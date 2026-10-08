@@ -2,6 +2,7 @@ import "server-only";
 import { learnMessages, learnSiteMessages } from "@zoonk/learn/messages";
 import { playerMessages } from "@zoonk/player/messages";
 import { isJsonObject } from "@zoonk/utils/json";
+import { mergeMessages } from "./merge-messages";
 
 type Messages = Record<string, unknown>;
 
@@ -24,7 +25,7 @@ async function appMessages(locale: string): Promise<Messages> {
   return translations.default;
 }
 
-/** Every catalog, for server components. App messages win a key collision, as they always have. */
+/** Every catalog, for server components. App messages win a key collision unless still untranslated. */
 export async function getAllMessages(locale: string): Promise<Messages> {
   const [player, learn, app] = await Promise.all([
     playerMessages(locale),
@@ -32,7 +33,7 @@ export async function getAllMessages(locale: string): Promise<Messages> {
     appMessages(locale),
   ]);
 
-  return { ...player, ...learn, ...app };
+  return mergeMessages(player, learn, app);
 }
 
 /** The messages client components need in a scope, so pages don't ship every catalog. */
@@ -49,9 +50,9 @@ export async function getClientMessages({
 
   if (scope === "learn") {
     const [learn, app] = await Promise.all([learnMessages(locale), appMessages(locale)]);
-    return { ...learn, ...app };
+    return mergeMessages(learn, app);
   }
 
   const [site, app] = await Promise.all([learnSiteMessages(locale), appMessages(locale)]);
-  return { ...site, ...app };
+  return mergeMessages(site, app);
 }

@@ -8,11 +8,21 @@ const PLAN_PHASE_KINDS = ["learn", "foundations", "gaps", "practice", "finalStre
 
 export const PRACTICE_BIASES = ["moreExplanation", "balanced", "morePractice"] as const;
 export const DIFFICULTY_BIASES = ["easier", "standard", "harder"] as const;
+/** Where an area starts: past its foundations, or from them (the default). */
+export const AREA_STARTS = ["pastBasics", "basics"] as const;
 const PACE_SOURCES = ["own", "course", "typical"] as const;
+
+/**
+ * When an exam's written tests (a redação, a discursive test) are practiced: a little every week
+ * (the default: spaced practice with feedback improves writing most), every other week, or only
+ * in the final weeks before the exam. The total practice stays the same; only when it comes moves.
+ */
+export const WRITTEN_CADENCES = ["weekly", "biweekly", "finalWeeks"] as const;
 
 export type PlanPhaseKind = (typeof PLAN_PHASE_KINDS)[number];
 export type PracticeBias = (typeof PRACTICE_BIASES)[number];
 export type DifficultyBias = (typeof DIFFICULTY_BIASES)[number];
+export type WrittenCadence = (typeof WRITTEN_CADENCES)[number];
 export type PaceSource = (typeof PACE_SOURCES)[number];
 
 export const MIN_DAILY_MINUTES = 5;
@@ -43,8 +53,18 @@ const graphSkillSchema = z.object({
   courseIds: z.array(z.string()).optional(),
   lessons: z.int().min(1),
   name: z.string(),
+  /**
+   * The skill turns what the learner studied into the goal's result (a career change's portfolio
+   * and job search): a plan short on time keeps it whole and leaves out other skills' depth first.
+   */
+  outcome: z.boolean().optional(),
   phase: z.int().min(0),
   skillId: z.string(),
+  /**
+   * The exact texts of the source's topics this skill teaches (for an exam, its notice's
+   * `structure.subjects[].topics`), so the syllabus can tick each topic. Absent on older graphs.
+   */
+  topics: z.array(z.string()).optional(),
   weight: z.number().nullable().default(null),
 });
 
@@ -58,6 +78,17 @@ const lightWeekSchema = z.object({ endDate: isoDateSchema, startDate: isoDateSch
 
 /** A weekly checkpoint or mock the learner moved to a later day ("Move to Monday"). */
 const movedEventSchema = z.object({ from: isoDateSchema, to: isoDateSchema });
+
+/**
+ * The part of a focused area the learner named ("mais biologia e química" in ENEM's Ciências da
+ * Natureza, which also holds physics): only these skills of the area get the focus, under the
+ * name the learner would say.
+ */
+const focusPartSchema = z.object({
+  area: z.string(),
+  name: z.string(),
+  skillIds: z.array(z.string()).min(1),
+});
 
 /**
  * The learner's choice for one tool, by the name the plan's chapters give it. `setupSkillId` is
@@ -77,13 +108,31 @@ export const toolChoiceSchema = z.object({
 const planSettingsSchema = z.object({
   difficultyBias: z.enum(DIFFICULTY_BIASES).default("standard"),
   focusAreas: z.array(z.string()).default([]),
+  /** Focused areas narrowed to the part the learner named; an area without one is focused whole. */
+  focusParts: z.array(focusPartSchema).default([]),
   lightWeeks: z.array(lightWeekSchema).default([]),
   movedEvents: z.array(movedEventSchema).default([]),
+  /**
+   * The exam day the plan took from the exam's notice, or its estimate, when the learner gave no
+   * date. While the goal's date is this day it's the notice's, so a new day from the notice (an
+   * estimate too) replaces it as a change the learner applies; a date the learner set is theirs.
+   */
+  noticeDate: isoDateSchema.nullable().default(null),
   pace: z
     .object({ factor: z.number().positive(), source: z.enum(PACE_SOURCES) })
     .nullable()
     .default(null),
+  /**
+   * Areas the learner said they're past the basics of ("the English lessons are too basic"): they
+   * start past their foundations, at their higher Library bands, whatever placement found.
+   */
+  pastBasicsAreas: z.array(z.string()).default([]),
   practiceBias: z.enum(PRACTICE_BIASES).default("balanced"),
+  /**
+   * Areas the learner wants less of but keeps ("menos Filosofia"): they count half, so their depth
+   * and their share of the days go to the others first. A focus on one of them takes it back out.
+   */
+  reducedAreas: z.array(z.string()).default([]),
   /**
    * A class test's own mock at full length, which rehearses it the day before when the test is days
    * away. Null for exams whose mock is a whole exam day. The planner sets it from the exam, like
@@ -104,6 +153,8 @@ const planSettingsSchema = z.object({
     .length(DAYS_PER_WEEK)
     .nullable()
     .default(null),
+  /** When an exam's written tests are practiced (see `WRITTEN_CADENCES`). */
+  writtenCadence: z.enum(WRITTEN_CADENCES).default("weekly"),
 });
 
 /** A phase as the learner sees it, with the dates the last planning run gave it. */
@@ -122,6 +173,7 @@ export type PlanSettings = z.infer<typeof planSettingsSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
 export type LightWeek = z.infer<typeof lightWeekSchema>;
 export type MovedEvent = z.infer<typeof movedEventSchema>;
+export type FocusPart = z.infer<typeof focusPartSchema>;
 export type PlanToolChoice = z.infer<typeof toolChoiceSchema>;
 
 /** What an undo restores: the goal's time settings, the graph and the settings. */

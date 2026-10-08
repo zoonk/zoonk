@@ -1,10 +1,10 @@
 import { classify } from "@zoonk/ai/evaluate/classify";
 import { decideBoolean } from "@zoonk/ai/evaluate/decisions";
 import { evaluateQuestions } from "@zoonk/ai/evaluate/evaluate-questions";
-import { type Experimental_EvaluationQuestion } from "ai";
+import { type Experimental_DecisionQuestion } from "ai";
 
 type EvaluationInput<TInput> = TInput & { model: string };
-type BooleanQuestion = Extract<Experimental_EvaluationQuestion, { type: "boolean" }>;
+type BooleanQuestion = Extract<Experimental_DecisionQuestion, { type: "boolean" }>;
 
 /** Evals score every case at even odds; product code picks its own thresholds from these results. */
 const EVAL_BOOLEAN_THRESHOLD = 0.5;

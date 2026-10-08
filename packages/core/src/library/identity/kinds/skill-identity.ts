@@ -3,6 +3,7 @@ import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/v2/identity/subje
 import { prisma, sql } from "@zoonk/db";
 import { buildSkillIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { findSurvivingSkill } from "../../skills/_utils/find-surviving-skill";
+import { listChaptersCourses } from "../_utils/candidate-courses";
 import { isInRequestScope } from "../_utils/exact-match-scope";
 import { type IdentityKindSearch, type SkillIdentityRequest } from "../_utils/identity-requests";
 import { SKILL_DOCUMENT } from "../_utils/search-documents";
@@ -59,14 +60,37 @@ async function findSkillCandidateIds({
   });
 }
 
+/**
+ * The skills a search found, with the courses whose chapters teach them, so the reuse decision
+ * judges from both sides' courses whether one can serve the other.
+ */
 export async function loadSkillCandidates(
   ids: readonly string[],
 ): Promise<LibraryIdentityCandidate[]> {
-  const skills = await prisma.skill.findMany({ where: { id: { in: [...ids] } } });
+  const skills = await prisma.skill.findMany({
+    include: {
+      chapters: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          chapter: {
+            select: {
+              courses: {
+                orderBy: { createdAt: "asc" },
+                select: { course: { select: { title: true } } },
+              },
+              homeCourse: { select: { title: true } },
+            },
+          },
+        },
+      },
+    },
+    where: { id: { in: [...ids] } },
+  });
 
   return skills.map((skill) => ({
     id: skill.id,
     item: {
+      courses: listChaptersCourses(skill),
       description: skill.description,
       targetLanguage: skill.targetLanguage,
       title: skill.name,
@@ -84,6 +108,7 @@ export function getSkillIdentitySearch(request: SkillIdentityRequest): IdentityK
     aiSubject: {
       goal: request.goal,
       item: {
+        courses: request.course ? [request.course] : [],
         description: request.description,
         targetLanguage: request.targetLanguage,
         title: request.name,

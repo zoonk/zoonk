@@ -84,6 +84,19 @@ describe(toAiGenerationEvent, () => {
     expect(properties).not.toHaveProperty("$ai_cost_passthrough");
   });
 
+  it("adds the tier that served the call and the call's own properties", () => {
+    const { properties } = toAiGenerationEvent({
+      properties: { evaluation_answers: '{"reuse":{"probability":0.8,"type":"boolean"}}' },
+      provenance: { ...provenance, serviceTier: "flex" },
+      task: "library-identity-decision",
+    });
+
+    expect(properties).toMatchObject({
+      evaluation_answers: '{"reuse":{"probability":0.8,"type":"boolean"}}',
+      service_tier: "flex",
+    });
+  });
+
   it("never sends prompt or response text or empty values", () => {
     const { properties } = toAiGenerationEvent({ provenance, task: "course-chapters" });
 

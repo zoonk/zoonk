@@ -47,7 +47,7 @@ function TyposPattern({
 }
 
 /**
- * A mistake pattern, full screen in Focus and Fun: the card with the rule ("We noticed a
+ * A mistake pattern, full screen: the card with the rule ("We noticed a
  * pattern"), a three-minute fill-in-the-blank drill one sentence at a time, and the result. A
  * pattern that was only typos gets the kind note and Done.
  *

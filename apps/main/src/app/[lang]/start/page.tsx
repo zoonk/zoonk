@@ -1,16 +1,16 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
+import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { GOAL_PARAM, PLAN_PARAM } from "@/lib/public/public-hrefs";
-import { getSession } from "@zoonk/core/users/session";
+import { findGuestGoalLimit } from "@zoonk/core/entitlements/guest-goal-limit";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
-import { DeviceModeRoot } from "@zoonk/learn/mode";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { StartClient } from "./start-client";
 import { DRAFT_PARAM, START_AGAIN_PARAM } from "./start-params";
@@ -41,12 +41,14 @@ async function loadDraft(draftId: string | null): Promise<OnboardingDraftView | 
 }
 
 async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
+  // Whether a guest can add a goal is read fresh for each visit: render per request.
+  await connection();
   const [language, query] = await Promise.all([lang(), searchParams]);
 
-  const [mode, session, draft] = await Promise.all([
-    getExperienceMode(),
-    getSession(),
+  const [tutor, draft, guestGoalLimit] = await Promise.all([
+    getTutorViewer(),
     loadDraft(readParam(query[DRAFT_PARAM])),
+    findGuestGoalLimit(),
   ]);
 
   // Once goals were created from the draft, its onboarding goes on at the goal.
@@ -62,10 +64,11 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
         // "Start over" comes back here with a new key, so nothing typed before is kept, and
         // opening another draft shows that one.
         key={`${readParam(query[START_AGAIN_PARAM]) ?? "start"}:${draft?.id ?? ""}`}
-        canAttach={Boolean(session && !session.user.isAnonymous)}
+        buddy={tutor.buddy}
+        canAttach={tutor.canAsk}
         defaultGoal={readParam(query[GOAL_PARAM]) ?? ""}
         initialDraft={draft}
-        initialMode={mode}
+        needsAccount={guestGoalLimit !== null}
         planId={plan && isUuid(plan) ? plan : null}
       />
     </MainLearnProvider>
@@ -74,14 +77,12 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
 
 function StartSkeleton() {
   return (
-    <DeviceModeRoot>
-      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 pt-24 sm:pt-32">
-        <Skeleton className="h-9 w-3/4" />
-        <Skeleton className="h-5 w-2/3" />
-        <Skeleton className="h-16 w-full rounded-3xl" />
-        <Skeleton className="h-64 w-full rounded-3xl" />
-      </main>
-    </DeviceModeRoot>
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 pt-24 sm:pt-32">
+      <Skeleton className="h-9 w-3/4" />
+      <Skeleton className="h-5 w-2/3" />
+      <Skeleton className="h-16 w-full rounded-3xl" />
+      <Skeleton className="h-64 w-full rounded-3xl" />
+    </main>
   );
 }
 
@@ -89,7 +90,7 @@ function StartSkeleton() {
  * Onboarding starts here: the goal in the learner's own words, understood and confirmed. The goal
  * being confirmed stays in the address (`?draft=`), so a refresh shows the same screen. Links send
  * visitors here with `?goal=` filled in; it only fills the box, since reading a goal starts from
- * the learner's own tap.
+ * the learner's own tap. A guest whose one goal is taken is asked to create an account first.
  */
 export default function StartPage(props: PageProps<"/[lang]/start">) {
   return (

@@ -3,6 +3,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
@@ -30,35 +31,15 @@ async function finishArriving({ items }: { items: { id: string }[] }) {
 }
 
 describe("language view models", () => {
-  it("shows levels since the level test, can-dos, current unit and the last four weeks", async () => {
+  it("shows levels since the level test and can-dos", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
     mockSession(user.id);
     await finishArriving(setup);
 
-    await Promise.all([
-      prisma.languageSkillLevel.create({
-        data: { language: "en", score: B1, skill: "listening", startScore: A2, userId: user.id },
-      }),
-      prisma.learnerWord.create({
-        data: { language: "en", text: "rent", userId: user.id, wordId: crypto.randomUUID() },
-      }),
-      prisma.languageConversation.create({
-        data: {
-          endedAt: new Date(),
-          kind: "practice",
-          language: "pt",
-          level: "A2",
-          minutes: 2,
-          scenario: RENTING_SCENARIO,
-          spokenSeconds: 90,
-          status: "completed",
-          targetLanguage: "en",
-          titleSnapshot: RENTING_SCENARIO.title,
-          userId: user.id,
-        },
-      }),
-    ]);
+    await prisma.languageSkillLevel.create({
+      data: { language: "en", score: B1, skill: "listening", startScore: A2, userId: user.id },
+    });
 
     const result = await getLanguageProgressView({ goalId: goal.id });
 
@@ -80,25 +61,36 @@ describe("language view models", () => {
     });
 
     expect(progress.target).toStrictEqual({ label: "B1+", score: 2.5 });
+    // Listening at B1 and the rest at A2 average below A2+, so the level across skills is A2.
+    expect(progress.level).toBe("A2");
 
     expect(progress.canDo).toStrictEqual([
       { done: true, text: "Consigo fazer a parte 1", unitTitle: "Chegando" },
       { done: false, text: "Consigo fazer a parte 2", unitTitle: "Alugando um apartamento" },
     ]);
 
-    expect(progress.currentUnit).toMatchObject({
-      chapterId: setup.renting.id,
-      lessonsDone: 0,
-      lessonsTotal: 2,
-      position: 2,
-      units: 2,
-    });
-
-    expect(progress.recent).toStrictEqual({ conversations: 1, minutesSpoken: 2, wordsLearned: 1 });
     expect(progress.speakingMock).toBeNull();
   });
 
-  it("shows no speaking level the level test didn't measure until the learner speaks", async () => {
+  it("shows the level the learner aims for from what onboarding understood", async () => {
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    // Onboarding writes a language goal's target as the CEFR level in `targetScore`.
+    await prisma.goal.update({
+      data: { details: { level: "B1+", reason: "Entrevista de emprego", targetScore: "B2" } },
+      where: { id: goal.id },
+    });
+
+    const result = await getLanguageProgressView({ goalId: goal.id });
+
+    expect(result.status === "ready" && result.progress.target).toStrictEqual({
+      label: "B2",
+      score: 3,
+    });
+  });
+
+  it("shows no level the level test didn't measure until a handful of answers give it one", async () => {
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
 
@@ -119,8 +111,24 @@ describe("language view models", () => {
 
     await expect(skillsShown()).resolves.toStrictEqual(["reading", "listening", "writing"]);
 
-    await prisma.languageSkillLevel.create({
-      data: { language: "en", score: A2, skill: "speaking", startScore: A2, userId: user.id },
+    // One sentence spoken says little about speaking.
+    const speaking = await prisma.languageSkillLevel.create({
+      data: {
+        language: "en",
+        score: A2,
+        skill: "speaking",
+        startScore: A2,
+        userId: user.id,
+        windowCorrect: 1,
+        windowTotal: 1,
+      },
+    });
+
+    await expect(skillsShown()).resolves.toStrictEqual(["reading", "listening", "writing"]);
+
+    await prisma.languageSkillLevel.update({
+      data: { windowCorrect: 4, windowTotal: 5 },
+      where: { id: speaking.id },
     });
 
     await expect(skillsShown()).resolves.toStrictEqual([
@@ -129,33 +137,6 @@ describe("language view models", () => {
       "speaking",
       "writing",
     ]);
-  });
-
-  it("counts every word known in the language, and only this month's as recent", async () => {
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-    const longAgo = new Date(Date.now() - 90 * MS_PER_DAY);
-
-    const word = (input: { language: string; learnedAt?: Date; text: string }) =>
-      prisma.learnerWord.create({
-        data: { ...input, userId: user.id, wordId: crypto.randomUUID() },
-      });
-
-    await Promise.all([
-      word({ language: "en", learnedAt: longAgo, text: "landlord" }),
-      word({ language: "en", learnedAt: longAgo, text: "lease" }),
-      word({ language: "en", text: "rent" }),
-      word({ language: "es", text: "alquiler" }),
-    ]);
-
-    const result = await getLanguageProgressView({ goalId: goal.id });
-
-    if (result.status !== "ready") {
-      throw new Error(result.status);
-    }
-
-    expect(result.progress.wordsKnown).toBe(3);
-    expect(result.progress.recent.wordsLearned).toBe(1);
   });
 
   it("offers the speaking mock of the exam the goal's reason names", async () => {
@@ -232,13 +213,44 @@ describe("language view models", () => {
     expect(result).toMatchObject({
       status: "ready",
       unit: {
-        conversation: { character: { name: "Linda" }, defaultMinutes: 2, minutes: [1, 2, 3, 5] },
+        // A free learner picks the lengths their day holds; Plus's longer ones show locked.
+        conversation: {
+          character: { name: "Linda" },
+          defaultMinutes: 2,
+          limit: null,
+          minutes: [1, 2],
+          plusMinutes: [3, 5],
+        },
         goalId: goal.id,
         grammarTips: [{ title: "There is / there are" }],
         mistakes: [{ answer: "There is two", skill: "writing" }],
         unit: { levelRange: "A1–A2", position: 2, title: "Alugando um apartamento" },
         words: { count: 0 },
       },
+    });
+  });
+
+  it("offers only the call lengths left today, and says when calls come back once none fits", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 50, userId: user.id });
+    const oneLeft = await getLanguageUnitView({ chapterId: renting.id });
+
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
+    const noneLeft = await getLanguageUnitView({ chapterId: renting.id });
+
+    expect(oneLeft.status === "ready" && oneLeft.unit.conversation).toMatchObject({
+      defaultMinutes: 1,
+      limit: null,
+      minutes: [1],
+      plusMinutes: [3, 5],
+    });
+
+    expect(noneLeft.status === "ready" && noneLeft.unit.conversation).toMatchObject({
+      limit: { period: "day", tier: "free" },
+      minutes: [],
+      plusMinutes: [],
     });
   });
 
@@ -274,7 +286,7 @@ describe("language view models", () => {
     });
   });
 
-  it("moves past a unit whose call was won on Today, Progress and the units list alike", async () => {
+  it("moves past a unit whose call was won in can-dos and the units list alike", async () => {
     const setup = await languageGoalFixture();
     const { arriving, goal, renting, user } = setup;
     mockSession(user.id);
@@ -296,17 +308,15 @@ describe("language view models", () => {
       },
     });
 
-    const [today, progress, units] = await Promise.all([
-      getLanguageTodayView({ goalId: goal.id }),
+    const [progress, units] = await Promise.all([
       getLanguageProgressView({ goalId: goal.id }),
       getLanguageUnitsView({ goalId: goal.id }),
     ]);
 
-    expect(today.status === "ready" && today.today.currentUnit?.chapterId).toBe(renting.id);
-
-    expect(progress.status === "ready" && progress.progress.currentUnit?.chapterId).toBe(
-      renting.id,
-    );
+    expect(progress.status === "ready" && progress.progress.canDo).toStrictEqual([
+      { done: true, text: "Consigo fazer a parte 1", unitTitle: "Chegando" },
+      { done: false, text: "Consigo fazer a parte 2", unitTitle: renting.title },
+    ]);
 
     expect(units.status === "ready" && units.units.units.map((unit) => unit.done)).toStrictEqual([
       true,
@@ -314,35 +324,61 @@ describe("language view models", () => {
     ]);
   });
 
-  it("adds the current unit, a new can-do and a noticed pattern to Today", async () => {
+  it("adds the level across skills and a noticed pattern to Today", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
     mockSession(user.id);
-    await finishArriving(setup);
 
-    const pattern = await prisma.mistakePattern.create({
-      data: {
-        content: { contrast: [], drill: [], examples: [], rule: "Use for com durações." },
-        goalId: goal.id,
-        kind: "pattern",
-        language: "en",
-        model: "test",
-        promptVersion: "test",
-        runId: "test",
-        title: "since e for",
-        userId: user.id,
-      },
-    });
+    const [pattern] = await Promise.all([
+      prisma.mistakePattern.create({
+        data: {
+          content: { contrast: [], drill: [], examples: [], rule: "Use for com durações." },
+          goalId: goal.id,
+          kind: "pattern",
+          language: "en",
+          model: "test",
+          promptVersion: "test",
+          runId: "test",
+          title: "since e for",
+          userId: user.id,
+        },
+      }),
+      prisma.languageSkillLevel.create({
+        data: { language: "en", score: B1, skill: "listening", startScore: A2, userId: user.id },
+      }),
+    ]);
 
     const result = await getLanguageTodayView({ goalId: goal.id });
 
-    expect(result).toMatchObject({
+    // Listening went up to B1 and the rest stay at A2: the average rounds down to A2.
+    expect(result).toStrictEqual({
       status: "ready",
       today: {
-        currentUnit: { chapterId: setup.renting.id },
-        newCanDo: "Consigo fazer a parte 1",
+        level: { label: "A2", target: "B1+" },
         pattern: { id: pattern.id, kind: "pattern", title: "since e for" },
+        pronunciation: null,
       },
+    });
+  });
+
+  it("rounds the level across skills down to a half step", async () => {
+    const setup = await languageGoalFixture();
+    const { goal, user } = setup;
+    mockSession(user.id);
+
+    await Promise.all(
+      (["listening", "reading"] as const).map((skill) =>
+        prisma.languageSkillLevel.create({
+          data: { language: "en", score: B1, skill, startScore: A2, userId: user.id },
+        }),
+      ),
+    );
+
+    const result = await getLanguageTodayView({ goalId: goal.id });
+
+    expect(result.status === "ready" && result.today.level).toStrictEqual({
+      label: "A2+",
+      target: "B1+",
     });
   });
 });

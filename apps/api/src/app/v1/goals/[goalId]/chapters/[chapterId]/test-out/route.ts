@@ -1,6 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
+import { withApiImageUrls } from "@/lib/file-urls";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
@@ -28,7 +29,7 @@ async function getTestOut(_request: Request, context: TestOutContext) {
     return learnerAccessError(result.status);
   }
 
-  return NextResponse.json(result.testOut);
+  return NextResponse.json(withApiImageUrls(result.testOut));
 }
 
 /** Grades the test-out; passing tests out what the learner already knows. */

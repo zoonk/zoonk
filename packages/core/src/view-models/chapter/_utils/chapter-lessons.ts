@@ -1,11 +1,12 @@
 import "server-only";
-import { type PlanItem, prisma } from "@zoonk/db";
+import { type Lesson, type PlanItem, prisma } from "@zoonk/db";
 import { toSummaryIdeas } from "../../../library/lessons/_utils/summary-ideas";
 import { type ChapterView } from "../chapter-contract";
 
 type ChapterItem = Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "status">;
 
 type ChapterLessonRow = {
+  contentStatus: Lesson["contentStatus"];
   estimatedMinutes: number;
   id: string;
   skillIds: string[];
@@ -20,6 +21,7 @@ export async function loadChapterLessons(chapterId: string): Promise<ChapterLess
     select: {
       lesson: {
         select: {
+          contentStatus: true,
           estimatedMinutes: true,
           id: true,
           skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } },
@@ -107,6 +109,7 @@ export function buildChapterLessons({
     skillIds: lesson.skillIds,
     state: getLessonState({ isDone: done[index] ?? false, isNext: index === nextIndex }),
     title: lesson.title,
+    written: lesson.contentStatus === "completed",
   }));
 }
 

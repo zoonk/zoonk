@@ -4,10 +4,10 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { getPreparationComponents, getPreparationValue } from "../../preparation/preparation-math";
 import { projectPersistedEnergy } from "../../progress/energy";
-import { type SessionSnapshot } from "./session-snapshot";
+import { type SessionSnapshot, type SessionState } from "./session-snapshot";
 
 /** A goal's preparation and each of its skills' state at one moment. */
-export async function measureGoal({
+async function measureGoal({
   goalId,
   now,
   userId,
@@ -56,8 +56,8 @@ export async function measureProgress({
   return { brainPower: Number(progress.totalBrainPower), energy: currentEnergy };
 }
 
-/** Where the learner stands as the session's first block starts. */
-export async function captureSessionSnapshot({
+/** Where the learner stands now on the session's goal: preparation, skills, Energy, Brain Power. */
+export async function measureSessionState({
   goalId,
   now,
   timeZone,
@@ -67,11 +67,18 @@ export async function captureSessionSnapshot({
   now: Date;
   timeZone: string;
   userId: string;
-}): Promise<SessionSnapshot> {
+}): Promise<SessionState> {
   const [goal, progress] = await Promise.all([
     measureGoal({ goalId, now, userId }),
     measureProgress({ now, timeZone, userId }),
   ]);
 
-  return { ...goal, ...progress, masteryRewards: {} };
+  return { ...goal, ...progress };
+}
+
+/** Where the learner stands as the session's first block starts. */
+export async function captureSessionSnapshot(
+  input: Parameters<typeof measureSessionState>[0],
+): Promise<SessionSnapshot> {
+  return { ...(await measureSessionState(input)), masteryRewards: {} };
 }

@@ -1,0 +1,73 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "subject 2: 6 instead of 7", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "subject 2: 6 instead of 7", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "subject 2: 6 instead of 7", "kind": "potentialImprovements", "score": 6 }
+      ],
+      "testCase": {
+        "expected": { "counts": { "2": 7, "20": 8 }, "status": "found" },
+        "id": "pt-oab-1a-fase-1",
+        "userInput": {
+          "board": "FGV",
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "subjects": [
+            "Direito Administrativo",
+            "Direito Civil",
+            "Direito Processual Civil",
+            "Direito Constitucional",
+            "Direito do Trabalho",
+            "Direito Processual do Trabalho",
+            "Direito Empresarial",
+            "Direito Penal",
+            "Direito Processual Penal",
+            "Direito Tributário e Processual Tributário",
+            "Direitos Humanos",
+            "Direito do Consumidor",
+            "Direito da Criança e do Adolescente",
+            "Direito Ambiental",
+            "Direito Internacional",
+            "Filosofia do Direito",
+            "Direito Financeiro",
+            "Direito Previdenciário",
+            "Direito Eleitoral",
+            "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB"
+          ],
+          "today": "2026-10-06",
+          "total": 80
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "counts": {}, "status": "any" },
+        "id": "pt-camara-registro-redacao-1",
+        "userInput": {
+          "board": "Cebraspe",
+          "exam": "Concurso da Câmara dos Deputados, Analista Legislativo – Registro e Redação",
+          "subjects": [
+            "Língua Portuguesa",
+            "Língua Inglesa",
+            "Noções de Direito Administrativo e Administração Pública",
+            "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+            "Tecnologia da Informação e Dados",
+            "Linguística",
+            "Reconhecimento de Fala, Transcrição e Inteligência Artificial",
+            "Processo Legislativo e Regimento Interno da Câmara dos Deputados",
+            "Ciência Política"
+          ],
+          "today": "2026-10-06",
+          "total": 180
+        }
+      }
+    }
+  ],
+  "taskId": "find-subject-questions"
+}

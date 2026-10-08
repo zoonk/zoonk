@@ -22,19 +22,62 @@ export function formatChatInput(messages: readonly MemoryChatMessage[]): string 
     .join("\n");
 }
 
+/**
+ * The answers a goal keeps about who the learner is and what they aim for. The rest are this
+ * goal's settings (when, how long and on which days they study it: 30 minutes for an exam, 10
+ * for a language) or the app's own bookkeeping, which memory would carry into every other goal.
+ */
+const LEARNER_DETAILS: ReadonlySet<string> = new Set([
+  "course",
+  "exam",
+  "examName",
+  "field",
+  "institution",
+  "level",
+  "levelNote",
+  "purpose",
+  "reason",
+  "role",
+  "subject",
+  "targetCourse",
+  "targetLevel",
+  "targetNote",
+  "targetPosition",
+  "targetScore",
+  "tasks",
+  "university",
+]);
+
+/** The follow-up questions onboarding asked about the goal, with the learner's own answers. */
+function formatFollowUps(followUps: unknown): string[] {
+  if (!Array.isArray(followUps)) {
+    return [];
+  }
+
+  return followUps.flatMap((item: unknown) =>
+    isJsonObject(item) && typeof item.question === "string" && typeof item.answer === "string"
+      ? [`${item.question} ${item.answer}`]
+      : [],
+  );
+}
+
 function formatDetails(details: unknown): string[] {
   if (!isJsonObject(details)) {
     return [];
   }
 
-  return Object.entries(details).flatMap(([key, value]) =>
-    typeof value === "string" || typeof value === "number" ? [`${key}: ${value}`] : [],
+  const answers = Object.entries(details).flatMap(([key, value]) =>
+    LEARNER_DETAILS.has(key) && (typeof value === "string" || typeof value === "number")
+      ? [`${key}: ${value}`]
+      : [],
   );
+
+  return [...answers, ...formatFollowUps(details.followUps)];
 }
 
 /**
  * What the learner told onboarding about one goal: their own words first, then the answers the
- * goal kept. Null when the goal isn't the learner's.
+ * goal kept about them, never its time or schedule. Null when the goal isn't the learner's.
  */
 export async function loadOnboardingInput({
   goalId,
@@ -53,8 +96,6 @@ export async function loadOnboardingInput({
     `In their words: ${goal.prompt}`,
     `Goal: ${goal.title}`,
     goal.targetDate && `Target date: ${goal.targetDate.toISOString().slice(0, 10)}`,
-    `Daily study time: ${goal.dailyMinutes} minutes`,
-    goal.studyTime && `Preferred study time: ${goal.studyTime}`,
     ...formatDetails(goal.details),
   ].filter(Boolean);
 

@@ -6,7 +6,11 @@ import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { checkpointResponseSchema } from "../src/lib/openapi/schemas/checkpoints";
+import {
+  challengeResponseSchema,
+  challengeStartResponseSchema,
+  checkpointResponseSchema,
+} from "../src/lib/openapi/schemas/checkpoints";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
@@ -87,9 +91,16 @@ test.describe("Checkpoints API", () => {
       api.get(`/v1/checkpoints/${id}`),
       api.post(`/v1/checkpoints/${id}/moves`, { data: {} }),
       api.delete(`/v1/checkpoints/${id}/moves/${randomUUID()}`),
+      api.get(`/v1/challenges/${id}?timeZone=UTC`),
+      api.post(`/v1/challenges/${id}/starts`, { data: { timeZone: "UTC" } }),
+      api.post(`/v1/challenges/${id}/moves`, { data: { timeZone: "UTC" } }),
+      api.delete(`/v1/challenges/${id}/moves/${randomUUID()}?timeZone=UTC`),
     ]);
 
-    expect(responses.map((response) => response.status())).toStrictEqual([401, 401, 401]);
+    expect(responses.map((response) => response.status())).toStrictEqual([
+      401, 401, 401, 401, 401, 401, 401,
+    ]);
+
     await api.dispose();
   });
 
@@ -158,5 +169,59 @@ test.describe("Checkpoints API", () => {
     // Only the week's challenge moves to Monday; a boss keeps its day.
     const bossMove = await api.post(`${path}/moves`, { data: {} });
     expect(bossMove.status()).toBe(404);
+  });
+
+  test("a boss's challenge says what it asks on its day and starts its block, only for its learner", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "challenge" }),
+      createBearerLearner({ baseURL, prefix: "challenge-other" }),
+    ]);
+
+    const goal = await createGoalAtBoss(userId);
+
+    const boss = await prisma.planItem.findFirstOrThrow({
+      where: { kind: "boss", plan: { goalId: goal.id } },
+    });
+
+    const path = `/v1/challenges/${boss.id}`;
+
+    const intro = await readBody({
+      response: await api.get(`${path}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    expect(intro).toMatchObject({
+      canMove: false,
+      goalId: goal.id,
+      kind: "boss",
+      phase: { index: 0, name: "Basics" },
+      planItemId: boss.id,
+      questions: BOSS_QUESTIONS,
+      status: "ready",
+    });
+
+    const started = await readBody({
+      response: await api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
+      schema: challengeStartResponseSchema,
+    });
+
+    expect(started).toMatchObject({ blockId: intro.blockId, kind: "checkpoint" });
+
+    const running = await readBody({
+      response: await api.get(`${path}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    expect(running.status).toBe("started");
+
+    const [hidden, bossMove] = await Promise.all([
+      other.api.get(`${path}?timeZone=UTC`),
+      api.post(`${path}/moves`, { data: { timeZone: "UTC" } }),
+    ]);
+
+    expect(hidden.status()).toBe(404);
+
+    // Only the week's challenge moves to Monday; a boss keeps its day.
+    expect(bossMove.status()).toBe(409);
   });
 });

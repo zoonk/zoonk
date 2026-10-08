@@ -38,7 +38,7 @@ export function DrillAnswerNotes({
       )}
 
       {trap && (
-        <p className="bg-background/60 in-data-[mode=fun]:bg-fun-soft flex items-start gap-2 rounded-xl px-3 py-2 text-sm">
+        <p className="bg-background/60 flex items-start gap-2 rounded-xl px-3 py-2 text-sm">
           <TriangleAlertIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
           <span>
             <span className="font-medium">{t("The trap:")}</span> {trap}

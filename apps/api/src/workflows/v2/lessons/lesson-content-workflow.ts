@@ -1,12 +1,15 @@
+import { type CallWait } from "@zoonk/ai/provider-options";
 import { MAX_LESSON_DRAFTS } from "@zoonk/core/library/generation/held-back-drafts";
 import { LESSON_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { createHook, getWorkflowMetadata, sleep } from "workflow";
-import { start } from "workflow/api";
+import { getWorkflowMetadata, sleep } from "workflow";
+import { type Run, start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
-import { PRIVATE_MAX_IMAGES, lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { claimRunToken, joinRun } from "../_shared/run-token";
+import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import {
   type LessonContentResult,
   getLessonContentHookToken,
@@ -23,15 +26,17 @@ export type LessonContentInput = {
   lessonId: string;
   /** The learner and goal the lesson is being made for, so its cost adds up per learner. */
   analytics?: ContentAnalytics;
-  /** Made for an exam goal, so the reasoning check always runs. */
+  /** Made for an exam goal, so the reasoning check always runs (after publishing). */
   forExam?: boolean;
   /** A rewrite after a later check failed: the reasoning check always runs. */
   forceReview?: boolean;
   /**
-   * A learner is waiting on it: a new goal's first lesson, or one opened before it was written.
-   * Its spec and writing run at the priority tier, about twice as fast at twice the price.
+   * When a learner reaches the lesson: `learner` when they're about to open it, `soon` (the
+   * default) within minutes, `later` in hours (the next study day's). Its spec and writing run at
+   * the tier `chooseServiceTier` gives that wait and who reads the lesson: `flex` later, `priority`
+   * when a learner waits on an exam's or a language's shared lesson, the standard tier otherwise.
    */
-  priority?: boolean;
+  wait?: CallWait;
 };
 
 /** How analytics names this run's work when it fails. */
@@ -63,20 +68,15 @@ async function finish({ lessonId, status }: LessonContentResult): Promise<Lesson
  */
 async function joinRunningLesson({
   lessonId,
-  returnValue,
-  runId,
+  run,
 }: {
   lessonId: string;
-  returnValue: Promise<unknown>;
-  runId: string;
+  run: Run<unknown>;
 }): Promise<LessonContentResult> {
-  await lessonProgressStep({ entityId: runId, status: "started", step: "joinRunningLesson" });
+  await lessonProgressStep({ entityId: run.runId, status: "started", step: "joinRunningLesson" });
 
-  try {
-    return await finish(lessonContentResultSchema.parse(await returnValue));
-  } catch {
-    return finish({ lessonId, status: "missing" });
-  }
+  const joined = lessonContentResultSchema.safeParse(await joinRun(run));
+  return finish(joined.success ? joined.data : { lessonId, status: "missing" });
 }
 
 /** A run outside this lesson's hook holds the claim, such as an explanation saving it: wait for it. */
@@ -195,9 +195,11 @@ async function planAndWrite({
 /**
  * Makes one lesson playable on demand: it claims the lesson's content (one run per lesson; a
  * second request joins the first and streams the same result), writes the spec when the chapter
- * ahead didn't already, writes and checks the screens, and publishes them. Pictures follow in the
- * background, since the lesson reads fine without them. A draft its checks hold back is drafted
- * again in this run while the lesson has drafts left; a lesson set aside isn't written again.
+ * ahead didn't already, writes the screens and publishes them once the code checks pass. Pictures
+ * and the model checks follow in the background (`lessonImagesWorkflow`, `lessonCheckWorkflow`), so
+ * a learner waiting on the lesson never waits on them; a check that finds a problem publishes a
+ * fixed version. A draft the code checks hold back is drafted again in this run while the lesson
+ * has drafts left; a lesson set aside isn't written again.
  * Progress goes to the run's stream, so the waiting screen shows live steps; rate limits retry
  * after a minute, and a run that fails frees the lesson for the next one.
  */
@@ -208,15 +210,10 @@ export async function lessonContentWorkflow(
 
   const { lessonId } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: getLessonContentHookToken(lessonId) });
-  const conflict = await hook.getConflict();
+  const { conflict } = await claimRunToken(getLessonContentHookToken(lessonId));
 
   if (conflict) {
-    return joinRunningLesson({
-      lessonId,
-      returnValue: conflict.returnValue,
-      runId: conflict.runId,
-    });
+    return joinRunningLesson({ lessonId, run: conflict });
   }
 
   const claim = await claimLessonContentStep({ lessonId, workflowRunId });
@@ -239,13 +236,18 @@ export async function lessonContentWorkflow(
     return finish({ lessonId, status: outcome.status === "heldBack" ? "heldBack" : "missing" });
   }
 
-  // The lesson plays without its pictures, so the waiting screens open it before they're started.
+  // The lesson plays without its pictures and before its model checks, so the waiting screens open
+  // it before they're started.
   const ready = await finish({ lessonId, status: "ready" });
 
   if (outcome.imageScope) {
-    const maxImages = outcome.imageScope === "personal" ? PRIVATE_MAX_IMAGES : undefined;
     const analytics = { ...input.analytics, contentScope: outcome.imageScope };
-    await start(lessonImagesWorkflow, [{ analytics, lessonId, maxImages }]);
+    await start(lessonImagesWorkflow, [{ analytics, lessonId }]);
+  }
+
+  if (outcome.check && (outcome.check.review || outcome.check.cite)) {
+    const check = { analytics: input.analytics, forExam: input.forExam, lessonId };
+    await start(lessonCheckWorkflow, [{ ...check, plan: outcome.check }]);
   }
 
   return ready;

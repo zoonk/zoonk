@@ -1,235 +1,225 @@
 "use client";
 
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
-import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarCheckIcon, TrendingUpIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { FactChip, FactChips } from "../_components/fact-chips";
+import { KindTile } from "../_components/kind-tile";
+import { Meter, MeterFill } from "../_components/meter";
+import {
+  StepCard,
+  StepDetail,
+  StepEyebrow,
+  StepHeader,
+  StepTitle,
+  StepTitleLabel,
+  StepTitleNumber,
+} from "../_components/step-card";
+import { Steps, type StepsItem } from "../_components/steps";
 import { useFormatShare } from "../_utils/percent";
-import { useFormatDuration } from "../_utils/time-format";
-import { LearnLink } from "../learn-link";
-import { TaskMainLink } from "../shell/task-frame";
+import { hasShareMoved } from "../_utils/share-moved";
 import { useMockScreen } from "./mock-context";
-import { MockFrame } from "./mock-frame";
 import { useMockTitle } from "./mock-labels";
-import { MockResultInsights } from "./mock-result-insights";
-import { MockReview } from "./mock-review";
+import {
+  MockNextStep,
+  MockResultActions,
+  MockResultOptions,
+  useMistakeCount,
+} from "./mock-result-actions";
+import { MockResultBreakdown, hasBreakdown } from "./mock-result-breakdown";
+import { MockResultInsights, useHasInsights } from "./mock-result-insights";
+import { MockFocusStep, MockSkipStep } from "./mock-result-plan";
 
-const NUMBER_CLASS = "in-data-[mode=fun]:font-fun-display font-semibold tabular-nums";
-
-const CARD_CLASS =
-  "border-border in-data-[mode=fun]:fun-glass rounded-3xl border p-5 in-data-[mode=fun]:border-transparent";
-
-function Delta({ current, previous }: { current: number; previous: number | null }) {
+/** "300–470": a range, since one mock can't pin a score down. */
+function useRange() {
   const t = useExtracted();
 
-  if (previous === null || current === previous) {
+  return ({ high, low }: { high: number; low: number }) =>
+    t("{low}–{high}", { high: String(high), low: String(low) });
+}
+
+/** The score in the exam's own terms: estimated range (ENEM), net score (Cebraspe) or right answers. */
+function useScore(result: MockResult): { label: string; value: string } {
+  const t = useExtracted();
+  const range = useRange();
+
+  if (result.irt) {
+    return { label: t("Estimated score"), value: range(result.irt) };
+  }
+
+  if (result.net) {
+    return {
+      label: t("Net score out of {max}", { max: String(result.net.max) }),
+      value: String(result.net.net),
+    };
+  }
+
+  return {
+    label: t("Right answers"),
+    value: t("{correct} of {total}", {
+      correct: String(result.correct),
+      total: String(result.total),
+    }),
+  };
+}
+
+/** "+16 since the last one", as a chip; only when there was a last one and it moved. */
+function DeltaChip({ result }: { result: MockResult }) {
+  const t = useExtracted();
+  const current = result.irt?.score ?? result.net?.net ?? null;
+
+  if (current === null || result.previous === null || current === result.previous) {
     return null;
   }
 
-  const change = current - previous;
+  const change = Math.round(current - result.previous);
 
   return (
-    <p className={cn("flex items-center gap-1 text-sm", change > 0 && "text-success")}>
-      {change > 0 && <TrendingUpIcon aria-hidden="true" className="size-4" />}
+    <FactChip>
+      {change > 0 ? <TrendingUpIcon aria-hidden="true" /> : <TrendingDownIcon aria-hidden="true" />}
       {change > 0
         ? t("+{change} since the last one", { change: String(change) })
         : t("{change} since the last one", { change: String(change) })}
-    </p>
+    </FactChip>
   );
 }
 
-/** ENEM: the estimated score by item response theory, its range and each area's score. */
-function IrtScore({ result }: { result: MockResult }) {
+/** Cebraspe's net score comes from right, wrong and blank answers: each as a chip. */
+function NetChips({ result }: { result: MockResult }) {
   const t = useExtracted();
-  const irt = result.irt;
 
-  if (!irt) {
+  if (!result.net) {
     return null;
   }
-
-  // One mock can't pin a score down, so it shows as the range it likely falls in, never one number.
-  return (
-    <section className={cn(CARD_CLASS, "flex flex-col gap-4")}>
-      <div className="flex flex-col gap-1">
-        <p className={cn(NUMBER_CLASS, "text-5xl")}>
-          {t("{low}–{high}", { high: String(irt.high), low: String(irt.low) })}
-        </p>
-        <p className="text-muted-foreground text-sm">{t("Estimated")}</p>
-        <Delta current={irt.score} previous={result.previous} />
-      </div>
-      {/* One area is the whole mock: its score would repeat the one above. */}
-      {result.areas.length > 1 && (
-        <ul className="grid grid-cols-2 gap-2">
-          {result.areas.map((area) => (
-            <li
-              className="bg-muted/60 in-data-[mode=fun]:bg-fun-soft flex flex-col gap-0.5 rounded-2xl px-3 py-2"
-              key={area.name}
-            >
-              <p className="text-muted-foreground text-xs leading-snug">{area.name}</p>
-              <p className={cn(NUMBER_CLASS, "mt-auto text-xl")}>
-                {area.score
-                  ? t("{low}–{high}", {
-                      high: String(area.score.high),
-                      low: String(area.score.low),
-                    })
-                  : "–"}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
-/** Cebraspe: the net score, right answers minus wrong ones, with blanks counted apart. */
-function NetScore({ result }: { result: MockResult }) {
-  const t = useExtracted();
-  const net = result.net;
-
-  if (!net) {
-    return null;
-  }
-
-  return (
-    <section className={cn(CARD_CLASS, "flex flex-col gap-2")}>
-      <p className={cn(NUMBER_CLASS, "text-5xl")}>{net.net}</p>
-      <p className="text-muted-foreground text-sm">
-        {t(
-          "Net score out of {max}: {right, plural, =0 {# right} one {# right} other {# right}}, {wrong, plural, =0 {# wrong} one {# wrong} other {# wrong}}, {blank} blank",
-          { blank: String(net.blank), max: String(net.max), right: net.right, wrong: net.wrong },
-        )}
-      </p>
-      <Delta current={net.net} previous={result.previous} />
-    </section>
-  );
-}
-
-function RawScore({ result }: { result: MockResult }) {
-  const t = useExtracted();
-
-  if (result.irt || result.net) {
-    return null;
-  }
-
-  return (
-    <section className={cn(CARD_CLASS, "flex flex-col gap-2")}>
-      <p className={cn(NUMBER_CLASS, "text-5xl")}>
-        {t("{correct} of {total}", {
-          correct: String(result.correct),
-          total: String(result.total),
-        })}
-      </p>
-      <p className="text-muted-foreground text-sm">{t("Right answers")}</p>
-    </section>
-  );
-}
-
-const PERCENT = 100;
-
-function PreparationChange({ result }: { result: MockResult }) {
-  const t = useExtracted();
-  const locale = useLocale();
-  const formatShare = useFormatShare();
-  const { runner } = useMockScreen();
-  const change = result.preparation;
-
-  if (!change) {
-    return null;
-  }
-
-  return (
-    <section className={cn(CARD_CLASS, "flex flex-col gap-3")}>
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="font-medium">
-          {runner.view.examName
-            ? t("{exam} preparation", { exam: runner.view.examName })
-            : t("Preparation")}
-        </p>
-        <p className="tabular-nums">
-          {t("{before} → {after}", {
-            after: formatShare(change.after),
-            before: formatShare(change.before),
-          })}
-        </p>
-      </div>
-      <ProgressRoot locale={locale} aria-label={t("Preparation")} value={change.after * PERCENT}>
-        <ProgressTrack className="h-2">
-          <ProgressIndicator className="in-data-[mode=fun]:bg-fun-accent-lime" />
-        </ProgressTrack>
-      </ProgressRoot>
-    </section>
-  );
-}
-
-function ResultFooter() {
-  const t = useExtracted();
-  const { hrefs, runner } = useMockScreen();
-  const mistakes = runner.view.review.filter((entry) => entry.outcome === "wrong").length;
 
   return (
     <>
-      {mistakes > 0 ? (
-        <TaskMainLink href={hrefs.mistakes}>
-          {t("{count, plural, one {Review the mistake} other {Review the # mistakes}}", {
-            count: mistakes,
-          })}
-        </TaskMainLink>
-      ) : (
-        <TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>
-      )}
-      {mistakes > 0 && (
-        <LearnLink
-          className="text-muted-foreground py-3 text-center text-sm underline-offset-4 hover:underline"
-          href={hrefs.continue}
-        >
-          {t("Continue today's session")}
-        </LearnLink>
-      )}
-      <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs">
-        <CalendarCheckIcon aria-hidden="true" className="size-3.5" />
-        {t("It's all in your plan already.")}
-      </p>
+      <FactChip>
+        {t("{count, plural, =0 {# right} one {# right} other {# right}}", {
+          count: result.net.right,
+        })}
+      </FactChip>
+      <FactChip>
+        {t("{count, plural, =0 {# wrong} one {# wrong} other {# wrong}}", {
+          count: result.net.wrong,
+        })}
+      </FactChip>
+      <FactChip>
+        {t("{count, plural, =0 {# blank} one {# blank} other {# blank}}", {
+          count: result.net.blank,
+        })}
+      </FactChip>
     </>
   );
 }
 
-/**
- * The result teaches: the score in the exam's own terms (estimated, as a range, where it's an
- * estimate), how preparation moved, then timing, consistency or calibration and the mistakes.
- */
-export function MockResultView() {
+/** The mock done, its score big, with the exam and its areas under it. */
+function ScoreStep({ result }: { result: MockResult }) {
   const t = useExtracted();
-  const { ask, runner } = useMockScreen();
-  const { result } = runner.view;
   const title = useMockTitle();
-  const duration = useFormatDuration();
-
-  if (!result) {
-    return null;
-  }
+  const { runner } = useMockScreen();
+  const score = useScore(result);
+  const areas = result.areas.map((area) => area.name).join(", ");
+  const detail = [score.label, runner.view.examName, areas].filter(Boolean).join(" · ");
 
   return (
-    <MockFrame footer={<ResultFooter />} headerEnd={ask}>
-      <div className="flex flex-col gap-1 pt-4">
-        <h1 className="in-data-[mode=fun]:font-fun-display text-3xl font-bold tracking-tight">
-          {title(runner.view)}
-        </h1>
-        <p className="text-muted-foreground">
-          {t("{count, plural, one {# question} other {# questions}} · {time}", {
-            count: result.total,
-            time: duration(Math.max(1, Math.round(result.minutesUsed))),
-          })}
-        </p>
-      </div>
+    <StepCard>
+      <KindTile kind="mock" size="lg" />
+      <StepHeader>
+        <StepTitle className="flex flex-col items-center gap-1.5">
+          <StepTitleLabel>{t("{mock} done", { mock: title(runner.view) })}</StepTitleLabel>
+          <StepTitleNumber>{score.value}</StepTitleNumber>
+        </StepTitle>
+        <StepDetail>{detail}</StepDetail>
+      </StepHeader>
 
-      <IrtScore result={result} />
-      <NetScore result={result} />
-      <RawScore result={result} />
-      <PreparationChange result={result} />
-      <MockResultInsights />
-      <MockReview />
-    </MockFrame>
+      <FactChips className="justify-center empty:hidden">
+        <NetChips result={result} />
+        <DeltaChip result={result} />
+      </FactChips>
+    </StepCard>
   );
+}
+
+/** Preparation before and after the mock: the answers it gave count, never more than that. */
+function PreparationStep({ change }: { change: NonNullable<MockResult["preparation"]> }) {
+  const t = useExtracted();
+  const formatShare = useFormatShare();
+  const fell = change.after < change.before;
+
+  return (
+    <StepCard>
+      <StepHeader>
+        {/* The exam is the screen's subject already; naming it here would need its article. */}
+        <StepEyebrow>{t("Your preparation")}</StepEyebrow>
+        <StepTitle className="text-5xl tabular-nums sm:text-5xl">
+          <span className="text-muted-foreground">{`${formatShare(change.before)} → `}</span>
+          {formatShare(change.after)}
+        </StepTitle>
+      </StepHeader>
+      <Meter className="h-2.5 w-full max-w-xs">
+        <MeterFill share={change.after} />
+      </Meter>
+      <StepDetail>
+        {fell
+          ? t("The mock exam showed what's still missing.")
+          : t("What you showed in this mock exam counts toward it.")}
+      </StepDetail>
+    </StepCard>
+  );
+}
+
+/**
+ * The result's steps, each only when it has something to say: the score, how each area and topic
+ * went, what the mock showed, preparation, what it offers to change in the plan (asked, one offer
+ * at a time) and the mistakes to review. A placement mock's answers set where the plan starts, so
+ * it offers no change and has no mistakes to review.
+ */
+function useResultItems(result: MockResult): StepsItem[] {
+  const { runner } = useMockScreen();
+  const mistakes = useMistakeCount();
+  const hasInsights = useHasInsights();
+  const { adapt, purpose } = runner.view;
+
+  return [
+    { content: <ScoreStep result={result} />, id: "score" },
+    hasBreakdown(result) && { content: <MockResultBreakdown result={result} />, id: "breakdown" },
+    hasInsights && { content: <MockResultInsights />, id: "insights" },
+    result.preparation &&
+      hasShareMoved(result.preparation) && {
+        content: <PreparationStep change={result.preparation} />,
+        id: "preparation",
+      },
+    adapt?.skip && { content: <MockSkipStep skip={adapt.skip} />, id: "skip" },
+    adapt?.focus && { content: <MockFocusStep focus={adapt.focus} />, id: "focus" },
+    purpose !== "placement" &&
+      mistakes > 0 && { content: <MockNextStep count={mistakes} />, id: "next" },
+  ].filter((item) => item !== null && item !== false && item !== undefined);
+}
+
+function MockResultSteps({ result }: { result: MockResult }) {
+  const { ask, hrefs } = useMockScreen();
+  const items = useResultItems(result);
+
+  return (
+    <Steps
+      exitHref={hrefs.exit}
+      finalAction={<MockResultActions />}
+      finalOptions={<MockResultOptions />}
+      headerEnd={ask}
+      items={items}
+    />
+  );
+}
+
+/**
+ * The result one thing at a time: the score in the exam's own terms (a range where it's an
+ * estimate), each area and topic, what the mock showed about pace and blanks, how preparation
+ * moved, what it offers to change in the plan, and the one thing to do now: review the mistakes.
+ */
+export function MockResultView() {
+  const { runner } = useMockScreen();
+  const { result } = runner.view;
+
+  return result ? <MockResultSteps result={result} /> : null;
 }

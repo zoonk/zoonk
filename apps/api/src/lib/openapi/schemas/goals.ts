@@ -1,7 +1,7 @@
 import { type GoalView } from "@zoonk/core/goals/contract";
+import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
-import { planChangeSchema } from "./plans";
 
 const isoDateSchema = z.iso.date();
 const SATURDAY = 6;

@@ -1,36 +1,36 @@
 "use client";
 
+import { NOTICE_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
+import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { RocketIcon } from "lucide-react";
+import { CalendarDaysIcon, ClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { usePrimaryVariant } from "../../_utils/fun-primary";
+import { FactChip, FactChips } from "../../_components/fact-chips";
+import { daysUntilIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { useFormatDuration } from "../../_utils/time-format";
 import { usePoll } from "../../_utils/use-poll";
-import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
+import { JourneyPath } from "../../journey/journey-path";
 import { LearnLink } from "../../learn-link";
-import { useExperienceMode } from "../../mode-provider";
-import { FunRouteMap } from "../../plan/fun-route-map";
-import { PlanAdjust } from "../../plan/plan-adjust";
 import {
   type PlanActions,
   type PlanGoal,
   PlanScreenProvider,
   usePlanScreen,
 } from "../../plan/plan-context";
-import { PlanEditPanel } from "../../plan/plan-edit-panel";
-import { PlanPhases } from "../../plan/plan-phases";
-import { PlanShortPlan } from "../../plan/plan-short-plan";
-import { PlanTools } from "../../plan/plan-tools";
-import { usePlanEdit } from "../../plan/use-plan-edit";
+import { PlanEditor } from "../../plan/plan-editor";
+import { PlanNotice } from "../../plan/plan-notice";
+import { SyllabusSummary } from "../../syllabus/syllabus-summary";
 import { LibraryCourseOffer } from "../library-course-offer";
-import { type OnboardingActions } from "../onboarding-actions";
+import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -39,20 +39,13 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
-import { PlanRevealStats } from "./plan-reveal-stats";
+import { NoticeDateNote, NoticeReading, UsualStructureNote } from "./notice-reading";
+import { StepLoading } from "./step-parts";
 import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
 
 const POLL_MS = 3000;
 
-/** Chapters still being outlined fill in on their own while the plan shows; outlines take minutes. */
-const OUTLINE_POLL_MS = 5000;
-const OUTLINE_POLL_LIMIT_MS = 300_000;
-
 type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
-
-function hasChaptersBeingWritten(plan: PlanView): boolean {
-  return plan.phases.some((phase) => phase.chapters?.some((chapter) => chapter.writing));
-}
 
 function PlanBuilding({
   libraryCourse,
@@ -70,7 +63,7 @@ function PlanBuilding({
           <OnboardingTitle>{t("Building your plan")}</OnboardingTitle>
           <OnboardingDescription>
             {t(
-              "We're choosing what to learn first and fitting it into your days. It usually takes a minute.",
+              "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
             )}
           </OnboardingDescription>
         </OnboardingHeading>
@@ -80,73 +73,123 @@ function PlanBuilding({
   );
 }
 
-/** The plan's one next step: Enter starts day 1 from anywhere on the screen. */
+/**
+ * The plan's one next step: Enter starts day 1 from anywhere on the screen. Today isn't
+ * prefetched: a copy taken while onboarding was still saving could send the learner back to the
+ * start, so day 1 is always read fresh.
+ */
 function StartButton({ href }: { href: string }) {
   const t = useExtracted();
-  const mode = useExperienceMode();
-  const primaryVariant = usePrimaryVariant();
   const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
     <LearnLink
-      className={cn(
-        buttonVariants({ size: "lg", variant: primaryVariant }),
-        "h-12 w-full text-base",
-      )}
+      className={cn(buttonVariants({ size: "lg" }), "h-12 w-full text-base")}
       href={href}
+      prefetch={false}
       ref={ref}
     >
-      {mode === "fun" && <RocketIcon aria-hidden="true" />}
-      {t("Start day 1")}
+      {t("Start")}
     </LearnLink>
   );
 }
 
+/**
+ * The plan's shape as two facts: how long until the goal (or when it ends at this pace), and the
+ * time a day.
+ */
+function RevealFacts() {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+  const today = useMountTime();
+  const formatDuration = useFormatDuration();
+  const { plan } = usePlanScreen();
+  const { dailyMinutes, targetDate, targetDateEstimated } = plan.schedule;
+  const { endDate } = plan.estimate;
+
+  return (
+    <FactChips>
+      {targetDate && (
+        <FactChip>
+          <CalendarDaysIcon aria-hidden="true" />
+          {targetDateEstimated
+            ? t("{days, plural, one {About # day} other {About # days}}", {
+                days: daysUntilIsoDate({ isoDate: targetDate, today }),
+              })
+            : t("{days, plural, one {# day} other {# days}}", {
+                days: daysUntilIsoDate({ isoDate: targetDate, today }),
+              })}
+        </FactChip>
+      )}
+      {!targetDate && endDate && (
+        <FactChip>
+          <CalendarDaysIcon aria-hidden="true" />
+          {t("Until about {date}", { date: formatDate(endDate, "month") })}
+        </FactChip>
+      )}
+      <FactChip>
+        <ClockIcon aria-hidden="true" />
+        {t("{time} a day", { time: formatDuration(dailyMinutes) })}
+      </FactChip>
+    </FactChips>
+  );
+}
+
+/**
+ * The notice's exam day waiting for the learner's answer on Today: the notice puts the exam on
+ * another day than the one they gave (another month than the one they said), and the plan keeps
+ * theirs until they choose. Null when no such change waits.
+ */
+function findWaitingNoticeDay(changes: PlanView["changes"]): string | null {
+  const operation = changes
+    .filter((change) => change.status === "proposed" && change.source === NOTICE_SOURCE)
+    .flatMap((change) => change.operations)
+    .find((candidate) => candidate.kind === "setNoticeDate");
+
+  return operation?.kind === "setNoticeDate" ? operation.targetDate : null;
+}
+
 function RevealBody({
   isGuest,
-  libraryCourse,
-  buddy,
   signUpHref,
+  syllabus,
   todayHref,
 }: {
   isGuest: boolean;
-  libraryCourse: LibraryCourseLink | null;
-  buddy: LearnBuddy | null;
   signUpHref: string;
+  syllabus: SyllabusView | null;
   todayHref: string;
 }) {
   const t = useExtracted();
-  const mode = useExperienceMode();
-  const edit = usePlanEdit();
-  const { goal } = usePlanScreen();
+  const [editing, setEditing] = useState(false);
+  const { goal, plan } = usePlanScreen();
+  // A class test's day comes from the learner, or their own material: never from a notice.
+  const noticeDay = syllabus?.fromMaterial ? null : findWaitingNoticeDay(plan.changes);
 
   return (
     <OnboardingColumn>
-      <div className="flex flex-col gap-1">
-        <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-          {mode === "fun" ? t("Route ready") : t("Plan ready")}
-        </p>
-        <OnboardingTitle>{goal.title}</OnboardingTitle>
+      <div className="flex flex-col gap-4">
+        <OnboardingHeading>
+          <OnboardingTitle>{t("Your plan is ready")}</OnboardingTitle>
+          <OnboardingDescription>{goal.title}</OnboardingDescription>
+        </OnboardingHeading>
+
+        <RevealFacts />
+        {noticeDay && plan.notice !== "usual" && <NoticeDateNote isoDate={noticeDay} />}
+        <PlanNotice onAdjust={() => setEditing(true)} />
+        {plan.notice === "usual" && <UsualStructureNote />}
       </div>
 
-      <PlanRevealStats />
-      <PlanShortPlan />
-      <PlanAdjust onNarrowScope={() => edit.openAt("words")} />
+      <SyllabusSummary dailyMinutes={plan.schedule.dailyMinutes} syllabus={syllabus} />
+      <JourneyPath />
 
-      {mode === "fun" ? (
-        <FunRouteMap buddy={buddy} tools={<PlanTools />} />
-      ) : (
-        <PlanPhases tools={<PlanTools />} />
-      )}
-      {libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
-      <PlanEditPanel focus={edit.focus} onOpenChange={edit.setOpen} open={edit.open} />
-
-      {/* A long route (dozens of skills in its first phase) never hides the one next step. */}
+      {/* A long plan never hides the one next step. */}
       <OnboardingFooter className="from-background sticky bottom-0 z-20 bg-linear-to-t from-70% to-transparent">
         <StartButton href={todayHref} />
+        {isGuest && <SavePlanNote signUpHref={signUpHref} />}
       </OnboardingFooter>
 
-      {isGuest && <SavePlanNote signUpHref={signUpHref} />}
+      <PlanEditor onOpenChange={setEditing} open={editing} />
     </OnboardingColumn>
   );
 }
@@ -185,43 +228,45 @@ function usePlanWait({
 }
 
 /**
- * The last onboarding screen: the plan in the learner's mode, honest about what fits in their
- * time and what more time would change (they decide), with no score before a mock exam. One
- * button starts day 1; the plan can still be changed in plain words.
+ * The last onboarding screen: the plan's shape in two facts, honest about how much of the goal
+ * their time covers ("Adjust" when it doesn't cover it all), the goal's structure (an exam's
+ * notice subjects and topics, or the plan's modules, all one tap away) and its path of phases to
+ * the goal. One button starts.
  */
 export function PlanReveal({
   actions,
+  focusTestHref,
   goal,
   goalId,
   initialPlan,
   isGuest,
   libraryCourse,
-  buddy,
   planActions,
   planLinkHref,
   run,
   signUpHref,
-  testOutBasePath,
   todayHref,
 }: {
   actions: OnboardingActions;
+  /** The goal's focus test, offered beside choosing where to focus. */
+  focusTestHref: string;
   goal: PlanGoal;
   goalId: string;
-  initialPlan: PlanView | null;
+  initialPlan: RevealedPlan | null;
   isGuest: boolean;
   /** A ready-made Library course for the same goal, offered next to the plan. */
   libraryCourse: LibraryCourseLink | null;
-  buddy: LearnBuddy | null;
   planActions: PlanActions;
   planLinkHref: (planId: string) => string;
   /** The run building the plan, when the host follows it. */
   run: GenerationRun | null;
   signUpHref: string;
-  /** Where a chapter's test-out lives, for chapters the learner may already know. */
-  testOutBasePath: string;
   todayHref: string;
 }) {
-  const [plan, setPlan] = useState<PlanView | null>(initialPlan);
+  const [plan, setPlan] = useState<PlanView | null>(initialPlan?.plan ?? null);
+  const [syllabus, setSyllabus] = useState<SyllabusView | null>(initialPlan?.syllabus ?? null);
+  // Without the page's read (the steps changed the plan since), nothing shows until a fresh one.
+  const [read, setRead] = useState(initialPlan !== null);
 
   const refresh = async () => {
     const outcome = await actions.getPlan(goalId);
@@ -231,34 +276,54 @@ export function PlanReveal({
     }
 
     setPlan(outcome.plan);
+    setSyllabus(outcome.syllabus);
+    setRead(true);
   };
+
+  // The page read the plan before placement's answers changed it (lessons tested out, what fits),
+  // so the reveal reads it once more when it shows: it never states the plan as it was before.
+  const readAgain = useEffectEvent(() => {
+    void safeAsync(refresh);
+  });
+
+  useEffect(() => {
+    if (initialPlan?.plan.ready) {
+      readAgain();
+    }
+  }, [initialPlan?.plan.ready]);
 
   /**
    * The plan may have been written while the learner answered; check once, then until it's ready.
    * A run that failed or never started pauses it until its "Try again".
    */
+  const readingNotice = plan?.notice === "reading";
+
   const poll = usePoll({
-    active: !plan?.ready && !isRunStopped(run),
+    active: (!plan?.ready && !isRunStopped(run)) || readingNotice,
     intervalMs: POLL_MS,
     onPoll: refresh,
   });
 
-  usePoll({
-    active: Boolean(plan?.ready) && plan !== null && hasChaptersBeingWritten(plan),
-    intervalMs: OUTLINE_POLL_MS,
-    onPoll: refresh,
-    timeoutMs: OUTLINE_POLL_LIMIT_MS,
+  usePlanWait({
+    isReady: Boolean(plan?.ready) && !readingNotice,
+    recordPlanWait: actions.recordPlanWait,
   });
 
-  usePlanWait({ isReady: Boolean(plan?.ready), recordPlanWait: actions.recordPlanWait });
-
   if (!plan?.ready) {
-    return (
+    return !read && poll.status === "polling" ? (
+      <StepLoading />
+    ) : (
       <PlanBuilding
         libraryCourse={libraryCourse}
         run={getWaitRun({ poll, run: run ?? WAITING_RUN })}
       />
     );
+  }
+
+  // An exam's plan waits for research's reading of the notice, so the learner sees the notice's
+  // plan; the wait has a cap, and a later reading arrives on Today as a change to apply.
+  if (readingNotice) {
+    return <NoticeReading lastNotice={plan.schedule.targetDateEstimated} />;
   }
 
   // After a change, the plan is read again; a failed read keeps the plan as it was.
@@ -272,24 +337,22 @@ export function PlanReveal({
     change: (operations) => refreshAfter(planActions.change(operations)),
     chooseTools: (input) => refreshAfter(planActions.chooseTools(input)),
     decide: (input) => refreshAfter(planActions.decide(input)),
-    requestEdit: (text) => refreshAfter(planActions.requestEdit(text)),
   };
 
   return (
     <PlanScreenProvider
       value={{
         actions: refreshingActions,
+        focusTestHref,
         goal,
         plan,
         shareHref: planLinkHref(plan.planId),
-        testOutBasePath,
       }}
     >
       <RevealBody
         isGuest={isGuest}
-        libraryCourse={libraryCourse}
-        buddy={buddy}
         signUpHref={signUpHref}
+        syllabus={syllabus}
         todayHref={todayHref}
       />
     </PlanScreenProvider>

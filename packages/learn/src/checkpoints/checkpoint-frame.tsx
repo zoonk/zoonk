@@ -1,11 +1,10 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { TaskFrame, TaskMainButton } from "../shell/task-frame";
+import { TaskFrame } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
-import { MoveToMondayButton } from "./move-to-monday";
 
-/** The checkpoint's frame: leave on the left, the phase's context in the middle and on the right. */
+/** The checkpoint's frame: leave on the left, the duel's context in the middle. */
 export function CheckpointFrame(props: Omit<React.ComponentProps<typeof TaskFrame>, "exitHref">) {
   const { hrefs } = useCheckpointScreen();
   return <TaskFrame {...props} exitHref={hrefs.exit} />;
@@ -27,23 +26,5 @@ export function CheckpointError() {
         {t("Try again")}
       </button>
     </p>
-  );
-}
-
-/**
- * An intro's footer: the one button that starts the duel and, for the week's challenge, "Move to
- * Monday".
- */
-export function CheckpointStartFooter({ children }: { children: React.ReactNode }) {
-  const { duel } = useCheckpointScreen();
-
-  return (
-    <>
-      <CheckpointError />
-      <TaskMainButton disabled={duel.state.pending} onClick={() => void duel.begin()}>
-        {children}
-      </TaskMainButton>
-      <MoveToMondayButton />
-    </>
   );
 }

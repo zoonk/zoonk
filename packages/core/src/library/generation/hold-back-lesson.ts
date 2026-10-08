@@ -13,7 +13,10 @@ const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
  * lesson nothing will write. Other lessons that teach its skills stay in the plans. Returns the
  * learners whose plans changed.
  */
-async function moveOnWithoutLesson(tx: TransactionClient, lessonId: string): Promise<string[]> {
+export async function moveOnWithoutLesson(
+  tx: TransactionClient,
+  lessonId: string,
+): Promise<string[]> {
   const items = await tx.planItem.findMany({
     select: { id: true, plan: { select: { goal: { select: { userId: true } } } } },
     where: { lessonId, status: "todo" },

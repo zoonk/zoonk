@@ -49,7 +49,7 @@ async function getLibraryCourseMetadata({
       "Learn {course} online with practical examples and everyday language. {description}",
       { course: course.title, description: course.description ?? "" },
     ),
-    robots: { follow: true, index: contentLocale === locale },
+    robots: { follow: true, index: route.isListed && contentLocale === locale },
     title: t("Learn {course}", { course: course.title }),
   };
 }

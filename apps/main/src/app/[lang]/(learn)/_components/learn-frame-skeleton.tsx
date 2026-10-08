@@ -1,40 +1,41 @@
-import { DeviceModeRoot } from "@zoonk/learn/mode";
-import {
-  LearnShell,
-  LearnShellEnd,
-  LearnShellHeader,
-  LearnShellMain,
-  LearnShellStart,
-} from "@zoonk/learn/shell";
-import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
+import { LearnShell, LearnShellHeader, LearnShellMain, LearnShellStart } from "@zoonk/learn/shell";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { LearnCommandPaletteSkeleton } from "./learn-command-palette";
+import { LearnBarEndSkeleton } from "./learn-bar-end";
 import { LearnGoalMenuSkeleton } from "./learn-goal-menu";
 
-/** Holds the top bar's shape, in the mode this device keeps, while the learner's frame loads. */
-export function LearnFrameSkeleton() {
+/**
+ * Holds the bars' shape while the app's frame loads: tabs on top from `lg`, below under it. A
+ * frame's own page skeleton (`children`) takes the generic one's place.
+ */
+export function LearnFrameSkeleton({ children }: { children?: React.ReactNode }) {
   return (
-    <DeviceModeRoot>
-      <LearnShell>
-        <LearnShellHeader column>
-          <LearnShellStart>
-            <LearnGoalMenuSkeleton />
-          </LearnShellStart>
+    <LearnShell>
+      <LearnShellHeader>
+        <LearnShellStart>
+          <LearnGoalMenuSkeleton />
+        </LearnShellStart>
 
-          <Skeleton className="col-span-2 row-start-2 h-9 w-72 rounded-full lg:col-span-1 lg:col-start-2 lg:row-start-1 lg:justify-self-center" />
+        <Skeleton className="col-start-2 row-start-1 hidden h-10 w-80 justify-self-center rounded-full lg:block" />
 
-          <LearnShellEnd>
-            <LearnCommandPaletteSkeleton />
-            <Skeleton className="h-11 w-18 rounded-full lg:h-10" />
-            <AvatarSkeleton />
-          </LearnShellEnd>
-        </LearnShellHeader>
+        <LearnBarEndSkeleton />
+      </LearnShellHeader>
 
-        <LearnShellMain>
-          <Skeleton className="h-8 w-2/3" />
-          <Skeleton className="mt-4 h-48 w-full rounded-2xl" />
-        </LearnShellMain>
-      </LearnShell>
-    </DeviceModeRoot>
+      <LearnShellMain>
+        {children ?? (
+          <>
+            <Skeleton className="h-8 w-2/3" />
+            <Skeleton className="mt-4 h-48 w-full rounded-2xl" />
+          </>
+        )}
+      </LearnShellMain>
+
+      <div className="sticky bottom-0 border-t pb-[env(safe-area-inset-bottom)] lg:hidden">
+        <div className="mx-auto grid h-16 max-w-md grid-cols-3 place-items-center px-2">
+          <Skeleton className="h-8 w-14 rounded-full" />
+          <Skeleton className="h-8 w-14 rounded-full" />
+          <Skeleton className="h-8 w-14 rounded-full" />
+        </div>
+      </div>
+    </LearnShell>
   );
 }

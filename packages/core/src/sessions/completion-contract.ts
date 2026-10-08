@@ -1,6 +1,7 @@
 import { type Milestone } from "@zoonk/db";
 import { z } from "zod";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
+import { type TestOutOffer } from "./_utils/test-out-offer";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
 
@@ -41,6 +42,11 @@ export type StudyBlockCompletion = {
   nextBlockId: string | null;
   sessionBar: { completed: number; total: number };
   sessionCompleted: boolean;
+  /**
+   * After a lesson the learner breezed through, the second in a row of its chapter: its test,
+   * which skips the rest of the chapter. Null otherwise, and for every other block.
+   */
+  testOutOffer: TestOutOffer | null;
   topHyperdrive: number;
   total: number;
 };
@@ -127,6 +133,20 @@ export const studyBlockCompletionSchema = z
     nextBlockId: idSchema.nullable(),
     sessionBar: z.object({ completed: countSchema, total: countSchema }),
     sessionCompleted: z.boolean(),
+    testOutOffer: z
+      .object({
+        chapterId: idSchema,
+        chapterTitle: z.string(),
+        goalId: idSchema,
+        lessonsLeft: countSchema.meta({
+          description: "Lessons of the chapter still to do: what passing its test skips",
+        }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "After a second lesson in a row of a chapter with every answer right: its test-out (GET /goals/{goalId}/chapters/{chapterId}/test-out), offered once. Null otherwise",
+      }),
     topHyperdrive: countSchema,
     total: countSchema,
   })

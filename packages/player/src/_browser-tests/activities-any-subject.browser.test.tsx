@@ -41,7 +41,7 @@ describe("any-subject activities", () => {
   });
 
   it("predict then reveal: a far guess says how far", async () => {
-    openActivity({ mode: "fun", template: "predictReveal" });
+    openActivity({ template: "predictReveal" });
     await valueInput().fill("3");
     await checkActivity();
     await expectVerdict("Not quite");
@@ -49,7 +49,7 @@ describe("any-subject activities", () => {
   });
 
   it("before and after: the change is computed once checked", async () => {
-    openActivity({ mode: "fun", template: "beforeAfter" });
+    openActivity({ template: "beforeAfter" });
     await expect.element(page.getByRole("region", { name: "1914" })).not.toBeInTheDocument();
     await page.getByRole("button", { name: "Show after: 1914" }).click();
 

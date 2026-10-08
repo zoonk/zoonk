@@ -11,7 +11,8 @@ import {
 import { type ConversationConnection } from "@zoonk/learn/language/conversation";
 
 /**
- * Opens the call: charges it to the learner's plan and returns the short-lived token for GPT-Live.
+ * Opens the call: holds its time from the call time on the learner's plan and returns the
+ * short-lived token for GPT-Live with how long the call may run.
  * Our gateway key never reaches the browser.
  */
 export async function connectConversationAction(
@@ -23,7 +24,11 @@ export async function connectConversationAction(
     return { setup: result.setup, status: "ready" };
   }
 
-  return { status: result.status === "limitReached" ? "limit" : "failed" };
+  if (result.status === "limitReached") {
+    return { limit: { period: result.limit.period, tier: result.limit.tier }, status: "limit" };
+  }
+
+  return { status: result.status === "conversationEnded" ? "ended" : "failed" };
 }
 
 /** Marks the call's goals from what was said so far; null when the check can't run. */

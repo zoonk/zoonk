@@ -1,6 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
+import { withApiImageUrls } from "@/lib/file-urls";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
@@ -32,7 +33,9 @@ async function createPlacementAnswer(
     return learnerAccessError(result.status);
   }
 
-  return NextResponse.json({ isCorrect: result.isCorrect, placement: result.placement });
+  return NextResponse.json(
+    withApiImageUrls({ isCorrect: result.isCorrect, placement: result.placement }),
+  );
 }
 
 export const POST = withApiErrorBoundary(createPlacementAnswer);

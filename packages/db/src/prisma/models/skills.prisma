@@ -87,6 +87,8 @@ model LessonSkill {
 /// steps and common mistakes) so practice can use new numbers. `field` holds practice set in the
 /// learner's work ("nursing") and is null for general items. Past exam questions keep their citation
 /// under the source's reuse policy. Difficulty and discrimination are recalibrated from real answers.
+/// A question about a figure (a diagram, a map, a geometry figure) asks for it in `content.image` and
+/// is stored only once that picture is drawn and checked, linked through `mediaAssetId`.
 model Item {
   id                 String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   skillId            String              @map("skill_id") @db.Uuid
@@ -102,6 +104,8 @@ model Item {
   sourceId           String?             @map("source_id") @db.Uuid
   source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
   sourceCitation     String?             @map("source_citation")
+  mediaAssetId       String?             @map("media_asset_id") @db.Uuid
+  mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
   model              String
   promptVersion      String              @map("prompt_version")
   runId              String              @map("run_id")
@@ -117,6 +121,7 @@ model Item {
   @@index([skillId, format])
   @@index([examBlueprintId])
   @@index([sourceId])
+  @@index([mediaAssetId])
   @@map("items")
 }
 

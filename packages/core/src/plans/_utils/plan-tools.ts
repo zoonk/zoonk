@@ -1,6 +1,7 @@
 import "server-only";
-import { type PlanItemStatus, prisma } from "@zoonk/db";
+import { type Goal, type PlanItemStatus, prisma } from "@zoonk/db";
 import { getToolKey, parseChapterTools } from "../../library/chapters/chapter-tools";
+import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type PlanToolView } from "../plan-view-contract";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
 import { type PlanContext } from "./plan-context";
@@ -37,17 +38,62 @@ function getPlanChapters(items: PlanContext["items"]) {
 }
 
 /**
+ * Whether a goal practices with tools of their own, from its kind and its exam's stored structure
+ * (`ExamBlueprint.structure`, null without a blueprint). An exam is answered on paper or on
+ * screen, so a shared course's chapters that practice with a spreadsheet, a data tool or a
+ * schematic editor (for learners at work) teach beyond what it asks: its plan leaves out the
+ * chapters that need one and asks about no tool, unless the exam itself is a practical one.
+ */
+export function usesTools({
+  examStructure,
+  kind,
+}: {
+  examStructure: unknown;
+  kind: Goal["kind"];
+}): boolean {
+  if (kind !== "exam") {
+    return true;
+  }
+
+  const formats = examStructureSchema.safeParse(examStructure).data?.formats ?? [];
+  return formats.some((format) => format.kind === "practical");
+}
+
+/** Whether the learner's goal practices with tools of their own (see `usesTools`). */
+export async function goalUsesTools(
+  goal: Pick<Goal, "examBlueprintId" | "kind">,
+): Promise<boolean> {
+  if (goal.kind !== "exam" || !goal.examBlueprintId) {
+    return usesTools({ examStructure: null, kind: goal.kind });
+  }
+
+  const blueprint = await prisma.examBlueprint.findUnique({
+    select: { structure: true },
+    where: { id: goal.examBlueprintId },
+  });
+
+  return usesTools({ examStructure: blueprint?.structure, kind: goal.kind });
+}
+
+/**
  * The tools of the plan's chapters, one entry per tool: the ones the learner's current phase uses
  * first (essential ones first), then the ones later phases use, in the order the plan reaches them.
+ * None for an exam that isn't practical (see `goalUsesTools`).
  */
 export async function loadPlanTools({
   currentPhase,
+  goal,
   items,
 }: {
   /** The phase the learner is in (see `findCurrentPhase`). */
   currentPhase: number | null;
+  goal: Pick<Goal, "examBlueprintId" | "kind">;
   items: PlanContext["items"];
 }): Promise<PlanTool[]> {
+  if (!(await goalUsesTools(goal))) {
+    return [];
+  }
+
   const { chapterIds, phaseByChapter } = getPlanChapters(items);
 
   const chapters = await prisma.chapter.findMany({

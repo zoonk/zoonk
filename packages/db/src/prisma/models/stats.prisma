@@ -21,7 +21,6 @@ model LearningEvent {
   kind             LearningEventKind
   /// The lesson's kind as text (legacy kinds included), so it survives enum changes.
   lessonKind       String?           @map("lesson_kind")
-  mode             ExperienceMode?
   goalId           String?           @map("goal_id") @db.Uuid
   startedAt        DateTime          @map("started_at")
   /// Null while a started activity isn't finished (forever for legacy lessons that were started and

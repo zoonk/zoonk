@@ -45,6 +45,29 @@ test.describe("Guardians API", () => {
     await Promise.all([teen.api.dispose(), adult.api.dispose()]);
   });
 
+  test("puts the guardian invite offer away for a learner, never for a guest", async () => {
+    const [teen, { guestApi }] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "guardian-not-now" }),
+      createGuest(baseURL),
+    ]);
+
+    await teen.api.patch("/v1/me/learning-profile", { data: { birth: TEEN_BIRTH } });
+
+    const [dismissed, again, guest] = await Promise.all([
+      teen.api.post("/v1/me/guardian-invite-dismissals"),
+      teen.api.post("/v1/me/guardian-invite-dismissals"),
+      guestApi.post("/v1/me/guardian-invite-dismissals"),
+    ]);
+
+    expect([dismissed.status(), again.status(), guest.status()]).toStrictEqual([204, 204, 401]);
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: teen.userId } }),
+    ).resolves.toMatchObject({ guardianInviteDismissedAt: expect.any(Date) });
+
+    await Promise.all([teen.api.dispose(), guestApi.dispose()]);
+  });
+
   test("runs the guardian flow: accept, see the week, limit time and approve Plus", async () => {
     const [teen, guardian] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "flow-teen" }),
@@ -100,6 +123,67 @@ test.describe("Guardians API", () => {
 
     const guardianRevoke = await guardian.api.delete(`/v1/me/guardian-links/${linkId}`);
     expect(guardianRevoke.status()).toBe(204);
+
+    await Promise.all([teen.api.dispose(), guardian.api.dispose()]);
+  });
+
+  test("lets a guardian keep a teen's memory off, and the teen sees who did", async () => {
+    const [teen, guardian] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "memory-teen" }),
+      createBearerLearner({ baseURL, prefix: "memory-guardian" }),
+    ]);
+
+    await teen.api.patch("/v1/me/learning-profile", { data: { birth: TEEN_BIRTH } });
+
+    // Memory starts off for a teen, and they turn it on themselves.
+    const startsOff = await teen.api.get("/v1/me/memory");
+    await expect(startsOff.json()).resolves.toMatchObject({ enabled: false, offByGuardian: false });
+
+    await teen.api.patch("/v1/me/memory", { data: { enabled: true } });
+
+    const guardianUser = await prisma.user.update({
+      data: { emailVerified: true },
+      where: { id: guardian.userId },
+    });
+
+    const token = await createGuardianInvite({
+      guardianEmail: guardianUser.email,
+      teenId: teen.userId,
+    });
+
+    const accepted = await guardian.api.post("/v1/me/guardian-invite-acceptances", {
+      data: { token },
+    });
+
+    const { linkId } = await accepted.json();
+
+    const [empty, off] = await Promise.all([
+      guardian.api.patch(`/v1/me/guarded-learners/${linkId}`, { data: {} }),
+      guardian.api.patch(`/v1/me/guarded-learners/${linkId}`, { data: { memoryOff: true } }),
+    ]);
+
+    expect([empty.status(), off.status()]).toStrictEqual([400, 204]);
+
+    const guarded = await guardian.api.get("/v1/me/guarded-learners");
+
+    await expect(guarded.json()).resolves.toMatchObject({
+      learners: [{ linkId, memoryEnabled: false, memoryOff: true }],
+    });
+
+    const [memory, turnOn, links] = await Promise.all([
+      teen.api.get("/v1/me/memory"),
+      teen.api.patch("/v1/me/memory", { data: { enabled: true } }),
+      teen.api.get("/v1/me/guardian-links"),
+    ]);
+
+    await expect(memory.json()).resolves.toMatchObject({ enabled: false, offByGuardian: true });
+    await expect(turnOn.json()).resolves.toStrictEqual({ enabled: false });
+    await expect(links.json()).resolves.toMatchObject({ links: [{ id: linkId, memoryOff: true }] });
+
+    await guardian.api.patch(`/v1/me/guarded-learners/${linkId}`, { data: { memoryOff: false } });
+
+    const allowed = await teen.api.get("/v1/me/memory");
+    await expect(allowed.json()).resolves.toMatchObject({ enabled: true, offByGuardian: false });
 
     await Promise.all([teen.api.dispose(), guardian.api.dispose()]);
   });

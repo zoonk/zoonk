@@ -82,27 +82,42 @@ describe(loadLessonDocuments, () => {
     ]);
   });
 
-  it("reads the notice behind the exam of a goal that plans the lesson's chapter", async () => {
+  it("never reads an exam's notice: a shared lesson is for every exam's learners", async () => {
     const chapter = await libraryChapterFixture();
 
-    const [lesson, notice] = await Promise.all([
+    const [lesson, notice, researchedNotice, sharedUpload] = await Promise.all([
       libraryLessonFixture({ homeChapterId: chapter.id }),
       statute({ title: "Exam notice 1/2026" }),
+      statute({ structure: { images: 0, pages: 3, topic: "exam" }, title: "Exam notice 2/2026" }),
+      statute({ kind: "upload", title: "A notice a learner shared" }),
     ]);
 
     const blueprint = await examBlueprintFixture({ sourceId: notice.id });
-    await planningGoal({ chapterId: chapter.id, examBlueprintId: blueprint.id });
 
-    const documents = await loadLessonDocuments({
+    const { goal, user } = await planningGoal({
       chapterId: chapter.id,
-      courseId: null,
-      lessonId: lesson.id,
-      query: QUERY,
+      examBlueprintId: blueprint.id,
     });
 
-    expect(documents.sources.map((page) => [page.sourceId, page.page])).toStrictEqual([
-      [notice.id, 2],
-    ]);
+    await Promise.all(
+      [researchedNotice, sharedUpload].map((source) =>
+        learnerSourceFixture({
+          goalId: goal.id,
+          origin: "research",
+          sourceId: source.id,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    await expect(
+      loadLessonDocuments({
+        chapterId: chapter.id,
+        courseId: null,
+        lessonId: lesson.id,
+        query: QUERY,
+      }),
+    ).resolves.toStrictEqual({ material: [], sources: [] });
   });
 
   it("leaves out private uploads, documents that state no facts and passages about other things", async () => {

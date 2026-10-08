@@ -1,8 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { mediaAssetFixture, stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   languageLessonFixture,
   playableLessonFixture,
@@ -17,7 +22,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
-import { stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 import type * as RateLimit from "@zoonk/auth/rate-limit";
 
@@ -36,10 +40,10 @@ describe(getPlayableLibraryLesson, () => {
     mockSession(randomUUID());
   });
 
-  it("serves every screen in order with its parsed content, image and depth versions, with their ids", async () => {
+  it("serves every screen in order with its parsed content and image", async () => {
     const image = await mediaAssetFixture({ height: 1024, width: 1536 });
 
-    const { lesson, steps } = await playableLessonFixture({
+    const { lesson } = await playableLessonFixture({
       steps: [
         "hook",
         {
@@ -55,14 +59,6 @@ describe(getPlayableLibraryLesson, () => {
         "summary",
         "multipleChoice",
       ],
-    });
-
-    const explanation = stepOfKind(steps, "explanation");
-
-    const simpler = await stepVariantFixture({
-      content: { text: "Think of a blur instead of a dot." },
-      kind: "simpler",
-      stepId: explanation.id,
     });
 
     const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
@@ -89,46 +85,10 @@ describe(getPlayableLibraryLesson, () => {
         url: image.url,
         width: 1536,
       },
-      variants: {
-        deeper: null,
-        simpler: { content: { text: "Think of a blur instead of a dot." }, id: simpler.id },
-      },
     });
 
     expect(playable?.steps[5]).toMatchObject({ exercise: { kind: "multipleChoice" } });
     expect(JSON.stringify(result)).not.toContain("test/fixture-model");
-  });
-
-  it("reads depth versions on every load, so one written after a read shows on the next", async () => {
-    const { lesson, steps } = await playableLessonFixture({
-      steps: ["explanation", "workedExample", "check"],
-    });
-
-    const first = await getPlayableLibraryLesson({ lessonId: lesson.id });
-
-    expect(first?.status === "ready" && first.lesson.steps[1]).toMatchObject({
-      variants: { deeper: null, simpler: null },
-    });
-
-    // Versions are written while learners play, by main or the API, whose caches never meet.
-    const deeper = await stepVariantFixture({
-      content: { ...playableStepContent.workedExample, title: "Reading the probability density" },
-      kind: "deeper",
-      stepId: stepOfKind(steps, "workedExample").id,
-    });
-
-    const second = await getPlayableLibraryLesson({ lessonId: lesson.id });
-
-    expect(second?.status === "ready" && second.lesson.steps[1]).toMatchObject({
-      variants: {
-        deeper: { content: { title: "Reading the probability density" }, id: deeper.id },
-        simpler: null,
-      },
-    });
-
-    expect(second?.status === "ready" && second.lesson.steps[0]).toMatchObject({
-      variants: { deeper: null, simpler: null },
-    });
   });
 
   it("sends a written lesson's screens only with a session, a guest's included", async () => {
@@ -192,6 +152,58 @@ describe(getPlayableLibraryLesson, () => {
     mockSession(null);
     await getPlayableLibraryLesson({ lessonId: lesson.id });
     expect(isRateLimited).not.toHaveBeenCalled();
+  });
+
+  it("never counts reading a written lesson of the learner's own plan, so its lists can load it ahead", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+
+    const [asLesson, inChapter, elsewhere, unwritten, chapter, goal] = await Promise.all([
+      playableLessonFixture({ steps: TEACHING_LESSON_STEPS }),
+      playableLessonFixture({ steps: TEACHING_LESSON_STEPS }),
+      playableLessonFixture({ steps: TEACHING_LESSON_STEPS }),
+      libraryLessonFixture({ contentStatus: "pending" }),
+      libraryChapterFixture(),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const [plan] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      chapterLessonFixture({ chapterId: chapter.id, lessonId: inChapter.lesson.id, position: 0 }),
+    ]);
+
+    // A plan names a lesson of its own, or a chapter it studies whole.
+    await Promise.all([
+      planItemFixture({
+        kind: "lesson",
+        lessonId: asLesson.lesson.id,
+        planId: plan.id,
+        position: 0,
+      }),
+      planItemFixture({ chapterId: chapter.id, kind: "chapter", planId: plan.id, position: 1 }),
+      planItemFixture({ kind: "lesson", lessonId: unwritten.id, planId: plan.id, position: 2 }),
+    ]);
+
+    vi.mocked(isRateLimited).mockClear();
+    vi.mocked(isRateLimited).mockResolvedValue(true);
+
+    const [own, chapterLesson, other, notWritten] = await Promise.all([
+      getPlayableLibraryLesson({ lessonId: asLesson.lesson.id }),
+      getPlayableLibraryLesson({ lessonId: inChapter.lesson.id }),
+      getPlayableLibraryLesson({ lessonId: elsewhere.lesson.id }),
+      getPlayableLibraryLesson({ lessonId: unwritten.id }),
+    ]);
+
+    expect(own?.status).toBe("ready");
+    expect(chapterLesson?.status).toBe("ready");
+    expect(other?.status).toBe("slowDown");
+    expect(isRateLimited).toHaveBeenCalledOnce();
+
+    // A plan's lesson that isn't written has no screens to load ahead: its outline only. Asking
+    // for it to be written is what counts, as a lesson start (`requestLessonGeneration`).
+    expect(notWritten?.status).toBe("notGenerated");
+
+    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   it("serves the lesson's summary card for the lesson menu, and none when it has none", async () => {

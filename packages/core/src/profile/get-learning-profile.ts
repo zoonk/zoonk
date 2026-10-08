@@ -6,8 +6,8 @@ import { findLearningProfileView } from "./_utils/learning-profile-view";
 import { type LearningProfileView } from "./learning-profile-contract";
 
 /**
- * Reads the signed-in learner's (or guest's) mode, buddy, age answer and active goal. Both modes and
- * the API read this same view; nothing about a mode is computed elsewhere.
+ * Reads the signed-in learner's (or guest's) buddy, age answer, settings and active goal. The apps
+ * and the API read this same view.
  */
 export async function getLearningProfile(): Promise<LearningProfileView | null> {
   "use cache: private";

@@ -4,8 +4,8 @@ import {
   type LessonQuestionScreenKind,
   type TutorTarget,
 } from "@zoonk/core/lesson-questions/contract";
+import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
-import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense, lazy, useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
@@ -22,43 +22,63 @@ const LessonQuestionSheet = lazy(async () => {
   return { default: panel.LessonQuestionSheet };
 });
 
-function useAskLabel(kind: LessonQuestionScreenKind) {
+function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: string }) {
   const t = useExtracted();
 
   switch (kind) {
     case "chapter":
-      return t("Ask about this chapter");
+      return t("Ask {name} about this chapter", { name });
     case "mock":
-      return t("Ask about this mock exam");
+      return t("Ask {name} about this mock exam", { name });
     case "plan":
-      return t("Ask about your plan");
+      return t("Ask {name} about your plan", { name });
     default:
       return kind satisfies never;
   }
 }
 
-function AskTutorButton({ kind }: { kind: LessonQuestionScreenKind }) {
+/** The button's size: small beside a screen's content, the bar's size in a page's top bar. */
+type AskTutorSize = "bar" | "sm";
+
+/** "Ask Zu": the learner's buddy, by face and name, answers about what the screen shows. */
+function AskTutorButton({
+  identity,
+  kind,
+  size,
+}: {
+  identity: TutorIdentity;
+  kind: LessonQuestionScreenKind;
+  size: AskTutorSize;
+}) {
   const t = useExtracted();
   const { open } = useLessonQuestionController();
-  const label = useAskLabel(kind);
+  const label = useAskLabel({ kind, name: identity.name });
 
   return (
     <Button
       aria-label={label}
-      className="in-data-[mode=fun]:fun-glass in-data-[mode=fun]:border-transparent"
+      className="pl-1.5"
       onClick={() => open({ kind })}
-      size="sm"
+      size={size}
       type="button"
       variant="outline"
     >
-      <MessageCircleQuestionIcon aria-hidden="true" />
-      {t("Ask")}
+      <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
+        {identity.avatar}
+      </span>
+      {t("Ask {name}", { name: identity.name })}
     </Button>
   );
 }
 
 /** The sheet mounts the first time it opens and stays for its closing animation after that. */
-function ScreenTutorSheet({ navigation }: { navigation: LessonTutorConfig["navigation"] }) {
+function ScreenTutorSheet({
+  identity,
+  navigation,
+}: {
+  identity: TutorIdentity;
+  navigation: LessonTutorConfig["navigation"];
+}) {
   const { state } = useLessonQuestionController();
   const [opened, setOpened] = useState(false);
 
@@ -72,23 +92,27 @@ function ScreenTutorSheet({ navigation }: { navigation: LessonTutorConfig["navig
 
   return (
     <Suspense fallback={null}>
-      <LessonQuestionSheet navigation={navigation} stepCount={0} />
+      <LessonQuestionSheet identity={identity} navigation={navigation} />
     </Suspense>
   );
 }
 
 /**
- * "Ask" on a screen outside the player (a chapter, the learner's plan or a finished mock): the
- * same questions sheet as the lesson tutor, with suggested questions, about what the screen shows.
- * Its thread loads when the learner opens it.
- *
- * Keep `target` and `tutor` stable across renders, as the tutor's requests follow them.
- *
- * ```tsx
- * <AskTutor target={chapterTarget} tutor={tutorConfig} />
- * ```
+ * The questions sheet of a screen outside the player (a chapter or a finished mock), mounted with
+ * its "Ask {name}" button. Keep `target` and `tutor` stable across renders, as the tutor's requests
+ * follow them.
  */
-export function AskTutor({ target, tutor }: { target: ScreenTarget; tutor: LessonTutorConfig }) {
+function AskTutorProvider({
+  children,
+  identity,
+  target,
+  tutor,
+}: {
+  children: React.ReactNode;
+  identity: TutorIdentity;
+  target: ScreenTarget;
+  tutor: LessonTutorConfig;
+}) {
   const host = useMemo(
     () => ({
       activeContext: { kind: target.kind },
@@ -101,8 +125,35 @@ export function AskTutor({ target, tutor }: { target: ScreenTarget; tutor: Lesso
 
   return (
     <LessonQuestionHostProvider connection={tutor.connection} host={host} target={target}>
-      <AskTutorButton kind={target.kind} />
-      <ScreenTutorSheet navigation={tutor.navigation} />
+      {children}
+      <ScreenTutorSheet identity={identity} navigation={tutor.navigation} />
     </LessonQuestionHostProvider>
+  );
+}
+
+/**
+ * "Ask Zu" on a screen outside the player: the same questions sheet as in a lesson, where the
+ * learner's buddy answers about what the screen shows, with suggested questions. Its thread loads
+ * when the learner opens it.
+ *
+ * ```tsx
+ * <AskTutor target={chapterTarget} tutor={tutorConfig} />
+ * ```
+ */
+export function AskTutor({
+  size = "sm",
+  target,
+  tutor,
+}: {
+  size?: AskTutorSize;
+  target: ScreenTarget;
+  tutor: LessonTutorConfig;
+}) {
+  const identity = useTutorIdentity(tutor.buddy);
+
+  return (
+    <AskTutorProvider identity={identity} target={target} tutor={tutor}>
+      <AskTutorButton identity={identity} kind={target.kind} size={size} />
+    </AskTutorProvider>
   );
 }

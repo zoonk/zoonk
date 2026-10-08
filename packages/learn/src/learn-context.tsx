@@ -1,8 +1,7 @@
 "use client";
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
-import { type ReactNode, type Ref, createContext, use, useMemo } from "react";
-import { useOptionalExperienceMode } from "./mode-provider";
+import { type MouseEvent, type ReactNode, type Ref, createContext, use } from "react";
 import { type LearnTab } from "./shell/learn-tabs";
 
 /** Hosts pass their own typed routes; the package only needs them as strings. */
@@ -14,7 +13,13 @@ export type LearnLinkComponentProps = {
   children?: ReactNode;
   className?: string;
   href: LearnRoute;
-  prefetch?: boolean;
+  /** Runs before the host navigates; preventing its default keeps the link from navigating. */
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  /**
+   * `true` (the default) loads the destination with this link's own data before the tap, a server
+   * render per visible link; `"auto"` loads only what every link to that route shares.
+   */
+  prefetch?: boolean | "auto";
   /** The screen's main link takes a ref, so Enter can follow it from anywhere on the screen. */
   ref?: Ref<HTMLAnchorElement>;
 };
@@ -23,19 +28,15 @@ type LearnLinkComponent = (props: LearnLinkComponentProps) => ReactNode;
 
 /**
  * Events come from the shared catalog in core. Shared properties are registered once by the
- * host, so screens send only their own properties; `useLearnAnalytics` adds the mode on screen.
+ * host, so screens send only their own properties.
  */
 export type LearnAnalytics = { track: TrackEvent };
 
 /**
- * The tabs, the buddy's page (where Fun's dock buddy leads; Focus has no buddy), and where a guest
- * creates an account (`signUp`) and a free learner sees Plus (`upgrade`).
+ * The tabs, and where a guest creates an account (`signUp`) and a free learner sees Plus
+ * (`upgrade`).
  */
-type LearnRoutes = Record<LearnTab, LearnRoute> & {
-  buddy: LearnRoute;
-  signUp: LearnRoute;
-  upgrade: LearnRoute;
-};
+type LearnRoutes = Record<LearnTab, LearnRoute> & { signUp: LearnRoute; upgrade: LearnRoute };
 
 /**
  * Everything the learning screens need from their host app. Keep the object
@@ -63,21 +64,8 @@ export function useLearnLinkComponent(): LearnLinkComponent {
   return useLearnAdapters().linkComponent;
 }
 
-/**
- * The host's analytics with the mode on screen, so an event carries the mode the learner sees
- * even before the host registers its shared properties, or right after onboarding's mode step.
- */
 export function useLearnAnalytics(): LearnAnalytics {
-  const { analytics } = useLearnAdapters();
-  const mode = useOptionalExperienceMode();
-
-  return useMemo(
-    () =>
-      mode
-        ? { track: (event, options) => analytics.track(event, { mode, ...options }) }
-        : analytics,
-    [analytics, mode],
-  );
+  return useLearnAdapters().analytics;
 }
 
 export function useLearnRoutes(): LearnRoutes {

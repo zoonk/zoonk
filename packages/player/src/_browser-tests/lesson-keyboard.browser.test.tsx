@@ -4,9 +4,8 @@ import { type Locator, page, userEvent } from "vitest/browser";
 import { expectVerdict, focusOn, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { tabTo } from "../_test-utils/keyboard";
-import { activityStep, explanationWithSimpler, teachingStep } from "../_test-utils/lesson-steps";
+import { activityStep, teachingStep } from "../_test-utils/lesson-steps";
 import {
-  type PlayerMode,
   acceptedAnswerCheck,
   buildAdapters,
   buildLesson,
@@ -23,16 +22,10 @@ import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
 const DESKTOP = { height: 900, width: 1280 };
 const PHONE = { height: 812, width: 375 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
-const SIMPLER_TEXT = "Think of a blur instead of a dot.";
+const SUMMARY_IDEA = "Electrons live in clouds.";
 
-function openLesson({
-  mode = "focus",
-  steps,
-}: {
-  mode?: PlayerMode;
-  steps: PlayableLibraryStep[];
-}) {
-  return renderLessonPlayer({ lesson: buildLesson(steps), mode });
+function openLesson({ steps }: { steps: PlayableLibraryStep[] }) {
+  return renderLessonPlayer({ lesson: buildLesson(steps, { summaryIdeas: [SUMMARY_IDEA] }) });
 }
 
 /** A screen's verdict, as the player announces it. */
@@ -55,23 +48,29 @@ async function inside(locator: Locator, selector: string) {
 describe("lesson by keyboard", () => {
   it("a focused control keeps Enter, and a sheet holds the lesson's keys", async () => {
     await atViewport(DESKTOP, async () => {
-      openLesson({ steps: [explanationWithSimpler(SIMPLER_TEXT), teachingStep("check")] });
+      openLesson({ steps: [teachingStep("explanation"), teachingStep("check")] });
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      // Enter on "Simpler" opens it; it doesn't move the lesson on.
-      const simplerButton = page.getByRole("button", { name: "Simpler" });
-      await tabTo(simplerButton);
+      // Enter on the screen's menu opens it; it doesn't move the lesson on.
+      await tabTo(page.getByRole("button", { name: "Screen options" }));
       await press("Enter");
 
-      const simpler = page.getByRole("dialog", { name: "Simpler" });
-      await expect.element(simpler.getByText(SIMPLER_TEXT)).toBeVisible();
+      const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
+      await expect.element(summaryItem).toBeVisible();
+      await press("End");
+      await expect.element(summaryItem).toHaveFocus();
+      await press("Enter");
 
-      // The arrows wait while the sheet is open, and Escape closes only the sheet.
+      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      await expect.element(summary.getByText(SUMMARY_IDEA)).toBeVisible();
+
+      // The arrows wait while the sheet is open, and Escape closes only the sheet, handing focus
+      // to Next rather than the menu, so Enter would go on instead of opening it again.
       await press("ArrowRight");
-      await expect.element(simpler).toBeVisible();
+      await expect.element(summary).toBeVisible();
       await press("Escape");
-      await expect.element(simpler).not.toBeInTheDocument();
-      await expect.element(simplerButton).toHaveFocus();
+      await expect.element(summary).not.toBeInTheDocument();
+      await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
       // Anywhere else, the keys move the lesson: the arrow to the check, a number, then Enter.
@@ -98,7 +97,6 @@ describe("lesson by keyboard", () => {
       const { onExit } = renderLessonPlayer({
         adapters: buildAdapters(lesson, { checkStep: acceptedAnswerCheck(typedAnswer) }),
         lesson,
-        mode: "fun",
       });
 
       const answer = page.getByRole("textbox", {
@@ -143,12 +141,27 @@ describe("lesson by keyboard", () => {
     });
   });
 
+  it("find the error: a number picks a step and Enter checks it, even with the step in focus", async () => {
+    await atViewport(DESKTOP, async () => {
+      openLesson({ steps: [activityStep({ content: activityContentFixtures.findError })] });
+
+      const wrongStep = page.getByRole("radio", { name: /Step 2: Down 20%/u });
+      await expect.element(wrongStep).toBeVisible();
+
+      await press("2");
+      await expect.element(wrongStep).toBeChecked();
+
+      // A step clicked or tabbed to keeps focus; Enter still checks the pick, never drops it.
+      await focusOn(wrongStep);
+      await press("Enter");
+      await expectVerdict("Correct!");
+      await expect.element(page.getByText("120 × 0.8 = 96, not 100.")).toBeVisible();
+    });
+  });
+
   it("an activity keeps digits in its field, and Enter checks the number", async () => {
     await atViewport(DESKTOP, async () => {
-      openLesson({
-        mode: "fun",
-        steps: [activityStep({ content: activityContentFixtures.numberLine })],
-      });
+      openLesson({ steps: [activityStep({ content: activityContentFixtures.numberLine })] });
 
       const value = page.getByRole("textbox", { name: "What is the value?" });
       await value.fill("");

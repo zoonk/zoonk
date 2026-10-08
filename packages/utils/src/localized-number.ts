@@ -58,9 +58,13 @@ export function formatLocalizedNumber({
   return formatted.replace(/^-/u, MINUS_SIGN);
 }
 
+/** Significant digits a value below one keeps, so 0.000075 m never reads as 0 m. */
+const SMALL_SIGNIFICANT_DIGITS = 3;
+
 /**
  * Decimals worth showing for a value's size: none for thousands ($3,870), one for tens (130.5 m),
- * two for ones (5.25) and three below one (0.125), so a readout never shows float noise.
+ * two for ones (5.25) and three significant digits below one (0.125, 0.0000752), so a readout never
+ * shows float noise and a tiny value never rounds to 0.
  */
 export function fractionDigitsFor(value: number): number {
   const size = Math.abs(value);
@@ -73,7 +77,16 @@ export function fractionDigitsFor(value: number): number {
     return 1;
   }
 
-  return size >= 1 ? DEFAULT_FRACTION_DIGITS : DEFAULT_FRACTION_DIGITS + 1;
+  if (size >= 1) {
+    return DEFAULT_FRACTION_DIGITS;
+  }
+
+  if (size === 0) {
+    return DEFAULT_FRACTION_DIGITS + 1;
+  }
+
+  const leadingZeros = Math.max(0, -Math.floor(Math.log10(size)) - 1);
+  return Math.min(MAX_FRACTION_DIGITS, leadingZeros + SMALL_SIGNIFICANT_DIGITS);
 }
 
 function decimalSeparator(locale: string): string {

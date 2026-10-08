@@ -56,7 +56,7 @@ export const TEST_CASES: TestCase<unknown, ChallengeCaseInput>[] = [
     },
   },
   {
-    expectations: `A nursing case in Brazilian Portuguese on a hospital ward: checking a weight-based dose before giving it, with a physician, a pharmacist or a senior nurse and an AI assistant. The strong path double-checks the calculation and the prescription, and raises a doubt with the prescriber clearly and respectfully. Doses and units must be correct and consistent (mg/kg, mL). Must model safe practice: never give a dose that looks wrong without checking.`,
+    expectations: `A nursing case in Brazilian Portuguese on a hospital ward: checking a weight-based dose before giving it, with a physician, a pharmacist or a senior nurse and an AI assistant. The strong path double-checks the calculation and the prescription, and raises a doubt with the prescriber clearly and respectfully. Doses and units must be correct and consistent (mg/kg, mL). Must model safe practice: never give a dose that looks wrong without checking. Not counting the AI assistant, the first colleague's role and every word about them is feminine and the second's masculine where Portuguese marks it ("a farmacêutica", "o médico plantonista"), since the app names them a woman and then a man.`,
     id: "pt-nursing-dose-work",
     userInput: {
       chapterDescription: "Calcular e conferir doses de medicamentos por peso com segurança.",

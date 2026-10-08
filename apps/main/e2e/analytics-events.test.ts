@@ -2,15 +2,17 @@ import { randomUUID } from "node:crypto";
 import { gunzipSync } from "node:zlib";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { createCeremonyLearner } from "./ceremony-fixtures";
 import { type Page, expect, test } from "./fixtures";
 import { answerRight, createStudyDay, openAs } from "./study-day";
 
 /**
- * Key browser events carry the mode the learner sees, in Focus and in Fun. E2E builds have no
- * PostHog settings, so the browser SDK never starts there and nothing reaches PostHog. This spec
+ * Key browser events carry the shared properties (the goal's kind, the platform). E2E builds have
+ * no PostHog settings, so the browser SDK never starts there and nothing reaches PostHog. This spec
  * hands the page settings through `process.env`, where Next reads public variables the build
  * didn't inline, and answers the SDK's requests itself, keeping the events it would have sent:
- * the Vercel queue would show that events fire, but only PostHog's copy carries `mode`.
+ * the Vercel queue would show that events fire, but only PostHog's copy carries the shared
+ * properties.
  */
 
 const POSTHOG_HOST = "https://posthog.e2e.test";
@@ -21,6 +23,9 @@ type SentEvent = { event: string; properties: Record<string, unknown> };
 
 /** Sent from the server (covered by core's tests), so the browser must never send them too. */
 const SERVER_OUTCOMES = new Set(["Block Completed", "Session Completed", "Session Started"]);
+
+/** What every browser event of a study day's learner carries: their exam goal, on the web. */
+const SHARED = { goal_kind: "exam", platform: "web" };
 
 function readBody(body: Buffer): unknown {
   if (body[0] === GZIP_MAGIC) {
@@ -107,21 +112,21 @@ async function expectSent(
 }
 
 test.describe("Analytics", () => {
-  test("Today and the session's capsules carry Focus; outcomes stay on the server", async ({
+  test("Today and the session's capsules carry the shared properties; outcomes stay on the server", async ({
     browser,
   }) => {
-    const { user } = await createStudyDay({ mode: "focus" });
+    const { user } = await createStudyDay();
     const page = await openAs(browser, user);
     const sent = await capturePostHog(page);
 
     await page.goto("/today");
-    await expectSent(sent, "Today Viewed", { mode: "focus" });
+    await expectSent(sent, "Today Viewed", SHARED);
 
     await page.getByRole("button", { name: /^Start/u }).click();
     await answerRight(page, /^Capsule one/u);
     await answerRight(page, /^Capsule two/u);
 
-    await expectSent(sent, "Capsule Opened", { mode: "focus" });
+    await expectSent(sent, "Capsule Opened", SHARED);
 
     // The block's moment shows once the block was saved, when the server sends its outcomes.
     await expect(
@@ -135,33 +140,39 @@ test.describe("Analytics", () => {
   });
 });
 
-test("switching to Fun sends Mode Switched, and later events, the player's among them, carry Fun", async ({
-  browser,
-}) => {
+test("a milestone's moment counts as shown, by its kind", async ({ browser }) => {
+  const { user } = await createCeremonyLearner({ key: "orange", kind: "belt" });
+  const page = await openAs(browser, user);
+  const sent = await capturePostHog(page);
+
+  await page.goto("/session");
+
+  await expect(page.getByRole("dialog", { name: "Orange belt!" })).toBeVisible();
+
+  await expectSent(sent, "Ceremony Shown", {
+    ceremony: "belt",
+    goal_kind: "learn",
+    platform: "web",
+  });
+
+  await page.context().close();
+});
+
+test("the player's events say which lesson and screen they come from", async ({ browser }) => {
   const [{ user }, { lesson }] = await Promise.all([
-    createStudyDay({ mode: "focus" }),
+    createStudyDay(),
     playableLessonFixture({ steps: ["hook", "check", "explanation"] }),
   ]);
 
   const page = await openAs(browser, user);
   const sent = await capturePostHog(page);
 
-  await page.goto("/settings/appearance");
-  await page.getByRole("radio", { name: /^Fun/u }).click();
-  await expectSent(sent, "Mode Switched", { from_mode: "focus", to_mode: "fun" });
-
-  await page.goto("/today");
-  await expectSent(sent, "Today Viewed", { mode: "fun" });
-
-  // Page views carry only the registered shared properties, so they show the switch reached them.
-  await expectSent(sent, "$pageview", { $pathname: "/today", mode: "fun" });
-
   // The player's hook, and leaving mid-lesson after a wrong answer.
   await page.goto(`/learn/${lesson.id}`);
 
   await page.getByRole("radio", { name: "No" }).click();
   await page.getByRole("button", { name: /^See the answer/u }).click();
-  await expectSent(sent, "Hook Answered", { lesson_id: lesson.id, mode: "fun" });
+  await expectSent(sent, "Hook Answered", { lesson_id: lesson.id });
   await page.getByRole("button", { name: /^Continue/u }).click();
 
   await page.getByRole("radio", { name: "The electron's exact path" }).click();
@@ -171,7 +182,6 @@ test("switching to Fun sends Mode Switched, and later events, the player's among
 
   await expectSent(sent, "Activity Abandoned", {
     lesson_id: lesson.id,
-    mode: "fun",
     screen: 2,
     step_kind: "check",
     wrong_in_a_row: 1,

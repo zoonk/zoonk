@@ -4,6 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
+import { formatCast } from "../../_utils/cast";
 import { formatLocalContext } from "../../_utils/language-context";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
@@ -18,7 +19,9 @@ import taskPrompt from "./placement-items.prompt.md";
  * Cebraspe true/false 8.73, SAT 8.08) with every key right, where single-skill writing of the
  * same skills scores 9.3–9.8. The judge's caps apply to the whole set: a typed question repeating
  * its skill's quick one, three false Cebraspe assertions and a duplicated accepted answer (the
- * prompt now rules these out), and one wrong distractor reason.
+ * prompt now rules these out), and one wrong distractor reason. The two cheapest, on 4 cases
+ * (7 Oct 2026): Luna 7.96 and Claude Haiku 5.5 7.46 (one set failed) against Sol's 8.90, at $2 and
+ * $2.50 per 1,000 runs against $40.
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
@@ -30,7 +33,16 @@ const DEFAULT_OPTION_COUNT = 4;
 /** How placement asks quickly: one right option, or one assertion judged right or wrong. */
 export type QuickItemFormat = "multipleChoice" | "trueFalse";
 
-type PlacementItemsSkill = { name: string; description: string; level: CourseLevel };
+type PlacementItemsSkill = {
+  name: string;
+  description: string;
+  level: CourseLevel;
+  /**
+   * The situations the skill's questions in the bank already use (their opening words), so the
+   * new ones put the skill in others: a mock never asks the same case twice under new names.
+   */
+  usedSituations?: readonly string[];
+};
 
 export type PlacementItemsParams = {
   skills: PlacementItemsSkill[];
@@ -40,6 +52,8 @@ export type PlacementItemsParams = {
   /** Typed questions per skill, which confirm a right quick answer; 0 for quick questions only. */
   typedCount: number;
   language: string;
+  /** The language a language goal's skills practice ("en"); its questions are in it. */
+  targetLanguage?: string | null;
   examFormat?: ItemExamFormat | null;
   model?: string;
   /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
@@ -52,13 +66,25 @@ export type PlacementItemsParams = {
 /** One skill's questions, in the order of the skills asked for; empty when the model left it out. */
 export type PlacementSkillItems = { quick: GeneratedItem[]; typed: GeneratedItem[] };
 
+function formatUsedSituations(situations: readonly string[] | undefined): string {
+  return situations?.length
+    ? situations.map((situation) => `\n     - ${situation}`).join("")
+    : " none";
+}
+
 function formatSkills(skills: readonly PlacementItemsSkill[]): string {
   return skills
     .map(
       (skill, index) =>
-        `${index + 1}. SKILL: ${skill.name}\n   SKILL_DESCRIPTION: ${skill.description}\n   LEVEL: ${skill.level}`,
+        `${index + 1}. SKILL: ${skill.name}\n   SKILL_DESCRIPTION: ${skill.description}\n   LEVEL: ${skill.level}\n   USED_SITUATIONS:${formatUsedSituations(skill.usedSituations)}`,
     )
     .join("\n");
+}
+
+function formatTargetLanguage({ language, targetLanguage }: PlacementItemsParams): string {
+  return targetLanguage
+    ? getPromptLanguageName({ language: targetLanguage, userLanguage: language })
+    : "none";
 }
 
 function buildUserPrompt(params: PlacementItemsParams): string {
@@ -70,7 +96,9 @@ function buildUserPrompt(params: PlacementItemsParams): string {
     TYPED_COUNT: ${params.typedCount}
     OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
+    TARGET_LANGUAGE: ${formatTargetLanguage(params)}
 ${formatLocalContext(params.language)}
+    ${formatCast({ language: params.language, seed: params.skills.map((skill) => skill.name).join(":") })}
     FIELD: none
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}

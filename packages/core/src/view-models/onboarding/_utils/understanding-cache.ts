@@ -1,5 +1,6 @@
 import "server-only";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/v2/goals/understand-goal";
+import { UNDERSTAND_GOAL_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/goals/understand-goal-version";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { z } from "zod";
@@ -7,6 +8,7 @@ import { ownLevelSchema } from "../../../learner/placement/placement-contract";
 import { ONBOARDING_PURPOSES } from "../onboarding-contract";
 
 const understoodGoalSchema = z.object({
+  examMonth: z.number().optional(),
   examName: z.string().optional(),
   examYear: z.number().optional(),
   institution: z.string().optional(),
@@ -44,7 +46,10 @@ const storedUnderstandingSchema = z.discriminatedUnion("route", [
 
 type CacheKey = { language: string; normalizedPrompt: string };
 
-/** The understanding of these exact words from the last day, when there is one. */
+/**
+ * The understanding of these exact words from the last day by the current prompt, when there is
+ * one: a reading an older prompt wrote (a longer title, say) is read again and replaced.
+ */
 export async function findCachedUnderstanding({
   language,
   now,
@@ -55,7 +60,11 @@ export async function findCachedUnderstanding({
   });
 
   // Relative dates ("this year", "in 6 months") resolve against the day: reuse lasts a day.
-  if (!row || now.getTime() - row.generatedAt.getTime() > MS_PER_DAY) {
+  if (
+    !row ||
+    row.promptVersion !== UNDERSTAND_GOAL_PROMPT_VERSION ||
+    now.getTime() - row.generatedAt.getTime() > MS_PER_DAY
+  ) {
     return null;
   }
 

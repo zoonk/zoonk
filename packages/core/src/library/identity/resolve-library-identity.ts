@@ -114,10 +114,12 @@ async function loadCandidates(
 
 /** A Jev decision on the candidates a search found, best first. */
 async function decideIdentity({
+  analytics,
   candidates,
   search,
   searchTerms,
 }: {
+  analytics?: IdentityAnalytics;
   candidates: readonly LibraryIdentityCandidate[];
   search: IdentityKindSearch;
   searchTerms: string[];
@@ -134,6 +136,7 @@ async function decideIdentity({
   }
 
   const { match, verdicts } = await decideLibraryIdentity({
+    analytics,
     candidates: [...candidates],
     subject: search.aiSubject,
   });
@@ -178,6 +181,17 @@ async function getSearchTerms({
   return new Map(searching.map((entry, position) => [entry, written[position] ?? []]));
 }
 
+/**
+ * Private requests never search, and neither does a lesson whose skills are all new: no Library
+ * lesson can teach them yet.
+ */
+function isSearched(entry: IdentityEntry): boolean {
+  const { request } = entry;
+  const isNewLesson = request.kind === "lesson" && request.newSkills === true;
+
+  return !entry.exactId && !request.ownerId && !isNewLesson;
+}
+
 function resolveUnsearched(entry: IdentityEntry): LibraryIdentityResolution {
   if (entry.exactId) {
     return { id: entry.exactId, kind: "existing", match: "exact", probability: null, verdicts: [] };
@@ -190,13 +204,14 @@ function resolveUnsearched(entry: IdentityEntry): LibraryIdentityResolution {
  * Finds the Library items that already teach what each request needs, or says to generate them.
  * One flow serves courses, chapters, lessons, skills, sources and images: an exact identity-key
  * match first, then model-written search terms, Postgres text search filtered by language and
- * level, and a Jev decision on each candidate. Requests known together, such as a chapter's
+ * level, and one Jev decision on its candidates. Requests known together, such as a chapter's
  * lessons, resolve together: the terms of every request still unmatched are written in one model
  * call instead of one each, the candidates their searches find load in one call per kind, and the
  * results come back in the order of the requests. A caller that
  * already wrote the terms, beside other work, passes them in `searchTerms`, in the same order.
  * Private requests only match their owner's own rows: they are never reused and never reuse
- * other learners' private content.
+ * other learners' private content. A lesson whose skills were all just created (`newSkills`) only
+ * matches exactly, with no search or reuse decision.
  *
  * This is a workflow bridge, not an app authorization boundary: it accepts owner ids only because
  * the public core boundary that started the workflow derived them from the authenticated session.
@@ -217,7 +232,7 @@ export async function resolveLibraryIdentities({
     }),
   );
 
-  const searching = entries.filter((entry) => !entry.exactId && !entry.request.ownerId);
+  const searching = entries.filter((entry) => isSearched(entry));
   const terms = await getSearchTerms({ analytics, searchTerms, searching });
 
   const searches = await Promise.all(
@@ -242,6 +257,7 @@ export async function resolveLibraryIdentities({
       }
 
       return decideIdentity({
+        analytics,
         candidates: found.ids.flatMap((id) => candidates.get(id) ?? []),
         search: entry.search,
         searchTerms: found.searchTerms,

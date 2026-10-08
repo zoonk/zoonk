@@ -126,7 +126,12 @@ describe("challenges in plans", () => {
     ]);
 
     const load = (withChallenges: boolean) =>
-      loadChapterTaughtLessons({ skillIds: [skill.id], userId: user.id, withChallenges });
+      loadChapterTaughtLessons({
+        skillIds: [skill.id],
+        userId: user.id,
+        withChallenges,
+        withToolChapters: true,
+      });
 
     await expect(load(true)).resolves.toMatchObject([{ lessonId: lesson.id }, { lessonId: id }]);
     await expect(load(false)).resolves.toMatchObject([{ lessonId: lesson.id }]);

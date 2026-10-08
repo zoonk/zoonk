@@ -33,6 +33,20 @@ export type SkillReadiness = {
   state: MasteryState;
 };
 
+/**
+ * Whether the learner has recalled the skill: studied it, or answered it right in a test, so their
+ * memory of it holds a day or more. A skill never studied, or one placement found missing, hasn't.
+ */
+export function isRecalled(
+  readiness: SkillReadiness | undefined,
+): readiness is SkillReadiness & { state: Exclude<MasteryState, "new"> } {
+  return (
+    readiness !== undefined &&
+    readiness.state !== "new" &&
+    readiness.stability >= RECALLED_STABILITY_DAYS
+  );
+}
+
 /** From 1 with no evidence toward 0 as reviews confirm the state. */
 function getUncertainty(readiness: SkillReadiness): number {
   return 1 / (1 + (readiness.reps ?? 0));
@@ -51,7 +65,7 @@ export function getExamValue({
   readiness: SkillReadiness | undefined;
   weight: number;
 }): number {
-  if (!readiness || readiness.state === "new" || readiness.stability < RECALLED_STABILITY_DAYS) {
+  if (!isRecalled(readiness)) {
     return weight;
   }
 
@@ -60,11 +74,6 @@ export function getExamValue({
   const uncertainty = 1 + UNCERTAINTY_WEIGHT * getUncertainty(readiness);
 
   return weight * gap * forgettingRisk * uncertainty;
-}
-
-/** Exam priority: time goes where it pays, a skill's value ÷ the time it needs, per minute. */
-export function getExamPriority({ minutes, value }: { minutes: number; value: number }): number {
-  return value / Math.max(minutes, 1);
 }
 
 function findInheritedValue({

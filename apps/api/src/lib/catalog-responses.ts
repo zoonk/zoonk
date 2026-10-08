@@ -4,6 +4,7 @@ import { type listCatalogCourseChapters } from "@zoonk/core/catalog/course-chapt
 import { type searchCatalog } from "@zoonk/core/catalog/search";
 import { type getCourseById } from "@zoonk/core/courses/get-by-id";
 import { type listCourses } from "@zoonk/core/courses/list";
+import { toApiImageUrl } from "./file-urls";
 
 type CatalogSearch = Awaited<ReturnType<typeof searchCatalog>>;
 type CatalogChapter = NonNullable<Awaited<ReturnType<typeof getCatalogChapter>>>;
@@ -29,7 +30,7 @@ function toCourseOrganization(organization: CourseSummary["organization"] | null
 
   return {
     id: organization.id,
-    logo: organization.logo,
+    logo: organization.logo && toApiImageUrl(organization.logo),
     name: organization.name,
     slug: organization.slug,
   };
@@ -44,7 +45,7 @@ export function toCourseSummary(
   return {
     description: course.description,
     id: course.id,
-    imageUrl: course.imageUrl,
+    imageUrl: course.imageUrl && toApiImageUrl(course.imageUrl),
     language: course.language,
     organization: toCourseOrganization(course.organization),
     slug: course.slug,
@@ -65,7 +66,7 @@ export function toCourseResource(course: CourseResource) {
     generationId: course.outlineRunId,
     generationStatus: course.outlineStatus ?? "pending",
     id: course.id,
-    imageUrl: course.imageUrl,
+    imageUrl: course.imageUrl && toApiImageUrl(course.imageUrl),
     language: course.language,
     organization: toCourseOrganization(course.organization),
     slug: course.slug,
@@ -150,7 +151,7 @@ export function toCatalogSearchResponse(results: CatalogSearch) {
     courses: results.courses.map((course) => ({
       description: course.description,
       id: course.id,
-      imageUrl: course.imageUrl,
+      imageUrl: course.imageUrl && toApiImageUrl(course.imageUrl),
       language: course.language,
       organizationSlug: course.brandSlug,
       slug: course.slug,

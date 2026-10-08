@@ -40,6 +40,46 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
+        { kind: "subject", name: "Ciências da Natureza e suas Tecnologias" },
+        {
+          kind: "topic",
+          subject: "Ciências da Natureza e suas Tecnologias",
+          topic: "Moléculas, células e tecidos",
+        },
+        {
+          kind: "topic",
+          subject: "Ciências da Natureza e suas Tecnologias",
+          topic: "Hereditariedade e diversidade da vida",
+        },
+        {
+          kind: "topic",
+          subject: "Matemática e suas Tecnologias",
+          topic: "Conhecimentos numéricos",
+        },
+        {
+          kind: "topic",
+          subject: "Ciências Humanas e suas Tecnologias",
+          topic: "Diversidade cultural, conflitos e vida em sociedade",
+        },
+      ],
+    },
+    // The reference matrix's competências and habilidades are what the questions ask; its
+    // "objetos de conhecimento" are what candidates study, so they're the topics.
+    id: "enem-2026-matriz",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          title: "Matriz de Referência Enem",
+          url: "https://download.inep.gov.br/download/enem/matriz_referencia.pdf",
+        },
+      ],
+      exam: "ENEM",
+    },
+  },
+  {
+    expected: {
+      facts: [
         { kind: "questionCount", value: 150 },
         { kind: "section", questions: 35 },
         { kind: "section", questions: 45 },
@@ -62,6 +102,55 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "Concurso TCDF, Analista Administrativo de Controle Externo",
+    },
+  },
+  {
+    // The notice that lists every role's syllabus in the same document: the reading keeps the
+    // role asked for, groups its subjects by test, and lists every numbered item and sub-item.
+    expected: {
+      facts: [
+        { date: "2027-01-17", dateKind: "exam", kind: "date" },
+        { format: "trueFalse", kind: "format" },
+        { kind: "scoring", method: "wrongCancelsRight" },
+        // P1 and P2 share one time: one section of both tests, 5 hours for 180 items.
+        { kind: "section", minutes: 300, questions: 180 },
+        { kind: "subject", name: "Língua Portuguesa" },
+        { kind: "subject", name: "Linguística" },
+        { kind: "subject", name: "Ciência Política" },
+        { group: "P1", kind: "group", subject: "Língua Portuguesa" },
+        { group: "P2", kind: "group", subject: "Linguística" },
+        {
+          kind: "topic",
+          subject: "Língua Portuguesa",
+          topic: "5.7 Emprego do sinal indicativo de crase",
+        },
+        {
+          kind: "topic",
+          subject: "Língua Portuguesa",
+          topic: "6.4 Reescrita de textos de diferentes gêneros e níveis de formalidade",
+        },
+        {
+          kind: "topic",
+          subject: "Linguística",
+          topic: "12 Noções básicas de lógica: conectivos, argumentos e notação",
+        },
+        {
+          kind: "topic",
+          subject: "Ciência Política",
+          topic: "11 História do voto e dos partidos no Brasil",
+        },
+      ],
+    },
+    id: "camara-2026-registro-redacao",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          title: "Edital nº 1 – Câmara dos Deputados, de 2 de outubro de 2026",
+          url: "https://cdn.cebraspe.org.br/concursos/CD_26_ANALISTA/arquivos/BBE30D016054F40651E36AC7B302C3425BD148A39675CA840A5A0CCBFBB5F0F1.pdf",
+        },
+      ],
+      exam: "Câmara dos Deputados, Analista Legislativo – Registro e Redação",
     },
   },
   {
@@ -88,6 +177,36 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "47º Exame de Ordem Unificado (OAB)",
+    },
+  },
+  {
+    // The 1ª fase names its disciplines in one table cell (the last ones after "bem como") while
+    // Anexo II details the 2ª fase's: a live reading on 8 Oct 2026 listed 19 subjects without
+    // Ética, so the latest edition's counts (Ética 8…) couldn't be looked up for the 80 questions.
+    expected: {
+      facts: [
+        { kind: "subject", name: "Ética" },
+        { kind: "subject", name: "Direitos Humanos" },
+        { kind: "subject", name: "Filosofia do Direito" },
+        { kind: "subject", name: "Direito Eleitoral" },
+        { kind: "subject", name: "Direito Civil" },
+        { kind: "subject", name: "Direito Processual Penal" },
+        { kind: "section", minutes: 300, questions: 80 },
+        { format: "multipleChoice", kind: "format" },
+        { date: "2027-01-10", dateKind: "exam", kind: "date" },
+        { date: "2027-02-28", dateKind: "other", kind: "date" },
+      ],
+    },
+    id: "oab-48-1a-fase",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          title: "Edital de abertura do 48º Exame de Ordem Unificado",
+          url: "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf",
+        },
+      ],
+      exam: "OAB Exame de Ordem Unificado, 1ª fase",
     },
   },
   {
@@ -226,6 +345,46 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { title: "Dates du bac 2027", url: "https://www.letudiant.fr/bac/date-du-bac.html" },
       ],
       exam: "Baccalauréat général 2027",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { format: "shortAnswer", kind: "format" },
+        { format: "essay", kind: "format" },
+      ],
+    },
+    // A teacher's one-page notes for a class test, as a learner uploads them: the formats are only
+    // announced in the last line (persona run, 7 Oct 2026, where one reading dropped both).
+    id: "pt-class-notes-biologia-celular",
+    language: "pt",
+    userInput: {
+      documents: [
+        {
+          text: 'BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as "celas" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!',
+          title: "Resumo pra prova de biologia",
+        },
+      ],
+      exam: "Prova de biologia (1º ano), a célula",
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { format: "multipleChoice", kind: "format" },
+        { format: "essay", kind: "format" },
+      ],
+    },
+    id: "en-class-notes-ap-biology-unit-2",
+    language: "en",
+    userInput: {
+      documents: [
+        {
+          text: "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
+          title: "Unit 2 review",
+        },
+      ],
+      exam: "AP Biology unit 2 test",
     },
   },
 ];

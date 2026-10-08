@@ -6,7 +6,7 @@ import { parsePathParams } from "@/lib/path-params";
 import { getGoalPreparation } from "@zoonk/core/preparation/get-goal";
 import { NextResponse } from "next/server";
 
-/** Returns the goal's preparation view model, the same numbers both modes show. */
+/** Returns the goal's preparation view model. */
 async function getPreparation(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/preparation">,

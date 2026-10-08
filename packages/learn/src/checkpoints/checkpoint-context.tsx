@@ -2,8 +2,6 @@
 
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
 import { createContext, use } from "react";
-import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { type ChallengeMoveState } from "./use-challenge-move";
 import { type CheckpointDuel } from "./use-checkpoint-duel";
 
 /** Where the screen leads: back to the day, or out of the checkpoint. */
@@ -13,9 +11,6 @@ type CheckpointScreenValue = {
   checkpoint: CheckpointView;
   duel: CheckpointDuel;
   hrefs: CheckpointHrefs;
-  move: ChallengeMoveState;
-  /** Fun's buddy cheers from the side; Focus has none. */
-  buddy: LearnBuddy | null;
 };
 
 const CheckpointContext = createContext<CheckpointScreenValue | null>(null);

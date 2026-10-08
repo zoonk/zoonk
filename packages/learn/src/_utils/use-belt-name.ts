@@ -8,9 +8,12 @@ export function toBeltColor(value: string): BeltColor | null {
   return BELT_COLORS_ORDER.find((color) => color === value) ?? null;
 }
 
-/** "Orange belt", "Yellow belt, level 5": the belt as the learner reads it. */
+/**
+ * "Orange belt", "Yellow belt, level 5": the belt as the learner reads it. Its own namespace, since
+ * the avatar shows it on every page, public ones included (see `learnSiteMessages`).
+ */
 export function useBeltName() {
-  const t = useExtracted();
+  const t = useExtracted("belts");
 
   return (color: BeltColor): string => {
     switch (color) {

@@ -25,7 +25,7 @@ test.describe("Account data export API", () => {
     await Promise.all([
       goalFixture({ title: "Speak Spanish at work", userId }),
       memoryFactFixture({ statement: "Works in sales", userId }),
-      api.patch("/v1/me/learning-profile", { data: { experienceMode: "fun" } }),
+      api.patch("/v1/me/learning-profile", { data: { buddy: { kind: "otto" } } }),
     ]);
 
     const response = await api.get("/v1/me/export");
@@ -34,9 +34,10 @@ test.describe("Account data export API", () => {
     expect(response.headers()["content-disposition"]).toMatch(/attachment; filename="zoonk-data-/u);
 
     await expect(response.json()).resolves.toMatchObject({
+      buddy: { conversations: [], exampleLines: [] },
       goals: [expect.objectContaining({ title: "Speak Spanish at work", userId })],
       memory: { facts: [expect.objectContaining({ statement: "Works in sales" })] },
-      profile: { experienceMode: "fun" },
+      profile: { buddy: { kind: "otto" } },
     });
 
     await api.dispose();

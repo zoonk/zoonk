@@ -1,6 +1,6 @@
-import { safeAsync } from "@zoonk/utils/error";
-import { createHook, getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { claimRunToken, joinRun } from "../_shared/run-token";
 import { createCourseIconStep, writeCourseDetailsStep } from "./steps/course-details-steps";
 
 export type CourseDetailsInput = { analytics?: ContentAnalytics; courseId: string };
@@ -22,12 +22,11 @@ export async function courseDetailsWorkflow(
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `course-details:${input.courseId}` });
-  const conflict = await hook.getConflict();
+  const { conflict } = await claimRunToken(`course-details:${input.courseId}`);
 
   // However the run filling this course's details ends, this run fills whatever is still missing.
   if (conflict) {
-    await safeAsync(() => conflict.returnValue);
+    await joinRun(conflict);
   }
 
   const context = { analytics: input.analytics, courseId: input.courseId, workflowRunId };

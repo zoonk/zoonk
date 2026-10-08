@@ -4,7 +4,7 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
 import systemPrompt from "./cite-material.prompt.md";
 
 /**
@@ -13,7 +13,7 @@ import systemPrompt from "./cite-material.prompt.md";
  * slide's topic could cite it); Luna is the cheaper at $0.16 per 1,000 lessons.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-4.5"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-5.5"] as const;
 
 const schema = z.object({
   citations: z.array(z.object({ ref: z.string().nullable(), screen: z.number().int() })),
@@ -32,6 +32,8 @@ export type CiteMaterialParams = CiteMaterialInput & {
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;
+  /** The gateway tier (see `chooseServiceTier`): `flex`, since citations follow a published lesson. */
+  serviceTier?: ServiceTier;
   useFallback?: boolean;
 };
 
@@ -51,10 +53,11 @@ export async function citeMaterial({
   model = defaultModel,
   reasoning,
   screens,
+  serviceTier,
   useFallback = true,
 }: CiteMaterialParams) {
   const userPrompt = formatUntrustedInput({ MATERIAL: material, SCREENS: formatScreens(screens) });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

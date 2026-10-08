@@ -24,6 +24,8 @@ export type {
   Attempt,
   Chapter,
   ChapterLesson,
+  ChapterMindMap,
+  ChapterSkill,
   ContentFeedback,
   Course,
   CourseCategory,
@@ -40,6 +42,7 @@ export type {
   Item,
   LanguageConversation,
   LanguageLevelTest,
+  LanguageSkillLevel,
   LearnerSkill,
   LearnerSource,
   LearningEvent,
@@ -67,6 +70,7 @@ export type {
   Source,
   SourceChangeNotice,
   Step,
+  StepExampleLine,
   StepVariant,
   StudySession,
   StudySessionBlock,
@@ -86,7 +90,6 @@ export {
   CourseFormat,
   CourseLevel,
   CoursePromptIntent,
-  ExperienceMode,
   FeedbackContentKind,
   FeedbackStatus,
   GoalKind,
@@ -123,6 +126,7 @@ export {
   VoteValue,
 } from "./generated/prisma/client";
 
+export type { AiCallCreateManyInput } from "./generated/prisma/models/AiCall";
 export type {
   CoursePromptGetPayload,
   CoursePromptWhereInput,
@@ -143,4 +147,9 @@ export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction
 
 export { isPrismaForeignKeyError, isPrismaUniqueConstraintError } from "./prisma-errors";
 
-export { getPublishedCourseWhere } from "./curriculum-filters";
+export {
+  getCourseRouteWhere,
+  getListedCourseWhere,
+  getPublishedCourseWhere,
+  isListedCourse,
+} from "./curriculum-filters";

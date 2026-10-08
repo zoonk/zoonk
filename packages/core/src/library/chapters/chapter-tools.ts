@@ -23,6 +23,11 @@ export function parseChapterTools(value: unknown): ChapterTool[] {
   return parsed.success ? parsed.data : [];
 }
 
+/** Practicing the chapter needs a tool on the learner's own device (see `essential`). */
+export function needsTool(tools: unknown): boolean {
+  return parseChapterTools(tools).some((tool) => tool.essential);
+}
+
 /** The usual choices a name lists after the tool: "Python (NumPy and SciPy)" is Python. */
 const TOOL_CHOICES = /\s*\([^()]*\)\s*$/u;
 

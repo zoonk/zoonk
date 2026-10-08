@@ -1,15 +1,17 @@
 "use server";
 
+import { adaptPlanFromMock } from "@zoonk/core/exams/mocks/adapt-plan";
 import { saveMockAnswer } from "@zoonk/core/exams/mocks/answer";
 import {
   type MockView,
   mockAnswerInputSchema,
+  mockPlanOfferInputSchema,
   mockTimeZoneInputSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { finishMock } from "@zoonk/core/exams/mocks/finish";
 import { getMock } from "@zoonk/core/exams/mocks/get";
-import { startMock } from "@zoonk/core/exams/mocks/start";
 import { submitMockSection } from "@zoonk/core/exams/mocks/submit-section";
+import { type MockPlanOfferOutcome } from "@zoonk/learn/mock";
 import { z } from "zod";
 
 const blockIdSchema = z.uuid();
@@ -19,22 +21,6 @@ const sectionSchema = z.int().min(0);
 async function readMock(blockId: string): Promise<MockView | null> {
   const result = await getMock(blockId);
   return result.status === "ready" ? result.mock : null;
-}
-
-/**
- * Starts the mock (or resumes it) and returns it running. Inputs are untrusted, so they're
- * parsed with the API's schemas.
- */
-export async function startMockAction(blockId: unknown, timeZone: unknown) {
-  const id = blockIdSchema.safeParse(blockId);
-  const input = mockTimeZoneInputSchema.safeParse({ timeZone });
-
-  if (!id.success || !input.success) {
-    return null;
-  }
-
-  const result = await startMock({ blockId: id.data, input: input.data });
-  return result.status === "ready" ? readMock(id.data) : null;
 }
 
 /** Saves a draft answer; never says whether it's right. */
@@ -87,4 +73,26 @@ export async function finishMockAction(blockId: unknown, timeZone: unknown) {
 
   const result = await finishMock({ blockId: id.data, input: input.data });
   return result.status === "finished" ? readMock(id.data) : null;
+}
+
+/** The learner's yes to one of the finished mock's offers: skip what it showed they know, or focus. */
+export async function adaptPlanFromMockAction(
+  blockId: unknown,
+  offer: unknown,
+  timeZone: unknown,
+): Promise<MockPlanOfferOutcome | null> {
+  const id = blockIdSchema.safeParse(blockId);
+  const input = mockPlanOfferInputSchema.safeParse({ offer, timeZone });
+
+  if (!id.success || !input.success) {
+    return null;
+  }
+
+  const result = await adaptPlanFromMock({ blockId: id.data, input: input.data });
+
+  if (result.status === "applied") {
+    return { lessonsSkipped: result.lessonsSkipped, status: "applied" };
+  }
+
+  return result.status === "unchanged" ? { reason: result.reason, status: "unchanged" } : null;
 }

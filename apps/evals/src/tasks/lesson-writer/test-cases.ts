@@ -4,10 +4,12 @@ import { describeActivityTemplates } from "@zoonk/core/library/activities/writer
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
 import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";
 import { PRICE_IMPACT_CHAPTER_LESSONS, PRICE_IMPACT_SPEC } from "./chapter-lesson-specs";
+import { EXAM_PREP_LESSON } from "./exam-prep-lesson-spec";
 import { LESSON_SPECS } from "./lesson-specs";
 import { MATERIAL_LESSON_SPEC } from "./material-lesson-spec";
 import { SETUP_LESSON_SPEC } from "./setup-lesson-spec";
 import { SOURCED_LESSONS } from "./sourced-lesson-specs";
+import { VISUAL_LESSON_SPECS } from "./visual-lesson-specs";
 
 type LessonWriterInput = Omit<
   WriteLessonDraftParams,
@@ -29,12 +31,32 @@ const SHARED_EXPECTATIONS = `
   - A \`hookGuess\` is a guess that doesn't count: one \`reveal\` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead
   - Calculations written as \`mathCheck\` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting
   - Activities are JSON inside \`content\`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea
-  - Image prompts are only requests; judge whether the requested picture would teach
+  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on
+  - Charts and timelines in \`visual\` are drawn by the app from their data; judge whether the data is right and matches the text
   - Don't evaluate JSON formatting
 `;
 
 /** The activity cases come first, so a small `--limit` run still checks the activities code runs. */
 export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
+  {
+    expectations: `
+      - MUST be in US English, for beginners
+      - The findError activity is an AI assistant's answer (\`author: "ai"\`) whose one mistake is in step 2 as the brief says: a solution ("show the fee on the home screen") taken as the goal; the steps after it build on it, and the last step is never the wrong one
+      - Every situation happens in a product team and its app (food delivery, banking), never at a bakery or a market; people and towns come from CAST
+      - No reason or reveal points at an option by its place ("the second one", "option B"): each names the option by what it says
+      - The checks and the application each ask something new
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-ux-goals-spot-ai",
+    userInput: toInput({
+      chapterTitle: "UX goals and outcomes",
+      courseTitle: "UX Design",
+      language: "en",
+      level: "beginner",
+      spec: ACTIVITY_LESSON_SPECS["en-ux-goals-spot-ai"],
+    }),
+  },
   {
     expectations: `
       - MUST be in US English, for beginners
@@ -122,6 +144,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       - Checks include the classic trap of dividing by the new value, and every option's reason explains why it's tempting and why it's wrong
       - The estimate-then-reveal activity makes the learner commit to a guess before the math, tied to the screen's idea
       - The application is a realistic case (rent, salary, a sale) in a place the learner recognizes
+      - \`exampleLineIdea\` is set on the explanation that compares a change with the starting value, saying what in a learner's life it could connect to (a price they pay going up or down); a second one only on an explanation whose idea would need a different moment of their life, and none on the others
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -289,5 +312,95 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       material: GLYCOLYSIS_SLIDES,
       spec: MATERIAL_LESSON_SPEC,
     }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for beginners preparing for a concurso's Portuguese test
+      - Every question about a picture (the guess, the check and the application) has an \`image\` whose prompt names what the answer depends on, and its text says "a imagem" without describing what the picture shows (no "Na imagem, Otávio está parado…")
+      - The two scenes of the application are one picture with both side by side, labeled 1 and 2
+      - Captions and quoted words are in _italics_, never between « » or << >>
+      - Checks ask which caption fits, with the tempting wrong caption the brief names and a reason on every option
+      - Every explanation has \`exampleLineIdea\` null: matching a caption to a picture is an everyday reading skill that a sentence about the learner's life wouldn't make clearer
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-imagens-e-legendas-visual",
+    userInput: toInput({
+      chapterTitle: "Interpretação de imagens",
+      courseTitle: "Língua Portuguesa",
+      language: "pt",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["pt-imagens-e-legendas-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for beginners
+      - The letters data is a real Markdown table in the screen's text or context (header row, \`---\` row, one row per line), never written inline as "Maio → 40; Junho → 30"
+      - The bar chart of letters answered is a \`visual\` of kind chart, \`bar\`, with May, June and July and their values (35, 36, 40), and the check's numbers match it
+      - The bikes table of the application is a Markdown table too
+      - No screen has both an image and a visual, and no screen describes a table or chart in words instead of showing it
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-tabela-e-grafico-visual",
+    userInput: toInput({
+      chapterTitle: "Interpretação de dados",
+      courseTitle: "Raciocínio lógico",
+      language: "pt",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["pt-tabela-e-grafico-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for beginners
+      - The application compares two drawings as one \`image\` with both in it, labeled 1 and 2, and its options name them by those labels
+      - The guess and the check don't offer three drawings or charts as options: each shows one chart as a \`visual\` and asks about it (which bar is wrong, whether it matches), or asks in words; no option is labeled as a drawing or chart the screen doesn't show
+      - The explanation with 2, 5 and 7 shows a bar chart \`visual\` with those values
+      - The explanation that compares two versions of the same data (bars standing with cramped names, bars lying with full names) shows them as one \`image\` with both, labeled 1 and 2, instead of only describing them
+      - No screen has both an image and a visual, and nothing is drawn with characters
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-graficos-de-barras-visual",
+    userInput: toInput({
+      chapterTitle: "Comparações visuais",
+      courseTitle: "Excel e análise de dados",
+      language: "pt",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["pt-graficos-de-barras-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
+      - The balance growing year by year ($1,000, $1,100, $1,210, $1,331) is data the app draws: the screen planned with a picture of the curve shows a \`visual\` of kind chart (\`line\`) with those exact values and \`image\` null, never a picture request for it
+      - The screen that compares simple and compound interest after 3 years shows the two balances ($1,300 and $1,331) as a table or chart, not a picture
+      - No other screen has a picture: the words are clear on their own
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-compound-interest-native-visual",
+    userInput: toInput({
+      chapterTitle: "Saving and investing",
+      courseTitle: "Personal finance",
+      language: "en",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["en-compound-interest-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Written for candidates of the exam in EXAMS, who studied law: no screen explains what the OAB, the Constitution, a lawyer, the Estatuto or human rights are, and the OAB isn't introduced as "a entidade dos advogados"
+      - The finalidades match art. 44 of Lei 8.906/1994 and are cited as such: I (defend the Constitution, the legal order of the democratic rule of law, human rights and social justice, and pursue the good application of laws, the quick administration of justice and the improvement of legal culture and institutions) and II (promote, exclusively, the representation, defense, selection and discipline of lawyers throughout Brazil); nothing says the OAB judges cases or that its exclusivity covers the finalidades of item I
+      - Every check has 3 or 4 options whose wrong ones are confusions law candidates make (a finalidade of item I taken as corporate or exclusive, exclusivity read as limiting the OAB to lawyers, cobrar celeridade taken as a power to decide), each as plausible and as long as the right one; no absurd option ("toda pessoa detida é advogada")
+      - No screen names the exam, its board or its notice ("Exame de Ordem", "1ª fase", "FGV", "edital")
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-finalidades-oab-exam-prep",
+    userInput: toInput(EXAM_PREP_LESSON),
   },
 ];

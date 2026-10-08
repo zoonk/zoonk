@@ -11,6 +11,7 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { moveWeeklyChallenge, undoWeeklyChallengeMove } from "./move-weekly-challenge";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
+vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /** A Monday in 2020, before other tests' learning events, so the planner's pace is its own. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
@@ -119,6 +120,23 @@ describe(moveWeeklyChallenge, () => {
     ]);
 
     expect(restored.payload).toMatchObject({ planItemId: back.id });
+  });
+
+  it("never moves the challenge onto or past the goal's date", async () => {
+    const { block, plan } = await setup();
+
+    // A test on the Monday the challenge would move to: moving the mock there no longer prepares.
+    await prisma.goal.update({
+      data: { targetDate: new Date("2020-10-12") },
+      where: { id: plan.goalId },
+    });
+
+    await expect(
+      moveWeeklyChallenge({ blockId: block.id, input: { timeZone: "UTC" } }),
+    ).resolves.toStrictEqual({ status: "notMovable" });
+
+    await expect(challengeDates(plan.id)).resolves.toContain("2020-10-11");
+    await expect(statusOf(block.id)).resolves.toBe("pending");
   });
 
   it("moves only a pending weekly challenge of the learner's own", async () => {

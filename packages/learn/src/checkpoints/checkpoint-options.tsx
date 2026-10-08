@@ -2,7 +2,6 @@
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { ANSWER_LETTERS, AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -71,7 +70,6 @@ export function CheckpointOptions({
 
         return (
           <AnswerOption
-            className={cn(pickedRight && "in-data-[mode=fun]:border-fun-accent-lime")}
             disabled={isLocked}
             key={label}
             marker={pickedRight ? <CheckIcon /> : ANSWER_LETTERS[index]}

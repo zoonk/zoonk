@@ -1,11 +1,14 @@
 import "server-only";
-import { type ItemFormat } from "@zoonk/db";
+import { type Goal, type ItemFormat, prisma } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { getPlacementBeliefs } from "../placement-beliefs";
+import { getKnownSubjects, getOwnLevel } from "../placement-contract";
+import { isOwnMaterialTest } from "../placement-material";
 import { type PlacementQuickFormat, compareQuickFormat } from "../placement-quick-format";
 import { getUndecidedSkills } from "../placement-steps";
-import { loadEvidence, loadPlacementItems } from "./load-placement-state";
+import { loadEvidence } from "./load-placement-state";
+import { loadPlacementItems } from "./placement-bank-items";
 
 /** Sessions grade quick questions on the spot; typed confirmation stays in placement itself. */
 const SESSION_FORMATS = new Set<ItemFormat>(["multipleChoice", "trueFalse"]);
@@ -29,16 +32,19 @@ function interleaveByStart<TSkill extends { phase: number; sectionTitle: string 
  * every start is settled.
  */
 export async function pickSessionPlacementItems({
-  examBlueprintId,
   excludeItemIds,
+  goal,
   limit,
   quickFormat,
   skills,
   userId,
 }: {
-  /** The goal's exam: another exam's questions are never asked. */
-  examBlueprintId: string | null;
   excludeItemIds: ReadonlySet<string>;
+  /**
+   * The goal: its exam's questions only (never another exam's), and the level and subjects the
+   * learner gave, which settle the easier bands before any answer.
+   */
+  goal: Pick<Goal, "details" | "examBlueprintId">;
   limit: number;
   quickFormat: PlacementQuickFormat;
   skills: GoalPlan["skills"];
@@ -46,13 +52,28 @@ export async function pickSessionPlacementItems({
 }): Promise<string[]> {
   const skillIds = skills.map((skill) => skill.id);
 
-  const [{ evidence, seenItemIds }, bankItems] = await Promise.all([
+  const [{ evidence, seenItemIds }, bankItems, blueprint] = await Promise.all([
     loadEvidence({ skillIds, userId }),
-    loadPlacementItems({ examBlueprintId, skillIds }),
+    loadPlacementItems({ examBlueprintId: goal.examBlueprintId, skillIds }),
+    goal.examBlueprintId
+      ? prisma.examBlueprint.findUnique({
+          select: { ownerId: true },
+          where: { id: goal.examBlueprintId },
+        })
+      : null,
   ]);
 
+  const answeredOnly = isOwnMaterialTest(blueprint);
+
   const undecided = getUndecidedSkills({
-    beliefs: getPlacementBeliefs({ evidence, skills }),
+    answeredOnly,
+    beliefs: getPlacementBeliefs({
+      answeredOnly,
+      evidence,
+      knownAreas: getKnownSubjects(goal),
+      ownLevel: getOwnLevel({ goal }),
+      skills,
+    }),
     skills,
   });
 

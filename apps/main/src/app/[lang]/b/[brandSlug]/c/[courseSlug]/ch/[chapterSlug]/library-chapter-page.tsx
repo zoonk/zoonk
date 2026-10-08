@@ -1,6 +1,8 @@
 import { CheckCircle } from "@/components/public/check-circle";
+import { CourseStartProvider } from "@/components/public/course-start-context";
 import { JsonLd } from "@/components/public/json-ld";
 import { HERO_CLASS, HERO_LEAD_CLASS, HERO_TITLE_CLASS } from "@/components/public/landing-styles";
+import { NoAccountNote } from "@/components/public/no-account-note";
 import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { PublicPage } from "@/components/public/public-page";
 import { PublicStart } from "@/components/public/public-start";
@@ -81,7 +83,9 @@ export async function LibraryChapterPage({
         <ContentVoteMenu
           label={t("Chapter options")}
           screen="chapter"
+          size="icon-bar"
           target={{ contentId: chapter.id, contentKind: "chapter" }}
+          votes={false}
         />
       }
     >
@@ -111,39 +115,43 @@ export async function LibraryChapterPage({
         ]}
       />
 
-      <section
-        aria-labelledby="chapter-title"
-        className={cn(HERO_CLASS, "pb-24 sm:pb-32 lg:items-center")}
-      >
-        <div className="min-w-0">
-          <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
+      <CourseStartProvider chapterId={firstLesson ? chapter.id : undefined} courseId={course.id}>
+        <section
+          aria-labelledby="chapter-title"
+          className={cn(HERO_CLASS, "pb-24 sm:pb-32 lg:items-center")}
+        >
+          <div className="min-w-0">
+            <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
 
-          <h1 className={cn(HERO_TITLE_CLASS, "mt-3 sm:mt-4")} id="chapter-title">
-            {chapter.title}
-          </h1>
+            <h1 className={cn(HERO_TITLE_CLASS, "mt-3 sm:mt-4")} id="chapter-title">
+              {chapter.title}
+            </h1>
 
-          <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
+            <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
 
-          <PublicStart
-            note={
-              firstLesson
-                ? t("Free to start. No account needed for your first lesson.")
-                : t("Its lessons are written when the first learner starts.")
-            }
-            start={
-              <StartCourseButton
-                chapterId={firstLesson ? chapter.id : undefined}
-                courseId={course.id}
-                label={firstLesson ? t("Start the chapter") : t("Start this course")}
-              />
-            }
-          />
+            <PublicStart
+              note={
+                firstLesson ? (
+                  <NoAccountNote>
+                    {t("Free to start. No account needed for your first lesson.")}
+                  </NoAccountNote>
+                ) : (
+                  t("Its lessons are written when the first learner starts.")
+                )
+              }
+              start={
+                <StartCourseButton
+                  label={firstLesson ? t("Start the chapter") : t("Start this course")}
+                />
+              }
+            />
 
-          <ChapterObjectives objectives={chapter.objectives} />
-        </div>
+            <ChapterObjectives objectives={chapter.objectives} />
+          </div>
 
-        {firstLesson && <ChapterLessonsCard params={params} route={route} />}
-      </section>
+          {firstLesson && <ChapterLessonsCard params={params} route={route} />}
+        </section>
+      </CourseStartProvider>
     </PublicPage>
   );
 }

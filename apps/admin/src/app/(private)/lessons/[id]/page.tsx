@@ -2,7 +2,6 @@ import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
 import { AdminSectionSkeleton } from "@/components/admin-section";
 import { ReviewFlagNotice } from "@/components/review-flag-notice";
 import { getVoteTotals } from "@/data/feedback/get-vote-totals";
-import { getDepthRequests } from "@/data/lessons/get-depth-requests";
 import { getLibraryLesson } from "@/data/lessons/get-library-lesson";
 import {
   Container,
@@ -24,7 +23,7 @@ export const metadata: Metadata = { title: "Lesson" };
 
 /**
  * One Library lesson as admins review it: where it lives, its screens with every version and
- * who wrote each, and how learners answered, voted and asked for Simpler or deeper versions.
+ * who wrote each, and how learners answered and voted.
  */
 export default function LibraryLessonPage({ params }: PageProps<"/lessons/[id]">) {
   return (
@@ -62,11 +61,10 @@ async function LessonContent({ params }: Pick<PageProps<"/lessons/[id]">, "param
   const stepIds = lesson.steps.map((step) => step.id);
   const variantIds = lesson.steps.flatMap((step) => step.variants.map((variant) => variant.id));
 
-  const [lessonVotes, stepVotes, variantVotes, depthRequests] = await Promise.all([
+  const [lessonVotes, stepVotes, variantVotes] = await Promise.all([
     getVoteTotals({ contentIds: [lesson.id], contentKind: "lesson" }),
     getVoteTotals({ contentIds: stepIds, contentKind: "step" }),
     getVoteTotals({ contentIds: variantIds, contentKind: "stepVariant" }),
-    getDepthRequests(stepIds),
   ]);
 
   return (
@@ -76,7 +74,6 @@ async function LessonContent({ params }: Pick<PageProps<"/lessons/[id]">, "param
       <LessonVersions steps={lesson.steps} />
       <LessonScreens
         answers={detail.answers}
-        depthRequests={depthRequests}
         steps={lesson.steps}
         stepVotes={stepVotes}
         variantVotes={variantVotes}

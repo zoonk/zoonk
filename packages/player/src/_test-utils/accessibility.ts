@@ -17,9 +17,8 @@ import { onDevice } from "./device-media";
 /**
  * Accessibility scans of the player's screens, by the rules the apps' E2E scans use
  * (`@zoonk/e2e/fixtures/accessibility`): axe-core reads the screen showing now, in light and dark
- * (the device's `prefers-color-scheme`, which Focus follows), and a serious or critical violation
- * fails it, as does an interactive target under 44 px. Fun is dark only, so a Fun screen is scanned
- * once, on a light device, where it must stay dark.
+ * (the device's `prefers-color-scheme`, which the player follows), and a serious or critical
+ * violation fails it, as does an interactive target under 44 px.
  */
 
 /** How long one check waits for running animations before it looks again. */
@@ -40,9 +39,9 @@ const HOST_DOCUMENT_RULES = {
 type AxeColor = { prototype: { parseString: (this: unknown, color: string) => unknown } };
 
 /**
- * Chrome writes a gray's hue as `none` (`oklch(0.145 0 none)`, which is every neutral token in
- * Focus), and axe-core 4.13 can't parse it, so it leaves those contrast checks incomplete instead
- * of measuring them. Until it can, a missing hue reads as 0, the same gray.
+ * Chrome writes a gray's hue as `none` (`oklch(0.145 0 none)`, which is every neutral token), and
+ * axe-core 4.13 can't parse it, so it leaves those contrast checks incomplete instead of measuring
+ * them. Until it can, a missing hue reads as 0, the same gray.
  */
 function readMissingHuesAsZero() {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- axe's color tools aren't typed.
@@ -82,24 +81,12 @@ async function scanScreen(where: string): Promise<string[]> {
   return [...describeViolations(results.violations, where).failing, ...smallTargets];
 }
 
-/** Fun on a light device still gets deep space and dark native controls. */
-function findLightFun(where: string): string[] {
-  const scheme = getComputedStyle(document.documentElement).colorScheme;
-  return scheme === "dark" ? [] : [`${where}: Fun renders with a "${scheme}" color scheme`];
-}
-
 /**
- * The screen as every test finds the device, light, then (Focus only) dark. Dark mode is CSS
- * alone, so switching the device's scheme restyles the same screen in place.
+ * The screen as every test finds the device, light, then dark. Dark mode is CSS alone, so
+ * switching the device's scheme restyles the same screen in place.
  */
 async function scanInEachScheme(label: string): Promise<string[]> {
-  const isFun = document.querySelector('[data-slot="mode-root"][data-mode="fun"]') !== null;
   const light = await scanScreen(`${label} (light)`);
-
-  if (isFun) {
-    return [...findLightFun(`${label} (light)`), ...light];
-  }
-
   const dark = await onDevice({ colorScheme: "dark" }, () => scanScreen(`${label} (dark)`));
   return [...light, ...dark];
 }
@@ -117,7 +104,7 @@ async function scanCurrentScreen(label: string): Promise<string[]> {
 
 /**
  * Fails with every finding when the screen showing now has a serious or critical violation or a
- * target under 44 px, in either scheme (Fun: light only, checked to stay dark).
+ * target under 44 px, in either scheme.
  */
 export async function expectAccessibleScreen(label: string) {
   await expect(scanCurrentScreen(label)).resolves.toStrictEqual([]);

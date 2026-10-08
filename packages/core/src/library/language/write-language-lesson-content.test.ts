@@ -69,7 +69,7 @@ function mockDraft(draft: Draft, runId: string = crypto.randomUUID()) {
 
 const SPEECH_PROVENANCE = {
   generatedAt: new Date().toISOString(),
-  model: "google/gemini-2.5-flash-preview-tts",
+  model: "google/gemini-3.8-flash-tts",
   promptVersion: "speech-v1",
   runId: "speech-run",
 } as const;

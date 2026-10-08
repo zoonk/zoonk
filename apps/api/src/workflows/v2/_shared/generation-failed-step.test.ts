@@ -34,11 +34,11 @@ describe(trackGenerationFailedStep, () => {
   });
 
   it("counts a run no learner started under the system", async () => {
-    await trackGenerationFailedStep({ contentKind: "course", task: "course-remaining-bands" });
+    await trackGenerationFailedStep({ contentKind: "course", task: "course-outline" });
 
     expect(trackSystemEvent).toHaveBeenCalledExactlyOnceWith({
       name: "Generation Failed",
-      properties: { content_kind: "course", model: null, task: "course-remaining-bands" },
+      properties: { content_kind: "course", model: null, task: "course-outline" },
     });
 
     expect(trackServerEvent).not.toHaveBeenCalled();

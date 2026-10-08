@@ -2,10 +2,19 @@
 
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { cn } from "@zoonk/ui/lib/utils";
 import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { KindTile } from "../_components/kind-tile";
+import {
+  NoticeCardActions,
+  NoticeCardContent,
+  NoticeCardDescription,
+  NoticeCardLeading,
+  NoticeCardTitle,
+} from "../_components/notice-card";
+import { SURFACE_CLASS } from "../_components/surface";
 import { useTodayScreen } from "./today-context";
 
 type SuggestedGoalAnswer = "accepted" | "dismissed";
@@ -40,34 +49,37 @@ export function SuggestedGoalCard({
   return (
     <aside
       aria-label={t("Suggested goal")}
-      className="bg-muted/60 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-2xl p-4"
+      className={cn(SURFACE_CLASS, "flex items-start gap-3 p-4")}
     >
-      <div className="flex items-start gap-3">
-        <LineMarker>
-          <CompassIcon aria-hidden="true" className="text-muted-foreground size-4.5" />
-        </LineMarker>
+      <NoticeCardLeading>
+        <KindTile icon={CompassIcon} kind="lesson" size="sm" />
+      </NoticeCardLeading>
 
-        <div className="flex flex-col gap-0.5">
-          <p className="font-medium">{t("Continue {course}?", { course: suggestion.title })}</p>
-          <p className="text-muted-foreground text-sm">{t("Build a plan in 1 minute.")}</p>
-        </div>
-      </div>
+      <NoticeCardContent>
+        <NoticeCardTitle>{t("Continue {course}?", { course: suggestion.title })}</NoticeCardTitle>
+        <NoticeCardDescription>{t("Build a plan in 1 minute.")}</NoticeCardDescription>
 
-      <div className="flex flex-wrap gap-2">
-        <Button disabled={isPending} onClick={() => answer("accepted")} size="sm">
-          {t("Build my plan")}
-        </Button>
+        <NoticeCardActions>
+          <Button disabled={isPending} onClick={() => answer("accepted")} size="sm">
+            {t("Build my plan")}
+          </Button>
 
-        <Button disabled={isPending} onClick={() => answer("dismissed")} size="sm" variant="ghost">
-          {t("Not now")}
-        </Button>
-      </div>
+          <Button
+            disabled={isPending}
+            onClick={() => answer("dismissed")}
+            size="sm"
+            variant="ghost"
+          >
+            {t("Not now")}
+          </Button>
+        </NoticeCardActions>
 
-      {failed && (
-        <p className="text-destructive text-sm" role="alert">
-          {t("We couldn't save that. Try again.")}
-        </p>
-      )}
+        {failed && (
+          <p className="text-destructive mt-2 text-sm" role="alert">
+            {t("We couldn't save that. Try again.")}
+          </p>
+        )}
+      </NoticeCardContent>
     </aside>
   );
 }

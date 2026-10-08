@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
   attemptFixture,
   learnerSkillFixture,
@@ -9,6 +10,10 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -206,7 +211,49 @@ describe(getWeeklyRecap, () => {
 
     expect(result.recap.badges.map((badge) => badge.key)).toStrictEqual(["trapHunter:boss"]);
   });
+
+  it("keeps showing the last finished week until the current one ends", async () => {
+    const user = await userFixture();
+
+    await dailyProgressFixtureMany([
+      { correctAnswers: 4, date: weekDay(1, 0), timeSpentSeconds: 600, userId: user.id },
+      { correctAnswers: 2, date: weekDay(8, 0), timeSpentSeconds: 300, userId: user.id },
+    ]);
+
+    // Wednesday of the next week: that week has only just started, so the logbook is last week's.
+    vi.setSystemTime(weekDay(9, 18));
+    mockSession(user.id);
+    const result = await getWeeklyRecap({ timeZone: "UTC" });
+
+    expect(result).toMatchObject({
+      recap: { ready: true, week: { minutes: 10, questions: 4 }, weekStart: MONDAY },
+      status: "ready",
+    });
+  });
+
+  it("waits for Sunday when the learner hasn't finished a week yet", async () => {
+    const user = await userFixture();
+    const thisMonday = weekDay(7, 0);
+
+    await dailyProgressFixtureMany([
+      { correctAnswers: 2, date: weekDay(8, 0), timeSpentSeconds: 300, userId: user.id },
+    ]);
+
+    vi.setSystemTime(weekDay(9, 18));
+    mockSession(user.id);
+    const result = await getWeeklyRecap({ timeZone: "UTC" });
+
+    expect(result).toMatchObject({
+      recap: { ready: false, weekStart: thisMonday },
+      status: "ready",
+    });
+  });
 });
+
+async function energyOf() {
+  const result = await getBuddyStatus({ timeZone: "UTC" });
+  return result.status === "ready" ? result.buddy.energy : null;
+}
 
 describe(getBuddyStatus, () => {
   it("shows the buddy's Energy, how far the next stage is and the glasses", async () => {
@@ -215,6 +262,9 @@ describe(getBuddyStatus, () => {
     await Promise.all([
       learningProfileFixture({ buddyKind: "zu", buddyName: "Zu", userId: user.id }),
       userProgressFixture({ currentEnergy: 12, totalBrainPower: 4550n, userId: user.id }),
+      dailyProgressFixtureMany([
+        { date: new Date("2026-09-01T00:00:00Z"), timeSpentSeconds: 600, userId: user.id },
+      ]),
     ]);
 
     mockSession(user.id);
@@ -242,5 +292,72 @@ describe(getBuddyStatus, () => {
 
     const awake = await getBuddyStatus({ timeZone: "UTC" });
     expect(awake.status === "ready" && awake.buddy.energy.state).toBe("awake");
+  });
+
+  it("has no Energy to show a brand-new learner until a day of study has passed", async () => {
+    const user = await userFixture();
+    const today = new Date(new Date().toISOString().slice(0, 10));
+
+    await Promise.all([
+      learningProfileFixture({ buddyKind: "zu", userId: user.id }),
+      userProgressFixture({ currentEnergy: 0, totalBrainPower: 0n, userId: user.id }),
+    ]);
+
+    mockSession(user.id);
+
+    // Just met: awake, with no empty meter to show.
+    await expect(energyOf()).resolves.toStrictEqual({
+      current: null,
+      state: "awake",
+      studiedToday: false,
+    });
+
+    // Day one's study fills nothing yet to drop: Energy says something from the next day.
+    await dailyProgressFixtureMany([{ date: today, timeSpentSeconds: 300, userId: user.id }]);
+    await expect(energyOf()).resolves.toMatchObject({ current: null, studiedToday: true });
+
+    // A day before with answers counts as a day of study too, however its time was recorded.
+    await dailyProgressFixtureMany([
+      { correctAnswers: 4, date: new Date(today.getTime() - 86_400_000), userId: user.id },
+    ]);
+
+    await expect(energyOf()).resolves.toMatchObject({ current: 0, state: "awake" });
+  });
+
+  it("reads today's missions from the active goal's session, never building one", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+    await learningProfileFixture({ activeGoalId: goal.id, buddyKind: "zu", userId: user.id });
+    mockSession(user.id);
+
+    const before = await getBuddyStatus({ timeZone: "UTC" });
+
+    expect(before.status === "ready" && before.buddy.today).toBeNull();
+    await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    await studySessionBlockFixture({
+      kind: "learn",
+      position: 0,
+      sessionId: session.id,
+      status: "completed",
+    });
+
+    const after = await getBuddyStatus({ timeZone: "UTC" });
+
+    expect(after).toMatchObject({
+      buddy: {
+        today: {
+          fullMeal: { bonus: 50, earned: false },
+          missions: [
+            { kind: "review", status: "nothingToday" },
+            { kind: "somethingNew", status: "done" },
+            { kind: "fixMistake", status: "nothingToday" },
+          ],
+        },
+      },
+      status: "ready",
+    });
   });
 });

@@ -1,4 +1,5 @@
 import { type ItemFormat } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { interleave } from "@zoonk/utils/interleave";
 
 /**
@@ -124,4 +125,35 @@ export function pickCapsuleItems({
 export function getCapsuleOpening(skills: readonly { due: Date | null }[]): Date | null {
   const dues = skills.flatMap((skill) => (skill.due ? [skill.due.getTime()] : []));
   return dues.length > 0 ? new Date(Math.min(...dues)) : null;
+}
+
+/**
+ * The day an idea comes back for review as the learner reads it: an idea already due comes back at
+ * the next session (tomorrow), never on a day that passed, and never on or after the goal's date,
+ * where the plan ends (an exam's final stretch reviews what would fade by then), so the last day
+ * before it. Null when that leaves no day after today. Days are UTC-midnight labels.
+ */
+export function capReviewDay({
+  day,
+  targetDate,
+  today,
+}: {
+  day: Date;
+  targetDate: Date | null;
+  today: Date;
+}): Date | null {
+  const tomorrow = today.getTime() + MS_PER_DAY;
+  const next = new Date(Math.max(day.getTime(), tomorrow));
+
+  if (!targetDate) {
+    return next;
+  }
+
+  const lastDay = targetDate.getTime() - MS_PER_DAY;
+
+  if (next.getTime() <= lastDay) {
+    return next;
+  }
+
+  return lastDay >= tomorrow ? new Date(lastDay) : null;
 }

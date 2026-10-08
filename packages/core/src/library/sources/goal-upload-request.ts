@@ -1,5 +1,7 @@
 import "server-only";
 import { type GoalKind, type ResearchUploadReason, prisma } from "@zoonk/db";
+import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { getGoalsCacheTag } from "../../cache/tags";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
@@ -23,14 +25,17 @@ export type GoalUploadRequestResult =
 
 /**
  * The upload research is waiting for on one of the learner's goals, or null when it needs
- * nothing. It's read fresh on every visit: research sets it from a workflow, and answering or
- * dismissing clears it, so the card disappears as soon as the learner acts.
+ * nothing. Private cached, so Today prefetches with it: research sets it from a workflow, and
+ * answering or dismissing clears it (and the learner's cached views), so the card disappears as
+ * soon as the learner acts.
  */
 export async function getGoalUploadRequest({
   goalId,
 }: {
   goalId: string;
 }): Promise<GoalUploadRequestResult> {
+  "use cache: private";
+
   const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
@@ -67,6 +72,7 @@ export async function dismissGoalUploadRequest({
   }
 
   await prisma.goal.update({ data: { researchUploadReason: null }, where: { id: goalId } });
+  revalidateCacheTags([getGoalsCacheTag(owned.userId)]);
 
   return { status: "dismissed" };
 }
@@ -118,6 +124,10 @@ export async function answerGoalUploadRequest({
 
     return true;
   });
+
+  if (answered) {
+    revalidateCacheTags([getGoalsCacheTag(userId)]);
+  }
 
   return answered ? access : { status: "noUploadRequest" };
 }

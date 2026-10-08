@@ -22,7 +22,7 @@ Write one case that makes the learner use `SKILLS` from the chapter `CHAPTER_TIT
 
 `team`: 1 to 4 colleagues by role, never by name. Each has a short `id` ("data", "product", "ai"), a `role` in `LANGUAGE` ("Data scientist"), what they know or want (`expertise`, one line) and `ai`: true for at most one AI assistant. Give them different expertise so each adds something: one knows the method, one knows the business or the people and wants to move fast, and the AI assistant runs checks and calculations when asked. A `work` case always has the AI assistant, since using AI well is part of the job; it helps with checks and calculations, while decisions and responsibility stay with people (a prescriber authorizes a dose, a lawyer signs off). A `whatIf` needs one or two colleagues.
 
-The app gives each colleague a name from the learner's own team, so refer to a colleague inside any text as `{{id}}` ("{{product}} wants to launch today"). Never write a person's name, and never name the learner: talk to them as "you".
+The app gives each colleague a name from the learner's own team, so refer to a colleague inside any text as `{{id}}` ("{{product}} wants to launch today"). Never write a person's name, and never name the learner: talk to them as "you". The names come in a fixed order: not counting the AI assistant, the first colleague in `team` is a woman, the second a man, the third a woman and the fourth a man. Write each `role`, and every word that refers to them, in that gender where `LANGUAGE` marks it ("Pesquisadora de UX" for the first colleague, "Gerente de produto" or "Analista de dados" for the second).
 
 # The decisions
 

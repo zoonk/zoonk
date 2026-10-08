@@ -6,76 +6,67 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Message-Key: msgctxt\n"
 
+#: src/app/[lang]/(catalog)/_components/account-dropdown-item.tsx
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
-msgctxt "I-38K2"
-msgid "My courses"
-msgstr "Meus cursos"
+#: src/app/[lang]/(settings)/_components/protected-section.tsx
+#: src/app/[lang]/(stats)/_components/progress-empty-state.tsx
+msgctxt "AyGauy"
+msgid "Login"
+msgstr "Entrar"
+
+#: src/app/[lang]/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(settings)/_components/protected-section.tsx
+#: src/app/[lang]/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/(settings)/settings/guardian/page.tsx
+msgctxt "0vL5u1"
+msgid "Create an account"
+msgstr "Criar uma conta"
+
+#: src/app/[lang]/(catalog)/_components/account-dropdown-item.tsx
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
+msgctxt "C81_uG"
+msgid "Logout"
+msgstr "Sair"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-msgctxt "Oj9Phc"
-msgid "Manage subscription"
-msgstr "Gerenciar assinatura"
+msgctxt "y1Z3or"
+msgid "Language"
+msgstr "Idioma"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(settings)/_components/locale-switcher.tsx
-#: src/app/[lang]/(settings)/language/page.tsx
-msgctxt "OhXwmw"
-msgid "Update language"
-msgstr "Alterar idioma"
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(settings)/profile/page.tsx
+msgctxt "itPgxd"
+msgid "Profile"
+msgstr "Perfil"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-msgctxt "O7ozeo"
-msgid "Update profile"
-msgstr "Atualizar perfil"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(settings)/settings/appearance/page.tsx
 msgctxt "2GURQY"
 msgid "Appearance"
 msgstr "Aparência"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(settings)/settings/memory/page.tsx
 msgctxt "dVx3yz"
 msgid "Memory"
 msgstr "Memória"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/[lang]/(settings)/_components/settings-navbar.tsx
-msgctxt "C81_uG"
-msgid "Logout"
-msgstr "Sair"
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
+msgctxt "R_6nsx"
+msgid "Subscription"
+msgstr "Assinatura"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/[lang]/(learn)/(stats)/_components/progress-empty-state.tsx
-#: src/app/[lang]/(settings)/_components/protected-section.tsx
-msgctxt "AyGauy"
-msgid "Login"
-msgstr "Entrar"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(settings)/_components/locale-switcher.tsx
-#: src/app/[lang]/(settings)/_components/settings-pills.tsx
-#: src/app/[lang]/(settings)/language/page.tsx
-msgctxt "y1Z3or"
-msgid "Language"
-msgstr "Idioma"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
-#: src/app/[lang]/(settings)/_components/settings-navbar.tsx
 msgctxt "U3l-Q9"
 msgid "Home page"
 msgstr "Página inicial"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 #: src/components/public/public-footer.tsx
 msgctxt "R85gsW"
@@ -83,9 +74,11 @@ msgid "Courses"
 msgstr "Cursos"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-msgctxt "jboh4c"
-msgid "Start a new course"
-msgstr "Começar um novo curso"
+#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(learn)/_components/learn-no-goal.tsx
+msgctxt "ng8fsM"
+msgid "Start a goal"
+msgstr "Começar uma meta"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "CxfKLC"
@@ -98,7 +91,6 @@ msgid "My account"
 msgstr "Minha conta"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
 msgctxt "tv5FG3"
 msgid "Blog"
 msgstr "Blog"
@@ -110,14 +102,9 @@ msgstr "Enviar feedback"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(settings)/support/page.tsx
 #: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "fFZ0Wd"
-msgid "Feedback & Support"
-msgstr "Sugestões e Suporte"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/components/public/public-footer.tsx
 msgctxt "SENRqu"
 msgid "Help"
@@ -129,6 +116,11 @@ msgid "Chapters"
 msgstr "Capítulos"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "Ie60UL"
+msgid "Switch to {goal}"
+msgstr "Trocar para {goal}"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
 #: src/app/[lang]/(learn)/today/page.tsx
 msgctxt "zWgbGg"
@@ -136,21 +128,12 @@ msgid "Today"
 msgstr "Hoje"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(learn)/(stats)/_components/progress-navbar.tsx
-#: src/app/[lang]/(learn)/progress/page.tsx
-msgctxt "sIMS7i"
-msgid "Progress"
-msgstr "Progresso"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-msgctxt "0fR-fE"
-msgid "Route"
-msgstr "Trilha"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-msgctxt "d9iNyj"
-msgid "Cards"
-msgstr "Cartões"
+#: src/app/[lang]/(learn)/journey/[subject]/page.tsx
+#: src/app/[lang]/(learn)/journey/page.tsx
+#: src/components/learn/journey-page-bar.tsx
+msgctxt "btihtD"
+msgid "Journey"
+msgstr "Jornada"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(learn)/buddy/page.tsx
@@ -159,30 +142,6 @@ msgid "Your buddy"
 msgstr "Seu parceiro"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/logbook/page.tsx
-msgctxt "_qTRbZ"
-msgid "Logbook"
-msgstr "Diário de bordo"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(learn)/plan/page.tsx
-msgctxt "fz0z4c"
-msgid "Plan"
-msgstr "Plano"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(learn)/content/page.tsx
-msgctxt "Jq3FDz"
-msgid "Content"
-msgstr "Conteúdo"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-msgctxt "Ie60UL"
-msgid "Switch to {goal}"
-msgstr "Trocar para {goal}"
-
-#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
 #: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
 #: src/app/[lang]/(learn)/mistakes/page.tsx
 msgctxt "g3GlDw"
@@ -190,22 +149,39 @@ msgid "Mistakes notebook"
 msgstr "Caderno de erros"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(catalog)/courses/page.tsx
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(learn)/_components/learn-bar-end.tsx
+#: src/app/[lang]/(stats)/layout.tsx
+#: src/app/[lang]/(stats)/stats/page.tsx
+msgctxt "H3eDAS"
+msgid "Statistics"
+msgstr "Estatísticas"
+
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(catalog)/courses/layout.tsx
 msgctxt "s-Ncqj"
 msgid "Explore courses"
 msgstr "Explorar cursos"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
-msgctxt "GlTq-A"
-msgid "Add a goal"
-msgstr "Adicionar uma meta"
+#: src/app/[lang]/(learn)/today/today-goal-paused.tsx
+msgctxt "QTg-WT"
+msgid "Start a new goal"
+msgstr "Começar uma nova meta"
 
 #: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Metas"
 
+#: src/app/[lang]/(catalog)/_components/command-palette-groups.ts
+msgctxt "eclXxO"
+msgid "Quick explanations"
+msgstr "Explicações rápidas"
+
 #: src/app/[lang]/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/(catalog)/_components/search-dropdown-item.tsx
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Pesquisar"
@@ -221,14 +197,9 @@ msgid "No results found"
 msgstr "Nenhum resultado encontrado"
 
 #: src/app/[lang]/(catalog)/_components/command-palette.tsx
-msgctxt "OXAZiT"
-msgid "Create a course about {term}"
-msgstr "Criar curso sobre {term}"
-
-#: src/app/[lang]/(catalog)/_components/navbar-links.tsx
-msgctxt "m826WB"
-msgid "New course"
-msgstr "Novo curso"
+msgctxt "hs4kcT"
+msgid "Start a goal: {term}"
+msgstr "Começar uma meta: {term}"
 
 #: src/app/[lang]/(catalog)/_components/user-avatar-menu.tsx
 msgctxt "6b2CRH"
@@ -236,17 +207,35 @@ msgid "User menu"
 msgstr "Menu do usuário"
 
 #: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(settings)/_components/settings-pills.tsx
-#: src/app/[lang]/(settings)/profile/page.tsx
-msgctxt "itPgxd"
-msgid "Profile"
-msgstr "Perfil"
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(settings)/subscription/current-plan.tsx
+#: src/components/pricing/plus-purchase.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
 
 #: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(settings)/_components/settings-pills.tsx
-msgctxt "R_6nsx"
-msgid "Subscription"
-msgstr "Assinatura"
+msgctxt "bzSrZ6"
+msgid "Level {level}"
+msgstr "Nível {level}"
+
+#: src/app/[lang]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(settings)/layout.tsx
+#: src/app/[lang]/(settings)/settings/page.tsx
+msgctxt "D3idYv"
+msgid "Settings"
+msgstr "Configurações"
+
+#: src/app/[lang]/(catalog)/courses/category-pills.tsx
+msgctxt "jzFcrt"
+msgid "Scroll left"
+msgstr "Rolar para a esquerda"
+
+#: src/app/[lang]/(catalog)/courses/category-pills.tsx
+msgctxt "-lsh8v"
+msgid "Scroll right"
+msgstr "Rolar para a direita"
 
 #: src/app/[lang]/(catalog)/courses/category-pills.tsx
 #: src/app/[lang]/(home)/_components/home-explore-links.tsx
@@ -270,11 +259,6 @@ msgid "No courses available yet."
 msgstr "Ainda não há cursos disponíveis."
 
 #: src/app/[lang]/(catalog)/courses/course-list-client.tsx
-msgctxt "qm3Qo4"
-msgid "Create a course about {category}"
-msgstr "Criar um curso sobre {category}"
-
-#: src/app/[lang]/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
 msgid "Loading more courses…"
 msgstr "Carregando mais cursos…"
@@ -292,6 +276,11 @@ msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Tentar de novo"
 
+#: src/app/[lang]/(catalog)/courses/layout.tsx
+msgctxt "SFpqvh"
+msgid "Pick a course to start a goal."
+msgstr "Escolha um curso para começar uma meta."
+
 #: src/app/[lang]/(catalog)/courses/page.tsx
 msgctxt "WgPMAP"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
@@ -301,63 +290,6 @@ msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa com IA. En
 msgctxt "P5jxUC"
 msgid "Online Courses using AI"
 msgstr "Cursos online com IA"
-
-#: src/app/[lang]/(catalog)/courses/page.tsx
-msgctxt "hUF3bo"
-msgid "Start learning something new today"
-msgstr "Comece a aprender algo novo hoje"
-
-#: src/app/[lang]/(catalog)/my/page.tsx
-msgctxt "riE3I5"
-msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons."
-msgstr "Veja todos os cursos que você começou no Zoonk. Continue de onde parou e acompanhe seu progresso nas aulas interativas."
-
-#: src/app/[lang]/(catalog)/my/page.tsx
-msgctxt "eeNr_Y"
-msgid "My Courses"
-msgstr "Meus cursos"
-
-#: src/app/[lang]/(catalog)/my/page.tsx
-msgctxt "88WJDU"
-msgid "Log in to track your courses"
-msgstr "Entre para acompanhar seus cursos"
-
-#: src/app/[lang]/(catalog)/my/page.tsx
-msgctxt "4J8O50"
-msgid "Keep your courses and progress in one place by logging in to your account."
-msgstr "Entre na sua conta para manter seus cursos e progresso em um só lugar."
-
-#: src/app/[lang]/(catalog)/my/page.tsx
-#: src/app/[lang]/(home)/_components/home-header.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
-#: src/app/[lang]/start/_components/start-chrome.tsx
-#: src/components/public/public-header.tsx
-#: src/components/public/start-lesson-button.tsx
-msgctxt "odXlk8"
-msgid "Log in"
-msgstr "Entrar"
-
-#: src/app/[lang]/(catalog)/my/page.tsx
-#: src/app/[lang]/(home)/_components/home-resume.tsx
-msgctxt "Dr13kE"
-msgid "Continue where you left off"
-msgstr "Continue de onde parou"
-
-#: src/app/[lang]/(catalog)/my/user-course-list.tsx
-msgctxt "BDHWkf"
-msgid "No courses yet"
-msgstr "Nenhum curso ainda"
-
-#: src/app/[lang]/(catalog)/my/user-course-list.tsx
-msgctxt "azX41u"
-msgid "Start learning something new today."
-msgstr "Comece a aprender algo novo hoje."
-
-#: src/app/[lang]/(catalog)/my/user-course-list.tsx
-#: src/app/[lang]/start/course/[courseId]/page.tsx
-msgctxt "9m9h0p"
-msgid "Start a course"
-msgstr "Começar um curso"
 
 #: src/app/[lang]/(home)/_components/final-call.tsx
 msgctxt "39QuMP"
@@ -430,7 +362,6 @@ msgid "It's knowing what to study, keeping what you learn and knowing where you 
 msgstr "É saber o que estudar, lembrar do que você aprende e entender como está indo. O Zoonk cuida dessas três coisas."
 
 #: src/app/[lang]/(home)/_components/hard-part-section.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
 msgctxt "JNxj8r"
 msgid "Open the app and today's session is ready. It fits the minutes you have and skips what you already know."
 msgstr "Abra o app e sua sessão de hoje já está pronta. Ela se adapta ao tempo que você tem e pula o que você já sabe."
@@ -441,7 +372,6 @@ msgid "Not sure what to study today?"
 msgstr "Não sabe o que estudar hoje?"
 
 #: src/app/[lang]/(home)/_components/hard-part-section.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
 msgctxt "hMnifD"
 msgid "Reviews come back right before you'd forget. Every mistake goes to a notebook and returns as practice."
 msgstr "As revisões voltam pouco antes de você esquecer. Cada erro vai para um caderno e depois vira prática."
@@ -478,15 +408,9 @@ msgid "Home page sections"
 msgstr "Seções da página inicial"
 
 #: src/app/[lang]/(home)/_components/home-header.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
 msgctxt "HK3ph8"
 msgid "How it works"
 msgstr "Como funciona"
-
-#: src/app/[lang]/(home)/_components/home-header.tsx
-msgctxt "6NuwZ2"
-msgid "Focus and Fun"
-msgstr "Foco e Diversão"
 
 #: src/app/[lang]/(home)/_components/home-header.tsx
 #: src/components/public/public-footer.tsx
@@ -535,45 +459,76 @@ msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Sessão de hoje"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "bEnNSN"
-msgid "Calm or playful. Same plan."
-msgstr "Mais tranquilo ou divertido. O mesmo plano."
+#: src/app/[lang]/(home)/_components/home-resume.tsx
+msgctxt "Dr13kE"
+msgid "Continue where you left off"
+msgstr "Continue de onde parou"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "-rDjS_"
-msgid "Pick the look that keeps you going. Your lessons, plan and progress are the same in both, and you can switch any time."
-msgstr "Escolha o visual que te ajuda a seguir em frente. Suas aulas, seu plano e seu progresso são iguais nos dois modos, e você pode trocar quando quiser."
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "Missões de hoje"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "hsJlm7"
-msgid "Focus"
-msgstr "Foco"
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "nrn81I"
+msgid "2 of 3"
+msgstr "2 de 3"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "uhCfm8"
-msgid "Fun"
-msgstr "Diversão"
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Revisar"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "B1qdQI"
-msgid "Just the lesson and your progress on a quiet screen, so nothing pulls your attention away."
-msgstr "Só a aula e seu progresso em uma tela sem distrações."
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "egXToe"
+msgid "Something new"
+msgstr "Algo novo"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "d54rpo"
-msgid "Calm and simple"
-msgstr "Tranquilo e simples"
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "MJ_uxr"
+msgid "Fix a mistake"
+msgstr "Corrija um erro"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "HPy249"
-msgid "Your plan becomes a space voyage to your goal. A buddy comes along, daily missions keep you going, and you earn rewards as you learn."
-msgstr "Seu plano vira uma viagem espacial rumo à sua meta. Um parceiro vai com você, missões diárias te mantêm no ritmo e você ganha recompensas enquanto aprende."
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "ivOuJV"
+msgid "Shield"
+msgstr "Escudo"
 
-#: src/app/[lang]/(home)/_components/modes-section.tsx
-msgctxt "9dx1wK"
-msgid "Learning that feels like a game"
-msgstr "Aprender como em um jogo"
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "Mt89EK"
+msgid "4 right · 3 to go"
+msgstr "4 acertos · faltam 3"
+
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "uUMV29"
+msgid "Small wins every day"
+msgstr "Pequenas conquistas todos os dias"
+
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "AzP3hh"
+msgid "Studying feeds your buddy, and every phase ends with a challenge. Mistakes never cost you anything."
+msgstr "Estudar alimenta seu parceiro, e toda fase termina com um desafio. Errar não custa nada."
+
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "-iIKeu"
+msgid "Three missions a day: a review, something new and a mistake to fix. Your buddy grows as you learn."
+msgstr "Três missões por dia: uma revisão, algo novo e um erro para corrigir. Seu parceiro cresce à medida que você aprende."
+
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "B0mHh3"
+msgid "A buddy you feed by learning"
+msgstr "Um parceiro que cresce com seus estudos"
+
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "p-H7oU"
+msgid "Each phase ends with 10 questions and no hints. Get 7 right to win. If you lose, you get a rematch tomorrow."
+msgstr "Cada fase termina com 10 perguntas e sem dicas. Acerte 7 para vencer. Se perder, você pode tentar de novo amanhã."
+
+#: src/app/[lang]/(home)/_components/motivation-section.tsx
+msgctxt "NjYD5A"
+msgid "Face the Trickster"
+msgstr "Encare o Pegadinha"
 
 #: src/app/[lang]/(home)/_components/plan-preview.tsx
 msgctxt "M4HoSk"
@@ -612,7 +567,6 @@ msgid "Greetings, numbers, simple questions"
 msgstr "Cumprimentos, números e perguntas simples"
 
 #: src/app/[lang]/(home)/_components/plan-preview.tsx
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
 msgctxt "wouTdw"
 msgid "The basics"
 msgstr "O básico"
@@ -643,7 +597,6 @@ msgid "Meetings, email, small talk"
 msgstr "Reuniões, emails, conversa informal"
 
 #: src/app/[lang]/(home)/_components/plan-preview.tsx
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
 msgctxt "YfVzE-"
 msgid "At work"
 msgstr "No trabalho"
@@ -654,7 +607,6 @@ msgid "Bank, doctor, neighbors"
 msgstr "Banco, médico, vizinhos"
 
 #: src/app/[lang]/(home)/_components/plan-preview.tsx
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
 msgctxt "laR93q"
 msgid "Daily life"
 msgstr "Dia a dia"
@@ -711,9 +663,9 @@ msgid "Speak before you move"
 msgstr "Treine conversas antes de se mudar"
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
-msgctxt "HpO7kn"
-msgid "Stuck on a topic? Tap Simpler. Curious? Go deeper. On any screen."
-msgstr "Travou em algum assunto? Toque em Mais simples. Ficou curioso? Vá mais a fundo. Em qualquer tela."
+msgctxt "hvpHlo"
+msgid "Stuck on a topic? Your buddy explains it another way. Curious? Ask it to go further."
+msgstr "Travou em algum tópico? Seu parceiro explica de outro jeito. Ficou curioso? Peça para explicar mais."
 
 #: src/app/[lang]/(home)/_components/practice-section.tsx
 msgctxt "D7lcBr"
@@ -761,14 +713,14 @@ msgid "It's the <b>slope</b> of the line that just touches the curve at that poi
 msgstr "É a <b>inclinação</b> da reta que toca a curva só naquele ponto."
 
 #: src/app/[lang]/(home)/_components/previews/class-preview.tsx
-msgctxt "Os2U8v"
-msgid "A derivative is <b>how fast</b> something changes at one moment."
-msgstr "A derivada é <b>a rapidez com que</b> algo muda em um instante."
-
-#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
 msgctxt "JzIwuN"
 msgid "Think of a speedometer: it shows <b>how fast</b> you're going right now."
 msgstr "Pense num velocímetro: ele mostra <b>a que velocidade</b> você está agora."
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "Os2U8v"
+msgid "A derivative is <b>how fast</b> something changes at one moment."
+msgstr "A derivada é <b>a rapidez com que</b> algo muda em um instante."
 
 #: src/app/[lang]/(home)/_components/previews/class-preview.tsx
 msgctxt "_m48x4"
@@ -776,16 +728,19 @@ msgid "right now"
 msgstr "agora"
 
 #: src/app/[lang]/(home)/_components/previews/class-preview.tsx
-#: src/app/[lang]/(home)/_components/previews/depth-chips.tsx
-msgctxt "6vRhWR"
-msgid "Simpler"
-msgstr "Mais simples"
+msgctxt "gIGYkd"
+msgid "Stuck, or curious for more? Just ask."
+msgstr "Travou ou quer saber mais? É só perguntar."
 
 #: src/app/[lang]/(home)/_components/previews/class-preview.tsx
-#: src/app/[lang]/(home)/_components/previews/depth-chips.tsx
-msgctxt "pfRO-j"
-msgid "Go deeper"
-msgstr "Mais a fundo"
+msgctxt "AcKlQI"
+msgid "Explain it more simply"
+msgstr "Explique de um jeito mais simples"
+
+#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
+msgctxt "s6QqT3"
+msgid "I want to go deeper"
+msgstr "Quero ir mais a fundo"
 
 #: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
 msgctxt "5vUSgc"
@@ -831,79 +786,6 @@ msgstr "Simulado cronometrado como a prova de verdade"
 msgctxt "onvyDn"
 msgid "Full length"
 msgstr "Prova completa"
-
-#: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
-msgctxt "Synugh"
-msgid "Back as practice Friday"
-msgstr "Volta como exercício na sexta"
-
-#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
-msgctxt "9lorEO"
-msgid "Percentages and discounts"
-msgstr "Porcentagens e descontos"
-
-#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
-msgctxt "sq8t1s"
-msgid "before"
-msgstr "antes"
-
-#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "rwlYwj"
-msgid "−25%"
-msgstr "−25%"
-
-#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
-msgctxt "T3BalS"
-msgid "you pay"
-msgstr "você paga"
-
-#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "KWQbwh"
-msgid "A discount is part of the price"
-msgstr "O desconto faz parte do preço"
-
-#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "ceO8ai"
-msgid "A T-shirt costs <b>{before}</b> and is 25% off. You don't pay 25%. You pay the rest: <b>75%</b>."
-msgstr "Uma camiseta custa <b>{before}</b> e está com 25% de desconto. Você não paga 25%. Você paga o restante: <b>75%</b>."
-
-#: src/app/[lang]/(home)/_components/previews/focus-lesson-preview.tsx
-msgctxt "BLplp_"
-msgid "75% of 80 = 0.75 × 80 = <b>{after}</b>."
-msgstr "75% de 80 = 0,75 × 80 = <b>{after}</b>."
-
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "4r25rd"
-msgid "was <old>{before}</old>, now"
-msgstr "era <old>{before}</old>, agora"
-
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "YgbapR"
-msgid "you pay 75%"
-msgstr "você paga 75%"
-
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "wwspdF"
-msgid "x3"
-msgstr "×3"
-
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "Fv88mR"
-msgid "Look how clever this is:"
-msgstr "Olha só que sacada:"
-
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "5a_385"
-msgid "0.75 × 80"
-msgstr "0,75 × 80"
-
-#: src/app/[lang]/(home)/_components/previews/fun-lesson-preview.tsx
-msgctxt "i0NKi_"
-msgid "= {after}"
-msgstr "= {after}"
 
 #: src/app/[lang]/(home)/_components/previews/job-preview.tsx
 msgctxt "gX3gLf"
@@ -951,12 +833,6 @@ msgid "What you remember"
 msgstr "O que você lembra"
 
 #: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Revisar"
-
-#: src/app/[lang]/(home)/_components/previews/memory-preview.tsx
 msgctxt "XGOJGX"
 msgid "With reviews"
 msgstr "Com revisões"
@@ -982,7 +858,6 @@ msgid "Needs practice"
 msgstr "Precisa praticar"
 
 #: src/app/[lang]/(home)/_components/previews/preparation-preview.tsx
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
 msgctxt "Jp5b0b"
 msgid "Phone calls"
 msgstr "Ligações telefônicas"
@@ -1093,154 +968,10 @@ msgid "Tuesday's mistakes"
 msgstr "Erros de terça-feira"
 
 #: src/app/[lang]/(home)/_components/previews/session-preview.tsx
+#: src/app/[lang]/(learn)/journey/journey-setup.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "B0mHh3"
-msgid "A buddy you feed by learning"
-msgstr "Um parceiro que você alimenta enquanto aprende"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "F01nWn"
-msgid "Lessons, reviews and fixed mistakes are its food. It grows as you learn."
-msgstr "Cada aula, revisão e erro que você corrige faz seu parceiro crescer junto com você."
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "Missões de hoje"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "nrn81I"
-msgid "2 of 3"
-msgstr "2 de 3"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "egXToe"
-msgid "Something new"
-msgstr "Algo novo"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "MJ_uxr"
-msgid "Fix a mistake"
-msgstr "Corrigir um erro"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "PTRDSP"
-msgid "Pick {zu}, {noodle}, {beep} or {otto}"
-msgstr "Escolha {zu}, {noodle}, {beep} ou {otto}"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "WsAzWR"
-msgid "Beep"
-msgstr "Bip"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "RBRr_i"
-msgid "Noodle"
-msgstr "Cuca"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "KUIiR8"
-msgid "Otto"
-msgstr "Oto"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-buddy.tsx
-msgctxt "vPjK_E"
-msgid "Zu"
-msgstr "Zu"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "NjYD5A"
-msgid "Face the Trickster"
-msgstr "Enfrente o Pegadinha"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "N_voEl"
-msgid "10 mixed questions, no hints, like exam day. Lose, and you get a rematch tomorrow."
-msgstr "10 perguntas variadas, sem dicas, como no dia da prova. Se perder, você pode tentar de novo amanhã."
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "v-rSek"
-msgid "His shield"
-msgstr "Escudo dele"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "4qr4X4"
-msgid "<b>4 right</b> · 3 to go"
-msgstr "<b>4 certas</b> · faltam 3"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "KM0AhC"
-msgid "{move, select, london {English} other {Spanish}}"
-msgstr "{move, select, london {Inglês} other {Espanhol}}"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "ZnAuWi"
-msgid "Capsule"
-msgstr "Cápsula do tempo"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "uId7v1"
-msgid "gold"
-msgstr "Ouro"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "9daE0t"
-msgid "Fading"
-msgstr "Para revisar"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "ntRjjB"
-msgid "Remembered"
-msgstr "Lembrado"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "8iIDLx"
-msgid "Cards that turn gold"
-msgstr "Cartões que ficam dourados"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-challenges.tsx
-msgctxt "a86o7U"
-msgid "A time capsule brings a card back before it fades. Remember it on 3 different days and it turns gold."
-msgstr "Uma cápsula do tempo traz o cartão de volta antes que você o esqueça. Lembre dele em 3 dias diferentes e ele fica dourado."
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
-msgctxt "djZCU5"
-msgid "Skipped"
-msgstr "Pulado"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
-msgctxt "mElWfu"
-msgid "You are here"
-msgstr "Você está aqui"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
-msgctxt "urVD1a"
-msgid "Arriving"
-msgstr "Chegando"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
-msgctxt "Dt17jZ"
-msgid "{move, select, london {The route to London} other {The route to Madrid}}"
-msgstr "{move, select, london {A rota para Londres} other {A rota para Madrid}}"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
-msgctxt "3My--Z"
-msgid "Each phase is a moon, and a boss waits at the end of it."
-msgstr "Cada fase é uma lua, e no fim dela tem um chefão."
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
-msgctxt "snox3X"
-msgid "{move, select, london {London · {date}} other {Madrid · {date}}}"
-msgstr "{move, select, london {Londres · {date}} other {Madrid · {date}}}"
-
-#: src/app/[lang]/(home)/_components/voyage/voyage-route.tsx
-msgctxt "EPzxuV"
-msgid "Boss · {date}"
-msgstr "Chefão · {date}"
 
 #: src/app/[lang]/(home)/page.tsx
 msgctxt "bzsKpM"
@@ -1252,6 +983,11 @@ msgctxt "w9VlUG"
 msgid "Zoonk: Get ready for your exam, new job or move"
 msgstr "Zoonk: prepare-se para uma prova, um novo emprego ou uma mudança"
 
+#: src/app/[lang]/(learn)/_components/learn-bar-end.tsx
+msgctxt "yAw6p8"
+msgid "{belt}, level {level}. Statistics"
+msgstr "{belt}, nível {level}. Estatísticas"
+
 #: src/app/[lang]/(learn)/_components/learn-no-goal.tsx
 msgctxt "l5SUmq"
 msgid "Start with a goal"
@@ -1262,390 +998,10 @@ msgctxt "FqgLH3"
 msgid "Tell us what you want to learn, and we'll plan every day until you get there."
 msgstr "Conte pra gente o que você quer aprender, e a gente vai planejar cada dia até você chegar lá."
 
-#: src/app/[lang]/(learn)/_components/learn-no-goal.tsx
-msgctxt "hJ3NNi"
-msgid "Set a goal"
-msgstr "Defina uma meta"
-
-#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
-#: src/app/[lang]/(learn)/(stats)/activity/page.tsx
-msgctxt "ZmlNQ3"
-msgid "Activity"
-msgstr "Atividade"
-
-#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
-#: src/app/[lang]/(learn)/(stats)/score/page.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Pontuação"
-
-#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
-#: src/app/[lang]/(learn)/(stats)/patterns/page.tsx
-msgctxt "BCauSf"
-msgid "Patterns"
-msgstr "Padrões"
-
-#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
-#: src/app/[lang]/(learn)/(stats)/level/page.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Nível"
-
-#: src/app/[lang]/(learn)/(stats)/_components/metric-pills.tsx
-#: src/app/[lang]/(learn)/(stats)/energy/page.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energia"
-
-#: src/app/[lang]/(learn)/(stats)/_components/progress-empty-state.tsx
-msgctxt "FVh2Tr"
-msgid "Start learning to track your progress"
-msgstr "Comece a estudar para acompanhar seu progresso"
-
-#: src/app/[lang]/(learn)/(stats)/_components/progress-empty-state.tsx
-msgctxt "Y1zzQt"
-msgid "Log in to track your progress"
-msgstr "Entre para acompanhar seu progresso"
-
-#: src/app/[lang]/(learn)/(stats)/_components/progress-navbar.tsx
-msgctxt "QbGIBZ"
-msgid "Your stats"
-msgstr "Suas estatísticas"
-
-#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
-msgctxt "yK5WcZ"
-msgid "{count, plural, =0 {# lesson completions on {date}} one {# lesson completion on {date}} other {# lesson completions on {date}}}"
-msgstr "{count, plural, =0 {# aulas concluídas em {date}} one {# aula concluída em {date}} other {# aulas concluídas em {date}}}"
-
-#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
-msgctxt "AfqNLd"
-msgid "Learning activity"
-msgstr "Atividade de estudo"
-
-#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "o0vS8L"
-msgid "Past 12 months"
-msgstr "Últimos 12 meses"
-
-#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
-msgctxt "mU3mx4"
-msgid "Lesson activity intensity from less to more"
-msgstr "Intensidade das atividades nas aulas, da menor para a maior"
-
-#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
-msgctxt "mFYgAX"
-msgid "Less"
-msgstr "Menos"
-
-#: src/app/[lang]/(learn)/(stats)/activity/activity-chart.tsx
-msgctxt "I5NMJ8"
-msgid "More"
-msgstr "Mais"
-
-#: src/app/[lang]/(learn)/(stats)/activity/activity-stats.tsx
-msgctxt "JhwQKn"
-msgid "Lessons completed"
-msgstr "Aulas concluídas"
-
-#: src/app/[lang]/(learn)/(stats)/activity/page.tsx
-msgctxt "ONB1Ju"
-msgid "Track your completed lessons, learning days, and learning time."
-msgstr "Acompanhe suas aulas concluídas, dias e tempo de estudo."
-
-#: src/app/[lang]/(learn)/(stats)/activity/page.tsx
-msgctxt "mjwoLD"
-msgid "See your learning activity over time"
-msgstr "Veja sua atividade de estudo ao longo do tempo"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "1cw6GI"
-msgid "No Energy recorded on {date}"
-msgstr "Nenhuma Energia registrada em {date}"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "FpslmD"
-msgid "Max Energy on {date}"
-msgstr "Energia Máxima em {date}"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "GThwd0"
-msgid "{percentage} Energy on {date}"
-msgstr "{percentage} de Energia em {date}"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "TfctoK"
-msgid "Energy history"
-msgstr "Histórico de Energia"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "jPmToJ"
-msgid "Energy intensity from low to high"
-msgstr "Intensidade da Energia, de baixa a alta"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "477I0g"
-msgid "Low"
-msgstr "Baixa"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-chart.tsx
-msgctxt "AxMhQr"
-msgid "High"
-msgstr "Alta"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
-msgctxt "b6XNAX"
-msgid "How do I increase my Energy?"
-msgstr "Como aumento minha Energia?"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
-msgctxt "65k5kc"
-msgid "Complete lessons and answer questions correctly to increase your Energy."
-msgstr "Complete aulas e responda às perguntas corretamente para aumentar sua Energia."
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
-msgctxt "IDCKRi"
-msgid "Missed a day?"
-msgstr "Ficou um dia sem estudar?"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
-msgctxt "tKCMUI"
-msgid "Your Energy drops a little. Complete lessons to fill it back up."
-msgstr "Sua Energia cai um pouco. Complete aulas para recuperar o que perdeu."
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
-msgctxt "-8Qx8X"
-msgid "Why is Energy important?"
-msgstr "Por que a Energia é importante?"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-explanation.tsx
-msgctxt "0-k3_3"
-msgid "Energy rewards consistency. Learning regularly helps reinforce what you learn."
-msgstr "A Energia recompensa a constância. Estudar com frequência ajuda a fixar o que você aprende."
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-insights.tsx
-msgctxt "-1YhhW"
-msgid "Days at Max Energy"
-msgstr "Dias com Energia Máxima"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-insights.tsx
-msgctxt "F9mA1x"
-msgid "Average Energy"
-msgstr "Energia média"
-
-#: src/app/[lang]/(learn)/(stats)/energy/energy-stats.tsx
-msgctxt "jZpK89"
-msgid "Your Energy"
-msgstr "Sua Energia"
-
-#: src/app/[lang]/(learn)/(stats)/energy/page.tsx
-msgctxt "ajjT8S"
-msgid "Stay at Max Energy by studying every day."
-msgstr "Mantenha a Energia Máxima estudando todos os dias."
-
-#: src/app/[lang]/(learn)/(stats)/level/level-explanation.tsx
-msgctxt "gaXaWV"
-msgid "How levels work"
-msgstr "Como os níveis funcionam"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-explanation.tsx
-msgctxt "Ekt8hM"
-msgid "Complete lessons to earn {brainPower} BP. Brain Power never goes down, so every lesson moves you closer to the next level."
-msgstr "Complete aulas para ganhar {brainPower} PM. O Poder Mental nunca diminui, então cada aula te deixa mais perto do próximo nível."
-
-#: src/app/[lang]/(learn)/(stats)/level/level-progression.tsx
-msgctxt "3DtX17"
-msgid "Belt progression"
-msgstr "Progressão das faixas"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
-msgctxt "Ugl3yi"
-msgid "{belt} · level {level}"
-msgstr "{belt} · nível {level}"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
-msgctxt "pgt3eW"
-msgid "Max level reached"
-msgstr "Nível máximo alcançado"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
-msgctxt "8N9BRu"
-msgid "{value} BP to next level"
-msgstr "Faltam {value} PM para o próximo nível"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
-msgctxt "U78NhE"
-msgid "Complete"
-msgstr "Concluído"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
-msgctxt "fRknQ6"
-msgid "{current} of {total} BP"
-msgstr "{current} de {total} PM"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
-msgctxt "v5yNm3"
-msgid "Total Brain Power"
-msgstr "Poder Mental total"
-
-#: src/app/[lang]/(learn)/(stats)/level/level-stats.tsx
-msgctxt "XdkaHc"
-msgid "{value} BP"
-msgstr "{value} PM"
-
-#: src/app/[lang]/(learn)/(stats)/level/page.tsx
-msgctxt "uZploX"
-msgid "See your current level and what comes next."
-msgstr "Veja seu nível atual e o que vem depois."
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-msgctxt "00_IyC"
-msgid "Night"
-msgstr "Madrugada"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-msgctxt "_kzk_m"
-msgid "Morning"
-msgstr "Manhã"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-msgctxt "mF-J9o"
-msgid "Afternoon"
-msgstr "Tarde"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-msgctxt "mPEpnN"
-msgid "Evening"
-msgstr "Noite"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
-msgctxt "q9WSEF"
-msgid "{count, plural, one {# answer} other {# answers}}"
-msgstr "{count, plural, one {# resposta} other {# respostas}}"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-msgctxt "pafDXI"
-msgid "No answers"
-msgstr "Nenhuma resposta"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-msgctxt "g0f6D5"
-msgid "Throughout the day"
-msgstr "Ao longo do dia"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/day-rhythm.tsx
-msgctxt "T2RcYA"
-msgid "Accuracy by time of day over the past 90 days"
-msgstr "Precisão por horário nos últimos 90 dias"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/page.tsx
-msgctxt "eBJm5e"
-msgid "See when you perform best over the past 90 days."
-msgstr "Veja quando você se sai melhor nos últimos 90 dias."
-
-#: src/app/[lang]/(learn)/(stats)/patterns/page.tsx
-msgctxt "RKvjug"
-msgid "See when you perform best"
-msgstr "Veja quando você se sai melhor"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-msgctxt "CQLx_3"
-msgid "{day}: {score} across {count, plural, one {# answer} other {# answers}}"
-msgstr "{day}: {score} em {count, plural, one {# resposta} other {# respostas}}"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-msgctxt "YSFJk-"
-msgid "{day}: No answers"
-msgstr "{day}: nenhuma resposta"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-msgctxt "u8s7op"
-msgid "You do better {weekday, select, sunday {on Sundays} monday {on Mondays} tuesday {on Tuesdays} wednesday {on Wednesdays} thursday {on Thursdays} friday {on Fridays} saturday {on Saturdays} other {on your best weekday}}"
-msgstr "Você se sai melhor {weekday, select, sunday {aos domingos} monday {às segundas-feiras} tuesday {às terças-feiras} wednesday {às quartas-feiras} thursday {às quintas-feiras} friday {às sextas-feiras} saturday {aos sábados} other {no seu melhor dia da semana}}"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-msgctxt "CW-JJR"
-msgid "{day} performance"
-msgstr "Desempenho de {day}"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
-msgctxt "i2_Jga"
-msgid "{score} across {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} em {count, plural, one {# resposta} other {# respostas}}"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-msgctxt "9SzqD3"
-msgid "Weekly rhythm"
-msgstr "Ritmo semanal"
-
-#: src/app/[lang]/(learn)/(stats)/patterns/weekday-rhythm.tsx
-msgctxt "gTx9DY"
-msgid "Accuracy by weekday over the past 90 days"
-msgstr "Precisão por dia da semana nos últimos 90 dias"
-
-#: src/app/[lang]/(learn)/(stats)/score/page.tsx
-msgctxt "-JqpHp"
-msgid "See your answer accuracy and weekly trend over the past 90 days."
-msgstr "Veja a precisão das suas respostas e a tendência semanal nos últimos 90 dias."
-
-#: src/app/[lang]/(learn)/(stats)/score/page.tsx
-msgctxt "jmWl8S"
-msgid "See how accurately you answer questions"
-msgstr "Veja com que precisão você responde às perguntas"
-
-#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
-msgctxt "33eat_"
-msgid "Weekly score trend"
-msgstr "Evolução semanal da Pontuação"
-
-#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
-msgctxt "22eTjk"
-msgid "Weekly score"
-msgstr "Pontuação semanal"
-
-#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
-#: src/app/[lang]/(learn)/(stats)/score/score-stats.tsx
-msgctxt "ZOWtIg"
-msgid "Past 90 days"
-msgstr "Últimos 90 dias"
-
-#: src/app/[lang]/(learn)/(stats)/score/score-chart-client.tsx
-msgctxt "l-oCrn"
-msgid "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
-msgstr "{label}: {score} em {count, plural, one {# resposta} other {# respostas}}"
-
-#: src/app/[lang]/(learn)/(stats)/score/score-explanation.tsx
-msgctxt "bIZaXJ"
-msgid "What is Score?"
-msgstr "O que é Pontuação?"
-
-#: src/app/[lang]/(learn)/(stats)/score/score-explanation.tsx
-msgctxt "TiNLLD"
-msgid "Score is the percentage of questions you answered correctly over the past 90 days. Every answer counts equally, so harder lessons can lower your Score for a while. That’s part of learning."
-msgstr "A Pontuação é a porcentagem de perguntas que você respondeu corretamente nos últimos 90 dias. Cada resposta tem o mesmo peso, então aulas mais difíceis podem diminuir sua Pontuação por um tempo. Isso faz parte de aprender."
-
-#: src/app/[lang]/(learn)/(stats)/score/score-stats.tsx
-msgctxt "b-bOob"
-msgid "Score summary"
-msgstr "Resumo da Pontuação"
-
-#: src/app/[lang]/(learn)/(stats)/score/score-stats.tsx
-msgctxt "WCq9Lo"
-msgid "{correct} of {total, plural, one {# answer} other {# answers}} correct"
-msgstr "{correct} de {total, plural, one {# resposta correta} other {# respostas corretas}}"
-
 #: src/app/[lang]/(learn)/content/chapters/[chapterId]/page.tsx
 msgctxt "dOgCSN"
 msgid "Chapter"
 msgstr "Capítulo"
-
-#: src/app/[lang]/(learn)/content/map/page.tsx
-msgctxt "xPZR26"
-msgid "Map of your subject"
-msgstr "Mapa da sua matéria"
 
 #: src/app/[lang]/(learn)/content/units/[chapterId]/page.tsx
 msgctxt "xkB-8Z"
@@ -1657,67 +1013,91 @@ msgctxt "9HjIgh"
 msgid "Your exam"
 msgstr "Sua prova"
 
-#: src/app/[lang]/(learn)/mistakes/practice/page.tsx
-msgctxt "HGnX5e"
-msgid "Practice mistakes"
-msgstr "Praticar o que você errou"
+#: src/app/[lang]/(learn)/journey/journey-setup.tsx
+msgctxt "NIpBgv"
+msgid "Your plan comes after a few questions"
+msgstr "A gente monta seu plano depois de algumas perguntas"
 
-#: src/app/[lang]/(learn)/plan/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Teste para pular um capítulo"
+#: src/app/[lang]/(learn)/journey/journey-setup.tsx
+msgctxt "mMlLhC"
+msgid "Answer them and we'll plan every day until you reach your goal."
+msgstr "Responda às perguntas e a gente planeja seus estudos para cada dia até você alcançar sua meta."
 
-#: src/app/[lang]/(learn)/plan/test-out/[chapterId]/page.tsx
-msgctxt "KGN7UU"
-msgid "This chapter"
-msgstr "Este capítulo"
-
-#: src/app/[lang]/(learn)/today/page.tsx
-msgctxt "-OmCxv"
-msgid "This goal is on pause"
-msgstr "Esta meta está pausada"
-
-#: src/app/[lang]/(learn)/today/page.tsx
-msgctxt "X6UPs-"
-msgid "Nothing is planned for it today. Pick another goal above, or start a new one."
-msgstr "Hoje, não há nada planejado para ela. Escolha outra meta acima ou comece uma nova."
-
-#: src/app/[lang]/(learn)/today/page.tsx
-msgctxt "QTg-WT"
-msgid "Start a new goal"
-msgstr "Comece uma nova meta"
+#: src/app/[lang]/(learn)/mind-maps/page.tsx
+msgctxt "Z9Sg5E"
+msgid "Mind maps"
+msgstr "Mapas mentais"
 
 #: src/app/[lang]/(learn)/today/page.tsx
 msgctxt "UKxoV8"
 msgid "Welcome back"
 msgstr "Que bom ter você de volta"
 
+#: src/app/[lang]/(learn)/today/resume-goal-button.tsx
+msgctxt "vr-vFm"
+msgid "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more."
+msgstr "O plano Grátis permite acompanhar uma meta por vez. Pause outra meta para retomar esta ou assine o Plus para acompanhar mais."
+
+#: src/app/[lang]/(learn)/today/resume-goal-button.tsx
+msgctxt "i5jfUY"
+msgid "We couldn't change this goal. Try again."
+msgstr "Não foi possível alterar esta meta. Tente de novo."
+
+#: src/app/[lang]/(learn)/today/resume-goal-button.tsx
+msgctxt "3y9DGg"
+msgid "Resume"
+msgstr "Retomar"
+
+#: src/app/[lang]/(learn)/today/today-goal-paused.tsx
+msgctxt "9qJBv5"
+msgid "You finished {goal}"
+msgstr "Você concluiu {goal}"
+
+#: src/app/[lang]/(learn)/today/today-goal-paused.tsx
+msgctxt "kL0PL2"
+msgid "Start a new goal, or pick another one above."
+msgstr "Comece uma nova meta ou escolha outra acima."
+
+#: src/app/[lang]/(learn)/today/today-goal-paused.tsx
+msgctxt "NpgeHh"
+msgid "{goal} is on pause"
+msgstr "{goal} está pausada"
+
+#: src/app/[lang]/(learn)/today/today-goal-paused.tsx
+msgctxt "-OmCxv"
+msgid "This goal is on pause"
+msgstr "Esta meta está pausada"
+
+#: src/app/[lang]/(learn)/today/today-goal-paused.tsx
+msgctxt "7QGA9R"
+msgid "Nothing is planned for it today. Resume it to plan your days again."
+msgstr "Não há nada planejado para ela hoje. Retome a meta para voltar a planejar seus dias."
+
+#: src/app/[lang]/(settings)/_components/protected-section.tsx
+msgctxt "XVrylB"
+msgid "Create an account to keep your plan and use this page."
+msgstr "Crie uma conta para manter seu plano e usar esta página."
+
 #: src/app/[lang]/(settings)/_components/protected-section.tsx
 msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "Você precisa estar logado para acessar esta página."
 
-#: src/app/[lang]/(settings)/_components/settings-navbar.tsx
-msgctxt "D3idYv"
-msgid "Settings"
-msgstr "Configurações"
+#: src/app/[lang]/(settings)/_components/settings-account-button.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/components/login-bar-link.tsx
+#: src/components/public/public-header.tsx
+#: src/components/public/start-lesson-button.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Entrar"
 
-#: src/app/[lang]/(settings)/_components/settings-pills.tsx
+#: src/app/[lang]/(settings)/_components/settings-links.tsx
 #: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
 #: src/app/[lang]/(settings)/settings/guardian/page.tsx
 msgctxt "poUf8i"
 msgid "Guardian"
 msgstr "Responsável"
-
-#: src/app/[lang]/(settings)/language/page.tsx
-msgctxt "2WHx14"
-msgid "Update your app language to learn in English, Portuguese, Spanish, French, or other supported languages."
-msgstr "Atualize o idioma do app para aprender em inglês, português, espanhol, francês ou outros idiomas disponíveis."
-
-#: src/app/[lang]/(settings)/language/page.tsx
-msgctxt "aNLa1G"
-msgid "Choose the app language you prefer for this device."
-msgstr "Escolha o idioma do app que você prefere neste dispositivo."
 
 #: src/app/[lang]/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
@@ -1740,11 +1120,6 @@ msgid "Delete account"
 msgstr "Excluir conta"
 
 #: src/app/[lang]/(settings)/profile/delete-account-section.tsx
-msgctxt "1hzzRD"
-msgid "Deletes your account and everything in it for good: goals, plans, progress, memory, feedback and uploads. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
-msgstr "Apaga sua conta e tudo que tem nela de vez: metas, planos, progresso, memória, comentários e arquivos enviados. A assinatura Plus contratada pelo site é cancelada; as compras feitas na App Store são gerenciadas pela própria App Store."
-
-#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
 msgctxt "TcCxtt"
 msgid "Delete your account?"
 msgstr "Excluir sua conta?"
@@ -1764,6 +1139,11 @@ msgctxt "Sk9SL5"
 msgid "Delete my account"
 msgstr "Excluir minha conta"
 
+#: src/app/[lang]/(settings)/profile/delete-account-section.tsx
+msgctxt "PswkCL"
+msgid "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store."
+msgstr "Apaga sua conta e tudo o que há nela de vez. O Plus comprado pela web é cancelado; compras pela App Store são gerenciadas na App Store."
+
 #: src/app/[lang]/(settings)/profile/export-data-button.tsx
 msgctxt "cQNx6-"
 msgid "Preparing your data…"
@@ -1775,14 +1155,19 @@ msgid "Download my data"
 msgstr "Baixar meus dados"
 
 #: src/app/[lang]/(settings)/profile/export-data-button.tsx
+msgctxt "4EwZU7"
+msgid "Everything Zoonk keeps about you"
+msgstr "Tudo que o Zoonk guarda sobre você"
+
+#: src/app/[lang]/(settings)/profile/export-data-button.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
 msgstr "Não foi possível preparar o download. Tente de novo."
 
 #: src/app/[lang]/(settings)/profile/page.tsx
-msgctxt "dSVD13"
-msgid "Update your name and username on Zoonk."
-msgstr "Atualize seu nome e nome de usuário no Zoonk."
+msgctxt "I4oZQq"
+msgid "Your name, username and account on Zoonk."
+msgstr "Seu nome, nome de usuário e conta no Zoonk."
 
 #: src/app/[lang]/(settings)/profile/page.tsx
 msgctxt "ZTyMjO"
@@ -1790,18 +1175,13 @@ msgid "Your data"
 msgstr "Seus dados"
 
 #: src/app/[lang]/(settings)/profile/page.tsx
-msgctxt "W5Vre9"
-msgid "Download everything Zoonk keeps about you: your profile, goals and plans, progress, answers, memory and feedback."
-msgstr "Baixe tudo o que o Zoonk guarda sobre você: seu perfil, metas e planos, progresso, respostas, memória e comentários."
-
-#: src/app/[lang]/(settings)/profile/page.tsx
-msgctxt "wjIStY"
-msgid "Your name and username as they appear to others."
-msgstr "Seu nome e nome de usuário como aparecem para outras pessoas."
+msgctxt "1VpnDN"
+msgid "Your name, username and account."
+msgstr "Seu nome, nome de usuário e conta."
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
-msgctxt "PfxzLv"
-msgid "Checking…"
+msgctxt "1SvspN"
+msgid "Checking..."
 msgstr "Verificando…"
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
@@ -1817,7 +1197,7 @@ msgstr "{username} já está em uso"
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "vLl7z0"
 msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "De 3 a 30 caracteres. Só letras, números e sublinhados."
+msgstr "De 3 a 30 caracteres. Use apenas letras, números e sublinhados."
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "HAlOn1"
@@ -1825,39 +1205,34 @@ msgid "Name"
 msgstr "Nome"
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
-msgctxt "yNHZ-a"
-msgid "Your profile has been updated successfully!"
-msgstr "Seu perfil foi atualizado com sucesso!"
-
-#: src/app/[lang]/(settings)/profile/profile-form.tsx
-msgctxt "VT-G_7"
-msgid "This name will be visible to other users."
-msgstr "Este nome vai ficar visível para outros usuários."
-
-#: src/app/[lang]/(settings)/profile/profile-form.tsx
-msgctxt "wYCHCR"
-msgid "Failed to update your profile. Please try again or contact hello@zoonk.com"
-msgstr "Não foi possível atualizar seu perfil. Tente de novo ou fale com contato@zoonk.com"
-
-#: src/app/[lang]/(settings)/profile/profile-form.tsx
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "Nome de usuário"
 
 #: src/app/[lang]/(settings)/profile/profile-form.tsx
-msgctxt "X0ha1a"
-msgid "Save changes"
-msgstr "Salvar alterações"
+msgctxt "GrnZDN"
+msgid "Saved."
+msgstr "Salvo."
+
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
+msgctxt "bz5AYp"
+msgid "We couldn't save your profile. Try again."
+msgstr "Não foi possível salvar seu perfil. Tente de novo."
+
+#: src/app/[lang]/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Salvar"
 
 #: src/app/[lang]/(settings)/settings/appearance/page.tsx
-msgctxt "jFuLnX"
-msgid "Choose Focus or Fun, your buddy, sounds, how deep lessons go and a daily time limit."
-msgstr "Escolha entre Foco e Diversão, seu parceiro, os sons, o nível de aprofundamento das aulas e um limite diário de tempo."
+msgctxt "VnpW_P"
+msgid "Choose your buddy, sounds, a daily time limit and the app's language."
+msgstr "Escolha seu parceiro, os sons, um limite diário de tempo e o idioma do app."
 
 #: src/app/[lang]/(settings)/settings/appearance/page.tsx
-msgctxt "gNVz4b"
-msgid "The same plan and lessons in the look you like."
-msgstr "O mesmo plano e as mesmas aulas, com o visual que você prefere."
+msgctxt "BbrYZc"
+msgid "Your buddy, lessons and language, the way you like them."
+msgstr "Seu parceiro, suas aulas e seu idioma, do seu jeito."
 
 #: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
 msgctxt "rdZ1RR"
@@ -1915,6 +1290,11 @@ msgid "Daily limit: {minutes} min"
 msgstr "Limite diário: {minutes} min"
 
 #: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
+msgctxt "BwJC5I"
+msgid "Memory off"
+msgstr "Memória desativada"
+
+#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
 msgctxt "cYLBm9"
 msgid "Plus approved"
 msgstr "Plus aprovado"
@@ -1950,9 +1330,9 @@ msgid "Invite sent"
 msgstr "Convite enviado"
 
 #: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "06YYVy"
-msgid "Invite a parent or guardian to see your week, set a daily limit and approve Plus."
-msgstr "Convide um responsável para acompanhar sua semana, definir um limite diário e aprovar o Plus."
+msgctxt "N2KcgD"
+msgid "Invite a parent or guardian to see your week, set a daily limit, turn memory off and approve Plus."
+msgstr "Convide um responsável para ver sua semana, definir um limite diário, desativar a memória e aprovar o Plus."
 
 #: src/app/[lang]/(settings)/settings/guardian/page.tsx
 msgctxt "-1JR11"
@@ -1960,19 +1340,14 @@ msgid "Create an account to invite a guardian."
 msgstr "Crie uma conta para convidar um responsável."
 
 #: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "0vL5u1"
-msgid "Create an account"
-msgstr "Criar uma conta"
-
-#: src/app/[lang]/(settings)/settings/guardian/page.tsx
 msgctxt "Pw2Cov"
 msgid "Guardian links are for learners under 18."
 msgstr "Os vínculos com responsáveis são para quem tem menos de 18 anos."
 
 #: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "qnuX3o"
-msgid "A parent or guardian can see your weekly activity, set a daily time limit and approve Plus."
-msgstr "Um responsável pode acompanhar sua atividade semanal, definir um limite diário e aprovar o Plus."
+msgctxt "NUsUzs"
+msgid "A parent or guardian can see your weekly activity, set a daily time limit, turn memory off and approve Plus."
+msgstr "Um responsável pode ver suas atividades da semana, definir um limite diário de tempo, desativar a memória e aprovar o Plus."
 
 #: src/app/[lang]/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
@@ -2008,12 +1383,6 @@ msgstr "Renova em {date}."
 msgctxt "vaN1qz"
 msgid "Current billing period ends on {date}."
 msgstr "O período de cobrança atual termina em {date}."
-
-#: src/app/[lang]/(settings)/subscription/current-plan.tsx
-#: src/components/pricing/plus-purchase.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
 
 #: src/app/[lang]/(settings)/subscription/current-plan.tsx
 msgctxt "CrGYez"
@@ -2092,14 +1461,353 @@ msgstr "Verificar de novo"
 
 #: src/app/[lang]/(settings)/support/page.tsx
 #: src/app/[lang]/(settings)/support/support-content.tsx
-msgctxt "B5MLC7"
-msgid "Share feedback, ask questions, or get help with your account and courses."
-msgstr "Envie feedback, faça perguntas ou receba ajuda com sua conta e cursos."
+msgctxt "e60J1V"
+msgid "Ask a question, report a problem or share an idea. We answer by email."
+msgstr "Tire uma dúvida, conte sobre um problema ou compartilhe uma ideia. A gente responde por email."
 
 #: src/app/[lang]/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"
 msgid "Follow us"
 msgstr "Siga a gente"
+
+#: src/app/[lang]/(stats)/_components/progress-empty-state.tsx
+msgctxt "FVh2Tr"
+msgid "Start learning to track your progress"
+msgstr "Comece a estudar para acompanhar seu progresso"
+
+#: src/app/[lang]/(stats)/_components/progress-empty-state.tsx
+msgctxt "Y1zzQt"
+msgid "Log in to track your progress"
+msgstr "Entre para acompanhar seu progresso"
+
+#: src/app/[lang]/(stats)/_components/stats-nav.tsx
+#: src/lib/public/public-labels.ts
+msgctxt "9uOFF3"
+msgid "Overview"
+msgstr "Visão geral"
+
+#: src/app/[lang]/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(stats)/level/page.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Nível"
+
+#: src/app/[lang]/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(stats)/energy/page.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energia"
+
+#: src/app/[lang]/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(stats)/activity/page.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "Atividade"
+
+#: src/app/[lang]/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(stats)/score/page.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Pontuação"
+
+#: src/app/[lang]/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(stats)/patterns/page.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "BCauSf"
+msgid "Patterns"
+msgstr "Padrões"
+
+#: src/app/[lang]/(stats)/_components/stats-nav.tsx
+msgctxt "QbGIBZ"
+msgid "Your stats"
+msgstr "Suas estatísticas"
+
+#: src/app/[lang]/(stats)/activity/activity-chart.tsx
+msgctxt "3AtaPR"
+msgid "{count, plural, =0 {No study on {date}} one {# activity finished on {date}} other {# activities finished on {date}}}"
+msgstr "{count, plural, =0 {Nenhum estudo em {date}} one {# atividade concluída em {date}} other {# atividades concluídas em {date}}}"
+
+#: src/app/[lang]/(stats)/activity/activity-chart.tsx
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "o0vS8L"
+msgid "Past 12 months"
+msgstr "Últimos 12 meses"
+
+#: src/app/[lang]/(stats)/activity/activity-chart.tsx
+msgctxt "MnYAxL"
+msgid "Activity by day"
+msgstr "Atividade por dia"
+
+#: src/app/[lang]/(stats)/activity/activity-stats.tsx
+msgctxt "Y_RPkD"
+msgid "{lessons, plural, =0 {# lessons finished} one {# lesson finished} other {# lessons finished}} and {time} of study in total."
+msgstr "{lessons, plural, =0 {# aulas concluídas} one {# aula concluída} other {# aulas concluídas}} e {time} de estudo no total."
+
+#: src/app/[lang]/(stats)/activity/page.tsx
+msgctxt "LYW_o7"
+msgid "Your study days, lessons finished and time spent learning."
+msgstr "Seus dias de estudo, aulas concluídas e tempo dedicado ao aprendizado."
+
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "1cw6GI"
+msgid "No Energy recorded on {date}"
+msgstr "Nenhuma Energia registrada em {date}"
+
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "FpslmD"
+msgid "Max Energy on {date}"
+msgstr "Energia Máxima em {date}"
+
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "GThwd0"
+msgid "{percentage} Energy on {date}"
+msgstr "{percentage} de Energia em {date}"
+
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "0i1UHO"
+msgid "Energy by day"
+msgstr "Energia por dia"
+
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "jPmToJ"
+msgid "Energy intensity from low to high"
+msgstr "Intensidade da Energia, de baixa a alta"
+
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "477I0g"
+msgid "Low"
+msgstr "Baixa"
+
+#: src/app/[lang]/(stats)/energy/energy-chart.tsx
+msgctxt "AxMhQr"
+msgid "High"
+msgstr "Alta"
+
+#: src/app/[lang]/(stats)/energy/energy-content.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "qE9FEI"
+msgid "Energy starts after your first day of study, and grows as you learn."
+msgstr "A Energia começa depois do seu primeiro dia de estudo e cresce conforme você aprende."
+
+#: src/app/[lang]/(stats)/energy/energy-content.tsx
+msgctxt "fjBX60"
+msgid "How to raise it"
+msgstr "Como aumentar"
+
+#: src/app/[lang]/(stats)/energy/energy-content.tsx
+msgctxt "4CVVa8"
+msgid "Study a little every day"
+msgstr "Estude um pouco todos os dias"
+
+#: src/app/[lang]/(stats)/energy/energy-content.tsx
+msgctxt "YuXHv8"
+msgid "Every lesson you finish raises it. On days off it drops a little, and your belt and progress stay."
+msgstr "Cada aula que você termina aumenta sua Energia. Nos dias de folga, ela diminui um pouco, e sua faixa e seu progresso continuam."
+
+#: src/app/[lang]/(stats)/energy/energy-insights.tsx
+msgctxt "F9mA1x"
+msgid "Average Energy"
+msgstr "Energia média"
+
+#: src/app/[lang]/(stats)/energy/energy-insights.tsx
+msgctxt "-1YhhW"
+msgid "Days at Max Energy"
+msgstr "Dias com Energia máxima"
+
+#: src/app/[lang]/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "8VUVGe"
+msgid "Energy rises when you study and drops a little on days off."
+msgstr "A Energia aumenta quando você estuda e cai um pouco nos dias de descanso."
+
+#: src/app/[lang]/(stats)/energy/page.tsx
+msgctxt "wSjCCg"
+msgid "Your Energy now and over the past 12 months."
+msgstr "Sua Energia agora e nos últimos 12 meses."
+
+#: src/app/[lang]/(stats)/level/level-progression.tsx
+msgctxt "3DtX17"
+msgid "Belt progression"
+msgstr "Progressão das faixas"
+
+#: src/app/[lang]/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "Ugl3yi"
+msgid "{belt} · level {level}"
+msgstr "{belt} · nível {level}"
+
+#: src/app/[lang]/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "pgt3eW"
+msgid "Max level reached"
+msgstr "Nível máximo alcançado"
+
+#: src/app/[lang]/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "wOQaZN"
+msgid "{value} Brain Power to the next level"
+msgstr "Faltam {value} de Poder Mental para o próximo nível"
+
+#: src/app/[lang]/(stats)/level/level-stats.tsx
+msgctxt "UftV_z"
+msgid "You have {total} Brain Power. Every lesson adds {points}, and it never goes down."
+msgstr "Você tem {total} de Poder Mental. Cada aula adiciona {points}, e esse valor nunca diminui."
+
+#: src/app/[lang]/(stats)/level/page.tsx
+msgctxt "Wzw2i9"
+msgid "Your belt, level and Brain Power."
+msgstr "Sua faixa, nível e Poder Mental."
+
+#: src/app/[lang]/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "00_IyC"
+msgid "Night"
+msgstr "Madrugada"
+
+#: src/app/[lang]/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "_kzk_m"
+msgid "Morning"
+msgstr "Manhã"
+
+#: src/app/[lang]/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "mF-J9o"
+msgid "Afternoon"
+msgstr "Tarde"
+
+#: src/app/[lang]/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "mPEpnN"
+msgid "Evening"
+msgstr "Noite"
+
+#: src/app/[lang]/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(stats)/score/score-chart-client.tsx
+msgctxt "q9WSEF"
+msgid "{count, plural, one {# answer} other {# answers}}"
+msgstr "{count, plural, one {# resposta} other {# respostas}}"
+
+#: src/app/[lang]/(stats)/patterns/day-rhythm.tsx
+#: src/app/[lang]/(stats)/patterns/weekday-rhythm.tsx
+msgctxt "pafDXI"
+msgid "No answers"
+msgstr "Nenhuma resposta"
+
+#: src/app/[lang]/(stats)/patterns/day-rhythm.tsx
+msgctxt "g0f6D5"
+msgid "Throughout the day"
+msgstr "Ao longo do dia"
+
+#: src/app/[lang]/(stats)/patterns/page.tsx
+msgctxt "eBJm5e"
+msgid "See when you perform best over the past 90 days."
+msgstr "Veja quando você se sai melhor nos últimos 90 dias."
+
+#: src/app/[lang]/(stats)/patterns/page.tsx
+msgctxt "SXjWkq"
+msgid "When you answer best, over the last 90 days."
+msgstr "Quando você responde melhor, nos últimos 90 dias."
+
+#: src/app/[lang]/(stats)/patterns/patterns-content.tsx
+msgctxt "2oIGIh"
+msgid "Throughout the week"
+msgstr "Ao longo da semana"
+
+#: src/app/[lang]/(stats)/patterns/weekday-rhythm.tsx
+msgctxt "CQLx_3"
+msgid "{day}: {score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{day}: {score} em {count, plural, one {# resposta} other {# respostas}}"
+
+#: src/app/[lang]/(stats)/patterns/weekday-rhythm.tsx
+msgctxt "YSFJk-"
+msgid "{day}: No answers"
+msgstr "{day}: nenhuma resposta"
+
+#: src/app/[lang]/(stats)/patterns/weekday-rhythm.tsx
+msgctxt "u8s7op"
+msgid "You do better {weekday, select, sunday {on Sundays} monday {on Mondays} tuesday {on Tuesdays} wednesday {on Wednesdays} thursday {on Thursdays} friday {on Fridays} saturday {on Saturdays} other {on your best weekday}}"
+msgstr "Você se sai melhor {weekday, select, sunday {aos domingos} monday {às segundas-feiras} tuesday {às terças-feiras} wednesday {às quartas-feiras} thursday {às quintas-feiras} friday {às sextas-feiras} saturday {aos sábados} other {no seu melhor dia da semana}}"
+
+#: src/app/[lang]/(stats)/patterns/weekday-rhythm.tsx
+msgctxt "CW-JJR"
+msgid "{day} performance"
+msgstr "Desempenho de {day}"
+
+#: src/app/[lang]/(stats)/patterns/weekday-rhythm.tsx
+#: src/app/[lang]/(stats)/score/score-chart-client.tsx
+msgctxt "i2_Jga"
+msgid "{score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{score} em {count, plural, one {# resposta} other {# respostas}}"
+
+#: src/app/[lang]/(stats)/patterns/weekday-rhythm.tsx
+msgctxt "9SzqD3"
+msgid "Weekly rhythm"
+msgstr "Ritmo semanal"
+
+#: src/app/[lang]/(stats)/score/page.tsx
+msgctxt "-JqpHp"
+msgid "See your answer accuracy and weekly trend over the past 90 days."
+msgstr "Veja a precisão das suas respostas e a tendência semanal nos últimos 90 dias."
+
+#: src/app/[lang]/(stats)/score/score-chart-client.tsx
+msgctxt "33eat_"
+msgid "Weekly score trend"
+msgstr "Evolução semanal da Pontuação"
+
+#: src/app/[lang]/(stats)/score/score-chart-client.tsx
+msgctxt "l-oCrn"
+msgid "{label}: {score} across {count, plural, one {# answer} other {# answers}}"
+msgstr "{label}: {score} em {count, plural, one {# resposta} other {# respostas}}"
+
+#: src/app/[lang]/(stats)/score/score-stats.tsx
+msgctxt "b-bOob"
+msgid "Score summary"
+msgstr "Resumo da Pontuação"
+
+#: src/app/[lang]/(stats)/score/score-stats.tsx
+msgctxt "I2Yn4D"
+msgid "{correct} of {total, plural, one {# answer} other {# answers}} right in the last 90 days"
+msgstr "{correct} de {total, plural, one {# resposta} other {# respostas}} certas nos últimos 90 dias"
+
+#: src/app/[lang]/(stats)/score/score-stats.tsx
+msgctxt "Ip-YhF"
+msgid "Every answer counts the same, so harder lessons can lower your score for a while."
+msgstr "Todas as respostas têm o mesmo peso, então aulas mais difíceis podem baixar sua pontuação por um tempo."
+
+#: src/app/[lang]/(stats)/stats/page.tsx
+msgctxt "Q0jtuV"
+msgid "Your belt, Energy, study days, right answers and when you do best."
+msgstr "Sua faixa, Energia, dias de estudo, acertos e seus melhores horários."
+
+#: src/app/[lang]/(stats)/stats/page.tsx
+msgctxt "gyeEHA"
+msgid "What you've done and where you're picking up pace."
+msgstr "O que você já fez e onde está ganhando ritmo."
+
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "lO7wKc"
+msgid "Not yet"
+msgstr "Ainda não"
+
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "-XxnAo"
+msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time} in total"
+msgstr "{lessons, plural, =0 {# aulas} one {# aula} other {# aulas}} · {time} no total"
+
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "Y_aK5B"
+msgid "Right answers in the last 90 days"
+msgstr "Respostas certas nos últimos 90 dias"
+
+#: src/app/[lang]/(stats)/stats/stats-overview.tsx
+msgctxt "eXAMzi"
+msgid "Your best day and time"
+msgstr "Seu melhor dia e horário"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons-card.tsx
 msgctxt "iqLF8D"
@@ -2118,13 +1826,11 @@ msgid "{count, plural, one {# short lesson} other {# short lessons}}"
 msgstr "{count, plural, one {# aula curta} other {# aulas curtas}}"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-lesson-preview.tsx
 msgctxt "xpsuUj"
 msgid "Guess first. It doesn't count."
 msgstr "Tente adivinhar. Não conta."
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/first-screen-card.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-lesson-preview.tsx
 msgctxt "ShLQAa"
 msgid "Quick question"
 msgstr "Pergunta rápida"
@@ -2164,7 +1870,6 @@ msgid "What you'll learn"
 msgstr "O que você vai aprender"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "nxKjXi"
 msgid "{count, plural, one {# lesson} other {# lessons}} · {duration}"
 msgstr "{count, plural, one {# aula} other {# aulas}} · {duration}"
@@ -2207,26 +1912,6 @@ msgctxt "DcXGUl"
 msgid "{chapter}: {course} course"
 msgstr "{chapter}: curso de {course}"
 
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
-msgctxt "Xi9OD0"
-msgid "A plan in the minutes you have"
-msgstr "Um plano para o tempo que você tem"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
-msgctxt "CzBBQM"
-msgid "Short lessons, one idea at a time"
-msgstr "Aulas curtas, uma ideia por vez"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
-msgctxt "UGlOBY"
-msgid "Each lesson takes a few minutes, with questions as you go. Stuck? Tap Simpler. Curious? Tap Go deeper."
-msgstr "Cada aula leva alguns minutos, com perguntas pelo caminho. Travou? Toque em Mais simples. Bateu a curiosidade? Toque em Mais a fundo."
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-how-it-works.tsx
-msgctxt "Ffq0W2"
-msgid "Reviews before you forget"
-msgstr "Revisões antes de esquecer"
-
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/course-levels-card.tsx
 msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
@@ -2258,12 +1943,6 @@ msgid "Who it's for"
 msgstr "Para quem é"
 
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
-msgctxt "8Dn3GJ"
-msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"
-msgstr "{chapters, plural, one {# capítulo} other {# capítulos}} · {lessons, plural, one {# aula} other {# aulas}}"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "L7XB2b"
 msgid "See all chapters and lessons"
 msgstr "Ver todos os capítulos e aulas"
@@ -2293,26 +1972,6 @@ msgctxt "sfBJ3B"
 msgid "Learn skills you can use, one lesson at a time"
 msgstr "Aprenda habilidades que você pode usar, uma aula de cada vez"
 
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "KjYOfT"
-msgid "You found a course that hasn't been written yet"
-msgstr "Você encontrou um curso que ainda não foi criado"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "0DbJhZ"
-msgid "Tell us what you want to learn. We'll turn it into a clear, step-by-step course made for you."
-msgstr "Conte pra gente o que você quer aprender. A gente transforma isso em um curso claro, passo a passo, feito para você."
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "1SogB9"
-msgid "Create this course"
-msgstr "Criar este curso"
-
-#: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/not-found.tsx
-msgctxt "eN72ct"
-msgid "An open book becoming a learning path"
-msgstr "Um livro aberto se transformando em uma trilha de estudo"
-
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/page.tsx
 msgctxt "_allXG"
 msgid "Learn {course} online with practical examples and everyday language. {description}"
@@ -2323,10 +1982,11 @@ msgctxt "gyGolN"
 msgid "Learn {course}"
 msgstr "Aprenda {course}"
 
+#: src/app/[lang]/challenge/[planItemId]/page.tsx
 #: src/app/[lang]/checkpoint/[blockId]/page.tsx
-msgctxt "h6XDMT"
-msgid "Checkpoint"
-msgstr "Avaliação"
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Desafio"
 
 #: src/app/[lang]/conversation/[conversationId]/page.tsx
 msgctxt "gegfoA"
@@ -2356,9 +2016,14 @@ msgid "Build a plan for the whole subject"
 msgstr "Monte um plano para a matéria toda"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
-msgctxt "bF1RJo"
-msgid "Learn in depth: {topic}"
-msgstr "Estude a fundo: {topic}"
+msgctxt "xuyfqZ"
+msgid "I want to understand {topic} in depth"
+msgstr "Quero entender {topic} mais a fundo"
+
+#: src/app/[lang]/focus-test/page.tsx
+msgctxt "-3M8u-"
+msgid "Focus test"
+msgstr "Teste de foco"
 
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
 msgctxt "UTU-oM"
@@ -2409,10 +2074,30 @@ msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Voltar"
 
+#: src/app/[lang]/logbook/page.tsx
+msgctxt "_qTRbZ"
+msgid "Logbook"
+msgstr "Diário de bordo"
+
+#: src/app/[lang]/mistakes/practice/page.tsx
+msgctxt "HGnX5e"
+msgid "Practice mistakes"
+msgstr "Praticar o que você errou"
+
 #: src/app/[lang]/mock/[blockId]/page.tsx
 msgctxt "6ppMud"
 msgid "Mock exam"
 msgstr "Simulado"
+
+#: src/app/[lang]/mock/new/page.tsx
+msgctxt "g5EneG"
+msgid "Take a mock exam"
+msgstr "Fazer um simulado"
+
+#: src/app/[lang]/mock/placement/[goalId]/page.tsx
+msgctxt "irPOsS"
+msgid "A mock exam to find your level"
+msgstr "Um simulado para descobrir seu nível"
 
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "XqDTOi"
@@ -2450,9 +2135,20 @@ msgid "~{hours, number} h"
 msgstr "~{hours, number} h"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "4zm4MM"
+msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
+msgstr "Você recebe um plano só seu sobre o mesmo assunto, no seu ritmo. Responda a algumas perguntas e pule o que já sabe."
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
 msgctxt "ql_IXy"
 msgid "A study plan someone shared with you"
 msgstr "Um plano de estudos que alguém compartilhou com você"
+
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
+msgctxt "8jQqTq"
+msgid "Start from this plan"
+msgstr "Começar com este plano"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 msgctxt "JzVq84"
@@ -2463,22 +2159,6 @@ msgstr "~{minutes, number} min de estudo · {phases, plural, one {# fase} other 
 msgctxt "GFvjUd"
 msgid "~{hours, number} h of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
 msgstr "~{hours, number} h de estudo · {phases, plural, one {# fase} other {# fases}} · {skills, plural, one {# habilidade} other {# habilidades}}"
-
-#: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "RBKgNO"
-msgid "Make it yours"
-msgstr "Personalize seu plano"
-
-#: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "4zm4MM"
-msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
-msgstr "Você recebe um plano só seu sobre o mesmo assunto, no seu ritmo. Responda a algumas perguntas e pule o que já sabe."
-
-#: src/app/[lang]/plan-link/[planId]/page.tsx
-#: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "8jQqTq"
-msgid "Start from this plan"
-msgstr "Começar com este plano"
 
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
 msgctxt "3aNmDX"
@@ -2491,9 +2171,9 @@ msgid "{minutes, number} min"
 msgstr "{minutes, number} min"
 
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "dLMg_G"
-msgid "You can't add another goal right now. Finish or pause one first."
-msgstr "Você não pode adicionar outra meta agora. Termine ou pause uma primeiro."
+msgctxt "W97xmd"
+msgid "You can't start another goal right now. Finish or pause one first."
+msgstr "Você não pode começar outra meta agora. Termine ou pause uma meta primeiro."
 
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
 msgctxt "kaDIbJ"
@@ -2521,6 +2201,11 @@ msgid "Its chapters and lessons are written when you start."
 msgstr "Os capítulos e as aulas são criados quando você começa."
 
 #: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "8Dn3GJ"
+msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"
+msgstr "{chapters, plural, one {# capítulo} other {# capítulos}} · {lessons, plural, one {# aula} other {# aulas}}"
+
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
 msgctxt "Cr5XrH"
 msgid "{count, plural, one {and # more chapter} other {and # more chapters}}"
 msgstr "{count, plural, one {e mais # capítulo} other {e mais # capítulos}}"
@@ -2539,6 +2224,11 @@ msgstr "Seu plano segue este curso, de acordo com o tempo que você tem por dia.
 msgctxt "6e3fLf"
 msgid "Start {course}"
 msgstr "Começar {course}"
+
+#: src/app/[lang]/start/course/[courseId]/page.tsx
+msgctxt "9m9h0p"
+msgid "Start a course"
+msgstr "Começar um curso"
 
 #: src/app/[lang]/start/page.tsx
 msgctxt "8kiH7W"
@@ -2560,16 +2250,20 @@ msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Termos de uso"
 
+#: src/app/[lang]/test-out/[chapterId]/page.tsx
+msgctxt "5-s6we"
+msgid "Test out of a chapter"
+msgstr "Teste para pular um capítulo"
+
+#: src/app/[lang]/test-out/[chapterId]/page.tsx
+msgctxt "KGN7UU"
+msgid "This chapter"
+msgstr "Este capítulo"
+
 #: src/app/global-not-found.tsx
 msgctxt "QRccCM"
 msgid "Page not found"
 msgstr "Página não encontrada"
-
-#: src/app/global-not-found.tsx
-#: src/components/public/public-top-bar.tsx
-msgctxt "wBSumo"
-msgid "Zoonk home page"
-msgstr "Página inicial do Zoonk"
 
 #: src/components/catalog/catalog-grid-back-to-top.tsx
 msgctxt "Gs9Kfp"
@@ -2577,14 +2271,14 @@ msgid "Back to top"
 msgstr "Voltar ao topo"
 
 #: src/components/errors/page-error-message.tsx
-msgctxt "9nolIL"
-msgid "This page didn't load"
-msgstr "Esta página não carregou"
-
-#: src/components/errors/page-error-message.tsx
 msgctxt "oPXFzM"
 msgid "Something went wrong on our side. Trying again usually fixes it."
 msgstr "Algo deu errado por aqui. Tentar de novo geralmente resolve."
+
+#: src/components/errors/page-error-message.tsx
+msgctxt "9nolIL"
+msgid "This page didn't load"
+msgstr "Esta página não carregou"
 
 #: src/components/pricing/billing-price-summary.tsx
 msgctxt "1qALXt"
@@ -2652,9 +2346,9 @@ msgid "AI tutor whenever you're stuck"
 msgstr "Tutor de IA sempre que você ficar com dúvida"
 
 #: src/components/pricing/plus-benefits.tsx
-msgctxt "mQ0rFD"
-msgid "Speaking practice every day"
-msgstr "Prática de conversação todos os dias"
+msgctxt "GEER8U"
+msgid "Higher limits for speaking calls"
+msgstr "Limites maiores para chamadas de conversação"
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "ANweop"
@@ -2682,9 +2376,9 @@ msgid "Get ready for your exam, new job or move."
 msgstr "Prepare-se para uma prova, um novo emprego ou uma mudança."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "vxvdpN"
-msgid "Plus gives you everything Zoonk has, with no limits."
-msgstr "O Plus te dá acesso a tudo que o Zoonk oferece, sem limites."
+msgctxt "XLh9rZ"
+msgid "Plus gives you everything Zoonk has."
+msgstr "Com o Plus, você tem acesso a tudo que o Zoonk oferece."
 
 #: src/components/pricing/plus-purchase.tsx
 msgctxt "h9kFux"
@@ -2753,9 +2447,14 @@ msgid "{days, plural, =7 {The first week} one {The first day} other {The first #
 msgstr "{days, plural, =7 {A primeira semana} one {O primeiro dia} other {Os primeiros # dias}} de preparo para a prova"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "ez22QW"
-msgid "{tutor, plural, one {# tutor message} other {# tutor messages}}, {conversations, plural, one {# speaking conversation} other {# speaking conversations}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "{tutor, plural, one {# mensagem para o tutor} other {# mensagens para o tutor}}, {conversations, plural, one {# conversa por voz} other {# conversas por voz}} e {uploads, plural, one {# envio de arquivo} other {# envios de arquivo}} por dia"
+msgctxt "LrvnTE"
+msgid "{tutor, plural, one {# tutor message} other {# tutor messages}} and {uploads, plural, one {# upload} other {# uploads}} a day"
+msgstr "{tutor, plural, one {# mensagem para o tutor} other {# mensagens para o tutor}} e {uploads, plural, one {# envio} other {# envios}} por dia"
+
+#: src/components/pricing/plus-questions.tsx
+msgctxt "wo99A0"
+msgid "Speaking calls, with lower limits than Plus"
+msgstr "Chamadas de conversação, com limites menores que no Plus"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "uUjwhB"
@@ -2773,9 +2472,9 @@ msgid "Is Plus really unlimited?"
 msgstr "O Plus é mesmo ilimitado?"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "-QCGXn"
-msgid "Yes. Learn as much as you want. Our limits are only there to stop bots and automated tools, not people learning. <link>Read our fair use policy</link>."
-msgstr "Sim. Aprenda tudo o que quiser. Nossos limites servem apenas para impedir robôs e ferramentas automatizadas, não quem está estudando. <link>Leia nossa política de uso justo</link>."
+msgctxt "Rlickz"
+msgid "Almost. Lessons, goals and the tutor have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
+msgstr "Quase. As aulas, as metas e o tutor têm limites só para impedir bots e ferramentas automatizadas, não quem está aprendendo. As chamadas de conversação têm limites diários e mensais, maiores que no plano grátis. <link>Leia nossa política de uso justo</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
@@ -2796,11 +2495,6 @@ msgstr "Posso pedir um reembolso?"
 msgctxt "LHV1sa"
 msgid "Just <link>contact us</link> and tell us what happened. We'll do our best to get you a refund."
 msgstr "É só <link>falar com a gente</link> e contar o que aconteceu. Vamos fazer o possível para conseguir seu reembolso."
-
-#: src/components/progress/learning-days-card.tsx
-msgctxt "8F6teD"
-msgid "Learning days"
-msgstr "Dias de estudo"
 
 #: src/components/progress/progress-day-count-label.ts
 msgctxt "r9koty"
@@ -2833,30 +2527,20 @@ msgctxt "Frd5VU"
 msgid "{hours, plural, one {# hr} other {# hr}} {minutes, plural, one {# min} other {# min}}"
 msgstr "{hours, plural, one {# h} other {# h}} {minutes, plural, one {# min} other {# min}}"
 
-#: src/components/progress/progress-lesson-count-label.ts
-msgctxt "sNh2SZ"
-msgid "{count, plural, =0 {# lessons} one {# lesson} other {# lessons}}"
-msgstr "{count, plural, =0 {# aulas} one {# aula} other {# aulas}}"
-
-#: src/components/progress/total-learning-time-card.tsx
-msgctxt "-V74AY"
-msgid "Learning time"
-msgstr "Tempo de estudo"
-
 #: src/components/public/course-start-failure.tsx
 msgctxt "6qTSET"
 msgid "We couldn't start this course."
 msgstr "Não foi possível começar este curso."
 
 #: src/components/public/not-found-message.tsx
-msgctxt "Rx6qZ-"
-msgid "We couldn't find this page"
-msgstr "Não encontramos esta página"
-
-#: src/components/public/not-found-message.tsx
 msgctxt "EdX_cR"
 msgid "The link may be old or mistyped."
 msgstr "O link pode ser antigo ou ter sido digitado errado."
+
+#: src/components/public/not-found-message.tsx
+msgctxt "Rx6qZ-"
+msgid "We couldn't find this page"
+msgstr "Não encontramos esta página"
 
 #: src/components/public/public-footer.tsx
 msgctxt "Vge-RX"
@@ -2877,6 +2561,11 @@ msgstr "Termos"
 msgctxt "k7JNE3"
 msgid "© {year} Zoonk"
 msgstr "© {year} Zoonk"
+
+#: src/components/public/public-top-bar.tsx
+msgctxt "wBSumo"
+msgid "Zoonk home page"
+msgstr "Página inicial do Zoonk"
 
 #: src/lib/belt-colors.ts
 msgctxt "_6Vlf7"
@@ -2969,11 +2658,6 @@ msgid "{category} Courses"
 msgstr "Cursos de {category}"
 
 #: src/lib/categories/category.ts
-msgctxt "EMi23I"
-msgid "Explore all {category} courses"
-msgstr "Explore todos os cursos de {category}"
-
-#: src/lib/categories/category.ts
 msgctxt "Rz9oL-"
 msgid "{category} courses"
 msgstr "Cursos de {category}"
@@ -2997,8 +2681,3 @@ msgstr "Iniciante"
 msgctxt "o5_DJA"
 msgid "Intermediate"
 msgstr "Intermediário"
-
-#: src/lib/public/public-labels.ts
-msgctxt "9uOFF3"
-msgid "Overview"
-msgstr "Visão geral"

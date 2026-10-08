@@ -31,9 +31,10 @@ async function requestLiveGeneration(lessonId: string) {
 }
 
 /**
- * Gets a lesson written for the learner or guest in the session, at the priority tier since they
- * reach it within minutes: a written lesson is `ready`, one being written is followed, otherwise
- * a run starts. Asking counts as the lesson start it leads to, so the allowance decides first.
+ * Gets a lesson written for the learner or guest in the session, who is about to open it: a
+ * written lesson is `ready`, one being written is followed, otherwise a run starts, written at the
+ * tier a learner's wait gets. Asking counts as the lesson start it leads to, so the allowance
+ * decides first.
  */
 export async function startLessonWriting(lessonId: string): Promise<LessonWriting> {
   const result = await requestLiveGeneration(lessonId);
@@ -47,7 +48,7 @@ export async function startLessonWriting(lessonId: string): Promise<LessonWritin
       analytics: result.analytics,
       forExam: result.forExam,
       lessonId: result.lessonId,
-      priority: true,
+      wait: "learner",
     },
   ]);
 

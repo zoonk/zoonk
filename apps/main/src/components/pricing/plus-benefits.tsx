@@ -14,7 +14,7 @@ export async function PlusBenefits() {
     t("Unlimited lessons and goals"),
     t("Full exam prep, with mock exams"),
     t("AI tutor whenever you're stuck"),
-    t("Speaking practice every day"),
+    t("Higher limits for speaking calls"),
   ];
 
   return (

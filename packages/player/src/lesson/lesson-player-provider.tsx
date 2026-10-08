@@ -6,6 +6,8 @@ import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { useEffect, useEffectEvent, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { UserNameProvider } from "../user-name-context";
+import { LessonPicturesProvider } from "./_components/lesson-pictures";
+import { resumeLesson } from "./_utils/lesson-resume";
 import {
   LessonPlayerConfigContext,
   LessonPlayerRuntimeContext,
@@ -17,10 +19,10 @@ import { type LessonPlayerState, createInitialState } from "./lesson-player-stat
 import {
   type LessonPlayerAdapters,
   type LessonPlayerRoutes,
+  type LessonRunAnswers,
   type PlayableLibraryLesson,
   type PlayableLibraryStep,
 } from "./lesson-player-types";
-import { type LessonPlayerSkin } from "./skins/lesson-player-skin";
 import { LessonTutor } from "./tutor/lesson-tutor";
 import { type LessonTutorConfig } from "./tutor/lesson-tutor-context";
 import { useAbandonTracking } from "./use-abandon-tracking";
@@ -39,22 +41,26 @@ function getOptionIds(step: PlayableLibraryStep): string[] {
 }
 
 /**
- * A public lesson page lets a visitor answer the first question right there. The player opens
- * with that answer picked, and checks it at once, so the tap counts as the lesson's first step.
+ * A lesson the learner comes back to opens where they left off (`resume`, the open run's answers
+ * read with the page). A public lesson page lets a visitor answer the first question right there:
+ * the player opens with that answer picked, and checks it at once, so the tap counts as the
+ * lesson's first step.
  */
 function createStartingState({
   firstAnswer,
   lesson,
+  resume,
   support,
 }: {
   firstAnswer: string | null;
   lesson: PlayableLibraryLesson;
+  resume: LessonRunAnswers;
   support: LessonSupport | null;
 }): LessonPlayerState {
   const first = lesson.steps[0];
 
   if (!firstAnswer || !first || !getOptionIds(first).includes(firstAnswer)) {
-    return createInitialState(lesson, support);
+    return resumeLesson(createInitialState(lesson, support), resume);
   }
 
   /** The visitor already answered the first screen, so the lesson keeps its own order. */
@@ -76,19 +82,18 @@ export type LessonPlayerProviderProps = {
    */
   challengeTeam?: ChallengeTeam | null;
   children: React.ReactNode;
-  /**
-   * Explanations open their "Go deeper" version first: the learner's setting, or what memory says
-   * they asked for. Off unless the host turns it on.
-   */
-  deeperByDefault?: boolean;
   /** The option a visitor picked on the lesson's public page, checked as soon as the player opens. */
   firstAnswer?: string | null;
   lesson: PlayableLibraryLesson;
   linkComponent: PlayerLinkComponent;
-  /** Called by Escape and by Enter on the completion moment. */
+  /** Called by Escape. */
   onExit: () => void;
+  /**
+   * The answers of the learner's open run of this lesson, read with the page, so a lesson they
+   * come back to opens where they left off before the run starts again. Empty for a new run.
+   */
+  resume?: LessonRunAnswers;
   routes: LessonPlayerRoutes;
-  skin: LessonPlayerSkin;
   slots?: LessonPlayerSlots;
   /** Plays Appearance's sounds for right answers and finishing. Off unless the host turns it on. */
   soundsEnabled?: boolean;
@@ -108,24 +113,24 @@ function noTracking() {
 }
 
 const NO_SLOTS: LessonPlayerSlots = {};
+const NO_ANSWERS: LessonRunAnswers = [];
 
 /**
  * Plays one Library lesson. The host supplies the lesson, how to reach the server (adapters), its
- * links and routes, and the mode's skin; everything else, including the run on the server, lives
- * here. A learner or guest with a session starts the run as the lesson opens; a host that shows a
- * lesson without one starts it on the first answer (the web sends screens only with a session).
+ * links and routes; everything else, including the run on the server, lives here. A learner or
+ * guest with a session starts the run as the lesson opens; a host that shows a lesson without one
+ * starts it on the first answer (the web sends screens only with a session).
  */
 export function LessonPlayerProvider({
   adapters,
   challengeTeam = null,
   children,
-  deeperByDefault = false,
   firstAnswer = null,
   lesson,
   linkComponent,
   onExit,
+  resume = NO_ANSWERS,
   routes,
-  skin,
   slots = NO_SLOTS,
   soundsEnabled = false,
   support = null,
@@ -135,7 +140,7 @@ export function LessonPlayerProvider({
 }: LessonPlayerProviderProps) {
   const [state, dispatch] = useReducer(
     lessonPlayerReducer,
-    { firstAnswer, lesson, support },
+    { firstAnswer, lesson, resume, support },
     createStartingState,
   );
 
@@ -162,7 +167,6 @@ export function LessonPlayerProvider({
     () => ({
       adapters,
       challengeTeam,
-      deeperByDefault,
       lesson: {
         estimatedMinutes: lesson.estimatedMinutes,
         id: lesson.id,
@@ -173,24 +177,11 @@ export function LessonPlayerProvider({
       linkComponent,
       onExit,
       routes,
-      skin,
       slots,
       soundsEnabled,
       track,
     }),
-    [
-      adapters,
-      challengeTeam,
-      deeperByDefault,
-      lesson,
-      linkComponent,
-      onExit,
-      routes,
-      skin,
-      slots,
-      soundsEnabled,
-      track,
-    ],
+    [adapters, challengeTeam, lesson, linkComponent, onExit, routes, slots, soundsEnabled, track],
   );
 
   const runtime = useMemo(() => ({ actions, screen, state }), [actions, screen, state]);
@@ -199,7 +190,12 @@ export function LessonPlayerProvider({
     <LessonPlayerConfigContext value={config}>
       <LessonPlayerRuntimeContext value={runtime}>
         <LessonTutor tutor={tutor}>
-          <UserNameProvider initialName={viewer.userName}>{children}</UserNameProvider>
+          <LessonPicturesProvider
+            getLessonPictures={adapters.getLessonPictures}
+            steps={lesson.steps}
+          >
+            <UserNameProvider initialName={viewer.userName}>{children}</UserNameProvider>
+          </LessonPicturesProvider>
         </LessonTutor>
       </LessonPlayerRuntimeContext>
     </LessonPlayerConfigContext>

@@ -87,7 +87,7 @@ export const languageLevelTestResultSchema = z
       )
       .meta({
         description:
-          "Each skill's starting level. Speaking has one only when the sentence was said out loud",
+          "Each tested skill's starting level. Speaking has one only when the sentence was said out loud; writing has none, since the test asks nothing written",
       }),
   })
   .meta({ id: "LanguageLevelTestResult" });

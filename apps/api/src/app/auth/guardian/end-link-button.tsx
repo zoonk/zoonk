@@ -36,7 +36,7 @@ export function EndLinkButton({ learnerName, linkId }: { learnerName: string; li
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t(
-                "You'll stop seeing their week, and your daily limit and Plus approval end. They can invite you again later.",
+                "You'll stop seeing their week, and your daily limit, memory choice and Plus approval end. They can invite you again later.",
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>

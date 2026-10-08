@@ -14,9 +14,12 @@ import systemPrompt from "./language-lesson.prompt.md";
  * quality wins over cost. In the per-pair eval (5 cases: pt-en at A2 and B1,
  * en-pt, en-es and es-en, Sep 2026) Sol scored 8.16 at 47s p50 and about
  * $0.04 a lesson; Gemini 3.8 Flash scored 7.40 at 9s and $0.01, with more
- * false pronunciation rules and wrong options that were also right.
+ * false pronunciation rules and wrong options that were also right. GPT-6.1
+ * Sol replaced GPT-6 Sol (7 Oct 2026, 3 cases, same prompt and hour): 8.83
+ * against 7.30 at 48s against 50s p50 and $0.028 against $0.042 a lesson; GPT-6
+ * Sol stated a false grammar rule in all three lessons, 6.1 in none.
  */
-const defaultModel = "openai/gpt-6-sol";
+const defaultModel = "openai/gpt-6.1-sol";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
 const MIN_WORDS = 3;

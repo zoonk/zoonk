@@ -129,7 +129,7 @@ export function TrueFalseQuestion({
       <div
         className={cn(
           "bg-background flex min-h-48 w-full touch-pan-y items-center justify-center rounded-3xl border p-6 text-center shadow-sm select-none",
-          "in-data-[mode=fun]:fun-paper motion-safe:transition-transform",
+          "motion-safe:transition-transform",
           !disabled && "cursor-grab active:cursor-grabbing",
         )}
         style={{
@@ -145,7 +145,7 @@ export function TrueFalseQuestion({
       </div>
 
       {/* On phones False and True share a row and "Leave blank" goes under them, so the three fit
-          the paper panel in every language; wider screens keep one row, blank in the middle. */}
+          in every language; wider screens keep one row, blank in the middle. */}
       <div className="grid w-full grid-cols-2 items-center gap-3 sm:grid-cols-[1fr_auto_1fr]">
         <Button
           aria-keyshortcuts="ArrowLeft 1"

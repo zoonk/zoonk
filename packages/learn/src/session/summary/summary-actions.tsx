@@ -1,63 +1,73 @@
 "use client";
 
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { AwardIcon } from "lucide-react";
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { EnterButton } from "../../_components/enter-button";
-import { useExperienceMode } from "../../mode-provider";
 import { SavePlanNote } from "../../onboarding/save-plan-note";
+import { TaskMainButton } from "../../shell/task-frame";
 import { ExtraTimeButton } from "../extra-time-button";
 import { useSessionAction } from "../use-session-action";
-import { useSessionSummary } from "./summary-context";
+import { useIsStopped, useSessionSummary } from "./summary-context";
 
-/**
- * Done goes back to Today; "10 more minutes" appears after the day's session while it's offered
- * (capped, and never past a guardian's limit). A guest is asked, softly, to save their plan. On
- * phones the actions sit at the bottom, within thumb reach; wider screens keep them under the
- * summary instead of across an empty gap.
- */
-export function SummaryActions() {
+function ActionFailed({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-destructive text-center text-sm" role="alert">
+      {children}
+    </p>
+  );
+}
+
+/** The last step's main action, back to Today. Enter presses it. */
+export function FinishButton() {
   const t = useExtracted();
-  const mode = useExperienceMode();
-  const { actions, signUpHref, summary } = useSessionSummary();
-  const { extraTime } = summary;
-  const done = useSessionAction({ action: actions.done, enterKey: true });
+  const { actions } = useSessionSummary();
+  const { failed, isPending, run } = useSessionAction({ action: actions.done });
 
   return (
-    <div className="mt-auto flex flex-col gap-2 pt-4 sm:mt-0">
-      {signUpHref && <SavePlanNote signUpHref={signUpHref} />}
-
-      <EnterButton disabled={done.isPending} onClick={done.run}>
-        {mode === "fun" ? t("Continue") : t("Done")}
-      </EnterButton>
-
-      {extraTime.available && (
-        <ExtraTimeButton action={actions.addExtraTime} minutes={extraTime.minutes} />
-      )}
+    <div className="flex flex-col gap-2">
+      {failed && <ActionFailed>{t("That didn't go through. Try again in a moment.")}</ActionFailed>}
+      <TaskMainButton busy={isPending} onClick={run}>
+        {t("Finish")}
+      </TaskMainButton>
     </div>
   );
 }
 
-/** At most one milestone per session: the host's ceremony, or a quiet line that lands softly. */
-export function SummaryMilestone() {
+/** Right after stopping for today, the rest of the session is one tap away. */
+function KeepGoingButton() {
   const t = useExtracted();
-  const { ceremony, summary } = useSessionSummary();
-  const milestone = summary.ceremony;
-
-  if (!milestone) {
-    return null;
-  }
-
-  if (ceremony) {
-    return ceremony(milestone);
-  }
+  const { actions } = useSessionSummary();
+  const { failed, isPending, run } = useSessionAction({ action: actions.keepGoing });
 
   return (
-    <p className="bg-muted/60 in-data-[mode=fun]:fun-glass flex items-start gap-2 rounded-2xl px-4 py-3 text-sm">
-      <LineMarker>
-        <AwardIcon aria-hidden="true" className="text-warning size-4" />
-      </LineMarker>
-      {t("New milestone reached. See it in Progress.")}
-    </p>
+    <>
+      <Button className="w-full" disabled={isPending} onClick={run} size="lg" variant="ghost">
+        {t("Keep going")}
+      </Button>
+
+      {failed && <ActionFailed>{t("We couldn't open the next step. Try again.")}</ActionFailed>}
+    </>
+  );
+}
+
+/**
+ * Under Finish: after the day's session, "10 more minutes" while there's something left to study
+ * (capped, and never past a guardian's limit); right after stopping for today, "Keep going". A
+ * guest is asked, softly, to save their plan.
+ */
+export function SummaryOptions() {
+  const stopped = useIsStopped();
+  const { actions, signUpHref, summary } = useSessionSummary();
+  const { extraTime } = summary;
+
+  return (
+    <>
+      {stopped && <KeepGoingButton />}
+
+      {!stopped && extraTime.available && (
+        <ExtraTimeButton action={actions.addExtraTime} minutes={extraTime.minutes} />
+      )}
+
+      {signUpHref && <SavePlanNote signUpHref={signUpHref} />}
+    </>
   );
 }

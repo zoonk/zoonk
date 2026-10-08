@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pickTestOutSkills, scoreTestOut } from "./test-out-rules";
+import { getTestOutQuestionCount, pickTestOutSkills, scoreTestOut } from "./test-out-rules";
 
 describe(pickTestOutSkills, () => {
   it("keeps every skill of a small chapter", () => {
@@ -22,10 +22,18 @@ describe(pickTestOutSkills, () => {
   });
 });
 
+describe(getTestOutQuestionCount, () => {
+  it("asks more the more it can skip, never fewer than four questions nor more than eight", () => {
+    expect([1, 4, 8, 9, 15, 40].map((lessons) => getTestOutQuestionCount(lessons))).toStrictEqual([
+      4, 4, 4, 5, 8, 8,
+    ]);
+  });
+});
+
 describe(scoreTestOut, () => {
   const chapterSkillIds = ["a", "b", "c", "d", "e"];
 
-  it("passes at 80% and counts the whole chapter known except missed skills", () => {
+  it("passes at 80% with every skill answered, and knows only the skills answered right", () => {
     const score = scoreTestOut({
       chapterSkillIds,
       results: [
@@ -35,7 +43,6 @@ describe(scoreTestOut, () => {
         { isCorrect: true, skillId: "d" },
         { isCorrect: false, skillId: "e" },
       ],
-      testableSkillCount: 5,
     });
 
     expect(score).toStrictEqual({
@@ -54,37 +61,70 @@ describe(scoreTestOut, () => {
         { isCorrect: true, skillId: "a" },
         { isCorrect: false, skillId: "b" },
         { isCorrect: false, skillId: "c" },
+        { isCorrect: true, skillId: "d" },
+        { isCorrect: true, skillId: "e" },
       ],
-      testableSkillCount: 5,
     });
 
     expect(score.passed).toBe(false);
-    expect(score.knownSkillIds).toStrictEqual(["a"]);
+    expect(score.knownSkillIds).toStrictEqual(["a", "d", "e"]);
   });
 
-  it("needs answers on three different skills", () => {
-    const score = scoreTestOut({
+  it("can't pass on a skill or two of a bigger chapter, however many answers are right", () => {
+    const oneSkill = scoreTestOut({
+      chapterSkillIds,
+      results: [{ isCorrect: true, skillId: "a" }],
+    });
+
+    const sameSkillTwice = scoreTestOut({
       chapterSkillIds,
       results: [
         { isCorrect: true, skillId: "a" },
         { isCorrect: true, skillId: "a" },
       ],
-      testableSkillCount: 5,
     });
 
-    expect(score.passed).toBe(false);
+    expect(oneSkill).toMatchObject({ knownSkillIds: ["a"], passed: false });
+    expect(sameSkillTwice).toMatchObject({ knownSkillIds: ["a"], passed: false });
   });
 
-  it("accepts every testable skill in a chapter with fewer than three", () => {
+  it("passes a big chapter on its sampled skills without counting the others as known", () => {
+    const skills = Array.from({ length: 10 }, (_, index) => `s${index}`);
+    const sampled = pickTestOutSkills(skills);
+
     const score = scoreTestOut({
-      chapterSkillIds: ["a", "b"],
-      results: [
-        { isCorrect: true, skillId: "a" },
-        { isCorrect: true, skillId: "b" },
-      ],
-      testableSkillCount: 2,
+      chapterSkillIds: skills,
+      results: sampled.map((skillId) => ({ isCorrect: true, skillId })),
     });
 
     expect(score.passed).toBe(true);
+    expect(score.knownSkillIds).toStrictEqual(sampled);
+    expect(score.knownSkillIds).not.toContain("s4");
+    expect(score.knownSkillIds).not.toContain("s9");
+  });
+
+  it("never skips a chapter on one right answer, even a chapter of one skill", () => {
+    const one = scoreTestOut({
+      chapterSkillIds: ["a"],
+      results: [{ isCorrect: true, skillId: "a" }],
+    });
+
+    expect(one.passed).toBe(false);
+
+    // Eight questions on its one skill: a slip still passes it, as 80% right overall does.
+    const eight = scoreTestOut({
+      chapterSkillIds: ["a"],
+      results: Array.from({ length: 8 }, (_, index) => ({ isCorrect: index !== 3, skillId: "a" })),
+    });
+
+    expect(eight).toMatchObject({ knownSkillIds: ["a"], passed: true });
+  });
+
+  it("doesn't pass with no answers", () => {
+    expect(scoreTestOut({ chapterSkillIds, results: [] })).toMatchObject({
+      knownSkillIds: [],
+      passed: false,
+      total: 0,
+    });
   });
 });

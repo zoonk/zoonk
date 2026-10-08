@@ -1,7 +1,7 @@
-import { type EnemEdition, getEnemEdition } from "../library/enem/enem-edition";
+import { type EnemEdition, getPlannedEnemEdition } from "../library/enem/enem-edition";
 import { buildAna } from "./personas/ana-exam";
 import { guest } from "./personas/guest";
-import { lucasFun } from "./personas/lucas-fun";
+import { lucasBuddy } from "./personas/lucas-buddy";
 import { buildMarcos } from "./personas/marcos-language";
 import { mayaHugeGoal } from "./personas/maya-huge-goal";
 import { pedroMinor } from "./personas/pedro-minor";
@@ -9,15 +9,15 @@ import { samExplain } from "./personas/sam-explain";
 import { type SeedLearner } from "./types";
 
 /** The personas a test can copy, by the name `seedV2` returns them under. */
-export type SeedPersonaName = "exam" | "explain" | "fun" | "hugeGoal" | "language" | "minor";
+export type SeedPersonaName = "buddy" | "exam" | "explain" | "hugeGoal" | "language" | "minor";
 
 type PersonaContext = { edition: EnemEdition; now: Date };
 
 /** Each persona by name; the exam and language ones depend on the day. */
 const PERSONAS: Record<SeedPersonaName, (context: PersonaContext) => SeedLearner> = {
+  buddy: () => lucasBuddy,
   exam: ({ edition, now }) => buildAna({ edition, now }),
   explain: () => samExplain,
-  fun: () => lucasFun,
   hugeGoal: () => mayaHugeGoal,
   language: ({ now }) => buildMarcos({ now }),
   minor: () => pedroMinor,
@@ -34,7 +34,7 @@ export function buildPersona({ name, ...context }: PersonaContext & { name: Seed
  * the same learners.
  */
 export function listSeedPersonas({ now }: { now: Date }): SeedLearner[] {
-  const context = { edition: getEnemEdition(now), now };
+  const context = { edition: getPlannedEnemEdition(now), now };
 
   return [...Object.values(PERSONAS).map((build) => build(context)), guest];
 }

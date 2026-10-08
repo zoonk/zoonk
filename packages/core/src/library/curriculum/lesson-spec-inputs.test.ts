@@ -1,9 +1,11 @@
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
@@ -119,5 +121,51 @@ describe(loadLessonSpecInputs, () => {
     const inputs = await loadLessonSpecInputs(lesson.id);
 
     expect(inputs?.prompt.chapterLessons).toStrictEqual([]);
+  });
+
+  /*
+   * A shared OAB lesson opened with "a entidade dos advogados do Brasil, chamada OAB" for law
+   * graduates: the planner didn't know who studies it. It now gets the exams of the goals that
+   * plan it, so it's written for their candidates (without naming them).
+   */
+  it("plans a lesson for the candidates of the exams whose goals plan it", async () => {
+    const [chapter, user] = await Promise.all([libraryChapterFixture(), userFixture()]);
+
+    const [publicExam, privateExam, lesson, other] = await Promise.all([
+      examBlueprintFixture({ name: "OAB Exame de Ordem", role: "1ª fase" }),
+      examBlueprintFixture({ name: "Prova de biologia", ownerId: user.id, visibility: "private" }),
+      libraryLessonFixture({ homeChapterId: chapter.id, title: "Finalidades da OAB" }),
+      libraryLessonFixture({ title: "Temperature drops" }),
+    ]);
+
+    const [examGoal, privateGoal, learnGoal] = await Promise.all([
+      goalFixture({ examBlueprintId: publicExam.id, kind: "exam", userId: user.id }),
+      goalFixture({ examBlueprintId: privateExam.id, kind: "exam", userId: user.id }),
+      goalFixture({ userId: user.id }),
+    ]);
+
+    const [examPlan, privatePlan, learnPlan] = await Promise.all([
+      planFixture({ goalId: examGoal.id }),
+      planFixture({ goalId: privateGoal.id }),
+      planFixture({ goalId: learnGoal.id }),
+    ]);
+
+    await Promise.all([
+      planItemFixture({ chapterId: chapter.id, planId: examPlan.id, position: 0 }),
+      planItemFixture({ lessonId: lesson.id, planId: privatePlan.id, position: 0 }),
+      planItemFixture({ lessonId: lesson.id, planId: learnPlan.id, position: 0 }),
+      planItemFixture({ lessonId: other.id, planId: learnPlan.id, position: 1 }),
+    ]);
+
+    const [examLesson, learnLesson] = await Promise.all([
+      loadLessonSpecInputs(lesson.id),
+      loadLessonSpecInputs(other.id),
+    ]);
+
+    expect(examLesson?.prompt.exams?.map((exam) => exam.name)).toStrictEqual([
+      "OAB Exame de Ordem, 1ª fase",
+    ]);
+
+    expect(learnLesson?.prompt.exams).toStrictEqual([]);
   });
 });

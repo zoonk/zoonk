@@ -11,7 +11,7 @@ const SHORT_ID_LENGTH = 8;
 const SKILLS_PER_PHASE = [3, 2];
 
 /** Every question up to placement is behind the learner: only placement and the plan are left. */
-export const ANSWERED = ["purpose", "targetDate", "level", "schedule", "age", "mode", "buddy"];
+export const ANSWERED = ["purpose", "targetDate", "level", "schedule", "age", "memory", "buddy"];
 
 /**
  * A goal whose skill map is already written, the way the goal workflow leaves it, with every

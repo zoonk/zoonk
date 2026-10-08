@@ -1,11 +1,10 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { expectAccessibleRoutes, expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
-const PATTERN_LINK = /We noticed a pattern\s*since e for/u;
-const RENTING_UNIT = "Alugando um apartamento";
+const PATTERN_LINK = /We noticed a pattern\s*“Since” e “for”/u;
 
 /** Picks an option with its number key, sees it was right, and continues with Enter. */
 async function answerRightWithKeys(page: Page, key: string) {
@@ -14,7 +13,7 @@ async function answerRightWithKeys(page: Page, key: string) {
   await page.keyboard.press("Enter");
 }
 
-/** Answers the seeded "since e for" drill, the first one wrong, and checks the feedback. */
+/** Answers the seeded "“Since” e “for”" drill, the first one wrong, and checks the feedback. */
 async function answerDrill(page: Page) {
   await expect(page.getByText("I've worked at the bank ___ 2019.")).toBeVisible();
   await page.keyboard.press("2");
@@ -36,20 +35,17 @@ async function answerDrill(page: Page) {
 }
 
 /**
- * "We noticed a pattern" for Marcos: from Today, beside his current situation, to the rule and its
+ * "We noticed a pattern" for Marcos: Today's one notice, under his plan's status, to the rule and its
  * contrast, then the five-question drill with instant feedback (number keys and Enter, or taps),
- * the result with Brain Power, and the card gone from Today once practiced.
+ * the result with Brain Power, and the row gone from Today once practiced.
  */
 test.describe("Language mistake pattern", () => {
-  test("drills the pattern from Today and takes it off Today, beside the current situation", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page }) => {
+  test("drills the pattern from Today and takes it off Today", async ({ browser }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page }) => {
       await page.goto("/today");
 
-      const situation = page.getByRole("region", { name: "Your current situation" });
-      await expect(situation.getByText("Unit 2 of 6")).toBeVisible();
-      await expect(situation.getByText("1 of 4 lessons")).toBeVisible();
+      // Today says only where the plan stands: the level lives in the Journey.
+      await expect(page.getByText(/level A\d|preparation \d+%/u)).toHaveCount(0);
 
       // No word he mispronounced is due, so Today asks him to say none again.
       await expect(page.getByRole("link", { name: /words? again/u })).toHaveCount(0);
@@ -59,8 +55,11 @@ test.describe("Language mistake pattern", () => {
 
       await expect(page).toHaveURL(/\/pattern\/[\da-f-]{36}$/u);
 
+      // The pattern is the title, under what it is.
+      await expect(page.getByRole("heading", { level: 1, name: "“Since” e “for”" })).toBeVisible();
+
       await expect(
-        page.getByRole("heading", { level: 1, name: "We noticed a pattern" }),
+        page.getByRole("main").getByText("We noticed a pattern", { exact: true }),
       ).toBeVisible();
 
       await expect(page.getByText("I've lived here since 2020.")).toBeVisible();
@@ -76,24 +75,15 @@ test.describe("Language mistake pattern", () => {
       await page.getByRole("link", { name: "Back to Today" }).click();
 
       await expect(page).toHaveURL(/\/today$/u);
-      await expect(situation).toBeVisible();
+      await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
       await expect(page.getByRole("link", { name: PATTERN_LINK })).toHaveCount(0);
-
-      await situation.getByRole("link", { name: RENTING_UNIT }).click();
-
-      await expect(page).toHaveURL(/\/content\/units\/[\da-f-]{36}$/u);
-      await expect(page.getByRole("heading", { level: 1, name: RENTING_UNIT })).toBeVisible();
-      await expectAccessibleScreen(page, "a unit");
-
-      // No Focus flow opens a language goal's plan, so it's scanned here.
-      await expectAccessibleRoutes(page, [{ path: "/plan" }]);
     });
   });
 
   test("a pattern that was only typos says so kindly, with nothing to practice", async ({
     browser,
   }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
       await prisma.mistakePattern.updateMany({
         data: { kind: "typos" },
         where: { userId: user.id },
@@ -108,7 +98,7 @@ test.describe("Language mistake pattern", () => {
       // Reading the note is enough: it leaves Today.
       await page.getByRole("link", { name: "Done" }).click();
       await expect(page).toHaveURL(/\/today$/u);
-      await expect(page.getByRole("region", { name: "Your current situation" })).toBeVisible();
+      await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
       await expect(page.getByRole("link", { name: /Just typos/u })).toHaveCount(0);
     });
   });

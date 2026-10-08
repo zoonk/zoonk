@@ -1,3 +1,4 @@
+import { type ExtraStudyBlockResult } from "@zoonk/core/sessions/extra-block";
 import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-errors";
 
 /** Stable codes clients use to recover from a session request that can't be applied. */
@@ -11,13 +12,17 @@ export const studySessionErrorCodes = {
   invalidItem: "INVALID_ITEM",
   lessonNotFinished: "LESSON_NOT_FINISHED",
   noAnswers: "NO_ANSWERS",
+  nothingToCatchUp: "NOTHING_TO_CATCH_UP",
   nothingToPractice: "NOTHING_TO_PRACTICE",
   slowDown: "SLOW_DOWN",
   unanswered: "UNANSWERED_QUESTIONS",
 } as const;
 
+/** Why "10 more minutes" (or a bonus block like it) isn't available. */
+type ExtraTimeReason = Extract<ExtraStudyBlockResult, { status: "unavailable" }>["reason"];
+
 type StudySessionRefusal =
-  | { reason: "dailyCap" | "dailyLimit" | "sessionNotFinished"; status: "unavailable" }
+  | { reason: ExtraTimeReason; status: "unavailable" }
   | { retryAfterSeconds: number; status: "slowDown" }
   | {
       status:
@@ -30,6 +35,7 @@ type StudySessionRefusal =
         | "lessonNotFinished"
         | "noAnswers"
         | "notFound"
+        | "nothingToCatchUp"
         | "nothingToPractice"
         | "unanswered"
         | "unauthorized";
@@ -48,6 +54,10 @@ const REFUSALS = {
   lessonNotFinished: { message: "Finish the lesson first", status: httpStatus.conflict },
   noAnswers: {
     message: "Answer at least one question first",
+    status: httpStatus.unprocessableEntity,
+  },
+  nothingToCatchUp: {
+    message: "There are no lessons left to catch up on",
     status: httpStatus.unprocessableEntity,
   },
   nothingToPractice: {

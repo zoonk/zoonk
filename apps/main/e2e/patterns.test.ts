@@ -1,21 +1,11 @@
 import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { expectMode, showInMode } from "./learn-personas";
 
-const TIME_PERIODS = ["Night", "Morning", "Afternoon", "Evening"] as const;
 const TUESDAY = 2;
 const FRIDAY = 5;
-
-const TIME_PERIOD_RANGES = [
-  /12:00\s*AM.*6:00\s*AM/iu,
-  /6:00\s*AM.*12:00\s*PM/iu,
-  /12:00\s*PM.*6:00\s*PM/iu,
-  /6:00\s*PM.*12:00\s*AM/iu,
-] as const;
 
 const WEEKDAYS = [
   "Sunday",
@@ -61,7 +51,7 @@ function buildLedgerRow({
 }
 
 /**
- * Creates one isolated learner in Fun whose strongest weekday and daypart are known.
+ * Creates one isolated learner whose strongest weekday and daypart are known.
  * The rolling-window dates only keep records current; the stored Tuesday,
  * Friday, and hour buckets are explicit so timezone changes cannot alter which
  * labels the page must select.
@@ -106,14 +96,13 @@ async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; b
   ]);
 
   const browserContext = await browser.newContext({ storageState: user.storageState });
-  await showInMode(browserContext, { mode: "fun", userId: user.id });
   const page = await browserContext.newPage();
 
   return { browserContext, page };
 }
 
 test.describe("Patterns", () => {
-  test("shows every weekday and time period, selecting the strongest explicit weekday in Fun", async ({
+  test("shows every weekday, opening on the strongest, and every part of the day with the best one marked", async ({
     baseURL,
     browser,
   }) => {
@@ -121,17 +110,11 @@ test.describe("Patterns", () => {
 
     try {
       await page.goto("/patterns");
-      await expectMode(page, "fun");
 
-      await expect(
-        page
-          .getByRole("navigation", { name: "Your stats" })
-          .getByRole("link", { name: "Patterns" }),
-      ).toHaveAttribute("aria-current", "page");
+      await expect(page.getByText("When you answer best, over the last 90 days.")).toBeVisible();
 
       const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
 
-      await expect(weeklyRhythm).toContainText(/past 90 days/iu);
       await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
 
       await Promise.all(
@@ -146,38 +129,30 @@ test.describe("Patterns", () => {
         /you do better on tuesdays.*90% across 10 answers/iu,
       );
 
-      await expectAccessibleScreen(page, "Patterns");
-
       await weeklyRhythm.getByRole("button", { name: /friday/iu }).click();
 
       await expect(weeklyRhythm.getByRole("status")).toContainText(
         /friday performance.*10% across 10 answers/iu,
       );
 
-      const dailyRhythm = page.getByRole("region", { name: /throughout the day/iu });
+      // Night, morning, afternoon and evening, each with its share of right answers.
+      const day = page.getByRole("region", { name: "Throughout the day" });
 
-      await expect(dailyRhythm).toContainText(/past 90 days/iu);
-      await expect(dailyRhythm.getByRole("article")).toHaveCount(TIME_PERIODS.length);
+      await expect(day.getByRole("listitem")).toHaveCount(4);
 
-      await Promise.all(
-        TIME_PERIODS.map((period, index) =>
-          expect(dailyRhythm.getByRole("article", { name: period })).toContainText(
-            TIME_PERIOD_RANGES[index]!,
-          ),
-        ),
+      await expect(day.getByRole("listitem", { name: "Morning" })).toContainText(
+        /90%\s*10 answers/u,
       );
 
-      const nightPattern = dailyRhythm.getByRole("article", { name: "Night" });
-      const morningPattern = dailyRhythm.getByRole("article", { name: "Morning" });
-      const afternoonPattern = dailyRhythm.getByRole("article", { name: "Afternoon" });
-      const eveningPattern = dailyRhythm.getByRole("article", { name: "Evening" });
+      await expect(day.getByRole("listitem", { name: "Afternoon" })).toContainText(
+        /20%\s*5 answers/u,
+      );
 
-      await expect(nightPattern).toContainText(/no answers/iu);
-      await expect(nightPattern).not.toContainText(/%/u);
+      await expect(day.getByRole("listitem", { name: "Evening" })).toContainText(
+        /40%\s*5 answers/u,
+      );
 
-      await expect(morningPattern).toContainText(/90%.*10 answers/iu);
-      await expect(afternoonPattern).toContainText(/20%.*5 answers/iu);
-      await expect(eveningPattern).toContainText(/40%.*5 answers/iu);
+      await expect(day.getByRole("listitem", { name: "Night" })).toContainText("No answers");
     } finally {
       await browserContext.close();
     }

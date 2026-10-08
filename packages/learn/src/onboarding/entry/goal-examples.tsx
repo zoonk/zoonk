@@ -63,7 +63,7 @@ export function GoalExamples({ onPick }: { onPick: (goal: string) => void }) {
         {examples.map((example) => (
           <li key={example.label}>
             <button
-              className="hover:bg-muted/60 focus-visible:ring-ring/50 in-data-[mode=fun]:hover:bg-fun-soft -mx-2 flex min-h-14 w-[calc(100%+1rem)] items-center gap-3 rounded-2xl px-2 py-2 text-left outline-none focus-visible:ring-[3px]"
+              className="hover:bg-muted/60 focus-visible:ring-ring/50 -mx-2 flex min-h-14 w-[calc(100%+1rem)] items-center gap-3 rounded-2xl px-2 py-2 text-left outline-none focus-visible:ring-[3px]"
               onClick={() => onPick(example.label)}
               type="button"
             >

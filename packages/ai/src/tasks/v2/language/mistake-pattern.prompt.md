@@ -19,7 +19,7 @@ A wrong word in a spoken answer may be a recognition slip: count it only when it
 # Fields
 
 - `mistakeNumbers`: the numbers of the mistakes that show the pattern (at least 2), or, for `typos`, every slip, all of them. Empty for `none`.
-- `title`: in `LEARNER_LANGUAGE`, 2 to 5 words naming the pattern, with `TARGET_LANGUAGE` words as they are ("since e for", "ser o estar"). For `typos`, a short kind title. Empty for `none`.
+- `title`: in `LEARNER_LANGUAGE`, 2 to 5 words naming the pattern, with `TARGET_LANGUAGE` words as they are, in quotes, so it never reads like a typo in a list (“since” e “for”, “ser” or “estar”, Verbo depois de “could you”). For `typos`, a short kind title. Empty for `none`.
 - `rule`: 1 or 2 short sentences in `LEARNER_LANGUAGE`: the rule, and when `LEARNER_LANGUAGE` leads to the mistake, how ("Em português dizemos 'moro aqui há dois anos', mas em inglês o tempo que dura vem com 'for'"). For `typos`, one kind line saying these look like spelling slips rather than something they don't know. Empty for `none`.
 - `contrast`: for `pattern`, 1 to 3 rows that show the difference side by side. `label` is in `LEARNER_LANGUAGE` ("since + quando começou") and `example` is a short `TARGET_LANGUAGE` example ("since 2020"). Empty for `typos` and `none`.
 - `drill`: for `pattern`, exactly 5 new fill-in-the-blank questions on this pattern. Empty for `typos` and `none`.

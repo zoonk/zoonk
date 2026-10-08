@@ -5,6 +5,7 @@ import {
   type ActivityStepContent,
   activityContentSchema,
   getActivityTemplate,
+  showsActivityData,
 } from "./activity-templates";
 import {
   type ActivityCheckTarget,
@@ -213,5 +214,14 @@ export function validateActivity(input: unknown): ActivityValidationResult {
 
   const issues = ruleIssues(parsed.data);
 
-  return issues.length === 0 ? { content: parsed.data, ok: true } : { issues, ok: false };
+  if (issues.length > 0) {
+    return { issues, ok: false };
+  }
+
+  // A template that shows no data keeps no data label, which would read as a note on nothing.
+  const content = showsActivityData(parsed.data.template)
+    ? parsed.data
+    : { ...parsed.data, data: undefined };
+
+  return { content, ok: true };
 }

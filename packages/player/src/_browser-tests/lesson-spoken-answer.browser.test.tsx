@@ -5,7 +5,6 @@ import { page } from "vitest/browser";
 import { languageStep } from "../_test-utils/language-steps";
 import { spokenAnswerStep, teachingStep } from "../_test-utils/lesson-steps";
 import {
-  type PlayerMode,
   buildAdapters,
   buildLesson,
   renderLessonPlayer,
@@ -36,20 +35,13 @@ function spokenSentenceStep(): PlayableSpokenAnswerStep {
 
 function openSpokenLesson({
   gradeSpokenAnswer,
-  mode = "focus",
   step = spokenAnswerStep(),
 }: {
   gradeSpokenAnswer: GradeSpokenAnswer;
-  mode?: PlayerMode;
   step?: PlayableSpokenAnswerStep;
 }) {
   const lesson = buildLesson([step, teachingStep("summary")]);
-
-  return renderLessonPlayer({
-    adapters: buildAdapters(lesson, { gradeSpokenAnswer }),
-    lesson,
-    mode,
-  });
+  return renderLessonPlayer({ adapters: buildAdapters(lesson, { gradeSpokenAnswer }), lesson });
 }
 
 /**
@@ -109,7 +101,7 @@ describe("spoken answers", () => {
       Promise.resolve({ status: "noSpeech" as const }),
     );
 
-    openSpokenLesson({ gradeSpokenAnswer, mode: "fun" });
+    openSpokenLesson({ gradeSpokenAnswer });
     await sayIt();
 
     await expect.element(page.getByText("We couldn't hear any words. Try again.")).toBeVisible();
@@ -145,5 +137,41 @@ describe("spoken answers", () => {
 
     await expect.element(page.getByRole("link", { name: "See Plus" })).toBeVisible();
     await expect.element(page.getByRole("button", { name: "Type it instead" })).toBeVisible();
+  });
+
+  // Pedro's microphone was blocked: the screen said "Type your answer instead" with nowhere to type.
+  it("brings up the typing field when the microphone is blocked, and checks what's typed", async () => {
+    vi.spyOn(navigator.mediaDevices, "getUserMedia").mockRejectedValue(
+      new DOMException("Permission denied", "NotAllowedError"),
+    );
+
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>();
+    const step = spokenSentenceStep();
+    const lesson = buildLesson([step, teachingStep("summary")]);
+    const adapters = buildAdapters(lesson, { gradeSpokenAnswer });
+    renderLessonPlayer({ adapters, lesson });
+
+    await page.getByRole("button", { name: "Start speaking" }).click();
+
+    await expect
+      .element(page.getByText("The microphone is blocked. Type your answer instead."))
+      .toBeVisible();
+
+    await page
+      .getByRole("textbox", { name: "Pergunte quanto é o aluguel." })
+      .fill("How much is the rent?");
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect
+      .poll(() => adapters.checkStep)
+      .toHaveBeenCalledWith(
+        expect.objectContaining({
+          answer: { kind: "spokenAnswer", text: "How much is the rent?" },
+          stepId: step.id,
+        }),
+      );
+
+    expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });
 });

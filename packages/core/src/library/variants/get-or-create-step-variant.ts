@@ -17,14 +17,6 @@ const GENERATION_ATTEMPTS = 2;
 
 type VariantScreenKind = (typeof VARIANT_SCREEN_KINDS)[number];
 
-/** Depth versions exist for teaching screens; checks only get field and tool versions. */
-const SUPPORTED_SCREENS: Readonly<Record<StepVariantKind, readonly VariantScreenKind[]>> = {
-  deeper: ["explanation", "workedExample"],
-  field: ["explanation", "workedExample", "check"],
-  simpler: ["explanation", "workedExample"],
-  tool: ["explanation", "workedExample", "check"],
-};
-
 export type StepVariantResult =
   | { status: "notFound" }
   | { status: "unsupported" }
@@ -34,15 +26,6 @@ export type StepVariantResult =
 type GeneratedVariant =
   | { content: object; provenance: Awaited<ReturnType<typeof generateStepVariant>>["provenance"] }
   | { problems: string[] };
-
-/** "Simpler" and "Go deeper" have no key; a field or tool is a slug such as "nursing" or "google-sheets". */
-function normalizeVariantKey({ key, kind }: { key: string; kind: StepVariantKind }): string | null {
-  if (kind === "simpler" || kind === "deeper") {
-    return "";
-  }
-
-  return toVariantKey(key) || null;
-}
 
 function isVariantScreen(kind: string): kind is VariantScreenKind {
   return VARIANT_SCREEN_KINDS.some((screenKind) => screenKind === kind);
@@ -98,7 +81,6 @@ async function generateVariantContent({
   });
 
   const converted = toVariantContent({
-    kind,
     language: lesson.language,
     level: lesson.level,
     original: step.content,
@@ -116,26 +98,26 @@ async function generateVariantContent({
 }
 
 /**
- * Returns the shared "Simpler", "Go deeper", field or tool version of a lesson
- * screen, writing it the first time anyone needs it. The `(step, kind, key)`
- * unique key makes it one row for everyone: when two requests race, both end
- * with the row that was stored first. Drafts pass the same contract and text
- * checks as lessons, with one retry. No cache holds versions (lesson reads load
- * them fresh), so a new one expires nothing and is seen at once in every app.
+ * Returns the shared field or tool version of a lesson screen, writing it the
+ * first time anyone needs it. The `(step, kind, key)` unique key makes it one
+ * row for everyone: when two requests race, both end with the row that was
+ * stored first. Drafts pass the same contract and text checks as lessons, with
+ * one retry. No cache holds versions (lesson reads load them fresh), so a new
+ * one expires nothing and is seen at once in every app.
  *
- * This is the internal capability: it doesn't read the session, so planner
- * workflows can make field and tool versions. Learners reach depth versions
- * through `requestStepVariant`.
+ * This is an internal capability: it doesn't read the session, so planner
+ * workflows make the versions ahead of the lessons that show them.
  */
 export async function getOrCreateStepVariant({
   analytics,
-  key = "",
+  key,
   kind,
   label,
   stepId,
 }: {
   analytics?: GenerateStepVariantParams["analytics"];
-  key?: string;
+  /** The field or tool, stored as a slug such as "nursing" or "google-sheets". */
+  key: string;
   kind: StepVariantKind;
   /**
    * How the model reads the key when it says more than the slug: a tool's full name with its
@@ -144,13 +126,13 @@ export async function getOrCreateStepVariant({
   label?: string;
   stepId: string;
 }): Promise<StepVariantResult> {
-  const variantKey = normalizeVariantKey({ key, kind });
+  const variantKey = toVariantKey(key);
 
   if (!isUuid(stepId)) {
     return { status: "notFound" };
   }
 
-  if (variantKey === null) {
+  if (!variantKey) {
     return { status: "unsupported" };
   }
 
@@ -166,7 +148,7 @@ export async function getOrCreateStepVariant({
     return { status: "notFound" };
   }
 
-  if (!isVariantScreen(step.kind) || !SUPPORTED_SCREENS[kind].includes(step.kind) || step.itemId) {
+  if (!isVariantScreen(step.kind) || step.itemId) {
     return { status: "unsupported" };
   }
 

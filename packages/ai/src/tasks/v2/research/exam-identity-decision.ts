@@ -22,8 +22,8 @@ export type ExamDescription = {
 const SAME_EXAM_QUESTION = {
   same: {
     criteria: {
-      false: "A different organizer, agency, role, level or country.",
-      true: "The same exam and role, possibly under another name or year.",
+      false: "A different organizer, agency, role, phase, level or country.",
+      true: "The same exam, role and phase, possibly under another name or year.",
     },
     instructions: decisionPrompt,
     type: "boolean",

@@ -187,6 +187,9 @@ test.describe("Memory API", () => {
 
     expect(memory.categories).toStrictEqual(["goals", "learning"]);
 
+    // Without an adult's age answer, memory starts off until the learner turns it on.
+    expect(memory).toMatchObject({ enabled: false, offByGuardian: false });
+
     await api.dispose();
   });
 

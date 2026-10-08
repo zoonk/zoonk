@@ -1,85 +1,103 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenIcon, ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useLevelName } from "../course/use-level-name";
+import {
+  DetailActions,
+  DetailContinueLink,
+  DetailEyebrow,
+  DetailFacts,
+  DetailHero,
+  DetailHeroText,
+  DetailTitle,
+} from "../_components/detail-page";
+import { KindTile } from "../_components/kind-tile";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
-import { UnitLessonsBar } from "../language/unit-parts";
-import { LearnLink } from "../learn-link";
-import { useExperienceMode } from "../mode-provider";
-import { FunMoon } from "../plan/fun-moon";
+import { LearnPageBar } from "../shell/learn-bar";
 import { useChapterScreen } from "./chapter-context";
 
-/** A chapter's mark: a book in Focus and its moon on the route in Fun, colored by its number. */
-function ChapterBadge({ position }: { position: number }) {
-  const mode = useExperienceMode();
+/** "11 lessons · About 40 min": how much the chapter holds. */
+function ChapterFacts() {
+  const t = useExtracted();
+  const { chapter } = useChapterScreen();
+  const { lessons } = chapter;
+  const minutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
 
-  if (mode === "fun") {
-    return <FunMoon index={position - 1} size="lg" />;
+  if (lessons.length === 0) {
+    return null;
   }
 
+  const facts = [
+    t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
+    minutes > 0 && t("About {minutes, number} min", { minutes }),
+  ].filter(Boolean);
+
+  return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
+}
+
+/**
+ * The chapter's tile, its subject and number there (as the subject's page numbers it), its title,
+ * how much it holds, then "Continue" into the next lesson with how far the learner is in the
+ * chapter and the chapter's "…" beside it.
+ */
+export function ChapterHeader() {
+  const t = useExtracted();
+  const { chapter, hrefs } = useChapterScreen();
+  const { lessons } = chapter;
+  const done = lessons.filter((lesson) => lesson.state === "done").length;
+  const next = lessons.find((lesson) => lesson.state === "next");
+
   return (
-    <span
-      aria-hidden="true"
-      className="bg-muted text-muted-foreground flex size-16 shrink-0 items-center justify-center rounded-3xl"
-    >
-      <BookOpenIcon className="size-7" />
-    </span>
+    <>
+      <DetailHero>
+        <KindTile kind="lesson" size="lg" />
+        <DetailHeroText>
+          <DetailEyebrow>
+            {chapter.chapter.subject
+              ? t("{subject} · Chapter {number, number}", {
+                  number: chapter.chapter.position,
+                  subject: chapter.chapter.subject.name,
+                })
+              : t("Chapter {number, number}", { number: chapter.chapter.position })}
+          </DetailEyebrow>
+          <DetailTitle>{chapter.chapter.title}</DetailTitle>
+          <ChapterFacts />
+        </DetailHeroText>
+      </DetailHero>
+
+      <DetailActions className="empty:hidden">
+        {next && (
+          <DetailContinueLink
+            href={`${hrefs.lessonBasePath}/${next.lessonId}`}
+            share={lessons.length > 0 ? done / lessons.length : 0}
+            started={done > 0}
+          />
+        )}
+        <ContentVoteMenu
+          label={t("Chapter options")}
+          screen="chapter"
+          size="detail"
+          target={{ contentId: chapter.chapter.chapterId, contentKind: "chapter" }}
+          votes={false}
+        />
+      </DetailActions>
+    </>
   );
 }
 
 /**
- * Back to Content with the chapter's "…" menu, "Chapter 3 · Overview", the chapter's title and
- * its lessons done.
+ * The chapter's bar: back to the Journey (or the subject it was opened from), and "Ask" on the
+ * right; the chapter's "…" sits beside its main action.
  */
-export function ChapterHeader() {
+export function ChapterBar() {
   const t = useExtracted();
-  const levelName = useLevelName();
   const { ask, chapter, hrefs } = useChapterScreen();
-  const done = chapter.lessons.filter((lesson) => lesson.state === "done").length;
 
   return (
-    <header className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-2">
-        <LearnLink
-          className={cn(
-            buttonVariants({ size: "sm", variant: "ghost" }),
-            "in-data-[mode=fun]:fun-glass -ml-2",
-          )}
-          href={hrefs.back}
-        >
-          <ChevronLeftIcon aria-hidden="true" />
-          {t("Content")}
-        </LearnLink>
-
-        <div className="flex items-center gap-1">
-          {ask}
-          <ContentVoteMenu
-            label={t("Chapter options")}
-            screen="chapter"
-            target={{ contentId: chapter.chapter.chapterId, contentKind: "chapter" }}
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <ChapterBadge position={chapter.chapter.position} />
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <p className="text-muted-foreground text-sm font-medium in-data-[mode=fun]:text-xs in-data-[mode=fun]:tracking-widest in-data-[mode=fun]:uppercase">
-            {t("Chapter {number, number} · {level}", {
-              level: levelName(chapter.chapter.level),
-              number: chapter.chapter.position,
-            })}
-          </p>
-          <h1 className="in-data-[mode=fun]:font-fun-display text-2xl font-bold tracking-tight text-balance sm:text-3xl">
-            {chapter.chapter.title}
-          </h1>
-        </div>
-      </div>
-
-      {chapter.lessons.length > 0 && <UnitLessonsBar done={done} total={chapter.lessons.length} />}
-    </header>
+    <LearnPageBar
+      back={{ href: hrefs.back, label: hrefs.backLabel ?? t("Journey") }}
+      title={chapter.chapter.title}
+    >
+      {ask}
+    </LearnPageBar>
   );
 }

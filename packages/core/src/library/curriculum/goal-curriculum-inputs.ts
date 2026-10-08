@@ -1,20 +1,34 @@
 import "server-only";
+import { type ExamOutline, formatExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
 import { type SkillGraphParams } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
 import { type Course, type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { readCourseStart } from "../../goals/course-start-details";
+import { getKnownSubjects } from "../../learner/placement/placement-contract";
+import { isOwnMaterialTest } from "../../learner/placement/placement-material";
+import { usesTools } from "../../plans/_utils/plan-tools";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { type OnboardingQuestion } from "../../view-models/onboarding/onboarding-contract";
 import { getMissingQuestions } from "../../view-models/onboarding/onboarding-steps";
-import { examStructureSchema, topicFrequencySchema } from "../exams/blueprint-contract";
+import {
+  type ExamStructure,
+  examStructureSchema,
+  topicFrequencySchema,
+} from "../exams/blueprint-contract";
+import { isNoticeReadAgain } from "../exams/blueprint-reading";
+import { type CandidateExam, toGoalCandidateExams } from "../exams/candidate-exams";
+import { getSubjectQuestions } from "../exams/subject-questions";
+import { listTopicLevels } from "../exams/topic-frequency";
 import { loadGoalMaterial } from "../sources/goal-material";
 import {
   type MaterialSource,
-  formatMaterialIndex,
+  formatMaterialOverview,
   toMaterialPages,
 } from "../sources/material-pages";
 import { type StartedCourse } from "./course-start-graph";
+import { getLessonBudget } from "./lesson-budget";
 
 type GraphPrompt = Omit<SkillGraphParams, "analytics" | "model" | "reasoning" | "useFallback">;
 
@@ -58,12 +72,19 @@ export type GoalCurriculumInputs = {
     | "userId"
   >;
   graphPrompt: GraphPrompt;
+  /** The exam its shared outlines are written for (see `toGoalCandidateExams`). */
+  exams: CandidateExam[];
   /**
    * The goal's exam blueprint as the skill graph reads it (`graphPrompt.examBlueprint`), titled
    * for the coverage check: an exam's plan is built before research reads a new notice, then
    * checked against it once it's in. Null when the goal has no blueprint.
    */
   blueprintReference: { text: string; title: string } | null;
+  /**
+   * Research reads the notice of the goal's shared blueprint again (see `isNoticeReadAgain`), so
+   * the graph waits for that reading instead of being built from the older one.
+   */
+  readsNoticeAgain: boolean;
   /**
    * The goal's sources as references for the coverage check: its exam notice, a law's text or a
    * product's docs, the syllabi research found for a big learn goal, or the learner's uploads.
@@ -78,11 +99,26 @@ export type GoalCurriculumInputs = {
   /** A plan already built from a skill graph: the goal's curriculum exists and nothing is redone. */
   hasPlanGraph: boolean;
   /**
+   * The goal practices with tools of its own (see `usesTools`): false for an exam answered on
+   * paper or on screen, whose courses teach its skills in chapters without tools.
+   */
+  usesTools: boolean;
+  /**
    * The learner is still answering onboarding questions that change the skill graph (purpose,
    * role, level, follow-ups), so the curriculum waits for them. Only goals typed in onboarding.
    */
   awaitingAnswers: boolean;
   isGuest: boolean;
+  /**
+   * The exam subjects the learner said they know well: placement writes no questions on their
+   * basics, which it takes as known.
+   */
+  knownSubjects: string[];
+  /**
+   * A test from the learner's own material (a private blueprint): placement asks every topic of
+   * it, so every skill gets placement questions (see `isOwnMaterialTest`).
+   */
+  ownMaterialTest: boolean;
   /**
    * The Library course the learner started the goal from, when its plan couldn't come from the
    * course's outline yet (nobody outlined it): the goal's curriculum is written into that course.
@@ -102,12 +138,15 @@ function readChoice<T extends string>({
   return allowed.find((choice) => choice === value);
 }
 
-/** How much of the material's page index the graph reads: enough for a long deck or handout. */
-const MAX_MATERIAL_INDEX = 12_000;
+/**
+ * How much of the material the graph reads: a short handout whole, or the index of a long deck
+ * (see `formatMaterialOverview`).
+ */
+const MAX_MATERIAL_OVERVIEW = 12_000;
 
 /**
- * What the learner said beyond the goal, and an index of their material (one line per page), so
- * a goal built from it covers what it teaches, in its order.
+ * What the learner said beyond the goal, and their material (whole when it's short, else one line
+ * per page), so a goal built from it covers what it teaches, in its order.
  */
 function toContext({
   details,
@@ -118,7 +157,11 @@ function toContext({
 }): string | undefined {
   const rest = Object.entries(details).filter(([key]) => !OMITTED_CONTEXT_FIELDS.has(key));
   const said = rest.length > 0 ? JSON.stringify(Object.fromEntries(rest)) : null;
-  const index = formatMaterialIndex(toMaterialPages(material)).slice(0, MAX_MATERIAL_INDEX);
+
+  const index = formatMaterialOverview({
+    maxCharacters: MAX_MATERIAL_OVERVIEW,
+    pages: toMaterialPages(material),
+  });
 
   const parts = [said, index && `The learner's own material, page by page:\n${index}`];
   const context = parts.filter(Boolean).join("\n\n");
@@ -126,30 +169,76 @@ function toContext({
   return context || undefined;
 }
 
+/** What the notice says about how the exam is answered and scored, which skills prepare for too. */
+function toExamNotes(structure: ExamStructure | undefined): string[] {
+  if (!structure) {
+    return [];
+  }
+
+  const scoring = structure.mock?.scoring.description;
+
+  return [
+    ...structure.formats.map((format) => `Format: ${format.description}`),
+    scoring ? `Scoring: ${scoring}` : "",
+    ...structure.rules.map((rule) => `Rule: ${rule.text}`),
+  ].filter((note) => note.trim().length > 0);
+}
+
 /**
- * The exam's areas as the skill graph weighs them: each subject with its share of the score and
- * its topics, and how often the board asks each topic in past papers.
+ * The exam's notice as the curriculum reads it: each subject with its group, its share of the
+ * score and every topic of its syllabus, what the notice says about format and scoring, and how
+ * often the board asks each topic in past papers (read with the notice, or looked up).
  */
-function formatExamBlueprint(
+function toExamOutline(
   blueprint: Pick<ExamBlueprint, "name" | "structure" | "topicFrequency">,
-) {
+): ExamOutline {
   const structure = examStructureSchema.safeParse(blueprint.structure).data;
   const frequency = topicFrequencySchema.safeParse(blueprint.topicFrequency).data ?? [];
 
-  const subjects = (structure?.subjects ?? []).map((subject) => {
-    const weight = subject.weight === null ? "" : ` (weight ${Math.round(subject.weight * 100)}%)`;
-    return `- ${subject.name}${weight}: ${subject.topics.join("; ")}`;
+  const subjects = structure
+    ? structure.subjects.map((subject) => ({
+        group: subject.group ?? null,
+        name: subject.name,
+        questions: getSubjectQuestions({ structure, subject }),
+        topics: subject.topics,
+        weight: subject.weight,
+      }))
+    : [];
+
+  // What past papers among the notice's documents say, then what the lookup of them found.
+  const looked = structure ? listTopicLevels({ structure, topicFrequency: [] }) : [];
+
+  return {
+    name: blueprint.name,
+    notes: toExamNotes(structure),
+    subjects,
+    topicFrequency: [...frequency, ...looked].map(({ level, subject, topic }) => ({
+      level,
+      subject,
+      topic,
+    })),
+  };
+}
+
+/**
+ * A test from the learner's own material days away (a class test on Friday) is taught in at most
+ * the lessons its days hold (see `getLessonBudget`); null for any other goal.
+ */
+function toLessonBudget({
+  goal,
+  hasMaterial,
+}: {
+  goal: Pick<Goal, "kind" | "targetDate" | "timezone">;
+  hasMaterial: boolean;
+}): number | null {
+  if (goal.kind !== "exam" || !hasMaterial) {
+    return null;
+  }
+
+  return getLessonBudget({
+    targetDate: goal.targetDate,
+    today: getDateInTimeZone({ date: new Date(), timeZone: goal.timezone ?? "UTC" }),
   });
-
-  const topics = frequency.map((topic) => `- ${topic.subject} / ${topic.topic}: ${topic.level}`);
-
-  return [
-    `EXAM: ${blueprint.name}`,
-    subjects.length > 0 ? `SUBJECTS:\n${subjects.join("\n")}` : null,
-    topics.length > 0 ? `TOPIC_FREQUENCY:\n${topics.join("\n")}` : null,
-  ]
-    .filter(Boolean)
-    .join("\n");
 }
 
 /** Goals typed in onboarding carry its id; other goals (plan links, API clients) are never asked. */
@@ -268,13 +357,17 @@ export async function loadGoalCurriculumInputs(
     loadGoalMaterial(goalId),
   ]);
 
-  const blueprint = goal.examBlueprint
-    ? { text: formatExamBlueprint(goal.examBlueprint), title: goal.examBlueprint.name }
-    : null;
+  const outline = goal.examBlueprint ? toExamOutline(goal.examBlueprint) : undefined;
+
+  const blueprint =
+    goal.examBlueprint && outline
+      ? { text: formatExamOutline(outline), title: goal.examBlueprint.name }
+      : null;
 
   return {
     awaitingAnswers: isAwaitingAnswers(goal, details),
     blueprintReference: blueprint,
+    exams: toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind }),
     goal: {
       examBlueprintId: goal.examBlueprintId,
       id: goal.id,
@@ -287,10 +380,11 @@ export async function loadGoalCurriculumInputs(
     },
     graphPrompt: {
       context: toContext({ details, material }),
-      examBlueprint: blueprint?.text,
+      examBlueprint: outline,
       goal: goal.prompt,
       goalKind: goal.kind,
       language: goal.language,
+      lessonBudget: toLessonBudget({ goal, hasMaterial: material.length > 0 }),
       ownLevel: readChoice({ allowed: OWN_LEVELS, value: details.level }),
       purpose: readChoice({ allowed: PURPOSES, value: details.purpose }),
       targetLanguage: goal.targetLanguage ?? undefined,
@@ -298,7 +392,15 @@ export async function loadGoalCurriculumInputs(
     hasMaterial: material.length > 0,
     hasPlanGraph: parsePlanGraph(goal.plan?.graph).skills.length > 0,
     isGuest: goal.user.isAnonymous,
+    knownSubjects: getKnownSubjects(goal),
+    ownMaterialTest: isOwnMaterialTest(goal.examBlueprint),
+    readsNoticeAgain: Boolean(
+      goal.examBlueprint &&
+      !goal.examBlueprint.ownerId &&
+      isNoticeReadAgain({ blueprint: goal.examBlueprint, now: new Date() }),
+    ),
     references,
     startedCourse: toStartedCourse({ course: goal.primaryCourse, details }),
+    usesTools: usesTools({ examStructure: goal.examBlueprint?.structure ?? null, kind: goal.kind }),
   };
 }

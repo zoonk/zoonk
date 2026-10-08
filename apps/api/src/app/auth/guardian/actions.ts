@@ -5,6 +5,7 @@ import { approvePlusPurchase } from "@zoonk/core/minors/guardian/approve-plus";
 import { guardedLearnerUpdateSchema } from "@zoonk/core/minors/guardian/contract";
 import { revokeGuardianLink } from "@zoonk/core/minors/guardian/revoke-link";
 import { setGuardianDailyLimit } from "@zoonk/core/minors/guardian/set-daily-limit";
+import { setGuardianMemory } from "@zoonk/core/minors/guardian/set-memory";
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -35,11 +36,31 @@ export async function setDailyLimitAction({
 }): Promise<boolean> {
   const parsed = guardedLearnerUpdateSchema.safeParse({ dailyLimitMinutes });
 
-  if (!parsed.success) {
+  if (!parsed.success || parsed.data.dailyLimitMinutes === undefined) {
     return false;
   }
 
-  const result = await setGuardianDailyLimit({ ...parsed.data, linkId });
+  const result = await setGuardianDailyLimit({
+    dailyLimitMinutes: parsed.data.dailyLimitMinutes,
+    linkId,
+  });
+
+  if (result.status === "updated") {
+    refresh();
+  }
+
+  return result.status === "updated";
+}
+
+/** The guardian turns the learner's memory off, or lets them choose again. */
+export async function setMemoryAction({
+  linkId,
+  memoryOff,
+}: {
+  linkId: string;
+  memoryOff: boolean;
+}): Promise<boolean> {
+  const result = await setGuardianMemory({ linkId, memoryOff });
 
   if (result.status === "updated") {
     refresh();

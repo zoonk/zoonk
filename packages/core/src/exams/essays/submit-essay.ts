@@ -3,6 +3,7 @@ import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
+import { startStudyBlock } from "../../sessions/start-study-block";
 import { countGradesLeft } from "./_utils/essay-drafts";
 import { findOwnedEssay } from "./_utils/owned-essay";
 import { type EssayGradeView, type EssaySubmissionInput } from "./essay-contract";
@@ -38,14 +39,21 @@ export async function submitEssay({
     return found;
   }
 
-  const { block, blueprint, content, goal, item, sessionId, userId } = found.owned;
-
-  if (block.status !== "active") {
-    return { status: "blockNotActive" };
-  }
-
+  const { block, blueprint, content, goal, item, sessionDate, sessionId, userId } = found.owned;
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
+  const isTodays = sessionDate.getTime() === localDate.getTime();
+
+  // Sending a draft takes today's block on, as opening it from the session does (a writing page
+  // opened from a link hasn't started it yet). Another day's block waits for its own session.
+  const started =
+    block.status === "pending" && isTodays
+      ? await startStudyBlock({ blockId, input: { timeZone: input.timeZone }, sessionId })
+      : null;
+
+  if (block.status !== "active" && started?.status !== "ready") {
+    return { status: "blockNotActive" };
+  }
 
   if ((await countGradesLeft({ localDate, userId })) === 0) {
     return { status: "limitReached" };

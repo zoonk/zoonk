@@ -13,8 +13,8 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
-import { announceTestedOutItems } from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
+import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { replanGoalsWaitingOnSkills } from "./replan-waiting-goals";
 import { listSkillExtensions, planSkillExtensions } from "./skill-extensions";
@@ -40,19 +40,26 @@ async function addChapter({
   position,
   skillId,
   title,
+  tools = [],
 }: {
   courseId: string;
   lessons: number;
   position: number;
   skillId: string;
   title: string;
+  tools?: { essential: boolean; name: string }[];
 }) {
-  const chapter = await libraryChapterFixture({ language: "pt", targetLanguage: "en", title });
+  const chapter = await libraryChapterFixture({
+    language: "pt",
+    targetLanguage: "en",
+    title,
+    tools,
+  });
 
   const created = await Promise.all(
     Array.from({ length: lessons }, (_, index) =>
       libraryLessonFixture({
-        estimatedMinutes: 3,
+        estimatedMinutes: DEFAULT_LESSON_MINUTES,
         homeChapterId: chapter.id,
         language: "pt",
         targetLanguage: "en",
@@ -212,7 +219,8 @@ describe("skill extensions", () => {
           {
             extend: [
               {
-                lessons: SKILL_LESSONS,
+                // The plan's stand-in: the 15 of the graph's 20 lessons the course doesn't have.
+                lessons: SKILL_LESSONS - OUTLINED_LESSONS,
                 skill: {
                   description: skill.description,
                   id: skill.id,
@@ -223,6 +231,7 @@ describe("skill extensions", () => {
             ],
             level: "beginner",
             skills: [],
+            withToolChapters: true,
           },
         ],
         courseId: course.id,
@@ -260,6 +269,77 @@ describe("skill extensions", () => {
     expect(soon).not.toContain(skills[2]?.id);
   });
 
+  it("asks for the next chapter of each situation a unit's shared first chapter starts", async () => {
+    const [user, course, ...skills] = await Promise.all([
+      userFixture(),
+      courseFixture({ language: "pt", targetLanguage: "en", title: "Inglês" }),
+      ...["Cumprimentar entrevistadores", "Apresentar sua trajetória"].map((name) =>
+        skillFixture({
+          language: "pt",
+          name: `${name} ${crypto.randomUUID()}`,
+          targetLanguage: "en",
+        }),
+      ),
+    ]);
+
+    // A first chapter of five lessons tagged with both situations, which the graph sizes at eight
+    // lessons each: five lessons in all, not five of each.
+    const chapter = await addChapter({
+      courseId: course.id,
+      lessons: OUTLINED_LESSONS,
+      position: 0,
+      skillId: skills[0]?.id ?? "",
+      title: "Abertura da entrevista",
+    });
+
+    await prisma.chapterSkill.create({
+      data: { chapterId: chapter.id, skillId: skills[1]?.id ?? "" },
+    });
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 30,
+      kind: "language",
+      language: "pt",
+      primaryCourseId: course.id,
+      settings: { startDate: "2020-09-28" },
+      targetLanguage: "en",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Entrevista" }],
+        skills: skills.map((skill) => ({
+          area: "Inglês",
+          courseIds: [course.id],
+          lessons: 8,
+          name: skill.name,
+          phase: 0,
+          skillId: skill.id,
+          weight: null,
+        })),
+      },
+    });
+
+    const items = await planItems(plan.id);
+
+    expect(
+      items.filter((item) => item.kind === "lesson" && !item.lessonId).map((item) => item.skillId),
+    ).toStrictEqual(skills.map((skill) => skill.id));
+
+    const requests = await listSkillExtensions({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(
+      requests[0]?.bands[0]?.extend?.map((extension) => [extension.skill.id, extension.lessons]),
+    ).toStrictEqual([
+      [skills[0]?.id, 5],
+      [skills[1]?.id, 6],
+    ]);
+  });
+
   it("gives a skill only a few lessons short neither a stand-in nor a next chapter", async () => {
     const { goal, plan } = await learnSetup([{ lessons: 8, outlined: 5 }]);
     const items = await planItems(plan.id);
@@ -290,13 +370,13 @@ describe("skill extensions", () => {
     );
   });
 
-  it("sizes the next chapter to the lessons still missing, capped, after the chapters so far", async () => {
+  it("sizes the next chapter to the plan's stand-in, capped, after the chapters so far", async () => {
     const { chapter, course, skill } = await setup();
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 
-    // 20 lessons: capped at 10; 10: the 5 missing; 8: only 3 short, less than a chapter.
-    const [capped, small, few] = await Promise.all(
-      [SKILL_LESSONS, 10, 8].map((lessons) =>
+    // A stand-in of 15 lessons: capped at 10; of 5: those 5; none: no next chapter.
+    const [capped, small, none] = await Promise.all(
+      [15, 5, 0].map((lessons) =>
         planSkillExtensions({
           courseId: course.id,
           extensions: [{ lessons, skill: ref }],
@@ -324,7 +404,37 @@ describe("skill extensions", () => {
     ]);
 
     expect(small?.map((plan) => plan.lessons)).toStrictEqual([5]);
-    expect(few).toStrictEqual([]);
+    expect(none).toStrictEqual([]);
+  });
+
+  it("continues after every chapter that teaches the skill, one that needs a tool included", async () => {
+    const { chapter, course, skill } = await setup();
+    const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+    const toolChapter = await addChapter({
+      courseId: course.id,
+      lessons: 4,
+      position: 1,
+      skillId: skill.id,
+      title: "Entrevistas gravadas no editor de vídeo",
+      tools: [{ essential: true, name: "Editor de vídeo" }],
+    });
+
+    // A plan without tool chapters keeps a stand-in for its lessons, but the next chapter still
+    // repeats none of them.
+    await expect(
+      planSkillExtensions({
+        courseId: course.id,
+        extensions: [{ lessons: 5, skill: ref }],
+        ownerId: null,
+      }),
+    ).resolves.toMatchObject([
+      {
+        afterChapterId: toolChapter.id,
+        chapters: [{ title: chapter.title }, { title: "Entrevistas gravadas no editor de vídeo" }],
+        lessons: 5,
+      },
+    ]);
   });
 
   it("swaps the next chapter's lessons in for part of the stand-in when the goal re-plans", async () => {
@@ -358,29 +468,5 @@ describe("skill extensions", () => {
 
     // The skill keeps the graph's size: written lessons replace part of the stand-in.
     expect(after.estimateHours).toBeCloseTo(before.estimateHours ?? 0);
-  });
-
-  it("counts a tested-out stand-in as the lessons it still stood for", async () => {
-    const { goal, plan } = await setup();
-    const items = await planItems(plan.id);
-    const tested = items.filter((item) => item.kind === "lesson");
-
-    await prisma.planItem.updateMany({
-      data: { completedAt: NOW, status: "testedOut" },
-      where: { id: { in: tested.map((item) => item.id) } },
-    });
-
-    await announceTestedOutItems({
-      goalId: goal.id,
-      now: NOW,
-      planItemIds: tested.map((item) => item.id),
-      timeZone: "UTC",
-    });
-
-    const change = await prisma.planChange.findFirstOrThrow({
-      where: { kind: "testedOut", planId: plan.id },
-    });
-
-    expect(change.payload).toMatchObject({ lessons: SKILL_LESSONS });
   });
 });

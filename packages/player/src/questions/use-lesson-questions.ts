@@ -1,6 +1,7 @@
 "use client";
 
 import { type TutorTarget } from "@zoonk/core/lesson-questions/contract";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useCallback, useEffect, useRef } from "react";
 import { type LessonQuestionConnection } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
@@ -8,7 +9,10 @@ import { getLessonQuestionScope } from "./lesson-question-scope";
 import { type LessonQuestionState } from "./lesson-question-state";
 import { useLessonQuestionAnswers } from "./use-lesson-question-answers";
 import { useLessonQuestionRecovery } from "./use-lesson-question-recovery";
-import { useLessonQuestionSessions } from "./use-lesson-question-sessions";
+import {
+  type LessonQuestionThreadPage,
+  useLessonQuestionSessions,
+} from "./use-lesson-question-sessions";
 import { useLessonQuestionThread } from "./use-lesson-question-thread";
 import { useSendLessonQuestion } from "./use-send-lesson-question";
 
@@ -20,7 +24,17 @@ import { useSendLessonQuestion } from "./use-send-lesson-question";
 export type LessonQuestionHost = {
   activeContext: LessonQuestionContext;
   canAskQuestions: boolean;
+  /**
+   * The thread as the page read it on the server: it shows at once, and the tutor still reads it
+   * again in the background for anything newer.
+   */
+  initialThread?: LessonQuestionThreadPage | null;
   lessonStepIds: readonly string[];
+  /**
+   * The conversation is a page of its own (the buddy's), always on screen, not a sheet the learner
+   * opens: an answer still being written elsewhere is followed as soon as it shows.
+   */
+  page?: boolean;
   preload?: boolean;
 };
 
@@ -30,6 +44,8 @@ type UseLessonQuestionsInput = LessonQuestionHost & {
 };
 
 export type LessonQuestionController = {
+  /** The learner answered a plan change an answer proposed (Apply, Not now, Undo). */
+  answerPlanChange: (change: PlanChangeView) => void;
   canAskQuestions: boolean;
   changeDraft: (draft: string) => void;
   checkAnswer: (questionId: string) => Promise<void>;
@@ -41,6 +57,8 @@ export type LessonQuestionController = {
   open: (context: LessonQuestionContext) => void;
   retryAnswer: (questionId: string) => Promise<void>;
   send: () => Promise<void>;
+  /** Sends one of the tutor's suggested questions right away. */
+  sendSuggestion: (question: string) => Promise<void>;
   state: LessonQuestionState;
   unresolvedQuestion: string | null;
 };
@@ -49,11 +67,16 @@ export function useLessonQuestions({
   activeContext,
   canAskQuestions,
   connection,
+  initialThread = null,
   lessonStepIds,
+  page = false,
   preload = true,
   target,
 }: UseLessonQuestionsInput): LessonQuestionController {
-  const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions(activeContext);
+  const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions({
+    activeContext,
+    initialThread,
+  });
 
   const { load, loadEarlier, loadThread, reconcileLatestThread } = useLessonQuestionThread({
     canAskQuestions,
@@ -121,7 +144,12 @@ export function useLessonQuestions({
     state,
   });
 
-  const { send, unresolvedQuestion } = useSendLessonQuestion({
+  const answerPlanChange = useCallback(
+    (change: PlanChangeView) => dispatch({ change, type: "planChangeAnswered" }),
+    [dispatch],
+  );
+
+  const { send, sendSuggestion, unresolvedQuestion } = useSendLessonQuestion({
     canAskQuestions,
     connection,
     dispatchToContext,
@@ -142,11 +170,13 @@ export function useLessonQuestions({
     canAskQuestions,
     connection,
     dispatch,
+    isShown: page || state.isOpen,
     state,
     streamAnswer: resumeAnswer,
   });
 
   return {
+    answerPlanChange,
     canAskQuestions,
     changeDraft,
     checkAnswer,
@@ -157,6 +187,7 @@ export function useLessonQuestions({
     open,
     retryAnswer,
     send,
+    sendSuggestion,
     state,
     unresolvedQuestion,
   };

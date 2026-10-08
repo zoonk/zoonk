@@ -6,20 +6,26 @@ const MONDAY = new Date("2026-09-28T00:00:00Z");
 
 describe(getFreshStart, () => {
   it("welcomes the learner back after two days away, before anything else", () => {
-    expect(getFreshStart({ isNewPhase: true, lastStudyDate: MONDAY, today: THURSDAY })).toBe(
-      "welcomeBack",
-    );
+    expect(
+      getFreshStart({
+        isFirstDay: false,
+        isNewPhase: true,
+        lastStudyDate: MONDAY,
+        today: THURSDAY,
+      }),
+    ).toBe("welcomeBack");
   });
 
   it("starts a new phase or a new week fresh", () => {
     const tuesday = new Date("2026-09-29T00:00:00Z");
 
-    expect(getFreshStart({ isNewPhase: true, lastStudyDate: MONDAY, today: tuesday })).toBe(
-      "newPhase",
-    );
+    expect(
+      getFreshStart({ isFirstDay: false, isNewPhase: true, lastStudyDate: MONDAY, today: tuesday }),
+    ).toBe("newPhase");
 
     expect(
       getFreshStart({
+        isFirstDay: false,
         isNewPhase: false,
         lastStudyDate: new Date("2026-09-27T00:00:00Z"),
         today: MONDAY,
@@ -31,10 +37,39 @@ describe(getFreshStart, () => {
     const wednesday = new Date("2026-09-30T00:00:00Z");
 
     expect(
-      getFreshStart({ isNewPhase: false, lastStudyDate: MONDAY, today: wednesday }),
+      getFreshStart({
+        isFirstDay: false,
+        isNewPhase: false,
+        lastStudyDate: MONDAY,
+        today: wednesday,
+      }),
     ).toBeNull();
 
-    expect(getFreshStart({ isNewPhase: false, lastStudyDate: null, today: wednesday })).toBeNull();
+    expect(
+      getFreshStart({
+        isFirstDay: false,
+        isNewPhase: false,
+        lastStudyDate: null,
+        today: wednesday,
+      }),
+    ).toBeNull();
+  });
+
+  it("says nothing on a goal's first day, even on a Monday, in a later phase or after a break", () => {
+    const lastMonth = new Date("2026-08-31T00:00:00Z");
+
+    expect(
+      getFreshStart({
+        isFirstDay: true,
+        isNewPhase: true,
+        lastStudyDate: lastMonth,
+        today: MONDAY,
+      }),
+    ).toBeNull();
+
+    expect(
+      getFreshStart({ isFirstDay: true, isNewPhase: false, lastStudyDate: null, today: MONDAY }),
+    ).toBeNull();
   });
 });
 

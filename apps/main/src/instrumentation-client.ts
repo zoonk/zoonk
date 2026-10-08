@@ -1,5 +1,5 @@
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
-import { loadPostHog } from "@zoonk/core/analytics/posthog-browser";
+import { loadPostHog, waitForSharedProperties } from "@zoonk/core/analytics/posthog-browser";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
 
@@ -20,5 +20,8 @@ if (process.env.NODE_ENV === "production") {
  * who hasn't told us their age, is ever recorded.
  */
 void loadPostHog();
+
+/** The root layout registers the properties every event carries, so events wait for them. */
+waitForSharedProperties();
 
 export const onRouterTransitionStart = captureRouterTransitionStart;

@@ -1,5 +1,5 @@
 import "server-only";
-import { getPublishedCourseWhere, prisma } from "@zoonk/db";
+import { getListedCourseWhere, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
 type ChapterFindManyArgs = NonNullable<Parameters<typeof prisma.chapter.findMany>[0]>;
@@ -69,10 +69,7 @@ export async function searchLibraryChapters({
   }
 
   const baseWhere: ChapterWhere = {
-    homeCourse: {
-      ...getPublishedCourseWhere({ organization: { kind: "brand" } }),
-      visibility: "public",
-    },
+    homeCourse: getListedCourseWhere(),
     language,
     visibility: "public",
   };

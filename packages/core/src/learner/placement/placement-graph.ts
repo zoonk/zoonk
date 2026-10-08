@@ -1,5 +1,30 @@
+import { type CourseLevel } from "@zoonk/db";
+
+/** Library bands from the most basic up: a subject's overview comes before its beginner skills. */
+const BAND_RANK: Readonly<Record<CourseLevel, number>> = {
+  advanced: 3,
+  beginner: 1,
+  intermediate: 2,
+  overview: 0,
+};
+
+/** How basic a band is, 0 for the overview; lower bands come first in a subject. */
+export function getBandRank(band: CourseLevel): number {
+  return BAND_RANK[band];
+}
+
 /** One skill of a goal's plan as placement walks it. */
 export type PlacementSkill = {
+  /**
+   * The Library band the skill graph put the skill in (overview, beginner, intermediate or
+   * advanced): how basic it is within its subject. Null or absent when unknown.
+   */
+  band?: CourseLevel | null;
+  /**
+   * One of its subject's foundations (`getFoundationSkillIds`): what the subject's later skills
+   * build on. Knowing the subject, or its later skills, says these are known too.
+   */
+  foundation?: boolean;
   id: string;
   /** The plan phase (0-based) the skill belongs to. */
   phase: number;

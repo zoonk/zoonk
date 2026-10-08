@@ -6,7 +6,6 @@ import {
   type SpeakingMockExam,
 } from "@zoonk/core/language/conversations/contract";
 import { useExtracted } from "next-intl";
-import { useExperienceMode } from "../../mode-provider";
 
 /** A speaking mock's name, as its card and call header say it. */
 export function useSpeakingMockTitle() {
@@ -20,12 +19,11 @@ export function useSpeakingMockTitle() {
   return (exam: SpeakingMockExam) => titles[exam];
 }
 
-/** What kind of call this is, as the header says it: Fun names a unit's checkpoint a boss. */
+/** What kind of call this is, as the header says it. */
 export function useConversationTitle(
   conversation: Pick<LanguageConversationView, "exam" | "kind">,
 ) {
   const t = useExtracted();
-  const mode = useExperienceMode();
   const mockTitle = useSpeakingMockTitle();
 
   if (conversation.exam) {
@@ -33,7 +31,7 @@ export function useConversationTitle(
   }
 
   if (conversation.kind === "checkpoint") {
-    return mode === "fun" ? t("Unit boss") : t("Unit checkpoint");
+    return t("Unit challenge");
   }
 
   return t("Practice call");

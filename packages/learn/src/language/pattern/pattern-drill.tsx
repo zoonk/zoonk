@@ -26,10 +26,12 @@ function toChoiceQuestion({
   return {
     context: null,
     format: "multipleChoice",
+    image: null,
     itemId: `pattern-drill-${index}`,
     options: question.options,
     question: question.sentence,
     skillId: "",
+    visual: null,
   };
 }
 
@@ -96,14 +98,14 @@ export function PatternDrillResult({ result }: { result: PatternPracticeResult }
       className="flex flex-col items-center gap-3 py-8 text-center"
       role="status"
     >
-      <h1 className="in-data-[mode=fun]:font-fun-display text-3xl font-bold tracking-tight tabular-nums">
+      <h1 className="text-3xl font-bold tracking-tight tabular-nums">
         {t("{correct, number} of {total, number} right", {
           correct: result.correct,
           total: result.total,
         })}
       </h1>
       {result.brainPower > 0 && (
-        <p className="text-score in-data-[mode=fun]:text-fun-accent-lime font-semibold tabular-nums">
+        <p className="text-score font-semibold tabular-nums">
           {t("+{points} Brain Power", { points: format.number(result.brainPower) })}
         </p>
       )}

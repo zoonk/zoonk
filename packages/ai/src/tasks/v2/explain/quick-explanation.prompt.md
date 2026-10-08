@@ -16,7 +16,7 @@ Answer `QUESTION` in `LANGUAGE` as a short visual story that anyone can follow i
 - Be accurate. Don't oversimplify into something false: prefer "roughly" or "in most cases" over a wrong absolute. When the honest answer is "it depends", say so and say on what.
 - For health, law and money, explain how things generally work and say when a professional should look at a specific case. Never give a diagnosis, legal advice or an investment recommendation.
 - Keep each screen short: a title of at most 6 words and a text of at most 300 characters.
-- Each screen may have an `imagePrompt`: a simple picture that shows the screen's idea (describe the content, not the art style). Use null when a picture would only decorate. At least half of the screens should have one.
+- Give a screen an `imagePrompt` whenever the listener would otherwise have to imagine what it describes (how something looks, is built, is arranged or moves): a simple picture that shows the screen's idea, with the parts it names (describe the content, not the art style). Use null when the words alone are fully clear or a picture would only decorate.
 
 # The check
 

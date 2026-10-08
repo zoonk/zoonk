@@ -1,16 +1,25 @@
 "use client";
 
-import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
+import {
+  type ActivityStepContent,
+  showsActivityData,
+} from "@zoonk/core/library/activities/templates";
 import { useExtracted } from "next-intl";
 
 /**
  * Where the activity's numbers come from: a cited source, or a plain note that the data is an
- * example, so made-up numbers never pass as facts.
+ * example, so made-up numbers never pass as facts. An activity that shows no data (sorting,
+ * matching) has no note, even when its content carries one.
  */
-export function ActivityDataNote({ data }: { data: ActivityStepContent["data"] }) {
+export function ActivityDataNote({
+  content,
+}: {
+  content: Pick<ActivityStepContent, "data" | "template">;
+}) {
   const t = useExtracted();
+  const { data } = content;
 
-  if (!data) {
+  if (!data || !showsActivityData(content.template)) {
     return null;
   }
 

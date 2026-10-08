@@ -14,7 +14,7 @@ type ExplanationCourse = {
 };
 
 /**
- * A quick explanation as both modes show it. `lesson` holds the story screens and the check,
+ * A quick explanation as the apps show it. `lesson` holds the story screens and the check,
  * without the summary card, which is `recap` ("Now you know"). It's null while the explanation is
  * being written (`preparing`).
  */
@@ -23,6 +23,11 @@ export type ExplanationView = {
   /** The run writing the explanation, to follow live; null until it starts. */
   generationId: string | null;
   goalId: string;
+  /**
+   * Whether the learner has a goal with a plan besides quick explanations: they go back to it
+   * after this one. Without one, the next step is asking another question.
+   */
+  hasStudyGoal: boolean;
   lesson: PlayableLibraryLesson | null;
   /** The story screens' titles, in order, once it's written. */
   outline: string[];

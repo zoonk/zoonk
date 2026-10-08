@@ -6,16 +6,24 @@ type RefusedConversation =
   | Exclude<UsageDecision, { status: "allowed" | "unauthorized" }>
   | { status: "conversationEnded" | "notFound" | "unauthorized" };
 
+/** What a refused call says, by the call time that ran out. */
+const CALL_LIMIT_MESSAGES = {
+  day: "No more call time on your plan today",
+  month: "No more call time on your plan this month",
+  total: "Calls need a free account",
+} as const;
+
 /**
- * A live conversation that can't open now: the plan's conversations for today are used, too many
- * at once, the call already ended, or it isn't the learner's.
+ * A live conversation that can't open now: the plan's call time for today or this month is used,
+ * or a guest's plan has none (`details` names it: its period and limit in seconds), too many at
+ * once, the call already ended, or it isn't the learner's.
  */
 export function conversationRefusalError(result: RefusedConversation) {
   if ("limit" in result) {
     return createErrorResponse({
       code: "CONVERSATION_LIMIT_REACHED",
       details: result.limit,
-      message: "No more live conversations on your plan today",
+      message: CALL_LIMIT_MESSAGES[result.limit.period],
       status: httpStatus.tooManyRequests,
     });
   }

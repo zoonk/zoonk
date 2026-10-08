@@ -4,6 +4,7 @@ import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { type StepKind, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { libraryRowsVisibleTo } from "../../_utils/library-visibility";
+import { CURRENT_STEPS } from "../lesson-versions";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
 import { toSummaryIdeas } from "./summary-ideas";
 
@@ -114,7 +115,11 @@ export async function loadChapterLessons({
         select: {
           canDo: true,
           spec: true,
-          steps: { orderBy: { position: "asc" }, select: { content: true, kind: true } },
+          steps: {
+            orderBy: { position: "asc" },
+            select: { content: true, kind: true },
+            where: CURRENT_STEPS,
+          },
           summary: true,
           title: true,
         },

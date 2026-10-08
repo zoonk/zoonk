@@ -195,7 +195,6 @@ export async function gradeEssay(params: GradeEssayParams) {
         prompt: userPrompt,
         providerOptions,
         reasoning,
-        temperature: 0,
       }),
     systemPrompt,
     task: "grade-essay",

@@ -93,7 +93,7 @@ describe("computing activities", () => {
   );
 
   it("code runner: JavaScript output that differs is wrong", async () => {
-    openActivity({ content: javascriptRunner, mode: "fun", template: "codeRunner" });
+    openActivity({ content: javascriptRunner, template: "codeRunner" });
     await page.getByRole("button", { name: "Run" }).click();
     await expect.element(page.getByText("map returns a new array.")).toBeVisible();
     await checkActivity();
@@ -101,7 +101,7 @@ describe("computing activities", () => {
   });
 
   it("code tracer: predicting the traced value is right", async () => {
-    openActivity({ mode: "fun", template: "codeTracer" });
+    openActivity({ template: "codeTracer" });
     await expect.element(page.getByText("Step 1 of 4", { exact: true })).toBeVisible();
     await stepForward(2);
     await expect.element(page.getByText("What will mid be on pass 3?")).toBeVisible();
@@ -137,7 +137,7 @@ describe("computing activities", () => {
   });
 
   it("SQL playground: OR instead of AND shows the expected rows", async () => {
-    openActivity({ mode: "fun", template: "sqlPlayground" });
+    openActivity({ template: "sqlPlayground" });
 
     await page
       .getByRole("textbox", { name: "Your query" })
@@ -154,7 +154,7 @@ describe("computing activities", () => {
   });
 
   it("pattern tester: examples pass as the pattern grows", async () => {
-    openActivity({ mode: "fun", template: "patternTester" });
+    openActivity({ template: "patternTester" });
     const pattern = page.getByRole("textbox", { name: "Your pattern" });
     await pattern.fill(String.raw`^\d{5}`);
 

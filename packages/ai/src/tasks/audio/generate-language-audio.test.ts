@@ -1,19 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type convertWavToMp3 } from "./convert-wav-to-mp3";
 import { generateLanguageAudio } from "./generate-language-audio";
+import { type generateSpeechWithProvider } from "./speech-provider";
 
 const { convertWavToMp3Mock, generateSpeechWithProviderMock } = vi.hoisted(() => ({
-  convertWavToMp3Mock: vi.fn(),
-  generateSpeechWithProviderMock: vi.fn(),
+  convertWavToMp3Mock: vi.fn<typeof convertWavToMp3>(),
+  generateSpeechWithProviderMock: vi.fn<typeof generateSpeechWithProvider>(),
 }));
 
 vi.mock("server-only", () => ({}));
 
-vi.mock("./generate-language-audio.prompt.md", () => ({
-  default:
-    'Some words may look like English words but they are {{LANGUAGE}} words and must be pronounced according to {{LANGUAGE}} phonology. For example, "fruit" in Dutch is pronounced "frœyt", not the English "froot."',
+vi.mock("./generate-language-audio-alphabet-symbol.prompt.md", () => ({
+  default: "This audio is for one card in an alphabet lesson.",
 }));
-
-vi.mock("./generate-language-audio-alphabet-symbol.prompt.md", () => ({ default: "" }));
 
 vi.mock("./convert-wav-to-mp3", () => ({ convertWavToMp3: convertWavToMp3Mock }));
 
@@ -21,311 +20,168 @@ vi.mock("./speech-provider", () => ({
   generateSpeechWithProvider: generateSpeechWithProviderMock,
 }));
 
-/** Every clip names the model that voiced it (the fallback, after one), its instructions and run. */
-function speechProvenance(model: string) {
-  return {
-    generatedAt: expect.any(String),
-    model,
-    promptVersion: expect.stringMatching(/^[a-f0-9]{12}$/u),
-    runId: expect.any(String),
-  };
+const FLASH = "google/gemini-3.8-flash-tts";
+const FLASH_LITE = "google/gemini-3.8-flash-lite-tts";
+const OPENAI = "openai/gpt-4o-mini-tts";
+
+const wavAudio = new Uint8Array([1, 2, 3]);
+const mp3Audio = new Uint8Array([4, 5, 6]);
+
+function voiced() {
+  return { audio: wavAudio, providerMetadata: {} };
+}
+
+/** The first request sent to a speech model. */
+function firstRequest() {
+  const [input] = generateSpeechWithProviderMock.mock.calls[0] ?? [];
+
+  if (!input) {
+    throw new Error("No speech request was sent");
+  }
+
+  return input;
+}
+
+/** The models asked for, in order. */
+function requestedModels() {
+  return generateSpeechWithProviderMock.mock.calls.map(([input]) => input.model);
 }
 
 describe(generateLanguageAudio, () => {
-  const googleWavAudio = new Uint8Array([1, 2, 3]);
-  const googleMp3Audio = new Uint8Array([4, 5, 6]);
-  const openAIWavAudio = new Uint8Array([7, 8, 9]);
-  const openAIMp3Audio = new Uint8Array([10, 11, 12]);
-
   beforeEach(() => {
     vi.clearAllMocks();
-    generateSpeechWithProviderMock.mockResolvedValue(googleWavAudio);
-    convertWavToMp3Mock.mockResolvedValue(googleMp3Audio);
+    generateSpeechWithProviderMock.mockResolvedValue(voiced());
+    convertWavToMp3Mock.mockResolvedValue({ audio: mp3Audio, durationSeconds: 2.5 });
   });
 
-  it("converts requested OpenAI WAV to MP3", async () => {
-    generateSpeechWithProviderMock.mockResolvedValue(openAIWavAudio);
-    convertWavToMp3Mock.mockResolvedValue(openAIMp3Audio);
-
-    const result = await generateLanguageAudio({
-      language: "en",
-      model: "openai/gpt-4o-mini-tts",
-      text: "fruit",
-    });
+  it("voices Italian with Gemini Flash, naming the language in every request", async () => {
+    const result = await generateLanguageAudio({ language: "it", text: "Ciao, come stai?" });
 
     expect(result.error).toBeNull();
 
     expect(result.data).toStrictEqual({
-      audio: openAIMp3Audio,
+      audio: mp3Audio,
+      durationMs: 2500,
       format: "mp3",
-      provenance: speechProvenance("openai/gpt-4o-mini-tts"),
+      provenance: expect.objectContaining({
+        costUsd: expect.any(Number),
+        model: FLASH,
+        promptVersion: expect.stringMatching(/^[a-f0-9]{12}$/u),
+        requestedModel: FLASH,
+        runId: expect.any(String),
+        usage: { audioSeconds: 2.5, inputTokens: expect.any(Number) },
+      }),
     });
 
-    expect(generateSpeechWithProviderMock).toHaveBeenCalledExactlyOnceWith({
-      model: "openai/gpt-4o-mini-tts",
-      text: "fruit",
+    const call = firstRequest();
+
+    expect(call).toStrictEqual({
+      instructions: expect.stringContaining("The following text is Italiano."),
+      model: FLASH,
+      text: "Ciao, come stai?",
       voice: "Kore",
     });
 
-    expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
-      audio: openAIWavAudio,
-      model: "openai/gpt-4o-mini-tts",
-    });
+    expect(call.instructions).toContain("pronounced according to Italiano phonology");
   });
 
-  it("uses OpenAI for English words", async () => {
-    generateSpeechWithProviderMock.mockResolvedValue(openAIWavAudio);
-    convertWavToMp3Mock.mockResolvedValue(openAIMp3Audio);
+  it("names English too, without the look-alike words reminder", async () => {
+    await generateLanguageAudio({ language: "en", text: "fruit" });
+    const call = firstRequest();
 
-    const result = await generateLanguageAudio({ language: "en", text: "fruit" });
-
-    expect(result.error).toBeNull();
-
-    expect(result.data).toStrictEqual({
-      audio: openAIMp3Audio,
-      format: "mp3",
-      provenance: speechProvenance("openai/gpt-4o-mini-tts"),
-    });
-
-    expect(generateSpeechWithProviderMock).toHaveBeenCalledExactlyOnceWith({
-      model: "openai/gpt-4o-mini-tts",
-      text: "fruit",
-      voice: "Kore",
-    });
-
-    expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
-      audio: openAIWavAudio,
-      model: "openai/gpt-4o-mini-tts",
-    });
+    expect(call.instructions).toContain("The following text is US English.");
+    expect(call.instructions).not.toContain("phonology");
   });
 
-  it("falls back to Gemini when OpenAI fails for English words", async () => {
+  it("keeps the alphabet card's instructions between the reminder and the read-aloud line", async () => {
+    await generateLanguageAudio({ language: "ja", text: "あ", usage: "alphabetSymbol" });
+    const call = firstRequest();
+    const { instructions } = call;
+
+    expect(instructions.indexOf("phonology")).toBeLessThan(instructions.indexOf("alphabet lesson"));
+
+    expect(instructions.indexOf("alphabet lesson")).toBeLessThan(
+      instructions.indexOf("The following text is"),
+    );
+  });
+
+  it("falls back to Flash Lite, then OpenAI, for a language OpenAI speaks", async () => {
     generateSpeechWithProviderMock
-      .mockRejectedValueOnce(new Error("OpenAI unavailable"))
-      .mockResolvedValueOnce(googleWavAudio);
+      .mockRejectedValueOnce(new Error("Flash unavailable"))
+      .mockRejectedValueOnce(new Error("Flash Lite unavailable"))
+      .mockResolvedValueOnce(voiced());
 
-    convertWavToMp3Mock.mockResolvedValue(googleMp3Audio);
+    const result = await generateLanguageAudio({ language: "es", text: "Hola" });
 
-    const result = await generateLanguageAudio({ language: "en", text: "fruit" });
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, OPENAI]);
 
-    expect(result.error).toBeNull();
-
-    expect(result.data).toStrictEqual({
-      audio: googleMp3Audio,
-      format: "mp3",
-      provenance: speechProvenance("google/gemini-2.5-flash-preview-tts"),
-    });
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(1, {
-      model: "openai/gpt-4o-mini-tts",
-      text: "fruit",
-      voice: "Kore",
-    });
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(2, {
-      model: "google/gemini-2.5-flash-preview-tts",
-      text: "fruit",
-      voice: "Kore",
-    });
-
-    expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
-      audio: googleWavAudio,
-      model: "google/gemini-2.5-flash-preview-tts",
-    });
-  });
-
-  it("falls back to Gemini when OpenAI fails for supported non-English sentences", async () => {
-    generateSpeechWithProviderMock
-      .mockRejectedValueOnce(new Error("OpenAI unavailable"))
-      .mockResolvedValueOnce(googleWavAudio);
-
-    convertWavToMp3Mock.mockResolvedValue(googleMp3Audio);
-
-    const result = await generateLanguageAudio({
-      language: "es",
-      text: "La fruta es deliciosa.",
-      textType: "sentence",
-    });
-
-    expect(result.error).toBeNull();
-
-    expect(result.data).toStrictEqual({
-      audio: googleMp3Audio,
-      format: "mp3",
-      provenance: speechProvenance("google/gemini-2.5-flash-preview-tts"),
-    });
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ model: "openai/gpt-4o-mini-tts" }),
-    );
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
+    expect(result.data?.provenance).toStrictEqual(
+      expect.objectContaining({ model: OPENAI, requestedModel: FLASH }),
     );
   });
 
-  it("falls back to OpenAI when Gemini fails for supported non-English words", async () => {
-    generateSpeechWithProviderMock
-      .mockRejectedValueOnce(new Error("Gemini unavailable"))
-      .mockResolvedValueOnce(openAIWavAudio);
-
-    convertWavToMp3Mock.mockResolvedValue(openAIMp3Audio);
-
-    const result = await generateLanguageAudio({ language: "nl", text: "fruit" });
-
-    expect(result.error).toBeNull();
-
-    expect(result.data).toStrictEqual({
-      audio: openAIMp3Audio,
-      format: "mp3",
-      provenance: speechProvenance("openai/gpt-4o-mini-tts"),
-    });
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
-    );
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ model: "openai/gpt-4o-mini-tts" }),
-    );
-  });
-
-  it("never uses OpenAI for unsupported languages", async () => {
+  it("never sends a language OpenAI doesn't speak to OpenAI", async () => {
     generateSpeechWithProviderMock.mockRejectedValue(new Error("Gemini unavailable"));
 
-    const result = await generateLanguageAudio({
-      language: "am",
-      text: "ሰላም ነው።",
-      textType: "sentence",
-    });
+    const result = await generateLanguageAudio({ language: "am", text: "ሰላም ነው።" });
 
     expect(result.data).toBeNull();
     expect(result.error?.message).toBe("Gemini unavailable");
-    expect(generateSpeechWithProviderMock).toHaveBeenCalledTimes(2);
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
-    );
-
-    expect(generateSpeechWithProviderMock).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ model: "google/gemini-2.5-flash-preview-tts" }),
-    );
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE]);
   });
 
-  it("keeps prompt instructions for non-English audio", async () => {
-    const result = await generateLanguageAudio({ language: "nl", text: "fruit" });
-    const call = generateSpeechWithProviderMock.mock.calls[0]?.[0];
-
-    expect(result.error).toBeNull();
-    expect(call).toStrictEqual(expect.objectContaining({ text: "fruit" }));
-    expect(call?.instructions).toContain("Some words may look like English words");
-  });
-
-  it("falls back before conversion when OpenAI returns oversized English WAV", async () => {
-    generateSpeechWithProviderMock
-      .mockResolvedValueOnce(new Uint8Array(850 * 1024 + 1))
-      .mockResolvedValueOnce(googleWavAudio);
-
-    convertWavToMp3Mock.mockResolvedValue(googleMp3Audio);
-
-    const result = await generateLanguageAudio({ language: "en", text: "fruit" });
-
-    expect(result.error).toBeNull();
-
-    expect(result.data).toStrictEqual({
-      audio: googleMp3Audio,
-      format: "mp3",
-      provenance: speechProvenance("google/gemini-2.5-flash-preview-tts"),
-    });
-
-    expect(generateSpeechWithProviderMock).toHaveBeenCalledTimes(2);
-
-    expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
-      audio: googleWavAudio,
-      model: "google/gemini-2.5-flash-preview-tts",
-    });
-  });
-
-  it("falls back when OpenAI returns silent English WAV", async () => {
-    const silentWavAudio = new Uint8Array([13, 14, 15]);
-
-    generateSpeechWithProviderMock
-      .mockResolvedValueOnce(silentWavAudio)
-      .mockResolvedValueOnce(googleWavAudio);
-
+  it("falls back when a model's audio is silent", async () => {
     convertWavToMp3Mock
-      .mockRejectedValueOnce(new Error("openai returned silent audio"))
-      .mockResolvedValueOnce(googleMp3Audio);
+      .mockRejectedValueOnce(new Error(`${FLASH} returned silent audio`))
+      .mockResolvedValueOnce({ audio: mp3Audio, durationSeconds: 1 });
 
-    const result = await generateLanguageAudio({ language: "en", text: "fruit" });
+    const result = await generateLanguageAudio({ language: "fr", text: "Bonjour" });
 
-    expect(result.error).toBeNull();
-
-    expect(result.data).toStrictEqual({
-      audio: googleMp3Audio,
-      format: "mp3",
-      provenance: speechProvenance("google/gemini-2.5-flash-preview-tts"),
-    });
-
-    expect(convertWavToMp3Mock).toHaveBeenNthCalledWith(1, {
-      audio: silentWavAudio,
-      model: "openai/gpt-4o-mini-tts",
-    });
-
-    expect(convertWavToMp3Mock).toHaveBeenNthCalledWith(2, {
-      audio: googleWavAudio,
-      model: "google/gemini-2.5-flash-preview-tts",
-    });
+    expect(result.data?.provenance.model).toBe(FLASH_LITE);
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE]);
   });
 
-  it("retries silent WAV when OpenAI is requested explicitly", async () => {
-    const audibleWavAudio = new Uint8Array([16, 17, 18]);
-
-    generateSpeechWithProviderMock
-      .mockResolvedValueOnce(openAIWavAudio)
-      .mockResolvedValueOnce(audibleWavAudio);
-
+  it("gives an explicitly requested model a second attempt", async () => {
     convertWavToMp3Mock
-      .mockRejectedValueOnce(new Error("openai returned silent audio"))
-      .mockResolvedValueOnce(openAIMp3Audio);
+      .mockRejectedValueOnce(new Error(`${OPENAI} returned silent audio`))
+      .mockResolvedValueOnce({ audio: mp3Audio, durationSeconds: 1 });
 
-    const result = await generateLanguageAudio({ model: "openai/gpt-4o-mini-tts", text: "fruit" });
+    const result = await generateLanguageAudio({ language: "en", model: OPENAI, text: "fruit" });
 
     expect(result.error).toBeNull();
+    expect(requestedModels()).toStrictEqual([OPENAI, OPENAI]);
+  });
 
-    expect(result.data).toStrictEqual({
-      audio: openAIMp3Audio,
-      format: "mp3",
-      provenance: speechProvenance("openai/gpt-4o-mini-tts"),
+  it("rejects oversized audio for a short text before decoding it", async () => {
+    generateSpeechWithProviderMock.mockResolvedValue({
+      audio: new Uint8Array(18 * 48_000 + 1025),
+      providerMetadata: {},
     });
 
-    expect(generateSpeechWithProviderMock).toHaveBeenCalledTimes(2);
-  });
-
-  it("returns an error after explicitly requested OpenAI remains silent", async () => {
-    generateSpeechWithProviderMock.mockResolvedValue(openAIWavAudio);
-    convertWavToMp3Mock.mockRejectedValue(new Error("openai returned silent audio"));
-
-    const result = await generateLanguageAudio({ model: "openai/gpt-4o-mini-tts", text: "fruit" });
-
-    expect(result.data).toBeNull();
-    expect(result.error?.message).toContain("returned silent audio");
-    expect(generateSpeechWithProviderMock).toHaveBeenCalledTimes(2);
-  });
-
-  it("rejects oversized OpenAI WAV before conversion", async () => {
-    generateSpeechWithProviderMock.mockResolvedValue(new Uint8Array(850 * 1024 + 1));
-
-    const result = await generateLanguageAudio({ model: "openai/gpt-4o-mini-tts", text: "fruit" });
+    const result = await generateLanguageAudio({ language: "en", model: FLASH, text: "fruit" });
 
     expect(result.data).toBeNull();
     expect(result.error?.message).toContain("returned oversized audio");
     expect(convertWavToMp3Mock).not.toHaveBeenCalled();
+  });
+
+  it("lets a long passage play longer than a word", async () => {
+    const passage = "Una frase lunga. ".repeat(25).trim();
+
+    await generateLanguageAudio({ language: "it", text: passage });
+
+    expect(convertWavToMp3Mock).toHaveBeenCalledExactlyOnceWith({
+      audio: wavAudio,
+      maxSeconds: Math.ceil(passage.length / 8),
+      model: FLASH,
+    });
+
+    await generateLanguageAudio({ language: "it", text: "Ciao" });
+
+    expect(convertWavToMp3Mock).toHaveBeenLastCalledWith({
+      audio: wavAudio,
+      maxSeconds: 18,
+      model: FLASH,
+    });
   });
 });

@@ -141,7 +141,6 @@ export function ArrangeWordsInteraction({
       return result.answer.arrangedWords.map((word, index) => ({
         audioUrl: null,
         id: String(index),
-        pronunciation: null,
         romanization: null,
         translation: null,
         word,

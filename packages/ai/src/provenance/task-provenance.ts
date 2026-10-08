@@ -1,14 +1,9 @@
 import { type LanguageModelUsage, type ProviderMetadata } from "ai";
+import { type CallUsage, computeCallCostUsd } from "../pricing/call-cost";
 import { readGatewayMetadata } from "./gateway-metadata";
 
-type TaskUsage = {
-  inputTokens?: number;
-  outputTokens?: number;
-  totalTokens?: number;
-  cacheReadTokens?: number;
-  cacheWriteTokens?: number;
-  reasoningTokens?: number;
-};
+/** Token counts as the AI SDK reports them, plus the units of calls billed by length or count. */
+type TaskUsage = CallUsage & { totalTokens?: number; reasoningTokens?: number };
 
 /**
  * What one AI task run produced its output with. Generated rows store
@@ -23,8 +18,17 @@ export type TaskProvenance = {
   promptVersion: string;
   runId: string;
   usage: TaskUsage;
-  /** AI Gateway's reported cost in USD; unknown for providers that don't report one. */
+  /**
+   * The call's cost in USD at the provider's list price, from its usage and our price list
+   * (`computeCallCostUsd`); unknown for a model the list doesn't price.
+   */
   costUsd?: number;
+  /** AI Gateway's list-price estimate, a cross-check for `costUsd`; unknown off the gateway. */
+  gatewayCostUsd?: number;
+  /** `flex` or `priority` when one of those tiers served the call; the standard tier is unset. */
+  serviceTier?: string;
+  /** `byok` when our provider key paid for the call, `system` when the gateway's credits did. */
+  credential?: string;
   latencyMs: number;
   generatedAt: string;
 };
@@ -112,6 +116,8 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
 
   return {
     costUsd: sumKnown(runs.map((run) => run.costUsd)),
+    credential: first.credential,
+    gatewayCostUsd: sumKnown(runs.map((run) => run.gatewayCostUsd)),
     generatedAt:
       runs
         .map((run) => run.generatedAt)
@@ -123,6 +129,7 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
     provider: joinDistinct(runs.map((run) => run.provider)),
     requestedModel: first.requestedModel,
     runId: first.runId,
+    serviceTier: first.serviceTier,
     usage: {
       cacheReadTokens: sum((usage) => usage.cacheReadTokens),
       cacheWriteTokens: sum((usage) => usage.cacheWriteTokens),
@@ -140,7 +147,9 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
  * metadata with headers and body, so the AI SDK falls back to the requested
  * model id even when a fallback model answered. AI Gateway's routing metadata
  * names the model that answered; `response.modelId` is only the fallback for
- * providers that don't report routing.
+ * providers that don't report routing. The cost is priced from the usage at the
+ * tier that served the call, since with our own provider keys the gateway bills
+ * nothing; its list-price estimate is kept beside it as a cross-check.
  */
 export function buildTaskProvenance({
   generatedAt,
@@ -157,18 +166,23 @@ export function buildTaskProvenance({
 }): TaskProvenance {
   const { finalStep } = generation;
   const gateway = readGatewayMetadata(finalStep.providerMetadata);
+  const model = gateway.servedModel ?? finalStep.response.modelId;
+  const usage = toTaskUsage(generation.usage);
 
   return {
-    costUsd: sumKnown(
+    costUsd: computeCallCostUsd({ model, serviceTier: gateway.serviceTier, usage }),
+    credential: gateway.credential,
+    gatewayCostUsd: sumKnown(
       generation.steps.map((step) => readGatewayMetadata(step.providerMetadata).costUsd),
     ),
     generatedAt,
     latencyMs,
-    model: gateway.servedModel ?? finalStep.response.modelId,
+    model,
     promptVersion,
     provider: gateway.servedProvider ?? finalStep.model.provider,
     requestedModel: finalStep.model.modelId,
     runId,
-    usage: toTaskUsage(generation.usage),
+    serviceTier: gateway.serviceTier,
+    usage,
   };
 }

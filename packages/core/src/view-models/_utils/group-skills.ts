@@ -32,9 +32,9 @@ const OTHER_AREA_ID = "other";
 
 /**
  * Groups skills by area in the order the areas first appear, which is plan order for a goal's
- * skills. Each group carries the counts both modes show: gold, fading and the rest.
+ * skills. Each group carries the counts the apps show: gold, fading and the rest.
  */
-export function groupSkillsByArea<TSkill extends GroupableSkill>(
+function groupSkillsByArea<TSkill extends GroupableSkill>(
   skills: readonly TSkill[],
 ): SkillGroup<TSkill>[] {
   const byArea = Map.groupBy(skills, (skill) => skill.areaId ?? OTHER_AREA_ID);

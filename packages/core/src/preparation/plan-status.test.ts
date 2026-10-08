@@ -48,7 +48,19 @@ describe(getPlanStatus, () => {
   it("offers the fix when a little behind", () => {
     expect(
       getPlanStatus({ items: schedule(6), minutesPerItem: 4, targetDate: null, today: TODAY }),
-    ).toStrictEqual({ days: 1, extraMinutesPerDay: 10, kind: "behind" });
+    ).toStrictEqual({ days: 1, extraMinutesPerDay: 10, kind: "behind", lessons: null });
+  });
+
+  it("is behind while lessons earlier days left aren't done, whatever the dates say", () => {
+    expect(
+      getPlanStatus({
+        catchUp: 3,
+        items: schedule(9),
+        minutesPerItem: 4,
+        targetDate: null,
+        today: TODAY,
+      }),
+    ).toStrictEqual({ days: 0, extraMinutesPerDay: 0, kind: "behind", lessons: 3 });
   });
 
   it("isn't behind for today's items before the learner studies", () => {

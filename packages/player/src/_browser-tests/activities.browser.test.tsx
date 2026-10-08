@@ -20,7 +20,7 @@ describe("lesson activities", () => {
   });
 
   it("number line: dragging the dot answers where the change lands", async () => {
-    openActivity({ mode: "fun", template: "numberLine" });
+    openActivity({ template: "numberLine" });
     await pressOnSlider("Your answer on the number line", "ArrowRight", 8);
     await expect.element(valueInput()).toHaveValue("5");
     await checkActivity();
@@ -39,7 +39,7 @@ describe("lesson activities", () => {
   });
 
   it("balance: one-sided moves tip the scale and equal moves solve it", async () => {
-    openActivity({ mode: "fun", template: "balance" });
+    openActivity({ template: "balance" });
 
     const takeLeftBag = page.getByRole("button", {
       name: "Take off the left side: One bag of rice",
@@ -79,7 +79,7 @@ describe("lesson activities", () => {
   });
 
   it("estimate then reveal: the real value shows next to the guess", async () => {
-    openActivity({ mode: "fun", template: "estimateReveal" });
+    openActivity({ template: "estimateReveal" });
     await expect.element(page.getByText("Drag to guess")).toBeVisible();
     await pressOnSlider("Your guess", "ArrowRight", 20);
     await expect.element(page.getByText(/Your guess: /u)).toBeVisible();
@@ -105,7 +105,7 @@ describe("lesson activities", () => {
   });
 
   it("chart reader: tapping a span measures it", async () => {
-    openActivity({ mode: "fun", template: "chartReader" });
+    openActivity({ template: "chartReader" });
     await page.getByRole("button", { name: "2010 to 2020" }).click();
 
     await expect

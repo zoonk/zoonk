@@ -3,7 +3,7 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
 /**
- * How the learner set Zoonk up (mode, buddy, memory, limits), their birth month and year for the
+ * How the learner set Zoonk up (buddy, memory, limits), their birth month and year for the
  * age rules, and their guardian links. Guardian emails are left out: support reads link states.
  */
 export const getUserLearningProfile = cacheAdminData(async (userId: string) => {

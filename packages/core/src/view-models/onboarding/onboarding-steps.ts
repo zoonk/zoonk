@@ -11,9 +11,13 @@ type GoalKind = "exam" | "explain" | "language" | "learn";
 type StepGoal = { details: Record<string, unknown>; kind: GoalKind; targetDate: string | null };
 
 type StepProfile = {
-  experienceMode: "focus" | "fun" | null;
+  /**
+   * Memory starts off for a learner under 18 or of unknown age, so onboarding asks them once
+   * whether to turn it on, unless they already chose or a guardian keeps it off.
+   */
+  asksMemory: boolean;
   hasBirth: boolean;
-  /** Mode and buddy are chosen once, in the learner's first onboarding. */
+  /** The buddy is offered once, in the learner's first onboarding; Appearance changes it later. */
   hasEarlierGoals: boolean;
   hasBuddy: boolean;
 };
@@ -34,11 +38,40 @@ function hasRoleAnswer(details: Record<string, unknown>): boolean {
     : hasText(details.role);
 }
 
+const EXAM_TARGETS = ["admission", "position", "score"] as const;
+
+/**
+ * What an exam's learner aims for beyond passing, as onboarding understood it: a course or school
+ * (`admission`, ENEM), a score (`score`, IELTS) or a position (`position`, a concurso). Null for
+ * an exam that is only passed or failed (the OAB, a license, a class test).
+ */
+export type ExamTarget = (typeof EXAM_TARGETS)[number];
+
+export function readExamTarget(details: Record<string, unknown>): ExamTarget | null {
+  return EXAM_TARGETS.find((target) => target === details.examTarget) ?? null;
+}
+
+/** Whether the words already gave what the exam's target question would ask. */
+function hasExamTarget(details: Record<string, unknown>): boolean {
+  switch (readExamTarget(details)) {
+    case "admission":
+      return hasText(details.targetCourse) || hasText(details.targetScore);
+    case "position":
+      return hasText(details.targetPosition);
+    case "score":
+      return hasText(details.targetScore);
+    case null:
+      return true;
+    default:
+      return true;
+  }
+}
+
 /**
  * An exam the learner prepares from their own material (a class test from the teacher's slides):
  * no notice gives its date, so onboarding asks for it.
  */
-function isClassTest(details: Record<string, unknown>): boolean {
+export function isClassTest(details: Record<string, unknown>): boolean {
   return details.materialIntent === "exam";
 }
 
@@ -49,6 +82,19 @@ export function getAnsweredQuestions(details: Record<string, unknown>): string[]
   return Array.isArray(answered)
     ? answered.filter((item): item is string => typeof item === "string")
     : [];
+}
+
+/**
+ * Whether the learner still has placement ahead: they haven't ended it, and they'll take it (a
+ * learner starting from nothing has nothing to place, and one who started at a chapter begins
+ * where they chose). Until then, placement may test out what the plan starts with.
+ */
+export function isPlacementAhead(details: Record<string, unknown>): boolean {
+  return (
+    !getAnsweredQuestions(details).includes("placement") &&
+    details.level !== "none" &&
+    !readCourseStart(details)?.chapterId
+  );
 }
 
 /** The AI's follow-up questions for an unusual goal, as stored on the goal. */
@@ -96,12 +142,7 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
     case "reason":
       return kind === "language" && !hasText(details.reason);
     case "target":
-      return (
-        kind === "exam" &&
-        !hasText(details.targetScore) &&
-        !hasText(details.targetCourse) &&
-        !hasText(details.targetPosition)
-      );
+      return kind === "exam" && !hasExamTarget(details);
     case "targetDate":
       return goal.targetDate === null && (kind !== "exam" || isClassTest(details));
     case "followUps":
@@ -122,17 +163,12 @@ function getProfileSteps({
   answered: Set<string>;
   profile: StepProfile;
 }): OnboardingStep[] {
-  const choosesMode = !profile.hasEarlierGoals && !answered.has("mode");
-
-  const mayPickBuddy =
-    !profile.hasBuddy &&
-    !answered.has("buddy") &&
-    (choosesMode || profile.experienceMode === "fun");
+  const picksBuddy = !profile.hasEarlierGoals && !profile.hasBuddy && !answered.has("buddy");
 
   return [
     !profile.hasBirth && !answered.has("age") && ("age" as const),
-    choosesMode && ("mode" as const),
-    mayPickBuddy && ("buddy" as const),
+    profile.asksMemory && !answered.has("memory") && ("memory" as const),
+    picksBuddy && ("buddy" as const),
   ].filter((step) => step !== false);
 }
 
@@ -150,11 +186,13 @@ export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
 
 /**
  * The onboarding screens still ahead for a new goal, in order: only the questions the typed goal
- * and earlier screens didn't answer, then the age when the profile doesn't have it, the mode and
- * buddy in the learner's first onboarding, placement, and the plan. The buddy screen only shows after
- * picking Fun, so it's listed whenever Fun may still be chosen. A learner starting from nothing skips placement: there's
- * nothing to place, and every phase starts at its beginning. So does one who started at a chapter:
- * the plan begins where they chose.
+ * and earlier screens didn't answer, then the age when the profile doesn't have it, whether memory
+ * may personalize lessons for a learner it starts off for, the buddy in the learner's first
+ * onboarding, placement, the daily time, and the plan. A learner starting from
+ * nothing skips placement: there's nothing to place, and every phase starts at its beginning. So
+ * does one who started at a chapter: the plan begins where they chose. The daily time comes last,
+ * once placement said what the learner already knows: it recommends the time the plan needs to
+ * cover the whole goal by its date, the same number the plan then shows.
  */
 export function getOnboardingSteps({
   goal,
@@ -167,18 +205,20 @@ export function getOnboardingSteps({
     return [];
   }
 
+  // The next level of a finished plan keeps the learner's time and what onboarding understood, so
+  // its curriculum and plan are written without asking again.
+  if (typeof goal.details.continuesFromGoalId === "string") {
+    return ["plan"];
+  }
+
   const answered = new Set(getAnsweredQuestions(goal.details));
   const questions = getMissingQuestions(goal);
 
-  const startsAtChapter = Boolean(readCourseStart(goal.details)?.chapterId);
-
-  const needsPlacement =
-    !answered.has("placement") && goal.details.level !== "none" && !startsAtChapter;
-
   return [
-    ...questions,
+    ...questions.filter((question) => question !== "schedule"),
     ...getProfileSteps({ answered, profile }),
-    ...(needsPlacement ? (["placement"] as const) : []),
+    ...(isPlacementAhead(goal.details) ? (["placement"] as const) : []),
+    ...questions.filter((question) => question === "schedule"),
     "plan",
   ];
 }

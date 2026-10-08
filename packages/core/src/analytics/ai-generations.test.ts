@@ -1,3 +1,5 @@
+import { toAiGenerationEvent } from "@zoonk/ai/ai-generation-event";
+import { type AiGeneration } from "@zoonk/ai/ai-generation-sink";
 import { PostHog } from "posthog-node";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerAiGenerationAnalytics } from "./ai-generations";
@@ -14,10 +16,19 @@ vi.mock("posthog-node", () => ({
   ),
 }));
 
-const event = {
-  distinctId: "user-id",
-  event: "$ai_generation" as const,
-  properties: { $ai_model: "openai/gpt-6-luna", task: "lesson-explanation" },
+const generation: AiGeneration = {
+  context: { distinctId: "user-id" },
+  provenance: {
+    generatedAt: "2026-10-06T12:00:00.000Z",
+    latencyMs: 1500,
+    model: "openai/gpt-6-luna",
+    promptVersion: "version",
+    provider: "openai",
+    requestedModel: "openai/gpt-6-luna",
+    runId: "run-1",
+    usage: { inputTokens: 10, outputTokens: 5 },
+  },
+  task: "lesson-explanation",
 };
 
 /**
@@ -26,7 +37,7 @@ const event = {
  */
 async function sendThroughRegisteredSink() {
   registerAiGenerationAnalytics();
-  await globalThis.zoonkAiGenerationSink?.(event);
+  await globalThis.zoonkAiGenerationSinks?.get("posthog")?.(generation);
 }
 
 describe(registerAiGenerationAnalytics, () => {
@@ -38,7 +49,7 @@ describe(registerAiGenerationAnalytics, () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
-    globalThis.zoonkAiGenerationSink = undefined;
+    globalThis.zoonkAiGenerationSinks = undefined;
   });
 
   it("sends AI generations to PostHog and flushes before returning", async () => {
@@ -50,7 +61,7 @@ describe(registerAiGenerationAnalytics, () => {
       host: "https://posthog.test",
     });
 
-    expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith(event);
+    expect(posthogClient.capture).toHaveBeenCalledExactlyOnceWith(toAiGenerationEvent(generation));
     expect(posthogClient.shutdown).toHaveBeenCalledOnce();
   });
 

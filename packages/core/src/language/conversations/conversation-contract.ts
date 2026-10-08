@@ -221,10 +221,18 @@ export type LanguageConversationView = z.infer<typeof languageConversationViewSc
 /**
  * What the app needs to open the call: GPT-Live's native Live WebSocket on AI Gateway, opened
  * with these subprotocols, whose first event is `session.start` with this model, the
- * conversation's instructions, PCM16 audio at 24 kHz and client delegation.
+ * conversation's instructions, PCM16 audio at 24 kHz and client delegation. The call runs for
+ * `seconds` from when its session starts: the app wraps it up shortly before and ends it then.
  */
 export const languageConversationSetupSchema = z
   .object({
+    endsAtLimit: z
+      .enum(["day", "month"])
+      .nullable()
+      .meta({
+        description:
+          "The call time on the learner's plan the call reaches before its length ends, today's (`day`) or this month's (`month`); say so when it wraps up. Null when it runs its full length",
+      }),
     expiresAt: z
       .number()
       .int()
@@ -235,6 +243,13 @@ export const languageConversationSetupSchema = z
       .array(z.string())
       .meta({
         description: "WebSocket subprotocols to open the connection with; they carry the token",
+      }),
+    seconds: z
+      .int()
+      .min(1)
+      .meta({
+        description:
+          "How long the call may run from when its session starts: its length, what's left of it after a dropped connection, or less when it reaches the plan's call time",
       }),
     token: z.string().meta({ description: "Single-use and short-lived; never store it" }),
     url: z.string().meta({ description: "The WebSocket URL to open" }),

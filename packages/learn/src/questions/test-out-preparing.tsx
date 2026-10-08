@@ -1,34 +1,61 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon } from "lucide-react";
+import { FastForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
+import { KindTile } from "../_components/kind-tile";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { TaskMainButton } from "../shell/task-frame";
+import { QuestionsHeader } from "./questions-header";
 
 /**
- * A chapter's test-out before it has questions: the learner asks for them (a tap, never the page
- * load), follows them being written, and the test opens once they exist (the host reads the page
- * again). The plan stays one tap away, and a refusal says why with the one thing to do.
+ * The test before it's asked for: its tile, the question it answers big ("Already know this?"),
+ * and what doing well does. The header already names the chapter.
+ */
+function TestOutCard() {
+  const t = useExtracted();
+
+  return (
+    <div className="bg-card flex flex-col items-center gap-4 rounded-3xl border px-6 py-8 text-center shadow-xs sm:px-8">
+      <KindTile icon={FastForwardIcon} kind="challenge" size="lg" />
+      <div className="flex flex-col items-center gap-1.5">
+        <h2 className="text-3xl font-bold tracking-tight text-balance">
+          {t("Already know this?")}
+        </h2>
+        <p className="text-muted-foreground text-balance">
+          {t(
+            "A few questions on this chapter. Do well, and your plan skips what you already know.",
+          )}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A chapter's test-out while its questions are written: the run's progress under the task's
+ * header, and the test opens by itself once they exist (the host reads the page again). Opened
+ * without a run (a link from elsewhere), it shows the test as one card and waits for the learner's
+ * Start (or Enter), since loading a page never writes anything; a refusal says why with the one
+ * thing to do.
  */
 export function TestOutPreparing({
-  backHref,
   chapterTitle,
+  closeHref,
   limit,
   onStart,
   run,
   starting,
 }: {
-  backHref: string;
   chapterTitle: string;
+  closeHref: string;
   /** The learner's small AI help doesn't cover writing it now. */
   limit: HelpLimit | null;
   onStart: () => void;
@@ -38,53 +65,46 @@ export function TestOutPreparing({
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
-  const title = t("Test out: {chapter}", { chapter: chapterTitle });
-
-  const noQuestionsYet = t(
-    "This chapter has no questions yet. We can write a few on its skills now, which takes about 20 seconds.",
-  );
 
   return (
-    <section className="mx-auto flex w-full max-w-md flex-col gap-6 py-6">
-      <LearnLink
-        className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-ml-2.5 self-start")}
-        href={backHref}
-      >
-        <ChevronLeftIcon aria-hidden="true" />
-        {t("Back to the plan")}
-      </LearnLink>
+    <div className="flex min-h-dvh flex-col">
+      <QuestionsHeader
+        screen="test-out"
+        title={t("Test out: {chapter}", { chapter: chapterTitle })}
+        closeHref={closeHref}
+        index={0}
+        itemId={null}
+        total={0}
+      />
 
-      {run ? (
-        <GenerationWait kind="testOutQuestions" run={run}>
-          <GenerationTimelineTitle>{title}</GenerationTimelineTitle>
-          <GenerationTimelineDescription>
-            {/* A run that stopped claims nothing: its alert says what happened. */}
-            {run.status === "failed"
-              ? noQuestionsYet
-              : t(
-                  "We're writing a few questions on this chapter. They open here as soon as they're ready.",
-                )}
-          </GenerationTimelineDescription>
-        </GenerationWait>
-      ) : (
-        <div className="flex flex-col gap-3">
-          <GenerationTimelineTitle>{title}</GenerationTimelineTitle>
-          <GenerationTimelineDescription>{noQuestionsYet}</GenerationTimelineDescription>
+      <section className="mx-auto flex w-full max-w-xl flex-1 flex-col px-4 pt-6 pb-[max(1rem,env(safe-area-inset-bottom))] lg:justify-center-safe lg:py-10">
+        {run ? (
+          <GenerationWait kind="testOutQuestions" run={run}>
+            <GenerationTimelineTitle>{t("Getting your test ready")}</GenerationTimelineTitle>
+            <GenerationTimelineDescription>
+              {t(
+                "We're writing a few questions on this chapter. The test opens here when they're ready.",
+              )}
+            </GenerationTimelineDescription>
+          </GenerationWait>
+        ) : (
+          <>
+            <div className="flex flex-1 flex-col justify-center lg:flex-none">
+              <TestOutCard />
+            </div>
 
-          {limit ? (
-            <HelpLimitNotice
-              className="mt-2"
-              limit={limit}
-              linkComponent={LearnLink}
-              routes={routes}
-            />
-          ) : (
-            <Button className="mt-2 self-start" disabled={starting} onClick={onStart} size="lg">
-              {starting ? t("Starting…") : t("Get my questions ready")}
-            </Button>
-          )}
-        </div>
-      )}
-    </section>
+            <div className="flex flex-col gap-2 pt-6">
+              {limit ? (
+                <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
+              ) : (
+                <TaskMainButton busy={starting} onClick={onStart}>
+                  {starting ? t("Starting…") : t("Start the test")}
+                </TaskMainButton>
+              )}
+            </div>
+          </>
+        )}
+      </section>
+    </div>
   );
 }

@@ -1,9 +1,15 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { isUuid } from "@zoonk/utils/uuid";
+import { getMovableDay, loadChallengeMoveRules } from "../../checkpoints/_utils/challenge-move";
 import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { toQuestionView } from "../../learner/_utils/choice-items";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
+import { loadMockPlanOffers } from "./_utils/mock-adapt";
 import { loadSkillAreas } from "./_utils/mock-candidates";
 import { buildMockConditions } from "./_utils/mock-conditions";
 import { loadMockItems } from "./_utils/mock-items";
@@ -79,6 +85,25 @@ async function loadCurrentSection({
   };
 }
 
+/** "Move to Monday" before the mock starts, from its own day or a later one. */
+async function canMoveMock(owned: OwnedMock): Promise<boolean> {
+  const { block, goal, mock, payload } = owned;
+
+  if (mock || block?.status !== "pending" || !goal || !payload.planItemId) {
+    return false;
+  }
+
+  const [item, rules] = await Promise.all([
+    isUuid(payload.planItemId)
+      ? prisma.planItem.findUnique({ where: { id: payload.planItemId } })
+      : null,
+    loadChallengeMoveRules(goal.id),
+  ]);
+
+  const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
+  return getMovableDay({ item, rules, today }) !== null;
+}
+
 function getStatus(mock: MockSitting | null): MockView["status"] {
   if (!mock) {
     return "ready";
@@ -97,23 +122,36 @@ async function loadFinished({
   owned: OwnedMock;
 }) {
   if (owned.mock?.status !== "finished") {
-    return { mistakes: [], result: null, review: [] };
+    return { adapt: null, mistakes: [], result: null, review: [] };
   }
 
-  const review = await loadMockReview({
-    areas,
-    conditions,
-    sessionId: owned.block.sessionId,
-    userId: owned.userId,
-  });
+  const result = mockResultSchema.safeParse(owned.mock.result).data ?? null;
 
-  return { ...review, result: mockResultSchema.safeParse(owned.mock.result).data ?? null };
+  const [review, offers] = await Promise.all([
+    loadMockReview({ areas, conditions, mockExamId: owned.mock.id, userId: owned.userId }),
+    loadMockPlanOffers({ goal: owned.goal, purpose: conditions.purpose, result }),
+  ]);
+
+  return { ...review, adapt: offers?.view ?? null, result };
+}
+
+/** Where the mock belongs: its goal and exam, and the session it was played in, if any. */
+function describeOwner(owned: OwnedMock) {
+  return {
+    date: toIsoDate(owned.sessionDate),
+    examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
+    goalId: owned.goal?.id ?? null,
+    scoringNote: owned.structure?.mock?.scoring.description ?? null,
+    sessionId: owned.block?.sessionId ?? null,
+    trueFalseLabels: getTrueFalseLabels(owned.structure),
+  };
 }
 
 /**
- * One of the learner's mock exams, by its session block: the exam's conditions before it starts,
- * the running section with its deadline and drafts (never the answers), and after it, what it
- * showed with the questions to review.
+ * One of the learner's mock exams, by the id it opens by (its session block's, or its own for a
+ * mock taken any time): the exam's conditions before it starts, the running section with its
+ * deadline and drafts (never the answers), and after it, what it showed with the questions to
+ * review.
  */
 export async function getMock(blockId: string): Promise<MockViewResult> {
   const found = await findOwnedMock(blockId);
@@ -123,46 +161,46 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
   }
 
   const { owned } = found;
-  const { block, mock, structure } = owned;
+  const { mock } = owned;
   const conditions = mock?.conditions ?? (await buildMockConditions(owned));
   const areas = owned.goal ? await loadSkillAreas(owned.goal.id) : new Map<string, string>();
   const running = mock?.status === "active" ? mock : null;
 
-  const [number, current, finished] = await Promise.all([
+  const [number, current, finished, canMove] = await Promise.all([
     getMockNumber(owned),
     running ? loadCurrentSection({ areas, mock: running }) : null,
     loadFinished({ areas, conditions, owned }),
+    canMoveMock(owned),
   ]);
 
   return {
     mock: {
+      ...describeOwner(owned),
+      adapt: finished.adapt,
       blockId,
       brainPower: BRAIN_POWER_BONUS.weeklyChallenge,
-      canMove: !mock && block.status === "pending",
+      canMove,
       checklist: [...EXAM_DAY_CHECKLIST],
       current,
-      date: toIsoDate(owned.sessionDate),
-      examName: owned.blueprint?.name ?? owned.goal?.title ?? null,
       fullLength: conditions.fullLength,
-      goalId: owned.goal?.id ?? null,
       minutes: conditions.sections.reduce((sum, section) => sum + section.minutes, 0),
       mistakes: finished.mistakes,
       number,
+      planItemId: owned.payload.planItemId,
+      purpose: conditions.purpose,
       questions: conditions.sections.reduce((sum, section) => sum + section.questions, 0),
       result: finished.result,
       review: finished.review,
       scoring: conditions.scoring,
-      scoringNote: structure?.mock?.scoring.description ?? null,
       sections: toSectionViews({
         conditions,
         current: running ? running.sectionIndex : null,
         finished: mock?.status === "finished",
       }),
-      sessionId: block.sessionId,
+      shape: conditions.shape,
       startTime: conditions.startTime,
       status: getStatus(mock),
       timeZone: conditions.timeZone,
-      trueFalseLabels: getTrueFalseLabels(structure),
     },
     status: "ready",
   };

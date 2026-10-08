@@ -136,7 +136,12 @@ test.describe("Today API", () => {
   test("returns the active goal's Today with its session and insight", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "today" });
     const { goal, lesson } = await createExamGoal(userId);
-    const insight = await memoryInsightFixture({ goalId: goal.id, userId });
+
+    // Insights come from memory, which a learner without an adult's age answer turns on.
+    const [insight] = await Promise.all([
+      memoryInsightFixture({ goalId: goal.id, userId }),
+      learningProfileFixture({ memoryEnabled: true, userId }),
+    ]);
 
     const response = await api.get("/v1/today?timeZone=UTC");
     expect(response.status(), await response.text()).toBe(200);
@@ -154,7 +159,6 @@ test.describe("Today API", () => {
     expect(today.session.blocks.map((block) => block.lessonId)).toContain(lesson.id);
     expect(today.insight?.id).toBe(insight.id);
     expect(today.lessonStatus).toStrictEqual({ [lesson.id]: "notStarted" });
-    expect(today.reveal).toStrictEqual({ missions: false });
     expect(today.suggestedGoal).toBeNull();
 
     const againResponse = await api.get("/v1/today?timeZone=UTC");

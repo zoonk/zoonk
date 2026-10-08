@@ -85,7 +85,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Opens the call: counts it toward the learner's conversations (guests have none; reconnecting within ten minutes doesn't count again) and returns a short-lived, single-use token for GPT-Live with the Live WebSocket to open with it. Send `session.start` first with the model, the conversation's `instructions`, PCM16 audio at 24 kHz and client delegation; then stream the microphone and play the audio GPT-Live returns. After each learner turn, send the transcript to objective-checks.",
+        "Opens the call: each connection holds the call's length from the call time on the learner's plan, today's and this month's (guests have none; with less left, the call runs what's left, and with under a minute left this returns 429 until the next day or month, `details.period` says which), and returns a short-lived, single-use token for GPT-Live with the Live WebSocket to open with it and how long the call may run (`seconds`). Send `session.start` first with the model, the conversation's `instructions`, PCM16 audio at 24 kHz and client delegation; then stream the microphone and play the audio GPT-Live returns. After each learner turn, send the transcript to objective-checks. Wrap up shortly before `seconds` and close the session then; when `endsAtLimit` is set, tell the learner their call time for the day or the month is almost up (never how much call time the plan has). Completing the call keeps only the time it ran; connecting again after a drop starts the call over.",
       operationId: "connectLanguageConversation",
       requestParams: { path: languageConversationPathParamsSchema },
       responses: {

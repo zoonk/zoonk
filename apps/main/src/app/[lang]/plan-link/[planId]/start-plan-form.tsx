@@ -27,7 +27,7 @@ export function StartPlanForm({
       const result = await action(previous, formData);
 
       if (result && "started" in result) {
-        router.push("/plan");
+        router.push("/journey");
       }
 
       return result;
@@ -52,7 +52,7 @@ export function StartPlanForm({
       </Button>
       {state && "error" in state && state.error === "refused" && (
         <p className="text-destructive text-sm" role="alert">
-          {t("You can't add another goal right now. Finish or pause one first.")}
+          {t("You can't start another goal right now. Finish or pause one first.")}
         </p>
       )}
       {state && "error" in state && state.error === "failed" && (

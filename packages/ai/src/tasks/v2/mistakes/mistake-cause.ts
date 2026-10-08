@@ -7,8 +7,14 @@ import { type Reasoning, buildProviderOptions } from "../../../provider-options"
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./mistake-cause.prompt.md";
 
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
+/**
+ * From the mistake-cause eval (23 wrong answers, 7 Oct 2026): Claude Haiku 5.5 with thinking off
+ * named all 23 causes at p50 1.4s and $0.05 per 1,000 runs; Luna named 21 (it took a trap and a
+ * misread unit for gaps) at p50 2.4s and $0.09.
+ */
+const defaultModel = "anthropic/claude-haiku-5.5";
+const defaultReasoning: Reasoning = "none";
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
 
 /**
  * Only the causes that need judgment. Time and guess are measured by code before this task runs,
@@ -79,7 +85,7 @@ export const mistakeCauseClassifier = {
 export async function classifyMistakeCause({
   analytics,
   model = defaultModel,
-  reasoning,
+  reasoning = defaultReasoning,
   useFallback = true,
   ...input
 }: MistakeCauseParams) {

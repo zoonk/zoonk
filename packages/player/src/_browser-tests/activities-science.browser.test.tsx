@@ -126,7 +126,7 @@ describe("science activities", () => {
   });
 
   it("parameter simulation: stopping at another angle is wrong", async () => {
-    openActivity({ mode: "fun", template: "parameterSimulation" });
+    openActivity({ template: "parameterSimulation" });
     await pressOnSlider("Launch angle", "ArrowRight", 5);
     await expect.element(valueInput()).toHaveValue("38.32");
     await checkActivity();
@@ -134,7 +134,7 @@ describe("science activities", () => {
   });
 
   it("labeled diagram: every name on its part is right", async () => {
-    openActivity({ mode: "fun", template: "labeledDiagram" });
+    openActivity({ template: "labeledDiagram" });
     await expect.element(page.getByText("Low in oxygen")).toBeVisible();
     await labelSpots(HEART_SPOTS);
 
@@ -175,7 +175,7 @@ describe("science activities", () => {
   });
 
   it("process order: steps out of place say where the learner had them", async () => {
-    openActivity({ mode: "fun", template: "processOrder" });
+    openActivity({ template: "processOrder" });
 
     await sortSteps([PHOTOSYNTHESIS[0] ?? "", PHOTOSYNTHESIS[1] ?? "", PHOTOSYNTHESIS[3] ?? ""]);
 
@@ -186,7 +186,7 @@ describe("science activities", () => {
   });
 
   it("molecule builder: two double bonds make carbon dioxide", async () => {
-    openActivity({ mode: "fun", template: "moleculeBuilder" });
+    openActivity({ template: "moleculeBuilder" });
     await buildCarbonDioxide({ doubleBonds: true });
 
     await expect
@@ -221,7 +221,7 @@ describe("science activities", () => {
   });
 
   it("Punnett square: a wrong square in a fill-the-square check is wrong", async () => {
-    openActivity({ content: FILL_THE_SQUARE, mode: "fun", template: "punnettSquare" });
+    openActivity({ content: FILL_THE_SQUARE, template: "punnettSquare" });
 
     await fillSquare(["Pp", "pp", "pp", "pp"]);
     await checkActivity();

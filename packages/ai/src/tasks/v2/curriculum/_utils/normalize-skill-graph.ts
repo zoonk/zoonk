@@ -1,6 +1,8 @@
 import { normalizeString } from "@zoonk/utils/string";
+import { type ExamOutline, isWrittenTestSubject, placeInExam } from "../exam-outline";
 import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
 import { toExamWeight } from "./exam-weight";
+import { fitLessonBudget } from "./lesson-budget";
 import {
   pushPhasesAfterPrerequisites,
   removeCycles,
@@ -8,6 +10,7 @@ import {
 } from "./order-skill-graph";
 
 type RawSkillGraphSkill = {
+  area: string;
   course: string;
   description: string;
   estimatedLessons: number;
@@ -15,8 +18,10 @@ type RawSkillGraphSkill = {
   key: string;
   level: CourseLevel;
   name: string;
+  outcome: boolean;
   phase: number;
   prerequisites: string[];
+  topics: string[];
 };
 
 export type RawSkillGraph = {
@@ -34,6 +39,13 @@ type SkillGraphSkill = {
   description: string;
   /** Key of the course that teaches it. */
   course: string;
+  /**
+   * The part of the path it belongs to: an exam's subject as its notice names it, a learn goal's
+   * module, or a language goal's course.
+   */
+  area: string;
+  /** For an exam with a notice: the notice's topics it teaches, in the notice's words. */
+  topics: string[];
   level: CourseLevel;
   /** Phase number, starting at 1. */
   phase: number;
@@ -43,6 +55,11 @@ type SkillGraphSkill = {
   estimatedLessons: number;
   /** How much the exam depends on it, from 1 to 5, or null outside exams. */
   examWeight: number | null;
+  /**
+   * The skill turns what the learner studied into the goal's result (a career change's portfolio
+   * and job search): a plan short on time keeps it whole and trims depth elsewhere.
+   */
+  outcome?: boolean;
 };
 
 type SkillGraphCourse = { key: string; title: string; levels: CourseLevel[] };
@@ -77,8 +94,8 @@ function toKey(value: string): string {
 
 /**
  * Keeps the first skill for each key and each name. A later duplicate is
- * dropped, its prerequisites join the survivor and its key becomes an alias,
- * so edges that pointed at it still resolve.
+ * dropped, its prerequisites and topics join the survivor and its key becomes
+ * an alias, so edges that pointed at it still resolve.
  */
 function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
   const survivors = new Map<string, RawSkillGraphSkill>();
@@ -96,7 +113,9 @@ function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
 
       survivors.set(survivorKey, {
         ...survivor,
+        outcome: survivor.outcome || skill.outcome,
         prerequisites: [...survivor.prerequisites, ...skill.prerequisites],
+        topics: [...new Set([...survivor.topics, ...skill.topics])],
       });
     } else if (name) {
       aliases.set(key, key);
@@ -186,28 +205,63 @@ function normalizePhases({
   };
 }
 
+/**
+ * An exam's skill takes its subject and topics from the notice, word for word; any other skill
+ * keeps the area the model wrote, or its course's title when it wrote none.
+ */
+function toArea({
+  courseTitle,
+  outline,
+  skill,
+}: {
+  courseTitle: string;
+  outline?: ExamOutline;
+  skill: RawSkillGraphSkill;
+}): { area: string; topics: string[] } {
+  const area = skill.area.trim() || courseTitle;
+
+  if (!outline || outline.subjects.length === 0) {
+    return { area, topics: [] };
+  }
+
+  return placeInExam({ area, outline, topics: skill.topics });
+}
+
+/** Whether a skill practices an exam's written test, which a plan short on time keeps whole. */
+function isWrittenTestSkill({ area, outline }: { area: string; outline?: ExamOutline }): boolean {
+  const subject = outline?.subjects.find((item) => item.name === area);
+  return Boolean(subject && isWrittenTestSubject(subject));
+}
+
 function toGraphSkill({
   aliases,
-  courseKeys,
+  courseTitles,
+  outline,
   phaseCount,
   skill,
 }: {
   aliases: ReadonlyMap<string, string>;
-  courseKeys: ReadonlySet<string>;
+  courseTitles: ReadonlyMap<string, string>;
+  outline?: ExamOutline;
   phaseCount: number;
   skill: RawSkillGraphSkill;
 }): SkillGraphSkill {
-  const course = toKey(skill.course);
-  const [firstCourse = ""] = courseKeys;
+  const key = toKey(skill.course);
+  const [firstCourse = ""] = courseTitles.keys();
+  const course = courseTitles.has(key) ? key : firstCourse;
+
+  const placed = toArea({ courseTitle: courseTitles.get(course) ?? "", outline, skill });
 
   return {
-    course: courseKeys.has(course) ? course : firstCourse,
+    ...placed,
+    course,
     description: skill.description.trim(),
     estimatedLessons: clamp({ max: MAX_SKILL_LESSONS, min: 1, value: skill.estimatedLessons }),
     examWeight: toExamWeight(skill.examWeight),
     key: skill.key,
     level: skill.level,
     name: skill.name,
+    outcome: skill.outcome || isWrittenTestSkill({ area: placed.area, outline }),
     phase: clamp({ max: phaseCount, min: 1, value: skill.phase }),
     prerequisites: resolvePrerequisites({ aliases, skill }),
   };
@@ -225,24 +279,33 @@ export class EmptySkillGraphError extends Error {
  * Turns the model's graph into one the planner can trust: duplicate skills
  * merged, prerequisites that point nowhere or close a cycle dropped, every
  * skill in a phase no earlier than its prerequisites, skills ordered so
- * prerequisites come first, empty phases and courses removed, and each
- * phase's size given in hours of study rather than dates.
+ * prerequisites come first, empty phases and courses removed, each phase's
+ * size given in hours of study rather than dates, and an exam's skills placed
+ * in its notice's subjects and topics, word for word.
  */
-export function normalizeSkillGraph(raw: RawSkillGraph): SkillGraph {
-  const courseKeys = new Set(raw.courses.map((course) => toKey(course.key)));
+export function normalizeSkillGraph(
+  raw: RawSkillGraph,
+  outline?: ExamOutline,
+  lessonBudget?: number | null,
+): SkillGraph {
+  const courseTitles = new Map(
+    raw.courses.map((course) => [toKey(course.key), course.title.trim()]),
+  );
 
-  if (courseKeys.size === 0 || raw.phases.length === 0 || raw.skills.length === 0) {
+  if (courseTitles.size === 0 || raw.phases.length === 0 || raw.skills.length === 0) {
     throw new EmptySkillGraphError();
   }
 
   const { aliases, skills: uniqueSkills } = dedupeSkills(raw.skills);
 
   const graphSkills = uniqueSkills.map((skill) =>
-    toGraphSkill({ aliases, courseKeys, phaseCount: raw.phases.length, skill }),
+    toGraphSkill({ aliases, courseTitles, outline, phaseCount: raw.phases.length, skill }),
   );
 
   const ordered = sortSkillsTopologically(pushPhasesAfterPrerequisites(removeCycles(graphSkills)));
-  const { phases, skills } = normalizePhases({ phases: raw.phases, skills: ordered });
+  const normalized = normalizePhases({ phases: raw.phases, skills: ordered });
+  const { phases } = normalized;
+  const skills = fitLessonBudget({ budget: lessonBudget, skills: normalized.skills });
 
   return {
     courses: normalizeCourses({ courses: raw.courses, skills }),

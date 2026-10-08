@@ -32,11 +32,15 @@ async function createChange(
     return planChangeInvalid(result.error);
   }
 
+  if (result.status === "unchanged") {
+    return NextResponse.json({ change: null, reason: result.reason, status: result.status });
+  }
+
   if (result.status !== "applied") {
     return accessError(result.status);
   }
 
-  return NextResponse.json({ change: result.change, status: result.status });
+  return NextResponse.json({ change: result.change, reason: null, status: result.status });
 }
 
 export const POST = withApiErrorBoundary(createChange);

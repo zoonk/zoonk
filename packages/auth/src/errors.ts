@@ -2,12 +2,20 @@ import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 import { isAPIError } from "better-auth/api";
 import { ACCESS_ERROR_CODES } from "./access-contract";
 
-/** Better Auth's captcha plugin rejects a request BotID flags with this code. */
-const BOT_CHECK_FAILED_CODE = "VERIFICATION_FAILED";
+/**
+ * Our product codes for Better Auth's, where they differ. Its captcha plugin rejects a request
+ * BotID flags with `VERIFICATION_FAILED`. Its CSRF check rejects a request that says it comes from
+ * a browser (fetch metadata, which Node's fetch also sends) without an Origin header it trusts.
+ */
+const PRODUCT_CODES: Record<string, string> = {
+  CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: ACCESS_ERROR_CODES.untrustedOrigin,
+  INVALID_ORIGIN: ACCESS_ERROR_CODES.untrustedOrigin,
+  MISSING_OR_NULL_ORIGIN: ACCESS_ERROR_CODES.untrustedOrigin,
+  VERIFICATION_FAILED: ACCESS_ERROR_CODES.botDetected,
+};
 
-/** Our product code for Better Auth's, where they differ. */
 function toProductCode(code: string | null): string | null {
-  return code === BOT_CHECK_FAILED_CODE ? ACCESS_ERROR_CODES.botDetected : code;
+  return code === null ? null : (PRODUCT_CODES[code] ?? code);
 }
 
 export class NativeAuthResponseError extends Error {

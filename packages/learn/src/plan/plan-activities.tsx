@@ -6,7 +6,6 @@ import {
 } from "@zoonk/core/language/activities";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
-import { SectionLabel } from "../_components/section-label";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
@@ -27,8 +26,7 @@ export function useActivityName() {
 
 /**
  * A language plan's practice, one toggle each: turning one off ("I don't need writing") leaves it
- * out of lessons from now on, and turning it on brings it back. Each change shows up in the
- * changes with an undo, like any other.
+ * out of lessons from now on, and turning it on brings it back.
  */
 export function PlanActivities() {
   const t = useExtracted();
@@ -43,8 +41,8 @@ export function PlanActivities() {
   const skipped = new Set(plan.steering.skippedActivities);
 
   return (
-    <section aria-labelledby="plan-activities-title" className="flex flex-col gap-2">
-      <SectionLabel id="plan-activities-title">{t("What you practice")}</SectionLabel>
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-2 text-sm font-medium">{t("What you practice")}</legend>
 
       <div className="flex flex-wrap gap-2">
         {LANGUAGE_ACTIVITY_TYPES.map((activity) => {
@@ -52,7 +50,7 @@ export function PlanActivities() {
 
           return (
             <Toggle
-              className="in-data-[mode=fun]:fun-glass"
+              className="aria-pressed:bg-foreground aria-pressed:text-background h-11 px-4"
               disabled={isPending}
               focusableWhenDisabled
               key={activity}
@@ -70,13 +68,7 @@ export function PlanActivities() {
         })}
       </div>
 
-      <p className="text-muted-foreground text-sm">
-        {skipped.size > 0
-          ? t("Turned-off practice stays out of your lessons until you turn it back on.")
-          : t("Turn off what you don't need. You can bring it back anytime.")}
-      </p>
-
       {failed && <PlanFailedMessage />}
-    </section>
+    </fieldset>
   );
 }

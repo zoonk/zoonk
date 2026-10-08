@@ -52,14 +52,14 @@ describe("money and society activities", () => {
   });
 
   it("slider calculator: a number that isn't the model's is wrong", async () => {
-    openActivity({ mode: "fun", template: "sliderCalculator" });
+    openActivity({ template: "sliderCalculator" });
     await valueInput().fill("300");
     await checkActivity();
     await expectVerdict("Not quite");
   });
 
   it("scenario simulator: the rent event and the price give the profit", async () => {
-    openActivity({ mode: "fun", template: "scenarioSimulator" });
+    openActivity({ template: "scenarioSimulator" });
     await page.getByRole("button", { name: "Rent goes up $500" }).click();
 
     await expect
@@ -91,7 +91,7 @@ describe("money and society activities", () => {
   });
 
   it("supply and demand: moving demand gets the wrong-curve feedback", async () => {
-    openActivity({ mode: "fun", template: "supplyDemand" });
+    openActivity({ template: "supplyDemand" });
     await pressOnSlider("Move the demand curve", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Not quite");
@@ -100,7 +100,7 @@ describe("money and society activities", () => {
   });
 
   it("timeline: events placed in order are right, and the real gaps show", async () => {
-    openActivity({ mode: "fun", template: "timeline" });
+    openActivity({ template: "timeline" });
     await page.getByRole("button", { name: "Place Moon landing on the timeline" }).click();
     await press("End");
 
@@ -131,7 +131,7 @@ describe("money and society activities", () => {
   });
 
   it("timeline: with a question, the real dates show before answering", async () => {
-    openActivity({ content: timelineQuestion, mode: "fun", template: "timeline" });
+    openActivity({ content: timelineQuestion, template: "timeline" });
     await page.getByRole("button", { name: "Place Moon landing on the timeline" }).click();
     await page.getByRole("button", { name: "Place Cleopatra rules Egypt on the timeline" }).click();
 
@@ -159,7 +159,7 @@ describe("money and society activities", () => {
   });
 
   it("map explorer: the wrong conclusion is marked wrong", async () => {
-    openActivity({ mode: "fun", template: "mapExplorer" });
+    openActivity({ template: "mapExplorer" });
     await page.getByRole("button", { name: "Broad Street pump" }).click();
     await page.getByRole("radio", { name: /air in their buildings/u }).click();
     await checkActivity();
@@ -167,7 +167,7 @@ describe("money and society activities", () => {
   });
 
   it("cause and effect: linking both causes to the storms is right", async () => {
-    openActivity({ mode: "fun", template: "causeEffectChain" });
+    openActivity({ template: "causeEffectChain" });
     await chainNode("1920 Prairie plowed for wheat").click();
     await chainNode("1934 Dust storms").click();
     await chainNode("1931 Years of drought").click();
@@ -189,7 +189,7 @@ describe("money and society activities", () => {
   });
 
   it("cause and effect: with a question, each link is confirmed at once", async () => {
-    openActivity({ content: chainQuestion, mode: "fun", template: "causeEffectChain" });
+    openActivity({ content: chainQuestion, template: "causeEffectChain" });
     await chainNode("1934 Dust storms").click();
     await chainNode("1920 Prairie plowed for wheat").click();
     await expect.element(page.getByText(/didn't lead straight to/u)).toBeVisible();
@@ -210,7 +210,7 @@ describe("money and society activities", () => {
   });
 
   it("source comparison: marking one of two shows the one missed", async () => {
-    openActivity({ mode: "fun", template: "sourceComparison" });
+    openActivity({ template: "sourceComparison" });
     await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
     await checkActivity();
     await expectVerdict("Not quite");

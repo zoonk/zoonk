@@ -1,21 +1,12 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { withClassTestMock } from "../../exams/mocks/class-test-mock";
-import { getWeeklyMockMinutes } from "../../exams/mocks/mock-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { loadSkillSurvivors } from "../../learner/_utils/update-learner-skill";
-import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
-import {
-  compareCourseOrder,
-  getCourseOrder,
-  loadChapterTaughtLessons,
-  mergePlannerLessons,
-} from "../../library/curriculum/chapter-taught-lessons";
-import { examStructureSchema } from "../../library/exams/blueprint-contract";
-import { type PlanGraph } from "../planner/plan-state";
-import { type PlannerLesson } from "../planner/plan-units";
+import { type DifficultyBias, type PlanGraph } from "../planner/plan-state";
 import { type SkillReadiness } from "../planner/skill-order";
-import { type SkillCourses, getSkillCourses, pickSkillPlaces } from "./skill-courses";
+import { loadExamFacts } from "./planner-exam-facts";
+import { loadGoalPlannerLessons } from "./planner-lessons";
+import { loadStrongAreas } from "./strong-areas";
 
 /**
  * Plans may point at a skill merged into another since; the learner's state and the lessons live
@@ -31,103 +22,6 @@ export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> 
       (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
     ),
   };
-}
-
-/**
- * The Library lessons that teach the plan's skills, in course order (level band, chapter, then
- * lesson), so a skill taught in several chapters meets them in the course's order. A skill with
- * courses only takes lessons its courses' chapters hold, planned in one of those chapters.
- * Private lessons count only for their owner, so one learner's private course never shows up in
- * another's plan.
- */
-async function loadLessons({
-  skillCourses,
-  skillIds,
-  userId,
-}: {
-  skillCourses: SkillCourses;
-  skillIds: string[];
-  userId: string;
-}): Promise<PlannerLesson[]> {
-  const rows = await prisma.lessonSkill.findMany({
-    select: {
-      lesson: {
-        select: {
-          chapters: {
-            select: {
-              chapter: {
-                select: {
-                  courses: {
-                    orderBy: { createdAt: "asc" },
-                    select: { courseId: true, level: true, position: true },
-                  },
-                },
-              },
-              chapterId: true,
-              position: true,
-            },
-          },
-          createdAt: true,
-          estimatedMinutes: true,
-          homeChapterId: true,
-          id: true,
-          title: true,
-        },
-      },
-      skillId: true,
-    },
-    where: {
-      // A lesson set aside after its last held-back draft can't be taught: plans leave it out.
-      lesson: { ...libraryRowsVisibleTo(userId), setAsideAt: null },
-      skillId: { in: skillIds },
-    },
-  });
-
-  const taught = rows.flatMap((row) => {
-    const chapters = pickSkillPlaces({
-      getCourseIds: (entry) => entry.chapter.courses.map((placement) => placement.courseId),
-      places: row.lesson.chapters,
-      skillCourses,
-      skillId: row.skillId,
-    });
-
-    return chapters ? [{ ...row, chapters }] : [];
-  });
-
-  const lessons = new Map(taught.map((row) => [row.lesson.id, row]));
-
-  return [...lessons.values()]
-    .map(({ chapters, lesson, skillId }) => {
-      const chapter =
-        chapters.find((entry) => entry.chapterId === lesson.homeChapterId) ?? chapters[0];
-
-      const courses = skillCourses.get(skillId);
-
-      const placement =
-        chapter?.chapter.courses.find((entry) => !courses || courses.includes(entry.courseId)) ??
-        chapter?.chapter.courses[0];
-
-      return {
-        chapterId: chapter?.chapterId ?? lesson.homeChapterId,
-        createdAt: lesson.createdAt,
-        lessonId: lesson.id,
-        minutes: lesson.estimatedMinutes,
-        order: getCourseOrder({ lessonPosition: chapter?.position ?? 0, placement }),
-        skillIds: taught.filter((row) => row.lesson.id === lesson.id).map((row) => row.skillId),
-        title: lesson.title,
-      };
-    })
-    .toSorted(
-      (a, b) =>
-        compareCourseOrder(a.order, b.order) || a.createdAt.getTime() - b.createdAt.getTime(),
-    )
-    .map(({ chapterId, lessonId, minutes, skillIds: taughtIds, title }) => ({
-      chapterId,
-      lessonId,
-      minutes,
-      skillIds: taughtIds,
-      title,
-    }));
 }
 
 async function loadPrerequisites(skillIds: string[]): Promise<Map<string, string[]>> {
@@ -175,70 +69,59 @@ async function loadReadiness({
   );
 }
 
-type MockMinutes = { mockMinutes: number; shortMockMinutes: number | null };
+/** More test answers than this on one goal's skills say nothing new about where its gaps are. */
+const MAX_TEST_ANSWERS = 1000;
 
 /**
- * How long the exam's mocks take: the weekly mock, the first exam day's sections at the real pace
- * with half of each on regular weeks, as the exam module plans it; and for a class test read from
- * the learner's own material (a private blueprint), its short mock at full length, which rehearses
- * it the day before when the test is days away.
+ * The skills whose last answer in a test (placement, the focus test, a chapter test: bank questions
+ * answered outside lessons and sessions) was wrong or "I don't know yet". A don't-know leaves no
+ * state in the learner model, so the answers themselves say where the gaps are; a later right
+ * answer closes one.
  */
-async function loadMockMinutes(goal: Pick<Goal, "examBlueprintId">): Promise<MockMinutes> {
-  const blueprint = goal.examBlueprintId
-    ? await prisma.examBlueprint.findUnique({
-        select: { ownerId: true, structure: true },
-        where: { id: goal.examBlueprintId },
-      })
-    : null;
-
-  const parsed = examStructureSchema.safeParse(blueprint?.structure).data ?? null;
-  const ownerId = blueprint?.ownerId ?? null;
-  const structure = parsed && withClassTestMock({ ownerId, structure: parsed });
-
-  return {
-    mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure }),
-    shortMockMinutes: ownerId ? getWeeklyMockMinutes({ fullLength: true, structure }) : null,
-  };
-}
-
-/**
- * The Library lessons a plan turns these skills into: the lessons that teach each one, and the
- * lessons of the chapters a course outline tagged with it (a graph skill that spans several
- * lessons), in course order.
- */
-export async function loadSkillLessons({
-  goal,
-  skillCourses = new Map(),
+async function loadMissedSkillIds({
   skillIds,
   userId,
 }: {
-  goal: Pick<Goal, "kind">;
-  /** The courses the goal learns its skills in; skills left out take lessons from any course. */
-  skillCourses?: SkillCourses;
   skillIds: string[];
   userId: string;
-}): Promise<PlannerLesson[]> {
-  const [taught, chapterTaught] = await Promise.all([
-    loadLessons({ skillCourses, skillIds, userId }),
-    loadChapterTaughtLessons({
-      skillCourses,
-      skillIds,
+}): Promise<Set<string>> {
+  const answers = await prisma.attempt.findMany({
+    orderBy: { answeredAt: "desc" },
+    select: { isCorrect: true, skillId: true },
+    take: MAX_TEST_ANSWERS,
+    where: {
+      itemId: { not: null },
+      skillId: { in: skillIds },
+      stepId: null,
+      studySessionId: null,
       userId,
-      withChallenges: goal.kind === "learn",
-    }),
-  ]);
+    },
+  });
 
-  return mergePlannerLessons({ chapterTaught, taught });
+  const last = answers.reduce(
+    (latest, answer) =>
+      answer.skillId && !latest.has(answer.skillId)
+        ? latest.set(answer.skillId, answer.isCorrect)
+        : latest,
+    new Map<string, boolean>(),
+  );
+
+  return new Set([...last].filter(([, isCorrect]) => !isCorrect).map(([skillId]) => skillId));
 }
 
-/** Reads what the planner needs from the Library and the learner model for one goal's graph. */
+/**
+ * Reads what the planner needs from the Library and the learner model for one goal's graph. A plan
+ * the learner made harder also needs the areas they're doing well in, which it starts past.
+ */
 export async function loadPlannerInputs({
+  difficultyBias,
   goal,
   graph,
   targetDate,
   userId,
 }: {
-  goal: Pick<Goal, "examBlueprintId" | "kind">;
+  difficultyBias: DifficultyBias;
+  goal: Pick<Goal, "details" | "examBlueprintId" | "kind" | "primaryCourseId">;
   graph: PlanGraph;
   targetDate: Date | null;
   userId: string;
@@ -246,17 +129,18 @@ export async function loadPlannerInputs({
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
 
-  const [lessons, prerequisites, readiness, mocks] = await Promise.all([
-    loadSkillLessons({ goal, skillCourses: getSkillCourses(graph), skillIds, userId }),
+  const [lessons, prerequisites, readiness, exam, missedSkillIds] = await Promise.all([
+    loadGoalPlannerLessons({ goal, graph, userId }),
     loadPrerequisites(skillIds),
     loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-    isExam
-      ? loadMockMinutes(goal)
-      : {
-          mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure: null }),
-          shortMockMinutes: null,
-        },
+    loadExamFacts({ goal, graph }),
+    isExam ? loadMissedSkillIds({ skillIds, userId }) : new Set<string>(),
   ]);
 
-  return { lessons, prerequisites, readiness, ...mocks };
+  const strongAreas =
+    difficultyBias === "harder"
+      ? await loadStrongAreas({ graph, lessons, userId })
+      : new Set<string>();
+
+  return { lessons, missedSkillIds, prerequisites, readiness, strongAreas, ...exam };
 }

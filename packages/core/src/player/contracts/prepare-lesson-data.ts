@@ -4,6 +4,7 @@ import {
   type StepContentByKind,
   parseStepContent,
 } from "../../library/steps/contract/step-contract";
+import { getTileRomanization } from "./_utils/tile-romanization";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
 import { type ExerciseKind, isExerciseKind } from "./exercise-content";
 import {
@@ -41,7 +42,6 @@ type DistractorWordDataInput = {
   word: string;
   romanization: string | null;
   audioUrl: string | null;
-  pronunciation: string | null;
 };
 
 type StepDataInput = {
@@ -74,10 +74,10 @@ type SerializedSentence = {
   audioUrl: string | null;
 };
 
+/** An answer tile: its word, translation and audio, and romanization only for non-Latin scripts. */
 export type WordBankOption = {
   word: string;
   translation: string | null;
-  pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
 };
@@ -170,8 +170,10 @@ function buildFillBlankOptions(step: SerializedStep): WordBankOption[] {
 
   return words.map((word) => ({
     audioUrl: null,
-    pronunciation: null,
-    romanization: content.romanizations?.[word] ?? null,
+    romanization: getTileRomanization({
+      romanization: content.romanizations?.[word] ?? null,
+      word,
+    }),
     translation: null,
     word,
   }));

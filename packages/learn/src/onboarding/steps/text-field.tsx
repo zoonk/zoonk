@@ -27,7 +27,7 @@ export function TextField({
       <Label htmlFor={inputId}>{label}</Label>
       <Input
         autoFocus={autoFocus}
-        className="in-data-[mode=fun]:fun-glass h-12 text-base"
+        className="h-12 text-base"
         id={inputId}
         maxLength={MAX_ANSWER_LENGTH}
         onChange={(event) => onChange(event.target.value)}

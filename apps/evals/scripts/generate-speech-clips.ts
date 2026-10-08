@@ -30,7 +30,6 @@ async function generateClip(testCase: SpeechClip) {
   const { data, error } = await generateLanguageAudio({
     language: testCase.userInput.language,
     text: testCase.userInput.spokenText,
-    textType: "sentence",
   });
 
   if (error) {

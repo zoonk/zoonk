@@ -1,9 +1,9 @@
 "use client";
 
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { type NoteTimingEvent, type TimingCallbacks, type TuneObject, type renderAbc } from "abcjs";
 import { useEffect, useState } from "react";
 import { type SoundEvent } from "../_utils/sound-events";
-import { useMeasuredWidth } from "../_utils/use-measured-width";
 import { notationToDraw } from "./notation-text";
 
 type Abcjs = { TimingCallbacks: typeof TimingCallbacks; renderAbc: typeof renderAbc };
@@ -64,8 +64,8 @@ function outlineTune(abcjs: Abcjs, tune: TuneObject): TuneOutline {
 
 /**
  * Draws ABC notation with abcjs (loaded only for this activity), as a staff or with guitar tab
- * under it, in the text color so it follows light, dark and Fun. The tune comes back ready to
- * play: its notes carry their pitches.
+ * under it, in the text color so it follows light and dark. The tune comes back ready to play:
+ * its notes carry their pitches.
  */
 export function useAbcNotation({
   label,

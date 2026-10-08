@@ -86,7 +86,7 @@ export function DrillCountdown({ onTimeUp, seconds }: { onTimeUp: () => void; se
       <span
         aria-label={t("Time left")}
         className={cn(
-          "in-data-[mode=fun]:font-fun-display min-w-10 text-right text-sm font-semibold tabular-nums",
+          "min-w-10 text-right text-sm font-semibold tabular-nums",
           warning && "text-warning",
         )}
         role="timer"

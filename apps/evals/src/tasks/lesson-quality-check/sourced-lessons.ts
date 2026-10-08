@@ -20,6 +20,7 @@ const taxDeadlines: WrittenLesson = {
         "You asked for more time to file your federal tax return. Do you also get more time to pay?",
       reveal:
         "No: the extra time is only for filing. The next screens show what that means for your money.",
+      visual: null,
     },
     {
       exampleLineIdea: null,
@@ -27,6 +28,7 @@ const taxDeadlines: WrittenLesson = {
       kind: "explanation",
       text: "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
       title: "Your return is due in April",
+      visual: null,
     },
     {
       exampleLineIdea: null,
@@ -34,6 +36,7 @@ const taxDeadlines: WrittenLesson = {
       kind: "explanation",
       text: "If your forms aren't ready, send **Form 4868** by April 15 and you get 6 more months to file: until October 15, 2026. It doesn't delay paying: the tax you owe is still due April 15, 2026, or interest and penalties start.",
       title: "More time to file, not to pay",
+      visual: null,
     },
     {
       context: null,
@@ -59,6 +62,7 @@ const taxDeadlines: WrittenLesson = {
         },
       ],
       question: "Mia sent Form 4868 on April 10, 2026. By when must she pay the tax she owes?",
+      visual: null,
     },
     {
       context:
@@ -85,6 +89,7 @@ const taxDeadlines: WrittenLesson = {
         },
       ],
       question: "What should he do?",
+      visual: null,
     },
   ],
   summary: [
@@ -106,6 +111,7 @@ const estabilidade: WrittenLesson = {
       question:
         "Ana passou num concurso e tomou posse. Sem valer ponto: depois de quanto tempo trabalhando no cargo ela pode ganhar a garantia de não ser mandada embora?",
       reveal: "São 3 anos, e ainda falta uma condição. As próximas telas mostram qual.",
+      visual: null,
     },
     {
       exampleLineIdea: null,
@@ -113,6 +119,7 @@ const estabilidade: WrittenLesson = {
       kind: "explanation",
       text: "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem entra por concurso ganha essa garantia depois de **três anos** trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
       title: "Três anos e uma avaliação",
+      visual: null,
     },
     {
       context: null,
@@ -139,6 +146,7 @@ const estabilidade: WrittenLesson = {
       ],
       question:
         "Pedro completou três anos no cargo, mas a comissão ainda não avaliou o trabalho dele. Ele já é estável?",
+      visual: null,
     },
     {
       exampleLineIdea: null,
@@ -146,6 +154,7 @@ const estabilidade: WrittenLesson = {
       kind: "explanation",
       text: "Estabilidade não é para sempre. Por falta ou mau desempenho, o servidor estável pode perder o cargo por uma decisão da Justiça da qual não cabe mais recurso, por um **processo administrativo** (uma apuração feita pelo próprio órgão, em que ele pode se defender) ou por avaliações periódicas do seu trabalho, também com direito a defesa.",
       title: "Estável também pode sair",
+      visual: null,
     },
     {
       context:
@@ -172,6 +181,7 @@ const estabilidade: WrittenLesson = {
         },
       ],
       question: "O chefe pode demiti-la no mesmo dia, sem processo?",
+      visual: null,
     },
   ],
   summary: [

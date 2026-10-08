@@ -2,7 +2,7 @@ import { type LearnerSkill, type MasteryState } from "@zoonk/db";
 import { NEW_SKILL_MEMORY, getSkillRetrievability } from "../fsrs-scheduler";
 import { isFadingRetrievability } from "../mastery-state";
 
-/** What both modes show about one skill: its state, whether it fades and when it comes back. */
+/** What the apps show about one skill: its state, whether it fades and when it comes back. */
 export type SkillStatus = {
   due: Date | null;
   fading: boolean;

@@ -1,5 +1,5 @@
 import "server-only";
-import { type AreaPracticeOutcome } from "@zoonk/learn/progress";
+import { type AreaPracticeOutcome } from "@zoonk/learn/chapter";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { openStudyBlock } from "./open-study-block";
@@ -14,8 +14,9 @@ type AddedPractice =
   | { status: "goalNotActive" | "notFound" | "nothingToPractice" | "unauthorized" | "unavailable" };
 
 /**
- * A bonus practice block ("Practice now", "Refresh now") that core added to today's session,
- * started where it's played, with why it didn't start in the learner's terms otherwise.
+ * A bonus practice block (a chapter's "Practice now", Content's "Review") that core added to
+ * today's session, started where it's played, with why it didn't start in the learner's terms
+ * otherwise.
  */
 export async function openPracticeBlock({
   add,

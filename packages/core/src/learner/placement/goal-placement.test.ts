@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
   choiceItemContent,
@@ -32,35 +33,54 @@ async function setup(phases = [3, 2]) {
 /** The item bank's easy, medium and hard questions. */
 const DIFFICULTIES = [-1, 0, 1];
 
-type PlanSkill = { area: string | null; builds: number | null };
+type PlanSkill = {
+  area: string | null;
+  /** The Library band the skill graph put the skill in. */
+  band?: "beginner" | "intermediate" | "overview";
+  builds: number | null;
+  /** The skill graph's phase; its first phase holds each subject's foundations. */
+  phase?: number;
+};
 
 /**
  * A goal whose skill graph lists `planSkills` in plan order, one phase, each skill building on the
- * one `builds` points at, with one question per difficulty for each skill in `withItems`.
+ * one `builds` points at, with one question per difficulty for each skill in `withItems`. Only the
+ * skills in `inPlan` have plan items: the others are the graph's skills the plan leaves out at the
+ * learner's time.
  */
 async function graphGoalFixture({
+  details = {},
+  inPlan,
   planSkills,
   withItems = planSkills.map((_, index) => index),
 }: {
+  /** What onboarding stored on the goal, such as the learner's own level. */
+  details?: Record<string, string | string[]>;
+  inPlan?: number[];
   planSkills: PlanSkill[];
   withItems?: number[];
 }) {
   const user = await userFixture();
-  const goal = await goalFixture({ userId: user.id });
+  const goal = await goalFixture({ details, userId: user.id });
 
   const skills = await Promise.all(
-    planSkills.map((_, index) => skillFixture({ name: `Graph skill ${index + 1}` })),
+    planSkills.map((planSkill, index) =>
+      skillFixture({ level: planSkill.band ?? null, name: `Graph skill ${index + 1}` }),
+    ),
   );
 
   const plan = await planFixture({
     goalId: goal.id,
     graph: {
-      phases: [{ milestone: null, name: "Phase 1" }],
+      phases: [
+        { milestone: null, name: "Phase 1" },
+        { milestone: null, name: "Phase 2" },
+      ],
       skills: skills.map((skill, index) => ({
         area: planSkills[index]?.area ?? null,
         lessons: 1,
         name: skill.name,
-        phase: 0,
+        phase: planSkills[index]?.phase ?? 0,
         skillId: skill.id,
         weight: null,
       })),
@@ -90,8 +110,8 @@ async function graphGoalFixture({
       ),
     ),
     Promise.all(
-      skills.map((skill, position) =>
-        planItemFixture({ phase: 0, planId: plan.id, position, skillId: skill.id }),
+      (inPlan ?? planSkills.map((_, index) => index)).map((index, position) =>
+        planItemFixture({ phase: 0, planId: plan.id, position, skillId: skillAt(index) }),
       ),
     ),
   ]);
@@ -116,6 +136,37 @@ const TWO_AREAS: PlanSkill[] = [
   { area: "Math", builds: 2 },
   { area: "History", builds: 3 },
 ];
+
+/**
+ * An exam's law and English, each a few skills in the Library bands the skill graph gave them, with
+ * no prerequisites between them, like a notice's subjects.
+ */
+const BANDED_EXAM: PlanSkill[] = [
+  { area: "Law", band: "overview", builds: null },
+  { area: "Law", band: "beginner", builds: null },
+  { area: "Law", band: "intermediate", builds: null },
+  { area: "English", band: "beginner", builds: null },
+  { area: "English", band: "intermediate", builds: null },
+];
+
+/**
+ * An ENEM-like exam whose plan, at the time it has before the learner picks theirs, holds only its
+ * essay (`ESSAY_ONLY_PLAN`): its other subjects don't fit yet, though the skill graph has them all.
+ */
+const ESSAY_FIRST_EXAM: PlanSkill[] = [
+  { area: "Redação", builds: null },
+  { area: "Redação", builds: 0 },
+  { area: "Natureza", builds: null },
+  { area: "Natureza", builds: 2 },
+  { area: "Humanas", builds: null },
+  { area: "Humanas", builds: 4 },
+];
+
+const ESSAY_ONLY_PLAN = [0, 1];
+
+function sortIds(ids: readonly (string | undefined)[]) {
+  return ids.toSorted((a, b) => String(a).localeCompare(String(b)));
+}
 
 async function readNext(goalId: string) {
   const result = await getGoalPlacement({ goalId });
@@ -185,7 +236,25 @@ describe(getGoalPlacement, () => {
     expect(result.status === "ready" && result.placement.status).toBe("asking");
   });
 
-  it("sends the question and its options only: nothing that tells the answer", async () => {
+  it("counts as started once this goal's placement has an answer, not from earlier answers", async () => {
+    const { goal, items, skills, user } = await graphGoalFixture({ planSkills: CHAIN });
+
+    // Another goal's placement asked about the same skill before this goal existed.
+    await attemptFixture({
+      answeredAt: new Date(goal.createdAt.getTime() - 60_000),
+      itemId: items[0]?.id,
+      skillId: skills[0]?.id,
+      userId: user.id,
+    });
+
+    const before = await readNext(goal.id);
+    const after = await answerNext({ answer: RIGHT, goalId: goal.id });
+
+    expect(before).toMatchObject({ answered: 1, started: false });
+    expect(after).toMatchObject({ answered: 2, started: true });
+  });
+
+  it("sends the question, its options and its picture, chart or timeline only: nothing that tells the answer", async () => {
     const { goal } = await setup();
     const result = await getGoalPlacement({ goalId: goal.id });
     const next = result.status === "ready" ? result.placement.next : null;
@@ -193,10 +262,12 @@ describe(getGoalPlacement, () => {
     expect(Object.keys(next ?? {}).toSorted()).toStrictEqual([
       "context",
       "format",
+      "image",
       "itemId",
       "options",
       "question",
       "skillId",
+      "visual",
     ]);
 
     expect(next?.options).toStrictEqual(["Right answer", "Wrong answer"]);
@@ -238,13 +309,13 @@ describe(getGoalPlacement, () => {
     });
   });
 
-  it("waits for the question it asks first while it's written, instead of asking one that's ready", async () => {
-    // Placement starts in the middle; only the first skill's questions are written so far.
+  it("asks a question that's ready while the one it would ask first is written, then goes back to its walk", async () => {
+    // Placement starts in the middle; only the first skill's questions are in the bank so far.
     const { goal, skills } = await graphGoalFixture({ planSkills: CHAIN, withItems: [0] });
 
     await expect(readNext(goal.id)).resolves.toMatchObject({
-      next: null,
-      status: "waitingForQuestions",
+      next: { skillId: skills[0]?.id },
+      status: "asking",
     });
 
     await Promise.all(
@@ -256,6 +327,28 @@ describe(getGoalPlacement, () => {
     await expect(readNext(goal.id)).resolves.toMatchObject({
       next: { skillId: skills[1]?.id },
       status: "asking",
+    });
+  });
+
+  it("never opens with a written-answer question while its quick one is still being written", async () => {
+    // Only the first skill has a question in the bank so far, and it's one answered in words.
+    const { goal, skills } = await graphGoalFixture({ planSkills: CHAIN, withItems: [] });
+
+    await itemFixture({
+      content: {
+        acceptedAnswers: [],
+        context: null,
+        keyPoints: ["Names the rule"],
+        question: "Which rule applies here, and why?",
+        sampleAnswer: "The rule, because the case fits it.",
+      },
+      format: "typed",
+      skillId: skills[0]?.id ?? "",
+    });
+
+    await expect(readNext(goal.id)).resolves.toMatchObject({
+      next: null,
+      status: "waitingForQuestions",
     });
   });
 
@@ -361,10 +454,11 @@ describe(getGoalPlacement, () => {
     // A goal without an exam asks multiple choice first.
     await expect(readNext(goal.id)).resolves.toMatchObject({ next: { itemId: choice.id } });
 
-    await prisma.goal.update({
-      data: { examBlueprintId: trueFalseExam.id },
-      where: { id: goal.id },
-    });
+    // Without questions of its own once writing ended, the exam falls back to general ones.
+    await Promise.all([
+      prisma.goal.update({ data: { examBlueprintId: trueFalseExam.id }, where: { id: goal.id } }),
+      prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { goalId: goal.id } }),
+    ]);
 
     await expect(readNext(goal.id)).resolves.toMatchObject({
       next: { format: "trueFalse", itemId: trueFalse.id },
@@ -507,6 +601,64 @@ describe("adaptive placement", () => {
     });
   });
 
+  it("asks every subject of the exam, the ones the plan's time leaves out included", async () => {
+    const { goal, skills } = await graphGoalFixture({
+      inPlan: ESSAY_ONLY_PLAN,
+      planSkills: ESSAY_FIRST_EXAM,
+    });
+
+    const areaOf = (skillId?: string) =>
+      ESSAY_FIRST_EXAM[skills.findIndex((skill) => skill.id === skillId)]?.area;
+
+    const first = await readNext(goal.id);
+    const second = await answerNext({ answer: RIGHT, goalId: goal.id });
+    const third = await answerNext({ answer: RIGHT, goalId: goal.id });
+
+    expect(
+      [first, second, third]
+        .map((placement) => areaOf(placement?.next?.skillId) ?? "")
+        .toSorted((a, b) => a.localeCompare(b)),
+    ).toStrictEqual(["Humanas", "Natureza", "Redação"]);
+
+    expect(third).toMatchObject({ complete: false, status: "asking" });
+    expect(third?.areas.map((area) => area.area)).toStrictEqual(["Redação", "Natureza", "Humanas"]);
+  });
+
+  it("waits for the subjects whose questions are still being written instead of ending after the first", async () => {
+    // Questions are written in batches: only the essay's are in the bank so far.
+    const { goal, skills } = await graphGoalFixture({
+      inPlan: ESSAY_ONLY_PLAN,
+      planSkills: ESSAY_FIRST_EXAM,
+      withItems: ESSAY_ONLY_PLAN,
+    });
+
+    await expect(readNext(goal.id)).resolves.toMatchObject({ next: { skillId: skills[0]?.id } });
+
+    // "I don't know yet" on the essay's first skill settles where the essay starts.
+    await expect(answerNext({ answer: DONT_KNOW, goalId: goal.id })).resolves.toMatchObject({
+      complete: false,
+      next: null,
+      status: "waitingForQuestions",
+    });
+
+    await Promise.all(
+      [2, 3].flatMap((index) =>
+        DIFFICULTIES.map((difficulty) =>
+          itemFixture({
+            content: choiceItemContent(),
+            difficulty,
+            skillId: skills[index]?.id ?? "",
+          }),
+        ),
+      ),
+    );
+
+    const next = await readNext(goal.id);
+
+    expect(next?.status).toBe("asking");
+    expect([skills[2]?.id, skills[3]?.id]).toContain(next?.next?.skillId);
+  });
+
   it("starts where the learner's own level points", async () => {
     const { goal, skills } = await setup();
 
@@ -585,17 +737,55 @@ describe(answerPlacementQuestion, () => {
     expect(second.status === "ready" && second.placement.next?.skillId).toBe(skills[3]?.id);
   });
 
-  it("rejects a question from outside the goal", async () => {
-    const { goal } = await setup();
-    const otherSkill = await skillFixture();
-    const otherItem = await itemFixture({ content: choiceItemContent(), skillId: otherSkill.id });
+  it("still takes the open question after a re-plan moved its skill out of the plan", async () => {
+    const { goal, items, planItems, skills, user } = await setup();
+    const asked = items.find((item) => item.skillId === skills[2]?.id);
+
+    // The re-plan swapped the lesson this question was asked on for another one.
+    await prisma.planItem.delete({ where: { id: planItems[2]?.id ?? "" } });
 
     const result = await answerPlacementQuestion({
       goalId: goal.id,
-      input: { answer: RIGHT, durationMs: 5000, itemId: otherItem.id },
+      input: { answer: RIGHT, durationMs: 5000, itemId: asked?.id ?? "" },
     });
 
-    expect(result).toStrictEqual({ status: "invalidItem" });
+    expect(result.status === "ready" && result.isCorrect).toBe(true);
+    expect(result.status === "ready" && result.placement.next?.skillId).not.toBe(skills[2]?.id);
+
+    await expect(
+      prisma.attempt.count({ where: { itemId: asked?.id, userId: user.id } }),
+    ).resolves.toBe(1);
+  });
+
+  it("rejects another learner's private question and another exam's", async () => {
+    const { goal } = await setup();
+    const owner = await userFixture();
+    const blueprint = await examBlueprintFixture();
+
+    const [privateSkill, sharedSkill] = await Promise.all([
+      skillFixture({ ownerId: owner.id, visibility: "private" }),
+      skillFixture(),
+    ]);
+
+    const [privateItem, otherExamItem] = await Promise.all([
+      itemFixture({ content: choiceItemContent(), skillId: privateSkill.id }),
+      itemFixture({
+        content: choiceItemContent(),
+        examBlueprintId: blueprint.id,
+        skillId: sharedSkill.id,
+      }),
+    ]);
+
+    const answers = await Promise.all(
+      [privateItem, otherExamItem].map((item) =>
+        answerPlacementQuestion({
+          goalId: goal.id,
+          input: { answer: RIGHT, durationMs: 5000, itemId: item.id },
+        }),
+      ),
+    );
+
+    expect(answers).toStrictEqual([{ status: "invalidItem" }, { status: "invalidItem" }]);
   });
 });
 
@@ -655,6 +845,318 @@ describe(finishGoalPlacement, () => {
 
     // The first three skills are known: the plan now opens with the fourth one's lesson.
     expect(result).toMatchObject({ firstLessonId: lessons[3]?.id, status: "ready" });
+  });
+
+  it("starts a learner who studied the subject before past its basics, in every subject", async () => {
+    const { goal, skills } = await graphGoalFixture({
+      details: { level: "intermediate" },
+      planSkills: BANDED_EXAM,
+    });
+
+    const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    // The overview and beginner skills of both subjects; the intermediate ones are left to study.
+    expect(result.status === "ready" && sortIds(result.completion.knownSkillIds)).toStrictEqual(
+      sortIds([skills[0]?.id, skills[1]?.id, skills[3]?.id]),
+    );
+
+    const items = await prisma.planItem.findMany({
+      where: { plan: { goalId: goal.id }, skillId: { not: null } },
+    });
+
+    const statusOf = (index: number) =>
+      items.find((item) => item.skillId === skills[index]?.id)?.status;
+
+    expect([0, 1, 2, 3, 4].map((index) => statusOf(index))).toStrictEqual([
+      "testedOut",
+      "testedOut",
+      "todo",
+      "testedOut",
+      "todo",
+    ]);
+  });
+
+  it("never skips a whole subject from a stated level alone: it asks first", async () => {
+    // "Understand personal finance": an overview the learner says they know a little of. The last
+    // skill builds on the others, and placement had no question written for it.
+    const { goal, skills } = await graphGoalFixture({
+      details: { level: "basic" },
+      planSkills: [
+        { area: "Finance", band: "overview", builds: null },
+        { area: "Finance", band: "overview", builds: 0 },
+        { area: "Finance", band: "overview", builds: 1 },
+        { area: "Finance", band: "beginner", builds: 2 },
+      ],
+      withItems: [0, 1, 2],
+    });
+
+    await prisma.plan.update({
+      data: { placementPreparedAt: new Date() },
+      where: { goalId: goal.id },
+    });
+
+    const placement = await readNext(goal.id);
+
+    expect(placement?.status).toBe("asking");
+    expect([skills[0]?.id, skills[1]?.id, skills[2]?.id]).toContain(placement?.next?.skillId);
+
+    // Ended before any answer: nothing is assumed known, so nothing is skipped.
+    const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    expect(result).toMatchObject({
+      completion: { knownSkillIds: [], testedOutPlanItemIds: [] },
+      status: "ready",
+    });
+  });
+
+  it("starts the subjects the learner said they know well past their basics, only those", async () => {
+    const { goal, skills } = await graphGoalFixture({
+      details: { knownSubjects: ["Law"] },
+      planSkills: BANDED_EXAM,
+    });
+
+    const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    expect(result.status === "ready" && sortIds(result.completion.knownSkillIds)).toStrictEqual(
+      sortIds([skills[0]?.id, skills[1]?.id]),
+    );
+  });
+
+  it("starts a subject the learner knows well past its foundations when the exam asks all of it at one band", async () => {
+    // Like a public exam's Portuguese: every skill at the exam's band, the foundations in the skill
+    // graph's first phase and the rest building on them later.
+    const { goal, skills } = await graphGoalFixture({
+      details: { knownSubjects: ["Portuguese"] },
+      planSkills: [
+        { area: "Portuguese", band: "intermediate", builds: null, phase: 0 },
+        { area: "Math", band: "intermediate", builds: null, phase: 0 },
+        { area: "Portuguese", band: "intermediate", builds: 0, phase: 1 },
+        { area: "Math", band: "intermediate", builds: 1, phase: 1 },
+      ],
+    });
+
+    const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    expect(result.status === "ready" && result.completion.knownSkillIds).toStrictEqual([
+      skills[0]?.id,
+    ]);
+
+    const items = await prisma.planItem.findMany({
+      select: { skillId: true, status: true },
+      where: { plan: { goalId: goal.id }, skillId: { not: null } },
+    });
+
+    const statusOf = (index: number) =>
+      items.find((item) => item.skillId === skills[index]?.id)?.status;
+
+    expect([0, 1, 2, 3].map((index) => statusOf(index))).toStrictEqual([
+      "testedOut",
+      "todo",
+      "todo",
+      "todo",
+    ]);
+  });
+
+  it("skips the basics of a subject the learner knows well even while the plan's time leaves them out", async () => {
+    // Before the learner picks their time, the plan holds only what the default time fits: here
+    // none of Portuguese's basics. Once they pick more time, a re-plan must not bring them back.
+    const { goal, skills } = await graphGoalFixture({
+      details: { knownSubjects: ["Portuguese"] },
+      inPlan: [1, 2, 3],
+      planSkills: [
+        { area: "Portuguese", band: "intermediate", builds: null, phase: 0 },
+        { area: "Math", band: "intermediate", builds: null, phase: 0 },
+        { area: "Portuguese", band: "intermediate", builds: 0, phase: 1 },
+        { area: "Math", band: "intermediate", builds: 1, phase: 1 },
+      ],
+    });
+
+    const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    const standIn = await prisma.planItem.findFirst({
+      where: { plan: { goalId: goal.id }, skillId: skills[0]?.id },
+    });
+
+    expect(standIn).toMatchObject({
+      chapterId: null,
+      kind: "lesson",
+      lessonId: null,
+      phase: 0,
+      status: "testedOut",
+      titleSnapshot: skills[0]?.name,
+    });
+
+    expect(result.status === "ready" && result.completion.testedOutPlanItemIds).toStrictEqual([
+      standIn?.id,
+    ]);
+
+    // Finishing again adds nothing: the skill has its item now.
+    await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    await expect(
+      prisma.planItem.count({ where: { plan: { goalId: goal.id }, skillId: skills[0]?.id } }),
+    ).resolves.toBe(1);
+  });
+
+  it("counts right answers on a subject's harder skill for its basics, not another subject's", async () => {
+    const { goal, items, skills } = await graphGoalFixture({ planSkills: BANDED_EXAM });
+    const lawIntermediate = items.filter((item) => item.skillId === skills[2]?.id).slice(0, 2);
+
+    // Two quick right answers on the law's intermediate skill.
+    await Promise.all(
+      lawIntermediate.map((item) =>
+        answerPlacementQuestion({
+          goalId: goal.id,
+          input: { answer: RIGHT, durationMs: 9000, itemId: item.id },
+        }),
+      ),
+    );
+
+    const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    expect(result.status === "ready" && sortIds(result.completion.knownSkillIds)).toStrictEqual(
+      sortIds([skills[0]?.id, skills[1]?.id, skills[2]?.id]),
+    );
+  });
+
+  it("tests out only the topics its answers checked in a test from the learner's own material", async () => {
+    // Pedro's handout: the level he gave and two right answers on organelles skipped all of it.
+    const { goal, items, skills, user } = await graphGoalFixture({
+      details: { level: "advanced" },
+      planSkills: [
+        { area: "Biologia", band: "overview", builds: null },
+        { area: "Biologia", band: "beginner", builds: null },
+        { area: "Biologia", band: "intermediate", builds: 1 },
+        { area: "Biologia", band: "intermediate", builds: null },
+      ],
+    });
+
+    const blueprint = await examBlueprintFixture({ ownerId: user.id });
+
+    await prisma.goal.update({
+      data: { examBlueprintId: blueprint.id, kind: "exam" },
+      where: { id: goal.id },
+    });
+
+    const organelles = items.filter((item) => item.skillId === skills[2]?.id).slice(0, 2);
+
+    await Promise.all(
+      organelles.map((item) =>
+        answerPlacementQuestion({
+          goalId: goal.id,
+          input: { answer: RIGHT, durationMs: 9000, itemId: item.id },
+        }),
+      ),
+    );
+
+    const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
+
+    expect(result.status === "ready" && result.completion.knownSkillIds).toStrictEqual([
+      skills[2]?.id,
+    ]);
+
+    const planItems = await prisma.planItem.findMany({
+      select: { skillId: true, status: true },
+      where: { plan: { goalId: goal.id }, skillId: { not: null } },
+    });
+
+    const statusOf = (index: number) =>
+      planItems.find((item) => item.skillId === skills[index]?.id)?.status;
+
+    expect([0, 1, 2, 3].map((index) => statusOf(index))).toStrictEqual([
+      "todo",
+      "todo",
+      "testedOut",
+      "todo",
+    ]);
+  });
+
+  // Pedro-like class test: a miss on the membrane marked every topic built on it unknown, and
+  // placement ended after three questions without asking the organelles or the nucleus.
+  it("asks every topic of the learner's own material, even after a miss on an early one", async () => {
+    const topics = 6;
+
+    const { goal, items, skills, user } = await graphGoalFixture({
+      details: { level: "basic" },
+      planSkills: Array.from({ length: topics }, (_, index) => ({
+        area: "Biologia",
+        builds: index === 0 ? null : index - 1,
+      })),
+    });
+
+    const blueprint = await examBlueprintFixture({ ownerId: user.id });
+
+    // Its questions are written for its own blueprint, as placement asks an exam's own questions.
+    await Promise.all([
+      prisma.goal.update({
+        data: { examBlueprintId: blueprint.id, kind: "exam" },
+        where: { id: goal.id },
+      }),
+      prisma.item.updateMany({
+        data: { examBlueprintId: blueprint.id },
+        where: { id: { in: items.map((item) => item.id) } },
+      }),
+    ]);
+
+    const first = await readNext(goal.id);
+    expect(first?.next?.skillId).toBe(skills[0]?.id);
+
+    const afterMiss = await answerNext({ answer: DONT_KNOW, goalId: goal.id });
+    expect(afterMiss).toMatchObject({ status: "asking" });
+
+    const asked = new Set([first?.next?.skillId]);
+    let placement = afterMiss;
+
+    for (let turn = 0; turn < topics * 2 && placement?.status === "asking"; turn += 1) {
+      asked.add(placement.next?.skillId);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
+      placement = await answerNext({ answer: RIGHT, goalId: goal.id });
+    }
+
+    expect(sortIds([...asked])).toStrictEqual(sortIds(skills.map((skill) => skill.id)));
+    expect(placement).toMatchObject({ complete: true, status: "done" });
+
+    // Only the topics answered right, and confirmed, count as known; the missed one doesn't.
+    expect(sortIds(placement?.knownSkillIds ?? [])).toStrictEqual(
+      sortIds(skills.slice(1).map((skill) => skill.id)),
+    );
+  });
+
+  // The topic placement's questions skipped only got some later, from the test's practice: the
+  // answer said placement was done, and reloading the page asked it.
+  it("waits for every topic's questions in a test from the learner's own material", async () => {
+    const missing = 5;
+
+    const { goal, items, skills, user } = await graphGoalFixture({
+      planSkills: Array.from({ length: 7 }, () => ({ area: "Biologia", builds: null })),
+      withItems: [0, 1, 2, 3, 4, 6],
+    });
+
+    const blueprint = await examBlueprintFixture({ ownerId: user.id });
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { examBlueprintId: blueprint.id, kind: "exam" },
+        where: { id: goal.id },
+      }),
+      prisma.item.updateMany({
+        data: { examBlueprintId: blueprint.id },
+        where: { id: { in: items.map((item) => item.id) } },
+      }),
+    ]);
+
+    let placement = await readNext(goal.id);
+
+    for (let turn = 0; turn < skills.length && placement?.status === "asking"; turn += 1) {
+      // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
+      placement = await answerNext({ answer: DONT_KNOW, goalId: goal.id });
+    }
+
+    expect(placement).toMatchObject({
+      complete: false,
+      needsItems: [skills[missing]?.id],
+      status: "waitingForQuestions",
+    });
   });
 
   it("starts every phase at its beginning from scratch and changes nothing", async () => {

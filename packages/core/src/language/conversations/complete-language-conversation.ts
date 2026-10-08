@@ -6,6 +6,7 @@ import { type AnalyticsEvent } from "../../analytics/events";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
+import { settleCallTime } from "../../entitlements/settle-call-time";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getSession } from "../../users/get-session";
 import { recordLanguageSkillEvidence } from "../levels/record-language-evidence";
@@ -28,6 +29,31 @@ const SECONDS_PER_MINUTE = 60;
 export type CompleteLanguageConversationResult =
   | { conversation: LanguageConversationView; status: "completed" }
   | { status: "invalid" | "notFound" | "unauthorized" };
+
+/**
+ * What the call ran: the learner's spoken time, capped at the call's length, and the turns to
+ * review. A call that never connected held no call time, so nobody spoke in it: whatever turns a
+ * client sends get no review, which would be model calls for a call that never happened.
+ */
+function readCallRun({
+  input,
+  row,
+}: {
+  input: LanguageConversationCompletionInput;
+  row: OwnedConversation["row"];
+}) {
+  if (row.startedAt === null) {
+    return { connected: false, spokenSeconds: 0, turns: [] };
+  }
+
+  const maxSeconds = row.minutes * SECONDS_PER_MINUTE + OVERTIME_SECONDS;
+
+  return {
+    connected: true,
+    spokenSeconds: Math.min(input.spokenSeconds, maxSeconds),
+    turns: input.turns,
+  };
+}
 
 const LEDGER_KIND = {
   checkpoint: "checkpoint",
@@ -79,9 +105,10 @@ async function trackCall({
  * spoken. The objectives met are the ones marked during the call plus any the full transcript
  * shows, read by a separate text model that also writes the feedback; the transcript isn't
  * stored. The call pays Brain Power, counts toward today and, as a language goal's checkpoint,
- * closes the unit when won. The speaking level gets the call as evidence. A finished speaking mock
- * gets the next one written ahead, so another try starts at once. Ending it again returns the same
- * result.
+ * closes the unit when won. The speaking level gets the call as evidence, and the day's call time
+ * keeps only what the call ran. A finished speaking mock gets the next one written ahead, so
+ * another try starts at once. Ending it again returns the same result. A call that never
+ * connected ends without a review: only connecting claims call time.
  */
 export async function completeLanguageConversation({
   conversationId,
@@ -111,17 +138,17 @@ export async function completeLanguageConversation({
   }
 
   if (owned.row.status === "ready") {
-    const spokenSeconds = Math.min(
-      input.spokenSeconds,
-      owned.row.minutes * SECONDS_PER_MINUTE + OVERTIME_SECONDS,
-    );
+    // When the call ended, before its review: the day's call time keeps only what it ran.
+    const endedAt = new Date();
+
+    const { connected, spokenSeconds, turns } = readCallRun({ input, row: owned.row });
 
     const { feedback, objectivesMet } = await reviewConversation({
       level,
       row: owned.row,
       scenario,
       spokenSeconds,
-      turns: input.turns,
+      turns,
       userId,
     });
 
@@ -155,6 +182,7 @@ export async function completeLanguageConversation({
             skill: "speaking",
             userId,
           }),
+        settleCallTime({ conversationId: owned.row.id, now: endedAt, userId }),
         trackCall({
           objectives: scenario.objectives.length,
           objectivesMet: objectivesMet.length,
@@ -181,7 +209,8 @@ export async function completeLanguageConversation({
     const { goalId } = owned.row;
 
     // After the speaking evidence, so the next mock is written at the level it leaves.
-    if (settled && goalId && owned.row.kind === "speakingMock") {
+    // Only a mock that was really taken gets the next one written (a model call).
+    if (settled && connected && goalId && owned.row.kind === "speakingMock") {
       after(() => prepareSpeakingMock({ goalId, userId }));
     }
 

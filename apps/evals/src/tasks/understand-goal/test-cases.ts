@@ -26,7 +26,15 @@ export const TEST_CASES: UnderstandGoalCase[] = [
   }),
   testCase("pt-exam-enem-nursing", {
     expected: {
-      goals: [{ examName: /enem/iu, hasTarget: true, hasTargetDate: false, kind: "exam" }],
+      goals: [
+        {
+          examName: /enem/iu,
+          examTarget: "admission",
+          hasTarget: true,
+          hasTargetDate: false,
+          kind: "exam",
+        },
+      ],
       hasStudyTime: true,
       route: "goals",
     },
@@ -48,6 +56,22 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     },
     goal: "i want to speak english from spanish because I'm moving to the US. my current level is A2. i need to become fluent in the next 6 months",
     language: "en",
+  }),
+  testCase("pt-language-interview-toronto", {
+    expected: {
+      goals: [
+        {
+          kind: "language",
+          ownLevel: "intermediate",
+          role: /dados/iu,
+          targetLanguage: "en",
+          targetLevel: /B2/u,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "preciso falar inglês numa entrevista de emprego em toronto daqui a 3 meses. sou analista de dados e meu inglês é intermediário",
+    language: "pt",
   }),
   testCase("pt-explain-microwave", {
     expected: { route: "explain" },
@@ -103,7 +127,15 @@ export const TEST_CASES: UnderstandGoalCase[] = [
   }),
   testCase("en-exam-ielts-band", {
     expected: {
-      goals: [{ examName: /ielts/iu, hasTarget: true, kind: "exam", month: "2027-03" }],
+      goals: [
+        {
+          examName: /ielts/iu,
+          examTarget: "score",
+          hasTarget: true,
+          kind: "exam",
+          month: "2027-03",
+        },
+      ],
       route: "goals",
     },
     goal: "get band 7 on the IELTS by March",
@@ -150,9 +182,112 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "aprender python do zero",
     language: "pt",
   }),
+  testCase("pt-exam-concurso-camara", {
+    expected: {
+      goals: [
+        {
+          examMonth: 1,
+          examYear: 2027,
+          hasTarget: true,
+          hasTargetDate: false,
+          kind: "exam",
+          title: /câmara/iu,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "quero passar no concurso da camara dos deputados, que saiu edital agora e tem prova em janeiro do ano que vem. quero passar na vaga para registro e redacao",
+    language: "pt",
+  }),
+  testCase("pt-exam-concurso-camara-month", {
+    expected: {
+      goals: [
+        {
+          examMonth: 1,
+          examYear: 2027,
+          hasTarget: true,
+          hasTargetDate: false,
+          kind: "exam",
+          title: /câmara/iu,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "quero passar no concurso da câmara dos deputados, saiu o edital e a prova é em janeiro do ano que vem. quero passar na vaga para registro e redação",
+    language: "pt",
+  }),
+  testCase("pt-exam-concurso-camara-owner", {
+    expected: {
+      goals: [
+        {
+          examMonth: 1,
+          examYear: 2027,
+          hasTarget: true,
+          hasTargetDate: false,
+          kind: "exam",
+          title: /câmara/iu,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
+    language: "pt",
+  }),
+  testCase("pt-exam-concurso-camara-day", {
+    expected: {
+      goals: [
+        {
+          examTarget: "position",
+          hasTarget: true,
+          hasTargetDate: true,
+          kind: "exam",
+          month: "2027-01",
+        },
+      ],
+      route: "goals",
+    },
+    goal: "concurso da câmara dos deputados, analista de registro e redação. a prova é dia 17 de janeiro de 2027",
+    language: "pt",
+  }),
+  testCase("en-exam-bar-month", {
+    expected: {
+      goals: [{ examMonth: 2, examYear: 2027, hasTargetDate: false, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "I want to pass the California bar exam in February next year",
+    language: "en",
+  }),
+  testCase("pt-exam-oab-month", {
+    expected: {
+      goals: [
+        { examMonth: 3, examName: /oab/iu, examTarget: null, hasTargetDate: false, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "vou fazer a primeira fase da oab em março",
+    language: "pt",
+  }),
   testCase("pt-exam-oab", {
-    expected: { goals: [{ examName: /oab/iu, kind: "exam" }], route: "goals" },
+    expected: { goals: [{ examName: /oab/iu, examTarget: null, kind: "exam" }], route: "goals" },
     goal: "passar na OAB",
+    language: "pt",
+  }),
+  testCase("pt-exam-oab-second-phase", {
+    expected: { goals: [{ examName: /oab.*(?:2|segunda)/iu, kind: "exam" }], route: "goals" },
+    goal: "estudar para a segunda fase da oab em direito penal",
+    language: "pt",
+  }),
+  testCase("pt-exam-class-test", {
+    expected: { goals: [{ examTarget: null, kind: "exam" }], route: "goals" },
+    goal: "prova de biologia sexta sobre célula",
+    language: "pt",
+  }),
+  testCase("pt-exam-concurso-pf", {
+    expected: {
+      goals: [{ examTarget: "position", hasTarget: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "quero passar no concurso da polícia federal para agente",
     language: "pt",
   }),
   testCase("en-learn-ear-training", {

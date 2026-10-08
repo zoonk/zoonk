@@ -55,12 +55,13 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
     }
   }, []);
 
-  const start = useCallback(async () => {
+  /** Starts recording; false when the browser or the learner blocks the microphone. */
+  const start = useCallback(async (): Promise<boolean> => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => null);
 
     if (!stream) {
       setStatus("denied");
-      return;
+      return false;
     }
 
     const chunks: Blob[] = [];
@@ -98,6 +99,7 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
     recorder.start();
     setElapsedMs(0);
     setStatus("recording");
+    return true;
   }, [onRecorded, stop]);
 
   useEffect(() => {

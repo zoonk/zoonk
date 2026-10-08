@@ -12,8 +12,17 @@ import {
   getLearningActivityTotals,
 } from "./get-learning-activity-totals";
 import { getRequestProgressDateContext } from "./get-request-date-context";
+import { LEARNING_DAY_WHERE, countActivitiesCompleted } from "./progress-metrics";
 
-export type LearningActivityDay = { date: Date; lessonCompletions: number };
+/**
+ * One calendar day: the activities finished (lessons, reviews, practice), which light the day
+ * exactly when it counts as a learning day, and the lessons finished for the first time.
+ */
+export type LearningActivityDay = {
+  activitiesCompleted: number;
+  date: Date;
+  lessonCompletions: number;
+};
 
 export type LearningActivityData = LearningActivityTotals & { days: LearningActivityDay[] };
 
@@ -21,28 +30,30 @@ type LearningActivityRow = Awaited<ReturnType<typeof listLearningActivityRows>>[
 
 type LearningActivityDateQuery = ContributionCalendarDateRange & { userId: string };
 
-type LessonCompletionsByDate = Record<string, number>;
+type ActivityByDate = Record<string, Omit<LearningActivityDay, "date">>;
 
 /**
- * Daily totals count each lesson's first completion on the learner-local date
- * it happened, so reviews never create extra calendar activity and the
- * calendar survives lessons being deleted. The query stays bounded to the
- * visible calendar instead of loading the learner's lifetime rows.
+ * The learning days in the visible calendar, by the same definition as the lifetime total, so
+ * the calendar and "learning days" never disagree. Daily totals survive lessons being deleted, and
+ * the query stays bounded to the visible calendar instead of the learner's lifetime rows.
  */
 function listLearningActivityRows({ endDate, startDate, userId }: LearningActivityDateQuery) {
   return prisma.dailyProgress.findMany({
     orderBy: { date: "asc" },
-    where: { date: { gte: startDate, lte: endDate }, lessonsCompleted: { gt: 0 }, userId },
+    where: { ...LEARNING_DAY_WHERE, date: { gte: startDate, lte: endDate }, userId },
   });
 }
 
-/**
- * One daily row per date lets the calendar look up each square's count by its
- * date key.
- */
-function buildLessonCompletionsByDate(rows: LearningActivityRow[]): LessonCompletionsByDate {
+/** One daily row per date lets the calendar look up each square's counts by its date key. */
+function buildActivityByDate(rows: LearningActivityRow[]): ActivityByDate {
   return Object.fromEntries(
-    rows.map((row) => [getContributionCalendarDateKey(row.date), row.lessonsCompleted]),
+    rows.map((row) => [
+      getContributionCalendarDateKey(row.date),
+      {
+        activitiesCompleted: countActivitiesCompleted(row),
+        lessonCompletions: row.lessonsCompleted,
+      },
+    ]),
   );
 }
 
@@ -51,15 +62,18 @@ function buildLessonCompletionsByDate(rows: LearningActivityRow[]): LessonComple
  * the UI can render a stable 53-week grid for new learners too.
  */
 function buildLearningActivityDay({
+  activityByDate,
   date,
-  lessonCompletionsByDate,
 }: {
+  activityByDate: ActivityByDate;
   date: Date;
-  lessonCompletionsByDate: LessonCompletionsByDate;
 }): LearningActivityDay {
+  const activity = activityByDate[getContributionCalendarDateKey(date)];
+
   return {
+    activitiesCompleted: activity?.activitiesCompleted ?? 0,
     date,
-    lessonCompletions: lessonCompletionsByDate[getContributionCalendarDateKey(date)] ?? 0,
+    lessonCompletions: activity?.lessonCompletions ?? 0,
   };
 }
 
@@ -76,10 +90,10 @@ function buildLearningActivityDays({
   rows: LearningActivityRow[];
   startDate: Date;
 }): LearningActivityDay[] {
-  const lessonCompletionsByDate = buildLessonCompletionsByDate(rows);
+  const activityByDate = buildActivityByDate(rows);
   const dates = getContributionCalendarDates({ endDate, startDate });
 
-  return dates.map((date) => buildLearningActivityDay({ date, lessonCompletionsByDate }));
+  return dates.map((date) => buildLearningActivityDay({ activityByDate, date }));
 }
 
 /**

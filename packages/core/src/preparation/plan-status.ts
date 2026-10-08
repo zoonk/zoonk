@@ -10,7 +10,11 @@ type PlanAdjustment = "addTime" | "moveDate" | "narrowScope";
  */
 export type PlanStatus =
   | { kind: "ahead"; days: number }
-  | { kind: "behind"; days: number; extraMinutesPerDay: number }
+  /**
+   * `lessons`: lessons earlier days left that the learner hasn't caught up on yet (they come first
+   * in the plan); null when the plan's dates alone say how far behind it is.
+   */
+  | { kind: "behind"; days: number; extraMinutesPerDay: number; lessons: number | null }
   | { kind: "needsAdjusting"; options: PlanAdjustment[] }
   | { kind: "onTrack" };
 
@@ -75,15 +79,20 @@ function isDue({ item, today }: { item: PlanStatusItem; today: Date }): boolean 
 /**
  * Compares finished plan items with those due by today. A day's worth of items either way
  * is the tolerance; beyond it the learner is ahead, or behind with a fix that fits before the
- * target date. Past work is never counted twice: items finished early count as ahead. Returns null
- * while nothing is scheduled.
+ * target date. Past work is never counted twice: items finished early count as ahead. Lessons
+ * earlier days left (`catchUp`) mean the learner is behind until they're done, whatever the dates
+ * say: a new day moves them first, so the dates alone would read as on track. Returns null while
+ * nothing is scheduled.
  */
 export function getPlanStatus({
+  catchUp = 0,
   items,
   minutesPerItem,
   targetDate,
   today,
 }: {
+  /** Lessons earlier days left that aren't done yet (see `loadCatchUpItems`). */
+  catchUp?: number;
   items: readonly PlanStatusItem[];
   minutesPerItem: number;
   targetDate: Date | null;
@@ -99,6 +108,10 @@ export function getPlanStatus({
 
   if (isPastTarget({ items, targetDate })) {
     return getNeedsAdjusting(targetDate);
+  }
+
+  if (catchUp > 0) {
+    return { days: 0, extraMinutesPerDay: 0, kind: "behind", lessons: catchUp };
   }
 
   const itemsPerDay = scheduled.length / days;
@@ -120,7 +133,12 @@ export function getPlanStatus({
   const daysLeft = targetDate ? daysBetween(today, targetDate) : Number.POSITIVE_INFINITY;
 
   if (catchUpDays <= MAX_CATCH_UP_DAYS && catchUpDays <= daysLeft) {
-    return { days: catchUpDays, extraMinutesPerDay: CATCH_UP_EXTRA_MINUTES, kind: "behind" };
+    return {
+      days: catchUpDays,
+      extraMinutesPerDay: CATCH_UP_EXTRA_MINUTES,
+      kind: "behind",
+      lessons: null,
+    };
   }
 
   return getNeedsAdjusting(targetDate);

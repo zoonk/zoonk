@@ -1,8 +1,8 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { type GuessScale } from "../_utils/guess-scale";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { ActivityCanvas, ActivityTextAlternative } from "./activity-canvas";
 import { ActivityGuessComparison } from "./activity-guess-comparison";
 import { ActivityGuessScale } from "./activity-guess-scale";

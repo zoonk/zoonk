@@ -8,8 +8,18 @@ import { type Reasoning, buildProviderOptions } from "../../../provider-options"
 import { type LibraryIdentitySubject, formatIdentitySubject } from "./library-identity-subject";
 import systemPrompt from "./library-search-terms.prompt.md";
 
+/**
+ * From the library-search-terms eval (16 cases, 7 Oct 2026): Luna found 14 of 16 items at its
+ * default reasoning and at minimal reasoning, answering in 2.2s (p50, 7.1s p95) instead of 3.3s
+ * (12.7s p95). These calls sit on a new goal's path to its first question, so minimal it is.
+ * Gemini 3.5 Flash Lite answered in 1.3s but found 6 of 9 Portuguese items against Luna's 8, and
+ * Haiku 4.5 12 of 16; with no reasoning, Luna found 13. Claude Haiku 5.5 with thinking off found
+ * 14 against Luna's 13 in the same run (7 Oct 2026), but at $0.17 per 1,000 runs against $0.12
+ * and 7.7s p95 against 5.6s.
+ */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-4.5"] as const;
+const defaultReasoning: Reasoning = "minimal";
+const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-5.5"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model names the item before writing its terms. */
 const schema = z.object({
@@ -62,7 +72,7 @@ function toSubjectTerms({
 export async function generateSearchTerms({
   analytics,
   model = defaultModel,
-  reasoning,
+  reasoning = defaultReasoning,
   subjects,
   useFallback = true,
 }: SearchTermsParams) {

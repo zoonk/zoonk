@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Shorter sentences and removal of the competing 20% calculation reduce the reading burden. However, the example is unchanged and the learner still needs to connect one-fourth with 25%. This is only a little simpler overall, triggering the cap of 8.",
+          "reasoning": "This is somewhat simpler: it uses short opening sentences, avoids a formula, and removes the distracting comparison with 20% of the new price. However, it retains the same ticket example and numbers and increases the word count. The improvement is modest rather than substantial, so the cap of 8 for an only slightly simpler version applies.",
           "score": 8,
-          "label": "Actually simpler or deeper",
+          "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The explanation preserves the original idea and explicitly compares the change with the starting amount. All numbers are correct: $100 minus $80 is $20, and $20 is one-fourth, or 25%, of $80. The explanation screen retains a populated title and text without introducing another lesson's ideas.",
+          "reasoning": "The explanation preserves the original idea and correctly compares the increase with the starting price. All arithmetic is correct: $80 plus $20 is $100, and $20 is one-quarter, or 25%, of $80. It introduces no unrelated lesson content or contradictions.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen is concise, uses US English and short sentences, and contains no introduction, filler, or promises. The remaining writing weakness is the absence of the requested direct address using \"you.\" No explicit writing cap is triggered.",
+          "reasoning": "The response is a short screen in US English, with mostly plain language and no prefatory introduction, filler, or promises. It is not much longer than the original, so no length cap applies. However, it uses “we” rather than the requested direct address “you,” and the central calculation sentence could be shorter.",
           "score": 8,
           "label": "Short, plain writing",
           "weight": 25
@@ -29,23 +29,23 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1369,
-          "inputTokens": 1372,
-          "outputTokens": 678,
-          "reasoningTokens": 235
+          "cacheWriteTokens": 1906,
+          "inputTokens": 1909,
+          "outputTokens": 670,
+          "reasoningTokens": 217
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The explanation is shorter and its sentences are simpler, but it keeps the original $80-to-$100 ticket example rather than providing a more everyday example. It also does not address the learner as \"you,\" as requested by the writing criteria.",
+          "conclusion": "The response never addresses the learner as “you.” Also, exampleLineIdea and image are null, so it does not literally meet the requirement that every field be filled.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use a small everyday purchase, such as a snack you bought for $4 that now costs $5. Explain that the $1 increase is one-quarter of the starting $4, so the increase is 25%. This would make the numbers easier and address the learner directly.",
+          "conclusion": "Make the simplification more substantial: use a small everyday purchase instead of retaining the original ticket example, and shorten the explanation. Splitting the opening into shorter sentences and removing the competing 20% calculation help, but the rewrite uses more words than the original.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -71,22 +71,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The relative-change terminology and undefined zero-baseline case provide genuine additional depth. However, the main steps remain mostly procedural, especially the unexplained choice of the starting price as the reference. This is only a little deeper, so the score is capped at 8.",
+          "reasoning": "Uses familiar words and a concrete box-packing example, but retains the abstract terms without explicitly connecting each to its example. It is also slightly longer than the original. The improvement in simplicity is modest, so the cap of 8 for an only slightly simpler version applies.",
           "score": 8,
-          "label": "Actually simpler or deeper",
+          "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The same ticket problem and worked-example fields are preserved. All calculations are correct: the increase is $20, 20 divided by 80 is 0.25, and the increase is 25%. The zero-baseline statement is accurate and remains within percent change.",
+          "reasoning": "Preserves both correct comparisons and identifies what stays fixed: the boxes for the people/time comparison and the team for the boxes/time comparison. There are no incorrect facts, numerical errors, or unrelated lesson ideas. The explanation format and populated title and text are preserved.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The response uses US English, direct instructions, and no introductory filler. However, it is nearly twice the original's word count rather than about the same length, triggering the cap of 7 for a much longer screen. The separate technical edge-case step is the clearest opportunity to compress it.",
-          "score": 7,
+          "reasoning": "The screen is short, uses Brazilian Portuguese and addresses the learner as “você.” Its sentences are manageable, with no introductory framing, filler, or promises. It remains close to the original length.",
+          "score": 10,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -95,21 +95,157 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1589,
-          "inputTokens": 1592,
-          "outputTokens": 704,
-          "reasoningTokens": 263
+          "cacheWriteTokens": 1902,
+          "inputTokens": 1905,
+          "outputTokens": 693,
+          "reasoningTokens": 261
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The explanation adds only modest depth to the actual calculation: it names relative change but does not explain why $80 is the reference. The screen is also nearly twice the original's length, largely because of the separate zero-baseline step.",
+          "conclusion": "The everyday example helps, but the version is only a little simpler overall. Unlike the original, it does not explicitly label more people/less time as inverse and more boxes/more time as direct. It leaves those terms together in the final sentence, making the learner infer their meanings.",
           "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Attach each label to its example: “Para o mesmo pedido, mais pessoas levam menos tempo: relação inversa. Com a mesma equipe, mais caixas levam mais tempo: relação direta.” Then briefly remind the learner to notice what stays unchanged.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A clearly simpler version: more everyday words and example, no new terms like \"grandeza\" left unexplained\n      - Still says what stays fixed decides whether the relation is direct or inverse: same order, more people, less time; same team, bigger order, more time\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-simpler-1",
+        "userInput": {
+          "key": "",
+          "language": "pt",
+          "lessonTitle": "Regra de três simples e composta",
+          "level": "intermediate",
+          "screen": {
+            "content": {
+              "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
+              "title": "O que fica fixo?"
+            },
+            "kind": "explanation"
+          },
+          "variant": "simpler"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The doorway comparison is a genuinely different everyday example, rather than a sentence-by-sentence paraphrase. However, the length and conceptual density remain close to the original, the symbols remain, and the final sentence is compressed. It is only a little simpler, so the cap of 8 applies.",
+          "score": 8,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The result correctly associates voltage with volts and current with amperes, preserves the per-second meaning of current, and correctly says that more charge passing in that time means greater current. There is no clear factual contradiction or topic drift, but the required connection between the electrical source and its push is missing.",
+          "score": 7,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The text is a short screen of approximately the original length, written in natural Brazilian Portuguese. It addresses the learner directly through 'Pense', with no introductory wrapper, filler, or promises. No writing-specific cap is triggered.",
+          "score": 9,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1937,
+          "inputTokens": 1940,
+          "outputTokens": 981,
+          "reasoningTokens": 515
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation no longer identifies the electrical source as what provides the push. It connects voltage to a push in the analogy, but omits the explicitly required source-to-voltage connection.",
+          "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "Explain that you are measuring the $20 increase against what the ticket originally cost. Briefly connect new minus old to a negative change when the price falls. Keep the useful zero-baseline limit, but shorten it and trim repeated wording.",
+          "conclusion": "The added exampleLineIdea and image fields are null, so not every returned field is filled. The explanation is only modestly simpler: it retains unit symbols and ends with a compressed semicolon construction.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the new doorway comparison, then explicitly say that the electrical source provides the push called voltage. Use 'quanto de carga elétrica passa por segundo' to emphasize an amount of charge, and give the units in short sentences without parenthetical symbols.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A clearly simpler version for a learner who read the original and didn't get it: explained another way (a new everyday comparison or a small concrete case), not the original's sentences reworded one by one\n      - Still says that the push of the source is the voltage, in volts, and that the current is how much electric charge passes each second, in amperes\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-lei-de-ohm-simpler-1",
+        "userInput": {
+          "key": "",
+          "language": "pt",
+          "lessonTitle": "Lei de Ohm",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "Imagine uma bomba empurrando água por um cano. A fonte elétrica também dá um empurrão: é a **tensão**, medida em volts (V). A **corrente** é a quantidade de carga elétrica que passa a cada segundo, medida em ampères (A). Quanto mais carga passa por segundo, maior é a corrente.",
+              "title": "Empurrão e passagem"
+            },
+            "kind": "explanation"
+          },
+          "variant": "simpler"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "It preserves the worked example and adds a valid zero-starting-price edge case plus an explanation of the positive sign. However, the central steps gain limited underlying reasoning: \"baseline\" mostly labels the denominator, and percent conversion remains procedural. The cap of 8 for a version that is only a little deeper applies.",
+          "score": 8,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The same problem, title, result, and three-step calculation are preserved, with all original fields filled. Every calculation is correct: the increase is $20, 20 divided by 80 is 0.25, and the increase is 25%. Percent change from a zero starting value is indeed undefined. The added material stays within percent change.",
+          "score": 10,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The response uses US English, short sentences, and a compact worked-example structure without an introduction or filler. It is longer than the original but remains a short screen. It does not directly address the learner as \"you,\" and terms such as \"baseline\" and \"undefined\" make it somewhat less plain for a beginner.",
+          "score": 8,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2088,
+          "inputTokens": 2091,
+          "outputTokens": 709,
+          "reasoningTokens": 229
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The explanation is only modestly deeper. Calling $80 the baseline identifies the reference but does not explain why the increase is measured against what you originally paid. The conversion step still gives an instruction rather than explaining why 0.25 means 25%.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explain that the $20 increase is one-quarter of the original $80, so it adds 25% of the starting price. Briefly explain that a decrease makes new minus starting negative. Address the learner as \"you\" and keep these explanations compact.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -146,22 +282,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Removing the retrospective opening and replacing 'fica fixo' with 'não muda' makes the screen somewhat easier. However, most of the explanation and the example remain essentially unchanged. This is only a little simpler, triggering the cap of 8.",
+          "reasoning": "This is genuinely deeper: it replaces the original analogy with a causal link between confinement, uncertainty in motion, and kinetic energy, without heavy formulas. However, it omits the precise name of the principle and the requested limit or technical example. The null fields also fall short of the literal completeness requirement.",
           "score": 8,
-          "label": "Actually simpler or deeper",
+          "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "Both relationships are preserved correctly: for the same order, more workers mean less time; with the same team, more labels mean more time. The reminder to state what remains unchanged preserves the original lesson without adding unrelated ideas.",
+          "reasoning": "The explanation stays on the original idea and gives a scientifically sound overview of the competition between localization energy and nuclear attraction. It introduces no literal spring or outward force, makes no numerical errors, and does not drift into another lesson.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The text is concise, natural Brazilian Portuguese and shorter than the original. It addresses the learner through 'diga', contains no introductory framing or filler, and fits a single explanation screen.",
-          "score": 10,
+          "reasoning": "The screen uses Brazilian Portuguese, remains close to the original length, and has no introductory filler or heavy notation. Its main writing weakness is the impersonal register rather than the requested direct address using “você.” The phrase about uncertainty in motion is also abstract for an overview.",
+          "score": 8,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -170,87 +306,21 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1385,
-          "inputTokens": 1388,
-          "outputTokens": 916,
-          "reasoningTokens": 516
+          "cacheWriteTokens": 1956,
+          "inputTokens": 1959,
+          "outputTokens": 767,
+          "reasoningTokens": 311
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The simplification is modest: the opening is removed and the title is easier, but the central sentences and workplace example are nearly unchanged. Also, exampleLineIdea and image are null, so the requirement that every field be filled is not fully met.",
+          "conclusion": "The explanation adds real depth, but it neither explicitly names the uncertainty principle nor provides the requested limit or more technical example. It also leaves exampleLineIdea and image null despite the requirement that every field be filled. The writing does not address the learner as “você.”",
           "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Use more everyday wording, such as 'mais pessoas' instead of 'mais trabalhadores', and shorter sentences. Make the connection explicit: what you keep unchanged determines whether the relationship is direct or inverse.",
-          "kind": "potentialImprovements",
           "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A clearly simpler version: more everyday words and example, no new terms like \"grandeza\" left unexplained\n      - Still says what stays fixed decides whether the relation is direct or inverse: same order, more people, less time; same team, bigger order, more time\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "pt-regra-simpler-1",
-        "userInput": {
-          "key": "",
-          "language": "pt",
-          "lessonTitle": "Regra de três simples e composta",
-          "level": "intermediate",
-          "screen": {
-            "content": {
-              "text": "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
-              "title": "O que fica fixo?"
-            },
-            "kind": "explanation"
-          },
-          "variant": "simpler"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "versionFit",
-          "reasoning": "This is genuinely deeper: it connects confinement to uncertainty, kinetic energy, and the minimum-energy balance with electrical attraction. It names the principle without heavy formulas. However, the explanation of the motion spread remains abstract, and the final sentence repeats the general relationship rather than supplying a distinct limiting case or technical example.",
-          "score": 8,
-          "label": "Actually simpler or deeper",
-          "weight": 40
         },
         {
-          "categoryId": "faithful",
-          "reasoning": "The explanation preserves the original idea and accurately describes the kinetic-energy cost of localization at overview level. The minimum-energy discussion remains on topic. It introduces neither a literal spring nor an outward force, and both original content fields are filled.",
-          "score": 10,
-          "label": "Faithful and correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The result is in Brazilian Portuguese and remains a single short screen, modestly longer than the original, without an introduction or heavy notation. No length or language cap applies. Its main weaknesses are impersonal phrasing rather than direct reader address and a relatively dense opening sentence.",
-          "score": 8,
-          "label": "Short, plain writing",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1459,
-          "inputTokens": 1462,
-          "outputTokens": 640,
-          "reasoningTokens": 213
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The writing is somewhat abstract and impersonal: it never addresses the reader directly, and 'incerteza de seu movimento' leaves the physical meaning of the uncertainty slightly vague.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Make the mechanism more tangible by explaining that tighter confinement requires a wider spread of possible momenta. A brief limiting case—trying to confine the cloud to the nucleus makes the kinetic-energy cost very large—would add depth without formulas or another topic.",
+          "conclusion": "Name the uncertainty principle after the intuition, and clarify that tighter confinement means a wider spread of possible momenta—not merely less knowledge about motion. A brief limiting example, such as trying to confine the electron within the tiny nuclear region, would make the energy cost more concrete while keeping the screen short.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -278,88 +348,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The tool adaptation is concrete and usable: it specifies the cells, gives =AVERAGE(A1:A5), and correctly states that the output is 85. This works in both Google Sheets and Excel without platform-specific features. However, it lacks the expected check about what the tool shows. No wrong-syntax, wrong-output, or barely-shown-tool cap applies.",
-          "score": 8,
-          "label": "Actually the version asked for",
-          "weight": 40
-        },
-        {
-          "categoryId": "faithful",
-          "reasoning": "The same five scores, correct result, and original topic are preserved, with no factual error or unrelated material. However, the original's central explanation—adding the values and dividing by their count—is lost despite being explicitly required. This is an omission rather than a false calculation or claim.",
-          "score": 8,
-          "label": "Faithful and correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The result is a short, beginner-friendly screen in US English. Its direct instructions address the learner naturally, and it contains no introduction, filler, lengthy digression, or promises. No writing cap applies.",
-          "score": 10,
-          "label": "Short, plain writing",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1970,
-          "inputTokens": 1973,
-          "outputTokens": 713,
-          "reasoningTokens": 271
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The explanation omits the explicitly required meaning of the mean: add the five scores and divide by how many scores there are. It should retain that these scores total 425 and that 425 ÷ 5 = 85, alongside the spreadsheet method.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "There is no check asking what the spreadsheet shows. Also, exampleLineIdea and image are null rather than filled, so the result does not literally meet the requirement that every field be filled.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-tool-spreadsheet-mean-1",
-        "userInput": {
-          "key": "Spreadsheet (Google Sheets or Excel)",
-          "language": "en",
-          "lessonTitle": "The mean",
-          "level": "beginner",
-          "screen": {
-            "content": {
-              "text": "The **mean** is the typical value: add all the values and divide by how many there are. Quiz scores of 80, 90, 75, 95 and 85 add up to 425, and 425 ÷ 5 = 85.",
-              "title": "Add, then divide"
-            },
-            "kind": "explanation"
-          },
-          "variant": "tool"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "versionFit",
-          "reasoning": "This is genuinely a Python worked example: the assignments and arithmetic are valid Python, and print(percentual) correctly prints 25.0. It preserves the example and uses six steps. However, the original calculation fields are unfilled, the steps fragment instructions from execution, and the required tool-output check is absent. The wrong-syntax/output cap does not apply.",
+          "reasoning": "Python is central, and the executable statements and stated values are correct. However, the explicitly required printout of 25.0 is not demonstrated: the only print statement outputs 25%. The combined arithmetic step also misses the requested one-move structure. The wrong-syntax-or-output cap is not triggered because the output shown for the actual print statement is accurate.",
           "score": 7,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The ticket still increases from R$ 80 to R$ 100. The difference is 20, dividing by the initial price and multiplying by 100 gives 25.0, and the conclusion correctly states a 25% increase. There is no factual error or conceptual drift.",
+          "reasoning": "The example preserves the ticket price change from R$ 80 to R$ 100, divides the increase by the initial price, and correctly concludes a 25% increase. All numerical claims are accurate, with no contradictory mathematical content.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The language is natural Brazilian Portuguese, with short, direct instructions and no introductory framing or promises. It remains a short screen, but splitting three calculations across six instruction-and-execution entries creates avoidable repetition. No explicit writing cap is triggered.",
-          "score": 8,
+          "reasoning": "The screen uses natural Brazilian Portuguese, short reader-directed instructions, and a concise four-step presentation. It has no introductory filler or promises and remains suitable for a single screen.",
+          "score": 9,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -368,27 +372,27 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 2189,
-          "inputTokens": 2192,
-          "outputTokens": 801,
-          "reasoningTokens": 324
+          "cacheWriteTokens": 2134,
+          "inputTokens": 2137,
+          "outputTokens": 752,
+          "reasoningTokens": 305
         }
       },
       "steps": [
         {
-          "conclusion": "The requirement to fill every field is not met: all six steps have an empty math field (null), unlike the original worked-example screen. Putting the calculations in text preserves the explanation but leaves required content fields unfilled.",
+          "conclusion": "The required Python printout of 25.0 is missing. The calculation correctly produces that value, but it is only labeled “Resultado”; the actual print statement displays 25%. Add print(percentual) with the exact output 25.0.",
           "kind": "majorErrors",
-          "score": 6
+          "score": 7
         },
         {
-          "conclusion": "There is no check asking what Python shows. The six steps also alternate between instructions and their execution, making the sequence repetitive rather than giving each step one complete move.",
+          "conclusion": "Step 3 combines division by the starting price and multiplication by 100, despite the requirement that each step contain one move. These can be separated while staying within the eight-step limit.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Combine each instruction with its corresponding Python calculation, populate the calculation fields, and add a brief check about the output of print(percentual). A contiguous code example would also make the execution order easier for beginners to follow.",
+          "conclusion": "Replace the formatted-string demonstration with a simple print(percentual). Decimal-formatting syntax adds an unnecessary concept for a beginner learning percentage change.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -426,22 +430,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The command is framed as an example rather than an instruction to act on the learner's device. It gives the exact command and a valid, exact example output, explains the version number, and never suggests the learner is missing out. The interpretation could state more directly that this output also confirms Python is installed.",
-          "score": 9,
+          "reasoning": "The command and exact example output are presented for reading, without asking the learner to open, install, download, or run anything. There is no missing-out language. However, the explanation does not explicitly state that the output confirms Python is available, which is one of the required takeaways.",
+          "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The explanation retains the original idea of checking Python's version. The command, example output, and interpretation are accurate, with no unrelated lesson content. The original title and text fields are both filled.",
+          "reasoning": "The screen preserves the original version-checking idea and title, with populated title and text fields. The command, example output, and interpretation of the version number are accurate, and no unrelated lesson content is introduced.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The result is a short explanation comparable to the original's length, written in US English with short sentences and direct use of “you.” It contains no prefatory announcement, filler, or promises.",
-          "score": 10,
+          "reasoning": "The writing is concise, beginner-friendly US English and comparable to the original in length, without filler or an introductory preamble. It does not use the requested direct address, “you.”",
+          "score": 8,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -450,17 +454,21 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1936,
-          "inputTokens": 1939,
-          "outputTokens": 630,
-          "reasoningTokens": 272
+          "cacheWriteTokens": 1887,
+          "inputTokens": 1890,
+          "outputTokens": 556,
+          "reasoningTokens": 171
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "Make the interpretation more direct: “This output means Python is installed, and its version is 3.13.1.” This explicitly states both things the example output tells you.",
+          "conclusion": "The explanation identifies the version number but leaves implicit that this output also confirms Python is available. It also never addresses the learner as “you,” as requested.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the final sentence with “This tells you Python is available and its version is 3.13.1.” This makes both takeaways explicit while keeping the screen short.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -488,22 +496,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The no-install conversion succeeds: it presents the cell values and formula as an example and asks what A4 displays, without asking the learner to open Excel or type anything. The check format is preserved. The remaining task-fit issue is the literal field-completeness requirement: context and image are null. No category score cap is triggered.",
+          "reasoning": "The check successfully becomes a read-only spreadsheet example: it shows the three cells and the valid formula, asks what A4 displays, and never requires opening Excel or typing. It retains exactly one correct option and explanations for realistic mistakes. The only completeness issue is the three null fields despite the requirement that every field be filled.",
           "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The original idea is preserved and the calculation is correct. SOMA(A1:A3) adds 10, 20 and 30 to produce 60. Exactly one option is correct, every option has a reason, and both distractors represent the requested plausible slips. No factual error or topic drift triggers a cap.",
+          "reasoning": "The original idea and values are preserved. SOMA(A1:A3) correctly sums 10, 20, and 30 to 60. Both distractors and their explanations accurately address the intended beginner mistakes, without introducing another lesson.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The text uses natural Brazilian Portuguese, short sentences and a compact single-screen presentation. There is no unnecessary introduction, device instruction or promise of results. Feedback could be tightened slightly, but there is no meaningful writing weakness or triggered cap.",
-          "score": 9,
+          "reasoning": "The screen uses natural Brazilian Portuguese, concise sentences, and direct instructions. Its length is comparable to the original, with no unnecessary introduction, filler, or promises.",
+          "score": 10,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -512,24 +520,20 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 2170,
-          "inputTokens": 2173,
-          "outputTokens": 725,
-          "reasoningTokens": 309
+          "cacheWriteTokens": 2109,
+          "inputTokens": 2112,
+          "outputTokens": 762,
+          "reasoningTokens": 401
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The added context and image fields are null, so the result does not literally satisfy the requirement that every field be filled. The question and all answer explanations are complete.",
+          "conclusion": "The context, image, and visual fields are null, so the literal requirement that every field be filled is not fully met. The question and all answer explanations are complete.",
           "kind": "minorErrors",
           "score": 8
         },
-        {
-          "conclusion": "The incorrect-answer explanations could be slightly shorter while retaining the useful distinction between adding only two cells and displaying the formula as text.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
@@ -559,6 +563,68 @@
               "question": "Abra o Excel, digite 10, 20 e 30 em A1, A2 e A3 e, em A4, digite =SOMA(A1:A3). O que aparece em A4?"
             },
             "kind": "check"
+          },
+          "variant": "tool"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "The explanation shows a genuine spreadsheet workflow with a specified input range, the valid formula =AVERAGE(A1:A5), and its correct output, 85. These instructions work in both Google Sheets and Excel without tool-exclusive features.",
+          "score": 10,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The result preserves the mean, the same five quiz scores, and the correct answer without introducing unrelated concepts. However, it leaves addition implicit in “total” rather than explicitly retaining the required add-then-divide explanation. Both fields from the original screen, title and text, are filled.",
+          "score": 8,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The screen is short, beginner-friendly, and written in US English. Direct second-person instructions address the learner naturally, with no introductory framing, filler, or promises.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1932,
+          "inputTokens": 1935,
+          "outputTokens": 846,
+          "reasoningTokens": 469
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The arithmetic explanation is slightly incomplete: “the total divided by the number of scores” does not explicitly tell the learner to add the values first, as required. Saying that the five scores add to 425 and that 425 ÷ 5 = 85 would close this gap.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tool-spreadsheet-mean-1",
+        "userInput": {
+          "key": "Spreadsheet (Google Sheets or Excel)",
+          "language": "en",
+          "lessonTitle": "The mean",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "The **mean** is the typical value: add all the values and divide by how many there are. Quiz scores of 80, 90, 75, 95 and 85 add up to 425, and 425 ÷ 5 = 85.",
+              "title": "Add, then divide"
+            },
+            "kind": "explanation"
           },
           "variant": "tool"
         }

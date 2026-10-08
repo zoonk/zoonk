@@ -2,29 +2,50 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { OWN_FILES_WEB_PATH, getPrivateBlobPathname, toOwnFileUrl } from "@zoonk/utils/user-blobs";
-import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { type PlayableStepImage } from "../lesson-player-types";
 
-/** The reading column is at most 672px wide, so larger candidates only waste bytes. */
-const LESSON_IMAGE_SIZES = "(max-width: 704px) 100vw, 672px";
+/**
+ * Pictures are at most a phone's width, or about 560px tall frames on larger screens. Every frame
+ * shares this, so a picture preloaded for the next screen is the same file the screen shows.
+ */
+const LESSON_IMAGE_SIZES = "(max-width: 640px) 100vw, 560px";
 
-/** Step images are 1536 by 1024; this ratio holds their space when a size isn't stored. */
-const DEFAULT_WIDTH = 1536;
-const DEFAULT_HEIGHT = 1024;
+/** Step pictures are drawn at 1024 by 1280; this ratio holds their space when a size isn't stored. */
+const DEFAULT_WIDTH = 1024;
+const DEFAULT_HEIGHT = 1280;
 
 /**
- * A step's picture, sized from the stored file so the text below never jumps as it loads. A file
- * that fails to load disappears instead of leaving a broken frame; the text still teaches.
+ * How tall a picture may grow on each kind of screen: a reading screen's picture leads the screen
+ * like a story; a question keeps room for its options; one inside a worked example sits between
+ * its lines.
+ */
+export type LessonPictureFrame = "hero" | "inline" | "question";
+
+export const PICTURE_FRAME_CLASS: Record<LessonPictureFrame, string> = {
+  hero: "max-h-[55dvh]",
+  inline: "max-h-[45dvh]",
+  question: "max-h-[40dvh]",
+};
+
+/**
+ * A step's picture, sized from the stored file so the text below never jumps as it loads, and
+ * capped in height by its frame. A file that fails to load disappears instead of leaving a broken
+ * frame; the text still teaches.
  */
 export function LessonStepImage({
   className,
+  frame = "inline",
   image,
+  loading,
   priority = false,
 }: {
   className?: string;
+  frame?: LessonPictureFrame;
   image: PlayableStepImage;
+  /** `eager` fetches a picture that isn't on screen yet, such as the next screen's. */
+  loading?: "eager";
   priority?: boolean;
 }) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
@@ -42,8 +63,14 @@ export function LessonStepImage({
   return (
     <Image
       alt={image.alt}
-      className={cn("bg-muted/40 h-auto w-full rounded-2xl object-contain", className)}
+      className={cn(
+        "bg-muted/40 mx-auto block h-auto w-auto max-w-full rounded-2xl object-contain",
+        PICTURE_FRAME_CLASS[frame],
+        className,
+      )}
+      data-frame={frame}
       height={image.height ?? DEFAULT_HEIGHT}
+      loading={loading}
       onError={() => setFailedUrl(image.url)}
       preload={priority}
       sizes={LESSON_IMAGE_SIZES}
@@ -51,36 +78,5 @@ export function LessonStepImage({
       unoptimized={isPrivate}
       width={image.width ?? DEFAULT_WIDTH}
     />
-  );
-}
-
-/**
- * A question's picture. Pictures are drawn after the lesson is written and a failed one is left
- * out, so until it's there the question shows its description instead: a question never depends
- * on a picture the learner can't see.
- */
-export function LessonQuestionPicture({
-  image,
-  priority = false,
-  request,
-}: {
-  image: PlayableStepImage | null;
-  priority?: boolean;
-  /** The picture the writer asked for, whose alt text describes it. */
-  request?: { alt: string } | null;
-}) {
-  if (image) {
-    return <LessonStepImage image={image} priority={priority} />;
-  }
-
-  if (!request) {
-    return null;
-  }
-
-  return (
-    <figure className="bg-muted/50 text-muted-foreground flex items-start gap-3 rounded-2xl px-4 py-3 text-sm leading-relaxed">
-      <ImageIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-      <figcaption>{request.alt}</figcaption>
-    </figure>
   );
 }

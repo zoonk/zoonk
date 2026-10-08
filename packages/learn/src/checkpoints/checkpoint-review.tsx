@@ -4,8 +4,9 @@ import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { type StudyBlockCompletionView } from "@zoonk/core/sessions/completion-contract";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
+import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { DetailsDrawer } from "../_components/details-drawer";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { ItemLine } from "../questions/item-text";
 import { WorkedSteps, useAnswerText } from "../session/question-block/question-feedback";
@@ -62,16 +63,17 @@ function ReviewItem({
         label={t("Question options")}
         screen="checkpoint-review"
         target={{ contentId: answer.itemId, contentKind: "item" }}
+        votes={false}
       />
     </li>
   );
 }
 
 /**
- * Now that the duel is over, each question's right answer and why, the traps included. Closed by
- * default so the result reads first; learning from it is one tap away.
+ * Now that the duel is over, each question's right answer and why, the traps included: one text
+ * link away, in a sheet, so the result reads first.
  */
-export function CheckpointReview() {
+export function CheckpointReviewSheet() {
   const t = useExtracted();
   const { checkpoint, duel } = useCheckpointScreen();
   const answers = duel.state.completion?.checkpoint?.answers ?? [];
@@ -81,15 +83,7 @@ export function CheckpointReview() {
   }
 
   return (
-    <details className="group border-border in-data-[mode=fun]:fun-glass rounded-3xl border px-4">
-      <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 font-semibold [&::-webkit-details-marker]:hidden">
-        {t("Review the answers")}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="size-4 transition-transform group-open:rotate-180 motion-reduce:transition-none"
-        />
-      </summary>
-
+    <DetailsDrawer label={t("Review the answers")} title={t("The answers")}>
       <ol className="flex flex-col">
         {answers.map((answer) => {
           const question = checkpoint.questions.find(
@@ -101,6 +95,6 @@ export function CheckpointReview() {
           ) : null;
         })}
       </ol>
-    </details>
+    </DetailsDrawer>
   );
 }

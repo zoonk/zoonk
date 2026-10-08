@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupSkillsByArea, groupSkillsBySection } from "./group-skills";
+import { groupSkillsBySection } from "./group-skills";
 
 const skill = (
   areaId: string | null,
@@ -7,9 +7,14 @@ const skill = (
   fading = false,
 ) => ({ areaId, areaTitle: areaId ? `Area ${areaId}` : null, fading, state });
 
-describe(groupSkillsByArea, () => {
+const inSection = (areaId: string, sectionTitle: string | null) => ({
+  ...skill(areaId, "new"),
+  sectionTitle,
+});
+
+describe(groupSkillsBySection, () => {
   it("keeps areas in the order they first appear, with counts per area", () => {
-    const groups = groupSkillsByArea([
+    const groups = groupSkillsBySection([
       skill("b", "mastered"),
       skill("a", "learning", true),
       skill("b", "new"),
@@ -27,19 +32,12 @@ describe(groupSkillsByArea, () => {
   });
 
   it("puts skills without an area in one group", () => {
-    const groups = groupSkillsByArea([skill(null, "new"), skill(null, "learning")]);
+    const groups = groupSkillsBySection([skill(null, "new"), skill(null, "learning")]);
 
     expect(groups).toHaveLength(1);
     expect(groups[0]).toMatchObject({ areaId: "other", counts: { total: 2 }, title: "" });
   });
-});
 
-const inSection = (areaId: string, sectionTitle: string | null) => ({
-  ...skill(areaId, "new"),
-  sectionTitle,
-});
-
-describe(groupSkillsBySection, () => {
   it("keeps each section's areas together, in the order sections and areas first appear", () => {
     const groups = groupSkillsBySection([
       inSection("algebra", "Math"),

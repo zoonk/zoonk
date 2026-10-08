@@ -1,5 +1,6 @@
 import { toGoalPlanGraph } from "../../library/curriculum/goal-plan-graph";
 import { type GoalSkillGraph } from "../../library/curriculum/save-goal-skills";
+import { getFoundationSkillIds, getSkillArea } from "../../plans/planner/graph-areas";
 import { type PlanGraph, type PlanGraphSkill } from "../../plans/planner/plan-state";
 
 /**
@@ -20,9 +21,18 @@ const MAX_SKILLS = 16;
 
 type Pick = { area: number; group: number; rank: number; skill: PlanGraphSkill };
 
-/** Evenly spaced picks from a group, first and last included, in the order they're most useful. */
-function spreadPicks(skills: readonly PlanGraphSkill[]): PlanGraphSkill[] {
-  const count = Math.min(SKILLS_PER_GROUP, skills.length);
+/**
+ * Evenly spaced picks from a group, first and last included, in the order they're most useful:
+ * `perGroup` of them, or every skill of the group.
+ */
+function spreadPicks({
+  perGroup,
+  skills,
+}: {
+  perGroup: number;
+  skills: readonly PlanGraphSkill[];
+}): PlanGraphSkill[] {
+  const count = Math.min(perGroup, skills.length);
 
   const indexes = Array.from({ length: count }, (_, index) =>
     count === 1 ? 0 : Math.round((index * (skills.length - 1)) / (count - 1)),
@@ -38,25 +48,60 @@ function spreadPicks(skills: readonly PlanGraphSkill[]): PlanGraphSkill[] {
 }
 
 /** An area's picks: its phases in order, each phase's picks ranked by usefulness. */
-function toAreaPicks({ area, skills }: { area: number; skills: PlanGraphSkill[] }): Pick[] {
+function toAreaPicks({
+  area,
+  perGroup,
+  skills,
+}: {
+  area: number;
+  perGroup: number;
+  skills: PlanGraphSkill[];
+}): Pick[] {
   return [...Map.groupBy(skills, (skill) => skill.phase).values()]
     .toSorted((a, b) => (a[0]?.phase ?? 0) - (b[0]?.phase ?? 0))
     .flatMap((phaseSkills, group) =>
-      spreadPicks(phaseSkills).map((skill, rank) => ({ area, group, rank, skill })),
+      spreadPicks({ perGroup, skills: phaseSkills }).map((skill, rank) => ({
+        area,
+        group,
+        rank,
+        skill,
+      })),
     );
 }
 
 /**
  * The skills of a goal's skill graph that placement questions are written for ahead of time, in
  * graph order: a few per area and phase, breadth first (every area's earliest phase, both its
- * ends, before any later phase) up to a cap. Placement treats a missing question for one of
- * these as "still being written" and any other as left to lessons and reviews.
+ * ends, before any later phase) up to a cap. The basics of a subject the learner said they know
+ * well (`knownAreas`) are skipped: placement takes them as known (see `getPlacementBeliefs`), so
+ * its questions go to what builds on them. Placement treats a missing question for one of these
+ * as "still being written" and any other as left to lessons and reviews. A test from the learner's
+ * own material (`everySkill`) is all on the test and placement asks every topic of it (see
+ * `answeredOnly`), so every one of its skills gets questions, up to the same cap: Pedro's sixth
+ * topic only got questions from the practice written after placement, which ended without it.
  */
-export function pickPlacementItemSkillIds(graph: PlanGraph): string[] {
+export function pickPlacementItemSkillIds({
+  everySkill = false,
+  graph,
+  knownAreas = [],
+}: {
+  everySkill?: boolean;
+  graph: PlanGraph;
+  /** The exam subjects (the graph's areas) the learner said they know well. */
+  knownAreas?: readonly string[];
+}): string[] {
   const order = new Map(graph.skills.map((skill, index) => [skill.skillId, index]));
+  const foundations = getFoundationSkillIds(graph);
+  const known = new Set(knownAreas);
 
-  return [...Map.groupBy(graph.skills, (skill) => skill.area).values()]
-    .flatMap((skills, area) => toAreaPicks({ area, skills }))
+  const askable = graph.skills.filter(
+    (skill) => !(foundations.has(skill.skillId) && known.has(getSkillArea({ graph, skill }))),
+  );
+
+  const perGroup = everySkill ? askable.length : SKILLS_PER_GROUP;
+
+  return [...Map.groupBy(askable, (skill) => skill.area).values()]
+    .flatMap((skills, area) => toAreaPicks({ area, perGroup, skills }))
     .toSorted((a, b) => a.group - b.group || a.rank - b.rank || a.area - b.area)
     .slice(0, MAX_SKILLS)
     .map((pick) => pick.skill.skillId)
@@ -70,11 +115,19 @@ export function pickPlacementItemSkillIds(graph: PlanGraph): string[] {
  * Library found as one included.
  */
 export function pickPlacementGraphSkillIds({
+  everySkill,
   graph,
   idsByKey,
+  knownAreas,
 }: {
+  everySkill: boolean;
   graph: GoalSkillGraph;
   idsByKey: Readonly<Record<string, string>>;
+  knownAreas?: readonly string[];
 }): string[] {
-  return pickPlacementItemSkillIds(toGoalPlanGraph({ courseIdsByKey: {}, graph, idsByKey }));
+  return pickPlacementItemSkillIds({
+    everySkill,
+    graph: toGoalPlanGraph({ courseIdsByKey: {}, graph, idsByKey }),
+    knownAreas,
+  });
 }

@@ -55,12 +55,3 @@ export function runEndedError() {
     status: httpStatus.conflict,
   });
 }
-
-/** A client answering the same screen over and over in one run. */
-export function tooManyAnswersError() {
-  return createErrorResponse({
-    code: LESSON_PLAYER_ERROR_CODES.tooManyAnswers,
-    message: "This screen was already answered in this run",
-    status: httpStatus.tooManyRequests,
-  });
-}

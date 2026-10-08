@@ -134,7 +134,7 @@ export const marcosLanguageHistory: SeedLanguageHistory = {
     },
     day: -1,
     mistakes: [],
-    title: "since e for",
+    title: "“Since” e “for”",
   },
   scenarios: [
     { chapter: "renting", content: rentingCall, level: "A2" },

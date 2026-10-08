@@ -1,36 +1,34 @@
 "use client";
 
-import { trackEvent } from "@zoonk/core/analytics/client";
+import { getPathname, usePathname } from "@/i18n/navigation";
 import {
   type AppearanceActions,
   AppearanceScreen,
   type AppearanceView,
 } from "@zoonk/learn/appearance";
-import {
-  saveBuddyAction,
-  setDailyLimitAction,
-  setDeeperByDefaultAction,
-  setModeAction,
-  setSoundsEnabledAction,
-} from "./actions";
+import { type SupportedLocale } from "@zoonk/utils/locale";
+import { saveBuddyAction, setDailyLimitAction, setSoundsEnabledAction } from "./actions";
 
-/** Appearance with main's actions, counting mode switches to compare Focus and Fun. */
+const APPEARANCE_ACTIONS: AppearanceActions = {
+  saveBuddy: saveBuddyAction,
+  setDailyLimit: setDailyLimitAction,
+  setSoundsEnabled: setSoundsEnabledAction,
+};
+
+/** Appearance with main's Server Actions and its language switch. */
 export function AppearanceSettings({ view }: { view: AppearanceView }) {
-  const actions: AppearanceActions = {
-    saveBuddy: saveBuddyAction,
-    setDailyLimit: setDailyLimitAction,
-    setDeeperByDefault: setDeeperByDefaultAction,
-    setMode: async (mode) => {
-      const saved = await setModeAction(mode);
+  const pathname = usePathname();
 
-      if (saved) {
-        trackEvent({ name: "Mode Switched", properties: { from_mode: view.mode, to_mode: mode } });
-      }
+  /**
+   * Use a document navigation because changing the root language through the client router can
+   * lose its in-flight response when the proxy canonicalizes English. The forced prefix lets the
+   * proxy persist the explicit choice before redirecting English to its unprefixed URL.
+   */
+  function changeLanguage(locale: SupportedLocale) {
+    globalThis.location.replace(getPathname({ forcePrefix: true, href: pathname, locale }));
+  }
 
-      return saved;
-    },
-    setSoundsEnabled: setSoundsEnabledAction,
-  };
-
-  return <AppearanceScreen actions={actions} view={view} />;
+  return (
+    <AppearanceScreen actions={APPEARANCE_ACTIONS} onLanguageChange={changeLanguage} view={view} />
+  );
 }

@@ -27,8 +27,8 @@ const NO_TEXT_RULE =
   "The image must contain no text at all: any letters, numbers or captions are a major error.";
 
 /**
- * The mockup board's six examples: fixed scenes, so the comparison isolates the
- * image model and the style block from scene writing.
+ * The mockup board's six examples, a whole with labeled parts and a comparison: fixed scenes, so
+ * the comparison isolates the image model and the style block from scene writing.
  */
 export const TEST_CASES = [
   {
@@ -132,6 +132,44 @@ export const TEST_CASES = [
         focalObject: "a small house with a yellow door",
         relation: "a sign on a post stands beside the house and shows only a key symbol",
         supportingObjects: ["a sign on a post with a key symbol"],
+      }),
+    },
+  },
+  {
+    expectations: `A whole with its parts: the brain seen from the left side, its four lobes in different soft colors, each label next to its own lobe (frontal at the front, parietal on top, temporal low at the side, occipital at the back). ${TEXT_RULE}`,
+    id: "brain-lobes-en",
+    userInput: {
+      caseId: "brain-lobes-en",
+      category: "health",
+      language: "en",
+      scene: scene({
+        focalObject:
+          "a human brain seen from the left side, its four lobes each a different soft color",
+        labels: [
+          { target: "next to the lobe at the front", text: "frontal lobe" },
+          { target: "next to the lobe on top", text: "parietal lobe" },
+          { target: "next to the lobe low at the side", text: "temporal lobe" },
+          { target: "next to the lobe at the back", text: "occipital lobe" },
+        ],
+      }),
+    },
+  },
+  {
+    expectations: `Two planets compared, one above the other at their relative sizes: Earth blue and green with white clouds, Mars smaller (about half as wide) and rusty red, each with its label. ${TEXT_RULE}`,
+    id: "earth-mars-pt",
+    userInput: {
+      caseId: "earth-mars-pt",
+      category: "science",
+      language: "pt",
+      scene: scene({
+        focalObject: "Earth, blue with green land and white clouds",
+        labels: [
+          { target: "next to Earth", text: "Terra" },
+          { target: "next to Mars", text: "Marte" },
+        ],
+        layout: "comparison",
+        relation: "Mars is drawn about half as wide as Earth",
+        supportingObjects: ["Mars, a smaller rusty red planet"],
       }),
     },
   },

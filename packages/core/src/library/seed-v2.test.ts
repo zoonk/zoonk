@@ -1,4 +1,5 @@
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { EXAM_BLUEPRINT_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint-version";
 import { prisma } from "@zoonk/db";
 import { seedV2 } from "@zoonk/db/seed/v2";
 import {
@@ -90,7 +91,14 @@ async function planAtLessonPace(goalId: string) {
 
   const graph = await resolveMergedSkills(context.state.graph);
   const { targetDate, userId } = goal;
-  const inputs = await loadPlannerInputs({ goal, graph, targetDate, userId });
+
+  const inputs = await loadPlannerInputs({
+    difficultyBias: context.state.settings.difficultyBias,
+    goal,
+    graph,
+    targetDate,
+    userId,
+  });
 
   const built = buildPlan({
     ...inputs,
@@ -251,6 +259,7 @@ describe("v2 seed", () => {
 
         const problems = checkItem({
           item: generated,
+          language: item.language,
           optionCount:
             item.examBlueprint?.identityKey === "enem" && item.format === "multipleChoice"
               ? ENEM_OPTIONS
@@ -307,6 +316,56 @@ describe("v2 seed", () => {
 
       expect(sources).toHaveLength(1);
       expect(missing).toStrictEqual([]);
+    });
+
+    // The first ENEM learner of a local pass waited 8.5 minutes for the seeded notice to be read
+    // again, because the seed's reading looked older than today's instructions.
+    it("stores the ENEM notice as read with today's reading instructions", async () => {
+      const blueprints = await prisma.examBlueprint.findMany({
+        where: { identityKey: "enem", runId: SEED_RUN },
+      });
+
+      expect(blueprints.map((blueprint) => blueprint.promptVersion)).toStrictEqual([
+        EXAM_BLUEPRINT_PROMPT_VERSION,
+        EXAM_BLUEPRINT_PROMPT_VERSION,
+      ]);
+    });
+
+    it("describes the ENEM edition ahead, rating topics by the notice's own names", async () => {
+      const blueprints = await prisma.examBlueprint.findMany({
+        where: { identityKey: "enem", runId: SEED_RUN },
+      });
+
+      const parsed = blueprints.map((blueprint) => ({
+        edition: examEditionSchema.parse(blueprint.edition),
+        structure: examStructureSchema.parse(blueprint.structure),
+        topicFrequency: topicFrequencySchema.parse(blueprint.topicFrequency),
+      }));
+
+      // The exam's last day isn't over yet and is less than a year away: never next year's
+      // edition while this year's is weeks away.
+      const lastDays = parsed.map(
+        ({ edition }) =>
+          new Date(
+            `${edition.dates.findLast((date) => date.kind === "exam")?.date}T23:59:59-03:00`,
+          ),
+      );
+
+      expect(lastDays.every((day) => day.getTime() >= Date.now())).toBe(true);
+
+      expect(lastDays.every((day) => day.getTime() - Date.now() < 366 * 24 * 60 * 60 * 1000)).toBe(
+        true,
+      );
+
+      const unnamed = parsed.flatMap(({ structure, topicFrequency }) =>
+        topicFrequency
+          .filter((entry) =>
+            structure.subjects.every((subject) => !subject.topics.includes(entry.topic)),
+          )
+          .map((entry) => entry.topic),
+      );
+
+      expect(unnamed).toStrictEqual([]);
     });
 
     it("names each ENEM area once", async () => {
@@ -453,7 +512,7 @@ describe("v2 seed", () => {
       expect(goingForward.stored).toStrictEqual(goingForward.built);
     }, 120_000);
 
-    it("closes each phase with a phase checkpoint, never a weekly challenge", async () => {
+    it("closes each phase with a phase checkpoint, never a weekly challenge or a practice day", async () => {
       const bosses = await prisma.planItem.findMany({
         where: {
           kind: "boss",
@@ -468,8 +527,9 @@ describe("v2 seed", () => {
 
       const missing = plans.flatMap((plan) =>
         parsePlanPhases(plan.phases).flatMap((phase, index) => {
+          // The weekly challenges and the practice days after the last lesson come after it.
           const last = plan.items.findLast(
-            (item) => item.phase === index && item.kind !== "checkpoint",
+            (item) => item.phase === index && item.kind !== "checkpoint" && item.kind !== "review",
           );
 
           return last?.kind === "boss" ? [] : [`${plan.goalId}: ${phase.name}`];
@@ -587,9 +647,9 @@ describe("v2 seed", () => {
       expect(mistakes.filter((mistake) => mistake.attemptId === null)).toStrictEqual([]);
     });
 
-    it("seeds Fun with a buddy, a minor with a guardian and an anonymous guest", async () => {
-      const [fun, minor, guest] = await Promise.all([
-        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: learners.fun.userId } }),
+    it("seeds a grown buddy, a minor with a guardian and an anonymous guest", async () => {
+      const [buddy, minor, guest] = await Promise.all([
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: learners.buddy.userId } }),
         prisma.user.findUniqueOrThrow({
           include: { guardianLinks: true, learningProfile: true },
           where: { id: learners.minor.userId },
@@ -597,8 +657,10 @@ describe("v2 seed", () => {
         prisma.user.findUniqueOrThrow({ where: { id: learners.guest.userId } }),
       ]);
 
-      expect(fun).toMatchObject({ buddyGlasses: "star", buddyKind: "otto", experienceMode: "fun" });
+      // The adult turned memory on; the minor keeps the default, off until they choose.
+      expect(buddy).toMatchObject({ buddyGlasses: "star", buddyKind: "otto", memoryEnabled: true });
       expect(minor.learningProfile?.birthYear).toBeGreaterThan(new Date().getUTCFullYear() - 18);
+      expect(minor.learningProfile?.memoryEnabled).toBeNull();
       expect(minor.guardianLinks[0]?.status).toBe("active");
       expect(guest.isAnonymous).toBe(true);
     });

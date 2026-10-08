@@ -3,7 +3,6 @@ import { type LearningEventKind, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CHECKPOINT_LEDGER_KINDS } from "../../../checkpoints/_utils/checkpoint-results";
 import { completePlanItem } from "../../../sessions/_utils/plan-items";
-import { getLearnerMode } from "../../../sessions/_utils/session-ledger";
 import { applySessionProgress } from "../../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta } from "../../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
@@ -72,10 +71,7 @@ export async function settleConversation(input: ConversationSettlement): Promise
   const brainPower = getConversationBrainPower({ checkpoint, objectivesMet: objectivesMet.length });
   const missed = input.objectives - objectivesMet.length;
 
-  const [block, mode] = await Promise.all([
-    findBlockContext(row.studyBlockId),
-    getLearnerMode(userId),
-  ]);
+  const block = await findBlockContext(row.studyBlockId);
 
   return prisma.$transaction(async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
@@ -127,7 +123,6 @@ export async function settleConversation(input: ConversationSettlement): Promise
       incorrectAnswers: missed,
       kind: LEDGER_KINDS[row.kind],
       lessonKind: getLessonKind({ bossKind, row }),
-      mode,
       seconds: spokenSeconds,
       startedAt: row.startedAt ?? lock.completedAt,
       timeZone,

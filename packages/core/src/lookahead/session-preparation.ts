@@ -1,18 +1,16 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import {
   canRedraftLesson,
   getLessonGenerationStates,
 } from "../library/generation/lesson-generation-state";
 import { getGoalFieldInput } from "../library/items/item-field";
+import { findPlanFirstLessonId } from "../plans/_utils/plan-first-lesson";
 import { parsePlanSettings } from "../plans/planner/plan-state";
-import { resolveDeeperByDefault } from "../profile/_utils/deeper-by-default";
 import { findOwnedStudySession } from "../sessions/_utils/study-session-access";
-
-/** Specs are written a chapter ahead; a chapter rarely has more lessons than this. */
-const MAX_SPEC_LESSONS = 12;
+import { type LearnerLookahead, getLearnerTier, getLookahead } from "./learner-lookahead";
 
 const OPEN_BLOCK_STATUSES = new Set<StudySessionBlock["status"]>(["active", "pending"]);
 
@@ -26,34 +24,43 @@ export type SessionPreparationAccess =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
+/**
+ * Whether the signed-in learner may prepare a goal's content before today's session exists, such
+ * as right after placement: the same as a session's (`SessionPreparationAccess`), a guest getting
+ * only the plan's first lesson.
+ */
+export type GoalPreparationAccess =
+  | Exclude<SessionPreparationAccess, { status: "ready" }>
+  | { goalId: string; status: "ready"; timeZone: string; userId: string };
+
 export type SessionPreparation = {
   /** The goal is an exam: its lessons always get the reasoning check, as on-demand runs do. */
   forExam: boolean;
-  /** Lessons in this session or the next whose content isn't written yet: write them now. */
+  /**
+   * Today's next lessons, the one the learner is in and the few after it, whose content isn't
+   * written yet: the learner gets there within minutes, so they're written now.
+   */
   lessonIds: string[];
-  /** Every lesson of this session and the next, written or not, in plan order. */
+  /**
+   * The next study day's first lessons whose content isn't written yet: nobody waits on them for
+   * hours, so they're written in the background at the flex tier.
+   */
+  laterLessonIds: string[];
+  /** Every lesson of both, written or not, in plan order. */
   plannedLessonIds: string[];
   /**
-   * The learner has a personal layer to write over the lessons being written (a field, a tool
-   * they chose or "Go deeper" first), so their preparation writes it once those lessons are done.
+   * The learner has a personal layer to write over the lessons being written (a field or a tool
+   * they chose), so their preparation writes it once those lessons are done.
    */
   personalized: boolean;
-  /** Lessons of the chapter after the one being studied that have no spec yet. */
-  specLessonIds: string[];
-  /**
-   * Today's next lesson when it isn't written yet: the learner reaches it within minutes, so it's
-   * written at the priority tier (about twice as fast at twice the price); the rest can wait.
-   */
-  urgentLessonId: string | null;
 };
 
 const NOTHING_TO_PREPARE: SessionPreparation = {
   forExam: false,
+  laterLessonIds: [],
   lessonIds: [],
   personalized: false,
   plannedLessonIds: [],
-  specLessonIds: [],
-  urgentLessonId: null,
 };
 
 /** The lesson a session's learner reaches next: its first learn block still to do. */
@@ -105,7 +112,60 @@ export async function getSessionPreparationAccess({
   };
 }
 
-/** Today's session's lessons: the ones still to play, in session order, and every one it holds. */
+/**
+ * Whether the signed-in learner may prepare their goal's content with no session open yet (right
+ * after placement, before Day 1's session is built): a guest gets only the plan's first lesson
+ * written ahead, counted as its start like opening it.
+ */
+export async function getGoalPreparationAccess({
+  goalId,
+}: {
+  goalId: string;
+}): Promise<GoalPreparationAccess> {
+  const owned = await findOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return owned;
+  }
+
+  const user = await prisma.user.findUnique({
+    select: { isAnonymous: true },
+    where: { id: owned.userId },
+  });
+
+  if (user?.isAnonymous) {
+    return { lessonId: await findPlanFirstLessonId(goalId), status: "guest" };
+  }
+
+  return {
+    goalId,
+    status: "ready",
+    timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: null }),
+    userId: owned.userId,
+  };
+}
+
+/** The plan's lessons scheduled for a day that are still to do, in plan order. */
+async function loadPlannedDayLessons({ goal, day }: { goal: Goal; day: Date }) {
+  const items = await prisma.planItem.findMany({
+    orderBy: { position: "asc" },
+    select: { lessonId: true },
+    where: {
+      lessonId: { not: null },
+      plan: { goalId: goal.id },
+      scheduledFor: day,
+      status: "todo",
+    },
+  });
+
+  return items.flatMap((item) => (item.lessonId ? [item.lessonId] : []));
+}
+
+/**
+ * Today's lessons still to play, in order, and every one today holds: the session's, or, before
+ * today's session is built (right after placement), the plan's lessons for today, which it's
+ * built from.
+ */
 async function loadTodayLessons({
   goal,
   today,
@@ -120,7 +180,12 @@ async function loadTodayLessons({
     where: { userGoalDate: { goalId: goal.id, localDate: today, userId } },
   });
 
-  const learnBlocks = (session?.blocks ?? []).filter(
+  if (!session) {
+    const planned = await loadPlannedDayLessons({ day: today, goal });
+    return { inSession: new Set(planned), open: planned };
+  }
+
+  const learnBlocks = session.blocks.filter(
     (block): block is StudySessionBlock & { lessonId: string } =>
       block.kind === "learn" && block.lessonId !== null,
   );
@@ -148,99 +213,86 @@ function loadUpcomingLessons({ goal, today }: { goal: Goal; today: Date }) {
 }
 
 /**
- * The lessons the plan has for the next study day: what the next session's learn blocks are drawn
- * from. They come from the plan rather than a session built ahead, because a session is built on
- * its own day, from that day's allowance and time limit. Lessons today's session already pulled
- * ahead (to fill its time, or "10 more minutes") don't count, so the day after them is prepared.
+ * The first lessons the plan has for the next study day: what the next session's learn blocks are
+ * drawn from. They come from the plan rather than a session built ahead, because a session is
+ * built on its own day, from that day's allowance and time limit. Lessons today's session already
+ * pulled ahead (to fill its time, or "10 more minutes") don't count, so the day after them is
+ * prepared.
  */
 function pickNextLessons({
+  count,
   inSession,
   upcoming,
 }: {
+  count: number;
   inSession: ReadonlySet<string>;
   upcoming: Awaited<ReturnType<typeof loadUpcomingLessons>>;
 }): string[] {
   const ahead = upcoming.filter((item) => item.lessonId && !inSession.has(item.lessonId));
   const nextDay = ahead[0]?.scheduledFor?.getTime();
 
-  return ahead.flatMap((item) =>
-    item.lessonId && item.scheduledFor?.getTime() === nextDay ? [item.lessonId] : [],
-  );
+  return ahead
+    .flatMap((item) =>
+      item.lessonId && item.scheduledFor?.getTime() === nextDay ? [item.lessonId] : [],
+    )
+    .slice(0, count);
 }
 
-/** Lessons of the chapter right after each chapter being studied, in course order, still unplanned. */
-async function findNextChapterSpecLessons(lessonIds: readonly string[]): Promise<string[]> {
-  const lessons = await prisma.lesson.findMany({
-    select: {
-      homeChapter: {
-        select: { courses: { select: { courseId: true, level: true, position: true } } },
-      },
-    },
-    where: { id: { in: [...lessonIds] } },
+/** A lesson to write: one never started, or one its checks held back while it has drafts left. */
+function filterUnwritten({
+  lessonIds,
+  states,
+}: {
+  lessonIds: readonly string[];
+  states: Awaited<ReturnType<typeof getLessonGenerationStates>>;
+}): string[] {
+  return lessonIds.filter((lessonId) => {
+    const state = states.get(lessonId);
+    // A run that just stopped is retried when a learner opens the lesson.
+    return state?.status === "notStarted" || canRedraftLesson(state);
   });
+}
 
-  const placements = lessons.flatMap((lesson) => lesson.homeChapter?.courses ?? []);
-
-  if (placements.length === 0) {
-    return [];
-  }
-
-  const next = await prisma.courseChapter.findMany({
-    select: { chapterId: true },
-    where: {
-      OR: placements.map((placement) => ({
-        courseId: placement.courseId,
-        level: placement.level,
-        position: placement.position + 1,
-      })),
-    },
-  });
-
-  if (next.length === 0) {
-    return [];
-  }
-
-  const specless = await prisma.chapterLesson.findMany({
-    orderBy: { position: "asc" },
-    select: { lessonId: true },
-    take: MAX_SPEC_LESSONS,
-    where: {
-      chapterId: { in: next.map((chapter) => chapter.chapterId) },
-      lesson: { specStatus: { in: ["failed", "pending"] } },
-    },
-  });
-
-  return specless.map((row) => row.lessonId);
+/**
+ * Today's lessons from the one the learner is in (the first still open) to as many after it as
+ * their plan writes ahead.
+ */
+function pickTodayWindow({
+  lookahead,
+  open,
+}: {
+  lookahead: LearnerLookahead;
+  open: readonly string[];
+}): string[] {
+  return open.slice(0, 1 + lookahead.lessonsAhead);
 }
 
 /**
  * Whether anything personal goes over this learner's lessons: questions and challenges set in
- * their field, hands-on screens in the tool they chose, or "Go deeper" versions opening first.
+ * their field, or hands-on screens in the tool they chose.
  */
-async function hasPersonalLayer({ goal, userId }: { goal: Goal; userId: string }) {
+async function hasPersonalLayer(goal: Goal) {
   if (getGoalFieldInput(goal.details)) {
     return true;
   }
 
-  const [plan, profile] = await Promise.all([
-    prisma.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } }),
-    prisma.userLearningProfile.findUnique({
-      select: { deeperByDefault: true, memoryAsksDeeper: true, memoryEnabled: true },
-      where: { userId },
-    }),
-  ]);
+  const plan = await prisma.plan.findUnique({
+    select: { settings: true },
+    where: { goalId: goal.id },
+  });
 
-  return (
-    parsePlanSettings(plan?.settings).tools.length > 0 ||
-    resolveDeeperByDefault(profile).deeperByDefault
-  );
+  return parsePlanSettings(plan?.settings).tools.length > 0;
 }
 
 /**
  * What to prepare for a learner's goal around a session, whether it's starting or just ended: the
- * rest of today's lessons and the next study day's whose content isn't written, and the specs of
- * the chapter after the one being studied. Lessons already written or being written are left out;
- * one the checks held back is drafted again while it has drafts left, before the learner gets there.
+ * lesson the learner is in and the next few of today's session, and the next study day's first
+ * lessons, whose content isn't written. How many depends on the learner's plan
+ * (`getLearnerTier`): Plus subscribers get more written ahead. Every block the learner opens
+ * prepares again, so today's window moves with them and nobody waits on a lesson. Lessons already
+ * written or being written are left out; one the checks held back is drafted again while it has
+ * drafts left, before the learner gets there. Each lesson writes its chapter's specs when it's the
+ * chapter's first, so specs are never written for chapters nobody reached.
  *
  * This is a workflow bridge: the ids come from `getSessionPreparationAccess`.
  */
@@ -261,36 +313,29 @@ export async function listSessionPreparation({
 
   const today = getDateInTimeZone({ date: new Date(), timeZone });
 
-  const [todayLessons, upcoming] = await Promise.all([
+  const [todayLessons, upcoming, tier] = await Promise.all([
     loadTodayLessons({ goal, today, userId }),
     loadUpcomingLessons({ goal, today }),
+    getLearnerTier(userId),
   ]);
 
-  const nextLessons = pickNextLessons({ inSession: todayLessons.inSession, upcoming });
-  const planned = [...new Set([...todayLessons.open, ...nextLessons])];
+  const lookahead = getLookahead(tier);
+  const todayWindow = pickTodayWindow({ lookahead, open: todayLessons.open });
 
-  const [states, nextChapterLessonIds] = await Promise.all([
-    getLessonGenerationStates(planned),
-    findNextChapterSpecLessons(planned),
-  ]);
+  const nextLessons = pickNextLessons({
+    count: lookahead.nextDayLessons,
+    inSession: todayLessons.inSession,
+    upcoming,
+  }).filter((lessonId) => !todayWindow.includes(lessonId));
 
-  const lessonIds = planned.filter((lessonId) => {
-    const state = states.get(lessonId);
-    // A lesson the checks held back is drafted again while it has drafts left; a run that just
-    // stopped is retried when a learner opens the lesson.
-    return state?.status === "notStarted" || canRedraftLesson(state);
-  });
-
-  // A lesson written now plans its own spec first: waiting on the chapter's other specs would
-  // only delay it.
-  const writing = new Set(lessonIds);
+  const planned = [...todayWindow, ...nextLessons];
+  const states = await getLessonGenerationStates(planned);
 
   return {
     forExam: goal.kind === "exam",
-    lessonIds,
-    personalized: planned.length > 0 && (await hasPersonalLayer({ goal, userId })),
+    laterLessonIds: filterUnwritten({ lessonIds: nextLessons, states }),
+    lessonIds: filterUnwritten({ lessonIds: todayWindow, states }),
+    personalized: planned.length > 0 && (await hasPersonalLayer(goal)),
     plannedLessonIds: planned,
-    specLessonIds: nextChapterLessonIds.filter((lessonId) => !writing.has(lessonId)),
-    urgentLessonId: todayLessons.open.find((lessonId) => writing.has(lessonId)) ?? null,
   };
 }

@@ -17,8 +17,10 @@ import { addAreaPracticeBlock } from "./add-area-practice-block";
 import { answerStudyQuestion } from "./answer-study-question";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
+import { getStudySessionSummary } from "./get-study-session-summary";
 import { getTodayStudySession } from "./get-today-study-session";
 import { startStudyBlock } from "./start-study-block";
+import { stopStudySession } from "./stop-study-session";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
@@ -89,24 +91,74 @@ describe("net-scored practice", () => {
     );
 
     // The drilled statement left blank, and the other false one answered true (wrong).
-    await questions.reduce(async (previous, question) => {
-      await previous;
+    const feedback = await questions.reduce<Promise<Record<string, unknown>>>(
+      async (previous, question) => {
+        const answered = await previous;
 
-      await answerStudyQuestion({
-        ...ref,
-        input: {
-          answer: question.itemId === ids.blank ? { dontKnow: true } : { isTrue: true },
-          durationMs: 2000,
-          itemId: question.itemId,
-        },
-      });
-    }, Promise.resolve());
+        const result = await answerStudyQuestion({
+          ...ref,
+          input: {
+            answer: question.itemId === ids.blank ? { dontKnow: true } : { isTrue: true },
+            durationMs: 2000,
+            itemId: question.itemId,
+          },
+        });
+
+        return { ...answered, [question.itemId]: result };
+      },
+      Promise.resolve({}),
+    );
+
+    // A blank is neither right nor a mistake: it says so, and nothing goes to the notebook.
+    expect(feedback[ids.blank ?? ""]).toMatchObject({
+      feedback: { blank: true, isCorrect: false, savedToNotebook: false },
+      status: "ready",
+    });
+
+    expect(feedback[ids.wrong ?? ""]).toMatchObject({
+      feedback: { blank: false, isCorrect: false, savedToNotebook: true },
+      status: "ready",
+    });
+
+    // Opened again, the block still tells the blank from the wrong answer.
+    const reopened = await getStudyBlock(ref);
+    const answered = reopened.status === "ready" ? reopened.detail.questions : [];
+
+    expect(answered.find((question) => question.itemId === ids.blank)?.answered).toStrictEqual({
+      blank: true,
+      isCorrect: false,
+    });
+
+    expect(answered.find((question) => question.itemId === ids.wrong)?.answered).toStrictEqual({
+      blank: false,
+      isCorrect: false,
+    });
 
     // The wrong answer costs a point; the blank costs nothing.
     await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
       completion: { correct: 0, netScore: -1, total: 2 },
       status: "ready",
     });
+
+    // The session's summary leads with the same net score.
+    await expect(
+      getStudySessionSummary({ input: {}, sessionId: ref.sessionId }),
+    ).resolves.toMatchObject({ status: "ready", summary: { netScore: -1 } });
+  });
+
+  it("shows no net score for a day stopped before any statement was answered", async () => {
+    const { goal } = await netScoredPracticeDay();
+    const today = await getTodayStudySession({ goalId: goal.id });
+    const session = today.status === "ready" ? today.session : null;
+
+    expect(session?.blocks.some((block) => block.netScored)).toBe(true);
+
+    // The day stops before its net-scored practice: "Net score 0" would say nothing true.
+    await stopStudySession({ input: {}, sessionId: session?.id ?? "" });
+
+    await expect(
+      getStudySessionSummary({ input: {}, sessionId: session?.id ?? "" }),
+    ).resolves.toMatchObject({ status: "ready", summary: { netScore: null } });
   });
 
   it("scores an area's extra practice like the goal's exam", async () => {

@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { SnailIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { LessonRichText } from "../_components/lesson-rich-text";
 import { type SpokenAnswerHeard } from "../lesson-player-types";
 import { usePracticeWordAudio } from "./use-practice-word-audio";
 
@@ -79,7 +80,7 @@ function PracticePanel({
   return (
     <div
       aria-label={t("How to say {word}", { word: word.text })}
-      className="bg-background in-data-[mode=fun]:bg-fun-soft flex flex-col gap-2 rounded-xl p-3"
+      className="bg-background flex flex-col gap-2 rounded-xl p-3"
       id={id}
       role="region"
     >
@@ -103,7 +104,11 @@ function PracticePanel({
           </Button>
         </span>
       </div>
-      {word.tip && <p className="text-sm leading-relaxed">{word.tip}</p>}
+      {word.tip && (
+        <p className="text-sm leading-relaxed">
+          <LessonRichText text={word.tip} />
+        </p>
+      )}
     </div>
   );
 }
@@ -122,7 +127,7 @@ export function LessonSpokenWords({
   language,
 }: {
   heard: SpokenAnswerHeard;
-  /** The language spoken, for the device's voice when a word has no recording. */
+  /** The language spoken, to read a word aloud when it has no recording. */
   language: string;
 }) {
   const t = useExtracted();
@@ -141,7 +146,7 @@ export function LessonSpokenWords({
     setSelected(index);
 
     if (next) {
-      void audio.playBoth(next);
+      audio.playBoth(next);
     }
   };
 
@@ -169,11 +174,7 @@ export function LessonSpokenWords({
         })}
       </p>
       {word && (
-        <PracticePanel
-          id={panelId}
-          onPlay={(slow) => void audio.play(word, { slow })}
-          word={word}
-        />
+        <PracticePanel id={panelId} onPlay={(slow) => audio.play(word, { slow })} word={word} />
       )}
     </div>
   );

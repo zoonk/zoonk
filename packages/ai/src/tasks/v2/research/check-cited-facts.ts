@@ -4,10 +4,15 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
 import systemPrompt from "./check-cited-facts.prompt.md";
 
-/** The `check-cited-facts` eval: Flash judged every planted fact right; Haiku accepted an unsupported one. */
+/**
+ * The `check-cited-facts` eval: Flash judged every planted fact right; Haiku accepted an
+ * unsupported one. Told that a passage stated for every part of a kind supports each part of it,
+ * Flash kept ENEM's 45 questions per objective test and still rejected them for the essay (4 of 4
+ * cases, 8 Oct 2026).
+ */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
 
@@ -21,6 +26,8 @@ export type CheckCitedFactsParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
+  /** The gateway tier it answers at (see `chooseServiceTier`); the standard one when unset. */
+  serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
@@ -43,10 +50,11 @@ export async function checkCitedFacts({
   facts,
   model = defaultModel,
   reasoning,
+  serviceTier,
   useFallback = true,
 }: CheckCitedFactsParams) {
   const userPrompt = formatUntrustedInput({ FACTS: formatFacts(facts) });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
@@ -58,7 +66,6 @@ export async function checkCitedFacts({
         prompt: userPrompt,
         providerOptions,
         reasoning,
-        temperature: 0,
       }),
     systemPrompt,
     task: "check-cited-facts",

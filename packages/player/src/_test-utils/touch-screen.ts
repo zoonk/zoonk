@@ -66,14 +66,19 @@ export async function holdAndDrag({ from, to }: { from: Locator; to: Locator }) 
   await touch("touchEnd", []);
 }
 
-/** A quick finger swipe up from an element, with no hold first. */
-export async function swipeUpFrom(from: Locator, distance: number) {
+/** A quick finger swipe from an element, with no hold first: sideways and up or down by `x` and `y`. */
+export async function swipeFrom(from: Locator, { x = 0, y = 0 }: { x?: number; y?: number }) {
   await expect.element(from).toBeVisible();
   const start = centerOf(from);
 
   await touch("touchStart", [start]);
-  await moveFinger({ end: { x: start.x, y: start.y - distance }, start });
+  await moveFinger({ end: { x: start.x + x, y: start.y + y }, start });
   await touch("touchEnd", []);
+}
+
+/** A quick finger swipe up from an element, with no hold first. */
+export function swipeUpFrom(from: Locator, distance: number) {
+  return swipeFrom(from, { y: -distance });
 }
 
 export async function tap(locator: Locator) {

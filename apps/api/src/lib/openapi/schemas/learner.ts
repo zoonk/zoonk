@@ -3,6 +3,7 @@ import { placementStatusSchema } from "@zoonk/core/learner/placement/contract";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { MasteryState } from "@zoonk/db";
 import { z } from "zod";
+import { questionImageSchema, questionVisualSchema } from "./common";
 
 const skillIdSchema = z.uuid().meta({ description: "Skill ID" });
 
@@ -79,8 +80,10 @@ export const reviewScheduleResponseSchema = z
 
 const questionBaseShape = {
   context: z.string().nullable().meta({ description: "A situation shown before the question" }),
+  image: questionImageSchema,
   itemId: z.uuid().meta({ description: "Answer with this item ID" }),
   skillId: skillIdSchema,
+  visual: questionVisualSchema,
 };
 
 export const bankQuestionSchema = z
@@ -169,6 +172,12 @@ export const placementResponseSchema = z
       .meta({ description: "Undecided skills with no question to ask yet" }),
     next: placementQuestionSchema.nullable(),
     phases: z.array(phaseStartSchema),
+    started: z
+      .boolean()
+      .meta({
+        description:
+          "This goal's placement already has answers: a client coming back resumes at `next` instead of showing placement's start",
+      }),
     status: placementStatusSchema,
     trueFalseLabels: trueFalseLabelsSchema,
   })
@@ -200,10 +209,19 @@ export const chapterTestOutResponseSchema = z
       .array(skillIdSchema)
       .meta({
         description:
-          "Sampled skills with no question yet: POST .../test-out/generations writes them when the learner asks",
+          "Sampled skills without their share of questions yet: POST .../test-out/generations writes them when the learner asks",
       }),
     passMark: probabilitySchema,
-    questions: z.array(bankQuestionSchema),
+    questions: z
+      .array(bankQuestionSchema)
+      .meta({
+        description:
+          "Four to eight, more the more lessons a pass skips, spread over the sampled skills (a chapter of few skills asks each several times); empty while `needsItems` lists any, so a test-out never runs on part of the chapter",
+      }),
+    questionsPerSkill: z
+      .int()
+      .min(0)
+      .meta({ description: "How many questions each sampled skill gets" }),
     trueFalseLabels: trueFalseLabelsSchema,
   })
   .meta({ id: "ChapterTestOut" });
@@ -228,8 +246,17 @@ export const testOutGenerationSchema = z
 export const chapterTestOutResultSchema = z
   .object({
     answers: z.array(z.object({ isCorrect: z.boolean(), itemId: z.uuid() })),
+    changeId: z
+      .uuid()
+      .nullable()
+      .meta({
+        description:
+          "The plan change that skipped the lessons; undo it through the goal's plan changes. Null when nothing was skipped or the plan isn't built yet.",
+      }),
     correct: z.number().int().min(0),
-    knownSkillIds: z.array(skillIdSchema),
+    knownSkillIds: z
+      .array(skillIdSchema)
+      .meta({ description: "Skills answered right; skills missed or not asked stay in the plan" }),
     missedSkillIds: z.array(skillIdSchema),
     passed: z.boolean(),
     testedOutPlanItemIds: z.array(z.uuid()),

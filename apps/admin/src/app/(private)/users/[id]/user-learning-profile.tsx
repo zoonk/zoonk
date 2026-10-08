@@ -2,6 +2,7 @@ import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { getUserLearningProfile } from "@/data/users/get-user-learning-profile";
 import { formatDate } from "@/lib/format";
+import { CorrectBirthDialog } from "./correct-birth-dialog";
 
 const MONTHS_PER_YEAR = 12;
 
@@ -24,6 +25,15 @@ function getAge({ month, year }: { month: number | null; year: number | null }):
   return `${age} (born ${month ? `${month}/` : ""}${year})`;
 }
 
+/** Null means the learner never chose, so their age decides: on for adults, off for minors. */
+function getMemoryChoice(enabled: boolean | null) {
+  if (enabled === null) {
+    return "Not chosen (on for adults, off under 18)";
+  }
+
+  return enabled ? "On" : "Off";
+}
+
 /**
  * How the learner set Zoonk up and the age and guardian facts that decide protections, so
  * support can explain why a minor sees a limit or can't buy Plus.
@@ -37,17 +47,21 @@ export async function UserLearningProfile({ userId }: { userId: string }) {
     <AdminSection title="Learning profile">
       {profile ? (
         <dl>
-          <DetailField label="Mode">
-            <span className="capitalize">{profile.experienceMode}</span>
-          </DetailField>
           <DetailField label="Buddy">
             {[profile.buddyName, profile.buddyKind].filter(Boolean).join(" · ") || "—"}
           </DetailField>
           <DetailField label="Age">
-            {getAge({ month: profile.birthMonth, year: profile.birthYear })}
+            <span className="flex items-center justify-end gap-2">
+              {getAge({ month: profile.birthMonth, year: profile.birthYear })}
+              <CorrectBirthDialog
+                birthMonth={profile.birthMonth}
+                birthYear={profile.birthYear}
+                userId={userId}
+              />
+            </span>
           </DetailField>
           <DetailField label="Active goal">{profile.activeGoal?.title ?? "—"}</DetailField>
-          <DetailField label="Memory">{profile.memoryEnabled ? "On" : "Off"}</DetailField>
+          <DetailField label="Memory">{getMemoryChoice(profile.memoryEnabled)}</DetailField>
           <DetailField label="Sounds">{profile.soundsEnabled ? "On" : "Off"}</DetailField>
           <DetailField label="Own daily limit">
             {profile.dailyLimitMinutes ? `${profile.dailyLimitMinutes} min` : "—"}
@@ -71,6 +85,7 @@ export async function UserLearningProfile({ userId }: { userId: string }) {
                     {formatDate(link.createdAt)}
                     {link.acceptedAt ? ` · accepted ${formatDate(link.acceptedAt)}` : ""}
                     {link.dailyLimitMinutes ? ` · ${link.dailyLimitMinutes} min a day` : ""}
+                    {link.memoryOff ? " · memory off" : ""}
                     {link.plusApprovedAt
                       ? ` · Plus approved ${formatDate(link.plusApprovedAt)}`
                       : ""}

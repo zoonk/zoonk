@@ -1,6 +1,8 @@
 import { VoteTotalsLabel } from "@/components/vote-totals";
+import { getRunAiUsage } from "@/data/ai/get-run-ai-usage";
 import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { type getLessonQuestion } from "@/data/questions/get-lesson-question";
+import { formatUsd } from "@/lib/ai-format";
 import {
   type AdminQuestionLessonContext,
   getAdminQuestionContextLabel,
@@ -41,7 +43,10 @@ function QuestionLessonFields({ context }: { context: AdminQuestionLessonContext
 export async function QuestionDetails({ question }: { question: LessonQuestionDetail }) {
   const { user } = question.thread;
 
-  const votes = await getVoteTotals({ contentIds: [question.id], contentKind: "lessonQuestion" });
+  const [votes, usage] = await Promise.all([
+    getVoteTotals({ contentIds: [question.id], contentKind: "lessonQuestion" }),
+    question.runId ? getRunAiUsage(question.runId) : null,
+  ]);
 
   return (
     <dl className="divide-y">
@@ -66,10 +71,13 @@ export async function QuestionDetails({ question }: { question: LessonQuestionDe
       </QuestionDetailField>
       <QuestionDetailField label="Provider">{question.provider ?? "—"}</QuestionDetailField>
       <QuestionDetailField label="Input tokens">
-        {question.inputTokens?.toLocaleString() ?? "—"}
+        {usage?.inputTokens.toLocaleString() ?? "—"}
       </QuestionDetailField>
       <QuestionDetailField label="Output tokens">
-        {question.outputTokens?.toLocaleString() ?? "—"}
+        {usage?.outputTokens.toLocaleString() ?? "—"}
+      </QuestionDetailField>
+      <QuestionDetailField label="Cost">
+        {usage?.costUsd === null || usage?.costUsd === undefined ? "—" : formatUsd(usage.costUsd)}
       </QuestionDetailField>
       <QuestionDetailField label="Finish reason">
         {question.finishReason ?? "—"}

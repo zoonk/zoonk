@@ -31,7 +31,7 @@ export function StepForm({
   canContinue?: boolean;
   children: React.ReactNode;
   continueLabel?: string;
-  description?: string;
+  description?: React.ReactNode;
   onContinue: () => void;
   onSkip?: () => void;
   pending: boolean;

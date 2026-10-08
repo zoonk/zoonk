@@ -15,7 +15,6 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
-import { expectMode, setDeviceMode, showInMode } from "./learn-personas";
 
 const GOAL_URL = /\/start\/(?<goalId>[0-9a-f-]{36})$/u;
 
@@ -112,18 +111,15 @@ test.describe("Starting a course from its page", () => {
     page,
   }) => {
     const { course, coursePath } = await createOutlinedCourse();
-    await setDeviceMode(page.context(), "focus");
 
     await page.goto(`/start/course/${course.id}`);
 
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
-    await expectMode(page, "focus");
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
 
     await page.getByRole("button", { name: "Start this course" }).click();
 
     const goalId = await readGoalId(page);
-    await expectMode(page, "focus");
 
     // No goal to type, nothing to confirm: the first screen is the learner's level in the course.
     const level = "How much do you already know?";
@@ -148,23 +144,31 @@ test.describe("Starting a course from its page", () => {
     await expect(page).toHaveURL(new RegExp(`/start/${goalId}$`, "u"));
   });
 
-  test("starts the plan at a chapter from the chapter's page, in Fun", async ({ page }) => {
+  test("starts the plan at a chapter from the chapter's page", async ({ page }) => {
     const { chapterPath, chapters, id } = await createOutlinedCourse();
-    await setDeviceMode(page.context(), "fun");
 
     await page.goto(chapterPath);
     await startFromHero(page, { name: chapters[1]?.title ?? "", start: "Start the chapter" });
 
     const goalId = await readGoalId(page);
 
-    // The learner chose where to begin: only their time is left to ask.
-    const schedule = "How much time can you study each day?";
-    await expect(page.getByRole("heading", { name: schedule })).toBeVisible();
-    await expectMode(page, "fun");
-    await expectAccessibleScreen(page, schedule);
+    // The learner chose where to begin: no level to ask and no placement, so a new learner gives
+    // their birth and buddy, and then their time.
+    await expect(page.getByRole("heading", { name: "How much do you already know?" })).toBeHidden();
+    await expect(page.getByRole("heading", { name: "When were you born?" })).toBeVisible();
+    await page.getByLabel("Month").selectOption("3");
+    await page.getByLabel("Year").selectOption("1990");
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+    await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "How much time can you study each day?" }),
+    ).toBeVisible();
 
     const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-    expect(goal.details).toStrictEqual({ courseStart: { chapterId: chapters[1]?.id } });
+    expect(goal.details).toMatchObject({ courseStart: { chapterId: chapters[1]?.id } });
 
     await expect(readPlanLessons(goalId)).resolves.toStrictEqual([
       `Lesson 2.1 ${id}`,
@@ -179,11 +183,9 @@ test.describe("Starting a course from its page", () => {
     const [{ course }] = await Promise.all([
       createOutlinedCourse(),
       goalFixture({ userId: noProgressUser.id }),
-      showInMode(page.context(), { mode: "fun", userId: noProgressUser.id }),
     ]);
 
     await page.goto(`/start/course/${course.id}`);
-    await expectMode(page, "fun");
 
     await page.getByRole("button", { name: "Start this course" }).click();
 
@@ -196,5 +198,58 @@ test.describe("Starting a course from its page", () => {
     await expect(
       prisma.goal.count({ where: { primaryCourseId: course.id, userId: noProgressUser.id } }),
     ).resolves.toBe(0);
+  });
+
+  test("on the course's page, a free learner following another goal gets Plus as the one action", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const [{ course, coursePath }] = await Promise.all([
+      createOutlinedCourse(),
+      goalFixture({ userId: noProgressUser.id }),
+    ]);
+
+    // Long enough on a phone to scroll past the first start button.
+    await prisma.course.update({
+      data: {
+        landingPage: {
+          audience: ["Curious adults", "Students starting robotics"],
+          outcomes: ["Build a simple robot", "Explain how sensors work"],
+          valueProposition: "See how robots sense, decide and move.",
+        },
+      },
+      where: { id: course.id },
+    });
+
+    await page.setViewportSize({ height: 812, width: 375 });
+    await page.goto(coursePath);
+    await startFromHero(page, { name: course.title, start: "Start this course" });
+
+    const hero = page.getByRole("region", { name: course.title });
+
+    await expect(hero.getByRole("alert")).toContainText(
+      "The free plan follows one goal at a time.",
+    );
+
+    // Starting again would be refused, so Plus takes the start button's place.
+    await expect(hero.getByRole("button", { name: "Start this course" })).toHaveCount(0);
+
+    await expect(hero.getByRole("link", { name: "Get Plus" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    // Past the first screen, the phone's bottom bar offers Plus too, never a start that's refused.
+    await page
+      .getByRole("heading", { name: "What you'll be able to do" })
+      .evaluate((heading) => heading.scrollIntoView({ block: "start" }));
+
+    await expect(page.getByRole("link", { name: "Get Plus" })).toHaveCount(3);
+    await expect(page.getByRole("button", { name: "Start this course" })).toHaveCount(0);
+
+    // The reason is announced once, where the learner pressed start.
+    await expect(
+      page.getByRole("alert").filter({ hasText: "The free plan follows one goal at a time." }),
+    ).toHaveCount(1);
   });
 });

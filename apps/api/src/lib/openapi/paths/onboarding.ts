@@ -93,7 +93,7 @@ export const onboardingPaths = {
     },
     patch: {
       description:
-        "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: a new exam year reads that year's dates (official or estimated) and drops a deadline set for the old year; the learner's own deadline replaces the exam's dates; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal (not an exam, a day or year already past). Fixing the words themselves is a new understanding.",
+        "One fix on the \"Here's what I understood\" card, recomputing the fields that depend on it: a new exam year reads that year's dates (official or estimated) and drops a deadline set for the old year; the learner's own deadline replaces the exam's dates; a study time replaces the time the words gave. 409 while it's being read or once goals were created from it; 422 when the fix doesn't apply to that goal (not an exam, a day or year already past). Searching the web for a new exam year's day counts as small AI help; past the learner's cap it isn't searched and the day is to be confirmed. Fixing the words themselves is a new understanding.",
       operationId: "reviseGoalUnderstanding",
       requestBody: {
         content: { "application/json": { schema: onboardingDraftEditSchema } },
@@ -170,7 +170,7 @@ export const onboardingPaths = {
   "/goals/{goalId}/onboarding": {
     get: {
       description:
-        "The rest of onboarding for a new goal: only the questions the typed goal didn't answer, one per screen, then the age, mode and buddy when needed, placement and the plan.",
+        "The rest of onboarding for a new goal: only the questions the typed goal didn't answer, one per screen, then the age and buddy when needed, placement and the plan.",
       operationId: "getOnboarding",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -188,7 +188,7 @@ export const onboardingPaths = {
   "/goals/{goalId}/onboarding/answers": {
     post: {
       description:
-        "Saves one onboarding answer and returns the screens still ahead. Skippable questions take null and are never asked again. The schedule re-plans and splits the day's time between goals typed together. Age, mode and buddy go to the learner's profile; an age under 13 deletes the account (403 UNDER_MINIMUM_AGE), since Zoonk is for 13 and older.",
+        "Saves one onboarding answer and returns the screens still ahead. Skippable questions take null and are never asked again. The schedule re-plans, splits the day's time between goals typed together and starts writing the lessons and outlines the first days now hold, as `POST /goals/{goalId}/lesson-preparations` does. Age and buddy go to the learner's profile; an age under 13 deletes the account (403 UNDER_MINIMUM_AGE), since Zoonk is for 13 and older.",
       operationId: "answerOnboardingQuestion",
       requestBody: {
         content: { "application/json": { schema: onboardingAnswerInputSchema } },

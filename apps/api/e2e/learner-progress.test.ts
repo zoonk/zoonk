@@ -285,6 +285,7 @@ test.describe("Learner Progress API", () => {
     expect(summaryBody.level).not.toHaveProperty("color");
 
     expect(activityBody.activity.days.at(-1)).toStrictEqual({
+      activitiesCompleted: 2,
       date: today.toISOString().slice(0, 10),
       lessonCompletions: 1,
     });

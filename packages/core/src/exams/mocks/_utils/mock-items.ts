@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type ChoiceItem, parseChoiceItem } from "../../../learner/_utils/choice-items";
+import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import {
   type ItemCitation,
   citedSourceSelect,
@@ -23,7 +24,7 @@ function getOptionCount(item: ChoiceItem): number {
 /** The mock's questions by id. Items that no longer parse are left out and read as blank. */
 export async function loadMockItems(itemIds: readonly string[]): Promise<Map<string, MockItem>> {
   const rows = await prisma.item.findMany({
-    include: { source: { select: citedSourceSelect } },
+    include: { ...ITEM_IMAGE_INCLUDE, source: { select: citedSourceSelect } },
     where: { id: { in: [...itemIds] } },
   });
 

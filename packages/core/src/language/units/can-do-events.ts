@@ -6,7 +6,7 @@ import { conversationScenarioSchema } from "../conversations/conversation-contra
 import { hasPassedConversation } from "../conversations/conversation-rules";
 import { type LanguageUnit, isUnitFinished, loadLanguageUnits } from "./language-units";
 
-type UnitGoal = Pick<Goal, "id" | "primaryCourseId">;
+type UnitGoal = Pick<Goal, "id">;
 
 /** Units whose call the learner won, from their finished calls; `exceptId` leaves one call out. */
 async function loadWonCallUnitIds({

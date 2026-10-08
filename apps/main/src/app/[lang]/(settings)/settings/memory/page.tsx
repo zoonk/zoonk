@@ -1,16 +1,10 @@
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
-import {
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
+import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ProtectedSection } from "../../_components/protected-section";
-import { SettingsPage, SettingsPageTitle } from "../../_components/settings-page";
 import { MemorySettings } from "./memory-settings";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,7 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
 async function MemoryContent() {
   const memory = await getCurrentUserMemory();
 
-  return <ProtectedSection>{memory && <MemorySettings memory={memory} />}</ProtectedSection>;
+  return (
+    <ProtectedSection allowGuests>{memory && <MemorySettings memory={memory} />}</ProtectedSection>
+  );
 }
 
 function MemorySkeleton() {
@@ -43,21 +39,19 @@ export default async function MemoryPage() {
   const t = await getExtracted();
 
   return (
-    <SettingsPage>
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <SettingsPageTitle>{t("Memory")}</SettingsPageTitle>
-          <ContainerDescription>
+    <Page>
+      <PageHeader>
+        <PageHeaderContent>
+          <PageTitle>{t("Memory")}</PageTitle>
+          <PageSubtitle>
             {t("What Zoonk remembers to give you examples and plans that fit your life.")}
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+          </PageSubtitle>
+        </PageHeaderContent>
+      </PageHeader>
 
-      <ContainerBody>
-        <Suspense fallback={<MemorySkeleton />}>
-          <MemoryContent />
-        </Suspense>
-      </ContainerBody>
-    </SettingsPage>
+      <Suspense fallback={<MemorySkeleton />}>
+        <MemoryContent />
+      </Suspense>
+    </Page>
   );
 }

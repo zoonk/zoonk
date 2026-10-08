@@ -1,4 +1,5 @@
 import "server-only";
+import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type LessonQuestionAnswerCompletion } from "@zoonk/ai/tasks/lessons/question";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -145,6 +146,22 @@ async function claimTutorAnswer({
 }
 
 /**
+ * Who the answer's AI calls run for, so the tutor's cost is summed per learner, and per goal for
+ * the buddy's answers in a goal's conversation.
+ */
+function getAnswerAnalytics({
+  subject,
+  userId,
+}: {
+  subject: TutorSubject;
+  userId: string;
+}): Pick<AiGenerationContext, "distinctId" | "goalId"> {
+  return subject.kind === "plan"
+    ? { distinctId: userId, goalId: subject.goal.id }
+    : { distinctId: userId };
+}
+
+/**
  * Atomically claims a pending, failed, or abandoned answer generation for its owner. A first
  * question about a lesson screen that someone already asked there is answered right away with the
  * shared answer (`shared`), without a generation, the allowance or memory.
@@ -193,6 +210,7 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   return {
     claim: {
+      analytics: getAnswerAnalytics({ subject: access.subject, userId }),
       contextSnapshot,
       learnerMemory,
       priorTurns,
@@ -252,11 +270,8 @@ function saveCompletedAnswer({
         ...provenance,
         answer: completion.answer,
         finishReason: completion.finishReason,
-        inputTokens: completion.inputTokens ?? null,
-        outputTokens: completion.outputTokens ?? null,
         provider: completion.provider,
         status: "completed",
-        totalTokens: completion.totalTokens ?? null,
       },
       where: {
         generationRevision: revision,

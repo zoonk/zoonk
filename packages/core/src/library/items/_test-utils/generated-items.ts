@@ -9,6 +9,7 @@ export function generatedMultipleChoice(attrs?: Partial<ItemOf<"multipleChoice">
     context: null,
     difficulty: "medium",
     format: "multipleChoice",
+    image: null,
     options: [
       { isCorrect: true, misconception: null, reason: "Half of 10 is 5.", text: "5" },
       {
@@ -19,6 +20,7 @@ export function generatedMultipleChoice(attrs?: Partial<ItemOf<"multipleChoice">
       },
     ],
     question: `What is half of 10? ${randomUUID()}`,
+    visual: null,
     ...attrs,
   } satisfies ItemOf<"multipleChoice">;
 }
@@ -30,9 +32,11 @@ export function generatedTypedItem(attrs?: Partial<ItemOf<"typed">>) {
     context: null,
     difficulty: "easy",
     format: "typed",
+    image: null,
     keyPoints: ["Names the mitochondria"],
     question: "Which part of the cell releases energy from food?",
     sampleAnswer: "The mitochondria.",
+    visual: null,
     ...attrs,
   } satisfies ItemOf<"typed">;
 }

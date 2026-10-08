@@ -83,7 +83,22 @@ export const currentUserActivityResponseSchema = z
   .object({
     activity: learningActivityTotalsSchema.extend({
       days: z.array(
-        z.object({ date: logicalDateSchema, lessonCompletions: z.number().int().min(0) }),
+        z.object({
+          activitiesCompleted: z
+            .number()
+            .int()
+            .min(0)
+            .meta({
+              description:
+                "Lessons, reviews and practice finished that day; above zero exactly on a learning day",
+            }),
+          date: logicalDateSchema,
+          lessonCompletions: z
+            .number()
+            .int()
+            .min(0)
+            .meta({ description: "Lessons finished for the first time that day" }),
+        }),
       ),
     }),
   })

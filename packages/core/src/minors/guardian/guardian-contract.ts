@@ -51,9 +51,23 @@ export const dailyLimitMinutesSchema = z
   .meta({ description: "Daily study limit in minutes, or null for no limit" });
 
 export const guardedLearnerUpdateSchema = z
-  .object({ dailyLimitMinutes: dailyLimitMinutesSchema })
+  .object({
+    dailyLimitMinutes: dailyLimitMinutesSchema.optional(),
+    memoryOff: z
+      .boolean()
+      .optional()
+      .meta({
+        description:
+          "True turns the learner's memory off and keeps it off; false lets the learner choose again",
+      }),
+  })
   .strict()
-  .meta({ id: "GuardedLearnerUpdate" });
+  .refine((input) => input.dailyLimitMinutes !== undefined || input.memoryOff !== undefined, {
+    message: "Send dailyLimitMinutes, memoryOff or both",
+  })
+  .meta({ id: "GuardedLearnerUpdate", override: { minProperties: 1 } });
+
+export type GuardedLearnerUpdateInput = z.infer<typeof guardedLearnerUpdateSchema>;
 
 /** A guardian link as the learner sees it. The token never leaves the invite email. */
 export type GuardianLinkView = {
@@ -63,17 +77,26 @@ export type GuardianLinkView = {
   expiresAt: Date | null;
   guardianEmail: string;
   id: string;
+  /** The guardian turned the learner's memory off. */
+  memoryOff: boolean;
   plusApprovedAt: Date | null;
   status: GuardianLinkStatus;
 };
 
 export type WeeklyActivityDay = { date: Date; lessonsCompleted: number; minutes: number };
 
-/** A learner as their guardian sees them: the last seven days and the controls the guardian set. */
+/**
+ * A learner as their guardian sees them: the last seven days, whether memory is on (never what it
+ * holds) and the controls the guardian set.
+ */
 export type GuardedLearnerView = {
   dailyLimitMinutes: number | null;
   learnerName: string;
   linkId: string;
+  /** Whether the learner's memory is on now, from their own choice and every guardian's. */
+  memoryEnabled: boolean;
+  /** This guardian turned the learner's memory off. */
+  memoryOff: boolean;
   plusApprovedAt: Date | null;
   weeklyActivity: { days: WeeklyActivityDay[]; lessonsCompleted: number; minutes: number };
 };

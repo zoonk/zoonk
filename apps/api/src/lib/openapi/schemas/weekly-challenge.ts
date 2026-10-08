@@ -4,8 +4,39 @@ import { logicalDateSchema } from "./study-sessions";
 
 const idSchema = z.uuid();
 
+const mockWrittenTaskSchema = z.object({
+  count: z
+    .number()
+    .int()
+    .nullable()
+    .meta({ description: "Null when the description says how many" }),
+  description: z.string(),
+});
+
+const mockWrittenPartSchema = z
+  .object({
+    minutes: z.number().int().nullable(),
+    name: z.string(),
+    tasks: z.array(mockWrittenTaskSchema),
+  })
+  .meta({ id: "MockWrittenPart" });
+
+/** A full-length mock's written parts, shared by the week's challenge and the challenge screen. */
+export const mockWrittenPartsSchema = z
+  .array(mockWrittenPartSchema)
+  .meta({
+    description:
+      "A full-length mock's parts answered in writing (a discursive test, a peça técnica), as the notice states them; never objective questions",
+  });
+
 const mockConditionsSchema = z
   .object({
+    fullLength: z
+      .boolean()
+      .meta({
+        description:
+          "The whole exam day, as in the final stretch; false for a short mock (half of it), which regular weeks hold",
+      }),
     netScoring: z.boolean(),
     questions: z.number().int().min(0),
     sections: z.array(
@@ -16,6 +47,7 @@ const mockConditionsSchema = z
       }),
     ),
     timeLimitMinutes: z.number().int().min(0),
+    written: mockWrittenPartsSchema,
   })
   .meta({ id: "MockConditions" });
 

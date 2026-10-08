@@ -10,7 +10,8 @@ type GraphSkill = GoalSkillGraph["skills"][number];
 
 /**
  * Puts a slice of a goal's skill graph in the Library and returns each graph key's skill id. The
- * slice's skills resolve together (see `resolveScopeSkills`). Workflows call it in slices so every
+ * slice's skills resolve together (see `resolveScopeSkills`), each within its area, so an exam's
+ * English reading skill never becomes its Portuguese one. Workflows call it in slices so every
  * step stays short; a retried slice finds the skills it already created by their identity keys.
  *
  * This is a workflow bridge: the scope's owner comes from the goal the public boundary loaded.
@@ -26,7 +27,12 @@ export async function saveGoalSkills({
   scope: CurriculumScope;
   skills: readonly GraphSkill[];
 }): Promise<Record<string, string>> {
-  const ids = await resolveScopeSkills({ analytics, provenance, scope, skills });
+  const ids = await resolveScopeSkills({
+    analytics,
+    provenance,
+    scope,
+    skills: skills.map((skill) => ({ ...skill, course: skill.area })),
+  });
 
   return Object.fromEntries(skills.map((skill, index) => [skill.key, ids[index] ?? ""]));
 }

@@ -6,17 +6,21 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { settleWithin } from "@zoonk/utils/timeout";
+import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState } from "react";
+import { Callout } from "../_components/callout";
+import { KindTile } from "../_components/kind-tile";
 import { ItemLine, ItemText } from "../questions/item-text";
-import { TaskFrame, TaskMainButton } from "../shell/task-frame";
+import { TaskFrame } from "../shell/task-frame";
 import {
   type EssayActions,
   type EssayHrefs,
   EssayScreenProvider,
   useEssayScreen,
 } from "./essay-context";
-import { EssayFeedback } from "./essay-feedback";
+import { EssayGradeSteps, FinishEssayButton } from "./essay-feedback";
+import { useCriterionName, useWritingName } from "./essay-labels";
 
 export type { EssayActions } from "./essay-context";
 
@@ -29,9 +33,9 @@ function countWords(text: string): number {
 }
 
 /**
- * Grading an essay takes about 9 seconds (Flash, 17 s at most in its eval; a fallback model takes
- * up to 24 s): past `slowMs` the screen says it's still grading, and past `timeoutMs` it stops
- * waiting and lets the learner send it again, with the text kept.
+ * Grading an essay takes about 9 to 17 seconds (a fallback model takes up to 24 s): past `slowMs`
+ * the screen says it's still grading, and past `timeoutMs` it stops waiting and lets the learner
+ * send it again, with the text kept.
  */
 const GRADING_BOUNDS = { slowMs: 20_000, timeoutMs: 90_000 } as const;
 
@@ -55,13 +59,13 @@ function StatusLine({ status }: { status: Status }) {
     );
   }
 
-  // Grading takes about ten seconds, so the learner knows it's working and roughly for how long.
+  // Grading takes ten to thirty seconds, so the learner knows it's working and roughly for how long.
   if (status === "pending") {
     return (
       <p className="text-muted-foreground text-center text-sm" role="status">
         {isSlow
           ? t("Still grading. This is taking longer than usual.")
-          : t("Reading your essay against each criterion. It takes about 10 seconds.")}
+          : t("Reading your essay against each criterion. It can take up to 30 seconds.")}
       </p>
     );
   }
@@ -73,6 +77,7 @@ function EssayWriter({ onGraded }: { onGraded: (draft: EssayDraft) => void }) {
   const t = useExtracted();
   const textId = useId();
   const { actions, drafts, essay } = useEssayScreen();
+  const writingName = useWritingName();
   const [text, setText] = useState(drafts[0]?.text ?? "");
   const [status, setStatus] = useState<Status>("idle");
   // Writing time runs from the first keystroke, not from when the screen opened.
@@ -106,10 +111,10 @@ function EssayWriter({ onGraded }: { onGraded: (draft: EssayDraft) => void }) {
   return (
     <section className="flex flex-col gap-3">
       <label className="text-sm font-medium" htmlFor={textId}>
-        {drafts.length > 0 ? t("Rewrite what needs work") : t("Your essay")}
+        {drafts.length > 0 ? t("Rewrite what needs work") : writingName(essay.rubric)}
       </label>
       <Textarea
-        className="in-data-[mode=fun]:fun-paper min-h-72 font-serif text-base leading-relaxed"
+        className="min-h-72 font-serif text-base leading-relaxed"
         id={textId}
         onChange={(event) => {
           startedAt.current ??= Date.now();
@@ -117,8 +122,9 @@ function EssayWriter({ onGraded }: { onGraded: (draft: EssayDraft) => void }) {
         }}
         value={text}
       />
-      <p className="text-muted-foreground text-xs tabular-nums" aria-live="polite">
-        {t("{count, plural, one {# word} other {# words}}", { count: words })}
+      {/* Counted from the first word: "0 words" under an empty box says nothing. */}
+      <p className="text-muted-foreground min-h-4 text-xs tabular-nums" aria-live="polite">
+        {words > 0 && t("{count, plural, one {# word} other {# words}}", { count: words })}
       </p>
       <StatusLine status={status} />
       <Button
@@ -126,10 +132,11 @@ function EssayWriter({ onGraded }: { onGraded: (draft: EssayDraft) => void }) {
         disabled={words === 0 || status === "pending" || essay.gradesLeft === 0}
         onClick={() => void send()}
         size="lg"
-        variant={drafts.length > 0 ? "outline" : "default"}
       >
         {status === "pending" && <Spinner aria-hidden="true" />}
-        {status === "pending" ? t("Grading…") : t("Send for grading")}
+        {status === "pending" && t("Grading…")}
+        {status !== "pending" &&
+          (drafts.length > 0 ? t("Grade the rewrite") : t("Send for grading"))}
       </Button>
     </section>
   );
@@ -152,10 +159,20 @@ function Prompt() {
   const { essay } = useEssayScreen();
   const label = usePromptLabel(essay.rubric);
 
+  // The essay's tile and what it's graded by, then what it's about (the theme) on a soft panel the
+  // eye finds first, and the task under it.
   return (
-    <section className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-sm font-medium">{label}</p>
-      {essay.context && <ItemText className="text-muted-foreground text-sm" text={essay.context} />}
+    <section className="flex flex-col gap-3">
+      <p className="text-muted-foreground flex items-center gap-2.5 text-sm font-medium">
+        <KindTile kind="essay" size="sm" />
+        {label}
+      </p>
+      {essay.context && (
+        <ItemText
+          className="bg-muted/60 rounded-2xl p-4 leading-relaxed font-medium"
+          text={essay.context}
+        />
+      )}
       <h1 className="text-lg leading-snug font-semibold text-balance">
         <ItemLine text={essay.question} />
       </h1>
@@ -163,41 +180,54 @@ function Prompt() {
   );
 }
 
-function EssayFooter() {
+/** While rewriting, the next step stays in view, and the whole grade one tap back. */
+function RewriteGuide({ onSeeGrade }: { onSeeGrade: () => void }) {
   const t = useExtracted();
-  const { actions, drafts } = useEssayScreen();
-  const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const criterionName = useCriterionName();
+  const { drafts } = useEssayScreen();
+  const grade = drafts[0]?.grade;
 
-  if (drafts.length === 0) {
+  if (!grade) {
     return null;
   }
 
-  async function finish() {
-    setPending(true);
-    const finished = await actions.finish().catch(() => false);
-    setPending(false);
-    setFailed(!finished);
-  }
+  const criterion = grade.criteria.find((item) => item.id === grade.nextStep.criterionId);
 
   return (
-    <>
-      {failed && (
-        <p className="text-destructive text-center text-sm" role="alert">
-          {t("That didn't go through. Try again in a moment.")}
+    <Callout>
+      <LightbulbIcon aria-hidden="true" />
+      <div className="flex flex-col gap-1">
+        <p>
+          {criterion && (
+            <span className="font-semibold">
+              {t("Next step: {criterion}", { criterion: criterionName(criterion) })}{" "}
+            </span>
+          )}
+          {grade.nextStep.text}
         </p>
-      )}
-      <TaskMainButton disabled={pending} onClick={() => void finish()}>
-        {t("Continue")}
-      </TaskMainButton>
-    </>
+        <button
+          className="self-start font-medium underline underline-offset-4"
+          onClick={onSeeGrade}
+          type="button"
+        >
+          {t("See the grade")}
+        </button>
+      </div>
+    </Callout>
   );
 }
 
+/** Once graded, going on without rewriting stays one quiet tap away. */
+function EssayFooter() {
+  const { drafts } = useEssayScreen();
+  return drafts.length > 0 ? <FinishEssayButton variant="outline" /> : null;
+}
+
 /**
- * Writing practice for an exam's essay, the same in both modes: the prompt, the learner's text,
- * and after grading, the estimated range by the official rubric with one next step. Rewriting
- * grades a new draft; Continue goes on with the session.
+ * Writing practice for an exam's essay: the prompt and the learner's text, then the grade in steps
+ * (the estimated range by the official rubric, the one next step, ENEM's proposal elements).
+ * Rewriting is then the main action and grades a new draft, with the next step in view; Continue
+ * goes on with the session.
  */
 export function EssayScreen({
   actions,
@@ -209,14 +239,25 @@ export function EssayScreen({
   hrefs: EssayHrefs;
 }) {
   const [drafts, setDrafts] = useState(essay.drafts);
+  const [mode, setMode] = useState<"grade" | "write">(drafts.length > 0 ? "grade" : "write");
+  const grade = drafts[0]?.grade;
 
   return (
     <EssayScreenProvider value={{ actions, drafts, essay, hrefs }}>
-      <TaskFrame exitHref={hrefs.exit} footer={<EssayFooter />}>
-        <Prompt />
-        <EssayFeedback />
-        <EssayWriter onGraded={(draft) => setDrafts((current) => [draft, ...current])} />
-      </TaskFrame>
+      {mode === "grade" && grade ? (
+        <EssayGradeSteps grade={grade} onRewrite={() => setMode("write")} />
+      ) : (
+        <TaskFrame exitHref={hrefs.exit} footer={<EssayFooter />}>
+          <Prompt />
+          <RewriteGuide onSeeGrade={() => setMode("grade")} />
+          <EssayWriter
+            onGraded={(draft) => {
+              setDrafts((current) => [draft, ...current]);
+              setMode("grade");
+            }}
+          />
+        </TaskFrame>
+      )}
     </EssayScreenProvider>
   );
 }

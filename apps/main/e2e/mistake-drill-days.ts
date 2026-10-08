@@ -12,7 +12,6 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { type Mode } from "./learn-personas";
 
 const MINUTE_MS = 60_000;
 
@@ -82,16 +81,10 @@ async function createCauseDrill({
 }
 
 /**
- * A new learner in Focus or Fun, with nothing studied yet, whose goal has one open mistake from
+ * A new learner, with nothing studied yet, whose goal has one open mistake from
  * yesterday per cause, each on its own skill with two questions and a lesson that teaches it.
  */
-export async function createMistakeLearner({
-  causes,
-  mode,
-}: {
-  causes: MistakeCause[];
-  mode: Mode;
-}) {
+export async function createMistakeLearner({ causes }: { causes: MistakeCause[] }) {
   const user = await createE2EUser(getBaseURL());
   const goal = await goalFixture({ timezone: "UTC", userId: user.id });
   const plan = await planFixture({ goalId: goal.id });
@@ -102,12 +95,7 @@ export async function createMistakeLearner({
         createCauseDrill({ cause, index, planId: plan.id, userId: user.id }),
       ),
     ),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   return { drills, goal, user };
@@ -127,8 +115,8 @@ function toBlockDrill(drill: CauseDrill) {
 }
 
 /** Today's session for the learner: one practice block of their mistakes' drills. */
-export async function createDrillSession({ causes, mode }: { causes: MistakeCause[]; mode: Mode }) {
-  const learner = await createMistakeLearner({ causes, mode });
+export async function createDrillSession({ causes }: { causes: MistakeCause[] }) {
+  const learner = await createMistakeLearner({ causes });
   const session = await studySessionFixture({ goalId: learner.goal.id, userId: learner.user.id });
 
   await studySessionBlockFixture({

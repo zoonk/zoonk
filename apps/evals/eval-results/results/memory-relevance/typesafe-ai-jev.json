@@ -347,6 +347,25 @@
       }
     },
     {
+      "classification": { "expected": "irrelevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "Expected irrelevant.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected irrelevant.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected irrelevant.", "kind": "potentialImprovements", "score": 6 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-persona-maya-plan-worked-example-1",
+        "userInput": {
+          "fact": {
+            "category": "learning",
+            "statement": "Does better with a worked example before trying alone"
+          },
+          "need": "Plan this learner's study schedule for the week"
+        }
+      }
+    },
+    {
       "classification": { "expected": "relevant", "predicted": "relevant" },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
@@ -378,6 +397,22 @@
         "userInput": {
           "fact": { "category": "routine", "statement": "Faz cursinho aos sábados de manhã" },
           "need": "Planejar a semana de estudos do aluno"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-persona-ana-example-study-time-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Estuda à noite, depois da escola" },
+          "need": "Escrever um exemplo pessoal para uma aula de porcentagem"
         }
       }
     },
@@ -461,41 +496,6 @@
         "userInput": {
           "fact": { "category": "goals", "statement": "Quer aprender a investir a mesada" },
           "need": "Escrever um exemplo pessoal para uma aula sobre o que é uma ação"
-        }
-      }
-    },
-    {
-      "classification": { "expected": "irrelevant", "predicted": "relevant" },
-      "steps": [
-        { "conclusion": "Expected irrelevant.", "kind": "majorErrors", "score": 6 },
-        { "conclusion": "Expected irrelevant.", "kind": "minorErrors", "score": 6 },
-        { "conclusion": "Expected irrelevant.", "kind": "potentialImprovements", "score": 6 }
-      ],
-      "testCase": {
-        "expected": { "relevant": false },
-        "id": "en-persona-maya-plan-worked-example-1",
-        "userInput": {
-          "fact": {
-            "category": "learning",
-            "statement": "Does better with a worked example before trying alone"
-          },
-          "need": "Plan this learner's study schedule for the week"
-        }
-      }
-    },
-    {
-      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": { "relevant": false },
-        "id": "pt-persona-ana-example-study-time-1",
-        "userInput": {
-          "fact": { "category": "routine", "statement": "Estuda à noite, depois da escola" },
-          "need": "Escrever um exemplo pessoal para uma aula de porcentagem"
         }
       }
     }

@@ -1,16 +1,41 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Badge } from "@zoonk/ui/components/badge";
-import { useExtracted, useFormatter } from "next-intl";
+import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { CheckIcon, XIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { ItemLine } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { type MistakeEntry } from "./mistakes-notebook";
 import { useCauseLabel } from "./use-cause-label";
 
+/** One answer line: a mark the eye reads at once (✗ yours, ✓ the right one), named for readers. */
+function AnswerLine({ children, kind }: { children: React.ReactNode; kind: "learner" | "right" }) {
+  const t = useExtracted();
+
+  return (
+    <p className={kind === "right" ? "flex gap-2" : "text-muted-foreground flex gap-2"}>
+      <LineMarker aria-hidden="true">
+        {kind === "right" ? (
+          <CheckIcon className="text-success size-4" />
+        ) : (
+          <XIcon className="text-destructive size-4" />
+        )}
+      </LineMarker>
+      <span className="min-w-0">
+        <span className="sr-only">
+          {kind === "right" ? t("Right answer:") : t("You answered:")}{" "}
+        </span>
+        {children}
+      </span>
+    </p>
+  );
+}
+
 /**
- * One notebook entry: the question, what the learner answered, the right answer and why. A
- * statement's answers are saved as "true" or "false" and read in the goal's exam's words.
+ * One notebook entry: why it happened (a quiet label), the question, what the learner answered
+ * against the right answer, and why. A statement's answers are saved as "true" or "false" and
+ * read in the goal's exam's words.
  */
 export function MistakeEntryCard({
   mistake,
@@ -20,7 +45,6 @@ export function MistakeEntryCard({
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
   const causeLabel = useCauseLabel();
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { snapshot } = mistake;
@@ -29,25 +53,22 @@ export function MistakeEntryCard({
 
   return (
     <li
-      className="bg-card ring-foreground/10 in-data-[mode=fun]:fun-paper flex flex-col gap-2 rounded-2xl p-4 ring-1"
+      className="border-border flex flex-col gap-2 border-t py-4 text-sm first:border-t-0 first:pt-1"
+      data-slot="mistake-entry"
       data-status={mistake.status}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline">{causeLabel(mistake.cause)}</Badge>
-        {mistake.status === "fixed" && <Badge variant="secondary">{t("Fixed")}</Badge>}
-        <span className="text-muted-foreground ml-auto text-xs">
-          {format.dateTime(mistake.createdAt, { day: "numeric", month: "short" })}
-        </span>
-      </div>
-      <p className="text-sm font-medium">
+      <p className="text-muted-foreground text-xs font-medium">
+        {mistake.status === "fixed"
+          ? t("{cause} · Fixed", { cause: causeLabel(mistake.cause) })
+          : causeLabel(mistake.cause)}
+      </p>
+      <p className="font-medium">
         <ItemLine text={snapshot.question} />
       </p>
-      {answer && (
-        <p className="text-muted-foreground text-sm">{t("You answered: {answer}", { answer })}</p>
-      )}
-      {correct && <p className="text-sm">{t("Right answer: {answer}", { answer: correct })}</p>}
+      {answer && <AnswerLine kind="learner">{answer}</AnswerLine>}
+      {correct && <AnswerLine kind="right">{correct}</AnswerLine>}
       {snapshot.explanation && (
-        <p className="text-muted-foreground text-sm">{snapshot.explanation}</p>
+        <p className="text-muted-foreground leading-relaxed">{snapshot.explanation}</p>
       )}
     </li>
   );

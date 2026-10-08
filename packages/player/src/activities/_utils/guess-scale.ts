@@ -1,4 +1,4 @@
-import { niceTicks } from "./plot-scale";
+import { niceTicks } from "@zoonk/utils/plot-scale";
 import { clamp } from "./snap-value";
 
 /** Slider positions along the scale: fine enough to feel continuous, coarse enough for arrows. */

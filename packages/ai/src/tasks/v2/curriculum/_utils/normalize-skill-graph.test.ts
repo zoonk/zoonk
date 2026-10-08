@@ -9,14 +9,17 @@ type RawSkillGraphSkill = RawSkillGraph["skills"][number];
 
 function rawSkill(overrides: Partial<RawSkillGraphSkill> & { key: string }): RawSkillGraphSkill {
   return {
+    area: "",
     course: "math",
     description: `${overrides.key} description`,
     estimatedLessons: 10,
     examWeight: null,
     level: "beginner",
     name: `Use ${overrides.key}`,
+    outcome: false,
     phase: 1,
     prerequisites: [],
+    topics: [],
     ...overrides,
   };
 }
@@ -131,6 +134,23 @@ describe(normalizeSkillGraph, () => {
     expect(graph.skills.map((skill) => skill.examWeight)).toStrictEqual([5, 1, null]);
   });
 
+  it("keeps a career goal's outcome skills marked, also when a duplicate carried the mark", () => {
+    const graph = normalizeSkillGraph(
+      rawGraph([
+        rawSkill({ key: "research", name: "Plan user interviews" }),
+        rawSkill({ key: "case", name: "Write a case study" }),
+        rawSkill({ key: "case-again", name: "write a case study", outcome: true }),
+        rawSkill({ key: "interview", name: "Present a portfolio in an interview", outcome: true }),
+      ]),
+    );
+
+    expect(graph.skills.map((skill) => [skill.key, skill.outcome])).toStrictEqual([
+      ["research", false],
+      ["case", true],
+      ["interview", true],
+    ]);
+  });
+
   it("keeps only courses with skills and lists every level band their skills use", () => {
     const graph = normalizeSkillGraph(
       rawGraph([
@@ -144,6 +164,106 @@ describe(normalizeSkillGraph, () => {
     ]);
 
     expect(graph.skills.map((skill) => skill.course)).toStrictEqual(["math", "math"]);
+  });
+
+  it("names a learn skill's area as the model wrote it, or by its course when it wrote none", () => {
+    const graph = normalizeSkillGraph(
+      rawGraph([
+        rawSkill({ area: " Álgebra ", key: "a" }),
+        rawSkill({ key: "b", topics: ["S1.1"] }),
+      ]),
+    );
+
+    expect(graph.skills.map((skill) => [skill.area, skill.topics])).toStrictEqual([
+      ["Álgebra", []],
+      ["Mathematics", []],
+    ]);
+  });
+
+  it("puts an exam's skills in the notice's subjects and topics, word for word", () => {
+    const outline = {
+      name: "Concurso",
+      notes: [],
+      subjects: [
+        {
+          group: "Conhecimentos básicos (P1)",
+          name: "Língua Portuguesa",
+          questions: null,
+          topics: ["Domínio da ortografia", "Emprego do sinal indicativo de crase"],
+          weight: null,
+        },
+        {
+          group: "Conhecimentos básicos (P1)",
+          name: "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+          questions: null,
+          topics: ["Princípios fundamentais", "Poder Legislativo"],
+          weight: null,
+        },
+      ],
+      topicFrequency: [],
+    };
+
+    const graph = normalizeSkillGraph(
+      rawGraph([
+        rawSkill({ area: "Português", key: "spelling", topics: ["S1.1", "S1.2", "S9.9"] }),
+        rawSkill({ area: "Direito Constitucional", key: "principles", topics: [] }),
+        rawSkill({ area: "Constitucional", key: "congress", topics: ["poder legislativo"] }),
+        rawSkill({ area: "Estratégia de prova", key: "blanks", topics: ["S1.1"] }),
+        rawSkill({ area: "Prova discursiva", key: "essay", topics: [] }),
+      ]),
+      outline,
+    );
+
+    const constitutional = outline.subjects[1]?.name;
+
+    expect(graph.skills.map((skill) => [skill.key, skill.area, skill.topics])).toStrictEqual([
+      [
+        "spelling",
+        "Língua Portuguesa",
+        ["Domínio da ortografia", "Emprego do sinal indicativo de crase"],
+      ],
+      ["principles", constitutional, []],
+      ["congress", constitutional, ["Poder Legislativo"]],
+      ["blanks", "Língua Portuguesa", ["Domínio da ortografia"]],
+      ["essay", "Prova discursiva", []],
+    ]);
+  });
+
+  it("keeps the skills of the notice's written test whole, as outcomes of an exam goal", () => {
+    const outline = {
+      name: "Concurso",
+      notes: [],
+      subjects: [
+        {
+          group: "Conhecimentos básicos (P1)",
+          name: "Língua Portuguesa",
+          questions: null,
+          topics: ["1 Ortografia"],
+          weight: null,
+        },
+        {
+          group: "Prova discursiva (P3)",
+          name: "Prova Discursiva",
+          questions: null,
+          topics: ["Questões discursivas", "Peça técnica"],
+          weight: null,
+        },
+      ],
+      topicFrequency: [],
+    };
+
+    const graph = normalizeSkillGraph(
+      rawGraph([
+        rawSkill({ area: "Língua Portuguesa", key: "spelling", topics: ["S1.1"] }),
+        rawSkill({ area: "Prova Discursiva", key: "piece", topics: ["S2.2"] }),
+      ]),
+      outline,
+    );
+
+    expect(graph.skills.map((skill) => [skill.key, skill.outcome])).toStrictEqual([
+      ["spelling", false],
+      ["piece", true],
+    ]);
   });
 
   it("rejects a graph without courses, phases or skills", () => {

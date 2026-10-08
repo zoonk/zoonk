@@ -2,6 +2,7 @@ import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { getCatalogNotFound } from "./lib/catalog-not-found";
 import { getSessionRedirect } from "./lib/session-redirects";
 
 const localizedMiddleware = createMiddleware(routing);
@@ -16,8 +17,9 @@ const CATALOG_PATH = new RegExp(
  * visitors skip the app's subscription page, all before the page renders.
  * Course editions have their own slugs. UI-language variants of the same slug
  * are not translated editions, so next-intl's automatic alternates do not apply.
+ * Once the language is settled, a course or category that doesn't exist gets a real 404.
  */
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const sessionRedirect = getSessionRedirect(request);
 
   if (sessionRedirect) {
@@ -30,7 +32,11 @@ export default function proxy(request: NextRequest) {
     response.headers.delete("link");
   }
 
-  return response;
+  if (response.headers.has("location")) {
+    return response;
+  }
+
+  return (await getCatalogNotFound({ localized: response, request })) ?? response;
 }
 
 export const config = {

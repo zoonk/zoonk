@@ -6,7 +6,8 @@ import { type LearnerScope } from "./write-goal";
 /**
  * The skill graph the planner plans from, read back from the seeded plan: each skill in plan
  * order with its phase, its size in lessons, its area (an exam's area, or the course, as graphs
- * made from courses name it) and, for exams, its weight.
+ * made from courses name it) and, for exams, its weight, with a written test's skills marked as
+ * outcome skills (how the planner tells an exam's written tests, such as the redação).
  */
 export function buildPlanGraph(scope: LearnerScope, goal: SeedGoal): Prisma.InputJsonObject {
   const { lookup } = scope;
@@ -24,6 +25,7 @@ export function buildPlanGraph(scope: LearnerScope, goal: SeedGoal): Prisma.Inpu
         area: chapter?.area ?? lookup.courseTitle,
         lessons: skill.lessons,
         name: lookup.skillName(skill.key),
+        ...(chapter?.writtenTest && { outcome: true }),
         phase: skill.phase,
         skillId: lookup.skill(skill.key),
         weight: chapter?.weight ?? null,

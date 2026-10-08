@@ -10,11 +10,17 @@ import {
 } from "../../../preparation/preparation-math";
 import { finishStudyBlock } from "../../../sessions/finish-study-block";
 import { type GradedMockAnswer, analyzeMock, getMockMeasure } from "../mock-analysis";
-import { type MockResult, mockResultSchema } from "../mock-contract";
+import {
+  type MockConditions,
+  type MockResult,
+  mockConditionsSchema,
+  mockResultSchema,
+} from "../mock-contract";
 import { gradeMock } from "./grade-mock";
 import { loadSkillAreas } from "./mock-candidates";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting, type OwnedMock } from "./owned-mock";
+import { settleAnytimeMock } from "./settle-anytime-mock";
 
 const MS_PER_MINUTE = 60_000;
 
@@ -29,27 +35,58 @@ async function measurePreparation({ goalId, userId }: { goalId: string | null; u
   return getPreparationValue(getPreparationComponents({ ...inputs, asOf: now }));
 }
 
-/** The goal's previous mock in the same terms, for "+16 since the last one". */
+/** How many of the goal's latest mocks are looked through for one like this. */
+const PREVIOUS_MOCKS_READ = 10;
+
+/** Two mocks that measure the same thing: the same part of the exam, never a placement one. */
+function isLike(mock: MockConditions, other: MockConditions): boolean {
+  return (
+    other.purpose !== "placement" &&
+    other.scoring === mock.scoring &&
+    JSON.stringify(other.shape) === JSON.stringify(mock.shape)
+  );
+}
+
+/**
+ * The goal's previous mock like this one in the same terms, for "+16 since the last one": the
+ * plan's weekly mocks among themselves, a mock taken any time against the last of the same part of
+ * the exam (a subject against that subject). A placement mock, stopped wherever the learner
+ * wanted, is never the measure.
+ */
 async function loadPreviousMeasure(mock: MockSitting): Promise<number | null> {
-  if (!mock.goalId) {
+  if (!mock.goalId || mock.conditions.purpose === "placement") {
     return null;
   }
 
-  const previous = await prisma.mockExam.findFirst({
+  const previous = await prisma.mockExam.findMany({
     orderBy: { finishedAt: "desc" },
-    select: { result: true },
+    select: { conditions: true, result: true },
+    take: PREVIOUS_MOCKS_READ,
     where: { goalId: mock.goalId, id: { not: mock.id }, status: "finished" },
   });
 
-  const result = mockResultSchema.safeParse(previous?.result).data;
-  return result && result.scoring === mock.conditions.scoring ? getMockMeasure(result) : null;
+  const like = previous.find((row) => {
+    const conditions = mockConditionsSchema.safeParse(row.conditions).data;
+    return conditions ? isLike(mock.conditions, conditions) : false;
+  });
+
+  const result = mockResultSchema.safeParse(like?.result).data;
+  return result ? getMockMeasure(result) : null;
 }
 
 /**
  * The block keeps every question it reserved; an adaptive exam asks only one of a module's two
  * sets, so the block's questions become the ones asked before the session settles it.
  */
-async function keepAskedQuestions(owned: OwnedMock, mock: MockSitting) {
+async function keepAskedQuestions({
+  blockId,
+  mock,
+  owned,
+}: {
+  blockId: string;
+  mock: MockSitting;
+  owned: OwnedMock;
+}) {
   const asked = getAskedItemIds(mock.conditions).map((entry) => entry.itemId);
 
   if (asked.length === owned.payload.itemIds.length) {
@@ -58,7 +95,36 @@ async function keepAskedQuestions(owned: OwnedMock, mock: MockSitting) {
 
   await prisma.studySessionBlock.update({
     data: { payload: { ...owned.payload, itemIds: asked } },
-    where: { id: owned.block.id },
+    where: { id: blockId },
+  });
+}
+
+/**
+ * Settles what the mock earned: a scheduled mock's session block (Brain Power, the ledger row that
+ * feeds preparation, the plan item checked off), or a mock taken any time on its own.
+ */
+async function settleMock({
+  graded,
+  mock,
+  owned,
+  timeZone,
+}: {
+  graded: readonly GradedMockAnswer[];
+  mock: MockSitting;
+  owned: OwnedMock;
+  timeZone: string;
+}) {
+  if (!owned.block) {
+    await settleAnytimeMock({ graded, mock, timeZone });
+    return;
+  }
+
+  await keepAskedQuestions({ blockId: owned.block.id, mock, owned });
+
+  await finishStudyBlock({
+    blockId: owned.block.id,
+    input: { timeZone },
+    sessionId: owned.block.sessionId,
   });
 }
 
@@ -89,8 +155,8 @@ async function trackCompletion({
 }
 
 /**
- * Ends a mock: grades and records every answer, settles its session block (Brain Power, the
- * mock's ledger row that feeds preparation, the plan item checked off), then keeps what it showed.
+ * Ends a mock: grades and records every answer, settles what it earned (see `settleMock`), then
+ * keeps what it showed.
  */
 export async function completeMock({
   mock,
@@ -108,15 +174,14 @@ export async function completeMock({
     loadPreviousMeasure(mock),
   ]);
 
-  const graded = await gradeMock({ areas, mock, sessionId: owned.block.sessionId, timeZone });
-
-  await keepAskedQuestions(owned, mock);
-
-  await finishStudyBlock({
-    blockId: owned.block.id,
-    input: { timeZone },
-    sessionId: owned.block.sessionId,
+  const graded = await gradeMock({
+    areas,
+    mock,
+    sessionId: owned.block?.sessionId ?? null,
+    timeZone,
   });
+
+  await settleMock({ graded, mock, owned, timeZone });
 
   const after = await measurePreparation({ goalId: mock.goalId, userId: mock.userId });
   const spentMs = graded.reduce((sum, answer) => sum + answer.durationMs, 0);

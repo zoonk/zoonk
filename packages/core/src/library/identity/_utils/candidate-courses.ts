@@ -15,7 +15,7 @@ export function listChapterCourses(chapter: ChapterCourses): string[] {
   ]);
 }
 
-/** A lesson's courses: those of every chapter it's placed in. */
-export function listLessonCourses(lesson: { chapters: { chapter: ChapterCourses }[] }): string[] {
-  return unique(lesson.chapters.flatMap((entry) => listChapterCourses(entry.chapter)));
+/** A lesson's or a skill's courses: those of every chapter it's in. */
+export function listChaptersCourses(item: { chapters: { chapter: ChapterCourses }[] }): string[] {
+  return unique(item.chapters.flatMap((entry) => listChapterCourses(entry.chapter)));
 }

@@ -1,10 +1,9 @@
 import "server-only";
-import { type ExperienceMode, type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { getLearnerMode } from "../sessions/_utils/session-ledger";
 import { type ProgressLock, applySessionProgress } from "../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../sessions/brain-power";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
@@ -69,7 +68,6 @@ function getRunTotals({ answers, endedAt }: { answers: readonly PracticeAnswer[]
 type SettleInput = {
   answers: PracticeAnswer[];
   goalId: string | null;
-  mode: ExperienceMode | null;
   timeZone: string;
   userId: string;
 };
@@ -88,7 +86,7 @@ type WriteRunInput = Omit<SettleInput, "answers"> & {
  */
 async function writeRun(
   tx: TransactionClient,
-  { fresh, goalId, lock, mode, run, runAnswers, timeZone, userId }: WriteRunInput,
+  { fresh, goalId, lock, run, runAnswers, timeZone, userId }: WriteRunInput,
 ): Promise<MistakePracticeSummary> {
   const totals = getRunTotals({ answers: runAnswers, endedAt: lock.completedAt });
   const correct = fresh.filter((answer) => answer.isCorrect).length;
@@ -134,7 +132,6 @@ async function writeRun(
       brainPower,
       energyDelta,
       goalId,
-      mode,
       seconds,
       startedAt: totals.startedAt,
       timeZone,
@@ -204,10 +201,9 @@ export async function finishMistakePractice(
 
   const userId = session.user.id;
 
-  const [goal, answers, mode] = await Promise.all([
+  const [goal, answers] = await Promise.all([
     resolveGoal(input.goalId),
     loadPracticeAnswers({ answerIds: input.answerIds, userId }),
-    getLearnerMode(userId),
   ]);
 
   if (goal === "notFound") {
@@ -221,7 +217,6 @@ export async function finishMistakePractice(
   const { counted, result } = await settlePracticeRun({
     answers,
     goalId: goal?.id ?? null,
-    mode,
     timeZone: getAnswerTimeZone({ goal, timeZone: input.timeZone }),
     userId,
   });

@@ -46,7 +46,7 @@ describe("dragging activity items with a mouse", () => {
   });
 
   it("categorize: an item dragged onto a group is sorted into it", async () => {
-    openActivity({ mode: "fun", template: "categorize" });
+    openActivity({ template: "categorize" });
 
     await dragWithMouse({
       from: page.getByRole("button", { exact: true, name: "Burning wood" }),

@@ -3,7 +3,9 @@
 import { CatalogGridContent, CatalogGridItem } from "@/components/catalog/catalog-grid";
 import { CatalogGridImage } from "@/components/catalog/catalog-grid-image";
 import { Link } from "@/i18n/navigation";
+import { CATEGORY_ICONS } from "@/lib/categories/category-icons";
 import { type CourseWithOrg } from "@zoonk/core/courses/list";
+import { KindTile } from "@zoonk/learn/kind-tile";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -25,46 +27,76 @@ import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { getLanguageFlagLabel } from "@zoonk/utils/language-flags";
 import { getFirstSentence } from "@zoonk/utils/string";
-import { Loader2Icon, NotebookPenIcon, PlusIcon, RefreshCwIcon } from "lucide-react";
+import {
+  ChevronRightIcon,
+  Loader2Icon,
+  NotebookPenIcon,
+  PlusIcon,
+  RefreshCwIcon,
+} from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { loadMoreCourses } from "./actions";
 
-type CourseListCategory = { key: CourseCategory; label: string };
+/** About the first two rows of the grid on the widest screens, where the largest paint is. */
+const ABOVE_THE_FOLD_TILES = 10;
 
-/** A language course shows the flag of the variety it teaches; other courses their picture. */
-function CourseTileMedia({ course }: { course: CourseWithOrg }) {
+/**
+ * A course's picture is its anchor. A language course without one shows the flag of the variety it
+ * teaches; any other course gets the course tile in the lesson color, with its category's icon
+ * when the page is a category, so it reads as a course and not as a missing picture.
+ */
+function CourseTileMedia({
+  category,
+  course,
+  eager,
+}: {
+  category?: CourseCategory;
+  course: CourseWithOrg;
+  eager: boolean;
+}) {
   const locale = useLocale();
+
+  if (course.imageUrl) {
+    return <CatalogGridImage alt={course.title} eager={eager} src={course.imageUrl} />;
+  }
 
   if (hasLanguageFlag(course.targetLanguage)) {
     return (
       <LanguageFlag
         alt={getLanguageFlagLabel({ language: course.targetLanguage, userLanguage: locale }) ?? ""}
-        className="w-20 sm:w-24"
+        className="w-4/5"
         language={course.targetLanguage}
       />
     );
   }
 
-  if (course.imageUrl) {
-    return <CatalogGridImage alt={course.title} size="compact" src={course.imageUrl} />;
-  }
-
-  return <NotebookPenIcon aria-hidden="true" className="text-muted-foreground/80 size-8" />;
+  return (
+    <KindTile
+      className="size-4/5 rounded-3xl [&>svg]:size-10"
+      icon={category ? CATEGORY_ICONS[category] : undefined}
+      kind="lesson"
+      size="lg"
+    />
+  );
 }
 
 /**
- * Course discovery should use the same playful tile language as curriculum
- * pages, so browsing courses feels like choosing the next learning path.
+ * A course as a card: its picture, its title and the first sentence of what it is; on phones a
+ * row of the list, with the chevron that says it opens.
  */
-function CourseTile({ course }: { course: CourseWithOrg }) {
+function CourseTile({
+  category,
+  course,
+  eager,
+}: {
+  category?: CourseCategory;
+  course: CourseWithOrg;
+  eager: boolean;
+}) {
   return (
-    <CatalogGridItem
-      className="min-h-56"
-      href={`/b/${course.organization?.slug}/c/${course.slug}`}
-      prefetch
-    >
-      <GridItemMedia className="size-24 sm:size-28">
-        <CourseTileMedia course={course} />
+    <CatalogGridItem href={`/b/${course.organization?.slug}/c/${course.slug}`} prefetch>
+      <GridItemMedia className="max-sm:size-14">
+        <CourseTileMedia category={category} course={course} eager={eager} />
       </GridItemMedia>
 
       <GridItemContent>
@@ -75,6 +107,11 @@ function CourseTile({ course }: { course: CourseWithOrg }) {
           </GridItemDescription>
         )}
       </GridItemContent>
+
+      <ChevronRightIcon
+        aria-hidden="true"
+        className="text-muted-foreground/60 -ml-2 size-4 shrink-0 sm:hidden"
+      />
     </CatalogGridItem>
   );
 }
@@ -85,7 +122,7 @@ export function CourseListClient({
   language,
   limit,
 }: {
-  category?: CourseListCategory;
+  category?: CourseCategory;
   initialCourses: CourseWithOrg[];
   language: string;
   limit: number;
@@ -99,8 +136,7 @@ export function CourseListClient({
     retry,
     sentryRef,
   } = useInfiniteList<CourseWithOrg>({
-    fetchMore: (cursor) =>
-      loadMoreCourses({ category: category?.key, cursor: String(cursor), language }),
+    fetchMore: (cursor) => loadMoreCourses({ category, cursor: String(cursor), language }),
     getKey: (course) => course.id,
     initialItems: initialCourses,
     limit,
@@ -119,19 +155,9 @@ export function CourseListClient({
 
         {category && (
           <EmptyContent>
-            <Link
-              className={buttonVariants({
-                className:
-                  "h-auto min-h-9 max-w-full whitespace-normal py-2 text-center leading-snug",
-                variant: "outline",
-              })}
-              href="/start"
-              prefetch
-            >
+            <Link className={buttonVariants({ variant: "outline" })} href="/start" prefetch>
               <PlusIcon aria-hidden="true" />
-              <span className="min-w-0 wrap-break-word">
-                {t("Create a course about {category}", { category: category.label })}
-              </span>
+              {t("Start a goal")}
             </Link>
           </EmptyContent>
         )}
@@ -142,8 +168,13 @@ export function CourseListClient({
   return (
     <CatalogGridContent>
       <GridGroup>
-        {courses.map((course) => (
-          <CourseTile course={course} key={course.id} />
+        {courses.map((course, index) => (
+          <CourseTile
+            category={category}
+            course={course}
+            eager={index < ABOVE_THE_FOLD_TILES}
+            key={course.id}
+          />
         ))}
       </GridGroup>
 

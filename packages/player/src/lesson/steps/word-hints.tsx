@@ -2,6 +2,7 @@
 
 import { LightbulbIcon, MessageCircleMoreIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { LessonRichText } from "../_components/lesson-rich-text";
 import { type PlayableWordHints } from "../lesson-player-types";
 
 function WordHint({
@@ -19,7 +20,10 @@ function WordHint({
   );
 }
 
-/** How a word is used and how to say it, from the lesson's word notes and pronunciation tips. */
+/**
+ * How a word is used and how to say it, from the lesson's word notes and pronunciation tips, with
+ * the letters and words they quote formatted as the writer marked them.
+ */
 export function WordHints({ hints }: { hints: PlayableWordHints }) {
   const t = useExtracted();
 
@@ -28,14 +32,14 @@ export function WordHints({ hints }: { hints: PlayableWordHints }) {
       {hints.note && (
         <WordHint icon={LightbulbIcon}>
           <span className="sr-only">{t("Usage:")} </span>
-          {hints.note}
+          <LessonRichText text={hints.note} />
         </WordHint>
       )}
 
       {hints.pronunciationTip && (
         <WordHint icon={MessageCircleMoreIcon}>
           <span className="sr-only">{t("Pronunciation tip:")} </span>
-          {hints.pronunciationTip}
+          <LessonRichText text={hints.pronunciationTip} />
         </WordHint>
       )}
     </div>

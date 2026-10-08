@@ -17,6 +17,7 @@ function checkQuestions(output: string, input: ExtractPastQuestionsParams): Code
       ...checkItem({
         expectedFormat: input.format,
         item: question.item,
+        language: input.language,
         optionCount: input.optionCount ?? null,
       }),
       ...checkPastQuestion({

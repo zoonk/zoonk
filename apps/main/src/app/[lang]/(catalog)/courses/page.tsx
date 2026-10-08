@@ -1,13 +1,6 @@
 import { CatalogGridSkeleton } from "@/components/catalog/catalog-skeletons";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
-import {
-  Container,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
@@ -35,21 +28,11 @@ async function CourseListContent() {
   return <CourseListClient initialCourses={courses} language={locale} limit={LIST_COURSES_LIMIT} />;
 }
 
-export default async function Courses() {
-  const t = await getExtracted();
-
+/** Every course in the learner's language, under the catalog's title and chips (its layout). */
+export default function Courses() {
   return (
-    <Container variant="grid">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{t("Explore courses")}</ContainerTitle>
-          <ContainerDescription>{t("Start learning something new today")}</ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <Suspense fallback={<CatalogGridSkeleton count={8} />}>
-        <CourseListContent />
-      </Suspense>
-    </Container>
+    <Suspense fallback={<CatalogGridSkeleton count={8} />}>
+      <CourseListContent />
+    </Suspense>
   );
 }

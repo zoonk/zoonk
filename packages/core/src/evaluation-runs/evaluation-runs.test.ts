@@ -15,12 +15,11 @@ function runRecord(attrs: Partial<EvaluationRunRecord> = {}): EvaluationRunRecor
     contentScope: "personal",
     input: { GOAL: `Pass the driving test ${crypto.randomUUID()}` },
     inputHash: `hash-${crypto.randomUUID()}`,
-    inputTokens: 80,
     latencyMs: 210,
     model: "typesafe-ai/jev",
-    outputTokens: 0,
     promptVersion: "prompt-1",
     requestedModel: "typesafe-ai/jev",
+    runId: crypto.randomUUID(),
     task: "changing-facts",
     ...attrs,
   };
@@ -40,7 +39,7 @@ describe(registerEvaluationRunLog, () => {
   it("stores a learner's run with its verdict and input, and deletes it with the learner", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
-    const record = runRecord({ costUsd: 0.00001, distinctId: user.id, goalId: goal.id });
+    const record = runRecord({ distinctId: user.id, goalId: goal.id });
 
     await recordEvaluationRun(record);
 
@@ -49,7 +48,6 @@ describe(registerEvaluationRunLog, () => {
     expect(stored).toMatchObject({
       answers: record.answers,
       contentScope: "personal",
-      costUsd: 0.00001,
       goalId: goal.id,
       input: record.input,
       model: "typesafe-ai/jev",

@@ -10,7 +10,7 @@ vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 /** Every question, the profile screens and placement already behind it: only the plan is left. */
 const FINISHED_DETAILS = {
-  answered: ["targetDate", "schedule", "age", "mode", "buddy"],
+  answered: ["targetDate", "schedule", "age", "memory", "buddy"],
   level: "none",
   purpose: "overview",
 };

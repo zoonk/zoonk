@@ -15,12 +15,12 @@ import {
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
 
-/** The Progress and Content tabs, read by both modes and native apps. */
+/** The Progress and Content tabs, read by the web and native apps. */
 export const learnViewPaths = {
   "/goals/{goalId}/area-practice": {
     post: {
       description:
-        "\"Practice now\" on an area of the goal (from its preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: at most two bonus blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
+        "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: at most two bonus blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
       operationId: "createAreaPractice",
       requestBody: { content: { "application/json": { schema: areaPracticeInputSchema } } },
       requestParams: { path: goalPathParamsSchema },
@@ -49,7 +49,7 @@ export const learnViewPaths = {
   "/goals/{goalId}/content": {
     get: {
       description:
-        "The Content tab (Cards in Fun): every skill of the goal as a study card grouped by chapter, with its state and whether it's fading, counts for the filters, today's reviews, the latest lesson summary cards and whether Fun shows Cards yet.",
+        "The Content tab: every skill of the goal as a study card grouped by chapter, with its state and whether it's fading, counts for the filters, today's reviews and the latest lesson summary cards.",
       operationId: "getGoalContent",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -69,7 +69,7 @@ export const learnViewPaths = {
   "/goals/{goalId}/progress": {
     get: {
       description:
-        "The Progress tab: preparation with the evidence for each part and an estimated score only after a mock exam, mastery per chapter, the skills fading now, open mistakes and this week against the last. Focus draws bars, Fun the preparation ring.",
+        "The Progress tab: preparation with the evidence for each part and an estimated score only after a mock exam, mastery per chapter, the skills fading now, open mistakes and this week against the last.",
       operationId: "getGoalProgress",
       requestParams: { path: goalPathParamsSchema },
       responses: {

@@ -7,20 +7,27 @@ import { type ShortPlanDay, getShortPlanDay, getShortPlanShape } from "./short-p
 /** Today in a short plan, with the day its short mock is scheduled (null without one). */
 export type ShortPlanToday = ShortPlanDay & { mockDate: Date | null };
 
-/** The day before, from today's place in a short plan; the light review for any other plan. */
+/**
+ * The day before, from today's place in a short plan; the light review for any other plan. Its
+ * short mock is a mock exam, which comes with Plus: without it, the day is the review alone.
+ */
 export function getDayBeforePlan({
+  includesMockExams,
   shortPlan,
   today,
 }: {
+  includesMockExams: boolean;
   shortPlan: ShortPlanToday | null;
   today: Date;
 }): DayBeforePlan {
+  // A plan without mocks gives the mock's day to a full review of every topic.
   if (shortPlan?.focus === "mockAndReview") {
-    return "mock";
+    return includesMockExams ? "mock" : "review";
   }
 
   if (shortPlan?.focus === "mapAndGaps") {
-    return shortPlan.mockDate?.getTime() === today.getTime() ? "learnAndMock" : "learn";
+    const mockToday = includesMockExams && shortPlan.mockDate?.getTime() === today.getTime();
+    return mockToday ? "learnAndMock" : "learn";
   }
 
   return "light";

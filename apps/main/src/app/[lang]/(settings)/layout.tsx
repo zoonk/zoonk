@@ -1,42 +1,40 @@
+import { SectionFrame } from "@/components/learn/section-frame";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
-import { DeviceModeRoot, ModeProvider } from "@zoonk/learn/mode";
-import { LearnShell } from "@zoonk/learn/shell";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { SettingsAccountAction } from "./_components/settings-account-action";
 import { SettingsNavbar, SettingsNavbarSkeleton } from "./_components/settings-navbar";
 
-const SHELL_CLASS = "gap-4 overflow-x-clip pb-12";
+const SETTINGS_HUB_HREF = "/settings";
 
-/** Settings keep the learner's appearance in their own shell, with a link home to leave it. */
-async function SettingsFrame({ children }: { children: React.ReactNode }) {
-  const mode = await getExperienceMode();
+/**
+ * Settings are a section: their own bar replaces the app's, with the way back and the account's way
+ * in or out. They open on their hub (`/settings`), a list of the settings pages; each page goes
+ * back to it and, from `lg`, keeps the pages in a sidebar beside it.
+ */
+export default async function Layout({ children }: LayoutProps<"/[lang]">) {
+  const t = await getExtracted();
 
-  return (
-    <ModeProvider experienceMode={mode}>
-      <LearnShell className={SHELL_CLASS}>
-        <Suspense fallback={<SettingsNavbarSkeleton />}>
-          <SettingsNavbar />
-        </Suspense>
-        {children}
-      </LearnShell>
-    </ModeProvider>
-  );
-}
-
-export default function Layout({ children }: LayoutProps<"/[lang]">) {
   return (
     <ClientMessagesProvider scope="learn">
-      <Suspense
-        fallback={
-          <DeviceModeRoot>
-            <LearnShell className={SHELL_CLASS}>
-              <SettingsNavbarSkeleton />
-            </LearnShell>
-          </DeviceModeRoot>
+      <SectionFrame
+        end={
+          <Suspense fallback={null}>
+            <SettingsAccountAction />
+          </Suspense>
         }
+        hub={{
+          href: SETTINGS_HUB_HREF,
+          nav: (
+            <Suspense fallback={<SettingsNavbarSkeleton />}>
+              <SettingsNavbar />
+            </Suspense>
+          ),
+          title: t("Settings"),
+        }}
       >
-        <SettingsFrame>{children}</SettingsFrame>
-      </Suspense>
+        {children}
+      </SectionFrame>
     </ClientMessagesProvider>
   );
 }

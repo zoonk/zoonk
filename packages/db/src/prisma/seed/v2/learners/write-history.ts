@@ -204,7 +204,6 @@ function toLedgerRow(
     incorrectAnswers: event.incorrect,
     kind: event.kind,
     lessonKind: event.lessonKind,
-    mode: scope.learner.mode,
     seconds: event.seconds,
     startedAt: new Date(endedAt.getTime() - event.seconds * 1000),
     titleSnapshot: event.title || null,

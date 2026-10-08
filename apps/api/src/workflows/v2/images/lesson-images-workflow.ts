@@ -4,19 +4,15 @@ import {
   createStepImageStep,
   listLessonImageStepsStep,
 } from "./steps/lesson-image-steps";
+import { checkPictureStep } from "./steps/picture-check-steps";
 
 export type LessonImagesInput = {
   lessonId: string;
   /** Who the lesson was made for, so image costs add up per learner and goal. */
   analytics?: ImageAnalytics;
-  /** Private courses get fewer pictures: only the first screens the writer marked. */
-  maxImages?: number;
 };
 
 export type LessonImagesResult = { failed: number; generated: number; reused: number };
-
-/** A lesson made for one learner gets one picture: the first screen the writer marked. */
-export const PRIVATE_MAX_IMAGES = 1;
 
 function countOutcomes(
   outcomes: PromiseSettledResult<Awaited<ReturnType<typeof createStepImageStep>>>[],
@@ -33,25 +29,34 @@ function countOutcomes(
 }
 
 /**
- * Gives a written lesson its pictures in the background: only the screens the
- * writer marked, at most one every two screens, each reused from an image of
- * the same scene when there is one. The lesson is readable before this ends;
- * a screen whose picture fails twice simply has none.
+ * Gives a written lesson its pictures in the background, all at once: a screen asks for a picture
+ * only when it needs one (the learner would otherwise have to imagine what it shows, or a question
+ * is about it), so every one is drawn, each reused from an image of the same scene when there is
+ * one. The lesson opens before this ends and the player shows each picture as it arrives, before
+ * its model check: the checks run once every picture is linked, and one that fails is redrawn and
+ * replaced (`checkImageAsset`); a screen whose redraws fail too shows its description instead.
  */
 export async function lessonImagesWorkflow({
   analytics,
   lessonId,
-  maxImages,
 }: LessonImagesInput): Promise<LessonImagesResult> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
   const context = { contentScope: "shared" as const, traceId: workflowRunId, ...analytics };
-  const marked = await listLessonImageStepsStep(lessonId);
-  const stepIds = maxImages === undefined ? marked : marked.slice(0, maxImages);
+  const stepIds = await listLessonImageStepsStep(lessonId);
 
   const outcomes = await Promise.allSettled(
     stepIds.map((stepId) => createStepImageStep({ analytics: context, stepId })),
+  );
+
+  // Each new picture shows as soon as it's linked; its model check follows, at flex.
+  await Promise.allSettled(
+    outcomes.flatMap((outcome) =>
+      outcome.status === "fulfilled" && outcome.value.status === "generated"
+        ? [checkPictureStep({ analytics: context, assetId: outcome.value.mediaAssetId })]
+        : [],
+    ),
   );
 
   return countOutcomes(outcomes);

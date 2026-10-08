@@ -8,7 +8,9 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { type CallLimit } from "../../_components/help-limit-notice";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
+import { CallLimitMessage } from "./call-limit-message";
 import { ConversationIntro } from "./conversation-intro";
 import { useConversationTitle } from "./conversation-labels";
 import { ConversationLive } from "./conversation-live";
@@ -29,44 +31,89 @@ export type ConversationActions = LiveCallActions & {
 
 export type ConversationHrefs = { exit: string; next: string };
 
+function ProblemMessage({ text, title }: { text: string; title: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 py-10 text-center" role="alert">
+      <p className="text-lg font-semibold text-balance">{title}</p>
+      <p className="text-muted-foreground text-balance">{text}</p>
+    </div>
+  );
+}
+
+/**
+ * Why the call stopped, never the learner's fault, with the one thing to do next: try again
+ * (a dropped call can also end here, which saves what was said), or go back when there's nothing
+ * to retry.
+ */
 function CallProblem({
   error,
   exitHref,
+  limit,
   onEnd,
   onRetry,
+  title,
 }: {
   error: LiveCallError | null;
   exitHref: string;
+  limit: CallLimit | null;
   onEnd: () => void;
   onRetry: () => void;
+  title: string;
 }) {
   const t = useExtracted();
 
-  if (error === "limit") {
+  if (error === "limit" || error === "ended") {
     return (
-      <div className="flex flex-col items-center gap-4 py-10 text-center" role="alert">
-        <p className="text-lg font-semibold">{t("No more calls on your plan today")}</p>
-        <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2">
-          {t("Your calls come back tomorrow. Everything you learned today is saved.")}
-        </p>
-        <TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>
-      </div>
+      <TaskFrame
+        exitHref={exitHref}
+        footer={<TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>}
+        headerTitle={title}
+      >
+        {error === "limit" ? (
+          <CallLimitMessage limit={limit ?? { period: "day", tier: "plus" }} />
+        ) : (
+          <ProblemMessage
+            text={t("Start a new call to keep practicing.")}
+            title={t("This call has ended")}
+          />
+        )}
+      </TaskFrame>
+    );
+  }
+
+  if (error === "dropped") {
+    return (
+      <TaskFrame
+        exitHref={null}
+        footer={
+          <>
+            <TaskMainButton onClick={onRetry}>{t("Call again")}</TaskMainButton>
+            <Button className="w-full" onClick={onEnd} size="xl" variant="outline">
+              {t("End the call")}
+            </Button>
+          </>
+        }
+        headerTitle={title}
+      >
+        <ProblemMessage
+          text={t("Call again, or end the call to get feedback on what you said.")}
+          title={t("The call dropped")}
+        />
+      </TaskFrame>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 py-10 text-center" role="alert">
-      <p className="text-lg font-semibold">{t("The call dropped")}</p>
-      <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2">
-        {t("Check your connection and try again, or end the call here.")}
-      </p>
-      <div className="flex gap-2">
-        <Button onClick={onRetry}>{t("Try again")}</Button>
-        <Button onClick={onEnd} variant="outline">
-          {t("End the call")}
-        </Button>
-      </div>
-    </div>
+    <TaskFrame
+      exitHref={exitHref}
+      footer={<TaskMainButton onClick={onRetry}>{t("Try again")}</TaskMainButton>}
+      headerTitle={title}
+    >
+      <ProblemMessage
+        text={t("This happens sometimes. Try again in a moment.")}
+        title={t("The call didn't connect")}
+      />
+    </TaskFrame>
   );
 }
 
@@ -90,6 +137,11 @@ function SavingCall({ failed, onRetry }: { failed: boolean; onRetry: () => void 
   );
 }
 
+/** How a call run begins: on its intro, or calling right away after "Try again". */
+type RunStart = "call" | "intro";
+
+const FIRST_RUN = { attempt: 0, startWith: "intro" } as const;
+
 /** One call from the first ring to hanging up, then saved once with what was said. */
 function LiveCallRun({
   actions,
@@ -97,17 +149,20 @@ function LiveCallRun({
   hrefs,
   onRestart,
   onSaved,
+  startWith,
 }: {
   actions: ConversationActions;
   conversation: LanguageConversationView;
   hrefs: ConversationHrefs;
-  onRestart: () => void;
+  onRestart: (startWith: RunStart) => void;
   onSaved: (view: LanguageConversationView) => void;
+  startWith: RunStart;
 }) {
   const title = useConversationTitle(conversation);
   const call = useLiveCall({ actions, conversation });
   const [usedHelp, setUsedHelp] = useState(false);
   const [saving, setSaving] = useState<"failed" | "saving" | null>(null);
+  const { start } = call;
 
   const save = useCallback(async () => {
     setSaving("saving");
@@ -130,14 +185,25 @@ function LiveCallRun({
     }
   }, [call.phase, save]);
 
-  const end = call.hangUp;
+  // "Try again" calls right away, once: React may run this effect twice for the same run.
+  const autoStarted = useRef(false);
 
-  if (call.phase === "idle") {
+  useEffect(() => {
+    if (startWith === "call" && !autoStarted.current) {
+      autoStarted.current = true;
+      void start();
+    }
+  }, [start, startWith]);
+
+  // A call that hasn't connected yet has nothing to save: ending it goes back to the intro.
+  const end = call.phase === "connecting" ? () => onRestart("intro") : call.hangUp;
+
+  if (call.phase === "idle" && startWith === "intro") {
     return (
       <ConversationIntro
         conversation={conversation}
         exitHref={hrefs.exit}
-        onStart={() => void call.start()}
+        onStart={() => void start()}
       />
     );
   }
@@ -152,9 +218,14 @@ function LiveCallRun({
 
   if (call.phase === "failed") {
     return (
-      <TaskFrame exitHref={hrefs.exit} headerTitle={title}>
-        <CallProblem error={call.error} exitHref={hrefs.exit} onEnd={end} onRetry={onRestart} />
-      </TaskFrame>
+      <CallProblem
+        error={call.error}
+        exitHref={hrefs.exit}
+        limit={call.limit}
+        onEnd={call.hangUp}
+        onRetry={() => onRestart("call")}
+        title={title}
+      />
     );
   }
 
@@ -171,9 +242,8 @@ function LiveCallRun({
 
 /**
  * A live conversation from its intro to its result: a unit's practice call, a language goal's
- * checkpoint (Fun's boss) or an IELTS or TOEFL speaking mock. Both modes run the same call; Fun
- * shows confidence and stars where Focus lists the goals. The host supplies the view model, how to
- * save the call and where to go after.
+ * checkpoint or an IELTS or TOEFL speaking mock. The host supplies the view model, how to save the
+ * call and where to go after.
  */
 export function ConversationScreen({
   actions,
@@ -185,13 +255,14 @@ export function ConversationScreen({
   hrefs: ConversationHrefs;
 }) {
   const [view, setView] = useState(conversation);
-  const [attempt, setAttempt] = useState(0);
+  const [run, setRun] = useState<{ attempt: number; startWith: RunStart }>(FIRST_RUN);
   const { result } = view;
 
   if (result && view.kind === "speakingMock") {
     return (
       <SpeakingMockResult
         conversation={view}
+        exitHref={hrefs.exit}
         feedback={result.feedback?.kind === "speakingMock" ? result.feedback : null}
         nextHref={hrefs.next}
         onTryAgain={actions.startAgain ?? null}
@@ -200,7 +271,14 @@ export function ConversationScreen({
   }
 
   if (result) {
-    return <ConversationResult conversation={view} nextHref={hrefs.next} result={result} />;
+    return (
+      <ConversationResult
+        conversation={view}
+        exitHref={hrefs.exit}
+        nextHref={hrefs.next}
+        result={result}
+      />
+    );
   }
 
   return (
@@ -208,9 +286,10 @@ export function ConversationScreen({
       actions={actions}
       conversation={view}
       hrefs={hrefs}
-      key={attempt}
-      onRestart={() => setAttempt((value) => value + 1)}
+      key={run.attempt}
+      onRestart={(startWith) => setRun((current) => ({ attempt: current.attempt + 1, startWith }))}
       onSaved={setView}
+      startWith={run.startWith}
     />
   );
 }

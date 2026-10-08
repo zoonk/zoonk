@@ -1,6 +1,5 @@
 import {
   type ContentFeedbackReason,
-  type ExperienceMode,
   type FeedbackContentKind,
   type FeedbackStatus,
   type VoteValue,
@@ -37,8 +36,6 @@ export function formatFeedbackReasons(reasons: ContentFeedbackReason[]): string 
 }
 
 export const voteLabels: Record<VoteValue, string> = { down: "Not helpful", up: "Helpful" };
-
-export const experienceModeLabels: Record<ExperienceMode, string> = { focus: "Focus", fun: "Fun" };
 
 export const feedbackStatusLabels: Record<FeedbackStatus, string> = {
   new: "New",

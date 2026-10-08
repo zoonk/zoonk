@@ -6,6 +6,7 @@ import { applyPlacement } from "../learner/placement/_utils/apply-placement";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { applyDrillRules } from "../mistakes/drill-answer";
 import { scheduleMistakeCause } from "../mistakes/resolve-mistake-cause";
+import { isLeftBlank } from "./_utils/net-score";
 import { loadSessionAnswers } from "./_utils/session-answers";
 import { type SessionItem, gradeSessionAnswer, parseSessionItem } from "./_utils/session-items";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
@@ -15,6 +16,8 @@ import { type StudyAnswerInput, type StudyAnswerResult } from "./contract";
 import { shouldSuggestPause } from "./pause-suggestion";
 
 type StudyAnswerRecord = {
+  /** A net-scored statement left blank: no notebook entry, since it isn't a mistake. */
+  blank: boolean;
   drill: BlockDrill | undefined;
   drilled: ReturnType<typeof applyDrillRules>;
   graded: ReturnType<typeof gradeSessionAnswer>;
@@ -33,6 +36,7 @@ type StudyAnswerRecord = {
  * of skips what the plan no longer needs.
  */
 async function recordStudyAnswer({
+  blank,
   drill,
   drilled,
   graded,
@@ -50,11 +54,13 @@ async function recordStudyAnswer({
     graded: { durationMs: input.durationMs, isCorrect: drilled.isCorrect },
     itemId: item.id,
     language: item.language,
-    mistake: {
-      questionText: graded.snapshot.question,
-      snapshot: graded.snapshot,
-      timeLimitMs: drilled.timeLimitMs,
-    },
+    mistake: blank
+      ? null
+      : {
+          questionText: graded.snapshot.question,
+          snapshot: graded.snapshot,
+          timeLimitMs: drilled.timeLimitMs,
+        },
     practicedMistakeId: drill?.mistakeId ?? null,
     purpose: placement ? "diagnostic" : "learning",
     skillId: item.skillId,
@@ -75,7 +81,8 @@ async function recordStudyAnswer({
 /**
  * Grades one answer to a question of the learner's session (a math problem against the numbers its
  * block showed, which the attempt keeps) and records it as learning: the FSRS review of its skill,
- * a notebook entry when wrong, and a fix for the drilled mistake when right on a later day. A
+ * a notebook entry when wrong (a statement left blank where wrong answers cost a point is neither),
+ * and a fix for the drilled mistake when right on a later day. A
  * mistake's drill plays by its rules: a timed drill's answer that takes the whole time box is wrong,
  * and a trap drill names the trap after the answer. Reviews
  * only slow down at unusual volume. The feedback carries the session's Hyperdrive and a pause
@@ -143,7 +150,10 @@ export async function answerStudyQuestion({
     misconception: graded.snapshot.misconception ?? null,
   });
 
+  const blank = isLeftBlank({ answer: input.answer, itemId: item.id, payload });
+
   const recorded = await recordStudyAnswer({
+    blank,
     drill,
     drilled,
     graded,
@@ -161,6 +171,7 @@ export async function answerStudyQuestion({
 
   return {
     feedback: {
+      blank,
       correctAnswer: isCheckpoint ? null : graded.correctAnswer,
       explanation: isCheckpoint ? null : graded.explanation,
       hyperdrive: { level: getHyperdriveLevel(streak), streak },

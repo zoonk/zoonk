@@ -5,7 +5,7 @@ import {
 } from "@zoonk/ai/tasks/lessons/question-context";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { findPlayableLessonRow } from "../../lesson-player/_utils/lesson-rows";
+import { findOpenedVersion, findPlayableLessonRow } from "../../lesson-player/_utils/lesson-rows";
 import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
 import { type LessonStepAnswer, type PlayableLibraryStep } from "../../lesson-player/contract";
 import { gradeStepAnswer } from "../../lesson-player/grade-step-answer";
@@ -32,6 +32,10 @@ function toStepContext({
 }
 
 /** The steps the question is about, in the order the learner saw them. */
+function getContextStepIds(context: LessonScopeContextInput): string[] {
+  return context.kind === "lesson" ? (context.stepIds ?? []) : [context.stepId];
+}
+
 function getRequestedSteps({
   context,
   steps,
@@ -39,7 +43,7 @@ function getRequestedSteps({
   context: LessonScopeContextInput;
   steps: PlayableLibraryStep[];
 }): PlayableLibraryStep[] | null {
-  const ids = context.kind === "lesson" ? (context.stepIds ?? []) : [context.stepId];
+  const ids = getContextStepIds(context);
 
   if (new Set(ids).size !== ids.length || ids.some((id) => !isUuid(id))) {
     return null;
@@ -167,7 +171,14 @@ export async function buildLibraryQuestionContextSnapshot({
   lesson: LibraryQuestionLesson;
   userId: string;
 }) {
-  const row = await findPlayableLessonRow({ lessonId: lesson.id, userId });
+  // A learner asking about a screen of a version replaced while they played it asks about theirs.
+  const version = await findOpenedVersion({
+    lessonId: lesson.id,
+    stepIds: getContextStepIds(context).filter((id) => isUuid(id)),
+    userId,
+  });
+
+  const row = await findPlayableLessonRow({ lessonId: lesson.id, userId, version });
 
   if (!row) {
     return { status: "invalidContext" as const };

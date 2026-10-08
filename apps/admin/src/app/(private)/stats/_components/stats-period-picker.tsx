@@ -10,6 +10,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type SyntheticEvent, useState } from "react";
@@ -61,7 +62,7 @@ export function StatsPeriodPicker({
   const [customRangeError, setCustomRangeError] = useState<string>();
   const startValue = statsPeriod.current.start.toISOString().slice(0, 10);
   const endValue = statsPeriod.chartEnd.toISOString().slice(0, 10);
-  const latestCustomDate = new Date().toISOString().slice(0, 10);
+  const latestCustomDate = useMountTime().toISOString().slice(0, 10);
   const canPage = statsPeriod.period === "month" || statsPeriod.period === "year";
 
   /**

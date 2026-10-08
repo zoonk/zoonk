@@ -19,12 +19,22 @@ The beginner, intermediate and advanced bands together are the full path to mast
 
 When `TAUGHT_ELSEWHERE` lists skills, the learners of this band already learn them in other chapters of this course. Never write a lesson that teaches them again, even under another name: a chapter next to one of them covers only what's still missing, and names itself for that.
 
+# Skills an exam needs
+
+When `WITHOUT_TOOLS` is `yes`, the learners who need `REQUIRED_SKILLS` and `EXTEND_SKILLS` prepare for an exam answered on paper or on screen, which asks what they know, not work done with tools. Tag each of those skills on a chapter that teaches it the way such an exam asks it: what it is, how it works, how to tell close cases apart and how to judge a statement about it, at this band's depth, with an empty `tools` list. The band may still have chapters that practice with tools for other learners, but never tag one of these skills only on such a chapter, and every chapter written for `EXTEND_SKILLS` has no tools.
+
+When `EXAMS` names the exam those learners prepare for, write the chapters that teach `REQUIRED_SKILLS` and `EXTEND_SKILLS` for its candidates, at the depth it asks them: not what every candidate already knows (what the Constitution or the OAB is, to someone who studied law; the sentences a beginner reads, in a foreign language its candidates read at B1 to B2), but the topic's rules, exceptions and close cases, the texts, cases and data its questions use and the distinctions they turn on. Lessons are titled for the topic as candidates search for it. Never name that exam, its board or its notice in a title, description or objective: other learners share these chapters.
+
+# The learner's own material
+
+When `MATERIAL` is given, this is a private course built from one learner's own class material (their teacher's notes, slides or a handout), page by page, and the course teaches exactly that material: its topics, in its order, at its depth and with its terms, so a learner studying for a test on it learns what the test asks. Write only the chapters and lessons the material covers, not the whole band: add a lesson beyond it only when an idea of the material can't make sense without it, and leave out what the material says isn't on the test. A required skill that says how many lessons it gets is taught in about that many: the learner's test is close, and that's what fits in their time until it.
+
 # Continuing a skill
 
 When `EXTEND_SKILLS` lists skills, this band already teaches each of them in the chapters listed under it, but learners need more lessons of it than those chapters hold. Don't write the band: write only the next chapter of each listed skill, one chapter per skill.
 
 - It continues where the listed chapters stop: new situations, harder tasks and new material at this band's level, building on their lessons and repeating none of them.
-- It has its own title and scope, never the title of a listed chapter or of a chapter in `OTHER_LEVEL_CHAPTERS`, and no "Part 2", "More…" or "Advanced…" variant of an existing title.
+- It has its own title and scope, named for what it teaches: never the title of a listed chapter or of a chapter in `OTHER_LEVEL_CHAPTERS`, no "Part 2", "More…" or "Advanced…" variant of an existing title, and no existing title with a subtitle after it ("Electricity: real circuits" next to "Electricity").
 - It has about the number of lessons given for the skill, and its `skillKeys` is that skill's key.
 
 # Chapters
@@ -41,6 +51,8 @@ When `EXTEND_SKILLS` lists skills, this band already teaches each of them in the
 
 Every lesson teaches one idea: one skill, or up to three closely linked skills, in about 3 minutes (2 to 5). A learner finishes it in one go, so split anything bigger into more lessons, and don't split an idea so finely that two lessons would repeat the same explanation. A chapter usually has 4 to 12 lessons.
 
+Each lesson of a chapter teaches something the others don't. Lessons are written at the same time, each seeing only the others' titles, so lessons that circle one distinction come out as the same lesson several times: "a need is not a product goal", "a goal is not a solution" and "a solution is not a result" are one lesson on stating a goal without its solution, and "a symptom is not a problem" and "a symptom is not its cause" are one lesson too. Give each lesson its own move: a new idea, a procedure, a harder case or applying earlier ideas together.
+
 For each lesson:
 
 - `title`: the canonical, searchable name of the topic, the way a serious learner would search for it: "Function parameters and return values", not "Send data in and get an answer back". Close natural variants in `LANGUAGE` are fine.
@@ -56,7 +68,8 @@ Favor what still matters when AI does routine work: understanding why, judgment,
 # No filler
 
 - No "Introduction to…", "Why X matters", "What is X" survey, course overview, recap, summary, review, "putting it all together" or study-tips chapters or lessons. The course page already introduces the course.
-- No career, job-search or "navigating the field" chapters.
+- No career, job-search or "navigating the field" chapters, unless `REQUIRED_SKILLS` asks for them (the portfolio and job search of a career change).
+- Every lesson teaches this course's subject: no lessons on general study or thinking skills, such as the scientific method, telling a prediction from an observation or reading a chart, unless the subject is about them.
 - A history chapter only when the subject is history, or when the field's evolution is knowledge practitioners actually use. Never as a warm-up.
 - No two lessons that would teach mostly the same thing.
 
@@ -69,4 +82,4 @@ Favor what still matters when AI does routine work: understanding why, judgment,
 
 # Final check
 
-Before answering, verify the order has no skipped prerequisites, the band has no missing pillar and no filler, overview outlines have 3 to 6 chapters with no formulas, code or tools, every lesson is one idea of 2 to 5 minutes with 1 to 3 skills, tools appear only on chapters that practice with them, and every required skill is tagged in a chapter. With `EXTEND_SKILLS`, the answer has only one new chapter per listed skill, each under a new title and repeating none of the listed lessons.
+Before answering, verify the order has no skipped prerequisites, the band has no missing pillar and no filler, overview outlines have 3 to 6 chapters with no formulas, code or tools, every lesson is one idea of 2 to 5 minutes with 1 to 3 skills, no two lessons of a chapter teach the same distinction, tools appear only on chapters that practice with them, and every required skill is tagged in a chapter (with `WITHOUT_TOOLS`, in a chapter without tools). With `EXTEND_SKILLS`, the answer has only one new chapter per listed skill, each under a new title and repeating none of the listed lessons. With `MATERIAL`, nothing in the outline goes beyond the material except what one of its ideas needs.

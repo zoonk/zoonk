@@ -1,3 +1,4 @@
+import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
 import { z } from "zod";
 import {
   choiceOptionSchema,
@@ -19,6 +20,9 @@ const MAX_MATH_LENGTH = 300;
 /** Display math in LaTeX, like `3x + 2 = 11`. Only shown, never evaluated. */
 const mathSchema = z.string().min(1).max(MAX_MATH_LENGTH);
 
+/** A chart or a timeline the player draws from data, on a screen that is about one. */
+const visualSchema = lessonVisualSchema.optional();
+
 /**
  * The first screen opens with the idea: a guess that doesn't count, or a surprising fact or real
  * situation. A guess reveals the answer whatever the learner picks.
@@ -33,6 +37,7 @@ export const hookContentSchema = z.discriminatedUnion("variant", [
       question: promptSchema,
       reveal: explanationSchema,
       variant: z.literal("guess"),
+      visual: visualSchema,
     })
     .strict(),
   z
@@ -40,6 +45,7 @@ export const hookContentSchema = z.discriminatedUnion("variant", [
       image: stepImageRequestSchema.optional(),
       text: richTextSchema,
       variant: z.literal("text"),
+      visual: visualSchema,
     })
     .strict(),
 ]);
@@ -54,6 +60,7 @@ export const explanationContentSchema = z
     image: stepImageRequestSchema.optional(),
     text: richTextSchema,
     title: promptSchema.optional(),
+    visual: visualSchema,
   })
   .strict();
 
@@ -68,6 +75,7 @@ export const workedExampleContentSchema = z
       .min(2)
       .max(MAX_WORKED_STEPS),
     title: promptSchema.optional(),
+    visual: visualSchema,
   })
   .strict();
 
@@ -78,6 +86,7 @@ export const checkContentSchema = z
     image: stepImageRequestSchema.optional(),
     options: choiceOptionsSchema(choiceOptionSchema),
     question: promptSchema,
+    visual: visualSchema,
   })
   .strict();
 
@@ -92,6 +101,7 @@ export const typedAnswerContentSchema = z
     keyPoints: z.array(explanationSchema).min(1).max(MAX_KEY_POINTS),
     question: promptSchema,
     sampleAnswer: richTextSchema,
+    visual: visualSchema,
   })
   .strict();
 

@@ -1,9 +1,12 @@
 import "server-only";
 import { type CourseLevel, type Goal, type LibraryVisibility, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { OUTLINE_AHEAD_DAYS } from "../../lookahead/outline-ahead";
+import { goalUsesTools } from "../../plans/_utils/plan-tools";
+import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { type PlanGraphSkill, parsePlanGraph } from "../../plans/planner/plan-state";
-import { countStandInLessons } from "../../plans/planner/plan-units";
+import { getStandInLessons } from "../../plans/planner/plan-units";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
 import {
@@ -15,9 +18,6 @@ import {
 
 /** One run adds one chapter to a skill, of at most this many lessons. */
 const MAX_EXTENSION_LESSONS = 10;
-
-/** Stand-ins due within this many days get their skill's next chapter written. */
-const EXTENSION_HORIZON_DAYS = 14;
 
 /** A chapter that teaches a skill, as the next chapter's outline needs to continue it. */
 type SkillChapter = { lessons: string[]; title: string };
@@ -77,6 +77,7 @@ function loadSkillPlacements({
             where: { lesson: visible },
           },
           title: true,
+          tools: true,
         },
       },
       chapterId: true,
@@ -118,6 +119,8 @@ function planExtension({
   extension: SkillExtension;
   placements: readonly Placement[];
 }): ExtensionPlan[] {
+  // Every chapter that teaches the skill says what the next one mustn't repeat, chapters the
+  // goal's plan leaves out (ones that need a tool) included.
   const teaching = placements
     .map((placement) => ({
       lessons: getSkillLessons({ placement, skillId: extension.skill.id }),
@@ -125,11 +128,9 @@ function planExtension({
     }))
     .filter((entry) => entry.lessons.length > 0);
 
-  const taught = new Set(teaching.flatMap((entry) => entry.lessons.map((lesson) => lesson.id)));
-  const missing = countStandInLessons({ lessons: extension.lessons, taught: taught.size });
   const last = teaching.at(-1);
 
-  if (!last || missing <= 0) {
+  if (!last || extension.lessons <= 0) {
     return [];
   }
 
@@ -140,7 +141,7 @@ function planExtension({
         lessons: entry.lessons.map((lesson) => lesson.title),
         title: entry.placement.chapter.title,
       })),
-      lessons: Math.min(missing, MAX_EXTENSION_LESSONS),
+      lessons: Math.min(extension.lessons, MAX_EXTENSION_LESSONS),
       level: last.placement.level,
       skill: extension.skill,
     },
@@ -149,10 +150,9 @@ function planExtension({
 
 /**
  * What the next chapter of each skill needs: the chapters of the course that teach it so far, in
- * order, with their lessons, the band of the last one, and how many lessons it should have, for
- * the skills whose plans keep a stand-in for lessons the course doesn't have yet (the rule plans
- * follow). A skill the course doesn't teach at all is left out: the regular outline writes its
- * first chapters.
+ * order, with their lessons, the band of the last one, and how many lessons it should have: its
+ * plan's stand-in, at most a chapter's worth. A skill the course doesn't teach at all is left out:
+ * the regular outline writes its first chapters.
  *
  * This is a workflow bridge: the owner comes from the course a goal's plan already uses.
  */
@@ -190,7 +190,7 @@ async function loadSoonStandInSkillIds({ goalId, timeZone }: { goalId: string; t
       kind: "lesson",
       lessonId: null,
       plan: { goalId },
-      scheduledFor: { lte: addDays(today, EXTENSION_HORIZON_DAYS) },
+      scheduledFor: { lte: addDays(today, OUTLINE_AHEAD_DAYS) },
       skillId: { not: null },
       status: "todo",
     },
@@ -217,43 +217,46 @@ function toCourseScope(course: ExtensionCourse): CurriculumScope {
   };
 }
 
-function groupByBand(plans: readonly ExtensionPlan[], graphSkills: readonly PlanGraphSkill[]) {
+function groupByBand({
+  extensions,
+  plans,
+  withToolChapters,
+}: {
+  extensions: readonly SkillExtension[];
+  plans: readonly ExtensionPlan[];
+  withToolChapters: boolean;
+}) {
   const levels = [...new Set(plans.map((plan) => plan.level))];
 
   return levels.map((level): CourseBandNeed => ({
-    extend: plans
-      .filter((plan) => plan.level === level)
-      .map((plan) => ({
-        lessons: graphSkills.find((skill) => skill.skillId === plan.skill.id)?.lessons ?? 0,
-        skill: plan.skill,
-      })),
+    extend: extensions.filter((extension) =>
+      plans.some((plan) => plan.level === level && plan.skill.id === extension.skill.id),
+    ),
     level,
     skills: [],
+    withToolChapters,
   }));
 }
 
 async function toCourseRequest({
   course,
-  graphSkills,
-  skillRefs,
+  extensions,
+  withToolChapters,
 }: {
   course: ExtensionCourse;
-  graphSkills: readonly PlanGraphSkill[];
-  skillRefs: readonly GoalSkillRef[];
+  extensions: readonly SkillExtension[];
+  withToolChapters: boolean;
 }): Promise<CourseExtensionRequest[]> {
   const scope = toCourseScope(course);
 
   const plans = await planSkillExtensions({
     courseId: course.id,
-    extensions: skillRefs.map((skill) => ({
-      lessons: graphSkills.find((graphSkill) => graphSkill.skillId === skill.id)?.lessons ?? 0,
-      skill,
-    })),
+    extensions,
     ownerId: scope.ownerId,
   });
 
   return plans.length > 0
-    ? [{ bands: groupByBand(plans, graphSkills), courseId: course.id, scope }]
+    ? [{ bands: groupByBand({ extensions, plans, withToolChapters }), courseId: course.id, scope }]
     : [];
 }
 
@@ -270,10 +273,11 @@ function getSkillCourseId({
 
 /**
  * The next chapters a goal's plan needs soon: for each skill whose stand-in (the part of the skill
- * the Library hasn't outlined, while a chapter's worth or more is missing) is due within two weeks,
- * the next chapter of the course that already teaches it in part, grouped by course and band. A
- * course whose outline is being written is left alone: that run may be writing them, and the next
- * preparation asks again for what's still missing.
+ * the Library hasn't outlined, while a chapter's worth or more is missing; see
+ * `getStandInLessons`) is due within two weeks, the next chapter of the course that already
+ * teaches it in part, grouped by course and band. A course whose outline is being written is left
+ * alone: that run may be writing them, and the next preparation asks again for what's still
+ * missing.
  *
  * This is a workflow bridge: the goal comes from the learner's own session.
  */
@@ -285,7 +289,15 @@ export async function listSkillExtensions({
   timeZone: string;
 }): Promise<CourseExtensionRequest[]> {
   const goal = await prisma.goal.findUnique({
-    select: { plan: { select: { graph: true } }, primaryCourseId: true, status: true },
+    select: {
+      details: true,
+      examBlueprintId: true,
+      kind: true,
+      plan: { select: { graph: true } },
+      primaryCourseId: true,
+      status: true,
+      userId: true,
+    },
     where: { id: goalId },
   });
 
@@ -293,11 +305,9 @@ export async function listSkillExtensions({
     return [];
   }
 
+  const graph = parsePlanGraph(goal.plan.graph);
   const soon = await loadSoonStandInSkillIds({ goalId, timeZone });
-
-  const graphSkills = parsePlanGraph(goal.plan.graph).skills.filter((skill) =>
-    soon.has(skill.skillId),
-  );
+  const graphSkills = graph.skills.filter((skill) => soon.has(skill.skillId));
 
   const courseIds = [
     ...new Set(graphSkills.flatMap((skill) => getSkillCourseId({ goal, skill }) ?? [])),
@@ -307,7 +317,7 @@ export async function listSkillExtensions({
     return [];
   }
 
-  const [courses, skills] = await Promise.all([
+  const [courses, skills, withToolChapters, lessons] = await Promise.all([
     prisma.course.findMany({
       select: { id: true, language: true, targetLanguage: true, userId: true, visibility: true },
       where: {
@@ -319,17 +329,25 @@ export async function listSkillExtensions({
       select: { description: true, id: true, name: true },
       where: { id: { in: graphSkills.map((skill) => skill.skillId) } },
     }),
+    goalUsesTools(goal),
+    loadGoalPlannerLessons({ goal, graph, userId: goal.userId }),
   ]);
+
+  // The plan's own stand-ins, so the Library writes exactly the lessons the plan waits for.
+  const standIns = getStandInLessons({ lessons, skills: graph.skills });
 
   const requests = await Promise.all(
     courses.map((course) =>
       toCourseRequest({
         course,
-        graphSkills,
-        skillRefs: graphSkills
+        extensions: graphSkills
           .filter((graphSkill) => getSkillCourseId({ goal, skill: graphSkill }) === course.id)
           .flatMap((graphSkill) => skills.filter((skill) => skill.id === graphSkill.skillId))
-          .map((skill) => ({ ...skill, key: skill.id })),
+          .map((skill) => ({
+            lessons: standIns.get(skill.id) ?? 0,
+            skill: { ...skill, key: skill.id },
+          })),
+        withToolChapters,
       }),
     ),
   );

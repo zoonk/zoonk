@@ -7,6 +7,7 @@ import { GENERATE_ITEMS_SCORE_CATEGORIES } from "./score-categories";
 type GenerateItemsCase = {
   examFormat?: { optionCount?: number | null } | null;
   format: ItemFormat;
+  language: string;
 };
 
 /** Runs the same checks production runs before storing items, then keeps only passing items. */
@@ -18,6 +19,7 @@ function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeChec
     problems: checkItem({
       expectedFormat: input.format,
       item,
+      language: input.language,
       optionCount: input.examFormat?.optionCount ?? null,
     }).map((problem) => `Item ${index + 1}: ${problem}`),
   }));

@@ -7,9 +7,12 @@ import { studySessionErrorCodes } from "./study-session-errors";
  */
 const examErrorCodes = {
   essayLimitReached: "ESSAY_LIMIT_REACHED",
+  invalidMockOption: "INVALID_MOCK_OPTION",
   mockFinished: "MOCK_FINISHED",
   mockNotRunning: "MOCK_NOT_RUNNING",
+  notEnoughQuestions: "NOT_ENOUGH_QUESTIONS",
   notExam: "NOT_AN_EXAM",
+  plusRequired: "PLUS_REQUIRED",
   timeUp: "SECTION_TIME_UP",
   tooEarly: "EXAM_NOT_TAKEN_YET",
 } as const;
@@ -20,12 +23,16 @@ type ExamRefusal = {
     | "blockNotActive"
     | "dailyLimitReached"
     | "finished"
+    | "goalNotActive"
     | "invalidItem"
+    | "invalidOption"
     | "limitReached"
     | "noGoal"
+    | "notEnoughQuestions"
     | "notExam"
     | "notFound"
     | "notRunning"
+    | "plusRequired"
     | "timeUp"
     | "tooEarly"
     | "unauthorized";
@@ -52,15 +59,30 @@ const REFUSALS = {
     message: "This mock is already finished",
     status: httpStatus.conflict,
   },
+  goalNotActive: {
+    code: studySessionErrorCodes.goalNotActive,
+    message: "Resume the goal to take a mock",
+    status: httpStatus.conflict,
+  },
   invalidItem: {
     code: studySessionErrorCodes.invalidItem,
     message: "This question isn't in the running section",
+    status: httpStatus.unprocessableEntity,
+  },
+  invalidOption: {
+    code: examErrorCodes.invalidMockOption,
+    message: "That isn't one of the goal's mocks; list them again",
     status: httpStatus.unprocessableEntity,
   },
   limitReached: {
     code: examErrorCodes.essayLimitReached,
     message: "Today's essay grades are used up",
     status: httpStatus.tooManyRequests,
+  },
+  notEnoughQuestions: {
+    code: examErrorCodes.notEnoughQuestions,
+    message: "There aren't enough questions for this mock yet",
+    status: httpStatus.unprocessableEntity,
   },
   notExam: {
     code: examErrorCodes.notExam,
@@ -71,6 +93,11 @@ const REFUSALS = {
     code: examErrorCodes.mockNotRunning,
     message: "Start the mock first, or it moved on already",
     status: httpStatus.conflict,
+  },
+  plusRequired: {
+    code: examErrorCodes.plusRequired,
+    message: "Mock exams come with Plus",
+    status: httpStatus.paymentRequired,
   },
   timeUp: {
     code: examErrorCodes.timeUp,

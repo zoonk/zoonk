@@ -32,7 +32,7 @@ function scrollToCatalogTop(event: MouseEvent<HTMLAnchorElement>) {
 /**
  * Long course grids need a reachable escape hatch while scrolling, so this
  * action follows the viewport instead of waiting for the reader to reach the
- * end of the collection.
+ * end of the collection. Under `lg` it floats above the app's tab bar.
  */
 export function CatalogGridBackToTop() {
   const t = useExtracted();
@@ -54,7 +54,7 @@ export function CatalogGridBackToTop() {
     <GridBackToTop
       aria-label={label}
       className={cn(
-        "bg-background/85 border-border/40 fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+1rem)] z-30 border shadow-[0_8px_24px_rgb(0_0_0/0.08)] backdrop-blur-md transition-all duration-150 md:right-6",
+        "bg-background/85 border-border/40 fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+5rem)] z-30 border shadow-[0_8px_24px_rgb(0_0_0/0.08)] backdrop-blur-md transition-all duration-150 md:right-6 lg:bottom-6",
         isVisible
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-2 opacity-0",

@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
-import { getExamStage, getFinalStretchStart, isInFinalStretch } from "./final-stretch-rules";
+import {
+  getExamDayChecklist,
+  getExamStage,
+  getFinalStretchStart,
+  isInFinalStretch,
+} from "./final-stretch-rules";
 
 function day(iso: string): Date {
   return new Date(`${iso}T00:00:00.000Z`);
@@ -69,5 +74,16 @@ describe(isInFinalStretch, () => {
     expect(
       isInFinalStretch({ finalStretchStart: null, targetDate, today: day("2026-11-01") }),
     ).toBe(false);
+  });
+});
+
+describe(getExamDayChecklist, () => {
+  it("lists the official exam day's needs only from a notice, and a class test's own short list", () => {
+    expect(getExamDayChecklist({ ownerId: null })).toContain("documents");
+    expect(getExamDayChecklist({ ownerId: "learner" })).toStrictEqual(["materials", "sleep"]);
+  });
+
+  it("has no checklist for a test no notice or material describes", () => {
+    expect(getExamDayChecklist(null)).toStrictEqual([]);
   });
 });

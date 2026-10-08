@@ -3,10 +3,12 @@
 import { checkLessonStep } from "@zoonk/core/lesson-player/check";
 import { completeLibraryLesson } from "@zoonk/core/lesson-player/complete";
 import {
+  type LessonPicture,
   answerExplanationInputSchema,
   lessonStepCheckInputSchema,
   libraryLessonCompletionInputSchema,
 } from "@zoonk/core/lesson-player/contract";
+import { getLessonPictures } from "@zoonk/core/lesson-player/pictures";
 import { explainAnswer } from "@zoonk/core/library/items/explain-answer";
 import {
   type AnswerExplanationOutcome,
@@ -21,7 +23,8 @@ const idSchema = z.uuid();
 
 /**
  * The web player's step check: the same core capability as `POST /v1/steps/{stepId}/checks`.
- * Anything but a verdict or a finished run is a failure the player retries.
+ * An error is a failure the player sends again; a finished run or an answer that doesn't fit the
+ * screen is a refusal, which no retry changes.
  */
 export async function checkLessonStepAction({
   stepId,
@@ -36,8 +39,9 @@ export async function checkLessonStepAction({
 }): Promise<LessonCheckOutcome> {
   const input = lessonStepCheckInputSchema.safeParse(rawInput);
 
+  // An answer that doesn't fit the contract never will: sending it again would only loop.
   if (!input.success || !idSchema.safeParse(stepId).success) {
-    return { status: "failed" };
+    return { status: "refused" };
   }
 
   const { data: outcome, error } = await safeAsync(() =>
@@ -53,10 +57,13 @@ export async function checkLessonStepAction({
     return { result: outcome.result, status: "checked" };
   }
 
-  return outcome.status === "runEnded" ? { status: "runEnded" } : { status: "failed" };
+  return { status: "refused" };
 }
 
-/** The web player's completion: the same core capability as `POST /v1/library/lessons/{id}/completions`. */
+/**
+ * The web player's completion: the same core capability as `POST /v1/library/lessons/{id}/completions`.
+ * A run missing an answer is `incomplete`, so the player goes back to that screen.
+ */
 export async function completeLibraryLessonAction({
   lessonId,
   ...rawInput
@@ -80,9 +87,11 @@ export async function completeLibraryLessonAction({
     return { status: "failed" };
   }
 
-  return outcome.status === "completed"
-    ? { completion: outcome.completion, status: "completed" }
-    : { status: "failed" };
+  if (outcome.status === "completed") {
+    return { completion: outcome.completion, status: "completed" };
+  }
+
+  return outcome.status === "invalid" ? { status: "incomplete" } : { status: "failed" };
 }
 
 /** "Explain answer": the same core capability as `POST /v1/steps/{stepId}/answer-explanations`. */
@@ -109,16 +118,32 @@ export async function explainAnswerAction({
   }
 
   if (result.status === "explained") {
-    return {
-      explanation: result.explanation,
-      explanationId: result.explanationId,
-      status: "explained",
-    };
+    return { explanation: result.explanation, status: "explained" };
   }
 
   if (result.status === "limitReached") {
-    return { status: "limitReached", tier: result.limit.tier };
+    return { period: result.limit.period, status: "limitReached", tier: result.limit.tier };
   }
 
   return result.status === "slowDown" ? result : { status: "failed" };
+}
+
+/**
+ * The lesson's pictures drawn so far, for screens whose picture was still being drawn when the
+ * page loaded. Read fresh: the API's workflow draws them, and this app's cached lesson doesn't
+ * have them yet (the public API's lesson read returns them as they're drawn).
+ */
+export async function getLessonPicturesAction(lessonId: string): Promise<LessonPicture[]> {
+  if (!idSchema.safeParse(lessonId).success) {
+    return [];
+  }
+
+  const { data, error } = await safeAsync(() => getLessonPictures({ lessonId }));
+
+  if (error) {
+    logError("[getLessonPicturesAction] Failed to read a lesson's pictures:", error);
+    return [];
+  }
+
+  return data;
 }

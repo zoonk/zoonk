@@ -181,6 +181,26 @@ export const studySessionPaths = {
       tags: TAGS,
     },
   },
+  "/study-sessions/{sessionId}/catch-up-blocks": {
+    post: {
+      description:
+        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again.",
+      operationId: "createStudyCatchUpBlocks",
+      requestBody: timeZoneBody,
+      requestParams: { path: studySessionPathParamsSchema },
+      responses: {
+        "200": jsonResponse(studySessionResponseSchema, "The session with the lessons added"),
+        ...readErrors,
+        "422": {
+          ...unprocessableEntityResponse,
+          description: `No lessons left to catch up on. Error code: ${studySessionErrorCodes.nothingToCatchUp}.`,
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Catch up today",
+      tags: TAGS,
+    },
+  },
   "/study-sessions/{sessionId}/extra-blocks": {
     post: {
       description:
@@ -207,7 +227,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/stops": {
     post: {
       description:
-        '"Stop for today": what was done counts (a partial day is a day studied), the rest of the session is skipped without any penalty, and the summary comes back.',
+        '"Stop for today": what was done counts (a partial day is a day studied) and the summary of what changed so far comes back. Nothing is skipped: the rest of the session stays as it is, so it can be picked up later the same day (`finished` is false until every block is done).',
       operationId: "createStudySessionStop",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },
@@ -220,7 +240,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/summary": {
     get: {
       description:
-        "What changed in the session: time, questions and accuracy, Brain Power, the best Hyperdrive, Energy, belt stripes, preparation, skills that moved and new cards, mistakes saved, when things come back, capsules sealed, what the buddy ate, tomorrow's lesson and at most one ceremony.",
+        "What changed in the session: time, questions and accuracy, the best streak, Brain Power, the best Hyperdrive, Energy, belt stripes, preparation, skills that moved and new cards, mistakes saved, when things come back, capsules sealed, what the buddy ate, tomorrow's lesson and at most one ceremony. A completed session's summary stays as the session ended, whatever is played later.",
       operationId: "getStudySessionSummary",
       requestParams: { path: studySessionPathParamsSchema, query: studySessionTimeZoneInputSchema },
       responses: { "200": sessionSummaryResponse, ...readErrors },

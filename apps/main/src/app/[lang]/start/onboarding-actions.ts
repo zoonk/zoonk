@@ -1,9 +1,12 @@
 "use server";
 
 import { startGoalWork } from "@/lib/goals/start-goal-work";
-import { markUnderMinimumAge } from "@/lib/guest/minimum-age";
-import { writeLessonAhead } from "@/lib/session/session-preparation";
+import { isUnderMinimumAge, markUnderMinimumAge } from "@/lib/guest/minimum-age";
+import { prepareGoalLessons, writeLessonAhead } from "@/lib/session/session-preparation";
 import { moveLanguageGoalToExam } from "@zoonk/core/exams/language-goal";
+import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
+import { finishMock } from "@zoonk/core/exams/mocks/finish";
+import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
 import { updateGoal } from "@zoonk/core/goals/update";
 import { instrumentWaitlistJoinSchema } from "@zoonk/core/instrument-waitlist/contract";
@@ -17,14 +20,17 @@ import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { guardianInviteSchema } from "@zoonk/core/minors/guardian/contract";
 import { inviteGuardian } from "@zoonk/core/minors/guardian/invite";
+import { refuseAgeRetry } from "@zoonk/core/minors/refuse-age-retry";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { createOnboardingGoals } from "@zoonk/core/view-models/onboarding/create-goals";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
+import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import {
   type AnswerOutcome,
   type CreateGoalsOutcome,
+  type PlacementMockOutcome,
   type PlacementOutcome,
   type PlanOutcome,
   type WaitlistOutcome,
@@ -77,6 +83,15 @@ export async function answerOnboardingAction(
     return { status: "failed" };
   }
 
+  // This device said under 13 within the last day: a new age answer can't undo that.
+  const retry =
+    parsed.data.question === "age" && (await isUnderMinimumAge()) ? await refuseAgeRetry() : null;
+
+  if (retry?.status === "accountDeleted") {
+    await markUnderMinimumAge();
+    return { status: "accountDeleted" };
+  }
+
   const result = await answerOnboardingQuestion({ goalId, input: parsed.data });
 
   if (result.status === "accountDeleted") {
@@ -95,6 +110,12 @@ export async function answerOnboardingAction(
   }
 
   const currentGoalId = moved?.status === "moved" ? moved.goal.id : goalId;
+
+  // The time a day re-plans the first days: the lessons and outlines they now hold start being
+  // written, so Today doesn't wait on them after the plan's reveal.
+  if (result.status === "saved" && parsed.data.question === "schedule") {
+    prepareGoalLessons(currentGoalId);
+  }
 
   const onboarding =
     result.status === "saved" ? await getOnboarding({ goalId: currentGoalId }) : null;
@@ -137,6 +158,7 @@ function toPlacementOutcome({
     dayBudgetUsed: placement.dayBudgetUsed,
     isCorrect,
     next: placement.next,
+    started: placement.started,
     status: "ready",
     trueFalseLabels: placement.trueFalseLabels,
   };
@@ -203,21 +225,34 @@ export async function finishPlacementAction({
     return false;
   }
 
-  // Day 1 opens the plan's first lesson minutes from now: it's written from here, guests' too.
+  // Day 1 opens the plan's first lesson minutes from now: it's written from here, guests' too,
+  // and the lessons after it start too, so none waits when the learner gets there.
   if (result.firstLessonId) {
     writeLessonAhead(result.firstLessonId);
   }
 
+  prepareGoalLessons(goalId);
+
   return true;
 }
 
+/** The plan with the goal's structure, the plan reveal's two reads. */
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
   if (!isUuid(goalId)) {
     return { status: "failed" };
   }
 
-  const result = await getGoalPlan(goalId);
-  return result.status === "ready" ? result : { status: "failed" };
+  const [result, syllabus] = await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })]);
+
+  if (result.status !== "ready") {
+    return { status: "failed" };
+  }
+
+  return {
+    plan: result.plan,
+    status: "ready",
+    syllabus: syllabus.status === "ready" ? syllabus.syllabus : null,
+  };
 }
 
 export async function inviteGuardianAction(email: unknown): Promise<boolean> {
@@ -284,4 +319,39 @@ export async function retryGenerationAction(goalId: string): Promise<string | nu
 
   const [start] = await startGoalWork([result.onboarding.goal]);
   return start?.generationId ?? null;
+}
+
+/**
+ * A diagnostic mock for placement: how long its lengths take, whether the learner's plan includes
+ * it, and the goal's own once started.
+ */
+export async function getPlacementMockAction(goalId: string): Promise<PlacementMockOutcome> {
+  const result = isUuid(goalId) ? await getMockOptions({ goalId }) : null;
+  const view = result?.status === "ready" ? result.view : null;
+  const placement = view?.placement ?? null;
+  const shortest = placement?.options[0];
+  const longest = placement?.options.at(-1);
+
+  return {
+    mock: placement?.mock ?? null,
+    offer:
+      view && shortest && longest
+        ? {
+            access: view.access,
+            minutes: { longest: longest.estimatedMinutes, shortest: shortest.estimatedMinutes },
+          }
+        : null,
+  };
+}
+
+/** Stops the placement mock now: the questions answered set where the plan starts. */
+export async function stopPlacementMockAction(mockId: string, timeZone: string): Promise<boolean> {
+  const input = mockTimeZoneInputSchema.safeParse({ timeZone });
+
+  if (!isUuid(mockId) || !input.success) {
+    return false;
+  }
+
+  const result = await finishMock({ blockId: mockId, input: input.data });
+  return result.status === "finished";
 }

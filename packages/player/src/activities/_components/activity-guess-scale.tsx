@@ -1,6 +1,8 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Slider, SliderControl, SliderThumb, SliderTrack } from "@zoonk/ui/components/slider";
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Lock } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -12,8 +14,6 @@ import {
   shareOfValue,
   valueAtPosition,
 } from "../_utils/guess-scale";
-import { useFormatNumber } from "../_utils/use-format-number";
-import { useMeasuredWidth } from "../_utils/use-measured-width";
 
 /** Tick labels are short, so only the ones right at the ends need pulling inside. */
 const TICK_EDGE_SHARE = 0.04;

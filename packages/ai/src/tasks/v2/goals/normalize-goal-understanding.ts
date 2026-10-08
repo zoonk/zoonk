@@ -15,9 +15,17 @@ type UnderstoodGoalKind = "exam" | "language" | "learn";
 type UnderstoodOwnLevel = "advanced" | "basic" | "intermediate" | "none";
 type UnderstoodPurpose = "careerChange" | "deep" | "other" | "overview" | "refresh" | "work";
 
+/**
+ * What an exam's learner aims for beyond passing: a course or school (`admission`), a score
+ * (`score`), or a position (`position`). Exams that are only passed or failed have none.
+ */
+type UnderstoodExamTarget = "admission" | "position" | "score";
+
 /** One goal as the model returned it: every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
+  examMonth: number | null;
   examName: string | null;
+  examTarget: UnderstoodExamTarget | null;
   examYear: number | null;
   institution: string | null;
   kind: UnderstoodGoalKind;
@@ -50,7 +58,10 @@ export type RawGoalUnderstanding = {
 
 /** A goal onboarding can create: fields the text didn't give are undefined, never null. */
 export type UnderstoodGoal = {
+  /** The month the learner named for an exam without its day ("in March"), 1 to 12. */
+  examMonth?: number;
   examName?: string;
+  examTarget?: UnderstoodExamTarget;
   examYear?: number;
   institution?: string;
   kind: UnderstoodGoalKind;
@@ -122,6 +133,14 @@ function cleanLanguageCode(code: string | null): string | undefined {
   return trimmed && LANGUAGE_CODE_PATTERN.test(trimmed) ? trimmed : undefined;
 }
 
+const MONTHS_PER_YEAR = 12;
+
+function cleanMonth(month: number | null): number | undefined {
+  return month !== null && Number.isInteger(month) && month >= 1 && month <= MONTHS_PER_YEAR
+    ? month
+    : undefined;
+}
+
 function cleanYear(year: number | null): number | undefined {
   return year !== null && Number.isInteger(year) && year >= MIN_YEAR && year <= MAX_YEAR
     ? year
@@ -143,7 +162,9 @@ function normalizeGoal({
   }
 
   return {
+    examMonth: goal.kind === "exam" ? cleanMonth(goal.examMonth) : undefined,
     examName: goal.kind === "exam" ? cleanText(goal.examName) : undefined,
+    examTarget: goal.kind === "exam" ? (goal.examTarget ?? undefined) : undefined,
     examYear: goal.kind === "exam" ? cleanYear(goal.examYear) : undefined,
     institution: cleanText(goal.institution),
     kind: goal.kind,

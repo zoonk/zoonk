@@ -63,6 +63,8 @@ export type PlannedLesson = {
   lessonId: string | null;
   minutes: number;
   planItemId: string | null;
+  /** The plan item's skill: the subject the lesson block is labeled with. */
+  planSkillId: string | null;
   skillIds: string[];
   title: string;
 };
@@ -103,10 +105,21 @@ export type SessionBuildInput = {
   practiceShare: number;
   /** Two short lessons before a boss rematch. */
   reinforcement: PlannedLesson[];
+  /**
+   * The goal's skills, on a day whose mock the learner's plan doesn't include (a free plan's): the
+   * day is a full review instead, with no new lessons, its practice taking every skill in turn,
+   * weakest first. Null on other days.
+   */
+  fullReviewSkillIds?: readonly string[] | null;
   /** A review day the plan scheduled: no new lessons, the day goes to reviews and practice. */
   reviewPlanItemId: string | null;
   /** Minutes left under a guardian's daily limit, or null without one. */
   remainingLimitMinutes: number | null;
+  /**
+   * Minutes the day's session already holds in blocks it keeps, when a plan change rebuilds the
+   * rest of a day already underway: the new blocks fill what's left.
+   */
+  usedMinutes?: number;
 };
 
 export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"> & {
@@ -119,8 +132,10 @@ function toMinutes(value: number): number {
 }
 
 function getSessionBudget(input: SessionBuildInput): number {
-  const minutes =
+  const day =
     input.freshStart === "welcomeBack" ? getLightMinutes(input.dailyMinutes) : input.dailyMinutes;
+
+  const minutes = Math.max(0, day - (input.usedMinutes ?? 0));
 
   return Math.min(minutes, input.remainingLimitMinutes ?? minutes);
 }
@@ -147,7 +162,7 @@ function takeCapsules({
   });
 }
 
-function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
+export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
   return {
     canDo: lesson.canDo,
     estimatedMinutes: toMinutes(lesson.minutes),
@@ -156,6 +171,7 @@ function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBl
     payload: toBlockPayload({
       chapterId: lesson.chapterId,
       planItemId: lesson.planItemId,
+      planSkillId: lesson.planSkillId,
       reinforcement,
       skillIds: lesson.skillIds,
       title: lesson.title,
@@ -191,14 +207,30 @@ function getLessonMinutes(lessons: readonly PlannedLesson[]): number {
   return lessons.reduce((sum, lesson) => sum + toMinutes(lesson.minutes), 0);
 }
 
+/** A full review asks every one of the goal's skills; one that misses some is only practice. */
+function isFullReview({
+  fullReviewSkillIds,
+  skillIds,
+}: {
+  fullReviewSkillIds: readonly string[] | null | undefined;
+  skillIds: readonly string[];
+}): boolean {
+  return (
+    Boolean(fullReviewSkillIds?.length) &&
+    (fullReviewSkillIds ?? []).every((skillId) => skillIds.includes(skillId))
+  );
+}
+
 function buildPracticeBlock({
   drills,
+  fullReviewSkillIds,
   minutes,
   netScored,
   planItemId,
   practice,
 }: {
   drills: readonly BlockDrill[];
+  fullReviewSkillIds: readonly string[] | null | undefined;
   minutes: number;
   netScored: boolean;
   planItemId: string | null;
@@ -209,6 +241,7 @@ function buildPracticeBlock({
   const items = practice.slice(0, Math.max(0, room));
   const questions = drillItems + items.length;
   const practiceMinutes = questions * PRACTICE_MINUTES_PER_QUESTION;
+  const skillIds = [...new Set(items.map((item) => item.skillId))];
 
   if (questions === 0 || (drills.length === 0 && practiceMinutes < MIN_BLOCK_MINUTES)) {
     return null;
@@ -221,10 +254,11 @@ function buildPracticeBlock({
     lessonId: null,
     payload: toBlockPayload({
       drills: [...drills],
+      fullReview: isFullReview({ fullReviewSkillIds, skillIds }),
       itemIds: items.map((item) => item.itemId),
       netScored,
       planItemId,
-      skillIds: [...new Set(items.map((item) => item.skillId))],
+      skillIds,
     }),
   };
 }
@@ -269,22 +303,48 @@ function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBlock {
   };
 }
 
+/** A day the plan gives to reviews and practice: a review day, or a full review for a mock's. */
+function isReviewDay(input: SessionBuildInput): boolean {
+  return Boolean(input.reviewPlanItemId) || Boolean(input.fullReviewSkillIds?.length);
+}
+
 /**
- * New lessons wait on the day of a first duel (practice prepares for it) and after a free exam
- * trial. A rematch never holds them back: losing a boss never locks the next phase.
+ * New lessons wait on the day of a first duel (practice prepares for it), on a review day and
+ * after a free exam trial. A rematch never holds them back: losing a boss never locks the next
+ * phase.
  */
 function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
   const checkpoint = input.checkpoint;
   const firstDuel = checkpoint !== null && checkpoint.kind !== "weekly" && !checkpoint.rematch;
 
-  return firstDuel || input.examTrialEnded || input.reviewPlanItemId ? [] : input.lessons;
+  return firstDuel || input.examTrialEnded || isReviewDay(input) ? [] : input.lessons;
+}
+
+/**
+ * The minutes mixed practice takes from what's left of the day: its share, at most what its
+ * questions fill, so a day with few questions to practice (the first one) gives lessons the rest
+ * instead of coming up short.
+ */
+function getPracticeMinutes({
+  input,
+  remaining,
+}: {
+  input: SessionBuildInput;
+  remaining: number;
+}): number {
+  const share = isReviewDay(input) ? 1 : input.practiceShare;
+  const practice = input.examTrialEnded ? [] : input.practice;
+  const drilled = input.drills.reduce((sum, drill) => sum + drill.itemIds.length, 0);
+
+  return Math.min(remaining * share, (practice.length + drilled) * PRACTICE_MINUTES_PER_QUESTION);
 }
 
 /**
  * Builds one day's session in the session shape: an easy start (capsules), the hard part in the
  * middle (new lessons, then mixed practice with mistake drills first), and the checkpoint last.
  * It fits the day's minutes: reviews take their share, a checkpoint takes what it needs, mixed
- * practice gets its growing share, and lessons fill the rest in plan order. A welcome back is
+ * practice gets its growing share (as far as it has questions), and lessons fill the rest in plan
+ * order. A welcome back is
  * lighter, and a guardian's daily limit caps it.
  */
 export function buildSessionBlocks(input: SessionBuildInput): {
@@ -310,8 +370,9 @@ export function buildSessionBlocks(input: SessionBuildInput): {
 
   const remaining = Math.max(0, budget - base - (produce?.estimatedMinutes ?? 0));
   const reinforcement = input.examTrialEnded ? [] : input.reinforcement;
-  const practiceShare = input.reviewPlanItemId ? 1 : input.practiceShare;
-  const learnBudget = remaining * (1 - practiceShare) - getLessonMinutes(reinforcement);
+
+  const learnBudget =
+    remaining - getPracticeMinutes({ input, remaining }) - getLessonMinutes(reinforcement);
 
   const lessons = takeLessons({
     budget: learnBudget,
@@ -327,6 +388,7 @@ export function buildSessionBlocks(input: SessionBuildInput): {
     ...lessons.map((lesson) => toLessonBlock(lesson, false)),
     buildPracticeBlock({
       drills: input.drills,
+      fullReviewSkillIds: input.fullReviewSkillIds,
       minutes: Math.max(0, remaining - learnMinutes),
       netScored: input.netScored,
       planItemId: input.reviewPlanItemId,

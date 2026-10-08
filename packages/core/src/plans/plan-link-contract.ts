@@ -1,6 +1,7 @@
 import { type GoalKind } from "@zoonk/db";
 import { z } from "zod";
 import { goalCreateInputSchema } from "../goals/goal-contract";
+import { type PlanPhaseKind } from "./planner/plan-state";
 
 const MAX_TITLE_LENGTH = 120;
 
@@ -30,7 +31,8 @@ export type PlanLinkOutline = {
   /** Study time the plan's lessons take, from the plan's size rather than the owner's pace. */
   hours: number;
   language: string;
-  phases: { hours: number; milestone: string | null; name: string }[];
+  /** Exam phases have no name: apps name them by `kind`, as the plan does. */
+  phases: { hours: number; kind: PlanPhaseKind; milestone: string | null; name: string }[];
   skillCount: number;
   targetLanguage: string | null;
 };

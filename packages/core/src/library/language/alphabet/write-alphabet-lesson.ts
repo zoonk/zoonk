@@ -10,6 +10,7 @@ import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-r
 import { claimLibraryGeneration, finishLibraryGeneration } from "../../claims/generation-claim";
 import { toStepData } from "../../lessons/_utils/step-data";
 import { createLibraryLesson } from "../../lessons/create-library-lesson";
+import { startLessonVersion } from "../../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { getAlphabetIdentityKey } from "./alphabet-identity";
 import { type AlphabetStepToSave, buildAlphabetLessonSteps } from "./alphabet-lesson-steps";
@@ -84,7 +85,7 @@ async function saveAlphabetLesson({
       return false;
     }
 
-    await tx.step.deleteMany({ where: { lessonId } });
+    const version = await startLessonVersion(tx, lessonId);
 
     await tx.step.createMany({
       data: steps.map((step, position) => ({
@@ -97,6 +98,7 @@ async function saveAlphabetLesson({
         }),
         lessonId,
         position,
+        version,
       })),
     });
 

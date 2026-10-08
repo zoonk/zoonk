@@ -1,6 +1,6 @@
 "use client";
 
-import { type NumericDomain, niceTicks } from "../_utils/plot-scale";
+import { type NumericDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { type PlotPoint } from "../_utils/sample-formula";
 import {
   ActivityPlot,

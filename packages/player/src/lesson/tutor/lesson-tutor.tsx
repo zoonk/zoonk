@@ -1,5 +1,6 @@
 "use client";
 
+import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { createContext, use, useMemo } from "react";
 import { type LessonQuestionContext } from "../../questions/lesson-question-context";
 import { LessonQuestionSheet } from "../../questions/lesson-question-panel";
@@ -11,7 +12,14 @@ import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context
 import { LessonInteractionProvider } from "../lesson-player-interaction";
 import { type LessonTutorConfig } from "./lesson-tutor-context";
 
-const LessonTutorContext = createContext<(() => void) | null>(null);
+/** The learner's buddy in the lesson: who it is, and a way to ask it about where they are. */
+type LessonBuddyTutor = {
+  identity: TutorIdentity;
+  /** Opens the questions sheet about where the learner is, with `suggestion` ready to send. */
+  open: (suggestion?: string) => void;
+};
+
+const LessonTutorContext = createContext<LessonBuddyTutor | null>(null);
 
 /**
  * Where the learner is, as the tutor sees it: the lesson once it's done, the answer they just
@@ -36,15 +44,33 @@ function useTutorContext(): LessonQuestionContext {
   }, [answer, showsResult, state.position, step]);
 }
 
-function TutorInteraction({ children }: { children: React.ReactNode }) {
+function TutorInteraction({
+  children,
+  identity,
+}: {
+  children: React.ReactNode;
+  identity: TutorIdentity;
+}) {
   const controller = useLessonQuestionController();
   const activeContext = useTutorContext();
-  const { open } = controller;
+  const { chooseSuggestion, open } = controller;
 
-  const openHere = useMemo(() => () => open(activeContext), [activeContext, open]);
+  const buddy = useMemo(
+    () => ({
+      identity,
+      open: (suggestion?: string) => {
+        open(activeContext);
+
+        if (suggestion) {
+          chooseSuggestion(suggestion);
+        }
+      },
+    }),
+    [activeContext, chooseSuggestion, identity, open],
+  );
 
   return (
-    <LessonTutorContext value={openHere}>
+    <LessonTutorContext value={buddy}>
       <LessonInteractionProvider tutorOpen={controller.state.isOpen}>
         {children}
       </LessonInteractionProvider>
@@ -62,6 +88,7 @@ function LessonTutorHost({
   const { lesson } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
   const activeContext = useTutorContext();
+  const identity = useTutorIdentity(tutor.buddy);
 
   // Every screen once, in lesson order: a question coming back at the end is still one screen.
   const lessonStepIds = useMemo(() => Object.keys(state.steps), [state.steps]);
@@ -73,8 +100,8 @@ function LessonTutorHost({
       host={{ activeContext, canAskQuestions: tutor.canAsk, lessonStepIds }}
       target={target}
     >
-      <TutorInteraction>{children}</TutorInteraction>
-      <LessonQuestionSheet navigation={tutor.navigation} stepCount={state.queue.length} />
+      <TutorInteraction identity={identity}>{children}</TutorInteraction>
+      <LessonQuestionSheet identity={identity} navigation={tutor.navigation} />
     </LessonQuestionHostProvider>
   );
 }
@@ -98,7 +125,10 @@ export function LessonTutor({
   return <LessonTutorHost tutor={tutor}>{children}</LessonTutorHost>;
 }
 
-/** Opens the tutor about where the learner is; null when the lesson has no tutor. */
-export function useOpenTutor(): (() => void) | null {
+/**
+ * The learner's buddy in the lesson, to ask about where they are; null when the lesson has no
+ * tutor (visitors and guests).
+ */
+export function useLessonBuddy(): LessonBuddyTutor | null {
   return use(LessonTutorContext);
 }

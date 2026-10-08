@@ -1,9 +1,11 @@
 import {
   type ExplanationStepName,
+  type FocusTestQuestionsStepName,
   type GoalContentStepName,
   type GoalUnderstandingStepName,
   type LessonContentStepName,
   type LevelTestBankStepName,
+  type MockQuestionsStepName,
   type TestOutQuestionsStepName,
 } from "@zoonk/core/library/generation/steps";
 
@@ -36,17 +38,22 @@ export type GenerationKindDefinition<TStep extends string, TPhase extends string
 };
 
 /*
- * Durations measured on real runs (impl-log, ONB-GOALWORK timings, 2026-09-27/28): reading a
- * goal's answers and scope about 8 s, a class test's own material up to 15 s when research reads it, the
- * skill graph 15 to 45 s (exams longest), saving the skills with the placement questions and the
- * plan 15 to 30 s, a course's first outline band about 60 s, a lesson's plan 20 s and its writing
- * 30 s, a quick explanation 12 s, a language pair's level test questions 30 to 85 s.
+ * Durations measured on real runs (impl-log, ONB-GOALWORK timings, 2026-09-27/28; re-measured at
+ * the standard tier, E-COST 2026-10-06 and E-COLDPATH 2026-10-07): reading a goal's answers and
+ * scope about 8 s, a class test's own material up to 15 s when research reads it, the skill graph
+ * 45 to 70 s (a big exam's written in sections; a notice another learner's goal already planned
+ * reuses its graph at once), saving the skills and the plan about 15 s, placement's first question
+ * about 25 s after the plan (at once when the bank has it), a course's first outline band about
+ * 75 s, a lesson's plan 40 s and its writing with its check about 50 s, a quick explanation 12 s,
+ * a language pair's level test questions 30 to 85 s.
  */
 
 const GOAL_PHASES = [
   { id: "goal", seconds: 8 },
   { id: "notice", optional: true, seconds: 15 },
-  { id: "skills", seconds: 45 },
+  // An exam's stored notice read again with newer instructions: a few minutes, once per exam.
+  { id: "edital", optional: true, seconds: 180 },
+  { id: "skills", seconds: 60 },
 ] as const;
 
 /** Goal steps up to the skill graph, shared by every wait on a goal's run. */
@@ -54,13 +61,15 @@ const GOAL_STEPS = {
   buildSkillGraph: "skills",
   joinRunningGoal: "join",
   readExamNotice: "notice",
+  readNotice: "edital",
   understandGoal: "goal",
 } as const;
 
 const understanding = {
   phases: [
     { id: "read", seconds: 8 },
-    { id: "dates", optional: true, seconds: 3 },
+    // A stored notice answers at once; an exam without one is looked up, about 10 to 20 seconds.
+    { id: "dates", optional: true, seconds: 12 },
   ],
   steps: {
     findExamDates: "dates",
@@ -73,7 +82,7 @@ const understanding = {
 /** Plan creation: done once the plan is saved, while outlines and first lessons go on. */
 const curriculum = {
   isDone: (steps) => steps.createPlan === "completed",
-  phases: [...GOAL_PHASES, { id: "plan", seconds: 25 }],
+  phases: [...GOAL_PHASES, { id: "plan", seconds: 15 }],
   steps: {
     ...GOAL_STEPS,
     createPlan: "plan",
@@ -85,20 +94,16 @@ const curriculum = {
   },
 } as const satisfies GenerationKindDefinition<
   GoalContentStepName,
-  "goal" | "notice" | "plan" | "skills"
+  "edital" | "goal" | "notice" | "plan" | "skills"
 >;
 
 /**
- * Placement preparation: its questions are written alongside the plan, and done once all are (a
- * plan that came with the goal has no `createPlan`: the first lessons start right after its
- * questions). The wait doesn't hold placement back: it asks each question as soon as that one is
- * written and the plan exists, which the placement step checks for itself.
+ * Placement preparation: its questions are written by a run of their own once the skills are saved,
+ * so the goal's run reports only their start. The wait doesn't hold placement back: it ends with
+ * the first question, which the placement step checks for itself, or once the goal is ready.
  */
 const placement = {
-  isDone: (steps) =>
-    steps.preparePlacement === "completed" &&
-    (steps.createPlan === "completed" || steps.prepareFirstLessons !== undefined),
-  phases: [...GOAL_PHASES, { id: "questions", seconds: 30 }],
+  phases: [...GOAL_PHASES, { id: "questions", seconds: 40 }],
   steps: {
     ...GOAL_STEPS,
     createPlan: "questions",
@@ -110,13 +115,13 @@ const placement = {
   },
 } as const satisfies GenerationKindDefinition<
   GoalContentStepName,
-  "goal" | "notice" | "questions" | "skills"
+  "edital" | "goal" | "notice" | "questions" | "skills"
 >;
 
 /** Day 1 opens once the plan is saved: Today builds the first day from it. */
 const firstLesson = {
   isDone: (steps) => steps.createPlan === "completed",
-  phases: [...GOAL_PHASES, { id: "day", seconds: 25 }],
+  phases: [...GOAL_PHASES, { id: "day", seconds: 15 }],
   steps: {
     ...GOAL_STEPS,
     createPlan: "day",
@@ -128,15 +133,15 @@ const firstLesson = {
   },
 } as const satisfies GenerationKindDefinition<
   GoalContentStepName,
-  "day" | "goal" | "notice" | "skills"
+  "day" | "edital" | "goal" | "notice" | "skills"
 >;
 
 /** The plan, then the outlines of its courses: the first band of the first course takes longest. */
 const courseOutline = {
   phases: [
-    { id: "skills", seconds: 55 },
-    { id: "plan", seconds: 25 },
-    { id: "outline", seconds: 60 },
+    { id: "skills", seconds: 60 },
+    { id: "plan", seconds: 15 },
+    { id: "outline", seconds: 75 },
   ],
   steps: {
     buildSkillGraph: "skills",
@@ -147,6 +152,7 @@ const courseOutline = {
     prepareFirstLessons: "done",
     preparePlacement: "plan",
     readExamNotice: "skills",
+    readNotice: "skills",
     saveSkills: "plan",
     understandGoal: "skills",
   },
@@ -160,7 +166,7 @@ const levelTestBank = {
 
 /**
  * A chapter's test-out questions, written when the learner asks: one call per skill it samples
- * that has none yet, all at once at the priority tier.
+ * that has none yet, all at once.
  */
 const testOutQuestions = {
   phases: [{ id: "questions", seconds: 20 }],
@@ -170,6 +176,29 @@ const testOutQuestions = {
     writeTestOutQuestions: "questions",
   },
 } as const satisfies GenerationKindDefinition<TestOutQuestionsStepName, "questions">;
+
+/**
+ * A goal's focus test questions, written when the learner starts the test: one call per skill it
+ * asks about that has none yet, all at once.
+ */
+const focusTestQuestions = {
+  phases: [{ id: "questions", seconds: 25 }],
+  steps: {
+    focusTestQuestionsReady: "done",
+    joinFocusTestQuestions: "join",
+    writeFocusTestQuestions: "questions",
+  },
+} as const satisfies GenerationKindDefinition<FocusTestQuestionsStepName, "questions">;
+
+/**
+ * A mock's questions, written when the learner starts a mock the shared bank is short of: one call
+ * per few skills, all at once. About two minutes for ENEM's whole exam (190 questions, measured on
+ * the dev server on 2026-10-07).
+ */
+const mockQuestions = {
+  phases: [{ id: "questions", seconds: 100 }],
+  steps: { joinMockQuestions: "join", mockQuestionsReady: "done", writeMockQuestions: "questions" },
+} as const satisfies GenerationKindDefinition<MockQuestionsStepName, "questions">;
 
 /**
  * A new explanation can be read once writing completes (it's saved then); the run goes on to link
@@ -193,8 +222,8 @@ const explanation = {
 
 const lesson = {
   phases: [
-    { id: "plan", seconds: 20 },
-    { id: "write", seconds: 30 },
+    { id: "plan", seconds: 40 },
+    { id: "write", seconds: 50 },
   ],
   steps: {
     joinRunningLesson: "join",
@@ -235,8 +264,10 @@ const GENERATION_KINDS = {
   curriculum,
   explanation,
   firstLesson,
+  focusTestQuestions,
   lesson,
   levelTestBank,
+  mockQuestions,
   placement,
   speakingMock,
   testOutQuestions,

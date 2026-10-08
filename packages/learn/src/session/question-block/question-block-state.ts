@@ -16,8 +16,8 @@ export type QuestionBlockPhase =
   | { kind: "finished"; moment: StudyMomentView };
 
 export type QuestionBlockState = {
-  /** Answers given in this visit, for the net score. */
-  answers: Record<string, { answer: StudyQuestionAnswer; isCorrect: boolean }>;
+  /** Answers given in this visit, for the net score: a blank counts as neither right nor wrong. */
+  answers: Record<string, { answer: StudyQuestionAnswer; blank: boolean; isCorrect: boolean }>;
   hyperdrive: number;
   index: number;
   phase: QuestionBlockPhase;
@@ -72,7 +72,11 @@ export function questionBlockReducer(
           ...state,
           answers: {
             ...state.answers,
-            [action.itemId]: { answer: action.answer, isCorrect: action.feedback.isCorrect },
+            [action.itemId]: {
+              answer: action.answer,
+              blank: action.feedback.blank,
+              isCorrect: action.feedback.isCorrect,
+            },
           },
           hyperdrive: action.feedback.hyperdrive.level,
           phase: { answer: action.answer, feedback: action.feedback, kind: "feedback" },

@@ -17,10 +17,29 @@ type KindCopy<TKind extends GenerationKind> = {
   phases: Record<GenerationPhase<TKind>, PhaseCopy>;
 };
 
+/** Numbered "Writing question 3…" lines for a wait that writes questions, as many as `count`. */
+function useQuestionLines() {
+  const t = useExtracted();
+
+  return ({ count }: { count: number }): NumberedLines => ({
+    count,
+    line: (number) => t("Writing question {number}…", { number: String(number) }),
+    review: t("Checking the answers…"),
+  });
+}
+
 function useGoalPhaseCopy() {
   const t = useExtracted();
 
   return {
+    // An exam's notice read again with newer instructions, once per exam.
+    edital: {
+      label: t("Reading the exam notice"),
+      lines: [
+        t("Finding the subjects and topics it lists…"),
+        t("Checking the exam's dates and format…"),
+      ],
+    },
     goal: {
       label: t("Reading your goal"),
       lines: [t("Reading your answers…"), t("Deciding how deep to go…")],
@@ -85,6 +104,7 @@ function useCurriculumCopy(): KindCopy<"curriculum"> {
 
 function usePlacementCopy(): KindCopy<"placement"> {
   const t = useExtracted();
+  const questionLines = useQuestionLines();
   const goal = useGoalPhaseCopy();
 
   return {
@@ -94,11 +114,7 @@ function usePlacementCopy(): KindCopy<"placement"> {
       questions: {
         label: t("Writing your questions"),
         lines: [t("Picking the skills to ask about…")],
-        numbered: {
-          count: 6,
-          line: (number) => t("Writing question {number}…", { number: String(number) }),
-          review: t("Checking the answers…"),
-        },
+        numbered: questionLines({ count: 6 }),
       },
     },
   };
@@ -228,6 +244,7 @@ function useSpeakingMockCopy(): KindCopy<"speakingMock"> {
 
 function useTestOutQuestionsCopy(): KindCopy<"testOutQuestions"> {
   const t = useExtracted();
+  const questionLines = useQuestionLines();
 
   return {
     name: t("Writing your questions"),
@@ -235,11 +252,39 @@ function useTestOutQuestionsCopy(): KindCopy<"testOutQuestions"> {
       questions: {
         label: t("Writing questions on this chapter"),
         lines: [t("Picking the skills to ask about…")],
-        numbered: {
-          count: 8,
-          line: (number) => t("Writing question {number}…", { number: String(number) }),
-          review: t("Checking the answers…"),
-        },
+        numbered: questionLines({ count: 8 }),
+      },
+    },
+  };
+}
+
+function useFocusTestQuestionsCopy(): KindCopy<"focusTestQuestions"> {
+  const t = useExtracted();
+  const questionLines = useQuestionLines();
+
+  return {
+    name: t("Writing your questions"),
+    phases: {
+      questions: {
+        label: t("Writing questions on each subject"),
+        lines: [t("Picking what to ask in each subject…")],
+        numbered: questionLines({ count: 8 }),
+      },
+    },
+  };
+}
+
+function useMockQuestionsCopy(): KindCopy<"mockQuestions"> {
+  const t = useExtracted();
+  const questionLines = useQuestionLines();
+
+  return {
+    name: t("Writing your mock exam"),
+    phases: {
+      questions: {
+        label: t("Writing questions like the exam's"),
+        lines: [t("Picking what to ask in each subject…")],
+        numbered: questionLines({ count: 12 }),
       },
     },
   };
@@ -282,8 +327,10 @@ export function useGenerationCopy(kind: GenerationKind): {
     curriculum: useCurriculumCopy(),
     explanation: useExplanationCopy(),
     firstLesson: useFirstLessonCopy(),
+    focusTestQuestions: useFocusTestQuestionsCopy(),
     lesson: useLessonCopy(),
     levelTestBank: useLevelTestBankCopy(),
+    mockQuestions: useMockQuestionsCopy(),
     placement: usePlacementCopy(),
     speakingMock: useSpeakingMockCopy(),
     testOutQuestions: useTestOutQuestionsCopy(),

@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { LessonRichTextBlocks } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -53,9 +53,10 @@ export function StepSolverActivity({ content, labelId, onAnswerChange, phase }: 
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <p className="text-base leading-snug font-medium">
-        <LessonRichText text={fields.problem} />
-      </p>
+      <LessonRichTextBlocks
+        className="text-base leading-snug [&>p]:font-medium"
+        text={fields.problem}
+      />
 
       <div className="relative">
         <div aria-hidden="true" className="bg-border absolute top-4 bottom-4 left-[15px] w-0.5" />

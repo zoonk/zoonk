@@ -106,7 +106,7 @@ describe(searchCatalog, () => {
     ]);
   });
 
-  it("only finds public chapters whose home course is a published brand course", async () => {
+  it("only finds public chapters whose home course the catalog lists", async () => {
     const uniqueId = randomUUID().slice(0, 8);
     const searchTerm = `catalogvisible${uniqueId}`;
 
@@ -116,9 +116,11 @@ describe(searchCatalog, () => {
       organizationFixture({ kind: "school" }),
     ]);
 
-    const [published, unpublished, schoolCourse, privateCourse] = await Promise.all([
+    const [published, unpublished, undescribed, schoolCourse, privateCourse] = await Promise.all([
       courseFixture({ isPublished: true, organizationId: brand.id }),
       courseFixture({ isPublished: false, organizationId: brand.id }),
+      // A shared course whose page details aren't written yet.
+      courseFixture({ description: null, isPublished: true, organizationId: brand.id }),
       courseFixture({ isPublished: true, organizationId: school.id }),
       courseFixture({ userId: owner.id, visibility: "private" }),
     ]);
@@ -132,6 +134,7 @@ describe(searchCatalog, () => {
         visibility: "private",
       }),
       searchableChapter({ homeCourseId: unpublished.id, title: searchTerm }),
+      searchableChapter({ homeCourseId: undescribed.id, title: searchTerm }),
       searchableChapter({ homeCourseId: schoolCourse.id, title: searchTerm }),
       searchableChapter({ homeCourseId: privateCourse.id, title: searchTerm }),
       searchableChapter({ homeCourseId: null, title: searchTerm }),

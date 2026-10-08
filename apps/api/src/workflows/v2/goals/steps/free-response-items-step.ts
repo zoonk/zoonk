@@ -4,6 +4,7 @@ import { pickFreeResponseSkills } from "@zoonk/core/lookahead/free-response-skil
 import { type PlacementItemSkill } from "@zoonk/core/lookahead/placement-item-skills";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { startPictureChecks } from "../../images/start-picture-checks";
 
 export async function pickFreeResponseSkillsStep(goalId: string): Promise<PlacementItemSkill[]> {
   "use step";
@@ -12,9 +13,10 @@ export async function pickFreeResponseSkillsStep(goalId: string): Promise<Placem
 }
 
 /**
- * Writes one original free-response question for an AP skill, with the rubric rows and points its
- * scoring guidelines would give, so the goal's essay block can practice and grade it. It joins the
- * shared bank under the exam, for every learner of that AP exam.
+ * Writes one original written question for a skill the exam asks in writing (an AP free-response
+ * question with the rows and points its scoring guidelines would give, a discursive answer or a
+ * peça técnica as the notice sets them), so the goal's essay block can practice and grade it. It
+ * joins the shared bank under the exam, for every learner of that exam.
  */
 export async function prepareFreeResponseItemStep({
   analytics,
@@ -41,7 +43,10 @@ export async function prepareFreeResponseItemStep({
     }),
   );
 
-  const { created } = await createItems({
+  const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });
+
+  const { created, unchecked } = await createItems({
+    analytics: context,
     examBlueprintId: exam?.blueprintId ?? null,
     format: "essay",
     items: data.items,
@@ -49,6 +54,8 @@ export async function prepareFreeResponseItemStep({
     provenance,
     skillId: skill.id,
   });
+
+  await startPictureChecks({ analytics: context, assetIds: unchecked });
 
   return created.length;
 }

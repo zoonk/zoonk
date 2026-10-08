@@ -10,24 +10,23 @@ export type EvaluationRunAnswer =
 /**
  * One evaluation run as the log keeps it: what the model decided with its probabilities, the model
  * that answered, and the input only when the caller keeps it. `inputHash` identifies the input
- * either way, so sampling can skip repeats without reading learner text.
+ * either way, so sampling can skip repeats without reading learner text. The call's tokens and
+ * cost go to the AI call sinks under the same `runId`.
  */
 export type EvaluationRunRecord = {
   answers: Readonly<Record<string, EvaluationRunAnswer>>;
   contentScope: "personal" | "shared";
-  costUsd?: number;
   /** The learner the run was for, when a learner triggered it. */
   distinctId?: string;
   goalId?: string;
   /** The untrusted fields the model read, by name; null when the task doesn't keep its input. */
   input: Readonly<Record<string, string>> | null;
   inputHash: string;
-  inputTokens: number;
   latencyMs: number;
   model: string;
-  outputTokens: number;
   promptVersion: string;
   requestedModel: string;
+  runId: string;
   task: string;
   traceId?: string;
 };

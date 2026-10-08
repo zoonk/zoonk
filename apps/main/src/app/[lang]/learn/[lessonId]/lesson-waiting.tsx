@@ -49,7 +49,7 @@ function Alternative({
   );
 
   return (
-    <div className="bg-muted/60 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-2xl p-4">
+    <div className="bg-muted/60 flex flex-col gap-3 rounded-2xl p-4">
       <p className="text-sm">
         {instead ? t("Something ready to do instead:") : t("Something ready while you wait:")}
       </p>
@@ -121,9 +121,7 @@ function useOpenWhenReady(isReady: boolean) {
 function LessonHeader({ lesson }: { lesson: LessonOutline }) {
   return (
     <header className="flex flex-col gap-2">
-      <h1 className="in-data-[mode=fun]:font-fun-display text-2xl font-semibold tracking-tight text-balance">
-        {lesson.title}
-      </h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-balance">{lesson.title}</h1>
       <p className="text-muted-foreground text-pretty">{lesson.description}</p>
     </header>
   );
@@ -211,7 +209,7 @@ export function LessonWaiting({
   useOpenWhenReady(request.status === "ready");
 
   return (
-    <main className="bg-background in-data-[mode=fun]:fun-space flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+    <main className="bg-background flex min-h-dvh flex-col items-center justify-center px-4 py-10">
       <div className="flex w-full max-w-md flex-col gap-6">
         {isWriting(request) ? (
           <WritingWait

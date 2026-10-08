@@ -6,11 +6,11 @@ Answer three questions.
 
 ## matchesScene
 
-True when the focal object is there and clearly recognizable, and the image shows the relation, comparison or motion the scene describes. Small differences in pose, angle or extra background space are fine. False when the main object is missing or wrong, the image shows a different idea, the parts contradict the scene (an arrow pointing the wrong way, the wrong state on the wrong side), or an object is drawn twice when the scene has it once (so a "before and after" shows no change).
+True when the focal object is there and clearly recognizable, and the image shows the relation, comparison or motion the scene describes. Small differences in pose, angle or extra background space are fine. False when the main object is missing or wrong, the image shows a different idea, the parts contradict the scene (an arrow pointing the wrong way, the wrong state on the wrong side), or an object is drawn twice when the scene has it once (so a "before and after" shows no change). A letter or number that marks a part (A, B, 1, 2) must point exactly at the part its target names: one whose pointer ends on another part, or between two parts, fails, since a question asks which part it marks. A word label only needs to sit near what it names.
 
 ## onStyle
 
-True for a flat illustration with simple shapes, soft colors, a light plain background and one clear focal point. False for a photo or photorealism, glossy 3D, a dark or busy background, a poster or infographic with many parts, or several panels.
+True for a flat illustration with simple shapes, soft colors, a light plain background and one clear focal point, including a whole drawn with its labeled parts (an organ, a cycle, a map) and an artwork the scene names drawn in its own colors and technique. False for a photo or photorealism, glossy 3D, a dark or busy background, a poster or infographic with many parts, or several panels.
 
 ## textCorrect
 

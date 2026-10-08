@@ -7,7 +7,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { listCurrentUserCourses, listCurrentUserCoursesPage } from "./list-current-user-courses";
+import { listCurrentUserCoursesPage } from "./list-current-user-courses";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
@@ -51,13 +51,13 @@ function startedLessonFixture({
   });
 }
 
-describe(listCurrentUserCourses, () => {
+describe(listCurrentUserCoursesPage, () => {
   beforeEach(() => {
     mockSession(null);
   });
 
-  it("returns an empty list without a session", async () => {
-    await expect(listCurrentUserCourses()).resolves.toStrictEqual([]);
+  it("returns null without a session", async () => {
+    await expect(listCurrentUserCoursesPage({ limit: 10 })).resolves.toBeNull();
   });
 
   it("lists goal courses and courses of started lessons, most recent activity first", async () => {
@@ -94,7 +94,8 @@ describe(listCurrentUserCourses, () => {
 
     mockSession(learner.id);
 
-    const courses = await listCurrentUserCourses();
+    const page = await listCurrentUserCoursesPage({ limit: 100 });
+    const courses = page?.courses ?? [];
 
     expect(courses.map((course) => course.id)).toStrictEqual([
       latestCourse.course.id,
@@ -134,21 +135,12 @@ describe(listCurrentUserCourses, () => {
 
     mockSession(learner.id);
 
-    const courses = await listCurrentUserCourses();
+    const page = await listCurrentUserCoursesPage({ limit: 100 });
+    const courses = page?.courses ?? [];
 
     expect(
       courses.map((course) => ({ id: course.id, organization: course.organization })),
     ).toStrictEqual([{ id: ownCourse.id, organization: null }]);
-  });
-});
-
-describe(listCurrentUserCoursesPage, () => {
-  beforeEach(() => {
-    mockSession(null);
-  });
-
-  it("returns null without a session", async () => {
-    await expect(listCurrentUserCoursesPage({ limit: 10 })).resolves.toBeNull();
   });
 
   it("filters by title or description before paginating", async () => {

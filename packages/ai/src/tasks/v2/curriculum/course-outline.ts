@@ -1,10 +1,12 @@
 import "server-only";
 import { Output, generateText, streamText } from "ai";
 import { z } from "zod";
+import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration, startTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
 import { formatLocalContext } from "../../_utils/language-context";
+import { type LessonExam, formatLessonExams } from "../../_utils/lesson-exams";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "./_utils/course-levels";
 import { chapterSchema } from "./_utils/course-outline-schema";
@@ -15,7 +17,10 @@ import systemPrompt from "./course-outline.prompt.md";
 /**
  * From the course-outline eval (6 cases, Astra judge, 26 Sep 2026): Opus 8.72,
  * Sol 8.70 and Gemini 3.8 Flash 7.87, at $207, $71 and $19 per 1,000 runs.
- * Sol ties Opus at a third of the cost; Flash left out pillars of broad bands.
+ * Sol ties Opus at a third of the cost; Flash left out pillars of broad bands. The two cheapest, on
+ * 8 cases (7 Oct 2026): Luna 8.91 and Claude Haiku 5.5 8.69 against Sol's 9.05, at $2 and $5 per
+ * 1,000 runs against $61; Luna's overviews left out foundations (GDP and unemployment in
+ * economics, quantization and tunneling in quantum physics).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
@@ -23,7 +28,13 @@ const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] 
 const schema = z.object({ chapters: z.array(chapterSchema) });
 
 /** A skill from a goal's skill graph that this course level must teach. */
-type RequiredSkill = { key: string; name: string; description: string };
+type RequiredSkill = {
+  key: string;
+  name: string;
+  description: string;
+  /** With `MATERIAL`: the lessons the learner's plan gives it, which the outline keeps to. */
+  lessons?: number;
+};
 
 /**
  * A skill the band already teaches in `chapters`, whose next chapter the outline writes, of about
@@ -45,6 +56,21 @@ export type CourseOutlineParams = {
   otherLevelChapters?: string[];
   /** Skills of this band that other chapters of this course already teach, so none is taught twice. */
   taughtElsewhere?: string[];
+  /**
+   * The learners who need the required and extended skills prepare for an exam answered without
+   * tools of their own: those skills are taught as the exam asks them, in chapters without tools.
+   */
+  withoutTools?: boolean;
+  /**
+   * The exam the learners who need the required and extended skills prepare for: their chapters
+   * are written at its depth and in its style for its candidates, without naming it.
+   */
+  exams?: LessonExam[];
+  /**
+   * A private course built from one learner's own class material: that material, page by page,
+   * which the outline teaches exactly instead of the whole band.
+   */
+  material?: string;
   model?: string;
   /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
@@ -56,7 +82,12 @@ export type CourseOutlineParams = {
 function formatRequiredSkills(skills: readonly RequiredSkill[]): string {
   return skills.length === 0
     ? "none"
-    : skills.map((skill) => `\n- ${skill.key}: ${skill.name}. ${skill.description}`).join("");
+    : skills
+        .map((skill) => {
+          const lessons = skill.lessons ? ` (about ${skill.lessons} lessons)` : "";
+          return `\n- ${skill.key}: ${skill.name}. ${skill.description}${lessons}`;
+        })
+        .join("");
 }
 
 function formatExtendSkill(skill: ExtendSkill): string {
@@ -84,8 +115,11 @@ function buildUserPrompt(params: CourseOutlineParams): string {
     EXTEND_SKILLS: ${formatExtendSkills(params.extendSkills ?? [])}
     OTHER_LEVEL_CHAPTERS: ${formatTitles(params.otherLevelChapters ?? [])}
     TAUGHT_ELSEWHERE: ${formatTitles(params.taughtElsewhere ?? [])}
+    WITHOUT_TOOLS: ${params.withoutTools ? "yes" : "no"}
+    ${formatLessonExams(params.exams)}
 
 ${formatLocalContext(params.language)}
+${params.material ? `\n${formatUntrustedInput({ MATERIAL: params.material })}` : ""}
   `;
 }
 

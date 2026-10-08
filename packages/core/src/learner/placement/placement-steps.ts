@@ -1,4 +1,3 @@
-import { type ItemFormat } from "@zoonk/db";
 import { type PlacementEvidence, type SkillBeliefs } from "./placement-beliefs";
 import {
   type PlacementSkill,
@@ -6,7 +5,6 @@ import {
   buildSkillGraph,
   collectRelated,
 } from "./placement-graph";
-import { type PlacementQuickFormat, getQuickFormatOrder } from "./placement-quick-format";
 
 /**
  * Placement is sure about a skill at 80%: known at or above it, unknown at or below 20%. It stops
@@ -146,17 +144,26 @@ export function getAreaStarts({
 }
 
 /**
- * Whether placement is sure where every area of every phase starts. A plan without skills yet
- * isn't: there's nothing to place.
+ * Whether placement is sure where every area of every phase starts. A test from the learner's own
+ * material (`answeredOnly`) is all on the test, so a start isn't enough: placement is sure once it
+ * knows each topic, known or not. A plan without skills yet isn't: there's nothing to place.
  */
 export function isPlacementSettled({
+  answeredOnly = false,
   beliefs,
   skills,
 }: {
+  answeredOnly?: boolean;
   beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
 }): boolean {
-  return skills.length > 0 && getSettledStart({ beliefs, skills }).confident;
+  if (skills.length === 0) {
+    return false;
+  }
+
+  return answeredOnly
+    ? getUndecidedSkills({ answeredOnly, beliefs, skills }).length === 0
+    : getSettledStart({ beliefs, skills }).confident;
 }
 
 /** "I'd rather start from scratch": every phase starts at its first skill. */
@@ -179,15 +186,25 @@ export function getScratchAreaStarts(skills: readonly PlacementSkill[]): AreaSta
 
 /**
  * Skills that still decide a starting point: unsure skills of each area of each phase that isn't
- * settled, from that part's current start onward. Skills after a confident start don't matter yet.
+ * settled, from that part's current start onward. Skills after a confident start don't matter yet,
+ * except in a test from the learner's own material (`answeredOnly`), where every unsure topic does:
+ * each one is on the test.
  */
 export function getUndecidedSkills({
+  answeredOnly = false,
   beliefs,
   skills,
 }: {
+  answeredOnly?: boolean;
   beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
 }): PlacementSkill[] {
+  if (answeredOnly) {
+    return buildSkillGraph(skills).ordered.filter(
+      (skill) => getSkillPlacementStatus(beliefs.get(skill.id)) === "unsure",
+    );
+  }
+
   return groupByPhaseAndArea(buildSkillGraph(skills).ordered).flatMap((group) => {
     const start = getStart({ beliefs, skills: group });
 
@@ -309,16 +326,20 @@ function getDirectionalPool({
  * so every area is sampled before placement goes deep in one. An area's first question comes from
  * where the learner's own level points (the middle by default); later ones bisect toward harder
  * or easier skills of that area after its last answer, so a long plan settles in a few questions
- * instead of one per skill. Only skills with an unseen question (`askableSkillIds`) can be asked;
- * null means nothing more can be asked right now.
+ * instead of one per skill. A test from the learner's own material (`answeredOnly`), where an
+ * answer settles only its own topic, asks each topic once in the plan's order, then confirms the
+ * ones still unsure. Only skills with an unseen question (`askableSkillIds`) can be asked; null
+ * means nothing more can be asked right now.
  */
 export function chooseNextPlacementSkill({
+  answeredOnly = false,
   askableSkillIds,
   beliefs,
   evidence,
   ownLevel,
   skills,
 }: {
+  answeredOnly?: boolean;
   askableSkillIds: ReadonlySet<string>;
   beliefs: SkillBeliefs;
   evidence: readonly PlacementEvidence[];
@@ -327,12 +348,23 @@ export function chooseNextPlacementSkill({
 }): string | null {
   const graph = buildSkillGraph(skills);
 
-  const candidates = getUndecidedSkills({ beliefs, skills }).filter((skill) =>
+  const candidates = getUndecidedSkills({ answeredOnly, beliefs, skills }).filter((skill) =>
     askableSkillIds.has(skill.id),
   );
 
   if (candidates.length === 0) {
     return null;
+  }
+
+  if (answeredOnly) {
+    const unanswered = candidates.filter(
+      (skill) => !evidence.some((answer) => answer.skillId === skill.id),
+    );
+
+    return (
+      (unanswered.length > 0 ? unanswered : candidates).toSorted((a, b) => a.order - b.order)[0]
+        ?.id ?? null
+    );
   }
 
   const area = pickArea({ candidates, evidence, graph });
@@ -347,72 +379,4 @@ export function chooseNextPlacementSkill({
   }
 
   return pickMedian(getDirectionalPool({ candidates: inArea, graph, last }))?.id ?? null;
-}
-
-/** A question from the shared item bank that placement could ask. */
-export type PlacementItemCandidate = {
-  /** The item bank's difficulty (easy -1, medium 0, hard 1); unknown reads as medium. */
-  difficulty?: number | null;
-  format: ItemFormat;
-  id: string;
-  seen: boolean;
-  skillId: string;
-};
-
-const CONFIRMING_FORMATS: readonly ItemFormat[] = ["typed", "numeric", "spoken"];
-
-/**
- * Where a format ranks for the next question, 0 first: the goal's quick format to cover breadth;
- * formats a guess can't pass to confirm, then the quick ones in the goal's order.
- */
-function getFormatRank({
-  confirming,
-  format,
-  quickFormat,
-}: {
-  confirming: boolean;
-  format: ItemFormat;
-  quickFormat: PlacementQuickFormat;
-}) {
-  const quick = getQuickFormatOrder(quickFormat);
-  const preferred = confirming ? [...CONFIRMING_FORMATS, ...quick] : quick;
-  const index = preferred.indexOf(format);
-
-  return index === -1 ? preferred.length : index;
-}
-
-function getDifficultyGap({ item, target }: { item: PlacementItemCandidate; target: number }) {
-  return Math.abs((item.difficulty ?? 0) - target);
-}
-
-/**
- * Picks an unseen question for a skill: a quick one in the goal's quick format to cover breadth the
- * first time (`quickFormat`: an exam that judges assertions asks true or false), and a typed or
- * numeric one to confirm a skill the learner already got right, since those are hard to guess.
- * Among those, the one closest to `targetDifficulty` (see `getTargetDifficulty`).
- */
-export function pickPlacementItem({
-  confirming,
-  items,
-  quickFormat = "multipleChoice",
-  skillId,
-  targetDifficulty = 0,
-}: {
-  confirming: boolean;
-  items: readonly PlacementItemCandidate[];
-  quickFormat?: PlacementQuickFormat;
-  skillId: string;
-  targetDifficulty?: number;
-}): PlacementItemCandidate | null {
-  return (
-    items
-      .filter((item) => item.skillId === skillId && !item.seen)
-      .toSorted(
-        (a, b) =>
-          getFormatRank({ confirming, format: a.format, quickFormat }) -
-            getFormatRank({ confirming, format: b.format, quickFormat }) ||
-          getDifficultyGap({ item: a, target: targetDifficulty }) -
-            getDifficultyGap({ item: b, target: targetDifficulty }),
-      )[0] ?? null
-  );
 }

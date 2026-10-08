@@ -8,19 +8,73 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": { "supportedIds": ["dates.0", "mock"] },
-        "id": "enem-2026-1",
+        "expected": {
+          "supportedIds": [
+            "formats.0",
+            "formats.0.description",
+            "formats.1",
+            "formats.1.description"
+          ]
+        },
+        "id": "class-test-announced-formats-1",
+        "language": "pt",
         "userInput": {
           "facts": [
             {
-              "id": "subjects.0",
+              "id": "formats.0",
+              "passage": "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "statement": "Question format: a written answer in the candidate's own words, such as an essay or a discursive question"
+            },
+            {
+              "id": "formats.0.description",
+              "passage": "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "statement": "Question format: Questão dissertativa sobre osmose."
+            },
+            {
+              "id": "formats.1",
+              "passage": "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "statement": "Question format: questions answered in writing with a short answer, such as a word, a value or a table or blank to fill in"
+            },
+            {
+              "id": "formats.1.description",
+              "passage": "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "statement": "Question format: Questão de completar a tabela das organelas."
+            },
+            {
+              "id": "formats.2",
+              "passage": "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "statement": "Question format: multiple-choice questions, 5 options each"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "supportedIds": ["subjects.0.questions", "dates.0", "mock"] },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "facts": [
+            {
+              "id": "subjects.0.questions",
               "passage": "3.2 O Exame será constituído de quatro provas objetivas e uma redação em Língua Portuguesa. Cada prova objetiva terá 45 (quarenta e cinco) questões de múltipla escolha.",
-              "statement": "Subject \"Matemática e suas Tecnologias\"; 45 questions"
+              "statement": "Subject \"Matemática e suas Tecnologias\" has 45 questions"
+            },
+            {
+              "id": "subjects.1.questions",
+              "passage": "3.2 O Exame será constituído de quatro provas objetivas e uma redação em Língua Portuguesa. Cada prova objetiva terá 45 (quarenta e cinco) questões de múltipla escolha.",
+              "statement": "Subject \"Redação\" has 45 questions"
             },
             {
               "id": "subjects.1",
               "passage": "3.2 O Exame será constituído de quatro provas objetivas e uma redação em Língua Portuguesa. Cada prova objetiva terá 45 (quarenta e cinco) questões de múltipla escolha.",
-              "statement": "Subject \"Redação\"; weight 0.2"
+              "statement": "Subject \"Redação\" is worth 20% of the final score"
             },
             {
               "id": "dates.0",
@@ -55,6 +109,7 @@
       "testCase": {
         "expected": { "supportedIds": ["rules.0", "mock", "formats.0"] },
         "id": "tcdf-2026-1",
+        "language": "pt",
         "userInput": {
           "facts": [
             {
@@ -95,6 +150,7 @@
       "testCase": {
         "expected": { "supportedIds": ["subjects.0"] },
         "id": "sat-1",
+        "language": "en",
         "userInput": {
           "facts": [
             {

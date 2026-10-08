@@ -6,10 +6,17 @@ import {
 } from "@zoonk/ai/tasks/v2/identity/subject";
 import { isJsonObject } from "@zoonk/utils/json";
 
-/** One labeled pair: the item a plan needs and one existing item the search found. */
+/**
+ * One labeled pair: the item a plan needs and one existing item the search found. Production
+ * judges every candidate of a search in one call, so `others` are the other candidates beside it
+ * (unlabeled, from other cases of the same kind and language) and `position` is where the labeled
+ * one sits among them.
+ */
 export type LibraryIdentityDecisionInput = {
   subject: LibraryIdentitySubject;
   candidate: LibraryIdentityItem;
+  others?: LibraryIdentityItem[];
+  position?: number;
 };
 
 export type LibraryIdentityDecisionOutput = { reuse: boolean };

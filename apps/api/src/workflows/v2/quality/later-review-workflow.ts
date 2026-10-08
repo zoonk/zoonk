@@ -1,29 +1,20 @@
 import { getWorkflowMetadata } from "workflow";
-import { start } from "workflow/api";
-import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { pullLessonStep, reviewLessonLaterStep } from "./steps/later-review-steps";
+import { type LessonCheckStatus, settlePublishedLesson } from "./lesson-check-workflow";
+import { reviewLessonLaterStep } from "./steps/later-review-steps";
 
-type Review = PromiseSettledResult<boolean | null>;
-
-/** A review that couldn't run (its step failed, or the lesson can't be reviewed) pulls nothing. */
-function foundProblem(review: Review | undefined): boolean {
-  return review?.status === "fulfilled" && review.value === true;
-}
-
-function wasReviewed(review: Review): boolean {
-  return review.status === "fulfilled" && review.value !== null;
-}
+export type LaterReviewResult = { replaced: string[]; reviewed: number; setAside: string[] };
 
 /**
  * The later check of lessons made ahead of time: each lesson gets the lesson quality check at the
- * flex tier, from a reasoning model of another family than the writer. A lesson with a blocking problem is pulled (nobody opened it yet, so nobody loses
- * progress) and written again, with the reasoning check required before it's published.
+ * flex tier, from a reasoning model of another family than the writer. A lesson it finds something
+ * wrong in gets a fresh draft, checked in full, published as its next version (learners playing
+ * the current one finish it); when no draft passes, the lesson is taken out of play.
  */
 export async function laterReviewWorkflow({
   lessonIds,
 }: {
   lessonIds: string[];
-}): Promise<{ pulled: string[]; reviewed: number }> {
+}): Promise<LaterReviewResult> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
@@ -32,17 +23,35 @@ export async function laterReviewWorkflow({
     lessonIds.map((lessonId) => reviewLessonLaterStep({ lessonId, workflowRunId })),
   );
 
-  const failed = lessonIds.filter((_, index) => foundProblem(reviews[index]));
+  const settled = await Promise.allSettled(
+    lessonIds.map(async (lessonId, index): Promise<LessonCheckStatus | null> => {
+      const review = reviews[index];
 
-  const pulled = await Promise.all(
-    failed.map(async (lessonId) => ((await pullLessonStep(lessonId)) ? [lessonId] : [])),
+      if (
+        review?.status !== "fulfilled" ||
+        !review.value ||
+        review.value.outcome.status !== "heldBack"
+      ) {
+        return null;
+      }
+
+      return settlePublishedLesson({
+        context: { lessonId, workflowRunId },
+        outcome: review.value.outcome,
+        version: review.value.version,
+      });
+    }),
   );
 
-  const pulledIds = pulled.flat();
+  const withStatus = (status: LessonCheckStatus) =>
+    lessonIds.filter((_, index) => {
+      const result = settled[index];
+      return result?.status === "fulfilled" && result.value === status;
+    });
 
-  await Promise.all(
-    pulledIds.map((lessonId) => start(lessonContentWorkflow, [{ forceReview: true, lessonId }])),
-  );
-
-  return { pulled: pulledIds, reviewed: reviews.filter((review) => wasReviewed(review)).length };
+  return {
+    replaced: withStatus("republished"),
+    reviewed: reviews.filter((review) => review.status === "fulfilled" && review.value).length,
+    setAside: withStatus("setAside"),
+  };
 }

@@ -19,6 +19,8 @@ type OwnedEssay = {
   content: EssayContent;
   goal: Goal | null;
   item: Item;
+  /** The learner-local day of the block's session (UTC midnight). */
+  sessionDate: Date;
   sessionId: string;
   userId: string;
 };
@@ -74,6 +76,7 @@ export async function findOwnedEssay(blockId: string): Promise<OwnedEssayResult>
       content,
       goal: studySession.goal,
       item,
+      sessionDate: studySession.localDate,
       sessionId: block.sessionId,
       userId,
     },

@@ -38,8 +38,9 @@ async function prepareFieldItems({
 }
 
 /**
- * An AP goal gets original free-response questions for its first skills, graded by rows with
- * their own points like AP's scoring guidelines. Guests don't.
+ * An exam answered partly in writing gets original written questions for its essay block: an AP
+ * goal's first skills, graded by rows with their own points like AP's scoring guidelines, or the
+ * skills of an exam's written test (a discursive test, a peça técnica). Guests don't.
  */
 async function prepareFreeResponseItems({
   context,

@@ -6,9 +6,10 @@ import { splitEvenly } from "@zoonk/utils/split-evenly";
  * same instructions (about 3,000 input tokens), so fewer calls cost less; but output comes token
  * by token, and the learner's first question can wait on the first call of the first saved slice.
  * Output costs most and grows with the skills, not the calls: three skills per call wrote about
- * 2,900 output tokens (1,100 of them reasoning), some 20–28 s at the priority tier, where one
+ * 2,900 output tokens (1,100 of them reasoning), some 20–28 s at the priority tier (the standard
+ * tier is about half as fast; only an exam's or a language's first call gets priority), where one
  * skill's three multiple-choice questions used to take 12–20 s. Two skills per call keep that wait
- * where it was for about $0.02 more per goal, and a slice's calls run at once.
+ * short for about $0.02 more per goal, and a slice's calls run at once.
  */
 const QUICK_ITEMS_PER_CALL = 2;
 

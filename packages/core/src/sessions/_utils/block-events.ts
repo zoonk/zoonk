@@ -5,6 +5,12 @@ import { type BlockPayload } from "../block-payload";
 import { BRAIN_POWER_BONUS, getAnswersEnergyDelta } from "../brain-power";
 import { type SessionAnswer } from "./session-answers";
 
+/**
+ * A full review's ledger kind: practice on every skill of the goal, on a day whose mock the
+ * learner's plan doesn't include. Preparation counts it as their test in real conditions.
+ */
+export const FULL_REVIEW_LEDGER_KIND = "fullReview";
+
 /** One ledger row a finished block writes, before the shared fields are added. */
 export type BlockEvent = {
   brainPower: number;
@@ -109,6 +115,18 @@ function getCheckpointEvent(context: BlockEventContext): BlockEvent {
   };
 }
 
+/**
+ * What a practice block was, as the ledger keeps it: bonus practice, a full review (which counts
+ * as the test in real conditions for a learner whose plan has no mocks), or mixed practice.
+ */
+function getPracticeKind(payload: BlockEventContext["payload"]): string {
+  if (payload.extra) {
+    return "extraPractice";
+  }
+
+  return payload.fullReview ? FULL_REVIEW_LEDGER_KIND : "practice";
+}
+
 /** The ledger rows for a finished question block: capsules, practice or a checkpoint. */
 export function getBlockEvents(context: BlockEventContext): BlockEvent[] {
   if (context.block.kind === "review") {
@@ -125,7 +143,7 @@ export function getBlockEvents(context: BlockEventContext): BlockEvent[] {
       contentIds: getIds(context),
       ...countAnswers(context.answers),
       kind: "questions",
-      lessonKind: context.payload.extra ? "extraPractice" : "practice",
+      lessonKind: getPracticeKind(context.payload),
       seconds: context.seconds,
       titleSnapshot: context.payload.title,
     },

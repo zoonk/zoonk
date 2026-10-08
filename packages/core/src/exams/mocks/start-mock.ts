@@ -16,9 +16,9 @@ export type StartMockResult = {
 };
 
 /**
- * Starts the mock when the learner takes it on: its session block starts (a guardian's daily
- * limit is checked there), the sections are fixed and the first one's clock starts. Starting a
- * running mock again resumes it.
+ * Starts a scheduled mock when the learner takes it on: its session block starts (a guardian's
+ * daily limit is checked there), the sections are fixed and the first one's clock starts. Starting
+ * a running mock again resumes it, a mock taken any time included.
  */
 export async function startMock({
   blockId,
@@ -37,6 +37,11 @@ export async function startMock({
 
   if (owned.mock) {
     return { status: owned.mock.status === "finished" ? "finished" : "ready" };
+  }
+
+  // A mock taken any time starts as it's made; only a scheduled one waits for its start.
+  if (!owned.block) {
+    return { status: "notFound" };
   }
 
   const started = await startStudyBlock({ blockId, input, sessionId: owned.block.sessionId });

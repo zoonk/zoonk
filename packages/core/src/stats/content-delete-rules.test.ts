@@ -98,12 +98,7 @@ async function createLearnerRows({ library, userId }: { library: Library; userId
   const [plan, session] = await Promise.all([
     planFixture({ goalId: goal.id }),
     studySessionFixture({ goalId: goal.id, userId }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      buddyKind: "zu",
-      experienceMode: "fun",
-      userId,
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, buddyKind: "zu", userId }),
     learnerSkillFixture({ skillId: library.skill.id, userId }),
   ]);
 

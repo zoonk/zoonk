@@ -68,12 +68,11 @@ describe(getLibraryCourse, () => {
       { id: lesson.id, position: 0, title: "First lesson" },
     ]);
 
-    expect(vi.mocked(cacheTag).mock.calls.flat()).toStrictEqual(
-      expect.arrayContaining([
-        getCourseCurriculumCacheTag(course.id),
-        getLibraryChapterCacheTag(beginnerFirst.id),
-      ]),
-    );
+    // Tagged by its course, never chapter by chapter: a course can hold more chapters than a cache
+    // entry has tags for, and a chapter's change refreshes it through the course's tag.
+    const tags = vi.mocked(cacheTag).mock.calls.flat();
+    expect(tags).toContain(getCourseCurriculumCacheTag(course.id));
+    expect(tags).not.toContain(getLibraryChapterCacheTag(beginnerFirst.id));
   });
 
   it("shows private chapters and lessons only to their owner", async () => {

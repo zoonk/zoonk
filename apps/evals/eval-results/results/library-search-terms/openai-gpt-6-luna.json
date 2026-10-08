@@ -550,17 +550,17 @@
       "classification": { "expected": "found", "predicted": "missed" },
       "steps": [
         {
-          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: primeira classe, ordem de preferência, exclusão das classes, dependentes do segurado, RGPS, classe de dependentes. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência comprovada, prova de dependência, ônus da prova, primeira classe, classes de dependentes. Item 5 (Classificar dependentes do segurado): target target not found with terms: classe, segurado, enquadramento, dependentes previdenciários, ordem das classes, dependência no RGPS.",
+          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: segurado, RGPS, classes de dependentes, primeira classe, ordem de preferência, exclusão das classes, prioridade dos dependentes. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência presumida, dependência comprovada, prova econômica, ônus da prova, classes de dependentes.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: primeira classe, ordem de preferência, exclusão das classes, dependentes do segurado, RGPS, classe de dependentes. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência comprovada, prova de dependência, ônus da prova, primeira classe, classes de dependentes. Item 5 (Classificar dependentes do segurado): target target not found with terms: classe, segurado, enquadramento, dependentes previdenciários, ordem das classes, dependência no RGPS.",
+          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: segurado, RGPS, classes de dependentes, primeira classe, ordem de preferência, exclusão das classes, prioridade dos dependentes. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência presumida, dependência comprovada, prova econômica, ônus da prova, classes de dependentes.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: primeira classe, ordem de preferência, exclusão das classes, dependentes do segurado, RGPS, classe de dependentes. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência comprovada, prova de dependência, ônus da prova, primeira classe, classes de dependentes. Item 5 (Classificar dependentes do segurado): target target not found with terms: classe, segurado, enquadramento, dependentes previdenciários, ordem das classes, dependência no RGPS.",
+          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: segurado, RGPS, classes de dependentes, primeira classe, ordem de preferência, exclusão das classes, prioridade dos dependentes. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência presumida, dependência comprovada, prova econômica, ônus da prova, classes de dependentes.",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -763,17 +763,17 @@
       "classification": { "expected": "found", "predicted": "missed" },
       "steps": [
         {
-          "conclusion": "Item 2 (Find a percentage of an amount): target target not found with terms: percentage, amount, percent of a number, part of a whole, proportion, percentage calculation.",
+          "conclusion": "Item 6 (Add a percentage to a price): target target not found with terms: sales tax, tip, markup, price increase, tax rate, total price, percentage increase.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "Item 2 (Find a percentage of an amount): target target not found with terms: percentage, amount, percent of a number, part of a whole, proportion, percentage calculation.",
+          "conclusion": "Item 6 (Add a percentage to a price): target target not found with terms: sales tax, tip, markup, price increase, tax rate, total price, percentage increase.",
           "kind": "minorErrors",
           "score": 6
         },
         {
-          "conclusion": "Item 2 (Find a percentage of an amount): target target not found with terms: percentage, amount, percent of a number, part of a whole, proportion, percentage calculation.",
+          "conclusion": "Item 6 (Add a percentage to a price): target target not found with terms: sales tax, tip, markup, price increase, tax rate, total price, percentage increase.",
           "kind": "potentialImprovements",
           "score": 6
         }
@@ -955,11 +955,23 @@
       }
     },
     {
-      "classification": { "expected": "found", "predicted": "found" },
+      "classification": { "expected": "found", "predicted": "missed" },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "Item 3 (Dominância e recessividade): target target not found with terms: alelo dominante, alelo recessivo, dominância completa, fenótipo, genótipo, herança genética. Item 7 (Identificar alelos dominantes e recessivos): target target not found with terms: alelo dominante, alelo recessivo, dominância completa, fenótipo, genótipo, expressão gênica.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 3 (Dominância e recessividade): target target not found with terms: alelo dominante, alelo recessivo, dominância completa, fenótipo, genótipo, herança genética. Item 7 (Identificar alelos dominantes e recessivos): target target not found with terms: alelo dominante, alelo recessivo, dominância completa, fenótipo, genótipo, expressão gênica.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 3 (Dominância e recessividade): target target not found with terms: alelo dominante, alelo recessivo, dominância completa, fenótipo, genótipo, herança genética. Item 7 (Identificar alelos dominantes e recessivos): target target not found with terms: alelo dominante, alelo recessivo, dominância completa, fenótipo, genótipo, expressão gênica.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {

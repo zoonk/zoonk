@@ -180,6 +180,37 @@ describe("reuse across courses", () => {
     expect(asked?.subject.item.courses).toStrictEqual([portuguese.title]);
   });
 
+  it("asks no reuse decision for a lesson whose skills are all new to the Library", async () => {
+    const word = uniqueWord();
+    const [foreign, portuguese] = await twoSubjects(word);
+    mockSearchTerms([word]);
+
+    await outlineIn({
+      chapter: outlineChapter({
+        lessons: [{ skills: [`Identificar o tema ${word}`], title: `Tema do texto ${word}` }],
+        title: `Leitura atenta ${word}`,
+      }),
+      courseId: foreign.id,
+    });
+
+    vi.mocked(decideLibraryIdentity).mockClear();
+
+    // Its one skill is created now, so no lesson in the Library can teach it yet, although the
+    // search would find the other course's lesson by its words.
+    const own = await outlineIn({
+      chapter: outlineChapter({
+        lessons: [
+          { skills: [`Resumir um parágrafo ${uniqueWord()}`], title: `Tema do texto ${word}` },
+        ],
+        title: `Resumos ${uniqueWord()}`,
+      }),
+      courseId: portuguese.id,
+    });
+
+    expect(own.lessonIds.length).toBeGreaterThan(0);
+    expect(decisionCalls("lesson")).toStrictEqual([]);
+  });
+
   it("still reuses a chapter and a lesson exactly inside the same course", async () => {
     const word = uniqueWord();
     const [, portuguese] = await twoSubjects(word);

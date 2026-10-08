@@ -59,11 +59,15 @@
       }
     },
     {
-      "classification": { "expected": "true", "predicted": "true" },
+      "classification": { "expected": "true", "predicted": "false" },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        { "conclusion": "Expected privateCourse true.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected privateCourse true.", "kind": "minorErrors", "score": 6 },
+        {
+          "conclusion": "Expected privateCourse true.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
       ],
       "testCase": {
         "expected": {
@@ -274,9 +278,21 @@
     {
       "classification": { "expected": "false", "predicted": "false" },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "generalGoal \"Preparação para concurso público bancário\" doesn't name the shared subject.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "generalGoal \"Preparação para concurso público bancário\" doesn't name the shared subject.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "generalGoal \"Preparação para concurso público bancário\" doesn't name the shared subject.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
       ],
       "testCase": {
         "expected": {

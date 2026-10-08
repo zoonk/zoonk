@@ -35,7 +35,9 @@ async function toSpokenAnswerOutcome(response: Response): Promise<SpokenAnswerOu
     return { retryAfterSeconds: refusal.retryAfterSeconds, status: "slowDown" };
   }
 
-  return refusal ? { status: "limitReached", tier: refusal.tier } : { status: "failed" };
+  return refusal
+    ? { period: refusal.period, status: "limitReached", tier: refusal.tier }
+    : { status: "failed" };
 }
 
 /**

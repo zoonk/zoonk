@@ -16,10 +16,10 @@ function teachingStep<TKind extends TeachingStepKind>(
     content,
     id,
     image: null,
+    imagePending: false,
     kind,
     position: 0,
     skillId: null,
-    variants: { deeper: null, simpler: null },
   };
 }
 
@@ -107,7 +107,9 @@ export function summaryStep(id: string): PlayableTeachingStep {
 export function stepResult(isCorrect: boolean): LessonStepResult {
   return {
     answerText: isCorrect ? "Right" : "Wrong",
+    checked: true,
     correctAnswer: isCorrect ? null : "Right",
+    corrections: [],
     feedback: isCorrect ? "Because it is." : "That's the trap.",
     heard: null,
     isCorrect,

@@ -1,5 +1,7 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import {
   GuitarIcon,
   HandHeartIcon,
@@ -22,14 +24,25 @@ import {
 } from "../onboarding-frame";
 
 const BUBBLE_CLASS =
-  "bg-muted in-data-[mode=fun]:fun-glass self-end rounded-3xl rounded-br-lg px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap";
+  "bg-muted self-end rounded-3xl rounded-br-lg px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap";
 
-const ICON_CLASS =
-  "bg-muted in-data-[mode=fun]:bg-fun-soft flex size-14 items-center justify-center rounded-2xl [&_svg]:size-7";
+const ICON_CLASS = "bg-muted flex size-14 items-center justify-center rounded-2xl [&_svg]:size-7";
+
+/** Creating a free account, as a screen's one main action. */
+export function SignUpLink({ href }: { href: string }) {
+  const t = useExtracted();
+
+  return (
+    <LearnLink className={cn(buttonVariants({ size: "lg" }), "h-12 w-full text-base")} href={href}>
+      {t("Create a free account")}
+    </LearnLink>
+  );
+}
 
 /**
- * Why the goal couldn't be created, said where the learner confirmed it. A guest who already has
- * their one goal gets the way to an account right there.
+ * Why the goal couldn't be read or created, said where the learner tried. A limit only an account
+ * lifts (a guest's one goal, their day's AI help) isn't an error: it says why, and creating a free
+ * account is the way on.
  */
 export function GoalErrorAlert({
   error,
@@ -38,24 +51,52 @@ export function GoalErrorAlert({
   error: GoalError | null;
   signUpHref: string;
 }) {
-  const t = useExtracted();
-
   if (!error) {
     return null;
   }
 
+  if (!error.needsAccount) {
+    return (
+      <p className="text-destructive text-sm" role="alert">
+        {error.message}
+      </p>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-start gap-2" role="alert">
-      <p className="text-destructive text-sm">{error.message}</p>
-      {error.needsAccount && (
-        <LearnLink
-          className="text-foreground text-sm font-medium underline underline-offset-4"
-          href={signUpHref}
-        >
-          {t("Create a free account")}
-        </LearnLink>
-      )}
+    <div className="flex flex-col gap-4" role="alert">
+      <p className="text-base text-pretty">{error.message}</p>
+      <SignUpLink href={signUpHref} />
     </div>
+  );
+}
+
+/**
+ * The buttons of a screen that starts a goal, under why it couldn't when that happened. When only
+ * an account helps, creating one replaces them, so nothing competes with the one way on.
+ */
+export function GoalFooter({
+  children,
+  error,
+  signUpHref,
+}: {
+  children: React.ReactNode;
+  error: GoalError | null;
+  signUpHref: string;
+}) {
+  if (error?.needsAccount) {
+    return (
+      <OnboardingFooter>
+        <GoalErrorAlert error={error} signUpHref={signUpHref} />
+      </OnboardingFooter>
+    );
+  }
+
+  return (
+    <>
+      <GoalErrorAlert error={error} signUpHref={signUpHref} />
+      <OnboardingFooter>{children}</OnboardingFooter>
+    </>
   );
 }
 
@@ -99,13 +140,11 @@ export function ExplainGoal({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <GoalErrorAlert error={error} signUpHref={signUpHref} />
-
-      <OnboardingFooter>
+      <GoalFooter error={error} signUpHref={signUpHref}>
         <OnboardingPrimaryButton disabled={isStarting} onClick={onStart}>
           {isStarting ? t("Opening your explanation…") : t("Explain it")}
         </OnboardingPrimaryButton>
-      </OnboardingFooter>
+      </GoalFooter>
     </OnboardingColumn>
   );
 }
@@ -246,7 +285,7 @@ export function InstrumentGoal({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <div className="bg-card ring-foreground/10 in-data-[mode=fun]:fun-glass flex items-start gap-3 rounded-3xl p-4 text-sm ring-1">
+      <div className="bg-card ring-foreground/10 flex items-start gap-3 rounded-3xl p-4 text-sm ring-1">
         <span className="flex h-lh shrink-0 items-center">
           <MusicIcon aria-hidden="true" className="size-5" />
         </span>
@@ -260,9 +299,7 @@ export function InstrumentGoal({
 
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
-      <GoalErrorAlert error={error} signUpHref={signUpHref} />
-
-      <OnboardingFooter>
+      <GoalFooter error={error} signUpHref={signUpHref}>
         <OnboardingPrimaryButton disabled={isStarting} onClick={onStartMusicianship}>
           {isStarting ? t("Saving your goal…") : t("Start musicianship")}
         </OnboardingPrimaryButton>
@@ -272,7 +309,7 @@ export function InstrumentGoal({
         >
           {t("Join the waitlist")}
         </OnboardingSecondaryButton>
-      </OnboardingFooter>
+      </GoalFooter>
     </OnboardingColumn>
   );
 }

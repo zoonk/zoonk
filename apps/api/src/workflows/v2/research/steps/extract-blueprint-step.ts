@@ -1,3 +1,4 @@
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCitedFacts } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
 import { extractExamBlueprint } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
 import {
@@ -11,6 +12,7 @@ import {
   toCheckBatches,
   toCitedFacts,
 } from "@zoonk/core/library/exams/blueprint-facts";
+import { toMaterialContent } from "@zoonk/core/library/exams/material-topics";
 import { type ReusePolicy } from "@zoonk/core/library/sources/contract";
 import { loadSourceDocuments } from "@zoonk/core/library/sources/load-documents";
 import { FatalError } from "workflow";
@@ -35,14 +37,17 @@ export type BlueprintReading = {
  */
 export async function extractBlueprintStep({
   analytics,
+  background,
   exam,
-  priority,
+  shared,
   sourceIds,
 }: {
   analytics: ResearchAnalytics;
+  /** Nobody waits on the reading (a freshness check), so it's read at the flex tier. */
+  background: boolean;
   exam: string;
-  /** A learner's new plan waits on the reading, so it's read at the priority tier. */
-  priority: boolean;
+  /** The reading becomes a shared blueprint, which must read as an exam (`isUsableBlueprint`). */
+  shared: boolean;
   sourceIds: string[];
 }): Promise<BlueprintReading> {
   "use step";
@@ -54,13 +59,14 @@ export async function extractBlueprintStep({
     throw new FatalError("None of the research sources exist anymore.");
   }
 
+  // An exam's published notice serves every learner of that exam; a learner's own upload, them.
+  const serviceTier = chooseServiceTier({
+    reuse: documents.every((document) => document.url) ? "bounded" : "personal",
+    wait: background ? "later" : "learner",
+  });
+
   const extraction = await withAiRetry(() =>
-    extractExamBlueprint({
-      analytics,
-      documents,
-      exam,
-      serviceTier: priority ? "priority" : undefined,
-    }),
+    extractExamBlueprint({ analytics, documents, exam, serviceTier }),
   );
 
   const extractionDocuments = documents.map((document) => ({
@@ -73,13 +79,13 @@ export async function extractBlueprintStep({
 
   const checks = await Promise.all(
     toCheckBatches(citedFacts).map((batch) =>
-      withAiRetry(() => checkCitedFacts({ analytics, facts: batch })),
+      withAiRetry(() => checkCitedFacts({ analytics, facts: batch, serviceTier })),
     ),
   );
 
   const supportedIds = checks.flatMap((check) => check.data.supportedIds);
 
-  const content = toBlueprintContent({
+  const read = toBlueprintContent({
     documents: extractionDocuments,
     extraction: extraction.data,
     facts,
@@ -87,6 +93,12 @@ export async function extractBlueprintStep({
     sourceHash: notice.contentHash,
     supportedIds,
   });
+
+  // A learner's own notes read as their headings: "4) Organelas (CAI MUITO!!)" is "Organelas",
+  // which comes up a lot.
+  const content = shared
+    ? read
+    : toMaterialContent({ content: read, documents: extractionDocuments });
 
   return {
     content,
@@ -98,6 +110,6 @@ export async function extractBlueprintStep({
       runId: extraction.provenance.runId,
     },
     reusePolicy: toReusePolicy({ extraction: extraction.data, facts, supportedIds }),
-    usable: isUsableBlueprint(content),
+    usable: isUsableBlueprint({ content, shared }),
   };
 }

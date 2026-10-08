@@ -22,9 +22,15 @@ function utcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
+/** An adult, whose memory is on until they turn it off; a minor's starts off. */
 async function learnerWithGoal() {
   const user = await userFixture();
-  const goal = await goalFixture({ studyTime: "07:00", userId: user.id });
+
+  const [goal] = await Promise.all([
+    goalFixture({ studyTime: "07:00", userId: user.id }),
+    learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: user.id }),
+  ]);
+
   mockSession(user.id);
   return { goal, user };
 }

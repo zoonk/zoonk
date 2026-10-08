@@ -19,6 +19,7 @@ const PRINTED_ITEM = {
     'Uma loja anunciou: "Tudo com 20% de desconto". Depois, sobre o preço já com desconto, deu mais 10% para pagamento à vista. Disponível em: www.exemplo.gov.br. Acesso em: 5 maio 2023 (adaptado).',
   difficulty: "medium" as const,
   format: "multipleChoice" as const,
+  image: null,
   options: ["28%.", "30%.", "18%.", "32%.", "25%."].map((text, index) => ({
     isCorrect: index === 0,
     misconception: index === 0 ? null : "Adds the discounts",
@@ -26,6 +27,7 @@ const PRINTED_ITEM = {
     text,
   })),
   question: "O desconto total sobre o preço original foi de",
+  visual: null,
 };
 
 function question(overrides: Partial<PastQuestion> = {}): PastQuestion {
@@ -66,6 +68,14 @@ describe(checkPastQuestion, () => {
     ]);
   });
 
+  it("leaves out a question that depends on a figure, which can't be copied", () => {
+    const item = { ...PRINTED_ITEM, image: { alt: "Um gráfico de pizza.", prompt: "Pizza" } };
+
+    expect(
+      checkPastQuestion({ paperText: PAPER, question: question({ item }), skillCount: 3 }),
+    ).toStrictEqual(["The question depends on a figure, which can't be copied."]);
+  });
+
   it("checks a true or false statement and its support text", () => {
     const statement: PastQuestion = {
       citation: "Cebraspe, item 42",
@@ -73,10 +83,12 @@ describe(checkPastQuestion, () => {
         context: null,
         difficulty: "easy",
         format: "trueFalse",
+        image: null,
         isTrue: false,
         misconception: "Swaps the rule",
         reason: "Reason.",
         statement: "A loja deu 30% de desconto no total.",
+        visual: null,
       },
       number: "42",
       skill: 1,

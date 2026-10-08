@@ -43,7 +43,7 @@ const checkpointSchema = z.object({
  * asks the same questions. Missing fields read as empty.
  */
 const blockPayloadSchema = z.object({
-  /** "Practice now" on an area in Progress: the area it practices, so a second tap finds it. */
+  /** A chapter's "Practice now": the area it practices, so a second tap finds it. */
   areaId: z.string().nullable().default(null),
   capsules: z.array(capsuleSchema).default([]),
   /** A chapter whose next lesson isn't written yet: it's generated just in time. */
@@ -52,6 +52,12 @@ const blockPayloadSchema = z.object({
   drills: z.array(drillSchema).default([]),
   /** "10 more minutes" after the day's session: its Brain Power is capped. */
   extra: z.boolean().default(false),
+  /**
+   * Practice on every skill of the goal, weakest first, on a day whose mock the learner's plan
+   * doesn't include: it stands in for the mock as the test in real conditions preparation waits
+   * for (see `getPreparationValue`).
+   */
+  fullReview: z.boolean().default(false),
   itemIds: z.array(z.string()).default([]),
   /**
    * Practice for an exam where a wrong answer cancels a right one (Cebraspe): it's scored net and
@@ -64,6 +70,11 @@ const blockPayloadSchema = z.object({
    */
   placementItemIds: z.array(z.string()).default([]),
   planItemId: z.string().nullable().default(null),
+  /**
+   * The plan's skill a lesson block stands for, kept with the block so its subject still shows
+   * when a re-plan removes its plan item while the lesson is on today's list.
+   */
+  planSkillId: z.string().nullable().default(null),
   /** A short lesson before a boss rematch, on the skills the lost duel missed. */
   reinforcement: z.boolean().default(false),
   skillIds: z.array(z.string()).default([]),

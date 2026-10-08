@@ -25,7 +25,7 @@ test.describe("Learning profile API", () => {
     await api.dispose();
   });
 
-  test("starts empty and saves mode, buddy and age with the protections they imply", async () => {
+  test("starts empty and saves buddy and age with the protections they imply", async () => {
     const { api } = await createBearerLearner({ baseURL, prefix: "profile" });
 
     const initial = await api.get("/v1/me/learning-profile");
@@ -37,7 +37,6 @@ test.describe("Learning profile API", () => {
         availableGlasses: ["round"],
         buddy: null,
         dailyLimitMinutes: null,
-        experienceMode: null,
         soundsEnabled: true,
       },
       protections: { plusPurchase: "allowed", sessionReplayAllowed: false },
@@ -47,7 +46,6 @@ test.describe("Learning profile API", () => {
       data: {
         birth: { month: 3, year: 1990 },
         buddy: { kind: "beep", name: "Bip" },
-        experienceMode: "fun",
         soundsEnabled: false,
       },
     });
@@ -59,7 +57,6 @@ test.describe("Learning profile API", () => {
         ageGroup: "adult",
         birth: { month: 3, year: 1990 },
         buddy: { glasses: "round", kind: "beep", name: "Bip" },
-        experienceMode: "fun",
         soundsEnabled: false,
       },
       protections: { ageGroup: "adult", sessionReplayAllowed: true },
@@ -87,6 +84,36 @@ test.describe("Learning profile API", () => {
     expect(future.status()).toBe(400);
     expect(glasses.status()).toBe(422);
     await expect(glasses.json()).resolves.toMatchObject({ error: { code: "GLASSES_NOT_EARNED" } });
+
+    await api.dispose();
+  });
+
+  test("lets a learner correct their age toward younger and leaves older answers to support", async () => {
+    const { api } = await createBearerLearner({ baseURL, prefix: "profile-birth" });
+    const teenBirth = { month: 6, year: THIS_YEAR - 15 };
+
+    const first = await api.patch("/v1/me/learning-profile", { data: { birth: teenBirth } });
+    await expect(first.json()).resolves.toMatchObject({ profile: { ageGroup: "teen" } });
+
+    const older = await api.patch("/v1/me/learning-profile", {
+      data: { birth: { month: 6, year: 1990 } },
+    });
+
+    expect(older.status()).toBe(409);
+
+    await expect(older.json()).resolves.toMatchObject({
+      error: { code: "BIRTH_CHANGE_NEEDS_SUPPORT" },
+    });
+
+    const younger = await api.patch("/v1/me/learning-profile", {
+      data: { birth: { month: 9, year: THIS_YEAR - 15 } },
+    });
+
+    expect(younger.status()).toBe(200);
+
+    await expect(younger.json()).resolves.toMatchObject({
+      profile: { ageGroup: "teen", birth: { month: 9, year: THIS_YEAR - 15 } },
+    });
 
     await api.dispose();
   });

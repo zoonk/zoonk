@@ -177,3 +177,12 @@ const templatesById: ReadonlyMap<string, ActivityTemplate> = new Map(
 export function getActivityTemplate(id: string): ActivityTemplate | null {
   return templatesById.get(id) ?? null;
 }
+
+/**
+ * Whether the template shows data (a chart, a simulation's numbers), whose source it cites or
+ * which it labels as an example. A sorting or matching activity shows none, so a data note on it
+ * would say something false.
+ */
+export function showsActivityData(template: string): boolean {
+  return getActivityTemplate(template)?.needsData === true;
+}

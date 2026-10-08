@@ -4,9 +4,11 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
+import { formatCast } from "../../_utils/cast";
 import { type ChapterLesson, formatChapterLessons } from "../../_utils/chapter-lessons";
 import { formatLocalContext } from "../../_utils/language-context";
 import { formatLessonDocuments } from "../../_utils/lesson-documents";
+import { type LessonExam, formatLessonExams } from "../../_utils/lesson-exams";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { LESSON_SCREEN_KINDS, type LessonSpec, SUPPORT_MODES } from "./lesson-spec-rules";
@@ -20,6 +22,8 @@ import { splitLessonSpec } from "./split-lesson-spec";
  * per 1,000 runs. Sol leads on quality at close to the lowest cost. On 27 Sep, once plans put
  * one new term per screen, applied checks and hooks whose answer shows at once, Sol scored 9.21 on
  * five cases (9.41 before), and lessons written from those plans scored 8.85 (8.24 before).
+ * The two cheapest, on 8 cases (7 Oct 2026): Claude Haiku 5.5 8.80 and Luna 8.65 against Sol's
+ * 9.22, at $6 and $2 per 1,000 runs against $44.
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
@@ -72,6 +76,11 @@ export type LessonSpecParams = {
   material?: string;
   /** Excerpts of the public documents the lesson's facts come from, tagged with references. */
   sources?: string;
+  /**
+   * The exams the learners who study this shared lesson prepare for, so it's planned at their
+   * depth and in their questions' style for their candidates, without naming them.
+   */
+  exams?: LessonExam[];
   model?: string;
   /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
@@ -95,12 +104,14 @@ function buildUserPrompt(params: LessonSpecParams): string {
   return `
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
 ${formatLocalContext(params.language)}
+    ${formatCast({ language: params.language, seed: `${params.courseTitle}:${params.lessonTitle}` })}
     LEVEL: ${params.level}
     COURSE_TITLE: ${params.courseTitle}
     CHAPTER_TITLE: ${params.chapterTitle}
     LESSON_TITLE: ${params.lessonTitle}
     LESSON_DESCRIPTION: ${params.lessonDescription}
     LESSON_CAN_DO: ${params.lessonCanDo ?? "none"}
+    ${formatLessonExams(params.exams)}
     OUTLINE_SKILLS: ${formatList(params.skills ?? [])}
     CHAPTER_LESSONS: ${formatChapterLessons(params.chapterLessons)}
     ACTIVITY_TEMPLATES: ${formatList(templates)}

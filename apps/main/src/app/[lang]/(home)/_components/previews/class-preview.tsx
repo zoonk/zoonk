@@ -1,42 +1,43 @@
 "use client";
 
 import { PREVIEW_CARD_CLASS } from "@/components/public/landing-styles";
+import { Buddy } from "@zoonk/ui/components/buddy";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FeatherIcon, LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { renderBold } from "../rich-text";
 
-type Depth = "original" | "simpler" | "deeper";
+type Ask = "simpler" | "deeper";
+
+/** A buddy studied with today: awake and cheerful. */
+const BUDDY_ENERGY = 70;
 
 /**
- * A class topic on one screen, with the depth buttons every lesson screen has. The tile tells
- * visitors to tap them, so they work: each swaps the explanation, and tapping it again brings the
- * original back.
+ * A class topic on one screen, with the buddy beside it. The tile tells visitors to ask, so the
+ * suggestions work: each one gets the buddy's answer, and tapping it again takes the answer away.
  */
 export function ClassPreview() {
   const t = useExtracted();
-  const [depth, setDepth] = useState<Depth>("original");
+  const [ask, setAsk] = useState<Ask | null>(null);
 
-  const explanation = {
+  const replies = {
     deeper: t.rich("It's the <b>slope</b> of the line that just touches the curve at that point.", {
-      b: renderBold,
-    }),
-    original: t.rich("A derivative is <b>how fast</b> something changes at one moment.", {
       b: renderBold,
     }),
     simpler: t.rich("Think of a speedometer: it shows <b>how fast</b> you're going right now.", {
       b: renderBold,
     }),
-  }[depth];
+  };
 
-  const toggle = (next: Depth) => setDepth((current) => (current === next ? "original" : next));
+  const toggle = (next: Ask) => setAsk((current) => (current === next ? null : next));
 
   return (
     <div className={cn(PREVIEW_CARD_CLASS, "mt-5 p-4 sm:mt-6")}>
-      <p aria-live="polite" className="text-[15px] leading-snug">
-        {explanation}
+      <p className="text-[15px] leading-snug">
+        {t.rich("A derivative is <b>how fast</b> something changes at one moment.", {
+          b: renderBold,
+        })}
       </p>
 
       <svg aria-hidden="true" className="mt-2 w-full" fill="none" viewBox="0 0 270 96">
@@ -70,24 +71,32 @@ export function ClassPreview() {
         </text>
       </svg>
 
-      <div className="mt-2 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex items-start gap-2.5">
+        <Buddy beltColor="yellow" className="size-8" crop="face" energy={BUDDY_ENERGY} kind="zu" />
+        <p
+          aria-live="polite"
+          className="bg-muted dark:bg-background/60 rounded-2xl rounded-tl-md px-3 py-2 text-[14px] leading-snug"
+        >
+          {ask ? replies[ask] : t("Stuck, or curious for more? Just ask.")}
+        </p>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
         <Button
-          aria-pressed={depth === "simpler"}
+          aria-pressed={ask === "simpler"}
           onClick={() => toggle("simpler")}
           size="sm"
-          variant={depth === "simpler" ? "default" : "secondary"}
+          variant={ask === "simpler" ? "default" : "outline"}
         >
-          <FeatherIcon aria-hidden="true" />
-          {t("Simpler")}
+          {t("Explain it more simply")}
         </Button>
         <Button
-          aria-pressed={depth === "deeper"}
+          aria-pressed={ask === "deeper"}
           onClick={() => toggle("deeper")}
           size="sm"
-          variant={depth === "deeper" ? "default" : "secondary"}
+          variant={ask === "deeper" ? "default" : "outline"}
         >
-          <LayersIcon aria-hidden="true" />
-          {t("Go deeper")}
+          {t("I want to go deeper")}
         </Button>
       </div>
     </div>

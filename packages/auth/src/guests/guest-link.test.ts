@@ -66,7 +66,7 @@ describe("guest accounts", () => {
 
     await expect(
       prisma.userLearningProfile.findUnique({ where: { userId } }),
-    ).resolves.toMatchObject({ activeGoalId: goal.id, buddyKind: "zu", experienceMode: "fun" });
+    ).resolves.toMatchObject({ activeGoalId: goal.id, buddyKind: "zu", buddyName: "Zuzu" });
 
     await expect(prisma.plan.findUnique({ where: { goalId: goal.id } })).resolves.not.toBeNull();
 

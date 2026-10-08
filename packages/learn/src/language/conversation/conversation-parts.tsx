@@ -1,19 +1,32 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SpeechStatusIcon, useSpeechActionLabel } from "../../speech/speech-parts";
+import { useSpokenAudio } from "../../speech/use-spoken-audio";
 
-/** The character's initial in a circle: calls show a person, never a stock face. */
-export function CharacterAvatar({ name, size = "md" }: { name: string; size?: "lg" | "md" }) {
+/**
+ * The character's initial in a circle: calls show a person, never a stock face. While they talk, a
+ * quiet ring shows it.
+ */
+export function CharacterAvatar({
+  name,
+  size = "md",
+  talking = false,
+}: {
+  name: string;
+  size?: "lg" | "md";
+  talking?: boolean;
+}) {
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "bg-muted text-foreground in-data-[mode=fun]:bg-fun-accent-violet/30 in-data-[mode=fun]:text-fun-fg grid shrink-0 place-items-center rounded-full font-semibold",
+        "bg-muted text-foreground ring-foreground/0 ring-offset-background grid shrink-0 place-items-center rounded-full font-semibold ring-4 ring-offset-2 transition-shadow duration-300",
         size === "lg" ? "size-20 text-3xl" : "size-11 text-lg",
+        talking && "ring-foreground/15",
       )}
     >
       {name.trim().charAt(0).toUpperCase()}
@@ -21,31 +34,31 @@ export function CharacterAvatar({ name, size = "md" }: { name: string; size?: "l
   );
 }
 
-/** Plays a phrase with the device's voice for the language; hidden where there's none. */
+/** Plays a phrase read aloud in its language; the phrase is on screen if the audio fails. */
 export function SpeakButton({ language, text }: { language: string; text: string }) {
   const t = useExtracted();
-  const isMounted = useIsMounted();
+  const speech = useSpokenAudio(language);
+  const { status } = speech.state;
+  const label = useSpeechActionLabel(speech.state, t("Listen to {text}", { text }));
 
-  if (!isMounted || globalThis.speechSynthesis === undefined) {
+  if (!speech.isAvailable) {
     return null;
   }
 
-  const speak = () => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language;
-    globalThis.speechSynthesis.cancel();
-    globalThis.speechSynthesis.speak(utterance);
-  };
-
   return (
     <Button
-      className="in-data-[mode=fun]:fun-glass shrink-0"
-      onClick={speak}
+      aria-busy={status === "loading"}
+      className="shrink-0"
+      onClick={
+        status === "loading" || status === "playing"
+          ? speech.cancel
+          : () => speech.speak({ segments: [text] })
+      }
       size="icon"
       variant="outline"
     >
-      <Volume2Icon aria-hidden="true" />
-      <span className="sr-only">{t("Listen to {text}", { text })}</span>
+      <SpeechStatusIcon idle={<Volume2Icon aria-hidden="true" />} state={speech.state} />
+      <span className="sr-only">{label}</span>
     </Button>
   );
 }

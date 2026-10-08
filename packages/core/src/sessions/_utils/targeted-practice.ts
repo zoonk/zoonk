@@ -129,10 +129,11 @@ async function addToLockedSession({
 }
 
 /**
- * Adds a bonus block of practice on some of a goal's skills to today's session ("Practice now"
- * on an area, "Refresh now" on fading skills). It can start before the day's session is done,
- * but it counts as extra time like "10 more minutes": at most two bonus blocks a day, never past
- * a guardian's limit, and its Brain Power is capped. Two taps at once see each other's block.
+ * Adds a bonus block of practice on some of a goal's skills to today's session (a chapter's
+ * "Practice now", Content's "Review" of fading and due skills). It can start before the day's
+ * session is done, but it counts as extra time like "10 more minutes": at most two bonus blocks a
+ * day, never past a guardian's limit, and its Brain Power is capped. Two taps at once see each
+ * other's block.
  */
 export async function addTargetedPracticeBlock({
   goal,

@@ -1,29 +1,12 @@
 import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
 import { type PlayableLibraryStep } from "../lesson-player-types";
-import {
-  getExplanationsAfter,
-  isExplainingStep,
-  isQuestionStep,
-  isRetryStep,
-} from "./lesson-steps";
+import { isExplainingStep, isRetryStep } from "./lesson-steps";
 
 type Opening = { queue: string[]; steps: Record<string, PlayableLibraryStep> };
 
 function moveBefore({ ids, queue, target }: { ids: string[]; queue: string[]; target: number }) {
   const rest = queue.filter((id) => !ids.includes(id));
   return [...rest.slice(0, target), ...ids, ...rest.slice(target)];
-}
-
-/** A lesson that opens with a question gets the explanations right after it first. */
-function openWithExplanation({ queue, start, steps }: Opening & { start: number }): string[] {
-  const opening = steps[queue[start] ?? ""];
-
-  if (!opening || !isQuestionStep(opening)) {
-    return queue;
-  }
-
-  const ids = getExplanationsAfter({ position: start, queue, steps });
-  return ids.length === 0 ? queue : moveBefore({ ids, queue, target: start });
 }
 
 /**
@@ -53,9 +36,10 @@ function openWithQuestion({ queue, start, steps }: Opening & { start: number }):
 }
 
 /**
- * Orders only the lesson's opening (the screens after its hook) for this learner: a new skill
- * starts with its explanation, a partly known one with a question. The rest of the lesson keeps
- * its order, and "Explain first" stays available on a question that comes first.
+ * Orders only the lesson's opening (the screens after its hook) for this learner: a partly known
+ * skill opens with a question. A lesson written to open with a question keeps its order for a new
+ * skill too, since the explanations after that question build on it; "Explain first" stays
+ * available on it.
  */
 export function orderLessonOpening({
   queue,
@@ -64,11 +48,9 @@ export function orderLessonOpening({
 }: Opening & { support: LessonSupport | null }): string[] {
   const start = queue.findIndex((id) => steps[id]?.kind !== "hook");
 
-  if (!support || start === -1) {
+  if (support !== "questionFirst" || start === -1) {
     return queue;
   }
 
-  return support === "explanationFirst"
-    ? openWithExplanation({ queue, start, steps })
-    : openWithQuestion({ queue, start, steps });
+  return openWithQuestion({ queue, start, steps });
 }

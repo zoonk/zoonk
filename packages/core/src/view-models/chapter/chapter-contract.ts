@@ -14,11 +14,17 @@ const chapterLessonSchema = z
       .enum(["done", "next", "upcoming"])
       .meta({ description: "`next` is the lesson to open now; at most one lesson has it" }),
     title: z.string(),
+    written: z
+      .boolean()
+      .meta({
+        description:
+          "Its screens are written, so opening it starts no writing and apps may load it ahead",
+      }),
   })
   .meta({ id: "ChapterLesson" });
 
 /**
- * A chapter of the learner's plan, the same view model for Focus and Fun: its map (the chapter's
+ * A chapter of the learner's plan: its map (the chapter's
  * skills linked by prerequisites, each with its mastery), its lessons with the next one to open,
  * open mistakes on its skills to practice and the summary cards its finished lessons left.
  */
@@ -30,8 +36,21 @@ export const chapterViewSchema = z
       position: z
         .int()
         .min(1)
-        .meta({ description: "Its number in the plan: Chapter 3 · Overview" }),
+        .meta({
+          description:
+            "Its number in `subject`, as the subject's page lists it (`SyllabusChapter.position`); its number in the plan when `subject` is null",
+        }),
       state: z.enum(["done", "current", "upcoming"]),
+      subject: z
+        .object({
+          key: z.string().meta({ description: "The subject's key in the goal's syllabus" }),
+          name: z.string().meta({ description: "Its short name" }),
+        })
+        .nullable()
+        .meta({
+          description:
+            "The subject or module whose page numbers it (Biologia · Chapter 4); null when the goal's subjects have no pages (a plan from one course, a language) or none lists it",
+        }),
       title: z.string(),
     }),
     counts: skillStateCountsSchema,

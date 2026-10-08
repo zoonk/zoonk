@@ -20,14 +20,14 @@ const scoreCategories = defineScoreCategories([
   },
   {
     expectations:
-      "One focal object, at most two small supporting objects, one idea. An overloaded request is cut down to the screen's idea. No charts, maps or diagrams with many parts.",
+      "One focal object, at most two small supporting objects, one idea. An overloaded request is cut down to the screen's idea. A screen that names the parts of a whole (the lobes of the brain, the stages of a cycle, places on a map) gets the whole with those parts, and nothing the screen doesn't name.",
     id: "simplicity",
     label: "One idea, simply",
     weight: 25,
   },
   {
     expectations:
-      "Labels appear only when a word, number or price makes the idea readable; each is at most four words, in the lesson's language, spelled right, and numbers match the screen exactly. None for language courses. Labels that repeat the obvious or act as captions cap this at 6.",
+      "Labels appear only when a word, number or price makes the idea readable, and a whole shown with its parts labels each part its screen names; each is at most four words, in the lesson's language, spelled right, and numbers match the screen exactly. None for language courses. Labels that repeat the obvious or act as captions cap this at 6.",
     id: "labels",
     label: "Labels",
     weight: 25,

@@ -2,8 +2,6 @@ import "server-only";
 import { getPublishedCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { isUuid } from "@zoonk/utils/uuid";
-import { cacheTag } from "next/cache";
-import { getGoalsCacheTag, getUserProgressCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { getOwnPrivateCourseWhere } from "./_utils/own-private-course";
 
@@ -121,23 +119,6 @@ async function findCurrentUserCourses({ query, userId }: { query?: string; userI
 
   const coursesById = new Map(courses.map((course) => [course.id, course]));
   return courseIds.flatMap((courseId) => coursesById.get(courseId) ?? []);
-}
-
-/**
- * Returns the authenticated learner's courses without accepting an acting user ID. Guests without
- * a session get an empty list, and repeated callers in one request share the private cache.
- */
-export async function listCurrentUserCourses() {
-  "use cache: private";
-
-  const session = await getSession();
-
-  if (!session) {
-    return [];
-  }
-
-  cacheTag(getGoalsCacheTag(session.user.id), getUserProgressCacheTag(session.user.id));
-  return findCurrentUserCourses({ userId: session.user.id });
 }
 
 /**

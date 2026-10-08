@@ -53,7 +53,7 @@ describe(isScreenShortcut, () => {
   });
 
   it("leaves Enter to a focused button or link, but not to a picked answer", () => {
-    const button = mount('<button data-target type="button">Go deeper</button>');
+    const button = mount('<button data-target type="button">Explain first</button>');
     expect(isScreenShortcut(pressOn(button, { key: "Enter" }))).toBe(false);
     expect(isScreenShortcut(pressOn(button, { key: "3" }))).toBe(true);
 

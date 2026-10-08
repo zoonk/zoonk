@@ -1,6 +1,7 @@
 "use server";
 
 import { postAsLearner } from "@/lib/api/learner-api";
+import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import {
   type OnboardingDraftView,
   goalUnderstandingInputSchema,
@@ -27,9 +28,32 @@ const TOO_MANY_REQUESTS = 429;
 /** A plan's cap the API refused the run for (`USAGE_LIMIT_REACHED` with `details.limit`). */
 const limitSchema = z.object({
   error: z.object({
-    details: z.object({ limit: z.object({ tier: z.enum(["free", "guest", "plus"]) }) }),
+    details: z.object({
+      limit: z.object({
+        period: z.enum(["day", "month", "total"]),
+        resource: z.string(),
+        tier: z.enum(["free", "guest", "plus"]),
+      }),
+    }),
   }),
 });
+
+/** The goal limits only an account lifts, as opposed to the day's small AI calls. */
+const GOAL_LIMITS = new Set(["activeGoals", "goal"]);
+
+/**
+ * Which cap refused reading the words: a guest's one goal, or the small AI calls of the day or the
+ * month.
+ */
+function toLimitOutcome(limit: {
+  period: "day" | "month" | "total";
+  resource: string;
+  tier: EntitlementTier;
+}): StartUnderstandingOutcome {
+  return GOAL_LIMITS.has(limit.resource)
+    ? { status: "needsAccount" }
+    : { period: limit.period, status: "limitReached", tier: limit.tier };
+}
 
 /** When the API's slow-down answer can't be read, a minute is what it asks for. */
 const DEFAULT_RETRY_AFTER_SECONDS = 60;
@@ -51,7 +75,7 @@ async function startRun(draft: OnboardingDraftView): Promise<StartUnderstandingO
   const limit = limitSchema.safeParse(response.json).data?.error.details.limit;
 
   if (limit) {
-    return { status: "limitReached", tier: limit.tier };
+    return toLimitOutcome(limit);
   }
 
   if (response.status === TOO_MANY_REQUESTS) {
@@ -88,7 +112,7 @@ export async function startUnderstandingAction(input: unknown): Promise<StartUnd
   }
 
   if (result.status === "limitReached") {
-    return { status: "limitReached", tier: result.limit.tier };
+    return toLimitOutcome(result.limit);
   }
 
   return result.status === "slowDown" ? result : { status: "failed" };

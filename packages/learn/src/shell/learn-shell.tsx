@@ -1,28 +1,24 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
- * The responsive frame of every learning tab. Mode styling comes from the
- * nearest `data-mode` (see `ModeProvider`), so these parts render on the server:
- * Fun paints deep space and leaves room for the phone dock.
+ * The responsive frame of every learning tab. These parts render on the server.
  *
  * ```tsx
  * <LearnShell>
- *   <LearnShellHeader>
+ *   <LearnShellHeader sticky>
  *     <LearnShellStart>{goalSwitcher}</LearnShellStart>
- *     <LearnNavigation activeTab="today" buddy={buddy} />
- *     <LearnShellEnd>{energyAndAccount}</LearnShellEnd>
+ *     <LearnTopNavigation activeTab="today" buddy={buddy} />
+ *     <LearnShellEnd>{account}</LearnShellEnd>
  *   </LearnShellHeader>
  *   <LearnShellMain>{screen}</LearnShellMain>
+ *   <LearnBottomNavigation activeTab="today" buddy={buddy} />
  * </LearnShell>
  * ```
  */
 export function LearnShell({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "bg-background text-foreground in-data-[mode=fun]:fun-space flex min-h-dvh flex-col",
-        className,
-      )}
+      className={cn("bg-background text-foreground flex min-h-dvh flex-col", className)}
       data-slot="learn-shell"
       {...props}
     >
@@ -32,28 +28,25 @@ export function LearnShell({ children, className, ...props }: React.ComponentPro
 }
 
 /**
- * Phones: start and end on the first row, Focus tabs below. Desktop: one row, tabs centered. Large
- * screens widen the bar: Fun's labeled dock and its three numbers need more room than Focus's
- * tabs and Energy to keep the dock centered in German. Over a `LearnShellMain` column (`column`),
- * tablets keep the bar as wide as that column, so the goal, the tabs and the page share one edge.
+ * One row at every width, over the 600px column on phones and tablets so the goal, the account and
+ * the page share one edge. From `lg` the tabs sit in its center (`LearnTopNavigation`) and, with
+ * `sticky`, the bar stays at the top while the page scrolls; under `lg` the tabs are at the bottom.
  */
 export function LearnShellHeader({
   children,
   className,
-  column = false,
+  sticky = false,
   ...props
-}: React.ComponentProps<"header"> & { column?: boolean }) {
+}: React.ComponentProps<"header"> & { sticky?: boolean }) {
   return (
     <header
-      className={cn(
-        "mx-auto grid w-full max-w-5xl grid-cols-[1fr_auto] items-center gap-x-2 gap-y-3 px-4 pt-3 pb-2 lg:grid-cols-[1fr_auto_1fr] lg:px-6 lg:py-4 xl:max-w-6xl xl:in-data-[mode=fun]:max-w-7xl",
-        column && "sm:max-w-150 lg:max-w-5xl xl:max-w-6xl xl:in-data-[mode=fun]:max-w-7xl",
-        className,
-      )}
+      className={cn(sticky && "lg:bg-background lg:sticky lg:top-0 lg:z-30", className)}
       data-slot="learn-shell-header"
       {...props}
     >
-      {children}
+      <div className="mx-auto grid w-full max-w-150 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 px-4 pt-3 pb-2 lg:max-w-5xl lg:grid-cols-[1fr_auto_1fr] lg:px-6 lg:py-3">
+        {children}
+      </div>
     </header>
   );
 }
@@ -71,7 +64,7 @@ export function LearnShellStart({ children, className, ...props }: React.Compone
   );
 }
 
-/** Where Energy, Brain Power and the account live. */
+/** Where the account lives. */
 export function LearnShellEnd({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -87,12 +80,18 @@ export function LearnShellEnd({ children, className, ...props }: React.Component
   );
 }
 
+/**
+ * A page wider than the column (the Journey's two columns, a detail page's identity beside its
+ * sections): as wide as the bar's content from `lg`, so the page and the bar share their edges.
+ */
+export const WIDE_PAGE_CLASS = "lg:w-[min(calc(100vw-3rem),61rem)] lg:self-center";
+
 /** One centered 600px column with one next step. */
 export function LearnShellMain({ children, className, ...props }: React.ComponentProps<"main">) {
   return (
     <main
       className={cn(
-        "mx-auto flex w-full max-w-150 flex-1 flex-col px-4 pt-4 pb-12 in-data-[mode=fun]:pb-32 lg:pt-6 lg:in-data-[mode=fun]:pb-12",
+        "mx-auto flex w-full max-w-150 flex-1 flex-col px-4 pt-4 pb-12 lg:pt-6",
         className,
       )}
       data-slot="learn-shell-main"

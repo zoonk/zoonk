@@ -49,7 +49,7 @@ async function expectTimedOut({ itemId, userId }: { itemId: string; userId: stri
 
 test.describe("Mistake drills", () => {
   test("today's practice plays each mistake's drill by its cause", async ({ browser }) => {
-    const { drills, user } = await createDrillSession({ causes: ["gap", "time"], mode: "fun" });
+    const { drills, user } = await createDrillSession({ causes: ["gap", "time"] });
     const [gap, time] = drills;
     const page = await openAs(browser, user);
     const feedback = page.getByRole("region", { name: "Answer feedback" });
@@ -65,7 +65,7 @@ test.describe("Mistake drills", () => {
       page.getByRole("heading", { name: drillQuestion("time", "original") }),
     ).toBeVisible();
 
-    // While the clock runs, the question can't be voted on.
+    // While the clock runs, the question's menu waits.
     await expect(page.getByRole("button", { name: "Question options" })).toBeHidden();
     await runOutOfTime(page);
 
@@ -75,18 +75,14 @@ test.describe("Mistake drills", () => {
 
     await expectTimedOut({ itemId: time?.original.id ?? "", userId: user.id });
 
-    // Its "…" menu takes a vote once the time is up, kept with the mode it was asked in.
+    // Once the time is up, its "…" menu reports a problem with the question, and only that.
     await page.getByRole("button", { name: "Question options" }).click();
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Helpful" }).click();
+    await expect(page.getByRole("menuitemcheckbox")).toHaveCount(0);
+    await page.getByRole("menuitem", { name: "Report a problem" }).click();
 
-    await expect
-      .poll(() =>
-        prisma.contentFeedback.findFirst({
-          select: { contentKind: true, mode: true, vote: true },
-          where: { contentId: time?.original.id, userId: user.id },
-        }),
-      )
-      .toStrictEqual({ contentKind: "item", mode: "fun", vote: "up" });
+    await expect(
+      page.getByRole("dialog", { name: "Report a problem" }).getByText("This screen is attached"),
+    ).toBeVisible();
 
     await page.context().close();
   });

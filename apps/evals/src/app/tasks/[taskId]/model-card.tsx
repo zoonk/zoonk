@@ -1,6 +1,6 @@
 import { ModelStatusBadge, ModelStatusBadgeSkeleton } from "@/components/model-status-badge";
-import { type ModelPricing } from "@/lib/gateway-prices";
 import { type ModelConfig, getModelDisplayName } from "@/lib/models";
+import { type ModelPricing } from "@zoonk/ai/pricing/gateway-prices";
 import { ButtonSkeleton, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Item,

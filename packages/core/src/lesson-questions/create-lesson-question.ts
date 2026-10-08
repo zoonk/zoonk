@@ -8,6 +8,7 @@ import { toDatabaseLessonQuestionContextSnapshot } from "./_utils/context-snapsh
 import {
   type LessonQuestionResourceSource,
   lessonQuestionResourceOmit,
+  lessonQuestionResourceQuery,
   toLessonQuestionResource,
 } from "./_utils/question-resource";
 import { getLessonQuestionRequestFingerprint } from "./_utils/request-fingerprint";
@@ -45,7 +46,7 @@ function findExistingLessonQuestion({
   userId: string;
 }) {
   return prisma.lessonQuestion.findFirst({
-    omit: lessonQuestionResourceOmit,
+    ...lessonQuestionResourceQuery,
     where: { requestId, thread: { ...getSubjectThreadColumn(subject), userId } },
   });
 }
@@ -80,7 +81,7 @@ async function persistLessonQuestion({
     await lockLessonQuestionThread({ threadId: thread.id, transaction });
 
     const existingQuestion = await transaction.lessonQuestion.findUnique({
-      omit: lessonQuestionResourceOmit,
+      ...lessonQuestionResourceQuery,
       where: { threadLessonQuestionRequest: { requestId: input.requestId, threadId: thread.id } },
     });
 

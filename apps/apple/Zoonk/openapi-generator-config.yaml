@@ -38,6 +38,6 @@ filter:
     - updateCurrentUser
 typeOverrides:
   schemas:
-    # The app reads only the learner's protections. The profile's buddy and mode enums grow with Fun
-    # mode, which the app doesn't show, so they stay free-form instead of failing the Plus check.
+    # The app reads only the learner's protections. The profile's buddy enums grow with the buddy,
+    # which the app doesn't show yet, so they stay free-form instead of failing the Plus check.
     LearningProfile: OpenAPIRuntime.OpenAPIObjectContainer

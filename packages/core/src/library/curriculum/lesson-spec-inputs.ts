@@ -3,6 +3,7 @@ import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
 import { prisma } from "@zoonk/db";
 import { activityTemplates } from "../activities/activity-templates";
 import { loadChapterLessons } from "../lessons/_utils/chapter-lessons";
+import { loadLessonExams } from "../lessons/_utils/lesson-exams";
 import { loadLessonDocuments } from "../lessons/_utils/lesson-sources";
 import { formatMaterialPages } from "../sources/material-pages";
 import { type CurriculumScope } from "./curriculum-scope";
@@ -48,14 +49,19 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
   const chapter = lesson.homeChapter;
   const skills = lesson.skills.map((entry) => entry.skill.name);
 
-  const [{ material, sources }, chapterLessons] = await Promise.all([
+  const goalsOf = {
+    chapterId: lesson.homeChapterId,
+    courseId: chapter?.homeCourse?.id ?? null,
+    lessonId,
+  };
+
+  const [{ material, sources }, chapterLessons, exams] = await Promise.all([
     loadLessonDocuments({
-      chapterId: lesson.homeChapterId,
-      courseId: chapter?.homeCourse?.id ?? null,
-      lessonId,
+      ...goalsOf,
       query: [lesson.title, lesson.description, lesson.canDo, ...skills].join(" "),
     }),
     loadChapterLessons({ chapterId: lesson.homeChapterId, lessonId, ownerId: lesson.ownerId }),
+    loadLessonExams(goalsOf),
   ]);
 
   return {
@@ -65,6 +71,8 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       chapterLessons,
       chapterTitle: chapter?.title ?? lesson.title,
       courseTitle: chapter?.homeCourse?.title ?? chapter?.title ?? lesson.title,
+      // A lesson built from the learner's own material follows that material, not an exam's style.
+      exams: material.length > 0 ? [] : exams,
       language: lesson.language,
       lessonCanDo: lesson.canDo ?? undefined,
       lessonDescription: lesson.description,

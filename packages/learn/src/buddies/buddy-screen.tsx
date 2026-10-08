@@ -1,331 +1,326 @@
 "use client";
 
-import { type BuddyStatusResult } from "@zoonk/core/milestones/buddy";
-import { Buddy, type BuddyExpression } from "@zoonk/ui/components/buddy";
-import { cn } from "@zoonk/ui/lib/utils";
-import { type BuddyGlasses } from "@zoonk/utils/buddy";
+import { Button } from "@zoonk/ui/components/button";
 import {
-  ArrowRightLeftIcon,
-  BookOpenIcon,
-  ChevronRightIcon,
-  OrbitIcon,
-  PencilIcon,
-  ZapIcon,
-} from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
-import { Meter, MeterFill } from "../_components/meter";
-import { useFormatShare } from "../_utils/percent";
-import { toBeltColor, useBeltName } from "../_utils/use-belt-name";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
+import { safeAsync } from "@zoonk/utils/error";
+import { CalendarDaysIcon, EllipsisIcon, GlassesIcon, PencilIcon, SmileIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { createContext, use, useState } from "react";
+import {
+  ListGroup,
+  ListRowButton,
+  ListRowContent,
+  ListRowDescription,
+  ListRowIcon,
+  ListRowTitle,
+} from "../_components/list-group";
+import { PageSubtitle, PageTitle } from "../_components/page";
+import { type AppearanceBuddy, BuddyEditor } from "../appearance/buddy-settings";
+import {
+  type TutorConversationContent,
+  type TutorSituation,
+  useTutorConversationContent,
+} from "../conversation/tutor-conversation-content";
+import { type DecideTutorPlanChange } from "../conversation/tutor-plan-change";
+import { type TutorToolActions } from "../conversation/tutor-tool-offer";
 import { LearnLink } from "../learn-link";
-import { useExperienceMode } from "../mode-provider";
-import { BuddyGlassesShelf } from "./buddy-glasses-shelf";
+import { BuddyArt } from "./buddy-art";
+import { BuddyGlassesSheet } from "./buddy-glasses-sheet";
 import { BuddyStageName } from "./buddy-labels";
-import { BuddySpeech, useBuddyLine } from "./buddy-lines";
-import { type LearnBuddy, useBuddyName } from "./use-buddy-name";
+import { type BuddyStatusView } from "./buddy-status-view";
+import { BuddyToday } from "./buddy-today";
+import { type LearnBuddy } from "./use-buddy-name";
 
-export type BuddyStatusView = Extract<BuddyStatusResult, { status: "ready" }>["buddy"];
+export type { BuddyStatusView } from "./buddy-status-view";
+export type {
+  TutorConversationContent,
+  TutorSituation,
+} from "../conversation/tutor-conversation-content";
 
-/** Where the buddy page leads: Appearance to switch or rename, the logbook and preparation. */
-export type BuddyScreenHrefs = { appearance: string; logbook: string; preparation: string };
-
-const PERCENT = 100;
+const TutorContentContext = createContext<TutorConversationContent | null>(null);
 
 /**
- * The page knows whether the learner studied today, so a buddy low on Energy is awake after a
- * session instead of napping: learning is what wakes it.
+ * What the host's conversation, placed as the buddy screen's child, needs from the buddy: its name
+ * and face, its hello, the composer's words, the first suggestions and the plan change card.
  */
-const BUDDY_EXPRESSION: Record<BuddyStatusView["energy"]["state"], BuddyExpression> = {
-  awake: "happy",
-  glowing: "cheer",
-  napping: "sleepy",
+export function useBuddyTutor(): TutorConversationContent {
+  const content = use(TutorContentContext);
+
+  if (!content) {
+    throw new Error("useBuddyTutor must be used inside BuddyScreen");
+  }
+
+  return content;
+}
+
+/**
+ * Where the buddy tab leads: its Energy over time and the week's summary. Statistics open from the
+ * account menu and the level in the top bar.
+ */
+export type BuddyScreenHrefs = { energy: string; logbook: string };
+
+/**
+ * How the buddy tab saves: the buddy (kind, name and glasses), resolving to whether it was saved,
+ * and the learner's answer to a plan change the buddy proposed in the conversation.
+ */
+export type BuddyScreenActions = {
+  decidePlanChange: DecideTutorPlanChange;
+  saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
+  /** How the app tools the buddy offers in the conversation open. */
+  tools: TutorToolActions;
 };
 
-function useEnergyWord(state: BuddyStatusView["energy"]["state"]): string {
-  const t = useExtracted();
-
-  if (state === "glowing") {
-    return t("well fed");
-  }
-
-  return state === "napping" ? t("napping") : t("awake");
-}
-
-/** "Grows to Young at Orange belt": the next stage and the belt that brings it. */
-function GrowthLabel({ belt, stage }: { belt: string; stage: BuddyStatusView["stage"] }) {
-  const t = useExtracted();
-
-  switch (stage) {
-    case "adult":
-      return t("Grows to Adult at {belt}", { belt });
-    case "wise":
-      return t("Grows to Wise at {belt}", { belt });
-    case "baby":
-    case "young":
-      return t("Grows to Young at {belt}", { belt });
-    default:
-      return t("Grows to Young at {belt}", { belt });
-  }
-}
-
-function EnergyAndGrowth({ buddy, status }: { buddy: LearnBuddy; status: BuddyStatusView }) {
-  const t = useExtracted();
-  const format = useFormatter();
-  const beltName = useBeltName();
-  const buddyName = useBuddyName(buddy);
-  const energyWord = useEnergyWord(status.energy.state);
-  const formatShare = useFormatShare();
-  const next = status.nextStage;
-  const nextBelt = next ? toBeltColor(next.belt) : null;
-  const total = status.belt.totalBrainPower;
-
-  return (
-    <section className="fun-glass flex flex-col gap-4 rounded-3xl p-4">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="flex items-center gap-1.5 text-sm font-semibold">
-            <ZapIcon aria-hidden="true" className="text-fun-energy size-4" />
-            {t("Energy")}
-            <span className="text-fun-fg2 font-normal">{energyWord}</span>
-          </span>
-          <span className="font-fun-display text-fun-accent-orange text-lg font-bold tabular-nums">
-            {formatShare(status.energy.current / PERCENT)}
-          </span>
-        </div>
-        <Meter className="h-2">
-          <MeterFill className="bg-fun-energy" share={status.energy.current / PERCENT} />
-        </Meter>
-      </div>
-
-      {next && nextBelt ? (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-baseline justify-between gap-2 text-sm">
-            <span className="font-semibold">
-              <GrowthLabel belt={beltName(nextBelt)} stage={next.stage} />
-            </span>
-            <span className="text-fun-fg2 text-xs tabular-nums">
-              {t("{points} BP to go", { points: format.number(next.brainPowerToGo) })}
-            </span>
-          </div>
-          <Meter className="h-2">
-            <MeterFill
-              className="bg-fun-accent-pink"
-              share={total / Math.max(1, total + next.brainPowerToGo)}
-            />
-          </Meter>
-        </div>
-      ) : (
-        <p className="text-fun-fg2 text-sm">
-          {t("{buddy} is fully grown and wise.", { buddy: buddyName })}
-        </p>
-      )}
-    </section>
-  );
-}
-
-function Diet({ buddy, status }: { buddy: LearnBuddy; status: BuddyStatusView }) {
-  const t = useExtracted();
-  const format = useFormatter();
-  const buddyName = useBuddyName(buddy);
-
-  const foods = [
-    {
-      dot: "bg-fun-accent-lime",
-      key: "newIdeas",
-      label: t("new ideas"),
-      value: status.thisWeek.newIdeas,
-    },
-    {
-      dot: "bg-fun-accent-cyan",
-      key: "reviews",
-      label: t("reviews"),
-      value: status.thisWeek.reviews,
-    },
-    { dot: "bg-fun-accent-pink", key: "fixes", label: t("fixes"), value: status.thisWeek.fixes },
-  ];
-
-  return (
-    <section className="fun-glass flex flex-col gap-3 rounded-3xl p-4">
-      <h2 className="text-sm font-semibold">{t("This week {buddy} ate", { buddy: buddyName })}</h2>
-      <dl className="grid grid-cols-3 gap-2">
-        {foods.map((food) => (
-          <div className="flex flex-col-reverse" key={food.key}>
-            <dt className="text-fun-fg2 text-xs">{food.label}</dt>
-            <dd className="font-fun-display flex items-center gap-1.5 text-xl font-bold tabular-nums">
-              <span aria-hidden="true" className={cn("size-2 rounded-full", food.dot)} />
-              {format.number(food.value)}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-  );
-}
-
-function PageLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
-  return (
-    <LearnLink
-      className="fun-glass focus-visible:ring-ring/50 flex min-h-12 items-center gap-3 rounded-2xl px-4 text-sm font-semibold outline-none focus-visible:ring-[3px]"
-      href={href}
-    >
-      {icon}
-      <span className="flex-1">{label}</span>
-      <ChevronRightIcon aria-hidden="true" className="text-fun-fg2 size-4" />
-    </LearnLink>
-  );
-}
-
-function BuddyHero({
-  hrefs,
-  buddy,
-  status,
+/**
+ * The buddy as the learner sees it right away: a change shows at once and goes back if it didn't
+ * save, with `failed` saying so.
+ */
+function useBuddyChanges({
+  initial,
+  saveBuddy,
 }: {
+  initial: AppearanceBuddy | null;
+  saveBuddy: BuddyScreenActions["saveBuddy"];
+}) {
+  const [current, setCurrent] = useState(initial);
+  const [failed, setFailed] = useState(false);
+
+  async function save(next: AppearanceBuddy) {
+    const previous = current;
+    setCurrent(next);
+    setFailed(false);
+
+    const { data: saved } = await safeAsync(() => saveBuddy(next));
+
+    if (!saved) {
+      setCurrent(previous);
+      setFailed(true);
+    }
+  }
+
+  return { current, failed, save };
+}
+
+/** What's done now and then with the buddy: change it, its glasses and the week's summary. */
+function BuddyMenu({
+  buddy,
+  glassesCount,
+  hrefs,
+  name,
+  onEdit,
+  onGlasses,
+}: {
+  buddy: LearnBuddy | null;
+  glassesCount: string;
   hrefs: BuddyScreenHrefs;
-  buddy: LearnBuddy;
-  status: BuddyStatusView;
+  name: string;
+  onEdit: () => void;
+  onGlasses: () => void;
 }) {
   const t = useExtracted();
-  const beltName = useBeltName();
-  const name = useBuddyName(buddy);
-  const isNapping = status.energy.state === "napping";
-  const line = useBuddyLine(isNapping ? "welcomeBack" : "fedToday");
 
   return (
-    <section className="flex flex-col items-center gap-2 text-center">
-      <LearnLink
-        className="fun-glass text-fun-fg2 hover:text-fun-fg flex min-h-11 items-center gap-1.5 self-end rounded-full px-3 text-xs font-medium"
-        href={hrefs.appearance}
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={<Button className="shrink-0 rounded-full" size="icon" variant="outline" />}
       >
-        <ArrowRightLeftIcon aria-hidden="true" className="size-3.5" />
-        {t("Switch buddy")}
-      </LearnLink>
+        <EllipsisIcon aria-hidden="true" />
+        <span className="sr-only">{t("More about {buddy}", { buddy: name })}</span>
+      </DropdownMenuTrigger>
 
-      {/* The buddy's drawing has headroom, so its line sits closer to keep them together. */}
-      {status.energy.studiedToday && (
-        <div className="relative z-20 -mb-8">
-          <BuddySpeech>{line}</BuddySpeech>
-        </div>
-      )}
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuItem onClick={onEdit}>
+          {buddy ? <PencilIcon aria-hidden="true" /> : <SmileIcon aria-hidden="true" />}
+          {buddy ? t("Change {buddy}", { buddy: name }) : t("Pick your buddy")}
+        </DropdownMenuItem>
 
-      <div className="relative flex flex-col items-center">
-        <Buddy
-          beltColor={buddy.beltColor}
-          className="relative z-10 size-36 sm:size-40"
-          energy={status.energy.current}
-          expression={BUDDY_EXPRESSION[status.energy.state]}
-          studiedToday={status.energy.studiedToday}
-          glasses={buddy.glasses}
-          kind={buddy.kind}
-          label={name}
-        />
-        <span aria-hidden="true" className="fun-planet -mt-6 size-24 opacity-90" />
-      </div>
+        {buddy && (
+          <DropdownMenuItem onClick={onGlasses}>
+            <GlassesIcon aria-hidden="true" />
+            <span className="flex-1">{t("Glasses")}</span>
+            <span className="text-muted-foreground text-xs tabular-nums">{glassesCount}</span>
+          </DropdownMenuItem>
+        )}
 
-      <h1 className="font-fun-display flex items-center gap-2 text-3xl font-bold">
-        {name}
-        <LearnLink
-          className="text-fun-fg2 hover:text-fun-fg flex size-11 items-center justify-center rounded-full"
-          href={hrefs.appearance}
-        >
-          <PencilIcon aria-hidden="true" className="size-4" />
-          <span className="sr-only">{t("Rename {buddy}", { buddy: name })}</span>
-        </LearnLink>
-      </h1>
+        <DropdownMenuSeparator />
 
-      <p className="text-fun-fg2 text-sm">
-        <BuddyStageName stage={status.stage} />
-        {" · "}
-        {t("{belt}, level {level}", {
-          belt: beltName(status.belt.color),
-          level: String(status.belt.level),
-        })}
-      </p>
-
-      {isNapping && (
-        <p className="text-fun-fg2 max-w-xs text-sm">
-          {t("{buddy} took a nap. Everything you learn helps it wake up.", { buddy: name })}
-        </p>
-      )}
-    </section>
+        <DropdownMenuItem render={<LearnLink href={hrefs.logbook} />}>
+          <CalendarDaysIcon aria-hidden="true" />
+          {t("Weekly summary")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
-/**
- * Buddies live in Fun: Focus learners get a way there instead of an empty page, and a Fun learner
- * who switched modes without picking one is sent to pick it.
- */
-function NoBuddyNote({ hrefs }: { hrefs: BuddyScreenHrefs }) {
+/** A learner without a buddy yet is offered one, right above the conversation. */
+function PickBuddyRow({ onPick }: { onPick: () => void }) {
   const t = useExtracted();
-  const mode = useExperienceMode();
 
   return (
-    <div className="flex flex-col gap-3 pt-6">
-      <h1 className="in-data-[mode=fun]:font-fun-display text-2xl font-semibold">
-        {mode === "fun" ? t("Pick your buddy") : t("Buddies live in Fun mode")}
-      </h1>
-      <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2">
-        {mode === "fun"
-          ? t("Pick a buddy in Appearance. You feed it by learning.")
-          : t("Switch to Fun in Appearance to pick a buddy you feed by learning.")}
-      </p>
-      <LearnLink
-        className="inline-flex min-h-11 items-center self-start text-sm font-semibold underline"
-        href={hrefs.appearance}
-      >
-        {t("Open Appearance")}
-      </LearnLink>
-    </div>
+    <ListGroup>
+      <ListRowButton aria-haspopup="dialog" onClick={onPick}>
+        <ListRowIcon>
+          <SmileIcon />
+        </ListRowIcon>
+        <ListRowContent>
+          <ListRowTitle>{t("Pick your buddy")}</ListRowTitle>
+          <ListRowDescription>
+            {t("It learns with you and grows with your belt.")}
+          </ListRowDescription>
+        </ListRowContent>
+      </ListRowButton>
+    </ListGroup>
   );
 }
 
+/** "Your study buddy · Baby": what the buddy is, and its stage once there's one to grow. */
+function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] | null }) {
+  const t = useExtracted();
+
+  if (!stage) {
+    return t("Your study buddy");
+  }
+
+  return (
+    <span>
+      {t("Your study buddy")}
+      {" · "}
+      <BuddyStageName stage={stage} />
+    </span>
+  );
+}
+
+function useGlassesCount(status: BuddyStatusView): string {
+  const t = useExtracted();
+  const earned = status.glasses.filter((item) => item.earned).length;
+  return t("{earned} of {total}", { earned: String(earned), total: String(status.glasses.length) });
+}
+
 /**
- * The buddy's page in Fun: its Energy (awake, napping or glowing), how far it is from growing, what
- * it ate this week and the glasses it earned. Growth comes from the belt and glow from Energy, so
- * the buddy has no economy of its own, and it never suffers: at worst it naps.
+ * The buddy tab: the learner's conversation with their buddy, their tutor for the goal. The buddy
+ * sits on top (its art, name and stage, the rest behind its "…") with its day as two small tiles
+ * (Energy and today's missions, their details a tap away); the conversation takes the screen, its
+ * suggestions and composer always within reach. Before a buddy is picked, a neutral tutor talks and the tab offers to pick one.
+ * The host places the conversation as its child, which reads the buddy with `useBuddyTutor`.
  */
 export function BuddyScreen({
+  actions,
+  children,
   hrefs,
-  onWearGlasses,
+  situation,
   status,
 }: {
+  actions: BuddyScreenActions;
+  /** The conversation, which reads what it needs from `useBuddyTutor`. */
+  children: React.ReactNode;
   hrefs: BuddyScreenHrefs;
-  onWearGlasses: (glasses: BuddyGlasses) => Promise<boolean>;
+  situation: TutorSituation;
   status: BuddyStatusView;
 }) {
   const t = useExtracted();
-  const mode = useExperienceMode();
+  const [editing, setEditing] = useState(false);
+  const [wearing, setWearing] = useState(false);
 
-  if (mode !== "fun" || !status.buddy) {
-    return <NoBuddyNote hrefs={hrefs} />;
-  }
+  const { current, failed, save } = useBuddyChanges({
+    initial: status.buddy,
+    saveBuddy: actions.saveBuddy,
+  });
 
-  const buddy: LearnBuddy = {
-    beltColor: status.belt.color,
-    energy: status.energy.current,
-    glasses: status.buddy.glasses,
-    kind: status.buddy.kind,
-    name: status.buddy.name,
+  const look = { beltColor: status.belt.color, energy: status.energy.current };
+
+  const buddy: LearnBuddy | null = current && {
+    ...look,
+    ...current,
     studiedToday: status.energy.studiedToday,
   };
 
-  return (
-    <div className="flex flex-col gap-5" data-slot="buddy-screen">
-      <BuddyHero hrefs={hrefs} buddy={buddy} status={status} />
-      <EnergyAndGrowth buddy={buddy} status={status} />
-      <Diet buddy={buddy} status={status} />
-      <BuddyGlassesShelf glasses={status.glasses} onWear={onWearGlasses} buddy={buddy} />
+  const content = useTutorConversationContent({
+    buddy,
+    decide: actions.decidePlanChange,
+    situation,
+    tools: actions.tools,
+  });
 
-      <nav aria-label={t("More about your progress")} className="flex flex-col gap-2">
-        <PageLink
-          href={hrefs.logbook}
-          icon={<BookOpenIcon aria-hidden="true" className="text-fun-accent-cyan size-5" />}
-          label={t("This week's logbook")}
+  const name = content.identity.name;
+  const glassesCount = useGlassesCount(status);
+
+  return (
+    <div className="-mb-12 flex flex-1 flex-col gap-6" data-slot="buddy-screen">
+      <header className="flex flex-col gap-5">
+        <div className="flex items-center gap-4 px-1">
+          <BuddyArt buddy={buddy} name={name} />
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <PageTitle className="truncate">{name}</PageTitle>
+            <PageSubtitle className="pt-0">
+              <BuddyLine stage={buddy ? status.stage : null} />
+            </PageSubtitle>
+          </div>
+
+          <BuddyMenu
+            buddy={buddy}
+            glassesCount={glassesCount}
+            hrefs={hrefs}
+            name={name}
+            onEdit={() => setEditing(true)}
+            onGlasses={() => setWearing(true)}
+          />
+        </div>
+
+        <BuddyToday
+          energyHref={hrefs.energy}
+          hasBuddy={Boolean(buddy)}
+          name={name}
+          status={status}
         />
-        <PageLink
-          href={hrefs.preparation}
-          icon={<OrbitIcon aria-hidden="true" className="text-fun-accent-violet size-5" />}
-          label={t("Preparation")}
+      </header>
+
+      {failed && !editing && (
+        <p className="text-destructive text-sm" role="alert">
+          {t("That didn't save. Try again in a moment.")}
+        </p>
+      )}
+
+      {!buddy && <PickBuddyRow onPick={() => setEditing(true)} />}
+
+      <TutorContentContext value={content}>{children}</TutorContentContext>
+
+      {buddy && (
+        <BuddyGlassesSheet
+          buddy={buddy}
+          failed={failed}
+          glasses={status.glasses}
+          onOpenChange={setWearing}
+          onWear={(glasses) => void save({ glasses, kind: buddy.kind, name: buddy.name })}
+          open={wearing}
         />
-      </nav>
+      )}
+
+      {editing && (
+        <BuddyEditor
+          initial={{
+            glasses: current?.glasses ?? "round",
+            kind: current?.kind ?? "zu",
+            name: current?.name ?? "",
+          }}
+          look={look}
+          onClose={() => setEditing(false)}
+          onSave={(choice) => {
+            setEditing(false);
+
+            void save({
+              glasses: choice.glasses,
+              kind: choice.kind,
+              name: choice.name.trim() || null,
+            });
+          }}
+        />
+      )}
     </div>
   );
 }

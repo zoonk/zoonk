@@ -142,12 +142,12 @@
           "imageFile": "flare-cover-photosynthesis.webp",
           "language": "en",
           "scene": {
+            "focalObject": "a green leaf catching rays of sunlight",
             "labels": [],
             "layout": "single",
             "motion": null,
             "relation": null,
-            "supportingObjects": ["a small sun"],
-            "focalObject": "a green leaf catching rays of sunlight"
+            "supportingObjects": ["a small sun"]
           }
         }
       }
@@ -194,12 +194,12 @@
           "imageFile": "gpt2-cover-photosynthesis.webp",
           "language": "en",
           "scene": {
+            "focalObject": "a green leaf catching rays of sunlight",
             "labels": [],
             "layout": "single",
             "motion": null,
             "relation": null,
-            "supportingObjects": ["a small sun"],
-            "focalObject": "a green leaf catching rays of sunlight"
+            "supportingObjects": ["a small sun"]
           }
         }
       }
@@ -247,17 +247,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. Microwave is duplicated in a sequence with no clear change between the two scenes",
+          "conclusion": "Expected fail; got fail. microwave and soup repeated in unchanged sequence panels several panels",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. Microwave is duplicated in a sequence with no clear change between the two scenes",
+          "conclusion": "Expected fail; got fail. microwave and soup repeated in unchanged sequence panels several panels",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. Microwave is duplicated in a sequence with no clear change between the two scenes",
+          "conclusion": "Expected fail; got fail. microwave and soup repeated in unchanged sequence panels several panels",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -283,17 +283,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. glossy 3D style unrequested text: 'nucleus'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'nucleus'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. glossy 3D style unrequested text: 'nucleus'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'nucleus'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. glossy 3D style unrequested text: 'nucleus'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'nucleus'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -319,17 +319,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave and soup missing water molecule and spinning arrows missing label: “water molecules”",
+          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave, soup, and spinning water molecule missing label: 'water molecules'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave and soup missing water molecule and spinning arrows missing label: “water molecules”",
+          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave, soup, and spinning water molecule missing label: 'water molecules'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave and soup missing water molecule and spinning arrows missing label: “water molecules”",
+          "conclusion": "Expected fail; got fail. wrong focal object: house and key sign instead of microwave, soup, and spinning water molecule missing label: 'water molecules'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -355,17 +355,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong text: 'antes R$ 80' wrong text: 'você paga R$ 60'",
+          "conclusion": "Expected fail; got fail. old price is R$ 80 instead of R$ 90 new price is R$ 60 instead of R$ 70 unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong text: 'antes R$ 80' wrong text: 'você paga R$ 60'",
+          "conclusion": "Expected fail; got fail. old price is R$ 80 instead of R$ 90 new price is R$ 60 instead of R$ 70 unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong text: 'antes R$ 80' wrong text: 'você paga R$ 60'",
+          "conclusion": "Expected fail; got fail. old price is R$ 80 instead of R$ 90 new price is R$ 60 instead of R$ 70 unrequested text: 'antes R$ 80' unrequested text: 'você paga R$ 60'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -431,17 +431,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: a leaf with sun instead of a red apple on a white plate",
+          "conclusion": "Expected fail; got fail. wrong focal object: a leaf and sun instead of a red apple on a white plate",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: a leaf with sun instead of a red apple on a white plate",
+          "conclusion": "Expected fail; got fail. wrong focal object: a leaf and sun instead of a red apple on a white plate",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong focal object: a leaf with sun instead of a red apple on a white plate",
+          "conclusion": "Expected fail; got fail. wrong focal object: a leaf and sun instead of a red apple on a white plate",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -467,17 +467,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. wrong label: 'water molecules'",
+          "conclusion": "Expected fail; got fail. wrong-language text: 'water molecules'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong label: 'water molecules'",
+          "conclusion": "Expected fail; got fail. wrong-language text: 'water molecules'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. wrong label: 'water molecules'",
+          "conclusion": "Expected fail; got fail. wrong-language text: 'water molecules'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -656,17 +656,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. missing steam, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. missing steaming soup, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. missing steam, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. missing steaming soup, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. missing steam, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
+          "conclusion": "Expected fail; got fail. missing steaming soup, wavy lines, water molecule, dashed link, and spinning arrows photorealistic, dark image unrequested text: '0:45'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -692,17 +692,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. Wrong scene: multi-panel water-cycle infographic, not a single lake-to-cloud illustration Style: busy infographic with multiple panels Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean'",
+          "conclusion": "Expected fail; got fail. Scene mismatch: multi-panel water-cycle infographic rather than a single lake-to-cloud illustration Style mismatch: busy infographic with multiple panels and dense text Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean', 'Clouds'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. Wrong scene: multi-panel water-cycle infographic, not a single lake-to-cloud illustration Style: busy infographic with multiple panels Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean'",
+          "conclusion": "Expected fail; got fail. Scene mismatch: multi-panel water-cycle infographic rather than a single lake-to-cloud illustration Style mismatch: busy infographic with multiple panels and dense text Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean', 'Clouds'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. Wrong scene: multi-panel water-cycle infographic, not a single lake-to-cloud illustration Style: busy infographic with multiple panels Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean'",
+          "conclusion": "Expected fail; got fail. Scene mismatch: multi-panel water-cycle infographic rather than a single lake-to-cloud illustration Style mismatch: busy infographic with multiple panels and dense text Unrequested text: 'The Water Cycle', 'Evaporation & Transpiration', 'Ocean', 'Clouds'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -720,6 +720,78 @@
             "motion": "dashed arrows rise from the lake to the cloud",
             "relation": null,
             "supportingObjects": ["a small sun"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "question-letters-1",
+        "userInput": {
+          "imageFile": "flare-question-animal-cell-letters.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a simplified cutaway view of a round animal cell showing a large central spherical nucleus",
+            "labels": [
+              {
+                "target": "pointing to the oval mitochondrion with wavy internal folds",
+                "text": "A"
+              },
+              { "target": "pointing to the dotted folded membranes near the nucleus", "text": "B" },
+              { "target": "pointing to the stack of curved flattened sacs", "text": "C" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": "The dotted folded membranes sit directly next to the nucleus, while the stacked smooth sacs and the oval mitochondrion are positioned separately in the surrounding cytoplasm",
+            "supportingObjects": [
+              "an oval mitochondrion with internal folds, a folded membrane sheet studded with small surface dots adjacent to the nucleus, and a stack of smooth curved flattened sacs"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary instead of the thin inner line",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary instead of the thin inner line",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. B pointer touches the thick outer boundary instead of the thin inner line",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "question-pointer-on-wrong-part-1",
+        "userInput": {
+          "imageFile": "flare-question-wall-membrane-wrong-pointer.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a simplified plant cell outline with a thick green outer hexagonal boundary and a thin inner line running just inside it with a small gap in between",
+            "labels": [
+              { "target": "at a pointer line touching the thick outer boundary", "text": "A" },
+              { "target": "at a pointer line touching the thin inner line", "text": "B" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
           }
         }
       }

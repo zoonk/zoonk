@@ -3,9 +3,11 @@ import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer"
 import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { claimAssist } from "../../entitlements/claim-usage";
+import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { getItemAudienceFilter } from "../../library/items/item-field";
 import { gradeChoiceAnswer } from "../_utils/choice-items";
-import { type GoalPlan, loadGoalPlan } from "../_utils/goal-skill-graph";
+import { loadPlacementPlan } from "../_utils/goal-skill-graph";
+import { canGradeWithModel } from "../_utils/model-grading";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { recordLearnerAnswer } from "../record-learner-answer";
 import { type PlacementState, loadPlacementState } from "./_utils/load-placement-state";
@@ -20,27 +22,39 @@ export type PlacementAnswerResult =
 
 type PlacementAnswer = PlacementAnswerInput["answer"];
 
-/** Placement only asks the goal's own questions, and only ones it can grade here. */
+/**
+ * Placement asks the goal's own questions, and only ones it can grade here. A question it asked
+ * stays answerable when the plan changes under it (a re-plan swaps the lessons whose skills it was
+ * asked on, or a notice read again rebuilds the skill graph): the answer is still evidence on its
+ * skill. So a question on a skill the plan no longer has counts when placement could have asked
+ * it: one the learner can see, and not another exam's.
+ */
 async function findGoalItem({
+  examBlueprintId,
   itemId,
-  plan,
+  userId,
 }: {
+  examBlueprintId: string | null;
   itemId: string;
-  plan: GoalPlan;
+  userId: string;
 }): Promise<PlacementItem | null> {
-  const item = await prisma.item.findUnique({ where: { id: itemId } });
+  const item = await prisma.item.findFirst({
+    where: {
+      id: itemId,
+      skill: libraryRowsVisibleTo(userId),
+      ...getItemAudienceFilter({ examBlueprintId }),
+    },
+  });
 
-  if (!item || !plan.skills.some((skill) => skill.id === item.skillId)) {
-    return null;
-  }
-
-  return parsePlacementItem(item);
+  return item ? parsePlacementItem(item) : null;
 }
 
 /**
  * A typed answer: code settles an accepted answer, and a fast model grades the rest one key point
- * at a time. Only an answer that states every key point counts as right, so a vague one can't
- * skip a phase. "I don't know yet" is never graded.
+ * at a time (not counted as small AI help: grading must stay right). Only an answer that states
+ * every key point counts as right, so a vague one can't skip a phase. "I don't know yet" is never
+ * graded. Placement asks each question once, so only a client answering one question over and over
+ * gets past the day's model-graded answers, where only an accepted answer counts.
  */
 async function gradeTyped({
   answer,
@@ -61,10 +75,7 @@ async function gradeTyped({
 
   const { content } = item;
 
-  const usage = await claimAssist();
-
-  // Once the learner's small AI help is used up, only an accepted answer (or a typo of one) counts.
-  if (usage.status !== "allowed") {
+  if (!(await canGradeWithModel({ question: { itemId: item.id }, userId }))) {
     return (
       matchTypedAnswer({ acceptedAnswers: content.acceptedAnswers ?? [], answer: answer.text })
         .kind !== "none"
@@ -119,8 +130,14 @@ export async function answerPlacementQuestion({
     return owned;
   }
 
-  const plan = await loadGoalPlan(goalId);
-  const item = await findGoalItem({ itemId: input.itemId, plan });
+  const [plan, item] = await Promise.all([
+    loadPlacementPlan(goalId),
+    findGoalItem({
+      examBlueprintId: owned.goal.examBlueprintId,
+      itemId: input.itemId,
+      userId: owned.userId,
+    }),
+  ]);
 
   const isCorrect = item
     ? await gradeAnswer({ answer: input.answer, item, userId: owned.userId })

@@ -1,41 +1,22 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { createGoalPlan } from "../../plans/create-goal-plan";
-import { parsePlanGraph } from "../../plans/planner/plan-state";
-import { resetPlannedStudySession } from "../../sessions/ensure-study-session";
+import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 
-const DEFAULT_TIME_ZONE = "UTC";
-
-async function replanGoal(goal: {
-  id: string;
-  plan: { graph: unknown } | null;
-  timezone: string | null;
-  userId: string;
-}): Promise<void> {
-  // Re-plans run in workflow steps, for any learner's goal: no request says which client they use.
-  await createGoalPlan({
-    goalId: goal.id,
-    graph: parsePlanGraph(goal.plan?.graph),
-    platform: null,
-  });
-
-  // Today's session may have been built from the stand-ins; a session not started yet is rebuilt.
-  await resetPlannedStudySession({
-    goalId: goal.id,
-    localDate: getDateInTimeZone({
-      date: new Date(),
-      timeZone: goal.timezone ?? DEFAULT_TIME_ZONE,
-    }),
-    userId: goal.userId,
-  });
+/**
+ * Today's session may have been built from the stand-ins: it takes the real lessons the next time
+ * the learner opens it, without moving anything they were shown (see `refreshDayFromPlan`). The
+ * plan takes them as any refresh does: this week's in place of their stand-ins, the rest from next
+ * week, and nothing else moves (see `refreshGoalPlan`).
+ */
+async function replanGoal(goal: { id: string }): Promise<void> {
+  await refreshGoalPlan({ goalId: goal.id });
 }
 
 /**
  * Re-plans every active goal still holding a stand-in for one of these skills (a plan item that
  * points at the skill because its lessons weren't outlined yet), now that an outline gave the
- * skills their lessons. The graph stays the same; the plan is rebuilt from today, so the real
- * lessons take the stand-ins' places this week too, and past work is kept. Goals of any learner
+ * skills their lessons. The graph stays the same, so the real lessons take the stand-ins' places,
+ * this week's too, and past work and the dates the learner saw are kept. Goals of any learner
  * waiting on a shared course benefit, not only the one whose run wrote it. Returns the goal ids.
  *
  * `goalIds` are goals re-planned when only part of the band had landed (its first chapter, for a
@@ -54,7 +35,7 @@ export async function replanGoalsWaitingOnSkills({
   }
 
   const goals = await prisma.goal.findMany({
-    select: { id: true, plan: { select: { graph: true } }, timezone: true, userId: true },
+    select: { id: true },
     where: {
       OR: [
         {

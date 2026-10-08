@@ -9,9 +9,7 @@ const MAIN_LEARN_ADAPTERS: LearnAdapters = {
   linkComponent: Link,
   routes: {
     buddy: "/buddy",
-    content: "/content",
-    plan: "/plan",
-    progress: "/progress",
+    journey: "/journey",
     signUp: "/login",
     today: "/today",
     upgrade: "/subscription",

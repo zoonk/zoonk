@@ -1,36 +1,37 @@
 import "server-only";
 import { type ItemFormat, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { readNoticeFormats } from "../../../library/exams/notice-formats";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../../library/exams/true-false-labels";
-import { getItemAudienceFilter } from "../../../library/items/item-field";
-import { parsePlanGraph } from "../../../plans/planner/plan-state";
+import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type PlacementEvidence, getPlacementBeliefs } from "../placement-beliefs";
 import { isPlacementBudgetUsed } from "../placement-budget";
-import { type PlacementStatus } from "../placement-contract";
+import { type PlacementStatus, getKnownSubjects, getOwnLevel } from "../placement-contract";
 import { getTargetDifficulty } from "../placement-difficulty";
-import { pickPlacementItemSkillIds } from "../placement-item-picks";
+import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
+import { isOwnMaterialTest } from "../placement-material";
 import { type PlacementQuickFormat, getPlacementQuickFormat } from "../placement-quick-format";
 import {
   type AreaStart,
   type OwnLevel,
   type PhaseStart,
-  type PlacementItemCandidate,
-  chooseNextPlacementSkill,
   getAreaStarts,
   getPhaseStarts,
   getSkillPlacementStatus,
   getUndecidedSkills,
   isPlacementSettled,
-  pickPlacementItem,
 } from "../placement-steps";
+import { chooseNextSkill } from "./next-placement-skill";
+import { hasPlacementStarted, isPlacementAnswerOn } from "./placement-answers";
+import { loadPlacementItems } from "./placement-bank-items";
 import {
-  PLACEMENT_ITEM_FORMATS,
   type PlacementQuestionView,
   parsePlacementItem,
   toPlacementQuestionView,
 } from "./placement-items";
+import { loadPlanBuild } from "./placement-plan-build";
 
 /**
  * Where placement stands for a goal: each phase's and each area's starting point, whether every
@@ -51,6 +52,11 @@ export type PlacementState = {
   needsItems: string[];
   next: PlacementQuestionView | null;
   phases: PhaseStart[];
+  /**
+   * This goal's placement already has answers (placement questions answered since the goal was
+   * created), so a client coming back resumes at `next` instead of showing placement's start.
+   */
+  started: boolean;
   /** What the client does next (`placementStatusSchema`). */
   status: PlacementStatus;
   /** The words the goal's true-or-false questions are answered with. */
@@ -62,6 +68,7 @@ const MAX_EVIDENCE = 1000;
 
 type AttemptRow = {
   answer: unknown;
+  answeredAt: Date;
   durationMs: number;
   isCorrect: boolean;
   item: { format: ItemFormat } | null;
@@ -98,6 +105,7 @@ export async function loadEvidence({ skillIds, userId }: { skillIds: string[]; u
     orderBy: { answeredAt: "desc" },
     select: {
       answer: true,
+      answeredAt: true,
       durationMs: true,
       isCorrect: true,
       item: { select: { format: true } },
@@ -121,63 +129,39 @@ export async function loadEvidence({ skillIds, userId }: { skillIds: string[]; u
 }
 
 /**
- * Placement's own answers on one learner-local day: bank questions answered outside a lesson and
- * outside a session (sessions carry their own few questions).
- */
-function isPlacementAnswerOn({ attempt, day }: { attempt: AttemptRow; day: Date }): boolean {
-  return (
-    attempt.itemId !== null &&
-    attempt.stepId === null &&
-    attempt.studySessionId === null &&
-    attempt.localDate.getTime() === day.getTime()
-  );
-}
-
-/**
- * The questions placement may ask on these skills: general ones and the goal's exam's, never
- * another exam's (a shared skill's "on the first day of ENEM…" question isn't for a police exam).
- */
-export function loadPlacementItems({
-  examBlueprintId,
-  skillIds,
-}: {
-  examBlueprintId: string | null;
-  skillIds: string[];
-}) {
-  return prisma.item.findMany({
-    orderBy: { id: "asc" },
-    select: { difficulty: true, format: true, id: true, skillId: true },
-    where: {
-      format: { in: [...PLACEMENT_ITEM_FORMATS] },
-      skillId: { in: skillIds },
-      ...getItemAudienceFilter({ examBlueprintId }),
-    },
-  });
-}
-
-/**
  * The goal's exam, whose questions placement may ask, how placement asks quickly for it, and the
  * words its statements are answered with.
  */
-async function loadGoalExam(
-  goalId: string,
-): Promise<{
+async function loadGoalExam(goalId: string): Promise<{
+  /** A test from the learner's own material: only answered topics are settled (`answeredOnly`). */
+  answeredOnly: boolean;
   examBlueprintId: string | null;
+  goalCreatedAt: Date | null;
+  /** The level the learner gave for the goal, stored on it. */
+  goalLevel: OwnLevel | null;
+  /** The exam's subjects the learner said they know well. */
+  knownAreas: string[];
   quickFormat: PlacementQuickFormat;
   trueFalseLabels: TrueFalseLabels;
 }> {
   const goal = await prisma.goal.findUnique({
-    select: { examBlueprint: true },
+    select: { createdAt: true, details: true, examBlueprint: true },
     where: { id: goalId },
   });
 
   const blueprint = goal?.examBlueprint ?? null;
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
+  const notice = readNoticeFormats(goal?.details);
 
   return {
+    answeredOnly: isOwnMaterialTest(blueprint),
     examBlueprintId: blueprint?.id ?? null,
-    quickFormat: getPlacementQuickFormat(structure),
-    trueFalseLabels: getTrueFalseLabels(structure),
+    goalCreatedAt: goal?.createdAt ?? null,
+    goalLevel: goal ? getOwnLevel({ goal }) : null,
+    knownAreas: goal ? getKnownSubjects(goal) : [],
+    // Before the notice's blueprint is linked, the formats a first pass over it read.
+    quickFormat: getPlacementQuickFormat(structure ?? notice),
+    trueFalseLabels: getTrueFalseLabels(structure ?? notice),
   };
 }
 
@@ -186,54 +170,10 @@ async function loadQuestion(itemId: string | undefined): Promise<PlacementQuesti
     return null;
   }
 
-  const item = await prisma.item.findUnique({ where: { id: itemId } });
+  const item = await prisma.item.findUnique({ include: ITEM_IMAGE_INCLUDE, where: { id: itemId } });
   const parsed = item ? parsePlacementItem(item) : null;
 
   return parsed ? toPlacementQuestionView(parsed) : null;
-}
-
-/**
- * A plan whose run never recorded the end of placement's questions (a lost run, or a plan built
- * before the run recorded it) stops waiting for them this long after its graph was written.
- */
-const QUESTION_WRITING_WINDOW_MS = 10 * 60 * 1000;
-
-/** How the run building the goal's plan went, as placement needs it. */
-type PlanBuild = {
-  /** The run gave up before the plan had skills: nothing will come until it's started again. */
-  failed: boolean;
-  /** The skills whose placement questions are still being written: none once writing ended. */
-  preparingSkillIds: Set<string>;
-};
-
-async function loadPlanBuild(goalId: string): Promise<PlanBuild> {
-  const plan = await prisma.plan.findUnique({
-    select: {
-      buildFailedAt: true,
-      createdAt: true,
-      generatedAt: true,
-      graph: true,
-      placementPreparedAt: true,
-    },
-    where: { goalId },
-  });
-
-  if (!plan) {
-    return { failed: false, preparingSkillIds: new Set() };
-  }
-
-  const graphWrittenAt = plan.generatedAt ?? plan.createdAt;
-
-  const writing =
-    plan.placementPreparedAt === null &&
-    Date.now() - graphWrittenAt.getTime() < QUESTION_WRITING_WINDOW_MS;
-
-  return {
-    failed: plan.buildFailedAt !== null,
-    preparingSkillIds: new Set(
-      writing ? pickPlacementItemSkillIds(parsePlanGraph(plan.graph)) : [],
-    ),
-  };
 }
 
 /**
@@ -285,12 +225,13 @@ function getStatus({
  */
 export async function loadPlacementState({
   goalId,
-  ownLevel,
+  ownLevel: requestedLevel,
   plan,
   today = null,
   userId,
 }: {
   goalId: string;
+  /** A level the request gave; the one stored on the goal otherwise. */
   ownLevel?: OwnLevel | null;
   plan: GoalPlan;
   today?: Date | null;
@@ -299,41 +240,63 @@ export async function loadPlacementState({
   const skills = plan.skills;
   const skillIds = skills.map((skill) => skill.id);
 
-  const { examBlueprintId, quickFormat, trueFalseLabels } = await loadGoalExam(goalId);
+  const {
+    answeredOnly,
+    examBlueprintId,
+    goalCreatedAt,
+    goalLevel,
+    knownAreas,
+    quickFormat,
+    trueFalseLabels,
+  } = await loadGoalExam(goalId);
 
-  const [{ attempts, evidence, seenItemIds }, bankItems, build] = await Promise.all([
+  const ownLevel = requestedLevel ?? goalLevel;
+
+  const [{ attempts, evidence, seenItemIds }, { bankItems, build }] = await Promise.all([
     loadEvidence({ skillIds, userId }),
-    loadPlacementItems({ examBlueprintId, skillIds }),
-    loadPlanBuild(goalId),
+    loadPlanBuild({ everySkill: answeredOnly, goalId, knownAreas }).then(async (planBuild) => ({
+      bankItems: await loadPlacementItems({
+        examBlueprintId,
+        skillIds,
+        writingSkillIds: planBuild.preparingSkillIds,
+      }),
+      build: planBuild,
+    })),
   ]);
-
-  const dayBudgetUsed =
-    today !== null &&
-    isPlacementBudgetUsed(
-      attempts.filter((attempt) => isPlacementAnswerOn({ attempt, day: today })),
-    );
 
   const items: PlacementItemCandidate[] = bankItems.map((item) => ({
     ...item,
     seen: seenItemIds.has(item.id),
   }));
 
-  const beliefs = getPlacementBeliefs({ evidence, skills });
-  const complete = isPlacementSettled({ beliefs, skills });
+  // A test from the learner's own material asks every topic placement has (or will have) a
+  // question for.
+  const topics = answeredOnly
+    ? new Set([...items.map((item) => item.skillId), ...build.preparingSkillIds]).size
+    : 0;
+
+  const dayBudgetUsed =
+    today !== null &&
+    isPlacementBudgetUsed({
+      answers: attempts.filter((attempt) => isPlacementAnswerOn({ attempt, day: today })),
+      topics,
+    });
+
+  const beliefs = getPlacementBeliefs({ answeredOnly, evidence, knownAreas, ownLevel, skills });
+  const complete = isPlacementSettled({ answeredOnly, beliefs, skills });
   const askableSkillIds = new Set(items.filter((item) => !item.seen).map((item) => item.skillId));
 
-  const needsItems = getUndecidedSkills({ beliefs, skills })
+  const needsItems = getUndecidedSkills({ answeredOnly, beliefs, skills })
     .filter((skill) => !askableSkillIds.has(skill.id))
     .map((skill) => skill.id);
 
-  // Skills whose questions are still being written count as askable, so placement keeps its own
-  // order while they're written: it waits for the one it asks next instead of asking another.
-  const nextSkillId = chooseNextPlacementSkill({
-    askableSkillIds: new Set([...askableSkillIds, ...build.preparingSkillIds]),
-    beliefs,
-    evidence,
-    ownLevel,
-    skills,
+  const nextSkillId = chooseNextSkill({
+    askableSkillIds,
+    choice: { answeredOnly, beliefs, evidence, ownLevel, skills },
+    preparingSkillIds: build.preparingSkillIds,
+    quickSkillIds: new Set(
+      items.filter((item) => !item.seen && item.format === quickFormat).map((item) => item.skillId),
+    ),
   });
 
   const waitsForNext = nextSkillId !== null && !askableSkillIds.has(nextSkillId);
@@ -369,6 +332,7 @@ export async function loadPlacementState({
     needsItems,
     next,
     phases: getPhaseStarts({ beliefs, skills }),
+    started: hasPlacementStarted({ attempts, since: goalCreatedAt }),
     status: getStatus({
       answered: evidence.length,
       buildFailed: build.failed,

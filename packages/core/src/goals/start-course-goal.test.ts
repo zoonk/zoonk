@@ -264,7 +264,7 @@ describe(startCourseGoal, () => {
 
     const goal = await goalFixture({
       details: {
-        answered: ["level", "schedule", "age", "mode", "placement"],
+        answered: ["level", "schedule", "age", "memory", "buddy", "placement"],
         courseStart: { chapterId: null },
       },
       primaryCourseId: course.id,

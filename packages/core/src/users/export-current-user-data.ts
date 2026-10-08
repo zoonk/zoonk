@@ -2,6 +2,13 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { loadMemoryExport } from "../memory/_utils/memory-export";
 import { findLearningProfileView } from "../profile/_utils/learning-profile-view";
+import {
+  loadBuddyExport,
+  loadLanguageExport,
+  loadStartExport,
+  loadStudyExport,
+  loadUsageExport,
+} from "./_utils/account-export-sections";
 import { getSession } from "./get-session";
 
 const byCreation = [{ createdAt: "asc" as const }, { id: "asc" as const }];
@@ -69,8 +76,10 @@ function loadGuardianLinks(userId: string) {
 
 /**
  * Everything Zoonk keeps about the signed-in learner, as one download: the account, the learning
- * profile, goals and plans, the progress ledger, answers, skills, mistakes, milestones, memory,
- * feedback and guardian links. Uncached, so it reflects what's stored at that moment.
+ * profile, goals and plans, the progress ledger, study sessions and mocks, answers, skills,
+ * mistakes, milestones, language learning, memory, the buddy's conversations and the example lines
+ * written from memory, sources, usage, feedback and guardian links. Uncached, so it reflects what's
+ * stored at that moment.
  */
 export async function exportCurrentUserData() {
   const session = await getSession();
@@ -91,6 +100,11 @@ export async function exportCurrentUserData() {
     memory,
     [contentVotes, feedbackMessages],
     guardianLinks,
+    buddy,
+    study,
+    language,
+    start,
+    usage,
   ] = await Promise.all([
     prisma.user.findUniqueOrThrow({
       select: { createdAt: true, email: true, image: true, name: true, username: true },
@@ -104,19 +118,29 @@ export async function exportCurrentUserData() {
     loadMemoryExport(userId),
     loadFeedback(userId),
     loadGuardianLinks(userId),
+    loadBuddyExport(userId),
+    loadStudyExport(userId),
+    loadLanguageExport(userId),
+    loadStartExport(userId),
+    loadUsageExport(userId),
   ]);
 
   return {
     account,
     answers: { attempts },
+    buddy,
     exportedAt: new Date(),
     feedback: { contentVotes, messages: feedbackMessages },
     goals,
     guardianLinks,
+    language,
     learnerModel: { milestones, mistakes, skills },
     memory,
     profile,
     progress: { daily: dailyProgress, learningEvents, totals: progress },
+    start,
+    study,
+    usage,
   };
 }
 

@@ -33,17 +33,27 @@ const HOW_MUCH = {
   translationDistractors: ["renda", "custa"],
 };
 
-const PAIR: ExerciseResources = {
-  distractorWords: [],
-  lessonSentences: [HOW_MUCH],
-  lessonWords: [RENT],
-  sentenceWords: [RENT],
-};
+type PairWord = typeof RENT;
+
+/** The pair's resources, with `word` as its word ("rent" unless a test teaches another). */
+function pairWith(word: PairWord): ExerciseResources {
+  return {
+    distractorWords: [],
+    lessonSentences: [HOW_MUCH],
+    lessonWords: [word],
+    sentenceWords: [word],
+  };
+}
+
+/** A word or phrase of the pair, in place of "rent". */
+export function pairWord(word: Pick<PairWord, "translation" | "word">): PairWord {
+  return { ...RENT, id: crypto.randomUUID(), ...word };
+}
 
 /** Word screens show the word's note and sound tip for this language pair. */
 const RENT_HINTS = {
   note: "Não confunda com renda, que é income.",
-  pronunciationTip: "O r do começo é suave, não como em rato.",
+  pronunciationTip: "O `r` do começo é suave, não como em _rato_.",
 };
 
 const WORD_KINDS = new Set<ExerciseKind>(["translation", "vocabulary"]);
@@ -73,16 +83,18 @@ const STORED_CONTENT: Partial<Record<ExerciseKind, object>> = {
 
 /**
  * A language exercise of the given kind on the shared pair, with the word's hints where shown. A
- * kind that stores its own content takes `content` in place of the shared one.
+ * kind that stores its own content takes `content` in place of the shared one, and a word screen
+ * may teach another word or phrase (`word`, from `pairWord`).
  */
 export function languageStep(
   kind: ExerciseKind,
   content: object = STORED_CONTENT[kind] ?? {},
+  { word = RENT }: { word?: PairWord } = {},
 ): PlayableLanguageStep {
   const id = crypto.randomUUID();
 
   const [exercise] = serializeExerciseSteps({
-    resources: PAIR,
+    resources: pairWith(word),
     steps: [
       {
         content,
@@ -90,7 +102,7 @@ export function languageStep(
         kind,
         position: 0,
         sentence: SENTENCE_KINDS.has(kind) ? HOW_MUCH : null,
-        word: WORD_KINDS.has(kind) ? RENT : null,
+        word: WORD_KINDS.has(kind) ? word : null,
       },
     ],
   });

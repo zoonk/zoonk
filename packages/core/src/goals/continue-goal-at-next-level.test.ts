@@ -97,6 +97,13 @@ describe(continueGoalAtNextLevel, () => {
 
     expect(finished.status).toBe("completed");
     expect(profile.activeGoalId).toBe(next?.id);
+
+    // A goal goes on to its next level once: asking again makes no other goal.
+    await expect(continueGoalAtNextLevel(goal.id)).resolves.toStrictEqual({
+      status: "noNextLevel",
+    });
+
+    await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(2);
   });
 
   it("has no next level at the top of the course, nor for goals that aren't about learning", async () => {

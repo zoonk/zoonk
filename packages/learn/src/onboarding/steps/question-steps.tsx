@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/view-models/onboarding/contract";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import {
   BriefcaseBusinessIcon,
   GraduationCapIcon,
@@ -139,9 +140,7 @@ export function LevelStep({ onAnswer, pending, subject }: StepProps) {
   return (
     <StepForm
       canContinue={level !== null}
-      description={t(
-        "Answer honestly. Nobody is grading you. This changes where we start, not what you can learn.",
-      )}
+      description={t("It only changes where your plan starts.")}
       subject={subject}
       onContinue={() =>
         level && onAnswer({ level: level === QUICK_TEST ? null : level, question: "level" })
@@ -154,7 +153,11 @@ export function LevelStep({ onAnswer, pending, subject }: StepProps) {
   );
 }
 
-type TextQuestion = "reason" | "target";
+/** What an exam's learner aims for beyond passing; the target question asks only that. */
+export type ExamTarget = "admission" | "position" | "score";
+
+/** A short answer: why they learn a language, or the exam's target of its kind. */
+type TextQuestion = ExamTarget | "reason";
 
 function toTextAnswer({
   question,
@@ -163,14 +166,9 @@ function toTextAnswer({
   question: TextQuestion;
   value: string | null;
 }): OnboardingAnswerInput {
-  switch (question) {
-    case "reason":
-      return { question, reason: value };
-    case "target":
-      return { question, target: value };
-    default:
-      return { question, target: value };
-  }
+  return question === "reason"
+    ? { question, reason: value }
+    : { question: "target", target: value };
 }
 
 function useTextQuestionCopy(question: TextQuestion) {
@@ -180,17 +178,29 @@ function useTextQuestionCopy(question: TextQuestion) {
     TextQuestion,
     Record<"description" | "label" | "placeholder" | "title", string>
   > = {
+    admission: {
+      description: t("It helps your plan focus on what counts most."),
+      label: t("Your target"),
+      placeholder: t("E.g., medicine, 750 points"),
+      title: t("Which course and score are you aiming for?"),
+    },
+    position: {
+      description: t("The notice can have a different exam for each position."),
+      label: t("Position"),
+      placeholder: t("E.g., agente, analista"),
+      title: t("Which position are you applying for?"),
+    },
     reason: {
       description: t("The situations you care about shape every lesson."),
       label: t("Why"),
       placeholder: t("E.g., a job interview, travel"),
       title: t("Why are you learning it?"),
     },
-    target: {
-      description: t("It's your target. We help you prepare; nobody can promise a result."),
+    score: {
+      description: t("It helps your plan focus on what counts most."),
       label: t("Your target"),
-      placeholder: t("A score, a course or a position"),
-      title: t("What are you aiming for?"),
+      placeholder: t("E.g., band 7, 100 points"),
+      title: t("What score do you need?"),
     },
   };
 
@@ -202,7 +212,8 @@ export function TextStep({
   onAnswer,
   pending,
   question,
-}: Omit<StepProps, "subject"> & { question: TextQuestion }) {
+  subject,
+}: StepProps & { question: TextQuestion }) {
   const copy = useTextQuestionCopy(question);
   const [value, setValue] = useState("");
 
@@ -213,6 +224,7 @@ export function TextStep({
       onContinue={() => onAnswer(toTextAnswer({ question, value: value.trim() }))}
       onSkip={() => onAnswer(toTextAnswer({ question, value: null }))}
       pending={pending}
+      subject={subject}
       title={copy.title}
     >
       <TextField
@@ -265,7 +277,7 @@ export function DateStep({ onAnswer, pending }: Omit<StepProps, "subject">) {
   const t = useExtracted();
   const inputId = useId();
   const [date, setDate] = useState("");
-  const today = new Date().toISOString().slice(0, 10);
+  const today = useMountTime().toISOString().slice(0, 10);
 
   return (
     <StepForm
@@ -280,7 +292,7 @@ export function DateStep({ onAnswer, pending }: Omit<StepProps, "subject">) {
       <div className="flex flex-col gap-2">
         <Label htmlFor={inputId}>{t("Date")}</Label>
         <Input
-          className="in-data-[mode=fun]:fun-glass h-12 text-base"
+          className="h-12 text-base"
           id={inputId}
           min={today}
           onChange={(event) => setDate(event.target.value)}

@@ -1,0 +1,49 @@
+/// One AI call and what it cost: every text, evaluation, image, speech and transcription call and
+/// every live voice session, so spend adds up per day, task, model, goal and learner. Token counts
+/// are the call's own (`inputTokens` includes cached reads and writes, `outputTokens` includes
+/// reasoning); calls billed by length keep `audioSeconds`, `characters` or `images` instead.
+/// `costUsd` is computed from that usage and the dated price table in `@zoonk/ai/pricing`, because
+/// with our own provider keys (BYOK) the gateway bills nothing; null means the model has no price
+/// there yet. `gatewayCostUsd` is the gateway's list-price estimate, kept as a cross-check.
+/// `runId` matches the `runId` of the content, question or evaluation row the call wrote. Rows
+/// outlive their learner and goal (the link is cleared), so totals stay whole.
+model AiCall {
+  id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  task             String
+  model            String
+  requestedModel   String   @map("requested_model")
+  provider         String
+  /// The gateway tier that served the call (`flex`, `priority`), or null for the standard one.
+  serviceTier      String?  @map("service_tier") @db.VarChar(10)
+  /// `byok` when our provider key paid for the call, `system` when the gateway's credits did.
+  credential       String?  @db.VarChar(10)
+  promptVersion    String   @map("prompt_version")
+  runId            String   @map("run_id")
+  /// Groups the calls of one larger job, such as a workflow run.
+  traceId          String?  @map("trace_id")
+  userId           String?  @map("user_id") @db.Uuid
+  user             User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  goalId           String?  @map("goal_id") @db.Uuid
+  goal             Goal?    @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  /// Shared Library content or content made for one learner, as the task's analytics say.
+  contentScope     String   @map("content_scope") @db.VarChar(10)
+  inputTokens      Int      @default(0) @map("input_tokens")
+  cacheReadTokens  Int      @default(0) @map("cache_read_tokens")
+  cacheWriteTokens Int      @default(0) @map("cache_write_tokens")
+  outputTokens     Int      @default(0) @map("output_tokens")
+  reasoningTokens  Int      @default(0) @map("reasoning_tokens")
+  audioSeconds     Float?   @map("audio_seconds")
+  characters       Int?
+  images           Int?
+  costUsd          Float?   @map("cost_usd")
+  gatewayCostUsd   Float?   @map("gateway_cost_usd")
+  latencyMs        Int      @map("latency_ms")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([task, createdAt])
+  @@index([userId, createdAt])
+  @@index([goalId])
+  @@index([runId])
+  @@map("ai_calls")
+}

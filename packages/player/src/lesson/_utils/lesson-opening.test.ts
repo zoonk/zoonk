@@ -11,6 +11,10 @@ import { createInitialState } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { orderLessonOpening } from "./lesson-opening";
 
+/** This sitting started now; answers in these tests were given in it. */
+const STARTED_AT = "2026-10-05T10:00:00.000Z";
+const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
+
 function withSkill(step: PlayableLibraryStep, skillId: string): PlayableLibraryStep {
   return { ...step, skillId };
 }
@@ -54,14 +58,8 @@ describe(orderLessonOpening, () => {
     ]);
   });
 
-  it("opens a new skill with the explanations a question-first lesson puts after its question", () => {
-    expect(order(questionLesson, "explanationFirst")).toStrictEqual([
-      "hook",
-      "idea",
-      "example",
-      "try",
-      "check",
-    ]);
+  it("keeps a lesson that opens with a question for a new skill, since what follows builds on it", () => {
+    expect(order(questionLesson, "explanationFirst")).toStrictEqual(ids(questionLesson));
   });
 
   it("keeps a lesson that already opens the right way, and any lesson without a learner order", () => {
@@ -83,7 +81,7 @@ describe(orderLessonOpening, () => {
     expect(order(typedNext, "questionFirst")).toStrictEqual(["hook", "idea", "typed"]);
   });
 
-  it("opens the same way after starting over, with 'Explain first' still on the question", () => {
+  it("opens the same way when a run resumes, with 'Explain first' still on the question", () => {
     const lesson = [
       hookGuessStep("hook"),
       withSkill(explanationStep("idea"), "skill-a"),
@@ -93,11 +91,18 @@ describe(orderLessonOpening, () => {
     ];
 
     const start = createInitialState({ id: "lesson", steps: lesson }, "questionFirst");
-    const restarted = lessonPlayerReducer(start, { type: "restart" });
 
-    expect(restarted.queue).toStrictEqual(start.queue);
+    const resumed = lessonPlayerReducer(start, {
+      answers: [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "missing" }],
+      hyperdrive: { knownStepIds: [], streak: 0 },
+      runId: "run",
+      startedAt: STARTED_AT,
+      type: "runStarted",
+    });
 
-    const atCheck = lessonPlayerReducer({ ...restarted, position: 1 }, { type: "explainFirst" });
+    expect(resumed.queue).toStrictEqual(start.queue);
+
+    const atCheck = lessonPlayerReducer({ ...resumed, position: 1 }, { type: "explainFirst" });
 
     expect(atCheck.queue).toStrictEqual(["hook", "idea", "example", "check", "next"]);
   });

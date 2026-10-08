@@ -1,8 +1,3 @@
-enum ExperienceMode {
-  focus
-  fun
-}
-
 enum BuddyKind {
   zu
   noodle
@@ -25,45 +20,42 @@ enum GuardianLinkStatus {
   revoked
 }
 
-/// The learner's settings for how Zoonk teaches and looks. Fun mode's buddy stores only its kind, name and
+/// The learner's settings for how Zoonk teaches and looks. The buddy stores only its kind, name and
 /// chosen glasses: stage and glow come from the belt and Energy, and earned glasses are `Milestone` rows.
 /// Birth month and year are the least data that tell us who is under 13, 16 or 18. `activeGoal` is the
 /// goal the tabs show.
 model UserLearningProfile {
-  id                String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId            String         @unique @map("user_id") @db.Uuid
-  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  interests         Json?
-  preferences       Json?
-  instructions      String?
-  experienceMode    ExperienceMode @default(focus) @map("experience_mode")
-  buddyKind         BuddyKind?     @map("buddy_kind")
-  buddyName         String?        @map("buddy_name")
-  buddyGlasses      BuddyGlasses   @default(round) @map("buddy_glasses")
-  birthMonth        Int?           @map("birth_month") @db.SmallInt
-  birthYear         Int?           @map("birth_year") @db.SmallInt
-  activeGoalId      String?        @unique @map("active_goal_id") @db.Uuid
-  activeGoal        Goal?          @relation(fields: [activeGoalId], references: [id], onDelete: SetNull)
-  /// Off stops Zoonk from learning new facts and from using the ones it has; they stay listed.
-  memoryEnabled     Boolean        @default(true) @map("memory_enabled")
+  id                        String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId                    String       @unique @map("user_id") @db.Uuid
+  user                      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interests                 Json?
+  preferences               Json?
+  instructions              String?
+  buddyKind                 BuddyKind?   @map("buddy_kind")
+  buddyName                 String?      @map("buddy_name")
+  buddyGlasses              BuddyGlasses @default(round) @map("buddy_glasses")
+  birthMonth                Int?         @map("birth_month") @db.SmallInt
+  birthYear                 Int?         @map("birth_year") @db.SmallInt
+  activeGoalId              String?      @unique @map("active_goal_id") @db.Uuid
+  activeGoal                Goal?        @relation(fields: [activeGoalId], references: [id], onDelete: SetNull)
+  /// The learner's own memory switch; off stops Zoonk from learning new facts and from using the ones
+  /// it has, which stay listed. Null until they choose: on for adults, off for under-18s and anyone who
+  /// hasn't told us their age (ECA Digital art. 7: the most protective setting by default).
+  memoryEnabled             Boolean?     @map("memory_enabled")
   /// Sounds for a right answer and for finishing, set in Appearance. The device's own mute still wins.
-  soundsEnabled     Boolean        @default(true) @map("sounds_enabled")
+  soundsEnabled             Boolean      @default(true) @map("sounds_enabled")
   /// The learner's own daily study limit in minutes. A guardian's limit can be stricter; the shorter applies.
-  dailyLimitMinutes Int?           @map("daily_limit_minutes") @db.SmallInt
-  /// Lessons open the "Go deeper" version of each explanation first: the learner's own choice in
-  /// settings, or null to follow `memoryAsksDeeper`.
-  deeperByDefault   Boolean?       @map("deeper_by_default")
-  /// The learner's memory says they asked for a more technical register. Refreshed when their
-  /// preference facts change and read only while memory is on.
-  memoryAsksDeeper  Boolean        @default(false) @map("memory_asks_deeper")
-  createdAt         DateTime       @default(now()) @map("created_at")
-  updatedAt         DateTime       @default(now()) @updatedAt @map("updated_at")
+  dailyLimitMinutes         Int?         @map("daily_limit_minutes") @db.SmallInt
+  /// When a teen who signed up from a guest session said "Not now" to inviting a guardian on Today.
+  guardianInviteDismissedAt DateTime?    @map("guardian_invite_dismissed_at")
+  createdAt                 DateTime     @default(now()) @map("created_at")
+  updatedAt                 DateTime     @default(now()) @updatedAt @map("updated_at")
 
   @@map("user_learning_profiles")
 }
 
-/// A guardian invited by email to see a minor's weekly activity, set a daily time limit and approve Plus.
-/// Only a hash of the invite token is stored.
+/// A guardian invited by email to see a minor's weekly activity, set a daily time limit, turn memory off
+/// and approve Plus. Only a hash of the invite token is stored.
 model GuardianLink {
   id                String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId            String             @map("user_id") @db.Uuid
@@ -74,6 +66,8 @@ model GuardianLink {
   dailyLimitMinutes Int?               @map("daily_limit_minutes") @db.SmallInt
   /// When the guardian approved a Plus purchase. Learners under 18 can't buy Plus without it.
   plusApprovedAt    DateTime?          @map("plus_approved_at")
+  /// The guardian turned the learner's memory off; while an active link says so, the learner can't turn it on.
+  memoryOff         Boolean            @default(false) @map("memory_off")
   expiresAt         DateTime?          @map("expires_at")
   acceptedAt        DateTime?          @map("accepted_at")
   createdAt         DateTime           @default(now()) @map("created_at")

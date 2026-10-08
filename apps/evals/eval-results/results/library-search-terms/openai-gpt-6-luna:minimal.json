@@ -1,0 +1,1135 @@
+{
+  "modelId": "openai/gpt-6-luna:minimal",
+  "results": [
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Percent off: sale prices. Work out what you pay when an item is 20% off. Find a price after a percentage reduction"
+                },
+                {
+                  "id": "interest",
+                  "text": "Simple interest on a loan. Calculate simple interest"
+                },
+                { "id": "tax", "text": "Sales tax. Add tax to a price at the register" },
+                { "id": "tips", "text": "Tipping at restaurants. Work out a tip on a bill" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "en-lesson-discount-1",
+        "userInput": {
+          "subjects": [
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "description": "Find the final price of an item on sale",
+                "level": "beginner",
+                "skills": ["Calculate a discounted price"],
+                "title": "Calculate a discount"
+              },
+              "kind": "lesson",
+              "language": "en"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Stoichiometric coefficients. Make atoms match on both sides of a reaction. Adjust coefficients so reactants and products have the same atoms"
+                },
+                { "id": "moles", "text": "The mole. Convert grams to moles with molar mass" },
+                {
+                  "id": "bonds",
+                  "text": "Ionic and covalent bonds. Tell how atoms share or give electrons"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "en-lesson-balance-equations-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": {
+                "description": "Make both sides of a chemical equation have the same atoms",
+                "level": "beginner",
+                "skills": ["Balance a chemical equation using coefficients"],
+                "title": "Balance chemical equations"
+              },
+              "kind": "lesson",
+              "language": "en"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Interpret a statement of financial position. Tell what a company owns, owes and what is left for owners"
+                },
+                {
+                  "id": "income",
+                  "text": "Read an income statement. Follow revenue down to net profit"
+                },
+                {
+                  "id": "cash",
+                  "text": "Read a cash flow statement. See where cash came from and went"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "en-skill-balance-sheet-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": {
+                "description": "Understand what a company owns and owes",
+                "title": "Read a balance sheet"
+              },
+              "kind": "skill",
+              "language": "en"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "How plants make food. Light-dependent reactions, the Calvin cycle and chlorophyll"
+                },
+                {
+                  "id": "respiration",
+                  "text": "Cellular respiration. How cells release energy from glucose"
+                },
+                {
+                  "id": "cells",
+                  "text": "Plant cells. Cell wall, vacuole and other parts of a plant cell"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "en-chapter-photosynthesis-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": {
+                "description": "How plants turn light into chemical energy",
+                "level": "beginner",
+                "objectives": ["Explain how plants make glucose from light"],
+                "title": "Photosynthesis"
+              },
+              "kind": "chapter",
+              "language": "en"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "IELTS Academic: what to expect on test day. British Council. https://takeielts.britishcouncil.org/academic"
+                },
+                { "id": "toefl", "text": "TOEFL iBT test content. ETS. https://www.ets.org/toefl" },
+                { "id": "cambridge", "text": "C1 Advanced exam format. Cambridge English" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "en-source-ielts-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": { "publisher": "British Council", "title": "IELTS Academic test format" },
+              "kind": "source",
+              "language": "en"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Circle graph of monthly spending split into rent, food and savings"
+                },
+                { "id": "bar", "text": "Bar graph comparing rainfall in four cities" },
+                { "id": "coins", "text": "A jar of coins on a kitchen table" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "en-image-budget-chart-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": { "title": "A pie chart with three slices showing a household budget" },
+              "kind": "image",
+              "language": "en"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Grandezas diretamente proporcionais. Descubra um valor desconhecido quando duas grandezas crescem juntas. Montar uma proporção entre duas razões"
+                },
+                { "id": "percent", "text": "Porcentagem. Calcular uma parte de um total" },
+                { "id": "fractions", "text": "Frações equivalentes. Simplificar frações" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-lesson-rule-of-three-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": {
+                "description": "Encontrar um valor a partir de três valores conhecidos",
+                "level": "beginner",
+                "skills": ["Resolver problemas de regra de três"],
+                "title": "Regra de três simples"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Montante com capitalização composta. Como o dinheiro cresce quando os juros rendem juros. Aplicar a fórmula M = C(1+i)^t"
+                },
+                {
+                  "id": "simple",
+                  "text": "Juros simples. Juros calculados só sobre o capital inicial. Calcular juros simples"
+                },
+                { "id": "inflation", "text": "Inflação e poder de compra. Entender o IPCA" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-lesson-compound-interest-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": {
+                "description": "Calcular quanto um investimento rende ao longo do tempo",
+                "level": "beginner",
+                "skills": ["Calcular o montante de uma aplicação"],
+                "title": "Juros compostos"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Conjugação de verbos regulares no presente do indicativo. Eu falo, tu falas, ele fala"
+                },
+                {
+                  "id": "past",
+                  "text": "Pretérito perfeito dos verbos regulares. Eu falei, tu falaste"
+                },
+                {
+                  "id": "plural",
+                  "text": "Plural dos substantivos. Formar o plural de palavras terminadas em -ão"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-skill-present-tense-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": {
+                "description": "Usar as formas certas dos verbos -ar, -er e -ir no presente",
+                "title": "Flexionar verbos -ar, -er, -ir"
+              },
+              "kind": "skill",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "A queda da monarquia na França (1789-1799). Tomada da Bastilha, Terror e ascensão de Napoleão"
+                },
+                {
+                  "id": "industrial",
+                  "text": "Revolução Industrial. Máquinas a vapor e fábricas na Inglaterra"
+                },
+                {
+                  "id": "american",
+                  "text": "Independência dos Estados Unidos. As treze colônias e 1776"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-chapter-french-revolution-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": {
+                "description": "Causas, fases e consequências da revolução de 1789",
+                "level": "intermediate",
+                "objectives": ["Explicar por que a monarquia francesa caiu"],
+                "title": "Revolução Francesa"
+              },
+              "kind": "chapter",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Exame Nacional do Ensino Médio 2026: edital. Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira"
+                },
+                { "id": "encceja", "text": "Edital Encceja 2026. Inep" },
+                {
+                  "id": "sisu",
+                  "text": "Sisu 2026: cronograma de inscrições. Ministério da Educação"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-source-enem-notice-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": { "publisher": "Inep", "title": "Edital ENEM 2026" },
+              "kind": "source",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Diagrama de uma célula eucariótica mostrando organelas"
+                },
+                { "id": "bacteria", "text": "Bactéria em forma de bastonete com flagelo" },
+                { "id": "plant", "text": "Folha verde ao sol com gotas de orvalho" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-image-animal-cell-1",
+        "userInput": {
+          "subjects": [
+            {
+              "item": { "title": "Célula animal com núcleo, mitocôndrias e membrana plasmática" },
+              "kind": "image",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Probabilidade e estatística. Médias, variação, amostras e testes para analisar dados"
+                },
+                { "id": "calculus", "text": "Cálculo. Limites, derivadas e integrais" },
+                {
+                  "id": "finance",
+                  "text": "Matemática financeira. Juros, descontos e investimentos"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-course-statistics-1",
+        "userInput": {
+          "subjects": [
+            {
+              "goal": "Analisar dados no trabalho",
+              "item": { "title": "Estatística" },
+              "kind": "course",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "missed" },
+      "steps": [
+        {
+          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: dependentes, segurado, primeira classe, ordem de preferência, exclusão das classes, beneficiários do RGPS. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência comprovada, prova da dependência, primeira classe, demais classes.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: dependentes, segurado, primeira classe, ordem de preferência, exclusão das classes, beneficiários do RGPS. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência comprovada, prova da dependência, primeira classe, demais classes.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 2 (Classes de dependentes): target target not found with terms: dependentes, segurado, primeira classe, ordem de preferência, exclusão das classes, beneficiários do RGPS. Item 3 (Dependência econômica presumida): target target not found with terms: dependência econômica, presunção legal, dependência comprovada, prova da dependência, primeira classe, demais classes.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Beneficiários da pensão por morte. Cônjuge, companheiro, filhos e pais do segurado falecido e a ordem entre eles"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Segurados obrigatórios do RGPS. Empregado, contribuinte individual e segurado especial"
+                },
+                { "id": "near-2", "text": "Salário-maternidade. Quem recebe e por quanto tempo" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Hierarquia entre beneficiários. Cônjuge e filhos vêm antes dos pais, e os pais antes dos irmãos"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Qualidade de segurado. Manter a proteção sem contribuir por um tempo"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Carência. Número mínimo de contribuições para um benefício"
+                }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Prova de sustento pelo segurado. Quando a lei dispensa a comprovação e quando ela é exigida"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Cálculo da renda mensal inicial. Média dos salários de contribuição"
+                },
+                { "id": "near-2", "text": "União estável. Como provar a convivência" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Fim da cota de pensão do filho. Aos 21 anos, pelo casamento ou quando a invalidez termina"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Auxílio-reclusão. Benefício para a família do segurado preso"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Aposentadoria por incapacidade permanente. Quando a doença impede o trabalho"
+                }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Enquadrar cônjuge, filhos, pais e irmãos na ordem de beneficiários do RGPS"
+                },
+                { "id": "near-1", "text": "Classificar segurados obrigatórios e facultativos" },
+                { "id": "near-2", "text": "Calcular o período de carência" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Reconhecer quando a lei presume a dependência econômica e quando o beneficiário precisa demonstrá-la"
+                },
+                { "id": "near-1", "text": "Comprovar tempo de contribuição com documentos" },
+                {
+                  "id": "near-2",
+                  "text": "Diferenciar aposentadoria por idade e por tempo de contribuição"
+                }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Reconhecer os fatos que encerram a cota de pensão: maioridade, casamento e fim da invalidez"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Reconhecer a perda da qualidade de segurado após o período de graça"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Identificar causas de suspensão do auxílio por incapacidade"
+                }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-batch-chapter-dependents-1",
+        "userInput": {
+          "subjects": [
+            {
+              "goal": "Passar no concurso do INSS",
+              "item": {
+                "courses": ["Direito Previdenciário"],
+                "description": "Quem são os dependentes do segurado no RGPS e como provam essa condição",
+                "level": "beginner",
+                "objectives": [
+                  "Identificar as classes de dependentes",
+                  "Reconhecer a dependência econômica presumida e a comprovada"
+                ],
+                "title": "Dependentes previdenciários"
+              },
+              "kind": "chapter",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no concurso do INSS",
+              "item": {
+                "courses": ["Direito Previdenciário"],
+                "description": "Os dependentes se dividem em três classes, e a primeira exclui as demais",
+                "level": "beginner",
+                "skills": ["Classificar dependentes do segurado"],
+                "title": "Classes de dependentes"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no concurso do INSS",
+              "item": {
+                "courses": ["Direito Previdenciário"],
+                "description": "Para a primeira classe, a dependência econômica é presumida; para as outras, precisa ser comprovada",
+                "level": "beginner",
+                "skills": ["Diferenciar dependência presumida e comprovada"],
+                "title": "Dependência econômica presumida"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no concurso do INSS",
+              "item": {
+                "courses": ["Direito Previdenciário"],
+                "description": "Casamento, maioridade ou fim da invalidez encerram a condição de dependente",
+                "level": "beginner",
+                "skills": ["Identificar causas de perda da qualidade de dependente"],
+                "title": "Perda da condição de dependente"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no concurso do INSS",
+              "item": {
+                "description": "Enquadrar cada pessoa na classe de dependentes certa",
+                "title": "Classificar dependentes do segurado"
+              },
+              "kind": "skill",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no concurso do INSS",
+              "item": {
+                "description": "Saber quando a dependência econômica precisa de prova",
+                "title": "Diferenciar dependência presumida e comprovada"
+              },
+              "kind": "skill",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no concurso do INSS",
+              "item": {
+                "description": "Reconhecer os fatos que encerram a condição de dependente",
+                "title": "Identificar causas de perda da qualidade de dependente"
+              },
+              "kind": "skill",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "missed" },
+      "steps": [
+        {
+          "conclusion": "Item 6 (Add a percentage to a price): target target not found with terms: percentage, price increase, sales tax, tip, markup, percent addition.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 6 (Add a percentage to a price): target target not found with terms: percentage, price increase, sales tax, tip, markup, percent addition.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Item 6 (Add a percentage to a price): target target not found with terms: percentage, price increase, sales tax, tip, markup, percent addition.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Percent calculations for shopping and bills. Sale prices, tips, sales tax and markups"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Fractions and decimals. Convert between fractions, decimals and ratios"
+                },
+                {
+                  "id": "near-2",
+                  "text": "Personal budgeting. Track income and expenses each month"
+                }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Percent of a quantity. Multiply by the rate as a decimal, as in 15% of 80"
+                },
+                { "id": "near-1", "text": "Ratios and rates. Compare two quantities as a ratio" },
+                {
+                  "id": "near-2",
+                  "text": "Simple interest. Interest on the original sum each year"
+                }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Tax at checkout. Apply the tax rate to find the total, including VAT"
+                },
+                { "id": "near-1", "text": "Tips at restaurants. Work out a tip on a bill" },
+                {
+                  "id": "near-2",
+                  "text": "Store markups. How shops set a selling price above cost"
+                }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Relative change in prices. Growth or decline of a value compared with the original"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Compound interest. Interest earned on interest over years"
+                },
+                { "id": "near-2", "text": "Reading line graphs. Spot trends over time" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                { "id": "target", "text": "Find part of a whole from a percent rate" },
+                { "id": "near-1", "text": "Convert a fraction to a decimal" },
+                { "id": "near-2", "text": "Find the average of a list of numbers" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                { "id": "target", "text": "Increase an amount by a given percent" },
+                { "id": "near-1", "text": "Subtract a discount from a price" },
+                { "id": "near-2", "text": "Round an amount to the nearest cent" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Relative change between two values, as an increase or a decrease"
+                },
+                { "id": "near-1", "text": "Compare two fractions" },
+                { "id": "near-2", "text": "Find the difference between two dates" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "en-batch-chapter-percentages-1",
+        "userInput": {
+          "subjects": [
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "courses": ["Everyday math"],
+                "description": "Use percentages to compare prices, discounts and tax",
+                "level": "beginner",
+                "objectives": [
+                  "Work out a percentage of an amount",
+                  "Find the price after a percent change"
+                ],
+                "title": "Percentages in everyday money"
+              },
+              "kind": "chapter",
+              "language": "en"
+            },
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "courses": ["Everyday math"],
+                "description": "Work out 15% of a bill or 20% of a salary",
+                "level": "beginner",
+                "skills": ["Calculate a percentage of a number"],
+                "title": "Find a percentage of an amount"
+              },
+              "kind": "lesson",
+              "language": "en"
+            },
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "courses": ["Everyday math"],
+                "description": "Find what you pay at the register when tax is added",
+                "level": "beginner",
+                "skills": ["Add a percentage to a price"],
+                "title": "Add sales tax to a price"
+              },
+              "kind": "lesson",
+              "language": "en"
+            },
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "courses": ["Everyday math"],
+                "description": "Describe how much a price went up or down as a percent",
+                "level": "beginner",
+                "skills": ["Calculate percent change"],
+                "title": "Percent increase and decrease"
+              },
+              "kind": "lesson",
+              "language": "en"
+            },
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "description": "Work out a part of a whole given as a percent",
+                "title": "Calculate a percentage of a number"
+              },
+              "kind": "skill",
+              "language": "en"
+            },
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "description": "Increase a price by a percent, such as tax or a tip",
+                "title": "Add a percentage to a price"
+              },
+              "kind": "skill",
+              "language": "en"
+            },
+            {
+              "goal": "Handle money at my new retail job",
+              "item": {
+                "description": "Find how much a value went up or down relative to where it started",
+                "title": "Calculate percent change"
+              },
+              "kind": "skill",
+              "language": "en"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "found", "predicted": "found" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "items": [
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Segregação dos alelos na meiose. Monoibridismo e proporção 3:1"
+                },
+                { "id": "near-1", "text": "Mitose. Divisão celular que forma células iguais" },
+                { "id": "near-2", "text": "Evolução por seleção natural. Darwin e a adaptação" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Tabela de gametas para prever genótipo e fenótipo dos descendentes"
+                },
+                { "id": "near-1", "text": "Heredograma. Ler a árvore genealógica de uma família" },
+                { "id": "near-2", "text": "Mutações genéticas. Alterações no DNA" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Alelo que se expressa sobre o outro. Heterozigoto e homozigoto"
+                },
+                {
+                  "id": "near-1",
+                  "text": "Codominância e herança intermediária. Flores rosas de pais vermelho e branco"
+                },
+                { "id": "near-2", "text": "Grupos sanguíneos ABO. Alelos múltiplos" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Diibridismo. Dois genes em cromossomos diferentes e a proporção 9:3:3:1"
+                },
+                { "id": "near-1", "text": "Ligação gênica e crossing-over" },
+                { "id": "near-2", "text": "Herança ligada ao sexo. Daltonismo e hemofilia" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                { "id": "target", "text": "Prever a separação dos alelos na formação dos gametas" },
+                { "id": "near-1", "text": "Prever o número de cromossomos após a mitose" },
+                { "id": "near-2", "text": "Calcular a frequência de alelos em uma população" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Combinar os gametas numa grade e ler as proporções de genótipo"
+                },
+                { "id": "near-1", "text": "Construir um heredograma" },
+                { "id": "near-2", "text": "Ler uma tabela periódica" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                {
+                  "id": "target",
+                  "text": "Reconhecer o gene dominante que se expressa no heterozigoto"
+                },
+                { "id": "near-1", "text": "Identificar organelas da célula animal" },
+                { "id": "near-2", "text": "Reconhecer mutações silenciosas" }
+              ],
+              "targetId": "target"
+            },
+            {
+              "library": [
+                { "id": "target", "text": "Resolver problemas de diibridismo com dois genes" },
+                { "id": "near-1", "text": "Resolver problemas de herança ligada ao X" },
+                { "id": "near-2", "text": "Aplicar a lei de Hardy-Weinberg" }
+              ],
+              "targetId": "target"
+            }
+          ]
+        },
+        "id": "pt-batch-lessons-skills-genetics-1",
+        "userInput": {
+          "subjects": [
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "courses": ["Biologia"],
+                "description": "Cada característica é determinada por um par de fatores que se separam na formação dos gametas",
+                "level": "beginner",
+                "skills": ["Aplicar a lei da segregação"],
+                "title": "Primeira lei de Mendel"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "courses": ["Biologia"],
+                "description": "Prever os descendentes de um cruzamento",
+                "level": "beginner",
+                "skills": ["Montar um quadro de Punnett"],
+                "title": "Cruzamentos e quadro de Punnett"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "courses": ["Biologia"],
+                "description": "Por que um alelo pode esconder o outro",
+                "level": "beginner",
+                "skills": ["Identificar alelos dominantes e recessivos"],
+                "title": "Dominância e recessividade"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "courses": ["Biologia"],
+                "description": "Características diferentes são herdadas de forma independente",
+                "level": "beginner",
+                "skills": ["Aplicar a segregação independente"],
+                "title": "Segunda lei de Mendel"
+              },
+              "kind": "lesson",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "description": "Usar a separação dos fatores para prever descendentes",
+                "title": "Aplicar a lei da segregação"
+              },
+              "kind": "skill",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "description": "Organizar os gametas numa tabela para prever os filhos",
+                "title": "Montar um quadro de Punnett"
+              },
+              "kind": "skill",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "description": "Saber qual alelo aparece no fenótipo",
+                "title": "Identificar alelos dominantes e recessivos"
+              },
+              "kind": "skill",
+              "language": "pt"
+            },
+            {
+              "goal": "Passar no ENEM",
+              "item": {
+                "description": "Prever descendentes quando dois genes são herdados juntos",
+                "title": "Aplicar a segregação independente"
+              },
+              "kind": "skill",
+              "language": "pt"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "library-search-terms"
+}

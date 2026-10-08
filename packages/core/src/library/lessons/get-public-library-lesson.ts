@@ -5,6 +5,7 @@ import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type PublicFirstScreen, toPublicFirstScreen } from "./_utils/public-first-screen";
 import { toSummaryIdeas } from "./_utils/summary-ideas";
+import { CURRENT_STEPS } from "./lesson-versions";
 
 async function getCachedPublicLesson(lessonId: string) {
   "use cache";
@@ -18,7 +19,12 @@ async function getCachedPublicLesson(lessonId: string) {
       id: true,
       language: true,
       slug: true,
-      steps: { orderBy: { position: "asc" }, select: { content: true, kind: true }, take: 1 },
+      steps: {
+        orderBy: { position: "asc" },
+        select: { content: true, kind: true },
+        take: 1,
+        where: CURRENT_STEPS,
+      },
       summary: true,
       title: true,
       updatedAt: true,

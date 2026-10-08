@@ -152,10 +152,13 @@ export function getShortExamEvents({
     return minutes > 0 ? [reviewEvent({ date, minutes })] : [];
   }
 
-  const reviewMinutes = minutes - shortMockMinutes;
+  // The short mock fits the day: on a day the learner gives less time, it's shorter (see
+  // `withClassTestMock`).
+  const mockMinutes = minutes > 0 ? Math.min(shortMockMinutes, minutes) : shortMockMinutes;
+  const reviewMinutes = minutes - mockMinutes;
 
   return [
-    mockEvent({ date, minutes: shortMockMinutes, replacesDay: true }),
+    mockEvent({ date, minutes: mockMinutes, replacesDay: true }),
     ...(reviewMinutes >= MIN_REVIEW_MINUTES ? [reviewEvent({ date, minutes: reviewMinutes })] : []),
   ];
 }

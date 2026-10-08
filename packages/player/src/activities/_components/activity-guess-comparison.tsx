@@ -1,8 +1,8 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { compareGuess } from "../_utils/guess-scale";
-import { useFormatNumber } from "../_utils/use-format-number";
 
 /** How far the guess landed from the real value, in plain words computed by code. */
 export function ActivityGuessComparison({

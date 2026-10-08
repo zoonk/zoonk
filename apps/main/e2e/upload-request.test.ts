@@ -3,19 +3,18 @@ import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { type Page, expect, test } from "./fixtures";
-import { type Mode } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
- * When research couldn't find (or confirm) what an exam goal is built from, Plan and Today ask the
- * learner for it. Uploads and research run on the API, an external boundary here: the uploads
+ * When research couldn't find (or confirm) what an exam goal is built from, Today asks the learner
+ * for it. Uploads and research run on the API, an external boundary here: the uploads
  * route answers with the learner's stored upload, and research takes the answer as it would.
  */
 
 type Reason = "noOfficialSource" | "unverified";
 
-async function studyDayWaitingFor(reason: Reason, mode: Mode = "focus") {
-  const day = await createStudyDay({ mode });
+async function studyDayWaitingFor(reason: Reason) {
+  const day = await createStudyDay();
 
   await prisma.goal.update({ data: { researchUploadReason: reason }, where: { id: day.goal.id } });
 
@@ -64,7 +63,7 @@ async function stubResearch(page: Page): Promise<() => unknown> {
 
 test.describe("Asking for the notice research couldn't find", () => {
   test("Today asks for the notice, and uploading it sends it to research", async ({ browser }) => {
-    const { goal, user } = await studyDayWaitingFor("noOfficialSource", "focus");
+    const { goal, user } = await studyDayWaitingFor("noOfficialSource");
     const page = await openAs(browser, user);
     const upload = await stubUpload({ page, userId: user.id });
     const lastResearch = await stubResearch(page);
@@ -90,15 +89,16 @@ test.describe("Asking for the notice research couldn't find", () => {
     await page.context().close();
   });
 
-  test(`Plan asks too, and "Not now" takes the ask away`, async ({ browser }) => {
-    const { goal, user } = await studyDayWaitingFor("unverified", "fun");
+  test(`Today asks to confirm the exam's details, and "Not now" takes the ask away`, async ({
+    browser,
+  }) => {
+    const { goal, user } = await studyDayWaitingFor("unverified");
     const page = await openAs(browser, user);
 
-    await page.goto("/plan");
+    await page.goto("/today");
 
     const ask = page.getByRole("region", { name: "We couldn't confirm the exam's details" });
     await expect(ask).toContainText("Upload the official notice");
-    await expectAccessibleScreen(page, "Plan asking for the notice");
 
     await ask.getByRole("button", { name: "Not now" }).click();
     await expect(ask).toBeHidden();
@@ -111,7 +111,7 @@ test.describe("Asking for the notice research couldn't find", () => {
       .toBeNull();
 
     await page.reload();
-    await expect(page.getByRole("button", { name: "Share this plan" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
     await expect(page.getByRole("region", { name: /exam's details/u })).toBeHidden();
     await page.context().close();
   });
@@ -119,7 +119,7 @@ test.describe("Asking for the notice research couldn't find", () => {
   test("Today asks for nothing until research needs something, like a teacher's test's material", async ({
     browser,
   }) => {
-    const { goal, user } = await createStudyDay({ mode: "focus" });
+    const { goal, user } = await createStudyDay();
     const page = await openAs(browser, user);
 
     await page.goto("/today");

@@ -21,7 +21,7 @@
   "dependencies": {
     "@sentry/nextjs": "catalog:",
     "@vercel/analytics": "catalog:",
-    "@vercel/blob": "2.8.0",
+    "@vercel/blob": "2.8.1",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
@@ -45,6 +45,7 @@
     "@mdx-js/loader": "catalog:",
     "@mdx-js/react": "catalog:",
     "@next/mdx": "catalog:",
+    "@next/playwright": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",

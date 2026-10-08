@@ -7,7 +7,7 @@ import { marcosLanguageHistory } from "./marcos-language-history";
 const MOVE_IN_DAYS = 160;
 
 /**
- * A language goal in Focus: English for a move to Toronto, 25 minutes a day, A2 toward B1+. He
+ * A language goal: English for a move to Toronto, 25 minutes a day, A2 toward B1+. He
  * finished the arrival unit and is in the middle of renting an apartment.
  */
 const marcos: SeedLearner = {
@@ -155,7 +155,6 @@ const marcos: SeedLearner = {
     { category: "learning", origin: "noticed", statement: "Lê melhor do que fala" },
   ],
   milestones: [],
-  mode: "focus",
   name: "Marcos Oliveira",
   session: {
     blocks: [

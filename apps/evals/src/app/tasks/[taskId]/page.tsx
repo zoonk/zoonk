@@ -6,13 +6,13 @@ import {
 } from "@/components/breadcrumb";
 import { getBattleJudgeCost, getBattleLeaderboard } from "@/lib/battle-loader";
 import { formatLatencyBudget } from "@/lib/format";
-import { loadGatewayPrices } from "@/lib/gateway-prices";
 import { getLeaderboardEntries } from "@/lib/leaderboard";
 import { EVAL_MODELS } from "@/lib/models";
 import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
 import { supportsJudgeMode } from "@/lib/types";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { ButtonSkeleton, buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -126,18 +126,17 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
   const judgeModeSupported = supportsJudgeMode(task);
 
-  const [modelsWithResults, battleEntries, battleJudgeCost, prices] = await Promise.all([
+  const [modelsWithResults, battleEntries, battleJudgeCost] = await Promise.all([
     getModelsWithResults(taskId),
     judgeModeSupported ? getBattleLeaderboard(taskId) : [],
     judgeModeSupported ? getBattleJudgeCost(taskId) : 0,
-    loadGatewayPrices(),
   ]);
 
   return (
     <LeaderboardTabs
       battleEntries={battleEntries}
       battleJudgeCost={battleJudgeCost}
-      entries={getLeaderboardEntries({ prices, results: modelsWithResults, task })}
+      entries={getLeaderboardEntries({ prices: GATEWAY_PRICES, results: modelsWithResults, task })}
       supportsJudgeMode={judgeModeSupported}
       taskId={taskId}
     />
@@ -150,7 +149,7 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
  */
 async function TaskModelGrid({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
-  const [sortedModels, prices] = await Promise.all([getSortedModels(task), loadGatewayPrices()]);
+  const sortedModels = await getSortedModels(task);
 
   return (
     <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -158,7 +157,7 @@ async function TaskModelGrid({ params }: TaskRouteProps) {
         <ModelCard
           key={model.id}
           model={model}
-          pricing={prices.models[model.gatewayModelId]}
+          pricing={GATEWAY_PRICES.models[model.gatewayModelId]}
           taskId={taskId}
         />
       ))}

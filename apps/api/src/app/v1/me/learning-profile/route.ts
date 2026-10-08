@@ -11,7 +11,7 @@ import {
 import { type NextRequest } from "next/server";
 import { createLearningProfileResponse } from "./_utils/learning-profile-response";
 
-/** Mode, buddy, age answer and active goal of the learner or guest in the session. */
+/** Buddy, age answer, settings and active goal of the learner or guest in the session. */
 async function getProfile() {
   const profile = await getLearningProfile();
 
@@ -31,6 +31,14 @@ function getUpdateErrorResponse(
 
   if (result.status === "accountDeleted") {
     return underMinimumAgeError();
+  }
+
+  if (result.status === "birthChangeNeedsSupport") {
+    return createErrorResponse({
+      code: accessErrorCodes.birthChangeNeedsSupport,
+      message: "An answer that makes the learner older is corrected by support",
+      status: httpStatus.conflict,
+    });
   }
 
   if (result.status === "goalNotFound") {

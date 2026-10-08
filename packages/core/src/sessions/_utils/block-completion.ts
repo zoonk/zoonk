@@ -15,6 +15,7 @@ type BlockResult = Pick<
   | "comesBackOn"
   | "correct"
   | "netScore"
+  | "testOutOffer"
   | "topHyperdrive"
   | "total"
 >;

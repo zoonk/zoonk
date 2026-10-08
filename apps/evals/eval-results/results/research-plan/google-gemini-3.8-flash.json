@@ -27,28 +27,6 @@
       ],
       "testCase": {
         "expected": {
-          "country": "BR",
-          "domains": ["cebraspe.org.br", "tc.df.gov.br"],
-          "language": "pt",
-          "nameIncludes": ["tcdf", "tribunal de contas do distrito federal"],
-          "roleIncludes": "analista"
-        },
-        "id": "tcdf-2026-1",
-        "language": "pt",
-        "userInput": {
-          "goal": "passar no concurso do TCDF 2026 para analista administrativo de controle externo",
-          "topic": "exam"
-        }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
           "country": "US",
           "domains": ["collegeboard.org"],
           "language": "en",
@@ -334,6 +312,66 @@
           "goal": "quero ficar muito bom no Free Fire e subir de patente",
           "topic": "syllabus"
         }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": ["cebraspe.org.br", "tc.df.gov.br"],
+          "language": "pt",
+          "nameIncludes": ["tcdf", "tribunal de contas do distrito federal"],
+          "roleIncludes": "analista"
+        },
+        "id": "tcdf-2026-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "passar no concurso do TCDF 2026 para analista administrativo de controle externo",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": ["oab.fgv.br", "fgv.br"],
+          "language": "pt",
+          "nameIncludes": ["oab"],
+          "roleIncludes": "1"
+        },
+        "id": "oab-first-phase-1",
+        "language": "pt",
+        "userInput": { "goal": "vou fazer a primeira fase da oab em março", "topic": "exam" }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": ["oab.fgv.br", "fgv.br"],
+          "language": "pt",
+          "nameIncludes": ["oab"],
+          "roleIncludes": "penal"
+        },
+        "id": "oab-second-phase-area-1",
+        "language": "pt",
+        "userInput": { "goal": "passar na segunda fase da OAB em direito penal", "topic": "exam" }
       }
     }
   ],

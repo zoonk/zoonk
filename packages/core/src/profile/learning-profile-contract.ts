@@ -1,4 +1,4 @@
-import { BuddyGlasses, BuddyKind, ExperienceMode } from "@zoonk/db";
+import { BuddyGlasses, BuddyKind } from "@zoonk/db";
 import { type AgeGroup, isValidBirthMonthYear } from "@zoonk/utils/age";
 import { z } from "zod";
 import { dailyLimitMinutesSchema } from "../minors/guardian/guardian-contract";
@@ -6,13 +6,6 @@ import { dailyLimitMinutesSchema } from "../minors/guardian/guardian-contract";
 const BUDDY_NAME_MAX_LENGTH = 24;
 const FIRST_MONTH = 1;
 const LAST_MONTH = 12;
-
-export const experienceModeSchema = z
-  .enum(ExperienceMode)
-  .meta({
-    description: "Focus (calm) or Fun (playful). Both show the same learning",
-    id: "ExperienceMode",
-  });
 
 const buddyInputSchema = z
   .object({
@@ -60,19 +53,10 @@ export const learningProfileUpdateSchema = z
     buddy: buddyInputSchema
       .nullable()
       .optional()
-      .meta({ description: "The Fun mode buddy, or null to remove it" }),
+      .meta({ description: "The learner's buddy, or null to remove it" }),
     dailyLimitMinutes: dailyLimitMinutesSchema
       .optional()
       .meta({ description: "The learner's own daily study limit; a guardian's can be stricter" }),
-    deeperByDefault: z
-      .boolean()
-      .nullable()
-      .optional()
-      .meta({
-        description:
-          'Open the "Go deeper" version of each explanation first; null goes back to following memory',
-      }),
-    experienceMode: experienceModeSchema.optional(),
     soundsEnabled: z
       .boolean()
       .optional()
@@ -92,15 +76,6 @@ export type LearningProfileView = {
   birth: { month: number; year: number } | null;
   /** The learner's own daily limit in minutes; a guardian's stricter limit still applies. */
   dailyLimitMinutes: number | null;
-  /**
-   * Lessons open the "Go deeper" version of each explanation first: the learner's own choice, or
-   * what their memory says while they haven't chosen and memory is on.
-   */
-  deeperByDefault: boolean;
-  /** On because memory says the learner asked for a more technical register, not by choice. */
-  deeperFromMemory: boolean;
-  /** Null until the learner saves a profile; apps then use the device cookie, then Focus. */
-  experienceMode: ExperienceMode | null;
   buddy: { glasses: BuddyGlasses; kind: BuddyKind; name: string | null } | null;
   /** On until the learner turns them off in Appearance. */
   soundsEnabled: boolean;

@@ -35,6 +35,23 @@ const oldStartRedirects = localePrefixes.flatMap((prefix) => [
   },
 ]);
 
+/**
+ * Pages folded into others: the language setting lives in Appearance, "My courses" gave way to
+ * Today, where a learner's goals and their courses are, and the Journey replaced the Plan,
+ * Progress and Content tabs and the subject map. Chapter and unit pages keep their URLs. Help
+ * lives at `/support`, and `/help` is the address people guess.
+ */
+const movedPageRedirects = localePrefixes.flatMap((prefix) => [
+  { destination: `${prefix}/settings/appearance`, permanent: true, source: `${prefix}/language` },
+  { destination: `${prefix}/today`, permanent: true, source: `${prefix}/my` },
+  { destination: `${prefix}/support`, permanent: true, source: `${prefix}/help` },
+  ...["/plan", "/progress", "/content", "/content/map"].map((path) => ({
+    destination: `${prefix}/journey`,
+    permanent: true,
+    source: `${prefix}${path}`,
+  })),
+]);
+
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
@@ -62,7 +79,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,
-  redirects: async () => oldStartRedirects,
+  redirects: async () => [...oldStartRedirects, ...movedPageRedirects],
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: {

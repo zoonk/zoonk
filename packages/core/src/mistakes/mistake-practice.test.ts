@@ -2,6 +2,7 @@ import { classifyMistakeCause } from "@zoonk/ai/tasks/v2/mistakes/cause";
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
@@ -73,6 +74,40 @@ describe(getMistakePractice, () => {
     ).toStrictEqual([original.id, extra.id]);
 
     expect(JSON.stringify(result)).not.toContain("isCorrect");
+  });
+
+  it("shows the picture of a question about a figure, with the writer's alt text", async () => {
+    const { extra, skill, user } = await setup();
+    const picture = await mediaAssetFixture({ height: 1024, width: 1536 });
+
+    const image = {
+      alt: "A circuit with two resistors in series.",
+      prompt: "Two resistors in series",
+    };
+
+    const pictured = await itemFixture({
+      content: { ...choiceItemContent("Which resistor gets more voltage?"), image },
+      mediaAssetId: picture.id,
+      skillId: skill.id,
+    });
+
+    await mistakeFixture({
+      cause: "gap",
+      createdAt: YESTERDAY,
+      itemId: pictured.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const result = await getMistakePractice({ timeZone: "UTC" });
+    const questions = result.status === "ready" ? (result.practice[0]?.questions ?? []) : [];
+
+    expect(questions.map((question) => [question.itemId, question.image])).toStrictEqual(
+      expect.arrayContaining([
+        [pictured.id, { alt: image.alt, height: 1024, url: picture.url, width: 1536 }],
+        [extra.id, null],
+      ]),
+    );
   });
 
   it("goes over a lesson the learner can open, with its summary, before a gap's questions", async () => {

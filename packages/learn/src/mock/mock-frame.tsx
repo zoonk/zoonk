@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { TaskFrame } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 
-/** The mock's frame: the section and its clock in the middle, the flag on the right. */
+/** The mock's frame: leave on the left, the mock and its clock in the middle, the flag on the right. */
 export function MockFrame(props: Omit<React.ComponentProps<typeof TaskFrame>, "exitHref">) {
   const { hrefs } = useMockScreen();
   return <TaskFrame {...props} exitHref={hrefs.exit} />;
@@ -32,9 +32,7 @@ export function MockStepStatus() {
 
   return (
     <p className="text-muted-foreground text-center text-sm" role="status">
-      {runner.busy === "start"
-        ? t("Still starting. This is taking longer than usual.")
-        : t("Still handing it in. This is taking longer than usual.")}
+      {t("Still handing it in. This is taking longer than usual.")}
     </p>
   );
 }

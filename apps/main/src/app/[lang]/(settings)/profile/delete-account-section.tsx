@@ -1,8 +1,14 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { forgetLearnerOnDevice } from "@/lib/logout";
-import { authClient } from "@zoonk/auth/client";
+import { forgetDeletedSession } from "@/lib/forget-deleted-session";
+import {
+  LIST_ROW_INTERACTIVE_CLASS,
+  ListGroup,
+  ListRowContent,
+  ListRowTitle,
+} from "@zoonk/learn/list";
+import { PageSectionFooter } from "@zoonk/learn/page";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,8 +20,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
+import { TrashIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type DeleteAccountResult, deleteAccountAction } from "./delete-account-action";
@@ -24,8 +31,7 @@ const DELETE_ACCOUNT_ID = "delete-account";
 
 /** The session is gone with the account, so the browser forgets it and starts fresh at home. */
 async function leaveDeletedAccount() {
-  await safeAsync(() => authClient.signOut());
-  await forgetLearnerOnDevice();
+  await forgetDeletedSession();
   globalThis.location.assign("/");
 }
 
@@ -82,20 +88,23 @@ export function DeleteAccountSection() {
   };
 
   return (
-    <section aria-labelledby={DELETE_ACCOUNT_ID} className="flex flex-col gap-3 lg:max-w-md">
-      <h2 className="text-base font-semibold" id={DELETE_ACCOUNT_ID}>
-        {t("Delete account")}
-      </h2>
-      <p className="text-muted-foreground text-sm">
-        {t(
-          "Deletes your account and everything in it for good: goals, plans, progress, memory, feedback and uploads. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
-        )}
-      </p>
-
+    <section aria-labelledby={DELETE_ACCOUNT_ID} className="flex flex-col gap-3">
       <AlertDialog>
-        <AlertDialogTrigger render={<Button className="w-fit" variant="destructive" />}>
-          {t("Delete account")}
-        </AlertDialogTrigger>
+        <ListGroup>
+          <AlertDialogTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
+            <span
+              aria-hidden="true"
+              className="bg-destructive/10 text-destructive flex size-8 shrink-0 items-center justify-center self-center rounded-lg"
+            >
+              <TrashIcon className="size-4" />
+            </span>
+            <ListRowContent>
+              <ListRowTitle className="text-destructive" id={DELETE_ACCOUNT_ID}>
+                {t("Delete account")}
+              </ListRowTitle>
+            </ListRowContent>
+          </AlertDialogTrigger>
+        </ListGroup>
 
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -115,6 +124,12 @@ export function DeleteAccountSection() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <PageSectionFooter>
+        {t(
+          "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
+        )}
+      </PageSectionFooter>
 
       <DeleteAccountOutcome result={result} />
     </section>

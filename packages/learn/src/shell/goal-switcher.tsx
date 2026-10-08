@@ -13,51 +13,67 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { LanguageFlag, hasLanguageFlag } from "@zoonk/ui/components/language-flag";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   BookOpenIcon,
   ChevronDownIcon,
-  CompassIcon,
   GraduationCapIcon,
   LanguagesIcon,
+  LayoutGridIcon,
   LightbulbIcon,
   PlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useOptimistic, useTransition } from "react";
+import { type LearnKind, kindToneClass } from "../_components/kind-tile";
+import { daysUntilIsoDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 
 type GoalKind = "exam" | "explain" | "language" | "learn";
 
-/**
- * What the switcher shows about each goal. `dailyMinutes` is its share of the day, null for a
- * paused or finished goal, which takes no time.
- */
+/** What the switcher shows about each goal. Archived goals aren't listed. */
 type SwitcherGoal = {
-  dailyMinutes: number | null;
+  dailyMinutes: number;
   id: string;
   kind: GoalKind;
+  status: "active" | "completed" | "paused";
+  /** The goal's date (YYYY-MM-DD), for the days left; null without one. */
+  targetDate: string | null;
   /** The language a language goal learns, which shows its flag; null for other goals. */
   targetLanguage: string | null;
   title: string;
 };
 
-/** A goal's minutes in the day, on the first line of its title. */
-function GoalMinutes({ minutes }: { minutes: number | null }) {
+/**
+ * "45 min a day · 32 days left" for a goal being followed (the days only when it has a date); a
+ * paused or finished one says so instead.
+ */
+function GoalLine({ goal }: { goal: SwitcherGoal }) {
   const t = useExtracted();
+  const today = useMountTime();
+  const days = goal.targetDate ? daysUntilIsoDate({ isoDate: goal.targetDate, today }) : null;
 
-  if (minutes === null) {
-    return null;
-  }
+  const active = [
+    t("{minutes} min a day", { minutes: String(goal.dailyMinutes) }),
+    days !== null &&
+      t("{days, plural, =0 {The day is here} one {# day left} other {# days left}}", { days }),
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
-  return (
-    <LineMarker className="ml-auto">
-      <span className="text-muted-foreground text-xs tabular-nums">
-        {t("{minutes} min", { minutes: String(minutes) })}
-      </span>
-    </LineMarker>
-  );
+  const line = { active, completed: t("Finished"), paused: t("Paused") }[goal.status];
+
+  return <span className="text-muted-foreground text-xs tabular-nums">{line}</span>;
 }
+
+/** Each kind of goal in its color, as the app's kinds have one: learning in sky, languages in teal. */
+const GOAL_TONES: Record<GoalKind, LearnKind> = {
+  exam: "lesson",
+  explain: "review",
+  language: "conversation",
+  learn: "lesson",
+};
 
 const GOAL_ICONS: Record<GoalKind, typeof BookOpenIcon> = {
   exam: GraduationCapIcon,
@@ -77,54 +93,85 @@ function GoalIcon({ className, goal }: { className?: string; goal: SwitcherGoal 
 }
 
 /**
- * One goal in the menu. The menu is where a cut trigger title reads in full, so titles wrap and the
- * icon, minutes and check stay on their first line.
+ * One goal in the menu, its icon on a tile in its kind's color, with its time a day and days left
+ * (or that it's paused) under the title. The menu is where a cut trigger title reads in full, so
+ * titles wrap.
  */
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
+  const tone = GOAL_TONES[goal.kind];
+
   return (
-    <DropdownMenuRadioItem className="items-start py-3" closeOnClick value={goal.id}>
-      {/* Flags take the icons' width here, so every title starts at the same edge. */}
-      <LineMarker aria-hidden="true">
-        <GoalIcon className="text-muted-foreground w-4" goal={goal} />
-      </LineMarker>
-      <span className="min-w-0">{goal.title}</span>
-      <GoalMinutes minutes={goal.dailyMinutes} />
+    <DropdownMenuRadioItem className="items-center gap-3 py-2" closeOnClick value={goal.id}>
+      {/* Each goal on a small tile, as rows do across the app; flags take the icons' width. */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "flex size-8 shrink-0 items-center justify-center rounded-lg",
+          kindToneClass(tone),
+        )}
+      >
+        <GoalIcon className="w-4" goal={goal} />
+      </span>
+      <span className="flex min-w-0 flex-col">
+        <span>{goal.title}</span>
+        <GoalLine goal={goal} />
+      </span>
     </DropdownMenuRadioItem>
   );
 }
 
-const TRIGGER_CLASS =
-  "border-border bg-background hover:bg-muted focus-visible:ring-ring/50 in-data-[mode=fun]:fun-glass in-data-[mode=fun]:text-fun-fg hit-area relative flex h-11 max-w-full min-w-0 items-center gap-2 rounded-full border px-3.5 text-sm font-medium outline-none focus-visible:ring-[3px] lg:h-10";
+/**
+ * A quick explanation the learner hasn't finished: it has no day or Journey for the tabs to show,
+ * so it opens the explanation itself. A finished one leaves the menu.
+ */
+function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string }) {
+  return (
+    <DropdownMenuItem className="items-start py-2.5" render={<LearnLink href={href} />}>
+      <LineMarker aria-hidden="true">
+        <LightbulbIcon className="text-muted-foreground size-4 shrink-0" />
+      </LineMarker>
+      <span className="min-w-0">{goal.title}</span>
+    </DropdownMenuItem>
+  );
+}
 
-/** Learners without a goal yet (a guest, or someone who archived them all) get one way to set one. */
+const TRIGGER_CLASS =
+  "border-border bg-background hover:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-11 max-w-full min-w-0 items-center gap-2 rounded-full border px-3.5 text-sm font-medium outline-none focus-visible:ring-[3px] lg:h-10";
+
+/**
+ * Learners without a goal yet (a guest, or someone who archived them all) get one way to start
+ * one.
+ */
 function NoGoalLink({ newGoalHref }: { newGoalHref: string }) {
   const t = useExtracted();
 
   return (
     <LearnLink className={TRIGGER_CLASS} href={newGoalHref}>
-      <PlusIcon aria-hidden="true" className="size-4 shrink-0" />
-      <span className="truncate">{t("Set a goal")}</span>
+      <PlusIcon aria-hidden="true" />
+      <span className="truncate">{t("Start a goal")}</span>
     </LearnLink>
   );
 }
 
 /**
  * The goal the tabs show, on the left of the top bar. Every tab reads the same goal, so switching
- * here changes Today, the plan, progress and content at once. The choice shows immediately and
- * the host saves it (`onSelect`), then the tabs re-render with the new goal. The menu lists each
- * goal's minutes and the day's total, and leads to a new goal or the course catalog.
+ * here changes Today, the Journey and the buddy at once. The choice shows immediately and
+ * the host saves it (`onSelect`), then the tabs re-render with the new goal. The menu only
+ * switches: it lists each goal with its time a day and leads to a new goal or the course catalog.
+ * Quick explanations not read to the end follow the goals, each opening itself
+ * (`explanationHref/{id}`). What acts on one goal (pausing, archiving) lives on that goal's own
+ * page, the Journey.
  */
 export function GoalSwitcher({
   activeGoalId,
-  dailyMinutes,
+  explanationHref,
   exploreHref,
   goals,
   newGoalHref,
   onSelect,
 }: {
   activeGoalId: string | null;
-  /** The day's total across active goals ("Today: 55 min"). */
-  dailyMinutes: number;
+  explanationHref: string;
   exploreHref: string;
   goals: SwitcherGoal[];
   newGoalHref: string;
@@ -132,8 +179,10 @@ export function GoalSwitcher({
 }) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
-  const [selectedId, setSelectedId] = useOptimistic(activeGoalId ?? goals[0]?.id ?? null);
-  const selected = goals.find((goal) => goal.id === selectedId) ?? goals[0];
+  const followed = goals.filter((goal) => goal.kind !== "explain");
+  const explanations = goals.filter((goal) => goal.kind === "explain");
+  const [selectedId, setSelectedId] = useOptimistic(activeGoalId ?? followed[0]?.id ?? null);
+  const selected = followed.find((goal) => goal.id === selectedId) ?? followed[0];
 
   if (!selected) {
     return <NoGoalLink newGoalHref={newGoalHref} />;
@@ -166,26 +215,35 @@ export function GoalSwitcher({
 
       <DropdownMenuContent className="w-72 max-w-[calc(100vw-2rem)]">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>
-            {t("Today: {minutes} min", { minutes: String(dailyMinutes) })}
-          </DropdownMenuLabel>
+          <DropdownMenuLabel>{t("Your goals")}</DropdownMenuLabel>
 
           <DropdownMenuRadioGroup onValueChange={select} value={selected.id}>
-            {goals.map((goal) => (
+            {followed.map((goal) => (
               <GoalOption goal={goal} key={goal.id} />
             ))}
           </DropdownMenuRadioGroup>
         </DropdownMenuGroup>
 
+        {explanations.length > 0 && (
+          <DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>{t("Quick explanations")}</DropdownMenuLabel>
+
+            {explanations.map((goal) => (
+              <ExplanationOption goal={goal} href={`${explanationHref}/${goal.id}`} key={goal.id} />
+            ))}
+          </DropdownMenuGroup>
+        )}
+
         <DropdownMenuSeparator />
 
         <DropdownMenuItem render={<LearnLink href={newGoalHref} />}>
           <PlusIcon aria-hidden="true" />
-          {t("Add a goal")}
+          {t("Start a new goal")}
         </DropdownMenuItem>
 
         <DropdownMenuItem render={<LearnLink href={exploreHref} />}>
-          <CompassIcon aria-hidden="true" />
+          <LayoutGridIcon aria-hidden="true" />
           {t("Explore courses")}
         </DropdownMenuItem>
       </DropdownMenuContent>

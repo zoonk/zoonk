@@ -54,13 +54,13 @@ export const guardianPaths = {
       },
       requestParams: { path: guardianLinkPathParamsSchema },
       responses: {
-        "204": { description: "Daily limit saved" },
+        "204": { description: "Controls saved" },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "404": guardedLearnerNotFoundResponse,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Set a guarded learner's daily time limit",
+      summary: "Set a guarded learner's daily time limit or turn their memory off",
       tags: TAGS,
     },
   },
@@ -105,6 +105,17 @@ export const guardianPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Accept a guardian invite",
+      tags: TAGS,
+    },
+  },
+  "/me/guardian-invite-dismissals": {
+    post: {
+      description:
+        '"Not now" to the offer to invite a parent or guardian on Today (`guardianInvite`): it stops showing on every device. Inviting from the guardian settings still works. Dismissing again changes nothing.',
+      operationId: "dismissGuardianInvite",
+      responses: { "204": { description: "Dismissed" }, "401": unauthorizedResponse },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Dismiss the guardian invite offer",
       tags: TAGS,
     },
   },

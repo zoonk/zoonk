@@ -56,8 +56,8 @@ export const unprocessableEntityResponse = {
 } as const;
 
 /**
- * A refused claim of small AI help (a simpler version, an answer's explanation, grading a spoken
- * answer, a plan edit): `USAGE_LIMIT_REACHED` with `details.limit`, or `SLOW_DOWN`.
+ * A refused claim of small AI help (an answer's explanation, grading a spoken answer, a plan
+ * edit): `USAGE_LIMIT_REACHED` with `details.limit`, or `SLOW_DOWN`.
  */
 export const smallAiHelpRefusalResponses = {
   "402": {

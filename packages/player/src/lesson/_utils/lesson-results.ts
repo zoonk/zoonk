@@ -7,7 +7,9 @@ import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-playe
 export function fromLocalGrade(graded: GradedStepAnswer): LessonStepResult {
   return {
     answerText: graded.answerText,
+    checked: true,
     correctAnswer: graded.correctAnswer,
+    corrections: [],
     feedback: graded.feedback,
     heard: null,
     isCorrect: graded.isCorrect,
@@ -41,7 +43,9 @@ export function fromSpokenGrade({
 
   return {
     answerText: grade.transcript,
+    checked: true,
     correctAnswer: grade.isCorrect ? null : target,
+    corrections: [],
     feedback: grade.explanation,
     heard: {
       transcript: grade.transcript,
@@ -78,7 +82,9 @@ export function revealGuess({
 
   return {
     answerText: picked.text,
+    checked: true,
     correctAnswer: picked.isCorrect ? null : (right?.text ?? null),
+    corrections: [],
     feedback: step.content.reveal,
     heard: null,
     isCorrect: picked.isCorrect,

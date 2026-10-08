@@ -2,23 +2,25 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import {
-  type Experimental_EvaluationQuestion,
-  type Experimental_EvaluationResult,
-  experimental_evaluate,
+  type Experimental_DecisionQuestion,
+  type Experimental_DecisionResult,
+  experimental_decide,
 } from "ai";
 import { getModelFamily } from "../_utils/model-family";
+import { NO_PROMPT_TRAINING } from "../data-protection";
+import { computeCallCostUsd } from "../pricing/call-cost";
 import { type AiGenerationContext } from "../provenance/ai-generation-event";
 import { captureAiGeneration } from "../provenance/ai-generation-sink";
 import { readGatewayMetadata } from "../provenance/gateway-metadata";
-import { getPromptVersion } from "../provenance/prompt-version";
-import { toEvaluationEvent, toEvaluationRunRecord } from "./evaluation-event";
+import { toEvaluationRunRecord } from "./evaluation-event";
 import { fitsTokenLimit } from "./evaluation-limits";
 import { JEV_MODEL_ID, getEvaluationModel, getEvaluationTokenLimit } from "./evaluation-models";
 import { type EvaluationRunAnswer, captureEvaluationRun } from "./evaluation-run-sink";
 import { formatUntrustedInput } from "./untrusted-input";
 
-type EvaluationQuestions = Record<string, Experimental_EvaluationQuestion>;
+type EvaluationQuestions = Record<string, Experimental_DecisionQuestion>;
 
 const TIMEOUT_MS = 10_000;
 
@@ -37,7 +39,7 @@ export type EvaluationRunDetails = {
 };
 
 type EvaluationRun<QUESTIONS extends EvaluationQuestions> = EvaluationRunDetails & {
-  answers: Experimental_EvaluationResult<QUESTIONS>["answers"];
+  answers: Experimental_DecisionResult<QUESTIONS>["answers"];
 };
 
 /**
@@ -78,9 +80,10 @@ async function runModel<QUESTIONS extends EvaluationQuestions>({
   questions: QUESTIONS;
   state: string;
 }) {
-  const result = await experimental_evaluate({
+  const result = await experimental_decide({
     abortSignal: AbortSignal.timeout(TIMEOUT_MS),
     model: getEvaluationModel(model),
+    providerOptions: { gateway: NO_PROMPT_TRAINING },
     questions,
     state,
   });
@@ -94,9 +97,10 @@ async function runModel<QUESTIONS extends EvaluationQuestions>({
 }
 
 /**
- * Logs one run for review and threshold tuning: the answers with their probabilities, the model
- * that answered (a fallback shows here), latency, tokens and the gateway's cost go to analytics
- * and to the evaluation log, which also keeps the input when `keepInput` says it may.
+ * Logs one run for review and threshold tuning: the call (the model that answered, a fallback
+ * showing here, its latency, tokens and cost) goes to every AI call sink with its answers, and
+ * the evaluation log keeps the answers with their probabilities under the same run id, and the
+ * input when `keepInput` says it may.
  */
 async function logEvaluation({
   analytics,
@@ -118,7 +122,13 @@ async function logEvaluation({
   const gateway = readGatewayMetadata(providerMetadata);
 
   const provenance = {
-    costUsd: gateway.costUsd,
+    costUsd: computeCallCostUsd({
+      model: run.model,
+      serviceTier: gateway.serviceTier,
+      usage: run.usage,
+    }),
+    credential: gateway.credential,
+    gatewayCostUsd: gateway.costUsd,
     generatedAt: new Date().toISOString(),
     latencyMs: run.latencyMs,
     model: run.model,
@@ -126,11 +136,17 @@ async function logEvaluation({
     provider: gateway.servedProvider ?? getModelFamily(run.model),
     requestedModel: run.requestedModel,
     runId: randomUUID(),
+    serviceTier: gateway.serviceTier,
     usage: run.usage,
   };
 
   await Promise.all([
-    captureAiGeneration(toEvaluationEvent({ analytics, answers: run.answers, provenance, task })),
+    captureAiGeneration({
+      context: analytics,
+      properties: { evaluation_answers: JSON.stringify(run.answers) },
+      provenance,
+      task,
+    }),
     captureEvaluationRun(
       toEvaluationRunRecord({
         analytics,

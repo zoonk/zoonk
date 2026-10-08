@@ -1,11 +1,11 @@
 "use client";
 
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type FactChange, barShares, describeChange } from "./fact-change";
 
 type Fields = ActivityContentFor<"beforeAfter">["fields"];

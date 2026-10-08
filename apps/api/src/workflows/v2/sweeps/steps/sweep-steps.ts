@@ -1,8 +1,10 @@
+import { purgeExpiredVerifications } from "@zoonk/core/auth/purge-verifications";
 import { purgeEvaluationRuns } from "@zoonk/core/evaluation-runs/purge";
 import { deleteInactiveGuests } from "@zoonk/core/guests/delete-inactive";
 import { type FreshnessTarget } from "@zoonk/core/library/exams/check-freshness";
 import { listDueFreshnessTargets } from "@zoonk/core/library/exams/freshness-checks";
 import { recalibrateItemDifficulties } from "@zoonk/core/library/items/recalibrate";
+import { deleteRetiredSteps } from "@zoonk/core/library/lessons/versions";
 import { listLessonsForLaterReview } from "@zoonk/core/library/quality/later-reviews";
 import { countOpenReviewFlags } from "@zoonk/core/library/review-flags/flagged";
 import { purgeMemoryFacts } from "@zoonk/core/memory/purge";
@@ -52,4 +54,19 @@ export async function countOpenReviewFlagsStep(): Promise<number> {
   "use step";
 
   return countOpenReviewFlags();
+}
+
+/** Screens a fixed version replaced more than a day ago: nobody plays them anymore. */
+export async function deleteRetiredStepsStep(): Promise<number> {
+  "use step";
+
+  return deleteRetiredSteps();
+}
+
+/** Sign-in codes and other auth verifications that expired more than a day ago. */
+export async function purgeExpiredVerificationsStep(): Promise<number> {
+  "use step";
+
+  const { purged } = await purgeExpiredVerifications();
+  return purged;
 }

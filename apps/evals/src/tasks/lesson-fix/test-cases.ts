@@ -62,6 +62,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           kind: "explanation",
           text: "It's important to note that a rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
           title: "Up is up, even below zero",
+          visual: null,
         },
         3: {
           ...mathCheck,
@@ -129,6 +130,7 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
           kind: "explanation",
           text: "Grandezas inversamente proporcionais têm produto constante: $x \\cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante.",
           title: "O que fica fixo?",
+          visual: null,
         },
       }),
       [

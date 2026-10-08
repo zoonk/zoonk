@@ -2,10 +2,11 @@
 
 import { Switch } from "@zoonk/ui/components/switch";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
-import { LayersIcon, type LucideIcon, Volume2Icon } from "lucide-react";
+import { type SupportedLocale } from "@zoonk/utils/locale";
+import { type LucideIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useOptimistic } from "react";
-import { SectionLabel } from "../_components/section-label";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import {
   SettingCard,
   SettingCardControl,
@@ -16,28 +17,24 @@ import {
 } from "../_components/setting-card";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
-import { type ExperienceMode } from "../experience-mode";
 import { type AppearanceBuddy, BuddySettings } from "./buddy-settings";
 import { DailyLimitSetting } from "./daily-limit-setting";
-import { ModePicker } from "./mode-picker";
+import { LanguageSetting } from "./language-setting";
 
 export type { AppearanceBuddy } from "./buddy-settings";
 
 /**
- * What Appearance shows: the learning profile's mode, buddy and sounds, plus the belt and Energy the
- * buddy is drawn with. Visitors without a session can only switch the mode, which their device keeps.
+ * What Appearance shows: the learning profile's buddy and sounds, plus the belt and Energy the
+ * buddy is drawn with. Visitors without a session have nothing to personalize but the language.
  */
 export type AppearanceView = {
   availableGlasses: BuddyGlasses[];
   canPersonalize: boolean;
   dailyLimitMinutes: number | null;
-  /** Explanations open their "Go deeper" version first. */
-  deeperByDefault: boolean;
-  /** On because memory says so, not by the learner's choice. */
-  deeperFromMemory: boolean;
+  /** The shortest limit an active guardian set, which applies whatever the learner picks. */
+  guardianLimitMinutes: number | null;
   isMinor: boolean;
   look: BuddyLook;
-  mode: ExperienceMode;
   buddy: AppearanceBuddy | null;
   soundsEnabled: boolean;
 };
@@ -46,13 +43,15 @@ export type AppearanceView = {
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
   setDailyLimit: (minutes: number | null) => Promise<boolean>;
-  setDeeperByDefault: (enabled: boolean) => Promise<boolean>;
-  setMode: (mode: ExperienceMode) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <SectionLabel className="px-1">{children}</SectionLabel>;
+  return (
+    <PageSectionHeader>
+      <PageSectionTitle>{children}</PageSectionTitle>
+    </PageSectionHeader>
+  );
 }
 
 function SwitchSetting({
@@ -91,24 +90,16 @@ function SwitchSetting({
 }
 
 function useAppearance({ actions, view }: { actions: AppearanceActions; view: AppearanceView }) {
-  const [mode, setOptimisticMode] = useOptimistic(view.mode);
   const [buddy, setOptimisticBuddy] = useOptimistic(view.buddy);
   const [soundsEnabled, setOptimisticSounds] = useOptimistic(view.soundsEnabled);
   const [dailyLimitMinutes, setOptimisticLimit] = useOptimistic(view.dailyLimitMinutes);
-
-  const [deeper, setOptimisticDeeper] = useOptimistic({
-    enabled: view.deeperByDefault,
-    fromMemory: view.deeperFromMemory,
-  });
 
   const { failed, run } = useOptimisticSave();
 
   return {
     buddy,
     dailyLimitMinutes,
-    deeper,
     failed,
-    mode,
     saveBuddy: (next: AppearanceBuddy) =>
       run(
         () => setOptimisticBuddy(next),
@@ -118,16 +109,6 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
       run(
         () => setOptimisticLimit(next),
         () => actions.setDailyLimit(next),
-      ),
-    setDeeperByDefault: (next: boolean) =>
-      run(
-        () => setOptimisticDeeper({ enabled: next, fromMemory: false }),
-        () => actions.setDeeperByDefault(next),
-      ),
-    setMode: (next: ExperienceMode) =>
-      run(
-        () => setOptimisticMode(next),
-        () => actions.setMode(next),
       ),
     setSoundsEnabled: (next: boolean) =>
       run(
@@ -139,15 +120,16 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
 }
 
 /**
- * Appearance: Focus or Fun (instant, nothing about learning changes), the Fun buddy, sounds and
- * whether lessons open the deeper version of explanations first.
- * Light, dark and reduced motion follow the device, so there's no theme picker.
+ * Appearance: the buddy, sounds, a daily limit and the app's language. Light, dark and reduced
+ * motion follow the device, so there's no theme picker.
  */
 export function AppearanceScreen({
   actions,
+  onLanguageChange,
   view,
 }: {
   actions: AppearanceActions;
+  onLanguageChange: (locale: SupportedLocale) => void;
   view: AppearanceView;
 }) {
   const t = useExtracted();
@@ -155,13 +137,8 @@ export function AppearanceScreen({
 
   return (
     <div className="flex flex-col gap-8" data-slot="appearance-screen">
-      <section className="flex flex-col gap-3">
-        <SectionTitle>{t("Mode")}</SectionTitle>
-        <ModePicker mode={appearance.mode} onChange={appearance.setMode} />
-      </section>
-
-      {view.canPersonalize && appearance.mode === "fun" && (
-        <section className="flex flex-col gap-3">
+      {view.canPersonalize && (
+        <PageSection>
           <SectionTitle>{t("Your buddy")}</SectionTitle>
           <BuddySettings
             availableGlasses={view.availableGlasses}
@@ -169,11 +146,11 @@ export function AppearanceScreen({
             onSave={appearance.saveBuddy}
             buddy={appearance.buddy}
           />
-        </section>
+        </PageSection>
       )}
 
       {view.canPersonalize && (
-        <section className="flex flex-col gap-3">
+        <PageSection>
           <SectionTitle>{t("Lessons")}</SectionTitle>
           <SwitchSetting
             checked={appearance.soundsEnabled}
@@ -182,31 +159,25 @@ export function AppearanceScreen({
             label={t("Sounds")}
             onCheckedChange={appearance.setSoundsEnabled}
           />
-          {/* When it's on because a conversation asked for that register, it says so. */}
-          <SwitchSetting
-            checked={appearance.deeper.enabled}
-            description={
-              appearance.deeper.fromMemory && appearance.deeper.enabled
-                ? t("On because you asked for more technical explanations")
-                : t("Explanations open their more technical version first")
-            }
-            icon={LayersIcon}
-            label={t("Go deeper by default")}
-            onCheckedChange={appearance.setDeeperByDefault}
-          />
-        </section>
+        </PageSection>
       )}
 
       {view.canPersonalize && (
-        <section className="flex flex-col gap-3">
+        <PageSection>
           <SectionTitle>{t("Healthy use")}</SectionTitle>
           <DailyLimitSetting
+            guardianMinutes={view.guardianLimitMinutes}
             isMinor={view.isMinor}
             minutes={appearance.dailyLimitMinutes}
             onChange={appearance.setDailyLimit}
           />
-        </section>
+        </PageSection>
       )}
+
+      <PageSection>
+        <SectionTitle>{t("Language")}</SectionTitle>
+        <LanguageSetting onChange={onLanguageChange} />
+      </PageSection>
 
       {appearance.failed && (
         <p className="text-destructive text-sm" role="alert">

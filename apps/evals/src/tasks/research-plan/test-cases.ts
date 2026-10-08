@@ -31,6 +31,30 @@ export const TEST_CASES: TestCase<ResearchPlanExpected, ResearchPlanParams>[] = 
   },
   {
     expected: {
+      country: "BR",
+      domains: ["oab.fgv.br", "fgv.br"],
+      language: "pt",
+      nameIncludes: ["oab"],
+      roleIncludes: "1",
+    },
+    id: "oab-first-phase",
+    language: "pt",
+    userInput: { goal: "vou fazer a primeira fase da oab em março", topic: "exam" },
+  },
+  {
+    expected: {
+      country: "BR",
+      domains: ["oab.fgv.br", "fgv.br"],
+      language: "pt",
+      nameIncludes: ["oab"],
+      roleIncludes: "penal",
+    },
+    id: "oab-second-phase-area",
+    language: "pt",
+    userInput: { goal: "passar na segunda fase da OAB em direito penal", topic: "exam" },
+  },
+  {
+    expected: {
       country: "US",
       domains: ["collegeboard.org"],
       language: "en",

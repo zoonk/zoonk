@@ -33,7 +33,7 @@ function buildWeek({
 }) {
   return buildWeekView({
     access: { freeUntil: null, mocksRequirePlus: false },
-    calendar: { dailyMinutes: 30, lightWeeks: [], weekdayMinutes: null },
+    calendar: { dailyMinutes: 30, firstDay: null, lightWeeks: [], weekdayMinutes: null },
     exam: null,
     items,
     minutes: new Map(),

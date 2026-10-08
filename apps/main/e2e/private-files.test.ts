@@ -3,7 +3,6 @@ import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { expect, test } from "./fixtures";
-import { setDeviceMode } from "./learn-personas";
 
 /**
  * A private course's pictures live in the private Blob store, so the player loads them from main's
@@ -54,7 +53,6 @@ test.describe("A private course's pictures", () => {
       await route.fulfill({ body: PIXEL_PNG, contentType: "image/png" });
     });
 
-    await setDeviceMode(page.context(), "fun");
     await page.goto(`/learn/${lesson.id}`);
 
     await expect(page.getByRole("img", { name: PICTURE_ALT })).toBeVisible();

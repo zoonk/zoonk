@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { ActivityCanvasLabel } from "../_components/activity-canvas";
@@ -10,7 +11,6 @@ import {
   ActivityPlotGridY,
   ActivityPlotLine,
 } from "../_components/activity-plot";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { FULL_TURN } from "./unit-circle-angle";
 import { type TrigName, useTrigNames } from "./use-unit-circle-format";
 

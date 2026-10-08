@@ -1,19 +1,25 @@
 "use client";
 
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { PencilIcon, RotateCcwIcon, ZapIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
+import { CloudOffIcon, PencilIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useLayoutEffect } from "react";
 import { PlayerContentFrame } from "../components/step-layouts";
 import { LessonCitation } from "./_components/lesson-citation";
+import { UpcomingPictures } from "./_components/lesson-pictures";
 import { LessonEyebrow } from "./_components/lesson-step-text";
+import { LESSON_CONTENT_ID } from "./_utils/lesson-focus";
 import { isLanguageStep } from "./_utils/lesson-steps";
-import { MissedIdeaHelp } from "./controls/simpler-offer";
+import { AskBuddyOffer } from "./controls/ask-buddy-offer";
 import { LessonResultNotes } from "./feedback/lesson-result-notes";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
-import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
+import { useLessonPlayer } from "./lesson-player-context";
+import { type LessonPlayerState } from "./lesson-player-state";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
+import { type ScreenTurn } from "./use-screen-turns";
 
-/** "I know this" in progress, a language answer to fix first, or back after a missed quick check. */
+/** "I know this" in progress, a language answer to fix first, or an answer that didn't save. */
 function LessonNotice() {
   const t = useExtracted();
   const { screen, state } = useLessonPlayer();
@@ -44,14 +50,14 @@ function LessonNotice() {
     );
   }
 
-  if (state.notice === "quickCheckMissed") {
+  if (state.notice === "answerNotSaved") {
     return (
       <PlayerContentFrame className="pt-4">
         <p className="text-muted-foreground flex items-start gap-2 text-sm" role="status">
           <LineMarker>
-            <RotateCcwIcon aria-hidden="true" className="size-4" />
+            <CloudOffIcon aria-hidden="true" className="size-4" />
           </LineMarker>
-          {t("Let's go through it together. What you got right still counts.")}
+          {t("Your answer here didn't save. Answer it again to finish the lesson.")}
         </p>
       </PlayerContentFrame>
     );
@@ -60,19 +66,61 @@ function LessonNotice() {
   return null;
 }
 
-/** First-try right answers at the end of the lesson so far, for the companion's cheers. */
-function countRightInARow(firstVerdicts: Record<string, boolean>): number {
-  const verdicts = Object.values(firstVerdicts);
-  const lastWrong = verdicts.lastIndexOf(false);
+/** How many screens ahead the player fetches pictures, so turning a screen never waits on one. */
+const PICTURES_AHEAD = 2;
 
-  return verdicts.length - lastWrong - 1;
+/**
+ * A new screen slides in from the side the learner is heading, like turning a story: from the
+ * right going on, from the left going back. Reduced motion shows it in place.
+ */
+const TURN_CLASS: Record<ScreenTurn, string> = {
+  back: "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-8 motion-safe:duration-200 motion-safe:ease-out",
+  forward:
+    "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-200 motion-safe:ease-out",
+};
+
+/**
+ * One screen of the lesson, sliding in from the side the learner turned to. It starts at its top,
+ * like a turned page: the screen before, scrolled down to its result or its last line, never
+ * leaves this one scrolled past its picture.
+ */
+function LessonScreenFrame({
+  children,
+  turn,
+}: {
+  children: React.ReactNode;
+  turn: ScreenTurn | null;
+}) {
+  useLayoutEffect(() => {
+    document.querySelector(`#${LESSON_CONTENT_ID}`)?.scrollTo({ top: 0 });
+  }, []);
+
+  return (
+    <div
+      className={cn("flex w-full flex-col", turn && TURN_CLASS[turn])}
+      data-slot="lesson-screen"
+      data-turn={turn ?? undefined}
+    >
+      {children}
+    </div>
+  );
 }
 
-/** The screen in view and, after a check, its result, laid out by the skin. */
-export function LessonStage() {
+function getUpcomingSteps(state: LessonPlayerState) {
+  return state.queue
+    .slice(state.position + 1, state.position + 1 + PICTURES_AHEAD)
+    .flatMap((id) => state.steps[id] ?? []);
+}
+
+/**
+ * The screen in view and, after a check, its result right under it, so the answered question
+ * stays in view. The screen keeps its place in both phases, so its state survives the check, and
+ * the result leaves out the verdict when the screen shows its own, like an activity. Every screen
+ * starts at the top, like a page, so nothing jumps from one screen to the next, and the next
+ * screens' pictures load while this one is read.
+ */
+export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
   const { actions, screen, state } = useLessonPlayer();
-  const { skin, slots } = useLessonPlayerConfig();
-  const { Screen } = skin;
   const { step } = screen;
 
   if (!step) {
@@ -81,59 +129,44 @@ export function LessonStage() {
 
   const result = state.results[step.id];
 
-  const view = (
-    <LessonStepView
-      answer={state.answers[step.id]}
-      isLocked={state.phase !== "playing"}
-      key={`${step.id}-${state.position}`}
-      onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
-      result={result}
-      step={step}
-    />
-  );
-
   const willReturn = Boolean(
     result && !result.isCorrect && state.queue.includes(step.id, state.position + 1),
   );
 
   return (
-    <Screen
-      companion={slots.companion?.({
-        position: state.position,
-        result:
-          state.phase === "feedback" && result
-            ? { isCorrect: result.isCorrect, isGuess: step.kind === "hook" }
-            : null,
-        rightInARow: countRightInARow(state.firstVerdicts),
-      })}
-      feedback={
-        state.phase === "feedback" && result
-          ? {
-              isCorrect: result.isCorrect,
-              notes: (
-                <div className="flex flex-col gap-2">
-                  <LessonResultNotes
-                    nextReviewAt={result.nextReviewAt}
-                    savedMistake={result.savedMistake && !result.isCorrect}
-                    willReturn={willReturn}
-                  />
-                  {screen.simplerOffer && <MissedIdeaHelp step={screen.simplerOffer} />}
-                </div>
-              ),
-              result: showsOwnResult(step) ? null : (
-                <LessonStepResultView result={result} step={step} />
-              ),
-            }
-          : null
-      }
-      question={
-        <>
-          {/* Right above the question it's about, not floating at the top of the screen. */}
-          <LessonNotice />
-          {view}
-          {!isLanguageStep(step) && <LessonCitation citation={step.citation} />}
-        </>
-      }
-    />
+    <div className="flex w-full flex-col" data-slot="lesson-stage">
+      {/* Right above the question it's about, not floating at the top of the screen. */}
+      <LessonNotice />
+
+      <LessonScreenFrame key={`${step.id}-${state.position}`} turn={turn}>
+        <LessonStepView
+          answer={state.answers[step.id]}
+          isLocked={state.phase !== "playing"}
+          onAnswer={(answer) => actions.selectAnswer(step.id, answer)}
+          result={result}
+          step={step}
+        />
+      </LessonScreenFrame>
+
+      {!isLanguageStep(step) && <LessonCitation citation={step.citation} />}
+
+      {state.phase === "feedback" && result && (
+        <PlayerContentFrame className="flex flex-col gap-3 pb-4">
+          {!showsOwnResult(step) && <LessonStepResultView result={result} step={step} />}
+
+          {/* Quiet lines under it all: Hyperdrive, then a saved mistake or when it comes back. */}
+          <LessonResultNotes
+            hyperdriveStreak={screen.hyperdriveStreak}
+            nextReviewAt={result.nextReviewAt}
+            savedMistake={result.savedMistake && !result.isCorrect}
+            willReturn={willReturn}
+          />
+
+          {screen.struggleOffer && <AskBuddyOffer reason="misses" />}
+        </PlayerContentFrame>
+      )}
+
+      <UpcomingPictures steps={getUpcomingSteps(state)} />
+    </div>
   );
 }

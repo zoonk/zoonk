@@ -72,6 +72,11 @@ export type StudyAnswerInput = z.infer<typeof studyAnswerInputSchema>;
 export type QuestionAnswer = StudyAnswerInput["answer"];
 
 type StudyAnswerFeedback = {
+  /**
+   * A statement left blank where a wrong answer cancels a right one: neither right nor a mistake,
+   * so it shows no error and stays out of the notebook.
+   */
+  blank: boolean;
   /** Checkpoints are duels without hints: the right answer and why wait until the duel ends. */
   correctAnswer: QuestionAnswer | null;
   explanation: string | null;

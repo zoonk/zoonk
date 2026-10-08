@@ -8,9 +8,9 @@ type ExamPhaseKind = Exclude<PlanPhaseKind, "learn">;
 export type ExamWindow = { endDate: Date; kind: ExamPhaseKind; startDate: Date };
 
 /**
- * The share of each day's time that goes to new lessons; the rest is reviews and practice. A
- * 3-minute lesson at half the time makes the skill graph's 6 minutes of study per lesson. Exam
- * phases shrink new learning as the date nears, and the final stretch has none.
+ * The share of each day's time that goes to new lessons; the rest is reviews and practice: a lesson
+ * at half the time takes twice its minutes of study. Exam phases shrink new learning as the date
+ * nears, and the final stretch has none.
  */
 const LEARNING_SHARE: Record<PlanPhaseKind, number> = {
   finalStretch: 0,

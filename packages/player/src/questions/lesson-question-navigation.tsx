@@ -10,8 +10,6 @@ export type LessonQuestionNavigation = {
   subscriptionHref: string;
   /** "Memory updated" with undo under an answer that changed memory; the host owns the undo. */
   renderMemoryUpdate?: (changes: LessonQuestionMemoryChange[]) => ReactNode;
-  /** Small thumbs under a finished answer, so the learner can say whether it helped. */
-  renderAnswerFeedback?: (questionId: string) => ReactNode;
 };
 
 export const LessonQuestionNavigationContext = createContext<LessonQuestionNavigation | null>(null);

@@ -1,26 +1,28 @@
 "use client";
 
-import { type PlanView } from "@zoonk/core/plans/view-contract";
 import {
   type OnboardingAnswerInput,
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { type ExperienceMode } from "../experience-mode";
 import { type GenerationRun } from "../generation/generation-run";
-import { ModeProvider } from "../mode-provider";
 import { type PlanActions } from "../plan/plan-context";
 import {
   type OnboardingActions,
   type OnboardingNavigation,
   type OnboardingRoutes,
+  type RevealedPlan,
 } from "./onboarding-actions";
-import { OnboardingFrame, OnboardingTopBar } from "./onboarding-frame";
+import {
+  OnboardingFrame,
+  OnboardingProgressProvider,
+  OnboardingTaskFrame,
+  OnboardingTopBar,
+} from "./onboarding-frame";
 import { OnboardingStepScreen } from "./onboarding-step-screen";
+import { StartOverButton } from "./start-over-button";
 import { PlanStartNotice } from "./steps/plan-start-notice";
 
 /** Placement and the plan aren't questions, so they don't count in the dots. */
@@ -37,7 +39,7 @@ const QUESTION_SCREENS = new Set<string>([
   "level",
   "schedule",
   "age",
-  "mode",
+  "memory",
   "buddy",
 ]);
 
@@ -67,67 +69,40 @@ function countQuestions(steps: OnboardingStep[]): number {
   return steps.filter((step) => !UNCOUNTED_STEPS.has(step)).length;
 }
 
-function useModeState(initialMode: ExperienceMode) {
-  const [mode, setMode] = useState(initialMode);
-  const [buddy, setBuddy] = useState<LearnBuddy | null>(null);
-
-  const learnFrom = (input: OnboardingAnswerInput) => {
-    if (input.question === "mode") {
-      setMode(input.experienceMode);
-    }
-
-    if (input.question === "buddy" && input.buddy) {
-      setBuddy({
-        beltColor: "white",
-        energy: 50,
-        glasses: "round",
-        kind: input.buddy.kind,
-        name: input.buddy.name ?? null,
-      });
-    }
-  };
-
-  return { buddy, learnFrom, mode };
-}
-
 /**
  * The rest of onboarding for a new goal, at `/start/[goalId]`: only the questions its words
- * didn't answer, one per screen with Back and Start over, then the age, mode and buddy when the
- * profile needs them, placement while the first lessons are made, and the plan. Choosing Fun
- * switches the screens to Fun right away. A refresh comes back to the same screen, since each
- * answer is saved. When the run building the plan in the background couldn't start or failed,
- * the questions say so with a way to start it again.
+ * didn't answer, one per screen with Back and Start over, then the age, memory and buddy when the
+ * profile needs them, placement while the first lessons are made, and the plan. A refresh comes
+ * back to the same screen, since each answer is saved. When the run building the plan in the
+ * background couldn't start or failed, the questions say so with a way to start it again.
  */
 export function StepsFlow({
   actions,
   generation = null,
-  initialMode,
   initialPlan,
   isGuest,
   navigation,
   onboarding,
-  buddy: savedBuddy,
   planActions,
   routes,
-  testOutBasePath,
 }: {
   actions: OnboardingActions;
   /** The run writing the goal's skill map, placement questions and plan, when the host follows it. */
   generation?: GenerationRun | null;
-  initialMode: ExperienceMode;
-  initialPlan: PlanView | null;
+  initialPlan: RevealedPlan | null;
   isGuest: boolean;
   navigation: OnboardingNavigation;
   onboarding: OnboardingView;
-  buddy: LearnBuddy | null;
   planActions: PlanActions;
   routes: OnboardingRoutes;
-  testOutBasePath: string;
 }) {
   const t = useExtracted();
-  const modeState = useModeState(initialMode);
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
+
+  // The page read the plan when it opened: current only when it opened on the plan. After the
+  // steps (placement, the learner's time), the reveal reads it fresh instead of showing that one.
+  const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
 
   const [state, setState] = useState<FlowState>(() => ({
     current: onboarding.steps[0] ?? "plan",
@@ -166,8 +141,6 @@ export function StepsFlow({
         navigation.replaceSteps(outcome.onboarding.goal.id);
       }
 
-      modeState.learnFrom(input);
-
       advance(
         outcome.onboarding,
         // Guardians are invited from an account; a guest is asked once they sign up.
@@ -189,35 +162,42 @@ export function StepsFlow({
       navigation.toStart();
     });
 
+  const isPlan = state.current === "plan";
   const remaining = countQuestions(state.view.steps.filter((step) => step !== state.current));
   const answeredCount = countQuestions(state.history);
   const showDots = !UNCOUNTED_STEPS.has(state.current) && !state.tooYoung;
 
+  // A goal's questions are a task without the app's bar; saying goodbye to a learner too young for
+  // Zoonk shows the bar again, which is a visitor's once their account is gone.
+  const Frame = state.tooYoung ? OnboardingFrame : OnboardingTaskFrame;
+
+  const progress = showDots
+    ? { current: answeredCount, total: answeredCount + 1 + remaining }
+    : null;
+
   return (
-    <ModeProvider experienceMode={modeState.mode}>
-      <OnboardingFrame>
-        <OnboardingTopBar
-          end={
-            state.tooYoung || state.current === "plan" ? null : (
-              <Button disabled={isPending} onClick={startOver} size="sm" variant="ghost">
-                {t("Start over")}
-              </Button>
-            )
-          }
-          onBack={state.history.length > 0 && !state.tooYoung ? back : undefined}
-          progress={
-            showDots ? { current: answeredCount, total: answeredCount + 1 + remaining } : null
-          }
-        />
+    <Frame>
+      <OnboardingTopBar
+        end={
+          state.tooYoung || isPlan ? null : (
+            <StartOverButton disabled={isPending} onStartOver={startOver} />
+          )
+        }
+        // The plan is built from the answers: changing them now happens in "Adjust", not by going
+        // back through the questions.
+        onBack={state.history.length > 0 && !state.tooYoung && !isPlan ? back : undefined}
+        progress={progress}
+      />
 
-        {failed && (
-          <p className="text-destructive mx-auto w-full max-w-xl px-4 text-sm" role="alert">
-            {t("We couldn't save that. Try again in a moment.")}
-          </p>
-        )}
+      {failed && (
+        <p className="text-destructive mx-auto w-full max-w-xl px-4 text-sm" role="alert">
+          {t("We couldn't save that. Try again in a moment.")}
+        </p>
+      )}
 
-        {showDots && generation && <PlanStartNotice run={generation} />}
+      {showDots && generation && <PlanStartNotice run={generation} />}
 
+      <OnboardingProgressProvider progress={progress}>
         <OnboardingStepScreen
           actions={actions}
           inviting={state.inviting}
@@ -226,15 +206,14 @@ export function StepsFlow({
           onGuardianDone={() => setState((previous) => ({ ...previous, inviting: false }))}
           onPlacementDone={() => answer({ question: "placement" })}
           pending={isPending}
-          buddy={modeState.buddy ?? savedBuddy}
-          plan={{ initialPlan, planActions, testOutBasePath }}
+          plan={{ initialPlan: pagePlan, planActions }}
           routes={routes}
           run={generation}
           step={state.current}
           tooYoung={state.tooYoung}
           view={state.view}
         />
-      </OnboardingFrame>
-    </ModeProvider>
+      </OnboardingProgressProvider>
+    </Frame>
   );
 }

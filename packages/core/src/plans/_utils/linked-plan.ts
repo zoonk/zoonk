@@ -20,6 +20,7 @@ export async function loadLinkedPlan(planId: string) {
         },
       },
       graph: true,
+      phases: true,
     },
     where: { id: planId },
   });

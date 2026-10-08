@@ -1,11 +1,13 @@
 "use client";
 
+import { LessonVisual } from "@zoonk/learn/visual";
 import { Button } from "@zoonk/ui/components/button";
 import { PenLineIcon, PenOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
 import { InteractiveStepLayout } from "../../components/step-layouts";
 import { LessonContext, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
+import { isNumberAnswer } from "../_utils/number-answer";
 import { ExplainFirstButton } from "../controls/explain-first-button";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonAnswerField } from "./lesson-answer-field";
@@ -39,7 +41,10 @@ function SkipWritingButton() {
   );
 }
 
-/** "Explain it in your words": a written answer graded one key point at a time. */
+/**
+ * "Explain it in your words": a written answer graded one key point at a time. A question whose
+ * answer is a number (every accepted answer is one) takes it in a number field instead.
+ */
 export function TypedAnswerStepView({
   answer,
   isLocked,
@@ -48,19 +53,24 @@ export function TypedAnswerStepView({
 }: LessonStepViewProps<StepOf<"typedAnswer">>) {
   const t = useExtracted();
   const text = answer?.kind === "typedAnswer" ? answer.text : "";
+  const isNumber = isNumberAnswer(step.content.acceptedAnswers);
 
   return (
     <InteractiveStepLayout>
       <div className="flex flex-col gap-3">
-        <LessonEyebrow icon={<PenLineIcon aria-hidden="true" />}>
-          {t("In your own words")}
-        </LessonEyebrow>
+        {!isNumber && (
+          <LessonEyebrow icon={<PenLineIcon aria-hidden="true" />}>
+            {t("In your own words")}
+          </LessonEyebrow>
+        )}
         <LessonContext>{step.content.context}</LessonContext>
+        <LessonVisual visual={step.content.visual} />
         <LessonQuestion>{step.content.question}</LessonQuestion>
       </div>
 
       <LessonAnswerField
         isLocked={isLocked}
+        isNumber={isNumber}
         label={step.content.question}
         onChange={(value) => onAnswer(value ? { kind: "typedAnswer", text: value } : null)}
         value={text}

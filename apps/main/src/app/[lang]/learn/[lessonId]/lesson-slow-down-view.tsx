@@ -18,7 +18,7 @@ export function LessonSlowDownView({ retryAfterSeconds }: { retryAfterSeconds: n
   }, [router]);
 
   return (
-    <main className="bg-background in-data-[mode=fun]:fun-space flex min-h-dvh flex-col">
+    <main className="bg-background flex min-h-dvh flex-col">
       <LessonSlowDown key={attempt} onRetry={retry} retryAfterSeconds={retryAfterSeconds} />
     </main>
   );

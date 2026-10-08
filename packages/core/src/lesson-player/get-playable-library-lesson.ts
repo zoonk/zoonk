@@ -8,9 +8,10 @@ import { isActorRateLimited } from "../entitlements/_utils/actor-rate-limit";
 import { RATE_LIMIT_RETRY_SECONDS } from "../entitlements/limits";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
+import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
 import { getSession } from "../users/get-session";
-import { loadDepthVersions, withDepthVersions } from "./_utils/depth-versions";
 import { withLearnerLessonVersions } from "./_utils/learner-lesson-versions";
+import { isLessonInLearnerPlan } from "./_utils/lesson-in-plan";
 import { playableStepInclude } from "./_utils/lesson-rows";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { type PlayableLibraryLesson } from "./contract";
@@ -42,7 +43,7 @@ function findPlayableLessonRow(lessonId: string) {
         include: { skill: { select: { id: true, name: true } } },
         orderBy: { createdAt: "asc" },
       },
-      steps: { include: playableStepInclude, orderBy: { position: "asc" } },
+      steps: { include: playableStepInclude, orderBy: { position: "asc" }, where: CURRENT_STEPS },
     },
     omit: { spec: true },
     where: { id: lessonId },
@@ -86,7 +87,16 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
   };
 }
 
-async function getCachedPlayableLesson(lessonId: string): Promise<LoadedPlayableLesson | null> {
+/**
+ * One version of a lesson, shared by every viewer: the version is part of the cache key, so a
+ * lesson that changed since gets a new entry instead of the cached one.
+ */
+async function getCachedPlayableLesson({
+  lessonId,
+}: {
+  lessonId: string;
+  version: string;
+}): Promise<LoadedPlayableLesson | null> {
   "use cache";
   cacheTag(getLibraryLessonCacheTag(lessonId));
 
@@ -106,21 +116,47 @@ async function getCachedPlayableLesson(lessonId: string): Promise<LoadedPlayable
 }
 
 /**
- * Each app keeps its own cache, and the API's workflows write lessons that main waits on, so a
- * cached "not written yet" is never trusted: it's read again from the database, which is cheap
- * for an unwritten lesson. Written lessons are served from the cache.
+ * When a lesson last changed: its row (written, pulled for a fix, rewritten, a fixed version
+ * published) and its current screens (a picture linked later). Null when the lesson doesn't exist.
  */
-async function getWrittenOrFreshPlayableLesson(
-  lessonId: string,
-): Promise<LoadedPlayableLesson | null> {
-  const cached = await getCachedPlayableLesson(lessonId);
+async function findLessonVersion(lessonId: string): Promise<string | null> {
+  const [lesson, steps] = await Promise.all([
+    prisma.lesson.findUnique({ select: { updatedAt: true }, where: { id: lessonId } }),
+    prisma.step.aggregate({ _max: { updatedAt: true }, where: { lessonId, ...CURRENT_STEPS } }),
+  ]);
 
-  if (cached?.result.status !== "notGenerated") {
-    return cached;
+  return lesson ? `${lesson.updatedAt.getTime()}:${steps._max.updatedAt?.getTime() ?? 0}` : null;
+}
+
+/**
+ * The lesson as it is now. Each app keeps its own cache, and the API's workflows and the admin
+ * write, pull and rewrite lessons that main serves, where their cache revalidation never reaches:
+ * a cheap fresh read of the lesson's version picks the cached copy of that version, so a lesson
+ * written, pulled for a fix or rewritten elsewhere is never served as it was.
+ */
+async function getCurrentPlayableLesson(lessonId: string): Promise<LoadedPlayableLesson | null> {
+  const version = await findLessonVersion(lessonId);
+  return version ? getCachedPlayableLesson({ lessonId, version }) : null;
+}
+
+/**
+ * Whether this read goes over the learner's `lesson-steps` limit. Lessons of their own plans never
+ * count, so they aren't checked (a check counts the read).
+ */
+async function isReadingTooFast({
+  isGuest,
+  lessonId,
+  userId,
+}: {
+  isGuest: boolean;
+  lessonId: string;
+  userId: string;
+}): Promise<boolean> {
+  if (await isLessonInLearnerPlan({ lessonId, userId })) {
+    return false;
   }
 
-  const lesson = await findPlayableLessonRow(lessonId);
-  return lesson ? toLoadedPlayableLesson(lesson) : null;
+  return isActorRateLimited({ isGuest, rule: RATE_LIMIT_RULES.lessonSteps, userId });
 }
 
 function toOutline(lesson: PlayableLibraryLesson): LessonOutline {
@@ -138,11 +174,13 @@ export async function getLibraryLessonOutline({
 }: {
   lessonId: string;
 }): Promise<LessonOutline | null> {
+  "use cache: private";
+
   if (!isUuid(lessonId)) {
     return null;
   }
 
-  const cached = await getCachedPlayableLesson(lessonId.toLowerCase());
+  const cached = await getCurrentPlayableLesson(lessonId.toLowerCase());
 
   if (!cached || !(await canViewLibraryRow(cached.access))) {
     return null;
@@ -152,48 +190,31 @@ export async function getLibraryLessonOutline({
 }
 
 /**
- * The cached lesson as this learner plays it: with the "Simpler" and "Go deeper" versions made so
- * far, read fresh (see `loadDepthVersions`), and with their field or tool's versions.
- */
-async function toPlayedLesson({
-  lesson,
-  userId,
-}: {
-  lesson: PlayableLibraryLesson;
-  userId: string;
-}): Promise<PlayableLibraryLesson> {
-  const [versions, seen] = await Promise.all([
-    loadDepthVersions(lesson.steps.map((step) => step.id)),
-    withLearnerLessonVersions({ lesson, userId }),
-  ]);
-
-  return withDepthVersions({ lesson: seen, versions });
-}
-
-/**
- * Loads a Library lesson for the player: its screens in order with images and any "Simpler" or
- * "Go deeper" version already made, its skills and its home chapter. The content is the same for
- * every viewer and never includes provenance, so guests and signed-in learners share one cached
- * copy; depth versions, which learners add while they play, are read fresh on every load. A
- * private lesson is only returned to its owner. Screens go only to someone with a session,
- * a guest's included: visitors get the outline, like search engines on the public lesson page. A
- * learner gets the screens their field or tool has a version of in that version (see
- * `withLearnerLessonVersions`). Reading screens is rate-limited per learner, and per network for
- * guests (the `lesson-steps` Firewall rule), so no session can read every lesson; over the limit,
- * it returns the outline with `slowDown`. A lesson whose content isn't written yet returns its
- * outline, so the page can wait for it.
+ * Loads a Library lesson for the player: its screens in order with images, its skills and its home
+ * chapter. The content is the same for every viewer and never includes provenance, so guests and
+ * signed-in learners share one cached copy. A private lesson is only returned to its owner.
+ * Screens go only to someone with a session, a guest's included: visitors get the outline, like
+ * search engines on the public lesson page. A learner gets the screens their field or tool has a
+ * version of in that version (see `withLearnerLessonVersions`). Reading screens of lessons outside
+ * the learner's plans is rate-limited per learner, and per network for guests (the `lesson-steps`
+ * Firewall rule), so no session can read every lesson; over the limit, it returns the outline with
+ * `slowDown`. Lessons of their own plans never count (`isLessonInLearnerPlan`), so the apps' lists
+ * load written ones ahead freely. A lesson whose content isn't written yet returns its outline, so
+ * the page can wait for it. Private cached, so a link that prefetches the lesson opens it at once.
  */
 export async function getPlayableLibraryLesson({
   lessonId,
 }: {
   lessonId: string;
 }): Promise<PlayableLibraryLessonResult | null> {
+  "use cache: private";
+
   if (!isUuid(lessonId)) {
     return null;
   }
 
   const [cached, session] = await Promise.all([
-    getWrittenOrFreshPlayableLesson(lessonId.toLowerCase()),
+    getCurrentPlayableLesson(lessonId.toLowerCase()),
     getSession(),
   ]);
 
@@ -208,9 +229,9 @@ export async function getPlayableLibraryLesson({
   if (cached.result.status === "ready" && session) {
     const { lesson } = cached.result;
 
-    const tooFast = await isActorRateLimited({
+    const tooFast = await isReadingTooFast({
       isGuest: session.user.isAnonymous === true,
-      rule: RATE_LIMIT_RULES.lessonSteps,
+      lessonId: lesson.id,
       userId: session.user.id,
     });
 
@@ -222,7 +243,10 @@ export async function getPlayableLibraryLesson({
       };
     }
 
-    return { lesson: await toPlayedLesson({ lesson, userId: session.user.id }), status: "ready" };
+    return {
+      lesson: await withLearnerLessonVersions({ lesson, userId: session.user.id }),
+      status: "ready",
+    };
   }
 
   return cached.result;

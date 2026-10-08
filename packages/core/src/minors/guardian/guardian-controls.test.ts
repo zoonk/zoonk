@@ -160,6 +160,7 @@ describe("guardian controls", () => {
       ageGroup: "teen",
       marketingEmailAllowed: false,
       memoryCategories: ["goals", "learning"],
+      memoryOnByDefault: false,
       plusPurchase: "needsGuardianApproval",
       sessionReplayAllowed: false,
     });
@@ -198,6 +199,7 @@ describe("guardian controls", () => {
     await expect(getLearnerProtections()).resolves.toMatchObject({
       ageGroup: "adult",
       memoryCategories: ["goals", "background", "routine", "preferences", "learning", "context"],
+      memoryOnByDefault: true,
       plusPurchase: "allowed",
       sessionReplayAllowed: true,
     });
@@ -206,6 +208,7 @@ describe("guardian controls", () => {
 
     await expect(getLearnerProtections()).resolves.toMatchObject({
       ageGroup: "unknown",
+      memoryOnByDefault: false,
       plusPurchase: "allowed",
       sessionReplayAllowed: false,
     });

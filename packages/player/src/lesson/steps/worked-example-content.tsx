@@ -24,7 +24,8 @@ function WorkedExampleLine({
       >
         {number}
       </span>
-      <div className="flex min-w-0 flex-col gap-1 pt-0.5 text-base leading-relaxed sm:text-lg">
+      {/* Full width on every step, so each formula centers on the same axis. */}
+      <div className="flex min-w-0 flex-1 flex-col gap-1 pt-0.5 text-base leading-relaxed sm:text-lg">
         <LessonRichText text={step.text} />
         {step.math && <RichInlineSegments segments={[{ kind: "displayMath", text: step.math }]} />}
       </div>
@@ -56,13 +57,16 @@ function useNewestStepInView(revealed: number) {
 
 /**
  * A solved problem shown `revealed` steps at a time, so the learner follows how an expert thinks
- * one move after another. New steps are announced as they appear.
+ * one move after another. New steps are announced as they appear. Its `figure` (a picture, a chart
+ * or a timeline) sits under the problem it belongs to, before the steps.
  */
 export function WorkedExampleContent({
   content,
+  figure,
   revealed,
 }: {
   content: WorkedExampleContentData;
+  figure?: React.ReactNode;
   revealed: number;
 }) {
   const t = useExtracted();
@@ -72,6 +76,7 @@ export function WorkedExampleContent({
   return (
     <div className="flex w-full flex-col gap-5" data-slot="worked-example">
       <LessonRichTextBlocks className="text-lg leading-relaxed sm:text-xl" text={content.problem} />
+      {figure}
 
       <ol aria-label={t("Steps")} aria-live="polite" className="flex flex-col gap-3">
         {content.steps.slice(0, revealed).map((step, index) => {

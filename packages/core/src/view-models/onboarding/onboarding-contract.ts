@@ -1,5 +1,6 @@
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
+import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
 import {
   DAYS_PER_WEEK,
@@ -10,6 +11,8 @@ import { learningProfileUpdateSchema } from "../../profile/learning-profile-cont
 
 const MAX_GOAL_TEXT_LENGTH = 2000;
 const MAX_ANSWER_LENGTH = 200;
+/** A notice lists a few dozen subjects at most. */
+const MAX_KNOWN_SUBJECTS = 40;
 const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
@@ -77,6 +80,11 @@ export type OnboardingExamDate = {
  * purpose, role), the questions they already answered and the onboarding the goals share.
  */
 export type UnderstoodGoalView = {
+  /**
+   * The last published cut-off of the target the words named (a course at an institution, a
+   * position), when another learner's research already found it; null otherwise.
+   */
+  cutoff: TargetCutoff | null;
   draft: GoalDraft;
   /** The exam's next dates from its stored notice; empty until research has read one. */
   examDates: OnboardingExamDate[];
@@ -224,8 +232,12 @@ export const ONBOARDING_QUESTIONS = [
 
 export type OnboardingQuestion = (typeof ONBOARDING_QUESTIONS)[number];
 
-/** Everything after the questions: about the learner, not the goal. */
-type OnboardingProfileStep = "age" | "mode" | "buddy";
+/**
+ * Everything after the questions: about the learner, not the goal. `memory` asks a learner under
+ * 18, or one whose age we don't know, whether memory may personalize their lessons, since it
+ * starts off for them.
+ */
+type OnboardingProfileStep = "age" | "buddy" | "memory";
 
 export type OnboardingStep = OnboardingProfileStep | OnboardingQuestion | "placement" | "plan";
 
@@ -237,10 +249,14 @@ export type OnboardingLibraryCourse = {
   title: string;
 };
 
-/** The rest of onboarding for one new goal, for both modes. */
+/** The rest of onboarding for one new goal. */
 export type OnboardingView = {
-  /** An exam's subjects from its stored notice, shown before placement; empty for other goals. */
-  examSubjects: string[];
+  /**
+   * An exam's subjects from its stored notice, for the level question and before placement: the
+   * notice's name (what `knownSubjects` sends back) and what learners call it when that's long.
+   * Empty for other goals.
+   */
+  examSubjects: { name: string; shortName: string | null }[];
   /** Questions the AI asked for this goal, answered on the `followUps` screen. */
   followUps: string[];
   /**
@@ -258,6 +274,12 @@ export type OnboardingView = {
    * question is answered; null before that and when none fits.
    */
   libraryCourse: OnboardingLibraryCourse | null;
+  /**
+   * The daily minutes the time question starts on, from how big the goal is (a public exam asks
+   * for more than a subject) and how soon its (or its exam's) date is. Only a starting pick: the
+   * plan says what the time covers once it's built.
+   */
+  recommendedMinutes: number;
   /** Onboarding screens still ahead, in order, ending with the plan. */
   steps: OnboardingStep[];
 };
@@ -278,16 +300,24 @@ const scheduleAnswerSchema = z
       .min(1)
       .max(DAYS_PER_WEEK)
       .optional(),
-    studyTime: z.string().regex(STUDY_TIME_PATTERN).nullable().optional(),
     timeZone: timeZoneSchema,
+    weekendMinutes: z
+      .int()
+      .min(MIN_DAILY_MINUTES)
+      .max(MAX_DAILY_MINUTES)
+      .optional()
+      .meta({
+        description:
+          "Minutes on Saturday and Sunday when they differ from the other days; only study days take them",
+      }),
   })
   .strict();
 
 /**
  * One onboarding answer. Skippable questions take null. "Placement" marks placement done, after
- * the learner finished it, stopped it or chose to start from scratch. Age, mode and buddy are saved
- * on the learner's profile; a birth date under 13 deletes the account, since Zoonk is for 13 and
- * older.
+ * the learner finished it, stopped it or chose to start from scratch. Age, memory and buddy are
+ * saved on the learner's profile; a birth date under 13 deletes the account, since Zoonk is for 13
+ * and older.
  */
 export const onboardingAnswerInputSchema = z
   .discriminatedUnion("question", [
@@ -310,7 +340,20 @@ export const onboardingAnswerInputSchema = z
     z
       .object({ answers: z.array(nullableAnswer).max(2), question: z.literal("followUps") })
       .strict(),
-    z.object({ level: ownLevelSchema.nullable(), question: z.literal("level") }).strict(),
+    z
+      .object({
+        knownSubjects: z
+          .array(z.string().trim().min(1).max(MAX_ANSWER_LENGTH))
+          .max(MAX_KNOWN_SUBJECTS)
+          .optional()
+          .meta({
+            description:
+              "For an exam with several subjects: the notice's subjects the learner already knows well, whose basics the plan skips",
+          }),
+        level: ownLevelSchema.nullable(),
+        question: z.literal("level"),
+      })
+      .strict(),
     scheduleAnswerSchema,
     z.object({ question: z.literal("placement") }).strict(),
     z
@@ -324,8 +367,13 @@ export const onboardingAnswerInputSchema = z
       .strict(),
     z
       .object({
-        experienceMode: learningProfileUpdateSchema.shape.experienceMode.unwrap(),
-        question: z.literal("mode"),
+        enabled: z
+          .boolean()
+          .meta({
+            description:
+              'Whether memory may personalize the learner\'s lessons: true for yes, false for "Not now"',
+          }),
+        question: z.literal("memory"),
       })
       .strict(),
     z

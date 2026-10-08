@@ -1,5 +1,5 @@
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
-import { type NumericDomain, niceTicks } from "../_utils/plot-scale";
+import { type NumericDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { isMultiple } from "../_utils/snap-value";
 
 type Fields = ActivityContentFor<"distributionExplorer">["fields"];

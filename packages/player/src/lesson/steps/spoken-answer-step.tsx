@@ -34,7 +34,8 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
-function RecordButton({ stepId }: { stepId: string }) {
+/** The microphone button. `onBlocked` hears when the browser or the learner blocks the microphone. */
+function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: string }) {
   const t = useExtracted();
   const { actions, state } = useLessonPlayer();
 
@@ -47,6 +48,12 @@ function RecordButton({ stepId }: { stepId: string }) {
   const recorder = useVoiceRecorder({ onRecorded });
   const isRecording = recorder.status === "recording";
   const seconds = Math.floor(recorder.elapsedMs / MS_PER_SECOND);
+
+  const startRecording = async () => {
+    if (!(await recorder.start())) {
+      onBlocked();
+    }
+  };
 
   const isSlow = useTakingLong({
     active: state.phase === "checking",
@@ -76,7 +83,7 @@ function RecordButton({ stepId }: { stepId: string }) {
       <Button
         aria-pressed={isRecording}
         className={cn("size-20 rounded-full", isRecording && "motion-safe:animate-pulse")}
-        onClick={isRecording ? recorder.stop : () => void recorder.start()}
+        onClick={isRecording ? recorder.stop : () => void startRecording()}
         size="icon-lg"
         variant={isRecording ? "destructive" : "default"}
       >
@@ -98,8 +105,6 @@ function RecordButton({ stepId }: { stepId: string }) {
               state.checkFailed && recorder.status === "idle" && "text-destructive",
             )}
           >
-            {recorder.status === "denied" &&
-              t("The microphone is blocked. Type your answer instead.")}
             {recorder.status === "idle" && getIdleHint()}
             {isRecording && t("Listening… {seconds}s. Tap to stop.", { seconds: String(seconds) })}
           </p>
@@ -115,24 +120,27 @@ function getAnswerMode({
   canListen,
   canSpeak,
   cantTalk,
+  micBlocked,
   prefersTyping,
 }: {
   canListen: boolean;
   canSpeak: boolean;
   cantTalk: boolean;
+  micBlocked: boolean;
   prefersTyping: boolean;
 }): AnswerMode {
   if ((cantTalk || !canSpeak) && canListen) {
     return "listen";
   }
 
-  return prefersTyping || !canSpeak ? "type" : "speak";
+  return prefersTyping || micBlocked || !canSpeak ? "type" : "speak";
 }
 
 /**
  * How the learner answers now. Speaking is the default; "I can't talk now" plays the sentence as
  * listening when the screen has it, for the rest of the visit; typing covers a quiet room without
- * a listening version, a blocked microphone or a browser that can't record.
+ * a listening version, a browser that can't record, and a microphone blocked when they tap to
+ * speak, which brings up the typing field right away with a line saying why.
  */
 function useAnswerMode({
   onAnswer,
@@ -144,17 +152,19 @@ function useAnswerMode({
   const canListen = step.listening !== null;
   const [cantTalk, setCantTalk] = useCantTalkNow();
   const [prefersTyping, setPrefersTyping] = useState(false);
+  const [micBlocked, setMicBlocked] = useState(false);
 
-  const mode = getAnswerMode({ canListen, canSpeak, cantTalk, prefersTyping });
+  const mode = getAnswerMode({ canListen, canSpeak, cantTalk, micBlocked, prefersTyping });
 
-  /** An answer started one way doesn't carry over to another. */
+  /** An answer started one way doesn't carry over to another; asking to speak tries the mic again. */
   const switchTo = (next: { cantTalk: boolean; prefersTyping: boolean }) => {
     onAnswer(null);
     setCantTalk(next.cantTalk);
     setPrefersTyping(next.prefersTyping);
+    setMicBlocked(false);
   };
 
-  return { canListen, canSpeak, mode, switchTo };
+  return { canListen, canSpeak, micBlocked, mode, onBlocked: () => setMicBlocked(true), switchTo };
 }
 
 /** "I can't talk now": the same sentence as a listening exercise, heard and built from a word bank. */
@@ -241,6 +251,7 @@ function ModeSwitch({
  * it), or as typing when there's no listening version.
  */
 export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAnswer">>) {
+  const t = useExtracted();
   const { answer, isLocked, onAnswer, step } = props;
   const answerMode = useAnswerMode({ onAnswer, step });
   const { listening } = step;
@@ -261,14 +272,22 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
       <TargetText step={step} />
 
       {answerMode.mode === "type" ? (
-        <LessonAnswerField
-          isLocked={isLocked}
-          label={step.content.prompt}
-          onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
-          value={text}
-        />
+        <>
+          {answerMode.micBlocked && !isLocked && (
+            <p className="text-muted-foreground text-center text-sm" role="status">
+              {t("The microphone is blocked. Type your answer instead.")}
+            </p>
+          )}
+
+          <LessonAnswerField
+            isLocked={isLocked}
+            label={step.content.prompt}
+            onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
+            value={text}
+          />
+        </>
       ) : (
-        !isLocked && <RecordButton stepId={step.id} />
+        !isLocked && <RecordButton onBlocked={answerMode.onBlocked} stepId={step.id} />
       )}
 
       <ModeSwitch answerMode={answerMode} isLocked={isLocked} />

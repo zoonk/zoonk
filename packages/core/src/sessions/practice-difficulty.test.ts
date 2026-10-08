@@ -23,7 +23,7 @@ const DIFFICULTIES = { easy: -1, hard: 1, medium: 0 } as const;
  * A goal whose only lesson is done, its skill studied and not due, with an easy, a medium and a
  * hard question on it, and the plan steered with `difficultyBias`: today is all mixed practice.
  */
-async function practiceDay(difficultyBias: DifficultyBias) {
+async function practiceDay(difficultyBias: DifficultyBias, targetDate: Date | null = null) {
   const user = await userFixture();
 
   const { goal, plan, planItems, skills } = await sessionGoalFixture({
@@ -43,6 +43,7 @@ async function practiceDay(difficultyBias: DifficultyBias) {
   await Promise.all([
     prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
     prisma.plan.update({ data: { settings: { difficultyBias } }, where: { id: plan.id } }),
+    prisma.goal.update({ data: { targetDate }, where: { id: plan.goalId } }),
     dueSkillFixture({ due: daysAgo(-10), skillId, userId: user.id }),
   ]);
 
@@ -89,6 +90,17 @@ describe("practice steered by Too easy and Too hard", () => {
       ids.easy,
       ids.medium,
       ids.hard,
+    ]);
+  });
+
+  it("goes past the minimum on the practice days left before a date, harder questions first", async () => {
+    const inAMonth = new Date(SESSION_NOW.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const { goal, ids } = await practiceDay("standard", inAMonth);
+
+    await expect(getPracticeItemIds(goal.id)).resolves.toStrictEqual([
+      ids.hard,
+      ids.medium,
+      ids.easy,
     ]);
   });
 });

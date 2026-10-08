@@ -1,9 +1,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
+import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 import { cache } from "react";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
 import { estimateCostPer1000Runs, getCallCost } from "./cost";
-import { type GatewayPrices, loadGatewayPrices } from "./gateway-prices";
 import { summarizeLatency } from "./latency";
 import { average, sum } from "./math";
 import {
@@ -175,7 +176,8 @@ function buildLeaderboardEntry({
 
 /** Total spent on battle judges for a task, from the usage saved with each judgment. */
 export async function getBattleJudgeCost(taskId: string): Promise<number> {
-  const [matchups, prices] = await Promise.all([getBattleMatchups(taskId), loadGatewayPrices()]);
+  const prices = GATEWAY_PRICES;
+  const matchups = await getBattleMatchups(taskId);
 
   const judgeCosts = matchups
     .flatMap((matchup) => matchup.judgments)
@@ -190,10 +192,11 @@ export async function getBattleJudgeCost(taskId: string): Promise<number> {
 
 export const getBattleLeaderboard = cache(
   async (taskId: string): Promise<BattleLeaderboardEntry[]> => {
-    const [matchups, allOutputs, prices] = await Promise.all([
+    const prices = GATEWAY_PRICES;
+
+    const [matchups, allOutputs] = await Promise.all([
       getBattleMatchups(taskId),
       getAllOutputsForTask(taskId),
-      loadGatewayPrices(),
     ]);
 
     if (matchups.length === 0) {

@@ -1,7 +1,6 @@
 import { type Request } from "@playwright/test";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { expectMode, showInMode } from "./learn-personas";
 
 /** Chromium's fake microphone, so recording starts without a device or a permission prompt. */
 test.use({
@@ -61,7 +60,6 @@ test.describe("A spoken answer", () => {
       }),
     ]);
 
-    await showInMode(context, { mode: "focus", userId: noProgressUser.id });
     const page = await context.newPage();
     const sent: Request[] = [];
 
@@ -73,7 +71,6 @@ test.describe("A spoken answer", () => {
 
     try {
       await page.goto(`/learn/${lesson.id}`);
-      await expectMode(page, "focus");
 
       await sayIt(page);
       await expect(page.getByText("We couldn't hear any words. Try again.")).toBeVisible();

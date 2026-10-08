@@ -3,12 +3,12 @@
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { useLocale } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
-import { type ExperienceMode } from "../experience-mode";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useLearnAnalytics } from "../learn-context";
-import { ModeProvider } from "../mode-provider";
 import { getClassifiedKind, useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
 import { AttachableGoalEntry } from "./entry/goal-attachments";
+import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
 import { MaterialQuestions } from "./entry/material-questions";
@@ -52,19 +52,40 @@ function getBack({
  * refresh or coming back later shows the same screen: the wait, the card with the learner's
  * fixes, or the way to try again. A question goes on to its quick explanation, an instrument to
  * the waitlist with musicianship offered, and an unsafe goal is declined kindly. Confirming
- * creates the goals and continues on the goal's own onboarding screens.
+ * creates the goals and continues on the goal's own onboarding screens. A guest whose one goal is
+ * taken is asked to create an account instead, before typing anything.
  */
 export function StartFlow({
+  needsAccount = false,
+  ...props
+}: React.ComponentProps<typeof GoalStartFlow> & {
+  /** A guest whose one goal is taken: only an account adds another. */
+  needsAccount?: boolean;
+}) {
+  if (needsAccount) {
+    return (
+      <OnboardingFrame>
+        <GuestGoalGate routes={props.routes} />
+      </OnboardingFrame>
+    );
+  }
+
+  return <GoalStartFlow {...props} />;
+}
+
+function GoalStartFlow({
   actions,
+  buddy = null,
   canAttach = false,
   defaultGoal = "",
   fromSharedPlan = false,
   initialDraft = null,
-  initialMode,
   navigation,
   routes,
 }: {
   actions: OnboardingActions;
+  /** The learner's buddy, who answers questions about their material; null before they pick one. */
+  buddy?: LearnBuddy | null;
   /** An account can attach material; guests and visitors are asked to create one. */
   canAttach?: boolean;
   defaultGoal?: string;
@@ -72,7 +93,6 @@ export function StartFlow({
   fromSharedPlan?: boolean;
   /** The draft in the address, to show again after a refresh or when coming back. */
   initialDraft?: OnboardingDraftView | null;
-  initialMode: ExperienceMode;
   navigation: OnboardingNavigation;
   routes: OnboardingRoutes;
 }) {
@@ -181,51 +201,49 @@ export function StartFlow({
   const backToEntry = (words: string) => showEntry({ words });
 
   return (
-    <ModeProvider experienceMode={initialMode}>
-      <OnboardingFrame>
-        <OnboardingTopBar onBack={getBack({ backToEntry, state })} />
+    <OnboardingFrame>
+      <OnboardingTopBar onBack={getBack({ backToEntry, state })} />
 
-        {state.kind === "entry" && (
-          <AttachableGoalEntry
-            attach={actions.attach}
-            attached={attached}
-            canAttach={canAttach}
-            defaultGoal={state.words}
-            error={state.error}
-            fromSharedPlan={fromSharedPlan}
-            intent={intent}
-            onAttachedChange={setAttached}
-            onIntentChange={setIntent}
-            onSubmit={submit}
-            routes={routes}
-          />
-        )}
+      {state.kind === "entry" && (
+        <AttachableGoalEntry
+          attach={actions.attach}
+          attached={attached}
+          canAttach={canAttach}
+          defaultGoal={state.words}
+          error={state.error}
+          fromSharedPlan={fromSharedPlan}
+          intent={intent}
+          onAttachedChange={setAttached}
+          onIntentChange={setIntent}
+          onSubmit={submit}
+          routes={routes}
+        />
+      )}
 
-        {state.kind === "questions" && (
-          <MaterialQuestions ask={actions.askMaterial} sources={attached} />
-        )}
+      {state.kind === "questions" && (
+        <MaterialQuestions ask={actions.askMaterial} buddy={buddy} sources={attached} />
+      )}
 
-        {state.kind === "sending" && <SendingGoal goal={state.goal} />}
+      {state.kind === "sending" && <SendingGoal goal={state.goal} />}
 
-        {state.kind === "draft" && (
-          <DraftScreen
-            actions={actions}
-            attached={attached}
-            creation={{
-              error: creation.error,
-              isCreating: creation.isCreating,
-              run: (run) => creation.create({ onCreated: navigation.toSteps, run }),
-              startExplanation,
-            }}
-            draft={state.draft}
-            draftActions={draftActions}
-            intent={intent}
-            onBack={() => backToEntry(state.draft.prompt)}
-            onRewrite={understand}
-            routes={routes}
-          />
-        )}
-      </OnboardingFrame>
-    </ModeProvider>
+      {state.kind === "draft" && (
+        <DraftScreen
+          actions={actions}
+          attached={attached}
+          creation={{
+            error: creation.error,
+            isCreating: creation.isCreating,
+            run: (run) => creation.create({ onCreated: navigation.toSteps, run }),
+            startExplanation,
+          }}
+          draft={state.draft}
+          draftActions={draftActions}
+          intent={intent}
+          onBack={() => backToEntry(state.draft.prompt)}
+          onRewrite={understand}
+          routes={routes}
+        />
+      )}
+    </OnboardingFrame>
   );
 }

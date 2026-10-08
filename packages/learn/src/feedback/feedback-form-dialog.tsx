@@ -15,13 +15,11 @@ import { FeedbackForm } from "./feedback-form";
 function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
   const t = useExtracted("feedback");
 
+  // A report needs no explaining: the title, the message and the screen it's about.
   if (isReport) {
     return (
       <DialogHeader>
         <DialogTitle>{t("Report a problem")}</DialogTitle>
-        <DialogDescription>
-          {t("Tell us what's wrong with this screen. We read every report.")}
-        </DialogDescription>
       </DialogHeader>
     );
   }
@@ -46,6 +44,8 @@ export function FeedbackFormDialog({
   onClose: () => void;
   request: FeedbackFormRequest | null;
 }) {
+  const t = useExtracted("feedback");
+
   return (
     <Dialog
       onOpenChange={(open) => {
@@ -55,7 +55,7 @@ export function FeedbackFormDialog({
       }}
       open={request !== null}
     >
-      <DialogContent>
+      <DialogContent closeLabel={t("Close")}>
         <FeedbackFormHeader isReport={request?.isReport ?? false} />
 
         <DialogFooter>{request && <FeedbackForm context={request.context} />}</DialogFooter>

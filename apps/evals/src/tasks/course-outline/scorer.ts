@@ -10,7 +10,7 @@ import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
 export type CourseOutlineExpected = { tool: string };
 
 type OutlineTool = { essential: boolean; name: string };
-type OutlineChapter = { title: string; tools: OutlineTool[] };
+type OutlineChapter = { skillKeys?: string[]; title: string; tools: OutlineTool[] };
 
 /** A tool is a generic name a learner would install or buy, not a sentence. */
 const MAX_TOOL_NAME_LENGTH = 60;
@@ -29,12 +29,15 @@ function parseChapters(output: string): OutlineChapter[] {
 function getToolProblems({
   chapter,
   level,
+  withoutTools,
 }: {
   chapter: OutlineChapter;
   level: CourseOutlineParams["level"];
+  withoutTools: boolean;
 }): string[] {
   const tools = chapter.tools ?? [];
   const where = `Chapter "${chapter.title}"`;
+  const taggedForExam = withoutTools && (chapter.skillKeys ?? []).length > 0;
 
   const names = tools.flatMap((tool) =>
     tool.name.length > MAX_TOOL_NAME_LENGTH || tool.name.split(/\s+/u).length > MAX_TOOL_NAME_WORDS
@@ -48,6 +51,9 @@ function getToolProblems({
     level === "overview" &&
       tools.length > 0 &&
       `${where} is an overview chapter but lists tools; overviews use none.`,
+    taggedForExam &&
+      tools.length > 0 &&
+      `${where} teaches a skill a written exam needs but lists tools; it must teach it without them.`,
   ].filter((problem) => typeof problem === "string");
 }
 
@@ -60,13 +66,19 @@ function checkOutlineTools({
   expected,
   level,
   output,
+  withoutTools,
 }: {
   expected: CourseOutlineExpected | undefined;
   level: CourseOutlineParams["level"];
   output: string;
+  withoutTools: boolean;
 }): CodeCheckResult {
   const chapters = parseChapters(output);
-  const chapterProblems = chapters.map((chapter) => getToolProblems({ chapter, level }));
+
+  const chapterProblems = chapters.map((chapter) =>
+    getToolProblems({ chapter, level, withoutTools }),
+  );
+
   const pattern = expected ? new RegExp(expected.tool, "iu") : null;
 
   const found =
@@ -87,10 +99,11 @@ function checkOutlineTools({
 }
 
 export const scoreCourseOutline: TaskScorer<CourseOutlineExpected> = ({ output, testCase }) => {
-  const { level } = testCase.userInput as CourseOutlineParams;
+  const { level, withoutTools = false } = testCase.userInput as CourseOutlineParams;
 
   return scoreWithCodeChecks({
-    check: (value) => checkOutlineTools({ expected: testCase.expected, level, output: value }),
+    check: (value) =>
+      checkOutlineTools({ expected: testCase.expected, level, output: value, withoutTools }),
     output,
     scoreCategories: COURSE_OUTLINE_SCORE_CATEGORIES,
     testCase,

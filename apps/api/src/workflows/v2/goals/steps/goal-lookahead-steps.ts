@@ -1,3 +1,4 @@
+import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import {
   type PlacementSkillItems,
   generatePlacementItems,
@@ -7,8 +8,9 @@ import {
   getGoalCourseFormat,
   setGoalPrimaryCourse,
 } from "@zoonk/core/library/curriculum/goal-primary-course";
-import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { type CurriculumScope, getContentReuse } from "@zoonk/core/library/curriculum/scope";
 import { createItems } from "@zoonk/core/library/items/create";
+import { type LearnerLookahead, getGoalLookahead } from "@zoonk/core/lookahead/learner-lookahead";
 import {
   type PlacementItemFormat,
   type PlacementItemPick,
@@ -18,12 +20,18 @@ import {
 import {
   type PlanOutlineNeed,
   listPlanOutlineNeeds,
+  listPlanSkillIdsWithin,
+  listSoonStandInCourseIds,
 } from "@zoonk/core/lookahead/plan-outline-needs";
-import { pickSpeculativeLessons } from "@zoonk/core/lookahead/speculative-lessons";
+import {
+  pickPlanStartToWrite,
+  pickSpeculativeLessons,
+} from "@zoonk/core/lookahead/speculative-lessons";
 import { type GoalKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { startPictureChecks } from "../../images/start-picture-checks";
 import { toPlacementItemBatches } from "../placement-item-batches";
 
 /**
@@ -124,7 +132,15 @@ export async function readPlanFirstSkillStep(goalId: string): Promise<string | n
   return first?.skillId ?? null;
 }
 
+/** The plan's first lesson when it may be written now (see `pickPlanStartToWrite`). */
+export async function pickPlanStartToWriteStep(goalId: string): Promise<string | null> {
+  "use step";
+
+  return pickPlanStartToWrite(goalId);
+}
+
 export async function pickSpeculativeLessonsStep(input: {
+  count: number;
   goalId: string;
   ownLevel: OwnLevel;
 }): Promise<string[][]> {
@@ -133,11 +149,44 @@ export async function pickSpeculativeLessonsStep(input: {
   return pickSpeculativeLessons(input);
 }
 
-/** The outlines an existing plan's stand-ins still need, by course and level band. */
-export async function listPlanOutlineNeedsStep(goalId: string): Promise<PlanOutlineNeed[]> {
+/**
+ * The outlines a plan's stand-ins still need, by course and level band: those scheduled within
+ * `days` of today, or all of them when `days` is null.
+ */
+export async function listPlanOutlineNeedsStep(input: {
+  days: number | null;
+  goalId: string;
+}): Promise<PlanOutlineNeed[]> {
   "use step";
 
-  return listPlanOutlineNeeds(goalId);
+  return listPlanOutlineNeeds(input);
+}
+
+/** The courses whose stand-ins the plan schedules within `days` of today (see the core function). */
+export async function listSoonStandInCourseIdsStep(input: {
+  days: number;
+  goalId: string;
+}): Promise<string[]> {
+  "use step";
+
+  return listSoonStandInCourseIds(input);
+}
+
+/** How far ahead content is written for the goal's learner: a guest, a free learner or Plus. */
+export async function readGoalLookaheadStep(goalId: string): Promise<LearnerLookahead> {
+  "use step";
+
+  return getGoalLookahead(goalId);
+}
+
+/** The skills the goal's plan gets to within `days` of today. */
+export async function listPlanSkillIdsWithinStep(input: {
+  days: number;
+  goalId: string;
+}): Promise<string[]> {
+  "use step";
+
+  return listPlanSkillIdsWithin(input);
 }
 
 type WriteContext = { analytics?: ContentAnalytics; workflowRunId: string };
@@ -162,13 +211,17 @@ async function withOneRetry<T>(write: () => Promise<T>): Promise<T> {
   return first.error ? write() : first.data;
 }
 
+type PlacementAnalytics = ReturnType<typeof toContentAnalytics>;
+
 /** Stores one skill's questions in one format; they join the shared item bank. */
 async function storeSkillItems({
+  analytics,
   format,
   items,
   provenance,
   skill,
 }: {
+  analytics: PlacementAnalytics;
   format: PlacementItemFormat;
   items: PlacementSkillItems["quick"];
   provenance: PlacementProvenance;
@@ -176,7 +229,8 @@ async function storeSkillItems({
 }): Promise<number> {
   const { exam } = skill;
 
-  const { created } = await createItems({
+  const { created, unchecked } = await createItems({
+    analytics,
     examBlueprintId: exam?.blueprintId ?? null,
     format,
     items,
@@ -186,25 +240,30 @@ async function storeSkillItems({
     skillId: skill.id,
   });
 
+  // Questions are asked as soon as they're stored; their new pictures are checked meanwhile.
+  await startPictureChecks({ analytics, assetIds: unchecked });
+
   return created.length;
 }
 
 /** Whether placement can now ask the skill: its quick question passed the checks and was stored. */
 async function storePlacementItems({
+  analytics,
   items,
   provenance,
   quickFormat,
   skill,
 }: {
+  analytics: PlacementAnalytics;
   items: PlacementSkillItems;
   provenance: PlacementProvenance;
   quickFormat: PlacementQuickFormat;
   skill: PlacementItemPick;
 }): Promise<boolean> {
   const [quick] = await Promise.all([
-    storeSkillItems({ format: quickFormat, items: items.quick, provenance, skill }),
+    storeSkillItems({ analytics, format: quickFormat, items: items.quick, provenance, skill }),
     skill.needsTyped
-      ? storeSkillItems({ format: "typed", items: items.typed, provenance, skill })
+      ? storeSkillItems({ analytics, format: "typed", items: items.typed, provenance, skill })
       : null,
   ]);
 
@@ -212,8 +271,8 @@ async function storePlacementItems({
 }
 
 /**
- * Writes placement's questions for a batch of skills in one call at the priority tier (placement
- * waits on them), retried once right away, then stores each skill's. A skill counts as written
+ * Writes placement's questions for a batch of skills in one call (placement waits on them, so the
+ * first batch is the smallest), retried once right away, then stores each skill's. A skill counts as written
  * once placement can ask it; a failed call counts every skill in it as failed.
  */
 async function writePlacementBatch({
@@ -221,17 +280,30 @@ async function writePlacementBatch({
   quickCount,
   quickFormat,
   skills,
+  wait,
   workflowRunId,
 }: WriteContext & {
   quickCount: number;
   quickFormat: PlacementQuickFormat;
   skills: PlacementItemPick[];
+  /** `learner` for the batch the first question waits on; the rest are asked minutes later. */
+  wait: CallWait;
 }): Promise<PlacementItemsWritten> {
   const [first] = skills;
 
   if (!first) {
     return { failed: 0, written: 0 };
   }
+
+  // The questions join the shared bank: an exam's or a language's are very likely asked again.
+  const serviceTier = chooseServiceTier({
+    reuse: getContentReuse({
+      forExam: first.exam !== null,
+      ownerId: first.ownerId,
+      targetLanguage: first.targetLanguage,
+    }),
+    wait,
+  });
 
   const generated = await safeAsync(() =>
     withOneRetry(() =>
@@ -241,12 +313,14 @@ async function writePlacementBatch({
         language: first.language,
         quickCount,
         quickFormat,
-        serviceTier: "priority",
+        serviceTier,
         skills: skills.map((skill) => ({
           description: skill.description,
           level: skill.level ?? "beginner",
           name: skill.name,
+          usedSituations: skill.usedSituations,
         })),
+        targetLanguage: first.targetLanguage,
         typedCount: first.needsTyped ? PLACEMENT_ITEMS_PER_SKILL.typed : 0,
       }),
     ),
@@ -261,6 +335,7 @@ async function writePlacementBatch({
   const stored = await Promise.allSettled(
     skills.map((skill, index) =>
       storePlacementItems({
+        analytics: toContentAnalytics({ analytics, scope: skill, workflowRunId }),
         items: data.skills[index] ?? { quick: [], typed: [] },
         provenance,
         quickFormat,
@@ -286,24 +361,43 @@ async function writePlacementBatch({
  */
 export async function preparePlacementItemsStep({
   analytics,
+  exceptAnswered,
   formats,
   goalId,
   quickCount = PLACEMENT_ITEMS_PER_SKILL.quick,
+  quickNeeded,
   skillIds,
   workflowRunId,
 }: WriteContext & {
+  /** Questions the goal's learner answered don't count, as a focus test never asks them again. */
+  exceptAnswered?: boolean;
   formats?: readonly PlacementItemFormat[];
   goalId: string;
   quickCount?: number;
+  /** How many quick questions a skill already needs to have before it's skipped. */
+  quickNeeded?: number;
   skillIds?: string[];
 }): Promise<PlacementItemsWritten> {
   "use step";
 
-  const { quickFormat, skills } = await pickPlacementItemSkills({ formats, goalId, skillIds });
+  const { quickFormat, skills } = await pickPlacementItemSkills({
+    exceptAnswered,
+    formats,
+    goalId,
+    quickNeeded,
+    skillIds,
+  });
 
   const results = await Promise.all(
-    toPlacementItemBatches({ quickCount, skills }).map((batch) =>
-      writePlacementBatch({ analytics, quickCount, quickFormat, skills: batch, workflowRunId }),
+    toPlacementItemBatches({ quickCount, skills }).map((batch, index) =>
+      writePlacementBatch({
+        analytics,
+        quickCount,
+        quickFormat,
+        skills: batch,
+        wait: index === 0 ? "learner" : "soon",
+        workflowRunId,
+      }),
     ),
   );
 

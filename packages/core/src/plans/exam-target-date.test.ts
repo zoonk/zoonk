@@ -31,19 +31,23 @@ function examBlueprint({ days, year }: { days: string[]; year: number }) {
   });
 }
 
-/**
- * Plans an exam goal without a date of its own for the stored notice, with the year the learner
- * named, and returns the date the plan counts down to.
- */
-async function planExam({
-  days,
-  examYear,
-  year,
-}: {
+type PlanExamInput = {
   days: string[];
+  examMonth?: number | null;
   examYear: number | null;
   year: number;
-}): Promise<string | null> {
+};
+
+/**
+ * Plans an exam goal without a date of its own for the stored notice, with the year (and month)
+ * the learner named, and returns the goal with the date the plan counts down to.
+ */
+async function planExamGoal({
+  days,
+  examMonth = null,
+  examYear,
+  year,
+}: PlanExamInput): Promise<{ goalId: string; targetDate: string | null }> {
   const [user, blueprint, library] = await Promise.all([
     userFixture(),
     examBlueprint({ days, year }),
@@ -51,7 +55,7 @@ async function planExam({
   ]);
 
   const { goal } = await unplannedGoalFixture({
-    details: examYear === null ? { examName: "Test Exam" } : { examName: "Test Exam", examYear },
+    details: { examName: "Test Exam", ...(examYear === null ? {} : { examMonth, examYear }) },
     examBlueprintId: blueprint.id,
     kind: "exam",
     settings: { startDate: TODAY },
@@ -62,7 +66,23 @@ async function planExam({
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
   const planned = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-  return planned.targetDate?.toISOString().slice(0, 10) ?? null;
+  return { goalId: goal.id, targetDate: planned.targetDate?.toISOString().slice(0, 10) ?? null };
+}
+
+/** The date an exam goal's plan counts down to (see `planExamGoal`). */
+async function planExam(input: PlanExamInput): Promise<string | null> {
+  const { targetDate } = await planExamGoal(input);
+  return targetDate;
+}
+
+function findNoticeProposals(goalId: string) {
+  return prisma.planChange.findMany({
+    where: {
+      payload: { equals: "notice", path: ["source"] },
+      plan: { goalId },
+      status: "proposed",
+    },
+  });
 }
 
 describe("the date an exam plan counts down to", () => {
@@ -87,22 +107,55 @@ describe("the date an exam plan counts down to", () => {
     ).resolves.toBe("2020-11-08");
   });
 
-  it("is two weeks before the estimated first day of a year the notice isn't for", async () => {
+  it("is the estimated first day of a year the notice isn't for, the day the exam screen shows", async () => {
     // The notice's 2nd and 3rd Sundays of November fall on the 13th and 20th in 2022.
     await expect(
       planExam({ days: ["2020-11-08", "2020-11-15"], examYear: 2022, year: 2020 }),
-    ).resolves.toBe("2022-10-30");
+    ).resolves.toBe("2022-11-13");
   });
 
-  it("is two weeks before the next edition's estimated first day once the notice's days passed", async () => {
+  it("is the estimated day in the month the learner named", async () => {
+    // The notice's 2nd Sunday of November moves to the 2nd Sunday of the March the learner said.
+    await expect(
+      planExam({ days: ["2020-11-08"], examMonth: 3, examYear: 2022, year: 2020 }),
+    ).resolves.toBe("2022-03-13");
+  });
+
+  it("follows the notice's day when it's in the month the learner named", async () => {
+    const planned = await planExamGoal({
+      days: ["2020-11-08"],
+      examMonth: 11,
+      examYear: 2020,
+      year: 2020,
+    });
+
+    expect(planned.targetDate).toBe("2020-11-08");
+    await expect(findNoticeProposals(planned.goalId)).resolves.toStrictEqual([]);
+  });
+
+  it("keeps the month the learner named when the notice sets another, and asks about the notice's day", async () => {
+    // She said December; the notice's official day is in November. The plan counts down to her
+    // month until she answers the notice's day on Today, never replacing it silently.
+    const planned = await planExamGoal({
+      days: ["2020-11-08"],
+      examMonth: 12,
+      examYear: 2020,
+      year: 2020,
+    });
+
+    expect(planned.targetDate).toBe("2020-12-01");
+
+    const proposals = await findNoticeProposals(planned.goalId);
+
+    expect(proposals.map((proposal) => proposal.payload)).toMatchObject([
+      { operations: [{ estimated: false, kind: "setNoticeDate", targetDate: "2020-11-08" }] },
+    ]);
+  });
+
+  it("is the next edition's estimated first day once the notice's days passed", async () => {
+    // The 2019 notice's 1st and 2nd Sundays of November fall on the 1st and 8th in 2020.
     await expect(
       planExam({ days: ["2019-11-03", "2019-11-10"], examYear: null, year: 2019 }),
-    ).resolves.toBe("2020-10-18");
-  });
-
-  it("is the estimated day itself when two weeks before it has already passed", async () => {
-    await expect(planExam({ days: ["2021-10-03"], examYear: 2020, year: 2021 })).resolves.toBe(
-      "2020-10-04",
-    );
+    ).resolves.toBe("2020-11-01");
   });
 });

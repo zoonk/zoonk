@@ -13,6 +13,13 @@ export function getLessonRegenerationWhere({ model, promptVersion }: LessonRegen
   return {
     contentStatus: "completed" as const,
     specStatus: "completed" as const,
-    steps: { some: { ...(model ? { model } : {}), ...(promptVersion ? { promptVersion } : {}) } },
+    steps: {
+      some: {
+        // The current version's screens (see `CURRENT_STEPS`).
+        retiredAt: null,
+        ...(model ? { model } : {}),
+        ...(promptVersion ? { promptVersion } : {}),
+      },
+    },
   };
 }

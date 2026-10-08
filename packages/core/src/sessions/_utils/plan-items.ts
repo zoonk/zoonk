@@ -17,7 +17,7 @@ export async function completePlanItem(
 }
 
 /** A language goal whose plan just checked a lesson off: its unit may reach its "I can" checks. */
-export type CheckedLanguageGoal = { id: string; primaryCourseId: string | null };
+export type CheckedLanguageGoal = { id: string };
 
 /**
  * A lesson finished checks off every one of the learner's plan items for it, in any goal: the
@@ -39,7 +39,7 @@ export async function completeLessonPlanItems(
   }
 
   return tx.goal.findMany({
-    select: { id: true, primaryCourseId: true },
+    select: { id: true },
     where: { kind: "language", plan: { id: { in: checked.map((item) => item.planId) } } },
   });
 }

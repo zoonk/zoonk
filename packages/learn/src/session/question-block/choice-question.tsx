@@ -51,8 +51,7 @@ export function ChoiceQuestion({
               className={cn(
                 "focus-visible:ring-ring flex min-h-14 w-full items-start gap-3 rounded-2xl border px-4 py-4 text-left font-medium transition-colors outline-none focus-visible:ring-2 disabled:cursor-default",
                 "bg-background hover:bg-muted/60",
-                state === "correct" &&
-                  "border-success bg-success/10 in-data-[mode=fun]:bg-fun-lime in-data-[mode=fun]:text-fun-lime-foreground",
+                state === "correct" && "border-success bg-success/10",
                 state === "wrong" && "border-destructive bg-destructive/10",
               )}
               disabled={locked}

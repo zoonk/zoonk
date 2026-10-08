@@ -1,4 +1,4 @@
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
@@ -13,6 +13,7 @@ import { listGoalChangeNotices, recordSourceChangeNotice } from "./source-change
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 const DAY_MS = 86_400_000;
+const MINUTE_MS = 60_000;
 
 describe(listGoalChangeNotices, () => {
   beforeEach(() => {
@@ -84,6 +85,46 @@ describe(listGoalChangeNotices, () => {
     await expect(listGoalChangeNotices({ goalId: goal.id })).resolves.toStrictEqual({
       status: "notFound",
     });
+  });
+
+  it("leaves out a notice read while the new goal's plan waited for it: it shaped that plan", async () => {
+    const [user, source] = await Promise.all([userFixture(), sourceFixture()]);
+    const blueprint = await examBlueprintFixture({ sourceId: source.id });
+
+    const goal = await goalFixture({
+      createdAt: new Date(Date.now() - 20 * MINUTE_MS),
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: user.id,
+    });
+
+    // The goal's own research read a new edition six minutes in; the plan stopped waiting at ten.
+    await planFixture({
+      goalId: goal.id,
+      noticeWaitEndedAt: new Date(Date.now() - 10 * MINUTE_MS),
+    });
+
+    const [, news] = await Promise.all([
+      sourceChangeNoticeFixture({
+        createdAt: new Date(Date.now() - 14 * MINUTE_MS),
+        examBlueprintId: blueprint.id,
+        message: "The exam notice changed: the test is now on 17 January.",
+        sourceId: source.id,
+      }),
+      sourceChangeNoticeFixture({
+        createdAt: new Date(Date.now() - MINUTE_MS),
+        examBlueprintId: blueprint.id,
+        message: "The exam notice changed: the test now has 100 questions.",
+        sourceId: source.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+    const result = await listGoalChangeNotices({ goalId: goal.id });
+
+    expect(result.status === "ready" && result.notices.map((notice) => notice.id)).toStrictEqual([
+      news.id,
+    ]);
   });
 });
 

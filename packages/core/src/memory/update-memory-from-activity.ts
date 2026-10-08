@@ -8,7 +8,6 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { toProvenanceData } from "../library/_utils/library-rows";
-import { refreshDepthPreferenceNow, touchesPreferences } from "./_utils/depth-preference";
 import { getMemoryAccess } from "./_utils/memory-access";
 import { toMemoryCandidates } from "./_utils/memory-candidates";
 import {
@@ -134,10 +133,6 @@ export async function updateMemoryFromActivity(
 
   if (changes.length > 0) {
     revalidateCacheTags([getMemoryCacheTag(userId)]);
-  }
-
-  if (touchesPreferences(changes)) {
-    await refreshDepthPreferenceNow(userId);
   }
 
   return changes;

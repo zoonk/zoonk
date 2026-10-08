@@ -26,7 +26,12 @@ vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
 
 const TIME_ZONE = "UTC";
 
-/** A goal made today with one skill placement is unsure of: one right pick so far. */
+const DAY_MS = 86_400_000;
+
+/**
+ * A goal set yesterday (placement ran in its onboarding) with one skill placement is unsure of:
+ * one right pick so far.
+ */
 async function setup({ details = {} }: { details?: object } = {}) {
   const user = await userFixture();
   const fixture = await learnerGoalFixture({ itemsPerSkill: 2, phases: [1], userId: user.id });
@@ -34,7 +39,7 @@ async function setup({ details = {} }: { details?: object } = {}) {
 
   await Promise.all([
     prisma.goal.update({
-      data: { createdAt: new Date(), details, timezone: TIME_ZONE },
+      data: { createdAt: new Date(Date.now() - DAY_MS), details, timezone: TIME_ZONE },
       where: { id: fixture.goal.id },
     }),
     attemptFixture({
@@ -175,17 +180,22 @@ describe("placement in the first week's sessions", () => {
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
-  it("asks nothing after the first week, or when the learner chose to start from scratch", async () => {
-    const [late, declined] = await Promise.all([
+  it("asks nothing on the day the goal was set, after the first week, or when the learner chose to start from scratch", async () => {
+    const [today, late, declined] = await Promise.all([
+      setup(),
       setup(),
       setup({ details: { placementDeclined: true } }),
     ]);
 
-    await prisma.goal.update({
-      data: { createdAt: new Date(Date.now() - 10 * 86_400_000) },
-      where: { id: late.goal.id },
-    });
+    await Promise.all([
+      prisma.goal.update({ data: { createdAt: new Date() }, where: { id: today.goal.id } }),
+      prisma.goal.update({
+        data: { createdAt: new Date(Date.now() - 10 * DAY_MS) },
+        where: { id: late.goal.id },
+      }),
+    ]);
 
+    await expect(hasReviewBlock(today)).resolves.toBe(false);
     await expect(hasReviewBlock(late)).resolves.toBe(false);
     await expect(hasReviewBlock(declined)).resolves.toBe(false);
   });

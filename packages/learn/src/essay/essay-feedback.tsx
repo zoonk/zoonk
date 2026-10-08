@@ -1,96 +1,145 @@
 "use client";
 
 import { type EssayDraft } from "@zoonk/core/exams/essays/contract";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleIcon, LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { DetailsDrawer } from "../_components/details-drawer";
+import { KindTile } from "../_components/kind-tile";
 import { Meter, MeterFill } from "../_components/meter";
+import {
+  StepCard,
+  StepDetail,
+  StepEyebrow,
+  StepHeader,
+  StepRow,
+  StepRows,
+  StepTitle,
+  StepTitleLabel,
+  StepTitleNumber,
+} from "../_components/step-card";
+import { Steps, type StepsItem } from "../_components/steps";
+import { TaskMainButton } from "../shell/task-frame";
 import { useEssayScreen } from "./essay-context";
-import { formatScore, useCriterionName, useInterventionElementName } from "./essay-labels";
+import {
+  useCriterionName,
+  useFormatScore,
+  useInterventionElementName,
+  useWritingName,
+} from "./essay-labels";
+import { useFinishEssay } from "./use-finish-essay";
 
 type Grade = EssayDraft["grade"];
 
 const ELEMENTS = ["agent", "action", "means", "effect", "detail"] as const;
 
-function ScoreHeader({ grade }: { grade: Grade }) {
-  const t = useExtracted();
-  const isFreeResponse = useEssayScreen().essay.rubric === "ap";
-
-  return (
-    <div className="flex items-end justify-between gap-4">
-      <div className="flex flex-col gap-0.5">
-        <h2 className="in-data-[mode=fun]:font-fun-display text-2xl font-bold">
-          {isFreeResponse ? t("Your answer") : t("Your essay")}
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          {isFreeResponse
-            ? t("Scored like the AP scoring guidelines, out of {max, number} points", {
-                max: grade.total.maxScore,
-              })
-            : t("Graded by the official rubric")}
-        </p>
-      </div>
-      <div className="flex flex-col items-end">
-        <p className="in-data-[mode=fun]:font-fun-display text-2xl font-bold whitespace-nowrap tabular-nums sm:text-3xl">
-          {t("{low}–{high}", {
-            high: formatScore(grade.range.high),
-            low: formatScore(grade.range.low),
-          })}
-        </p>
-        <p className="text-muted-foreground text-xs">{t("Estimated")}</p>
-      </div>
-    </div>
-  );
+/** Whether a proposal is missing any of ENEM's five elements; null outside ENEM. */
+function hasMissingElements(grade: Grade): boolean {
+  const elements = grade.enemInterventionElements;
+  return elements !== null && ELEMENTS.some((key) => !elements[key]);
 }
 
-function CriteriaTable({ grade }: { grade: Grade }) {
+function CriteriaRows({ grade }: { grade: Grade }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
+  const formatScore = useFormatScore();
 
   return (
-    <ul
-      aria-label={t("Score by criterion")}
-      className="border-border in-data-[mode=fun]:fun-glass flex flex-col gap-2 rounded-3xl border p-4 in-data-[mode=fun]:border-transparent"
-    >
+    <StepRows aria-label={t("Score by criterion")}>
       {grade.criteria.map((criterion) => {
         const isNext = criterion.id === grade.nextStep.criterionId;
         const share = criterion.maxScore > 0 ? criterion.score / criterion.maxScore : 0;
 
         return (
-          <li
-            className={cn(
-              "flex items-start gap-3 rounded-xl px-2 py-1.5 text-sm",
-              isNext && "bg-warning/10 in-data-[mode=fun]:bg-fun-accent-amber/15",
-            )}
-            key={criterion.id}
-          >
-            <span className="min-w-0 flex-1">{criterionName(criterion)}</span>
-            {/* The bar and score stay on the name's first line when a long name wraps. */}
-            <LineMarker>
-              <Meter className="w-20">
-                <MeterFill
-                  className={isNext ? "bg-warning" : "in-data-[mode=fun]:bg-fun-accent-violet"}
-                  share={share}
-                />
-              </Meter>
-            </LineMarker>
-            <span className="w-12 shrink-0 text-right font-medium tabular-nums">
+          <StepRow key={criterion.id}>
+            <span className={cn("min-w-0 flex-1", isNext && "font-semibold")}>
+              {criterionName(criterion)}
+            </span>
+            <Meter className="w-16 shrink-0 sm:w-20">
+              <MeterFill className={isNext ? "bg-warning" : undefined} share={share} />
+            </Meter>
+            <span className="w-10 shrink-0 text-right font-medium tabular-nums">
               {formatScore(criterion.score)}
             </span>
-          </li>
+          </StepRow>
         );
       })}
-      <li className="text-muted-foreground px-2 pt-1 text-right text-xs">
-        {t("Total {score} of {max}", {
-          max: formatScore(grade.total.maxScore),
-          score: formatScore(grade.total.score),
-        })}
-      </li>
-    </ul>
+    </StepRows>
   );
 }
 
+/** The estimated range, big, and each criterion's score; the one to work on next stands out. */
+function GradeStep({ grade }: { grade: Grade }) {
+  const t = useExtracted();
+  const { rubric } = useEssayScreen().essay;
+  const formatScore = useFormatScore();
+  const writingName = useWritingName();
+
+  if (grade.zeroReason === "tooShort") {
+    return (
+      <StepCard>
+        <KindTile kind="essay" size="lg" />
+        <StepHeader>
+          <StepTitle>{t("Too short to grade")}</StepTitle>
+          <StepDetail>{t("Write the whole essay, then send it again.")}</StepDetail>
+        </StepHeader>
+      </StepCard>
+    );
+  }
+
+  return (
+    <StepCard>
+      <KindTile kind="essay" size="lg" />
+      <StepHeader>
+        <StepTitle className="flex flex-col items-center gap-1.5">
+          <StepTitleLabel>{writingName(rubric)}</StepTitleLabel>
+          <StepTitleNumber>
+            {t("{low}–{high}", {
+              high: formatScore(grade.range.high),
+              low: formatScore(grade.range.low),
+            })}
+          </StepTitleNumber>
+        </StepTitle>
+        <StepDetail>{t("Estimated")}</StepDetail>
+      </StepHeader>
+      <CriteriaRows grade={grade} />
+    </StepCard>
+  );
+}
+
+/** The one next step, on the criterion that would gain the most, with the learner's own words. */
+function NextStepComment({ grade }: { grade: Grade }) {
+  const t = useExtracted();
+  const criterionName = useCriterionName();
+  const criterion = grade.criteria.find((item) => item.id === grade.nextStep.criterionId);
+
+  return (
+    <StepCard className="items-stretch text-left">
+      <KindTile className="self-center" icon={LightbulbIcon} kind="essay" size="lg" />
+      <StepHeader>
+        <StepEyebrow>{t("Next step")}</StepEyebrow>
+        <StepTitle className="text-center">
+          {criterion ? criterionName(criterion) : t("What to rewrite")}
+        </StepTitle>
+      </StepHeader>
+
+      {criterion?.quote && (
+        <blockquote className="border-warning border-l-2 pl-3 font-serif italic">
+          {criterion.quote}
+        </blockquote>
+      )}
+      <p>{grade.nextStep.text}</p>
+      {criterion?.example && (
+        <p className="text-muted-foreground text-sm">
+          {t("For example: {example}", { example: criterion.example })}
+        </p>
+      )}
+    </StepCard>
+  );
+}
+
+/** ENEM's five elements of an intervention proposal, when the proposal misses any. */
 function InterventionElements({ grade }: { grade: Grade }) {
   const t = useExtracted();
   const elementName = useInterventionElementName();
@@ -101,81 +150,38 @@ function InterventionElements({ grade }: { grade: Grade }) {
   }
 
   return (
-    <section className="flex flex-col gap-2">
-      <h3 className="text-sm font-semibold">{t("The five elements of the proposal")}</h3>
-      <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+    <StepCard>
+      <StepTitle>{t("The five elements of the proposal")}</StepTitle>
+      <StepRows>
         {ELEMENTS.map((key) => (
-          <li className="flex items-start gap-2 text-sm" key={key}>
-            <LineMarker aria-hidden="true">
-              {elements[key] ? (
-                <CheckIcon className="text-success size-4" />
-              ) : (
-                <CircleIcon className="text-muted-foreground size-4" />
-              )}
-            </LineMarker>
+          <StepRow key={key}>
+            {elements[key] ? (
+              <CheckIcon aria-hidden="true" className="text-success" />
+            ) : (
+              <CircleIcon aria-hidden="true" className="text-muted-foreground" />
+            )}
             <span className={cn(!elements[key] && "text-muted-foreground")}>
               {elementName(key)}
               <span className="sr-only">{elements[key] ? t(", present") : t(", missing")}</span>
             </span>
-          </li>
+          </StepRow>
         ))}
-      </ul>
-    </section>
+      </StepRows>
+    </StepCard>
   );
 }
 
-/** The one next step, on the criterion that would gain the most, with the learner's own words. */
-function NextStep({ grade }: { grade: Grade }) {
-  const t = useExtracted();
-  const criterionName = useCriterionName();
-  const criterion = grade.criteria.find((item) => item.id === grade.nextStep.criterionId);
-
-  if (grade.zeroReason === "tooShort") {
-    return (
-      <p className="bg-muted/60 in-data-[mode=fun]:fun-glass rounded-2xl p-4 text-sm">
-        {t("This is too short to grade. Write the whole essay, then send it again.")}
-      </p>
-    );
-  }
-
-  return (
-    <section className="bg-muted/60 in-data-[mode=fun]:fun-paper flex flex-col gap-2 rounded-2xl p-4">
-      <p className="flex items-start gap-2 text-sm font-semibold">
-        <LineMarker aria-hidden="true">
-          <LightbulbIcon className="text-warning size-4" />
-        </LineMarker>
-        {criterion
-          ? t("Next step: {criterion}", { criterion: criterionName(criterion) })
-          : t("Next step")}
-      </p>
-      {criterion?.quote && (
-        <blockquote className="border-warning border-l-2 pl-3 font-serif text-sm italic">
-          {criterion.quote}
-        </blockquote>
-      )}
-      <p className="text-sm">{grade.nextStep.text}</p>
-      {criterion?.example && (
-        <p className="text-muted-foreground text-sm">
-          {t("For example: {example}", { example: criterion.example })}
-        </p>
-      )}
-    </section>
-  );
-}
-
+/** Every criterion's comment, with the passage it's about, one text link away. */
 function CriterionComments({ grade }: { grade: Grade }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
 
   return (
-    <details className="flex flex-col gap-2">
-      <summary className="text-muted-foreground cursor-pointer py-3 text-sm font-medium">
-        {t("See comments on every criterion")}
-      </summary>
-      <ul className="mt-3 flex flex-col gap-3">
+    <DetailsDrawer label={t("See comments on every criterion")} title={t("Comments")}>
+      <ul className="flex flex-col gap-4">
         {grade.criteria.map((criterion) => (
           <li className="flex flex-col gap-1 text-sm" key={criterion.id}>
-            <p className="font-medium">{criterionName(criterion)}</p>
+            <p className="font-semibold">{criterionName(criterion)}</p>
             {criterion.quote && (
               <blockquote className="text-muted-foreground border-l-2 pl-3 italic">
                 {criterion.quote}
@@ -185,26 +191,66 @@ function CriterionComments({ grade }: { grade: Grade }) {
           </li>
         ))}
       </ul>
-    </details>
+    </DetailsDrawer>
   );
 }
 
-/** A graded draft: the estimated range, each criterion, the five elements and one next step. */
-export function EssayFeedback() {
-  const { drafts } = useEssayScreen();
-  const grade = drafts[0]?.grade;
-
-  if (!grade) {
-    return null;
-  }
+/** Once graded, going on without rewriting stays one quiet tap away. */
+export function FinishEssayButton({ variant = "ghost" }: { variant?: "ghost" | "outline" }) {
+  const t = useExtracted();
+  const { failed, finish, pending } = useFinishEssay();
 
   return (
-    <div aria-live="polite" className="flex flex-col gap-5" data-slot="essay-feedback">
-      <ScoreHeader grade={grade} />
-      <CriteriaTable grade={grade} />
-      <NextStep grade={grade} />
-      <InterventionElements grade={grade} />
-      <CriterionComments grade={grade} />
-    </div>
+    <>
+      {failed && (
+        <p className="text-destructive text-center text-sm" role="alert">
+          {t("That didn't go through. Try again in a moment.")}
+        </p>
+      )}
+      <Button
+        className="w-full"
+        disabled={pending}
+        onClick={() => void finish()}
+        size="lg"
+        variant={variant}
+      >
+        {t("Continue")}
+      </Button>
+    </>
+  );
+}
+
+/**
+ * A graded draft, one thing at a time: the estimated range with each criterion, the one next step
+ * with the learner's own words, and ENEM's five proposal elements when any is missing. Rewriting
+ * is then the main action; every criterion's comment waits behind a link.
+ */
+export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite: () => void }) {
+  const t = useExtracted();
+  const { hrefs } = useEssayScreen();
+  const tooShort = grade.zeroReason === "tooShort";
+
+  const items: StepsItem[] = [
+    { content: <GradeStep grade={grade} />, id: "grade" },
+    !tooShort && { content: <NextStepComment grade={grade} />, id: "nextStep" },
+    !tooShort &&
+      hasMissingElements(grade) && {
+        content: <InterventionElements grade={grade} />,
+        id: "elements",
+      },
+  ].filter((item) => item !== false);
+
+  return (
+    <Steps
+      exitHref={hrefs.exit}
+      finalAction={<TaskMainButton onClick={onRewrite}>{t("Rewrite")}</TaskMainButton>}
+      finalOptions={
+        <>
+          <FinishEssayButton />
+          {!tooShort && <CriterionComments grade={grade} />}
+        </>
+      }
+      items={items}
+    />
   );
 }

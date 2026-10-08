@@ -7,7 +7,8 @@ import { writeLearner } from "./write-learner";
 
 /**
  * One learner per goal kind (a huge learn goal, an exam with a date, a language and an explain),
- * plus Fun mode with a buddy, a minor and a guest. Sign in as any of them with the seed password.
+ * plus a learner with a grown buddy, a minor and a guest. Sign in as any of them with the seed
+ * password.
  */
 export async function writeLearners({
   edition,
@@ -22,15 +23,15 @@ export async function writeLearners({
 
   const persona = (name: SeedPersonaName) => write(buildPersona({ edition, name, now }));
 
-  const [exam, explain, fun, anonymous, hugeGoal, language, minor] = await Promise.all([
+  const [buddy, exam, explain, anonymous, hugeGoal, language, minor] = await Promise.all([
+    persona("buddy"),
     persona("exam"),
     persona("explain"),
-    persona("fun"),
     write(guest),
     persona("hugeGoal"),
     persona("language"),
     persona("minor"),
   ]);
 
-  return { exam, explain, fun, guest: anonymous, hugeGoal, language, minor };
+  return { buddy, exam, explain, guest: anonymous, hugeGoal, language, minor };
 }

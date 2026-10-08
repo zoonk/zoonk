@@ -2,13 +2,12 @@
 
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
 import { type MaterialQuestionOutcome } from "@zoonk/learn/onboarding/actions";
+import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { isJsonObject } from "@zoonk/utils/json";
 import { postFromBrowser } from "../api/browser-api";
 
 const HTTP_UNAUTHORIZED = 401;
-const HTTP_PAYMENT_REQUIRED = 402;
 const HTTP_FORBIDDEN = 403;
-const HTTP_TOO_MANY_REQUESTS = 429;
 
 function isAnswer(body: unknown): body is MaterialQuestionAnswer {
   return isJsonObject(body) && typeof body.answer === "string" && Array.isArray(body.citations);
@@ -22,16 +21,20 @@ async function toOutcome(response: Response): Promise<MaterialQuestionOutcome> {
     return { answer: body, status: "answered" };
   }
 
-  switch (response.status) {
-    case HTTP_UNAUTHORIZED:
-    case HTTP_FORBIDDEN:
-      return { status: "signInRequired" };
-    case HTTP_PAYMENT_REQUIRED:
-    case HTTP_TOO_MANY_REQUESTS:
-      return { status: "limitReached" };
-    default:
-      return { status: "failed" };
+  const refusal = getUsageRefusal(body);
+
+  if (refusal?.kind === "slowDown") {
+    return { status: "slowDown" };
   }
+
+  // A guest's tutor answers need an account.
+  if (refusal?.kind === "usageLimit" && refusal.tier !== "guest") {
+    return { period: refusal.period, status: "limitReached", tier: refusal.tier };
+  }
+
+  return response.status === HTTP_UNAUTHORIZED || response.status === HTTP_FORBIDDEN || refusal
+    ? { status: "signInRequired" }
+    : { status: "failed" };
 }
 
 /**

@@ -118,6 +118,12 @@ export const goalUpdateInputSchema = z
     targetDate: z.iso.date().nullable().optional(),
     timeZone: timeZoneSchema.optional(),
     title: z.string().trim().min(1).max(MAX_TITLE_LENGTH).optional(),
+    weekendMinutes: dailyMinutesSchema
+      .optional()
+      .meta({
+        description:
+          "Minutes on Saturday and Sunday when they differ from the daily time; only study days take them",
+      }),
   })
   .strict()
   .refine((input) => Object.values(input).some((value) => value !== undefined), {

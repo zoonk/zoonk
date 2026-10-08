@@ -1,7 +1,7 @@
 import { type AddedSkill, type PlanOperation } from "../plan-contract";
+import { applyAreaOperation, isAreaOperation } from "./area-operations";
 import { addDays, daysBetween, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
-import { getSkillArea } from "./plan-queue";
-import { DAYS_PER_WEEK, type PlanState } from "./plan-state";
+import { DAYS_PER_WEEK, type PlanGraph, type PlanState } from "./plan-state";
 import { setTools } from "./plan-tools";
 
 export type PlanOperationError =
@@ -14,10 +14,6 @@ export type PlanOperationError =
 type OperationResult = { error: PlanOperationError } | { state: PlanState };
 
 const LIGHT_WEEK_LAST_DAY = DAYS_PER_WEEK - 1;
-
-function getAreas(state: PlanState): Set<string> {
-  return new Set(state.graph.skills.map((skill) => getSkillArea({ graph: state.graph, skill })));
-}
 
 /** The daily time a week shows as "45 min a day": its most common study-day time. */
 function getTypicalMinutes(weekdayMinutes: readonly number[]): number {
@@ -82,30 +78,6 @@ function addLightWeek({
   return { state: { ...state, settings: { ...state.settings, lightWeeks } } };
 }
 
-function withAreas({
-  areas,
-  state,
-  update,
-}: {
-  areas: readonly string[];
-  state: PlanState;
-  update: (settings: PlanState["settings"]) => PlanState["settings"];
-}): OperationResult {
-  const known = getAreas(state);
-
-  if (areas.some((area) => !known.has(area))) {
-    return { error: "unknownArea" };
-  }
-
-  const settings = update(state.settings);
-
-  if ([...known].every((area) => settings.skippedAreas.includes(area))) {
-    return { error: "nothingLeft" };
-  }
-
-  return { state: { ...state, settings } };
-}
-
 /** New skills go right before the skill that needs them, in its phase and area. */
 function addSkills({
   skills,
@@ -142,8 +114,59 @@ function addSkills({
 }
 
 /**
- * "Move to Monday": the week's checkpoint or mock goes to a later day, at most a week later. Moving
- * the same day again replaces the earlier move, and undo brings it back.
+ * The plan follows the graph the exam's notice gave it: its skills in its order, with the notice's
+ * areas, topics and weights. A skill only this plan has (a tool's setup lesson, foundations for
+ * the learner's level) keeps its place: right before the skill it came before.
+ */
+function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanState }): PlanState {
+  if (!graph) {
+    return state;
+  }
+
+  const noticeIds = new Set(graph.skills.map((skill) => skill.skillId));
+  const current = state.graph.skills;
+
+  const skills = current.reduce((list, skill, index) => {
+    if (noticeIds.has(skill.skillId)) {
+      return list;
+    }
+
+    const next = current.slice(index + 1).find((later) => noticeIds.has(later.skillId));
+    const at = next ? list.findIndex((item) => item.skillId === next.skillId) : -1;
+
+    return at === -1 ? [...list, skill] : [...list.slice(0, at), skill, ...list.slice(at)];
+  }, graph.skills);
+
+  return { ...state, graph: { phases: graph.phases, skills } };
+}
+
+/** The plan counts down to the notice's exam day, which stays the notice's (`noticeDate`). */
+function setNoticeDate({
+  state,
+  targetDate,
+  today,
+}: {
+  state: PlanState;
+  targetDate: string;
+  today: string;
+}): OperationResult {
+  if (targetDate <= today) {
+    return { error: "pastDate" };
+  }
+
+  return {
+    state: {
+      ...state,
+      goal: { ...state.goal, targetDate },
+      settings: { ...state.settings, noticeDate: targetDate },
+    },
+  };
+}
+
+/**
+ * "Move to Monday": the week's checkpoint or mock goes to a later day, at most a week later and
+ * before the goal's date (a mock moved onto or past the test day no longer prepares for it).
+ * Moving the same day again replaces the earlier move, and undo brings it back.
  */
 function moveWeeklyEvent({
   from,
@@ -161,8 +184,9 @@ function moveWeeklyEvent({
   }
 
   const days = daysBetween(fromIsoDate(from), fromIsoDate(to));
+  const { targetDate } = state.goal;
 
-  if (days < 1 || days > DAYS_PER_WEEK) {
+  if (days < 1 || days > DAYS_PER_WEEK || (targetDate && to >= targetDate)) {
     return { error: "badMove" };
   }
 
@@ -174,14 +198,20 @@ function moveWeeklyEvent({
 }
 
 function applyOperation({
+  noticeGraph,
   operation,
   state,
   today,
 }: {
+  noticeGraph: PlanGraph | null;
   operation: PlanOperation;
   state: PlanState;
   today: string;
 }): OperationResult {
+  if (isAreaOperation(operation)) {
+    return applyAreaOperation({ operation, state });
+  }
+
   switch (operation.kind) {
     case "setDailyMinutes":
       return {
@@ -210,31 +240,6 @@ function applyOperation({
       return operation.targetDate !== null && operation.targetDate <= today
         ? { error: "pastDate" }
         : { state: { ...state, goal: { ...state.goal, targetDate: operation.targetDate } } };
-    case "focusAreas":
-      return withAreas({
-        areas: operation.areas,
-        state,
-        update: (settings) => ({ ...settings, focusAreas: [...operation.areas] }),
-      });
-    case "skipAreas":
-      return withAreas({
-        areas: operation.areas,
-        state,
-        update: (settings) => ({
-          ...settings,
-          focusAreas: settings.focusAreas.filter((area) => !operation.areas.includes(area)),
-          skippedAreas: [...new Set([...settings.skippedAreas, ...operation.areas])],
-        }),
-      });
-    case "restoreAreas":
-      return withAreas({
-        areas: operation.areas,
-        state,
-        update: (settings) => ({
-          ...settings,
-          skippedAreas: settings.skippedAreas.filter((area) => !operation.areas.includes(area)),
-        }),
-      });
     case "skipActivities":
       return {
         state: {
@@ -265,10 +270,18 @@ function applyOperation({
       return {
         state: { ...state, settings: { ...state.settings, difficultyBias: operation.bias } },
       };
+    case "setWrittenCadence":
+      return {
+        state: { ...state, settings: { ...state.settings, writtenCadence: operation.cadence } },
+      };
     case "addSkills":
       return { state: addSkills({ skills: operation.skills, state }) };
     case "setTools":
       return { state: setTools({ state, tools: operation.tools }) };
+    case "followNotice":
+      return { state: followNotice({ graph: noticeGraph, state }) };
+    case "setNoticeDate":
+      return setNoticeDate({ state, targetDate: operation.targetDate, today });
     default:
       return operation satisfies never;
   }
@@ -276,13 +289,17 @@ function applyOperation({
 
 /**
  * Applies a change to what the learner set: time, days, light weeks, the date, areas, steering,
- * tools or missing skills. The first operation that can't apply stops the change, so none of it applies.
+ * tools, missing skills or the exam's notice. The first operation that can't apply stops the
+ * change, so none of it applies.
  */
 export function applyPlanOperations({
+  noticeGraph = null,
   operations,
   state,
   today,
 }: {
+  /** The graph a `followNotice` operation follows, kept with its change. */
+  noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
   state: PlanState;
   today: Date;
@@ -291,7 +308,9 @@ export function applyPlanOperations({
 
   return operations.reduce<OperationResult>(
     (result, operation) =>
-      "error" in result ? result : applyOperation({ operation, state: result.state, today: day }),
+      "error" in result
+        ? result
+        : applyOperation({ noticeGraph, operation, state: result.state, today: day }),
     { state },
   );
 }

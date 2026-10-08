@@ -1,15 +1,20 @@
 import { PostHog } from "posthog-node";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { trackServerEvent, trackSystemEvent } from "./server";
+import { trackAccountDeleted, trackServerEvent, trackSystemEvent } from "./server";
 import { buildSharedEventProperties } from "./shared-properties";
 
 // PostHog is an external service; the mock records what would leave the server.
-const posthogClient = vi.hoisted(() => ({ capture: vi.fn(), shutdown: vi.fn() }));
+const posthogClient = vi.hoisted(() => ({
+  capture: vi.fn(),
+  captureImmediate: vi.fn(),
+  shutdown: vi.fn(),
+}));
 
 vi.mock("posthog-node", () => ({
   PostHog: vi.fn(
     class {
       capture = posthogClient.capture;
+      captureImmediate = posthogClient.captureImmediate;
       shutdown = posthogClient.shutdown;
     },
   ),
@@ -52,7 +57,6 @@ describe(trackServerEvent, () => {
         goal_kind: null,
         is_guest: false,
         locale: "pt",
-        mode: "focus",
         plan_phase: null,
         platform: "web",
       },
@@ -110,5 +114,48 @@ describe(trackSystemEvent, () => {
     });
 
     expect(posthogClient.shutdown).toHaveBeenCalledExactlyOnceWith(5000);
+  });
+});
+
+describe(trackAccountDeleted, () => {
+  beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_HOST", "https://posthog.test");
+    vi.stubEnv("NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN", "project-token");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("waits for PostHog to take the deleted account's id, with no other properties", async () => {
+    await trackAccountDeleted({ analyticsDisabled: false, userId: "user-id" });
+
+    expect(posthogClient.captureImmediate).toHaveBeenCalledExactlyOnceWith({
+      distinctId: "user-id",
+      event: "Account Deleted",
+      properties: {},
+    });
+
+    expect(posthogClient.capture).not.toHaveBeenCalled();
+    expect(posthogClient.shutdown).toHaveBeenCalledExactlyOnceWith(5000);
+  });
+
+  it("sends nothing for learners kept out of analytics, or from E2E runs", async () => {
+    await trackAccountDeleted({ analyticsDisabled: true, userId: "user-id" });
+
+    vi.stubEnv("E2E_TESTING", "true");
+    await trackAccountDeleted({ analyticsDisabled: false, userId: "user-id" });
+
+    expect(PostHog).not.toHaveBeenCalled();
+  });
+
+  it("never fails the deletion when PostHog doesn't answer", async () => {
+    posthogClient.captureImmediate.mockRejectedValueOnce(new Error("PostHog is down"));
+
+    await expect(
+      trackAccountDeleted({ analyticsDisabled: false, userId: "user-id" }),
+    ).resolves.toBeUndefined();
+
+    expect(posthogClient.shutdown).toHaveBeenCalledOnce();
   });
 });

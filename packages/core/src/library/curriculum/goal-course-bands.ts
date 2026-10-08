@@ -21,7 +21,18 @@ function toSkillRef({
   skill: GraphSkill;
 }): GoalSkillRef[] {
   const id = idsByKey[skill.key];
-  return id ? [{ description: skill.description, id, key: skill.key, name: skill.name }] : [];
+
+  return id
+    ? [
+        {
+          description: skill.description,
+          id,
+          key: skill.key,
+          lessons: skill.estimatedLessons,
+          name: skill.name,
+        },
+      ]
+    : [];
 }
 
 function toBand({
@@ -111,21 +122,51 @@ export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: s
 
 /**
  * Each course need with the Library course found for its graph course, in the needs' order. A
- * private course has one band with every skill.
+ * private course has one band with every skill. A goal answered without tools of its own (an exam
+ * that isn't practical) has its skills taught in chapters without tools.
  */
 export function toGoalCourses({
   courseIdsByKey,
   needs,
   ownerId,
+  withToolChapters,
 }: {
   courseIdsByKey: Readonly<Record<string, string>>;
   needs: readonly GoalCourseNeed[];
   ownerId: string | null;
+  withToolChapters: boolean;
 }): { bands: CourseBandNeed[]; courseId: string }[] {
   return needs.flatMap((need) => {
     const courseId = courseIdsByKey[need.key];
     const bands = ownerId ? mergePrivateBands(need).bands : need.bands;
 
-    return courseId ? [{ bands, courseId }] : [];
+    return courseId
+      ? [{ bands: bands.map((band) => ({ ...band, withToolChapters })), courseId }]
+      : [];
   });
+}
+
+/**
+ * The goal's course bands split by when the plan gets to them: `near` bands teach a skill the plan
+ * reaches within the learner's outline window (`nearSkillIds`), and are outlined while the plan is
+ * built; `far` bands teach none, and wait (or run at the flex tier) until the plan gets close. A
+ * band is written whole, so one near skill makes the whole band near.
+ */
+export function splitGoalCourseBands({
+  nearSkillIds,
+  needs,
+}: {
+  nearSkillIds: ReadonlySet<string>;
+  needs: readonly GoalCourseNeed[];
+}): { far: GoalCourseNeed[]; near: GoalCourseNeed[] } {
+  const isNear = (band: GoalCourseNeed["bands"][number]) =>
+    band.skills.some((skill) => nearSkillIds.has(skill.id));
+
+  const pick = (keep: (band: GoalCourseNeed["bands"][number]) => boolean) =>
+    needs.flatMap((need) => {
+      const bands = need.bands.filter((band) => keep(band));
+      return bands.length > 0 ? [{ ...need, bands }] : [];
+    });
+
+  return { far: pick((band) => !isNear(band)), near: pick((band) => isNear(band)) };
 }

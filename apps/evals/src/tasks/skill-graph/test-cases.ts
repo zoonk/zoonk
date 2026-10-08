@@ -1,5 +1,7 @@
 import { type TestCase } from "@/lib/types";
+import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
 import { type SkillGraphParams } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
+import { CAMARA_BLUEPRINT } from "./camara-blueprint";
 
 const SHARED_EXPECTATIONS = `
   - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
@@ -9,28 +11,238 @@ const SHARED_EXPECTATIONS = `
   - Don't evaluate JSON formatting
 `;
 
-const ENEM_BLUEPRINT = `
-ENEM (Exame Nacional do Ensino Médio), two Sundays.
-Day 1: Linguagens, Códigos e suas Tecnologias (45 questions: Portuguese, literature, arts, physical education, communication technologies, and English or Spanish) + Ciências Humanas e suas Tecnologias (45 questions: history, geography, philosophy, sociology) + the essay (redação).
-Day 2: Ciências da Natureza e suas Tecnologias (45 questions: biology, chemistry, physics) + Matemática e suas Tecnologias (45 questions).
-Scoring: item response theory (TRI). Getting hard questions right while missing easy ones counts as inconsistent and lowers the score. 5 options per question, no penalty for wrong answers. 5h30 on day 1, 5h on day 2.
-Essay: dissertative-argumentative text on a social issue, graded 0 to 1000 in five competencies of 200 points each: C1 formal written Portuguese; C2 understanding the prompt and building a dissertative-argumentative text with knowledge from several areas; C3 selecting and organizing arguments; C4 cohesion; C5 an intervention proposal that respects human rights.
-How often topics appear in recent editions (approximate):
-- Matemática: statistics and reading charts and tables (very often), percentages and proportions (very often), plane and solid geometry (often), functions (often), probability and counting (often), financial math (sometimes).
-- Natureza: ecology and environment (very often), human physiology and health (often), genetics (often), electricity and energy (often), mechanics (sometimes), organic chemistry (often), stoichiometry and solutions (often), electrochemistry (sometimes).
-- Humanas: Brazil colony, empire and republic (very often), citizenship, social movements and rights (very often), environment and geography of Brazil (often), ancient and medieval history (sometimes), philosophy and sociology classics (often), urbanization and agrarian issues (often).
-- Linguagens: text interpretation and genres (very often), language functions and linguistic variation (often), literature movements (sometimes), arts (sometimes), foreign language reading (5 questions).
-`;
+const ENEM_BLUEPRINT: ExamOutline = {
+  name: "ENEM (Exame Nacional do Ensino Médio), two Sundays",
+  notes: [
+    "Format: 5 options per question, no penalty for wrong answers. 5h30 on day 1, 5h on day 2.",
+    "Scoring: item response theory (TRI). Getting hard questions right while missing easy ones counts as inconsistent and lowers the score.",
+    "Rule: Essay: dissertative-argumentative text on a social issue, graded 0 to 1000 in five competencies of 200 points each: C1 formal written Portuguese; C2 understanding the prompt and building a dissertative-argumentative text with knowledge from several areas; C3 selecting and organizing arguments; C4 cohesion; C5 an intervention proposal that respects human rights.",
+  ],
+  subjects: [
+    {
+      group: "Dia 1",
+      name: "Linguagens, Códigos e suas Tecnologias",
+      questions: 45,
+      topics: [
+        "Interpretação de textos e gêneros textuais",
+        "Funções da linguagem e variação linguística",
+        "Movimentos literários",
+        "Artes",
+        "Educação física e tecnologias da comunicação",
+        "Leitura em língua estrangeira (inglês ou espanhol)",
+      ],
+      weight: null,
+    },
+    {
+      group: "Dia 1",
+      name: "Ciências Humanas e suas Tecnologias",
+      questions: 45,
+      topics: [
+        "Brasil colônia, império e república",
+        "Cidadania, movimentos sociais e direitos",
+        "Meio ambiente e geografia do Brasil",
+        "História antiga e medieval",
+        "Clássicos da filosofia e da sociologia",
+        "Urbanização e questões agrárias",
+      ],
+      weight: null,
+    },
+    {
+      group: "Dia 1",
+      name: "Redação",
+      questions: null,
+      topics: ["Texto dissertativo-argumentativo sobre um problema social"],
+      weight: null,
+    },
+    {
+      group: "Dia 2",
+      name: "Ciências da Natureza e suas Tecnologias",
+      questions: 45,
+      topics: [
+        "Ecologia e meio ambiente",
+        "Fisiologia humana e saúde",
+        "Genética",
+        "Eletricidade e energia",
+        "Mecânica",
+        "Química orgânica",
+        "Estequiometria e soluções",
+        "Eletroquímica",
+      ],
+      weight: null,
+    },
+    {
+      group: "Dia 2",
+      name: "Matemática e suas Tecnologias",
+      questions: 45,
+      topics: [
+        "Estatística e leitura de gráficos e tabelas",
+        "Porcentagem e proporção",
+        "Geometria plana e espacial",
+        "Funções",
+        "Probabilidade e contagem",
+        "Matemática financeira",
+      ],
+      weight: null,
+    },
+  ],
+  topicFrequency: [
+    {
+      level: "high",
+      subject: "Matemática e suas Tecnologias",
+      topic: "Estatística e leitura de gráficos e tabelas",
+    },
+    { level: "high", subject: "Matemática e suas Tecnologias", topic: "Porcentagem e proporção" },
+    {
+      level: "medium",
+      subject: "Matemática e suas Tecnologias",
+      topic: "Geometria plana e espacial",
+    },
+    { level: "low", subject: "Matemática e suas Tecnologias", topic: "Matemática financeira" },
+    {
+      level: "high",
+      subject: "Ciências da Natureza e suas Tecnologias",
+      topic: "Ecologia e meio ambiente",
+    },
+    { level: "low", subject: "Ciências da Natureza e suas Tecnologias", topic: "Eletroquímica" },
+    {
+      level: "high",
+      subject: "Ciências Humanas e suas Tecnologias",
+      topic: "Brasil colônia, império e república",
+    },
+    {
+      level: "high",
+      subject: "Ciências Humanas e suas Tecnologias",
+      topic: "Cidadania, movimentos sociais e direitos",
+    },
+    {
+      level: "low",
+      subject: "Ciências Humanas e suas Tecnologias",
+      topic: "História antiga e medieval",
+    },
+    {
+      level: "high",
+      subject: "Linguagens, Códigos e suas Tecnologias",
+      topic: "Interpretação de textos e gêneros textuais",
+    },
+    { level: "low", subject: "Linguagens, Códigos e suas Tecnologias", topic: "Artes" },
+  ],
+};
 
-const POLICIA_FEDERAL_BLUEPRINT = `
-Concurso da Polícia Federal, cargo Agente de Polícia Federal (banca Cebraspe). Objective test of 120 true-or-false items plus an essay, 4h30.
-Scoring: each right item is worth 1 point and each wrong item takes 1 point away; a blank item is worth 0.
-Bloco I (60 items): Língua Portuguesa (text comprehension, types and genres, cohesion, syntax, punctuation, agreement, regency and crase, pronoun placement, rewriting of excerpts), Noções de Direito Administrativo, Noções de Direito Constitucional, Noções de Direito Penal e Processual Penal, Legislação Especial (drugs, firearms, organized crime, abuse of authority, heinous crimes).
-Bloco II (36 items): Estatística (descriptive statistics, probability, inference), Raciocínio Lógico (propositions, equivalences, arguments, sets, counting), Informática (hardware, operating systems, networks, internet, security, cloud, databases and SQL, data analysis).
-Bloco III (24 items): Contabilidade Geral (assets, accounting records, financial statements).
-Essay: a dissertative text on a current topic. Later phases: physical tests (pull-ups, long jump, swimming, timed run).
-How often topics appear in recent editions (approximate): text comprehension and rewriting (very often), administrative and constitutional law (very often), criminal law and procedure (often), informática (often), logic and statistics (often), accounting (sometimes).
-`;
+const POLICIA_FEDERAL_BLUEPRINT: ExamOutline = {
+  name: "Concurso da Polícia Federal, cargo Agente de Polícia Federal (banca Cebraspe)",
+  notes: [
+    "Format: objective test of 120 true-or-false items plus an essay, 4h30.",
+    "Scoring: each right item is worth 1 point and each wrong item takes 1 point away; a blank item is worth 0.",
+    "Rule: Essay: a dissertative text on a current topic. Later phases: physical tests (pull-ups, long jump, swimming, timed run).",
+  ],
+  subjects: [
+    {
+      group: "Bloco I (60 itens)",
+      name: "Língua Portuguesa",
+      questions: null,
+      topics: [
+        "Compreensão e interpretação de textos",
+        "Tipologia e gêneros textuais",
+        "Coesão textual",
+        "Sintaxe da oração e do período",
+        "Pontuação",
+        "Concordância, regência e crase",
+        "Colocação dos pronomes átonos",
+        "Reescrita de frases e parágrafos do texto",
+      ],
+      weight: null,
+    },
+    {
+      group: "Bloco I (60 itens)",
+      name: "Noções de Direito Administrativo",
+      questions: null,
+      topics: [
+        "Administração pública",
+        "Atos administrativos",
+        "Agentes públicos",
+        "Poderes administrativos",
+        "Responsabilidade civil do Estado",
+      ],
+      weight: null,
+    },
+    {
+      group: "Bloco I (60 itens)",
+      name: "Noções de Direito Constitucional",
+      questions: null,
+      topics: ["Direitos e garantias fundamentais", "Organização do Estado", "Segurança pública"],
+      weight: null,
+    },
+    {
+      group: "Bloco I (60 itens)",
+      name: "Noções de Direito Penal e Processual Penal",
+      questions: null,
+      topics: [
+        "Crimes contra a administração pública",
+        "Inquérito policial",
+        "Prisão e liberdade provisória",
+      ],
+      weight: null,
+    },
+    {
+      group: "Bloco I (60 itens)",
+      name: "Legislação Especial",
+      questions: null,
+      topics: [
+        "Lei de Drogas",
+        "Estatuto do Desarmamento",
+        "Organizações criminosas",
+        "Abuso de autoridade",
+        "Crimes hediondos",
+      ],
+      weight: null,
+    },
+    {
+      group: "Bloco II (36 itens)",
+      name: "Estatística",
+      questions: null,
+      topics: ["Estatística descritiva", "Probabilidade", "Inferência"],
+      weight: null,
+    },
+    {
+      group: "Bloco II (36 itens)",
+      name: "Raciocínio Lógico",
+      questions: null,
+      topics: ["Proposições e equivalências", "Argumentos", "Conjuntos", "Contagem"],
+      weight: null,
+    },
+    {
+      group: "Bloco II (36 itens)",
+      name: "Informática",
+      questions: null,
+      topics: [
+        "Hardware e sistemas operacionais",
+        "Redes e internet",
+        "Segurança da informação",
+        "Computação em nuvem",
+        "Bancos de dados e SQL",
+        "Análise de dados",
+      ],
+      weight: null,
+    },
+    {
+      group: "Bloco III (24 itens)",
+      name: "Contabilidade Geral",
+      questions: null,
+      topics: ["Patrimônio", "Registros contábeis", "Demonstrações contábeis"],
+      weight: null,
+    },
+  ],
+  topicFrequency: [
+    { level: "high", subject: "Língua Portuguesa", topic: "Compreensão e interpretação de textos" },
+    {
+      level: "high",
+      subject: "Língua Portuguesa",
+      topic: "Reescrita de frases e parágrafos do texto",
+    },
+    { level: "medium", subject: "Informática", topic: "Segurança da informação" },
+    { level: "low", subject: "Contabilidade Geral", topic: "Demonstrações contábeis" },
+  ],
+};
 
 export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
   {
@@ -101,6 +313,30 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese
+      - Public-service exam with a long notice: every one of the nine subjects is an area, named exactly as the notice names it, and every numbered item of their syllabi (182 topics) is taught by some skill; Linguística, Reconhecimento de Fala e Transcrição and Processo Legislativo are the role's own subjects and must be covered in depth, not as a token skill each
+      - Foundations first: the first phase holds what the rest builds on and what most of the exam shares, such as reading and grammar for Língua Portuguesa and the Constitution's basics, before the role's most specialized subjects (speech recognition, parliamentary procedure details)
+      - The exam is answered on paper (certo/errado items, plus the discursive test): every skill is what its items ask about a topic, at the exam's depth. The speech subject's skills explain how automatic speech recognition, end-to-end models, multimodal audio LLMs and speaker diarization work and fail, and how transcripts are post-processed, never job tasks with tools (reviewing recordings in an audio editor, choosing which range to replay, running pyannote or Whisper, writing Python)
+      - Only the discursive test's skills are outcome skills (every candidate sits it and it's scored apart); no other skill is
+      - Exam strategy the exam scores belongs here: with a wrong item cancelling a right one, deciding when to leave an item blank; and the discursive test (a technical piece) is prepared
+      - Starting point: an adult graduate with a law degree, weak in IT and English. Law subjects need less from zero; IT and English need their foundations at the depth the exam asks
+      - Weights follow the notice: the P1 and P2 tests have 90 items each, so the role's four subjects together weigh as much as the five basic ones
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-camara-registro-redacao",
+    userInput: {
+      context:
+        "Tenho 27 anos e sou formada em direito. Sou fraca em informática e inglês. Estudo 2h por dia de semana e 4h aos sábados.",
+      examBlueprint: CAMARA_BLUEPRINT,
+      goal: "quero passar no concurso da câmara dos deputados para analista legislativo, área de registro e redação. a prova é em janeiro",
+      goalKind: "exam",
+      language: "pt",
+      ownLevel: "intermediate",
+    },
+  },
+  {
+    expectations: `
       - MUST be in US English
       - Work goal: target the learner's real tasks: SQL (joins, aggregation, window functions), spreadsheets, cleaning data, descriptive statistics, defining business metrics (conversion, retention, average order value), charts and dashboards, A/B testing (hypotheses, sample size, significance, common pitfalls such as peeking), and explaining results to non-technical people
       - Must include using AI tools well for analysis: writing and checking queries with AI, spotting wrong AI analyses, not trusting unverified numbers
@@ -125,7 +361,10 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       - MUST be in Brazilian Portuguese
       - Career change into UX design from zero: user research and interviews, synthesizing findings, information architecture, user flows, wireframes, prototyping in a design tool such as Figma, usability testing, visual design and typography basics, interaction design, accessibility, design systems, working with product managers and developers, measuring outcomes
       - Must include using AI tools well in design work (research synthesis, generating and critiquing ideas and prototypes, checking AI output)
-      - Producing a portfolio case study is allowed because the learner asked to change careers; generic job-search advice or a "history of design" is filler
+      - What gets the job is part of the path, in two areas of their own near the end whose skills are marked as outcome skills: a portfolio of complete UX projects written up as case studies, and the job search for junior UX roles in Brazil (a résumé and portfolio that present eight years of teaching as an asset, such as running research with real people and explaining ideas clearly, finding openings, interviews and the design exercise or portfolio presentation); a "history of design" or generic career motivation is filler
+      - Only these portfolio and job-search skills are outcome skills
+      - The portfolio's projects grow with the path: the first project's skills (including choosing its problem) have prerequisites only in the first phase, so it can start in the first weeks; later projects build on later phases
+      - Area sizes follow the job's daily work: the hands-on areas (interaction and interface design, prototyping and usability testing) together get the most lessons and start in the first phases; user research is substantial but no single supporting area (research, collaboration, theory) has more lessons than prototyping and usability testing, and research doesn't fill the first months alone
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -178,6 +417,80 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       goal: "Prova de biologia na sexta sobre citologia",
       goalKind: "exam",
       language: "pt",
+      ownLevel: "basic",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)
+      - The test is in three days (LESSON_BUDGET 25, the most those days hold): the skills' lessons are sized by the listed topics, not padded up to 25 and never above it; every listed topic gets a skill of its own with at least one lesson, none outside them, and no area for a discursive test or exam strategy
+      - Exam weights come from the listed material's emphasis, since there is no official blueprint
+      - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-school-exam-cytology-three-days",
+    userInput: {
+      context:
+        "Sou do 1º ano do ensino médio. A prova de sexta é sobre membrana plasmática e transportes (difusão, osmose, transporte ativo), organelas, núcleo e divisão celular (mitose e meiose).",
+      goal: "Prova de biologia na sexta sobre citologia",
+      goalKind: "exam",
+      language: "pt",
+      lessonBudget: 25,
+      ownLevel: "basic",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - A class test on Friday from the learner's own notes, read into a blueprint with one subject (Biologia) and six topics (S1.1 to S1.6): one skill for each topic at least, never one skill for several topics, each skill's \`topics\` listing its topic id; every topic id appears in a skill
+      - Sized by the notes, not by the budget (LESSON_BUDGET 15, the most two days hold): roughly one to three lessons a topic, more for membrane transport (osmosis, active transport, endocytosis) and organelles (the notes say they come up a lot), never above 15 in all
+      - Only what the notes teach (cell theory, prokaryotes and eukaryotes, plasma membrane and transport, organelles, nucleus, viruses) and the prerequisites a first-year high-school student lacks, a lesson each; nothing beyond the notes (no cell division, DNA replication or genetics), and no area for a discursive test or exam strategy beyond the notes' own announcement
+      - Exam weights follow the notes' emphasis (organelles "cai muito")
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-class-test-own-notes-two-days",
+    userInput: {
+      context: `The learner's own material, page by page:
+[p1] BIOLOGIA - 1º ANO B - Prof.ª Juliana
+Resumo pra prova de sexta (9/10): A CÉLULA
+1) Teoria celular: todo ser vivo é formado por células (exceto vírus); a célula é a menor unidade da vida; toda célula vem de outra célula (Virchow); Hooke viu as "celas" na cortiça (1665).
+2) Procarionte x eucarionte: procarionte sem núcleo (DNA solto = nucleoide), sem organelas membranosas, ex. bactérias; eucarionte com núcleo (carioteca) e organelas, ex. animais, plantas, fungos, protozoários; as duas têm membrana plasmática, citoplasma, ribossomos e DNA.
+3) Membrana plasmática: bicamada de fosfolipídios + proteínas (mosaico fluido); permeabilidade seletiva; transporte passivo sem ATP (difusão simples, difusão facilitada, osmose); osmose: água vai do meio hipotônico para o hipertônico; hemácia em água pura incha e estoura (hemólise), em solução muito salgada murcha; transporte ativo gasta ATP, contra o gradiente (bomba de sódio e potássio); endocitose (fagocitose e pinocitose) e exocitose.
+4) Organelas (CAI MUITO!!): mitocôndria (respiração celular, ATP); cloroplasto (fotossíntese, plantas e algas); ribossomos (síntese de proteínas); RE rugoso (proteínas) e RE liso (lipídios, desintoxicação); complexo golgiense (modifica, empacota e secreta); lisossomo (digestão intracelular); vacúolo (grande na célula vegetal); parede celular (celulose).
+5) Núcleo: carioteca com poros; cromatina = DNA + proteínas; nucléolo produz ribossomos.
+6) Vírus: acelulares, parasitas intracelulares obrigatórios; capsídeo de proteína + DNA ou RNA; antibiótico não funciona contra vírus.
+A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!`,
+      examBlueprint: {
+        name: "Biologia",
+        notes: [
+          "Format: Questão de completar a tabela das organelas.",
+          "Format: Dissertativa sobre osmose.",
+        ],
+        subjects: [
+          {
+            group: null,
+            name: "Biologia",
+            questions: null,
+            topics: [
+              "Teoria celular",
+              "Procarionte x eucarionte",
+              "Membrana plasmática",
+              "Organelas",
+              "Núcleo",
+              "Vírus",
+            ],
+            weight: null,
+          },
+        ],
+        topicFrequency: [{ level: "high", subject: "Biologia", topic: "Organelas" }],
+      },
+      goal: "prova de biologia sexta sobre célula",
+      goalKind: "exam",
+      language: "pt",
+      lessonBudget: 15,
       ownLevel: "basic",
     },
   },

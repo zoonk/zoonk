@@ -3,7 +3,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./image-check.prompt.md";
 import { type ImageScene, describeImageScene } from "./image-scene-schema";
@@ -12,11 +12,14 @@ import { type ImageScene, describeImageScene } from "./image-scene-schema";
  * From the image-check eval (23 hand-labeled images, 27 Sep 2026, after
  * adding real cases where the drawing model named objects nobody asked for):
  * Luna and Gemini 3.8 Flash caught every failure and passed every good image;
- * Flash Lite let one image with unrequested labels through. Luna is the
- * cheapest of the three at $0.40 per 1,000 checks, with a 2.3s median.
+ * Flash Lite let one image with unrequested labels through. On 25 images (7 Oct
+ * 2026), Claude Haiku 5.5 with thinking off got every one right as Luna did, at
+ * p50 1.9s against 3.1s (p95 2.8s against 5.8s) and $0.27 per 1,000 checks
+ * against $0.40.
  */
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash", "google/gemini-3.5-flash-lite"] as const;
+const defaultModel = "anthropic/claude-haiku-5.5";
+const defaultReasoning: Reasoning = "none";
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;
 
 const schema = z.object({
   matchesScene: z.boolean(),
@@ -38,6 +41,11 @@ export type ImageCheckParams = ImageCheckInput & {
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;
+  /**
+   * The gateway tier (see `chooseServiceTier`): `flex` for the check of a picture already shown,
+   * which nobody waits on. Haiku answers at the standard tier through the gateway either way.
+   */
+  serviceTier?: ServiceTier;
   useFallback?: boolean;
 };
 
@@ -51,22 +59,23 @@ function formatLabels({ language, scene }: Pick<ImageCheckInput, "language" | "s
 }
 
 /**
- * The check before an image is used: does it show the scene, is it on style,
- * and is any text short, legible and spelled right in the lesson's language?
- * An image passes only when all three hold; the caller makes a failed image
- * once more and then ships the screen without one.
+ * The check of a drawn image: does it show the scene, is it on style, and is any text short,
+ * legible and spelled right in the lesson's language? An image passes only when all three hold.
+ * Pictures are shown as soon as they're drawn and checked after, in the background: a failed one
+ * is drawn again and replaced, and a screen whose redraws fail too goes without one.
  */
 export async function checkLessonImage({
   analytics,
   image,
   language,
   model = defaultModel,
-  reasoning,
+  reasoning = defaultReasoning,
   scene,
+  serviceTier,
   useFallback = true,
 }: ImageCheckParams) {
   const userPrompt = `SCENE: ${describeImageScene(scene)}\nLABELS: ${formatLabels({ language, scene })}`;
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

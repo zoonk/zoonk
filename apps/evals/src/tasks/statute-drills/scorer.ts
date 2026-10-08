@@ -10,7 +10,7 @@ import { checkItem } from "@zoonk/core/library/items/checks";
 import { STATUTE_DRILLS_SCORE_CATEGORIES } from "./score-categories";
 
 type StatuteDrillsOutput = Awaited<ReturnType<typeof generateStatuteDrills>>["data"];
-type StatuteDrillsCase = Pick<StatuteDrillParams, "count" | "style">;
+type StatuteDrillsCase = Pick<StatuteDrillParams, "count" | "language" | "style">;
 
 const GENERIC_FORMATS: StatuteDrill["format"][] = ["trueFalse", "typed", "multipleChoice"];
 
@@ -48,7 +48,11 @@ function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): Cod
 
   const checked = drills.map((drill) => ({
     drill,
-    problems: checkItem({ item: drill, optionCount: STATUTE_DRILL_OPTION_COUNT }),
+    problems: checkItem({
+      item: drill,
+      language: input.language,
+      optionCount: STATUTE_DRILL_OPTION_COUNT,
+    }),
   }));
 
   const passing = checked.filter((entry) => entry.problems.length === 0);

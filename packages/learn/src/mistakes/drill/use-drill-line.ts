@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { type Drill } from "./drill-types";
+import { type Drill, isIdeaFirst } from "./drill-types";
 
 /** Each cause gets its own practice, said in one line before its questions. */
 export function useDrillLine() {
@@ -10,7 +10,9 @@ export function useDrillLine() {
   return (drill: Drill): string => {
     switch (drill.kind) {
       case "reteach":
-        return t("The idea first, then a few questions on it.");
+        return isIdeaFirst(drill)
+          ? t("The idea first, then a few questions on it.")
+          : t("A few questions on an idea you missed.");
       case "readCarefully":
         return t("Read every word before you answer.");
       case "spotTheTrap":

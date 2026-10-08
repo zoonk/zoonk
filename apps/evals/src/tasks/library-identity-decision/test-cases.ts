@@ -14,7 +14,7 @@ function pairCase({
   return { expected: { reuse }, id, userInput };
 }
 
-export const TEST_CASES: LibraryIdentityDecisionTestCase[] = [
+const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
   pairCase({
     candidate: {
       description: "Work out what you pay when an item is 20% off",
@@ -151,6 +151,47 @@ export const TEST_CASES: LibraryIdentityDecisionTestCase[] = [
       item: {
         description: "Usar as formas certas dos verbos -ar, -er e -ir no presente",
         title: "Flexionar verbos -ar, -er, -ir no presente do indicativo",
+      },
+      kind: "skill",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      courses: ["Língua Portuguesa"],
+      description:
+        "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+      title: "Inferir sentidos e argumentos de textos",
+    },
+    id: "pt-skill-reading-other-language-course",
+    reuse: false,
+    subject: {
+      goal: "Passar no concurso da Câmara dos Deputados",
+      item: {
+        courses: ["Língua Inglesa"],
+        description:
+          "Compreender ideias principais e secundárias, explícitas e implícitas, e relações entre textos",
+        title: "Inferir ideias e relações entre textos",
+      },
+      kind: "skill",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      courses: ["Português"],
+      description:
+        "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+      title: "Inferir sentidos e argumentos de textos",
+    },
+    id: "pt-skill-reading-same-subject-course",
+    reuse: true,
+    subject: {
+      goal: "Passar no concurso da Câmara dos Deputados",
+      item: {
+        courses: ["Língua Portuguesa"],
+        description: "Reconhecer pressupostos, inferências e relações argumentativas de um texto",
+        title: "Inferir pressupostos e argumentos em textos",
       },
       kind: "skill",
       language: "pt",
@@ -742,3 +783,36 @@ export const TEST_CASES: LibraryIdentityDecisionTestCase[] = [
     },
   }),
 ];
+
+/** Production judges up to five candidates of one search together: the labeled one and four more. */
+const OTHER_CANDIDATES = 4;
+
+/**
+ * The candidates of other cases with the same kind and language: items a search could plausibly
+ * return beside the labeled one, which the verdict on it must not depend on.
+ */
+function findOtherCandidates(testCase: LibraryIdentityDecisionTestCase) {
+  const { subject } = testCase.userInput;
+
+  return PAIR_CASES.filter(
+    (other) =>
+      other.id !== testCase.id &&
+      other.userInput.subject.kind === subject.kind &&
+      other.userInput.subject.language === subject.language,
+  )
+    .map((other) => other.userInput.candidate)
+    .slice(0, OTHER_CANDIDATES);
+}
+
+/**
+ * Every pair judged the way production judges it: among other candidates, at a position that
+ * varies from case to case, so a verdict that leans on the first or last candidate shows.
+ */
+export const TEST_CASES: LibraryIdentityDecisionTestCase[] = PAIR_CASES.map((testCase, index) => {
+  const others = findOtherCandidates(testCase);
+
+  return {
+    ...testCase,
+    userInput: { ...testCase.userInput, others, position: index % (others.length + 1) },
+  };
+});

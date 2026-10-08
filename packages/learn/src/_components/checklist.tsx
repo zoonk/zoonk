@@ -13,8 +13,7 @@ function CheckMark({ checked }: { checked: boolean }) {
       <span
         className={cn(
           "border-border flex size-5 items-center justify-center rounded-full border",
-          checked &&
-            "bg-foreground text-background in-data-[mode=fun]:bg-fun-lime in-data-[mode=fun]:text-fun-lime-foreground border-transparent",
+          checked && "bg-foreground text-background border-transparent",
         )}
       >
         {checked && <CheckIcon className="size-3.5" />}
@@ -63,7 +62,7 @@ export function Checklist<Item extends string>({
   return (
     <section aria-labelledby={titleId} className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-baseline justify-between gap-2">
-        <h2 className="in-data-[mode=fun]:font-fun-display font-semibold" id={titleId}>
+        <h2 className="font-semibold" id={titleId}>
           {title}
         </h2>
         <span className="text-muted-foreground text-xs tabular-nums" aria-live="polite">
@@ -81,7 +80,7 @@ export function Checklist<Item extends string>({
                 aria-pressed={checked}
                 className={cn(
                   "border-border focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-2xl border px-3 py-3 text-left text-sm outline-none focus-visible:ring-[3px]",
-                  checked && "border-foreground/40 in-data-[mode=fun]:border-fun-accent-lime",
+                  checked && "border-foreground/40",
                 )}
                 onClick={() => toggle(item)}
                 type="button"

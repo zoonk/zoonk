@@ -1,5 +1,7 @@
 "use client";
 
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import {
   ProgressIndicator,
   ProgressRoot,
@@ -37,21 +39,25 @@ function GenerationTimelineHeader({ className, ...props }: React.ComponentProps<
   );
 }
 
-/** The wait is the page's main content, so its title is the page's heading. */
-function GenerationTimelineTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
-  return (
-    <h1
-      className={cn(
-        "text-2xl leading-tight font-semibold tracking-tight text-balance",
-        "in-data-[mode=fun]:font-fun-display in-data-[mode=fun]:font-bold in-data-[mode=fun]:tracking-normal",
-        className,
-      )}
-      data-slot="generation-timeline-title"
-      {...props}
-    >
-      {children}
-    </h1>
-  );
+/**
+ * The wait is usually the page's main content, so its title is the page's heading; a wait inside
+ * a screen that has its own (`render`, such as `<h2 />`) takes the next level.
+ */
+function GenerationTimelineTitle({ className, render, ...props }: useRender.ComponentProps<"h1">) {
+  return useRender({
+    defaultTagName: "h1",
+    props: mergeProps<"h1">(
+      {
+        className: cn(
+          "text-2xl leading-tight font-semibold tracking-tight text-balance",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
+    state: { slot: "generation-timeline-title" },
+  });
 }
 
 function GenerationTimelineDescription({ className, ...props }: React.ComponentProps<"p">) {
@@ -78,8 +84,8 @@ function GenerationTimelineProgress({
       data-slot="generation-timeline-progress"
       {...props}
     >
-      <ProgressTrack className="in-data-[mode=fun]:bg-fun-track h-2 flex-1">
-        <ProgressIndicator className="in-data-[mode=fun]:from-fun-accent-violet in-data-[mode=fun]:to-fun-accent-pink rounded-full duration-700 ease-out in-data-[mode=fun]:bg-linear-to-r motion-reduce:transition-none" />
+      <ProgressTrack className="h-2 flex-1">
+        <ProgressIndicator className="rounded-full duration-700 ease-out motion-reduce:transition-none" />
       </ProgressTrack>
       <ProgressValue className="ml-0 min-w-[4ch] text-right font-medium" />
     </ProgressRoot>
@@ -146,7 +152,6 @@ const indicatorClassName = cn(
   "border-muted-foreground/60 border-dashed",
   "group-data-[status=active]/generation-timeline-step:border-foreground group-data-[status=active]/generation-timeline-step:border-solid",
   "group-data-[status=completed]/generation-timeline-step:bg-foreground group-data-[status=completed]/generation-timeline-step:text-background group-data-[status=completed]/generation-timeline-step:border-transparent",
-  "in-data-[mode=fun]:group-data-[status=completed]/generation-timeline-step:bg-fun-lime in-data-[mode=fun]:group-data-[status=completed]/generation-timeline-step:text-fun-lime-foreground",
   "group-data-[status=failed]/generation-timeline-step:text-destructive group-data-[status=failed]/generation-timeline-step:border-0",
 );
 

@@ -1,36 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { withClassTestMock } from "./class-test-mock";
-import { outlineMock } from "./mock-plan";
 
-const SLIDES_STRUCTURE: ExamStructure = { formats: [], mock: null, rules: [], subjects: [] };
+/** A class test read from the learner's slides: subjects, no mock conditions of its own. */
+const STRUCTURE = examStructureSchema.parse({ formats: [], mock: null, rules: [], subjects: [] });
+
+function mockOf(dayMinutes?: number | null) {
+  return withClassTestMock({ dayMinutes, ownerId: "learner", structure: STRUCTURE }).mock;
+}
 
 describe(withClassTestMock, () => {
-  it("makes a class test's mock short, from the learner's own material", () => {
-    const structure = withClassTestMock({ ownerId: "learner", structure: SLIDES_STRUCTURE });
-
-    expect(outlineMock({ fullLength: true, structure })).toMatchObject({ minutes: 30 });
-    expect(outlineMock({ fullLength: false, structure }).sections[0]?.questions).toBe(5);
+  it("copies a short test of ten questions in half an hour", () => {
+    expect(mockOf()).toMatchObject({ timeLimitMinutes: 30, totalQuestions: 10 });
+    expect(mockOf(60)).toMatchObject({ timeLimitMinutes: 30, totalQuestions: 10 });
   });
 
-  it("keeps a shared exam's structure and conditions a notice gave", () => {
-    const withConditions = withClassTestMock({
-      ownerId: "learner",
-      structure: {
-        ...SLIDES_STRUCTURE,
-        mock: {
-          adaptive: false,
-          citations: [],
-          order: null,
-          scoring: { description: "", method: "raw" },
-          sections: [],
-          timeLimitMinutes: 90,
-          totalQuestions: 20,
-        },
-      },
-    });
+  it("fits a shorter day at the same pace, never below a checkpoint's questions", () => {
+    expect(mockOf(15)).toMatchObject({ timeLimitMinutes: 15, totalQuestions: 5 });
+    expect(mockOf(10)).toMatchObject({ timeLimitMinutes: 10, totalQuestions: 5 });
+  });
 
-    expect(withClassTestMock({ ownerId: null, structure: SLIDES_STRUCTURE }).mock).toBeNull();
-    expect(withConditions.mock?.totalQuestions).toBe(20);
+  it("keeps a public exam's own conditions", () => {
+    const structure = withClassTestMock({ dayMinutes: 15, ownerId: null, structure: STRUCTURE });
+    expect(structure.mock).toBeNull();
   });
 });

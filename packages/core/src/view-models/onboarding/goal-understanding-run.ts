@@ -1,4 +1,5 @@
 import "server-only";
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 import { type GoalUnderstanding, understandGoal } from "@zoonk/ai/tasks/v2/goals/understand-goal";
 import { prisma } from "@zoonk/db";
@@ -52,15 +53,18 @@ export async function readGoalWords(
   draft: Pick<UnderstandingRunDraft, "language" | "prompt" | "timeZone" | "userId">,
 ): Promise<{ provenance: Provenance; result: GoalUnderstanding }> {
   const analytics = { contentScope: "personal" as const, distinctId: draft.userId };
+  // The learner watches their words being read: two small one-off calls worth the premium.
+  const serviceTier = chooseServiceTier({ reuse: "personal", small: true, wait: "learner" });
 
   const [understood, intent] = await Promise.all([
     understandGoal({
       analytics,
       goal: draft.prompt,
       language: draft.language,
+      serviceTier,
       today: getLearnerToday(draft.timeZone),
     }),
-    classifyCourseIntent({ analytics, prompt: draft.prompt }),
+    classifyCourseIntent({ analytics, prompt: draft.prompt, serviceTier }),
   ]);
 
   const { model, promptVersion, runId } = understood.provenance;

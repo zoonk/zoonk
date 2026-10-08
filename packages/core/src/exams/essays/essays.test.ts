@@ -162,15 +162,14 @@ describe("essays in sessions", () => {
     const blockId = block?.id ?? "";
     const sessionId = today.status === "ready" ? today.session.id : "";
 
-    await expect(
-      submitEssay({ blockId, input: { durationMs: 1000, text: "Draft" } }),
-    ).resolves.toStrictEqual({ status: "blockNotActive" });
-
-    await startStudyBlock({ blockId, input: {}, sessionId });
-
+    // Sending the first draft takes the block on, even from a writing page opened from a link.
     await expect(
       submitEssay({ blockId, input: { durationMs: 600_000, text: "My essay about it." } }),
     ).resolves.toMatchObject({ grade: { total: { score: 720 } }, status: "graded" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    ).resolves.toMatchObject({ status: "active" });
 
     expect(gradeEssay).toHaveBeenCalledWith(
       expect.objectContaining({ essay: "My essay about it.", rubric: { kind: "enem" } }),
@@ -195,6 +194,11 @@ describe("essays in sessions", () => {
     const finished = await finishStudyBlock({ blockId, input: {}, sessionId });
 
     expect(finished.status).toBe("ready");
+
+    // A finished block takes no more drafts.
+    await expect(
+      submitEssay({ blockId, input: { durationMs: 1000, text: "Another draft" } }),
+    ).resolves.toStrictEqual({ status: "blockNotActive" });
   });
 
   it("practices an AP free-response question and scores it by its rows' points", async () => {
@@ -257,6 +261,38 @@ describe("essay drafts and access", () => {
     gradeEssay.mockReset();
   });
 
+  it("starts today's writing block when a draft is sent, but never another day's", async () => {
+    const { goal } = await essaySetup();
+    const today = await getTodayStudySession({ goalId: goal.id });
+    const blocks = today.status === "ready" ? today.session.blocks : [];
+    const sessionId = today.status === "ready" ? today.session.id : "";
+    const blockId = blocks.find((block) => block.kind === "produce")?.id ?? "";
+    const input = { durationMs: 1000, text: "Draft" };
+
+    const { localDate } = await prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } });
+    const yesterday = new Date(localDate.getTime() - DAY_MS);
+
+    await prisma.studySession.update({ data: { localDate: yesterday }, where: { id: sessionId } });
+
+    await expect(submitEssay({ blockId, input })).resolves.toStrictEqual({
+      status: "blockNotActive",
+    });
+
+    expect(gradeEssay).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+    await prisma.studySession.update({ data: { localDate }, where: { id: sessionId } });
+
+    await expect(submitEssay({ blockId, input })).resolves.toMatchObject({ status: "graded" });
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    ).resolves.toMatchObject({ status: "active" });
+  });
+
   it("keeps a writing block to its learner, and only a writing block", async () => {
     const { blockId, otherBlockId } = await startedWritingBlock();
     const input = { durationMs: 1000, text: "Draft" };
@@ -304,5 +340,64 @@ describe("essay drafts and access", () => {
     await expect(getEssay({ blockId })).resolves.toMatchObject({
       essay: { drafts: [{ text: "Second draft" }, { text: "First draft" }], gradesLeft: 6 },
     });
+  });
+});
+
+/** Whether today's session (Wednesday 30 Sep) has a writing block under the plan's cadence. */
+async function writesToday({
+  cadence,
+  startDate,
+  targetDate,
+}: {
+  cadence: string;
+  startDate: string;
+  targetDate: string;
+}) {
+  const { goal, plan } = await essaySetup();
+
+  await Promise.all([
+    prisma.goal.update({
+      data: { targetDate: new Date(`${targetDate}T00:00:00Z`) },
+      where: { id: goal.id },
+    }),
+    prisma.plan.update({
+      data: { settings: { startDate, writtenCadence: cadence } },
+      where: { id: plan.id },
+    }),
+  ]);
+
+  const today = await getTodayStudySession({ goalId: goal.id });
+  return today.status === "ready" && today.session.blocks.some((block) => block.kind === "produce");
+}
+
+describe("essays on the learner's written cadence", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(SESSION_NOW);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("writes in the plan's first, third… week when the learner practices every other week", async () => {
+    // One learner at a time: each signs in as theirs.
+    await expect(
+      writesToday({ cadence: "biweekly", startDate: "2026-09-30", targetDate: "2026-12-20" }),
+    ).resolves.toBe(true);
+
+    await expect(
+      writesToday({ cadence: "biweekly", startDate: "2026-09-23", targetDate: "2026-12-20" }),
+    ).resolves.toBe(false);
+  });
+
+  it("writes only in the final weeks before the exam when the learner asked for that", async () => {
+    await expect(
+      writesToday({ cadence: "finalWeeks", startDate: "2026-09-01", targetDate: "2026-10-20" }),
+    ).resolves.toBe(true);
+
+    await expect(
+      writesToday({ cadence: "finalWeeks", startDate: "2026-09-01", targetDate: "2026-11-30" }),
+    ).resolves.toBe(false);
   });
 });

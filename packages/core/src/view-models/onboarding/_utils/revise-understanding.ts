@@ -1,10 +1,13 @@
 import "server-only";
+import { readExamMonth } from "../../../exams/_utils/exam-edition-days";
+import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import {
   type GoalUnderstandingView,
   type OnboardingDraftEdit,
   type UnderstoodGoalView,
 } from "../onboarding-contract";
+import { allowDateSearch } from "./date-search";
 import { findExamFacts } from "./exam-facts";
 
 type GoalsUnderstanding = Extract<GoalUnderstandingView, { status: "goals" }>;
@@ -17,6 +20,10 @@ function withoutKey<Value extends object, Key extends keyof Value>(
 ): Omit<Value, Key> {
   const { [key]: _removed, ...rest } = value;
   return rest;
+}
+
+function readText(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value : null;
 }
 
 function readYear(isoDate: string): number {
@@ -64,9 +71,9 @@ function retitleForYear({ from, title, to }: { from: unknown; title: string; to:
 }
 
 /**
- * Another year of the same exam: that year's dates (from its notice, or estimated from its usual
- * timing) and blueprint, a title naming the old year names the new one, and a deadline set for
- * the old year no longer holds.
+ * Another year of the same exam: that year's dates (from its notice or a quick search for the
+ * published one, or estimated from its usual timing) and blueprint, a title naming the old year
+ * names the new one, and a deadline set for the old year no longer holds.
  */
 async function reviseExamYear({
   goal,
@@ -84,9 +91,17 @@ async function reviseExamYear({
     return null;
   }
 
+  // The learner can type any year, so its day is searched for only as one of their small AI calls.
   const facts = await findExamFacts({
-    examName,
-    examYear: value,
+    allowSearch: allowDateSearch,
+    exam: {
+      examMonth: readExamMonth(details),
+      examName,
+      examYear: value,
+      institution: readText(details.institution),
+      role: readText(details.targetPosition),
+      words: goal.draft.prompt,
+    },
     language: goal.draft.language,
     today,
   });
@@ -94,9 +109,12 @@ async function reviseExamYear({
   const draft = withoutKey(goal.draft, "targetDate");
 
   return {
+    // Another year's exam may be another notice: `reviseUnderstanding` reads its cut-off again.
+    cutoff: null,
     draft: {
       ...withoutKey(draft, "examBlueprintId"),
       ...(facts.blueprintId ? { examBlueprintId: facts.blueprintId } : {}),
+      ...(facts.targetDate ? { targetDate: facts.targetDate } : {}),
       details: { ...details, examYear: value },
       title: retitleForYear({ from: details.examYear, title: draft.title, to: value }),
     },
@@ -178,5 +196,15 @@ export async function reviseUnderstanding({
   const goal = understanding.goals[edit.goal];
   const revised = goal ? await reviseGoal({ edit, goal, today }) : null;
 
-  return revised ? { ...understanding, goals: understanding.goals.with(edit.goal, revised) } : null;
+  if (!revised) {
+    return null;
+  }
+
+  // Another course, institution, position or year has its own cut-off, when one is known.
+  const cutoff = await loadTargetCutoff({
+    details: revised.draft.details,
+    examBlueprintId: revised.draft.examBlueprintId,
+  });
+
+  return { ...understanding, goals: understanding.goals.with(edit.goal, { ...revised, cutoff }) };
 }

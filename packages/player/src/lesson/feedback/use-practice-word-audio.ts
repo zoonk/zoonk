@@ -1,7 +1,7 @@
 "use client";
 
+import { useSpokenAudio } from "@zoonk/learn/speech";
 import { useCallback, useRef } from "react";
-import { useSpeech } from "../../activities/_utils/use-speech";
 import { useWordAudio } from "../../use-word-audio";
 
 /** Slow enough to hear each sound, fast enough to still sound like the word. */
@@ -10,8 +10,8 @@ const SLOW_RATE = 0.7;
 type PracticeSound = { audioUrl: string | null; text: string };
 
 /**
- * Plays a word to practice: the native recording when the vocabulary has one, otherwise the
- * device's voice for the language. `playBoth` plays it at normal speed, then slowly.
+ * Plays a word to practice: the native recording when the vocabulary has one, otherwise the word
+ * read aloud in its language. `playBoth` plays it at normal speed, then slowly.
  */
 export function usePracticeWordAudio({
   audioUrls,
@@ -20,7 +20,7 @@ export function usePracticeWordAudio({
   audioUrls: (string | null)[];
   language: string;
 }) {
-  const speech = useSpeech(language);
+  const speech = useSpokenAudio(language);
   const slowNextRef = useRef<PracticeSound | null>(null);
 
   const recording = useWordAudio({
@@ -48,30 +48,48 @@ export function usePracticeWordAudio({
     [recording],
   );
 
+  /**
+   * A word without a recording is read aloud right inside the tap, which mobile Safari needs to
+   * let the sound play; a recording that won't play is read aloud instead.
+   */
   const play = useCallback(
-    async (word: PracticeSound, { slow }: { slow: boolean }) => {
+    (word: PracticeSound, { slow }: { slow: boolean }) => {
       const rate = slow ? SLOW_RATE : 1;
       slowNextRef.current = null;
       speech.cancel();
 
-      if (!(await playRecording(word, rate))) {
+      if (!word.audioUrl) {
         speak(word, rate);
+        return;
       }
+
+      void playRecording(word, rate).then((started) => {
+        if (!started) {
+          speak(word, rate);
+        }
+      });
     },
     [playRecording, speak, speech],
   );
 
   const playBoth = useCallback(
-    async (word: PracticeSound) => {
+    (word: PracticeSound) => {
+      const readBoth = () => speak(word, 1, () => speak(word, SLOW_RATE));
       speech.cancel();
-      slowNextRef.current = word;
 
-      if (await playRecording(word, 1)) {
+      if (!word.audioUrl) {
+        readBoth();
         return;
       }
 
-      slowNextRef.current = null;
-      speak(word, 1, () => speak(word, SLOW_RATE));
+      slowNextRef.current = word;
+
+      void playRecording(word, 1).then((started) => {
+        if (!started) {
+          slowNextRef.current = null;
+          readBoth();
+        }
+      });
     },
     [playRecording, speak, speech],
   );

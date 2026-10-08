@@ -3,12 +3,13 @@ import { type PlayableLibraryStep } from "../lesson-player-types";
 
 type Miss = LessonPlayerState["misses"][number];
 
-export type SimplifiableStep = Extract<
+/** The screens that explain an idea, which a struggling learner gets help with. */
+export type ExplainingStep = Extract<
   PlayableLibraryStep,
   { kind: "explanation" | "workedExample" }
 >;
 
-/** Two answers missed in a row on the same idea: the moment a simpler explanation helps. */
+/** Two answers missed in a row on the same idea: the moment help is worth offering. */
 const MISSES_TO_STRUGGLE = 2;
 
 /**
@@ -20,12 +21,12 @@ const MIN_STRUGGLE_PAUSE_MS = 45_000;
 /** Unhurried reading speed, in words per minute, to size a screen's reading time. */
 const READING_WORDS_PER_MINUTE = 150;
 
-/** How many times the reading time a pause must last before "Simpler" is offered. */
+/** How many times the reading time a pause must last before help is offered. */
 const PAUSE_READING_FACTOR = 3;
 
 const MS_PER_MINUTE = 60_000;
 
-function isSimplifiable(step: PlayableLibraryStep | undefined): step is SimplifiableStep {
+function isExplaining(step: PlayableLibraryStep | undefined): step is ExplainingStep {
   return step?.kind === "explanation" || step?.kind === "workedExample";
 }
 
@@ -45,13 +46,13 @@ function findExplanationOf({
 }: {
   miss: Miss;
   state: LessonPlayerState;
-}): SimplifiableStep | null {
+}): ExplainingStep | null {
   const ids = [...new Set(state.queue)];
   const questionIndex = ids.indexOf(miss.stepId);
 
   const explanations = ids.flatMap((id, index) => {
     const step = state.steps[id];
-    return isSimplifiable(step) && isSameSkill(step.skillId, miss.skillId) ? [{ index, step }] : [];
+    return isExplaining(step) && isSameSkill(step.skillId, miss.skillId) ? [{ index, step }] : [];
   });
 
   const before = explanations.findLast(({ index }) => index < questionIndex);
@@ -59,11 +60,11 @@ function findExplanationOf({
 }
 
 /**
- * The explanation to offer in a simpler version, right after the second answer in a row missed on
- * the same idea (or the same question twice). Never during "I know this", where a miss already
+ * The explanation to offer help with, right after the second answer in a row missed on the same
+ * idea (or the same question twice). Never during "I know this", where a miss already
  * brings the learner back to the lesson.
  */
-export function getStruggleOffer(state: LessonPlayerState): SimplifiableStep | null {
+export function getStruggleOffer(state: LessonPlayerState): ExplainingStep | null {
   const recent = state.misses.slice(-MISSES_TO_STRUGGLE);
   const [first, last] = recent;
 
@@ -78,7 +79,7 @@ export function getStruggleOffer(state: LessonPlayerState): SimplifiableStep | n
   return findExplanationOf({ miss: last, state });
 }
 
-function getReadingText(step: SimplifiableStep): string {
+function getReadingText(step: ExplainingStep): string {
   if (step.kind === "explanation") {
     return `${step.content.title ?? ""} ${step.content.text}`;
   }
@@ -89,11 +90,11 @@ function getReadingText(step: SimplifiableStep): string {
 
 /**
  * How long a learner can stay on an explanation or worked example without touching anything
- * before "Simpler" is offered: three times its reading time, and at least 45 seconds. Null for
- * screens without a simpler version.
+ * before help is offered: three times its reading time, and at least 45 seconds. Null for other
+ * screens.
  */
 export function getStrugglePauseMs(step: PlayableLibraryStep): number | null {
-  if (!isSimplifiable(step)) {
+  if (!isExplaining(step)) {
     return null;
   }
 

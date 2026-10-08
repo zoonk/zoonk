@@ -21,7 +21,7 @@ export const TARGET_RETENTION = 0.9;
 type MasteryInput = Pick<LearnerSkill, "recallDays" | "reps" | "stability">;
 
 /**
- * Maps the memory model to the four states both modes show: New (never answered), Learning,
+ * Maps the memory model to the four states the apps show: New (never answered), Learning,
  * Solid (stability of at least a week) and Mastered (remembered on three different days).
  */
 export function getMasteryState({ recallDays, reps, stability }: MasteryInput): MasteryState {

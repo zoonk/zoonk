@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { loadPostHog } from "./posthog-browser";
+import { registerSharedProperties } from "./posthog-browser";
 import { type SharedEventProperties } from "./shared-properties";
 
 /**
@@ -15,7 +15,7 @@ export function RegisterSharedEventProperties({
   properties: SharedEventProperties;
 }) {
   useEffect(() => {
-    void loadPostHog().then((posthog) => posthog?.register(properties));
+    void registerSharedProperties(properties);
   }, [properties]);
 
   return null;

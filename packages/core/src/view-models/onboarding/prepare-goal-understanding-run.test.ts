@@ -3,10 +3,11 @@ import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
-import { mockSession } from "../../_test-utils/mock-session";
+import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { prepareGoalUnderstandingRun } from "./prepare-goal-understanding-run";
 import type * as RateLimit from "@zoonk/auth/rate-limit";
 
@@ -101,6 +102,23 @@ describe(prepareGoalUnderstandingRun, () => {
     await expect(
       prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } }),
     ).resolves.toMatchObject({ status: "failed" });
+  });
+
+  it("reads nothing for a guest whose one goal is taken", async () => {
+    const guest = await userFixture();
+    mockGuestSession(guest.id);
+    await usageRecordsFixture({ count: 1, createdAt: new Date(), kind: "goal", userId: guest.id });
+
+    const draft = await onboardingDraftFixture({
+      prompt: `learn welding ${randomUUID()}`,
+      status: "understanding",
+      userId: guest.id,
+    });
+
+    await expect(prepareGoalUnderstandingRun({ draftId: draft.id })).resolves.toStrictEqual({
+      limit: { limit: 1, period: "total", resource: "goal", tier: "guest" },
+      status: "limitReached",
+    });
   });
 
   it("needs no run when the same words were understood today, or the draft already is", async () => {

@@ -44,7 +44,7 @@ async function seedDueWords(userId: string) {
  */
 test.describe("Pronunciation reviews", () => {
   test("opens the due words from Today and walks through them", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
       const { deposit, rent } = await seedDueWords(user.id);
 
       await page.goto("/today");

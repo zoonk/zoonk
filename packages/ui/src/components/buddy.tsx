@@ -28,6 +28,21 @@ const STAGE_SCALE: Record<BuddyStage, number> = { adult: 1, baby: 0.7, wise: 1, 
 const GROUND_X = 60;
 const GROUND_Y = 116;
 
+/** Every buddy's face sits in the same square of the full-size art: eyes at y 58, mouth near 80. */
+const FACE_CENTER_Y = 60;
+const FACE_SIZE = 96;
+
+/**
+ * The square around the face at the buddy's current size, so a small icon shows the face at the
+ * same size whatever the stage: a baby's face would otherwise be a dot in the corner of the box.
+ */
+function getFaceViewBox(scale: number) {
+  const size = FACE_SIZE * scale;
+  const centerY = GROUND_Y - (GROUND_Y - FACE_CENTER_Y) * scale;
+
+  return `${GROUND_X - size / 2} ${centerY - size / 2} ${size} ${size}`;
+}
+
 const EXPRESSION_BY_ENERGY: Record<BuddyEnergyState, BuddyExpression> = {
   awake: "happy",
   glowing: "cheer",
@@ -72,14 +87,16 @@ function WiseAura({ uid }: { uid: string }) {
 }
 
 /**
- * A Fun mode buddy: Zu, Noodle, Beep or Otto. The stage comes from the belt, the
+ * The learner's buddy: Zu, Noodle, Beep or Otto. The stage comes from the belt, the
  * glow and the default expression from Energy, and every pair of glasses fits
  * every buddy. Pass a translated `label` so the buddy is announced as an image; omit
- * it only when adjacent text already names the buddy.
+ * it only when adjacent text already names the buddy. `crop="face"` frames only the face, for
+ * icon sizes such as a tab.
  */
 function Buddy({
   beltColor,
   className,
+  crop,
   energy,
   expression,
   glasses = "round",
@@ -88,9 +105,11 @@ function Buddy({
   studiedToday = false,
   style,
   ...props
-}: Omit<React.ComponentProps<"svg">, "children"> & {
+}: Omit<React.ComponentProps<"svg">, "children" | "viewBox"> & {
   beltColor: BeltColor;
-  energy: number;
+  crop?: "face";
+  /** Null before the learner has any Energy: the buddy is awake, without a glow. */
+  energy: number | null;
   expression?: BuddyExpression;
   glasses?: BuddyGlasses;
   kind: BuddyKind;
@@ -110,7 +129,11 @@ function Buddy({
     <svg
       aria-hidden={label ? undefined : true}
       aria-label={label}
-      className={cn("size-24 shrink-0 overflow-visible", className)}
+      className={cn(
+        "size-24 shrink-0",
+        crop === "face" ? "overflow-hidden" : "overflow-visible",
+        className,
+      )}
       data-energy={energyState}
       data-buddy={kind}
       data-slot="buddy"
@@ -118,7 +141,7 @@ function Buddy({
       focusable="false"
       role={label ? "img" : undefined}
       style={{ ...beltStyle, ...style }}
-      viewBox="0 0 120 120"
+      viewBox={crop === "face" ? getFaceViewBox(scale) : "0 0 120 120"}
       {...props}
     >
       {stage === "wise" && <WiseAura uid={uid} />}

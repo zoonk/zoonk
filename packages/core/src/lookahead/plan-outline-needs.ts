@@ -1,6 +1,12 @@
 import "server-only";
-import { type Course, type Skill, prisma } from "@zoonk/db";
+import { type Course, type ExamBlueprint, type Goal, type Skill, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { findUntaughtSkills } from "../library/curriculum/course-outline-state";
 import { type CourseBandNeed, type CurriculumScope } from "../library/curriculum/curriculum-scope";
+import { toGoalCandidateExams } from "../library/exams/candidate-exams";
+import { goalUsesTools } from "../plans/_utils/plan-tools";
+import { addDays } from "../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 
 /** One course of an existing plan with the level bands its stand-ins still need outlined. */
@@ -10,21 +16,50 @@ type NeedSkill = Pick<Skill, "description" | "id" | "level" | "name">;
 
 type NeedCourse = Pick<Course, "id" | "language" | "targetLanguage" | "userId" | "visibility">;
 
-type PlanGoal = { targetLanguage: string | null; title: string };
+type PlanGoal = Pick<
+  Goal,
+  "examBlueprintId" | "kind" | "primaryCourseId" | "targetLanguage" | "title"
+> & { examBlueprint: ExamBlueprint | null };
 
 /** A skill without a level is outlined with the course's first band. */
 const DEFAULT_LEVEL: CourseBandNeed["level"] = "beginner";
 
-/** The stand-ins' skills (plan items waiting for a lesson), in plan order, once each. */
-async function loadStandIns(goalId: string) {
+/** The last day of the plan within `days` of today in the goal's time zone. */
+async function getHorizon({ days, goalId }: { days: number; goalId: string }): Promise<Date> {
+  const goal = await prisma.goal.findUnique({ select: { timezone: true }, where: { id: goalId } });
+  const timeZone = getAnswerTimeZone({ goal });
+
+  return addDays(getDateInTimeZone({ date: new Date(), timeZone }), days);
+}
+
+/**
+ * The stand-ins' skills (plan items waiting for a lesson), in plan order, once each; only those
+ * scheduled by `until` when it's given.
+ */
+async function loadStandIns({ goalId, until }: { goalId: string; until: Date | null }) {
   const plan = await prisma.plan.findUnique({
     select: {
-      goal: { select: { targetLanguage: true, title: true } },
+      goal: {
+        select: {
+          examBlueprint: true,
+          examBlueprintId: true,
+          kind: true,
+          primaryCourseId: true,
+          targetLanguage: true,
+          title: true,
+        },
+      },
       graph: true,
       items: {
         orderBy: { position: "asc" },
         select: { skillId: true },
-        where: { kind: "lesson", lessonId: null, skillId: { not: null }, status: "todo" },
+        where: {
+          kind: "lesson",
+          lessonId: null,
+          skillId: { not: null },
+          status: "todo",
+          ...(until ? { scheduledFor: { lte: until } } : {}),
+        },
       },
     },
     where: { goalId },
@@ -35,23 +70,43 @@ async function loadStandIns(goalId: string) {
   return plan ? { goal: plan.goal, graph: plan.graph, skillIds: [...new Set(skillIds)] } : null;
 }
 
-/** The Library course each plan skill takes its lessons from. */
-function readSkillCourses(graph: unknown): Map<string, string> {
+/**
+ * The Library course each plan skill takes its lessons from: the one its graph names, else the
+ * goal's own course, where the planner learns a skill a change added (a topic the learner asked
+ * for, a prerequisite) and the next chapters of a skill are written too.
+ */
+function readSkillCourses({
+  graph,
+  primaryCourseId,
+}: {
+  graph: unknown;
+  primaryCourseId: string | null;
+}): Map<string, string> {
   return new Map(
     parsePlanGraph(graph).skills.flatMap((skill) => {
-      const [courseId] = skill.courseIds ?? [];
+      const courseId = skill.courseIds?.[0] ?? primaryCourseId;
       return courseId ? [[skill.skillId, courseId] as const] : [];
     }),
   );
 }
 
-/** Level bands in the order the learner reaches their first stand-in. */
-function toBands(skills: readonly NeedSkill[]): CourseBandNeed[] {
+/**
+ * Level bands in the order the learner reaches their first stand-in. A goal answered without tools
+ * of its own (an exam that isn't practical) has them taught in chapters without tools.
+ */
+function toBands({
+  skills,
+  withToolChapters,
+}: {
+  skills: readonly NeedSkill[];
+  withToolChapters: boolean;
+}): CourseBandNeed[] {
   const byLevel = Map.groupBy(skills, (skill) => skill.level ?? DEFAULT_LEVEL);
 
   return [...byLevel.entries()].map(([level, bandSkills]) => ({
     level,
     skills: bandSkills.map(({ description, id, name }) => ({ description, id, key: id, name })),
+    withToolChapters,
   }));
 }
 
@@ -59,6 +114,7 @@ function toScope({ course, goal }: { course: NeedCourse; goal: PlanGoal }): Curr
   const ownerId = course.visibility === "private" ? course.userId : null;
 
   return {
+    exams: ownerId ? [] : toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind }),
     generalGoal: ownerId ? null : goal.title,
     language: course.language,
     ownerId,
@@ -67,25 +123,38 @@ function toScope({ course, goal }: { course: NeedCourse; goal: PlanGoal }): Curr
 }
 
 /**
- * The outlines an existing plan still needs before its stand-ins become lessons: a plan started
- * from a plan link or a course keeps the Library courses it came with, and only the level bands
- * those courses haven't outlined for its skills are written, the course and band the learner
- * reaches first first. Courses keep their own language and owner; a shared course's outline sees
- * only the goal's title.
+ * The outlines a plan still needs before its stand-ins become lessons, the course and band the
+ * learner reaches first first: a plan started from a plan link or a course keeps the Library
+ * courses it came with, and a plan whose later bands weren't outlined when it was built gets them
+ * as it gets close (`days`: only stand-ins scheduled within that many days; null for all). Only
+ * skills their course doesn't teach at all are listed: one it teaches in part gets its next
+ * chapter from `listSkillExtensions`.
+ * Courses keep their own language and owner; a shared course's outline sees only the goal's title.
  *
  * This is a workflow bridge: the goal id comes from the goal the public boundary created.
  */
-export async function listPlanOutlineNeeds(goalId: string): Promise<PlanOutlineNeed[]> {
-  const standIns = await loadStandIns(goalId);
+export async function listPlanOutlineNeeds({
+  days,
+  goalId,
+}: {
+  days: number | null;
+  goalId: string;
+}): Promise<PlanOutlineNeed[]> {
+  const until = days === null ? null : await getHorizon({ days, goalId });
+  const standIns = await loadStandIns({ goalId, until });
 
   if (!standIns || standIns.skillIds.length === 0) {
     return [];
   }
 
-  const courseOf = readSkillCourses(standIns.graph);
+  const courseOf = readSkillCourses({
+    graph: standIns.graph,
+    primaryCourseId: standIns.goal.primaryCourseId,
+  });
+
   const courseIds = [...new Set(standIns.skillIds.flatMap((id) => courseOf.get(id) ?? []))];
 
-  const [skills, courses] = await Promise.all([
+  const [skills, courses, withToolChapters] = await Promise.all([
     prisma.skill.findMany({
       select: { description: true, id: true, level: true, name: true },
       where: { id: { in: standIns.skillIds } },
@@ -94,16 +163,96 @@ export async function listPlanOutlineNeeds(goalId: string): Promise<PlanOutlineN
       select: { id: true, language: true, targetLanguage: true, userId: true, visibility: true },
       where: { id: { in: courseIds } },
     }),
+    goalUsesTools(standIns.goal),
   ]);
 
   const ordered = standIns.skillIds.flatMap((id) => skills.find((skill) => skill.id === id) ?? []);
 
-  return courseIds.flatMap((courseId) => {
-    const course = courses.find((row) => row.id === courseId);
-    const bands = toBands(ordered.filter((skill) => courseOf.get(skill.id) === courseId));
+  const needs = await Promise.all(
+    courses.map(async (course) => {
+      const scope = toScope({ course, goal: standIns.goal });
+      const courseSkills = ordered.filter((skill) => courseOf.get(skill.id) === course.id);
 
-    return course && bands.length > 0
-      ? [{ bands, courseId, scope: toScope({ course, goal: standIns.goal }) }]
-      : [];
+      // A skill its course teaches in part gets its next chapter as an extension instead.
+      const untaught = new Set(
+        await findUntaughtSkills({
+          courseId: course.id,
+          ownerId: scope.ownerId,
+          skillIds: courseSkills.map((skill) => skill.id),
+          withToolChapters,
+        }),
+      );
+
+      const bands = toBands({
+        skills: courseSkills.filter((skill) => untaught.has(skill.id)),
+        withToolChapters,
+      });
+
+      return { bands, courseId: course.id, scope };
+    }),
+  );
+
+  // Courses in the order the learner reaches their first stand-in.
+  return courseIds.flatMap((courseId) =>
+    needs.filter((need) => need.courseId === courseId && need.bands.length > 0),
+  );
+}
+
+/**
+ * The Library courses whose stand-ins (lessons not outlined yet, a skill's first chapters or its
+ * next one) the plan schedules within `days` of today. Today holds their time and says more
+ * lessons are on the way, so their outline isn't background work.
+ *
+ * This is a workflow bridge: the goal id comes from the goal the public boundary loaded.
+ */
+export async function listSoonStandInCourseIds({
+  days,
+  goalId,
+}: {
+  days: number;
+  goalId: string;
+}): Promise<string[]> {
+  const until = await getHorizon({ days, goalId });
+  const standIns = await loadStandIns({ goalId, until });
+
+  if (!standIns) {
+    return [];
+  }
+
+  const courseOf = readSkillCourses({
+    graph: standIns.graph,
+    primaryCourseId: standIns.goal.primaryCourseId,
   });
+
+  return [...new Set(standIns.skillIds.flatMap((id) => courseOf.get(id) ?? []))];
+}
+
+/**
+ * The skills the plan gets to within `days` of today: every one with a lesson or a stand-in
+ * scheduled by then. A plan is built with only these skills' course bands outlined when the
+ * learner's plan writes less ahead (`getLookahead`); the rest are outlined as the plan gets close.
+ *
+ * This is a workflow bridge: the goal id comes from the goal the public boundary created.
+ */
+export async function listPlanSkillIdsWithin({
+  days,
+  goalId,
+}: {
+  days: number;
+  goalId: string;
+}): Promise<string[]> {
+  const until = await getHorizon({ days, goalId });
+
+  const items = await prisma.planItem.findMany({
+    distinct: ["skillId"],
+    select: { skillId: true },
+    where: {
+      kind: "lesson",
+      plan: { goalId },
+      scheduledFor: { lte: until },
+      skillId: { not: null },
+    },
+  });
+
+  return items.flatMap((item) => (item.skillId ? [item.skillId] : []));
 }

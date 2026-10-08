@@ -195,7 +195,8 @@ describe("a rewritten lesson", () => {
       workflowRunId,
     });
 
-    expect(saved).toBe(true);
+    // The lesson's earlier screens stay as version 1 for learners playing them.
+    expect(saved).toBe(2);
 
     await expect(
       prisma.contentReviewFlag.findFirstOrThrow({
@@ -256,11 +257,13 @@ describe("the flag sweep", () => {
           context: null,
           difficulty: "medium",
           format: "trueFalse",
+          image: null,
           isTrue: true,
           misconception: null,
           reason: "O art. 13 fixa trinta dias para a posse.",
           reference: "Art. 13",
           statement: "A posse ocorrerá no prazo de trinta dias contados da publicação do ato.",
+          visual: null,
         },
       ],
       group,

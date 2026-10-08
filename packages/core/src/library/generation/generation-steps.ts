@@ -16,15 +16,17 @@ export type LessonContentStepName = (typeof LESSON_CONTENT_STEPS)[number];
 export const LESSON_READY_STEP: LessonContentStepName = "lessonReady";
 
 /**
- * A new goal: its skill graph (after research reads a class test's own material, `readExamNotice`;
- * a new exam's notice is read beside the plan and reconciles it without steps of its own), its
- * skills in the Library, placement's questions (written while the skills are saved), the plan,
- * the outlines and the first lessons.
+ * A new goal: its skill graph (after research reads a class test's own material, `readExamNotice`,
+ * or reads a stored exam notice again with newer instructions, `readNotice`; a new exam's notice
+ * is read beside the plan and reconciles it without steps of its own), its skills in the Library,
+ * placement's questions (written while the skills are saved), the plan, the outlines and the first
+ * lessons.
  */
 const GOAL_CONTENT_STEPS = [
   "joinRunningGoal",
   "understandGoal",
   "readExamNotice",
+  "readNotice",
   "buildSkillGraph",
   "saveSkills",
   "preparePlacement",
@@ -63,6 +65,35 @@ const TEST_OUT_QUESTIONS_STEPS = [
 export type TestOutQuestionsStepName = (typeof TEST_OUT_QUESTIONS_STEPS)[number];
 
 export const TEST_OUT_QUESTIONS_READY_STEP: TestOutQuestionsStepName = "testOutQuestionsReady";
+
+/**
+ * A goal's focus test questions, written when the learner starts the test. A run started while
+ * another one writes them reports `joinFocusTestQuestions` with that run's id.
+ */
+const FOCUS_TEST_QUESTIONS_STEPS = [
+  "joinFocusTestQuestions",
+  "writeFocusTestQuestions",
+  "focusTestQuestionsReady",
+] as const;
+
+export type FocusTestQuestionsStepName = (typeof FOCUS_TEST_QUESTIONS_STEPS)[number];
+
+export const FOCUS_TEST_QUESTIONS_READY_STEP: FocusTestQuestionsStepName =
+  "focusTestQuestionsReady";
+
+/**
+ * The questions a mock taken any time still needs, written when the learner starts it. A run
+ * started while another one writes them reports `joinMockQuestions` with that run's id.
+ */
+const MOCK_QUESTIONS_STEPS = [
+  "joinMockQuestions",
+  "writeMockQuestions",
+  "mockQuestionsReady",
+] as const;
+
+export type MockQuestionsStepName = (typeof MOCK_QUESTIONS_STEPS)[number];
+
+export const MOCK_QUESTIONS_READY_STEP: MockQuestionsStepName = "mockQuestionsReady";
 
 /**
  * An explain question: shared or personal, an explanation someone already asked for, or a new one.

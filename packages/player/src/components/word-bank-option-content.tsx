@@ -43,7 +43,7 @@ function WordBankOptionDescription({ children, id }: { children: ReactNode; id: 
  * aria-describedby, while this component owns the actual visual description.
  */
 function hasWordBankOptionDescription(option: WordBankOption): boolean {
-  return Boolean(option.romanization || option.pronunciation);
+  return Boolean(option.romanization);
 }
 
 /**
@@ -107,10 +107,6 @@ export function WordBankOptionButton({
         {hasDescription && (
           <WordBankOptionDescription id={descriptionId}>
             <RomanizationText>{option.romanization}</RomanizationText>
-
-            {option.pronunciation && (
-              <span className="text-muted-foreground text-xs">{option.pronunciation}</span>
-            )}
           </WordBankOptionDescription>
         )}
       </WordBankOptionContent>

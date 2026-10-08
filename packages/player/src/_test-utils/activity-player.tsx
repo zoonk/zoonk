@@ -1,9 +1,10 @@
 import { type PlayableStepImage } from "@zoonk/core/lesson-player/contract";
+import { type VoiceText } from "@zoonk/learn/speech/provider";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { expect } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { type ActivityContent, activityStep } from "./lesson-steps";
-import { type PlayerMode, buildLesson, renderLessonPlayer } from "./render-lesson-player";
+import { buildLesson, renderLessonPlayer } from "./render-lesson-player";
 
 /**
  * Helpers for the per-template activity specs (`activities-*.browser.test.tsx`): each one plays a
@@ -12,37 +13,33 @@ import { type PlayerMode, buildLesson, renderLessonPlayer } from "./render-lesso
 
 type ActivityTemplate = keyof typeof activityContentFixtures;
 
-/** Plays a one-screen lesson of the template's fixture, or of `content` when given. */
+/**
+ * Plays a one-screen lesson of the template's fixture, or of `content` when given. `voice` stands
+ * in for the speech clips endpoint when a test needs to see or change what it answers.
+ */
 export function openActivity({
   content,
   image,
-  mode = "focus",
   template,
+  voice,
 }: {
   content?: ActivityContent;
   image?: PlayableStepImage;
-  mode?: PlayerMode;
   template: ActivityTemplate;
+  voice?: VoiceText;
 }) {
   return renderLessonPlayer({
     lesson: buildLesson([
       activityStep({ content: content ?? activityContentFixtures[template], image }),
     ]),
-    mode,
+    ...(voice ? { voice } : {}),
   });
 }
 
 /** Plays a lesson of several activity screens, in the order given. */
-export function openActivities({
-  contents,
-  mode = "focus",
-}: {
-  contents: ActivityContent[];
-  mode?: PlayerMode;
-}) {
+export function openActivities({ contents }: { contents: ActivityContent[] }) {
   return renderLessonPlayer({
     lesson: buildLesson(contents.map((content) => activityStep({ content }))),
-    mode,
   });
 }
 
@@ -125,14 +122,14 @@ function escapeSvgText(value: string) {
 }
 
 /**
- * A drawn picture for a screen, inline so the tests don't depend on an image host: the same `img`
- * semantics without network errors or 404 fallbacks.
+ * A drawn picture for a screen, portrait like the pictures lessons draw, inline so the tests don't
+ * depend on an image host: the same `img` semantics without network errors or 404 fallbacks.
  */
 export function inlineImage({ alt }: { alt: string }): PlayableStepImage {
   const svg = [
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">',
-    '<rect width="1536" height="1024" fill="#f4f4f5" />',
-    '<text x="768" y="512" fill="#111827" font-family="Arial, sans-serif" font-size="36" text-anchor="middle">',
+    '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1280" viewBox="0 0 1024 1280">',
+    '<rect width="1024" height="1280" fill="#f4f4f5" />',
+    '<text x="512" y="640" fill="#111827" font-family="Arial, sans-serif" font-size="36" text-anchor="middle">',
     escapeSvgText(alt),
     "</text>",
     "</svg>",
@@ -140,9 +137,9 @@ export function inlineImage({ alt }: { alt: string }): PlayableStepImage {
 
   return {
     alt,
-    height: 1024,
+    height: 1280,
     id: crypto.randomUUID(),
     url: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
-    width: 1536,
+    width: 1024,
   };
 }

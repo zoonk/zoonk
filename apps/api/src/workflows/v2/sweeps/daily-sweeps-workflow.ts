@@ -6,9 +6,11 @@ import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow
 import {
   countOpenReviewFlagsStep,
   deleteInactiveGuestsStep,
+  deleteRetiredStepsStep,
   listDueFreshnessTargetsStep,
   listLessonsForLaterReviewStep,
   purgeEvaluationRunsStep,
+  purgeExpiredVerificationsStep,
   purgeMemoryFactsStep,
   recalibrateItemDifficultiesStep,
 } from "./steps/sweep-steps";
@@ -24,6 +26,8 @@ export type DailySweepsResult = {
   itemsRecalibrated: number;
   laterReviews: number;
   memoryFactsPurged: number;
+  retiredStepsDeleted: number;
+  verificationsPurged: number;
 };
 
 /** A sweep that failed counts as having done nothing; the next day runs it again. */
@@ -80,21 +84,26 @@ async function startLaterReviews(): Promise<number> {
  * whose freshness check is due, delete guests inactive for 30 days (with everything they
  * created), purge memory facts deleted or expired more than 30 days ago and evaluation runs older
  * than 30 days, recalibrate the difficulty of questions answered that day, start the later check
- * of lessons made ahead of time, and rewrite what was built on a source that changed.
+ * of lessons made ahead of time, rewrite what was built on a source that changed, delete the
+ * screens of lesson versions replaced more than a day ago and the sign-in codes that expired more
+ * than a day ago.
  */
 export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
   "use workflow";
 
   // Each sweep stands alone: one failing doesn't keep the others from running.
-  const [checks, guests, facts, runs, items, reviews, flagged] = await Promise.allSettled([
-    checkFreshness(),
-    deleteGuests(),
-    purgeMemoryFactsStep(),
-    purgeEvaluationRunsStep(),
-    recalibrateItemDifficultiesStep(),
-    startLaterReviews(),
-    rewriteFlaggedContent(),
-  ]);
+  const [checks, guests, facts, runs, items, reviews, flagged, retired, verifications] =
+    await Promise.allSettled([
+      checkFreshness(),
+      deleteGuests(),
+      purgeMemoryFactsStep(),
+      purgeEvaluationRunsStep(),
+      recalibrateItemDifficultiesStep(),
+      startLaterReviews(),
+      rewriteFlaggedContent(),
+      deleteRetiredStepsStep(),
+      purgeExpiredVerificationsStep(),
+    ]);
 
   return {
     evaluationRunsPurged: countOf(runs),
@@ -104,5 +113,7 @@ export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
     itemsRecalibrated: countOf(items),
     laterReviews: countOf(reviews),
     memoryFactsPurged: countOf(facts),
+    retiredStepsDeleted: countOf(retired),
+    verificationsPurged: countOf(verifications),
   };
 }

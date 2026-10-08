@@ -5,7 +5,10 @@ import { type PlannedLesson } from "../session-builder";
 
 type LessonWithSkills = Lesson & { skills: { skillId: string }[] };
 
-type LearnItem = Pick<PlanItem, "chapterId" | "id" | "kind" | "lessonId" | "titleSnapshot">;
+type LearnItem = Pick<
+  PlanItem,
+  "chapterId" | "id" | "kind" | "lessonId" | "skillId" | "titleSnapshot"
+>;
 
 const LESSON_INCLUDE = {
   skills: { orderBy: { createdAt: "asc" }, select: { skillId: true } },
@@ -15,7 +18,7 @@ function toPlannedLesson({
   item,
   lesson,
 }: {
-  item: Pick<LearnItem, "chapterId" | "id" | "titleSnapshot"> | null;
+  item: Pick<LearnItem, "chapterId" | "id" | "skillId" | "titleSnapshot"> | null;
   lesson: LessonWithSkills;
 }): PlannedLesson {
   return {
@@ -24,6 +27,7 @@ function toPlannedLesson({
     lessonId: lesson.id,
     minutes: lesson.estimatedMinutes || DEFAULT_LESSON_MINUTES,
     planItemId: item?.id ?? null,
+    planSkillId: item?.skillId ?? null,
     skillIds: lesson.skills.map((skill) => skill.skillId),
     title: lesson.title,
   };
@@ -125,6 +129,7 @@ export async function loadPlanLessons({
           lessonId: null,
           minutes: DEFAULT_LESSON_MINUTES,
           planItemId: item.id,
+          planSkillId: item.skillId,
           skillIds: [],
           title: item.titleSnapshot,
         },

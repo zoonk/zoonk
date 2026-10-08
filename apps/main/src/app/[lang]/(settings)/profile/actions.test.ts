@@ -8,7 +8,7 @@ vi.mock("@zoonk/core/users/current", () => ({ updateCurrentUser: vi.fn() }));
 function createProfileFormData(): FormData {
   const formData = new FormData();
   formData.set("name", "Updated learner");
-  formData.set("username", "updated-learner");
+  formData.set("username", "updated_learner");
   return formData;
 }
 
@@ -21,7 +21,7 @@ describe(profileFormAction, () => {
     expect(result.status).toBe("success");
 
     expect(updateCurrentUser).toHaveBeenCalledExactlyOnceWith({
-      input: { name: "Updated learner", username: "updated-learner" },
+      input: { name: "Updated learner", username: "updated_learner" },
     });
   });
 

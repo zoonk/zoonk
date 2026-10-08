@@ -16,10 +16,19 @@ import { upsertDailyProgress } from "../stats/daily-progress";
 import { finishLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
 import { trackLessonCompleted } from "./_utils/lesson-events";
-import { findPlayableLessonRow } from "./_utils/lesson-rows";
-import { findLessonRun, getRunStudySessionId, hasFinishedLessonBefore } from "./_utils/lesson-runs";
+import { findOpenedVersion, findPlayableLessonRow, isOwnExplanation } from "./_utils/lesson-rows";
+import {
+  findLessonRun,
+  hasFinishedLessonBefore,
+  loadProgressRuns,
+  toSittings,
+} from "./_utils/lesson-runs";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
-import { type LibraryLessonCompletion, type LibraryLessonCompletionInput } from "./contract";
+import {
+  type LibraryLessonCompletion,
+  type LibraryLessonCompletionInput,
+  type PlayableLibraryStep,
+} from "./contract";
 import { type LessonRunTally, isAnswerableStep, tallyLessonRun } from "./lesson-run";
 import { scoreLibraryLesson } from "./lesson-score";
 
@@ -35,6 +44,7 @@ type RunCompletion = Omit<LibraryLessonCompletion, "studyBlock">;
 type CompletionRun = {
   lessonId: string;
   run: LearningEvent;
+  /** The skills whose next review the completion announces. */
   skillIds: string[];
   timeZone: string;
   userId: string;
@@ -42,6 +52,10 @@ type CompletionRun = {
 
 /** The earliest review of the lesson's skills, which the completion moment announces. */
 async function getNextReviewAt({ skillIds, userId }: { skillIds: string[]; userId: string }) {
+  if (skillIds.length === 0) {
+    return null;
+  }
+
   const next = await prisma.learnerSkill.findFirst({
     orderBy: { due: "asc" },
     select: { due: true },
@@ -189,9 +203,56 @@ async function withStudyBlock({
 }
 
 /**
+ * The answers the completion counts: every answerable screen's, since the first sitting the
+ * learner left unfinished (this run's when there's none), with the sittings to score them by.
+ */
+async function loadLessonAttempts({
+  sittings,
+  steps,
+  userId,
+}: {
+  sittings: Sittings;
+  steps: Pick<PlayableLibraryStep, "id" | "kind">[];
+  userId: string;
+}) {
+  const answerable = steps.filter((step) => isAnswerableStep(step)).map((step) => step.id);
+
+  return prisma.attempt.findMany({
+    orderBy: { answeredAt: "asc" },
+    select: { answeredAt: true, id: true, isCorrect: true, itemId: true, stepId: true },
+    where: { answeredAt: { gte: sittings[0]?.startedAt }, stepId: { in: answerable }, userId },
+  });
+}
+
+type Sittings = Awaited<ReturnType<typeof loadProgressRuns>> | [LearningEvent];
+
+/**
+ * The run's sittings (see `loadProgressRuns`) and the lesson as the learner played it: the
+ * version they opened, which a check may have replaced since (`findOpenedVersion`).
+ */
+async function loadPlayedLesson({
+  lessonId,
+  run,
+  userId,
+}: {
+  lessonId: string;
+  run: LearningEvent;
+  userId: string;
+}) {
+  const progress = await loadProgressRuns({ lessonId, until: run.startedAt, userId });
+  const sittings: Sittings = progress.length > 0 ? progress : [run];
+  const since = sittings[0]?.startedAt;
+  const version = await findOpenedVersion({ lessonId, since, userId });
+  const lesson = await findPlayableLessonRow({ lessonId, userId, version });
+
+  return { lesson, sittings };
+}
+
+/**
  * Finishes a run of a Library lesson for the learner or guest in the session. The server
  * re-validates it from the answers it graded: every screen that takes an answer was answered in
- * this run, or "I know this" got every check right. Then the ledger row closes, and Brain Power,
+ * this run or in an earlier sitting the learner left unfinished (see `loadProgressRuns`), or "I
+ * know this" got every check right. Then the ledger row closes, and Brain Power,
  * Energy and the day's totals are added. Completing the same run again returns the same result;
  * only the completion that closed the run counts as "Lesson Completed".
  */
@@ -214,10 +275,11 @@ export async function completeLibraryLesson({
 
   const userId = session.user.id;
 
-  const [lesson, run] = await Promise.all([
-    findPlayableLessonRow({ lessonId, userId }),
-    findLessonRun({ lessonId, runId: input.runId, userId }),
-  ]);
+  const run = await findLessonRun({ lessonId, runId: input.runId, userId });
+
+  const { lesson, sittings } = run
+    ? await loadPlayedLesson({ lessonId, run, userId })
+    : { lesson: null, sittings: [] };
 
   if (!lesson || !run) {
     return { status: "notFound" };
@@ -233,12 +295,16 @@ export async function completeLibraryLesson({
   // A language lesson finishes without the practice the learner left out of their plan.
   const steps = filterSkippedSteps({ activities: skippedActivities, steps: allSteps });
 
-  const skillIds = [
-    ...new Set([
-      ...lesson.skills.map((skill) => skill.skillId),
-      ...steps.flatMap((step) => (step.skillId ? [step.skillId] : [])),
-    ]),
-  ];
+  // A quick explanation never comes back in a review (reviews come with a study plan's sessions,
+  // which explanations aren't part of), so its completion announces none.
+  const skillIds = isOwnExplanation(lesson)
+    ? []
+    : [
+        ...new Set([
+          ...lesson.skills.map((skill) => skill.skillId),
+          ...steps.flatMap((step) => (step.skillId ? [step.skillId] : [])),
+        ]),
+      ];
 
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
 
@@ -252,14 +318,7 @@ export async function completeLibraryLesson({
     };
   }
 
-  const answerable = steps.filter((step) => isAnswerableStep(step)).map((step) => step.id);
-
-  const attempts = await prisma.attempt.findMany({
-    orderBy: { answeredAt: "asc" },
-    select: { answeredAt: true, id: true, isCorrect: true, itemId: true, stepId: true },
-    where: { answeredAt: { gte: run.startedAt }, stepId: { in: answerable }, userId },
-  });
-
+  const attempts = await loadLessonAttempts({ sittings, steps, userId });
   const tally = tallyLessonRun({ attempts, steps });
 
   if (!tally.isComplete) {
@@ -268,7 +327,7 @@ export async function completeLibraryLesson({
 
   const { brainPower: answerPoints } = await scoreLessonAnswers({
     answers: attempts,
-    studySessionId: getRunStudySessionId(run),
+    sittings: toSittings(sittings),
     userId,
   });
 

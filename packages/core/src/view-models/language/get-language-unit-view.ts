@@ -3,18 +3,16 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { findLearnerLanguageGoal } from "../../language/_utils/language-goal";
 import { getSpeakingLevel } from "../../language/conversations/_utils/conversation-goal";
-import {
-  PRACTICE_CONVERSATION_MINUTES,
-  conversationScenarioSchema,
-} from "../../language/conversations/conversation-contract";
+import { loadPracticeCall } from "../../language/conversations/_utils/practice-call";
 import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
+import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
+import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { loadLanguageUnits } from "../../language/units/language-units";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { getSession } from "../../users/get-session";
 import { loadGrammarTips, loadUnitMistakes, loadUnitWords } from "./_utils/unit-content";
 import { type LanguageUnitView } from "./language-view-contract";
-
-const DEFAULT_PRACTICE_MINUTES = 2;
 
 export type LanguageUnitViewResult =
   | { status: "notFound" | "notLanguage" | "unauthorized" }
@@ -24,7 +22,17 @@ function findVisibleUnit({ chapterId, userId }: { chapterId: string; userId: str
   return prisma.chapter.findFirst({
     include: {
       lessons: {
-        include: { lesson: { select: { id: true, title: true } } },
+        include: {
+          lesson: {
+            select: {
+              contentStatus: true,
+              estimatedMinutes: true,
+              id: true,
+              summary: true,
+              title: true,
+            },
+          },
+        },
         orderBy: { position: "asc" },
       },
     },
@@ -32,24 +40,11 @@ function findVisibleUnit({ chapterId, userId }: { chapterId: string; userId: str
   });
 }
 
-/** Who the learner talks to in the unit's call, once a call at their level was written. */
-async function findCharacter({ chapterId, level }: { chapterId: string; level: string }) {
-  const saved = await prisma.conversationScenario.findUnique({
-    select: { content: true },
-    where: { chapterLevel: { chapterId, level } },
-  });
-
-  const scenario = conversationScenarioSchema.safeParse(saved?.content);
-
-  return scenario.success
-    ? { name: scenario.data.character.name, role: scenario.data.character.role }
-    : null;
-}
-
 /**
- * A language unit's page, for Focus and Fun alike: its "I can" objectives and lessons, the grammar
- * tips pinned from its lessons, the words it teaches, the learner's open mistakes on it by skill,
- * and the conversation to practice (1 to 5 minutes).
+ * A language unit's page: its "I can" objectives and lessons with the summaries the finished ones
+ * left, the grammar tips pinned from its lessons, the words it teaches, the learner's open mistakes
+ * on it by skill with a pattern noticed in them, the words to say again today, and the
+ * conversation to practice, with the lengths the learner's call time holds now.
  */
 export async function getLanguageUnitView({
   chapterId,
@@ -58,6 +53,8 @@ export async function getLanguageUnitView({
   chapterId: string;
   goalId?: string;
 }): Promise<LanguageUnitViewResult> {
+  "use cache: private";
+
   const session = await getSession();
 
   if (!session) {
@@ -80,12 +77,13 @@ export async function getLanguageUnitView({
   const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
-  const [units, level, grammarTips, words, mistakes] = await Promise.all([
+  const [units, level, grammarTips, words, mistakes, pronunciation] = await Promise.all([
     goal ? loadLanguageUnits(goal) : [],
     getSpeakingLevel({ goal, targetLanguage, userId }),
     loadGrammarTips(lessonIds),
     loadUnitWords(lessonIds),
     loadUnitMistakes({ lessonIds, userId }),
+    loadDuePronunciation({ language: targetLanguage, userId }),
   ]);
 
   const unit = units.find((candidate) => candidate.chapterId === chapter.id);
@@ -94,22 +92,37 @@ export async function getLanguageUnitView({
     unit?.lessons.filter((lesson) => lesson.done).map((lesson) => lesson.lessonId),
   );
 
+  const pattern =
+    mistakes.length > 0
+      ? await findFreshMistakePattern({
+          language: targetLanguage,
+          mistakeIds: mistakes.map((mistake) => mistake.id),
+          userId,
+        })
+      : null;
+
+  const summaries = chapter.lessons.flatMap(({ lesson }) => {
+    const ideas = done.has(lesson.id) ? toSummaryIdeas(lesson.summary) : [];
+    return ideas.length > 0 ? [{ ideas, lessonId: lesson.id, title: lesson.title }] : [];
+  });
+
   return {
     status: "ready",
     unit: {
-      conversation: {
-        character: await findCharacter({ chapterId: chapter.id, level }),
-        defaultMinutes: DEFAULT_PRACTICE_MINUTES,
-        minutes: [...PRACTICE_CONVERSATION_MINUTES],
-      },
+      conversation: await loadPracticeCall({ chapterId: chapter.id, level }),
       goalId: goal?.id ?? null,
       grammarTips,
       lessons: chapter.lessons.map(({ lesson }) => ({
         done: done.has(lesson.id),
         lessonId: lesson.id,
+        minutes: lesson.estimatedMinutes,
         title: lesson.title,
+        written: lesson.contentStatus === "completed",
       })),
       mistakes,
+      pattern,
+      pronunciation,
+      summaries,
       unit: {
         chapterId: chapter.id,
         description: chapter.description,

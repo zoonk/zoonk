@@ -47,6 +47,24 @@ describe("native session errors", () => {
   );
 
   it.each(sessionErrorMappers)(
+    "maps a browser-looking request without a trusted Origin to UNTRUSTED_ORIGIN",
+    async (mapError) => {
+      const response = mapError(
+        new NativeAuthResponseError({
+          body: { code: "MISSING_OR_NULL_ORIGIN", message: "Missing or null Origin" },
+          statusCode: 403,
+        }),
+      );
+
+      expect(response?.status).toBe(403);
+
+      await expect(response?.json()).resolves.toMatchObject({
+        error: { code: "UNTRUSTED_ORIGIN" },
+      });
+    },
+  );
+
+  it.each(sessionErrorMappers)(
     "maps auth rate limits to the stable product error",
     async (mapError) => {
       const response = mapError(

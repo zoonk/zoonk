@@ -1,7 +1,8 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { normalizeString } from "@zoonk/utils/string";
-import { stripOptionLabels } from "../_utils/answer-options";
+import { findOptionPositionReferences, stripOptionLabels } from "../_utils/answer-options";
+import { getVisualProblems } from "../quality/_utils/visual-references";
 import { checkMathProblem } from "./item-math-checks";
 import { optionsShowWorkedValues } from "./option-leaks";
 
@@ -25,6 +26,7 @@ function checkMultipleChoice(
   const texts = options.map((option) => option.text);
   const correct = options.filter((option) => option.isCorrect);
   const wrong = options.filter((option) => !option.isCorrect);
+  const [position] = options.flatMap((option) => findOptionPositionReferences(option.reason));
 
   return [
     correct.length !== 1 && `Has ${correct.length} correct options instead of 1.`,
@@ -37,6 +39,8 @@ function checkMultipleChoice(
     wrong.some((option) => isBlank(option.misconception)) && "A wrong option has no misconception.",
     optionsShowWorkedValues({ options: texts, stem: `${item.context ?? ""} ${item.question}` }) &&
       "Options show the worked-out values that decide the answer.",
+    position !== undefined &&
+      `A reason points at an option by its place ("${position}"); options are shuffled, so name it by what it says.`,
   ];
 }
 
@@ -85,6 +89,46 @@ function getQuestion(item: GeneratedItem): string {
   return item.format === "trueFalse" ? item.statement : item.question;
 }
 
+/** Every text a learner reads with the question: its support text, command and options. */
+function getItemTexts(item: GeneratedItem): string[] {
+  const context = "context" in item ? [item.context ?? ""] : [];
+
+  switch (item.format) {
+    case "multipleChoice":
+      return [...context, item.question, ...item.options.map((option) => option.text)];
+    case "matchPairs":
+      return [item.question, ...item.pairs.flatMap((pair) => [pair.left, pair.right])];
+    case "order":
+      return [item.question, ...item.steps];
+    case "trueFalse":
+    case "typed":
+    case "spoken":
+    case "essay":
+    case "numeric":
+      return [...context, getQuestion(item)];
+    default:
+      throw new Error("Unknown item format.");
+  }
+}
+
+/**
+ * A question shows what its words point at: a table in Markdown in its context, a chart or a
+ * timeline as its `visual`, and a picture (a diagram, a map, a figure) as its `image`, drawn before
+ * it's stored. Formats without an `image` (math problems, whose numbers change every time,
+ * matching, ordering, spoken and essay questions) ask another way.
+ */
+function checkVisuals(item: GeneratedItem, language: string): Problem[] {
+  return getVisualProblems({
+    canShowImage: "image" in item,
+    language,
+    shown: {
+      hasImage: "image" in item && item.image !== null,
+      texts: getItemTexts(item),
+      visual: "visual" in item ? item.visual : null,
+    },
+  });
+}
+
 function checkFormat(item: GeneratedItem, optionCount: number | null): Problem[] {
   switch (item.format) {
     case "multipleChoice":
@@ -110,17 +154,21 @@ function checkFormat(item: GeneratedItem, optionCount: number | null): Problem[]
 /**
  * The code checks every item passes before it is stored: one right answer,
  * options a learner can tell apart, a reason and a misconception for every
- * wrong option, key points for open answers and math recomputed from its data.
+ * wrong option, key points for open answers, math recomputed from its data and
+ * every table, chart, timeline or picture its words point at shown with it.
  * Returns one line per problem, so an empty list means the item passes.
  */
 export function checkItem({
   expectedFormat,
   item,
+  language,
   optionCount = null,
 }: {
   /** The format the item was generated for; a model can answer in the wrong one. */
   expectedFormat?: GeneratedItem["format"];
   item: GeneratedItem;
+  /** The item's language, for the words that point at a table, chart or picture. */
+  language: string;
   /** Options every multiple-choice item must have, such as 5 for ENEM. */
   optionCount?: number | null;
 }): string[] {
@@ -130,5 +178,6 @@ export function checkItem({
       `Is ${item.format} instead of ${expectedFormat}.`,
     isBlank(getQuestion(item)) && "The question is empty.",
     ...checkFormat(item, optionCount),
+    ...checkVisuals(item, language),
   ].filter((problem) => typeof problem === "string");
 }

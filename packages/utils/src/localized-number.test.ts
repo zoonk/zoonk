@@ -22,6 +22,28 @@ describe(fractionDigitsFor, () => {
     expect(fractionDigitsFor(5.25)).toBe(2);
     expect(fractionDigitsFor(0.125)).toBe(3);
   });
+
+  it("keeps three significant digits for tiny values, so they never read as 0", () => {
+    expect(fractionDigitsFor(0.000075)).toBe(7);
+
+    expect(
+      formatLocalizedNumber({
+        locale: "en",
+        maximumFractionDigits: fractionDigitsFor(0.000075),
+        value: 0.000075,
+      }),
+    ).toBe("0.000075");
+
+    expect(
+      formatLocalizedNumber({
+        locale: "pt",
+        maximumFractionDigits: fractionDigitsFor(1e-10),
+        value: 1e-10,
+      }),
+    ).toBe("0,0000000001");
+
+    expect(fractionDigitsFor(0)).toBe(3);
+  });
 });
 
 describe(parseLocalizedNumber, () => {

@@ -106,9 +106,9 @@ describe("guest and newcomer usage", () => {
   it("lets a guest start their goal after a day's small AI help, and use everything else they're allowed", async () => {
     const guest = await useGuest();
 
-    const used = (["assist", "explanation", "lessonStart"] as const).map((kind) => ({
+    const used = (["assist", "explanation", "lessonStart", "mindMap"] as const).map((kind) => ({
       costMicros: getEstimatedCostMicros({ generated: true, kind }),
-      count: { assist: 40, explanation: 5, lessonStart: 1 }[kind],
+      count: { assist: 40, explanation: 5, lessonStart: 1, mindMap: 1 }[kind],
       createdAt: new Date(),
       generated: true,
       kind,
@@ -120,6 +120,27 @@ describe("guest and newcomer usage", () => {
     // The goal weighs the most, and still fits in the guest's day after every other use.
     await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toStrictEqual({
       status: "allowed",
+    });
+  });
+
+  it("gives a guest one new mind map, while reading one that exists stays free", async () => {
+    await useGuest();
+    const chapterId = randomUUID();
+
+    await expect(
+      claimUsage({ generated: true, kind: "mindMap", targetId: chapterId }),
+    ).resolves.toStrictEqual({ status: "allowed" });
+
+    // Asking again for the same chapter's map, after a failed run, doesn't count twice.
+    await expect(
+      claimUsage({ generated: true, kind: "mindMap", targetId: chapterId }),
+    ).resolves.toStrictEqual({ status: "allowed" });
+
+    await expect(
+      claimUsage({ generated: true, kind: "mindMap", targetId: randomUUID() }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 1, period: "total", resource: "mindMap", tier: "guest" },
+      status: "limitReached",
     });
   });
 
@@ -140,6 +161,35 @@ describe("guest and newcomer usage", () => {
       status: "limitReached",
     });
   });
+
+  it.each([
+    { day: 40, kind: "assist", month: 100 },
+    { day: 5, kind: "explanation", month: 10 },
+  ] as const)(
+    "caps a guest's $kind at $day a day and $month a month",
+    async ({ day, kind, month }) => {
+      // Mid-month, so the month's earlier days are this month's.
+      vi.setSystemTime(new Date(Date.UTC(2300 + Math.floor(Math.random() * 1000), 0, 15, 12)));
+      const now = new Date();
+      const guest = await useGuest();
+
+      await usageRecordsFixture({ count: day, createdAt: now, kind, userId: guest.id });
+
+      await expect(claimUsage({ kind, targetId: randomUUID() })).resolves.toStrictEqual({
+        limit: { limit: day, period: "day", resource: kind, tier: "guest" },
+        status: "limitReached",
+      });
+
+      const other = await useGuest();
+      const earlier = new Date(now.getTime() - 10 * MS_PER_DAY);
+      await usageRecordsFixture({ count: month, createdAt: earlier, kind, userId: other.id });
+
+      await expect(claimUsage({ kind, targetId: randomUUID() })).resolves.toStrictEqual({
+        limit: { limit: month, period: "month", resource: kind, tier: "guest" },
+        status: "limitReached",
+      });
+    },
+  );
 
   it("stops newcomers' AI work for everyone when the shared daily budget runs out", async () => {
     await prisma.newcomerSpendDay.create({

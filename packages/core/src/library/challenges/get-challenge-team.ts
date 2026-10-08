@@ -31,13 +31,16 @@ type ChallengeTeamOutcome =
  * guest): the team kept with their plan, created from a curated list of names in the lesson's
  * language when their first challenge is played. A learner without a plan gets a team picked from
  * their account, the same every time. A lesson that doesn't exist or isn't theirs to see is
- * `notFound`; without a session, colleagues go by role.
+ * `notFound`; without a session, colleagues go by role. Private cached, so a prefetched lesson
+ * opens with its team; keeping the team the first time is idempotent, so a prefetch may do it.
  */
 export async function getChallengeTeam({
   lessonId,
 }: {
   lessonId: string;
 }): Promise<ChallengeTeamOutcome> {
+  "use cache: private";
+
   const session = await getSession();
 
   if (!session) {

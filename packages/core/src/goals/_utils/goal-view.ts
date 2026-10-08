@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { chooseNextItem } from "../../plans/_utils/plan-phase-views";
 import { getWeekdayMinutes, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type GoalView } from "../goal-contract";
@@ -20,9 +21,8 @@ function getStudyDays({ dailyMinutes, settings }: { dailyMinutes: number; settin
 const WRITING_ITEM = { chapterId: null, kind: "lesson" as const, lessonId: null };
 
 /**
- * `findCurrentPhase` for many plans at once, in SQL: the phase of each plan's next thing to do (a
- * written one before a stand-in still waiting for its lessons), or its last phase once everything
- * is done. Null for a plan without items.
+ * `findCurrentPhase` for many plans at once, in SQL: the phase of each plan's next thing to do
+ * (`chooseNextItem`), or its last phase once everything is done. Null for a plan without items.
  */
 export async function loadCurrentPhases(
   plans: readonly Pick<PlanRow, "id" | "phases">[],
@@ -34,24 +34,30 @@ export async function loadCurrentPhases(
     prisma.planItem.findMany({
       distinct: ["planId"],
       orderBy: [{ planId: "asc" }, { position: "asc" }],
-      select: { phase: true, planId: true },
+      select: { kind: true, phase: true, planId: true, position: true },
       where: { NOT: WRITING_ITEM, planId: { in: planIds }, status: "todo" },
     }),
     prisma.planItem.findMany({
       distinct: ["planId"],
       orderBy: [{ planId: "asc" }, { position: "asc" }],
-      select: { phase: true, planId: true },
+      select: { kind: true, phase: true, planId: true, position: true },
       where: { planId: { in: planIds }, status: "todo" },
     }),
   ]);
-
-  const nextItems = [...nextWritten, ...next];
 
   return new Map(
     plans.map((plan) => {
       const phaseCount = parsePlanPhases(plan.phases).length;
       const hasItems = withItems.some((row) => row.planId === plan.id);
-      const phase = nextItems.find((row) => row.planId === plan.id)?.phase;
+      const first = next.find((row) => row.planId === plan.id);
+      const written = nextWritten.find((row) => row.planId === plan.id);
+
+      const phase = chooseNextItem({
+        first,
+        written,
+        writtenIsLater: written !== undefined && written.position !== first?.position,
+      })?.phase;
+
       const last = hasItems && phaseCount > 0 ? phaseCount - 1 : null;
 
       return [plan.id, phase ?? last];

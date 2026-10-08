@@ -86,19 +86,20 @@ describe(toMemoryCandidates, () => {
     expect(candidates.map((candidate) => candidate.statement)).toStrictEqual(["Wants Law"]);
   });
 
-  it("reads session numbers only as noticed learning and routine facts", () => {
+  it("reads session numbers only as noticed learning facts, never when or how long they study", () => {
     const candidates = toMemoryCandidates({
       categories: ALL,
       facts: [
         fact({ category: "goals", statement: "Wants a high score" }),
-        fact({ category: "routine", origin: "said", statement: "Studies after 8 pm" }),
+        fact({ category: "routine", origin: "said", statement: "Studies about 6 minutes a day" }),
+        fact({ category: "learning", origin: "said", statement: "Mixes up fractions" }),
       ],
       source: "session",
       today: TODAY,
     });
 
     expect(candidates).toMatchObject([
-      { category: "routine", confidence: 0.6, origin: "noticed", statement: "Studies after 8 pm" },
+      { category: "learning", confidence: 0.6, origin: "noticed", statement: "Mixes up fractions" },
     ]);
   });
 

@@ -13,19 +13,12 @@ async function generateAudio({
   orgSlug,
   targetLanguage,
   text,
-  textType,
 }: {
   orgSlug: string;
   targetLanguage: string;
   text: string;
-  textType: "sentence" | "word";
 }): Promise<VoicedClip | null> {
-  const { data, error } = await generateLanguageAudio({
-    language: targetLanguage,
-    orgSlug,
-    text,
-    textType,
-  });
+  const { data, error } = await generateLanguageAudio({ language: targetLanguage, orgSlug, text });
 
   if (error) {
     logError(`Error generating audio for "${text}":`, error);
@@ -55,7 +48,7 @@ async function fillWordAudio({
   targetLanguage: string;
   word: AudioTarget;
 }) {
-  const clip = await generateAudio({ orgSlug, targetLanguage, text: word.text, textType: "word" });
+  const clip = await generateAudio({ orgSlug, targetLanguage, text: word.text });
 
   if (clip) {
     await prisma.word.updateMany({
@@ -74,12 +67,7 @@ async function fillSentenceAudio({
   sentence: AudioTarget;
   targetLanguage: string;
 }) {
-  const clip = await generateAudio({
-    orgSlug,
-    targetLanguage,
-    text: sentence.text,
-    textType: "sentence",
-  });
+  const clip = await generateAudio({ orgSlug, targetLanguage, text: sentence.text });
 
   if (clip) {
     await prisma.sentence.updateMany({

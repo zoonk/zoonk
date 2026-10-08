@@ -87,7 +87,6 @@ export const pedroMinor: SeedLearner = {
   language: "pt",
   memory: [{ category: "goals", origin: "said", statement: "Quer aprender a investir a mesada" }],
   milestones: [],
-  mode: "focus",
   name: "Pedro Lima",
   session: {
     blocks: [

@@ -4,18 +4,21 @@ import { type ShortExamFocus, type ShortPhaseView } from "@zoonk/core/plans/view
 import { useExtracted } from "next-intl";
 import { usePlanScreen } from "./plan-context";
 
-/** What a day of a plan for a test days away is for, as both modes say it. */
+/**
+ * What a day of a plan for a test days away is for. Without mocks in the learner's plan (they come
+ * with Plus), the short mock's day is a full review of every topic instead.
+ */
 export function useShortFocusName() {
   const t = useExtracted();
 
-  return (focus: ShortExamFocus): string => {
+  return (focus: ShortExamFocus, { mocksRequirePlus = false } = {}): string => {
     switch (focus) {
       case "mapAndGaps":
         return t("Exam map and gaps");
       case "practice":
         return t("Practice");
       case "mockAndReview":
-        return t("Short mock and review");
+        return mocksRequirePlus ? t("Full review") : t("Short mock and review");
       case "lightReview":
         return t("Light review");
       default:

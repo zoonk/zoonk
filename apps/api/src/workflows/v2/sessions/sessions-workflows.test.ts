@@ -32,7 +32,6 @@ import { mockHookConflict } from "../../../../mocks/workflow";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { lessonSpecsWorkflow } from "../lessons/lesson-specs-workflow";
 import { sessionPreparationWorkflow } from "./session-preparation-workflow";
 import type * as StepVariantTask from "@zoonk/ai/tasks/v2/variants/step-variant";
 
@@ -112,6 +111,7 @@ async function nurseWithWrittenLessons() {
       kind: "explanation" as const,
       text: "Here's what `python --version` prints: `Python 3.13.1`.",
       title: "What the terminal shows",
+      visual: null,
     }),
   );
 
@@ -122,6 +122,7 @@ async function nurseWithWrittenLessons() {
           context: "A patient's chart shows two doses a day.",
           difficulty: "easy" as const,
           format: "multipleChoice" as const,
+          image: null,
           options: [
             { isCorrect: true, misconception: null, reason: "Right.", text: "Twice a day" },
             {
@@ -132,6 +133,7 @@ async function nurseWithWrittenLessons() {
             },
           ],
           question: "How often is it given?",
+          visual: null,
         },
       ],
     }),
@@ -188,21 +190,22 @@ describe(sessionPreparationWorkflow, () => {
       userId: user.id,
     });
 
-    expect(result).toMatchObject({ specLessonIds: [], status: "prepared" });
-
-    expect(result.status === "prepared" && result.lessonIds.toSorted()).toStrictEqual(
-      [todayLesson.id, tomorrowLesson.id].toSorted(),
-    );
+    expect(result).toStrictEqual({
+      laterLessonIds: [tomorrowLesson.id],
+      lessonIds: [todayLesson.id],
+      status: "prepared",
+    });
 
     const analytics = { distinctId: user.id, goalId: goal.id, platform: "ios" };
 
-    // Today's next lesson is minutes away, so it's written at the priority tier; tomorrow's can wait.
+    // Today's next lesson is minutes away, so it's written at the standard tier; tomorrow's is
+    // hours away, so it's written at the flex tier, about half the price.
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-      { analytics, forExam: false, lessonId: todayLesson.id, priority: true },
+      { analytics, forExam: false, lessonId: todayLesson.id },
     ]);
 
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
-      { analytics, forExam: false, lessonId: tomorrowLesson.id },
+      { analytics, forExam: false, lessonId: tomorrowLesson.id, wait: "later" },
     ]);
 
     expect(vi.mocked(createHook)).toHaveBeenCalledWith({ token: `session-prep:${user.id}` });
@@ -313,82 +316,25 @@ describe(sessionPreparationWorkflow, () => {
     });
   });
 
-  it("plans the specs of the chapter after the one being studied, for the learner's client", async () => {
+  it("outlines at the flex tier the first chapters of a skill due soon that no course teaches yet", async () => {
     const user = await userFixture();
     const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
 
-    const [goal, course, studiedChapter, nextChapter] = await Promise.all([
+    const [goal, course, skill] = await Promise.all([
       goalFixture({ userId: user.id }),
-      courseFixture(),
-      libraryChapterFixture(),
-      libraryChapterFixture(),
+      courseFixture({ outlineStatus: "completed" }),
+      skillFixture(),
     ]);
-
-    const [session, studied, unplanned, planned] = await Promise.all([
-      studySessionFixture({ goalId: goal.id, localDate: today, userId: user.id }),
-      libraryLessonFixture({ homeChapterId: studiedChapter.id }),
-      libraryLessonFixture({ homeChapterId: nextChapter.id }),
-      libraryLessonFixture({ homeChapterId: nextChapter.id, specStatus: "completed" }),
-      courseChapterFixture({ chapterId: studiedChapter.id, courseId: course.id, position: 0 }),
-      courseChapterFixture({ chapterId: nextChapter.id, courseId: course.id, position: 1 }),
-    ]);
-
-    await Promise.all([
-      chapterLessonFixture({ chapterId: studiedChapter.id, lessonId: studied.id, position: 0 }),
-      chapterLessonFixture({ chapterId: nextChapter.id, lessonId: unplanned.id, position: 0 }),
-      chapterLessonFixture({ chapterId: nextChapter.id, lessonId: planned.id, position: 1 }),
-      studySessionBlockFixture({ lessonId: studied.id, position: 0, sessionId: session.id }),
-    ]);
-
-    await expect(
-      sessionPreparationWorkflow({
-        goalId: goal.id,
-        platform: "android",
-        timeZone: TIME_ZONE,
-        userId: user.id,
-      }),
-    ).resolves.toStrictEqual({
-      lessonIds: [studied.id],
-      specLessonIds: [unplanned.id],
-      status: "prepared",
-    });
-
-    expect(start).toHaveBeenCalledWith(lessonSpecsWorkflow, [
-      {
-        analytics: { distinctId: user.id, goalId: goal.id, platform: "android" },
-        lessonIds: [unplanned.id],
-      },
-    ]);
-  });
-
-  it("outlines the next chapter of a language skill whose stand-in is due soon", async () => {
-    const user = await userFixture();
-    const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
-
-    const [course, skill, chapter, lesson] = await Promise.all([
-      courseFixture({ language: "pt", outlineStatus: "completed", targetLanguage: "en" }),
-      skillFixture({ language: "pt", targetLanguage: "en" }),
-      libraryChapterFixture({ language: "pt", targetLanguage: "en" }),
-      libraryLessonFixture({ language: "pt", targetLanguage: "en" }),
-    ]);
-
-    const goal = await goalFixture({
-      kind: "language",
-      language: "pt",
-      primaryCourseId: course.id,
-      targetLanguage: "en",
-      userId: user.id,
-    });
 
     const plan = await planFixture({
       goalId: goal.id,
       graph: {
-        phases: [{ milestone: null, name: "Trabalho" }],
+        phases: [{ milestone: null, name: "Base" }],
         skills: [
           {
             area: null,
             courseIds: [course.id],
-            lessons: 12,
+            lessons: 4,
             name: skill.name,
             phase: 0,
             skillId: skill.id,
@@ -398,32 +344,154 @@ describe(sessionPreparationWorkflow, () => {
       },
     });
 
-    // The course teaches the skill in one lesson; the plan stands in for the other eleven tomorrow.
-    await Promise.all([
-      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
-      prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
-      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+    // The plan stands in for the skill in three days; one due in a month waits for a later session.
+    const [later] = await Promise.all([
+      skillFixture(),
       planItemFixture({
         planId: plan.id,
         position: 0,
-        scheduledFor: new Date(today.getTime() + 86_400_000),
+        scheduledFor: new Date(today.getTime() + 3 * 86_400_000),
         skillId: skill.id,
       }),
     ]);
 
+    await planItemFixture({
+      planId: plan.id,
+      position: 1,
+      scheduledFor: new Date(today.getTime() + 30 * 86_400_000),
+      skillId: later.id,
+    });
+
     await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
 
-    const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+    expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+      expect.objectContaining({
+        background: true,
+        bands: [expect.objectContaining({ skills: [expect.objectContaining({ id: skill.id })] })],
+        courseId: course.id,
+      }),
+    ]);
+
+    expect(JSON.stringify(vi.mocked(start).mock.calls)).not.toContain(later.id);
+  });
+
+  // Lucas's first day held time for subjects whose lessons weren't outlined yet: their outlines,
+  // started at the flex tier, landed minutes after he started his day.
+  it("outlines at the standard tier the chapters of a skill the plan stands in for today", async () => {
+    const user = await userFixture();
+    const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
+
+    const [goal, course, skill] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      courseFixture({ outlineStatus: "completed" }),
+      skillFixture(),
+    ]);
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Base" }],
+        skills: [
+          {
+            area: null,
+            courseIds: [course.id],
+            lessons: 4,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+            weight: null,
+          },
+        ],
+      },
+    });
+
+    await planItemFixture({ planId: plan.id, position: 0, scheduledFor: today, skillId: skill.id });
+
+    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
 
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
-      {
-        analytics: { distinctId: user.id, goalId: goal.id },
-        bands: [{ extend: [{ lessons: 12, skill: ref }], level: "beginner", skills: [] }],
-        courseId: course.id,
-        scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
-      },
+      expect.objectContaining({ background: false, courseId: course.id }),
     ]);
   });
+
+  it.each([
+    { background: true, days: 1, when: "tomorrow" },
+    { background: false, days: 0, when: "today" },
+  ])(
+    "outlines the next chapter of a language skill whose stand-in is due $when",
+    async ({ background, days }) => {
+      const user = await userFixture();
+      const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
+
+      const [course, skill, chapter, lesson] = await Promise.all([
+        courseFixture({ language: "pt", outlineStatus: "completed", targetLanguage: "en" }),
+        skillFixture({ language: "pt", targetLanguage: "en" }),
+        libraryChapterFixture({ language: "pt", targetLanguage: "en" }),
+        libraryLessonFixture({ language: "pt", targetLanguage: "en" }),
+      ]);
+
+      const goal = await goalFixture({
+        kind: "language",
+        language: "pt",
+        primaryCourseId: course.id,
+        targetLanguage: "en",
+        userId: user.id,
+      });
+
+      const plan = await planFixture({
+        goalId: goal.id,
+        graph: {
+          phases: [{ milestone: null, name: "Trabalho" }],
+          skills: [
+            {
+              area: null,
+              courseIds: [course.id],
+              lessons: 12,
+              name: skill.name,
+              phase: 0,
+              skillId: skill.id,
+              weight: null,
+            },
+          ],
+        },
+      });
+
+      // The course teaches the skill in one lesson; the plan stands in for the other eleven: today's
+      // time waits on their chapter, so only tomorrow's is written at the flex tier.
+      await Promise.all([
+        courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+        prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+        planItemFixture({
+          planId: plan.id,
+          position: 0,
+          scheduledFor: new Date(today.getTime() + days * 86_400_000),
+          skillId: skill.id,
+        }),
+      ]);
+
+      await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+
+      const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+
+      expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+        {
+          analytics: { distinctId: user.id, goalId: goal.id },
+          background,
+          bands: [
+            {
+              extend: [{ lessons: 11, skill: ref }],
+              level: "beginner",
+              skills: [],
+              withToolChapters: true,
+            },
+          ],
+          courseId: course.id,
+          scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
+        },
+      ]);
+    },
+  );
 
   it("writes a language goal's next checkpoint call ahead, so opening it never waits", async () => {
     const { goal, plan, renting, user } = await languageGoalFixture();

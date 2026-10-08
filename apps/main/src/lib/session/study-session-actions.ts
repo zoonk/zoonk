@@ -2,6 +2,7 @@
 
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
 import { answerStudyQuestion } from "@zoonk/core/sessions/answer";
+import { catchUpToday } from "@zoonk/core/sessions/catch-up";
 import { serializeStudyBlockCompletion } from "@zoonk/core/sessions/completion-contract";
 import { studyAnswerInputSchema } from "@zoonk/core/sessions/contract";
 import { addExtraStudyBlock } from "@zoonk/core/sessions/extra-block";
@@ -34,7 +35,8 @@ type BlockInput = z.infer<typeof blockInputSchema>;
 /**
  * Opens the next block of today's session ("Continue", "Take off", the moment after a block):
  * starts it and says where it's played, or the session screen for the summary once nothing is
- * left. Null when it couldn't be opened.
+ * left. An earlier day's session the learner has left (a lesson finished the next morning) goes on
+ * with today's, on Today. Null when it couldn't be opened.
  */
 export async function openNextStudyBlockAction(
   input: SessionInput,
@@ -53,6 +55,10 @@ export async function openNextStudyBlockAction(
 
     if (session.status !== "ready") {
       return null;
+    }
+
+    if (!session.session.current) {
+      return { kind: "today" } satisfies StudyDestination;
     }
 
     const next = session.session.blocks.find((block) => block.id === session.session.nextBlockId);
@@ -222,6 +228,29 @@ export async function addExtraStudyBlockAction(
   }
 
   return result;
+}
+
+/**
+ * "Catch up today": the lessons earlier days left that today's time didn't fit join today's
+ * session. Resolves to whether they were added; Today reads itself again to show them.
+ */
+export async function catchUpTodayAction(input: SessionInput): Promise<boolean> {
+  const parsed = sessionInputSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return false;
+  }
+
+  const { data: result, error } = await safeAsync(() =>
+    catchUpToday({ input: { timeZone: parsed.data.timeZone }, sessionId: parsed.data.sessionId }),
+  );
+
+  if (error) {
+    logError("[catchUpTodayAction] Failed to catch up today:", error);
+    return false;
+  }
+
+  return result.status === "ready";
 }
 
 const insightAnswerSchema = z.object({

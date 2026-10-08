@@ -56,15 +56,15 @@ export async function writeChallengeLessonContent({
   analytics,
   lessonId,
   model,
-  priority = false,
+  serviceTier,
   workflowRunId,
 }: {
   analytics?: ChallengeCaseParams["analytics"];
   lessonId: string;
   /** The writer model, when not the task's default: private courses use a cheaper one. */
   model?: string;
-  /** A learner is waiting on this lesson: the case is written at the priority tier. */
-  priority?: boolean;
+  /** `flex` when the lesson is written well before a learner reaches it. */
+  serviceTier?: ChallengeCaseParams["serviceTier"];
   workflowRunId: string;
 }): Promise<WriteChallengeResult> {
   const state = await loadChallengeInputs({ lessonId, workflowRunId });
@@ -77,7 +77,7 @@ export async function writeChallengeLessonContent({
     analytics: { contentScope: "shared", traceId: workflowRunId, ...analytics },
     inputs: state.inputs,
     model,
-    serviceTier: priority ? "priority" : undefined,
+    serviceTier,
   });
 
   if (!result.content) {
@@ -107,5 +107,5 @@ export async function writeChallengeLessonContent({
     workflowRunId,
   });
 
-  return saved ? { status: "published" } : { status: "notClaimed" };
+  return saved === null ? { status: "notClaimed" } : { status: "published" };
 }

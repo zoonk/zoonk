@@ -8,8 +8,8 @@ import { type Page, expect, test } from "./fixtures";
 
 /**
  * The learner's side of guardian links: a teen invites a guardian, sees the invite pending and
- * can cancel it, and sees an active guardian's daily limit and Plus approval. Adults don't need
- * one. Accepting and the guardian's controls live on the auth host (API e2e).
+ * can cancel it, and sees an active guardian's daily limit, memory off and Plus approval. Adults
+ * don't need one. Accepting and the guardian's controls live on the auth host (API e2e).
  */
 
 const TEEN_BIRTH_YEAR = new Date().getUTCFullYear() - 15;
@@ -27,12 +27,10 @@ test.describe("Guardian settings", () => {
     await learningProfileFixture({
       birthMonth: 1,
       birthYear: TEEN_BIRTH_YEAR,
-      experienceMode: "fun",
       userId: noProgressUser.id,
     });
 
     await openGuardian(page);
-    await expectAccessibleScreen(page, "a teen's Fun guardian settings");
     await page.getByRole("textbox", { name: "Your guardian's email" }).fill("mom@zoonk.test");
     await page.getByRole("button", { name: "Send invite" }).click();
 
@@ -51,7 +49,7 @@ test.describe("Guardian settings", () => {
       .toMatchObject({ status: "revoked" });
   });
 
-  test("shows an active guardian's daily limit and Plus approval", async ({
+  test("shows an active guardian's daily limit, memory off and Plus approval", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -65,6 +63,7 @@ test.describe("Guardian settings", () => {
         acceptedAt: new Date(),
         dailyLimitMinutes: 45,
         guardianEmail: "dad@zoonk.test",
+        memoryOff: true,
         plusApprovedAt: new Date(),
         status: "active",
         userId: noProgressUser.id,
@@ -75,11 +74,18 @@ test.describe("Guardian settings", () => {
 
     await expect(page.getByText("dad@zoonk.test")).toBeVisible();
     await expect(page.getByText("Daily limit: 45 min")).toBeVisible();
+    await expect(page.getByText("Memory off", { exact: true })).toBeVisible();
     await expect(page.getByText("Plus approved")).toBeVisible();
     await expect(page.getByText("Only your guardian can end this link.")).toBeVisible();
-    await expect(page.getByRole("textbox", { name: "Invite another guardian" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Guardian" })).toBeVisible();
     await expectAccessibleScreen(page, "a teen's guardian settings");
+
+    // With a guardian already linked, inviting another waits behind one button.
+    const another = page.getByRole("textbox", { name: "Invite another guardian" });
+    await expect(another).toHaveCount(0);
+    await page.getByRole("button", { name: "Invite another guardian" }).click();
+    await expect(another).toBeFocused();
+    await expect(page.getByRole("button", { name: "Send invite" })).toBeVisible();
   });
 
   test("adults don't need a guardian", async ({ noProgressUser, userWithoutProgress: page }) => {

@@ -94,8 +94,12 @@ test.describe("Pricing for visitors", () => {
       `${limits.activeGoals} goal at a time`,
       `${limits.lessonsPerDay} lessons a day, up to ${limits.lessonsPerMonth} a month`,
       "The first week of exam prep",
-      `${limits.tutorMessagesPerDay} tutor messages, ${limits.conversationsPerDay} speaking conversations and ${limits.uploadsPerDay} uploads a day`,
+      `${limits.tutorMessagesPerDay} tutor messages and ${limits.uploadsPerDay} uploads a day`,
+      "Speaking calls, with lower limits than Plus",
     ]);
+
+    // No plan says how many minutes of calls it has.
+    await expect(page.getByText(/minutes? of (?:speaking )?calls/iu)).toHaveCount(0);
 
     await questions.getByText("Can I get a refund?").click();
 
@@ -104,7 +108,16 @@ test.describe("Pricing for visitors", () => {
       "/support",
     );
 
+    // Honest about the one thing Plus limits for people: speaking calls, without numbers.
     await questions.getByText("Is Plus really unlimited?").click();
+
+    await expect(
+      questions.getByText(
+        "Speaking calls have daily and monthly limits, higher than on the free plan.",
+        { exact: false },
+      ),
+    ).toBeVisible();
+
     await questions.getByRole("link", { name: "Read our fair use policy" }).click();
 
     await expect(page).toHaveURL(/\/terms#fair-use$/u);

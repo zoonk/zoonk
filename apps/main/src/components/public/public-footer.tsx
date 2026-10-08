@@ -1,5 +1,5 @@
-import { ZoonkLogo } from "@/components/brand/zoonk-logo";
 import { Link } from "@/i18n/navigation";
+import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { PUBLIC_FOOTER_ID } from "./public-ids";

@@ -4,46 +4,110 @@ import { type EntitlementTier } from "./contract";
 /**
  * Hard caps (`day`, `month`, `total`, `generatedTotal`) block until the period resets.
  * `fairUseDay` never blocks: above it, each new use waits `FAIR_USE_SPACING_SECONDS` after the last.
+ * `daySeconds` and `monthSeconds` cap the time a day's and a month's uses may run: live calls,
+ * which the voice model bills by the second.
  */
 type UsageRule = {
   day?: number;
+  daySeconds?: number;
   fairUseDay?: number;
   generatedTotal?: number;
   month?: number;
+  monthSeconds?: number;
   total?: number;
 };
+
+const SECONDS_PER_MINUTE = 60;
+
+/** A minute of a voice call: GPT-Live's $0.05, silence included. */
+const CALL_MINUTE_COST_MICROS = 50_000;
+const CALL_SECOND_COST_MICROS = CALL_MINUTE_COST_MICROS / SECONDS_PER_MINUTE;
+
+/** The checks of what was said during a call and its feedback, whatever its length. */
+const CALL_CHECKS_COST_MICROS = 10_000;
+
+/**
+ * What one minute of call time can cost at most: a one-minute call (a unit's call at A1 and A2)
+ * that runs to its end, its goodbye past the end (the app hangs up 10 seconds later, which the
+ * call time doesn't count) and its checks. Longer calls cost less a minute.
+ */
+const CALL_GOODBYE_SECONDS = 10;
+
+const WORST_CALL_MINUTE_COST_MICROS =
+  CALL_MINUTE_COST_MICROS +
+  CALL_GOODBYE_SECONDS * CALL_SECOND_COST_MICROS +
+  CALL_CHECKS_COST_MICROS;
+
+/** The most Plus's calls may cost in a month: Plus is $19, and calls are its costliest feature. */
+const PLUS_CALL_BUDGET_MICROS_A_MONTH = 6_000_000;
+
+/**
+ * Call time. Calls are paid by the minute, so the caps are time, not a number of calls. A unit's
+ * call runs 1 to 4 minutes and a practice call or a speaking mock up to 5. A day: Plus's 20 minutes
+ * fit a day of heavy speaking practice (a unit's call, two practice calls and a mock); the free
+ * plan's 2 fit one short call, to try speaking. A month: Plus's calls stay within their budget even
+ * when every call is a minute long (87 minutes, about $5.95), and the free plan's 5 minutes cost at
+ * most about $0.35. Learners never see these numbers, only that Plus has higher call limits.
+ */
+const FREE_CALL_MINUTES_A_DAY = 2;
+const PLUS_CALL_MINUTES_A_DAY = 20;
+const FREE_CALL_MINUTES_A_MONTH = 5;
+
+const PLUS_CALL_MINUTES_A_MONTH = Math.floor(
+  PLUS_CALL_BUDGET_MICROS_A_MONTH / WORST_CALL_MINUTE_COST_MICROS,
+);
+
+/** A call shorter than this isn't worth starting: with less call time left, calls wait for more. */
+export const MIN_CALL_SECONDS = SECONDS_PER_MINUTE;
 
 /**
  * The allowance counts new lessons started, whether reused or generated, since learners can't tell
  * which is which. Quick explanations and reviews stay out of it. Guests get three lessons, at most
  * one of them newly generated, a goal to try the plan, and a day's worth of small AI help
- * (`assist`: understanding a goal, simpler or deeper versions, answer explanations, grading).
+ * (`assist`: understanding a goal, answer explanations, grading). A chapter's mind map counts only
+ * when it's made for the learner (one that exists is free to read): free learners make three a
+ * day and ten a month, about as many chapters as forty lessons finish; guests one.
+ *
+ * Free accounts and guests never get unlimited AI work: every kind has a cap that blocks, a day's
+ * and a month's, sized from what a use costs (`COST_MICROS`) so a free month stays a few dollars
+ * at most. Small help (`assist`, about $0.001–0.005 a call, or a test's few new questions) stops at
+ * 100 a day and 500 a month, far above a busy learner's 40 a day; quick explanations (each a short
+ * lesson with its pictures) at 5 a day and 20 a month. Plus keeps fair use.
  */
 const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   free: {
-    assist: { fairUseDay: 300 },
-    conversation: { day: 3 },
-    explanation: { fairUseDay: 30 },
-    goal: { day: 3 },
+    assist: { day: 100, month: 500 },
+    conversation: {
+      daySeconds: FREE_CALL_MINUTES_A_DAY * SECONDS_PER_MINUTE,
+      monthSeconds: FREE_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
+    },
+    explanation: { day: 5, month: 20 },
+    goal: { day: 3, month: 10 },
     lessonStart: { day: 20, month: 40 },
-    tutorMessage: { day: 10 },
-    upload: { day: 3 },
+    mindMap: { day: 3, month: 10 },
+    tutorMessage: { day: 10, month: 100 },
+    upload: { day: 3, month: 10 },
   },
   guest: {
-    assist: { day: 40 },
+    assist: { day: 40, month: 100 },
     conversation: { total: 0 },
-    explanation: { day: 5 },
+    explanation: { day: 5, month: 10 },
     goal: { total: 1 },
     lessonStart: { generatedTotal: 1, total: 3 },
+    mindMap: { total: 1 },
     tutorMessage: { total: 0 },
     upload: { total: 0 },
   },
   plus: {
     assist: { fairUseDay: 1000 },
-    conversation: { fairUseDay: 30 },
+    conversation: {
+      daySeconds: PLUS_CALL_MINUTES_A_DAY * SECONDS_PER_MINUTE,
+      monthSeconds: PLUS_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
+    },
     explanation: { fairUseDay: 200 },
     goal: { day: 10 },
     lessonStart: { fairUseDay: 200 },
+    mindMap: { fairUseDay: 30 },
     tutorMessage: { fairUseDay: 300 },
     upload: { fairUseDay: 30 },
   },
@@ -78,28 +142,37 @@ const GOAL_COST_MICROS = 1_800_000;
 const GENERATED_LESSON_COST_MICROS = 200_000;
 
 /**
+ * What a new mind map costs at list price: its text (Haiku 5.5, about $0.002), its picture (GPT
+ * Image 2.5 Flare at low quality, about $0.01) and the check of its words ($0.0004), measured on
+ * 2026-10-07; a picture redrawn after a failed check adds about $0.01.
+ */
+const MIND_MAP_COST_MICROS = 15_000;
+
+/**
  * Estimated AI cost of one use, in millionths of a dollar, because provenance doesn't store cost.
- * Starting a lesson or explanation that already exists costs nothing.
+ * Starting a lesson or explanation that already exists costs nothing; a call adds its seconds.
  */
 const COST_MICROS: Record<UsageKind, number> = {
   assist: 5000,
-  conversation: 50_000,
+  conversation: CALL_CHECKS_COST_MICROS,
   explanation: 20_000,
   goal: GOAL_COST_MICROS,
   lessonStart: GENERATED_LESSON_COST_MICROS,
+  mindMap: MIND_MAP_COST_MICROS,
   tutorMessage: 5000,
   upload: 30_000,
 };
 
 /**
  * A learner's daily AI spend cap, in millionths of a dollar. It stops a runaway client or a
- * compromised account, not a busy learner: a free learner's day of three new goals and twenty new
- * lessons ($9.40 at the costs above) fits, and so does everything a guest's hard caps allow (one
- * goal, one new lesson, five quick explanations and forty small helps: $2.30), whatever the order.
+ * compromised account, not a busy learner: a free learner's day of three new goals, twenty new
+ * lessons, three mind maps and two minutes of calls ($9.56 at the costs above) fits, and so does
+ * everything a guest's hard caps allow (one goal, one new lesson, five quick explanations, forty
+ * small helps and a mind map: $2.32), whatever the order.
  */
 const DAILY_SPEND_BUDGET_MICROS: Record<EntitlementTier, number> = {
-  free: 9_500_000,
-  guest: 2_300_000,
+  free: 10_500_000,
+  guest: 2_320_000,
   plus: 30_000_000,
 };
 
@@ -150,11 +223,18 @@ export function getDailySpendBudgetMicros(tier: EntitlementTier): number {
 export function getEstimatedCostMicros({
   generated,
   kind,
+  seconds = 0,
 }: {
   generated: boolean;
   kind: UsageKind;
+  /** A call's time, paid by the second. */
+  seconds?: number;
 }): number {
-  return REUSABLE_KINDS.has(kind) && !generated ? 0 : COST_MICROS[kind];
+  if (REUSABLE_KINDS.has(kind) && !generated) {
+    return 0;
+  }
+
+  return COST_MICROS[kind] + Math.round(seconds * CALL_SECOND_COST_MICROS);
 }
 
 export function getExamPrepAccess(tier: EntitlementTier) {

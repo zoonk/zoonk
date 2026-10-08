@@ -4,6 +4,7 @@ import { type SkillCourses, pickSkillPlaces } from "../../plans/_utils/skill-cou
 import { type PlannerLesson } from "../../plans/planner/plan-units";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { isChallengeIdentityKey } from "../challenges/challenge-lesson-spec";
+import { needsTool } from "../chapters/chapter-tools";
 
 const LEVEL_RANK = new Map(Object.values(CourseLevel).map((level, index) => [level, index]));
 
@@ -44,6 +45,7 @@ export async function loadChapterTaughtLessons({
   skillIds,
   userId,
   withChallenges,
+  withToolChapters,
 }: {
   /** The courses the goal learns its skills in; skills left out take chapters from any course. */
   skillCourses?: SkillCourses;
@@ -51,6 +53,8 @@ export async function loadChapterTaughtLessons({
   userId: string;
   /** Chapter challenges are for learn goals; exam and language plans leave them out. */
   withChallenges: boolean;
+  /** False for an exam answered without tools: chapters that need one teach beyond it. */
+  withToolChapters: boolean;
 }): Promise<PlannerLesson[]> {
   const visible = libraryRowsVisibleTo(userId);
 
@@ -74,6 +78,7 @@ export async function loadChapterTaughtLessons({
             // A lesson set aside after its last held-back draft can't be taught.
             where: { lesson: { ...visible, setAsideAt: null } },
           },
+          tools: true,
         },
       },
       skillId: true,
@@ -81,7 +86,9 @@ export async function loadChapterTaughtLessons({
     where: { chapter: visible, skillId: { in: [...skillIds] } },
   });
 
-  const lessons = rows.flatMap((row) => {
+  const planned = withToolChapters ? rows : rows.filter((row) => !needsTool(row.chapter.tools));
+
+  const lessons = planned.flatMap((row) => {
     const placements = pickSkillPlaces({
       getCourseIds: (placement) => [placement.courseId],
       places: row.chapter.courses,
@@ -95,11 +102,12 @@ export async function loadChapterTaughtLessons({
 
     const [placement] = placements;
 
-    const planned = withChallenges
+    const chapterLessons = withChallenges
       ? row.chapter.lessons
       : row.chapter.lessons.filter((entry) => !isChallengeIdentityKey(entry.lesson.identityKey));
 
-    return planned.map((entry): ChapterTaughtLesson => ({
+    return chapterLessons.map((entry): ChapterTaughtLesson => ({
+      band: placement?.level ?? null,
       chapterId: row.chapter.id,
       lessonId: entry.lesson.id,
       minutes: entry.lesson.estimatedMinutes,
@@ -112,6 +120,7 @@ export async function loadChapterTaughtLessons({
   return lessons
     .toSorted((a, b) => compareCourseOrder(a.order, b.order))
     .map((lesson) => ({
+      band: lesson.band,
       chapterId: lesson.chapterId,
       lessonId: lesson.lessonId,
       minutes: lesson.minutes,

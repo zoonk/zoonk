@@ -2,45 +2,34 @@
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Meter, MeterFill } from "../_components/meter";
-import { SectionLabel } from "../_components/section-label";
+import {
+  LIST_GROUP_CLASS,
+  LIST_ROW_INTERACTIVE_CLASS,
+  ListRowContent,
+  ListRowTitle,
+  ListRowTrailing,
+} from "../_components/list-group";
+import {
+  PageSection,
+  PageSectionHeader,
+  PageSectionLabel,
+  PageSectionTitle,
+} from "../_components/page";
 import { useFormatShare } from "../_utils/percent";
+import { FrequencyChip, setsApart } from "../syllabus/frequency-chip";
+import { groupSubjects } from "../syllabus/group-subjects";
+import { QuestionsSourceNote } from "../syllabus/syllabus-notes";
 import { useExamScreen } from "./exam-context";
 
 type Subject = NonNullable<ExamView["map"]>["subjects"][number];
 type Topic = Subject["topics"][number];
 
-/** "Appears a lot" on every row tells nothing, so it only marks rows when it sets some apart. */
-function setsApart(items: readonly { frequency: Topic["frequency"] }[]): boolean {
-  const frequent = items.filter((item) => item.frequency === "high").length;
-  return frequent > 0 && frequent < items.length;
-}
-
-/** Whether anything from past exams shows: a tag that sets rows apart, or a topic's count. */
-function showsPastExams(subjects: readonly Subject[]): boolean {
-  return (
-    setsApart(subjects) ||
-    subjects.some(
-      (subject) =>
-        setsApart(subject.topics) || subject.topics.some((topic) => topic.appearances !== null),
-    )
-  );
-}
-
-function FrequencyChip({ frequency }: { frequency: Topic["frequency"] }) {
-  const t = useExtracted();
-
-  if (frequency !== "high") {
-    return null;
-  }
-
-  return (
-    <span className="bg-warning/15 text-foreground in-data-[mode=fun]:bg-fun-accent-amber/20 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap">
-      {t("Appears a lot")}
-    </span>
-  );
+/** Whether a subject's topics show anything from past exams: a tag or a count. */
+function showsPastExams(topics: readonly Topic[]): boolean {
+  return setsApart(topics) || topics.some((topic) => topic.appearances !== null);
 }
 
 function TopicRow({ showFrequency, topic }: { showFrequency: boolean; topic: Topic }) {
@@ -62,97 +51,85 @@ function TopicRow({ showFrequency, topic }: { showFrequency: boolean; topic: Top
   );
 }
 
-/**
- * The learner's level in the subject: the bar fills with the same skills the line under it
- * counts, so the two always agree.
- */
-function SubjectLevel({ level }: { level: Subject["level"] }) {
-  const t = useExtracted();
-
-  if (!level || level.total === 0) {
-    return null;
-  }
-
-  return (
-    <>
-      <Meter>
-        <MeterFill
-          className="in-data-[mode=fun]:bg-fun-accent-violet"
-          share={level.solid / level.total}
-        />
-      </Meter>
-      <span className="text-muted-foreground text-xs">
-        {t("{solid} of {total} skills solid", {
-          solid: String(level.solid),
-          total: String(level.total),
-        })}
-      </span>
-    </>
-  );
-}
-
 /** The subject's weight on the exam in the notice's terms: its questions, or its share. */
 function useSubjectWeight() {
   const t = useExtracted();
   const formatShare = useFormatShare();
 
   return (subject: Subject): string => {
-    const topics = t("{count, plural, one {# topic} other {# topics}}", {
-      count: subject.topics.length,
-    });
-
     if (subject.questions !== null) {
-      return t("{questions, plural, one {# question} other {# questions}} · {topics}", {
-        questions: subject.questions,
-        topics,
+      return t("{count, plural, one {# question} other {# questions}}", {
+        count: subject.questions,
       });
     }
 
     if (subject.share !== null) {
-      return t("{share} of the exam · {topics}", { share: formatShare(subject.share), topics });
+      return t("{share} of the exam", { share: formatShare(subject.share) });
     }
 
-    return topics;
+    return "";
   };
 }
 
-function SubjectRow({ showFrequency, subject }: { showFrequency: boolean; subject: Subject }) {
+/** A subject in one line, its weight on the right; its topics open in place. */
+function SubjectRow({
+  hasFrequency,
+  showFrequency,
+  subject,
+}: {
+  hasFrequency: boolean;
+  showFrequency: boolean;
+  subject: Subject;
+}) {
+  const t = useExtracted();
   const weight = useSubjectWeight();
   const showTopicFrequency = setsApart(subject.topics);
+  const subjectWeight = weight(subject);
 
   return (
-    <li className="border-border border-b py-3 last:border-b-0">
+    <li>
       <details className="group">
-        <summary className="flex cursor-pointer list-none flex-col gap-2 [&::-webkit-details-marker]:hidden">
-          <div className="flex items-start justify-between gap-3">
-            <span className="min-w-0 font-medium">{subject.name}</span>
-            {/* On the name's first line, however many lines a long subject name takes. */}
-            <LineMarker className="gap-2">
-              {showFrequency && <FrequencyChip frequency={subject.frequency} />}
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="text-muted-foreground size-4 transition-transform group-open:rotate-180"
-              />
-            </LineMarker>
-          </div>
-
-          <p className="text-muted-foreground text-xs">{weight(subject)}</p>
-          <SubjectLevel level={subject.level} />
+        <summary
+          className={cn(
+            LIST_ROW_INTERACTIVE_CLASS,
+            "cursor-pointer list-none [&::-webkit-details-marker]:hidden",
+          )}
+        >
+          <ListRowContent>
+            <ListRowTitle>{subject.name}</ListRowTitle>
+          </ListRowContent>
+          <ListRowTrailing>
+            {showFrequency && <FrequencyChip frequency={subject.frequency} />}
+            {subjectWeight && <span className="whitespace-nowrap">{subjectWeight}</span>}
+          </ListRowTrailing>
+          <ChevronDownIcon
+            aria-hidden="true"
+            className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-open:rotate-180 motion-reduce:transition-none"
+          />
         </summary>
 
-        <ul className="mt-2 flex flex-col">
-          {subject.topics.map((topic) => (
-            <TopicRow key={topic.name} showFrequency={showTopicFrequency} topic={topic} />
-          ))}
-        </ul>
+        <div className="flex flex-col gap-1 px-4 pb-3">
+          <ul className="flex flex-col">
+            {subject.topics.map((topic) => (
+              <TopicRow key={topic.name} showFrequency={showTopicFrequency} topic={topic} />
+            ))}
+          </ul>
+
+          {hasFrequency && showsPastExams(subject.topics) && (
+            <p className="text-muted-foreground text-xs">{t("From past exams")}</p>
+          )}
+        </div>
       </details>
     </li>
   );
 }
 
+const getGroupId = (index: number) => `exam-map-group-${index}`;
+
 /**
- * The exam map: the notice's subjects with their weight on the exam and the learner's level in
- * each, and each topic with how often the board asks it (or how many times it was on the old exam).
+ * What's on the exam, as a short list: each of the notice's subjects with its weight, in the
+ * notice's groups ("Conhecimentos básicos (P1)") when it has them, and its topics one tap away with
+ * how often the board asks them. How ready the learner is in each lives on the Journey.
  */
 export function ExamMapSection() {
   const t = useExtracted();
@@ -164,23 +141,32 @@ export function ExamMapSection() {
   }
 
   return (
-    <section aria-labelledby="exam-map-title" className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-        <SectionLabel id="exam-map-title">{t("What's on the exam")}</SectionLabel>
-        {map.hasFrequency && showsPastExams(map.subjects) && (
-          <span className="text-muted-foreground text-xs">{t("From past exams")}</span>
-        )}
-      </div>
+    <PageSection aria-labelledby="exam-map-title">
+      <PageSectionHeader>
+        <PageSectionTitle id="exam-map-title">{t("What's on the exam")}</PageSectionTitle>
+      </PageSectionHeader>
 
-      <ul className="in-data-[mode=fun]:fun-glass flex flex-col in-data-[mode=fun]:rounded-3xl in-data-[mode=fun]:px-4">
-        {map.subjects.map((subject) => (
-          <SubjectRow
-            key={subject.name}
-            showFrequency={setsApart(map.subjects)}
-            subject={subject}
-          />
-        ))}
-      </ul>
-    </section>
+      {groupSubjects(map.subjects, { modules: false }).map((group, index) => (
+        <div className="flex flex-col gap-2" key={group.name ?? "all"}>
+          {group.name && <PageSectionLabel id={getGroupId(index)}>{group.name}</PageSectionLabel>}
+
+          <ul
+            aria-labelledby={group.name ? getGroupId(index) : "exam-map-title"}
+            className={LIST_GROUP_CLASS}
+          >
+            {group.subjects.map((subject) => (
+              <SubjectRow
+                hasFrequency={map.hasFrequency}
+                key={subject.name}
+                showFrequency={setsApart(map.subjects)}
+                subject={subject}
+              />
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <QuestionsSourceNote source={map.questionsSource} />
+    </PageSection>
   );
 }

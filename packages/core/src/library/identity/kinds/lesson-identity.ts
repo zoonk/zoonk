@@ -5,7 +5,7 @@ import {
 } from "@zoonk/ai/tasks/v2/identity/subject";
 import { type Sql, prisma, sql } from "@zoonk/db";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
-import { listLessonCourses } from "../_utils/candidate-courses";
+import { listChaptersCourses } from "../_utils/candidate-courses";
 import { isInRequestScope } from "../_utils/exact-match-scope";
 import { type IdentityKindSearch, type LessonIdentityRequest } from "../_utils/identity-requests";
 import { LESSON_DOCUMENT, SKILL_DOCUMENT } from "../_utils/search-documents";
@@ -184,7 +184,7 @@ export async function loadLessonCandidates(
   return lessons.map((lesson) => ({
     id: lesson.id,
     item: {
-      courses: listLessonCourses(lesson),
+      courses: listChaptersCourses(lesson),
       description: lesson.description,
       level: lesson.level,
       skills: lesson.skills.map((item) => item.skill.name),

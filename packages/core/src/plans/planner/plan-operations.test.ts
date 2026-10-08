@@ -81,6 +81,38 @@ describe(applyPlanOperations, () => {
     });
   });
 
+  it("focuses on the part of an area the learner named, keeps it while the area stays in focus", () => {
+    const part = { area: "Biology", name: "Cells only", skillIds: ["bio", "math", "unknown"] };
+    const focused = apply([{ areas: ["Biology", "Math"], kind: "focusAreas", parts: [part] }]);
+
+    // Only the area's own skills make its part.
+    expect("state" in focused && focused.state.settings.focusParts).toStrictEqual([
+      { area: "Biology", name: "Cells only", skillIds: ["bio"] },
+    ]);
+
+    // A focus that names no part (the subjects sheet) keeps the parts its areas had.
+    const kept =
+      "state" in focused
+        ? apply([{ areas: ["Biology"], kind: "focusAreas" }], focused.state)
+        : focused;
+
+    expect("state" in kept && kept.state.settings.focusParts).toStrictEqual([
+      { area: "Biology", name: "Cells only", skillIds: ["bio"] },
+    ]);
+
+    // Focusing the whole area again, or leaving it out, drops its part.
+    const whole =
+      "state" in kept
+        ? apply([{ areas: ["Biology"], kind: "focusAreas", parts: [] }], kept.state)
+        : kept;
+
+    const skipped =
+      "state" in kept ? apply([{ areas: ["Biology"], kind: "skipAreas" }], kept.state) : kept;
+
+    expect("state" in whole && whole.state.settings.focusParts).toStrictEqual([]);
+    expect("state" in skipped && skipped.state.settings.focusParts).toStrictEqual([]);
+  });
+
   it("focuses, skips and restores known areas, but never skips everything", () => {
     const focused = apply([{ areas: ["Math"], kind: "focusAreas" }]);
     expect("state" in focused && focused.state.settings.focusAreas).toStrictEqual(["Math"]);
@@ -109,6 +141,22 @@ describe(applyPlanOperations, () => {
         : skipped;
 
     expect("state" in restored && restored.state.settings.skippedAreas).toStrictEqual([]);
+  });
+
+  it("starts known areas past their basics, or from them again", () => {
+    const past = apply([{ areas: ["Math"], kind: "setAreaStart", start: "pastBasics" }]);
+    expect("state" in past && past.state.settings.pastBasicsAreas).toStrictEqual(["Math"]);
+
+    const again = apply(
+      [{ areas: ["Math"], kind: "setAreaStart", start: "basics" }],
+      state({ pastBasicsAreas: ["Math", "Biology"] }),
+    );
+
+    expect("state" in again && again.state.settings.pastBasicsAreas).toStrictEqual(["Biology"]);
+
+    expect(
+      apply([{ areas: ["History"], kind: "setAreaStart", start: "pastBasics" }]),
+    ).toStrictEqual({ error: "unknownArea" });
   });
 
   it("refuses a target date that isn't in the future", () => {
@@ -177,6 +225,18 @@ describe(applyPlanOperations, () => {
 
     expect(
       apply([{ from: "2026-10-04", kind: "moveWeeklyEvent", to: "2026-10-12" }]),
+    ).toStrictEqual({ error: "badMove" });
+  });
+
+  it("refuses to move a mock onto or past the test day", () => {
+    const friday = { ...state(), goal: { dailyMinutes: 30, targetDate: "2026-10-09" } };
+
+    expect(
+      apply([{ from: "2026-10-08", kind: "moveWeeklyEvent", to: "2026-10-12" }], friday),
+    ).toStrictEqual({ error: "badMove" });
+
+    expect(
+      apply([{ from: "2026-10-08", kind: "moveWeeklyEvent", to: "2026-10-09" }], friday),
     ).toStrictEqual({ error: "badMove" });
   });
 });

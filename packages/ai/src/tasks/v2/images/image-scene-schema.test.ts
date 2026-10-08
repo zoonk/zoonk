@@ -14,15 +14,18 @@ const discountScene: ImageScene = {
 };
 
 describe(normalizeImageScene, () => {
-  it("keeps at most two supporting objects and three labels of up to four words", () => {
+  it("keeps at most two supporting objects and six labels of up to four words", () => {
     const scene = normalizeImageScene({
       scene: {
         ...discountScene,
         labels: [
           ...discountScene.labels,
           { target: "on the badge", text: "-25%" },
-          { target: "next to the receipt", text: "total" },
           { target: "next to the shelf", text: "this label is too long" },
+          { target: "next to the receipt", text: "total" },
+          { target: "on the wallet", text: "carteira" },
+          { target: "next to the bag", text: "sacola" },
+          { target: "next to the door", text: "saída" },
         ],
       },
       textAllowed: true,
@@ -34,6 +37,9 @@ describe(normalizeImageScene, () => {
       "antes R$ 80",
       "você paga R$ 60",
       "-25%",
+      "total",
+      "carteira",
+      "sacola",
     ]);
   });
 

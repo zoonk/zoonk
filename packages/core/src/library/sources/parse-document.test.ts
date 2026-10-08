@@ -34,6 +34,15 @@ describe(parseDocument, () => {
     expect(parsed.images).toStrictEqual([{ data: expect.any(String), mediaType: "image/png" }]);
   });
 
+  it("drops NUL characters, which a stored text can't hold", async () => {
+    const parsed = await parseDocument({
+      bytes: new TextEncoder().encode("Guia do curso\u0000: módulo 1\u0000"),
+      contentType: "text/plain",
+    });
+
+    expect(parsed.text).toBe("Guia do curso: módulo 1");
+  });
+
   it("extracts a PDF's text for search and citation checks", async () => {
     const parsed = await parseDocument({
       bytes: await readFixture("notice.pdf"),

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   findMaterialPage,
-  formatMaterialIndex,
+  formatMaterialOverview,
   formatMaterialPages,
   selectMaterialPages,
   selectSourcePages,
@@ -108,8 +108,28 @@ describe(formatMaterialPages, () => {
     expect(formatMaterialPages(first ? [first] : [])).toBe(
       '<page ref="S1:1" of="Aula 5, slide 1">\nGlicólise\n</page>',
     );
+  });
+});
 
-    expect(formatMaterialIndex(first ? [first] : [])).toBe("[Aula 5, slide 1] Glicólise");
+describe(formatMaterialOverview, () => {
+  it("gives a short handout whole, so a curriculum covers every line of it", () => {
+    const pages = toMaterialPages([notes]);
+
+    expect(formatMaterialOverview({ maxCharacters: 1000, pages })).toBe(formatMaterialPages(pages));
+  });
+
+  it("lists a long deck one line per page, within the size it's given", () => {
+    const pages = toMaterialPages([slides]);
+
+    expect(formatMaterialOverview({ maxCharacters: 100, pages })).toBe(
+      [
+        "[Aula 5, slide 1] Glicólise",
+        "[Aula 5, slide 3] Fase de investimento: gasta 2 ATP",
+        "[Aula 5, slide 4] Saldo: 2 ATP por glicose",
+      ]
+        .join("\n")
+        .slice(0, 100),
+    );
   });
 });
 

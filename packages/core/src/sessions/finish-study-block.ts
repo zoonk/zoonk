@@ -9,10 +9,12 @@ import {
   markLessonBlockDone,
   readFinishedLessonId,
 } from "./_utils/lesson-block";
+import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { trackBlockCompleted } from "./_utils/session-events";
 import { gradeSessionAnswer, parseSessionItem, readRecordedAnswer } from "./_utils/session-items";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
+import { findTestOutOffer } from "./_utils/test-out-offer";
 import { readBlockPayload } from "./block-payload";
 import { type CheckpointResultView, type StudyBlockCompletion } from "./completion-contract";
 import { type StudySessionTimeZoneInput } from "./contract";
@@ -84,36 +86,6 @@ async function toCheckpointResult({
   return { ...checkpoint, answers };
 }
 
-/** A statement left blank ("I don't know") in a net-scored capsule or practice. */
-function isBlankAnswer(answer: unknown): boolean {
-  const recorded = readRecordedAnswer(answer);
-  return recorded !== null && "dontKnow" in recorded;
-}
-
-/**
- * Cebraspe scoring for swipe capsules and net-scored practice: each wrong answer cancels a right
- * one, and a statement left blank counts for neither, which is why leaving it blank is offered.
- */
-async function getNetScore({
-  itemIds,
-  sessionId,
-  userId,
-}: {
-  itemIds: string[];
-  sessionId: string;
-  userId: string;
-}): Promise<number> {
-  const attempts = await prisma.attempt.findMany({
-    select: { answer: true, isCorrect: true },
-    where: { itemId: { in: itemIds }, studySessionId: sessionId, userId },
-  });
-
-  const right = attempts.filter((attempt) => attempt.isCorrect).length;
-  const blank = attempts.filter((attempt) => !attempt.isCorrect && isBlankAnswer(attempt.answer));
-
-  return right - (attempts.length - right - blank.length);
-}
-
 async function finishQuestionBlock(owned: OwnedBlock): Promise<FinishStudyBlockResult> {
   const settled = await settleQuestionBlock(owned);
 
@@ -128,8 +100,10 @@ async function finishQuestionBlock(owned: OwnedBlock): Promise<FinishStudyBlockR
     answer.itemId ? [answer.itemId] : [],
   );
 
-  const netScored =
-    payload.netScored || payload.capsules.some((capsule) => capsule.format === "swipe");
+  // Only statements (swipe capsules, net-scored practice) count in the net; a matching question in
+  // the same review is right or wrong on its own.
+  const netItemIds = new Set(getNetScoredItemIds([owned.block]));
+  const answeredNetItemIds = answeredItemIds.filter((itemId) => netItemIds.has(itemId));
 
   const [checkpoint, netScore] = await Promise.all([
     toCheckpointResult({
@@ -139,8 +113,12 @@ async function finishQuestionBlock(owned: OwnedBlock): Promise<FinishStudyBlockR
       sessionId: owned.session.id,
       userId: owned.userId,
     }),
-    netScored
-      ? getNetScore({ itemIds: answeredItemIds, sessionId: owned.session.id, userId: owned.userId })
+    netItemIds.size > 0
+      ? getNetScore({
+          itemIds: answeredNetItemIds,
+          sessionId: owned.session.id,
+          userId: owned.userId,
+        })
       : null,
   ]);
 
@@ -155,6 +133,7 @@ async function finishQuestionBlock(owned: OwnedBlock): Promise<FinishStudyBlockR
       comesBackOn: null,
       correct: settlement.correct,
       netScore,
+      testOutOffer: null,
       topHyperdrive: settlement.topHyperdrive,
       total: settlement.total,
     },
@@ -192,6 +171,18 @@ export async function finishLessonBlock(owned: OwnedBlock): Promise<FinishStudyB
     trackBlockCompleted({ block: owned.block, seconds: finish.seconds, session: owned.session });
   }
 
+  const { goalId } = owned.session;
+
+  const [comesBackOn, testOutOffer] = await Promise.all([
+    getLessonComesBack({
+      lessonId,
+      targetDate: owned.session.goal?.targetDate ?? null,
+      timeZone: owned.timeZone,
+      userId: owned.userId,
+    }),
+    lessonId && goalId ? findTestOutOffer({ goalId, lessonId, userId: owned.userId }) : null,
+  ]);
+
   const completion = await completeBlockMoment({
     blockId: owned.block.id,
     brainPowerBefore: Number(progress?.totalBrainPower ?? 0) - finish.brainPower,
@@ -200,13 +191,10 @@ export async function finishLessonBlock(owned: OwnedBlock): Promise<FinishStudyB
       brainPower: finish.brainPower,
       capsulesOpened: 0,
       checkpoint: null,
-      comesBackOn: await getLessonComesBack({
-        lessonId,
-        timeZone: owned.timeZone,
-        userId: owned.userId,
-      }),
+      comesBackOn,
       correct: finish.correctAnswers,
       netScore: null,
+      testOutOffer,
       topHyperdrive: 0,
       total: finish.correctAnswers + finish.incorrectAnswers,
     },

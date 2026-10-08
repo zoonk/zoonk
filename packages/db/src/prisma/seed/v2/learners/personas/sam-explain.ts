@@ -49,7 +49,6 @@ export const samExplain: SeedLearner = {
     },
   ],
   milestones: [],
-  mode: "focus",
   name: "Sam Rivera",
   session: {
     blocks: [

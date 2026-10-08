@@ -12,6 +12,7 @@ const PACK_LINES = [
   "School",
   "National exams",
   "Register",
+  "Brands",
 ];
 
 describe(formatLocalContext, () => {

@@ -22,6 +22,11 @@ import { useSSE } from "./use-sse";
 const ID_POLL_MS = 2000;
 /** With no run after this long, the start failed: the learner can start it again. */
 const NOT_STARTED_MS = 45_000;
+/**
+ * A run can stop without ending its stream (a crash or a restart leaves it running, which the API
+ * reports as failed once it stalls): while following one, its status is checked this often.
+ */
+const STATUS_CHECK_MS = 120_000;
 
 const RUN_STATUSES = new Set<string>(["cancelled", "completed", "failed", "pending", "running"]);
 
@@ -114,6 +119,23 @@ export function useWorkflowRun({
   }
 
   const isConnected = status === "following" && runId !== null && state.reconnectIn === null;
+
+  const checkStopped = useEffectEvent(async (id: string) => {
+    const runStatus = await readRunStatus(id);
+
+    if (runStatus === "failed" || runStatus === "cancelled") {
+      dispatch({ status: runStatus, type: "runStatus" });
+    }
+  });
+
+  useEffect(() => {
+    if (!isConnected || !runId) {
+      return;
+    }
+
+    const timer = setInterval(() => void checkStopped(runId), STATUS_CHECK_MS);
+    return () => clearInterval(timer);
+  }, [isConnected, runId]);
 
   const url =
     isConnected && runId

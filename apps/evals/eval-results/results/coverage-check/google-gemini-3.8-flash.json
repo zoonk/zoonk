@@ -353,6 +353,110 @@
           ]
         }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": ["5 Sistemas eleitorais"],
+          "placements": [
+            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
+            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
+          ]
+        },
+        "id": "pt-camara-notice-topics-1",
+        "userInput": {
+          "examOutline": {
+            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
+            "notes": ["Scoring: cada item errado anula um item certo"],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos de gêneros variados",
+                  "3 Domínio da ortografia",
+                  "5 Domínio da estrutura morfossintática do período",
+                  "5.5 Concordância verbal e nominal",
+                  "5.7 Emprego do sinal indicativo de crase"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P2)",
+                "name": "Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Regimes políticos",
+                  "2 Sistemas e formas de governo",
+                  "5 Sistemas eleitorais"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar textos de gêneros variados.",
+              "key": "leitura",
+              "name": "Interpretar textos de gêneros variados",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
+            },
+            {
+              "description": "Aplicar as regras de ortografia.",
+              "key": "ortografia",
+              "name": "Aplicar as regras de ortografia",
+              "examWeight": 3,
+              "area": "Língua Portuguesa",
+              "topics": ["3 Domínio da ortografia"]
+            },
+            {
+              "description": "Empregar o acento grave indicativo de crase.",
+              "key": "crase",
+              "name": "Empregar o acento grave indicativo de crase",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Fazer a concordância do verbo e do nome.",
+              "key": "concordancia",
+              "name": "Fazer a concordância do verbo e do nome",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Comparar regimes políticos.",
+              "key": "regimes",
+              "name": "Comparar regimes políticos",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["1 Regimes políticos"]
+            },
+            {
+              "description": "Distinguir sistemas e formas de governo.",
+              "key": "governo",
+              "name": "Distinguir sistemas e formas de governo",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["2 Sistemas e formas de governo"]
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "coverage-check"

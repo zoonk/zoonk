@@ -39,6 +39,7 @@ const TYPED_CONTENT = {
 function mockGrade({ met }: { met: number }) {
   vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
     data: {
+      corrections: [],
       feedback: "You found the denominator but didn't add the numerators.",
       isCorrect: met === KEY_POINTS.length,
       keyPoints: KEY_POINTS.map((text, index) => ({ met: index < met, text })),
@@ -109,16 +110,45 @@ describe("typed answers in placement", () => {
     expect(vi.mocked(gradeTypedAnswer)).toHaveBeenCalledOnce();
   });
 
-  it("grades by code alone once the learner's help is used up, and only accepted answers count", async () => {
+  it("grades a typed answer with the model past the learner's small AI help, without counting it", async () => {
     const { goal, typed, user } = await setup();
     await answerQuickRight({ goalId: goal.id });
+    const capped = getUsageRule({ kind: "assist", tier: "free" }).day ?? 0;
 
     await usageRecordsFixture({
-      count: getUsageRule({ kind: "assist", tier: "free" }).fairUseDay ?? 0,
+      count: capped,
       createdAt: new Date(),
       kind: "assist",
       userId: user.id,
     });
+
+    mockGrade({ met: KEY_POINTS.length });
+
+    await expect(
+      answerPlacementQuestion({
+        goalId: goal.id,
+        input: {
+          answer: { text: "Use sixths as the shared bottom, then add the tops" },
+          durationMs: 9000,
+          itemId: typed.id,
+        },
+      }),
+    ).resolves.toMatchObject({ isCorrect: true, status: "ready" });
+
+    expect(gradeTypedAnswer).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
+    ).resolves.toBe(capped);
+  });
+
+  it("grades by code alone past a few answers to one question a day, where only accepted answers count", async () => {
+    const { goal, typed, user } = await setup();
+    await answerQuickRight({ goalId: goal.id });
+
+    await Promise.all(
+      Array.from({ length: 5 }, () => attemptFixture({ itemId: typed.id, userId: user.id })),
+    );
 
     const [paraphrase, accepted] = await Promise.all([
       answerPlacementQuestion({

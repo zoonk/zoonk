@@ -1,6 +1,6 @@
 /// A learner's questions to the tutor about one thing, named by `kind`: a Library lesson, a Library
-/// chapter, a goal's plan ("why am I studying this today?") or a finished mock. One thread
-/// per learner and thing. Content links use SetNull so questions outlive regenerated content (threads
+/// chapter, a goal (`plan`: the conversation with the buddy about the goal, its subject and its plan,
+/// where plan changes are proposed by talking) or a finished mock. One thread per learner and thing. Content links use SetNull so questions outlive regenerated content (threads
 /// from before learning v2 have none left); plan and mock threads belong to the learner's own goal
 /// and mock and go with them.
 model LessonQuestionThread {
@@ -54,12 +54,14 @@ model LessonQuestion {
   generatedAt        DateTime?                 @map("generated_at")
   provider           String?
   finishReason       String?                   @map("finish_reason")
-  inputTokens        Int?                      @map("input_tokens")
-  outputTokens       Int?                      @map("output_tokens")
-  totalTokens        Int?                      @map("total_tokens")
   /// The shared answer this question was served from, when it was a general question about a screen.
   sharedAnswerId     String?                   @map("shared_answer_id") @db.Uuid
   sharedAnswer       TutorSharedAnswer?        @relation(fields: [sharedAnswerId], references: [id], onDelete: SetNull)
+  /// The plan change the buddy proposed in this answer, waiting for the learner's tap (or answered).
+  planChangeId       String?                   @map("plan_change_id") @db.Uuid
+  planChange         PlanChange?               @relation(fields: [planChangeId], references: [id], onDelete: SetNull)
+  /// One of the app's tools the buddy offered in this answer: a chapter's test, choosing where to focus, a practice call.
+  toolOffer          Json?                     @map("tool_offer")
   createdAt          DateTime                  @default(now()) @map("created_at")
   updatedAt          DateTime                  @default(now()) @updatedAt @map("updated_at")
 
@@ -68,6 +70,7 @@ model LessonQuestion {
   @@index([threadId, createdAt])
   @@index([libraryStepId])
   @@index([sharedAnswerId])
+  @@index([planChangeId])
   @@map("lesson_questions")
 }
 

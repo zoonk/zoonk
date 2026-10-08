@@ -9,10 +9,12 @@ function conditions(scoring: MockConditions["scoring"]): MockConditions {
   return {
     day: 2,
     fullLength: false,
+    purpose: "planned",
     scoring,
     sections: [
       { itemIds: [], minutes: 20, name: "Natural Sciences and Math", questions: 6, routing: null },
     ],
+    shape: null,
     startTime: "13:30",
     timeZone: "America/Sao_Paulo",
     timedOutSections: [],
@@ -27,6 +29,7 @@ function answer(overrides: Partial<GradedMockAnswer>): GradedMockAnswer {
     irtItem: EASY,
     outcome: "right",
     section: 0,
+    skill: { id: "fractions", name: "Fractions" },
     timedOut: false,
     ...overrides,
   };
@@ -42,6 +45,28 @@ const ANSWERS = [
 ];
 
 describe(analyzeMock, () => {
+  it("says how each topic went, in the order the mock first asked it", () => {
+    const ecology = { id: "ecology", name: "Ecology" };
+
+    const result = analyzeMock({
+      answers: [
+        answer({ area: "Natural Sciences", skill: ecology }),
+        answer({ outcome: "wrong" }),
+        answer({ area: "Natural Sciences", skill: ecology }),
+        answer({ outcome: "blank" }),
+      ],
+      conditions: conditions("raw"),
+      minutesUsed: 10,
+      preparation: null,
+      previous: null,
+    });
+
+    expect(result.topics).toStrictEqual([
+      { area: "Natural Sciences", correct: 2, name: "Ecology", skillId: "ecology", total: 2 },
+      { area: "Math", correct: 0, name: "Fractions", skillId: "fractions", total: 2 },
+    ]);
+  });
+
   it("scores ENEM by area with IRT, time per question against the pace and coherence", () => {
     const result = analyzeMock({
       answers: ANSWERS,

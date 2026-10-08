@@ -4,8 +4,33 @@ export const TEST_OUT_PASS_MARK = 0.8;
 /** Enough questions to sample a chapter's skills, few enough to take in two minutes. */
 export const TEST_OUT_MAX_QUESTIONS = 8;
 
-/** Answers on fewer skills than this can't show a chapter is known. */
-const TEST_OUT_MIN_SKILLS = 3;
+/** Never fewer: one lucky answer, or two, never skips a chapter. */
+const TEST_OUT_MIN_QUESTIONS = 4;
+
+/** One more question for every this many lessons a pass would skip. */
+const LESSONS_PER_QUESTION = 2;
+
+/**
+ * How many questions a test-out asks: more the more lessons passing it skips (what it vouches
+ * for), from four to eight.
+ */
+export function getTestOutQuestionCount(lessonsSkipped: number): number {
+  return Math.min(
+    TEST_OUT_MAX_QUESTIONS,
+    Math.max(TEST_OUT_MIN_QUESTIONS, Math.ceil(lessonsSkipped / LESSONS_PER_QUESTION)),
+  );
+}
+
+/** Each sampled skill's share of the questions: a chapter of one skill asks it several times. */
+export function getQuestionsPerSkill({
+  questions,
+  skills,
+}: {
+  questions: number;
+  skills: number;
+}): number {
+  return skills > 0 ? Math.ceil(questions / skills) : 0;
+}
 
 /** Spreads a test-out over the whole chapter: evenly spaced skills when there are too many. */
 export function pickTestOutSkills<TSkill>(skills: readonly TSkill[]): TSkill[] {
@@ -23,55 +48,51 @@ export function pickTestOutSkills<TSkill>(skills: readonly TSkill[]): TSkill[] {
 
 export type TestOutScore = {
   correct: number;
-  /** When passed: every chapter skill not missed. Otherwise: only skills answered right. */
+  /** Skills answered 80% right or better: the ones a passed test-out takes off the plan. */
   knownSkillIds: string[];
   missedSkillIds: string[];
   passed: boolean;
   total: number;
 };
 
+function isKnownBy(results: readonly { isCorrect: boolean }[]): boolean {
+  const right = results.filter((result) => result.isCorrect).length;
+  return results.length > 0 && right / results.length >= TEST_OUT_PASS_MARK;
+}
+
 /**
- * Scores a test-out. Passing needs answers on at least three different skills (or all of them, in
- * a smaller chapter) and 80% of the answers right; then the whole chapter counts as known except
- * the skills the learner missed, which stay in the plan. A failed test-out only credits the skills
- * answered right.
+ * Scores a test-out. It only vouches for what it asked: passing needs at least four answers, an
+ * answer on every skill it samples (each skill of a chapter of up to eight, eight spread over a
+ * bigger one) and 80% of the answers right. Then the skills answered 80% right count as known;
+ * skills it missed or never asked about stay in the plan, so a chapter with questions on only
+ * some of its skills can't be skipped.
  */
 export function scoreTestOut({
   chapterSkillIds,
   results,
-  testableSkillCount,
 }: {
+  /** The chapter's skills in plan order, which the test-out samples from. */
   chapterSkillIds: readonly string[];
   results: readonly { isCorrect: boolean; skillId: string }[];
-  /** Chapter skills that have questions to ask. */
-  testableSkillCount: number;
 }): TestOutScore {
   const correct = results.filter((result) => result.isCorrect).length;
 
-  const missed = new Set(
-    results.filter((result) => !result.isCorrect).map((result) => result.skillId),
-  );
-
-  const answeredSkills = new Set(results.map((result) => result.skillId)).size;
-  const requiredSkills = Math.min(TEST_OUT_MIN_SKILLS, testableSkillCount);
+  const bySkill = Map.groupBy(results, (result) => result.skillId);
+  const sampled = pickTestOutSkills(chapterSkillIds);
 
   const passed =
-    results.length > 0 &&
-    answeredSkills >= requiredSkills &&
+    results.length >= TEST_OUT_MIN_QUESTIONS &&
+    sampled.every((skillId) => bySkill.has(skillId)) &&
     correct / results.length >= TEST_OUT_PASS_MARK;
 
-  const answeredRight = new Set(
-    results
-      .filter((result) => result.isCorrect && !missed.has(result.skillId))
-      .map((result) => result.skillId),
+  const known = new Set(
+    [...bySkill].filter(([, answers]) => isKnownBy(answers)).map(([skillId]) => skillId),
   );
 
   return {
     correct,
-    knownSkillIds: chapterSkillIds.filter((skillId) =>
-      passed ? !missed.has(skillId) : answeredRight.has(skillId),
-    ),
-    missedSkillIds: [...missed],
+    knownSkillIds: chapterSkillIds.filter((skillId) => known.has(skillId)),
+    missedSkillIds: [...bySkill.keys()].filter((skillId) => !known.has(skillId)),
     passed,
     total: results.length,
   };

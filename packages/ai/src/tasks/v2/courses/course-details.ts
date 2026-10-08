@@ -17,7 +17,7 @@ import promptTemplate from "./course-details.prompt.md";
  * cheaper was run; fallbacks come from other families.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-4.5"] as const;
+const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
 
 /** Language courses are listed under `languages` because of what they are, never by a model. */
 const SUBJECT_CATEGORIES = COURSE_CATEGORIES.filter((category) => category !== "languages");

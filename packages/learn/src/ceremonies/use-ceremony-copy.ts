@@ -2,9 +2,9 @@
 
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses, type BuddyStage } from "@zoonk/utils/buddy";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { toBeltColor, useBeltName } from "../_utils/use-belt-name";
-import { BUDDY_GLASSES, BUDDY_STAGES } from "../buddies/buddy-labels";
+import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 
 /** A milestone as the session summary sends it; only its identity matters here. */
@@ -15,37 +15,32 @@ export type CeremonyMilestone = {
   kind: "badge" | "belt" | "glasses" | "buddyStage";
 };
 
-type CeremonyCopy = {
-  action: string;
-  detail: string;
-  eyebrow: string;
-  glasses: BuddyGlasses | null;
-  subtitle: string | null;
-  title: string;
-};
+type CeremonyCopy = { action: string; detail: string; title: string };
+
+const BUDDY_STAGES: BuddyStage[] = ["baby", "young", "adult", "wise"];
 
 export function toBuddyGlasses(key: string): BuddyGlasses | null {
   return BUDDY_GLASSES.find((glasses) => glasses === key) ?? null;
 }
 
-export function toBuddyStage(key: string): BuddyStage | null {
-  return BUDDY_STAGES.find((stage) => stage === key) ?? null;
-}
-
-function useGlassesCopy(glasses: BuddyGlasses | null) {
+/** Each pair's ceremony names it and the learning that earned it. */
+function useGlassesCopy(glasses: BuddyGlasses | null): Omit<CeremonyCopy, "action"> {
   const t = useExtracted();
 
   switch (glasses) {
     case "star":
-      return { detail: t("For beating your first boss."), title: t("Star glasses!") };
+      return { detail: t("For winning your first phase challenge."), title: t("Star glasses!") };
     case "aviator":
-      return { detail: t("For your first Big Challenge."), title: t("Aviator glasses!") };
+      return {
+        detail: t("For finishing your first weekly challenge."),
+        title: t("Aviator glasses!"),
+      };
     case "catEye":
-      return { detail: t("For seven full meals."), title: t("Cat-eye glasses!") };
+      return { detail: t("For your seventh full meal."), title: t("Cat-eye glasses!") };
     case "retro":
-      return { detail: t("For opening fifty capsules."), title: t("Retro glasses!") };
+      return { detail: t("For finishing 50 reviews."), title: t("Retro glasses!") };
     case "monocle":
-      return { detail: t("For beating the final boss."), title: t("A monocle!") };
+      return { detail: t("For winning the final challenge."), title: t("A monocle!") };
     case "round":
     case null:
       return { detail: t("They come with your buddy."), title: t("New glasses!") };
@@ -54,139 +49,77 @@ function useGlassesCopy(glasses: BuddyGlasses | null) {
   }
 }
 
-function useStageLine({ buddyName, stage }: { buddyName: string; stage: BuddyStage | null }) {
+function useStageLine({ buddyName, key }: { buddyName: string; key: string }): string {
   const t = useExtracted();
+  const stage = BUDDY_STAGES.find((candidate) => candidate === key) ?? "young";
 
   switch (stage) {
     case "adult":
-      return t("{buddy} is now an Adult", { buddy: buddyName });
+      return t("{buddy} is an Adult now, and keeps growing with your Brain Power.", {
+        buddy: buddyName,
+      });
     case "wise":
-      return t("{buddy} is now Wise", { buddy: buddyName });
+      return t("{buddy} is Wise now, the last stage. It grew with your Brain Power.", {
+        buddy: buddyName,
+      });
     case "baby":
     case "young":
-    case null:
-      return t("{buddy} is now Young", { buddy: buddyName });
+      return t("{buddy} is Young now, and keeps growing with your Brain Power.", {
+        buddy: buddyName,
+      });
     default:
-      return t("{buddy} is now Young", { buddy: buddyName });
+      return t("{buddy} is Young now, and keeps growing with your Brain Power.", {
+        buddy: buddyName,
+      });
   }
 }
 
-function useBeltTitle(color: BeltColor | null) {
+function useBeltTitle(color: BeltColor | null): string {
   const t = useExtracted();
   const beltName = useBeltName();
 
   return color ? t("{belt}!", { belt: beltName(color) }) : t("A new belt!");
 }
 
-/** What a ceremony says, from fixed translated lines: nothing random, and never a comparison. */
+/**
+ * What a ceremony says, from fixed translated lines: a title, one line on what earned it and its
+ * one button. Nothing random, and never a comparison with anyone else.
+ */
 export function useCeremonyCopy({
-  brainPower = null,
-  milestone,
   buddy,
+  canWear,
+  milestone,
 }: {
-  brainPower?: number | null;
-  milestone: CeremonyMilestone;
   buddy: LearnBuddy | null;
+  /** New glasses go on with the button; without a buddy to wear them, it only continues. */
+  canWear: boolean;
+  milestone: CeremonyMilestone;
 }): CeremonyCopy {
   const t = useExtracted();
-  const format = useFormatter();
   const buddyName = useBuddyName(buddy ?? { kind: "zu", name: null });
-  const glasses = toBuddyGlasses(milestone.key);
-  const glassesCopy = useGlassesCopy(glasses);
-  const stageLine = useStageLine({ buddyName, stage: toBuddyStage(milestone.key) });
+  const glasses = useGlassesCopy(toBuddyGlasses(milestone.key));
+  const stageLine = useStageLine({ buddyName, key: milestone.key });
   const beltTitle = useBeltTitle(toBeltColor(milestone.key));
-
-  const badge: CeremonyCopy = {
-    action: t("Continue"),
-    detail: t("For beating a boss. It's in your logbook."),
-    eyebrow: t("New badge"),
-    glasses: null,
-    subtitle: null,
-    title: t("Trap hunter"),
-  };
+  const continueLabel = t("Continue");
 
   switch (milestone.kind) {
     case "belt":
       return {
-        action: t("Put on the belt"),
-        detail:
-          brainPower === null
-            ? t("Every point came from what you learned.")
-            : t("You reached {points} Brain Power. Every point came from what you learned.", {
-                points: format.number(brainPower),
-              }),
-        eyebrow: t("Belt ceremony"),
-        glasses: null,
-        subtitle: null,
+        action: continueLabel,
+        detail: t("Every point came from what you learned."),
         title: beltTitle,
       };
     case "buddyStage":
       return {
-        action: t("Continue"),
-        detail: t("{buddy} grows with your Brain Power, which never goes down.", {
-          buddy: buddyName,
-        }),
-        eyebrow: t("Growing up"),
-        glasses: null,
-        subtitle: stageLine,
+        action: continueLabel,
+        detail: stageLine,
         title: t("{buddy} grew up!", { buddy: buddyName }),
       };
     case "glasses":
-      return {
-        action: t("Wear them"),
-        detail: glassesCopy.detail,
-        eyebrow: t("New glasses"),
-        glasses,
-        subtitle: null,
-        title: glassesCopy.title,
-      };
+      return { ...glasses, action: canWear ? t("Wear them") : continueLabel };
     case "badge":
-      return badge;
+      return { action: continueLabel, detail: "", title: "" };
     default:
-      return badge;
+      return { action: continueLabel, detail: "", title: "" };
   }
-}
-
-function useAchievementTitle(glasses: BuddyGlasses | null) {
-  const t = useExtracted();
-
-  switch (glasses) {
-    case "star":
-      return t("First phase checkpoint passed");
-    case "aviator":
-      return t("First weekly challenge done");
-    case "catEye":
-      return t("Seven complete sessions");
-    case "retro":
-      return t("Fifty reviews done");
-    case "monocle":
-      return t("Final checkpoint passed");
-    case "round":
-    case null:
-      return t("A new milestone");
-    default:
-      return t("A new milestone");
-  }
-}
-
-/**
- * Focus has no buddy and no Trickster, so the same milestone lands as what the learner did: a
- * checkpoint passed, a week's challenge done. Belts read the same in both modes.
- */
-export function useFocusMilestoneCopy(
-  milestone: CeremonyMilestone,
-): { detail: string; title: string } | null {
-  const t = useExtracted();
-  const achievement = useAchievementTitle(toBuddyGlasses(milestone.key));
-  const detail = t("Earned by your own learning.");
-
-  if (milestone.kind === "glasses") {
-    return { detail, title: achievement };
-  }
-
-  if (milestone.kind === "badge") {
-    return { detail, title: t("Phase checkpoint passed") };
-  }
-
-  return null;
 }

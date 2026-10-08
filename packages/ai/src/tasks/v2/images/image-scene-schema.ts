@@ -1,10 +1,12 @@
 import { z } from "zod";
 
 /**
- * "A few short labels": a word, a number or a price, large enough to read on a
- * phone. Numbers and prices don't count as words, so "you pay $60" is two.
+ * Short labels: a word, a number or a price, large enough to read on a phone.
+ * Numbers and prices don't count as words, so "you pay $60" is two. Six lets a
+ * whole show the parts its screen names (the brain's four lobes, a cycle's
+ * stages, a map's places) while every label stays legible.
  */
-const IMAGE_SCENE_LIMITS = { maxLabelWords: 4, maxLabels: 3, maxSupportingObjects: 2 } as const;
+const IMAGE_SCENE_LIMITS = { maxLabelWords: 4, maxLabels: 6, maxSupportingObjects: 2 } as const;
 
 const IMAGE_SCENE_LAYOUTS = ["single", "comparison", "sequence"] as const;
 
@@ -55,7 +57,7 @@ function isShortLabel(label: ImageLabel): boolean {
 
 /**
  * Enforces the style rules a model may bend: at most two supporting objects,
- * at most three labels of up to four words and no text where text isn't allowed
+ * at most six labels of up to four words and no text where text isn't allowed
  * (language courses). A label that is too long is dropped rather than drawn,
  * since long text in an image is where spelling errors come from.
  */

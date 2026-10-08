@@ -86,6 +86,7 @@ function useStepLabels(): Record<GenerationStep, string> {
     prepareFirstLessons: t("Getting your first lessons ready"),
     preparePlacement: t("Writing your questions"),
     readExamNotice: t("Reading your material"),
+    readNotice: t("Reading the exam notice"),
     saveSkills: t("Matching them with lessons in the Library"),
     understandGoal: t("Reading your goal"),
     writeExplanation: t("Writing about 5 short screens"),
@@ -102,10 +103,7 @@ function RowIcon({ state }: { state: RowState }) {
       return <CircleAlertIcon aria-hidden="true" className="text-destructive size-4 shrink-0" />;
     case "upcoming":
       return (
-        <CircleDashedIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 in-data-[mode=fun]:text-fun-fg2 size-4 shrink-0"
-        />
+        <CircleDashedIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
       );
     default:
       return null;
@@ -140,7 +138,7 @@ export function GenerationSteps({
             <li
               className={cn(
                 "flex items-center gap-3 text-sm",
-                state === "upcoming" && "text-muted-foreground in-data-[mode=fun]:text-fun-fg2",
+                state === "upcoming" && "text-muted-foreground",
                 state === "current" && "font-medium",
               )}
               data-state={state}

@@ -26,6 +26,7 @@ function lesson(id: string, minutes: number): PlannedLesson {
     lessonId: id,
     minutes,
     planItemId: `plan-${id}`,
+    planSkillId: `plan-${id}-skill`,
     skillIds: [`${id}-skill`],
     title: id,
   };
@@ -183,6 +184,43 @@ describe(buildSessionBlocks, () => {
     expect(blocks[1]?.payload.itemIds).toHaveLength(12);
   });
 
+  // Pedro's Thursday: the class test's short mock is Plus, so his 30 minutes were a 1-minute
+  // review and 5 minutes of practice. The day is a full review on every skill instead.
+  it("gives a day whose mock the learner's plan doesn't include to a full review of every skill", () => {
+    const pool = Array.from({ length: 30 }, (_, index) => ({
+      itemId: `p${index}`,
+      skillId: `s${index % 6}`,
+    }));
+
+    const skills = ["s0", "s1", "s2", "s3", "s4", "s5"];
+
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      dailyMinutes: 30,
+      fullReviewSkillIds: skills,
+      practice: pool,
+    });
+
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
+    expect(plannedMinutes).toBeGreaterThanOrEqual(28);
+
+    const review = blocks[1]?.payload;
+
+    expect(review).toMatchObject({ fullReview: true, planItemId: null });
+    expect(new Set(review?.skillIds)).toStrictEqual(new Set(skills));
+  });
+
+  it("doesn't call a day's practice a full review when it can't ask every skill", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      dailyMinutes: 30,
+      fullReviewSkillIds: ["s0", "s1", "s2", "s9"],
+    });
+
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
+    expect(blocks[1]?.payload.fullReview).toBe(false);
+  });
+
   it("scores mixed practice net for exams where a wrong answer cancels a right one", () => {
     expect(getScoring({ ...baseInput, reviewPlanItemId: "plan-review" })).toStrictEqual([
       ["review", false],
@@ -226,6 +264,39 @@ describe(buildSessionBlocks, () => {
 
     expect(blocks.map((block) => block.lessonId)).toStrictEqual(["long"]);
   });
+
+  it("gives lessons the practice time a day has no questions for, so it doesn't come up short", () => {
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 30,
+      drills: [],
+      lessons: Array.from({ length: 10 }, (_, index) => lesson(`l${index}`, 3)),
+      practice: [],
+      practiceShare: 0.5,
+    });
+
+    expect(blocks.every((block) => block.kind === "learn")).toBe(true);
+    expect(plannedMinutes).toBe(30);
+  });
+
+  it("gives practice the lessons' time on a day with no new lesson left, so it isn't empty", () => {
+    const { blocks, plannedMinutes } = buildSessionBlocks({
+      ...baseInput,
+      capsules: [],
+      dailyMinutes: 30,
+      drills: [],
+      lessons: [],
+      practice: Array.from({ length: 30 }, (_, index) => ({
+        itemId: `p${index}`,
+        skillId: `s${index % 3}`,
+      })),
+      practiceShare: 0.6,
+    });
+
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["practice"]);
+    expect(plannedMinutes).toBe(30);
+  });
 });
 
 describe(getPracticeShare, () => {
@@ -243,7 +314,12 @@ describe(getPracticeShare, () => {
     const { blocks, plannedMinutes } = buildSessionBlocks({
       ...baseInput,
       dailyMinutes: 60,
-      produce: { itemId: "essay-1", skillId: "s-essay", title: "Intervention proposal" },
+      produce: {
+        itemId: "essay-1",
+        minutes: 20,
+        skillId: "s-essay",
+        title: "Intervention proposal",
+      },
     });
 
     const kinds = blocks.map((block) => block.kind);

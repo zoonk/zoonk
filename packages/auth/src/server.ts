@@ -62,6 +62,9 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   },
   trustedOrigins: ["https://appleid.apple.com", ...getDevelopmentTrustedOrigins()],
   user: { deleteUser: { beforeDelete: deleteUserDependenciesBeforeAuthDelete, enabled: true } },
+  // Better Auth would delete every expired code on any sign-in, so a learner back with an expired
+  // code would hear it's wrong instead of expired. Expired codes stay until the daily sweep.
+  verification: { disableCleanup: true },
 };
 
 export const baseAuthPlugins = [

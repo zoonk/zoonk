@@ -1,19 +1,14 @@
 "use client";
 
-import { MainAskTutor } from "@/components/learn/main-ask-tutor";
+import { MainAskTutor, type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockActions, MockScreen } from "@zoonk/learn/mock";
-import { type LearnBuddy } from "@zoonk/learn/navigation";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import {
-  moveChallengeAction,
-  undoChallengeMoveAction,
-} from "../../checkpoint/[blockId]/checkpoint-actions";
-import {
+  adaptPlanFromMockAction,
   finishMockAction,
   saveMockAnswerAction,
-  startMockAction,
   submitMockSectionAction,
 } from "./mock-actions";
 
@@ -23,43 +18,42 @@ import {
  * the learner can ask the tutor about the result.
  */
 export function MockClient({
-  canAsk,
   continueHref,
   mock,
-  buddy,
+  tutor,
 }: {
-  canAsk: boolean;
   continueHref: string;
   mock: MockView;
-  buddy: LearnBuddy | null;
+  /** Who asks and the buddy who answers (`getTutorViewer`). */
+  tutor: TutorViewer;
 }) {
   const { blockId } = mock;
   const target = useMemo(() => ({ blockId, kind: "mock" as const }), [blockId]);
 
   const actions = useMemo<MockActions>(
     () => ({
+      adapt: (offer) => adaptPlanFromMockAction(blockId, offer, getLocalTimeZone()),
       answer: (input) => saveMockAnswerAction(blockId, input),
       finish: () => finishMockAction(blockId, getLocalTimeZone()),
-      move: () => moveChallengeAction(blockId, getLocalTimeZone()),
-      start: () => startMockAction(blockId, getLocalTimeZone()),
       submit: (section) => submitMockSectionAction(blockId, section, getLocalTimeZone()),
-      undoMove: (changeId) => undoChallengeMoveAction({ blockId, changeId }, getLocalTimeZone()),
     }),
     [blockId],
   );
 
+  // A placement mock leaves for onboarding, where stopping it keeps what was answered.
+  const exit = mock.purpose === "placement" ? continueHref : "/today";
+
   const hrefs = useMemo(
-    () => ({ continue: continueHref, exit: "/today", mistakes: "/mistakes/practice" }),
-    [continueHref],
+    () => ({ continue: continueHref, exit, mistakes: "/mistakes/practice" }),
+    [continueHref, exit],
   );
 
   return (
     <MockScreen
       actions={actions}
-      ask={<MainAskTutor canAsk={canAsk} target={target} />}
+      ask={<MainAskTutor {...tutor} target={target} />}
       hrefs={hrefs}
       mock={mock}
-      buddy={buddy}
     />
   );
 }

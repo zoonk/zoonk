@@ -4,6 +4,7 @@ import {
   applyLevelEvidence,
   getContentCeiling,
   getLevelTrend,
+  getOverallLevel,
   getStartScore,
   getStepLanguageSkill,
 } from "./skill-level-rules";
@@ -116,5 +117,17 @@ describe(getLevelTrend, () => {
     expect(getLevelTrend({ score: B1, startScore: A2 })).toBe("up");
     expect(getLevelTrend({ score: A2, startScore: B1 })).toBe("down");
     expect(getLevelTrend({ score: A2, startScore: A2 })).toBe("same");
+  });
+});
+
+describe(getOverallLevel, () => {
+  it("rounds the skills' average down to a half step", () => {
+    expect(getOverallLevel([2, 2, 1.5, 1.5])).toBe("A2+");
+    expect(getOverallLevel([2, 2, 2, 1.5])).toBe("A2+");
+    expect(getOverallLevel([2, 2])).toBe("B1");
+  });
+
+  it("is null before any skill has a level", () => {
+    expect(getOverallLevel([])).toBeNull();
   });
 });

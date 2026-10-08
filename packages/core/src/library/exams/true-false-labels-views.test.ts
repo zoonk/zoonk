@@ -154,6 +154,45 @@ describe.each([
   });
 });
 
+// Rafaela's Câmara goal (Cebraspe) asked "Verdadeiro ou falso" until its notice's blueprint linked,
+// though the first pass over the notice had read "CERTO ou ERRADO".
+describe("statements of an exam whose notice is still being read", () => {
+  it("are judged right or wrong from the first question when its first reading names them so", async () => {
+    const { blocks, goalId, sessionId } = await examGoal(
+      examStructure({ format: "trueFalse", method: "wrongCancelsRight" }),
+    );
+
+    const noticeFormats = [
+      {
+        citation: {
+          passage: "O julgamento de cada item será CERTO ou ERRADO, de acordo com o comando.",
+          sourceId: "notice",
+        },
+        description: "Itens para julgamento individual entre certo ou errado",
+        kind: "trueFalse",
+        options: null,
+      },
+    ];
+
+    await prisma.goal.update({
+      data: { details: { noticeFormats }, examBlueprintId: null },
+      where: { id: goalId },
+    });
+
+    const [placement, practice] = await Promise.all([
+      getGoalPlacement({ goalId }),
+      getStudyBlock({ blockId: blocks.practice.id, sessionId }),
+    ]);
+
+    expect(placement).toMatchObject({
+      placement: { trueFalseLabels: "rightWrong" },
+      status: "ready",
+    });
+
+    expect(practice).toMatchObject({ detail: { trueFalseLabels: "rightWrong" }, status: "ready" });
+  });
+});
+
 describe("the notebook across every goal", () => {
   it("keeps statements true or false, since no one exam's words apply", async () => {
     const user = await userFixture();

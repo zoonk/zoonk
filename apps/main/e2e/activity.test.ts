@@ -1,59 +1,50 @@
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
-import { expectMode, showInMode } from "./learn-personas";
 
-const ACTIVE_DAY_LABEL = /^1 lesson completion on /iu;
-const EMPTY_DAY_LABEL = /^0 lesson completions on /iu;
+const ACTIVE_DAY_LABEL = /^1 activity finished on /iu;
+const EMPTY_DAY_LABEL = /^No study on /iu;
 
 test.describe("Activity Page", () => {
-  test("learners see their activity calendar and inspect its days by pointer and keyboard", async ({
+  test("learners see their study days, the calendar that lights them and inspect its days", async ({
     browser,
     withProgressUser,
   }) => {
     const context = await browser.newContext({ storageState: withProgressUser.storageState });
-    await showInMode(context, { mode: "fun", userId: withProgressUser.id });
     const page = await context.newPage();
 
     try {
       await page.goto("/activity");
-      await expectMode(page, "fun");
 
       await expect(page.getByRole("heading", { level: 1, name: /^activity$/iu })).toBeVisible();
 
-      await expect(page.getByRole("article", { name: /learning days/iu })).toContainText("1 day");
+      // The headline and the calendar count the same days: one finished lesson today.
+      await expect(page.getByText("1 day", { exact: true })).toBeVisible();
+      await expect(page.getByText("1 lesson finished and 2 min of study in total.")).toBeVisible();
 
-      await expect(page.getByRole("article", { name: /learning time/iu })).toContainText("2 min");
-      await expectAccessibleScreen(page, "Activity");
+      const activityChart = page.getByRole("figure", { name: /past 12 months/iu });
+      const days = activityChart.getByRole("group", { name: "Activity by day" });
+      const readout = activityChart.locator('[data-slot="contribution-calendar-readout"]');
 
-      const activityChart = page.getByRole("figure", { name: /learning activity/iu });
-      const activeDay = activityChart.getByRole("button", { name: ACTIVE_DAY_LABEL });
-
+      // A year of small squares, one control: the readout starts on the newest day studied.
       await expect(activityChart).toBeVisible();
-
-      await expect(
-        activityChart.getByRole("group", { name: /lesson activity intensity from less to more/iu }),
-      ).toBeVisible();
-
+      await expect(activityChart.getByRole("button")).toHaveCount(0);
       await expect(activityChart.getByText(/^Mon$/u)).toHaveCount(0);
-      await expect(activityChart.getByText(/^Wed$/u)).toHaveCount(0);
-      await expect(activityChart.getByText(/^Fri$/u)).toHaveCount(0);
-      await expect(activeDay).toBeVisible();
-      await activeDay.hover();
-      await expect(page.getByText(ACTIVE_DAY_LABEL)).toBeVisible();
+      await expect(readout).toHaveText(ACTIVE_DAY_LABEL);
 
-      // The arrow keys move to the empty days around it.
-      await activeDay.focus();
-      await activeDay.press("ArrowLeft");
-      await expect(page.getByText(EMPTY_DAY_LABEL)).toBeVisible();
+      // The pointer reads the day under it, and the arrow keys move from there.
+      await days.locator('[data-slot="contribution-calendar-day"]').first().hover();
+      await expect(readout).toHaveText(EMPTY_DAY_LABEL);
+
+      await days.focus();
+      await page.keyboard.press("ArrowRight");
+      await expect(readout).toHaveText(EMPTY_DAY_LABEL);
+      await expect(days.locator("[data-active]")).toHaveCount(1);
     } finally {
       await context.close();
     }
   });
 
-  test("learners can tap a day to keep its details visible", async ({
-    browser,
-    withProgressUser,
-  }) => {
+  test("learners can tap a day to read it", async ({ browser, withProgressUser }) => {
     const browserContext = await browser.newContext({
       hasTouch: true,
       isMobile: true,
@@ -64,10 +55,12 @@ test.describe("Activity Page", () => {
     const page = await browserContext.newPage();
     await page.goto("/activity");
 
-    const activeDay = page.getByRole("button", { name: ACTIVE_DAY_LABEL });
+    const days = page.getByRole("group", { name: "Activity by day" });
+    const readout = page.locator('[data-slot="contribution-calendar-readout"]');
 
-    await activeDay.tap();
-    await expect(page.getByText(ACTIVE_DAY_LABEL)).toBeVisible();
+    await days.locator('[data-slot="contribution-calendar-day"]').last().tap();
+    await expect(readout).toHaveText(/ on /u);
+    await expect(days.locator("[data-active]")).toHaveCount(1);
     await expectAccessibleScreen(page, "Activity");
 
     await browserContext.close();

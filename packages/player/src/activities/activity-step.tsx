@@ -3,7 +3,6 @@
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { Suspense, useId } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
-import { LessonQuestionPicture } from "../lesson/_components/lesson-step-image";
 import { LessonQuestion } from "../lesson/_components/lesson-step-text";
 import { ActivityBadge } from "./_components/activity-badge";
 import { ActivityCanvasSkeleton } from "./_components/activity-canvas";
@@ -58,10 +57,10 @@ function ActivityCheckArea({
 export function ActivityStep({
   answer,
   content,
-  image,
   isCorrect,
   onAnswerChange,
   phase,
+  picture,
 }: ActivityStepProps) {
   const labelId = useId();
   const isMounted = useIsMounted();
@@ -84,7 +83,7 @@ export function ActivityStep({
         <LessonQuestion id={labelId}>{content.prompt}</LessonQuestion>
       </div>
 
-      <LessonQuestionPicture image={image} request={content.image} />
+      {picture}
 
       {checkFirst && checkArea}
 
@@ -105,7 +104,7 @@ export function ActivityStep({
           <ActivityCanvasSkeleton />
         )}
 
-        <ActivityDataNote data={content.data} />
+        <ActivityDataNote content={content} />
       </div>
 
       {!checkFirst && checkArea}

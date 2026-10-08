@@ -22,6 +22,18 @@ describe(buildChallengeTeam, () => {
     );
   });
 
+  it("always starts with a woman, then a man, so a case can write each role's gender", () => {
+    const women = new Set(["Sofia", "Camila", "Yara", "Beatriz", "Luana", "Helena"]);
+
+    const firsts = ["plan-1", "plan-2", "plan-3", "plan-4", "plan-5", "plan-6"].map((seed) =>
+      buildChallengeTeam({ language: "pt", seed }).members.map((member) => member.name),
+    );
+
+    expect(
+      firsts.map((names) => names.map((name) => (women.has(name) ? "woman" : "man"))),
+    ).toStrictEqual(firsts.map(() => ["woman", "man", "woman", "man"]));
+  });
+
   it("gives different plans different teams", () => {
     const teams = ["plan-1", "plan-2", "plan-3", "plan-4"].map(
       (seed) => buildChallengeTeam({ language: "en", seed }).members[0]?.name,

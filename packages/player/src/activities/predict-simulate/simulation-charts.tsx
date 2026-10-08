@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   ActivityPlot,
@@ -9,7 +10,6 @@ import {
   ActivityPlotLine,
   usePlotScales,
 } from "../_components/activity-plot";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { outcomeCounts, runningShare } from "./simulation";
 
 const CHART_HEIGHT = 148;

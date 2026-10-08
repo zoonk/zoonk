@@ -2,16 +2,23 @@
 
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { createContext, use } from "react";
-import { type AreaPracticeOutcome } from "../progress/progress-context";
+import { type TestOutStart } from "../_components/test-out-start-link";
+import { type AreaPracticeOutcome } from "../_utils/use-practice-run";
 
 /**
- * Where a chapter's page links: back to where it opened from, the lesson player (the lesson id is
- * appended) and the mistakes notebook.
+ * Where a chapter's page links: back where the learner came from (the Journey, or the subject they
+ * opened it from, named by `backLabel`), and the lesson player (lesson id appended).
  */
-export type ChapterHrefs = { back: string; lessonBasePath: string; mistakes: string };
+export type ChapterHrefs = { back: string; backLabel?: string; lessonBasePath: string };
 
-/** "Practice" on the chapter's skills: the host adds the bonus block through core and opens it. */
-export type ChapterActions = { practice: () => Promise<AreaPracticeOutcome> };
+/**
+ * "Practice" on the chapter's skills (a bonus block the host adds through core and opens) and
+ * "Take the test", which asks for the test-out's questions and opens it.
+ */
+export type ChapterActions = {
+  practice: () => Promise<AreaPracticeOutcome>;
+  startTestOut: () => Promise<TestOutStart>;
+};
 
 type ChapterScreenValue = {
   actions: ChapterActions;
@@ -41,10 +48,4 @@ export function useChapterScreen(): ChapterScreenValue {
   }
 
   return value;
-}
-
-/** Where a lesson opens: the player, for lessons done and the next one. */
-export function useLessonHref() {
-  const { hrefs } = useChapterScreen();
-  return (lessonId: string) => `${hrefs.lessonBasePath}/${lessonId}`;
 }

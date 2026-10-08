@@ -66,16 +66,23 @@ function getRunningQuestionId(questions: LessonQuestionState["questions"]) {
   return questions.find((question) => question.status === "running")?.id ?? null;
 }
 
+/**
+ * While the conversation is on screen (`isShown`: an open sheet, or a page), a question waiting
+ * for its answer gets one, and an answer being written by a stream this page no longer reads (a
+ * dropped connection, a reload) is followed until it's done.
+ */
 export function useLessonQuestionRecovery({
   connection,
   canAskQuestions,
   dispatch,
+  isShown,
   state,
   streamAnswer,
 }: {
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
+  isShown: boolean;
   state: LessonQuestionState;
   streamAnswer: (questionId: string) => Promise<void>;
 }) {
@@ -87,7 +94,7 @@ export function useLessonQuestionRecovery({
   useEffect(() => {
     if (
       !canAskQuestions ||
-      !state.isOpen ||
+      !isShown ||
       !pendingQuestionId ||
       state.activeQuestionId ||
       state.isCreating ||
@@ -114,17 +121,17 @@ export function useLessonQuestionRecovery({
     dispatch,
     hasRunningQuestion,
     canAskQuestions,
+    isShown,
     pendingQuestionId,
     state.activeQuestionId,
     state.isCreating,
-    state.isOpen,
     streamAnswer,
   ]);
 
   const remoteRunningQuestionId = state.activeQuestionId === null ? runningQuestionId : null;
 
   useEffect(() => {
-    if (!canAskQuestions || !state.isOpen || !remoteRunningQuestionId) {
+    if (!canAskQuestions || !isShown || !remoteRunningQuestionId) {
       return;
     }
 
@@ -185,5 +192,5 @@ export function useLessonQuestionRecovery({
     return () => {
       abortController.abort();
     };
-  }, [connection, canAskQuestions, dispatch, remoteRunningQuestionId, state.isOpen]);
+  }, [connection, canAskQuestions, dispatch, isShown, remoteRunningQuestionId]);
 }

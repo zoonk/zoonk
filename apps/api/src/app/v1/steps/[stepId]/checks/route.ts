@@ -1,8 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
-import { runEndedError, tooManyAnswersError } from "@/lib/lesson-player-errors";
-import { stepPathParamsSchema } from "@/lib/openapi/schemas/step-variants";
+import { runEndedError } from "@/lib/lesson-player-errors";
+import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
 import { checkLessonStep } from "@zoonk/core/lesson-player/check";
 import { lessonStepCheckInputSchema } from "@zoonk/core/lesson-player/contract";
@@ -40,8 +40,6 @@ async function createStepCheck(
       return errors.unprocessableEntity("This answer doesn't fit this screen");
     case "runEnded":
       return runEndedError();
-    case "tooManyAnswers":
-      return tooManyAnswersError();
     case "checked":
       return NextResponse.json(outcome.result);
     default:

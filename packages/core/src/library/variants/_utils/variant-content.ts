@@ -1,7 +1,4 @@
-import {
-  type StepVariantKind,
-  type WrittenVariant,
-} from "@zoonk/ai/tasks/v2/variants/step-variant";
+import { type WrittenVariant } from "@zoonk/ai/tasks/v2/variants/step-variant";
 import { type CourseLevel, type StepKind } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { checkScreenText } from "../../quality/lesson-code-checks";
@@ -9,29 +6,15 @@ import { safeParseStepContent } from "../../steps/contract/step-contract";
 import { toStepContent } from "../../steps/written-screens";
 
 /**
- * What a variant keeps from the original screen: its example-line slot, and
- * for "Simpler" and "Go deeper" its picture, since the idea is the same. A
- * field or tool version changes the example, so the picture may not fit.
+ * What a version keeps from the original screen: its example-line slot. A field or tool version
+ * changes the example, so the original's picture may not fit and stays behind.
  */
-function getCarriedFields({
-  kind,
-  original,
-}: {
-  kind: StepVariantKind;
-  original: unknown;
-}): Record<string, unknown> {
-  if (!isJsonObject(original)) {
+function getCarriedFields(original: unknown): Record<string, unknown> {
+  if (!isJsonObject(original) || original.exampleLineSlot === undefined) {
     return {};
   }
 
-  const keepImage = (kind === "simpler" || kind === "deeper") && original.image !== undefined;
-
-  return {
-    ...(keepImage ? { image: original.image } : {}),
-    ...(original.exampleLineSlot === undefined
-      ? {}
-      : { exampleLineSlot: original.exampleLineSlot }),
-  };
+  return { exampleLineSlot: original.exampleLineSlot };
 }
 
 /**
@@ -40,14 +23,12 @@ function getCarriedFields({
  * variant can't be shown.
  */
 export function toVariantContent({
-  kind,
   language,
   level,
   original,
   stepKind,
   written,
 }: {
-  kind: StepVariantKind;
   language: string;
   level: CourseLevel;
   original: unknown;
@@ -65,7 +46,7 @@ export function toVariantContent({
     return { ok: false, problems: [`Wrote a ${converted.kind} for a ${stepKind} screen.`] };
   }
 
-  const content = { ...converted.content, ...getCarriedFields({ kind, original }) };
+  const content = { ...converted.content, ...getCarriedFields(original) };
   const parsed = safeParseStepContent(stepKind, content);
   const textProblems = checkScreenText({ language, level, screen });
 

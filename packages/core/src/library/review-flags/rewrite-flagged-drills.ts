@@ -36,7 +36,13 @@ export async function replaceFlaggedDrills({
     }
 
     const { reference: _reference, ...item } = drill;
-    const problems = checkItem({ expectedFormat: group.format, item, optionCount });
+
+    const problems = checkItem({
+      expectedFormat: group.format,
+      item,
+      language: group.language,
+      optionCount,
+    });
 
     return problems.length === 0 ? [{ item, itemId }] : [];
   });

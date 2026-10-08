@@ -1,17 +1,20 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
-import { changeGoalPlan } from "../plans/change-goal-plan";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { decidePlanChange } from "../plans/decide-plan-change";
-import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanOperationError } from "../plans/planner/plan-operations";
-import { parsePlanGraph } from "../plans/planner/plan-state";
 import { readBlockPayload } from "../sessions/block-payload";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
 import { getSession } from "../users/get-session";
-
-const MONDAY = 1;
-const DAYS_PER_WEEK = 7;
+import {
+  applyChallengeMove,
+  findChallengeOn,
+  getMovableDay,
+  loadChallengeMoveRules,
+  restoreChallengeBlock,
+} from "./_utils/challenge-move";
 
 type WeeklyChallengeMove = { changeId: string | null; date: string };
 
@@ -24,12 +27,6 @@ export type UndoWeeklyChallengeMoveResult =
   | { status: "undone" }
   | { status: "conflict" | "notFound" | "unauthorized" };
 
-/** The first Monday after a day: a Sunday's challenge moves to the next day. */
-function getNextMonday(date: Date): Date {
-  const days = (MONDAY - date.getUTCDay() + DAYS_PER_WEEK) % DAYS_PER_WEEK || DAYS_PER_WEEK;
-  return addDays(date, days);
-}
-
 async function findWeeklyBlock(blockId: string) {
   const session = await getSession();
 
@@ -39,30 +36,25 @@ async function findWeeklyBlock(blockId: string) {
 
   const block = isUuid(blockId)
     ? await prisma.studySessionBlock.findFirst({
-        include: { session: { select: { goalId: true, localDate: true } } },
+        include: { session: { include: { goal: true } } },
         where: { id: blockId, kind: "checkpoint", session: { userId: session.user.id } },
       })
     : null;
 
   const payload = block ? readBlockPayload(block) : null;
+  const goal = block?.session.goal;
 
-  if (!block?.session.goalId || payload?.checkpoint?.kind !== "weekly" || !payload.planItemId) {
+  if (!goal || payload?.checkpoint?.kind !== "weekly" || !payload.planItemId) {
     return { status: "notFound" as const };
   }
 
-  return {
-    block,
-    goalId: block.session.goalId,
-    planItemId: payload.planItemId,
-    status: "ready" as const,
-  };
+  return { block, goal, planItemId: payload.planItemId, status: "ready" as const };
 }
 
 /**
- * "Move to Monday": the week's Big Challenge (a mock or a mixed challenge) moves from its day to
- * the next Monday, through the planner, so the plan and its undo stay in one place. Today's block
- * steps aside; the session never asks for a challenge that moved. Only the planner's own plans
- * (with a skill graph) can move it, since the planner is what places it again.
+ * "Move to Monday" from today's session: the week's Big Challenge (a mock or a mixed challenge)
+ * moves from its day to the next Monday, through the planner, and today's block steps aside. It
+ * moves only before it starts, from its own day or a later one.
  */
 export async function moveWeeklyChallenge({
   blockId,
@@ -77,51 +69,34 @@ export async function moveWeeklyChallenge({
     return found;
   }
 
-  const [item, plan] = await Promise.all([
-    prisma.planItem.findUnique({ where: { id: found.planItemId } }),
-    prisma.plan.findUnique({ select: { graph: true }, where: { goalId: found.goalId } }),
+  const { block, goal, planItemId } = found;
+  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
+  const today = getDateInTimeZone({ date: new Date(), timeZone });
+
+  const [item, rules] = await Promise.all([
+    prisma.planItem.findUnique({ where: { id: planItemId } }),
+    loadChallengeMoveRules(goal.id),
   ]);
 
-  const planned = parsePlanGraph(plan?.graph).skills.length > 0;
+  const from = getMovableDay({ item, rules, today });
 
-  if (
-    !planned ||
-    found.block.status !== "pending" ||
-    item?.status !== "todo" ||
-    !item.scheduledFor
-  ) {
+  if (block.status !== "pending" || !item || !from) {
     return { status: "notMovable" };
   }
 
-  const to = getNextMonday(item.scheduledFor);
-
-  const result = await changeGoalPlan({
-    goalId: found.goalId,
-    input: {
-      operations: [
-        { from: toIsoDate(item.scheduledFor), kind: "moveWeeklyEvent", to: toIsoDate(to) },
-      ],
-      timeZone: input.timeZone,
-    },
+  const result = await applyChallengeMove({
+    block,
+    from,
+    goalId: goal.id,
+    input,
+    planId: item.planId,
   });
 
-  if (result.status !== "applied") {
+  if (result.status !== "moved") {
     return result;
   }
 
-  await prisma.studySessionBlock.updateMany({
-    data: { status: "skipped" },
-    where: { id: found.block.id, status: "pending" },
-  });
-
-  return { move: { changeId: result.change?.id ?? null, date: toIsoDate(to) }, status: "moved" };
-}
-
-/** The challenge back on its day after an undo: a dated item is a new row once it moves. */
-async function findChallengeOn({ date, planId }: { date: Date; planId: string }) {
-  return prisma.planItem.findFirst({
-    where: { kind: { in: ["checkpoint", "mock"] }, planId, scheduledFor: date, status: "todo" },
-  });
+  return { move: { changeId: result.move.changeId, date: result.move.date }, status: "moved" };
 }
 
 /**
@@ -145,7 +120,7 @@ export async function undoWeeklyChallengeMove({
 
   const result = await decidePlanChange({
     changeId,
-    goalId: found.goalId,
+    goalId: found.goal.id,
     input: { status: "undone", timeZone: input.timeZone },
   });
 
@@ -155,7 +130,7 @@ export async function undoWeeklyChallengeMove({
 
   const plan = await prisma.plan.findUnique({
     select: { id: true },
-    where: { goalId: found.goalId },
+    where: { goalId: found.goal.id },
   });
 
   const challenge = plan
@@ -163,13 +138,7 @@ export async function undoWeeklyChallengeMove({
     : null;
 
   if (challenge) {
-    await prisma.studySessionBlock.updateMany({
-      data: {
-        payload: { ...readBlockPayload(found.block), planItemId: challenge.id },
-        status: "pending",
-      },
-      where: { id: found.block.id, status: "skipped" },
-    });
+    await restoreChallengeBlock({ block: found.block, challenge });
   }
 
   return { status: "undone" };

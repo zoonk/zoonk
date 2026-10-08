@@ -1,10 +1,12 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
 import { claimLibraryGeneration } from "@zoonk/core/library/claims/generation";
 import { loadLessonSpecInputs } from "@zoonk/core/library/curriculum/lesson-spec-inputs";
 import { saveLessonSpecs } from "@zoonk/core/library/curriculum/save-lesson-specs";
 import { getScopeModel } from "@zoonk/core/library/curriculum/scope";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
+import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import { prisma } from "@zoonk/db";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
@@ -17,7 +19,8 @@ export type LessonSpecOutcome = "missing" | "ready" | "waiting";
 type SpecInput = {
   analytics?: ContentAnalytics;
   lessonId: string;
-  priority?: boolean;
+  /** When a learner reaches the lesson (see `LessonContentInput`). */
+  wait?: CallWait;
   workflowRunId: string;
 };
 
@@ -48,7 +51,7 @@ async function claimSpec({ lessonId, workflowRunId }: SpecInput) {
 async function planLesson({
   analytics,
   lessonId,
-  priority,
+  wait = "soon",
   workflowRunId,
 }: SpecInput): Promise<LessonSpecOutcome> {
   const inputs = await loadLessonSpecInputs(lessonId);
@@ -59,12 +62,19 @@ async function planLesson({
 
   const context = toContentAnalytics({ analytics, scope: inputs.scope, workflowRunId });
 
+  // Exams its learners prepare for, its language or other learners' goals make a shared lesson
+  // very likely reused.
+  const reuse = await loadLessonReuse({
+    forExam: (inputs.prompt.exams?.length ?? 0) > 0,
+    lessonId,
+  });
+
   const { data, provenance } = await withAiRetry(() =>
     generateLessonSpec({
       ...inputs.prompt,
       analytics: context,
       model: getScopeModel(inputs.scope),
-      serviceTier: priority ? "priority" : undefined,
+      serviceTier: chooseServiceTier({ reuse, wait }),
     }),
   );
 

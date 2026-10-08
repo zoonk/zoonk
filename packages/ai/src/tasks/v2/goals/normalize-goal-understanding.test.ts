@@ -10,7 +10,9 @@ const TODAY = "2026-09-26";
 
 function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal {
   return {
+    examMonth: null,
     examName: null,
+    examTarget: null,
     examYear: null,
     institution: null,
     kind: "learn",
@@ -86,6 +88,40 @@ describe(normalizeGoalUnderstanding, () => {
       studyTime: "21:30",
       studyTimeNote: "At night, after school",
     });
+  });
+
+  it("keeps the month the learner named for an exam, only a real one, and only for exams", () => {
+    const result = normalizeGoalUnderstanding({
+      raw: raw({
+        goals: [
+          rawGoal({ examMonth: 3, examName: "OAB", examYear: 2027, kind: "exam" }),
+          rawGoal({ examMonth: 13, examName: "ENEM", kind: "exam" }),
+          rawGoal({ examMonth: 3 }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(
+      result.route === "goals" ? result.goals.map((goal) => goal.examMonth) : null,
+    ).toStrictEqual([3, undefined, undefined]);
+  });
+
+  it("keeps what an exam's learner aims for beyond passing, only for exams", () => {
+    const result = normalizeGoalUnderstanding({
+      raw: raw({
+        goals: [
+          rawGoal({ examName: "ENEM", examTarget: "admission", kind: "exam" }),
+          rawGoal({ examName: "OAB", examTarget: null, kind: "exam" }),
+          rawGoal({ examTarget: "score" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(
+      result.route === "goals" ? result.goals.map((goal) => goal.examTarget) : null,
+    ).toStrictEqual(["admission", undefined, undefined]);
   });
 
   it("drops past or invalid dates, invalid times and out-of-range weekdays", () => {

@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     // The API enables Cache Components for request deduplication, not to require every auth page to navigate instantly.
     instantInsights: { validationLevel: "manual-warning" },
+    // Next 16.4.0: a dev session restored from Turbopack's file cache can answer every HMR subscription to
+    // the client entry with "restart", so auth pages reload in a loop. The API compiles quickly from scratch.
+    turbopackFileSystemCacheForDev: false,
     turbopackRustReactCompiler: true,
     typedEnv: true,
   },

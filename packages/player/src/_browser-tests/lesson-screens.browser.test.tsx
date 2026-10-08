@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
-import { languageStep } from "../_test-utils/language-steps";
-import { teachingStep } from "../_test-utils/lesson-steps";
+import { languageStep, pairWord } from "../_test-utils/language-steps";
+import { explanationStep, teachingStep } from "../_test-utils/lesson-steps";
 import {
   buildAdapters,
   buildLesson,
@@ -25,7 +25,7 @@ function verdict(text: string) {
 }
 
 describe("lesson screens", () => {
-  it("shows the lesson's minutes in Focus and keeps its summary card in the screen's menu", async () => {
+  it("shows the lesson's minutes and keeps its summary card in the screen's menu", async () => {
     renderLessonPlayer({
       lesson: buildLesson([teachingStep("explanation"), teachingStep("check")], {
         estimatedMinutes: 4,
@@ -35,7 +35,7 @@ describe("lesson screens", () => {
 
     await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
 
-    // Focus's header has the title and minutes; Fun's has the dots instead.
+    // The header has the lesson's title and minutes.
     await expect.element(page.getByText("4 min", { exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: "Screen options" }).click();
@@ -50,6 +50,47 @@ describe("lesson screens", () => {
     await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
   });
 
+  it("shows a written answer nothing checked next to the sample answer, without calling it wrong", async () => {
+    const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
+
+    // Past a few graded answers to the screen today, the server didn't check a paraphrase.
+    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
+      Promise.resolve({
+        result: {
+          checked: false,
+          correctAnswer: "Because it maps chances.",
+          corrections: [],
+          feedback: null,
+          isCorrect: false,
+          keyPoints: null,
+          nextReviewAt: null,
+          savedMistake: false,
+          score: null,
+          spelling: null,
+        },
+        status: "checked" as const,
+      }),
+    );
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await page
+      .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
+      .fill("It's where it probably is");
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(verdict("Not checked this time")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("status").getByText("Because it maps chances."))
+      .toBeVisible();
+
+    await expect.element(verdict("Not quite")).not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+  });
+
   it("counts a typo as right and shows the spelling", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
 
@@ -57,7 +98,9 @@ describe("lesson screens", () => {
     const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
       Promise.resolve({
         result: {
+          checked: true,
           correctAnswer: null,
+          corrections: [],
           feedback: null,
           isCorrect: true,
           keyPoints: null,
@@ -70,7 +113,7 @@ describe("lesson screens", () => {
       }),
     );
 
-    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson, mode: "fun" });
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
 
     await page
       .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
@@ -84,22 +127,66 @@ describe("lesson screens", () => {
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
   });
 
+  it("names a language answer's form mistake without calling a stated idea missing", async () => {
+    const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
+    const answer = "It show where the electron is likely to be";
+
+    // The server's verdict on a language answer that states every idea with one form mistake.
+    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
+      Promise.resolve({
+        result: {
+          checked: true,
+          correctAnswer: RIGHT_TYPED,
+          corrections: [{ right: "It shows", wrong: "It show" }],
+          feedback: "Every idea is there; with “it” the verb is “shows”.",
+          isCorrect: false,
+          keyPoints: [
+            { met: true, text: "We can't know the electron's exact position or path" },
+            { met: true, text: "The cloud shows where it's likely to be found" },
+          ],
+          nextReviewAt: null,
+          savedMistake: true,
+          score: 1,
+          spelling: null,
+        },
+        status: "checked" as const,
+      }),
+    );
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await page
+      .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
+      .fill(answer);
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(verdict("Almost there")).toBeVisible();
+
+    await expect
+      .element(page.getByRole("status").getByRole("listitem").first())
+      .toHaveTextContent("Your answer: It show Correct answer: It shows");
+
+    await expect.element(page.getByText("2 of 2 key points")).toBeVisible();
+    await expect.element(page.getByText("Missing:")).not.toBeInTheDocument();
+  });
+
   it("teaches a word with its note and tip, then checks it", async () => {
     renderLessonPlayer({
       lesson: buildLesson(
         [languageStep("vocabulary"), languageStep("translation"), languageStep("reading")],
         { language: "pt", targetLanguage: "en" },
       ),
-      mode: "fun",
     });
 
     await expect.element(page.getByRole("region", { name: "Vocabulary: rent" })).toBeVisible();
     await expect.element(page.getByText("aluguel", { exact: true })).toBeVisible();
     await expect.element(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
+    // Writers mark the word's letters as code and quotes in italics: shown formatted, never raw.
     await expect.element(page.getByText("O r do começo é suave, não como em rato.")).toBeVisible();
+    await expect.element(page.getByText("r", { exact: true })).toHaveProperty("tagName", "CODE");
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    await expect.element(page.getByText("Translate this word:")).toBeVisible();
+    await expect.element(page.getByText("Translate:", { exact: true })).toBeVisible();
     await page.getByRole("radio", { name: "Rent" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Correct!")).toBeVisible();
@@ -107,6 +194,23 @@ describe("lesson screens", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByRole("group", { name: "Word bank" })).toBeVisible();
+  });
+
+  it("asks to translate a noun with its article without calling it a phrase", async () => {
+    // Words carry their article ("as colunas", "die Miete") and chunks are several words
+    // ("Thanks for having me"): the prompt names neither, so it fits both.
+    const columns = pairWord({ translation: "as colunas", word: "columns" });
+
+    renderLessonPlayer({
+      lesson: buildLesson([languageStep("translation", {}, { word: columns })], {
+        language: "pt",
+        targetLanguage: "en",
+      }),
+    });
+
+    await expect.element(page.getByText("Translate:", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("as colunas", { exact: true })).toBeVisible();
+    await expect.element(page.getByText(/phrase/iu)).not.toBeInTheDocument();
   });
 
   it("dates a screen built from a law and opens the law from its Sources chip", async () => {
@@ -138,5 +242,52 @@ describe("lesson screens", () => {
     await press("Escape");
     await expect.element(source).not.toBeInTheDocument();
     await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
+  });
+
+  it("shows each screen's own personal example, and nothing where the learner has none", async () => {
+    const discount = explanationStep({
+      exampleLineSlot: { idea: "A discount on something the learner buys." },
+      text: "A 25% discount takes a quarter off the price.",
+      title: "Discounts",
+    });
+
+    const interest = explanationStep({
+      exampleLineSlot: { idea: "Interest on an installment plan the learner pays." },
+      text: "Paying in installments with interest costs more than paying the price at once.",
+      title: "Interest",
+    });
+
+    const markup = explanationStep({
+      exampleLineSlot: { idea: "A price the learner sets at work." },
+      text: "A markup adds a percent of the cost to set the price.",
+      title: "Markups",
+    });
+
+    const lesson = buildLesson([discount, interest, markup]);
+
+    const lines: Record<string, string> = {
+      [discount.id]: "At the pharmacy where you work, 25% off a $40 kit saves $10.",
+      [interest.id]: "Your scooter's 12 payments of $110 for $1,200 add $120 of interest.",
+    };
+
+    // The server writes a lesson's lines together, each a different moment, or none.
+    const getExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["getExampleLine"]>>(
+      ({ stepId }) => Promise.resolve(lines[stepId] ?? null),
+    );
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { getExampleLine }), lesson });
+
+    const example = page.getByRole("complementary", { name: "Your example" });
+
+    await expect.element(example).toHaveTextContent(lines[discount.id] ?? "");
+    await page.getByRole("button", { name: /^Next/u }).click();
+
+    await expect.element(page.getByText("Interest", { exact: true })).toBeVisible();
+    await expect.element(example).toHaveTextContent(lines[interest.id] ?? "");
+    await page.getByRole("button", { name: /^Next/u }).click();
+
+    await expect.element(page.getByText("Markups", { exact: true })).toBeVisible();
+    await vi.waitFor(() => expect(getExampleLine).toHaveBeenCalledWith({ stepId: markup.id }));
+    await expect.element(example).not.toBeInTheDocument();
   });
 });

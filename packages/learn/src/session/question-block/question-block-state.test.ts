@@ -6,7 +6,7 @@ import {
   questionBlockReducer,
 } from "./question-block-state";
 
-function question(itemId: string, answered: { isCorrect: boolean } | null = null) {
+function question(itemId: string, answered: { blank: boolean; isCorrect: boolean } | null = null) {
   return {
     answered,
     capsuleKey: null,
@@ -14,6 +14,7 @@ function question(itemId: string, answered: { isCorrect: boolean } | null = null
     context: null,
     drill: null,
     format: "multipleChoice" as const,
+    image: null,
     itemId,
     left: null,
     mistakeId: null,
@@ -25,6 +26,7 @@ function question(itemId: string, answered: { isCorrect: boolean } | null = null
     skillId: "skill",
     timeMachine: null,
     unit: null,
+    visual: null,
   };
 }
 
@@ -38,6 +40,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   estimatedBrainPower: 10,
   estimatedMinutes: 4,
   extra: false,
+  fullReview: false,
   id: "block",
   kind: "practice",
   lessonId: null,
@@ -48,6 +51,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   questions: 2,
   reinforcement: false,
   status: "active",
+  subject: null,
   title: null,
 };
 
@@ -56,6 +60,7 @@ function detailWith(questions: ReturnType<typeof question>[]): StudyBlockDetail 
 }
 
 const feedback: StudyAnswerFeedback = {
+  blank: false,
   correctAnswer: { selectedIndex: 0 },
   explanation: "Because.",
   hyperdrive: { level: 2, streak: 3 },
@@ -70,7 +75,7 @@ const feedback: StudyAnswerFeedback = {
 describe(createQuestionBlockState, () => {
   it("resumes at the first question not answered yet", () => {
     const state = createQuestionBlockState(
-      detailWith([question("a", { isCorrect: true }), question("b"), question("c")]),
+      detailWith([question("a", { blank: false, isCorrect: true }), question("b"), question("c")]),
     );
 
     expect(state.index).toBe(1);
@@ -79,7 +84,10 @@ describe(createQuestionBlockState, () => {
 
   it("goes straight to the block's end when every question was answered", () => {
     const state = createQuestionBlockState(
-      detailWith([question("a", { isCorrect: true }), question("b", { isCorrect: false })]),
+      detailWith([
+        question("a", { blank: false, isCorrect: true }),
+        question("b", { blank: false, isCorrect: false }),
+      ]),
     );
 
     expect(state.phase).toStrictEqual({ kind: "finishing" });
@@ -105,7 +113,10 @@ describe(questionBlockReducer, () => {
 
     expect(graded.phase).toMatchObject({ kind: "feedback" });
     expect(graded.hyperdrive).toBe(2);
-    expect(graded.answers).toStrictEqual({ a: { answer: { selectedIndex: 0 }, isCorrect: true } });
+
+    expect(graded.answers).toStrictEqual({
+      a: { answer: { selectedIndex: 0 }, blank: false, isCorrect: true },
+    });
   });
 
   it("moves to the next question, and to the end after the last one", () => {

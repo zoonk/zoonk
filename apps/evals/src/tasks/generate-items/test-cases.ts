@@ -71,7 +71,7 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
-    expectations: `ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options.`,
+    expectations: `ENEM-style Mathematics items in Brazilian Portuguese about successive percentage changes. Distractors should come from typical mistakes such as adding the percentages (10% + 20% = 30%) or applying the second change to the original value. Every item needs 5 options. People and towns come from CAST, a different person and town in each item, and no reason points at an option by its place ("a segunda", "alternativa B"): each names the option by what it says.`,
     id: "pt-enem-matematica-porcentagens-sucessivas",
     userInput: {
       count: ITEMS_PER_CASE,
@@ -315,6 +315,35 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
         example:
           "A 12-ounce jar for $3.00 costs $0.25 per ounce; an 18-ounce jar for $4.14 costs $0.23.",
         name: "Comparing unit prices",
+      },
+    },
+  },
+  {
+    expectations: `School multiple-choice items in Brazilian Portuguese on telling plant cell organelles apart in a cell diagram. The skill is reading a diagram, so every question shows one as an \`image\` whose prompt describes the cell with every structure and label the answer depends on (for example a plant cell with a numbered arrow on one organelle), and whose question refers to "a figura" without describing what it shows. The picture never gives the answer away: no label names the structure the question asks for. A question with an image has \`visual\` null. Distractors are organelles students confuse (chloroplast and mitochondrion, cell wall and membrane, vacuole and nucleus).`,
+    id: "pt-celula-vegetal-figure-image",
+    userInput: {
+      count: ITEMS_PER_CASE,
+      format: "multipleChoice",
+      language: "pt",
+      level: "beginner",
+      skill: {
+        description:
+          "Identificar, num esquema de célula vegetal, a parede celular, o cloroplasto, o vacúolo e o núcleo.",
+        name: "Identificar organelas num esquema de célula vegetal",
+      },
+    },
+  },
+  {
+    expectations: `Everyday multiple-choice items in US English on comparing and ordering negative numbers, a skill that needs no picture: every question has \`image\` null and asks in words, a table or a chart, and none points at a picture it doesn't show.`,
+    id: "en-no-figure-needed-image-null",
+    userInput: {
+      count: ITEMS_PER_CASE,
+      format: "multipleChoice",
+      language: "en",
+      level: "beginner",
+      skill: {
+        description: "Compare and order negative numbers, such as temperatures below zero.",
+        name: "Ordering negative numbers",
       },
     },
   },

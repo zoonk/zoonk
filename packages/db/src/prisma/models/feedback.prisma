@@ -46,7 +46,6 @@ model ContentFeedback {
   reasons       ContentFeedbackReason[] @default([])
   comment       String?
   language      String?                 @db.VarChar(10)
-  mode          ExperienceMode?
   model         String?
   promptVersion String?                 @map("prompt_version")
   runId         String?                 @map("run_id")

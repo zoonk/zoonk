@@ -17,11 +17,13 @@ import { isPassageInDocument } from "@zoonk/core/library/exams/passage-check";
 import { fetchDocument } from "@zoonk/core/library/sources/fetch";
 import { parseDocument } from "@zoonk/core/library/sources/parse-document";
 
-export type ExtractionEvalInput = {
-  exam: string;
-  /** Real notices, fetched when the eval runs, as research would fetch them. */
-  documents: { title: string; url: string }[];
-};
+/**
+ * A real notice, fetched when the eval runs as research would fetch it, or a learner's material
+ * given as its text, as an upload is read.
+ */
+type EvalDocument = { title: string; url: string } | { text: string; title: string };
+
+export type ExtractionEvalInput = { exam: string; documents: EvalDocument[] };
 
 export type ExtractionEvalOutput = BlueprintExtraction & {
   /** How many quoted passages code found in their document, the first half of the citation check. */
@@ -32,13 +34,12 @@ export type ExtractionEvalOutput = BlueprintExtraction & {
   check: { claims: number; inputTokens: number; kept: number; outputTokens: number };
 };
 
-async function loadDocument({
-  title,
-  url,
-}: {
-  title: string;
-  url: string;
-}): Promise<ResearchDocument> {
+async function loadDocument(document: EvalDocument): Promise<ResearchDocument> {
+  if ("text" in document) {
+    return { file: null, images: [], text: document.text, title: document.title, url: null };
+  }
+
+  const { title, url } = document;
   const fetched = await fetchDocument(url);
   const parsed = await parseDocument({ bytes: fetched.bytes, contentType: fetched.contentType });
   const isPdf = fetched.contentType === "application/pdf";

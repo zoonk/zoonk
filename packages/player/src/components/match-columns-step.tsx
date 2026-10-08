@@ -52,7 +52,6 @@ function MatchItem({
 
   return (
     <button
-      aria-label={displayLabel}
       aria-keyshortcuts={visibleShortcut ?? undefined}
       aria-pressed={state === "selected"}
       className={cn(

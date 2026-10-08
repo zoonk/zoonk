@@ -3,14 +3,15 @@ import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { generateLessonImage } from "@zoonk/ai/tasks/v2/images/generate";
 import { generateImageScene } from "@zoonk/ai/tasks/v2/images/scene";
 import { describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
+import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/v2/images/style";
 import { uploadImage } from "@zoonk/core/images/upload";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { buildImageReuseKey } from "@zoonk/utils/identity-key";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TEST_IMAGE, imageProvenance, passedCheck, sceneFor } from "./_test-utils/image-results";
-import { PRIVATE_MAX_IMAGES, lessonImagesWorkflow } from "./lesson-images-workflow";
+import { lessonImagesWorkflow } from "./lesson-images-workflow";
 
 /**
  * Models and Vercel Blob are the external boundaries. Identity search, the
@@ -28,15 +29,23 @@ vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({
 
 vi.mock("@zoonk/core/images/upload", () => ({ uploadImage: vi.fn() }));
 
+/** Stored pictures are read back from Vercel Blob for their check: the test store serves one. */
+function serveStoredPictures() {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () => new Response(TEST_IMAGE, { headers: { "content-type": "image/webp" } })),
+  );
+}
+
 function explanation(prompt: string) {
   return { image: { alt: "A picture", prompt }, text: "One idea on this screen." };
 }
 
-/** Screens that each ask for a picture, two screens apart so every one of them gets drawn. */
+/** Screens in a row that each ask for a picture. */
 function markedScreens({ lessonId, prompts }: { lessonId: string; prompts: string[] }) {
   return Promise.all(
     prompts.map((prompt, index) =>
-      libraryStepFixture({ content: explanation(prompt), lessonId, position: index * 2 }),
+      libraryStepFixture({ content: explanation(prompt), lessonId, position: index }),
     ),
   );
 }
@@ -66,6 +75,57 @@ describe(lessonImagesWorkflow, () => {
     vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
       Promise.resolve({ data: `https://blob.test/${fileName}-${randomUUID()}`, error: null }),
     );
+
+    serveStoredPictures();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("shows each new picture before its check, then replaces one its check rejects with a redraw", async () => {
+    const lesson = await libraryLessonFixture();
+    const [rejectedPrompt, passedPrompt] = [`globe ${randomUUID()}`, `compass ${randomUUID()}`];
+    await markedScreens({ lessonId: lesson.id, prompts: [rejectedPrompt, passedPrompt] });
+
+    // The stored globe fails its check; its redraw passes.
+    vi.mocked(checkLessonImage).mockImplementation(async ({ scene }) =>
+      scene.focalObject.includes(rejectedPrompt) &&
+      vi.mocked(checkLessonImage).mock.calls.filter(([params]) => params.scene === scene).length ===
+        1
+        ? ({ data: { ...passedCheck.data, passed: false, problems: ["wrong object"] } } as never)
+        : (passedCheck as never),
+    );
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 2,
+      reused: 0,
+    });
+
+    const steps = await prisma.step.findMany({
+      include: { mediaAsset: true },
+      orderBy: { position: "asc" },
+      where: { lessonId: lesson.id },
+    });
+
+    // Both pictures were linked before any check ran; each was checked at flex once linked.
+    expect(checkLessonImage).toHaveBeenCalledTimes(3);
+
+    expect(
+      vi.mocked(checkLessonImage).mock.calls.every(([params]) => params.serviceTier === "flex"),
+    ).toBe(true);
+
+    expect(generateLessonImage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ corrections: ["wrong object"] }),
+    );
+
+    // The globe's screen keeps its asset, which now holds the redraw: the third file stored.
+    const redraw = await vi.mocked(uploadImage).mock.results[2]?.value;
+
+    expect(uploadImage).toHaveBeenCalledTimes(3);
+    expect(steps[0]?.mediaAsset?.url).toBe(redraw?.data);
+    expect(steps[1]?.mediaAsset?.url).not.toBe(redraw?.data);
   });
 
   it("reuses a picture of the same scene and draws the rest", async () => {
@@ -79,9 +139,9 @@ describe(lessonImagesWorkflow, () => {
         reuseKey: buildImageReuseKey({
           language: null,
           prompt: describeImageScene(reusedScene),
-          styleVersion: 1,
+          styleVersion: IMAGE_STYLE_VERSION,
         }),
-        styleVersion: 1,
+        styleVersion: IMAGE_STYLE_VERSION,
       }),
     ]);
 
@@ -112,19 +172,24 @@ describe(lessonImagesWorkflow, () => {
     });
   });
 
-  it("draws only the first marked screen of a lesson made for one learner", async () => {
+  it("draws every picture a lesson asks for, on screens in a row too", async () => {
     const lesson = await libraryLessonFixture();
-    const prompts = ["atom", "cell", "orbit"].map((name) => `${name} ${randomUUID()}`);
+
+    const prompts = ["frontal lobe", "temporal lobe", "occipital lobe"].map(
+      (name) => `${name} ${randomUUID()}`,
+    );
+
     await markedScreens({ lessonId: lesson.id, prompts });
 
-    await expect(
-      lessonImagesWorkflow({ lessonId: lesson.id, maxImages: PRIVATE_MAX_IMAGES }),
-    ).resolves.toStrictEqual({ failed: 0, generated: 1, reused: 0 });
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 3,
+      reused: 0,
+    });
 
     const pictures = await lessonPictures(lesson.id);
 
-    expect(pictures.map((step) => step.mediaAssetId !== null)).toStrictEqual([true, false, false]);
-    expect(generateLessonImage).toHaveBeenCalledOnce();
+    expect(pictures.map((step) => step.mediaAssetId !== null)).toStrictEqual([true, true, true]);
   });
 
   it("draws the other screens when one screen's picture fails, and the next run draws only that one", async () => {

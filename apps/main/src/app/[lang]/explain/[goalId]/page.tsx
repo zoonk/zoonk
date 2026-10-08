@@ -1,11 +1,8 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
-import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getExplanation } from "@zoonk/core/view-models/explain/get";
-import { DeviceModeRoot, ModeProvider } from "@zoonk/learn/mode";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -25,12 +22,10 @@ async function ExplainContent({ params }: Props) {
     notFound();
   }
 
-  const [result, session, profile, mode, buddy] = await Promise.all([
+  const [result, session, profile] = await Promise.all([
     getExplanation({ goalId }),
     getSession(),
     getLearningProfile(),
-    getExperienceMode(),
-    getLearnerBuddy(),
   ]);
 
   if (result.status === "unauthorized") {
@@ -42,27 +37,22 @@ async function ExplainContent({ params }: Props) {
   }
 
   return (
-    <ModeProvider experienceMode={mode}>
-      <MainLearnProvider>
-        <ExplainClient
-          explanation={result.explanation}
-          hasSession={Boolean(session)}
-          buddy={buddy}
-          soundsEnabled={profile?.soundsEnabled ?? true}
-        />
-      </MainLearnProvider>
-    </ModeProvider>
+    <MainLearnProvider>
+      <ExplainClient
+        explanation={result.explanation}
+        hasSession={Boolean(session)}
+        soundsEnabled={profile?.soundsEnabled ?? true}
+      />
+    </MainLearnProvider>
   );
 }
 
 function ExplainSkeleton() {
   return (
-    <DeviceModeRoot>
-      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-4 px-4 pt-20">
-        <Skeleton className="h-40 w-full rounded-3xl" />
-        <Skeleton className="h-5 w-2/3" />
-      </main>
-    </DeviceModeRoot>
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-4 px-4 pt-20">
+      <Skeleton className="h-40 w-full rounded-3xl" />
+      <Skeleton className="h-5 w-2/3" />
+    </main>
   );
 }
 

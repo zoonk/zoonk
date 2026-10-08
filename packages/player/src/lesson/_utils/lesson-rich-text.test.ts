@@ -88,4 +88,24 @@ describe(parseRichBlocks, () => {
       { kind: "paragraph", lines: [[{ kind: "text", text: "New idea" }]] },
     ]);
   });
+
+  it("reads a table of data between paragraphs, with math and emphasis in its cells", () => {
+    const blocks = parseRichBlocks(
+      "Uma tabela mostra as bicicletas:\n| Hora | Bicicletas |\n|---|---:|\n| 7h | 9 |\n| **8h** | $5$ |\n\nQual horário teve menos?",
+    );
+
+    expect(blocks).toStrictEqual([
+      { kind: "paragraph", lines: [[{ kind: "text", text: "Uma tabela mostra as bicicletas:" }]] },
+      {
+        align: [null, "right"],
+        header: [[{ kind: "text", text: "Hora" }], [{ kind: "text", text: "Bicicletas" }]],
+        kind: "table",
+        rows: [
+          [[{ kind: "text", text: "7h" }], [{ kind: "text", text: "9" }]],
+          [[{ kind: "bold", text: "8h" }], [{ kind: "math", text: "5" }]],
+        ],
+      },
+      { kind: "paragraph", lines: [[{ kind: "text", text: "Qual horário teve menos?" }]] },
+    ]);
+  });
 });

@@ -26,7 +26,7 @@ describe("geometry and data activities", () => {
   });
 
   it("geometry board: a wrong sum shows the real one", async () => {
-    openActivity({ mode: "fun", template: "geometryBoard" });
+    openActivity({ template: "geometryBoard" });
     await valueInput().fill("90");
     await checkActivity();
     await expectVerdict("Not quite");
@@ -39,7 +39,7 @@ describe("geometry and data activities", () => {
   });
 
   it("unit circle: turning to the check's angle answers it", async () => {
-    openActivity({ mode: "fun", template: "unitCircle" });
+    openActivity({ template: "unitCircle" });
     await pressOnSlider("Point on the circle", "ArrowRight", 6);
     await expect.element(valueInput()).toHaveValue("0.5");
     await checkActivity();
@@ -68,15 +68,17 @@ describe("geometry and data activities", () => {
   });
 
   it("distribution explorer: half the range gives the wrong share", async () => {
-    openActivity({ mode: "fun", template: "distributionExplorer" });
+    openActivity({ template: "distributionExplorer" });
     await pressOnSlider("Lower handle", "ArrowLeft", 4);
     await checkActivity();
     await expectVerdict("Not quite");
   });
 
   it("sampling simulator: bigger samples bunch up", async () => {
-    openActivity({ mode: "fun", template: "samplingSimulator" });
+    openActivity({ template: "samplingSimulator" });
     await expect.element(page.getByText("200 samples of 400")).toBeVisible();
+    // Its numbers are made up for the example, and it says so.
+    await expect.element(page.getByText("Example numbers, not real data")).toBeVisible();
     await page.getByRole("radio", { name: /Half as big/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");

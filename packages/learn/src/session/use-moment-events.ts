@@ -18,7 +18,7 @@ function isDone(mission: Mission | undefined): boolean {
 
 /**
  * Sends the missions a block finished, once per moment. The block's own completion is an outcome
- * the server sends. Shared properties such as `mode` come from the host's registration.
+ * the server sends. Shared properties come from the host's registration.
  */
 export function useMomentEvents({
   missionsBefore,

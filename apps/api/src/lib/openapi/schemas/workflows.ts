@@ -10,7 +10,12 @@ const startIndexSchema = z.coerce
 export const generationResourceSchema = z
   .object({
     id: z.string().min(1).meta({ description: "Generation ID" }),
-    status: z.enum(["pending", "running", "completed", "failed", "cancelled"]),
+    status: z
+      .enum(["pending", "running", "completed", "failed", "cancelled"])
+      .meta({
+        description:
+          "A run that stopped without ending (no progress for 30 minutes, as after a crash) reads `failed`: start the work again, and the new run takes its place.",
+      }),
   })
   .meta({ id: "Generation" });
 

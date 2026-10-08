@@ -1,3 +1,4 @@
+import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateCourseOutline } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
 import {
   claimCourseOutline,
@@ -18,6 +19,7 @@ import {
   type CourseBandNeed,
   type CurriculumScope,
   type GoalSkillRef,
+  getScopeReuse,
 } from "@zoonk/core/library/curriculum/scope";
 import { planSkillExtensions } from "@zoonk/core/library/curriculum/skill-extensions";
 import { withAiRetry } from "../../_shared/ai-retry";
@@ -42,6 +44,7 @@ type OutlineContext = {
 /**
  * Decides what a band still needs. Skills the course already teaches (in any band) are planned from
  * its lessons; a band whose skills are all taught needs nothing, even when it has no chapters here.
+ * For a goal answered without tools (an exam), chapters that need one don't count as teaching.
  * Another course's lessons never count: a course on the same subject shares its chapters and
  * lessons through identity search when the outline asks for them. A band requested without skills
  * is written whole when the course doesn't have it yet. A skill the band teaches in part (`extend`)
@@ -63,6 +66,7 @@ export async function planOutlineBandStep({
       courseId,
       ownerId: scope.ownerId,
       skillIds: band.skills.map((skill) => skill.id),
+      withToolChapters: band.withToolChapters,
     }),
     getCourseBandContext({ courseId, level: band.level }),
     planSkillExtensions({ courseId, extensions: band.extend ?? [], ownerId: scope.ownerId }),
@@ -83,12 +87,14 @@ export async function planOutlineBandStep({
     extensions: extended,
     isNewBand: context.nextPosition === 0,
     level: band.level,
+    material: context.material,
     nextPosition: context.nextPosition,
     otherChapterTitles: context.chapterTitles,
     skills: band.skills.filter((skill) => untaught.includes(skill.id)),
     taughtElsewhere: band.skills
       .filter((skill) => !untaught.includes(skill.id))
       .map((skill) => skill.name),
+    withoutTools: band.withToolChapters === false,
   };
 }
 
@@ -118,30 +124,44 @@ export async function finishCourseOutlineStep(input: {
   await finishCourseOutline(input);
 }
 
+/** A learner waits on the band teaching their first lesson; a background band is days away. */
+function getBandWait({ background, waited }: { background?: boolean; waited: boolean }): CallWait {
+  if (waited) {
+    return "learner";
+  }
+
+  return background ? "later" : "soon";
+}
+
 /**
  * Writes one level band's outline: chapters with objectives, and every lesson's title and skills.
- * The band teaching the skill of a waiting learner's first lesson is written at the priority tier
- * and, unless it continues chapters the band already has, streamed, so the chapter teaching that
- * skill is saved before the rest is written.
+ * The band teaching the skill of a waiting learner's first lesson is, unless it continues chapters
+ * the band already has, streamed, so the chapter teaching that skill is saved before the rest is
+ * written; an exam's or a language's band a learner waits on runs at the priority tier, since its
+ * course is very likely reused (`chooseServiceTier`). A band the plan gets to in days
+ * (`background`) is written at the flex tier.
  */
 export async function writeOutlineBandStep({
+  background,
   waitedSkillId,
   ...input
-}: BandInput & { waitedSkillId?: string }): Promise<BandOutline> {
+}: BandInput & { background?: boolean; waitedSkillId?: string }): Promise<BandOutline> {
   "use step";
 
   const { plan } = input;
   const waitedKey = plan.skills.find((skill) => skill.id === waitedSkillId)?.key;
 
+  const serviceTier = chooseServiceTier({
+    reuse: getScopeReuse(input.scope),
+    wait: getBandWait({ background, waited: Boolean(waitedKey) }),
+  });
+
   if (waitedKey && plan.extensions.length === 0) {
-    return withAiRetry(() => writeWaitedBand({ input, waitedKey }));
+    return withAiRetry(() => writeWaitedBand({ input, serviceTier, waitedKey }));
   }
 
   const { data, provenance } = await withAiRetry(() =>
-    generateCourseOutline({
-      ...toOutlineParams(input),
-      serviceTier: waitedKey ? "priority" : undefined,
-    }),
+    generateCourseOutline({ ...toOutlineParams(input), serviceTier }),
   );
 
   return { chapters: pickChapters({ outline: data, plan }), early: null, provenance };

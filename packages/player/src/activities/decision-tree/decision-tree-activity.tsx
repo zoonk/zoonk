@@ -5,7 +5,7 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CircleCheck, Undo2 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { LessonRichText, LessonRichTextBlocks } from "../../lesson/_components/lesson-rich-text";
 import {
   ActivityCanvas,
   ActivityCanvasLabel,
@@ -64,9 +64,7 @@ export function DecisionTreeActivity({
         className="bg-background flex flex-col gap-1 rounded-2xl border px-3.5 py-3"
       >
         <ActivityCanvasLabel className="font-medium">{t("The case")}</ActivityCanvasLabel>
-        <p className="text-base leading-snug">
-          <LessonRichText text={fields.case.description} />
-        </p>
+        <LessonRichTextBlocks className="text-base leading-snug" text={fields.case.description} />
       </section>
 
       {current?.kind === "question" && (

@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getStrugglePauseMs } from "../_utils/lesson-struggle";
-import { type DepthStep } from "./use-step-variant";
+import { type ExplainingStep, getStrugglePauseMs } from "../_utils/lesson-struggle";
 
 /** Anything the learner does on the page means they're not stuck, so the wait starts over. */
 const ACTIVITY_EVENTS = ["keydown", "pointerdown", "scroll", "touchstart", "wheel"] as const;
@@ -11,7 +10,7 @@ const ACTIVITY_EVENTS = ["keydown", "pointerdown", "scroll", "touchstart", "whee
  * Whether the learner has stayed on an explanation far past its reading time without touching
  * anything, while the page is in view. It turns true once per screen and stays true.
  */
-export function useStrugglePause(step: DepthStep): boolean {
+export function useStrugglePause(step: ExplainingStep): boolean {
   const [isStuck, setIsStuck] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const delay = getStrugglePauseMs(step);

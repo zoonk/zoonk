@@ -6,6 +6,7 @@ import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback } from "react";
 import { LESSON_LIMIT_PARAM, toLessonLimitParam } from "./lesson-limit-param";
+import { SESSION_STOPPED_HREF } from "./session-stopped-param";
 import { type StudyDestination } from "./study-destination";
 import {
   addExtraStudyBlockAction,
@@ -81,9 +82,13 @@ export function useGoToStudyDestination() {
   );
 }
 
-/** Moves through today's session: each action opens where the next block is played. */
+/**
+ * Moves through today's session: each action opens where the next block is played. Stopping for
+ * today shows what changed so far on the session screen; the rest waits on Today.
+ */
 export function useStudyNavigation(sessionId: string) {
   const go = useGoToStudyDestination();
+  const router = useRouter();
 
   const input = useCallback(() => ({ sessionId, timeZone: getLocalTimeZone() }), [sessionId]);
 
@@ -93,7 +98,12 @@ export function useStudyNavigation(sessionId: string) {
     openBlock: async (blockId: string) => go(await openStudyBlockAction({ ...input(), blockId })),
     stop: async () => {
       const stopped = await stopStudySessionAction(input());
-      return stopped && go({ kind: "session" });
+
+      if (stopped) {
+        router.push(SESSION_STOPPED_HREF);
+      }
+
+      return stopped;
     },
   };
 }

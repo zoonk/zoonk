@@ -5,7 +5,8 @@ import {
   type UnderstoodLanguagePair,
 } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { createHook, getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata } from "workflow";
+import { claimRunToken } from "../_shared/run-token";
 import {
   completeUnderstandingStep,
   failUnderstandingStep,
@@ -79,8 +80,7 @@ export async function goalUnderstandingWorkflow({
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `goal-understanding:${draftId}` });
-  const conflict = await hook.getConflict();
+  const { conflict } = await claimRunToken(`goal-understanding:${draftId}`);
 
   // Whoever follows this run's id moves to the run reading the draft.
   if (conflict) {

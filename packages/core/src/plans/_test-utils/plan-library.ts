@@ -29,6 +29,9 @@ export async function planLibraryFixture({
   phases?: string[];
   skills: SkillSpec[];
 }) {
+  // Plans teach a title once, so two libraries in one test need lesson titles of their own.
+  const [libraryId] = crypto.randomUUID().split("-");
+
   const chapters = await Promise.all(
     phases.map((name, index) => libraryChapterFixture({ title: `${name} chapter ${index + 1}` })),
   );
@@ -45,7 +48,7 @@ export async function planLibraryFixture({
         const lesson = await libraryLessonFixture({
           estimatedMinutes: 3,
           homeChapterId: chapter?.id ?? null,
-          title: `Lesson ${skillIndex + 1}.${lessonIndex + 1}`,
+          title: `Lesson ${skillIndex + 1}.${lessonIndex + 1} ${libraryId}`,
         });
 
         await Promise.all([

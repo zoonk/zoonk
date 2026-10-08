@@ -6,6 +6,7 @@ import { type generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-gra
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
+import { createCourseIcon } from "@zoonk/core/library/courses/icon";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { prisma } from "@zoonk/db";
@@ -18,14 +19,14 @@ import {
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
+import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
 import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
 import { courseDetailsWorkflow } from "./course-details-workflow";
 import { courseOutlineWorkflow } from "./course-outline-workflow";
-import { courseRemainingBandsWorkflow } from "./course-remaining-bands-workflow";
 import { writeOutlineBandStep } from "./steps/course-outline-steps";
 
 vi.mock("workflow/api", () => ({
@@ -40,6 +41,9 @@ vi.mock("@zoonk/ai/tasks/v2/curriculum/course-outline", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
+
+// Drawing an icon is an image model's call: the mock says which course got one.
+vi.mock("@zoonk/core/library/courses/icon", () => ({ createCourseIcon: vi.fn(async () => null) }));
 vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
 
 // PostHog is an external service; the mock records what would leave the server.
@@ -148,10 +152,12 @@ async function writeAfterEarlyAttempt(firstStatus: "completed" | "failed") {
       extensions: [],
       isNewBand: true,
       level: "overview",
+      material: null,
       nextPosition: 0,
       otherChapterTitles: [],
       skills: bandSkills,
       taughtElsewhere: [],
+      withoutTools: false,
     },
     scope,
     waitedSkillId: bandSkills[0]?.id,
@@ -176,6 +182,11 @@ describe(courseOutlineWorkflow, () => {
     vi.mocked(streamCourseOutline).mockImplementation(
       replayStreamedOutline(recordedOutline) as never,
     );
+  });
+
+  // A test that says how another run stands leaves the next one the default.
+  afterEach(() => {
+    vi.mocked(getRun).mockReset();
   });
 
   it(
@@ -217,18 +228,20 @@ describe(courseOutlineWorkflow, () => {
       expect(items.length).toBeGreaterThan(0);
       expect(items.every((item) => item.lessonId !== null)).toBe(true);
 
-      expect(start).toHaveBeenCalledWith(courseDetailsWorkflow, [
+      // Its page details follow; level bands no goal needs are never written ahead.
+      expect(start).toHaveBeenCalledExactlyOnceWith(courseDetailsWorkflow, [
         { analytics: undefined, courseId: course.id },
       ]);
 
-      expect(start).toHaveBeenCalledWith(courseRemainingBandsWorkflow, [
-        { analytics: undefined, courseId: course.id },
-      ]);
+      // The icon is drawn while the outline is written, not after the whole run.
+      expect(createCourseIcon).toHaveBeenCalledWith(
+        expect.objectContaining({ courseId: course.id }),
+      );
     },
   );
 
   it(
-    "writes the band a learner is waiting on at the priority tier and the others at the standard one",
+    "writes every band at the standard tier, never priority, and bands the plan gets to in days at the flex tier",
     { timeout: TIMEOUT },
     async () => {
       const [{ bandSkills }, course] = await Promise.all([
@@ -252,13 +265,100 @@ describe(courseOutlineWorkflow, () => {
         vi
           .mocked(streamCourseOutline)
           .mock.calls.map(([params]) => [params.level, params.serviceTier]),
-      ).toStrictEqual([["overview", "priority"]]);
+      ).toStrictEqual([["overview", undefined]]);
 
       expect(
         vi
           .mocked(generateCourseOutline)
           .mock.calls.map(([params]) => [params.level, params.serviceTier]),
       ).toStrictEqual([["beginner", undefined]]);
+
+      const later = await courseFixture({ outlineStatus: "pending", title: "Immunology" });
+      vi.mocked(generateCourseOutline).mockClear();
+
+      await courseOutlineWorkflow({
+        background: true,
+        bands: [{ level: "beginner", skills: bandSkills.slice(half) }],
+        courseId: later.id,
+        scope,
+      });
+
+      expect(
+        vi.mocked(generateCourseOutline).mock.calls.map(([params]) => params.serviceTier),
+      ).toStrictEqual(["flex"]);
+    },
+  );
+
+  it(
+    "writes a course's bands at once, so a later band doesn't wait for the first one to land",
+    { timeout: TIMEOUT },
+    async () => {
+      const [{ bandSkills }, course] = await Promise.all([
+        waitingGoal(),
+        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+      ]);
+
+      const half = Math.ceil(bandSkills.length / 2);
+
+      // The first band's outline lands only once the second band's started: one after the other,
+      // the second would never start.
+      const secondStarted = new Promise<boolean>((resolve) => {
+        vi.mocked(generateCourseOutline).mockImplementation(async (params) => {
+          resolve(params.level === "beginner");
+          return taskResult(recordedOutline);
+        });
+
+        setTimeout(() => resolve(false), 5000);
+      });
+
+      vi.mocked(streamCourseOutline).mockImplementationOnce((async (params: never) => {
+        await expect(secondStarted).resolves.toBe(true);
+        return replayStreamedOutline(recordedOutline)(params);
+      }) as never);
+
+      await expect(
+        courseOutlineWorkflow({
+          bands: [
+            { level: "overview", skills: bandSkills.slice(0, half) },
+            { level: "beginner", skills: bandSkills.slice(half) },
+          ],
+          courseId: course.id,
+          scope,
+          waitedSkillId: bandSkills[0]?.id,
+        }),
+      ).resolves.toMatchObject({ status: "written" });
+    },
+  );
+
+  it(
+    "writes the band a learner waits on at the priority tier when its course is an exam's or a language's",
+    { timeout: TIMEOUT },
+    async () => {
+      const [{ bandSkills }, course] = await Promise.all([
+        waitingGoal(),
+        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+      ]);
+
+      const examScope = {
+        ...scope,
+        exams: [{ name: "ENEM", style: "Interdisciplinary five-option items." }],
+      };
+
+      const half = Math.ceil(bandSkills.length / 2);
+
+      await courseOutlineWorkflow({
+        bands: [
+          { level: "overview", skills: bandSkills.slice(0, half) },
+          { level: "beginner", skills: bandSkills.slice(half) },
+        ],
+        courseId: course.id,
+        scope: examScope,
+        waitedSkillId: bandSkills[0]?.id,
+      });
+
+      // Only the band the learner waits on pays for priority; the next one is minutes away.
+      expect(vi.mocked(streamCourseOutline).mock.calls[0]?.[0].serviceTier).toBe("priority");
+      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBeUndefined();
     },
   );
 
@@ -372,7 +472,7 @@ describe(courseOutlineWorkflow, () => {
       const { band, first } = await writeAfterEarlyAttempt("completed");
 
       expect(streamCourseOutline).not.toHaveBeenCalled();
-      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBe("priority");
+      expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBeUndefined();
       expect(band.early).toStrictEqual({ chapterId: first.id, goalIds: [], position: 0 });
       expect(band.chapters).toStrictEqual(recordedOutline.chapters.slice(1));
     });
@@ -561,6 +661,40 @@ describe(courseOutlineWorkflow, () => {
   );
 
   it(
+    "asks an exam answered on paper for chapters without tools, even for skills a tool chapter teaches",
+    { timeout: TIMEOUT },
+    async () => {
+      const [{ bandSkills }, course, practice, lesson] = await Promise.all([
+        waitingGoal(),
+        courseFixture({ outlineStatus: "pending", title: "Speech recognition" }),
+        libraryChapterFixture({ tools: [{ essential: true, name: "Audio editor (Audacity)" }] }),
+        libraryLessonFixture(),
+      ]);
+
+      const [withTool] = bandSkills;
+
+      await Promise.all([
+        courseChapterFixture({ chapterId: practice.id, courseId: course.id, position: 0 }),
+        prisma.chapterLesson.create({
+          data: { chapterId: practice.id, lessonId: lesson.id, position: 0 },
+        }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId: withTool?.id ?? "" }),
+      ]);
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "overview", skills: bandSkills, withToolChapters: false }],
+        courseId: course.id,
+        scope,
+      });
+
+      const [call] = vi.mocked(generateCourseOutline).mock.calls;
+
+      expect(call?.[0]).toMatchObject({ taughtElsewhere: [], withoutTools: true });
+      expect(call?.[0].requiredSkills?.map((skill) => skill.key)).toContain(withTool?.key);
+    },
+  );
+
+  it(
     "waits while another run saves the course's other bands, then plans against what it saved",
     { timeout: TIMEOUT },
     async () => {
@@ -639,6 +773,7 @@ describe(courseOutlineWorkflow, () => {
       expect(items.length).toBeGreaterThan(0);
       expect(items.every((item) => item.lessonId !== null)).toBe(true);
       expect(start).not.toHaveBeenCalled();
+      expect(createCourseIcon).not.toHaveBeenCalled();
     },
   );
 
@@ -705,12 +840,8 @@ describe(courseOutlineWorkflow, () => {
 
     expect(generateCourseOutline).not.toHaveBeenCalled();
 
-    // The course may still lack its page details or other bands; both runs find what's missing.
+    // The course may still lack its page details; that run finds what's missing.
     expect(start).toHaveBeenCalledWith(courseDetailsWorkflow, [
-      { analytics: undefined, courseId: course.id },
-    ]);
-
-    expect(start).toHaveBeenCalledWith(courseRemainingBandsWorkflow, [
       { analytics: undefined, courseId: course.id },
     ]);
   });
@@ -861,6 +992,152 @@ describe(courseOutlineWorkflow, () => {
       ]);
     },
   );
+
+  // Lucas's session preparation asked for one ENEM course's "intermediate" band twice in one run (a
+  // skill's next chapter and another skill's first ones): both bands placed their chapters from
+  // the same position, and the run failed on the course's unique chapter places.
+  it(
+    "writes a level a run lists twice as one band, so its chapters never claim the same place",
+    { timeout: TIMEOUT },
+    async () => {
+      const [course, extended, missing, existing] = await Promise.all([
+        courseFixture({ language: "pt", outlineStatus: "completed", title: "Inglês" }),
+        skillFixture({ language: "pt", name: `Descrever experiência ${crypto.randomUUID()}` }),
+        skillFixture({ language: "pt", name: `Negociar salário ${crypto.randomUUID()}` }),
+        libraryChapterFixture({ language: "pt", title: "Candidaturas e entrevistas" }),
+      ]);
+
+      const written = await libraryLessonFixture({
+        estimatedMinutes: 3,
+        homeChapterId: existing.id,
+        language: "pt",
+        title: "Formação acadêmica",
+      });
+
+      await Promise.all([
+        courseChapterFixture({ chapterId: existing.id, courseId: course.id, position: 0 }),
+        prisma.chapterSkill.create({ data: { chapterId: existing.id, skillId: extended.id } }),
+        prisma.chapterLesson.create({
+          data: { chapterId: existing.id, lessonId: written.id, position: 0 },
+        }),
+        lessonSkillFixture({ lessonId: written.id, skillId: extended.id }),
+      ]);
+
+      const toRef = (skill: typeof extended) => ({
+        description: skill.description,
+        id: skill.id,
+        key: skill.id,
+        name: skill.name,
+      });
+
+      // Each outline call writes its own chapters, so two calls for one level would place
+      // different chapters in the same places.
+      vi.mocked(generateCourseOutline)
+        .mockResolvedValueOnce(
+          taskResult({
+            chapters: [
+              interviewChapter("Entrevistas com perguntas situacionais", [extended.id]),
+              interviewChapter("Negociação de salário", [missing.id]),
+            ],
+            uncoveredSkillKeys: [],
+          }),
+        )
+        .mockResolvedValueOnce(
+          taskResult({
+            chapters: [
+              interviewChapter("Entrevistas técnicas", [extended.id]),
+              interviewChapter("Benefícios e contratos", [missing.id]),
+            ],
+            uncoveredSkillKeys: [],
+          }),
+        );
+
+      const result = await courseOutlineWorkflow({
+        bands: [
+          { level: "beginner", skills: [toRef(missing)] },
+          { extend: [{ lessons: 12, skill: toRef(extended) }], level: "beginner", skills: [] },
+        ],
+        courseId: course.id,
+        scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: null },
+      });
+
+      expect(result).toMatchObject({ bandsWritten: 1, status: "written" });
+
+      expect(
+        vi
+          .mocked(generateCourseOutline)
+          .mock.calls.map(([params]) => [
+            params.requiredSkills?.map((skill) => skill.key),
+            params.extendSkills?.map((skill) => skill.key),
+          ]),
+      ).toStrictEqual([[[missing.id], [extended.id]]]);
+
+      const placements = await prisma.courseChapter.findMany({
+        include: { chapter: { select: { title: true } } },
+        orderBy: { position: "asc" },
+        where: { courseId: course.id },
+      });
+
+      expect(
+        placements.map((placement) => [placement.position, placement.chapter.title]),
+      ).toStrictEqual([
+        [0, "Candidaturas e entrevistas"],
+        [1, "Entrevistas com perguntas situacionais"],
+        [2, "Negociação de salário"],
+      ]);
+    },
+  );
+
+  it("takes the course over from a run that stalled instead of joining it forever", async () => {
+    const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
+    const chapter = await libraryChapterFixture();
+
+    await Promise.all([
+      prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+    ]);
+
+    const lesson = await libraryLessonFixture();
+
+    await prisma.chapterLesson.create({
+      data: { chapterId: chapter.id, lessonId: lesson.id, position: 0 },
+    });
+
+    // A server restart left the run that held the course saying it's running, an hour after its
+    // last step started. Cancelling it frees the course's token.
+    const cancel = vi.fn(() => {
+      mockHookConflict(null);
+      return Promise.resolve();
+    });
+
+    vi.mocked(getRun).mockReturnValue({
+      cancel,
+      exists: Promise.resolve(true),
+      status: Promise.resolve("running"),
+    } as unknown as ReturnType<typeof getRun>);
+
+    mockHookConflict({ returnValue: new Promise(() => {}), runId: "stalled-run" });
+
+    mockLastRunEvent("stalled-run", {
+      createdAt: new Date(Date.now() - 60 * 60 * 1000),
+      eventType: "step_started",
+    });
+
+    await expect(
+      courseOutlineWorkflow({
+        bands: [
+          {
+            level: "overview",
+            skills: [{ description: skill.description, id: skill.id, key: "k", name: skill.name }],
+          },
+        ],
+        courseId: course.id,
+        scope,
+      }),
+    ).resolves.toStrictEqual({ bandsWritten: 0, chapterIds: [], status: "written" });
+
+    expect(cancel).toHaveBeenCalledOnce();
+  });
 
   it("waits for the run already writing the course, then writes what is still missing once", async () => {
     const course = await courseFixture();

@@ -102,6 +102,7 @@ function copiedQuestion(overrides: Partial<PastQuestion> = {}): PastQuestion {
       context: "Um celular custava R$ 1.000,00 e teve dois aumentos seguidos de 10%.",
       difficulty: "easy",
       format: "multipleChoice",
+      image: null,
       options: options.map((text) => ({
         isCorrect: text === "R$ 1.210,00",
         misconception: text === "R$ 1.210,00" ? null : "Soma os aumentos",
@@ -109,6 +110,7 @@ function copiedQuestion(overrides: Partial<PastQuestion> = {}): PastQuestion {
         text,
       })),
       question: "Qual é o novo preço do celular?",
+      visual: null,
     },
     number: "91",
     skill: 1,

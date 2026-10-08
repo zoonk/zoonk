@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
+import { IMAGE_STYLE_VERSION } from "@zoonk/ai/tasks/v2/images/style";
 import { prisma } from "@zoonk/db";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -19,7 +21,6 @@ import {
   drawBlankImage,
   drawTestImage,
   mockDrawnImages,
-  mockImageChecks,
   mockImageScene,
   resetImageModels,
   testScene,
@@ -55,12 +56,12 @@ function stepKey(scene: ReturnType<typeof testScene>) {
   return buildImageReuseKey({
     language: scene.labels.length > 0 ? "en" : null,
     prompt: describeImageScene(scene),
-    styleVersion: 1,
+    styleVersion: IMAGE_STYLE_VERSION,
   });
 }
 
 describe(listLessonImageSteps, () => {
-  it("lists requested pictures at most one every two screens, skipping drawn ones", async () => {
+  it("lists every picture a screen still asks for, skipping drawn ones", async () => {
     const [lesson, asset] = await Promise.all([libraryLessonFixture(), mediaAssetFixture()]);
     const hook = { image, text: "A shop cuts a price.", variant: "text" };
 
@@ -86,8 +87,46 @@ describe(listLessonImageSteps, () => {
 
     await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual([
       steps[0]?.id,
+      steps[1]?.id,
+      steps[5]?.id,
       steps[6]?.id,
     ]);
+  });
+
+  it("lists the pictures questions are about and those that teach alike, in screen order", async () => {
+    const lesson = await libraryLessonFixture({ language: "pt" });
+
+    const options = [
+      { id: "a", isCorrect: true, reason: "You see him standing.", text: "Otávio stands" },
+      { id: "b", isCorrect: false, reason: "He isn't riding.", text: "Otávio rides" },
+    ];
+
+    const guess = {
+      image,
+      options: options.map(({ id, isCorrect, text }) => ({ id, isCorrect, text })),
+      question: "Which caption fits?",
+      reveal: "He stands.",
+      variant: "guess",
+    };
+
+    const check = { image, options, question: "Which caption fits the picture?" };
+
+    const steps = await Promise.all([
+      libraryStepFixture({ content: guess, kind: "hook", lessonId: lesson.id, position: 0 }),
+      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 1 }),
+      libraryStepFixture({ content: check, kind: "check", lessonId: lesson.id, position: 2 }),
+      libraryStepFixture({ content: check, kind: "check", lessonId: lesson.id, position: 3 }),
+      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 4 }),
+      libraryStepFixture({
+        content: { image, text: "Na placa da imagem, o Centro fica em frente.", title: "Setas" },
+        lessonId: lesson.id,
+        position: 5,
+      }),
+    ]);
+
+    await expect(listLessonImageSteps({ lessonId: lesson.id })).resolves.toStrictEqual(
+      steps.map((step) => step.id),
+    );
   });
 });
 
@@ -116,7 +155,7 @@ describe(createStepImage, () => {
     );
   });
 
-  it("draws, checks and stores a new picture in the subject's palette", async () => {
+  it("draws and stores a new picture in the subject's palette, showing it before its model check", async () => {
     const lesson = await scienceLesson();
     const step = await libraryStepFixture({ content: explanation(), lessonId: lesson.id });
 
@@ -128,11 +167,13 @@ describe(createStepImage, () => {
     mockImageScene(scene);
     mockSearchTerms([]);
     const drawSpy = mockDrawnImages([await drawTestImage()]);
-    mockImageChecks([true]);
 
     const outcome = await createStepImage({ stepId: step.id });
 
     expect(outcome).toMatchObject({ status: "generated" });
+
+    // The model check follows in the background (`checkImageAsset`).
+    expect(checkLessonImage).not.toHaveBeenCalled();
 
     const linked = await prisma.step.findUniqueOrThrow({
       include: { mediaAsset: true },
@@ -148,7 +189,7 @@ describe(createStepImage, () => {
       prompt: describeImageScene(scene),
       reuseKey: stepKey(scene),
       scene,
-      styleVersion: 1,
+      styleVersion: IMAGE_STYLE_VERSION,
       visibility: "public",
       width: TEST_IMAGE_WIDTH,
     });
@@ -170,7 +211,7 @@ describe(createStepImage, () => {
       mediaAssetFixture({
         prompt: describeImageScene(scene),
         reuseKey: stepKey(scene),
-        styleVersion: 1,
+        styleVersion: IMAGE_STYLE_VERSION,
       }),
     ]);
 
@@ -189,7 +230,7 @@ describe(createStepImage, () => {
     });
   });
 
-  it("tries once more after a failed image and ships the screen without one after two", async () => {
+  it("draws a blank frame once more and ships the screen without a picture after two", async () => {
     const lesson = await libraryLessonFixture();
 
     const [retried, abandoned] = await Promise.all([
@@ -200,14 +241,12 @@ describe(createStepImage, () => {
     mockSearchTerms([]);
     mockImageScene(testScene({ focalObject: `a ${randomUUID()} coin` }));
     const drawSpy = mockDrawnImages([await drawBlankImage(), await drawTestImage()]);
-    const checkSpy = mockImageChecks([true]);
 
     await expect(createStepImage({ stepId: retried.id })).resolves.toMatchObject({
       status: "generated",
     });
 
     expect(drawSpy).toHaveBeenCalledTimes(2);
-    expect(checkSpy).toHaveBeenCalledOnce();
 
     expect(drawSpy).toHaveBeenLastCalledWith(
       expect.objectContaining({ corrections: ["the image was a blank frame"] }),
@@ -216,8 +255,7 @@ describe(createStepImage, () => {
     resetImageModels();
     mockSearchTerms([]);
     mockImageScene(testScene({ focalObject: `a ${randomUUID()} bill` }));
-    mockDrawnImages([await drawTestImage(), await drawTestImage()]);
-    mockImageChecks([false, false]);
+    mockDrawnImages([await drawBlankImage(), await drawBlankImage()]);
 
     await expect(createStepImage({ stepId: abandoned.id })).resolves.toStrictEqual({
       status: "failed",
@@ -226,6 +264,8 @@ describe(createStepImage, () => {
     await expect(prisma.step.findUnique({ where: { id: abandoned.id } })).resolves.toMatchObject({
       mediaAssetId: null,
     });
+
+    expect(checkLessonImage).not.toHaveBeenCalled();
   });
 
   it("keeps a private lesson's picture private and language courses free of text", async () => {
@@ -244,7 +284,6 @@ describe(createStepImage, () => {
     const privateScene = testScene({ focalObject: `our ${randomUUID()} form` });
     mockImageScene(privateScene);
     mockDrawnImages([await drawTestImage()]);
-    mockImageChecks([true]);
 
     await createStepImage({ stepId: privateStep.id });
 
@@ -268,7 +307,6 @@ describe(createStepImage, () => {
     const sceneSpy = mockImageScene(testScene({ focalObject: `a ${randomUUID()} house` }));
     mockSearchTerms([]);
     mockDrawnImages([await drawTestImage()]);
-    mockImageChecks([true]);
 
     await createStepImage({ stepId: languageStep.id });
 

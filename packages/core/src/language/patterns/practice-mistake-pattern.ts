@@ -4,7 +4,6 @@ import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { getLearnerMode } from "../../sessions/_utils/session-ledger";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -67,7 +66,6 @@ export async function practiceMistakePattern({
   });
 
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
-  const mode = await getLearnerMode(userId);
   const incorrect = verdicts.length - correct;
 
   await prisma.$transaction(async (tx) => {
@@ -97,7 +95,6 @@ export async function practiceMistakePattern({
       incorrectAnswers: incorrect,
       kind: "questions",
       lessonKind: "patternDrill",
-      mode,
       seconds: DRILL_SECONDS,
       startedAt: lock.completedAt,
       timeZone,

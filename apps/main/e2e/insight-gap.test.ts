@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -89,62 +88,26 @@ function loadChangeStatus(changeId: string) {
 
 test.describe("Plan-change insight bigger than a lesson", () => {
   test("shows its effect and adds it once the learner says yes", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const { change, skillIds } = await proposeGap({ goalId: user.goalId, userId: user.id });
       await page.goto("/today");
 
       const card = page.getByRole("complementary", { name: "From your recent answers" });
       await expect(card.getByText(MESSAGE)).toBeVisible();
-      await expect(card.getByText(/^Adds 3 lessons\. Ends .+ instead of .+\.$/u)).toBeVisible();
-      await expectAccessibleScreen(page, "Today");
+      // Ana's plan has a date, so Today says only what it adds.
+      await expect(card.getByText("Adds 3 lessons.", { exact: true })).toBeVisible();
 
       // Nothing changes before the learner's OK.
       await expect.poll(() => loadGraphSkillIds(user.goalId)).not.toContain(skillIds[0]);
 
       await card.getByRole("button", { name: "Add it" }).click();
-      await expect(card.getByRole("status")).toHaveText("It's in your plan.");
+      await expect(card.getByRole("status")).toHaveText("Your plan follows it from now on.");
 
       await expect.poll(() => loadChangeStatus(change.id)).toBe("applied");
 
       await expect
         .poll(() => loadGraphSkillIds(user.goalId))
         .toStrictEqual(expect.arrayContaining(skillIds));
-    });
-  });
-
-  test("waits on the Route with the same effect until applied, as other proposals wait to be declined", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
-      const { change, skillIds } = await proposeGap({ goalId: user.goalId, userId: user.id });
-      await page.goto("/plan");
-
-      const waiting = page.getByRole("listitem").filter({ hasText: "Waiting for your OK" });
-      const gap = waiting.filter({ hasText: MESSAGE });
-      await expect(gap.getByText(/^Adds 3 lessons\. Ends .+ instead of .+\.$/u)).toBeVisible();
-
-      await gap.getByRole("button", { name: "Apply" }).click();
-      await expect(waiting).toHaveCount(1);
-
-      await expect.poll(() => loadChangeStatus(change.id)).toBe("applied");
-
-      await expect
-        .poll(() => loadGraphSkillIds(user.goalId))
-        .toStrictEqual(expect.arrayContaining(skillIds));
-
-      // The plan's own proposal waits too, until "Not now" declines it.
-      await expect(waiting).toContainText("sábado");
-      await waiting.getByRole("button", { name: "Not now" }).click();
-      await expect(page.getByText("Waiting for your OK")).toBeHidden();
-
-      // The declined proposal leaves the list, so focus moves to the plan's changes.
-      await expect(page.getByRole("heading", { name: "Changes to your plan" })).toBeFocused();
-
-      await expect
-        .poll(() =>
-          prisma.planChange.count({ where: { plan: { goalId: user.goalId }, status: "declined" } }),
-        )
-        .toBe(1);
     });
   });
 });

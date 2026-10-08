@@ -19,17 +19,21 @@ type ScreenKind = Exclude<TeachingStepKind, "activity" | "spokenAnswer">;
 
 function playableStep<TKind extends TeachingStepKind>(
   kind: TKind,
-  { content, image = null }: { content: object; image?: PlayableStepImage | null },
+  {
+    content,
+    image = null,
+    imagePending = false,
+  }: { content: object; image?: PlayableStepImage | null; imagePending?: boolean },
 ): PlayableTeachingStepOf<TKind> {
   return {
     citation: null,
     content: parseStepContent(kind, content),
     id: crypto.randomUUID(),
     image,
+    imagePending,
     kind,
     position: 0,
     skillId: null,
-    variants: { deeper: null, simpler: null },
   };
 }
 
@@ -41,6 +45,11 @@ export function activityStep({
   image?: PlayableStepImage | null;
 }): PlayableTeachingStepOf<"activity"> {
   return playableStep("activity", { content, image });
+}
+
+/** An explanation with its own stored content, such as its own personal example slot or none. */
+export function explanationStep(content: object): PlayableTeachingStepOf<"explanation"> {
+  return playableStep("explanation", { content });
 }
 
 /** A teaching screen of the shared stored content for its kind. */
@@ -57,10 +66,4 @@ export function spokenAnswerStep(): PlayableSpokenAnswerStep {
     ...playableStep("spokenAnswer", { content: playableStepContent.spokenAnswer }),
     listening: null,
   };
-}
-
-/** The shared explanation with a stored "Simpler" version, which the lesson read includes. */
-export function explanationWithSimpler(text: string): PlayableTeachingStepOf<"explanation"> {
-  const simpler = { content: parseStepContent("explanation", { text }), id: crypto.randomUUID() };
-  return { ...teachingStep("explanation"), variants: { deeper: null, simpler } };
 }

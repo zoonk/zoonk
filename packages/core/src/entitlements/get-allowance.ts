@@ -4,6 +4,7 @@ import { cacheTag } from "next/cache";
 import { getAllowanceCacheTag, getUserSubscriptionCacheTag } from "../cache/tags";
 import { type AllowanceCounts, toAllowance } from "./_utils/allowance-view";
 import { getEntitlementViewer } from "./_utils/entitlement-viewer";
+import { sumCallSeconds } from "./_utils/usage-counts";
 import { getUsagePeriodStarts } from "./_utils/usage-periods";
 import { type Allowance } from "./contract";
 
@@ -26,20 +27,30 @@ async function countAllowanceUsage({
 }): Promise<AllowanceCounts> {
   const starts = getUsagePeriodStarts(now);
 
-  const [day, month, total, generatedLessons, activeGoals] = await Promise.all([
+  const [day, month, total, generatedLessons, activeGoals, callSeconds] = await Promise.all([
     countByKind({ since: starts.day, userId }),
     countByKind({ since: starts.month, userId }),
     countByKind({ userId }),
     prisma.usageRecord.count({ where: { generated: true, kind: "lessonStart", userId } }),
     prisma.goal.count({ where: { kind: { not: "explain" }, status: "active", userId } }),
+    sumCallSeconds({ client: prisma, now, userId }),
   ]);
 
-  return { activeGoals, day, generatedLessons, month, total };
+  return {
+    activeGoals,
+    callSecondsThisMonth: callSeconds.thisMonth,
+    callSecondsToday: callSeconds.today,
+    day,
+    generatedLessons,
+    month,
+    total,
+  };
 }
 
 /**
  * Shows the learner or guest their plan and what they used: new lessons today and this month,
- * tutor messages, uploads, conversations, goals, and when the counts start over.
+ * tutor messages, uploads, conversations and the call time used today and this month, goals, and
+ * when the counts start over.
  */
 export async function getAllowance(): Promise<Allowance | null> {
   "use cache: private";

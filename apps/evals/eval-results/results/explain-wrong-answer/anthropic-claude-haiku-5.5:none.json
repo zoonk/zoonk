@@ -1,0 +1,275 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5:none",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The calculations are correct for the stated exclusion of compound interest: 15% divided by 12 is 1.25%, yielding R$ 12,50 per month on R$ 1.000. Currency and number notation are Brazilian.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "Directly identifies treating the annual rate as monthly, connects that mistake to R$ 150, and explains the division by 12. It acknowledges the calculation producing R$ 150, though explicitly labeling that amount as the yearly return would sharpen the connection.",
+          "score": 9,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Uses two sentences in plain Brazilian Portuguese, stays well below 600 characters, and avoids headings or unnecessary background. The second sentence could be split for slightly easier reading.",
+          "score": 9,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "Addresses the learner directly as 'você' without blame, praise, or personal assumptions. The neutral explanation is suitable for reuse with anyone giving this answer.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1768,
+          "outputTokens": 633,
+          "reasoningTokens": 225
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Explicitly saying that R$ 150 is the correct yearly return would make the partially correct calculation clearer. Splitting the second sentence would make the explanation easier to scan.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The learner multiplied 15% by the monthly amount instead of dividing the yearly rate over 12. A good explanation in Brazilian Portuguese names that mix-up; if it uses a tiny example, the money is in reais written the Brazilian way (R$ 1.000,00), never dollars.",
+        "id": "pt-juros-mensais-contexto-local-1",
+        "userInput": {
+          "answer": "R$ 150 por mês",
+          "correctAnswer": "Cerca de R$ 12,50 por mês (15% ao ano ÷ 12 × R$ 1.000).",
+          "keyPoints": ["Divide a taxa anual por 12 para ter a mensal"],
+          "language": "pt",
+          "misconceptions": ["Usa a taxa anual como se fosse mensal"],
+          "question": "Um investimento rende 15% ao ano sobre R$ 1.000. Quanto ele rende, aproximadamente, por mês, sem contar juros sobre juros?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All calculations and financial statements are correct under the question's simple-interest assumption: annual interest is $150, the monthly rate is 1.25%, and monthly interest is $12.50.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "Specifically identifies treating yearly interest as monthly interest. It recognizes that $150 is the correct yearly amount, explains why the time period is wrong, and connects the correction to dividing the yearly rate by 12.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The explanation uses three understandable sentences and is under 600 characters. However, the first two sentences are relatively long, the final check repeats the division-by-12 idea, and the dollar amounts do not consistently use the requested cents formatting.",
+          "score": 8,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "Addresses the learner directly through 'Your answer' and gives a neutral, respectful correction without praise, blame, or assumptions about the person. It is suitable for reuse with anyone giving this answer.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1778,
+          "outputTokens": 674,
+          "reasoningTokens": 210
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The money formatting does not consistently match the requested $1,000.00 style: it uses $1,000 and $150 without cents. The explanation is also somewhat repetitive, explaining division by 12 and then repeating the one-twelfth relationship.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use consistent dollar formatting and shorten the explanation to two sentences: identify $150.00 as the correct yearly interest, then explain that dividing it by 12 gives $12.50 per month.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The learner used the yearly rate as if it were monthly. A good explanation in US English names that mix-up; if it uses a tiny example, the money is in dollars written the US way ($1,000.00).",
+        "id": "en-monthly-interest-local-1",
+        "userInput": {
+          "answer": "$150 a month",
+          "correctAnswer": "About $12.50 a month (15% a year ÷ 12 × $1,000).",
+          "keyPoints": ["Divides the yearly rate by 12 to get the monthly one"],
+          "language": "en",
+          "misconceptions": ["Uses the yearly rate as if it were monthly"],
+          "question": "A savings account pays 15% a year on $1,000. About how much does it pay each month, without counting interest on interest?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "“Aumento geral e contínuo de todos os preços” falsely implies that every price must rise. The explicit false-statement cap of 6 applies. The explanation correctly describes the loss of purchasing power.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "It directly addresses the gasoline example, acknowledges the correct idea of a price rising, and identifies the confusion between an individual price increase and a general increase over time. It also connects inflation to money buying less.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The explanation uses three sentences in everyday Brazilian Portuguese and stays under 600 characters. However, the first sentence is lengthy, and the final sentence repeats an already stated point, reducing reading efficiency.",
+          "score": 8,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "It addresses the learner directly as “você”, corrects the answer kindly, and evaluates the answer rather than praising or blaming the person. It makes no assumptions about the learner and is suitable for reuse.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1711,
+          "outputTokens": 600,
+          "reasoningTokens": 162
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation incorrectly defines inflation as a continuous increase in all prices. Inflation is a rise in the general price level; individual prices can remain stable or fall. Replace “de todos os preços” with “dos preços em geral”.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The first sentence is long, and the final sentence repeats the general-and-over-time distinction rather than adding useful information.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The learner described a single price going up once, not a general rise over time. A good explanation in Portuguese says what is right (prices rising) and what is missing (general and over time, money buys less).",
+        "id": "pt-inflacao-parcial-1",
+        "userInput": {
+          "answer": "É quando o preço da gasolina sobe.",
+          "correctAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos.",
+          "keyPoints": [
+            "Os preços sobem de forma geral",
+            "Acontece ao longo do tempo",
+            "O dinheiro perde poder de compra"
+          ],
+          "language": "pt",
+          "question": "Explique com suas palavras o que é inflação."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explanation correctly contrasts photosynthesis in chloroplasts with energy release through cellular respiration in mitochondria. Its simplified descriptions and labeled analogies introduce no factual error.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "It specifically addresses the learner's chloroplast answer, explaining that chloroplasts make sugar rather than release energy from food, and connects that distinction to mitochondria. This identifies the expected misconception rather than merely supplying the answer.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The explanation uses four sentences in US English and stays below 600 characters. However, \"opposite direction\" is underspecified, and technical labels plus a final analogy make it less immediate than a simple contrast between making sugar and releasing its energy.",
+          "score": 8,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "The wording is neutral and kind, and the invitation to \"Think of\" the analogy addresses the reader directly. It makes no personal assumptions, offers no praise or blame, and is reusable for anyone who gives this answer.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1696,
+          "outputTokens": 655,
+          "reasoningTokens": 184
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The phrase \"which is the opposite direction\" is vague about what is being reversed. Terms such as \"organelle\" and \"cellular respiration\" add unnecessary technical vocabulary to an otherwise straightforward explanation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Lead directly with the mix-up: \"You're thinking of chloroplasts, which use sunlight to make sugar. Mitochondria release energy from that sugar for the cell to use.\" This preserves the specific correction while removing the less useful opening and extra analogy.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The learner named the chloroplast, which makes sugar in photosynthesis, instead of the mitochondria, which release energy from food. A good explanation names that swap.",
+        "id": "en-biology-chloroplast-for-mitochondria-1",
+        "userInput": {
+          "answer": "the chloroplast",
+          "correctAnswer": "The mitochondria.",
+          "keyPoints": ["Names the mitochondria"],
+          "language": "en",
+          "misconceptions": [
+            "Confuses the organelle that makes sugar with the one that releases energy"
+          ],
+          "question": "Which part of the cell releases energy from food?"
+        }
+      }
+    }
+  ],
+  "taskId": "explain-wrong-answer"
+}

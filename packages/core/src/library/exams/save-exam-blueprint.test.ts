@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { decideExamIdentity } from "@zoonk/ai/tasks/v2/research/exam-identity-decision";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -6,13 +7,36 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { MAX_MATCHES_PER_TERM } from "../identity/_utils/text-search-sql";
 import { type BlueprintContent } from "./blueprint-contract";
-import { type ExamIdentity, buildExamIdentityKey, searchExamBlueprints } from "./exam-identity";
+import {
+  type ExamIdentity,
+  type ExamRequest,
+  buildExamIdentityKey,
+  findSameExam,
+} from "./exam-identity";
 import { previewExamBlueprintChanges, saveExamBlueprint } from "./save-exam-blueprint";
+
+/** Whether two exams are the same is an evaluation model's call: each test says what it answers. */
+vi.mock("@zoonk/ai/tasks/v2/research/exam-identity-decision", () => ({
+  decideExamIdentity: vi.fn(),
+}));
+
+/** The stored exams the search hands the identity decision for a request, best first. */
+async function searchedCandidates(request: Partial<ExamRequest> & Pick<ExamRequest, "name">) {
+  vi.mocked(decideExamIdentity).mockClear();
+  vi.mocked(decideExamIdentity).mockResolvedValue(null);
+
+  await findSameExam({
+    request: { board: null, country: "BR", language: "pt", ownerId: null, role: null, ...request },
+    searchTerms: [],
+  });
+
+  return vi.mocked(decideExamIdentity).mock.calls[0]?.[0].candidates ?? [];
+}
 
 const PROVENANCE = {
   generatedAt: new Date("2026-09-26T12:00:00.000Z"),
@@ -258,6 +282,76 @@ describe(saveExamBlueprint, () => {
     ).resolves.toBe(0);
   });
 
+  it("tells learners nothing when the same notice is read again with new instructions", async () => {
+    const source = await sourceFixture({ language: "pt" });
+    const examIdentity = identity();
+    const first = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
+
+    await saveExamBlueprint({
+      content: first,
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    // The same document, read by newer instructions that now see the notice's groups.
+    const reread = content({ questions: 90, sourceHash: source.contentHash, sourceId: source.id });
+
+    await expect(
+      previewExamBlueprintChanges({ content: reread, identity: examIdentity }),
+    ).resolves.toBeNull();
+  });
+
+  it("keeps the number of options when a new reading of the notice doesn't state it", async () => {
+    const [source, page] = await Promise.all([
+      sourceFixture({ language: "pt" }),
+      sourceFixture({ language: "pt" }),
+    ]);
+
+    const examIdentity = identity({ board: "Inep", name: `Enem ${randomUUID()}`, role: null });
+    const first = content({ questions: 180, sourceHash: source.contentHash, sourceId: source.id });
+
+    const fiveOptions = {
+      citation: { passage: "Cada questão terá cinco alternativas.", sourceId: source.id },
+      description: "Múltipla escolha com cinco alternativas",
+      kind: "multipleChoice" as const,
+      options: 5,
+    };
+
+    await saveExamBlueprint({
+      content: { ...first, structure: { ...first.structure, formats: [fiveOptions] } },
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    // The exam's page, read by newer instructions: "180 questões objetivas", no options.
+    const reread = content({ questions: 180, sourceHash: page.contentHash, sourceId: page.id });
+
+    const saved = await saveExamBlueprint({
+      content: {
+        ...reread,
+        structure: {
+          ...reread.structure,
+          formats: [
+            {
+              citation: { passage: "180 questões objetivas", sourceId: page.id },
+              description: "Questões objetivas",
+              kind: "multipleChoice",
+              options: null,
+            },
+          ],
+        },
+      },
+      identity: examIdentity,
+      provenance: { ...PROVENANCE, runId: "run-reread" },
+      sourceId: page.id,
+    });
+
+    expect(saved.changes).toStrictEqual([]);
+    expect(saved.blueprint.structure).toMatchObject({ formats: [fiveOptions] });
+  });
+
   it("keeps a blueprint read from private material private, in its owner's key space", async () => {
     const [source, owner] = await Promise.all([sourceFixture({ language: "pt" }), userFixture()]);
 
@@ -281,9 +375,9 @@ describe(saveExamBlueprint, () => {
       visibility: "private",
     });
 
-    await expect(
-      searchExamBlueprints({ country: "BR", language: "pt", terms: ["Bioquímica prova"] }),
-    ).resolves.not.toContainEqual(expect.objectContaining({ id: saved.blueprint.id }));
+    await expect(searchedCandidates({ name: "Bioquímica prova" })).resolves.not.toContainEqual(
+      expect.objectContaining({ id: saved.blueprint.id }),
+    );
   });
 
   it("deletes a blueprint read from private material with its owner, never a shared one", async () => {
@@ -315,8 +409,8 @@ describe(saveExamBlueprint, () => {
   });
 });
 
-describe(searchExamBlueprints, () => {
-  it("finds a shared blueprint under another name for the same exam", async () => {
+describe(findSameExam, () => {
+  it("finds a shared blueprint under another name for the same exam, in any country when none is known", async () => {
     const marker = randomUUID().slice(0, 8);
 
     const blueprint = await examBlueprintFixture({
@@ -327,17 +421,51 @@ describe(searchExamBlueprints, () => {
       name: `ENEM ${marker} Exame Nacional do Ensino Médio`,
     });
 
-    const found = await searchExamBlueprints({
-      country: "BR",
-      language: "pt",
-      terms: [`exame nacional ensino medio ${marker}`],
+    const name = `exame nacional ensino medio ${marker}`;
+
+    await expect(searchedCandidates({ name })).resolves.toContainEqual(
+      expect.objectContaining({ id: blueprint.id }),
+    );
+
+    await expect(searchedCandidates({ country: "US", name })).resolves.toStrictEqual([]);
+
+    await expect(searchedCandidates({ country: null, name })).resolves.toContainEqual(
+      expect.objectContaining({ id: blueprint.id }),
+    );
+
+    // The evaluation model's yes is what links it, compared in the match's country.
+    vi.mocked(decideExamIdentity).mockResolvedValue({ id: blueprint.id, probability: 0.9 });
+
+    const found = await findSameExam({
+      request: { board: null, country: null, language: "pt", name, ownerId: null, role: null },
+      searchTerms: [],
     });
 
-    expect(found.map((item) => item.id)).toContain(blueprint.id);
+    expect(found?.id).toBe(blueprint.id);
 
-    await expect(
-      searchExamBlueprints({ country: "US", language: "pt", terms: [`exame nacional ${marker}`] }),
-    ).resolves.toStrictEqual([]);
+    expect(decideExamIdentity).toHaveBeenLastCalledWith(
+      expect.objectContaining({ request: expect.objectContaining({ country: "BR" }) }),
+    );
+  });
+
+  it("takes an exact key match without asking the evaluation model", async () => {
+    const name = `Concurso ${randomUUID()}`;
+
+    const blueprint = await examBlueprintFixture({
+      identityKey: buildExamIdentityKey({ name, ownerId: null, role: null }),
+      language: "pt",
+      name,
+    });
+
+    vi.mocked(decideExamIdentity).mockClear();
+
+    const found = await findSameExam({
+      request: { board: null, country: null, language: "pt", name, ownerId: null, role: null },
+      searchTerms: [],
+    });
+
+    expect(found?.id).toBe(blueprint.id);
+    expect(decideExamIdentity).not.toHaveBeenCalled();
   });
 
   it("ranks a blueprint matching a specific term first when a broad term matches too many to rank", async () => {
@@ -354,13 +482,24 @@ describe(searchExamBlueprints, () => {
       name: `Concurso ${broad} ${specific}`,
     });
 
-    const found = await searchExamBlueprints({
-      country: "BR",
-      language: "pt",
-      terms: [broad, specific],
+    vi.mocked(decideExamIdentity).mockClear();
+    vi.mocked(decideExamIdentity).mockResolvedValue(null);
+
+    await findSameExam({
+      request: {
+        board: null,
+        country: "BR",
+        language: "pt",
+        name: broad,
+        ownerId: null,
+        role: null,
+      },
+      searchTerms: [specific],
     });
 
-    expect(found[0]?.id).toBe(target.id);
-    expect(found).toHaveLength(5);
+    const candidates = vi.mocked(decideExamIdentity).mock.calls[0]?.[0].candidates ?? [];
+
+    expect(candidates[0]?.id).toBe(target.id);
+    expect(candidates).toHaveLength(5);
   });
 });

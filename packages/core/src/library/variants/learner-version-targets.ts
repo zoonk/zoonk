@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { getGoalField } from "../items/item-field";
+import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import {
   TOOL_VERSION_SCREENS,
   type ToolVersion,
@@ -69,6 +70,7 @@ function loadVersionSteps(lessonIds: readonly string[]) {
       kind: { in: ["challenge", ...TOOL_VERSION_SCREENS] },
       lesson: { contentStatus: "completed" },
       lessonId: { in: [...lessonIds] },
+      ...CURRENT_STEPS,
     },
   });
 }

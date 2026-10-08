@@ -1,12 +1,13 @@
 import { getChallengeProgress } from "./_utils/challenge-progress";
-import { getLessonHyperdriveLevel } from "./_utils/lesson-hyperdrive";
+import { canGoBack } from "./_utils/lesson-flow";
+import { getHyperdriveStreak } from "./_utils/lesson-hyperdrive";
 import {
   getExplanationsAfter,
   getQuickCheckQueue,
   isQuestionStep,
   isReadStep,
 } from "./_utils/lesson-steps";
-import { type SimplifiableStep, getStruggleOffer } from "./_utils/lesson-struggle";
+import { type ExplainingStep, getStruggleOffer } from "./_utils/lesson-struggle";
 import { type LessonPlayerState, getCurrentStep } from "./lesson-player-state";
 import { type LessonPlayerAnswer, type PlayableLibraryStep } from "./lesson-player-types";
 
@@ -30,25 +31,31 @@ type LessonPrimaryAction = {
 };
 
 /**
- * What the learner can do on the screen in view. The shell, the keyboard and both skins read this
+ * What the learner can do on the screen in view. The shell, the header and the keyboard read this
  * one model, so the visible button and Enter always do the same thing.
  */
 export type LessonScreen = {
   canExplainFirst: boolean;
   canGoBack: boolean;
+  /**
+   * The screen moves on with the arrow key or a swipe, the way its main action does: a reading
+   * screen, and a question once its result shows. A question waiting for its answer moves on only
+   * through its main action, so a stray swipe never skips or checks one.
+   */
+  canGoForward: boolean;
   canKnowThis: boolean;
-  /** Hyperdrive's multiplier (x2 after two right answers in a row), 0 without a streak. */
-  hyperdriveLevel: number;
+  /** Right answers in a row the result on screen made (Hyperdrive), from three on. */
+  hyperdriveStreak: number | null;
   primary: LessonPrimaryAction | null;
   progress: { current: number; total: number };
   /** Position within "I know this", when it's running. */
   quickCheck: { current: number; total: number } | null;
-  /**
-   * The explanation offered in a simpler version after two misses in a row on the same idea, so
-   * help comes at the moment the learner struggles.
-   */
-  simplerOffer: SimplifiableStep | null;
   step: PlayableLibraryStep | null;
+  /**
+   * The explanation of an idea missed twice in a row, so help can come at the moment the learner
+   * struggles.
+   */
+  struggleOffer: ExplainingStep | null;
 };
 
 function hasText(text: string): boolean {
@@ -130,11 +137,13 @@ function getPrimaryAction(
   };
 }
 
-function canGoBack(state: LessonPlayerState, step: PlayableLibraryStep): boolean {
-  const previousId = state.queue[state.position - 1];
-  const previous = previousId ? state.steps[previousId] : null;
+/** A reading screen, or a question showing its result, turns forward as its button would. */
+function canTurnForward(state: LessonPlayerState, step: PlayableLibraryStep | null): boolean {
+  if (!step || state.run.status === "refused") {
+    return false;
+  }
 
-  return state.phase === "playing" && isReadStep(step) && Boolean(previous && isReadStep(previous));
+  return state.phase === "feedback" || (state.phase === "playing" && isReadStep(step));
 }
 
 /** Derives the screen from the reducer state. */
@@ -148,20 +157,22 @@ export function getLessonScreen(state: LessonPlayerState): LessonScreen {
       Boolean(step && isQuestionStep(step)) &&
       !state.answers[step?.id ?? ""] &&
       getExplanationsAfter(state).length > 0,
-    canGoBack: step ? canGoBack(state, step) : false,
+    canGoBack: step ? canGoBack(state) : false,
+    canGoForward: canTurnForward(state, step),
     canKnowThis:
       isPlaying &&
       !state.quickCheck &&
       step?.kind === "explanation" &&
       getQuickCheckQueue(state).length > 0,
-    hyperdriveLevel: getLessonHyperdriveLevel(state),
+    hyperdriveStreak:
+      state.phase === "feedback" && step ? getHyperdriveStreak({ state, stepId: step.id }) : null,
     primary: step ? getPrimaryAction(state, step) : null,
     progress: {
       current: state.phase === "completed" ? state.queue.length : state.position,
       total: state.queue.length,
     },
     quickCheck: state.quickCheck ? { current: state.position, total: state.queue.length } : null,
-    simplerOffer: getStruggleOffer(state),
     step,
+    struggleOffer: getStruggleOffer(state),
   };
 }

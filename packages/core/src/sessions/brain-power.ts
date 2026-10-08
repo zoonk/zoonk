@@ -1,7 +1,7 @@
 import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "../progress/energy";
 
 /**
- * Brain Power v2, the same in both modes: points only come from learning. Right answers on new or
+ * Brain Power v2: points only come from learning. Right answers on new or
  * due material earn points, multiplied by Hyperdrive (right answers in a row). Repeating material
  * the learner already knows earns less and less, and a wrong answer costs nothing: it only resets
  * Hyperdrive. Bonuses reward learning actions that matter: finishing a lesson, opening capsules,
@@ -73,7 +73,7 @@ function buildsHyperdrive(answer: Pick<ScoredAnswer, "material">): boolean {
 
 /**
  * The streak after one more answer: new or due material builds it, any wrong answer resets it.
- * The player shows Hyperdrive live with this same rule, so the server's score matches.
+ * The lesson player shows Hyperdrive live with this same rule, so the server's score matches.
  */
 export function advanceHyperdrive({
   answer,
@@ -112,8 +112,10 @@ export type ScoredAnswers = {
   points: number[];
   /** The Hyperdrive streak after the last answer, carried into the next block of the session. */
   streak: number;
-  /** The highest multiplier reached, shown in Fun as "Top Hyperdrive". */
+  /** The highest multiplier reached ("Top Hyperdrive"). */
   topLevel: number;
+  /** The most right answers in a row that built Hyperdrive ("best streak"). */
+  topStreak: number;
 };
 
 /**
@@ -138,9 +140,10 @@ export function scoreAnswers({
         points: [...total.points, points],
         streak: next,
         topLevel: counts ? Math.max(total.topLevel, getHyperdriveLevel(next)) : total.topLevel,
+        topStreak: counts ? Math.max(total.topStreak, next) : total.topStreak,
       };
     },
-    { brainPower: 0, points: [], streak, topLevel: 0 },
+    { brainPower: 0, points: [], streak, topLevel: 0, topStreak: 0 },
   );
 }
 
@@ -208,7 +211,7 @@ export function estimateBrainPower({
 const ENERGY_DECIMALS = 100;
 
 /**
- * Energy keeps today's rules in both modes: it rises with right answers, dips a little with wrong
+ * Energy keeps today's rules: it rises with right answers, dips a little with wrong
  * ones, and a block without questions still counts as a little study.
  */
 export function getAnswersEnergyDelta({

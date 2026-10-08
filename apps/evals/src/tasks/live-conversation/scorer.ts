@@ -1,11 +1,11 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
 import { normalizeString } from "@zoonk/utils/string";
-import { type CallTurn } from "./live-call";
+import { type CallTurn, type CallUsage } from "./live-call";
 import { LIVE_CONVERSATION_SCORE_CATEGORIES } from "./score-categories";
 import { type LiveConversationExpected, type LiveConversationInput } from "./test-cases";
 
-export type LiveConversationOutput = { turns: CallTurn[]; voiceSeconds: number | null };
+export type LiveConversationOutput = { turns: CallTurn[]; usage: CallUsage | null };
 
 /**
  * The longest sentence the character may say at each level, a little above the instructions'
@@ -31,7 +31,7 @@ function toSentences(text: string): string[] {
 }
 
 /**
- * The first turn is the opening line. GPT-Live's transcript of its own speech may differ in a word
+ * The first turn is the opening line. The voice model's transcript of its own speech may differ in a word
  * or two from the text, so most of the line's words must be there.
  */
 const OPENING_WORDS_SHARE = 0.8;
@@ -167,8 +167,8 @@ function checkCall({
 /**
  * Code checks the call's shape (the opening line, every objective the learner achieved marked
  * once and nothing else, short replies at the learner's level), then a judge reads the
- * transcript for role, level and when objectives were marked. Learner lines are what GPT-Live
- * heard from the text-to-speech voice.
+ * transcript for role, level and when objectives were marked. Learner lines are what the voice
+ * model heard from the text-to-speech voice.
  */
 export const scoreLiveConversation: TaskScorer<LiveConversationExpected> = ({
   output,

@@ -14,6 +14,7 @@ import { contentGenerationPaths } from "./paths/content-generation";
 import { courseGoalPaths } from "./paths/course-goals";
 import { currentLearningPaths } from "./paths/current-learning";
 import { currentUserProgressPaths } from "./paths/current-user-progress";
+import { exampleLinePaths } from "./paths/example-lines";
 import { examPaths } from "./paths/exams";
 import { feedbackPaths } from "./paths/feedback";
 import { filePaths } from "./paths/files";
@@ -34,7 +35,9 @@ import { lessonRegenerationPaths } from "./paths/lesson-regenerations";
 import { libraryLessonPaths } from "./paths/library-lessons";
 import { memoryPaths } from "./paths/memory";
 import { milestonePaths } from "./paths/milestones";
+import { mindMapPaths } from "./paths/mind-maps";
 import { mistakePaths } from "./paths/mistakes";
+import { mockPaths } from "./paths/mocks";
 import { onboardingPaths } from "./paths/onboarding";
 import { placementPaths } from "./paths/placement";
 import { planPaths } from "./paths/plans";
@@ -43,7 +46,7 @@ import { pronunciationPaths } from "./paths/pronunciation";
 import { researchSourcePaths } from "./paths/research-sources";
 import { reviewFlagPaths } from "./paths/review-flags";
 import { sessionPaths } from "./paths/sessions";
-import { stepVariantPaths } from "./paths/step-variants";
+import { speechClipPaths } from "./paths/speech-clips";
 import { studySessionPaths } from "./paths/study-sessions";
 import { subscriptionPaths } from "./paths/subscriptions";
 import { todayPaths } from "./paths/today";
@@ -111,6 +114,7 @@ const paths = withInternalErrorResponses({
   ...languageGoalPaths,
   ...languageConversationPaths,
   ...pronunciationPaths,
+  ...speechClipPaths,
   ...learnerProfilePaths,
   ...libraryLessonPaths,
   ...lessonRegenerationPaths,
@@ -122,7 +126,7 @@ const paths = withInternalErrorResponses({
   ...filePaths,
   ...progressPaths,
   ...sessionPaths,
-  ...stepVariantPaths,
+  ...exampleLinePaths,
   ...subscriptionPaths,
   ...learnerPaths,
   ...learnViewPaths,
@@ -132,7 +136,9 @@ const paths = withInternalErrorResponses({
   ...planPaths,
   ...memoryPaths,
   ...milestonePaths,
+  ...mindMapPaths,
   ...mistakePaths,
+  ...mockPaths,
   ...onboardingPaths,
   ...researchSourcePaths,
   ...studySessionPaths,

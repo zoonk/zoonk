@@ -62,12 +62,15 @@ async function findMockSubject({
   userId: string;
   where: { blockId: string } | { id: string };
 }) {
+  // A mock taken any time opens by its own id, where a scheduled one opens by its block's.
+  const opened = "blockId" in where ? { OR: [where, { blockId: null, id: where.blockId }] } : where;
+
   const mock = await prisma.mockExam.findFirst({
     include: {
       examBlueprint: { select: { language: true } },
       goal: { select: { language: true } },
     },
-    where: { ...where, status: "finished", userId },
+    where: { ...opened, status: "finished", userId },
   });
 
   const language = mock?.goal?.language ?? mock?.examBlueprint?.language;

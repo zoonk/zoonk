@@ -2,11 +2,10 @@
 
 import { type AnalyticsEvent } from "@zoonk/core/analytics/events";
 import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
-import { type Dispatch, useCallback, useMemo } from "react";
+import { type Dispatch, useCallback, useEffect, useEffectEvent, useMemo } from "react";
 import { fromLocalGrade, revealGuess } from "./_utils/lesson-results";
 import { isServerGradedAnswer } from "./_utils/lesson-steps";
 import { type LessonPlayerActions } from "./lesson-player-context";
-import { lessonPlayerReducer } from "./lesson-player-reducer";
 import {
   type LessonPlayerAction,
   type LessonPlayerState,
@@ -34,26 +33,22 @@ function analyticsFor(check: CheckContext, lessonId: string): AnalyticsEvent | n
   return null;
 }
 
-/**
- * Turns learner intent into reducer actions and server calls. Checks, activities and exercises
- * are graded on the device at once and recorded in the background; typed and spoken answers wait
- * for the server's grade. Reaching the end saves the run once every answer is recorded.
- */
 /** The screens each skippable activity is made of in a lesson. */
 const SKIPPED_KINDS = { speaking: "spokenAnswer", writing: "typedAnswer" } as const;
 
+/**
+ * Turns learner intent into reducer actions and server calls. Checks, activities and exercises
+ * are graded on the device at once and recorded in the background; typed and spoken answers wait
+ * for the server's grade. Reaching the end (or coming back to a run with every screen answered)
+ * saves the run once every answer is recorded.
+ */
 export function useLessonPlayerActions({
   adapters,
   dispatch,
   state,
   track,
 }: ActionsInput): LessonPlayerActions {
-  const {
-    ensureRun,
-    flushChecks,
-    resetRun,
-    track: trackCheck,
-  } = useLessonRun({ adapters, dispatch });
+  const { ensureRun, flushChecks, track: trackCheck } = useLessonRun({ adapters, dispatch });
 
   const { gradeOnServer, recordInBackground, submitSpokenAnswer } = useStepGrading({
     adapters,
@@ -63,30 +58,40 @@ export function useLessonPlayerActions({
     trackCheck,
   });
 
-  const saveCompletion = useCallback(async () => {
+  /**
+   * Saves the finished run. When the server is missing an answer (it never arrived), the lesson
+   * goes back to that screen with the run's answers instead of failing the save again and again.
+   */
+  const saveCompletion = useEffectEvent(async () => {
     const [allSaved, runId] = await Promise.all([flushChecks(), ensureRun()]);
-    const outcome = allSaved && runId ? await adapters.completeLesson({ runId }) : null;
+
+    // A request that never reached the server (offline) fails like any other save.
+    const outcome =
+      allSaved && runId ? await adapters.completeLesson({ runId }).catch(() => null) : null;
 
     if (outcome?.status === "completed") {
       dispatch({ result: outcome.completion, type: "completionSaved" });
       return;
     }
 
+    const restarted =
+      outcome?.status === "incomplete" ? await adapters.startLesson().catch(() => null) : null;
+
+    if (restarted?.reason === "started") {
+      dispatch({ answers: restarted.answers, type: "runResynced" });
+      return;
+    }
+
     dispatch({ type: "completionFailed" });
-  }, [adapters, dispatch, ensureRun, flushChecks]);
+  });
 
-  /** Dispatches and, when this action finishes the lesson, saves it. */
-  const dispatchAndSave = useCallback(
-    (action: LessonPlayerAction) => {
-      const next = lessonPlayerReducer(state, action);
-      dispatch(action);
+  const isSaving = state.phase === "completed" && state.completion?.status === "saving";
 
-      if (state.phase !== "completed" && next.phase === "completed") {
-        void saveCompletion();
-      }
-    },
-    [dispatch, saveCompletion, state],
-  );
+  useEffect(() => {
+    if (isSaving) {
+      void saveCompletion();
+    }
+  }, [isSaving]);
 
   const check = useCallback(() => {
     const step = getCurrentStep(state);
@@ -140,40 +145,23 @@ export function useLessonPlayerActions({
       check,
       continue: () => {
         void ensureRun();
-        dispatchAndSave({ type: "continue" });
+        dispatch({ type: "continue" });
       },
       explainFirst: () => dispatch({ type: "explainFirst" }),
       goBack: () => dispatch({ direction: "prev", type: "navigate" }),
       knowThis: () => dispatch({ type: "knowThis" }),
-      restart: () => {
-        resetRun();
-        dispatch({ type: "restart" });
-        void ensureRun();
-      },
-      retryCompletion: () => {
-        dispatch({ type: "completionRetried" });
-        void saveCompletion();
-      },
+      retryCompletion: () => dispatch({ type: "completionRetried" }),
       retryStart: () => void ensureRun(),
       selectAnswer: (stepId, answer) => dispatch({ answer, stepId, type: "selectAnswer" }),
       skipActivity: async (activity) => {
         const skipped = await adapters.skipLanguageActivity?.(activity);
 
         if (skipped) {
-          dispatchAndSave({ kinds: [SKIPPED_KINDS[activity]], type: "skipKinds" });
+          dispatch({ kinds: [SKIPPED_KINDS[activity]], type: "skipKinds" });
         }
       },
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [
-      adapters,
-      check,
-      dispatch,
-      dispatchAndSave,
-      ensureRun,
-      resetRun,
-      saveCompletion,
-      submitSpokenAnswer,
-    ],
+    [adapters, check, dispatch, ensureRun, submitSpokenAnswer],
   );
 }

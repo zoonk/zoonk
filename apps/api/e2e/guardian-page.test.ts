@@ -5,7 +5,7 @@ import { createTeenInvite, openAsGuardian } from "./helpers/guardian";
 
 /**
  * The guardian's page on the auth host: sign in, accept a teen's invite, see their week, set a
- * daily time limit and approve Plus.
+ * daily time limit, keep memory off and approve Plus.
  */
 
 const TWENTY_MINUTES_IN_SECONDS = 1200;
@@ -31,7 +31,9 @@ test.describe("Guardian page", () => {
     expect(redirectTo.searchParams.get("invite")).toBe("invite-token");
   });
 
-  test("accepts an invite, sets a daily limit and approves Plus", async ({ browser }) => {
+  test("accepts an invite, sets a daily limit, keeps memory off and approves Plus", async ({
+    browser,
+  }) => {
     const { context, guardian, page } = await openAsGuardian({ baseURL, browser });
     const { learner, token } = await createTeenInvite({ baseURL, guardianEmail: guardian.email });
 
@@ -66,6 +68,18 @@ test.describe("Guardian page", () => {
     await card.getByRole("button", { name: "Save" }).click();
     await expect(card.getByText("Daily limit saved")).toBeVisible();
 
+    // Memory starts off for a teen; the guardian can keep it off, and turning it on stays theirs.
+    const memory = card.getByRole("switch", { name: `Let ${learner.name} use memory` });
+    await expect(memory).toBeChecked();
+
+    await expect(
+      card.getByText(`Off. It stays off unless ${learner.name} turns it on.`),
+    ).toBeVisible();
+
+    await memory.click();
+    await expect(memory).not.toBeChecked();
+    await expect(card.getByText(`Off. ${learner.name} can't turn it on.`)).toBeVisible();
+
     await card.getByRole("button", { name: "Approve Plus" }).click();
     await expect(card.getByText(/You approved Plus on/u)).toBeVisible();
 
@@ -73,6 +87,7 @@ test.describe("Guardian page", () => {
       prisma.guardianLink.findFirstOrThrow({ where: { userId: learner.id } }),
     ).resolves.toMatchObject({
       dailyLimitMinutes: 45,
+      memoryOff: true,
       plusApprovedAt: expect.any(Date),
       status: "active",
     });

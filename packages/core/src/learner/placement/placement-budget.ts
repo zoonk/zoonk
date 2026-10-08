@@ -19,12 +19,28 @@ export const SESSION_PLACEMENT_QUESTIONS = 3;
 /** Placement spreads over the goal's first week; after that, lessons and reviews refine it. */
 export const PLACEMENT_WEEK_DAYS = 7;
 
-/** Whether today's placement answers used up the day's few minutes. */
-export function isPlacementBudgetUsed(answers: readonly { durationMs: number }[]): boolean {
+/** A topic of the learner's own material takes about this long: a quick answer, or a typed one. */
+const TOPIC_ANSWER_MS = 40_000;
+
+/**
+ * Whether today's placement answers used up the day's few minutes. A test from the learner's own
+ * material asks every one of its `topics` (see `answeredOnly`), so its day has room for an answer
+ * on each: a class test days away has no first week to ask the rest in.
+ */
+export function isPlacementBudgetUsed({
+  answers,
+  topics = 0,
+}: {
+  answers: readonly { durationMs: number }[];
+  topics?: number;
+}): boolean {
   const spent = answers.reduce(
     (total, answer) => total + Math.min(answer.durationMs, MAX_COUNTED_ANSWER_MS),
     0,
   );
 
-  return answers.length >= DAY_PLACEMENT_ANSWERS || spent >= DAY_PLACEMENT_MS;
+  return (
+    answers.length >= Math.max(DAY_PLACEMENT_ANSWERS, topics) ||
+    spent >= Math.max(DAY_PLACEMENT_MS, topics * TOPIC_ANSWER_MS)
+  );
 }

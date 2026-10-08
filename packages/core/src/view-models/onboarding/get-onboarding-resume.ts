@@ -1,6 +1,8 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { connection } from "next/server";
+import { asksToTurnOnMemory, getMemoryAccess } from "../../memory/_utils/memory-access";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
 import { type LearningProfileView } from "../../profile/learning-profile-contract";
@@ -61,10 +63,12 @@ function findOpenDraft({ drafts, goals }: { drafts: ResumeDraft[]; goals: Resume
  * "Start day 1", is where onboarding ends. Questions have no onboarding.
  */
 function isInOnboarding({
+  asksMemory,
   goal,
   goals,
   profile,
 }: {
+  asksMemory: boolean;
   goal: ResumeGoal;
   goals: ResumeGoal[];
   profile: LearningProfileView;
@@ -78,7 +82,7 @@ function isInOnboarding({
       targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : null,
     },
     profile: {
-      experienceMode: profile.experienceMode,
+      asksMemory,
       hasBirth: profile.birth !== null,
       hasBuddy: profile.buddy !== null,
       hasEarlierGoals: goals.some(
@@ -97,10 +101,12 @@ function isInOnboarding({
  * set aside. Then the newest goal (questions aside) while its onboarding runs, else the day.
  */
 function toResume({
+  asksMemory,
   draft,
   goals,
   profile,
 }: {
+  asksMemory: boolean;
   draft: ResumeDraft | null;
   goals: ResumeGoal[];
   profile: LearningProfileView;
@@ -114,7 +120,7 @@ function toResume({
   const activeGoals = goals.filter((goal) => goal.status === "active");
   const latest = activeGoals.find((goal) => goal.kind !== "explain");
 
-  if (latest && isInOnboarding({ goal: latest, goals, profile })) {
+  if (latest && isInOnboarding({ asksMemory, goal: latest, goals, profile })) {
     return { goalId: latest.id, kind: "goal", title: latest.title };
   }
 
@@ -124,9 +130,11 @@ function toResume({
 /**
  * What a returning visitor, guest or learner should continue: a goal they typed but haven't
  * confirmed yet, their newest goal while its onboarding hasn't reached the plan, or their day when
- * they have an active goal. Null when there's nothing to continue. Uncached: every step changes it.
+ * they have an active goal. Null when there's nothing to continue. Read at request time, never in a
+ * prefetch: every step changes it.
  */
 export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
+  await connection();
   const session = await getSession();
 
   if (!session) {
@@ -135,7 +143,7 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
 
   const userId = session.user.id;
 
-  const [drafts, goals, profile] = await Promise.all([
+  const [drafts, goals, profile, memory] = await Promise.all([
     prisma.onboardingDraft.findMany({
       orderBy: { updatedAt: "desc" },
       select: { id: true, prompt: true, status: true, understanding: true, updatedAt: true },
@@ -156,10 +164,16 @@ export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
       where: { userId },
     }),
     findLearningProfileView(userId),
+    getMemoryAccess(userId),
   ]);
 
   return {
-    resume: toResume({ draft: findOpenDraft({ drafts, goals }), goals, profile }),
+    resume: toResume({
+      asksMemory: asksToTurnOnMemory(memory),
+      draft: findOpenDraft({ drafts, goals }),
+      goals,
+      profile,
+    }),
     status: "ready",
   };
 }

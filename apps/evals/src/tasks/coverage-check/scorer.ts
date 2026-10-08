@@ -15,11 +15,17 @@ export type CoverageCheckExpected = {
   examWeights?: (WeightRange & { key: string })[];
   /** For an exam: the weights accepted for the skill each planted gap adds, in `gaps` order. */
   gapWeights?: WeightRange[];
+  /**
+   * For an exam with a notice: skills that must gain these notice topics (they already teach them
+   * under another name). Any topic placed on a skill not listed here counts against it.
+   */
+  placements?: { key: string; topics: string[] }[];
 };
 
 type Flagged = { examWeight: number | null; syllabusLine: string };
 type WeightChange = { examWeight: number; key: string };
-type Output = { flagged: Flagged[]; weightChanges: WeightChange[] };
+type Placement = { key: string; topics: string[] };
+type Output = { flagged: Flagged[]; placements: Placement[]; weightChanges: WeightChange[] };
 
 const MIN_SCORE = 6;
 const MAX_SCORE = 10;
@@ -54,11 +60,25 @@ function toWeightChange(change: unknown): WeightChange[] {
     : [];
 }
 
+function toPlacement(placement: unknown): Placement[] {
+  return isJsonObject(placement) &&
+    typeof placement.key === "string" &&
+    Array.isArray(placement.topics)
+    ? [
+        {
+          key: placement.key,
+          topics: placement.topics.filter((topic): topic is string => typeof topic === "string"),
+        },
+      ]
+    : [];
+}
+
 function parseOutput(output: string): Output | null {
   try {
     const parsed: unknown = JSON.parse(output);
     const missing = isJsonObject(parsed) ? parsed.missing : null;
     const changes = isJsonObject(parsed) ? parsed.examWeights : null;
+    const placements = isJsonObject(parsed) ? parsed.placements : null;
 
     if (!Array.isArray(missing)) {
       return null;
@@ -66,6 +86,9 @@ function parseOutput(output: string): Output | null {
 
     return {
       flagged: missing.flatMap((skill) => toFlagged(skill)),
+      placements: Array.isArray(placements)
+        ? placements.flatMap((placement) => toPlacement(placement))
+        : [],
       weightChanges: Array.isArray(changes)
         ? changes.flatMap((change) => toWeightChange(change))
         : [],
@@ -88,6 +111,9 @@ function getExpected(expected: unknown): CoverageCheckExpected {
       ? (expected.gapWeights as CoverageCheckExpected["gapWeights"])
       : undefined,
     gaps: expected.gaps.filter((line): line is string => typeof line === "string"),
+    placements: Array.isArray(expected.placements)
+      ? (expected.placements as CoverageCheckExpected["placements"])
+      : undefined,
   };
 }
 
@@ -193,6 +219,53 @@ function scoreGapWeights({
 }
 
 /**
+ * Topics placed on existing skills: an expected topic on its skill is a hit, a topic placed on a
+ * skill that doesn't teach it is a false alarm.
+ */
+function scorePlacements({
+  expected,
+  placements,
+}: {
+  expected: NonNullable<CoverageCheckExpected["placements"]>;
+  placements: Placement[];
+}) {
+  const wanted = expected.flatMap((item) => item.topics.map((topic) => ({ key: item.key, topic })));
+
+  const placed = placements.flatMap((item) =>
+    item.topics.map((topic) => ({ key: item.key, topic })),
+  );
+
+  const isWanted = (entry: { key: string; topic: string }) =>
+    wanted.some(
+      (item) => item.key === entry.key && matchesLine({ line: item.topic, quote: entry.topic }),
+    );
+
+  const hits = placed.filter((entry) => isWanted(entry));
+
+  const missed = wanted.filter(
+    (item) =>
+      !hits.some(
+        (hit) => hit.key === item.key && matchesLine({ line: item.topic, quote: hit.topic }),
+      ),
+  );
+
+  // A skill keeps the topics it already had, so only new topics on unexpected skills are wrong.
+  const unexpected = placements.filter((item) => !expected.some((other) => other.key === item.key));
+
+  const details = [
+    missed.length > 0 &&
+      `Topics not placed: ${missed.map((item) => `${item.key}: ${item.topic}`).join("; ")}.`,
+    unexpected.length > 0 &&
+      `Unexpected placements: ${unexpected.map((item) => item.key).join(", ")}.`,
+  ].filter(Boolean);
+
+  return {
+    details,
+    f1: toF1({ found: hits.length + unexpected.length, hits: hits.length, total: wanted.length }),
+  };
+}
+
+/**
  * Scores gap finding by F1 over the planted gaps: a flagged line matching a
  * planted gap is a hit, anything else is a false alarm. A case with no gaps
  * loses a point per false alarm, since inventing gaps is the failure there.
@@ -228,10 +301,23 @@ export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, 
     ? scoreGapWeights({ expected, flagged: parsed.flagged })
     : null;
 
-  const parts = [gaps.f1, weights?.f1, gapWeights?.share].filter((part) => part !== undefined);
+  const placed = expected.placements
+    ? scorePlacements({ expected: expected.placements, placements: parsed.placements })
+    : null;
+
+  const parts = [gaps.f1, weights?.f1, gapWeights?.share, placed?.f1].filter(
+    (part) => part !== undefined,
+  );
+
   const quality = parts.reduce((total, part) => total + part, 0) / parts.length;
   const score = round(MIN_SCORE + (MAX_SCORE - MIN_SCORE) * quality);
-  const details = [...gaps.details, ...(weights?.details ?? []), ...(gapWeights?.details ?? [])];
+
+  const details = [
+    ...gaps.details,
+    ...(weights?.details ?? []),
+    ...(gapWeights?.details ?? []),
+    ...(placed?.details ?? []),
+  ];
 
   return createFixedScore({
     conclusion:

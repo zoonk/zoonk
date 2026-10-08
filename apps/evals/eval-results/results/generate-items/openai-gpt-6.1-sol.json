@@ -1,0 +1,241 @@
+{
+  "modelId": "openai/gpt-6.1-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Condition B is the appropriate matched control, and the decrease is (80−20)/80 × 100 = 75%. Inhibition falls to 10% at the higher substrate concentration, supporting the requested competitive-inhibition interpretation without establishing it uniquely. The temperature, protonation, and recovery explanations are scientifically appropriate and qualified to the tested conditions. No factual-error cap is triggered.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The rubric provides independently scorable criteria and allows common scientifically correct alternatives, including effects on substrate binding or catalysis and on structural interactions or active-site function. However, several entries in the separate keyPoints list bundle multiple assessable ideas rather than presenting one idea each. No distractor-related cap applies to this essay item.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The experimental table, lettered parts, AP task verbs, and point-based scoring guidelines fit an AP Biology constructed-response question. Eight one-point rows produce an allowed 8-point total, and there is no evident copying of a recognizable past question. Explicitly displaying the total would improve presentation.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The question directly assesses enzyme activity through controlled comparisons, calculation, molecular explanations, recovery-test interpretation, and evaluation of an inhibition model. It covers temperature, pH, and inhibitors using experimental data, varies the reasoning demanded across parts, fits the intermediate level, and is entirely in English.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3003,
+          "inputTokens": 3006,
+          "outputTokens": 1020,
+          "reasoningTokens": 474
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Several keyPoints combine independently assessable ideas: control identification with calculation, moderate warming with heat damage, and pH effects with recovery interpretation. This falls short of the requirement that each key point contain one independently checkable idea, although the separate rubric rows substantially mitigate the grading problem.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly label the question as worth 8 points so learners and graders can see the total without summing the rubric.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One original AP Biology free-response question in English on enzyme activity, with lettered parts that use AP task verbs (identify, describe, explain, predict or justify) around an experiment or data. Its rubric must read like AP scoring guidelines: one row per point-bearing part, each description saying exactly what earns the points, and every row with whole points (1 to 3), adding up to a realistic total for a short free-response question (4 to 10). It must not copy a real College Board question.",
+        "id": "en-ap-biology-free-response-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "AP Biology",
+            "style": "multipleChoice (4 options): questions on data, experiments and models. essay: free-response questions with parts (a), (b), (c) and (d) using task verbs (identify, describe, explain, predict, justify), scored with point-based scoring guidelines."
+          },
+          "format": "essay",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Explain how temperature, pH and inhibitors change an enzyme's shape and activity, using data from an experiment.",
+            "name": "Enzyme activity"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The supporting texts make defensible claims and explicitly identify the opening scenario as hypothetical. The constitutional reference in the sample outline is accurate. The rubric correctly represents ENEM's five competencies, including the intervention components, and every rubric row has null points. No factual-error cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The checklist and sample outline support relevant, assessable essay writing without prescribing a single acceptable thesis. However, the fourth key point bundles coherence, cohesion, and formal language rather than presenting one independently checkable idea. The intervention key point also compresses several checks into one entry. No distractor-related cap applies to this essay.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "This is a credible ENEM-style essay proposal: a Brazilian social theme, short motivating texts, a formal dissertative-argumentative command, a human-rights-respecting intervention, and a 30-line limit. The five-competency rubric matches the task-specific expectations. Multiple-choice requirements do not apply to the requested essay format.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The single prompt directly requires the requested skills: constructing a thesis, developing arguments with relevant repertoire, organizing the text, and proposing a complete intervention. Its accessible but substantive topic fits intermediate learners, and the learner-facing content is in Brazilian Portuguese. Variety across multiple questions is not applicable to a one-item request.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2619,
+          "inputTokens": 2622,
+          "outputTokens": 657,
+          "reasoningTokens": 149
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Some key points combine independently assessable requirements. In particular, the fourth combines coherent progression, cohesive devices, and formal language, which belong to distinct grading dimensions. Separating these would make the checklist more reliable for grading and feedback.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
+        "id": "pt-enem-redacao-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
+          },
+          "format": "essay",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
+            "name": "Redação do ENEM"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each item has exactly one correct answer, and all keys and worked calculations are accurate. Independently recomputed results are 1.2 × 0.75 × 20 = 18 kWh; 1.5 × 2 × 30 × $0.16 = $14.40; and [(60 − 9) × 5 + (80 − 45) × 8] / 1,000 × 30 × $0.20 = $3.21. The stated constant-power and billing assumptions remove relevant ambiguity. No cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor corresponds to a specific, realistic mistake, and its numerical value matches that mistake. Feedback clearly identifies omitted conversions, omitted days or devices, confusion between energy and cost, or confusion between total cost and savings. Labels are specific, and reasons explain the learner's error rather than merely repeating the correct answer. No cap applies.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items use concise everyday support texts, clear commands, and five comparable numeric options with one correct answer, fitting the requested ENEM-style structure. Appliance powers, usage assumptions, and hypothetical electricity rates are plausible. The table-based replacement comparison provides a realistic application. Distributing correct answers across different positions would improve the set's exam presentation; no cap applies.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items require applying household electricity calculations rather than recalling definitions. They progress from energy consumption with minute-to-hour conversion, to electricity cost, to combined savings from replacing two devices. These are distinct applications with an appropriate difficulty spread. All learner-facing content is in English. No cap applies.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3164,
+          "inputTokens": 3167,
+          "outputTokens": 787,
+          "reasoningTokens": 232
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Vary the correct answer's position across the three items; it is currently the first option every time, creating an avoidable answer-position pattern.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style Natural Sciences items in US English about household electricity use (energy is power times time, in kWh, and its cost). Each item has a short everyday support text and 5 options; distractors come from typical mistakes such as not converting watts to kilowatts or minutes to hours, or using the wrong number of days. All learner-facing text must be in English.",
+        "id": "en-enem-natural-sciences-electricity-consumption-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
+            "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
+            "name": "Household electricity consumption"
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "generate-items"
+}

@@ -8,6 +8,7 @@ import {
   InputGroupTextarea,
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type KeyboardEvent } from "react";
@@ -107,7 +108,23 @@ function getComposerAvailability({
   };
 }
 
-export function QuestionComposer({ controller }: { controller: LessonQuestionController }) {
+/**
+ * Where the learner writes. In a sheet it closes the sheet's bottom; on a page (`page`, the buddy's
+ * conversation) it's one growing line, with the label and placeholder the host gives.
+ */
+export function QuestionComposer({
+  className,
+  controller,
+  label,
+  placeholder: hostPlaceholder,
+  variant = "sheet",
+}: {
+  className?: string;
+  controller: LessonQuestionController;
+  label?: string;
+  placeholder?: string;
+  variant?: "page" | "sheet";
+}) {
   const t = useExtracted();
   const { state } = controller;
   const isResolvingPreviousQuestion = controller.unresolvedQuestion !== null;
@@ -118,7 +135,8 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
   });
 
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
-  const placeholder = useComposerPlaceholder(state.context.kind);
+  const contextPlaceholder = useComposerPlaceholder(state.context.kind);
+  const placeholder = hostPlaceholder ?? contextPlaceholder;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing || !canSend) {
@@ -130,13 +148,24 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
   };
 
   return (
-    <div className="bg-background border-t px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
+    <div
+      className={cn(
+        variant === "sheet" &&
+          "bg-background border-t px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5",
+        className,
+      )}
+    >
       <label className="sr-only" htmlFor={LESSON_QUESTION_COMPOSER_ID}>
-        {t("Ask a question")}
+        {label ?? t("Ask a question")}
       </label>
-      <InputGroup>
+      <InputGroup
+        className={cn(variant === "page" && "bg-background items-end rounded-3xl! shadow-sm")}
+      >
         <InputGroupTextarea
-          className="max-h-40 min-h-20"
+          className={cn(
+            "max-h-40",
+            variant === "page" ? "min-h-12 py-3 pl-4 text-base md:text-base" : "min-h-20",
+          )}
           id={LESSON_QUESTION_COMPOSER_ID}
           maxLength={MAX_LESSON_QUESTION_LENGTH}
           onChange={(event) => controller.changeDraft(event.target.value)}
@@ -144,7 +173,10 @@ export function QuestionComposer({ controller }: { controller: LessonQuestionCon
           placeholder={placeholder}
           value={state.draft}
         />
-        <InputGroupAddon align="block-end" className="justify-end pt-0">
+        <InputGroupAddon
+          align={variant === "page" ? "inline-end" : "block-end"}
+          className={cn(variant === "page" ? "pb-2" : "justify-end pt-0")}
+        >
           <InputGroupButton
             aria-label={submitLabel}
             disabled={!canSend || createNavigationError}

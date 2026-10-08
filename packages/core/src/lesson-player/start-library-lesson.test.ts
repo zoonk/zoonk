@@ -12,11 +12,13 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { RATE_LIMIT_RETRY_SECONDS } from "../entitlements/limits";
+import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { startLibraryLesson } from "./start-library-lesson";
 import type * as RateLimit from "@zoonk/auth/rate-limit";
@@ -50,9 +52,8 @@ describe(startLibraryLesson, () => {
     await expect(start(randomUUID())).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
-  it("opens a run in the ledger with the profile's mode and goal, still unfinished", async () => {
+  it("opens a run in the ledger, still unfinished", async () => {
     const { lesson, user } = await setupPlayableLesson();
-    await learningProfileFixture({ experienceMode: "fun", userId: user.id });
 
     const outcome = await start(lesson.id);
 
@@ -66,7 +67,6 @@ describe(startLibraryLesson, () => {
       endedAt: null,
       kind: "lesson",
       lessonKind: "library",
-      mode: "fun",
       titleSnapshot: lesson.title,
       userId: user.id,
     });
@@ -91,6 +91,123 @@ describe(startLibraryLesson, () => {
     ]);
 
     expect({ runs, usage }).toStrictEqual({ runs: 1, usage: 1 });
+  });
+
+  it("resumes the open run with its answers in order, and Hyperdrive as it stood when it started", async () => {
+    const { lesson, steps, user } = await setupPlayableLesson();
+    const check = stepOfKind(steps, "check");
+    const typed = stepOfKind(steps, "typedAnswer");
+    const first = await start(lesson.id);
+
+    expect(first.status === "started" && first.run.answers).toStrictEqual([]);
+
+    const startedAt = Date.now();
+
+    await Promise.all([
+      attemptFixture({ answeredAt: new Date(startedAt + 1000), stepId: check.id, userId: user.id }),
+      attemptFixture({
+        answeredAt: new Date(startedAt + 2000),
+        isCorrect: false,
+        stepId: typed.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const resumed = await start(lesson.id);
+
+    expect(resumed.status === "started" && resumed.run).toMatchObject({
+      answers: [
+        { answeredAt: new Date(startedAt + 1000).toISOString(), isCorrect: true, stepId: check.id },
+        { isCorrect: false, stepId: typed.id },
+      ],
+      hyperdrive: { knownStepIds: [], streak: 0 },
+      runId: first.status === "started" ? first.run.runId : "",
+    });
+  });
+
+  it("continues a lesson left unfinished days ago in a new run, with today's Hyperdrive", async () => {
+    const { lesson, steps, user } = await setupPlayableLesson();
+    const check = stepOfKind(steps, "check");
+    const earlier = await playableLessonFixture({ steps: ["check", "typedAnswer"] });
+
+    const [yesterday, today] = await Promise.all([
+      studySessionFixture({ userId: user.id }),
+      studySessionFixture({ userId: user.id }),
+    ]);
+
+    const leftAt = Date.now() - 2 * MS_PER_DAY;
+
+    const left = await lessonRunFixture({
+      lessonId: lesson.id,
+      startedAt: new Date(leftAt),
+      studySessionId: yesterday.id,
+      userId: user.id,
+    });
+
+    await Promise.all([
+      // Yesterday's streak in its own session, which must not carry into today's.
+      attemptFixture({
+        answeredAt: new Date(leftAt + 1000),
+        stepId: check.id,
+        studySessionId: yesterday.id,
+        userId: user.id,
+      }),
+      studySessionBlockFixture({ lessonId: lesson.id, sessionId: today.id }),
+      ...earlier.steps.map((step, index) =>
+        attemptFixture({
+          answeredAt: new Date(Date.now() - (10 - index) * 1000),
+          stepId: step.id,
+          studySessionId: today.id,
+          userId: user.id,
+        }),
+      ),
+    ]);
+
+    const outcome = await start(lesson.id, today.id);
+
+    expect(outcome.status === "started" && outcome.run).toMatchObject({
+      answers: [
+        { answeredAt: new Date(leftAt + 1000).toISOString(), isCorrect: true, stepId: check.id },
+      ],
+      hyperdrive: { knownStepIds: [check.id], streak: 2 },
+    });
+
+    expect(outcome.status === "started" && outcome.run.runId).not.toBe(left.id);
+  });
+
+  it("starts over a lesson left more than a week ago, or one finished since", async () => {
+    const [stale, finished] = await Promise.all([setupPlayableLesson(), setupPlayableLesson()]);
+
+    const leave = async ({ daysAgo, setup }: { daysAgo: number; setup: typeof stale }) => {
+      const startedAt = new Date(Date.now() - daysAgo * MS_PER_DAY);
+      await lessonRunFixture({ lessonId: setup.lesson.id, startedAt, userId: setup.user.id });
+
+      await attemptFixture({
+        answeredAt: new Date(startedAt.getTime() + 1000),
+        stepId: stepOfKind(setup.steps, "check").id,
+        userId: setup.user.id,
+      });
+    };
+
+    await Promise.all([
+      leave({ daysAgo: 8, setup: stale }),
+      leave({ daysAgo: 2, setup: finished }),
+      lessonRunFixture({
+        endedAt: new Date(Date.now() - MS_PER_DAY),
+        lessonId: finished.lesson.id,
+        startedAt: new Date(Date.now() - MS_PER_DAY - 60_000),
+        userId: finished.user.id,
+      }),
+    ]);
+
+    mockSession(stale.user.id);
+    const staleRun = await start(stale.lesson.id);
+
+    mockSession(finished.user.id);
+    const replay = await start(finished.lesson.id);
+
+    expect(staleRun.status === "started" && staleRun.run.answers).toStrictEqual([]);
+    expect(replay.status === "started" && replay.run.answers).toStrictEqual([]);
   });
 
   it("opens a new run once the last one finished, without counting the lesson again", async () => {
@@ -265,10 +382,10 @@ describe(startLibraryLesson, () => {
     await expect(start(lesson.id)).resolves.toMatchObject({ status: "slowDown" });
   });
 
-  it('sends "Lesson Started" once per run, with its goal and the learner\'s mode', async () => {
+  it('sends "Lesson Started" once per run, with its goal and the learner\'s shared properties', async () => {
     const { lesson, user } = await setupPlayableLesson();
     const goal = await goalFixture({ userId: user.id });
-    await learningProfileFixture({ activeGoalId: goal.id, experienceMode: "fun", userId: user.id });
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
     const flush = runDeferredWork();
 
     await start(lesson.id);
@@ -284,7 +401,7 @@ describe(startLibraryLesson, () => {
         lesson_id: lesson.id,
         stepCount: await prisma.step.count({ where: { lessonId: lesson.id } }),
       },
-      shared: expect.objectContaining({ goal_kind: "learn", is_guest: false, mode: "fun" }),
+      shared: expect.objectContaining({ goal_kind: "learn", is_guest: false }),
     });
   });
 

@@ -1,6 +1,5 @@
 import { getCurrentUserAnalyticsState } from "@/data/users/get-current-user-analytics-disabled";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
 import { Analytics } from "@vercel/analytics/next";
 import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
 import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
@@ -17,7 +16,6 @@ async function loadAnalyticsState() {
       getCurrentUserAnalyticsState(),
       lang(),
       getLearningProfile(),
-      getExperienceMode(),
       getCurrentGoal(),
     ]);
   } catch (error) {
@@ -41,7 +39,7 @@ export async function AppAnalytics() {
     return null;
   }
 
-  const [{ analyticsDisabled, plan, userId, username }, locale, profile, mode, goal] = state;
+  const [{ analyticsDisabled, plan, userId, username }, locale, profile, goal] = state;
 
   return (
     <>
@@ -50,7 +48,6 @@ export async function AppAnalytics() {
           goal: goal ? { kind: goal.kind, phase: goal.plan?.currentPhase ?? null } : null,
           isGuest: !userId,
           locale,
-          mode,
           platform: "web",
         })}
       />

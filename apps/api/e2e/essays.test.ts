@@ -10,6 +10,7 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { essayViewResponseSchema } from "../src/lib/openapi/schemas/essays";
 import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
@@ -59,7 +60,16 @@ const GRADED_DRAFT = {
 const DRAFT = { durationMs: 600_000, text: "Minha redação sobre desinformação.", timeZone: "UTC" };
 
 /** An ENEM learner's writing block in today's session, in the given state. */
-async function createEssayBlock({ status, userId }: { status: StudyBlockStatus; userId: string }) {
+async function createEssayBlock({
+  localDate,
+  status,
+  userId,
+}: {
+  /** The session's day; today when left out. */
+  localDate?: Date;
+  status: StudyBlockStatus;
+  userId: string;
+}) {
   const [blueprint, skill] = await Promise.all([
     examBlueprintFixture({ identityKey: `enem-${randomUUID()}`, name: "ENEM" }),
     skillFixture({ name: `Redação ${randomUUID()}` }),
@@ -79,7 +89,7 @@ async function createEssayBlock({ status, userId }: { status: StudyBlockStatus; 
       format: "essay",
       skillId: skill.id,
     }),
-    studySessionFixture({ goalId: goal.id, userId }),
+    studySessionFixture({ goalId: goal.id, userId, ...(localDate && { localDate }) }),
   ]);
 
   const block = await studySessionBlockFixture({
@@ -115,13 +125,18 @@ test.describe("Essays API", () => {
     await anonymous.dispose();
   });
 
-  test("shows the writing block to its learner only and grades nothing before it starts", async () => {
+  test("shows the writing block to its learner only and grades nothing for another day's block", async () => {
     const [learner, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "essay" }),
       createBearerLearner({ baseURL, prefix: "essay-other" }),
     ]);
 
+    // Sending a draft starts today's writing block; a block from another day's session waits.
+    const yesterday = new Date(Date.now() - MS_PER_DAY);
+    yesterday.setUTCHours(0, 0, 0, 0);
+
     const { blockId, sessionId } = await createEssayBlock({
+      localDate: yesterday,
       status: "pending",
       userId: learner.userId,
     });

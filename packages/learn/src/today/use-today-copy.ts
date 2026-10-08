@@ -36,17 +36,35 @@ export function useFreshStartText(): string | null {
   }
 }
 
-/** Where the day stands, for the main button and the done state. */
-export function useSessionState() {
-  const { today } = useTodayScreen();
-  const { session } = today;
-  const started = session.blocks.some((block) => block.status !== "pending");
+type SessionDay = Pick<
+  TodayView["session"],
+  "blocks" | "dailyLimit" | "emptyDay" | "minutes" | "nextBlockId"
+>;
+
+/**
+ * Where the day stands, for the main button and the done state. A day with no blocks is a rest
+ * day (the plan gives it no time), a day whose lessons are still being outlined, which fills in on
+ * its own (`waiting`), or a day the plan has nothing new for: every lesson done or one the learner
+ * already knows (`ahead`). None of them is a finished session.
+ */
+export function getSessionState(session: SessionDay) {
+  const empty = session.blocks.length === 0;
+  const limitReached = session.dailyLimit?.reached === true;
+  const studyDay = empty && !limitReached && session.minutes.dailyGoal > 0;
 
   return {
-    done: session.nextBlockId === null,
-    limitReached: session.dailyLimit?.reached === true,
-    started,
+    ahead: studyDay && session.emptyDay !== "lessonsComing",
+    done: !empty && session.nextBlockId === null,
+    limitReached,
+    rest: empty && !limitReached && session.minutes.dailyGoal === 0,
+    started: session.blocks.some((block) => block.status !== "pending"),
+    waiting: studyDay && session.emptyDay === "lessonsComing",
   };
+}
+
+export function useSessionState() {
+  const { today } = useTodayScreen();
+  return getSessionState(today.session);
 }
 
 type StopLesson = { kind: string; lessonId: string | null };

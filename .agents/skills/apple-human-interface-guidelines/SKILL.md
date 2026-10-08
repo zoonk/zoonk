@@ -23,7 +23,7 @@ This skill is a workflow, not a frozen copy of Apple's HIG. Apple's official doc
 
 ## Product Rule
 
-Like Duolingo, Zoonk's Apple apps use native controls for performance and platform behavior, and look like the `main` web app. Take colors, typography, icons, proportions, screen structure, and both modes (Focus and Fun) from `main`. Take controls, navigation containers, gestures, input, and accessibility behavior from the platform. Do not port web implementation details such as HTML layout tricks, hover-only affordances, or custom replacements for native controls. When `main`'s look would break native behavior, keep the behavior and adapt the look.
+Like Duolingo, Zoonk's Apple apps use native controls for performance and platform behavior, and look like the `main` web app. Take colors, typography, icons, proportions and screen structure from `main`. Take controls, navigation containers, gestures, input, and accessibility behavior from the platform. Do not port web implementation details such as HTML layout tricks, hover-only affordances, or custom replacements for native controls. When `main`'s look would break native behavior, keep the behavior and adapt the look.
 
 Examples of native behavior:
 

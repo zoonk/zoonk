@@ -107,4 +107,74 @@ export const TEST_CASES: ImageSceneCase[] = [
       textAllowed: true,
     },
   },
+  {
+    expectations:
+      "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
+    expected: { labels: "some" },
+    id: "question-cell-diagram-pt",
+    userInput: {
+      context: "Biologia › Célula › Organelas da célula vegetal",
+      language: "pt",
+      request:
+        "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
+      screenText: "Na figura, qual letra indica o vacúolo?",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
+    expected: { labels: "some" },
+    id: "brain-lobes-en",
+    userInput: {
+      context: "Human biology › The nervous system › The lobes of the brain",
+      language: "en",
+      request: "The brain from the side with its four lobes labeled",
+      screenText:
+        "Your brain has four lobes: the frontal lobe behind your forehead, the parietal lobe on top, the temporal lobe by your ears and the occipital lobe at the back.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "Two paintings compared, one above the other, labeled only 1 and 2: a calm, symmetrical Renaissance scene with soft even light, and a dramatic Baroque scene with a strong diagonal and a bright light against deep shadow. No titles, artists or style names written in the picture, since the question asks which is which.",
+    expected: { labels: "some" },
+    id: "paintings-comparison-pt",
+    userInput: {
+      context: "História da arte › Do Renascimento ao Barroco › Comparando pinturas",
+      language: "pt",
+      request:
+        "Duas pinturas para comparar: 1, uma cena renascentista calma e simétrica com luz suave; 2, uma cena barroca com diagonal forte e luz intensa contra sombras profundas",
+      screenText: "Qual das pinturas é barroca?",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "A syntax tree for 'the cat slept': S at the top splitting into NP and VP, NP over 'the cat' and VP over 'slept', each node a short label joined by thin lines. Labels match the screen exactly.",
+    expected: { labels: "some" },
+    id: "syntax-tree-en",
+    userInput: {
+      context: "Introduction to linguistics › Syntax › Syntax trees",
+      language: "en",
+      request: "A tree for 'the cat slept': S splits into NP 'the cat' and VP 'slept'",
+      screenText:
+        "Every simple sentence (S) splits into a noun phrase (NP), here 'the cat', and a verb phrase (VP), here 'slept'.",
+      textAllowed: true,
+    },
+  },
+  {
+    expectations:
+      "A lever: a long bar on a triangular fulcrum near one end, a heavy rock on the short side and a hand pushing down on the long side, with labels for the fulcrum, the load and the effort.",
+    expected: { labels: "some" },
+    id: "lever-en",
+    userInput: {
+      context: "Physics › Simple machines › How a lever multiplies force",
+      language: "en",
+      request: "A lever lifting a heavy rock with the fulcrum close to the rock",
+      screenText:
+        "Put the fulcrum close to the load and push on the far end: a small effort lifts a heavy rock.",
+      textAllowed: true,
+    },
+  },
 ];

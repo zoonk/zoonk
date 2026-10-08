@@ -4,8 +4,6 @@ import { startCourseFormAction } from "@/app/[lang]/start/course-start-actions";
 import { CourseStartFailureNote } from "@/components/public/course-start-failure";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
 import { CHAPTER_PARAM } from "@/lib/public/public-hrefs";
-import { type ExperienceMode } from "@zoonk/learn/experience-mode";
-import { ModeProvider } from "@zoonk/learn/mode";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -42,7 +40,7 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
 
   if (chapters.length === 0) {
     return (
-      <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-sm text-pretty">
+      <p className="text-muted-foreground text-sm text-pretty">
         {t("Its chapters and lessons are written when you start.")}
       </p>
     );
@@ -54,12 +52,9 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
   return (
     <section
       aria-labelledby={PLAN_PREVIEW_ID}
-      className="bg-card ring-foreground/10 in-data-[mode=fun]:fun-glass rounded-3xl p-4 ring-1 sm:p-5"
+      className="bg-card ring-foreground/10 rounded-3xl p-4 ring-1 sm:p-5"
     >
-      <h2
-        className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-sm font-medium"
-        id={PLAN_PREVIEW_ID}
-      >
+      <h2 className="text-muted-foreground text-sm font-medium" id={PLAN_PREVIEW_ID}>
         {t(
           "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}",
           { chapters: chapters.length, lessons },
@@ -70,7 +65,7 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
         {chapters.slice(0, PREVIEW_CHAPTERS).map((chapter, index) => (
           <li className="flex items-start gap-3 text-[15px] leading-6" key={chapter.id}>
             <span className="flex h-6 shrink-0 items-center">
-              <span className="bg-muted text-muted-foreground in-data-[mode=fun]:text-fun-fg2 flex size-6 items-center justify-center rounded-full text-xs font-medium tabular-nums">
+              <span className="bg-muted text-muted-foreground flex size-6 items-center justify-center rounded-full text-xs font-medium tabular-nums">
                 {index + 1}
               </span>
             </span>
@@ -80,7 +75,7 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
       </ol>
 
       {more > 0 && (
-        <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 mt-2.5 pl-9 text-sm">
+        <p className="text-muted-foreground mt-2.5 pl-9 text-sm">
           {t("{count, plural, one {and # more chapter} other {and # more chapters}}", {
             count: more,
           })}
@@ -96,9 +91,7 @@ function StartHeading({ chapter, course }: StartTarget) {
   if (chapter) {
     return (
       <OnboardingHeading>
-        <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-sm font-medium">
-          {course.title}
-        </p>
+        <p className="text-muted-foreground text-sm font-medium">{course.title}</p>
         <OnboardingTitle>{chapter.title}</OnboardingTitle>
         <OnboardingDescription>
           {t(
@@ -162,17 +155,14 @@ function CourseStartForm({
         </span>
       )}
 
-      <p
-        className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-center text-sm"
-        data-slot="start-note"
-      >
+      <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
         {t("Free to start. No account needed for your first lesson.")}
       </p>
 
       <CourseStartFailureNote
         actionClassName={cn(
           buttonVariants({ size: "lg", variant: "outline" }),
-          "in-data-[mode=fun]:fun-glass h-12 w-full text-base",
+          "h-12 w-full text-base",
         )}
         className="max-w-none items-stretch text-center"
         failure={failure}
@@ -192,24 +182,17 @@ export function CourseStartScreen({
   chapters,
   course,
   initialFailure,
-  initialMode,
-}: StartTarget & {
-  chapters: PlanChapter[];
-  initialFailure: CourseStartFailure | null;
-  initialMode: ExperienceMode;
-}) {
+}: StartTarget & { chapters: PlanChapter[]; initialFailure: CourseStartFailure | null }) {
   return (
-    <ModeProvider experienceMode={initialMode}>
-      <OnboardingFrame>
-        <OnboardingColumn className="sm:pt-16">
-          <StartHeading chapter={chapter} course={course} />
-          <PlanPreview chapters={chapters} />
+    <OnboardingFrame>
+      <OnboardingColumn className="sm:pt-16">
+        <StartHeading chapter={chapter} course={course} />
+        <PlanPreview chapters={chapters} />
 
-          <OnboardingFooter>
-            <CourseStartForm chapter={chapter} course={course} initialFailure={initialFailure} />
-          </OnboardingFooter>
-        </OnboardingColumn>
-      </OnboardingFrame>
-    </ModeProvider>
+        <OnboardingFooter>
+          <CourseStartForm chapter={chapter} course={course} initialFailure={initialFailure} />
+        </OnboardingFooter>
+      </OnboardingColumn>
+    </OnboardingFrame>
   );
 }

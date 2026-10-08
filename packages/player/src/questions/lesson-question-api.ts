@@ -1,17 +1,13 @@
 import {
   type CreateLessonQuestionInput,
   type GetLessonQuestionThreadInput,
-  LESSON_QUESTION_MEMORY_PART,
-  type LessonQuestionMemoryChange,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
   type TutorTarget,
-  lessonQuestionMemoryChangesSchema,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { type UIMessageChunk } from "ai";
 import {
   type LessonQuestionUsageRefusal,
   getRefusalError,
@@ -36,7 +32,7 @@ export type LessonQuestionApiError =
   | LessonQuestionUsageRefusal
   | { kind: LessonQuestionApiErrorKind };
 
-type LessonQuestionApiResult<Value> =
+export type LessonQuestionApiResult<Value> =
   | { data: Value; status: "success" }
   | { error: LessonQuestionApiError; status: "error" };
 
@@ -46,7 +42,7 @@ const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_CONFLICT = 409;
 const HTTP_STATUS_UNPROCESSABLE_ENTITY = 422;
 
-async function getApiError(response: Response): Promise<LessonQuestionApiError> {
+export async function getApiError(response: Response): Promise<LessonQuestionApiError> {
   if (response.status === HTTP_STATUS_UNAUTHORIZED) {
     return { kind: "authentication" };
   }
@@ -97,7 +93,7 @@ function questionsUrl({
   return url.toString();
 }
 
-function questionUrl({
+export function questionUrl({
   connection,
   questionId,
 }: {
@@ -107,42 +103,9 @@ function questionUrl({
   return new URL(`/v1/questions/${encodeURIComponent(questionId)}`, connection.apiUrl);
 }
 
-function questionAnswerUrl({
-  connection,
-  questionId,
-}: {
-  connection: LessonQuestionConnection;
-  questionId: string;
-}) {
-  return new URL(
-    `${questionUrl({ connection, questionId }).pathname}/answers`,
-    connection.apiUrl,
-  ).toString();
-}
-
 async function getJsonHeaders(connection: LessonQuestionConnection) {
   return { ...(await connection.getHeaders()), "Content-Type": "application/json" };
 }
-
-class LessonQuestionAnswerRequestError extends Error {
-  readonly apiError: LessonQuestionApiError;
-
-  constructor(apiError: LessonQuestionApiError) {
-    super("Lesson question answer request failed");
-    this.apiError = apiError;
-    this.name = "LessonQuestionAnswerRequestError";
-  }
-}
-
-const fetchLessonQuestionAnswer: typeof fetch = async (input, init) => {
-  const response = await fetch(input, init);
-
-  if (!response.ok) {
-    throw new LessonQuestionAnswerRequestError(await getApiError(response));
-  }
-
-  return response;
-};
 
 export async function getLessonQuestionThreadRequest({
   connection,
@@ -250,121 +213,4 @@ export async function getLessonQuestionRequest({
   }
 
   return { data: parsed.data, status: "success" };
-}
-
-type AnswerStreamHandlers = {
-  onChunk: (chunk: string) => void;
-  onMemory: (changes: LessonQuestionMemoryChange[]) => void;
-  /** The server sends `finish` once the answer is saved; memory changes may still follow. */
-  onSaved: () => void;
-};
-
-/** A Library lesson's answer ends with what it changed in memory; a malformed part is ignored. */
-function readMemoryPart({ chunk, onMemory }: { chunk: UIMessageChunk } & AnswerStreamHandlers) {
-  if (chunk.type !== LESSON_QUESTION_MEMORY_PART || !("data" in chunk)) {
-    return;
-  }
-
-  const parsed = lessonQuestionMemoryChangesSchema.safeParse(chunk.data);
-
-  if (parsed.success) {
-    onMemory(parsed.data);
-  }
-}
-
-async function readAnswerStream({
-  reader,
-  ...handlers
-}: AnswerStreamHandlers & {
-  reader: ReadableStreamDefaultReader<UIMessageChunk>;
-}): Promise<number> {
-  const result = await reader.read();
-
-  if (result.done) {
-    return 0;
-  }
-
-  if (result.value.type === "error") {
-    throw new Error(result.value.errorText);
-  }
-
-  if (result.value.type === "finish") {
-    handlers.onSaved();
-  }
-
-  if (result.value.type !== "text-delta") {
-    readMemoryPart({ chunk: result.value, ...handlers });
-    return readAnswerStream({ reader, ...handlers });
-  }
-
-  handlers.onChunk(result.value.delta);
-
-  return result.value.delta.length + (await readAnswerStream({ reader, ...handlers }));
-}
-
-/**
- * Streams a tutor answer. `onSaved` runs as soon as the server saved the answer, before what the
- * exchange taught memory arrives, so the learner can ask again at once; a stream cut after that
- * still counts as answered.
- */
-export async function streamLessonQuestionAnswerRequest({
-  connection,
-  onChunk,
-  onSaved,
-  questionId,
-}: {
-  connection: LessonQuestionConnection;
-  onChunk: (chunk: string) => void;
-  onSaved: () => void;
-  questionId: string;
-}): Promise<LessonQuestionApiResult<{ memoryChanges: LessonQuestionMemoryChange[] }>> {
-  // The AI SDK's client (and the schemas it brings) loads when the learner asks, not with every lesson.
-  const { DefaultChatTransport } = await import("ai");
-
-  const transport = new DefaultChatTransport({
-    api: questionAnswerUrl({ connection, questionId }),
-    fetch: fetchLessonQuestionAnswer,
-    headers: connection.getHeaders,
-  });
-
-  const { data: stream, error } = await safeAsync(() =>
-    transport.sendMessages({
-      abortSignal: undefined,
-      chatId: questionId,
-      messageId: undefined,
-      messages: [],
-      trigger: "submit-message",
-    }),
-  );
-
-  if (error instanceof LessonQuestionAnswerRequestError) {
-    return { error: error.apiError, status: "error" };
-  }
-
-  if (error || !stream) {
-    return { error: { kind: "unknown" }, status: "error" };
-  }
-
-  let memoryChanges: LessonQuestionMemoryChange[] = [];
-  let saved = false;
-
-  const { data: characterCount, error: streamError } = await safeAsync(() =>
-    readAnswerStream({
-      onChunk,
-      onMemory: (changes) => {
-        memoryChanges = changes;
-      },
-      onSaved: () => {
-        saved = true;
-        onSaved();
-      },
-      reader: stream.getReader(),
-    }),
-  );
-
-  if (!saved && (streamError || !characterCount)) {
-    return { error: { kind: "unknown" }, status: "error" };
-  }
-
-  return { data: { memoryChanges }, status: "success" };
 }

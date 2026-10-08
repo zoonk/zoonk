@@ -12,6 +12,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -104,6 +105,7 @@ describe(saveGoalSkills, () => {
 
     const skills = [
       {
+        area: "Math",
         course: "math",
         description: "Move terms across an equation",
         estimatedLessons: 3,
@@ -113,6 +115,7 @@ describe(saveGoalSkills, () => {
         name: `Isolate a variable ${word}`,
         phase: 1,
         prerequisites: [],
+        topics: [],
       },
     ];
 
@@ -135,6 +138,7 @@ describe(saveGoalSkills, () => {
     const word = uniqueWord();
 
     const skills = ["Isolate a variable", "Graph a line", "Solve a system"].map((name, index) => ({
+      area: "Math",
       course: "math",
       description: `${name} step by step`,
       estimatedLessons: 2,
@@ -144,6 +148,7 @@ describe(saveGoalSkills, () => {
       name: `${name} ${word}`,
       phase: 1,
       prerequisites: [],
+      topics: [],
     }));
 
     const [first, second] = await Promise.all([
@@ -629,6 +634,55 @@ describe("course outline state", () => {
     ).resolves.toStrictEqual([untaught.id]);
   });
 
+  it("counts only chapters without tools as teaching an exam answered without them", async () => {
+    const audio = [{ essential: true, name: "Audio editor (Audacity)" }];
+
+    const [byConcept, byToolLesson, byToolChapter, course] = await Promise.all([
+      skillFixture(),
+      skillFixture(),
+      skillFixture(),
+      courseFixture(),
+    ]);
+
+    const [concepts, practice] = await Promise.all([
+      libraryChapterFixture(),
+      libraryChapterFixture({ tools: audio }),
+    ]);
+
+    const [conceptLesson, practiceLesson] = await Promise.all([
+      libraryLessonFixture(),
+      libraryLessonFixture(),
+    ]);
+
+    await Promise.all([
+      prisma.courseChapter.createMany({
+        data: [
+          { chapterId: concepts.id, courseId: course.id, level: "beginner", position: 0 },
+          { chapterId: practice.id, courseId: course.id, level: "beginner", position: 1 },
+        ],
+      }),
+      chapterLessonFixture({ chapterId: concepts.id, lessonId: conceptLesson.id }),
+      chapterLessonFixture({ chapterId: practice.id, lessonId: practiceLesson.id }),
+      prisma.lessonSkill.createMany({
+        data: [
+          { lessonId: conceptLesson.id, skillId: byConcept.id },
+          { lessonId: practiceLesson.id, skillId: byToolLesson.id },
+        ],
+      }),
+      prisma.chapterSkill.create({ data: { chapterId: practice.id, skillId: byToolChapter.id } }),
+    ]);
+
+    const skillIds = [byConcept.id, byToolLesson.id, byToolChapter.id];
+
+    await expect(
+      findUntaughtSkills({ courseId: course.id, ownerId: null, skillIds, withToolChapters: true }),
+    ).resolves.toStrictEqual([]);
+
+    await expect(
+      findUntaughtSkills({ courseId: course.id, ownerId: null, skillIds, withToolChapters: false }),
+    ).resolves.toStrictEqual([byToolLesson.id, byToolChapter.id]);
+  });
+
   it("reopens a written outline for a later goal's missing skills and lists the course once written", async () => {
     const course = await courseFixture({ outlineStatus: "pending", visibility: "public" });
     const first = randomUUID();
@@ -701,7 +755,35 @@ describe("course outline state", () => {
 
     await expect(
       getCourseBandContext({ courseId: course.id, level: "intermediate" }),
-    ).resolves.toMatchObject({ nextPosition: 0 });
+    ).resolves.toMatchObject({ material: null, nextPosition: 0 });
+  });
+
+  it("gives a private course built from the learner's notes those notes, whole", async () => {
+    const user = await userFixture();
+    const notes = "Resumo para a prova: A CÉLULA. Não cai divisão celular.";
+
+    const [course, shared, source] = await Promise.all([
+      courseFixture({ title: "Biologia celular", userId: user.id, visibility: "private" }),
+      courseFixture({ title: "Biologia celular", visibility: "public" }),
+      sourceFixture({
+        extractedText: notes,
+        kind: "upload",
+        title: "Resumo da prova",
+        visibility: "private",
+      }),
+    ]);
+
+    const goal = await goalFixture({ kind: "exam", primaryCourseId: course.id, userId: user.id });
+
+    await learnerSourceFixture({ goalId: goal.id, sourceId: source.id, userId: user.id });
+
+    const context = await getCourseBandContext({ courseId: course.id, level: "intermediate" });
+
+    expect(context.material).toContain(notes);
+
+    await expect(
+      getCourseBandContext({ courseId: shared.id, level: "intermediate" }),
+    ).resolves.toMatchObject({ material: null });
   });
 });
 
@@ -712,7 +794,7 @@ describe(replanGoalsWaitingOnSkills, () => {
     mockDecision(null);
   });
 
-  it("replaces a skill's stand-in with its outlined lessons, in chapter order, and rebuilds today's session", async () => {
+  it("replaces a skill's stand-in with its outlined lessons, in chapter order, leaving today's session in place", async () => {
     const user = await userFixture();
 
     const [goal, first, second] = await Promise.all([
@@ -796,7 +878,60 @@ describe(replanGoalsWaitingOnSkills, () => {
     ]);
 
     expect(items.slice(0, 2).every((item) => item.skillId === first.id)).toBe(true);
-    await expect(prisma.studySession.findUnique({ where: { id: planned.id } })).resolves.toBeNull();
+
+    // A screen showing today's session still reaches it: the learner's next read brings it up to
+    // date with the real lessons, keeping the block it offers next.
+    await expect(
+      prisma.studySession.findUnique({ where: { id: planned.id } }),
+    ).resolves.not.toBeNull();
+  });
+
+  it("keeps today's session and the plan's version when re-planning a goal changes nothing", async () => {
+    const user = await userFixture();
+    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+    const today = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
+
+    await prisma.plan.create({
+      data: { goalId: goal.id, settings: { startDate: today.toISOString().slice(0, 10) } },
+    });
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Phase" }],
+        skills: [
+          {
+            area: "Physics",
+            lessons: 2,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+            weight: null,
+          },
+        ],
+      },
+    });
+
+    const planned = await studySessionFixture({
+      goalId: goal.id,
+      localDate: today,
+      userId: user.id,
+    });
+
+    const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    // A band landed for another course: the goal is asked to re-plan, and nothing in it moves.
+    await expect(
+      replanGoalsWaitingOnSkills({ goalIds: [goal.id], skillIds: [] }),
+    ).resolves.toStrictEqual([goal.id]);
+
+    const after = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    expect(after.version).toBe(before.version);
+
+    await expect(
+      prisma.studySession.findUnique({ where: { id: planned.id } }),
+    ).resolves.not.toBeNull();
   });
 
   it("re-plans a goal re-planned from the band's first chapter again, so its later chapters' lessons join", async () => {

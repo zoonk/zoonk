@@ -1,5 +1,6 @@
 import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -217,6 +218,31 @@ describe(listCurrentUserGoals, () => {
       goal: { status: "archived" },
       status: "ready",
     });
+  });
+
+  it("places a test days away on its first day while that day's lessons are still being written", async () => {
+    const user = await useLearner();
+    const goal = await goalFixture({ kind: "exam", userId: user.id });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      phases: ["gaps", "practice", "finalStretch"].map((kind, index) => ({
+        endDate: null,
+        kind,
+        name: `Day ${index + 1}`,
+      })),
+    });
+
+    // Days 1 and 2 are stand-ins for lessons not outlined yet; day 3 is the short mock.
+    await Promise.all(
+      [0, 0, 1, 1].map((phase, position) =>
+        planItemFixture({ phase, planId: plan.id, position, skillId: null }),
+      ),
+    );
+
+    await planItemFixture({ kind: "mock", phase: 2, planId: plan.id, position: 4 });
+
+    await expect(getGoal(goal.id)).resolves.toMatchObject({ goal: { plan: { currentPhase: 0 } } });
   });
 
   it("leads with the first active goal while none is picked, the goal the tabs show", async () => {

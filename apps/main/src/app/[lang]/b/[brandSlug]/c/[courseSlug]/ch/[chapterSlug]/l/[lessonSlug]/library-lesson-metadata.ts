@@ -7,8 +7,8 @@ import { type Metadata } from "next";
 
 /**
  * Lesson titles and one-liners are written in the course's language. Only the
- * page in that language is indexed, and a reused lesson's canonical URL is its
- * home placement.
+ * page in that language is indexed, once the catalog lists its course, and a reused lesson's
+ * canonical URL is its home placement.
  */
 export async function getLibraryLessonMetadata({
   locale,
@@ -37,7 +37,10 @@ export async function getLibraryLessonMetadata({
   return {
     alternates: { canonical: urls.canonical },
     description: lesson.description,
-    robots: { follow: true, index: getContentLocale(route.course.language) === locale },
+    robots: {
+      follow: true,
+      index: route.isListed && getContentLocale(route.course.language) === locale,
+    },
     title: lesson.title,
   };
 }

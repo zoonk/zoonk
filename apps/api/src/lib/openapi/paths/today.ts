@@ -45,7 +45,7 @@ export const todayPaths = {
   "/today": {
     get: {
       description:
-        "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), today's session (built the first time it's opened on the learner's local day), the week, the week's checkpoint and at most one insight. `reveal` says what Fun shows yet, so a new learner sees a few things at a time. Focus and Fun read the same fields.",
+        "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), today's session (built the first time it's opened on the learner's local day), the week, the week's checkpoint and at most one insight.",
       operationId: "getToday",
       requestParams: { query: todayStudySessionInputSchema },
       responses: {
@@ -57,7 +57,7 @@ export const todayPaths = {
         "401": unauthorizedResponse,
         "404": {
           ...notFoundResponse,
-          description: `The goal doesn't exist, or the learner has no active goal yet. Error code without a goal: ${todayErrorCodes.noGoal}, with \`details.suggestedGoal\` (a SuggestedGoal or null) to offer before opening onboarding.`,
+          description: `The goal doesn't exist, or the learner has no active goal yet (only quick explanations count as none: they have no day to plan). Error code without a goal: ${todayErrorCodes.noGoal}, with \`details.suggestedGoal\` (a SuggestedGoal or null) to offer before opening onboarding.`,
         },
         "409": {
           ...conflictResponse,

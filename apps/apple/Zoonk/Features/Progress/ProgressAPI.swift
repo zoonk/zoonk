@@ -262,8 +262,8 @@ private func makeActivityProgressDay(
   _ payload: Components.Schemas.CurrentUserActivityResponse.ActivityPayload.DaysPayloadPayload
 ) throws -> ActivityProgressDay {
   ActivityProgressDay(
-    date: try makeProgressDate(payload.date),
-    lessonCompletions: payload.lessonCompletions)
+    activitiesCompleted: payload.activitiesCompleted,
+    date: try makeProgressDate(payload.date))
 }
 
 private func makeEnergyProgress(

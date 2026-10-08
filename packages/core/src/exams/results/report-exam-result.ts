@@ -39,7 +39,7 @@ async function loadEstimateBefore({
   userId: string;
 }): Promise<{ high: number; low: number } | null> {
   const inputs = await loadPreparationInputs({ goalId: goal.id, now: new Date(), userId });
-  const estimate = await loadGoalScoreEstimate({ goal, ledgerMocks: inputs.mocks });
+  const estimate = await loadGoalScoreEstimate({ goal, ledgerMocks: inputs.mockResults });
 
   if (!estimate) {
     return null;

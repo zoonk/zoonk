@@ -1,12 +1,16 @@
 import {
   type LessonQuestionMemoryChange,
   type LessonQuestionResource,
+  type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import {
+  answerPlanChange,
   isSameDraftContext,
   mergeCreatedQuestion,
+  replacePlanChanges,
   updateQuestionById,
 } from "./lesson-question-state-helpers";
 import {
@@ -69,6 +73,10 @@ export type LessonQuestionAction =
   | { chunk: string; questionId: string; type: "answerChunkReceived" }
   | { questionId: string; type: "answerCompleted" }
   | { changes: LessonQuestionMemoryChange[]; questionId: string; type: "memoryUpdated" }
+  | { change: PlanChangeView; questionId: string; type: "planChangeProposed" }
+  | { change: PlanChangeView; type: "planChangeAnswered" }
+  | { changeIds: string[]; type: "planChangesReplaced" }
+  | { offer: TutorToolOffer; questionId: string; type: "toolOffered" }
   | { questionId: string; reason: LessonQuestionApiError; type: "answerFailed" };
 
 export const INITIAL_LESSON_QUESTION_STATE: LessonQuestionState = {
@@ -259,6 +267,34 @@ export function lessonQuestionReducer(
       return {
         ...state,
         memoryChanges: { ...state.memoryChanges, [action.questionId]: action.changes },
+      };
+    case "planChangeProposed":
+      return {
+        ...state,
+        questions: updateQuestionById({
+          questionId: action.questionId,
+          questions: state.questions,
+          update: (question) => ({ ...question, planChange: action.change }),
+        }),
+      };
+    case "planChangeAnswered":
+      return {
+        ...state,
+        questions: answerPlanChange({ change: action.change, questions: state.questions }),
+      };
+    case "planChangesReplaced":
+      return {
+        ...state,
+        questions: replacePlanChanges({ changeIds: action.changeIds, questions: state.questions }),
+      };
+    case "toolOffered":
+      return {
+        ...state,
+        questions: updateQuestionById({
+          questionId: action.questionId,
+          questions: state.questions,
+          update: (question) => ({ ...question, toolOffer: action.offer }),
+        }),
       };
     default:
       return state;

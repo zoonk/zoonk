@@ -1,6 +1,7 @@
 import {
   type StudyCalendar,
   addDays,
+  daysBetween,
   fromIsoDate,
   getStudyMinutes,
   toIsoDate,
@@ -10,6 +11,7 @@ import { type MovedEvent, type PlanSettings, type PracticeBias } from "./plan-st
 import { BOSS_MINUTES, getBossKey } from "./plan-units";
 import { type DayShape, type FixedEvent } from "./schedule-units";
 import { getShortExamEvents, isLightDayBefore, isShortExam } from "./short-exam-plan";
+import { MIN_DAYS_APART } from "./spare-mocks";
 
 /** A weekly checkpoint outside exams: a short mixed challenge on the week's skills. */
 export const WEEKLY_CHECKPOINT_MINUTES = 15;
@@ -89,45 +91,90 @@ export function createLearnDays({
   };
 }
 
+/**
+ * A weekly mock's day: the week's event day from the gaps phase on, never days before the exam
+ * (see `MIN_DAYS_APART`), which the final stretch keeps for review.
+ */
 function isMockDay({
   date,
   eventWeekday,
+  targetDate,
   window,
 }: {
   date: Date;
   eventWeekday: number;
+  targetDate: Date;
   window: ExamWindow;
 }): boolean {
-  return window.kind !== "foundations" && date.getUTCDay() === eventWeekday;
+  return (
+    window.kind !== "foundations" &&
+    date.getUTCDay() === eventWeekday &&
+    daysBetween(date, targetDate) >= MIN_DAYS_APART
+  );
 }
 
-/** A phase closes with its checkpoint on its last day, or the day before when that's a mock day. */
-function isPhaseCheckpointDay({
-  date,
+/**
+ * A phase closes with its checkpoint on its last study day that isn't a mock day: a rest day the
+ * phase ends on never takes it. A phase without such a day keeps its last day.
+ */
+function getPhaseCheckpointDay({
+  calendar,
   eventWeekday,
+  targetDate,
   window,
 }: {
+  calendar: StudyCalendar;
+  eventWeekday: number;
+  targetDate: Date;
+  window: ExamWindow;
+}): Date {
+  const length = daysBetween(window.startDate, window.endDate) + 1;
+  const fromEnd = Array.from({ length }, (_, index) => addDays(window.endDate, -index));
+
+  return (
+    fromEnd.find(
+      (date) =>
+        getStudyMinutes({ calendar, date }) > 0 &&
+        !isMockDay({ date, eventWeekday, targetDate, window }),
+    ) ?? window.endDate
+  );
+}
+
+function isPhaseCheckpointDay({
+  calendar,
+  date,
+  eventWeekday,
+  targetDate,
+  window,
+}: {
+  calendar: StudyCalendar;
   date: Date;
   eventWeekday: number;
+  targetDate: Date;
   window: ExamWindow;
 }): boolean {
-  const end = window.endDate;
-  const checkpointDay = isMockDay({ date: end, eventWeekday, window }) ? addDays(end, -1) : end;
-
-  return window.kind !== "finalStretch" && date.getTime() === checkpointDay.getTime();
+  return (
+    window.kind !== "finalStretch" &&
+    date.getTime() ===
+      getPhaseCheckpointDay({ calendar, eventWeekday, targetDate, window }).getTime()
+  );
 }
 
 function getExamEvents({
+  calendar,
   date,
   eventWeekday,
   isDayBefore,
   minutes,
   mockMinutes,
   phase,
+  targetDate,
   window,
 }: {
+  calendar: StudyCalendar;
   date: Date;
   eventWeekday: number;
+  targetDate: Date;
   isDayBefore: boolean;
   minutes: number;
   mockMinutes: number;
@@ -141,7 +188,7 @@ function getExamEvents({
     return minutes > 0 ? [review] : [];
   }
 
-  if (isMockDay({ date, eventWeekday, window })) {
+  if (isMockDay({ date, eventWeekday, targetDate, window })) {
     return [
       fixedEvent({
         key: `mock:${day}`,
@@ -157,7 +204,7 @@ function getExamEvents({
     return minutes > 0 ? [review] : [];
   }
 
-  return isPhaseCheckpointDay({ date, eventWeekday, window })
+  return isPhaseCheckpointDay({ calendar, date, eventWeekday, targetDate, window })
     ? [fixedEvent({ key: getBossKey(phase), kind: "boss", minutes: BOSS_MINUTES, title: "" })]
     : [];
 }
@@ -229,7 +276,17 @@ export function createExamDays({
           minutes,
           shortMockMinutes: rules.shortMockMinutes,
         })
-      : getExamEvents({ date, eventWeekday, isDayBefore, minutes, mockMinutes, phase, window });
+      : getExamEvents({
+          calendar,
+          date,
+          eventWeekday,
+          isDayBefore,
+          minutes,
+          mockMinutes,
+          phase,
+          targetDate,
+          window,
+        });
 
     return {
       events,

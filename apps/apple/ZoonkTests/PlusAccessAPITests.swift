@@ -101,7 +101,7 @@ final class PlusAccessAPITests: XCTestCase {
   }
 }
 
-/// The profile holds buddy and mode values the app doesn't know, which must not block the Plus check.
+/// The profile holds buddy values the app doesn't know, which must not block the Plus check.
 private func learningProfileBody(plusPurchase: String) -> String {
   """
   {
@@ -111,7 +111,6 @@ private func learningProfileBody(plusPurchase: String) -> String {
       "availableGlasses": ["round", "glasses-from-a-future-release"],
       "birth": { "month": 3, "year": 2011 },
       "dailyLimitMinutes": null,
-      "experienceMode": "fun",
       "buddy": { "glasses": "round", "kind": "buddy-from-a-future-release", "name": null },
       "soundsEnabled": true
     },
@@ -119,6 +118,7 @@ private func learningProfileBody(plusPurchase: String) -> String {
       "ageGroup": "teen",
       "marketingEmailAllowed": false,
       "memoryCategories": ["goals"],
+      "memoryOnByDefault": false,
       "plusPurchase": "\(plusPurchase)",
       "sessionReplayAllowed": false
     }

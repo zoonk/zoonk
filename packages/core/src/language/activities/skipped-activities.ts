@@ -27,13 +27,16 @@ export async function loadSkippedActivities({
 /**
  * The language practice the signed-in learner left out of their plan for a language, which lessons
  * in that language skip, or null when they have no goal for it (guests included): then there's no
- * plan to change, so "Skip writing" isn't offered.
+ * plan to change, so "Skip writing" isn't offered. Private cached, so a prefetched lesson opens
+ * with it; changing it is a plan change, which clears the learner's cached views.
  */
 export async function getLanguageActivitySettings({
   targetLanguage,
 }: {
   targetLanguage: string;
 }): Promise<{ skipped: LanguageActivityType[] } | null> {
+  "use cache: private";
+
   const session = await getSession();
 
   if (!session || session.user.isAnonymous) {

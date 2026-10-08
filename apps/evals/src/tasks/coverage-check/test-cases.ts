@@ -12,6 +12,24 @@ function weighted(key: string, name: string, examWeight: number): CoverageSkill 
   return { ...skill(key, name), examWeight };
 }
 
+function placed({
+  area,
+  examWeight,
+  key,
+  name,
+  topics,
+}: {
+  area: string;
+  examWeight: number;
+  key: string;
+  name: string;
+  topics: string[];
+}): CoverageSkill {
+  return { ...weighted(key, name, examWeight), area, topics };
+}
+
+const CAMARA_SUBJECTS = { politics: "Ciência Política", portuguese: "Língua Portuguesa" };
+
 export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] = [
   {
     expected: {
@@ -234,6 +252,99 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
           "Determine a word's meaning and a text's structure and purpose",
           3,
         ),
+      ],
+    },
+  },
+  {
+    // A public-service notice with numbered topics: crase and agreement are taught by skills that
+    // don't list them yet, and electoral systems by none.
+    expected: {
+      gaps: ["5 Sistemas eleitorais"],
+      placements: [
+        { key: "crase", topics: ["5.7 Emprego do sinal indicativo de crase"] },
+        { key: "concordancia", topics: ["5.5 Concordância verbal e nominal"] },
+      ],
+    },
+    id: "pt-camara-notice-topics",
+    userInput: {
+      examOutline: {
+        name: "Concurso da Câmara dos Deputados, Analista Legislativo",
+        notes: ["Scoring: cada item errado anula um item certo"],
+        subjects: [
+          {
+            group: "Conhecimentos básicos (P1)",
+            name: CAMARA_SUBJECTS.portuguese,
+            questions: null,
+            topics: [
+              "1 Compreensão e interpretação de textos de gêneros variados",
+              "3 Domínio da ortografia",
+              "5 Domínio da estrutura morfossintática do período",
+              "5.5 Concordância verbal e nominal",
+              "5.7 Emprego do sinal indicativo de crase",
+            ],
+            weight: null,
+          },
+          {
+            group: "Conhecimentos específicos (P2)",
+            name: CAMARA_SUBJECTS.politics,
+            questions: null,
+            topics: [
+              "1 Regimes políticos",
+              "2 Sistemas e formas de governo",
+              "5 Sistemas eleitorais",
+            ],
+            weight: null,
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "quero passar no concurso da câmara dos deputados para analista legislativo",
+      goalKind: "exam",
+      language: "pt",
+      references: [],
+      skills: [
+        placed({
+          area: CAMARA_SUBJECTS.portuguese,
+          examWeight: 4,
+          key: "leitura",
+          name: "Interpretar textos de gêneros variados",
+          topics: ["1 Compreensão e interpretação de textos de gêneros variados"],
+        }),
+        placed({
+          area: CAMARA_SUBJECTS.portuguese,
+          examWeight: 3,
+          key: "ortografia",
+          name: "Aplicar as regras de ortografia",
+          topics: ["3 Domínio da ortografia"],
+        }),
+        placed({
+          area: CAMARA_SUBJECTS.portuguese,
+          examWeight: 4,
+          key: "crase",
+          name: "Empregar o acento grave indicativo de crase",
+          topics: [],
+        }),
+        placed({
+          area: CAMARA_SUBJECTS.portuguese,
+          examWeight: 4,
+          key: "concordancia",
+          name: "Fazer a concordância do verbo e do nome",
+          topics: [],
+        }),
+        placed({
+          area: CAMARA_SUBJECTS.politics,
+          examWeight: 3,
+          key: "regimes",
+          name: "Comparar regimes políticos",
+          topics: ["1 Regimes políticos"],
+        }),
+        placed({
+          area: CAMARA_SUBJECTS.politics,
+          examWeight: 3,
+          key: "governo",
+          name: "Distinguir sistemas e formas de governo",
+          topics: ["2 Sistemas e formas de governo"],
+        }),
       ],
     },
   },

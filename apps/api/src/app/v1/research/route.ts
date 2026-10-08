@@ -2,12 +2,16 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { createResearchRequestSchema } from "@/lib/openapi/schemas/research-sources";
+import { readClientRunStatus } from "@/workflows/v2/_shared/run-activity";
 import { researchWorkflow } from "@/workflows/v2/research/research-workflow";
 import { answerGoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { type NextRequest, NextResponse } from "next/server";
-import { getRun, start } from "workflow/api";
+import { start } from "workflow/api";
 
-/** A run that ended badly can be started again; any other is followed instead of paid for twice. */
+/**
+ * A run that ended badly (a stalled one reads as failed) can be started again; any other is
+ * followed instead of paid for twice. The new run stops a stalled one before it starts.
+ */
 const RESTARTABLE_STATUSES = new Set(["cancelled", "failed"]);
 
 function researchResponse({ runId, status }: { runId: string; status: string }) {
@@ -17,20 +21,14 @@ function researchResponse({ runId, status }: { runId: string; status: string }) 
   );
 }
 
-/** The goal's last research run, unless it ended badly or no longer exists. */
+/** The goal's last research run, unless it ended badly, stalled or no longer exists. */
 async function findFollowableRun(runId: string | null) {
   if (!runId) {
     return null;
   }
 
-  const run = getRun(runId);
-
-  if (!(await run.exists)) {
-    return null;
-  }
-
-  const status = await run.status;
-  return RESTARTABLE_STATUSES.has(status) ? null : { runId, status };
+  const status = await readClientRunStatus(runId);
+  return !status || RESTARTABLE_STATUSES.has(status) ? null : { runId, status };
 }
 
 /**

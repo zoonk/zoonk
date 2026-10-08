@@ -85,6 +85,7 @@ function examInput(attrs: Partial<BuildPlanInput> = {}): BuildPlanInput {
     graph: { phases: [{ milestone: null, name: "Everything" }], skills: SKILLS },
     items: [TESTED_OUT_STAND_IN],
     lessons: LESSONS,
+    missedSkillIds: new Set(["rewrite"]),
     mockMinutes: 150,
     mode: "forced",
     paceFactor: 1,
@@ -110,6 +111,12 @@ function areaOf(item: PlannedItem): string | undefined {
   return SKILLS.find((skill) => skill.skillId === item.skillId)?.area ?? undefined;
 }
 
+/** The subjects of a day in the order its blocks come, one entry per block. */
+function runsOf(items: readonly PlannedItem[]): string[] {
+  const areas = items.map((item) => areaOf(item) ?? "");
+  return areas.filter((area, index) => index === 0 || areas[index - 1] !== area);
+}
+
 function minutesByArea(items: readonly PlannedItem[]): Record<string, number> {
   const areas = [...new Set(items.map((item) => areaOf(item) ?? ""))];
 
@@ -132,20 +139,85 @@ describe("an adult's exam plan after placement", () => {
     expect(plan.items.find((item) => item.id === "stand-in")?.status).toBe("testedOut");
   });
 
-  it("opens with the gap placement found and mixes the exam's areas by weight from day 1", () => {
+  it("keeps a skill placement found known out of the plan when more of its lessons are outlined", () => {
+    // Placement found law known while only its first chapter was outlined: those lessons were
+    // tested out. The chapters outlined since teach the same skill.
+    const testedOutLaw = Array.from({ length: 6 }, (_, index) => ({
+      ...TESTED_OUT_STAND_IN,
+      id: `law-item-${index}`,
+      lessonId: `law-${index}`,
+      position: index + 1,
+      skillId: "law",
+      titleSnapshot: `Read the constitution ${index + 1}`,
+    }));
+
+    const plan = buildPlan(examInput({ items: [TESTED_OUT_STAND_IN, ...testedOutLaw] }));
+    const todo = plan.items.filter((item) => item.status === "todo" && item.kind === "lesson");
+
+    expect(todo.some((item) => item.skillId === "law")).toBe(false);
+    expect(todo.some((item) => item.skillId === "logic")).toBe(true);
+  });
+
+  it("brings back a lesson that also teaches a skill the learner doesn't know yet", () => {
+    const testedOutLaw = {
+      ...TESTED_OUT_STAND_IN,
+      id: "law-item",
+      lessonId: "law-0",
+      skillId: "law",
+      titleSnapshot: "Read the constitution 1",
+    };
+
+    const shared: PlannerLesson = {
+      chapterId: "law-logic",
+      lessonId: "law-logic",
+      minutes: 3,
+      skillIds: ["law", "logic"],
+      title: "Propositions in the constitution",
+    };
+
+    const plan = buildPlan(
+      examInput({ items: [TESTED_OUT_STAND_IN, testedOutLaw], lessons: [...LESSONS, shared] }),
+    );
+
+    expect(plan.items.some((item) => item.lessonId === "law-logic" && item.status === "todo")).toBe(
+      true,
+    );
+  });
+
+  it("opens with the gap placement found and rotates a couple of subjects a day by their worth", () => {
     const plan = buildPlan(examInput());
     const dayOne = lessonsOn({ date: "2026-09-28", items: plan.items });
 
+    // An hour a day studies two subjects, in a block each, starting with the gap placement found.
     expect(dayOne[0]?.skillId).toBe("rewrite");
-    expect(new Set(dayOne.map((item) => areaOf(item))).size).toBeGreaterThanOrEqual(2);
+    expect(runsOf(dayOne)).toStrictEqual(["Portuguese", "Logic"]);
+
+    const twoDays = ["2026-09-28", "2026-09-29"].flatMap((date) =>
+      lessonsOn({ date, items: plan.items }),
+    );
+
+    expect(new Set(twoDays.map((item) => areaOf(item)))).toStrictEqual(
+      new Set(["Portuguese", "Logic", "Law", "Fitness"]),
+    );
+
+    const studyDays = [...new Set(plan.items.map((item) => item.scheduledFor?.getTime()))];
+
+    const days = studyDays.map((time) =>
+      lessonsOn({ date: toIsoDate(new Date(time ?? 0)), items: plan.items }),
+    );
+
+    expect(days.every((day) => runsOf(day).length <= 2)).toBe(true);
 
     const firstWeek = ["2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02"];
-    const weekLessons = firstWeek.flatMap((date) => lessonsOn({ date, items: plan.items }));
-    const byArea = minutesByArea(weekLessons);
 
-    expect(byArea.Portuguese).toBeGreaterThan(byArea.Logic ?? 0);
-    expect(byArea.Logic).toBeGreaterThan(byArea.Law ?? 0);
-    expect(byArea.Law).toBeGreaterThan(byArea.Fitness ?? 0);
+    const byArea = minutesByArea(
+      firstWeek.flatMap((date) => lessonsOn({ date, items: plan.items })),
+    );
+
+    // Fitness is worth the least, so it comes back least often.
+    expect(Math.min(byArea.Portuguese ?? 0, byArea.Logic ?? 0, byArea.Law ?? 0)).toBeGreaterThan(
+      byArea.Fitness ?? 0,
+    );
 
     const rewriteStart = plan.items.findIndex((item) => item.skillId === "rewrite");
     const readingStart = plan.items.findIndex((item) => item.skillId === "reading");
@@ -153,7 +225,35 @@ describe("an adult's exam plan after placement", () => {
     expect(rewriteStart).toBeLessThan(readingStart);
   });
 
-  it("mixes areas inside each phase when the exam has no date yet", () => {
+  it("keeps the day's mix of subjects while the others' lessons aren't outlined yet", () => {
+    const portuguese = LESSONS.filter((lesson) =>
+      lesson.skillIds.every((skillId) => !["logic", "law", "fitness"].includes(skillId)),
+    );
+
+    const plan = buildPlan(examInput({ lessons: portuguese }));
+    const dayOne = lessonsOn({ date: "2026-09-28", items: plan.items });
+
+    // The other subjects' stand-ins share the day with Portuguese instead of waiting for a day
+    // they fit whole, so the cycle doesn't open with Portuguese alone.
+    expect(runsOf(dayOne)).toStrictEqual(["Portuguese", "Logic"]);
+
+    const twoDays = ["2026-09-28", "2026-09-29"].flatMap((date) =>
+      lessonsOn({ date, items: plan.items }),
+    );
+
+    expect(new Set(twoDays.map((item) => areaOf(item)))).toStrictEqual(
+      new Set(["Portuguese", "Logic", "Law", "Fitness"]),
+    );
+
+    // Each stand-in stays one item, on the day its skill starts, with its whole skill's time.
+    const logic = plan.items.filter((item) => item.skillId === "logic");
+
+    expect(logic).toHaveLength(1);
+    expect(logic[0]?.scheduledFor && toIsoDate(logic[0].scheduledFor)).toBe("2026-09-28");
+    expect(logic[0]?.minutes).toBeGreaterThanOrEqual(24 * 3);
+  });
+
+  it("rotates subjects inside each phase when the exam has no date yet", () => {
     const plan = buildPlan(
       examInput({
         goal: { dailyMinutes: 60, kind: "exam", targetDate: null },

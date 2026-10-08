@@ -1,4 +1,4 @@
-import { ZoonkLogo } from "@/components/brand/zoonk-logo";
+import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { type ReactNode } from "react";
 
 const CLOSING_TITLE_ID = "closing-call-title";
@@ -15,7 +15,7 @@ export function ClosingCall({
 }: {
   children: ReactNode;
   lead: string;
-  note: string;
+  note: ReactNode;
   title: string;
 }) {
   return (

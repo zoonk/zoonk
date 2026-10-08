@@ -82,11 +82,24 @@ describe("language lesson screens", () => {
     const graded = buildAdapters(lesson).checkStep;
     const accepted = acceptedAnswerCheck(writing);
 
+    const { completeLesson } = buildAdapters(lesson);
+
     renderLessonPlayer({
       adapters: buildAdapters(lesson, {
         // Written answers are graded only on the server; the rest the way it grades them.
         checkStep: (input) =>
           input.answer.kind === "typedAnswer" ? accepted(input) : graded(input),
+        // The server counts each screen's first answer, as the screens did.
+        completeLesson: async (input) => {
+          const outcome = await completeLesson(input);
+
+          return outcome.status === "completed"
+            ? {
+                ...outcome,
+                completion: { ...outcome.completion, correctCount: 3, incorrectCount: 1 },
+              }
+            : outcome;
+        },
       }),
       lesson,
     });
@@ -133,7 +146,8 @@ describe("language lesson screens", () => {
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
     // The blank's first answer was wrong, so it counts as a miss even though it was fixed.
-    await expect.element(page.getByText("3 of 4 right the first time")).toBeVisible();
+    await expect.element(page.getByText("3 of 4 right")).toBeVisible();
+    await expect.element(page.getByText("+10 Brain Power")).toBeVisible();
   });
 
   it("shows each letter with its reading and, when recorded, its sound, then matches them", async () => {

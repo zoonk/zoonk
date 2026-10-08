@@ -406,5 +406,6 @@ export const enemAreaChapters: SeedChapter[] = [
     ],
     title: t("Essay", "Redação"),
     weight: 5,
+    writtenTest: true,
   },
 ];

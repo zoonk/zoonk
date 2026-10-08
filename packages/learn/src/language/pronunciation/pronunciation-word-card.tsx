@@ -6,21 +6,93 @@ import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MicIcon, SnailIcon, SquareIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useWordAudio } from "./use-word-audio";
+import { type ReactNode, useState } from "react";
+import { ItemLine } from "../../questions/item-text";
+import { SpeechFailedNote, SpeechStatusIcon, withoutFailure } from "../../speech/speech-parts";
+import { useSpokenAudio } from "../../speech/use-spoken-audio";
 
 const MS_PER_SECOND = 1000;
 
 type ReviewWord = PronunciationReviewsView["words"][number];
 
+type Pace = "normal" | "slow";
+
+/** Slow enough to hear each sound, close enough to real speech to still sound like the word. */
+const SLOW_RATE = 0.7;
+
+/**
+ * Listen and Listen slowly: the native recording when the word has one, otherwise the word read
+ * aloud in its language. The button that started the sound shows it loading, playing or failed.
+ */
+function WordListenButtons({ language, word }: { language: string; word: ReviewWord }) {
+  const t = useExtracted();
+  const speech = useSpokenAudio(language);
+  const [pace, setPace] = useState<Pace>("normal");
+  const buttonState = withoutFailure(speech.state);
+  const { status } = buttonState;
+  const isBusy = status === "loading" || status === "playing";
+
+  const play = (next: Pace) => {
+    setPace(next);
+
+    speech.speak({
+      rate: next === "slow" ? SLOW_RATE : 1,
+      segments: [{ audioUrl: word.audioUrl, text: word.word }],
+    });
+  };
+
+  const iconFor = (button: Pace, idle: ReactNode) =>
+    button === pace ? <SpeechStatusIcon idle={idle} state={buttonState} /> : idle;
+
+  if (!speech.isAvailable) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-wrap justify-center gap-2">
+        <Button
+          aria-busy={pace === "normal" && status === "loading"}
+          onClick={() => (isBusy && pace === "normal" ? speech.cancel() : play("normal"))}
+          size="sm"
+          type="button"
+          variant="secondary"
+        >
+          {iconFor("normal", <Volume2Icon aria-hidden="true" />)}
+          {t("Listen")}
+        </Button>
+        <Button
+          aria-busy={pace === "slow" && status === "loading"}
+          onClick={() => (isBusy && pace === "slow" ? speech.cancel() : play("slow"))}
+          size="sm"
+          type="button"
+          variant="secondary"
+        >
+          {iconFor("slow", <SnailIcon aria-hidden="true" />)}
+          {t("Listen slowly")}
+        </Button>
+      </div>
+
+      {speech.state.status === "failed" && (
+        <SpeechFailedNote
+          className="items-center text-center"
+          language={language}
+          limit={speech.state.limit}
+          onRetry={() => play(pace)}
+        />
+      )}
+    </div>
+  );
+}
+
 /** The word as a native speaker says it, then slowly, with how to spell and fix the sound. */
 export function PronunciationWordCard({ language, word }: { language: string; word: ReviewWord }) {
   const t = useExtracted();
-  const audio = useWordAudio({ audioUrl: word.audioUrl, language, word: word.word });
 
   return (
     <section
       aria-label={t("The word to say")}
-      className="bg-muted/50 in-data-[mode=fun]:fun-glass flex flex-col items-center gap-3 rounded-3xl p-6 text-center"
+      className="bg-muted/50 flex flex-col items-center gap-3 rounded-3xl p-6 text-center"
     >
       <p className="text-4xl font-semibold tracking-tight" lang={language}>
         {word.word}
@@ -34,21 +106,12 @@ export function PronunciationWordCard({ language, word }: { language: string; wo
         </p>
       )}
 
-      {audio.canPlay && (
-        <div className="flex flex-wrap justify-center gap-2">
-          <Button onClick={() => audio.play(false)} size="sm" type="button" variant="secondary">
-            <Volume2Icon aria-hidden="true" />
-            {t("Listen")}
-          </Button>
-          <Button onClick={() => audio.play(true)} size="sm" type="button" variant="secondary">
-            <SnailIcon aria-hidden="true" />
-            {t("Listen slowly")}
-          </Button>
-        </div>
-      )}
+      <WordListenButtons language={language} word={word} />
 
       {word.tip && (
-        <p className="text-muted-foreground max-w-sm text-sm text-balance">{word.tip}</p>
+        <p className="text-muted-foreground max-w-sm text-sm text-balance">
+          <ItemLine text={word.tip} />
+        </p>
       )}
     </section>
   );

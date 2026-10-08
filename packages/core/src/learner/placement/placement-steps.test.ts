@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { type PlacementEvidence, getPlacementBeliefs } from "./placement-beliefs";
 import { getTargetDifficulty } from "./placement-difficulty";
 import { type PlacementSkill } from "./placement-graph";
+import { pickPlacementItem } from "./placement-item-choice";
 import {
+  type OwnLevel,
   chooseNextPlacementSkill,
   getAreaStarts,
   getPhaseStarts,
@@ -10,7 +12,6 @@ import {
   getScratchPhaseStarts,
   getSkillPlacementStatus,
   isPlacementSettled,
-  pickPlacementItem,
 } from "./placement-steps";
 
 /**
@@ -40,6 +41,58 @@ const EXAM: PlacementSkill[] = [
 ];
 
 const EXAM_ASKABLE = new Set(EXAM.map((skill) => skill.id));
+
+/**
+ * Two subjects without prerequisites between their skills, each skill in the Library band the
+ * skill graph put it in, like an exam whose graph links few skills.
+ */
+const BANDED: PlacementSkill[] = (
+  [
+    ["overview", "law-overview", "Law"],
+    ["beginner", "law-beginner", "Law"],
+    ["intermediate", "law-intermediate", "Law"],
+    ["advanced", "law-advanced", "Law"],
+    ["beginner", "english-beginner", "English"],
+    ["intermediate", "english-intermediate", "English"],
+  ] as const
+).map(([band, id, sectionTitle], order) => ({
+  band,
+  id,
+  order,
+  phase: 0,
+  prerequisiteIds: [],
+  sectionTitle,
+}));
+
+/**
+ * An exam whose skills all sit in the band it asks them at, as exam graphs put a public exam's
+ * school subjects: each subject's foundations (the skill graph's first phase) come before the
+ * rest of it, which builds on them in later phases.
+ */
+const FOUNDED: PlacementSkill[] = (
+  [
+    ["pt-read", "Portuguese", true],
+    ["pt-genres", "Portuguese", true],
+    ["math-ratio", "Math", true],
+    ["pt-syntax", "Portuguese", false],
+    ["pt-rewrite", "Portuguese", false],
+    ["math-functions", "Math", false],
+  ] as const
+).map(([id, sectionTitle, foundation], order) => ({
+  band: "intermediate",
+  foundation,
+  id,
+  order,
+  phase: foundation ? 0 : 1,
+  prerequisiteIds: [],
+  sectionTitle,
+}));
+
+/** Each banded skill's status before any answer, from the learner's own level alone. */
+function statusByLevel(ownLevel: OwnLevel | null) {
+  const beliefs = getPlacementBeliefs({ evidence: [], ownLevel, skills: BANDED });
+  return BANDED.map((skill) => getSkillPlacementStatus(beliefs.get(skill.id)));
+}
 
 function answer(
   skillId: string,
@@ -83,6 +136,160 @@ describe(getPlacementBeliefs, () => {
     const { beliefs } = place([answer("elsewhere", "correct", "typed")]);
 
     expect([...beliefs.values()].every((belief) => belief === 0.5)).toBe(true);
+  });
+
+  it("starts the bands below a stated level as known, and nothing without a level", () => {
+    // Law: overview, beginner, intermediate, advanced; then English: beginner, intermediate.
+    expect(statusByLevel(null)).toStrictEqual(Array.from({ length: 6 }, () => "unsure"));
+    expect(statusByLevel("none")).toStrictEqual(Array.from({ length: 6 }, () => "unsure"));
+
+    expect(statusByLevel("basic")).toStrictEqual([
+      "known",
+      "unsure",
+      "unsure",
+      "unsure",
+      "unsure",
+      "unsure",
+    ]);
+
+    expect(statusByLevel("intermediate")).toStrictEqual([
+      "known",
+      "known",
+      "unsure",
+      "unsure",
+      "known",
+      "unsure",
+    ]);
+
+    expect(statusByLevel("advanced")).toStrictEqual([
+      "known",
+      "known",
+      "unsure",
+      "unsure",
+      "known",
+      "unsure",
+    ]);
+  });
+
+  it("starts a subject the learner knows well past its basics, and only that subject", () => {
+    const beliefs = getPlacementBeliefs({ evidence: [], knownAreas: ["Law"], skills: BANDED });
+
+    expect(BANDED.map((skill) => getSkillPlacementStatus(beliefs.get(skill.id)))).toStrictEqual([
+      "known",
+      "known",
+      "unsure",
+      "unsure",
+      "unsure",
+      "unsure",
+    ]);
+  });
+
+  it("starts a subject the learner knows well past its foundations when all of it is at the exam's band", () => {
+    const beliefs = getPlacementBeliefs({
+      evidence: [],
+      knownAreas: ["Portuguese"],
+      skills: FOUNDED,
+    });
+
+    expect(FOUNDED.map((skill) => getSkillPlacementStatus(beliefs.get(skill.id)))).toStrictEqual([
+      "known",
+      "known",
+      "unsure",
+      "unsure",
+      "unsure",
+      "unsure",
+    ]);
+  });
+
+  it("counts right answers on a subject's later skills for its foundations, not another subject's", () => {
+    const beliefs = getPlacementBeliefs({
+      evidence: [answer("pt-syntax", "correct"), answer("pt-rewrite", "correct")],
+      skills: FOUNDED,
+    });
+
+    expect(getSkillPlacementStatus(beliefs.get("pt-read"))).toBe("known");
+    expect(getSkillPlacementStatus(beliefs.get("pt-genres"))).toBe("known");
+    expect(getSkillPlacementStatus(beliefs.get("math-ratio"))).toBe("unsure");
+
+    const missed = getPlacementBeliefs({ evidence: [answer("pt-read", "wrong")], skills: FOUNDED });
+
+    // Missing a foundation says what builds on it isn't known either.
+    expect(getSkillPlacementStatus(missed.get("pt-syntax"))).toBe("unknown");
+  });
+
+  it("counts right answers on a harder skill for the easier ones of the same subject only", () => {
+    const beliefs = getPlacementBeliefs({
+      evidence: [answer("law-intermediate", "correct"), answer("law-advanced", "correct")],
+      skills: BANDED,
+    });
+
+    expect(getSkillPlacementStatus(beliefs.get("law-overview"))).toBe("known");
+    expect(getSkillPlacementStatus(beliefs.get("law-beginner"))).toBe("known");
+    expect(getSkillPlacementStatus(beliefs.get("law-intermediate"))).toBe("known");
+    // One quick answer can be a lucky guess, and another subject says nothing about this one.
+    expect(getSkillPlacementStatus(beliefs.get("law-advanced"))).toBe("unsure");
+    expect(getSkillPlacementStatus(beliefs.get("english-beginner"))).toBe("unsure");
+  });
+
+  it("counts a wrong answer on an easier skill against the harder ones of the same subject", () => {
+    const beliefs = getPlacementBeliefs({
+      evidence: [answer("english-beginner", "dontKnow")],
+      ownLevel: "advanced",
+      skills: BANDED,
+    });
+
+    expect(getSkillPlacementStatus(beliefs.get("english-intermediate"))).toBe("unknown");
+    expect(getSkillPlacementStatus(beliefs.get("law-intermediate"))).toBe("unsure");
+  });
+
+  // Pedro's two right answers on organelles tested his whole handout out: in a test from the
+  // learner's own material, every topic is on the test, so only the topics answered are settled.
+  it("settles only the skills its answers checked in a test from the learner's own material", () => {
+    const beliefs = getPlacementBeliefs({
+      answeredOnly: true,
+      evidence: [
+        answer("law-intermediate", "correct"),
+        answer("law-intermediate", "correct", "typed"),
+      ],
+      ownLevel: "advanced",
+      skills: [
+        ...BANDED,
+        {
+          band: "intermediate",
+          id: "law-cases",
+          order: BANDED.length,
+          phase: 0,
+          prerequisiteIds: ["law-intermediate"],
+          sectionTitle: "Law",
+        },
+      ],
+    });
+
+    expect(getSkillPlacementStatus(beliefs.get("law-intermediate"))).toBe("known");
+    expect(getSkillPlacementStatus(beliefs.get("law-overview"))).toBe("unsure");
+    expect(getSkillPlacementStatus(beliefs.get("law-beginner"))).toBe("unsure");
+    expect(getSkillPlacementStatus(beliefs.get("english-beginner"))).toBe("unsure");
+    expect(getSkillPlacementStatus(beliefs.get("law-cases"))).toBe("unsure");
+
+    const missed = getPlacementBeliefs({
+      answeredOnly: true,
+      evidence: [answer("law-intermediate", "dontKnow")],
+      skills: [
+        ...BANDED,
+        {
+          band: "intermediate",
+          id: "law-cases",
+          order: BANDED.length,
+          phase: 0,
+          prerequisiteIds: ["law-intermediate"],
+          sectionTitle: "Law",
+        },
+      ],
+    });
+
+    // A miss settles only its own topic: what builds on it is still asked.
+    expect(getSkillPlacementStatus(missed.get("law-intermediate"))).toBe("unknown");
+    expect(getSkillPlacementStatus(missed.get("law-cases"))).toBe("unsure");
   });
 });
 

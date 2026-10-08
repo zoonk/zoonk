@@ -1,15 +1,13 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { type OpenAITranscriptionModelOptions } from "@ai-sdk/openai";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { transcribe } from "ai";
 import { directOpenAI } from "../../../direct-providers";
 import { zoonkGateway } from "../../../gateway";
-import {
-  type AiGenerationContext,
-  toAiGenerationEvent,
-} from "../../../provenance/ai-generation-event";
+import { computeCallCostUsd } from "../../../pricing/call-cost";
+import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { captureAiGeneration } from "../../../provenance/ai-generation-sink";
-import { getPromptVersion } from "../../../provenance/prompt-version";
 import { type TaskProvenance } from "../../../provenance/task-provenance";
 
 /**
@@ -102,7 +100,7 @@ async function transcribeWithModel({
   audio: Uint8Array;
   language: string;
   model: TranscriptionModelId;
-}): Promise<string> {
+}): Promise<{ audioSeconds?: number; text: string }> {
   const result = await transcribe({
     audio,
     model: getTranscriptionModel(model),
@@ -111,24 +109,29 @@ async function transcribeWithModel({
       : {}),
   });
 
-  return result.text.trim();
+  return { audioSeconds: result.durationInSeconds, text: result.text.trim() };
 }
 
 /**
  * Provenance for a call that has no tokens: transcription is billed by audio
- * length, which neither the AI SDK's result nor the gateway reports back, so
- * cost stays unknown and PostHog groups the call by model and latency.
+ * length, priced from the duration the model reports; a model that doesn't
+ * report one leaves the cost unknown.
  */
 function buildTranscriptionProvenance({
+  audioSeconds,
   latencyMs,
   model,
   requestedModel,
 }: {
+  audioSeconds?: number;
   latencyMs: number;
   model: TranscriptionModelId;
   requestedModel: TranscriptionModelId;
 }): TaskProvenance {
+  const usage = { audioSeconds };
+
   return {
+    costUsd: audioSeconds === undefined ? undefined : computeCallCostUsd({ model, usage }),
     generatedAt: new Date().toISOString(),
     latencyMs,
     model,
@@ -139,7 +142,7 @@ function buildTranscriptionProvenance({
     provider: model.split("/")[0] ?? model,
     requestedModel,
     runId: randomUUID(),
-    usage: {},
+    usage,
   };
 }
 
@@ -151,7 +154,7 @@ async function transcribeInOrder({
   audio: Uint8Array;
   language: string;
   models: readonly TranscriptionModelId[];
-}): Promise<{ model: TranscriptionModelId; text: string }> {
+}): Promise<{ audioSeconds?: number; model: TranscriptionModelId; text: string }> {
   const [model, ...remaining] = models;
 
   if (!model) {
@@ -159,7 +162,7 @@ async function transcribeInOrder({
   }
 
   try {
-    return { model, text: await transcribeWithModel({ audio, language, model }) };
+    return { model, ...(await transcribeWithModel({ audio, language, model })) };
   } catch (error) {
     if (remaining.length === 0) {
       throw error;
@@ -190,14 +193,13 @@ export async function transcribeSpeech({
   const result = await transcribeInOrder({ audio, language, models });
 
   const provenance = buildTranscriptionProvenance({
+    audioSeconds: result.audioSeconds,
     latencyMs: Math.round(performance.now() - startedAt),
     model: result.model,
     requestedModel: model,
   });
 
-  await captureAiGeneration(
-    toAiGenerationEvent({ context: analytics, provenance, task: "transcribe-speech" }),
-  );
+  await captureAiGeneration({ context: analytics, provenance, task: "transcribe-speech" });
 
   return { data: { text: result.text } satisfies SpeechTranscript, provenance };
 }

@@ -1,11 +1,11 @@
 "use client";
 
 import { evaluateFormula } from "@zoonk/core/library/activities/expression/evaluate";
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Lightbulb } from "lucide-react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityGuessReveal } from "../_components/activity-guess-reveal";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 
 type EstimateRevealProps = ActivityRendererProps<"estimateReveal">;

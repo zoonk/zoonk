@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { type LinearScale } from "../_utils/plot-scale";
+import { type LinearScale } from "@zoonk/utils/plot-scale";
 import { type SnapRange, snapToStep, valueAfterKey } from "../_utils/snap-value";
 
 type Orientation = "horizontal" | "vertical";

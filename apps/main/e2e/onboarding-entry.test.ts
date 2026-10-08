@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -258,15 +259,54 @@ test.describe("Fixing what was understood", () => {
   });
 });
 
+/** Signs the page in as a new guest and returns the guest's id. */
+async function signInAsGuest(page: Page): Promise<string> {
+  const guest = await page.request.post("/api/auth/sign-in/anonymous", {
+    data: {},
+    headers: { Origin: getBaseURL() },
+  });
+
+  expect(guest.ok(), await guest.text()).toBe(true);
+  const body: { user: { id: string } } = await guest.json();
+
+  return body.user.id;
+}
+
 test.describe("Goal limits", () => {
-  test("a guest's second goal says why, with the way to an account", async ({ page }) => {
+  test("a guest whose one goal is taken is asked for an account before typing another", async ({
+    page,
+  }) => {
+    const guestId = await signInAsGuest(page);
+    await goalFixture({ userId: guestId });
+
+    await page.goto("/start");
+
+    await expect(
+      page.getByRole("heading", { name: "Create a free account to start another goal" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("textbox", { name: "Your goal" })).toBeHidden();
+
+    await expect(page.getByRole("link", { name: "Create a free account" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
+
+    await expect(page.getByRole("link", { name: "Back to Today" })).toHaveAttribute(
+      "href",
+      "/today",
+    );
+
+    await expectAccessibleScreen(page, "the account ask before a guest's second goal");
+  });
+
+  test("a guest whose one goal was taken while confirming gets the account as the way on", async ({
+    page,
+  }) => {
     const goal = uniqueWords("understand astronomy as a guest");
 
-    const [guest] = await Promise.all([
-      page.request.post("/api/auth/sign-in/anonymous", {
-        data: {},
-        headers: { Origin: getBaseURL() },
-      }),
+    const [guestId] = await Promise.all([
+      signInAsGuest(page),
       goalUnderstandingFixture({
         goal,
         result: {
@@ -277,13 +317,11 @@ test.describe("Goal limits", () => {
       }),
     ]);
 
-    expect(guest.ok(), await guest.text()).toBe(true);
-
-    // The guest already follows their one goal.
-    const { user } = await guest.json();
-    await goalFixture({ userId: user.id });
-
     await sendGoal(page, goal);
+    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
+
+    // Their one goal is taken in another tab before they confirm this one.
+    await goalFixture({ userId: guestId });
     await page.getByRole("button", { name: "Looks right" }).click();
 
     await expect(
@@ -296,6 +334,9 @@ test.describe("Goal limits", () => {
       "href",
       "/login",
     );
+
+    await expect(page.getByRole("button", { name: "Looks right" })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Fix something" })).toBeHidden();
   });
 });
 

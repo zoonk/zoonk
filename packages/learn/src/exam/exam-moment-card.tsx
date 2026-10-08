@@ -2,8 +2,10 @@
 
 import { type DayBeforePlan, type ExamMomentView } from "@zoonk/core/exams/view/contract";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarHeartIcon, FlagIcon, MessageCircleQuestionIcon, MoonIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SURFACE_CLASS } from "../_components/surface";
 import { LearnLink } from "../learn-link";
 import { ExamChecklist } from "./exam-checklist";
 import { useExamDayText } from "./exam-labels";
@@ -15,6 +17,7 @@ type Moment = Pick<
   | "dayBefore"
   | "examName"
   | "mocksTaken"
+  | "prepared"
   | "resultReported"
   | "sessionsDone"
   | "stage"
@@ -39,6 +42,11 @@ function useDayBeforeBody({ dayBefore, work }: { dayBefore: DayBeforePlan; work:
       return t("Today goes to the topics that come up most, then a short mock. Then rest.");
     case "learn":
       return t("Today goes to the topics that come up most. Then rest.");
+    case "review":
+      return t(
+        "Today is a full review of every topic, in your test's format, your weakest first. Then rest. {work}",
+        { work },
+      );
     case "light":
       return t("Today is a short, light review. Then rest. {work}", { work });
     default:
@@ -46,14 +54,30 @@ function useDayBeforeBody({ dayBefore, work }: { dayBefore: DayBeforePlan; work:
   }
 }
 
+/**
+ * The work behind the day, as it was: the sessions and any mock exams, and "You've prepared for
+ * this" only when the learner did what their plan asked.
+ */
+function useWorkLine(moment: Moment): string {
+  const t = useExtracted();
+
+  const done =
+    moment.mocksTaken > 0
+      ? t(
+          "You did {sessions, plural, =0 {# sessions} one {# session} other {# sessions}} and {mocks, plural, one {# mock exam} other {# mock exams}}.",
+          { mocks: moment.mocksTaken, sessions: moment.sessionsDone },
+        )
+      : t("You did {sessions, plural, =0 {# sessions} one {# session} other {# sessions}}.", {
+          sessions: moment.sessionsDone,
+        });
+
+  return moment.prepared ? `${done} ${t("You've prepared for this.")}` : done;
+}
+
 /** What the moment says: the stage's title and one or two calm lines. */
 function useMomentCopy(moment: Moment): { body: string; title: string } | null {
   const t = useExtracted();
-
-  const work = t(
-    "You did {sessions, plural, one {# session} other {# sessions}} and {mocks, plural, one {# mock exam} other {# mock exams}}. You've prepared for this.",
-    { mocks: moment.mocksTaken, sessions: moment.sessionsDone },
-  );
+  const work = useWorkLine(moment);
 
   const dayBeforeBody = useDayBeforeBody({ dayBefore: moment.dayBefore, work });
 
@@ -102,15 +126,15 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
   return (
     <section
       aria-label={copy.title}
-      className="bg-muted/60 in-data-[mode=fun]:fun-glass flex flex-col gap-4 rounded-3xl p-5"
+      className={cn(SURFACE_CLASS, "flex flex-col gap-4 p-5")}
       data-slot="exam-moment"
     >
       <div className="flex items-start gap-3">
         <LineMarker aria-hidden="true">
-          <Icon className="text-muted-foreground in-data-[mode=fun]:text-fun-accent-cyan size-5" />
+          <Icon className="text-muted-foreground size-5" />
         </LineMarker>
         <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="in-data-[mode=fun]:font-fun-display font-semibold">{copy.title}</h2>
+          <h2 className="font-semibold">{copy.title}</h2>
           {showDay && moment.day && <p className="text-sm font-medium">{dayText(moment.day)}</p>}
           <p className="text-muted-foreground text-sm leading-relaxed">{copy.body}</p>
         </div>

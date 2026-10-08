@@ -5,6 +5,7 @@ import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
 import { getExamDayChecklist, getExamStage } from "../final-stretch/final-stretch-rules";
 import { loadFinalStretchStart } from "../final-stretch/load-final-stretch-start";
+import { loadExamWork } from "./_utils/exam-work";
 import { type ExamMomentView } from "./exam-view-contract";
 
 const CHECKLIST_STAGES = new Set<ExamMomentView["stage"]>(["dayBefore", "examDay"]);
@@ -28,6 +29,7 @@ function pickDay({
  */
 export async function loadExamMoment({
   goal,
+  includesMockExams,
   today,
 }: {
   goal: Pick<
@@ -41,6 +43,8 @@ export async function loadExamMoment({
     | "timezone"
     | "title"
   >;
+  /** The learner's plan includes mock exams (Plus), such as a class test's short mock. */
+  includesMockExams: boolean;
   /** The session's learner-local date, as a UTC-midnight label. */
   today: Date;
 }): Promise<ExamMomentView | null> {
@@ -62,8 +66,8 @@ export async function loadExamMoment({
     return null;
   }
 
-  const [sessionsDone, mocksTaken, result, shortPlan] = await Promise.all([
-    prisma.studySession.count({ where: { goalId: goal.id, startedAt: { not: null } } }),
+  const [work, mocksTaken, result, shortPlan] = await Promise.all([
+    loadExamWork({ goalId: goal.id, today }),
     prisma.mockExam.count({ where: { goalId: goal.id, status: "finished" } }),
     prisma.examResult.findUnique({ select: { id: true }, where: { goalId: goal.id } }),
     loadShortPlanDay({ goal, today }),
@@ -72,11 +76,12 @@ export async function loadExamMoment({
   return {
     checklist: CHECKLIST_STAGES.has(stage) ? getExamDayChecklist(blueprint) : [],
     day: pickDay({ days: calendar.days, today }),
-    dayBefore: getDayBeforePlan({ shortPlan, today }),
+    dayBefore: getDayBeforePlan({ includesMockExams, shortPlan, today }),
     examName: blueprint?.name ?? goal.title,
     mocksTaken,
+    prepared: work.prepared,
     resultReported: result !== null,
-    sessionsDone,
+    sessionsDone: work.sessionsDone,
     stage,
     timeZone: calendar.timeZone,
   };

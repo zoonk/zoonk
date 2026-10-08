@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -8,7 +9,6 @@ import {
   ActivityCanvasLabel,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { ARC_GUTTER, CauseEffectArcs } from "./cause-effect-arcs";
 import { CauseEffectLinkList } from "./cause-effect-link-list";

@@ -1,5 +1,6 @@
 import "server-only";
 import { type Item, prisma } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { interleave } from "@zoonk/utils/interleave";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getSkillRetrievability } from "../../learner/fsrs-scheduler";
@@ -14,6 +15,12 @@ import { QUESTION_ITEM_FORMATS, hasTraps, parseSessionItem } from "./session-ite
 
 /** Practice rotates through the weakest skills; this many questions is plenty for any day. */
 const PRACTICE_POOL = 30;
+
+/**
+ * A question answered this recently (placement, a lesson's check, yesterday evening's practice)
+ * would test what's still in short-term memory, so practice waits a day before asking it again.
+ */
+const RECENTLY_ANSWERED_MS = MS_PER_DAY;
 
 /** Open mistakes considered for today's drill, oldest first. */
 const MISTAKE_POOL = 50;
@@ -87,14 +94,34 @@ function comparePractice({
   return (a.lastAnsweredAt?.getTime() ?? 0) - (b.lastAnsweredAt?.getTime() ?? 0);
 }
 
+/** A focused skill's questions in two turns of a round, so it gets two to every other skill's one. */
+function withFocusTurns<T>({
+  focusSkillIds,
+  items,
+  skillId,
+}: {
+  focusSkillIds: ReadonlySet<string>;
+  items: T[];
+  skillId: string;
+}): T[][] {
+  if (!focusSkillIds.has(skillId)) {
+    return [items];
+  }
+
+  return [items.filter((_, index) => index % 2 === 0), items.filter((_, index) => index % 2 === 1)];
+}
+
 /**
  * Mixed practice for a goal: questions on skills the learner has studied, one skill after another
  * in turn with the weakest first (lowest chance of recall), in the exam's own format when the goal
- * has one. The last questions land on stronger skills, so the block ends with a win.
+ * has one, never one they answered in the last day. The last questions land on stronger skills, so
+ * the block ends with a win.
  */
 export async function loadPracticeItems({
   difficultyBias,
+  everySkill = false,
   examBlueprintId,
+  focusSkillIds = new Set(),
   excludeItemIds,
   field,
   now,
@@ -103,6 +130,16 @@ export async function loadPracticeItems({
 }: {
   /** The plan's "Too easy" or "Too hard" steering. */
   difficultyBias: DifficultyBias;
+  /**
+   * Every skill of the goal, not only the ones studied: a full review asks every topic of the
+   * test, the ones never studied first, as the weakest.
+   */
+  everySkill?: boolean;
+  /**
+   * Skills the learner asked to focus on, on a review day: they open the practice and get two
+   * questions to every other skill's one.
+   */
+  focusSkillIds?: ReadonlySet<string>;
   examBlueprintId: string | null;
   excludeItemIds: ReadonlySet<string>;
   /** The goal's field (work and career goals): its questions come first, other fields' never. */
@@ -115,12 +152,21 @@ export async function loadPracticeItems({
     where: { reps: { gt: 0 }, skillId: { in: [...skillIds] }, userId },
   });
 
-  const weakestFirst = studied
-    .map((row) => ({
-      recall: getSkillRetrievability({ memory: row, now }) ?? 0,
-      skillId: row.skillId,
-    }))
-    .toSorted((a, b) => a.recall - b.recall)
+  const recalls = studied.map((row) => ({
+    recall: getSkillRetrievability({ memory: row, now }) ?? 0,
+    skillId: row.skillId,
+  }));
+
+  const unstudied = everySkill
+    ? skillIds
+        .filter((skillId) => !studied.some((row) => row.skillId === skillId))
+        .map((skillId) => ({ recall: 0, skillId }))
+    : [];
+
+  const isFocused = (skillId: string) => Number(focusSkillIds.has(skillId));
+
+  const weakestFirst = [...unstudied, ...recalls]
+    .toSorted((a, b) => isFocused(b.skillId) - isFocused(a.skillId) || a.recall - b.recall)
     .map((row) => row.skillId);
 
   const items = await prisma.item.findMany({
@@ -134,15 +180,24 @@ export async function loadPracticeItems({
   });
 
   const lastAnswers = await loadLastAnswers({ itemIds: items.map((item) => item.id), userId });
+  const recentSince = now.getTime() - RECENTLY_ANSWERED_MS;
+
+  const isRecent = (itemId: string) => (lastAnswers.get(itemId)?.getTime() ?? 0) > recentSince;
 
   const perSkill = weakestFirst.map((skillId) =>
     items
-      .filter((item) => item.skillId === skillId && !excludeItemIds.has(item.id))
+      .filter(
+        (item) => item.skillId === skillId && !excludeItemIds.has(item.id) && !isRecent(item.id),
+      )
       .map((item) => ({ ...item, lastAnsweredAt: lastAnswers.get(item.id) ?? null }))
       .toSorted((a, b) => comparePractice({ a, b, difficultyBias, examBlueprintId, field })),
   );
 
-  return interleave(perSkill)
+  return interleave(
+    perSkill.flatMap((skillItems, index) =>
+      withFocusTurns({ focusSkillIds, items: skillItems, skillId: weakestFirst[index] ?? "" }),
+    ),
+  )
     .slice(0, PRACTICE_POOL)
     .map((item) => ({ itemId: item.id, skillId: item.skillId }));
 }

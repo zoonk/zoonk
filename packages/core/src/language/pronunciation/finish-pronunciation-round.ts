@@ -4,7 +4,6 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { getLearnerMode } from "../../sessions/_utils/session-ledger";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -101,7 +100,6 @@ export async function finishPronunciationRound({
   });
 
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
-  const mode = await getLearnerMode(userId);
 
   const event = await prisma.$transaction(async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
@@ -140,7 +138,6 @@ export async function finishPronunciationRound({
       incorrectAnswers: incorrect,
       kind: "review",
       lessonKind: "pronunciationReview",
-      mode,
       seconds,
       startedAt: answers[0]?.answeredAt ?? lock.completedAt,
       timeZone,

@@ -77,3 +77,23 @@ export function namesMatch(first: string, second: string): boolean {
 
   return shorter.every((word) => longer.some((other) => isSameWord(word, other)));
 }
+
+/**
+ * How much of the shorter name the longer one shares, from 0 to 1, for names that almost match:
+ * "Processo Legislativo e Regimentos Parlamentares" shares three of its four words with the
+ * notice's "Processo Legislativo e Regimento Interno da Câmara dos Deputados". 1 when `namesMatch`.
+ */
+export function nameOverlap(first: string, second: string): number {
+  const firstWords = toWords(first);
+  const secondWords = toWords(second);
+
+  if (firstWords.length === 0 || secondWords.length === 0) {
+    return 0;
+  }
+
+  const [shorter, longer] =
+    firstWords.length <= secondWords.length ? [firstWords, secondWords] : [secondWords, firstWords];
+
+  const shared = shorter.filter((word) => longer.some((other) => isSameWord(word, other)));
+  return shared.length / shorter.length;
+}

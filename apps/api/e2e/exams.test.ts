@@ -2,12 +2,14 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { examResultResponseSchema, examViewResponseSchema } from "../src/lib/openapi/schemas/exams";
 import {
-  examResultResponseSchema,
-  examViewResponseSchema,
+  anytimeMockResponseSchema,
+  mockOptionsResponseSchema,
+  mockPlanOfferResultSchema,
   mockStepResponseSchema,
   mockViewResponseSchema,
-} from "../src/lib/openapi/schemas/exams";
+} from "../src/lib/openapi/schemas/mocks";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
 import {
@@ -44,6 +46,10 @@ test.describe("Exams API", () => {
       api.get(`/v1/mocks/${id}`),
       api.post(`/v1/mocks/${id}/starts`, { data: {} }),
       api.post(`/v1/mocks/${id}/finishes`, { data: {} }),
+      api.post(`/v1/mocks/${id}/plan-changes`, { data: { offer: "skip", timeZone: "UTC" } }),
+      api.get(`/v1/goals/${id}/mocks`),
+      api.post(`/v1/goals/${id}/mocks`, { data: {} }),
+      api.post(`/v1/goals/${id}/mocks/generations`, { data: {} }),
       api.get(`/v1/essays/${id}`),
     ]);
 
@@ -261,5 +267,151 @@ test.describe("Exams API", () => {
 
     expect(retried.status()).toBe(200);
     await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("takes a mock any time, then skips what it showed the learner knows once they say so", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "anytime-mock" }),
+      createBearerLearner({ baseURL, prefix: "anytime-mock-other" }),
+    ]);
+
+    const { goal } = await createExamGoal(userId);
+    const mocksPath = `/v1/goals/${goal.id}/mocks`;
+    const half = { area: null, day: null, kind: "half" } as const;
+
+    const options = await readBody({
+      response: await api.get(mocksPath),
+      schema: mockOptionsResponseSchema,
+    });
+
+    expect(options).toMatchObject({
+      access: "open",
+      options: [
+        { kind: "full", minutes: 24, questions: 12 },
+        { kind: "half", minutes: 12, questions: MOCK_QUESTIONS },
+      ],
+      running: null,
+    });
+
+    // The bank holds half the exam's questions: the full one needs more written first.
+    const [hidden, full] = await Promise.all([
+      other.api.get(mocksPath),
+      readBody({
+        response: await api.post(mocksPath, {
+          data: { shape: { ...half, kind: "full" }, timeZone: "UTC" },
+        }),
+        schema: anytimeMockResponseSchema,
+      }),
+    ]);
+
+    expect(hidden.status()).toBe(404);
+    expect(full).toStrictEqual({ id: null, status: "needsQuestions" });
+
+    const started = await readBody({
+      response: await api.post(mocksPath, { data: { shape: half, timeZone: "UTC" } }),
+      schema: anytimeMockResponseSchema,
+      status: 201,
+    });
+
+    const path = `/v1/mocks/${started.id}`;
+
+    const running = await readBody({
+      response: await api.get(path),
+      schema: mockViewResponseSchema,
+    });
+
+    expect(running).toMatchObject({
+      purpose: "practice",
+      sessionId: null,
+      shape: half,
+      status: "running",
+    });
+
+    await (running.current?.questions ?? []).reduce(async (previous, question) => {
+      await previous;
+
+      await api.put(`${path}/answers`, {
+        data: {
+          answer: { selectedIndex: 0 },
+          durationMs: 5000,
+          flagged: false,
+          itemId: question.itemId,
+        },
+      });
+    }, Promise.resolve());
+
+    await api.post(`${path}/sections/0/submissions`, { data: { timeZone: "UTC" } });
+
+    const finished = await readBody({
+      response: await api.get(path),
+      schema: mockViewResponseSchema,
+    });
+
+    expect(finished).toMatchObject({
+      adapt: { skip: { lessons: 1, topics: ["Statutes"] } },
+      result: { topics: [{ correct: MOCK_QUESTIONS, name: "Statutes", total: MOCK_QUESTIONS }] },
+      status: "finished",
+    });
+
+    const skipped = await readBody({
+      response: await api.post(`${path}/plan-changes`, {
+        data: { offer: "skip", timeZone: "UTC" },
+      }),
+      schema: mockPlanOfferResultSchema,
+    });
+
+    expect(skipped).toMatchObject({ lessonsSkipped: 1, reason: null, status: "applied" });
+
+    const again = await readBody({
+      response: await api.post(`${path}/plan-changes`, {
+        data: { offer: "skip", timeZone: "UTC" },
+      }),
+      schema: mockPlanOfferResultSchema,
+    });
+
+    expect(again).toStrictEqual({
+      changeId: null,
+      lessonsSkipped: 0,
+      reason: null,
+      status: "unchanged",
+    });
+
+    await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("every mock exam comes with Plus, the diagnostic one in onboarding included", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "anytime-mock-free" });
+    const { goal } = await createExamGoal(userId);
+
+    await prisma.subscription.deleteMany({ where: { referenceId: userId } });
+
+    const shape = { area: null, day: null, kind: "half" } as const;
+    const placement = { length: "short", purpose: "placement" } as const;
+
+    const [options, start, writing, placementStart] = await Promise.all([
+      readBody({
+        response: await api.get(`/v1/goals/${goal.id}/mocks`),
+        schema: mockOptionsResponseSchema,
+      }),
+      api.post(`/v1/goals/${goal.id}/mocks`, { data: { shape, timeZone: "UTC" } }),
+      api.post(`/v1/goals/${goal.id}/mocks/generations`, { data: { shape } }),
+      api.post(`/v1/goals/${goal.id}/mocks`, { data: { ...placement, timeZone: "UTC" } }),
+    ]);
+
+    // The free plan still sees the diagnostic mock's lengths, with what it takes.
+    expect(options).toMatchObject({
+      access: "plusRequired",
+      placement: { mock: null, options: [{ length: "short" }, { length: "long" }] },
+    });
+
+    expect([start.status(), writing.status(), placementStart.status()]).toStrictEqual([
+      402, 402, 402,
+    ]);
+
+    await expect(placementStart.json()).resolves.toMatchObject({
+      error: { code: "PLUS_REQUIRED" },
+    });
+
+    await api.dispose();
   });
 });

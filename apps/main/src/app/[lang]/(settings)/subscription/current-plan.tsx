@@ -1,15 +1,9 @@
 import { PlusBenefits } from "@/components/pricing/plus-benefits";
 import { type Subscription } from "@zoonk/db";
+import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { Badge } from "@zoonk/ui/components/badge";
-import {
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
 import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
-import { SettingsPage, SettingsPageTitle } from "../_components/settings-page";
 import { CancelPlusButton } from "./cancel-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
 
@@ -48,34 +42,34 @@ export async function CurrentPlan({ subscription }: { subscription: Subscription
   const isEnding = Boolean(subscription.cancelAt);
 
   return (
-    <SettingsPage>
-      <ContainerHeader>
-        <ContainerHeaderGroup>
+    <Page>
+      <PageHeader>
+        <PageHeaderContent>
           <div className="flex flex-wrap items-center gap-2">
-            <SettingsPageTitle>{t("Plus")}</SettingsPageTitle>
+            <PageTitle>{t("Plus")}</PageTitle>
             <Badge variant={isEnding ? "secondary" : "success"}>
               {isEnding ? t("Subscription ending") : t("Active")}
             </Badge>
           </div>
 
-          {dateLine && <ContainerDescription>{dateLine}</ContainerDescription>}
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+          {dateLine && <PageSubtitle>{dateLine}</PageSubtitle>}
+        </PageHeaderContent>
+      </PageHeader>
 
-      <ContainerBody className="gap-8">
-        <section aria-labelledby={INCLUDED_ID} className="flex flex-col gap-3">
-          <h2 className="text-base font-semibold" id={INCLUDED_ID}>
-            {t("What's included")}
-          </h2>
-          <PlusBenefits />
-        </section>
+      <section aria-labelledby={INCLUDED_ID} className="flex flex-col gap-3 px-1">
+        <h2 className="text-base font-semibold" id={INCLUDED_ID}>
+          {t("What's included")}
+        </h2>
+        <PlusBenefits />
+      </section>
 
+      <div className="px-1 empty:hidden">
         {isWebManagedSubscriptionProvider(subscription.provider) ? (
           !isEnding && <CancelPlusButton />
         ) : (
           <ManagedSubscription provider={subscription.provider} />
         )}
-      </ContainerBody>
-    </SettingsPage>
+      </div>
+    </Page>
   );
 }

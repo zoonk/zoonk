@@ -3,10 +3,9 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
-import { SectionLabel } from "../_components/section-label";
-import { ContentThumbsRow } from "../feedback/content-thumbs";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
+import { useDifficultySentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 
 type Steer = {
@@ -52,26 +51,34 @@ function useSteers(): Steer[] {
 }
 
 /**
- * Steering in one tap: "Too easy", "Too hard", "More practice" and "More explanation". Each
- * re-plans from today and shows up in the changes with an undo.
+ * Steering in one tap: "Too easy", "Too hard", "More practice" and "More explanation", once the
+ * learner studied a lesson of the plan. Each re-plans from today; tapping an active one again
+ * goes back to the default. A difficulty that isn't the default says what it does.
  */
 export function PlanSteering() {
   const t = useExtracted();
   const steers = useSteers();
-  const { change, failed, isPending } = usePlanChange();
   const { plan } = usePlanScreen();
+  const { change, failed, isPending } = usePlanChange();
+  const difficultySentence = useDifficultySentence();
+  const { difficultyBias } = plan.steering;
+
+  // Nothing studied yet means nothing to call too easy or too hard.
+  if (plan.steering.lessonsStudied === 0) {
+    return null;
+  }
 
   return (
-    <section aria-labelledby="plan-steering-title" className="flex flex-col gap-2">
-      <SectionLabel id="plan-steering-title">{t("How is it going?")}</SectionLabel>
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-2 text-sm font-medium">{t("How is it going?")}</legend>
       <div className="flex flex-wrap gap-2">
         {steers.map((steer) => (
           <Toggle
+            className="aria-pressed:bg-foreground aria-pressed:text-background h-11 px-4"
             disabled={isPending}
             focusableWhenDisabled
             key={steer.label}
             onPressedChange={() => change([steer.operation(steer.active)])}
-            className="aria-pressed:bg-foreground aria-pressed:text-background h-11 px-4"
             pressed={steer.active}
             variant="outline"
           >
@@ -79,8 +86,14 @@ export function PlanSteering() {
           </Toggle>
         ))}
       </div>
+
+      {difficultyBias !== "standard" && (
+        <p className="text-muted-foreground text-sm" role="status">
+          {difficultySentence(difficultyBias)}
+        </p>
+      )}
+
       {failed && <PlanFailedMessage />}
-      <ContentThumbsRow about="plan" target={{ contentId: plan.planId, contentKind: "plan" }} />
-    </section>
+    </fieldset>
   );
 }

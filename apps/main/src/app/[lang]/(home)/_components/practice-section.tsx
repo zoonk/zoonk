@@ -20,9 +20,9 @@ import { HOW_IT_WORKS_ID } from "./home-ids";
 import { BusinessPreview } from "./previews/business-preview";
 import { ClassPreview } from "./previews/class-preview";
 import { ExamPreview } from "./previews/exam-preview";
+import { EXAMPLE_CURRENCY } from "./previews/example-currency";
 import { JobPreview } from "./previews/job-preview";
 import { LanguagePreview } from "./previews/language-preview";
-import { EXAMPLE_CURRENCY } from "./previews/lesson-prices";
 
 function PracticeTile({
   children,
@@ -59,8 +59,9 @@ function PracticeTile({
 
 /**
  * Practice changes with the goal: an exam gets its format, a job gets real
- * problems, a move gets its conversations, a class gets depth on demand and a
- * business gets numbers to play with. Each tile shows the product itself.
+ * problems, a move gets its conversations, a class gets a buddy who explains it
+ * another way and a business gets numbers to play with. Each tile shows the
+ * product itself.
  */
 export async function PracticeSection({ locale }: { locale: SupportedLocale }) {
   const t = await getExtracted();
@@ -142,7 +143,9 @@ export async function PracticeSection({ locale }: { locale: SupportedLocale }) {
         </PracticeTile>
 
         <PracticeTile
-          description={t("Stuck on a topic? Tap Simpler. Curious? Go deeper. On any screen.")}
+          description={t(
+            "Stuck on a topic? Your buddy explains it another way. Curious? Ask it to go further.",
+          )}
           icon={
             <span
               className={cn(

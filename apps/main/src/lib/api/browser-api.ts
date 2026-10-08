@@ -52,3 +52,17 @@ export async function postFromBrowser({
 
   return response;
 }
+
+/**
+ * Reads from the public API in the browser as the signed-in learner or guest, for screens that
+ * ask again every few seconds: a Server Action would run in a transition, which holds the screen's
+ * other actions as pending while it waits. Null when the API couldn't be reached.
+ */
+export async function getFromBrowser(path: `/v1/${string}`): Promise<Response | null> {
+  const { data: response } = await safeAsync(async () => {
+    const headers = await getWorkflowAuthHeaders();
+    return fetch(`${API_URL}${path}`, { headers });
+  });
+
+  return response;
+}

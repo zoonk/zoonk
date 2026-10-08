@@ -2,9 +2,9 @@ import "server-only";
 import { type IssuedSignedToken, issueSignedToken } from "@vercel/blob";
 import { getPrivateBlobStore } from "@zoonk/utils/private-blob-store";
 import { getSourceUploadFolder, isFileInFolder } from "@zoonk/utils/user-blobs";
-import { type AllowanceItem } from "../../entitlements/contract";
-import { getAllowance } from "../../entitlements/get-allowance";
-import { getSession } from "../../users/get-session";
+import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { findReachedUsageLimit } from "../../entitlements/_utils/reached-usage-limit";
+import { type AllowanceLimit } from "../../entitlements/contract";
 import { MAX_SOURCE_UPLOAD_BYTES, SOURCE_UPLOAD_CONTENT_TYPES } from "./source-contract";
 
 /** Long enough to upload a 20 MB file on a slow phone connection, short enough to be useless if leaked. */
@@ -20,13 +20,8 @@ const UPLOAD_URL_OPTIONS = { addRandomSuffix: true };
 export type SourceUploadToken =
   | { status: "unauthorized" }
   | { status: "invalidPathname" }
-  | { limit: number; status: "limitReached" }
+  | { limit: AllowanceLimit; status: "limitReached" }
   | { status: "ready"; token: IssuedSignedToken; urlOptions: typeof UPLOAD_URL_OPTIONS };
-
-/** The cap the learner hit: today's uploads for accounts, none at all for guests. */
-function getHardLimit(item: AllowanceItem): number {
-  return item.dailyLimit ?? item.monthlyLimit ?? item.totalLimit ?? 0;
-}
 
 /** A file name inside the learner's own folder, without climbing out of it. */
 export function isOwnUploadPathname({
@@ -51,23 +46,22 @@ export async function createSourceUploadToken({
 }: {
   pathname: string;
 }): Promise<SourceUploadToken> {
-  const session = await getSession();
+  const viewer = await getEntitlementViewer();
 
-  if (!session) {
+  if (!viewer) {
     return { status: "unauthorized" };
   }
 
-  const userId = session.user.id;
+  const { tier, userId } = viewer;
 
   if (!isOwnUploadPathname({ pathname, userId })) {
     return { status: "invalidPathname" };
   }
 
-  const allowance = await getAllowance();
-  const uploads = allowance?.items.find((item) => item.kind === "upload");
+  const limit = await findReachedUsageLimit({ kind: "upload", tier, userId });
 
-  if (uploads?.remaining === 0) {
-    return { limit: getHardLimit(uploads), status: "limitReached" };
+  if (limit) {
+    return { limit, status: "limitReached" };
   }
 
   const token = await issueSignedToken({

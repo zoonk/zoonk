@@ -10,10 +10,19 @@ const RECENT_CHANGE_DAYS = 14;
 const MAX_CHANGES = 10;
 
 /**
- * The app says changes from these sources itself, from their kind and operations (a rebalance
- * after a session is "preparation"); other sources wrote a sentence for the learner.
+ * The app says changes from these sources itself, from their kind, operations and effect (a
+ * rebalance after a session is "preparation"); other sources wrote a sentence for the learner. A
+ * change read from the learner's words ("planEdit", the buddy's or the plan page's) is said from
+ * what it does, never from the model's summary of what they asked, which can claim more than the
+ * change does ("Sundays stay free" while the plan keeps its Sunday mocks).
  */
-const LEARNER_FACING_SOURCES = new Set(["learner", OWN_LEVEL_SOURCE, "preparation", "system"]);
+const LEARNER_FACING_SOURCES = new Set([
+  "learner",
+  OWN_LEVEL_SOURCE,
+  "planEdit",
+  "preparation",
+  "system",
+]);
 
 /**
  * Edits and test-outs can be undone while the plan is exactly as they left it. Any later change
@@ -45,17 +54,22 @@ export function toPlanChangeView({
   const payload = parsePlanChangePayload(change.payload);
 
   return {
+    behind: payload.behind,
     canUndo: canUndoChange({ change, planVersion }),
     createdAt: change.createdAt.toISOString(),
     days: payload.days,
     effect: payload.effect,
     id: change.id,
     kind: change.kind,
-    lessonsSkipped: payload.lessons ?? payload.planItemIds.length,
+    lessonsSkipped: payload.planItemIds.length,
+    officialDate: payload.officialDate,
     operations: payload.operations,
-    reason: LEARNER_FACING_SOURCES.has(payload.source) ? null : change.reason,
+    // A change without a sentence of its own (an exam notice's, say) is said by the app.
+    reason: LEARNER_FACING_SOURCES.has(payload.source) || !change.reason ? null : change.reason,
+    seen: payload.seenAt !== null,
     source: payload.source,
     status: change.status,
+    todaySession: payload.todaySession,
   };
 }
 

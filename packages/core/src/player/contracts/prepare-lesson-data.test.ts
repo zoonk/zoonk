@@ -53,14 +53,7 @@ function makeSentence(overrides: Partial<SentenceInput> = {}): SentenceInput {
 }
 
 function makeDistractorWord(overrides: Partial<DistractorWordInput> = {}): DistractorWordInput {
-  return {
-    audioUrl: null,
-    id: "1",
-    pronunciation: null,
-    romanization: null,
-    word: "word",
-    ...overrides,
-  };
+  return { audioUrl: null, id: "1", romanization: null, word: "word", ...overrides };
 }
 
 function makeStep(overrides: Partial<StepInput> = {}): StepInput {
@@ -76,20 +69,13 @@ function makeStep(overrides: Partial<StepInput> = {}): StepInput {
 }
 
 function wordOption(word: string, metadata: Partial<WordBankOption> = {}): WordBankOption {
-  return {
-    audioUrl: null,
-    pronunciation: null,
-    romanization: null,
-    translation: null,
-    word,
-    ...metadata,
-  };
+  return { audioUrl: null, romanization: null, translation: null, word, ...metadata };
 }
 
 function translationOption(
   option: Pick<TranslationOption, "id" | "word"> & Partial<TranslationOption>,
 ): TranslationOption {
-  return { audioUrl: null, pronunciation: null, romanization: null, ...option };
+  return { audioUrl: null, romanization: null, ...option };
 }
 
 function serialize({ steps, ...resources }: Partial<Resources> & { steps: StepInput[] }) {
@@ -208,7 +194,8 @@ describe(serializeExerciseSteps, () => {
 
     expect(result[0]?.fillBlankOptions).toStrictEqual([
       wordOption("sky"),
-      wordOption("ground", { romanization: "ground-rom" }),
+      // A word in Latin letters shows no romanization on its tile.
+      wordOption("ground"),
     ]);
 
     expect(result[1]?.matchColumnsRightItems).toStrictEqual(["1", "2"]);
@@ -257,35 +244,15 @@ describe(serializeExerciseSteps, () => {
         word: "boa noite",
       }),
       [
-        makeDistractorWord({
-          audioUrl: "/audio/boa-tarde.mp3",
-          id: "101",
-          pronunciation: "boa tarde",
-          word: "boa tarde",
-        }),
-        makeDistractorWord({
-          audioUrl: "/audio/bom-dia.mp3",
-          id: "102",
-          pronunciation: "bom dia",
-          word: "bom dia",
-        }),
+        makeDistractorWord({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "boa tarde" }),
+        makeDistractorWord({ audioUrl: "/audio/bom-dia.mp3", id: "102", word: "bom dia" }),
       ],
     );
 
     expect(result[0]?.translationOptions).toStrictEqual([
-      translationOption({ id: "10", pronunciation: "boa noite", word: "Boa noite" }),
-      translationOption({
-        audioUrl: "/audio/boa-tarde.mp3",
-        id: "101",
-        pronunciation: "boa tarde",
-        word: "Boa tarde",
-      }),
-      translationOption({
-        audioUrl: "/audio/bom-dia.mp3",
-        id: "102",
-        pronunciation: "bom dia",
-        word: "Bom dia",
-      }),
+      translationOption({ id: "10", word: "Boa noite" }),
+      translationOption({ audioUrl: "/audio/boa-tarde.mp3", id: "101", word: "Boa tarde" }),
+      translationOption({ audioUrl: "/audio/bom-dia.mp3", id: "102", word: "Bom dia" }),
       translationOption({ id: "distractor:ate logo", word: "Até logo" }),
     ]);
   });
@@ -390,7 +357,6 @@ describe(serializeExerciseSteps, () => {
         makeDistractorWord({
           audioUrl: "/audio/abend.mp3",
           id: "201",
-          pronunciation: "abend",
           romanization: "abend",
           word: "Abend",
         }),
@@ -405,11 +371,7 @@ describe(serializeExerciseSteps, () => {
       wordOption("Guten"),
       wordOption("Morgen,"),
       wordOption("Lara."),
-      wordOption("abend", {
-        audioUrl: "/audio/abend.mp3",
-        pronunciation: "abend",
-        romanization: "abend",
-      }),
+      wordOption("abend", { audioUrl: "/audio/abend.mp3" }),
       wordOption("fenster"),
     ]);
 
@@ -446,8 +408,8 @@ describe(serializeExerciseSteps, () => {
     });
 
     expect(result[0]?.sentenceWordOptions).toStrictEqual([
-      wordOption("Guten", { romanization: "guten" }),
-      wordOption("Morgen", { romanization: "morgen" }),
+      wordOption("Guten"),
+      wordOption("Morgen"),
     ]);
   });
 
@@ -481,11 +443,7 @@ describe(serializeExerciseSteps, () => {
     });
 
     expect(result[0]?.sentenceWordOptions).toStrictEqual([
-      wordOption("gato", {
-        audioUrl: "/audio/sentence-gato.mp3",
-        romanization: "ga-to",
-        translation: "cat (lesson)",
-      }),
+      wordOption("gato", { audioUrl: "/audio/sentence-gato.mp3", translation: "cat (lesson)" }),
       wordOption("bonito"),
     ]);
   });

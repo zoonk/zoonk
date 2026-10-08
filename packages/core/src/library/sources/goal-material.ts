@@ -1,8 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Course, prisma } from "@zoonk/db";
 import {
   type MaterialPage,
   type MaterialSource,
+  formatMaterialOverview,
   selectMaterialPages,
   toMaterialPages,
 } from "./material-pages";
@@ -44,6 +45,35 @@ async function findMaterial(goalIds: readonly string[]): Promise<MaterialSource[
  */
 export function loadGoalMaterial(goalId: string): Promise<MaterialSource[]> {
   return findMaterial([goalId]);
+}
+
+/** A course outline reads a short handout whole, or the index of a long deck. */
+const MAX_COURSE_MATERIAL = 12_000;
+
+/**
+ * The material a private course is built from, as its outline reads it: the uploads of its owner's
+ * goals whose own course it is, whole when short (a teacher's summary), else one line per page.
+ * Null for shared courses and courses without material, whose outlines cover their whole band.
+ *
+ * This is a workflow bridge: the course comes from the outline run that holds its claim.
+ */
+export async function loadCourseMaterial(
+  course: Pick<Course, "id" | "userId" | "visibility">,
+): Promise<string | null> {
+  if (!course.userId || course.visibility !== "private") {
+    return null;
+  }
+
+  const goals = await prisma.goal.findMany({
+    select: { id: true },
+    where: { primaryCourseId: course.id, userId: course.userId },
+  });
+
+  const pages = toMaterialPages(await findMaterial(goals.map((goal) => goal.id)));
+
+  return pages.length > 0
+    ? formatMaterialOverview({ maxCharacters: MAX_COURSE_MATERIAL, pages })
+    : null;
 }
 
 /**

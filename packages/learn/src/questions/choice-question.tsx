@@ -7,7 +7,7 @@ import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ItemLine, ItemText } from "./item-text";
+import { ItemLine, ItemSupport } from "./item-text";
 import { useTrueFalseLabels } from "./use-true-false-labels";
 
 /** A bank question as learners see it: never which answer is right. */
@@ -108,9 +108,12 @@ export function ChoiceQuestion({
 
   return (
     <div className="flex flex-col gap-4">
-      {question.context && (
-        <ItemText className="text-muted-foreground text-sm" text={question.context} />
-      )}
+      <ItemSupport
+        className="text-muted-foreground text-sm"
+        context={question.context}
+        image={question.image}
+        visual={question.visual}
+      />
       <h2 className="text-lg font-medium">
         <ItemLine text={question.question} />
       </h2>
@@ -126,9 +129,7 @@ export function ChoiceQuestion({
                 className={cn(
                   // The number and mark sit on the label's first line when it wraps.
                   "border-border focus-visible:ring-ring/50 flex min-h-12 w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left outline-none focus-visible:ring-[3px]",
-                  "aria-pressed:border-foreground aria-pressed:bg-muted in-data-[mode=fun]:fun-paper",
-                  // Paper keeps its own surface when picked, or its dark text sits on the night sky.
-                  "in-data-[mode=fun]:aria-pressed:bg-(--fun-paper)",
+                  "aria-pressed:border-foreground aria-pressed:bg-muted",
                   result === "right" && "border-success bg-success/10",
                   result === "wrong" && "border-destructive bg-destructive/10",
                 )}

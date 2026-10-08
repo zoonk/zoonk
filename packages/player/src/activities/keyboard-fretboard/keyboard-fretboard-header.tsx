@@ -31,9 +31,7 @@ export function KeyboardFretboardHeader({
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <p className="in-data-[mode=fun]:font-fun-display text-lg leading-tight font-semibold">
-          {title}
-        </p>
+        <p className="text-lg leading-tight font-semibold">{title}</p>
 
         <p aria-live="polite" className="text-muted-foreground text-sm">
           <span aria-hidden="true">

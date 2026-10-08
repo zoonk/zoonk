@@ -52,6 +52,7 @@ export function toMatchQuestion(item: MatchItem) {
   return {
     context: null,
     format: item.format,
+    image: null,
     itemId: item.id,
     left: pairs.map((pair) => pair.left),
     options: null,
@@ -59,6 +60,7 @@ export function toMatchQuestion(item: MatchItem) {
     right: getRightOrder(item).map((index) => pairs[index]?.right ?? ""),
     skillId: item.skillId,
     unit: null,
+    visual: null,
   };
 }
 

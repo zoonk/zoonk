@@ -1,5 +1,6 @@
 import { CEFR_LEVELS, MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { z } from "zod";
+import { answerDurationSchema } from "../../learner/contract";
 import { LANGUAGE_SKILLS } from "../levels/skill-level-rules";
 
 const OPTIONS = 4;
@@ -37,12 +38,16 @@ const levelTestAnswerSchema = z.object({
     .min(0)
     .max(OPTIONS - 1)
     .nullable(),
+  /** How long it took, for study time; 0 on answers kept before durations were. */
+  durationMs: z.int().min(0).default(0),
   id: z.string(),
 });
 
 /** What the goal keeps while the learner takes the test. */
 export const levelTestProgressSchema = z.object({
   answers: z.array(levelTestAnswerSchema).default([]),
+  /** The answers already counted toward the learner's study time, when the test ended. */
+  counted: z.int().min(0).default(0),
   speaking: z
     .object({ level: z.enum(CEFR_LEVELS), score: z.number().min(0).max(1) })
     .nullable()
@@ -59,6 +64,12 @@ export const levelTestAnswerInputSchema = z
       .max(OPTIONS - 1)
       .nullable()
       .meta({ description: 'The option chosen, or null for "I don\'t know"' }),
+    durationMs: answerDurationSchema
+      .optional()
+      .meta({
+        description:
+          "Milliseconds from showing the question to the answer, which count toward the learner's study time; anything over an hour counts as an hour",
+      }),
     questionId: z.string().min(1),
   })
   .strict()
@@ -114,7 +125,7 @@ export const languageLevelTestViewSchema = z
         .array(levelResultSchema)
         .meta({
           description:
-            "The levels so far. Speaking has one only after the sentence out loud; writing, which the test can't ask, follows reading and speaking",
+            "The levels so far. Speaking has one only after the sentence out loud; writing, which the test can't ask, has none until lessons' typed answers give it one",
         }),
       next: z.discriminatedUnion("kind", [
         z.object({ kind: z.literal("question"), question: questionViewSchema }),

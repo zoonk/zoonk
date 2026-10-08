@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { reportSubscriptionChange } from "@zoonk/auth/subscription-events";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { trackServerEvent } from "./server";
@@ -10,9 +9,8 @@ import { registerSubscriptionAnalytics } from "./subscription-events";
 vi.mock("./server", () => ({ trackServerEvent: vi.fn() }));
 
 describe(registerSubscriptionAnalytics, () => {
-  it('sends "Subscription Conversion" with the learner\'s mode when Stripe confirms a checkout', async () => {
+  it('sends "Subscription Conversion" with the learner\'s shared properties when Stripe confirms a checkout', async () => {
     const user = await userFixture();
-    await learningProfileFixture({ experienceMode: "fun", userId: user.id });
     registerSubscriptionAnalytics();
 
     await reportSubscriptionChange({ change: "started", plan: "plus", referenceId: user.id });
@@ -22,7 +20,7 @@ describe(registerSubscriptionAnalytics, () => {
         distinctId: user.id,
         name: "Subscription Conversion",
         properties: { plan: "plus" },
-        shared: expect.objectContaining({ mode: "fun" }),
+        shared: expect.objectContaining({ is_guest: false }),
       }),
     );
   });

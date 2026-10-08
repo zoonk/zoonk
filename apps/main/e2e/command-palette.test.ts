@@ -9,6 +9,7 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { normalizeString } from "@zoonk/utils/string";
+import { openPaletteWithKeyboard } from "./command-palette";
 import { type Page, expect, test } from "./fixtures";
 
 const SEARCH_CONTROL_NAME = /search|buscar|pesquisar/iu;
@@ -84,18 +85,11 @@ async function createLocalizedSearchCatalog() {
 }
 
 /**
- * Opens the command palette through the real navbar trigger so tests interact
- * with the same hydrated chrome learners use.
+ * Opens the palette with Cmd/Ctrl+K, its shortcut everywhere; the account menu's "Search" opens
+ * the same palette (`navbar.test.ts`).
  */
 async function openCommandPalette(page: Page) {
-  const searchButton = page
-    .getByRole("navigation")
-    .getByRole("button", { name: SEARCH_CONTROL_NAME });
-
-  await expect(async () => {
-    await searchButton.click();
-    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 1000 });
-  }).toPass();
+  await openPaletteWithKeyboard(page, SEARCH_CONTROL_NAME);
 }
 
 /**
@@ -178,12 +172,12 @@ test.describe("Command Palette - Unauthenticated", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/courses");
 
-    await expect(
-      page.getByRole("navigation").getByRole("button", { name: /search/iu }),
-    ).toBeVisible();
+    // Search has no button in the bar: the account menu and the shortcut open it.
+    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
+    await expect(page.getByRole("banner").getByRole("button", { name: /search/iu })).toHaveCount(0);
   });
 
-  test("opens from the search button and Ctrl+K / Cmd+K, and closes on Escape, the shortcut and outside clicks", async ({
+  test("opens from Ctrl+K / Cmd+K, and closes on Escape, the shortcut and outside clicks", async ({
     page,
   }) => {
     const dialog = page.getByRole("dialog");
@@ -220,7 +214,7 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(pages.getByRole("option")).toHaveText([
       /home page/iu,
       /^courses$/iu,
-      /start a new course/iu,
+      /^start a goal$/iu,
     ]);
 
     await expect(dialog.getByText("My account")).toBeVisible();
@@ -228,14 +222,13 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(dialog.getByText(/^language$/iu)).toBeVisible();
 
     // Should NOT show authenticated-only options
-    await expect(dialog.getByText(/^my courses$/iu)).not.toBeVisible();
-    await expect(dialog.getByText(/manage subscription/iu)).not.toBeVisible();
+    await expect(dialog.getByText(/^subscription$/iu)).not.toBeVisible();
+    await expect(dialog.getByText(/^profile$/iu)).not.toBeVisible();
 
-    await expect(dialog.getByText("Help")).toBeVisible();
-    await expect(dialog.getByText(/feedback & support/iu)).toBeVisible();
+    await expect(dialog.getByRole("option", { exact: true, name: "Help" })).toBeVisible();
   });
 
-  test("selecting Courses or Start a new course opens that page", async ({ page }) => {
+  test("selecting Courses or Start a goal opens that page", async ({ page }) => {
     await openCommandPalette(page);
 
     await page
@@ -250,7 +243,7 @@ test.describe("Command Palette - Unauthenticated", () => {
 
     await page
       .getByRole("dialog")
-      .getByText(/start a new course/iu)
+      .getByText(/^start a goal$/iu)
       .click();
 
     await expect(page).toHaveURL(/\/start$/u);
@@ -259,27 +252,27 @@ test.describe("Command Palette - Unauthenticated", () => {
 });
 
 test.describe("Command Palette - Authenticated", () => {
-  test("My account lists a learner's options without Login, and opens My courses and the subscription", async ({
+  test("My account lists a learner's options without Login, and opens the language and the subscription", async ({
     userWithoutProgress: page,
   }) => {
     await page.goto("/courses");
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByText(/^my courses$/iu)).toBeVisible();
-    await expect(dialog.getByText(/manage subscription/iu)).toBeVisible();
-    await expect(dialog.getByText(/update language/iu)).toBeVisible();
-    await expect(dialog.getByText(/update profile/iu)).toBeVisible();
+    await expect(dialog.getByText(/^my courses$/iu)).toHaveCount(0);
+    await expect(dialog.getByText(/^subscription$/iu)).toBeVisible();
+    await expect(dialog.getByText(/^profile$/iu)).toBeVisible();
     await expect(dialog.getByText(/^logout$/iu)).toBeVisible();
     await expect(dialog.getByText(/^login$/iu)).not.toBeVisible();
 
-    await dialog.getByText(/^my courses$/iu).click();
+    await dialog.getByText(/^language$/iu).click();
 
-    // Verify user sees my courses page
-    await expect(page.getByRole("heading", { name: /my courses/iu })).toBeVisible();
+    // The language lives in Appearance.
+    await expect(page.getByRole("combobox", { name: "App language" })).toBeVisible();
 
+    await page.goto("/courses");
     await openCommandPalette(page);
-    await dialog.getByText(/manage subscription/iu).click();
+    await dialog.getByText(/^subscription$/iu).click();
 
     // Verify user sees subscription page
     await expect(
@@ -466,10 +459,10 @@ test.describe("Command Palette - Course Search", () => {
 
     await expect(dialog.getByText(/no results found/iu)).toBeVisible();
 
-    const createCourseLink = dialog.getByRole("link", { name: `Create a course about ${prompt}` });
+    const startGoalLink = dialog.getByRole("link", { name: `Start a goal: ${prompt}` });
 
-    await expect(createCourseLink).toBeVisible();
-    await createCourseLink.click();
+    await expect(startGoalLink).toBeVisible();
+    await startGoalLink.click();
 
     await expect(page).toHaveURL(`/start?goal=${encodeURIComponent(prompt)}`);
     await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue(prompt);

@@ -40,6 +40,7 @@ export const BASE_LESSONS = {
             "O núcleo atrai o elétron. Sem valer ponto: por que ele não termina espremido no núcleo?",
           reveal:
             "O núcleo atrai o elétron, mas espremê-lo num espaço minúsculo exige energia. A atração não decide tudo sozinha.",
+          visual: null,
         },
         {
           exampleLineIdea: "a imagem de um elétron desenhado como bolinha em uma aula ou vídeo",
@@ -51,6 +52,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "Imagine procurar o elétron ao redor do núcleo. Em vez de uma bolinha seguindo uma trilha, você encontra uma região onde ele pode aparecer. Essa região se chama **nuvem eletrônica**. Ela não é uma trilha nem uma nuvem de matéria comum.",
           title: "Não é uma órbita",
+          visual: null,
         },
         {
           exampleLineIdea: null,
@@ -62,6 +64,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "O núcleo atrai o elétron para perto. Mas concentrar sua nuvem num espaço minúsculo exige mais energia. Pense em tentar confinar algo que resiste a ficar espremido: apertar tem um custo. Isso é só uma comparação; não existe uma mola dentro do átomo.",
           title: "Apertar exige energia",
+          visual: null,
         },
         {
           context: "O núcleo atrai o elétron para perto.",
@@ -88,6 +91,7 @@ export const BASE_LESSONS = {
             },
           ],
           question: "Por que essa atração não basta para deixá-lo espremido no núcleo?",
+          visual: null,
         },
         {
           exampleLineIdea: "os átomos que formam a tela de um celular",
@@ -99,6 +103,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "O arranjo mais estável leva em conta duas coisas: o núcleo atrai o elétron, e confiná-lo demais custa energia. Por isso, mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo. O elétron não fica espremido num ponto.",
           title: "O arranjo mais estável",
+          visual: null,
         },
         {
           context: "Alguém diz: «O elétron não cai porque o núcleo o empurra para longe».",
@@ -125,6 +130,7 @@ export const BASE_LESSONS = {
             },
           ],
           question: "Qual é o erro nessa frase?",
+          visual: null,
         },
         {
           acceptedAnswers: [],
@@ -141,6 +147,7 @@ export const BASE_LESSONS = {
             "Como você explicaria a essa pessoa por que os elétrons não ficam espremidos nos núcleos?",
           sampleAnswer:
             "O núcleo atrai o elétron, mas ele não é uma bolinha em órbita: ocupa uma nuvem. Espremer essa nuvem no núcleo exige energia. Por isso, no arranjo mais estável, ela ocupa uma região ao redor dele.",
+          visual: null,
         },
       ],
       summary: [
@@ -171,6 +178,7 @@ export const BASE_LESSONS = {
             "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
           reveal:
             "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+          visual: null,
         },
         {
           context:
@@ -205,6 +213,7 @@ export const BASE_LESSONS = {
           ],
           question:
             "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+          visual: null,
         },
         {
           exampleLineIdea:
@@ -217,6 +226,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "Você acabou de comparar duas mudanças separadas. Para o mesmo pedido, mais trabalhadores significam menos tempo: é uma relação **inversa**. Com a mesma equipe, mais etiquetas significam mais tempo: é uma relação **direta**. Diga sempre o que fica fixo.",
           title: "O que fica fixo?",
+          visual: null,
         },
         {
           exampleLineIdea:
@@ -225,6 +235,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
           title: "Uma mudança por vez",
+          visual: null,
         },
         {
           image: null,
@@ -241,6 +252,7 @@ export const BASE_LESSONS = {
             { math: "6\\times\\frac{4}{8}=3", text: "Multiplique o prazo inicial por essa razão." },
           ],
           title: "Mais gente, menos dias",
+          visual: null,
         },
         {
           context:
@@ -295,6 +307,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
           title: "Duas mudanças juntas",
+          visual: null,
         },
         {
           image: null,
@@ -318,6 +331,7 @@ export const BASE_LESSONS = {
             },
           ],
           title: "Pedido maior, mais impressoras",
+          visual: null,
         },
         {
           context:
@@ -445,6 +459,7 @@ export const BASE_LESSONS = {
           question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
           reveal:
             "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+          visual: null,
         },
         {
           exampleLineIdea: "A cold morning where the learner lives.",
@@ -455,6 +470,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
           title: "Up is up, even below zero",
+          visual: null,
         },
         {
           image: null,
@@ -466,6 +482,7 @@ export const BASE_LESSONS = {
             { math: "0 + 2 = 2", text: "Two degrees of the rise are left, so keep going up." },
           ],
           title: "From −3 °C, up 5 degrees",
+          visual: null,
         },
         {
           context: null,
@@ -508,6 +525,7 @@ export const BASE_LESSONS = {
           kind: "explanation",
           text: "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
           title: "Zero is a stop, not a wall",
+          visual: null,
         },
         {
           content:
@@ -522,6 +540,7 @@ export const BASE_LESSONS = {
           kind: "typedAnswer",
           question: "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
           sampleAnswer: "Three degrees get you to zero, and the other two take you to 2 °C.",
+          visual: null,
         },
         {
           context:
@@ -546,6 +565,7 @@ export const BASE_LESSONS = {
             },
           ],
           question: "What will the thermometer show?",
+          visual: null,
         },
       ],
       summary: [

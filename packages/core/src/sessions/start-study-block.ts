@@ -4,7 +4,7 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getDailyTimeLimitStatus } from "../minors/get-daily-time-limit";
 import { captureSessionSnapshot } from "./_utils/capture-snapshot";
 import { trackSessionStarted } from "./_utils/session-events";
-import { getLearnerMode, recordSessionStart } from "./_utils/session-ledger";
+import { recordSessionStart } from "./_utils/session-ledger";
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { type StudySessionTimeZoneInput } from "./contract";
 
@@ -45,10 +45,7 @@ async function openSession({
     return;
   }
 
-  const [snapshot, mode] = await Promise.all([
-    captureSessionSnapshot({ goalId: session.goalId, now, timeZone, userId }),
-    getLearnerMode(userId),
-  ]);
+  const snapshot = await captureSessionSnapshot({ goalId: session.goalId, now, timeZone, userId });
 
   const opened = await prisma.$transaction(async (tx) => {
     const { count } = await tx.studySession.updateMany({
@@ -57,7 +54,7 @@ async function openSession({
     });
 
     if (count === 1) {
-      await recordSessionStart(tx, { mode, now, session, timeZone });
+      await recordSessionStart(tx, { now, session, timeZone });
     }
 
     return count === 1;

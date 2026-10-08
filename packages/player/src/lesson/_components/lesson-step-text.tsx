@@ -1,15 +1,36 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { findMarkdownTables } from "@zoonk/utils/markdown-table";
 import { LessonRichText, LessonRichTextBlocks } from "./lesson-rich-text";
+
+/**
+ * A question written with its data first ("The office logged its letters:", a table, then "Which
+ * month had the fewest?") reads as that data, then the question itself.
+ */
+function splitQuestionData(text: string): { data: string | null; question: string } {
+  if (findMarkdownTables(text).length === 0) {
+    return { data: null, question: text };
+  }
+
+  const paragraphs = text.trim().split(/\n\s*\n/u);
+  const question = paragraphs.at(-1) ?? text;
+
+  return { data: paragraphs.slice(0, -1).join("\n\n"), question };
+}
 
 /** The question or prompt of a screen: the one line the learner answers. */
 export function LessonQuestion({ children, id }: { children: string; id?: string }) {
+  const { data, question } = splitQuestionData(children);
+
   return (
-    <h2
-      className="text-foreground text-xl leading-snug font-semibold tracking-tight text-balance sm:text-2xl"
-      id={id}
-    >
-      <LessonRichText text={children} />
-    </h2>
+    <>
+      {data && <LessonContext>{data}</LessonContext>}
+      <h2
+        className="text-foreground text-xl leading-snug font-semibold tracking-tight text-balance sm:text-2xl"
+        id={id}
+      >
+        <LessonRichText text={question} />
+      </h2>
+    </>
   );
 }
 

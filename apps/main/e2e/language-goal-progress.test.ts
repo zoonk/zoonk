@@ -1,11 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
 import { asPersona } from "./learn-personas";
+import { nextStep } from "./result-steps";
 import { openAs } from "./study-day";
-
-const RENTING_UNIT = "Alugando um apartamento";
 
 const TOEFL_SCENARIO = {
   character: { name: "Sarah", place: "Test centre", role: "examinadora" },
@@ -81,22 +80,28 @@ async function createToeflMock({
   });
 }
 
+/** The Journey's hero opens the level sheet. */
+async function openLevel(page: Page) {
+  await page.goto("/journey");
+  await page.getByRole("button", { name: /^Your level/u }).click();
+  return page.getByRole("dialog", { name: "Your level" });
+}
+
 /**
- * Marcos's English goal (a language goal) on Progress: level by skill against his target, "I can
- * already…", the words he knows and the last four weeks. Progress keeps the sections every goal
- * shares and leaves preparation out. A goal preparing for the TOEFL gets its speaking mock: before
- * the call, the header names the TOEFL and the objectives are its two tasks; after it, an
- * estimated band on TOEFL's 1 to 6 scale, overall and for each TOEFL criterion, with the focus
- * marked.
+ * Marcos's English goal (a language goal) on the Journey: its hero is his level against his
+ * target, and its sheet has level by skill with every rise named and "I can already…". The
+ * mistakes notebook it links to offers the pattern noticed in his mistakes. Preparation stays out.
+ * A goal preparing for the TOEFL gets its speaking mock in that sheet: before the call, the header
+ * names the TOEFL and the objectives are its two tasks; after it, an estimated band on TOEFL's 1
+ * to 6 scale, overall and for each TOEFL criterion, with the focus marked.
  */
 test.describe("Language goal progress", () => {
-  test(`Progress shows level by skill, "I can already" and the last four weeks, and the exam screen keeps the speaking mock once the goal moved to the IELTS`, async ({
+  test(`the Journey shows his level by skill, "I can already" and his mistakes, and the exam screen keeps the speaking mock once the goal moved to the IELTS`, async ({
     browser,
   }) => {
-    await asPersona(browser, { mode: "focus", persona: "language" }, async ({ page, user }) => {
-      await page.goto("/progress");
-
-      const levels = page.getByRole("list", { name: "Level by skill" });
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
+      const sheet = await openLevel(page);
+      const levels = sheet.getByRole("list", { name: "Level by skill" });
 
       await expect(levels.getByRole("listitem")).toHaveText([
         /^Reading\s*B1$/u,
@@ -105,35 +110,62 @@ test.describe("Language goal progress", () => {
         /^Writing\s*A2\+/u,
       ]);
 
+      await expect(sheet.getByText(/^Goal B1\+ by \w+ \d{4}$/u)).toBeVisible();
+
+      // The sentence names every skill with an up arrow, the biggest rise first.
+      await expect(
+        sheet.getByText("Listening, Speaking, and Writing went up since the level test."),
+      ).toBeVisible();
+
+      await Promise.all(
+        ["Listening", "Speaking", "Writing"].map((skill) =>
+          expect(
+            levels
+              .getByRole("listitem")
+              .filter({ hasText: skill })
+              .getByLabel("up since the level test"),
+          ).toBeVisible(),
+        ),
+      );
+
       await expect(
         levels
           .getByRole("listitem")
-          .filter({ hasText: "Listening" })
-          .getByLabel("up since the level test"),
+          .filter({ hasText: "Reading" })
+          .getByLabel(/since the level test$/u),
+      ).toHaveCount(0);
+
+      const canDo = sheet.getByRole("region", { name: "I can already…" });
+      await expect(canDo.getByText("Consigo pedir informações no aeroporto")).toBeVisible();
+      // Only the next thing he's working toward, not the rest of the unit.
+      await expect(
+        canDo.getByText("Consigo perguntar o preço do aluguel e as regras, not yet"),
       ).toBeVisible();
 
-      await expect(page.getByText(/^Goal B1\+ by \w+ \d{4}$/u)).toBeVisible();
-      await expect(page.getByText("Listening went up to B1 since the level test.")).toBeVisible();
+      await expect(canDo.getByText(/Consigo marcar uma visita/u)).toHaveCount(0);
 
-      const canDo = page.getByRole("region", { name: "I can already…" });
-      await expect(canDo.getByText("Consigo pedir informações no aeroporto")).toBeVisible();
-      await expect(canDo.getByText("Consigo marcar uma visita, not yet")).toBeVisible();
+      // A language goal has no exam, so no speaking mock.
+      await expect(sheet.getByRole("heading", { name: "IELTS speaking mock" })).toHaveCount(0);
+      await expectAccessibleScreen(page, "the level of a language goal");
 
-      await expect(page.getByText(/^9\s*words known$/u)).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(sheet).toBeHidden();
+      await expect(page.getByText("Your preparation")).toHaveCount(0);
 
-      const recent = page.getByRole("region", { name: "In the last 4 weeks" });
-      await expect(recent).toContainText("9new words");
-      await expect(recent).toContainText("1conversation");
+      // The notebook, one of Today's "Practice anytime", offers the pattern noticed in his recent
+      // mistakes.
+      await page.goto("/today");
 
-      const situation = page.getByRole("region", { name: "Your current situation" });
-      await expect(situation.getByText("Unit 2 of 6")).toBeVisible();
-      await expect(situation.getByRole("link", { name: RENTING_UNIT })).toBeVisible();
+      await page
+        .getByRole("region", { name: "Practice anytime" })
+        .getByRole("link", { name: /^Mistakes notebook\b.*\b1 to fix$/u })
+        .click();
 
-      await expect(page.getByRole("link", { name: /Mistakes notebook/u })).toBeVisible();
-      await expect(page.getByRole("navigation", { name: "Your stats" })).toBeVisible();
-      await expectAccessibleScreen(page, "Progress for a language goal");
-      await expect(page.getByText(/preparation$/u)).toHaveCount(0);
-      await expect(page.getByRole("heading", { name: "IELTS speaking mock" })).toHaveCount(0);
+      const pattern = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });
+
+      await expect(
+        page.getByRole("link", { name: "We noticed a pattern “Since” e “for”" }),
+      ).toHaveAttribute("href", `/pattern/${pattern.id}`);
 
       await prisma.goal.update({
         data: { kind: "exam", title: "IELTS" },
@@ -147,10 +179,10 @@ test.describe("Language goal progress", () => {
     });
   });
 
-  test("Progress offers the TOEFL speaking mock in Fun, which opens with its two tasks and ends with a band on the 1 to 6 scale", async ({
+  test("the level sheet offers the TOEFL speaking mock, which opens with its two tasks and ends with a band on the 1 to 6 scale", async ({
     browser,
   }) => {
-    const { goal, user } = await createLanguageLearner("fun");
+    const { goal, user } = await createLanguageLearner();
 
     const [waiting] = await Promise.all([
       createToeflMock({ finished: false, goalId: goal.id, userId: user.id }),
@@ -161,54 +193,74 @@ test.describe("Language goal progress", () => {
     ]);
 
     const page = await openAs(browser, user);
-    await page.goto("/progress");
+    const sheet = await openLevel(page);
 
-    await expect(page.getByRole("heading", { name: "TOEFL speaking mock" })).toBeVisible();
+    await expect(sheet.getByRole("heading", { name: "TOEFL speaking mock" })).toBeVisible();
 
     await expect(
-      page.getByText(/^Repeat sentences, then a short interview with an examiner/u),
+      sheet.getByText(/^Repeat sentences, then a short interview with an examiner/u),
     ).toBeVisible();
 
-    await expectAccessibleScreen(page, "Progress for a language goal");
-
-    await expect(page.getByRole("heading", { name: "IELTS speaking mock" })).toHaveCount(0);
+    await expect(sheet.getByRole("heading", { name: "IELTS speaking mock" })).toHaveCount(0);
 
     // The mock written ahead opens at once.
-    await page.getByRole("button", { name: "Start the mock" }).click();
+    await sheet.getByRole("button", { name: "Start the mock" }).click();
 
     await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}$`, "u"));
     await expect(page.getByText("TOEFL speaking mock").first()).toBeVisible();
-    await expect(page.getByRole("heading", { level: 1, name: "Sarah" })).toBeVisible();
+    await expect(page.getByText("Sarah · examinadora · Test centre")).toBeVisible();
     await expect(page.getByText("Listen and Repeat", { exact: true })).toBeVisible();
     await expect(page.getByText("Take an Interview", { exact: true })).toBeVisible();
 
     const finished = await createToeflMock({ finished: true, goalId: goal.id, userId: user.id });
     await page.goto(`/conversation/${finished.id}`);
 
-    await expect(page.getByText("TOEFL speaking mock").first()).toBeVisible();
-    await expect(page.getByText("4.0–4.5", { exact: true }).first()).toBeVisible();
+    // The result in steps: the band overall on the TOEFL's scale, each criterion, then the one to
+    // work on first.
+    await expect(
+      page.getByRole("heading", { level: 1, name: /^TOEFL speaking mock\s*4\.0–4\.5$/u }),
+    ).toBeVisible();
+
     await expect(page.getByText("Estimated band, from 1 to 6")).toBeVisible();
 
     await expect(
       page.getByText("An estimate from one short mock, not an official score."),
     ).toBeVisible();
 
-    const criteria = page.getByRole("listitem");
+    await nextStep(page);
 
-    await expect(criteria.getByRole("heading")).toHaveText([
-      "Repeating sentences",
-      /^Clear, developed answers\s*Focus$/u,
-      "Grammar",
-      "Vocabulary",
-      "Pace and pronunciation",
+    await expect(page.getByRole("listitem")).toHaveText([
+      /^Repeating sentences\s*4\.0–4\.5$/u,
+      /^Clear, developed answers\s*Focus\s*3\.5–4\.0$/u,
+      /^Grammar\s*4\.0–4\.5$/u,
+      /^Vocabulary\s*4\.0–4\.5$/u,
+      /^Pace and pronunciation\s*3\.5–4\.5$/u,
     ]);
 
-    await expect(page.getByText('Você disse "clean it" em vez de "clean it up".')).toBeVisible();
+    await nextStep(page);
+    await expect(page.getByText("Work on this first")).toBeVisible();
 
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Clear, developed answers" }),
+    ).toBeVisible();
+
+    await expect(page.getByText("Suas respostas ficaram curtas.")).toBeVisible();
+    await expect(page.getByText("Dica para elaboration.")).toBeVisible();
+
+    // Every criterion's comments wait behind a link; another try is one tap away.
+    await page.getByRole("button", { name: "See every criterion" }).click();
+
+    await expect(
+      page
+        .getByRole("dialog", { name: "By criterion" })
+        .getByText('Você disse "clean it" em vez de "clean it up".'),
+    ).toBeVisible();
+
+    await page.keyboard.press("Escape");
     await expect(page.getByRole("button", { name: "Try another mock" })).toBeEnabled();
 
     await page.getByRole("link", { name: "Continue" }).click();
-    await expect(page).toHaveURL(/\/progress$/u);
+    await expect(page).toHaveURL(/\/journey$/u);
     await page.context().close();
   });
 });

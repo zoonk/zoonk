@@ -32,8 +32,10 @@ describe(toBlueprintContent, () => {
     expect(content.structure.subjects).toStrictEqual([
       {
         citation: { passage: extraction.subjects[0]!.passages[0]!.passage, sourceId: "notice" },
+        group: null,
         name: "Linguagens",
         questions: 45,
+        shortName: null,
         topics: ["Língua Portuguesa", "Língua Estrangeira (Inglês ou Espanhol)"],
         weight: 0.25,
       },
@@ -49,7 +51,7 @@ describe(toBlueprintContent, () => {
       sourceHash: "hash",
     });
 
-    expect(isUsableBlueprint(content)).toBe(true);
+    expect(isUsableBlueprint({ content, shared: true })).toBe(true);
   });
 
   it("keeps a subject, format and mock whose details the check rejected, leaving gaps", () => {
@@ -71,7 +73,7 @@ describe(toBlueprintContent, () => {
       ],
     });
 
-    expect(isUsableBlueprint(content)).toBe(true);
+    expect(isUsableBlueprint({ content, shared: true })).toBe(true);
   });
 
   it("keeps a mock's sections only as a whole, and its days only when every one was kept", () => {
@@ -81,8 +83,8 @@ describe(toBlueprintContent, () => {
     expect(withoutSection.structure.mock?.sections).toStrictEqual([]);
 
     expect(withoutDay.structure.mock?.sections).toStrictEqual([
-      { day: null, minutes: 330, name: "Linguagens", questions: 45 },
-      { day: null, minutes: null, name: "Matemática", questions: 45 },
+      { day: null, kind: "objective", minutes: 330, name: "Linguagens", questions: 45, tasks: [] },
+      { day: null, kind: "objective", minutes: null, name: "Matemática", questions: 45, tasks: [] },
     ]);
   });
 
@@ -99,6 +101,197 @@ describe(toBlueprintContent, () => {
     });
 
     expect(empty.structure.mock).toBeNull();
+  });
+
+  /*
+   * Lucas's ENEM topics were the matrix's long competência and habilidade statements; candidates
+   * study its contents ("Hereditariedade e diversidade da vida"), with the statements as detail.
+   */
+  it("keeps a skills matrix's statements as detail when the topics are its contents", () => {
+    const documents = [
+      {
+        sourceId: "notice",
+        text: [
+          "H13 – Reconhecer mecanismos de transmissão da vida, prevendo ou explicando a manifestação de características dos seres vivos.",
+          "Objetos de conhecimento associados às Matrizes de Referência",
+          "Moléculas, células e tecidos - Estrutura e fisiologia celular: membrana, citoplasma e núcleo.",
+          "Hereditariedade e diversidade da vida - Princípios básicos que regem a transmissão de características hereditárias.",
+        ].join("\n"),
+      },
+    ];
+
+    const base = blueprintExtraction();
+    const [, math] = base.subjects;
+
+    const extraction = blueprintExtraction({
+      subjects: [
+        {
+          ...math!,
+          matrix: [
+            "H13 – Reconhecer mecanismos de transmissão da vida, prevendo ou explicando a manifestação de características dos seres vivos",
+            "H99 – Uma habilidade que o documento não traz",
+          ],
+          name: "Ciências da Natureza e suas Tecnologias",
+          passages: [
+            {
+              document: 1,
+              passage: "Objetos de conhecimento associados às Matrizes de Referência",
+            },
+          ],
+          topics: ["Moléculas, células e tecidos", "Hereditariedade e diversidade da vida"],
+        },
+      ],
+    });
+
+    const facts = listBlueprintFacts({ documents, extraction });
+
+    const content = toBlueprintContent({
+      documents,
+      extraction,
+      facts,
+      noticeUrl: null,
+      sourceHash: "hash",
+      supportedIds: facts.map((fact) => fact.id),
+    });
+
+    const [natureza] = content.structure.subjects;
+
+    expect(natureza).toMatchObject({
+      matrix: [
+        "H13 – Reconhecer mecanismos de transmissão da vida, prevendo ou explicando a manifestação de características dos seres vivos",
+      ],
+      topics: ["Moléculas, células e tecidos", "Hereditariedade e diversidade da vida"],
+    });
+  });
+
+  it("keeps the notice's headings over a subject's topics when its documents state them", () => {
+    const documents = [
+      {
+        sourceId: "notice",
+        text: [
+          "Objetos de conhecimento associados às Matrizes de Referência",
+          "FÍSICA",
+          "Energia, trabalho e potência",
+          "O calor e os fenômenos térmicos",
+          "QUÍMICA",
+          "Transformações químicas.",
+          "BIOLOGIA",
+          "Moléculas, células e tecidos",
+        ].join("\n"),
+      },
+    ];
+
+    const [, math] = blueprintExtraction().subjects;
+
+    const extraction = blueprintExtraction({
+      subjects: [
+        {
+          ...math!,
+          name: "Ciências da Natureza e suas Tecnologias",
+          passages: [
+            {
+              document: 1,
+              passage: "Objetos de conhecimento associados às Matrizes de Referência",
+            },
+          ],
+          topicHeadings: [
+            { firstTopic: "Energia, trabalho e potência", name: "Física" },
+            { firstTopic: "Transformações químicas.", name: "Química" },
+            { firstTopic: "Moléculas, células e tecidos", name: "Biologia" },
+            { firstTopic: "Ecologia", name: "Ecologia e ambiente" },
+          ],
+          topics: [
+            "Energia, trabalho e potência",
+            "O calor e os fenômenos térmicos",
+            "Uma linha que o documento não traz",
+            "Transformações químicas.",
+            "Moléculas, células e tecidos",
+          ],
+        },
+      ],
+    });
+
+    const facts = listBlueprintFacts({ documents, extraction });
+
+    const content = toBlueprintContent({
+      documents,
+      extraction,
+      facts,
+      noticeUrl: null,
+      sourceHash: "hash",
+      supportedIds: facts.map((fact) => fact.id),
+    });
+
+    expect(content.structure.subjects[0]?.topicGroups).toStrictEqual([
+      {
+        name: "Física",
+        topics: ["Energia, trabalho e potência", "O calor e os fenômenos térmicos"],
+      },
+      { name: "Química", topics: ["Transformações químicas"] },
+      { name: "Biologia", topics: ["Moléculas, células e tecidos"] },
+    ]);
+  });
+
+  it("stores no headings for a syllabus listed without them", () => {
+    const content = readWith({ keep: () => true });
+
+    expect(content.structure.subjects[0]).not.toHaveProperty("topicGroups");
+  });
+
+  it("puts subjects in a group the check confirmed for one of them, with short names and topic lines", () => {
+    const base = blueprintExtraction();
+    const [languages, math] = base.subjects;
+
+    const extraction = blueprintExtraction({
+      subjects: [
+        {
+          ...languages!,
+          group: "1º dia",
+          topics: ["Língua Portuguesa.", "Língua Portuguesa", "Literatura;"],
+        },
+        { ...math!, group: "1º dia", passages: languages!.passages },
+        {
+          ...math!,
+          group: "2º dia",
+          name: "Ciências da Natureza e suas Tecnologias",
+          passages: languages!.passages,
+          shortName: " Natureza ",
+        },
+      ],
+    });
+
+    const content = readWith({ extraction, keep: (id) => id !== "subjects.1.group" });
+
+    expect(
+      content.structure.subjects.map(({ group, name, shortName, topics }) => ({
+        group,
+        name,
+        shortName,
+        topics,
+      })),
+    ).toStrictEqual([
+      {
+        group: "1º dia",
+        name: "Linguagens",
+        shortName: null,
+        topics: ["Língua Portuguesa", "Literatura"],
+      },
+      { group: "1º dia", name: "Matemática", shortName: null, topics: [] },
+      {
+        group: "2º dia",
+        name: "Ciências da Natureza e suas Tecnologias",
+        shortName: "Natureza",
+        topics: [],
+      },
+    ]);
+
+    const unconfirmed = readWith({ extraction, keep: (id) => !id.endsWith(".group") });
+
+    expect(unconfirmed.structure.subjects.map((subject) => subject.group)).toStrictEqual([
+      null,
+      null,
+      null,
+    ]);
   });
 
   it("keeps a date whose start time the check rejected, without the time", () => {
@@ -124,7 +317,20 @@ describe(toBlueprintContent, () => {
   });
 
   it("isn't usable when nothing about the exam's content or conditions survived", () => {
-    expect(isUsableBlueprint(readWith({ keep: (id) => id === "dates.0" }))).toBe(false);
+    const content = readWith({ keep: (id) => id === "dates.0" });
+
+    expect(isUsableBlueprint({ content, shared: false })).toBe(false);
+  });
+
+  it("shares only an exam's own documents: subjects alone may come from a curriculum", () => {
+    // What a curriculum like the BNCC states too: the subjects and their topics, nothing that
+    // says how an exam asks them, when, or how much each counts.
+    const subjectsOnly = readWith({ keep: (id) => /^subjects\.\d+$/u.test(id) });
+    const withDay = readWith({ keep: (id) => /^subjects\.\d+$/u.test(id) || id === "dates.0" });
+
+    expect(isUsableBlueprint({ content: subjectsOnly, shared: true })).toBe(false);
+    expect(isUsableBlueprint({ content: subjectsOnly, shared: false })).toBe(true);
+    expect(isUsableBlueprint({ content: withDay, shared: true })).toBe(true);
   });
 });
 

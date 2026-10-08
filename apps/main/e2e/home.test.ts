@@ -145,36 +145,8 @@ test.describe("The home goal box", () => {
   });
 });
 
-test.describe("Focus and Fun on the home page", () => {
-  test("shows Focus first, and the Fun tab brings Fun's pitch, lesson and voyage", async ({
-    page,
-  }) => {
-    await page.goto("/");
-
-    const focusTitle = page.getByRole("heading", { name: "Calm and simple" });
-    const fun = page.getByRole("tabpanel", { name: "Fun" });
-    const route = fun.getByRole("heading", { name: "The route to Madrid" });
-
-    await expect(page.getByRole("tab", { name: "Focus" })).toHaveAttribute("aria-selected", "true");
-    await expect(focusTitle).toBeVisible();
-    await expect(route).toBeHidden();
-    await expectAccessibleScreen(page, "the home page");
-
-    await page.getByRole("tab", { name: "Fun" }).click();
-
-    await expect(
-      fun.getByRole("heading", { name: "Learning that feels like a game" }),
-    ).toBeVisible();
-
-    await expect(fun.getByText(/^Your plan becomes a space voyage/u)).toBeVisible();
-    await expect(route).toBeVisible();
-    await expect(fun.getByRole("heading", { name: "A buddy you feed by learning" })).toBeVisible();
-    await expect(focusTitle).toBeHidden();
-  });
-});
-
 test.describe("The class example on the home page", () => {
-  test("Simpler and Go deeper swap the explanation, and a second tap brings it back", async ({
+  test("the buddy explains it another way or goes further, and a second tap takes it back", async ({
     page,
   }) => {
     await page.goto("/");
@@ -183,22 +155,25 @@ test.describe("The class example on the home page", () => {
       .getByRole("listitem")
       .filter({ has: page.getByRole("heading", { name: "Keep up in class" }) });
 
-    const original = example.getByText(/^A derivative is how fast/u);
-    const simpler = example.getByRole("button", { name: "Simpler" });
+    const invitation = example.getByText("Stuck, or curious for more? Just ask.");
+    const simpler = example.getByRole("button", { name: "Explain it more simply" });
+    const deeper = example.getByRole("button", { name: "I want to go deeper" });
 
-    await expect(original).toBeVisible();
+    await expect(example.getByText(/^A derivative is how fast/u)).toBeVisible();
+    await expect(invitation).toBeVisible();
+    await expectAccessibleScreen(page, "the home page");
 
     await simpler.click();
     await expect(simpler).toHaveAttribute("aria-pressed", "true");
     await expect(example.getByText(/^Think of a speedometer/u)).toBeVisible();
-    await expect(original).toBeHidden();
+    await expect(invitation).toBeHidden();
 
-    await example.getByRole("button", { name: "Go deeper" }).click();
+    await deeper.click();
     await expect(example.getByText(/^It's the slope of the line/u)).toBeVisible();
     await expect(simpler).toHaveAttribute("aria-pressed", "false");
 
-    await example.getByRole("button", { name: "Go deeper" }).click();
-    await expect(original).toBeVisible();
+    await deeper.click();
+    await expect(invitation).toBeVisible();
   });
 });
 

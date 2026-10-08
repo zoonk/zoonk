@@ -16,7 +16,7 @@ import { HomeExploreLinks } from "./_components/home-explore-links";
 import { HomeHeader } from "./_components/home-header";
 import { HomeHero } from "./_components/home-hero";
 import { FINAL_GOAL_ID, HERO_GOAL_ID } from "./_components/home-ids";
-import { ModesSection } from "./_components/modes-section";
+import { MotivationSection } from "./_components/motivation-section";
 import { PracticeSection } from "./_components/practice-section";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -51,7 +51,7 @@ export default async function HomePage() {
         <HomeHero startPath={startPath} />
         <PracticeSection locale={locale} />
         <HardPartSection />
-        <ModesSection locale={locale} />
+        <MotivationSection />
         <FinalCall startPath={startPath} />
       </main>
 

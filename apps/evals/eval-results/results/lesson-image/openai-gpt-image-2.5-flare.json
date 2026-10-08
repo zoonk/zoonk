@@ -5,76 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "The discount reads at a glance. The old tag has R$ 80 crossed out, the amber -25% badge sits between the tags, and a dashed arrow leads to the new R$ 60 tag. The numbers are consistent: 25% off 80 is 60. The two tags look identical in color, which slightly weakens the old-versus-new contrast.",
-          "score": 9,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image uses flat rounded shapes, soft ground shadows, thin dashed movement lines and a very light plain background. The palette is limited to muted blue, cream and gray with an amber accent. The composition is clean with generous space.",
-          "score": 9,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Read letter by letter, the image shows 'antes', 'R$ 80' (struck through), '-25%', 'voc\u00ea paga' and 'R$ 60'. All labels are spelled correctly, including the circumflex, and each sits on its own element. There is no extra text. Legibility is good, though the right tag's text is slightly tilted.",
-          "score": 9,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "anthropic/claude-opus-5.5",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3722,
-          "outputTokens": 796,
-          "reasoningTokens": 229
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "Both tags use the same blue, so the new tag is not visually set apart from the old one. The tilted, slightly curved baseline of 'voc\u00ea paga' makes it a little less crisp to read than the other labels.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Give the new tag a subtle distinguishing touch, such as a soft green tint, to reinforce 'new, lower price'. Straighten the text baseline on the right tag.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "One idea: a discount. An old tag with \"antes R$ 80\" crossed out, a new tag with \"voc\u00ea paga R$ 60\" and a -25% badge between them. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
-        "id": "discount-pt-1",
-        "userInput": {
-          "caseId": "discount-pt",
-          "category": "business",
-          "format": "step",
-          "language": "pt",
-          "scene": {
-            "labels": [
-              { "target": "on the old tag", "text": "antes R$ 80" },
-              { "target": "on the new tag", "text": "voc\u00ea paga R$ 60" },
-              { "target": "on the round badge", "text": "-25%" }
-            ],
-            "layout": "sequence",
-            "motion": null,
-            "relation": "a round amber badge sits between the old tag and the new tag",
-            "supportingObjects": ["a round badge"],
-            "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
           "reasoning": "The image shows a clear cloud of tiny dots around a small red nucleus, thinning outward, so the probability idea reads at a glance. The gradient could be stronger near the center.",
           "score": 8.5,
           "label": "Shows the idea",
@@ -202,79 +132,6 @@
             "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
             "supportingObjects": ["a water molecule in a circle"],
             "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The side-by-side comparison of two same-size dashed orbits reads at a glance. The Sun and Earth are recognizable, the electron orbits the nucleus, and the question mark conveys the doubt. However, the nucleus is not tiny as the scene specifies.",
-          "score": 8,
-          "label": "Shows the idea",
-          "weight": 40
-        },
-        {
-          "categoryId": "style",
-          "reasoning": "The image uses flat, soft shapes, a very light plain background, dashed orbits, a limited palette and soft shadows. The callout pills with leader lines and the divider push it toward an infographic look and add clutter.",
-          "score": 7,
-          "label": "House style",
-          "weight": 35
-        },
-        {
-          "categoryId": "text",
-          "reasoning": "Both requested labels are spelled correctly, legible and placed under their scenes. Four unrequested labels ('Sun', 'Earth', 'Nucleus', 'Electron') are also present, which caps this category at 4.",
-          "score": 3,
-          "label": "Text",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "anthropic/claude-opus-5.5",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3726,
-          "outputTokens": 842,
-          "reasoningTokens": 234
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Four unrequested callout labels appear: 'Sun', 'Earth', 'Nucleus' and 'Electron', each with a leader line. Only 'Earth and Sun' and 'Electron and nucleus?' were allowed, so the extra text is a major error.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The nucleus is drawn as a fairly large red sphere, close in size to the Sun analogue, rather than the tiny nucleus the scene asks for. The callout pills with leader lines and the vertical divider make the image look more like an infographic and add clutter.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Remove the four callout labels and their leader lines. Shrink the nucleus so it reads as tiny. Consider dropping the divider line and letting spacing separate the two panels.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "A comparison: Earth orbiting the Sun next to an electron orbiting a nucleus, same size, so the question becomes visible. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
-        "id": "orbits-comparison-en-1",
-        "userInput": {
-          "caseId": "orbits-comparison-en",
-          "category": "science",
-          "format": "step",
-          "language": "en",
-          "scene": {
-            "labels": [
-              { "target": "under the Sun and Earth", "text": "Earth and Sun" },
-              { "target": "under the nucleus and electron", "text": "Electron and nucleus?" }
-            ],
-            "layout": "comparison",
-            "motion": null,
-            "relation": "the two orbits sit side by side at the same size",
-            "supportingObjects": ["a tiny nucleus with an electron on a dashed elliptical orbit"],
-            "focalObject": "the Sun with Earth on a dashed elliptical orbit"
           }
         }
       }
@@ -473,6 +330,281 @@
             "relation": null,
             "supportingObjects": ["a small sun"],
             "focalObject": "a green leaf catching rays of sunlight"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The discount reads at a glance. The old tag shows \"R$ 80\" crossed out, a -25% amber badge sits between the tags on a dashed arrow, and the new tag shows R$ 60. The comparison is correct and nothing contradicts the scene.",
+          "score": 9,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "It matches the house style: portrait format, flat shapes with rounded corners, soft ellipse shadows, a plain light background, a cream, blue and gray palette with one amber accent, a dashed movement line and generous spacing. The pale old tag is only slightly washed out.",
+          "score": 9,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Only the requested labels appear, each spelled exactly: \"antes R$ 80\", \"-25%\" and \"você paga R$ 60\". All are legible and sit on the objects they name, and there is no extra text.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1114,
+          "inputTokens": 3406,
+          "outputTokens": 741,
+          "reasoningTokens": 232
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The cream old tag has fairly low contrast against the near-white background. The thin amber strike line through \"R$ 80\" is less prominent than it could be on the pale tag.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make the strike-through bolder or darker so the crossed-out price reads instantly. Add a slightly stronger outline or tint to the old tag so it separates better from the background.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One idea: a discount. An old tag with \"antes R$ 80\" crossed out, a new tag with \"você paga R$ 60\" and a -25% badge between them. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "discount-pt-1",
+        "userInput": {
+          "caseId": "discount-pt",
+          "category": "business",
+          "language": "pt",
+          "scene": {
+            "labels": [
+              { "target": "on the old tag", "text": "antes R$ 80" },
+              { "target": "on the new tag", "text": "você paga R$ 60" },
+              { "target": "on the round badge", "text": "-25%" }
+            ],
+            "layout": "sequence",
+            "motion": null,
+            "relation": "a round amber badge sits between the old tag and the new tag",
+            "supportingObjects": ["a round badge"],
+            "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The Sun with Earth on a dashed orbit and the nucleus with an electron on a dashed orbit are both clearly recognizable, so the analogy reads at a glance. However, the orbits differ in size, which slightly undercuts the same-size comparison the scene asked for.",
+          "score": 8,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is flat, uses soft shadows, a very light plain background and a limited coral and periwinkle palette, with generous empty space. The nucleus spheres are slightly glossy, and the divider line gives a mild two-panel feel.",
+          "score": 8,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Only the two requested labels appear. Both are spelled exactly as given ('Earth and Sun' and 'Electron and nucleus?'), are legible, and sit directly under their scenes.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1114,
+          "inputTokens": 3410,
+          "outputTokens": 897,
+          "reasoningTokens": 374
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The two orbits are not the same size: the Earth–Sun ellipse is noticeably wider than the electron–nucleus ellipse. This weakens the requested same-size comparison. The divider line also makes the image read a little like two panels.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Draw both dashed ellipses at identical dimensions and align them. Make the nucleus shading flatter to match the Sun and Earth. Drop the divider line and rely on spacing to separate the two halves.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A comparison: Earth orbiting the Sun next to an electron orbiting a nucleus, same size, so the question becomes visible. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "orbits-comparison-en-1",
+        "userInput": {
+          "caseId": "orbits-comparison-en",
+          "category": "science",
+          "language": "en",
+          "scene": {
+            "labels": [
+              { "target": "under the Sun and Earth", "text": "Earth and Sun" },
+              { "target": "under the nucleus and electron", "text": "Electron and nucleus?" }
+            ],
+            "layout": "comparison",
+            "motion": null,
+            "relation": "the two orbits sit side by side at the same size",
+            "supportingObjects": ["a tiny nucleus with an electron on a dashed elliptical orbit"],
+            "focalObject": "the Sun with Earth on a dashed elliptical orbit"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The left-side brain with four colored lobes reads clearly. Each lobe is correctly placed: frontal at the front, parietal on top, temporal low at the side, occipital at the back. The occipital lobe's color merges with the cerebellum, and the two pink lobes are similar, which slightly weakens how well the parts stand apart.",
+          "score": 8,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is a flat, soft-colored portrait illustration on a very light plain background, with one whole and its parts and generous space. The palette is soft and coherent. The composition sits slightly high, leaving uneven empty space below.",
+          "score": 9,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Only the four requested labels appear. Read letter by letter, 'frontal lobe', 'parietal lobe', 'temporal lobe' and 'occipital lobe' are all spelled correctly, are legible, and use leader lines that point to the correct lobes.",
+          "score": 9,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1114,
+          "inputTokens": 3416,
+          "outputTokens": 860,
+          "reasoningTokens": 257
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The occipital lobe shares the same slate-blue as the cerebellum and brainstem, so the back lobe blends into structures that are not lobes. The frontal and parietal lobes are two similar pinks with fairly low contrast between them. The temporal lobe looks like a separate sausage-shaped piece laid over the brain rather than an integrated part.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give the cerebellum and brainstem a neutral grey that differs from the occipital lobe. Make the frontal and parietal hues more distinct. Center the brain vertically to reduce the large empty band at the bottom.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A whole with its parts: the brain seen from the left side, its four lobes in different soft colors, each label next to its own lobe (frontal at the front, parietal on top, temporal low at the side, occipital at the back). Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "brain-lobes-en-1",
+        "userInput": {
+          "caseId": "brain-lobes-en",
+          "category": "health",
+          "language": "en",
+          "scene": {
+            "labels": [
+              { "target": "next to the lobe at the front", "text": "frontal lobe" },
+              { "target": "next to the lobe on top", "text": "parietal lobe" },
+              { "target": "next to the lobe low at the side", "text": "temporal lobe" },
+              { "target": "next to the lobe at the back", "text": "occipital lobe" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a human brain seen from the left side, its four lobes each a different soft color"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "Earth is clearly blue with green land and white clouds, and Mars is rusty red. Mars measures about 220px wide against Earth's 465px, roughly half, so the size comparison reads instantly.",
+          "score": 9,
+          "label": "Shows the idea",
+          "weight": 40
+        },
+        {
+          "categoryId": "style",
+          "reasoning": "The image is a flat portrait illustration on a very light background with soft ellipse shadows and a restrained palette. The divider line adds a panel-like split, and the continents are somewhat intricate.",
+          "score": 8,
+          "label": "House style",
+          "weight": 35
+        },
+        {
+          "categoryId": "text",
+          "reasoning": "Only 'Terra' and 'Marte' appear, both spelled correctly, clearly legible and connected by leader lines to the planets they name.",
+          "score": 10,
+          "label": "Text",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "anthropic/claude-opus-5.5",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1114,
+          "inputTokens": 3391,
+          "outputTokens": 645,
+          "reasoningTokens": 178
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "A full-width horizontal divider line splits the image into two stacked sections, creating a slightly two-panel feel that the house style avoids. The Earth's continents are also more detailed than the simple geometric shapes the style calls for.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Remove the divider line so both planets sit in one shared space. Shift Mars from a bright orange-red toward a dustier rust tone. Simplify the continent outlines into rounder, more geometric shapes.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Two planets compared, one above the other at their relative sizes: Earth blue and green with white clouds, Mars smaller (about half as wide) and rusty red, each with its label. Only the listed labels may appear, each spelled exactly as given and easy to read. Any other text, gibberish letters or a misspelled label is a major error.",
+        "id": "earth-mars-pt-1",
+        "userInput": {
+          "caseId": "earth-mars-pt",
+          "category": "science",
+          "language": "pt",
+          "scene": {
+            "labels": [
+              { "target": "next to Earth", "text": "Terra" },
+              { "target": "next to Mars", "text": "Marte" }
+            ],
+            "layout": "comparison",
+            "motion": null,
+            "relation": "Mars is drawn about half as wide as Earth",
+            "supportingObjects": ["Mars, a smaller rusty red planet"],
+            "focalObject": "Earth, blue with green land and white clouds"
           }
         }
       }

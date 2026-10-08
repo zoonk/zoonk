@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { withApiImageUrls } from "@/lib/file-urls";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { parseQueryParams } from "@/lib/query-params";
 import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
@@ -20,7 +21,9 @@ async function getPractice(request: Request) {
     return learnerAccessError(result.status);
   }
 
-  return NextResponse.json({ practice: result.practice, trueFalseLabels: result.trueFalseLabels });
+  return NextResponse.json(
+    withApiImageUrls({ practice: result.practice, trueFalseLabels: result.trueFalseLabels }),
+  );
 }
 
 export const GET = withApiErrorBoundary(getPractice);

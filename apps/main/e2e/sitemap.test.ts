@@ -133,4 +133,36 @@ test.describe("catalog sitemaps", () => {
     const lastChanged = expect.stringContaining("<lastmod>");
     expect(entries).toStrictEqual([lastChanged, lastChanged, lastChanged]);
   });
+
+  test("leaves out a shared course whose page details aren't written yet, with its chapters", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const organization = await getAiOrganization();
+
+    // A shared course a guest's goal made: published with its outline, its details still to come.
+    const course = await courseFixture({
+      description: null,
+      isPublished: true,
+      language: "pt-BR",
+      organizationId: organization.id,
+      slug: `e2e-sitemap-undescribed-${uniqueId}`,
+    });
+
+    const chapter = await libraryChapterFixture({
+      homeCourseId: course.id,
+      language: "pt-BR",
+      slug: `e2e-sitemap-undescribed-chapter-${uniqueId}`,
+    });
+
+    const coursePath = `/b/${organization.slug}/c/${course.slug}`;
+
+    const entries = await Promise.all([
+      findPortugueseSitemapEntry({ path: coursePath, resource: "courses" }),
+      findPortugueseSitemapEntry({
+        path: `${coursePath}/ch/${chapter.slug}`,
+        resource: "library-chapters",
+      }),
+    ]);
+
+    expect(entries).toStrictEqual([undefined, undefined]);
+  });
 });

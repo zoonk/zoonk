@@ -1,6 +1,6 @@
 "use client";
 
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 
 /** ENEM's competencies and OAB's brief sections have fixed ids; the app names them. */
 export function useCriterionName() {
@@ -56,7 +56,20 @@ export function useInterventionElementName() {
   };
 }
 
-/** Scores keep the rubric's own steps: whole points for ENEM, hundredths elsewhere. */
-export function formatScore(value: number): string {
-  return Number.isInteger(value) ? String(value) : value.toFixed(2);
+/**
+ * Scores keep the rubric's own steps (whole points for ENEM, hundredths elsewhere), written the
+ * learner's way ("7,67" in Portuguese).
+ */
+export function useFormatScore() {
+  const format = useFormatter();
+  return (value: number): string => format.number(value, { maximumFractionDigits: 2 });
+}
+
+/**
+ * What the learner writes: an essay for ENEM's redação; an answer for every other written question
+ * (a discursive question, a class test's dissertativa, an AP free-response question, a brief).
+ */
+export function useWritingName() {
+  const t = useExtracted();
+  return (rubric: string): string => (rubric === "enem" ? t("Your essay") : t("Your answer"));
 }

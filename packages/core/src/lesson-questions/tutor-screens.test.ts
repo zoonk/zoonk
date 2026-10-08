@@ -7,6 +7,7 @@ import {
 } from "@zoonk/testing/fixtures/library-courses";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
@@ -212,18 +213,11 @@ describe("the tutor beyond lessons", () => {
 
       const snapshot = await storedSnapshot(question.id);
 
-      // One "Ask" on the plan answers about its course too, from the course's outline.
+      // One "Ask" on the plan answers about its course too, from the course's outline: its
+      // chapters' titles level by level, which every message sends, so no lesson lists.
       expect(snapshot).toMatchObject({
         course: {
-          levels: [
-            {
-              chapters: [
-                { lessonCount: 2, title: "Chapter 1" },
-                { lessonCount: 1, title: "Chapter 2" },
-              ],
-              level: "beginner",
-            },
-          ],
+          levels: [{ chapters: ["Chapter 1", "Chapter 2"], level: "beginner" }],
           title: course.title,
         },
         goal: { title: goal.title },
@@ -239,6 +233,51 @@ describe("the tutor beyond lessons", () => {
       await expect(ask({ context: { kind: "plan" }, target })).resolves.toStrictEqual({
         status: "notFound",
       });
+    });
+
+    it("keeps the mock exams a free plan doesn't include in the days ahead, marked as Plus", async () => {
+      const [free, plus] = await Promise.all([userFixture(), userFixture()]);
+      const tomorrow = new Date(SESSION_TODAY.getTime() + MS_PER_DAY);
+
+      async function kindsAhead({ isPlus, userId }: { isPlus: boolean; userId: string }) {
+        const { goal, plan } = await sessionGoalFixture({ goal: { kind: "exam" }, userId });
+
+        await Promise.all([
+          checkpointItemFixture({
+            kind: "mock",
+            planId: plan.id,
+            position: 10,
+            scheduledFor: tomorrow,
+          }),
+          isPlus
+            ? prisma.subscription.create({
+                data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },
+              })
+            : null,
+        ]);
+
+        mockSession(userId);
+
+        const question = await askCreated({
+          context: { kind: "plan" },
+          question: "What's coming this week?",
+          target: { goalId: goal.id, kind: "plan" },
+        });
+
+        const snapshot = await storedSnapshot(question.id);
+        const next = "next" in snapshot ? snapshot.next : [];
+
+        return next.flatMap((day) => day.items.filter((item) => item.kind === "mock"));
+      }
+
+      // Features are never hidden: the buddy sees the free plan's mock too, and that it's Plus's.
+      await expect(kindsAhead({ isPlus: false, userId: free.id })).resolves.toStrictEqual([
+        expect.objectContaining({ kind: "mock", plusRequired: true }),
+      ]);
+
+      await expect(kindsAhead({ isPlus: true, userId: plus.id })).resolves.toStrictEqual([
+        expect.not.objectContaining({ plusRequired: true }),
+      ]);
     });
 
     it("answers about a mock only once it's finished, from its result", async () => {

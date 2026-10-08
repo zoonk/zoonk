@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
-import { expectAccessibleRoutes, expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
 import { asPersona, findPlanChapterId } from "./learn-personas";
 import { askSuggestion, stubScreenTutor } from "./screen-tutor";
@@ -10,96 +11,108 @@ import { askSuggestion, stubScreenTutor } from "./screen-tutor";
  */
 const CHAPTER = "Exponents and scientific notation";
 
+const EXTRA = { equals: true, path: ["extra"] };
+
+/** The day's bonus practice played out: the block "Practice now" added, then a second one. */
+async function useUpBonusPractice(goalId: string) {
+  const added = await prisma.studySessionBlock.findFirstOrThrow({
+    orderBy: { createdAt: "desc" },
+    where: { payload: EXTRA, session: { goalId } },
+  });
+
+  const last = await prisma.studySessionBlock.findFirstOrThrow({
+    orderBy: { position: "desc" },
+    where: { sessionId: added.sessionId },
+  });
+
+  await Promise.all([
+    prisma.studySessionBlock.update({ data: { status: "completed" }, where: { id: added.id } }),
+    studySessionBlockFixture({
+      kind: "practice",
+      payload: { areaId: "bonus-second", extra: true, itemIds: [], skillIds: [] },
+      position: last.position + 1,
+      sessionId: added.sessionId,
+      status: "completed",
+    }),
+  ]);
+
+  return added.sessionId;
+}
+
 test.describe("Chapter page", () => {
-  test("opens from the plan with the chapter's map, lessons and mistakes, takes a vote and a question, and practices it", async ({
+  test("shows the chapter's lessons, mistakes and skills, takes a report and a question, and practices it up to the day's cap", async ({
     browser,
   }) => {
-    await asPersona(browser, { mode: "focus", persona: "hugeGoal" }, async ({ page, user }) => {
+    await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
       const [chapterId, outside, asked] = await Promise.all([
         findPlanChapterId(user.goalId, CHAPTER),
         prisma.chapter.findFirstOrThrow({ where: { title: "Light: wave or particle?" } }),
         stubScreenTutor(page),
       ]);
 
-      // Focus's plan links the current phase's chapters and the full course.
-      await page.goto("/plan");
-      await expect(page.getByText(/^\d+ of \d+ chapters · See full course$/u)).toBeVisible();
+      const chapterUrl = new RegExp(`/content/chapters/${chapterId}$`, "u");
 
-      await expect(page.getByRole("link", { name: "See full course" })).toHaveAttribute(
-        "href",
-        /\/b\/[^/]+\/c\/[^/]+$/u,
-      );
-
-      await page.getByRole("link", { exact: true, name: CHAPTER }).click();
-      await expect(page).toHaveURL(new RegExp(`/content/chapters/${chapterId}$`, "u"));
+      // Chapters open from the Journey, which is the way back.
+      await page.goto(`/content/chapters/${chapterId}`);
       await expect(page.getByRole("heading", { level: 1, name: CHAPTER })).toBeVisible();
 
-      await expect(page.getByText("Chapter 4 · Beginner")).toBeVisible();
-      await expect(page.getByRole("progressbar", { name: /of 3 lessons/u })).toBeVisible();
-
-      const lessons = page.getByRole("region", { name: "Lessons" });
-      await expect(lessons.getByRole("link", { name: /Done Powers of ten/u })).toBeVisible();
-      await expectAccessibleScreen(page, "a chapter");
-      await expect(lessons.getByRole("link", { name: /^Next /u })).toBeVisible();
-      await expect(lessons.getByRole("img", { name: "Coming up" })).toBeVisible();
-
-      const map = page.getByRole("list", { name: `Skills in ${CHAPTER}` });
-      // Screen readers hear each skill's state and what it builds on, as the lines show.
       await expect(
-        map.getByRole("button", {
-          name: "Write a number in scientific notation Learning, builds on Use powers of ten",
-        }),
-      ).toBeVisible();
+        page.getByRole("main").getByRole("link", { name: "Back to Journey" }),
+      ).toHaveAttribute("href", "/journey");
 
-      const powers = map.getByRole("button", { name: /^Use powers of ten/u });
-      await powers.click();
-
-      await expect(powers).toHaveAttribute("aria-expanded", "true");
-      const detail = page.getByRole("region", { name: "Use powers of ten" });
-      await expect(detail.getByRole("link", { name: "Powers of ten" })).toBeVisible();
-
-      // The map is walked with the keyboard too.
-      const skills = map.getByRole("button");
-      await skills.first().focus();
-      await page.keyboard.press("ArrowRight");
-      await expect(skills.nth(1)).toBeFocused();
-
-      await page.keyboard.press("Enter");
-      await expect(skills.nth(1)).toHaveAttribute("aria-expanded", "true");
-
-      await page.keyboard.press("Escape");
-      await expect(skills.nth(1)).toHaveAttribute("aria-expanded", "false");
-
-      await expect(page.getByRole("link", { name: "Your mistakes" })).toHaveAttribute(
+      await expect(page.getByText("Chapter 4", { exact: true })).toBeVisible();
+      // Its one way in, with how far she is in it, right under its name.
+      await expect(page.getByRole("link", { name: /^Continue\s*33% complete$/u })).toHaveAttribute(
         "href",
-        /\/mistakes$/u,
+        /\/learn\/[\da-f-]{36}$/u,
       );
 
-      await expect(page.getByText("1 to review")).toBeVisible();
+      // Every lesson opens in the player, in teaching order, the next one marked.
+      const lessons = page.getByRole("region", { name: "Lessons" });
+      await expect(lessons.getByText("1 of 3", { exact: true })).toBeVisible();
+      await expect(lessons.getByRole("link")).toHaveCount(3);
 
-      // A vote on the chapter from its menu is saved with its reason.
+      await expect(lessons.getByRole("link", { name: /^Up next \d+\. /u })).toHaveAttribute(
+        "href",
+        /\/learn\/[\da-f-]{36}$/u,
+      );
+
+      await expect(
+        lessons.getByRole("link", { name: /^Done \d+\. Powers of ten/u }),
+      ).toHaveAttribute("href", /\/learn\/[\da-f-]{36}$/u);
+
+      await expect(lessons.getByRole("link", { name: /^Coming up \d+\. /u })).toHaveAttribute(
+        "href",
+        /\/learn\/[\da-f-]{36}$/u,
+      );
+
+      await expectAccessibleScreen(page, "a chapter");
+
+      // Folded away in its summary: each skill with its state in words.
+      const summary = page.getByRole("button", { name: "Chapter summary" });
+      await expect(summary).toHaveAttribute("aria-expanded", "false");
+      await summary.click();
+
+      const skills = page.getByRole("region", { name: "Skills" });
+
+      await expect(
+        skills.getByRole("listitem").filter({ hasText: "Write a number in scientific notation" }),
+      ).toHaveText(/^Write a number in scientific notation\s*Learning$/u);
+
+      // She knows none of it yet, so the test that skips it is there.
+      await expect(page.getByText("Already know this?")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Take the test" })).toBeEnabled();
+
+      // Its menu only reports a problem: no votes on a chapter.
       await page.getByRole("button", { name: "Chapter options" }).click();
-      await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).click();
-
-      const sheet = page.getByRole("dialog", { name: "What went wrong?" });
-      await sheet.getByRole("button", { name: "Too easy" }).click();
-      await sheet.getByRole("button", { name: "Send" }).click();
-      await expect(sheet).toBeHidden();
-
-      await expect
-        .poll(() =>
-          prisma.contentFeedback.findFirst({ where: { contentId: chapterId, userId: user.id } }),
-        )
-        .toMatchObject({
-          contentKind: "chapter",
-          mode: "focus",
-          reasons: ["tooEasy"],
-          vote: "down",
-        });
+      await expect(page.getByRole("menuitem", { name: "Report a problem" })).toBeVisible();
+      await expect(page.getByRole("menuitemcheckbox")).toHaveCount(0);
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("menu")).toBeHidden();
 
       // "Ask" is about the chapter as a whole, and closing it hands focus back to it.
       const tutor = await askSuggestion({
-        ask: "Ask about this chapter",
+        ask: "Ask Buddy about this chapter",
         description: "Ask questions about this chapter",
         page,
         suggestion: "What will I be able to do after this chapter?",
@@ -118,43 +131,35 @@ test.describe("Chapter page", () => {
 
       await page.keyboard.press("Escape");
       await expect(tutor).toBeHidden();
-      await expect(page.getByRole("button", { name: "Ask about this chapter" })).toBeFocused();
 
-      // Practice on the chapter's studied skills, or its next lesson once today's session has
-      // already asked every question on them.
-      await page.getByRole("button", { name: "Practice" }).click();
+      await expect(
+        page.getByRole("button", { name: "Ask Buddy about this chapter" }),
+      ).toBeFocused();
+
+      // Her open mistake is on this chapter's skills: practice adds a bonus block on them, or
+      // opens its next lesson once today's session has already asked every question on them.
+      await expect(page.getByText("1 from this chapter", { exact: true })).toBeVisible();
+      await page.getByRole("button", { name: "Practice now" }).click();
       await expect(page).toHaveURL(/\/(?:session|learn\/[^/?]+\?session=)/u);
+
+      // Bonus practice stops at two blocks a day: after both, the tap says so and adds none.
+      const sessionId = await useUpBonusPractice(user.goalId);
+      await page.goto(`/content/chapters/${chapterId}`);
+      await page.getByRole("button", { name: "Practice now" }).click();
+
+      await expect(
+        page.getByRole("status").filter({ hasText: "That's all the bonus practice for today." }),
+      ).toBeVisible();
+
+      await expect(page).toHaveURL(chapterUrl);
+
+      await expect(
+        prisma.studySessionBlock.count({ where: { payload: EXTRA, sessionId } }),
+      ).resolves.toBe(2);
 
       // A chapter outside the learner's plan isn't hers to open.
       await page.goto(`/content/chapters/${outside.id}`);
       await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
-    });
-  });
-});
-
-test.describe("Plan links", () => {
-  test("Fun's route leads to the map, where the subject's levels are", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "fun" }, async ({ page, user }) => {
-      await page.goto("/plan");
-      await expect(page.getByRole("heading", { level: 1, name: "Route" })).toBeVisible();
-
-      await page.getByRole("link", { name: "See the map of your subject" }).click();
-      const mapTitle = page.getByRole("heading", { level: 1, name: "Map of your subject" });
-      await expect(mapTitle).toBeVisible();
-
-      const levels = page.getByRole("region", { name: "Levels of this subject" });
-      const planLevel = levels.getByRole("listitem").filter({ hasText: "your plan" });
-
-      await expect(planLevel).toHaveText(/^Overview/u);
-      await expect(page.getByText("Want to go deeper later? Just keep going.")).toBeVisible();
-      await expectAccessibleScreen(page, "the map of the subject");
-
-      // No Fun flow opens a chapter's page, so it's scanned here.
-      const chapter = await prisma.planItem.findFirstOrThrow({
-        where: { chapterId: { not: null }, plan: { goalId: user.goalId } },
-      });
-
-      await expectAccessibleRoutes(page, [{ path: `/content/chapters/${chapter.chapterId}` }]);
     });
   });
 });

@@ -17,6 +17,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
+import { claimLibraryGeneration } from "../claims/generation-claim";
 import { temperatureSpec, writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { STEP_CONTRACT_VERSION, parseStepContent } from "../steps/contract/step-contract";
@@ -69,16 +70,6 @@ function mockFix({ changedScreens, lesson }: { changedScreens: number[]; lesson:
   return fixProvenance;
 }
 
-function mockReview(issues: Awaited<ReturnType<typeof checkLessonQuality>>["data"]["issues"] = []) {
-  vi.mocked(checkLessonQuality).mockResolvedValueOnce({
-    data: { issues },
-    provenance: provenance("anthropic/claude-opus-5.5"),
-    systemPrompt: "",
-    usage: {} as never,
-    userPrompt: "",
-  });
-}
-
 function withScreen(lesson: WrittenLesson, index: number, screen: WrittenScreen): WrittenLesson {
   return {
     ...lesson,
@@ -87,7 +78,14 @@ function withScreen(lesson: WrittenLesson, index: number, screen: WrittenScreen)
 }
 
 function explanation(text: string): WrittenScreen {
-  return { exampleLineIdea: null, image: null, kind: "explanation", text, title: "Up is up" };
+  return {
+    exampleLineIdea: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title: "Up is up",
+    visual: null,
+  };
 }
 
 /** A lesson whose spec is written and whose content this run has claimed. */
@@ -139,23 +137,22 @@ describe(writeLessonContent, () => {
     );
   });
 
-  it("publishes a lesson that passes the gate, with its summary, skills, math item and provenance", async () => {
+  it("publishes a lesson as soon as its code checks pass, leaving the reviewer to the check after it", async () => {
     const { lesson, skill, workflowRunId } = await createClaimedLesson();
-    const draft = mockDraft(writtenTemperatureLesson());
-    mockReview();
+    const written = writtenTemperatureLesson();
+    const draft = mockDraft(written);
 
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
+    // A lesson with math gets the reasoning check, after publishing: nobody waits on it.
     expect(result).toStrictEqual({
+      check: { cite: false, lesson: written, review: true, version: 1, writerModel: draft.model },
       fixed: false,
-      reviewed: true,
       status: "published",
       stepCount: 8,
     });
 
-    expect(checkLessonQuality).toHaveBeenCalledWith(
-      expect.objectContaining({ level: "beginner", writerModel: draft.model }),
-    );
+    expect(checkLessonQuality).not.toHaveBeenCalled();
 
     const [steps, stored] = await Promise.all([
       listSteps(lesson.id),
@@ -198,40 +195,25 @@ describe(writeLessonContent, () => {
     }
   });
 
-  it("fixes what code and the reviewer found, then records the fix's run on the screens it changed", async () => {
+  it("fixes what the code checks found, then records the fix's run on the screens it changed", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
     const draft = mockDraft(withScreen(written, 1, explanation("In this lesson, a rise goes up.")));
-
-    mockReview([
-      {
-        fix: "Say where it's cold.",
-        kind: "unclear",
-        problem: "The city is vague.",
-        screen: 7,
-        severity: "blocking",
-      },
-    ]);
-
-    const fix = mockFix({ changedScreens: [1, 7], lesson: written });
-    mockReview();
+    const fix = mockFix({ changedScreens: [1], lesson: written });
 
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
-    expect(result).toMatchObject({ fixed: true, status: "published" });
+    expect(result).toMatchObject({ check: { lesson: written }, fixed: true, status: "published" });
+    expect(checkLessonQuality).not.toHaveBeenCalled();
 
     expect(vi.mocked(fixLessonDraft).mock.calls[0]?.[0].problems).toStrictEqual([
       expect.objectContaining({ screen: 1, source: "code" }),
-      expect.objectContaining({
-        problem: "The city is vague. Fix: Say where it's cold.",
-        screen: 7,
-      }),
     ]);
 
     const steps = await listSteps(lesson.id);
 
     expect(steps.map((step) => step.runId)).toStrictEqual(
-      steps.map((step) => ([1, 7].includes(step.position) ? fix.runId : draft.runId)),
+      steps.map((step) => (step.position === 1 ? fix.runId : draft.runId)),
     );
   });
 
@@ -245,9 +227,7 @@ describe(writeLessonContent, () => {
     );
 
     mockDraft(filler);
-    mockReview();
     mockFix({ changedScreens: [], lesson: filler });
-    mockReview();
 
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
@@ -263,50 +243,6 @@ describe(writeLessonContent, () => {
 
     expect(steps).toStrictEqual([]);
     expect(stored.contentStatus).toBe("failed");
-  });
-
-  it("publishes after its fix pass when the reviewer only has a style problem left", async () => {
-    const { lesson, workflowRunId } = await createClaimedLesson();
-    const written = writtenTemperatureLesson();
-
-    const jargon = {
-      fix: "Explain the second term on its own screen.",
-      kind: "jargon" as const,
-      problem: 'Two new terms on one screen: "rise" and "mark".',
-      screen: 1,
-      severity: "blocking" as const,
-    };
-
-    mockDraft(written);
-    mockReview([jargon]);
-    mockFix({ changedScreens: [1], lesson: written });
-    mockReview([{ ...jargon, problem: 'Two new terms on one screen: "scale" and "mark".' }]);
-
-    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { fixed: true, status: "published" },
-    );
-  });
-
-  it("holds back a lesson the reviewer still finds wrong after its fix pass", async () => {
-    const { lesson, workflowRunId } = await createClaimedLesson();
-    const written = writtenTemperatureLesson();
-
-    const wrong = {
-      fix: "Mark 3 °C as the answer.",
-      kind: "incorrect" as const,
-      problem: "The option marked correct, 11 °C, is wrong.",
-      screen: 3,
-      severity: "blocking" as const,
-    };
-
-    mockDraft(written);
-    mockReview([wrong]);
-    mockFix({ changedScreens: [3], lesson: written });
-    mockReview([wrong]);
-
-    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { problems: [expect.objectContaining({ screen: 3, source: "review" })], status: "heldBack" },
-    );
   });
 
   it("holds back a lesson whose code activity doesn't print its expected output", async () => {
@@ -341,9 +277,7 @@ describe(writeLessonContent, () => {
     });
 
     mockDraft(written);
-    mockReview();
     mockFix({ changedScreens: [], lesson: written });
-    mockReview();
 
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
@@ -368,9 +302,7 @@ describe(writeLessonContent, () => {
     const draft = withScreen(writtenTemperatureLesson(), 1, explanation(long));
 
     mockDraft(draft);
-    mockReview();
     mockFix({ changedScreens: [], lesson: draft });
-    mockReview();
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { fixed: true, status: "published" },
@@ -397,9 +329,7 @@ describe(writeLessonContent, () => {
     };
 
     mockDraft(early);
-    mockReview();
     mockFix({ changedScreens: [0], lesson: early });
-    mockReview();
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { fixed: true, status: "published" },
@@ -410,7 +340,7 @@ describe(writeLessonContent, () => {
     );
   });
 
-  it("writes a private lesson from its owner's material and cites a slide on each screen it can", async () => {
+  it("writes a private lesson from its owner's material and leaves its citations to the check after publishing", async () => {
     const user = await userFixture();
     const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
     const goal = await goalFixture({ userId: user.id });
@@ -430,40 +360,24 @@ describe(writeLessonContent, () => {
 
     await learnerSourceFixture({ goalId: goal.id, sourceId: slides.id, userId: user.id });
     mockDraft(writtenTemperatureLesson());
-    mockReview();
 
-    vi.mocked(citeMaterial).mockResolvedValueOnce({
-      data: {
-        citations: [
-          { ref: null, screen: 1 },
-          { ref: "S1:2", screen: 2 },
-          { ref: "S1:9", screen: 3 },
-        ],
-      },
-      provenance: provenance("openai/gpt-6-luna"),
-      systemPrompt: "",
-      usage: {} as never,
-      userPrompt: "",
-    });
-
-    await writeLessonContent({ lessonId: lesson.id, workflowRunId });
+    // A lesson written from material is always reviewed and cited, both after publishing.
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { check: { cite: true, review: true }, status: "published" },
+    );
 
     // The writer reads the slides, tagged so each page can be cited.
     expect(vi.mocked(writeLessonDraft).mock.calls.at(-1)?.[0].material).toContain(
       '<page ref="S1:2" of="Class 3, slide 2">',
     );
 
-    const steps = await listSteps(lesson.id);
+    expect(citeMaterial).not.toHaveBeenCalled();
 
-    // A reference to a slide the lesson wasn't given is dropped.
-    expect(steps.slice(0, 3).map((step) => [step.sourceId, step.sourcePage])).toStrictEqual([
-      [null, null],
-      [slides.id, 2],
-      [null, null],
-    ]);
+    const steps = await listSteps(lesson.id);
+    expect(steps.every((step) => step.sourceId === null)).toBe(true);
   });
 
-  it("writes a shared lesson from its goals' public sources and cites them on the screens they support", async () => {
+  it("writes a shared lesson from the passages of its goals' public sources it teaches", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -490,27 +404,12 @@ describe(writeLessonContent, () => {
     });
 
     mockDraft(writtenTemperatureLesson());
-    mockReview();
-
-    vi.mocked(citeMaterial).mockResolvedValueOnce({
-      data: {
-        citations: [
-          { ref: null, screen: 1 },
-          { ref: "S1:2", screen: 2 },
-          { ref: "S1:2", screen: 3 },
-        ],
-      },
-      provenance: provenance("openai/gpt-6-luna"),
-      systemPrompt: "",
-      usage: {} as never,
-      userPrompt: "",
-    });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { reviewed: true, status: "published" },
+      { check: { cite: true, review: true }, status: "published" },
     );
 
-    // The writer and the reviewer read the passage about the lesson, not the rest of the document.
+    // The writer reads the passage about the lesson, not the rest of the document.
     const draftInput = vi.mocked(writeLessonDraft).mock.calls.at(-1)?.[0];
     expect(draftInput?.material).toBeUndefined();
 
@@ -519,15 +418,38 @@ describe(writeLessonContent, () => {
     );
 
     expect(draftInput?.sources).not.toContain("Agency history");
-    expect(vi.mocked(checkLessonQuality).mock.calls.at(-1)?.[0].sources).toBe(draftInput?.sources);
+  });
+
+  it("publishes a rewrite of a lesson taken out of play as its next version, keeping the old screens for learners playing them", async () => {
+    const { lesson } = await createClaimedLesson();
+    const old = await libraryStepFixture({ lessonId: lesson.id, position: 0 });
+    const workflowRunId = randomUUID();
+
+    // The lesson was pulled for a rewrite, and this run claims it.
+    await prisma.lesson.update({
+      data: { contentRunId: null, contentStatus: "failed" },
+      where: { id: lesson.id },
+    });
+
+    await expect(
+      claimLibraryGeneration({ id: lesson.id, target: "lessonContent", workflowRunId }),
+    ).resolves.toBe("claimed");
+
+    mockDraft(writtenTemperatureLesson());
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { check: { version: 2 }, status: "published" },
+    );
 
     const steps = await listSteps(lesson.id);
+    const current = steps.filter((step) => step.retiredAt === null);
 
-    expect(steps.slice(0, 3).map((step) => [step.sourceId, step.sourcePage])).toStrictEqual([
-      [null, null],
-      [guidance.id, 2],
-      [guidance.id, 2],
-    ]);
+    expect(current.map((step) => step.version)).toStrictEqual(Array.from({ length: 8 }, () => 2));
+
+    expect(steps.find((step) => step.id === old.id)).toMatchObject({
+      retiredAt: expect.any(Date),
+      version: 1,
+    });
   });
 
   it("saves nothing when another run took the claim while this one was writing", async () => {
@@ -548,8 +470,6 @@ describe(writeLessonContent, () => {
         userPrompt: "",
       };
     });
-
-    mockReview();
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toStrictEqual(
       { status: "notClaimed" },
@@ -606,12 +526,11 @@ describe(writeLessonContent, () => {
         { isCorrect: false, reason: "That's moving down instead of up.", text: "−27 °C" },
       ],
       question: "What will the thermometer show?",
+      visual: null,
     });
 
     mockDraft(repeated);
-    mockReview();
     mockFix({ changedScreens: [7], lesson: written });
-    mockReview();
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { fixed: true, status: "published" },

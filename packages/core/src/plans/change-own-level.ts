@@ -60,6 +60,7 @@ async function addFoundations(context: PlanContext): Promise<PlanChangeView | nu
 
   const result = await applyChangeNow({
     context,
+    followToday: true,
     operations,
     reason: OWN_LEVEL_NOTE,
     source: OWN_LEVEL_SOURCE,

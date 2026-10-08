@@ -9,8 +9,9 @@ import { useExtracted } from "next-intl";
 import { PlayAudioButton } from "../components/play-audio-button";
 import { PlayerContentFrame } from "../components/step-layouts";
 import { usePromptAudioUrl } from "../player-audio-context";
+import { LESSON_PRIMARY_ID } from "./_utils/lesson-focus";
 import { isReadStep } from "./_utils/lesson-steps";
-import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
+import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonPrimaryLabel } from "./lesson-player-screen";
 import { AskTutorButton } from "./tutor/ask-tutor-button";
 
@@ -48,13 +49,13 @@ function PromptAudio() {
 }
 
 /**
- * The one next action, with Previous and a card's sound on reading screens. It sticks to the bottom on phones and
- * sits under the content on desktop, and Enter always does what it says.
+ * The one next action, with Previous on every screen after the first and a card's sound on
+ * reading screens. It stays at the bottom on every size, so it never moves when a result appears,
+ * and Enter always does what it says.
  */
 export function LessonActionBar() {
   const t = useExtracted();
   const { actions, screen } = useLessonPlayer();
-  const { skin } = useLessonPlayerConfig();
   const { primary } = screen;
 
   if (!primary) {
@@ -65,7 +66,7 @@ export function LessonActionBar() {
 
   return (
     <div
-      className="bg-background/90 sticky bottom-0 z-20 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm lg:static lg:bg-transparent lg:backdrop-blur-none"
+      className="bg-background/90 sticky bottom-0 z-20 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm lg:pb-6"
       data-slot="lesson-action-bar"
     >
       <PlayerContentFrame className="flex items-center gap-2 pt-3">
@@ -90,21 +91,17 @@ export function LessonActionBar() {
             primary.busy && "disabled:opacity-100",
           )}
           disabled={primary.disabled}
+          id={LESSON_PRIMARY_ID}
           onClick={runPrimary}
           size="lg"
-          variant={skin.primaryVariant}
         >
-          {/* One group, so the desktop layout (label left, shortcut right) keeps the arrow with it. */}
+          {/* One group, so the arrow stays with the label next to the Enter hint. */}
           <span className="inline-flex items-center gap-1.5">
             {primary.busy && <Spinner aria-hidden="true" />}
             <PrimaryLabel label={primary.label} />
             {primary.label === "next" && <ChevronRightIcon aria-hidden="true" />}
           </span>
-          {!primary.busy && (
-            <ShortcutKbd tone={skin.primaryVariant === "default" ? "inverse" : "default"}>
-              Enter
-            </ShortcutKbd>
-          )}
+          {!primary.busy && <ShortcutKbd tone="inverse">Enter</ShortcutKbd>}
         </Button>
 
         <AskTutorButton />

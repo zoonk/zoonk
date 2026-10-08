@@ -7,7 +7,7 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { ItemLine, ItemText } from "../../questions/item-text";
+import { ItemLine, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type Choice, ChoiceList } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
@@ -91,7 +91,7 @@ function TypedAnswerField({
       <Label htmlFor={fieldId}>{t("Your answer, in your own words")}</Label>
       <Textarea
         autoFocus
-        className="in-data-[mode=fun]:fun-glass min-h-28 text-base"
+        className="min-h-28 text-base"
         id={fieldId}
         maxLength={MAX_TYPED_ANSWER}
         onChange={(event) => onChange(event.target.value)}
@@ -173,7 +173,7 @@ export function PlacementQuestionScreen({
         {subject && number !== undefined && (
           <div className="flex items-start justify-between gap-3">
             <OnboardingSubject>{subject}</OnboardingSubject>
-            <span className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 shrink-0 py-1 text-xs font-medium tabular-nums">
+            <span className="text-muted-foreground shrink-0 py-1 text-xs font-medium tabular-nums">
               {t("Question {number, number}", { number })}
             </span>
           </div>
@@ -181,14 +181,14 @@ export function PlacementQuestionScreen({
 
         {media}
 
-        {question.context && (
-          <ItemText
-            className="text-muted-foreground text-base leading-relaxed"
-            text={question.context}
-          />
-        )}
+        <ItemSupport
+          className="text-muted-foreground text-base leading-relaxed"
+          context={question.context}
+          image={question.image}
+          visual={question.visual}
+        />
 
-        <h1 className="in-data-[mode=fun]:font-fun-display text-xl leading-snug font-semibold text-pretty">
+        <h1 className="text-xl leading-snug font-semibold text-pretty">
           <ItemLine text={question.question} />
         </h1>
 
@@ -204,7 +204,7 @@ export function PlacementQuestionScreen({
         )}
 
         <Button
-          className="in-data-[mode=fun]:fun-glass h-12 rounded-full text-base"
+          className="h-12 rounded-full text-base"
           disabled={pending}
           onClick={() => send({ dontKnow: true })}
           type="button"

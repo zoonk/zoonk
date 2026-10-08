@@ -110,6 +110,7 @@ function formatPack(pack: LocalContextPack): string {
     `- School: ${pack.school}`,
     `- National exams: ${pack.exams}`,
     `- Register: ${pack.register}`,
+    "- Brands: real companies and brands, the ones above included, appear only in their ordinary use; a failure, a bug, a complaint or a mistake happens at a made-up company with a made-up name",
   ].join("\n");
 }
 

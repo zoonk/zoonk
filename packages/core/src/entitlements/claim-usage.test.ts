@@ -41,6 +41,21 @@ function startLesson({ generated = false, lessonId = randomUUID() } = {}) {
   return claimUsage({ generated, kind: "lessonStart", targetId: lessonId });
 }
 
+function makeMindMap() {
+  return claimUsage({ generated: true, kind: "mindMap", targetId: randomUUID() });
+}
+
+/** Every metered kind a free learner can use, with its caps (calls are capped by time instead). */
+const FREE_CAPS = [
+  { day: 100, kind: "assist", month: 500 },
+  { day: 5, kind: "explanation", month: 20 },
+  { day: 3, kind: "goal", month: 10 },
+  { day: 20, kind: "lessonStart", month: 40 },
+  { day: 3, kind: "mindMap", month: 10 },
+  { day: 10, kind: "tutorMessage", month: 100 },
+  { day: 3, kind: "upload", month: 10 },
+] as const;
+
 describe(claimUsage, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -131,34 +146,251 @@ describe(claimUsage, () => {
     });
   });
 
-  it.each(["upload", "conversation", "goal"] as const)(
-    "caps a free learner's %s at 3 a day",
-    async (kind) => {
-      const user = await useLearner();
-      await usageRecordsFixture({ count: 3, createdAt: NOW, kind, userId: user.id });
+  it.each(["upload", "goal"] as const)("caps a free learner's %s at 3 a day", async (kind) => {
+    const user = await useLearner();
+    await usageRecordsFixture({ count: 3, createdAt: NOW, kind, userId: user.id });
 
-      await expect(claimUsage({ kind, targetId: randomUUID() })).resolves.toStrictEqual({
-        limit: { limit: 3, period: "day", resource: kind, tier: "free" },
+    await expect(claimUsage({ kind, targetId: randomUUID() })).resolves.toStrictEqual({
+      limit: { limit: 3, period: "day", resource: kind, tier: "free" },
+      status: "limitReached",
+    });
+
+    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+
+    await expect(claimUsage({ kind, targetId: randomUUID() })).resolves.toStrictEqual({
+      status: "allowed",
+    });
+  });
+
+  it("caps a free learner's new mind maps at 3 a day and 10 a month", async () => {
+    const user = await useLearner();
+    await usageRecordsFixture({ count: 3, createdAt: NOW, kind: "mindMap", userId: user.id });
+
+    await expect(makeMindMap()).resolves.toStrictEqual({
+      limit: { limit: 3, period: "day", resource: "mindMap", tier: "free" },
+      status: "limitReached",
+    });
+
+    await usageRecordsFixture({
+      count: 7,
+      createdAt: EARLIER_THIS_MONTH,
+      kind: "mindMap",
+      userId: user.id,
+    });
+
+    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+
+    await expect(makeMindMap()).resolves.toStrictEqual({
+      limit: { limit: 10, period: "month", resource: "mindMap", tier: "free" },
+      status: "limitReached",
+    });
+  });
+
+  it("holds a call's length from the day's call time, priced by the second", async () => {
+    const user = await useLearner();
+    const targetId = randomUUID();
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId }),
+    ).resolves.toStrictEqual({ heldSeconds: 120, status: "allowed" });
+
+    await expect(
+      prisma.usageRecord.findUniqueOrThrow({
+        where: { userUsageTarget: { kind: "conversation", targetId, userId: user.id } },
+      }),
+    ).resolves.toMatchObject({
+      costMicros: getEstimatedCostMicros({ generated: false, kind: "conversation", seconds: 120 }),
+      seconds: 120,
+    });
+
+    expect(getEstimatedCostMicros({ generated: false, kind: "conversation", seconds: 120 })).toBe(
+      110_000,
+    );
+  });
+
+  it("gives Plus 20 minutes of calls a day: the last call runs what's left, then calls wait for tomorrow", async () => {
+    const user = await useLearner({ plus: true });
+
+    await usageRecordsFixture({
+      count: 1,
+      createdAt: NOW,
+      kind: "conversation",
+      seconds: 19 * 60,
+      userId: user.id,
+    });
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 300, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({ heldSeconds: 60, shortenedBy: "day", status: "allowed" });
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 1200, period: "day", resource: "callSeconds", tier: "plus" },
+      status: "limitReached",
+    });
+
+    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({ heldSeconds: 120, status: "allowed" });
+  });
+
+  it("caps a month of Plus's calls too: the last call runs what's left, then calls wait for next month", async () => {
+    const user = await useLearner({ plus: true });
+
+    // 85 minutes on earlier days this month: two of the month's minutes are left.
+    await usageRecordsFixture({
+      count: 5,
+      createdAt: EARLIER_THIS_MONTH,
+      kind: "conversation",
+      seconds: 17 * 60,
+      userId: user.id,
+    });
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 300, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({ heldSeconds: 120, shortenedBy: "month", status: "allowed" });
+
+    // Tomorrow brings no call time back: the month's is used.
+    vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 5220, period: "month", resource: "callSeconds", tier: "plus" },
+      status: "limitReached",
+    });
+
+    // A second before the month ends, still none; on the 1st, by the server's clock, it's back.
+    vi.setSystemTime(new Date("2026-09-30T23:59:59Z"));
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toMatchObject({ limit: { period: "month" }, status: "limitReached" });
+
+    vi.setSystemTime(new Date("2026-10-01T00:00:00Z"));
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({ heldSeconds: 120, status: "allowed" });
+  });
+
+  it("gives the free plan a much smaller month of calls than Plus", async () => {
+    const user = await useLearner();
+
+    // 4 minutes on earlier days this month leave one: a minute-long call fits, nothing after it.
+    await usageRecordsFixture({
+      count: 1,
+      createdAt: EARLIER_THIS_MONTH,
+      kind: "conversation",
+      seconds: 4 * 60,
+      userId: user.id,
+    });
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({ heldSeconds: 60, shortenedBy: "month", status: "allowed" });
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 60, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 300, period: "month", resource: "callSeconds", tier: "free" },
+      status: "limitReached",
+    });
+  });
+
+  it("refuses a call with less than a minute of the free plan's 2 a day left", async () => {
+    const user = await useLearner();
+
+    await usageRecordsFixture({
+      count: 1,
+      createdAt: NOW,
+      kind: "conversation",
+      seconds: 61,
+      userId: user.id,
+    });
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 60, targetId: randomUUID() }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 120, period: "day", resource: "callSeconds", tier: "free" },
+      status: "limitReached",
+    });
+  });
+
+  it("keeps what a dropped call ran when it connects again, and holds its length again", async () => {
+    const user = await useLearner();
+    const targetId = randomUUID();
+
+    await claimUsage({ kind: "conversation", seconds: 60, targetId });
+    vi.setSystemTime(new Date(NOW.getTime() + 30_000));
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 60, targetId }),
+    ).resolves.toStrictEqual({ heldSeconds: 60, status: "allowed" });
+
+    await expect(
+      prisma.usageRecord.findUniqueOrThrow({
+        where: { userUsageTarget: { kind: "conversation", targetId, userId: user.id } },
+      }),
+    ).resolves.toMatchObject({ seconds: 90 });
+
+    // Another drop: what's left of the day's 2 minutes is too short for a call.
+    vi.setSystemTime(new Date(NOW.getTime() + 90_000));
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 60, targetId }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 120, period: "day", resource: "callSeconds", tier: "free" },
+      status: "limitReached",
+    });
+  });
+
+  it.each(FREE_CAPS)(
+    "stops a free learner's $kind at $day a day and $month a month: no AI work is unlimited on the free plan",
+    async ({ day, kind, month }) => {
+      const user = await useLearner();
+      await usageRecordsFixture({ count: day, createdAt: NOW, kind, userId: user.id });
+
+      await expect(
+        claimUsage({ generated: true, kind, targetId: randomUUID() }),
+      ).resolves.toStrictEqual({
+        limit: { limit: day, period: "day", resource: kind, tier: "free" },
         status: "limitReached",
       });
 
-      vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
+      const other = await useLearner();
 
-      await expect(claimUsage({ kind, targetId: randomUUID() })).resolves.toStrictEqual({
-        status: "allowed",
+      await usageRecordsFixture({
+        count: month,
+        createdAt: EARLIER_THIS_MONTH,
+        kind,
+        userId: other.id,
+      });
+
+      await expect(
+        claimUsage({ generated: true, kind, targetId: randomUUID() }),
+      ).resolves.toStrictEqual({
+        limit: { limit: month, period: "month", resource: kind, tier: "free" },
+        status: "limitReached",
       });
     },
   );
 
-  it("spaces out a free learner's quick explanations above 30 a day instead of blocking them", async () => {
-    const user = await useLearner();
-    const lastExplanation = new Date(NOW.getTime() - MINUTE_MS);
+  it("keeps fair use for Plus's small AI help and quick explanations, spacing them out instead of blocking", async () => {
+    const user = await useLearner({ plus: true });
+    const lastUse = new Date(NOW.getTime() - MINUTE_MS);
 
-    await usageRecordsFixture({
-      count: 30,
-      createdAt: lastExplanation,
-      kind: "explanation",
-      userId: user.id,
+    await Promise.all([
+      usageRecordsFixture({ count: 1000, createdAt: lastUse, kind: "assist", userId: user.id }),
+      usageRecordsFixture({ count: 200, createdAt: lastUse, kind: "explanation", userId: user.id }),
+    ]);
+
+    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toStrictEqual({
+      retryAfterSeconds: 240,
+      status: "slowDown",
     });
 
     await expect(
@@ -190,10 +422,18 @@ describe(claimUsage, () => {
     });
   });
 
-  it("lets a free learner start the day's three new goals and a day of new lessons within the AI budget", async () => {
+  it("lets a free learner start the day's three new goals, a day of new lessons and mind maps within the AI budget", async () => {
     const user = await useLearner();
 
     await Promise.all([
+      usageRecordsFixture({
+        costMicros: getEstimatedCostMicros({ generated: true, kind: "mindMap" }),
+        count: 3,
+        createdAt: NOW,
+        generated: true,
+        kind: "mindMap",
+        userId: user.id,
+      }),
       usageRecordsFixture({
         costMicros: getEstimatedCostMicros({ generated: true, kind: "goal" }),
         count: 2,

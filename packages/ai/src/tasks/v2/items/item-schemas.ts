@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { imageRequestSchema } from "../images/image-request-schema";
+import { lessonVisualSchema } from "../visuals/visual-schema";
 
 /** Item formats, matching the `ItemFormat` database enum. */
 const ITEM_FORMATS = [
@@ -36,11 +38,17 @@ export const essayRubricRowSchema = z.object({
 
 const difficulty = z.enum(["easy", "medium", "hard"]);
 
+/** A chart or timeline the app draws next to the question, when the question reads one; or null. */
+const visual = lessonVisualSchema.nullable();
+
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the situation and question come before the answers. */
 const multipleChoiceItem = z.object({
   format: z.literal("multipleChoice"),
   difficulty,
   context: z.string().nullable(),
+  visual,
+  /** The picture a question is about (a diagram, a map), drawn and checked before it is stored. */
+  image: imageRequestSchema,
   question: z.string(),
   options: z
     .array(
@@ -59,23 +67,38 @@ const trueFalseItem = z.object({
   format: z.literal("trueFalse"),
   difficulty,
   context: z.string().nullable(),
+  visual,
+  /** The picture a question is about (a diagram, a map), drawn and checked before it is stored. */
+  image: imageRequestSchema,
   statement: z.string(),
   isTrue: z.boolean(),
   reason: z.string(),
   misconception: z.string().nullable(),
 });
 
+const openAnswerSetup = { difficulty, context: z.string().nullable() };
+
 const openAnswerFields = {
-  difficulty,
-  context: z.string().nullable(),
   question: z.string(),
   keyPoints: z.array(z.string()).min(MIN_KEY_POINTS).max(MAX_KEY_POINTS),
   acceptedAnswers: z.array(z.string()),
   sampleAnswer: z.string(),
 };
 
-const typedItem = z.object({ format: z.literal("typed"), ...openAnswerFields });
-const spokenItem = z.object({ format: z.literal("spoken"), ...openAnswerFields });
+const typedItem = z.object({
+  format: z.literal("typed"),
+  ...openAnswerSetup,
+  visual,
+  /** The picture a question is about (a diagram, a map), drawn and checked before it is stored. */
+  image: imageRequestSchema,
+  ...openAnswerFields,
+});
+
+const spokenItem = z.object({
+  format: z.literal("spoken"),
+  ...openAnswerSetup,
+  ...openAnswerFields,
+});
 
 const essayItem = z.object({
   format: z.literal("essay"),

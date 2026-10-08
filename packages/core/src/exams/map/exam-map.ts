@@ -1,5 +1,10 @@
 import { type MasteryState } from "@zoonk/db";
 import { type ExamStructure, type TopicFrequency } from "../../library/exams/blueprint-contract";
+import {
+  getPastQuestionsSource,
+  getSubjectQuestions,
+  orderByQuestions,
+} from "../../library/exams/subject-questions";
 import { namesMatch } from "../_utils/name-match";
 
 type FrequencyLevel = TopicFrequency[number]["level"];
@@ -18,6 +23,8 @@ type ExamMapLevel = { mastered: number; solid: number; studied: number; total: n
 type ExamMapSubject = {
   /** The subject's most frequent topic level, so "appears a lot" can mark the subject. */
   frequency: FrequencyLevel | null;
+  /** The notice's group for it, such as "Conhecimentos básicos (P1)". Null when it has none. */
+  group: string | null;
   level: ExamMapLevel | null;
   name: string;
   questions: number | null;
@@ -31,7 +38,16 @@ type ExamMapSubject = {
  * topic with how often the board asks it, and where the learner stands in each subject. The plan's
  * priority already uses the same weights and frequency.
  */
-export type ExamMap = { hasFrequency: boolean; subjects: ExamMapSubject[]; topicCount: number };
+export type ExamMap = {
+  hasFrequency: boolean;
+  /**
+   * Where the subjects' counts come from when the notice gives none: the exam's latest edition,
+   * as one source counted it. Null when the notice gives them, or nobody does.
+   */
+  questionsSource: { edition: string | null; title: string | null; url: string } | null;
+  subjects: ExamMapSubject[];
+  topicCount: number;
+};
 
 type ExamMapSkill = { area: string | null; state: MasteryState };
 
@@ -42,7 +58,11 @@ function rank(topic: Pick<ExamMapTopic, "frequency">): number {
   return topic.frequency ? FREQUENCY_RANK[topic.frequency] : NO_FREQUENCY_RANK;
 }
 
-function getShare({
+/**
+ * A subject's share of the exam, from 0 to 1: the notice's weight, or its share of the questions
+ * (the notice's counts, or the latest edition's when the notice gives none).
+ */
+export function getSubjectShare({
   structure,
   subject,
 }: {
@@ -53,8 +73,14 @@ function getShare({
     return subject.weight;
   }
 
-  const total = structure.subjects.reduce((sum, item) => sum + (item.questions ?? 0), 0);
-  return subject.questions !== null && total > 0 ? subject.questions / total : null;
+  const questions = getSubjectQuestions({ structure, subject });
+
+  const total = structure.subjects.reduce(
+    (sum, item) => sum + (getSubjectQuestions({ structure, subject: item }) ?? 0),
+    0,
+  );
+
+  return questions !== null && total > 0 ? questions / total : null;
 }
 
 function toTopics({
@@ -119,22 +145,26 @@ export function buildExamMap({
   skills: readonly ExamMapSkill[];
   structure: ExamStructure;
 }): ExamMap {
-  const subjects = structure.subjects.map((subject) => {
-    const topics = toTopics({ frequency, subject });
-    const top = topics.find((topic) => topic.frequency !== null)?.frequency ?? null;
+  const subjects = orderByQuestions(
+    structure.subjects.map((subject) => {
+      const topics = toTopics({ frequency, subject });
+      const top = topics.find((topic) => topic.frequency !== null)?.frequency ?? null;
 
-    return {
-      frequency: top,
-      level: toLevel({ skills, subject: subject.name }),
-      name: subject.name,
-      questions: subject.questions,
-      share: getShare({ structure, subject }),
-      topics,
-    };
-  });
+      return {
+        frequency: top,
+        group: subject.group ?? null,
+        level: toLevel({ skills, subject: subject.name }),
+        name: subject.name,
+        questions: getSubjectQuestions({ structure, subject }),
+        share: getSubjectShare({ structure, subject }),
+        topics,
+      };
+    }),
+  );
 
   return {
     hasFrequency: frequency.length > 0,
+    questionsSource: getPastQuestionsSource(structure),
     subjects,
     topicCount: subjects.reduce((sum, subject) => sum + subject.topics.length, 0),
   };

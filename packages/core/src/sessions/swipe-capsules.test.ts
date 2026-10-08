@@ -1,6 +1,11 @@
 import { prisma } from "@zoonk/db";
-import { itemFixture } from "@zoonk/testing/fixtures/skills";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -80,6 +85,90 @@ describe("swipe capsules", () => {
       finishStudyBlock({ blockId: review?.id ?? "", input: {}, sessionId: session?.id ?? "" }),
     ).resolves.toMatchObject({
       completion: { correct: 2, netScore: 1, total: 3 },
+      status: "ready",
+    });
+  });
+
+  it("nets only the statements when the review also asks a matching question", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+    const goal = await goalFixture({ kind: "exam", timezone: "UTC", userId: user.id });
+
+    const pairs = [
+      { left: "10% of 50", right: "5" },
+      { left: "25% of 40", right: "10" },
+    ];
+
+    const [statements, match, session] = await Promise.all([
+      Promise.all(
+        [true, true, false].map((isTrue) =>
+          itemFixture({
+            content: statementContent(isTrue),
+            format: "trueFalse",
+            skillId: skill.id,
+          }),
+        ),
+      ),
+      itemFixture({
+        content: { pairs, question: "Match each percentage", reason: "Multiply." },
+        format: "matchPairs",
+        skillId: skill.id,
+      }),
+      studySessionFixture({ goalId: goal.id, localDate: new Date(SESSION_NOW), userId: user.id }),
+    ]);
+
+    const block = await studySessionBlockFixture({
+      kind: "review",
+      payload: {
+        capsules: [
+          {
+            format: "swipe",
+            itemIds: statements.map((item) => item.id),
+            key: `skill:${skill.id}`,
+            lessonId: null,
+            skillIds: [skill.id],
+            title: "Statements",
+          },
+          {
+            format: "matchPairs",
+            itemIds: [match.id],
+            key: `match:${skill.id}`,
+            lessonId: null,
+            skillIds: [skill.id],
+            title: "Percentages",
+          },
+        ],
+        skillIds: [skill.id],
+      },
+      position: 0,
+      sessionId: session.id,
+    });
+
+    mockSession(user.id);
+    await startStudyBlock({ blockId: block.id, input: {}, sessionId: session.id });
+    const detail = await getStudyBlock({ blockId: block.id, sessionId: session.id });
+    const questions = detail.status === "ready" ? detail.detail.questions : [];
+
+    // Every statement swiped "true" (two right, one wrong: net 1) and the pairs matched right,
+    // which counts as right but never in the net.
+    await questions.reduce(async (previous, question) => {
+      await previous;
+
+      const answer =
+        question.format === "matchPairs"
+          ? { matches: pairs.map((pair) => question.right?.indexOf(pair.right) ?? -1) }
+          : { isTrue: true };
+
+      await answerStudyQuestion({
+        blockId: block.id,
+        input: { answer, durationMs: 2000, itemId: question.itemId },
+        sessionId: session.id,
+      });
+    }, Promise.resolve());
+
+    await expect(
+      finishStudyBlock({ blockId: block.id, input: {}, sessionId: session.id }),
+    ).resolves.toMatchObject({
+      completion: { correct: 3, netScore: 1, total: 4 },
       status: "ready",
     });
   });

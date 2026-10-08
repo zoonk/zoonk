@@ -4,13 +4,17 @@ import { type SeedGoal, type SeedPlanItem } from "./types";
 
 /*
  * The planner's rules for plans without exam phases (`packages/core/src/plans/planner`), so a
- * seeded plan is the one the app computes from its skill graph: a lesson of the graph's size is 3
- * minutes of new learning, which gets half of each day's time (reviews and practice take the
- * rest); a skill the Library outlined in part keeps the graph's size while a chapter's worth of its
- * lessons (4) is missing; each phase closes with a 10-minute phase checkpoint (`boss`); and every
- * Sunday from the plan's second week holds a 15-minute weekly challenge (`checkpoint`).
+ * seeded plan is the one the app computes from its skill graph: a lesson of the graph's size is 4
+ * minutes of new learning (`DEFAULT_LESSON_MINUTES`), which gets half of each day's time (reviews
+ * and practice take the rest); a skill the Library outlined in part keeps the graph's size while a
+ * chapter's worth of its lessons (4) is missing, a lesson a chapter shares among several skills
+ * counting once, for the skill it's planned under (`assignLessonSkills`); each phase closes with a 10-minute phase
+ * checkpoint (`boss`); and every Sunday from the plan's second week holds a 15-minute weekly
+ * challenge (`checkpoint`), until the goal's date when it has one, else until the lessons end. With
+ * a date, every other day after the last lesson is a practice day (`review`) of the day's whole
+ * time.
  */
-const LESSON_MINUTES = 3;
+const LESSON_MINUTES = 4;
 const LEARNING_SHARE = 0.5;
 const BOSS_MINUTES = 10;
 const WEEKLY_CHECKPOINT_MINUTES = 15;
@@ -28,8 +32,13 @@ const EPSILON = 1e-6;
  */
 type GoalSkill = { key: string; lesson: string; lessons: number; phase: number };
 
-/** A Library lesson that teaches some of the goal's skills. */
-type CourseLesson = { key: string; minutes: number; skills: readonly string[] };
+/** A Library lesson that teaches some of the goal's skills, in its chapter (null for none). */
+type CourseLesson = {
+  chapter: string | null;
+  key: string;
+  minutes: number;
+  skills: readonly string[];
+};
 
 /** One thing to do in order, as the planner queues it: a lesson, a skill's stand-in or a boss. */
 type Unit = {
@@ -75,11 +84,20 @@ export type PlanSchedule = {
 };
 
 /** The course's lessons in course order: chapters as listed, then lessons without a chapter. */
+function toCourseLesson(
+  lesson: { key: string; minutes: number; skills: readonly string[] },
+  chapter: string | null,
+): CourseLesson {
+  return { chapter, key: lesson.key, minutes: lesson.minutes, skills: lesson.skills };
+}
+
 function listCourseLessons(course: SeedCourse): CourseLesson[] {
   return [
-    ...course.chapters.flatMap((chapter) => chapter.lessons),
-    ...(course.explanations ?? []),
-  ].map((lesson) => ({ key: lesson.key, minutes: lesson.minutes, skills: lesson.skills }));
+    ...course.chapters.flatMap((chapter) =>
+      chapter.lessons.map((lesson) => toCourseLesson(lesson, chapter.key)),
+    ),
+    ...(course.explanations ?? []).map((lesson) => toCourseLesson(lesson, null)),
+  ];
 }
 
 function itemLessonKeys(course: SeedCourse, item: SeedPlanItem): string[] {
@@ -106,6 +124,120 @@ function countStandInLessons({ lessons, taught }: { lessons: number; taught: num
 
   const missing = lessons - taught;
   return missing >= MIN_STAND_IN_LESSONS ? missing : 0;
+}
+
+/**
+ * The planner's `apportion`: shares `total` lessons among skills in proportion to what each still
+ * needs (largest remainder, ties to the earlier skill), then gives every skill at least one, from
+ * the largest share, when there are enough to go round.
+ */
+function apportion({ needs, total }: { needs: readonly number[]; total: number }): number[] {
+  const sum = needs.reduce((acc, need) => acc + need, 0);
+  const exact = needs.map((need) => (sum > 0 ? (total * need) / sum : total / needs.length));
+  const whole = exact.map((share) => Math.floor(share));
+  const left = total - whole.reduce((acc, count) => acc + count, 0);
+
+  const extra = new Set(
+    exact
+      .map((share, index) => ({ index, remainder: share - (whole[index] ?? 0) }))
+      .toSorted((a, b) => b.remainder - a.remainder || a.index - b.index)
+      .slice(0, left)
+      .map((entry) => entry.index),
+  );
+
+  const counts = whole.map((count, index) => count + (extra.has(index) ? 1 : 0));
+
+  if (total < needs.length) {
+    return counts;
+  }
+
+  return counts.reduce<number[]>((shares, count, index) => {
+    if (count > 0) {
+      return shares;
+    }
+
+    const largest = shares.indexOf(Math.max(...shares));
+
+    return shares.map((share, at) => {
+      if (at === index) {
+        return 1;
+      }
+
+      return at === largest ? share - 1 : share;
+    });
+  }, counts);
+}
+
+/**
+ * The planner's `assignLessonSkills`: the skill each lesson counts for. A lesson of one of the
+ * skills is that skill's; the lessons a chapter shares among the same skills split into runs in
+ * the graph's order (`order`, each skill's place in it), each sized by what the skill still needs
+ * beyond the lessons that are its alone.
+ */
+function assignLessonSkills({
+  lessons,
+  order,
+  skills,
+}: {
+  lessons: readonly CourseLesson[];
+  order: ReadonlyMap<string, number>;
+  skills: readonly GoalSkill[];
+}): Map<string, string> {
+  const studied = new Set(skills.map((skill) => skill.key));
+  const sizes = new Map(skills.map((skill) => [skill.key, skill.lessons]));
+
+  const taughtBy = lessons.map((lesson) => ({
+    chapter: lesson.chapter,
+    key: lesson.key,
+    skills: lesson.skills
+      .filter((skill) => studied.has(skill))
+      .toSorted((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0)),
+  }));
+
+  const single = new Map(
+    taughtBy.flatMap((lesson) =>
+      lesson.skills.length === 1 ? [[lesson.key, lesson.skills[0] ?? ""] as const] : [],
+    ),
+  );
+
+  const alone = Map.groupBy([...single.values()], (skill) => skill);
+
+  const groups = Map.groupBy(
+    taughtBy.filter((lesson) => lesson.skills.length > 1),
+    (lesson) => `${lesson.chapter ?? ""}:${lesson.skills.join("+")}`,
+  );
+
+  const shared = [...groups.values()].flatMap((group) => {
+    const skillKeys = group[0]?.skills ?? [];
+
+    const counts = apportion({
+      needs: skillKeys.map((skill) =>
+        Math.max(1, (sizes.get(skill) ?? 1) - (alone.get(skill)?.length ?? 0)),
+      ),
+      total: group.length,
+    });
+
+    const runs = skillKeys.flatMap((skill, index) =>
+      Array.from({ length: counts[index] ?? 0 }, () => skill),
+    );
+
+    return group.map((lesson, position) => [lesson.key, runs[position] ?? ""] as const);
+  });
+
+  return new Map([...single, ...shared.filter(([, skill]) => skill)]);
+}
+
+/** How many lessons count toward each skill's size: each lesson once, for its assigned skill. */
+function countTaughtLessons(input: Parameters<typeof assignLessonSkills>[0]): Map<string, number> {
+  return [...assignLessonSkills(input).values()].reduce(
+    (counts, skill) => counts.set(skill, (counts.get(skill) ?? 0) + 1),
+    new Map<string, number>(),
+  );
+}
+
+/** Each skill's place in the goal's graph, which a shared chapter teaches its skills in. */
+function getGraphOrder(skills: readonly GoalSkill[]): Map<string, number> {
+  return new Map(skills.map((skill, index) => [skill.key, index]));
 }
 
 /**
@@ -181,14 +313,17 @@ function listSettledStandIns({
       .flatMap((lesson) => lesson.skills),
   );
 
+  const taught = countTaughtLessons({
+    lessons: context.lessons,
+    order: getGraphOrder(context.skills),
+    skills: context.skills,
+  });
+
   return context.skills
     .filter(
       (skill) =>
         covered.has(skill.key) &&
-        countStandInLessons({
-          lessons: skill.lessons,
-          taught: taughtLessons(context.lessons, skill.key).length,
-        }) > 0,
+        countStandInLessons({ lessons: skill.lessons, taught: taught.get(skill.key) ?? 0 }) > 0,
     )
     .map((skill) => ({
       day: item.day ?? 0,
@@ -265,6 +400,8 @@ function buildQueue({
     .filter((skill) => !settled.has(skill.key))
     .toSorted((a, b) => a.phase - b.phase);
 
+  const counts = countTaughtLessons({ lessons, order: getGraphOrder(context.skills), skills });
+
   const firstSkill = new Map<string, string>();
 
   lessons.forEach((lesson) => {
@@ -277,7 +414,11 @@ function buildQueue({
 
   const units = skills.flatMap((skill): Unit[] => {
     const taught = taughtLessons(lessons, skill.key);
-    const missing = countStandInLessons({ lessons: skill.lessons, taught: taught.length });
+
+    const missing = countStandInLessons({
+      lessons: skill.lessons,
+      taught: counts.get(skill.key) ?? 0,
+    });
 
     const own = taught
       .filter((lesson) => firstSkill.get(lesson.key) === skill.key)
@@ -428,8 +569,8 @@ function placeAfterThisWeek({
 
 /**
  * Study minutes of an item already on the plan: a lesson's from its unit (a lesson the plan no
- * longer queues counts as one of the graph's size), a boss's or weekly challenge's own. Mocks and
- * reviews belong to exam plans, which this schedule doesn't plan.
+ * longer queues counts as one of the graph's size), a boss's or weekly challenge's own. Mocks belong
+ * to exam plans, which this schedule doesn't plan; a kept practice day holds no new learning.
  */
 function getKeptMinutes(item: ScheduledItem, units: ReadonlyMap<string, Unit>): number {
   const byKind: Record<PlanItemKind, number> = {
@@ -446,6 +587,39 @@ function getKeptMinutes(item: ScheduledItem, units: ReadonlyMap<string, Unit>): 
 
 const RANK = { event: 2, kept: 0, unit: 1 } as const;
 
+/**
+ * The planner's `placeItemsInPhaseTime`: a phase's time ends with its boss, so what's still to do
+ * after that day (a weekly challenge the day after it) belongs to the first later phase whose boss
+ * hasn't come yet, or the last phase. Bosses and finished items keep their phase.
+ */
+function placeInPhaseTime(items: readonly ScheduledItem[]): ScheduledItem[] {
+  const lastPhase = Math.max(0, ...items.map((item) => item.phase));
+
+  const ends = new Map(
+    items
+      .filter((item) => item.kind === "boss" && item.phase < lastPhase)
+      .map((item) => [item.phase, item.day] as const),
+  );
+
+  return items.map((item) => {
+    const end = ends.get(item.phase);
+
+    if (item.kind === "boss" || item.status !== "todo" || end === undefined || item.day <= end) {
+      return item;
+    }
+
+    const later = Array.from(
+      { length: Math.max(0, lastPhase - item.phase) },
+      (_, index) => item.phase + 1 + index,
+    );
+
+    return {
+      ...item,
+      phase: later.find((next) => (ends.get(next) ?? Infinity) >= item.day) ?? lastPhase,
+    };
+  });
+}
+
 /** By day; on one day, what's already on the plan first, then lessons in order, events last. */
 function mergeItems(ranked: readonly { item: ScheduledItem; rank: number }[]): ScheduledItem[] {
   const sorted = ranked
@@ -455,11 +629,13 @@ function mergeItems(ranked: readonly { item: ScheduledItem; rank: number }[]): S
   // Weekly challenges belong to the phase of the lessons before them.
   const firstPhase = sorted.find((item) => item.phase >= 0)?.phase ?? 0;
 
-  return sorted.reduce<ScheduledItem[]>((merged, item) => {
-    const previous = merged.at(-1)?.phase ?? firstPhase;
-    merged.push(item.phase < 0 ? { ...item, phase: previous } : item);
-    return merged;
-  }, []);
+  return placeInPhaseTime(
+    sorted.reduce<ScheduledItem[]>((merged, item) => {
+      const previous = merged.at(-1)?.phase ?? firstPhase;
+      merged.push(item.phase < 0 ? { ...item, phase: previous } : item);
+      return merged;
+    }, []),
+  );
 }
 
 /**
@@ -529,6 +705,43 @@ function summarizePhases({
  * seeded plan is the one it shows. Returns the items with their days, the phases with their dates
  * and sizes, and the plan's total study time.
  */
+/**
+ * The practice days of a plan with a date: from where this run plans, every day after its last
+ * lesson and before the date that holds no weekly challenge.
+ */
+function listPracticeDays({
+  calendar,
+  eventDays,
+  kept,
+  placed,
+  start,
+}: {
+  calendar: Calendar;
+  eventDays: readonly number[];
+  kept: readonly ScheduledItem[];
+  placed: readonly { day: number; unit: Unit }[];
+  start: number;
+}): number[] {
+  if (calendar.targetDay === null || calendar.daily <= 0) {
+    return [];
+  }
+
+  const lessonDays = [
+    ...placed.filter(({ unit }) => unit.kind === "lesson").map(({ day }) => day),
+    ...kept
+      .filter((item) => item.kind === "lesson" && item.status === "todo")
+      .map((item) => item.day),
+  ];
+
+  const lastLesson = lessonDays.length > 0 ? Math.max(...lessonDays) : -1;
+  const from = Math.max(start, lastLesson + 1);
+
+  return Array.from(
+    { length: Math.max(0, calendar.targetDay - from) },
+    (_, index) => from + index,
+  ).filter((day) => !eventDays.includes(day));
+}
+
 export function schedulePlan({
   goal,
   targetDay,
@@ -566,7 +779,8 @@ export function schedulePlan({
     weekEnd,
   });
 
-  const lastDay = placed.at(-1)?.day ?? null;
+  // A plan with a date keeps its weekly challenges until then; one without, until its lessons end.
+  const lastDay = targetDay === null ? (placed.at(-1)?.day ?? null) : targetDay - 1;
 
   // This week's challenge was planned with this week's items; later ones come with the lessons.
   const eventDays =
@@ -609,7 +823,29 @@ export function schedulePlan({
     })),
   ];
 
-  const items = mergeItems(ranked);
+  const practiceDays = listPracticeDays({
+    calendar,
+    eventDays,
+    kept,
+    placed,
+    start: kept.some((item) => item.status === "todo") ? weekEnd + 1 : 0,
+  });
+
+  const items = mergeItems([
+    ...ranked,
+    ...practiceDays.map((day) => ({
+      item: {
+        day,
+        key: `review:${day}`,
+        kind: "review" as const,
+        minutes: calendar.daily,
+        phase: -1,
+        status: "todo" as const,
+        title: "",
+      },
+      rank: RANK.event,
+    })),
+  ]);
 
   return {
     items,

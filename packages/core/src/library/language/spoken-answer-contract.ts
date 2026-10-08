@@ -60,7 +60,10 @@ const spokenPracticeWordSchema = spokenWordResultSchema
     audioUrl: z
       .string()
       .nullable()
-      .meta({ description: "The word said by a native voice; null to use the device's voice" }),
+      .meta({
+        description:
+          "The word said by a native voice; null when it has none, so apps read it aloud with a speech clip (`POST /speech-clips`)",
+      }),
     respelling: z
       .string()
       .nullable()

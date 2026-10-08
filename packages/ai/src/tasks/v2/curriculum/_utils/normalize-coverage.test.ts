@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeCoverage, normalizeExamWeights } from "./normalize-coverage";
+import { normalizeCoverage, normalizeExamWeights, normalizePlacements } from "./normalize-coverage";
 
 const references = [
   {
@@ -16,11 +16,13 @@ const graphSkills = [
 
 function missing(overrides: Partial<Parameters<typeof normalizeCoverage>[0]["missing"][number]>) {
   return {
+    area: "",
     description: "Uma ideia.",
     examWeight: 3,
     name: "Calcular juros compostos",
     prerequisites: [],
     syllabusLine: "Porcentagem e juros compostos",
+    topics: [],
     ...overrides,
   };
 }
@@ -36,12 +38,14 @@ describe(normalizeCoverage, () => {
 
     expect(result).toStrictEqual([
       {
+        area: null,
         description: "Uma ideia.",
         examWeight: null,
         name: "Calcular juros compostos",
         prerequisites: ["percent"],
         reference: "Matriz de Matemática",
         syllabusLine: "Porcentagem e juros compostos",
+        topics: [],
       },
     ]);
   });
@@ -123,5 +127,99 @@ describe(normalizeExamWeights, () => {
         graphSkills,
       }),
     ).toStrictEqual([]);
+  });
+});
+
+const outline = {
+  name: "Concurso da Câmara",
+  notes: [],
+  subjects: [
+    {
+      group: null,
+      name: "Língua Portuguesa",
+      questions: null,
+      topics: ["Domínio da ortografia", "Emprego do sinal indicativo de crase"],
+      weight: null,
+    },
+    {
+      group: null,
+      name: "Ciência Política",
+      questions: null,
+      topics: ["Regimes políticos", "Sistemas eleitorais"],
+      weight: null,
+    },
+  ],
+  topicFrequency: [],
+};
+
+describe("an exam's notice", () => {
+  it("keeps a gap quoting a notice topic by its id, in the notice's subject and words", () => {
+    const result = normalizeCoverage({
+      exam: true,
+      graphSkills,
+      missing: [
+        missing({
+          area: "Política",
+          name: "Comparar sistemas eleitorais",
+          syllabusLine: "S2.2",
+          topics: ["S2.2", "S2.1"],
+        }),
+        missing({ name: "Inventar um tópico", syllabusLine: "S7.1" }),
+      ],
+      outline,
+      references: [],
+    });
+
+    expect(
+      result.map(({ area, name, reference, syllabusLine, topics }) => ({
+        area,
+        name,
+        reference,
+        syllabusLine,
+        topics,
+      })),
+    ).toStrictEqual([
+      {
+        area: "Ciência Política",
+        name: "Comparar sistemas eleitorais",
+        reference: "Concurso da Câmara",
+        syllabusLine: "Sistemas eleitorais",
+        topics: ["Regimes políticos", "Sistemas eleitorais"],
+      },
+    ]);
+  });
+
+  it("places skills in the notice's subjects and topics, only where they move", () => {
+    const skills = [
+      {
+        area: "Língua Portuguesa",
+        key: "spelling",
+        name: "Escrever",
+        topics: ["Domínio da ortografia"],
+      },
+      { area: null, key: "regimes", name: "Comparar regimes", topics: [] },
+    ];
+
+    const result = normalizePlacements({
+      graphSkills: skills,
+      outline,
+      placements: [
+        { area: "Língua Portuguesa", key: "spelling", topics: ["S1.1"] },
+        { area: "Ciência Política", key: "regimes", topics: ["S2.1"] },
+        { area: "Ciência Política", key: "invented", topics: ["S2.2"] },
+        { area: "Língua Portuguesa", key: "spelling", topics: ["S1.1", "S1.2"] },
+      ],
+    });
+
+    expect(result).toStrictEqual([
+      { area: "Ciência Política", key: "regimes", topics: ["Regimes políticos"] },
+      {
+        area: "Língua Portuguesa",
+        key: "spelling",
+        topics: ["Domínio da ortografia", "Emprego do sinal indicativo de crase"],
+      },
+    ]);
+
+    expect(normalizePlacements({ graphSkills: skills, placements: result })).toStrictEqual([]);
   });
 });

@@ -1,7 +1,7 @@
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { generateImage } from "ai";
 import { MockImageModelV4 } from "ai/test";
 import { describe, expect, it } from "vitest";
-import { getPromptVersion } from "./prompt-version";
 import { runImageTaskGeneration } from "./run-image-generation";
 
 const REQUESTED_MODEL = "openai/gpt-image-2.5-flare";
@@ -56,7 +56,7 @@ describe(runImageTaskGeneration, () => {
     expect(result.image.base64).toBe(PIXEL);
 
     expect(provenance).toMatchObject({
-      costUsd: 0.0082,
+      gatewayCostUsd: 0.0082,
       model: "bfl/flux-kontext-max",
       promptVersion: getPromptVersion({ systemPrompt: TEMPLATE, version: "style-v1" }),
       provider: "bfl",
@@ -74,6 +74,14 @@ describe(runImageTaskGeneration, () => {
       requestedModel: REQUESTED_MODEL,
     });
 
-    expect(provenance.costUsd).toBeUndefined();
+    expect(provenance.gatewayCostUsd).toBeUndefined();
+  });
+
+  it("prices the image from the tokens of the model that drew it", async () => {
+    const { provenance } = await runWithModel(imageModel());
+
+    // 120 input tokens at $5 and 272 output tokens at $30 per million.
+    expect(provenance.costUsd).toBeCloseTo(8.76e-3, 8);
+    expect(provenance.usage.images).toBe(1);
   });
 });

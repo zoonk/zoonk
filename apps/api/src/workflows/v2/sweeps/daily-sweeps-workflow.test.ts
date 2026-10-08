@@ -32,6 +32,30 @@ const DAY_MS = 86_400_000;
 /** Enough learners for real answers to replace a question's generated difficulty. */
 const LEARNERS_TO_RECALIBRATE = 20;
 
+/** An AI call logged at `createdAt`, as the ledger stores it. */
+function aiCallFixture(createdAt: Date) {
+  return prisma.aiCall.create({
+    data: {
+      contentScope: "shared",
+      createdAt,
+      latencyMs: 1000,
+      model: "openai/gpt-6-sol",
+      promptVersion: "v1",
+      provider: "openai",
+      requestedModel: "openai/gpt-6-sol",
+      runId: randomUUID(),
+      task: "course-outline",
+    },
+  });
+}
+
+/** A sign-in code that expired at `expiresAt`, as Better Auth stores it. */
+function verificationFixture(expiresAt: Date) {
+  return prisma.verification.create({
+    data: { expiresAt, identifier: `sign-in-otp-${randomUUID()}@zoonk.test`, value: "123456:0" },
+  });
+}
+
 /** A generated "medium" question that every learner answered wrong today. */
 async function missedQuestionFixture() {
   const skill = await skillFixture();
@@ -51,7 +75,7 @@ async function missedQuestionFixture() {
 }
 
 describe(dailySweepsWorkflow, () => {
-  it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, recalibrates questions and starts the later check of lessons made ahead", async () => {
+  it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, keeps every AI call, recalibrates questions, starts the later check of lessons made ahead, deletes lesson versions replaced days ago and sign-in codes expired days ago", async () => {
     const now = Date.now();
 
     const [guest, learner, exam] = await Promise.all([
@@ -67,20 +91,35 @@ describe(dailySweepsWorkflow, () => {
       where: { id: guest.id },
     });
 
-    const [fact, lesson, question, oldRun] = await Promise.all([
-      memoryFactFixture({
-        deletedAt: new Date(now - 40 * DAY_MS),
-        status: "deleted",
-        userId: learner.id,
-      }),
-      // Published today and in the one-in-five sample, which lesson ids land in by their last digits.
-      libraryLessonFixture({
-        contentStatus: "completed",
-        id: `${randomUUID().slice(0, -8)}0000000a`,
-      }),
-      missedQuestionFixture(),
-      evaluationRunFixture({ createdAt: new Date(now - 31 * DAY_MS) }),
-    ]);
+    const [fact, lesson, question, oldRun, oldCall, replaced, oldCode, expiredCode] =
+      await Promise.all([
+        memoryFactFixture({
+          deletedAt: new Date(now - 40 * DAY_MS),
+          status: "deleted",
+          userId: learner.id,
+        }),
+        // Published today and in the one-in-five sample, which lesson ids land in by their last digits.
+        libraryLessonFixture({
+          contentStatus: "completed",
+          id: `${randomUUID().slice(0, -8)}0000000a`,
+        }),
+        missedQuestionFixture(),
+        evaluationRunFixture({ createdAt: new Date(now - 31 * DAY_MS) }),
+        // The AI cost history stays whole, however old.
+        aiCallFixture(new Date(now - 800 * DAY_MS)),
+        // A screen a fixed version replaced two days ago: nobody plays it anymore.
+        libraryLessonFixture({ contentStatus: "completed" }).then((replacedIn) =>
+          libraryStepFixture({
+            lessonId: replacedIn.id,
+            position: 0,
+            retiredAt: new Date(now - 2 * DAY_MS),
+          }),
+        ),
+        // A sign-in code that expired two days ago goes; one that just expired stays, so its
+        // learner hears it expired.
+        verificationFixture(new Date(now - 2 * DAY_MS)),
+        verificationFixture(new Date(now - 60_000)),
+      ]);
 
     const result = await dailySweepsWorkflow();
 
@@ -93,7 +132,16 @@ describe(dailySweepsWorkflow, () => {
       expect(prisma.user.findUnique({ where: { id: guest.id } })).resolves.toBeNull(),
       expect(prisma.memoryFact.findUnique({ where: { id: fact.id } })).resolves.toBeNull(),
       expect(prisma.evaluationRun.findUnique({ where: { id: oldRun.id } })).resolves.toBeNull(),
+      expect(prisma.aiCall.findUnique({ where: { id: oldCall.id } })).resolves.not.toBeNull(),
+      expect(prisma.step.findUnique({ where: { id: replaced.id } })).resolves.toBeNull(),
+      expect(prisma.verification.findUnique({ where: { id: oldCode.id } })).resolves.toBeNull(),
+      expect(
+        prisma.verification.findUnique({ where: { id: expiredCode.id } }),
+      ).resolves.not.toBeNull(),
     ]);
+
+    expect(result.retiredStepsDeleted).toBeGreaterThanOrEqual(1);
+    expect(result.verificationsPurged).toBeGreaterThanOrEqual(1);
 
     const recalibrated = await prisma.item.findUniqueOrThrow({ where: { id: question.id } });
     expect(recalibrated.difficulty).toBeGreaterThan(1);

@@ -36,15 +36,19 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   );
 }
 
+/**
+ * A sheet has a close button when it gets the caller's translated `closeLabel` (this package has
+ * no translations of its own).
+ */
 function SheetContent({
   className,
   children,
+  closeLabel,
   side = "right",
-  showCloseButton = true,
   ...props
 }: SheetPrimitive.Popup.Props & {
+  closeLabel?: string;
   side?: "top" | "right" | "bottom" | "left";
-  showCloseButton?: boolean;
 }) {
   return (
     <SheetPortal>
@@ -59,13 +63,13 @@ function SheetContent({
         {...props}
       >
         <PopupShortcutLayer value>{children}</PopupShortcutLayer>
-        {showCloseButton && (
+        {closeLabel && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
             render={<Button className="absolute top-4 right-4" size="icon-sm" variant="ghost" />}
           >
             <XIcon />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{closeLabel}</span>
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Popup>

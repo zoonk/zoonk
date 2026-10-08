@@ -20,52 +20,88 @@ export function useGoalLimitMessage() {
   const t = useExtracted("goalErrors");
 
   const messages: Record<GoalLimitReason, string> = {
+    dailyExplanations: t(
+      "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+    ),
     dailyGoals: t(
       "You've started as many new goals as your plan allows today. Try again tomorrow.",
     ),
     guest: t("Without an account, you can follow one goal. Create a free account to keep going."),
-    oneActiveGoal: t(
-      "The free plan follows one goal at a time. Pause your current goal to start this one, or get Plus for more.",
+    monthlyExplanations: t(
+      "You've asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.",
     ),
-    slowDown: t("You're adding goals quickly. Try again in a few minutes."),
+    monthlyGoals: t(
+      "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
+    ),
+    oneActiveGoal: t(
+      "The free plan follows one goal at a time. To start this one, pause your current goal from the goal menu on Today, or get Plus.",
+    ),
+    slowDown: t("You're starting goals quickly. Try again in a few minutes."),
   };
 
   return (reason: GoalLimitReason) => messages[reason];
 }
 
 /**
- * New words to read count toward the day's small AI calls: a guest who used them up is asked to
- * create an account (their words stay), anyone else comes back tomorrow.
+ * New words to read count toward the small AI calls of the day and the month: a guest who used
+ * them up is asked to create an account (their words stay), a free learner comes back when they
+ * start over or gets Plus, and Plus comes back tomorrow.
  */
-export function useUnderstandingLimit() {
+function useUnderstandingLimit() {
   const t = useExtracted("goalErrors");
 
-  return (tier: EntitlementTier): GoalError =>
-    tier === "guest"
-      ? {
-          message: t(
-            "Without an account, you can send a few new goals a day. Create a free account to keep going.",
-          ),
-          needsAccount: true,
-        }
-      : {
-          message: t(
-            "You've sent as many new goals as your plan allows today. Try again tomorrow.",
-          ),
-          needsAccount: false,
-        };
+  return ({
+    period,
+    tier,
+  }: {
+    period: "day" | "month" | "total";
+    tier: EntitlementTier;
+  }): GoalError => {
+    if (tier === "guest") {
+      return {
+        message: t(
+          "Without an account, you can send a few new goals a day. Create a free account to keep going.",
+        ),
+        needsAccount: true,
+      };
+    }
+
+    if (tier === "plus") {
+      return {
+        message: t("You've sent as many new goals as your plan allows today. Try again tomorrow."),
+        needsAccount: false,
+      };
+    }
+
+    return {
+      message:
+        period === "month"
+          ? t(
+              "You've sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
+            )
+          : t(
+              "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+            ),
+      needsAccount: false,
+    };
+  };
 }
 
 /** Why typed words couldn't be sent; the entry keeps them to send again. */
 export function useStartError() {
   const t = useExtracted("goalErrors");
   const limitError = useUnderstandingLimit();
+  const goalLimitMessage = useGoalLimitMessage();
 
   return (
     outcome: Exclude<StartUnderstandingOutcome, { status: "started" | "startFailed" }>,
   ): GoalError => {
     if (outcome.status === "limitReached") {
-      return limitError(outcome.tier);
+      return limitError(outcome);
+    }
+
+    if (outcome.status === "needsAccount") {
+      return { message: goalLimitMessage("guest"), needsAccount: true };
     }
 
     return {

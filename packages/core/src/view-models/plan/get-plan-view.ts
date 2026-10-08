@@ -12,7 +12,7 @@ export type PlanTabViewResult =
 
 /**
  * The Plan tab for a goal (the active goal by default): the goal's header and its plan at every
- * zoom level, the same view model for Focus and Fun. One cached read, so the tab prefetches whole.
+ * zoom level. One cached read, so the tab prefetches whole.
  * The API serves the same data as `GET /v1/goals/{goalId}` and `GET /v1/goals/{goalId}/plan`.
  */
 export async function getPlanTabView(input: { goalId?: string } = {}): Promise<PlanTabViewResult> {

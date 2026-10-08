@@ -14,7 +14,7 @@ import { logError } from "@zoonk/utils/logger";
  * `POST /v1/me/generation-waits`. Best effort: a lost measurement never blocks what was waited for.
  */
 export async function recordGenerationWaitAction(input: {
-  contentKind: Exclude<GenerationWaitInput["contentKind"], "variant">;
+  contentKind: GenerationWaitInput["contentKind"];
   locale?: string;
   milliseconds: number;
 }): Promise<void> {

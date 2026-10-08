@@ -181,6 +181,14 @@ describe(validateActivity, () => {
     expect(validateActivity({ ...fixtures.chartReader, data: exampleData }).ok).toBe(true);
   });
 
+  it("drops a data label from an activity that shows no data, keeping it where data shows", () => {
+    const sorting = validateActivity({ ...fixtures.categorize, data: exampleData });
+    const chart = validateActivity({ ...fixtures.chartReader, data: exampleData });
+
+    expect(sorting.ok && sorting.content.data).toBeUndefined();
+    expect(chart.ok && chart.content.data).toStrictEqual(exampleData);
+  });
+
   it("reports labels that don't fit as labelTooLong", () => {
     const longLabel = structuredClone(fixtures.numberLine);
     longLabel.fields.label = "A temperature reading taken every hour at the station";

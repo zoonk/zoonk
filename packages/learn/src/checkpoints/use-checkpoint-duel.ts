@@ -2,7 +2,7 @@
 
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
 import { type StudyBlockCompletionView } from "@zoonk/core/sessions/completion-contract";
-import { useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { type LearnAnalytics, useLearnAnalytics } from "../learn-context";
 import {
   type CheckpointAnswer,
@@ -15,7 +15,7 @@ import {
 
 /**
  * How the screen reaches the server: the host wires these to the study session's block
- * capabilities. Each resolves to null (or false) when the request didn't go through.
+ * capabilities. Each resolves to null when the request didn't go through.
  */
 export type CheckpointActions = {
   answer: (input: {
@@ -24,14 +24,7 @@ export type CheckpointActions = {
     itemId: string;
   }) => Promise<{ isCorrect: boolean } | null>;
   finish: () => Promise<StudyBlockCompletionView | null>;
-  /** "Move to Monday" for the week's challenge. */
-  move: () => Promise<ChallengeMove | null>;
-  start: () => Promise<boolean>;
-  undoMove: (changeId: string) => Promise<boolean>;
 };
-
-/** Where the week's challenge went, and the plan change that undoes it. */
-export type ChallengeMove = { changeId: string | null; date: string };
 
 const MILESTONE_EVENT_KINDS = {
   badge: "badge",
@@ -40,7 +33,7 @@ const MILESTONE_EVENT_KINDS = {
   glasses: "glasses",
 } as const;
 
-/** The duel's result and what it earned, for the shared event catalog (the host adds `mode`). */
+/** The duel's result and what it earned, for the shared event catalog. */
 function trackFinish({
   analytics,
   completion,
@@ -74,7 +67,6 @@ function trackFinish({
 const MAX_ANSWER_MS = 3_600_000;
 
 export type CheckpointDuel = {
-  begin: () => Promise<void>;
   confirm: () => Promise<void>;
   next: () => Promise<void>;
   retry: () => Promise<void>;
@@ -82,7 +74,7 @@ export type CheckpointDuel = {
   state: CheckpointDuelState;
 };
 
-/** Runs a checkpoint: start it, answer one question at a time, then finish for the result. */
+/** Runs a started checkpoint: answer one question at a time, then finish for the result. */
 export function useCheckpointDuel({
   actions,
   checkpoint,
@@ -92,20 +84,12 @@ export function useCheckpointDuel({
 }): CheckpointDuel {
   const analytics = useLearnAnalytics();
   const [state, dispatch] = useReducer(checkpointDuelReducer, checkpoint, createDuelState);
+  // The first question shows as the duel opens; each later one when the learner moves on.
   const shownAt = useRef<number | null>(null);
 
-  async function begin() {
-    dispatch({ type: "pending" });
-    const started = await actions.start();
-
-    if (!started) {
-      dispatch({ error: "start", type: "failed" });
-      return;
-    }
-
-    shownAt.current = Date.now();
-    dispatch({ type: "started" });
-  }
+  useEffect(() => {
+    shownAt.current ??= Date.now();
+  }, []);
 
   async function finish() {
     dispatch({ type: "pending" });
@@ -153,11 +137,6 @@ export function useCheckpointDuel({
   }
 
   async function retry() {
-    if (state.error === "start") {
-      await begin();
-      return;
-    }
-
     if (state.error === "finish") {
       await finish();
       return;
@@ -166,12 +145,5 @@ export function useCheckpointDuel({
     await confirm();
   }
 
-  return {
-    begin,
-    confirm,
-    next,
-    retry,
-    select: (answer) => dispatch({ answer, type: "select" }),
-    state,
-  };
+  return { confirm, next, retry, select: (answer) => dispatch({ answer, type: "select" }), state };
 }

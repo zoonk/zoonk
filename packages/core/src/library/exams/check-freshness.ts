@@ -3,9 +3,14 @@ import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { addDays } from "../../plans/planner/plan-calendar";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
 import { refreshWebSource } from "../sources/web-sources";
-import { countActiveExamGoals, countActiveSourceGoals } from "./exam-learners";
+import {
+  countActiveExamGoals,
+  countActiveSourceGoals,
+  countNextEditionGoals,
+} from "./exam-learners";
 import { readBlueprintContent } from "./save-exam-blueprint";
 
 /** What gets checked for freshness: an exam blueprint, or a source that isn't an exam notice. */
@@ -31,9 +36,17 @@ export type FreshnessCheck =
       /** Set when the blueprint was read from an older version of its notice. */
       blueprintUpdate: { examBlueprintId: string; sourceId: string } | null;
       nextCheckAt: string;
+      /**
+       * Set when the stored edition's exam passed while learners prepare for a later one: the
+       * next notice is searched for, since the stored one will never announce it.
+       */
+      nextNotice: { examBlueprintId: string } | null;
       sourceChange: SourceChange | null;
       status: "scheduled";
     };
+
+/** A search for an exam's next notice runs once a week, like a weekly check. */
+const NEXT_NOTICE_SEARCH_DAYS = 7;
 
 /**
  * A failed fetch (the board's site is down) must not stop the checks, so it's
@@ -101,6 +114,38 @@ function getNextCheckAfterRefresh({
   return refreshed ? scheduled : new Date(now.getTime() + MS_PER_DAY);
 }
 
+/**
+ * After the stored edition's exam, its notice has nothing more to say: learners preparing for a
+ * later edition (an estimated date after it) need the next notice, so it's searched for every
+ * week until one is read. Without them, the checks stop.
+ */
+async function searchNextNotice({
+  examBlueprintId,
+  examDate,
+  now,
+}: {
+  examBlueprintId: string;
+  examDate: Date;
+  now: Date;
+}): Promise<FreshnessCheck> {
+  const waiting = await countNextEditionGoals({ after: examDate, examBlueprintId });
+  const nextCheckAt = waiting > 0 ? addDays(now, NEXT_NOTICE_SEARCH_DAYS) : null;
+
+  await prisma.examBlueprint.update({ data: { nextCheckAt }, where: { id: examBlueprintId } });
+
+  if (!nextCheckAt) {
+    return { reason: "examPassed", status: "stopped" };
+  }
+
+  return {
+    blueprintUpdate: null,
+    nextCheckAt: nextCheckAt.toISOString(),
+    nextNotice: { examBlueprintId },
+    sourceChange: null,
+    status: "scheduled",
+  };
+}
+
 async function checkExam({
   examBlueprintId,
   now,
@@ -128,6 +173,10 @@ async function checkExam({
     now,
   });
 
+  if (schedule.stop === "examPassed" && blueprint.examDate) {
+    return searchNextNotice({ examBlueprintId: blueprint.id, examDate: blueprint.examDate, now });
+  }
+
   const learners = await countActiveExamGoals(blueprint.id);
   const reason = getExamStopReason({ learners, stop: schedule.stop, url: blueprint.source?.url });
 
@@ -154,6 +203,7 @@ async function checkExam({
       ? { examBlueprintId: blueprint.id, sourceId: blueprint.source.id }
       : null,
     nextCheckAt: nextCheckAt.toISOString(),
+    nextNotice: null,
     sourceChange: null,
     status: "scheduled",
   };
@@ -221,6 +271,7 @@ async function checkSource({
   return {
     blueprintUpdate: null,
     nextCheckAt: nextCheckAt.toISOString(),
+    nextNotice: null,
     sourceChange: toSourceChange({ language: source.language, refresh, title: source.title }),
     status: "scheduled",
   };

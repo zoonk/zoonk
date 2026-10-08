@@ -5,6 +5,7 @@ import { getExamWindows } from "./plan-phases";
 
 const calendar = {
   dailyMinutes: 45,
+  firstDay: null,
   lightWeeks: [{ endDate: "2026-10-11", startDate: "2026-10-05" }],
   weekdayMinutes: [0, 45, 45, 45, 45, 45, 45],
 };
@@ -40,7 +41,7 @@ describe(createExamDays, () => {
     const planStart = fromIsoDate("2026-09-30");
 
     const dayShape = createExamDays({
-      calendar: { dailyMinutes: 45, lightWeeks: [], weekdayMinutes: null },
+      calendar: { dailyMinutes: 45, firstDay: null, lightWeeks: [], weekdayMinutes: null },
       eventWeekday: 0,
       mockMinutes: 150,
       practiceBias: "balanced",

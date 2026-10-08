@@ -20,9 +20,9 @@ const IELTS_SCENARIO = {
   title: "Simulado de Speaking do IELTS",
 };
 
-/** A Focus language learner speaking at B1, while the renting unit's call is only written at A2. */
+/** A language learner speaking at B1, while the renting unit's call is only written at A2. */
 async function createB1Learner() {
-  const learner = await createLanguageLearner("focus");
+  const learner = await createLanguageLearner();
   const { user } = learner;
 
   await prisma.languageSkillLevel.create({
@@ -142,7 +142,7 @@ test.describe("Language calls written ahead", () => {
 
     await page.goto(`/checkpoint/${block.id}`);
 
-    await expect(page.getByText("Unit checkpoint")).toBeVisible();
+    await expect(page.getByText("Unit challenge")).toBeVisible();
 
     await expect(page.getByRole("heading", { level: 1, name: renting.title })).toBeVisible();
 
@@ -162,25 +162,31 @@ test.describe("Language calls written ahead", () => {
     await page.getByRole("button", { name: "Try again" }).click();
 
     await expect(page).toHaveURL(/\/conversation\//u);
-    await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
+    await expect(page.getByText(/^Linda · /u)).toBeVisible();
 
     // Once written, the checkpoint opens the unit's call straight away.
     await page.goto(`/checkpoint/${block.id}`);
 
     await expect(page).toHaveURL(/\/conversation\//u);
-    await expect(page.getByText("Unit checkpoint")).toBeVisible();
-    await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
+    await expect(page.getByText("Unit challenge")).toBeVisible();
+    await expect(page.getByText(/^Linda · /u)).toBeVisible();
     await page.context().close();
   });
 
   test("a speaking mock that isn't written yet shows it being written", async ({ browser }) => {
-    const { goal, user } = await createLanguageLearner("fun");
+    const { goal, user } = await createLanguageLearner();
     await ieltsGoal(goal.id);
 
     const page = await openAs(browser, user);
-    await page.goto("/progress");
 
-    const card = page.getByRole("region", { name: "IELTS speaking mock" });
+    // The mock is in the level sheet behind the Journey's number.
+    await page.goto("/journey");
+    await page.getByRole("button", { name: /^Your level/u }).click();
+
+    const card = page
+      .getByRole("dialog", { name: "Your level" })
+      .getByRole("region", { name: "IELTS speaking mock" });
+
     const release = await holdServerActions(page);
     await card.getByRole("button", { name: "Start the mock" }).click();
 
@@ -205,7 +211,7 @@ test.describe("Language calls written ahead", () => {
     await card.getByRole("button", { name: "Try again" }).click();
 
     await expect(page).toHaveURL(new RegExp(`/conversation/${waiting.id}$`, "u"));
-    await expect(page.getByRole("heading", { level: 1, name: "Emma" })).toBeVisible();
+    await expect(page.getByText(/^Emma · /u)).toBeVisible();
     await page.context().close();
   });
 
@@ -216,7 +222,9 @@ test.describe("Language calls written ahead", () => {
     const page = await openAs(browser, user);
     await page.goto(`/content/units/${renting.id}`);
 
-    const call = page.getByRole("region", { name: "Practice a conversation" });
+    // The call is set up in its sheet, which shows the wait while it's written.
+    await page.getByRole("button", { name: "Practice a conversation" }).click();
+    const call = page.getByRole("dialog", { name: "Practice a conversation" });
     const release = await holdServerActions(page);
     await call.getByRole("button", { name: "Start the call" }).click();
 
@@ -236,7 +244,7 @@ test.describe("Language calls written ahead", () => {
     await call.getByRole("button", { name: "Try again" }).click();
 
     await expect(page).toHaveURL(/\/conversation\//u);
-    await expect(page.getByRole("heading", { level: 1, name: "Linda" })).toBeVisible();
+    await expect(page.getByText(/^Linda · /u)).toBeVisible();
     await page.context().close();
   });
 });

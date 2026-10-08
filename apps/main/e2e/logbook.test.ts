@@ -1,29 +1,45 @@
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
-import { toUTCMidnight } from "@zoonk/utils/date";
+import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+import { createGoalLearner } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
-import { createModeLearner } from "./fun-rewards-fixtures";
-import { tabTo } from "./keyboard-focus";
 import { openAs } from "./study-day";
 
-const STUDY_SECONDS = 1500;
-const RIGHT_ANSWERS = 12;
+const DAYS_PER_WEEK = 7;
+const SUNDAY = 0;
+
+/** Monday of the week with this date, as a UTC midnight. */
+function getMonday(date: Date): Date {
+  const daysSinceMonday = (date.getUTCDay() + DAYS_PER_WEEK - 1) % DAYS_PER_WEEK;
+  return new Date(toUTCMidnight(date).getTime() - daysSinceMonday * MS_PER_DAY);
+}
+
+/**
+ * The week the logbook tells: the last finished one, or this one on Sunday, when it's complete.
+ */
+function getToldWeekStart(): Date {
+  const thisMonday = getMonday(new Date());
+  const isSunday = new Date().getUTCDay() === SUNDAY;
+
+  return isSunday ? thisMonday : new Date(thisMonday.getTime() - DAYS_PER_WEEK * MS_PER_DAY);
+}
 
 test.describe("Logbook", () => {
-  test("Fun: the week as a short story, turned by pointer and keyboard, to next week and Today", async ({
+  test("tells the last finished week in the learner's own numbers, then back to studying", async ({
     browser,
   }) => {
-    const { user } = await createModeLearner("fun");
+    const { user } = await createGoalLearner();
+    const weekStart = getToldWeekStart();
 
-    await dailyProgressFixtureMany([
-      {
-        correctAnswers: RIGHT_ANSWERS,
-        // Today, as the ledger stores learner-local days (UTC for these learners).
-        date: toUTCMidnight(new Date()),
-        timeSpentSeconds: STUDY_SECONDS,
+    await dailyProgressFixtureMany(
+      [0, 2].map((day) => ({
+        correctAnswers: 8,
+        date: new Date(weekStart.getTime() + day * MS_PER_DAY),
+        incorrectAnswers: 2,
+        timeSpentSeconds: 900,
         userId: user.id,
-      },
-    ]);
+      })),
+    );
 
     const page = await openAs(browser, user);
 
@@ -31,68 +47,52 @@ test.describe("Logbook", () => {
     const pageErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
 
-    await page.setViewportSize({ height: 900, width: 1280 });
     await page.goto("/logbook");
 
-    await expect(page.getByRole("heading", { name: /What a week/u })).toBeVisible();
-    await expect(page.getByText("1 day", { exact: true })).toBeVisible();
-    await expect(page.getByText("25 min", { exact: true })).toBeVisible();
-    await expectAccessibleScreen(page, "the logbook");
+    const range = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", timeZone: "UTC" })
+      .formatRange(weekStart, new Date(weekStart.getTime() + (DAYS_PER_WEEK - 1) * MS_PER_DAY))
+      .replaceAll("\u2009", " ");
 
-    await page.getByRole("button", { name: "Next" }).click();
-    await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeVisible();
-
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByText("Ready for next week?")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Let's go" })).toHaveAttribute("href", "/today");
-
-    await page.keyboard.press("ArrowLeft");
-    await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeVisible();
-
-    // Enter on a focused Back presses Back instead of turning the page.
-    await tabTo(page, page.getByRole("button", { name: "Back" }));
-    await page.keyboard.press("Enter");
-    await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeHidden();
-
-    // Elsewhere, Enter turns the page.
-    await page.keyboard.press("Enter");
-    await expect(page.getByRole("heading", { name: "What Zu ate" })).toBeVisible();
-
-    await page.keyboard.press("ArrowRight");
-    await expect(page.getByText("Ready for next week?")).toBeVisible();
-    expect(pageErrors).toStrictEqual([]);
-
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/\/today$/u);
-    await page.context().close();
-  });
-
-  test("Focus: the same week as a calm weekly summary", async ({ browser }) => {
-    const { user } = await createModeLearner("focus");
-    const page = await openAs(browser, user);
-
-    await page.goto("/logbook");
-
-    await expect(page.getByRole("heading", { name: "Weekly summary" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "A quiet week" })).toBeVisible();
-
-    await expect(
-      page.getByText("Monday starts fresh, and your plan already made room."),
-    ).toBeVisible();
-
-    await expect(page.getByRole("heading", { name: "What you learned" })).toBeVisible();
+    // The week in one line: its days, its time and its questions, against the week before.
+    await expect(page.getByText(`Weekly summary · ${range}`)).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^What a week/u })).toBeVisible();
+    await expect(page.getByRole("img", { name: "2 days studied" })).toBeVisible();
+    await expect(page.getByText("30 min", { exact: true })).toBeVisible();
+    await expect(page.getByText("20 questions", { exact: true })).toBeVisible();
+    await expect(page.getByText("30 min more than the week before!")).toBeVisible();
     await expectAccessibleScreen(page, "the weekly summary");
 
-    await expect(page.getByRole("link", { name: "Close weekly summary" })).toHaveAttribute(
-      "href",
-      "/progress",
-    );
+    // Closing goes back to the buddy tab, where the summary is opened from.
+    await expect(page.getByRole("link", { name: "Leave" })).toHaveAttribute("href", "/buddy");
+
+    expect(pageErrors).toStrictEqual([]);
 
     // Enter follows the one next step, back to studying.
     await expect(async () => {
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(/\/today$/u, { timeout: 1000 });
     }).toPass({ timeout: 5000 });
+
+    await page.context().close();
+  });
+
+  test("a learner without a finished week yet waits for Sunday instead of a half-written week", async ({
+    browser,
+  }) => {
+    const { user } = await createGoalLearner();
+    const isSunday = new Date().getUTCDay() === SUNDAY;
+    const page = await openAs(browser, user);
+
+    await page.goto("/logbook");
+
+    // On Sunday this week is complete: a learner who hasn't studied gets a quiet week, no blame.
+    await expect(
+      page.getByRole("heading", {
+        name: isSunday ? "A quiet week" : "Your first summary comes on Sunday",
+      }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "Let's go" })).toHaveAttribute("href", "/today");
 
     await page.context().close();
   });

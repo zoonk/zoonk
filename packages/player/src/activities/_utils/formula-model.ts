@@ -1,4 +1,4 @@
-import { niceDomain } from "./plot-scale";
+import { niceDomain } from "@zoonk/utils/plot-scale";
 import { type PlotPoint, sampleFormula } from "./sample-formula";
 
 type Variable = { initial: number; max: number; min: number; name: string };

@@ -1,5 +1,5 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { getPromptVersion } from "../../../provenance/prompt-version";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import { type GenerateConversationScenarioSchema } from "./conversation-scenario";
 import template from "./live-conversation-instructions.prompt.md";

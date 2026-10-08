@@ -25,6 +25,12 @@ describe(getBuddyEnergyState, () => {
     expect(getBuddyEnergyState(2, { studiedToday: false })).toBe("napping");
   });
 
+  it("is awake, without a glow, before the learner has any Energy", () => {
+    expect(getBuddyEnergyState(null)).toBe("awake");
+    expect(getBuddyEnergyState(null, { studiedToday: false })).toBe("awake");
+    expect(getBuddyGlow(null)).toBe(0);
+  });
+
   it("treats out-of-range Energy as the nearest bound", () => {
     expect(getBuddyEnergyState(-5)).toBe("napping");
     expect(getBuddyEnergyState(140)).toBe("glowing");

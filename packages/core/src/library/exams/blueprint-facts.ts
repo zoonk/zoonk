@@ -21,13 +21,14 @@ type Extraction = BlueprintExtraction;
 type Mock = NonNullable<Extraction["mock"]>;
 
 const FORMAT_WORDS: Record<Extraction["formats"][number]["kind"], string> = {
-  essay: "an essay",
+  essay: "a written answer in the candidate's own words, such as an essay or a discursive question",
   multipleChoice: "multiple-choice questions",
   numeric: "questions answered with a number",
   oral: "an oral exam",
   other: "other questions",
   practical: "a practical test",
-  shortAnswer: "short answers written or entered instead of chosen",
+  shortAnswer:
+    "questions answered in writing with a short answer, such as a word, a value or a table or blank to fill in",
   trueFalse: "items judged true or false (right or wrong)",
 };
 
@@ -73,8 +74,9 @@ function describeParts(parts: (string | false | null)[]): string {
 }
 
 /**
- * A subject is kept when its passages name it; its question count and weight are claims of their
- * own, often stated elsewhere in the notice. Its topics are checked by code (`findStatedTopics`).
+ * A subject is kept when its passages name it; its question count, weight and group are claims of
+ * their own, often stated elsewhere in the notice. Its topics are checked by code
+ * (`findStatedTopics`).
  */
 function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[] {
   return extraction.subjects.flatMap((subject, index) => {
@@ -91,6 +93,10 @@ function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[]
         subject.weight !== null && {
           id: `${id}.weight`,
           statement: `${name} is worth ${Math.round(subject.weight * PERCENT)}% of the final score`,
+        },
+        Boolean(subject.group) && {
+          id: `${id}.group`,
+          statement: `${name} is part of "${subject.group}"`,
         },
       ],
       documents,
@@ -156,6 +162,10 @@ function sectionFacts({
           id: `${id}.day`,
           statement: `${name} is on exam day ${section.day}`,
         },
+        ...(section.tasks ?? []).map((task, taskIndex) => ({
+          id: `${id}.tasks.${taskIndex}`,
+          statement: `${name} asks ${task.count} × ${task.description}`,
+        })),
       ],
       documents,
       passages: toPartPassages({ found, name: section.name, own: mock.passages }),

@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { hasStudyGoal } from "../../goals/_utils/study-goal";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { type PlayableLibraryLesson } from "../../lesson-player/contract";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
@@ -80,8 +81,8 @@ async function findExplanationLessonId(goalId: string): Promise<string | null> {
 /**
  * A quick explanation for one of the learner's questions: about five short screens and one
  * check, then the "Now you know" recap and "Want to go further?" into the subject's Overview
- * course and related questions. While the explanation is being written, it says so; nothing
- * about it differs between Focus and Fun. Uncached: the page asks again until it's ready.
+ * course and related questions. While the explanation is being written, it says so. Uncached: the
+ * page asks again until it's ready.
  */
 export async function getExplanation({ goalId }: { goalId: string }): Promise<ExplanationResult> {
   const owned = await findOwnedGoal(goalId);
@@ -93,9 +94,10 @@ export async function getExplanation({ goalId }: { goalId: string }): Promise<Ex
   const { goal, userId } = owned;
   const details = isJsonObject(goal.details) ? goal.details : {};
 
-  const [lessonId, course] = await Promise.all([
+  const [lessonId, course, studyGoal] = await Promise.all([
     findExplanationLessonId(goal.id),
     findGoFurtherCourse({ courseId: goal.primaryCourseId, userId }),
+    hasStudyGoal(userId),
   ]);
 
   const played = lessonId ? await getPlayableLibraryLesson({ lessonId }) : null;
@@ -106,6 +108,7 @@ export async function getExplanation({ goalId }: { goalId: string }): Promise<Ex
       generationId: goal.generationRunId,
       goFurther: { course, questions: readRelatedQuestions(details) },
       goalId: goal.id,
+      hasStudyGoal: studyGoal,
       lesson: ready?.lesson ?? null,
       outline: ready ? getOutline(ready.lesson) : [],
       question: typeof details.question === "string" ? details.question : goal.prompt,

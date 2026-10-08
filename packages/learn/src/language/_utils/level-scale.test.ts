@@ -1,5 +1,6 @@
+import { parseCefrScore } from "@zoonk/utils/cefr";
 import { describe, expect, it } from "vitest";
-import { findBiggestRise, getBandFill, getLevelShare } from "./level-scale";
+import { getBandFill, getLevelShare, listRises } from "./level-scale";
 
 describe(getLevelShare, () => {
   it("puts a plain level in the middle of its band and a plus at its end", () => {
@@ -22,26 +23,27 @@ describe(getBandFill, () => {
 });
 
 function level(skill: string, score: number, startLabel: string) {
-  return { score, skill, startLabel };
+  const trend = score > (parseCefrScore(startLabel) ?? score) ? "up" : "same";
+  return { score, skill, startLabel, trend };
 }
 
-describe(findBiggestRise, () => {
-  it("picks the skill that rose the most since the level test", () => {
+describe(listRises, () => {
+  it("lists every skill that rose since the level test, the biggest rise first", () => {
     const levels = [
       level("reading", 2, "B1"),
-      level("listening", 2, "A2"),
       level("speaking", 1.5, "A2"),
+      level("listening", 2, "A2"),
+      level("writing", 1.5, "A2"),
     ];
 
-    expect(findBiggestRise(levels)?.skill).toBe("listening");
+    expect(listRises(levels).map((rise) => rise.skill)).toStrictEqual([
+      "listening",
+      "speaking",
+      "writing",
+    ]);
   });
 
-  it("keeps the first skill on a tie", () => {
-    const levels = [level("speaking", 1.5, "A2"), level("writing", 1.5, "A2")];
-    expect(findBiggestRise(levels)?.skill).toBe("speaking");
-  });
-
-  it("is null when nothing rose", () => {
-    expect(findBiggestRise([level("reading", 1, "A2"), level("writing", 0.5, "A2")])).toBeNull();
+  it("is empty when nothing rose", () => {
+    expect(listRises([level("reading", 1, "A2"), level("writing", 0.5, "A2")])).toStrictEqual([]);
   });
 });

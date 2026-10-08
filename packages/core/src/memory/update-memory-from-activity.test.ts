@@ -233,8 +233,17 @@ describe(updateMemoryFromActivity, () => {
     expect(extractMemoryFacts).not.toHaveBeenCalled();
   });
 
+  it("learns nothing for a learner of unknown age until they turn memory on", async () => {
+    const user = await userFixture();
+
+    // Memory starts off for anyone who hasn't said they're an adult, so nothing is read or sent.
+    await expect(updateMemoryFromActivity(chat(user.id))).resolves.toStrictEqual([]);
+    expect(extractMemoryFacts).not.toHaveBeenCalled();
+  });
+
   it("keeps only goals and learning for learners of unknown age, and never sensitive ones", async () => {
     const user = await userFixture();
+    await learningProfileFixture({ memoryEnabled: true, userId: user.id });
 
     mockExtraction([
       extracted({ category: "context", statement: "Lives in Recife" }),
@@ -255,14 +264,26 @@ describe(updateMemoryFromActivity, () => {
     expect(stored.map((fact) => fact.statement)).toStrictEqual(["Mixes up fractions"]);
   });
 
-  it("reads onboarding answers from the learner's goal", async () => {
+  it("reads who the learner is from their goal and follow-up answers, never the goal's time or schedule", async () => {
     const user = await adult();
 
+    // The time a day, the hour and the days are settings of this goal (30 minutes for an exam,
+    // 10 for a language): memory would carry them into every other goal.
     const goal = await goalFixture({
       dailyMinutes: 45,
-      details: { targetScore: "700 in the essay" },
+      details: {
+        followUps: [
+          { answer: "Trabalho como técnica de enfermagem", question: "O que você faz hoje?" },
+          { answer: null, question: "Qual área te interessa?" },
+        ],
+        onboardingId: "draft-1",
+        studyDays: ["mon", "tue"],
+        studyTimeNote: "À noite, depois do trabalho",
+        targetScore: "700 in the essay",
+      },
       language: "pt",
       prompt: "Quero passar no ENEM para Direito",
+      studyTime: "21:00",
       title: "ENEM 2026",
       userId: user.id,
     });
@@ -280,8 +301,8 @@ describe(updateMemoryFromActivity, () => {
         input: [
           "In their words: Quero passar no ENEM para Direito",
           "Goal: ENEM 2026",
-          "Daily study time: 45 minutes",
           "targetScore: 700 in the essay",
+          "O que você faz hoje? Trabalho como técnica de enfermagem",
         ].join("\n"),
         language: "pt",
         source: "onboarding",
@@ -306,7 +327,7 @@ describe(updateMemoryFromActivity, () => {
     expect(extractMemoryFacts).not.toHaveBeenCalled();
   });
 
-  it("keeps only noticed learning and routine facts from session numbers", async () => {
+  it("keeps only noticed learning facts from session numbers, never when or how long they study", async () => {
     const user = await adult();
 
     mockExtraction([
@@ -326,9 +347,7 @@ describe(updateMemoryFromActivity, () => {
 
     const stored = await prisma.memoryFact.findMany({ where: { userId: user.id } });
 
-    expect(stored).toMatchObject([
-      { category: "routine", confidence: 0.6, origin: "noticed", statement: "Studies after 8 pm" },
-    ]);
+    expect(stored).toStrictEqual([]);
   });
 
   it("changes nothing when another update replaced the fact first", async () => {

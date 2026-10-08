@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, createContext, useContext } from "react";
+import { type ReactNode, type Ref, createContext, useContext } from "react";
 
 type PlayerLinkComponentProps = {
   "aria-keyshortcuts"?: string;
@@ -8,6 +8,7 @@ type PlayerLinkComponentProps = {
   className?: string;
   href: string;
   prefetch?: boolean;
+  ref?: Ref<HTMLAnchorElement>;
 };
 
 export type PlayerLinkComponent = (props: PlayerLinkComponentProps) => ReactNode;

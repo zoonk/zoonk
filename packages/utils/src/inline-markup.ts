@@ -1,6 +1,8 @@
 /**
  * The inline Markdown AI writers use in learner text: `inline code`, **bold** and *italics* (or
- * _italics_). Anything else stays text, so a stray marker never changes a screen's layout.
+ * _italics_). Words a writer quoted in angle quotes («caption» or <<caption>>) read as italics, the
+ * way the app shows quoted words, instead of showing the marks. Anything else stays text, so a
+ * stray marker never changes a screen's layout.
  */
 export type InlineMarkup =
   | { kind: "bold"; text: string }
@@ -22,6 +24,27 @@ function findCode(text: string): Span | null {
   const end = start === -1 ? -1 : text.indexOf("`", start + 1);
 
   return end > start + 1 ? { content: text.slice(start + 1, end), end: end + 1, start } : null;
+}
+
+/** Angle quotes AI writers use around a quoted word or sentence, each with its closing mark. */
+const ANGLE_QUOTES = [
+  { close: "»", open: "«" },
+  { close: ">>", open: "<<" },
+] as const;
+
+/** The first «quoted» or <<quoted>> words on one line, with text inside the marks. */
+function findAngleQuote(text: string): Span | null {
+  const spans = ANGLE_QUOTES.flatMap(({ close, open }) => {
+    const start = text.indexOf(open);
+    const end = start === -1 ? -1 : text.indexOf(close, start + open.length);
+    const content = end === -1 ? "" : text.slice(start + open.length, end);
+
+    return content.trim() && !content.includes("\n")
+      ? [{ content: content.trim(), end: end + close.length, start }]
+      : [];
+  });
+
+  return spans.toSorted((left, right) => left.start - right.start)[0] ?? null;
 }
 
 function findBold(text: string): Span | null {
@@ -105,17 +128,31 @@ function splitAround({
   ];
 }
 
-function parseEmphasis(text: string): InlineMarkup[] {
+type MarkedSpan = Span & { kind: "bold" | "italic" };
+
+/**
+ * The first marked span on the line: bold, italics or angle quotes. On a tie, bold wins over the
+ * italics inside its markers.
+ */
+function findFirstMark(text: string): MarkedSpan | null {
   const bold = findBold(text);
-
-  if (bold) {
-    return splitAround({ kind: "bold", rest: parseEmphasis, span: bold, text });
-  }
-
   const italic = findItalic(text);
+  const quote = findAngleQuote(text);
 
-  return italic
-    ? splitAround({ kind: "italic", rest: parseEmphasis, span: italic, text })
+  const marks: MarkedSpan[] = [
+    ...(bold ? [{ ...bold, kind: "bold" as const }] : []),
+    ...(italic ? [{ ...italic, kind: "italic" as const }] : []),
+    ...(quote ? [{ ...quote, kind: "italic" as const }] : []),
+  ];
+
+  return marks.toSorted((left, right) => left.start - right.start)[0] ?? null;
+}
+
+function parseEmphasis(text: string): InlineMarkup[] {
+  const mark = findFirstMark(text);
+
+  return mark
+    ? splitAround({ kind: mark.kind, rest: parseEmphasis, span: mark, text })
     : plainText(text);
 }
 

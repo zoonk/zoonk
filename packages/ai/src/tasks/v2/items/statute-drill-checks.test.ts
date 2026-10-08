@@ -25,11 +25,13 @@ function statement(text: string, isTrue: boolean, reference = CAPUT): StatuteDri
     context: null,
     difficulty: "medium",
     format: "trueFalse",
+    image: null,
     isTrue,
     misconception: isTrue ? null : "Troca uma palavra do texto",
     reason: "O texto diz outra coisa.",
     reference,
     statement: text,
+    visual: null,
   };
 }
 
@@ -39,10 +41,12 @@ function gap(question: string, acceptedAnswers: string[], reference = CAPUT): St
     context: null,
     difficulty: "easy",
     format: "typed",
+    image: null,
     keyPoints: ["Quem é igual perante a lei"],
     question,
     reference,
     sampleAnswer: question.replace("____", acceptedAnswers[0] ?? ""),
+    visual: null,
   };
 }
 
@@ -50,6 +54,7 @@ const multipleChoice: StatuteDrill = {
   context: null,
   difficulty: "medium",
   format: "multipleChoice",
+  image: null,
   options: [
     { isCorrect: true, misconception: null, reason: "É o texto.", text: "vedado o anonimato" },
     { isCorrect: false, misconception: "Inverte", reason: "Não.", text: "permitido o anonimato" },
@@ -58,6 +63,7 @@ const multipleChoice: StatuteDrill = {
   ],
   question: "De acordo com a CF/88, na manifestação do pensamento, é",
   reference: "Art. 5º, IV",
+  visual: null,
 };
 
 const TRUE_CAPUT =

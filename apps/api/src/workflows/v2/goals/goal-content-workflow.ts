@@ -3,20 +3,26 @@ import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-c
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { GOAL_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { createHook, getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata } from "workflow";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
+import { claimRunToken } from "../_shared/run-token";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
-import { waitForGraphInputs } from "./goal-content-inputs";
+import { isBuiltBeforeResearch, waitForGraphInputs } from "./goal-content-inputs";
 import { type BuiltCurriculum, buildCurriculum, startOutlines } from "./goal-curriculum";
 import { followPlanStart } from "./goal-lookahead";
 import { preparePlanPlacement } from "./goal-placement-items";
-import { reconcileResearch } from "./goal-research-reconcile";
+import { reconcileResearch, reconcileStoredPlan } from "./goal-research-reconcile";
 import { type GoalRunContext } from "./goal-run-context";
 import { isPlanPreparedStep, recordGoalBuildFailureStep } from "./steps/goal-build-outcome-steps";
 import { decideGoalScopeStep, loadGoalCurriculumStep } from "./steps/goal-curriculum-steps";
-import { listPlanOutlineNeedsStep, readPlanFirstSkillStep } from "./steps/goal-lookahead-steps";
+import {
+  listPlanOutlineNeedsStep,
+  readGoalLookaheadStep,
+  readPlanFirstSkillStep,
+} from "./steps/goal-lookahead-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { recordGoalRunStep } from "./steps/record-goal-run-step";
+import { loadStoredCurriculumStep } from "./steps/stored-plan-steps";
 
 export type GoalContentInput = {
   goalId: string;
@@ -73,26 +79,60 @@ async function reportBuildFailure({
 }
 
 /**
+ * An exam's plan built before research `researchId` started (research restarted) is reconciled
+ * with what it reads, from the stored plan (`reconcileStoredPlan`); any other plan has nothing to
+ * wait for.
+ */
+async function reconcileRestartedResearch({
+  context,
+  inputs,
+  researchId,
+}: {
+  context: GoalRunContext;
+  inputs: GoalCurriculumInputs;
+  researchId?: string | null;
+}): Promise<void> {
+  if (!researchId || !isBuiltBeforeResearch({ inputs, researchId })) {
+    return;
+  }
+
+  const curriculum = await loadStoredCurriculumStep({ goalId: inputs.goal.id, researchId });
+
+  if (!curriculum) {
+    return;
+  }
+
+  const scope = await decideGoalScopeStep({ ...context, inputs });
+  await reconcileStoredPlan({ context, curriculum, inputs, researchId, scope });
+}
+
+/**
  * A goal that came with its plan (a plan link, a course start) gets what a built plan gets ahead,
- * once: outlines for the stand-ins its courses haven't written, placement's questions for its
- * skills, the likeliest first lessons, and a language's level test.
+ * once: outlines for the stand-ins its courses haven't written (within the learner's outline
+ * window; later ones as the plan gets close), placement's questions for its skills, the likeliest
+ * first lessons, and a language's level test.
  */
 async function prepareExistingPlan({
   context,
   inputs,
+  researchId,
 }: {
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
+  researchId?: string | null;
 }): Promise<GoalContentResult> {
   const goalId = inputs.goal.id;
 
   if (await isPlanPreparedStep(goalId)) {
     await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
+    await reconcileRestartedResearch({ context, inputs, researchId });
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
+  const lookahead = await readGoalLookaheadStep(goalId);
+
   const [needs, firstSkillId] = await Promise.all([
-    listPlanOutlineNeedsStep(goalId),
+    listPlanOutlineNeedsStep({ days: lookahead.outlineDays, goalId }),
     readPlanFirstSkillStep(goalId),
   ]);
 
@@ -106,7 +146,11 @@ async function prepareExistingPlan({
   ]);
 
   await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
-  await followPlanStart({ context, inputs, started: speculativeLessonIds });
+
+  await Promise.all([
+    followPlanStart({ context, inputs, started: speculativeLessonIds }),
+    reconcileRestartedResearch({ context, inputs, researchId }),
+  ]);
 
   return { goalId, speculativeLessonIds, status: "prepared" };
 }
@@ -114,6 +158,8 @@ async function prepareExistingPlan({
 type BuiltPlan = {
   curriculum: BuiltCurriculum;
   inputs: GoalCurriculumInputs;
+  /** The research the plan is reconciled with: none once the graph waited for its reading. */
+  researchId: string | null;
   scope: CurriculumScope;
 };
 
@@ -145,15 +191,11 @@ async function buildPlan({
     return null;
   }
 
-  const curriculum = await buildCurriculum({
-    context,
-    inputs,
-    rebuild,
-    researchId: input.researchId,
-    scope,
-  });
+  // A notice research read again before the graph (see `waitForGraphInputs`) is already in it.
+  const researchId = initial.readsNoticeAgain ? null : (input.researchId ?? null);
+  const curriculum = await buildCurriculum({ context, inputs, rebuild, researchId, scope });
 
-  return { curriculum, inputs, scope };
+  return { curriculum, inputs, researchId, scope };
 }
 
 /**
@@ -208,15 +250,13 @@ async function buildGoal({
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
-  const { curriculum, inputs, scope } = built;
+  const { curriculum, inputs, researchId, scope } = built;
 
   await goalProgressStep({ entityId: goalId, status: "started", step: "prepareFirstLessons" });
 
   const [speculativeLessonIds] = await Promise.all([
     prepareAheadOfLearner({ context, inputs, rebuild }),
-    rebuild
-      ? null
-      : reconcileResearch({ context, curriculum, inputs, researchId: input.researchId, scope }),
+    rebuild ? null : reconcileResearch({ context, curriculum, inputs, researchId, scope }),
   ]);
 
   return { goalId, speculativeLessonIds, status: "built" };
@@ -235,7 +275,8 @@ async function buildGoal({
  * alphabet lesson. Meanwhile, an exam's plan is reconciled with the notice research reads:
  * missing skills added, exam weights corrected, the plan built again with the exam's day
  * (`reconcileResearch`). A goal that came with its plan gets the same work ahead once. One run per
- * goal: a second start joins it, and a goal whose plan was already built isn't rebuilt, unless the
+ * goal: a second start joins it, or takes over from one that stalled (a crash or a restart left it
+ * half done, `claimRunToken`), and a goal whose plan was already built isn't rebuilt, unless the
  * learner's upload answered research's ask (`rebuild`, one at a time per goal). A plan that
  * couldn't be built is recorded, so the learner's screens offer to try again.
  */
@@ -244,8 +285,8 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
 
   const { goalId } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `goal-${input.rebuild ? "rebuild" : "content"}:${goalId}` });
-  const conflict = await hook.getConflict();
+  const token = `goal-${input.rebuild ? "rebuild" : "content"}:${goalId}`;
+  const { conflict } = await claimRunToken(token);
 
   if (conflict) {
     await goalProgressStep({
@@ -279,7 +320,7 @@ export async function goalContentWorkflow(input: GoalContentInput): Promise<Goal
   const rebuild = Boolean(input.rebuild);
 
   if (initial.hasPlanGraph && !rebuild) {
-    return prepareExistingPlan({ context, inputs: initial });
+    return prepareExistingPlan({ context, inputs: initial, researchId: input.researchId });
   }
 
   // A rebuild of a goal whose first build is still running leaves it to that run, which reads the

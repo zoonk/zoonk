@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
-import { stepPathParamsSchema } from "@/lib/openapi/schemas/step-variants";
+import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
 import { answerExplanationInputSchema } from "@zoonk/core/lesson-player/contract";
 import { explainAnswer } from "@zoonk/core/library/items/explain-answer";

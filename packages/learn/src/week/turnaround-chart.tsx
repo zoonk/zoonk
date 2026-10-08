@@ -37,7 +37,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
 
   return (
     <figure
-      className="border-border in-data-[mode=fun]:fun-glass flex flex-col gap-2 rounded-3xl border p-4"
+      className="bg-muted/50 flex w-full flex-col gap-2 rounded-2xl p-4"
       data-slot="turnaround-chart"
     >
       <svg

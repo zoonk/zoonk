@@ -1,12 +1,11 @@
+import { type LessonVisual as LessonVisualData } from "@zoonk/core/library/steps/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type InlineMarkup } from "@zoonk/utils/inline-markup";
 import { Fragment } from "react";
-import {
-  type ItemTextAlign,
-  type ItemTextBlock,
-  parseItemLine,
-  parseItemText,
-} from "./_utils/item-text";
+import { RichTable } from "../_components/rich-table";
+import { LessonVisual } from "../visuals/lesson-visual";
+import { type ItemTextBlock, parseItemLine, parseItemText } from "./_utils/item-text";
+import { ItemPicture, type ItemPictureData } from "./item-picture";
 
 type ItemTable = Extract<ItemTextBlock, { kind: "table" }>;
 
@@ -54,77 +53,20 @@ function ItemParagraph({ lines }: { lines: InlineMarkup[][] }) {
   );
 }
 
-/**
- * Numbers line up on their digits. Cells wrap between words, amounts stay whole, and the gap
- * between columns is tighter than the frame's edge, so four columns fit a phone.
- */
-function getCellClass(align: ItemTextAlign | undefined) {
-  return cn(
-    "p-2 align-top first:ps-3 last:pe-3",
-    align === "right" && "text-right tabular-nums",
-    align === "center" && "text-center tabular-nums",
-    (align === "left" || !align) && "text-left",
-  );
-}
-
 function toPlainText(cell: InlineMarkup[]): string {
   return cell.map((segment) => segment.text).join("");
 }
 
-/**
- * A table of data with its header row. On a narrow screen it scrolls sideways inside its frame
- * instead of widening the page, and keyboard users can focus it to scroll.
- */
+/** A table of data with its header row, shared with the lesson player's tables. */
 function ItemTableView({ table }: { table: ItemTable }) {
   return (
-    <div
-      aria-label={table.header.map((cell) => toPlainText(cell)).join(", ")}
-      className="border-border focus-visible:ring-ring/50 max-w-full overflow-x-auto rounded-xl border outline-none focus-visible:ring-[3px]"
-      role="region"
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- A wide table scrolls sideways, which needs focus by keyboard.
-      tabIndex={0}
-    >
-      <table className="text-foreground w-full border-collapse text-sm leading-snug">
-        <thead className="bg-muted">
-          <tr>
-            {table.header.map((cell, index) => {
-              const key = `head-${index}`;
-
-              return (
-                <th
-                  // Long labels ("Durchschnittlicher Fahrpreis") hyphenate, so the table fits a phone.
-                  className={cn(getCellClass(table.align[index]), "font-semibold hyphens-auto")}
-                  key={key}
-                  scope="col"
-                >
-                  <InlineMarkupView segments={cell} />
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
-
-        <tbody>
-          {table.rows.map((row, rowIndex) => {
-            const rowKey = `row-${rowIndex}`;
-
-            return (
-              <tr className="border-border border-t" key={rowKey}>
-                {row.map((cell, index) => {
-                  const key = `cell-${index}`;
-
-                  return (
-                    <td className={getCellClass(table.align[index])} key={key}>
-                      <InlineMarkupView segments={cell} />
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+    <RichTable
+      align={table.align}
+      header={table.header}
+      label={table.header.map((cell) => toPlainText(cell)).join(", ")}
+      renderCell={(cell) => <InlineMarkupView segments={cell} />}
+      rows={table.rows}
+    />
   );
 }
 
@@ -151,4 +93,29 @@ export function ItemText({ className, text }: { className?: string; text: string
 /** One line of item text, such as a question's command or a statement, with its emphasis. */
 export function ItemLine({ text }: { text: string }) {
   return <InlineMarkupView segments={parseItemLine(text)} />;
+}
+
+/**
+ * What a question shows before its command: its support text (paragraphs and tables), the figure
+ * it's about and the chart or timeline it reads. Every question screen uses it, so a picture or a
+ * visual never goes missing.
+ */
+export function ItemSupport({
+  className,
+  context,
+  image,
+  visual,
+}: {
+  className?: string;
+  context: string | null;
+  image: ItemPictureData | null;
+  visual: LessonVisualData | null;
+}) {
+  return (
+    <>
+      {context && <ItemText className={className} text={context} />}
+      {image && <ItemPicture image={image} />}
+      <LessonVisual visual={visual} />
+    </>
+  );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, Plus } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -20,7 +21,6 @@ import {
   stableDomain,
   startingValues,
 } from "../_utils/formula-model";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 
 type ScenarioProps = ActivityRendererProps<"scenarioSimulator">;

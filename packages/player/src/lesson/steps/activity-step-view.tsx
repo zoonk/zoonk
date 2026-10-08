@@ -1,6 +1,7 @@
 "use client";
 
 import { ActivityStep } from "../../activities/activity-step";
+import { LessonStepPicture } from "../_components/lesson-pictures";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
 /**
@@ -18,7 +19,6 @@ export function ActivityStepView({
     <ActivityStep
       answer={answer?.kind === "activity" ? answer.answer : null}
       content={step.content}
-      image={step.image}
       isCorrect={result ? result.isCorrect : null}
       onAnswerChange={(value) => {
         if (!isLocked) {
@@ -26,6 +26,7 @@ export function ActivityStepView({
         }
       }}
       phase={result ? "checked" : "answering"}
+      picture={<LessonStepPicture asks step={step} />}
     />
   );
 }

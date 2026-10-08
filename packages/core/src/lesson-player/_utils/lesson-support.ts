@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { type LessonSupport } from "../contract";
 
 /**
@@ -11,7 +12,7 @@ async function loadOpeningSkillIds(lessonId: string): Promise<string[]> {
     prisma.step.findFirst({
       orderBy: { position: "asc" },
       select: { skillId: true },
-      where: { kind: { not: "hook" }, lessonId, skillId: { not: null } },
+      where: { kind: { not: "hook" }, lessonId, skillId: { not: null }, ...CURRENT_STEPS },
     }),
     prisma.lessonSkill.findMany({ select: { skillId: true }, where: { lessonId } }),
   ]);

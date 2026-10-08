@@ -50,7 +50,7 @@ describe(getCrossedMilestones, () => {
     expect(getCrossedMilestones({ after: 7600, before: 7500, hasBuddy: true })).toStrictEqual([]);
   });
 
-  it("gives Focus learners the belt without a buddy stage", () => {
+  it("gives learners without a buddy the belt without a buddy stage", () => {
     expect(getCrossedMilestones({ after: 7600, before: 7400, hasBuddy: false })).toStrictEqual([
       { key: "orange", kind: "belt" },
     ]);

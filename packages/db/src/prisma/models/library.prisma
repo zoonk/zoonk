@@ -35,8 +35,6 @@ enum StepKind {
 }
 
 enum StepVariantKind {
-  simpler
-  deeper
   field
   tool
 }
@@ -86,6 +84,7 @@ model Chapter {
   conversations         LanguageConversation[]
   conversationScenarios ConversationScenario[]
   questionThreads       LessonQuestionThread[]
+  mindMap               ChapterMindMap?
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@unique([homeCourseId, slug], name: "homeCourseSlug")
@@ -209,6 +208,13 @@ model Step {
   lessonId           String              @map("lesson_id") @db.Uuid
   lesson             Lesson              @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   position           Int
+  /// The lesson version the screen belongs to. A check that finds a problem after a lesson was
+  /// published publishes a new version; the screens it replaces stay, retired, so learners playing
+  /// them finish the version they opened.
+  version            Int                 @default(1) @db.SmallInt
+  /// When a newer version replaced this screen; null for the lesson's current screens, the only
+  /// ones lessons are read with. Retired screens are deleted a day later.
+  retiredAt          DateTime?           @map("retired_at")
   kind               StepKind
   contractVersion    Int                 @default(1) @map("contract_version") @db.SmallInt
   content            Json
@@ -242,7 +248,8 @@ model Step {
   questions          LessonQuestion[]
   sharedTutorAnswers TutorSharedAnswer[]
 
-  @@unique([lessonId, position], name: "lessonPosition")
+  @@unique([lessonId, version, position], name: "lessonVersionPosition")
+  @@index([retiredAt])
   @@index([skillId])
   @@index([itemId])
   @@index([wordId])
@@ -252,14 +259,14 @@ model Step {
   @@map("library_steps")
 }
 
-/// A "Simpler", "Go deeper", field or tool version of a step, made the first time someone asks and then
-/// shared. `key` names the field or tool ("nursing", "excel") and is empty for depth variants.
+/// A field or tool version of a step, made the first time a learner with that field or tool needs
+/// it and then shared. `key` names the field or tool ("nursing", "excel").
 model StepVariant {
   id              String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
   stepId          String          @map("step_id") @db.Uuid
   step            Step            @relation(fields: [stepId], references: [id], onDelete: Cascade)
   kind            StepVariantKind
-  key             String          @default("")
+  key             String
   contractVersion Int             @default(1) @map("contract_version") @db.SmallInt
   content         Json
   model           String
@@ -297,7 +304,7 @@ model StepExampleLine {
 }
 
 /// An image or audio file with the prompt and style version that made it, instead of URLs inside step
-/// JSON. `reuseKey` identifies the same picture or sound (audio keys include the language) so it is made
+/// or item JSON. `reuseKey` identifies the same picture or sound (audio keys include the language) so it is made
 /// once and reused. Images keep the structured scene they were drawn from and the subject palette; an
 /// image with labels has the labels' `language`, and one without text serves every language.
 model MediaAsset {
@@ -326,7 +333,40 @@ model MediaAsset {
   generatedAt   DateTime          @default(now()) @map("generated_at")
   createdAt     DateTime          @default(now()) @map("created_at")
   steps         Step[]
+  items         Item[]
 
   @@index([ownerId])
   @@map("media_assets")
+}
+
+/// A chapter's mind map: its main concepts written as an outline (`structure`: a title, a central
+/// idea, branches with an explanation and points, an optional comparison and a one-line summary,
+/// in the chapter's language), then drawn as one picture. Made once per chapter, when a learner who
+/// finished it asks, and shared by every learner of the chapter; a private chapter's picture stays in
+/// its owner's private files. `status` follows the run writing it (`runId`): the map is completed
+/// as soon as its picture is drawn, and the picture's words are checked afterwards. A picture with
+/// serious mistakes is drawn again and replaced; when that one fails too, it's left out (`imageUrl`
+/// null) and the outline is the map.
+model ChapterMindMap {
+  id            String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  chapterId     String           @unique @map("chapter_id") @db.Uuid
+  chapter       Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  language      String           @db.VarChar(10)
+  status        GenerationStatus @default(pending)
+  runId         String?          @map("run_id")
+  structure     Json?
+  imageUrl      String?          @map("image_url")
+  imageWidth    Int?             @map("image_width")
+  imageHeight   Int?             @map("image_height")
+  /// A small copy of the picture for lists of maps.
+  thumbnailUrl  String?          @map("thumbnail_url")
+  /// The model that wrote the outline and the one that drew the picture.
+  model         String?
+  imageModel    String?          @map("image_model")
+  promptVersion String?          @map("prompt_version")
+  generatedAt   DateTime?        @map("generated_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @default(now()) @updatedAt @map("updated_at")
+
+  @@map("chapter_mind_maps")
 }

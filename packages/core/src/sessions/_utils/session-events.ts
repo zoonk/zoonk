@@ -87,8 +87,9 @@ async function isDailyGoalMet({
 }
 
 /**
- * "Session Completed" once, when the session's last block finished or the learner stopped for
- * the day. `session` is the row as it ended, with its blocks' final states.
+ * "Session Completed" once, when the session's last block finished; a session stopped for the day
+ * isn't completed until it's resumed and finished. `session` is the row as it ended, with its
+ * blocks' final states.
  */
 export function trackSessionCompleted(session: StudySessionRow): void {
   const minutes = Math.round(getSessionBlockMinutes(session.blocks));

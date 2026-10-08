@@ -95,14 +95,14 @@ describe(writeChallengeLessonContent, () => {
     });
   });
 
-  it("writes the case at the priority tier when a learner is waiting on it", async () => {
+  it("writes the case at the flex tier when nobody reaches it for hours", async () => {
     const { lessonId, workflowRunId } = await claimedChallenge();
     vi.mocked(generateChallengeCase).mockResolvedValue(written(writtenChallengeCaseFixture()));
 
-    await writeChallengeLessonContent({ lessonId, priority: true, workflowRunId });
+    await writeChallengeLessonContent({ lessonId, serviceTier: "flex", workflowRunId });
 
     expect(generateChallengeCase).toHaveBeenCalledWith(
-      expect.objectContaining({ serviceTier: "priority" }),
+      expect.objectContaining({ serviceTier: "flex" }),
     );
   });
 

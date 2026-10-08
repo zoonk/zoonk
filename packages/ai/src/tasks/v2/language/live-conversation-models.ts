@@ -14,6 +14,13 @@
  * line; before that it scored 7.90 to 8.02, and one TOEFL mock took 30s to open.
  * gpt-realtime-2.1, which it replaced, scored 8.54 in text mode on the gateway's normalized route
  * with a tool call per objective.
+ *
+ * Gemini 3.8 Live (7 Oct 2026, three calls: pt→en A2, en→pt B1, en→es C1) scored 8.45 against
+ * GPT-Live's 8.64, and its first words came 1.5s after the learner stopped (p50) against 0.9s. It
+ * bills tokens and every turn re-reads the whole session, so a one-minute call cost $0.024 a
+ * minute but a five-minute one would cost about $0.065 a minute, against GPT-Live's flat $0.05. On
+ * the gateway's realtime route it also has no silent context: a note about the call's progress
+ * makes the character speak, and an event the route doesn't know closes the call. GPT-Live stays.
  */
 export const LIVE_CONVERSATION_MODEL = "openai/gpt-live-1";
 

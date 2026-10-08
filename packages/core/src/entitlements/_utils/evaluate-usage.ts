@@ -2,6 +2,7 @@ import { type UsageKind } from "@zoonk/db";
 import { type AllowanceLimit, type EntitlementTier, type UsageDecision } from "../contract";
 import {
   FAIR_USE_SPACING_SECONDS,
+  MIN_CALL_SECONDS,
   getActiveGoalLimit,
   getDailySpendBudgetMicros,
   getUsageRule,
@@ -58,6 +59,78 @@ function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitChe
   return checks.filter((check): check is LimitCheck => check !== false);
 }
 
+/** Which of the plan's call time caps a call reaches: today's or this month's. */
+export type CallTimePeriod = "day" | "month";
+
+/** The plan's call time cap that runs out first, and how many seconds it has left. */
+export type CallTimeLeft = { limit: number; period: CallTimePeriod; seconds: number };
+
+/**
+ * What's left of the plan's call time: today's or this month's, whichever runs out first. Once the
+ * month's is used, it's the one that counts whatever's left today, since tomorrow brings none back.
+ * Null for uses without a time cap.
+ */
+export function getCallTimeLeft({
+  kind,
+  tier,
+  usedThisMonth,
+  usedToday,
+}: {
+  kind: UsageKind;
+  tier: EntitlementTier;
+  usedThisMonth: number;
+  usedToday: number;
+}): CallTimeLeft | null {
+  const { daySeconds, monthSeconds } = getUsageRule({ kind, tier });
+
+  const day: CallTimeLeft | null =
+    daySeconds === undefined
+      ? null
+      : { limit: daySeconds, period: "day", seconds: daySeconds - usedToday };
+
+  const month: CallTimeLeft | null =
+    monthSeconds === undefined
+      ? null
+      : { limit: monthSeconds, period: "month", seconds: monthSeconds - usedThisMonth };
+
+  if (!day || (month && (month.seconds < MIN_CALL_SECONDS || month.seconds <= day.seconds))) {
+    return month;
+  }
+
+  return day;
+}
+
+/**
+ * The seconds a live call may hold: what it asks for, or what's left of the plan's call time when
+ * that's less, with the cap that shortens it. Uses without a time cap hold what they ask.
+ */
+export function getCallHold({ left, seconds }: { left: CallTimeLeft | null; seconds: number }): {
+  heldSeconds: number;
+  shortenedBy: CallTimePeriod | null;
+} {
+  if (!left || left.seconds >= seconds) {
+    return { heldSeconds: seconds, shortenedBy: null };
+  }
+
+  return { heldSeconds: Math.max(0, left.seconds), shortenedBy: left.period };
+}
+
+/** The plan's call time is used once less than a short call is left, today or this month. */
+function findCallTimeLimit({ counts, kind, tier }: UsageClaim): AllowanceLimit | null {
+  const left = getCallTimeLeft({
+    kind,
+    tier,
+    usedThisMonth: counts.secondsThisMonth,
+    usedToday: counts.secondsToday,
+  });
+
+  if (!left || left.seconds >= MIN_CALL_SECONDS) {
+    return null;
+  }
+
+  return { limit: left.limit, period: left.period, resource: "callSeconds", tier };
+}
+
 function findReachedLimit(claim: UsageClaim): AllowanceLimit | null {
   const reached = getLimitChecks(claim).find((check) => check.used >= check.limit);
 
@@ -68,6 +141,12 @@ function findReachedLimit(claim: UsageClaim): AllowanceLimit | null {
       resource: reached.resource,
       tier: claim.tier,
     };
+  }
+
+  const callTime = findCallTimeLimit(claim);
+
+  if (callTime) {
+    return callTime;
   }
 
   const budget = getDailySpendBudgetMicros(claim.tier);
@@ -94,8 +173,8 @@ function getFairUseWaitSeconds({ counts, kind, now, tier }: UsageClaim): number 
 }
 
 /**
- * Judges one new use against the learner's plan: hard caps and the daily AI budget block, while
- * fair use only slows unusual volume down.
+ * Judges one new use against the learner's plan: hard caps, the plan's call time and the daily AI
+ * budget block, while fair use only slows unusual volume down.
  */
 export function evaluateUsage(claim: UsageClaim): UsageDecision {
   const limit = findReachedLimit(claim);

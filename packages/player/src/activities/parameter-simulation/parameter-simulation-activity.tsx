@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -10,7 +11,6 @@ import {
 import { ActivitySlider } from "../_components/activity-slider";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { startingValues } from "../_utils/formula-model";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { checkValues, curvePeak, othersDiffer, sweepCurve } from "./parameter-model";
 import { OtherOutputs, SimulationTextAlternative, StartingCurveNote } from "./simulation-parts";

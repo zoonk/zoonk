@@ -27,7 +27,15 @@
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "examName": {}, "hasTarget": true, "hasTargetDate": false, "kind": "exam" }],
+          "goals": [
+            {
+              "examName": {},
+              "examTarget": "admission",
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
           "hasStudyTime": true,
           "route": "goals"
         },
@@ -63,6 +71,33 @@
         "userInput": {
           "goal": "i want to speak english from spanish because I'm moving to the US. my current level is A2. i need to become fluent in the next 6 months",
           "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "ownLevel": "intermediate",
+              "targetLanguage": "en",
+              "targetLevel": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-language-interview-toronto-1",
+        "userInput": {
+          "goal": "preciso falar inglês numa entrevista de emprego em toronto daqui a 3 meses. sou analista de dados e meu inglês é intermediário",
+          "language": "pt",
           "today": "2026-09-26"
         }
       }
@@ -232,7 +267,15 @@
       ],
       "testCase": {
         "expected": {
-          "goals": [{ "examName": {}, "hasTarget": true, "kind": "exam", "month": "2027-03" }],
+          "goals": [
+            {
+              "examName": {},
+              "examTarget": "score",
+              "hasTarget": true,
+              "kind": "exam",
+              "month": "2027-03"
+            }
+          ],
           "route": "goals"
         },
         "id": "en-exam-ielts-band-1",
@@ -364,9 +407,229 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": { "goals": [{ "examName": {}, "kind": "exam" }], "route": "goals" },
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-1",
+        "userInput": {
+          "goal": "quero passar no concurso da camara dos deputados, que saiu edital agora e tem prova em janeiro do ano que vem. quero passar na vaga para registro e redacao",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-month-1",
+        "userInput": {
+          "goal": "quero passar no concurso da câmara dos deputados, saiu o edital e a prova é em janeiro do ano que vem. quero passar na vaga para registro e redação",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-owner-1",
+        "userInput": {
+          "goal": "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examTarget": "position",
+              "hasTarget": true,
+              "hasTargetDate": true,
+              "kind": "exam",
+              "month": "2027-01"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-day-1",
+        "userInput": {
+          "goal": "concurso da câmara dos deputados, analista de registro e redação. a prova é dia 17 de janeiro de 2027",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examMonth": 2, "examYear": 2027, "hasTargetDate": false, "kind": "exam" }],
+          "route": "goals"
+        },
+        "id": "en-exam-bar-month-1",
+        "userInput": {
+          "goal": "I want to pass the California bar exam in February next year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 3,
+              "examName": {},
+              "examTarget": null,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-oab-month-1",
+        "userInput": {
+          "goal": "vou fazer a primeira fase da oab em março",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examName": {}, "examTarget": null, "kind": "exam" }],
+          "route": "goals"
+        },
         "id": "pt-exam-oab-1",
         "userInput": { "goal": "passar na OAB", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "examName": {}, "kind": "exam" }], "route": "goals" },
+        "id": "pt-exam-oab-second-phase-1",
+        "userInput": {
+          "goal": "estudar para a segunda fase da oab em direito penal",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "examTarget": null, "kind": "exam" }], "route": "goals" },
+        "id": "pt-exam-class-test-1",
+        "userInput": {
+          "goal": "prova de biologia sexta sobre célula",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examTarget": "position", "hasTarget": true, "kind": "exam" }],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-pf-1",
+        "userInput": {
+          "goal": "quero passar no concurso da polícia federal para agente",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
       }
     },
     {
@@ -434,7 +697,7 @@
         },
         "id": "pt-persona-ana-1",
         "userInput": {
-          "goal": "quero passar em medicina na federal, faço o enem desse ano",
+          "goal": "quero passar em medicina na federal, vou fazer o enem de 2027",
           "language": "pt",
           "today": "2026-09-28"
         }

@@ -7,12 +7,30 @@ import {
 } from "@zoonk/core/language/conversations/contract";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
+import { InfoIcon, LightbulbIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useTransition } from "react";
-import { TaskFrame, TaskMainLink } from "../../shell/task-frame";
+import { Callout } from "../../_components/callout";
+import { DetailsDrawer } from "../../_components/details-drawer";
+import { KindTile } from "../../_components/kind-tile";
+import {
+  StepCard,
+  StepDetail,
+  StepEyebrow,
+  StepHeader,
+  StepRow,
+  StepRows,
+  StepTitle,
+  StepTitleLabel,
+  StepTitleNumber,
+} from "../../_components/step-card";
+import { Steps, type StepsItem } from "../../_components/steps";
+import { TaskMainLink } from "../../shell/task-frame";
 import { useConversationTitle, useCriterionName } from "./conversation-labels";
 
 const BAND_DIGITS = 1;
+
+type Criterion = SpeakingMockFeedback["criteria"][number];
 
 function useBandRange() {
   const format = useFormatter();
@@ -39,101 +57,185 @@ function useBandLabel() {
   return (exam: SpeakingMockExam) => labels[exam];
 }
 
-function Criteria({ feedback }: { feedback: SpeakingMockFeedback }) {
-  const t = useExtracted();
-  const criterionName = useCriterionName();
-  const range = useBandRange();
-
-  return (
-    <ul className="flex flex-col gap-3">
-      {feedback.criteria.map((criterion) => (
-        <li
-          className="in-data-[mode=fun]:fun-glass flex flex-col gap-1.5 rounded-2xl border p-4 in-data-[mode=fun]:border-transparent"
-          key={criterion.criterion}
-        >
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="flex items-center gap-2 font-semibold">
-              {criterionName(criterion.criterion)}
-              {criterion.criterion === feedback.focus && (
-                <Badge variant="outline">{t("Focus")}</Badge>
-              )}
-            </h3>
-            <span className="shrink-0 font-semibold whitespace-nowrap tabular-nums">
-              {range(criterion)}
-            </span>
-          </div>
-          <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-sm">
-            {criterion.evidence}
-          </p>
-          <p className="text-sm">{criterion.tip}</p>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/**
- * After a speaking mock: an estimated band range overall and for each of its exam's criteria, on
- * that exam's scale (IELTS 0 to 9, TOEFL 1 to 6), with the words behind it and one concrete tip
- * each, the criterion to work on first, and another try. It's an estimate from a short mock, never
- * an official score, and says so.
- */
-export function SpeakingMockResult({
+/** The band overall, big, on its exam's scale, and that it's an estimate. */
+function BandStep({
   conversation,
   feedback,
-  nextHref,
-  onTryAgain,
 }: {
   conversation: LanguageConversationView;
-  feedback: SpeakingMockFeedback | null;
-  nextHref: string;
-  onTryAgain: (() => Promise<void>) | null;
+  feedback: SpeakingMockFeedback;
 }) {
   const t = useExtracted();
   const title = useConversationTitle(conversation);
   const range = useBandRange();
   const bandLabel = useBandLabel();
+
+  return (
+    <>
+      <StepCard>
+        <KindTile kind="conversation" size="lg" />
+        <StepHeader>
+          <StepTitle className="flex flex-col items-center gap-1.5">
+            <StepTitleLabel>{title}</StepTitleLabel>
+            <StepTitleNumber>{range(feedback.overall)}</StepTitleNumber>
+          </StepTitle>
+          <StepDetail>{bandLabel(feedback.exam)}</StepDetail>
+        </StepHeader>
+      </StepCard>
+
+      <Callout>
+        <InfoIcon aria-hidden="true" />
+        <p>{t("An estimate from one short mock, not an official score.")}</p>
+      </Callout>
+    </>
+  );
+}
+
+/** Each criterion with its band; the one to work on first is marked. */
+function CriteriaStep({ feedback }: { feedback: SpeakingMockFeedback }) {
+  const t = useExtracted();
+  const criterionName = useCriterionName();
+  const range = useBandRange();
+
+  return (
+    <StepCard>
+      <StepTitle>{t("By criterion")}</StepTitle>
+      <StepRows>
+        {feedback.criteria.map((criterion) => (
+          <StepRow className="justify-between" key={criterion.criterion}>
+            <span className="flex min-w-0 items-center gap-2 font-medium">
+              {criterionName(criterion.criterion)}
+              {criterion.criterion === feedback.focus && (
+                <Badge variant="outline">{t("Focus")}</Badge>
+              )}
+            </span>
+            <span className="shrink-0 font-semibold whitespace-nowrap tabular-nums">
+              {range(criterion)}
+            </span>
+          </StepRow>
+        ))}
+      </StepRows>
+    </StepCard>
+  );
+}
+
+/** The criterion to work on first: what was heard, and one concrete tip. */
+function FocusStep({ criterion }: { criterion: Criterion }) {
+  const t = useExtracted();
+  const criterionName = useCriterionName();
+
+  return (
+    <>
+      <StepCard>
+        <StepHeader>
+          <StepEyebrow>{t("Work on this first")}</StepEyebrow>
+          <StepTitle>{criterionName(criterion.criterion)}</StepTitle>
+          <StepDetail>{criterion.evidence}</StepDetail>
+        </StepHeader>
+      </StepCard>
+
+      <Callout>
+        <LightbulbIcon aria-hidden="true" />
+        <p>{criterion.tip}</p>
+      </Callout>
+    </>
+  );
+}
+
+/** Every criterion's evidence and tip, one text link away. */
+function CriteriaDetails({ feedback }: { feedback: SpeakingMockFeedback }) {
+  const t = useExtracted();
+  const criterionName = useCriterionName();
+
+  return (
+    <DetailsDrawer label={t("See every criterion")} title={t("By criterion")}>
+      <ul className="flex flex-col gap-4">
+        {feedback.criteria.map((criterion) => (
+          <li className="flex flex-col gap-1 text-sm" key={criterion.criterion}>
+            <p className="font-semibold">{criterionName(criterion.criterion)}</p>
+            <p className="text-muted-foreground">{criterion.evidence}</p>
+            <p>{criterion.tip}</p>
+          </li>
+        ))}
+      </ul>
+    </DetailsDrawer>
+  );
+}
+
+/** Nothing to grade, never the learner's fault. */
+function NoScoreStep() {
+  const t = useExtracted();
+
+  return (
+    <StepCard>
+      <KindTile kind="conversation" size="lg" />
+      <StepTitle>{t("This mock has no score")}</StepTitle>
+      <StepDetail>{t("Try another one when you're ready.")}</StepDetail>
+    </StepCard>
+  );
+}
+
+function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
+  const t = useExtracted();
   const [isPending, startTransition] = useTransition();
 
   return (
-    <TaskFrame
-      exitHref={null}
-      footer={
+    <Button
+      className="w-full"
+      disabled={isPending}
+      onClick={() => startTransition(onTryAgain)}
+      size="lg"
+      variant="ghost"
+    >
+      {t("Try another mock")}
+    </Button>
+  );
+}
+
+/**
+ * After a speaking mock, one thing at a time: the estimated band on its exam's scale (IELTS 0 to
+ * 9, TOEFL 1 to 6), each criterion's band, then the one to work on first with what was heard and a
+ * concrete tip. Every criterion's comments wait behind a link, and another try is one tap away.
+ * It's an estimate from a short mock, never an official score, and says so.
+ */
+export function SpeakingMockResult({
+  conversation,
+  exitHref,
+  feedback,
+  nextHref,
+  onTryAgain,
+}: {
+  conversation: LanguageConversationView;
+  exitHref: string;
+  feedback: SpeakingMockFeedback | null;
+  nextHref: string;
+  onTryAgain: (() => Promise<void>) | null;
+}) {
+  const t = useExtracted();
+  const focus = feedback?.criteria.find((criterion) => criterion.criterion === feedback.focus);
+
+  const items: StepsItem[] = feedback
+    ? [
+        { content: <BandStep conversation={conversation} feedback={feedback} />, id: "band" },
+        feedback.criteria.length > 0 && {
+          content: <CriteriaStep feedback={feedback} />,
+          id: "criteria",
+        },
+        focus && { content: <FocusStep criterion={focus} />, id: "focus" },
+      ].filter((item) => item !== false && item !== undefined)
+    : [{ content: <NoScoreStep />, id: "noScore" }];
+
+  return (
+    <Steps
+      exitHref={exitHref}
+      finalAction={<TaskMainLink href={nextHref}>{t("Continue")}</TaskMainLink>}
+      finalOptions={
         <>
-          <TaskMainLink href={nextHref}>{t("Continue")}</TaskMainLink>
-          {onTryAgain && (
-            <Button
-              className="w-full"
-              disabled={isPending}
-              onClick={() => startTransition(onTryAgain)}
-              size="xl"
-              variant="outline"
-            >
-              {t("Try another mock")}
-            </Button>
-          )}
+          {onTryAgain && <TryAgainButton onTryAgain={onTryAgain} />}
+          {feedback && feedback.criteria.length > 0 && <CriteriaDetails feedback={feedback} />}
         </>
       }
-      headerTitle={title}
-    >
-      {feedback ? (
-        <>
-          <div className="flex flex-col gap-1 pt-2">
-            <p className="in-data-[mode=fun]:font-fun-display text-5xl font-bold tabular-nums">
-              {range(feedback.overall)}
-            </p>
-            <p className="font-medium">{bandLabel(feedback.exam)}</p>
-            <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-sm">
-              {t("An estimate from one short mock, not an official score.")}
-            </p>
-          </div>
-          <Criteria feedback={feedback} />
-        </>
-      ) : (
-        <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 pt-4 text-center">
-          {t("We couldn't score this mock. Try again when you can talk for a few minutes.")}
-        </p>
-      )}
-    </TaskFrame>
+      items={items}
+    />
   );
 }

@@ -3,23 +3,23 @@ import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { switchGoalAction } from "./switch-goal-action";
 
-/** The goal switcher on the left of the top bar, with every goal the learner hasn't archived. */
+/**
+ * The goal switcher on the left of the top bar, with the goals the learner hasn't archived. A
+ * quick explanation read to the end leaves it: search finds it again.
+ */
 export async function LearnGoalMenu() {
   const list = await listCurrentUserGoals();
 
   return (
     <GoalSwitcher
       activeGoalId={list?.activeGoalId ?? null}
-      dailyMinutes={list?.dailyMinutes ?? 0}
+      explanationHref="/explain"
       exploreHref="/courses"
-      goals={(list?.goals ?? []).map(
-        ({ dailyMinutes, id, kind, status, targetLanguage, title }) => ({
-          dailyMinutes: status === "active" ? dailyMinutes : null,
-          id,
-          kind,
-          targetLanguage,
-          title,
-        }),
+      goals={(list?.goals ?? []).flatMap(
+        ({ dailyMinutes, id, kind, status, targetDate, targetLanguage, title }) =>
+          status === "archived" || (kind === "explain" && status === "completed")
+            ? []
+            : [{ dailyMinutes, id, kind, status, targetDate, targetLanguage, title }],
       )}
       newGoalHref="/start"
       onSelect={switchGoalAction}

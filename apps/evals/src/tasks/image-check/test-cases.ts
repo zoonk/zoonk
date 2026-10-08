@@ -34,6 +34,41 @@ function checkCase({
   return { expected: { passed: expected }, id, userInput: { imageFile, ...input } };
 }
 
+/**
+ * Pictures a question is about (7 Oct 2026, a class test's chapter test-out): the letters are the
+ * question's only text, and each one must point at the part its target names, since the answer
+ * depends on it. The wall-and-membrane drawing passed its check with B touching the wall.
+ */
+const wallAndMembrane: ImageScene = {
+  focalObject:
+    "a simplified plant cell outline with a thick green outer hexagonal boundary and a thin inner line running just inside it with a small gap in between",
+  labels: [
+    { target: "at a pointer line touching the thick outer boundary", text: "A" },
+    { target: "at a pointer line touching the thin inner line", text: "B" },
+  ],
+  layout: "single",
+  motion: null,
+  relation: null,
+  supportingObjects: [],
+};
+
+const animalCellLetters: ImageScene = {
+  focalObject:
+    "a simplified cutaway view of a round animal cell showing a large central spherical nucleus",
+  labels: [
+    { target: "pointing to the oval mitochondrion with wavy internal folds", text: "A" },
+    { target: "pointing to the dotted folded membranes near the nucleus", text: "B" },
+    { target: "pointing to the stack of curved flattened sacs", text: "C" },
+  ],
+  layout: "single",
+  motion: null,
+  relation:
+    "The dotted folded membranes sit directly next to the nucleus, while the stacked smooth sacs and the oval mitochondrion are positioned separately in the surrounding cytoplasm",
+  supportingObjects: [
+    "an oval mitochondrion with internal folds, a folded membrane sheet studded with small surface dots adjacent to the nucleus, and a stack of smooth curved flattened sacs",
+  ],
+};
+
 /** Scenes from a real overview-goal run, where the drawing model named objects nobody asked it to. */
 const electronHook: ImageScene = {
   focalObject: "a small blue dot representing an electron, inside a small dashed boundary",
@@ -268,5 +303,17 @@ export const TEST_CASES = [
         supportingObjects: ["a small sun"],
       },
     },
+  }),
+  checkCase({
+    expected: true,
+    id: "question-letters",
+    imageFile: "flare-question-animal-cell-letters.webp",
+    input: { language: "pt", scene: animalCellLetters },
+  }),
+  checkCase({
+    expected: false,
+    id: "question-pointer-on-wrong-part",
+    imageFile: "flare-question-wall-membrane-wrong-pointer.webp",
+    input: { language: "pt", scene: wallAndMembrane },
   }),
 ];

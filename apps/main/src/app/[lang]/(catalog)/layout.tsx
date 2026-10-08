@@ -1,32 +1,38 @@
 import { CATALOG_TOP_TARGET_ID } from "@/components/catalog/catalog-top-target";
+import { SectionFrame } from "@/components/learn/section-frame";
+import { LoginBarLink } from "@/components/login-bar-link";
+import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getSession } from "@zoonk/core/users/session";
 import { AvatarSkeleton } from "@zoonk/ui/components/avatar";
-import { Navbar } from "@zoonk/ui/components/navbar";
 import { Suspense } from "react";
-import { NavbarLinks, NavbarLinksSkeleton } from "./_components/navbar-links";
 import { UserAvatarMenu } from "./_components/user-avatar-menu";
 
-async function NavbarLinksWithAuth() {
+/** The bar's end: the account's menu, or a visitor's way in. */
+async function CatalogBarEnd() {
   const session = await getSession();
-  return <NavbarLinks isLoggedIn={Boolean(session)} />;
+  return session ? <UserAvatarMenu /> : <LoginBarLink />;
 }
 
+/**
+ * The catalog is a section: its own bar (the way home, and the account's menu or a visitor's way
+ * in) over a page as wide as the screen, so the grid has room for its columns on large screens.
+ * The page names itself ("Explore courses"), so the bar doesn't.
+ */
 export default function CatalogLayout({ children }: LayoutProps<"/[lang]">) {
   return (
-    <div className="flex min-h-dvh flex-col">
-      <Navbar>
-        <Suspense fallback={<NavbarLinksSkeleton />}>
-          <NavbarLinksWithAuth />
-        </Suspense>
-
-        <Suspense fallback={<AvatarSkeleton />}>
-          <UserAvatarMenu />
-        </Suspense>
-      </Navbar>
-
-      <div aria-hidden="true" className="scroll-mt-20" id={CATALOG_TOP_TARGET_ID} />
-
-      {children}
-    </div>
+    <ClientMessagesProvider scope="learn">
+      <SectionFrame
+        end={
+          <Suspense fallback={<AvatarSkeleton className="size-11 lg:size-10" />}>
+            <CatalogBarEnd />
+          </Suspense>
+        }
+        home
+        wide
+      >
+        <div aria-hidden="true" className="scroll-mt-24" id={CATALOG_TOP_TARGET_ID} />
+        {children}
+      </SectionFrame>
+    </ClientMessagesProvider>
   );
 }

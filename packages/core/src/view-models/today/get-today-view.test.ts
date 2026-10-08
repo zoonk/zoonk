@@ -6,6 +6,7 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { dismissGuardianInvite } from "../../minors/guardian/dismiss-guardian-invite";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -22,7 +23,7 @@ vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 const DAYS_TO_EXAM = 32;
 
 /** A learner whose active goal is an exam 32 days away, with a weekly mock in the plan. */
-async function setup({ earlierStudyDay = false } = {}) {
+async function setup() {
   const user = await userFixture();
 
   const fixture = await sessionGoalFixture({
@@ -34,20 +35,18 @@ async function setup({ earlierStudyDay = false } = {}) {
     userId: user.id,
   });
 
-  await Promise.all([
-    learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id }),
+  const [mock] = await Promise.all([
     checkpointItemFixture({
       kind: "mock",
       planId: fixture.plan.id,
       position: fixture.planItems.length,
       scheduledFor: new Date(SESSION_TODAY.getTime() + 4 * DAY_MS),
     }),
-    earlierStudyDay &&
-      dailyProgressFixtureMany([{ date: daysAgo(1), timeSpentSeconds: 900, userId: user.id }]),
+    learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id }),
   ]);
 
   mockSession(user.id);
-  return { ...fixture, user };
+  return { ...fixture, mock, user };
 }
 
 describe(getTodayView, () => {
@@ -58,6 +57,80 @@ describe(getTodayView, () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("offers a teen who just signed up from a guest session to invite a guardian, until one is", async () => {
+    const { goal, user } = await setup();
+    const signedUpAt = new Date(SESSION_NOW.getTime() - 60 * 60 * 1000);
+
+    // The goal came from the guest session: it's older than the account.
+    await Promise.all([
+      prisma.user.update({ data: { createdAt: signedUpAt }, where: { id: user.id } }),
+      prisma.goal.update({
+        data: { createdAt: new Date(signedUpAt.getTime() - DAY_MS) },
+        where: { id: goal.id },
+      }),
+      prisma.userLearningProfile.update({
+        data: { birthMonth: 3, birthYear: 2009 },
+        where: { userId: user.id },
+      }),
+    ]);
+
+    const before = await getTodayView({});
+    expect(before.status === "ready" && before.today.guardianInvite).toBe(true);
+
+    await prisma.guardianLink.create({
+      data: {
+        guardianEmail: "mom@zoonk.test",
+        status: "pending",
+        tokenHash: crypto.randomUUID(),
+        userId: user.id,
+      },
+    });
+
+    const after = await getTodayView({});
+    expect(after.status === "ready" && after.today.guardianInvite).toBe(false);
+  });
+
+  it("stops offering the guardian invite once the teen says not now", async () => {
+    const { goal, user } = await setup();
+    const signedUpAt = new Date(SESSION_NOW.getTime() - 60 * 60 * 1000);
+
+    await Promise.all([
+      prisma.user.update({ data: { createdAt: signedUpAt }, where: { id: user.id } }),
+      prisma.goal.update({
+        data: { createdAt: new Date(signedUpAt.getTime() - DAY_MS) },
+        where: { id: goal.id },
+      }),
+      prisma.userLearningProfile.update({
+        data: { birthMonth: 3, birthYear: 2009 },
+        where: { userId: user.id },
+      }),
+    ]);
+
+    const before = await getTodayView({});
+    expect(before.status === "ready" && before.today.guardianInvite).toBe(true);
+
+    await expect(dismissGuardianInvite()).resolves.toStrictEqual({ status: "dismissed" });
+
+    const after = await getTodayView({});
+    expect(after.status === "ready" && after.today.guardianInvite).toBe(false);
+  });
+
+  it("leaves the invite to onboarding for a teen who signed up first, and never asks an adult", async () => {
+    const { user } = await setup();
+
+    const adult = await getTodayView({});
+    expect(adult.status === "ready" && adult.today.guardianInvite).toBe(false);
+
+    // Onboarding offered it after the age question: the goal is newer than the account.
+    await prisma.userLearningProfile.update({
+      data: { birthMonth: 3, birthYear: 2009 },
+      where: { userId: user.id },
+    });
+
+    const teen = await getTodayView({});
+    expect(teen.status === "ready" && teen.today.guardianInvite).toBe(false);
   });
 
   it("refuses a visitor without a session", async () => {
@@ -97,7 +170,7 @@ describe(getTodayView, () => {
   });
 
   it("shows the active goal's countdown, status and today's session", async () => {
-    const { goal, lessons } = await setup();
+    const { goal, lessons, mock } = await setup();
     const result = await getTodayView({});
 
     if (result.status !== "ready") {
@@ -107,6 +180,7 @@ describe(getTodayView, () => {
     const { today } = result;
 
     expect(today.goal).toStrictEqual({
+      dateEstimated: false,
       daysLeft: DAYS_TO_EXAM,
       id: goal.id,
       kind: "exam",
@@ -123,8 +197,22 @@ describe(getTodayView, () => {
     expect(today.weeklyChallenge).toMatchObject({
       date: new Date(SESSION_TODAY.getTime() + 4 * DAY_MS),
       kind: "mock",
+      planItemId: mock.id,
       title: "Test mock",
     });
+  });
+
+  it("says the learner studied today once today has study time, on any goal", async () => {
+    const { user } = await setup();
+
+    await dailyProgressFixtureMany([
+      { date: daysAgo(1), timeSpentSeconds: 900, userId: user.id },
+      { date: SESSION_TODAY, timeSpentSeconds: 300, userId: user.id },
+    ]);
+
+    const result = await getTodayView({});
+
+    expect(result.status === "ready" && result.today.studiedToday).toBe(true);
   });
 
   it("opens the same session on a second visit the same day", async () => {
@@ -143,22 +231,11 @@ describe(getTodayView, () => {
     ).resolves.toBe(1);
   });
 
-  it("keeps the missions hidden on the first study day", async () => {
-    await setup();
-    const result = await getTodayView({});
-
-    expect(result.status === "ready" && result.today.reveal).toStrictEqual({ missions: false });
-  });
-
-  it("reveals the missions from the second study day", async () => {
-    await setup({ earlierStudyDay: true });
-    const result = await getTodayView({});
-
-    expect(result.status === "ready" && result.today.reveal).toStrictEqual({ missions: true });
-  });
-
   it("carries the insight waiting for this goal", async () => {
     const { goal, user } = await setup();
+
+    // Insights come from memory, which a learner without an age answer turns on themselves.
+    await learningProfileFixture({ memoryEnabled: true, userId: user.id });
 
     const insight = await memoryInsightFixture({
       createdAt: SESSION_NOW,
@@ -233,6 +310,38 @@ describe(getTodayView, () => {
     await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
 
     await expect(getTodayView({})).resolves.toStrictEqual({ status: "goalNotActive" });
+  });
+
+  it("has no day to plan for a learner with only quick explanations", async () => {
+    const user = await userFixture();
+
+    const { goal } = await sessionGoalFixture({
+      goal: { kind: "explain", title: "How a microwave works" },
+      userId: user.id,
+    });
+
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+    mockSession(user.id);
+
+    await expect(getTodayView({})).resolves.toStrictEqual({
+      status: "noGoal",
+      suggestedGoal: null,
+    });
+
+    await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
+  });
+
+  it("keeps a quick explanation's day for a learner who also has a plan to study", async () => {
+    const { user } = await setup();
+
+    const explanation = await sessionGoalFixture({
+      goal: { kind: "explain", title: "How a microwave works" },
+      userId: user.id,
+    });
+
+    const result = await getTodayView({ goalId: explanation.goal.id });
+
+    expect(result.status === "ready" && result.today.goal.id).toBe(explanation.goal.id);
   });
 
   it("never shows another learner's goal", async () => {

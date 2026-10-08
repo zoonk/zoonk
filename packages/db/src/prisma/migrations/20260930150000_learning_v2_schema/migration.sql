@@ -12,6 +12,9 @@ CREATE TYPE "TutorThreadKind" AS ENUM ('lesson', 'chapter', 'plan', 'mock');
 CREATE TYPE "MockExamStatus" AS ENUM ('active', 'finished');
 
 -- CreateEnum
+CREATE TYPE "TargetCutoffStatus" AS ENUM ('found', 'unknown');
+
+-- CreateEnum
 CREATE TYPE "VoteValue" AS ENUM ('up', 'down');
 
 -- CreateEnum
@@ -39,7 +42,7 @@ CREATE TYPE "PlanItemStatus" AS ENUM ('todo', 'done', 'skipped', 'tested_out');
 CREATE TYPE "SuggestedGoalStatus" AS ENUM ('pending', 'accepted', 'dismissed');
 
 -- CreateEnum
-CREATE TYPE "PlanChangeStatus" AS ENUM ('proposed', 'applied', 'declined', 'undone');
+CREATE TYPE "PlanChangeStatus" AS ENUM ('proposed', 'applied', 'declined', 'undone', 'replaced');
 
 -- CreateEnum
 CREATE TYPE "ResearchUploadReason" AS ENUM ('no_official_source', 'unverified', 'class_material');
@@ -75,7 +78,7 @@ CREATE TYPE "LibraryVisibility" AS ENUM ('public', 'private');
 CREATE TYPE "LibraryStepKind" AS ENUM ('hook', 'explanation', 'worked_example', 'check', 'typed_answer', 'spoken_answer', 'activity', 'multiple_choice', 'fill_blank', 'match_columns', 'vocabulary', 'reading', 'listening', 'translation', 'alphabet', 'summary', 'challenge');
 
 -- CreateEnum
-CREATE TYPE "StepVariantKind" AS ENUM ('simpler', 'deeper', 'field', 'tool');
+CREATE TYPE "StepVariantKind" AS ENUM ('field', 'tool');
 
 -- CreateEnum
 CREATE TYPE "MediaKind" AS ENUM ('image', 'audio');
@@ -129,10 +132,7 @@ CREATE TYPE "StudyBlockStatus" AS ENUM ('pending', 'active', 'completed', 'skipp
 CREATE TYPE "StudyFreshStart" AS ENUM ('welcome_back', 'new_week', 'new_phase');
 
 -- CreateEnum
-CREATE TYPE "UsageKind" AS ENUM ('lesson_start', 'explanation', 'goal', 'tutor_message', 'upload', 'conversation', 'assist');
-
--- CreateEnum
-CREATE TYPE "ExperienceMode" AS ENUM ('focus', 'fun');
+CREATE TYPE "UsageKind" AS ENUM ('lesson_start', 'explanation', 'goal', 'tutor_message', 'upload', 'conversation', 'assist', 'mind_map');
 
 -- CreateEnum
 CREATE TYPE "BuddyKind" AS ENUM ('zu', 'noodle', 'beep', 'otto');
@@ -183,11 +183,16 @@ ADD COLUMN     "library_lesson_id" UUID,
 ADD COLUMN     "mock_exam_id" UUID;
 
 -- AlterTable
-ALTER TABLE "lesson_questions" ADD COLUMN     "generated_at" TIMESTAMP(3),
+ALTER TABLE "lesson_questions" DROP COLUMN "input_tokens",
+DROP COLUMN "output_tokens",
+DROP COLUMN "total_tokens",
+ADD COLUMN     "generated_at" TIMESTAMP(3),
 ADD COLUMN     "library_step_id" UUID,
+ADD COLUMN     "plan_change_id" UUID,
 ADD COLUMN     "prompt_version" TEXT,
 ADD COLUMN     "run_id" TEXT,
-ADD COLUMN     "shared_answer_id" UUID;
+ADD COLUMN     "shared_answer_id" UUID,
+ADD COLUMN     "tool_offer" JSONB;
 
 -- AlterTable
 ALTER TABLE "sentences" ADD COLUMN     "audio_generated_at" TIMESTAMP(3),
@@ -207,10 +212,8 @@ ADD COLUMN     "buddy_glasses" "BuddyGlasses" NOT NULL DEFAULT 'round',
 ADD COLUMN     "buddy_kind" "BuddyKind",
 ADD COLUMN     "buddy_name" TEXT,
 ADD COLUMN     "daily_limit_minutes" SMALLINT,
-ADD COLUMN     "deeper_by_default" BOOLEAN,
-ADD COLUMN     "experience_mode" "ExperienceMode" NOT NULL DEFAULT 'focus',
-ADD COLUMN     "memory_asks_deeper" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "memory_enabled" BOOLEAN NOT NULL DEFAULT true,
+ADD COLUMN     "guardian_invite_dismissed_at" TIMESTAMP(3),
+ADD COLUMN     "memory_enabled" BOOLEAN,
 ADD COLUMN     "sounds_enabled" BOOLEAN NOT NULL DEFAULT true;
 
 -- AlterTable
@@ -248,12 +251,41 @@ CREATE TABLE "evaluation_runs" (
     "input_hash" TEXT NOT NULL,
     "answers" JSONB NOT NULL,
     "latency_ms" INTEGER NOT NULL,
-    "input_tokens" INTEGER NOT NULL,
-    "output_tokens" INTEGER NOT NULL,
-    "cost_usd" DOUBLE PRECISION,
+    "run_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "evaluation_runs_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ai_calls" (
+    "id" UUID NOT NULL DEFAULT uuidv7(),
+    "task" TEXT NOT NULL,
+    "model" TEXT NOT NULL,
+    "requested_model" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "service_tier" VARCHAR(10),
+    "credential" VARCHAR(10),
+    "prompt_version" TEXT NOT NULL,
+    "run_id" TEXT NOT NULL,
+    "trace_id" TEXT,
+    "user_id" UUID,
+    "goal_id" UUID,
+    "content_scope" VARCHAR(10) NOT NULL,
+    "input_tokens" INTEGER NOT NULL DEFAULT 0,
+    "cache_read_tokens" INTEGER NOT NULL DEFAULT 0,
+    "cache_write_tokens" INTEGER NOT NULL DEFAULT 0,
+    "output_tokens" INTEGER NOT NULL DEFAULT 0,
+    "reasoning_tokens" INTEGER NOT NULL DEFAULT 0,
+    "audio_seconds" DOUBLE PRECISION,
+    "characters" INTEGER,
+    "images" INTEGER,
+    "cost_usd" DOUBLE PRECISION,
+    "gateway_cost_usd" DOUBLE PRECISION,
+    "latency_ms" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ai_calls_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -313,6 +345,27 @@ CREATE TABLE "exam_results" (
 );
 
 -- CreateTable
+CREATE TABLE "target_cutoffs" (
+    "id" UUID NOT NULL DEFAULT uuidv7(),
+    "exam_blueprint_id" UUID NOT NULL,
+    "target_key" TEXT NOT NULL,
+    "year" SMALLINT NOT NULL,
+    "status" "TargetCutoffStatus" NOT NULL,
+    "score" DOUBLE PRECISION,
+    "edition" TEXT,
+    "quota" TEXT,
+    "source_url" TEXT,
+    "source_title" TEXT,
+    "model" TEXT NOT NULL,
+    "prompt_version" TEXT NOT NULL,
+    "run_id" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "target_cutoffs_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "content_feedback" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
     "user_id" UUID NOT NULL,
@@ -322,7 +375,6 @@ CREATE TABLE "content_feedback" (
     "reasons" "ContentFeedbackReason"[] DEFAULT ARRAY[]::"ContentFeedbackReason"[],
     "comment" TEXT,
     "language" VARCHAR(10),
-    "mode" "ExperienceMode",
     "model" TEXT,
     "prompt_version" TEXT,
     "run_id" TEXT,
@@ -387,6 +439,9 @@ CREATE TABLE "plans" (
     "generated_at" TIMESTAMP(3),
     "build_failed_at" TIMESTAMP(3),
     "placement_prepared_at" TIMESTAMP(3),
+    "notice_wait_until" TIMESTAMP(3),
+    "notice_wait_ended_at" TIMESTAMP(3),
+    "covered_share" DOUBLE PRECISION,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -744,6 +799,8 @@ CREATE TABLE "library_steps" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
     "lesson_id" UUID NOT NULL,
     "position" INTEGER NOT NULL,
+    "version" SMALLINT NOT NULL DEFAULT 1,
+    "retired_at" TIMESTAMP(3),
     "kind" "LibraryStepKind" NOT NULL,
     "contract_version" SMALLINT NOT NULL DEFAULT 1,
     "content" JSONB NOT NULL,
@@ -769,7 +826,7 @@ CREATE TABLE "step_variants" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
     "step_id" UUID NOT NULL,
     "kind" "StepVariantKind" NOT NULL,
-    "key" TEXT NOT NULL DEFAULT '',
+    "key" TEXT NOT NULL,
     "contract_version" SMALLINT NOT NULL DEFAULT 1,
     "content" JSONB NOT NULL,
     "model" TEXT NOT NULL,
@@ -822,6 +879,28 @@ CREATE TABLE "media_assets" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "media_assets_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "chapter_mind_maps" (
+    "id" UUID NOT NULL DEFAULT uuidv7(),
+    "chapter_id" UUID NOT NULL,
+    "language" VARCHAR(10) NOT NULL,
+    "status" "GenerationStatus" NOT NULL DEFAULT 'pending',
+    "run_id" TEXT,
+    "structure" JSONB,
+    "image_url" TEXT,
+    "image_width" INTEGER,
+    "image_height" INTEGER,
+    "thumbnail_url" TEXT,
+    "model" TEXT,
+    "image_model" TEXT,
+    "prompt_version" TEXT,
+    "generated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "chapter_mind_maps_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -981,6 +1060,7 @@ CREATE TABLE "items" (
     "exam_blueprint_id" UUID,
     "source_id" UUID,
     "source_citation" TEXT,
+    "media_asset_id" UUID,
     "model" TEXT NOT NULL,
     "prompt_version" TEXT NOT NULL,
     "run_id" TEXT NOT NULL,
@@ -1114,7 +1194,6 @@ CREATE TABLE "learning_events" (
     "user_id" UUID NOT NULL,
     "kind" "LearningEventKind" NOT NULL,
     "lesson_kind" TEXT,
-    "mode" "ExperienceMode",
     "goal_id" UUID,
     "started_at" TIMESTAMP(3) NOT NULL,
     "ended_at" TIMESTAMP(3),
@@ -1141,11 +1220,14 @@ CREATE TABLE "study_sessions" (
     "local_date" DATE NOT NULL,
     "status" "StudySessionStatus" NOT NULL DEFAULT 'planned',
     "planned_minutes" SMALLINT NOT NULL,
+    "plan_version" INTEGER,
     "fresh_start" "StudyFreshStart",
     "start_snapshot" JSONB,
+    "end_snapshot" JSONB,
     "full_meal_at" TIMESTAMP(3),
     "started_at" TIMESTAMP(3),
     "ended_at" TIMESTAMP(3),
+    "stopped_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -1180,6 +1262,7 @@ CREATE TABLE "usage_records" (
     "target_id" UUID NOT NULL,
     "generated" BOOLEAN NOT NULL DEFAULT false,
     "cost_micros" INTEGER NOT NULL DEFAULT 0,
+    "seconds" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "usage_records_pkey" PRIMARY KEY ("id")
@@ -1202,6 +1285,7 @@ CREATE TABLE "guardian_links" (
     "token_hash" TEXT NOT NULL,
     "daily_limit_minutes" SMALLINT,
     "plus_approved_at" TIMESTAMP(3),
+    "memory_off" BOOLEAN NOT NULL DEFAULT false,
     "expires_at" TIMESTAMP(3),
     "accepted_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1258,6 +1342,21 @@ CREATE INDEX "evaluation_runs_user_id_idx" ON "evaluation_runs"("user_id");
 CREATE INDEX "evaluation_runs_goal_id_idx" ON "evaluation_runs"("goal_id");
 
 -- CreateIndex
+CREATE INDEX "ai_calls_created_at_idx" ON "ai_calls"("created_at");
+
+-- CreateIndex
+CREATE INDEX "ai_calls_task_created_at_idx" ON "ai_calls"("task", "created_at");
+
+-- CreateIndex
+CREATE INDEX "ai_calls_user_id_created_at_idx" ON "ai_calls"("user_id", "created_at");
+
+-- CreateIndex
+CREATE INDEX "ai_calls_goal_id_idx" ON "ai_calls"("goal_id");
+
+-- CreateIndex
+CREATE INDEX "ai_calls_run_id_idx" ON "ai_calls"("run_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "mock_exams_block_id_key" ON "mock_exams"("block_id");
 
 -- CreateIndex
@@ -1280,6 +1379,9 @@ CREATE INDEX "exam_results_user_id_idx" ON "exam_results"("user_id");
 
 -- CreateIndex
 CREATE INDEX "exam_results_exam_blueprint_id_reported_at_idx" ON "exam_results"("exam_blueprint_id", "reported_at");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "target_cutoffs_exam_blueprint_id_target_key_year_key" ON "target_cutoffs"("exam_blueprint_id", "target_key", "year");
 
 -- CreateIndex
 CREATE INDEX "content_feedback_content_kind_content_id_idx" ON "content_feedback"("content_kind", "content_id");
@@ -1477,7 +1579,10 @@ CREATE INDEX "library_steps_media_asset_id_idx" ON "library_steps"("media_asset_
 CREATE INDEX "library_steps_source_id_idx" ON "library_steps"("source_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "library_steps_lesson_id_position_key" ON "library_steps"("lesson_id", "position");
+CREATE INDEX "library_steps_retired_at_idx" ON "library_steps"("retired_at");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "library_steps_lesson_id_version_position_key" ON "library_steps"("lesson_id", "version", "position");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "step_variants_step_id_kind_key_key" ON "step_variants"("step_id", "kind", "key");
@@ -1493,6 +1598,9 @@ CREATE UNIQUE INDEX "media_assets_reuse_key_key" ON "media_assets"("reuse_key");
 
 -- CreateIndex
 CREATE INDEX "media_assets_owner_id_idx" ON "media_assets"("owner_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "chapter_mind_maps_chapter_id_key" ON "chapter_mind_maps"("chapter_id");
 
 -- CreateIndex
 CREATE INDEX "memory_facts_user_id_category_status_idx" ON "memory_facts"("user_id", "category", "status");
@@ -1550,6 +1658,9 @@ CREATE INDEX "items_exam_blueprint_id_idx" ON "items"("exam_blueprint_id");
 
 -- CreateIndex
 CREATE INDEX "items_source_id_idx" ON "items"("source_id");
+
+-- CreateIndex
+CREATE INDEX "items_media_asset_id_idx" ON "items"("media_asset_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "answer_explanations_item_id_normalized_answer_language_key" ON "answer_explanations"("item_id", "normalized_answer", "language");
@@ -1687,6 +1798,9 @@ CREATE INDEX "lesson_questions_library_step_id_idx" ON "lesson_questions"("libra
 CREATE INDEX "lesson_questions_shared_answer_id_idx" ON "lesson_questions"("shared_answer_id");
 
 -- CreateIndex
+CREATE INDEX "lesson_questions_plan_change_id_idx" ON "lesson_questions"("plan_change_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "user_learning_profiles_active_goal_id_key" ON "user_learning_profiles"("active_goal_id");
 
 -- CreateIndex
@@ -1697,6 +1811,12 @@ ALTER TABLE "evaluation_runs" ADD CONSTRAINT "evaluation_runs_user_id_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "evaluation_runs" ADD CONSTRAINT "evaluation_runs_goal_id_fkey" FOREIGN KEY ("goal_id") REFERENCES "goals"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ai_calls" ADD CONSTRAINT "ai_calls_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ai_calls" ADD CONSTRAINT "ai_calls_goal_id_fkey" FOREIGN KEY ("goal_id") REFERENCES "goals"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "mock_exams" ADD CONSTRAINT "mock_exams_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -1721,6 +1841,9 @@ ALTER TABLE "exam_results" ADD CONSTRAINT "exam_results_goal_id_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "exam_results" ADD CONSTRAINT "exam_results_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "target_cutoffs" ADD CONSTRAINT "target_cutoffs_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "content_feedback" ADD CONSTRAINT "content_feedback_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -1849,6 +1972,9 @@ ALTER TABLE "lesson_questions" ADD CONSTRAINT "lesson_questions_library_step_id_
 ALTER TABLE "lesson_questions" ADD CONSTRAINT "lesson_questions_shared_answer_id_fkey" FOREIGN KEY ("shared_answer_id") REFERENCES "tutor_shared_answers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "lesson_questions" ADD CONSTRAINT "lesson_questions_plan_change_id_fkey" FOREIGN KEY ("plan_change_id") REFERENCES "plan_changes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "tutor_shared_answers" ADD CONSTRAINT "tutor_shared_answers_step_id_fkey" FOREIGN KEY ("step_id") REFERENCES "library_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -1915,6 +2041,9 @@ ALTER TABLE "step_example_lines" ADD CONSTRAINT "step_example_lines_step_id_fkey
 ALTER TABLE "media_assets" ADD CONSTRAINT "media_assets_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "chapter_mind_maps" ADD CONSTRAINT "chapter_mind_maps_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "library_chapters"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "memory_facts" ADD CONSTRAINT "memory_facts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -1961,6 +2090,9 @@ ALTER TABLE "items" ADD CONSTRAINT "items_exam_blueprint_id_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "items" ADD CONSTRAINT "items_source_id_fkey" FOREIGN KEY ("source_id") REFERENCES "sources"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "items" ADD CONSTRAINT "items_media_asset_id_fkey" FOREIGN KEY ("media_asset_id") REFERENCES "media_assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "answer_explanations" ADD CONSTRAINT "answer_explanations_item_id_fkey" FOREIGN KEY ("item_id") REFERENCES "items"("id") ON DELETE CASCADE ON UPDATE CASCADE;

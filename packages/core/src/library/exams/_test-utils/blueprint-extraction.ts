@@ -60,8 +60,8 @@ export function blueprintExtraction(
       ],
       scoring: { description: "Proficiência pela TRI", method: "itemResponseTheory" },
       sections: [
-        { day: 1, minutes: 330, name: "Linguagens", questions: 45 },
-        { day: 2, minutes: null, name: "Matemática", questions: 45 },
+        { day: 1, kind: "objective", minutes: 330, name: "Linguagens", questions: 45, tasks: [] },
+        { day: 2, kind: "objective", minutes: null, name: "Matemática", questions: 45, tasks: [] },
       ],
       timeLimitMinutes: null,
       totalQuestions: null,
@@ -74,25 +74,34 @@ export function blueprintExtraction(
     rules: [
       {
         document: 1,
+        kind: "other",
         passage: "A redação nota zero elimina o participante.",
         text: "Nota zero na redação elimina.",
       },
     ],
     subjects: [
       {
+        group: null,
+        matrix: [],
         name: "Linguagens",
         passages: [
           { document: 1, passage: "LINGUAGENS: 1 Língua Portuguesa. 2 Literatura." },
           { document: 1, passage: COUNT_PASSAGE },
         ],
         questions: 45,
+        shortName: "Linguagens",
+        topicHeadings: [],
         topics: ["Língua Portuguesa", "Língua Estrangeira (Inglês ou Espanhol)", "Gramática"],
         weight: 0.25,
       },
       {
+        group: null,
+        matrix: [],
         name: "Matemática",
         passages: [{ document: 2, passage: "Cada prova objetiva terá 45 questões." }],
         questions: 45,
+        shortName: "Matemática",
+        topicHeadings: [],
         topics: [],
         weight: null,
       },

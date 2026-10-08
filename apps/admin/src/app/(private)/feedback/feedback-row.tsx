@@ -5,7 +5,6 @@ import { Badge } from "@zoonk/ui/components/badge";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
 import {
-  experienceModeLabels,
   feedbackContentKindLabels,
   formatFeedbackReasons,
   getLearnerLabel,
@@ -48,11 +47,7 @@ export function FeedbackRow({ feedback }: { feedback: ListedContentFeedback }) {
         {formatFeedbackReasons(feedback.reasons)}
       </TableCell>
       <TableCell>{feedback.hasComment ? <Badge variant="outline">Comment</Badge> : null}</TableCell>
-      <TableCell className="text-xs">
-        {[feedback.language, feedback.mode && experienceModeLabels[feedback.mode]]
-          .filter(Boolean)
-          .join(" · ") || "—"}
-      </TableCell>
+      <TableCell className="text-xs">{feedback.language ?? "—"}</TableCell>
       <TableCell>
         <ProvenanceLine provenance={feedback} />
       </TableCell>

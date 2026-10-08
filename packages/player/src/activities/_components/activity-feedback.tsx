@@ -2,11 +2,11 @@
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { fractionDigitsFor } from "@zoonk/utils/localized-number";
 import { useExtracted } from "next-intl";
 import { VerdictLabel } from "../../components/verdict-label";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
-import { useFormatNumber } from "../_utils/use-format-number";
 
 const FEEDBACK_FRACTION_DIGITS = 2;
 

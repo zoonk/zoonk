@@ -7,6 +7,7 @@ import {
   prisma,
 } from "@zoonk/db";
 import { type MemorySource } from "../memory-contract";
+import { forgetExampleLines } from "./forget-example-lines";
 
 /** A replaced fact's history is short; this bounds the walk if rows were ever edited by hand. */
 const MAX_HISTORY_DEPTH = 50;
@@ -50,9 +51,10 @@ export async function addMemoryFact({
 }
 
 /**
- * Stores the new fact and marks the old one as replaced by it, in one transaction. Returns null,
- * writing nothing, when the old fact stopped being active meanwhile (another update got there
- * first), so two runs never replace the same fact twice.
+ * Stores the new fact and marks the old one as replaced by it, in one transaction, and lets go of
+ * the example lines that could quote the old one. Returns null, writing nothing, when the old fact
+ * stopped being active meanwhile (another update got there first), so two runs never replace the
+ * same fact twice.
  */
 export async function replaceMemoryFact({
   fact,
@@ -75,6 +77,8 @@ export async function replaceMemoryFact({
       await transaction.memoryFact.delete({ where: { id: created.id } });
       return null;
     }
+
+    await forgetExampleLines({ client: transaction, userId });
 
     const previous = await transaction.memoryFact.findUniqueOrThrow({ where: { id: previousId } });
     return { fact: created, previous };
@@ -113,9 +117,9 @@ export async function findHistoryIds({
 }
 
 /**
- * Deletes an active fact and its history. Deleted facts stay 30 days so the learner can undo, then
- * `purgeMemoryFacts` removes them for good. Returns null when the fact isn't the learner's active
- * fact.
+ * Deletes an active fact, its history and the example lines that could quote it. Deleted facts stay
+ * 30 days so the learner can undo, then `purgeMemoryFacts` removes them for good. Returns null when
+ * the fact isn't the learner's active fact.
  */
 export async function removeMemoryFact({
   factId,
@@ -138,10 +142,13 @@ export async function removeMemoryFact({
 
     const historyIds = await findHistoryIds({ factId, status: "superseded", transaction });
 
-    await transaction.memoryFact.updateMany({
-      data: { deletedAt, status: "deleted" },
-      where: { id: { in: historyIds }, userId },
-    });
+    await Promise.all([
+      transaction.memoryFact.updateMany({
+        data: { deletedAt, status: "deleted" },
+        where: { id: { in: historyIds }, userId },
+      }),
+      forgetExampleLines({ client: transaction, userId }),
+    ]);
 
     return transaction.memoryFact.findUniqueOrThrow({ where: { id: factId } });
   });

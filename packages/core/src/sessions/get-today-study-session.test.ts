@@ -5,6 +5,7 @@ import {
   learningProfileFixture,
 } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -165,13 +166,31 @@ describe(getTodayStudySession, () => {
     const user = await userFixture();
     const { goal } = await sessionGoalFixture({ lessons: 8, userId: user.id });
 
-    await dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 900, userId: user.id }]);
+    await Promise.all([
+      dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 900, userId: user.id }]),
+      studySessionFixture({ goalId: goal.id, localDate: daysAgo(5), userId: user.id }),
+    ]);
+
     mockSession(user.id);
 
     const result = await getTodayStudySession({ goalId: goal.id });
 
     expect(result.status === "ready" && result.session.freshStart).toBe("welcomeBack");
     expect(result.status === "ready" && result.session.minutes.planned).toBeLessThanOrEqual(20);
+  });
+
+  it("starts nothing over on a goal's first day, even for a learner back from a break", async () => {
+    const user = await userFixture();
+    const { goal } = await sessionGoalFixture({ lessons: 8, userId: user.id });
+
+    // They studied another goal days ago; this one is brand new.
+    await dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 900, userId: user.id }]);
+    mockSession(user.id);
+
+    const result = await getTodayStudySession({ goalId: goal.id });
+
+    expect(result.status === "ready" && result.session.freshStart).toBeNull();
+    expect(result.status === "ready" && result.session.blocks.length > 0).toBe(true);
   });
 
   it("follows the plan's week: a rest day has nothing to do and a light week is shorter", async () => {
@@ -209,6 +228,33 @@ describe(getTodayStudySession, () => {
     expect(light.status === "ready" && light.session.minutes.planned).toBeLessThanOrEqual(23);
   });
 
+  it("gives day one a session even when the learner rests on its weekday", async () => {
+    const user = await userFixture();
+
+    const { goal, plan } = await sessionGoalFixture({
+      goal: { createdAt: SESSION_NOW },
+      lessons: 8,
+      userId: user.id,
+    });
+
+    // The plan starts today, a Wednesday, and the learner rests on Wednesdays.
+    await prisma.plan.update({
+      data: {
+        settings: {
+          startDate: toIsoDate(SESSION_TODAY),
+          weekdayMinutes: [45, 45, 45, 0, 45, 45, 45],
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    mockSession(user.id);
+    const result = await getTodayStudySession({ goalId: goal.id });
+
+    expect(result.status === "ready" && result.session.minutes.dailyGoal).toBe(45);
+    expect(result.status === "ready" && result.session.blocks.length > 0).toBe(true);
+  });
+
   it("counts only the days since the goal started in its first week", async () => {
     const user = await userFixture();
 
@@ -228,7 +274,14 @@ describe(getTodayStudySession, () => {
     const { days, studyDays } = result.session.week;
 
     expect(studyDays).toBe(5);
-    expect(days.slice(0, 2).map((day) => day.goalMinutes)).toStrictEqual([0, 0]);
+
+    // Days before the goal aren't rest days the learner chose: Today shows them apart.
+    expect(days.slice(0, 2).map((day) => [day.goalMinutes, day.kind])).toStrictEqual([
+      [0, "beforeStart"],
+      [0, "beforeStart"],
+    ]);
+
+    expect(days.find((day) => day.isToday)).toMatchObject({ kind: "study" });
     expect(days.find((day) => day.isToday)?.goalMinutes).toBeGreaterThan(0);
   });
 

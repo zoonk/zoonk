@@ -25,7 +25,19 @@ describe(pickPlacementItemSkillIds, () => {
       { area: null, id: "b1", phase: 1 },
     ]);
 
-    expect(pickPlacementItemSkillIds(graph)).toStrictEqual(["a0", "a3", "a6", "b0", "b1"]);
+    expect(pickPlacementItemSkillIds({ graph })).toStrictEqual(["a0", "a3", "a6", "b0", "b1"]);
+  });
+
+  it("picks every skill of a test from the learner's own material, which placement all asks", () => {
+    const graph = graphOf([
+      ...Array.from({ length: 7 }, (_, index) => ({ area: "Biologia", id: `a${index}`, phase: 0 })),
+      { area: "Biologia", id: "b0", phase: 1 },
+    ]);
+
+    expect(pickPlacementItemSkillIds({ everySkill: true, graph })).toStrictEqual([
+      ...Array.from({ length: 7 }, (_, index) => `a${index}`),
+      "b0",
+    ]);
   });
 
   it("covers every area of a big exam before a later phase of any, up to 16 skills", () => {
@@ -43,7 +55,7 @@ describe(pickPlacementItemSkillIds, () => {
       ),
     );
 
-    const picked = pickPlacementItemSkillIds(graph);
+    const picked = pickPlacementItemSkillIds({ graph });
 
     // Day 1 asks at most 12 questions: 16 skills cover it with room for the walk to choose.
     expect(picked).toHaveLength(16);
@@ -52,8 +64,36 @@ describe(pickPlacementItemSkillIds, () => {
     expect(picked).toContain("Subject 12/0/0");
   });
 
+  it("skips the basics of the subjects the learner knows well, which placement takes as known", () => {
+    // ENEM's four objective areas, each its basics in phase 0 and what builds on them in phase 1;
+    // the learner said they know Languages and Math well.
+    const areas = ["Languages", "Math", "Sciences", "Humanities"];
+
+    const graph = graphOf(
+      [0, 1].flatMap((phase) =>
+        areas.flatMap((area) =>
+          Array.from({ length: 3 }, (_, index) => ({
+            area,
+            id: `${area}/${phase}/${index}`,
+            phase,
+          })),
+        ),
+      ),
+    );
+
+    const picked = pickPlacementItemSkillIds({ graph, knownAreas: ["Languages", "Math"] });
+
+    const pickedIn = (area: string, phase: number) =>
+      picked.filter((id) => id.startsWith(`${area}/${phase}/`)).length;
+
+    expect([pickedIn("Languages", 0), pickedIn("Math", 0)]).toStrictEqual([0, 0]);
+    expect(pickedIn("Languages", 1)).toBeGreaterThan(0);
+    expect(pickedIn("Math", 1)).toBeGreaterThan(0);
+    expect(pickedIn("Sciences", 0)).toBeGreaterThan(0);
+  });
+
   it("has nothing to pick before the skill graph exists", () => {
-    expect(pickPlacementItemSkillIds({ phases: [], skills: [] })).toStrictEqual([]);
+    expect(pickPlacementItemSkillIds({ graph: { phases: [], skills: [] } })).toStrictEqual([]);
   });
 });
 
@@ -71,12 +111,14 @@ function skillGraphOf(skills: { course: string; key: string; phase: number }[]):
     })),
     skills: skills.map((skill) => ({
       ...skill,
+      area: `Course ${skill.course}`,
       description: skill.key,
       estimatedLessons: 1,
       examWeight: null,
       level: "beginner",
       name: skill.key,
       prerequisites: [],
+      topics: [],
     })),
   };
 }
@@ -101,11 +143,11 @@ describe(pickPlacementGraphSkillIds, () => {
       })),
     );
 
-    expect(pickPlacementGraphSkillIds({ graph, idsByKey })).toStrictEqual(
-      pickPlacementItemSkillIds(planGraph),
+    expect(pickPlacementGraphSkillIds({ everySkill: false, graph, idsByKey })).toStrictEqual(
+      pickPlacementItemSkillIds({ graph: planGraph }),
     );
 
-    expect(pickPlacementGraphSkillIds({ graph, idsByKey })).toStrictEqual(
+    expect(pickPlacementGraphSkillIds({ everySkill: false, graph, idsByKey })).toStrictEqual(
       ["m0", "m3", "m6", "h0", "m7"].map((key) => `id-${key}`),
     );
   });
@@ -129,8 +171,8 @@ describe(pickPlacementGraphSkillIds, () => {
       })),
     );
 
-    expect(pickPlacementGraphSkillIds({ graph, idsByKey })).toStrictEqual(
-      pickPlacementItemSkillIds(planGraph),
+    expect(pickPlacementGraphSkillIds({ everySkill: false, graph, idsByKey })).toStrictEqual(
+      pickPlacementItemSkillIds({ graph: planGraph }),
     );
   });
 });

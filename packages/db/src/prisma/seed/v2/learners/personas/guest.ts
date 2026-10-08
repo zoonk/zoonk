@@ -80,7 +80,6 @@ export const guest: SeedLearner = {
   language: "en",
   memory: [],
   milestones: [],
-  mode: "focus",
   name: "Guest",
   session: {
     blocks: [

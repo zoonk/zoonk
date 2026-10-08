@@ -1,12 +1,18 @@
 "use client";
 
+import { useSpokenAudio } from "@zoonk/learn/speech";
+import {
+  SpeechFailedNote,
+  SpeechStatusIcon,
+  useSpeechActionLabel,
+  withoutFailure,
+} from "@zoonk/learn/speech/parts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Lock, Pause, Play, RotateCcw } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
-import { useSpeech } from "../_utils/use-speech";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { splitSentences, waveformBars } from "./listening-script";
 import { ListeningTranscript } from "./listening-transcript";
@@ -26,27 +32,26 @@ const NORMAL_SPEED = 1;
 export function ListeningSpeedActivity({ content, labelId, phase }: ListeningProps) {
   const t = useExtracted();
   const { fields } = content;
-  const speech = useSpeech(fields.language);
+  const speech = useSpokenAudio(fields.language);
   const sentences = splitSentences(fields.script, fields.language);
   const bars = waveformBars(fields.script, BAR_COUNT);
   const [index, setIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(NORMAL_SPEED);
   const [isRevealed, setIsRevealed] = useState(false);
   const isChecked = phase === "checked";
-  const canListen = speech.status === "ready";
-  const shared = Math.min((index + (isPlaying ? 1 : 0)) / sentences.length, 1);
+  const canListen = speech.isAvailable;
+  const buttonState = withoutFailure(speech.state);
+  const { status } = buttonState;
+  const isPlaying = status === "loading" || status === "playing";
+  const shared = Math.min((index + (status === "playing" ? 1 : 0)) / sentences.length, 1);
+  const actionLabel = useSpeechActionLabel(buttonState, t("Play the message"));
 
   function playFrom(from: number, rate = speed) {
     setIndex(from);
-    setIsPlaying(true);
 
     speech.speak({
       from,
-      onDone: () => {
-        setIsPlaying(false);
-        setIndex(0);
-      },
+      onDone: () => setIndex(0),
       onSegment: setIndex,
       rate,
       segments: sentences,
@@ -56,7 +61,6 @@ export function ListeningSpeedActivity({ content, labelId, phase }: ListeningPro
   function togglePlay() {
     if (isPlaying) {
       speech.cancel();
-      setIsPlaying(false);
       return;
     }
 
@@ -86,17 +90,22 @@ export function ListeningSpeedActivity({ content, labelId, phase }: ListeningPro
     <ActivityCanvas className="gap-3" labelId={labelId}>
       <div className="flex items-center gap-3">
         <button
-          aria-label={isPlaying ? t("Pause") : t("Play the message")}
+          aria-busy={status === "loading"}
+          aria-label={status === "playing" ? t("Pause") : actionLabel}
           className="bg-primary text-primary-foreground focus-visible:ring-ring/50 flex size-12 shrink-0 items-center justify-center rounded-full outline-none focus-visible:ring-[3px] disabled:opacity-50"
           disabled={!canListen}
           onClick={togglePlay}
           onKeyDown={keepArrowKeys}
           type="button"
         >
-          {isPlaying ? (
+          {status === "playing" ? (
             <Pause aria-hidden="true" className="size-5 fill-current" />
           ) : (
-            <Play aria-hidden="true" className="size-5 translate-x-px fill-current" />
+            <SpeechStatusIcon
+              className="size-5"
+              idle={<Play aria-hidden="true" className="size-5 translate-x-px fill-current" />}
+              state={buttonState}
+            />
           )}
         </button>
 
@@ -147,10 +156,18 @@ export function ListeningSpeedActivity({ content, labelId, phase }: ListeningPro
         />
       </div>
 
-      {!canListen && speech.status === "unavailable" && (
+      {!canListen && (
         <p className="text-muted-foreground text-sm" role="status">
-          {t("This device has no voice for this language, so the message can't play here.")}
+          {t("There's no voice for this language here, so the message can't play.")}
         </p>
+      )}
+
+      {speech.state.status === "failed" && (
+        <SpeechFailedNote
+          language={fields.language}
+          limit={speech.state.limit}
+          onRetry={() => playFrom(index)}
+        />
       )}
 
       {isChecked || isRevealed ? (

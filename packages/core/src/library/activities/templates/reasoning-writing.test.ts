@@ -27,6 +27,30 @@ describe(findErrorTemplate.id, () => {
     expect(result.ok ? [] : result.issues.map((item) => item.code)).toContain("answerMismatch");
   });
 
+  it("puts the mistake before the conclusion, so learners check every step", () => {
+    const steps = [
+      { id: "s1", text: "Most of the survey's users are students." },
+      { id: "s2", text: "Students said they want shorter lessons." },
+      { id: "s3", text: "So every user wants shorter lessons." },
+    ];
+
+    const lastStep = validateActivity({
+      ...spotTheAi,
+      fields: { ...spotTheAi.fields, errorStepId: "s3", steps },
+    });
+
+    const middleStep = validateActivity({
+      ...spotTheAi,
+      fields: { ...spotTheAi.fields, errorStepId: "s2", steps },
+    });
+
+    expect(lastStep.ok ? [] : lastStep.issues.map((item) => item.path)).toContain(
+      "fields.errorStepId",
+    );
+
+    expect(middleStep.ok ? [] : middleStep.issues).toStrictEqual([]);
+  });
+
   it("accepts only an AI assistant as the other author", () => {
     const result = validateActivity({
       ...spotTheAi,

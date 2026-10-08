@@ -26,9 +26,18 @@ describe(getEndOfWeek, () => {
 describe(getStudyMinutes, () => {
   const calendar = {
     dailyMinutes: 45,
+    firstDay: null,
     lightWeeks: [{ endDate: "2026-10-11", startDate: "2026-10-05" }],
     weekdayMinutes: [0, 45, 45, 45, 45, 45, 20],
   };
+
+  it("gives the plan's first day study time even when its weekday rests, and only that day", () => {
+    const fromSunday = { ...calendar, firstDay: day("2026-10-04") };
+
+    expect(getStudyMinutes({ calendar: fromSunday, date: day("2026-10-04") })).toBe(45);
+    expect(getStudyMinutes({ calendar: fromSunday, date: day("2026-10-11") })).toBe(0);
+    expect(getStudyMinutes({ calendar: fromSunday, date: day("2026-10-03") })).toBe(20);
+  });
 
   it("uses each weekday's minutes, with rest days at zero", () => {
     expect(getStudyMinutes({ calendar, date: day("2026-09-28") })).toBe(45);
@@ -42,7 +51,7 @@ describe(getStudyMinutes, () => {
   });
 
   it("uses the daily minutes every day without a weekly shape", () => {
-    const even = { dailyMinutes: 30, lightWeeks: [], weekdayMinutes: null };
+    const even = { dailyMinutes: 30, firstDay: null, lightWeeks: [], weekdayMinutes: null };
 
     expect(getStudyMinutes({ calendar: even, date: day("2026-10-04") })).toBe(30);
     expect(countStudyDays(even)).toBe(7);
@@ -51,16 +60,21 @@ describe(getStudyMinutes, () => {
 });
 
 describe(getWeeklyEventWeekday, () => {
-  it("prefers Sunday, and a rest day when Sunday is a study day", () => {
+  it("is the week's last study day, never a rest day", () => {
     expect(getWeeklyEventWeekday({ dailyMinutes: 30, weekdayMinutes: null })).toBe(0);
+
+    // Sunday rests: Saturday, the nearest study day, ends the week.
+    expect(
+      getWeeklyEventWeekday({ dailyMinutes: 30, weekdayMinutes: [0, 30, 30, 30, 30, 30, 30] }),
+    ).toBe(6);
 
     expect(
       getWeeklyEventWeekday({ dailyMinutes: 30, weekdayMinutes: [0, 30, 30, 30, 30, 30, 0] }),
-    ).toBe(0);
+    ).toBe(5);
 
     expect(
       getWeeklyEventWeekday({ dailyMinutes: 30, weekdayMinutes: [30, 30, 0, 30, 0, 30, 30] }),
-    ).toBe(4);
+    ).toBe(0);
   });
 });
 

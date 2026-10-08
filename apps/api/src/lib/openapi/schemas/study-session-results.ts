@@ -26,6 +26,11 @@ export const studySessionSummaryResponseSchema = z
         stripesGained: z.number().int(),
       })
       .nullable(),
+    bestStreak: z
+      .number()
+      .int()
+      .min(0)
+      .meta({ description: "The most right answers in a row on new or due material" }),
     brainPower: z.number().int().min(0),
     buddyAte: z.object({
       fixes: z.number().int().min(0),
@@ -44,10 +49,24 @@ export const studySessionSummaryResponseSchema = z
     correct: z.number().int().min(0),
     energy: z.object({ after: z.number(), before: z.number() }).nullable(),
     extraTime: extraTimeSchema,
+    finished: z
+      .boolean()
+      .meta({
+        description:
+          'Every block is done or skipped. False right after "Stop for today": the rest of the session waits to be picked up',
+      }),
     fullMeal: z.boolean(),
     minutes: z.number().int().min(0),
     missions: z.array(missionSchema),
     mistakesSaved: z.number().int().min(0),
+    netScore: z
+      .number()
+      .int()
+      .nullable()
+      .meta({
+        description:
+          "Right minus wrong on the session's net-scored questions (Cebraspe practice and swipe capsules); null without them",
+      }),
     newCards: z.array(z.object({ description: z.string(), name: z.string(), skillId: idSchema })),
     preparation: z.object({ after: z.number().nullable(), before: z.number().nullable() }),
     questions: z.number().int().min(0),

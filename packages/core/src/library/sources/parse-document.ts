@@ -57,9 +57,15 @@ export function hashDocument({ bytes, text }: { bytes: Uint8Array; text: string 
   return hashContent(text || bytes);
 }
 
-/** Trims spaces and line breaks but keeps page breaks, so an empty first page still counts. */
+/**
+ * Trims spaces and line breaks but keeps page breaks, so an empty first page still counts. NUL
+ * characters, which some PDFs' text holds, go: a Postgres text can't store them.
+ */
 function limitText(text: string): string {
-  return text.replaceAll(/^[^\S\f]+|[^\S\f]+$/gu, "").slice(0, MAX_EXTRACTED_TEXT_LENGTH);
+  return text
+    .replaceAll("\u0000", "")
+    .replaceAll(/^[^\S\f]+|[^\S\f]+$/gu, "")
+    .slice(0, MAX_EXTRACTED_TEXT_LENGTH);
 }
 
 /** Whether a stored text is only the start of its document, cut at the length a row keeps. */

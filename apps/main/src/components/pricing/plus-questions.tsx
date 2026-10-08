@@ -61,13 +61,10 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
       { days: limits.examPrepDays ?? 0 },
     ),
     t(
-      "{tutor, plural, one {# tutor message} other {# tutor messages}}, {conversations, plural, one {# speaking conversation} other {# speaking conversations}} and {uploads, plural, one {# upload} other {# uploads}} a day",
-      {
-        conversations: limits.conversationsPerDay ?? 0,
-        tutor: limits.tutorMessagesPerDay ?? 0,
-        uploads: limits.uploadsPerDay ?? 0,
-      },
+      "{tutor, plural, one {# tutor message} other {# tutor messages}} and {uploads, plural, one {# upload} other {# uploads}} a day",
+      { tutor: limits.tutorMessagesPerDay ?? 0, uploads: limits.uploadsPerDay ?? 0 },
     ),
+    t("Speaking calls, with lower limits than Plus"),
   ];
 
   return (
@@ -90,8 +87,9 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
 
 /**
  * What people ask before paying, one tap away under the offer. Plus's limits only stop automated
- * use, so "Unlimited" needs no footnote: one answer says so and links the fair use policy. The
- * free plan's limits live here too, for whoever wants them, instead of crowding the offer.
+ * use, except speaking calls, which have daily and monthly limits: one answer says so honestly
+ * (never how many minutes, on any plan) and links the fair use policy. The free plan's limits live
+ * here too, for whoever wants them, instead of crowding the offer.
  */
 export async function PlusQuestions({ hasNoAccount }: { hasNoAccount: boolean }) {
   const t = await getExtracted();
@@ -110,7 +108,7 @@ export async function PlusQuestions({ hasNoAccount }: { hasNoAccount: boolean })
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>
           <p className={ANSWER_CLASS}>
             {t.rich(
-              "Yes. Learn as much as you want. Our limits are only there to stop bots and automated tools, not people learning. <link>Read our fair use policy</link>.",
+              "Almost. Lessons, goals and the tutor have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>.",
               { link: renderFairUseLink },
             )}
           </p>

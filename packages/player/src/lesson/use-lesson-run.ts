@@ -6,6 +6,11 @@ import { type LessonPlayerAdapters } from "./lesson-player-types";
 
 type BackgroundCheck = () => Promise<boolean>;
 
+/** A check that couldn't reach the server (offline, a dropped request) is unsaved, never thrown. */
+function settle(check: BackgroundCheck): Promise<boolean> {
+  return check().catch(() => false);
+}
+
 /**
  * Owns the run on the server: one start per run (a double mount or a retry reuses it), and the
  * answers graded on the device that still have to be recorded. The completion waits for them, so
@@ -31,7 +36,14 @@ export function useLessonRun({
 
     const run = adapters.startLesson().then((outcome) => {
       if (outcome.reason === "started") {
-        dispatch({ hyperdrive: outcome.hyperdrive, runId: outcome.runId, type: "runStarted" });
+        dispatch({
+          answers: outcome.answers,
+          hyperdrive: outcome.hyperdrive,
+          runId: outcome.runId,
+          startedAt: outcome.startedAt,
+          type: "runStarted",
+        });
+
         return outcome.runId;
       }
 
@@ -44,14 +56,8 @@ export function useLessonRun({
     return run;
   }, [adapters, dispatch]);
 
-  /** Starting over opens a new run. */
-  const resetRun = useCallback(() => {
-    runRef.current = null;
-    failedRef.current = [];
-  }, []);
-
   const track = useCallback((check: BackgroundCheck) => {
-    const pending = check().then((saved) => {
+    const pending = settle(check).then((saved) => {
       if (!saved) {
         failedRef.current = [...failedRef.current, check];
       }
@@ -70,12 +76,12 @@ export function useLessonRun({
     const retries = failedRef.current;
     failedRef.current = [];
 
-    const results = await Promise.all(retries.map((check) => check()));
+    const results = await Promise.all(retries.map((check) => settle(check)));
     const stillFailed = retries.filter((_, index) => !results[index]);
 
     failedRef.current = stillFailed;
     return stillFailed.length === 0;
   }, []);
 
-  return { ensureRun, flushChecks, resetRun, track };
+  return { ensureRun, flushChecks, track };
 }

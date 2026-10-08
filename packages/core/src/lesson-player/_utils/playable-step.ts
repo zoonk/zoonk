@@ -1,5 +1,6 @@
 import { type MediaAsset, type Source, type Step, type StepKind } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
+import { getStepImageRequest } from "../../library/media/_utils/step-image-request";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
 import { isExerciseKind } from "../../player/contracts/exercise-content";
 import {
@@ -21,7 +22,7 @@ import { getStepCitation, markExplanationsNotInMaterial } from "./step-citation"
 
 /**
  * A stored step with what the player needs to show it: its image and the learner's material or
- * the public source it cites. Its depth versions are added per read (`withDepthVersions`).
+ * the public source it cites.
  */
 export type PlayableStepRow = Step & {
   mediaAsset: MediaAsset | null;
@@ -56,8 +57,14 @@ function isTeachingKind(kind: StepKind): kind is TeachingStepKind {
   return TEACHING_KINDS.has(kind);
 }
 
+/**
+ * How long after a screen is written its picture may still be on its way: pictures are drawn in
+ * the background right after the lesson opens, usually in under a minute, with one retry.
+ */
+const PICTURE_WAIT_MS = 300_000;
+
 /** The image file is linked through the step; its alt text comes from the step's image request. */
-function getStepImage({
+export function getStepImage({
   content,
   mediaAsset,
 }: {
@@ -82,6 +89,25 @@ function getStepImage({
     : null;
 }
 
+/**
+ * A picture the player waits on: one the screen asks for (every request is one the screen needs),
+ * not drawn yet, on a screen written moments ago. Past that, a picture that never came stays out.
+ */
+function isPicturePending({
+  content,
+  kind,
+  row,
+}: {
+  content: object;
+  kind: TeachingStepKind;
+  row: PlayableStepRow;
+}): boolean {
+  return (
+    getStepImageRequest({ content, kind }) !== null &&
+    Date.now() - row.generatedAt.getTime() < PICTURE_WAIT_MS
+  );
+}
+
 function buildTeachingStep<TKind extends TeachingStepKind>(
   kind: TKind,
   row: PlayableStepRow,
@@ -93,15 +119,17 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
     return null;
   }
 
+  const image = getStepImage({ content: parsed.data, mediaAsset: row.mediaAsset });
+
   return {
     citation: getStepCitation(row),
     content: parsed.data,
     id: row.id,
-    image: getStepImage({ content: parsed.data, mediaAsset: row.mediaAsset }),
+    image,
+    imagePending: !image && isPicturePending({ content: parsed.data, kind, row }),
     kind,
     position: row.position,
     skillId: row.skillId,
-    variants: { deeper: null, simpler: null },
   };
 }
 

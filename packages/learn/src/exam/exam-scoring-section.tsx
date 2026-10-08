@@ -1,9 +1,21 @@
 "use client";
 
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { LightbulbIcon } from "lucide-react";
+import { FlagIcon, ScaleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import {
+  ListGroup,
+  ListRow,
+  ListRowContent,
+  ListRowDescription,
+  ListRowIcon,
+  ListRowLeading,
+  ListRowTitle,
+} from "../_components/list-group";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useExamScreen } from "./exam-context";
+import { TargetCutoffRow } from "./target-cutoff";
+
+const SCORING_TITLE_ID = "exam-scoring-title";
 
 /** Cebraspe: how often the learner is right when sure and when unsure, across their mocks. */
 function Calibration() {
@@ -16,8 +28,8 @@ function Calibration() {
   }
 
   return (
-    <div className="flex flex-col gap-1 text-sm">
-      <p>
+    <>
+      <ListRowDescription className="text-foreground pt-1">
         {t(
           "In your mock exams: sure, {sureRight} of {sureAnswered} right. Unsure, {unsureRight} of {unsureAnswered} right.",
           {
@@ -27,80 +39,121 @@ function Calibration() {
             unsureRight: String(calibration.unsure.right),
           },
         )}
-      </p>
+      </ListRowDescription>
       {calibration.advice === "blankUnsure" && (
-        <p className="text-muted-foreground">
+        <ListRowDescription>
           {t("Your unsure answers cost more than they earn: leave those blank.")}
-        </p>
+        </ListRowDescription>
       )}
       {calibration.advice === "keepAnswering" && (
-        <p className="text-muted-foreground">
+        <ListRowDescription>
           {t("Your unsure answers still earn points: keep answering them.")}
-        </p>
+        </ListRowDescription>
       )}
-    </div>
+    </>
   );
 }
 
-type Strategy = { advice: string; method: string };
-
-/** How the method scores in plain words, and what to do about it. */
-function useStrategy(): Strategy {
+/**
+ * How the method scores, as a title, and what to do about it: only when the notice says how the
+ * exam is scored, never from the mocks' default (a class test from the learner's material).
+ */
+function useScoringRule(): { rule: string; title: string } | null {
   const t = useExtracted();
   const { exam } = useExamScreen();
+
+  if (!exam.scoring.stated) {
+    return null;
+  }
 
   switch (exam.scoring.method) {
     case "net":
       return {
-        advice: t(
-          "Answer only when you're more than 50% sure; otherwise leave it blank. Flag the ones you're unsure of in mock exams to track this.",
-        ),
-        method: t("A wrong answer cancels a right one."),
+        rule: t("Answer only when you're more than 50% sure."),
+        title: t("A wrong answer cancels a right one"),
       };
     case "irt":
       return {
-        advice: t(
-          "Missing easy questions costs more than missing hard ones, so secure the easy ones first.",
+        rule: t(
+          "Missing an easy question costs more than missing a hard one, so solve the easy ones first.",
         ),
-        method: t(
-          "Scored with item response theory: a right answer counts more when your pattern is consistent.",
-        ),
+        title: t("Getting the easy ones right counts more"),
       };
     case "raw":
-      return {
-        advice: t("Answer every question."),
-        method: t("Each right answer counts one point."),
-      };
+      return { rule: t("Answer every question."), title: t("Each right answer counts one point") };
     default:
-      return { advice: "", method: exam.scoring.method };
+      return null;
   }
 }
 
-/** How the exam is scored, in the board's words when there are any, and what to do about it. */
-export function ExamScoringSection() {
+/** What it takes to pass, as the notice says it ("Aprovado com no mínimo 40 dos 80 pontos"). */
+function PassMarksRow() {
   const t = useExtracted();
   const { exam } = useExamScreen();
-  const strategy = useStrategy();
+
+  if (exam.passMarks.length === 0) {
+    return null;
+  }
 
   return (
-    <section
-      aria-labelledby="exam-scoring-title"
-      className="bg-muted/60 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-3xl p-5"
-    >
-      <div className="flex items-start gap-3">
-        <LineMarker aria-hidden="true">
-          <LightbulbIcon className="text-warning size-5" />
-        </LineMarker>
-        <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="in-data-[mode=fun]:font-fun-display font-semibold" id="exam-scoring-title">
-            {t("How it's scored")}
-          </h2>
-          {/* The board's own words replace the plain-words method, so it isn't said twice. */}
-          <p className="text-muted-foreground text-sm">{exam.scoring.note ?? strategy.method}</p>
-          {strategy.advice && <p className="text-sm">{strategy.advice}</p>}
-        </div>
-      </div>
-      <Calibration />
-    </section>
+    <ListRow role="note">
+      <ListRowLeading>
+        <ListRowIcon>
+          <FlagIcon />
+        </ListRowIcon>
+      </ListRowLeading>
+      <ListRowContent>
+        <ListRowTitle>{t("To pass")}</ListRowTitle>
+        {exam.passMarks.map((passMark) => (
+          <ListRowDescription key={passMark}>{passMark}</ListRowDescription>
+        ))}
+      </ListRowContent>
+    </ListRow>
+  );
+}
+
+function ScoringRuleRow({ rule }: { rule: { rule: string; title: string } }) {
+  return (
+    <ListRow role="note">
+      <ListRowLeading>
+        <ListRowIcon>
+          <ScaleIcon />
+        </ListRowIcon>
+      </ListRowLeading>
+      <ListRowContent>
+        <ListRowTitle>{rule.title}</ListRowTitle>
+        <ListRowDescription>{rule.rule}</ListRowDescription>
+        <Calibration />
+      </ListRowContent>
+    </ListRow>
+  );
+}
+
+/**
+ * "How the score works", as one list: what it takes to pass as the notice says it, where the bar
+ * was for the learner's target (its last cut-off), and the one scoring rule that changes how to
+ * answer, with the learner's calibration after their mocks. Nothing when none of them applies.
+ */
+export function ExamScoringSection() {
+  const t = useExtracted();
+  const rule = useScoringRule();
+  const { exam } = useExamScreen();
+
+  if (!rule && !exam.cutoff && exam.passMarks.length === 0) {
+    return null;
+  }
+
+  return (
+    <PageSection aria-labelledby={SCORING_TITLE_ID}>
+      <PageSectionHeader>
+        <PageSectionTitle id={SCORING_TITLE_ID}>{t("How the score works")}</PageSectionTitle>
+      </PageSectionHeader>
+
+      <ListGroup>
+        {rule && <ScoringRuleRow rule={rule} />}
+        <PassMarksRow />
+        <TargetCutoffRow cutoff={exam.cutoff} targetScore={exam.targetScore} />
+      </ListGroup>
+    </PageSection>
   );
 }

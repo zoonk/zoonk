@@ -1,10 +1,16 @@
+import { type CallWait } from "@zoonk/ai/provider-options";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
-import { pickSpeculativeLessonsStep, readPlanOpeningStep } from "./steps/goal-lookahead-steps";
+import {
+  pickPlanStartToWriteStep,
+  pickSpeculativeLessonsStep,
+  readGoalLookaheadStep,
+  readPlanOpeningStep,
+} from "./steps/goal-lookahead-steps";
 
 /** The first outline band takes about a minute; placement runs meanwhile. */
 const OUTLINE_POLL = "5s";
@@ -53,27 +59,31 @@ function toWriter({
   return { analytics: context.analytics, forExam: inputs.goal.kind === "exam" };
 }
 
+/**
+ * `learner` for the plan's first lesson, which the learner opens the moment placement ends; the
+ * others are minutes away.
+ */
 function writeLessons({
   lessonIds,
-  priority,
+  wait = "soon",
   writer,
 }: {
   lessonIds: string[];
-  priority: boolean;
+  wait?: CallWait;
   writer: LessonWriter;
 }) {
   return Promise.all(
-    lessonIds.map((lessonId) => start(lessonContentWorkflow, [{ ...writer, lessonId, priority }])),
+    lessonIds.map((lessonId) => start(lessonContentWorkflow, [{ ...writer, lessonId, wait }])),
   );
 }
 
 /**
  * While placement runs, the first lessons of the two likeliest starting phases start generating,
- * so the first lesson is ready when placement ends. The plan's first lesson starts the moment its
- * band lands, at the priority tier, since the learner opens it next. The rest follow once the
- * whole opening is outlined: the first lesson of the other guessed phase at the priority tier too,
- * since placement may start the learner there, and the others at the standard tier, since the
- * learner reaches them minutes later. Guests never trigger speculative work.
+ * so the first lesson is ready when placement ends: two for a free learner, four for a Plus
+ * subscriber (`getLookahead`), whose sessions run longer. The plan's first lesson starts the
+ * moment its band lands, since the learner opens it next; the rest follow once the whole opening
+ * is outlined, the first lesson of the other guessed phase first, since placement may start the
+ * learner there. Guests never trigger speculative work.
  */
 export async function startLikelyLessons({
   context,
@@ -86,13 +96,17 @@ export async function startLikelyLessons({
   const writer = toWriter({ context, inputs });
   const ownLevel = inputs.graphPrompt.ownLevel ?? null;
 
-  const pick = async (): Promise<string[][]> =>
-    inputs.isGuest ? [] : pickSpeculativeLessonsStep({ goalId, ownLevel });
+  if (inputs.isGuest) {
+    return [];
+  }
+
+  const { speculativeLessons: count } = await readGoalLookaheadStep(goalId);
+  const pick = (): Promise<string[][]> => pickSpeculativeLessonsStep({ count, goalId, ownLevel });
 
   await waitForOpening({ done: hasFirstLesson, goalId });
   const [firstGuess = []] = await pick();
   const first = firstGuess.slice(0, 1);
-  await writeLessons({ lessonIds: first, priority: true, writer });
+  await writeLessons({ lessonIds: first, wait: "learner", writer });
 
   await waitForOpening({ done: isOpeningOutlined, goalId });
   const guesses = await pick();
@@ -100,10 +114,7 @@ export async function startLikelyLessons({
   const leads = unstarted.slice(1).flatMap((guess) => guess.slice(0, 1));
   const rest = unstarted.flat().filter((lessonId) => !leads.includes(lessonId));
 
-  await Promise.all([
-    writeLessons({ lessonIds: leads, priority: true, writer }),
-    writeLessons({ lessonIds: rest, priority: false, writer }),
-  ]);
+  await writeLessons({ lessonIds: [...leads, ...rest], writer });
 
   return [...first, ...leads, ...rest];
 }
@@ -111,9 +122,9 @@ export async function startLikelyLessons({
 /**
  * The plan's start still moves after its first lessons start: placement moves the learner past
  * what they know, and each band that lands re-plans with its real lessons. For a few minutes, the
- * plan's first lesson is written at the priority tier the moment the start moves to one nobody
- * started, so it's ready when the learner opens it; one already written ends its run at once.
- * Guests never trigger speculative work.
+ * plan's first lesson is written the moment the start moves to one nobody started, so it's ready
+ * when the learner opens it; one already written ends its run at once. The learner's own lesson
+ * waits until placement ends (`pickPlanStartToWrite`). Guests never trigger speculative work.
  */
 export async function followPlanStart({
   context,
@@ -133,13 +144,13 @@ export async function followPlanStart({
   await repeatUntil<string[]>({
     done: () => false,
     run: async (previous = started) => {
-      const [first] = await readPlanOpeningStep(inputs.goal.id);
+      const first = await pickPlanStartToWriteStep(inputs.goal.id);
 
       if (!first || previous.includes(first)) {
         return previous;
       }
 
-      await writeLessons({ lessonIds: [first], priority: true, writer });
+      await writeLessons({ lessonIds: [first], wait: "learner", writer });
       return [...previous, first];
     },
     times: FOLLOW_POLLS,

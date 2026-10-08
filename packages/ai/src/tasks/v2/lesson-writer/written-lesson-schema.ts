@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { imageRequestSchema } from "../images/image-request-schema";
 import { GENERATED_ITEM_SCHEMAS } from "../items/item-schemas";
 import { type LessonScreenKind } from "../lesson-spec/lesson-spec-rules";
+import { lessonVisualSchema } from "../visuals/visual-schema";
 
 const MIN_OPTIONS = 2;
 const MAX_GUESS_OPTIONS = 4;
@@ -10,19 +12,11 @@ const MAX_WORKED_STEPS = 8;
 const MAX_KEY_POINTS = 5;
 const MAX_ACCEPTED_ANSWERS = 5;
 const MAX_SUMMARY_IDEAS = 5;
-/** Mirrors the step contract's image request limits (core `stepImageRequestSchema`). */
-const MAX_IMAGE_PROMPT_LENGTH = 400;
-const MAX_IMAGE_ALT_LENGTH = 160;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind comes first, then the setup, then the answers. */
 
-/** A picture that teaches, only where the spec asked for one. Code links the generated file. */
-const imageRequest = z
-  .object({
-    prompt: z.string().max(MAX_IMAGE_PROMPT_LENGTH),
-    alt: z.string().max(MAX_IMAGE_ALT_LENGTH),
-  })
-  .nullable();
+/** A chart or a timeline the app draws from data, when the screen is about one; or null. */
+const visual = lessonVisualSchema.nullable();
 
 const hookGuessScreen = z.object({
   kind: z.literal("hookGuess"),
@@ -32,13 +26,15 @@ const hookGuessScreen = z.object({
     .min(MIN_OPTIONS)
     .max(MAX_GUESS_OPTIONS),
   reveal: z.string(),
-  image: imageRequest,
+  image: imageRequestSchema,
+  visual,
 });
 
 const hookTextScreen = z.object({
   kind: z.literal("hookText"),
   text: z.string(),
-  image: imageRequest,
+  image: imageRequestSchema,
+  visual,
 });
 
 const explanationScreen = z.object({
@@ -47,7 +43,8 @@ const explanationScreen = z.object({
   text: z.string(),
   /** What a one-sentence example from the learner's own life should connect to, or null. */
   exampleLineIdea: z.string().nullable(),
-  image: imageRequest,
+  image: imageRequestSchema,
+  visual,
 });
 
 const workedExampleScreen = z.object({
@@ -59,7 +56,8 @@ const workedExampleScreen = z.object({
     .min(MIN_WORKED_STEPS)
     .max(MAX_WORKED_STEPS),
   result: z.string(),
-  image: imageRequest,
+  image: imageRequestSchema,
+  visual,
 });
 
 const checkScreen = z.object({
@@ -70,7 +68,8 @@ const checkScreen = z.object({
     .array(z.object({ text: z.string(), isCorrect: z.boolean(), reason: z.string() }))
     .min(MIN_OPTIONS)
     .max(MAX_CHECK_OPTIONS),
-  image: imageRequest,
+  image: imageRequestSchema,
+  visual,
 });
 
 /**
@@ -94,6 +93,7 @@ const typedAnswerScreen = z.object({
   keyPoints: z.array(z.string()).min(1).max(MAX_KEY_POINTS),
   sampleAnswer: z.string(),
   acceptedAnswers: z.array(z.string()).max(MAX_ACCEPTED_ANSWERS),
+  visual,
 });
 
 /**

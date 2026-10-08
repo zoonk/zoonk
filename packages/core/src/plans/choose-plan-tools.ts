@@ -34,9 +34,9 @@ async function findChosenTools({
   context: PlanContext;
   names: readonly string[];
 }): Promise<PlanTool[] | null> {
-  const { items, phases } = context;
+  const { goal, items, phases } = context;
   const currentPhase = findCurrentPhase({ items, phaseCount: phases.length });
-  const planTools = await loadPlanTools({ currentPhase, items });
+  const planTools = await loadPlanTools({ currentPhase, goal, items });
   const keys = [...new Set(names.map((name) => getToolKey(name)))];
   const tools = keys.flatMap((key) => planTools.filter((tool) => tool.key === key));
 
@@ -152,6 +152,7 @@ export async function choosePlanTools({
 
     const result = await applyChangeNow({
       context,
+      followToday: true,
       operations: await toOperations({ chosen, graph: context.state.graph, input }),
       reason: TOOLS_CHANGE_NOTE,
       source: "learner",

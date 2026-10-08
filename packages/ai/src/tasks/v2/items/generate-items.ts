@@ -4,6 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
+import { formatCast } from "../../_utils/cast";
 import { formatLocalContext } from "../../_utils/language-context";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
@@ -68,7 +69,9 @@ function buildUserPrompt(params: GenerateItemsParams): string {
     OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}
     LEVEL: ${params.level}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
+    TARGET_LANGUAGE: none
 ${formatLocalContext(params.language)}
+    ${formatCast({ language: params.language, seed: `${skill.name}:${params.format}` })}
     SKILL: ${skill.name}
     SKILL_DESCRIPTION: ${skill.description}
     SKILL_EXAMPLE: ${skill.example ?? "none"}

@@ -17,19 +17,26 @@ const MINUTE_STEP = 5;
 /**
  * Why today starts fresh, the most important reason first: a return after a break, the first day
  * of a new phase, or a Monday. Every fresh start opens with an easy warm-up and no backlog; a
- * return after a break is also shorter.
+ * return after a break is also shorter. A goal's first day starts nothing over: it's just day one.
  */
 export function getFreshStart({
+  isFirstDay,
   isNewPhase,
   lastStudyDate,
   today,
 }: {
+  /** No earlier day of this goal: the learner only just set it up. */
+  isFirstDay: boolean;
   isNewPhase: boolean;
   /** The learner-local date of the last day with any study, or null for a first day. */
   lastStudyDate: Date | null;
   /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }): StudyFreshStart | null {
+  if (isFirstDay) {
+    return null;
+  }
+
   const daysSince = lastStudyDate ? daysBetween(lastStudyDate, today) : 0;
 
   if (daysSince >= WELCOME_BACK_AFTER_DAYS) {

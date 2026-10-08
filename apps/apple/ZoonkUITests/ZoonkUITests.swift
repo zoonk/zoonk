@@ -1196,7 +1196,7 @@ final class ZoonkUITests: XCTestCase {
     assertContributionDetails(
       destination: "Activity",
       date: "August 20, 2026",
-      details: "Lessons completed: 9")
+      details: "Activities finished: 9")
     assertContributionDetails(
       destination: "Energy",
       date: "August 20, 2026",

@@ -1,3 +1,4 @@
+import { AuthFrame } from "@/components/auth-frame";
 import { Setup, SetupDescription, SetupHeader, SetupTitle } from "@/components/setup";
 import { listGuardedLearners } from "@zoonk/core/minors/guardian/list-guarded-learners";
 import { getSession } from "@zoonk/core/users/session";
@@ -67,7 +68,7 @@ async function AcceptInvite({ token }: { token: string }) {
         <SetupTitle>{t("Accept the invite")}</SetupTitle>
         <SetupDescription>
           {t(
-            "As their guardian, you'll see their weekly activity, can set a daily time limit and approve Plus. You won't see their answers or messages.",
+            "As their guardian, you'll see their weekly activity and can set a daily time limit, turn memory off and approve Plus. You won't see their answers or messages.",
           )}
         </SetupDescription>
       </SetupHeader>
@@ -120,14 +121,17 @@ async function GuardianView({ searchParams }: PageProps<"/auth/guardian">) {
 
 /**
  * Where a guardian accepts a learner's invite and then manages them: the week at a glance, a
- * daily time limit and Plus approval. It lives on the auth host so links work from every client.
+ * daily time limit, memory and Plus approval. It lives on the auth host so links work from every
+ * client.
  */
 export default function GuardianPage(props: PageProps<"/auth/guardian">) {
   return (
-    <Setup>
-      <Suspense fallback={<FullPageLoading />}>
-        <GuardianView {...props} />
-      </Suspense>
-    </Setup>
+    <AuthFrame>
+      <Setup>
+        <Suspense fallback={<FullPageLoading />}>
+          <GuardianView {...props} />
+        </Suspense>
+      </Setup>
+    </AuthFrame>
   );
 }

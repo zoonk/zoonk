@@ -6,7 +6,7 @@ import { type SpokenWordResult } from "../spoken-answer-match";
 /**
  * A word worth practicing after a spoken answer, with what the player needs to help: the native
  * audio, the respelling for speakers of the learner's language and its one sound tip. Words the
- * lessons never taught have none of them, and the player reads them with the device's voice.
+ * lessons never taught have none of them, and the player reads them aloud with a speech clip.
  */
 export type SpokenPracticeWord = SpokenWordResult & {
   audioUrl: string | null;

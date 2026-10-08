@@ -61,28 +61,18 @@ test.describe("Locale Detection", () => {
 });
 
 test.describe("Locale Navigation", () => {
-  test("the navbar's Courses and New course links keep the learner in Portuguese", async ({
-    page,
-  }) => {
+  test("the public header's links keep the visitor in Portuguese", async ({ page }) => {
     await setLocale(page, "pt");
-    await page.goto("/courses/science");
-    await expect(page).toHaveURL(/\/pt\/courses\/science$/u);
+    await page.goto("/privacy");
+    await expect(page).toHaveURL(/\/pt\/privacy$/u);
 
-    const navigation = page.getByRole("navigation");
-    const coursesLink = navigation.getByRole("link", { exact: true, name: "Cursos" });
+    const login = page.getByRole("link", { exact: true, name: "Entrar" });
+    await expect(login).toHaveAttribute("href", /^\/pt\/login/u);
 
-    await expect(coursesLink).toHaveAttribute("href", "/pt/courses");
-    await coursesLink.click();
+    const home = page.getByRole("link", { name: "Página inicial do Zoonk" });
+    await expect(home).toHaveAttribute("href", "/pt");
+    await home.click();
 
-    await expect(page).toHaveURL(/\/pt\/courses$/u);
-    await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
-
-    const startLink = navigation.getByRole("link", { exact: true, name: "Novo curso" });
-
-    await expect(startLink).toHaveAttribute("href", "/pt/start");
-    await startLink.click();
-
-    await expect(page).toHaveURL(/\/pt\/start$/u);
-    await expect(page.getByRole("heading", { name: "O que você quer alcançar?" })).toBeVisible();
+    await expect(page).toHaveURL(/\/pt$/u);
   });
 });

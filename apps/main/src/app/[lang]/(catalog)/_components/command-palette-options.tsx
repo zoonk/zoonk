@@ -13,6 +13,7 @@ import Image from "next/image";
 import {
   type ChapterPaletteItem,
   type CoursePaletteItem,
+  type ExplanationPaletteItem,
   type FeedbackPaletteItem,
   type GoalPaletteItem,
   type LogoutPaletteItem,
@@ -90,7 +91,12 @@ function PaletteOptionContent({ item }: { item: PaletteItem }) {
 function SimpleOptionContent({
   item,
 }: {
-  item: FeedbackPaletteItem | GoalPaletteItem | LogoutPaletteItem | NavigationPaletteItem;
+  item:
+    | ExplanationPaletteItem
+    | FeedbackPaletteItem
+    | GoalPaletteItem
+    | LogoutPaletteItem
+    | NavigationPaletteItem;
 }) {
   const Icon = item.icon;
 

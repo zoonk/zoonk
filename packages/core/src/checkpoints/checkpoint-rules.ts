@@ -1,7 +1,7 @@
 import { interleave } from "@zoonk/utils/interleave";
 
 /**
- * Phase checkpoints (the boss in Fun): about ten mixed questions from the whole phase in the exam's
+ * Phase checkpoints (the Trickster boss): about ten mixed questions from the whole phase in the exam's
  * format, with no hints, favoring classic traps. Seven of ten wins. Losing costs nothing: two short
  * reinforcement lessons and a rematch the next day, and the next phase is never locked. A final
  * boss closes the plan. Weekly challenges use the same questions and pass mark rules.

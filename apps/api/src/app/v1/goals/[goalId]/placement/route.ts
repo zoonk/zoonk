@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { withApiImageUrls } from "@/lib/file-urls";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
@@ -30,7 +31,7 @@ async function getPlacement(
     return learnerAccessError(result.status);
   }
 
-  return NextResponse.json(result.placement);
+  return NextResponse.json(withApiImageUrls(result.placement));
 }
 
 export const GET = withApiErrorBoundary(getPlacement);

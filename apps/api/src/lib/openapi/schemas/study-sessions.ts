@@ -2,6 +2,9 @@ import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labe
 import { missionSchema, questionAnswerSchema } from "@zoonk/core/sessions/completion-contract";
 import { StudyBlockKind, StudyBlockStatus, StudyFreshStart, StudySessionStatus } from "@zoonk/db";
 import { z } from "zod";
+import { catchUpSchema } from "./catch-up";
+import { itemCitationSchema, questionImageSchema, questionVisualSchema } from "./common";
+import { emptyDaySchema, lessonsComingSchema } from "./day-lessons";
 import { mistakeDrillSchema } from "./mistakes";
 
 export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local calendar date" });
@@ -11,25 +14,6 @@ const hyperdriveSchema = z.object({
   level: z.number().int().min(1),
   streak: z.number().int().min(0),
 });
-
-/** A question's dated "Sources" chip: the passage it quotes and the document it comes from. */
-export const itemCitationSchema = z
-  .object({
-    checkedAt: z.iso
-      .datetime()
-      .nullable()
-      .meta({
-        description:
-          'When the source was last fetched and found current ("Checked Sep 2026"); null when the passage has no stored source',
-      }),
-    publisher: z.string().nullable(),
-    text: z
-      .string()
-      .meta({ description: 'The passage it quotes, such as "Lei nº 8.112, Art. 13"' }),
-    title: z.string().nullable().meta({ description: "The source document's title" }),
-    url: z.string().nullable().meta({ description: "The official text, when it's online" }),
-  })
-  .nullable();
 
 const checkpointSchema = z
   .object({
@@ -75,6 +59,11 @@ export const studyBlockSchema = z
     estimatedBrainPower: z.number().int().min(0),
     estimatedMinutes: z.number().int().min(0),
     extra: z.boolean().meta({ description: 'A "10 more minutes" block after the day\'s session' }),
+    fullReview: z
+      .boolean()
+      .meta({
+        description: "A full review: every topic, in place of a mock the plan doesn't have",
+      }),
     id: idSchema,
     kind: z.enum(StudyBlockKind),
     lessonId: idSchema.nullable(),
@@ -94,6 +83,13 @@ export const studyBlockSchema = z
     questions: z.number().int().min(0),
     reinforcement: z.boolean().meta({ description: "A short lesson before a boss rematch" }),
     status: z.enum(StudyBlockStatus),
+    subject: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
+      }),
     title: z.string().nullable(),
   })
   .meta({ id: "StudyBlock" });
@@ -102,7 +98,13 @@ export const extraTimeSchema = z
   .object({
     available: z.boolean(),
     minutes: z.number().int().min(0),
-    reason: z.enum(["dailyCap", "dailyLimit", "sessionNotFinished"]).nullable(),
+    reason: z
+      .enum(["dailyCap", "dailyLimit", "nothingToStudy", "sessionNotFinished"])
+      .nullable()
+      .meta({
+        description:
+          "Why it isn't offered: the day's two bonus blocks are used, the daily time limit leaves too little, nothing is left to practice or learn, or the session isn't finished",
+      }),
   })
   .meta({ id: "StudyExtraTime" });
 
@@ -123,7 +125,15 @@ export const studySessionResponseSchema = z
   .object({
     blocks: z.array(studyBlockSchema),
     brainPower: z.number().int().min(0),
+    catchUp: catchUpSchema,
+    current: z
+      .boolean()
+      .meta({
+        description:
+          "Whether this is the learner's day now: today's session, or the day before's they're still in after midnight. An earlier day's session has nothing left to open; continue with today's",
+      }),
     dailyLimit: dailyLimitSchema.nullable(),
+    emptyDay: emptyDaySchema,
     examAccess: z.object({ includesMockExams: z.boolean(), trialEnded: z.boolean() }),
     extraTime: extraTimeSchema,
     freshStart: z.enum(StudyFreshStart).nullable(),
@@ -131,6 +141,7 @@ export const studySessionResponseSchema = z
     goalId: idSchema.nullable(),
     hyperdrive: hyperdriveSchema,
     id: idSchema,
+    lessonsComing: lessonsComingSchema,
     localDate: logicalDateSchema,
     minutes: z.object({
       dailyGoal: z.number().int().min(0),
@@ -152,9 +163,17 @@ export const studySessionResponseSchema = z
             .number()
             .int()
             .min(0)
-            .meta({ description: "What the learner's plans give the day; 0 on a rest day" }),
+            .meta({
+              description: "What the learner's plans give the day; 0 on a day without study",
+            }),
           hitGoal: z.boolean(),
           isToday: z.boolean(),
+          kind: z
+            .enum(["afterEnd", "beforeStart", "deadline", "exam", "rest", "study"])
+            .meta({
+              description:
+                "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day outside their plans (before they began or after their date)",
+            }),
           minutes: z.number().int().min(0),
           studied: z.boolean().meta({ description: "Any study counts, partial days included" }),
         }),
@@ -171,7 +190,17 @@ export const studyBlockDetailResponseSchema = z
     hints: z.boolean().meta({ description: "False in checkpoints: a duel without hints" }),
     questions: z.array(
       z.object({
-        answered: z.object({ isCorrect: z.boolean() }).nullable(),
+        answered: z
+          .object({
+            blank: z
+              .boolean()
+              .meta({
+                description:
+                  "Left blank where a wrong answer cancels a right one: counts as neither",
+              }),
+            isCorrect: z.boolean(),
+          })
+          .nullable(),
         capsuleKey: z.string().nullable(),
         citation: itemCitationSchema.meta({
           description: "The passage it quotes, such as an article of law, with its dated source",
@@ -186,6 +215,7 @@ export const studyBlockDetailResponseSchema = z
             description:
               "numeric: a math problem, answered with a number. Its numbers are drawn for this block, so they stay the same on every visit and change in the next block that asks it",
           }),
+        image: questionImageSchema,
         itemId: idSchema,
         left: z.array(z.string()).nullable().meta({ description: "Match pairs: the left column" }),
         mistakeId: idSchema.nullable(),
@@ -217,7 +247,7 @@ export const studyBlockDetailResponseSchema = z
           .nullable()
           .meta({
             description:
-              "The learner's last answer to this question before today. A math answer given with other numbers has no answer text",
+              "The learner's last answer to this question before today: when, and whether it was right. `answer` holds its text only when it was wrong, so it never gives today's answer away; show it after the learner answers. A math answer given with other numbers has no answer text",
           }),
         unit: z
           .object({
@@ -228,6 +258,7 @@ export const studyBlockDetailResponseSchema = z
           })
           .nullable()
           .meta({ description: "A math problem's unit, shown next to the answer field" }),
+        visual: questionVisualSchema,
       }),
     ),
     trueFalseLabels: trueFalseLabelsSchema,
@@ -246,6 +277,12 @@ export const startedStudyBlockResponseSchema = z
 
 export const studyAnswerFeedbackResponseSchema = z
   .object({
+    blank: z
+      .boolean()
+      .meta({
+        description:
+          "A statement left blank (`{ dontKnow: true }`) where a wrong answer cancels a right one: neither right nor a mistake, so show it as left blank, not as an error. It isn't saved as a mistake",
+      }),
     correctAnswer: questionAnswerSchema
       .nullable()
       .meta({ description: "Null in checkpoints until they end" }),

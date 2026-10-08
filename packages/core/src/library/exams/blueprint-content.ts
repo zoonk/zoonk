@@ -2,8 +2,9 @@ import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-ex
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { type ReusePolicy } from "../sources/source-contract";
 import { type BlueprintContent, type Citation, type ExamStructure } from "./blueprint-contract";
-import { type FactEntry, findStatedTopics } from "./blueprint-facts";
+import { type FactEntry } from "./blueprint-facts";
 import { type ExtractionDocument } from "./blueprint-passages";
+import { toSubjectTopics } from "./blueprint-subject-topics";
 
 type Extraction = BlueprintExtraction;
 type MockConditions = NonNullable<ExamStructure["mock"]>;
@@ -85,9 +86,16 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
 
   return mock.sections.map((section, index) => ({
     day: daysKept ? section.day : null,
+    kind: section.kind,
     minutes: keptOr({ gap: null, id: `${ids[index]}.minutes`, kept, value: section.minutes }),
     name: section.name,
-    questions: keptOr({ gap: null, id: `${ids[index]}.questions`, kept, value: section.questions }),
+    questions:
+      section.kind === "written"
+        ? null
+        : keptOr({ gap: null, id: `${ids[index]}.questions`, kept, value: section.questions }),
+    tasks: (section.tasks ?? []).filter(
+      (task, taskIndex) => task.count > 0 && kept.has(`${ids[index]}.tasks.${taskIndex}`),
+    ),
   }));
 }
 
@@ -149,6 +157,52 @@ function toMock({ extraction, kept }: { extraction: Extraction; kept: KeptFacts 
   return known ? conditions : null;
 }
 
+/** A label shorter than the subject's name, or none: the name serves when it's short already. */
+function toShortName({ name, shortName }: { name: string; shortName?: string | null }) {
+  const short = shortName?.trim();
+  return short && short.length < name.trim().length ? short : null;
+}
+
+/** A subject the check kept, with what its documents state of its syllabus, as stored. */
+function toSubject({
+  documents,
+  found,
+  groups,
+  id,
+  item,
+  kept,
+}: {
+  documents: ExtractionDocument[];
+  found: Citation;
+  groups: ReadonlySet<string>;
+  id: string;
+  item: Extraction["subjects"][number];
+  kept: KeptFacts;
+}): ExamStructure["subjects"][number] {
+  return {
+    citation: found,
+    group: item.group && groups.has(item.group) ? item.group : null,
+    name: item.name,
+    questions: keptOr({ gap: null, id: `${id}.questions`, kept, value: item.questions }),
+    shortName: toShortName(item),
+    ...toSubjectTopics({ documents, subject: item }),
+    weight: keptOr({ gap: null, id: `${id}.weight`, kept, value: item.weight }),
+  };
+}
+
+/**
+ * The groups a check confirmed for at least one subject. A group's heading sits above its first
+ * subject, so the passages of the subjects after it rarely show it; the reading's own order puts
+ * them under it.
+ */
+function findKeptGroups({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
+  return new Set(
+    extraction.subjects.flatMap((subject, index) =>
+      subject.group && kept.has(`subjects.${index}.group`) ? [subject.group] : [],
+    ),
+  );
+}
+
 function toStructure({
   documents,
   extraction,
@@ -158,6 +212,8 @@ function toStructure({
   extraction: Extraction;
   kept: KeptFacts;
 }): ExamStructure {
+  const groups = findKeptGroups({ extraction, kept });
+
   return {
     formats: keepItems({ items: extraction.formats, kept, prefix: "formats" }).map(
       ({ found, id, item }) => ({
@@ -173,16 +229,11 @@ function toStructure({
     mock: toMock({ extraction, kept }),
     rules: keepItems({ items: extraction.rules, kept, prefix: "rules" }).map(({ found, item }) => ({
       citation: found,
+      kind: item.kind,
       text: item.text,
     })),
     subjects: keepItems({ items: extraction.subjects, kept, prefix: "subjects" }).map(
-      ({ found, id, item }) => ({
-        citation: found,
-        name: item.name,
-        questions: keptOr({ gap: null, id: `${id}.questions`, kept, value: item.questions }),
-        topics: findStatedTopics({ documents, subject: item }),
-        weight: keptOr({ gap: null, id: `${id}.weight`, kept, value: item.weight }),
-      }),
+      ({ found, id, item }) => toSubject({ documents, found, groups, id, item, kept }),
     ),
   };
 }
@@ -255,14 +306,41 @@ export function toBlueprintContent({
 }
 
 /**
- * Enough to plan from: what the exam covers, or how and when it's taken.
- * Anything less means the documents weren't the notice, and the learner is
- * asked to upload it.
+ * What only an exam's own documents state: how its questions look or score, its days, its rules,
+ * or how much each subject counts. A curriculum (the BNCC, a school syllabus) lists subjects and
+ * topics too, but none of these.
  */
-export function isUsableBlueprint(content: BlueprintContent): boolean {
+function describesExam({ edition, structure }: BlueprintContent): boolean {
+  return (
+    structure.formats.length > 0 ||
+    structure.mock !== null ||
+    structure.rules.length > 0 ||
+    edition.dates.length > 0 ||
+    edition.questionCount !== null ||
+    structure.subjects.some((subject) => subject.questions !== null || subject.weight !== null)
+  );
+}
+
+/**
+ * Enough to plan from: what the exam covers, or how and when it's taken. Anything less means the
+ * documents weren't the notice, and the learner is asked to upload it. A shared blueprint, which
+ * anyone naming the exam matches, also has to read as an exam (`describesExam`): a teacher's test
+ * named after a school subject ("Prova de biologia") never becomes a public notice built from a
+ * curriculum. A learner's own material only needs what it covers.
+ */
+export function isUsableBlueprint({
+  content,
+  shared,
+}: {
+  content: BlueprintContent;
+  shared: boolean;
+}): boolean {
   const { edition, structure } = content;
 
-  return structure.subjects.length > 0 || (structure.mock !== null && edition.dates.length > 0);
+  const plans =
+    structure.subjects.length > 0 || (structure.mock !== null && edition.dates.length > 0);
+
+  return plans && (!shared || describesExam(content));
 }
 
 /**

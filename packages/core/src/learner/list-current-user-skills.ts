@@ -99,7 +99,7 @@ async function loadAllCards({ now, userId }: { now: Date; userId: string }) {
 /**
  * Lists the learner's skills as study cards with counts per state for the filters (All, Fading,
  * Gold, New). For a goal, every skill of its plan appears in plan order, New ones included; without
- * one, every skill the learner has started. Focus shows the same states as a skill list.
+ * one, every skill the learner has started.
  */
 export async function listCurrentUserSkills(input: SkillListInput): Promise<CurrentUserSkills> {
   "use cache: private";

@@ -1,7 +1,9 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { readNoticeFormats } from "../library/exams/notice-formats";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { isQuotedItem } from "../library/items/item-content";
+import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import {
   type ItemCitation,
   citedSourceSelect,
@@ -9,6 +11,7 @@ import {
 } from "../library/sources/source-citation";
 import { type DrillView, loadDrillLessons, toDrillView } from "../mistakes/drill-lessons";
 import { loadExamStructure } from "./_utils/load-build-inputs";
+import { isLeftBlank } from "./_utils/net-score";
 import {
   type SessionItem,
   type SessionQuestion,
@@ -21,15 +24,20 @@ import { findOwnedStudyBlock } from "./_utils/study-session-access";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "./block-payload";
 
 /**
- * "On Sep 30 you answered $18": the learner's last answer to a capsule question before this
- * session, as text. Match answers have no single text, and a math answer given with other numbers
- * says nothing about today's, so those only say whether it was right.
+ * The learner's last answer to a capsule question before this session: when, whether it was right
+ * and, only when it was wrong, the answer as text ("On Sep 30 you answered $18"). A right one is
+ * never sent, since it would give today's answer away. Match answers have no single text, and a
+ * math answer given with other numbers says nothing about today's, so those only say whether it
+ * was right.
  */
 type TimeMachine = { answer: string | null; answeredAt: Date; isCorrect: boolean };
 
 type StudyBlockQuestion = SessionQuestion & {
-  /** Set once answered in this session: a checkpoint shows right or wrong without hints. */
-  answered: { isCorrect: boolean } | null;
+  /**
+   * Set once answered in this session: a checkpoint shows right or wrong without hints, and a
+   * net-scored statement left blank counts as neither.
+   */
+  answered: { blank: boolean; isCorrect: boolean } | null;
   capsuleKey: string | null;
   /**
    * The passage the question quotes, such as an article of law, with its source's title, link and
@@ -101,7 +109,9 @@ async function loadTimeMachines({
             [
               item.id,
               {
-                answer: describeEarlierAnswer({ answer: attempt.answer, blockId, item }),
+                answer: attempt.isCorrect
+                  ? null
+                  : describeEarlierAnswer({ answer: attempt.answer, blockId, item }),
                 answeredAt: attempt.answeredAt,
                 isCorrect: attempt.isCorrect,
               },
@@ -135,12 +145,12 @@ export async function getStudyBlock({
 
   const [rows, answers, drillLessons, structure] = await Promise.all([
     prisma.item.findMany({
-      include: { source: { select: citedSourceSelect } },
+      include: { ...ITEM_IMAGE_INCLUDE, source: { select: citedSourceSelect } },
       where: { id: { in: itemIds } },
     }),
     prisma.attempt.findMany({
       orderBy: { answeredAt: "asc" },
-      select: { isCorrect: true, itemId: true },
+      select: { answer: true, isCorrect: true, itemId: true },
       where: { itemId: { in: itemIds }, studySessionId: sessionId, userId: owned.userId },
     }),
     loadDrillLessons(payload.drills.map((drill) => drill.lessonId)),
@@ -158,22 +168,23 @@ export async function getStudyBlock({
   });
 
   const answered = new Map(
-    answers.flatMap((answer) =>
-      answer.itemId ? [[answer.itemId, answer.isCorrect] as const] : [],
+    answers.flatMap(({ answer, isCorrect, itemId }) =>
+      itemId
+        ? [[itemId, { blank: isLeftBlank({ answer, itemId, payload }), isCorrect }] as const]
+        : [],
     ),
   );
 
   const questions = itemIds.flatMap((itemId): StudyBlockQuestion[] => {
     const item = items.find((candidate) => candidate.id === itemId);
     const row = rows.find((candidate) => candidate.id === itemId);
-    const isCorrect = answered.get(itemId);
     const drill = payload.drills.find((candidate) => candidate.itemIds.includes(itemId));
 
     return item
       ? [
           {
             ...toSessionQuestion({ blockId, item }),
-            answered: isCorrect === undefined ? null : { isCorrect },
+            answered: answered.get(itemId) ?? null,
             capsuleKey:
               payload.capsules.find((capsule) => capsule.itemIds.includes(itemId))?.key ?? null,
             citation: row ? toItemCitation(row) : null,
@@ -192,7 +203,10 @@ export async function getStudyBlock({
       block: toStudyBlockView({ answeredItemIds: new Set(answered.keys()), block: owned.block }),
       hints: owned.block.kind !== "checkpoint",
       questions,
-      trueFalseLabels: getTrueFalseLabels(structure),
+      // Before the notice's blueprint is linked, the formats a first pass over it read.
+      trueFalseLabels: getTrueFalseLabels(
+        structure ?? readNoticeFormats(owned.session.goal?.details),
+      ),
     },
     status: "ready",
   };

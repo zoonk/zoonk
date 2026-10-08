@@ -9,9 +9,6 @@ import { toPlanEditInput } from "./plan-edit-input";
 import { loadPlanMemory } from "./plan-memory";
 import { withPlanRetry } from "./replan";
 
-/** Days off, lighter days and dated light weeks: all a routine may change on a new plan. */
-const ROUTINE_KINDS = new Set<PlanOperation["kind"]>(["addLightWeek", "setWeekdayMinutes"]);
-
 /** Memory proposed it; the change shows the model's sentence saying what changed and why. */
 const ROUTINE_SOURCE = "memory";
 
@@ -45,7 +42,13 @@ export async function fitPlanToRoutine(goalId: string): Promise<void> {
     request: "",
   });
 
-  const operations = data.operations.filter((operation) => ROUTINE_KINDS.has(operation.kind));
+  // Days off, lighter days and dated light weeks: all a routine may change on a new plan.
+  const operations = data.operations.filter(
+    (
+      operation,
+    ): operation is Extract<PlanOperation, { kind: "addLightWeek" | "setWeekdayMinutes" }> =>
+      operation.kind === "addLightWeek" || operation.kind === "setWeekdayMinutes",
+  );
 
   if (!data.understood || operations.length === 0) {
     return;

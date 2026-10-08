@@ -2,7 +2,7 @@ import { createErrorResponse, errors, httpStatus, slowDownError } from "@/lib/ap
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { invalidAudioError, missingAudioError } from "@/lib/language-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
-import { stepPathParamsSchema } from "@/lib/openapi/schemas/step-variants";
+import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
 import { gradeSpokenAnswer } from "@zoonk/core/library/language/grade-spoken-answer";

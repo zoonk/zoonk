@@ -8,18 +8,15 @@ import { useLearnAnalytics } from "../learn-context";
 import { type MockActions, type MockRunner, type MockStep } from "./mock-context";
 import { useMockDrafts } from "./use-mock-drafts";
 
-type Moved = MockRunner["moved"];
-
 /**
- * Starting a mock, handing a section in and scoring it are database work of a second or two (no
- * model runs): past `slowMs` the screen says it's still at it, and past `timeoutMs` it stops
- * waiting and offers to try again, which is safe (a started mock resumes, a handed-in section
- * stays handed in).
+ * Handing a section in and scoring the mock are database work of a second or two (no model
+ * runs): past `slowMs` the screen says it's still at it, and past `timeoutMs` it stops waiting and
+ * offers to try again, which is safe (a handed-in section stays handed in).
  */
 const STEP_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
 
 /**
- * The mock from the learner's side: starting it, answering and flagging (saved as drafts), moving
+ * The started mock from the learner's side: answering and flagging (saved as drafts), moving
  * through the section, handing it in (or letting the clock do it) and seeing the result. Each step
  * takes the mock as the server returns it, so the screen always matches what's stored.
  */
@@ -37,7 +34,6 @@ export function useMockRunner({
   const [busy, setBusy] = useState<MockStep | null>(null);
   const [error, setError] = useState(false);
   const slow = useTakingLong({ active: busy !== null, afterMs: STEP_BOUNDS.slowMs });
-  const [moved, setMoved] = useState<Moved>(null);
   const drafts = useMockDrafts({ save: actions.answer, view: initial });
   const questions = view.current?.questions ?? [];
   const question = questions[position];
@@ -101,28 +97,6 @@ export function useMockRunner({
     setPosition(clamped);
   }
 
-  async function moveToMonday() {
-    setPending(true);
-    const result = await actions.move().catch(() => null);
-    setPending(false);
-    setError(!result);
-    setMoved(result);
-  }
-
-  async function undoMove() {
-    const changeId = moved?.changeId;
-
-    if (!changeId) {
-      return;
-    }
-
-    setPending(true);
-    const undone = await actions.undoMove(changeId).catch(() => false);
-    setPending(false);
-    setError(!undone);
-    setMoved(undone ? null : moved);
-  }
-
   return {
     answer: (choice) => question && drafts.answer(question.itemId, choice),
     busy,
@@ -130,15 +104,11 @@ export function useMockRunner({
     error: error || drafts.failed,
     finish: () => step("finish", actions.finish),
     go,
-    moveToMonday,
-    moved,
     pending,
     position,
     slow,
-    start: () => step("start", actions.start),
     submitSection: () => step("submit", () => actions.submit(view.current?.section ?? 0)),
     toggleFlag: () => question && drafts.toggleFlag(question.itemId),
-    undoMove,
     view,
   };
 }

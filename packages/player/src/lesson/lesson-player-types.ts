@@ -1,5 +1,6 @@
 import { type LanguageActivityType } from "@zoonk/core/language/activities";
 import {
+  type LessonPicture,
   type LessonStepAnswer,
   type LessonStepCheckResult,
   type LibraryLessonCompletion,
@@ -9,7 +10,6 @@ import {
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 
 export type {
-  LibraryLessonCompletion,
   PlayableLanguageStep,
   PlayableLibraryLesson,
   PlayableLibraryStep,
@@ -42,43 +42,56 @@ export type LessonRunRefusal =
   | { reason: "slowDown"; retryAfterSeconds: number }
   | { reason: "unauthorized" };
 
-/** Where Hyperdrive starts: the session's streak so far and screens that would be repeats. */
+/**
+ * The lesson's answers so far, oldest first, this sitting's and those of earlier sittings left
+ * unfinished: a lesson the learner comes back to resumes after them.
+ */
+export type LessonRunAnswers = LibraryLessonRun["answers"];
+
+/** Where Hyperdrive stood when the run started: the session's streak and screens that are repeats. */
 export type LessonRunHyperdrive = LibraryLessonRun["hyperdrive"];
 
 export type LessonStartOutcome =
   | LessonRunRefusal
-  | { hyperdrive: LessonRunHyperdrive; reason: "started"; runId: string };
+  | {
+      answers: LessonRunAnswers;
+      hyperdrive: LessonRunHyperdrive;
+      reason: "started";
+      runId: string;
+      /** When this sitting's run started: earlier answers came from sittings before it. */
+      startedAt: string;
+    };
 
+/**
+ * `failed` is worth sending again (the connection, the server); `refused` never is (the run
+ * finished, or the answer doesn't fit the screen), so the completion goes on without it.
+ */
 export type LessonCheckOutcome =
   | { result: LessonStepCheckResult; status: "checked" }
   | { status: "failed" }
-  | { status: "runEnded" };
+  | { status: "refused" };
 
-/** The session block's moment, when the lesson was one of today's blocks. */
-export type StudyBlockCompletion = NonNullable<LibraryLessonCompletion["studyBlock"]>;
-
+/**
+ * `incomplete`: the server is missing an answer the learner gave (it never arrived), so the
+ * lesson goes back to that screen instead of asking to save again and again.
+ */
 export type LessonCompletionOutcome =
   | { completion: LibraryLessonCompletion; status: "completed" }
-  | { status: "failed" };
+  | { status: "failed" }
+  | { status: "incomplete" };
 
-/** The learner used the small AI help their plan gives for today. */
-export type HelpLimitOutcome = { status: "limitReached"; tier: LessonPlayerTier };
+/** The learner used the small AI help their plan gives for the day or the month (`period`). */
+type HelpLimitOutcome = {
+  period?: "day" | "month" | "total";
+  status: "limitReached";
+  tier: LessonPlayerTier;
+};
 
 export type AnswerExplanationOutcome =
-  | { explanation: string; explanationId: string; status: "explained" }
+  | { explanation: string; status: "explained" }
   | { status: "failed" }
   | HelpLimitOutcome
   | { retryAfterSeconds: number; status: "slowDown" };
-
-export type StepVariantKind = "deeper" | "simpler";
-
-/** A ready version carries its id, so a vote on it reaches the version rather than the screen. */
-export type StepVariantOutcome =
-  | { content: unknown; id: string; status: "ready" }
-  | { status: "failed" }
-  | HelpLimitOutcome
-  | { retryAfterSeconds: number; status: "slowDown" }
-  | { status: "unsupported" };
 
 export type SpokenAnswerOutcome =
   | { grade: SpokenAnswerGrade; status: "graded" }
@@ -106,6 +119,11 @@ export type LessonPlayerAdapters = {
    * slot. It arrives after the screen shows, so the lesson never waits for it.
    */
   getExampleLine?: (input: { stepId: string }) => Promise<string | null>;
+  /**
+   * The lesson's pictures drawn so far, asked for while a screen's picture is still being drawn
+   * (`imagePending`). Without it, those screens show without their picture.
+   */
+  getLessonPictures?: () => Promise<LessonPicture[]>;
   /** Shares the explanation of a wrong typed answer ("Explain answer"). */
   explainAnswer?: (input: { answer: string; stepId: string }) => Promise<AnswerExplanationOutcome>;
   /** Grades a recording of a spoken answer. Without it, spoken screens take a typed answer. */
@@ -119,18 +137,20 @@ export type LessonPlayerAdapters = {
    * and later lessons skip it until they turn it back on. Without it, the control isn't shown.
    */
   skipLanguageActivity?: (activity: LanguageActivityType) => Promise<boolean>;
-  /** "Simpler" and "Go deeper". Without it, only versions already made are offered. */
-  requestVariant?: (input: {
-    kind: StepVariantKind;
-    stepId: string;
-  }) => Promise<StepVariantOutcome>;
   startLesson: () => Promise<LessonStartOutcome>;
 };
 
 /** Where the player's links go, supplied by the host. */
 export type LessonPlayerRoutes = {
-  /** Where closing the lesson goes. */
+  /** Where closing the lesson goes: back where the learner opened it from. */
   exit: string;
+  /** What `exit` is when it's the lesson's chapter (a language goal calls it a unit), for its link. */
+  exitTo: "chapter" | "unit" | null;
+  /**
+   * The lesson after this one in the chapter it was opened from, which the completion moment
+   * opens next ("Next lesson", with "Back to chapter" going to `exit`). Null without one.
+   */
+  nextLesson: string | null;
   /** Account creation, for a guest who used their lessons. */
   signUp: string;
   /** Plus, for a learner who used the free plan's lessons. */

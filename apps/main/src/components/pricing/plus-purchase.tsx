@@ -38,12 +38,12 @@ const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | un
 };
 
 /**
- * The billing period switch is a segmented control, like the card filters: a muted track (glass
- * in Fun) with the chosen period raised on the page background, so it reads on the card in light
- * mode too, where the card and the page share one color.
+ * The billing period switch is a segmented control, like the card filters: a muted track with the
+ * chosen period raised on the page background, so it reads on the card in light mode too, where
+ * the card and the page share one color.
  */
 function getPeriodOptionClass(isSelected: boolean) {
-  return isSelected ? "shadow-sm in-data-[mode=fun]:fun-inv" : "text-muted-foreground";
+  return isSelected ? "shadow-sm" : "text-muted-foreground";
 }
 
 /**
@@ -112,7 +112,7 @@ export function PlusPurchase({
 
         <div
           aria-label={t("Billing period")}
-          className="bg-muted in-data-[mode=fun]:fun-glass flex rounded-4xl p-1"
+          className="bg-muted flex rounded-4xl p-1"
           role="group"
         >
           <Button

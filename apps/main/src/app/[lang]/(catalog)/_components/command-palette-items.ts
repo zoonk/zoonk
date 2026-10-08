@@ -2,7 +2,13 @@ import { type AppRoute } from "@/i18n/navigation";
 import { type getMenu } from "@/lib/menu";
 import { type ChapterSearchResult, type CourseSearchResult } from "@zoonk/core/catalog/search";
 import { removeAccents } from "@zoonk/utils/string";
-import { ArrowLeftRightIcon, LogOutIcon, type LucideIcon, MessageSquareIcon } from "lucide-react";
+import {
+  ArrowLeftRightIcon,
+  LightbulbIcon,
+  LogOutIcon,
+  type LucideIcon,
+  MessageSquareIcon,
+} from "lucide-react";
 
 type PaletteRoute = AppRoute<ReturnType<typeof getMenu>["url"]>;
 
@@ -40,6 +46,15 @@ export type GoalPaletteItem = {
   searchValue: string;
 };
 
+export type ExplanationPaletteItem = {
+  goalId: string;
+  icon: LucideIcon;
+  id: string;
+  kind: "explanation";
+  label: string;
+  searchValue: string;
+};
+
 export type CoursePaletteItem = {
   course: CourseSearchResult;
   id: string;
@@ -59,6 +74,7 @@ export type ChapterPaletteItem = {
 export type PaletteItem =
   | ChapterPaletteItem
   | CoursePaletteItem
+  | ExplanationPaletteItem
   | FeedbackPaletteItem
   | GoalPaletteItem
   | LogoutPaletteItem
@@ -128,6 +144,24 @@ export function createGoalPaletteItem({
  * in the item's search value while the visible option keeps the compact title
  * and description layout.
  */
+/** A quick explanation opens itself: search is where one read to the end is found again. */
+export function createExplanationPaletteItem({
+  goalId,
+  title,
+}: {
+  goalId: string;
+  title: string;
+}): ExplanationPaletteItem {
+  return {
+    goalId,
+    icon: LightbulbIcon,
+    id: `explanation-${goalId}`,
+    kind: "explanation",
+    label: title,
+    searchValue: title,
+  };
+}
+
 export function createCoursePaletteItem(course: CourseSearchResult): CoursePaletteItem {
   return {
     course,

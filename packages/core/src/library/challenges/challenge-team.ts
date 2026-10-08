@@ -26,8 +26,9 @@ export const challengeTeamSchema = z
 export type ChallengeTeam = z.infer<typeof challengeTeamSchema>;
 
 /**
- * Diverse by design: every list alternates women and men from different backgrounds, so any four
- * names in a row are two and two, with different origins. Names fit the language the case is in.
+ * Diverse by design: every list alternates women and men from different backgrounds, starting with
+ * a woman, so any four names in a row from an even place are a woman, a man, a woman and a man,
+ * with different origins. Names fit the language the case is in.
  */
 const TEAM_NAMES: Readonly<Record<string, readonly string[]>> = {
   de: [
@@ -110,9 +111,11 @@ function getTeamLanguage(language: string): string {
 }
 
 /**
- * Picks four names in a row from the language's list, starting where the seed (the plan's id)
- * points. No model is needed, and the same plan always gets the same team, even if it's picked
- * again.
+ * Picks four names in a row from the language's list, starting at the woman the seed (the plan's
+ * id) points to, so every team is a woman, a man, a woman and a man in that order: cases are
+ * written before anyone plays them, and they write each colleague's role in that gender
+ * ("Pesquisadora de UX" for the first). No model is needed, and the same plan always gets the
+ * same team, even if it's picked again.
  */
 export function buildChallengeTeam({
   language,
@@ -123,7 +126,8 @@ export function buildChallengeTeam({
 }): ChallengeTeam {
   const base = getTeamLanguage(language);
   const names = TEAM_NAMES[base] ?? [];
-  const start = hashSeed(seed) % names.length;
+  const pairs = Math.max(1, Math.floor(names.length / 2));
+  const start = (hashSeed(seed) % pairs) * 2;
 
   return {
     language: base,

@@ -1,6 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { loadSkillLessons } from "../../../plans/_utils/planner-inputs";
+import { loadSkillLessons } from "../../../plans/_utils/planner-lessons";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type PlannerLesson } from "../../../plans/planner/plan-units";
 import { type ActivitySkill } from "./activity-signals";
@@ -119,7 +119,7 @@ async function toChapterGaps({
 }: {
   footprint: PlanFootprint;
   gaps: PrerequisiteGap[];
-  goal: Pick<Goal, "kind" | "userId">;
+  goal: Pick<Goal, "examBlueprintId" | "kind" | "userId">;
   lessons: readonly PlannerLesson[];
 }): Promise<PrerequisiteGap[]> {
   const chapterIds = new Map(
@@ -182,7 +182,7 @@ export async function loadPrerequisiteGaps({
   goalSkills,
   weakSkills,
 }: {
-  goal: Pick<Goal, "id" | "kind" | "userId">;
+  goal: Pick<Goal, "examBlueprintId" | "id" | "kind" | "userId">;
   goalSkills: readonly ActivitySkill[];
   weakSkills: readonly ActivitySkill[];
 }): Promise<PrerequisiteGap[]> {

@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { getSkillArea } from "../plans/planner/plan-queue";
+import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 import { proposePlanChange } from "../plans/propose-plan-change";
 import { loadPreparationInputs } from "./_utils/load-preparation-inputs";
@@ -84,7 +84,7 @@ async function rebalance({ goalId, now, userId }: { goalId: string; now: Date; u
 
 /**
  * After a session, when one area is going well and another needs practice, the plan moves time to
- * the weak one (Fun's buddy says it in one line, Focus shows a plan change), with an undo. It runs
+ * the weak one (shown as a plan change), with an undo. It runs
  * at most once a week; a failure is logged and never gets in the way of the learner's day.
  */
 export async function rebalancePlanAfterSession({

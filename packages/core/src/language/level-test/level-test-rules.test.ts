@@ -29,7 +29,9 @@ const bank: LevelTestBank = {
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "" })),
 };
 
-function progress(answers: LevelTestProgress["answers"] = []): LevelTestProgress {
+type Answer = Pick<LevelTestProgress["answers"][number], "answerIndex" | "id">;
+
+function progress(answers: Answer[] = []) {
   return { answers, speaking: null };
 }
 
@@ -37,7 +39,7 @@ describe("level estimates", () => {
   it("keeps the level the learner gave until they answer", () => {
     const scores = getLevelTestScores({ bank, progress: progress(), start: A2 });
 
-    expect(scores).toStrictEqual({ listening: A2, reading: A2, writing: A2 });
+    expect(scores).toStrictEqual({ listening: A2, reading: A2 });
   });
 
   it("has no speaking level until a sentence is said out loud", () => {
@@ -53,11 +55,7 @@ describe("level estimates", () => {
 
     expect(scores.speaking).toBeUndefined();
     expect(toLevelLabels(scores)).not.toHaveProperty("speaking");
-    expect(scores.writing).toBe(Math.min(scores.reading, scores.listening));
-
-    expect(getOverallScore(scores)).toBe(
-      clampCefrScore((scores.reading + scores.listening + scores.writing) / 3),
-    );
+    expect(getOverallScore(scores)).toBe(clampCefrScore((scores.reading + scores.listening) / 2));
   });
 
   it("rises with right answers and falls with wrong ones", () => {
@@ -134,7 +132,7 @@ describe(getNextLevelTestStep, () => {
 });
 
 describe(getLevelTestScores, () => {
-  it("reads speaking from the sentence and writing from the lower of reading and speaking", () => {
+  it("reads speaking from the sentence and gives writing no level, since nothing tested it", () => {
     const scores = getLevelTestScores({
       bank,
       progress: {
@@ -150,8 +148,8 @@ describe(getLevelTestScores, () => {
 
     expect(scores.reading).toBeGreaterThan(scores.listening);
     expect(scores.speaking).toBe(0.5);
-    expect(scores.writing).toBe(0.5);
     expect(toLevelLabels(scores).speaking).toBe("A1+");
+    expect(toLevelLabels(scores)).not.toHaveProperty("writing");
     expect(getOverallScore(scores)).toBeGreaterThanOrEqual(0.5);
   });
 });

@@ -80,7 +80,7 @@ export function BuddyHalo({
   return (
     <g opacity={glow}>
       <circle
-        className={cn(isGlowing && "animate-fun-glow")}
+        className={cn(isGlowing && "motion-safe:animate-glow")}
         cx={cx}
         cy={cy}
         fill={buddyDefUrl(uid, "halo")}

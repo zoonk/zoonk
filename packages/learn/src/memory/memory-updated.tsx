@@ -91,14 +91,14 @@ export function MemoryUpdated({
     <div
       aria-live="polite"
       className={cn(
-        "border-border bg-background in-data-[mode=fun]:fun-glass flex items-start gap-3 rounded-2xl border px-3 py-3.5 text-sm",
+        "border-border bg-background flex items-start gap-3 rounded-2xl border px-3 py-3.5 text-sm",
         className,
       )}
       data-slot="memory-updated"
       role="status"
     >
       <LineMarker aria-hidden="true">
-        <BrainIcon className="in-data-[mode=fun]:text-fun-accent-violet size-4 text-violet-600 dark:text-violet-400" />
+        <BrainIcon className="size-4 text-violet-600 dark:text-violet-400" />
       </LineMarker>
 
       {status === "idle" ? (

@@ -13,7 +13,7 @@ import {
 
 /**
  * Where a call leads: a checkpoint back to today's session, which opens the next block; practice
- * back to its unit; a speaking mock to Progress.
+ * back to its unit; a speaking mock to the Journey, where it starts.
  */
 function getHrefs(conversation: LanguageConversationView) {
   if (conversation.kind === "checkpoint") {
@@ -25,7 +25,7 @@ function getHrefs(conversation: LanguageConversationView) {
     return { exit: unit, next: unit };
   }
 
-  return { exit: "/progress", next: "/progress" };
+  return { exit: "/journey", next: "/journey" };
 }
 
 /** Wires the call screen to the app: opening the call, its goals, saving it, and another mock. */

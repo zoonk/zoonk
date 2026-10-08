@@ -1,13 +1,13 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Button } from "@zoonk/ui/components/button";
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { Lightbulb, RotateCcw } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
-import { useFormatNumber } from "../_utils/use-format-number";
-import { useMeasuredWidth } from "../_utils/use-measured-width";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BoardDrawing } from "./board-drawing";
 import {

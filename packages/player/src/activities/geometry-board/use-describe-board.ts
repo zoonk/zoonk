@@ -1,7 +1,7 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type BoardMeasure } from "./board-geometry";
 import { type BoardReading } from "./board-measure";
 

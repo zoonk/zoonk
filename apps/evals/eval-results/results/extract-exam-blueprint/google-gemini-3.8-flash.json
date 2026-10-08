@@ -4,51 +4,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 42/42",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 42/42",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 9/9 (read 9). passages found 42/42",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "section", "minutes": 300, "questions": 80 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "kind": "scoring", "method": "raw" },
-            { "kind": "timeLimit", "minutes": 300 },
-            { "date": "2026-06-01", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-06-08", "dateKind": "registrationEnd", "kind": "date" },
-            { "date": "2026-09-06", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-10-18", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-12-03", "dateKind": "results", "kind": "date" }
-          ]
-        },
-        "id": "oab-47-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
-              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
-            }
-          ],
-          "exam": "47º Exame de Ordem Unificado (OAB)"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 3/3 (read 3). passages found 29/29",
           "kind": "majorErrors",
           "score": 10
@@ -211,53 +166,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/11 (read 9). passages found 30/30. missing: {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
-          "kind": "majorErrors",
-          "score": 9.418181818181818
-        },
-        {
-          "conclusion": "Facts kept 9/11 (read 9). passages found 30/30. missing: {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
-          "kind": "minorErrors",
-          "score": 9.418181818181818
-        },
-        {
-          "conclusion": "Facts kept 9/11 (read 9). passages found 30/30. missing: {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
-          "kind": "potentialImprovements",
-          "score": 9.418181818181818
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 180 },
-            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "subject", "name": "Linguagens", "questions": 45 },
-            { "kind": "subject", "name": "Matemática", "questions": 45 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" },
-            { "kind": "scoring", "method": "itemResponseTheory" },
-            { "kind": "timeLimit", "minutes": 330 },
-            { "kind": "timeLimit", "minutes": 300 }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 10/10 (read 10). passages found 40/40",
           "kind": "majorErrors",
           "score": 10
@@ -390,6 +298,285 @@
             }
           ],
           "exam": "IELTS Academic"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 3/3",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 3/3",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 3/3",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "format": "shortAnswer", "kind": "format" },
+            { "format": "essay", "kind": "format" }
+          ]
+        },
+        "id": "pt-class-notes-biologia-celular-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n\n1) Teoria celular\n- Todo ser vivo é formado por células (exceto vírus!)\n- A célula é a menor unidade da vida\n- Toda célula vem de outra célula (Virchow)\n- Hooke viu as \"celas\" na cortiça (1665)\n\n2) Procarionte x eucarionte\n- Procarionte: sem núcleo (DNA solto no citoplasma = nucleoide), sem organelas membranosas. Ex: bactérias\n- Eucarionte: núcleo com carioteca + organelas. Ex: animais, plantas, fungos, protozoários\n- As duas têm: membrana plasmática, citoplasma, ribossomos, DNA\n\n3) Membrana plasmática\n- Bicamada de fosfolipídios + proteínas (mosaico fluido)\n- Permeabilidade seletiva\n- Transporte passivo (sem gasto de ATP): difusão simples, difusão facilitada, osmose\n- Osmose: água vai do meio hipotônico (menos concentrado) para o hipertônico (mais concentrado)\n- Hemácia em água pura incha e estoura (hemólise); em solução muito salgada murcha\n- Transporte ativo: gasta ATP, contra o gradiente. Ex: bomba de sódio e potássio\n- Endocitose (fagocitose e pinocitose) e exocitose\n\n4) Organelas (CAI MUITO!!)\n- Mitocôndria: respiração celular, produz ATP\n- Cloroplasto: fotossíntese (só em plantas e algas)\n- Ribossomos: síntese de proteínas\n- RE rugoso: tem ribossomos, faz proteínas / RE liso: lipídios, desintoxicação\n- Complexo golgiense: modifica, empacota e secreta\n- Lisossomo: digestão intracelular\n- Vacúolo: grande na célula vegetal\n- Parede celular: célula vegetal (celulose)\n\n5) Núcleo\n- Carioteca (envoltório nuclear com poros)\n- Cromatina = DNA + proteínas\n- Nucléolo: produz ribossomos\n\n6) Vírus\n- Acelulares, só se reproduzem dentro de células (parasitas intracelulares obrigatórios)\n- Capsídeo de proteína + material genético (DNA ou RNA)\n- Antibiótico NÃO funciona contra vírus\n\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+              "title": "Resumo pra prova de biologia"
+            }
+          ],
+          "exam": "Prova de biologia (1º ano), a célula"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 1/2 (read 2). passages found 10/10. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "majorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "Facts kept 1/2 (read 2). passages found 10/10. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "Facts kept 1/2 (read 2). passages found 10/10. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "format": "multipleChoice", "kind": "format" },
+            { "format": "essay", "kind": "format" }
+          ]
+        },
+        "id": "en-class-notes-ap-biology-unit-2-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "AP Biology - Mr. Daniels - Unit 2 review (test on Thursday)\n\n1. Cell size and surface area-to-volume ratio\n- Smaller cells exchange materials faster: higher SA:V\n- Calculate SA:V for a cube (side 1 cm vs 3 cm)\n\n2. Membrane structure\n- Phospholipid bilayer, fluid mosaic model\n- Cholesterol keeps the membrane fluid at low temperatures\n\n3. Membrane transport\n- Passive: simple diffusion, facilitated diffusion, osmosis\n- Tonicity: hypotonic, isotonic, hypertonic solutions\n- Active transport uses ATP (sodium-potassium pump)\n\n4. Compartmentalization\n- Endomembrane system: ER, Golgi, lysosomes\n- Endosymbiotic theory (mitochondria and chloroplasts)\n\nTest format: 20 multiple choice questions (four choices each) plus one free-response essay where you design an experiment on osmosis in potato cores. Calculators allowed.",
+              "title": "Unit 2 review"
+            }
+          ],
+          "exam": "AP Biology unit 2 test"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 8/9 (read 8). passages found 42/42. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
+          "kind": "majorErrors",
+          "score": 9.644444444444446
+        },
+        {
+          "conclusion": "Facts kept 8/9 (read 8). passages found 42/42. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
+          "kind": "minorErrors",
+          "score": 9.644444444444446
+        },
+        {
+          "conclusion": "Facts kept 8/9 (read 8). passages found 42/42. missing: {\"date\":\"2026-10-18\",\"dateKind\":\"exam\",\"kind\":\"date\"}",
+          "kind": "potentialImprovements",
+          "score": 9.644444444444446
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "section", "minutes": 300, "questions": 80 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "kind": "scoring", "method": "raw" },
+            { "kind": "timeLimit", "minutes": 300 },
+            { "date": "2026-06-01", "dateKind": "registrationStart", "kind": "date" },
+            { "date": "2026-06-08", "dateKind": "registrationEnd", "kind": "date" },
+            { "date": "2026-09-06", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-10-18", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-12-03", "dateKind": "results", "kind": "date" }
+          ]
+        },
+        "id": "oab-47-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+            }
+          ],
+          "exam": "47º Exame de Ordem Unificado (OAB)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 10/10 (read 10). passages found 59/59",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 10/10 (read 10). passages found 59/59",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 10/10 (read 10). passages found 59/59",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "subject", "name": "Ética" },
+            { "kind": "subject", "name": "Direitos Humanos" },
+            { "kind": "subject", "name": "Filosofia do Direito" },
+            { "kind": "subject", "name": "Direito Eleitoral" },
+            { "kind": "subject", "name": "Direito Civil" },
+            { "kind": "subject", "name": "Direito Processual Penal" },
+            { "kind": "section", "minutes": 300, "questions": 80 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "date": "2027-01-10", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-02-28", "dateKind": "other", "kind": "date" }
+          ]
+        },
+        "id": "oab-48-1a-fase-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/11 (read 10). passages found 29/29. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "majorErrors",
+          "score": 7.963636363636364
+        },
+        {
+          "conclusion": "Facts kept 4/11 (read 10). passages found 29/29. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "minorErrors",
+          "score": 7.963636363636364
+        },
+        {
+          "conclusion": "Facts kept 4/11 (read 10). passages found 29/29. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "potentialImprovements",
+          "score": 7.963636363636364
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 180 },
+            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
+            { "kind": "subject", "name": "Linguagens", "questions": 45 },
+            { "kind": "subject", "name": "Matemática", "questions": 45 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "format": "essay", "kind": "format" },
+            { "kind": "scoring", "method": "itemResponseTheory" },
+            { "kind": "timeLimit", "minutes": 330 },
+            { "kind": "timeLimit", "minutes": 300 }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 13/13 (read 13). passages found 41/41",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 13/13 (read 13). passages found 41/41",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 13/13 (read 13). passages found 41/41",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "date": "2027-01-17", "dateKind": "exam", "kind": "date" },
+            { "format": "trueFalse", "kind": "format" },
+            { "kind": "scoring", "method": "wrongCancelsRight" },
+            { "kind": "section", "minutes": 300, "questions": 180 },
+            { "kind": "subject", "name": "Língua Portuguesa" },
+            { "kind": "subject", "name": "Linguística" },
+            { "kind": "subject", "name": "Ciência Política" },
+            { "group": "P1", "kind": "group", "subject": "Língua Portuguesa" },
+            { "group": "P2", "kind": "group", "subject": "Linguística" },
+            {
+              "kind": "topic",
+              "subject": "Língua Portuguesa",
+              "topic": "5.7 Emprego do sinal indicativo de crase"
+            },
+            {
+              "kind": "topic",
+              "subject": "Língua Portuguesa",
+              "topic": "6.4 Reescrita de textos de diferentes gêneros e níveis de formalidade"
+            },
+            {
+              "kind": "topic",
+              "subject": "Linguística",
+              "topic": "12 Noções básicas de lógica: conectivos, argumentos e notação"
+            },
+            {
+              "kind": "topic",
+              "subject": "Ciência Política",
+              "topic": "11 História do voto e dos partidos no Brasil"
+            }
+          ]
+        },
+        "id": "camara-2026-registro-redacao-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – Câmara dos Deputados, de 2 de outubro de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/CD_26_ANALISTA/arquivos/BBE30D016054F40651E36AC7B302C3425BD148A39675CA840A5A0CCBFBB5F0F1.pdf"
+            }
+          ],
+          "exam": "Câmara dos Deputados, Analista Legislativo – Registro e Redação"
         }
       }
     }

@@ -1,8 +1,8 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { useSamplingFormat } from "./use-sampling-format";
 

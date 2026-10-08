@@ -2,6 +2,7 @@ import "server-only";
 import { decideBoolean } from "../../../evaluate/decisions";
 import { type EvaluationRunDetails, evaluateQuestions } from "../../../evaluate/evaluate-questions";
 import { JEV_MODEL_ID } from "../../../evaluate/evaluation-models";
+import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import decisionPrompt from "./library-identity-decision.prompt.md";
 import {
   type LibraryIdentityCandidate,
@@ -42,8 +43,9 @@ const REUSE_CRITERIA: Readonly<Record<LibraryIdentityKind, { false: string; true
     true: "The candidate is a current official document of the requested kind about exactly the requested topic.",
   },
   skill: {
-    false: "It is a different action, a broader or narrower ability, or only on the same topic.",
-    true: "The candidate skill is the same thing a learner can do, only worded differently.",
+    false:
+      "It is a different action, a broader or narrower ability, only on the same topic, or only belongs to courses on another subject.",
+    true: "The candidate skill is the same thing a learner can do, only worded differently, in a course on the requested course's subject when one is named.",
   },
   source: {
     false: "It is a different document, edition or year, or a summary of the document.",
@@ -59,61 +61,108 @@ export type LibraryIdentityVerdict = {
   model: string;
 };
 
-/** The yes-or-no reuse question for one kind of item, shared by production and evals. */
-export function getLibraryIdentityQuestion(kind: LibraryIdentityKind) {
-  return { criteria: REUSE_CRITERIA[kind], instructions: decisionPrompt, type: "boolean" } as const;
+/** The field that holds the candidate at this position (from 0) in the state the model reads. */
+function toCandidateField(position: number): string {
+  return `CANDIDATE_${position + 1}`;
 }
 
 /**
- * Asks whether one candidate can replace the requested item. Both sides are
- * data inside delimiters: titles and goals come from models and learners, and a
- * line claiming "same lesson" must not move the verdict.
+ * The yes-or-no reuse question about the candidate at one position, shared by production and
+ * evals. Each question names its candidate, since the state holds every candidate of the request.
  */
-export async function evaluateLibraryIdentityPair({
-  candidate,
+export function getLibraryIdentityQuestion({
+  kind,
+  position,
+}: {
+  kind: LibraryIdentityKind;
+  position: number;
+}) {
+  return {
+    criteria: REUSE_CRITERIA[kind],
+    instructions: `${decisionPrompt}\nThis question is about ${toCandidateField(position)} only.`,
+    type: "boolean",
+  } as const;
+}
+
+/**
+ * Asks whether each candidate can replace the requested item, in one evaluation call: the state
+ * holds the request and every candidate, and each candidate gets its own question, which Jev
+ * answers independently. One call per request instead of one per candidate keeps a big plan's
+ * thousands of verdicts under the gateway's request limit (a public-service exam's outlines asked
+ * for about 14,000 in eight minutes, over the 3,000 a minute the team may send). Both sides are
+ * data inside delimiters: titles and goals come from models and learners, and a line claiming
+ * "same lesson" must not move a verdict. Returns each candidate's probability, in order.
+ */
+export async function evaluateLibraryIdentityCandidates({
+  analytics,
+  candidates,
   fallbackModel = FALLBACK_EVALUATION_MODEL,
   model = JEV_MODEL_ID,
   subject,
 }: {
-  candidate: LibraryIdentityCandidate;
+  analytics?: AiGenerationContext;
+  candidates: readonly LibraryIdentityCandidate[];
   fallbackModel?: string;
   model?: string;
   subject: LibraryIdentitySubject;
-}): Promise<EvaluationRunDetails & { probability: number }> {
+}): Promise<EvaluationRunDetails & { probabilities: number[] }> {
+  const fields: Record<string, string> = Object.fromEntries(
+    candidates.map((candidate, position) => [
+      toCandidateField(position),
+      formatIdentityItem(candidate.item),
+    ]),
+  );
+
+  const questions = Object.fromEntries(
+    candidates.map((_, position) => [
+      toCandidateField(position),
+      getLibraryIdentityQuestion({ kind: subject.kind, position }),
+    ]),
+  );
+
   const { answers, ...run } = await evaluateQuestions({
+    analytics,
     fallbackModel,
-    input: {
-      CANDIDATE: formatIdentityItem(candidate.item),
-      REQUEST: formatIdentitySubject(subject),
-    },
+    input: { REQUEST: formatIdentitySubject(subject), ...fields },
     // Only shared Library items are compared, and the goal is only its shareable part.
     keepInput: true,
     model,
-    questions: { reuse: getLibraryIdentityQuestion(subject.kind) },
+    questions,
     task: "library-identity-decision",
   });
 
-  return { ...run, probability: answers.reuse.probability };
+  const probabilities = candidates.map(
+    (_, position) => answers[toCandidateField(position)]?.probability ?? 0,
+  );
+
+  return { ...run, probabilities };
 }
 
 /**
- * Picks the candidate most likely to replace the request, when one reaches the
- * threshold. Candidates are judged one at a time so each verdict reads only one
- * pair, and the calls run together because Jev answers in a fraction of a second.
+ * Picks the candidate most likely to replace the request, when one reaches the threshold, from
+ * one evaluation of every candidate (see `evaluateLibraryIdentityCandidates`). `verdicts` keeps
+ * each candidate's probability, for callers that reuse every candidate that fits.
  */
 export async function decideLibraryIdentity({
+  analytics,
   candidates,
   subject,
 }: {
+  analytics?: AiGenerationContext;
   candidates: LibraryIdentityCandidate[];
   subject: LibraryIdentitySubject;
 }): Promise<{ match: LibraryIdentityVerdict | null; verdicts: LibraryIdentityVerdict[] }> {
-  const verdicts = await Promise.all(
-    candidates.map(async (candidate) => {
-      const run = await evaluateLibraryIdentityPair({ candidate, subject });
-      return { id: candidate.id, model: run.model, probability: run.probability };
-    }),
-  );
+  if (candidates.length === 0) {
+    return { match: null, verdicts: [] };
+  }
+
+  const run = await evaluateLibraryIdentityCandidates({ analytics, candidates, subject });
+
+  const verdicts = candidates.map((candidate, position) => ({
+    id: candidate.id,
+    model: run.model,
+    probability: run.probabilities[position] ?? 0,
+  }));
 
   const [match] = verdicts
     .filter(({ probability }) =>

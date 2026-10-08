@@ -18,7 +18,7 @@ type ExplanationState = AnswerExplanationOutcome | { status: "idle" } | { status
  */
 export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: string }) {
   const t = useExtracted();
-  const { adapters, slots } = useLessonPlayerConfig();
+  const { adapters } = useLessonPlayerConfig();
   const [state, setState] = useState<ExplanationState>({ status: "idle" });
   const explain = adapters.explainAnswer;
 
@@ -43,10 +43,6 @@ export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: stri
       >
         <p className="text-muted-foreground text-sm font-medium">{t("Why that answer misses")}</p>
         <LessonRichTextBlocks className="text-base leading-relaxed" text={state.explanation} />
-        {slots.answerFeedback?.({
-          contentId: state.explanationId,
-          contentKind: "answerExplanation",
-        })}
       </div>
     );
   }

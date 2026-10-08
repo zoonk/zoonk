@@ -4,9 +4,10 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getCourseCacheTag,
   getCourseCurriculumCacheTag,
-  getLibraryChapterCacheTag,
   getLibraryLessonCacheTag,
 } from "../../cache/tags";
+import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
+import { startLessonVersion } from "../lessons/lesson-versions";
 
 /** The Library generation phases that one workflow at a time may run for a row. */
 export type LibraryGenerationTarget =
@@ -31,7 +32,7 @@ type ClaimTargetOps = {
   read: (db: TransactionClient, id: string) => Promise<ClaimState | null>;
   /** Clears what a failed run left behind before the new owner starts. */
   reset?: (db: TransactionClient, id: string) => Promise<unknown>;
-  tags: (id: string) => string[];
+  tags: (id: string) => Promise<string[]> | string[];
 };
 
 const CLAIMABLE_STATUSES: GenerationStatus[] = ["pending", "failed"];
@@ -52,7 +53,7 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
       const chapter = await db.chapter.findUnique({ where: { id } });
       return chapter && { runId: chapter.outlineRunId, status: chapter.outlineStatus };
     },
-    tags: (id) => [getLibraryChapterCacheTag(id)],
+    tags: (id) => getChapterCacheTags(id),
   },
   courseOutline: {
     /** Courses made before outlines existed have no outline status; their first run may claim them. */
@@ -91,7 +92,8 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
 
       return lesson && { runId: lesson.contentRunId, status: lesson.contentStatus };
     },
-    reset: (db, id) => db.step.deleteMany({ where: { lessonId: id } }),
+    // A pulled lesson's screens stay, retired, for whoever is playing them (`startLessonVersion`).
+    reset: (db, id) => startLessonVersion(db, id),
     tags: (id) => [getLibraryLessonCacheTag(id)],
   },
   lessonSpec: {
@@ -169,8 +171,9 @@ async function claimWith(
 /**
  * Claims one generation phase of a Library row before any AI work starts. The status predicate
  * makes the claim atomic: when two workflows race for the same row, exactly one moves it to
- * `running` and the other learns who owns it. Claiming lesson content after a failed run deletes
- * that run's partial steps, in one transaction with the claim; the other phases need none.
+ * `running` and the other learns who owns it. Claiming lesson content of a lesson taken out of play
+ * retires its screens, in one transaction with the claim (learners playing them finish them); the
+ * other phases need none.
  */
 export async function claimLibraryGeneration({
   id,
@@ -185,7 +188,7 @@ export async function claimLibraryGeneration({
     : await claimWith(prisma, input);
 
   if (changed) {
-    revalidateCacheTags(ops.tags(id));
+    revalidateCacheTags(await ops.tags(id));
   }
 
   return result;
@@ -209,7 +212,7 @@ export async function finishLibraryGeneration({
   const { count } = await ops.finish({ id, status, workflowRunId });
 
   if (count > 0) {
-    revalidateCacheTags(ops.tags(id));
+    revalidateCacheTags(await ops.tags(id));
   }
 
   return count > 0;

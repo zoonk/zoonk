@@ -60,12 +60,10 @@ export function LessonGuestGate({ lesson }: { lesson: { description: string; tit
   const { failed, retry } = useOpenAsGuest();
 
   return (
-    <main className="bg-background in-data-[mode=fun]:fun-space flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+    <main className="bg-background flex min-h-dvh flex-col items-center justify-center px-4 py-10">
       <div className="flex w-full max-w-md flex-col gap-6">
         <header className="flex flex-col gap-2">
-          <h1 className="in-data-[mode=fun]:font-fun-display text-2xl font-semibold tracking-tight">
-            {lesson.title}
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{lesson.title}</h1>
           <p className="text-muted-foreground">{lesson.description}</p>
         </header>
 

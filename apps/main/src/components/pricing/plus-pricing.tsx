@@ -30,6 +30,27 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
 }
 
 /**
+ * The public pricing page's hero, or the app's settings pages' header, so the in-app page reads
+ * like its siblings.
+ */
+const PRICING_PAGE_VARIANTS = {
+  hero: {
+    body: "sm:px-4",
+    container: "gap-8 py-4 sm:py-8 lg:gap-10 lg:py-10",
+    description: "text-base leading-relaxed sm:text-lg",
+    header: "",
+    title: "text-4xl leading-[0.95] font-semibold tracking-[-0.04em] text-balance sm:text-5xl",
+  },
+  settings: {
+    body: "px-0 pb-0",
+    container: "gap-6",
+    description: "leading-normal",
+    header: "px-0",
+    title: "text-foreground text-2xl leading-tight font-semibold tracking-tight",
+  },
+} as const;
+
+/**
  * The offer's headline, in the words people use for what they're getting ready for, over one
  * column. Visitors read it on the public pricing page and learners in the app's subscription
  * page. A learner with a goal reads that goal instead, so the offer is about keeping it going.
@@ -39,37 +60,40 @@ export async function PlusPricingPage({
   className,
   goalTitle,
   render,
+  variant = "hero",
 }: {
   children: ReactNode;
   className?: string;
   goalTitle?: string;
   render?: ContainerProps["render"];
+  variant?: keyof typeof PRICING_PAGE_VARIANTS;
 }) {
   const t = await getExtracted();
+  const classes = PRICING_PAGE_VARIANTS[variant];
 
   return (
-    <Container className={cn("gap-8 py-4 sm:py-8 lg:gap-10 lg:py-10", className)} render={render}>
-      <ContainerHeader className="items-start">
-        <ContainerHeaderGroup className="gap-4">
+    <Container className={cn(classes.container, className)} render={render}>
+      <ContainerHeader className={cn("items-start", classes.header)}>
+        <ContainerHeaderGroup className={variant === "hero" ? "gap-4" : "gap-1.5"}>
           {goalTitle && (
             <p className="text-muted-foreground text-sm font-medium text-pretty sm:text-base">
               {t("Your goal: {goal}", { goal: goalTitle })}
             </p>
           )}
 
-          <ContainerTitle className="text-4xl leading-[0.95] font-semibold tracking-[-0.04em] text-balance sm:text-5xl">
+          <ContainerTitle className={classes.title}>
             {goalTitle
               ? t("Keep going with Plus.")
               : t("Get ready for your exam, new job or move.")}
           </ContainerTitle>
 
-          <ContainerDescription className="text-base leading-relaxed sm:text-lg">
-            {t("Plus gives you everything Zoonk has, with no limits.")}
+          <ContainerDescription className={classes.description}>
+            {t("Plus gives you everything Zoonk has.")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
-      <ContainerBody className="sm:px-4">{children}</ContainerBody>
+      <ContainerBody className={classes.body}>{children}</ContainerBody>
     </Container>
   );
 }

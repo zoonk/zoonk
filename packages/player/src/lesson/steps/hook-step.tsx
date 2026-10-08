@@ -1,11 +1,17 @@
 "use client";
 
+import { LessonVisual } from "@zoonk/learn/visual";
+import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerChoiceScene, PlayerChoiceScenePrompt } from "../../components/player-choice-scene";
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonChoiceOptions } from "../_components/lesson-choice-options";
-import { LessonQuestionPicture, LessonStepImage } from "../_components/lesson-step-image";
+import {
+  LessonStepPicture,
+  useHasStepPicture,
+  useIsPictureDrawing,
+} from "../_components/lesson-pictures";
 import { LessonBody, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
@@ -17,6 +23,7 @@ function HookGuess({
   step,
 }: LessonStepViewProps<StepOf<"hook">>) {
   const t = useExtracted();
+  const isPictureDrawing = useIsPictureDrawing(step);
 
   if (step.content.variant !== "guess") {
     return null;
@@ -27,16 +34,15 @@ function HookGuess({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>
-          {t("Guess first · no points")}
-        </LessonEyebrow>
-        <LessonQuestionPicture image={step.image} priority request={step.content.image} />
+        <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>{t("Guess first")}</LessonEyebrow>
+        <LessonStepPicture asks priority step={step} />
+        <LessonVisual visual={step.content.visual} />
         <LessonQuestion>{step.content.question}</LessonQuestion>
       </PlayerChoiceScenePrompt>
 
       <LessonChoiceOptions
         isChecked={Boolean(result)}
-        isLocked={isLocked}
+        isLocked={isLocked || isPictureDrawing}
         onSelect={(optionId) => onAnswer(optionId ? { kind: "hook", optionId } : null)}
         options={step.content.options}
         selectedId={selectedId}
@@ -57,15 +63,17 @@ function HookGuess({
  */
 export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
   const { step } = props;
+  const hasPicture = useHasStepPicture(step);
 
   if (step.content.variant === "guess") {
     return <HookGuess {...props} />;
   }
 
   return (
-    <PlayerReadScene className="gap-5 sm:gap-6">
-      {step.image && <LessonStepImage image={step.image} priority />}
+    <PlayerReadScene className={cn("gap-5 sm:gap-6", hasPicture && "max-sm:pt-0")}>
+      <LessonStepPicture hero priority step={step} />
       <LessonBody>{step.content.text}</LessonBody>
+      <LessonVisual visual={step.content.visual} />
     </PlayerReadScene>
   );
 }

@@ -11,7 +11,6 @@
     "dev:direct": "next dev -p 3201",
     "eval:languages": "tsx --conditions=react-server --import ./scripts/register-markdown.mts scripts/check-language-coverage.ts",
     "eval:run": "tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts",
-    "prices:refresh": "tsx --conditions=react-server scripts/refresh-gateway-prices.ts",
     "sample:production": "tsx scripts/sample-production-inputs.ts",
     "start": "next start -p 3201",
     "typecheck": "next typegen && tsc --noEmit"

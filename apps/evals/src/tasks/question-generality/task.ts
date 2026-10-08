@@ -35,8 +35,8 @@ const scoreQuestionGenerality: TaskScorer<QuestionGeneralityExpected> = ({ outpu
 
 /**
  * The classifier only runs as an evaluation question (Jev in production), so
- * both routes ask the same question through `experimental_evaluate`: a
- * generation model id runs through the evaluation adapter.
+ * both routes ask the same question through `experimental_decide`: a
+ * generation model id runs through the decision adapter.
  */
 export const questionGeneralityTask: Task<
   QuestionGeneralityInput,

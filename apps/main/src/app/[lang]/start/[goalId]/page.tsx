@@ -2,17 +2,14 @@ import {
   changePlanAction,
   choosePlanToolsAction,
   decidePlanChangeAction,
-  requestPlanEditAction,
-} from "@/app/[lang]/(learn)/plan/plan-actions";
+} from "@/app/[lang]/(learn)/journey/journey-actions";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
 import { isUnderMinimumAge } from "@/lib/guest/minimum-age";
-import { getDeviceExperienceMode, getExperienceMode } from "@/lib/learn/experience-mode";
-import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
-import { DeviceModeRoot } from "@zoonk/learn/mode";
+import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { OnboardingChromeProvider } from "@zoonk/learn/onboarding/frame";
 import { TooYoungScreen } from "@zoonk/learn/onboarding/too-young";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -41,13 +38,11 @@ async function StepsContent({ params }: Props) {
     notFound();
   }
 
-  const [result, plan, savedMode, deviceMode, session, buddy] = await Promise.all([
+  const [result, plan, syllabus, session] = await Promise.all([
     getOnboarding({ goalId }),
     getGoalPlan(goalId),
-    getExperienceMode(),
-    getDeviceExperienceMode(),
+    getSyllabusView({ goalId }),
     getSession(),
-    getLearnerBuddy(),
   ]);
 
   // Right after an under-13 answer deletes the account, the page renders once more without it,
@@ -56,7 +51,7 @@ async function StepsContent({ params }: Props) {
     return (
       <MainLearnProvider>
         <OnboardingChromeProvider chrome={<VisitorTopBar />}>
-          <TooYoungScreen mode={deviceMode} />
+          <TooYoungScreen />
         </OnboardingChromeProvider>
       </MainLearnProvider>
     );
@@ -74,23 +69,20 @@ async function StepsContent({ params }: Props) {
     redirect({ href: `/explain/${goalId}`, locale: lang });
   }
 
-  // Until this onboarding asks for the mode, the saved one is only the default, so the screens
-  // keep the look the visitor already had on this device.
-  const choosesMode = result.onboarding.steps.includes("mode");
-
   return (
     <MainLearnProvider>
       <StepsClient
-        initialMode={choosesMode ? deviceMode : savedMode}
-        initialPlan={plan.status === "ready" ? plan.plan : null}
+        initialPlan={
+          plan.status === "ready"
+            ? { plan: plan.plan, syllabus: syllabus.status === "ready" ? syllabus.syllabus : null }
+            : null
+        }
         isGuest={Boolean(session?.user.isAnonymous)}
         onboarding={result.onboarding}
-        buddy={buddy}
         planActions={{
           change: changePlanAction.bind(null, goalId),
           chooseTools: choosePlanToolsAction.bind(null, goalId),
           decide: decidePlanChangeAction.bind(null, goalId),
-          requestEdit: requestPlanEditAction.bind(null, goalId),
         }}
       />
     </MainLearnProvider>
@@ -99,15 +91,13 @@ async function StepsContent({ params }: Props) {
 
 function StepsSkeleton() {
   return (
-    <DeviceModeRoot>
-      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 pt-20">
-        <Skeleton className="h-9 w-3/4" />
-        <Skeleton className="h-5 w-1/2" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-        <Skeleton className="h-14 w-full rounded-2xl" />
-      </main>
-    </DeviceModeRoot>
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 pt-20">
+      <Skeleton className="h-9 w-3/4" />
+      <Skeleton className="h-5 w-1/2" />
+      <Skeleton className="h-14 w-full rounded-2xl" />
+      <Skeleton className="h-14 w-full rounded-2xl" />
+      <Skeleton className="h-14 w-full rounded-2xl" />
+    </main>
   );
 }
 

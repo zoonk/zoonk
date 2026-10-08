@@ -1,12 +1,17 @@
 "use client";
 
+import {
+  TaskHeader,
+  TaskHeaderBar,
+  TaskHeaderProgress,
+  TaskHeaderSide,
+  TaskHeaderTitle,
+} from "@zoonk/learn/task-header";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { HyperdriveBadge } from "./_components/hyperdrive-badge";
-import { MIN_SHOWN_HYPERDRIVE } from "./_utils/lesson-hyperdrive";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { LessonScreenMenu } from "./lesson-screen-menu";
 
@@ -34,35 +39,41 @@ function LessonCloseLink() {
   );
 }
 
-/** Close on the left, the skin's center (title or dots) and room for the session bar below. */
-export function LessonPlayerHeader() {
-  const { lesson, skin, slots } = useLessonPlayerConfig();
+/** The screens passed so far, as a share of the lesson. */
+function useLessonProgress(): number {
   const { screen } = useLessonPlayer();
-  const { HeaderCenter, ProgressBar } = skin;
+  const { current, total } = screen.progress;
+
+  return total === 0 ? 0 : Math.round((current / total) * 100);
+}
+
+/**
+ * The full-screen task header: close, the lesson's title with its minutes under it, the screen's
+ * menu, and one thin bar for the lesson. The session's progress waits for the moment between blocks.
+ */
+export function LessonPlayerHeader() {
+  const t = useExtracted();
+  const { lesson } = useLessonPlayerConfig();
+  const progress = useLessonProgress();
 
   return (
-    <div className="shrink-0" data-slot="lesson-player-header">
-      <header className="flex items-center gap-2 px-3 py-2 sm:px-4 xl:py-3">
-        <LessonCloseLink />
-        <div className="min-w-0 flex-1">
-          <HeaderCenter
-            minutes={lesson.estimatedMinutes}
-            progress={screen.progress}
-            title={lesson.title}
-          />
-        </div>
-        <LessonScreenMenu />
-        {/* Fun keeps the badge's room so the dots don't shift when Hyperdrive lights up. */}
-        {skin.showsHyperdrive &&
-          (screen.hyperdriveLevel >= MIN_SHOWN_HYPERDRIVE ? (
-            <HyperdriveBadge level={screen.hyperdriveLevel} />
-          ) : (
-            <span aria-hidden="true" className="size-9 shrink-0" />
-          ))}
-      </header>
+    <TaskHeader data-slot="lesson-player-header">
+      <TaskHeaderBar>
+        <TaskHeaderSide align="start">
+          <LessonCloseLink />
+        </TaskHeaderSide>
 
-      <ProgressBar current={screen.progress.current} total={screen.progress.total} />
-      {slots.sessionBar}
-    </div>
+        <TaskHeaderTitle
+          detail={t("{minutes, number} min", { minutes: lesson.estimatedMinutes })}
+          title={lesson.title}
+        />
+
+        <TaskHeaderSide align="end">
+          <LessonScreenMenu />
+        </TaskHeaderSide>
+      </TaskHeaderBar>
+
+      <TaskHeaderProgress label={t("Lesson progress")} value={progress} />
+    </TaskHeader>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
 
+import { LessonVisual } from "@zoonk/learn/visual";
 import { ListOrderedIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../../components/player-read-scene";
-import { LessonStepImage } from "../_components/lesson-step-image";
+import { LessonStepPicture } from "../_components/lesson-pictures";
 import { LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
-import { DepthControls } from "../controls/depth-controls";
+import { StrugglePauseOffer } from "../controls/ask-buddy-offer";
 import { useLessonPlayer } from "../lesson-player-context";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 import { WorkedExampleContent } from "./worked-example-content";
@@ -25,9 +26,17 @@ export function WorkedExampleStepView({ step }: LessonStepViewProps<StepOf<"work
         {step.content.title && <LessonQuestion>{step.content.title}</LessonQuestion>}
       </div>
 
-      {step.image && <LessonStepImage image={step.image} />}
-      <WorkedExampleContent content={step.content} revealed={revealed} />
-      <DepthControls step={step} />
+      <WorkedExampleContent
+        content={step.content}
+        figure={
+          <>
+            <LessonStepPicture step={step} />
+            <LessonVisual visual={step.content.visual} />
+          </>
+        }
+        revealed={revealed}
+      />
+      <StrugglePauseOffer step={step} />
     </PlayerReadScene>
   );
 }

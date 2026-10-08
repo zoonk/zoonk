@@ -12,7 +12,6 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { type Mode } from "./learn-personas";
 
 /** Exams scored on their own scale or by their own guidelines: the SAT's 400 to 1600, AP's points. */
 
@@ -36,7 +35,7 @@ const SAT_STRUCTURE = {
  * A learner whose SAT was yesterday, with one mock before it: 30 of 40 right, which the estimate
  * reads as 1170 to 1430 on the SAT's scale.
  */
-export async function createSatExamAfterMock(mode: Mode) {
+export async function createSatExamAfterMock() {
   const [user, blueprint] = await Promise.all([
     createE2EUser(getBaseURL()),
     examBlueprintFixture({ name: "SAT", structure: SAT_STRUCTURE }),
@@ -91,12 +90,7 @@ export async function createSatExamAfterMock(mode: Mode) {
       kind: "mock",
       userId: user.id,
     }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   return { user };
@@ -123,7 +117,7 @@ const AP_ROW_SCORES = [1, 1, 0, 1];
  * An AP Biology learner with a free-response question open in today's writing block and one draft
  * graded by its rows' own points, stored the way grading stores it (tests don't call the model).
  */
-export async function createApFreeResponseDay(mode: Mode) {
+export async function createApFreeResponseDay() {
   const [user, skill, blueprint] = await Promise.all([
     createE2EUser(getBaseURL()),
     skillFixture({ name: `Enzyme activity ${randomUUID()}` }),
@@ -154,12 +148,7 @@ export async function createApFreeResponseDay(mode: Mode) {
     }),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     planFixture({ goalId: goal.id }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   const block = await studySessionBlockFixture({

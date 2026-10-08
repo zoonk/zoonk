@@ -1,19 +1,19 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { LESSON_LIMIT_PARAM, readLessonLimitParam } from "@/lib/session/lesson-limit-param";
+import {
+  SESSION_STOPPED_PARAM,
+  readSessionStoppedParam,
+} from "@/lib/session/session-stopped-param";
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
-import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
 import { getStudySessionSummary } from "@zoonk/core/sessions/summary";
 import { getSession } from "@zoonk/core/users/session";
 import { type TodayView, getTodayView } from "@zoonk/core/view-models/today/get";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
-import { DeviceModeRoot, ModeProvider } from "@zoonk/learn/mode";
-import { type LearnBuddy } from "@zoonk/learn/navigation";
 import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { type StudyBlock, type StudySession } from "@zoonk/learn/session/types";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -113,16 +113,16 @@ function findAlternative({ next, session }: { next: StudyBlock; session: StudySe
 }
 
 async function SessionSummaryView({
-  buddy,
+  goalKind,
   session,
 }: {
-  buddy: LearnBuddy | null;
+  goalKind: TodayView["goal"]["kind"];
   session: StudySession;
 }) {
-  const [result, belt, viewer] = await Promise.all([
+  const [result, viewer, buddy] = await Promise.all([
     getStudySessionSummary({ input: {}, sessionId: session.id }),
-    getBeltLevel(),
     getSession(),
+    getLearnerBuddy(),
   ]);
 
   if (result.status !== "ready") {
@@ -131,7 +131,7 @@ async function SessionSummaryView({
 
   return (
     <SessionSummaryClient
-      brainPower={belt?.totalBrainPower ?? null}
+      goalKind={goalKind}
       isGuest={Boolean(viewer?.user.isAnonymous)}
       buddy={buddy}
       sessionId={session.id}
@@ -141,15 +141,20 @@ async function SessionSummaryView({
 }
 
 async function SessionView({
-  buddy,
   limit,
+  stopped,
   today,
 }: {
-  buddy: LearnBuddy | null;
   limit: LessonLimit | null;
+  /** The learner just stopped for today: what changed so far, before the next step. */
+  stopped: boolean;
   today: TodayView;
 }) {
   const { lessonStatus, session } = today;
+
+  if (stopped) {
+    return <SessionSummaryView goalKind={today.goal.kind} session={session} />;
+  }
 
   const active = session.blocks.find(
     (block) => block.status === "active" && isQuestionBlock(block),
@@ -168,7 +173,7 @@ async function SessionView({
   const next = session.blocks.find((block) => block.id === session.nextBlockId);
 
   if (!next) {
-    return <SessionSummaryView buddy={buddy} session={session} />;
+    return <SessionSummaryView goalKind={today.goal.kind} session={session} />;
   }
 
   const lesson = getNextStopLesson({ lessonStatus, next });
@@ -193,13 +198,7 @@ async function SessionView({
 
 async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   // The root param, not `params`: a prefetch warms its caches with `params` still pending.
-  const [language, result, buddy, mode, search] = await Promise.all([
-    lang(),
-    getTodayView({}),
-    getLearnerBuddy(),
-    getExperienceMode(),
-    searchParams,
-  ]);
+  const [language, result, search] = await Promise.all([lang(), getTodayView({}), searchParams]);
 
   if (result.status === "unauthorized") {
     redirect({ href: "/login", locale: language });
@@ -216,39 +215,43 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   }
 
   return (
-    <ModeProvider experienceMode={mode}>
-      <MainLearnProvider>
-        <main className="bg-background in-data-[mode=fun]:fun-space flex min-h-dvh flex-col">
-          <div className="mx-auto flex w-full max-w-150 flex-1 flex-col px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-            <SessionView
-              buddy={buddy}
-              limit={readLessonLimitParam(search[LESSON_LIMIT_PARAM])}
-              today={result.today}
-            />
-          </div>
-        </main>
-      </MainLearnProvider>
-    </ModeProvider>
+    <MainLearnProvider>
+      <main className="bg-background flex min-h-dvh flex-col">
+        <SessionView
+          limit={readLessonLimitParam(search[LESSON_LIMIT_PARAM])}
+          stopped={readSessionStoppedParam(search[SESSION_STOPPED_PARAM])}
+          today={result.today}
+        />
+      </main>
+    </MainLearnProvider>
   );
 }
 
+/** The task header's place (close, title, menu and its bar), then the step in its column. */
 function SessionSkeleton() {
   return (
-    <DeviceModeRoot>
-      <main className="mx-auto flex min-h-dvh w-full max-w-150 flex-col gap-6 px-4 py-3">
-        <Skeleton className="size-10 rounded-full" />
-        <Skeleton className="h-1 w-full" />
-        <Skeleton className="h-8 w-2/3" />
-        <Skeleton className="h-48 w-full rounded-3xl" />
+    <main className="flex min-h-dvh flex-col">
+      <div className="flex items-center justify-between gap-2 px-3 py-2 sm:px-4">
+        <Skeleton className="size-9 rounded-full" />
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="size-9 rounded-full" />
+      </div>
+      <Skeleton className="h-1 w-full rounded-none" />
+
+      <div className="mx-auto flex w-full max-w-150 flex-1 flex-col gap-5 px-4 pt-4 pb-6">
+        <Skeleton className="h-7 w-2/3" />
+        <Skeleton className="h-14 w-full rounded-2xl" />
+        <Skeleton className="h-14 w-full rounded-2xl" />
+        <Skeleton className="h-14 w-full rounded-2xl" />
         <Skeleton className="mt-auto h-12 w-full rounded-full" />
-      </main>
-    </DeviceModeRoot>
+      </div>
+    </main>
   );
 }
 
 /**
- * Today's session, full screen like a lesson: the question block in progress, the next stop, or
- * the end-of-session summary once the day's blocks are done or stopped.
+ * Today's session, full screen like a lesson: the question block in progress, the next step, or
+ * the summary once the day's blocks are done (or what changed so far, right after stopping).
  */
 export default function SessionPage({ searchParams }: Props) {
   return (

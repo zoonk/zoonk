@@ -20,7 +20,7 @@ const PAIRS = [
 ];
 
 /**
- * A Focus learner whose day opens with two capsules: true-or-false statements scored net, as in
+ * A learner whose day opens with two capsules: true-or-false statements scored net, as in
  * Cebraspe exams (a wrong answer cancels a right one), and one match-pairs question.
  */
 async function createCapsuleDay() {
@@ -48,7 +48,7 @@ async function createCapsuleDay() {
     }),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
-    learningProfileFixture({ activeGoalId: goal.id, experienceMode: "focus", userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   await studySessionBlockFixture({
@@ -103,10 +103,11 @@ test.describe("Capsules", () => {
     await expect(page.getByText("1 right")).toBeVisible();
     await page.keyboard.press("Enter");
 
-    // Left blank with its number key (1 false, 2 leave blank, 3 true): it cancels nothing.
+    // Left blank with its number key (1 false, 2 leave blank, 3 true): it cancels nothing, and
+    // reads as left blank, not as a mistake.
     await expect(page.getByText(/^Second statement/u)).toBeVisible();
     await page.keyboard.press("2");
-    await expect(feedback.getByText("Not quite")).toBeVisible();
+    await expect(feedback.getByText("Left blank")).toBeVisible();
     await expect(page.getByText("0 wrong")).toBeVisible();
     await expect(page.getByText("net 1")).toBeVisible();
     await page.keyboard.press("Enter");
@@ -140,7 +141,10 @@ test.describe("Capsules", () => {
     await page.keyboard.press("Enter");
     await expect(feedback.getByText("Correct!")).toBeVisible();
     await page.keyboard.press("Enter");
-    await expect(page.getByText("Net score 1: 2 right, 1 wrong")).toBeVisible();
+    // The day's last block opens the summary: only the statements count in the net (one right, one
+    // left blank, one wrong), never the matching question.
+    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await expect(page.getByText("Net score 0", { exact: true })).toBeVisible();
     await page.context().close();
   });
 });

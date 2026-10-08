@@ -1,4 +1,5 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
 import { type StepKind } from "@zoonk/db";
 import { getOptionId, shuffleAnswerOptions } from "../_utils/answer-options";
 import { validateActivity } from "../activities/validate-activity";
@@ -16,7 +17,7 @@ export type ConvertedScreen =
 
 type ConvertOptions = {
   language: string;
-  /** Pictures only go where the lesson spec asked for one. */
+  /** Pictures go where the lesson spec asked for one, or on a question about one. */
   allowImage: boolean;
 };
 
@@ -33,6 +34,11 @@ function imageField(
   return allowImage && screen.image
     ? { image: { alt: screen.image.alt.trim(), prompt: screen.image.prompt.trim() } }
     : {};
+}
+
+/** A chart or timeline is drawn by code from its data, so any screen may carry one. */
+function visualField(screen: { visual: LessonVisual | null }) {
+  return screen.visual ? { visual: screen.visual } : {};
 }
 
 /** Writer fields map one to one onto the contract, except for ids, nulls and empty lists. */
@@ -53,12 +59,18 @@ function toTeachingContent(
           question: screen.question.trim(),
           reveal: screen.reveal.trim(),
           variant: "guess",
+          ...visualField(screen),
         },
         kind: "hook",
       };
     case "hookText":
       return {
-        content: { ...imageField(screen, allowImage), text: screen.text.trim(), variant: "text" },
+        content: {
+          ...imageField(screen, allowImage),
+          text: screen.text.trim(),
+          variant: "text",
+          ...visualField(screen),
+        },
         kind: "hook",
       };
     case "explanation":
@@ -70,6 +82,7 @@ function toTeachingContent(
             : {}),
           text: screen.text.trim(),
           ...optional("title", screen.title),
+          ...visualField(screen),
         },
         kind: "explanation",
       };
@@ -84,6 +97,7 @@ function toTeachingContent(
             text: step.text.trim(),
           })),
           ...optional("title", screen.title),
+          ...visualField(screen),
         },
         kind: "workedExample",
       };
@@ -99,6 +113,7 @@ function toTeachingContent(
             text: option.text.trim(),
           })),
           question: screen.question.trim(),
+          ...visualField(screen),
         },
         kind: "check",
       };
@@ -116,6 +131,7 @@ function toTeachingContent(
           keyPoints: screen.keyPoints.map((point) => point.trim()),
           question: screen.question.trim(),
           sampleAnswer: screen.sampleAnswer.trim(),
+          ...visualField(screen),
         },
         kind: "typedAnswer",
       };
@@ -175,8 +191,8 @@ function toValidatedStep({
  * Turns one screen as the lesson writer (or a variant) wrote it into stored
  * step content that passes the versioned step contract: activities through the
  * activity validator, calculations into checks whose numbers code computed,
- * and pictures only where they were planned. Problems are written for the
- * writer's fix pass.
+ * charts and timelines as drawn data, and pictures only where they're allowed.
+ * Problems are written for the writer's fix pass.
  */
 export function toStepContent(screen: WrittenScreen, options: ConvertOptions): ConvertedScreen {
   if (screen.kind === "activity") {

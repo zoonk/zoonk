@@ -7,7 +7,7 @@ import {
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useLocale } from "next-intl";
 import { useState, useTransition } from "react";
-import { type GoalError, useUnderstandingLimit } from "../goal-errors";
+import { type GoalError } from "../goal-errors";
 import {
   type AttachedSource,
   type CreateGoalsOutcome,
@@ -103,6 +103,7 @@ function ReadDraft({
           error={creation.error}
           goal={draft.prompt}
           isCreating={creation.isCreating}
+          material={attached}
           onConfirm={() =>
             creation.run(() =>
               actions.createGoals(
@@ -169,7 +170,6 @@ export function DraftScreen({
   onRewrite: (words: string) => void;
   routes: OnboardingRoutes;
 }) {
-  const limitError = useUnderstandingLimit();
   const understanding = draft.status === "understood" ? draft.understanding : null;
 
   if (!understanding) {
@@ -177,7 +177,7 @@ export function DraftScreen({
       <UnderstandingWait
         draft={draft}
         isRetrying={draftActions.isRetrying}
-        limitError={draftActions.limit ? limitError(draftActions.limit) : null}
+        limitError={draftActions.limit}
         onReady={() => void draftActions.loadRead()}
         onRestart={draftActions.restart}
         onRetry={draftActions.retry}

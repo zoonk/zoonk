@@ -72,9 +72,9 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
 
 /**
  * The answer sheet: every question of the running section at a glance (answered, flagged, still
- * blank), a tap to jump to one, and handing the section in with what's left said plainly.
+ * blank), a tap to jump to one, and handing the section in (`onHandIn` confirms it first).
  */
-export function MockAnswerSheet() {
+export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const [open, setOpen] = useState(false);
@@ -85,23 +85,17 @@ export function MockAnswerSheet() {
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger
         aria-label={t("Answer sheet")}
-        render={
-          <Button
-            className="in-data-[mode=fun]:fun-glass w-14 shrink-0 px-0"
-            size="xl"
-            variant="outline"
-          />
-        }
+        render={<Button className="w-14 shrink-0 px-0" size="xl" variant="outline" />}
       >
         <LayoutGridIcon aria-hidden="true" />
       </DialogTrigger>
 
-      <DialogContent className="max-h-[90dvh] overflow-y-auto">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto" closeLabel={t("Close")}>
         <DialogHeader>
           <DialogTitle>{t("Answer sheet")}</DialogTitle>
           <DialogDescription>
             {t(
-              "{answered, plural, one {# answered} other {# answered}} · {flagged, plural, one {# flagged} other {# flagged}} · {blank, plural, one {# blank} other {# blank}}",
+              "{answered, plural, =0 {# answered} one {# answered} other {# answered}} · {flagged, plural, =0 {# flagged} one {# flagged} other {# flagged}} · {blank, plural, =0 {# blank} one {# blank} other {# blank}}",
               { answered: counts.answered, blank: counts.blank, flagged: counts.flagged },
             )}
           </DialogDescription>
@@ -119,7 +113,7 @@ export function MockAnswerSheet() {
             disabled={runner.pending}
             onClick={() => {
               setOpen(false);
-              void runner.submitSection();
+              onHandIn();
             }}
           >
             {isLast ? t("Hand in the mock exam") : t("Hand in this section")}

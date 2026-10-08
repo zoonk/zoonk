@@ -9,8 +9,8 @@ import {
   typedAnswerStep,
   workedExampleStep,
 } from "./_test-utils/lesson-steps";
-import { getLessonHyperdriveLevel, getLessonTopHyperdrive } from "./_utils/lesson-hyperdrive";
 import { lessonPlayerReducer } from "./lesson-player-reducer";
+import { getLessonScreen } from "./lesson-player-screen";
 import {
   type LessonPlayerAction,
   type LessonPlayerState,
@@ -19,7 +19,9 @@ import {
 } from "./lesson-player-state";
 import { type PlayableLibraryStep } from "./lesson-player-types";
 
-const NO_HYPERDRIVE = { knownStepIds: [], streak: 0 };
+/** This sitting started now; answers in these tests were given in it. */
+const STARTED_AT = "2026-10-05T10:00:00.000Z";
+const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
 
 function play(steps: PlayableLibraryStep[], actions: LessonPlayerAction[]): LessonPlayerState {
   return actions.reduce(
@@ -40,7 +42,7 @@ function answerCheck(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
 }
 
 describe(lessonPlayerReducer, () => {
-  it("moves through reading screens and back, but never back into a question", () => {
+  it("goes back one screen at a time, showing an answered question's result again", () => {
     const steps = [checkStep("quiz"), explanationStep("a"), explanationStep("b")];
 
     const atB = play(steps, [
@@ -52,10 +54,20 @@ describe(lessonPlayerReducer, () => {
     expect(getCurrentStep(atB)?.id).toBe("b");
 
     const backToA = lessonPlayerReducer(atB, { direction: "prev", type: "navigate" });
-    expect(getCurrentStep(backToA)?.id).toBe("a");
+    expect([getCurrentStep(backToA)?.id, backToA.phase]).toStrictEqual(["a", "playing"]);
 
-    const stillA = lessonPlayerReducer(backToA, { direction: "prev", type: "navigate" });
-    expect(getCurrentStep(stillA)?.id).toBe("a");
+    const backToQuiz = lessonPlayerReducer(backToA, { direction: "prev", type: "navigate" });
+
+    expect(backToQuiz).toMatchObject({ phase: "feedback", position: 0, reviewing: true });
+    expect(backToQuiz.results.quiz?.isCorrect).toBe(true);
+
+    // The result in view stays put: Previous waits for the next screen.
+    const stillQuiz = lessonPlayerReducer(backToQuiz, { direction: "prev", type: "navigate" });
+    expect(stillQuiz.position).toBe(0);
+
+    const forward = lessonPlayerReducer(stillQuiz, { type: "continue" });
+    expect([getCurrentStep(forward)?.id, forward.reviewing]).toStrictEqual(["a", false]);
+    expect(forward.firstVerdicts).toStrictEqual({ quiz: true });
   });
 
   it("skips the rest of a skipped activity's screens and goes on from where the learner is", () => {
@@ -274,12 +286,13 @@ describe(lessonPlayerReducer, () => {
     });
   });
 
-  it('returns to the lesson when "I know this" misses a check, keeping what was right', () => {
+  it('returns to the lesson when "I know this" misses a check, which comes back at the end', () => {
     const steps = [
       explanationStep("e"),
       checkStep("q1"),
       explanationStep("e2"),
       checkStep("quiz2"),
+      explanationStep("e3"),
     ];
 
     const state = play(steps, [
@@ -291,14 +304,122 @@ describe(lessonPlayerReducer, () => {
     ]);
 
     expect(state).toMatchObject({
-      notice: "quickCheckMissed",
+      notice: null,
       phase: "playing",
-      queue: ["e", "e2", "quiz2"],
+      queue: ["e", "e2", "e3", "quiz2"],
       quickCheck: null,
+      retried: ["quiz2"],
     });
 
     expect(getCurrentStep(state)?.id).toBe("e");
     expect(state.firstVerdicts).toStrictEqual({ q1: true, quiz2: false });
+
+    const retry = play(steps, [
+      { type: "knowThis" },
+      ...answerCheck("q1", true),
+      { type: "continue" },
+      ...answerCheck("quiz2", false),
+      { type: "continue" },
+      { type: "continue" },
+      { type: "continue" },
+      { type: "continue" },
+    ]);
+
+    // The retry is a plain, fresh question at the end: no quick check, no "Explain first".
+    expect([getCurrentStep(retry)?.id, retry.quickCheck, retry.answers.quiz2]).toStrictEqual([
+      "quiz2",
+      null,
+      undefined,
+    ]);
+
+    expect(getLessonScreen(retry).canExplainFirst).toBe(false);
+  });
+
+  it("opens a run the learner comes back to at the first screen still to answer", () => {
+    const steps = [
+      hookGuessStep("hook"),
+      explanationStep("e1"),
+      checkStep("q1"),
+      explanationStep("e2"),
+      checkStep("q2"),
+      summaryStep("sum"),
+    ];
+
+    const resumed = play(steps, [
+      {
+        answers: [{ answeredAt: ANSWERED_AT, isCorrect: false, stepId: "q1" }],
+        hyperdrive: { knownStepIds: [], streak: 0 },
+        runId: "run",
+        startedAt: STARTED_AT,
+        type: "runStarted",
+      },
+    ]);
+
+    expect(resumed).toMatchObject({
+      firstVerdicts: { q1: false },
+      phase: "playing",
+      queue: ["hook", "e1", "q1", "e2", "q2", "sum", "q1"],
+      retried: ["q1"],
+      run: { runId: "run", status: "started" },
+    });
+
+    expect(getCurrentStep(resumed)?.id).toBe("e2");
+  });
+
+  it("finishes a resumed run with every screen answered, and leaves a lesson in play alone", () => {
+    const steps = [explanationStep("e1"), checkStep("q1")];
+    const answers = [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "q1" }];
+    const hyperdrive = { knownStepIds: [], streak: 0 };
+
+    const done = play(steps, [
+      { answers, hyperdrive, runId: "run", startedAt: STARTED_AT, type: "runStarted" },
+    ]);
+
+    expect(done).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
+
+    const answeredHere = play(steps, [
+      { type: "continue" },
+      ...answerCheck("q1", false),
+      { answers, hyperdrive, runId: "run", startedAt: STARTED_AT, type: "runStarted" },
+    ]);
+
+    expect([answeredHere.phase, answeredHere.firstVerdicts]).toStrictEqual([
+      "feedback",
+      { q1: false },
+    ]);
+  });
+
+  it("goes back to an answer the server never got instead of saving again and again", () => {
+    const steps = [explanationStep("e1"), checkStep("q1"), explanationStep("e2"), checkStep("q2")];
+
+    const finished = play(steps, [
+      { type: "continue" },
+      ...answerCheck("q1", true),
+      { type: "continue" },
+      { type: "continue" },
+      ...answerCheck("q2", true),
+      { type: "continue" },
+    ]);
+
+    expect(finished.phase).toBe("completed");
+
+    const resynced = lessonPlayerReducer(finished, {
+      answers: [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "q1" }],
+      type: "runResynced",
+    });
+
+    expect(resynced).toMatchObject({ notice: "answerNotSaved", phase: "playing" });
+    expect(getCurrentStep(resynced)?.id).toBe("e2");
+
+    const complete = lessonPlayerReducer(finished, {
+      answers: [
+        { answeredAt: ANSWERED_AT, isCorrect: true, stepId: "q1" },
+        { answeredAt: ANSWERED_AT, isCorrect: true, stepId: "q2" },
+      ],
+      type: "runResynced",
+    });
+
+    expect([complete.phase, complete.completion?.status]).toStrictEqual(["completed", "failed"]);
   });
 
   it("keeps answers still while a screen is being graded or after the end", () => {
@@ -330,11 +451,13 @@ describe(lessonPlayerReducer, () => {
   });
 
   it("tracks the run and the completion as the server answers", () => {
+    const hyperdrive = { knownStepIds: [], streak: 2 };
+
     const done = play(
       [explanationStep("e")],
       [
         { type: "runStarting" },
-        { hyperdrive: NO_HYPERDRIVE, runId: "run-1", type: "runStarted" },
+        { answers: [], hyperdrive, runId: "run-1", startedAt: STARTED_AT, type: "runStarted" },
         { type: "continue" },
         { type: "completionFailed" },
         { type: "completionRetried" },
@@ -342,69 +465,8 @@ describe(lessonPlayerReducer, () => {
     );
 
     expect([done.run, done.completion?.status]).toStrictEqual([
-      { hyperdrive: NO_HYPERDRIVE, runId: "run-1", status: "started" },
+      { carriedStepIds: [], hyperdrive, runId: "run-1", status: "started" },
       "saving",
     ]);
-
-    const restarted = lessonPlayerReducer(done, { type: "restart" });
-
-    expect([restarted.phase, restarted.run, restarted.position]).toStrictEqual([
-      "playing",
-      { status: "idle" },
-      0,
-    ]);
-  });
-});
-
-describe(getLessonHyperdriveLevel, () => {
-  const steps = [checkStep("one"), checkStep("two"), checkStep("three")];
-
-  it("builds on right answers in a row and resets on a wrong one", () => {
-    const twoRight = play(steps, [
-      ...answerCheck("one", true),
-      { type: "continue" },
-      ...answerCheck("two", true),
-    ]);
-
-    expect(getLessonHyperdriveLevel(twoRight)).toBe(2);
-
-    const thenWrong = play(steps, [
-      ...answerCheck("one", true),
-      { type: "continue" },
-      ...answerCheck("two", true),
-      { type: "continue" },
-      ...answerCheck("three", false),
-    ]);
-
-    expect([getLessonHyperdriveLevel(thenWrong), getLessonTopHyperdrive(thenWrong)]).toStrictEqual([
-      0, 2,
-    ]);
-  });
-
-  it("continues the session's streak, keeps it on repeats and caps at x5", () => {
-    const state = play(steps, [
-      { hyperdrive: { knownStepIds: ["two"], streak: 4 }, runId: "run", type: "runStarted" },
-      ...answerCheck("one", true),
-      { type: "continue" },
-      ...answerCheck("two", true),
-    ]);
-
-    expect(getLessonHyperdriveLevel(state)).toBe(5);
-
-    const repeatOnly = play(steps, [
-      { hyperdrive: { knownStepIds: ["one"], streak: 1 }, runId: "run", type: "runStarted" },
-      ...answerCheck("one", true),
-    ]);
-
-    expect(getLessonHyperdriveLevel(repeatOnly)).toBe(1);
-  });
-
-  it("counts answers given before the run started from the session's streak", () => {
-    const state = play(steps, [
-      ...answerCheck("one", true),
-      { hyperdrive: { knownStepIds: [], streak: 2 }, runId: "run", type: "runStarted" },
-    ]);
-
-    expect(getLessonHyperdriveLevel(state)).toBe(3);
   });
 });

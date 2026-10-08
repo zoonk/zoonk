@@ -11,16 +11,16 @@ import { useId } from "react";
 import { BUDDY_KINDS, BuddyTagline } from "./buddy-labels";
 import { useBuddyName } from "./use-buddy-name";
 
-/** Custom names stay short so they fit the dock and the buddy's lines. */
+/** Custom names stay short so they fit wherever the buddy is named. */
 const BUDDY_NAME_MAX_LENGTH = 24;
 
 export type BuddyChoice = { glasses: BuddyGlasses; kind: BuddyKind; name: string };
 
 /** How a buddy looks right now: it grows with the belt and glows with Energy. */
-export type BuddyLook = { beltColor: BeltColor; energy: number };
+export type BuddyLook = { beltColor: BeltColor; energy: number | null };
 
 const OPTION_CLASS =
-  "border-border has-data-checked:border-foreground has-focus-visible:ring-ring/50 in-data-[mode=fun]:fun-glass in-data-[mode=fun]:has-data-checked:border-fun-lime relative flex cursor-pointer flex-col items-center gap-1 rounded-2xl border p-3 pt-4 text-center has-focus-visible:ring-[3px]";
+  "border-border has-data-checked:border-foreground has-focus-visible:ring-ring/50 relative flex cursor-pointer flex-col items-center gap-1 rounded-2xl border p-3 pt-4 text-center has-focus-visible:ring-[3px]";
 
 function BuddyOption({
   choice,
@@ -44,7 +44,7 @@ function BuddyOption({
         glasses={choice.kind === kind ? choice.glasses : "round"}
         kind={kind}
       />
-      <span className="in-data-[mode=fun]:font-fun-display text-base font-semibold">{name}</span>
+      <span className="text-base font-semibold">{name}</span>
       <span className="text-muted-foreground text-xs">
         <BuddyTagline kind={kind} />
       </span>
@@ -53,7 +53,7 @@ function BuddyOption({
 }
 
 /**
- * Choosing a Fun buddy: Zu, Noodle, Beep or Otto, and a name. Onboarding and Appearance share it.
+ * Choosing a buddy: Zu, Noodle, Beep or Otto, and a name. Onboarding and Appearance share it.
  * An empty name keeps the buddy's own name in each language.
  */
 export function BuddyPicker({

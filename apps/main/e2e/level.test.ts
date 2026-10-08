@@ -3,7 +3,6 @@ import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
-import { type Mode, expectMode, showInMode } from "./learn-personas";
 
 /**
  * Creates an isolated learner at an exact Brain Power total so Level assertions
@@ -13,13 +12,11 @@ async function createLevelTestPage({
   baseURL,
   browser,
   browserLocale,
-  mode = "focus",
   totalBrainPower,
 }: {
   baseURL: string;
   browser: Browser;
   browserLocale?: string;
-  mode?: Mode;
   totalBrainPower: bigint;
 }) {
   const user = await createE2EUser(baseURL, { orgRole: "member" });
@@ -30,14 +27,13 @@ async function createLevelTestPage({
     storageState: user.storageState,
   });
 
-  await showInMode(browserContext, { mode, userId: user.id });
   const page = await browserContext.newPage();
 
   return { browserContext, page };
 }
 
 test.describe("Level Page", () => {
-  test("shows the current level and the progress that moves learning forward in Fun, in the app's locale", async ({
+  test("shows the belt, how far the next level is and the Brain Power total, in the app's locale", async ({
     baseURL,
     browser,
   }) => {
@@ -45,40 +41,36 @@ test.describe("Level Page", () => {
       baseURL: baseURL!,
       browser,
       browserLocale: "en-US",
-      mode: "fun",
       totalBrainPower: 15_000n,
     });
 
     try {
       await page.goto("/level");
-      await expectMode(page, "fun");
 
       await expect(page.getByRole("heading", { level: 1, name: /^level$/iu })).toBeVisible();
       await expect(page.getByText(/^orange belt · level 8$/iu)).toBeVisible();
-      await expect(page.getByText(/^500 bp to next level$/iu)).toBeVisible();
-      await expect(page.getByText(/^15,000 bp$/iu)).toBeVisible();
 
-      const levelProgress = page.getByRole("progressbar", { name: /500 bp to next level/iu });
+      // Brain Power is written out, never abbreviated.
+      const levelProgress = page.getByRole("progressbar", {
+        name: /^500 brain power to the next level$/iu,
+      });
 
       await expect(levelProgress).toBeVisible();
       await expect(levelProgress).toHaveAttribute("aria-valuenow", "50");
-      await expect(levelProgress).toContainText("500 of 1,000 BP");
+      await expect(page.getByText(/\bBP\b/u)).toHaveCount(0);
 
       await expect(page.getByRole("heading", { name: /belt progression/iu })).toBeVisible();
-      await expect(page.getByRole("heading", { name: /how levels work/iu })).toBeVisible();
-      await expect(page.getByText(/brain power never goes down/iu)).toBeVisible();
 
-      await expect(page.getByRole("navigation", { name: /period selection/iu })).toHaveCount(0);
-      await expect(page.getByRole("figure", { name: /brain power chart/iu })).toHaveCount(0);
-      await expect(page.getByRole("article", { name: /highest bp/iu })).toHaveCount(0);
-      await expectAccessibleScreen(page, "Level");
+      await expect(
+        page.getByText(
+          "You have 15,000 Brain Power. Every lesson adds 10, and it never goes down.",
+        ),
+      ).toBeVisible();
 
       // The app's locale formats the progress, not the browser's.
       await page.goto("/de/level");
 
-      await expect(
-        page.getByRole("progressbar", { name: /500 bp bis zum nächsten level/iu }),
-      ).toHaveAttribute(
+      await expect(page.getByRole("progressbar", { name: /500 brain power/iu })).toHaveAttribute(
         "aria-valuetext",
         new Intl.NumberFormat("de", { style: "percent" }).format(0.5),
       );
@@ -103,8 +95,6 @@ test.describe("Level Page", () => {
       const levelProgress = page.getByRole("progressbar", { name: /max level reached/iu });
 
       await expect(levelProgress).toHaveAttribute("aria-valuenow", "100");
-      await expect(levelProgress).toContainText("Complete");
-      await expect(levelProgress).not.toContainText("0 of 100,000 BP");
       await expectAccessibleScreen(page, "Level");
     } finally {
       await browserContext.close();

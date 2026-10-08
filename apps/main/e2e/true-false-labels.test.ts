@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -12,13 +12,12 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { NET_SCORED_STRUCTURE, statement } from "./exam-fixtures";
 import { expect, test } from "./fixtures";
-import { type Mode, setDeviceMode } from "./learn-personas";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
 
 /**
  * A Cebraspe-style exam goal right before placement: its skill map is written with one statement
- * per skill, and every question before placement is answered.
+ * of the exam's own per skill, and every question before placement is answered.
  */
 async function createCebraspePlacement() {
   const [user, blueprint] = await Promise.all([
@@ -46,6 +45,7 @@ async function createCebraspePlacement() {
     planItems.map((item, index) =>
       itemFixture({
         content: statement(`Statement ${index + 1}`, index % 2 === 0),
+        examBlueprintId: blueprint.id,
         format: "trueFalse",
         skillId: item.skillId ?? "",
       }),
@@ -59,7 +59,7 @@ async function createCebraspePlacement() {
  * Today's weekly mock for a Cebraspe-style exam goal, on two statements: the first true, the second
  * false.
  */
-async function createCebraspeMock(mode: Mode) {
+async function createCebraspeMock() {
   const [user, blueprint, skill] = await Promise.all([
     createE2EUser(getBaseURL(), { withSubscription: true }),
     examBlueprintFixture({ name: "Concurso Test", structure: NET_SCORED_STRUCTURE }),
@@ -73,20 +73,24 @@ async function createCebraspeMock(mode: Mode) {
     userId: user.id,
   });
 
-  const [statements, session] = await Promise.all([
+  const [statements, session, plan] = await Promise.all([
     Promise.all(
       [statement("First statement", true), statement("Second statement", false)].map((content) =>
         itemFixture({ content, format: "trueFalse", skillId: skill.id }),
       ),
     ),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    planFixture({ goalId: goal.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
+
+  // The week's mock in the plan, today: its intro is the challenge page, by its plan item.
+  const mock = await planItemFixture({
+    kind: "mock",
+    planId: plan.id,
+    position: 0,
+    scheduledFor: session.localDate,
+  });
 
   const block = await studySessionBlockFixture({
     estimatedMinutes: 10,
@@ -101,6 +105,7 @@ async function createCebraspeMock(mode: Mode) {
         timeLimitMinutes: 10,
       },
       itemIds: statements.map((item) => item.id),
+      planItemId: mock.id,
       skillIds: [skill.id],
       title: "Mock exam",
     },
@@ -113,7 +118,6 @@ async function createCebraspeMock(mode: Mode) {
 test("a Cebraspe goal's placement asks each statement Certo or Errado", async ({ browser }) => {
   const { goal, user } = await createCebraspePlacement();
   const page = await openAs(browser, user);
-  await setDeviceMode(page.context(), "focus");
 
   await page.goto(`/pt/start/${goal.id}`);
   await page.getByRole("button", { exact: true, name: "Começar" }).click();
@@ -135,12 +139,13 @@ test.describe("Statements", () => {
   test("a Cebraspe mock asks Certo, Errado or Deixar em branco, and reviews in those words", async ({
     browser,
   }) => {
-    const { blockId, user } = await createCebraspeMock("focus");
+    const { blockId, user } = await createCebraspeMock();
     const page = await openAs(browser, user);
 
+    // Before it starts, the mock's page is its challenge's intro, where it starts.
     await page.goto(`/pt/mock/${blockId}`);
-
     await page.getByRole("button", { name: "Começar o simulado" }).click();
+    await expect(page).toHaveURL(new RegExp(`/pt/mock/${blockId}$`, "u"));
 
     await expect(page.getByText(/^Questão 1 de 2/u)).toBeVisible();
 
@@ -155,7 +160,23 @@ test.describe("Statements", () => {
     await picks.getByRole("radio", { name: /Errado/u }).click();
     await page.getByRole("button", { name: "Entregar o simulado" }).click();
 
-    await page.getByText("Ver a pergunta para revisar").click();
+    await page
+      .getByRole("alertdialog")
+      .getByRole("button", { exact: true, name: "Entregar" })
+      .click();
+
+    // The result says one thing per step; the questions to review open from its last step.
+    const seeQuestion = page.getByText("Veja a pergunta", { exact: true });
+
+    await expect(async () => {
+      if (!(await seeQuestion.isVisible())) {
+        await page.getByRole("button", { exact: true, name: "Continuar" }).click();
+      }
+
+      await expect(seeQuestion).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await seeQuestion.click();
     const review = page.getByRole("listitem").filter({ hasText: "First statement" });
 
     await expect(review.getByRole("definition")).toHaveText(["Errado", "Certo"]);

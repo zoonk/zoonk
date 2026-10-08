@@ -1,7 +1,7 @@
-import { loadGatewayPrices } from "@/lib/gateway-prices";
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { getStatsFromResults } from "@/lib/stats";
 import { type TaskEvalResults } from "@/lib/types";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { Accordion } from "@zoonk/ui/components/accordion";
 import { ContainerTitle } from "@zoonk/ui/components/container";
 import { ClassificationSummaryCard } from "./classification-summary-card";
@@ -10,7 +10,7 @@ import { SummaryCard } from "./summary-card";
 import { TestCase } from "./test-case";
 
 export async function EvalResults({ results }: { results: TaskEvalResults }) {
-  const prices = await loadGatewayPrices();
+  const prices = GATEWAY_PRICES;
   const stats = getStatsFromResults({ evalResults: results, prices });
 
   return (

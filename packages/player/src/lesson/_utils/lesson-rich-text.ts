@@ -1,14 +1,21 @@
 import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
+import { type MarkdownTableAlign, readMarkdownTable } from "@zoonk/utils/markdown-table";
 import { type RichInlineSegment } from "../../components/rich-inline-segments";
 
 /**
- * Lesson text (step contract v2) is Markdown limited to emphasis, short lists, inline code and
- * `$...$` math. This parser covers exactly that subset, so generated headings, links or tables
- * can never change the player's layout.
+ * Lesson text is Markdown limited to emphasis, short lists, GFM tables of data, inline code and
+ * `$...$` math. This parser covers exactly that subset, so generated headings or links can never
+ * change the player's layout.
  */
 export type RichBlock =
   | { kind: "list"; items: RichInlineSegment[][]; ordered: boolean }
-  | { kind: "paragraph"; lines: RichInlineSegment[][] };
+  | { kind: "paragraph"; lines: RichInlineSegment[][] }
+  | {
+      align: MarkdownTableAlign[];
+      header: RichInlineSegment[][];
+      kind: "table";
+      rows: RichInlineSegment[][][];
+    };
 
 type Span = { content: string; end: number; start: number };
 
@@ -160,15 +167,52 @@ function appendLine(
     : [...blocks, { kind: "paragraph", lines: [inline] }];
 }
 
-/**
- * Splits lesson text into paragraphs (lines separated by a single line break stay together) and
- * lists (lines starting with "-", "*", "•" or "1.").
- */
-export function parseRichBlocks(text: string): RichBlock[] {
-  const lines = text.split(/\r?\n/u).map((line) => classifyLine(line));
+/** The lines between tables as paragraphs and lists. */
+function parseTextLines(lines: readonly string[]): RichBlock[] {
+  const classified = lines.map((line) => classifyLine(line));
 
-  return lines.reduce<RichBlock[]>(
-    (blocks, line, index) => appendLine(blocks, line, lines[index - 1]),
+  return classified.reduce<RichBlock[]>(
+    (blocks, line, index) => appendLine(blocks, line, classified[index - 1]),
     [],
   );
+}
+
+/** Where the text before the next table ends: the table's header line, or the end of the text. */
+function findNextTable(lines: readonly string[], from: number) {
+  const index = lines.findIndex(
+    (_, position) => position >= from && readMarkdownTable(lines, position) !== null,
+  );
+
+  return index === -1 ? null : { index, read: readMarkdownTable(lines, index) };
+}
+
+function readBlocks(lines: readonly string[], from: number): RichBlock[] {
+  const next = findNextTable(lines, from);
+
+  if (!next?.read) {
+    return parseTextLines(lines.slice(from));
+  }
+
+  const { align, header, rows } = next.read.table;
+
+  const table: RichBlock = {
+    align,
+    header: header.map((cell) => parseRichInline(cell)),
+    kind: "table",
+    rows: rows.map((row) => row.map((cell) => parseRichInline(cell))),
+  };
+
+  return [
+    ...parseTextLines(lines.slice(from, next.index)),
+    table,
+    ...readBlocks(lines, next.read.end),
+  ];
+}
+
+/**
+ * Splits lesson text into paragraphs (lines separated by a single line break stay together),
+ * lists (lines starting with "-", "*", "•" or "1.") and tables of data (GFM pipe tables).
+ */
+export function parseRichBlocks(text: string): RichBlock[] {
+  return readBlocks(text.split(/\r?\n/u), 0);
 }

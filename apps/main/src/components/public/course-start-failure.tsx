@@ -8,10 +8,33 @@ import { useExtracted } from "next-intl";
 import { START_FAILURE_SLOT } from "./public-start";
 import { type CourseStartFailure } from "./use-course-start";
 
+type CourseStartRemedy = "signUp" | "upgrade" | "retry" | null;
+
 /**
  * The one thing to do next: an account, Plus, or another try. A limit that only needs time (the
  * day's goals, too many at once) has none.
  */
+function getCourseStartRemedy(failure: CourseStartFailure): CourseStartRemedy {
+  if (failure.status !== "limitReached") {
+    return "retry";
+  }
+
+  if (failure.reason === "guest") {
+    return "signUp";
+  }
+
+  return failure.reason === "oneActiveGoal" ? "upgrade" : null;
+}
+
+/**
+ * Whether the start can only go on with an account or Plus: then that's the page's one action,
+ * in place of a start that would be refused again.
+ */
+export function isStartBlocked(failure: CourseStartFailure | null): boolean {
+  const remedy = failure ? getCourseStartRemedy(failure) : null;
+  return remedy === "signUp" || remedy === "upgrade";
+}
+
 function FailureAction({
   className,
   failure,
@@ -22,9 +45,9 @@ function FailureAction({
   onRetry: () => void;
 }) {
   const t = useExtracted();
-  const reason = failure.status === "limitReached" ? failure.reason : null;
+  const remedy = getCourseStartRemedy(failure);
 
-  if (reason === "guest") {
+  if (remedy === "signUp") {
     return (
       <Link className={className} href="/login" prefetch={false}>
         {t("Create a free account")}
@@ -32,7 +55,7 @@ function FailureAction({
     );
   }
 
-  if (reason === "oneActiveGoal") {
+  if (remedy === "upgrade") {
     return (
       <Link className={className} href="/subscription" prefetch={false}>
         {t("Get Plus")}
@@ -40,7 +63,7 @@ function FailureAction({
     );
   }
 
-  if (reason) {
+  if (!remedy) {
     return null;
   }
 
@@ -57,12 +80,18 @@ function FailureAction({
  */
 export function CourseStartFailureNote({
   actionClassName,
+  announce = true,
   className,
   failure,
   onRetry,
 }: {
   /** The action's look where the note sits; an outline button by default. */
   actionClassName?: string;
+  /**
+   * Whether screen readers hear it as it appears: only where the start was pressed, when a page
+   * repeats the note under each of its start controls.
+   */
+  announce?: boolean;
   className?: string;
   failure: CourseStartFailure | null;
   onRetry: () => void;
@@ -78,9 +107,9 @@ export function CourseStartFailureNote({
     <div
       className={cn("flex max-w-md flex-col items-start gap-3", className)}
       data-slot={START_FAILURE_SLOT}
-      role="alert"
+      role={announce ? "alert" : undefined}
     >
-      <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-sm text-pretty">
+      <p className="text-muted-foreground text-sm text-pretty">
         {failure.status === "limitReached"
           ? limitMessage(failure.reason)
           : t("We couldn't start this course.")}

@@ -4,8 +4,8 @@ import { Suspense } from "react";
 import { StartChrome, StartChromeSkeleton } from "./_components/start-chrome";
 
 /**
- * Every onboarding page shows the app's own bar (`StartChrome`), placed by each screen inside its
- * mode, and gets the learn catalog, since learn screens render here.
+ * Every onboarding page shows the app's own bar (`StartChrome`), placed by each screen, and gets
+ * the learn catalog, since learn screens render here.
  */
 export default function Layout({ children }: LayoutProps<"/[lang]/start">) {
   return (

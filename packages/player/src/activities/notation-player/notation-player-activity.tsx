@@ -58,9 +58,7 @@ export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col">
-          <p className="in-data-[mode=fun]:font-fun-display text-base leading-tight font-semibold">
-            {title}
-          </p>
+          <p className="text-base leading-tight font-semibold">{title}</p>
           {header.composer && <p className="text-muted-foreground text-sm">{header.composer}</p>}
         </div>
 

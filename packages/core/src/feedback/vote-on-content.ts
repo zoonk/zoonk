@@ -25,10 +25,7 @@ export async function voteOnContent(input: ContentVoteInput): Promise<VoteOnCont
   const userId = session.user.id;
   const { contentId, contentKind, vote } = input;
 
-  const [provenance, profile] = await Promise.all([
-    findContentProvenance({ contentId, contentKind, userId }),
-    prisma.userLearningProfile.findUnique({ where: { userId } }),
-  ]);
+  const provenance = await findContentProvenance({ contentId, contentKind, userId });
 
   if (!provenance) {
     return { status: "notFound" };
@@ -38,7 +35,6 @@ export async function voteOnContent(input: ContentVoteInput): Promise<VoteOnCont
     ...provenance,
     comment: input.comment || null,
     language: input.language ?? null,
-    mode: profile?.experienceMode ?? null,
     reasons: vote === "down" ? [...new Set(input.reasons)] : [],
     vote,
   };

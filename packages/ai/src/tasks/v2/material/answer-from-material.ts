@@ -14,7 +14,7 @@ import systemPrompt from "./answer-from-material.prompt.md";
  * saying when the material doesn't cover a question; Luna is the cheaper at $0.12 per 1,000.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-4.5"] as const;
+const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-5.5"] as const;
 
 const schema = z.object({ answer: z.string(), found: z.boolean(), refs: z.array(z.string()) });
 

@@ -3,18 +3,21 @@ import { LANGUAGE_ACTIVITY_TYPES } from "../language/activities/language-activit
 import { answerTimeZoneSchema } from "../learner/contract";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "./plan-tools-contract";
 import {
+  AREA_STARTS,
   DAYS_PER_WEEK,
   DIFFICULTY_BIASES,
   MAX_DAILY_MINUTES,
   MIN_DAILY_MINUTES,
   PRACTICE_BIASES,
+  WRITTEN_CADENCES,
   toolChoiceSchema,
 } from "./planner/plan-state";
 
 const MAX_OPERATIONS = 10;
 const MAX_AREAS = 20;
-const MAX_EDIT_LENGTH = 500;
 const MAX_TOOLS = 20;
+const MAX_PART_NAME_LENGTH = 80;
+const MAX_PART_SKILLS = 200;
 
 const areasSchema = z
   .array(z.string().trim().min(1))
@@ -22,6 +25,23 @@ const areasSchema = z
   .meta({ description: "Area names exactly as the plan lists them" });
 
 const dailyMinutesSchema = z.int().min(MIN_DAILY_MINUTES).max(MAX_DAILY_MINUTES);
+
+const focusPartInputSchema = z
+  .object({
+    area: z.string().trim().min(1).meta({ description: "One of the operation's `areas`" }),
+    name: z
+      .string()
+      .trim()
+      .min(1)
+      .max(MAX_PART_NAME_LENGTH)
+      .meta({ description: 'The part as the learner says it, such as "Biologia e Química"' }),
+    skillIds: z
+      .array(z.string().trim().min(1))
+      .min(1)
+      .max(MAX_PART_SKILLS)
+      .meta({ description: "The area's skills in the part, from the plan's graph" }),
+  })
+  .meta({ id: "PlanFocusPart" });
 
 const activitiesSchema = z
   .array(z.enum(LANGUAGE_ACTIVITY_TYPES))
@@ -71,9 +91,35 @@ const planOperationSchema = z
         targetDate: z.iso.date().nullable().meta({ description: "The new date, or null for none" }),
       })
       .strict(),
-    z.object({ areas: areasSchema, kind: z.literal("focusAreas") }).strict(),
+    z
+      .object({
+        areas: areasSchema,
+        kind: z.literal("focusAreas"),
+        parts: z
+          .array(focusPartInputSchema)
+          .max(MAX_AREAS)
+          .optional()
+          .meta({
+            description:
+              "Some of `areas` narrowed to the part the learner named (biology and chemistry of a sciences area that also holds physics): only those skills get the focus. Omitted, each area keeps the part it had; an area without a part is focused whole",
+          }),
+      })
+      .strict(),
     z.object({ areas: areasSchema.min(1), kind: z.literal("skipAreas") }).strict(),
-    z.object({ areas: areasSchema.min(1), kind: z.literal("restoreAreas") }).strict(),
+    z
+      .object({ areas: areasSchema.min(1), kind: z.literal("restoreAreas") })
+      .strict()
+      .meta({
+        description:
+          "Brings these areas back to their usual place: skipped ones back in the plan, and ones given less time (`reduceAreas`) their usual time",
+      }),
+    z
+      .object({ areas: areasSchema.min(1), kind: z.literal("reduceAreas") })
+      .strict()
+      .meta({
+        description:
+          "Less time for these areas, which stay in the plan (the learner wants less of them): they count half, so their depth and their share of the days go to the other areas first. A focus on one, or `restoreAreas`, gives it its usual time again",
+      }),
     z
       .object({
         activities: activitiesSchema.meta({
@@ -85,6 +131,29 @@ const planOperationSchema = z
     z.object({ activities: activitiesSchema, kind: z.literal("restoreActivities") }).strict(),
     z.object({ bias: z.enum(PRACTICE_BIASES), kind: z.literal("setPracticeBias") }).strict(),
     z.object({ bias: z.enum(DIFFICULTY_BIASES), kind: z.literal("setDifficultyBias") }).strict(),
+    z
+      .object({
+        cadence: z
+          .enum(WRITTEN_CADENCES)
+          .meta({
+            description:
+              "When an exam's written tests (a redação, a discursive test) are practiced: weekly (the default, spaced practice), biweekly (every other week and the final stretch) or finalWeeks (only the final weeks before the exam, which needs a date). The total practice stays the same",
+          }),
+        kind: z.literal("setWrittenCadence"),
+      })
+      .strict(),
+    z
+      .object({
+        areas: areasSchema.min(1),
+        kind: z.literal("setAreaStart"),
+        start: z
+          .enum(AREA_STARTS)
+          .meta({
+            description:
+              "pastBasics: these areas start past their foundations, at their higher bands (the learner said their lessons are too basic). basics: they start from their foundations again",
+          }),
+      })
+      .strict(),
   ])
   .meta({ id: "PlanOperation" });
 
@@ -118,10 +187,31 @@ const setToolsOperationSchema = z.object({
   tools: z.array(toolChoiceSchema).min(1),
 });
 
+/**
+ * Makes the plan follow the exam's notice research read after the learner saw their plan: the
+ * skills the notice expects and the plan missed, its subjects' names and topics, and its exam
+ * weights. The graph it follows stays with the change (`noticeGraph` in its payload), so clients
+ * only see which change it is. Core proposes it; learners never send it.
+ */
+const followNoticeOperationSchema = z.object({ kind: z.literal("followNotice") });
+
+/**
+ * Moves the plan to the exam day its notice gives (`estimated` when the notice isn't out and the
+ * day is the likely one), which stays the notice's day: a later notice day may replace it again.
+ * Core proposes it; learners never send it (their own date is `setTargetDate`).
+ */
+const setNoticeDateOperationSchema = z.object({
+  estimated: z.boolean(),
+  kind: z.literal("setNoticeDate"),
+  targetDate: z.iso.date(),
+});
+
 export const anyPlanOperationSchema = z.union([
   planOperationSchema,
   addSkillsOperationSchema,
   setToolsOperationSchema,
+  followNoticeOperationSchema,
+  setNoticeDateOperationSchema,
 ]);
 
 export type PlanOperation = z.infer<typeof anyPlanOperationSchema>;
@@ -136,21 +226,6 @@ export const planChangeInputSchema = z
   .meta({ id: "PlanChangeInput" });
 
 export type PlanChangeInput = z.infer<typeof planChangeInputSchema>;
-
-export const planEditRequestInputSchema = z
-  .object({
-    text: z
-      .string()
-      .trim()
-      .min(1)
-      .max(MAX_EDIT_LENGTH)
-      .meta({ description: 'What to change, in plain words: "less on weekends", "focus on math"' }),
-    timeZone: answerTimeZoneSchema,
-  })
-  .strict()
-  .meta({ id: "PlanEditRequestInput" });
-
-export type PlanEditRequestInput = z.infer<typeof planEditRequestInputSchema>;
 
 export const planToolChoiceInputSchema = z
   .object({
@@ -186,8 +261,11 @@ export type PlanToolChoiceInput = z.infer<typeof planToolChoiceInputSchema>;
 export const planChangeDecisionInputSchema = z
   .object({
     status: z
-      .enum(["applied", "declined", "undone"])
-      .meta({ description: "Accept or decline a proposed change, or undo an applied one" }),
+      .enum(["applied", "declined", "undone", "seen"])
+      .meta({
+        description:
+          'Accept or decline a proposed change, undo an applied one, or mark an applied one as seen ("Got it"), so the plan stops showing it',
+      }),
     timeZone: answerTimeZoneSchema,
   })
   .strict()

@@ -12,7 +12,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { expect, test } from "./fixtures";
-import { type Mode } from "./learn-personas";
+import { continueToLastStep } from "./result-steps";
 import { openAs } from "./study-day";
 
 const SAVED_REASON = "That's what you save. You pay what's left after it.";
@@ -79,13 +79,7 @@ async function readNumbers(page: Page, label: string) {
 }
 
 /** A learner whose day is one practice block: a choice question, then two math problems. */
-async function createMathDay({
-  mode,
-  problems,
-}: {
-  mode: Mode;
-  problems: ReturnType<typeof discountContent>[];
-}) {
+async function createMathDay({ problems }: { problems: ReturnType<typeof discountContent>[] }) {
   const [user, skill, lesson] = await Promise.all([
     createE2EUser(getBaseURL()),
     skillFixture({ name: `Percent discounts ${randomUUID()}` }),
@@ -112,12 +106,7 @@ async function createMathDay({
     ),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   await studySessionBlockFixture({
@@ -132,7 +121,7 @@ async function createMathDay({
 }
 
 /** Today's session holding one boss that asks one math problem, won with one right answer. */
-async function createMathBoss(mode: Mode) {
+async function createMathBoss() {
   const [user, skill] = await Promise.all([
     createE2EUser(getBaseURL()),
     skillFixture({ name: `Percent discounts ${randomUUID()}` }),
@@ -149,12 +138,7 @@ async function createMathBoss(mode: Mode) {
     itemFixture({ content: discountContent("Boss"), format: "numeric", skillId: skill.id }),
     planItemFixture({ kind: "boss", phase: 0, planId: plan.id, position: 0 }),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   const block = await studySessionBlockFixture({
@@ -186,7 +170,6 @@ test.describe("Math problems", () => {
     browser,
   }) => {
     const { user } = await createMathDay({
-      mode: "focus",
       problems: [discountContent("Shirt"), discountContent("Jacket")],
     });
 
@@ -233,12 +216,15 @@ test.describe("Math problems", () => {
       feedback.getByRole("listitem").filter({ hasText: `= ${jacket.paid}` }),
     ).toBeVisible();
 
-    await expect(feedback.getByText("Saved to your mistakes, so it comes back.")).toBeVisible();
+    await expect(
+      feedback.getByText("Saved to your mistakes · it comes back tomorrow"),
+    ).toBeVisible();
+
     await page.context().close();
   });
 
   test("a boss asks a math problem without hints, then shows the way", async ({ browser }) => {
-    const { block, user } = await createMathBoss("fun");
+    const { block, user } = await createMathBoss();
     const page = await openAs(browser, user);
     await page.goto(`/checkpoint/${block.id}`);
 
@@ -258,10 +244,15 @@ test.describe("Math problems", () => {
     await expect(page.getByText(SAVED_REASON)).toHaveCount(0);
     await page.keyboard.press("Enter");
 
-    await page.getByText("Review the answers").click();
-    await expect(page.getByText(`Answer: ${reais(boss.paid)}`)).toBeVisible();
-    await expect(page.getByText(SAVED_REASON)).toBeVisible();
-    await expect(page.getByText(`/100) = ${boss.paid}`)).toBeVisible();
+    // The result's last step has the answers, with the worked steps, behind a link.
+    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+    await continueToLastStep(page);
+    await page.getByRole("button", { name: "Review the answers" }).click();
+
+    const answers = page.getByRole("dialog", { name: "The answers" });
+    await expect(answers.getByText(`Answer: ${reais(boss.paid)}`)).toBeVisible();
+    await expect(answers.getByText(SAVED_REASON)).toBeVisible();
+    await expect(answers.getByText(`/100) = ${boss.paid}`)).toBeVisible();
     await page.context().close();
   });
 });

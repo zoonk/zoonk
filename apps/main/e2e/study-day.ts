@@ -10,14 +10,12 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
-import { type Mode } from "./learn-personas";
 
 export const DAYS_TO_EXAM = 32;
 const TIME_MACHINE_DAYS_AGO = 4;
@@ -76,10 +74,9 @@ async function createContent({ writtenLesson }: { writtenLesson: boolean }) {
 }
 
 type StudyDayOptions = {
-  /** A day studied before today, so Fun shows its missions. */
-  earlierStudyDay?: boolean;
+  /** Zu, the default buddy, picked in onboarding. */
+  buddy?: boolean;
   freshStart?: "newWeek" | "welcomeBack" | null;
-  mode: Mode;
   /** The capsules already played, so the session opens on its lesson. */
   reviewDone?: boolean;
   /** False for a lesson still being written, so the session has to wait for it. */
@@ -87,17 +84,16 @@ type StudyDayOptions = {
 };
 
 /**
- * A learner in Focus or Fun (with Zu) whose exam is 32 days away, with today's session already
+ * A learner whose exam is 32 days away, with today's session already
  * built in the session shape: capsules first (two quick questions, one with a time machine), a
  * short lesson with one check, then mixed practice. The right option is always the first.
  */
 export async function createStudyDay({
-  earlierStudyDay = false,
+  buddy = false,
   freshStart = null,
-  mode,
   reviewDone = false,
   writtenLesson = true,
-}: StudyDayOptions) {
+}: StudyDayOptions = {}) {
   const [user, content] = await Promise.all([
     createE2EUser(getBaseURL()),
     createContent({ writtenLesson }),
@@ -127,9 +123,8 @@ export async function createStudyDay({
     studySessionFixture({ freshStart, goalId: goal.id, plannedMinutes: 7, userId: user.id }),
     learningProfileFixture({
       activeGoalId: goal.id,
-      experienceMode: mode,
       userId: user.id,
-      ...(mode === "fun" ? { buddyGlasses: "round", buddyKind: "zu" } : {}),
+      ...(buddy ? { buddyGlasses: "round" as const, buddyKind: "zu" as const } : {}),
     }),
     attemptFixture({
       answer: { selectedIndex: 1 },
@@ -139,14 +134,6 @@ export async function createStudyDay({
       skillId: percentages.id,
       userId: user.id,
     }),
-    earlierStudyDay &&
-      dailyProgressFixtureMany([
-        {
-          date: new Date(toUTCMidnight(new Date()).getTime() - MS_PER_DAY),
-          timeSpentSeconds: 600,
-          userId: user.id,
-        },
-      ]),
   ]);
 
   const [capsuleOne, capsuleTwo, practiceOne, practiceTwo] = items.map((item) => item.id);

@@ -8,7 +8,7 @@ import instructions from "./memory-relevance.prompt.md";
  * The runner-up from the memory-relevance eval (83% against Jev's 100%; Flash Lite was as accurate
  * but timed out), used when Jev errors, times out or can't fit the input.
  */
-const FALLBACK_EVALUATION_MODEL = "anthropic/claude-haiku-4.5";
+const FALLBACK_EVALUATION_MODEL = "anthropic/claude-haiku-5.5";
 
 /** A fact that doesn't fit only costs a few tokens of context, so the cutoff sits at even odds. */
 const RELEVANT_AT = 0.5;

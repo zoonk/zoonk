@@ -1,4 +1,3 @@
-import { type PlayableStepImage } from "@zoonk/core/lesson-player/contract";
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityExpectedAnswer } from "@zoonk/core/library/activities/expected-answer";
 import {
@@ -53,8 +52,8 @@ export type AnyActivityRendererProps = ActivityRendererSharedProps & {
 export type ActivityStepProps = {
   answer: ActivityAnswer | null;
   content: ActivityStepContent;
-  /** The picture of the case, once drawn (a decision tree's leaf); null without one. */
-  image: PlayableStepImage | null;
+  /** The picture of the case (a decision tree's leaf), drawn, on its way or described. */
+  picture: React.ReactNode;
   /** The server's grade once `phase` is "checked"; null while answering. */
   isCorrect: boolean | null;
   onAnswerChange: (answer: ActivityAnswer | null) => void;

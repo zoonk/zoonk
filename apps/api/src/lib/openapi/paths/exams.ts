@@ -1,24 +1,12 @@
 import { essayGradeSchema, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
-import { mockAnswerInputSchema, mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { examResultInputSchema } from "@zoonk/core/exams/results/contract";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { essayViewResponseSchema } from "../schemas/essays";
-import {
-  examResultResponseSchema,
-  examViewResponseSchema,
-  mockStepResponseSchema,
-  mockViewResponseSchema,
-} from "../schemas/exams";
+import { examResultResponseSchema, examViewResponseSchema } from "../schemas/exams";
 import { replacementGoalResponseSchema } from "../schemas/goals";
-import {
-  essayPathParamsSchema,
-  goalPathParamsSchema,
-  mockPathParamsSchema,
-  mockSectionPathParamsSchema,
-} from "../schemas/paths";
+import { essayPathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
 import {
   conflictResponse,
-  forbiddenResponse,
   notFoundResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
@@ -141,112 +129,6 @@ export const examPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Report the official exam result",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}": {
-    get: {
-      description:
-        "A mock exam in real conditions, by the study session block that scheduled it (an exam goal's weekly Big Challenge): before it starts, its sections in the exam's order with questions, minutes, scoring and when the real exam starts; while it runs, the current section's questions (never the answers), its deadline and the saved drafts; once finished, what it showed (the exam's own score, estimated where it's an estimate, time per question against the pace, IRT coherence or Cebraspe calibration), mistakes by cause and the questions to review.",
-      operationId: "getMock",
-      requestParams: { path: mockPathParamsSchema },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: mockViewResponseSchema } },
-          description: "The mock",
-        },
-        ...commonErrors,
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Get a mock exam",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}/answers": {
-    put: {
-      description:
-        "Saves a draft answer in the running section, like marking an answer sheet: a pick or null for blank, whether it's flagged to come back to (which also marks it unsure, for calibration) and the time spent. Nothing is graded until the mock ends. A section whose time ran out takes no more answers.",
-      operationId: "saveMockAnswer",
-      requestBody: {
-        content: { "application/json": { schema: mockAnswerInputSchema } },
-        required: true,
-      },
-      requestParams: { path: mockPathParamsSchema },
-      responses: {
-        "204": { description: "Saved" },
-        ...commonErrors,
-        "409": { ...conflictResponse, description: "The mock isn't running or the time ran out" },
-        "422": { ...unprocessableEntityResponse, description: "Not in the running section" },
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Save a mock answer",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}/finishes": {
-    post: {
-      description:
-        "Ends the mock now, like leaving the exam early: unanswered questions count as blank, and it's graded, recorded in the learner model and settled in the session.",
-      operationId: "finishMock",
-      requestBody: {
-        content: { "application/json": { schema: mockTimeZoneInputSchema } },
-        required: true,
-      },
-      requestParams: { path: mockPathParamsSchema },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: mockStepResponseSchema } },
-          description: "Finished",
-        },
-        ...commonErrors,
-        "409": { ...conflictResponse, description: "The mock isn't running" },
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Finish a mock exam",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}/sections/{section}/submissions": {
-    post: {
-      description:
-        "Hands in the running section, by the learner or when its time runs out: the next section's clock starts (an adaptive exam's next module is picked from how the last one went), and handing in the last section ends and grades the mock.",
-      operationId: "submitMockSection",
-      requestBody: {
-        content: { "application/json": { schema: mockTimeZoneInputSchema } },
-        required: true,
-      },
-      requestParams: { path: mockSectionPathParamsSchema },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: mockStepResponseSchema } },
-          description: "The next section started, or the mock finished",
-        },
-        ...commonErrors,
-        "409": { ...conflictResponse, description: "Not the running section" },
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Hand in a mock section",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}/starts": {
-    post: {
-      description:
-        "Starts the mock when the learner takes it on (or resumes it): its session block starts, the sections are fixed and the first section's clock starts.",
-      operationId: "startMock",
-      requestBody: {
-        content: { "application/json": { schema: mockTimeZoneInputSchema } },
-        required: true,
-      },
-      requestParams: { path: mockPathParamsSchema },
-      responses: {
-        "204": { description: "Running" },
-        ...commonErrors,
-        "403": { ...forbiddenResponse, description: "Today's time limit is reached" },
-        "409": { ...conflictResponse, description: "The mock or its block already finished" },
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Start a mock exam",
       tags: TAGS,
     },
   },

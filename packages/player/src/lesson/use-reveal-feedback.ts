@@ -4,7 +4,7 @@ import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { type RefObject, useEffect } from "react";
 import { useLessonPlayer } from "./lesson-player-context";
 
-/** A screen's result in any layout: under the question, on the paper's back or in an activity. */
+/** A screen's result wherever it shows: under the question, in an activity or inline. */
 const FEEDBACK_SELECTOR = [
   '[data-slot="lesson-step-result"]',
   '[data-slot="activity-feedback"]',

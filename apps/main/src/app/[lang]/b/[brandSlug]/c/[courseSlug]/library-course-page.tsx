@@ -1,6 +1,8 @@
 import { ClosingCall } from "@/components/public/closing-call";
+import { CourseStartProvider } from "@/components/public/course-start-context";
 import { JsonLd } from "@/components/public/json-ld";
 import { HERO_CLASS, HERO_LEAD_CLASS, HERO_TITLE_CLASS } from "@/components/public/landing-styles";
+import { NoAccountNote } from "@/components/public/no-account-note";
 import { PUBLIC_CLOSING_START_ID } from "@/components/public/public-ids";
 import { PublicPage } from "@/components/public/public-page";
 import { PublicStart } from "@/components/public/public-start";
@@ -13,7 +15,6 @@ import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getLibraryOutlineStats } from "@/lib/public/library-outline";
 import { getCourseUrl } from "@/lib/public/public-canonical";
 import { getLevelLabel } from "@/lib/public/public-labels";
-import { getSampleLesson } from "@/lib/public/sample-lesson";
 import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
@@ -25,7 +26,6 @@ import { getLanguageFlagLabel } from "@zoonk/utils/language-flags";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
 import { ArrowRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import { CourseHowItWorks } from "./course-how-it-works";
 import { CourseLevelsCard } from "./course-levels-card";
 import { CourseOutcomes } from "./course-outcomes";
 import { LibraryCourseOutline } from "./library-course-outline";
@@ -65,10 +65,10 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
 
 /**
  * A course's landing page, in the home page's language: the promise and one way to start, the
- * course at a glance, what it makes you able to do, how learning works with one of its own
- * lessons, and the outline, whose every chapter and lesson stays in the HTML behind a
- * disclosure. "Start this course" makes the course the visitor's goal on their tap, with a plan
- * built from its outline, and goes straight to what onboarding still needs to ask.
+ * course at a glance, what it makes you able to do and who it's for, and the outline, whose every
+ * chapter and lesson stays in the HTML behind a disclosure. "Start this course" makes the course
+ * the visitor's goal on their tap, with a plan built from its outline, and goes straight to what
+ * onboarding still needs to ask.
  */
 export async function LibraryCoursePage({
   locale,
@@ -86,10 +86,9 @@ export async function LibraryCoursePage({
   const isOtherLanguage = getContentLocale(course.language) !== locale;
   const promise = landingPage?.valueProposition || course.description;
 
-  const [t, levelLabels, sample] = await Promise.all([
+  const [t, levelLabels] = await Promise.all([
     getExtracted(),
     Promise.all(outline.levels.map((band) => getLevelLabel(band.level))),
-    getSampleLesson(outline),
   ]);
 
   const startLabel = t("Start this course");
@@ -100,7 +99,9 @@ export async function LibraryCoursePage({
         <ContentVoteMenu
           label={t("Course options")}
           screen="course"
+          size="icon-bar"
           target={{ contentId: course.id, contentKind: "course" }}
+          votes={false}
         />
       }
     >
@@ -123,63 +124,66 @@ export async function LibraryCoursePage({
         ]}
       />
 
-      <section aria-labelledby="course-title" className={cn(HERO_CLASS, "lg:items-center")}>
-        <div className="min-w-0">
-          {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
+      <CourseStartProvider courseId={course.id}>
+        <section aria-labelledby="course-title" className={cn(HERO_CLASS, "lg:items-center")}>
+          <div className="min-w-0">
+            {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
 
-          {hasLanguageFlag(course.targetLanguage) && (
-            <LanguageFlag
-              alt={
-                getLanguageFlagLabel({ language: course.targetLanguage, userLanguage: locale }) ??
-                ""
+            {hasLanguageFlag(course.targetLanguage) && (
+              <LanguageFlag
+                alt={
+                  getLanguageFlagLabel({ language: course.targetLanguage, userLanguage: locale }) ??
+                  ""
+                }
+                className="mb-5 w-14 sm:mb-6 sm:w-16"
+                language={course.targetLanguage}
+              />
+            )}
+
+            <h1 className={HERO_TITLE_CLASS} id="course-title">
+              {course.title}
+            </h1>
+
+            {promise && <p className={HERO_LEAD_CLASS}>{promise}</p>}
+
+            <PublicStart
+              note={
+                <NoAccountNote>
+                  {t("Free to start. No account needed for your first lesson.")}
+                </NoAccountNote>
               }
-              className="mb-5 w-14 sm:mb-6 sm:w-16"
-              language={course.targetLanguage}
+              start={<StartCourseButton label={startLabel} />}
             />
-          )}
+          </div>
 
-          <h1 className={HERO_TITLE_CLASS} id="course-title">
-            {course.title}
-          </h1>
+          {stats.chapterCount > 0 && <CourseLevelsCard outline={outline} />}
+        </section>
 
-          {promise && <p className={HERO_LEAD_CLASS}>{promise}</p>}
-
-          <PublicStart
-            note={t("Free to start. No account needed for your first lesson.")}
-            start={<StartCourseButton courseId={course.id} label={startLabel} />}
-          />
-        </div>
-
-        {stats.chapterCount > 0 && <CourseLevelsCard outline={outline} />}
-      </section>
-
-      <CourseOutcomes
-        audience={landingPage?.audience ?? []}
-        outcomes={landingPage?.outcomes ?? []}
-      />
-
-      <CourseHowItWorks sample={sample} />
-
-      <LibraryCourseOutline
-        lead={promise === course.description ? null : course.description}
-        outline={outline}
-        params={params}
-      />
-
-      <ClosingCall
-        lead={t(
-          "Your plan starts at your level and builds from there. Your first lesson comes next.",
-        )}
-        note={t("Free to start. No account needed for your first lesson.")}
-        title={t("Learn skills you can use, one lesson at a time")}
-      >
-        <StartCourseButton
-          align="center"
-          courseId={course.id}
-          id={PUBLIC_CLOSING_START_ID}
-          label={startLabel}
+        <CourseOutcomes
+          audience={landingPage?.audience ?? []}
+          outcomes={landingPage?.outcomes ?? []}
         />
-      </ClosingCall>
+
+        <LibraryCourseOutline
+          lead={promise === course.description ? null : course.description}
+          outline={outline}
+          params={params}
+        />
+
+        <ClosingCall
+          lead={t(
+            "Your plan starts at your level and builds from there. Your first lesson comes next.",
+          )}
+          note={
+            <NoAccountNote>
+              {t("Free to start. No account needed for your first lesson.")}
+            </NoAccountNote>
+          }
+          title={t("Learn skills you can use, one lesson at a time")}
+        >
+          <StartCourseButton align="center" id={PUBLIC_CLOSING_START_ID} label={startLabel} />
+        </ClosingCall>
+      </CourseStartProvider>
     </PublicPage>
   );
 }

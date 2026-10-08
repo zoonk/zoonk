@@ -1,14 +1,14 @@
 import "server-only";
 import { type StepKind, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { claimAssist } from "../entitlements/claim-usage";
 import { recordLanguageStepEvidence } from "../language/levels/record-language-evidence";
+import { canGradeWithModel } from "../learner/_utils/model-grading";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type RecordedLearnerAnswer, recordLearnerAnswer } from "../learner/record-learner-answer";
 import { scheduleMistakeCause } from "../mistakes/resolve-mistake-cause";
 import { getSession } from "../users/get-session";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./_utils/grade-lesson-answer";
-import { findPlayableStepRow, getAnswerSkillId } from "./_utils/lesson-rows";
+import { findPlayableStepRow, getAnswerSkillId, isOwnExplanation } from "./_utils/lesson-rows";
 import { findLessonRun, getRunStudySessionId } from "./_utils/lesson-runs";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { getStepQuestion } from "./_utils/step-question";
@@ -21,7 +21,8 @@ import { isAnswerableStep } from "./lesson-run";
 
 /**
  * The first answer, the question coming back at the end of the lesson and one retried request.
- * More answers to one screen in one run are a client looping, which would also loop the grader.
+ * More answers to one screen in one run come from a client looping or the lesson open in another
+ * tab: they're graded by code and not recorded.
  */
 const MAX_ANSWERS_PER_STEP_IN_RUN = 3;
 
@@ -38,7 +39,6 @@ export type LessonStepCheckOutcome =
   | { status: "invalid" }
   | { status: "notFound" }
   | { status: "runEnded" }
-  | { status: "tooManyAnswers" }
   | { status: "unauthorized" };
 
 async function countRunAnswers({
@@ -62,30 +62,106 @@ function getAnsweredKind({ answer, kind }: { answer: LessonStepAnswer; kind: Ste
 }
 
 function toCheckResult({
-  recorded,
+  nextReviewAt,
+  savedMistake,
   verdict,
 }: {
-  recorded: RecordedLearnerAnswer;
+  nextReviewAt: Date | null;
+  savedMistake: boolean;
   verdict: LessonAnswerVerdict;
 }): LessonStepCheckResult {
   return {
+    checked: verdict.checked,
     correctAnswer: verdict.correctAnswer,
+    corrections: verdict.corrections,
     feedback: verdict.feedback,
     isCorrect: verdict.isCorrect,
     keyPoints: verdict.keyPoints,
-    nextReviewAt: recorded.learnerSkill?.due?.toISOString() ?? null,
-    savedMistake: recorded.mistake !== null,
+    nextReviewAt: nextReviewAt?.toISOString() ?? null,
+    savedMistake,
     score: verdict.score,
     spelling: verdict.spelling,
   };
 }
 
 /**
+ * A quick explanation never comes back in a review (reviews come with a study plan's sessions,
+ * which explanations aren't part of), so its screens don't say when their skill does.
+ */
+function fromRecorded({
+  explanation,
+  recorded,
+  verdict,
+}: {
+  explanation: boolean;
+  recorded: RecordedLearnerAnswer;
+  verdict: LessonAnswerVerdict;
+}): LessonStepCheckResult {
+  return toCheckResult({
+    nextReviewAt: explanation ? null : (recorded.learnerSkill?.due ?? null),
+    savedMistake: recorded.mistake !== null,
+    verdict,
+  });
+}
+
+/**
+ * An answer past the run's cap, or a written one nothing checked, isn't recorded: the verdict,
+ * with when the skill already comes back (never for a quick explanation) and no new mistake.
+ */
+async function checkWithoutRecording({
+  explanation,
+  skillId,
+  userId,
+  verdict,
+}: {
+  explanation: boolean;
+  skillId: string | null;
+  userId: string;
+  verdict: LessonAnswerVerdict;
+}): Promise<LessonStepCheckOutcome> {
+  const learnerSkill =
+    skillId && !explanation
+      ? await prisma.learnerSkill.findFirst({ select: { due: true }, where: { skillId, userId } })
+      : null;
+
+  return {
+    result: toCheckResult({
+      nextReviewAt: learnerSkill?.due ?? null,
+      savedMistake: false,
+      verdict,
+    }),
+    status: "checked",
+  };
+}
+
+/**
+ * Grades the answer. Only a recorded typed answer asks a model, within the day's model-graded
+ * answers to the screen; past those, or past the run's cap, code grades it.
+ */
+async function gradeRunAnswer({
+  answer,
+  isRecorded,
+  lesson,
+  step,
+  userId,
+}: Omit<Parameters<typeof gradeLessonAnswer>[0], "useModel"> & { isRecorded: boolean }) {
+  const useModel =
+    step.kind === "typedAnswer" &&
+    isRecorded &&
+    (await canGradeWithModel({ question: { stepId: step.id }, userId }));
+
+  return gradeLessonAnswer({ answer, lesson, step, useModel, userId });
+}
+
+/**
  * Grades one answer to a lesson screen on the server and records it as learning: the attempt on
  * the learner's day, the review of the skill it trains and, when wrong, an entry in the mistakes
  * notebook. Checks, activities and language exercises use the code the player ran; typed answers
- * use the grader, claimed as small AI help, or code alone once that help is used up. Answers count toward an open run of the screen's lesson, and toward its session
- * when the run was started from one.
+ * use the grader (not counted as small AI help: grading must stay right, and the plan's lesson
+ * caps bound it), or code alone past a few graded answers to the screen a day, where an answer
+ * code doesn't recognize is shown as not checked and isn't recorded. Answers count toward an open
+ * run of the screen's lesson, and toward its session when the run was started from one. A screen
+ * answered more often than a run allows is graded by code and not recorded.
  */
 export async function checkLessonStep({
   input,
@@ -123,25 +199,29 @@ export async function checkLessonStep({
   }
 
   const answers = await countRunAnswers({ startedAt: run.startedAt, stepId: row.id, userId });
+  const isRecorded = answers < MAX_ANSWERS_PER_STEP_IN_RUN;
 
-  if (answers >= MAX_ANSWERS_PER_STEP_IN_RUN) {
-    return { status: "tooManyAnswers" };
-  }
-
-  // Only a typed answer asks a model; once the learner's small AI help is used up, code grades it.
-  const usage = step.kind === "typedAnswer" ? await claimAssist() : null;
-  const useModel = usage?.status === "allowed";
-
-  const verdict = await gradeLessonAnswer({
+  const verdict = await gradeRunAnswer({
     answer: input.answer,
+    isRecorded,
     lesson: row.lesson,
     step,
-    useModel,
     userId,
   });
 
   if (!verdict) {
     return { status: "invalid" };
+  }
+
+  const skillId = getAnswerSkillId({
+    lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),
+    stepSkillId: row.skillId,
+  });
+
+  const explanation = isOwnExplanation(row.lesson);
+
+  if (!isRecorded || !verdict.checked) {
+    return checkWithoutRecording({ explanation, skillId, userId, verdict });
   }
 
   const questionText = getStepQuestion(step);
@@ -171,10 +251,7 @@ export async function checkLessonStep({
         }
       : null,
     purpose: "learning",
-    skillId: getAnswerSkillId({
-      lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),
-      stepSkillId: row.skillId,
-    }),
+    skillId,
     stepId: row.id,
     studySessionId: getRunStudySessionId(run),
     targetLanguage: row.lesson.targetLanguage,
@@ -191,5 +268,5 @@ export async function checkLessonStep({
     userId,
   });
 
-  return { result: toCheckResult({ recorded, verdict }), status: "checked" };
+  return { result: fromRecorded({ explanation, recorded, verdict }), status: "checked" };
 }

@@ -6,7 +6,10 @@ import { MAX_MATCHES_PER_TERM } from "../identity/_utils/text-search-sql";
 import { findStoredResearchSources } from "./stored-research-sources";
 
 // The reuse decision is a model call, the one external boundary: each test says which it accepts.
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({
+  LIBRARY_IDENTITY_MIN_PROBABILITY: 0.6,
+  decideLibraryIdentity: vi.fn(),
+}));
 
 const DAY_MS = 86_400_000;
 
@@ -86,8 +89,10 @@ describe(findStoredResearchSources, () => {
     expect(found.toSorted()).toStrictEqual([lawText.id, guide.id].toSorted());
     expect(found).not.toContain(summary.id);
 
-    // Each stored document is compared, alone, with the one research would fetch.
-    expect(decision.mock.calls.every(([call]) => call.candidates.length === 1)).toBe(true);
+    // Every stored document is judged in one decision, each on its own question, against the one
+    // research would fetch.
+    expect(decision).toHaveBeenCalledOnce();
+    expect(decision.mock.calls[0]?.[0].candidates).toHaveLength(3);
 
     expect(decision.mock.calls[0]?.[0].subject).toMatchObject({
       item: {
@@ -174,7 +179,8 @@ describe(findStoredResearchSources, () => {
     });
 
     expect(found).toStrictEqual([target.id]);
+    expect(decision).toHaveBeenCalledOnce();
+    expect(decision.mock.calls[0]?.[0].candidates).toHaveLength(5);
     expect(decision.mock.calls[0]?.[0].candidates[0]?.id).toBe(target.id);
-    expect(decision).toHaveBeenCalledTimes(5);
   });
 });

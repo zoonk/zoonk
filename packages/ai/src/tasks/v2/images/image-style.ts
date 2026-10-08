@@ -6,10 +6,13 @@ import { type CourseCategory } from "@zoonk/utils/categories";
  * change that makes new images look different must bump it. Old images are
  * replaced when their lesson is next revised, never regenerated in bulk.
  */
-export const IMAGE_STYLE_VERSION = 1;
+export const IMAGE_STYLE_VERSION = 2;
 
-/** A landscape picture that fits above the text of a lesson screen on a phone. */
-export const IMAGE_SIZE = "1536x1024";
+/**
+ * A portrait picture, like main's lesson images: it fills a phone's screen
+ * above the words, the way learners liked in story-like lessons.
+ */
+export const IMAGE_SIZE = "1024x1280";
 
 /**
  * Two to four soft colors and one accent. Each subject keeps its own colors in

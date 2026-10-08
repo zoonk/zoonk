@@ -4,7 +4,6 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { z } from "zod";
 import { expect, test } from "./fixtures";
-import { expectMode, setDeviceMode } from "./learn-personas";
 
 /** Only the size of a plan's skill graph matters here. */
 const graphSchema = z.object({ skills: z.array(z.unknown()) });
@@ -23,8 +22,8 @@ async function findSeededPlan(email: string) {
 
 /**
  * A plan's link opened by someone else: the subject and the plan's shape, never the owner's name
- * or progress, noindex, and a way to start their own plan from it. The owner landing on their plan
- * is in plan-tab.test.ts, after sharing it.
+ * or progress, noindex, and a way to start their own plan from it. The owner landing on their
+ * Journey is in journey.test.ts, after sharing it.
  */
 test.describe("Plan links", () => {
   test("visitors see the plan's shape without the owner, and onboarding starts from the plan", async ({
@@ -38,6 +37,8 @@ test.describe("Plan links", () => {
 
     await expect(page.getByText("A study plan someone shared with you")).toBeVisible();
     await expect(page.getByText(/phases? · \d+ skills?/u)).toBeVisible();
+    // An exam's phases have no name of their own: they're named by what they're for, as on the plan.
+    await expect(page.getByText("Fill the gaps", { exact: true })).toBeVisible();
     await expect(page.getByText("Ana Souza")).toBeHidden();
 
     await expect
@@ -83,13 +84,7 @@ test.describe("Plan links", () => {
   }) => {
     const [plan] = await Promise.all([
       findSeededPlan("v2-learn@zoonk.test"),
-      learningProfileFixture({
-        birthMonth: 3,
-        birthYear: 1995,
-        experienceMode: "focus",
-        userId: noProgressUser.id,
-      }),
-      setDeviceMode(page.context(), "focus"),
+      learningProfileFixture({ birthMonth: 3, birthYear: 1995, userId: noProgressUser.id }),
     ]);
 
     await page.goto(`/plan-link/${plan.id}`);
@@ -97,8 +92,7 @@ test.describe("Plan links", () => {
     await page.getByLabel("How much time a day?").selectOption("30");
     await page.getByRole("button", { name: "Start from this plan" }).click();
 
-    await expect(page).toHaveURL(/\/plan$/u);
-    await expectMode(page, "focus");
+    await expect(page).toHaveURL(/\/journey$/u);
 
     await expect
       .poll(async () =>

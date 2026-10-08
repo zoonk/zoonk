@@ -22,7 +22,8 @@ import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema
  * held-back redraft, sourced law and advanced physics cases, Sol scored 8.09
  * and Opus 5.5 7.72 at $43 and $154 per 1,000 lessons (Opus stated a made-up
  * product fact and misread the law). Fallbacks come from other families, so an
- * outage at one provider doesn't stop lessons.
+ * outage at one provider doesn't stop lessons. Claude Haiku 5.5 scored 7.42 against Sol's 8.90 on 3
+ * cases (7 Oct 2026), one draft not matching the schema.
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;

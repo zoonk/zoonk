@@ -20,9 +20,8 @@ const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1);
 const OLDEST_AGE = 100;
 /** Any year works for naming months. */
 const ANY_YEAR = 2000;
-/** The wrapper takes the column; the select inside gets the size and Fun's glass. */
-const SELECT_CLASS =
-  "w-full [&_select]:h-12 [&_select]:text-base in-data-[mode=fun]:[&_select]:fun-glass";
+/** The wrapper takes the column; the select inside gets the size. */
+const SELECT_CLASS = "w-full [&_select]:h-12 [&_select]:text-base";
 
 function useYears(): number[] {
   const thisYear = new Date().getFullYear();
@@ -108,7 +107,7 @@ export function AgeStep({
 
 /**
  * Teens get the most private settings, and can invite a parent or guardian to see their weekly
- * activity, set a daily time limit and approve Plus. Inviting is optional.
+ * activity, set a daily time limit, turn memory off and approve Plus. Inviting is optional.
  */
 export function GuardianInviteStep({
   onDone,
@@ -132,7 +131,7 @@ export function GuardianInviteStep({
       canContinue={status === "sent" || email.includes("@")}
       continueLabel={status === "sent" ? t("Continue") : t("Send invite")}
       description={t(
-        "Because you're under 18, we keep things private: no marketing email, audio isn't stored and memory keeps only learning facts.",
+        "Because you're under 18, we keep things private: no marketing email, no stored audio, and memory stays off unless you turn it on.",
       )}
       onContinue={() => (status === "sent" ? onDone() : invite())}
       onSkip={status === "sent" ? undefined : onDone}
@@ -144,7 +143,7 @@ export function GuardianInviteStep({
         <ShieldCheckIcon aria-hidden="true" className="text-success mt-0.5 size-5 shrink-0" />
         <p>
           {t(
-            "They'll see your weekly activity, can set a daily time limit and approve Plus. Never your answers.",
+            "They'll see your weekly activity and can set a daily time limit, turn memory off and approve Plus. Never your answers.",
           )}
         </p>
       </div>
@@ -158,7 +157,7 @@ export function GuardianInviteStep({
           <Label htmlFor={emailId}>{t("Their email")}</Label>
           <Input
             autoComplete="off"
-            className="in-data-[mode=fun]:fun-glass h-12 text-base"
+            className="h-12 text-base"
             id={emailId}
             onChange={(event) => setEmail(event.target.value)}
             type="email"

@@ -4,16 +4,19 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
-  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area relative inline-flex shrink-0 items-center justify-center rounded-4xl border bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-[3px] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:ring-[3px] disabled:**:data-[slot=shortcut-kbd]:invisible lg:pointer-fine:has-data-[slot=shortcut-kbd]:justify-between [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area relative inline-flex shrink-0 items-center justify-center rounded-4xl border bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-[3px] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 aria-invalid:ring-[3px] disabled:**:data-[slot=shortcut-kbd]:invisible [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
       size: {
         adaptive:
           "size-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 sm:h-9 sm:w-auto",
+        // Every control in a top bar shares one height: a touch target on phones and tablets.
+        bar: "h-11 gap-1.5 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 lg:h-10",
         default:
           "h-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
         icon: "size-9",
+        "icon-bar": "size-11 lg:size-10",
         "icon-lg": "size-10",
         "icon-sm": "size-8",
         "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
@@ -32,11 +35,6 @@ const buttonVariants = cva(
           "bg-primary-foreground text-primary hover:bg-primary-foreground/90 focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30 border-transparent",
         "inverse-outline":
           "border-primary-foreground/30 bg-primary-foreground/5 text-primary-foreground hover:border-primary-foreground hover:bg-primary-foreground hover:text-primary focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:border-primary/30 dark:bg-primary/5 dark:text-primary dark:hover:border-primary dark:hover:bg-primary dark:hover:text-primary-foreground dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30",
-        // Fun mode's glowing main action; needs the tokens from @zoonk/ui/fun.css. Its shortcut
-        // hint takes the button's dark text, since the page's muted text can't be read on lime.
-        // Its focus ring takes the text color, set apart by a gap: dark Fun's lime ring would
-        // vanish into the lime glow.
-        lime: "bg-fun-lime text-fun-lime-foreground shadow-fun-lime hover:bg-fun-lime/90 **:data-[slot=shortcut-kbd]:bg-fun-lime-foreground/10 **:data-[slot=shortcut-kbd]:text-fun-lime-foreground focus-visible:ring-fun-fg focus-visible:ring-offset-background border-transparent font-bold focus-visible:ring-2 focus-visible:ring-offset-2",
         outline:
           "border-border bg-background hover:bg-input/50 hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
         secondary:

@@ -13,27 +13,55 @@ import {
   type PlanPhaseKind,
   type PracticeBias,
 } from "./planner/plan-state";
+import { type WrittenPractice } from "./written-practice-contract";
 
 /** A change to the plan, announced in one plain sentence with an undo. */
 export type PlanChangeView = {
   /** Only the latest applied edit and test-outs can be undone; past work never is. */
   canUndo: boolean;
   createdAt: string;
-  /** Study days missed, for `missedDays`. */
+  /**
+   * For `missedDays`, when falling behind made the plan cover less of its goal by its date: what it
+   * covered before and now, and the daily time to offer (see `FallingBehind`). Null when the date
+   * isn't at risk.
+   */
+  behind: {
+    canFocus: boolean;
+    coveredAfter: number;
+    coveredBefore: number;
+    currentMinutes: number;
+    dailyMinutes: number | null;
+    fullDepth: boolean;
+    measure: "exam" | "goal";
+  } | null;
+  /** For `missedDays`: the earlier days that left lessons, now first on the plan. */
   days: number | null;
   effect: PlanEffect | null;
   id: string;
   kind: string;
   /** Lessons a test-out skipped. */
   lessonsSkipped: number;
+  /**
+   * The exam day the notice officially sets, when the change moves the goal's date off it: the
+   * learner applies it only knowing that ("use my date anyway"). Null otherwise.
+   */
+  officialDate: { date: string; source: string | null } | null;
   operations: PlanOperation[];
   /**
    * The sentence to show as written, in the learner's language, when an AI or a proposal wrote it.
    * Null when the app says it from `kind`, `operations` and `effect`.
    */
   reason: string | null;
+  /** The learner said "Got it" to it, so the plan no longer shows it. */
+  seen: boolean;
   source: string;
   status: PlanChangeStatus;
+  /**
+   * For a change the learner made or applied: `changed` when today's session took it right away,
+   * `unchanged` when today's session stays as it was (underway or done), so it starts on the next
+   * study day. Null otherwise.
+   */
+  todaySession: "changed" | "unchanged" | null;
 };
 
 export type PlanItemView = {
@@ -57,10 +85,11 @@ export type PlanItemView = {
 };
 
 /**
- * A chapter of the current phase: "Functions and graphs, 3 of 8 lessons". Skills whose lessons are
- * still being written group under their course's title as one `writing` row until their chapters
- * exist; their lesson counts are stand-ins, so apps say "being written" instead. Skills placement
- * tested out before their lessons were written are one finished row under the same title.
+ * A chapter of a phase: "Functions and graphs, 3 of 8 lessons". Only the current phase has a
+ * `current` chapter (the one holding the next lesson). Skills whose lessons are still being written
+ * group under their course's title as one `writing` row until their chapters exist; their lesson
+ * counts are stand-ins, so apps say "being written" instead. Skills placement tested out before
+ * their lessons were written are one finished row under the same title.
  */
 export type PlanChapterView = {
   chapterId: string | null;
@@ -102,10 +131,22 @@ export type ShortExamFocus = (typeof SHORT_EXAM_FOCUSES)[number];
  */
 export type ShortPhaseView = { firstDay: number; focus: ShortExamFocus; lastDay: number };
 
+/**
+ * The checkpoint that closes a phase (the Trickster), by its plan item, whose page is its intro:
+ * `done` once passed, its planned day while it's ahead.
+ */
+export type PlanPhaseCheckpointView = {
+  date: string | null;
+  planItemId: string;
+  state: "done" | "upcoming";
+};
+
 export type PlanPhaseView = {
   chapterCount: number;
-  /** Only the current phase lists its chapters: later phases are one line each. */
-  chapters: PlanChapterView[] | null;
+  /** Every phase's chapters in plan order, so a done or later phase opens like the current one. */
+  chapters: PlanChapterView[];
+  /** Null for a phase without one. */
+  checkpoint: PlanPhaseCheckpointView | null;
   endDate: string | null;
   hours: number;
   index: number;
@@ -113,6 +154,8 @@ export type PlanPhaseView = {
   lessonsDone: number;
   lessonsTotal: number;
   milestone: string | null;
+  /** The phase's mock exams: how many, and the day of the next one still to take. */
+  mocks: { count: number; nextDate: string | null };
   /** Empty for exam phases, which the apps name by kind. */
   name: string;
   /** Its days in a short plan (a test days away); null in any other plan. */
@@ -141,10 +184,21 @@ export type PlanToolView = {
   system: ToolSystem | null;
 };
 
-/** The plan at three zoom levels (until the goal, this week, and the changes), for both modes. */
+/** The plan at three zoom levels (until the goal, this week, and the changes). */
 export type PlanView = {
   access: { freeUntil: string | null; mocksRequirePlus: boolean };
-  areas: { focused: boolean; name: string; skillCount: number; skipped: boolean }[];
+  areas: {
+    /** The part of the area in focus, as the learner named it; null when it's focused whole. */
+    focusPart: string | null;
+    focused: boolean;
+    name: string;
+    /** The learner said they're past its basics: it starts past its foundations. */
+    pastBasics: boolean;
+    /** The learner wants less of it: it keeps its core, and its depth goes to other areas first. */
+    reduced: boolean;
+    skillCount: number;
+    skipped: boolean;
+  }[];
   changes: PlanChangeView[];
   /** The Library course the plan is built from, with its levels; null without one. */
   course: PlanCourseView | null;
@@ -157,14 +211,30 @@ export type PlanView = {
   };
   feasibility: {
     alternative: { dailyMinutes: number; endDate: string | null } | null;
+    /** Every topic (every skill's core) is in the plan; false only when even the cores don't fit. */
+    coreFits: boolean;
+    /** When the cores don't all fit: the fewest daily minutes that bring every topic in. */
+    coreMinutes: number | null;
+    /** The share of everything, in depth, the plan covers (see `measure`). */
     coveredShare: number;
     deadline: string | null;
     fits: boolean;
+    /** When no daily time covers everything: what the most time a day covers, when it's more. */
+    maximum: { coveredShare: number; dailyMinutes: number } | null;
+    /** A share of the exam's questions and points, or of the goal's skills by their weight. */
+    measure: "exam" | "goal";
+    /** The daily minutes that study everything in depth. */
     recommendedMinutes: number | null;
   } | null;
   /** Every lesson and chapter is behind the learner: time for what to study next. */
   finished: boolean;
   goalId: string;
+  /**
+   * An exam plan built before research read the exam's notice: `reading` while the reveal waits
+   * for that reading, `usual` once the wait ended without it (the plan follows the exam's usual
+   * structure, and the reading arrives as a change to apply). Null otherwise.
+   */
+  notice: "reading" | "usual" | null;
   /** The level the learner gave (nothing yet to advanced), which they can change from the plan. */
   ownLevel: OwnLevel | null;
   phases: PlanPhaseView[];
@@ -181,12 +251,19 @@ export type PlanView = {
     lightWeeks: LightWeek[];
     studyDays: number;
     targetDate: string | null;
+    /** The date is the likely day of an edition whose notice isn't out yet. */
+    targetDateEstimated: boolean;
     /** Minutes per weekday, Sunday first; 0 for rest days. */
     weekdayMinutes: number[];
   };
   status: PlanStatus | null;
   steering: {
     difficultyBias: DifficultyBias;
+    /**
+     * Lessons of this plan the learner studied (not the ones placement skipped): "too easy" or
+     * "too hard" means something only after the first one.
+     */
+    lessonsStudied: number;
     practiceBias: PracticeBias;
     /** Language practice the learner left out ("I don't need writing"); empty for other goals. */
     skippedActivities: LanguageActivityType[];
@@ -194,4 +271,9 @@ export type PlanView = {
   /** "You'll use": the tools the plan's chapters use, essential first. Empty when none do. */
   tools: PlanToolView[];
   week: { days: PlanDayView[]; endDate: string; startDate: string };
+  /**
+   * When the exam's written tests are practiced, which the learner chooses. Null for plans without
+   * written tests and plans for a test days away.
+   */
+  writtenPractice: WrittenPractice | null;
 };

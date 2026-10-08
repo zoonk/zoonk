@@ -1,7 +1,7 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { usePlotScales } from "../_components/activity-plot";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { cutsToParts } from "./area-model-cuts";
 import { CutHandle, type SideCuts } from "./area-model-grid";
 

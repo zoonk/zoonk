@@ -6,7 +6,7 @@ import {
   getPreparationValue,
 } from "./preparation-math";
 
-/** One area of a goal (a subject area or chapter): Fun draws it as a planet around the goal. */
+/** One area of a goal (a subject area or chapter) and how prepared the learner is in it. */
 export type AreaPreparation = {
   areaId: string;
   /** Studied, but fading or not yet well known: where practice pays. */
@@ -43,7 +43,7 @@ function measureArea({
     getPreparationComponents({ answers: areaAnswers, asOf, mocks: [], skills: areaSkills });
 
   const components = measure(now);
-  const preparation = getPreparationValue(components);
+  const preparation = getPreparationValue(components, { needsTest: false });
   const coverage = components.coverage.value;
   const quality = coverage > 0 ? preparation / coverage : null;
   const counts = countSkillStates(areaSkills);
@@ -55,7 +55,7 @@ function measureArea({
     preparation,
     quality,
     skills: counts,
-    weekGain: preparation - getPreparationValue(measure(weekAgo)),
+    weekGain: preparation - getPreparationValue(measure(weekAgo), { needsTest: false }),
   };
 }
 

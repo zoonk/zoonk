@@ -89,7 +89,7 @@ function toResult({
 }
 
 /**
- * What a call screen shows, the same for Focus and Fun: the character, the goals of the call with
+ * What a call screen shows: the character, the goals of the call with
  * the ones met, hints, and once it ends, the result with the feedback. The voice model's
  * instructions are included only while the call can still be made.
  */

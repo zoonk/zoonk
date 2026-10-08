@@ -34,9 +34,7 @@ export function AnswerOption({
       aria-checked={picked}
       className={cn(
         "border-border bg-background focus-visible:ring-ring/50 enabled:hover:bg-muted flex min-h-12 w-full items-start gap-3 rounded-2xl border px-3 py-3 text-left transition-colors outline-none focus-visible:ring-[3px] disabled:cursor-default",
-        "in-data-[mode=fun]:rounded-[18px]",
-        picked &&
-          "border-foreground ring-foreground/10 in-data-[mode=fun]:border-fun-accent-violet in-data-[mode=fun]:ring-fun-accent-violet/20 ring-2",
+        picked && "border-foreground ring-foreground/10 ring-2",
         className,
       )}
       data-slot="answer-option"
@@ -49,8 +47,7 @@ export function AnswerOption({
         <span
           className={cn(
             "bg-muted text-muted-foreground flex size-7 items-center justify-center rounded-full text-xs font-semibold [&_svg]:size-4",
-            picked &&
-              "bg-foreground text-background in-data-[mode=fun]:bg-fun-accent-violet in-data-[mode=fun]:text-white",
+            picked && "bg-foreground text-background",
           )}
         >
           {marker}

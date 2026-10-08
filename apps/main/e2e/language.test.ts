@@ -3,7 +3,6 @@ import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
-import { expectMode, showInMode } from "./learn-personas";
 
 /**
  * Change the language and wait for the proxy to finish canonicalizing the
@@ -24,56 +23,57 @@ async function selectLanguage({
   await expect(page).toHaveURL((url) => url.pathname === expectedPath);
 }
 
-test.describe("Language settings page", () => {
+test.describe("Language setting in Appearance", () => {
   test("switches the UI through every language and drops the prefix back in English", async ({
     page,
   }) => {
-    await page.goto("/language");
+    await page.goto("/settings/appearance");
 
-    await expect(page.getByRole("heading", { level: 1, name: /^language$/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^appearance$/iu })).toBeVisible();
 
-    const english = page.getByRole("combobox", { name: /update language/iu });
+    const english = page.getByRole("combobox", { name: "App language" });
     await expect(english).toHaveValue("en");
-    await expectAccessibleScreen(page, "the language settings");
-
-    await selectLanguage({ expectedPath: "/pt/language", locale: "pt", page, selector: english });
-    await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
-
-    await expect(
-      page.getByRole("heading", {
-        level: 2,
-        name: /escolha o idioma do app que você prefere neste dispositivo/iu,
-      }),
-    ).toBeVisible();
+    await expectAccessibleScreen(page, "the appearance settings for a visitor");
 
     await selectLanguage({
-      expectedPath: "/fr/language",
+      expectedPath: "/pt/settings/appearance",
+      locale: "pt",
+      page,
+      selector: english,
+    });
+
+    await expect(page.getByRole("heading", { level: 1, name: /^aparência$/iu })).toBeVisible();
+
+    await selectLanguage({
+      expectedPath: "/fr/settings/appearance",
       locale: "fr",
       page,
-      selector: page.getByRole("combobox", { name: /alterar idioma/iu }),
+      selector: page.getByRole("combobox", { name: "Idioma do app" }),
     });
 
-    await expect(page.getByRole("heading", { level: 1, name: /^langue$/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^apparence$/iu })).toBeVisible();
 
     await selectLanguage({
-      expectedPath: "/de/language",
+      expectedPath: "/de/settings/appearance",
       locale: "de",
       page,
-      selector: page.getByRole("combobox", { name: /changer la langue/iu }),
+      selector: page.getByRole("combobox", { name: "Langue de l’application" }),
     });
 
-    await expect(page.getByRole("heading", { level: 1, name: /^sprache$/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^aussehen$/iu })).toBeVisible();
 
     await selectLanguage({
-      expectedPath: "/language",
+      expectedPath: "/settings/appearance",
       locale: "en",
       page,
-      selector: page.getByRole("combobox", { name: /sprache ändern/iu }),
+      selector: page.getByRole("combobox", { name: "App-Sprache" }),
     });
 
-    await expect(page.getByRole("heading", { level: 1, name: /^language$/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^appearance$/iu })).toBeVisible();
   });
+});
 
+test.describe("Legal pages", () => {
   test("renders the French privacy policy and the German terms of service", async ({ page }) => {
     await setLocale(page, "fr");
     await page.goto("/privacy");
@@ -96,28 +96,5 @@ test.describe("Language settings page", () => {
     ).toBeVisible();
 
     await expectAccessibleScreen(page, "the terms of service");
-  });
-});
-
-test.describe("Language settings in Fun", () => {
-  test("a Fun learner switches the app language and stays in Fun", async ({
-    browser,
-    noProgressUser,
-  }) => {
-    const context = await browser.newContext({ storageState: noProgressUser.storageState });
-    await showInMode(context, { mode: "fun", userId: noProgressUser.id });
-    const page = await context.newPage();
-
-    await page.goto("/language");
-    await expectMode(page, "fun");
-    await expectAccessibleScreen(page, "the Fun language settings");
-
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/es/language", locale: "es", page, selector });
-    await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
-    await expectMode(page, "fun");
-
-    await context.close();
   });
 });

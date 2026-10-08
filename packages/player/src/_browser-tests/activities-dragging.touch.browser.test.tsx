@@ -9,7 +9,7 @@ const SWIPE_PX = 200;
 /** Played on a phone's touch screen (the touch instance in vitest.config.mts), with a finger. */
 describe("dragging activity items with a finger", () => {
   it("labeled diagram: a name held and dragged onto a spot labels it", async () => {
-    openActivity({ mode: "fun", template: "labeledDiagram" });
+    openActivity({ template: "labeledDiagram" });
 
     await holdAndDrag({
       from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
@@ -41,7 +41,7 @@ describe("dragging activity items with a finger", () => {
   });
 
   it("argument builder: a quote held and dragged onto the evidence is picked", async () => {
-    openActivity({ mode: "fun", template: "argumentBuilder" });
+    openActivity({ template: "argumentBuilder" });
 
     await holdAndDrag({
       from: page.getByRole("button", { name: /^Use as evidence: It is too rash/u }),
@@ -64,7 +64,7 @@ describe("dragging activity items with a finger", () => {
   });
 
   it("labeled diagram: tapping a name still puts it on the highlighted spot", async () => {
-    openActivity({ mode: "fun", template: "labeledDiagram" });
+    openActivity({ template: "labeledDiagram" });
     await tap(page.getByRole("button", { name: "Put Aorta on spot 1" }));
     await expect.element(page.getByRole("button", { name: /^Spot 1, .*: Aorta$/u })).toBeVisible();
   });

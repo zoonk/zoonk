@@ -12,6 +12,7 @@ vi.mock("@zoonk/ai/tasks/v2/memory/search-terms", () => ({ generateMemorySearchT
 vi.mock("@zoonk/ai/tasks/v2/memory/relevance", () => ({ selectRelevantMemoryFacts: vi.fn() }));
 
 const ADULT_BIRTH = { birthMonth: 5, birthYear: 1990 };
+const TEEN_BIRTH = { birthMonth: 1, birthYear: new Date().getUTCFullYear() - 15 };
 const MINUTE_MS = 60_000;
 
 async function adultWithFacts(facts: { category: MemoryCategory; statement: string }[]) {
@@ -97,10 +98,24 @@ describe(getMemoryForTask, () => {
     ).resolves.toStrictEqual([]);
   });
 
+  it("reads nothing for a minor who hasn't turned memory on", async () => {
+    const user = await userFixture();
+
+    await Promise.all([
+      learningProfileFixture({ ...TEEN_BIRTH, userId: user.id }),
+      memoryFactFixture({ category: "goals", statement: "Wants Medicine", userId: user.id }),
+    ]);
+
+    await expect(
+      getMemoryForTask({ categories: ["goals"], language: "pt", userId: user.id }),
+    ).resolves.toStrictEqual([]);
+  });
+
   it("reads only goals and learning for learners who may not keep other facts", async () => {
     const user = await userFixture();
 
     await Promise.all([
+      learningProfileFixture({ memoryEnabled: true, userId: user.id }),
       memoryFactFixture({ category: "context", statement: "Lives in Recife", userId: user.id }),
       memoryFactFixture({ category: "learning", statement: "Mixes up signs", userId: user.id }),
     ]);
@@ -137,6 +152,31 @@ describe(getMemoryForTask, () => {
       "Has ADHD",
       "Mixes up signs",
     ]);
+  });
+
+  it("never hands a minor's sensitive fact to a task, even one that helps with them", async () => {
+    const user = await userFixture();
+
+    await Promise.all([
+      learningProfileFixture({ ...TEEN_BIRTH, memoryEnabled: true, userId: user.id }),
+      memoryFactFixture({ category: "learning", statement: "Mixes up signs", userId: user.id }),
+      // A teen can write anything into a fact they correct; the check flags it, and it stays theirs.
+      memoryFactFixture({
+        category: "learning",
+        sensitive: true,
+        statement: "Has ADHD",
+        userId: user.id,
+      }),
+    ]);
+
+    const facts = await getMemoryForTask({
+      categories: ["learning"],
+      includeSensitive: true,
+      language: "en",
+      userId: user.id,
+    });
+
+    expect(facts.map((fact) => fact.statement)).toStrictEqual(["Mixes up signs"]);
   });
 
   it("searches a large memory with model terms and keeps what the relevance check keeps", async () => {

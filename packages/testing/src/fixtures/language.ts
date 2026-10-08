@@ -89,6 +89,7 @@ export async function languageGoalFixture({ userId }: { userId?: string } = {}) 
   const items = await Promise.all(
     lessons.map((lesson, index) =>
       planItemFixture({
+        chapterId: lesson.homeChapterId,
         lessonId: lesson.id,
         phase: index < 2 ? 0 : 1,
         planId: plan.id,

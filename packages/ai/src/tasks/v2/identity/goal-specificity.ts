@@ -8,8 +8,14 @@ import { type Reasoning, buildProviderOptions } from "../../../provider-options"
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./goal-specificity.prompt.md";
 
-const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-4.5"] as const;
+/**
+ * From the goal-specificity eval (16 goals, 7 Oct 2026): Claude Haiku 5.5 with thinking off got
+ * all 16 at p50 1.7s and $0.08 per 1,000 runs; Luna got 14 (it called a private codebase general)
+ * at p50 2.3s and $0.12.
+ */
+const defaultModel = "anthropic/claude-haiku-5.5";
+const defaultReasoning: Reasoning = "none";
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
 
 const schema = z.object({
   generalGoal: z.string().nullable(),
@@ -60,7 +66,7 @@ export async function classifyGoalSpecificity({
   goal,
   language,
   model = defaultModel,
-  reasoning,
+  reasoning = defaultReasoning,
   useFallback = true,
 }: GoalSpecificityParams) {
   const userPrompt = [

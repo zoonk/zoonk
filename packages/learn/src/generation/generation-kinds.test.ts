@@ -40,24 +40,16 @@ describe(isGenerationDone, () => {
     expect(isDone("curriculum", { createPlan: "completed" })).toBe(true);
   });
 
-  it("ends placement once its questions are written and the plan exists", () => {
+  it("keeps placement's wait open while its questions are written, until the goal is ready", () => {
     expect(isDone("placement", { createPlan: "completed", preparePlacement: "started" })).toBe(
       false,
     );
 
-    expect(isDone("placement", { preparePlacement: "completed", saveSkills: "started" })).toBe(
-      false,
-    );
-
-    expect(isDone("placement", { createPlan: "completed", preparePlacement: "completed" })).toBe(
-      true,
-    );
-  });
-
-  it("ends placement for a plan that came with the goal once its first lessons start", () => {
     expect(
-      isDone("placement", { prepareFirstLessons: "started", preparePlacement: "completed" }),
-    ).toBe(true);
+      isDone("placement", { prepareFirstLessons: "started", preparePlacement: "started" }),
+    ).toBe(false);
+
+    expect(isDone("placement", { goalReady: "completed", preparePlacement: "started" })).toBe(true);
   });
 
   it("ends a wait when the run reports a step past it", () => {

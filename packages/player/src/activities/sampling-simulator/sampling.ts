@@ -1,6 +1,6 @@
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
+import { type NumericDomain } from "@zoonk/utils/plot-scale";
 import { binomialCount, seededRandom, standardNormal } from "@zoonk/utils/seeded-random";
-import { type NumericDomain } from "../_utils/plot-scale";
 import { clamp } from "../_utils/snap-value";
 
 export type Population = ActivityContentFor<"samplingSimulator">["fields"]["population"];

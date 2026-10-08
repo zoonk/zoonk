@@ -12,7 +12,7 @@ import {
   isIdeaFirst,
   isReadFirst,
 } from "../../mistakes/drill/drill-types";
-import { ItemLine, ItemText } from "../../questions/item-text";
+import { ItemLine, ItemSupport } from "../../questions/item-text";
 import {
   type StudyAnswerFeedback,
   type StudyBlockDetail,
@@ -69,6 +69,14 @@ export function useBlockDrill({ detail, index }: { detail: StudyBlockDetail; ind
 
 type BlockDrill = ReturnType<typeof useBlockDrill>;
 
+/**
+ * A gap's idea had its own screen; other drills say how they work above their first question, and
+ * a misread above each one, since each waits behind "Show the answers".
+ */
+function showsDrillIntro({ drill, first }: Pick<BlockDrill, "drill" | "first">): boolean {
+  return drill !== null && !isIdeaFirst(drill) && (first || isReadFirst(drill));
+}
+
 /** The drill's notes under the grade: time running out, an honest "not sure", the trap. */
 export function BlockDrillNotes({
   blockDrill,
@@ -96,12 +104,12 @@ function QuestionText({ question }: { question: StudyQuestion }) {
     <>
       <PlacementNote question={question} />
       <QuotedSource question={question} />
-      {question.context && (
-        <ItemText
-          className="text-muted-foreground text-sm leading-relaxed"
-          text={question.context}
-        />
-      )}
+      <ItemSupport
+        className="text-muted-foreground text-sm leading-relaxed"
+        context={question.context}
+        image={question.image}
+        visual={question.visual}
+      />
       {question.format !== "trueFalse" && (
         <h2 className="text-xl leading-snug font-semibold">
           <ItemLine text={question.question} />
@@ -112,7 +120,7 @@ function QuestionText({ question }: { question: StudyQuestion }) {
 }
 
 /**
- * The current question on paper, played the way its mistake's drill calls for: the idea first for
+ * The current question, played the way its mistake's drill calls for: the idea first for
  * a content gap, the question before its answers for a misread, a clock for a timed drill and "I'm
  * not sure" where guessing is the habit. Other questions play as they are.
  */
@@ -145,10 +153,7 @@ export function BlockQuestion({
 
   return (
     <>
-      {/* A gap's idea had its own screen; other drills say how they work above the question. */}
-      {drill && blockDrill.first && !isIdeaFirst(drill) && (
-        <DrillIntro drill={drill} lessonHref={lessonHref} />
-      )}
+      {showsDrillIntro(blockDrill) && drill && <DrillIntro drill={drill} lessonHref={lessonHref} />}
 
       {drill?.timeLimitSeconds && phase.kind === "answering" && (
         <DrillCountdown
@@ -160,18 +165,18 @@ export function BlockQuestion({
 
       <section
         aria-label={question.question}
-        className="in-data-[mode=fun]:fun-paper flex flex-col gap-4 rounded-3xl in-data-[mode=fun]:p-5"
+        className="flex flex-col gap-4 rounded-3xl"
         key={question.itemId}
       >
         {stage === "reading" ? (
           <>
             <QuotedSource question={question} />
-            {question.context && (
-              <ItemText
-                className="text-muted-foreground text-sm leading-relaxed"
-                text={question.context}
-              />
-            )}
+            <ItemSupport
+              className="text-muted-foreground text-sm leading-relaxed"
+              context={question.context}
+              image={question.image}
+              visual={question.visual}
+            />
             <h2 className="text-xl leading-snug font-semibold">
               <ItemLine text={question.question} />
             </h2>

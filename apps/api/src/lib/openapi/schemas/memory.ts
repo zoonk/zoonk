@@ -1,7 +1,7 @@
 import { memoryCategorySchema, memorySourceSchema } from "@zoonk/core/memory/contract";
+import { planEffectSchema } from "@zoonk/core/plans/change-contract";
 import { MemoryFactStatus, MemoryInsightKind, MemoryInsightStatus, MemoryOrigin } from "@zoonk/db";
 import { z } from "zod";
-import { planEffectSchema } from "./plans";
 
 const memoryFactSchema = z
   .object({
@@ -37,13 +37,22 @@ export const memoryResponseSchema = z
     categories: z
       .array(memoryCategorySchema)
       .meta({ description: "The categories this learner's memory may hold, in display order" }),
-    enabled: z.boolean().meta({ description: "Whether memory is on" }),
+    enabled: z
+      .boolean()
+      .meta({ description: "Whether memory is on; off until a learner under 18 turns it on" }),
     facts: z.array(memoryFactSchema).meta({ description: "Active facts, newest first" }),
+    offByGuardian: z
+      .boolean()
+      .meta({ description: "A guardian turned memory off, so the learner can't turn it on" }),
   })
   .meta({ id: "Memory" });
 
 export const memorySettingsResponseSchema = z
-  .object({ enabled: z.boolean() })
+  .object({
+    enabled: z
+      .boolean()
+      .meta({ description: "Whether memory is on now; stays off while a guardian keeps it off" }),
+  })
   .meta({ id: "MemorySettings" });
 
 export const memoryFactResponseSchema = z

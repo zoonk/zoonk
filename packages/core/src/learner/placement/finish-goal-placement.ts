@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
-import { loadGoalPlan } from "../_utils/goal-skill-graph";
+import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { applyPlacement } from "./_utils/apply-placement";
 import { type PlacementCompletionInput } from "./placement-contract";
@@ -67,7 +67,7 @@ export async function finishGoalPlacement({
     return owned;
   }
 
-  const plan = await loadGoalPlan(goalId);
+  const plan = await loadPlacementPlan(goalId);
 
   if (input.fromScratch) {
     const [firstLessonId] = await Promise.all([

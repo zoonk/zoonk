@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -204,7 +205,12 @@ describe("questions about a Library lesson", () => {
 
   it("claims the answer from the tutor allowance and reads the learner's memory", async () => {
     const { lesson, user } = await setupPlayableLesson();
-    await memoryFactFixture({ statement: "Studies chemistry for a nursing exam", userId: user.id });
+
+    // An adult: memory is on for them until they turn it off, and off for minors until they turn it on.
+    await Promise.all([
+      learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: user.id }),
+      memoryFactFixture({ statement: "Studies chemistry for a nursing exam", userId: user.id }),
+    ]);
 
     const question = await ask({ context: { kind: "lesson" }, lessonId: lesson.id });
 
@@ -214,7 +220,11 @@ describe("questions about a Library lesson", () => {
     });
 
     expect(claimed).toMatchObject({
-      claim: { learnerMemory: ["Studies chemistry for a nursing exam"], questionId: question.id },
+      claim: {
+        analytics: { distinctId: user.id },
+        learnerMemory: ["Studies chemistry for a nursing exam"],
+        questionId: question.id,
+      },
       status: "ready",
     });
 

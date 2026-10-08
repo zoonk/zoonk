@@ -12,7 +12,6 @@ import {
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
-import { type Mode } from "./learn-personas";
 
 export const DAYS_TO_TEST = 3;
 const LESSONS_PER_SKILL = 3;
@@ -33,7 +32,7 @@ export function dayFromToday(offset: number): Date {
   return new Date(toUTCMidnight(new Date()).getTime() + offset * MS_PER_DAY);
 }
 
-async function createTopic({ name, weight }: { name: string; weight: number }) {
+async function createTopic({ area, name, weight }: { area: string; name: string; weight: number }) {
   const [chapter, skill] = await Promise.all([
     libraryChapterFixture({ title: name }),
     skillFixture({ name: `${name} ${randomUUID()}` }),
@@ -60,7 +59,7 @@ async function createTopic({ name, weight }: { name: string; weight: number }) {
   ]);
 
   return {
-    area: "Biochemistry",
+    area,
     lessons: LESSONS_PER_SKILL,
     name: skill.name,
     phase: 0,
@@ -69,28 +68,63 @@ async function createTopic({ name, weight }: { name: string; weight: number }) {
   };
 }
 
+/** Slides that list only their headings: each one a subject of the test, with no topics under it. */
+function toHeadingsStructure() {
+  const citation = { passage: "", sourceId: "slides" };
+
+  return {
+    ...CLASS_TEST_STRUCTURE,
+    subjects: TOPICS.map(({ name }) => ({
+      citation,
+      name,
+      questions: null,
+      topics: [],
+      weight: null,
+    })),
+  };
+}
+
 /**
  * Bia's biochemistry test days away (three by default), read from her slides (a private blueprint), with the
  * skill graph the goal-driven workflow writes. Placement settled glycolysis, so the plan starts
  * with what she doesn't know yet. The plan itself is built by the real planner the first time
- * Today opens. She has Plus, so the short mock is part of her plan.
+ * Today opens. She has Plus, so the short mock is part of her plan, unless `plus` is false. With
+ * `headings`, her slides list the test's headings (one subject each, no topics), and her plan's
+ * areas follow them. `startedDaysAgo` starts the plan that many days ago, so today is a later
+ * day of it. `details` adds to what onboarding stored on the goal.
  */
-export async function createClassTestDays(mode: Mode, { days = DAYS_TO_TEST } = {}) {
-  const user = await createE2EUser(getBaseURL(), { withSubscription: true });
+export async function createClassTestDays({
+  days = DAYS_TO_TEST,
+  details = {},
+  headings = false,
+  plus = true,
+  startedDaysAgo = 0,
+}: {
+  days?: number;
+  details?: Record<string, unknown>;
+  headings?: boolean;
+  plus?: boolean;
+  startedDaysAgo?: number;
+} = {}) {
+  const user = await createE2EUser(getBaseURL(), { withSubscription: plus });
 
   const [blueprint, skills] = await Promise.all([
     examBlueprintFixture({
       name: "Biochemistry test",
       ownerId: user.id,
-      structure: CLASS_TEST_STRUCTURE,
+      structure: headings ? toHeadingsStructure() : CLASS_TEST_STRUCTURE,
       visibility: "private",
     }),
-    Promise.all(TOPICS.map((topic) => createTopic(topic))),
+    Promise.all(
+      TOPICS.map((topic) =>
+        createTopic({ ...topic, area: headings ? topic.name : "Biochemistry" }),
+      ),
+    ),
   ]);
 
   const goal = await goalFixture({
     dailyMinutes: 30,
-    details: { placementDeclined: true },
+    details: { placementDeclined: true, ...details },
     examBlueprintId: blueprint.id,
     kind: "exam",
     targetDate: dayFromToday(days),
@@ -103,6 +137,9 @@ export async function createClassTestDays(mode: Mode, { days = DAYS_TO_TEST } = 
     goalId: goal.id,
     graph: { phases: [{ milestone: null, name: "Biochemistry" }], skills },
     phases: [],
+    ...(startedDaysAgo > 0 && {
+      settings: { startDate: dayFromToday(-startedDaysAgo).toISOString().slice(0, 10) },
+    }),
   });
 
   const settled = skills[1];
@@ -117,13 +154,8 @@ export async function createClassTestDays(mode: Mode, { days = DAYS_TO_TEST } = 
       status: "testedOut",
       titleSnapshot: "Biochemistry",
     }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
-  return { user };
+  return { goal, user };
 }

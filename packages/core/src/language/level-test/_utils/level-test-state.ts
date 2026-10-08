@@ -40,7 +40,7 @@ export function getTestStart(goal: Pick<Goal, "details">): number {
 
 function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
   const parsed = levelTestProgressSchema.safeParse(readGoalDetails(goal).levelTest);
-  return parsed.success ? parsed.data : { answers: [], speaking: null };
+  return parsed.success ? parsed.data : { answers: [], counted: 0, speaking: null };
 }
 
 /** Keeps the test's answers on the goal, next to what onboarding already stored. */

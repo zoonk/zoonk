@@ -115,7 +115,6 @@ describe(getStrugglePauseMs, () => {
       ...explanationStep("long"),
       content: { text: words, title: "Long" },
       kind: "explanation",
-      variants: { deeper: null, simpler: null },
     };
 
     expect(getStrugglePauseMs(explanationStep("short"))).toBe(45_000);

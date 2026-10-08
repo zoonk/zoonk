@@ -104,6 +104,6 @@ describe(generateLevelTestBank, () => {
     );
 
     expect(total.inputTokens).toBe(5000);
-    expect(provenance).toMatchObject({ costUsd: expect.closeTo(0.25), model: MODEL });
+    expect(provenance).toMatchObject({ gatewayCostUsd: expect.closeTo(0.25), model: MODEL });
   });
 });

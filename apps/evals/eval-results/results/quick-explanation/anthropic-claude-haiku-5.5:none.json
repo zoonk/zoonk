@@ -1,0 +1,349 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5:none",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The compound-interest mechanism and numerical calculations are correct to the stated approximation. No specific investment is recommended. However, screen 5's unqualified statement about Tesouro Direto turns a simplification into a false generalization: returns depend on the bond, coupon treatment, and whether it is sold before maturity. The false-simplification cap of 6 applies.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, and the opening uses a concrete money situation rather than merely announcing the topic. However, screen 4 teaches both accelerating investment growth and debt accumulation, while screen 5 repeats that contrast and introduces additional guidance. The multiple-ideas and repetition cap of 7 applies.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The explanation is mostly accessible Brazilian Portuguese and contains no formulas or equations. Nevertheless, 'cheque especial' and 'Tesouro Direto' are introduced without explaining what they are, and 'juros simples' is named before its plain-language explanation. The cap of 7 for multiple terms introduced before explanation applies.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The running R$ 1.000,00 example makes interest on accumulated interest concrete, and most screens include amounts or everyday financial situations. Poupança, cartão de crédito, and cheque especial provide Brazilian context, with appropriate currency formatting throughout.",
+          "score": 9,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check transfers the investment explanation to a new borrowing situation. Exactly one option correctly uses R$ 550,00 as the second-month base. The alternatives have comparable length and tone, and each feedback explains the relevant reasoning.",
+          "score": 10,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral, and directly recognizable. The recap contains three short bullets following the explanation's progression from mechanism to time effects to debt management. Educação Financeira is a suitable broad beginner course, and the three follow-up questions are natural extensions.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2457,
+          "outputTokens": 1542,
+          "reasoningTokens": 776
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Screen 5 overgeneralizes by saying compound interest makes poupança and Tesouro Direto earn more over time. Tesouro Direto is not a single product with uniformly increasing returns: some bonds pay periodic coupons, and selling before maturity can produce losses. This needs qualification rather than presenting compounding as an automatic explanation for all these products.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Screen 4 combines long-term investment growth with a new application to debt, and screen 5 repeats that contrast while adding financial guidance. This weakens the one-idea-per-screen progression. Terms such as 'cheque especial' and 'Tesouro Direto' also appear without beginner-friendly explanations.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use the final screen exclusively for a concrete Brazilian debt example, instead of repeating the investment-versus-debt summary. State that the numerical investment example assumes an unchanged rate and that the interest stays invested.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese of compound interest (juros sobre juros), so growth speeds up over time. Examples MUST be Brazilian: amounts in reais written the Brazilian way (R$ 1.000,00 or R$ 1.000), everyday Brazilian situations such as a poupança, the cartão de crédito rotativo or parcelamento; penalize dollars, US products (401(k), Venmo) or US-style number formats. No formula; must not recommend a specific investment.",
+        "id": "pt-juros-compostos-contexto-local-1",
+        "userInput": { "language": "pt", "question": "como funcionam os juros compostos?" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The basic account of federal withholding, the W-4, state taxes, and typical employee FICA rates is substantially correct, and the result avoids personal tax advice. However, it omits the explicitly required refund-or-bill reconciliation and loosely characterizes Social Security and Medicare taxes as funding future benefits rather than primarily current benefits. The meal analogy is also directionally misleading.",
+          "score": 7,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Five short screens form a readable progression from the familiar surprise of a smaller paycheck to taxes, benefits, and reading a stub. Each has a recognizable central idea. The annual-salary opening would be clearer if it explicitly distinguished annual earnings from earnings for one pay period, and the required tax-time settlement explanation is absent.",
+          "score": 8,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most wording is accessible and there are no unrequested equations. However, multiple terms appear before their plain-language explanations, including FICA and premium; 401(k) is only loosely contextualized. This triggers the maximum score of 7 for two or more unexplained-first terms.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "The pay-stub screen provides a concrete real-life use, and employer insurance and retirement deductions are recognizable situations. However, the meal comparison reverses the direction of the adjustment, triggering the misleading-comparison cap of 7. The dollar amounts are not developed into a worked paycheck example.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "There is one check with individual explanatory feedback, but its scenario does not establish one clearly correct answer. The significance of a $1,500 shortfall depends heavily on pay frequency and the expected amount; the feedback dismisses payroll error without enough evidence. The question mostly asks readers to recognize the explanation just taught rather than meaningfully apply it.",
+          "score": 6,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is neutral and recognizable. The recap has three short bullets that follow the story's order, and Personal Finance is an appropriate beginner course with three natural follow-up questions. These ending elements satisfy the category without a concrete weakness.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2338,
+          "outputTokens": 1336,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required explanation of tax-time reconciliation is missing: federal income tax withholding is a payment toward the year's tax, and the return determines whether a refund or additional payment is due. The check also lacks enough information for a clearly correct answer. A $1,500 shortfall on a $48,000 salary cannot confidently be attributed to ordinary deductions without knowing the pay period and what Maya expected.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The meal-price comparison is misleading because adding tax and a tip increases a bill, whereas paycheck deductions decrease take-home pay. Several terms, including FICA, premium, and 401(k), appear without a plain-language explanation first. Describing payroll taxes as funding future benefits also risks suggesting personal savings rather than taxes that primarily finance current benefits.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a realistic dollar example that distinguishes annual salary from one pay period's gross pay, then shows illustrative deductions and the resulting take-home amount in words. This would make the salary figures useful rather than merely contextual. Keep the strong pay-stub ending and concise recap.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in US English of how taxes come out of a paycheck: federal income tax withheld based on the W-4, Social Security and Medicare (FICA), and state income tax in most states; the refund or bill at tax time settles the difference. Examples in dollars with US situations. Must not give personal tax advice; suggesting a tax professional for a specific case is fine.",
+        "id": "en-paycheck-taxes-local-1",
+        "userInput": { "language": "en", "question": "why is my paycheck smaller than my salary?" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The answer correctly stays mainly in the United States, gives the common 300–850 range, and identifies several genuine scoring factors without offering personal financial advice. However, the unconditional statement that a bank charges more or refuses someone with a low score, together with the recap's promise of reduced interest, makes probabilistic outcomes sound certain. Approval and pricing also depend on the lender, product, income, and other information. These false simplifications trigger the maximum score of 6. FICO and the three bureaus are also missing.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are four short screens, and the opening uses the familiar situation of applying for a card or loan. The sequence is easy to follow. However, screen 3 introduces four distinct scoring mechanisms at once rather than developing one idea, triggering the cap of 7. The ending explains consequences but leaves the expected reporting-bureau mechanism unanswered.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "The Brazilian Portuguese is accessible and conversational, with familiar references to card bills, limits, banks, and apartment rentals. There are no formulas or unexplained clusters of technical terminology. The requested term 'credit score' is immediately explained in ordinary language.",
+          "score": 9,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "Card applications, bills, borrowing costs, and apartment rentals give most screens concrete everyday anchors. However, the claim that nobody sees the whole test, only the grade, is a misleading comparison: lenders commonly review credit-report information as well as scores. This triggers the cap of 7 for misleading comparisons. A worked dollar example would also make the card-limit factor more useful.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single check applies two factors to a new situation rather than asking for simple recall, and each option has explanatory feedback. The intended answer is clearly preferable to the distractors. However, high utilization generally lowers a score relative to otherwise comparable low utilization; it does not establish that an existing score will fall without a change or baseline. Specifying that the reported balance recently increased would make the correct option unambiguous.",
+          "score": 8,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is neutral and recognizable, and the recap has three short bullets broadly following the teaching order. The broad personal-economics course is sensible. However, two follow-up questions turn toward Brazil and Serasa rather than naturally extending the US question. The recap also narrows the score to payment history and overstates the certainty of lower interest rates.",
+          "score": 7,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2208,
+          "outputTokens": 1218,
+          "reasoningTokens": 300
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation omits FICO and all three credit bureaus—Equifax, Experian, and TransUnion—leaving important expected parts of the US system unexplained. It also turns tendencies into guarantees: a low score does not invariably mean rejection or higher rates, and a high score does not automatically reduce interest charges. The school-grade comparison misleadingly suggests lenders see only the score rather than also being able to review the credit report.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Screen 3 compresses payment history, credit utilization, history length, and new applications into one short screen without explaining why low utilization helps. Two follow-up questions shift toward Brazil instead of extending the US explanation. The check's answer predicts a decline despite providing no earlier utilization level or score for comparison.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use the available fifth and sixth screens to explain who maintains credit reports and to separate timely payments from card-limit usage. A dollar example, such as a $100 reported balance on a $1,000 limit, would make utilization tangible. Keep follow-up questions focused on US credit reports, score differences, and borrowing decisions.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Explanation in Brazilian Portuguese of how the US credit score works: the question sets the place, so it stays in the United States (a FICO score from about 300 to 850, the three credit bureaus, paying on time and using little of the card's limit), with amounts in dollars. Penalize swapping it for Brazil's Serasa score as if it were the same system; a one-line comparison is fine. No personal financial advice.",
+        "id": "pt-credit-score-eua-lugar-da-pergunta-1",
+        "userInput": {
+          "language": "pt",
+          "question": "Como funciona o credit score nos Estados Unidos?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The explicit inside-out cooking claim is false and directly violates the task expectations, triggering the maximum score of 6 for a false simplification. The magnetic analogy and unqualified water-targeting language further weaken the otherwise useful account of molecular motion.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 25
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "There are five short screens, a familiar leftovers hook, and a mostly progressive explanation. However, the last screen introduces both selective heating of food versus dishes and uneven heating of frozen food. This triggers the maximum score of 7 for multiple new ideas on one screen.",
+          "score": 7,
+          "label": "Clarity & one idea per screen",
+          "weight": 20
+        },
+        {
+          "categoryId": "everydayWords",
+          "reasoning": "Most wording is accessible, but 'electromagnetic energy' and 'frequency' appear before either receives a plain-language explanation. That triggers the maximum score of 7 for two unexplained technical terms. There are no unrequested formulas.",
+          "score": 7,
+          "label": "Everyday words, no formulas unless asked",
+          "weight": 20
+        },
+        {
+          "categoryId": "practicalExample",
+          "reasoning": "Leftover pasta, a ceramic plate, and a frozen burrito provide recognizable examples. However, describing electrically polarized water molecules as tiny magnets, reinforced by the image prompt, is a misleading comparison. The plate explanation also needs qualification because ceramic composition and heat transferred from food affect its temperature. The misleading-comparison cap of 7 applies.",
+          "score": 7,
+          "label": "Practical example",
+          "weight": 15
+        },
+        {
+          "categoryId": "check",
+          "reasoning": "The single dry-rice question applies the central water-heating idea to a new situation, has one clearly intended correct answer, and explains every option. Its correct answer is substantially longer than either distractor, and the claim that microwaves only heat metal makes one distractor implausibly easy.",
+          "score": 8,
+          "label": "The check",
+          "weight": 10
+        },
+        {
+          "categoryId": "ending",
+          "reasoning": "The title is short, neutral, and recognizable. The recap supplies three short points in the order taught. Physics is a sensible broad beginner course, and the three follow-up questions naturally extend the subject.",
+          "score": 10,
+          "label": "Recap, go further and title",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2152,
+          "outputTokens": 1155,
+          "reasoningTokens": 378
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The explanation explicitly says food warms 'from the inside out,' the exact myth the expectations prohibit. Microwave energy penetrates only a limited distance, and conduction helps heat deeper regions. The water-molecule-as-magnet comparison also risks teaching a magnetic mechanism rather than alignment with an electric field. Statements that microwaves 'target water' overstate their selectivity: other food components can absorb microwave energy too.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The final screen combines two distinct lessons: why dishes heat differently from food and why frozen food heats unevenly. 'Electromagnetic energy' and 'frequency' appear without plain-language explanations. The check's correct option is noticeably longer than the distractors, and the metal-only distractor is too easy to dismiss.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Replace the technical introductory screen with a simple account of invisible waves making water molecules turn and jiggle. Use separate screens for a water-versus-empty-plate comparison and uneven heating, qualifying that some dishes absorb microwave energy and dishes also warm through contact with food. Make the check options similar in length and plausibility.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Microwaves make water molecules in food jiggle, and that motion is heat. Penalize the common myth that microwaves cook \"from the inside out\" and any claim that they make food radioactive. A good practical example: why a cup of water heats but an empty plate barely warms, or why food heats unevenly.",
+        "id": "en-microwave-1",
+        "userInput": { "language": "en", "question": "How does a microwave heat food?" }
+      }
+    }
+  ],
+  "taskId": "quick-explanation"
+}

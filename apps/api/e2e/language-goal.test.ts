@@ -13,8 +13,12 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
-const FREE_DAILY_CONVERSATIONS = 3;
-const ELEVEN_MINUTES_MS = 660_000;
+/** A call from yesterday, in seconds. */
+const OLD_CALL_SECONDS = 120;
+
+/** The free plan's call time a day, in seconds. */
+const FREE_CALL_SECONDS = 120;
+const DAY_MS = 86_400_000;
 
 /** A level test bank for Portuguese speakers learning English, so no model writes one here. */
 async function ensureLevelTestBank() {
@@ -105,16 +109,18 @@ test.describe("Language goal API", () => {
     expect(progress.status()).toBe(200);
 
     expect(await progress.json()).toMatchObject({
-      currentUnit: { position: 1, units: 2 },
       goal: { id: goal.id, targetLanguage: "en" },
+      level: "A2",
       levels: [{ label: "A2", skill: "reading", trend: "same" }, {}, {}, {}],
-      recent: { conversations: 0 },
       speakingMock: null,
       target: { label: "B1+" },
-      wordsKnown: 0,
     });
 
-    expect(await today.json()).toMatchObject({ newCanDo: null, pattern: null });
+    expect(await today.json()).toStrictEqual({
+      level: { label: "A2", target: "B1+" },
+      pattern: null,
+      pronunciation: null,
+    });
 
     expect(await unit.json()).toMatchObject({
       conversation: { character: { name: "Linda" } },
@@ -321,7 +327,7 @@ test.describe("Language goal API", () => {
     await Promise.all([apiContext.dispose(), stranger.dispose()]);
   });
 
-  test("won't reopen an old call and stops at the free plan's daily calls", async () => {
+  test("won't reopen a call from an earlier day and stops at the free plan's daily call time", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "language-call-limit",
@@ -342,8 +348,9 @@ test.describe("Language goal API", () => {
 
     await prisma.usageRecord.create({
       data: {
-        createdAt: new Date(Date.now() - ELEVEN_MINUTES_MS),
+        createdAt: new Date(Date.now() - DAY_MS),
         kind: "conversation",
+        seconds: OLD_CALL_SECONDS,
         targetId: oldCall,
         userId: user.id,
       },
@@ -354,11 +361,16 @@ test.describe("Language goal API", () => {
     expect(reopened.status()).toBe(409);
     await expect(reopened.json()).resolves.toMatchObject({ error: { code: "CONVERSATION_ENDED" } });
 
-    await usageRecordsFixture({
-      count: FREE_DAILY_CONVERSATIONS,
-      kind: "conversation",
-      userId: user.id,
-    });
+    // Half a minute of today's two is used: a new two-minute call runs the minute and a half left,
+    // and says it ends at the day's limit.
+    await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
+
+    const shortened = await apiContext.post(
+      `/v1/language-conversations/${await start()}/connections`,
+    );
+
+    expect(shortened.status()).toBe(201);
+    await expect(shortened.json()).resolves.toMatchObject({ endsAtLimit: "day", seconds: 90 });
 
     const limited = await apiContext.post(
       `/v1/language-conversations/${await start()}/connections`,
@@ -367,7 +379,26 @@ test.describe("Language goal API", () => {
     expect(limited.status()).toBe(429);
 
     await expect(limited.json()).resolves.toMatchObject({
-      error: { code: "CONVERSATION_LIMIT_REACHED", details: { limit: FREE_DAILY_CONVERSATIONS } },
+      error: {
+        code: "CONVERSATION_LIMIT_REACHED",
+        details: { limit: FREE_CALL_SECONDS, period: "day", resource: "callSeconds" },
+        message: "No more call time on your plan today",
+      },
+    });
+
+    const allowance = await apiContext.get("/v1/me/allowance");
+
+    await expect(allowance.json()).resolves.toMatchObject({
+      callTime: {
+        limitSeconds: FREE_CALL_SECONDS,
+        usedSeconds: FREE_CALL_SECONDS,
+        // Yesterday's call counts in this month's time too, unless today is the 1st (UTC).
+        usedSecondsThisMonth:
+          FREE_CALL_SECONDS +
+          (new Date(Date.now() - DAY_MS).getUTCMonth() === new Date().getUTCMonth()
+            ? OLD_CALL_SECONDS
+            : 0),
+      },
     });
 
     await apiContext.dispose();
@@ -411,11 +442,10 @@ test.describe("Language goal API", () => {
     expect(finished.status()).toBe(200);
     const finishedBody = await finished.json();
 
-    // No sentence was said out loud, so speaking gets no level.
+    // No sentence was said out loud, so speaking gets no level; nothing written was asked either.
     expect(finishedBody.levels.map((level: { skill: string }) => level.skill)).toStrictEqual([
       "reading",
       "listening",
-      "writing",
     ]);
 
     await apiContext.dispose();

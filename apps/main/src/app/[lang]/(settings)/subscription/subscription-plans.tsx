@@ -54,7 +54,7 @@ export async function SubscriptionPlans({
   });
 
   return (
-    <PlusPricingPage className="sm:max-w-150" goalTitle={goal?.title}>
+    <PlusPricingPage goalTitle={goal?.title} render={<div />} variant="settings">
       <PlusPricing
         monthlyPrice={prices.monthlyPrice}
         viewerState={viewerState}

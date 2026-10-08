@@ -1,21 +1,19 @@
 import "server-only";
-import { type Goal, type MasteryState, prisma } from "@zoonk/db";
+import { type Goal, type MasteryState } from "@zoonk/db";
 import { getCurrentUserReviewSchedule } from "../../learner/get-current-user-review-schedule";
 import { listCurrentUserSkills } from "../../learner/list-current-user-skills";
 import { type SkillStateCounts } from "../../learner/mastery-state";
-import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { groupSkillsBySection } from "../_utils/group-skills";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 
-/** The latest summary cards; older ones stay in the lessons themselves. */
-const MAX_SUMMARIES = 30;
-
 /**
- * A skill as a study card: the idea on the front, an example on the back, and its memory. Gold is
- * the Mastered state (remembered on three different days); a fading card dims until it's reviewed.
+ * A skill as a study card: the idea on the front, an example on the back, and its memory. Mastered
+ * means remembered on three different days; a fading skill is due back soon, and `dueToday` puts it
+ * in today's reviews.
  */
 type ContentCard = {
   description: string | null;
+  dueToday: boolean;
   example: string | null;
   fading: boolean;
   name: string;
@@ -26,8 +24,8 @@ type ContentCard = {
 };
 
 /**
- * One chapter (or plan phase) of cards. `section` is the course or exam subject above it, so both
- * modes can show areas, then chapters; groups of one section always come together.
+ * One chapter (or plan phase) of cards. `section` is the course or exam subject above it, so the
+ * apps can show areas, then chapters; groups of one section always come together.
  */
 type ContentGroup = {
   areaId: string;
@@ -37,73 +35,21 @@ type ContentGroup = {
   title: string;
 };
 
-/** Every finished lesson leaves its summary card: each idea in one sentence. */
-type ContentSummary = { finishedAt: string; ideas: string[]; lessonId: string; title: string };
-
 /**
  * Content for one goal: every skill as a card grouped by section (the course or exam subject) and
- * area (chapters, in plan order) with counts for the filters, the saved summary cards, and today's reviews. Focus lists the same skills with
- * their states; Fun shows them as Cards, revealed after the first review.
+ * area (chapters, in plan order) with its state counts, and today's reviews. Lesson summaries live
+ * on each chapter's page.
  */
 export type ContentView = {
   capsules: { dueToday: number };
   counts: SkillStateCounts;
   goal: Pick<Goal, "id" | "kind" | "title">;
   groups: ContentGroup[];
-  reveal: { cards: boolean };
-  summaries: ContentSummary[];
-  summaryCount: number;
 };
 
 export type ContentViewResult =
   | { content: ContentView; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
-
-async function loadSummaries(goalId: string) {
-  const where = { lessonId: { not: null }, plan: { goalId }, status: "done" as const };
-
-  const [items, count] = await Promise.all([
-    prisma.planItem.findMany({
-      orderBy: [{ completedAt: "desc" }, { position: "desc" }],
-      select: {
-        completedAt: true,
-        lesson: { select: { id: true, summary: true, title: true } },
-        titleSnapshot: true,
-        updatedAt: true,
-      },
-      take: MAX_SUMMARIES,
-      where,
-    }),
-    prisma.planItem.count({ where }),
-  ]);
-
-  const summaries = items.flatMap(({ completedAt, lesson, titleSnapshot, updatedAt }) => {
-    const ideas = lesson ? toSummaryIdeas(lesson.summary) : [];
-
-    return lesson && ideas.length > 0
-      ? [
-          {
-            finishedAt: (completedAt ?? updatedAt).toISOString(),
-            ideas,
-            lessonId: lesson.id,
-            title: lesson.title || titleSnapshot,
-          },
-        ]
-      : [];
-  });
-
-  return { count, summaries };
-}
-
-/** Cards show up in Fun once the learner has opened their first capsules. */
-async function hasReviewed(userId: string) {
-  const review = await prisma.learningEvent.findFirst({
-    select: { id: true },
-    where: { endedAt: { not: null }, kind: "review", userId },
-  });
-
-  return review !== null;
-}
 
 /** Content for a goal (the active goal by default). */
 export async function getContentView(input: { goalId?: string } = {}): Promise<ContentViewResult> {
@@ -117,20 +63,22 @@ export async function getContentView(input: { goalId?: string } = {}): Promise<C
 
   const { goal } = resolved;
 
-  const [skills, schedule, summaries, reviewed] = await Promise.all([
+  const [skills, schedule] = await Promise.all([
     listCurrentUserSkills({ goalId: goal.id }),
     getCurrentUserReviewSchedule({ goalId: goal.id }),
-    loadSummaries(goal.id),
-    hasReviewed(goal.userId),
   ]);
 
   if (skills.status !== "ready") {
     return { status: "notFound" };
   }
 
+  const dueToday = new Set(
+    schedule.status === "ready" ? schedule.schedule.dueToday.map((review) => review.skillId) : [],
+  );
+
   return {
     content: {
-      capsules: { dueToday: schedule.status === "ready" ? schedule.schedule.dueToday.length : 0 },
+      capsules: { dueToday: dueToday.size },
       counts: skills.counts,
       goal: { id: goal.id, kind: goal.kind, title: goal.title },
       groups: groupSkillsBySection(skills.skills).map(
@@ -138,6 +86,7 @@ export async function getContentView(input: { goalId?: string } = {}): Promise<C
           areaId,
           cards: cards.map((card) => ({
             description: card.description,
+            dueToday: dueToday.has(card.skillId),
             example: card.example,
             fading: card.fading,
             name: card.name,
@@ -151,9 +100,6 @@ export async function getContentView(input: { goalId?: string } = {}): Promise<C
           title,
         }),
       ),
-      reveal: { cards: reviewed },
-      summaries: summaries.summaries,
-      summaryCount: summaries.count,
     },
     status: "ready",
   };

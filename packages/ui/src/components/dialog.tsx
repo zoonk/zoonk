@@ -68,12 +68,16 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   );
 }
 
+/**
+ * A dialog has a close button when it gets the caller's translated `closeLabel` (this package has
+ * no translations of its own).
+ */
 function DialogContent({
   className,
   children,
-  showCloseButton = true,
+  closeLabel,
   ...props
-}: DialogPrimitive.Popup.Props & { showCloseButton?: boolean }) {
+}: DialogPrimitive.Popup.Props & { closeLabel?: string }) {
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -86,13 +90,13 @@ function DialogContent({
         {...props}
       >
         <PopupShortcutLayer value>{children}</PopupShortcutLayer>
-        {showCloseButton && (
+        {closeLabel && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
             render={<Button className="absolute top-4 right-4" size="icon-sm" variant="ghost" />}
           >
             <XIcon />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{closeLabel}</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
@@ -125,10 +129,13 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 function DialogFooter({
   className,
-  showCloseButton = false,
+  closeLabel,
   children,
   ...props
-}: React.ComponentProps<"div"> & { showCloseButton?: boolean }) {
+}: React.ComponentProps<"div"> & {
+  /** A "Close" button at the end, with the caller's translated label. */
+  closeLabel?: string;
+}) {
   return (
     <div
       className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
@@ -136,8 +143,10 @@ function DialogFooter({
       {...props}
     >
       {children}
-      {showCloseButton && (
-        <DialogPrimitive.Close render={<Button variant="outline" />}>Close</DialogPrimitive.Close>
+      {closeLabel && (
+        <DialogPrimitive.Close render={<Button variant="outline" />}>
+          {closeLabel}
+        </DialogPrimitive.Close>
       )}
     </div>
   );

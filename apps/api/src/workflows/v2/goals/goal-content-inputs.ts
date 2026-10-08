@@ -63,6 +63,22 @@ function waitForAnswers(goalId: string): Promise<GoalCurriculumInputs | null> {
 }
 
 /**
+ * Only an exam's plan is built before research reads what it found (see `waitForGraphInputs`):
+ * a goal built from the learner's material waits for research first, and a learn goal's coverage
+ * check waits for its references. Such a plan waits for research's reading of the notice from the
+ * moment it's saved (see `startNoticeWait`).
+ */
+export function isBuiltBeforeResearch({
+  inputs,
+  researchId,
+}: {
+  inputs: GoalCurriculumInputs;
+  researchId?: string | null;
+}): boolean {
+  return Boolean(researchId) && inputs.goal.kind === "exam" && !inputs.hasMaterial;
+}
+
+/**
  * The goal as research left it: read once research ends, or once the goal's kind stops waiting
  * for it, with what research linked (an exam's blueprint, references, the learner's material).
  */
@@ -86,8 +102,11 @@ export async function loadResearchedInputs({
   return loadGoalCurriculumStep(inputs.goal.id);
 }
 
-/** Waits for research to read the learner's material, saying so for a class test. */
-async function waitForMaterial({
+/**
+ * Waits for research to read the learner's material, or the exam's notice again, saying so for an
+ * exam.
+ */
+async function waitForReading({
   inputs,
   researchId,
 }: {
@@ -96,15 +115,17 @@ async function waitForMaterial({
 }): Promise<GoalCurriculumInputs | null> {
   const entityId = inputs.goal.id;
   const isExam = inputs.goal.kind === "exam";
+  // The learner's own material, or the exam's notice read again: the wait says which.
+  const step = inputs.hasMaterial ? "readExamNotice" : "readNotice";
 
   if (isExam) {
-    await goalProgressStep({ entityId, status: "started", step: "readExamNotice" });
+    await goalProgressStep({ entityId, status: "started", step });
   }
 
   const researched = await loadResearchedInputs({ inputs, researchId });
 
   if (isExam) {
-    await goalProgressStep({ entityId, status: "completed", step: "readExamNotice" });
+    await goalProgressStep({ entityId, status: "completed", step });
   }
 
   return researched;
@@ -118,8 +139,11 @@ async function waitForMaterial({
  * created with (a class test from the teacher's slides, not the exam of the same name). An exam's
  * graph doesn't wait for research: it's written from the blueprint the goal has, or from the exam
  * as onboarding understood it (its name, year and what the learner said), and the plan is
- * reconciled with a new notice once research reads it (`reconcileResearch`). A goal whose plan
- * exists waits for nothing, since nothing is built for it.
+ * reconciled with a new notice once research reads it (`reconcileResearch`). The exception is a
+ * notice research reads again because older instructions read it (`readsNoticeAgain`): its
+ * topics come back worded and numbered as the notice has them, so the graph waits for that
+ * reading instead of being matched against it topic by topic. A goal whose plan exists waits for
+ * nothing, since nothing is built for it.
  */
 export async function waitForGraphInputs({
   initial,
@@ -130,11 +154,15 @@ export async function waitForGraphInputs({
 }): Promise<GoalCurriculumInputs | null> {
   const inputs = initial.awaitingAnswers ? await waitForAnswers(initial.goal.id) : initial;
 
-  if (!inputs || !researchId || !inputs.hasMaterial || inputs.hasPlanGraph) {
+  if (!inputs || !researchId || inputs.hasPlanGraph) {
     return inputs;
   }
 
-  return waitForMaterial({ inputs, researchId });
+  if (!inputs.hasMaterial && !inputs.readsNoticeAgain) {
+    return inputs;
+  }
+
+  return waitForReading({ inputs, researchId });
 }
 
 /**

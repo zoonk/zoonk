@@ -12,11 +12,13 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
-import { type Mode } from "./learn-personas";
 
 /** Six questions keep a mock quick to play; the pace still follows the exam's. */
 const MOCK_QUESTIONS = 6;
 const PASS_MARK = 4;
+
+/** After every item the persona's plan has. */
+const MOCK_PLAN_POSITION = 10_000;
 
 /** An ENEM essay's scores by competency: strong, except the intervention proposal (C5). */
 const STRONG = 160;
@@ -46,7 +48,7 @@ function readQuestion(content: unknown): string {
 }
 
 /** The options of a bank item's multiple-choice content, each with whether it's right. */
-export function readOptions(content: unknown): ChoiceOption[] {
+function readOptions(content: unknown): ChoiceOption[] {
   const options =
     content && typeof content === "object" && "options" in content ? content.options : [];
 
@@ -59,11 +61,22 @@ export function readOptions(content: unknown): ChoiceOption[] {
  * a test can answer on purpose.
  */
 export async function addTodayMock({ goalId, userId }: { goalId: string; userId: string }) {
-  const [goal, session, seen] = await Promise.all([
+  const [goal, session, seen, plan] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),
     findTodaySession({ goalId, userId }),
     prisma.attempt.findMany({ select: { itemId: true }, where: { userId } }),
+    prisma.plan.findUniqueOrThrow({ where: { goalId } }),
   ]);
+
+  // The plan's week's mock, today: its intro is the challenge page, by its plan item.
+  const planItem = await planItemFixture({
+    kind: "mock",
+    phase: 0,
+    planId: plan.id,
+    position: MOCK_PLAN_POSITION,
+    scheduledFor: session.localDate,
+    titleSnapshot: "",
+  });
 
   const seenIds = new Set(seen.flatMap((attempt) => (attempt.itemId ? [attempt.itemId] : [])));
 
@@ -90,6 +103,7 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
         timeLimitMinutes: 20,
       },
       itemIds: items.map((item) => item.id),
+      planItemId: planItem.id,
       skillIds: [...new Set(items.map((item) => item.skillId))],
       title: "Mock exam",
     },
@@ -110,10 +124,16 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
     }),
   );
 
-  return { answers, blockId: block.id };
+  return { answers, blockId: block.id, planItemId: planItem.id };
 }
 
 type MockAnswers = Awaited<ReturnType<typeof addTodayMock>>["answers"];
+
+/** Hands the running mock in, confirming it in the dialog that says what's still open. */
+async function handInMock(page: Page) {
+  await page.getByRole("button", { name: "Hand in the mock exam" }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+}
 
 async function answerMockQuestion(
   page: Page,
@@ -121,7 +141,7 @@ async function answerMockQuestion(
 ) {
   await expect(page.getByText(new RegExp(`^Question ${number} of \\d+`, "u"))).toBeVisible();
 
-  const heading = (await page.getByRole("heading", { level: 1 }).textContent()) ?? "";
+  const heading = (await page.getByRole("heading", { level: 2 }).textContent()) ?? "";
   const answer = answers.get(heading.trim());
   const isFirst = number === 1;
 
@@ -131,15 +151,18 @@ async function answerMockQuestion(
     await page.getByRole("button", { name: "Flag" }).click();
   }
 
-  await page
-    .getByRole("button", { name: number === total ? "Hand in the mock exam" : "Next" })
-    .click();
+  if (number === total) {
+    await handInMock(page);
+    return;
+  }
+
+  await page.getByRole("button", { name: "Next" }).click();
 }
 
 /**
  * Plays a running mock from `addTodayMock`: the first question wrong and flagged as unsure, the
- * rest right, moving with Next until the last question hands the mock in. A mock asks one exam
- * day's questions, so the first question's counter says how many there are.
+ * rest right, moving with Next until the last question hands the mock in, confirmed. A mock asks
+ * one exam day's questions, so the first question's counter says how many there are.
  */
 export async function playMock({ answers, page }: { answers: MockAnswers; page: Page }) {
   const counter = await page.getByText(/^Question 1 of \d+/u).textContent();
@@ -255,11 +278,9 @@ export const QUOTED_STATEMENT_CITATION = "Cebraspe 2024, TJ-AM, item 41";
  * session builder scores it. The first is a past exam's statement, copied as printed and citing it.
  */
 async function createStatementPracticeDay({
-  mode,
   netScored,
   structure,
 }: {
-  mode: Mode;
   netScored: boolean;
   structure: object;
 }) {
@@ -292,12 +313,7 @@ async function createStatementPracticeDay({
     ),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   await studySessionBlockFixture({
@@ -312,6 +328,6 @@ async function createStatementPracticeDay({
 }
 
 /** A Cebraspe-style exam's practice day: statements judged right or wrong, scored net. */
-export function createNetScoredPracticeDay(mode: Mode) {
-  return createStatementPracticeDay({ mode, netScored: true, structure: NET_SCORED_STRUCTURE });
+export function createNetScoredPracticeDay() {
+  return createStatementPracticeDay({ netScored: true, structure: NET_SCORED_STRUCTURE });
 }

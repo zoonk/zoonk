@@ -4,8 +4,8 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
-import { scheduleDepthPreferenceRefresh } from "./_utils/depth-preference";
 import { scheduleSensitivityCheck } from "./_utils/fact-sensitivity";
+import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { getMemoryAccess } from "./_utils/memory-access";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import { type MemoryFactUpdateInput, type MemoryFactView } from "./memory-contract";
@@ -18,7 +18,8 @@ export type MemoryFactUpdateResult =
   | { status: "categoryNotAllowed" | "notFound" | "unauthorized" };
 
 /**
- * Saves the learner's correction of one fact in place, so the old wording isn't kept anywhere.
+ * Saves the learner's correction of one fact in place, so the old wording isn't kept anywhere, not
+ * even in an example line written from it.
  * The fact becomes something the learner said, and a new wording is checked for sensitive details
  * after the response. A category outside what their memory may hold (only goals and learning for
  * minors) is refused.
@@ -66,12 +67,8 @@ export async function updateMemoryFact({
   const fact = await prisma.memoryFact.findUniqueOrThrow({ where: { id: factId } });
 
   if (input.statement !== undefined) {
+    await forgetExampleLines({ userId });
     scheduleSensitivityCheck(fact);
-  }
-
-  // A category change may move a note into or out of preferences.
-  if (fact.category === "preferences" || input.category !== undefined) {
-    scheduleDepthPreferenceRefresh(userId);
   }
 
   return { fact: toMemoryFactView(fact), status: "updated" };

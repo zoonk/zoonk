@@ -36,14 +36,17 @@ describe(toMockConditions, () => {
               routing: null,
             },
           ],
+          written: [],
         },
         structure,
       }),
     ).toStrictEqual({
+      fullLength: false,
       netScoring: true,
       questions: 2,
       sections: [{ minutes: 75, name: "Science and Math", questions: 2 }],
       timeLimitMinutes: 75,
+      written: [],
     });
   });
 });

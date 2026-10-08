@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type Page, expect, test } from "./fixtures";
-import { setDeviceMode } from "./learn-personas";
 
 /**
  * Studying your own material: the paperclip takes a file, pasted text or a link, then "What do you
@@ -13,6 +13,14 @@ import { setDeviceMode } from "./learn-personas";
  */
 
 const PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
+/** A class test this week: Friday's, as a learner would set it. */
+const TEST_IN_DAYS = 3;
+
+/** The learner's day `days` from today, as the date field takes it. */
+function isoDateIn(days: number): string {
+  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
+}
 
 /** A learner's material as `POST /v1/uploads` returns it once stored. */
 async function stubUpload(page: Page, source: { id: string; title: string }) {
@@ -78,14 +86,17 @@ test.describe("Studying your own material", () => {
     await page.getByRole("radio", { name: /Prepare for an exam/u }).click();
     await page.getByRole("button", { name: "Start with your goal" }).click();
 
+    // The card says the plan is built from what they gave, before they confirm it.
+    const materialRow = page.getByRole("listitem").filter({ hasText: "Your material" });
+    await expect(materialRow.getByText(title)).toBeVisible();
+    await expect(materialRow.getByText("Your plan and lessons follow this material")).toBeVisible();
+
     const goal = await confirmGoal(page, prompt);
 
     expect(goal.details).toMatchObject({ materialIntent: "exam" });
 
-    // No notice gives a class test's date, so it's asked right after the target.
-    await expect(page.getByRole("heading", { name: "What are you aiming for?" })).toBeVisible();
-    await page.getByRole("button", { name: "Skip" }).click();
-
+    // A class test is only passed, so there's no target to ask; no notice gives its date, so
+    // that comes first.
     await expect(
       page.getByRole("heading", { name: "Is there a date you're aiming for?" }),
     ).toBeVisible();
@@ -99,9 +110,35 @@ test.describe("Studying your own material", () => {
         return link.goalId;
       })
       .toBe(goal.id);
+
+    // A class test three days away starts at a short study time, not a public exam's hours.
+    await page.getByRole("textbox", { name: "Date" }).fill(isoDateIn(TEST_IN_DAYS));
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "How much do you already know?" }),
+    ).toBeVisible();
+
+    await page.getByText("The basics").click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+
+    // The time comes after the profile (birth and buddy) and placement.
+    await expect(page.getByRole("heading", { name: "When were you born?" })).toBeVisible();
+    await page.getByLabel("Month").selectOption("3");
+    await page.getByLabel("Year").selectOption("1990");
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    await page.getByRole("button", { name: "Start from zero" }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "How much time can you study each day?" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("radio", { exact: true, name: "45 min" })).toBeChecked();
   });
 
-  test("a pasted link to a public page becomes lessons that teach it, in Fun", async ({
+  test("a pasted link to a public page becomes lessons that teach it", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -109,7 +146,6 @@ test.describe("Studying your own material", () => {
     const notice = await sourceFixture({ kind: "upload", title, visibility: "public" });
     await learnerSourceFixture({ sourceId: notice.id, userId: noProgressUser.id });
     await stubUpload(page, { id: notice.id, title });
-    await setDeviceMode(page.context(), "fun");
 
     const words = `help me understand this notice ${randomUUID().slice(0, 6)}`;
 
@@ -147,7 +183,6 @@ test.describe("Studying your own material", () => {
     const slides = await sourceFixture({ kind: "upload", mimeType: PPTX, title });
     await learnerSourceFixture({ sourceId: slides.id, userId: noProgressUser.id });
     await stubUpload(page, { id: slides.id, title });
-    await setDeviceMode(page.context(), "focus");
 
     await page.route("**/v1/material-questions", (route) =>
       route.fulfill({
@@ -180,5 +215,61 @@ test.describe("Studying your own material", () => {
 
     // Asking isn't a goal: nothing was created.
     await expect(prisma.goal.count({ where: { userId: noProgressUser.id } })).resolves.toBe(0);
+  });
+
+  test("a failed upload's message goes once the learner pastes their notes instead", async ({
+    userWithoutProgress: page,
+  }) => {
+    await page.route("**/v1/uploads/tokens", (route) =>
+      route.fulfill({ json: { error: "Not configured" }, status: 500 }),
+    );
+
+    await openPaperclip(page);
+
+    await page
+      .getByLabel("Upload a file")
+      .setInputFiles({
+        buffer: Buffer.from("%PDF-1.4"),
+        mimeType: "application/pdf",
+        name: "resumo-celula.pdf",
+      });
+
+    const failed = page.getByText("We couldn't add that. Try again in a moment.");
+    await expect(failed).toBeVisible();
+
+    await page.getByRole("button", { name: "Paste text" }).click();
+
+    await expect(page.getByRole("textbox", { name: "Your text" })).toBeVisible();
+    await expect(failed).toBeHidden();
+  });
+
+  test("past the free plan's material for the month, the paperclip says when it comes back and offers Plus", async ({
+    userWithoutProgress: page,
+  }) => {
+    await page.route("**/v1/uploads", (route) =>
+      route.fulfill({
+        json: {
+          error: {
+            code: "USAGE_LIMIT_REACHED",
+            details: { limit: { limit: 10, period: "month", resource: "upload", tier: "free" } },
+            message: "This plan's limit is reached",
+          },
+        },
+        status: 402,
+      }),
+    );
+
+    await openPaperclip(page);
+    await page.getByRole("button", { name: "Paste text" }).click();
+    await page.getByRole("textbox", { name: "Your text" }).fill("Glycolysis nets 2 ATP.");
+    await page.getByRole("button", { name: "Add text" }).click();
+
+    await expect(
+      page.getByText(
+        "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.",
+      ),
+    ).toBeVisible();
+
+    await expect(page.getByRole("list", { name: "Your material" })).toBeHidden();
   });
 });

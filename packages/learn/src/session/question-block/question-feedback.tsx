@@ -4,7 +4,14 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
-import { CheckCircle2Icon, NotebookPenIcon, SparklesIcon, XCircleIcon } from "lucide-react";
+import {
+  CheckCircle2Icon,
+  MinusCircleIcon,
+  NotebookPenIcon,
+  SparklesIcon,
+  XCircleIcon,
+  ZapIcon,
+} from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { ItemCitationNote } from "../../_components/item-citation";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
@@ -79,9 +86,94 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
   );
 }
 
+/** Hyperdrive in its quietest form: a right answer that makes a streak of three or more says so. */
+const SHOWN_STREAK = 3;
+
 /**
- * The grade after an answer: right or wrong, the right answer and why, and quiet notes when a mistake was saved or fixed. Fun flips it in like the
- * back of the paper; a wrong answer flips calmly.
+ * The right answer in words, only where the question doesn't mark it: choice questions light the
+ * right option, other formats say it here.
+ */
+function useCorrectAnswerLine({
+  feedback,
+  question,
+  trueFalseLabels,
+}: {
+  feedback: StudyAnswerFeedback;
+  question: StudyQuestion;
+  trueFalseLabels: TrueFalseLabels;
+}): string | null {
+  const answerText = useAnswerText(trueFalseLabels);
+
+  if (feedback.isCorrect || question.format === "multipleChoice") {
+    return null;
+  }
+
+  return answerText({ answer: feedback.correctAnswer, question });
+}
+
+/** One quiet note under the grade: the mistake was fixed, or saved to come back. */
+function MistakeNote({ feedback }: { feedback: StudyAnswerFeedback }) {
+  const t = useExtracted();
+
+  if (feedback.mistakeFixed) {
+    return (
+      <p className="text-success flex items-start gap-2 text-sm">
+        <LineMarker>
+          <SparklesIcon aria-hidden="true" className="size-4" />
+        </LineMarker>
+        {t("Mistake fixed. It leaves your notebook.")}
+      </p>
+    );
+  }
+
+  if (!feedback.savedToNotebook) {
+    return null;
+  }
+
+  return (
+    <p className="text-muted-foreground flex items-start gap-2 text-sm">
+      <LineMarker>
+        <NotebookPenIcon aria-hidden="true" className="size-4" />
+      </LineMarker>
+      {t("Saved to your mistakes · it comes back tomorrow")}
+    </p>
+  );
+}
+
+/** Right, wrong, or left blank where a wrong answer costs a point: blank is neither, never red. */
+function useGrade(feedback: StudyAnswerFeedback) {
+  const t = useExtracted();
+
+  if (feedback.isCorrect) {
+    return {
+      Icon: CheckCircle2Icon,
+      label: t("Correct!"),
+      surface: "border-success/40 bg-success/5",
+      text: "text-success",
+    };
+  }
+
+  if (feedback.blank) {
+    return {
+      Icon: MinusCircleIcon,
+      label: t("Left blank"),
+      surface: "border-border bg-muted/40",
+      text: "text-foreground",
+    };
+  }
+
+  return {
+    Icon: XCircleIcon,
+    label: t("Not quite"),
+    surface: "border-destructive/30 bg-destructive/5",
+    text: "text-destructive",
+  };
+}
+
+/**
+ * The grade after an answer: right, wrong or left blank (with the streak once it's three or more),
+ * why, the right answer where the question doesn't show it, and one quiet note when a mistake was
+ * saved or fixed.
  */
 export function QuestionFeedback({
   children,
@@ -96,37 +188,28 @@ export function QuestionFeedback({
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
-  const answerText = useAnswerText(trueFalseLabels);
-
-  const correct = feedback.isCorrect
-    ? null
-    : answerText({ answer: feedback.correctAnswer, question });
-
-  const Icon = feedback.isCorrect ? CheckCircle2Icon : XCircleIcon;
+  const correct = useCorrectAnswerLine({ feedback, question, trueFalseLabels });
+  const streak = feedback.isCorrect ? feedback.hyperdrive.streak : 0;
+  const { Icon, label, surface, text } = useGrade(feedback);
 
   return (
     <section
       aria-label={t("Answer feedback")}
       aria-live="polite"
-      className={cn(
-        "flex flex-col gap-2 rounded-2xl border p-4",
-        feedback.isCorrect
-          ? "border-success/40 bg-success/5"
-          : "border-destructive/30 bg-destructive/5",
-        "in-data-[mode=fun]:fun-paper in-data-[mode=fun]:border-transparent",
-        feedback.isCorrect
-          ? "in-data-[mode=fun]:animate-fun-flip"
-          : "in-data-[mode=fun]:animate-fun-flip-calm",
-      )}
+      className={cn("flex flex-col gap-2 rounded-2xl border p-4", surface)}
     >
-      <p
-        className={cn(
-          "flex items-center gap-2 font-semibold",
-          feedback.isCorrect ? "text-success" : "text-destructive",
+      <p className="flex items-center justify-between gap-3">
+        <span className={cn("flex items-center gap-2 font-semibold", text)}>
+          <Icon aria-hidden="true" className="size-5" />
+          {label}
+        </span>
+
+        {streak >= SHOWN_STREAK && (
+          <span className="text-muted-foreground flex items-center gap-1 text-xs font-medium tabular-nums">
+            <ZapIcon aria-hidden="true" className="size-3.5" />
+            {t("{count} right in a row", { count: String(streak) })}
+          </span>
         )}
-      >
-        <Icon aria-hidden="true" className="size-5" />
-        {feedback.isCorrect ? t("Correct!") : t("Not quite")}
       </p>
 
       {correct && <p className="text-sm">{t("Right answer: {answer}", { answer: correct })}</p>}
@@ -140,29 +223,12 @@ export function QuestionFeedback({
       {question.citation && (
         <ItemCitationNote
           citation={question.citation}
-          className="bg-background/60 in-data-[mode=fun]:bg-fun-soft rounded-xl px-3 py-2"
+          className="bg-background/60 rounded-xl px-3 py-2"
         />
       )}
 
-      {feedback.mistakeFixed && (
-        <p className="text-success flex items-start gap-2 text-sm">
-          <LineMarker>
-            <SparklesIcon aria-hidden="true" className="size-4" />
-          </LineMarker>
-          {t("Mistake fixed. It leaves your notebook.")}
-        </p>
-      )}
-
       {children}
-
-      {feedback.savedToNotebook && (
-        <p className="text-muted-foreground flex items-start gap-2 text-sm">
-          <LineMarker>
-            <NotebookPenIcon aria-hidden="true" className="size-4" />
-          </LineMarker>
-          {t("Saved to your mistakes, so it comes back.")}
-        </p>
-      )}
+      <MistakeNote feedback={feedback} />
     </section>
   );
 }

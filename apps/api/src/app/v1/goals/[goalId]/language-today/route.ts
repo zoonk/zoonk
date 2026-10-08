@@ -6,7 +6,7 @@ import { parsePathParams } from "@/lib/path-params";
 import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { NextResponse } from "next/server";
 
-/** Returns what Today adds for a language goal: the current unit, a new "I can" and a noticed pattern. */
+/** Returns what Today adds for a language goal: the level across skills, a noticed pattern and words to say again. */
 async function getLanguageView(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/language-today">,

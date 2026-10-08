@@ -48,9 +48,13 @@ function sharesWordsAndNumbers({
   return passageWords.length > 0 && found / passageWords.length >= MIN_WORD_SHARE;
 }
 
-/** Words in order with single spaces around them, so a name matches whole words only. */
+/**
+ * Words in order with single spaces around them, so a name matches whole words only. A hyphen
+ * inside a word joins its halves, since PDF text often loses it ("políticoadministrativa").
+ */
 function toWordLine(text: string): string {
-  return ` ${toWords(normalizeText(text)).join(" ")} `;
+  const joined = normalizeText(text).replaceAll(/(?<=\p{L})-(?=\p{L})/gu, "");
+  return ` ${toWords(joined).join(" ")} `;
 }
 
 /**

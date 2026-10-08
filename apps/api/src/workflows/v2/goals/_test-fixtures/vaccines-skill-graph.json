@@ -10,6 +10,7 @@
   ],
   "skills": [
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Identify pathogens as microbes that can cause illness and trigger an immune response.",
       "estimatedLessons": 2,
@@ -18,9 +19,11 @@
       "level": "overview",
       "name": "Identify pathogens that trigger immune responses",
       "phase": 1,
-      "prerequisites": []
+      "prerequisites": [],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how the immune system uses recognizable features of a pathogen, called antigens, to target it.",
       "estimatedLessons": 2,
@@ -29,9 +32,11 @@
       "level": "overview",
       "name": "Explain how immune cells recognize antigens",
       "phase": 1,
-      "prerequisites": ["identify-pathogens"]
+      "prerequisites": ["identify-pathogens"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Describe how early immune defenses detect a threat and alert other immune cells.",
       "estimatedLessons": 2,
@@ -40,9 +45,11 @@
       "level": "overview",
       "name": "Explain how innate defenses raise an alert",
       "phase": 1,
-      "prerequisites": ["identify-pathogens"]
+      "prerequisites": ["identify-pathogens"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how certain immune cells display antigens so other immune cells can respond to a specific threat.",
       "estimatedLessons": 3,
@@ -51,9 +58,11 @@
       "level": "overview",
       "name": "Explain how immune cells present antigens",
       "phase": 1,
-      "prerequisites": ["recognize-antigens", "explain-innate-alerts"]
+      "prerequisites": ["recognize-antigens", "explain-innate-alerts"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how helper T cells coordinate a targeted immune response after recognizing a presented antigen.",
       "estimatedLessons": 2,
@@ -62,9 +71,11 @@
       "level": "overview",
       "name": "Explain how helper T cells coordinate defenses",
       "phase": 1,
-      "prerequisites": ["explain-antigen-presentation"]
+      "prerequisites": ["explain-antigen-presentation"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Describe how B cells respond to a matching antigen and receive help to produce antibodies.",
       "estimatedLessons": 3,
@@ -73,9 +84,11 @@
       "level": "overview",
       "name": "Explain how B cells become activated",
       "phase": 1,
-      "prerequisites": ["recognize-antigens", "explain-helper-t-cells"]
+      "prerequisites": ["recognize-antigens", "explain-helper-t-cells"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how antibodies bind to a pathogen and can help stop it from causing illness.",
       "estimatedLessons": 2,
@@ -84,9 +97,11 @@
       "level": "overview",
       "name": "Explain how antibodies help prevent illness",
       "phase": 1,
-      "prerequisites": ["explain-b-cell-activation"]
+      "prerequisites": ["explain-b-cell-activation"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how killer T cells recognize and destroy infected cells.",
       "estimatedLessons": 2,
@@ -95,9 +110,11 @@
       "level": "overview",
       "name": "Explain how killer T cells respond",
       "phase": 1,
-      "prerequisites": ["explain-antigen-presentation"]
+      "prerequisites": ["explain-antigen-presentation"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how some B and T cells remain after an immune response and respond faster to a familiar threat.",
       "estimatedLessons": 3,
@@ -106,9 +123,11 @@
       "level": "overview",
       "name": "Explain how immune memory develops",
       "phase": 1,
-      "prerequisites": ["explain-b-cell-activation", "explain-killer-t-cells"]
+      "prerequisites": ["explain-b-cell-activation", "explain-killer-t-cells"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how a vaccine exposes the immune system to an antigen or instructions for making one without requiring the disease itself.",
       "estimatedLessons": 3,
@@ -117,9 +136,11 @@
       "level": "overview",
       "name": "Explain how vaccines train immune defenses",
       "phase": 1,
-      "prerequisites": ["recognize-antigens", "explain-immune-memory"]
+      "prerequisites": ["recognize-antigens", "explain-immune-memory"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Compare broad ways vaccines supply an antigen or instructions for making one.",
       "estimatedLessons": 3,
@@ -128,9 +149,11 @@
       "level": "overview",
       "name": "Compare ways vaccines present antigens",
       "phase": 1,
-      "prerequisites": ["explain-vaccine-training"]
+      "prerequisites": ["explain-vaccine-training"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how additional doses can strengthen or renew an immune response.",
       "estimatedLessons": 2,
@@ -139,9 +162,11 @@
       "level": "overview",
       "name": "Explain why booster doses can help",
       "phase": 1,
-      "prerequisites": ["explain-immune-memory", "explain-vaccine-training"]
+      "prerequisites": ["explain-immune-memory", "explain-vaccine-training"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain why changes to a pathogen can make existing immune recognition less effective.",
       "estimatedLessons": 2,
@@ -150,9 +175,11 @@
       "level": "overview",
       "name": "Explain how variants affect immune recognition",
       "phase": 1,
-      "prerequisites": ["recognize-antigens", "explain-immune-memory"]
+      "prerequisites": ["recognize-antigens", "explain-immune-memory"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain why vaccination can reduce the chance of illness without preventing every infection.",
       "estimatedLessons": 3,
@@ -161,9 +188,11 @@
       "level": "overview",
       "name": "Explain why vaccinated people can get infected",
       "phase": 1,
-      "prerequisites": ["explain-vaccine-training", "explain-pathogen-variants"]
+      "prerequisites": ["explain-vaccine-training", "explain-pathogen-variants"],
+      "topics": []
     },
     {
+      "area": "Immunology",
       "course": "immunology",
       "description": "Explain how immune activation can cause short-lived symptoms after vaccination.",
       "estimatedLessons": 2,
@@ -172,7 +201,8 @@
       "level": "overview",
       "name": "Explain common reactions after vaccination",
       "phase": 1,
-      "prerequisites": ["explain-innate-alerts", "explain-vaccine-training"]
+      "prerequisites": ["explain-innate-alerts", "explain-vaccine-training"],
+      "topics": []
     }
   ]
 }

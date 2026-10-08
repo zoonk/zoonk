@@ -1,7 +1,7 @@
 import { errors, slowDownError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
-import { stepPathParamsSchema } from "@/lib/openapi/schemas/step-variants";
+import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
 import { getStepExampleLine } from "@zoonk/core/library/variants/example-line";
 import { type NextRequest, NextResponse } from "next/server";

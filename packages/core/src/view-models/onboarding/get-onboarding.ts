@@ -1,19 +1,24 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
+import { isWrittenSubject } from "../../exams/mocks/written-subject";
 import { findActiveGoalId, loadGoalViews } from "../../goals/_utils/goal-view";
 import { readCourseStart } from "../../goals/course-start-details";
-import { findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { asksToTurnOnMemory, getMemoryAccess } from "../../memory/_utils/memory-access";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
+import { getGoalSize, getRecommendedMinutes } from "./_utils/recommended-minutes";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingLibraryCourse,
   type OnboardingStep,
   type OnboardingView,
 } from "./onboarding-contract";
-import { getFollowUpQuestions, getOnboardingSteps } from "./onboarding-steps";
+import { getFollowUpQuestions, getOnboardingSteps, isClassTest } from "./onboarding-steps";
 
 export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
@@ -44,19 +49,43 @@ async function findOnboardingGoalIds({
   return goals.length > 0 ? goals.map((goal) => goal.id) : [goalId];
 }
 
-/** The exam's subjects from its stored notice, for the tiles before placement. */
-async function findExamSubjects(examBlueprintId: string | null): Promise<string[]> {
+/**
+ * What the exam's stored notice says that onboarding uses: its subjects, for the count before
+ * placement, its exam day, for the time question's starting pick when the goal has no date of
+ * its own, and whether it's the learner's own material read into a notice (`fromMaterial`, a
+ * class test).
+ */
+async function findExamNotice(
+  examBlueprintId: string | null,
+): Promise<{
+  examDate: string | null;
+  fromMaterial: boolean;
+  subjects: OnboardingView["examSubjects"];
+}> {
   if (!examBlueprintId) {
-    return [];
+    return { examDate: null, fromMaterial: false, subjects: [] };
   }
 
   const blueprint = await prisma.examBlueprint.findUnique({
-    select: { structure: true },
+    select: { examDate: true, ownerId: true, structure: true },
     where: { id: examBlueprintId },
   });
 
-  const subjects = examStructureSchema.safeParse(blueprint?.structure).data?.subjects ?? [];
-  return subjects.map((subject) => subject.name);
+  const structure = examStructureSchema.safeParse(blueprint?.structure).data;
+
+  // Its written tests (a discursive test, an essay) aren't subjects a learner already knows well.
+  const subjects = structure
+    ? structure.subjects.filter((subject) => !isWrittenSubject({ structure, subject }))
+    : [];
+
+  return {
+    examDate: blueprint?.examDate ? toIsoDate(blueprint.examDate) : null,
+    fromMaterial: Boolean(blueprint?.ownerId),
+    subjects: subjects.map((subject) => ({
+      name: subject.name,
+      shortName: subject.shortName ?? null,
+    })),
+  };
 }
 
 const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
@@ -106,7 +135,7 @@ async function findLibraryCourse({
 
 /**
  * The rest of onboarding for a goal the learner just created: the goal, the screens still ahead
- * (only unanswered questions, then age, mode and buddy when the profile lacks them, placement and
+ * (only unanswered questions, then age, memory and buddy when the profile lacks them, placement and
  * the plan) and whether they're a minor. Uncached: every answer changes it.
  */
 export async function getOnboarding({ goalId }: { goalId: string }): Promise<OnboardingResult> {
@@ -119,11 +148,12 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
   const { goal, userId } = owned;
   const details = isJsonObject(goal.details) ? goal.details : {};
 
-  const [profile, activeGoalId, goalIds, examSubjects] = await Promise.all([
+  const [profile, memory, activeGoalId, goalIds, notice] = await Promise.all([
     findLearningProfileView(userId),
+    getMemoryAccess(userId),
     findActiveGoalId(userId),
     findOnboardingGoalIds({ details, goalId, userId }),
-    findExamSubjects(goal.examBlueprintId),
+    findExamNotice(goal.examBlueprintId),
   ]);
 
   const earlierGoals = await prisma.goal.count({ where: { id: { notIn: goalIds }, userId } });
@@ -137,12 +167,16 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
   const steps = getOnboardingSteps({
     goal: { details, kind: goal.kind, targetDate: view.targetDate },
     profile: {
-      experienceMode: profile.experienceMode,
+      asksMemory: asksToTurnOnMemory(memory),
       hasBirth: profile.birth !== null,
       hasBuddy: profile.buddy !== null,
       hasEarlierGoals: earlierGoals > 0,
     },
   });
+
+  const today = toIsoDate(
+    getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
+  );
 
   // A goal started from a course's page is already built from that course.
   const libraryCourse = readCourseStart(details)
@@ -156,13 +190,26 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
 
   return {
     onboarding: {
-      examSubjects,
+      examSubjects: notice.subjects,
       followUps: getFollowUpQuestions(details),
       generationId: goal.generationRunId,
       goal: view,
       goalIds,
       isMinor: profile.ageGroup === "teen",
       libraryCourse,
+      recommendedMinutes: getRecommendedMinutes({
+        size: getGoalSize({
+          hasNotice: goal.examBlueprintId !== null && !notice.fromMaterial,
+          isClassTest: isClassTest(details) || notice.fromMaterial,
+          kind: goal.kind,
+          purpose: details.purpose,
+          targetDate: view.targetDate ?? notice.examDate,
+          targetPosition: details.targetPosition,
+          today,
+        }),
+        targetDate: view.targetDate ?? notice.examDate,
+        today,
+      }),
       steps,
     },
     status: "ready",

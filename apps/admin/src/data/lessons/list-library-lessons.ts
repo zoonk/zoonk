@@ -11,7 +11,7 @@ type LibraryLessonFilter = {
 };
 
 const libraryLessonListInclude = {
-  _count: { select: { chapters: true, steps: true } },
+  _count: { select: { chapters: true, steps: { where: { retiredAt: null } } } },
   homeChapter: {
     select: { homeCourse: { select: { id: true, title: true } }, id: true, title: true },
   },
@@ -19,12 +19,14 @@ const libraryLessonListInclude = {
     orderBy: { position: "asc" as const },
     select: { generatedAt: true, model: true, promptVersion: true, runId: true },
     take: 1,
+    where: { retiredAt: null },
   },
 } as const;
 
 /**
  * Screens carry the content's provenance (the lesson row's own provenance is its outline), so the
- * model and prompt version filters match lessons with a screen written by them.
+ * model and prompt version filters match lessons with a screen written by them. Only the current
+ * version's screens count; a version a check replaced stays a day for learners playing it.
  */
 function buildLibraryLessonWhere({ model, promptVersion, search, status }: LibraryLessonFilter) {
   const containsSearch = search ? { contains: search, mode: "insensitive" as const } : undefined;
@@ -32,7 +34,7 @@ function buildLibraryLessonWhere({ model, promptVersion, search, status }: Libra
 
   return {
     contentStatus: toContentStatus(status),
-    ...(hasProvenanceFilter ? { steps: { some: { model, promptVersion } } } : {}),
+    ...(hasProvenanceFilter ? { steps: { some: { model, promptVersion, retiredAt: null } } } : {}),
     ...(containsSearch
       ? {
           OR: [

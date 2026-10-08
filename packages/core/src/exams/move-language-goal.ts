@@ -15,7 +15,9 @@ export type MoveLanguageGoalResult =
  * "Pass an exam" inside a language goal: when the learner's reason names a language certificate
  * (IELTS, DELE, Celpe-Bras…), the goal moves to an exam goal for it, keeping the language, what
  * onboarding understood and the schedule. The language goal is archived, not deleted; it comes
- * back if the exam goal can't be created.
+ * back if the exam goal can't be created. The exam goal takes the language goal's place, so it
+ * isn't another goal against the plan's limits, and only a goal the learner follows moves: an
+ * archived one already did, so moving it again can't make unlimited exam goals.
  */
 export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLanguageGoalResult> {
   const owned = await findOwnedGoal(goalId);
@@ -25,6 +27,11 @@ export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLangua
   }
 
   const { goal } = owned;
+
+  if (goal.status !== "active") {
+    return { status: "notFound" };
+  }
+
   const details = isJsonObject(goal.details) ? goal.details : {};
   const reason = typeof details.reason === "string" ? details.reason : "";
   const examName = goal.kind === "language" ? detectLanguageExam(reason) : null;
@@ -40,7 +47,8 @@ export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLangua
       dailyMinutes: goal.dailyMinutes,
       goals: [
         {
-          details: { ...details, examName, movedFromGoalId: goal.id },
+          // A language certificate reports a score or a level, which onboarding then asks for.
+          details: { ...details, examName, examTarget: "score", movedFromGoalId: goal.id },
           kind: "exam",
           language: goal.language,
           prompt: goal.prompt,

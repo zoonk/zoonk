@@ -15,7 +15,7 @@ Cuando usas Zoonk, podemos recopilar:
 - Datos de cuenta, como correo electrónico, nombre, nombre de usuario, foto de perfil, país e idioma.
 - Tu mes y año de nacimiento, si nos los indicas, para saber si tienes menos de 13 años, menos de 18 años o eres mayor de edad.
 - Datos de pago y suscripción a través de Stripe, App Store, Google Play u otro proveedor de pagos.
-- Datos de aprendizaje, como tus objetivos, planes, lecciones, respuestas (escritas, o habladas y convertidas en texto), progreso, errores, tiempo de uso, comentarios y preferencias como tu modo y tu compañero del modo Diversión.
+- Datos de aprendizaje, como tus objetivos, planes, lecciones, respuestas (escritas, o habladas y convertidas en texto), progreso, errores, tiempo de uso, comentarios y preferencias como tu compañero.
 - Memoria: datos breves sobre tu aprendizaje que Zoonk recuerda para ayudarte (consulta la sección 4).
 - Contenido que creas o subes, como los objetivos que describes, preguntas al tutor de IA, archivos subidos, texto pegado, páginas, comentarios y mensajes de soporte.
 - Datos de tutores legales: el correo electrónico de un tutor legal y el estado de su vínculo con un estudiante.
@@ -30,7 +30,7 @@ Usamos datos personales para las siguientes finalidades y bases jurídicas:
 
 - Para crear cuentas, autenticar usuarios, operar Zoonk, guardar el progreso y ofrecer planes de pago, sobre la base del contrato contigo.
 - Para crear y ajustar tu plan, personalizar lecciones, ejemplos y respuestas del tutor de IA, y recordar tus preferencias, sobre la base del contrato contigo y de nuestros intereses legítimos.
-- Para generar contenido educativo con IA, evaluar la calidad y la seguridad, mejorar las funciones de IA de Zoonk y entrenar o ajustar sistemas que Zoonk opera o configura, sobre la base del contrato contigo, de nuestros intereses legítimos y del consentimiento cuando se requiera.
+- Para generar contenido educativo con IA, comprobar su calidad y seguridad y mejorar las funciones de IA de Zoonk, sobre la base del contrato contigo y de nuestros intereses legítimos. Nunca entrenamos modelos de IA con tus datos (consulta la sección 3).
 - Para procesar pagos, prevenir el fraude, prestar asistencia y gestionar reembolsos o cancelaciones, sobre la base del contrato contigo, de obligaciones legales y de nuestros intereses legítimos.
 - Para prevenir abusos, como cuentas falsas y tráfico automatizado, y para aplicar los límites de uso justo, sobre la base de nuestros intereses legítimos.
 - Para medir el uso, mejorar el producto, depurar errores y flujos de uso, y mantener la seguridad de la plataforma, sobre la base de nuestros intereses legítimos y del consentimiento cuando se requiera.
@@ -43,7 +43,8 @@ No mostramos anuncios y no usamos los datos de nadie para segmentar anuncios.
 ## 3. IA y tu contenido
 
 - Zoonk usa sistemas de IA para crear planes, lecciones, imágenes, audio, explicaciones, ejercicios, respuestas del tutor de IA, sugerencias y comentarios. Las lecciones hechas con IA y el tutor de IA están identificados como IA.
-- Podemos tratar tus prompts, archivos subidos, respuestas, actividad de aprendizaje, comentarios y contenido generado para ofrecer estas funciones de IA y para mejorar, evaluar, probar, entrenar o ajustar los sistemas de IA de Zoonk.
+- Tratamos tus prompts, archivos subidos, respuestas, actividad de aprendizaje, comentarios y contenido generado para ofrecer estas funciones de IA y para comprobar y mejorar su calidad.
+- No usamos tus datos para entrenar ni ajustar modelos de IA, ni nuestros ni de terceros, y los datos de estudiantes menores de 18 años nunca se usarán para eso. Nuestros proveedores de IA no entrenan modelos con lo que les enviamos: sus condiciones para empresas no lo permiten, y las solicitudes que pasan por el AI Gateway de Vercel solo llegan a proveedores que no entrenan modelos con los prompts.
 - Intentamos evitar enviar identificadores directos de cuenta a los proveedores de IA cuando no son necesarios, pero lo que escribes, dices o subes puede contener datos personales si los incluyes.
 - No incluyas datos personales sensibles tuyos o de otras personas, salvo que sean estrictamente necesarios para tu uso educativo y tengas derecho a compartirlos.
 - Los resultados de la IA y las entradas relacionadas pueden ser revisados por sistemas automatizados o por personas autorizadas con fines de seguridad, prevención de abusos, depuración y control de calidad.
@@ -56,9 +57,10 @@ No mostramos anuncios y no usamos los datos de nadie para segmentar anuncios.
 - Zoonk recuerda datos breves que le ayudan a enseñarte, como tus objetivos, lo que ya sabes, cómo te gusta estudiar, tu rutina y el contexto que compartes. Proceden de tus respuestas cuando configuras un objetivo, de tus preguntas al tutor de IA y de tu actividad de estudio.
 - La memoria se usa para adaptar los ejemplos de las lecciones, las respuestas del tutor de IA y las sugerencias que ves en Hoy, como consejos o cambios en tu plan.
 - Zoonk no guarda datos de salud, religión, opiniones políticas ni otros detalles sensibles, a menos que seas mayor de edad y le pidas que los recuerde.
-- En Ajustes, en Memoria, puedes ver cada dato, editarlo o borrarlo, deshacer cambios recientes, descargarlo todo y desactivar la memoria. Cuando la memoria está desactivada, Zoonk no aprende datos nuevos ni usa los que ya tiene, y esos datos se mantienen hasta que los borres.
+- En Ajustes, en Memoria, puedes ver cada dato, editarlo o borrarlo, deshacer cambios recientes, descargarlo todo y activar o desactivar la memoria. Cuando la memoria está desactivada, Zoonk no aprende datos nuevos ni usa los que ya tiene, y esos datos se mantienen hasta que los borres.
 - Los datos borrados se eliminan en un plazo de 30 días. Cuando un dato cambia, la versión anterior se guarda con él para poder deshacer el cambio, y se elimina cuando se elimina ese dato.
-- Para los estudiantes menores de 18 años, y para quienes no nos han indicado su edad, la memoria solo usa datos sobre objetivos y aprendizaje.
+- Cuando borras o corriges un dato, o desactivas la memoria, también eliminamos los ejemplos personales de las lecciones que se escribieron a partir de tus datos.
+- La memoria está activada para los adultos hasta que la desactivan. Para los estudiantes menores de 18 años, y para quienes no nos han indicado su edad, la memoria está desactivada hasta que la activan, y entonces solo guarda datos sobre objetivos y aprendizaje. Se lo preguntamos una vez, cuando configuran un objetivo, y "Ahora no" la mantiene desactivada.
 
 ---
 
@@ -68,8 +70,7 @@ No mostramos anuncios y no usamos los datos de nadie para segmentar anuncios.
 - En la prueba de nivel de idioma y en los repasos de pronunciación "Repítelo", la frase o palabra que dices en voz alta va a un modelo de audio Google Gemini, a través del AI Gateway de Vercel, que comprueba cada palabra, incluidos los sonidos y el acento. Si ese modelo no está disponible, usamos un modelo de voz a texto de OpenAI o de Google, a través del AI Gateway de Vercel.
 - No guardamos el audio. Guardamos el texto de tu respuesta junto con tu progreso. Las respuestas incorrectas frecuentes también pueden guardarse como texto, sin ningún vínculo contigo, para reutilizar sus explicaciones.
 - En las conversaciones en directo con IA, tu navegador se conecta al modelo de voz GPT-Live de OpenAI a través del AI Gateway de Vercel, con una clave temporal que sirve para una conversación. El audio no pasa por nuestros servidores y no lo guardamos. Durante la llamada, después de cada una de tus intervenciones, tu navegador nos envía el texto de la conversación hasta ese momento, y un modelo de IA lo usa para comprobar qué objetivos de la llamada ya has alcanzado. Después de la llamada, nos envía el texto completo, y un modelo de IA lo usa para escribir tus comentarios: lo que salió bien y una cosa que mejorar o, después de un simulacro de expresión oral, una puntuación estimada para cada criterio del examen. Guardamos esos comentarios, que pueden citar algunas de tus frases, junto con los objetivos que alcanzaste y el resultado de la conversación. No guardamos el resto del texto de la conversación.
-- Algunas actividades de idiomas leen texto en voz alta con las voces de tu propio dispositivo. Esa voz se genera en tu dispositivo.
-- El audio de las palabras y frases de las lecciones de idiomas lo generan modelos de texto a voz de OpenAI y Google. Solo reciben el texto de la lección, nunca tu voz ni los datos de tu cuenta.
+- El audio que escuchas en las lecciones de idiomas, la prueba de nivel y los repasos (palabras, frases y mensajes de voz) lo generan los modelos de texto a voz Gemini, de Google, a través del AI Gateway de Vercel, con un modelo de texto a voz de OpenAI como alternativa. Solo reciben el texto que hay que leer y su idioma, nunca tu voz ni los datos de tu cuenta. Cada audio se genera una vez y se reproduce para todos los que escuchan las mismas palabras.
 
 ---
 
@@ -99,7 +100,7 @@ Solo compartimos datos cuando es necesario para operar, proteger y mejorar Zoonk
 
 - Vercel, para alojamiento, analítica, almacenamiento de archivos subidos (Vercel Blob), protección contra bots y abusos (BotID y Firewall) y el AI Gateway, que envía las solicitudes de IA a los proveedores de modelos.
 - Neon, para nuestra base de datos.
-- Proveedores de modelos de IA, principalmente OpenAI, Anthropic y Google, a los que accedemos a través del AI Gateway de Vercel. Los mismos modelos pueden ejecutarse en Microsoft Azure o Google Cloud, y se usan otros proveedores como alternativa para algunas tareas, como las imágenes. Para la voz, OpenAI convierte las respuestas habladas en texto y lleva las conversaciones en directo, y Gemini, de Google, comprueba lo que dices en la prueba de nivel de idioma y en los repasos de pronunciación. Las respuestas habladas van directamente a OpenAI para convertirlas en texto, con el AI Gateway solo como alternativa. Las solicitudes de texto a voz van directamente a OpenAI y Google, sin pasar por el AI Gateway, y solo contienen texto de las lecciones.
+- Proveedores de modelos de IA, principalmente OpenAI, Anthropic y Google, a los que accedemos a través del AI Gateway de Vercel. Los mismos modelos pueden ejecutarse en Microsoft Azure o Google Cloud, y algunas tareas usan otros proveedores como alternativa, siempre proveedores que no entrenan modelos con los prompts. Para la voz, OpenAI convierte las respuestas habladas en texto y lleva las conversaciones en directo, y Gemini, de Google, comprueba lo que dices en la prueba de nivel de idioma y en los repasos de pronunciación. Las respuestas habladas van directamente a OpenAI para convertirlas en texto, con el AI Gateway solo como alternativa. Las solicitudes de texto a voz van a Gemini, de Google, a través del AI Gateway, con OpenAI directamente como alternativa, y solo contienen el texto que hay que leer.
 - TypeSafe, que ejecuta Jev, un modelo que usamos para clasificar texto rápidamente, por ejemplo, para saber si un dato de la memoria es sensible. Solo recibe el texto que se clasifica, sin los datos de tu cuenta.
 - Proveedores de búsqueda web a los que accedemos a través del AI Gateway de Vercel, actualmente Parallel. Solo reciben el texto de búsqueda, como el nombre y el organizador de un examen, nunca los datos de tu cuenta ni tus archivos.
 - PostHog, para analítica de producto, grabaciones de sesión de adultos y registros de uso de IA sin el texto de los prompts ni de las respuestas.
@@ -144,7 +145,7 @@ Puedes descargar los datos de tu cuenta en un archivo JSON con "Descargar mis da
 - Puedes eliminar tu cuenta en cualquier momento con "Eliminar cuenta" en la página de tu perfil, o enviando un correo electrónico a [contacto@zoonk.com](mailto:contacto@zoonk.com).
 - Cuando se elimina tu cuenta, eliminamos tu cuenta, tus datos de aprendizaje, tu memoria, tus archivos subidos y todo lo creado a partir de tus archivos privados, como los datos de exámenes extraídos de ellos, y cancelamos tu suscripción web. Perderás el acceso a tu cuenta.
 - Los documentos públicos que has subido y que se han convertido en fuentes públicas compartidas siguen disponibles, porque ya no están vinculados a ti.
-- Los eventos de analítica ya enviados a nuestros proveedores de analítica se conservan según la configuración de conservación de esos proveedores.
+- En un plazo de 15 días después de eliminar tu cuenta, también eliminamos sus datos en PostHog, nuestro proveedor de analítica, incluidos los eventos y las grabaciones de sesión. La analítica de una sesión de invitado que nunca se convirtió en cuenta se queda en PostHog según su configuración de conservación, sin nombre ni correo electrónico.
 - Eliminamos o anonimizamos los datos personales cuando ya no los necesitamos.
 - Parte de la información puede conservarse durante un tiempo limitado cuando sea necesario por motivos legales, de facturación, fiscales, de consumo, de prevención del fraude, de seguridad, de prevención de abusos, de copias de seguridad, de resolución de disputas o regulatorios.
 - Podemos conservar los registros de acceso a la aplicación y los registros técnicos relacionados durante los plazos que exigen el Marco Civil de Internet de Brasil y otras leyes aplicables.
@@ -157,10 +158,11 @@ Puedes descargar los datos de tu cuenta en un archivo JSON con "Descargar mis da
 
 - Zoonk es para usuarios de 13 años o más. Te pedimos tu mes y año de nacimiento cuando configuras tu primer objetivo. Puedes elegir no responder.
 - Si nos indicas que tienes menos de 13 años, eliminamos tu cuenta y sus datos de inmediato. Si descubrimos de otra forma que un usuario tiene menos de 13 años, eliminamos la cuenta.
+- Una vez que nos indicas tu mes y año de nacimiento, solo puedes cambiarlos escribiéndonos. Comprobamos la solicitud antes de tratar a alguien como mayor. Después de una respuesta de menos de 13 años, el mismo navegador no puede responder con otra edad durante un día.
 - Los estudiantes menores de 18 años solo pueden usar Zoonk con permiso y supervisión de su padre, madre o tutor legal.
-- Los estudiantes menores de 18 años, y quienes no nos han indicado su edad, tienen por defecto la configuración más protectora: la memoria solo usa datos sobre objetivos y aprendizaje, nunca datos sensibles; no hay grabaciones de sesión; y no hay correos de marketing. No guardamos las grabaciones de voz de nadie.
+- Los estudiantes menores de 18 años, y quienes no nos han indicado su edad, tienen por defecto la configuración más protectora: la memoria está desactivada hasta que la activan, y entonces solo guarda datos sobre objetivos y aprendizaje, nunca datos sensibles; no hay grabaciones de sesión; y no hay correos de marketing. No guardamos las grabaciones de voz de nadie.
 - Si tienes menos de 18 años, comprar Plus en nuestro sitio web requiere la aprobación de un tutor legal.
-- Un estudiante de 13 a 17 años puede invitar a un tutor legal por correo electrónico. Un tutor legal vinculado ve el nombre del estudiante y los minutos de estudio y las lecciones terminadas cada día de la última semana, nunca sus respuestas ni sus mensajes. El tutor legal puede fijar un límite diario de tiempo y aprobar Plus. Guardamos el correo electrónico del tutor legal y el estado del vínculo, incluso después de que el vínculo termine, hasta que se elimine la cuenta del estudiante.
+- Un estudiante de 13 a 17 años puede invitar a un tutor legal por correo electrónico. Un tutor legal vinculado ve el nombre del estudiante y los minutos de estudio y las lecciones terminadas cada día de la última semana, nunca sus respuestas ni sus mensajes. El tutor legal puede fijar un límite diario de tiempo, desactivar la memoria del estudiante y aprobar Plus. El tutor legal ve si la memoria está activada, nunca lo que guarda. Guardamos el correo electrónico del tutor legal y el estado del vínculo, incluso después de que el vínculo termine, hasta que se elimine la cuenta del estudiante.
 - Un tutor legal puede terminar el vínculo en cualquier momento con "Desvincular" en su página de tutor legal. Un estudiante puede cancelar una invitación que aún no se haya aceptado.
 - Cualquier persona puede fijar su propio límite diario de tiempo. Cuando un estudiante tiene un límite propio y otro de su tutor legal, se aplica el más estricto a las sesiones de estudio diarias.
 - No hay rachas que proteger ni recompensas aleatorias, y no creamos perfiles de menores con fines publicitarios.
@@ -170,7 +172,13 @@ Puedes descargar los datos de tu cuenta en un archivo JSON con "Descargar mis da
 
 ## 13. Transferencias internacionales
 
-Algunos de nuestros proveedores, incluidos los de Estados Unidos, pueden tratar datos fuera de Brasil. Cuando esto ocurre, aplicamos medidas contractuales, técnicas y organizativas adecuadas para proteger los datos de acuerdo con la ley aplicable.
+Nuestros proveedores tratan datos fuera de Brasil, principalmente en Estados Unidos y en la Unión Europea. Solo transferimos lo que cada servicio necesita, mientras usas Zoonk y después durante los plazos de la sección 11:
+
+- Para ofrecer Zoonk y las funciones de IA que pides: alojamiento, archivos y el AI Gateway (Vercel), nuestra base de datos (Neon), modelos de IA (OpenAI, Anthropic, Google, TypeSafe) y búsqueda web (Parallel).
+- Para enviar correos electrónicos (ZeptoMail) y cobrar pagos (Stripe, Apple, Google).
+- Para medir y corregir Zoonk: analítica (PostHog) y monitorización de errores (Sentry).
+
+Las transferencias a la Unión Europea se basan en el reconocimiento de la ANPD de que protege los datos personales de forma adecuada (Resolução CD/ANPD nº 32/2026). Las demás se basan en las cláusulas contractuales tipo aprobadas por la ANPD, cuando el proveedor las ha adoptado, o en que son necesarias para cumplir nuestro contrato contigo (LGPD, art. 33, IX). Cada proveedor debe proteger los datos según sus propias condiciones, incluido el cifrado en tránsito. Zoonk Tecnologia e Educação Ltda es responsable de estas transferencias y puedes contactar con nosotros en [contacto@zoonk.com](mailto:contacto@zoonk.com). En esa dirección puedes ejercer los derechos descritos en la sección 10 y pedir las cláusulas que se aplican a una transferencia, y también puedes presentar una petición ante la ANPD.
 
 ---
 

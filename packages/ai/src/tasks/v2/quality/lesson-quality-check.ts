@@ -3,7 +3,12 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
+import {
+  type CallReuse,
+  type Reasoning,
+  type ServiceTier,
+  buildProviderOptions,
+} from "../../../provider-options";
 import { type LessonWritingContext, formatLessonPlan } from "../lesson-writer/format-lesson-plan";
 import { getLessonCheckModels } from "./lesson-check-models";
 import systemPrompt from "./lesson-quality-check.prompt.md";
@@ -43,6 +48,8 @@ type ReviewedLesson = { screens: { kind: string; content: unknown }[]; summary: 
 
 export type CheckLessonQualityParams = LessonWritingContext & {
   lesson: ReviewedLesson;
+  /** How likely the lesson is to be read again, which picks the reviewer (`getLessonCheckModels`). */
+  reuse: CallReuse;
   /** The model that wrote the lesson, so the reviewer comes from another family. */
   writerModel: string;
   model?: string;
@@ -72,14 +79,15 @@ function toIssue({
 
 /**
  * The judgment half of the quality gate: a reasoning model from a different
- * family than the writer reads the lesson as a learner and as an expert, and
+ * family than the writer, strongest for lessons many learners will read,
+ * reads the lesson as a learner and as an expert, and
  * reports wrong facts or answers, jargon before it's explained, unclear steps,
  * filler, level misfits, decorative activities and weak checks. A lesson passes
  * when no issue is `blocking`.
  */
 export async function checkLessonQuality(params: CheckLessonQualityParams) {
-  const { analytics, lesson, reasoning, serviceTier, useFallback = true } = params;
-  const models = getLessonCheckModels(params.writerModel);
+  const { analytics, lesson, reasoning, reuse, serviceTier, useFallback = true } = params;
+  const models = getLessonCheckModels({ reuse, writerModel: params.writerModel });
   const model = params.model ?? models.model;
 
   const providerOptions = buildProviderOptions({

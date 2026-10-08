@@ -2,11 +2,9 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, CompassIcon, PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { usePrimaryVariant } from "../../_utils/fun-primary";
 import { LearnLink } from "../../learn-link";
 import { type GoalError } from "../goal-errors";
 import {
@@ -28,7 +26,6 @@ export const MAX_GOAL_LENGTH = 2000;
  */
 function SubmitButton({ disabled }: { disabled: boolean }) {
   const t = useExtracted();
-  const primaryVariant = usePrimaryVariant();
   const ref = useEnterClick<HTMLButtonElement>({ enabled: !disabled });
 
   return (
@@ -39,7 +36,6 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
       ref={ref}
       size="icon-lg"
       type="submit"
-      variant={primaryVariant}
     >
       <ArrowUpIcon aria-hidden="true" className="size-5" />
     </Button>
@@ -101,10 +97,7 @@ export function GoalEntry({
       </OnboardingHeading>
 
       <form
-        className={cn(
-          "bg-muted/60 focus-within:ring-ring/40 flex items-end gap-2 rounded-3xl p-2 pl-4 focus-within:ring-[3px]",
-          "in-data-[mode=fun]:fun-glass",
-        )}
+        className="bg-muted/60 focus-within:ring-ring/40 flex items-end gap-2 rounded-3xl p-2 pl-4 focus-within:ring-[3px]"
         onSubmit={(event) => {
           event.preventDefault();
           submit(goal);
@@ -157,7 +150,7 @@ export function GoalEntry({
 
       <GoalExamples onPick={submit} />
 
-      <div className="text-muted-foreground mt-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-4 text-sm">
+      <div className="text-muted-foreground mt-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-4 text-sm lg:mt-0">
         <LearnLink
           className="text-foreground inline-flex min-h-11 items-center gap-1.5 font-medium underline-offset-4 hover:underline"
           href={exploreHref}

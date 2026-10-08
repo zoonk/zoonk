@@ -1,7 +1,8 @@
-import { setModeAction } from "@/app/[lang]/(settings)/settings/appearance/actions";
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
+import { forgetDeletedSession } from "@/lib/forget-deleted-session";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
+import { getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
@@ -21,10 +22,12 @@ import {
   createOnboardingGoalsAction,
   finishPlacementAction,
   getPlacementAction,
+  getPlacementMockAction,
   getPlanAction,
   inviteGuardianAction,
   joinWaitlistAction,
   startOverAction,
+  stopPlacementMockAction,
 } from "./onboarding-actions";
 import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
@@ -36,12 +39,12 @@ import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
  * through the uploads API from the browser, since files go straight to storage.
  */
 export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
-  // The mode answer is this device's pick too, so every page shows it, before and after sign-in.
   answer: async ({ goalId, input }) => {
     const outcome = await answerOnboardingAction(goalId, input);
 
-    if (input.question === "mode" && outcome.status === "saved") {
-      await setModeAction(input.experienceMode);
+    // An age under 13 deleted the account: the browser forgets its session too.
+    if (outcome.status === "accountDeleted") {
+      await forgetDeletedSession();
     }
 
     return outcome;
@@ -53,7 +56,9 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
     (await ensureGuestSession()) ? createOnboardingGoalsAction(input) : { status: "failed" },
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
+  getPlacementMock: getPlacementMockAction,
   getPlan: getPlanAction,
+  getTimeAdvice: getGoalTimeAdvice,
   inviteGuardian: inviteGuardianAction,
   joinWaitlist: joinWaitlistAction,
   languageLevelTest: (goalId) => ({
@@ -78,12 +83,16 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   recordPlanWait: (milliseconds) =>
     recordGenerationWaitAction({ contentKind: "curriculum", milliseconds }),
   startOver: startOverAction,
+  stopPlacementMock: (mockId) => stopPlacementMockAction(mockId, getLocalTimeZone()),
   understanding: WEB_UNDERSTANDING_ACTIONS,
 };
 
 export const WEB_ONBOARDING_ROUTES: OnboardingRoutes = {
   course: getCourseHref,
   explore: "/courses",
+  focusTest: (goalId) => `/focus-test?goal=${goalId}`,
+  mock: (mockId) => `/mock/${mockId}`,
+  placementMock: (goalId) => `/mock/placement/${goalId}`,
   planLink: (planId) => `/plan-link/${planId}`,
   signUp: "/login",
   today: "/today",

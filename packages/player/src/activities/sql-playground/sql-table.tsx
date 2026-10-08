@@ -1,11 +1,11 @@
 "use client";
 
 import { type ActivityCell } from "@zoonk/core/library/activities/expected-answer";
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDown, Table2 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { keyedByPosition } from "../_utils/position-keys";
-import { useFormatNumber } from "../_utils/use-format-number";
 
 type RowState = "extra" | "missing" | "plain" | "right";
 

@@ -29,13 +29,17 @@ export function useCallMicrophone() {
 
   const stop = useCallback(() => stopAudio.current?.(), []);
 
-  useEffect(
-    () => () => {
+  // React runs this cleanup and setup again without unmounting (Strict Mode in development, a
+  // screen kept hidden in an Activity and shown again), so setup reopens the screen: otherwise
+  // every later call would drop its audio and never connect.
+  useEffect(() => {
+    screenClosed.current = false;
+
+    return () => {
       screenClosed.current = true;
       stopAudio.current?.();
-    },
-    [],
-  );
+    };
+  }, []);
 
   return { blocked, keep, stop };
 }

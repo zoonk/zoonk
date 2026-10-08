@@ -14,6 +14,8 @@ export type GradedMockAnswer = {
   irtItem: IrtItem;
   outcome: NetOutcome;
   section: number;
+  /** The skill it asks, by id and name: the mock's topics. */
+  skill: { id: string; name: string };
   /** Left blank without ever being answered in a section that ran out of time. */
   timedOut: boolean;
 };
@@ -105,6 +107,25 @@ function getOverallIrt(groups: readonly AreaGroup[]): MockResult["irt"] {
   return { ...toScaleRange({ se, theta }), se, theta };
 }
 
+/** How each topic went, in the order the mock first asked it. */
+function toTopicResults(answers: readonly GradedMockAnswer[]): MockResult["topics"] {
+  return [...Map.groupBy(answers, (answer) => answer.skill.id).values()].flatMap((group) => {
+    const [first] = group;
+
+    return first
+      ? [
+          {
+            area: first.area,
+            correct: group.filter((answer) => answer.outcome === "right").length,
+            name: first.skill.name,
+            skillId: first.skill.id,
+            total: group.length,
+          },
+        ]
+      : [];
+  });
+}
+
 /** The number a mock is compared on: the exam's own measure. */
 export function getMockMeasure(result: Pick<MockResult, "correct" | "irt" | "net" | "total">) {
   if (result.irt) {
@@ -121,7 +142,8 @@ export function getMockMeasure(result: Pick<MockResult, "correct" | "irt" | "net
 /**
  * Turns a finished mock's graded answers into what it showed: the score in the exam's own terms
  * (estimated item response theory scores by area, Cebraspe's net score with calibration, or right
- * answers), time per question against the exam's pace, and ENEM's coherence.
+ * answers), each area and topic, time per question against the exam's pace, and ENEM's
+ * coherence.
  */
 export function analyzeMock({
   answers,
@@ -153,6 +175,7 @@ export function analyzeMock({
     preparation,
     previous,
     scoring,
+    topics: toTopicResults(answers),
     total: answers.length,
     unansweredAtTimeout: answers.filter((answer) => answer.timedOut).length,
   };

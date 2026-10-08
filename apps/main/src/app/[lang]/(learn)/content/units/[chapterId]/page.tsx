@@ -1,3 +1,4 @@
+import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { redirect } from "@/i18n/navigation";
 import { getLanguageUnitView } from "@zoonk/core/view-models/language/unit";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -32,7 +33,7 @@ async function UnitBody({ params }: Props) {
 function UnitSkeleton() {
   return (
     <div className="flex flex-col gap-6">
-      <Skeleton className="h-8 w-24 rounded-full" />
+      <JourneyPageBar />
       <div className="flex items-center gap-4">
         <Skeleton className="size-16 rounded-3xl" />
         <div className="flex flex-1 flex-col gap-2">

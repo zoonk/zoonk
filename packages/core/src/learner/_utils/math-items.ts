@@ -61,11 +61,15 @@ export function toMathQuestionView({ item, version }: { item: MathItem; version:
   return {
     context: version.context,
     format: item.format,
+    /** New numbers each time, so a math problem never asks about a figure. */
+    image: null,
     itemId: item.id,
     options: null,
     question: version.question,
     skillId: item.skillId,
     unit: toUnitView({ language: item.language, unit: item.content.math.unit }),
+    /** Math problems draw new numbers each time, so their data is in the words, never a chart. */
+    visual: null,
   };
 }
 

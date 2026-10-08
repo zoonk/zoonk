@@ -84,9 +84,11 @@ const COMPLETION = {
   voiceSeconds: 55,
 };
 
-const FREE_DAILY_CONVERSATIONS = 3;
-const ELEVEN_MINUTES_MS = 660_000;
+/** The free plan's call time a day, in seconds. */
+const FREE_CALL_SECONDS = 120;
+const PRACTICE_SECONDS = 120;
 const TEN_MINUTES_MS = 600_000;
+const DAY_MS = 86_400_000;
 
 const CONNECTION = {
   expiresAt: 1_790_000_000,
@@ -185,33 +187,64 @@ describe("language conversations", () => {
     });
   });
 
-  it("connects with a short-lived GPT-Live token and charges the call once", async () => {
+  it("connects with a short-lived GPT-Live token and holds the call's length from the day's call time", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await startPractice(renting.id);
 
-    const first = await connectLanguageConversation(conversationId);
-    const reconnect = await connectLanguageConversation(conversationId);
-
-    expect(first).toStrictEqual({ setup: { ...CONNECTION, voice: "marin" }, status: "ready" });
-    expect(reconnect).toStrictEqual(first);
+    await expect(connectLanguageConversation(conversationId)).resolves.toStrictEqual({
+      setup: { ...CONNECTION, endsAtLimit: null, seconds: PRACTICE_SECONDS, voice: "marin" },
+      status: "ready",
+    });
 
     const [usage, row] = await Promise.all([
-      prisma.usageRecord.count({ where: { kind: "conversation", userId: user.id } }),
+      prisma.usageRecord.findMany({ where: { kind: "conversation", userId: user.id } }),
       prisma.languageConversation.findUniqueOrThrow({ where: { id: conversationId } }),
     ]);
 
-    expect(usage).toBe(1);
+    expect(usage).toMatchObject([{ seconds: PRACTICE_SECONDS, targetId: conversationId }]);
     expect(row.startedAt).not.toBeNull();
   });
 
-  it("ends a call's reconnects ten minutes after it connected", async () => {
+  it("starts a dropped call over when it connects again, keeping what the dropped one ran", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    // A one-minute call, so what's left of the day's call time holds it again.
+    const started = await startLanguageConversation({
+      chapterId: renting.id,
+      kind: "practice",
+      minutes: 1,
+    });
+
+    const conversationId = started.status === "ready" ? started.conversationId : "";
+    await connectLanguageConversation(conversationId);
+
+    // It dropped, and the learner called again half a minute after the first connection.
+    await prisma.usageRecord.updateMany({
+      data: { createdAt: new Date(Date.now() - 30_000) },
+      where: { targetId: conversationId },
+    });
+
+    await expect(connectLanguageConversation(conversationId)).resolves.toMatchObject({
+      setup: { endsAtLimit: null, seconds: 60 },
+      status: "ready",
+    });
+
+    const record = await prisma.usageRecord.findFirstOrThrow({
+      where: { targetId: conversationId },
+    });
+
+    expect(record.seconds).toBeGreaterThanOrEqual(90);
+    expect(record.seconds).toBeLessThanOrEqual(92);
+  });
+
+  it("can't connect again a call claimed on an earlier day", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
 
     await prisma.usageRecord.updateMany({
-      data: { createdAt: new Date(Date.now() - ELEVEN_MINUTES_MS) },
+      data: { createdAt: new Date(Date.now() - DAY_MS) },
       where: { targetId: conversationId },
     });
 
@@ -220,23 +253,63 @@ describe("language conversations", () => {
     });
   });
 
-  it("stops at the free plan's daily calls and never mints a token past it", async () => {
+  it("ends a call early at the day's call time, and says so", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await startPractice(renting.id);
 
     await usageRecordsFixture({
-      count: FREE_DAILY_CONVERSATIONS,
+      count: 1,
       kind: "conversation",
+      seconds: FREE_CALL_SECONDS - 90,
       userId: user.id,
     });
 
     await expect(connectLanguageConversation(conversationId)).resolves.toMatchObject({
-      limit: { limit: FREE_DAILY_CONVERSATIONS, resource: "conversation" },
+      setup: { endsAtLimit: "day", seconds: 90 },
+      status: "ready",
+    });
+  });
+
+  it("stops at the free plan's daily call time and never mints a token past it", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await startPractice(renting.id);
+
+    await usageRecordsFixture({
+      count: 1,
+      kind: "conversation",
+      seconds: FREE_CALL_SECONDS - 30,
+      userId: user.id,
+    });
+
+    await expect(connectLanguageConversation(conversationId)).resolves.toMatchObject({
+      limit: { limit: FREE_CALL_SECONDS, resource: "callSeconds" },
       status: "limitReached",
     });
 
     expect(createLiveConversationToken).not.toHaveBeenCalled();
+  });
+
+  it("keeps only what a finished call ran in the day's call time", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    await prisma.usageRecord.updateMany({
+      data: { createdAt: new Date(Date.now() - 45_000) },
+      where: { targetId: conversationId },
+    });
+
+    await completeLanguageConversation({ conversationId, input: COMPLETION });
+
+    const record = await prisma.usageRecord.findFirstOrThrow({
+      where: { targetId: conversationId },
+    });
+
+    expect(record.seconds).toBeGreaterThanOrEqual(45);
+    expect(record.seconds).toBeLessThanOrEqual(47);
+    expect(record.costMicros).toBe(10_000 + Math.round((record.seconds * 50_000) / 60));
   });
 
   it("gives guests no live calls", async () => {
@@ -356,10 +429,26 @@ describe("language conversations", () => {
     expect(checkConversationObjectives).not.toHaveBeenCalled();
   });
 
-  it("finishes a call once with feedback, Brain Power, the ledger and speaking evidence", async () => {
+  it("reviews nothing for a call that never connected, whatever turns it's sent: only connecting claims call time", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await startPractice(renting.id);
+
+    await expect(
+      completeLanguageConversation({ conversationId, input: COMPLETION }),
+    ).resolves.toMatchObject({
+      conversation: { result: { brainPower: 0, feedback: null, spokenSeconds: 0 } },
+      status: "completed",
+    });
+
+    expect(writeConversationFeedback).not.toHaveBeenCalled();
+    expect(checkConversationObjectives).not.toHaveBeenCalled();
+  });
+
+  it("finishes a call once with feedback, Brain Power, the ledger and speaking evidence", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
 
     const first = await completeLanguageConversation({ conversationId, input: COMPLETION });
     const again = await completeLanguageConversation({ conversationId, input: COMPLETION });
@@ -429,7 +518,7 @@ describe("language conversations", () => {
   it("keeps the call when the feedback model fails", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const conversationId = await startPractice(renting.id);
+    const conversationId = await connectPractice(renting.id);
     vi.mocked(writeConversationFeedback).mockRejectedValue(new Error("model down"));
 
     const result = await completeLanguageConversation({ conversationId, input: COMPLETION });
@@ -471,6 +560,7 @@ describe("language conversations", () => {
     expect(again).toStrictEqual(first);
 
     const conversationId = first.status === "ready" ? first.conversationId : "";
+    await connectLanguageConversation(conversationId);
 
     vi.mocked(checkConversationObjectives).mockResolvedValue(
       objectivesAnswer(RENTING_SCENARIO.objectives.map((item) => item.label)),

@@ -24,7 +24,7 @@ export default function PageError({
   return (
     <PageErrorMessage
       homeLink={
-        <Link className={buttonVariants({ size: "lg", variant: "outline" })} href="/">
+        <Link className={buttonVariants({ variant: "ghost" })} href="/">
           {t("Go to the home page")}
         </Link>
       }

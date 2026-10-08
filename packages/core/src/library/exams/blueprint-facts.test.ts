@@ -88,7 +88,16 @@ describe(listBlueprintFacts, () => {
         ],
         mock: {
           ...extraction.mock!,
-          sections: [{ day: null, minutes: 240, name: "(P4) Discursiva", questions: null }],
+          sections: [
+            {
+              day: null,
+              kind: "written",
+              minutes: 240,
+              name: "(P4) Discursiva",
+              questions: null,
+              tasks: [],
+            },
+          ],
         },
       },
     });

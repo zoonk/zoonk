@@ -1,4 +1,5 @@
 import "server-only";
+import { toAiGenerationEvent } from "@zoonk/ai/ai-generation-event";
 import { registerAiGenerationSink } from "@zoonk/ai/ai-generation-sink";
 import { getPostHogConfig } from "@zoonk/utils/posthog";
 import { PostHog } from "posthog-node";
@@ -12,12 +13,14 @@ import { PostHog } from "posthog-node";
  * settings.
  */
 export function registerAiGenerationAnalytics() {
-  registerAiGenerationSink(async ({ distinctId, event, properties }) => {
+  registerAiGenerationSink("posthog", async (generation) => {
     const config = getPostHogConfig();
 
     if (!config) {
       return;
     }
+
+    const { distinctId, event, properties } = toAiGenerationEvent(generation);
 
     const posthog = new PostHog(config.projectToken, {
       flushAt: 1,

@@ -41,6 +41,20 @@ function getAccountDisabledErrorResponse(error: unknown) {
     : null;
 }
 
+/**
+ * A request that says it comes from a browser page (fetch metadata) without an Origin header the
+ * auth server trusts. Native apps send no fetch metadata; a browser page must be one of Zoonk's.
+ */
+function getUntrustedOriginErrorResponse(error: unknown) {
+  return getAuthError(error)?.code === accessErrorCodes.untrustedOrigin
+    ? createErrorResponse({
+        code: accessErrorCodes.untrustedOrigin,
+        message: "This request comes from a page Zoonk doesn't trust",
+        status: httpStatus.forbidden,
+      })
+    : null;
+}
+
 function getSharedSessionErrorResponse(error: unknown) {
   const authError = getAuthError(error);
 
@@ -60,7 +74,11 @@ function getSharedSessionErrorResponse(error: unknown) {
     });
   }
 
-  return getRateLimitErrorResponse(error) ?? getAccountDisabledErrorResponse(error);
+  return (
+    getUntrustedOriginErrorResponse(error) ??
+    getRateLimitErrorResponse(error) ??
+    getAccountDisabledErrorResponse(error)
+  );
 }
 
 export function getEmailSessionErrorResponse(error: unknown) {

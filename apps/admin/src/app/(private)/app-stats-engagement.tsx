@@ -15,6 +15,7 @@ const DAYS_7 = 7;
 export async function EngagementStats() {
   "use cache: private";
 
+  // oxlint-disable-next-line react/purity -- A cached Server Component reads the time once per cache entry and never re-renders on the client.
   const now = new Date();
 
   const { currentPeriodStart, previousPeriodStart } = getRollingUtcDateWindowStarts({

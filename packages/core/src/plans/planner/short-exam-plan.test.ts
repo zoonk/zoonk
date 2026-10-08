@@ -147,6 +147,23 @@ describe("a class test days away", () => {
     expect(plan.items.find((item) => item.kind === "mock")?.minutes).toBe(SHORT_MOCK_MINUTES);
   });
 
+  it("fits the short mock to a day the learner gives less time, without a review after it", () => {
+    const input = classTest({ days: 2 });
+
+    // Fifteen minutes on Thursday, the day before the test.
+    const plan = buildPlan({
+      ...input,
+      settings: parsePlanSettings({
+        shortMockMinutes: SHORT_MOCK_MINUTES,
+        startDate: toIsoDate(TODAY),
+        weekdayMinutes: [60, 60, 60, 60, 15, 60, 60],
+      }),
+    });
+
+    expect(plan.items.find((item) => item.kind === "mock")).toMatchObject({ minutes: 15 });
+    expect(datesOf({ items: plan.items, kind: "review" })).toStrictEqual([]);
+  });
+
   it("in seven days: four days of map and gaps, two of practice, and the mock the day before", () => {
     const plan = buildPlan(classTest({ days: 7 }));
 
@@ -204,7 +221,12 @@ describe("a public exam days away", () => {
 });
 
 describe("the minutes of a short plan's day before", () => {
-  const calendar = { dailyMinutes: DAILY_MINUTES, lightWeeks: [], weekdayMinutes: null };
+  const calendar = {
+    dailyMinutes: DAILY_MINUTES,
+    firstDay: null,
+    lightWeeks: [],
+    weekdayMinutes: null,
+  };
 
   function dayBefore({
     days,

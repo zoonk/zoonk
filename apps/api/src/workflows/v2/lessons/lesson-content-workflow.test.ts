@@ -12,13 +12,14 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 
 vi.mock("workflow/api", () => ({
@@ -75,11 +76,21 @@ describe(lessonContentWorkflow, () => {
     );
   });
 
-  it("plans and writes a lesson, streams its progress and starts its pictures in the background", async () => {
+  // A test that says how another run stands leaves the next one the default.
+  afterEach(() => {
+    vi.mocked(getRun).mockReset();
+  });
+
+  it("plans and writes a lesson, streams its progress and starts its pictures and model checks in the background", async () => {
     const lesson = await outlinedLesson();
 
+    // An exam's lesson always gets the reasoning check (after publishing).
     await expect(
-      lessonContentWorkflow({ analytics: { distinctId: "learner" }, lessonId: lesson.id }),
+      lessonContentWorkflow({
+        analytics: { distinctId: "learner" },
+        forExam: true,
+        lessonId: lesson.id,
+      }),
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 
     const stored = await prisma.lesson.findUniqueOrThrow({
@@ -106,33 +117,57 @@ describe(lessonContentWorkflow, () => {
     ]);
 
     expect(start).toHaveBeenCalledWith(lessonImagesWorkflow, [
+      { analytics: { contentScope: "shared", distinctId: "learner" }, lessonId: lesson.id },
+    ]);
+
+    // The reviewer reads the published lesson in the background: the learner never waits on it.
+    expect(checkLessonQuality).not.toHaveBeenCalled();
+
+    expect(start).toHaveBeenCalledWith(lessonCheckWorkflow, [
       {
-        analytics: { contentScope: "shared", distinctId: "learner" },
+        analytics: { distinctId: "learner" },
+        forExam: true,
         lessonId: lesson.id,
-        maxImages: undefined,
+        plan: expect.objectContaining({ lesson: recordedDraft, review: true, version: 1 }),
       },
     ]);
   });
 
-  it("plans and writes a lesson a learner waits on at the priority tier, and one written ahead at the standard tier", async () => {
-    const [waitedOn, ahead] = await Promise.all([outlinedLesson(), outlinedLesson()]);
+  it("plans and writes a lesson a learner reaches soon at the standard tier, and one for a later day at the flex tier", async () => {
+    const [soon, later] = await Promise.all([outlinedLesson(), outlinedLesson()]);
     vi.mocked(generateLessonSpec).mockClear();
     vi.mocked(writeLessonDraft).mockClear();
 
-    await lessonContentWorkflow({ lessonId: waitedOn.id, priority: true });
-    await lessonContentWorkflow({ lessonId: ahead.id });
+    await lessonContentWorkflow({ lessonId: soon.id });
+    await lessonContentWorkflow({ lessonId: later.id, wait: "later" });
 
     expect(
       vi.mocked(generateLessonSpec).mock.calls.map(([params]) => params.serviceTier),
-    ).toStrictEqual(["priority", undefined]);
+    ).toStrictEqual([undefined, "flex"]);
 
     expect(
       vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.serviceTier),
-    ).toStrictEqual(["priority", undefined]);
+    ).toStrictEqual([undefined, "flex"]);
+  });
+
+  it("pays for priority only when a learner waits on an exam's shared lesson, not on any shared one", async () => {
+    const [anyTopic, exam] = await Promise.all([outlinedLesson(), outlinedLesson()]);
+    vi.mocked(writeLessonDraft).mockClear();
+
+    await lessonContentWorkflow({ lessonId: anyTopic.id, wait: "learner" });
+    await lessonContentWorkflow({ forExam: true, lessonId: exam.id, wait: "learner" });
+
+    expect(
+      vi.mocked(writeLessonDraft).mock.calls.map(([params]) => params.serviceTier),
+    ).toStrictEqual([undefined, "priority"]);
   });
 
   it("joins the run already writing the lesson and ends with its result", async () => {
     const lesson = await outlinedLesson();
+
+    vi.mocked(getRun).mockImplementation(
+      () => ({ exists: Promise.resolve(true), status: Promise.resolve("completed") }) as never,
+    );
 
     mockHookConflict({
       returnValue: Promise.resolve({ lessonId: lesson.id, status: "ready" }),
@@ -263,7 +298,7 @@ describe(lessonContentWorkflow, () => {
     expect(readyWhenPicturesStart).toStrictEqual([true]);
   });
 
-  it("gives a lesson made for one learner a single picture, counted as theirs", async () => {
+  it("gives a lesson made for one learner its pictures, counted as theirs", async () => {
     const user = await userFixture();
     const lesson = await outlinedLesson({ ownerId: user.id, visibility: "private" });
 
@@ -271,12 +306,9 @@ describe(lessonContentWorkflow, () => {
       lessonContentWorkflow({ analytics: { distinctId: user.id }, lessonId: lesson.id }),
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 
-    expect(start).toHaveBeenCalledExactlyOnceWith(lessonImagesWorkflow, [
-      {
-        analytics: { contentScope: "personal", distinctId: user.id },
-        lessonId: lesson.id,
-        maxImages: 1,
-      },
+    // Its model checks may start too (a sample of lessons gets the reasoning check).
+    expect(start).toHaveBeenCalledWith(lessonImagesWorkflow, [
+      { analytics: { contentScope: "personal", distinctId: user.id }, lessonId: lesson.id },
     ]);
   });
 

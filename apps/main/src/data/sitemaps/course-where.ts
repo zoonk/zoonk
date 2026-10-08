@@ -1,5 +1,5 @@
 import "server-only";
-import { getPublishedCourseWhere, prisma } from "@zoonk/db";
+import { getListedCourseWhere, prisma } from "@zoonk/db";
 import { getContentLocale } from "@zoonk/utils/locale";
 
 /**
@@ -10,15 +10,12 @@ import { getContentLocale } from "@zoonk/utils/locale";
 export async function getSitemapCourseWhere() {
   const languages = await prisma.course.groupBy({
     by: ["language"],
-    where: getPublishedCourseWhere({ organization: { kind: "brand" } }),
+    where: getListedCourseWhere(),
   });
 
   const supportedLanguages = languages
     .filter(({ language }) => getContentLocale(language) !== null)
     .map(({ language }) => language);
 
-  return getPublishedCourseWhere({
-    language: { in: supportedLanguages },
-    organization: { kind: "brand" },
-  });
+  return getListedCourseWhere({ language: { in: supportedLanguages } });
 }

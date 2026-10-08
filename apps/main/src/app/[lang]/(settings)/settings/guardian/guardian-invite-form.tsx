@@ -1,6 +1,6 @@
 "use client";
 
-import { FUN_PRIMARY_BUTTON_CLASS } from "@zoonk/learn/fun-primary";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Field,
   FieldContent,
@@ -9,10 +9,9 @@ import {
   FieldLabel,
 } from "@zoonk/ui/components/field";
 import { Input } from "@zoonk/ui/components/input";
-import { cn } from "@zoonk/ui/lib/utils";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useExtracted } from "next-intl";
-import { useActionState, useId } from "react";
+import { useActionState, useId, useState } from "react";
 import { type GuardianInviteState, inviteGuardianAction } from "./actions";
 
 function InviteError({ status }: { status: GuardianInviteState["status"] }) {
@@ -33,14 +32,26 @@ function InviteError({ status }: { status: GuardianInviteState["status"] }) {
   return null;
 }
 
-/** Invites a parent or guardian by email. */
+/**
+ * Invites a parent or guardian by email. With a guardian already linked, inviting another is rare,
+ * so the form waits behind one button.
+ */
 export function GuardianInviteForm({ hasGuardian }: { hasGuardian: boolean }) {
   const t = useExtracted();
   const emailId = useId();
+  const [isOpen, setIsOpen] = useState(!hasGuardian);
 
   const [state, formAction] = useActionState<GuardianInviteState, FormData>(inviteGuardianAction, {
     status: "idle",
   });
+
+  if (!isOpen) {
+    return (
+      <Button className="w-fit" onClick={() => setIsOpen(true)} variant="outline">
+        {t("Invite another guardian")}
+      </Button>
+    );
+  }
 
   return (
     <form
@@ -55,6 +66,7 @@ export function GuardianInviteForm({ hasGuardian }: { hasGuardian: boolean }) {
           </FieldLabel>
           <Input
             autoComplete="off"
+            autoFocus={hasGuardian}
             id={emailId}
             name="email"
             placeholder={t("parent@example.com")}
@@ -74,9 +86,7 @@ export function GuardianInviteForm({ hasGuardian }: { hasGuardian: boolean }) {
         </FieldContent>
       </Field>
 
-      <SubmitButton className={cn("w-fit", FUN_PRIMARY_BUTTON_CLASS)}>
-        {t("Send invite")}
-      </SubmitButton>
+      <SubmitButton className="w-fit">{t("Send invite")}</SubmitButton>
     </form>
   );
 }

@@ -13,9 +13,9 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { SITE_URL } from "@zoonk/utils/url";
 import { type Page, expect, test } from "./fixtures";
-import { expectMode, setDeviceMode } from "./learn-personas";
 
 const REVEAL = "It spreads out into a cloud of places where it could be.";
 const HIDDEN_SCREEN = "This second screen only loads in the player.";
@@ -265,7 +265,6 @@ test.describe("public Library lesson page", () => {
     page,
   }) => {
     const { id, unwritten, unwrittenPath } = await createLibraryCourse();
-    await setDeviceMode(page.context(), "fun");
     const { asked, runId } = await writeLessonWhenFollowed({ lessonId: unwritten.id, page });
 
     await page.goto(unwrittenPath);
@@ -292,7 +291,6 @@ test.describe("public Library lesson page", () => {
     await followed;
 
     await expect(page.getByText(playableStepContent.explanation.title)).toBeVisible();
-    await expectMode(page, "fun");
     expect(asked).toHaveLength(1);
 
     const session = await page.request.get("/api/auth/get-session");
@@ -342,7 +340,7 @@ test.describe("public Library chapter and course pages", () => {
     await expectAccessibleScreen(page, "a public chapter");
   });
 
-  test("shows the course's details, a lesson preview without the answer and the full outline on a tap, with Course structured data", async ({
+  test("shows the course's details and the full outline on a tap, with Course structured data, and never a lesson's answers", async ({
     page,
     request,
   }) => {
@@ -371,7 +369,6 @@ test.describe("public Library chapter and course pages", () => {
     expect(html).toContain(`Waves ${id}`);
     expect(html).toContain(`Inside the atom ${id}`);
     expect(html).toContain(`How do electrons fill the shells ${id}`);
-    expect(html).toContain("Does the electron circle the nucleus like Earth circles the Sun?");
     expect(html).not.toContain(REVEAL);
     expect(html).not.toContain(WRONG_REASON);
     expect(html).not.toContain("isCorrect");
@@ -393,10 +390,6 @@ test.describe("public Library chapter and course pages", () => {
       page.getByRole("region", { name: "Who it's for" }).getByRole("listitem"),
     ).toHaveText(["Curious adults who read science news"]);
 
-    await expect(
-      page.getByText("Does the electron circle the nucleus like Earth circles the Sun?"),
-    ).toBeVisible();
-
     const items = await readStructuredData(page);
 
     expect(items).toContainEqual(
@@ -408,16 +401,13 @@ test.describe("public Library chapter and course pages", () => {
       }),
     );
 
-    // The full outline folds away and opens on a tap.
+    // The full outline folds away and opens on a tap, every chapter and lesson a link.
+    const chapter = page.getByRole("link", { name: `Inside the atom ${id}` });
     const lesson = page.getByRole("link", { name: `How do electrons fill the shells ${id}` });
-
-    await expect(page.getByRole("link", { name: `Inside the atom ${id}` })).toHaveAttribute(
-      "href",
-      chapterPath,
-    );
 
     await expect(lesson).toBeHidden();
     await page.getByText("See all chapters and lessons").click();
+    await expect(chapter).toHaveAttribute("href", chapterPath);
     await expect(lesson).toHaveAttribute("href", unwrittenPath);
     await expectAccessibleScreen(page, "a public course with its full outline open");
   });
@@ -425,7 +415,19 @@ test.describe("public Library chapter and course pages", () => {
   test("keeps a start button at the bottom of a phone once the first one scrolls away", async ({
     page,
   }) => {
-    const { coursePath } = await createLibraryCourse();
+    const { course, coursePath } = await createLibraryCourse();
+
+    // A course page as the details step leaves it, long enough to scroll past its first button.
+    await prisma.course.update({
+      data: {
+        landingPage: {
+          audience: ["Curious adults who read science news", "Students starting physics"],
+          outcomes: ["Explain why atoms are stable", "Predict where an electron is"],
+          valueProposition: "See why the smallest things behave so strangely.",
+        },
+      },
+      where: { id: course.id },
+    });
 
     await page.setViewportSize({ height: 812, width: 375 });
     await page.goto(coursePath);
@@ -435,7 +437,11 @@ test.describe("public Library chapter and course pages", () => {
     // The hero's and the closing call's buttons; the bottom bar's is hidden until it's needed.
     await expect(bottomStart).toHaveCount(2);
 
-    await page.getByRole("heading", { name: "What you'll learn" }).scrollIntoViewIfNeeded();
+    // What the course makes you able to do, at the top of the screen: the first button is gone.
+    await page
+      .getByRole("heading", { name: "What you'll be able to do" })
+      .evaluate((heading) => heading.scrollIntoView({ block: "start" }));
+
     await expect(bottomStart).toHaveCount(3);
 
     // The closing call's button is on screen again, so the bottom bar steps aside.
@@ -459,31 +465,31 @@ test.describe("public Library chapter and course pages", () => {
     await expectAccessibleScreen(page, "a catalog category");
   });
 
-  test("a signed-in learner votes on the course and the chapter from their menus", async ({
-    noProgressUser,
+  test("a signed-in learner reports a problem from the course's and the chapter's menus, without votes", async ({
     userWithoutProgress: page,
   }) => {
-    const { chapter, chapterPath, course, coursePath } = await createLibraryCourse();
-
-    const findVote = (contentId: string) =>
-      prisma.contentFeedback.findFirst({ where: { contentId, userId: noProgressUser.id } });
+    const { chapterPath, coursePath } = await createLibraryCourse();
 
     await page.goto(coursePath);
-    await page.getByRole("button", { name: "Course options" }).click();
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Helpful" }).click();
 
-    await expect
-      .poll(() => findVote(course.id))
-      .toMatchObject({ contentKind: "course", vote: "up" });
+    // A learner is in the app: its account menu and goal instead of the logo, and no note about
+    // starting without an account.
+    const bar = page.getByRole("banner");
+    await expect(bar.getByRole("link", { name: "Start a goal" })).toBeVisible();
+    await expect(bar.getByRole("button", { name: "User menu" })).toBeVisible();
+    await expect(bar.getByRole("link", { name: "Zoonk home page" })).toHaveCount(0);
+    await expect(page.getByText("No account needed for your first lesson.")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Course options" }).click();
+    await expect(page.getByRole("menu").getByRole("menuitemcheckbox")).toHaveCount(0);
+    await page.getByRole("menuitem", { name: "Report a problem" }).click();
+    await expect(page.getByRole("dialog", { name: "Report a problem" })).toBeVisible();
 
     await page.goto(chapterPath);
     await page.getByRole("button", { name: "Chapter options" }).click();
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).click();
-    await page.getByRole("button", { name: "Skip" }).click();
 
-    await expect
-      .poll(() => findVote(chapter.id))
-      .toMatchObject({ contentKind: "chapter", reasons: [], vote: "down" });
+    await expect(page.getByRole("menu").getByRole("menuitem")).toHaveText(["Report a problem"]);
+    await expect(page.getByRole("menu").getByRole("menuitemcheckbox")).toHaveCount(0);
   });
 
   test("lists other editions of the course as language alternates", async ({ page }) => {
@@ -529,5 +535,16 @@ test.describe("moved chapter and lesson URLs", () => {
 
     await page.goto(`${chapterPath}/l/deleted-lesson`);
     await expect(page).toHaveURL(new RegExp(`${coursePath}$`, "u"));
+  });
+
+  test("a chapter or a lesson of a course that doesn't exist answers 404", async ({ page }) => {
+    const coursePath = `/b/${AI_ORG_SLUG}/c/deleted-${randomUUID().slice(0, 8)}`;
+
+    const [chapter, lesson] = await Promise.all([
+      page.request.get(`${coursePath}/ch/a-chapter`),
+      page.request.get(`${coursePath}/ch/a-chapter/l/a-lesson`),
+    ]);
+
+    expect([chapter.status(), lesson.status()]).toStrictEqual([404, 404]);
   });
 });

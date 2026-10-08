@@ -1,11 +1,19 @@
+import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import {
   planChangeDecisionInputSchema,
   planChangeInputSchema,
-  planEditRequestInputSchema,
   planToolChoiceInputSchema,
 } from "@zoonk/core/plans/contract";
+import { focusTestInputSchema } from "@zoonk/core/plans/focus-test/contract";
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
+import { planTimeAdviceSchema } from "@zoonk/core/plans/time-advice-contract";
+import { z } from "zod";
+import {
+  focusTestGenerationSchema,
+  focusTestResponseSchema,
+  focusTestResultSchema,
+} from "../schemas/focus-test";
 import { goalSchema } from "../schemas/goals";
 import {
   goalPathParamsSchema,
@@ -15,19 +23,20 @@ import {
 import {
   ownLevelChangeSchema,
   planChangeResultSchema,
-  planChangeSchema,
   planLinkResponseSchema,
   planResponseSchema,
 } from "../schemas/plans";
 import {
   conflictResponse,
+  forbiddenResponse,
   notFoundResponse,
-  smallAiHelpRefusalResponses,
+  paymentRequiredResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
+import { planTimeAdviceQuerySchema } from "../schemas/time-advice";
 import { AUTHENTICATED_SECURITY, OPTIONAL_AUTHENTICATION_SECURITY } from "../security";
 
 const planErrors = {
@@ -40,7 +49,7 @@ export const planPaths = {
   "/goals/{goalId}/plan": {
     get: {
       description:
-        "The plan at every zoom level for both modes: each phase with the current one chapter by chapter, this week day by day, the status (on track, ahead, a bit behind with the fix, or needs adjusting), the estimate and its pace, what fits in the learner's time and what more time would change, the areas to focus on or skip, and recent changes with proposals waiting for an OK. Free exam plans mark mocks and days past the first week as Plus.",
+        "The plan at every zoom level: each phase with the current one chapter by chapter, this week day by day, the status (on track, ahead, a bit behind with the fix, or needs adjusting), the estimate and its pace, what fits in the learner's time and what more time would change, the areas to focus on or skip, and recent changes with proposals waiting for an OK. Free exam plans mark mocks and days past the first week as Plus.",
       operationId: "getGoalPlan",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -58,7 +67,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/changes": {
     post: {
       description:
-        "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on, skip or bring back, or steering. It re-plans from today and can be undone.",
+        "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone. A change that only focuses on subjects and would move nothing isn't saved: it answers `unchanged` with the reason.",
       operationId: "createPlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeInputSchema } },
@@ -81,7 +90,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/changes/{changeId}": {
     patch: {
       description:
-        "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it). 409 when the change was already answered or the plan moved on.",
+        'The learner\'s answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen ("Got it") for an applied change the plan should stop showing. 409 when the change was already answered or the plan moved on.',
       operationId: "decidePlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeDecisionInputSchema } },
@@ -102,27 +111,72 @@ export const planPaths = {
       tags: ["Plans"],
     },
   },
-  "/goals/{goalId}/plan/edit-requests": {
+  "/goals/{goalId}/plan/focus-test": {
+    get: {
+      description:
+        "For a plan whose time doesn't cover everything in depth: a few questions on each of the plan's areas worth most, in the exam's quick format, so the answers choose where the depth goes. Nothing is stored until the answers are submitted. 404 when the plan has fewer than two areas to choose between.",
+      operationId: "getFocusTest",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        ...planErrors,
+        "200": {
+          content: { "application/json": { schema: focusTestResponseSchema } },
+          description: "The focus test's questions",
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get a plan's focus test",
+      tags: ["Plans"],
+    },
     post: {
       description:
-        'Changes the plan from plain words, such as "less on weekends" or "focus on math". A change of at most one lesson applies at once with an undo; anything bigger comes back proposed, with its effect on the end date, waiting for the learner\'s OK. 422 PLAN_EDIT_NOT_UNDERSTOOD when the words aren\'t a plan change.',
-      operationId: "createPlanEditRequest",
+        "Grades the focus test, records every answer as diagnostic evidence, and gives the plan's focus to the areas that need it most: the weakest of the ones worth most, each decided by at least three answers. The focus is a plan change that can be undone; every other topic stays in the plan.",
+      operationId: "submitFocusTest",
       requestBody: {
-        content: { "application/json": { schema: planEditRequestInputSchema } },
+        content: { "application/json": { schema: focusTestInputSchema } },
         required: true,
       },
       requestParams: { path: goalPathParamsSchema },
       responses: {
         ...planErrors,
         "200": {
-          content: { "application/json": { schema: planChangeResultSchema } },
-          description: "The change, applied or proposed",
+          content: { "application/json": { schema: focusTestResultSchema } },
+          description: "What the test found and the focus it set",
         },
         "422": unprocessableEntityResponse,
-        ...smallAiHelpRefusalResponses,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Change a plan in plain words",
+      summary: "Submit a plan's focus test",
+      tags: ["Plans"],
+    },
+  },
+  "/goals/{goalId}/plan/focus-test/generations": {
+    post: {
+      description:
+        "Gets the focus test ready when the learner starts it (never on a screen view). `ready` when every area has its questions. Otherwise a run writes the missing ones in the exam's quick format (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+      operationId: "createFocusTestGeneration",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        ...planErrors,
+        "200": {
+          content: { "application/json": { schema: focusTestGenerationSchema } },
+          description: "The focus test has its questions",
+        },
+        "202": {
+          content: { "application/json": { schema: focusTestGenerationSchema } },
+          description: "A run is writing the questions",
+          headers: z.object({
+            Location: z
+              .string()
+              .meta({ description: "The run's status URL: GET /generations/{generationId}" }),
+          }),
+        },
+        "402": paymentRequiredResponse,
+        "403": forbiddenResponse,
+        "429": tooManyRequestsResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Write a plan's focus test questions",
       tags: ["Plans"],
     },
   },
@@ -145,6 +199,24 @@ export const planPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Change your own level",
+      tags: ["Plans"],
+    },
+  },
+  "/goals/{goalId}/plan/time-advice": {
+    get: {
+      description:
+        "The daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, on the study days asked about, or, when no daily time does, what the most time a day covers. The time question recommends and picks it first, and the plan says the same number once the learner chooses. `ready` is false while the plan is being built: ask again in a few seconds.",
+      operationId: "getPlanTimeAdvice",
+      requestParams: { path: goalPathParamsSchema, query: planTimeAdviceQuerySchema },
+      responses: {
+        ...planErrors,
+        "200": {
+          content: { "application/json": { schema: planTimeAdviceSchema } },
+          description: "The daily time the goal needs",
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get the daily time a goal needs",
       tags: ["Plans"],
     },
   },

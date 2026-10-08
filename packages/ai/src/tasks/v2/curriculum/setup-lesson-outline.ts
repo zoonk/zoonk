@@ -16,7 +16,7 @@ import systemPrompt from "./setup-lesson-outline.prompt.md";
  * 27 Sep 2026) Luna met every rule at 4.0s p50 and $0.24 per 1,000.
  */
 const defaultModel = "openai/gpt-6-luna";
-const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-4.5"] as const;
+const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
 
 const schema = z.object({
   canDo: z.string(),

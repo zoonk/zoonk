@@ -13,8 +13,11 @@ const MAX_CANDIDATES = 5;
  */
 const CONFIDENCE_BY_ORIGIN: Record<MemoryOrigin, number> = { noticed: 0.6, said: 0.9 };
 
-/** Activity numbers can only show how someone learns and when they study. */
-const SESSION_CATEGORIES = new Set<MemoryCategory>(["learning", "routine"]);
+/**
+ * Activity numbers can only show how someone learns. When and how long they study is the plan's
+ * setting for one goal, not a fact about them.
+ */
+const SESSION_CATEGORIES = new Set<MemoryCategory>(["learning"]);
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 
@@ -94,7 +97,7 @@ function toCandidate({
 
 /**
  * Turns what the extraction model proposed into candidates code can trust: only categories this
- * learner's memory may hold, only learning and routine from session numbers, no fact whose end
+ * learner's memory may hold, only learning from session numbers, no fact whose end
  * date has passed, one copy of each statement and at most a handful per run.
  */
 export function toMemoryCandidates({

@@ -202,6 +202,14 @@ function findErrorIssues(fields: FindErrorFields) {
   return [
     !fields.steps.some((step) => step.id === fields.errorStepId) &&
       issue("inconsistentFields", "fields.errorStepId", "The wrong step isn't in the list"),
+    // Writers put the mistake in the final "So…" almost every time, which teaches learners to
+    // check only the last line: the conclusion should come out wrong because of an earlier step.
+    fields.steps.at(-1)?.id === fields.errorStepId &&
+      issue(
+        "inconsistentFields",
+        "fields.errorStepId",
+        "The mistake is in the last step; make it in an earlier step the conclusion builds on",
+      ),
     withMath.some((step) => step.expression === undefined || step.result === undefined) &&
       issue(
         "inconsistentFields",
@@ -217,7 +225,7 @@ function findErrorIssues(fields: FindErrorFields) {
 export const findErrorTemplate = defineActivityTemplate({
   checks: ["interaction"],
   description:
-    'Spot the wrong step in a worked answer, like a price change that looks symmetric but isn\'t. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to "ai" for "Spot the AI\'s mistake": the steps are an AI assistant\'s answer to the problem, with one plausible mistake to catch. Fills: the worked steps, which one is wrong, why and the corrected step.',
+    'Spot the wrong step in a worked answer, like a price change that looks symmetric but isn\'t. Steps with math give an expression and the result they claim; code finds the one whose result is wrong. Set author to "ai" for "Spot the AI\'s mistake": the steps are an AI assistant\'s answer to the problem, with one plausible mistake to catch. The wrong step is never the last one: later steps build on it, so the conclusion comes out wrong because of it. Fills: the worked steps, which one is wrong, why and the corrected step.',
   expected: (fields) => ({ ids: [fields.errorStepId], kind: "selection" }),
   fields: findErrorFields,
   id: "findError",

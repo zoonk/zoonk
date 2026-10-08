@@ -6,4 +6,3 @@ export const FINAL_GOAL_ID = "goal-again";
 
 /** Sections the top bar links to. */
 export const HOW_IT_WORKS_ID = "how-it-works";
-export const FOCUS_AND_FUN_ID = "focus-and-fun";

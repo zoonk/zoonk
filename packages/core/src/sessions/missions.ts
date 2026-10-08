@@ -1,7 +1,7 @@
 /**
  * The day's three missions come from the session itself: review (open today's capsules), something
  * new (finish the new lesson) and fix a mistake. Together they make a full meal, always +50 Brain
- * Power, in both modes: Fun names it and feeds the buddy, Focus adds it to the total quietly. They
+ * Power, which also feeds the buddy. They
  * renew at the learner's local midnight because each session belongs to one local day.
  */
 type MissionKind = "review" | "somethingNew" | "fixMistake";

@@ -131,6 +131,76 @@ export const ACTIVITY_LESSON_SPECS = {
     supportMode: "explanationFirst",
     title: "Name a tree from one leaf",
   },
+  "en-ux-goals-spot-ai": {
+    canDo: "Write a UX goal that names the change without naming a solution",
+    description:
+      "State what should change in people's experience before choosing a design, and catch a goal that hides a solution.",
+    estimatedMinutes: 4,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "A team writes the goal 'Add a progress bar to checkout'. Ask the learner to guess, without scoring, whether that is a goal or a solution. Answer: a solution.",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "A UX goal names the change in people's experience ('fewer people give up at payment'), not the design that might cause it ('add a progress bar'). Explain with the checkout example.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Ask which of three statements is a UX goal. Tempting wrong answer: 'Redesign the payment button', a solution phrased like a goal.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "findError",
+        brief:
+          "Spot the AI's mistake: a designer asked an AI assistant to turn interview notes into a UX goal for a food delivery app. The assistant's four steps read the notes, find that people abandon orders when the delivery fee appears late, then in step 2 decide the goal is 'show the fee on the home screen' (the mistake: a solution, not a change in experience), and in steps 3 and 4 build the success measure and the summary on that wrong goal.",
+        kind: "activity",
+        skills: [1],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Application: in a banking app, support tickets show people can't find where to change their card limit. Ask the learner to pick the UX goal among options that mix goals and solutions.",
+        kind: "application",
+        skills: [0, 1],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Write a goal that names the change in people's experience, not the design that might cause it.",
+        example: "'Fewer people give up when the fee appears' instead of 'Add a fee banner'.",
+        hard: false,
+        name: "Write a UX goal without a solution",
+        topic: "UX goals",
+        useCase: "Agreeing with a product team on what a redesign must change before designing it.",
+      },
+      {
+        description: "Tell a real UX goal from a proposed solution written as if it were a goal.",
+        example:
+          "'Redesign the button' is a solution; 'people finish payment on the first try' is a goal.",
+        hard: false,
+        name: "Tell a UX goal from a proposed solution",
+        topic: "UX goals",
+        useCase: "Reviewing a brief or an AI assistant's summary before a design sprint.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Writing UX goals",
+  },
   "pt-camaras-do-coracao-beginner": {
     canDo: "Localizar as quatro câmaras do coração e dizer para onde cada lado bombeia o sangue",
     description:

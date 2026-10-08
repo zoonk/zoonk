@@ -6,11 +6,9 @@ import {
   type LanguageUnitView,
 } from "@zoonk/core/view-models/language/contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, NotebookPenIcon, XIcon } from "lucide-react";
+import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
-import { LanguageCard } from "../language-card";
-import { UnitCardHeader } from "./unit-sections";
 
 type UnitMistake = LanguageUnitView["mistakes"][number];
 
@@ -29,7 +27,7 @@ function MistakeItem({ mistake }: { mistake: UnitMistake }) {
   const t = useExtracted();
 
   return (
-    <li className="bg-muted/60 in-data-[mode=fun]:bg-fun-soft flex flex-col gap-1.5 rounded-2xl p-3">
+    <li className="bg-background flex flex-col gap-1.5 rounded-2xl p-3">
       <p className="text-sm font-medium">{mistake.question}</p>
       {mistake.answer && (
         <p className="text-muted-foreground flex items-start gap-2 text-sm">
@@ -72,7 +70,7 @@ function SkillFilters({
   return (
     <div
       aria-label={t("Show mistakes in")}
-      className="bg-muted grid grid-cols-4 gap-1 rounded-2xl p-1"
+      className="bg-background grid grid-cols-4 gap-1 rounded-2xl p-1"
       role="group"
     >
       {LANGUAGE_MISTAKE_SKILLS.map((skill) => {
@@ -84,9 +82,7 @@ function SkillFilters({
             aria-pressed={isSelected}
             className={cn(
               "focus-visible:ring-ring/50 flex min-h-11 min-w-0 flex-col items-center justify-center rounded-xl px-1 py-1 outline-none focus-visible:ring-[3px] disabled:opacity-50",
-              isSelected
-                ? "bg-background in-data-[mode=fun]:fun-inv shadow-sm"
-                : "text-muted-foreground",
+              isSelected ? "bg-muted" : "text-muted-foreground",
             )}
             disabled={count === 0}
             key={skill}
@@ -103,8 +99,8 @@ function SkillFilters({
 }
 
 /**
- * "Review my mistakes": the learner's open mistakes on this unit, filtered by words, listening,
- * speaking or writing. Each shows the question, what they answered, the right answer and why.
+ * The learner's open mistakes on this unit, filtered by words, listening, speaking or writing.
+ * Each shows the question, what they answered, the right answer and why.
  */
 export function UnitMistakes({ mistakes }: { mistakes: UnitMistake[] }) {
   const t = useExtracted();
@@ -113,32 +109,17 @@ export function UnitMistakes({ mistakes }: { mistakes: UnitMistake[] }) {
   const shown = skill ? mistakes.filter((mistake) => mistake.skill === skill) : mistakes;
 
   return (
-    <LanguageCard aria-labelledby="unit-mistakes">
-      <UnitCardHeader
-        aside={mistakes.length > 0 ? mistakes.length : null}
-        icon={NotebookPenIcon}
-        id="unit-mistakes"
-        title={t("Review my mistakes")}
-      />
-
-      {mistakes.length === 0 ? (
-        <p className="text-muted-foreground text-sm">
-          {t("Nothing to review here. Mistakes you make in this unit show up here.")}
-        </p>
-      ) : (
-        <>
-          <SkillFilters mistakes={mistakes} onChange={setSkill} selected={skill} />
-          <ul
-            aria-label={skill ? labels[skill] : t("All mistakes")}
-            aria-live="polite"
-            className="flex flex-col gap-2"
-          >
-            {shown.map((mistake) => (
-              <MistakeItem key={mistake.id} mistake={mistake} />
-            ))}
-          </ul>
-        </>
-      )}
-    </LanguageCard>
+    <>
+      <SkillFilters mistakes={mistakes} onChange={setSkill} selected={skill} />
+      <ul
+        aria-label={skill ? labels[skill] : t("All mistakes")}
+        aria-live="polite"
+        className="flex flex-col gap-2"
+      >
+        {shown.map((mistake) => (
+          <MistakeItem key={mistake.id} mistake={mistake} />
+        ))}
+      </ul>
+    </>
   );
 }

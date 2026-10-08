@@ -1,6 +1,7 @@
-import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
+import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
+import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { uploadTokenRequestSchema } from "@/lib/openapi/schemas/research-sources";
 import { handleUploadPresigned } from "@vercel/blob/client";
 import { createSourceUploadToken } from "@zoonk/core/library/sources/upload-token";
@@ -37,11 +38,7 @@ async function createUploadToken(request: NextRequest) {
   }
 
   if (result.status === "limitReached") {
-    return createErrorResponse({
-      code: "UPLOAD_LIMIT_REACHED",
-      message: `You can upload ${result.limit} files a day on your plan`,
-      status: httpStatus.tooManyRequests,
-    });
+    return usageDecisionError(result);
   }
 
   const presigned = await handleUploadPresigned({

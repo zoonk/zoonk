@@ -1,20 +1,19 @@
 "use client";
 
-import { Buddy } from "@zoonk/ui/components/buddy";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
-import { FlagIcon, RotateCcwIcon, StarIcon } from "lucide-react";
+import { BrainIcon, FlagIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { BuddySpeech, useBuddyLine } from "../buddies/buddy-lines";
-import { useBuddyName } from "../buddies/use-buddy-name";
-import { useExperienceMode } from "../mode-provider";
+import { Callout } from "../_components/callout";
+import { FactChip, FactChips } from "../_components/fact-chips";
+import { KindTile } from "../_components/kind-tile";
+import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
+import { Steps, type StepsItem } from "../_components/steps";
 import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
-import { CheckpointFrame } from "./checkpoint-frame";
 import { usePhaseLabel } from "./checkpoint-labels";
-import { CheckpointReview } from "./checkpoint-review";
-import { CheckpointRewards } from "./checkpoint-rewards";
+import { CheckpointReviewSheet } from "./checkpoint-review";
+import { CheckpointRewardsStep } from "./checkpoint-rewards";
 
 type Outcome = { correct: number; passed: boolean; total: number };
 
@@ -28,175 +27,211 @@ function useOutcome(): Outcome | null {
     : checkpoint.result;
 }
 
-/** One star per question, lit for each right answer, in the order they were answered. */
-function ScoreStars() {
-  const { checkpoint, duel } = useCheckpointScreen();
-  const answers = duel.state.completion?.checkpoint?.answers;
+/** A weekly challenge is done once finished; a phase's Trickster is won or not. */
+function useIsWon(): boolean {
+  const { checkpoint } = useCheckpointScreen();
+  const outcome = useOutcome();
 
-  const stars =
-    answers?.map((answer) => ({ id: answer.itemId, isLit: answer.isCorrect })) ??
-    checkpoint.questions.map((question) => ({
-      id: question.itemId,
-      isLit: question.answered?.isCorrect ?? false,
-    }));
+  return checkpoint.kind === "weekly" || Boolean(outcome?.passed);
+}
+
+function useHeadline(): string {
+  const t = useExtracted();
+  const { checkpoint } = useCheckpointScreen();
+  const won = useIsWon();
+
+  if (checkpoint.kind === "weekly") {
+    return t("Weekly challenge done");
+  }
+
+  return won ? t("You beat the Trickster!") : t("Not this time");
+}
+
+/** "8 of 10 right"; a duel not won also says how many winning takes. */
+function useScoreLine(outcome: Outcome): string {
+  const t = useExtracted();
+  const { checkpoint } = useCheckpointScreen();
+  const won = useIsWon();
+  const score = { correct: String(outcome.correct), total: String(outcome.total) };
+
+  if (won) {
+    return t("{correct} of {total} right", score);
+  }
+
+  return t("{correct} of {total} right. Winning takes {passMark}.", {
+    ...score,
+    passMark: String(checkpoint.passMark),
+  });
+}
+
+/** The Trickster as the result's art: beaten, he leans back; otherwise he still holds his sign. */
+function ResultArt() {
+  const { checkpoint } = useCheckpointScreen();
+  const won = useIsWon();
+
+  if (checkpoint.kind === "weekly") {
+    return <KindTile kind="challenge" size="lg" />;
+  }
 
   return (
-    <div aria-hidden="true" className="flex flex-wrap justify-center gap-1">
-      {stars.map((star) => (
-        <StarIcon
-          className={cn(
-            "size-5",
-            star.isLit ? "fill-fun-accent-amber text-fun-accent-amber" : "text-fun-dash",
-          )}
-          key={star.id}
-        />
-      ))}
-    </div>
+    <Trickster
+      className={cn("size-28 sm:size-32", won && "rotate-12 opacity-80")}
+      pose={won ? "sly" : "hero"}
+    />
   );
 }
 
-function useHeadline(outcome: Outcome): string {
+/** A duel not won still earns Brain Power for its right answers, said beside the score. */
+function EarnedChip() {
   const t = useExtracted();
-  const mode = useExperienceMode();
-  const { checkpoint } = useCheckpointScreen();
+  const format = useFormatter();
+  const { duel } = useCheckpointScreen();
+  const earned = duel.state.completion?.brainPower ?? 0;
 
-  if (checkpoint.kind === "weekly") {
-    return mode === "fun" ? t("Big Challenge done!") : t("Weekly challenge done");
+  if (earned <= 0) {
+    return null;
   }
 
-  if (outcome.passed) {
-    return mode === "fun" ? t("You won!") : t("Checkpoint passed");
-  }
-
-  return mode === "fun" ? t("Good fight!") : t("Not passed yet");
+  return (
+    <FactChips className="justify-center">
+      <FactChip>
+        <BrainIcon aria-hidden="true" />
+        {t("+{points} Brain Power", { points: format.number(earned) })}
+      </FactChip>
+    </FactChips>
+  );
 }
 
-/** A lost boss costs nothing: a rematch tomorrow after short lessons, and the next phase is open. */
-function RematchNote() {
+/** The result: the Trickster, won or not, and the score. */
+function OutcomeStep() {
+  const headline = useHeadline();
+  const outcome = useOutcome();
+  const won = useIsWon();
+  const scoreLine = useScoreLine(outcome ?? { correct: 0, passed: false, total: 0 });
+
+  return (
+    <StepCard>
+      <ResultArt />
+      <StepHeader>
+        <StepTitle>{headline}</StepTitle>
+        {outcome && <StepDetail>{scoreLine}</StepDetail>}
+      </StepHeader>
+      {!won && <EarnedChip />}
+    </StepCard>
+  );
+}
+
+/** The new try, as things stand now: tomorrow, back in the plan, or passed on a later try. */
+function useRetry(): { detail: string; title: string } | null {
+  const t = useExtracted();
+  const { checkpoint, duel } = useCheckpointScreen();
+  const lessons = String(checkpoint.reinforcementLessons);
+  // Right after the duel, its new try is tomorrow.
+  const retry = duel.state.completion ? "tomorrow" : checkpoint.retry;
+
+  if (retry === "passed") {
+    return { detail: t("This phase is complete."), title: t("Passed on a later try") };
+  }
+
+  if (!retry) {
+    return null;
+  }
+
+  return {
+    detail: t("After {lessons} short lessons on what tripped you up. Nothing is lost.", {
+      lessons,
+    }),
+    title: retry === "tomorrow" ? t("New try tomorrow") : t("New try in your next session"),
+  };
+}
+
+/** A duel not won costs nothing: a new try after short lessons, and the next phase is open. */
+function RetryStep() {
+  const t = useExtracted();
+  const phaseLabel = usePhaseLabel();
+  const { checkpoint } = useCheckpointScreen();
+  const retry = useRetry();
+
+  if (!retry) {
+    return null;
+  }
+
+  return (
+    <>
+      <StepCard>
+        <KindTile icon={RotateCcwIcon} kind="challenge" size="lg" />
+        <StepHeader>
+          <StepTitle>{retry.title}</StepTitle>
+          <StepDetail>{retry.detail}</StepDetail>
+        </StepHeader>
+      </StepCard>
+
+      {checkpoint.nextPhase && checkpoint.retry !== "passed" && (
+        <Callout>
+          <FlagIcon aria-hidden="true" />
+          <p>
+            {t("The next phase, {phase}, is already open.", {
+              phase: phaseLabel(checkpoint.nextPhase),
+            })}
+          </p>
+        </Callout>
+      )}
+    </>
+  );
+}
+
+/** After a win, the phase that comes next, by its name. */
+function NextPhaseStep() {
   const t = useExtracted();
   const phaseLabel = usePhaseLabel();
   const { checkpoint } = useCheckpointScreen();
 
-  return (
-    <ul className="border-border in-data-[mode=fun]:fun-glass flex flex-col rounded-3xl border px-4">
-      <li className="border-border flex items-start gap-3 border-b py-3">
-        <LineMarker>
-          <RotateCcwIcon aria-hidden="true" className="size-5" />
-        </LineMarker>
-        <span className="flex flex-col">
-          <span className="font-semibold">{t("Rematch tomorrow")}</span>
-          <span className="text-muted-foreground text-sm">
-            {t("After {lessons} short lessons on what tripped you up. Nothing is lost.", {
-              lessons: String(checkpoint.reinforcementLessons),
-            })}
-          </span>
-        </span>
-      </li>
-      {checkpoint.nextPhase && (
-        <li className="flex items-start gap-3 py-3">
-          <LineMarker>
-            <FlagIcon aria-hidden="true" className="size-5" />
-          </LineMarker>
-          <span className="flex flex-col">
-            <span className="font-semibold">
-              {t("{phase} is open", { phase: phaseLabel(checkpoint.nextPhase) })}
-            </span>
-            <span className="text-muted-foreground text-sm">
-              {t("You can keep going while you prepare the rematch.")}
-            </span>
-          </span>
-        </li>
-      )}
-    </ul>
-  );
-}
-
-function FunResultArt({ outcome }: { outcome: Outcome }) {
-  const { checkpoint, buddy } = useCheckpointScreen();
-  const won = outcome.passed || checkpoint.kind === "weekly";
-  const line = useBuddyLine(won ? "bossWon" : "bossLost");
-  const buddyName = useBuddyName(buddy ?? { kind: "zu", name: null });
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      {buddy && <BuddySpeech>{line}</BuddySpeech>}
-      <div className="flex items-end justify-center gap-4">
-        {buddy && (
-          <Buddy
-            beltColor={buddy.beltColor}
-            className="animate-fun-ceremony size-32"
-            energy={buddy.energy}
-            expression={won ? "cheer" : "kind"}
-            glasses={buddy.glasses}
-            kind={buddy.kind}
-            label={buddyName}
-          />
-        )}
-        {checkpoint.kind !== "weekly" && (
-          <Trickster className={cn("size-20", won && "rotate-12 opacity-80")} />
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ScoreLine({ outcome }: { outcome: Outcome }) {
-  const t = useExtracted();
-  const { checkpoint } = useCheckpointScreen();
-  const score = { correct: String(outcome.correct), total: String(outcome.total) };
-
-  if (outcome.passed || checkpoint.kind === "weekly") {
-    return <p className="text-muted-foreground">{t("{correct} of {total} right", score)}</p>;
+  if (!checkpoint.nextPhase) {
+    return null;
   }
 
   return (
-    <p className="text-muted-foreground">
-      {t("{correct} of {total} right. Winning takes {passMark}.", {
-        ...score,
-        passMark: String(checkpoint.passMark),
-      })}
-    </p>
+    <StepCard>
+      <KindTile icon={FlagIcon} kind="lesson" size="lg" />
+      <StepHeader>
+        <StepEyebrow>{t("Next phase")}</StepEyebrow>
+        <StepTitle>{phaseLabel(checkpoint.nextPhase)}</StepTitle>
+      </StepHeader>
+    </StepCard>
   );
 }
 
+/** The result's steps: how it went, then what it earned and what's next, or the new try. */
+function useResultItems(): StepsItem[] {
+  const { checkpoint } = useCheckpointScreen();
+  const won = useIsWon();
+  const retry = useRetry();
+  const nextAfterWin = won && checkpoint.kind !== "weekly" && checkpoint.reward.phaseComplete;
+
+  return [
+    { content: <OutcomeStep />, id: "outcome" },
+    won && { content: <CheckpointRewardsStep />, id: "rewards" },
+    !won && retry && { content: <RetryStep />, id: "retry" },
+    nextAfterWin && checkpoint.nextPhase && { content: <NextPhaseStep />, id: "next" },
+  ].filter((item) => item !== null && item !== false);
+}
+
 /**
- * The end of a checkpoint. A win lists what it earned; a loss is kind and concrete: a rematch
- * tomorrow after short lessons, and the next phase stays open. The answers and the traps are
- * explained now, one tap away.
+ * The end of a checkpoint, one thing at a time. A win: the Trickster beaten, what it earned and
+ * the next phase. A duel not won is kind and concrete: a new try after short lessons, and the next
+ * phase already open. The answers and the traps are one text link away.
  */
 export function CheckpointResultView() {
   const t = useExtracted();
-  const format = useFormatter();
-  const mode = useExperienceMode();
-  const { checkpoint, duel, hrefs } = useCheckpointScreen();
-  const outcome = useOutcome();
-  const headline = useHeadline(outcome ?? { correct: 0, passed: false, total: 0 });
-  const earned = duel.state.completion?.brainPower;
-  const won = Boolean(outcome?.passed) || checkpoint.kind === "weekly";
+  const { hrefs } = useCheckpointScreen();
+  const items = useResultItems();
 
   return (
-    <CheckpointFrame footer={<TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>}>
-      {mode === "fun" && outcome && <FunResultArt outcome={outcome} />}
-
-      <div className="flex flex-col items-center gap-2 text-center" role="status">
-        <h1 className="in-data-[mode=fun]:font-fun-display text-3xl font-bold text-balance">
-          {headline}
-        </h1>
-        {mode === "fun" && outcome && <ScoreStars />}
-        {outcome && <ScoreLine outcome={outcome} />}
-        {earned !== undefined && earned > 0 && (
-          <p className="text-sm font-medium">
-            {t("+{points} Brain Power", { points: format.number(earned) })}
-          </p>
-        )}
-      </div>
-
-      {won ? (
-        <CheckpointRewards layout="rows" withBrainPower={earned === undefined} />
-      ) : (
-        <RematchNote />
-      )}
-      <CheckpointReview />
-    </CheckpointFrame>
+    <Steps
+      exitHref={hrefs.exit}
+      finalAction={<TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>}
+      finalOptions={<CheckpointReviewSheet />}
+      items={items}
+    />
   );
 }

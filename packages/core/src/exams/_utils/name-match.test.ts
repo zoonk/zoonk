@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { namesMatch } from "./name-match";
+import { nameOverlap, namesMatch } from "./name-match";
 
 describe(namesMatch, () => {
   it("matches official area names with their short forms", () => {
@@ -22,5 +22,22 @@ describe(namesMatch, () => {
     expect(namesMatch("Humanities", "Natural Sciences and Math")).toBe(false);
     expect(namesMatch("Mat", "Mathematics")).toBe(false);
     expect(namesMatch("", "Math")).toBe(false);
+  });
+});
+
+describe(nameOverlap, () => {
+  it("is the share of the shorter name's words the longer one has", () => {
+    expect(nameOverlap("Matemática", "Matemática e suas Tecnologias")).toBe(1);
+
+    expect(
+      nameOverlap(
+        "Processo Legislativo e Regimentos Parlamentares",
+        "Processo Legislativo e Regimento Interno da Câmara dos Deputados, Regimento Comum do Congresso Nacional",
+      ),
+    ).toBe(0.75);
+
+    expect(nameOverlap("Direito Penal", "Direito Administrativo")).toBe(0.5);
+    expect(nameOverlap("Ecologia", "Eletricidade")).toBe(0);
+    expect(nameOverlap("", "Math")).toBe(0);
   });
 });

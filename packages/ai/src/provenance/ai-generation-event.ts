@@ -1,5 +1,5 @@
 import { POSTHOG_SYSTEM_DISTINCT_ID } from "@zoonk/utils/posthog";
-import { type TaskProvenance } from "./task-provenance";
+import { type AiGeneration } from "./ai-generation-sink";
 
 type EventPropertyValue = boolean | number | string;
 
@@ -23,21 +23,18 @@ export type AiGenerationEvent = {
 const MS_PER_SECOND = 1000;
 
 /**
- * Maps provenance to PostHog's `$ai_generation` event. It never carries prompt
+ * Maps a finished AI call to PostHog's `$ai_generation` event. It never carries prompt
  * or response text. A known cost is sent as a passthrough total so PostHog
- * keeps the gateway's billed cost (at the tier that actually served the call)
+ * keeps our price list's cost (at the tier that actually served the call)
  * instead of estimating one from its own price table; without one, PostHog estimates
  * from the model and token counts.
  */
 export function toAiGenerationEvent({
   context = {},
+  properties: extraProperties = {},
   provenance,
   task,
-}: {
-  context?: AiGenerationContext;
-  provenance: TaskProvenance;
-  task: string;
-}): AiGenerationEvent {
+}: AiGeneration): AiGenerationEvent {
   const { costUsd, usage } = provenance;
 
   const properties: Record<string, EventPropertyValue | undefined> = {
@@ -61,7 +58,9 @@ export function toAiGenerationEvent({
     goal_id: context.goalId,
     prompt_version: provenance.promptVersion,
     requested_model: provenance.requestedModel,
+    service_tier: provenance.serviceTier,
     task,
+    ...extraProperties,
   };
 
   return {

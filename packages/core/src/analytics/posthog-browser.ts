@@ -1,5 +1,6 @@
 import { getPostHogConfig } from "@zoonk/utils/posthog";
 import { type PostHog } from "posthog-js";
+import { type SharedEventProperties } from "./shared-properties";
 
 /** Starts PostHog even on a page that stays busy, so analytics never waits for long. */
 const IDLE_TIMEOUT_MS = 2000;
@@ -53,4 +54,40 @@ export function loadPostHog(): Promise<PostHog | null> {
     });
 
   return postHog;
+}
+
+/** How long events wait for the layout's shared properties before they go without them. */
+const SHARED_PROPERTIES_WAIT_MS = 5000;
+
+let sharedPropertiesRegistered: Promise<void> = Promise.resolve();
+let markSharedPropertiesRegistered: (() => void) | null = null;
+
+/**
+ * For apps whose layout registers the shared properties (`RegisterSharedEventProperties`), called
+ * before the page renders. That layout streams in, so a screen can report its view before the
+ * properties are registered: its event waits for them instead of going without them. A page that
+ * never registers them (its analytics lookup failed) sends its events after a few seconds anyway.
+ */
+export function waitForSharedProperties() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  sharedPropertiesRegistered = new Promise((resolve) => {
+    markSharedPropertiesRegistered = resolve;
+    setTimeout(resolve, SHARED_PROPERTIES_WAIT_MS);
+  });
+}
+
+/** Registers the shared properties as PostHog super properties, so every later event carries them. */
+export async function registerSharedProperties(properties: SharedEventProperties): Promise<void> {
+  const posthog = await loadPostHog();
+  posthog?.register(properties);
+  markSharedPropertiesRegistered?.();
+}
+
+/** PostHog for sending an event: once it has loaded and the shared properties are registered. */
+export async function loadPostHogForEvents(): Promise<PostHog | null> {
+  await sharedPropertiesRegistered;
+  return loadPostHog();
 }

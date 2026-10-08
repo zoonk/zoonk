@@ -23,22 +23,14 @@ async function publishedCourse(attrs: {
 }
 
 test.describe("Course Detail Page", () => {
-  test("non-existent course invites the learner to create it", async ({ page }) => {
-    await page.goto(`/b/${AI_ORG_SLUG}/c/nonexistent-course`);
+  test("a course that doesn't exist answers 404 with the app's message and a way home", async ({
+    page,
+  }) => {
+    const response = await page.goto(`/b/${AI_ORG_SLUG}/c/nonexistent-course`);
 
-    await expect(
-      page.getByRole("heading", { name: "You found a course that hasn't been written yet" }),
-    ).toBeVisible();
-
-    await expect(
-      page.getByRole("img", { name: "An open book becoming a learning path" }),
-    ).toBeVisible();
-
-    await expect(page.getByRole("link", { name: "Create this course" })).toHaveAttribute(
-      "href",
-      "/start",
-    );
-
+    expect(response?.status()).toBe(404);
+    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Go to the home page" })).toBeVisible();
     await expectAccessibleScreen(page, "a missing course");
   });
 

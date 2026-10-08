@@ -2,12 +2,12 @@
 
 import { getMenu } from "@/lib/menu";
 import { type CatalogSearchResults } from "@zoonk/core/catalog/search";
-import { useOptionalExperienceMode } from "@zoonk/learn/mode";
 import { useExtracted } from "next-intl";
 import {
   type PaletteGroup,
   createChapterPaletteItem,
   createCoursePaletteItem,
+  createExplanationPaletteItem,
   createFeedbackPaletteItem,
   createGoalPaletteItem,
   createLogoutPaletteItem,
@@ -17,10 +17,12 @@ import {
 
 /**
  * What the learning tabs add to the palette: the learner's goals, so a goal can be switched from
- * the keyboard, and the host's action that saves the switch (as the goal switcher does).
+ * the keyboard, and the host's action that saves the switch (as the goal switcher does); and their
+ * quick explanations, newest first, each opening itself (finished ones are found here again).
  */
 export type LearnerPalette = {
   activeGoalId: string | null;
+  explanations: { id: string; title: string }[];
   goals: { id: string; title: string }[];
   onSwitchGoal: (goalId: string) => Promise<void>;
 };
@@ -44,26 +46,18 @@ export function usePaletteGroups({
   const t = useExtracted();
   const learnerGroups = useLearnerPaletteGroups(learner);
 
+  /** The language setting lives in Appearance; its own entry lets "language" find it. */
+  const language = createNavigationPaletteItem({
+    id: "language",
+    label: t("Language"),
+    menu: getMenu("appearance"),
+  });
+
   const accountItems = isLoggedIn
     ? [
         createNavigationPaletteItem({
-          id: "my-courses",
-          label: t("My courses"),
-          menu: getMenu("myCourses"),
-        }),
-        createNavigationPaletteItem({
-          id: "subscription",
-          label: t("Manage subscription"),
-          menu: getMenu("subscription"),
-        }),
-        createNavigationPaletteItem({
-          id: "update-language",
-          label: t("Update language"),
-          menu: getMenu("language"),
-        }),
-        createNavigationPaletteItem({
           id: "profile",
-          label: t("Update profile"),
+          label: t("Profile"),
           menu: getMenu("profile"),
         }),
         createNavigationPaletteItem({
@@ -71,16 +65,18 @@ export function usePaletteGroups({
           label: t("Appearance"),
           menu: getMenu("appearance"),
         }),
+        language,
         createNavigationPaletteItem({ id: "memory", label: t("Memory"), menu: getMenu("memory") }),
+        createNavigationPaletteItem({
+          id: "subscription",
+          label: t("Subscription"),
+          menu: getMenu("subscription"),
+        }),
         createLogoutPaletteItem({ label: t("Logout") }),
       ]
     : [
         createNavigationPaletteItem({ id: "login", label: t("Login"), menu: getMenu("login") }),
-        createNavigationPaletteItem({
-          id: "language",
-          label: t("Language"),
-          menu: getMenu("language"),
-        }),
+        language,
       ];
 
   const catalogPages: PaletteGroup = {
@@ -90,7 +86,7 @@ export function usePaletteGroups({
       createNavigationPaletteItem({ id: "courses", label: t("Courses"), menu: getMenu("courses") }),
       createNavigationPaletteItem({
         id: "start",
-        label: t("Start a new course"),
+        label: t("Start a goal"),
         menu: getMenu("start"),
       }),
     ],
@@ -108,7 +104,7 @@ export function usePaletteGroups({
           createFeedbackPaletteItem({ label: t("Send feedback") }),
           createNavigationPaletteItem({
             id: "support",
-            label: t("Feedback & Support"),
+            label: t("Help"),
             menu: getMenu("support"),
           }),
         ],
@@ -126,56 +122,15 @@ export function usePaletteGroups({
 }
 
 /**
- * The learning tabs' places in the names the learner's mode uses (Fun's Route, Cards and buddy,
- * as on the dock), then the learner's other goals. Null outside the learning tabs.
+ * The learning tabs' places, in the tabs' order, then the learner's other goals. Null outside the
+ * learning tabs.
  */
 function useLearnerPaletteGroups(learner?: LearnerPalette): PaletteGroup[] | null {
   const t = useExtracted();
-  const isFun = useOptionalExperienceMode() === "fun";
 
   if (!learner) {
     return null;
   }
-
-  const today = createNavigationPaletteItem({
-    id: "today",
-    label: t("Today"),
-    menu: getMenu("today"),
-  });
-
-  const progress = createNavigationPaletteItem({
-    id: "progress",
-    label: t("Progress"),
-    menu: getMenu("progress"),
-  });
-
-  const modePages = isFun
-    ? [
-        today,
-        createNavigationPaletteItem({ id: "plan", label: t("Route"), menu: getMenu("plan") }),
-        createNavigationPaletteItem({ id: "content", label: t("Cards"), menu: getMenu("content") }),
-        createNavigationPaletteItem({
-          id: "buddy",
-          label: t("Your buddy"),
-          menu: getMenu("buddy"),
-        }),
-        progress,
-        createNavigationPaletteItem({
-          id: "logbook",
-          label: t("Logbook"),
-          menu: getMenu("logbook"),
-        }),
-      ]
-    : [
-        today,
-        createNavigationPaletteItem({ id: "plan", label: t("Plan"), menu: getMenu("plan") }),
-        progress,
-        createNavigationPaletteItem({
-          id: "content",
-          label: t("Content"),
-          menu: getMenu("content"),
-        }),
-      ];
 
   /** The goal switcher falls back to the first goal when none is saved as active yet. */
   const activeGoalId = learner.activeGoalId ?? learner.goals[0]?.id;
@@ -193,11 +148,26 @@ function useLearnerPaletteGroups(learner?: LearnerPalette): PaletteGroup[] | nul
     {
       id: "pages",
       items: [
-        ...modePages,
+        createNavigationPaletteItem({ id: "today", label: t("Today"), menu: getMenu("today") }),
+        createNavigationPaletteItem({
+          id: "journey",
+          label: t("Journey"),
+          menu: getMenu("journey"),
+        }),
+        createNavigationPaletteItem({
+          id: "buddy",
+          label: t("Your buddy"),
+          menu: getMenu("buddy"),
+        }),
         createNavigationPaletteItem({
           id: "mistakes",
           label: t("Mistakes notebook"),
           menu: getMenu("mistakes"),
+        }),
+        createNavigationPaletteItem({
+          id: "stats",
+          label: t("Statistics"),
+          menu: getMenu("stats"),
         }),
         createNavigationPaletteItem({
           id: "courses",
@@ -206,12 +176,19 @@ function useLearnerPaletteGroups(learner?: LearnerPalette): PaletteGroup[] | nul
         }),
         createNavigationPaletteItem({
           id: "start",
-          label: t("Add a goal"),
+          label: t("Start a new goal"),
           menu: getMenu("start"),
         }),
       ],
       label: t("Pages"),
     },
     { id: "goals", items: goalItems, label: t("Goals") },
+    {
+      id: "explanations",
+      items: learner.explanations.map(({ id, title }) =>
+        createExplanationPaletteItem({ goalId: id, title }),
+      ),
+      label: t("Quick explanations"),
+    },
   ];
 }

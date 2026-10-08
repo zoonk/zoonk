@@ -1,4 +1,5 @@
 import "server-only";
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import {
   type LanguageLessonContent,
   generateLanguageLesson,
@@ -76,13 +77,13 @@ function withSharedIds({
 export async function writeLanguageLessonContent({
   analytics,
   lessonId,
-  priority = false,
+  serviceTier,
   workflowRunId,
 }: {
   analytics?: Analytics;
   lessonId: string;
-  /** A learner is waiting on this lesson: the writer answers at the priority tier. */
-  priority?: boolean;
+  /** `flex` when the lesson is written well before a learner reaches it. */
+  serviceTier?: ServiceTier;
   workflowRunId: string;
 }): Promise<WriteLanguageLessonResult> {
   const state = await loadLanguageLessonInputs({ lessonId, workflowRunId });
@@ -97,7 +98,7 @@ export async function writeLanguageLessonContent({
     generateLanguageLesson({
       ...inputs.writerInput,
       analytics: { contentScope: "shared", traceId: workflowRunId, ...analytics },
-      serviceTier: priority ? "priority" : undefined,
+      serviceTier,
     }),
     getSharedOrganization(),
   ]);

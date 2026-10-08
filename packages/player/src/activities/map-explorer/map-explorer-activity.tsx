@@ -1,7 +1,9 @@
 "use client";
 
 import { getActivityBaseMap } from "@zoonk/core/library/activities/base-maps";
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapPin as MapPinIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -15,8 +17,6 @@ import {
   ActivityCanvasLabel,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
-import { useFormatNumber } from "../_utils/use-format-number";
-import { useMeasuredWidth } from "../_utils/use-measured-width";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BaseMapView, type MapPin } from "./base-map-view";
 import { fitViewport, spreadPins } from "./map-viewport";

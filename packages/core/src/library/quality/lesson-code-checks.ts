@@ -5,7 +5,9 @@ import {
   type WrittenScreen,
 } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { type CourseLevel } from "@zoonk/db";
+import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";
+import { findOptionPositionReferences } from "../_utils/answer-options";
 import { safeParseStepContent } from "../steps/contract/step-contract";
 import { type ConvertedScreen, toStepContent } from "../steps/written-screens";
 import { findArithmeticErrors } from "./_utils/arithmetic";
@@ -14,6 +16,7 @@ import { findLongSentences, getMaxExplanationCharacters } from "./_utils/reading
 import { type RepeatedExample, findRepeatedExamples } from "./_utils/repeated-examples";
 import { findRepeatedQuestions } from "./_utils/repeated-questions";
 import { getScreenTexts } from "./_utils/screen-texts";
+import { canHaveImage, getScreenVisualProblems } from "./_utils/screen-visuals";
 import { findTermsUsedBeforeExplained } from "./_utils/term-order";
 
 /** A summary idea is one sentence; two short ones are tolerated, a paragraph isn't. */
@@ -28,6 +31,7 @@ type LessonCheckCode =
   | "filler"
   | "invalidContent"
   | "lessonFraming"
+  | "optionPosition"
   | "readingLevel"
   | "repeatedExample"
   | "repeatedQuestion"
@@ -35,7 +39,8 @@ type LessonCheckCode =
   | "screenKind"
   | "screenLength"
   | "summary"
-  | "termOrder";
+  | "termOrder"
+  | "visual";
 
 /** One reason a lesson can't be published yet. `screen` is a 0-based index, or null for the lesson. */
 export type LessonCheckProblem = { code: LessonCheckCode; problem: string; screen: number | null };
@@ -85,6 +90,11 @@ function hasDuplicateOptions(screen: WrittenScreen): boolean {
   return new Set(texts).size !== texts.length;
 }
 
+/** Screens whose options are shuffled before learners see them. */
+function hasShuffledOptions(screen: WrittenScreen): boolean {
+  return screen.kind === "check" || screen.kind === "hookGuess";
+}
+
 function getTextProblems({
   language,
   level,
@@ -94,8 +104,13 @@ function getTextProblems({
 
   const textProblems = texts.flatMap(({ prose, text }) => {
     const phrases = findLessonPhrases({ language, text });
+    const positions = hasShuffledOptions(screen) ? findOptionPositionReferences(text) : [];
 
     return [
+      ...positions.map((phrase) => ({
+        code: "optionPosition" as const,
+        problem: `Points at an option by its place ("${phrase}"), but options are shuffled before learners see them; name the option by what it says instead.`,
+      })),
       ...phrases.framing.map((phrase) => ({
         code: "lessonFraming" as const,
         problem: `Talks about the lesson itself ("${phrase}"); open with the idea instead.`,
@@ -104,10 +119,12 @@ function getTextProblems({
         code: "filler" as const,
         problem: `Uses filler ("${phrase}"); cut it and say the idea directly.`,
       })),
-      ...(prose ? findLongSentences({ level, text }) : []).map((sentence) => ({
-        code: "readingLevel" as const,
-        problem: `This sentence is too long for a ${level} learner; split it: "${sentence}"`,
-      })),
+      ...(prose ? findLongSentences({ level, text: removeMarkdownTables(text) }) : []).map(
+        (sentence) => ({
+          code: "readingLevel" as const,
+          problem: `This sentence is too long for a ${level} learner; split it: "${sentence}"`,
+        }),
+      ),
       ...findArithmeticErrors({ language, text }).map((error) => ({
         code: "arithmetic" as const,
         problem: `Wrong arithmetic: ${error}`,
@@ -120,9 +137,9 @@ function getTextProblems({
   return [
     ...textProblems,
     screen.kind === "explanation" &&
-      screen.text.length > maxCharacters && {
+      removeMarkdownTables(screen.text).length > maxCharacters && {
         code: "screenLength",
-        problem: `The text has ${screen.text.length} characters; one screen holds one idea in under ${maxCharacters}. Cut words or keep only this screen's idea.`,
+        problem: `The text has ${removeMarkdownTables(screen.text).length} characters besides its tables; one screen holds one idea in under ${maxCharacters}. Cut words or keep only this screen's idea.`,
       },
     hasDuplicateOptions(screen) && {
       code: "duplicateOptions",
@@ -132,7 +149,7 @@ function getTextProblems({
 }
 
 /**
- * The text rules for one screen written on its own, such as a "Simpler"
+ * The text rules for one screen written on its own, such as a field or tool
  * version: no talk about the lesson, no filler, sentences and screens short
  * enough for the level, right arithmetic and distinct options.
  */
@@ -148,16 +165,22 @@ function checkScreen(input: ScreenCheckInput): {
   converted: ConvertedScreen;
   problems: LessonCheckProblem[];
 } {
-  const converted = toStepContent(input.screen, {
-    allowImage: input.specScreen.visual !== null,
-    language: input.language,
-  });
+  const allowImage = canHaveImage(input);
+  const converted = toStepContent(input.screen, { allowImage, language: input.language });
 
   const contentProblems: Problem[] = converted.ok
     ? []
     : converted.problems.map((problem) => ({ code: "invalidContent", problem }));
 
-  const problems = [...getKindProblems(input), ...contentProblems, ...getTextProblems(input)]
+  const problems = [
+    ...getKindProblems(input),
+    ...contentProblems,
+    ...getTextProblems(input),
+    ...getScreenVisualProblems({ ...input, allowImage }).map((problem) => ({
+      code: "visual" as const,
+      problem,
+    })),
+  ]
     .filter((problem) => problem !== false)
     .map((problem) => ({ ...problem, screen: input.index }));
 

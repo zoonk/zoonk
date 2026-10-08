@@ -7,14 +7,22 @@ import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match"
 
 /**
  * The plan's Jev use for open answers: one boolean question per key point
- * after the same code pre-check production runs. It returns the task's own
- * output shape so the typed-grading scorer compares it with generation models.
+ * after the same code pre-check production runs, plus one on form in language
+ * practice. It returns the task's own output shape so the typed-grading scorer
+ * compares it with generation models; a yes/no answer can't name a correction,
+ * so a form mistake only shows in the verdict.
  */
 const INSTRUCTIONS = `Decide whether LEARNER_ANSWER states the key point below as an answer to QUESTION.
 The key point is met when the answer states its idea in any wording, including synonyms, paraphrases, everyday words and examples that clearly show it. It is not met when the answer leaves it out, stays too vague, only repeats the question or contradicts it. Judge meaning, not grammar, and ignore spelling slips.`;
 
-const SPELLING_RULE =
-  "The learner is practicing a language: a form that changes the word's meaning, gender, number, tense or agreement does not meet the key point.";
+const FORM_QUESTION = {
+  criteria: {
+    false: "The answer has at least one form mistake.",
+    true: "The answer has no form mistake.",
+  },
+  instructions: `The learner is practicing a language. Decide whether LEARNER_ANSWER is free of form mistakes: a wrong word ("you" for "your") or a spelling or form that changes a word's meaning, gender, number, tense or agreement. Slips that don't change which word was meant, capital letters and punctuation are not mistakes.`,
+  type: "boolean" as const,
+};
 
 const EVAL_THRESHOLD = 0.5;
 
@@ -22,11 +30,9 @@ const NO_USAGE = { inputTokens: 0, outputTokens: 0 };
 
 function buildQuestions({
   keyPoints,
-  spellingMatters,
-}: Pick<GradeTypedAnswerParams, "keyPoints" | "spellingMatters">) {
-  const instructions = spellingMatters ? `${INSTRUCTIONS}\n${SPELLING_RULE}` : INSTRUCTIONS;
-
-  return Object.fromEntries(
+  practicedLanguage,
+}: Pick<GradeTypedAnswerParams, "keyPoints" | "practicedLanguage">) {
+  const keyPointQuestions = Object.fromEntries(
     keyPoints.map((keyPoint, index) => [
       `keyPoint${index + 1}`,
       {
@@ -34,18 +40,24 @@ function buildQuestions({
           false: "The answer leaves this key point out, is too vague or contradicts it.",
           true: "The answer clearly states this key point.",
         },
-        instructions: `${instructions}\n\nKEY_POINT: ${keyPoint}`,
+        instructions: `${INSTRUCTIONS}\n\nKEY_POINT: ${keyPoint}`,
         type: "boolean" as const,
       },
     ]),
   );
+
+  return practicedLanguage
+    ? { ...keyPointQuestions, formIsRight: FORM_QUESTION }
+    : keyPointQuestions;
 }
 
 function toGrade({
+  formIsRight,
   keyPoints,
   met,
   spelling,
 }: {
+  formIsRight: boolean;
   keyPoints: string[];
   met: boolean[];
   spelling: string | null;
@@ -54,8 +66,9 @@ function toGrade({
   const metCount = graded.filter((keyPoint) => keyPoint.met).length;
 
   return {
+    corrections: [],
     feedback: null,
-    isCorrect: metCount === graded.length,
+    isCorrect: metCount === graded.length && formIsRight,
     keyPoints: graded,
     method: "model",
     score: metCount / graded.length,
@@ -73,9 +86,14 @@ export async function evaluateTypedAnswerKeyPoints(
 
   const spelling = match.kind === "typo" ? match.acceptedAnswer : null;
 
-  if (match.kind === "exact" || (match.kind === "typo" && !input.spellingMatters)) {
+  if (match.kind === "exact" || (match.kind === "typo" && !input.practicedLanguage)) {
     return {
-      data: toGrade({ keyPoints: input.keyPoints, met: input.keyPoints.map(() => true), spelling }),
+      data: toGrade({
+        formIsRight: true,
+        keyPoints: input.keyPoints,
+        met: input.keyPoints.map(() => true),
+        spelling,
+      }),
       systemPrompt: INSTRUCTIONS,
       usage: NO_USAGE,
       userPrompt: input.answer,
@@ -97,8 +115,11 @@ export async function evaluateTypedAnswerKeyPoints(
     (_, index) => run.answers[`keyPoint${index + 1}`]?.probability ?? 0,
   );
 
+  const formIsRight = (run.answers.formIsRight?.probability ?? 1) >= EVAL_THRESHOLD;
+
   return {
     data: toGrade({
+      formIsRight,
       keyPoints: input.keyPoints,
       met: probabilities.map((probability) => probability >= EVAL_THRESHOLD),
       spelling,

@@ -1,12 +1,10 @@
 "use client";
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
-import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
-import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useLocale } from "next-intl";
-import { useExperienceMode } from "../mode-provider";
-import { ItemLine, ItemText } from "../questions/item-text";
+import { useExtracted } from "next-intl";
+import { TaskHeaderTitle } from "../_components/task-header";
+import { ItemLine, ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { TaskMainButton } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
@@ -14,7 +12,6 @@ import { getCurrentQuestion, getDuelScore } from "./checkpoint-duel-state";
 import { CheckpointError, CheckpointFrame } from "./checkpoint-frame";
 import { CheckpointOptions } from "./checkpoint-options";
 import { TricksterShield } from "./trickster-shield";
-import { useTricksterLine } from "./use-trickster-line";
 
 const PERCENT = 100;
 
@@ -30,47 +27,13 @@ function useDuelNumbers() {
   return { position, question, score, total: checkpoint.questions.length };
 }
 
-/** The Trickster, his shield and his line. Each right answer cracks one segment. */
-function TricksterBar() {
-  const t = useExtracted();
-  const { checkpoint, duel } = useCheckpointScreen();
-  const { position, score } = useDuelNumbers();
-  const toGo = Math.max(0, checkpoint.passMark - score.correct);
-  const line = useTricksterLine({ feedback: duel.state.feedback, position });
-
-  return (
-    <section aria-label={t("The Trickster")} className="flex flex-col gap-3">
-      <div className="flex items-center gap-3">
-        <Trickster className="size-14 shrink-0" />
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="font-fun-display font-semibold">{t("The Trickster")}</span>
-            <span className="text-fun-fg2 text-xs tabular-nums" aria-live="polite">
-              {toGo > 0
-                ? t("{correct} right · {toGo} to go", {
-                    correct: String(score.correct),
-                    toGo: String(toGo),
-                  })
-                : t("Shield broken!")}
-            </span>
-          </div>
-          <TricksterShield cracked={score.correct} segments={checkpoint.passMark} />
-        </div>
-      </div>
-      <p className="fun-glass self-center rounded-full px-4 py-1.5 text-center text-sm">{line}</p>
-    </section>
-  );
-}
-
 function Verdict({ isCorrect }: { isCorrect: boolean }) {
   const t = useExtracted();
-  const mode = useExperienceMode();
 
   return (
     <p
       className={cn(
         "text-center font-semibold",
-        mode === "fun" && "font-fun-display animate-fun-flip-calm",
         isCorrect ? "text-success" : "text-muted-foreground",
       )}
       role="status"
@@ -89,24 +52,21 @@ function getVerdictResult(verdict: { isCorrect: boolean } | null) {
 }
 
 function QuestionCard({ question }: { question: CheckpointQuestion }) {
-  const t = useExtracted();
   const { duel } = useCheckpointScreen();
   const { feedback, selected } = duel.state;
   const verdict = feedback?.itemId === question.itemId ? { isCorrect: feedback.isCorrect } : null;
 
   return (
-    <div
-      className="in-data-[mode=fun]:fun-paper flex flex-col gap-4 in-data-[mode=fun]:rounded-[28px] in-data-[mode=fun]:p-5"
-      data-slot="checkpoint-question"
-    >
-      <span className="bg-muted text-muted-foreground self-start rounded-full px-2.5 py-1 text-xs font-semibold tracking-[0.12em] uppercase">
-        {t("No hints")}
-      </span>
-
-      {question.context && <ItemText className="text-muted-foreground" text={question.context} />}
-      <h1 className="text-lg leading-snug font-semibold text-balance sm:text-xl">
+    <div className="flex flex-col gap-4" data-slot="checkpoint-question">
+      <ItemSupport
+        className="text-muted-foreground"
+        context={question.context}
+        image={question.image}
+        visual={question.visual}
+      />
+      <h2 className="text-lg leading-snug font-semibold text-balance sm:text-xl">
         <ItemLine text={question.question} />
-      </h1>
+      </h2>
 
       {question.format === "numeric" ? (
         <NumericAnswerField
@@ -155,15 +115,15 @@ function DuelAction() {
 
 /**
  * One question at a time, without hints: right or wrong shows after each answer, and the answers
- * and the traps wait for the end. Fun draws the Trickster's shield; Focus a thin progress bar.
+ * and the traps wait for the end. Against the Trickster, his shield is the duel's one bar: each
+ * right answer breaks a segment. The weekly challenge has a plain bar of questions answered.
  */
 export function CheckpointDuelView() {
   const t = useExtracted();
-  const locale = useLocale();
-  const mode = useExperienceMode();
   const { checkpoint } = useCheckpointScreen();
   const { position, question, score, total } = useDuelNumbers();
   const isBoss = checkpoint.kind !== "weekly";
+  const current = String(Math.min(position + 1, total));
 
   return (
     <CheckpointFrame
@@ -173,25 +133,22 @@ export function CheckpointDuelView() {
           <DuelAction />
         </>
       }
-      headerTitle={t("Question {current} of {total}", {
-        current: String(Math.min(position + 1, total)),
-        total: String(total),
-      })}
+      headerTitle={
+        <TaskHeaderTitle
+          detail={t("Question {current} of {total}", { current, total: String(total) })}
+          title={isBoss ? t("The Trickster") : t("Weekly challenge")}
+        />
+      }
+      progress={
+        isBoss
+          ? undefined
+          : {
+              label: t("Questions answered"),
+              value: total > 0 ? (score.answered / total) * PERCENT : 0,
+            }
+      }
     >
-      {mode === "fun" && isBoss ? (
-        <TricksterBar />
-      ) : (
-        <ProgressRoot
-          locale={locale}
-          aria-label={t("Questions answered")}
-          value={total > 0 ? (score.answered / total) * PERCENT : 0}
-        >
-          <ProgressTrack className="h-1">
-            <ProgressIndicator className="in-data-[mode=fun]:bg-fun-accent-lime" />
-          </ProgressTrack>
-        </ProgressRoot>
-      )}
-
+      {isBoss && <TricksterShield broken={score.correct} segments={checkpoint.passMark} />}
       {question && <QuestionCard key={question.itemId} question={question} />}
     </CheckpointFrame>
   );

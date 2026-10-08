@@ -1,16 +1,22 @@
 import "server-only";
 import { type PlanItem, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { parsePlanGraph, parsePlanPhases } from "../../plans/planner/plan-state";
+import { getFoundationSkillIds, getSkillArea } from "../../plans/planner/graph-areas";
+import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type PlacementSkill } from "../placement/placement-graph";
 import { loadSkillSurvivors } from "./update-learner-skill";
 
 /**
  * A goal skill with the area it belongs to (its chapter, or its plan phase without one), below its
  * section (`sectionTitle`): the course the skill graph put it in, such as an exam's subject or one
- * course of a goal that spans several.
+ * course of a goal that spans several. `memberSkillIds` are the skill and the finer skills its
+ * planned Library lessons teach, where the learner's answers in those lessons land.
  */
-export type GoalSkillNode = PlacementSkill & { areaId: string; areaTitle: string };
+export type GoalSkillNode = PlacementSkill & {
+  areaId: string;
+  areaTitle: string;
+  memberSkillIds: string[];
+};
 
 type PlanItemRow = Pick<
   PlanItem,
@@ -19,8 +25,11 @@ type PlanItemRow = Pick<
 
 type SkillEntry = { areaId: string; phase: number; planItemId: string; skillId: string };
 
-/** A plan item with the skills it teaches, for marking what a learner already knows. */
-export type GoalPlanItem = Pick<PlanItem, "id" | "status"> & { skillIds: string[] };
+/**
+ * A plan item with the skills it teaches and the chapter it's planned in, for marking what a
+ * learner already knows.
+ */
+export type GoalPlanItem = Pick<PlanItem, "chapterId" | "id" | "status"> & { skillIds: string[] };
 
 export type GoalPlan = { items: GoalPlanItem[]; skills: GoalSkillNode[] };
 
@@ -94,6 +103,42 @@ function expandItem({
     .map((row) => ({ ...base, areaId: fallbackArea, skillId: row.skillId }));
 }
 
+/** A finer skill a lesson planned for one of the graph's skills teaches. */
+type MemberEntry = { memberId: string; skillId: string };
+
+/**
+ * A lesson planned for one of the graph's skills teaches its own one to three skills, and the
+ * learner's answers in it are recorded on those: each becomes a member of the plan skill.
+ */
+function toMemberEntries({
+  items,
+  skills,
+}: {
+  items: readonly PlanItemRow[];
+  skills: Awaited<ReturnType<typeof loadItemSkills>>;
+}): MemberEntry[] {
+  const byLesson = Map.groupBy(skills.lessonSkills, (row) => row.lessonId);
+
+  return items.flatMap((item) => {
+    const { lessonId, skillId } = item;
+
+    return skillId && lessonId
+      ? (byLesson.get(lessonId) ?? []).map((row) => ({ memberId: row.skillId, skillId }))
+      : [];
+  });
+}
+
+async function toSurvivingMembers(entries: readonly MemberEntry[]): Promise<MemberEntry[]> {
+  const survivorOf = await loadSkillSurvivors(
+    unique(entries.flatMap((entry) => [entry.memberId, entry.skillId])),
+  );
+
+  return entries.map((entry) => ({
+    memberId: survivorOf(entry.memberId),
+    skillId: survivorOf(entry.skillId),
+  }));
+}
+
 /** Plan items may still point at a merged skill; the learner's state lives on the survivor. */
 async function toSurvivingSkills(entries: readonly SkillEntry[]): Promise<SkillEntry[]> {
   const survivorOf = await loadSkillSurvivors(unique(entries.map((entry) => entry.skillId)));
@@ -154,12 +199,46 @@ function toGraphEntries(graph: unknown): SkillEntry[] {
 }
 
 /**
- * Loads the skills a goal's plan covers, in plan order, with their phase, area and prerequisites
- * inside the goal, plus each plan item's skills. The skills are the graph placement walks and
- * preparation measures. A goal without a plan has no skills yet; a plan whose items lost every
- * skill falls back to its skill graph's.
+ * The skill graph's skills the plan's items don't hold, in the graph's order: what the learner's
+ * time leaves out for now, never an area they took out of the plan.
  */
-export async function loadGoalPlan(goalId: string): Promise<GoalPlan> {
+function toLeftOutEntries({
+  graph,
+  planned,
+  settings,
+}: {
+  graph: unknown;
+  planned: readonly SkillEntry[];
+  settings: unknown;
+}): SkillEntry[] {
+  const parsed = parsePlanGraph(graph);
+  const skipped = new Set(parsePlanSettings(settings).skippedAreas);
+  const plannedIds = new Set(planned.map((entry) => entry.skillId));
+
+  return toGraphEntries(graph).filter((entry, index) => {
+    const skill = parsed.skills[index];
+
+    return (
+      skill !== undefined &&
+      !plannedIds.has(entry.skillId) &&
+      !skipped.has(getSkillArea({ graph: parsed, skill }))
+    );
+  });
+}
+
+/**
+ * Loads the skills a goal's plan covers, in plan order, with their phase, area, band and
+ * prerequisites inside the goal, plus each plan item's skills. With `withLeftOut`, the skill
+ * graph's skills the plan's items leave out follow them (see `loadPlacementPlan`). A goal without
+ * a plan has no skills yet; a plan whose items lost every skill falls back to its skill graph's.
+ */
+async function loadPlan({
+  goalId,
+  withLeftOut,
+}: {
+  goalId: string;
+  withLeftOut: boolean;
+}): Promise<GoalPlan> {
   const plan = await prisma.plan.findUnique({
     select: {
       graph: true,
@@ -177,6 +256,7 @@ export async function loadGoalPlan(goalId: string): Promise<GoalPlan> {
         },
       },
       phases: true,
+      settings: true,
     },
     where: { goalId },
   });
@@ -188,28 +268,50 @@ export async function loadGoalPlan(goalId: string): Promise<GoalPlan> {
   const itemSkills = await loadItemSkills(plan.items);
 
   const itemEntries = plan.items.flatMap((item) => expandItem({ item, skills: itemSkills }));
+  const planned = itemEntries.length > 0 ? itemEntries : toGraphEntries(plan.graph);
 
-  const allEntries = await toSurvivingSkills(
-    itemEntries.length > 0 ? itemEntries : toGraphEntries(plan.graph),
-  );
+  const leftOut = withLeftOut
+    ? toLeftOutEntries({ graph: plan.graph, planned, settings: plan.settings })
+    : [];
+
+  const [allEntries, members] = await Promise.all([
+    toSurvivingSkills([...planned, ...leftOut]),
+    toSurvivingMembers(toMemberEntries({ items: plan.items, skills: itemSkills })),
+  ]);
+
+  const membersOf = Map.groupBy(members, (entry) => entry.skillId);
 
   const entries = firstPerSkill(allEntries);
   const skillIds = entries.map((entry) => entry.skillId);
 
-  const [titles, edges] = await Promise.all([
+  const [titles, edges, bands] = await Promise.all([
     loadAreaTitles({ entries, items: plan.items, phases: plan.phases }),
     prisma.skillPrerequisite.findMany({
       select: { prerequisiteId: true, skillId: true },
       where: { prerequisiteId: { in: skillIds }, skillId: { in: skillIds } },
     }),
+    prisma.skill.findMany({ select: { id: true, level: true }, where: { id: { in: skillIds } } }),
   ]);
 
-  const sections = new Map(
-    parsePlanGraph(plan.graph).skills.map((skill) => [skill.skillId, skill.area]),
+  const graph = parsePlanGraph(plan.graph);
+  const sections = new Map(graph.skills.map((skill) => [skill.skillId, skill.area]));
+  const foundations = getFoundationSkillIds(graph);
+
+  const bandOf = new Map(bands.map((skill) => [skill.id, skill.level]));
+
+  // A lesson can teach a skill the graph doesn't name; it belongs to the subject of the plan item
+  // that teaches it, so what placement learns about that subject reaches it too. Graph skills
+  // without a plan item have no item to share a subject through.
+  const itemSections = new Map(
+    allEntries.flatMap((entry) => {
+      const section = sections.get(entry.skillId);
+      return section && entry.planItemId ? [[entry.planItemId, section] as const] : [];
+    }),
   );
 
   return {
     items: plan.items.map((item) => ({
+      chapterId: item.chapterId,
       id: item.id,
       skillIds: unique(
         allEntries.filter((entry) => entry.planItemId === item.id).map((entry) => entry.skillId),
@@ -219,15 +321,38 @@ export async function loadGoalPlan(goalId: string): Promise<GoalPlan> {
     skills: entries.map((entry, order) => ({
       areaId: entry.areaId,
       areaTitle: titles.get(entry.areaId) ?? "",
+      band: bandOf.get(entry.skillId) ?? null,
+      foundation: foundations.has(entry.skillId),
       id: entry.skillId,
+      memberSkillIds: unique([
+        entry.skillId,
+        ...(membersOf.get(entry.skillId) ?? []).map((member) => member.memberId),
+      ]),
       order,
       phase: entry.phase,
       prerequisiteIds: edges
         .filter((edge) => edge.skillId === entry.skillId)
         .map((edge) => edge.prerequisiteId),
-      sectionTitle: sections.get(entry.skillId) ?? null,
+      sectionTitle: sections.get(entry.skillId) ?? itemSections.get(entry.planItemId) ?? null,
     })),
   };
+}
+
+/** The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. */
+export function loadGoalPlan(goalId: string): Promise<GoalPlan> {
+  return loadPlan({ goalId, withLeftOut: false });
+}
+
+/**
+ * The goal's plan with every skill of its skill graph, the ones the plan's items leave out after
+ * its own: the skills placement places the learner on. Placement runs before the learner picks
+ * their time, while the plan holds only what the default time fits (an ENEM plan at 15 minutes a
+ * day had only its essay), and what the learner already knows decides what fits once they pick
+ * it, so placement asks every subject the goal has, and its questions are written for the graph's
+ * skills too.
+ */
+export function loadPlacementPlan(goalId: string): Promise<GoalPlan> {
+  return loadPlan({ goalId, withLeftOut: true });
 }
 
 /** The ids of every skill a goal's plan covers, in plan order. */

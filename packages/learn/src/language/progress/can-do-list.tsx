@@ -8,11 +8,14 @@ import { useExtracted } from "next-intl";
 import { SectionLabel } from "../../_components/section-label";
 
 /**
- * "I can already…": what the learner can do in real life, from the units they finished (checked)
- * and the one they're in (still open), in the words of each unit's objectives.
+ * "I can already…": what the learner can do in real life, from the units they finished (checked),
+ * and the one thing they're working toward next (still open), in the words of each unit's
+ * objectives. The rest of the unit they're in waits for its page.
  */
-export function CanDoList({ canDo }: { canDo: LanguageProgressView["canDo"] }) {
+export function CanDoList({ canDo: all }: { canDo: LanguageProgressView["canDo"] }) {
   const t = useExtracted();
+  const next = all.find((item) => !item.done);
+  const canDo = [...all.filter((item) => item.done), ...(next ? [next] : [])];
 
   if (canDo.length === 0) {
     return null;

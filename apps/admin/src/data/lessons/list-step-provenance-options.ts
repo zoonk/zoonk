@@ -14,6 +14,7 @@ export const listStepProvenanceOptions = cacheAdminData(
       _count: { id: true },
       by: ["model", "promptVersion"],
       orderBy: { _count: { id: "desc" } },
+      where: { retiredAt: null },
     });
 
     return rows.map((row) => ({

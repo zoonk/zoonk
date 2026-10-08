@@ -22,7 +22,7 @@ const initialEmailLoginState = { status: "idle" as const };
  * Keeping this as a focused client component lets the login page itself stay a
  * Server Component while still showing recoverable form errors.
  */
-export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
+export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
   const t = useExtracted();
   const [state, formAction] = useActionState(sendVerificationOTPAction, initialEmailLoginState);
   const hasError = state.status !== "idle";

@@ -41,6 +41,8 @@ function reviewLesson({
     lesson: toReviewedLesson({ lesson, screens }),
     model,
     reasoning,
+    // Each run names its model; a lesson many learners read only sets the default reviewer.
+    reuse: "bounded",
     useFallback,
     writerModel: WRITER_MODEL,
   });

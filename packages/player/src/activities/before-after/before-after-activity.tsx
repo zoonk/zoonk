@@ -1,12 +1,12 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { ArrowDown, Eye } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BeforeAfterState } from "./before-after-state";
 

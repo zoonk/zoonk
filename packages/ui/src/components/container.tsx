@@ -13,7 +13,7 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
       centered:
         "bg-background mx-auto min-h-dvh max-w-sm items-center justify-center py-4 lg:gap-8",
       default: "",
-      grid: "gap-5 px-4 pb-8 **:data-[slot=container-description]:text-base **:data-[slot=container-header]:px-0 **:data-[slot=container-title]:text-2xl **:data-[slot=container-title]:md:text-3xl",
+      grid: "gap-5 px-4 pb-8 **:data-[slot=container-header]:px-0 **:data-[slot=container-title]:text-2xl **:data-[slot=container-title]:font-bold sm:px-8 **:data-[slot=container-title]:md:text-3xl",
       list: "mx-auto pb-8 lg:max-w-xl lg:py-8",
       narrow: "mx-auto py-4 lg:max-w-xl lg:gap-8 lg:py-16",
     },

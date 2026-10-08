@@ -27,7 +27,8 @@ export const generationPaths = {
   },
   "/generations/{generationId}/events": {
     get: {
-      description: "Returns a resumable Server-Sent Events stream with generation step updates.",
+      description:
+        "Returns a resumable Server-Sent Events stream with generation step updates. A run that stopped without ending gets a stream that ends at once: read its status, which says `failed`.",
       operationId: "streamGenerationEvents",
       requestParams: { path: generationPathParamsSchema, query: workflowEventsQuerySchema },
       responses: {

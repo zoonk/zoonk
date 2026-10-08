@@ -1,5 +1,7 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
+import { niceDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -18,8 +20,6 @@ import {
 } from "../_components/activity-plot";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { niceDomain, niceTicks } from "../_utils/plot-scale";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 
 type ChartReaderProps = ActivityRendererProps<"chartReader">;

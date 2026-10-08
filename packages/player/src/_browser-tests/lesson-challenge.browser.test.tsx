@@ -18,7 +18,6 @@ describe("challenge lesson", () => {
     renderLessonPlayer({
       challengeTeam: TEAM,
       lesson: buildLesson([teachingStep("challenge")], { title: "Challenge: A/B tests" }),
-      mode: "fun",
     });
 
     await expect.element(page.getByText("Meeting with Tom today at 3 pm")).toBeVisible();

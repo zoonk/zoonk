@@ -1,0 +1,392 @@
+{
+  "modelId": "anthropic/claude-sonnet-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All named pillars are explicitly represented: foundational algebra, trigonometry, complex numbers, probability, calculus, differential equations, linear algebra, mechanics, waves, and electromagnetism. Quantum coverage includes wave functions, both Schrödinger equations, observables, uncertainty, hydrogen, angular momentum, spin, approximation methods, entanglement, and quantum information. No missing-pillar cap applies.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The phases form a sensible progression, the courses are canonical subjects, and calculus and linear algebra precede the quantum formalism. However, several explicit dependencies are missing: separation of variables for stationary states, delta-function mathematics for singular potentials, and commutators for Heisenberg-picture evolution. The cap of 7 for several prerequisite errors applies. The path remains followable in its listed order, so the cap of 6 does not apply.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The skills are generally chapter-sized, with estimates of approximately 20–60 lessons rather than hundreds of isolated trivia items. The 426-hour total equals the phase estimates and is within the expected hundreds-of-hours scale. It also leaves substantial time beyond three-minute lesson delivery for practice and review. No clearly mis-sized area or total-estimate cap is triggered.",
+          "score": 10,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills teach relevant mathematical and physical capabilities rather than motivation, study advice, or generic introductions. The origins-of-quantum material addresses physical evidence and explanatory models rather than history for its own sake. Repeated systems, such as the harmonic oscillator, are revisited through substantively different analytical and operator methods. No clear filler skill triggers a cap.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The map fits deep learning from forgotten high school mathematics and progresses to substantial quantum mechanics rather than stopping at a conceptual overview. Names, descriptions, and milestones use US English, and exam weights are correctly null. The only useful contextual enhancement is converting the study-hour estimate into the learner's daily schedule; there is no clear goal or starting-level mismatch.",
+          "score": 9,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph combines necessary mathematical procedures with interpretation, dimensional checks, estimation, approximation validity, experimental distinctions, and numerical verification. numerical-quantum explicitly includes checking code or AI-generated results against analytic cases. Routine calculation does not dominate at the expense of understanding, and no AI-era cap applies.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 16127,
+          "inputTokens": 16130,
+          "outputTokens": 1855,
+          "reasoningTokens": 950
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Several dependent skills lack explicit prerequisite edges: stationary-states uses separation of variables without requiring pde-separation; bound-states-delta uses delta-function potentials without requiring special-functions; and time-evolution includes the Heisenberg picture without requiring commutators-uncertainty. These omissions weaken the graph's ability to enforce readiness, although the listed sequence generally puts the necessary material earlier.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Two descriptions need scientific clarification. hermitian-unitary ambiguously attributes 'real eigenvalues and preserved lengths' to both matrix classes: Hermitian matrices have real eigenvalues, while unitary matrices preserve norms and have eigenvalues of unit modulus. adiabatic-berry should describe following an instantaneous eigenstate under suitable slow-change and spectral-gap conditions, rather than simply keeping the same quantum state.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Translate the 426-hour estimate into the learner's available schedule: approximately 568 study days, or 19 months at 45 minutes every day. Identify advanced frontier branches as optional extensions after the core quantum sequence so the learner can see a meaningful intermediate completion point.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Huge goal: the graph must span several canonical courses, such as mathematics (algebra, trigonometry, calculus, differential equations, complex numbers, probability), linear algebra, classical mechanics, waves and oscillations, electromagnetism, and quantum mechanics\n      - Quantum mechanics must reach the core: the wave function, the Schrödinger equation, operators and observables, uncertainty, the hydrogen atom, angular momentum and spin, perturbation theory or approximation methods, and entanglement or quantum information\n      - Starting from forgotten high school math, the path begins with the math physics uses; calculus and linear algebra come before the quantum formalism\n      - The honest size is hundreds of hours (roughly 300 to 600); phases like \"math\", \"calculus and linear algebra\", \"classical physics\", \"quantum mechanics\", \"advanced topics\" are sensible\n      - Chapter-sized skills are expected, not hundreds of lesson-sized trivia skills\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-quantum-physics-from-zero-1",
+        "userInput": {
+          "context": "I finished high school years ago and forgot most of the math. I can study about 45 minutes a day.",
+          "goal": "Master quantum physics from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "ownLevel": "none",
+          "purpose": "deep"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four blueprint areas, every named topic pillar, and the substantive abilities of all five essay competencies are present. Exam strategy includes time management, easy-question prioritization, elimination, and guessing without an error penalty. Frequent topics receive higher weights than financial mathematics, electrochemistry, ancient/medieval history, and arts. No missing-pillar or frequency-weighting cap is triggered. Explicit C1–C5 labels would make the existing coverage easier to audit.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The graph is broadly ordered and its references are usable, but several prerequisite errors trigger the cap of 7. Kinematics omits the existing graph-reading and equation-solving prerequisites; circuit calculations omit equation solving; heredogram risk calculations omit probability. Classical sociology is unnecessarily gated by modern political philosophy. The phase-three milestone also describes generic deepening rather than a specific assessable capability.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 350.4-hour total is plausible for a full ENEM preparation map with short lessons, practice, and reviews. It appropriately maps the whole goal rather than compressing it into the learner's remaining 46 days. Most academic skills are chapter-sized at roughly 20–60 lessons, while exam-strategy skills are reasonably shorter. No clear mis-sizing or dishonest-total cap is triggered.",
+          "score": 9,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Most skills directly support tested knowledge or legitimate exam strategy; there is no motivation or career-advice filler. However, 'Avaliar impactos ambientais e propostas de sustentabilidade' and 'Analisar problemas ambientais e propostas de sustentabilidade' substantially repeat environmental causes, consequences, and solutions. Without a distinct geographic versus biological focus, this is one clear duplication, triggering the cap of 8.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The content is in Brazilian Portuguese and remains focused on ENEM rather than nursing vocational training. However, standalone fraction/decimal arithmetic is explicitly excluded by the expected starting point, and the broader beginner-oriented mathematics sequence reinforces a remedial level rather than consistently targeting secondary-school exam applications. This pattern triggers the cap of 7. The foreign-language skills also lack an explicit English-or-Spanish choice.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map repeatedly emphasizes interpretation, modeling, evaluating evidence, comparing alternatives, explaining relationships, and checking results. Examples include judging conclusions from charts, evaluating biotechnology claims, comparing payment plans, and checking physics and chemistry calculations. Manual computation is appropriate for this exam, and AI-tool instruction is not required. No rote-dominance cap is triggered.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 29628,
+          "inputTokens": 29631,
+          "outputTokens": 1936,
+          "reasoningTokens": 1023
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map explicitly includes elementary arithmetic remediation: 'Operar com frações e números decimais' allocates 30 lessons to everyday fraction and decimal operations, contrary to the required secondary-school starting point. Several central prerequisite edges are missing: kinematics uses graphs and equations but lists only proportion; genetic risk calculations omit probability. Conversely, requiring modern political philosophy before classical sociology creates an unnecessary gate that interferes with prioritization.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The environmental-impact skills in Natureza and Humanas substantially overlap without distinguishing their disciplinary contributions. The phase-three milestone is vague rather than specifying an observable capability. The TRI explanation should distinguish prioritizing reliable easy-question answers from claiming that easy questions intrinsically carry more points.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly label the essay skills with C1–C5 to make competency coverage auditable. Represent English and Spanish as alternative branches selected according to the learner's exam registration, rather than leaving both as apparently required skills with different weights.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Exam goal with a blueprint: all four areas (Linguagens, Humanas, Natureza, Matemática) and the essay must be covered, including the five essay competencies (C1 to C5)\n      - Exam weights must follow the blueprint's frequency: statistics and chart reading, percentages and proportions, ecology, Brazilian history and citizenship, and text interpretation should weigh more than rarely tested topics\n      - Exam strategy the exam scores belongs here, such as keeping answers consistent under item response theory (easy questions first) and managing time\n      - Topics outside the ENEM syllabus don't belong\n      - The graph maps the whole exam even though the learner has little time; prioritization is the planner's job, but weights must make it possible\n      - Starting point: the learner is finishing secondary school, so Portuguese, mathematics and science skills sit at the depth ENEM asks (mostly the intermediate band or above). Elementary content, such as naming word classes, reading everyday notices, invitations or recipes, or drilling basic arithmetic, doesn't belong\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-enem-2026-1",
+        "userInput": {
+          "context": "Tenho 17 anos, quero Enfermagem numa federal. Estudo à noite e faltam uns 46 dias pra prova. Sou melhor em humanas, tenho dificuldade em matemática.",
+          "examBlueprint": {
+            "name": "ENEM (Exame Nacional do Ensino Médio), two Sundays",
+            "notes": [
+              "Format: 5 options per question, no penalty for wrong answers. 5h30 on day 1, 5h on day 2.",
+              "Scoring: item response theory (TRI). Getting hard questions right while missing easy ones counts as inconsistent and lowers the score.",
+              "Rule: Essay: dissertative-argumentative text on a social issue, graded 0 to 1000 in five competencies of 200 points each: C1 formal written Portuguese; C2 understanding the prompt and building a dissertative-argumentative text with knowledge from several areas; C3 selecting and organizing arguments; C4 cohesion; C5 an intervention proposal that respects human rights."
+            ],
+            "subjects": [
+              {
+                "group": "Dia 1",
+                "name": "Linguagens, Códigos e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Interpretação de textos e gêneros textuais",
+                  "Funções da linguagem e variação linguística",
+                  "Movimentos literários",
+                  "Artes",
+                  "Educação física e tecnologias da comunicação",
+                  "Leitura em língua estrangeira (inglês ou espanhol)"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Dia 1",
+                "name": "Ciências Humanas e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Brasil colônia, império e república",
+                  "Cidadania, movimentos sociais e direitos",
+                  "Meio ambiente e geografia do Brasil",
+                  "História antiga e medieval",
+                  "Clássicos da filosofia e da sociologia",
+                  "Urbanização e questões agrárias"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Dia 1",
+                "name": "Redação",
+                "questions": null,
+                "topics": ["Texto dissertativo-argumentativo sobre um problema social"],
+                "weight": null
+              },
+              {
+                "group": "Dia 2",
+                "name": "Ciências da Natureza e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Ecologia e meio ambiente",
+                  "Fisiologia humana e saúde",
+                  "Genética",
+                  "Eletricidade e energia",
+                  "Mecânica",
+                  "Química orgânica",
+                  "Estequiometria e soluções",
+                  "Eletroquímica"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Dia 2",
+                "name": "Matemática e suas Tecnologias",
+                "questions": 45,
+                "topics": [
+                  "Estatística e leitura de gráficos e tabelas",
+                  "Porcentagem e proporção",
+                  "Geometria plana e espacial",
+                  "Funções",
+                  "Probabilidade e contagem",
+                  "Matemática financeira"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Estatística e leitura de gráficos e tabelas"
+              },
+              {
+                "level": "high",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Porcentagem e proporção"
+              },
+              {
+                "level": "medium",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Geometria plana e espacial"
+              },
+              {
+                "level": "low",
+                "subject": "Matemática e suas Tecnologias",
+                "topic": "Matemática financeira"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Ecologia e meio ambiente"
+              },
+              {
+                "level": "low",
+                "subject": "Ciências da Natureza e suas Tecnologias",
+                "topic": "Eletroquímica"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências Humanas e suas Tecnologias",
+                "topic": "Brasil colônia, império e república"
+              },
+              {
+                "level": "high",
+                "subject": "Ciências Humanas e suas Tecnologias",
+                "topic": "Cidadania, movimentos sociais e direitos"
+              },
+              {
+                "level": "low",
+                "subject": "Ciências Humanas e suas Tecnologias",
+                "topic": "História antiga e medieval"
+              },
+              {
+                "level": "high",
+                "subject": "Linguagens, Códigos e suas Tecnologias",
+                "topic": "Interpretação de textos e gêneros textuais"
+              },
+              {
+                "level": "low",
+                "subject": "Linguagens, Códigos e suas Tecnologias",
+                "topic": "Artes"
+              }
+            ]
+          },
+          "goal": "Passar no ENEM 2026",
+          "goalKind": "exam",
+          "language": "pt",
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every named pillar is explicitly represented: check-in, check-out, complaints, telephone reservations, directions, recommendations, small talk, guest emails, and understanding colleagues and workplace instructions. The graph also covers useful related reception situations. Exam weights are correctly null for this non-exam goal.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The graph is traversable in its listed order, and many central sequences are sound, including reservation details before check-in and telephone handling before telephone reservations. However, several invented dependencies restrict useful skills unnecessarily: shopping gates hotel payments, renting accommodation gates banking and healthcare, and overbooking gates compensation. These trigger the cap of 7 for several prerequisite errors. The course title 'Inglés' is canonical.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The 191.5-hour total is not inherently implausible for substantial occupational English study with practice and reviews. However, scope is inconsistent across skills: pronunciation and long spontaneous conversations are much broader than individual reception transactions, and banking, healthcare and settling-in services are bundled into one skill. This triggers the cap of 8 for a clearly mis-sized area. The claimed advanced-fluency endpoint also makes the estimate less credible than a bounded B1/B2 occupational endpoint would be.",
+          "score": 8,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "At least four skills target personal activities rather than the stated reception-language goal: ordering food as a customer, shopping, renting a room, and arranging personal banking, healthcare and services. Their usefulness for relocation does not make them necessary for hotel reception work. This triggers the cap of 6 for four or more filler skills. Most of the remaining graph is directly useful.",
+          "score": 6,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The output uses Spain Spanish naturally, titles the course 'Inglés', and mostly teaches actionable situations rather than standalone grammar. Contact-detail spelling is occupationally justified rather than an alphabet detour. However, the repeated advanced-level skills and broad final fluency milestone exceed the specified intermediate endpoint, while several personal-relocation skills dilute the role focus. This pattern of mismatches triggers the cap of 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The graph includes an explicit AI-tool skill covering requests for correction, simulated reception conversations and critical review of responses. It also emphasises judgment through alternatives, complaints, compensation within policy, privacy and prioritisation rather than predominantly rote procedures. No AI-related cap is triggered. Concrete examples of output checks would make the existing AI skill more operational.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 10309,
+          "inputTokens": 10312,
+          "outputTokens": 1447,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The path exceeds the requested A1/A2-to-B1/B2 scope: most skills in phases 4 and 5 are labelled advanced, with an endpoint promising broad fluency and nuanced humour. It also spends substantial study time on non-reception tasks, including shopping, ordering meals, renting accommodation, and personal banking and healthcare. Several prerequisites impose unnecessary gates, such as requiring shopping before hotel payments, housing before banking and healthcare, and overbooking before compensation.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Skill sizes and boundaries are uneven: broad pronunciation and spontaneous-conversation skills sit alongside narrowly bounded hotel transactions, while the banking, health and services skill bundles unrelated situations. Some names are not generically reusable, notably those explicitly naming London. The requested CEFR progression is not made explicit through A1, A2, B1 and B2 labels.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Prioritise a reception-ready core before optional relocation content, express milestones as bounded hotel-language capabilities, and redistribute time towards speaking practice in those situations. Make the AI skill more operational by specifying checks for incorrect reservation details, inappropriate tone and disclosure of guest information.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish): names and descriptions in European Spanish vocabulary and forms\n      - Language goal: skills are real situations with can-dos for working at a hotel in London, such as checking guests in and out, handling complaints, taking phone reservations, giving directions and recommendations, small talk with guests, writing short emails to guests, and understanding colleagues and instructions at work\n      - Ordered by CEFR level from A1/A2 (beginner) to B1/B2 (intermediate); the learner has a basic level, so the path should not dwell on the alphabet\n      - Grammar lives inside situations, not as standalone grammar skills\n      - The course is English itself, titled in Spanish (for example \"Inglés\")\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "es-language-english-hotel-1",
+        "userInput": {
+          "context": "Me voy a Londres en marzo para trabajar en la recepción de un hotel. Entiendo un poco de inglés pero me cuesta hablar.",
+          "goal": "Aprender inglés para trabajar en un hotel en Londres",
+          "goalKind": "language",
+          "language": "es",
+          "ownLevel": "basic",
+          "targetLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "skill-graph"
+}

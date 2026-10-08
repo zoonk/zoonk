@@ -1,9 +1,5 @@
 import { type BuddyKind } from "@zoonk/utils/buddy";
-import {
-  type AnalyticsGoalKind,
-  type AnalyticsMode,
-  type SharedEventProperties,
-} from "./shared-properties";
+import { type AnalyticsGoalKind, type SharedEventProperties } from "./shared-properties";
 
 /**
  * The event catalog every Zoonk app sends to PostHog.
@@ -53,7 +49,6 @@ type ArrivalEvents = {
 type OnboardingEvents = {
   "Goal Classified": { duration_ms: number; result: AnalyticsGoalKind | "declined" };
   "Goal Typed": { has_attachment: boolean };
-  "Mode Chosen": { chosen_mode: AnalyticsMode };
   "Buddy Chosen": { buddy: BuddyKind; renamed: boolean };
   "Placement Answered": {
     answer: "correct" | "dont_know" | "incorrect";
@@ -94,15 +89,6 @@ type LearningEvents = {
     wrong_in_a_row: number;
   };
   "Activity Used": { lesson_id: string; template: string };
-  /**
-   * `trigger` says whether the learner tapped the button, took the offer made when they struggled,
-   * or the lesson opened the deeper version by default.
-   */
-  "Depth Requested": {
-    depth: "deeper" | "simpler";
-    step_id: string;
-    trigger?: "button" | "default" | "struggle";
-  };
   /** Every closed run, replays included; the first finish of a lesson has `first_completion`. */
   "Lesson Completed": LessonEventProperties & { first_completion: boolean; seconds: number };
   /** A new run: resuming one started in the last half hour doesn't send it again. */
@@ -163,24 +149,23 @@ type MemoryEvents = {
   };
 };
 
-type FunEvents = {
+type MechanicsEvents = {
   "Big Challenge Finished": { correct: number; questions: number };
   "Boss Finished": { boss: "final" | "language" | "phase"; passed: boolean };
   "Capsule Opened": { days_since_sealed: number; lesson_id: string | null };
-  "Ceremony Shown": { ceremony: "belt" | "buddy_stage" };
+  /** A milestone's full-screen moment appeared; badges have none. */
+  "Ceremony Shown": { ceremony: "belt" | "buddy_stage" | "glasses" };
   "Hyperdrive Reached": { multiplier: number };
   "Logbook Viewed": NoProperties;
   "Milestone Earned": { key: string; milestone: "badge" | "belt" | "glasses" | "buddy_stage" };
   "Mission Completed": { full_meal: boolean; mission: "fix" | "new" | "review" };
 };
 
-type SettingsEvents = {
-  "Memory Turned Off": NoProperties;
-  "Mode Switched": { from_mode: AnalyticsMode; to_mode: AnalyticsMode };
-  "Plan Edited": { change_kind: string };
-};
+type SettingsEvents = { "Memory Turned Off": NoProperties; "Plan Edited": { change_kind: string } };
 
 type AccountEvents = {
+  /** Sent once an account is deleted, with no properties, so its PostHog person can be deleted too. */
+  "Account Deleted": NoProperties;
   "Sign In Completed": NoProperties;
   "Sign In Method Chosen": { method: "apple" | "google" | "otp" };
   /** The plan's "Signed Up". */
@@ -221,7 +206,7 @@ type AnalyticsEvents = EventCatalog<
     DailyEvents &
     LearningEvents &
     MemoryEvents &
-    FunEvents &
+    MechanicsEvents &
     SettingsEvents &
     AccountEvents &
     QualityEvents &
@@ -232,11 +217,6 @@ type AnalyticsEvents = EventCatalog<
 export type TrackOptions = {
   /** Sends it right away instead of in the next batch, for an event sent as the page closes. */
   instant?: boolean;
-  /**
-   * The mode on screen. Screens inside a mode send it with each event, since their first events
-   * can come before the page registers the shared properties.
-   */
-  mode?: AnalyticsMode;
 };
 
 /** Pairs each event name with its own properties, so a sender can't mix up shapes. */

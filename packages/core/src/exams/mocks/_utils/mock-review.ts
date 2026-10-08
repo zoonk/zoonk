@@ -49,11 +49,11 @@ type FinishedMockAnswers = {
 /** The mock's graded answers, as they were recorded when it finished. */
 async function loadFinishedAnswers({
   conditions,
-  sessionId,
+  mockExamId,
   userId,
 }: {
   conditions: MockConditions;
-  sessionId: string;
+  mockExamId: string;
   userId: string;
 }): Promise<FinishedMockAnswers> {
   const itemIds = getAskedItemIds(conditions).map((entry) => entry.itemId);
@@ -61,7 +61,7 @@ async function loadFinishedAnswers({
   const [attempts, items] = await Promise.all([
     prisma.attempt.findMany({
       select: { answer: true, id: true, itemId: true },
-      where: { itemId: { in: itemIds }, studySessionId: sessionId, userId },
+      where: { itemId: { in: itemIds }, mockExamId, userId },
     }),
     loadMockItems(itemIds),
   ]);
@@ -76,18 +76,18 @@ async function loadFinishedAnswers({
 export async function loadMockReview({
   areas,
   conditions,
-  sessionId,
+  mockExamId,
   userId,
 }: {
   areas: Map<string, string>;
   conditions: MockConditions;
-  sessionId: string;
+  mockExamId: string;
   userId: string;
 }): Promise<{
   mistakes: { cause: MistakeCause | null; count: number }[];
   review: MockReviewEntry[];
 }> {
-  const { attempts, items } = await loadFinishedAnswers({ conditions, sessionId, userId });
+  const { attempts, items } = await loadFinishedAnswers({ conditions, mockExamId, userId });
 
   const review = getAskedItemIds(conditions).flatMap((entry, index) => {
     const item = items.get(entry.itemId);

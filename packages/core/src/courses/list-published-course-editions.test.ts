@@ -5,7 +5,8 @@ import { describe, expect, it } from "vitest";
 import { listPublishedCourseEditions } from "./list-published-course-editions";
 
 describe(listPublishedCourseEditions, () => {
-  it("lists every published edition in the course's family, itself included", async () => {
+  it("lists every listed edition in the course's family, itself included", async () => {
+    // An unpublished edition and one whose page details aren't written yet stay out.
     const [org, family] = await Promise.all([
       organizationFixture({ kind: "brand" }),
       prisma.courseFamily.create({ data: {} }),
@@ -28,6 +29,13 @@ describe(listPublishedCourseEditions, () => {
         familyId: family.id,
         isPublished: false,
         language: "es",
+        organizationId: org.id,
+      }),
+      courseFixture({
+        description: null,
+        familyId: family.id,
+        isPublished: true,
+        language: "fr",
         organizationId: org.id,
       }),
     ]);

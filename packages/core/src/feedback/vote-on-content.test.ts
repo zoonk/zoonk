@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
@@ -60,9 +59,8 @@ describe(voteOnContent, () => {
     await expect(prisma.contentFeedback.count({ where: { contentId: step.id } })).resolves.toBe(0);
   });
 
-  it("stores a downvote with its reasons, comment, language, mode and the content's provenance", async () => {
+  it("stores a downvote with its reasons, comment, language and the content's provenance", async () => {
     const [user, step] = await Promise.all([userFixture(), createLibraryStep()]);
-    await learningProfileFixture({ experienceMode: "fun", userId: user.id });
     mockSession(user.id);
 
     const result = await voteOnContent({
@@ -91,7 +89,6 @@ describe(voteOnContent, () => {
         contentId: step.id,
         contentKind: "step",
         language: "pt",
-        mode: "fun",
         model: step.model,
         promptVersion: step.promptVersion,
         reasons: ["wrongOrOutdated", "hardToFollow"],
@@ -139,7 +136,7 @@ describe(voteOnContent, () => {
     ]);
 
     await expect(listVotes(otherUser.id)).resolves.toStrictEqual([
-      expect.objectContaining({ mode: null, vote: "up" }),
+      expect.objectContaining({ vote: "up" }),
     ]);
   });
 
@@ -239,14 +236,14 @@ describe(voteOnContent, () => {
     ).resolves.toMatchObject({ model: "test/planner", runId: "plan-run" });
   });
 
-  it("stores votes on a screen's simpler version and its image with their own provenance", async () => {
+  it("stores votes on a screen's field version and its image with their own provenance", async () => {
     const [user, step, image] = await Promise.all([
       userFixture(),
       createLibraryStep(),
       mediaAssetFixture({ model: "test/image-model", runId: "image-run" }),
     ]);
 
-    const simpler = await stepVariantFixture({
+    const version = await stepVariantFixture({
       model: "test/variant-model",
       runId: "variant-run",
       stepId: step.id,
@@ -255,7 +252,7 @@ describe(voteOnContent, () => {
     mockSession(user.id);
 
     await Promise.all([
-      voteOnContent({ contentId: simpler.id, contentKind: "stepVariant", vote: "down" }),
+      voteOnContent({ contentId: version.id, contentKind: "stepVariant", vote: "down" }),
       voteOnContent({ contentId: image.id, contentKind: "mediaAsset", vote: "up" }),
     ]);
 
@@ -267,7 +264,7 @@ describe(voteOnContent, () => {
 
     expect(votes).toStrictEqual([
       {
-        contentId: simpler.id,
+        contentId: version.id,
         contentKind: "stepVariant",
         model: "test/variant-model",
         runId: "variant-run",
@@ -296,11 +293,11 @@ describe(voteOnContent, () => {
     });
 
     const step = await libraryStepFixture({ lessonId: privateLesson.id });
-    const simpler = await stepVariantFixture({ stepId: step.id });
+    const version = await stepVariantFixture({ stepId: step.id });
     mockSession(user.id);
 
     await expect(
-      voteOnContent({ contentId: simpler.id, contentKind: "stepVariant", vote: "up" }),
+      voteOnContent({ contentId: version.id, contentKind: "stepVariant", vote: "up" }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
     await expect(listVotes(user.id)).resolves.toStrictEqual([]);

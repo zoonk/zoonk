@@ -1,6 +1,10 @@
 import "server-only";
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
-import { type TransactionClient, type TutorSharedAnswer } from "@zoonk/db";
+import {
+  type LessonQuestionContextKind,
+  type TransactionClient,
+  type TutorSharedAnswer,
+} from "@zoonk/db";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 import { lessonQuestionResourceOmit } from "./question-resource";
 import { isSuggestedScreenQuestion } from "./request-fingerprint";
@@ -10,7 +14,24 @@ import { lockLessonQuestionThread } from "./thread-lock";
 const MAX_PRIOR_TURNS = 12;
 const STALE_GENERATION_MILLISECONDS = 2 * 60 * 1000;
 
-export type ClaimLessonQuestionAnswerInput = { questionId: string; requestedModel: string };
+/**
+ * The model the answer is requested from, recorded while it's written; adapters whose task
+ * depends on what the question is about pass it by the question's context kind.
+ */
+export type ClaimLessonQuestionAnswerInput = {
+  questionId: string;
+  requestedModel: string | ((contextKind: LessonQuestionContextKind) => string);
+};
+
+function resolveRequestedModel({
+  contextKind,
+  requestedModel,
+}: {
+  contextKind: LessonQuestionContextKind;
+  requestedModel: ClaimLessonQuestionAnswerInput["requestedModel"];
+}): string {
+  return typeof requestedModel === "function" ? requestedModel(contextKind) : requestedModel;
+}
 
 function getStaleGenerationBoundary(now: Date): Date {
   return new Date(now.getTime() - STALE_GENERATION_MILLISECONDS);
@@ -150,16 +171,13 @@ async function completeWithSharedAnswer({
       finishReason: null,
       generatedAt: shared.generatedAt,
       generationRevision: { increment: 1 },
-      inputTokens: null,
       model: shared.model,
-      outputTokens: null,
       promptVersion: shared.promptVersion,
       provider: null,
       requestedModel: null,
       runId: shared.runId,
       sharedAnswerId: shared.id,
       status: "completed",
-      totalTokens: null,
     },
     where,
   });
@@ -230,15 +248,15 @@ export async function claimAnswerInTransaction({
       finishReason: null,
       generatedAt: null,
       generationRevision: { increment: 1 },
-      inputTokens: null,
       model: null,
-      outputTokens: null,
       promptVersion: null,
       provider: null,
-      requestedModel: input.requestedModel,
+      requestedModel: resolveRequestedModel({
+        contextKind: question.contextKind,
+        requestedModel: input.requestedModel,
+      }),
       runId: null,
       status: "running",
-      totalTokens: null,
     },
     where: claimWhere,
   });

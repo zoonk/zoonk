@@ -1,13 +1,20 @@
 "use client";
 
-import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import {
   type OnboardingDraftEdit,
   type OnboardingDraftView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
-import { type UnderstandingActions } from "../onboarding-actions";
+import { type GoalError, useStartError } from "../goal-errors";
+import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
+
+/** Reading the words again hit a cap: the day's small AI calls, or a guest's one goal. */
+function isLimit(
+  outcome: StartUnderstandingOutcome | null,
+): outcome is Extract<StartUnderstandingOutcome, { status: "limitReached" | "needsAccount" }> {
+  return outcome?.status === "limitReached" || outcome?.status === "needsAccount";
+}
 
 /**
  * What the learner can do with a draft on screen: load it once its words were read, start the read
@@ -22,9 +29,10 @@ export function useDraftActions({
   onDraft: (draft: OnboardingDraftView) => void;
   understanding: UnderstandingActions;
 }) {
+  const toError = useStartError();
   const [readFailed, setReadFailed] = useState(false);
-  /** Starting the read again hit the day's limit. */
-  const [limit, setLimit] = useState<EntitlementTier | null>(null);
+  /** Starting the read again hit a limit: why, with the way to an account when one helps. */
+  const [limit, setLimit] = useState<GoalError | null>(null);
   const [isRetrying, startRetrying] = useTransition();
 
   /** The run said the words were read: load what was understood. */
@@ -50,8 +58,8 @@ export function useDraftActions({
     startRetrying(async () => {
       const { data: outcome } = await safeAsync(() => understanding.retry(draft.id));
 
-      if (outcome?.status === "limitReached") {
-        setLimit(outcome.tier);
+      if (isLimit(outcome)) {
+        setLimit(toError(outcome));
         return;
       }
 
@@ -70,8 +78,8 @@ export function useDraftActions({
 
     const outcome = await understanding.retry(draft.id);
 
-    if (outcome.status === "limitReached") {
-      setLimit(outcome.tier);
+    if (isLimit(outcome)) {
+      setLimit(toError(outcome));
     }
 
     if (outcome.status !== "started") {

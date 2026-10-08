@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@sentry/nextjs": "catalog:",
-    "@vercel/blob": "2.8.0",
+    "@vercel/blob": "2.8.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
@@ -40,11 +40,11 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "server-only": "catalog:",
-    "workflow": "5.0.1",
+    "workflow": "5.1.0",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@scalar/nextjs-api-reference": "0.12.4",
+    "@scalar/nextjs-api-reference": "0.12.8",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

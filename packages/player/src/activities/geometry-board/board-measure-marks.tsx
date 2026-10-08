@@ -1,7 +1,7 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type BoardMeasure, interiorAngles, sideSquares } from "./board-geometry";
 import { cornerWedge } from "./board-marks";
 import { type BoardReading } from "./board-measure";

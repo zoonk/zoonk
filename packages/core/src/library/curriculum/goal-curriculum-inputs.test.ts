@@ -73,20 +73,34 @@ describe(loadGoalCurriculumInputs, () => {
       hasPlanGraph: false,
       isGuest: false,
       references: [{ text: "Syllabus text", title: "Official syllabus" }],
+      // Answered on paper: its courses teach its skills in chapters without tools.
+      usesTools: false,
     });
 
-    // Each subject with its weight and topics, and how often the board asks each topic.
-    expect(inputs?.graphPrompt.examBlueprint).toBe(
-      [
-        "EXAM: ENEM",
-        "SUBJECTS:\n- Mathematics (weight 25%): Percentages; Functions\n- Languages: Reading",
-        "TOPIC_FREQUENCY:\n- Mathematics / Percentages: high",
-      ].join("\n"),
-    );
+    // Each subject with its group, weight and every topic, and how often the board asks each topic.
+    expect(inputs?.graphPrompt.examBlueprint).toStrictEqual({
+      name: "ENEM",
+      notes: [],
+      subjects: [
+        {
+          group: null,
+          name: "Mathematics",
+          questions: 45,
+          topics: ["Percentages", "Functions"],
+          weight: 0.25,
+        },
+        { group: null, name: "Languages", questions: 45, topics: ["Reading"], weight: null },
+      ],
+      topicFrequency: [{ level: "high", subject: "Mathematics", topic: "Percentages" }],
+    });
 
-    // The coverage check reads the same text, under the exam's name.
+    // The coverage check reads it as the skill graph does, under the exam's name.
     expect(inputs?.blueprintReference).toStrictEqual({
-      text: inputs?.graphPrompt.examBlueprint,
+      text: [
+        "EXAM: ENEM",
+        "SUBJECTS:\nS1. Mathematics (45 questions; weight 25%)\n  S1.1 Percentages\n  S1.2 Functions\nS2. Languages (45 questions)\n  S2.1 Reading",
+        "TOPIC_FREQUENCY:\n- Mathematics / Percentages: high",
+      ].join("\n\n"),
       title: "ENEM",
     });
   });
@@ -113,6 +127,7 @@ describe(loadGoalCurriculumInputs, () => {
     await expect(loadGoalCurriculumInputs(goal.id)).resolves.toMatchObject({
       hasPlanGraph: true,
       isGuest: true,
+      usesTools: true,
     });
 
     await expect(loadGoalCurriculumInputs(question.id)).resolves.toBeNull();

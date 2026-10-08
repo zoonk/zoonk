@@ -1,21 +1,27 @@
 import { randomUUID } from "node:crypto";
 import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
+import { saveLessonVersion } from "../library/lessons/_utils/save-lesson-content";
+import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "./check-lesson-step";
 import { completeLibraryLesson } from "./complete-library-lesson";
 import { type LessonStepAnswer } from "./contract";
+import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
 import { startLibraryLesson } from "./start-library-lesson";
 import type * as RateLimit from "@zoonk/auth/rate-limit";
 
@@ -182,6 +188,33 @@ describe(completeLibraryLesson, () => {
     });
   });
 
+  it("finishes a lesson left unfinished yesterday, counting both sittings, Hyperdrive in each", async () => {
+    const setup = await setupPlayableLesson({ steps: [...LESSON] });
+    const leftAt = new Date(Date.now() - MS_PER_DAY);
+
+    await lessonRunFixture({ lessonId: setup.lesson.id, startedAt: leftAt, userId: setup.user.id });
+
+    await attemptFixture({
+      answeredAt: new Date(leftAt.getTime() + 1000),
+      stepId: stepOfKind(setup.steps, "check").id,
+      userId: setup.user.id,
+    });
+
+    const runId = await startRun(setup.lesson.id);
+
+    await answer({
+      runId,
+      stepId: stepOfKind(setup.steps, "typedAnswer").id,
+      value: { kind: "typedAnswer", text: RIGHT_TYPED },
+    });
+
+    // Yesterday's right answer doesn't multiply today's: x1 in each sitting.
+    await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
+      completion: { brainPower: 2 + 2 + 10, correctCount: 2, incorrectCount: 0 },
+      status: "completed",
+    });
+  });
+
   it("counts a screen once, by its first answer, when a missed question comes back", async () => {
     const { lesson, runId, steps } = await playLesson({ checkOption: "size" });
 
@@ -334,6 +367,144 @@ describe(completeLibraryLesson, () => {
     await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
       status: "completed",
     });
+  });
+
+  it("never says when a quick explanation comes back, since nothing reviews it", async () => {
+    const setup = await setupPlayableLesson({ steps: ["explanation", "check"] });
+    const goal = await goalFixture({ kind: "explain", userId: setup.user.id });
+    const plan = await planFixture({ goalId: goal.id });
+    await planItemFixture({ kind: "lesson", lessonId: setup.lesson.id, planId: plan.id });
+
+    const runId = await startRun(setup.lesson.id);
+
+    const checked = await answer({
+      runId,
+      stepId: stepOfKind(setup.steps, "check").id,
+      value: { kind: "check", optionId: "likely" },
+    });
+
+    expect(checked).toMatchObject({ result: { nextReviewAt: null }, status: "checked" });
+
+    await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
+      completion: { nextReviewAt: null },
+      status: "completed",
+    });
+
+    // The answer still reaches the learner's memory of the skill.
+    await expect(
+      prisma.learnerSkill.findFirst({ where: { skillId: setup.skill.id, userId: setup.user.id } }),
+    ).resolves.toMatchObject({ due: expect.any(Date) });
+  });
+
+  it("finishes a quick explanation with its lesson, and the tabs move to a goal with a plan", async () => {
+    const setup = await setupPlayableLesson({ steps: ["explanation", "check"] });
+    const other = await userFixture();
+
+    const [explanation, study, othersExplanation] = await Promise.all([
+      goalFixture({ kind: "explain", userId: setup.user.id }),
+      goalFixture({ kind: "learn", userId: setup.user.id }),
+      goalFixture({ kind: "explain", userId: other.id }),
+    ]);
+
+    const [plan, othersPlan] = await Promise.all([
+      planFixture({ goalId: explanation.id }),
+      planFixture({ goalId: othersExplanation.id }),
+      learningProfileFixture({ activeGoalId: explanation.id, userId: setup.user.id }),
+    ]);
+
+    await Promise.all([
+      planItemFixture({ kind: "lesson", lessonId: setup.lesson.id, planId: plan.id }),
+      planItemFixture({ kind: "lesson", lessonId: setup.lesson.id, planId: othersPlan.id }),
+    ]);
+
+    const runId = await startRun(setup.lesson.id);
+
+    await answer({
+      runId,
+      stepId: stepOfKind(setup.steps, "check").id,
+      value: { kind: "check", optionId: "likely" },
+    });
+
+    await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
+      status: "completed",
+    });
+
+    const [goals, profile] = await Promise.all([
+      prisma.goal.findMany({
+        select: { id: true, status: true },
+        where: { id: { in: [explanation.id, study.id, othersExplanation.id] } },
+      }),
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: setup.user.id } }),
+    ]);
+
+    // Another learner who asked the same question still has theirs to read.
+    expect(goals).toStrictEqual(
+      expect.arrayContaining([
+        { id: explanation.id, status: "completed" },
+        { id: study.id, status: "active" },
+        { id: othersExplanation.id, status: "active" },
+      ]),
+    );
+
+    expect(profile.activeGoalId).toBe(study.id);
+  });
+
+  it("finishes the version the learner opened when a check publishes a fix mid-lesson, and the next open gets the fix", async () => {
+    const setup = await setupPlayableLesson({ steps: [...LESSON] });
+    const runId = await startRun(setup.lesson.id);
+
+    await answer({
+      runId,
+      stepId: stepOfKind(setup.steps, "check").id,
+      value: { kind: "check", optionId: "likely" },
+    });
+
+    // A background check publishes a fixed version while the learner is on the next screen.
+    const opened = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { lessonId: setup.lesson.id },
+    });
+
+    const fixed = await saveLessonVersion({
+      language: setup.lesson.language,
+      lessonId: setup.lesson.id,
+      replaces: 1,
+      screens: opened.map((step) => ({
+        content: step.content as object,
+        kind: step.kind,
+        mathItem: null,
+        provenance: { generatedAt: new Date(), model: "fix", promptVersion: "fix", runId: "fix" },
+        skillId: step.skillId,
+      })),
+      summary: ["A fixed idea."],
+    });
+
+    expect(fixed).toBe(2);
+
+    // The learner keeps answering the screens they opened, and their run completes.
+    await expect(
+      answer({
+        runId,
+        stepId: stepOfKind(setup.steps, "typedAnswer").id,
+        value: { kind: "typedAnswer", text: RIGHT_TYPED },
+      }),
+    ).resolves.toMatchObject({ result: { isCorrect: true }, status: "checked" });
+
+    await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
+      completion: { brainPower: BOTH_RIGHT, correctCount: 2, incorrectCount: 0 },
+      status: "completed",
+    });
+
+    // Opening the lesson again plays the fixed version.
+    const reopened = await getPlayableLibraryLesson({ lessonId: setup.lesson.id });
+    const openedIds = new Set(opened.map((step) => step.id));
+
+    expect(reopened?.status).toBe("ready");
+
+    expect(
+      reopened?.status === "ready" &&
+        reopened.lesson.steps.every((step) => !openedIds.has(step.id)),
+    ).toBe(true);
   });
 
   it("finishes only the learner's own runs of that lesson", async () => {

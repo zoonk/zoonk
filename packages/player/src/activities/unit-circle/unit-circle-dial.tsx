@@ -1,8 +1,8 @@
 "use client";
 
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { svgPoint } from "../_components/activity-place-handle";
-import { useMeasuredWidth } from "../_utils/use-measured-width";
 import { FULL_TURN, angleAfterKey, pointerAngle, snapAngle } from "./unit-circle-angle";
 import { DialLabel, TangentMark, TrigLegs, arcPath, onCircle } from "./unit-circle-marks";
 import { type TrigName, useTrigNames } from "./use-unit-circle-format";

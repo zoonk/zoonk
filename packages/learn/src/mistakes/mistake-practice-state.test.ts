@@ -13,10 +13,12 @@ function entry(
     questions: Array.from({ length: questions }, (_, index) => ({
       context: null,
       format: "multipleChoice" as const,
+      image: null,
       itemId: `${mistakeId}-${index}`,
       options: ["Right", "Wrong"],
       question: `Question ${index}?`,
       skillId: "skill",
+      visual: null,
     })),
     snapshot: { answer: "Wrong", question: "Question 0?" },
   };
@@ -43,6 +45,15 @@ describe(createPracticeState, () => {
 
   it("asks straight away when a gap's lesson is gone", () => {
     const practice = [entry("gap", { kind: "reteach", lesson: null })];
+
+    expect(createPracticeState(practice).phase).toStrictEqual({
+      kind: "answering",
+      selected: null,
+    });
+  });
+
+  it("asks straight away when a gap's lesson has no summary to show", () => {
+    const practice = [entry("gap", { kind: "reteach", lesson: { ...LESSON, ideas: [] } })];
 
     expect(createPracticeState(practice).phase).toStrictEqual({
       kind: "answering",

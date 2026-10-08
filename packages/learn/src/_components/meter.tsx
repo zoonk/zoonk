@@ -10,10 +10,7 @@ export function Meter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       aria-hidden="true"
-      className={cn(
-        "bg-muted in-data-[mode=fun]:bg-fun-track h-1.5 overflow-hidden rounded-full",
-        className,
-      )}
+      className={cn("bg-muted h-1.5 overflow-hidden rounded-full", className)}
       data-slot="meter"
       {...props}
     />

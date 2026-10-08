@@ -3,7 +3,9 @@ import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
+import { findGuestGoalLimit } from "../../entitlements/find-guest-goal-limit";
 import { getSession } from "../../users/get-session";
+import { allowDateSearch } from "./_utils/date-search";
 import { completeDraft, findOwnedDraft, loadDraftView } from "./_utils/onboarding-draft";
 import { findCachedUnderstanding } from "./_utils/understanding-cache";
 import { type OnboardingDraftView } from "./onboarding-contract";
@@ -17,8 +19,9 @@ export type GoalUnderstandingRunResult =
  * Gets a draft ready for the run that reads its words, when the learner starts it or tries again:
  * `understood` when nothing needs to run (already read, or the same words were understood today),
  * `start` when a run should start. A new draft's first run was already claimed when it was saved;
- * starting one again is another of the learner's small AI calls (`claimAssist`). A failed draft
- * goes back to being read.
+ * starting one again is another of the learner's small AI calls (`claimAssist`). A guest whose one
+ * goal is taken can't confirm it, so nothing is read for them. A failed draft goes back to being
+ * read.
  */
 export async function prepareGoalUnderstandingRun({
   draftId,
@@ -48,8 +51,15 @@ export async function prepareGoalUnderstandingRun({
   });
 
   if (cached) {
-    const understood = await completeDraft({ draft, understanding: cached });
+    const understood = await completeDraft({ allowDateSearch, draft, understanding: cached });
+
     return { draft: await loadDraftView(understood), status: "understood" };
+  }
+
+  const guestLimit = await findGuestGoalLimit();
+
+  if (guestLimit) {
+    return { limit: guestLimit, status: "limitReached" };
   }
 
   const usage = draft.runId === null ? null : await claimAssist();

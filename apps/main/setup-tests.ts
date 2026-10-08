@@ -23,6 +23,8 @@ vi.mock("next/headers", async (importOriginal) => {
 vi.mock("next/cache", () => ({
   cacheLife: vi.fn(),
   cacheTag: vi.fn(),
+  // Outside a request, Next.js' `io()` resolves at once, as it does here.
+  io: async () => null,
   revalidatePath: vi.fn(),
   revalidateTag: vi.fn(),
   unstable_cache: vi.fn(),

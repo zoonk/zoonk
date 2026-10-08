@@ -17,7 +17,7 @@ export function PauseSuggestion({ onStop }: { onStop: () => Promise<boolean> }) 
   return (
     <aside
       aria-label={t("Time for a break?")}
-      className="bg-muted/60 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-2xl p-4"
+      className="bg-muted/60 flex flex-col gap-3 rounded-2xl p-4"
     >
       <p className="flex items-start gap-2 text-sm">
         <LineMarker>

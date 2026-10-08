@@ -56,14 +56,17 @@ Related packages also include bundled docs:
 **Essential imports:**
 
 ```typescript
+// AI agent (Workflow 5)
+import { WorkflowAgent, type ModelCallStreamPart } from "@ai-sdk/workflow";
 // Workflow primitives
 import { sleep, fetch, createHook, createWebhook, getWritable } from "workflow";
 import { FatalError, RetryableError } from "workflow";
 import { getWorkflowMetadata, getStepMetadata } from "workflow";
-
 // API operations
 import { start, getRun, resumeHook, resumeWebhook } from "workflow/api";
-
+import { workflow } from "workflow/astro";
+// Framework integrations
+import { withWorkflow } from "workflow/next";
 // Observability & data hydration
 import {
   hydrateResourceIO,
@@ -71,15 +74,8 @@ import {
   parseStepName,
   parseWorkflowName,
 } from "workflow/observability";
-
-// Framework integrations
-import { withWorkflow } from "workflow/next";
-import { workflow } from "workflow/vite";
-import { workflow } from "workflow/astro";
 // Or use modules: ["workflow/nitro"] for Nitro/Nuxt
-
-// AI agent (Workflow 5)
-import { WorkflowAgent, type ModelCallStreamPart } from "@ai-sdk/workflow";
+import { workflow } from "workflow/vite";
 ```
 
 ## Prefer step functions to avoid sandbox errors
@@ -638,9 +634,9 @@ describe("createUser step", () => {
 **Integration testing:** Use `@workflow/vitest` for workflows using `sleep()`, hooks, webhooks, or retries. Install it next to `workflow` and keep the two on the same major: `npm i -D @workflow/vitest`. The plugin fails the run when its `@workflow/core` major differs from the app's.
 
 ```typescript
+import { workflow } from "@workflow/vitest";
 // vitest.integration.config.ts
 import { defineConfig } from "vitest/config";
-import { workflow } from "@workflow/vitest";
 
 export default defineConfig({
   plugins: [workflow()],
@@ -649,10 +645,10 @@ export default defineConfig({
 ```
 
 ```typescript
+import { waitForHook, waitForSleep } from "@workflow/vitest";
 // approval.integration.test.ts
 import { describe, it, expect } from "vitest";
 import { start, getRun, resumeHook } from "workflow/api";
-import { waitForHook, waitForSleep } from "@workflow/vitest";
 import { approvalWorkflow } from "./approval";
 
 describe("approvalWorkflow", () => {
@@ -676,8 +672,8 @@ describe("approvalWorkflow", () => {
 **Testing webhooks:** Use `resumeWebhook()` with a `Request` object. No HTTP server is needed:
 
 ```typescript
-import { start, resumeWebhook } from "workflow/api";
 import { waitForHook } from "@workflow/vitest";
+import { start, resumeWebhook } from "workflow/api";
 
 const run = await start(ingestWorkflow, ["ep-1"]);
 const hook = await waitForHook(run); // Discovers the random webhook token
@@ -714,13 +710,13 @@ Use `await getWorld()` to build observability dashboards, admin panels, and insp
 **Key imports:**
 
 ```typescript
-import { getWorld } from "workflow/runtime";
 import {
   hydrateResourceIO,
   observabilityRevivers,
   parseStepName,
   parseWorkflowName,
 } from "workflow/observability";
+import { getWorld } from "workflow/runtime";
 ```
 
 **Key docs** (grep `node_modules/workflow/docs/` for full details):

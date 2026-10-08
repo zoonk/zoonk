@@ -1,3 +1,8 @@
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import {
+  chapterSkillFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSkillIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
@@ -78,6 +83,45 @@ describe("private skill identity", () => {
     expect(result).toMatchObject({ kind: "generate" });
     expect(getCandidateIds(decisionSpy)).toStrictEqual([publicSkill.id]);
     expect(getCandidateIds(decisionSpy)).not.toContain(misfiled.id);
+  });
+});
+
+describe("skill identity decision", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("gives the decision the course a skill is studied in and the courses each candidate is taught in", async () => {
+    const word = uniqueWord();
+
+    const [portuguese, skill] = await Promise.all([
+      courseFixture({ title: "Língua Portuguesa" }),
+      skillFixture({ name: `Inferir ${word} de textos` }),
+    ]);
+
+    const chapter = await libraryChapterFixture({ homeCourseId: portuguese.id });
+    await chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id });
+
+    mockSearchTerms([word]);
+    const decisionSpy = mockDecision(null);
+
+    await resolveLibraryIdentity({
+      request: {
+        ...skillRequest({ name: `Inferir ${word} entre textos` }),
+        course: "Língua Inglesa",
+      },
+    });
+
+    const [input] = decisionSpy.mock.calls[0] ?? [];
+
+    expect(input?.subject.item.courses).toStrictEqual(["Língua Inglesa"]);
+
+    expect(input?.candidates).toStrictEqual([
+      expect.objectContaining({
+        id: skill.id,
+        item: expect.objectContaining({ courses: ["Língua Portuguesa"] }),
+      }),
+    ]);
   });
 });
 

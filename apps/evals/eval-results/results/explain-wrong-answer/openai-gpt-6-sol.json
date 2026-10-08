@@ -5,137 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "The explanation correctly distinguishes chloroplasts making sugar using sunlight from mitochondria releasing usable energy from food.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "diagnosis",
-          "reasoning": "It explicitly identifies the specific mix-up between making sugar and releasing energy, then names both cell parts and their respective functions.",
-          "score": 10,
-          "label": "Diagnoses this mistake",
-          "weight": 30
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "The explanation uses two concise sentences in US English and is comfortably below 600 characters. However, “organelle” is unexplained jargon where “cell part” would suffice.",
-          "score": 8,
-          "label": "Clarity & brevity",
-          "weight": 20
-        },
-        {
-          "categoryId": "reusableTone",
-          "reasoning": "It addresses the learner directly without praise, blame, or personal assumptions, and treats the answer as a straightforward conceptual mix-up.",
-          "score": 10,
-          "label": "Reusable, kind tone",
-          "weight": 20
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1313,
-          "inputTokens": 1316,
-          "outputTokens": 519,
-          "reasoningTokens": 151
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "“Organelle” is unnecessary technical vocabulary that is not explained; “cell part” would better meet the everyday-language requirement.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Replace “organelle” with “cell part,” keeping the concise contrast between chloroplasts making sugar and mitochondria releasing energy from food.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "The learner named the chloroplast, which makes sugar in photosynthesis, instead of the mitochondria, which release energy from food. A good explanation names that swap.",
-        "id": "en-biology-chloroplast-for-mitochondria-1",
-        "userInput": {
-          "answer": "the chloroplast",
-          "correctAnswer": "The mitochondria.",
-          "keyPoints": ["Names the mitochondria"],
-          "language": "en",
-          "misconceptions": [
-            "Confuses the organelle that makes sugar with the one that releases energy"
-          ],
-          "question": "Which part of the cell releases energy from food?"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
-          "reasoning": "Correctly distinguishes a gasoline price increase alone from inflation and accurately explains general price increases over time and reduced purchasing power.",
-          "score": 10,
-          "label": "Accuracy",
-          "weight": 30
-        },
-        {
-          "categoryId": "diagnosis",
-          "reasoning": "Acknowledges the valid idea of a price rising, identifies the specific confusion between one product's increase and inflation, and supplies all three missing elements.",
-          "score": 10,
-          "label": "Diagnoses this mistake",
-          "weight": 30
-        },
-        {
-          "categoryId": "clarity",
-          "reasoning": "Uses two short sentences in plain Brazilian Portuguese, comfortably under 600 characters, without jargon or unnecessary detail.",
-          "score": 10,
-          "label": "Clarity & brevity",
-          "weight": 20
-        },
-        {
-          "categoryId": "reusableTone",
-          "reasoning": "Addresses the learner directly with 'Você' and corrects the answer respectfully without praise, blame, or assumptions about the person.",
-          "score": 10,
-          "label": "Reusable, kind tone",
-          "weight": 20
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1350,
-          "inputTokens": 1353,
-          "outputTokens": 376,
-          "reasoningTokens": 66
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "The learner described a single price going up once, not a general rise over time. A good explanation in Portuguese says what is right (prices rising) and what is missing (general and over time, money buys less).",
-        "id": "pt-inflacao-parcial-1",
-        "userInput": {
-          "answer": "É quando o preço da gasolina sobe.",
-          "correctAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos.",
-          "keyPoints": [
-            "Os preços sobem de forma geral",
-            "Acontece ao longo do tempo",
-            "O dinheiro perde poder de compra"
-          ],
-          "language": "pt",
-          "question": "Explique com suas palavras o que é inflação."
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "accuracy",
           "reasoning": "It correctly identifies “went” as the simple past of “go,” explains that “have” requires the past participle here, and supplies the expected corrected sentence.",
           "score": 10,
           "label": "Accuracy",
@@ -387,28 +256,28 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "Correctly identifies R$ 150 as the annual return and divides by 12 to obtain approximately R$ 12,50 per month, consistent with excluding compound interest.",
+          "reasoning": "Correctly identifies R$ 150 as the annual return and divides it by 12 to obtain R$ 12,50 monthly, consistent with excluding compound interest.",
           "score": 10,
           "label": "Accuracy",
           "weight": 30
         },
         {
           "categoryId": "diagnosis",
-          "reasoning": "Explicitly identifies the annual-versus-monthly mix-up, acknowledges that calculating 15% of the principal was correct, and explains how to convert the annual return into a monthly return.",
+          "reasoning": "Directly identifies the annual-versus-monthly mix-up, acknowledges that calculating 15% of the principal was correct, and explains the missing division by 12.",
           "score": 10,
           "label": "Diagnoses this mistake",
           "weight": 30
         },
         {
           "categoryId": "clarity",
-          "reasoning": "Uses two short, straightforward sentences in Brazilian Portuguese. The calculation is easy to follow, and monetary amounts use reais and Brazilian number conventions.",
+          "reasoning": "Uses two short, clear sentences in Brazilian Portuguese, comfortably under 600 characters, with familiar wording and locally appropriate currency notation.",
           "score": 10,
           "label": "Clarity & brevity",
           "weight": 20
         },
         {
           "categoryId": "reusableTone",
-          "reasoning": "Addresses the learner directly as 'você' and explains the mistake neutrally and kindly. Acknowledging the correct calculation is specific feedback, not personal praise; no personal assumptions or blame appear.",
+          "reasoning": "Addresses the learner directly as 'você' and corrects the mistake neutrally and kindly. Acknowledging the correct calculation is specific feedback, not personal praise, and no personal facts are assumed.",
           "score": 10,
           "label": "Reusable, kind tone",
           "weight": 20
@@ -418,10 +287,10 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1732,
-          "inputTokens": 1735,
-          "outputTokens": 489,
-          "reasoningTokens": 140
+          "cacheWriteTokens": 0,
+          "inputTokens": 1733,
+          "outputTokens": 464,
+          "reasoningTokens": 121
         }
       },
       "steps": [
@@ -446,28 +315,28 @@
       "categoryScores": [
         {
           "categoryId": "accuracy",
-          "reasoning": "All calculations and explanations are correct: 15% of $1,000 is $150 annually, and dividing by 12 gives $12.50 monthly without compounding.",
+          "reasoning": "All calculations and statements are correct: 15% of $1,000 is $150 annually, and dividing by 12 gives $12.50 monthly without compounding.",
           "score": 10,
           "label": "Accuracy",
           "weight": 30
         },
         {
           "categoryId": "diagnosis",
-          "reasoning": "Explicitly identifies the yearly-versus-monthly mix-up, acknowledges that the percentage calculation is correct, and explains how dividing by 12 fixes the answer.",
+          "reasoning": "Acknowledges the correctly calculated $150, explicitly identifies the yearly-versus-monthly mix-up, and explains how dividing by 12 fixes it.",
           "score": 10,
           "label": "Diagnoses this mistake",
           "weight": 30
         },
         {
           "categoryId": "clarity",
-          "reasoning": "Three short sentences in plain US English explain the mistake and correction directly. Dollar notation is conventional for the US context.",
+          "reasoning": "Uses three short, plain US English sentences with familiar US dollar notation. The explanation is concise and easy to follow.",
           "score": 10,
           "label": "Clarity & brevity",
           "weight": 20
         },
         {
           "categoryId": "reusableTone",
-          "reasoning": "Addresses the learner as 'you' without personal assumptions, praise, or blame. Acknowledging the correct calculation is specific instructional feedback, and the explanation works for anyone giving this answer.",
+          "reasoning": "Addresses the learner directly as 'you' without personal assumptions, praise, or blame. It treats the mistake neutrally and is suitable for everyone who selects this answer.",
           "score": 10,
           "label": "Reusable, kind tone",
           "weight": 20
@@ -477,10 +346,10 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1720,
+          "cacheWriteTokens": 0,
           "inputTokens": 1723,
-          "outputTokens": 602,
-          "reasoningTokens": 264
+          "outputTokens": 521,
+          "reasoningTokens": 189
         }
       },
       "steps": [
@@ -498,6 +367,129 @@
           "language": "en",
           "misconceptions": ["Uses the yearly rate as if it were monthly"],
           "question": "A savings account pays 15% a year on $1,000. About how much does it pay each month, without counting interest on interest?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly distinguishes a gasoline price increase alone from inflation and explains general price increases over time and reduced purchasing power.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "Acknowledges the correct observation that a price rose, identifies the specific confusion between one item's increase and inflation, and supplies all the missing elements.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Uses two short, accessible sentences in Brazilian Portuguese, comfortably below 600 characters, without headings, jargon, or unnecessary repetition.",
+          "score": 10,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "Addresses the learner directly as 'você' and corrects the misconception kindly without praise, blame, or personal assumptions.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1687,
+          "outputTokens": 362,
+          "reasoningTokens": 51
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The learner described a single price going up once, not a general rise over time. A good explanation in Portuguese says what is right (prices rising) and what is missing (general and over time, money buys less).",
+        "id": "pt-inflacao-parcial-1",
+        "userInput": {
+          "answer": "É quando o preço da gasolina sobe.",
+          "correctAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos.",
+          "keyPoints": [
+            "Os preços sobem de forma geral",
+            "Acontece ao longo do tempo",
+            "O dinheiro perde poder de compra"
+          ],
+          "language": "pt",
+          "question": "Explique com suas palavras o que é inflação."
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly explains that chloroplasts use sunlight to make sugar and mitochondria release usable energy from food.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "Explicitly names the learner's mix-up between making sugar and releasing energy from it, contrasts the two organelles, and identifies mitochondria as the correct answer.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Uses three short, readily understandable sentences in US English, well under 600 characters, without headings or unnecessary technical detail.",
+          "score": 10,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "Addresses the learner directly as 'you' and explains the mistake neutrally without praise, blame, or assumptions about the person.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1659,
+          "outputTokens": 579,
+          "reasoningTokens": 265
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The learner named the chloroplast, which makes sugar in photosynthesis, instead of the mitochondria, which release energy from food. A good explanation names that swap.",
+        "id": "en-biology-chloroplast-for-mitochondria-1",
+        "userInput": {
+          "answer": "the chloroplast",
+          "correctAnswer": "The mitochondria.",
+          "keyPoints": ["Names the mitochondria"],
+          "language": "en",
+          "misconceptions": [
+            "Confuses the organelle that makes sugar with the one that releases energy"
+          ],
+          "question": "Which part of the cell releases energy from food?"
         }
       }
     }

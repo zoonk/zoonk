@@ -49,7 +49,7 @@ function OptionLabel({ option }: { option: EarOption }) {
   return (
     <span className="flex w-full items-center gap-3">
       <span className="flex flex-col">
-        <span className="in-data-[mode=fun]:font-fun-display text-xl leading-tight font-bold">
+        <span className="text-xl leading-tight font-bold">
           {chordSymbol(option.chord.root, option.chord.quality)}
         </span>
         <span className="text-sm opacity-80">

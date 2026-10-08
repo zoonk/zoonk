@@ -1,21 +1,8 @@
 "use server";
 
-import { experienceModeSchema, learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
-import { setExperienceMode } from "@zoonk/core/profile/experience-mode";
+import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
 import { updateLearningProfile } from "@zoonk/core/profile/update";
 import { type AppearanceBuddy } from "@zoonk/learn/appearance";
-
-/** Switches the mode on this device and, with a session, on the profile. Nothing else changes. */
-export async function setModeAction(rawMode: unknown): Promise<boolean> {
-  const mode = experienceModeSchema.safeParse(rawMode);
-
-  if (!mode.success) {
-    return false;
-  }
-
-  await setExperienceMode(mode.data);
-  return true;
-}
 
 /** Saves one change to the profile, after the same validation the public API runs. */
 async function saveProfile(input: unknown): Promise<boolean> {
@@ -39,8 +26,4 @@ export async function setSoundsEnabledAction(soundsEnabled: boolean): Promise<bo
 
 export async function setDailyLimitAction(dailyLimitMinutes: number | null): Promise<boolean> {
   return saveProfile({ dailyLimitMinutes });
-}
-
-export async function setDeeperByDefaultAction(deeperByDefault: boolean): Promise<boolean> {
-  return saveProfile({ deeperByDefault });
 }

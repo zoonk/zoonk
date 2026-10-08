@@ -1,4 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
 import {
   generateSkillGraph,
@@ -6,10 +7,7 @@ import {
 } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/v2/identity/goal-specificity";
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
-import {
-  addCoverageSkills,
-  reweightExamSkills,
-} from "@zoonk/core/library/curriculum/add-coverage-skills";
+import { applyGraphCoverage } from "@zoonk/core/library/curriculum/add-coverage-skills";
 import { getStartedCourseScope } from "@zoonk/core/library/curriculum/course-start-graph";
 import {
   type GoalCurriculumInputs,
@@ -21,7 +19,11 @@ import {
   linkGoalSkillPrerequisites,
   saveGoalSkills,
 } from "@zoonk/core/library/curriculum/save-goal-skills";
-import { type CurriculumScope, getScopeModel } from "@zoonk/core/library/curriculum/scope";
+import {
+  type CurriculumScope,
+  getScopeModel,
+  getScopeReuse,
+} from "@zoonk/core/library/curriculum/scope";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { safeAsync } from "@zoonk/utils/error";
 import { withAiRetry } from "../../_shared/ai-retry";
@@ -79,13 +81,20 @@ export async function decideGoalScopeStep({
     return { ...shared, generalGoal: null, ownerId: goal.userId };
   }
 
-  return { ...shared, generalGoal: data.generalGoal ?? goal.title };
+  return { ...shared, exams: inputs.exams, generalGoal: data.generalGoal ?? goal.title };
+}
+
+/**
+ * The learner watches the graph being built, so an exam's or a language's graph, which later
+ * learners of the same notice or language reuse, runs at the priority tier (`chooseServiceTier`).
+ */
+function getGraphTier(scope: CurriculumScope) {
+  return chooseServiceTier({ reuse: getScopeReuse(scope), wait: "learner" });
 }
 
 /**
  * A private course's graph comes from the cheaper model; when that model returns a graph that
  * can't be used (no course or phase), the default model writes it instead of failing the goal.
- * The learner's first lesson waits on the graph, so it's written at the priority tier.
  */
 async function generateGraph({
   analytics,
@@ -97,7 +106,7 @@ async function generateGraph({
   scope: CurriculumScope;
 }) {
   const model = getScopeModel(scope);
-  const params = { ...prompt, analytics, serviceTier: "priority" as const };
+  const params = { ...prompt, analytics, serviceTier: getGraphTier(scope) };
 
   if (!model) {
     return generateSkillGraph(params);
@@ -151,7 +160,9 @@ export async function buildSkillGraphStep({
  * Adds the skills the goal's reference syllabi (an exam notice, a syllabus the learner uploaded,
  * the ones research found) expect and the graph missed. An exam's skills are weighed against
  * them too: the new ones get their weight, and the ones the notice shows are off get theirs
- * corrected. `changed` says whether the graph gained a skill or a weight moved.
+ * corrected. With an exam's notice, every skill is placed in its subjects and topics and every
+ * topic gets a skill (see `applyGraphCoverage`). `changed` says whether the graph gained a skill,
+ * a weight moved or a skill moved in the notice.
  */
 export async function checkGraphCoverageStep({
   analytics,
@@ -162,35 +173,39 @@ export async function checkGraphCoverageStep({
   workflowRunId,
 }: RunScope & {
   graph: GoalSkillGraph;
-  /** What the goal is and in which language, as the skill graph read it. */
-  prompt: Pick<GoalCurriculumInputs["graphPrompt"], "goal" | "goalKind" | "language">;
+  /** What the goal is, in which language and its exam's notice, as the skill graph read it. */
+  prompt: Pick<
+    GoalCurriculumInputs["graphPrompt"],
+    "examBlueprint" | "goal" | "goalKind" | "language"
+  >;
   references: GoalCurriculumInputs["references"];
   scope: CurriculumScope;
 }): Promise<{ changed: boolean; graph: GoalSkillGraph }> {
   "use step";
 
+  const outline = prompt.goalKind === "exam" ? prompt.examBlueprint : undefined;
+
   const coverage = await withAiRetry(() =>
     checkCoverage({
       analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+      examOutline: outline,
       goal: prompt.goal,
       goalKind: prompt.goalKind,
       language: prompt.language,
       references,
-      skills: graph.skills.map(({ description, examWeight, key, name }) => ({
+      serviceTier: getGraphTier(scope),
+      skills: graph.skills.map(({ area, description, examWeight, key, name, topics }) => ({
+        area,
         description,
         examWeight,
         key,
         name,
+        topics,
       })),
     }),
   );
 
-  const { examWeights, missing } = coverage.data;
-
-  return {
-    changed: examWeights.length > 0 || missing.length > 0,
-    graph: addCoverageSkills({ graph: reweightExamSkills({ examWeights, graph }), missing }),
-  };
+  return applyGraphCoverage({ coverage: coverage.data, graph, outline });
 }
 
 /** A slice of the graph's skills in the Library; retried slices find the skills they created. */
@@ -233,6 +248,7 @@ export async function linkSkillPrerequisitesStep(input: {
  */
 export async function createGoalPlanStep({
   courseIdsByKey,
+  followNotice = false,
   goalId,
   graph,
   idsByKey,
@@ -240,6 +256,8 @@ export async function createGoalPlanStep({
   provenance,
 }: {
   courseIdsByKey: Record<string, string>;
+  /** The exam's notice was read before the learner saw the plan: its day becomes the plan's. */
+  followNotice?: boolean;
   goalId: string;
   graph: GoalSkillGraph;
   idsByKey: Record<string, string>;
@@ -250,6 +268,7 @@ export async function createGoalPlanStep({
   "use step";
 
   const result = await createGoalPlan({
+    followNotice,
     goalId,
     graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
     platform,

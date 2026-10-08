@@ -85,11 +85,11 @@ describe("plan links", () => {
     expect(link).toStrictEqual({
       outline: {
         goalKind: "learn",
-        hours: 0.3,
+        hours: 0.4,
         language: "en",
         phases: [
-          { hours: 0.2, milestone: "Can do Basics", name: "Basics" },
-          { hours: 0.1, milestone: "Can do Advanced", name: "Advanced" },
+          { hours: 0.3, kind: "learn", milestone: "Can do Basics", name: "Basics" },
+          { hours: 0.1, kind: "learn", milestone: "Can do Advanced", name: "Advanced" },
         ],
         skillCount: 2,
         subject: { description: "How markets set prices", title: "How the stock market works" },
@@ -162,17 +162,31 @@ describe("plan links", () => {
       visibility: "private",
     });
 
-    await prisma.goal.update({
-      data: { examBlueprintId: exam.id, kind: "exam", primaryCourseId: null },
-      where: { id: goal.id },
-    });
+    // An exam plan's phases are time-boxed and nameless: the link says what each one is for.
+    await Promise.all([
+      prisma.goal.update({
+        data: { examBlueprintId: exam.id, kind: "exam", primaryCourseId: null },
+        where: { id: goal.id },
+      }),
+      prisma.plan.update({
+        data: { phases: [{ kind: "foundations" }, { kind: "gaps" }, { kind: "finalStretch" }] },
+        where: { id: plan.id },
+      }),
+    ]);
 
     const visitor = await userFixture();
     mockSession(visitor.id);
 
     const link = await getPlanLink(plan.id);
 
-    expect(link).toMatchObject({ outline: { goalKind: "exam", subject: null } });
+    expect(link).toMatchObject({
+      outline: {
+        goalKind: "exam",
+        phases: [{ kind: "foundations" }, { kind: "gaps" }],
+        subject: null,
+      },
+    });
+
     expect(JSON.stringify(link)).not.toContain("Acme");
 
     await expect(

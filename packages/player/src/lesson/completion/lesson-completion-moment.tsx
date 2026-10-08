@@ -1,200 +1,173 @@
 "use client";
 
+import { FactChip, FactChips } from "@zoonk/learn/fact-chips";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CalendarClockIcon, CheckIcon, RotateCcwIcon } from "lucide-react";
+import { CalendarClockIcon, CheckIcon, TargetIcon, ZapIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { PlayerContentFrame } from "../../components/step-layouts";
-import { HyperdriveBadge } from "../_components/hyperdrive-badge";
-import { MIN_SHOWN_HYPERDRIVE, getLessonTopHyperdrive } from "../_utils/lesson-hyperdrive";
 import { describeReviewDate } from "../_utils/review-date";
-import {
-  type LessonCompletionSlotProps,
-  useLessonPlayer,
-  useLessonPlayerConfig,
-} from "../lesson-player-context";
-import { type LibraryLessonCompletion, type StudyBlockCompletion } from "../lesson-player-types";
+import { type LessonCompletionSlotProps, useLessonPlayerConfig } from "../lesson-player-context";
 
-function ReviewLine({ reviewAt }: { reviewAt: string }) {
+const PRIMARY_LINK = cn(buttonVariants({ size: "lg" }), "h-12 w-full rounded-full text-base");
+
+const SECONDARY_LINK = cn(
+  buttonVariants({ size: "lg", variant: "outline" }),
+  "h-12 w-full rounded-full text-base",
+);
+
+function ReviewChip({ reviewAt }: { reviewAt: string }) {
   const t = useExtracted();
   const locale = useLocale();
   const when = describeReviewDate({ locale, reviewAt });
 
-  const text =
-    when.kind === "today" || when.kind === "tomorrow"
-      ? t("We'll review this {when, select, today {later today} other {tomorrow}}", {
-          when: when.kind,
-        })
-      : t("We'll review this on {day}", { day: when.label });
-
   return (
-    <p className="text-muted-foreground flex items-start gap-2 text-sm">
-      <LineMarker>
-        <CalendarClockIcon aria-hidden="true" className="size-4" />
-      </LineMarker>
-      {text}
-    </p>
+    <FactChip>
+      <CalendarClockIcon aria-hidden="true" />
+      {t(
+        "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}",
+        { day: "label" in when ? when.label : "", when: when.kind },
+      )}
+    </FactChip>
   );
 }
 
-function SessionLine({ studyBlock }: { studyBlock: StudyBlockCompletion }) {
+/**
+ * The lesson's score and what it earned, as chips ("3 of 5 right", "+22 Brain Power"), and when
+ * its idea comes back. A lesson played again earns nothing new; "+0" would only read as a loss.
+ */
+function CompletionFacts({
+  answered,
+  brainPower,
+  correct,
+  reviewAt,
+}: {
+  answered: number;
+  brainPower: number;
+  correct: number;
+  reviewAt: string | null;
+}) {
   const t = useExtracted();
 
-  if (studyBlock.sessionCompleted) {
-    return <p className="text-muted-foreground text-sm">{t("That's today's session done")}</p>;
-  }
-
-  return (
-    <p className="text-muted-foreground text-sm">
-      {t("{completed} of {total} done today", {
-        completed: String(studyBlock.sessionBar.completed),
-        total: String(studyBlock.sessionBar.total),
-      })}
-    </p>
-  );
-}
-
-/** When the lesson comes back: its capsule's day in a session, or its skills' next review. */
-function getComesBackAt(result: LibraryLessonCompletion): string | null {
-  if (result.studyBlock?.comesBackOn) {
-    // A learner-local day: read at local noon, so no time zone moves it to another day.
-    return `${result.studyBlock.comesBackOn}T12:00:00`;
-  }
-
-  return result.nextReviewAt;
-}
-
-function BrainPowerTile({
-  completion,
-  onRetry,
-  topHyperdrive,
-}: Pick<LessonCompletionSlotProps, "completion" | "onRetry"> & { topHyperdrive: number }) {
-  const t = useExtracted();
-  const { skin } = useLessonPlayerConfig();
-
-  if (completion.status === "failed") {
-    return (
-      <div className="flex flex-col items-start gap-2" role="alert">
-        <p className="text-sm">{t("We couldn't save your progress yet.")}</p>
-        <Button onClick={onRetry} size="sm" variant="outline">
-          {t("Try again")}
-        </Button>
-      </div>
-    );
-  }
-
-  if (!completion.result) {
-    return <Skeleton className="h-16 w-32 rounded-2xl" />;
-  }
-
-  const points = completion.result.studyBlock?.brainPower ?? completion.result.brainPower;
-  const showsHyperdrive = skin.showsHyperdrive && topHyperdrive >= MIN_SHOWN_HYPERDRIVE;
-
-  // A lesson played again earns nothing new; "+0" would only read as a loss.
-  if (points === 0 && !showsHyperdrive) {
+  if (answered === 0 && brainPower === 0 && !reviewAt) {
     return null;
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      {points > 0 && (
-        <div className="bg-muted/60 in-data-[mode=fun]:fun-glass flex w-fit flex-col rounded-2xl px-4 py-3">
-          <span className="in-data-[mode=fun]:font-fun-display text-2xl font-semibold tabular-nums">
-            {t("+{points}", { points: String(points) })}
-          </span>
-          <span className="text-muted-foreground text-xs">{t("Brain Power")}</span>
-        </div>
+    <FactChips className="justify-center">
+      {answered > 0 && (
+        <FactChip>
+          <TargetIcon aria-hidden="true" />
+          {t("{correct} of {answered} right", {
+            answered: String(answered),
+            correct: String(correct),
+          })}
+        </FactChip>
       )}
+      {brainPower > 0 && (
+        <FactChip>
+          <ZapIcon aria-hidden="true" />
+          {t("+{points} Brain Power", { points: String(brainPower) })}
+        </FactChip>
+      )}
+      {reviewAt && <ReviewChip reviewAt={reviewAt} />}
+    </FactChips>
+  );
+}
 
-      {showsHyperdrive && (
-        <div className="flex flex-col items-start gap-1">
-          <HyperdriveBadge level={topHyperdrive} />
-          <span className="text-muted-foreground text-xs">{t("Top Hyperdrive")}</span>
-        </div>
+function BackLabel({ exitTo }: { exitTo: "chapter" | "unit" | null }) {
+  const t = useExtracted();
+  return exitTo === "unit" ? t("Back to unit") : t("Back to chapter");
+}
+
+/** Next lesson in the chapter (with a way back to it), or one Continue to where it was opened. */
+function CompletionLinks() {
+  const t = useExtracted();
+  const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
+  const primaryRef = useEnterClick<HTMLAnchorElement>();
+
+  return (
+    <div className="flex flex-col gap-2">
+      <LinkComponent
+        aria-keyshortcuts="Enter"
+        className={PRIMARY_LINK}
+        href={routes.nextLesson ?? routes.exit}
+        ref={primaryRef}
+      >
+        {routes.nextLesson ? t("Next lesson") : t("Continue")}
+        <ShortcutKbd tone="inverse">Enter</ShortcutKbd>
+      </LinkComponent>
+
+      {routes.nextLesson && (
+        <LinkComponent className={SECONDARY_LINK} href={routes.exit}>
+          <BackLabel exitTo={routes.exitTo} />
+        </LinkComponent>
       )}
     </div>
   );
 }
 
 /**
- * The quick moment at the end of a lesson: a check, what was earned and when the idea comes back,
- * then one tap to keep going. The session's bigger summary waits for the end of the session.
+ * The quick moment at the end of a lesson: a check that pops in, the score and what it earned as
+ * chips with when the idea comes back, then one tap to keep going. On phones the way on sits at the
+ * bottom; on wide screens the moment and its actions stay together in the middle. The session's
+ * bigger summary waits for the end of the session.
  */
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
-  const { completion, correctCount, incorrectCount, onRestart, onRetry } = props;
+  const { completion, correctCount, incorrectCount, onRetry } = props;
   const t = useExtracted();
-  const { lesson, linkComponent: LinkComponent, routes, skin, slots } = useLessonPlayerConfig();
-  const { state } = useLessonPlayer();
-  const answered = correctCount + incorrectCount;
-  const comesBackAt = completion.result ? getComesBackAt(completion.result) : null;
-
-  const topHyperdrive =
-    completion.result?.studyBlock?.topHyperdrive ?? getLessonTopHyperdrive(state);
-
-  // Fun's buddy cheers the finished lesson in place of the check mark.
-  const companion = slots.companion?.({
-    isComplete: true,
-    position: state.position,
-    result: { isCorrect: true },
-    rightInARow: 0,
-  });
+  const { slots } = useLessonPlayerConfig();
+  const { result } = completion;
+  const brainPower = result ? (result.studyBlock?.brainPower ?? result.brainPower) : 0;
 
   return (
-    <PlayerContentFrame className="my-auto flex flex-col gap-6 py-8" data-slot="lesson-completion">
-      {companion ?? (
-        <span className="bg-success/10 text-success flex size-14 items-center justify-center rounded-full">
-          <CheckIcon aria-hidden="true" className="size-7" />
+    <PlayerContentFrame
+      className="flex max-w-xl flex-1 flex-col py-6 lg:justify-center-safe"
+      data-slot="lesson-completion"
+    >
+      <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center lg:flex-none">
+        <span className="bg-success/10 text-success animate-in zoom-in-50 fade-in flex size-20 items-center justify-center rounded-full duration-500 ease-out motion-reduce:animate-none">
+          <CheckIcon aria-hidden="true" className="size-10" strokeWidth={2.5} />
         </span>
-      )}
 
-      <div className="flex flex-col gap-1" role="status">
-        <h2
-          className="in-data-[mode=fun]:font-fun-display text-3xl font-semibold tracking-tight"
-          data-slot="lesson-result-verdict"
-        >
-          {completion.testedOut ? t("You already knew this") : t("Lesson complete")}
-        </h2>
-        {answered > 0 && (
-          <p className="text-muted-foreground">
-            {t("{correct} of {answered} right the first time", {
-              answered: String(answered),
-              correct: String(correctCount),
-            })}
-          </p>
+        <div className="flex flex-col items-center gap-4" role="status">
+          <h2
+            className="text-3xl font-bold tracking-tight text-balance sm:text-4xl"
+            data-slot="lesson-result-verdict"
+          >
+            {completion.testedOut ? t("You already knew this") : t("Lesson complete")}
+          </h2>
+
+          {completion.status === "saving" && <Skeleton className="h-8 w-48 rounded-full" />}
+
+          {completion.status === "saved" && (
+            <CompletionFacts
+              answered={correctCount + incorrectCount}
+              brainPower={brainPower}
+              correct={correctCount}
+              reviewAt={result?.nextReviewAt ?? null}
+            />
+          )}
+        </div>
+
+        {completion.status === "failed" && (
+          <div className="flex flex-col items-center gap-2" role="alert">
+            <p className="text-sm">{t("We couldn't save your progress yet.")}</p>
+            <Button onClick={onRetry} variant="outline">
+              {t("Try again")}
+            </Button>
+          </div>
         )}
       </div>
 
-      <BrainPowerTile completion={completion} onRetry={onRetry} topHyperdrive={topHyperdrive} />
-      {comesBackAt && <ReviewLine reviewAt={comesBackAt} />}
-      {completion.result?.studyBlock && <SessionLine studyBlock={completion.result.studyBlock} />}
-
-      {slots.completionActions?.(props) ?? (
-        <div className="flex flex-col gap-2">
-          <LinkComponent
-            aria-keyshortcuts="Enter"
-            className={cn(
-              buttonVariants({ size: "lg", variant: skin.primaryVariant }),
-              "h-12 rounded-full text-base",
-            )}
-            href={routes.exit}
-          >
-            {t("Continue")}
-            <ShortcutKbd tone={skin.primaryVariant === "default" ? "inverse" : "default"}>
-              Enter
-            </ShortcutKbd>
-          </LinkComponent>
-
-          <Button className="self-center" onClick={onRestart} size="sm" variant="ghost">
-            <RotateCcwIcon aria-hidden="true" />
-            {t("Start over")}
-          </Button>
+      {completion.status === "saved" && (
+        <div className="flex flex-col pt-8">
+          {slots.completionActions?.(props) ?? <CompletionLinks />}
         </div>
       )}
-
-      {slots.completionFeedback?.({ contentId: lesson.id, contentKind: "lesson" })}
     </PlayerContentFrame>
   );
 }

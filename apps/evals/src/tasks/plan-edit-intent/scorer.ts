@@ -9,26 +9,39 @@ export type ExpectedChange = {
   activities?: string[];
   areas?: string[];
   bias?: string;
+  cadence?: string;
   date?: string | null;
   kind: string;
   minutes?: ExpectedMinutes;
+  /** A focus's parts: each narrowed area with exactly these skills; empty for whole areas. */
+  parts?: { area: string; skillIds: string[] }[];
+  start?: string;
+  /** Topics to add: the area each one goes under (null for none), in any order. */
+  topics?: (string | null)[];
   weekdays?: number[];
 };
 
 /**
  * What the request asks for. `alternatives` lists other change sets that are just as right, such
- * as a daily time plus a Saturday instead of five weekdays plus a Saturday.
+ * as a daily time plus a Saturday instead of five weekdays plus a Saturday. `leftOut`: part of the
+ * request is something no change does ("aim for 800"), which must come back in `leftOut`.
  */
-export type PlanEditExpected = { alternatives?: ExpectedChange[][]; changes: ExpectedChange[] };
+export type PlanEditExpected = {
+  alternatives?: ExpectedChange[][];
+  changes: ExpectedChange[];
+  leftOut?: boolean;
+};
 
 type GeneratedOperation = Record<string, unknown> & { kind: string };
 
 const FULL = 10;
 const MIN_SCORE = 1;
 const EXTRA_PENALTY = 3;
+const LEFT_OUT_PENALTY = 5;
 
 function parseOutput(output: string): {
   kind: string | null;
+  leftOut: number;
   operations: GeneratedOperation[] | null;
   understood: boolean;
 } {
@@ -36,13 +49,13 @@ function parseOutput(output: string): {
     const parsed: unknown = JSON.parse(output);
 
     if (!isJsonObject(parsed)) {
-      return { kind: null, operations: null, understood: false };
+      return { kind: null, leftOut: 0, operations: null, understood: false };
     }
 
     if (typeof parsed.kind === "string" && !Array.isArray(parsed.operations)) {
       /** The classifier names clearing the date apart; the planner sets it to none. */
       const kind = parsed.kind === "clearTargetDate" ? "setTargetDate" : parsed.kind;
-      return { kind, operations: null, understood: kind !== "none" };
+      return { kind, leftOut: 0, operations: null, understood: kind !== "none" };
     }
 
     const operations = (Array.isArray(parsed.operations) ? parsed.operations : []).flatMap(
@@ -54,11 +67,12 @@ function parseOutput(output: string): {
 
     return {
       kind: operations[0]?.kind ?? "none",
+      leftOut: Array.isArray(parsed.leftOut) ? parsed.leftOut.length : 0,
       operations,
       understood: parsed.understood === true,
     };
   } catch {
-    return { kind: null, operations: null, understood: false };
+    return { kind: null, leftOut: 0, operations: null, understood: false };
   }
 }
 
@@ -76,6 +90,37 @@ function matchesMinutes(value: unknown, expected: ExpectedMinutes): boolean {
     : value >= expected.min && value <= expected.max;
 }
 
+/** The same narrowed areas, each with exactly the expected skills. */
+function matchesParts(value: unknown, expected: NonNullable<ExpectedChange["parts"]>): boolean {
+  const parts = Array.isArray(value) ? value.filter((part) => isJsonObject(part)) : [];
+
+  return (
+    parts.length === expected.length &&
+    expected.every((part) =>
+      parts.some(
+        (generated) => generated.area === part.area && sameSet(generated.skillIds, part.skillIds),
+      ),
+    )
+  );
+}
+
+/** As many topics as expected, each named, under the expected areas. */
+function matchesTopics(value: unknown, expected: NonNullable<ExpectedChange["topics"]>): boolean {
+  const topics = Array.isArray(value) ? value.filter((topic) => isJsonObject(topic)) : [];
+  const named = topics.every((topic) => typeof topic.name === "string" && topic.name.length > 0);
+  const areas = topics.map((topic) => (typeof topic.area === "string" ? topic.area : null));
+
+  return (
+    named &&
+    areas.length === expected.length &&
+    expected.every(
+      (area) =>
+        areas.filter((generated) => generated === area).length ===
+        expected.filter((wanted) => wanted === area).length,
+    )
+  );
+}
+
 function getValue(operation: GeneratedOperation, keys: string[]): unknown {
   return keys.map((key) => operation[key]).find((value) => value !== undefined);
 }
@@ -88,6 +133,10 @@ function matches(operation: GeneratedOperation, expected: ExpectedChange): boole
     expected.areas === undefined || sameSet(operation.areas, expected.areas),
     expected.activities === undefined || sameSet(operation.activities, expected.activities),
     expected.bias === undefined || operation.bias === expected.bias,
+    expected.cadence === undefined || operation.cadence === expected.cadence,
+    expected.start === undefined || operation.start === expected.start,
+    expected.parts === undefined || matchesParts(operation.parts, expected.parts),
+    expected.topics === undefined || matchesTopics(operation.topics, expected.topics),
     expected.date === undefined ||
       getValue(operation, ["startDate", "targetDate"]) === expected.date,
   ];
@@ -195,8 +244,18 @@ export const scorePlanEditIntent: TaskScorer<PlanEditExpected> = ({ output, test
     score: MIN_SCORE,
   };
 
+  const missedLeftOut = expected.leftOut === true && generated.leftOut === 0;
+
+  const problems = [
+    ...best.problems,
+    missedLeftOut && "Expected the rest of the request in leftOut.",
+  ];
+
   return {
-    ...createFixedScore({ conclusion: best.problems.join(" ") || "None", score: best.score }),
+    ...createFixedScore({
+      conclusion: problems.filter(Boolean).join(" ") || "None",
+      score: Math.max(MIN_SCORE, best.score - (missedLeftOut ? LEFT_OUT_PENALTY : 0)),
+    }),
     classification,
   };
 };

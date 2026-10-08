@@ -28,8 +28,8 @@ function lastSunday(now: Date): number {
 
 /**
  * The four exam phases, sized to the days left: foundations, gaps, practice and the final stretch.
- * Her hand-placed plan items only fit inside them from 38 days out, so `getEnemEdition` keeps the
- * exam at least two months away.
+ * Her hand-placed plan items only fit inside them from 38 days out, so `getPlannedEnemEdition`
+ * keeps her exam at least two months away.
  */
 function examPhases(examDay: number) {
   const gaps = Math.round(examDay * 0.2);
@@ -232,7 +232,6 @@ const anaProfile: Omit<SeedLearner, "goal"> = {
     },
   ],
   milestones: [{ day: -3, key: "yellow", kind: "belt", shown: true }],
-  mode: "focus",
   name: "Ana Souza",
   plus: true,
   session: {
@@ -412,8 +411,9 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
 }
 
 /**
- * An exam goal in Focus: ENEM with a date, 45 minutes a day, six days a week. Her diagnostic
- * found Humanities solid and Science and Math weaker; she took her first mock on Sunday.
+ * An exam goal: ENEM with a date, 45 minutes a day, six days a week. Her diagnostic
+ * found Humanities solid and Science and Math weaker; she took her first mock on Sunday, which
+ * earned her the aviator glasses then (already celebrated, so her next session doesn't).
  */
 export function buildAna(context: { edition: EnemEdition; now: Date }): SeedLearner {
   const mock = { correct: 31, day: lastSunday(context.now), title: FIRST_MOCK, total: 45 };
@@ -422,5 +422,9 @@ export function buildAna(context: { edition: EnemEdition; now: Date }): SeedLear
     ...anaProfile,
     goal: anaGoal(context),
     history: { ...anaProfile.history, mocks: [mock] },
+    milestones: [
+      ...anaProfile.milestones,
+      { day: mock.day, key: "aviator", kind: "glasses", shown: true },
+    ],
   };
 }

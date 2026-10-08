@@ -8,9 +8,9 @@ type LessonInteraction = { isPaused: boolean; setPaused: (isPaused: boolean) => 
 const LessonInteractionContext = createContext<LessonInteraction | null>(null);
 
 /**
- * While a sheet is open over the lesson ("Simpler", "Go deeper", the tutor), the lesson's keys
- * pause so Enter or a number can't answer the screen underneath. The shared option lists read the
- * same pause through the player's interaction context.
+ * While a sheet is open over the lesson (the summary, the tutor), the lesson's keys pause so Enter
+ * or a number can't answer the screen underneath. The shared option lists read the same pause
+ * through the player's interaction context.
  */
 export function LessonInteractionProvider({
   children,

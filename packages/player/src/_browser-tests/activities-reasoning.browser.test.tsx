@@ -40,8 +40,18 @@ describe("reasoning activities", () => {
     await expect.element(page.getByText("3 of 3 in the right group")).toBeVisible();
   });
 
+  it("categorize: sorting shows no data, so it never says its numbers are examples", async () => {
+    openActivity({
+      content: { ...activityContentFixtures.categorize, data: { isExample: true } },
+      template: "categorize",
+    });
+
+    await expect.element(page.getByText("0 of 3 sorted", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Example numbers, not real data")).not.toBeInTheDocument();
+  });
+
   it("categorize: a misplaced item says where it belongs and why", async () => {
-    openActivity({ mode: "fun", template: "categorize" });
+    openActivity({ template: "categorize" });
     await sortItem({ group: "Same substance", item: "Burning wood" });
     await sortItem({ group: "Same substance", item: "Melting ice" });
     await sortItem({ group: "New substance", item: "Rusting iron" });
@@ -52,7 +62,7 @@ describe("reasoning activities", () => {
   });
 
   it("match pairs: matching each pair on the first try is right", async () => {
-    openActivity({ mode: "fun", template: "matchPairs" });
+    openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "pregnant");
     await matchCards("éxito", "success");
     await expect.element(page.getByText("2 of 2 pairs matched", { exact: true })).toBeVisible();
@@ -90,7 +100,7 @@ describe("reasoning activities", () => {
   });
 
   it("argument builder: a weak quote names the stronger one", async () => {
-    openActivity({ mode: "fun", template: "argumentBuilder" });
+    openActivity({ template: "argumentBuilder" });
     await page.getByRole("button", { name: /Use as evidence: O brawling love/u }).click();
     await page.getByRole("button", { name: "Take the quote out" }).click();
     await page.getByRole("button", { name: /Use as evidence: O brawling love/u }).click();
@@ -102,8 +112,8 @@ describe("reasoning activities", () => {
   });
 
   it("find the error: tapping the wrong step shows its fix", async () => {
-    openActivity({ mode: "fun", template: "findError" });
-    await page.getByRole("button", { name: /Step 2: Down 20%/u }).click();
+    openActivity({ template: "findError" });
+    await page.getByRole("radio", { name: /Step 2: Down 20%/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("120 × 0.8 = 96, not 100.")).toBeVisible();
@@ -111,7 +121,7 @@ describe("reasoning activities", () => {
 
   it("find the error: another step points to the wrong one", async () => {
     openActivity({ template: "findError" });
-    await page.getByRole("button", { name: /Step 3: So the price/u }).click();
+    await page.getByRole("radio", { name: /Step 3: So the price/u }).click();
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("The wrong step is step 2.")).toBeVisible();
@@ -129,13 +139,39 @@ describe("reasoning activities", () => {
       .element(page.getByRole("list", { name: "The AI assistant's answer" }))
       .toBeVisible();
 
-    await page.getByRole("button", { name: /Step 2: Down 20%/u }).click();
+    await page.getByRole("radio", { name: /Step 2: Down 20%/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
   });
 
+  it("spot the AI's mistake: the problem's data reads as a table, not a line of pipes", async () => {
+    const fixture = activityContentFixtures.findError;
+
+    const problem = [
+      "Sabrina asked the AI: how many distinct requests are in this log?",
+      "",
+      "| request | event | action |",
+      "|---|---|---|",
+      "| 801 | E11 | opened |",
+      "| 801 | E12 | assigned |",
+      "| 802 | E13 | opened |",
+    ].join("\n");
+
+    openActivity({
+      content: { ...fixture, fields: { ...fixture.fields, author: "ai", problem } },
+      template: "findError",
+    });
+
+    const table = page.getByRole("table");
+
+    await expect.element(table.getByRole("columnheader", { name: "request" })).toBeVisible();
+    await expect.element(table.getByRole("cell", { name: "E12" })).toBeVisible();
+    await expect.element(page.getByText("how many distinct requests")).toBeVisible();
+    await expect.element(page.getByText("|---|", { exact: false })).not.toBeInTheDocument();
+  });
+
   it("decision tree: following the case reaches its outcome", async () => {
-    openActivity({ mode: "fun", template: "decisionTree" });
+    openActivity({ template: "decisionTree" });
 
     await expect
       .element(page.getByRole("list", { name: "Still possible" }))
@@ -160,14 +196,13 @@ describe("reasoning activities", () => {
     const drawn = openActivity({
       content,
       image: inlineImage({ alt: LEAF.alt }),
-      mode: "fun",
       template: "decisionTree",
     });
 
     await expect.element(page.getByRole("img", { name: LEAF.alt })).toBeVisible();
     drawn.unmount();
 
-    openActivity({ content, mode: "fun", template: "decisionTree" });
+    openActivity({ content, template: "decisionTree" });
     await expect.element(page.getByText(LEAF.alt)).toBeVisible();
     await expectCount(page.getByRole("img", { name: LEAF.alt }), 0);
   });

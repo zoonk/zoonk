@@ -1,9 +1,10 @@
+import { LoginBarLink } from "@/components/login-bar-link";
 import { PublicTopBar } from "@/components/public/public-top-bar";
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { FOCUS_AND_FUN_ID, HOW_IT_WORKS_ID } from "./home-ids";
+import { HOW_IT_WORKS_ID } from "./home-ids";
 
 const NAV_LINK_CLASS =
   "text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 min-w-11 items-center justify-center rounded-md whitespace-nowrap outline-none transition-colors focus-visible:ring-[3px]";
@@ -21,16 +22,11 @@ export async function HomeHeader() {
     <PublicTopBar
       actions={
         <>
+          <LoginBarLink className="sm:border-transparent sm:bg-transparent" />
           <Link
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "sm:border-transparent sm:bg-transparent",
-            )}
-            href="/login"
+            className={cn(buttonVariants({ size: "bar" }), "hidden sm:inline-flex")}
+            href="/start"
           >
-            {t("Log in")}
-          </Link>
-          <Link className={cn(buttonVariants(), "hidden px-4 sm:inline-flex")} href="/start">
             {t("Try free")}
           </Link>
         </>
@@ -42,9 +38,6 @@ export async function HomeHeader() {
         >
           <a className={NAV_LINK_CLASS} href={`#${HOW_IT_WORKS_ID}`}>
             {t("How it works")}
-          </a>
-          <a className={NAV_LINK_CLASS} href={`#${FOCUS_AND_FUN_ID}`}>
-            {t("Focus and Fun")}
           </a>
           <Link className={NAV_LINK_CLASS} href="/pricing">
             {t("Pricing")}

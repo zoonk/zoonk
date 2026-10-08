@@ -30,7 +30,6 @@ import {
   formatPercent,
   formatSeconds,
 } from "@/lib/format";
-import { type GatewayPrices, loadGatewayPrices } from "@/lib/gateway-prices";
 import { meetsLatencyBudget } from "@/lib/latency";
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById, getModelDisplayName } from "@/lib/models";
@@ -40,6 +39,9 @@ import { type TaskStats, getStatsFromResults } from "@/lib/stats";
 import { getTestCaseRunId } from "@/lib/test-case-runs";
 import { type RegisteredTask, type TaskEvalResults, type TestCase } from "@/lib/types";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
+import { zoonkDefaultProvider } from "@zoonk/ai/gateway";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
+import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 
 /** `scored` below `sampled` means calls failed or timed out; accuracy only covers scored cases. */
 type ReportRow = {
@@ -305,9 +307,11 @@ async function runTask({
 }
 
 async function main() {
+  // The same provider the apps register, so task runs and judges cache their system prompts too.
+  globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
   const { caseIds, fresh, languages, limit, modelIds, saved, tasks } = parseCliArgs();
   const filters = { caseIds, languages };
-  const prices = await loadGatewayPrices();
+  const prices = GATEWAY_PRICES;
 
   const reports = await tasks.reduce<Promise<{ rows: ReportRow[]; task: RegisteredTask }[]>>(
     async (previous, task) => [

@@ -12,6 +12,7 @@ function check(question: string): WrittenScreen {
       { isCorrect: false, reason: "Not quite.", text: "B" },
     ],
     question,
+    visual: null,
   };
 }
 
@@ -37,7 +38,14 @@ function mathCheck(question: string): WrittenScreen {
 }
 
 function explanation(text: string): WrittenScreen {
-  return { exampleLineIdea: null, image: null, kind: "explanation", text, title: "Idea" };
+  return {
+    exampleLineIdea: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title: "Idea",
+    visual: null,
+  };
 }
 
 describe(findRepeatedQuestions, () => {

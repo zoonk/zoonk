@@ -6,7 +6,7 @@ const DEFAULT_PLANNED_MINUTES = 20;
 
 /** Creates today's planned study session for a learner. */
 export async function studySessionFixture(
-  attrs: FixtureAttrs<StudySession, "startSnapshot"> & Pick<StudySession, "userId">,
+  attrs: FixtureAttrs<StudySession, "startSnapshot" | "endSnapshot"> & Pick<StudySession, "userId">,
 ) {
   return prisma.studySession.create({
     data: {

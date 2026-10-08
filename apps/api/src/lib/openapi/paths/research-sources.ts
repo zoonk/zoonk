@@ -234,6 +234,8 @@ export const researchSourcePaths = {
   },
   "/uploads": {
     post: {
+      description:
+        "Counts as one of the plan's uploads (registering the same document again doesn't). A refusal is `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 asks a guest to create an account, 402 a free learner to upgrade or come back, 429 Plus to come back after it resets), or `SLOW_DOWN` (429) under fair use.",
       operationId: "createUpload",
       requestBody: {
         content: { "application/json": { schema: createUploadRequestSchema } },
@@ -246,6 +248,8 @@ export const researchSourcePaths = {
         },
         "400": badRequestResponse,
         "401": unauthorizedResponse,
+        "402": paymentRequiredResponse,
+        "403": forbiddenResponse,
         "404": notFoundResponse,
         "422": unprocessableEntityResponse,
         "429": tooManyRequestsResponse,
@@ -257,6 +261,8 @@ export const researchSourcePaths = {
   },
   "/uploads/tokens": {
     post: {
+      description:
+        "Refused with `USAGE_LIMIT_REACHED` once the plan's uploads are used up, with `details.limit` saying which cap (403 for a guest, 402 for a free learner, 429 for Plus). Signing counts nothing: the upload is counted when the file is registered with POST /uploads.",
       operationId: "createUploadToken",
       requestBody: {
         content: { "application/json": { schema: uploadTokenRequestSchema } },
@@ -270,6 +276,8 @@ export const researchSourcePaths = {
         },
         "400": badRequestResponse,
         "401": unauthorizedResponse,
+        "402": paymentRequiredResponse,
+        "403": forbiddenResponse,
         "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,

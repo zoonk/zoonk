@@ -3,8 +3,9 @@
 import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { CircleCheckIcon, HandIcon, MicIcon, TimerIcon } from "lucide-react";
+import { CircleCheckIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
+import { KindTile } from "../../_components/kind-tile";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -14,7 +15,7 @@ import {
   OnboardingSecondaryButton,
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
-import { StepIcon, StepPoints } from "../../onboarding/steps/step-parts";
+import { StepIcon } from "../../onboarding/steps/step-parts";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -35,12 +36,16 @@ function InterfaceOffer({
   }
 
   return (
-    <OnboardingSecondaryButton lang={language} onClick={() => onSwitch(language)}>
+    <OnboardingSecondaryButton lang={language} onClick={() => onSwitch(language)} variant="ghost">
       {t("Use the app in {language}", { language: name })}
     </OnboardingSecondaryButton>
   );
 }
 
+/**
+ * The level test's start: what it is in one sentence, Start, and skipping it as the quiet way
+ * around; the app in the learner's own language when it isn't already.
+ */
 export function TestIntro({
   goal,
   onScratch,
@@ -55,30 +60,24 @@ export function TestIntro({
   pending: boolean;
 }) {
   const t = useExtracted();
-
-  const target = new Intl.DisplayNames([goal.language], { type: "language" }).of(
-    goal.targetLanguage,
-  );
-
-  const points = [
-    { icon: TimerIcon, label: t("About three minutes, no timer") },
-    { icon: MicIcon, label: t("Reading, listening and one sentence out loud") },
-    { icon: HandIcon, label: t("Stop anytime. It gets more accurate every week.") },
-  ];
+  const locale = useLocale();
+  // Named in the language the screen is in, which can differ from the goal's.
+  const target = new Intl.DisplayNames([locale], { type: "language" }).of(goal.targetLanguage);
 
   return (
     <OnboardingColumn>
+      {/* The same anchor as every other goal's placement, so both read as one step. */}
+      <KindTile icon={ListChecksIcon} kind="practice" size="lg" />
       <OnboardingHeading>
-        <OnboardingTitle>{t("A quick test that adapts")}</OnboardingTitle>
+        <OnboardingTitle>
+          {t("Let's see your level in {language}", { language: target ?? goal.targetLanguage })}
+        </OnboardingTitle>
         <OnboardingDescription>
           {t(
-            "Each answer tunes the next question, so we can see your level in each skill of {language}. It isn't graded.",
-            { language: target ?? goal.targetLanguage },
+            "About three minutes of reading, listening and one sentence out loud, so your plan starts at your level.",
           )}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      <StepPoints points={points} />
 
       {usesNonLatinScript(goal.targetLanguage) && (
         <p className="text-muted-foreground text-sm text-pretty">
@@ -90,9 +89,9 @@ export function TestIntro({
 
       <OnboardingFooter>
         <OnboardingPrimaryButton disabled={pending} onClick={onStart}>
-          {t("Take the quick test")}
+          {t("Start")}
         </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton disabled={pending} onClick={onScratch}>
+        <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
           {t("Skip the test")}
         </OnboardingSecondaryButton>
         <InterfaceOffer language={goal.language} onSwitch={onSwitch} />

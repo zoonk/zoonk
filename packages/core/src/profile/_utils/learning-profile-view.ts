@@ -1,7 +1,6 @@
 import { BuddyGlasses, type UserLearningProfile, prisma } from "@zoonk/db";
 import { getAgeGroup } from "@zoonk/utils/age";
 import { type LearningProfileView } from "../learning-profile-contract";
-import { resolveDeeperByDefault } from "./deeper-by-default";
 
 const STARTER_GLASSES = BuddyGlasses.round;
 
@@ -27,7 +26,7 @@ function getBirth(profile: UserLearningProfile | null) {
   return { month: profile.birthMonth, year: profile.birthYear };
 }
 
-/** A learner without a saved profile has no mode, buddy or age yet. */
+/** A learner without a saved profile has no buddy or age yet. */
 function toLearningProfileView({
   availableGlasses,
   profile,
@@ -46,8 +45,6 @@ function toLearningProfileView({
       ? { glasses: profile.buddyGlasses, kind: profile.buddyKind, name: profile.buddyName }
       : null,
     dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
-    ...resolveDeeperByDefault(profile),
-    experienceMode: profile?.experienceMode ?? null,
     soundsEnabled: profile?.soundsEnabled ?? true,
   };
 }

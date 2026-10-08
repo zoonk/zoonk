@@ -1,7 +1,13 @@
 "use client";
 
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { SunriseIcon } from "lucide-react";
+import { KindTile } from "../_components/kind-tile";
+import {
+  NoticeCard,
+  NoticeCardContent,
+  NoticeCardLeading,
+  NoticeCardTitle,
+} from "../_components/notice-card";
 import { useFreshStartText } from "./use-today-copy";
 
 export function TodayFreshStart() {
@@ -12,11 +18,13 @@ export function TodayFreshStart() {
   }
 
   return (
-    <p className="bg-muted/60 in-data-[mode=fun]:fun-glass flex items-start gap-2 rounded-2xl px-4 py-3 text-sm">
-      <LineMarker>
-        <SunriseIcon aria-hidden="true" className="text-warning size-4" />
-      </LineMarker>
-      {text}
-    </p>
+    <NoticeCard>
+      <NoticeCardLeading>
+        <KindTile icon={SunriseIcon} kind="review" size="sm" />
+      </NoticeCardLeading>
+      <NoticeCardContent className="min-h-8 justify-center">
+        <NoticeCardTitle className="font-medium">{text}</NoticeCardTitle>
+      </NoticeCardContent>
+    </NoticeCard>
   );
 }

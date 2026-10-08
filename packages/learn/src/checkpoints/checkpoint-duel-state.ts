@@ -4,12 +4,12 @@ import { type StudyBlockCompletionView } from "@zoonk/core/sessions/completion-c
 /** What the learner picked: an option, true or false for a statement, or a math answer. */
 export type CheckpointAnswer = { selectedIndex: number } | { isTrue: boolean } | { number: number };
 
-type DuelPhase = "intro" | "duel" | "result";
+type DuelPhase = "duel" | "result";
 
-type DuelError = "answer" | "finish" | "start";
+type DuelError = "answer" | "finish";
 
 /**
- * A checkpoint on screen: the intro that says what it asks and what it's worth, the duel one
+ * A started checkpoint on screen (its challenge page introduced and started it): the duel one
  * question at a time (right or wrong shows, never the answer or why), and the result, which is
  * when the answers and the traps are finally explained.
  */
@@ -31,8 +31,7 @@ type CheckpointDuelAction =
   | { isCorrect: boolean; itemId: string; type: "answered" }
   | { completion: StudyBlockCompletionView; type: "finished" }
   | { type: "next" }
-  | { type: "pending" }
-  | { type: "started" };
+  | { type: "pending" };
 
 /** A finished checkpoint opens on its result, a started one where the learner left it. */
 export function createDuelState(checkpoint: CheckpointView): CheckpointDuelState {
@@ -42,14 +41,12 @@ export function createDuelState(checkpoint: CheckpointView): CheckpointDuelState
     ),
   );
 
-  const phase = checkpoint.status === "completed" ? "result" : "intro";
-
   return {
     completion: null,
     error: null,
     feedback: null,
     pending: false,
-    phase: phase === "intro" && Object.keys(verdicts).length > 0 ? "duel" : phase,
+    phase: checkpoint.status === "completed" ? "result" : "duel",
     selected: null,
     verdicts,
   };
@@ -64,8 +61,6 @@ export function checkpointDuelReducer(
       return { ...state, error: null, pending: true };
     case "failed":
       return { ...state, error: action.error, pending: false };
-    case "started":
-      return { ...state, pending: false, phase: "duel" };
     case "select":
       return state.feedback ? state : { ...state, selected: action.answer };
     case "answered":

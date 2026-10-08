@@ -37,4 +37,25 @@ describe(getTrueFalseLabels, () => {
     expect(getTrueFalseLabels({ ...structureScoredBy("raw"), mock: null })).toBe("trueFalse");
     expect(getTrueFalseLabels(null)).toBe("trueFalse");
   });
+
+  // Rafaela's Câmara placement asked "Verdadeiro ou falso" until the notice's blueprint linked.
+  it("judges statements right or wrong when the notice names its answers so, scoring unknown", () => {
+    const format = {
+      citation: {
+        passage: "O julgamento de cada item será CERTO ou ERRADO, de acordo com o comando.",
+        sourceId: "notice",
+      },
+      description: "Itens para julgamento entre certo ou errado",
+      kind: "trueFalse" as const,
+      options: null,
+    };
+
+    expect(getTrueFalseLabels({ formats: [format] })).toBe("rightWrong");
+
+    expect(
+      getTrueFalseLabels({
+        formats: [{ ...format, citation: CITATION, description: "Verdadeiro ou falso" }],
+      }),
+    ).toBe("trueFalse");
+  });
 });

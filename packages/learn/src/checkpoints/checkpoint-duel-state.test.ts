@@ -7,7 +7,7 @@ import {
   getDuelScore,
 } from "./checkpoint-duel-state";
 
-function question(itemId: string, answered: { isCorrect: boolean } | null = null) {
+function question(itemId: string, answered: { blank: boolean; isCorrect: boolean } | null = null) {
   return {
     answered,
     capsuleKey: null,
@@ -15,6 +15,7 @@ function question(itemId: string, answered: { isCorrect: boolean } | null = null
     context: null,
     drill: null,
     format: "multipleChoice" as const,
+    image: null,
     itemId,
     left: null,
     mistakeId: null,
@@ -26,6 +27,7 @@ function question(itemId: string, answered: { isCorrect: boolean } | null = null
     skillId: "skill",
     timeMachine: null,
     unit: null,
+    visual: null,
   };
 }
 
@@ -38,13 +40,15 @@ function checkpoint(overrides: Partial<CheckpointView> = {}): CheckpointView {
     nextPhase: null,
     passMark: 2,
     phase: null,
+    planItemId: "plan-item",
     questions: [question("a"), question("b"), question("c")],
     reinforcementLessons: 2,
     rematch: false,
     result: null,
+    retry: null,
     reward: { badge: true, brainPower: 200, glasses: null, phaseComplete: true },
     sessionId: "session",
-    status: "pending",
+    status: "active",
     timeLimitMinutes: null,
     title: null,
     trueFalseLabels: "trueFalse",
@@ -53,11 +57,11 @@ function checkpoint(overrides: Partial<CheckpointView> = {}): CheckpointView {
 }
 
 describe(createDuelState, () => {
-  it("opens on the intro, where the learner left the duel, or on a finished result", () => {
-    expect(createDuelState(checkpoint()).phase).toBe("intro");
+  it("opens on the first question, where the learner left the duel, or on a finished result", () => {
+    expect(createDuelState(checkpoint())).toMatchObject({ phase: "duel", verdicts: {} });
 
     const resumed = createDuelState(
-      checkpoint({ questions: [question("a", { isCorrect: true }), question("b")] }),
+      checkpoint({ questions: [question("a", { blank: false, isCorrect: true }), question("b")] }),
     );
 
     expect(resumed).toMatchObject({ phase: "duel", verdicts: { a: true } });
@@ -68,8 +72,11 @@ describe(createDuelState, () => {
 describe(checkpointDuelReducer, () => {
   it("shows each verdict until the learner moves on, then asks the next question", () => {
     const view = checkpoint();
-    const started = checkpointDuelReducer(createDuelState(view), { type: "started" });
-    const picked = checkpointDuelReducer(started, { answer: { selectedIndex: 1 }, type: "select" });
+
+    const picked = checkpointDuelReducer(createDuelState(view), {
+      answer: { selectedIndex: 1 },
+      type: "select",
+    });
 
     const answered = checkpointDuelReducer(picked, {
       isCorrect: false,
@@ -102,9 +109,9 @@ describe(checkpointDuelReducer, () => {
 
   it("keeps the state and reports a failed request so the learner can try again", () => {
     const pending = checkpointDuelReducer(createDuelState(checkpoint()), { type: "pending" });
-    const failed = checkpointDuelReducer(pending, { error: "start", type: "failed" });
+    const failed = checkpointDuelReducer(pending, { error: "answer", type: "failed" });
 
-    expect(failed).toMatchObject({ error: "start", pending: false, phase: "intro" });
+    expect(failed).toMatchObject({ error: "answer", pending: false, phase: "duel" });
     expect(checkpointDuelReducer(failed, { type: "pending" }).error).toBeNull();
   });
 });
@@ -112,7 +119,10 @@ describe(checkpointDuelReducer, () => {
 describe(getDuelScore, () => {
   it("is done once every question has a verdict", () => {
     const view = checkpoint({
-      questions: [question("a", { isCorrect: true }), question("b", { isCorrect: true })],
+      questions: [
+        question("a", { blank: false, isCorrect: true }),
+        question("b", { blank: false, isCorrect: true }),
+      ],
     });
 
     expect(getDuelScore({ checkpoint: view, state: createDuelState(view) })).toStrictEqual({

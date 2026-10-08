@@ -1,17 +1,19 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { scheduleMemoryAfterSession } from "../../memory/after-session";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { BRAIN_POWER_BONUS } from "../brain-power";
 import { getSessionBlockMinutes } from "../daily-goal";
 import { type Mission, isFullMeal } from "../missions";
+import { measureSessionState } from "./capture-snapshot";
 import { refreshPlanAroundSession } from "./refresh-plan";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { trackSessionCompleted } from "./session-events";
 import { addSessionBrainPower, recordSessionEnd } from "./session-ledger";
 import { countMistakesFixedToday, getSessionMissions } from "./session-missions";
 import { applySessionProgress } from "./session-progress";
+import { type SessionState } from "./session-snapshot";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 const SECONDS_PER_MINUTE = 60;
@@ -63,9 +65,20 @@ async function payFullMeal({ session, timeZone, userId }: SessionDay): Promise<b
 }
 
 /**
+ * Keeps where the learner stood as the session ended, so its summary says what that session
+ * changed, not what later lessons did.
+ */
+async function keepSessionEnd(
+  tx: TransactionClient,
+  { end, sessionId }: { end: SessionState; sessionId: string },
+) {
+  await tx.studySession.update({ data: { endSnapshot: end }, where: { id: sessionId } });
+}
+
+/**
  * A session whose blocks are all done or skipped is complete: its ledger row closes, the plan
  * re-flows what the day left undone, "Session Completed" goes out the first time and memory reads
- * the session after the response. When two blocks finish at once, only the request that completed
+ * the session after the response (unless an earlier stop had it read already). When two blocks finish at once, only the request that completed
  * it does this.
  */
 async function completeIfFinished({
@@ -84,6 +97,8 @@ async function completeIfFinished({
 
   const endedAt = new Date();
 
+  const end = await measureSessionState({ goalId: session.goalId, now: endedAt, timeZone, userId });
+
   const completed = await prisma.$transaction(async (tx) => {
     const { count } = await tx.studySession.updateMany({
       data: { endedAt, status: "completed" },
@@ -93,6 +108,8 @@ async function completeIfFinished({
     if (count === 0) {
       return false;
     }
+
+    await keepSessionEnd(tx, { end, sessionId: session.id });
 
     await recordSessionEnd(tx, {
       endedAt,
@@ -118,10 +135,14 @@ async function completeIfFinished({
     trackSessionCompleted(session);
   }
 
-  scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
+  await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
-  await refreshPlanAroundSession({ goalId: session.goalId });
-  await rebalancePlanAfterSession({ goalId: session.goalId, userId });
+  // Memory and the rebalance read a session once, when it first ended or was first stopped: what
+  // came after is in the week the next session's read measures.
+  if (!session.endedAt && !session.stoppedAt) {
+    scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
+    await rebalancePlanAfterSession({ goalId: session.goalId, userId });
+  }
 
   return true;
 }

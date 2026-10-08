@@ -50,10 +50,10 @@ export function LevelTestQuestion({
       media={
         isListening ? <ListeningMessage language={targetLanguage} text={question.passage} /> : null
       }
-      onAnswer={(choice) =>
+      onAnswer={(choice, durationMs) =>
         startTransition(async () => {
           const answerIndex = "selectedIndex" in choice ? choice.selectedIndex : null;
-          const view = await answer({ answerIndex, questionId: question.id });
+          const view = await answer({ answerIndex, durationMs, questionId: question.id });
           setFailed(!view);
 
           if (view) {
@@ -66,10 +66,12 @@ export function LevelTestQuestion({
       question={{
         context: isListening ? null : question.passage,
         format: "multipleChoice",
+        image: null,
         itemId: question.id,
         options: question.options,
         question: question.question,
         skillId: question.skill,
+        visual: null,
       }}
     />
   );

@@ -8,18 +8,15 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { EllipsisIcon, ImageIcon, NotebookTextIcon, SparklesIcon } from "lucide-react";
+import { EllipsisIcon, NotebookTextIcon, SparklesIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
+import { getLessonFocusTarget } from "./_utils/lesson-focus";
 import { SummarySheet } from "./controls/summary-sheet";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
-import { type PlayableLibraryStep } from "./lesson-player-types";
 
 /**
  * The lesson's summary card, one tap away from the menu. The menu closes as the sheet opens, so
@@ -43,54 +40,21 @@ function useSummarySheet() {
   return { change, onMenuOpenChange, open };
 }
 
-/** Language exercises have no image of their own; teaching screens may. */
-function getStepImageId(step: PlayableLibraryStep): string | null {
-  return "image" in step && step.image ? step.image.id : null;
-}
-
 /**
- * The image's own votes, one level down, so a vote on a picture reaches the picture and the
- * screen's votes stay about its text.
- */
-function ImageMenuItems({ imageId }: { imageId: string }) {
-  const t = useExtracted();
-  const { slots } = useLessonPlayerConfig();
-
-  if (!slots.screenMenuItems) {
-    return null;
-  }
-
-  return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger>
-        <ImageIcon aria-hidden="true" />
-        {t("Image")}
-      </DropdownMenuSubTrigger>
-
-      <DropdownMenuSubContent className="w-56">
-        {slots.screenMenuItems({ contentId: imageId, contentKind: "mediaAsset" })}
-      </DropdownMenuSubContent>
-    </DropdownMenuSub>
-  );
-}
-
-/**
- * The screen's "…" menu: that the lesson was made with AI and may contain mistakes (said once
- * here, not on every screen), the lesson's summary card, then votes and "Report a problem" from
- * the host's feedback slot, about the screen in view and its image. Always there and never in the
- * way.
+ * The screen's "…" menu, for what the learner rarely needs: that the lesson was made with AI and
+ * may contain mistakes (said once here, not on every screen), "I already know this" on an
+ * explanation, the lesson's summary card and "Report a problem" from the host. Closing it hands
+ * focus back to the lesson, so Enter goes on instead of opening the menu again.
  */
 export function LessonScreenMenu() {
   const t = useExtracted();
   const { lesson, slots } = useLessonPlayerConfig();
-  const { screen } = useLessonPlayer();
+  const { actions, screen } = useLessonPlayer();
   const summary = useSummarySheet();
 
   if (!screen.step) {
     return null;
   }
-
-  const imageId = slots.screenMenuItems ? getStepImageId(screen.step) : null;
 
   return (
     <>
@@ -101,7 +65,7 @@ export function LessonScreenMenu() {
           <span className="sr-only">{t("Screen options")}</span>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuContent align="end" className="w-64" finalFocus={getLessonFocusTarget}>
           <DropdownMenuGroup>
             <DropdownMenuLabel className="flex items-start gap-2" data-slot="lesson-ai-note">
               <SparklesIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
@@ -109,29 +73,23 @@ export function LessonScreenMenu() {
             </DropdownMenuLabel>
           </DropdownMenuGroup>
 
+          <DropdownMenuSeparator />
+
+          {screen.canKnowThis && (
+            <DropdownMenuItem onClick={actions.knowThis}>
+              <ZapIcon aria-hidden="true" />
+              {t("I already know this")}
+            </DropdownMenuItem>
+          )}
+
           {lesson.summaryIdeas.length > 0 && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => summary.change(true)}>
-                <NotebookTextIcon aria-hidden="true" />
-                {t("Lesson summary")}
-              </DropdownMenuItem>
-            </>
+            <DropdownMenuItem onClick={() => summary.change(true)}>
+              <NotebookTextIcon aria-hidden="true" />
+              {t("Lesson summary")}
+            </DropdownMenuItem>
           )}
 
-          {slots.screenMenuItems && (
-            <>
-              <DropdownMenuSeparator />
-              {slots.screenMenuItems({ contentId: screen.step.id, contentKind: "step" })}
-            </>
-          )}
-
-          {imageId && (
-            <>
-              <DropdownMenuSeparator />
-              <ImageMenuItems imageId={imageId} />
-            </>
-          )}
+          {slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" })}
         </DropdownMenuContent>
       </DropdownMenu>
 

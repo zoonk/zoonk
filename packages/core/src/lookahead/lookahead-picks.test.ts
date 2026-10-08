@@ -1,12 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { pickPlacementItemSkills, recordPlacementPrepared } from "./placement-item-skills";
-import { pickSpeculativeLessons } from "./speculative-lessons";
+import { pickPlanStartToWrite, pickSpeculativeLessons } from "./speculative-lessons";
 
 const CITATION = { passage: "Cinco alternativas.", sourceId: "source" };
 
@@ -43,6 +44,18 @@ const ENEM_STRUCTURE = {
   subjects: [],
 };
 
+/** A multiple-choice question with `count` options, the first one right. */
+function choiceContent(count: number) {
+  return {
+    options: Array.from({ length: count }, (_, index) => ({
+      isCorrect: index === 0,
+      reason: index === 0 ? null : "A common mix-up.",
+      text: `Option ${index + 1}`,
+    })),
+    question: "Which option is right?",
+  };
+}
+
 const TRUE_FALSE_CONTENT = {
   context: null,
   isTrue: true,
@@ -72,14 +85,28 @@ async function examGoalWithSkills({ count, structure }: { count: number; structu
   return { blueprint, goal, skillIds: skills.map((skill) => skill.id) };
 }
 
-async function planWithLessons({ phases, written = [] }: { phases: number[]; written?: number[] }) {
+async function planWithLessons({
+  details = {},
+  phases,
+  personal = false,
+  written = [],
+}: {
+  details?: object;
+  phases: number[];
+  /** The plan's lessons are the learner's own, from a course only they read (their material). */
+  personal?: boolean;
+  written?: number[];
+}) {
   const user = await userFixture();
-  const goal = await goalFixture({ userId: user.id });
+  const goal = await goalFixture({ details, userId: user.id });
   const plan = await planFixture({ goalId: goal.id });
 
   const lessons = await Promise.all(
     phases.map((_, index) =>
-      libraryLessonFixture({ contentStatus: written.includes(index) ? "completed" : "pending" }),
+      libraryLessonFixture({
+        contentStatus: written.includes(index) ? "completed" : "pending",
+        ...(personal ? { ownerId: user.id, visibility: "private" as const } : {}),
+      }),
     ),
   );
 
@@ -101,7 +128,9 @@ describe(pickSpeculativeLessons, () => {
   it("guesses the first phase and the one the learner's own level points at", async () => {
     const { goalId, lessonIds } = await planWithLessons({ phases: [0, 0, 1, 1, 2, 2, 3, 3] });
 
-    await expect(pickSpeculativeLessons({ goalId, ownLevel: "advanced" })).resolves.toStrictEqual([
+    await expect(
+      pickSpeculativeLessons({ count: 4, goalId, ownLevel: "advanced" }),
+    ).resolves.toStrictEqual([
       [lessonIds[0], lessonIds[1]],
       [lessonIds[4], lessonIds[5]],
     ]);
@@ -114,11 +143,11 @@ describe(pickSpeculativeLessons, () => {
     ]);
 
     await expect(
-      pickSpeculativeLessons({ goalId: single.goalId, ownLevel: null }),
+      pickSpeculativeLessons({ count: 4, goalId: single.goalId, ownLevel: null }),
     ).resolves.toStrictEqual([single.lessonIds.slice(0, 4)]);
 
     await expect(
-      pickSpeculativeLessons({ goalId: empty.goalId, ownLevel: "basic" }),
+      pickSpeculativeLessons({ count: 4, goalId: empty.goalId, ownLevel: "basic" }),
     ).resolves.toStrictEqual([]);
   });
 
@@ -130,18 +159,58 @@ describe(pickSpeculativeLessons, () => {
 
     // Without a level, the second guess is the next phase. The first lesson is already written
     // (found in the Library), so the next two are guessed instead.
-    await expect(pickSpeculativeLessons({ goalId, ownLevel: null })).resolves.toStrictEqual([
+    await expect(
+      pickSpeculativeLessons({ count: 4, goalId, ownLevel: null }),
+    ).resolves.toStrictEqual([
       [lessonIds[1], lessonIds[2]],
       [lessonIds[3], lessonIds[4]],
     ]);
   });
 
+  it("writes fewer lessons ahead for a learner whose plan writes less ahead", async () => {
+    const { goalId, lessonIds } = await planWithLessons({ phases: [0, 0, 0, 1, 1, 1] });
+
+    await expect(
+      pickSpeculativeLessons({ count: 2, goalId, ownLevel: null }),
+    ).resolves.toStrictEqual([[lessonIds[0]], [lessonIds[3]]]);
+  });
+
+  it("leaves the learner's own lessons for after placement, which may test them out", async () => {
+    // A class test's lessons from the learner's notes: nobody else reads them, so a lesson
+    // placement tests out would be written for nothing.
+    const during = await planWithLessons({ personal: true, phases: [0, 0, 0] });
+
+    await expect(
+      pickSpeculativeLessons({ count: 4, goalId: during.goalId, ownLevel: "basic" }),
+    ).resolves.toStrictEqual([]);
+
+    await expect(pickPlanStartToWrite(during.goalId)).resolves.toBeNull();
+
+    const after = await planWithLessons({
+      details: { answered: ["placement"] },
+      personal: true,
+      phases: [0, 0, 0],
+    });
+
+    await expect(
+      pickSpeculativeLessons({ count: 4, goalId: after.goalId, ownLevel: "basic" }),
+    ).resolves.toStrictEqual([after.lessonIds]);
+
+    await expect(pickPlanStartToWrite(after.goalId)).resolves.toBe(after.lessonIds[0]);
+  });
+
+  it("writes a shared plan's start during placement: another learner reads a wrong guess", async () => {
+    const { goalId, lessonIds } = await planWithLessons({ phases: [0, 0, 0] });
+
+    await expect(pickPlanStartToWrite(goalId)).resolves.toBe(lessonIds[0]);
+  });
+
   it("guesses only the first phase for a learner starting from nothing, who skips placement", async () => {
     const { goalId, lessonIds } = await planWithLessons({ phases: [0, 0, 0, 0, 0, 1, 1] });
 
-    await expect(pickSpeculativeLessons({ goalId, ownLevel: "none" })).resolves.toStrictEqual([
-      lessonIds.slice(0, 4),
-    ]);
+    await expect(
+      pickSpeculativeLessons({ count: 4, goalId, ownLevel: "none" }),
+    ).resolves.toStrictEqual([lessonIds.slice(0, 4)]);
   });
 });
 
@@ -208,6 +277,23 @@ describe(pickPlacementItemSkills, () => {
     // In the order the run picked them, once each, and never a skill that already has questions.
     expect(picked.map((skill) => skill.id)).toStrictEqual([second.id, first.id]);
     expect(picked.every((skill) => skill.needsTyped)).toBe(true);
+  });
+
+  it("gives a language goal's skills the language their questions practice", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "language", targetLanguage: "en", userId: user.id });
+    await planFixture({ goalId: goal.id });
+
+    const interview = await skillFixture({ language: "pt", targetLanguage: "en" });
+
+    const { skills: picked } = await pickPlacementItemSkills({
+      goalId: goal.id,
+      skillIds: [interview.id],
+    });
+
+    expect(picked.map((skill) => [skill.language, skill.targetLanguage])).toStrictEqual([
+      ["pt", "en"],
+    ]);
   });
 
   it("records when placement's questions for the goal's plan were written", async () => {
@@ -300,19 +386,20 @@ describe(pickPlacementItemSkills, () => {
 
     const { quickFormat, skills } = await pickPlacementItemSkills({ goalId: goal.id, skillIds });
 
-    // Written before the notice was read, the multiple-choice questions don't count: true/false
-    // ones are written, and the typed one it has is kept.
+    // Written before the notice was read, the general questions don't count for its placement:
+    // the exam's own true/false and typed ones are written.
     expect(quickFormat).toBe("trueFalse");
 
     expect(skills.map((skill) => [skill.id, skill.needsTyped])).toStrictEqual([
-      [withChoice, false],
+      [withChoice, true],
+      [withTrueFalse, true],
       [bare, true],
     ]);
 
     expect(skills[0]?.exam?.blueprintId).toBe(blueprint.id);
   });
 
-  it("counts only questions this goal can ask: never another exam's or a field's", async () => {
+  it("writes an exam's own questions where only general ones exist, once for every learner of it", async () => {
     const [{ blueprint, goal, skillIds }, otherExam] = await Promise.all([
       examGoalWithSkills({ count: 4, structure: ENEM_STRUCTURE }),
       examBlueprintFixture(),
@@ -323,31 +410,227 @@ describe(pickPlacementItemSkills, () => {
     await Promise.all([
       itemFixture({ examBlueprintId: otherExam.id, skillId: otherExams ?? "" }),
       itemFixture({ field: "nursing", skillId: fields ?? "" }),
-      itemFixture({ examBlueprintId: blueprint.id, skillId: ownExams ?? "" }),
+      itemFixture({
+        content: choiceContent(5),
+        examBlueprintId: blueprint.id,
+        skillId: ownExams ?? "",
+      }),
+      itemFixture({
+        content: TYPED_CONTENT,
+        examBlueprintId: blueprint.id,
+        format: "typed",
+        skillId: ownExams ?? "",
+      }),
       itemFixture({ skillId: general ?? "" }),
     ]);
 
     const { quickFormat, skills } = await pickPlacementItemSkills({ goalId: goal.id, skillIds });
 
     expect(quickFormat).toBe("multipleChoice");
-    expect(skills.map((skill) => skill.id)).toStrictEqual([otherExams, fields]);
+    expect(skills.map((skill) => skill.id)).toStrictEqual([otherExams, fields, general]);
+    expect(skills.every((skill) => skill.exam?.blueprintId === blueprint.id)).toBe(true);
+
+    // Once written, the exam's questions are shared: the next learner of the exam needs none.
+    const [nextLearner] = await Promise.all([
+      userFixture(),
+      ...skills.flatMap((skill) => [
+        itemFixture({
+          content: choiceContent(5),
+          examBlueprintId: blueprint.id,
+          skillId: skill.id,
+        }),
+        itemFixture({
+          content: TYPED_CONTENT,
+          examBlueprintId: blueprint.id,
+          format: "typed",
+          skillId: skill.id,
+        }),
+      ]),
+    ]);
+
+    const nextGoal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      userId: nextLearner.id,
+    });
+
+    await expect(pickPlacementItemSkills({ goalId: nextGoal.id, skillIds })).resolves.toMatchObject(
+      { skills: [] },
+    );
+  });
+
+  it("writes the exam's five-option questions for a skill whose exam questions have four", async () => {
+    const { blueprint, goal, skillIds } = await examGoalWithSkills({
+      count: 2,
+      structure: ENEM_STRUCTURE,
+    });
+
+    const [fourOptions = "", fiveOptions = ""] = skillIds;
+
+    await Promise.all(
+      [
+        { content: choiceContent(4), skillId: fourOptions },
+        { content: choiceContent(5), skillId: fiveOptions },
+        { content: TYPED_CONTENT, format: "typed" as const, skillId: fourOptions },
+        { content: TYPED_CONTENT, format: "typed" as const, skillId: fiveOptions },
+      ].map((attrs) => itemFixture({ ...attrs, examBlueprintId: blueprint.id })),
+    );
+
+    // Placement only asks ENEM questions with ENEM's five options, so the old four-option ones
+    // can't stand for the skill: it gets five-option ones, and keeps its typed confirmation.
+    await expect(pickPlacementItemSkills({ goalId: goal.id, skillIds })).resolves.toMatchObject({
+      quickFormat: "multipleChoice",
+      skills: [{ id: fourOptions, needsTyped: false }],
+    });
+  });
+
+  it("writes five-option questions for a notice that leaves the count to its latest edition", async () => {
+    const { blueprint, goal, skillIds } = await examGoalWithSkills({
+      count: 2,
+      structure: {
+        ...ENEM_STRUCTURE,
+        formats: [{ ...ENEM_STRUCTURE.formats[0], options: null }],
+        pastOptions: {
+          checkedAt: "2026-10-07T00:00:00.000Z",
+          edition: "Enem 2025",
+          options: 5,
+          source: { title: null, url: "https://www.gov.br/inep" },
+        },
+      },
+    });
+
+    const [fourOptions = "", fiveOptions = ""] = skillIds;
+
+    await Promise.all(
+      [
+        { content: choiceContent(4), skillId: fourOptions },
+        { content: choiceContent(5), skillId: fiveOptions },
+        { content: TYPED_CONTENT, format: "typed" as const, skillId: fourOptions },
+        { content: TYPED_CONTENT, format: "typed" as const, skillId: fiveOptions },
+      ].map((attrs) => itemFixture({ ...attrs, examBlueprintId: blueprint.id })),
+    );
+
+    await expect(pickPlacementItemSkills({ goalId: goal.id, skillIds })).resolves.toMatchObject({
+      skills: [{ exam: { optionCount: 5 }, id: fourOptions }],
+    });
+  });
+
+  it("counts for a focus test only questions the learner hasn't answered, with the exam's options", async () => {
+    const { blueprint, goal, skillIds } = await examGoalWithSkills({
+      count: 3,
+      structure: ENEM_STRUCTURE,
+    });
+
+    const [answered = "", unanswered = "", fourOptions = ""] = skillIds;
+
+    const [seen] = await Promise.all([
+      itemFixture({ content: choiceContent(5), examBlueprintId: blueprint.id, skillId: answered }),
+      itemFixture({ content: choiceContent(5), skillId: unanswered }),
+      itemFixture({ content: choiceContent(4), skillId: fourOptions }),
+    ]);
+
+    await attemptFixture({ itemId: seen.id, skillId: answered, userId: goal.userId });
+
+    const picks = await pickPlacementItemSkills({
+      exceptAnswered: true,
+      formats: ["multipleChoice"],
+      goalId: goal.id,
+      skillIds,
+    });
+
+    expect(picks.skills.map((skill) => skill.id)).toStrictEqual([answered, fourOptions]);
+  });
+
+  it("counts general questions for a goal without an exam", async () => {
+    const user = await userFixture();
+    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+
+    await Promise.all([
+      itemFixture({ skillId: skill.id }),
+      itemFixture({ content: TYPED_CONTENT, format: "typed", skillId: skill.id }),
+    ]);
+
+    await expect(
+      pickPlacementItemSkills({ goalId: goal.id, skillIds: [skill.id] }),
+    ).resolves.toMatchObject({ skills: [] });
   });
 
   it("writes only the formats a caller asks for, such as a test-out's multiple choice", async () => {
     const { goal, skillIds } = await examGoalWithSkills({
-      count: 1,
+      count: 2,
       structure: CEBRASPE_STRUCTURE,
     });
 
-    const [skillId = ""] = skillIds;
+    const [skillId = "", withGeneralChoice = ""] = skillIds;
 
-    await itemFixture({ content: TRUE_FALSE_CONTENT, format: "trueFalse", skillId });
+    await Promise.all([
+      itemFixture({ content: TRUE_FALSE_CONTENT, format: "trueFalse", skillId }),
+      itemFixture({ skillId: withGeneralChoice }),
+    ]);
 
+    // A test-out asks general multiple choice too, so only the skill without any gets questions.
     await expect(
       pickPlacementItemSkills({ formats: ["multipleChoice"], goalId: goal.id, skillIds }),
     ).resolves.toMatchObject({
       quickFormat: "multipleChoice",
       skills: [{ id: skillId, needsTyped: false }],
     });
+  });
+
+  it("writes for a skill short of the questions a test-out asks of it, not only for one with none", async () => {
+    const { goal, skillIds } = await examGoalWithSkills({
+      count: 2,
+      structure: CEBRASPE_STRUCTURE,
+    });
+
+    const [short = "", enough = ""] = skillIds;
+
+    // A chapter of one skill asks it several times: one question isn't enough for four.
+    await Promise.all([
+      itemFixture({ skillId: short }),
+      ...Array.from({ length: 4 }, () => itemFixture({ skillId: enough })),
+    ]);
+
+    await expect(
+      pickPlacementItemSkills({
+        formats: ["multipleChoice"],
+        goalId: goal.id,
+        quickNeeded: 4,
+        skillIds,
+      }),
+    ).resolves.toMatchObject({ skills: [{ id: short }] });
+  });
+
+  it("names the situations a skill's questions already use, so new ones put it in others", async () => {
+    const { goal, skillIds } = await examGoalWithSkills({ count: 1, structure: ENEM_STRUCTURE });
+    const [skillId = ""] = skillIds;
+
+    await itemFixture({
+      content: {
+        context:
+          "Moradores de Olinda marcaram uma reunião pacífica na praça central, sem armas, e avisaram a prefeitura.",
+        options: [
+          { isCorrect: true, text: "Pode, pois basta o aviso prévio." },
+          {
+            isCorrect: false,
+            reason: "Não depende de autorização.",
+            text: "Depende de autorização.",
+          },
+        ],
+        question: "A reunião pode acontecer?",
+      },
+      skillId,
+    });
+
+    const picked = await pickPlacementItemSkills({
+      formats: ["multipleChoice"],
+      goalId: goal.id,
+      quickNeeded: 4,
+      skillIds,
+    });
+
+    expect(picked.skills[0]?.usedSituations).toStrictEqual([
+      "Moradores de Olinda marcaram uma reunião pacífica na praça central, sem armas, e avisaram a prefeitura.",
+    ]);
   });
 });

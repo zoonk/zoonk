@@ -48,6 +48,20 @@ describe(isPassageInDocument, () => {
 });
 
 describe(findNamesInDocument, () => {
+  it("finds a numbered syllabus item whose hyphen the PDF text lost", () => {
+    const found = findNamesInDocument({
+      names: [
+        "3 Organização do Estado: organização político-administrativa, União, estados",
+        "3 Organização do Estado: organização político administrativa",
+      ],
+      text: "2 Princípios fundamentais. 3 Organização do Estado: organização políticoadministrativa, União, estados, municípios.",
+    });
+
+    expect([...found]).toStrictEqual([
+      "3 Organização do Estado: organização político-administrativa, União, estados",
+    ]);
+  });
+
   it("finds names stated word for word, whatever their case, punctuation and line breaks", () => {
     const found = findNamesInDocument({
       names: ["Linguagens, códigos e suas tecnologias", "questões de múltipla escolha", "provas"],

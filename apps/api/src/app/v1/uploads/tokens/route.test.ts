@@ -76,7 +76,19 @@ describe("POST /v1/uploads/tokens", () => {
   it.each([
     [{ status: "unauthorized" as const }, 401, "UNAUTHORIZED"],
     [{ status: "invalidPathname" as const }, 400, "BAD_REQUEST"],
-    [{ limit: 3, status: "limitReached" as const }, 429, "UPLOAD_LIMIT_REACHED"],
+    [
+      {
+        limit: {
+          limit: 3,
+          period: "day" as const,
+          resource: "upload" as const,
+          tier: "free" as const,
+        },
+        status: "limitReached" as const,
+      },
+      402,
+      "USAGE_LIMIT_REACHED",
+    ],
   ])("maps %o to HTTP %i", async (result, status, code) => {
     vi.mocked(createSourceUploadToken).mockResolvedValue(result);
 

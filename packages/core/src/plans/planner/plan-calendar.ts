@@ -1,5 +1,5 @@
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
-import { DAYS_PER_WEEK, type LightWeek } from "./plan-state";
+import { DAYS_PER_WEEK, type LightWeek, type PlanSettings } from "./plan-state";
 
 const ISO_DATE_LENGTH = 10;
 const SUNDAY = 0;
@@ -10,6 +10,11 @@ const LIGHT_WEEK_FACTOR = 0.5;
 /** When and how long the learner studies for one goal. */
 export type StudyCalendar = {
   dailyMinutes: number;
+  /**
+   * The plan's first day. It always has study time, so a learner who finishes onboarding on a
+   * weekday they rest starts right away; the week's shape takes over the next day.
+   */
+  firstDay: Date | null;
   lightWeeks: readonly LightWeek[];
   /** Minutes per weekday, Sunday first, or null for the daily minutes every day. */
   weekdayMinutes: readonly number[] | null;
@@ -31,6 +36,22 @@ export function toIsoDate(date: Date): string {
 
 export function fromIsoDate(value: string): Date {
   return parseLocalDate(value);
+}
+
+/** A goal's study calendar: its daily time and its plan's weekly shape, light weeks and first day. */
+export function getPlanCalendar({
+  dailyMinutes,
+  settings,
+}: {
+  dailyMinutes: number;
+  settings: Pick<PlanSettings, "lightWeeks" | "startDate" | "weekdayMinutes">;
+}): StudyCalendar {
+  return {
+    dailyMinutes,
+    firstDay: settings.startDate ? fromIsoDate(settings.startDate) : null,
+    lightWeeks: settings.lightWeeks,
+    weekdayMinutes: settings.weekdayMinutes,
+  };
 }
 
 /** The last day of the week a date falls in. Weeks run Monday to Sunday, as the week view shows. */
@@ -59,7 +80,14 @@ export function getWeekdayMinutes({
   return calendar.weekdayMinutes?.[weekday] ?? calendar.dailyMinutes;
 }
 
-/** The minutes the learner studies on one date: the weekday's time, halved in a light week. */
+function isFirstDay({ calendar, date }: { calendar: StudyCalendar; date: Date }): boolean {
+  return calendar.firstDay?.getTime() === date.getTime();
+}
+
+/**
+ * The minutes the learner studies on one date: the weekday's time (the daily time on the plan's
+ * first day, even when its weekday rests), halved in a light week.
+ */
 export function getStudyMinutes({
   calendar,
   date,
@@ -67,7 +95,10 @@ export function getStudyMinutes({
   calendar: StudyCalendar;
   date: Date;
 }): number {
-  const minutes = getWeekdayMinutes({ calendar, weekday: date.getUTCDay() });
+  const weekdayMinutes = getWeekdayMinutes({ calendar, weekday: date.getUTCDay() });
+
+  const minutes =
+    weekdayMinutes === 0 && isFirstDay({ calendar, date }) ? calendar.dailyMinutes : weekdayMinutes;
 
   return isInLightWeek({ date, lightWeeks: calendar.lightWeeks })
     ? Math.round(minutes * LIGHT_WEEK_FACTOR)
@@ -103,20 +134,21 @@ export function countStudyDays(calendar: Pick<StudyCalendar, "dailyMinutes" | "w
   ).filter((minutes) => minutes > 0).length;
 }
 
+/** The week's days from its last, Sunday, back to Monday. */
+const WEEK_FROM_ITS_END = Array.from(
+  { length: DAYS_PER_WEEK },
+  (_, index) => (DAYS_PER_WEEK - index) % DAYS_PER_WEEK,
+);
+
 /**
- * The day a weekly checkpoint or mock exam goes on: Sunday, unless the learner rests on another
- * day and studies on Sunday. Then it's their last rest day, so it doesn't take a study day's time.
+ * The day a weekly checkpoint or mock exam goes on, the same every week: the week's last study
+ * day, Sunday when the learner studies on Sundays, else the nearest study day before it. A rest
+ * day is never taken, even when the exam itself falls on that weekday.
  */
 export function getWeeklyEventWeekday(
   calendar: Pick<StudyCalendar, "dailyMinutes" | "weekdayMinutes">,
 ): number {
-  const restDays = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) => weekday).filter(
-    (weekday) => getWeekdayMinutes({ calendar, weekday }) === 0,
+  return (
+    WEEK_FROM_ITS_END.find((weekday) => getWeekdayMinutes({ calendar, weekday }) > 0) ?? SUNDAY
   );
-
-  if (restDays.length === 0 || restDays.includes(SUNDAY)) {
-    return SUNDAY;
-  }
-
-  return Math.max(...restDays);
 }

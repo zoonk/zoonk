@@ -1,10 +1,13 @@
 "use client";
 
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BotIcon, Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { LessonRichText, LessonRichTextBlocks } from "../../lesson/_components/lesson-rich-text";
+import { usePlayerInteractionState } from "../../player-context";
+import { getNumberKeyShortcut } from "../../player-shortcuts";
 import {
   ActivityCanvas,
   ActivityCanvasLabel,
@@ -34,7 +37,10 @@ function StepNumber({ index, verdict }: { index: number; verdict: StepVerdict })
   );
 }
 
-/** A worked step to tap; after the check, the wrong one is struck through with its fix. */
+/**
+ * A worked step to pick, like an answer option: its number key picks it and Enter checks the pick,
+ * even while the step has focus. After the check, the wrong one is struck through with its fix.
+ */
 function FindErrorStep({
   correction,
   index,
@@ -56,8 +62,9 @@ function FindErrorStep({
 
   return (
     <button
+      aria-checked={isPicked}
+      aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
       aria-label={t("Step {number}: {text}", { number: String(index + 1), text })}
-      aria-pressed={isChecked ? undefined : isPicked}
       className={cn(
         "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-11 w-full items-start gap-3 rounded-2xl border px-3.5 py-3 text-left text-sm leading-snug outline-none focus-visible:ring-[3px] sm:text-base",
         !isChecked && !isPicked && "hover:bg-accent",
@@ -67,6 +74,7 @@ function FindErrorStep({
       )}
       disabled={isChecked}
       onClick={onToggle}
+      role="radio"
       type="button"
     >
       {/* Centered on the step's first line, however many lines it wraps to. */}
@@ -113,6 +121,7 @@ export function FindErrorActivity({
   const pickedId = answer?.kind === "selection" ? (answer.ids[0] ?? null) : null;
   const errorId = expectedInteraction(expected, "selection")?.ids[0] ?? null;
   const isAiAnswer = fields.author === "ai";
+  const interactionState = usePlayerInteractionState();
 
   function verdictOf(stepId: string): StepVerdict {
     if (stepId === errorId) {
@@ -126,15 +135,30 @@ export function FindErrorActivity({
     onAnswerChange(stepId === pickedId ? null : { ids: [stepId], kind: "selection" });
   }
 
+  useNumberKeys({
+    count: fields.steps.length,
+    enabled: !isChecked && interactionState !== "paused",
+    onPick: (index) => {
+      const step = fields.steps[index];
+
+      if (!step) {
+        return false;
+      }
+
+      toggle(step.id);
+    },
+  });
+
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <div className="flex flex-col gap-1">
         <ActivityCanvasLabel className="font-medium">
           {isAiAnswer ? t("Someone asked an AI assistant") : t("Problem")}
         </ActivityCanvasLabel>
-        <p className="text-base leading-snug font-medium">
-          <LessonRichText text={fields.problem} />
-        </p>
+        <LessonRichTextBlocks
+          className="text-base leading-snug [&>p]:font-medium"
+          text={fields.problem}
+        />
       </div>
 
       {isAiAnswer && (

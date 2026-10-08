@@ -17,7 +17,7 @@ export const listUserStudySessions = cacheAdminData((userId: string) =>
       },
       goal: { select: { id: true, title: true } },
     },
-    omit: { startSnapshot: true },
+    omit: { endSnapshot: true, startSnapshot: true },
     orderBy: [{ localDate: "desc" }, { createdAt: "desc" }],
     take: RECENT_SESSIONS,
     where: { userId },

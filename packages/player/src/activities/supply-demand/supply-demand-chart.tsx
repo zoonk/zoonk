@@ -1,10 +1,10 @@
 "use client";
 
+import { createLinearScale } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ActivityPlaceHandle } from "../_components/activity-place-handle";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
-import { createLinearScale } from "../_utils/plot-scale";
 import {
   Axes,
   ChangeArrows,

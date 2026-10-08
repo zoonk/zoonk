@@ -1,4 +1,4 @@
-import { milestoneSchema } from "@zoonk/core/sessions/completion-contract";
+import { milestoneSchema, missionSchema } from "@zoonk/core/sessions/completion-contract";
 import { BuddyGlasses, BuddyKind, MasteryState } from "@zoonk/db";
 import { z } from "zod";
 import { logicalDateSchema } from "./study-sessions";
@@ -88,7 +88,15 @@ export const buddyStatusResponseSchema = z
       .nullable()
       .meta({ description: "Null for learners without a buddy" }),
     energy: z.object({
-      current: z.number().min(0).max(100),
+      current: z
+        .number()
+        .min(0)
+        .max(100)
+        .nullable()
+        .meta({
+          description:
+            "Null until a day of study has passed: a new buddy has no Energy to show yet",
+        }),
       state: z.enum(["napping", "awake", "glowing"]),
       studiedToday: z.boolean(),
     }),
@@ -102,5 +110,15 @@ export const buddyStatusResponseSchema = z
       .nullable(),
     stage: z.enum(["baby", "young", "adult", "wise"]),
     thisWeek: buddyDietSchema,
+    today: z
+      .object({
+        fullMeal: z.object({ bonus: countSchema, earned: z.boolean() }),
+        missions: z.array(missionSchema),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Today's missions from the active goal's session, null until today's session is built (reading the buddy never builds it)",
+      }),
   })
   .meta({ id: "BuddyStatus" });

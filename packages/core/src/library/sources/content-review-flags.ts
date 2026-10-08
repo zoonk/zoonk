@@ -1,5 +1,6 @@
 import "server-only";
 import { type SourceChangeNotice, type TransactionClient } from "@zoonk/db";
+import { CURRENT_STEPS } from "../lessons/lesson-versions";
 
 type NoticeData = Pick<
   SourceChangeNotice,
@@ -36,7 +37,9 @@ async function flagContentBuiltOnSource({
   const [lessons, items] = await Promise.all([
     tx.lesson.findMany({
       select: { id: true },
-      where: { steps: { some: { generatedAt: writtenBefore, sourceId: builtOn } } },
+      where: {
+        steps: { some: { ...CURRENT_STEPS, generatedAt: writtenBefore, sourceId: builtOn } },
+      },
     }),
     tx.item.findMany({
       select: { id: true },

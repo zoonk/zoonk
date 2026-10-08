@@ -1,11 +1,17 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { ChevronRightIcon, LanguagesIcon } from "lucide-react";
+import { LanguagesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { LearnLink } from "../../learn-link";
-import { LANGUAGE_ROW_LINK_CLASS } from "../current-unit";
+import {
+  ListGroup,
+  ListRowContent,
+  ListRowDescription,
+  ListRowIcon,
+  ListRowLink,
+  ListRowTitle,
+} from "../../_components/list-group";
 
 /** The script's alphabet lesson as Content lists it, and whether it still opens the sessions. */
 export type AlphabetLink = { href: string; minutes: number; pending: boolean; title: string };
@@ -33,25 +39,23 @@ export function AlphabetRow({
 
   return (
     <div className="flex flex-col gap-2">
-      <LearnLink className={LANGUAGE_ROW_LINK_CLASS} href={alphabet.href}>
-        <span
-          aria-hidden="true"
-          className="bg-background text-muted-foreground in-data-[mode=fun]:bg-fun-soft flex size-9 shrink-0 items-center justify-center rounded-xl"
-        >
-          <LanguagesIcon className="size-4" />
-        </span>
-        <span className="flex min-w-0 flex-1 flex-col">
-          <span className="text-muted-foreground text-xs">
-            {alphabet.pending
-              ? t("First in your next session · {minutes, number} min", {
-                  minutes: alphabet.minutes,
-                })
-              : t("Practice anytime · {minutes, number} min", { minutes: alphabet.minutes })}
-          </span>
-          <span className="font-medium">{alphabet.title}</span>
-        </span>
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-      </LearnLink>
+      <ListGroup>
+        <ListRowLink href={alphabet.href}>
+          <ListRowIcon>
+            <LanguagesIcon />
+          </ListRowIcon>
+          <ListRowContent>
+            <ListRowTitle>{alphabet.title}</ListRowTitle>
+            <ListRowDescription>
+              {alphabet.pending
+                ? t("First in your next session · {minutes, number} min", {
+                    minutes: alphabet.minutes,
+                  })
+                : t("Practice anytime · {minutes, number} min", { minutes: alphabet.minutes })}
+            </ListRowDescription>
+          </ListRowContent>
+        </ListRowLink>
+      </ListGroup>
 
       {alphabet.pending && (
         <div className="flex flex-wrap items-center gap-2 px-1">

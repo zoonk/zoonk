@@ -1,4 +1,4 @@
-import { niceTicks } from "../_utils/plot-scale";
+import { niceTicks } from "@zoonk/utils/plot-scale";
 
 /** Positions a year can take on a drag: about a hundred along the axis, in whole years. */
 const POSITIONS = 100;

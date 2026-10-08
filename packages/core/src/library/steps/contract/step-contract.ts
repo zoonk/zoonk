@@ -19,6 +19,9 @@ import {
   workedExampleContentSchema,
 } from "./teaching-steps";
 
+/** The chart or timeline a screen or question shows, drawn from its data. */
+export type { ChartVisual, LessonVisual, TimelineVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
+
 /** The contract version stored in `Step.contractVersion` and `StepVariant.contractVersion`. */
 export const STEP_CONTRACT_VERSION = 1;
 

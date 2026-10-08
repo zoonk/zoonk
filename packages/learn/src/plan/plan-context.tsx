@@ -4,77 +4,79 @@ import {
   type LearnerPlanOperation,
   type PlanChangeDecisionInput,
 } from "@zoonk/core/plans/contract";
-import { type OwnLevelChange } from "@zoonk/core/plans/own-level-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { createContext, use, useCallback, useEffect, useRef } from "react";
-import { type HelpLimit } from "../_components/help-limit-notice";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 
 /**
- * What happened to a request in plain words: applied now, waiting for OK, not understood, or not
- * read because the learner's small AI help needs a short break or is used up for today.
+ * What a change did: applied (with the change, null while the plan isn't built yet), or for a focus
+ * that would move nothing, unchanged with why: its subjects already have every lesson in the plan
+ * (`alreadyIn`), or already start as early as what they build on allows (`cantMove`).
  */
-export type PlanEditOutcome =
-  | { status: "applied" | "failed" | "notUnderstood" | "proposed" }
-  | HelpLimit;
+export type PlanChangeOutcome =
+  | { change: PlanChangeView | null; status: "applied" }
+  | { reason: "alreadyIn" | "cantMove"; status: "unchanged" };
 
 /**
  * The host saves every change through core and re-renders the plan. Each action resolves to
- * whether it worked, so the screen can say so without knowing how the host talks to core.
+ * whether it worked (a change, to what it did, or null when it didn't), so the screen can say so
+ * without knowing how the host talks to core.
  */
 export type PlanActions = {
-  change: (operations: LearnerPlanOperation[]) => Promise<boolean>;
+  change: (operations: LearnerPlanOperation[]) => Promise<PlanChangeOutcome | null>;
   decide: (input: {
     changeId: string;
     status: PlanChangeDecisionInput["status"];
   }) => Promise<boolean>;
-  requestEdit: (text: string) => Promise<PlanEditOutcome>;
-  /** The learner's answer on the "You'll use" card for these tools. */
+  /** The learner's answer for these tools, from the plan editor. */
   chooseTools: (input: {
     choice: ToolChoice;
     system: ToolSystem | null;
     tools: string[];
   }) => Promise<boolean>;
-  /**
-   * Changes the learner's own level from the plan; null when it didn't work. Hosts without it
-   * (the plan reveal) don't show the level control.
-   */
-  changeLevel?: (level: OwnLevelChange["level"]) => Promise<OwnLevelChange | null>;
 };
 
-/** The goal as the plan's header shows it. */
+/** The buddy's conversation, by its tab's link and the buddy that answers (null before one). */
+export type PlanTutor = { buddy: Pick<LearnBuddy, "kind" | "name"> | null; href: string };
+
+/** The goal as the plan's screens name it. */
 export type PlanGoal = { kind: "exam" | "explain" | "language" | "learn"; title: string };
 
 type PlanScreenValue = {
   actions: PlanActions;
-  /** Where a chapter's page lives: the chapter id is appended. Chapters aren't links without it. */
-  chapterBasePath?: string;
-  /** The public page of the course the plan is built from, for "See full course". */
-  courseHref?: string | null;
   goal: PlanGoal;
-  /** The map of the goal's subject, with what to study next once the plan is done. */
-  mapHref?: string;
+  /**
+   * The learner's buddy, their tutor for the goal, where questions about the plan and changes in
+   * their own words go; hosts without the buddy's conversation leave it out.
+   */
+  tutor?: PlanTutor;
   plan: PlanView;
+  /**
+   * The focus test's page on the host, where answers choose where the plan's depth goes; hosts
+   * without it leave it out, and only choosing by hand is offered.
+   */
+  focusTestHref?: string;
+  /**
+   * The host opened the plan to choose where to focus (the buddy offered it): "Choose where to
+   * focus" opens on arrival.
+   */
+  openFocus?: boolean;
   /** The plan's link, as a path on the host (the origin is added when sharing). */
   shareHref: string;
-  /** Where a chapter's test-out lives: the chapter id is appended. */
-  testOutBasePath: string;
-  /** The host's "Ask" about the plan ("Why am I studying this today?") and the course it's built from. */
-  tutor?: React.ReactNode;
 };
 
-/** Where focus goes when a save takes its control away: the plan's changes, then its title. */
-export const PLAN_CHANGES_TITLE_ID = "plan-changes-title";
+/** Where focus goes when a save takes its control away and nothing closer can take it. */
 export const PLAN_TITLE_ID = "plan-title";
 
-/** Where focus should land if the control that saved is gone; null falls back to the plan's changes. */
+/** Where focus should land if the control that saved is gone; null falls back to the plan's title. */
 type FocusTarget = () => HTMLElement | null;
 
 type PlanScreenContextValue = PlanScreenValue & {
   /**
-   * Call as a save starts. If the save takes the focused control away (Apply turns into Undo, a
-   * declined proposal leaves the list, a fix the plan no longer needs goes away), focus moves to
-   * `target`, the plan's changes or its title once the saved plan shows, instead of to the page.
+   * Call as a save starts. If the save takes the focused control away (an answered change leaves,
+   * a tool's choice replaces its button), focus moves to `target` or the plan's title once the saved
+   * plan shows, instead of to the page.
    */
   keepFocus: (target?: FocusTarget) => void;
 };
@@ -83,16 +85,17 @@ type Saving = { control: Element | null; plan: PlanView; target?: FocusTarget };
 
 const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
 
+/**
+ * Focus is lost when it fell to the page, or, inside a sheet (the plan editor), to the sheet
+ * itself: the dialog takes focus back when its focused control leaves.
+ */
 function isFocusLost(): boolean {
-  return !document.activeElement || document.activeElement === document.body;
+  const active = document.activeElement;
+  return !active || active === document.body || active.getAttribute("role") === "dialog";
 }
 
 function findFallback(target?: FocusTarget): HTMLElement | null {
-  return (
-    target?.() ??
-    document.querySelector<HTMLElement>(`#${PLAN_CHANGES_TITLE_ID}`) ??
-    document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`)
-  );
+  return target?.() ?? document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
 }
 
 function useKeepFocus(plan: PlanView) {

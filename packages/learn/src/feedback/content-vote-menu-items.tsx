@@ -13,18 +13,34 @@ import { useEffect } from "react";
 import { useContentFeedback } from "./feedback-context";
 
 /**
- * The feedback entries of a screen's menu: "Helpful", "Not helpful" (which asks why, lightly) and
- * "Report a problem" (a message with the screen attached). Place them inside a `DropdownMenuContent`
- * for lesson screens, their simpler and deeper versions, activities and images. `screen` names
- * where the menu is, such as "lesson-step", for the message's context.
+ * "Report a problem": a message with the screen attached, and the content it's about when there's
+ * one. Nothing for hosts without feedback.
  */
-export function ContentVoteMenuItems({
+export function ReportProblemItem({
   screen,
   target,
 }: {
   screen: string;
-  target: ContentVoteTarget;
+  target?: ContentVoteTarget;
 }) {
+  const t = useExtracted("feedback");
+  const feedback = useContentFeedback();
+
+  if (!feedback) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem
+      onClick={() => feedback.openFeedbackForm({ context: { ...target, screen }, isReport: true })}
+    >
+      <FlagIcon aria-hidden="true" />
+      {t("Report a problem")}
+    </DropdownMenuItem>
+  );
+}
+
+function VoteItems({ target }: { target: ContentVoteTarget }) {
   const t = useExtracted("feedback");
   const feedback = useContentFeedback();
 
@@ -63,15 +79,36 @@ export function ContentVoteMenuItems({
       </DropdownMenuCheckboxItem>
 
       <DropdownMenuSeparator />
+    </>
+  );
+}
 
-      <DropdownMenuItem
-        onClick={() =>
-          feedback.openFeedbackForm({ context: { ...target, screen }, isReport: true })
-        }
-      >
-        <FlagIcon aria-hidden="true" />
-        {t("Report a problem")}
-      </DropdownMenuItem>
+/**
+ * The feedback entries of a screen's menu: "Helpful", "Not helpful" (which asks why, lightly) and
+ * "Report a problem" (a message with the screen attached). Place them inside a `DropdownMenuContent`
+ * for lesson screens, activities and images. `screen` names where the menu is, such as
+ * "lesson-step", for the message's context. Without `votes` the menu only reports a problem, as
+ * on a question in the middle of a task.
+ */
+export function ContentVoteMenuItems({
+  screen,
+  target,
+  votes = true,
+}: {
+  screen: string;
+  target: ContentVoteTarget;
+  votes?: boolean;
+}) {
+  const feedback = useContentFeedback();
+
+  if (!feedback) {
+    return null;
+  }
+
+  return (
+    <>
+      {votes && <VoteItems target={target} />}
+      <ReportProblemItem screen={screen} target={target} />
     </>
   );
 }

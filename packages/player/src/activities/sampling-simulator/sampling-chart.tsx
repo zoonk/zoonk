@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
+import { type NumericDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
-import { type NumericDomain, niceTicks } from "../_utils/plot-scale";
 import { type HistogramBin } from "./sampling";
 
 const PLOT_HEIGHT = 176;

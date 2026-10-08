@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getAgeGroup, isValidBirthMonthYear } from "./age";
+import { getAgeGroup, isSameOrYoungerBirth, isValidBirthMonthYear } from "./age";
 
 const now = new Date("2026-09-26T12:00:00Z");
 
@@ -34,5 +34,21 @@ describe(getAgeGroup, () => {
     expect(getAgeGroup({ birthMonth: 9, birthYear: 2008, now })).toBe("teen");
     expect(getAgeGroup({ birthMonth: 8, birthYear: 2008, now })).toBe("adult");
     expect(getAgeGroup({ birthMonth: 1, birthYear: 1980, now })).toBe("adult");
+  });
+});
+
+describe(isSameOrYoungerBirth, () => {
+  const saved = { birthMonth: 6, birthYear: 2010 };
+
+  it("accepts the same answer and any later month, which make the learner the same age or younger", () => {
+    expect(isSameOrYoungerBirth({ next: saved, saved })).toBe(true);
+    expect(isSameOrYoungerBirth({ next: { birthMonth: 7, birthYear: 2010 }, saved })).toBe(true);
+    expect(isSameOrYoungerBirth({ next: { birthMonth: 1, birthYear: 2011 }, saved })).toBe(true);
+  });
+
+  it("refuses any earlier month, which makes the learner older", () => {
+    expect(isSameOrYoungerBirth({ next: { birthMonth: 5, birthYear: 2010 }, saved })).toBe(false);
+    expect(isSameOrYoungerBirth({ next: { birthMonth: 12, birthYear: 2009 }, saved })).toBe(false);
+    expect(isSameOrYoungerBirth({ next: { birthMonth: 6, birthYear: 1990 }, saved })).toBe(false);
   });
 });

@@ -1,16 +1,16 @@
 import { findMovingAnimations } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
-import { createModeLearner } from "./fun-rewards-fixtures";
-import { openAs } from "./study-day";
+import { createStudyDay, openAs } from "./study-day";
 
 /**
- * Reduced motion on Fun's screens: when the device asks for it, the buddy's glow, the logbook's
- * pages and menus opening fade or stay still instead of moving. The lesson player's flip is checked
- * in the player's browser tests.
+ * Reduced motion on the learner's screens: when the device asks for it, screens and menus opening
+ * fade or stay still instead of moving. The lesson player's motion is checked in the player's
+ * browser tests.
  */
 
-test("Fun screens and menus stay still with reduced motion", async ({ browser }) => {
-  const { user } = await createModeLearner("fun");
+test("screens and menus stay still with reduced motion", async ({ browser }) => {
+  // A goal with a plan, so the Journey shows its path.
+  const { user } = await createStudyDay();
   const page = await openAs(browser, user);
   await page.emulateMedia({ reducedMotion: "reduce" });
 
@@ -21,7 +21,7 @@ test("Fun screens and menus stay still with reduced motion", async ({ browser })
     moving.push(...found.map((animation) => `${where}: ${animation}`));
   };
 
-  for (const path of ["/today", "/buddy", "/logbook", "/progress", "/content"]) {
+  for (const path of ["/today", "/buddy", "/logbook", "/journey", "/stats"]) {
     // oxlint-disable-next-line no-await-in-loop -- One page visits each screen in turn.
     await page.goto(path);
     // oxlint-disable-next-line no-await-in-loop -- The screen shows before its motion is read.
@@ -30,6 +30,8 @@ test("Fun screens and menus stay still with reduced motion", async ({ browser })
     await readMotion(path);
   }
 
+  // The account menu lives on the tabs' bar; sections such as Statistics have their own bar.
+  await page.goto("/today");
   await page.getByRole("button", { name: "User menu" }).click();
   await expect(page.getByRole("menu")).toBeVisible();
   await readMotion("user menu");

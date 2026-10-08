@@ -9,97 +9,36 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyGlasses, type BuddyKind, getBuddyStage } from "@zoonk/utils/buddy";
-import { LockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { FUN_PRIMARY_BUTTON_CLASS } from "../_utils/fun-primary";
-import {
-  BUDDY_GLASSES,
-  BuddyGlassesHowToEarn,
-  BuddyGlassesName,
-  BuddyStageName,
-  BuddyTagline,
-} from "../buddies/buddy-labels";
+import { SURFACE_CLASS } from "../_components/surface";
+import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
+import { BUDDY_GLASSES, BuddyStageName, BuddyTagline } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
 import { useBuddyName } from "../buddies/use-buddy-name";
 
 export type AppearanceBuddy = { glasses: BuddyGlasses; kind: BuddyKind; name: string | null };
 
-const GLASSES_OPTION_CLASS =
-  "border-border has-data-checked:border-foreground has-focus-visible:ring-ring/50 in-data-[mode=fun]:fun-glass in-data-[mode=fun]:has-data-checked:border-fun-lime flex cursor-pointer items-center gap-3 rounded-2xl border p-2 pr-3 has-focus-visible:ring-[3px] has-data-disabled:cursor-default";
-
-/** One column: the dialog is too narrow for two, which squeezed "how to earn" into four lines. */
-function GlassesPicker({
-  available,
-  choice,
-  look,
-  onChange,
-}: {
-  available: BuddyGlasses[];
-  choice: BuddyChoice;
-  look: BuddyLook;
-  onChange: (glasses: BuddyGlasses) => void;
-}) {
-  const t = useExtracted();
-
-  return (
-    <RadioGroup
-      aria-label={t("Glasses")}
-      className="grid gap-2"
-      onValueChange={(value) => {
-        const glasses = available.find((item) => item === value);
-
-        if (glasses) {
-          onChange(glasses);
-        }
-      }}
-      value={choice.glasses}
-    >
-      {BUDDY_GLASSES.map((glasses) => {
-        const isEarned = available.includes(glasses);
-
-        return (
-          <RadioGroupOption className={GLASSES_OPTION_CLASS} key={glasses}>
-            <Buddy
-              beltColor={look.beltColor}
-              className="size-12"
-              energy={look.energy}
-              expression="happy"
-              glasses={glasses}
-              kind={choice.kind}
-            />
-            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="text-sm font-semibold">
-                <BuddyGlassesName glasses={glasses} />
-              </span>
-              <span className="text-muted-foreground flex items-start gap-1 text-xs font-normal">
-                {!isEarned && (
-                  <LineMarker aria-hidden="true">
-                    <LockIcon className="size-3" />
-                  </LineMarker>
-                )}
-                <BuddyGlassesHowToEarn glasses={glasses} />
-              </span>
-            </span>
-            <RadioGroupItem disabled={!isEarned} value={glasses} />
-          </RadioGroupOption>
-        );
-      })}
-    </RadioGroup>
-  );
+/** Appearance knows which pairs are earned, not how far the rest are. */
+function toGlassesOptions(available: BuddyGlasses[]): BuddyGlassesOption[] {
+  return BUDDY_GLASSES.map((glasses) => ({ earned: available.includes(glasses), glasses }));
 }
 
-function BuddyEditor({
-  availableGlasses,
+/**
+ * Changing the buddy, its name and its glasses in one dialog. Appearance opens it with the glasses;
+ * the pencil beside the buddy's name on its tab opens it without them, since that tab has its own
+ * glasses sheet.
+ */
+export function BuddyEditor({
+  glasses,
   initial,
   look,
   onClose,
   onSave,
 }: {
-  availableGlasses: BuddyGlasses[];
+  glasses?: BuddyGlassesOption[];
   initial: BuddyChoice;
   look: BuddyLook;
   onClose: () => void;
@@ -117,30 +56,31 @@ function BuddyEditor({
       }}
       open
     >
-      <DialogContent className="max-h-[90dvh] overflow-y-auto">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto" closeLabel={t("Close")}>
         <DialogHeader>
           <DialogTitle>{t("Your buddy")}</DialogTitle>
         </DialogHeader>
 
         <BuddyPicker choice={choice} look={look} onChange={setChoice} />
 
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">{t("Glasses")}</p>
-          <GlassesPicker
-            available={availableGlasses}
-            choice={choice}
-            look={look}
-            onChange={(glasses) => setChoice({ ...choice, glasses })}
-          />
-        </div>
+        {glasses && (
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">{t("Glasses")}</p>
+            <BuddyGlassesPicker
+              kind={choice.kind}
+              look={look}
+              onChange={(next) => setChoice({ ...choice, glasses: next })}
+              options={glasses}
+              value={choice.glasses}
+            />
+          </div>
+        )}
 
         <DialogFooter>
           <Button onClick={onClose} variant="outline">
             {t("Cancel")}
           </Button>
-          <Button className={FUN_PRIMARY_BUTTON_CLASS} onClick={() => onSave(choice)}>
-            {t("Save")}
-          </Button>
+          <Button onClick={() => onSave(choice)}>{t("Save")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -175,7 +115,7 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
 }
 
 /**
- * The Fun buddy: who it is, how it looks and a way to change it, rename it or pick earned glasses.
+ * The buddy: who it is, how it looks and a way to change it, rename it or pick earned glasses.
  * Growth and glow come from the belt and Energy, so only kind, name and glasses are saved.
  */
 export function BuddySettings({
@@ -193,12 +133,12 @@ export function BuddySettings({
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div className="border-border in-data-[mode=fun]:fun-glass flex items-center gap-3 rounded-2xl border p-3">
+    <div className={cn(SURFACE_CLASS, "flex items-center gap-3 p-4")}>
       {buddy ? (
         <CurrentBuddy look={look} buddy={buddy} />
       ) : (
         <span className="text-muted-foreground flex-1 text-sm">
-          {t("Pick a buddy to feed with what you learn.")}
+          {t("Pick a buddy who learns with you.")}
         </span>
       )}
 
@@ -208,7 +148,7 @@ export function BuddySettings({
 
       {isEditing && (
         <BuddyEditor
-          availableGlasses={availableGlasses}
+          glasses={toGlassesOptions(availableGlasses)}
           initial={{
             glasses: buddy?.glasses ?? "round",
             kind: buddy?.kind ?? "zu",

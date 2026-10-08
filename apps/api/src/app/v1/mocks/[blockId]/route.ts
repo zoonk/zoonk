@@ -1,6 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
+import { withApiImageUrls } from "@/lib/file-urls";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { getMock } from "@zoonk/core/exams/mocks/get";
@@ -20,7 +21,7 @@ async function getMockRoute(_request: Request, context: RouteContext<"/v1/mocks/
     return examError(result);
   }
 
-  return NextResponse.json(result.mock);
+  return NextResponse.json(withApiImageUrls(result.mock));
 }
 
 export const GET = withApiErrorBoundary(getMockRoute);

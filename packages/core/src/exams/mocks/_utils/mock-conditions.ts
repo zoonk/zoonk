@@ -49,8 +49,10 @@ export async function buildMockConditions(owned: OwnedMock): Promise<MockConditi
   return {
     day: plan.day,
     fullLength: plan.fullLength,
+    purpose: "planned",
     scoring: getMockScoring({ scale: getExamScale({ blueprint, goal }), structure }),
     sections: plan.sections,
+    shape: null,
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],

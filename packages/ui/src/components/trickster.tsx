@@ -190,7 +190,7 @@ function QuestionSign() {
 }
 
 /**
- * The Trickster, Fun mode's boss: a sly comet with a "?" tail and a crown he
+ * The Trickster, the checkpoints' boss: a sly comet with a "?" tail and a crown he
  * hasn't earned. `hero` holds up a "?" sign. Pass a translated `label` so he's
  * announced as an image; omit it when adjacent text already names him.
  */

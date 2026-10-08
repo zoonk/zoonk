@@ -7,12 +7,11 @@ import {
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
-import { GoalErrorAlert } from "../entry/goal-outcomes";
+import { GoalFooter } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -24,12 +23,12 @@ import { UnderstoodWords } from "./understood-words";
 import {
   type EditableField,
   type UnderstoodRow,
+  useMaterialRow,
   useScheduleRow,
   useUnderstoodRows,
 } from "./use-understood-rows";
 
-const CARD_CLASS =
-  "bg-card ring-foreground/10 in-data-[mode=fun]:fun-glass rounded-3xl p-4 ring-1 sm:p-5";
+const CARD_CLASS = "bg-card ring-foreground/10 rounded-3xl p-4 ring-1 sm:p-5";
 
 type GoalDraft = UnderstoodGoalView["draft"];
 
@@ -102,12 +101,14 @@ function GoalCard({
   onSave: (input: { field: EditableField; value: string }) => Promise<boolean>;
 }) {
   const rowsFor = useUnderstoodRows();
-  const rows = [...rowsFor({ draft: goal.draft, examDates: goal.examDates }), ...extraRows];
+
+  const rows = [
+    ...rowsFor({ cutoff: goal.cutoff, draft: goal.draft, examDates: goal.examDates }),
+    ...extraRows,
+  ];
 
   return (
-    <ul
-      className={`${CARD_CLASS} divide-border in-data-[mode=fun]:divide-fun-line flex flex-col divide-y`}
-    >
+    <ul className={`${CARD_CLASS} divide-border flex flex-col divide-y`}>
       {rows.map((row) => (
         <UnderstoodRowItem
           editValue={readEditValue({ draft: goal.draft, row })}
@@ -134,6 +135,7 @@ export function UnderstoodScreen({
   error,
   goal,
   isCreating,
+  material,
   onConfirm,
   onRevise,
   onRewrite,
@@ -145,6 +147,8 @@ export function UnderstoodScreen({
   /** What the learner typed, shown as they typed it. */
   goal: string;
   isCreating: boolean;
+  /** What the learner attached with the paperclip; the first goal is built from it. */
+  material: readonly { title: string }[];
   onConfirm: () => void;
   /** Saves one fix; false when it couldn't be saved. */
   onRevise: (edit: OnboardingDraftEdit) => Promise<boolean>;
@@ -154,11 +158,13 @@ export function UnderstoodScreen({
 }) {
   const t = useExtracted();
   const scheduleRow = useScheduleRow();
+  const materialRow = useMaterialRow();
   const [editing, setEditing] = useState<FieldEdit | null>(null);
   const [edited, setEdited] = useState<FieldEdit | null>(null);
   const [rewriting, setRewriting] = useState(false);
   const fixButtonRef = useRef<HTMLButtonElement>(null);
   const schedule = scheduleRow(draft.schedule, draft.minutesSaid);
+  const firstGoalRows = [materialRow(material), schedule].filter((row) => row !== null);
 
   const edit = (next: FieldEdit | null) => {
     setEdited(next ? null : editing);
@@ -181,18 +187,17 @@ export function UnderstoodScreen({
 
       <OnboardingHeading>
         <OnboardingTitle>{t("Here's what I understood:")}</OnboardingTitle>
-        <OnboardingDescription>
-          {draft.goals.length > 1
-            ? t("Based on what you wrote. These goals share your daily time.")
-            : t("Based on what you wrote.")}
-        </OnboardingDescription>
+        {/* What they wrote sits right above, so only a note that adds something stays. */}
+        {draft.goals.length > 1 && (
+          <OnboardingDescription>{t("These goals share your daily time.")}</OnboardingDescription>
+        )}
       </OnboardingHeading>
 
       {draft.goals.map((understood, index) => (
         <GoalCard
           edited={edited?.goal === index ? edited.field : null}
           editing={editing?.goal === index ? editing.field : null}
-          extraRows={index === 0 && schedule ? [schedule] : []}
+          extraRows={index === 0 ? firstGoalRows : []}
           goal={understood}
           // oxlint-disable-next-line react/no-array-index-key -- A goal's place is its identity on the card; its title can change.
           key={index}
@@ -201,16 +206,14 @@ export function UnderstoodScreen({
         />
       ))}
 
-      <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 flex items-start justify-center gap-2 text-sm">
+      <p className="text-muted-foreground flex items-start justify-center gap-2 text-sm">
         <span className="flex h-lh items-center">
           <RotateCcwIcon aria-hidden="true" className="size-4" />
         </span>
         {t("You can change all of this later.")}
       </p>
 
-      <GoalErrorAlert error={error} signUpHref={signUpHref} />
-
-      <OnboardingFooter>
+      <GoalFooter error={error} signUpHref={signUpHref}>
         <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>
           {isCreating ? t("Saving your goal…") : t("Looks right")}
         </OnboardingPrimaryButton>
@@ -221,7 +224,7 @@ export function UnderstoodScreen({
         >
           {t("Fix something")}
         </OnboardingSecondaryButton>
-      </OnboardingFooter>
+      </GoalFooter>
     </OnboardingColumn>
   );
 }

@@ -26,9 +26,10 @@ function buildScreenSnapshot({
     case "chapter":
       return buildChapterContextSnapshot({ chapterId: subject.chapterId, userId });
     case "mock":
-      return subject.blockId
-        ? buildMockContextSnapshot({ blockId: subject.blockId, language: subject.language })
-        : Promise.resolve(null);
+      return buildMockContextSnapshot({
+        blockId: subject.blockId ?? subject.mockExamId,
+        language: subject.language,
+      });
     case "plan":
       return buildPlanContextSnapshot(subject.goal);
     default:

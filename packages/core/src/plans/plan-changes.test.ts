@@ -1,25 +1,15 @@
-import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
 import { prisma } from "@zoonk/db";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { GUEST_OUT_OF_HELP } from "../_test-utils/guest-out-of-help";
-import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
-import { getUsageRule } from "../entitlements/limits";
+import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposePlanChange } from "./propose-plan-change";
-import { requestPlanEdit } from "./request-plan-edit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
-/** Grading and plain-words edits claim small AI help, which reads the request for its rate limit. */
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The model call is the one external boundary; each test says what the model understood. */
-vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -56,25 +46,6 @@ function lastDate(planId: string) {
     .then((result) => result._max.scheduledFor?.toISOString().slice(0, 10));
 }
 
-function mockEdit(data: Awaited<ReturnType<typeof interpretPlanEdit>>["data"]) {
-  vi.mocked(interpretPlanEdit).mockResolvedValue({
-    data,
-    provenance: {
-      generatedAt: NOW.toISOString(),
-      latencyMs: 1,
-      model: "openai/gpt-6-luna",
-      promptVersion: "test",
-      provider: "openai",
-      requestedModel: "openai/gpt-6-luna",
-      runId: "run-test",
-      usage: {},
-    },
-    systemPrompt: "",
-    usage: {} as never,
-    userPrompt: "",
-  });
-}
-
 describe("plan changes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -83,6 +54,31 @@ describe("plan changes", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("saves no focus that would move nothing, and says why", async () => {
+    const { goal, plan } = await setup();
+
+    // Every lesson fits and Math already comes first: focusing it moves nothing.
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ areas: ["Math"], kind: "focusAreas" }] },
+      }),
+    ).resolves.toStrictEqual({ reason: "alreadyIn", status: "unchanged" });
+
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(stored.settings).not.toMatchObject({ focusAreas: ["Math"] });
+    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
+
+    // The focus test's choice is kept even then: its result names the focus it chose.
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ areas: ["Math"], kind: "focusAreas" }] },
+        saveFocusAnyway: true,
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
   });
 
   it("applies the learner's change, re-plans from today and lets them undo it", async () => {
@@ -240,6 +236,45 @@ describe("plan changes", () => {
     await expect(lastDate(plan.id)).resolves.toBe(before);
   });
 
+  it("marks an applied change seen without touching the plan, and never a proposal", async () => {
+    const { goal, plan } = await setup();
+
+    const applied = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 20 }] },
+    });
+
+    const before = await lastDate(plan.id);
+
+    const seen = await decidePlanChange({
+      changeId: applied.status === "applied" ? (applied.change?.id ?? "") : "",
+      goalId: goal.id,
+      input: { status: "seen" },
+    });
+
+    expect(seen).toMatchObject({
+      change: { canUndo: true, seen: true, status: "applied" },
+      status: "updated",
+    });
+
+    await expect(lastDate(plan.id)).resolves.toBe(before);
+
+    const proposal = await proposePlanChange({
+      goalId: goal.id,
+      operations: [{ kind: "setDailyMinutes", minutes: 5 }],
+      reason: "Shorter days.",
+      source: "memory",
+    });
+
+    await expect(
+      decidePlanChange({
+        changeId: "changeId" in proposal ? proposal.changeId : "",
+        goalId: goal.id,
+        input: { status: "seen" },
+      }),
+    ).resolves.toStrictEqual({ status: "conflict" });
+  });
+
   it("only undoes the latest edit", async () => {
     const { goal } = await setup();
 
@@ -261,66 +296,64 @@ describe("plan changes", () => {
     ).resolves.toStrictEqual({ status: "conflict" });
   });
 
-  it("turns plain words into a proposal the learner can accept", async () => {
-    const { goal } = await setup();
+  it(`makes "harder" harder now: the basics of a subject the learner does well in leave the plan`, async () => {
+    const user = await userFixture();
 
-    mockEdit({
-      operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0, 6] }],
-      summary: "Weekends become rest days.",
-      understood: true,
+    // Two subjects, each with its basics in the first phase and what builds on them in the next.
+    const library = await planLibraryFixture({
+      phases: ["Basics", "Further"],
+      skills: [
+        { area: "Math", lessons: 4, phase: 0 },
+        { area: "Biology", lessons: 3, phase: 0 },
+        { area: "Math", lessons: 4, phase: 1 },
+        { area: "Biology", lessons: 3, phase: 1 },
+      ],
     });
 
-    const result = await requestPlanEdit({
-      goalId: goal.id,
-      input: { text: "no studying on weekends" },
-    });
-
-    expect(result).toMatchObject({
-      change: { reason: "Weekends become rest days.", source: "planEdit", status: "proposed" },
-      status: "proposed",
-    });
-
-    expect(vi.mocked(interpretPlanEdit)).toHaveBeenCalledWith(
-      expect.objectContaining({
-        areas: ["Math", "Biology"],
-        dailyMinutes: 12,
-        request: "no studying on weekends",
-        today: "2020-09-28",
-      }),
-    );
-
-    const stored = await prisma.planChange.findFirstOrThrow({
-      where: { reason: "Weekends become rest days." },
-    });
-
-    expect(stored).toMatchObject({ model: "openai/gpt-6-luna", runId: "run-test" });
-  });
-
-  it("asks a guest who used today's help to sign up before reading plain words", async () => {
-    const { goal, user } = await setup();
-
-    await usageRecordsFixture({
-      count: getUsageRule({ kind: "assist", tier: "guest" }).day ?? 0,
-      createdAt: new Date(),
-      kind: "assist",
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-28" },
       userId: user.id,
     });
 
-    mockGuestSession(user.id);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
 
+    // Right every time in math's first lessons; nothing in biology yet.
+    await Promise.all(
+      Array.from({ length: 8 }, () =>
+        attemptFixture({ skillId: library.skills[0]?.id ?? "", userId: user.id }),
+      ),
+    );
+
+    const todoLessons = (skillIndex: number) =>
+      prisma.planItem.count({
+        where: { planId: plan.id, skillId: library.skills[skillIndex]?.id, status: "todo" },
+      });
+
+    const result = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ bias: "harder", kind: "setDifficultyBias" }] },
+    });
+
+    expect(result).toMatchObject({
+      change: { effect: { lessonsRemoved: 4 }, status: "applied" },
+      status: "applied",
+    });
+
+    // Math starts past its basics; biology, not shown yet, and math's next part stay.
     await expect(
-      requestPlanEdit({ goalId: goal.id, input: { text: "less on weekends" } }),
-    ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
+      Promise.all([0, 1, 2, 3].map((index) => todoLessons(index))),
+    ).resolves.toStrictEqual([0, 3, 4, 3]);
 
-    expect(interpretPlanEdit).not.toHaveBeenCalled();
-  });
+    const change = result.status === "applied" ? result.change : null;
 
-  it("says when plain words aren't a plan change", async () => {
-    const { goal } = await setup();
-    mockEdit({ operations: [], summary: "", understood: false });
+    await decidePlanChange({
+      changeId: change?.id ?? "",
+      goalId: goal.id,
+      input: { status: "undone" },
+    });
 
-    await expect(
-      requestPlanEdit({ goalId: goal.id, input: { text: "what is photosynthesis?" } }),
-    ).resolves.toStrictEqual({ status: "notUnderstood" });
+    await expect(todoLessons(0)).resolves.toBe(4);
   });
 });

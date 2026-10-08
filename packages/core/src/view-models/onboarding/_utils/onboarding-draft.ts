@@ -74,18 +74,23 @@ export async function loadDraftView(draft: OnboardingDraft): Promise<OnboardingD
  * details carry the draft's id, and exam dates are read for the learner's own today.
  */
 export async function completeDraft({
+  allowDateSearch,
   draft,
   understanding,
 }: {
-  draft: Pick<OnboardingDraft, "id" | "language" | "prompt" | "timeZone">;
+  /** A reused understanding's exam day is searched for only as small AI help (`allowDateSearch`). */
+  allowDateSearch?: () => Promise<boolean>;
+  draft: Pick<OnboardingDraft, "id" | "language" | "prompt" | "timeZone" | "userId">;
   understanding: GoalUnderstanding;
 }): Promise<OnboardingDraft> {
   const view = await toUnderstandingView({
     context: {
+      allowDateSearch,
       goal: draft.prompt,
       language: draft.language,
       onboardingId: draft.id,
       today: getLearnerToday(draft.timeZone),
+      userId: draft.userId,
     },
     understanding,
   });

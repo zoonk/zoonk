@@ -7,7 +7,7 @@ import {
   unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
-import { stepPathParamsSchema } from "../schemas/step-variants";
+import { stepPathParamsSchema } from "../schemas/steps";
 import { AUTHENTICATED_SECURITY } from "../security";
 
 export const languagePaths = {

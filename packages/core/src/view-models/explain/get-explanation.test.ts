@@ -61,6 +61,7 @@ describe(getExplanation, () => {
         generationId: "run-writing-it",
         goFurther: { course: null, questions: ["How does Wi-Fi work?"] },
         goalId: goal.id,
+        hasStudyGoal: false,
         lesson: null,
         outline: [],
         question: "how does a microwave work?",
@@ -125,6 +126,24 @@ describe(getExplanation, () => {
       id: course.id,
       title: "Everyday physics",
     });
+  });
+
+  it("says whether the learner has a plan to go back to after the explanation", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const goal = await explainGoalFixture({ userId: user.id });
+
+    const only = await getExplanation({ goalId: goal.id });
+    expect(only.status === "ready" && only.explanation.hasStudyGoal).toBe(false);
+
+    // A paused goal is still the learner's plan; an archived one isn't.
+    const study = await goalFixture({ status: "paused", title: "ENEM 2026", userId: user.id });
+    const withPlan = await getExplanation({ goalId: goal.id });
+    expect(withPlan.status === "ready" && withPlan.explanation.hasStudyGoal).toBe(true);
+
+    await prisma.goal.update({ data: { status: "archived" }, where: { id: study.id } });
+    const archived = await getExplanation({ goalId: goal.id });
+    expect(archived.status === "ready" && archived.explanation.hasStudyGoal).toBe(false);
   });
 
   it("only opens the learner's own quick explanations", async () => {

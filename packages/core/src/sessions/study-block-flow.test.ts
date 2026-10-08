@@ -1,6 +1,6 @@
 import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -221,6 +221,45 @@ describe("study session blocks", () => {
         where: { kind: "review", lessonKind: "capsule", userId: user.id },
       }),
     ).resolves.toBe(1);
+  });
+
+  it("never shows a capsule's earlier right answer, which would give it away", async () => {
+    const { session, user } = await setup();
+    const blockId = session.blocks[0]?.id ?? "";
+    const before = await getStudyBlock({ blockId, sessionId: session.id });
+    const question = before.status === "ready" ? before.detail.questions[0] : undefined;
+
+    const answerEarlier = (daysBefore: number, selectedIndex: number) =>
+      attemptFixture({
+        answer: { selectedIndex },
+        answeredAt: daysAgo(daysBefore),
+        isCorrect: selectedIndex === 0,
+        itemId: question?.itemId,
+        skillId: question?.skillId,
+        userId: user.id,
+      });
+
+    const readTimeMachine = async () => {
+      const detail = await getStudyBlock({ blockId, sessionId: session.id });
+      return detail.status === "ready" ? detail.detail.questions[0]?.timeMachine : undefined;
+    };
+
+    await answerEarlier(5, 0);
+
+    await expect(readTimeMachine()).resolves.toStrictEqual({
+      answer: null,
+      answeredAt: daysAgo(5),
+      isCorrect: true,
+    });
+
+    // The last answer before today was wrong: its text helps once the learner answers again.
+    await answerEarlier(3, 1);
+
+    await expect(readTimeMachine()).resolves.toStrictEqual({
+      answer: question?.options?.[1],
+      answeredAt: daysAgo(3),
+      isCorrect: false,
+    });
   });
 
   it("asks for a short wait at unusual review volume instead of blocking", async () => {

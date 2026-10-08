@@ -127,7 +127,7 @@ describe("music activities", () => {
   });
 
   it("keyboard: changing one note turns C major into C minor", async () => {
-    openActivity({ mode: "fun", template: "keyboardFretboard" });
+    openActivity({ template: "keyboardFretboard" });
     await expect.element(page.getByText("C minor", { exact: true })).toBeVisible();
     await expect.element(pianoKey("E")).toHaveAttribute("aria-pressed", "true");
     await expect.element(page.getByText("Same chord on guitar")).toBeVisible();
@@ -147,7 +147,7 @@ describe("music activities", () => {
   });
 
   it("notation: the melody plays bar by bar in staff or tab", async () => {
-    openActivity({ mode: "fun", template: "notationPlayer" });
+    openActivity({ template: "notationPlayer" });
     await expect.element(page.getByText("Ode to Joy")).toBeVisible();
     await expect.element(page.getByText("Beethoven, 1824")).toBeVisible();
     await expect.element(page.getByText(/Bar 1: E, E, F, G\./u)).toBeInTheDocument();
@@ -185,7 +185,7 @@ describe("music activities", () => {
     async () => {
       const lesson = buildLesson([activityStep({ content: activityContentFixtures.rhythmTapper })]);
 
-      const firstVisit = renderLessonPlayer({ lesson, mode: "fun" });
+      const firstVisit = renderLessonPlayer({ lesson });
       await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
       await page.getByRole("button", { name: "Start the sound check" }).click();
       await tapAlongWithSoundCheck();
@@ -199,7 +199,7 @@ describe("music activities", () => {
 
       // Measured once per device: the next visit goes straight to the rhythm.
       firstVisit.unmount();
-      renderLessonPlayer({ lesson, mode: "fun" });
+      renderLessonPlayer({ lesson });
       await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
       await expectCount(page.getByRole("heading", { name: "Set up your sound" }), 0);
 
@@ -238,7 +238,7 @@ describe("music activities", () => {
   );
 
   it("musicianship lesson: hear the chord change, then play it on guitar", async () => {
-    openActivities({ contents: [progression, guitarChord], mode: "fun" });
+    openActivities({ contents: [progression, guitarChord] });
     await expect.element(page.getByText("Asa Branca")).toBeVisible();
     await expect.element(page.getByRole("listitem", { name: "The chord to name" })).toBeVisible();
     await page.getByRole("radio", { name: /C major/u }).click();

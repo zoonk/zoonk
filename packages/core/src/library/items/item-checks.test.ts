@@ -1,5 +1,6 @@
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { describe, expect, it } from "vitest";
+import { discountMath } from "./_test-utils/math-problems";
 import { checkItem } from "./item-checks";
 
 type MultipleChoice = Extract<GeneratedItem, { format: "multipleChoice" }>;
@@ -8,6 +9,7 @@ const multipleChoice: MultipleChoice = {
   context: "Four friends split a R$ 80 bill, and one pays R$ 20 more than the others.",
   difficulty: "medium",
   format: "multipleChoice",
+  image: null,
   options: [
     {
       isCorrect: true,
@@ -29,11 +31,74 @@ const multipleChoice: MultipleChoice = {
     },
   ],
   question: "How much does each of the other friends pay?",
+  visual: null,
 };
 
 describe(checkItem, () => {
   it("passes a well-formed multiple-choice item", () => {
-    expect(checkItem({ item: multipleChoice })).toStrictEqual([]);
+    expect(checkItem({ item: multipleChoice, language: "en" })).toStrictEqual([]);
+  });
+
+  it("shows the table, chart, timeline or picture a question points at", () => {
+    const pointing = {
+      ...multipleChoice,
+      context: "Lídia anotou os ofícios no quadro a seguir. No gráfico, junho tem menos.",
+    };
+
+    expect(checkItem({ item: pointing, language: "pt" })).toStrictEqual([
+      expect.stringContaining("point at a chart"),
+      expect.stringContaining("point at a table"),
+    ]);
+
+    const shown: MultipleChoice = {
+      ...multipleChoice,
+      context:
+        "Na tabela abaixo:\n\n| Mês | Ofícios |\n|---|---:|\n| Maio | 40 |\n| Junho | 30 |\n\nNo gráfico, junho tem menos.",
+      visual: {
+        axisStart: null,
+        categories: ["Maio", "Junho"],
+        categoryLabel: "Mês",
+        chart: "bar",
+        kind: "chart",
+        series: [{ name: "Ofícios", values: [40, 30] }],
+        source: null,
+        title: "Ofícios por mês",
+        unit: null,
+        valueLabel: "Ofícios",
+      },
+    };
+
+    expect(checkItem({ item: shown, language: "pt" })).toStrictEqual([]);
+
+    const picture = { ...multipleChoice, context: "No diagrama, a seta sai do cloroplasto." };
+
+    expect(checkItem({ item: picture, language: "pt" })).toStrictEqual([
+      expect.stringContaining("give it an `image`"),
+    ]);
+
+    const drawn = {
+      ...picture,
+      image: {
+        alt: "Uma célula vegetal com uma seta saindo do cloroplasto.",
+        prompt: "Célula vegetal com o cloroplasto rotulado e uma seta saindo dele.",
+      },
+    };
+
+    expect(checkItem({ item: drawn, language: "pt" })).toStrictEqual([]);
+  });
+
+  it("never points a math problem at a picture, since its numbers change every time", () => {
+    const item: GeneratedItem = {
+      context: "Na figura, a camisa custa {price} e está com {discount}% de desconto.",
+      difficulty: "easy",
+      format: "numeric",
+      math: discountMath,
+      question: "Quanto você paga?",
+    };
+
+    expect(checkItem({ item, language: "pt" })).toStrictEqual([
+      expect.stringContaining("can't show one"),
+    ]);
   });
 
   it("requires exactly one correct option", () => {
@@ -42,7 +107,7 @@ describe(checkItem, () => {
       options: multipleChoice.options.map((option) => ({ ...option, isCorrect: true })),
     };
 
-    expect(checkItem({ item })).toContain("Has 3 correct options instead of 1.");
+    expect(checkItem({ item, language: "en" })).toContain("Has 3 correct options instead of 1.");
   });
 
   it("requires distinct options, a reason each and a misconception per wrong option", () => {
@@ -57,7 +122,7 @@ describe(checkItem, () => {
       ],
     };
 
-    expect(checkItem({ item })).toStrictEqual([
+    expect(checkItem({ item, language: "en" })).toStrictEqual([
       "Two options are the same.",
       "An option has no reason.",
       "A wrong option has no misconception.",
@@ -81,8 +146,11 @@ describe(checkItem, () => {
       options: [labeled.options[0]!, labeled.options[1]!, { ...second!, text: "C) R$ 15" }],
     };
 
-    expect(checkItem({ item: labeled })).toStrictEqual([]);
-    expect(checkItem({ item: sameOnceUnlabeled })).toContain("Two options are the same.");
+    expect(checkItem({ item: labeled, language: "en" })).toStrictEqual([]);
+
+    expect(checkItem({ item: sameOnceUnlabeled, language: "en" })).toContain(
+      "Two options are the same.",
+    );
   });
 
   it("rejects options that print the worked-out values deciding the answer", () => {
@@ -92,6 +160,7 @@ describe(checkItem, () => {
         "No mercado, um pacote com 6 maçãs custa R$ 12,00, e outro com 4 maçãs custa R$ 10,00.",
       difficulty: "easy",
       format: "multipleChoice",
+      image: null,
       options: [
         {
           isCorrect: true,
@@ -113,9 +182,10 @@ describe(checkItem, () => {
         },
       ],
       question: "Qual pacote tem o menor preço por maçã?",
+      visual: null,
     };
 
-    expect(checkItem({ item: leaking })).toStrictEqual([
+    expect(checkItem({ item: leaking, language: "en" })).toStrictEqual([
       "Options show the worked-out values that decide the answer.",
     ]);
 
@@ -141,8 +211,8 @@ describe(checkItem, () => {
       question: "Quanto custa cada maçã no pacote mais barato por maçã?",
     };
 
-    expect(checkItem({ item: choicesOnly })).toStrictEqual([]);
-    expect(checkItem({ item: valuesAsked })).toStrictEqual([]);
+    expect(checkItem({ item: choicesOnly, language: "en" })).toStrictEqual([]);
+    expect(checkItem({ item: valuesAsked, language: "en" })).toStrictEqual([]);
   });
 
   it("keeps options that are values themselves or calculations to judge", () => {
@@ -166,20 +236,35 @@ describe(checkItem, () => {
       ],
     };
 
-    expect(checkItem({ item: point })).toStrictEqual([]);
-    expect(checkItem({ item: calculations })).toStrictEqual([]);
+    expect(checkItem({ item: point, language: "en" })).toStrictEqual([]);
+    expect(checkItem({ item: calculations, language: "en" })).toStrictEqual([]);
+  });
+
+  it("rejects a reason that points at another option by its place", () => {
+    const item = {
+      ...multipleChoice,
+      options: multipleChoice.options.map((option, index) =>
+        index === 0
+          ? { ...option, reason: "Like the second option, but removing the extra first." }
+          : option,
+      ),
+    };
+
+    expect(checkItem({ item, language: "en" })).toStrictEqual([
+      'A reason points at an option by its place ("second option"); options are shuffled, so name it by what it says.',
+    ]);
   });
 
   it("enforces the exam's number of options", () => {
-    expect(checkItem({ item: multipleChoice, optionCount: 5 })).toStrictEqual([
+    expect(checkItem({ item: multipleChoice, language: "en", optionCount: 5 })).toStrictEqual([
       "Has 3 options instead of 5.",
     ]);
   });
 
   it("rejects an item in a different format than requested", () => {
-    expect(checkItem({ expectedFormat: "trueFalse", item: multipleChoice })).toStrictEqual([
-      "Is multipleChoice instead of trueFalse.",
-    ]);
+    expect(
+      checkItem({ expectedFormat: "trueFalse", item: multipleChoice, language: "en" }),
+    ).toStrictEqual(["Is multipleChoice instead of trueFalse."]);
   });
 
   it("requires a misconception for false statements only", () => {
@@ -187,14 +272,16 @@ describe(checkItem, () => {
       context: null,
       difficulty: "easy" as const,
       format: "trueFalse" as const,
+      image: null,
       misconception: null,
       reason: "The law applies to every contract.",
       statement: "The rule applies only to written contracts.",
+      visual: null,
     };
 
-    expect(checkItem({ item: { ...statement, isTrue: true } })).toStrictEqual([]);
+    expect(checkItem({ item: { ...statement, isTrue: true }, language: "en" })).toStrictEqual([]);
 
-    expect(checkItem({ item: { ...statement, isTrue: false } })).toStrictEqual([
+    expect(checkItem({ item: { ...statement, isTrue: false }, language: "en" })).toStrictEqual([
       "A false statement has no misconception.",
     ]);
   });
@@ -210,7 +297,7 @@ describe(checkItem, () => {
       sampleAnswer: "",
     };
 
-    expect(checkItem({ item })).toStrictEqual([
+    expect(checkItem({ item, language: "en" })).toStrictEqual([
       "Two key points are the same.",
       "Two accepted answers are the same.",
       "Has no sample answer.",
@@ -231,10 +318,12 @@ describe(checkItem, () => {
       sampleOutline: "Claim, two pieces of evidence, reasoning.",
     };
 
-    expect(checkItem({ item })).toStrictEqual(["Only some rubric rows have points."]);
+    expect(checkItem({ item, language: "en" })).toStrictEqual([
+      "Only some rubric rows have points.",
+    ]);
 
     const pointed = item.rubric.map((row) => ({ ...row, points: 2 }));
-    expect(checkItem({ item: { ...item, rubric: pointed } })).toStrictEqual([]);
+    expect(checkItem({ item: { ...item, rubric: pointed }, language: "en" })).toStrictEqual([]);
   });
 
   it("requires pairs and steps a learner can tell apart", () => {
@@ -250,6 +339,7 @@ describe(checkItem, () => {
           question: "Match each part to its job.",
           reason: "Each part has one job.",
         },
+        language: "en",
       }),
     ).toStrictEqual(["Two right items are the same."]);
 
@@ -262,6 +352,7 @@ describe(checkItem, () => {
           reason: "One after the other.",
           steps: ["Mix", "Bake", "mix"],
         },
+        language: "en",
       }),
     ).toStrictEqual(["Two steps are the same."]);
   });
@@ -286,7 +377,7 @@ describe(checkItem, () => {
       question: "What is {a} times {b}?",
     };
 
-    expect(checkItem({ item })).toStrictEqual([
+    expect(checkItem({ item, language: "en" })).toStrictEqual([
       "The stated answer 12 doesn't match the computed 15.",
     ]);
   });

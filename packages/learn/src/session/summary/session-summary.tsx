@@ -1,46 +1,50 @@
 "use client";
 
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
-import { useExperienceMode } from "../../mode-provider";
 import { type StudySessionSummary } from "../session-types";
-import { FocusSummary } from "./focus-summary";
-import { FunSummary } from "./fun-summary";
 import {
   type CeremonyRenderer,
   type SessionSummaryActions,
   SessionSummaryProvider,
+  type SummaryGoalKind,
 } from "./summary-context";
+import { SummarySteps } from "./summary-steps";
+
+export type { SummaryGoalKind } from "./summary-context";
 
 /**
- * The end of the session in the learner's mode: Focus says what changed today, Fun lets the buddy
- * eat what was learned. Both read the same summary.
+ * The end of the session, told in steps: what changed today. Right after "Stop for today", what's
+ * done so far.
  *
  * ```tsx
- * <SessionSummary actions={actions} buddy={buddy} summary={summary} />
+ * <SessionSummary actions={actions} buddy={buddy} exitHref="/today" goalKind="exam" summary={summary} />
  * ```
  */
 export function SessionSummary({
   actions,
   buddy,
+  exitHref,
+  goalKind,
   renderCeremony,
   signUpHref = null,
   summary,
 }: {
   actions: SessionSummaryActions;
+  /** The learner's buddy, glad about the day's rewards; null before one is picked. */
   buddy: LearnBuddy | null;
-  /** The ceremony screen for the session's one milestone; without it, a quiet line. */
+  exitHref: string;
+  goalKind: SummaryGoalKind;
+  /** The ceremony screen for the session's one milestone, shown between the steps. */
   renderCeremony?: CeremonyRenderer;
   /** For guests: after their first session, "Save your plan" asks for an account. */
   signUpHref?: string | null;
   summary: StudySessionSummary;
 }) {
-  const mode = useExperienceMode();
-
   return (
     <SessionSummaryProvider
-      value={{ actions, buddy, ceremony: renderCeremony, signUpHref, summary }}
+      value={{ actions, buddy, ceremony: renderCeremony, exitHref, goalKind, signUpHref, summary }}
     >
-      {mode === "fun" ? <FunSummary /> : <FocusSummary />}
+      <SummarySteps />
     </SessionSummaryProvider>
   );
 }

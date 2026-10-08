@@ -2,95 +2,82 @@
 
 import { type ContentVoteTarget } from "@zoonk/core/feedback/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon, ZapIcon } from "lucide-react";
+import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import {
+  TaskHeader,
+  TaskHeaderBar,
+  TaskHeaderProgress,
+  TaskHeaderSide,
+  TaskHeaderTitle,
+} from "../../_components/task-header";
 import { ContentVoteMenu } from "../../feedback/content-vote-menu";
 import { LearnLink } from "../../learn-link";
-import { useExperienceMode } from "../../mode-provider";
-import { SessionBar } from "../session-bar";
 
-/** Hyperdrive shows from a double; Focus counts it without showing it. */
-const MIN_SHOWN_HYPERDRIVE = 2;
+const PERCENT = 100;
 
 /**
- * The block's header: close (progress is kept), what the block is (the page's heading), how far
- * into it the learner is, in Fun the live Hyperdrive, and the question's "…" menu to vote on it.
- * The session bar sits under it.
+ * The block's header, the same as every full-screen task's: close (answers are kept), the
+ * block's name as Today shows it with how far into it the learner is, the question's "…" menu to
+ * report a problem, and one bar for the block's questions.
  */
 export function QuestionBlockHeader({
   exitHref,
-  hyperdrive,
   index,
-  sessionBar,
   title,
   total,
   voteTarget,
 }: {
   exitHref: string;
-  hyperdrive: number;
   index: number;
-  sessionBar: { completed: number; total: number };
   title: string;
   total: number;
-  /** The question to vote on, when it can be voted on now. */
+  /** The question to report, when it can be reported now. */
   voteTarget: ContentVoteTarget | null;
 }) {
   const t = useExtracted();
-  const mode = useExperienceMode();
-  const showHyperdrive = mode === "fun" && hyperdrive >= MIN_SHOWN_HYPERDRIVE;
+  const current = Math.min(index + 1, total);
+  // Answers are saved as they go, so Escape closes like the lesson player's close.
+  const closeRef = useEscapeClick<HTMLAnchorElement>();
 
   return (
-    <header className="flex flex-col gap-3">
-      {/* Close and the menu sit on the title's first line, even when a long title wraps. */}
-      <div className="flex items-start gap-3">
-        <LineMarker>
+    <TaskHeader>
+      <TaskHeaderBar>
+        <TaskHeaderSide align="start">
           <LearnLink
+            aria-keyshortcuts="Escape"
             aria-label={t("Close. Your answers are saved.")}
-            className={cn(buttonVariants({ size: "icon-lg", variant: "ghost" }), "rounded-full")}
+            className={buttonVariants({ size: "icon", variant: "ghost" })}
             href={exitHref}
             prefetch={false}
+            ref={closeRef}
           >
             <XIcon aria-hidden="true" />
           </LearnLink>
-        </LineMarker>
+        </TaskHeaderSide>
 
-        {/* The title gets the row's width and wraps; Hyperdrive rides on the count's line. */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          <h1 className="font-semibold wrap-break-word">{title}</h1>
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <p className="text-muted-foreground text-xs tabular-nums" aria-live="polite">
-              {t("{current} of {total}", {
-                current: String(Math.min(index + 1, total)),
-                total: String(total),
-              })}
-            </p>
+        <TaskHeaderTitle
+          detail={t("{current} of {total}", { current: String(current), total: String(total) })}
+          title={title}
+        />
 
-            {showHyperdrive && (
-              <p
-                aria-live="polite"
-                className="fun-glass text-fun-accent-violet flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold whitespace-nowrap"
-              >
-                <ZapIcon aria-hidden="true" className="size-3.5" />
-                {t("Hyperdrive x{level}", { level: String(hyperdrive) })}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {voteTarget && (
-          <LineMarker>
+        <TaskHeaderSide align="end">
+          {voteTarget && (
             <ContentVoteMenu
               label={t("Question options")}
               screen="question-block"
               target={voteTarget}
+              votes={false}
             />
-          </LineMarker>
-        )}
-      </div>
+          )}
+        </TaskHeaderSide>
+      </TaskHeaderBar>
 
-      <SessionBar completed={sessionBar.completed} total={sessionBar.total} />
-    </header>
+      <TaskHeaderProgress
+        label={t("Question {current, number} of {total, number}", { current, total })}
+        value={total === 0 ? 0 : (index / total) * PERCENT}
+      />
+    </TaskHeader>
   );
 }

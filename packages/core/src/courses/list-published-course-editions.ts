@@ -1,12 +1,13 @@
 import "server-only";
-import { getPublishedCourseWhere, prisma } from "@zoonk/db";
+import { getListedCourseWhere, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
-import { getCourseCacheTag } from "../cache/tags";
+import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../cache/tags";
 
+/** Tagged with the catalog too, so an edition that becomes listed later joins the others. */
 async function getCachedCourseEditions(courseId: string) {
   "use cache";
-  cacheTag(getCourseCacheTag(courseId));
+  cacheTag(getCourseCacheTag(courseId), COURSE_LIST_CACHE_TAG);
 
   const course = await prisma.course.findUnique({
     select: { familyId: true },
@@ -20,11 +21,7 @@ async function getCachedCourseEditions(courseId: string) {
   const editions = await prisma.course.findMany({
     orderBy: { language: "asc" },
     select: { id: true, language: true, organization: { select: { slug: true } }, slug: true },
-    where: getPublishedCourseWhere({
-      familyId: course.familyId,
-      organization: { kind: "brand" },
-      visibility: "public",
-    }),
+    where: getListedCourseWhere({ familyId: course.familyId }),
   });
 
   cacheTag(...editions.map((edition) => getCourseCacheTag(edition.id)));
@@ -44,9 +41,9 @@ async function getCachedCourseEditions(courseId: string) {
 }
 
 /**
- * Lists the published editions of a course in every language, itself
- * included. Editions have their own slugs, so public pages link them as
- * language alternates (hreflang) instead of translating one URL.
+ * Lists the listed editions of a course (`getListedCourseWhere`) in every language, itself
+ * included. Editions have their own slugs, so public pages link them as language alternates
+ * (hreflang) instead of translating one URL.
  */
 export async function listPublishedCourseEditions({ courseId }: { courseId: string }) {
   if (!isUuid(courseId)) {

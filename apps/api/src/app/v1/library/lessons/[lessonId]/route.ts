@@ -32,11 +32,7 @@ async function getLibraryLessonRoute(
     return usageDecisionError({ retryAfterSeconds: result.retryAfterSeconds, status: "slowDown" });
   }
 
-  if (result.status === "ready") {
-    return NextResponse.json({ ...result, lesson: withApiImageUrls(result.lesson) });
-  }
-
-  return NextResponse.json(result);
+  return NextResponse.json(withApiImageUrls(result));
 }
 
 export const GET = withApiErrorBoundary(getLibraryLessonRoute);

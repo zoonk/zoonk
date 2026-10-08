@@ -3,7 +3,6 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
-import { scheduleDepthPreferenceRefresh, touchesPreferences } from "./_utils/depth-preference";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import { removeMemoryFact } from "./_utils/memory-writes";
 import { type MemoryChange } from "./memory-contract";
@@ -37,10 +36,6 @@ export async function deleteMemoryFact(factId: string): Promise<MemoryFactDelete
   revalidateCacheTags([getMemoryCacheTag(userId)]);
 
   const change = { action: "removed" as const, fact: null, previous: toMemoryFactView(removed) };
-
-  if (touchesPreferences([change])) {
-    scheduleDepthPreferenceRefresh(userId);
-  }
 
   return { change, status: "deleted" };
 }

@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
@@ -23,12 +24,12 @@ describe(updateLearningProfile, () => {
   });
 
   it("needs a session", async () => {
-    await expect(updateLearningProfile({ experienceMode: "fun" })).resolves.toStrictEqual({
+    await expect(updateLearningProfile({ soundsEnabled: false })).resolves.toStrictEqual({
       status: "unauthorized",
     });
   });
 
-  it("starts with no mode, buddy or age, only the buddy's own glasses and sounds on", async () => {
+  it("starts with no buddy or age, only the buddy's own glasses and sounds on", async () => {
     await useLearner();
 
     await expect(getLearningProfile()).resolves.toStrictEqual({
@@ -38,68 +39,28 @@ describe(updateLearningProfile, () => {
       birth: null,
       buddy: null,
       dailyLimitMinutes: null,
-      deeperByDefault: false,
-      deeperFromMemory: false,
-      experienceMode: null,
       soundsEnabled: true,
     });
   });
 
-  it("opens the deeper version by choice, or from memory until the learner chooses", async () => {
+  it("turns sounds off and on without touching the buddy", async () => {
     const user = await useLearner();
-    await updateLearningProfile({ soundsEnabled: true });
-
-    await prisma.userLearningProfile.update({
-      data: { memoryAsksDeeper: true },
-      where: { userId: user.id },
-    });
-
-    await expect(getLearningProfile()).resolves.toMatchObject({
-      deeperByDefault: true,
-      deeperFromMemory: true,
-    });
-
-    await expect(updateLearningProfile({ deeperByDefault: false })).resolves.toMatchObject({
-      profile: { deeperByDefault: false, deeperFromMemory: false },
-    });
-
-    await expect(updateLearningProfile({ deeperByDefault: null })).resolves.toMatchObject({
-      profile: { deeperByDefault: true, deeperFromMemory: true },
-    });
-
-    // With memory off, Zoonk stops using what it remembers, the depth preference included.
-    await prisma.userLearningProfile.update({
-      data: { memoryEnabled: false },
-      where: { userId: user.id },
-    });
+    await updateLearningProfile({ buddy: { kind: "otto" } });
 
     await expect(updateLearningProfile({ soundsEnabled: false })).resolves.toMatchObject({
-      profile: { deeperByDefault: false, deeperFromMemory: false },
-    });
-
-    await expect(updateLearningProfile({ deeperByDefault: true })).resolves.toMatchObject({
-      profile: { deeperByDefault: true, deeperFromMemory: false },
-    });
-  });
-
-  it("turns sounds off and on without touching the mode or buddy", async () => {
-    const user = await useLearner();
-    await updateLearningProfile({ buddy: { kind: "otto" }, experienceMode: "fun" });
-
-    await expect(updateLearningProfile({ soundsEnabled: false })).resolves.toMatchObject({
-      profile: { buddy: { kind: "otto" }, experienceMode: "fun", soundsEnabled: false },
+      profile: { buddy: { kind: "otto" }, soundsEnabled: false },
       status: "updated",
     });
 
     await expect(
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ buddyKind: "otto", experienceMode: "fun", soundsEnabled: false });
+    ).resolves.toMatchObject({ buddyKind: "otto", soundsEnabled: false });
 
     await updateLearningProfile({ soundsEnabled: true });
     await expect(getLearningProfile()).resolves.toMatchObject({ soundsEnabled: true });
   });
 
-  it("saves mode, buddy, age and the active goal the tabs show", async () => {
+  it("saves buddy, age and the active goal the tabs show", async () => {
     const user = await useLearner();
     const goal = await goalFixture({ userId: user.id });
 
@@ -107,7 +68,6 @@ describe(updateLearningProfile, () => {
       activeGoalId: goal.id,
       birth: { month: 4, year: 1995 },
       buddy: { kind: "noodle", name: "Nodo" },
-      experienceMode: "fun",
     });
 
     expect(result).toStrictEqual({
@@ -118,9 +78,6 @@ describe(updateLearningProfile, () => {
         birth: { month: 4, year: 1995 },
         buddy: { glasses: "round", kind: "noodle", name: "Nodo" },
         dailyLimitMinutes: null,
-        deeperByDefault: false,
-        deeperFromMemory: false,
-        experienceMode: "fun",
         soundsEnabled: true,
       },
       status: "updated",
@@ -128,12 +85,12 @@ describe(updateLearningProfile, () => {
 
     expect(revalidateTag).toHaveBeenCalledWith(getLearningProfileCacheTag(user.id), { expire: 0 });
 
-    await updateLearningProfile({ experienceMode: "focus" });
+    await updateLearningProfile({ buddy: { kind: "zu" } });
 
     await expect(getLearningProfile()).resolves.toMatchObject({
       activeGoalId: goal.id,
-      buddy: { kind: "noodle" },
-      experienceMode: "focus",
+      birth: { month: 4, year: 1995 },
+      buddy: { kind: "zu", name: null },
     });
   });
 
@@ -172,6 +129,49 @@ describe(updateLearningProfile, () => {
     await expect(updateLearningProfile({ activeGoalId: archivedGoal.id })).resolves.toStrictEqual({
       status: "goalNotFound",
     });
+  });
+
+  it("lets learners correct their age toward younger, and leaves older answers to support", async () => {
+    const user = await useLearner();
+    const teenYear = new Date().getUTCFullYear() - 15;
+
+    await expect(
+      updateLearningProfile({ birth: { month: 6, year: teenYear } }),
+    ).resolves.toMatchObject({ profile: { ageGroup: "teen" }, status: "updated" });
+
+    await expect(
+      updateLearningProfile({ birth: { month: 6, year: teenYear } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    await expect(
+      updateLearningProfile({ birth: { month: 8, year: teenYear } }),
+    ).resolves.toMatchObject({
+      profile: { birth: { month: 8, year: teenYear } },
+      status: "updated",
+    });
+
+    await expect(
+      updateLearningProfile({ birth: { month: 3, year: 1990 }, soundsEnabled: false }),
+    ).resolves.toStrictEqual({ status: "birthChangeNeedsSupport" });
+
+    await expect(
+      updateLearningProfile({ birth: { month: 7, year: teenYear } }),
+    ).resolves.toStrictEqual({ status: "birthChangeNeedsSupport" });
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
+    ).resolves.toMatchObject({ birthMonth: 8, birthYear: teenYear, soundsEnabled: true });
+  });
+
+  it("still deletes the account when a correction says the learner is under 13", async () => {
+    const user = await useLearner();
+    await learningProfileFixture({ birthMonth: 1, birthYear: 1990, userId: user.id });
+
+    await expect(
+      updateLearningProfile({ birth: { month: 1, year: new Date().getUTCFullYear() - 10 } }),
+    ).resolves.toStrictEqual({ status: "accountDeleted" });
+
+    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
   });
 
   it("deletes the account and everything in it when the age answer is under 13", async () => {

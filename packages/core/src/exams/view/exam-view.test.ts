@@ -38,6 +38,7 @@ async function examSetup({ examDay }: { examDay: string }) {
       subjects: [
         {
           citation,
+          group: "Day 1",
           name: "Mathematics and its Technologies",
           questions: 45,
           topics: ["Functions", "Percentages"],
@@ -45,6 +46,7 @@ async function examSetup({ examDay }: { examDay: string }) {
         },
         {
           citation,
+          group: "Day 2",
           name: "Humanities",
           questions: 45,
           topics: ["Brazil's Republic"],
@@ -130,6 +132,7 @@ describe("exam screen", () => {
           subjects: [
             {
               frequency: "high",
+              group: "Day 1",
               level: { solid: 1, studied: 1, total: 2 },
               name: "Mathematics and its Technologies",
               share: 0.5,
@@ -138,7 +141,7 @@ describe("exam screen", () => {
                 { frequency: "medium", name: "Functions" },
               ],
             },
-            { frequency: null, level: { solid: 0, total: 1 }, name: "Humanities" },
+            { frequency: null, group: "Day 2", level: { solid: 0, total: 1 }, name: "Humanities" },
           ],
           topicCount: 3,
         },

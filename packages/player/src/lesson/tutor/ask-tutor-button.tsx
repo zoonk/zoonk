@@ -4,24 +4,24 @@ import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useOpenTutor } from "./lesson-tutor";
+import { useLessonBuddy } from "./lesson-tutor";
 
 /** One quiet way to ask the tutor about the screen in view, beside the lesson's next action. */
 export function AskTutorButton() {
   const t = useExtracted();
-  const openTutor = useOpenTutor();
+  const buddy = useLessonBuddy();
 
-  if (!openTutor) {
+  if (!buddy) {
     return null;
   }
 
-  const label = t("Ask a question");
+  const label = t("Ask {name}", { name: buddy.identity.name });
 
   return (
     <Tooltip>
       <TooltipTrigger
         aria-label={label}
-        onClick={openTutor}
+        onClick={() => buddy.open()}
         render={<Button size="icon-lg" type="button" variant="outline" />}
       >
         <MessageCircleQuestionIcon aria-hidden="true" />

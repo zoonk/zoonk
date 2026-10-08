@@ -81,13 +81,7 @@ export async function seedLearnerData({
   ]);
 
   await prisma.userLearningProfile.create({
-    data: {
-      activeGoalId: goal.id,
-      buddyKind: "zu",
-      buddyName: "Zuzu",
-      experienceMode: "fun",
-      userId,
-    },
+    data: { activeGoalId: goal.id, buddyKind: "zu", buddyName: "Zuzu", userId },
   });
 
   return { goal };

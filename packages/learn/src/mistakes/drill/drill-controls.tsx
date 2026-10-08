@@ -40,7 +40,7 @@ export function NotSureButton({
 
   return (
     <Button
-      className="in-data-[mode=fun]:fun-glass h-12 rounded-full"
+      className="h-12 rounded-full"
       disabled={disabled}
       onClick={onClick}
       size="lg"

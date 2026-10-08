@@ -16,7 +16,6 @@ import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { CircleCheckIcon, EyeIcon, WrenchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { FUN_PRIMARY_BUTTON_CLASS } from "../_utils/fun-primary";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { useSystemName } from "./use-system-name";
@@ -63,7 +62,7 @@ function SystemPicker({
       <div className="flex flex-wrap gap-2">
         {TOOL_SYSTEMS.map((system) => (
           <Toggle
-            className="aria-pressed:border-foreground in-data-[mode=fun]:aria-pressed:border-fun-lime h-11 rounded-full px-4 aria-pressed:font-semibold"
+            className="aria-pressed:border-foreground h-11 rounded-full px-4 aria-pressed:font-semibold"
             key={system}
             onPressedChange={() => onChange(system)}
             pressed={value === system}
@@ -118,14 +117,7 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
           <Button onClick={onClose} size="lg" type="button" variant="outline">
             {t("Cancel")}
           </Button>
-          <Button
-            className={FUN_PRIMARY_BUTTON_CLASS}
-            disabled={!canSave}
-            focusableWhenDisabled
-            ref={saveRef}
-            size="lg"
-            type="submit"
-          >
+          <Button disabled={!canSave} focusableWhenDisabled ref={saveRef} size="lg" type="submit">
             {t("Save")}
           </Button>
         </div>

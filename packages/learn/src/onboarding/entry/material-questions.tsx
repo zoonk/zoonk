@@ -7,7 +7,12 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { usePrimaryVariant } from "../../_utils/fun-primary";
+import {
+  type LearnBuddy,
+  type TutorIdentity,
+  TutorMessage,
+  useTutorIdentity,
+} from "../../conversation/tutor-identity";
 import {
   type AttachedSource,
   type MaterialQuestionOutcome,
@@ -39,63 +44,101 @@ function useCitationLabel() {
   };
 }
 
-/** The answer to one question, with the pages it came from, or why there's no answer. */
-function TurnAnswer({ outcome }: { outcome: MaterialQuestionOutcome }) {
+/** The buddy's answer to one question, with the pages it came from, or why there's no answer. */
+/** The plan's cap on questions: the day's or the month's, with Plus for a free learner. */
+function useQuestionLimitMessage() {
+  const t = useExtracted();
+
+  return (outcome: MaterialQuestionOutcome): string => {
+    if (outcome.status !== "limitReached" || outcome.tier === "plus") {
+      return t("You've asked as many questions as your plan allows today.");
+    }
+
+    return outcome.period === "month"
+      ? t(
+          "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.",
+        )
+      : t(
+          "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.",
+        );
+  };
+}
+
+function TurnAnswer({
+  identity,
+  outcome,
+}: {
+  identity: TutorIdentity;
+  outcome: MaterialQuestionOutcome;
+}) {
   const t = useExtracted();
   const toLabel = useCitationLabel();
+  const toLimitMessage = useQuestionLimitMessage();
 
   if (outcome.status !== "answered") {
+    const limitReached = toLimitMessage(outcome);
+
     const messages: Record<Exclude<MaterialQuestionOutcome["status"], "answered">, string> = {
       failed: t("We couldn't answer that. Try again in a moment."),
-      limitReached: t("You've asked as many questions as your plan allows today."),
+      limitReached,
       signInRequired: t("Create an account to ask about your material."),
+      slowDown: t("You're asking quickly. Try again in a few minutes."),
     };
 
-    return <p className="text-destructive text-sm">{messages[outcome.status]}</p>;
+    return (
+      <TutorMessage identity={identity}>
+        <p className="text-destructive text-sm">{messages[outcome.status]}</p>
+      </TutorMessage>
+    );
   }
 
   const { answer, citations } = outcome.answer;
 
   return (
-    <div className="bg-card ring-foreground/10 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-3xl p-4 ring-1">
-      <p className="leading-relaxed whitespace-pre-wrap">{answer}</p>
+    <TutorMessage identity={identity}>
+      <div className="bg-card ring-foreground/10 flex flex-col gap-3 rounded-3xl p-4 ring-1">
+        <p className="leading-relaxed whitespace-pre-wrap">{answer}</p>
 
-      {citations.length > 0 && (
-        <ul aria-label={t("Where this comes from")} className="flex flex-wrap gap-2">
-          {citations.map((citation) => (
-            <li
-              className="bg-muted text-muted-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs"
-              key={`${citation.title}-${citation.page}`}
-            >
-              <FileTextIcon aria-hidden="true" className="size-3.5" />
-              {toLabel(citation)}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+        {citations.length > 0 && (
+          <ul aria-label={t("Where this comes from")} className="flex flex-wrap gap-2">
+            {citations.map((citation) => (
+              <li
+                className="bg-muted text-muted-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs"
+                key={`${citation.title}-${citation.page}`}
+              >
+                <FileTextIcon aria-hidden="true" className="size-3.5" />
+                {toLabel(citation)}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </TutorMessage>
   );
 }
 
 /**
- * "Ask questions" about the material the learner attached: each answer comes from their pages
- * and shows the page it came from, so they can read it there.
+ * "Ask questions" about the material the learner attached, answered by their buddy (a neutral
+ * "Buddy" before they pick one): each answer comes from their pages and shows the page it came
+ * from, so they can read it there.
  */
 export function MaterialQuestions({
   ask,
+  buddy,
   sources,
 }: {
   ask: OnboardingActions["askMaterial"];
+  buddy: LearnBuddy | null;
   sources: AttachedSource[];
 }) {
   const t = useExtracted();
   const locale = useLocale();
-  const primaryVariant = usePrimaryVariant();
   const inputId = useId();
   const [question, setQuestion] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [isPending, startTransition] = useTransition();
   const trimmed = question.trim();
+  const identity = useTutorIdentity(buddy);
 
   const submit = () => {
     if (!trimmed || isPending) {
@@ -131,7 +174,7 @@ export function MaterialQuestions({
         {turns.map((turn) => (
           <div className="flex flex-col gap-3" key={turn.id}>
             <TypedGoal goal={turn.question} />
-            <TurnAnswer outcome={turn.outcome} />
+            <TurnAnswer identity={identity} outcome={turn.outcome} />
           </div>
         ))}
 
@@ -144,7 +187,7 @@ export function MaterialQuestions({
       </div>
 
       <form
-        className="bg-muted/60 in-data-[mode=fun]:fun-glass focus-within:ring-ring/40 mt-auto flex items-end gap-2 rounded-3xl p-2 pl-4 focus-within:ring-[3px]"
+        className="bg-muted/60 focus-within:ring-ring/40 mt-auto flex items-end gap-2 rounded-3xl p-2 pl-4 focus-within:ring-[3px] lg:mt-0"
         onSubmit={(event) => {
           event.preventDefault();
           submit();
@@ -175,7 +218,6 @@ export function MaterialQuestions({
           disabled={!trimmed || isPending}
           size="icon-lg"
           type="submit"
-          variant={primaryVariant}
         >
           <ArrowUpIcon aria-hidden="true" className="size-5" />
         </Button>

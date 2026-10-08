@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import {
   studySessionBlockFixture,
@@ -13,7 +14,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getUsageRule } from "../entitlements/limits";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
-import { checkLessonStep } from "./check-lesson-step";
+import { type LessonStepCheckOutcome, checkLessonStep } from "./check-lesson-step";
 import { type LessonStepAnswer } from "./contract";
 import type * as GradeTypedAnswer from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 
@@ -150,6 +151,7 @@ describe(checkLessonStep, () => {
 
     expect(outcome).toMatchObject({
       result: {
+        corrections: [],
         feedback: null,
         isCorrect: true,
         keyPoints: [
@@ -167,6 +169,7 @@ describe(checkLessonStep, () => {
 
     vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
       data: {
+        corrections: [],
         feedback: "You said it's likely somewhere, but not why we can't know where.",
         isCorrect: false,
         keyPoints: [
@@ -201,8 +204,32 @@ describe(checkLessonStep, () => {
     });
 
     expect(gradeTypedAnswer).toHaveBeenCalledWith(
-      expect.objectContaining({ language: "en", spellingMatters: false }),
+      expect.objectContaining({ language: "en", practicedLanguage: null }),
     );
+  });
+
+  it("records nothing when the grader fails, so a grading failure is never a mistake", async () => {
+    const { run, steps, user } = await setupRun();
+    const step = stepOfKind(steps, "typedAnswer");
+
+    vi.mocked(gradeTypedAnswer).mockRejectedValueOnce(
+      new Error("AI provider didn't grade every key point of a typed answer"),
+    );
+
+    await expect(
+      check({
+        answer: { kind: "typedAnswer", text: "Because it's probably around there" },
+        runId: run.id,
+        stepId: step.id,
+      }),
+    ).rejects.toThrow("grade every key point");
+
+    const [attempts, mistakes] = await Promise.all([
+      prisma.attempt.count({ where: { stepId: step.id, userId: user.id } }),
+      prisma.mistake.count({ where: { stepId: step.id, userId: user.id } }),
+    ]);
+
+    expect([attempts, mistakes]).toStrictEqual([0, 0]);
   });
 
   it("counts a typo as right, shows the spelling and saves no mistake", async () => {
@@ -229,19 +256,21 @@ describe(checkLessonStep, () => {
     ).resolves.toBe(0);
   });
 
-  it("shows no spelling for a language slip the grader counts as a mistake", async () => {
+  it("shows a language form mistake as a correction, not a missing idea or a spelling", async () => {
     const { run, steps } = await setupRun();
+    const corrections = [{ right: "the electron", wrong: "the electrons" }];
 
     vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
       data: {
-        feedback: "Houses is plural: the sentence needs one house.",
+        corrections,
+        feedback: "Every idea is there; it's one electron, so “the electron”.",
         isCorrect: false,
         keyPoints: [
-          { met: false, text: "We can't know the electron's exact position or path" },
+          { met: true, text: "We can't know the electron's exact position or path" },
           { met: true, text: "The cloud shows where it's likely to be found" },
         ],
         method: "model",
-        score: 0.5,
+        score: 1,
         spelling: "It shows where the electron is likely to be",
       },
       provenance: null,
@@ -257,7 +286,7 @@ describe(checkLessonStep, () => {
     });
 
     expect(outcome).toMatchObject({
-      result: { isCorrect: false, savedMistake: true, spelling: null },
+      result: { corrections, isCorrect: false, savedMistake: true, score: 1, spelling: null },
       status: "checked",
     });
   });
@@ -404,52 +433,143 @@ describe(checkLessonStep, () => {
     });
   });
 
-  it("stops a client that keeps answering the same screen in one run", async () => {
-    const { run, steps } = await setupRun();
+  it("grades a screen answered over and over in one run without recording more of it", async () => {
+    const { run, steps, user } = await setupRun();
     const stepId = stepOfKind(steps, "check").id;
     const answer = { kind: "check", optionId: "path" } as const;
 
     /** Each answer lands before the next one is counted. */
-    const statuses = await [1, 2, 3, 4].reduce<Promise<string[]>>(async (previous) => {
-      const earlier = await previous;
-      const outcome = await check({ answer, runId: run.id, stepId });
-      return [...earlier, outcome.status];
-    }, Promise.resolve([]));
+    const outcomes = await [1, 2, 3, 4].reduce<Promise<LessonStepCheckOutcome[]>>(
+      async (previous) => {
+        const earlier = await previous;
+        const outcome = await check({ answer, runId: run.id, stepId });
+        return [...earlier, outcome];
+      },
+      Promise.resolve([]),
+    );
 
-    expect(statuses).toStrictEqual(["checked", "checked", "checked", "tooManyAnswers"]);
-  });
-
-  it("grades a guest's typed answers by code alone once today's help is used up", async () => {
-    const { run, steps, user } = await setupRun({ guest: true });
-    const step = stepOfKind(steps, "typedAnswer");
-
-    await usageRecordsFixture({
-      count: getUsageRule({ kind: "assist", tier: "guest" }).day ?? 0,
-      createdAt: new Date(),
-      kind: "assist",
-      userId: user.id,
-    });
-
-    const [paraphrase, accepted] = await Promise.all([
-      check({
-        answer: { kind: "typedAnswer", text: "Because it's probably around there" },
-        runId: run.id,
-        stepId: step.id,
-      }),
-      check({
-        answer: { kind: "typedAnswer", text: "it shows where the electron is likely to be." },
-        runId: run.id,
-        stepId: step.id,
-      }),
+    expect(outcomes.map((outcome) => outcome.status)).toStrictEqual([
+      "checked",
+      "checked",
+      "checked",
+      "checked",
     ]);
 
+    expect(outcomes.at(-1)).toMatchObject({ result: { isCorrect: false, savedMistake: false } });
+
+    await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(3);
+  });
+
+  it.each([
+    { guest: false, tier: "free" as const },
+    { guest: true, tier: "guest" as const },
+  ])(
+    "grades a $tier learner's written answer with the model past their small AI help, without counting it",
+    async ({ guest, tier }) => {
+      const { run, steps, user } = await setupRun({ guest });
+      const capped = getUsageRule({ kind: "assist", tier }).day ?? 0;
+
+      await usageRecordsFixture({
+        count: capped,
+        createdAt: new Date(),
+        kind: "assist",
+        userId: user.id,
+      });
+
+      vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
+        data: {
+          corrections: [],
+          feedback: "Both ideas are there.",
+          isCorrect: true,
+          keyPoints: [
+            { met: true, text: "We can't know the electron's exact position or path" },
+            { met: true, text: "The cloud shows where it's likely to be found" },
+          ],
+          method: "model",
+          score: 1,
+          spelling: null,
+        },
+        provenance: null,
+        systemPrompt: "",
+        usage: null,
+        userPrompt: "",
+      });
+
+      const outcome = await check({
+        answer: {
+          kind: "typedAnswer",
+          text: "We can't pin down its path, so the cloud maps where it's probably found",
+        },
+        runId: run.id,
+        stepId: stepOfKind(steps, "typedAnswer").id,
+      });
+
+      expect(outcome).toMatchObject({
+        result: { checked: true, isCorrect: true, savedMistake: false, score: 1 },
+        status: "checked",
+      });
+
+      expect(gradeTypedAnswer).toHaveBeenCalledOnce();
+
+      await expect(
+        prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
+      ).resolves.toBe(capped);
+    },
+  );
+
+  it("past a few graded answers to a screen today, still takes an accepted answer and shows the rest as not checked", async () => {
+    const { run, steps, user } = await setupRun();
+    const stepId = stepOfKind(steps, "typedAnswer").id;
+
+    // Earlier sittings today, before this run started: five answers already graded.
+    await Promise.all(
+      Array.from({ length: 5 }, () =>
+        attemptFixture({
+          answeredAt: new Date(run.startedAt.getTime() - 60_000),
+          isCorrect: false,
+          stepId,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    const paraphrase = await check({
+      answer: { kind: "typedAnswer", text: "Because it's probably around there" },
+      runId: run.id,
+      stepId,
+    });
+
+    const accepted = await check({
+      answer: { kind: "typedAnswer", text: "it shows where the electron is likely to be." },
+      runId: run.id,
+      stepId,
+    });
+
+    // Not marked wrong: shown with the sample answer, not recorded, no mistake saved.
     expect(paraphrase).toMatchObject({
-      result: { feedback: null, isCorrect: false, keyPoints: null, score: 0 },
+      result: {
+        checked: false,
+        correctAnswer:
+          "Because we can't pin down where the electron is. The cloud maps where it's most likely to be.",
+        feedback: null,
+        keyPoints: null,
+        savedMistake: false,
+        score: null,
+      },
       status: "checked",
     });
 
-    expect(accepted).toMatchObject({ result: { isCorrect: true, score: 1 }, status: "checked" });
+    expect(accepted).toMatchObject({ result: { checked: true, isCorrect: true, score: 1 } });
     expect(gradeTypedAnswer).not.toHaveBeenCalled();
+
+    const [attempts, mistakes] = await Promise.all([
+      prisma.attempt.count({
+        where: { answeredAt: { gte: run.startedAt }, stepId, userId: user.id },
+      }),
+      prisma.mistake.count({ where: { stepId, userId: user.id } }),
+    ]);
+
+    expect([attempts, mistakes]).toStrictEqual([1, 0]);
   });
 
   it("records a guest's answers like anyone else's", async () => {

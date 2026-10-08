@@ -63,7 +63,7 @@ function useRequestCopy({ goalKind, reason }: Pick<GoalUploadRequest, "goalKind"
 
 /**
  * Research couldn't find (or confirm) what the goal is built from, and it never guesses an
- * exam's structure: Plan and Today ask the learner for the document, in both modes. Uploading it
+ * exam's structure: Today asks the learner for the document. Uploading it
  * answers at once and research reads it; the plan is rebuilt from it a few minutes later.
  * "Not now" takes the ask away for good.
  */
@@ -104,10 +104,7 @@ export function UploadRequestCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(
-        "bg-muted/60 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-2xl p-4",
-        className,
-      )}
+      className={cn("bg-muted/60 flex flex-col gap-3 rounded-2xl p-4", className)}
     >
       <div className="flex items-start gap-3">
         <FileSearchIcon
@@ -133,7 +130,6 @@ export function UploadRequestCard({
       {state === "asking" && (
         <div className="flex flex-wrap gap-2">
           <Button
-            className="in-data-[mode=fun]:fun-glass"
             disabled={isPending}
             onClick={() => setState("uploading")}
             size="sm"

@@ -63,7 +63,7 @@ export function getExamBlueprintCacheTag(blueprintId: string): string {
   return `exam-blueprint:${blueprintId}`;
 }
 
-/** Identifies private reads of one learner's profile: mode, buddy, birth month and year, active goal. */
+/** Identifies private reads of one learner's profile: buddy, birth month and year, active goal. */
 export function getLearningProfileCacheTag(userId: string): string {
   return `learning-profile:${userId}`;
 }

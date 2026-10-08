@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
+import { planChangeSchema } from "@zoonk/core/plans/change-contract";
+import { planTimeAdviceSchema } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -11,7 +13,6 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import {
   goalCreateResponseSchema,
@@ -21,18 +22,14 @@ import {
 } from "../src/lib/openapi/schemas/goals";
 import {
   planChangeResultSchema,
-  planChangeSchema,
   planLinkResponseSchema,
   planResponseSchema,
 } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
-import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
 const LESSONS = 12;
-
-/** A guest's small AI help for a day (`assist` in core's limits). */
-const GUEST_DAILY_HELP = 40;
+const DAY_MS = 86_400_000;
 
 /**
  * A goal whose plan has its skill graph (what the goal-driven workflow writes) and a Library chapter
@@ -116,14 +113,12 @@ test.describe("Goals and plans API", () => {
       apiContext.get(`/v1/goals/${goalId}`),
       apiContext.patch(`/v1/goals/${goalId}`, { data: { title: "x" } }),
       apiContext.get(`/v1/goals/${goalId}/plan`),
+      apiContext.get(`/v1/goals/${goalId}/plan/time-advice`),
       apiContext.post(`/v1/goals/${goalId}/plan/changes`, {
         data: { operations: [{ kind: "setDailyMinutes", minutes: 20 }] },
       }),
       apiContext.patch(`/v1/goals/${goalId}/plan/changes/${randomUUID()}`, {
         data: { status: "undone" },
-      }),
-      apiContext.post(`/v1/goals/${goalId}/plan/edit-requests`, {
-        data: { text: "less on weekends" },
       }),
       apiContext.post(`/v1/plan-links/${randomUUID()}/goals`, { data: { dailyMinutes: 20 } }),
     ]);
@@ -224,7 +219,17 @@ test.describe("Goals and plans API", () => {
     });
 
     expect(after.phases[0]?.lessonsTotal).toBe(LESSONS);
-    expect(after.changes[0]?.id).toBe(changed.change?.id);
+    expect(after.changes[0]).toMatchObject({ id: changed.change?.id, seen: false });
+
+    // "Got it" only marks it read: it stays applied and can still be undone.
+    const seen = await readBody({
+      response: await apiContext.patch(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
+        data: { status: "seen" },
+      }),
+      schema: planChangeSchema,
+    });
+
+    expect(seen).toMatchObject({ canUndo: true, seen: true, status: "applied" });
 
     const undone = await readBody({
       response: await apiContext.patch(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
@@ -242,6 +247,13 @@ test.describe("Goals and plans API", () => {
 
     expect(again.status()).toBe(409);
 
+    const seenAfterUndo = await apiContext.patch(
+      `/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`,
+      { data: { status: "seen" } },
+    );
+
+    expect(seenAfterUndo.status()).toBe(409);
+
     const unknownArea = await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
       data: { operations: [{ areas: ["History"], kind: "focusAreas" }] },
     });
@@ -252,11 +264,71 @@ test.describe("Goals and plans API", () => {
       error: { code: "PLAN_CHANGE_INVALID", details: { reason: "unknownArea" } },
     });
 
-    const empty = await apiContext.post(`/v1/goals/${goal.id}/plan/edit-requests`, {
-      data: { text: "" },
+    // The plan's one area already has every lesson in it: focusing it moves nothing, so nothing
+    // is saved and the answer says why.
+    const noFocusGain = await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
+        data: { operations: [{ areas: ["Markets"], kind: "focusAreas" }] },
+      }),
+      schema: planChangeResultSchema,
     });
 
-    expect(empty.status()).toBe(400);
+    expect(noFocusGain).toStrictEqual({ change: null, reason: "alreadyIn", status: "unchanged" });
+
+    // Starting an area past its basics is a change the learner can make like any other.
+    const pastBasics = await readBody({
+      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
+        data: { operations: [{ areas: ["Markets"], kind: "setAreaStart", start: "pastBasics" }] },
+      }),
+      schema: planChangeResultSchema,
+    });
+
+    expect(pastBasics).toMatchObject({ status: "applied" });
+
+    await apiContext.dispose();
+  });
+
+  test("recommends the daily time that covers the goal by its date: the one the plan shows", async () => {
+    const [{ apiContext, user }, stranger] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "plans-time-advice" }),
+      userFixture(),
+    ]);
+
+    const [{ goal }, other] = await Promise.all([
+      createPlannedGoal(user.id),
+      createPlannedGoal(stranger.id),
+    ]);
+
+    // Due the day after tomorrow: twelve 3-minute lessons don't fit in 12 minutes a day.
+    const targetDate = new Date(Date.now() + 2 * DAY_MS).toISOString().slice(0, 10);
+
+    await prisma.goal.update({
+      data: { targetDate: new Date(`${targetDate}T00:00:00Z`) },
+      where: { id: goal.id },
+    });
+
+    const [everyDay, weekdays, plan, invalid, hidden] = await Promise.all([
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice`),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=1,2,3,4,5`),
+      apiContext.get(`/v1/goals/${goal.id}/plan`),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=7`),
+      apiContext.get(`/v1/goals/${other.goal.id}/plan/time-advice`),
+    ]);
+
+    const advice = await readBody({ response: everyDay, schema: planTimeAdviceSchema });
+
+    expect(advice).toMatchObject({ measure: "goal", ready: true, targetDate });
+    expect(advice.recommendedMinutes).toBeGreaterThan(12);
+
+    await expect(readBody({ response: plan, schema: planResponseSchema })).resolves.toMatchObject({
+      feasibility: { recommendedMinutes: advice.recommendedMinutes },
+    });
+
+    await expect(
+      readBody({ response: weekdays, schema: planTimeAdviceSchema }),
+    ).resolves.toMatchObject({ ready: true });
+
+    expect([invalid.status(), hidden.status()]).toStrictEqual([400, 404]);
     await apiContext.dispose();
   });
 
@@ -300,35 +372,6 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
-  test("asks a guest who used today's help to sign up before reading plain words", async () => {
-    const guest = await createGuest(baseURL);
-
-    const [{ goal }] = await Promise.all([
-      createPlannedGoal(guest.userId),
-      usageRecordsFixture({
-        count: GUEST_DAILY_HELP,
-        createdAt: new Date(),
-        kind: "assist",
-        userId: guest.userId,
-      }),
-    ]);
-
-    const response = await guest.guestApi.post(`/v1/goals/${goal.id}/plan/edit-requests`, {
-      data: { text: "less on weekends" },
-    });
-
-    expect(response.status()).toBe(403);
-
-    await expect(response.json()).resolves.toMatchObject({
-      error: {
-        code: "USAGE_LIMIT_REACHED",
-        details: { limit: { period: "day", resource: "assist", tier: "guest" } },
-      },
-    });
-
-    await guest.guestApi.dispose();
-  });
-
   test("shares a plan's outline through its link and starts a visitor's own goal from it", async () => {
     const [owner, { apiContext: visitor, user }] = await Promise.all([
       userFixture(),
@@ -345,7 +388,7 @@ test.describe("Goals and plans API", () => {
 
     expect(outline).toMatchObject({
       outline: {
-        phases: [{ name: "The basics" }],
+        phases: [{ kind: "learn", name: "The basics" }],
         skillCount: 1,
         subject: { title: course.title },
       },

@@ -24,18 +24,14 @@ export function getBandFill({ band, score }: { band: number; score: number }): n
 }
 
 /**
- * The skill that rose the most since the level test, for "Listening went up to B1". Null when no
- * skill rose. On a tie, the first skill in the list wins.
+ * The skills that went up since the level test (the ones with an up arrow), the biggest rise
+ * first, for "Listening went up to B1" or "Listening and Speaking went up". On a tie, list order
+ * wins. Empty when nothing went up.
  */
-export function findBiggestRise<TLevel extends { score: number; startLabel: string }>(
+export function listRises<TLevel extends { score: number; startLabel: string; trend: string }>(
   levels: readonly TLevel[],
-): TLevel | null {
-  const rises = levels
-    .map((level) => ({
-      level,
-      rise: level.score - (parseCefrScore(level.startLabel) ?? level.score),
-    }))
-    .filter(({ rise }) => rise > 0);
+): TLevel[] {
+  const rise = (level: TLevel) => level.score - (parseCefrScore(level.startLabel) ?? level.score);
 
-  return rises.toSorted((a, b) => b.rise - a.rise)[0]?.level ?? null;
+  return levels.filter((level) => level.trend === "up").toSorted((a, b) => rise(b) - rise(a));
 }

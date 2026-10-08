@@ -9,16 +9,10 @@ import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context
 import { type LessonRunRefusal } from "../lesson-player-types";
 import { AccessLayout, LessonSlowDown } from "./lesson-slow-down";
 
-/** The screen's buttons match the lesson's main action: the same size, and Fun's lime pill. */
-function useAccessButtons() {
-  const { skin } = useLessonPlayerConfig();
-  const shape = "h-12 rounded-full text-base";
-
-  return {
-    primary: cn(buttonVariants({ size: "lg", variant: skin.primaryVariant }), shape),
-    secondary: cn(buttonVariants({ size: "lg", variant: "outline" }), shape),
-  };
-}
+/** The screen's buttons match the lesson's main action: the same size and shape. */
+const BUTTON_SHAPE = "h-12 rounded-full text-base";
+const PRIMARY_BUTTON = cn(buttonVariants({ size: "lg" }), BUTTON_SHAPE);
+const SECONDARY_BUTTON = cn(buttonVariants({ size: "lg", variant: "outline" }), BUTTON_SHAPE);
 
 /** Fair use spaces new lessons out; the run starts again when the wait is over. */
 function SlowDown({ retryAfterSeconds }: { retryAfterSeconds: number }) {
@@ -34,7 +28,6 @@ function SlowDown({ retryAfterSeconds }: { retryAfterSeconds: number }) {
 function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
   const t = useExtracted();
   const { linkComponent: LinkComponent, routes, track } = useLessonPlayerConfig();
-  const { primary: primaryLink, secondary: secondaryLink } = useAccessButtons();
 
   useEffect(() => {
     track({ name: "Subscription Gate Shown" });
@@ -58,10 +51,10 @@ function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
           : t("That's all the new lessons for today")
       }
     >
-      <LinkComponent className={primaryLink} href={routes.upgrade}>
+      <LinkComponent className={PRIMARY_BUTTON} href={routes.upgrade}>
         {t("See Plus")}
       </LinkComponent>
-      <LinkComponent className={secondaryLink} href={routes.exit}>
+      <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
         {t("Back")}
       </LinkComponent>
     </AccessLayout>
@@ -77,7 +70,6 @@ function LimitReached({
 }) {
   const t = useExtracted();
   const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
-  const { primary: primaryLink, secondary: secondaryLink } = useAccessButtons();
 
   if (tier === "guest") {
     return (
@@ -88,7 +80,7 @@ function LimitReached({
         icon={<UserRoundPlusIcon aria-hidden="true" />}
         title={t("Save your progress to keep going")}
       >
-        <LinkComponent className={primaryLink} href={routes.signUp}>
+        <LinkComponent className={PRIMARY_BUTTON} href={routes.signUp}>
           {t("Create a free account")}
         </LinkComponent>
       </AccessLayout>
@@ -105,7 +97,7 @@ function LimitReached({
       icon={<HourglassIcon aria-hidden="true" />}
       title={t("That's a lot of learning today")}
     >
-      <LinkComponent className={secondaryLink} href={routes.exit}>
+      <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
         {t("Back")}
       </LinkComponent>
     </AccessLayout>
@@ -120,7 +112,6 @@ function Unavailable({
   const t = useExtracted();
   const { actions } = useLessonPlayer();
   const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
-  const buttons = useAccessButtons();
 
   if (refusal.reason === "failed") {
     return (
@@ -129,7 +120,7 @@ function Unavailable({
         icon={<CircleAlertIcon aria-hidden="true" />}
         title={t("We couldn't open this lesson")}
       >
-        <Button className={buttons.primary} onClick={actions.retryStart}>
+        <Button className={PRIMARY_BUTTON} onClick={actions.retryStart}>
           {t("Try again")}
         </Button>
       </AccessLayout>
@@ -149,7 +140,7 @@ function Unavailable({
       }
     >
       <LinkComponent
-        className={buttons.primary}
+        className={PRIMARY_BUTTON}
         href={refusal.reason === "unauthorized" ? routes.signUp : routes.exit}
       >
         {refusal.reason === "unauthorized" ? t("Sign in") : t("Back")}

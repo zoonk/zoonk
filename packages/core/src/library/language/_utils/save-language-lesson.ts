@@ -5,6 +5,7 @@ import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { toStepData } from "../../lessons/_utils/step-data";
+import { startLessonVersion } from "../../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type LanguageStepToSave } from "./language-lesson-steps";
 
@@ -68,8 +69,8 @@ function toLessonSentences({
 /**
  * Publishes a language lesson in one transaction: the summary card, the
  * pair's links to its shared words and sentences (with translations,
- * explanations and wrong options), every screen in order, and the content
- * claim marked completed. Anything an earlier attempt left is replaced. It
+ * explanations and wrong options), every screen in order (a new version when
+ * an earlier one exists), and the content claim marked completed. It
  * only writes while this run holds the claim, so a run that lost it changes
  * nothing and gets `false`.
  */
@@ -89,8 +90,8 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
       return false;
     }
 
-    await Promise.all([
-      tx.step.deleteMany({ where: { lessonId } }),
+    const [version] = await Promise.all([
+      startLessonVersion(tx, lessonId),
       tx.lessonWord.deleteMany({ where: { lessonId } }),
       tx.lessonSentence.deleteMany({ where: { lessonId } }),
     ]);
@@ -112,6 +113,7 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
           }),
           lessonId,
           position,
+          version,
         })),
       }),
     ]);

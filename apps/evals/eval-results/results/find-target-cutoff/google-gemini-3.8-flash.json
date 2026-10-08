@@ -1,0 +1,60 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "range": { "max": 900, "min": 700 } },
+        "id": "pt-enem-medicina-ufmg-1",
+        "userInput": {
+          "course": "Medicina",
+          "exam": "ENEM",
+          "institution": "UFMG",
+          "position": null,
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "range": { "max": 900, "min": 550 } },
+        "id": "pt-enem-direito-ufpe-1",
+        "userInput": {
+          "course": "Direito",
+          "exam": "ENEM",
+          "institution": "UFPE",
+          "position": null,
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "range": null },
+        "id": "pt-enem-instituicao-inexistente-1",
+        "userInput": {
+          "course": "Direito",
+          "exam": "ENEM",
+          "institution": "Faculdade Imaginária de Estudos Avançados de Pirapora do Norte",
+          "position": null,
+          "today": "2026-10-07"
+        }
+      }
+    }
+  ],
+  "taskId": "find-target-cutoff"
+}

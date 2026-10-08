@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { type Verdict, VerdictLabel } from "../../components/verdict-label";
 import { LessonRichText, LessonRichTextBlocks } from "../_components/lesson-rich-text";
+import { isLanguageStep } from "../_utils/lesson-steps";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 import { WordHints } from "../steps/word-hints";
 import { ExplainAnswer } from "./explain-answer";
@@ -20,6 +21,10 @@ function getVerdict({
     return result.isCorrect ? "guessRight" : "guess";
   }
 
+  if (!result.checked) {
+    return "unchecked";
+  }
+
   if (result.isCorrect) {
     return result.spelling ? "typo" : "correct";
   }
@@ -27,59 +32,95 @@ function getVerdict({
   return result.score !== null && result.score > 0 ? "almost" : "incorrect";
 }
 
-function AnswerLines({
-  answerText,
+/**
+ * The right answer, for screens that don't show it themselves: language answers built from words.
+ * Options already turn green and red, and a written answer has its key points.
+ */
+function CorrectAnswerLine({
   result,
   step,
 }: {
-  answerText: string | null;
   result: LessonStepResult;
   step: PlayableLibraryStep;
 }) {
   const t = useExtracted();
-  const isOpenAnswer = step.kind === "typedAnswer" || step.kind === "spokenAnswer";
+
+  if (!result.correctAnswer || result.isCorrect || !result.checked || !isLanguageStep(step)) {
+    return null;
+  }
 
   return (
-    <dl className="flex flex-col gap-1 text-sm">
-      {answerText && !isOpenAnswer && (
-        <div className="flex flex-wrap gap-x-1.5">
-          <dt className="text-muted-foreground">
-            {step.kind === "hook" ? t("Your guess:") : t("You chose:")}
-          </dt>
-          <dd className="font-medium">
-            <LessonRichText text={answerText} />
-          </dd>
-        </div>
-      )}
+    <p className="text-sm">
+      <span className="text-muted-foreground">{t("Answer:")}</span>{" "}
+      <span className="text-success font-medium">
+        <LessonRichText text={result.correctAnswer} />
+      </span>
+    </p>
+  );
+}
 
-      {result.spelling && (
-        <div className="flex flex-wrap gap-x-1.5">
-          <dt className="text-muted-foreground">{t("Spelled:")}</dt>
-          <dd className="text-success font-medium">
-            <LessonRichText text={result.spelling} />
-          </dd>
-        </div>
-      )}
+/** A written answer nothing checked: why, and the sample answer to compare it with. */
+function UncheckedLine({ sampleAnswer }: { sampleAnswer: string }) {
+  const t = useExtracted();
 
-      {result.correctAnswer && (
-        <div className="flex flex-wrap gap-x-1.5">
-          <dt className="text-muted-foreground">
-            {isOpenAnswer ? t("A full answer:") : t("Answer:")}
-          </dt>
-          <dd className="text-success font-medium">
-            <LessonRichText text={result.correctAnswer} />
-          </dd>
-        </div>
-      )}
-    </dl>
+  return (
+    <div className="flex flex-col gap-1 text-sm">
+      <p className="text-muted-foreground">
+        {t("Each question is checked a few times a day. Compare your answer with this one:")}
+      </p>
+      <p className="text-base font-medium">
+        <LessonRichText text={sampleAnswer} />
+      </p>
+    </div>
+  );
+}
+
+function SpellingLine({ spelling }: { spelling: string }) {
+  const t = useExtracted();
+
+  return (
+    <p className="text-sm">
+      <span className="text-muted-foreground">{t("Spelled:")}</span>{" "}
+      <span className="text-success font-medium">
+        <LessonRichText text={spelling} />
+      </span>
+    </p>
   );
 }
 
 /**
- * The result of one screen, shared by both modes: the verdict, the learner's answer next to the
- * right one (or the right spelling, when a typo was all that was off), the why, and key points or
- * words heard. Focus shows it under the question; Fun shows
- * it on the back of the paper.
+ * A language answer's form mistakes, each struck through next to its right form: the ideas were
+ * stated (the key points say so), only how they were written needs fixing.
+ */
+function CorrectionLines({ corrections }: { corrections: LessonStepResult["corrections"] }) {
+  const t = useExtracted();
+
+  return (
+    <ul className="flex flex-col gap-1 text-sm" data-slot="lesson-corrections">
+      {corrections.map((correction) => (
+        <li
+          className="flex flex-wrap items-baseline gap-x-2"
+          key={`${correction.wrong}→${correction.right}`}
+        >
+          <span className="text-muted-foreground decoration-destructive line-through decoration-2">
+            <span className="sr-only">{t("Your answer:")} </span>
+            {correction.wrong}
+          </span>{" "}
+          <span className="text-success font-medium">
+            <span className="sr-only">{t("Correct answer:")} </span>
+            {correction.right}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * The result of one screen, shown under the question: the verdict and one why. The options on
+ * screen already show what was picked and what was right, so nothing repeats them; a written
+ * answer shows its key points instead of a paragraph, a typo its right spelling, a language
+ * answer's form mistakes their corrections, and a spoken one the words heard.
  */
 export function LessonStepResultView({
   result,
@@ -104,13 +145,21 @@ export function LessonStepResultView({
     >
       <div aria-live="polite" className="flex flex-col gap-3" role="status">
         <VerdictLabel verdict={verdict} />
-        <AnswerLines answerText={answerText} result={result} step={step} />
+        {result.spelling && <SpellingLine spelling={result.spelling} />}
+        {result.corrections.length > 0 && <CorrectionLines corrections={result.corrections} />}
+        <CorrectAnswerLine result={result} step={step} />
+        {!result.checked && result.correctAnswer && (
+          <UncheckedLine sampleAnswer={result.correctAnswer} />
+        )}
         {result.heard && step.kind === "spokenAnswer" && (
           <LessonSpokenWords heard={result.heard} language={step.content.language} />
         )}
-        {result.keyPoints && <LessonKeyPoints keyPoints={result.keyPoints} />}
-        {result.feedback && (
-          <LessonRichTextBlocks className="text-base leading-relaxed" text={result.feedback} />
+        {result.keyPoints ? (
+          <LessonKeyPoints keyPoints={result.keyPoints} />
+        ) : (
+          result.feedback && (
+            <LessonRichTextBlocks className="text-base leading-relaxed" text={result.feedback} />
+          )
         )}
         {wordHints && <WordHints hints={wordHints} />}
       </div>

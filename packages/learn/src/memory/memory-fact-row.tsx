@@ -20,7 +20,6 @@ import { Textarea } from "@zoonk/ui/components/textarea";
 import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { FUN_PRIMARY_BUTTON_CLASS } from "../_utils/fun-primary";
 import { MemoryFactSource } from "./memory-labels";
 
 /**
@@ -52,7 +51,7 @@ function EditFactDialog({
       }}
       open
     >
-      <DialogContent>
+      <DialogContent closeLabel={t("Close")}>
         <DialogHeader>
           <DialogTitle>{t("Edit memory")}</DialogTitle>
           <DialogDescription>{t("Say it the way it's true for you.")}</DialogDescription>
@@ -79,11 +78,7 @@ function EditFactDialog({
             <Button onClick={onClose} type="button" variant="outline">
               {t("Cancel")}
             </Button>
-            <Button
-              className={FUN_PRIMARY_BUTTON_CLASS}
-              disabled={!trimmed || trimmed === fact.statement}
-              type="submit"
-            >
+            <Button disabled={!trimmed || trimmed === fact.statement} type="submit">
               {t("Save")}
             </Button>
           </DialogFooter>

@@ -43,23 +43,27 @@ const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";
 
-const clean = taskResult({ issues: [] }, OPUS);
+/**
+ * A draft its code checks hold back: filler on screen 2, which the fix pass (replaying the draft)
+ * leaves as it was.
+ */
+const heldBack: RecordedDraft = {
+  ...recordedDraft,
+  screens: recordedDraft.screens.map((screen, index) =>
+    index === 2 && screen.kind === "explanation"
+      ? { ...screen, text: `It's worth noting that ${screen.text}` }
+      : screen,
+  ),
+};
 
-/** What held the school test's lessons back: a fact the reviewer still finds wrong after the fix. */
-const wrong = taskResult(
-  {
-    issues: [
-      {
-        fix: "Say that vaccines train the immune system without causing the disease.",
-        kind: "incorrect" as const,
-        problem: "Screen 3 says the vaccine gives a mild case of the disease.",
-        screen: 2,
-        severity: "blocking" as const,
-      },
-    ],
-  },
-  OPUS,
-);
+/** The writer's drafts in order: held back ones, then the recorded draft once they run out. */
+function mockDrafts(held: number) {
+  Array.from({ length: held }).forEach(() =>
+    vi
+      .mocked(writeLessonDraft)
+      .mockImplementationOnce(async (params) => taskResult(heldBack, params.model ?? SOL)),
+  );
+}
 
 /** A lesson of a learner's plan, its spec already written (reasoning check on, as for exams). */
 async function plannedLesson(attrs: Parameters<typeof libraryLessonFixture>[0] = {}) {
@@ -102,22 +106,22 @@ describe("lesson content redrafts", () => {
     );
 
     vi.mocked(fixLessonDraft).mockResolvedValue(
-      taskResult({ changedScreens: [2], lesson: recordedDraft }),
+      taskResult({ changedScreens: [2], lesson: heldBack }),
     );
-
-    vi.mocked(checkLessonQuality).mockResolvedValue(clean);
   });
 
   it("drafts a lesson its checks held back again in the same run, told why, and publishes it", async () => {
     const { lesson } = await plannedLesson();
-
-    vi.mocked(checkLessonQuality).mockResolvedValueOnce(wrong).mockResolvedValueOnce(wrong);
+    mockDrafts(1);
 
     await expect(
       lessonContentWorkflow({ forExam: true, lessonId: lesson.id }),
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 
     expect(writeLessonDraft).toHaveBeenCalledTimes(2);
+
+    // The reviewer reads the published lesson in the background, never on the way to it.
+    expect(checkLessonQuality).not.toHaveBeenCalled();
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
       heldBackProblems: [expect.objectContaining({ screen: 2 })],
@@ -133,8 +137,7 @@ describe("lesson content redrafts", () => {
 
   it("gives the last draft to another family's writer, then sets the lesson aside and the plan moves on", async () => {
     const { item, lesson } = await plannedLesson();
-
-    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+    mockDrafts(3);
 
     await expect(
       lessonContentWorkflow({ forExam: true, lessonId: lesson.id }),
@@ -165,7 +168,7 @@ describe("lesson content redrafts", () => {
       heldBackDrafts: [heldBackDraftFixture({ model: SOL })],
     });
 
-    vi.mocked(checkLessonQuality).mockResolvedValue(wrong);
+    mockDrafts(2);
 
     await expect(
       lessonContentWorkflow({ forExam: true, lessonId: lesson.id }),

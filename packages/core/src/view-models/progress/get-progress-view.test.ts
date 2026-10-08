@@ -1,5 +1,9 @@
 import { prisma } from "@zoonk/db";
-import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import {
+  attemptFixture,
+  learnerSkillFixture,
+  mistakeFixture,
+} from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
@@ -23,17 +27,20 @@ async function setup() {
 
 /** A skill studied long ago and not reviewed since: its memory has faded. */
 function fadedSkill({ days, skillId, userId }: { days: number; skillId: string; userId: string }) {
-  return learnerSkillFixture({
-    createdAt: daysAgo(days),
-    difficulty: 5,
-    lastReviewedAt: daysAgo(days),
-    recallDays: 1,
-    reps: 1,
-    skillId,
-    stability: 1,
-    state: "learning",
-    userId,
-  });
+  return Promise.all([
+    learnerSkillFixture({
+      createdAt: daysAgo(days),
+      difficulty: 5,
+      lastReviewedAt: daysAgo(days),
+      recallDays: 1,
+      reps: 1,
+      skillId,
+      stability: 1,
+      state: "learning",
+      userId,
+    }),
+    attemptFixture({ answeredAt: daysAgo(days), skillId, userId }),
+  ]);
 }
 
 /** A skill remembered a week out: Solid. */
@@ -66,8 +73,8 @@ describe(getProgressView, () => {
     await expect(getProgressView()).resolves.toStrictEqual({ status: "noGoal" });
   });
 
-  it("shows preparation, mastery per chapter, the most faded skills first and open mistakes", async () => {
-    const { chapters, goal, skills, user } = await setup();
+  it("shows preparation with what's fading, and open mistakes", async () => {
+    const { goal, skills, user } = await setup();
 
     await Promise.all([
       fadedSkill({ days: 5, skillId: skills[0]?.id ?? "", userId: user.id }),
@@ -82,15 +89,7 @@ describe(getProgressView, () => {
     expect(progress?.goal).toMatchObject({ id: goal.id, title: goal.title });
     expect(progress?.preparation?.goalId).toBe(goal.id);
     expect(progress?.preparation?.estimatedScore).toBeNull();
-
-    expect(
-      progress?.chapters.map((chapter) => [chapter.areaId, chapter.counts.total]),
-    ).toStrictEqual([
-      [chapters[0]?.id, 2],
-      [chapters[1]?.id, 2],
-    ]);
-
-    expect(progress?.fading.map((skill) => skill.name)).toStrictEqual(["Skill 3", "Skill 1"]);
+    expect(progress?.preparation?.skills).toMatchObject({ fading: 2, total: 4 });
     expect(progress?.mistakes).toStrictEqual({ open: 1 });
   });
 

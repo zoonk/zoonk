@@ -14,8 +14,8 @@ export type GoalPlanResult =
   | { status: "unauthorized" };
 
 /**
- * One of the learner's plans at every zoom level, the same view model for Focus and Fun. The
- * learner's day comes from the goal's timezone, then the request's.
+ * One of the learner's plans at every zoom level. The learner's day comes from the goal's timezone,
+ * then the request's.
  */
 export async function getGoalPlan(goalId: string): Promise<GoalPlanResult> {
   "use cache: private";

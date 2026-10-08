@@ -2,8 +2,20 @@ import { resolve } from "node:path";
 import { getTestEnvironment } from "@zoonk/db/test-environment";
 import { defineConfig } from "vitest/config";
 
+/**
+ * Prompts load as their text, as the apps' raw-loader serves them, so a prompt's version here is
+ * the one production records (stored readings and fixtures compare against it).
+ */
+const markdownAsText = {
+  enforce: "pre" as const,
+  name: "markdown-as-text",
+  transform(code: string, id: string) {
+    return id.endsWith(".md") ? `export default ${JSON.stringify(code)};` : null;
+  },
+};
+
 export default defineConfig({
-  assetsInclude: ["**/*.md"],
+  plugins: [markdownAsText],
   resolve: {
     alias: { "server-only": resolve(import.meta.dirname, "__mocks__/server-only.ts") },
     tsconfigPaths: true,

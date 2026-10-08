@@ -1,6 +1,7 @@
-import { type Item, type ItemFormat } from "@zoonk/db";
+import { type Item, type ItemFormat, type MediaAsset } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { type ParsedItemContent, parseItemContent } from "../../library/items/item-content";
+import { type ItemImage, toItemImage } from "../../library/items/item-image";
 import { type MistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { type ChoiceAnswer } from "../contract";
 
@@ -16,9 +17,17 @@ export const GRADABLE_ITEM_FORMATS = [
 
 type ChoiceContent = Extract<ParsedItemContent, { format: (typeof GRADABLE_ITEM_FORMATS)[number] }>;
 
-export type ChoiceItem = Pick<Item, "id" | "language" | "skillId"> & ChoiceContent;
+/** A bank question with the picture it shows, when it's about one. */
+export type ChoiceItem = Pick<Item, "id" | "language" | "skillId"> &
+  ChoiceContent & { image: ItemImage | null };
 
-type BankItem = Pick<Item, "content" | "format" | "id" | "language" | "skillId">;
+/**
+ * A bank item as reads return it. Reads that show questions include its picture's file
+ * (`ITEM_IMAGE_INCLUDE`); grading reads leave it out.
+ */
+export type BankItem = Pick<Item, "content" | "format" | "id" | "language" | "skillId"> & {
+  mediaAsset?: Pick<MediaAsset, "height" | "url" | "width"> | null;
+};
 
 function isGradableFormat(format: ItemFormat): format is ChoiceContent["format"] {
   return GRADABLE_ITEM_FORMATS.some((gradable) => gradable === format);
@@ -37,7 +46,13 @@ export function parseChoiceItem(item: BankItem): ChoiceItem | null {
     const parsed = parseItemContent({ content: item.content, format: item.format });
 
     return parsed.format === "multipleChoice" || parsed.format === "trueFalse"
-      ? { ...parsed, id: item.id, language: item.language, skillId: item.skillId }
+      ? {
+          ...parsed,
+          id: item.id,
+          image: toItemImage({ content: parsed.content, mediaAsset: item.mediaAsset }),
+          language: item.language,
+          skillId: item.skillId,
+        }
       : null;
   } catch (error) {
     logError(`Item ${item.id} has content that doesn't match its format.`, error);
@@ -47,7 +62,13 @@ export function parseChoiceItem(item: BankItem): ChoiceItem | null {
 
 /** The question as the learner sees it: never which answer is right or why. */
 export function toQuestionView(item: ChoiceItem) {
-  const base = { context: item.content.context, itemId: item.id, skillId: item.skillId };
+  const base = {
+    context: item.content.context,
+    image: item.image,
+    itemId: item.id,
+    skillId: item.skillId,
+    visual: item.content.visual,
+  };
 
   if (item.format === "trueFalse") {
     return { ...base, format: item.format, options: null, question: item.content.statement };

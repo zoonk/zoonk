@@ -13,10 +13,7 @@ function PatternIcon({ kind }: { kind: MistakePatternView["kind"] }) {
   return (
     <span
       aria-hidden="true"
-      className={cn(
-        "bg-info/10 text-info flex size-12 items-center justify-center rounded-2xl [&_svg]:size-6",
-        "in-data-[mode=fun]:bg-fun-soft in-data-[mode=fun]:text-fun-accent-violet",
-      )}
+      className="bg-info/10 text-info flex size-12 items-center justify-center rounded-2xl [&_svg]:size-6"
     >
       {kind === "typos" ? <KeyboardIcon /> : <SparklesIcon />}
     </span>
@@ -65,7 +62,7 @@ function ContrastRows({ contrast }: { contrast: MistakePatternView["contrast"] }
   }
 
   return (
-    <ul className="bg-muted/70 in-data-[mode=fun]:fun-glass divide-background in-data-[mode=fun]:divide-fun-line flex flex-col divide-y rounded-2xl">
+    <ul className="bg-muted/70 divide-background flex flex-col divide-y rounded-2xl">
       {contrast.map((row) => (
         <li className="flex items-center gap-3 px-4 py-3" key={row.label}>
           <ContrastLabel label={row.label} />
@@ -102,21 +99,21 @@ function AlsoCameUp({ examples }: { examples: PatternExample[] }) {
   );
 }
 
-/** "We noticed a pattern": one mistake as the example, the rule, the contrast and where else. */
+/**
+ * "We noticed a pattern", with the pattern as its title: one mistake as the example, the rule, the
+ * contrast and where else.
+ */
 export function PatternIntro({ pattern }: { pattern: MistakePatternView }) {
   const t = useExtracted();
   const [first, ...others] = pattern.examples;
 
   return (
     <>
+      {/* The pattern itself is the big thing; that it was noticed is its label. */}
       <header className="flex flex-col gap-2">
         <PatternIcon kind="pattern" />
-        <p className="text-info in-data-[mode=fun]:text-fun-accent-violet mt-2 text-sm font-semibold">
-          {pattern.title}
-        </p>
-        <h1 className="in-data-[mode=fun]:font-fun-display text-3xl font-bold tracking-tight">
-          {t("We noticed a pattern")}
-        </h1>
+        <p className="text-info mt-2 text-sm font-semibold">{t("We noticed a pattern")}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-balance">{pattern.title}</h1>
         <p className="text-muted-foreground">
           {t(
             "{count, plural, =0 {It came up in your recent answers.} one {It came up once in your recent answers.} other {It came up # times in your recent answers.}}",
@@ -139,9 +136,7 @@ export function TyposNote({ pattern }: { pattern: MistakePatternView }) {
   return (
     <header className="flex flex-col gap-2">
       <PatternIcon kind="typos" />
-      <h1 className="in-data-[mode=fun]:font-fun-display mt-2 text-3xl font-bold tracking-tight">
-        {t("Just typos")}
-      </h1>
+      <h1 className="mt-2 text-3xl font-bold tracking-tight">{t("Just typos")}</h1>
       <p className="text-muted-foreground">
         {t(
           "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice.",

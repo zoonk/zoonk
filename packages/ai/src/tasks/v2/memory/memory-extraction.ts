@@ -11,7 +11,8 @@ import { type MemoryFactCategory, memoryCategorySchema } from "./memory-facts";
 
 /**
  * A background call after every chat, session and onboarding. In the memory-extraction eval Luna
- * and Gemini 3.8 Flash tied at the top and Luna costs a sixteenth as much.
+ * and Gemini 3.8 Flash tied at the top and Luna costs a sixteenth as much. Claude Haiku 5.5 with
+ * thinking off scored 9.44 against Luna's 9.78 on 18 cases (7 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;

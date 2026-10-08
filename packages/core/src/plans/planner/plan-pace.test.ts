@@ -2,14 +2,28 @@ import { describe, expect, it } from "vitest";
 import { choosePace, isMorePrecise } from "./plan-pace";
 
 describe(choosePace, () => {
-  it("uses the learner's own pace once they finished enough lessons", () => {
-    expect(
-      choosePace({
-        course: { count: 100, ratio: 1.1 },
-        own: { count: 5, ratio: 1.3 },
-        typical: { count: 900, ratio: 1 },
-      }),
-    ).toStrictEqual({ factor: 1.3, source: "own" });
+  it("uses the learner's own pace once they finished enough lessons, more of it as they finish more", () => {
+    const others = { course: { count: 100, ratio: 1.1 }, typical: { count: 900, ratio: 1 } };
+
+    // Five lessons are a hint: the pace moves toward theirs from the course's.
+    expect(choosePace({ ...others, own: { count: 5, ratio: 1.3 } })).toStrictEqual({
+      factor: 1.14,
+      source: "own",
+    });
+
+    expect(choosePace({ ...others, own: { count: 180, ratio: 1.3 } }).factor).toBe(1.28);
+  });
+
+  it("doesn't halve a plan on a few quick lessons", () => {
+    // A learner who breezed through five easy lessons at half the estimate.
+    const pace = choosePace({
+      course: null,
+      own: { count: 5, ratio: 0.5 },
+      typical: { count: 900, ratio: 1.02 },
+    });
+
+    expect(pace.source).toBe("own");
+    expect(pace.factor).toBeGreaterThan(0.9);
   });
 
   it("falls back to others on the same lessons, then to everyone", () => {

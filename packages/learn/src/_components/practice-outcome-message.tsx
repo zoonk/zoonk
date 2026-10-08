@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { type AreaPracticeOutcome } from "../progress/progress-context";
+import { type AreaPracticeOutcome } from "../_utils/use-practice-run";
 
 /**
  * Why a bonus practice didn't open. The caller says what the daily cap and an empty practice mean

@@ -16,6 +16,13 @@ export const LIVE_CALL_WRAP_UP_CUE =
   "Time is almost up. Wrap up in one short sentence and say goodbye.";
 
 /**
+ * Sent once when the learner has been quiet for a while; the call ends on its own if they stay
+ * quiet, since the session is paid by the second, silence included.
+ */
+export const LIVE_CALL_SILENCE_CUE =
+  "The learner has been quiet for a while. In one short sentence and in your role, ask whether they're still there, then wait.";
+
+/**
  * A reply the learner typed instead of saying it. It goes in quoted, as data: what the learner
  * types is part of the conversation, never instructions.
  */

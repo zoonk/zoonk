@@ -5,6 +5,7 @@ import {
   type LessonPlayerAnswer,
   type LessonPlayerCompletionState,
   type LessonPlayerLesson,
+  type LessonRunAnswers,
   type LessonRunHyperdrive,
   type LessonRunRefusal,
   type LessonStepResult,
@@ -21,7 +22,13 @@ type CheckIssue = HelpLimit | { status: "noSpeech" };
 
 type LessonPlayerRun =
   | { refusal: LessonRunRefusal; status: "refused" }
-  | { hyperdrive: LessonRunHyperdrive; runId: string; status: "started" }
+  | {
+      /** Screens answered in earlier sittings, which Hyperdrive leaves out: it's this sitting's. */
+      carriedStepIds: string[];
+      hyperdrive: LessonRunHyperdrive;
+      runId: string;
+      status: "started";
+    }
   | { status: "idle" }
   | { status: "starting" };
 
@@ -29,7 +36,7 @@ type LessonPlayerRun =
 type QuickCheck = { missed: boolean; returnPosition: number; returnQueue: string[] };
 
 /**
- * The lesson in play. One reducer drives every screen kind in both modes: skins read this state,
+ * The lesson in play. One reducer drives every screen kind: the player's parts read this state,
  * they never add their own.
  */
 export type LessonPlayerState = {
@@ -46,14 +53,14 @@ export type LessonPlayerState = {
   lessonId: string;
   /**
    * Answers missed in a row since the last right one, oldest first: two on the same idea mean the
-   * learner is struggling, so a simpler explanation is offered.
+   * learner is struggling (`getStruggleOffer`).
    */
   misses: { skillId: string | null; stepId: string }[];
   /**
-   * A missed quick check brought the learner back to the lesson, or a language answer was wrong
-   * and the learner gets to fix it before the answer shows.
+   * A language answer was wrong and the learner gets to fix it before the answer shows, or an
+   * answer never reached the server and the lesson came back to its screen to finish.
    */
-  notice: "quickCheckMissed" | "selfCorrect" | null;
+  notice: "answerNotSaved" | "selfCorrect" | null;
   phase: LessonPlayerPhase;
   position: number;
   queue: string[];
@@ -64,6 +71,11 @@ export type LessonPlayerState = {
   /** How many steps of each worked example are shown. */
   revealed: Record<string, number>;
   run: LessonPlayerRun;
+  /**
+   * Back on an answered screen with Previous: it shows its result again, without a sound, and
+   * Continue goes on to where the learner was.
+   */
+  reviewing: boolean;
   /** Language answers that already had their one chance to self-correct. */
   selfCorrected: string[];
   startedAt: number;
@@ -81,7 +93,14 @@ export type LessonPlayerAction =
   | { kinds: PlayableLibraryStep["kind"][]; type: "skipKinds" }
   | { refusal: LessonRunRefusal; type: "runRefused" }
   | { result: LessonPlayerCompletionState["result"]; type: "completionSaved" }
-  | { hyperdrive: LessonRunHyperdrive; runId: string; type: "runStarted" }
+  | {
+      answers: LessonRunAnswers;
+      hyperdrive: LessonRunHyperdrive;
+      runId: string;
+      startedAt: string;
+      type: "runStarted";
+    }
+  | { answers: LessonRunAnswers; type: "runResynced" }
   | { issue?: CheckIssue; stepId: string; type: "checkFailed" }
   | { stepId: string; type: "checkStarted" }
   | { type: "completionFailed" }
@@ -89,7 +108,6 @@ export type LessonPlayerAction =
   | { type: "continue" }
   | { type: "explainFirst" }
   | { type: "knowThis" }
-  | { type: "restart" }
   | { type: "runStarting" };
 
 export function createInitialState(
@@ -117,6 +135,7 @@ export function createInitialState(
     results: {},
     retried: [],
     revealed: {},
+    reviewing: false,
     run: { status: "idle" },
     selfCorrected: [],
     startedAt: now,

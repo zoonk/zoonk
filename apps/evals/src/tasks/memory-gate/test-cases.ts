@@ -70,8 +70,26 @@ export const TEST_CASES: GateCase[] = [
       evidence: "my ENEM is on November 8",
       statement: "Has the ENEM on November 8",
     },
+    decision: "notLasting",
+    id: "en-goal-exam-date",
+  }),
+  gateCase({
+    candidate: {
+      category: "goals",
+      evidence: "eu disse que a prova era em março, por que o plano é pra janeiro?",
+      statement: "Tem prova em março de 2027",
+    },
+    decision: "notLasting",
+    id: "pt-goal-exam-month",
+  }),
+  gateCase({
+    candidate: {
+      category: "context",
+      evidence: "I'm moving to Italy in June next year",
+      statement: "Moves to Italy in June 2027",
+    },
     decision: "keep",
-    id: "en-keep-goal-exam-date",
+    id: "en-keep-dated-move",
   }),
   gateCase({
     candidate: {
@@ -259,5 +277,32 @@ export const TEST_CASES: GateCase[] = [
     },
     decision: "keep",
     id: "pt-sensitive-asked-adult",
+  }),
+  gateCase({
+    candidate: {
+      category: "routine",
+      evidence: "can you set my plan to 30 minutes a day?",
+      statement: "Studies 30 minutes a day",
+    },
+    decision: "notLasting",
+    id: "en-goal-setting-daily-time",
+  }),
+  gateCase({
+    candidate: {
+      category: "routine",
+      evidence: "aos domingos eu só consigo estudar 1 hora",
+      statement: "Só consegue estudar 1 hora aos domingos",
+    },
+    decision: "notLasting",
+    id: "pt-goal-setting-sunday-hour",
+  }),
+  gateCase({
+    candidate: {
+      category: "goals",
+      evidence: "quero mais biologia e química no plano, física pode ser menos",
+      statement: "Quer priorizar Biologia e Química",
+    },
+    decision: "notLasting",
+    id: "pt-goal-setting-focus",
   }),
 ];

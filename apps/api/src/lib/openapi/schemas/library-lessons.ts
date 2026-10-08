@@ -53,26 +53,18 @@ const stepCitationSchema = z
   });
 
 function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
-  const content = stepContentSchemas[kind];
-
-  const variant = z
-    .object({
-      content,
-      id: z
-        .uuid()
-        .meta({ description: "The shared version, to vote on it rather than the screen" }),
-    })
-    .nullable();
-
   return z.object({
     ...stepBaseShape,
     citation: stepCitationSchema,
-    content,
+    content: stepContentSchemas[kind],
     image: stepImageSchema,
+    imagePending: z
+      .boolean()
+      .meta({
+        description:
+          "The screen asks for a picture that is still being drawn (the lesson was written moments ago): read the lesson again in a few seconds for `image`",
+      }),
     kind: z.literal(kind),
-    variants: z
-      .object({ deeper: variant, simpler: variant })
-      .meta({ description: '"Simpler" and "Go deeper" versions someone already asked for' }),
   });
 }
 

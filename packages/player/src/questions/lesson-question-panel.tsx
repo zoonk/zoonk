@@ -1,5 +1,6 @@
 "use client";
 
+import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Sheet,
@@ -11,6 +12,7 @@ import {
 } from "@zoonk/ui/components/sheet";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
 import { QuestionComposer } from "./lesson-question-composer";
 import {
   type LessonQuestionNavigation,
@@ -20,23 +22,19 @@ import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
-/** What the sheet is about: the part of a lesson in view, or the thing asked about as a whole. */
+/** What the sheet is about: the screen or answer in view, or the thing asked about as a whole. */
 function LessonQuestionPanelDescription({
   context,
-  stepCount,
 }: {
   context: LessonQuestionController["state"]["context"];
-  stepCount: number;
 }) {
   const t = useExtracted();
 
   switch (context.kind) {
     case "answer":
+      return t("Ask about your answer");
     case "step":
-      return t("Part {current} of {total}", {
-        current: String(context.stepIndex + 1),
-        total: String(stepCount),
-      });
+      return t("Ask about this screen");
     case "chapter":
       return t("Ask questions about this chapter");
     case "lesson":
@@ -50,19 +48,28 @@ function LessonQuestionPanelDescription({
   }
 }
 
+/** The buddy the learner is talking to, by face and name, and what the questions are about. */
 function LessonQuestionPanelHeader({
   controller,
-  stepCount,
+  identity,
 }: {
   controller: LessonQuestionController;
-  stepCount: number;
+  identity: TutorIdentity;
 }) {
   const t = useExtracted();
 
   return (
     <SheetHeader className="gap-0 border-b px-3 py-3 sm:px-4">
-      <div className="flex items-center justify-between gap-2">
-        <SheetTitle>{t("Ask questions")}</SheetTitle>
+      <div className="flex items-center gap-3">
+        <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center">
+          {identity.avatar}
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <SheetTitle className="truncate">{identity.name}</SheetTitle>
+          <SheetDescription className="text-xs">
+            <LessonQuestionPanelDescription context={controller.state.context} />
+          </SheetDescription>
+        </div>
         <SheetClose
           render={
             <Button
@@ -76,23 +83,28 @@ function LessonQuestionPanelHeader({
           <XIcon aria-hidden="true" />
         </SheetClose>
       </div>
-      <SheetDescription className="text-xs">
-        <LessonQuestionPanelDescription context={controller.state.context} stepCount={stepCount} />
-      </SheetDescription>
     </SheetHeader>
   );
 }
 
 /**
- * The tutor's sheet: the thread about where the learner is and, for learners who can ask, the
- * composer.
+ * Inside a lesson, closing the sheet hands focus back to the lesson so Enter goes on; elsewhere
+ * it returns to the button that opened it.
+ */
+function getFinalFocus(): HTMLElement | true {
+  return getLessonFocusTarget() ?? true;
+}
+
+/**
+ * The questions sheet, where the learner talks to their buddy about where they are: the thread
+ * and, for learners who can ask, the composer.
  */
 export function LessonQuestionSheet({
+  identity,
   navigation,
-  stepCount,
 }: {
+  identity: TutorIdentity;
   navigation: LessonQuestionNavigation;
-  stepCount: number;
 }) {
   const controller = useLessonQuestionController();
   const { canAskQuestions, state } = controller;
@@ -102,13 +114,17 @@ export function LessonQuestionSheet({
       <Sheet onOpenChange={(open) => !open && controller.close()} open={state.isOpen}>
         <SheetContent
           className="gap-0 outline-none data-[side=right]:w-full sm:max-w-md"
-          showCloseButton={false}
+          finalFocus={getFinalFocus}
           side="right"
         >
-          <LessonQuestionPanelHeader controller={controller} stepCount={stepCount} />
+          <LessonQuestionPanelHeader controller={controller} identity={identity} />
 
           <div className="min-h-0 flex-1">
-            <QuestionThread controller={controller} isAuthenticated={canAskQuestions} />
+            <QuestionThread
+              controller={controller}
+              identity={identity}
+              isAuthenticated={canAskQuestions}
+            />
           </div>
 
           {canAskQuestions && <QuestionComposer controller={controller} />}

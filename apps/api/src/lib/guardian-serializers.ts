@@ -14,6 +14,7 @@ export function serializeGuardianLink(link: GuardianLinkView) {
     expiresAt: serializeDate(link.expiresAt),
     guardianEmail: link.guardianEmail,
     id: link.id,
+    memoryOff: link.memoryOff,
     plusApprovedAt: serializeDate(link.plusApprovedAt),
     status: link.status,
   };

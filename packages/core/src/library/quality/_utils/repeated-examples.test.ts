@@ -20,7 +20,14 @@ function specOf(kinds: LessonScreenKind[]): LessonSpec {
 }
 
 function explanation(text: string): WrittenScreen {
-  return { exampleLineIdea: null, image: null, kind: "explanation", text, title: "Idea" };
+  return {
+    exampleLineIdea: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title: "Idea",
+    visual: null,
+  };
 }
 
 function check(question: string, options: [string, string] = ["Yes", "No"]): WrittenScreen {
@@ -33,6 +40,7 @@ function check(question: string, options: [string, string] = ["Yes", "No"]): Wri
       { isCorrect: false, reason: "Not quite.", text: options[1] },
     ],
     question,
+    visual: null,
   };
 }
 

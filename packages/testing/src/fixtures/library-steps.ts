@@ -31,14 +31,15 @@ export async function libraryStepFixture(
   });
 }
 
-/** Creates a shared "Simpler", "Go deeper", field or tool version of a step. */
+/** Creates a shared field or tool version of a step, a nursing version unless the test says. */
 export async function stepVariantFixture(
   attrs: FixtureAttrs<StepVariant, "content"> & Pick<StepVariant, "stepId">,
 ) {
   return prisma.stepVariant.create({
     data: {
-      content: { text: "Test simpler step content" },
-      kind: "simpler",
+      content: { text: "Test step content for nurses" },
+      key: "nursing",
+      kind: "field",
       ...fixtureProvenance(),
       ...attrs,
     },

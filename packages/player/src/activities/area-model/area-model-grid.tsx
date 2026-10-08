@@ -1,11 +1,11 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
+import { type LinearScale } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { ActivityPlaceHandle } from "../_components/activity-place-handle";
 import { usePlotScales } from "../_components/activity-plot";
-import { type LinearScale } from "../_utils/plot-scale";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { cutsToParts, moveCut } from "./area-model-cuts";
 
 export type SideCuts = { cuts: number[]; step: number; total: number };

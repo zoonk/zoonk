@@ -24,6 +24,22 @@ export type LiveConversationConnection = {
 };
 
 /**
+ * Tests mint nothing: they get this stand-in, and E2E tests answer the browser's Live WebSocket
+ * themselves, so no call reaches GPT-Live.
+ */
+const TEST_TOKEN = "test-live-token";
+
+function getTestConnection(): LiveConversationConnection {
+  return {
+    expiresAt: null,
+    model: LIVE_CONVERSATION_MODEL,
+    protocols: getGatewayRealtimeProtocols(TEST_TOKEN),
+    token: TEST_TOKEN,
+    url: LIVE_SESSIONS_URL,
+  };
+}
+
+/**
  * Mints a short-lived, single-use token so the browser talks to GPT-Live
  * directly and our gateway key never leaves the server. The gateway SDK's
  * `getToken` can't mint a Live token, so this calls the documented
@@ -33,8 +49,12 @@ export type LiveConversationConnection = {
 export async function createLiveConversationToken(): Promise<LiveConversationConnection> {
   const apiKey = process.env.AI_GATEWAY_API_KEY;
 
-  if (isTestEnvironment() || !apiKey) {
-    throw new Error("Live conversation tokens need AI_GATEWAY_API_KEY outside tests.");
+  if (isTestEnvironment()) {
+    return getTestConnection();
+  }
+
+  if (!apiKey) {
+    throw new Error("Live conversation tokens need AI_GATEWAY_API_KEY.");
   }
 
   const response = await fetch(CLIENT_SECRETS_URL, {

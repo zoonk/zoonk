@@ -6,18 +6,24 @@ import { useExtracted } from "next-intl";
 
 export type PlanStatus = NonNullable<PlanView["status"]>;
 
-/** One status in a few words, the same in both modes: Fun only draws it on the route. */
-export function usePlanStatusText() {
+/**
+ * One status in a few words: "One day ahead", "On track", "3 lessons to catch up" (lessons earlier
+ * days left, until they're done), "2 days behind". Being behind is a count to catch up on, never a
+ * judgment.
+ */
+function usePlanStatusText() {
   const t = useExtracted();
 
   return (status: PlanStatus): string => {
     switch (status.kind) {
       case "ahead":
-        return t("{days, plural, one {# day ahead of plan} other {# days ahead of plan}}", {
-          days: status.days,
-        });
+        return t("{days, plural, one {One day ahead} other {# days ahead}}", { days: status.days });
       case "behind":
-        return t("A bit behind");
+        return status.lessons
+          ? t("{lessons, plural, one {# lesson to catch up} other {# lessons to catch up}}", {
+              lessons: status.lessons,
+            })
+          : t("{days, plural, one {One day behind} other {# days behind}}", { days: status.days });
       case "needsAdjusting":
         return t("Needs adjusting");
       case "onTrack":

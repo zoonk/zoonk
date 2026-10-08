@@ -6,8 +6,10 @@ import {
   type PronunciationRoundResult,
 } from "@zoonk/core/language/pronunciation/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { CheckCircle2Icon, RotateCcwIcon } from "lucide-react";
+import { CheckCircle2Icon, MicIcon, RotateCcwIcon, ZapIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { FactChip, FactChips } from "../../_components/fact-chips";
+import { KindTile } from "../../_components/kind-tile";
 import { TaskFrame, TaskMainButton, TaskMainLink, TaskSaveError } from "../../shell/task-frame";
 import { PronunciationRecorder, PronunciationWordCard } from "./pronunciation-word-card";
 import { type PronunciationRoundActions, usePronunciationRound } from "./use-pronunciation-round";
@@ -54,10 +56,11 @@ function RoundResult({ result }: { result: PronunciationRoundResult | null }) {
   return (
     <div
       aria-live="polite"
-      className="flex flex-col items-center gap-3 py-8 text-center"
+      className="flex flex-1 flex-col items-center justify-center gap-4 py-8 text-center lg:flex-none"
       role="status"
     >
-      <h1 className="in-data-[mode=fun]:font-fun-display text-3xl font-bold tracking-tight tabular-nums">
+      <KindTile icon={MicIcon} kind="conversation" size="lg" />
+      <h1 className="text-3xl font-bold tracking-tight text-balance tabular-nums">
         {result
           ? t("{correct, number} of {total, number} sounded right", {
               correct: result.correct,
@@ -67,9 +70,12 @@ function RoundResult({ result }: { result: PronunciationRoundResult | null }) {
       </h1>
 
       {result && result.brainPower > 0 && (
-        <p className="text-score in-data-[mode=fun]:text-fun-accent-lime font-semibold tabular-nums">
-          {t("+{points} Brain Power", { points: format.number(result.brainPower) })}
-        </p>
+        <FactChips className="justify-center">
+          <FactChip>
+            <ZapIcon aria-hidden="true" />
+            {t("+{points} Brain Power", { points: format.number(result.brainPower) })}
+          </FactChip>
+        </FactChips>
       )}
 
       <p className="text-muted-foreground max-w-sm">
@@ -80,7 +86,7 @@ function RoundResult({ result }: { result: PronunciationRoundResult | null }) {
 }
 
 /**
- * Pronunciation reviews, full screen in Focus and Fun: each word the learner mispronounced comes
+ * Pronunciation reviews, full screen: each word the learner mispronounced comes
  * back with its native sound, a slow version, the respelling and the tip; they say it, see what we
  * heard, and the round counts toward their day at the end. Nothing due shows a short note.
  *
@@ -110,9 +116,12 @@ export function PronunciationReviewScreen({
         headerTitle={t("Say it again")}
       >
         {total === 0 ? (
-          <p className="text-muted-foreground py-8 text-center">
-            {t("No words to say again today.")}
-          </p>
+          <div className="flex flex-1 flex-col items-center justify-center gap-5 py-8 text-center lg:flex-none">
+            <KindTile icon={MicIcon} kind="conversation" size="lg" />
+            <p className="text-2xl font-bold tracking-tight text-balance" role="status">
+              {t("No words to say again today.")}
+            </p>
+          </div>
         ) : (
           <RoundResult result={step.kind === "result" ? step.result : null} />
         )}
@@ -134,7 +143,7 @@ export function PronunciationReviewScreen({
           {round.failed && <TaskSaveError onRetry={round.retryFinish} />}
           {graded && !graded.isCorrect && (
             <Button
-              className="in-data-[mode=fun]:fun-glass w-full"
+              className="w-full"
               onClick={round.tryAgain}
               size="xl"
               type="button"

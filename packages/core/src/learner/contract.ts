@@ -2,7 +2,21 @@ import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 
 /** An hour covers a slow typed answer; anything longer is a tab left open, not answering time. */
-const MAX_ANSWER_DURATION_MS = 3_600_000;
+export const MAX_ANSWER_DURATION_MS = 3_600_000;
+
+/**
+ * How long the learner took to answer. A screen left open overnight still saves: idle time isn't
+ * answering time, so anything past the limit counts as the limit instead of failing the answer.
+ */
+export const answerDurationSchema = z
+  .number()
+  .int()
+  .min(0)
+  .overwrite((durationMs) => Math.min(durationMs, MAX_ANSWER_DURATION_MS))
+  .meta({
+    description:
+      "Milliseconds from showing the question to the answer; anything over an hour counts as an hour",
+  });
 
 /**
  * A choice question's answer: the option picked (multiple choice), true or false (a statement),
@@ -20,11 +34,7 @@ export type ChoiceAnswer = z.infer<typeof choiceAnswerSchema>;
 
 /** One answer to one bank question, as placement, test-outs and mistake practice receive it. */
 export const itemAnswerInputSchema = z
-  .object({
-    answer: choiceAnswerSchema,
-    durationMs: z.number().int().min(0).max(MAX_ANSWER_DURATION_MS),
-    itemId: z.uuid(),
-  })
+  .object({ answer: choiceAnswerSchema, durationMs: answerDurationSchema, itemId: z.uuid() })
   .strict()
   .meta({ id: "ItemAnswerInput" });
 

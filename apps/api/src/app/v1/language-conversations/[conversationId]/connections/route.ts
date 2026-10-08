@@ -9,8 +9,9 @@ import { NextResponse } from "next/server";
 const CREATED = 201;
 
 /**
- * Opens the call: counts it toward the learner's conversations and returns a short-lived token for
- * GPT-Live with the Live WebSocket to open. The app talks to the model directly with it.
+ * Opens the call: holds its length from the day's call time on the learner's plan and returns a
+ * short-lived token for GPT-Live with the Live WebSocket to open and how long the call may run.
+ * The app talks to the model directly with it.
  */
 async function connectConversation(
   _request: Request,

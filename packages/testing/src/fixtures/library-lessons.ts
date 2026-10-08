@@ -5,12 +5,15 @@ import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
 const DEFAULT_ESTIMATED_MINUTES = 4;
 
-/** Creates a shared Library lesson outline (title and description) with a unique identity key. */
+/**
+ * Creates a shared Library lesson outline (title and description) with a unique identity key and,
+ * unless given one, a unique title: plans teach a title once, so lessons of one plan need their own.
+ */
 export async function libraryLessonFixture(
   attrs?: FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary">,
 ) {
   const key = randomUUID();
-  const title = attrs?.title ?? "Test Library Lesson";
+  const title = attrs?.title ?? `Test Library Lesson ${key.split("-")[0]}`;
 
   return prisma.lesson.create({
     data: {

@@ -1,9 +1,7 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
 import { CHAPTER_PARAM } from "@/lib/public/public-hrefs";
 import { getLibraryCourse } from "@zoonk/core/library/courses/get";
-import { DeviceModeRoot } from "@zoonk/learn/mode";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -16,7 +14,15 @@ import { CourseStartScreen } from "./course-start-screen";
 
 type Props = PageProps<"/[lang]/start/course/[courseId]">;
 
-const LIMIT_REASONS = new Set<string>(["dailyGoals", "guest", "oneActiveGoal", "slowDown"]);
+const LIMIT_REASONS = new Set<string>([
+  "dailyExplanations",
+  "dailyGoals",
+  "guest",
+  "monthlyExplanations",
+  "monthlyGoals",
+  "oneActiveGoal",
+  "slowDown",
+]);
 
 function isLimitReason(value: string): value is GoalLimitReason {
   return LIMIT_REASONS.has(value);
@@ -52,11 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 async function CourseStartContent({ params, searchParams }: Props) {
-  const [{ courseId }, query, mode] = await Promise.all([
-    params,
-    searchParams,
-    getExperienceMode(),
-  ]);
+  const [{ courseId }, query] = await Promise.all([params, searchParams]);
 
   const course = await loadStartableCourse(courseId);
 
@@ -80,7 +82,6 @@ async function CourseStartContent({ params, searchParams }: Props) {
         }))}
         course={{ id: course.id, title: course.title }}
         initialFailure={toFailure(readParam(query[COURSE_START_ERROR_PARAM]))}
-        initialMode={mode}
       />
     </MainLearnProvider>
   );
@@ -88,13 +89,11 @@ async function CourseStartContent({ params, searchParams }: Props) {
 
 function CourseStartSkeleton() {
   return (
-    <DeviceModeRoot>
-      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-4 px-4 pt-24 sm:pt-32">
-        <Skeleton className="h-9 w-3/4" />
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="mt-auto mb-8 h-12 w-full rounded-full" />
-      </main>
-    </DeviceModeRoot>
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-4 px-4 pt-24 sm:pt-32">
+      <Skeleton className="h-9 w-3/4" />
+      <Skeleton className="h-5 w-full" />
+      <Skeleton className="mt-auto mb-8 h-12 w-full rounded-full" />
+    </main>
   );
 }
 

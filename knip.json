@@ -36,7 +36,10 @@
       "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
-    "packages/ai": { "project": ["src/**/*.ts!", "!**/_test-utils/**!"] },
+    "packages/ai": {
+      "entry": ["scripts/*.ts!"],
+      "project": ["src/**/*.ts!", "!**/_test-utils/**!"]
+    },
     "packages/auth": { "project": ["src/**/*.ts!", "!**/_test-utils/**!"] },
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {

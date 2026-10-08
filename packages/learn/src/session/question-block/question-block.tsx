@@ -4,12 +4,15 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
+import { useEffect, useEffectEvent, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
+import { SessionBody } from "../session-body";
 import { type StudyBlockDetail, type StudySession } from "../session-types";
 import { StudyMoment } from "../study-moment";
 import { useBlockTitle } from "../use-block-copy";
 import { useMomentEvents } from "../use-moment-events";
+import { useSessionAction } from "../use-session-action";
 import { BlockDrillNotes, BlockQuestion, useBlockDrill } from "./block-question";
 import { PauseSuggestion } from "./pause-suggestion";
 import { QuestionBlockHeader } from "./question-block-header";
@@ -21,11 +24,7 @@ import { TimeMachine } from "./time-machine";
 import { useCapsuleEvents } from "./use-capsule-events";
 import { type QuestionBlockActions, useQuestionBlock } from "./use-question-block";
 
-type SessionContext = {
-  id: string;
-  missions: StudySession["missions"];
-  sessionBar: { completed: number; total: number };
-};
+type SessionContext = Pick<StudySession, "blocks" | "id" | "missions">;
 
 type SessionActions = QuestionBlockActions & {
   continueSession: () => Promise<boolean>;
@@ -78,6 +77,48 @@ function NextButton({ onNext }: { onNext: () => void }) {
   return <EnterButton onClick={onNext}>{t("Continue")}</EnterButton>;
 }
 
+/**
+ * The session's last block ends on the summary itself: a moment that only says "See what changed"
+ * would be one more tap. It opens as soon as the block is saved.
+ */
+function SessionEnd({ onEnd }: { onEnd: () => Promise<boolean> }) {
+  const t = useExtracted();
+  const { failed, run } = useSessionAction({ action: onEnd });
+  const opened = useRef(false);
+  const openSummary = useEffectEvent(run);
+
+  useEffect(() => {
+    if (!opened.current) {
+      opened.current = true;
+      openSummary();
+    }
+  }, []);
+
+  if (failed) {
+    return (
+      <SessionBody>
+        <div className="flex flex-col items-start gap-2" role="alert">
+          <p className="text-destructive text-sm">
+            {t("We couldn't open the next step. Try again.")}
+          </p>
+          <Button onClick={run} size="sm" variant="outline">
+            {t("Try again")}
+          </Button>
+        </div>
+      </SessionBody>
+    );
+  }
+
+  return (
+    <SessionBody className="items-center justify-center">
+      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
+        <Spinner />
+        {t("Saving your answers…")}
+      </p>
+    </SessionBody>
+  );
+}
+
 function FinishedBlock({
   actions,
   detail,
@@ -91,19 +132,35 @@ function FinishedBlock({
 }) {
   useMomentEvents({ missionsBefore: session.missions, moment });
 
+  if (moment.sessionCompleted) {
+    return <SessionEnd onEnd={actions.continueSession} />;
+  }
+
   return (
-    <StudyMoment
-      kind={detail.block.kind}
-      moment={moment}
-      onContinue={actions.continueSession}
-      onStop={actions.stop}
-    />
+    <SessionBody>
+      <StudyMoment
+        kind={detail.block.kind}
+        moment={moment}
+        next={session.blocks.find((block) => block.id === moment.nextBlockId) ?? null}
+        onContinue={actions.continueSession}
+        onStop={actions.stop}
+      />
+    </SessionBody>
   );
 }
 
+/** How the current question's answer went, or null before it's graded. */
+function getAnswerResult(phase: QuestionBlockPhase): "correct" | "wrong" | null {
+  if (phase.kind !== "feedback") {
+    return null;
+  }
+
+  return phase.feedback.isCorrect ? "correct" : "wrong";
+}
+
 /**
- * Votes on the question from the header's menu. A timed drill's clock never waits on a menu, so
- * its question is voted on once answered.
+ * The question the header's menu reports. A timed drill's clock never waits on a menu, so its
+ * question is reported once answered.
  */
 function getVoteTarget({
   phase,
@@ -122,8 +179,7 @@ function getVoteTarget({
 /**
  * One question block of today's session (capsules, practice or a mistake drill), played one
  * question at a time and ending with its completion moment. A saved mistake's drill
- * plays the way its cause calls for. Both modes share it; Fun puts questions on paper and shows
- * Hyperdrive live.
+ * plays the way its cause calls for.
  */
 export function QuestionBlock({
   actions,
@@ -153,57 +209,59 @@ export function QuestionBlock({
     );
   }
 
-  const capsule = detail.block.capsules.find((candidate) => candidate.key === question?.capsuleKey);
-
   return (
-    <div className="flex flex-1 flex-col gap-5" data-slot="question-block">
+    <>
       <QuestionBlockHeader
         exitHref={exitHref}
-        hyperdrive={run.state.hyperdrive}
         index={run.state.index}
-        sessionBar={session.sessionBar}
-        title={capsule?.title ?? blockTitle(detail.block)}
+        title={blockTitle(detail.block)}
         total={run.total}
         voteTarget={blockDrill.stage === "idea" ? null : getVoteTarget({ phase, question })}
       />
 
-      {isNetScoredQuestion({ detail, question }) && (
-        <SwipeScore detail={detail} answers={run.state.answers} />
-      )}
-      {question?.timeMachine && (
-        <TimeMachine
-          format={question.format}
-          machine={question.timeMachine}
-          trueFalseLabels={detail.trueFalseLabels}
-        />
-      )}
+      <SessionBody data-slot="question-block">
+        {isNetScoredQuestion({ detail, question }) && (
+          <SwipeScore detail={detail} answers={run.state.answers} />
+        )}
 
-      {question && (
-        <BlockQuestion
-          blockDrill={blockDrill}
-          detail={detail}
-          lessonHref={lessonHref}
-          question={question}
-          run={run}
-        />
-      )}
-
-      {phase.kind === "feedback" && question && (
-        <>
-          <QuestionFeedback
-            feedback={phase.feedback}
-            question={question}
+        {question?.timeMachine && (
+          <TimeMachine
+            format={question.format}
+            machine={question.timeMachine}
+            result={getAnswerResult(phase)}
             trueFalseLabels={detail.trueFalseLabels}
-          >
-            <BlockDrillNotes blockDrill={blockDrill} feedback={phase.feedback} phase={phase} />
-          </QuestionFeedback>
-          {phase.feedback.pauseSuggested && <PauseSuggestion onStop={actions.stop} />}
-        </>
-      )}
+          />
+        )}
 
-      <PhaseMessage onRetry={run.retryFinish} phase={phase} />
+        {question && (
+          <BlockQuestion
+            blockDrill={blockDrill}
+            detail={detail}
+            lessonHref={lessonHref}
+            question={question}
+            run={run}
+          />
+        )}
 
-      <div className="mt-auto">{phase.kind === "feedback" && <NextButton onNext={run.next} />}</div>
-    </div>
+        {phase.kind === "feedback" && question && (
+          <>
+            <QuestionFeedback
+              feedback={phase.feedback}
+              question={question}
+              trueFalseLabels={detail.trueFalseLabels}
+            >
+              <BlockDrillNotes blockDrill={blockDrill} feedback={phase.feedback} phase={phase} />
+            </QuestionFeedback>
+            {phase.feedback.pauseSuggested && <PauseSuggestion onStop={actions.stop} />}
+          </>
+        )}
+
+        <PhaseMessage onRetry={run.retryFinish} phase={phase} />
+
+        <div className="mt-auto">
+          {phase.kind === "feedback" && <NextButton onNext={run.next} />}
+        </div>
+      </SessionBody>
+    </>
   );
 }

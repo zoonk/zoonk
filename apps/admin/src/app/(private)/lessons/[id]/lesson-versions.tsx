@@ -49,7 +49,7 @@ function groupVersions(steps: LibraryLessonStep[]): VersionRow[] {
 
 /**
  * Which models, prompt versions and step contract versions wrote this lesson's screens and their
- * "Simpler", "Go deeper", field and tool versions. A lesson partly rewritten shows two rows.
+ * field and tool versions. A lesson partly rewritten shows two rows.
  */
 export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
   const versions = groupVersions(steps);

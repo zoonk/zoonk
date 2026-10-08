@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { withApiImageUrls } from "@/lib/file-urls";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { getExplanation } from "@zoonk/core/view-models/explain/get";
@@ -22,7 +23,9 @@ async function getGoalExplanation(
     return errors.unauthorized();
   }
 
-  return result.status === "ready" ? NextResponse.json(result.explanation) : errors.notFound();
+  return result.status === "ready"
+    ? NextResponse.json(withApiImageUrls(result.explanation))
+    : errors.notFound();
 }
 
 export const GET = withApiErrorBoundary(getGoalExplanation);

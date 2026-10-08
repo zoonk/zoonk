@@ -1,5 +1,8 @@
 import "server-only";
-import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
+import {
+  LIBRARY_IDENTITY_MIN_PROBABILITY,
+  decideLibraryIdentity,
+} from "@zoonk/ai/tasks/v2/identity/decision";
 import {
   type LibraryIdentityCandidate,
   type LibraryIdentitySubject,
@@ -86,18 +89,26 @@ async function searchStoredSources({
 }
 
 /**
- * Each candidate gets its own reuse decision, since research can reuse several documents (a law
- * and its regulation, syllabi from two universities), not only the best one.
+ * The candidates whose own reuse verdict passes, not only the best one, since research can reuse
+ * several documents (a law and its regulation, syllabi from two universities). One decision
+ * judges every candidate, each on its own question.
  */
-async function isReusable({
-  candidate,
+async function findReusable({
+  candidates,
   subject,
 }: {
-  candidate: LibraryIdentityCandidate;
+  candidates: LibraryIdentityCandidate[];
   subject: LibraryIdentitySubject;
-}): Promise<boolean> {
-  const { match } = await decideLibraryIdentity({ candidates: [candidate], subject });
-  return match !== null;
+}): Promise<LibraryIdentityCandidate[]> {
+  const { verdicts } = await decideLibraryIdentity({ candidates, subject });
+
+  const reusable = new Set(
+    verdicts
+      .filter((verdict) => verdict.probability >= LIBRARY_IDENTITY_MIN_PROBABILITY)
+      .map((verdict) => verdict.id),
+  );
+
+  return candidates.filter((candidate) => reusable.has(candidate.id));
 }
 
 /**
@@ -136,12 +147,7 @@ export async function findStoredResearchSources(request: StoredSourcesRequest): 
     language: request.language,
   };
 
-  const reusable = await Promise.all(
-    candidates.map((candidate) => isReusable({ candidate, subject })),
-  );
+  const reusable = await findReusable({ candidates, subject });
 
-  return candidates
-    .filter((_candidate, index) => reusable[index])
-    .slice(0, MAX_REUSED_SOURCES)
-    .map((candidate) => candidate.id);
+  return reusable.slice(0, MAX_REUSED_SOURCES).map((candidate) => candidate.id);
 }

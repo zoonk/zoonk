@@ -1,4 +1,6 @@
+import { prisma } from "@zoonk/db";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { getExamCalendar } from "./exam-calendar";
 
@@ -59,10 +61,42 @@ describe(getExamCalendar, () => {
       timeZone: "America/Sao_Paulo",
     });
 
-    // The plan's own date for an estimate (two weeks early) doesn't replace the exam's days.
-    const planned = { ...goal, targetDate: new Date("2028-10-29T00:00:00Z") };
+    // The plan counts down to the estimated day itself, so the screen keeps the estimated days.
+    const planned = { ...goal, targetDate: new Date("2028-11-12T00:00:00Z") };
 
-    expect(getExamCalendar({ blueprint, goal: planned }).days[0]?.date).toBe("2028-11-12");
+    expect(getExamCalendar({ blueprint, goal: planned })).toMatchObject({
+      days: [{ date: "2028-11-12" }, { date: "2028-11-19" }],
+      estimated: true,
+    });
+  });
+
+  it("shows the date the plan counts down to when it isn't one of the notice's days", async () => {
+    const blueprint = await examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
+    const goal = { ...GOAL, targetDate: new Date("2027-03-14T00:00:00Z") };
+
+    expect(getExamCalendar({ blueprint, goal })).toStrictEqual({
+      days: [{ date: "2027-03-14", label: null, startTime: null }],
+      estimated: false,
+      timeZone: null,
+    });
+  });
+
+  it("marks the start of the month the learner named as a guess when the notice gives another month", async () => {
+    // She said "March"; the notice's official day is in January: the plan keeps her month until
+    // she answers the notice's day, and every screen says it's a guess.
+    const blueprint = await examBlueprint({ days: ["2027-01-10"], year: 2026 });
+
+    const goal = {
+      ...GOAL,
+      details: { examMonth: 3, examYear: 2027 },
+      targetDate: new Date("2027-03-01T00:00:00Z"),
+    };
+
+    expect(getExamCalendar({ blueprint, goal })).toStrictEqual({
+      days: [{ date: "2027-03-01", label: null, startTime: null }],
+      estimated: true,
+      timeZone: null,
+    });
   });
 
   it("estimates the next edition once the notice's days all passed before the goal started", async () => {
@@ -71,6 +105,32 @@ describe(getExamCalendar, () => {
     expect(getExamCalendar({ blueprint, goal: GOAL })).toMatchObject({
       days: [{ date: "2027-07-25", label: "Day 1", startTime: "13:30" }],
       estimated: true,
+    });
+  });
+
+  it("never estimates a class test's day from the learner's old material: its own date counts", async () => {
+    // Last year's slides name last year's test day: no edition comes after it.
+    const [slides, learner] = await Promise.all([
+      examBlueprint({ days: ["2025-10-09"], year: 2025 }),
+      userFixture(),
+    ]);
+
+    const material = await prisma.examBlueprint.update({
+      data: { ownerId: learner.id, visibility: "private" },
+      where: { id: slides.id },
+    });
+
+    const dated = { ...GOAL, targetDate: new Date("2026-10-09T00:00:00Z") };
+
+    expect(getExamCalendar({ blueprint: material, goal: dated })).toStrictEqual({
+      days: [{ date: "2026-10-09", label: null, startTime: null }],
+      estimated: false,
+      timeZone: null,
+    });
+
+    expect(getExamCalendar({ blueprint: material, goal: GOAL })).toMatchObject({
+      days: [],
+      estimated: false,
     });
   });
 

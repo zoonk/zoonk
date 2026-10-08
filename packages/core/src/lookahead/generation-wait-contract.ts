@@ -6,7 +6,7 @@ const MAX_WAIT_MS = 600_000;
 export const generationWaitInputSchema = z
   .object({
     contentKind: z
-      .enum(["lesson", "explanation", "curriculum", "variant"])
+      .enum(["lesson", "explanation", "curriculum"])
       .meta({ description: "What the learner waited for" }),
     locale: z.string().min(2).max(10).optional(),
     milliseconds: z

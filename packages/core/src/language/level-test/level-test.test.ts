@@ -2,6 +2,8 @@ import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunci
 import { generateLevelTestBank } from "@zoonk/ai/tasks/v2/language/level-test-bank";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -111,7 +113,8 @@ describe("language level test", () => {
         ? answered.test.levels.map((level) => level.skill)
         : [];
 
-    expect(answeredLevels).toStrictEqual(["reading", "listening", "writing"]);
+    // Nothing in the test is written, so writing gets no level until lessons show one.
+    expect(answeredLevels).toStrictEqual(["reading", "listening"]);
 
     const finished = await finishLanguageLevelTest(goal.id);
 
@@ -120,22 +123,56 @@ describe("language level test", () => {
     // The learner stopped before the sentence out loud: speaking wasn't tested, so it gets no level.
     expect(
       finished.status === "ready" ? finished.levels.map((level) => level.skill) : [],
-    ).toStrictEqual(["reading", "listening", "writing"]);
+    ).toStrictEqual(["reading", "listening"]);
 
     const [levels, saved] = await Promise.all([
       prisma.languageSkillLevel.findMany({ where: { language: "en", userId: user.id } }),
       prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
     ]);
 
-    expect(levels.map((level) => level.skill).toSorted()).toStrictEqual([
-      "listening",
-      "reading",
-      "writing",
-    ]);
+    expect(levels.map((level) => level.skill).toSorted()).toStrictEqual(["listening", "reading"]);
 
     expect(levels.every((level) => level.score === level.startScore)).toBe(true);
     expect(saved.details).toMatchObject({ skillLevels: { reading: expect.any(String) } });
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
+    expect(saved.details).not.toHaveProperty("skillLevels.writing");
+  });
+
+  // Marcos' level test took him minutes that his statistics never showed.
+  it("counts the time the test took as study time, once", async () => {
+    await saveBank();
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    await answerLanguageLevelTest({
+      goalId: goal.id,
+      input: { answerIndex: 1, durationMs: 40_000, questionId: "reading-A2-0" },
+    });
+
+    const next = await getLanguageLevelTest(goal.id);
+
+    const questionId =
+      next.status === "ready" && next.test.status === "ready" && next.test.next.kind === "question"
+        ? next.test.next.question.id
+        : "";
+
+    await answerLanguageLevelTest({
+      goalId: goal.id,
+      input: { answerIndex: 0, durationMs: 20_000, questionId },
+    });
+
+    await finishLanguageLevelTest(goal.id);
+    await finishLanguageLevelTest(goal.id);
+
+    const events = await prisma.learningEvent.findMany({
+      where: { goalId: goal.id, lessonKind: "levelTest", userId: user.id },
+    });
+
+    const progress = await prisma.dailyProgress.findMany({ where: { userId: user.id } });
+
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({ correctAnswers: 1, incorrectAnswers: 1, seconds: 60 });
+    expect(progress.reduce((sum, day) => sum + day.timeSpentSeconds, 0)).toBe(60);
   });
 
   it("sets the speaking level from the sentence said out loud", async () => {
@@ -237,6 +274,52 @@ describe("language level test", () => {
     ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
 
     expect(assessPronunciation).not.toHaveBeenCalled();
+  });
+
+  it("starts the plan at the level: units of a band below it are tested out", async () => {
+    await saveBank();
+    const { goal, items, lessons, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    const [basics, onLevel] = await Promise.all([
+      skillFixture({ language: "pt", level: "beginner", name: "Chegar ao aeroporto" }),
+      skillFixture({ language: "pt", level: "intermediate", name: "Negociar o aluguel" }),
+    ]);
+
+    // Right up to B2 in reading and listening: B1 or above, past the A1–A2 band.
+    const answers = ["reading", "listening"].flatMap((skill) =>
+      ["A2", "B1", "B2"].map((level) => `${skill}-${level}-0`),
+    );
+
+    await Promise.all([
+      ...lessons.map((lesson, index) =>
+        lessonSkillFixture({ lessonId: lesson.id, skillId: (index < 2 ? basics : onLevel).id }),
+      ),
+      prisma.goal.update({
+        data: {
+          details: {
+            ...(goal.details as object),
+            levelTest: { answers: answers.map((id) => ({ answerIndex: 1, id })), speaking: null },
+          },
+        },
+        where: { id: goal.id },
+      }),
+    ]);
+
+    await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({ status: "ready" });
+
+    const statuses = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      select: { status: true },
+      where: { id: { in: items.map((item) => item.id) } },
+    });
+
+    expect(statuses.map((item) => item.status)).toStrictEqual([
+      "testedOut",
+      "testedOut",
+      "todo",
+      "todo",
+    ]);
   });
 
   it("doesn't test a goal of another kind", async () => {

@@ -21,7 +21,7 @@ const scoreCategories = defineScoreCategories([
   },
   {
     expectations:
-      "Matches the house style: flat shapes, rounded corners, soft shadows, one focal object with lots of space, a light plain background, two to four soft colors and one accent. A photo, 3D render, poster, infographic, dark or busy background caps this at 4.",
+      "Matches the house style: a portrait picture with flat shapes, rounded corners, soft shadows, one focal object (or one whole with its parts) with lots of space, a plain white background, two to four soft colors and one accent. A photo, 3D render, poster, infographic, dark or busy background caps this at 4.",
     id: "style",
     label: "House style",
     weight: 35,

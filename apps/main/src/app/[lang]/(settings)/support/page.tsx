@@ -6,8 +6,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
-    description: t("Share feedback, ask questions, or get help with your account and courses."),
-    title: t("Feedback & Support"),
+    description: t("Ask a question, report a problem or share an idea. We answer by email."),
+    title: t("Help"),
   };
 }
 

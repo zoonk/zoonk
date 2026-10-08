@@ -1,11 +1,11 @@
 import { type LanguageSummary, summarizeByLanguage } from "@/lib/case-languages";
-import { type GatewayPrices } from "@/lib/gateway-prices";
 import { meetsLatencyBudget } from "@/lib/latency";
 import { getModelById, getModelFamily, getReasoningLabel } from "@/lib/models";
 import { calculateScore } from "@/lib/score-calculation";
 import { summarizeCategoryScores } from "@/lib/score-categories";
 import { getStatsFromResults } from "@/lib/stats";
 import { type CategoryScoreSummary, type RegisteredTask, type TaskEvalResults } from "@/lib/types";
+import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 
 function roundScoreToFixed(score: number): number {
   return Number(score.toFixed(2));

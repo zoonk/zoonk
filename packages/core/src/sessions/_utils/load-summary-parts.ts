@@ -3,7 +3,9 @@ import { type MasteryState, type Milestone, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { pickCeremony } from "../../milestones/milestone-rules";
 import { readBlockPayload } from "../block-payload";
+import { capReviewDay } from "../capsules";
 import { getLessonComesBack } from "./lesson-block";
+import { loadPlanLessons } from "./load-plan-lessons";
 import { type SessionAnswer, getDueItemIds } from "./session-answers";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -21,10 +23,12 @@ export async function loadSkillNames(skillIds: readonly string[]) {
 
 export async function loadComesBack({
   answers,
+  session,
   timeZone,
   userId,
 }: {
   answers: readonly SessionAnswer[];
+  session: StudySessionRow;
   timeZone: string;
   userId: string;
 }): Promise<{ date: Date; skills: number }[]> {
@@ -37,9 +41,16 @@ export async function loadComesBack({
     where: { due: { not: null }, skillId: { in: skillIds }, userId },
   });
 
-  const dates = rows.flatMap((row) =>
-    row.due ? [getDateInTimeZone({ date: row.due, timeZone })] : [],
-  );
+  const today = getDateInTimeZone({ date: new Date(), timeZone });
+  const targetDate = session.goal?.targetDate ?? null;
+
+  const dates = rows.flatMap((row) => {
+    const day = row.due
+      ? capReviewDay({ day: getDateInTimeZone({ date: row.due, timeZone }), targetDate, today })
+      : null;
+
+    return day ? [day] : [];
+  });
 
   const unique = [...new Set(dates.map((date) => date.getTime()))].toSorted((a, b) => a - b);
 
@@ -68,7 +79,12 @@ export async function loadSealedCapsules({
   return Promise.all(
     lessons.map(async (block) => ({
       lessonId: block.lessonId ?? "",
-      opensOn: await getLessonComesBack({ lessonId: block.lessonId, timeZone, userId }),
+      opensOn: await getLessonComesBack({
+        lessonId: block.lessonId,
+        targetDate: session.goal?.targetDate ?? null,
+        timeZone,
+        userId,
+      }),
       title: readBlockPayload(block).title,
     })),
   );
@@ -110,17 +126,30 @@ export async function loadCeremony(userId: string): Promise<Milestone | null> {
   return pickCeremony(unshown);
 }
 
-/** "Tomorrow: Linear functions": the next lesson the plan has for the goal. */
-export async function loadTomorrow(goalId: string | null): Promise<{ title: string } | null> {
+/**
+ * "Tomorrow: Linear functions": the next lesson the plan has for the goal, by the title Today and
+ * the session show for it (a chapter's next lesson, not the chapter's outline title).
+ */
+export async function loadTomorrow({
+  goalId,
+  userId,
+}: {
+  goalId: string | null;
+  userId: string;
+}): Promise<{ title: string } | null> {
   if (!goalId) {
     return null;
   }
 
   const next = await prisma.planItem.findFirst({
     orderBy: { position: "asc" },
-    select: { titleSnapshot: true },
     where: { kind: { in: ["lesson", "chapter"] }, plan: { goalId }, status: "todo" },
   });
 
-  return next ? { title: next.titleSnapshot } : null;
+  if (!next) {
+    return null;
+  }
+
+  const [lesson] = await loadPlanLessons({ items: [next], userId });
+  return { title: lesson?.title ?? next.titleSnapshot };
 }

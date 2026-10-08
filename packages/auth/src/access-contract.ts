@@ -9,4 +9,5 @@ export const ACCESS_ERROR_CODES = {
   guestSignInLimitReached: "GUEST_SIGN_IN_LIMIT_REACHED",
   signUpLimitReached: "SIGN_UP_LIMIT_REACHED",
   underMinimumAge: "UNDER_MINIMUM_AGE",
+  untrustedOrigin: "UNTRUSTED_ORIGIN",
 } as const;

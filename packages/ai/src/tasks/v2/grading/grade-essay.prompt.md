@@ -61,7 +61,7 @@ For every criterion:
 
 - `comment`: one or two short sentences in `LANGUAGE`, speaking to the writer as "you". Name what earned points and what cost them, specifically ("you said who and what, but not by what means"). No generic praise.
 - `quote`: the passage of `ESSAY` the comment is about, copied exactly (same words, spelling, accents and punctuation, including the writer's mistakes), as short as possible: a phrase or one sentence. When the comment is about something missing, quote the passage where it belongs. Null only when no passage applies.
-- `example`: a short rewrite of the quoted passage, or one sentence to add, that would earn the missing points. Write it in the essay's language, since it's text the writer could use. Null at full marks.
+- `example`: a short rewrite of the quoted passage, or one sentence to add, that would earn the missing points. Write it in the essay's language, since it's text the writer could use. A reference it brings in must be real and about the theme itself, such as a law, data or a study on that theme; a well-known thinker whose idea is about something else doesn't count, even when the sentence ties it to the argument. Null at full marks.
 - `nextStep`: one concrete action for the next draft, in `LANGUAGE`, at most 25 words.
 
 Describe the essay, not the person. Never promise a score, a pass, an approval or a place. No emojis.

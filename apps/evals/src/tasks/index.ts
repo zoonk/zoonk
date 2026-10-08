@@ -15,13 +15,20 @@ import { courseIntentTask } from "./course-intent/task";
 import { courseOutlineTask } from "./course-outline/task";
 import { coverageCheckTask } from "./coverage-check/task";
 import { examIdentityDecisionTask } from "./exam-identity-decision/task";
-import { exampleLineTask } from "./example-line/task";
+import { exampleLinesTask } from "./example-lines/task";
 import { explainSpokenAnswerTask } from "./explain-spoken-answer/task";
 import { explainWrongAnswerTask } from "./explain-wrong-answer/task";
 import { extractExamBlueprintTask } from "./extract-exam-blueprint/task";
+import { findChoiceOptionsTask } from "./find-choice-options/task";
+import { findCourseWeightsTask } from "./find-course-weights/task";
+import { findExamDateTask } from "./find-exam-date/task";
 import { findOfficialSourcesTask } from "./find-official-sources/task";
+import { findSubjectQuestionsTask } from "./find-subject-questions/task";
+import { findTargetCutoffTask } from "./find-target-cutoff/task";
+import { findTopicFrequencyTask } from "./find-topic-frequency/task";
 import { generateItemsTask } from "./generate-items/task";
 import { goalSpecificityTask } from "./goal-specificity/task";
+import { goalTutorTask } from "./goal-tutor/task";
 import { gradeEssayTask } from "./grade-essay/task";
 import { gradeTypedAnswerTask } from "./grade-typed-answer/task";
 import { imageCheckTask } from "./image-check/task";
@@ -38,13 +45,13 @@ import { levelTestBankTask } from "./level-test-bank/task";
 import { libraryIdentityDecisionTask } from "./library-identity-decision/task";
 import { librarySearchTermsTask } from "./library-search-terms/task";
 import { liveConversationTask } from "./live-conversation/task";
-import { memoryDepthTask } from "./memory-depth/task";
 import { memoryExtractionTask } from "./memory-extraction/task";
 import { memoryGateTask } from "./memory-gate/task";
 import { memoryInsightTask } from "./memory-insight/task";
 import { memoryReconcileTask } from "./memory-reconcile/task";
 import { memoryRelevanceTask } from "./memory-relevance/task";
 import { memorySearchTermsTask } from "./memory-search-terms/task";
+import { mindMapImageTask } from "./mind-map-image/task";
 import { mistakeCauseTask } from "./mistake-cause/task";
 import { mistakePatternTask } from "./mistake-pattern/task";
 import { pastQuestionsTask } from "./past-questions/task";
@@ -68,6 +75,12 @@ export const TASKS: readonly RegisteredTask[] = [
   changingFactsTask,
   researchPlanTask,
   findOfficialSourcesTask,
+  findExamDateTask,
+  findCourseWeightsTask,
+  findSubjectQuestionsTask,
+  findTargetCutoffTask,
+  findTopicFrequencyTask,
+  findChoiceOptionsTask,
   extractExamBlueprintTask,
   checkCitedFactsTask,
   citeMaterialTask,
@@ -81,6 +94,7 @@ export const TASKS: readonly RegisteredTask[] = [
   imageSceneTask,
   lessonImageTask,
   imageCheckTask,
+  mindMapImageTask,
   generateItemsTask,
   placementItemsTask,
   statuteDrillsTask,
@@ -102,15 +116,15 @@ export const TASKS: readonly RegisteredTask[] = [
   lessonQualityCheckTask,
   lessonFixTask,
   stepVariantTask,
-  exampleLineTask,
+  exampleLinesTask,
   librarySearchTermsTask,
   libraryIdentityDecisionTask,
   goalSpecificityTask,
+  goalTutorTask,
   mistakeCauseTask,
   planEditIntentTask,
   understandGoalTask,
   memoryExtractionTask,
-  memoryDepthTask,
   memoryGateTask,
   memoryReconcileTask,
   memorySearchTermsTask,

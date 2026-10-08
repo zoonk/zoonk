@@ -4,11 +4,16 @@ import { lessonPlayerReducer } from "../lesson-player-reducer";
 import { type LessonPlayerAction, createInitialState } from "../lesson-player-state";
 import { getAbandonEvent } from "./lesson-abandon";
 
+/** When the run in these tests started. */
+const STARTED_AT = "2026-10-05T10:00:00.000Z";
+
 const STEPS = [checkStep("q1"), explanationStep("idea"), checkStep("q2"), checkStep("q3")];
 
 const STARTED: LessonPlayerAction = {
+  answers: [],
   hyperdrive: { knownStepIds: [], streak: 0 },
   runId: "run",
+  startedAt: STARTED_AT,
   type: "runStarted",
 };
 

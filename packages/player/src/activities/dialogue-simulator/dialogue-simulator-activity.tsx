@@ -1,5 +1,6 @@
 "use client";
 
+import { type SpokenAudioState } from "@zoonk/learn/speech";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MapPin, UserRound } from "lucide-react";
@@ -12,7 +13,7 @@ import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { ActivitySpeakButton } from "../_components/activity-speak-button";
 import { expectedInteraction } from "../_utils/activity-expected";
-import { useSpeech } from "../_utils/use-speech";
+import { useActivitySpeech } from "../_utils/use-activity-speech";
 import { type ActivityRendererProps } from "../activity-renderer";
 
 type DialogueProps = ActivityRendererProps<"dialogueSimulator">;
@@ -24,10 +25,12 @@ function ChatLine({
   canSpeak,
   line,
   onSpeak,
+  speechState,
 }: {
   canSpeak: boolean;
   line: DialogueLine;
   onSpeak: () => void;
+  speechState: SpokenAudioState;
 }) {
   const t = useExtracted();
   const isThem = line.speaker === "them";
@@ -54,7 +57,9 @@ function ChatLine({
         <span className="text-muted-foreground text-sm">{line.translation}</span>
       </div>
 
-      {canSpeak && isThem && <ActivitySpeakButton label={t("Hear this line")} onSpeak={onSpeak} />}
+      {canSpeak && isThem && (
+        <ActivitySpeakButton label={t("Hear this line")} onClick={onSpeak} state={speechState} />
+      )}
     </li>
   );
 }
@@ -105,10 +110,10 @@ export function DialogueSimulatorActivity({
 }: DialogueProps) {
   const t = useExtracted();
   const { fields } = content;
-  const speech = useSpeech(fields.language);
+  const speech = useActivitySpeech(fields.language);
   const isChecked = phase === "checked";
   const selectedId = answer?.kind === "selection" ? (answer.ids[0] ?? null) : null;
-  const canSpeak = speech.status === "ready";
+  const canSpeak = speech.isAvailable;
   const best = fields.replies.find((reply) => reply.isBest);
 
   const expectedIds = expectedInteraction(expected, "selection")?.ids ?? [];
@@ -134,12 +139,13 @@ export function DialogueSimulatorActivity({
         </p>
 
         <ol aria-label={t("The conversation so far")} className="flex flex-col gap-3">
-          {fields.lines.map((line) => (
+          {fields.lines.map((line, index) => (
             <ChatLine
               canSpeak={canSpeak}
               key={`${line.speaker}-${line.text}`}
               line={line}
-              onSpeak={() => speech.speak({ segments: [line.text] })}
+              onSpeak={() => speech.toggle(`line-${String(index)}`, [line.text])}
+              speechState={speech.stateFor(`line-${String(index)}`)}
             />
           ))}
         </ol>
@@ -163,7 +169,8 @@ export function DialogueSimulatorActivity({
         <div className="flex items-center gap-2">
           <ActivitySpeakButton
             label={t("Hear the best reply")}
-            onSpeak={() => speech.speak({ segments: [best.text] })}
+            onClick={() => speech.toggle("best", [best.text])}
+            state={speech.stateFor("best")}
           />
           <span className="text-muted-foreground text-sm">{t("Hear the best reply")}</span>
         </div>

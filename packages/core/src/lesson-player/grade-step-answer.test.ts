@@ -18,10 +18,10 @@ function teachingStep<TKind extends TeachingStepKind>(
     content: parseStepContent(kind, content),
     id: `${kind}-step`,
     image: null,
+    imagePending: false,
     kind,
     position: 0,
     skillId: null,
-    variants: { deeper: null, simpler: null },
   };
 }
 

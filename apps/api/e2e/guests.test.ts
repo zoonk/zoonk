@@ -37,7 +37,7 @@ test.describe("Guests API", () => {
     const { guestApi, token } = await createGuest(baseURL);
 
     await guestApi.patch("/v1/me/learning-profile", {
-      data: { buddy: { kind: "otto" }, experienceMode: "fun" },
+      data: { buddy: { kind: "otto", name: "Octo" } },
     });
 
     const guest = await prisma.userLearningProfile.findFirstOrThrow({
@@ -55,7 +55,7 @@ test.describe("Guests API", () => {
 
     await expect(
       prisma.userLearningProfile.findFirst({ where: { user: { email } } }),
-    ).resolves.toMatchObject({ buddyKind: "otto", experienceMode: "fun" });
+    ).resolves.toMatchObject({ buddyKind: "otto", buddyName: "Octo" });
 
     await expect(prisma.user.findUnique({ where: { id: guest.userId } })).resolves.toBeNull();
 

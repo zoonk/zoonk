@@ -33,7 +33,13 @@ export type GoalUpdateResult =
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
 const RESUMED_NOTE = "The goal started again after a pause.";
 
-/** Study days become rest days at 0 minutes, and new study days get the daily time. */
+const SATURDAY = 6;
+const SUNDAY = 0;
+
+/**
+ * Study days become rest days at 0 minutes, and new study days get the daily time. A weekend time
+ * goes to Saturday and Sunday when they're study days.
+ */
 function getStudyDayOperations({
   context,
   input,
@@ -41,9 +47,9 @@ function getStudyDayOperations({
   context: PlanContext;
   input: GoalUpdateInput;
 }) {
-  const { studyDays } = input;
+  const { studyDays, weekendMinutes } = input;
 
-  if (!studyDays) {
+  if (!studyDays && weekendMinutes === undefined) {
     return [];
   }
 
@@ -54,13 +60,25 @@ function getStudyDayOperations({
 
   const weekdays = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) => weekday);
   const current = (weekday: number) => getWeekdayMinutes({ calendar, weekday });
-  const rest = weekdays.filter((weekday) => !studyDays.includes(weekday) && current(weekday) > 0);
-  const added = weekdays.filter((weekday) => studyDays.includes(weekday) && current(weekday) === 0);
+
+  const studies = (weekday: number) =>
+    studyDays ? studyDays.includes(weekday) : current(weekday) > 0;
+
+  const rest = weekdays.filter((weekday) => !studies(weekday) && current(weekday) > 0);
+  const added = weekdays.filter((weekday) => studies(weekday) && current(weekday) === 0);
   const minutes = input.dailyMinutes ?? context.state.goal.dailyMinutes;
+
+  const weekend =
+    weekendMinutes === undefined ? [] : [SUNDAY, SATURDAY].filter((weekday) => studies(weekday));
 
   return [
     rest.length > 0 && { kind: "setWeekdayMinutes" as const, minutes: 0, weekdays: rest },
     added.length > 0 && { kind: "setWeekdayMinutes" as const, minutes, weekdays: added },
+    weekend.length > 0 && {
+      kind: "setWeekdayMinutes" as const,
+      minutes: weekendMinutes ?? minutes,
+      weekdays: weekend,
+    },
   ].filter((operation) => operation !== false);
 }
 
@@ -120,6 +138,7 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
 
     const result = await applyChangeNow({
       context,
+      followToday: true,
       operations,
       reason: SETTINGS_NOTE,
       source: "learner",

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { type PrismaClient } from "../../../../../generated/prisma/client";
 import { daysFrom } from "../../_utils/dates";
 import { SEED_LANGUAGES, type SeedLanguage, localizeObject, t } from "../../_utils/localize";
@@ -15,11 +17,104 @@ const RECHECK_DAYS = 7;
 /** Enem starts at 1:30 pm, Brasília time, on both days. */
 const START_TIME = "13:30";
 
+/** The instructions research reads a notice with (`EXAM_BLUEPRINT_PROMPT_VERSION` in `@zoonk/ai`). */
+const READING_PROMPT = new URL(
+  "../../../../../../../ai/src/tasks/v2/research/extract-exam-blueprint.prompt.md",
+  import.meta.url,
+);
+
+/**
+ * The seeded notice counts as read with today's instructions, as a reading research just stored
+ * would: an older version makes research read it again for the first ENEM learner, minutes of
+ * waiting before their first question (see `isNoticeReadAgain`). Only the seed writes this.
+ */
+function getReadingPromptVersion(): string {
+  return getPromptVersion({ systemPrompt: readFileSync(READING_PROMPT, "utf8") });
+}
+
 function cite(sourceId: string, passage: string) {
   return { passage, sourceId };
 }
 
-function buildStructure(notice: ReturnType<typeof getNoticePassages>) {
+/*
+ * The notice's contents ("objetos de conhecimento") as it words them, the ones past papers rate
+ * named once so the topic frequency below names them exactly.
+ */
+const LANGUAGES_READING = t(
+  "Text study: discourse sequences and text genres in communication and information",
+  "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação",
+);
+
+const HUMANITIES_STATE = t(
+  "Forms of social organization, social movements, political thought and the State",
+  "Formas de organização social, movimentos sociais, pensamento político e ação do Estado",
+);
+
+const MATH_NUMBERS = t("Numbers", "Conhecimentos numéricos");
+
+const MATH_STATISTICS = t(
+  "Statistics and probability",
+  "Conhecimentos de estatística e probabilidade",
+);
+
+const MATH_ALGEBRA = t("Algebra", "Conhecimentos algébricos");
+const SCIENCE_ECOLOGY = t("Ecology and environmental science", "Ecologia e ciências ambientais");
+
+const SCIENCE_ELECTRICITY = t(
+  "Electric and magnetic phenomena",
+  "Fenômenos Elétricos e Magnéticos",
+);
+
+/** Ciências da Natureza's contents under the notice's headings: physics, chemistry and biology. */
+const SCIENCE_GROUPS = [
+  {
+    name: t("Physics", "Física"),
+    topics: [
+      t("Basic and fundamental knowledge", "Conhecimentos básicos e fundamentais"),
+      t(
+        "Motion, equilibrium and the discovery of physical laws",
+        "O movimento, o equilíbrio e a descoberta de leis físicas",
+      ),
+      t("Energy, work and power", "Energia, trabalho e potência"),
+      t("Mechanics and how the Universe works", "A Mecânica e o funcionamento do Universo"),
+      SCIENCE_ELECTRICITY,
+      t("Oscillations, waves, optics and radiation", "Oscilações, ondas, óptica e radiação"),
+      t("Heat and thermal phenomena", "O calor e os fenômenos térmicos"),
+    ],
+  },
+  {
+    name: t("Chemistry", "Química"),
+    topics: [
+      t("Chemical transformations", "Transformações Químicas"),
+      t("Representing chemical transformations", "Representação das transformações químicas"),
+      t("Materials, their properties and uses", "Materiais, suas propriedades e usos"),
+      t("Water", "Água"),
+      t("Chemical transformations and energy", "Transformações Químicas e Energia"),
+      t("Dynamics of chemical transformations", "Dinâmica das Transformações Químicas"),
+      t("Chemical transformation and equilibrium", "Transformação Química e Equilíbrio"),
+      t("Carbon compounds", "Compostos de Carbono"),
+      t(
+        "Chemistry, technology, society and the environment",
+        "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+      ),
+      t("Chemical energy in everyday life", "Energias Químicas no Cotidiano"),
+    ],
+  },
+  {
+    name: t("Biology", "Biologia"),
+    topics: [
+      t("Molecules, cells and tissues", "Moléculas, células e tecidos"),
+      t("Heredity and the diversity of life", "Hereditariedade e diversidade da vida"),
+      t("Identity of living beings", "Identidade dos seres vivos"),
+      SCIENCE_ECOLOGY,
+      t("Origin and evolution of life", "Origem e evolução da vida"),
+      t("Quality of life of human populations", "Qualidade de vida das populações humanas"),
+    ],
+  },
+];
+
+/** The notice's five parts, each with its contents as the notice words them. */
+function buildSubjects(notice: ReturnType<typeof getNoticePassages>) {
   const area = (name: ReturnType<typeof t>, topics: ReturnType<typeof t>[]) => ({
     citation: cite(NOTICE, notice.areas),
     name,
@@ -28,6 +123,84 @@ function buildStructure(notice: ReturnType<typeof getNoticePassages>) {
     weight: null,
   });
 
+  return [
+    area(t("Languages, Codes and their Technologies", "Linguagens, Códigos e suas Tecnologias"), [
+      LANGUAGES_READING,
+      t(
+        "Body practices: body language as social integration and identity",
+        "Estudo das práticas corporais: a linguagem corporal como integradora social e formadora de identidade",
+      ),
+      t(
+        "Producing and receiving artistic texts: interpreting and representing the world for identity and citizenship",
+        "Produção e recepção de textos artísticos: interpretação e representação do mundo para o fortalecimento dos processos de identidade e cidadania",
+      ),
+      t(
+        "Literary texts: literature and society, artistic conceptions, how texts are built and received",
+        "Estudo do texto literário: relações entre produção literária e processo social, concepções artísticas, procedimentos de construção e recepção de textos",
+      ),
+      t(
+        "Linguistic features of different texts: expressive resources, how texts are built and received",
+        "Estudo dos aspectos linguísticos em diferentes textos: recursos expressivos da língua, procedimentos de construção e recepção de textos",
+      ),
+      t(
+        "Argumentative texts, their genres and linguistic resources",
+        "Estudo do texto argumentativo, seus gêneros e recursos linguísticos: argumentação: tipo, gêneros e usos em língua portuguesa",
+      ),
+      t(
+        "Portuguese in use: the standard norm and linguistic variation",
+        "Estudo dos aspectos linguísticos da língua portuguesa: usos da língua: norma culta e variação linguística",
+      ),
+      t(
+        "Digital genres: communication and information technology, its impact and social role",
+        "Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social",
+      ),
+    ]),
+    area(t("Humanities and their Technologies", "Ciências Humanas e suas Tecnologias"), [
+      t(
+        "Cultural diversity, conflicts and life in society",
+        "Diversidade cultural, conflitos e vida em sociedade",
+      ),
+      HUMANITIES_STATE,
+      t(
+        "Productive structures and how they change",
+        "Características e transformações das estruturas produtivas",
+      ),
+      t(
+        "Natural domains and how people relate to the environment",
+        "Os domínios naturais e a relação do ser humano com o ambiente",
+      ),
+      t("Spatial representation", "Representação espacial"),
+    ]),
+    {
+      ...area(
+        t("Natural Sciences and their Technologies", "Ciências da Natureza e suas Tecnologias"),
+        SCIENCE_GROUPS.flatMap((group) => group.topics),
+      ),
+      topicGroups: SCIENCE_GROUPS,
+    },
+    area(t("Mathematics and its Technologies", "Matemática e suas Tecnologias"), [
+      MATH_NUMBERS,
+      t("Geometry", "Conhecimentos geométricos"),
+      MATH_STATISTICS,
+      MATH_ALGEBRA,
+      t("Algebra and geometry", "Conhecimentos algébricos/geométricos"),
+    ]),
+    {
+      citation: cite(NOTICE, notice.essay),
+      name: t("Essay", "Redação"),
+      questions: null,
+      topics: [
+        t(
+          "An argumentative essay on a problem situation",
+          "Texto dissertativo-argumentativo a partir de uma situação-problema",
+        ),
+      ],
+      weight: null,
+    },
+  ];
+}
+
+function buildStructure(notice: ReturnType<typeof getNoticePassages>) {
   return {
     formats: [
       {
@@ -114,58 +287,24 @@ function buildStructure(notice: ReturnType<typeof getNoticePassages>) {
         ),
       },
     ],
-    subjects: [
-      area(t("Languages, Codes and their Technologies", "Linguagens, Códigos e suas Tecnologias"), [
-        t("Reading comprehension", "Interpretação de texto"),
-        t("Functions of language", "Funções da linguagem"),
-        t("Foreign language (English or Spanish)", "Língua estrangeira (inglês ou espanhol)"),
-      ]),
-      area(t("Humanities and their Technologies", "Ciências Humanas e suas Tecnologias"), [
-        t("Brazil's Republic", "Brasil República"),
-        t("Urban geography", "Geografia urbana"),
-        t("Philosophy and sociology", "Filosofia e sociologia"),
-      ]),
-      area(
-        t("Natural Sciences and their Technologies", "Ciências da Natureza e suas Tecnologias"),
-        [
-          t("Ecology", "Ecologia"),
-          t("Electricity", "Eletricidade"),
-          t("Organic chemistry", "Química orgânica"),
-        ],
-      ),
-      area(t("Mathematics and its Technologies", "Matemática e suas Tecnologias"), [
-        t("Percentages", "Porcentagem"),
-        t("Ratios and proportions", "Razão e proporção"),
-        t("Functions", "Funções"),
-        t("Statistics and charts", "Estatística e gráficos"),
-      ]),
-      {
-        citation: cite(NOTICE, notice.essay),
-        name: t("Essay", "Redação"),
-        questions: null,
-        topics: [
-          t("The intervention proposal", "Proposta de intervenção"),
-          t("The five competencies", "As cinco competências"),
-        ],
-        weight: null,
-      },
-    ],
+    subjects: buildSubjects(notice),
   };
 }
 
 const MATH = t("Mathematics", "Matemática");
 const SCIENCES = t("Natural Sciences", "Ciências da Natureza");
 
+/** How often past papers ask the topics they rate most, on the notice's own topics. */
 const topicFrequency = [
   {
     basis: t(
-      "Asked in almost every edition, usually about shopping, interest and price changes.",
-      "Cai em quase toda edição, em geral em compras, juros e variação de preços.",
+      "Percentages come up in almost every edition, usually about shopping, interest and price changes.",
+      "Porcentagem cai em quase toda edição, em geral em compras, juros e variação de preços.",
     ),
     citation: cite(PAST_PAPERS, pastPaperPassages.percentages),
     level: "high",
     subject: MATH,
-    topic: t("Percentages", "Porcentagem"),
+    topic: MATH_NUMBERS,
   },
   {
     basis: t(
@@ -175,17 +314,17 @@ const topicFrequency = [
     citation: cite(PAST_PAPERS, pastPaperPassages.charts),
     level: "high",
     subject: MATH,
-    topic: t("Statistics and charts", "Estatística e gráficos"),
+    topic: MATH_STATISTICS,
   },
   {
     basis: t(
-      "Asked regularly, tied to everyday situations.",
-      "Aparece com regularidade, ligada a situações do dia a dia.",
+      "Functions are asked regularly, tied to everyday situations.",
+      "Funções aparecem com regularidade, ligadas a situações do dia a dia.",
     ),
     citation: cite(PAST_PAPERS, pastPaperPassages.functions),
     level: "medium",
     subject: MATH,
-    topic: t("Functions", "Funções"),
+    topic: MATH_ALGEBRA,
   },
   {
     basis: t(
@@ -195,17 +334,17 @@ const topicFrequency = [
     citation: cite(PAST_PAPERS, pastPaperPassages.ecology),
     level: "high",
     subject: SCIENCES,
-    topic: t("Ecology", "Ecologia"),
+    topic: SCIENCE_ECOLOGY,
   },
   {
     basis: t(
-      "A regular in physics questions, mostly simple circuits.",
-      "Presença regular em Física, principalmente circuitos simples.",
+      "A constant in physics questions, mostly simple circuits.",
+      "Presença constante em Física, principalmente circuitos simples.",
     ),
     citation: cite(PAST_PAPERS, pastPaperPassages.electricity),
-    level: "medium",
+    level: "high",
     subject: SCIENCES,
-    topic: t("Electricity", "Eletricidade"),
+    topic: SCIENCE_ELECTRICITY,
   },
   {
     basis: t(
@@ -215,7 +354,7 @@ const topicFrequency = [
     citation: cite(PAST_PAPERS, pastPaperPassages.republic),
     level: "high",
     subject: t("Humanities", "Ciências Humanas"),
-    topic: t("Brazil's Republic", "Brasil República"),
+    topic: HUMANITIES_STATE,
   },
   {
     basis: t(
@@ -225,17 +364,7 @@ const topicFrequency = [
     citation: cite(PAST_PAPERS, pastPaperPassages.reading),
     level: "high",
     subject: t("Languages", "Linguagens"),
-    topic: t("Reading comprehension", "Interpretação de texto"),
-  },
-  {
-    basis: t(
-      "The competency where most candidates lose points.",
-      "A competência em que mais candidatos perdem pontos.",
-    ),
-    citation: cite(PAST_PAPERS, pastPaperPassages.essay),
-    level: "high",
-    subject: t("Essay", "Redação"),
-    topic: t("The intervention proposal", "Proposta de intervenção"),
+    topic: LANGUAGES_READING,
   },
 ];
 
@@ -315,6 +444,7 @@ async function writeBlueprint(
     topicFrequency: topicFrequency.map((entry) => localizeObject(entry, language)),
     validUntil: examDate,
     ...SEED_PROVENANCE,
+    promptVersion: getReadingPromptVersion(),
   };
 
   await prisma.examBlueprint.upsert({ create: { id, ...data }, update: data, where: { id } });

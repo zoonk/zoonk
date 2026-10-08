@@ -13,7 +13,7 @@ import { expect, test } from "./fixtures";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
- * The free plan's paywalls, split between Focus and Fun: a learner who started today's new
+ * The free plan's paywalls: a learner who started today's new
  * lessons sees when they come back and Plus as a choice, a free exam plan past its first week says
  * so on Today instead of lessons quietly disappearing, and a second goal explains the one-goal
  * limit.
@@ -28,7 +28,7 @@ test.describe("Paywall", () => {
     ]);
 
     await Promise.all([
-      learningProfileFixture({ experienceMode: "focus", userId: user.id }),
+      learningProfileFixture({ userId: user.id }),
       usageRecordsFixture({ count: getFreePlanLimits().lessonsPerDay ?? 0, userId: user.id }),
     ]);
 
@@ -54,7 +54,7 @@ test.describe("Paywall", () => {
   });
 
   test("a free exam plan past its first week offers Plus on Today", async ({ browser }) => {
-    const { goal, user } = await createStudyDay({ mode: "fun" });
+    const { goal, user } = await createStudyDay();
     const days = getFreePlanLimits().examPrepDays ?? 0;
 
     await prisma.goal.update({
@@ -82,12 +82,6 @@ test.describe("Paywall", () => {
     const goal = `learn quantum physics ${randomUUID().slice(0, 8)}`;
 
     await Promise.all([
-      learningProfileFixture({
-        buddyGlasses: "round",
-        buddyKind: "zu",
-        experienceMode: "fun",
-        userId: user.id,
-      }),
       goalFixture({ status: "active", userId: user.id }),
       goalUnderstandingFixture({
         goal,
@@ -110,7 +104,7 @@ test.describe("Paywall", () => {
 
     await expect(
       page.getByText(
-        "The free plan follows one goal at a time. Pause your current goal to start this one, or get Plus for more.",
+        "The free plan follows one goal at a time. To start this one, pause your current goal from the goal menu on Today, or get Plus.",
       ),
     ).toBeVisible();
 

@@ -159,6 +159,7 @@ test.describe("Study sessions API", () => {
       api.get(`/v1/study-sessions/${id}/summary`),
       api.post(`/v1/study-sessions/${id}/stops`, { data: {} }),
       api.post(`/v1/study-sessions/${id}/extra-blocks`),
+      api.post(`/v1/study-sessions/${id}/catch-up-blocks`, { data: { timeZone: "UTC" } }),
       api.get(`/v1/study-sessions/${id}/blocks/${id}`),
       api.post(`/v1/study-sessions/${id}/blocks/${id}/starts`, { data: {} }),
       api.post(`/v1/study-sessions/${id}/blocks/${id}/completions`, { data: {} }),
@@ -305,27 +306,54 @@ test.describe("Study sessions API", () => {
       schema: todayResponseSchema,
     });
 
-    const [hidden, notMine] = await Promise.all([
+    const [hidden, notMine, notMineToCatchUp, onPace] = await Promise.all([
       other.api.get(`/v1/study-sessions/${today.id}`),
       other.api.get(`/v1/today?goalId=${goal.id}`),
+      other.api.post(`/v1/study-sessions/${today.id}/catch-up-blocks`, {
+        data: { timeZone: "UTC" },
+      }),
+      api.post(`/v1/study-sessions/${today.id}/catch-up-blocks`, { data: { timeZone: "UTC" } }),
     ]);
 
-    expect([hidden.status(), notMine.status()]).toStrictEqual([404, 404]);
+    expect([hidden.status(), notMine.status(), notMineToCatchUp.status()]).toStrictEqual([
+      404, 404, 404,
+    ]);
+
+    // On pace, the session has nothing to catch up, and says so instead of adding anything.
+    expect(today.catchUp).toBeNull();
+    expect(onPace.status()).toBe(422);
+
+    await expect(onPace.json()).resolves.toMatchObject({ error: { code: "NOTHING_TO_CATCH_UP" } });
 
     const stopped = await readBody({
       response: await api.post(`/v1/study-sessions/${today.id}/stops`, { data: {} }),
       schema: studySessionSummaryResponseSchema,
     });
 
-    expect(stopped).toMatchObject({ extraTime: { available: true }, status: "completed" });
+    // Nothing is skipped: the rest of the session waits to be picked up.
+    expect(stopped).toMatchObject({
+      extraTime: { available: false, reason: "sessionNotFinished" },
+      finished: false,
+    });
+
+    const { session: after } = await readBody({
+      response: await api.get(`/v1/today?goalId=${goal.id}`),
+      schema: todayResponseSchema,
+    });
+
+    expect(after.nextBlockId).toBe(today.blocks[0]?.id);
   });
 
   test("asks placement questions in the first week and never saves them as mistakes", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-placement" });
     const { goal, items, skills } = await createGoal(userId);
 
-    // A goal made today: placement is still unsure where to start the next lesson's skill.
-    await prisma.goal.update({ data: { createdAt: new Date() }, where: { id: goal.id } });
+    // A goal made yesterday: placement is still unsure where to start the next lesson's skill (the
+    // day a goal is set asks nothing, since its learner has learned nothing yet).
+    await prisma.goal.update({
+      data: { createdAt: new Date(Date.now() - DAY_MS) },
+      where: { id: goal.id },
+    });
 
     const { session: today } = await readBody({
       response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
@@ -398,7 +426,8 @@ test.describe("Study sessions API", () => {
     ]);
 
     expect(recap.week.questions).toBe(0);
-    expect(buddy).toMatchObject({ buddy: null, stage: "baby" });
+    // Reading the buddy never builds today's session, so there are no missions yet.
+    expect(buddy).toMatchObject({ buddy: null, stage: "baby", today: null });
     expect(challenge).toStrictEqual({ challenge: null });
 
     const stranger = await userFixture();

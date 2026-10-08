@@ -1,8 +1,8 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { type ModelValues } from "../_utils/formula-model";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { ActivitySlider } from "./activity-slider";
 
 type Variable = {

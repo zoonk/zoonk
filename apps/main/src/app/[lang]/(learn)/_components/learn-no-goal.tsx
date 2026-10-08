@@ -11,7 +11,7 @@ import {
 import { TargetIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
-/** Tabs without a goal have one next step: setting one. */
+/** Tabs without a goal have one next step: starting one. */
 export async function LearnNoGoal() {
   const t = await getExtracted();
 
@@ -30,7 +30,7 @@ export async function LearnNoGoal() {
       </EmptyHeader>
       <EmptyContent>
         <Link className={buttonVariants()} href="/start">
-          {t("Set a goal")}
+          {t("Start a goal")}
         </Link>
       </EmptyContent>
     </Empty>

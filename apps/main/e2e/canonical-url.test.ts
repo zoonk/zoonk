@@ -56,11 +56,22 @@ async function expectIndexable({ page, path }: { page: Page; path: string }) {
     .toBe("index, follow");
 }
 
-/** A published course whose outline has one chapter with one lesson, all in the course language. */
-async function createLibraryCourse({ language }: { language: string }) {
+/**
+ * A published course whose outline has one chapter with one lesson, all in the course language.
+ * Without `details`, it's a shared course whose page details (its description first) aren't
+ * written yet.
+ */
+async function createLibraryCourse({
+  details = true,
+  language,
+}: {
+  details?: boolean;
+  language: string;
+}) {
   const organization = await getAiOrganization();
 
   const course = await courseFixture({
+    ...(!details && { description: null }),
     isPublished: true,
     language,
     organizationId: organization.id,
@@ -129,6 +140,25 @@ test("indexes course, chapter, and lesson pages only in the course language", as
     path: `/pt${lessonPath}`,
     robots: "index, follow",
   });
+});
+
+test("keeps a course and its pages out of the index until its page details are written", async ({
+  page,
+}) => {
+  const { chapterPath, coursePath, lessonPath } = await createLibraryCourse({
+    details: false,
+    language: "pt-BR",
+  });
+
+  for (const path of [coursePath, chapterPath, lessonPath]) {
+    // oxlint-disable-next-line no-await-in-loop -- One page opens each URL in turn.
+    await expectCatalogMetadata({
+      canonicalPath: `/pt${path}`,
+      page,
+      path: `/pt${path}`,
+      robots: "noindex, follow",
+    });
+  }
 });
 
 test("keeps unsupported instructional languages out of the English index", async ({ page }) => {

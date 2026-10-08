@@ -1,9 +1,6 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
-import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
@@ -66,8 +63,6 @@ describe(getContentView, () => {
       ["Skill 1", "new"],
       ["Skill 2", "mastered"],
     ]);
-
-    expect(content?.reveal).toStrictEqual({ cards: false });
   });
 
   it("puts chapters under the course or subject their skills belong to, each subject together", async () => {
@@ -108,54 +103,30 @@ describe(getContentView, () => {
     ]);
   });
 
-  it("keeps every finished lesson's summary card, newest first", async () => {
-    const { plan, user } = await setup();
+  it("marks the skills in today's reviews, so Content's review filter matches its review count", async () => {
+    const { skills, user } = await setup();
 
-    const [older, newer, noSummary] = await Promise.all([
-      libraryLessonFixture({
-        summary: { ideas: [{ text: "Older idea." }] },
-        title: "Older lesson",
-      }),
-      libraryLessonFixture({
-        summary: { ideas: [{ text: "Newer idea." }] },
-        title: "Newer lesson",
-      }),
-      libraryLessonFixture({ title: "No summary yet" }),
-    ]);
-
-    await Promise.all([
-      planItemFixture({
-        completedAt: new Date(Date.now() - MS_PER_DAY),
-        lessonId: older.id,
-        planId: plan.id,
-        position: 10,
-        status: "done",
-      }),
-      planItemFixture({
-        completedAt: new Date(),
-        lessonId: newer.id,
-        planId: plan.id,
-        position: 11,
-        status: "done",
-      }),
-      planItemFixture({
-        completedAt: new Date(),
-        lessonId: noSummary.id,
-        planId: plan.id,
-        position: 12,
-        status: "done",
-      }),
-      learningEventFixture({ kind: "review", userId: user.id }),
-    ]);
+    await learnerSkillFixture({
+      difficulty: 5,
+      due: new Date(Date.now() - 2 * MS_PER_DAY),
+      lastReviewedAt: new Date(Date.now() - 5 * MS_PER_DAY),
+      reps: 2,
+      skillId: skills[0]?.id ?? "",
+      stability: 3,
+      state: "learning",
+      userId: user.id,
+    });
 
     const result = await getContentView();
     const content = result.status === "ready" ? result.content : null;
+    const cards = content?.groups.flatMap((group) => group.cards) ?? [];
 
-    expect(content?.summaries.map((summary) => [summary.title, summary.ideas])).toStrictEqual([
-      ["Newer lesson", ["Newer idea."]],
-      ["Older lesson", ["Older idea."]],
+    expect(content?.capsules.dueToday).toBe(1);
+
+    expect(cards.map((card) => [card.name, card.dueToday])).toStrictEqual([
+      ["Skill 1", true],
+      ["Skill 2", false],
+      ["Skill 3", false],
     ]);
-
-    expect(content?.reveal).toStrictEqual({ cards: true });
   });
 });

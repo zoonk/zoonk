@@ -200,6 +200,31 @@ export function useEnterClick<Target extends HTMLElement>({
 }
 
 /**
+ * For a full-screen task whose leaving loses nothing: Escape presses its close link (the element
+ * this ref is on), the same way the lesson player closes. Dialogs, menus and fields keep their own
+ * Escape.
+ */
+export function useEscapeClick<Target extends HTMLElement>({
+  enabled = true,
+}: { enabled?: boolean } = {}) {
+  const ref = useRef<Target>(null);
+
+  useKeyboardCallback(
+    "Escape",
+    () => {
+      if (!enabled || !ref.current) {
+        return false;
+      }
+
+      ref.current.click();
+    },
+    { mode: "none", screen: true },
+  );
+
+  return ref;
+}
+
+/**
  * Number keys 1 to 9 pick the screen's options, as fast as a tap. Digits typed in a field, or
  * pressed inside a dialog or a menu, stay there. Return `false` from `onPick` for a key that
  * picked nothing.

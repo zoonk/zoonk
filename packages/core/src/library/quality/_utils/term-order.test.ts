@@ -3,7 +3,14 @@ import { describe, expect, it } from "vitest";
 import { findTermsUsedBeforeExplained } from "./term-order";
 
 function explanation(text: string): WrittenScreen {
-  return { exampleLineIdea: null, image: null, kind: "explanation", text, title: "Idea" };
+  return {
+    exampleLineIdea: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title: "Idea",
+    visual: null,
+  };
 }
 
 function check(question: string, option = "Two"): WrittenScreen {
@@ -16,6 +23,7 @@ function check(question: string, option = "Two"): WrittenScreen {
       { isCorrect: false, reason: "Not quite.", text: "Four" },
     ],
     question,
+    visual: null,
   };
 }
 
@@ -29,6 +37,7 @@ function hook(question: string): WrittenScreen {
     ],
     question,
     reveal: "Let's see.",
+    visual: null,
   };
 }
 

@@ -6,15 +6,7 @@ import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-/**
- * Builds the internal login route once so the link href and Escape shortcut
- * always send users back to the same place.
- */
-function getChangeEmailHref(redirectTo: string) {
-  const params = new URLSearchParams({ redirectTo });
-  return `/auth/login?${params.toString()}` as const;
-}
+import { getLoginHref } from "../_utils/auth-redirect";
 
 /**
  * Lets keyboard users leave the OTP step without hunting for the secondary
@@ -25,9 +17,9 @@ export function ChangeEmailLink({
   redirectTo,
 }: {
   children: React.ReactNode;
-  redirectTo: string;
+  redirectTo: string | null;
 }) {
-  const href = getChangeEmailHref(redirectTo);
+  const href = getLoginHref(redirectTo);
   const router = useRouter();
 
   useKeyboardCallback("Escape", () => router.push(href), { mode: "none" });
@@ -35,7 +27,7 @@ export function ChangeEmailLink({
   return (
     <Link
       aria-keyshortcuts="Escape"
-      className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+      className={cn(buttonVariants({ variant: "ghost" }), "text-muted-foreground w-full")}
       href={href}
     >
       {children}

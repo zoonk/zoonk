@@ -4,6 +4,8 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { loadGoalMap } from "../_utils/goal-map";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
+import { loadChapterNumbering } from "../syllabus/_utils/chapter-numbers";
+import { findChapterArea } from "./_utils/chapter-area";
 import {
   buildChapterLessons,
   buildChapterSummaries,
@@ -28,7 +30,8 @@ async function loadStudiedSkills({ skillIds, userId }: { skillIds: string[]; use
 /**
  * A chapter of the learner's plan (the active goal by default): its map of skills with mastery,
  * its lessons with the next one to open, open mistakes on its skills and the summary cards its
- * finished lessons left. A chapter outside the goal's plan isn't found.
+ * finished lessons left. Every chapter a plan item points at has one; a chapter outside the goal's
+ * plan isn't found.
  */
 export async function getChapterView({
   chapterId,
@@ -47,20 +50,19 @@ export async function getChapterView({
 
   const { goal } = resolved;
   const map = isUuid(chapterId) ? await loadGoalMap({ goal }) : null;
-  const chapterAreas = map?.areas.filter((area) => area.chapterId !== null) ?? [];
-  const areaIndex = chapterAreas.findIndex((area) => area.chapterId === chapterId);
-  const area = chapterAreas[areaIndex];
+  const area = map ? findChapterArea({ chapterId, map }) : null;
 
   if (!map || !area) {
     return { status: "notFound" };
   }
 
-  const [chapter, lessons] = await Promise.all([
+  const [chapter, lessons, numbering] = await Promise.all([
     prisma.chapter.findFirst({
       select: { id: true, level: true, title: true },
       where: { ...libraryRowsVisibleTo(goal.userId), id: chapterId },
     }),
     loadChapterLessons(chapterId),
+    loadChapterNumbering(goal),
   ]);
 
   if (!chapter) {
@@ -82,14 +84,16 @@ export async function getChapterView({
   ]);
 
   const lessonStates = buildChapterLessons({ chapterId, items: map.items, lessons, studied });
+  const number = numbering({ chapterId, planPosition: area.position });
 
   return {
     chapter: {
       chapter: {
         chapterId: chapter.id,
         level: chapter.level,
-        position: areaIndex + 1,
+        position: number.position,
         state: area.state,
+        subject: number.subject,
         title: chapter.title,
       },
       counts: area.counts,

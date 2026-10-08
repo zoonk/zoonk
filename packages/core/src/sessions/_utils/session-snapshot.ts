@@ -10,24 +10,36 @@ const MASTERY_RANK: Readonly<Record<MasteryState, number>> = {
 
 const rewardSchema = z.enum(["solid", "mastered"]);
 
+/** Where the learner stands at one moment: Brain Power, Energy, preparation and skill states. */
+const sessionStateSchema = z.object({
+  brainPower: z.number(),
+  energy: z.number(),
+  preparation: z.number().nullable(),
+  skillStates: z.record(z.string(), z.enum(MasteryState)),
+});
+
+export type SessionState = z.infer<typeof sessionStateSchema>;
+
 /**
  * Where the learner stood when the session's first block started, so its end can say what
  * changed: Brain Power (belt stripes), Energy, preparation and each goal skill's state. It also
  * remembers which skills already earned their Solid or Mastered bonus this session, so a skill
  * that wobbles and recovers is never paid twice.
  */
-const sessionSnapshotSchema = z.object({
-  brainPower: z.number(),
-  energy: z.number(),
+const sessionSnapshotSchema = sessionStateSchema.extend({
   masteryRewards: z.record(z.string(), rewardSchema).default({}),
-  preparation: z.number().nullable(),
-  skillStates: z.record(z.string(), z.enum(MasteryState)),
 });
 
 export type SessionSnapshot = z.infer<typeof sessionSnapshotSchema>;
 
 export function readSessionSnapshot(value: unknown): SessionSnapshot | null {
   const parsed = sessionSnapshotSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
+}
+
+/** Where the learner stood when the session ended (its `endSnapshot`), if it ended. */
+export function readSessionEnd(value: unknown): SessionState | null {
+  const parsed = sessionStateSchema.safeParse(value);
   return parsed.success ? parsed.data : null;
 }
 

@@ -1,5 +1,8 @@
 import "server-only";
-import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
+import {
+  type TypedAnswerCorrection,
+  gradeTypedAnswer,
+} from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 import { gradeChallengePath } from "../../library/challenges/challenge-run";
 import { matchSpokenAnswer } from "../../library/language/spoken-answer-match";
@@ -9,7 +12,14 @@ import { gradeStepAnswer } from "../grade-step-answer";
 /** A graded answer with what the learner sees about it and what the notebook keeps. */
 export type LessonAnswerVerdict = {
   answerText: string | null;
+  /**
+   * False for a written answer code couldn't recognize while no model graded it: it isn't marked
+   * wrong, and the sample answer shows what was expected.
+   */
+  checked: boolean;
   correctAnswer: string | null;
+  /** A language course's typed answer: each form mistake, named so it isn't read as a missing idea. */
+  corrections: TypedAnswerCorrection[];
   feedback: string | null;
   isCorrect: boolean;
   keyPoints: { met: boolean; text: string }[] | null;
@@ -24,7 +34,7 @@ type OpenAnswerGrade = {
   answer: LessonStepAnswer;
   lesson: LessonLanguage;
   step: PlayableLibraryStep;
-  /** False when the learner's small AI help ran out: typed answers are then graded by code only. */
+  /** False past the day's model-graded answers to the screen: code then grades a typed answer. */
   useModel: boolean;
   userId: string;
 };
@@ -36,9 +46,9 @@ function withContext(context: string | undefined, question: string): string {
 type TypedContent = Extract<PlayableLibraryStep, { kind: "typedAnswer" }>["content"];
 
 /**
- * A written answer graded without a model, once the learner's small AI help is used up: an
- * accepted answer (or a typo of one, where spelling doesn't matter) is right, anything else isn't,
- * and the sample answer shows what was expected.
+ * A written answer graded without a model: an accepted answer (or a typo of one, where spelling
+ * doesn't matter) is right. Anything else isn't checked rather than wrong, since a paraphrase can
+ * be right too, and the sample answer shows what was expected.
  */
 function gradeTypedByCode({
   answer,
@@ -55,11 +65,13 @@ function gradeTypedByCode({
 
   return {
     answerText: answer,
+    checked: isCorrect,
     correctAnswer: isCorrect ? null : content.sampleAnswer,
+    corrections: [],
     feedback: null,
     isCorrect,
     keyPoints: null,
-    score: isCorrect ? 1 : 0,
+    score: isCorrect ? 1 : null,
     spelling: isCorrect && isTypo ? match.acceptedAnswer : null,
   };
 }
@@ -92,14 +104,16 @@ async function gradeTypedStep({
     answer: answer.text,
     keyPoints: content.keyPoints,
     language: lesson.language,
+    practicedLanguage: lesson.targetLanguage,
     question: withContext(content.context, content.question),
     sampleAnswer: content.sampleAnswer,
-    spellingMatters: Boolean(lesson.targetLanguage),
   });
 
   return {
     answerText: answer.text,
+    checked: true,
     correctAnswer: data.isCorrect ? null : content.sampleAnswer,
+    corrections: data.corrections,
     feedback: data.feedback,
     isCorrect: data.isCorrect,
     keyPoints: data.keyPoints,
@@ -127,7 +141,9 @@ function gradeSpokenFallback({ answer, step }: OpenAnswerGrade): LessonAnswerVer
 
   return {
     answerText: answer.text,
+    checked: true,
     correctAnswer: match.isCorrect ? null : content.targetText,
+    corrections: [],
     feedback: null,
     isCorrect: match.isCorrect,
     keyPoints: null,
@@ -164,6 +180,13 @@ export async function gradeLessonAnswer(
   const graded = gradeStepAnswer({ answer: input.answer, step: input.step });
 
   return graded
-    ? { ...graded, keyPoints: null, score: getChallengeScore(input), spelling: null }
+    ? {
+        ...graded,
+        checked: true,
+        corrections: [],
+        keyPoints: null,
+        score: getChallengeScore(input),
+        spelling: null,
+      }
     : null;
 }

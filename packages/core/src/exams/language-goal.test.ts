@@ -88,5 +88,9 @@ describe(moveLanguageGoalToExam, () => {
     await expect(
       prisma.goal.count({ where: { status: "active", userId: guest.id } }),
     ).resolves.toBe(1);
+
+    // The archived language goal already moved: moving it again can't make another exam goal.
+    await expect(moveLanguageGoalToExam(goal.id)).resolves.toStrictEqual({ status: "notFound" });
+    await expect(prisma.goal.count({ where: { userId: guest.id } })).resolves.toBe(2);
   });
 });

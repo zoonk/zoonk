@@ -58,6 +58,29 @@ function getAgeInYears({
   return current.year - birthYear - (birthdayMayNotHavePassed ? 1 : 0);
 }
 
+/** Months since year zero, so two answers compare as one number. */
+function toMonthIndex({ birthMonth, birthYear }: BirthMonthYear): number {
+  return birthYear * LAST_MONTH + birthMonth;
+}
+
+/**
+ * Whether a new age answer is the same as the saved one or makes the learner younger. Learners
+ * correct their own answer only this way, since a younger answer can only add protections. An
+ * answer that makes them older could lift a minor's protections, so it goes through support:
+ * self-declaration is only as good as the age screen it can't be retried on (ICO age assurance
+ * opinion; FTC COPPA FAQ H.3), and when signals disagree the more protective one wins (Decreto
+ * 12.880/2026 art. 25 §4).
+ */
+export function isSameOrYoungerBirth({
+  next,
+  saved,
+}: {
+  next: BirthMonthYear;
+  saved: BirthMonthYear;
+}): boolean {
+  return toMonthIndex(next) >= toMonthIndex(saved);
+}
+
 /** Groups a learner by the age rules that apply to them; missing answers stay `unknown`. */
 export function getAgeGroup({
   birthMonth,

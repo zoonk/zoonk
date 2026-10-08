@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   type CapsuleItemCandidate,
+  capReviewDay,
   getCapsuleOpening,
   groupIntoCapsules,
   pickCapsuleFormat,
@@ -83,5 +84,39 @@ describe(getCapsuleOpening, () => {
     ).toStrictEqual(new Date("2026-10-07T03:00:00Z"));
 
     expect(getCapsuleOpening([{ due: null }])).toBeNull();
+  });
+});
+
+const day = (iso: string) => new Date(`${iso}T00:00:00Z`);
+
+describe(capReviewDay, () => {
+  const today = day("2026-10-05");
+
+  it("keeps a review day before the goal's date, and any day without one", () => {
+    expect(
+      capReviewDay({ day: day("2026-10-09"), targetDate: day("2026-11-08"), today }),
+    ).toStrictEqual(day("2026-10-09"));
+
+    expect(capReviewDay({ day: day("2026-11-30"), targetDate: null, today })).toStrictEqual(
+      day("2026-11-30"),
+    );
+  });
+
+  it("never says an idea comes back after the exam: the last day before it instead", () => {
+    expect(
+      capReviewDay({ day: day("2026-11-30"), targetDate: day("2026-11-08"), today }),
+    ).toStrictEqual(day("2026-11-07"));
+  });
+
+  it("brings an idea already due back tomorrow, never on a day that passed", () => {
+    expect(capReviewDay({ day: day("2026-09-29"), targetDate: null, today })).toStrictEqual(
+      day("2026-10-06"),
+    );
+  });
+
+  it("says no day when the goal's date leaves none after today", () => {
+    expect(
+      capReviewDay({ day: day("2026-10-09"), targetDate: day("2026-10-06"), today }),
+    ).toBeNull();
   });
 });

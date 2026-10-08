@@ -87,33 +87,24 @@ export const QUANTUM_PLAN = {
     levels: [
       {
         chapters: [
-          { lessonCount: 3, title: "Fractions and ratios" },
-          { lessonCount: 3, title: "Exponents and scientific notation" },
-          { lessonCount: 4, title: "Functions and graphs" },
+          "Fractions and ratios",
+          "Exponents and scientific notation",
+          "Functions and graphs",
         ],
+        inPlan: true,
         level: "overview",
       },
       {
-        chapters: [
-          { lessonCount: 5, title: "Waves and light" },
-          { lessonCount: 4, title: "The photoelectric effect" },
-        ],
+        chapters: ["Waves and light", "The photoelectric effect"],
+        inPlan: true,
         level: "beginner",
       },
       {
-        chapters: [
-          { lessonCount: 6, title: "The Schrödinger equation" },
-          { lessonCount: 5, title: "Spin and measurement" },
-        ],
+        chapters: ["The Schrödinger equation", "Spin and measurement"],
+        inPlan: false,
         level: "intermediate",
       },
-      {
-        chapters: [
-          { lessonCount: 5, title: "Entanglement" },
-          { lessonCount: 6, title: "Quantum computing" },
-        ],
-        level: "advanced",
-      },
+      { chapters: ["Entanglement", "Quantum computing"], inPlan: false, level: "advanced" },
     ],
     targetLanguage: null,
     title: "Quantum physics from scratch",
@@ -239,18 +230,13 @@ export const ACCOUNTING_PLAN = {
     description: "Contabilidade do zero para quem tem ou quer abrir um pequeno negócio.",
     levels: [
       {
-        chapters: [
-          { lessonCount: 3, title: "Para que serve a contabilidade" },
-          { lessonCount: 4, title: "Regimes de caixa e competência" },
-        ],
+        chapters: ["Para que serve a contabilidade", "Regimes de caixa e competência"],
+        inPlan: true,
         level: "overview",
       },
       {
-        chapters: [
-          { lessonCount: 5, title: "Balanço patrimonial" },
-          { lessonCount: 4, title: "Demonstração do resultado" },
-          { lessonCount: 4, title: "Fluxo de caixa" },
-        ],
+        chapters: ["Balanço patrimonial", "Demonstração do resultado", "Fluxo de caixa"],
+        inPlan: true,
         level: "beginner",
       },
     ],

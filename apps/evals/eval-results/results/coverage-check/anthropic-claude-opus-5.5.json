@@ -18,6 +18,7 @@
         "id": "pt-enem-matematica-planted-gaps-1",
         "userInput": {
           "goal": "Passar no ENEM 2026",
+          "goalKind": "exam",
           "language": "pt",
           "references": [
             {
@@ -91,6 +92,7 @@
         "id": "en-intro-stats-syllabus-1",
         "userInput": {
           "goal": "Learn introductory statistics at a university level",
+          "goalKind": "learn",
           "language": "en",
           "references": [
             {
@@ -161,6 +163,7 @@
         "id": "en-quantum-mechanics-two-syllabi-1",
         "userInput": {
           "goal": "Master quantum physics from scratch",
+          "goalKind": "learn",
           "language": "en",
           "references": [
             {
@@ -228,6 +231,7 @@
         "id": "es-python-no-gaps-1",
         "userInput": {
           "goal": "Aprender a programar en Python",
+          "goalKind": "learn",
           "language": "es",
           "references": [
             {
@@ -275,6 +279,180 @@
               "description": "Importar módulos e instalar paquetes.",
               "key": "modulos",
               "name": "Importar módulos e instalar paquetes"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "examWeights": [{ "key": "linear-equations", "max": 5, "min": 4 }],
+          "gapWeights": [{ "max": 4, "min": 2 }],
+          "gaps": ["Expression of ideas"]
+        },
+        "id": "en-sat-blueprint-weights-1",
+        "userInput": {
+          "goal": "Pass the SAT in March",
+          "goalKind": "exam",
+          "language": "en",
+          "references": [
+            {
+              "text": "EXAM: SAT\nSUBJECTS:\n- Reading and Writing (weight 50%): Craft and structure; Information and ideas; Standard English conventions; Expression of ideas\n- Math (weight 50%): Algebra; Advanced math; Problem-solving and data analysis; Geometry and trigonometry\nTOPIC_FREQUENCY:\n- Math / Algebra: high\n- Math / Advanced math: high\n- Math / Problem-solving and data analysis: medium\n- Math / Geometry and trigonometry: low\n- Reading and Writing / Standard English conventions: high\n- Reading and Writing / Information and ideas: medium\n- Reading and Writing / Craft and structure: medium\n- Reading and Writing / Expression of ideas: medium",
+              "title": "SAT"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Solve linear equations, inequalities and systems.",
+              "key": "linear-equations",
+              "name": "Solve linear equations, inequalities and systems",
+              "examWeight": 1
+            },
+            {
+              "description": "Solve quadratic, exponential and other nonlinear equations.",
+              "key": "nonlinear",
+              "name": "Solve quadratic, exponential and other nonlinear equations",
+              "examWeight": 5
+            },
+            {
+              "description": "Interpret ratios, percentages, probability and data displays.",
+              "key": "data-analysis",
+              "name": "Interpret ratios, percentages, probability and data displays",
+              "examWeight": 3
+            },
+            {
+              "description": "Find areas, volumes, circle measures and right-triangle ratios.",
+              "key": "geometry",
+              "name": "Find areas, volumes, circle measures and right-triangle ratios",
+              "examWeight": 2
+            },
+            {
+              "description": "Apply standard English grammar, usage and punctuation.",
+              "key": "conventions",
+              "name": "Apply standard English grammar, usage and punctuation",
+              "examWeight": 5
+            },
+            {
+              "description": "Find central ideas, inferences and supporting evidence.",
+              "key": "central-ideas",
+              "name": "Find central ideas, inferences and supporting evidence",
+              "examWeight": 3
+            },
+            {
+              "description": "Determine a word's meaning and a text's structure and purpose.",
+              "key": "words-in-context",
+              "name": "Determine a word's meaning and a text's structure and purpose",
+              "examWeight": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": ["5 Sistemas eleitorais"],
+          "placements": [
+            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
+            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
+          ]
+        },
+        "id": "pt-camara-notice-topics-1",
+        "userInput": {
+          "examOutline": {
+            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
+            "notes": ["Scoring: cada item errado anula um item certo"],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos de gêneros variados",
+                  "3 Domínio da ortografia",
+                  "5 Domínio da estrutura morfossintática do período",
+                  "5.5 Concordância verbal e nominal",
+                  "5.7 Emprego do sinal indicativo de crase"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P2)",
+                "name": "Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Regimes políticos",
+                  "2 Sistemas e formas de governo",
+                  "5 Sistemas eleitorais"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar textos de gêneros variados.",
+              "key": "leitura",
+              "name": "Interpretar textos de gêneros variados",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
+            },
+            {
+              "description": "Aplicar as regras de ortografia.",
+              "key": "ortografia",
+              "name": "Aplicar as regras de ortografia",
+              "examWeight": 3,
+              "area": "Língua Portuguesa",
+              "topics": ["3 Domínio da ortografia"]
+            },
+            {
+              "description": "Empregar o acento grave indicativo de crase.",
+              "key": "crase",
+              "name": "Empregar o acento grave indicativo de crase",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Fazer a concordância do verbo e do nome.",
+              "key": "concordancia",
+              "name": "Fazer a concordância do verbo e do nome",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Comparar regimes políticos.",
+              "key": "regimes",
+              "name": "Comparar regimes políticos",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["1 Regimes políticos"]
+            },
+            {
+              "description": "Distinguir sistemas e formas de governo.",
+              "key": "governo",
+              "name": "Distinguir sistemas e formas de governo",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["2 Sistemas e formas de governo"]
             }
           ]
         }

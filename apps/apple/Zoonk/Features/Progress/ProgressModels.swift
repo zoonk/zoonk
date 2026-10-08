@@ -39,9 +39,11 @@ struct ActivityProgress: Codable, Equatable, Sendable {
   }
 }
 
+/// One calendar day lit by everything finished that day (lessons, reviews and practice), so the
+/// calendar shows the same days that count as learning days.
 struct ActivityProgressDay: Codable, Equatable, Identifiable, Sendable {
+  let activitiesCompleted: Int
   let date: ProgressDate
-  let lessonCompletions: Int
 
   var id: ProgressDate { date }
 }

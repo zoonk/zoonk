@@ -7,23 +7,31 @@ import {
   type MockView,
 } from "@zoonk/core/exams/mocks/contract";
 import { createContext, use } from "react";
-import { type LearnBuddy } from "../buddies/use-buddy-name";
+
+/**
+ * What the learner's yes to one of the finished mock's offers did: applied (with the lessons a
+ * skip took off), or nothing moved and, for a focus, why.
+ */
+export type MockPlanOfferOutcome =
+  | { lessonsSkipped: number; status: "applied" }
+  | { reason: "alreadyIn" | "cantMove" | null; status: "unchanged" };
 
 /** How the screen reaches the server. Each step returns the mock as it now stands. */
 export type MockActions = {
+  /** Applies one of the finished mock's offers (`MockAdaptView`); null when it didn't go through. */
+  adapt: (offer: MockPlanOffer) => Promise<MockPlanOfferOutcome | null>;
   answer: (input: MockAnswerInput) => Promise<boolean>;
   finish: () => Promise<MockView | null>;
-  move: () => Promise<{ changeId: string | null; date: string } | null>;
-  start: () => Promise<MockView | null>;
   submit: (section: number) => Promise<MockView | null>;
-  undoMove: (changeId: string) => Promise<boolean>;
 };
+
+export type MockPlanOffer = "focus" | "skip";
 
 /** Where the screen leads: out, back to the day, and to practicing the mistakes. */
 export type MockHrefs = { continue: string; exit: string; mistakes: string };
 
-/** A step of the mock the learner waits on: starting it, handing a section in, or scoring it. */
-export type MockStep = "finish" | "start" | "submit";
+/** A step of the mock the learner waits on: handing a section in, or scoring it. */
+export type MockStep = "finish" | "submit";
 
 export type MockRunner = {
   answer: (choice: MockChoice | null) => void;
@@ -33,24 +41,20 @@ export type MockRunner = {
   error: boolean;
   finish: () => Promise<void>;
   go: (position: number) => void;
-  moved: { changeId: string | null; date: string } | null;
-  moveToMonday: () => Promise<void>;
   pending: boolean;
   position: number;
   /** The step on its way is taking longer than usual. */
   slow: boolean;
-  start: () => Promise<void>;
   submitSection: () => Promise<void>;
   toggleFlag: () => void;
-  undoMove: () => Promise<void>;
   view: MockView;
 };
 
 type MockScreenValue = {
+  actions: MockActions;
   /** The host's "Ask" about the finished mock; never shown while the mock runs. */
   ask?: React.ReactNode;
   hrefs: MockHrefs;
-  buddy: LearnBuddy | null;
   runner: MockRunner;
 };
 

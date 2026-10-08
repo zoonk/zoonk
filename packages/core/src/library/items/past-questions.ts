@@ -167,6 +167,7 @@ export async function savePastQuestions({
       ...checkItem({
         expectedFormat: target.format,
         item: question.item,
+        language: target.language,
         optionCount: target.optionCount,
       }),
       ...checkPastQuestion({ paperText, question, skillCount: target.skills.length }),

@@ -20,7 +20,7 @@ export function LibraryCourseOffer({
 
   return (
     <LearnLink
-      className="bg-card ring-foreground/10 hover:bg-muted/60 focus-visible:ring-ring/50 in-data-[mode=fun]:fun-glass flex min-h-16 items-center gap-3 rounded-3xl px-4 py-3 ring-1 outline-none focus-visible:ring-[3px]"
+      className="bg-card ring-foreground/10 hover:bg-muted/60 focus-visible:ring-ring/50 flex min-h-16 items-center gap-3 rounded-3xl px-4 py-3 ring-1 outline-none focus-visible:ring-[3px]"
       href={href}
     >
       <span className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-xl">

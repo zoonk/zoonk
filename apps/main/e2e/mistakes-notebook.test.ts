@@ -6,62 +6,95 @@ import { TRAP, createMistakeLearner, drillQuestion } from "./mistake-drill-days"
 import { openAs } from "./study-day";
 
 /**
- * Ana's mistakes notebook: open mistakes by skill with why they happened, filters by cause, the
- * fixed ones, and "Practice mistakes", which drills each by its cause. Split between Focus and Fun.
+ * Ana's mistakes notebook: how many are left to fix with "Practice mistakes" under it, then one
+ * row per skill that opens in place to each mistake with why it happened, and the fixed ones on
+ * their own page.
  */
 test.describe("Mistakes notebook", () => {
-  test("shows mistakes by skill and filters by cause", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page }) => {
+  test("leads with what's left to fix, opens each skill's mistakes in place, and shows the fixed ones", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
       await page.goto("/mistakes");
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: "Mistakes notebook" }),
-      ).toBeVisible();
+      await expect(page.getByRole("heading", { level: 1, name: "3 to fix" })).toBeVisible();
+      await expect(page.getByText("Mistakes notebook", { exact: true })).toBeVisible();
 
-      await expect(page.getByText(/^3 to fix · 1 fixed$/u)).toBeVisible();
+      // The notebook sits under the Journey, where its row is, and its way back is the Journey.
+      await expect(
+        page
+          .getByRole("navigation", { name: "Learning tabs" })
+          .getByRole("link", { exact: true, name: "Today" }),
+      ).toHaveAttribute("aria-current", "page");
+
+      // The notebook opens from Today's "Practice anytime", which is the way back.
+      await expect(
+        page.getByRole("main").getByRole("link", { name: "Back to Today" }),
+      ).toHaveAttribute("href", "/today");
+
+      await expect(page.getByRole("link", { name: "Practice mistakes" })).toHaveAttribute(
+        "href",
+        "/mistakes/practice",
+      );
+
       await expectAccessibleScreen(page, "the mistakes notebook");
 
-      await expect(
-        page.getByRole("heading", { name: "Calcular o preço com desconto" }),
-      ).toBeVisible();
+      // Each skill is one row with its count; its mistakes wait behind it.
+      const entries = page.locator('[data-slot="mistake-entry"]');
+      const shirt = entries.filter({ hasText: "Uma camisa de" });
+      const discount = page.locator("summary").filter({ hasText: "Calcular o preço com desconto" });
+      await expect(discount).toContainText("1");
+      await expect(shirt).toBeHidden();
 
-      const causes = page.getByRole("navigation", { name: "Filter by cause" });
-      await causes.getByRole("link", { name: /Misread/u }).click();
+      // A row opens from the keyboard, and each mistake says why it happened.
+      await discount.focus();
+      await page.keyboard.press("Enter");
+      await expect(shirt).toContainText("Misread");
+      await expect(shirt).toContainText("You answered: R$ 18");
+      await expect(shirt).toContainText("Right answer: R$ 102");
 
-      await expect(page).toHaveURL(/cause=misread/u);
+      await page.locator("summary").filter({ hasText: "Combinar variações percentuais" }).click();
 
-      await expect(page.getByRole("listitem").filter({ hasText: "You answered:" })).toHaveCount(1);
+      await expect(entries.filter({ hasText: "Um investidor aplicou" })).toContainText(
+        "Fell for a trap",
+      );
 
-      await expect(page.getByText("Right answer: R$ 102")).toBeVisible();
+      await page.locator("summary").filter({ hasText: "Resolver circuitos em série" }).click();
 
-      await page.goto("/mistakes");
+      await expect(entries.filter({ hasText: "Uma lanterna usa" })).toContainText("Content gap");
+
       await page.getByRole("link", { name: "See fixed mistakes" }).click();
-      await expect(page.getByRole("listitem").filter({ hasText: "Fixed" })).toHaveCount(1);
+      await expect(page).toHaveURL(/\/mistakes\?status=fixed$/u);
+      await expect(page.getByRole("heading", { level: 1, name: "1 fixed" })).toBeVisible();
+
+      // A notebook with one skill opens it.
+      await expect(entries.filter({ hasText: "Fixed" })).toHaveCount(1);
+      await expect(entries.filter({ hasText: "Fixed" })).toBeVisible();
+
+      await page.getByRole("main").getByRole("link", { name: "Mistakes notebook" }).click();
+      await expect(page).toHaveURL(/\/mistakes$/u);
     });
   });
 
   test("practice drills a mistake by its cause and gives the why, by keyboard", async ({
     browser,
   }) => {
-    await asPersona(browser, { mode: "fun", persona: "exam" }, async ({ page, user }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const attemptsBefore = await prisma.attempt.count({ where: { userId: user.id } });
       const right = page.getByRole("status").filter({ hasText: /^Right!/u });
 
       await page.goto("/mistakes");
-
-      await expect(
-        page.getByRole("heading", { level: 1, name: "Mistakes notebook" }),
-      ).toBeVisible();
-
-      await expectAccessibleScreen(page, "the mistakes notebook");
+      await expect(page.getByRole("heading", { level: 1, name: "3 to fix" })).toBeVisible();
       await page.getByRole("link", { name: "Practice mistakes" }).click();
 
       await expect(page.getByText("Read every word before you answer.")).toBeVisible();
-      await expect(page.getByText("Last time you answered: R$ 18")).toBeVisible();
+
+      // The mistake's own question (a number to type) can't be asked here, so its earlier
+      // answer stays out: next to another question it would mislead.
+      await expect(page.getByText(/^Last time you answered/u)).toBeHidden();
 
       // A misread is drilled by reading first: the answers show once the question is read.
       await expect(page.getByRole("button", { name: "R$ 2.040" })).toBeHidden();
-      await expectAccessibleScreen(page, "practice mistakes");
 
       // Keys work once the page hydrates, so the first press retries. Enter shows the answers of
       // a question read first, then a number picks; picking again is harmless.
@@ -87,7 +120,7 @@ test.describe("Mistakes notebook", () => {
   });
 
   test("practice counts toward today, stopped early too", async ({ browser }) => {
-    const { user } = await createMistakeLearner({ causes: ["trap", "guess"], mode: "fun" });
+    const { user } = await createMistakeLearner({ causes: ["trap", "guess"] });
     const page = await openAs(browser, user);
 
     await page.goto("/activity");
@@ -111,33 +144,52 @@ test.describe("Mistakes notebook", () => {
     const done = page.getByRole("status").filter({ hasText: "Practice done" });
     await expect(done.getByRole("heading", { level: 1, name: "Practice done" })).toBeVisible();
 
-    await expect(done.getByText("1 mistake fixed. The rest come back another day.")).toBeVisible();
+    // What the run did, as chips, with one way back.
+    const facts = done.getByRole("listitem");
+    await expect(facts).toHaveText(["1 mistake fixed", "1 of 1 right", "+2 Brain Power"]);
 
-    await expect(done.getByText("+2", { exact: true })).toBeVisible();
-    await expect(done.getByText("Brain Power")).toBeVisible();
-    await expect(done.getByText("Practice time")).toBeVisible();
-    await expect(done.getByText("1 of 1", { exact: true })).toBeVisible();
+    await expectAccessibleScreen(page, "a practice's end");
+    await expect(page.getByRole("link", { name: "Back" })).toHaveAttribute("href", /\/mistakes$/u);
 
     await expect
       .poll(() =>
         prisma.learningEvent.findMany({
-          select: { brainPower: true, correctAnswers: true, mode: true },
+          select: { brainPower: true, correctAnswers: true },
           where: { lessonKind: "mistakePractice", userId: user.id },
         }),
       )
-      .toStrictEqual([{ brainPower: 2, correctAnswers: 1, mode: "fun" }]);
+      .toStrictEqual([{ brainPower: 2, correctAnswers: 1 }]);
 
     await expect
       .poll(() => prisma.dailyProgress.findFirst({ where: { userId: user.id } }))
       .toMatchObject({ brainPowerEarned: 2, correctAnswers: 1, interactiveCompleted: 1 });
 
-    await page.goto("/activity");
-    await expect(page.getByRole("article", { name: /learning days/iu })).toContainText("1 day");
+    await page.goto("/stats");
+
+    // The overview's Activity card (the sidebar, on a wide screen, names the page alone).
+    await expect(page.getByRole("main").getByRole("link", { name: /^Activity 1 day/u })).toHaveText(
+      /^Activity\s*1 day/u,
+    );
+
     await page.context().close();
   });
 
-  test("votes on a practice question while its keys wait", async ({ browser }) => {
-    const { drills, user } = await createMistakeLearner({ causes: ["guess"], mode: "focus" });
+  test("sends a signed-out visitor of practice to sign in", async ({ page }) => {
+    const authUrls: string[] = [];
+
+    // Central auth is stood in for: only where the learner is sent matters here.
+    await page.route("**/auth/login**", async (route) => {
+      authUrls.push(route.request().url());
+      await route.fulfill({ body: "Auth app", contentType: "text/html", status: 200 });
+    });
+
+    await page.goto("/mistakes/practice");
+    await expect.poll(() => authUrls.length).toBe(1);
+    await expect(page.getByText("Start with a goal")).toBeHidden();
+  });
+
+  test("reports a practice question while its keys wait", async ({ browser }) => {
+    const { user } = await createMistakeLearner({ causes: ["guess"] });
     const page = await openAs(browser, user);
     const answer = page.getByRole("button", { name: "Right answer" });
 
@@ -148,6 +200,11 @@ test.describe("Mistakes notebook", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("button", { name: "I'm not sure" })).toBeVisible();
+
+    // Full screen like a lesson: the task's header, no tabs.
+    await expect(page.getByRole("heading", { level: 1, name: "Practice mistakes" })).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toBeHidden();
+    await expect(page.getByRole("progressbar", { name: /^Question 1 of \d+$/u })).toBeVisible();
     await expectAccessibleScreen(page, "practice mistakes");
 
     // The menu opens from the keyboard, and a number key pressed in it picks no answer.
@@ -157,26 +214,20 @@ test.describe("Mistakes notebook", () => {
     await page.keyboard.press("1");
     await expect(answer).toHaveAttribute("aria-pressed", "false");
 
-    await page.getByRole("menuitemcheckbox", { exact: true, name: "Not helpful" }).press("Enter");
-    const sheet = page.getByRole("dialog", { name: "What went wrong?" });
-    await expect(sheet).toBeVisible();
+    // The menu only reports a problem: no votes in the middle of a practice.
+    await expect(page.getByRole("menuitemcheckbox")).toHaveCount(0);
+    await page.getByRole("menuitem", { name: "Report a problem" }).press("Enter");
+    const dialog = page.getByRole("dialog", { name: "Report a problem" });
+    await expect(dialog.getByText("This screen is attached")).toBeVisible();
 
-    await expect
-      .poll(() =>
-        prisma.contentFeedback.findFirst({
-          select: { contentKind: true, mode: true, vote: true },
-          where: { contentId: drills[0]?.original.id, userId: user.id },
-        }),
-      )
-      .toStrictEqual({ contentKind: "item", mode: "focus", vote: "down" });
-
-    // A number key pressed while the sheet is open picks nothing underneath it either.
+    // A number key pressed while the form is open picks nothing underneath it either.
     await page.keyboard.press("1");
     await page.keyboard.press("Escape");
-    await expect(sheet).toBeHidden();
+    await expect(dialog).toBeHidden();
     await expect(answer).toHaveAttribute("aria-pressed", "false");
 
-    // Once the sheet is closed, number keys answer again.
+    // Once the form is closed and focus is back on the menu's button, number keys answer again.
+    await expect(page.getByRole("button", { name: "Question options" })).toBeFocused();
     await page.keyboard.press("1");
     await expect(answer).toHaveAttribute("aria-pressed", "true");
     await page.context().close();

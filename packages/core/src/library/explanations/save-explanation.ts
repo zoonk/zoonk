@@ -10,6 +10,7 @@ import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
+import { startLessonVersion } from "../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../steps/contract/step-contract";
 import { type ExplanationStep } from "./explanation-steps";
 
@@ -73,7 +74,7 @@ async function publishSteps({
       return false;
     }
 
-    await tx.step.deleteMany({ where: { lessonId } });
+    const version = await startLessonVersion(tx, lessonId);
 
     await tx.step.createMany({
       data: steps.map((step, position) => ({
@@ -83,6 +84,7 @@ async function publishSteps({
         lessonId,
         position,
         skillId,
+        version,
         ...toProvenanceData(provenance),
       })),
     });

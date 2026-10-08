@@ -4,6 +4,7 @@ import { allowanceResponseSchema } from "../schemas/allowance";
 import { dailyTimeLimitResponseSchema } from "../schemas/guardians";
 import { learningProfileResponseSchema } from "../schemas/learning-profile";
 import {
+  conflictResponse,
   forbiddenResponse,
   notFoundResponse,
   unauthorizedResponse,
@@ -51,7 +52,7 @@ export const learnerProfilePaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: learningProfileResponseSchema } },
-          description: "Mode, buddy, age answer, active goal and the protections they imply",
+          description: "Buddy, age answer, settings, active goal and the protections they imply",
         },
         "401": unauthorizedResponse,
       },
@@ -61,7 +62,7 @@ export const learnerProfilePaths = {
     },
     patch: {
       description:
-        "Send only the fields that changed. Switching mode changes no learning data. A birth month and year under 13 deletes the account.",
+        "Send only the fields that changed. A birth month and year under 13 deletes the account. Once given, the birth month and year can only be corrected toward younger; support corrects an answer that makes the learner older.",
       operationId: "updateCurrentUserLearningProfile",
       requestBody: {
         content: { "application/json": { schema: learningProfileUpdateSchema } },
@@ -81,6 +82,10 @@ export const learnerProfilePaths = {
         "404": {
           ...notFoundResponse,
           description: `The active goal isn't one of the learner's goals. Error code: ${accessErrorCodes.goalNotFound}.`,
+        },
+        "409": {
+          ...conflictResponse,
+          description: `The new birth month and year make the learner older than the saved answer, which only support can change. Error code: ${accessErrorCodes.birthChangeNeedsSupport}.`,
         },
         "422": {
           ...unprocessableEntityResponse,

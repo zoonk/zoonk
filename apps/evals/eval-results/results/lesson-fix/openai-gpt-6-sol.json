@@ -44,7 +44,8 @@
                   { "isCorrect": false, "text": "−8 °C" }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
-                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember."
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "visual": null
               },
               {
                 "exampleLineIdea": null,
@@ -54,7 +55,8 @@
                 },
                 "kind": "explanation",
                 "text": "It's important to note that a rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
-                "title": "Up is up, even below zero"
+                "title": "Up is up, even below zero",
+                "visual": null
               },
               {
                 "image": null,
@@ -68,7 +70,8 @@
                     "text": "Two degrees of the rise are left, so keep going up."
                   }
                 ],
-                "title": "From −3 °C, up 5 degrees"
+                "title": "From −3 °C, up 5 degrees",
+                "visual": null
               },
               {
                 "context": null,
@@ -117,7 +120,8 @@
                 "image": null,
                 "kind": "explanation",
                 "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
-                "title": "Zero is a stop, not a wall"
+                "title": "Zero is a stop, not a wall",
+                "visual": null
               },
               {
                 "content": "{\"check\": {\"answer\": 5, \"explanation\": \"−3 + 8 = 5, so it's 5 °C at noon.\", \"kind\": \"numeric\", \"question\": \"What's the temperature at noon?\", \"tolerance\": {\"kind\": \"absolute\", \"value\": 0.01}, \"unit\": \"°C\"}, \"fields\": {\"label\": \"Temperature\", \"max\": 7, \"min\": -5, \"moves\": [{\"by\": 3}, {\"by\": 5}], \"start\": -3, \"step\": 1, \"unit\": \"°C\"}, \"prompt\": \"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}",
@@ -133,7 +137,8 @@
                 ],
                 "kind": "typedAnswer",
                 "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
-                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C."
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "visual": null
               },
               {
                 "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
@@ -156,7 +161,8 @@
                     "text": "15 °C"
                   }
                 ],
-                "question": "What will the thermometer show?"
+                "question": "What will the thermometer show?",
+                "visual": null
               }
             ],
             "summary": [
@@ -293,7 +299,8 @@
                   { "isCorrect": false, "text": "−8 °C" }
                 ],
                 "question": "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
-                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember."
+                "reveal": "It shows 2 °C. The next screens show why, and guessing first helps you remember.",
+                "visual": null
               },
               {
                 "exampleLineIdea": "A cold morning where the learner lives.",
@@ -303,7 +310,8 @@
                 },
                 "kind": "explanation",
                 "text": "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
-                "title": "Up is up, even below zero"
+                "title": "Up is up, even below zero",
+                "visual": null
               },
               {
                 "image": null,
@@ -317,7 +325,8 @@
                     "text": "Two degrees of the rise are left, so keep going up."
                   }
                 ],
-                "title": "From −3 °C, up 5 degrees"
+                "title": "From −3 °C, up 5 degrees",
+                "visual": null
               },
               {
                 "context": null,
@@ -365,7 +374,8 @@
                 "image": null,
                 "kind": "explanation",
                 "text": "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
-                "title": "Zero is a stop, not a wall"
+                "title": "Zero is a stop, not a wall",
+                "visual": null
               },
               {
                 "content": "{\"check\":{\"answer\":6,\"explanation\":\"−3 + 8 = 6, so it's 6 °C at noon.\",\"kind\":\"numeric\",\"question\":\"What's the temperature at noon?\",\"tolerance\":{\"kind\":\"absolute\",\"value\":0.01},\"unit\":\"°C\"},\"fields\":{\"label\":\"Temperature\",\"max\":7,\"min\":-5,\"moves\":[{\"by\":3},{\"by\":5}],\"start\":-3,\"step\":1,\"unit\":\"°C\"},\"prompt\":\"At 7 am it's −3 °C. By noon it's 8 degrees warmer. Move the dot.\"}",
@@ -381,7 +391,8 @@
                 ],
                 "kind": "typedAnswer",
                 "question": "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
-                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C."
+                "sampleAnswer": "Three degrees get you to zero, and the other two take you to 2 °C.",
+                "visual": null
               },
               {
                 "context": "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
@@ -404,7 +415,8 @@
                     "text": "15 °C"
                   }
                 ],
-                "question": "What will the thermometer show?"
+                "question": "What will the thermometer show?",
+                "visual": null
               }
             ],
             "summary": [
@@ -532,7 +544,8 @@
                   { "isCorrect": true, "text": "Depende de quanto cada coisa mudou" }
                 ],
                 "question": "Uma gráfica recebe um pedido maior e contrata mais gente. O prazo aumenta ou diminui? Dê seu palpite.",
-                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças."
+                "reveal": "Depende. Um pedido maior exige mais tempo, mas mais gente pode reduzir o tempo. Você precisa comparar as duas mudanças.",
+                "visual": null
               },
               {
                 "context": "Na gráfica, todos trabalham no mesmo ritmo. Compare cada mudança separadamente.",
@@ -560,21 +573,24 @@
                     "text": "Dobra; depois cai pela metade."
                   }
                 ],
-                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?"
+                "question": "O que acontece com o prazo ao dobrar a equipe para o mesmo pedido? E ao dobrar o pedido com a mesma equipe?",
+                "visual": null
               },
               {
                 "exampleLineIdea": null,
                 "image": null,
                 "kind": "explanation",
                 "text": "Grandezas inversamente proporcionais têm produto constante: $x \\cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante.",
-                "title": "O que fica fixo?"
+                "title": "O que fica fixo?",
+                "visual": null
               },
               {
                 "exampleLineIdea": "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
                 "image": null,
                 "kind": "explanation",
                 "text": "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
-                "title": "Uma mudança por vez"
+                "title": "Uma mudança por vez",
+                "visual": null
               },
               {
                 "image": null,
@@ -592,7 +608,8 @@
                     "text": "Multiplique o prazo inicial por essa razão."
                   }
                 ],
-                "title": "Mais gente, menos dias"
+                "title": "Mais gente, menos dias",
+                "visual": null
               },
               {
                 "context": "{impressoras} impressoras fazem {etiquetas} etiquetas em {horas} horas, no mesmo ritmo.",
@@ -664,7 +681,8 @@
                 "image": null,
                 "kind": "explanation",
                 "text": "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
-                "title": "Duas mudanças juntas"
+                "title": "Duas mudanças juntas",
+                "visual": null
               },
               {
                 "image": null,
@@ -686,7 +704,8 @@
                     "text": "Junte os dois efeitos."
                   }
                 ],
-                "title": "Pedido maior, mais impressoras"
+                "title": "Pedido maior, mais impressoras",
+                "visual": null
               },
               {
                 "context": "{maquinasAntigas} máquinas fazem {pecasAntigas} peças em {horas} horas, no mesmo ritmo.",

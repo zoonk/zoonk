@@ -10,6 +10,7 @@ import { type HeldBackDraft, parseHeldBackDrafts } from "../../generation/held-b
 import { type LessonWritingContext } from "../../quality/lesson-quality-gate";
 import { type MaterialPage, formatMaterialPages } from "../../sources/material-pages";
 import { type ChapterLesson, loadChapterLessons } from "./chapter-lessons";
+import { loadLessonExams } from "./lesson-exams";
 import { loadLessonDocuments } from "./lesson-sources";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
 
@@ -21,6 +22,8 @@ export type LessonWritingInputs = {
   chapterLessons: ChapterLesson[];
   chapterTitle: string;
   courseTitle: string;
+  /** The exams the lesson's learners prepare for: it's written for their candidates (see `loadLessonExams`). */
+  exams: NonNullable<LessonWritingContext["exams"]>;
   /** Earlier drafts the quality gate held back, oldest first: the next draft is told why. */
   heldBackDrafts: HeldBackDraft[];
   language: string;
@@ -94,18 +97,20 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
     return { status: "missingSpec" };
   }
 
-  const [{ material, sources }, chapterLessons] = await Promise.all([
-    loadLessonDocuments({
-      chapterId: lesson.homeChapterId,
-      courseId: lesson.homeChapter?.homeCourseId ?? null,
-      lessonId: lesson.id,
-      query: toMaterialQuery(spec),
-    }),
+  const goalsOf = {
+    chapterId: lesson.homeChapterId,
+    courseId: lesson.homeChapter?.homeCourseId ?? null,
+    lessonId: lesson.id,
+  };
+
+  const [{ material, sources }, chapterLessons, exams] = await Promise.all([
+    loadLessonDocuments({ ...goalsOf, query: toMaterialQuery(spec) }),
     loadChapterLessons({
       chapterId: lesson.homeChapterId,
       lessonId: lesson.id,
       ownerId: lesson.ownerId,
     }),
+    loadLessonExams(goalsOf),
   ]);
 
   const course = lesson.homeChapter?.homeCourse;
@@ -119,6 +124,8 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       chapterLessons,
       chapterTitle: lesson.homeChapter?.title ?? lesson.title,
       courseTitle: course?.title ?? lesson.homeChapter?.title ?? lesson.title,
+      // A lesson built from the learner's own material follows that material, not an exam's style.
+      exams: material.length > 0 ? [] : exams,
       heldBackDrafts: parseHeldBackDrafts(lesson.heldBackDrafts),
       language: lesson.language,
       level: lesson.level,
@@ -162,6 +169,7 @@ export function toWritingContext(inputs: LessonWritingInputs): LessonWritingCont
     chapterLessons: inputs.chapterLessons,
     chapterTitle: inputs.chapterTitle,
     courseTitle: inputs.courseTitle,
+    exams: inputs.exams,
     language: inputs.language,
     level: inputs.level,
     material: inputs.material.length > 0 ? formatMaterialPages(inputs.material) : undefined,
@@ -171,14 +179,23 @@ export function toWritingContext(inputs: LessonWritingInputs): LessonWritingCont
 }
 
 /**
- * What the writer read for a lesson, whatever its claim: for a later check of a lesson already
- * published, which reviews it against the same plan.
+ * What the writer read for a lesson, whatever its claim: for the check of a lesson already
+ * published, which reviews it against the same plan and fixes it into a new version. Null when the
+ * lesson is gone or has no readable spec.
  */
-export async function loadLessonWritingContext(
+export async function loadPublishedLessonInputs(
   lessonId: string,
-): Promise<LessonWritingContext | null> {
+): Promise<LessonWritingInputs | null> {
   const lesson = await findLessonToWrite(lessonId);
   const state = lesson ? await toWritingState(lesson) : null;
 
-  return state?.status === "ready" ? toWritingContext(state.inputs) : null;
+  return state?.status === "ready" ? state.inputs : null;
+}
+
+/** The writing context of a lesson already published (see `loadPublishedLessonInputs`). */
+export async function loadLessonWritingContext(
+  lessonId: string,
+): Promise<LessonWritingContext | null> {
+  const inputs = await loadPublishedLessonInputs(lessonId);
+  return inputs ? toWritingContext(inputs) : null;
 }

@@ -5,15 +5,19 @@ enum UsageKind {
   tutorMessage @map("tutor_message")
   upload
   conversation
-  /// A small AI call: understanding a goal, a simpler or deeper version, an answer's explanation,
-  /// grading a typed or spoken answer, an example line or a plan edit.
+  /// A small AI call: understanding a goal, an answer's explanation, grading a typed or spoken
+  /// answer, an example line or a plan edit.
   assist
+  /// A chapter's mind map drawn when the learner asked for it; reading one that exists is free.
+  mindMap      @map("mind_map")
 }
 
 /// One metered action behind the allowance and fair use. A lesson counts the first time a learner
 /// starts it, whether it was reused or generated; `generated` marks a start that needed new content.
 /// `targetId` is a plain id, so usage survives content changes. `costMicros` is the estimated AI spend
-/// in millionths of a dollar, summed for the daily spend budget.
+/// in millionths of a dollar, summed for the daily spend budget. `seconds` is a live call's time,
+/// summed for the plan's daily call time: the most the call may run when it connects, then how long
+/// it ran once it ends; 0 for every other use.
 model UsageRecord {
   id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId     String    @map("user_id") @db.Uuid
@@ -22,6 +26,7 @@ model UsageRecord {
   targetId   String    @map("target_id") @db.Uuid
   generated  Boolean   @default(false)
   costMicros Int       @default(0) @map("cost_micros")
+  seconds    Int       @default(0)
   createdAt  DateTime  @default(now()) @map("created_at")
 
   @@unique([userId, kind, targetId], name: "userUsageTarget")

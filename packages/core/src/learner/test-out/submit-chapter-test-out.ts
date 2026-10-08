@@ -3,14 +3,15 @@ import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getLearnerModelCacheTag } from "../../cache/tags";
+import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
+import { recordAnsweredActivity } from "../../stats/record-answered-activity";
 import { gradeChoiceAnswer, parseChoiceItem } from "../_utils/choice-items";
 import { loadGoalPlan } from "../_utils/goal-skill-graph";
-import { markPlanItemsTestedOut, markSkillsKnown } from "../_utils/known-skills";
+import { markPlanItemsTestedOut } from "../_utils/known-skills";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
-import { getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
+import { getChapterSkills } from "./_utils/chapter-items";
 import { type ChapterTestOutInput } from "./test-out-contract";
 import { type TestOutScore, scoreTestOut } from "./test-out-rules";
 
@@ -18,6 +19,8 @@ const PERCENT = 100;
 
 type ChapterTestOutOutcome = TestOutScore & {
   answers: { isCorrect: boolean; itemId: string }[];
+  /** The plan change that skipped the lessons, so the result can offer its undo right there. */
+  changeId: string | null;
   testedOutPlanItemIds: string[];
 };
 
@@ -34,9 +37,11 @@ function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInpu
 }
 
 /**
- * Grades a chapter test-out and records every answer as diagnostic. Passing marks the chapter's
- * skills known (except any the learner missed) and tests out the plan items that teach only known
- * skills, so the plan skips them. Every answered question must belong to the chapter.
+ * Grades a chapter test-out and records every answer as diagnostic, so each right answer is the
+ * evidence for its skill: nothing the test-out didn't ask about is assumed known. Its answering
+ * time counts in the learner's day like any other study. Passing tests
+ * out the plan items that teach only skills answered right, so the plan skips them. Every answered
+ * question must belong to the chapter.
  */
 export async function submitChapterTestOut({
   chapterId,
@@ -62,14 +67,9 @@ export async function submitChapterTestOut({
 
   const answers = firstAnswerPerItem(input.answers);
 
-  const [rows, chapterItems] = await Promise.all([
-    prisma.item.findMany({ where: { id: { in: answers.map((answer) => answer.itemId) } } }),
-    loadSkillItems({
-      examBlueprintId: owned.goal.examBlueprintId,
-      skillIds: chapterSkillIds,
-      userId: owned.userId,
-    }),
-  ]);
+  const rows = await prisma.item.findMany({
+    where: { id: { in: answers.map((answer) => answer.itemId) } },
+  });
 
   const graded = answers.map((answer) => {
     const row = rows.find((candidate) => candidate.id === answer.itemId);
@@ -89,25 +89,43 @@ export async function submitChapterTestOut({
   const answeredAt = new Date();
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
+  const recordAnswer = ({ answer, item, result }: (typeof graded)[number]) =>
+    item && result
+      ? recordLearnerAnswer({
+          answer: answer.answer,
+          answeredAt,
+          graded: { durationMs: answer.durationMs, isCorrect: result.isCorrect },
+          itemId: item.id,
+          language: item.language,
+          purpose: "diagnostic",
+          skillId: item.skillId,
+          timeZone,
+          userId: owned.userId,
+        })
+      : null;
+
+  // A chapter of few skills asks each several times: one skill's answers update its memory one
+  // after another, so they never race on the same row.
   await Promise.all(
-    graded.flatMap(({ answer, item, result }) =>
-      item && result
-        ? [
-            recordLearnerAnswer({
-              answer: answer.answer,
-              answeredAt,
-              graded: { durationMs: answer.durationMs, isCorrect: result.isCorrect },
-              itemId: item.id,
-              language: item.language,
-              purpose: "diagnostic",
-              skillId: item.skillId,
-              timeZone,
-              userId: owned.userId,
-            }),
-          ]
-        : [],
+    [...Map.groupBy(graded, (entry) => entry.item?.skillId ?? "").values()].map((skillAnswers) =>
+      skillAnswers.reduce<Promise<unknown>>(
+        (previous, entry) => previous.then(() => recordAnswer(entry)),
+        Promise.resolve(),
+      ),
     ),
   );
+
+  await recordAnsweredActivity({
+    answers: graded.map(({ answer, result }) => ({
+      durationMs: answer.durationMs,
+      isCorrect: result?.isCorrect ?? false,
+    })),
+    contentIds: { chapterId },
+    goalId,
+    lessonKind: "testOut",
+    timeZone,
+    userId: owned.userId,
+  });
 
   const score = scoreTestOut({
     chapterSkillIds,
@@ -115,19 +133,9 @@ export async function submitChapterTestOut({
       isCorrect: result?.isCorrect ?? false,
       skillId: item?.skillId ?? "",
     })),
-    testableSkillCount: new Set(chapterItems.map((item) => item.skillId)).size,
   });
 
-  if (score.passed) {
-    await markSkillsKnown({
-      knownAt: answeredAt,
-      skillIds: score.knownSkillIds,
-      timeZone,
-      userId: owned.userId,
-    });
-  }
-
-  const testedOutPlanItemIds = score.passed
+  const testedOut = score.passed
     ? await markPlanItemsTestedOut({
         goalId,
         items: plan.items,
@@ -135,9 +143,12 @@ export async function submitChapterTestOut({
         testedOutAt: answeredAt,
         timeZone,
       })
-    : [];
+    : { changeId: null, planItemIds: [] };
 
-  revalidateCacheTags([getLearnerModelCacheTag(owned.userId)]);
+  revalidateCacheTags([
+    getLearnerModelCacheTag(owned.userId),
+    getUserProgressCacheTag(owned.userId),
+  ]);
 
   after(() =>
     trackLearnerEvents({
@@ -163,7 +174,8 @@ export async function submitChapterTestOut({
         isCorrect: result?.isCorrect ?? false,
         itemId: answer.itemId,
       })),
-      testedOutPlanItemIds,
+      changeId: testedOut.changeId,
+      testedOutPlanItemIds: testedOut.planItemIds,
     },
     status: "ready",
   };

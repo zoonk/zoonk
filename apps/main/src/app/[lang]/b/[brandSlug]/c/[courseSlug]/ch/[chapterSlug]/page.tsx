@@ -15,8 +15,8 @@ import { LibraryChapterPage } from "./library-chapter-page";
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">;
 
 /**
- * Chapter copy is written in the course's language; only the page in that
- * language is indexed, and a reused chapter's canonical URL is its home course.
+ * Chapter copy is written in the course's language; only the page in that language is indexed,
+ * once the catalog lists the course, and a reused chapter's canonical URL is its home course.
  */
 async function getLibraryChapterMetadata({
   locale,
@@ -42,7 +42,7 @@ async function getLibraryChapterMetadata({
   return {
     alternates: { canonical: urls.canonical },
     description: route.chapter.description,
-    robots: { follow: true, index: contentLocale === locale },
+    robots: { follow: true, index: route.isListed && contentLocale === locale },
     title: t("{chapter}: {course} course", {
       chapter: route.chapter.title,
       course: route.course.title,

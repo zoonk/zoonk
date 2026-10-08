@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { targetCutoffSchema } from "../../exams/cutoffs/target-cutoff-contract";
 import { goalDraftSchema } from "../../goals/goal-contract";
 import {
   type GoalUnderstandingView,
@@ -28,6 +29,13 @@ const examDateSchema = z
 
 const understoodGoalSchema = z
   .object({
+    cutoff: targetCutoffSchema
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "The last published cut-off of the target the words named (a course at an institution, a position) with its source, when it's already known: where the bar was, never a promise. Null otherwise",
+      }),
     draft: goalDraftSchema.meta({
       description:
         "Ready for POST /goals once the learner confirms or edits it. `details` holds what the words said, the questions they already answered and the onboarding the goals share (`onboardingId`, the draft's id).",

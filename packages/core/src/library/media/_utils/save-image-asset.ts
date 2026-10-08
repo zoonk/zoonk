@@ -46,7 +46,14 @@ function getImageUpload(ownerId: string | null) {
     : { access: "public" as const, fileName: `library/images/${IMAGE_FILE_NAME}` };
 }
 
-async function uploadImageFile({ image, ownerId }: { image: Uint8Array; ownerId: string | null }) {
+/** Optimizes and uploads a picture's file: its URL and size, for a new asset or a redrawn one. */
+export async function uploadImageFile({
+  image,
+  ownerId,
+}: {
+  image: Uint8Array;
+  ownerId: string | null;
+}) {
   const { data: optimized, error: optimizeError } = await optimizeImage({
     image: Buffer.from(image),
   });

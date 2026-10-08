@@ -5,6 +5,7 @@ import {
   type LessonQualityIssueKind,
 } from "@zoonk/ai/tasks/v2/quality/lesson-check";
 import { BASE_LESSONS } from "./base-lessons";
+import { EXAM_PREP_BASE_LESSON } from "./exam-prep-lessons";
 import { SOURCED_BASE_LESSONS } from "./sourced-lessons";
 
 type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
@@ -12,7 +13,14 @@ type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
 /** A lesson as the reviewer reads it; lessons of goals built from sources add their passages. */
 export type LessonQualityCheckInput = Pick<
   CheckLessonQualityParams,
-  "chapterLessons" | "chapterTitle" | "courseTitle" | "language" | "level" | "sources" | "spec"
+  | "chapterLessons"
+  | "chapterTitle"
+  | "courseTitle"
+  | "exams"
+  | "language"
+  | "level"
+  | "sources"
+  | "spec"
 > & { lesson: WrittenLesson };
 
 /**
@@ -58,6 +66,43 @@ const { estabilidade, taxDeadlines } = SOURCED_BASE_LESSONS;
 /** The sourced cases come first, so a small `--limit` run checks that sources settle facts. */
 export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheckInput>[] = [
   { expected: { verdict: "pass" }, id: "en-tax-deadlines-sourced-clean", userInput: taxDeadlines },
+  {
+    // Written for law candidates: the OAB and the Constitution need no explanation for them.
+    expected: { verdict: "pass" },
+    id: "pt-finalidades-oab-exam-prep-clean",
+    userInput: EXAM_PREP_BASE_LESSON,
+  },
+  {
+    // An option no law candidate would pick, the kind a layperson's lesson had.
+    expected: { kinds: ["weakCheck", "level"], screen: 2, verdict: "fail" },
+    id: "pt-finalidades-oab-exam-prep-absurd-option",
+    userInput: plant(EXAM_PREP_BASE_LESSON, 2, {
+      context:
+        "Raimundo vê que um recurso demora a ser julgado. Ele sugere que a OAB passe a decidi-lo no lugar dos juízes.",
+      image: null,
+      kind: "check",
+      options: [
+        {
+          isCorrect: true,
+          reason:
+            "Você distingue cobrar providências de decidir um caso: a demora pode motivar uma cobrança da OAB, não transferir a ela o papel dos juízes.",
+          text: "A OAB pode cobrar melhorias na Justiça, mas não assumir o julgamento do recurso.",
+        },
+        {
+          isCorrect: false,
+          reason: "Advogados não são juízes, e Raimundo não é advogado.",
+          text: "A OAB pode julgar o recurso, porque toda pessoa que espera um processo é advogada.",
+        },
+        {
+          isCorrect: false,
+          reason: "A OAB não decide recursos: seu papel é outro.",
+          text: "A OAB deve fechar o tribunal até o recurso ser julgado.",
+        },
+      ],
+      question: "Como você avalia a proposta de Raimundo?",
+      visual: null,
+    }),
+  },
   { expected: { verdict: "pass" }, id: "pt-estabilidade-sourced-clean", userInput: estabilidade },
   {
     // The IRS page says an extension moves filing only; the lesson says it moves paying too.
@@ -69,6 +114,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       kind: "explanation",
       text: "If your forms aren't ready, send **Form 4868** by April 15 and both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.",
       title: "Six more months for everything",
+      visual: null,
     }),
   },
   {
@@ -81,6 +127,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       kind: "explanation",
       text: "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem entra por concurso ganha essa garantia depois de **dois anos** (24 meses) trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
       title: "Dois anos e uma avaliação",
+      visual: null,
     }),
   },
   {
@@ -106,6 +153,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
         { math: null, text: "The rest of the rise, 3 degrees, takes you above zero." },
       ],
       title: "From −3 °C, up 5 degrees",
+      visual: null,
     }),
   },
   {
@@ -117,6 +165,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       kind: "explanation",
       text: "Thermometers have a long history. Galileo built an early one around 1593, and Daniel Fahrenheit made the mercury thermometer popular in 1714. Today they're everywhere, from kitchens to hospitals.",
       title: "A short history of thermometers",
+      visual: null,
     }),
   },
   {
@@ -154,6 +203,36 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       kind: "explanation",
       text: "Grandezas inversamente proporcionais têm produto constante: $x \\cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante. Identifique a relação funcional antes de montar a proporção.",
       title: "Proporcionalidade",
+      visual: null,
+    }),
+  },
+  {
+    // A shared lesson framed around one exam's notice, which learners of other exams also study.
+    expected: { kinds: ["scope"], screen: 2, verdict: "fail" },
+    id: "pt-regra-framed-around-one-exam",
+    userInput: plant(regra, 2, {
+      ...(screenOf(regra, 2) as Extract<WrittenScreen, { kind: "check" }>),
+      context:
+        "Na prova da Cebraspe para analista da Câmara dos Deputados, conforme o subitem 13.5 do edital, recursos vão para sac@cebraspe.org.br. Um setor da Câmara organiza a triagem desses recursos.",
+    }),
+  },
+  {
+    // A check about a case no screen showed yet ("Lorena's order" first appears later, if ever).
+    expected: { kinds: ["unclear"], screen: 2, verdict: "fail" },
+    id: "pt-regra-case-before-shown",
+    userInput: plant(regra, 2, {
+      ...(screenOf(regra, 2) as Extract<WrittenScreen, { kind: "check" }>),
+      context: "Volte ao pedido da Lorena e compare as duas mudanças que a gráfica conferiu nele.",
+    }),
+  },
+  {
+    // A made-up failure pinned on a real company.
+    expected: { kinds: ["incorrect", "scope"], screen: 2, verdict: "fail" },
+    id: "pt-regra-real-brand-failure",
+    userInput: plant(regra, 2, {
+      ...(screenOf(regra, 2) as Extract<WrittenScreen, { kind: "check" }>),
+      context:
+        "A gráfica que imprime as etiquetas do Mercado Livre errou o prazo de um pedido grande porque o sistema do Mercado Livre caiu. Todos trabalham no mesmo ritmo.",
     }),
   },
   {
@@ -197,6 +276,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       kind: "explanation",
       text: "O arranjo mais estável minimiza a energia total $E = \\frac{\\hbar^2}{2 m r^2} - \\frac{e^2}{4 \\pi \\varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \\approx 0{,}53$ Å.",
       title: "O arranjo mais estável",
+      visual: null,
     }),
   },
   {
@@ -214,6 +294,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
         { math: "6\\times\\frac{8}{4}=12", text: "Multiplique o prazo inicial por essa razão." },
       ],
       title: "Mais gente, menos dias",
+      visual: null,
     }),
   },
   {
@@ -242,6 +323,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
         },
       ],
       question: "What will the thermometer show?",
+      visual: null,
     }),
   },
   {

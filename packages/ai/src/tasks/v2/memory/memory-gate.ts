@@ -30,7 +30,7 @@ export const memoryGateClassifier = {
     lasting: {
       criteria: {
         false:
-          "A moment, a one-off, small talk, or something only about this lesson or conversation.",
+          "A moment, a one-off, small talk, something only about this lesson or conversation, how one goal's study is set up (time a day, focus, difficulty), or the date of the exam or deadline they study for.",
         true: "Likely still true in a few weeks, and it would change how a tutor teaches, plans or picks examples.",
       },
       instructions,

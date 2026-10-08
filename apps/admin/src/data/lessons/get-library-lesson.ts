@@ -35,6 +35,7 @@ const libraryLessonInclude = {
       variants: { orderBy: [{ kind: "asc" as const }, { key: "asc" as const }] },
     },
     orderBy: { position: "asc" as const },
+    where: { retiredAt: null },
   },
   words: {
     include: { word: { select: { audioUrl: true, word: true } } },
@@ -66,8 +67,7 @@ async function countStepAnswers(stepIds: string[]) {
 
 /**
  * Everything the admin lesson page shows about one Library lesson: where it's used, its skills,
- * spec and summary, each screen with its "Simpler", "Go deeper", field and tool versions, and
- * answers per screen.
+ * spec and summary, each screen with its field and tool versions, and answers per screen.
  */
 export const getLibraryLesson = cacheAdminData(async (lessonId: string) => {
   const lesson = await prisma.lesson.findUnique({

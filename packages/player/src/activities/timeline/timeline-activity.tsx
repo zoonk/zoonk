@@ -1,11 +1,11 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Button } from "@zoonk/ui/components/button";
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
-import { useFormatNumber } from "../_utils/use-format-number";
-import { useMeasuredWidth } from "../_utils/use-measured-width";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type TrackEvent } from "./timeline-event-card";
 import { TimelineGaps } from "./timeline-gaps";

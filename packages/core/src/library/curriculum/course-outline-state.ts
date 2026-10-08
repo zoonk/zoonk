@@ -1,5 +1,5 @@
 import "server-only";
-import { CourseLevel, prisma } from "@zoonk/db";
+import { type CourseLevel, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   COURSE_LIST_CACHE_TAG,
@@ -8,12 +8,13 @@ import {
   getCourseRouteCacheTag,
 } from "../../cache/tags";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
+import { needsTool } from "../chapters/chapter-tools";
 import {
   type LibraryClaimResult,
   claimLibraryGeneration,
   finishLibraryGeneration,
 } from "../claims/generation-claim";
-import { type CurriculumScope } from "./curriculum-scope";
+import { loadCourseMaterial } from "../sources/goal-material";
 
 /**
  * The goal skills this course doesn't teach yet: no lesson of its chapters teaches the skill and
@@ -21,31 +22,43 @@ import { type CurriculumScope } from "./curriculum-scope";
  * across courses, but another subject's lessons for them teach other content (reading for the
  * main idea in English is not in Portuguese), so only this course's own chapters count; a course
  * on the same subject gets its chapters and lessons through identity search when the outline asks.
+ * For a goal whose plan leaves out chapters that need a tool (`withToolChapters` false: an exam
+ * answered without one), those chapters don't count either: its skills need chapters without them.
  */
 export async function findUntaughtSkills({
   courseId,
   ownerId,
   skillIds,
+  withToolChapters = true,
 }: {
   courseId: string;
   ownerId: string | null;
   skillIds: readonly string[];
+  withToolChapters?: boolean;
 }): Promise<string[]> {
   const visible = libraryRowsVisibleTo(ownerId);
   const inCourse = { courses: { some: { courseId } } };
 
   const [byLesson, byChapter] = await Promise.all([
     prisma.lessonSkill.findMany({
-      distinct: ["skillId"],
-      select: { skillId: true },
+      select: {
+        lesson: {
+          select: {
+            chapters: {
+              select: { chapter: { select: { tools: true } } },
+              where: { chapter: inCourse },
+            },
+          },
+        },
+        skillId: true,
+      },
       where: {
         lesson: { ...visible, chapters: { some: { chapter: inCourse } } },
         skillId: { in: [...skillIds] },
       },
     }),
     prisma.chapterSkill.findMany({
-      distinct: ["skillId"],
-      select: { skillId: true },
+      select: { chapter: { select: { tools: true } }, skillId: true },
       where: {
         chapter: { ...visible, ...inCourse, lessons: { some: {} } },
         skillId: { in: [...skillIds] },
@@ -53,14 +66,22 @@ export async function findUntaughtSkills({
     }),
   ]);
 
-  const taught = new Set([...byLesson, ...byChapter].map((row) => row.skillId));
+  const counts = (tools: unknown) => withToolChapters || !needsTool(tools);
+
+  const taught = new Set([
+    ...byLesson
+      .filter((row) => row.lesson.chapters.some((entry) => counts(entry.chapter.tools)))
+      .map((row) => row.skillId),
+    ...byChapter.filter((row) => counts(row.chapter.tools)).map((row) => row.skillId),
+  ]);
 
   return skillIds.filter((skillId) => !taught.has(skillId));
 }
 
 /**
  * What writing one level band needs to know about the course: every chapter title it already has
- * (so the band doesn't repeat them) and the first free position in the band.
+ * (so the band doesn't repeat them), the first free position in the band, and, for a private
+ * course built from the learner's own class material, that material (see `loadCourseMaterial`).
  */
 export async function getCourseBandContext({
   courseId,
@@ -68,7 +89,12 @@ export async function getCourseBandContext({
 }: {
   courseId: string;
   level: CourseLevel;
-}): Promise<{ chapterTitles: string[]; nextPosition: number; title: string }> {
+}): Promise<{
+  chapterTitles: string[];
+  material: string | null;
+  nextPosition: number;
+  title: string;
+}> {
   const course = await prisma.course.findUniqueOrThrow({
     include: {
       courseChapters: {
@@ -83,6 +109,7 @@ export async function getCourseBandContext({
 
   return {
     chapterTitles: course.courseChapters.map((placement) => placement.chapter.title),
+    material: await loadCourseMaterial(course),
     nextPosition:
       band.length === 0 ? 0 : Math.max(...band.map((placement) => placement.position)) + 1,
     title: course.title,
@@ -203,74 +230,4 @@ export async function finishCourseOutline({
   if (count > 0) {
     revalidateCacheTags(await getListedCourseTags(courseId));
   }
-}
-
-const COURSE_LEVELS = Object.values(CourseLevel);
-
-/** Language courses follow CEFR levels from beginner to advanced; they have no overview band. */
-function getCourseLevels({ targetLanguage }: { targetLanguage: string | null }): CourseLevel[] {
-  return targetLanguage ? COURSE_LEVELS.filter((level) => level !== "overview") : COURSE_LEVELS;
-}
-
-/** The bands of a shared course nobody has outlined yet, and what writing them needs. */
-export type MissingCourseBands = {
-  /** Every chapter title the course already has, so the new bands don't repeat them. */
-  chapterTitles: string[];
-  courseTitle: string;
-  levels: CourseLevel[];
-  scope: CurriculumScope;
-};
-
-/**
- * The level bands of a shared course that have no chapters yet, once the course has an outline.
- * Every public Library course ends up with its full outline: the bands a goal needs are written
- * right away, and the others in the background at the flex tier. Private courses have no levels,
- * and a course without any chapter has no outline to complete yet. Null when nothing is missing.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
-export async function findMissingCourseBands(courseId: string): Promise<MissingCourseBands | null> {
-  const course = await prisma.course.findUnique({
-    include: {
-      courseChapters: {
-        include: { chapter: { select: { title: true } } },
-        orderBy: [{ level: "asc" }, { position: "asc" }],
-      },
-    },
-    where: { id: courseId },
-  });
-
-  if (!course || course.visibility !== "public" || course.courseChapters.length === 0) {
-    return null;
-  }
-
-  const outlined = new Set(course.courseChapters.map((placement) => placement.level));
-  const levels = getCourseLevels(course).filter((level) => !outlined.has(level));
-
-  if (levels.length === 0) {
-    return null;
-  }
-
-  return {
-    chapterTitles: course.courseChapters.map((placement) => placement.chapter.title),
-    courseTitle: course.title,
-    levels,
-    scope: {
-      generalGoal: null,
-      language: course.language,
-      ownerId: null,
-      targetLanguage: course.targetLanguage,
-    },
-  };
-}
-
-/** The skills these lessons teach, so goals waiting on any of them can plan the real lessons. */
-export async function findLessonSkillIds(lessonIds: readonly string[]): Promise<string[]> {
-  const rows = await prisma.lessonSkill.findMany({
-    distinct: ["skillId"],
-    select: { skillId: true },
-    where: { lessonId: { in: [...lessonIds] } },
-  });
-
-  return rows.map((row) => row.skillId);
 }

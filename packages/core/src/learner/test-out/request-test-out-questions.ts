@@ -15,6 +15,8 @@ export type TestOutQuestionsRequest =
   | { status: "ready" }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
+      /** How many questions each of those skills needs: several in a chapter of few skills. */
+      questionsPerSkill: number;
       skillIds: string[];
       status: "start";
     }
@@ -24,9 +26,9 @@ export type TestOutQuestionsRequest =
 
 /**
  * Decides what asking for a chapter's test-out questions does, when the learner taps to get the
- * test ready: skills the test-out samples with no question yet get some written (shared with
- * placement, reviews and practice), claimed as small AI help first. Nothing is written when the
- * test-out already has a question for every skill it asks about.
+ * test ready: skills the test-out samples without their share of questions get some written
+ * (shared with placement, reviews and practice), claimed as small AI help first. Nothing is written
+ * when the test-out already has every skill's share.
  */
 export async function requestTestOutQuestions({
   chapterId,
@@ -63,6 +65,7 @@ export async function requestTestOutQuestions({
 
   return {
     analytics: { distinctId: owned.userId, goalId, platform: await getRequestPlatform() },
+    questionsPerSkill: testOut.questionsPerSkill,
     skillIds: testOut.needsItems,
     status: "start",
   };

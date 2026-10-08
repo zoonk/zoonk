@@ -1,6 +1,6 @@
 import { PREVIEW_CARD_CLASS } from "@/components/public/landing-styles";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, NotebookPenIcon, TimerIcon, XIcon } from "lucide-react";
+import { CheckIcon, TimerIcon, XIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { renderBold } from "../rich-text";
@@ -46,7 +46,7 @@ function renderEmphasis(chunks: ReactNode) {
   return <b className="text-foreground">{chunks}</b>;
 }
 
-/** An exam question in the real format, its explanation, a timed mock and the mistakes notebook. */
+/** An exam question in the real format, its explanation, and the weekly timed mock. */
 export async function ExamPreview() {
   const t = await getExtracted();
 
@@ -80,7 +80,7 @@ export async function ExamPreview() {
         </p>
       </div>
 
-      <div className="hidden w-[212px] flex-none flex-col gap-4 md:flex">
+      <div className="hidden w-[212px] flex-none md:flex">
         <div className={cn(PREVIEW_CARD_CLASS, "flex-1 p-5")}>
           <span className="flex size-9 items-center justify-center rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
             <TimerIcon className="size-[18px]" />
@@ -92,18 +92,6 @@ export async function ExamPreview() {
           <p className="text-muted-foreground mt-1.5 text-[13px] leading-snug">
             {t("Full length")}
           </p>
-        </div>
-
-        <div className={cn(PREVIEW_CARD_CLASS, "flex items-start gap-3 p-4")}>
-          <span className="flex size-9 flex-none items-center justify-center rounded-full bg-pink-50 text-pink-600 dark:bg-pink-950 dark:text-pink-300">
-            <NotebookPenIcon className="size-[18px]" />
-          </span>
-          <div>
-            <p className="text-sm leading-tight font-medium">{t("Mistakes notebook")}</p>
-            <p className="text-muted-foreground mt-0.5 text-[13px]">
-              {t("Back as practice Friday")}
-            </p>
-          </div>
         </div>
       </div>
     </div>

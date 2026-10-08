@@ -3,12 +3,11 @@
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
-import { cn } from "@zoonk/ui/lib/utils";
 import {
   BriefcaseBusinessIcon,
   CalendarDaysIcon,
   ClockIcon,
-  FlagIcon,
+  FileTextIcon,
   GaugeIcon,
   GraduationCapIcon,
   LanguagesIcon,
@@ -30,11 +29,11 @@ const ICONS: Record<UnderstoodRowIcon, React.ComponentType<{ className?: string 
   goal: TargetIcon,
   language: LanguagesIcon,
   level: GaugeIcon,
+  material: FileTextIcon,
   reason: PlaneIcon,
   speaks: MessageCircleIcon,
   target: TrophyIcon,
   work: BriefcaseBusinessIcon,
-  year: FlagIcon,
 };
 
 /** Years ahead the card accepts for an exam: sooner than that, nobody plans yet. */
@@ -60,22 +59,32 @@ function getInputLimits(type: EditorType) {
   return {};
 }
 
-function SourceBadge({ source }: { source: NonNullable<Row["source"]> }) {
-  const t = useExtracted();
+/** Past this, a notice's title (often its whole heading, in capitals) reads as its site instead. */
+const MAX_SOURCE_TITLE_LENGTH = 40;
 
+/** The source as a few words: its short title, else the site it's on ("cebraspe.org.br"). */
+function getSourceName(source: NonNullable<Row["source"]>): string {
   const host = URL.canParse(source.url)
     ? new URL(source.url).hostname.replace(/^www\./u, "")
     : null;
 
+  const title = source.title?.trim();
+  return title && title.length <= MAX_SOURCE_TITLE_LENGTH ? title : (host ?? source.url);
+}
+
+function SourceBadge({ source }: { source: NonNullable<Row["source"]> }) {
+  const t = useExtracted();
+
   return (
     <a
-      className="text-success bg-success/10 focus-visible:ring-ring/50 inline-flex min-h-6 items-center gap-1 rounded-full px-2 text-xs font-medium outline-none focus-visible:ring-[3px]"
+      className="text-success bg-success/10 focus-visible:ring-ring/50 inline-flex min-h-6 max-w-full items-center gap-1 rounded-full px-2 text-xs font-medium outline-none focus-visible:ring-[3px]"
       href={source.url}
       rel="noreferrer"
       target="_blank"
+      title={source.title ?? undefined}
     >
-      <ShieldCheckIcon aria-hidden="true" className="size-3" />
-      {t("source: {source}", { source: source.title ?? host ?? source.url })}
+      <ShieldCheckIcon aria-hidden="true" className="size-3 shrink-0" />
+      <span className="truncate">{t("source: {source}", { source: getSourceName(source) })}</span>
     </a>
   );
 }
@@ -147,7 +156,7 @@ function RowEditor({
 
 /**
  * One understood fact: what it is, the value, where it came from, and a pencil to fix it in
- * place. Official exam dates keep their source one tap away; picking another day replaces them.
+ * place. Official exam dates keep their source one tap away; another year reads that year's days.
  * Closing the editor gives focus back to the pencil (`focusEdit`), so keyboard users keep their place.
  */
 export function UnderstoodRowItem({
@@ -168,6 +177,7 @@ export function UnderstoodRowItem({
 }) {
   const t = useExtracted();
   const Icon = ICONS[row.icon];
+  const label = editing ? (row.editLabel ?? row.label) : row.label;
 
   return (
     <li className="flex items-start gap-3 py-3.5 first:pt-1 last:pb-1">
@@ -176,12 +186,12 @@ export function UnderstoodRowItem({
       </span>
 
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-muted-foreground text-xs">{row.label}</span>
+        <span className="text-muted-foreground text-xs">{label}</span>
 
         {editing && row.editable ? (
           <RowEditor
             defaultValue={editValue}
-            label={row.label}
+            label={label}
             onCancel={() => onEdit(false)}
             onSave={async (value) => {
               const saved = await onSave(value);
@@ -217,7 +227,7 @@ export function UnderstoodRowItem({
         <Button
           aria-label={t("Edit {field}", { field: row.label })}
           autoFocus={focusEdit}
-          className={cn("text-muted-foreground -mr-2 shrink-0")}
+          className="text-muted-foreground -mr-2 shrink-0"
           onClick={() => onEdit(true)}
           size="icon"
           variant="ghost"

@@ -1,5 +1,5 @@
 import { type CourseLevel, type LanguageSkill, type StepKind } from "@zoonk/db";
-import { clampCefrScore, parseCefrScore } from "@zoonk/utils/cefr";
+import { clampCefrScore, formatCefrScore, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 
 export const LANGUAGE_SKILLS = [
@@ -159,4 +159,17 @@ export function getLevelTrend({
   }
 
   return score < startScore ? "down" : "same";
+}
+
+/**
+ * The level across the skills ("A2+"): their average, rounded down to a half step so it never reads
+ * higher than the skills behind it. Null without any skill's level.
+ */
+export function getOverallLevel(scores: readonly number[]): string | null {
+  if (scores.length === 0) {
+    return null;
+  }
+
+  const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  return formatCefrScore(Math.floor(average / HALF_STEP) * HALF_STEP);
 }

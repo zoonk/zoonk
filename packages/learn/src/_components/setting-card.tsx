@@ -1,18 +1,16 @@
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LucideIcon } from "lucide-react";
+import { SURFACE_CLASS } from "./surface";
 
 /**
- * A setting in its own card: the icon and a small control sit on the label's line and the
+ * A setting on the page's surface: the icon and a small control sit on the label's line and the
  * description wraps under the label, so long translations never pull them off the first line.
  */
 export function SettingCard({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "border-border in-data-[mode=fun]:fun-glass flex items-start gap-3 rounded-2xl border p-4 text-base",
-        className,
-      )}
+      className={cn(SURFACE_CLASS, "flex items-start gap-3 p-4 text-base", className)}
       data-slot="setting-card"
       {...props}
     />

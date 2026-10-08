@@ -3,7 +3,6 @@ import {
   BRAIN_POWER_BONUS,
   EMPTY_OUTCOME,
   type ScoredAnswer,
-  advanceHyperdrive,
   capExtraPractice,
   estimateBrainPower,
   getAnswersEnergyDelta,
@@ -32,6 +31,7 @@ describe(scoreAnswers, () => {
       points: [2, 4, 6, 8, 10, 10, 10],
       streak: 7,
       topLevel: 5,
+      topStreak: 7,
     });
   });
 
@@ -43,6 +43,7 @@ describe(scoreAnswers, () => {
       points: [2, 4, 6, 0, 2],
       streak: 1,
       topLevel: 3,
+      topStreak: 3,
     });
   });
 
@@ -52,6 +53,7 @@ describe(scoreAnswers, () => {
       points: [10],
       streak: 5,
       topLevel: 5,
+      topStreak: 5,
     });
   });
 
@@ -61,7 +63,13 @@ describe(scoreAnswers, () => {
       streak: 2,
     });
 
-    expect(result).toStrictEqual({ brainPower: 1, points: [1, 0, 0], streak: 2, topLevel: 0 });
+    expect(result).toStrictEqual({
+      brainPower: 1,
+      points: [1, 0, 0],
+      streak: 2,
+      topLevel: 0,
+      topStreak: 0,
+    });
   });
 
   it("earns nothing and keeps nothing for wrong answers only", () => {
@@ -70,15 +78,8 @@ describe(scoreAnswers, () => {
       points: [0, 0],
       streak: 0,
       topLevel: 0,
+      topStreak: 0,
     });
-  });
-});
-
-describe(advanceHyperdrive, () => {
-  it("builds on new or due material, holds on repeats and resets on mistakes", () => {
-    expect(advanceHyperdrive({ answer: right("due"), streak: 2 })).toBe(3);
-    expect(advanceHyperdrive({ answer: right("repeat", 1), streak: 2 })).toBe(2);
-    expect(advanceHyperdrive({ answer: wrong, streak: 4 })).toBe(0);
   });
 });
 

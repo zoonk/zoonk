@@ -8,6 +8,7 @@ import {
   skipStepKinds,
   startQuickCheck,
 } from "./_utils/lesson-flow";
+import { getRunVerdicts, resumeLesson } from "./_utils/lesson-resume";
 import { isReadStep } from "./_utils/lesson-steps";
 import {
   type LessonPlayerAction,
@@ -15,6 +16,7 @@ import {
   createInitialState,
   getCurrentStep,
 } from "./lesson-player-state";
+import { type LessonRunAnswers } from "./lesson-player-types";
 
 type ActionOf<TType extends LessonPlayerAction["type"]> = Extract<
   LessonPlayerAction,
@@ -104,19 +106,74 @@ function failCheck(state: LessonPlayerState, action: ActionOf<"checkFailed">): L
   return { ...state, checkFailed: true, checkIssue: action.issue ?? null, phase: "playing" };
 }
 
-/** Starting over plays the same lesson from the top in a new run. */
-function restart(state: LessonPlayerState): LessonPlayerState {
-  return createInitialState(
-    { id: state.lessonId, steps: Object.values(state.steps) },
-    state.support,
-  );
-}
-
 function setCompletionStatus(
   state: LessonPlayerState,
   status: "failed" | "saving",
 ): LessonPlayerState {
   return state.completion ? { ...state, completion: { ...state.completion, status } } : state;
+}
+
+/** Whether two sets of first verdicts are the same answers. */
+function isSameProgress(a: Record<string, boolean>, b: Record<string, boolean>): boolean {
+  const entries = Object.entries(a);
+
+  return (
+    entries.length === Object.keys(b).length && entries.every(([id, value]) => b[id] === value)
+  );
+}
+
+/** The lesson from the top, continued from the run's answers. */
+function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): LessonPlayerState {
+  const fresh = createInitialState(
+    { id: state.lessonId, steps: Object.values(state.steps) },
+    state.support,
+  );
+
+  return { ...resumeLesson(fresh, answers), run: state.run };
+}
+
+/**
+ * The run started. When it already holds answers the screen doesn't show (the learner came back
+ * to an open run), the lesson continues from them. Once the learner answered anything here, their
+ * screen leads.
+ */
+function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): LessonPlayerState {
+  const startedAt = Date.parse(action.startedAt);
+
+  const run = {
+    carriedStepIds: action.answers
+      .filter((answer) => Date.parse(answer.answeredAt) < startedAt)
+      .map((answer) => answer.stepId),
+    hyperdrive: action.hyperdrive,
+    runId: action.runId,
+    status: "started" as const,
+  };
+
+  const started = { ...state, run };
+  const isUntouched = Object.keys(state.results).length === 0 && !state.quickCheck;
+  const answers = action.answers.filter((answer) => answer.stepId in state.steps);
+
+  if (!isUntouched || isSameProgress(state.firstVerdicts, getRunVerdicts(answers))) {
+    return started;
+  }
+
+  return resumeFrom(started, answers);
+}
+
+/**
+ * The server couldn't finish the lesson because an answer the screens show never reached it: the
+ * lesson goes back to the first screen it's missing, never to a save that can't succeed.
+ */
+function resyncRun(state: LessonPlayerState, action: ActionOf<"runResynced">): LessonPlayerState {
+  if (state.phase !== "completed") {
+    return state;
+  }
+
+  const resumed = resumeFrom(state, action.answers);
+
+  return resumed.phase === "completed"
+    ? setCompletionStatus(state, "failed")
+    : { ...resumed, notice: "answerNotSaved" };
 }
 
 function completionSaved(
@@ -129,8 +186,8 @@ function completionSaved(
 }
 
 /**
- * The one lesson reducer: every screen kind, both modes. It has no idea how a mode looks; skins
- * read its state. Network work happens outside it and reports back through actions.
+ * The one lesson reducer: every screen kind. It has no idea how the lesson looks; the player's
+ * parts read its state. Network work happens outside it and reports back through actions.
  */
 export function lessonPlayerReducer(
   state: LessonPlayerState,
@@ -149,8 +206,6 @@ export function lessonPlayerReducer(
       return explainFirst(state);
     case "knowThis":
       return startQuickCheck(state);
-    case "restart":
-      return restart(state);
     case "checkStarted":
       return startChecking(state);
     case "checkResolved":
@@ -162,10 +217,9 @@ export function lessonPlayerReducer(
     case "runStarting":
       return { ...state, run: { status: "starting" } };
     case "runStarted":
-      return {
-        ...state,
-        run: { hyperdrive: action.hyperdrive, runId: action.runId, status: "started" },
-      };
+      return startRun(state, action);
+    case "runResynced":
+      return resyncRun(state, action);
     case "runRefused":
       return { ...state, run: { refusal: action.refusal, status: "refused" } };
     case "completionSaved":

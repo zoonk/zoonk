@@ -5,6 +5,8 @@ import { getUsageResets } from "./usage-periods";
 
 export type AllowanceCounts = {
   activeGoals: number;
+  callSecondsThisMonth: number;
+  callSecondsToday: number;
   day: Map<UsageKind, number>;
   generatedLessons: number;
   month: Map<UsageKind, number>;
@@ -65,9 +67,16 @@ export function toAllowance({
   tier: EntitlementTier;
 }): Allowance {
   const generatedLimit = getUsageRule({ kind: "lessonStart", tier }).generatedTotal;
+  const calls = getUsageRule({ kind: "conversation", tier });
 
   return {
     activeGoals: { limit: getActiveGoalLimit(tier), used: counts.activeGoals },
+    callTime: {
+      limitSeconds: calls.daySeconds ?? null,
+      monthLimitSeconds: calls.monthSeconds ?? null,
+      usedSeconds: counts.callSecondsToday,
+      usedSecondsThisMonth: counts.callSecondsThisMonth,
+    },
     examPrep: getExamPrepAccess(tier),
     generatedLessons:
       generatedLimit === undefined

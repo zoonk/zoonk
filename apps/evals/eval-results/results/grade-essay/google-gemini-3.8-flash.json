@@ -5,154 +5,6 @@
       "classification": { "expected": "in band", "predicted": "in band" },
       "steps": [
         {
-          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "interventionElements": {
-            "action": true,
-            "agent": true,
-            "detail": true,
-            "effect": true,
-            "means": true
-          },
-          "nextStepCriteria": ["c1", "c2", "c3", "c4"],
-          "totalBand": { "max": 1000, "min": 840 },
-          "zeroReason": null
-        },
-        "id": "enem-strong-pt-1",
-        "userInput": {
-          "essay": "No início do século XX, a Revolta da Vacina, no Rio de Janeiro, mostrou como a falta de informação pode transformar uma medida de saúde pública em motivo de medo e revolta. Mais de cem anos depois, o Brasil, que construiu um dos maiores programas públicos de imunização do mundo, volta a enfrentar a queda da cobertura vacinal, agora alimentada pela desinformação que circula nas redes. Esse cenário é agravado pela lógica das plataformas digitais e pela fragilidade da educação científica no país.\n\nEm primeiro lugar, é preciso reconhecer que os algoritmos das redes sociais favorecem conteúdos que despertam emoções fortes, como o medo. Segundo o sociólogo Zygmunt Bauman, a modernidade líquida é marcada por vínculos frágeis e pela desconfiança em relação às instituições, e é justamente nesse ambiente que boatos sobre supostos efeitos colaterais ganham mais alcance do que os dados oficiais. Assim, pais que buscam orientação na internet frequentemente encontram primeiro o alarme falso, e não a explicação do especialista, o que os leva a adiar ou a recusar a vacinação dos filhos.\n\nAlém disso, a escola brasileira ainda dedica pouco espaço ao letramento científico. Muitos estudantes aprendem os nomes das doenças, mas não compreendem como uma vacina é testada, por que os efeitos adversos graves são raros ou como diferenciar uma pesquisa confiável de uma opinião sem fundamento. Sem essas ferramentas, o cidadão fica vulnerável a discursos que se apresentam como científicos, e a Constituição Federal, que define a saúde como direito de todos e dever do Estado, deixa de se concretizar plenamente, já que a proteção coletiva depende da adesão de cada indivíduo.\n\nPortanto, cabe ao Ministério da Saúde, em parceria com o Ministério da Educação, promover um programa nacional de letramento científico sobre imunização, por meio de oficinas nas escolas públicas conduzidas por profissionais da atenção básica e de conteúdos curtos publicados nas próprias redes sociais. Essas ações devem ensinar, em linguagem simples, como as vacinas são desenvolvidas e como checar a origem de uma informação antes de compartilhá-la, a fim de reconstruir a confiança da população e recuperar as altas taxas de vacinação que já fizeram do país uma referência. Desse modo, a história de 1904 não se repetirá na era digital.",
-          "language": "pt",
-          "prompt": "Tema: Desafios para combater a desinformação sobre vacinas no Brasil.\nTexto I: A cobertura vacinal infantil caiu no Brasil na última década, e doenças antes controladas voltaram a preocupar as autoridades de saúde.\nTexto II: Boatos sobre supostos riscos das vacinas circulam mais depressa em aplicativos de mensagem do que as informações oficiais.\nTexto III: Criado em 1973, o Programa Nacional de Imunizações oferece gratuitamente dezenas de vacinas e é reconhecido internacionalmente.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": { "kind": "enem" }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "in band", "predicted": "in band" },
-      "steps": [
-        {
-          "conclusion": "All 10 checks passed. Total 760 (range 720–800), expected 600–760.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 10 checks passed. Total 760 (range 720–800), expected 600–760.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 10 checks passed. Total 760 (range 720–800), expected 600–760.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "interventionElements": { "action": true, "agent": true, "effect": true, "means": false },
-          "nextStepCriteria": ["c2", "c3", "c5"],
-          "totalBand": { "max": 760, "min": 600 },
-          "zeroReason": null
-        },
-        "id": "enem-mid-missing-means-pt-1",
-        "userInput": {
-          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
-          "language": "pt",
-          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": { "kind": "enem" }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "in band", "predicted": "in band" },
-      "steps": [
-        {
-          "conclusion": "All 6 checks passed. Total 480 (range 440–520), expected 320–600.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 480 (range 440–520), expected 320–600.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 480 (range 440–520), expected 320–600.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "nextStepCriteria": ["c1"],
-          "totalBand": { "max": 600, "min": 320 },
-          "zeroReason": null
-        },
-        "id": "enem-weak-norm-errors-pt-1",
-        "userInput": {
-          "essay": "Hoje em dia agente ve que os jovens nao gosta de ler, eles preferem ficar no celular o dia inteiro vendo video e jogando. Isso é um problema muito serio pro Brasil porque quem nao le nao aprende direito as coisa.\n\nPrimeiramente os livro são muito caro, uma pessoa pobre nao consegue comprar um livro de cinquenta reais, ai ela desiste. E tambem as biblioteca da minha cidade vive fechada ou nao tem livro novo, entao fica dificil. Concerteza se tivesse mais biblioteca os jovem ia ler mais.\n\nOutro ponto é que na escola os professor manda ler uns livro muito antigo, que ninguem entende, tipo Machado de Assis, e os aluno fica com raiva da leitura. Eu mesmo nunca terminei um livro que a escola mandou. Mais se fosse um livro que a gente gosta seria diferente, porque ai a pessoa le por vontade propria e nao por obrigação.\n\nPortanto as escolas deve criar clubes de leitura com livros que os jovens escolhe, por meio de encontros toda semana na biblioteca da escola, para que eles comece a ler por prazer e nao so pra prova. Assim o Brasil vai ter mais leitor.",
-          "language": "pt",
-          "prompt": "Tema: Caminhos para ampliar o hábito de leitura entre os jovens brasileiros.\nTexto I: Pesquisas indicam que boa parte dos brasileiros não leu nenhum livro inteiro nos últimos meses.\nTexto II: Muitos municípios não têm biblioteca pública em funcionamento regular.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": { "kind": "enem" }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "in band", "predicted": "in band" },
-      "steps": [
-        {
-          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "feedbackLanguage": "pt",
-          "nextStepCriteria": ["c2"],
-          "totalBand": { "max": 0, "min": 0 },
-          "zeroReason": "offTopic"
-        },
-        "id": "enem-off-topic-pt-1",
-        "userInput": {
-          "essay": "O uso das redes sociais por crianças cresce a cada ano no Brasil. Aplicativos de vídeos curtos e jogos on-line fazem parte da rotina de muitos estudantes antes mesmo dos dez anos de idade, o que levanta preocupações sobre a saúde mental e a segurança dessa geração.\n\nEm primeiro lugar, a exposição precoce às telas afeta o desenvolvimento infantil. Crianças que passam muitas horas conectadas dormem menos, têm mais dificuldade de concentração e, muitas vezes, comparam a própria vida com imagens editadas de influenciadores, o que pode gerar ansiedade.\n\nAlém disso, o ambiente digital expõe os pequenos a riscos como o contato com desconhecidos e o acesso a conteúdos impróprios. O Estatuto da Criança e do Adolescente garante a proteção integral desse público, mas as plataformas ainda falham em verificar a idade dos usuários.\n\nPortanto, o Ministério da Educação deve incluir a educação digital no currículo escolar, por meio de aulas semanais sobre o uso consciente da internet, a fim de proteger as crianças. Além disso, as famílias devem acompanhar o que os filhos acessam.",
-          "language": "pt",
-          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
-          "rubric": { "kind": "enem" }
-        }
-      }
-    },
-    {
-      "classification": { "expected": "in band", "predicted": "in band" },
-      "steps": [
-        {
           "conclusion": "All 10 checks passed. Total 720 (range 680–760), expected 600–760.",
           "kind": "majorErrors",
           "score": 10
@@ -499,6 +351,154 @@
             ],
             "kind": "ap"
           }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 11 checks passed. Total 1000 (range 960–1000), expected 840–1000.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "interventionElements": {
+            "action": true,
+            "agent": true,
+            "detail": true,
+            "effect": true,
+            "means": true
+          },
+          "nextStepCriteria": ["c1", "c2", "c3", "c4"],
+          "totalBand": { "max": 1000, "min": 840 },
+          "zeroReason": null
+        },
+        "id": "enem-strong-pt-1",
+        "userInput": {
+          "essay": "No início do século XX, a Revolta da Vacina, no Rio de Janeiro, mostrou como a falta de informação pode transformar uma medida de saúde pública em motivo de medo e revolta. Mais de cem anos depois, o Brasil, que construiu um dos maiores programas públicos de imunização do mundo, volta a enfrentar a queda da cobertura vacinal, agora alimentada pela desinformação que circula nas redes. Esse cenário é agravado pela lógica das plataformas digitais e pela fragilidade da educação científica no país.\n\nEm primeiro lugar, é preciso reconhecer que os algoritmos das redes sociais favorecem conteúdos que despertam emoções fortes, como o medo. Segundo o sociólogo Zygmunt Bauman, a modernidade líquida é marcada por vínculos frágeis e pela desconfiança em relação às instituições, e é justamente nesse ambiente que boatos sobre supostos efeitos colaterais ganham mais alcance do que os dados oficiais. Assim, pais que buscam orientação na internet frequentemente encontram primeiro o alarme falso, e não a explicação do especialista, o que os leva a adiar ou a recusar a vacinação dos filhos.\n\nAlém disso, a escola brasileira ainda dedica pouco espaço ao letramento científico. Muitos estudantes aprendem os nomes das doenças, mas não compreendem como uma vacina é testada, por que os efeitos adversos graves são raros ou como diferenciar uma pesquisa confiável de uma opinião sem fundamento. Sem essas ferramentas, o cidadão fica vulnerável a discursos que se apresentam como científicos, e a Constituição Federal, que define a saúde como direito de todos e dever do Estado, deixa de se concretizar plenamente, já que a proteção coletiva depende da adesão de cada indivíduo.\n\nPortanto, cabe ao Ministério da Saúde, em parceria com o Ministério da Educação, promover um programa nacional de letramento científico sobre imunização, por meio de oficinas nas escolas públicas conduzidas por profissionais da atenção básica e de conteúdos curtos publicados nas próprias redes sociais. Essas ações devem ensinar, em linguagem simples, como as vacinas são desenvolvidas e como checar a origem de uma informação antes de compartilhá-la, a fim de reconstruir a confiança da população e recuperar as altas taxas de vacinação que já fizeram do país uma referência. Desse modo, a história de 1904 não se repetirá na era digital.",
+          "language": "pt",
+          "prompt": "Tema: Desafios para combater a desinformação sobre vacinas no Brasil.\nTexto I: A cobertura vacinal infantil caiu no Brasil na última década, e doenças antes controladas voltaram a preocupar as autoridades de saúde.\nTexto II: Boatos sobre supostos riscos das vacinas circulam mais depressa em aplicativos de mensagem do que as informações oficiais.\nTexto III: Criado em 1973, o Programa Nacional de Imunizações oferece gratuitamente dezenas de vacinas e é reconhecido internacionalmente.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 10 checks passed. Total 720 (range 680–760), expected 600–760.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 10 checks passed. Total 720 (range 680–760), expected 600–760.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 10 checks passed. Total 720 (range 680–760), expected 600–760.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "interventionElements": { "action": true, "agent": true, "effect": true, "means": false },
+          "nextStepCriteria": ["c2", "c3", "c5"],
+          "totalBand": { "max": 760, "min": 600 },
+          "zeroReason": null
+        },
+        "id": "enem-mid-missing-means-pt-1",
+        "userInput": {
+          "essay": "Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.\n\nEm primeiro lugar, os hábitos de consumo contribuem para o desperdício. Muitas famílias compram mais do que precisam no supermercado e acabam jogando fora o que estragou na geladeira. Da mesma forma, as pessoas tem o costume de rejeitar frutas e legumes com aparência feia, mesmo quando eles estão bons para o consumo. Com isso, toneladas de alimentos viram lixo todos os dias.\n\nAlém disso, faltam políticas públicas eficientes para enfrentar a questão. Houveram algumas tentativas de criar leis sobre o assunto, mas elas tiveram pouco resultado. Muitos restaurantes e supermercados descartam alimentos que ainda poderiam ser consumidos, pois temem ser responsabilizados caso alguém passe mal. Enquanto isso, milhões de brasileiros passam fome, o que revela uma grande contradição.\n\nPortanto, o desperdício de alimentos precisa ser combatido. Para isso, o governo federal deve incentivar a doação de alimentos, a fim de diminuir o desperdício e a fome no país. Assim, o Brasil poderá se tornar um país mais justo.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para reduzir o desperdício de alimentos no Brasil.\nTexto I: Uma parte expressiva dos alimentos produzidos no mundo se perde entre a colheita e o prato do consumidor.\nTexto II: Supermercados e restaurantes descartam produtos próprios para consumo por receio de responsabilização.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 520 (range 480–560), expected 320–600.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 520 (range 480–560), expected 320–600.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 520 (range 480–560), expected 320–600.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": ["c1"],
+          "totalBand": { "max": 600, "min": 320 },
+          "zeroReason": null
+        },
+        "id": "enem-weak-norm-errors-pt-1",
+        "userInput": {
+          "essay": "Hoje em dia agente ve que os jovens nao gosta de ler, eles preferem ficar no celular o dia inteiro vendo video e jogando. Isso é um problema muito serio pro Brasil porque quem nao le nao aprende direito as coisa.\n\nPrimeiramente os livro são muito caro, uma pessoa pobre nao consegue comprar um livro de cinquenta reais, ai ela desiste. E tambem as biblioteca da minha cidade vive fechada ou nao tem livro novo, entao fica dificil. Concerteza se tivesse mais biblioteca os jovem ia ler mais.\n\nOutro ponto é que na escola os professor manda ler uns livro muito antigo, que ninguem entende, tipo Machado de Assis, e os aluno fica com raiva da leitura. Eu mesmo nunca terminei um livro que a escola mandou. Mais se fosse um livro que a gente gosta seria diferente, porque ai a pessoa le por vontade propria e nao por obrigação.\n\nPortanto as escolas deve criar clubes de leitura com livros que os jovens escolhe, por meio de encontros toda semana na biblioteca da escola, para que eles comece a ler por prazer e nao so pra prova. Assim o Brasil vai ter mais leitor.",
+          "language": "pt",
+          "prompt": "Tema: Caminhos para ampliar o hábito de leitura entre os jovens brasileiros.\nTexto I: Pesquisas indicam que boa parte dos brasileiros não leu nenhum livro inteiro nos últimos meses.\nTexto II: Muitos municípios não têm biblioteca pública em funcionamento regular.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "in band", "predicted": "in band" },
+      "steps": [
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All 6 checks passed. Total 0 (range 0–0), expected 0–0.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "feedbackLanguage": "pt",
+          "nextStepCriteria": ["c2"],
+          "totalBand": { "max": 0, "min": 0 },
+          "zeroReason": "offTopic"
+        },
+        "id": "enem-off-topic-pt-1",
+        "userInput": {
+          "essay": "O uso das redes sociais por crianças cresce a cada ano no Brasil. Aplicativos de vídeos curtos e jogos on-line fazem parte da rotina de muitos estudantes antes mesmo dos dez anos de idade, o que levanta preocupações sobre a saúde mental e a segurança dessa geração.\n\nEm primeiro lugar, a exposição precoce às telas afeta o desenvolvimento infantil. Crianças que passam muitas horas conectadas dormem menos, têm mais dificuldade de concentração e, muitas vezes, comparam a própria vida com imagens editadas de influenciadores, o que pode gerar ansiedade.\n\nAlém disso, o ambiente digital expõe os pequenos a riscos como o contato com desconhecidos e o acesso a conteúdos impróprios. O Estatuto da Criança e do Adolescente garante a proteção integral desse público, mas as plataformas ainda falham em verificar a idade dos usuários.\n\nPortanto, o Ministério da Educação deve incluir a educação digital no currículo escolar, por meio de aulas semanais sobre o uso consciente da internet, a fim de proteger as crianças. Além disso, as famílias devem acompanhar o que os filhos acessam.",
+          "language": "pt",
+          "prompt": "Tema: Desafios da mobilidade urbana nas grandes cidades brasileiras.\nTexto I: Trabalhadores das regiões metropolitanas passam, em média, horas por semana no trânsito.\nTexto II: O transporte coletivo concentra reclamações sobre lotação, atrasos e tarifas.\nRedija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa, com proposta de intervenção que respeite os direitos humanos.",
+          "rubric": { "kind": "enem" }
         }
       }
     }

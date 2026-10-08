@@ -1,37 +1,28 @@
 "use client";
 
 import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
-import { isReadStep } from "./_utils/lesson-steps";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
+import { useScreenTurns } from "./use-screen-turns";
 
 /** Screen shortcuts leave keys to the control in focus: a field, a sheet, a focused button. */
 const SCREEN_KEY = { mode: "none", screen: true } as const;
 
 /**
- * Keyboard first: Enter runs the visible main action, the arrows move between reading screens,
- * Escape leaves. Number keys pick options in the option lists. Keys wait while a sheet is open, and
- * a focused control (an answer field, "Simpler", a chip in an activity) keeps its own keys.
+ * Keyboard first: Enter runs the visible main action, the arrows move between screens, Escape
+ * leaves. Number keys pick options in the option lists. Keys wait while a sheet is open, and
+ * a focused control (an answer field, a button, a chip in an activity) keeps its own keys.
  */
 export function useLessonKeyboard() {
   const { actions, screen, state } = useLessonPlayer();
-  const { onExit, slots } = useLessonPlayerConfig();
+  const { onExit } = useLessonPlayerConfig();
   const { isPaused } = useLessonInteraction();
-  const isCompleted = state.phase === "completed";
+  const turns = useScreenTurns();
 
   useEnterKey(() => {
-    if (isPaused) {
+    // The completion moment (the player's, a session block's or a guest's) owns its Enter.
+    if (isPaused || state.phase === "completed") {
       return false;
-    }
-
-    // A host's own completion moment or next steps (a session block's, a guest's) own its Enter.
-    if (isCompleted && (slots.completion || slots.completionActions)) {
-      return false;
-    }
-
-    if (isCompleted && state.completion?.status === "saved") {
-      onExit();
-      return;
     }
 
     const { primary } = screen;
@@ -51,18 +42,9 @@ export function useLessonKeyboard() {
   useKeyboardCallback(
     "ArrowRight",
     () => {
-      const isReading = screen.step ? isReadStep(screen.step) : false;
-
-      if (
-        isPaused ||
-        !isReading ||
-        screen.primary?.action !== "continue" ||
-        state.phase !== "playing"
-      ) {
+      if (!turns.forward()) {
         return false;
       }
-
-      actions.continue();
     },
     SCREEN_KEY,
   );
@@ -70,11 +52,9 @@ export function useLessonKeyboard() {
   useKeyboardCallback(
     "ArrowLeft",
     () => {
-      if (isPaused || !screen.canGoBack) {
+      if (!turns.back()) {
         return false;
       }
-
-      actions.goBack();
     },
     SCREEN_KEY,
   );

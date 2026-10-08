@@ -5,6 +5,7 @@ import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
@@ -213,6 +214,52 @@ describe(startGoalUnderstanding, () => {
 
     expect(result).toStrictEqual({ retryAfterSeconds: expect.any(Number), status: "slowDown" });
     await expect(prisma.onboardingDraft.count({ where: { userId: user.id } })).resolves.toBe(0);
+  });
+
+  it("asks a guest whose one goal is taken to create an account before anything is read", async () => {
+    const guest = await userFixture();
+    mockGuestSession(guest.id);
+    await usageRecordsFixture({ count: 1, createdAt: new Date(), kind: "goal", userId: guest.id });
+    const known = uniqueGoal("learn to bake bread");
+
+    await goalUnderstandingFixture({
+      goal: known,
+      result: {
+        followUps: [],
+        goals: [{ kind: "learn", subject: "Baking", title: "Bake bread" }],
+        route: "goals",
+      },
+    });
+
+    const refused = {
+      limit: { limit: 1, period: "total", resource: "goal", tier: "guest" },
+      status: "limitReached",
+    };
+
+    // Not even words understood today: the card couldn't be confirmed without an account.
+    await expect(startGoalUnderstanding({ goal: known, language: "en" })).resolves.toStrictEqual(
+      refused,
+    );
+
+    await expect(
+      startGoalUnderstanding({ goal: uniqueGoal("learn welding"), language: "en" }),
+    ).resolves.toStrictEqual(refused);
+
+    expect(isRateLimited).not.toHaveBeenCalled();
+    await expect(prisma.onboardingDraft.count({ where: { userId: guest.id } })).resolves.toBe(0);
+  });
+
+  it("still reads an account's new goal while another one is active", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    await usageRecordsFixture({ count: 1, createdAt: new Date(), kind: "goal", userId: user.id });
+
+    const result = await startGoalUnderstanding({
+      goal: uniqueGoal("learn welding"),
+      language: "en",
+    });
+
+    expect(result.status).toBe("understanding");
   });
 
   it("asks a guest who used today's small AI calls to sign up, and still reads words known today", async () => {

@@ -4,6 +4,7 @@ import { type CourseWithDetails, getCourse } from "@zoonk/core/courses/get-by-sl
 import { getLibraryCourse } from "@zoonk/core/library/courses/get";
 import { findOutlineChapter, findOutlineLesson } from "@zoonk/core/library/routes/outline";
 import { decodeRouteParam } from "@zoonk/core/navigation/decode-route-param";
+import { isListedCourse } from "@zoonk/db";
 
 export type LibraryOutline = NonNullable<Awaited<ReturnType<typeof getLibraryCourse>>>;
 type OutlineChapter = LibraryOutline["levels"][number]["chapters"][number];
@@ -17,6 +18,8 @@ type Missing = { kind: "notFound" } | { href: ReturnType<typeof getCourseHref>; 
 
 export type LibraryCourseRoute = {
   course: CourseWithDetails;
+  /** Whether search engines may index the course's pages: only once the catalog lists it. */
+  isListed: boolean;
   kind: "library";
   outline: LibraryOutline;
 };
@@ -50,7 +53,7 @@ export async function resolveCourseRoute(params: CourseParams): Promise<CourseRo
     return { kind: "notFound" };
   }
 
-  return { course, kind: "library", outline };
+  return { course, isListed: isListedCourse(course), kind: "library", outline };
 }
 
 /**

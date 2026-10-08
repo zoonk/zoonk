@@ -1,14 +1,16 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { expect, test } from "./fixtures";
 import {
   CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
   MOCK_MINUTES,
   createCheckpointLearner,
+  createUpcomingBoss,
   playDuel,
   starShownAt,
-} from "./fun-rewards-fixtures";
+} from "./checkpoint-fixtures";
+import { expect, test } from "./fixtures";
+import { continueToLastStep, nextStep, stepDots } from "./result-steps";
 import { openAs } from "./study-day";
 
 async function planItemStatus(id: string) {
@@ -17,50 +19,84 @@ async function planItemStatus(id: string) {
 }
 
 test.describe("Checkpoints", () => {
-  test("Fun: winning the Trickster duel checks the phase off, with a calm fade under reduced motion", async ({
+  test("the Trickster's checkpoint says what it asks before its day, without a way to start it yet", async ({
     browser,
   }) => {
-    const { block, boss, user } = await createCheckpointLearner({ mode: "fun" });
+    const { boss, user } = await createUpcomingBoss();
     const page = await openAs(browser, user);
 
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(`/checkpoint/${block.id}`);
+    await page.goto(`/challenge/${boss.id}`);
 
     await expect(page.getByRole("heading", { level: 1, name: "The Trickster" })).toBeVisible();
+    await expect(page.getByText("Phase 1 challenge", { exact: true })).toBeVisible();
+
+    await expect(page.getByText("Mixed questions from this phase, with no hints.")).toBeVisible();
+    await expect(page.getByText("10 questions", { exact: true })).toBeVisible();
+    await expect(page.getByText("7 right to win", { exact: true })).toBeVisible();
+
+    await expect(page.getByText(/^Opens /u)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Start" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Move to Monday" })).toHaveCount(0);
+    await expectAccessibleScreen(page, "a checkpoint before its day");
+
+    await page.context().close();
+  });
+
+  test("winning breaks the Trickster's shield, checks the phase off and explains the answers", async ({
+    browser,
+  }) => {
+    const { block, boss, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+
+    // Before it starts, the checkpoint's own page is its challenge's intro.
+    await page.goto(`/checkpoint/${block.id}`);
+    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
 
     await expect(
-      page.getByText(
-        `${CHECKPOINT_QUESTIONS} mixed questions, no hints. Get ${CHECKPOINT_PASS_MARK} right to win.`,
-      ),
+      page.getByText(`${CHECKPOINT_QUESTIONS} questions`, { exact: true }),
     ).toBeVisible();
 
-    await expect(page.getByText("Trap hunter badge")).toBeVisible();
-    await expect(page.getByRole("meter", { name: "Shield" })).toHaveAttribute("aria-valuenow", "0");
-    await expectAccessibleScreen(page, "the boss's intro");
+    await expect(
+      page.getByText(`${CHECKPOINT_PASS_MARK} right to win`, { exact: true }),
+    ).toBeVisible();
 
-    await page.getByRole("button", { name: "Take it on" }).click();
-    await expect(page.getByText("No hints")).toBeVisible();
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
+
+    const shield = page.getByRole("meter", { name: "The Trickster's shield" });
+    await expect(shield).toHaveAttribute("aria-valuemax", String(CHECKPOINT_PASS_MARK));
+    await expect(shield).toHaveAttribute("aria-valuenow", "0");
+    await expectAccessibleScreen(page, "the Trickster's duel");
 
     await playDuel(page);
 
-    await expect(page.getByRole("heading", { name: "You won!" })).toBeVisible();
+    // The result says one thing at a time: how it went, what it earned, then the next phase.
+    await expect(
+      page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
+    ).toBeVisible();
 
     await expect(
       page.getByText(`${CHECKPOINT_QUESTIONS} of ${CHECKPOINT_QUESTIONS} right`),
     ).toBeVisible();
 
+    await expect(stepDots(page)).toHaveAttribute("aria-label", "Step 1 of 3");
+    await expectAccessibleScreen(page, "a checkpoint's result");
+
+    await nextStep(page);
+    await expect(page.getByRole("heading", { level: 1, name: /Brain Power$/u })).toBeVisible();
     await expect(page.getByText("Phase 1 complete")).toBeVisible();
+    await expect(page.getByText("Trap hunter badge")).toBeVisible();
 
-    // Reduced motion swaps the celebration for a calm fade.
-    const buddy = page.getByRole("img", { name: "Zu" });
-    await expect(buddy).toBeVisible();
+    await nextStep(page);
+    await expect(page.getByText("Next phase", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Practice" })).toBeVisible();
 
-    await expect
-      .poll(() => buddy.evaluate((element) => getComputedStyle(element).animationName))
-      .toBe("fun-fade-in");
-
-    await page.getByText("Review the answers").click();
-    await expect(page.getByText("It follows the rule.")).toHaveCount(CHECKPOINT_QUESTIONS);
+    // The answers and their traps wait behind a link, in a sheet that Escape closes.
+    await page.getByRole("button", { name: "Review the answers" }).click();
+    const answers = page.getByRole("dialog", { name: "The answers" });
+    await expect(answers.getByText("It follows the rule.")).toHaveCount(CHECKPOINT_QUESTIONS);
+    await page.keyboard.press("Escape");
+    await expect(answers).toBeHidden();
 
     await expect.poll(() => planItemStatus(boss.id)).toBe("done");
 
@@ -69,51 +105,72 @@ test.describe("Checkpoints", () => {
     await page.context().close();
   });
 
-  test("Fun: losing costs nothing, with a rematch tomorrow and the next phase open", async ({
+  test("not passing costs nothing: a new try tomorrow, and the next phase open", async ({
     browser,
   }) => {
-    const { block, boss, user } = await createCheckpointLearner({ mode: "fun" });
+    const { block, boss, user } = await createCheckpointLearner();
     const page = await openAs(browser, user);
 
-    await page.goto(`/checkpoint/${block.id}`);
-    await page.getByRole("button", { name: "Take it on" }).click();
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
     await playDuel(page, { answer: "Wrong answer" });
 
-    await expect(page.getByRole("heading", { name: "Good fight!" })).toBeVisible();
-    await expect(page.getByText("Rematch tomorrow")).toBeVisible();
-    await expect(page.getByText("Practice is open")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+
+    await expect(
+      page.getByText(`0 of ${CHECKPOINT_QUESTIONS} right. Winning takes 5.`),
+    ).toBeVisible();
+
+    // A new try, and the next phase named: nothing is locked.
+    await nextStep(page);
+    await expect(page.getByRole("heading", { level: 1, name: "New try tomorrow" })).toBeVisible();
+    await expect(page.getByText("The next phase, Practice, is already open.")).toBeVisible();
     await expect(page.getByText("Trap hunter badge")).toHaveCount(0);
 
     await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
 
+    // Its intro says so too, and opens how it went.
+    await page.goto(`/challenge/${boss.id}`);
+
+    await expect(
+      page.getByText("New try tomorrow, after 2 short lessons. Nothing is lost."),
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: "See how it went" }).click();
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
+    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+    await nextStep(page);
+    await expect(page.getByRole("heading", { level: 1, name: "New try tomorrow" })).toBeVisible();
+
     await page.context().close();
   });
 
-  test("Fun: the Big Challenge rehearses exam day with a checklist", async ({ browser }) => {
-    const { block, user } = await createCheckpointLearner({ kind: "weekly", mode: "fun" });
+  test("the week's mock says when, how long and its one rule, and starts from its intro", async ({
+    browser,
+  }) => {
+    const { block, boss, user } = await createCheckpointLearner({ kind: "weekly" });
     const page = await openAs(browser, user);
 
-    // A weekly mock runs in real conditions on its own screen.
+    // A weekly mock is introduced by its challenge and runs in real conditions on its own screen.
     await page.goto(`/checkpoint/${block.id}`);
-    await expect(page).toHaveURL(new RegExp(`/mock/${block.id}$`, "u"));
+    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
 
-    await expect(page.getByRole("heading", { level: 1, name: "Big Challenge" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Mock exam 1" })).toBeVisible();
 
     await expect(
-      page.getByText(`${CHECKPOINT_QUESTIONS} questions · ${MOCK_MINUTES} min`),
+      page.getByText(`${CHECKPOINT_QUESTIONS} questions`, { exact: true }),
     ).toBeVisible();
 
-    await expect(page.getByText("0 of 4")).toBeVisible();
-    await expectAccessibleScreen(page, "the Big Challenge");
+    // About how long it takes: the exam's pace until learners' own is known.
+    await expect(page.getByText(`About ${MOCK_MINUTES} min`, { exact: true })).toBeVisible();
 
-    const phone = page.getByRole("button", { name: "Phone on silent" });
-    await phone.click();
+    await expect(
+      page.getByText("Your result only shows at the end, like on exam day."),
+    ).toBeVisible();
 
-    await expect(phone).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByText("1 of 4")).toBeVisible();
-
-    // From here it plays as any mock exam does (see the exam goal's mock).
-    await page.getByRole("button", { name: "I'm in" }).click();
+    await page.getByRole("button", { name: "Start the mock exam" }).click();
+    await expect(page).toHaveURL(new RegExp(`/mock/${block.id}$`, "u"));
 
     await expect(
       page.getByText(new RegExp(`^Question 1 of ${CHECKPOINT_QUESTIONS}`, "u")),
@@ -123,11 +180,9 @@ test.describe("Checkpoints", () => {
   });
 });
 
-test.describe("A checkpoint from today's session in Fun", () => {
-  test("continues back to the session by keyboard, where the first boss's glasses go on", async ({
-    browser,
-  }) => {
-    const { block, user } = await createCheckpointLearner({ mode: "fun" });
+test.describe("A checkpoint from today's session", () => {
+  test("continues back to the session by keyboard, to the day's summary", async ({ browser }) => {
+    const { block, boss, user } = await createCheckpointLearner();
     const page = await openAs(browser, user);
 
     await page.goto("/today");
@@ -136,7 +191,8 @@ test.describe("A checkpoint from today's session in Fun", () => {
     await expect(async () => {
       await page.keyboard.press("Enter");
 
-      await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"), {
+      // Its intro is the challenge's page, keeping the session it came from.
+      await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"), {
         timeout: 1000,
       });
     }).toPass({ timeout: 10_000 });
@@ -149,36 +205,35 @@ test.describe("A checkpoint from today's session in Fun", () => {
       });
     }).toPass({ timeout: 5000 });
 
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
+
     await playDuel(page, { keyboard: true });
 
-    await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
+    // Enter goes through the result's steps, then on to the session.
+    await expect(
+      page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
+    ).toBeVisible();
 
+    await continueToLastStep(page, { keyboard: true });
+    await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
     await page.keyboard.press("Enter");
 
     // The checkpoint was the day's only block, so the session shows the day's summary.
     await expect(page).toHaveURL(/\/session$/u);
+    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
 
-    // In Fun, the first boss won brings glasses first. Enter presses the focused "Wear them"; the
-    // summary under the ceremony keeps its own Enter for later.
-    const wear = page.getByRole("button", { name: "Wear them" });
-    await expect(wear).toBeFocused();
+    // Winning the first checkpoint earned the Star glasses: their own moment, before the last step.
+    await continueToLastStep(page, { keyboard: true });
+    const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
+    await expect(ceremony.getByRole("button", { name: "Continue" })).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(wear).toBeHidden();
-    await expect(page).toHaveURL(/\/session$/u);
-
-    // "Wear them" puts the new glasses on the buddy and marks the ceremony shown.
-    await expect
-      .poll(async () => {
-        const profile = await prisma.userLearningProfile.findUnique({ where: { userId: user.id } });
-        return profile?.buddyGlasses;
-      })
-      .toBe("star");
-
+    await expect(ceremony).toBeHidden();
     await expect.poll(() => starShownAt(user.id)).not.toBeNull();
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Flight plan complete!" }),
-    ).toBeVisible();
+    // The step under it takes the focus, and Enter finishes the day.
+    await expect(page.getByRole("button", { name: "Finish" })).toBeVisible();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/today$/u);
 
     await page.context().close();
   });
@@ -200,15 +255,14 @@ async function blockStatus(blockId: string) {
 
 test.describe("Move to Monday", () => {
   test("the week's challenge moves to Monday through the plan, with undo", async ({ browser }) => {
-    const { block, plan, user } = await createCheckpointLearner({
+    const { block, boss, plan, user } = await createCheckpointLearner({
       kind: "weekly",
-      mode: "focus",
       planned: true,
     });
 
     const page = await openAs(browser, user);
 
-    await page.goto(`/checkpoint/${block.id}`);
+    await page.goto(`/challenge/${boss.id}`);
     const move = page.getByRole("button", { name: "Move to Monday" });
     await expect(move).toBeVisible();
     await expectAccessibleScreen(page, "the week's challenge");
@@ -218,12 +272,15 @@ test.describe("Move to Monday", () => {
     await expect(page.getByText("Your plan made room for it. Nothing is lost.")).toBeVisible();
     await expect.poll(() => blockStatus(block.id)).toBe("skipped");
 
+    // A dated plan item is a new one on its new day: the page follows it.
+    await expect(page).not.toHaveURL(new RegExp(boss.id, "u"));
     const days = await challengeDays(plan.id);
     expect(days.some((day) => day && new Date(`${day}T00:00:00Z`).getUTCDay() === 1)).toBe(true);
 
     await page.getByRole("button", { name: "Undo" }).click();
 
     await expect(page.getByRole("button", { name: "Move to Monday" })).toBeVisible();
+    await expect(page).not.toHaveURL(/moved=/u);
     await expect.poll(() => blockStatus(block.id)).toBe("pending");
 
     await page.context().close();

@@ -1,7 +1,10 @@
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { tutorQuestionRoutes } from "@/lib/tutor-question-routes";
 
-/** The learner's questions about the plan of one of their goals: "Why am I studying this today?" */
+/**
+ * The learner's conversation with their buddy about one of their goals: doubts about what they
+ * study, "Why am I studying this today?", and plan changes asked for in their own words.
+ */
 const routes = tutorQuestionRoutes({
   pathSchema: goalPathParamsSchema,
   toTarget: ({ goalId }) => ({ goalId, kind: "plan" }),

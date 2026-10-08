@@ -1,4 +1,3 @@
-import { experienceModeSchema } from "@zoonk/core/profile/contract";
 import { BuddyGlasses, BuddyKind, MemoryCategory } from "@zoonk/db";
 import { z } from "zod";
 
@@ -28,23 +27,11 @@ export const learningProfileSchema = z
       .object({ month: z.int(), year: z.int() })
       .nullable()
       .meta({ description: "Birth month and year, or null until answered" }),
-    buddy: buddySchema.nullable().meta({ description: "The Fun mode buddy, or null" }),
+    buddy: buddySchema.nullable().meta({ description: "The learner's buddy, or null" }),
     dailyLimitMinutes: z
       .int()
       .nullable()
       .meta({ description: "The learner's own daily study limit in minutes, or null" }),
-    deeperByDefault: z
-      .boolean()
-      .meta({
-        description:
-          "Lessons open the \"Go deeper\" version of each explanation first: the learner's choice, or their memory while they haven't chosen",
-      }),
-    deeperFromMemory: z
-      .boolean()
-      .meta({ description: "On because memory says they asked for a more technical register" }),
-    experienceMode: experienceModeSchema
-      .nullable()
-      .meta({ description: "Null until the learner chooses; show Focus meanwhile" }),
     soundsEnabled: z
       .boolean()
       .meta({ description: "Sounds for a right answer and for finishing; on by default" }),
@@ -58,6 +45,9 @@ const learnerProtectionsSchema = z
     memoryCategories: z
       .array(z.enum(MemoryCategory))
       .meta({ description: "Memory categories that may be stored and read" }),
+    memoryOnByDefault: z
+      .boolean()
+      .meta({ description: "Whether memory is on until the learner chooses; only for adults" }),
     plusPurchase: z
       .enum(["allowed", "guestNotAllowed", "needsGuardianApproval"])
       .meta({ description: "Whether the learner can subscribe to Plus now" }),

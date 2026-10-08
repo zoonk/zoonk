@@ -115,6 +115,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         ],
         question: "It's −3 °C at dawn and it warms up 5 degrees. What does the thermometer show?",
         reveal: "It shows 2 °C. Guessing first helps you remember the rule.",
+        visual: null,
       },
       {
         exampleLineIdea: "A cold morning where the learner lives.",
@@ -125,6 +126,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         kind: "explanation",
         text: "A rise always moves **up** the thermometer. From −3 °C, going up 3 degrees takes you to zero.",
         title: "Up is up, even below zero",
+        visual: null,
       },
       {
         image: null,
@@ -136,6 +138,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
           { math: "0 + 2 = 2", text: "Two degrees are left, so keep going up." },
         ],
         title: "From −3 °C, up 5 degrees",
+        visual: null,
       },
       {
         context: null,
@@ -178,6 +181,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         kind: "explanation",
         text: "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
         title: "Zero is a stop, not a wall",
+        visual: null,
       },
       { content: JSON.stringify(numberLineActivity), kind: "activity", template: "numberLine" },
       {
@@ -187,6 +191,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
         kind: "typedAnswer",
         question: "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
         sampleAnswer: "Three degrees get you to zero, and the other two take you to 2 °C.",
+        visual: null,
       },
       {
         context:
@@ -211,6 +216,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
           },
         ],
         question: "What will the thermometer show?",
+        visual: null,
       },
     ],
     summary: [

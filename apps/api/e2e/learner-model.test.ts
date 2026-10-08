@@ -140,7 +140,7 @@ test.describe("Learner model API", () => {
     const sent: unknown = await response.json();
     const placement = await readBody({ response, schema: placementResponseSchema });
 
-    expect(placement).toMatchObject({ complete: false, status: "asking" });
+    expect(placement).toMatchObject({ complete: false, started: false, status: "asking" });
     expect(placement.next?.skillId).toBe(skills[0]?.id);
 
     // The raw response carries the question and its options only: nothing that tells the answer.
@@ -162,9 +162,10 @@ test.describe("Learner model API", () => {
       schema: placementAnswerResponseSchema,
     });
 
+    // Once answered, coming back resumes placement instead of showing its start.
     expect(answered).toMatchObject({
       isCorrect: false,
-      placement: { complete: true, next: null, status: "done" },
+      placement: { complete: true, next: null, started: true, status: "done" },
     });
 
     const completion = await readBody({

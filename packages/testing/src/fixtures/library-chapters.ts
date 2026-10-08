@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Chapter, type CourseChapter, prisma } from "@zoonk/db";
+import { type Chapter, type ChapterSkill, type CourseChapter, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
@@ -38,4 +38,9 @@ export async function courseChapterFixture(
     (await prisma.courseChapter.count({ where: { courseId: attrs.courseId, level } }));
 
   return prisma.courseChapter.create({ data: { ...attrs, level, position } });
+}
+
+/** Links a skill to a Library chapter that teaches it. */
+export async function chapterSkillFixture(attrs: Pick<ChapterSkill, "chapterId" | "skillId">) {
+  return prisma.chapterSkill.create({ data: attrs });
 }

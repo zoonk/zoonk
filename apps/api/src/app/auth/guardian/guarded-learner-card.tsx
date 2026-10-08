@@ -4,9 +4,10 @@ import { DAILY_LIMIT_CHOICES, type GuardedLearnerView } from "@zoonk/core/minors
 import { Button } from "@zoonk/ui/components/button";
 import { Label } from "@zoonk/ui/components/label";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
+import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted, useFormatter } from "next-intl";
-import { useId, useState, useTransition } from "react";
-import { approvePlusAction, setDailyLimitAction } from "./actions";
+import { useId, useOptimistic, useState, useTransition } from "react";
+import { approvePlusAction, setDailyLimitAction, setMemoryAction } from "./actions";
 import { EndLinkButton } from "./end-link-button";
 
 const NO_LIMIT = "none";
@@ -60,6 +61,65 @@ function DailyLimitForm({ learner }: { learner: GuardedLearnerView }) {
       {status === "failed" && (
         <p className="text-destructive text-sm" role="alert">
           {t("We couldn't save the limit. Try again.")}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function MemoryStatus({ allowed, learner }: { allowed: boolean; learner: GuardedLearnerView }) {
+  const t = useExtracted();
+  const name = learner.learnerName;
+
+  if (!allowed) {
+    return t("Off. {name} can't turn it on.", { name });
+  }
+
+  return learner.memoryEnabled
+    ? t("On. Zoonk remembers {name}'s goals and how they learn, to fit examples to them.", { name })
+    : t("Off. It stays off unless {name} turns it on.", { name });
+}
+
+/**
+ * Whether the learner may use memory. The guardian sees if it's on, never what it holds, and can
+ * keep it off; turning it on stays the learner's choice.
+ */
+function MemoryControl({ learner }: { learner: GuardedLearnerView }) {
+  const t = useExtracted();
+  const labelId = useId();
+  const descriptionId = useId();
+  const [allowed, setAllowed] = useOptimistic(!learner.memoryOff);
+  const [failed, setFailed] = useState(false);
+  const [, startTransition] = useTransition();
+
+  const change = (next: boolean) => {
+    startTransition(async () => {
+      setAllowed(next);
+      setFailed(!(await setMemoryAction({ linkId: learner.linkId, memoryOff: !next })));
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium" id={labelId}>
+            {t("Let {name} use memory", { name: learner.learnerName })}
+          </span>
+          <p className="text-muted-foreground text-sm" id={descriptionId}>
+            <MemoryStatus allowed={allowed} learner={learner} />
+          </p>
+        </div>
+        <Switch
+          aria-describedby={descriptionId}
+          aria-labelledby={labelId}
+          checked={allowed}
+          onCheckedChange={change}
+        />
+      </div>
+      {failed && (
+        <p className="text-destructive text-sm" role="alert">
+          {t("We couldn't save that. Try again.")}
         </p>
       )}
     </div>
@@ -142,7 +202,7 @@ function WeekActivity({ days }: { days: GuardedLearnerView["weeklyActivity"]["da
           </span>
           <span className="sr-only">
             {t(
-              "{day}: {minutes, plural, one {# minute} other {# minutes}}, {lessons, plural, one {# lesson} other {# lessons}}",
+              "{day}: {minutes, plural, =0 {# minutes} one {# minute} other {# minutes}}, {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}",
               {
                 day: format.dateTime(day.date, { timeZone: "UTC", weekday: "long" }),
                 lessons: day.lessonsCompleted,
@@ -156,7 +216,7 @@ function WeekActivity({ days }: { days: GuardedLearnerView["weeklyActivity"]["da
   );
 }
 
-/** One learner: the last seven days, their daily limit and Plus approval. */
+/** One learner: the last seven days, their daily limit, memory and Plus approval. */
 export function GuardedLearnerCard({ learner }: { learner: GuardedLearnerView }) {
   const t = useExtracted();
   const { lessonsCompleted, minutes } = learner.weeklyActivity;
@@ -170,7 +230,7 @@ export function GuardedLearnerCard({ learner }: { learner: GuardedLearnerView })
         <h2 className="text-lg font-semibold">{learner.learnerName}</h2>
         <p className="text-muted-foreground text-sm">
           {t(
-            "Last 7 days: {minutes, plural, one {# minute} other {# minutes}} and {lessons, plural, one {# lesson} other {# lessons}}",
+            "Last 7 days: {minutes, plural, =0 {# minutes} one {# minute} other {# minutes}} and {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}",
             { lessons: lessonsCompleted, minutes },
           )}
         </p>
@@ -180,6 +240,7 @@ export function GuardedLearnerCard({ learner }: { learner: GuardedLearnerView })
         <WeekActivity days={learner.weeklyActivity.days} />
       )}
       <DailyLimitForm learner={learner} />
+      <MemoryControl learner={learner} />
       <PlusApproval learner={learner} />
       <EndLinkButton learnerName={learner.learnerName} linkId={learner.linkId} />
     </section>

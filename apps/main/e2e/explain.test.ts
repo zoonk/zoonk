@@ -5,6 +5,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { openPaletteWithKeyboard } from "./command-palette";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
@@ -105,7 +106,7 @@ test.describe("Quick explanations", () => {
       page.getByRole("link", { name: /I want to learn this in depth/u }),
     ).toHaveAttribute(
       "href",
-      `/start?goal=${encodeURIComponent("Learn in depth: How a microwave works")}`,
+      `/start?goal=${encodeURIComponent("I want to understand how a microwave works in depth")}`,
     );
 
     // The explanation is saved while the stream is silent: the page's own check, every five
@@ -243,58 +244,86 @@ test.describe("Quick explanations", () => {
   });
 
   test(`plays the story and ends with "Now you know"`, async ({ browser }) => {
-    await asPersona(
-      browser,
-      { mode: "focus", persona: "explain" },
-      async ({ page, user: persona }) => {
-        await page.goto(`/explain/${persona.goalId}`);
-        await expect(page.getByText("The market isn't one price")).toBeVisible();
+    await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
+      await page.goto(`/explain/${persona.goalId}`);
+      await expect(page.getByText("The market isn't one price")).toBeVisible();
 
-        await readStory(page, STORY_SCREENS);
+      await readStory(page, STORY_SCREENS);
 
-        await expect(
-          page.getByText("A headline says the market is up 2% today. What do you know for sure?"),
-        ).toBeVisible();
+      await expect(
+        page.getByText("A headline says the market is up 2% today. What do you know for sure?"),
+      ).toBeVisible();
 
-        await page.keyboard.press("1");
-        await page.keyboard.press("Enter");
-        await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
-        await page.keyboard.press("Enter");
+      await page.keyboard.press("1");
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+      await page.keyboard.press("Enter");
 
-        await expect(page.getByText("Now you know")).toBeVisible();
+      await expect(page.getByText("Now you know")).toBeVisible();
 
-        await expect(
-          page.getByRole("heading", { level: 2, name: /the market is up 2%/u }),
-        ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 2, name: /the market is up 2%/u }),
+      ).toBeVisible();
 
-        await expect(
-          page.getByText("An index fund lets you own the whole basket, so its move is yours."),
-        ).toBeVisible();
+      await expect(
+        page.getByText("An index fund lets you own the whole basket, so its move is yours."),
+      ).toBeVisible();
 
-        // Quiet thumbs on the explanation save a vote on its lesson.
-        const item = await prisma.planItem.findFirstOrThrow({
-          where: { kind: "lesson", lessonId: { not: null }, plan: { goalId: persona.goalId } },
-        });
+      // No feedback widget on the ending: a problem is reported from the "…" menu.
+      await expect(page.getByText("Was this explanation helpful?")).toBeHidden();
 
-        await expect(page.getByText("Was this explanation helpful?")).toBeVisible();
-        await page.getByRole("button", { exact: true, name: "Helpful" }).click();
+      // Going further is a plan of its own, one tap away at the end as before the explanation.
+      const goFurther = page.getByRole("region", { name: "Want to go further?" });
 
-        await expect
-          .poll(() =>
-            prisma.contentFeedback.findFirst({
-              where: { contentId: item.lessonId ?? "", userId: persona.id },
-            }),
-          )
-          .toMatchObject({ contentKind: "lesson", mode: "focus", vote: "up" });
+      await expect(
+        goFurther.getByRole("button", {
+          name: /I want to learn this in depth Build a How the stock market works plan/u,
+        }),
+      ).toBeVisible();
 
-        const goFurther = page.getByRole("region", { name: "Want to go further?" });
+      // Sam only asks questions: with no plan to go back to, Done leads to the next question.
+      await expect(page.getByRole("link", { name: "Done" })).toHaveAttribute("href", "/start");
+    });
+  });
 
-        await expect(
-          goFurther.getByRole("link", { name: /How the stock market works/u }),
-        ).toBeVisible();
+  test("a learner with only quick explanations gets no study plan around them", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "explain" }, async ({ page }) => {
+      await page.goto("/today");
 
-        await expect(page.getByRole("link", { name: "Done" })).toHaveAttribute("href", "/today");
-      },
-    );
+      await expect(page).toHaveURL(/\/start(?:\?|$)/u);
+      await expect(page.getByRole("textbox", { name: "Your goal" })).toBeVisible();
+      await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+    });
+  });
+
+  test("a learner with a plan goes back to Today after an explanation", async ({ browser }) => {
+    await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
+      await goalFixture({ title: "Learn percentages", userId: persona.id });
+      await page.goto(`/explain/${persona.goalId}`);
+
+      await readStory(page, STORY_SCREENS);
+      await page.keyboard.press("1");
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+      await page.keyboard.press("Enter");
+
+      await page.getByRole("link", { name: "Done" }).click();
+      await expect(page).toHaveURL(/\/today$/u);
+
+      // Read to the end, the explanation is done: the tabs follow the plan, the goal list leaves
+      // it out, and search finds it again.
+      await page.getByRole("button", { name: /Current goal: Learn percentages/u }).click();
+      await expect(page.getByRole("menuitemradio")).toHaveCount(1);
+      await expect(page.getByRole("menuitem", { name: /the market is up 2%/u })).toHaveCount(0);
+      await page.keyboard.press("Escape");
+
+      const palette = await openPaletteWithKeyboard(page);
+      const explanations = palette.getByRole("group", { name: "Quick explanations" });
+      await explanations.getByRole("option", { name: /the market is up 2%/u }).click();
+
+      await expect(page).toHaveURL(`/explain/${persona.goalId}`);
+    });
   });
 });

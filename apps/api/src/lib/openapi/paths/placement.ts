@@ -51,7 +51,7 @@ export const placementPaths = {
     },
     post: {
       description:
-        "Grades the test-out. Passing (80%) marks the chapter's skills known, except any missed, and tests out the plan items that teach only known skills.",
+        "Grades the test-out. Passing (at least four answers, every sampled skill answered, 80% right) marks the skills answered 80% right known and tests out the plan items that teach only known skills.",
       operationId: "submitChapterTestOut",
       requestBody: {
         content: { "application/json": { schema: chapterTestOutInputSchema } },
@@ -145,7 +145,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/completion": {
     post: {
       description:
-        "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it.",
+        "Ends placement at any time. Skills placement is sure about become known and the plan skips what they cover. With fromScratch, nothing changes and every phase and area starts at its beginning. Finishing before the goal's skill map exists places nothing: `complete` is false. The lesson the plan now opens with starts being written, counted as its start like opening it, so it's ready when the first session reaches it; for a learner with an account, Day 1's next lessons and the next study day's first ones are written too (see createGoalLessonPreparation).",
       operationId: "completeGoalPlacement",
       requestBody: {
         content: { "application/json": { schema: placementCompletionInputSchema } },

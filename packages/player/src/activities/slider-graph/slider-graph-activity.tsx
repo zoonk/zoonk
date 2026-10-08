@@ -1,5 +1,7 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
+import { niceDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -19,9 +21,7 @@ import {
 } from "../_components/activity-plot";
 import { ActivitySlider } from "../_components/activity-slider";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { niceDomain, niceTicks } from "../_utils/plot-scale";
 import { sampleFormula } from "../_utils/sample-formula";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 
 const PLOT_HEIGHT = 168;

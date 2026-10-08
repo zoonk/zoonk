@@ -10,7 +10,7 @@ import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categor
 
 type PlacementItemsCase = Pick<
   PlacementItemsParams,
-  "examFormat" | "quickCount" | "quickFormat" | "skills" | "typedCount"
+  "examFormat" | "language" | "quickCount" | "quickFormat" | "skills" | "typedCount"
 >;
 
 type RoleCheck = { passing: GeneratedItem[]; problems: string[]; wanted: number };
@@ -20,18 +20,20 @@ function checkRole({
   format,
   items,
   label,
+  language,
   optionCount,
   wanted,
 }: {
   format: GeneratedItem["format"];
   items: GeneratedItem[];
   label: string;
+  language: string;
   optionCount: number | null;
   wanted: number;
 }): RoleCheck {
   const checked = items.map((item, index) => ({
     item,
-    problems: checkItem({ expectedFormat: format, item, optionCount }).map(
+    problems: checkItem({ expectedFormat: format, item, language, optionCount }).map(
       (problem) => `${label} ${index + 1}: ${problem}`,
     ),
   }));
@@ -61,6 +63,7 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
         format: input.quickFormat,
         items: written.quick,
         label: `${skill.name}, quick`,
+        language: input.language,
         optionCount,
         wanted: input.quickCount,
       }),
@@ -68,6 +71,7 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
         format: "typed",
         items: written.typed,
         label: `${skill.name}, typed`,
+        language: input.language,
         optionCount: null,
         wanted: input.typedCount,
       }),

@@ -92,8 +92,8 @@ async function writeGuardian({
 }
 
 /**
- * Creates or refreshes the learner's user, sign-in account, learning profile (mode, buddy, birth
- * month for minors), Plus and guardian link. Returns the user id.
+ * Creates or refreshes the learner's user, sign-in account, learning profile (buddy, birth month
+ * for minors, memory switch), Plus and guardian link. Returns the user id.
  */
 export async function writeLearnerUser({
   learner,
@@ -112,7 +112,9 @@ export async function writeLearnerUser({
     buddyGlasses: learner.buddy?.glasses ?? "round",
     buddyKind: learner.buddy?.kind ?? null,
     buddyName: learner.buddy?.name ?? null,
-    experienceMode: learner.mode,
+    // Memory starts off without an adult's age answer. The adults here skipped the question and
+    // turned memory on; Pedro (15) keeps a minor's default, off.
+    memoryEnabled: learner.birth ? null : true,
   };
 
   await Promise.all([

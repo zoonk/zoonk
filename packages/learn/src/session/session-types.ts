@@ -4,7 +4,7 @@ import { type QuestionAnswer, type StudyAnswerResult } from "@zoonk/core/session
 import { type StudySessionResult } from "@zoonk/core/sessions/get";
 import { type StudySessionSummaryResult } from "@zoonk/core/sessions/summary";
 
-/** Today's session as core builds it: the same view model for the Focus card and the flight plan. */
+/** Today's session as core builds it. */
 export type StudySession = Extract<StudySessionResult, { status: "ready" }>["session"];
 
 export type StudyBlock = StudySession["blocks"][number];

@@ -25,7 +25,7 @@ export const countLibraryContent = cacheAdminData(async () => {
     prisma.chapter.count({ where: { outlineStatus: "completed" } }),
     prisma.lesson.count({ where: { contentStatus: "completed" } }),
     prisma.lesson.count(),
-    prisma.step.count(),
+    prisma.step.count({ where: { retiredAt: null } }),
     prisma.skill.count({ where: { mergedIntoId: null } }),
     prisma.item.count(),
     prisma.mediaAsset.count({ where: { kind: "image" } }),

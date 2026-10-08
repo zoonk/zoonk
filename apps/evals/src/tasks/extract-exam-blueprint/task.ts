@@ -13,6 +13,10 @@ type ExpectedFact =
   | { kind: "date"; date: string; dateKind?: ExtractionEvalOutput["dates"][number]["kind"] }
   | { kind: "questionCount"; value: number }
   | { kind: "subject"; name: string; questions?: number }
+  /** One item of a subject's syllabus, which must be among its topics, word for word. */
+  | { kind: "topic"; subject: string; topic: string }
+  /** The part of the exam the notice puts a subject in. */
+  | { kind: "group"; subject: string; group: string }
   | { kind: "section"; minutes?: number; questions?: number }
   | { kind: "format"; format: ExtractionEvalOutput["formats"][number]["kind"] }
   | { kind: "scoring"; method: NonNullable<ExtractionEvalOutput["mock"]>["scoring"]["method"] }
@@ -24,12 +28,21 @@ export type ExtractionExpected = { facts: ExpectedFact[] };
 type Reading = {
   dates: Pick<ExtractionEvalOutput["dates"][number], "date" | "kind">[];
   formats: Pick<ExtractionEvalOutput["formats"][number], "kind">[];
-  mock: Pick<
-    NonNullable<ExtractionEvalOutput["mock"]>,
-    "scoring" | "sections" | "timeLimitMinutes" | "totalQuestions"
-  > | null;
+  mock:
+    | (Pick<
+        NonNullable<ExtractionEvalOutput["mock"]>,
+        "scoring" | "timeLimitMinutes" | "totalQuestions"
+      > & {
+        sections: Pick<
+          NonNullable<ExtractionEvalOutput["mock"]>["sections"][number],
+          "day" | "minutes" | "name" | "questions"
+        >[];
+      })
+    | null;
   questionCount: number | null;
-  subjects: Pick<ExtractionEvalOutput["subjects"][number], "name" | "questions">[];
+  subjects: (Pick<ExtractionEvalOutput["subjects"][number], "name" | "questions" | "topics"> & {
+    group?: string | null;
+  })[];
 };
 
 const MIN_SCORE = 6;
@@ -76,6 +89,12 @@ function getQuestionTotals(reading: Reading): number[] {
   ].filter((total) => total !== null);
 }
 
+function findSubject({ name, reading }: { name: string; reading: Reading }) {
+  return reading.subjects.find(
+    (subject) => normalizeString(subject.name) === normalizeString(name),
+  );
+}
+
 function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }): boolean {
   switch (fact.kind) {
     case "date":
@@ -89,6 +108,16 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
         (subject) =>
           normalizeString(subject.name).includes(normalizeString(fact.name)) &&
           (fact.questions === undefined || subject.questions === fact.questions),
+      );
+    case "topic":
+      return (
+        findSubject({ name: fact.subject, reading })?.topics.some(
+          (topic) => normalizeString(topic) === normalizeString(fact.topic),
+        ) ?? false
+      );
+    case "group":
+      return normalizeString(findSubject({ name: fact.subject, reading })?.group ?? "").includes(
+        normalizeString(fact.group),
       );
     case "section":
       return hasSection({ fact, reading });

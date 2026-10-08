@@ -33,6 +33,7 @@ function ActiveLinkDetails({ link }: { link: GuardianLinkView }) {
           ? t("No daily time limit")
           : t("Daily limit: {minutes} min", { minutes: String(link.dailyLimitMinutes) })}
       </li>
+      {link.memoryOff && <li>{t("Memory off")}</li>}
       {link.plusApprovedAt && <li>{t("Plus approved")}</li>}
       <li>{t("Only your guardian can end this link.")}</li>
     </ul>
@@ -74,12 +75,15 @@ function PendingInvite({ link }: { link: GuardianLinkView }) {
   );
 }
 
-/** Guardians and invites: who can see the week, set a daily limit and approve Plus. */
+/**
+ * Guardians and invites: who can see the week, set a daily limit, turn memory off and approve
+ * Plus. Each active link says what its guardian set, so the learner knows what's supervised.
+ */
 export function GuardianLinks({ links }: { links: GuardianLinkView[] }) {
   const t = useExtracted();
 
   return (
-    <ul className="border-border in-data-[mode=fun]:fun-glass divide-border divide-y rounded-2xl border">
+    <ul className="border-border divide-border divide-y rounded-2xl border">
       {links.map((link) => (
         <li className="flex flex-col gap-2 px-4 py-3.5" key={link.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">

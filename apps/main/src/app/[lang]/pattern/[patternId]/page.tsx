@@ -1,8 +1,6 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
 import { getMistakePattern } from "@zoonk/core/language/patterns/get";
-import { DeviceModeRoot, ModeProvider } from "@zoonk/learn/mode";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -20,22 +18,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function PatternSkeleton() {
   return (
-    <DeviceModeRoot>
-      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-        <Skeleton className="size-9 rounded-full" />
-        <Skeleton className="size-12 rounded-2xl" />
-        <Skeleton className="h-10 w-2/3" />
-        <Skeleton className="h-48 w-full rounded-3xl" />
-        <Skeleton className="mt-auto h-14 w-full rounded-full" />
-      </main>
-    </DeviceModeRoot>
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
+      <Skeleton className="size-9 rounded-full" />
+      <Skeleton className="size-12 rounded-2xl" />
+      <Skeleton className="h-10 w-2/3" />
+      <Skeleton className="h-48 w-full rounded-3xl" />
+      <Skeleton className="mt-auto h-14 w-full rounded-full" />
+    </main>
   );
 }
 
 async function PatternContent({ params }: Props) {
   const { lang, patternId } = await params;
 
-  const [result, mode] = await Promise.all([getMistakePattern(patternId), getExperienceMode()]);
+  const result = await getMistakePattern(patternId);
 
   if (result.status === "unauthorized") {
     redirect({ href: "/login", locale: lang });
@@ -46,11 +42,9 @@ async function PatternContent({ params }: Props) {
   }
 
   return (
-    <ModeProvider experienceMode={mode}>
-      <MainLearnProvider>
-        <PatternClient pattern={result.pattern} />
-      </MainLearnProvider>
-    </ModeProvider>
+    <MainLearnProvider>
+      <PatternClient pattern={result.pattern} />
+    </MainLearnProvider>
   );
 }
 

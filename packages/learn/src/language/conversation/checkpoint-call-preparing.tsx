@@ -61,21 +61,19 @@ export function CheckpointCallPreparing({
         }
         headerTitle={title}
       >
-        <div className="in-data-[mode=fun]:fun-glass flex flex-col items-center gap-3 rounded-3xl px-4 py-6 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-3xl px-4 py-6 text-center">
           <span
             aria-hidden="true"
-            className="bg-muted in-data-[mode=fun]:bg-fun-accent-violet/30 grid size-20 shrink-0 place-items-center rounded-full"
+            className="bg-muted grid size-20 shrink-0 place-items-center rounded-full"
           >
             <PhoneIcon className="size-8" />
           </span>
-          <h1 className="in-data-[mode=fun]:font-fun-display text-2xl font-semibold tracking-tight text-balance">
-            {unitTitle}
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-balance">{unitTitle}</h1>
         </div>
 
-        <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2">
+        <p className="text-muted-foreground">
           {t(
-            "This checkpoint is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
+            "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
           )}
         </p>
       </TaskFrame>

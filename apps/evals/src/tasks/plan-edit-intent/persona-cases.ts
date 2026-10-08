@@ -12,18 +12,21 @@ const DAYS_PER_WEEK = 7;
 function personaCase({
   changes,
   id,
+  leftOut,
   learnerKey,
   request,
 }: {
   changes: ExpectedChange[];
   id: string;
+  /** Part of the request is something no change does. */
+  leftOut?: boolean;
   learnerKey: string;
   request: string;
 }): TestCase<PlanEditExpected, PlanEditInput> {
   const { goal, language } = getSeedLearner(learnerKey);
 
   return {
-    expected: { changes },
+    expected: { changes, leftOut },
     id: `${language}-persona-${learnerKey}-${id}`,
     userInput: {
       areas: goal.areas,

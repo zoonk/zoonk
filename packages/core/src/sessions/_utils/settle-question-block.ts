@@ -24,7 +24,6 @@ import { getBlockEvents } from "./block-events";
 import { completePlanItem } from "./plan-items";
 import { type SessionAnswer, getBlockAnswers, loadSessionAnswers } from "./session-answers";
 import { trackBlockCompleted } from "./session-events";
-import { getLearnerMode } from "./session-ledger";
 import { applySessionProgress } from "./session-progress";
 import { getMasteryRewards, readSessionSnapshot, withPaidRewards } from "./session-snapshot";
 import { type StudySessionRow } from "./study-session-access";
@@ -88,7 +87,6 @@ type PreparedBlock = {
   checkpoint: CheckpointOutcome | null;
   correct: number;
   current: Record<string, MasteryState>;
-  mode: Awaited<ReturnType<typeof getLearnerMode>>;
   own: SessionAnswer[];
   payload: BlockPayload;
   scored: ReturnType<typeof scoreAnswers>;
@@ -130,16 +128,12 @@ async function prepareBlock({
     (answer) => !own.includes(answer) && answer.answeredAt < firstAnsweredAt,
   );
 
-  const [current, mode] = await Promise.all([
-    loadCurrentStates({ answers: own, userId }),
-    getLearnerMode(userId),
-  ]);
+  const current = await loadCurrentStates({ answers: own, userId });
 
   return {
     checkpoint: getCheckpointOutcome({ answers: own, payload }),
     correct: own.filter((answer) => answer.isCorrect).length,
     current,
-    mode,
     own,
     payload,
     scored: scoreAnswers({ answers: own, streak: scoreAnswers({ answers: earlier }).streak }),
@@ -272,7 +266,6 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
           ...event,
           endedAt: lock.completedAt,
           goalId: session.goalId,
-          mode: prepared.mode,
           startedAt: block.startedAt ?? lock.completedAt,
           timeZone,
           userId,

@@ -17,6 +17,7 @@ const writtenItem = {
   context: null,
   difficulty: "easy" as const,
   format: "multipleChoice" as const,
+  image: null,
   options: [
     { isCorrect: true, misconception: null, reason: "Area is length times width.", text: "12" },
     {
@@ -27,6 +28,7 @@ const writtenItem = {
     },
   ],
   question: "A rectangle is 3 by 4. What is its area?",
+  visual: null,
 };
 
 function streamedSteps() {
@@ -63,6 +65,7 @@ describe(testOutQuestionsWorkflow, () => {
       testOutQuestionsWorkflow({
         chapterId: "chapter-id",
         goalId: goal.id,
+        questionsPerSkill: 1,
         skillIds: [withoutItems.id, withItem.id],
       }),
     ).resolves.toStrictEqual({ status: "written" });
@@ -76,7 +79,6 @@ describe(testOutQuestionsWorkflow, () => {
       expect.objectContaining({
         quickCount: 3,
         quickFormat: "multipleChoice",
-        serviceTier: "priority",
         skills: [expect.objectContaining({ name: "Rectangle area" })],
         typedCount: 0,
       }),
@@ -92,6 +94,26 @@ describe(testOutQuestionsWorkflow, () => {
     ]);
   });
 
+  it("writes a skill's whole share when the test asks it several times", async () => {
+    const { goal, withItem } = await goalWithSkills();
+
+    vi.mocked(generatePlacementItems).mockResolvedValue(
+      taskResult({ skills: [{ quick: [writtenItem], typed: [] }] }),
+    );
+
+    // A chapter of one skill asks it six times: its one question isn't enough.
+    await testOutQuestionsWorkflow({
+      chapterId: "chapter-id",
+      goalId: goal.id,
+      questionsPerSkill: 6,
+      skillIds: [withItem.id],
+    });
+
+    expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ quickCount: 6, skills: [expect.objectContaining({})] }),
+    );
+  });
+
   it("fails on its stream when no question could be written", async () => {
     const { goal, withoutItems } = await goalWithSkills();
     vi.mocked(generatePlacementItems).mockRejectedValue(new Error("Provider unavailable"));
@@ -100,6 +122,7 @@ describe(testOutQuestionsWorkflow, () => {
       testOutQuestionsWorkflow({
         chapterId: "chapter-id",
         goalId: goal.id,
+        questionsPerSkill: 1,
         skillIds: [withoutItems.id],
       }),
     ).resolves.toStrictEqual({ status: "failed" });
@@ -111,7 +134,12 @@ describe(testOutQuestionsWorkflow, () => {
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "writing-run" });
 
     await expect(
-      testOutQuestionsWorkflow({ chapterId: "chapter-id", goalId: "goal-id", skillIds: [] }),
+      testOutQuestionsWorkflow({
+        chapterId: "chapter-id",
+        goalId: "goal-id",
+        questionsPerSkill: 1,
+        skillIds: [],
+      }),
     ).resolves.toStrictEqual({ status: "joined" });
 
     expect(generatePlacementItems).not.toHaveBeenCalled();

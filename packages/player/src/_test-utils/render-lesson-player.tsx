@@ -4,6 +4,7 @@ import {
   type PlayableTeachingStepOf,
 } from "@zoonk/core/lesson-player/contract";
 import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
+import { SpeechPlayerProvider, type VoiceText } from "@zoonk/learn/speech/provider";
 import { type ReactNode } from "react";
 import { vi } from "vitest";
 import {
@@ -11,13 +12,9 @@ import {
   type LessonPlayerProviderProps,
 } from "../lesson/lesson-player-provider";
 import { LessonPlayerShell } from "../lesson/lesson-player-shell";
-import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
-import { focusSkin } from "../lesson/skins/focus-skin";
-import { funSkin } from "../lesson/skins/fun-skin";
+import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
 import { type PlayerLinkComponent } from "../player-context";
-
-/** How an app presents the player; the skin and the tokens follow it. */
-export type PlayerMode = "focus" | "fun";
+import { speechClips } from "./speech-clips";
 
 /** A link that stays on the page: following it would navigate away from the test's frame. */
 export function TestLink({
@@ -25,6 +22,7 @@ export function TestLink({
   children,
   className,
   href,
+  ref,
 }: Parameters<PlayerLinkComponent>[0]) {
   return (
     <a
@@ -32,10 +30,40 @@ export function TestLink({
       className={className}
       href={href}
       onClick={(event) => event.preventDefault()}
+      ref={ref}
     >
       {children}
     </a>
   );
+}
+
+/** A run the server just started: new, or resumed with the answers it already has. */
+export function startedRun({
+  answers = [],
+  hyperdrive = { knownStepIds: [], streak: 0 },
+  runId = crypto.randomUUID(),
+  startedAt = new Date().toISOString(),
+}: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
+  return { answers, hyperdrive, reason: "started" as const, runId, startedAt };
+}
+
+const MS_PER_MINUTE = 60_000;
+
+/** An answer the server already has, given `minutesAgo` before now. */
+export function runAnswer({
+  isCorrect = true,
+  minutesAgo = 1,
+  stepId,
+}: {
+  isCorrect?: boolean;
+  minutesAgo?: number;
+  stepId: string;
+}) {
+  return {
+    answeredAt: new Date(Date.now() - minutesAgo * MS_PER_MINUTE).toISOString(),
+    isCorrect,
+    stepId,
+  };
 }
 
 /**
@@ -58,7 +86,9 @@ export function buildAdapters(
 
       return Promise.resolve({
         result: {
+          checked: true,
           correctAnswer: graded.correctAnswer,
+          corrections: [],
           feedback: graded.feedback,
           isCorrect: graded.isCorrect,
           keyPoints: null,
@@ -86,13 +116,7 @@ export function buildAdapters(
         status: "completed" as const,
       }),
     ),
-    startLesson: vi.fn(() =>
-      Promise.resolve({
-        hyperdrive: { knownStepIds: [], streak: 0 },
-        reason: "started" as const,
-        runId: crypto.randomUUID(),
-      }),
-    ),
+    startLesson: vi.fn(() => Promise.resolve(startedRun())),
     ...overrides,
   };
 }
@@ -113,7 +137,9 @@ export function acceptedAnswerCheck(
 
     return Promise.resolve({
       result: {
+        checked: true,
         correctAnswer: null,
+        corrections: [],
         feedback: null,
         isCorrect: true,
         keyPoints: step.content.keyPoints.map((text) => ({ met: true, text })),
@@ -150,37 +176,42 @@ export function buildLesson(
 }
 
 /**
- * Plays a lesson the way an app hosts it: the real provider and shell in the mode's skin, inside
- * the mode's root so Fun's tokens apply, with adapters standing in for the server.
+ * Plays a lesson the way an app hosts it: the real provider and shell, with adapters standing in
+ * for the server, and `voice` for the speech clips endpoint (short generated clips by default).
  */
 export function renderLessonPlayer({
   adapters,
   children = <LessonPlayerShell />,
   lesson,
-  mode = "focus",
+  voice = speechClips().voice,
   ...props
-}: Partial<Omit<LessonPlayerProviderProps, "children" | "lesson" | "skin">> & {
+}: Partial<Omit<LessonPlayerProviderProps, "children" | "lesson">> & {
   children?: ReactNode;
   lesson: PlayableLibraryLesson;
-  mode?: PlayerMode;
+  voice?: VoiceText;
 }) {
   const onExit = vi.fn();
 
   const view = render(
-    <div className="contents" data-mode={mode} data-slot="mode-root">
+    <SpeechPlayerProvider voice={voice}>
       <LessonPlayerProvider
         adapters={adapters ?? buildAdapters(lesson)}
         lesson={lesson}
         linkComponent={TestLink}
         onExit={onExit}
-        routes={{ exit: "/", signUp: "/login", upgrade: "/subscription" }}
-        skin={mode === "fun" ? funSkin : focusSkin}
+        routes={{
+          exit: "/",
+          exitTo: null,
+          nextLesson: null,
+          signUp: "/login",
+          upgrade: "/subscription",
+        }}
         viewer={{ hasSession: true }}
         {...props}
       >
         {children}
       </LessonPlayerProvider>
-    </div>,
+    </SpeechPlayerProvider>,
     { reactStrictMode: true },
   );
 

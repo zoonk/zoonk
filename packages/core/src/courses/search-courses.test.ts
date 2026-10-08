@@ -218,6 +218,21 @@ describe(searchCourses, () => {
     expect(ids).not.toContain(schoolCourse.id);
   });
 
+  it("leaves out a course whose page details aren't written yet and a private course", async () => {
+    const title = `Listed search ${randomUUID()}`;
+    const shared = { isPublished: true, language: "en", normalizedTitle: normalizeString(title) };
+
+    const [listed] = await Promise.all([
+      courseFixture({ ...shared, organizationId: brandOrg.id, title }),
+      courseFixture({ ...shared, description: null, organizationId: brandOrg.id, title }),
+      courseFixture({ ...shared, organizationId: brandOrg.id, title, visibility: "private" }),
+    ]);
+
+    const result = await searchCourses({ language: "en", limit: 10, query: title });
+
+    expect(result.map((course) => course.id)).toStrictEqual([listed.id]);
+  });
+
   it("limits results to default of 10", async () => {
     await prisma.course.createMany({
       data: Array.from({ length: 15 }, (_, i) => ({

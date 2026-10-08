@@ -1,15 +1,16 @@
 import { normalizeDistractorKey, sanitizeDistractors } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { normalizePunctuation } from "@zoonk/utils/string";
+import { getTileRomanization } from "./_utils/tile-romanization";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
 const FIRST_LETTER_PATTERN = /\p{L}/u;
 const TERMINAL_PUNCTUATION_PATTERN = /[.!?…。！？؟]+$/u;
 
+/** A translation answer tile: its word and audio, and romanization only for non-Latin scripts. */
 export type TranslationOption = {
   id: string;
   word: string;
-  pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
 };
@@ -17,7 +18,6 @@ export type TranslationOption = {
 export type DistractorWord = {
   id: string;
   word: string;
-  pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
 };
@@ -27,7 +27,6 @@ type TranslationSourceWord = {
   word: string;
   translation: string;
   distractors: string[];
-  pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
 };
@@ -35,32 +34,16 @@ type TranslationSourceWord = {
 /**
  * Direct distractor words do not need lesson translations, only render metadata.
  */
-export function serializeDistractorWord(word: {
-  id: string;
-  word: string;
-  pronunciation: string | null;
-  romanization: string | null;
-  audioUrl: string | null;
-}): DistractorWord {
-  return {
-    audioUrl: word.audioUrl,
-    id: word.id,
-    pronunciation: word.pronunciation,
-    romanization: word.romanization,
-    word: word.word,
-  };
+export function serializeDistractorWord(word: DistractorWord): DistractorWord {
+  return { audioUrl: word.audioUrl, id: word.id, romanization: word.romanization, word: word.word };
 }
 
-/**
- * Translation options only need the target-language surface form plus audio and
- * pronunciation metadata.
- */
+/** Translation options only need the target-language surface form, its audio and romanization. */
 function toTranslationOption(word: TranslationSourceWord | DistractorWord): TranslationOption {
   return {
     audioUrl: word.audioUrl,
     id: word.id,
-    pronunciation: word.pronunciation,
-    romanization: word.romanization,
+    romanization: getTileRomanization({ romanization: word.romanization, word: word.word }),
     word: word.word,
   };
 }
@@ -144,13 +127,7 @@ function normalizeTranslationOption(params: {
  * and punctuation differences in regenerated content.
  */
 function buildFallbackDistractorOption(params: { key: string; word: string }): TranslationOption {
-  return {
-    audioUrl: null,
-    id: `distractor:${params.key}`,
-    pronunciation: null,
-    romanization: null,
-    word: params.word,
-  };
+  return { audioUrl: null, id: `distractor:${params.key}`, romanization: null, word: params.word };
 }
 
 /**

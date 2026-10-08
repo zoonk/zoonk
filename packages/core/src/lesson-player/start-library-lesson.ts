@@ -12,8 +12,14 @@ import { startLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
 import { trackLessonStarted } from "./_utils/lesson-events";
 import { findLessonStudySessionId, getRunHyperdrive } from "./_utils/lesson-hyperdrive";
-import { findStartableLesson } from "./_utils/lesson-rows";
-import { findResumableRun, getRunStudySessionId, lockLessonRuns } from "./_utils/lesson-runs";
+import { findStartableLesson, isOwnExplanation } from "./_utils/lesson-rows";
+import {
+  findResumableRun,
+  getRunStudySessionId,
+  loadProgressAnswers,
+  loadProgressRuns,
+  lockLessonRuns,
+} from "./_utils/lesson-runs";
 import { loadLessonSupport } from "./_utils/lesson-support";
 import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract";
 
@@ -34,15 +40,11 @@ type RunSource = {
 
 /**
  * Opens the run in the ledger with `endedAt` null, so a lesson started and never finished still
- * counts against the completion rate. The mode comes from the learner's profile, the goal is the
- * one the tabs show, and a lesson played as a session block keeps the session, so its answers
- * count toward it.
+ * counts against the completion rate. The goal is the one the tabs show, and a lesson played as a
+ * session block keeps the session, so its answers count toward it.
  */
 async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSource) {
-  const [profile, goalId] = await Promise.all([
-    prisma.userLearningProfile.findUnique({ select: { experienceMode: true }, where: { userId } }),
-    findActiveGoalId(userId),
-  ]);
+  const goalId = await findActiveGoalId(userId);
 
   return prisma.$transaction(async (tx) => {
     await lockLessonRuns(tx, { lessonId: lesson.id, userId });
@@ -63,7 +65,6 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
       goalId,
       kind: "lesson",
       lessonKind: LIBRARY_LESSON_KIND,
-      mode: profile?.experienceMode ?? null,
       startedAt: now,
       timeZone,
       titleSnapshot: lesson.title,
@@ -72,6 +73,22 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
 
     return { isNew: true, run };
   });
+}
+
+/** The lesson's answers this run continues from: its own and its unfinished earlier sittings'. */
+async function loadRunProgress({
+  lessonId,
+  run,
+  userId,
+}: {
+  lessonId: string;
+  run: { startedAt: Date };
+  userId: string;
+}) {
+  const sittings = await loadProgressRuns({ lessonId, until: run.startedAt, userId });
+  const since = sittings[0]?.startedAt ?? run.startedAt;
+
+  return loadProgressAnswers({ lessonId, since, userId });
 }
 
 async function limitExplanationStarts({
@@ -95,10 +112,13 @@ async function limitExplanationStarts({
 /**
  * Starts a Library lesson for the learner or guest in the session. Starting counts against the
  * allowance once per lesson (restarts are free), so the outcome can ask the learner to slow down,
- * sign up or subscribe instead. A start right after another one (a double mount or a retry)
- * resumes the same run, and answers and the completion refer to its id. The run says where
- * Hyperdrive starts, continuing the session's streak when the lesson is one of its blocks, and how
- * the lesson opens for this learner (`support`). Only a new run counts as "Lesson Started".
+ * sign up or subscribe instead. A start within half an hour of another one (a double mount or a
+ * reload) resumes the same run; later, a new run opens for this sitting. Either way the run comes
+ * with the lesson's answers so far (`answers`, including sittings left unfinished in the last
+ * week), so the learner continues where they left off; answers and the completion refer to its id.
+ * The run says where Hyperdrive stood when it started, continuing this session's streak (never
+ * another day's), and how the lesson opens for this learner (`support`). Only a new run counts as
+ * "Lesson Started".
  */
 export async function startLibraryLesson({
   input,
@@ -129,9 +149,7 @@ export async function startLibraryLesson({
    * allowance, so playing it never takes one of the learner's lessons. Starting it again and again
    * still waits under the lesson-start rate limit, since every run can grade typed answers.
    */
-  const isOwnExplanation = lesson.planItems.length > 0;
-
-  const usage = isOwnExplanation
+  const usage = isOwnExplanation(lesson)
     ? await limitExplanationStarts({ isGuest: session.user.isAnonymous === true, userId })
     : await claimUsage({ kind: "lessonStart", targetId: lesson.id });
 
@@ -161,13 +179,19 @@ export async function startLibraryLesson({
     });
   }
 
-  const [hyperdrive, support] = await Promise.all([
-    getRunHyperdrive({ lessonId: lesson.id, studySessionId: getRunStudySessionId(run), userId }),
+  const [answers, hyperdrive, support] = await Promise.all([
+    loadRunProgress({ lessonId: lesson.id, run, userId }),
+    getRunHyperdrive({
+      lessonId: lesson.id,
+      run,
+      studySessionId: getRunStudySessionId(run),
+      userId,
+    }),
     loadLessonSupport({ lessonId: lesson.id, userId }),
   ]);
 
   return {
-    run: { hyperdrive, runId: run.id, startedAt: run.startedAt.toISOString(), support },
+    run: { answers, hyperdrive, runId: run.id, startedAt: run.startedAt.toISOString(), support },
     status: "started",
   };
 }

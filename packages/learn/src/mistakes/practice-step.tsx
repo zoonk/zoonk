@@ -6,13 +6,13 @@ import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { ChoiceQuestion } from "../questions/choice-question";
-import { ItemLine, ItemText } from "../questions/item-text";
+import { ItemLine, ItemSupport } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { DrillAnswerNotes } from "./drill/drill-answer-notes";
 import { NotSureButton, ShowAnswersButton } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
-import { type LessonHref, isIdeaFirst } from "./drill/drill-types";
+import { type LessonHref, isIdeaFirst, isReadFirst } from "./drill/drill-types";
 import { type PracticeStep as Step } from "./mistake-practice-state";
 import { type useMistakePractice } from "./use-mistake-practice";
 
@@ -71,9 +71,12 @@ function StepActions({ run, step }: { run: Run; step: Step }) {
 function ReadingQuestion({ question }: { question: Step["question"] }) {
   return (
     <div className="flex flex-col gap-4">
-      {question.context && (
-        <ItemText className="text-muted-foreground text-sm" text={question.context} />
-      )}
+      <ItemSupport
+        className="text-muted-foreground text-sm"
+        context={question.context}
+        image={question.image}
+        visual={question.visual}
+      />
       <h2 className="text-lg font-medium">
         <ItemLine text={question.question} />
       </h2>
@@ -110,7 +113,12 @@ export function PracticeStepView({
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { phase } = run.state;
   const { drill } = step.entry;
-  const lastAnswer = answerText(step.entry.snapshot.answer);
+
+  // The earlier answer belongs to the mistake's own question; next to another one it misleads.
+  const lastAnswer =
+    step.question.question === step.entry.snapshot.question
+      ? answerText(step.entry.snapshot.answer)
+      : null;
 
   if (phase.kind === "idea") {
     return (
@@ -129,9 +137,14 @@ export function PracticeStepView({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* A gap's idea had its own screen; other drills say how they work above the question. */}
-      {step.firstOfEntry && !isIdeaFirst(drill) && (
-        <DrillIntro drill={drill} lastAnswer={lastAnswer} lessonHref={lessonHref} />
+      {/* A gap's idea had its own screen; other drills say how they work above their first
+          question, and a misread above each one, since each waits behind "Show the answers". */}
+      {!isIdeaFirst(drill) && (step.firstOfEntry || isReadFirst(drill)) && (
+        <DrillIntro
+          drill={drill}
+          lastAnswer={step.firstOfEntry ? lastAnswer : null}
+          lessonHref={lessonHref}
+        />
       )}
 
       {drill.timeLimitSeconds !== null && phase.kind === "answering" && (

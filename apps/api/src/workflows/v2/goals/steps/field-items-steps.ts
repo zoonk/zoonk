@@ -9,6 +9,7 @@ import {
 import { resolveGoalField } from "@zoonk/core/library/items/goal-field";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { startPictureChecks } from "../../images/start-picture-checks";
 
 /**
  * The shareable field a work or career-change goal's practice is set in, sorted from the
@@ -91,7 +92,10 @@ export async function prepareFieldItemsStep({
     }),
   );
 
-  const { created } = await createItems({
+  const context = toContentAnalytics({ analytics, scope: skill, workflowRunId });
+
+  const { created, unchecked } = await createItems({
+    analytics: context,
     field,
     format: "multipleChoice",
     items: data.items,
@@ -99,6 +103,8 @@ export async function prepareFieldItemsStep({
     provenance,
     skillId: skill.id,
   });
+
+  await startPictureChecks({ analytics: context, assetIds: unchecked });
 
   return created.length;
 }

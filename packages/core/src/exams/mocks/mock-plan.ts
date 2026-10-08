@@ -1,6 +1,7 @@
 import { interleave } from "@zoonk/utils/interleave";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { namesMatch } from "../_utils/name-match";
+import { type MockRouting, isNextModule, toRouting } from "./mock-routing";
 
 /**
  * A weekly mock sits one exam day in the blueprint's section order and at its pace. Regular weeks
@@ -15,6 +16,9 @@ const DEFAULT_SECTION_QUESTIONS = 45;
 /** Exams like ENEM give about three minutes per question, reading included. */
 const DEFAULT_MINUTES_PER_QUESTION = 3;
 
+/** One of the notice's subjects, by the name questions' areas carry, and its questions. */
+export type SubjectShare = { name: string; questions: number };
+
 /** A bank item a mock can ask: its area (the plan graph's), and how hard it is. */
 export type MockCandidate = {
   area: string | null;
@@ -22,12 +26,6 @@ export type MockCandidate = {
   itemId: string;
   skillId: string;
 };
-
-/**
- * An adaptive exam's later module: its questions wait for the module before it. A learner who did
- * well there gets the harder set, like the digital SAT's second module.
- */
-type MockRouting = { easier: string[]; harder: string[] };
 
 type MockSectionPlan = {
   itemIds: string[];
@@ -38,22 +36,104 @@ type MockSectionPlan = {
   routing: MockRouting | null;
 };
 
+/** What a written part asks, as the notice states it; `count` is null when it's in the words. */
+type MockWrittenTask = { count: number | null; description: string };
+
+/**
+ * A part of the exam day answered in writing (a discursive test, a redação, a peça técnica): the
+ * mock lists it as the notice states it, never as objective questions.
+ */
+export type MockWrittenPart = { minutes: number | null; name: string; tasks: MockWrittenTask[] };
+
 export type MockPlan = {
   /** Which exam day the mock copies, when the exam runs over several days. */
   day: number | null;
   fullLength: boolean;
   minutes: number;
   sections: MockSectionPlan[];
+  /** The day's written parts, in a full-length mock; a short one sits half the objective part. */
+  written: MockWrittenPart[];
 };
 
 type BlueprintSection = { minutes: number | null; name: string | null; questions: number | null };
 
-function getDays(structure: ExamStructure | null): (number | null)[] {
+type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
+
+/** How a written test is named, for readings from before sections had kinds. */
+const WRITTEN_SECTION_NAME =
+  /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica|essay|written|free.?response|escrit/iu;
+
+/**
+ * Whether a section is answered in writing: as its reading says, or, for a reading from before
+ * sections had kinds, a section without a question count, named like a written test, in an exam
+ * with an essay format.
+ */
+export function isWrittenSection({
+  section,
+  structure,
+}: {
+  section: StructureSection;
+  structure: ExamStructure | null;
+}): boolean {
+  if (section.kind) {
+    return section.kind === "written";
+  }
+
+  const hasEssay = structure?.formats.some((format) => format.kind === "essay") ?? false;
+  return section.questions === null && hasEssay && WRITTEN_SECTION_NAME.test(section.name);
+}
+
+function toWrittenPart({
+  section,
+  structure,
+}: {
+  section: StructureSection;
+  structure: ExamStructure | null;
+}): MockWrittenPart {
+  const essays = (structure?.formats ?? []).filter((format) => format.kind === "essay");
+
+  const tasks =
+    section.tasks && section.tasks.length > 0
+      ? section.tasks
+      : essays.map((format) => ({ count: null, description: format.description }));
+
+  return { minutes: section.minutes, name: section.name, tasks };
+}
+
+/** The objective sections of the exam: the ones a mock fills with questions. */
+function getObjectiveSections(structure: ExamStructure | null): StructureSection[] {
+  return (structure?.mock?.sections ?? []).filter(
+    (section) => !isWrittenSection({ section, structure }),
+  );
+}
+
+/** A full-length mock lists the day's written parts; a short one leaves them for another week. */
+function getDayWritten({
+  day,
+  fullLength,
+  structure,
+}: {
+  day: number | null;
+  fullLength: boolean;
+  structure: ExamStructure | null;
+}): MockWrittenPart[] {
+  if (!fullLength) {
+    return [];
+  }
+
+  return (structure?.mock?.sections ?? [])
+    .filter((section) => section.day === day && isWrittenSection({ section, structure }))
+    .map((section) => toWrittenPart({ section, structure }));
+}
+
+/** The exam's days in the blueprint's order; one unnamed day when it doesn't split them. */
+export function getMockDays(structure: ExamStructure | null): (number | null)[] {
   const days = [...new Set((structure?.mock?.sections ?? []).map((section) => section.day))];
   return days.length > 0 ? days : [null];
 }
 
-function getPace(structure: ExamStructure | null): number {
+/** Minutes per question at the exam's own pace, reading included. */
+export function getPace(structure: ExamStructure | null): number {
   const mock = structure?.mock;
 
   if (mock?.timeLimitMinutes && mock.totalQuestions) {
@@ -72,8 +152,9 @@ function getDaySections({
 }): BlueprintSection[] {
   const sections = (structure?.mock?.sections ?? []).filter((section) => section.day === day);
 
+  // A day of only a written test has no questions to pick.
   if (sections.length > 0) {
-    return sections;
+    return sections.filter((section) => !isWrittenSection({ section, structure }));
   }
 
   return [
@@ -111,56 +192,94 @@ function matchesSection(candidate: MockCandidate, section: BlueprintSection): bo
 }
 
 /**
- * A section's own area questions first, then those no section of the exam claims on any day, so a
- * day-two mock never borrows day one's areas.
+ * Whether the questions' areas line up with the exam's sections: some question's area is named by
+ * a section. When none is (a goal without areas, or sections that don't name areas), sections
+ * can't be told apart by area.
  */
-function sectionPool({
+function areasMatchSections({
   allSections,
   candidates,
-  section,
 }: {
   allSections: readonly BlueprintSection[];
   candidates: readonly MockCandidate[];
+}): boolean {
+  return candidates.some((candidate) =>
+    allSections.some((section) => matchesSection(candidate, section)),
+  );
+}
+
+/**
+ * The questions a section may ask. When areas line up with sections, only the section's own area:
+ * "Natural Sciences and Math" never asks an English reading question, and a question whose area
+ * no section names stays out. When they don't line up, any question may fill any section.
+ */
+function sectionPool({
+  byArea,
+  candidates,
+  section,
+}: {
+  byArea: boolean;
+  candidates: readonly MockCandidate[];
   section: BlueprintSection;
 }): MockCandidate[] {
-  const own = candidates.filter((candidate) => matchesSection(candidate, section));
-
-  const unclaimed = candidates.filter(
-    (candidate) => !allSections.some((other) => matchesSection(candidate, other)),
-  );
-
-  return interleaveBySkill([...own, ...unclaimed]);
-}
-
-function byDifficulty(first: MockCandidate, second: MockCandidate): number {
-  return (first.difficulty ?? 0) - (second.difficulty ?? 0);
-}
-
-/** A module's name without its number: "Math, module 2" is "Math, module". */
-function withoutNumbers(name: string): string {
-  return name.replaceAll(/\d+/gu, " ");
-}
-
-/** Two names for the same subject's modules ("Math, module 1" and "Math, module 2"). */
-function isNextModule({ current, previous }: { current: string | null; previous: string | null }) {
-  return Boolean(
-    current &&
-    previous &&
-    current !== previous &&
-    namesMatch(withoutNumbers(current), withoutNumbers(previous)),
+  return interleaveBySkill(
+    byArea ? candidates.filter((candidate) => matchesSection(candidate, section)) : candidates,
   );
 }
 
-function toRouting({ pool, wanted }: { pool: MockCandidate[]; wanted: number }): MockRouting {
-  const sorted = pool.toSorted(byDifficulty);
+/**
+ * A section's name says which area it asks. Questions that couldn't be sorted by area fill an
+ * exam's several sections without their names, so none claims an area it may not ask.
+ */
+function getSectionName({
+  allSections,
+  byArea,
+  section,
+}: {
+  allSections: readonly BlueprintSection[];
+  byArea: boolean;
+  section: BlueprintSection;
+}): string | null {
+  return byArea || allSections.length <= 1 ? section.name : null;
+}
 
-  return {
-    easier: sorted.slice(0, wanted).map((item) => item.itemId),
-    harder: sorted
-      .toReversed()
-      .slice(0, wanted)
-      .map((item) => item.itemId),
-  };
+/**
+ * A section that asks several of the notice's subjects asks each its share, in the notice's order,
+ * as ENEM's first day asks 45 questions of Linguagens, then 45 of Ciências Humanas. A subject short
+ * of questions leaves its place to the others. Questions whose areas aren't those subjects stay as
+ * they came.
+ */
+function orderBySubjectShares({
+  pool,
+  subjectShares,
+  wanted,
+}: {
+  pool: readonly MockCandidate[];
+  subjectShares: readonly SubjectShare[];
+  wanted: number;
+}): MockCandidate[] {
+  const ofSubject = (name: string) => (candidate: MockCandidate) =>
+    candidate.area !== null && namesMatch(candidate.area, name);
+
+  const shares = subjectShares.filter((share) => pool.some((item) => ofSubject(share.name)(item)));
+
+  if (shares.length < 2) {
+    return [...pool];
+  }
+
+  const total = shares.reduce((sum, share) => sum + share.questions, 0);
+
+  const shared = shares.flatMap((share) =>
+    pool
+      .filter((item) => ofSubject(share.name)(item))
+      .slice(0, Math.round((wanted * share.questions) / total)),
+  );
+
+  // A subject named inside another's ("Direito Civil", "Direito Processual Civil") matches its
+  // questions too: each question still comes once.
+  const first = [...new Map(shared.map((candidate) => [candidate.itemId, candidate])).values()];
+  const picked = new Set(first.map((candidate) => candidate.itemId));
+  return [...first, ...pool.filter((candidate) => !picked.has(candidate.itemId))];
 }
 
 /**
@@ -175,6 +294,7 @@ export function planMock({
   fullLength,
   mockNumber,
   structure,
+  subjectShares = [],
 }: {
   adaptive: boolean;
   candidates: readonly MockCandidate[];
@@ -182,22 +302,29 @@ export function planMock({
   /** How many mocks the learner already finished for the goal: the days take turns. */
   mockNumber: number;
   structure: ExamStructure | null;
+  /** The notice's subjects with their questions, so a section asks each its share. */
+  subjectShares?: readonly SubjectShare[];
 }): MockPlan {
-  const days = getDays(structure);
+  const days = getMockDays(structure);
   const day = days[mockNumber % days.length] ?? null;
   const sections = getDaySections({ day, structure });
   const pace = getPace(structure);
   const share = fullLength ? 1 : WEEKLY_MOCK_SHARE;
+  const objective = getObjectiveSections(structure);
+  const allSections = objective.length > 0 ? objective : sections;
+  const byArea = areasMatchSections({ allSections, candidates });
 
   const planned = sections.reduce<{ plans: MockSectionPlan[]; used: Set<string> }>(
     (state, section, index) => {
       const wanted = Math.ceil((section.questions ?? DEFAULT_SECTION_QUESTIONS) * share);
 
-      const pool = sectionPool({
-        allSections: structure?.mock?.sections ?? sections,
-        candidates,
-        section,
-      }).filter((candidate) => !state.used.has(candidate.itemId));
+      const pool = orderBySubjectShares({
+        pool: sectionPool({ byArea, candidates, section }).filter(
+          (candidate) => !state.used.has(candidate.itemId),
+        ),
+        subjectShares,
+        wanted,
+      });
 
       const previous = sections[index - 1]?.name ?? null;
       const routed = adaptive && isNextModule({ current: section.name, previous });
@@ -209,7 +336,7 @@ export function planMock({
       const plan: MockSectionPlan = {
         itemIds: picked,
         minutes: sectionMinutes({ pace, picked: questions, section }),
-        name: section.name,
+        name: getSectionName({ allSections, byArea, section }),
         questions,
         routing,
       };
@@ -226,6 +353,7 @@ export function planMock({
     fullLength,
     minutes: plans.reduce((sum, plan) => sum + plan.minutes, 0),
     sections: plans,
+    written: getDayWritten({ day, fullLength, structure }),
   };
 }
 
@@ -244,7 +372,7 @@ export function outlineMock({
   fullLength: boolean;
   structure: ExamStructure | null;
 }): MockPlan {
-  const day = requestedDay === undefined ? (getDays(structure)[0] ?? null) : requestedDay;
+  const day = requestedDay === undefined ? (getMockDays(structure)[0] ?? null) : requestedDay;
   const pace = getPace(structure);
   const share = fullLength ? 1 : WEEKLY_MOCK_SHARE;
 
@@ -265,6 +393,7 @@ export function outlineMock({
     fullLength,
     minutes: sections.reduce((sum, section) => sum + section.minutes, 0),
     sections,
+    written: getDayWritten({ day, fullLength, structure }),
   };
 }
 

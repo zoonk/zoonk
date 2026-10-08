@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -10,7 +11,6 @@ import {
 } from "../_components/activity-canvas";
 import { ActivityPlot, ActivityPlotArea, ActivityPlotLine } from "../_components/activity-plot";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 import {
   type Interval,

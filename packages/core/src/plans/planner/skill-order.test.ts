@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getExamPriority, getExamValue, inheritValues, orderSkills } from "./skill-order";
+import { getExamValue, inheritValues, orderSkills } from "./skill-order";
 
 type Skill = { rank: number; skillId: string };
 
@@ -43,14 +43,10 @@ describe(orderSkills, () => {
 });
 
 describe(getExamValue, () => {
-  it("rises with weight and the gap, and priority falls with the time a skill needs", () => {
+  it("rises with weight and the gap", () => {
     const base = getExamValue({ readiness: undefined, weight: 2 });
 
     expect(getExamValue({ readiness: undefined, weight: 4 })).toBe(base * 2);
-
-    expect(getExamPriority({ minutes: 60, value: base })).toBe(
-      getExamPriority({ minutes: 30, value: base }) / 2,
-    );
 
     const mastered = getExamValue({
       readiness: { retrievabilityAtTarget: 0.9, stability: 40, state: "mastered" },

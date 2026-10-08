@@ -2,19 +2,13 @@ import { Link } from "@/i18n/navigation";
 import { listGuardianLinks } from "@zoonk/core/minors/guardian/list-links";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
+import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-} from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ProtectedSection } from "../../_components/protected-section";
-import { SettingsPage, SettingsPageTitle } from "../../_components/settings-page";
 import { GuardianInviteForm } from "./guardian-invite-form";
 import { GuardianLinks } from "./guardian-links";
 
@@ -23,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t(
-      "Invite a parent or guardian to see your week, set a daily limit and approve Plus.",
+      "Invite a parent or guardian to see your week, set a daily limit, turn memory off and approve Plus.",
     ),
     robots: { follow: false, index: false },
     title: t("Guardian"),
@@ -90,23 +84,21 @@ export default async function GuardianPage() {
   const t = await getExtracted();
 
   return (
-    <SettingsPage>
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <SettingsPageTitle>{t("Guardian")}</SettingsPageTitle>
-          <ContainerDescription>
+    <Page>
+      <PageHeader>
+        <PageHeaderContent>
+          <PageTitle>{t("Guardian")}</PageTitle>
+          <PageSubtitle>
             {t(
-              "A parent or guardian can see your weekly activity, set a daily time limit and approve Plus.",
+              "A parent or guardian can see your weekly activity, set a daily time limit, turn memory off and approve Plus.",
             )}
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+          </PageSubtitle>
+        </PageHeaderContent>
+      </PageHeader>
 
-      <ContainerBody>
-        <Suspense fallback={<GuardianSkeleton />}>
-          <GuardianContent />
-        </Suspense>
-      </ContainerBody>
-    </SettingsPage>
+      <Suspense fallback={<GuardianSkeleton />}>
+        <GuardianContent />
+      </Suspense>
+    </Page>
   );
 }

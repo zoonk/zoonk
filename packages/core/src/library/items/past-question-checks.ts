@@ -58,9 +58,13 @@ export function checkPastQuestion({
     return quoted && paper.includes(quoted) ? [] : [`${label} isn't in the paper as printed.`];
   });
 
+  // A printed question is copied as it is, never with a new drawing of its figure.
+  const asksForPicture = "image" in question.item && question.item.image !== null;
+
   return [
     ...quoteProblems,
     ...(citesNumber ? [] : ["The citation doesn't name the question's number."]),
     ...(hasSkill ? [] : ["The question isn't tagged with one of the skills."]),
+    ...(asksForPicture ? ["The question depends on a figure, which can't be copied."] : []),
   ];
 }

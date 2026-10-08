@@ -6,8 +6,7 @@ export type { LearnAdapters } from "./learn-context";
 
 /**
  * Injects the host app's links, analytics and API connection, so the
- * learning screens never import an app's routes, auth or data fetching. Wrap it
- * in `ModeProvider` to choose between Focus and Fun.
+ * learning screens never import an app's routes, auth or data fetching.
  */
 export function LearnProvider({
   adapters,

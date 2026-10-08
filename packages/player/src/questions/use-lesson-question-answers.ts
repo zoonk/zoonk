@@ -1,11 +1,8 @@
 "use client";
 
 import { type Dispatch, useCallback, useRef } from "react";
-import {
-  type LessonQuestionConnection,
-  getLessonQuestionRequest,
-  streamLessonQuestionAnswerRequest,
-} from "./lesson-question-api";
+import { streamLessonQuestionAnswerRequest } from "./lesson-question-answer-stream";
+import { type LessonQuestionConnection, getLessonQuestionRequest } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
@@ -87,7 +84,12 @@ export function useLessonQuestionAnswers({
       const result = await streamLessonQuestionAnswerRequest({
         connection,
         onChunk: (chunk) => dispatchToSession({ chunk, questionId, type: "answerChunkReceived" }),
+        onPlanChange: (change) =>
+          dispatchToSession({ change, questionId, type: "planChangeProposed" }),
+        onPlanChangesReplaced: (changeIds) =>
+          dispatchToSession({ changeIds, type: "planChangesReplaced" }),
         onSaved: () => dispatchToSession({ questionId, type: "answerCompleted" }),
+        onToolOffer: (offer) => dispatchToSession({ offer, questionId, type: "toolOffered" }),
         questionId,
       });
 

@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -16,7 +15,6 @@ import {
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
-import { expectMode, setDeviceMode } from "./learn-personas";
 
 /**
  * A visitor from a search result: the answer on the public page opens the lesson as a guest, the
@@ -121,7 +119,6 @@ test.describe("A visitor from a public lesson page", () => {
     page,
   }) => {
     const { course, lessonId, lessonPath } = await createPublicLesson();
-    await setDeviceMode(page.context(), "fun");
 
     // The lesson's screens load only with a session, so they aren't in a visitor's HTML.
     const response = await page.request.get(`/learn/${lessonId}`);
@@ -158,8 +155,6 @@ test.describe("A visitor from a public lesson page", () => {
 
     const level = "How much do you already know?";
     await expect(page.getByRole("heading", { name: level })).toBeVisible();
-    await expectMode(page, "fun");
-    await expectAccessibleScreen(page, level);
 
     const goalId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
 

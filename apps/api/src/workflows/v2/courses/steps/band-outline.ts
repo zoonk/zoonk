@@ -27,6 +27,8 @@ export type BandPlan = {
   level: CourseBandNeed["level"];
   /** The band has no chapters yet, so its whole outline is written for every learner. */
   isNewBand: boolean;
+  /** A private course built from the learner's own class material: that material, which it follows. */
+  material: string | null;
   nextPosition: number;
   otherChapterTitles: string[];
   skills: GoalSkillRef[];
@@ -34,6 +36,8 @@ export type BandPlan = {
   extensions: ExtensionPlan[];
   /** The band's skills other chapters of this course already teach: the outline mustn't repeat them. */
   taughtElsewhere: string[];
+  /** The goal is an exam answered without tools: its skills go in chapters without tools. */
+  withoutTools: boolean;
 };
 
 /**
@@ -106,6 +110,7 @@ export function toOutlineParams({
   return {
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
     courseTitle: plan.courseTitle,
+    exams: scope.exams,
     extendSkills: plan.extensions.map(({ chapters, lessons, skill }) => ({
       chapters,
       description: skill.description,
@@ -115,9 +120,18 @@ export function toOutlineParams({
     })),
     language: scope.language,
     level: plan.level,
+    material: plan.material ?? undefined,
     model: getScopeModel(scope),
     otherLevelChapters: plan.otherChapterTitles,
-    requiredSkills: plan.skills.map(({ description, key, name }) => ({ description, key, name })),
+    // A private course from the learner's material teaches each skill in the lessons the goal's
+    // graph planned: a test days away is sized to what fits before it.
+    requiredSkills: plan.skills.map(({ description, key, lessons, name }) => ({
+      description,
+      key,
+      lessons: plan.material ? lessons : undefined,
+      name,
+    })),
     taughtElsewhere: plan.taughtElsewhere,
+    withoutTools: plan.withoutTools,
   };
 }

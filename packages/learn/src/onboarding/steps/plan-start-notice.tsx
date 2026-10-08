@@ -20,7 +20,7 @@ export function PlanStartNotice({ run }: { run: GenerationRun }) {
 
   return (
     <div className="mx-auto w-full max-w-xl px-4 pt-2">
-      <Alert className="in-data-[mode=fun]:fun-glass" variant="destructive">
+      <Alert variant="destructive">
         <CircleAlertIcon aria-hidden="true" />
         <AlertTitle>
           {run.failure === "notStarted"

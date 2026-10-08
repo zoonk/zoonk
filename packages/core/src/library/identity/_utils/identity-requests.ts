@@ -53,6 +53,11 @@ export type LessonIdentityRequest = IdentityRequestBase & {
    * into several lessons, so the title tells them apart (see `buildLessonIdentityKey`).
    */
   sharesSkills?: boolean;
+  /**
+   * Every skill it teaches was created for it just now: no Library lesson teaches them yet, so
+   * only an exact match (another run writing the same lesson) can be it, and nothing is searched.
+   */
+  newSkills?: boolean;
 };
 
 export type SkillIdentityRequest = IdentityRequestBase & {
@@ -60,6 +65,11 @@ export type SkillIdentityRequest = IdentityRequestBase & {
   targetLanguage: string | null;
   name: string;
   description: string;
+  /**
+   * The course or plan area the skill is studied in ("Língua Inglesa"), when known: reading a text
+   * for an exam's English isn't the skill of reading one for its Portuguese, though the words match.
+   */
+  course?: string | null;
 };
 
 export type SourceIdentityRequest = IdentityRequestBase & {

@@ -5,17 +5,216 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-language-recruiter-english-answer-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hi, could you tell me who I should contact about the professional registration requirements? Thank you!"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-language-recruiter-english-paraphrase-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hello! I'd like to ask who is the right person to talk to about the requirements for my professional registration. Thanks in advance."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, false, true] },
+        "id": "pt-language-recruiter-missing-registration-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hi, could you tell me who I should contact? Thanks!"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
+        "id": "pt-language-recruiter-portuguese-answer-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva em inglês uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Olá, você poderia me dizer com quem devo falar sobre as exigências do registro profissional? Obrigado!"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-english-answer-outside-language-practice-1",
+        "userInput": {
+          "answer": "Prices keep going up over time, so the same money buys less.",
+          "keyPoints": [
+            "Os preços sobem de forma geral",
+            "Acontece ao longo do tempo",
+            "O dinheiro perde poder de compra"
+          ],
+          "language": "pt",
+          "question": "Explique com suas palavras o que é inflação.",
+          "sampleAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -36,17 +235,17 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -71,17 +270,411 @@
       "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
+        "id": "en-photosynthesis-reversed-1",
+        "userInput": {
+          "keyPoints": [
+            "Plants take in carbon dioxide (from the air)",
+            "Light provides the energy",
+            "Sugar (glucose) and oxygen are produced"
+          ],
+          "language": "en",
+          "question": "In your own words, what happens during photosynthesis?",
+          "sampleAnswer": "Using energy from light, plants turn carbon dioxide and water into sugar and release oxygen.",
+          "answer": "Plants breathe in oxygen and breathe out carbon dioxide to make their food at night."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-inflacao-parafrase-1",
+        "userInput": {
+          "answer": "É quando tudo vai ficando mais caro com o tempo e o mesmo dinheiro passa a comprar menos coisas.",
+          "keyPoints": [
+            "Os preços sobem de forma geral",
+            "Acontece ao longo do tempo",
+            "O dinheiro perde poder de compra"
+          ],
+          "language": "pt",
+          "question": "Explique com suas palavras o que é inflação.",
+          "sampleAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, true, false] },
+        "id": "pt-sem-acentos-lei-de-ohm-1",
+        "userInput": {
+          "answer": "o resistor, porque a resistencia dele nao muda. a corrente e 9/6 = 1,5 A",
+          "keyPoints": [
+            "Escolher o resistor, pois ele mantém a resistência constante",
+            "Calcular 9 ÷ 6 = 1,5 A",
+            "Explicar que a resistência da lâmpada muda quando ela esquenta"
+          ],
+          "language": "pt",
+          "question": "João tem uma fonte de 9 V, um resistor de 6 Ω e uma lâmpada que mediu 6 Ω ainda fria. Qual dos dois ele pode usar para prever a corrente com a lei de Ohm, quanto ela vale e por que o outro não serve?",
+          "sampleAnswer": "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, true, false] },
+        "id": "pt-sem-acentos-fotossintese-1",
+        "userInput": {
+          "answer": "a planta usa a luz do sol como energia e pega o gas carbonico do ar, mas nao sei o que ela produz no final",
+          "keyPoints": [
+            "A planta absorve gás carbônico do ar",
+            "A luz fornece a energia",
+            "A planta produz açúcar (glicose) e libera oxigênio"
+          ],
+          "language": "pt",
+          "question": "Com suas palavras, o que acontece na fotossíntese?",
+          "sampleAnswer": "Com a energia da luz, a planta transforma gás carbônico e água em açúcar e libera oxigênio."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "corrections": ["bonita"], "isCorrect": false, "keyPoints": [false] },
+        "id": "pt-language-gender-agreement-1",
+        "userInput": {
+          "acceptedAnswers": ["Ela é bonita"],
+          "answer": "Ela é bonito",
+          "keyPoints": ["Uses the feminine form of the adjective to agree with 'ela'"],
+          "language": "en",
+          "practicedLanguage": "pt",
+          "question": "Translate into Portuguese: 'She is pretty.'",
+          "sampleAnswer": "Ela é bonita."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "corrections": ["your"],
+          "isCorrect": false,
+          "keyPoints": [true, true, true]
+        },
+        "id": "pt-language-form-mistake-idea-stated-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Please reply by Thursday to confirm your availability.",
+            "Please respond by Thursday to confirm your availability."
+          ],
+          "keyPoints": [
+            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
+            "Usa `by Thursday` para indicar o prazo.",
+            "Pede a confirmação da disponibilidade."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
+          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
+          "answer": "Please reply by thursday to confirm you availability."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-language-slip-not-a-mistake-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Please reply by Thursday to confirm your availability.",
+            "Please respond by Thursday to confirm your availability."
+          ],
+          "keyPoints": [
+            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
+            "Usa `by Thursday` para indicar o prazo.",
+            "Pede a confirmação da disponibilidade."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
+          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
+          "answer": "Please reply by Thursday to confirm your availabilty."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "corrections": ["sua"], "isCorrect": false, "keyPoints": [true, true, true] },
+        "id": "en-language-form-mistake-idea-stated-1",
+        "userInput": {
+          "acceptedAnswers": ["Por favor, confirme sua presença até sexta-feira."],
+          "answer": "Por favor, confirme seu presença até sexta-feira.",
+          "keyPoints": [
+            "Asks politely with `Por favor`",
+            "Asks the person to confirm their attendance",
+            "Gives Friday (`até sexta-feira`) as the deadline"
+          ],
+          "language": "en",
+          "practicedLanguage": "pt",
+          "question": "Write in Portuguese: “Please confirm your attendance by Friday.”",
+          "sampleAnswer": "Por favor, confirme sua presença até sexta-feira."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true, true] },
+        "id": "pt-entrevista-pergunta-concreta-1",
+        "userInput": {
+          "answer": "1) Me conta como foi a última vez que você dividiu uma conta com os amigos no app. 2) O que aconteceu depois que vocês voltaram pra casa? 3) Como você decidiu se ia registrar o gasto ou não? Eu tiraria a pergunta do gerente porque ela já supõe que as notificações atrapalharam, aí a pessoa só concorda.",
+          "keyPoints": [
+            "A primeira pergunta pede o relato da última tentativa de registrar um gasto.",
+            "A segunda pergunta acompanha o que aconteceu depois.",
+            "A terceira pergunta explora como a pessoa decidiu registrar ou não.",
+            "A sugestão sobre notificações é descartada ou reformulada porque presume que elas atrapalharam."
+          ],
+          "language": "pt",
+          "question": "Sua equipe pesquisa um app de divisão de despesas usado por amigos em Belém. Algumas pessoas saem sem registrar um gasto. O gerente sugeriu: “As notificações atrapalharam você?”\n\nEscreva três perguntas, em ordem: sobre a última tentativa, o que aconteceu depois e a decisão de registrar ou não. Descarte ou reformule a sugestão do gerente e diga por quê.",
+          "sampleAnswer": "“Conte como foi a última vez que tentou registrar um gasto no app.” “O que aconteceu depois?” “Como decidiu se registraria o gasto ou não?” Eu descartaria a pergunta do gerente. Não sei se as notificações apareceram. Também não sei se atrapalharam."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true] },
+        "id": "en-spelling-slip-with-article-1",
+        "userInput": {
+          "acceptedAnswers": ["mitochondria"],
+          "answer": "the mitocondria",
+          "keyPoints": ["Names the mitochondria"],
+          "language": "en",
+          "question": "Which part of the cell releases energy from food?",
+          "sampleAnswer": "The mitochondria."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true] },
+        "id": "en-number-in-words-1",
+        "userInput": {
+          "acceptedAnswers": ["6"],
+          "answer": "six",
+          "keyPoints": ["States that a hexagon has 6 sides"],
+          "language": "en",
+          "question": "How many sides does a hexagon have?",
+          "sampleAnswer": "6"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -106,52 +699,17 @@
       "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "conclusion": "Expected wrong with key points [false,false] and corrections []; got wrong with [false,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "conclusion": "Expected wrong with key points [false,false] and corrections []; got wrong with [false,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
-        "id": "en-photosynthesis-reversed-1",
-        "userInput": {
-          "keyPoints": [
-            "Plants take in carbon dioxide (from the air)",
-            "Light provides the energy",
-            "Sugar (glucose) and oxygen are produced"
-          ],
-          "language": "en",
-          "question": "In your own words, what happens during photosynthesis?",
-          "sampleAnswer": "Using energy from light, plants turn carbon dioxide and water into sugar and release oxygen.",
-          "answer": "Plants breathe in oxygen and breathe out carbon dioxide to make their food at night."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
+          "conclusion": "Expected wrong with key points [false,false] and corrections []; got wrong with [false,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -175,151 +733,17 @@
       "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [false]; got wrong with [false].",
+          "conclusion": "Expected wrong with key points [false,false] and corrections []; got wrong with [false,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false]; got wrong with [false].",
+          "conclusion": "Expected wrong with key points [false,false] and corrections []; got wrong with [false,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false]; got wrong with [false].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": false, "keyPoints": [false] },
-        "id": "pt-language-gender-agreement-1",
-        "userInput": {
-          "acceptedAnswers": ["Ela é bonita"],
-          "answer": "Ela é bonito",
-          "keyPoints": ["Uses the feminine form of the adjective to agree with 'ela'"],
-          "language": "en",
-          "question": "Translate into Portuguese: 'She is pretty.'",
-          "sampleAnswer": "Ela é bonita.",
-          "spellingMatters": true
-        }
-      }
-    },
-    {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [true,false]; got wrong with [true,false].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,false]; got wrong with [true,false].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,false]; got wrong with [true,false].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": false, "keyPoints": [true, false] },
-        "id": "en-feedback-partial-1",
-        "userInput": {
-          "answer": "So they still remember exactly what happened.",
-          "keyPoints": [
-            "Feedback soon after the event is specific because details are fresh",
-            "The person can adjust right away"
-          ],
-          "language": "en",
-          "question": "Why should a manager give feedback soon after the behavior happens?",
-          "sampleAnswer": "Because everyone still remembers the details, and the person can change what they do right away."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "correct", "predicted": "correct" },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true] },
-        "id": "en-spelling-slip-with-article-1",
-        "userInput": {
-          "acceptedAnswers": ["mitochondria"],
-          "answer": "the mitocondria",
-          "keyPoints": ["Names the mitochondria"],
-          "language": "en",
-          "question": "Which part of the cell releases energy from food?",
-          "sampleAnswer": "The mitochondria."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "correct", "predicted": "correct" },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
-        "id": "pt-inflacao-parafrase-1",
-        "userInput": {
-          "answer": "É quando tudo vai ficando mais caro com o tempo e o mesmo dinheiro passa a comprar menos coisas.",
-          "keyPoints": [
-            "Os preços sobem de forma geral",
-            "Acontece ao longo do tempo",
-            "O dinheiro perde poder de compra"
-          ],
-          "language": "pt",
-          "question": "Explique com suas palavras o que é inflação.",
-          "sampleAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
+          "conclusion": "Expected wrong with key points [false,false] and corrections []; got wrong with [false,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -340,52 +764,20 @@
       }
     },
     {
-      "classification": { "expected": "correct", "predicted": "correct" },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true]; got correct with [true].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true] },
-        "id": "en-number-in-words-1",
-        "userInput": {
-          "acceptedAnswers": ["6"],
-          "answer": "six",
-          "keyPoints": ["States that a hexagon has 6 sides"],
-          "language": "en",
-          "question": "How many sides does a hexagon have?",
-          "sampleAnswer": "6"
-        }
-      }
-    },
-    {
       "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -403,6 +795,145 @@
           "language": "pt",
           "question": "O que acontece quando o Banco Central sobe a taxa Selic?",
           "sampleAnswer": "Os juros sobem, o crédito fica mais caro, o consumo e o investimento caem e isso ajuda a segurar a inflação."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true, true] },
+        "id": "pt-membrana-sodio-sem-nomes-1",
+        "userInput": {
+          "answer": "a saida para pq a bomba precisa de ATP. a entrada continua pq é a favor do gradiente e nao gasta ATP",
+          "keyPoints": [
+            "A expulsão de Na+ pela proteína será interrompida porque depende de ATP.",
+            "A saída de Na+ ocorre contra o gradiente de concentração e é transporte ativo.",
+            "A entrada de Na+ pela outra proteína poderá continuar enquanto houver gradiente, sem ATP.",
+            "A entrada ocorre a favor do gradiente e é difusão facilitada, um transporte passivo."
+          ],
+          "language": "pt",
+          "question": "Raíssa observa células que mantêm a concentração de Na+ menor no interior do que no exterior. Uma proteína da membrana expulsa Na+ com consumo de ATP; outra permite sua entrada sem consumo de ATP. Considere apenas o gradiente de concentração.\n\nSe o ATP se esgotar enquanto essa diferença de concentração ainda existir, o que acontecerá com a saída e a entrada de Na+? Explique por quê.",
+          "sampleAnswer": "A expulsão de Na+ será interrompida: ela ocorre contra o gradiente de concentração e depende de ATP, portanto é transporte ativo. A entrada pela outra proteína poderá continuar enquanto houver diferença de concentração, pois ocorre a favor do gradiente por difusão facilitada, sem gasto de ATP."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-virus-ribossomos-proprias-palavras-1",
+        "userInput": {
+          "answer": "nao vai sair virus novo pq o virus usa os ribossomos da celula pra fazer as proteinas dele",
+          "keyPoints": [
+            "A produção de novos vírus diminui muito ou é interrompida.",
+            "O vírus depende dos ribossomos da célula para produzir proteínas virais, como as do capsídeo.",
+            "O vírus não possui ribossomos próprios para substituir os da célula."
+          ],
+          "language": "pt",
+          "question": "Raíssa acompanha células infectadas por um vírus. Uma substância experimental bloqueia os ribossomos dessas células, mas não destrói o material genético viral.\n\nPreveja o efeito desse bloqueio na produção de novos vírus e explique por quê.",
+          "sampleAnswer": "A produção de novos vírus diminui muito ou para. Embora o material genético viral continue presente, o vírus não tem ribossomos próprios e depende dos ribossomos da célula para produzir as proteínas necessárias à formação de novas partículas."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and []. Feedback: \"voce\" written without its right accent.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and []. Feedback: \"voce\" written without its right accent.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and []. Feedback: \"voce\" written without its right accent.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, false] },
+        "id": "pt-teoria-celular-meia-resposta-1",
+        "userInput": {
+          "answer": "que todo ser vivo é formado por celulas",
+          "keyPoints": [
+            "Seres vivos são constituídos por células, que formam seus tecidos.",
+            "O microscópio permitiu observar células em tecidos de organismos diferentes e reconhecer essa organização comum."
+          ],
+          "language": "pt",
+          "question": "Renan compara ao microscópio uma lâmina de tecido de folha e outra de mucosa da boca. Nas duas, identifica pequenas unidades delimitadas que compõem os tecidos.\n\nQue postulado da teoria celular essa comparação ajuda a fundamentar? Explique também por que a observação microscópica foi importante para formulá-lo.",
+          "sampleAnswer": "A comparação ajuda a fundamentar o postulado de que os seres vivos são constituídos por células. O microscópio permitiu identificar essas unidades nos tecidos de uma planta e de um animal, revelando uma organização comum que não seria visível a olho nu."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, false] },
+        "id": "en-feedback-partial-1",
+        "userInput": {
+          "answer": "So they still remember exactly what happened.",
+          "keyPoints": [
+            "Feedback soon after the event is specific because details are fresh",
+            "The person can adjust right away"
+          ],
+          "language": "en",
+          "question": "Why should a manager give feedback soon after the behavior happens?",
+          "sampleAnswer": "Because everyone still remembers the details, and the person can change what they do right away."
         }
       }
     }

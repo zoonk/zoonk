@@ -1,7 +1,7 @@
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { generateText } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
 import { describe, expect, it } from "vitest";
-import { getPromptVersion } from "./prompt-version";
 import { runTaskGeneration } from "./run-task-generation";
 
 const REQUESTED_MODEL = "openai/gpt-6-sol";
@@ -70,7 +70,10 @@ describe(runTaskGeneration, () => {
     expect(result.finalStep.response.modelId).toBe(REQUESTED_MODEL);
 
     expect(provenance).toStrictEqual({
-      costUsd: 0.0125,
+      // Opus answered: 680 uncached, 300 cached and 20 written input tokens, 400 output tokens.
+      costUsd: expect.closeTo(1.088e-2, 8),
+      credential: undefined,
+      gatewayCostUsd: 0.0125,
       generatedAt: expect.any(String),
       latencyMs: expect.any(Number),
       model: "anthropic/claude-opus-5.5",
@@ -78,6 +81,7 @@ describe(runTaskGeneration, () => {
       provider: "anthropic",
       requestedModel: REQUESTED_MODEL,
       runId: expect.stringMatching(/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/u),
+      serviceTier: undefined,
       usage: {
         cacheReadTokens: 300,
         cacheWriteTokens: 20,
@@ -135,7 +139,7 @@ describe(runTaskGeneration, () => {
     const { provenance } = await runWithModel(model);
 
     expect(provenance).toMatchObject({
-      costUsd: undefined,
+      gatewayCostUsd: undefined,
       model: REQUESTED_MODEL,
       provider: "vertex",
       requestedModel: REQUESTED_MODEL,

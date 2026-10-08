@@ -2,13 +2,11 @@ import { AdminJson } from "@/components/admin-json";
 import { ProvenanceLine } from "@/components/provenance";
 import { VoteTotalsLabel } from "@/components/vote-totals";
 import { type VoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
-import { type DepthRequests } from "@/data/lessons/get-depth-requests";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatPercent } from "@/lib/format";
 import { Badge } from "@zoonk/ui/components/badge";
 import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
-import { DepthRequestsLabel } from "./lesson-depth-requests";
 
 export type StepAnswers = { correct: number; total: number };
 
@@ -60,19 +58,14 @@ function StepLinks({ step }: { step: LibraryLessonStep }) {
   );
 }
 
-/**
- * One screen: its kind and contract version, who wrote it, answers, votes, Simpler and Go deeper
- * taps (null when PostHog can't be read), and its versions.
- */
+/** One screen: its kind and contract version, who wrote it, answers, votes and its versions. */
 export function LessonScreen({
   answers,
-  depthRequests,
   step,
   stepVotes,
   variantVotes,
 }: {
   answers?: StepAnswers;
-  depthRequests: DepthRequests | null;
   step: LibraryLessonStep;
   stepVotes: Map<string, VoteTotals>;
   variantVotes: Map<string, VoteTotals>;
@@ -95,7 +88,6 @@ export function LessonScreen({
         <div className="flex items-start gap-4 text-xs">
           <AnswersLabel answers={answers} />
           <VoteTotalsLabel totals={readVoteTotals(stepVotes, step.id)} />
-          <DepthRequestsLabel requests={depthRequests} />
           <ProvenanceLine provenance={step} />
         </div>
       </div>

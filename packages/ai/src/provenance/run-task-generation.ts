@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { type AiGenerationContext, toAiGenerationEvent } from "./ai-generation-event";
+import { getPromptVersion } from "@zoonk/utils/prompt-version";
+import { type AiGenerationContext } from "./ai-generation-event";
 import { captureAiGeneration } from "./ai-generation-sink";
-import { getPromptVersion } from "./prompt-version";
 import {
   type FinishedGeneration,
   type TaskProvenance,
@@ -48,7 +48,7 @@ export function startTaskRun({
         runId,
       });
 
-      await captureAiGeneration(toAiGenerationEvent({ context: analytics, provenance, task }));
+      await captureAiGeneration({ context: analytics, provenance, task });
 
       return provenance;
     },

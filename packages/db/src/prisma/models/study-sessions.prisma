@@ -38,14 +38,24 @@ model StudySession {
   localDate      DateTime            @map("local_date") @db.Date
   status         StudySessionStatus  @default(planned)
   plannedMinutes Int                 @map("planned_minutes") @db.SmallInt
+  /// The plan version the session's blocks follow. When the plan changes without the learner
+  /// (new lessons landing), their next read brings the day up to date without moving what they
+  /// were shown; null for sessions built before it was kept.
+  planVersion    Int?                @map("plan_version")
   freshStart     StudyFreshStart?    @map("fresh_start")
   /// Energy, Brain Power, preparation and skill states when the first block started, so the end of
   /// the session can say what changed.
   startSnapshot  Json?               @map("start_snapshot")
+  /// Energy, Brain Power, preparation and skill states when the session ended, so its summary keeps
+  /// saying what that session changed after lessons played later.
+  endSnapshot    Json?               @map("end_snapshot")
   /// When the day's three missions made a full meal (+50 Brain Power, once per learner-local day).
   fullMealAt     DateTime?           @map("full_meal_at")
   startedAt      DateTime?           @map("started_at")
   endedAt        DateTime?           @map("ended_at")
+  /// The first "Stop for today" on the session while it was unfinished: memory reads the day and
+  /// the plan rebalances then, once, however often the learner stops.
+  stoppedAt      DateTime?           @map("stopped_at")
   createdAt      DateTime            @default(now()) @map("created_at")
   updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
   blocks         StudySessionBlock[]

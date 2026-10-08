@@ -7,8 +7,8 @@ type AuthCompletionAction = "sign-in" | "sign-up";
 /**
  * Captures completed auth outcomes from the web callback because that route
  * already knows whether the returning session still needs first-time setup.
- * They go through the learner sender, so a Fun learner (or a guest who signs up
- * with a goal) reports their own mode and goal like every other outcome.
+ * They go through the learner sender, so a learner (or a guest who signs up with
+ * a goal) reports their own goal like every other outcome.
  */
 export async function trackAuthCompleted({
   action,

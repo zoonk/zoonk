@@ -110,7 +110,12 @@ test.describe("Onboarding API", () => {
 
     expect(onboarding.steps[0]).toBe("purpose");
     expect(onboarding.steps.at(-1)).toBe("plan");
-    expect(onboarding).toMatchObject({ examSubjects: [], libraryCourse: null });
+    // No date yet: the time question suggests a short daily habit.
+    expect(onboarding).toMatchObject({
+      examSubjects: [],
+      libraryCourse: null,
+      recommendedMinutes: 15,
+    });
 
     // The material attached with the goal is linked to it for research and the curriculum.
     await expect(

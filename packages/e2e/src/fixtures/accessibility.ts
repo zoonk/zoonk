@@ -16,10 +16,10 @@ import {
 
 /**
  * Accessibility scans for browser tests: axe-core reads a screen where a flow already shows it, at
- * the flow's width, in light and dark (the device's `prefers-color-scheme`, which Focus follows),
+ * the flow's width, in light and dark (the device's `prefers-color-scheme`, which the app follows),
  * and a test fails on any serious or critical violation. Lesser findings are listed in the report
- * without failing it. Fun is dark only, so a Fun screen is scanned once, on a light device, where it
- * must stay dark. Every scan also checks that each interactive target is at least 44 px by 44 px.
+ * without failing it. Every scan also checks that each interactive target is at least 44 px by
+ * 44 px.
  */
 
 /** Dark first, so a scan leaves the device light, as the browser starts. */
@@ -32,7 +32,7 @@ const MAX_ANIMATION_WAIT_MS = 3000;
 const ANIMATIONS_TIMEOUT_MS = 15_000;
 
 export type AccessibilityRoute = {
-  /** Named in failures next to the path, e.g. "the Fun buddy page". */
+  /** Named in failures next to the path, e.g. "the logbook". */
   label?: string;
   path: string;
   /** Waits until the screen shows what the scan should read; the page's h1 by default. */
@@ -89,32 +89,11 @@ async function scanScreen(page: Page, where: string): Promise<string[]> {
   ];
 }
 
-/** A screen inside the learner's Fun mode (not a Fun preview on a Focus page). */
-async function isFunScreen(page: Page): Promise<boolean> {
-  return (await page.locator('[data-slot="mode-root"][data-mode="fun"]').count()) > 0;
-}
-
 /**
- * Fun is dark only: on a light device the page still gets deep space and dark native controls.
- * Returns a finding when it doesn't.
- */
-async function findLightFun(page: Page, where: string): Promise<string[]> {
-  const scheme = await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme);
-  return scheme === "dark" ? [] : [`${where}: Fun renders with a "${scheme}" color scheme`];
-}
-
-/**
- * Scans the screen in dark and light (Fun: light only, checked to stay dark). Dark mode is CSS
- * alone (`prefers-color-scheme`), so switching the device's scheme restyles the same screen
- * without reloading it.
+ * Scans the screen in dark and light. Dark mode is CSS alone (`prefers-color-scheme`), so switching
+ * the device's scheme restyles the same screen without reloading it.
  */
 async function scanInEachScheme(page: Page, label: string): Promise<string[]> {
-  if (await isFunScreen(page)) {
-    await page.emulateMedia({ colorScheme: "light" });
-    const where = `${label} (light)`;
-    return [...(await findLightFun(page, where)), ...(await scanScreen(page, where))];
-  }
-
   const found: string[] = [];
 
   for (const colorScheme of COLOR_SCHEMES) {

@@ -4,7 +4,6 @@ import { CourseStartFailureNote } from "@/components/public/course-start-failure
 import { useCourseStart } from "@/components/public/use-course-start";
 import { Link } from "@/i18n/navigation";
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
-import { usePrimaryVariant } from "@zoonk/learn/fun-primary";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -13,26 +12,18 @@ import { useExtracted } from "next-intl";
 
 type CourseStart = { chapterId: string | null; courseId: string };
 
-function usePlanClassName() {
-  const primaryVariant = usePrimaryVariant();
-
-  return cn(
-    buttonVariants({ size: "lg", variant: primaryVariant }),
-    "h-12 w-full rounded-full text-base",
-  );
-}
+const PLAN_CLASS = cn(buttonVariants({ size: "lg" }), "h-12 w-full rounded-full text-base");
 
 /** Starts the lesson's course as the guest's goal right here: no goal to type or confirm. */
 function StartCoursePlan({ start }: { start: CourseStart }) {
   const t = useExtracted();
-  const className = usePlanClassName();
   const ref = useEnterClick<HTMLButtonElement>();
   const { failure, pending, start: startCourse } = useCourseStart(start);
 
   return (
     <>
       <button
-        className={className}
+        className={PLAN_CLASS}
         disabled={pending}
         onClick={startCourse}
         ref={ref}
@@ -51,7 +42,7 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
       <CourseStartFailureNote
         actionClassName={cn(
           buttonVariants({ size: "lg", variant: "outline" }),
-          "in-data-[mode=fun]:fun-glass h-12 w-full rounded-full text-base",
+          "h-12 w-full rounded-full text-base",
         )}
         className="max-w-none items-stretch text-center"
         failure={failure}
@@ -68,7 +59,6 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
  */
 export function GuestPlanStart({ goal, start }: { goal: string; start: CourseStart | null }) {
   const t = useExtracted();
-  const className = usePlanClassName();
   const ref = useEnterClick<HTMLAnchorElement>();
 
   if (start) {
@@ -76,7 +66,7 @@ export function GuestPlanStart({ goal, start }: { goal: string; start: CourseSta
   }
 
   return (
-    <Link className={className} href={getGoalStartHref(goal)} ref={ref}>
+    <Link className={PLAN_CLASS} href={getGoalStartHref(goal)} ref={ref}>
       {t("Build my plan")}
     </Link>
   );

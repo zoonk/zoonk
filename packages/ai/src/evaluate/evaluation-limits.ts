@@ -1,4 +1,4 @@
-import { type Experimental_EvaluationQuestion } from "ai";
+import { type Experimental_DecisionQuestion } from "ai";
 
 /**
  * Exact counts need each provider's tokenizer. Three characters per token
@@ -23,7 +23,7 @@ export function fitsTokenLimit({
   state,
 }: {
   limit: number;
-  questions: Readonly<Record<string, Experimental_EvaluationQuestion>>;
+  questions: Readonly<Record<string, Experimental_DecisionQuestion>>;
   state: string;
 }): boolean {
   const longestQuestion = Math.max(

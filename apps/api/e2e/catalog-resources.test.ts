@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
@@ -277,6 +278,32 @@ test.describe("Catalog resource API", () => {
       position: 1,
       slug: lesson.slug,
       title: lesson.title,
+    });
+
+    await apiContext.dispose();
+  });
+
+  test("gives a cover the web app serves its absolute address, which a native client can load", async () => {
+    const { course, language } = await createLanguageCourse();
+    const cover = "/catalog/chapters/science.webp";
+
+    await prisma.course.update({ data: { imageUrl: cover }, where: { id: course.id } });
+
+    const apiContext = await newApiContext();
+
+    const [courseResponse, listResponse] = await Promise.all([
+      apiContext.get(`/v1/courses/${course.id}`),
+      apiContext.get(`/v1/courses?language=${language}`),
+    ]);
+
+    const absoluteCover = /^https?:\/\/[^/]+\/catalog\/chapters\/science\.webp$/u;
+
+    await expect(courseResponse.json()).resolves.toMatchObject({
+      imageUrl: expect.stringMatching(absoluteCover),
+    });
+
+    await expect(listResponse.json()).resolves.toMatchObject({
+      data: [{ id: course.id, imageUrl: expect.stringMatching(absoluteCover) }],
     });
 
     await apiContext.dispose();

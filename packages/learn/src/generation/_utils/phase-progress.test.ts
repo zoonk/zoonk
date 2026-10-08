@@ -46,10 +46,10 @@ describe(getPhaseProgress, () => {
   it("weighs each phase by how long it usually takes", () => {
     const result = progressOf("curriculum", { steps: { understandGoal: "completed" } });
 
-    // Reading the goal (8 s) is done and mapping skills (45 s) runs, out of 78 s.
-    expect(result.progress).toBeCloseTo((8 / 78) * 100);
-    expect(result.target).toBeCloseTo((53 / 78) * 100);
-    expect(result.activeMs).toBe(45_000);
+    // Reading the goal (8 s) is done and mapping skills (60 s) runs, out of 83 s.
+    expect(result.progress).toBeCloseTo((8 / 83) * 100);
+    expect(result.target).toBeCloseTo((68 / 83) * 100);
+    expect(result.activeMs).toBe(60_000);
   });
 
   it("is done once the step that ends the wait finished, although the run goes on", () => {
@@ -82,17 +82,17 @@ describe(getPhaseProgress, () => {
     ).toStrictEqual(["goal:completed", "notice:active", "skills:pending", "plan:pending"]);
   });
 
-  it("is done with placement once its questions are prepared and the plan exists", () => {
+  it("is done with placement once the goal is ready, while its questions are written before", () => {
     const writing = progressOf("placement", {
       steps: { createPlan: "completed", preparePlacement: "started", saveSkills: "started" },
     });
 
-    const prepared = progressOf("placement", {
-      steps: { createPlan: "completed", preparePlacement: "completed", saveSkills: "started" },
+    const ready = progressOf("placement", {
+      steps: { createPlan: "completed", goalReady: "completed", preparePlacement: "started" },
     });
 
     expect(writing.progress).toBeLessThan(100);
-    expect(prepared.progress).toBe(100);
+    expect(ready.progress).toBe(100);
   });
 
   it("shows an optional phase only once the run reports it", () => {

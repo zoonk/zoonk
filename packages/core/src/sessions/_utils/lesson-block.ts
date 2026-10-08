@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { readBlockPayload } from "../block-payload";
-import { getCapsuleOpening } from "../capsules";
+import { capReviewDay, getCapsuleOpening } from "../capsules";
 import {
   type CheckedLanguageGoal,
   completeLessonPlanItems,
@@ -126,14 +126,17 @@ export async function markLessonBlockDone({
 
 /**
  * The learner-local day the lesson's capsule opens: the first of its skills FSRS says is due,
- * as a UTC-midnight date label.
+ * never after the goal's date (see `capReviewDay`), as a UTC-midnight date label.
  */
 export async function getLessonComesBack({
   lessonId,
+  targetDate,
   timeZone,
   userId,
 }: {
   lessonId: string | null;
+  /** The goal's date, when it has one. */
+  targetDate: Date | null;
   timeZone: string;
   userId: string;
 }): Promise<Date | null> {
@@ -152,5 +155,14 @@ export async function getLessonComesBack({
   });
 
   const opening = getCapsuleOpening(memories);
-  return opening ? getDateInTimeZone({ date: opening, timeZone }) : null;
+
+  if (!opening) {
+    return null;
+  }
+
+  return capReviewDay({
+    day: getDateInTimeZone({ date: opening, timeZone }),
+    targetDate,
+    today: getDateInTimeZone({ date: new Date(), timeZone }),
+  });
 }

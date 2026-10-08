@@ -1,6 +1,6 @@
 import { type CourseLevel } from "@zoonk/db";
 import { z } from "zod";
-import { answerTimeZoneSchema } from "../learner/contract";
+import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract";
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
 import { type MaterialCitation } from "../library/sources/material-question-contract";
 import { type SourceCitation } from "../library/sources/source-citation";
@@ -18,12 +18,8 @@ export const LESSON_PLAYER_ERROR_CODES = {
   noSpeech: "NO_SPEECH",
   runEnded: "LESSON_RUN_ENDED",
   slowDown: "SLOW_DOWN",
-  tooManyAnswers: "TOO_MANY_ANSWERS",
   usageLimitReached: "USAGE_LIMIT_REACHED",
 } as const;
-
-/** An hour covers a slow typed answer; anything longer is a tab left open, not answering time. */
-const MAX_ANSWER_DURATION_MS = 3_600_000;
 
 /** Typed and spoken answers are a few sentences; the grader and the shared explanations share it. */
 export const MAX_TYPED_ANSWER_LENGTH = 1000;
@@ -65,15 +61,14 @@ const runIdSchema = z
 export const lessonStepCheckInputSchema = z
   .object({
     answer: lessonStepAnswerSchema,
-    durationMs: z.number().int().min(0).max(MAX_ANSWER_DURATION_MS),
+    durationMs: answerDurationSchema,
     runId: runIdSchema,
     timeZone: answerTimeZoneSchema,
     usedHelp: z
       .boolean()
       .optional()
       .meta({
-        description:
-          'The learner saw the explanation first ("Explain first") or a simpler version before answering',
+        description: 'The learner saw the explanation first ("Explain first") before answering',
       }),
   })
   .strict()
@@ -131,26 +126,14 @@ export type PlayableStepImage = {
   width: number | null;
 };
 
+/** A screen's picture drawn after the lesson was read, for the player to show as it arrives. */
+export type LessonPicture = { image: PlayableStepImage; stepId: string };
+
 type PlayableStepBase = {
   id: string;
   position: number;
   /** The skill this screen teaches or checks, so answers update the right memory. */
   skillId: string | null;
-};
-
-/** One shared depth version; `id` lets a vote on it reach the version rather than the screen. */
-export type PlayableStepVariant<TKind extends TeachingStepKind> = {
-  content: StepContentByKind[TKind];
-  id: string;
-};
-
-/**
- * "Simpler" and "Go deeper" versions someone already asked for, shared with everyone. A missing
- * one is made on the first request.
- */
-type DepthVariants<TKind extends TeachingStepKind> = {
-  deeper: PlayableStepVariant<TKind> | null;
-  simpler: PlayableStepVariant<TKind> | null;
 };
 
 /**
@@ -172,8 +155,12 @@ export type PlayableTeachingStepOf<TKind extends TeachingStepKind> = PlayableSte
   citation: LessonStepCitation | null;
   content: StepContentByKind[TKind];
   image: PlayableStepImage | null;
+  /**
+   * The screen asks for a picture that is still being drawn: the lesson was written moments ago.
+   * The player waits on it (`getLessonPictures`) instead of showing the screen without it.
+   */
+  imagePending: boolean;
   kind: TKind;
-  variants: DepthVariants<TKind>;
 };
 
 /**
@@ -206,7 +193,7 @@ export type PlayableLibraryStep = PlayableLanguageStep | PlayableTeachingStep;
 
 /**
  * A Library lesson as the player needs it: public content only, the same for every viewer, with
- * image URLs resolved and existing depth variants included so switching needs no request.
+ * image URLs resolved.
  */
 export type PlayableLibraryLesson = {
   canDo: string | null;
@@ -238,23 +225,43 @@ const lessonSupportSchema = z
 
 export type LessonSupport = z.infer<typeof lessonSupportSchema>;
 
+/** One answer the lesson already has, in the order the learner gave them. */
+const lessonRunAnswerSchema = z.object({
+  answeredAt: z.iso
+    .datetime()
+    .meta({ description: "Before the run's `startedAt` for an answer from an earlier sitting" }),
+  isCorrect: z.boolean(),
+  stepId: z.uuid(),
+});
+
 /** One started run of a lesson. Answers and the completion refer to it. */
 export const libraryLessonRunSchema = z
   .object({
+    answers: z
+      .array(lessonRunAnswerSchema)
+      .meta({
+        description:
+          "The lesson's answers so far, oldest first: this run's and those of earlier sittings the learner left unfinished in the last week (since they last finished the lesson). The lesson continues after the screens they answered, each counting with its first answer, and a check missed once comes back at the end. Hyperdrive replays only this run's answers (`answeredAt` at or after `startedAt`) on top of `hyperdrive`",
+      }),
     hyperdrive: z
       .object({
         knownStepIds: z
           .array(z.uuid())
           .meta({
             description:
-              "Screens already answered right before: a right answer on them doesn't build Hyperdrive",
+              "Screens answered right before this run: a right answer on them doesn't build Hyperdrive",
           }),
         streak: z
           .int()
           .min(0)
-          .meta({ description: "Right answers in a row so far in the session, 0 outside one" }),
+          .meta({
+            description: "Right answers in a row in the session before this run, 0 outside one",
+          }),
       })
-      .meta({ description: "Where Hyperdrive starts, to show it live with the server's rule" }),
+      .meta({
+        description:
+          "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
+      }),
     runId: z.uuid().meta({ description: "Send it with every answer and with the completion" }),
     startedAt: z.iso.datetime(),
     support: lessonSupportSchema
@@ -267,7 +274,24 @@ export type LibraryLessonRun = z.infer<typeof libraryLessonRunSchema>;
 
 export const lessonStepCheckResultSchema = z
   .object({
+    checked: z
+      .boolean()
+      .meta({
+        description:
+          "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise.",
+      }),
     correctAnswer: z.string().nullable().meta({ description: "The right answer when missed" }),
+    corrections: z
+      .array(
+        z.object({
+          right: z.string().meta({ description: "The same words written correctly" }),
+          wrong: z.string().meta({ description: "The learner's words as they wrote them" }),
+        }),
+      )
+      .meta({
+        description:
+          "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. Empty otherwise.",
+      }),
     feedback: z
       .string()
       .nullable()
@@ -279,7 +303,10 @@ export const lessonStepCheckResultSchema = z
     keyPoints: z
       .array(z.object({ met: z.boolean(), text: z.string() }))
       .nullable()
-      .meta({ description: "Each key point of a typed answer and whether the answer stated it" }),
+      .meta({
+        description:
+          "Each key point of a typed answer and whether the answer stated it, judged by meaning",
+      }),
     nextReviewAt: z.iso
       .datetime()
       .nullable()

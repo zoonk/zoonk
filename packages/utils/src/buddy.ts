@@ -1,7 +1,7 @@
 import { BELT_COLORS_ORDER, type BeltColor } from "./belt-level";
 
 /**
- * Fun mode buddies. The learner's profile stores the kind, an optional custom name
+ * The learner's buddy. The profile stores the kind, an optional custom name
  * and the chosen glasses; growth and glow are always derived from the belt and
  * Energy, so buddies never need an economy of their own.
  */
@@ -51,9 +51,14 @@ const BUDDY_AWAKE_FROM_ENERGY = 30;
 const BUDDY_GLOWING_FROM_ENERGY = 80;
 
 export function getBuddyEnergyState(
-  energy: number,
+  /** Null before the learner has any Energy (no day of study has passed): the buddy just met them. */
+  energy: number | null,
   { studiedToday = false }: { studiedToday?: boolean } = {},
 ): BuddyEnergyState {
+  if (energy === null) {
+    return "awake";
+  }
+
   if (energy >= BUDDY_GLOWING_FROM_ENERGY) {
     return "glowing";
   }
@@ -77,7 +82,7 @@ export function getNextBuddyStage(
   return belt ? { belt, stage: getBuddyStage(belt) } : null;
 }
 
-/** Energy (0–100) as the 0–1 opacity of the buddy's orange glow. */
-export function getBuddyGlow(energy: number): number {
-  return Math.min(1, Math.max(0, energy / MAX_BUDDY_ENERGY));
+/** Energy (0–100) as the 0–1 opacity of the buddy's orange glow; none before any Energy. */
+export function getBuddyGlow(energy: number | null): number {
+  return energy === null ? 0 : Math.min(1, Math.max(0, energy / MAX_BUDDY_ENERGY));
 }

@@ -2,11 +2,7 @@ import "server-only";
 import { CourseLevel, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
-import {
-  getCourseCacheTag,
-  getCourseCurriculumCacheTag,
-  getLibraryChapterCacheTag,
-} from "../../cache/tags";
+import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../../cache/tags";
 import { canViewLibraryRow, filterVisibleLibraryRows } from "../_utils/library-visibility";
 
 const LEVEL_ORDER = Object.values(CourseLevel);
@@ -28,11 +24,16 @@ const outlineLessonSelect = {
   visibility: true,
 } as const;
 
+/**
+ * Tagged by the course alone: a chapter's change refreshes the outlines that place it through
+ * their course's curriculum tag (`getChapterCacheTags`), since a course can hold more chapters
+ * than one cache entry has tags for.
+ */
 async function getCachedLibraryCourse(courseId: string) {
   "use cache";
   cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
 
-  const course = await prisma.course.findUnique({
+  return prisma.course.findUnique({
     include: {
       courseChapters: {
         include: {
@@ -50,12 +51,6 @@ async function getCachedLibraryCourse(courseId: string) {
     },
     where: { id: courseId },
   });
-
-  if (course) {
-    cacheTag(...course.courseChapters.map((item) => getLibraryChapterCacheTag(item.chapterId)));
-  }
-
-  return course;
 }
 
 type CachedCourse = NonNullable<Awaited<ReturnType<typeof getCachedLibraryCourse>>>;

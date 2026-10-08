@@ -6,7 +6,6 @@ import {
   getExplanationsAfter,
   getQuickCheckQueue,
   isQuestionStep,
-  isReadStep,
   isRetryStep,
 } from "./lesson-steps";
 
@@ -30,6 +29,7 @@ function enterPosition(state: LessonPlayerState, position: number): LessonPlayer
     phase: "playing",
     position,
     results: omitKey(state.results, id),
+    reviewing: false,
     stepStartedAt: Date.now(),
   };
 }
@@ -44,7 +44,7 @@ function complete(state: LessonPlayerState): LessonPlayerState {
 
 /**
  * A missed quick check returns to where the learner was, without the checks they just got right,
- * which already count. The missed one waits after its explanation.
+ * which already count. The missed one comes back at the end of the lesson, like any missed check.
  */
 function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
   const { quickCheck } = state;
@@ -53,14 +53,22 @@ function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
     return state;
   }
 
-  const passed = new Set(state.queue.filter((id) => state.results[id]?.isCorrect));
+  const answered = state.queue.filter((id) => state.results[id]);
+  const passed = new Set(answered.filter((id) => state.results[id]?.isCorrect));
+  const missed = answered.filter((id) => !passed.has(id));
 
-  const queue = quickCheck.returnQueue.filter(
-    (id, index) => index <= quickCheck.returnPosition || !passed.has(id),
+  const rest = quickCheck.returnQueue.filter(
+    (id, index) => index <= quickCheck.returnPosition || (!passed.has(id) && !missed.includes(id)),
   );
 
   return enterPosition(
-    { ...state, notice: "quickCheckMissed", queue, quickCheck: null },
+    {
+      ...state,
+      notice: null,
+      queue: [...rest, ...missed],
+      quickCheck: null,
+      retried: [...new Set([...state.retried, ...missed])],
+    },
     quickCheck.returnPosition,
   );
 }
@@ -141,16 +149,41 @@ export function continueChallenge(state: LessonPlayerState): LessonPlayerState {
   return canMove ? { ...state, revealed: { ...state.revealed, [step.id]: shown + 1 } } : state;
 }
 
+/**
+ * Previous goes back one screen from any screen after the first. A screen already answered shows
+ * its result again (Continue goes on); one not answered yet plays as it was.
+ */
 export function goBack(state: LessonPlayerState): LessonPlayerState {
   const previousId = state.queue[state.position - 1];
-  const previous = previousId ? state.steps[previousId] : null;
-  const current = getCurrentStep(state);
 
-  if (!previous || !current || !isReadStep(previous) || !isReadStep(current)) {
+  if (!canGoBack(state) || !previousId) {
     return state;
   }
 
-  return { ...state, position: state.position - 1, stepStartedAt: Date.now() };
+  const current = state.queue[state.position] ?? "";
+  const reviewing = previousId in state.results;
+
+  return {
+    ...state,
+    answers: omitKey(state.answers, current),
+    checkFailed: false,
+    checkIssue: null,
+    notice: null,
+    phase: reviewing ? "feedback" : "playing",
+    position: state.position - 1,
+    reviewing,
+    stepStartedAt: Date.now(),
+  };
+}
+
+/** Previous is on every screen after the first, while it's being played (not during "I know this"). */
+export function canGoBack(state: LessonPlayerState): boolean {
+  return (
+    state.phase === "playing" &&
+    state.position > 0 &&
+    !state.quickCheck &&
+    state.run.status !== "refused"
+  );
 }
 
 /**

@@ -1,5 +1,6 @@
 "use client";
 
+import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import { useCallback, useLayoutEffect, useReducer, useRef } from "react";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import {
@@ -9,10 +10,49 @@ import {
 } from "./lesson-question-sessions";
 import { type LessonQuestionAction } from "./lesson-question-state";
 
-export function useLessonQuestionSessions(activeContext: LessonQuestionContext) {
+/**
+ * A page of a thread the host already read: its questions and where the earlier ones continue. A
+ * thread that doesn't exist yet is an empty page.
+ */
+export type LessonQuestionThreadPage = Pick<
+  LessonQuestionThreadResource,
+  "hasMore" | "nextCursor" | "questions"
+>;
+
+/** The thread the page already read starts loaded, so the conversation shows without a wait. */
+function getInitialSessions({
+  activeContext,
+  initialThread,
+}: {
+  activeContext: LessonQuestionContext;
+  initialThread: LessonQuestionThreadPage | null;
+}) {
+  if (!initialThread) {
+    return INITIAL_LESSON_QUESTION_SESSIONS;
+  }
+
+  return lessonQuestionSessionsReducer(INITIAL_LESSON_QUESTION_SESSIONS, {
+    action: {
+      hasMore: initialThread.hasMore,
+      nextCursor: initialThread.nextCursor,
+      questions: initialThread.questions,
+      type: "threadLoaded",
+    },
+    context: activeContext,
+  });
+}
+
+export function useLessonQuestionSessions({
+  activeContext,
+  initialThread,
+}: {
+  activeContext: LessonQuestionContext;
+  initialThread: LessonQuestionThreadPage | null;
+}) {
   const [sessions, dispatchToContext] = useReducer(
     lessonQuestionSessionsReducer,
-    INITIAL_LESSON_QUESTION_SESSIONS,
+    { activeContext, initialThread },
+    getInitialSessions,
   );
 
   const currentSessions = useRef(sessions);

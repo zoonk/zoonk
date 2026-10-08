@@ -1,0 +1,186 @@
+{
+  "modelId": "openai/gpt-6.1-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly identifies R$ 150 as the annual return and divides it by 12 to obtain R$ 12,50 per month under the stated no-compounding assumption. The currency and numerical notation are Brazilian.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "Explicitly identifies the annual-versus-monthly mix-up, acknowledges that calculating 15% of the principal was correct, and explains how to convert the annual return into a monthly return.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Uses two short, straightforward sentences in Brazilian Portuguese, with a compact calculation and no unnecessary detail.",
+          "score": 10,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "Addresses the learner directly as 'você' and neutrally acknowledges the correct calculation without personal praise, blame, or unsupported assumptions.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1738,
+          "inputTokens": 1741,
+          "outputTokens": 473,
+          "reasoningTokens": 136
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The learner multiplied 15% by the monthly amount instead of dividing the yearly rate over 12. A good explanation in Brazilian Portuguese names that mix-up; if it uses a tiny example, the money is in reais written the Brazilian way (R$ 1.000,00), never dollars.",
+        "id": "pt-juros-mensais-contexto-local-1",
+        "userInput": {
+          "answer": "R$ 150 por mês",
+          "correctAnswer": "Cerca de R$ 12,50 por mês (15% ao ano ÷ 12 × R$ 1.000).",
+          "keyPoints": ["Divide a taxa anual por 12 para ter a mensal"],
+          "language": "pt",
+          "misconceptions": ["Usa a taxa anual como se fosse mensal"],
+          "question": "Um investimento rende 15% ao ano sobre R$ 1.000. Quanto ele rende, aproximadamente, por mês, sem contar juros sobre juros?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly identifies $150 as the yearly interest and divides it by 12 to obtain $12.50 per month without compounding.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "Directly identifies the yearly-versus-monthly mix-up, acknowledges the correctly calculated interest amount, and explains how to convert it to monthly interest.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Uses two short, clear sentences in US English, with familiar words and appropriate dollar notation.",
+          "score": 10,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "Addresses you directly and kindly, acknowledges the correct calculation without personal praise, and makes no assumptions about the learner.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1720,
+          "inputTokens": 1723,
+          "outputTokens": 398,
+          "reasoningTokens": 90
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The learner used the yearly rate as if it were monthly. A good explanation in US English names that mix-up; if it uses a tiny example, the money is in dollars written the US way ($1,000.00).",
+        "id": "en-monthly-interest-local-1",
+        "userInput": {
+          "answer": "$150 a month",
+          "correctAnswer": "About $12.50 a month (15% a year ÷ 12 × $1,000).",
+          "keyPoints": ["Divides the yearly rate by 12 to get the monthly one"],
+          "language": "en",
+          "misconceptions": ["Uses the yearly rate as if it were monthly"],
+          "question": "A savings account pays 15% a year on $1,000. About how much does it pay each month, without counting interest on interest?"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "Correctly explains that rising gasoline prices can be part of inflation but do not alone establish it. Accurately describes a general, continuing rise in prices and the resulting loss of purchasing power.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "diagnosis",
+          "reasoning": "Directly identifies the learner's focus on one product, acknowledges the valid connection between gasoline price increases and inflation, and supplies the missing general, ongoing rise and reduced purchasing power.",
+          "score": 10,
+          "label": "Diagnoses this mistake",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Uses three short, easy-to-read sentences in Brazilian Portuguese, well below 600 characters, without headings, lists, or unexplained jargon.",
+          "score": 10,
+          "label": "Clarity & brevity",
+          "weight": 20
+        },
+        {
+          "categoryId": "reusableTone",
+          "reasoning": "Addresses the learner directly as 'você' with respectful, neutral correction. It avoids personal assumptions, praise, and blame and is suitable for everyone giving this answer.",
+          "score": 10,
+          "label": "Reusable, kind tone",
+          "weight": 20
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1691,
+          "inputTokens": 1694,
+          "outputTokens": 417,
+          "reasoningTokens": 71
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "The learner described a single price going up once, not a general rise over time. A good explanation in Portuguese says what is right (prices rising) and what is missing (general and over time, money buys less).",
+        "id": "pt-inflacao-parcial-1",
+        "userInput": {
+          "answer": "É quando o preço da gasolina sobe.",
+          "correctAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos.",
+          "keyPoints": [
+            "Os preços sobem de forma geral",
+            "Acontece ao longo do tempo",
+            "O dinheiro perde poder de compra"
+          ],
+          "language": "pt",
+          "question": "Explique com suas palavras o que é inflação."
+        }
+      }
+    }
+  ],
+  "taskId": "explain-wrong-answer"
+}

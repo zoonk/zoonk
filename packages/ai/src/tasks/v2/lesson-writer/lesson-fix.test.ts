@@ -15,7 +15,14 @@ vi.mock("ai", async (importOriginal) => {
 });
 
 function explanation(text: string): WrittenScreen {
-  return { exampleLineIdea: null, image: null, kind: "explanation", text, title: text };
+  return {
+    exampleLineIdea: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title: text,
+    visual: null,
+  };
 }
 
 function spec(screenCount: number): LessonSpec {

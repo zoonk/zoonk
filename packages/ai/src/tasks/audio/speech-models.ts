@@ -1,5 +1,19 @@
+/**
+ * Text-to-speech models, in the order a clip tries them when no model is asked for (checked 6 Oct
+ * 2026):
+ *
+ * - Gemini 3.8 Flash TTS (GA, $0.50 per million text tokens in and $9 per million audio tokens
+ *   out through Dec 2026). Speech is about 25 audio tokens a second, so a 5-second clip costs
+ *   about $0.001. It goes through AI Gateway, so its cost shows up with every other gateway call.
+ * - Gemini 3.8 Flash Lite TTS ($6 per million audio tokens), the same voices when Flash is busy
+ *   or its audio fails the checks.
+ * - gpt-4o-mini-tts, called on OpenAI directly because AI Gateway only lists tts-1, and only for
+ *   languages OpenAI supports. It's the one fallback on another provider, so an outage at Google
+ *   doesn't silence every listening screen; its voice differs, which beats no audio.
+ */
 export const speechModels = {
-  google: "google/gemini-2.5-flash-preview-tts",
+  geminiFlash: "google/gemini-3.8-flash-tts",
+  geminiFlashLite: "google/gemini-3.8-flash-lite-tts",
   openai: "openai/gpt-4o-mini-tts",
 } as const;
 

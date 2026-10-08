@@ -9,6 +9,7 @@ export function toGuardianLinkView(link: GuardianLink): GuardianLinkView {
     expiresAt: link.expiresAt,
     guardianEmail: link.guardianEmail,
     id: link.id,
+    memoryOff: link.memoryOff,
     plusApprovedAt: link.plusApprovedAt,
     status: link.status,
   };

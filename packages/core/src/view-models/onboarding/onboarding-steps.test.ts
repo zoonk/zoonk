@@ -1,19 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { getOnboardingSteps } from "./onboarding-steps";
 
-const NEW_PROFILE = {
-  experienceMode: null,
-  hasBirth: false,
-  hasBuddy: false,
-  hasEarlierGoals: false,
-};
+const NEW_PROFILE = { asksMemory: false, hasBirth: false, hasBuddy: false, hasEarlierGoals: false };
 
 const SET_UP_PROFILE = {
-  experienceMode: "focus" as const,
+  asksMemory: false,
   hasBirth: true,
   hasBuddy: false,
   hasEarlierGoals: true,
 };
+
+/** The steps of an exam goal whose words gave these details. */
+function examSteps(details: Record<string, unknown>) {
+  return getOnboardingSteps({
+    goal: { details, kind: "exam", targetDate: null },
+    profile: SET_UP_PROFILE,
+  });
+}
 
 describe(getOnboardingSteps, () => {
   it("asks a learn goal what it's for, how much they know and their time", () => {
@@ -26,13 +29,25 @@ describe(getOnboardingSteps, () => {
       "purpose",
       "targetDate",
       "level",
-      "schedule",
       "age",
-      "mode",
       "buddy",
       "placement",
+      "schedule",
       "plan",
     ]);
+  });
+
+  it("asks nothing of the next level of a finished plan: only its plan is ahead", () => {
+    const steps = getOnboardingSteps({
+      goal: {
+        details: { continuesFromGoalId: "goal-1", courseLevel: "beginner", level: "basic" },
+        kind: "learn",
+        targetDate: null,
+      },
+      profile: NEW_PROFILE,
+    });
+
+    expect(steps).toStrictEqual(["plan"]);
   });
 
   it("skips what the typed goal already said", () => {
@@ -45,7 +60,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["schedule", "placement", "plan"]);
+    expect(steps).toStrictEqual(["placement", "schedule", "plan"]);
   });
 
   it("asks for the role only when the goal is for work", () => {
@@ -82,21 +97,32 @@ describe(getOnboardingSteps, () => {
 
   it("asks an exam for its target but never for a date, which comes from the notice", () => {
     const withoutTarget = getOnboardingSteps({
-      goal: { details: { examName: "ENEM" }, kind: "exam", targetDate: null },
-      profile: SET_UP_PROFILE,
-    });
-
-    const withTarget = getOnboardingSteps({
       goal: {
-        details: { examName: "ENEM", targetCourse: "Nursing" },
+        details: { examName: "ENEM", examTarget: "admission" },
         kind: "exam",
         targetDate: null,
       },
       profile: SET_UP_PROFILE,
     });
 
-    expect(withoutTarget).toStrictEqual(["target", "level", "schedule", "placement", "plan"]);
-    expect(withTarget).toStrictEqual(["level", "schedule", "placement", "plan"]);
+    const withTarget = getOnboardingSteps({
+      goal: {
+        details: { examName: "ENEM", examTarget: "admission", targetCourse: "Nursing" },
+        kind: "exam",
+        targetDate: null,
+      },
+      profile: SET_UP_PROFILE,
+    });
+
+    expect(withoutTarget).toStrictEqual(["target", "level", "placement", "schedule", "plan"]);
+    expect(withTarget).toStrictEqual(["level", "placement", "schedule", "plan"]);
+  });
+
+  it("asks only for the target the exam has: a position for a concurso, nothing for a pass", () => {
+    // A concurso that named its position, one that didn't, and the OAB, which is only passed.
+    expect(examSteps({ examTarget: "position", targetPosition: "Agente" })).not.toContain("target");
+    expect(examSteps({ examTarget: "position", targetScore: "80 pontos" })[0]).toBe("target");
+    expect(examSteps({ examName: "OAB" })).not.toContain("target");
   });
 
   it("asks a class test from the learner's own material for its date, which no notice gives", () => {
@@ -109,7 +135,8 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps.slice(0, 2)).toStrictEqual(["target", "targetDate"]);
+    // A class test is only passed: no score, course or job to ask about.
+    expect(steps.slice(0, 2)).toStrictEqual(["targetDate", "level"]);
   });
 
   it("asks a language goal why, unless it said so", () => {
@@ -118,7 +145,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["reason", "targetDate", "schedule", "placement", "plan"]);
+    expect(steps).toStrictEqual(["reason", "targetDate", "placement", "schedule", "plan"]);
   });
 
   it("keeps skipped and answered questions behind the learner", () => {
@@ -158,37 +185,24 @@ describe(getOnboardingSteps, () => {
     expect(steps).toStrictEqual(["targetDate", "schedule", "plan"]);
   });
 
-  it("offers the buddy only to Fun learners without one, or while Fun can still be chosen", () => {
+  it("offers the buddy once, in the first onboarding, to learners without one", () => {
     const answered = { answered: ["purpose", "targetDate", "level", "schedule", "placement"] };
     const goal = { details: answered, kind: "learn" as const, targetDate: null };
+    const firstGoal = { ...SET_UP_PROFILE, hasEarlierGoals: false };
 
-    expect(
-      getOnboardingSteps({ goal, profile: { ...SET_UP_PROFILE, experienceMode: "fun" } }),
-    ).toStrictEqual(["buddy", "plan"]);
+    expect(getOnboardingSteps({ goal, profile: firstGoal })).toStrictEqual(["buddy", "plan"]);
 
-    expect(
-      getOnboardingSteps({
-        goal,
-        profile: { ...SET_UP_PROFILE, experienceMode: "fun", hasBuddy: true },
-      }),
-    ).toStrictEqual(["plan"]);
+    expect(getOnboardingSteps({ goal, profile: { ...firstGoal, hasBuddy: true } })).toStrictEqual([
+      "plan",
+    ]);
+
+    expect(getOnboardingSteps({ goal, profile: SET_UP_PROFILE })).toStrictEqual(["plan"]);
   });
 
-  it("asks for the mode only once, in the first onboarding, and remembers an answer", () => {
-    const goal = { details: { answered: ["mode"] }, kind: "learn" as const, targetDate: null };
-
-    const chosenFun = { ...NEW_PROFILE, experienceMode: "fun" as const };
-
-    expect(getOnboardingSteps({ goal, profile: chosenFun })).not.toContain("mode");
-    expect(getOnboardingSteps({ goal, profile: chosenFun })).toContain("buddy");
-
-    expect(
-      getOnboardingSteps({ goal, profile: { ...NEW_PROFILE, experienceMode: "focus" } }),
-    ).not.toContain("buddy");
-
+  it("remembers a buddy answer, picked or skipped", () => {
     expect(
       getOnboardingSteps({
-        goal: { details: { answered: ["mode", "buddy", "age"] }, kind: "learn", targetDate: null },
+        goal: { details: { answered: ["buddy", "age"] }, kind: "learn", targetDate: null },
         profile: NEW_PROFILE,
       }),
     ).not.toContain("buddy");
@@ -200,7 +214,7 @@ describe(getOnboardingSteps, () => {
       profile: NEW_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["level", "schedule", "age", "mode", "buddy", "placement", "plan"]);
+    expect(steps).toStrictEqual(["level", "age", "buddy", "placement", "schedule", "plan"]);
   });
 
   it("gives a language course its level test, without asking why they learn it", () => {
@@ -209,7 +223,7 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["level", "schedule", "placement", "plan"]);
+    expect(steps).toStrictEqual(["level", "placement", "schedule", "plan"]);
   });
 
   it("asks a chapter start only for the learner's time: they chose where to begin", () => {

@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { groupGoalCourseBands, orderGoalCourses, toGoalCourses } from "./goal-course-bands";
+import {
+  groupGoalCourseBands,
+  orderGoalCourses,
+  splitGoalCourseBands,
+  toGoalCourses,
+} from "./goal-course-bands";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
 function skill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key: string }) {
   return {
+    area: "Course A",
     course: "a",
     description: `Idea ${overrides.key}`,
     estimatedLessons: 2,
@@ -12,6 +18,7 @@ function skill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key: str
     name: `Skill ${overrides.key}`,
     phase: 1,
     prerequisites: [],
+    topics: [],
     ...overrides,
   };
 }
@@ -48,7 +55,7 @@ describe(groupGoalCourseBands, () => {
     expect(result[1]?.bands[0]).toStrictEqual({
       firstPhase: 2,
       level: "beginner",
-      skills: [{ description: "Idea a1", id: "id-a1", key: "a1", name: "Skill a1" }],
+      skills: [{ description: "Idea a1", id: "id-a1", key: "a1", lessons: 2, name: "Skill a1" }],
     });
   });
 
@@ -75,24 +82,68 @@ describe(toGoalCourses, () => {
   const courseIdsByKey = { a: "course-a", b: "course-b" };
 
   it("gives each need its Library course and keeps a shared course's bands", () => {
-    const courses = toGoalCourses({ courseIdsByKey, needs, ownerId: null });
+    const courses = toGoalCourses({ courseIdsByKey, needs, ownerId: null, withToolChapters: true });
 
     expect(courses.map((course) => course.courseId)).toStrictEqual(["course-b", "course-a"]);
     expect(courses[1]?.bands.map((band) => band.level)).toStrictEqual(["beginner", "intermediate"]);
   });
 
   it("puts every skill of a private course in one band at the level of the first one", () => {
-    const [, courseA] = toGoalCourses({ courseIdsByKey, needs, ownerId: "learner" });
+    const [, courseA] = toGoalCourses({
+      courseIdsByKey,
+      needs,
+      ownerId: "learner",
+      withToolChapters: true,
+    });
 
     expect(courseA?.bands).toStrictEqual([
       {
         firstPhase: 2,
         level: "beginner",
         skills: [
-          { description: "Idea a1", id: "id-a1", key: "a1", name: "Skill a1" },
-          { description: "Idea a2", id: "id-a2", key: "a2", name: "Skill a2" },
+          { description: "Idea a1", id: "id-a1", key: "a1", lessons: 2, name: "Skill a1" },
+          { description: "Idea a2", id: "id-a2", key: "a2", lessons: 2, name: "Skill a2" },
         ],
+        withToolChapters: true,
       },
     ]);
+  });
+
+  it("asks every band of an exam answered without tools for chapters without tools", () => {
+    const courses = toGoalCourses({
+      courseIdsByKey,
+      needs,
+      ownerId: null,
+      withToolChapters: false,
+    });
+
+    expect(
+      courses.flatMap((course) => course.bands.map((band) => band.withToolChapters)),
+    ).toStrictEqual([false, false, false]);
+  });
+});
+
+describe(splitGoalCourseBands, () => {
+  it("keeps a band near when the plan reaches any of its skills, and the rest for later", () => {
+    const needs = groupGoalCourseBands({ graph, idsByKey: ids });
+    const { far, near } = splitGoalCourseBands({ nearSkillIds: new Set(["id-a1"]), needs });
+
+    expect(
+      near.map((course) => [course.key, course.bands.map((band) => band.level)]),
+    ).toStrictEqual([["a", ["beginner"]]]);
+
+    expect(far.map((course) => [course.key, course.bands.map((band) => band.level)])).toStrictEqual(
+      [
+        ["b", ["overview"]],
+        ["a", ["intermediate"]],
+      ],
+    );
+  });
+
+  it("leaves nothing for later when the plan reaches every band", () => {
+    const needs = groupGoalCourseBands({ graph, idsByKey: ids });
+    const everything = new Set(Object.values(ids));
+
+    expect(splitGoalCourseBands({ nearSkillIds: everything, needs }).far).toStrictEqual([]);
   });
 });

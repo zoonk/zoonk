@@ -43,7 +43,10 @@ export async function answerLanguageLevelTest({
 
   const next = {
     ...progress,
-    answers: [...progress.answers, { answerIndex: input.answerIndex, id: input.questionId }],
+    answers: [
+      ...progress.answers,
+      { answerIndex: input.answerIndex, durationMs: input.durationMs ?? 0, id: input.questionId },
+    ],
   };
 
   await saveLevelTestProgress({ goal: owned.goal, progress: next });

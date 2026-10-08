@@ -45,9 +45,9 @@ describe(claimLibraryGeneration, () => {
     ).resolves.toBe("completed");
   });
 
-  it("clears a failed run's partial steps when a new run claims the content", async () => {
+  it("retires a pulled lesson's screens when a new run claims its content, keeping them for learners playing them", async () => {
     const lesson = await libraryLessonFixture({ contentStatus: "failed" });
-    await libraryStepFixture({ lessonId: lesson.id, position: 0 });
+    const step = await libraryStepFixture({ lessonId: lesson.id, position: 0 });
 
     await expect(
       claimLibraryGeneration({
@@ -57,7 +57,9 @@ describe(claimLibraryGeneration, () => {
       }),
     ).resolves.toBe("claimed");
 
-    await expect(prisma.step.count({ where: { lessonId: lesson.id } })).resolves.toBe(0);
+    await expect(prisma.step.findUniqueOrThrow({ where: { id: step.id } })).resolves.toMatchObject({
+      retiredAt: expect.any(Date),
+    });
   });
 
   it("claims the outline of a course made before outlines existed", async () => {

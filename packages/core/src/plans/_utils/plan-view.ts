@@ -2,20 +2,24 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAllowance } from "../../entitlements/get-allowance";
+import { loadIsEstimatedGoalDate } from "../../exams/_utils/goal-date-estimate";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
+import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
+import { getNoticeWaitState } from "../notice-wait";
 import { type PlanView } from "../plan-view-contract";
+import { getSkillArea } from "../planner/graph-areas";
 import {
   addDays,
   countStudyDays,
   fromIsoDate,
+  getPlanCalendar,
   getStartOfWeek,
   getWeekdayMinutes,
   toIsoDate,
 } from "../planner/plan-calendar";
 import { getExamDayRules } from "../planner/plan-days";
 import { type PlanFeasibility } from "../planner/plan-feasibility";
-import { getSkillArea } from "../planner/plan-queue";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanSettings } from "../planner/plan-state";
 import { isPlanReady } from "./apply-plan-change";
 import { loadPlanChangeViews } from "./plan-change-view";
@@ -25,7 +29,8 @@ import { buildPhaseViews, findCurrentPhase } from "./plan-phase-views";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
 import { buildWeekView } from "./plan-week-view";
 import { type ComputedPlan, computePlan } from "./replan";
-import { type ShortPlanShape, getShortPlanShape } from "./short-plan-view";
+import { type ShortPlanShape, findShortPlanPhase, getShortPlanShape } from "./short-plan-view";
+import { getWrittenPracticeView } from "./written-practice-view";
 
 const MINUTES_PER_HOUR = 60;
 
@@ -37,7 +42,14 @@ function toIsoOrNull(date: Date | null): string | null {
   return date ? toIsoDate(date) : null;
 }
 
+/** Shares go out as whole percentages' worth, so the screens never show "14.7%". */
+function roundShare(share: number): number {
+  return Math.round(share * 100) / 100;
+}
+
 function toFeasibilityView(feasibility: PlanFeasibility): PlanView["feasibility"] {
+  const { maximum } = feasibility;
+
   return {
     alternative: feasibility.alternative
       ? {
@@ -45,9 +57,15 @@ function toFeasibilityView(feasibility: PlanFeasibility): PlanView["feasibility"
           endDate: toIsoOrNull(feasibility.alternative.endDate),
         }
       : null,
-    coveredShare: Math.round(feasibility.coveredShare * 100) / 100,
+    coreFits: feasibility.coreFits,
+    coreMinutes: feasibility.coreMinutes,
+    coveredShare: roundShare(feasibility.coveredShare),
     deadline: toIsoOrNull(feasibility.deadline),
     fits: feasibility.fits,
+    maximum: maximum
+      ? { coveredShare: roundShare(maximum.coveredShare), dailyMinutes: maximum.dailyMinutes }
+      : null,
+    measure: feasibility.measure,
     recommendedMinutes: feasibility.recommendedMinutes,
   };
 }
@@ -62,8 +80,11 @@ function buildAreas({
   const names = graph.skills.map((skill) => getSkillArea({ graph, skill }));
 
   return [...new Set(names)].map((name) => ({
+    focusPart: settings.focusParts.find((part) => part.area === name)?.name ?? null,
     focused: settings.focusAreas.includes(name),
     name,
+    pastBasics: settings.pastBasicsAreas.includes(name),
+    reduced: settings.reducedAreas.includes(name),
     skillCount: names.filter((area) => area === name).length,
     skipped: settings.skippedAreas.includes(name),
   }));
@@ -89,8 +110,9 @@ async function getAccess(context: PlanContext): Promise<PlanView["access"]> {
 }
 
 /**
- * The plan's size and end. A plan without a graph (a seeded one) keeps the estimate it was saved
- * with and ends on its last item.
+ * The plan's size and end. The end is the one the plan's graph sizes (see `PlanFeasibility`), so
+ * it stays put while the Library outlines lessons. A plan without a graph (a seeded one) keeps the
+ * estimate it was saved with and ends on its last item.
  */
 function buildEstimate({
   computed,
@@ -105,7 +127,7 @@ function buildEstimate({
     const { estimate } = computed.built;
 
     return {
-      endDate: toIsoOrNull(estimate.endDate),
+      endDate: toIsoOrNull(computed.feasibility.endDate),
       pace,
       remainingHours: toHours(estimate.remainingMinutes),
       totalHours: toHours(estimate.totalMinutes),
@@ -168,7 +190,7 @@ function toShortPlanView({
 }
 
 /**
- * The plan view model for both modes: every phase with the current one in detail, this week day
+ * The plan view model: every phase with its chapters and checkpoint, this week day
  * by day, the status and estimate, what fits in the learner's time, the areas they can focus on
  * or skip, the tools its chapters use, and recent changes with proposals waiting for an OK.
  */
@@ -182,36 +204,46 @@ export async function buildPlanView({
   const { goal, items, phases, state } = context;
   const ready = phases.length > 0;
   const skillAreas = new Map(state.graph.skills.map((skill) => [skill.skillId, skill.area]));
-  const currentPhase = findCurrentPhase({ items, phaseCount: phases.length });
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
 
-  const chapterIds = [
-    ...new Set(
-      items.filter((item) => item.phase === currentPhase).flatMap((item) => item.chapterId ?? []),
-    ),
-  ];
+  const currentPhase = findShortPlanPhase({
+    phases,
+    progressPhase: findCurrentPhase({ items, phaseCount: phases.length }),
+    shape: shortPlan,
+    today: context.today,
+  });
 
-  const [computed, changes, access, chapterTitles, course, tools, studiedDates] = await Promise.all(
-    [
-      ready && isPlanReady(context) ? computePlan({ context, mode: "automatic", now }) : null,
-      loadPlanChangeViews({ now, planId: context.plan.id, planVersion: context.plan.version }),
-      getAccess(context),
-      loadChapterTitles(chapterIds),
-      loadPlanCourse({ goal, items }),
-      loadPlanTools({ currentPhase, items }),
-      loadStudiedDates({ today: context.today, userId: goal.userId }),
-    ],
-  );
+  const chapterIds = [...new Set(items.flatMap((item) => item.chapterId ?? []))];
+
+  const [
+    computed,
+    changes,
+    access,
+    chapterTitles,
+    course,
+    tools,
+    studiedDates,
+    targetDateEstimated,
+    catchUp,
+  ] = await Promise.all([
+    ready && isPlanReady(context)
+      ? computePlan({ context, mode: "automatic", now, pace: "saved" })
+      : null,
+    loadPlanChangeViews({ now, planId: context.plan.id, planVersion: context.plan.version }),
+    getAccess(context),
+    loadChapterTitles(chapterIds),
+    loadPlanCourse({ goal, items }),
+    loadPlanTools({ currentPhase, goal, items }),
+    loadStudiedDates({ today: context.today, userId: goal.userId }),
+    loadIsEstimatedGoalDate(goal),
+    loadCatchUpItems(goal.id),
+  ]);
 
   const minutes = new Map(
     computed ? computed.built.items.map((item) => [item.key, item.minutes]) : null,
   );
 
-  const calendar = {
-    dailyMinutes: goal.dailyMinutes,
-    lightWeeks: state.settings.lightWeeks,
-    weekdayMinutes: state.settings.weekdayMinutes,
-  };
+  const calendar = getPlanCalendar({ dailyMinutes: goal.dailyMinutes, settings: state.settings });
 
   return {
     access,
@@ -223,6 +255,7 @@ export async function buildPlanView({
     feasibility: computed ? toFeasibilityView(computed.feasibility) : null,
     finished: isPlanFinished(items),
     goalId: goal.id,
+    notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
     ownLevel: getOwnLevel({ goal }),
     phases: buildPhaseViews({
       chapterTitles,
@@ -242,12 +275,14 @@ export async function buildPlanView({
       lightWeeks: state.settings.lightWeeks,
       studyDays: countStudyDays(calendar),
       targetDate: toIsoOrNull(goal.targetDate),
+      targetDateEstimated,
       weekdayMinutes: Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
         getWeekdayMinutes({ calendar, weekday }),
       ),
     },
     shortPlan: toShortPlanView({ context, shape: shortPlan }),
     status: getPlanStatus({
+      catchUp: catchUp.length,
       items,
       minutesPerItem: getMinutesPerItem({
         estimateHours: context.plan.estimateHours,
@@ -258,6 +293,8 @@ export async function buildPlanView({
     }),
     steering: {
       difficultyBias: state.settings.difficultyBias,
+      lessonsStudied: items.filter((item) => item.kind === "lesson" && item.status === "done")
+        .length,
       practiceBias: state.settings.practiceBias,
       skippedActivities: state.settings.skippedActivities,
     },
@@ -274,5 +311,6 @@ export async function buildPlanView({
       targetDate: goal.targetDate,
       today: context.today,
     }),
+    writtenPractice: getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
   };
 }

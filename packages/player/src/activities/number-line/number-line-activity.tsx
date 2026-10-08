@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
@@ -11,7 +12,6 @@ import {
 import { ActivityPlaceHandle, usePlacePointer } from "../_components/activity-place-handle";
 import { ActivityPlot, usePlotScales } from "../_components/activity-plot";
 import { clamp } from "../_utils/snap-value";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { jumpArc, jumpStops, numberLineTicks } from "./number-line-geometry";
 

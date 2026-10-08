@@ -22,7 +22,7 @@ This skill is a workflow, not a frozen copy of Google's Android or Material Desi
 
 ## Product Rule
 
-Like Duolingo, Zoonk's Android app uses native components for performance and platform behavior, and looks like the `main` web app. Take colors, typography, icons, proportions, screen structure, and both modes (Focus and Fun) from `main`. Take components, navigation containers, gestures, input, and accessibility behavior from Android. Do not port web or iOS implementation details such as HTML layout tricks, hover-only affordances, or iOS-specific controls. When `main`'s look would break native behavior, keep the behavior and adapt the look.
+Like Duolingo, Zoonk's Android app uses native components for performance and platform behavior, and looks like the `main` web app. Take colors, typography, icons, proportions and screen structure from `main`. Take components, navigation containers, gestures, input, and accessibility behavior from Android. Do not port web or iOS implementation details such as HTML layout tricks, hover-only affordances, or iOS-specific controls. When `main`'s look would break native behavior, keep the behavior and adapt the look.
 
 Examples of native behavior:
 

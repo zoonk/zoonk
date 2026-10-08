@@ -1,8 +1,8 @@
 "use client";
 
+import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
-import { type ExperienceMode } from "@zoonk/learn/experience-mode";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { StartFlow } from "@zoonk/learn/onboarding";
 import {
@@ -13,17 +13,21 @@ import {
 import { useOnboardingNavigation } from "./use-onboarding-navigation";
 
 export function StartClient({
+  buddy,
   canAttach,
   defaultGoal,
   initialDraft,
-  initialMode,
+  needsAccount,
   planId,
 }: {
+  /** The learner's buddy, who answers questions about their material; null before they pick one. */
+  buddy: TutorViewer["buddy"];
   /** An account can attach material; guests and visitors are asked to create one. */
   canAttach: boolean;
   defaultGoal: string;
   initialDraft: OnboardingDraftView | null;
-  initialMode: ExperienceMode;
+  /** A guest whose one goal is taken: only an account adds another. */
+  needsAccount: boolean;
   /** Someone's plan link this onboarding started from, if any. */
   planId: string | null;
 }) {
@@ -33,12 +37,13 @@ export function StartClient({
     <GenerationFollowerProvider follower={WorkflowRunFollower}>
       <StartFlow
         actions={planId ? getPlanLinkOnboardingActions(planId) : WEB_ONBOARDING_ACTIONS}
+        buddy={buddy}
         canAttach={canAttach}
         defaultGoal={defaultGoal}
         fromSharedPlan={planId !== null}
         initialDraft={initialDraft}
-        initialMode={initialMode}
         navigation={navigation}
+        needsAccount={needsAccount}
         routes={WEB_ONBOARDING_ROUTES}
       />
     </GenerationFollowerProvider>

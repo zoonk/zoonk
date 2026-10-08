@@ -35,12 +35,15 @@ enum SuggestedGoalStatus {
   dismissed
 }
 
-/// A proposed change waits for the learner's OK; an applied one can be undone.
+/// A proposed change waits for the learner's OK; an applied one can be undone. A proposal still
+/// waiting is `replaced` when a newer change changes the same thing (the time, the date, the
+/// focus, what the exam's notice says), so the learner never answers two that contradict.
 enum PlanChangeStatus {
   proposed
   applied
   declined
   undone
+  replaced
 }
 
 /// Why research asked the learner for a document instead of guessing: no official source turned up,
@@ -95,6 +98,7 @@ model Goal {
   mockExams             MockExam[]
   examResult            ExamResult?
   evaluationRuns        EvaluationRun[]
+  aiCalls               AiCall[]
   questionThreads       LessonQuestionThread[]
 
   @@index([userId, status])
@@ -128,6 +132,20 @@ model Plan {
   /// When the run that built the plan finished writing placement's questions (some may have
   /// failed); until then, a skill's missing questions are still coming.
   placementPreparedAt DateTime?    @map("placement_prepared_at")
+  /// An exam plan built before research read the exam's notice waits for that reading until this
+  /// time: the plan reveal says it's reading the notice, and a reading that lands in time becomes
+  /// part of the plan. Past it, the plan shows the exam's usual structure and the reading arrives
+  /// as a change the learner applies. Null when nothing is waited for (the plan was built from
+  /// the notice, the reading landed, or research ended without one).
+  noticeWaitUntil     DateTime?    @map("notice_wait_until")
+  /// When the plan stopped waiting for its exam's notice: the reading landed in the plan, arrived as
+  /// a change to apply, or research ended without one. A notice recorded before then is the plan's
+  /// own (it shaped the plan or that change), so Today never shows it as news.
+  noticeWaitEndedAt   DateTime?    @map("notice_wait_ended_at")
+  /// What the plan covered of its goal by its date when it was last planned (0 to 1, the share its
+  /// feasibility reads), so a new day can tell the learner when falling behind puts the date at
+  /// risk. Null for plans without a date.
+  coveredShare        Float?       @map("covered_share")
   createdAt           DateTime     @default(now()) @map("created_at")
   updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at")
   items               PlanItem[]
@@ -181,6 +199,8 @@ model PlanChange {
   runId         String?          @map("run_id")
   generatedAt   DateTime?        @map("generated_at")
   createdAt     DateTime         @default(now()) @map("created_at")
+  /// The buddy's answers that proposed it, when the learner asked for it by talking.
+  tutorAnswers  LessonQuestion[]
 
   @@index([planId, createdAt])
   @@map("plan_changes")

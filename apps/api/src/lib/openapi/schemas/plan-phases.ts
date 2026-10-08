@@ -4,9 +4,9 @@ import { shortPhaseSchema } from "./short-exam-plans";
 const isoDateSchema = z.iso.date();
 
 const stateSchema = z.enum(["current", "done", "upcoming"]);
-const phaseKindSchema = z.enum(["learn", "foundations", "gaps", "practice", "finalStretch"]);
+export const phaseKindSchema = z.enum(["learn", "foundations", "gaps", "practice", "finalStretch"]);
 
-/** A plan phase with its size and dates; the current one lists its chapters. */
+/** A plan phase with its size and dates, its chapters and the checkpoint that closes it. */
 export const planPhaseSchema = z
   .object({
     chapterCount: z.int().min(0),
@@ -38,8 +38,20 @@ export const planPhaseSchema = z
             }),
         }),
       )
+      .meta({
+        description:
+          "Every phase's chapters in plan order; only the current phase has a `current` chapter",
+      }),
+    checkpoint: z
+      .object({
+        date: isoDateSchema.nullable(),
+        planItemId: z.uuid().meta({ description: "Its intro is GET /challenges/{planItemId}" }),
+        state: z.enum(["done", "upcoming"]),
+      })
       .nullable()
-      .meta({ description: "Only the current phase lists its chapters" }),
+      .meta({
+        description: "The checkpoint that closes the phase (the Trickster); null without one",
+      }),
     endDate: isoDateSchema.nullable(),
     hours: z.number().min(0),
     index: z.int().min(0),
@@ -49,6 +61,14 @@ export const planPhaseSchema = z
     lessonsDone: z.int().min(0),
     lessonsTotal: z.int().min(0),
     milestone: z.string().nullable(),
+    mocks: z
+      .object({
+        count: z.int().min(0),
+        nextDate: isoDateSchema
+          .nullable()
+          .meta({ description: "The day of the phase's next mock still to take" }),
+      })
+      .meta({ description: "The phase's mock exams" }),
     name: z.string(),
     short: shortPhaseSchema,
     startDate: isoDateSchema.nullable(),

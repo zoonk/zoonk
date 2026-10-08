@@ -29,9 +29,22 @@ export const planStatusSchema = z
     z.object({ kind: z.literal("onTrack") }),
     z.object({ days: z.number().int().min(1), kind: z.literal("ahead") }),
     z.object({
-      days: z.number().int().min(1).meta({ description: "Days of extra time that catch up" }),
-      extraMinutesPerDay: z.number().int().min(1),
+      days: z
+        .number()
+        .int()
+        .min(0)
+        .meta({ description: "Days of extra time that catch up; 0 when lessons says it instead" }),
+      extraMinutesPerDay: z.number().int().min(0),
       kind: z.literal("behind"),
+      lessons: z
+        .number()
+        .int()
+        .min(1)
+        .nullable()
+        .meta({
+          description:
+            "Lessons earlier days left that the learner hasn't caught up on: they come first in the plan, and the learner is behind until they're done. Say this count instead of days when present",
+        }),
     }),
     z.object({
       kind: z.literal("needsAdjusting"),
@@ -43,26 +56,57 @@ export const planStatusSchema = z
 const componentsSchema = z
   .object({
     coverage: z.object({
+      heaviest: z
+        .object({
+          studiedSkills: z.number().int().min(0),
+          totalSkills: z.number().int().min(0),
+          value: shareSchema,
+        })
+        .meta({
+          description:
+            "The goal's heavier part (its hardest and most asked skills) and the share of it studied: preparation reads as solid only once this part is too",
+        }),
       studiedSkills: z.number().int().min(0),
       totalSkills: z.number().int().min(0),
-      value: shareSchema.meta({ description: "Share of the goal (by weight) studied" }),
+      value: shareSchema.meta({
+        description:
+          "Share of the goal studied, each skill counting by the exam's weight on it and how hard it is",
+      }),
     }),
     mastery: z.object({
       answered: z.number().int().min(0),
       correct: z.number().int().min(0),
+      evidence: z
+        .number()
+        .min(0)
+        .meta({ description: "How many answers the weighted ones are worth as evidence" }),
       value: shareSchema
         .nullable()
-        .meta({ description: "Accuracy on questions never seen before" }),
+        .meta({
+          description:
+            "Accuracy on questions never seen before, each answer counting by its skill's importance",
+        }),
     }),
     mocks: z
       .object({
-        kind: z.enum(["mockExams", "weeklyChallenges"]),
+        kind: z
+          .enum(["fullReviews", "mockExams", "weeklyChallenges"])
+          .meta({
+            description:
+              "fullReviews: an exam goal whose plan has no mock exams (free) counts its full reviews in the exam's format (study blocks with `fullReview`), which its plan gives it on the mock's day",
+          }),
+        plusRequired: z
+          .boolean()
+          .meta({
+            description:
+              "The test needs Plus now: the plan has no mocks and its free days are over. Show the mock with the Plus mark",
+          }),
         taken: z.number().int().min(0),
         value: shareSchema.nullable().meta({ description: "Recent results" }),
       })
       .meta({
         description:
-          "The fourth part: an exam goal's mock exams, or another goal's weekly challenges (it has no exam to rehearse)",
+          "The fourth part: an exam goal's mock exams (or its full reviews when its plan has no mocks), or another goal's weekly challenges (it has no exam to rehearse). Preparation stays under 75% until one is taken, never for a test the learner's plan can't take",
       }),
     retention: z.object({
       studiedSkills: z.number().int().min(0),
@@ -99,6 +143,13 @@ export const goalPreparationResponseSchema = z
       description: "Preparation: coverage times how well the studied part is known",
     }),
     weakestAreaId: z.string().nullable(),
-    weekGain: z.number().min(-1).max(1),
+    weekGain: z
+      .number()
+      .min(-1)
+      .max(1)
+      .meta({
+        description:
+          "Preparation gained since the start of the learner's week (Monday, in their time zone)",
+      }),
   })
   .meta({ id: "GoalPreparation" });

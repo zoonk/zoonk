@@ -7,37 +7,139 @@ import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { readOptions } from "./exam-fixtures";
+import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { type Mode, asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
 
+const GENERATIONS_URL = "**/v1/goals/*/chapters/*/test-out/generations";
+const RIGHT = "Right answer";
+const SUMMARY_LESSON = "Ratios in one picture";
+
+/** A finished lesson's summary idea, with math the chapter page draws as lessons do. */
+const SUMMARY_IDEA = String.raw`A ratio of 3 to 4 is the fraction $\frac{3}{4}$ of the whole.`;
+
+const DAYS_PER_WEEK = 7;
+const STUDY_MINUTES = 30;
+
 /**
- * Passing a chapter's test-out: Ana answers every question right (the first from the keyboard), the
- * chapter's lessons she still had to take come off her plan, and the plan says so with an undo
- * that puts them back.
+ * The plan's skill graph and settings, so the planner owns the plan: a test-out's skip then
+ * re-plans around it.
  */
+function plannerOwned(skills: readonly { id: string; name: string }[]) {
+  return {
+    graph: {
+      phases: [{ milestone: null, name: "Ratios" }],
+      skills: skills.map((skill) => ({
+        area: null,
+        lessons: 1,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
+      })),
+    },
+    settings: {
+      startDate: toUTCMidnight(new Date()).toISOString().slice(0, "YYYY-MM-DD".length),
+      weekdayMinutes: Array.from({ length: DAYS_PER_WEEK }, () => STUDY_MINUTES),
+    },
+  };
+}
 
-/** The right option of the bank question the test-out shows, found by its text. */
-async function findRightOption(question: string): Promise<string> {
-  const item = await prisma.item.findFirstOrThrow({
-    where: { content: { equals: question, path: ["question"] } },
-  });
+/**
+ * A learner whose plan's one chapter has a lesson for each of a few skills, after a finished lesson
+ * that left its summary. The test-out asks at least four questions spread over the skills (one
+ * each from four skills on, two each below), so `writeQuestions` adds two per skill to the bank
+ * the way the API's run would.
+ */
+async function createTestOutChapter({
+  planned = false,
+  skills: skillCount,
+}: {
+  /** The planner owns the plan, so the skip shows on it. */
+  planned?: boolean;
+  skills: number;
+}) {
+  const user = await createE2EUser(getBaseURL());
+  const suffix = randomUUID().slice(0, 6);
+  const indexes = Array.from({ length: skillCount }, (_, index) => index);
 
-  return readOptions(item.content).find((option) => option.isCorrect)?.text ?? "";
+  const [goal, chapter, summaryLesson, skills, lessons] = await Promise.all([
+    goalFixture({ timezone: "UTC", title: `Ratios ${suffix}`, userId: user.id }),
+    libraryChapterFixture({ title: `Rates and ratios ${suffix}` }),
+    libraryLessonFixture({
+      summary: { ideas: [{ text: SUMMARY_IDEA }] },
+      title: `${SUMMARY_LESSON} ${suffix}`,
+    }),
+    Promise.all(
+      indexes.map((index) => skillFixture({ name: `Ratio skill ${index + 1} ${suffix}` })),
+    ),
+    Promise.all(
+      indexes.map((index) =>
+        libraryLessonFixture({ title: `Ratio lesson ${index + 1} ${suffix}` }),
+      ),
+    ),
+  ]);
+
+  const [plan] = await Promise.all([
+    planFixture({ goalId: goal.id, ...(planned ? plannerOwned(skills) : {}) }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: summaryLesson.id, position: 0 }),
+    Promise.all(
+      lessons.map((lesson, index) =>
+        chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: index + 1 }),
+      ),
+    ),
+    prisma.lessonSkill.createMany({
+      data: lessons.map((lesson, index) => ({
+        lessonId: lesson.id,
+        skillId: skills[index]?.id ?? "",
+      })),
+    }),
+  ]);
+
+  await Promise.all(
+    [summaryLesson, ...lessons].map((lesson, position) =>
+      planItemFixture({
+        chapterId: chapter.id,
+        lessonId: lesson.id,
+        planId: plan.id,
+        position,
+        status: lesson === summaryLesson ? "done" : "todo",
+        titleSnapshot: lesson.title,
+      }),
+    ),
+  );
+
+  const writeQuestions = () =>
+    Promise.all(
+      skills.flatMap((skill, index) =>
+        [1, 2].map((copy) =>
+          itemFixture({
+            content: choiceItemContent(`Ratio question ${index + 1}.${copy} ${suffix}?`),
+            skillId: skill.id,
+          }),
+        ),
+      ),
+    );
+
+  return { chapter, goal, user, writeQuestions };
 }
 
 /** The right option of the question shown, picked by its number key, then Enter moves on. */
-async function answerRightByKeyboard(page: Page, right: string) {
+async function answerRightByKeyboard(page: Page) {
   // Each option reads as its number key followed by its text.
   const options = await page.getByRole("main").getByRole("listitem").allTextContents();
-  const key = options.findIndex((option, index) => option === `${index + 1}${right}`) + 1;
+  const key = options.findIndex((option, index) => option === `${index + 1}${RIGHT}`) + 1;
 
   await page.keyboard.press(String(key));
 
-  await expect(page.getByRole("button", { exact: true, name: right })).toHaveAttribute(
+  await expect(page.getByRole("button", { exact: true, name: RIGHT })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
@@ -46,130 +148,158 @@ async function answerRightByKeyboard(page: Page, right: string) {
   await page.keyboard.press("Enter");
 }
 
-/** Answers the first question from the keyboard and the rest by tapping. */
-async function answerEveryQuestionRight(page: Page) {
-  const progress = page.getByRole("progressbar", { name: /^Question 1 of \d+$/u });
-  const label = await progress.getAttribute("aria-label");
-  const total = Number(label?.match(/of (?<total>\d+)/u)?.groups?.total);
-
-  for (const number of Array.from({ length: total }, (_, index) => index + 1)) {
-    // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
-    await expect(
-      page.getByRole("progressbar", { name: `Question ${number} of ${total}` }),
-    ).toBeVisible();
-
-    // oxlint-disable-next-line no-await-in-loop -- Each answer depends on the question shown.
-    const question = (await page.getByRole("heading", { level: 2 }).textContent()) ?? "";
-    // oxlint-disable-next-line no-await-in-loop -- Each answer depends on the question shown.
-    const right = await findRightOption(question);
-
-    if (number === 1) {
-      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await answerRightByKeyboard(page, right);
-    } else {
-      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("button", { exact: true, name: right }).click();
-      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("button", { name: number === total ? "Finish" : "Next" }).click();
-    }
-  }
+/** Waits for question `number` of `total` to show. */
+async function expectQuestion(page: Page, number: number, total: number) {
+  await expect(
+    page.getByRole("progressbar", { name: `Question ${number} of ${total}` }),
+  ).toBeVisible();
 }
 
 function countTestedOut(goalId: string) {
   return prisma.planItem.count({ where: { plan: { goalId }, status: "testedOut" } });
 }
 
-test.describe("Passing a chapter test-out", () => {
-  test("answered by keyboard and tap, takes the chapter's lessons off the plan, with an undo", async ({
+/**
+ * A chapter's test-out, full screen from the chapter's "Take the test": at least four questions
+ * spread over its skills, and only the skills answered right count as known. When the questions still have to be written,
+ * the tap starts that run and the test opens once it's done; a test opened any other way waits for
+ * the learner's tap. Tests never reach a model: the API's writing run is stood in for.
+ */
+test.describe("Chapter test-out", () => {
+  test("opens from the chapter and takes off only the skills answered right", async ({
     browser,
   }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
-      const before = await countTestedOut(user.goalId);
+    const SKILLS = 5;
 
-      await page.goto("/plan");
-      await page.getByRole("link", { name: "Test out of Porcentagem" }).click();
-      await expect(page.getByText("Test out: Porcentagem")).toBeVisible();
-      await expectAccessibleScreen(page, "a chapter test-out");
-
-      await answerEveryQuestionRight(page);
-
-      await expect(page.getByRole("heading", { name: "You already know this" })).toBeVisible();
-
-      await expect(
-        page.getByText(
-          /^\d+ lessons? (?:is|are) off your plan\. You can undo it from the plan\.$/u,
-        ),
-      ).toBeVisible();
-
-      await expect.poll(() => countTestedOut(user.goalId)).toBeGreaterThan(before);
-
-      await page.getByRole("link", { name: "Back to the plan" }).click();
-
-      const change = page
-        .getByRole("listitem")
-        .filter({ hasText: /^You tested out of \d+ lessons?, so it.s off your plan\./u });
-
-      await change.getByRole("button", { name: "Undo" }).click();
-      await expect(change.getByText("Undone")).toBeVisible();
-
-      await expect.poll(() => countTestedOut(user.goalId)).toBe(before);
+    const { chapter, goal, user, writeQuestions } = await createTestOutChapter({
+      planned: true,
+      skills: SKILLS,
     });
-  });
-});
 
-const SKILLS = 3;
-const GENERATIONS_URL = "**/v1/goals/*/chapters/*/test-out/generations";
+    const chapterUrl = new RegExp(`/content/chapters/${chapter.id}$`, "u");
 
-/** A learner whose plan's first chapter has three skills and no question for any of them yet. */
-async function createChapterWithoutQuestions(mode: Mode) {
-  const user = await createE2EUser(getBaseURL());
-  const suffix = randomUUID().slice(0, 6);
+    await writeQuestions();
+    const page = await openAs(browser, user);
 
-  const [goal, chapter, skills] = await Promise.all([
-    goalFixture({ timezone: "UTC", title: `Ratios ${suffix}`, userId: user.id }),
-    libraryChapterFixture({ title: `Rates and ratios ${suffix}` }),
-    Promise.all(
-      Array.from({ length: SKILLS }, (_, index) =>
-        skillFixture({ name: `Ratio skill ${index + 1} ${suffix}` }),
-      ),
-    ),
-  ]);
-
-  const [plan] = await Promise.all([
-    planFixture({ goalId: goal.id }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      experienceMode: mode,
-      userId: user.id,
-      ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-    }),
-  ]);
-
-  await Promise.all(
-    skills.map((skill, position) =>
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position, skillId: skill.id }),
-    ),
-  );
-
-  /** The run's questions land in the shared bank, one per skill. */
-  const writeQuestions = () =>
-    Promise.all(
-      skills.map((skill, index) =>
-        itemFixture({
-          content: choiceItemContent(`Ratio question ${index + 1} ${suffix}?`),
-          skillId: skill.id,
-        }),
-      ),
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({ json: { generationId: null, status: "ready" }, status: 200 }),
     );
 
-  return { chapter, user, writeQuestions };
-}
+    await page.goto(`/content/chapters/${chapter.id}`);
 
-test.describe("A chapter test-out without questions yet", () => {
-  test("writes them when asked, follows the run and opens the test on its own", async ({
+    // The finished lesson's summary, folded away, its math drawn as lessons draw it.
+    await page.getByRole("button", { name: "Chapter summary" }).click();
+    const summaries = page.getByRole("region", { name: "Summaries" });
+
+    await expect(
+      summaries.getByRole("heading", { name: new RegExp(SUMMARY_LESSON, "u") }),
+    ).toBeVisible();
+
+    await expect(summaries.getByRole("math")).toHaveCount(1);
+    await expect(summaries).toContainText("A ratio of 3 to 4 is the fraction");
+    await expect(summaries).not.toContainText("$");
+
+    await page.getByRole("button", { name: "Take the test" }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/test-out/${chapter.id}$`, "u"));
+
+    // Full screen like every task: close back to the chapter, how far in, a menu and one bar.
+    await expect(
+      page.getByRole("heading", { level: 1, name: `Test out: ${chapter.title}` }),
+    ).toBeVisible();
+
+    await expect(page.getByText(`1 of ${SKILLS}`, { exact: true })).toBeVisible();
+    await expectQuestion(page, 1, SKILLS);
+    await expect(page.getByRole("button", { name: "Question options" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Close" })).toHaveAttribute("href", chapterUrl);
+    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+    await expectAccessibleScreen(page, "a chapter test-out");
+
+    // Four right (the first from the keyboard), and one not known yet: 80% passes.
+    await answerRightByKeyboard(page);
+
+    for (const number of [2, 3, 4]) {
+      // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
+      await expectQuestion(page, number, SKILLS);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { exact: true, name: RIGHT }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { name: "Next" }).click();
+    }
+
+    await expectQuestion(page, SKILLS, SKILLS);
+    await page.getByRole("button", { name: "I don't know yet" }).click();
+
+    const result = page.getByRole("status").filter({ hasText: "You already know this" });
+    await expect(result.getByRole("heading", { name: "You already know this" })).toBeVisible();
+    await expect(result.getByText(`4 of ${SKILLS} right`)).toBeVisible();
+
+    // Only the four skills answered right come off the plan; the fifth stays.
+    await expect(result.getByText("4 lessons are off your plan.")).toBeVisible();
+    await expect.poll(() => countTestedOut(goal.id)).toBe(4);
+
+    // Changed their mind: the lessons come back right here, and the undo goes away.
+    await page.getByRole("button", { name: "Undo" }).click();
+    await expect(result.getByText("The lessons are back in your plan.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Undo" })).toHaveCount(0);
+    await expect.poll(() => countTestedOut(goal.id)).toBe(0);
+
+    // The task's one way on sits under the result.
+    await page.getByRole("link", { name: "Continue" }).click();
+    await expect(page).toHaveURL(chapterUrl);
+    await page.context().close();
+  });
+
+  test("keeps each answer as it's given: a reload goes on from the next question", async ({
     browser,
   }) => {
-    const { chapter, user, writeQuestions } = await createChapterWithoutQuestions("fun");
+    const SKILLS = 4;
+
+    const { chapter, goal, user, writeQuestions } = await createTestOutChapter({
+      planned: true,
+      skills: SKILLS,
+    });
+
+    await writeQuestions();
+    const page = await openAs(browser, user);
+    await page.goto(`/test-out/${chapter.id}`);
+
+    for (const number of [1, 2]) {
+      // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
+      await expectQuestion(page, number, SKILLS);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { exact: true, name: RIGHT }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { name: "Next" }).click();
+    }
+
+    await expectQuestion(page, 3, SKILLS);
+    await page.reload();
+
+    // The two answers given before the reload still count.
+    await expectQuestion(page, 3, SKILLS);
+
+    for (const number of [3, 4]) {
+      // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
+      await expectQuestion(page, number, SKILLS);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { exact: true, name: RIGHT }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { name: /^(?:Next|Finish)$/u }).click();
+    }
+
+    const result = page.getByRole("status").filter({ hasText: "You already know this" });
+    await expect(result.getByText(`${SKILLS} of ${SKILLS} right`)).toBeVisible();
+    await expect.poll(() => countTestedOut(goal.id)).toBe(SKILLS);
+    await page.context().close();
+  });
+
+  test("written on the chapter's tap, it follows the run and opens the test on its own", async ({
+    browser,
+  }) => {
+    // Three skills take four questions: never fewer, so a lucky answer never skips the chapter.
+    const QUESTIONS = 4;
+    const { chapter, user, writeQuestions } = await createTestOutChapter({ skills: 3 });
     const runId = `e2e-test-out-${randomUUID()}`;
     const page = await openAs(browser, user);
     const events: StreamEvent[] = [];
@@ -179,32 +309,41 @@ test.describe("A chapter test-out without questions yet", () => {
     );
 
     await followRun({ events, page, runId });
-    await page.goto(`/plan/test-out/${chapter.id}`);
-
-    await expect(
-      page.getByRole("heading", { level: 1, name: `Test out: ${chapter.title}` }),
-    ).toBeVisible();
-
-    await expect(page.getByText(/This chapter has no questions yet/u)).toBeVisible();
-    await expect(page.getByRole("link", { name: "Back to the plan" })).toBeVisible();
+    await page.goto(`/content/chapters/${chapter.id}`);
 
     events.push({ entityId: chapter.id, status: "started", step: "writeTestOutQuestions" });
-    await page.getByRole("button", { name: "Get my questions ready" }).click();
+    await page.getByRole("button", { name: "Take the test" }).click();
 
+    await expect(page).toHaveURL(new RegExp(`/test-out/${chapter.id}\\?run=${runId}$`, "u"));
+    await expect(page.getByText("Getting your test ready")).toBeVisible();
     await expect(page.getByRole("progressbar", { name: "Writing your questions" })).toBeVisible();
 
     await writeQuestions();
     events.push({ entityId: chapter.id, status: "completed", step: "testOutQuestionsReady" });
 
     // No refresh: the test opens once its questions exist.
-    await expect(page.getByRole("progressbar", { name: `Question 1 of ${SKILLS}` })).toBeVisible();
-    await expectAccessibleScreen(page, "a chapter test-out");
+    await expectQuestion(page, 1, QUESTIONS);
 
+    for (const number of [1, 2, 3, 4]) {
+      // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
+      await expectQuestion(page, number, QUESTIONS);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await page.getByRole("button", { name: "I don't know yet" }).click();
+    }
+
+    const result = page.getByRole("status").filter({ hasText: "Not yet, and that's fine" });
+    await expect(result.getByRole("heading", { name: "Not yet, and that's fine" })).toBeVisible();
+    await expect(result.getByText(`0 of ${QUESTIONS} right`)).toBeVisible();
+
+    await page.getByRole("link", { name: "Continue" }).click();
+    await expect(page).toHaveURL(new RegExp(`/content/chapters/${chapter.id}$`, "u"));
     await page.context().close();
   });
 
-  test("says when writing them couldn't start, and a tap asks again", async ({ browser }) => {
-    const { chapter, user, writeQuestions } = await createChapterWithoutQuestions("focus");
+  test("opened without questions, a tap writes them, and says when that couldn't start", async ({
+    browser,
+  }) => {
+    const { chapter, user, writeQuestions } = await createTestOutChapter({ skills: 3 });
     const page = await openAs(browser, user);
     let reachable = false;
 
@@ -214,8 +353,11 @@ test.describe("A chapter test-out without questions yet", () => {
         : route.fulfill({ json: { error: { code: "INTERNAL_ERROR" } }, status: 500 }),
     );
 
-    await page.goto(`/plan/test-out/${chapter.id}`);
-    await page.getByRole("button", { name: "Get my questions ready" }).click();
+    // Loading the page writes nothing: the learner's tap (or Enter) does.
+    await page.goto(`/test-out/${chapter.id}`);
+    await expect(page.getByRole("heading", { level: 2, name: "Already know this?" })).toBeVisible();
+    await expect(page.getByText("Getting your test ready")).toBeHidden();
+    await page.getByRole("button", { name: "Start the test" }).click();
 
     const failed = page.getByRole("alert").filter({ hasText: "This didn't start" });
     await expect(failed).toBeVisible();
@@ -225,21 +367,23 @@ test.describe("A chapter test-out without questions yet", () => {
     reachable = true;
     await failed.getByRole("button", { name: "Try again" }).click();
 
-    await expect(page.getByRole("progressbar", { name: `Question 1 of ${SKILLS}` })).toBeVisible();
-
+    // Three skills take four questions: never fewer, so a lucky answer never skips the chapter.
+    await expectQuestion(page, 1, 4);
     await page.context().close();
   });
 
-  test("says why when today's help is used up, and the way back stays", async ({ browser }) => {
-    const { chapter, user } = await createChapterWithoutQuestions("focus");
+  test("says why when today's help is used up, and closes back to the chapter", async ({
+    browser,
+  }) => {
+    const { chapter, user } = await createTestOutChapter({ skills: 3 });
     const page = await openAs(browser, user);
 
     await page.route(GENERATIONS_URL, (route) =>
       route.fulfill({ json: { error: { code: "USAGE_LIMIT_REACHED", details: {} } }, status: 402 }),
     );
 
-    await page.goto(`/plan/test-out/${chapter.id}`);
-    await page.getByRole("button", { name: "Get my questions ready" }).click();
+    await page.goto(`/test-out/${chapter.id}`);
+    await page.getByRole("button", { name: "Start the test" }).click();
 
     await expect(
       page.getByText(
@@ -249,8 +393,8 @@ test.describe("A chapter test-out without questions yet", () => {
 
     await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
 
-    await page.getByRole("link", { name: "Back to the plan" }).click();
-    await expect(page).toHaveURL(/\/plan$/u);
+    await page.getByRole("link", { name: "Close" }).click();
+    await expect(page).toHaveURL(new RegExp(`/content/chapters/${chapter.id}$`, "u"));
     await page.context().close();
   });
 });

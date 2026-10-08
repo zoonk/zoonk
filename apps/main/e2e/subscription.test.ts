@@ -11,7 +11,7 @@ import {
   learningProfileFixture,
 } from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
-import { expectMode, showInMode } from "./learn-personas";
+import { openAsGuest } from "./guest-session";
 
 type TestSubscriptionProvider = "apple" | "google" | "stripe" | "zoonk";
 
@@ -147,20 +147,6 @@ const STRIPE_CHECKOUTS = [
   { locale: "de", stripeLocale: "de", subscribeLabel: "Abonnieren" },
 ];
 
-/**
- * A guest tried lessons without an account, so they have a session but can't subscribe yet. The
- * session cookie's cached copy still says "signed up": dropping it makes the server read the guest.
- */
-async function openAsGuest(browser: Browser) {
-  const user = await createE2EUser(getBaseURL());
-  await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
-
-  const context = await browser.newContext({ storageState: user.storageState });
-  await context.clearCookies({ name: /session_data/u });
-
-  return { context, page: await context.newPage(), user };
-}
-
 test.describe("Subscription Page - Guest", () => {
   test("offers Plus for the guest's goal and asks them to sign in before subscribing", async ({
     browser,
@@ -207,13 +193,15 @@ test.describe("Subscription Page - No Subscription", () => {
     ).toBeVisible();
 
     await expect(page.getByText(/your goal:/iu)).toHaveCount(0);
-    await expect(page.getByRole("link", { exact: true, name: "Today" })).toHaveCount(0);
+
+    // A settings page like the others: the section's bar with its pills, one centered column.
+    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
 
     await expect(
       page
         .getByRole("navigation", { name: "Settings" })
-        .getByRole("link", { exact: true, name: "Home page" }),
-    ).toBeVisible();
+        .getByRole("link", { exact: true, name: "Subscription" }),
+    ).toHaveAttribute("aria-current", "page");
 
     await expect(page.getByRole("link", { name: "Try free" })).toHaveCount(0);
 
@@ -293,14 +281,10 @@ test.describe("Subscription Page - Learner under 18", () => {
 });
 
 test.describe("Subscription Page - Stripe Locale", () => {
-  test("a Fun learner's checkout hands Stripe the app's language", async ({
-    noProgressUser,
+  test("a learner's checkout hands Stripe the app's language", async ({
     userWithoutProgress: page,
   }) => {
-    await showInMode(page.context(), { mode: "fun", userId: noProgressUser.id });
     await page.goto("/subscription");
-    await expectMode(page, "fun");
-    await expectAccessibleScreen(page, "the Fun Plus offer");
 
     // Stripe infers English from the browser, so English sends no locale.
     const english = await requestPlusCheckout({ page, subscribeLabel: "Subscribe" });
@@ -316,19 +300,16 @@ test.describe("Subscription Page - Stripe Locale", () => {
 });
 
 test.describe("Subscription Page - With Plus Subscription", () => {
-  test("shows a Fun learner's plan instead of the offer, back from checkout: what it includes, its renewal and cancellation", async ({
+  test("shows a learner's plan instead of the offer, back from checkout: what it includes, its renewal and cancellation", async ({
     browser,
   }) => {
-    const { browserContext, page, user } = await openWithSubscription(browser, {
+    const { browserContext, page } = await openWithSubscription(browser, {
       periodEnd: new Date("2027-03-14T12:00:00Z"),
     });
-
-    await showInMode(browserContext, { mode: "fun", userId: user.id });
 
     // Back from checkout once the subscription is active, the Stripe checkout marker goes.
     await page.goto("/subscription?stripe_checkout=complete&ref=email");
     await expect(page).toHaveURL(/\/subscription\?ref=email$/u);
-    await expectMode(page, "fun");
 
     await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
     await expect(page.getByText("Active", { exact: true })).toBeVisible();
@@ -340,7 +321,6 @@ test.describe("Subscription Page - With Plus Subscription", () => {
 
     await expect(page.getByRole("heading", { name: /get ready for your exam/iu })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
-    await expectAccessibleScreen(page, "a Fun Plus plan");
 
     const requestBody = captureStripeActionRequest({ page, path: "/api/auth/subscription/cancel" });
 

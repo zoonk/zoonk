@@ -1,40 +1,62 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { type TTSVoice, isOpenAITTSSupportedLanguage } from "@zoonk/utils/languages";
+import {
+  type TTSVoice,
+  getBaseLanguage,
+  isOpenAITTSSupportedLanguage,
+} from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
-import { getPromptVersion } from "../../provenance/prompt-version";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { getModelFamily } from "../../_utils/model-family";
+import { computeCallCostUsd } from "../../pricing/call-cost";
+import { type AiGenerationContext } from "../../provenance/ai-generation-event";
+import { captureAiGeneration } from "../../provenance/ai-generation-sink";
+import { readGatewayMetadata } from "../../provenance/gateway-metadata";
+import { type TaskProvenance } from "../../provenance/task-provenance";
 import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
-import promptTemplate from "./generate-language-audio.prompt.md";
+import { DEFAULT_LANGUAGE_AUDIO_VOICE, getLanguageAudioPrompt } from "./language-audio-prompt";
 import { type SpeechModelName, speechModels } from "./speech-models";
 import { generateSpeechWithProvider } from "./speech-provider";
 
-const DEFAULT_VOICE: TTSVoice = "Kore";
-const MAX_ATTEMPTS_PER_PROVIDER = 2;
+const TASK = "language-audio";
+const MS_PER_SECOND = 1000;
 
-/* oxlint-disable-next-line no-magic-numbers -- 850 KiB fits an 18-second 24 kHz mono WAV. */
-const MAX_PROVIDER_AUDIO_BYTES = 850 * 1024;
+/** Both providers return 24 kHz, 16-bit mono WAV. */
+const WAV_BYTES_PER_SECOND = 48_000;
+const WAV_HEADER_ALLOWANCE_BYTES = 1024;
 
-const READ_ALOUD_TEMPLATE =
-  "The following text is {{LANGUAGE}}. Speak clearly at a moderate pace suitable for language learners. Enunciate each word precisely; read it aloud in {{LANGUAGE}}.";
+/** Even a one-letter clip may take this long, with the pauses a voice leaves around it. */
+const MIN_MAX_SECONDS = 18;
+
+/** Slower than any voice reads aloud, so audio longer than this means the model read something else. */
+const MIN_CHARACTERS_PER_SECOND = 8;
 
 /**
  * The text-to-speech run that voiced a clip, stored with the audio like every generated row's
  * provenance. `promptVersion` covers the voice and the instructions it was read with.
  */
-export type SpeechProvenance = {
-  generatedAt: string;
+export type SpeechProvenance = Pick<
+  TaskProvenance,
+  "generatedAt" | "model" | "promptVersion" | "runId"
+>;
+
+type VoicedAudio = {
+  audio: Uint8Array;
+  durationSeconds: number;
+  format: "mp3";
   model: SpeechModelName;
-  promptVersion: string;
-  runId: string;
+  providerMetadata: Record<string, unknown>;
 };
 
-type VoicedAudio = { audio: Uint8Array; format: "mp3"; model: SpeechModelName };
+export type AudioResult = {
+  audio: Uint8Array;
+  /** How long the clip plays. */
+  durationMs: number;
+  format: "mp3";
+  provenance: TaskProvenance;
+};
 
-export type AudioResult = Omit<VoicedAudio, "model"> & { provenance: SpeechProvenance };
-export type LanguageAudioTextType = "sentence" | "word";
 export type LanguageAudioUsage = "alphabetSymbol";
 
 const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
@@ -43,122 +65,66 @@ const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
 >;
 
 /**
- * Skips task-level guidance for normal English word and sentence audio because
- * the extra instructions exist to prevent non-English words from being read
- * with English pronunciation. Usage-specific audio still gets its task prompt,
- * and the provider supplies the minimal guidance Gemini needs to stay in speech
- * mode.
- */
-function shouldBuildInstructions({
-  languageCode,
-  usage,
-}: {
-  languageCode?: string;
-  usage?: LanguageAudioUsage;
-}) {
-  return Boolean(usage) || Boolean(languageCode && languageCode !== "en");
-}
-
-/**
- * Expands the TTS prompt with optional usage-specific instructions. Keeping the
- * usage structured avoids passing learner-facing romanization or pronunciation
- * hints into the audio model, which can make output less stable.
- */
-function buildInstructions({
-  languageCode,
-  usage,
-}: {
-  languageCode?: string;
-  usage?: LanguageAudioUsage;
-}): string | undefined {
-  if (!shouldBuildInstructions({ languageCode, usage })) {
-    return undefined;
-  }
-
-  const languageName = languageCode
-    ? getPromptLanguageName({ language: languageCode })
-    : getPromptLanguageName({ language: "en" });
-
-  const languagePrompt =
-    languageCode && languageCode !== "en"
-      ? promptTemplate.replaceAll("{{LANGUAGE}}", () => languageName)
-      : "";
-
-  const usagePrompt = usage ? usagePrompts[usage] : "";
-  const readAloudPrompt = READ_ALOUD_TEMPLATE.replaceAll("{{LANGUAGE}}", () => languageName);
-
-  return [languagePrompt, usagePrompt, readAloudPrompt].filter(Boolean).join("\n\n");
-}
-
-/**
- * Chooses the automatic provider order from language support and content type.
- * English always prefers OpenAI. Other supported languages prefer OpenAI for
- * sentences and Gemini for words, while Gemini-only languages never reach
- * OpenAI.
- */
-function getDefaultProviderOrder({
-  languageCode,
-  textType,
-}: {
-  languageCode?: string;
-  textType: LanguageAudioTextType;
-}): readonly SpeechModelName[] {
-  if (languageCode === "en") {
-    return [speechModels.openai, speechModels.google];
-  }
-
-  if (!isOpenAITTSSupportedLanguage(languageCode)) {
-    return [speechModels.google];
-  }
-
-  if (textType === "sentence") {
-    return [speechModels.openai, speechModels.google];
-  }
-
-  return [speechModels.google, speechModels.openai];
-}
-
-/**
- * Tries every selected provider twice because transport retries cannot observe
- * semantic failures discovered only after decoded-signal validation. Explicit
- * model requests keep their existing two attempts for the audio test tool.
+ * The automatic order: Gemini Flash, then Gemini Flash Lite, then OpenAI for the languages it
+ * supports (see `speechModels`). Each model is tried once: the next one is the retry. An explicit
+ * model, from the audio test tool, gets a second attempt instead, because transport retries can't
+ * see silent or malformed audio.
  */
 function getSpeechModels({
-  languageCode,
+  language,
   model,
-  textType,
 }: {
-  languageCode?: string;
+  language: string;
   model?: SpeechModelName;
-  textType: LanguageAudioTextType;
 }): readonly SpeechModelName[] {
-  const providerOrder = model
-    ? [model]
-    : getDefaultProviderOrder({ ...(languageCode ? { languageCode } : {}), textType });
+  if (model) {
+    return [model, model];
+  }
 
-  return Array.from({ length: MAX_ATTEMPTS_PER_PROVIDER }, () => providerOrder).flat();
+  return [
+    speechModels.geminiFlash,
+    speechModels.geminiFlashLite,
+    ...(isOpenAITTSSupportedLanguage(getBaseLanguage(language)) ? [speechModels.openai] : []),
+  ];
 }
 
 /**
- * Rejects suspiciously large audio from every provider before upload. Keeping
- * one task-level limit prevents a provider-specific implementation from
- * bypassing the prompt-leak safeguard when tasks choose different models.
+ * How long the clip may play. A model that reads its instructions aloud, or keeps talking,
+ * returns far more audio than the text needs, so longer audio falls through to the next model.
  */
-function assertExpectedAudioSize({ audio, model }: { audio: Uint8Array; model: SpeechModelName }) {
-  if (audio.byteLength <= MAX_PROVIDER_AUDIO_BYTES) {
+function getMaxSeconds(text: string): number {
+  return Math.max(MIN_MAX_SECONDS, Math.ceil(text.length / MIN_CHARACTERS_PER_SECOND));
+}
+
+/**
+ * Rejects suspiciously large audio from every provider before decoding it. Keeping one
+ * task-level limit prevents a provider-specific implementation from bypassing the prompt-leak
+ * safeguard.
+ */
+function assertExpectedAudioSize({
+  audio,
+  maxSeconds,
+  model,
+}: {
+  audio: Uint8Array;
+  maxSeconds: number;
+  model: SpeechModelName;
+}) {
+  const maxBytes = maxSeconds * WAV_BYTES_PER_SECOND + WAV_HEADER_ALLOWANCE_BYTES;
+
+  if (audio.byteLength <= maxBytes) {
     return;
   }
 
   throw new Error(
-    `${model} returned oversized audio: ${audio.byteLength} bytes. Expected at most ${MAX_PROVIDER_AUDIO_BYTES} bytes.`,
+    `${model} returned oversized audio: ${audio.byteLength} bytes. Expected at most ${maxBytes} bytes.`,
   );
 }
 
 /**
- * Generates WAV and converts it to the one upload format inside the retry
- * boundary. Malformed or silent audio therefore follows the same provider
- * fallback path as transport and API failures, regardless of which provider
- * produced it.
+ * Generates WAV and converts it to the one upload format inside the retry boundary. Malformed,
+ * silent or overlong audio therefore follows the same fallback path as transport and API
+ * failures, whichever provider produced it.
  */
 async function generateWithModel({
   instructions,
@@ -166,35 +132,35 @@ async function generateWithModel({
   text,
   voice,
 }: {
-  instructions?: string;
+  instructions: string;
   model: SpeechModelName;
   text: string;
   voice: TTSVoice;
 }): Promise<VoicedAudio> {
-  const wavAudio = await generateSpeechWithProvider({
-    ...(instructions ? { instructions } : {}),
+  const maxSeconds = getMaxSeconds(text);
+
+  const { audio: wavAudio, providerMetadata } = await generateSpeechWithProvider({
+    instructions,
     model,
     text,
     voice,
   });
 
-  assertExpectedAudioSize({ audio: wavAudio, model });
+  assertExpectedAudioSize({ audio: wavAudio, maxSeconds, model });
 
-  const mp3Audio = await convertWavToMp3({ audio: wavAudio, model });
-  return { audio: mp3Audio, format: "mp3", model };
+  const { audio, durationSeconds } = await convertWavToMp3({ audio: wavAudio, maxSeconds, model });
+  return { audio, durationSeconds, format: "mp3", model, providerMetadata };
 }
 
 /**
- * Tries provider-qualified models in order. Each adapter owns transient request
- * retries; this layer owns cross-provider and post-decode quality retries.
+ * Tries provider-qualified models in order. Each adapter owns transient request retries; this
+ * layer owns cross-model and post-decode quality retries.
  */
 async function generateWithFallback({
-  instructions,
   models,
-  text,
-  voice,
+  ...input
 }: {
-  instructions?: string;
+  instructions: string;
   models: readonly SpeechModelName[];
   text: string;
   voice: TTSVoice;
@@ -206,20 +172,10 @@ async function generateWithFallback({
   }
 
   try {
-    return await generateWithModel({
-      ...(instructions ? { instructions } : {}),
-      model,
-      text,
-      voice,
-    });
+    return await generateWithModel({ ...input, model });
   } catch (error) {
     if (remainingModels.length > 0) {
-      return generateWithFallback({
-        ...(instructions ? { instructions } : {}),
-        models: remainingModels,
-        text,
-        voice,
-      });
+      return generateWithFallback({ ...input, models: remainingModels });
     }
 
     const lastError = error instanceof Error ? error : new Error(String(error));
@@ -229,51 +185,105 @@ async function generateWithFallback({
 }
 
 /**
- * Generates audio with a language-aware provider order. Callers only need to
- * identify sentences because words are the default used by vocabulary and
- * alphabet generation. An explicit model bypasses automatic provider choice.
- * The result names the model that actually voiced it, after any fallback.
+ * The text a speech model reads (its instructions and the clip's words), in tokens: the SDK
+ * doesn't report them, and at about four characters a token they're a small part of the price.
+ */
+const CHARACTERS_PER_TEXT_TOKEN = 4;
+
+/**
+ * Speech is billed by the second of audio it returns and the text it reads, so the clip's length
+ * and its words price it. AI Gateway's routing names the provider that served a Gemini clip and its
+ * own estimate is kept as a cross-check.
+ */
+function buildSpeechProvenance({
+  latencyMs,
+  promptVersion,
+  read,
+  requestedModel,
+  runId,
+  voiced,
+}: {
+  latencyMs: number;
+  promptVersion: string;
+  /** Everything the model read: its instructions and the clip's words. */
+  read: string;
+  requestedModel: SpeechModelName;
+  runId: string;
+  voiced: VoicedAudio;
+}): TaskProvenance {
+  const gateway = readGatewayMetadata(voiced.providerMetadata);
+
+  const usage = {
+    audioSeconds: voiced.durationSeconds,
+    inputTokens: Math.ceil(read.length / CHARACTERS_PER_TEXT_TOKEN),
+  };
+
+  return {
+    costUsd: computeCallCostUsd({ model: voiced.model, usage }),
+    credential: gateway.credential,
+    gatewayCostUsd: gateway.costUsd,
+    generatedAt: new Date().toISOString(),
+    latencyMs,
+    model: voiced.model,
+    promptVersion,
+    provider: gateway.servedProvider ?? getModelFamily(voiced.model),
+    requestedModel,
+    runId,
+    usage,
+  };
+}
+
+/**
+ * Voices a word, sentence or passage in its language, Gemini first (see `speechModels`). Every
+ * request names the language in its instructions, English included. An explicit model bypasses
+ * the automatic order. The result names the model that actually voiced it, after any fallback,
+ * and how long the clip plays.
  */
 export async function generateLanguageAudio({
+  analytics,
   language,
   model,
   text,
-  textType = "word",
   usage,
-  voice = DEFAULT_VOICE,
+  voice = DEFAULT_LANGUAGE_AUDIO_VOICE,
 }: {
-  language?: string;
+  analytics?: AiGenerationContext;
+  language: string;
   model?: SpeechModelName;
   text: string;
-  textType?: LanguageAudioTextType;
   usage?: LanguageAudioUsage;
   voice?: TTSVoice;
 }): Promise<SafeReturn<AudioResult>> {
-  const instructions = buildInstructions({ languageCode: language, usage });
-  const promptVersion = getPromptVersion({ systemPrompt: `${voice}\n${instructions ?? ""}` });
+  const { instructions, promptVersion } = getLanguageAudioPrompt({
+    language,
+    usagePrompt: usage ? usagePrompts[usage] : "",
+    voice,
+  });
+
+  const models = getSpeechModels({ language, ...(model ? { model } : {}) });
+  const [requestedModel = speechModels.geminiFlash] = models;
   const runId = randomUUID();
+  const startedAt = performance.now();
 
   return safeAsync(async () => {
-    const voiced = await generateWithFallback({
-      ...(instructions ? { instructions } : {}),
-      models: getSpeechModels({
-        ...(language ? { languageCode: language } : {}),
-        ...(model ? { model } : {}),
-        textType,
-      }),
-      text,
-      voice,
+    const voiced = await generateWithFallback({ instructions, models, text, voice });
+
+    const provenance = buildSpeechProvenance({
+      latencyMs: Math.round(performance.now() - startedAt),
+      promptVersion,
+      read: `${instructions}\n${text}`,
+      requestedModel,
+      runId,
+      voiced,
     });
+
+    await captureAiGeneration({ context: analytics, provenance, task: TASK });
 
     return {
       audio: voiced.audio,
+      durationMs: Math.round(voiced.durationSeconds * MS_PER_SECOND),
       format: voiced.format,
-      provenance: {
-        generatedAt: new Date().toISOString(),
-        model: voiced.model,
-        promptVersion,
-        runId,
-      },
+      provenance,
     };
   });
 }

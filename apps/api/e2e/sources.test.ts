@@ -320,10 +320,14 @@ test.describe("Sources API", () => {
       prisma.learnerSource.count({ where: { userId: learner.userId } }),
     ]);
 
-    expect([guestToken.status(), guestUpload.status()]).toStrictEqual([429, 429]);
+    // A guest's plan has no uploads: 403 asks them to create an account.
+    expect([guestToken.status(), guestUpload.status()]).toStrictEqual([403, 403]);
 
     await expect(guestUpload.json()).resolves.toMatchObject({
-      error: { code: "UPLOAD_LIMIT_REACHED" },
+      error: {
+        code: "USAGE_LIMIT_REACHED",
+        details: { limit: { period: "total", resource: "upload", tier: "guest" } },
+      },
     });
 
     expect(stored).toBe(0);

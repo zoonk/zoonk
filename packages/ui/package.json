@@ -5,7 +5,6 @@
   "type": "module",
   "exports": {
     "./components/*": "./src/components/*.tsx",
-    "./fun.css": "./src/styles/fun.css",
     "./globals.css": "./src/styles/globals.css",
     "./hooks/animated-progress": "./src/hooks/use-animated-progress.ts",
     "./hooks/clipboard": "./src/hooks/use-clipboard.ts",
@@ -15,7 +14,9 @@
     "./hooks/is-mounted": "./src/hooks/use-is-mounted.ts",
     "./hooks/hide-element": "./src/hooks/use-hide-element.ts",
     "./hooks/keyboard": "./src/hooks/use-keyboard.ts",
+    "./hooks/measured-width": "./src/hooks/use-measured-width.ts",
     "./hooks/mobile": "./src/hooks/use-mobile.ts",
+    "./hooks/mount-time": "./src/hooks/use-mount-time.ts",
     "./hooks/taking-long": "./src/hooks/use-taking-long.ts",
     "./hooks/tick-count": "./src/hooks/use-tick-count.ts",
     "./hooks/voice-recorder": "./src/hooks/use-voice-recorder.ts",

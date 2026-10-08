@@ -47,7 +47,12 @@ async function createTestOutGeneration(
   }
 
   const run = await start(testOutQuestionsWorkflow, [
-    { analytics: result.analytics, skillIds: result.skillIds, ...path.data },
+    {
+      analytics: result.analytics,
+      questionsPerSkill: result.questionsPerSkill,
+      skillIds: result.skillIds,
+      ...path.data,
+    },
   ]);
 
   return NextResponse.json(

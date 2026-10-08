@@ -11,7 +11,7 @@ import {
 import { NotebookTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonSummaryIdeas } from "../_components/lesson-summary-ideas";
-import { useLessonPlayerConfig } from "../lesson-player-context";
+import { getLessonFocusTarget } from "../_utils/lesson-focus";
 
 /**
  * The lesson's summary card over the lesson, opened from its menu: short lessons end without a
@@ -27,11 +27,10 @@ export function SummarySheet({
   open: boolean;
 }) {
   const t = useExtracted();
-  const { skin } = useLessonPlayerConfig();
 
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
-      <DrawerPopup>
+      <DrawerPopup finalFocus={getLessonFocusTarget}>
         <DrawerHeader>
           <DrawerTitle className="flex items-center gap-2 text-lg font-semibold">
             <NotebookTextIcon aria-hidden="true" className="size-5" />
@@ -41,12 +40,7 @@ export function SummarySheet({
 
         <DrawerContent className="flex flex-col gap-6">
           <LessonSummaryIdeas ideas={ideas} />
-          <Button
-            className="w-full"
-            onClick={() => onOpenChange(false)}
-            size="lg"
-            variant={skin.primaryVariant}
-          >
+          <Button className="w-full" onClick={() => onOpenChange(false)} size="lg">
             {t("Got it")}
           </Button>
         </DrawerContent>

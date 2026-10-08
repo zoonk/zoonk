@@ -5,7 +5,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { cacheTag } from "next/cache";
 import { describe, expect, it } from "vitest";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
-import { LIST_COURSES_LIMIT, listCourses } from "./list-courses";
+import { LIST_COURSES_LIMIT, listCourses, listCoursesPage } from "./list-courses";
 
 /**
  * A unique language isolates each catalog query from courses created by other
@@ -37,6 +37,36 @@ describe(listCourses, () => {
     expect(ids).not.toContain(draftCourse.id);
     expect(ids).not.toContain(schoolCourse.id);
     expect(cacheTag).toHaveBeenCalledWith(COURSE_LIST_CACHE_TAG);
+  });
+
+  it("lists a shared course only once its page details are written, and never a private one", async () => {
+    const language = createTestLanguage();
+    const organization = await organizationFixture({ kind: "brand" });
+
+    // A shared course a guest's goal made: published with its outline, its details still to come.
+    const [listed] = await Promise.all([
+      courseFixture({ isPublished: true, language, organizationId: organization.id }),
+      courseFixture({
+        description: null,
+        isPublished: true,
+        language,
+        organizationId: organization.id,
+      }),
+      courseFixture({
+        isPublished: true,
+        language,
+        organizationId: organization.id,
+        visibility: "private",
+      }),
+    ]);
+
+    const [list, page] = await Promise.all([
+      listCourses({ language, limit: 100 }),
+      listCoursesPage({ language, limit: 100 }),
+    ]);
+
+    expect(list.map((course) => course.id)).toStrictEqual([listed.id]);
+    expect(page.courses.map((course) => course.id)).toStrictEqual([listed.id]);
   });
 
   it("filters courses by language", async () => {

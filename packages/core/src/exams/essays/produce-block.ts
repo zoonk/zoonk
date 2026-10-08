@@ -2,13 +2,32 @@ import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { type BlockPayload, toBlockPayload } from "../../sessions/block-payload";
 
 /**
- * Writing practice for exams with an essay (ENEM's redação, OAB's brief, a discursive answer): a
- * focused stretch of writing graded with the official rubric, a few times a week.
+ * Writing practice for exams with an essay (ENEM's redação, OAB's brief): a focused stretch of
+ * writing graded with the official rubric, a few times a week.
  */
 const ESSAY_BLOCK_MINUTES = 20;
 
-/** The essay a produce block asks for: its item and skill, and the title it shows. */
-export type PlannedProduce = { itemId: string; skillId: string; title: string | null };
+/**
+ * A class test's discursive question ("uma dissertativa sobre osmose") asks a few lines: Pedro's
+ * 20-minute essay took two thirds of his 30-minute day and left out the osmosis lesson before it.
+ */
+const DISCURSIVE_ANSWER_MINUTES = 8;
+
+/** How long the essay takes to write: a class test's discursive answer is a few lines. */
+export function getEssayMinutes({ classTest }: { classTest: boolean }): number {
+  return classTest ? DISCURSIVE_ANSWER_MINUTES : ESSAY_BLOCK_MINUTES;
+}
+
+/**
+ * The essay a produce block asks for: its item and skill, the title it shows and the minutes it
+ * takes to write (`getEssayMinutes`).
+ */
+export type PlannedProduce = {
+  itemId: string;
+  minutes: number;
+  skillId: string;
+  title: string | null;
+};
 
 type ProduceBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"> & {
   estimatedMinutes: number;
@@ -34,7 +53,7 @@ export function toProduceBlock({
   /** Minutes left after capsules and the checkpoint. */
   room: number;
 }): ProduceBlock | null {
-  const fits = room >= ESSAY_BLOCK_MINUTES + minBlockMinutes;
+  const fits = produce !== null && room >= produce.minutes + minBlockMinutes;
 
   if (!produce || examTrialEnded || freshStart === "welcomeBack" || !fits) {
     return null;
@@ -42,7 +61,7 @@ export function toProduceBlock({
 
   return {
     canDo: null,
-    estimatedMinutes: ESSAY_BLOCK_MINUTES,
+    estimatedMinutes: produce.minutes,
     kind: "produce",
     lessonId: null,
     payload: toBlockPayload({

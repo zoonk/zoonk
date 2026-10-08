@@ -2,8 +2,9 @@ import "server-only";
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getLibraryChapterCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
+import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type LibraryProvenance } from "../_utils/library-rows";
+import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
 import { type IdentityCourse } from "../identity/_utils/identity-requests";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 import { resolveScopeLessons } from "./resolve-lesson-skills";
@@ -95,7 +96,7 @@ async function placeAfter({
     );
   });
 
-  revalidateCacheTags([getLibraryChapterCacheTag(chapterId)]);
+  revalidateCacheTags(await getChapterCacheTags(chapterId));
 }
 
 /**

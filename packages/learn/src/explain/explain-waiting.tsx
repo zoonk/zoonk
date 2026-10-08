@@ -66,7 +66,7 @@ function Outline({ titles }: { titles: string[] }) {
 }
 
 const DEEPER_ROW_CLASS =
-  "bg-card ring-foreground/10 hover:bg-muted/60 focus-visible:ring-ring/50 in-data-[mode=fun]:fun-glass flex min-h-16 w-full items-center gap-3 rounded-3xl px-4 py-3 text-left ring-1 outline-none focus-visible:ring-[3px] disabled:pointer-events-none";
+  "bg-card ring-foreground/10 hover:bg-muted/60 focus-visible:ring-ring/50 flex min-h-16 w-full items-center gap-3 rounded-3xl px-4 py-3 text-left ring-1 outline-none focus-visible:ring-[3px] disabled:pointer-events-none";
 
 /** "I want to learn this in depth" and what that builds, with where the row leads at its end. */
 function DeeperRowContent({
@@ -208,7 +208,7 @@ export function ExplainWaiting({
       />
 
       <OnboardingColumn>
-        <div className="bg-card ring-foreground/10 in-data-[mode=fun]:fun-glass flex flex-col gap-5 rounded-3xl p-5 ring-1 sm:p-6">
+        <div className="bg-card ring-foreground/10 flex flex-col gap-5 rounded-3xl p-5 ring-1 sm:p-6">
           <div className="flex items-center gap-3">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15">
               <LightbulbIcon
@@ -228,7 +228,7 @@ export function ExplainWaiting({
 
           <Outline titles={explanation.outline} />
 
-          <p className="text-muted-foreground text-sm">{t("No account and no plan to set up.")}</p>
+          <p className="text-muted-foreground text-sm">{t("No plan to set up.")}</p>
 
           {ready && (
             <OnboardingPrimaryButton autoFocus onClick={onStart}>

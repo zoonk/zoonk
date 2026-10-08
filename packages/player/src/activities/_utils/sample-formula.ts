@@ -1,6 +1,6 @@
 import { evaluateExpression } from "@zoonk/core/library/activities/expression/evaluate";
 import { parseExpression } from "@zoonk/core/library/activities/expression/parse";
-import { type NumericDomain } from "./plot-scale";
+import { type NumericDomain } from "@zoonk/utils/plot-scale";
 
 export type PlotPoint = { x: number; y: number };
 

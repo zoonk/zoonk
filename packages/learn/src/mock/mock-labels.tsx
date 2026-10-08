@@ -1,6 +1,6 @@
 "use client";
 
-import { type MockView } from "@zoonk/core/exams/mocks/contract";
+import { type MockPurpose, type MockShape, type MockView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
 
 export function useMockTitle() {
@@ -10,29 +10,26 @@ export function useMockTitle() {
     t("Mock exam {number}", { number: String(mock.number) });
 }
 
-/** A section's name, or a plain word when the exam doesn't name its sections. */
-export function useSectionName() {
-  const t = useExtracted();
-  return (name: string | null) => name ?? t("Questions");
-}
-
-/** How the exam scores answers, in one sentence the learner can act on. */
-export function useScoringRule() {
+/**
+ * What a mock sat, in a few words, beside its number: the subject, half the exam or all of it for
+ * one taken any time, the starting point for one taken in onboarding; empty for the plan's own.
+ */
+export function useMockShapeLabel() {
   const t = useExtracted();
 
-  return (scoring: MockView["scoring"]): string => {
-    if (scoring === "net") {
-      return t(
-        "A wrong answer cancels a right one. When you're not sure, you can leave a statement blank.",
-      );
+  return ({ purpose, shape }: { purpose: MockPurpose; shape: MockShape | null }): string => {
+    if (purpose === "placement") {
+      return t("Starting point");
     }
 
-    if (scoring === "irt") {
-      return t(
-        "Scored with item response theory, like the real exam: right answers count more when your pattern is consistent.",
-      );
+    if (!shape) {
+      return "";
     }
 
-    return t("Each right answer counts one point.");
+    if (shape.kind === "area") {
+      return shape.area ?? "";
+    }
+
+    return shape.kind === "half" ? t("Half the exam") : t("Full exam");
   };
 }

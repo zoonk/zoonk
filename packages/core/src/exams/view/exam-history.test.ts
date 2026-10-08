@@ -35,6 +35,7 @@ function netResult(correct: number): MockResult {
     preparation: null,
     previous: null,
     scoring: "net",
+    topics: [],
     total: QUESTIONS,
     unansweredAtTimeout: 0,
   };

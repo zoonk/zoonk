@@ -46,8 +46,8 @@ export function hasPassedConversation({
 }
 
 /**
- * Three stars in Fun: one for finishing the call, one for every objective, one for doing it
- * without Help. Nothing is random, and Focus shows the same facts as a list.
+ * Three stars: one for finishing the call, one for every objective, one for doing it without Help.
+ * Nothing is random.
  */
 export function getConversationStars({
   objectives,

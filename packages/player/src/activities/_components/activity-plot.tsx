@@ -1,10 +1,10 @@
 "use client";
 
+import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
+import { type LinearScale, type NumericDomain, createLinearScale } from "@zoonk/utils/plot-scale";
 import { createContext, use } from "react";
-import { type LinearScale, type NumericDomain, createLinearScale } from "../_utils/plot-scale";
 import { type PlotPoint, linePath } from "../_utils/sample-formula";
-import { useMeasuredWidth } from "../_utils/use-measured-width";
 
 type PlotPadding = { bottom: number; left: number; right: number; top: number };
 

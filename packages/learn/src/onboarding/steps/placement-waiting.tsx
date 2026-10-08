@@ -54,8 +54,10 @@ export function PlacementWaiting({
   const t = useExtracted();
   const patient = usePatience();
   const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
-  // A test built from the learner's own material has it read first, which takes a few minutes.
+  // A test built from the learner's own material has it read first, and an exam's notice is read
+  // again when newer instructions read notices better; either takes a few minutes.
   const readsMaterial = shown.steps.readExamNotice !== undefined;
+  const readsNotice = shown.steps.readNotice !== undefined;
 
   return (
     <OnboardingColumn>
@@ -63,9 +65,15 @@ export function PlacementWaiting({
         <OnboardingHeading>
           <OnboardingTitle>{t("Getting your questions ready")}</OnboardingTitle>
           <OnboardingDescription>
-            {readsMaterial
-              ? t("They come from the material you added. Reading it takes a few minutes.")
-              : t("They come from the skills your goal needs. It usually takes under a minute.")}
+            {readsMaterial &&
+              t("They come from the material you added. Reading it takes a few minutes.")}
+            {readsNotice &&
+              t(
+                "Your questions follow the exam notice, which we're reading now. It takes a few minutes, once per exam.",
+              )}
+            {!readsMaterial &&
+              !readsNotice &&
+              t("They come from the skills your goal needs. It usually takes a minute or two.")}
           </OnboardingDescription>
         </OnboardingHeading>
       </GenerationWait>
@@ -75,7 +83,7 @@ export function PlacementWaiting({
           <OnboardingSecondaryButton disabled={skipping} onClick={onSkip}>
             {t("Skip for now")}
           </OnboardingSecondaryButton>
-          <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-center text-sm text-pretty">
+          <p className="text-muted-foreground text-center text-sm text-pretty">
             {t("Your first sessions will ask a few of these instead.")}
           </p>
         </OnboardingFooter>

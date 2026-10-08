@@ -65,7 +65,8 @@ async function applyEdit({
  * Saves one fix the learner made on the "Here's what I understood" card and recomputes every
  * field that depends on it (a new exam year reads that year's dates and drops the old deadline).
  * Only goals still being confirmed can be fixed: `conflict` while the words are being read or once
- * goals were created from the draft; `invalid` when the fix doesn't apply to that goal.
+ * goals were created from the draft; `invalid` when the fix doesn't apply to that goal. A new exam
+ * year's day is searched for on the web only as one of the learner's small AI calls (`allowDateSearch`).
  */
 export async function reviseOnboardingDraft({
   draftId,

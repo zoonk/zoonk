@@ -2,7 +2,6 @@
 
 import { type WeeklyRecapResult } from "@zoonk/core/milestones/weekly-recap";
 import { createContext, use } from "react";
-import { type LearnBuddy } from "../buddies/use-buddy-name";
 
 export type WeeklyRecapView = Extract<WeeklyRecapResult, { status: "ready" }>["recap"];
 
@@ -13,7 +12,6 @@ type LogbookValue = {
   hrefs: LogbookHrefs;
   /** The learner's first name for "What a week, Ana!", when there is one. */
   learnerName: string | null;
-  buddy: LearnBuddy | null;
   recap: WeeklyRecapView;
 };
 

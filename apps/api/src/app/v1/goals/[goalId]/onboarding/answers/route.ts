@@ -4,6 +4,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
@@ -44,6 +45,12 @@ async function createOnboardingAnswer(
 
   if (result.status === "invalid") {
     return errors.unprocessableEntity("This answer can't be applied to the goal");
+  }
+
+  // The time a day re-plans the first days: the lessons and outlines they now hold start being
+  // written after the response, so Today doesn't wait on them after the plan's reveal.
+  if (body.data.question === "schedule") {
+    await scheduleGoalPreparation(goalId);
   }
 
   const onboarding = await getOnboarding({ goalId });

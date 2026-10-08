@@ -35,14 +35,6 @@ const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";
 const GEMINI = "google/gemini-3.8-flash";
 
-const WRONG_ANSWER = {
-  fix: "Mark 1 °C as the answer.",
-  kind: "incorrect" as const,
-  problem: "The option marked correct, 9 °C, is wrong.",
-  screen: 3,
-  severity: "blocking" as const,
-};
-
 function taskResult<T>(data: T, model: string) {
   return {
     data,
@@ -62,20 +54,32 @@ function taskResult<T>(data: T, model: string) {
   };
 }
 
-/** One draft by `model`: the reviewer finds `issues` before and after the fix pass. */
-function mockDraft({ issues, model }: { issues: (typeof WRONG_ANSWER)[]; model: string }) {
-  const lesson = writtenTemperatureLesson();
+/** Filler the code checks flag on screen 4, which the fix pass in these tests leaves as it was. */
+const FILLER = "It's worth noting that zero is a mark.";
+
+/**
+ * One draft by `model`. A `heldBack` draft has filler the code checks flag, and its fix pass
+ * leaves it, so the checks hold the draft back.
+ */
+function mockDraft({ heldBack, model }: { heldBack: boolean; model: string }) {
+  const written = writtenTemperatureLesson();
+
+  const lesson = heldBack
+    ? {
+        ...written,
+        screens: written.screens.map((screen, index) =>
+          index === 4 && screen.kind === "explanation" ? { ...screen, text: FILLER } : screen,
+        ),
+      }
+    : written;
 
   vi.mocked(writeLessonDraft).mockResolvedValueOnce(taskResult(lesson, model));
-  vi.mocked(checkLessonQuality).mockResolvedValueOnce(taskResult({ issues }, OPUS));
 
-  if (issues.length === 0) {
-    return;
+  if (heldBack) {
+    vi.mocked(fixLessonDraft).mockResolvedValueOnce(
+      taskResult({ changedScreens: [], lesson }, SOL),
+    );
   }
-
-  vi.mocked(fixLessonDraft).mockResolvedValueOnce(taskResult({ changedScreens: [3], lesson }, SOL));
-
-  vi.mocked(checkLessonQuality).mockResolvedValueOnce(taskResult({ issues }, OPUS));
 }
 
 async function claimedLesson(attrs: Parameters<typeof libraryLessonFixture>[0] = {}) {
@@ -140,7 +144,7 @@ describe("held-back lessons", () => {
     const { lesson, workflowRunId } = await claimedLesson();
     const planned = await plannedLesson(lesson.id);
 
-    mockDraft({ issues: [WRONG_ANSWER], model: SOL });
+    mockDraft({ heldBack: true, model: SOL });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { status: "heldBack" },
@@ -153,12 +157,7 @@ describe("held-back lessons", () => {
       heldBackDrafts: [
         {
           model: SOL,
-          problems: [
-            {
-              problem: "The option marked correct, 9 °C, is wrong. Fix: Mark 1 °C as the answer.",
-              screen: 3,
-            },
-          ],
+          problems: [{ problem: expect.any(String), screen: 4 }],
           runId: workflowRunId,
         },
       ],
@@ -166,11 +165,11 @@ describe("held-back lessons", () => {
     });
 
     // The second draft: a fresh one by the same writer, told what held the first back.
-    mockDraft({ issues: [WRONG_ANSWER], model: SOL });
+    mockDraft({ heldBack: true, model: SOL });
     await redraft({ lessonId: lesson.id, workflowRunId });
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
-      heldBackProblems: [expect.objectContaining({ screen: 3 })],
+      heldBackProblems: [expect.objectContaining({ screen: 4 })],
       model: undefined,
     });
 
@@ -180,15 +179,15 @@ describe("held-back lessons", () => {
     });
 
     // The last draft: a writer from another family, told what held both back.
-    mockDraft({ issues: [WRONG_ANSWER], model: OPUS });
+    mockDraft({ heldBack: true, model: OPUS });
     await redraft({ lessonId: lesson.id, workflowRunId });
 
     const lastDraft = vi.mocked(writeLessonDraft).mock.calls[2]?.[0];
     expect(lastDraft?.model).toBe(OPUS);
     expect(lastDraft?.heldBackProblems).toHaveLength(2);
 
-    // The reviewer follows the writer, so it stays from another family.
-    expect(vi.mocked(checkLessonQuality).mock.calls.at(-1)?.[0].writerModel).toBe(OPUS);
+    // The reviewer reads drafts after publishing, so none ran on the way to the learner.
+    expect(checkLessonQuality).not.toHaveBeenCalled();
 
     const setAside = await readLesson(lesson.id);
     expect(setAside.contentStatus).toBe("failed");
@@ -225,7 +224,7 @@ describe("held-back lessons", () => {
       visibility: "private",
     });
 
-    mockDraft({ issues: [], model: SOL });
+    mockDraft({ heldBack: false, model: SOL });
 
     await writeLessonContent({ lessonId: lesson.id, model: GEMINI, workflowRunId });
 
@@ -238,7 +237,7 @@ describe("held-back lessons", () => {
       heldBackDrafts: [heldBackDraftFixture()],
     });
 
-    mockDraft({ issues: [], model: SOL });
+    mockDraft({ heldBack: false, model: SOL });
 
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { status: "published" },

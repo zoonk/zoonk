@@ -4,7 +4,6 @@ import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
 import { followRun } from "./generation-run";
-import { type Mode, setDeviceMode } from "./learn-personas";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 
 /**
@@ -44,11 +43,6 @@ function placementWait(page: Page) {
   return page.getByRole("list", { name: "Getting your questions ready" }).getByRole("listitem");
 }
 
-async function openSteps(page: Page, { goalId, mode = "focus" }: { goalId: string; mode?: Mode }) {
-  await setDeviceMode(page.context(), mode);
-  await page.goto(`/start/${goalId}`);
-}
-
 test.describe("Refreshing mid-onboarding", () => {
   test("comes back to the same question, with the dots, Back and Start over", async ({
     noProgressUser,
@@ -60,7 +54,7 @@ test.describe("Refreshing mid-onboarding", () => {
       userId: noProgressUser.id,
     });
 
-    await openSteps(page, { goalId: goal.id });
+    await page.goto(`/start/${goal.id}`);
 
     const purpose = "What do you want from it?";
     await expect(page.getByRole("heading", { name: purpose })).toBeVisible();
@@ -82,8 +76,13 @@ test.describe("Refreshing mid-onboarding", () => {
 
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
-    // Start over sets the goal aside and goes back to the first question.
+    // Onboarding is a task: no app bar, and its close starts over, after asking. Starting over sets
+    // the goal aside and goes back to the first question.
+    await expect(page.getByRole("button", { name: /current goal/iu })).toHaveCount(0);
     await page.getByRole("button", { name: "Start over" }).click();
+
+    const confirm = page.getByRole("alertdialog", { name: "Start over?" });
+    await confirm.getByRole("button", { name: "Start over" }).click();
     await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
 
     await expect
@@ -114,7 +113,7 @@ test.describe("Waiting for placement's questions", () => {
       runId,
     });
 
-    await openSteps(page, { goalId: goal.id, mode: "focus" });
+    await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByRole("heading", { name: "Getting your questions ready" })).toBeVisible();
@@ -155,7 +154,7 @@ test.describe("When a wait can't go on", () => {
       runId,
     });
 
-    await openSteps(page, { goalId: goal.id, mode: "fun" });
+    await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     const failed = page.getByRole("alert").filter({ hasText: "This didn't finish" });
@@ -199,7 +198,7 @@ test.describe("When a wait can't go on", () => {
     );
 
     await page.clock.install();
-    await openSteps(page, { goalId: goal.id });
+    await page.goto(`/start/${goal.id}`);
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     const lost = page.getByRole("alert").filter({ hasText: "Connection lost" });
@@ -231,7 +230,7 @@ test.describe("When a wait can't go on", () => {
     });
 
     await page.clock.install();
-    await openSteps(page, { goalId: goal.id });
+    await page.goto(`/start/${goal.id}`);
 
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
@@ -262,13 +261,13 @@ test.describe("When a wait can't go on", () => {
   }) => {
     const goal = await createGoalBeingMapped({ runId: null, userId: noProgressUser.id });
     await mapGoalSkills({ goalId: goal.id, items: false, placementPrepared: true });
-    await openSteps(page, { goalId: goal.id });
+    await page.goto(`/start/${goal.id}`);
 
     await page.getByRole("button", { exact: true, name: "Start" }).click();
     await expect(page.getByRole("heading", { name: "Let's skip the questions" })).toBeVisible();
     await page.getByRole("button", { name: "See my plan" }).click();
 
-    await expect(page.getByRole("heading", { level: 1, name: goal.title })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
 
     await expect
       .poll(async () => {
@@ -309,15 +308,15 @@ test.describe("When a wait can't go on", () => {
       userId: noProgressUser.id,
     });
 
-    await openSteps(page, { goalId: goal.id });
-    await page.getByRole("button", { name: "Take the quick test" }).click();
+    await page.goto(`/start/${goal.id}`);
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
     const progress = page.getByRole("progressbar", { name: "Preparing your level test" });
     await expect(progress).toBeVisible();
 
     // A refresh comes back to the wait, following the writer at work.
     await page.reload();
     await expect(progress).toBeVisible();
-    await expect(page.getByRole("button", { name: "Take the quick test" })).toBeHidden();
+    await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeHidden();
 
     // The writer gives up: its claim goes stale with nothing written.
     await prisma.languageLevelTest.update({

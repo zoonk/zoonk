@@ -18,7 +18,7 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
   const { chapter, course } = fit;
 
   return (
-    <section className="bg-card ring-foreground/10 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-3xl p-4 ring-1">
+    <section className="bg-card ring-foreground/10 flex flex-col gap-3 rounded-3xl p-4 ring-1">
       <p className="text-muted-foreground text-sm">{t("This is part of")}</p>
 
       {course && (
@@ -95,7 +95,7 @@ export function GuestLessonNext({
         <LearnLink
           className={cn(
             buttonVariants({ size: "lg", variant: "outline" }),
-            "in-data-[mode=fun]:fun-glass h-12 w-full rounded-full text-base",
+            "h-12 w-full rounded-full text-base",
           )}
           href={signUpHref}
         >

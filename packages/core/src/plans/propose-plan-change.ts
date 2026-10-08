@@ -5,7 +5,7 @@ import { loadPlanContext } from "./_utils/plan-context";
 import { type PlanChangeRecord, withPlanRetry } from "./_utils/replan";
 import { type PlanOperation } from "./plan-contract";
 
-export type PlanProposalResult = AppliedChange | { status: "notFound" | "saved" };
+export type PlanProposalResult = AppliedChange | { status: "notFound" | "saved" | "unchanged" };
 
 /**
  * Suggests a change to a learner's plan from another part of core, such as a memory insight ("I

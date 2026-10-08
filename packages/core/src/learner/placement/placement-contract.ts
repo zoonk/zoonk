@@ -1,4 +1,5 @@
 import { type Goal } from "@zoonk/db";
+import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { answerTimeZoneSchema, choiceAnswerSchema, itemAnswerInputSchema } from "../contract";
@@ -66,7 +67,29 @@ export const placementCompletionInputSchema = z
 
 export type PlacementCompletionInput = z.infer<typeof placementCompletionInputSchema>;
 
-/** The level the learner gave: this request's, then the one onboarding stored on the goal. */
+/**
+ * A language level test's result on the own-level scale, by the Library band it covers: B1 and up
+ * has the beginner band (A1–A2) behind it, C1 and up the intermediate one too.
+ */
+const CEFR_OWN_LEVELS: readonly { from: number; level: OwnLevel }[] = [
+  { from: CEFR_LEVELS.indexOf("C1"), level: "advanced" },
+  { from: CEFR_LEVELS.indexOf("B1"), level: "intermediate" },
+  { from: CEFR_LEVELS.indexOf("A2"), level: "basic" },
+  { from: 0, level: "none" },
+];
+
+function fromCefrLevel(label: unknown): OwnLevel | null {
+  const score = parseCefrScore(label);
+
+  return score === null
+    ? null
+    : (CEFR_OWN_LEVELS.find((step) => score >= step.from)?.level ?? null);
+}
+
+/**
+ * The level the learner gave: this request's, then the one onboarding stored on the goal, which a
+ * language goal's level test replaces with its CEFR level ("B1+").
+ */
 export function getOwnLevel({
   goal,
   level,
@@ -78,7 +101,20 @@ export function getOwnLevel({
     return level;
   }
 
-  const stored = isJsonObject(goal.details) ? ownLevelSchema.safeParse(goal.details.level) : null;
+  const stored = isJsonObject(goal.details) ? goal.details.level : null;
+  const parsed = ownLevelSchema.safeParse(stored);
 
-  return stored?.success ? stored.data : null;
+  return parsed.success ? parsed.data : fromCefrLevel(stored);
+}
+
+/**
+ * The subjects of an exam the learner said they already know well in onboarding (the notice's
+ * names): their basics start as known.
+ */
+export function getKnownSubjects(goal: Pick<Goal, "details">): string[] {
+  const known = isJsonObject(goal.details) ? goal.details.knownSubjects : null;
+
+  return Array.isArray(known)
+    ? known.filter((item): item is string => typeof item === "string")
+    : [];
 }

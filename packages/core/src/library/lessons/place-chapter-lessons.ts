@@ -1,8 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
-import { getLibraryChapterCacheTag } from "../../cache/tags";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
+import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
 
 /**
  * Makes these shared lessons a chapter's outline, in this order. Placements an earlier attempt
@@ -34,5 +34,5 @@ export async function placeChapterLessons({
     data: lessonIds.map((lessonId, position) => ({ chapterId, lessonId, position })),
   });
 
-  revalidateCacheTags([getLibraryChapterCacheTag(chapterId)]);
+  revalidateCacheTags(await getChapterCacheTags(chapterId));
 }

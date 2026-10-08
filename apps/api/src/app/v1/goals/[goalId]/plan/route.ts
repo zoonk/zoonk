@@ -5,7 +5,7 @@ import { parsePathParams } from "@/lib/path-params";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { NextResponse } from "next/server";
 
-/** The goal's plan at every zoom level, the same view model both modes show. */
+/** The goal's plan at every zoom level. */
 async function readPlan(_request: Request, context: RouteContext<"/v1/goals/[goalId]/plan">) {
   const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
 

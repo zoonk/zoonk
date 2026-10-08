@@ -7,10 +7,10 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { temperatureSpec } from "./_test-utils/written-lessons";
 import {
-  failsLaterReview,
   listLessonsForLaterReview,
   prepareLaterReview,
   pullLessonForFix,
+  toLaterReviewProblems,
 } from "./later-reviews";
 
 /** Lesson ids are sampled by their last hex digits; these land in and out of the one-in-five sample. */
@@ -46,7 +46,7 @@ describe(listLessonsForLaterReview, () => {
 });
 
 describe(prepareLaterReview, () => {
-  it("reads the lesson as stored against its own plan, naming the model that wrote it", async () => {
+  it("reads the lesson's current version as stored against its own plan, naming the model that wrote it and its reuse", async () => {
     const spec = temperatureSpec();
 
     const lesson = await libraryLessonFixture({
@@ -55,18 +55,32 @@ describe(prepareLaterReview, () => {
       summary: { ideas: [{ text: "A rise moves up the thermometer." }] },
     });
 
-    const step = await libraryStepFixture({
-      lessonId: lesson.id,
-      model: "openai/gpt-6-sol",
-      position: 0,
-    });
+    const [, step] = await Promise.all([
+      // A version a check replaced stays for learners playing it, but isn't what's reviewed.
+      libraryStepFixture({
+        lessonId: lesson.id,
+        model: "openai/gpt-6-luna",
+        position: 0,
+        retiredAt: new Date(),
+        version: 1,
+      }),
+      libraryStepFixture({
+        lessonId: lesson.id,
+        model: "openai/gpt-6-sol",
+        position: 0,
+        version: 2,
+      }),
+    ]);
 
     await expect(prepareLaterReview(lesson.id)).resolves.toMatchObject({
       lesson: {
         screens: [{ content: step.content, kind: step.kind }],
         summary: ["A rise moves up the thermometer."],
       },
+      // No goal plans it yet: a niche lesson, checked by the cheaper reviewer.
+      reuse: "library",
       spec: { title: spec.title },
+      version: 2,
       writerModel: "openai/gpt-6-sol",
     });
   });
@@ -94,12 +108,20 @@ describe(pullLessonForFix, () => {
   });
 });
 
-describe(failsLaterReview, () => {
-  it("pulls a published lesson only for something wrong, never for style or repetition", () => {
-    expect(failsLaterReview([{ kind: "incorrect", severity: "blocking" }])).toBe(true);
-    expect(failsLaterReview([{ kind: "incorrect", severity: "minor" }])).toBe(false);
-    expect(failsLaterReview([{ kind: "scope", severity: "blocking" }])).toBe(false);
-    expect(failsLaterReview([{ kind: "weakCheck", severity: "blocking" }])).toBe(false);
-    expect(failsLaterReview(null)).toBe(false);
+describe(toLaterReviewProblems, () => {
+  it("replaces a published lesson only for something wrong, never for style or repetition", () => {
+    const issue = { fix: "Mark 3 °C.", problem: "The key is 11 °C.", screen: 3 };
+
+    expect(
+      toLaterReviewProblems([{ ...issue, kind: "incorrect", severity: "blocking" }]),
+    ).toStrictEqual([{ problem: "The key is 11 °C. Fix: Mark 3 °C.", screen: 3 }]);
+
+    expect(
+      toLaterReviewProblems([
+        { ...issue, kind: "incorrect", severity: "minor" },
+        { ...issue, kind: "scope", severity: "blocking" },
+        { ...issue, kind: "weakCheck", severity: "blocking" },
+      ]),
+    ).toStrictEqual([]);
   });
 });

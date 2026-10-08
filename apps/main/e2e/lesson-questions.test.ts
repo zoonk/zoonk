@@ -8,7 +8,6 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { expect, test } from "./fixtures";
-import { expectMode, showInMode } from "./learn-personas";
 import { fulfillTutorAnswer } from "./tutor-answer";
 
 const FORMATTED_ANSWER = [
@@ -39,7 +38,17 @@ function questionResource({
 }): LessonQuestionResource {
   const now = new Date().toISOString();
 
-  return { answer, context, createdAt: now, id: randomUUID(), question, status, updatedAt: now };
+  return {
+    answer,
+    context,
+    createdAt: now,
+    id: randomUUID(),
+    planChange: null,
+    question,
+    status,
+    toolOffer: null,
+    updatedAt: now,
+  };
 }
 
 type QuestionLessonScenario = {
@@ -206,8 +215,10 @@ async function mockQuestionApi({
       context: getContextSummary(input.context),
       createdAt: now,
       id: randomUUID(),
+      planChange: null,
       question: input.question,
       status: "pending",
+      toolOffer: null,
       updatedAt: now,
     };
 
@@ -246,26 +257,23 @@ async function mockQuestionApi({
 }
 
 test.describe("The tutor", () => {
-  test("asks from the screen in view and follows up on the next one in its own thread in Fun", async ({
-    noProgressUser,
+  test("asks from the screen in view and follows up on the next one in its own thread", async ({
     userWithoutProgress: page,
   }) => {
     // Any signed-in learner can ask, without a subscription or progress.
-    await showInMode(page.context(), { mode: "fun", userId: noProgressUser.id });
     const scenario = await createQuestionLesson({ includeSecondStep: true });
     const api = await mockQuestionApi({ lessonId: scenario.lessonId, page });
 
     await page.goto(scenario.url);
-    await expectMode(page, "fun");
     await expect(page.getByText(scenario.question)).toBeVisible();
     const lessonUrl = page.url();
 
     // The screen's history preloads once the page is interactive; the sheet opens with it.
     await expect.poll(() => api.getRequests).toBe(1);
-    await page.getByRole("button", { name: "Ask a question" }).click();
+    await page.getByRole("button", { name: "Ask Buddy" }).click();
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-    await expect(dialog.getByText("Part 1 of 2")).toBeVisible();
+    await expect(dialog.getByRole("heading", { name: "Buddy" })).toBeVisible();
+    await expect(dialog.getByText("Ask about this screen")).toBeVisible();
 
     const textbox = dialog.getByRole("textbox", { name: "Ask a question" });
     await expect(textbox).toHaveAttribute("placeholder", "Ask about the lesson content…");
@@ -297,7 +305,7 @@ test.describe("The tutor", () => {
     }
 
     await expect(page.getByText(secondStepTitle)).toBeVisible();
-    await page.getByRole("button", { name: "Ask a question" }).click();
+    await page.getByRole("button", { name: "Ask Buddy" }).click();
     await expect(dialog.getByText(firstQuestion)).not.toBeVisible();
 
     const followUp = "How does that connect to free fall?";
@@ -334,7 +342,7 @@ test("renders preloaded Markdown immediately while optional scripts load", async
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
   await expect.poll(() => api.completedGetRequests).toBe(1);
-  await expect(page.getByRole("button", { name: "Ask a question" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ask Buddy" })).toBeVisible();
   const releaseScripts = Promise.withResolvers<null>();
   const errors: Error[] = [];
   page.on("pageerror", (error) => errors.push(error));
@@ -348,7 +356,7 @@ test("renders preloaded Markdown immediately while optional scripts load", async
   const dialog = page.getByRole("dialog");
 
   try {
-    await page.getByRole("button", { name: "Ask a question" }).click();
+    await page.getByRole("button", { name: "Ask Buddy" }).click();
     await expect(dialog.getByRole("heading", { name: "Key idea" })).toBeVisible();
     await expect(dialog.getByRole("status")).toHaveCount(0);
     expect(api.getRequests).toBe(1);
@@ -371,20 +379,20 @@ test("renders preloaded Markdown immediately while optional scripts load", async
   expect(errors).toEqual([]);
 });
 
-test("keeps the mobile visitor flow focused on signing in", async ({ page }) => {
+test("keeps the mobile visitor flow focused on creating an account", async ({ page }) => {
   const scenario = await createQuestionLesson({ staticOnly: true });
   const api = await mockQuestionApi({ lessonId: scenario.lessonId, page });
 
   await page.setViewportSize({ height: 812, width: 375 });
   await page.goto(scenario.url);
-  await page.getByRole("button", { name: "Ask a question" }).click();
+  await page.getByRole("button", { name: "Ask Buddy" }).click();
 
   const dialog = page.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { name: "Ask questions" })).toBeVisible();
-  await expect(dialog.getByText("Sign in to ask questions")).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "Buddy" })).toBeVisible();
+  await expect(dialog.getByText("Create a free account to ask questions")).toBeVisible();
   await expect(dialog.getByRole("textbox", { name: "Ask a question" })).toHaveCount(0);
   await expect(dialog.getByRole("button", { name: "Send" })).toHaveCount(0);
-  await expect(dialog.getByRole("link", { name: "Sign in" })).toBeVisible();
+  await expect(dialog.getByRole("link", { name: "Create a free account" })).toBeVisible();
   expect(api.getRequests).toBe(0);
   expect(api.statusRequests).toBe(0);
 

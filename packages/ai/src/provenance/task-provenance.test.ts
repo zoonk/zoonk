@@ -1,4 +1,4 @@
-import { type LanguageModelUsage } from "ai";
+import { type LanguageModelUsage, type ProviderMetadata } from "ai";
 import { describe, expect, it } from "vitest";
 import {
   type TaskProvenance,
@@ -15,10 +15,10 @@ const usage: LanguageModelUsage = {
   totalTokens: 15,
 };
 
-function createStep(cost?: string) {
+function createStep(gateway?: ProviderMetadata[string]) {
   return {
     model: { modelId: "openai/gpt-6-luna", provider: "gateway" },
-    providerMetadata: cost === undefined ? undefined : { gateway: { cost } },
+    providerMetadata: gateway === undefined ? undefined : { gateway },
     response: { modelId: "openai/gpt-6-luna" },
   };
 }
@@ -34,14 +34,50 @@ function buildWithSteps(steps: ReturnType<typeof createStep>[]) {
 }
 
 describe(buildTaskProvenance, () => {
-  it("adds up the cost of every step the gateway billed", () => {
-    const provenance = buildWithSteps([createStep("0.25"), createStep(), createStep("0.5")]);
+  it("prices the call from its usage, whatever the gateway billed for our own key", () => {
+    const provenance = buildWithSteps([createStep({ cost: "0" })]);
 
-    expect(provenance.costUsd).toBe(0.75);
+    // Luna: 10 input tokens at $0.10 and 5 output tokens at $0.50 per million.
+    expect(provenance.costUsd).toBeCloseTo(3.5e-6, 10);
   });
 
-  it("leaves the cost unknown when no step reported one", () => {
-    expect(buildWithSteps([createStep(), createStep()]).costUsd).toBeUndefined();
+  it("prices the call at the tier that served it", () => {
+    const provenance = buildWithSteps([createStep({ serviceTier: "flex" })]);
+
+    expect(provenance.serviceTier).toBe("flex");
+    expect(provenance.costUsd).toBeCloseTo(1.75e-6, 10);
+  });
+
+  it("keeps the gateway's list-price estimate of every step as a cross-check", () => {
+    const provenance = buildWithSteps([
+      createStep({ cost: "0", marketCost: "0.25" }),
+      createStep(),
+      createStep({ cost: "0.5" }),
+    ]);
+
+    expect(provenance.gatewayCostUsd).toBe(0.75);
+  });
+
+  it("names the credential that paid for the call", () => {
+    const provenance = buildWithSteps([
+      createStep({
+        routing: {
+          modelAttempts: [
+            {
+              canonicalSlug: "openai/gpt-6-luna",
+              providerAttempts: [{ credentialType: "byok", success: true }],
+              success: true,
+            },
+          ],
+        },
+      }),
+    ]);
+
+    expect(provenance.credential).toBe("byok");
+  });
+
+  it("leaves the gateway's estimate unknown when no step reported one", () => {
+    expect(buildWithSteps([createStep(), createStep()]).gatewayCostUsd).toBeUndefined();
   });
 });
 
@@ -95,6 +131,8 @@ describe(combineTaskProvenance, () => {
 
     expect(combined).toStrictEqual({
       costUsd: expect.closeTo(0.3),
+      credential: undefined,
+      gatewayCostUsd: undefined,
       generatedAt: "2026-09-28T10:00:40.000Z",
       latencyMs: 40_000,
       model: "anthropic/claude-opus-5.5",
@@ -102,6 +140,7 @@ describe(combineTaskProvenance, () => {
       provider: "anthropic",
       requestedModel: "anthropic/claude-opus-5.5",
       runId: "run-1",
+      serviceTier: undefined,
       usage: {
         cacheReadTokens: undefined,
         cacheWriteTokens: undefined,

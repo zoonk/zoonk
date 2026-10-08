@@ -150,7 +150,9 @@ async function isOwnGoal({ goalId, userId }: { goalId?: string; userId: string }
  * claimed against the learner's plan first (free learners follow one active goal), and the ones
  * allowed are created even when a later one isn't. The first new goal becomes the one the tabs
  * show: it's the main goal, whose session comes first. A goal that replaces one of the learner's
- * (`replacesGoalId`, a language goal moving to its exam) isn't another goal, so it claims nothing.
+ * (`replacesGoalId`: a language goal moving to its exam, a finished level going on to the next)
+ * isn't another goal, so it claims nothing; its callers let a goal be replaced only once, so a
+ * replacement can't repeat into unlimited new goals.
  */
 export async function createGoals(
   input: GoalCreateInput,

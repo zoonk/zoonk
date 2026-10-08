@@ -1,3 +1,4 @@
+import { type ServiceTier } from "@zoonk/ai/provider-options";
 import {
   generateCourseOutline,
   streamCourseOutline,
@@ -47,9 +48,11 @@ function withoutWaitedChapter({
  */
 async function streamWaitedBand({
   input,
+  serviceTier,
   waitedKey,
 }: {
   input: BandInput;
+  serviceTier?: ServiceTier;
   waitedKey: string;
 }): Promise<BandOutline> {
   const { analytics, courseId, plan, scope, workflowRunId } = input;
@@ -83,7 +86,7 @@ async function streamWaitedBand({
 
       return { chapterId: saved.chapterId, goalIds, position };
     },
-    serviceTier: "priority",
+    serviceTier,
   });
 
   if (outline.early && outline.provenance.model !== outline.provenance.requestedModel) {
@@ -105,9 +108,12 @@ async function streamWaitedBand({
  */
 export async function writeWaitedBand({
   input,
+  serviceTier,
   waitedKey,
 }: {
   input: BandInput;
+  /** The tier the learner's wait gets (`chooseServiceTier`). */
+  serviceTier?: ServiceTier;
   waitedKey: string;
 }): Promise<BandOutline> {
   const early = await findEarlyOutlineChapter({
@@ -117,12 +123,12 @@ export async function writeWaitedBand({
   });
 
   if (!early) {
-    return streamWaitedBand({ input, waitedKey });
+    return streamWaitedBand({ input, serviceTier, waitedKey });
   }
 
   const { data, provenance } = await generateCourseOutline({
     ...toOutlineParams(input),
-    serviceTier: "priority",
+    serviceTier,
   });
 
   const kept = pickChapters({ outline: data, plan: input.plan });

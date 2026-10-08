@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { scoreAnswers } from "../../sessions/brain-power";
 import { loadStudySessionAnswers } from "../../sessions/score-lesson-answers";
 import { type LibraryLessonRun } from "../contract";
@@ -32,13 +33,15 @@ export async function findLessonStudySessionId({
 }
 
 /**
- * Screens whose question the learner already got right: a bank item (math checks) or the screen
- * itself. Answering them right again is a repeat, which keeps Hyperdrive where it is.
+ * Screens whose question the learner got right before the run: a bank item (math checks) or the
+ * screen itself. Answering them right again is a repeat, which keeps Hyperdrive where it is.
  */
 async function getKnownStepIds({
+  before,
   steps,
   userId,
 }: {
+  before: Date;
   steps: readonly LessonQuestionRow[];
   userId: string;
 }): Promise<string[]> {
@@ -49,6 +52,7 @@ async function getKnownStepIds({
     select: { itemId: true, stepId: true },
     where: {
       OR: [{ stepId: { in: steps.map((step) => step.id) } }, { itemId: { in: itemIds } }],
+      answeredAt: { lt: before },
       isCorrect: true,
       userId,
     },
@@ -62,27 +66,32 @@ async function getKnownStepIds({
 }
 
 /**
- * Where Hyperdrive starts for a run, so the player shows it live with the same rule the server
- * scores by (`advanceHyperdrive`): the session's streak so far and the screens that would be repeats.
+ * Where Hyperdrive starts for a run, by the same rule the server scores with: the session's streak
+ * and the screens that would be repeats, both as they were when the run started, so a resumed run
+ * replays its own answers on top of them.
  */
 export async function getRunHyperdrive({
   lessonId,
+  run,
   studySessionId,
   userId,
 }: {
   lessonId: string;
+  run: { startedAt: Date };
   studySessionId: string | null;
   userId: string;
 }): Promise<LibraryLessonRun["hyperdrive"]> {
   const steps = await prisma.step.findMany({
     select: { id: true, itemId: true },
-    where: { lessonId },
+    where: { lessonId, ...CURRENT_STEPS },
   });
 
   const [knownStepIds, sessionAnswers] = await Promise.all([
-    getKnownStepIds({ steps, userId }),
+    getKnownStepIds({ before: run.startedAt, steps, userId }),
     loadStudySessionAnswers({ studySessionId, userId }),
   ]);
 
-  return { knownStepIds, streak: scoreAnswers({ answers: sessionAnswers }).streak };
+  const earlier = sessionAnswers.filter((answer) => answer.answeredAt < run.startedAt);
+
+  return { knownStepIds, streak: scoreAnswers({ answers: earlier }).streak };
 }

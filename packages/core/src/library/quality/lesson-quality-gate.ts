@@ -1,5 +1,5 @@
 import "server-only";
-import { type ServiceTier } from "@zoonk/ai/provider-options";
+import { type CallReuse, type ServiceTier } from "@zoonk/ai/provider-options";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import {
@@ -21,6 +21,7 @@ export type LessonWritingContext = Pick<
   | "chapterLessons"
   | "chapterTitle"
   | "courseTitle"
+  | "exams"
   | "language"
   | "level"
   | "material"
@@ -48,6 +49,11 @@ export type LessonGateProblem = {
 type LessonGateResult = {
   /** Problems that keep the lesson from being published. */
   blocking: LessonGateProblem[];
+  /**
+   * The blocking problems the reviewer found wrong (a fact, a number, an answer key), the ones a
+   * fix that leaves their screen as it was can't have fixed.
+   */
+  incorrect: LessonGateProblem[];
   /** Improvements the reviewer suggested that don't block publishing. */
   minor: LessonGateProblem[];
   screens: ConvertedScreen[];
@@ -58,6 +64,7 @@ async function reviewLesson({
   analytics,
   context,
   lesson,
+  reuse,
   screens,
   serviceTier,
   writerModel,
@@ -66,14 +73,16 @@ async function reviewLesson({
   analytics?: AiAnalytics;
   context: LessonWritingContext;
   lesson: WrittenLesson;
+  reuse: CallReuse;
   screens: readonly ConvertedScreen[];
   serviceTier?: ServiceTier;
   writerModel: string;
-}): Promise<Pick<LessonGateResult, "blocking" | "minor">> {
+}): Promise<Pick<LessonGateResult, "blocking" | "incorrect" | "minor">> {
   const { data } = await checkLessonQuality({
     ...context,
     analytics,
     lesson: toReviewedLesson({ lesson, screens }),
+    reuse,
     serviceTier,
     writerModel,
   });
@@ -91,8 +100,13 @@ async function reviewLesson({
   const isBlocking = (issue: Issue) =>
     issue.severity === "blocking" && (!afterFix || issue.kind === "incorrect");
 
+  const blocking = data.issues.filter((issue) => isBlocking(issue));
+
   return {
-    blocking: data.issues.filter((issue) => isBlocking(issue)).map((issue) => toProblem(issue)),
+    blocking: blocking.map((issue) => toProblem(issue)),
+    incorrect: blocking
+      .filter((issue) => issue.kind === "incorrect")
+      .map((issue) => toProblem(issue)),
     minor: data.issues.filter((issue) => !isBlocking(issue)).map((issue) => toProblem(issue)),
   };
 }
@@ -110,6 +124,7 @@ export async function runLessonQualityGate({
   analytics,
   context,
   lesson,
+  reuse,
   review,
   serviceTier,
   writerModel,
@@ -126,8 +141,10 @@ export async function runLessonQualityGate({
   analytics?: AiAnalytics;
   context: LessonWritingContext;
   lesson: WrittenLesson;
+  /** How likely the lesson is to be read again, which picks the reviewer (`getLessonCheckModels`). */
+  reuse: CallReuse;
   review: boolean;
-  /** The reviewer's gateway tier: `priority` when a learner is waiting on the lesson. */
+  /** The reviewer's gateway tier: `flex` when the lesson is written well before a learner reaches it. */
   serviceTier?: ServiceTier;
   writerModel: string;
 }): Promise<LessonGateResult> {
@@ -150,11 +167,12 @@ export async function runLessonQualityGate({
           analytics,
           context,
           lesson,
+          reuse,
           screens: checked.screens,
           serviceTier,
           writerModel,
         })
-      : { blocking: [], minor: [] },
+      : { blocking: [], incorrect: [], minor: [] },
   ]);
 
   const codeProblems = [...checked.problems, ...programProblems].map((problem) => ({
@@ -167,6 +185,7 @@ export async function runLessonQualityGate({
       ...codeProblems.filter((entry) => !entry.isMinor).map((entry) => entry.problem),
       ...reviewed.blocking,
     ],
+    incorrect: reviewed.incorrect,
     minor: [
       ...codeProblems.filter((entry) => entry.isMinor).map((entry) => entry.problem),
       ...reviewed.minor,

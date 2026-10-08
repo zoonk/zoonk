@@ -24,6 +24,25 @@ export const allowanceResponseSchema = z
     activeGoals: z
       .object({ limit: limitSchema, used: z.int() })
       .meta({ description: "Active goals and the plan's cap, or null for none" }),
+    callTime: z
+      .object({
+        limitSeconds: limitSchema.meta({
+          description: "Seconds of live calls the plan allows each UTC day, or null for none",
+        }),
+        monthLimitSeconds: limitSchema.meta({
+          description: "Seconds of live calls the plan allows each UTC month, or null for none",
+        }),
+        usedSeconds: z
+          .int()
+          .meta({ description: "Seconds held or used by live calls this UTC day" }),
+        usedSecondsThisMonth: z
+          .int()
+          .meta({ description: "Seconds held or used by live calls this UTC month" }),
+      })
+      .meta({
+        description:
+          "Live call time today and this month: each connection holds the call's length, and an ended call keeps what it ran. Don't show learners these amounts; plans only say that Plus has higher call limits",
+      }),
     examPrep: z
       .object({
         includesMockExams: z.boolean().meta({ description: "Whether mock exams are included" }),

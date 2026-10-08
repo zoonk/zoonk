@@ -111,19 +111,24 @@ export const TEST_CASES: ExtractionCase[] = [
     language: "en",
   }),
   extractionCase({
-    expected: {
-      facts: [
-        {
-          categories: ["goals", "context"],
-          expiresOn: ["2026-10-02", "2026-10-09"],
-          keywords: ["exam", "test"],
-        },
-      ],
-      maxFacts: 1,
-    },
-    id: "en-chat-relative-date",
+    expected: { facts: [{ categories: ["goals", "context"], keywords: ["italy"] }], maxFacts: 2 },
+    id: "en-chat-dated-move",
+    input: "Learner: I'm moving to Italy in June next year, can the examples be about life there?",
+    language: "en",
+  }),
+  // The date of the exam they study for is their goal's, which its notice can move.
+  extractionCase({
+    expected: { facts: [], forbidden: ["friday", "exam"], maxFacts: 0 },
+    id: "en-chat-exam-date",
     input: "Learner: My biology exam is next Friday, can we focus on cells?",
     language: "en",
+  }),
+  extractionCase({
+    expected: { facts: [], forbidden: ["março", "marco", "janeiro", "prova"], maxFacts: 0 },
+    id: "pt-chat-exam-month",
+    input:
+      "Learner: aos domingos só consigo estudar 1 hora. quero mais processo civil e menos filosofia. e eu disse que a prova era em março, por que o plano é pra janeiro?\nTutor: O edital fixa a 1ª fase em 10 de janeiro de 2027, não em março.",
+    language: "pt",
   }),
   extractionCase({
     expected: { facts: [], forbidden: ["admin", "access"], maxFacts: 0 },
@@ -160,8 +165,6 @@ export const TEST_CASES: ExtractionCase[] = [
       "In their words: I want to get into Law at USP, I'm terrible at math",
       "Goal: ENEM 2026",
       "Target date: 2026-11-08",
-      "Daily study time: 45 minutes",
-      "Preferred study time: 20:00",
       "targetScore: 700 in the essay",
     ].join("\n"),
     language: "en",
@@ -171,9 +174,9 @@ export const TEST_CASES: ExtractionCase[] = [
     expected: {
       facts: [
         { categories: ["learning"], keywords: ["fraction", "percent"] },
-        { categories: ["routine", "learning"], keywords: ["night", "evening", "9 pm", "21", "pm"] },
+        { categories: ["learning"], keywords: ["night", "evening", "9 pm", "21", "pm"] },
       ],
-      forbidden: ["tired"],
+      forbidden: ["tired", "24 minutes", "minutes a day", "5 of"],
       maxFacts: 3,
     },
     id: "en-session-patterns",
@@ -187,6 +190,31 @@ export const TEST_CASES: ExtractionCase[] = [
     input: "Answers in the last 7 days: 5 on 1 day, 60% right.",
     language: "en",
     source: "session",
+  }),
+  extractionCase({
+    expected: {
+      facts: [
+        { categories: ["goals"], keywords: ["italian", "italy"] },
+        { categories: ["routine", "context"], keywords: ["commute", "train", "bus"] },
+      ],
+      forbidden: ["10 minutes", "minutes a day"],
+      maxFacts: 3,
+    },
+    id: "en-onboarding-time-in-words",
+    input: [
+      "In their words: I want to speak Italian for a trip to Italy next June. I can do 10 minutes a day on my train commute.",
+      "Goal: Italian for travel",
+      "Target date: 2027-06-01",
+    ].join("\n"),
+    language: "en",
+    source: "onboarding",
+  }),
+  extractionCase({
+    expected: { facts: [], forbidden: ["domingo", "hora", "processo civil"], maxFacts: 0 },
+    id: "pt-chat-plan-settings",
+    input:
+      "Learner: aos domingos eu só consigo estudar 1 hora. e hoje me deu 8 aulas de filosofia, prefiro mais processo civil\nTutor: Propus o ajuste no seu plano: domingos com 1 hora e mais Processo Civil.",
+    language: "pt",
   }),
   extractionCase({
     expected: {

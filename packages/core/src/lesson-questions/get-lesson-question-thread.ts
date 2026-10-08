@@ -4,6 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";
 import {
   lessonQuestionResourceOmit,
+  lessonQuestionResourceQuery,
   toLessonQuestionThreadResource,
 } from "./_utils/question-resource";
 import { findTutorSubject, getSubjectThreadColumn } from "./_utils/tutor-subject";
@@ -56,7 +57,7 @@ async function getQuestionPage({
   }
 
   const questions = await prisma.lessonQuestion.findMany({
-    omit: lessonQuestionResourceOmit,
+    ...lessonQuestionResourceQuery,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_LESSON_QUESTION_THREAD_TURNS + 1,
     where: { ...getScopeWhere(scope), ...getOlderQuestionsWhere(cursorQuestion) },
@@ -75,7 +76,9 @@ async function getQuestionPage({
 
 /**
  * The learner's thread about a lesson, chapter, plan or finished mock, newest page first.
- * Filters before pagination so other steps cannot displace the active step's history.
+ * Filters before pagination so other steps cannot displace the active step's history. Private
+ * cached, so the buddy's tab prefetches with its conversation; the conversation reads it again
+ * through the API once on screen, so nothing asked meanwhile is missed.
  */
 export async function getLessonQuestionThread({
   contextKind,
@@ -83,6 +86,8 @@ export async function getLessonQuestionThread({
   stepId,
   target,
 }: GetLessonQuestionThreadInput & { target: TutorTarget }) {
+  "use cache: private";
+
   const session = await getSession();
 
   if (!session) {

@@ -49,7 +49,7 @@ const emailCodeForbiddenResponse = {
 
 const botCheckForbiddenResponse = {
   ...forbiddenResponse,
-  description: `The request didn't pass BotID. Error code: ${accessErrorCodes.botDetected}.`,
+  description: `The request didn't pass BotID, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
 } as const;
 
 /**

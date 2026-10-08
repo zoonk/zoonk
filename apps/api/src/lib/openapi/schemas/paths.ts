@@ -81,12 +81,27 @@ export const checkpointMovePathParamsSchema = checkpointPathParamsSchema
   .extend({ changeId: z.uuid().meta({ description: "The plan change that moved it" }) })
   .meta({ id: "CheckpointMovePathParams" });
 
+export const challengePathParamsSchema = z
+  .object({ planItemId: z.uuid().meta({ description: "The challenge's plan item ID" }) })
+  .meta({ id: "ChallengePathParams" });
+
+export const challengeMovePathParamsSchema = challengePathParamsSchema
+  .extend({ changeId: z.uuid().meta({ description: "The plan change that moved it" }) })
+  .meta({ id: "ChallengeMovePathParams" });
+
 export const essayPathParamsSchema = z
   .object({ blockId: z.uuid().meta({ description: "The writing block's study session block ID" }) })
   .meta({ id: "EssayPathParams" });
 
 export const mockPathParamsSchema = z
-  .object({ blockId: z.uuid().meta({ description: "The mock's study session block ID" }) })
+  .object({
+    blockId: z
+      .uuid()
+      .meta({
+        description:
+          "The id the mock opens by: its study session block's for a mock the plan scheduled, its own for one taken any time",
+      }),
+  })
   .meta({ id: "MockPathParams" });
 
 export const mockSectionPathParamsSchema = mockPathParamsSchema

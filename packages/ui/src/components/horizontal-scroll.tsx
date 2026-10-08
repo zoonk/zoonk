@@ -4,7 +4,16 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-function HorizontalScroll({ className, children, ...props }: React.ComponentProps<"div">) {
+/**
+ * A row that scrolls sideways, with arrow buttons for mouse users when it overflows. The arrows'
+ * accessible names come from the caller (`labels`), since this package has no translations.
+ */
+function HorizontalScroll({
+  className,
+  children,
+  labels,
+  ...props
+}: React.ComponentProps<"div"> & { labels: { left: string; right: string } }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -59,7 +68,7 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
 
       {canScrollLeft && (
         <button
-          aria-label="Scroll left"
+          aria-label={labels.left}
           className="border-border bg-background hover:bg-accent hit-area absolute top-1/2 left-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
           onClick={() => scroll("left")}
           type="button"
@@ -70,7 +79,7 @@ function HorizontalScroll({ className, children, ...props }: React.ComponentProp
 
       {canScrollRight && (
         <button
-          aria-label="Scroll right"
+          aria-label={labels.right}
           className="border-border bg-background hover:bg-accent hit-area absolute top-1/2 right-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
           onClick={() => scroll("right")}
           type="button"

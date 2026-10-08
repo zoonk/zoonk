@@ -7,7 +7,11 @@ const EXTRA_BLOCK_MINUTES = 10;
 /** Two bonus blocks a day at most: pacing beats binging for memory. */
 const MAX_EXTRA_BLOCKS_PER_DAY = 2;
 
-export type ExtraTimeReason = "dailyCap" | "dailyLimit" | "sessionNotFinished";
+/**
+ * Why "10 more minutes" isn't offered: the day's two bonus blocks are used, the daily time limit
+ * leaves too little, nothing is left to practice or learn, or the session isn't finished yet.
+ */
+export type ExtraTimeReason = "dailyCap" | "dailyLimit" | "nothingToStudy" | "sessionNotFinished";
 
 export type ExtraTime = {
   available: boolean;

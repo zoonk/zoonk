@@ -4,6 +4,7 @@ import {
   type UnderstoodGoal,
 } from "@zoonk/ai/tasks/v2/goals/understand-goal";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
@@ -18,6 +19,10 @@ export type UnderstandingContext = {
   language: string;
   onboardingId: string;
   today: string;
+  /** The learner the draft is for, so an exam date lookup counts toward their cost. */
+  userId: string;
+  /** Asked before an exam's day is searched for on the web (see `allowDateSearch`). */
+  allowDateSearch?: () => Promise<boolean>;
 };
 
 type DetailValue = NonNullable<GoalDraft["details"]>[string];
@@ -58,12 +63,29 @@ async function toGoalView({
 
   const exam =
     goal.kind === "exam" && goal.examName
-      ? await findExamFacts({ examName: goal.examName, examYear: goal.examYear, language, today })
+      ? await findExamFacts({
+          allowSearch: context.allowDateSearch,
+          analytics: { contentScope: "personal", distinctId: context.userId },
+          exam: {
+            examMonth: goal.examMonth,
+            examName: goal.examName,
+            examYear: goal.examYear,
+            institution: goal.institution,
+            role: goal.targetPosition,
+            words: context.goal,
+          },
+          language,
+          // A day the learner gave is theirs: nothing to look up.
+          lookUpDate: !goal.targetDate,
+          today,
+        })
       : null;
 
   const details = compactDetails({
     answered,
+    examMonth: goal.examMonth,
     examName: goal.examName,
+    examTarget: goal.examTarget,
     examYear: goal.examYear,
     followUps: followUps.map((question) => ({ answer: null, question })),
     institution: goal.institution,
@@ -81,14 +103,18 @@ async function toGoalView({
     targetScore: goal.targetScore,
   });
 
+  // Another learner's research may already know the target's last cut-off: a read, never a lookup.
+  const cutoff = await loadTargetCutoff({ details, examBlueprintId: exam?.blueprintId });
+
   return {
+    cutoff,
     draft: {
       details,
       examBlueprintId: exam?.blueprintId ?? undefined,
       kind: goal.kind,
       language,
       prompt: context.goal,
-      targetDate: goal.targetDate,
+      targetDate: goal.targetDate ?? exam?.targetDate ?? undefined,
       targetLanguage: goal.targetLanguage,
       title: goal.title,
     },

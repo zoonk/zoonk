@@ -6,13 +6,15 @@ type UsagePeriod = "day" | "month" | "total";
 
 /**
  * What ran out: one kind of usage, the single active goal of the free plan, a guest's one newly
- * generated lesson, the learner's daily AI budget, or the daily AI budget all newcomers (guests
- * and accounts younger than a day) share.
+ * generated lesson, the plan's call time today or this month (its limit in seconds), the learner's
+ * daily AI budget, or the daily AI budget all newcomers (guests and accounts younger than a day)
+ * share.
  */
 type AllowanceResource =
   | UsageKind
   | "activeGoals"
   | "aiSpend"
+  | "callSeconds"
   | "generatedLessons"
   | "newcomerSpend";
 
@@ -25,10 +27,12 @@ export type AllowanceLimit = {
 
 /**
  * `slowDown` is fair use: the action is allowed again after `retryAfterSeconds`, so learning never
- * hits a wall. `limitReached` is a hard cap of the learner's plan.
+ * hits a wall. `limitReached` is a hard cap of the learner's plan. A live call's connection is
+ * allowed with the seconds it holds from the plan's call time (`heldSeconds`), and which cap,
+ * today's or this month's, holds less than the call asked (`shortenedBy`).
  */
 export type UsageDecision =
-  | { status: "allowed" }
+  | { heldSeconds?: number; shortenedBy?: "day" | "month"; status: "allowed" }
   | { limit: AllowanceLimit; status: "limitReached" }
   | { retryAfterSeconds: number; status: "slowDown" }
   | { status: "unauthorized" };
@@ -53,6 +57,16 @@ export type AllowanceItem = {
 
 export type Allowance = {
   activeGoals: { limit: number | null; used: number };
+  /**
+   * Live call time, in seconds: the plan's caps today and this month (null without one) and what's
+   * used of each.
+   */
+  callTime: {
+    limitSeconds: number | null;
+    monthLimitSeconds: number | null;
+    usedSeconds: number;
+    usedSecondsThisMonth: number;
+  };
   /** Exam prep in the plan: mock exams, and how many days of an exam plan (null for all of it). */
   examPrep: { includesMockExams: boolean; studyDays: number | null };
   /** A guest's newly generated lessons; null for accounts. */

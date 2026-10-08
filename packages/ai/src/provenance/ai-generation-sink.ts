@@ -1,8 +1,19 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { isTestEnvironment } from "../_utils/is-test-environment";
-import { type AiGenerationEvent } from "./ai-generation-event";
+import { type AiGenerationContext } from "./ai-generation-event";
+import { type TaskProvenance } from "./task-provenance";
 
-type AiGenerationSink = (event: AiGenerationEvent) => Promise<void>;
+/** One finished AI call, as every sink receives it. */
+export type AiGeneration = {
+  context?: AiGenerationContext;
+  /** Extra analytics properties for this kind of call, such as an evaluation's answers. */
+  properties?: Readonly<Record<string, boolean | number | string>>;
+  provenance: TaskProvenance;
+  /** Stable task name, matching the task's eval id. */
+  task: string;
+};
+
+type AiGenerationSink = (generation: AiGeneration) => Promise<void> | void;
 
 declare global {
   /**
@@ -10,25 +21,27 @@ declare global {
    * Next.js bundles instrumentation, routes and workflow steps separately, so
    * a module variable set in `register()` isn't the one tasks would read.
    */
-  var zoonkAiGenerationSink: AiGenerationSink | undefined;
+  var zoonkAiGenerationSinks: Map<string, AiGenerationSink> | undefined;
 }
 
 /**
- * Lets each app decide where `$ai_generation` events go (PostHog in the API)
- * without this package depending on an analytics SDK. Apps that never register
- * one, like evals, send nothing.
+ * Lets each app decide where finished AI calls go (PostHog, the database's AI call log) without
+ * this package depending on an analytics SDK or the database. Sinks are kept by name, so
+ * registering one again (a hot reload) replaces it. Apps that never register one, like evals,
+ * send nothing.
  */
-export function registerAiGenerationSink(sink: AiGenerationSink): void {
-  globalThis.zoonkAiGenerationSink = sink;
+export function registerAiGenerationSink(name: string, sink: AiGenerationSink): void {
+  globalThis.zoonkAiGenerationSinks ??= new Map();
+  globalThis.zoonkAiGenerationSinks.set(name, sink);
 }
 
-/** Analytics never fails a generation that already finished, and tests never send events. */
-export async function captureAiGeneration(event: AiGenerationEvent): Promise<void> {
-  const sink = globalThis.zoonkAiGenerationSink;
+/** A sink never fails a generation that already finished, and tests never send anything. */
+export async function captureAiGeneration(generation: AiGeneration): Promise<void> {
+  const sinks = globalThis.zoonkAiGenerationSinks;
 
-  if (!sink || isTestEnvironment()) {
+  if (!sinks || isTestEnvironment()) {
     return;
   }
 
-  await safeAsync(() => sink(event));
+  await Promise.all([...sinks.values()].map((sink) => safeAsync(async () => sink(generation))));
 }

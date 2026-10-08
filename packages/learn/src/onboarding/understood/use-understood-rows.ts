@@ -1,18 +1,21 @@
 "use client";
 
+import { type TargetCutoff } from "@zoonk/core/exams/cutoffs/contract";
 import { type GoalDraft } from "@zoonk/core/goals/contract";
 import {
   type OnboardingExamDate,
   type UnderstoodSchedule,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { getLanguageName } from "@zoonk/utils/languages";
-import { useExtracted, useFormatter, useLocale } from "next-intl";
-import { daysUntilIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { useExtracted, useLocale } from "next-intl";
 import { useFormatTimeOfDay } from "../../_utils/time-format";
+import { useCutoffWords } from "../../exam/target-cutoff";
+import { isSaidInTitle } from "./said-in-title";
+import { useDateRow } from "./understood-date-row";
 
 /**
- * A fact the learner can fix in place: the goal's title and date, one of its details, or when
- * they study (shared by every goal of the onboarding).
+ * A fact the learner can fix in place: the goal's title and date, the exam's year, one of its
+ * details, or when they study (shared by every goal of the onboarding).
  */
 export type EditableField =
   | { kind: "date"; key: "targetDate" }
@@ -31,18 +34,20 @@ export type UnderstoodRowIcon =
   | "goal"
   | "language"
   | "level"
+  | "material"
   | "reason"
   | "speaks"
   | "target"
-  | "work"
-  | "year";
+  | "work";
 
 export type UnderstoodRow = {
-  /** A small marker next to the value, such as "you said" for a level or "estimated" for dates. */
+  /** A small marker next to the value, such as "you said" for a level. */
   badge?: string;
   editable?: EditableField;
-  /** What the editor starts from when the field is still empty, such as the official date. */
+  /** What the editor starts from when the field is still empty, such as the exam's year. */
   editDefault?: string;
+  /** What the row is called while it's being fixed, when that's another fact (the exam's year). */
+  editLabel?: string;
   icon: UnderstoodRowIcon;
   id: string;
   label: string;
@@ -56,141 +61,80 @@ function readText(details: GoalDraft["details"], key: string): string | null {
   return typeof value === "string" && value.trim() ? value : null;
 }
 
-const NO_BREAK_SPACE = "\u00A0";
-
-/** "2028" in "2028-11-12". */
-const YEAR_LENGTH = 4;
-
-function yearOf(isoDate: string): number {
-  return Number(isoDate.slice(0, YEAR_LENGTH));
-}
-
-/** The exam's year: the one the learner named, else the year of its next dates. */
-function readExamYear({
-  dates,
-  draft,
-}: {
-  dates: OnboardingExamDate[];
-  draft: GoalDraft;
-}): number | null {
-  const named = draft.details?.examYear;
-
-  if (typeof named === "number") {
-    return named;
-  }
-
-  const [first] = dates;
-  return first ? yearOf(first.date) : null;
-}
-
-/**
- * The year of the exam the learner is preparing for, to fix in place: another year reads that
- * year's dates. Shown for exams whose dates or year are known.
- */
-function useExamYearRow() {
-  const t = useExtracted();
-
-  return function toExamYearRow(year: number | null): UnderstoodRow | null {
-    if (year === null) {
-      return null;
-    }
-
-    return {
-      editable: { key: "examYear", kind: "year" },
-      icon: "year",
-      id: "examYear",
-      label: t("Exam year"),
-      value: String(year),
-    };
-  };
-}
-
-function useExamRow() {
-  const t = useExtracted();
-  const format = useFormatter();
-  const formatDate = useFormatIsoDate();
-
-  return function toExamRow({
-    dates,
-    year,
-  }: {
-    dates: OnboardingExamDate[];
-    /** The exam year shown just above; days in another year say theirs. */
-    year: number | null;
-  }): UnderstoodRow | null {
-    const [first] = dates;
-
-    if (!first) {
-      return null;
-    }
-
-    const estimated = dates.some((date) => date.estimated);
-
-    // The learner can pick their own day; official dates stay one tap away in their source, and
-    // dates guessed from the exam's usual timing say so.
-    return {
-      badge: estimated ? t("estimated") : undefined,
-      editDefault: first.date,
-      editable: { key: "targetDate", kind: "date" },
-      icon: "calendar",
-      id: "examDates",
-      label: t("Dates"),
-      note: estimated
-        ? t("From its usual dates. The official ones aren't out yet.")
-        : t("{days, plural, one {# day left} other {# days left}}", {
-            days: daysUntilIsoDate({ isoDate: first.date, today: new Date() }),
-          }),
-      source: estimated ? null : first.source,
-      // Each day stays on one line; a long list breaks between days.
-      value: format.list(
-        dates.map((date) =>
-          formatDate(date.date, yearOf(date.date) === year ? "dayMonth" : "longYear").replaceAll(
-            " ",
-            NO_BREAK_SPACE,
-          ),
-        ),
-        { type: "conjunction" },
-      ),
-    };
-  };
-}
-
 function useLanguageRows() {
   const t = useExtracted();
   const locale = useLocale();
 
   return (draft: GoalDraft): UnderstoodRow[] => {
+    if (draft.kind !== "language" || !draft.targetLanguage) {
+      return [];
+    }
+
     const nativeLanguage = readText(draft.details, "nativeLanguage") ?? draft.language;
 
-    return draft.kind === "language" && draft.targetLanguage
-      ? [
-          {
-            icon: "language",
-            id: "targetLanguage",
-            label: t("Language"),
-            value: getLanguageName({ targetLanguage: draft.targetLanguage, userLanguage: locale }),
-          },
-          {
-            icon: "speaks",
-            id: "nativeLanguage",
-            label: t("You speak"),
-            value: getLanguageName({ targetLanguage: nativeLanguage, userLanguage: locale }),
-          },
-        ]
-      : [];
+    const language = getLanguageName({
+      targetLanguage: draft.targetLanguage,
+      userLanguage: locale,
+    });
+
+    const rows: (UnderstoodRow | false)[] = [
+      !isSaidInTitle({ title: draft.title, value: language }) && {
+        icon: "language",
+        id: "targetLanguage",
+        label: t("Language"),
+        value: language,
+      },
+      {
+        icon: "speaks",
+        id: "nativeLanguage",
+        label: t("You speak"),
+        value: getLanguageName({ targetLanguage: nativeLanguage, userLanguage: locale }),
+      },
+    ];
+
+    return rows.filter((row) => row !== false);
   };
+}
+
+/**
+ * The target's last cut-off, under the target, when another learner's research already found it:
+ * where the bar was, with its source, so a target can be fixed right here. Never a promise.
+ */
+function useCutoffRow() {
+  const t = useExtracted();
+  const words = useCutoffWords();
+
+  return (cutoff: TargetCutoff | null): UnderstoodRow | null =>
+    cutoff && {
+      icon: "target",
+      id: "cutoff",
+      label: t("Last cut-off"),
+      note: words.detail(cutoff),
+      // Named by its site: a search's page titles are often file names ("Notas-minimas.pdf").
+      source: { title: null, url: cutoff.source.url },
+      value: words.score(cutoff),
+    };
 }
 
 function useDetailRows() {
   const t = useExtracted();
+  const cutoffRow = useCutoffRow();
 
-  return (draft: GoalDraft): UnderstoodRow[] => {
-    const course = readText(draft.details, "targetCourse");
-    const institution = readText(draft.details, "institution");
-    const target = readText(draft.details, "targetScore");
-    const position = readText(draft.details, "targetPosition");
-    const reason = readText(draft.details, "reason");
-    const role = readText(draft.details, "role");
+  return (draft: GoalDraft, cutoff: TargetCutoff | null): UnderstoodRow[] => {
+    /** A detail the title already says isn't repeated: fixing the title fixes it. */
+    const unsaid = (key: string) => {
+      const value = readText(draft.details, key);
+      return value && !isSaidInTitle({ title: draft.title, value }) ? value : null;
+    };
+
+    const course = unsaid("targetCourse");
+    const institution = unsaid("institution");
+    const target = unsaid("targetScore");
+    const position = unsaid("targetPosition");
+    const reason = unsaid("reason");
+    const role = unsaid("role");
+    // A career change names where they're coming from and where they're going, not "their role".
+    const isCareerChange = draft.details?.purpose === "careerChange";
 
     const rows: (UnderstoodRow | false)[] = [
       Boolean(course) && {
@@ -214,17 +158,18 @@ function useDetailRows() {
         editable: { key: "targetPosition", kind: "text" },
         icon: "work",
         id: "targetPosition",
-        label: t("Position"),
+        label: isCareerChange ? t("The role you want") : t("Position"),
         value: position ?? "",
       },
       Boolean(target) && {
         editable: { key: "targetScore", kind: "text" },
         icon: "target",
         id: "targetScore",
-        label: t("Target score"),
-        note: t("It's your target. We help you prepare; nobody can promise a result."),
+        // A language goal aims for a level ("B2"), which the Journey shows next to the learner's.
+        label: draft.kind === "language" ? t("Level you're aiming for") : t("Target score"),
         value: target ?? "",
       },
+      cutoffRow(cutoff) ?? false,
       Boolean(reason) && {
         editable: { key: "reason", kind: "text" },
         icon: "reason",
@@ -236,7 +181,7 @@ function useDetailRows() {
         editable: { key: "role", kind: "text" },
         icon: "work",
         id: "role",
-        label: t("Your role"),
+        label: isCareerChange ? t("What you do now") : t("Your role"),
         value: role ?? "",
       },
     ];
@@ -247,26 +192,26 @@ function useDetailRows() {
 
 /**
  * The "Here's what I understood" rows for one goal, in the order the learner reads them: the
- * goal, its official dates with their source, the language, the target and why, the level they
- * gave and their deadline. Only what the words said shows up; everything else is asked later.
+ * goal, its one date, the language, the target and why, and the level they gave. Each fact shows
+ * once: what the goal's title already says gets no row of its own. Only what the words said shows
+ * up; everything else is asked later.
  */
 export function useUnderstoodRows() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const examRow = useExamRow();
-  const examYearRow = useExamYearRow();
+  const dateRow = useDateRow();
   const languageRows = useLanguageRows();
   const detailRows = useDetailRows();
 
   return ({
+    cutoff,
     draft,
     examDates,
   }: {
+    cutoff: TargetCutoff | null;
     draft: GoalDraft;
     examDates: OnboardingExamDate[];
   }): UnderstoodRow[] => {
     const levelNote = readText(draft.details, "levelNote");
-    const examYear = draft.kind === "exam" ? readExamYear({ dates: examDates, draft }) : null;
 
     const rows: (UnderstoodRow | null | false)[] = [
       {
@@ -276,24 +221,15 @@ export function useUnderstoodRows() {
         label: t("Goal"),
         value: draft.title,
       },
-      examYearRow(examYear),
-      // A day of their own replaces the official dates on the card.
-      !draft.targetDate && examRow({ dates: examDates, year: examYear }),
+      dateRow({ draft, examDates }),
       ...languageRows(draft),
-      ...detailRows(draft),
+      ...detailRows(draft, cutoff),
       Boolean(levelNote) && {
         badge: t("you said"),
         icon: "level",
         id: "level",
         label: t("Level"),
         value: levelNote ?? "",
-      },
-      Boolean(draft.targetDate) && {
-        editable: { key: "targetDate", kind: "date" },
-        icon: "calendar",
-        id: "targetDate",
-        label: t("Deadline"),
-        value: draft.targetDate ? formatDate(draft.targetDate, "short") : "",
       },
     ];
 
@@ -331,5 +267,27 @@ export function useScheduleRow() {
           value: parts.join(" · "),
         }
       : null;
+  };
+}
+
+/**
+ * The material the learner attached to the goal, so they see it was taken in: the plan, its
+ * lessons and its practice follow it. Null without material.
+ */
+export function useMaterialRow() {
+  const t = useExtracted();
+
+  return function toMaterialRow(material: readonly { title: string }[]): UnderstoodRow | null {
+    if (material.length === 0) {
+      return null;
+    }
+
+    return {
+      icon: "material",
+      id: "material",
+      label: t("Your material"),
+      note: t("Your plan and lessons follow this material"),
+      value: material.map((source) => source.title || t("Your text")).join(", "),
+    };
   };
 }

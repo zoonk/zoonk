@@ -6,7 +6,6 @@ import { formatDateTime } from "@/lib/format";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  experienceModeLabels,
   feedbackContentKindLabels,
   formatFeedbackReasons,
   getLearnerLabel,
@@ -61,9 +60,6 @@ export async function FeedbackDetail({ id }: { id: string }) {
           </DetailField>
           <DetailField label="Reasons">{formatFeedbackReasons(feedback.reasons)}</DetailField>
           <DetailField label="Language">{feedback.language ?? "—"}</DetailField>
-          <DetailField label="Mode">
-            {feedback.mode ? experienceModeLabels[feedback.mode] : "—"}
-          </DetailField>
           <DetailField label="Learner">
             <Link className="hover:underline" href={`/users/${feedback.user.id}`} prefetch>
               {getLearnerLabel(feedback.user)}

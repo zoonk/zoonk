@@ -1,42 +1,43 @@
 "use client";
 
-import { ZoonkLogo } from "@/components/brand/zoonk-logo";
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
+import { RotateCwIcon, TriangleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { StatusMessage } from "./status-message";
 
 /**
- * A page that failed to load says so calmly and offers to try again, with a way home, instead of
- * the framework's bare error screen. Pages pass their own home link: the app's router link, or a
- * plain link when the whole app failed.
+ * A page that failed to load says so calmly and offers to try again, with a quieter way home,
+ * instead of the framework's bare error screen. Pages pass their own home link: the app's router
+ * link, or a plain link when the whole app failed. Inside the app's frame (`inFrame`), the bar and
+ * the tabs are still there to go elsewhere, so it fills the frame's page instead of the screen.
  */
 export function PageErrorMessage({
   homeLink,
+  inFrame = false,
   onRetry,
 }: {
-  homeLink: React.ReactNode;
+  homeLink?: React.ReactNode;
+  inFrame?: boolean;
   onRetry: () => void;
 }) {
   const t = useExtracted();
+  const Root = inFrame ? "div" : "main";
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[704px] flex-col justify-center px-5 py-16 sm:px-8">
-      <ZoonkLogo className="size-8" />
-
-      <h1 className="mt-6 text-[30px] leading-[1.1] font-bold tracking-[-0.03em] text-balance sm:text-[44px] sm:leading-[1.08]">
-        {t("This page didn't load")}
-      </h1>
-
-      <p className="text-muted-foreground mt-3 text-base leading-relaxed text-pretty sm:mt-4 sm:text-[19px]">
-        {t("Something went wrong on our side. Trying again usually fixes it.")}
-      </p>
-
-      <div className="mt-8 flex flex-wrap gap-3">
+    <Root className={cn("flex w-full flex-col", inFrame ? "flex-1" : "min-h-dvh")}>
+      <StatusMessage
+        description={t("Something went wrong on our side. Trying again usually fixes it.")}
+        icon={<TriangleAlertIcon aria-hidden="true" />}
+        title={t("This page didn't load")}
+      >
         <Button onClick={onRetry} size="lg">
+          <RotateCwIcon aria-hidden="true" data-icon="inline-start" />
           {t("Try again")}
         </Button>
 
         {homeLink}
-      </div>
-    </main>
+      </StatusMessage>
+    </Root>
   );
 }

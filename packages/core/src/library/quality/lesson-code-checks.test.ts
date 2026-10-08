@@ -22,8 +22,15 @@ function withScreen(index: number, screen: WrittenScreen): WrittenLesson {
   };
 }
 
-function explanation(text: string): WrittenScreen {
-  return { exampleLineIdea: null, image: null, kind: "explanation", text, title: "An idea" };
+function explanation(text: string): Extract<WrittenScreen, { kind: "explanation" }> {
+  return {
+    exampleLineIdea: null,
+    image: null,
+    kind: "explanation",
+    text,
+    title: "An idea",
+    visual: null,
+  };
 }
 
 function codesOf(lesson: WrittenLesson, options: { allowActivityFallback?: boolean } = {}) {
@@ -31,6 +38,111 @@ function codesOf(lesson: WrittenLesson, options: { allowActivityFallback?: boole
 }
 
 describe(checkWrittenLesson, () => {
+  it("keeps every picture the plan asks for, on screens in a row too", () => {
+    const lesson = writtenTemperatureLesson();
+    const picture = { alt: "A thermometer.", prompt: "A thermometer from −5 °C to 5 °C." };
+    const spec = temperatureSpec();
+
+    const planned = {
+      ...spec,
+      screens: spec.screens.map((screen, index) =>
+        index === 2 ? { ...screen, visual: "The thermometer again." } : screen,
+      ),
+    };
+
+    const checked = checkWrittenLesson({
+      language: "en",
+      lesson: {
+        ...lesson,
+        screens: lesson.screens.map((screen, index) =>
+          index === 2 && screen.kind === "workedExample" ? { ...screen, image: picture } : screen,
+        ),
+      },
+      level: "beginner",
+      spec: planned,
+    });
+
+    expect(checked.screens[1]?.ok && checked.screens[1].content).toHaveProperty("image");
+    expect(checked.screens[2]?.ok && checked.screens[2].content).toMatchObject({ image: picture });
+  });
+
+  it("shows the picture, table or chart a screen points at, even where the plan drew none", () => {
+    const application = writtenTemperatureLesson().screens[7];
+
+    if (application?.kind !== "check") {
+      throw new Error("Screen 8 is a check.");
+    }
+
+    const picture = { alt: "A street thermometer at −6 °C.", prompt: "A street thermometer." };
+
+    const pointing = {
+      ...application,
+      context: "In the picture, a street thermometer shows −6 °C.",
+    };
+
+    expect(codesOf(withScreen(7, pointing))).toStrictEqual([[7, "visual"]]);
+
+    const shown = check(withScreen(7, { ...pointing, image: picture }));
+
+    expect(shown.problems).toStrictEqual([]);
+    expect(shown.screens[7]?.ok && shown.screens[7].content).toMatchObject({ image: picture });
+
+    const table = explanation(
+      "The table below shows the morning.\n\n| Hour | °C |\n|---|---:|\n| 6 am | −6 |",
+    );
+
+    expect(codesOf(withScreen(4, table))).toStrictEqual([]);
+
+    expect(codesOf(withScreen(4, explanation("The chart below shows the morning.")))).toStrictEqual(
+      [[4, "visual"]],
+    );
+  });
+
+  it("draws the picture a teaching screen points at, even a diagram the plan didn't ask for", () => {
+    const diagram = explanation(
+      "In the diagram, the arrow climbs from −3 °C to zero, then two more degrees.",
+    );
+
+    const picture = {
+      alt: "A thermometer with an arrow from −3 °C up to 2 °C.",
+      prompt: "A thermometer from −5 °C to 5 °C with an arrow from −3 °C up to 2 °C.",
+    };
+
+    expect(codesOf(withScreen(4, diagram))).toStrictEqual([[4, "visual"]]);
+
+    const shown = check(withScreen(4, { ...diagram, image: picture }));
+
+    expect(shown.problems).toStrictEqual([]);
+    expect(shown.screens[4]?.ok && shown.screens[4].content).toMatchObject({ image: picture });
+
+    const versions = explanation(
+      "Version 1 counts from −3 °C straight to 2 °C; version 2 stops at zero first.",
+    );
+
+    const compared = check(withScreen(4, { ...versions, image: picture }));
+
+    expect(compared.problems).toStrictEqual([]);
+
+    expect(compared.screens[4]?.ok && compared.screens[4].content).toMatchObject({
+      image: picture,
+    });
+  });
+
+  it("keeps the personal example slot of every explanation whose writer left one", () => {
+    const second = {
+      ...explanation("Zero is just a mark on the way up. Count the degrees to zero, then past it."),
+      exampleLineIdea: "Another cold morning.",
+    };
+
+    const result = check(withScreen(4, second));
+
+    expect(result.problems).toStrictEqual([]);
+
+    expect(
+      result.screens.map((screen) => screen.ok && "exampleLineSlot" in screen.content),
+    ).toStrictEqual([false, true, false, false, true, false, false, false]);
+  });
+
   it("passes a lesson that follows its plan and converts every screen", () => {
     const result = check(writtenTemperatureLesson());
 
@@ -59,7 +171,7 @@ describe(checkWrittenLesson, () => {
 
   it("rejects kinds the plan doesn't allow and activities on other templates", () => {
     expect(
-      codesOf(withScreen(1, { image: null, kind: "hookText", text: "A fact." })),
+      codesOf(withScreen(1, { image: null, kind: "hookText", text: "A fact.", visual: null })),
     ).toContainEqual([1, "screenKind"]);
 
     const activity = writtenTemperatureLesson().screens[5];
@@ -94,6 +206,7 @@ describe(checkWrittenLesson, () => {
         { isCorrect: true, reason: "Also right?", text: "3 °C" },
       ],
       question: "Which one?",
+      visual: null,
     };
 
     const wrongActivityAnswer = {
@@ -176,6 +289,18 @@ describe(checkWrittenLesson, () => {
     const duplicated = { ...hook, options: [...hook.options, { isCorrect: false, text: "2 °c" }] };
 
     expect(codesOf(withScreen(0, duplicated))).toContainEqual([0, "duplicateOptions"]);
+  });
+
+  it("rejects a guess's reveal that points at an option by its place", () => {
+    const hook = writtenTemperatureLesson().screens[0];
+
+    if (hook?.kind !== "hookGuess") {
+      throw new Error("Screen 1 is a guess.");
+    }
+
+    const byPlace = { ...hook, reveal: "The right answer is the second." };
+
+    expect(codesOf(withScreen(0, byPlace))).toStrictEqual([[0, "optionPosition"]]);
   });
 
   it("rejects a check that asks an earlier check's question with other numbers", () => {

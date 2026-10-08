@@ -6,7 +6,7 @@ An internal evaluation system for testing and monitoring AI-generated content qu
 
 - **Task Evaluation**: Run evaluations on AI tasks using different models
 - **Model Comparison**: Compare quality, cost and latency (p50 and p95) across supported models, with English and Portuguese scored apart and a pass or fail for tasks with a latency budget
-- **Evaluation Models**: Classifiers can also run through `experimental_evaluate`, so Jev and language models used as evaluation models land on the same leaderboard as the task's own prompt
+- **Evaluation Models**: Classifiers can also run through `experimental_decide`, so Jev and language models used as evaluation models land on the same leaderboard as the task's own prompt
 - **Automatic Scoring**: Task-specific deterministic scoring when outputs have exact pass/fail rules, with AI-powered judge scoring as the fallback for open-ended tasks. Classifiers also report per-label accuracy and a confusion matrix
 - **Gateway Prices**: Costs use the AI Gateway's price list, including cached input and reasoning tokens, and judge calls are priced too
 
@@ -50,8 +50,8 @@ Every task needs cases in English and Portuguese (see [Language Coverage](#langu
 
 ```typescript
 import { generateYourFunction } from "@zoonk/ai/your-task/generate";
-import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
+import type { Task } from "@/lib/types";
 
 export const yourTask: Task<YourInput, YourOutput> = {
   id: "your-task-id",
@@ -87,13 +87,15 @@ That's it! Your task will automatically appear in the dashboard.
 Models are configured in [src/lib/models.ts](./src/lib/models.ts). Each one has a kind:
 
 - `generation` models run the task's own prompt through `generate`.
-- `evaluation` models run the task's `evaluate` route through the AI SDK's `experimental_evaluate`: Jev natively, and Luna, Flash Lite and Haiku through the SDK's language-model evaluation adapter (their ids end in `/evaluation`). They only appear for tasks with an `evaluate` route.
+- `evaluation` models run the task's `evaluate` route through the AI SDK's `experimental_decide`: the gateway's decision models (Jev, GPT-6 Luna Decisions, Liquid d1) natively, and Luna, Flash Lite and Haiku through the SDK's language-model decision adapter (their ids end in `/evaluation`). They only appear for tasks with an `evaluate` route.
 
-Prices come from the AI Gateway's model list, saved in `data/gateway-prices.json` with the time it was fetched. Refresh it after adding a model or when prices change:
+Prices come from the same list the apps price every AI call with: the AI Gateway's model list, saved in `packages/ai/src/pricing/gateway-prices.json` with the time it was fetched. Refresh it after adding a model or when prices change:
 
 ```bash
-pnpm --filter evals prices:refresh
+pnpm --filter @zoonk/ai prices:refresh
 ```
+
+Eval runs use the apps' default provider too, so Anthropic and OpenAI models read their system prompts from the prompt cache.
 
 ## Judges
 
@@ -112,7 +114,7 @@ pnpm --filter evals eval:run --task course-intent --model typesafe-ai/jev --mode
 - `--case` keeps only cases whose id contains one of the given texts, such as `--case :parallel` for the production search tool in `find-official-sources`.
 - `--fresh` regenerates the sampled cases even if saved outputs exist, so every model's latency is measured the same way. Without it, only cases with no saved output are generated.
 - `--saved` prints the same table from saved results without calling any model.
-- `live-conversation` runs only on `openai/gpt-live-1`: it plays scripted learner turns, spoken by Gemini 3.8 Flash TTS at real-time pace, against the production instructions over GPT-Live's native Live WebSocket, with the production objective check after each answer. GPT-Live bills $0.05 per minute of session, so the six cases cost about $0.50 of voice plus the judge; the table's "Spent" only shows the judge.
+- `live-conversation` runs on `openai/gpt-live-1`, and on `google/gemini-3.8-live` to compare: it plays scripted learner turns, spoken by Gemini 3.8 Flash TTS at real-time pace, against the production instructions over GPT-Live's native Live WebSocket (Gemini over AI Gateway's realtime route, with cues as notes in the conversation), with the production objective check after each answer. GPT-Live bills $0.05 per minute of session, so the six cases cost about $0.50 of voice plus the judge; Gemini bills tokens, every turn re-reading the whole session. Each output saves the call's `usage` (session seconds and voice cost); the table's "Spent" only shows the judge.
 
 Generation runs at most four calls at a time so a model's own requests don't slow each other down. "Spent" is what the sampled cases' saved outputs and judge calls cost, including ones generated in earlier runs. Search tool fees (`find-official-sources`) are billed per search and aren't included.
 
@@ -138,10 +140,9 @@ Case counts per language are small, so rerun a task before trusting a single mis
 
 A model wins a task when it's close to the best quality at the lowest cost and meets the task's latency budget. Budgets are tight where learners wait on the answer and absent for work made ahead of time:
 
-| Task                                       | p50  | p95  | Why                                                                                                                |
-| ------------------------------------------ | ---- | ---- | ------------------------------------------------------------------------------------------------------------------ |
-| `step-variant` ("Simpler" and "Go deeper") | 4 s  | 6 s  | The learner taps and waits on the same screen                                                                      |
-| `quick-explanation`                        | 12 s | 18 s | The first screen should show in about 20 seconds, and the generality check, the save and the page load come on top |
+| Task                | p50  | p95  | Why                                                                                                                |
+| ------------------- | ---- | ---- | ------------------------------------------------------------------------------------------------------------------ |
+| `quick-explanation` | 12 s | 18 s | The first screen should show in about 20 seconds, and the generality check, the save and the page load come on top |
 
 Measure latency with `--fresh` when nothing else is running.
 

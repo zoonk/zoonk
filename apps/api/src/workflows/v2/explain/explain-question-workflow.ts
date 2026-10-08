@@ -1,13 +1,14 @@
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { EXPLANATION_READY_STEP } from "@zoonk/core/library/generation/steps";
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { createHook, getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata } from "workflow";
 import { start } from "workflow/api";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { repeatUntil } from "../_shared/repeat-until";
+import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { recordGoalRunStep } from "../goals/steps/record-goal-run-step";
-import { PRIVATE_MAX_IMAGES, lessonImagesWorkflow } from "../images/lesson-images-workflow";
+import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { explainProgressStep } from "./steps/explain-progress-step";
 import {
   type QuestionSkill,
@@ -65,7 +66,6 @@ async function saveAndDraw({
       {
         analytics: { ...context.analytics, contentScope: ownerId ? "personal" : "shared" },
         lessonId: saved.lessonId,
-        maxImages: ownerId ? PRIVATE_MAX_IMAGES : undefined,
       },
     ]);
   }
@@ -118,8 +118,7 @@ export async function explainQuestionWorkflow({
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `explain:${goalId}` });
-  const conflict = await hook.getConflict();
+  const { conflict } = await claimRunToken(`explain:${goalId}`);
 
   // Whoever follows this run's id (an API client that just asked for it) moves to the run
   // answering the question, like a goal's run that joins another.

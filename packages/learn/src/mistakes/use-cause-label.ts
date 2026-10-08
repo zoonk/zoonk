@@ -2,15 +2,7 @@
 
 import { useExtracted } from "next-intl";
 
-export type MistakeCauseKey = "gap" | "guess" | "misread" | "time" | "trap" | "unsorted";
-
-export const MISTAKE_CAUSES: readonly MistakeCauseKey[] = [
-  "gap",
-  "misread",
-  "trap",
-  "time",
-  "guess",
-];
+type MistakeCauseKey = "gap" | "guess" | "misread" | "time" | "trap" | "unsorted";
 
 /** Why a mistake happened, in plain words. Each cause gets its own kind of practice. */
 export function useCauseLabel() {

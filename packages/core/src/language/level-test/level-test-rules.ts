@@ -7,6 +7,12 @@ import {
   type LevelTestQuestion,
 } from "./level-test-contract";
 
+/** What the rules read of the test so far: which option each answer chose, and the sentence. */
+type TestAnswers = {
+  answers: readonly Pick<LevelTestProgress["answers"][number], "answerIndex" | "id">[];
+  speaking: LevelTestProgress["speaking"];
+};
+
 /** Three questions a skill, alternating reading and listening, then one sentence out loud. */
 const QUESTIONS_PER_SKILL = 3;
 const QUESTION_SKILLS = ["reading", "listening"] as const;
@@ -32,10 +38,11 @@ const SPOKEN_MOSTLY = 0.6;
 
 type QuestionSkill = (typeof QUESTION_SKILLS)[number];
 
-/** The levels the test gives, in half steps: speaking only once a sentence was said out loud. */
-export type LevelTestScores = Record<Exclude<LanguageSkill, "speaking">, number> & {
-  speaking?: number;
-};
+/**
+ * The levels the test gives, in half steps: speaking only once a sentence was said out loud, and
+ * never writing, which no question of the test asks.
+ */
+export type LevelTestScores = Record<QuestionSkill, number> & { speaking?: number };
 
 function getBand(level: CefrLevel): number {
   return CEFR_LEVELS.indexOf(level);
@@ -111,7 +118,7 @@ function scoreAnswers({
   skill,
 }: {
   bank: LevelTestBank;
-  progress: LevelTestProgress;
+  progress: TestAnswers;
   skill: QuestionSkill;
 }): ScoredAnswer[] {
   return progress.answers.flatMap((answer) => {
@@ -135,7 +142,7 @@ function getSkillScore({
   start,
 }: {
   bank: LevelTestBank;
-  progress: LevelTestProgress;
+  progress: TestAnswers;
   skill: QuestionSkill;
   start: number;
 }) {
@@ -150,7 +157,7 @@ function pickQuestion({
   skill,
 }: {
   bank: LevelTestBank;
-  progress: LevelTestProgress;
+  progress: TestAnswers;
   score: number;
   skill: QuestionSkill;
 }): LevelTestQuestion | null {
@@ -194,7 +201,7 @@ export function getNextLevelTestStep({
   start,
 }: {
   bank: LevelTestBank;
-  progress: LevelTestProgress;
+  progress: TestAnswers;
   start: number;
 }): LevelTestStep {
   const targets = {
@@ -231,7 +238,7 @@ export function getNextLevelTestStep({
   return sentence ? { kind: "speaking", speaking: sentence } : { kind: "done" };
 }
 
-function getSpeakingScore(progress: LevelTestProgress): number | null {
+function getSpeakingScore(progress: TestAnswers): number | null {
   if (!progress.speaking) {
     return null;
   }
@@ -249,8 +256,8 @@ function getSpeakingScore(progress: LevelTestProgress): number | null {
 /**
  * Levels from the answers so far, in half steps. Speaking comes only from the sentence said out
  * loud: a learner who skips it gets no speaking level until they speak in lessons. Writing, which
- * three minutes can't test, comes from the lower of reading and speaking, or of reading and
- * listening without the sentence. Activity refines every one of them from then on.
+ * three minutes can't test, gets none: it shows once lessons' typed answers give it one, starting
+ * from the goal's level. Activity refines every one of them from then on.
  */
 export function getLevelTestScores({
   bank,
@@ -258,18 +265,14 @@ export function getLevelTestScores({
   start,
 }: {
   bank: LevelTestBank;
-  progress: LevelTestProgress;
+  progress: TestAnswers;
   start: number;
 }): LevelTestScores {
   const reading = getSkillScore({ bank, progress, skill: "reading", start });
   const listening = getSkillScore({ bank, progress, skill: "listening", start });
   const speaking = getSpeakingScore(progress);
 
-  const scores = {
-    listening: clampCefrScore(listening),
-    reading: clampCefrScore(reading),
-    writing: clampCefrScore(Math.min(reading, speaking ?? listening)),
-  };
+  const scores = { listening: clampCefrScore(listening), reading: clampCefrScore(reading) };
 
   return speaking === null ? scores : { ...scores, speaking: clampCefrScore(speaking) };
 }
@@ -278,8 +281,10 @@ export function getLevelTestScores({
 export function listLevelTestLevels(
   scores: LevelTestScores,
 ): { label: string; score: number; skill: LanguageSkill }[] {
+  const byId: Partial<Record<LanguageSkill, number>> = scores;
+
   return LANGUAGE_SKILLS.flatMap((skill) => {
-    const score = scores[skill];
+    const score = byId[skill];
     return score === undefined ? [] : [{ label: formatCefrScore(score), score, skill }];
   });
 }

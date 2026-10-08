@@ -60,7 +60,7 @@ function HomeLink() {
 
   return (
     // oxlint-disable-next-line next/no-html-link-for-pages -- The app router is what failed.
-    <a className={buttonVariants({ size: "lg", variant: "outline" })} href="/">
+    <a className={buttonVariants({ variant: "ghost" })} href="/">
       {t("Go to the home page")}
     </a>
   );

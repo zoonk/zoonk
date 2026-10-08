@@ -4,6 +4,7 @@ import { type GoalSkillGraph } from "./save-goal-skills";
 
 function graphSkill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key: string }) {
   return {
+    area: "",
     course: "math",
     description: `Idea of ${overrides.key}`,
     estimatedLessons: 3,
@@ -12,6 +13,7 @@ function graphSkill(overrides: Partial<GoalSkillGraph["skills"][number]> & { key
     name: `Skill ${overrides.key}`,
     phase: 1,
     prerequisites: [],
+    topics: [],
     ...overrides,
   };
 }
@@ -98,5 +100,27 @@ describe(toGoalPlanGraph, () => {
       name: "Skill algebra",
       phase: 0,
     });
+  });
+
+  it("marks a career goal's outcome skills, also when the Library merged one into another skill", () => {
+    const career: GoalSkillGraph = {
+      ...graph,
+      skills: [
+        graphSkill({ key: "research" }),
+        graphSkill({ key: "portfolio", outcome: true, phase: 2 }),
+        graphSkill({ key: "case-study", outcome: true, phase: 2 }),
+      ],
+    };
+
+    const result = toGoalPlanGraph({
+      courseIdsByKey: { math: "course-math" },
+      graph: career,
+      idsByKey: { "case-study": "skill-r", portfolio: "skill-p", research: "skill-r" },
+    });
+
+    expect(result.skills.map((skill) => [skill.skillId, skill.outcome])).toStrictEqual([
+      ["skill-r", true],
+      ["skill-p", true],
+    ]);
   });
 });

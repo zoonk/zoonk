@@ -42,6 +42,7 @@ export function courseLookup(course: SeedCourse, language: SeedLanguage) {
         lessonKeys: chapter.lessons.map((lesson) => lesson.key),
         title: chapter.title.in(language),
         weight: chapter.weight ?? null,
+        writtenTest: chapter.writtenTest ?? false,
       };
     },
     courseId: libraryIds.course(course.key, language),

@@ -1,11 +1,11 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 
 type SolverStep = ActivityRendererProps<"stepSolver">["content"]["fields"]["steps"][number];

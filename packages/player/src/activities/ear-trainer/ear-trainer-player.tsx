@@ -54,7 +54,7 @@ function ProgressionStrip({
               aria-current={playingIndex === index ? "true" : undefined}
               aria-label={isHidden && !isChecked ? t("The chord to name") : label}
               className={cn(
-                "in-data-[mode=fun]:font-fun-display flex h-14 min-w-14 items-center justify-center rounded-2xl px-3 text-xl font-bold motion-safe:transition-all",
+                "flex h-14 min-w-14 items-center justify-center rounded-2xl px-3 text-xl font-bold motion-safe:transition-all",
                 isHidden
                   ? "border-viz-accent text-viz-accent border-2 border-dashed"
                   : "bg-background border-border border",

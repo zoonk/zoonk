@@ -1,5 +1,6 @@
 "use client";
 
+import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { useReplaceName } from "../user-name-context";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segments";
@@ -27,13 +28,15 @@ function findNextMathDelimiter(text: string) {
 
 /**
  * Splits lesson prose into math and non-math regions so lightweight Markdown
- * markers never modify LaTeX commands such as \lambda or \theta.
+ * markers never modify LaTeX commands such as \lambda or \theta. Outside math,
+ * code and emphasis (angle-quoted words included) read the way every learner
+ * text reads them.
  */
 function parseMathSegments(text: string): RichInlineSegment[] {
   const delimiter = findNextMathDelimiter(text);
 
   if (!delimiter) {
-    return parseCodeSegments(text);
+    return parseInlineMarkup(text);
   }
 
   const before = text.slice(0, delimiter.index);
@@ -41,104 +44,22 @@ function parseMathSegments(text: string): RichInlineSegment[] {
   const mathEnd = text.indexOf(delimiter.close, mathStart);
 
   if (mathEnd === -1) {
-    return parseCodeSegments(text);
+    return parseInlineMarkup(text);
   }
 
   const mathText = text.slice(mathStart, mathEnd);
   const after = text.slice(mathEnd + delimiter.close.length);
 
   return [
-    ...parseCodeSegments(before),
+    ...parseInlineMarkup(before),
     { kind: delimiter.kind, text: mathText },
     ...parseMathSegments(after),
   ];
 }
 
 /**
- * Parses inline code before emphasis so generated examples such as
- * `greetUser();` keep their literal punctuation instead of being interpreted
- * as lightweight Markdown.
- */
-function parseCodeSegments(text: string): RichInlineSegment[] {
-  const start = text.indexOf("`");
-  const contentStart = start + 1;
-  const end = text.indexOf("`", contentStart);
-
-  if (start === -1 || end === -1) {
-    return parseEmphasisSegments(text);
-  }
-
-  const before = text.slice(0, start);
-  const content = text.slice(contentStart, end);
-  const after = text.slice(end + 1);
-
-  return [
-    ...parseEmphasisSegments(before),
-    { kind: "code", text: content },
-    ...parseCodeSegments(after),
-  ];
-}
-
-/**
- * Parses the small text emphasis subset that AI lesson copy actually uses.
- * This intentionally avoids a broad Markdown renderer so generated headings,
- * lists, tables, or links cannot unexpectedly change the player layout.
- */
-function parseEmphasisSegments(text: string): RichInlineSegment[] {
-  const boldStart = text.indexOf("**");
-  const italicStart = text.indexOf("*");
-  const hasBold = boldStart !== -1;
-  const hasItalic = italicStart !== -1;
-
-  if (!hasBold && !hasItalic) {
-    return text ? [{ kind: "text", text }] : [];
-  }
-
-  if (hasBold && (!hasItalic || boldStart <= italicStart)) {
-    return parseMarkedSegment({ close: "**", kind: "bold", open: "**", text });
-  }
-
-  return parseMarkedSegment({ close: "*", kind: "italic", open: "*", text });
-}
-
-/**
- * Converts one matched emphasis pair and then recursively parses the text
- * around it. Unmatched markers stay visible because showing the original
- * generated text is better than dropping learner-facing content.
- */
-function parseMarkedSegment({
-  close,
-  kind,
-  open,
-  text,
-}: {
-  close: string;
-  kind: "bold" | "italic";
-  open: string;
-  text: string;
-}): RichInlineSegment[] {
-  const start = text.indexOf(open);
-  const contentStart = start + open.length;
-  const end = text.indexOf(close, contentStart);
-
-  if (start === -1 || end === -1) {
-    return text ? [{ kind: "text", text }] : [];
-  }
-
-  const before = text.slice(0, start);
-  const content = text.slice(contentStart, end);
-  const after = text.slice(end + close.length);
-
-  return [
-    ...parseEmphasisSegments(before),
-    { kind, text: content },
-    ...parseEmphasisSegments(after),
-  ];
-}
-
-/**
  * Renders generated lesson copy with only the formatting primitives we support
- * in player content: LaTeX math, inline code, and simple bold/italic emphasis.
+ * in player content: LaTeX math, inline code, and bold/italic emphasis.
  */
 export function PlayerRichText({ text }: { text: string }) {
   const replaceName = useReplaceName();

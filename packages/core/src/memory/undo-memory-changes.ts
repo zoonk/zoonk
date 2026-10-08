@@ -3,7 +3,7 @@ import { type MemoryFact, type TransactionClient, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
-import { scheduleDepthPreferenceRefresh } from "./_utils/depth-preference";
+import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import { restoreRemovedMemoryFact } from "./_utils/memory-writes";
 import {
@@ -27,6 +27,7 @@ class MemoryUndoConflictError extends Error {
   }
 }
 
+/** An added fact taken back goes with the example lines that could quote it. */
 async function takeBackAddedFact({
   factId,
   transaction,
@@ -44,6 +45,8 @@ async function takeBackAddedFact({
   if (count === 0) {
     throw new MemoryUndoConflictError();
   }
+
+  await forgetExampleLines({ client: transaction, userId });
 }
 
 /** The replaced fact comes back only if it's still the one this fact replaced. */
@@ -167,7 +170,6 @@ export async function undoMemoryChanges(input: MemoryUndoInput): Promise<MemoryU
   }
 
   revalidateCacheTags([getMemoryCacheTag(userId)]);
-  scheduleDepthPreferenceRefresh(userId);
 
   return {
     removedFactIds: result.flatMap((change) => change.removedFactId ?? []),

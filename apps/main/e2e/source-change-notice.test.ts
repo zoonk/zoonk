@@ -17,7 +17,7 @@ async function addChangedNotice({ goalId, userId }: { goalId: string; userId: st
 
 test.describe("Source change notice on Today", () => {
   test("says in one line what changed in the goal's notice", async ({ browser }) => {
-    const { goal, user } = await createStudyDay({ mode: "fun" });
+    const { goal, user } = await createStudyDay();
     await addChangedNotice({ goalId: goal.id, userId: user.id });
 
     const page = await openAs(browser, user);

@@ -1,8 +1,8 @@
 "use client";
 
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
-import { useFormatNumber } from "../_utils/use-format-number";
 
 type Fields = ActivityContentFor<"samplingSimulator">["fields"];
 

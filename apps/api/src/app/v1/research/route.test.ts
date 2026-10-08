@@ -3,6 +3,7 @@ import { answerGoalUploadRequest } from "@zoonk/core/library/sources/upload-requ
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getRun, start } from "workflow/api";
+import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
 import { POST as createResearch } from "./route";
 
 // Core's integration tests cover who may research which goal and when an upload answers an ask;
@@ -79,6 +80,41 @@ describe("POST /v1/research", () => {
     expect([retried.status, first.status]).toStrictEqual([202, 202]);
     expect(start).toHaveBeenCalledTimes(2);
     expect(start).toHaveBeenCalledWith(researchWorkflow, [{ goalId: GOAL_ID, sourceIds: [] }]);
+  });
+
+  it("starts again when the goal's run says it's running but stalled, as a restart leaves it", async () => {
+    goalWithRun("wrun_first");
+    lastRun({ status: "running" });
+
+    // It started a step an hour ago and never recorded anything since.
+    mockLastRunEvent("wrun_first", {
+      createdAt: new Date(Date.now() - 60 * 60 * 1000),
+      eventType: "step_started",
+    });
+
+    const response = await createResearch(researchRequest({ goalId: GOAL_ID }));
+
+    expect(response.headers.get("Location")).toBe("/v1/research/wrun_new");
+
+    expect(start).toHaveBeenCalledExactlyOnceWith(researchWorkflow, [
+      { goalId: GOAL_ID, sourceIds: [] },
+    ]);
+  });
+
+  it("follows a run that's asleep until its next check, however long ago it went to sleep", async () => {
+    goalWithRun("wrun_first");
+    lastRun({ status: "running" });
+
+    mockLastRunEvent("wrun_first", {
+      createdAt: new Date(Date.now() - 30 * 60 * 1000),
+      eventData: { resumeAt: new Date(Date.now() + 60 * 1000) },
+      eventType: "wait_created",
+    });
+
+    const response = await createResearch(researchRequest({ goalId: GOAL_ID }));
+
+    expect(response.headers.get("Location")).toBe("/v1/research/wrun_first");
+    expect(start).not.toHaveBeenCalled();
   });
 
   it("reads the uploads that answer the goal's ask in a new run", async () => {

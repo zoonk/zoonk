@@ -1,10 +1,8 @@
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
-import { type Mode, setDeviceMode } from "./learn-personas";
 
 /**
  * Support per skill: a lesson on a skill the learner already answered opens with a question. A
@@ -16,7 +14,7 @@ const EXPLANATION_TITLE = "A cloud, not a little ball";
 const CHECK_QUESTION = 'What does the electron "cloud" show?';
 
 /** A lesson on a skill the learner already answered twice. */
-async function createLessonFor({ mode, userId }: { mode: Mode; userId: string }) {
+async function createLessonFor(userId: string) {
   const skill = await skillFixture();
 
   const [{ lesson }] = await Promise.all([
@@ -28,7 +26,6 @@ async function createLessonFor({ mode, userId }: { mode: Mode; userId: string })
         "summary",
       ],
     }),
-    learningProfileFixture({ experienceMode: mode, userId }),
     learnerSkillFixture({ reps: 2, skillId: skill.id, state: "learning", userId }),
   ]);
 
@@ -37,8 +34,7 @@ async function createLessonFor({ mode, userId }: { mode: Mode; userId: string })
   return lesson;
 }
 
-async function passHook(page: Page, { lessonId, mode }: { lessonId: string; mode: Mode }) {
-  await setDeviceMode(page.context(), mode);
+async function passHook(page: Page, lessonId: string) {
   await page.goto(`/learn/${lessonId}`);
 
   await page.getByRole("radio", { name: "No" }).click();
@@ -51,9 +47,9 @@ test.describe("How a lesson opens", () => {
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    const lesson = await createLessonFor({ mode: "fun", userId: noProgressUser.id });
+    const lesson = await createLessonFor(noProgressUser.id);
 
-    await passHook(page, { lessonId: lesson.id, mode: "fun" });
+    await passHook(page, lesson.id);
 
     await expect(page.getByText(CHECK_QUESTION)).toBeVisible();
     await expect(page.getByRole("button", { name: "Explain first" })).toBeVisible();

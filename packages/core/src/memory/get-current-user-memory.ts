@@ -39,5 +39,6 @@ export async function getCurrentUserMemory(): Promise<MemoryView | null> {
     categories: access.categories,
     enabled: access.enabled,
     facts: facts.map((fact) => toMemoryFactView(fact)),
+    offByGuardian: access.offByGuardian,
   };
 }

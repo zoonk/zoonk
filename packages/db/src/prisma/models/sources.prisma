@@ -86,12 +86,50 @@ model ExamBlueprint {
   changeNotices      SourceChangeNotice[]
   mockExams          MockExam[]
   examResults        ExamResult[]
+  targetCutoffs      TargetCutoff[]
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@index([nextCheckAt])
   @@index([ownerId])
   @@index([sourceId])
   @@map("exam_blueprints")
+}
+
+enum TargetCutoffStatus {
+  found
+  unknown
+}
+
+/// The last published cut-off of one target of a shared exam: a course at an institution in an
+/// entrance exam's selection (SISU's last cut-off for Medicina at UFMG), or a public-service
+/// exam's position, for the general list ("ampla concorrência"), with the page it came from. It's
+/// looked up once a year per exam and target and shared by every learner aiming there; `unknown`
+/// means the lookup found none, so nothing is shown and nothing is guessed. `targetKey` is the
+/// normalized course and institution, or position.
+model TargetCutoff {
+  id              String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  examBlueprintId String             @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint      @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  targetKey       String             @map("target_key")
+  /// The year it was looked up in: the next year looks it up again.
+  year            Int                @db.SmallInt
+  status          TargetCutoffStatus
+  /// On the exam's own scale, as the source gives it.
+  score           Float?
+  /// The selection it's from, as the source names it ("Sisu 2025").
+  edition         String?
+  /// The list it's for, as the source names it ("ampla concorrência").
+  quota           String?
+  sourceUrl       String?            @map("source_url")
+  sourceTitle     String?            @map("source_title")
+  model           String
+  promptVersion   String             @map("prompt_version")
+  runId           String             @map("run_id")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([examBlueprintId, targetKey, year], name: "blueprintTargetYear")
+  @@map("target_cutoffs")
 }
 
 enum LearnerSourceOrigin {

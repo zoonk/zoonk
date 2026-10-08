@@ -3,7 +3,6 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { setDeviceMode } from "./learn-personas";
 
 /**
  * The personal layer over shared lessons, as the page serves it: hands-on screens in the tool the
@@ -82,7 +81,6 @@ test.describe("Personal versions of shared lessons", () => {
         kind: "tool",
         stepId: stepId(steps, "check"),
       }),
-      setDeviceMode(page.context(), "focus"),
     ]);
 
     await page.goto(`/learn/${lessonId}`);

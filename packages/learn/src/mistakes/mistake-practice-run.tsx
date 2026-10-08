@@ -2,12 +2,18 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { Progress } from "@zoonk/ui/components/progress";
-import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
+import {
+  TaskHeader,
+  TaskHeaderBar,
+  TaskHeaderProgress,
+  TaskHeaderSide,
+  TaskHeaderTitle,
+} from "../_components/task-header";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnLink } from "../learn-link";
+import { SessionBody } from "../session/session-body";
 import { type LessonHref } from "./drill/drill-types";
 import { type PracticeEntry } from "./mistake-practice-state";
 import { NothingToPractice, PracticeDone, PracticeSaving } from "./practice-done";
@@ -20,7 +26,7 @@ const PERCENT = 100;
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-const CLOSE_CLASS = cn(buttonVariants({ size: "icon-lg", variant: "ghost" }), "rounded-full");
+const CLOSE_CLASS = buttonVariants({ size: "icon", variant: "ghost" });
 
 /**
  * Ends the run early: what was answered counts, like a partial day. Before any answer there's
@@ -40,10 +46,9 @@ function EndButton({ backHref, run }: { backHref: string; run: Run }) {
   return (
     <Button
       aria-label={t("End practice. What you answered counts.")}
-      className="rounded-full"
       disabled={run.state.phase.kind === "checking"}
       onClick={run.end}
-      size="icon-lg"
+      size="icon"
       variant="ghost"
     >
       <XIcon aria-hidden="true" />
@@ -52,8 +57,8 @@ function EndButton({ backHref, run }: { backHref: string; run: Run }) {
 }
 
 /**
- * The question's "…" menu to vote on it. A timed drill's clock never waits on a menu, so there it
- * shows once the question is answered.
+ * The question's "…" menu to report a problem. A timed drill's clock never waits on a menu, so
+ * there it shows once the question is answered.
  */
 function QuestionMenu({ run }: { run: Run }) {
   const t = useExtracted();
@@ -69,34 +74,39 @@ function QuestionMenu({ run }: { run: Run }) {
       label={t("Question options")}
       screen="mistake-practice"
       target={{ contentId: run.step.question.itemId, contentKind: "item" }}
+      votes={false}
     />
   );
 }
 
+/** The run's header, the same as every full-screen task's, with one bar for its questions. */
 function PracticeHeader({ backHref, run }: { backHref: string; run: Run }) {
   const t = useExtracted();
-  const locale = useLocale();
   const total = run.steps.length;
+  const current = Math.min(run.state.index + 1, total);
 
   return (
-    <header className="flex items-center gap-2">
-      <EndButton backHref={backHref} run={run} />
+    <TaskHeader>
+      <TaskHeaderBar>
+        <TaskHeaderSide align="start">
+          <EndButton backHref={backHref} run={run} />
+        </TaskHeaderSide>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <h1 className="text-muted-foreground text-sm">{t("Practice mistakes")}</h1>
-        <Progress
-          locale={locale}
-          aria-label={t("Question {current, number} of {total, number}", {
-            current: Math.min(run.state.index + 1, total),
-            total,
-          })}
-          className="**:data-[slot=progress-track]:h-1.5"
-          value={(run.state.index / total) * PERCENT}
+        <TaskHeaderTitle
+          detail={t("{current} of {total}", { current: String(current), total: String(total) })}
+          title={t("Practice mistakes")}
         />
-      </div>
 
-      <QuestionMenu run={run} />
-    </header>
+        <TaskHeaderSide align="end">
+          <QuestionMenu run={run} />
+        </TaskHeaderSide>
+      </TaskHeaderBar>
+
+      <TaskHeaderProgress
+        label={t("Question {current, number} of {total, number}", { current, total })}
+        value={(run.state.index / total) * PERCENT}
+      />
+    </TaskHeader>
   );
 }
 
@@ -142,14 +152,17 @@ export function MistakePracticeRun({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <>
       <PracticeHeader backHref={backHref} run={run} />
-      <PracticeStepView
-        lessonHref={lessonHref}
-        run={run}
-        step={run.step}
-        trueFalseLabels={trueFalseLabels}
-      />
-    </div>
+
+      <SessionBody>
+        <PracticeStepView
+          lessonHref={lessonHref}
+          run={run}
+          step={run.step}
+          trueFalseLabels={trueFalseLabels}
+        />
+      </SessionBody>
+    </>
   );
 }

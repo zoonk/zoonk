@@ -6,7 +6,12 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planChangeFixture,
+  planFixture,
+  planItemFixture,
+} from "@zoonk/testing/fixtures/goals";
 import {
   catalogCourseFixture,
   privateCourseFixture,
@@ -166,10 +171,47 @@ test.describe("Tutor threads beyond lessons", () => {
     const [thread, hiddenThread] = await Promise.all([api.get(path), other.api.get(path)]);
 
     expect(lessonQuestionThreadResponseSchema.parse(await thread.json())).toMatchObject({
-      questions: [{ id: question.id }],
+      questions: [{ id: question.id, planChange: null }],
     });
 
     expect(hiddenThread.status()).toBe(404);
+
+    // A plan change the buddy proposed in its answer comes with the question, waiting for an OK.
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    const change = await planChangeFixture({
+      kind: "edited",
+      payload: { operations: [{ kind: "setDailyMinutes", minutes: 20 }], source: "planEdit" },
+      planId: plan.id,
+      reason: "Twenty minutes a day.",
+      status: "proposed",
+    });
+
+    await prisma.lessonQuestion.update({
+      data: { planChangeId: change.id },
+      where: { id: question.id },
+    });
+
+    const [withChange, single] = await Promise.all([
+      api.get(path),
+      api.get(`/v1/questions/${question.id}`),
+    ]);
+
+    // The app says a change read from the learner's words from its operations, not the model's.
+    const proposal = {
+      id: change.id,
+      operations: [{ kind: "setDailyMinutes", minutes: 20 }],
+      reason: null,
+      status: "proposed",
+    };
+
+    expect(lessonQuestionThreadResponseSchema.parse(await withChange.json())).toMatchObject({
+      questions: [{ id: question.id, planChange: proposal }],
+    });
+
+    expect(lessonQuestionResourceSchema.parse(await single.json())).toMatchObject({
+      planChange: proposal,
+    });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
   });

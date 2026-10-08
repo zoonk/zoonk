@@ -47,29 +47,18 @@ async function changeStatus(changeId: string) {
 }
 
 test.describe("Plan rebalance", () => {
-  test("Fun: the buddy says it moved time on Today, and it can be undone", async ({ browser }) => {
-    await asPersona(browser, { mode: "fun", persona: "fun" }, async ({ page, user }) => {
+  test("Today says it moved time, and it can be undone", async ({ browser }) => {
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const change = await addRebalance(user);
       await page.goto("/today");
 
       const note = page.getByRole("region", { name: "Plan change" });
-      await expect(note).toContainText("Otto moved time to Science, where it's needed most.");
+      await expect(note).toContainText("More time for Science, where it's needed most.");
 
       await note.getByRole("button", { name: "Undo" }).click();
 
-      await expect(note).toBeHidden();
+      await expect(note.getByRole("status")).toHaveText("Undone. Your plan is back as it was.");
       await expect.poll(() => changeStatus(change.id)).toBe("undone");
-    });
-  });
-
-  test("Focus: the same change as a plain line on Progress", async ({ browser }) => {
-    await asPersona(browser, { mode: "focus", persona: "exam" }, async ({ page, user }) => {
-      await addRebalance(user);
-      await page.goto("/progress");
-
-      const note = page.getByRole("region", { name: "Plan change" });
-      await expect(note).toContainText("More time for Science, where it's needed most.");
-      await expect(note.getByRole("button", { name: "Undo" })).toBeVisible();
     });
   });
 });

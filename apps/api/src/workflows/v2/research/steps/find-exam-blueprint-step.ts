@@ -1,14 +1,10 @@
-import { decideExamIdentity } from "@zoonk/ai/tasks/v2/research/exam-identity-decision";
+import { isCurrentEdition, isNoticeReadAgain } from "@zoonk/core/library/exams/blueprint-reading";
 import {
   type ExamIdentity,
   buildExamIdentityKey,
-  findExamBlueprintByKey,
-  searchExamBlueprints,
+  findSameExam,
 } from "@zoonk/core/library/exams/identity";
-import { type ExamBlueprint } from "@zoonk/db";
 import { withAiRetry } from "../../_shared/ai-retry";
-
-const DAY_MS = 86_400_000;
 
 export type ExamBlueprintLookup = {
   /** The identity research saves under: the stored exam's when another name matched it. */
@@ -18,42 +14,9 @@ export type ExamBlueprintLookup = {
   blueprintId: string | null;
   /** False when the stored edition's exam has passed, so a new notice is looked for. */
   isCurrent: boolean;
+  /** The stored edition is current but was read with older instructions (`isNoticeReadAgain`). */
+  readsAgain: boolean;
 };
-
-async function findSameExam({
-  identity,
-  searchTerms,
-}: {
-  identity: ExamIdentity;
-  searchTerms: string[];
-}): Promise<ExamBlueprint | null> {
-  const identityKey = buildExamIdentityKey(identity);
-  const exact = await findExamBlueprintByKey({ identityKey, language: identity.language });
-
-  // Private blueprints only match their owner's exact key.
-  if (exact || identity.ownerId) {
-    return exact;
-  }
-
-  const candidates = await searchExamBlueprints({
-    country: identity.country,
-    language: identity.language,
-    terms: [identity.name, ...searchTerms],
-  });
-
-  if (candidates.length === 0) {
-    return null;
-  }
-
-  const match = await withAiRetry(() => decideExamIdentity({ candidates, request: identity }));
-
-  return candidates.find((candidate) => candidate.id === match?.id) ?? null;
-}
-
-/** A stored edition stays current until a day after its exam; one without a date always is. */
-function isCurrentEdition({ blueprint, now }: { blueprint: ExamBlueprint; now: Date }): boolean {
-  return !blueprint.examDate || blueprint.examDate.getTime() + DAY_MS > now.getTime();
-}
 
 /**
  * Finds the exam's canonical blueprint: its exact key first, then shared
@@ -70,7 +33,9 @@ export async function findExamBlueprintStep({
 }): Promise<ExamBlueprintLookup> {
   "use step";
 
-  const blueprint = await findSameExam({ identity, searchTerms });
+  const blueprint = await withAiRetry(() => findSameExam({ request: identity, searchTerms }));
+
+  const now = new Date();
 
   if (!blueprint) {
     return {
@@ -78,6 +43,7 @@ export async function findExamBlueprintStep({
       identity,
       identityKey: buildExamIdentityKey(identity),
       isCurrent: false,
+      readsAgain: false,
     };
   }
 
@@ -92,6 +58,7 @@ export async function findExamBlueprintStep({
       role: blueprint.role,
     },
     identityKey: blueprint.identityKey,
-    isCurrent: isCurrentEdition({ blueprint, now: new Date() }),
+    isCurrent: isCurrentEdition({ blueprint, now }),
+    readsAgain: isNoticeReadAgain({ blueprint, now }),
   };
 }

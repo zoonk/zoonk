@@ -5,8 +5,8 @@ type ToneClasses = { area: string; mark: string; soft: string; stroke: string };
 /**
  * Drawings keep natural colors (red and blue blood, green leaves), so they use color families
  * instead of the data tokens. Fills are tints mixed into the page background and strokes are
- * mixed toward the text color, so every tone follows light, dark and Fun's paper on its own and
- * outlines keep at least 3:1 against the surface.
+ * mixed toward the text color, so every tone follows light and dark on its own and outlines keep
+ * at least 3:1 against the surface.
  */
 export const DIAGRAM_TONES: Record<DiagramTone, ToneClasses> = {
   blue: {

@@ -11,13 +11,12 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
-import { type Mode } from "./learn-personas";
 import { openAs } from "./study-day";
 
 /**
  * Questions built from a public document (a law, an exam notice) show a dated "Sources" chip:
  * when the document was last checked, and a tap opens its title, publisher and link. The chip is
- * the same in Focus and Fun, and on lesson screens, which the player's tests cover.
+ * the same on lesson screens, which the player's tests cover.
  */
 
 const LAW_URL = "https://www.planalto.gov.br/ccivil_03/leis/l8112cons.htm";
@@ -32,24 +31,19 @@ function lawFixture() {
   });
 }
 
-async function learnerIn(mode: Mode) {
+async function createExamLearner() {
   const user = await createE2EUser(getBaseURL());
   const goal = await goalFixture({ kind: "exam", timezone: "UTC", userId: user.id });
 
-  await learningProfileFixture({
-    activeGoalId: goal.id,
-    experienceMode: mode,
-    userId: user.id,
-    ...(mode === "fun" ? { buddyKind: "zu" } : {}),
-  });
+  await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
   return { goal, user };
 }
 
 /** Today's session holding one practice question that quotes an article of the law. */
-async function createSourcedPractice(mode: Mode) {
+async function createSourcedPractice() {
   const [{ goal, user }, skill, law, lesson] = await Promise.all([
-    learnerIn(mode),
+    createExamLearner(),
     skillFixture({ name: `Probation ${randomUUID()}` }),
     lawFixture(),
     libraryLessonFixture({ title: "Probation" }),
@@ -83,7 +77,7 @@ test.describe("Sources chip", () => {
   test("a practice question's feedback shows the article and its dated source", async ({
     browser,
   }) => {
-    const { law, user } = await createSourcedPractice("fun");
+    const { law, user } = await createSourcedPractice();
     const page = await openAs(browser, user);
     const feedback = page.getByRole("region", { name: "Answer feedback" });
 

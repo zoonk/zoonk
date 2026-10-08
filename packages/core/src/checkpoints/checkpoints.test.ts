@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -245,6 +246,47 @@ describe(getWeeklyChallenge, () => {
       checkpoint: { kind: "weekly", mock: true, timeLimitMinutes: 27 },
       kind: "checkpoint",
       questions: 9,
+    });
+  });
+
+  it("says a mock days away is the exam's short mock, not the few questions the bank has today", async () => {
+    const user = await userFixture();
+    const citation = { passage: "80 questões em 5 horas", sourceId: "notice" };
+
+    const blueprint = await examBlueprintFixture({
+      structure: {
+        formats: [{ citation, description: "Quatro opções", kind: "multipleChoice", options: 4 }],
+        mock: {
+          adaptive: false,
+          citations: [citation],
+          order: null,
+          scoring: { description: "Um ponto por questão", method: "raw" },
+          sections: [{ day: null, minutes: 300, name: "Prova objetiva", questions: 80 }],
+          timeLimitMinutes: 300,
+          totalQuestions: 80,
+        },
+        rules: [],
+        subjects: [],
+      },
+    });
+
+    const { goal, plan } = await sessionGoalFixture({
+      goal: { examBlueprintId: blueprint.id, kind: "exam" },
+      userId: user.id,
+    });
+
+    await checkpointItemFixture({
+      kind: "mock",
+      planId: plan.id,
+      position: 10,
+      scheduledFor: new Date("2026-10-04T00:00:00Z"),
+    });
+
+    mockSession(user.id);
+
+    await expect(getWeeklyChallenge({ goalId: goal.id })).resolves.toMatchObject({
+      challenge: { conditions: { fullLength: false, questions: 40 }, questions: 40 },
+      status: "ready",
     });
   });
 

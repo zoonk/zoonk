@@ -1,4 +1,3 @@
-import { ZoonkLogo } from "@/components/brand/zoonk-logo";
 import { NotFoundMessage } from "@/components/public/not-found-message";
 import { routing } from "@/i18n/routing";
 import { type Metadata } from "next";
@@ -30,26 +29,15 @@ async function LocalizedMessage() {
 }
 
 /**
- * URLs no route matches skip the app's layouts, so this page brings its own document: the brain
- * linking home and the same message as the in-app 404.
+ * URLs no route matches skip the app's layouts, so this page brings its own document: the same
+ * message as the in-app 404, whose button goes home. It can't tell a visitor from a learner, so it
+ * shows no bar (no logo, no account) rather than the wrong one.
  */
 export default async function GlobalNotFound() {
-  const t = await getExtracted({ locale: routing.defaultLocale });
-
   return (
     <html lang={routing.defaultLocale}>
       <body className="font-sans antialiased">
         <div className="flex min-h-dvh flex-col">
-          <header className="mx-auto flex h-14 w-full max-w-6xl items-center px-4 sm:h-[72px] sm:px-8">
-            {/* oxlint-disable-next-line next/no-html-link-for-pages -- This document has no app router to navigate with. */}
-            <a
-              className="focus-visible:ring-ring/50 -m-2 rounded-xl p-2 outline-none focus-visible:ring-[3px]"
-              href="/"
-            >
-              <ZoonkLogo className="size-7" label={t("Zoonk home page")} />
-            </a>
-          </header>
-
           <Suspense fallback={<main className="flex-1" />}>
             <LocalizedMessage />
           </Suspense>

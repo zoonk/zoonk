@@ -9,11 +9,15 @@ import { DEFAULT_AUDIO_MODEL_VALUE, getSpeechModel, isAudioModelValue } from "./
 export async function generateAudioAction(formData: FormData) {
   const text = parseFormField(formData, "text");
   const voice = parseFormField(formData, "voice") as TTSVoice | undefined;
-  const language = parseFormField(formData, "language") || undefined;
+  const language = parseFormField(formData, "language");
   const modelValue = parseFormField(formData, "model") ?? DEFAULT_AUDIO_MODEL_VALUE;
 
   if (!text) {
     return { error: "Text is required." };
+  }
+
+  if (!language) {
+    return { error: "Language is required." };
   }
 
   if (!isAudioModelValue(modelValue)) {

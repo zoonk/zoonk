@@ -2,6 +2,7 @@
 
 import { type BuddyGlasses, type BuddyKind, type BuddyStage } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
+import { type LearnBuddy, useBuddyName } from "./use-buddy-name";
 
 /** Every buddy in the order learners meet them. */
 export const BUDDY_KINDS: BuddyKind[] = ["zu", "noodle", "beep", "otto"];
@@ -16,8 +17,18 @@ export const BUDDY_GLASSES: BuddyGlasses[] = [
   "monocle",
 ];
 
-/** The stages a buddy grows through, youngest first. */
-export const BUDDY_STAGES: BuddyStage[] = ["baby", "young", "adult", "wise"];
+function NamedBuddy({ buddy }: { buddy: Pick<LearnBuddy, "kind" | "name"> }) {
+  return useBuddyName(buddy);
+}
+
+/**
+ * What the buddy's tab is called: the buddy's name, or "Buddy" before one is picked. Links back to
+ * that tab say it the same way.
+ */
+export function BuddyTabName({ buddy }: { buddy: Pick<LearnBuddy, "kind" | "name"> | null }) {
+  const t = useExtracted();
+  return buddy ? <NamedBuddy buddy={buddy} /> : t("Buddy");
+}
 
 export function BuddyTagline({ kind }: { kind: BuddyKind }) {
   const t = useExtracted();
@@ -80,15 +91,15 @@ export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
 
   switch (glasses) {
     case "star":
-      return t("Beat your first boss");
+      return t("Win your first phase challenge");
     case "aviator":
-      return t("Finish your first Big Challenge");
+      return t("Finish your first weekly challenge");
     case "catEye":
-      return t("Have 7 full meals");
+      return t("Get 7 full meals");
     case "retro":
-      return t("Open 50 capsules");
+      return t("Finish 50 reviews");
     case "monocle":
-      return t("Beat the final boss");
+      return t("Win the final challenge");
     case "round":
       return t("Comes with your buddy");
     default:

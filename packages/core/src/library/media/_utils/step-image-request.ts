@@ -1,12 +1,6 @@
 import { type StepKind } from "@zoonk/db";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 
-/**
- * "At most one every 2 or 3 screens": two pictures are always at least this
- * many screens apart, even when the writer asked for more.
- */
-const MIN_SCREENS_BETWEEN_IMAGES = 2;
-
 /** The screen fields a picture sits next to, in reading order. */
 const SCREEN_TEXT_FIELDS = [
   "title",
@@ -27,9 +21,11 @@ function getScreenText(content: Record<string, unknown>): string {
 }
 
 /**
- * The picture a screen asks for, with the words shown next to it. Screens
- * whose content doesn't follow the contract, or that ask for no picture, have
- * none.
+ * The picture a screen asks for, with the words shown next to it. A screen asks
+ * only when it needs one (the learner would otherwise have to imagine what it
+ * shows, a question is about it, or its words point at it), so every request is
+ * drawn. Screens whose content doesn't follow the contract, or that ask for no
+ * picture, have none.
  */
 export function getStepImageRequest({
   content,
@@ -52,23 +48,4 @@ export function getStepImageRequest({
   }
 
   return { alt: image.alt, prompt: image.prompt, screenText: getScreenText(parsed.data) };
-}
-
-function keepIfSpaced<TStep extends { position: number }>(kept: TStep[], step: TStep): TStep[] {
-  const last = kept.at(-1);
-  const isFarEnough = !last || step.position - last.position >= MIN_SCREENS_BETWEEN_IMAGES;
-  return isFarEnough ? [...kept, step] : kept;
-}
-
-/**
- * Picks which requested pictures to draw: in screen order, a picture is kept
- * only when the last kept one is at least two screens back, so a lesson never
- * shows pictures on consecutive screens.
- */
-export function pickSpacedImageSteps<TStep extends { position: number }>(
-  steps: readonly TStep[],
-): TStep[] {
-  return steps
-    .toSorted((first, second) => first.position - second.position)
-    .reduce<TStep[]>((kept, step) => keepIfSpaced(kept, step), []);
 }

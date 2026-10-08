@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { type AreaPracticeOutcome } from "../progress/progress-context";
+
+/** How a bonus practice went; on "started" the host has already opened it. */
+export type AreaPracticeOutcome = "dailyCap" | "failed" | "nothingToPractice" | "started";
 
 /**
- * Runs a host's bonus practice action ("Practice", "Refresh now") once at a time and keeps how it
+ * Runs a host's bonus practice action ("Practice", "Review") once at a time and keeps how it
  * went, so the button can say why nothing opened. On "started" the host has already opened it.
  */
 export function usePracticeRun(run: () => Promise<AreaPracticeOutcome>) {

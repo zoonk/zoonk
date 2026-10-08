@@ -70,7 +70,8 @@ function compareItems(a: RankedItem, b: RankedItem): number {
   return getSortDate(a.item) - getSortDate(b.item) || a.rank - b.rank;
 }
 
-function fromUnit(unit: ScheduledUnit): PlannedItem {
+/** A scheduled unit as a new plan item. */
+export function fromUnit(unit: ScheduledUnit): PlannedItem {
   return {
     chapterId: unit.chapterId,
     completedAt: null,

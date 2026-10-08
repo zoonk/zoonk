@@ -52,8 +52,9 @@ async function loadStudyDays(goalId: string): Promise<number[] | undefined> {
  * "Continue at Beginner" once a plan is done: the finished goal is completed and a new goal takes
  * its place for the next level of the same course, with the learner's time, study days and what
  * onboarding understood, so its curriculum and plan are written without asking again. It takes the
- * finished goal's place, so it isn't another goal against the plan's limits. The finished goal
- * comes back if the new one can't be created.
+ * finished goal's place, so it isn't another goal against the plan's limits, and a goal goes on to
+ * its next level once, so continuing again can't make unlimited goals. The finished goal comes
+ * back if the new one can't be created.
  */
 export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevelResult> {
   const owned = await findOwnedGoal(goalId);
@@ -71,6 +72,14 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
 
   if (!isPlanFinished(items)) {
     return { status: "notFinished" };
+  }
+
+  const continued = await prisma.goal.count({
+    where: { details: { equals: goal.id, path: ["continuesFromGoalId"] }, userId: owned.userId },
+  });
+
+  if (continued > 0) {
+    return { status: "noNextLevel" };
   }
 
   const [course, studyDays] = await Promise.all([

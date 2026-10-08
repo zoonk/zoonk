@@ -10,6 +10,9 @@ import { type LessonTutorConfig } from "../lesson/lesson-player-types";
 import { type LessonQuestionNavigation } from "../questions/lesson-question-navigation";
 import { TestLink } from "./render-lesson-player";
 
+/** What a question carries before an answer proposes or offers anything. */
+const UNANSWERED = { planChange: null, toolOffer: null } as const;
+
 /**
  * The tutor's side of the public API (`/v1/.../questions`), faked in the page: the tutor talks to
  * it with `fetch` through its connection, so the stub sits there and answers like the API, with
@@ -78,6 +81,8 @@ export function tutorAnswerStream() {
       send({ id: "answer", type: "text-end" });
       send({ type: "finish" });
     },
+    /** A data part, such as the plan change the buddy proposed (`data-plan-change`). */
+    part: (type: `data-${string}`, data: unknown) => send({ data, type }),
     response: new Response(readable, { headers: ANSWER_STREAM_HEADERS, status: 200 }),
     write: (delta: string) => send({ delta, id: "answer", type: "text-delta" }),
   };
@@ -258,6 +263,7 @@ export function stubTutorApi({
         id: crypto.randomUUID(),
         question,
         status,
+        ...UNANSWERED,
         updatedAt: createdAt,
       };
     },
@@ -301,6 +307,7 @@ export function stubTutorApi({
       id: crypto.randomUUID(),
       question: input.question,
       status: "pending",
+      ...UNANSWERED,
       updatedAt: createdAt,
     };
 
@@ -364,9 +371,25 @@ export function stubTutorApi({
   return api;
 }
 
-/** The tutor as a host app sets it up for a learner who may ask, reaching the faked API. */
-export function buildTutor(navigation: Partial<LessonQuestionNavigation> = {}): LessonTutorConfig {
+/** A learner's buddy as the host reads it: Zu, named Pip by the learner. */
+const TEST_BUDDY: NonNullable<LessonTutorConfig["buddy"]> = {
+  beltColor: "white",
+  energy: null,
+  glasses: "round",
+  kind: "zu",
+  name: "Pip",
+};
+
+/**
+ * The tutor as a host app sets it up for a learner who may ask, reaching the faked API. The
+ * learner's buddy (Pip) answers unless a test passes `buddy: null` (no buddy picked yet).
+ */
+export function buildTutor(
+  navigation: Partial<LessonQuestionNavigation> = {},
+  { buddy = TEST_BUDDY }: { buddy?: LessonTutorConfig["buddy"] } = {},
+): LessonTutorConfig {
   return {
+    buddy,
     canAsk: true,
     connection: {
       apiUrl: TUTOR_API_URL,

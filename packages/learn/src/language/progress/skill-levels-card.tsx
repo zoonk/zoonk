@@ -12,9 +12,9 @@ import {
   PenLineIcon,
   TrendingUpIcon,
 } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useFormatIsoDate } from "../../_utils/iso-date";
-import { findBiggestRise, getBandFill, getLevelShare } from "../_utils/level-scale";
+import { getBandFill, getLevelShare, listRises } from "../_utils/level-scale";
 import { useSkillName } from "../_utils/use-skill-name";
 import { LanguageCard, LanguageCardTitle } from "../language-card";
 
@@ -50,7 +50,7 @@ function TargetLabel({
     <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
       <span
         aria-hidden="true"
-        className="border-success in-data-[mode=fun]:border-fun-accent-lime inline-block h-3 border-l-2 border-dashed"
+        className="border-success inline-block h-3 border-l-2 border-dashed"
       />
       {targetDate
         ? t("Goal {level} by {date}", {
@@ -67,11 +67,11 @@ function LevelBar({ score }: { score: number }) {
     <div aria-hidden="true" className="flex gap-0.75">
       {CEFR_LEVELS.map((band, index) => (
         <span
-          className="bg-muted in-data-[mode=fun]:bg-fun-track h-2.5 flex-1 overflow-hidden first:rounded-l-full last:rounded-r-full"
+          className="bg-muted h-2.5 flex-1 overflow-hidden first:rounded-l-full last:rounded-r-full"
           key={band}
         >
           <span
-            className="bg-primary in-data-[mode=fun]:bg-fun-accent-cyan block h-full"
+            className="bg-primary block h-full"
             style={{ width: `${getBandFill({ band: index, score }) * PERCENT}%` }}
           />
         </span>
@@ -92,7 +92,7 @@ function LevelRow({ level }: { level: LanguageSkillLevel }) {
         <span className="truncate">{skillName(level.skill)}</span>
       </span>
       <LevelBar score={level.score} />
-      <span className="in-data-[mode=fun]:font-fun-display flex items-center justify-end gap-0.5 font-semibold tabular-nums">
+      <span className="flex items-center justify-end gap-0.5 font-semibold tabular-nums">
         {level.label}
         {level.trend === "up" && (
           <ArrowUpIcon
@@ -113,12 +113,15 @@ function LevelRow({ level }: { level: LanguageSkillLevel }) {
   );
 }
 
+/** Every skill with an up arrow, so the sentence and the arrows always agree. */
 function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
   const t = useExtracted();
+  const format = useFormatter();
   const skillName = useSkillName();
-  const rise = findBiggestRise(levels);
+  const rises = listRises(levels);
+  const [only] = rises;
 
-  if (!rise) {
+  if (!only) {
     return (
       <p className="text-muted-foreground text-sm">
         {t("Levels move as you practice. They get more accurate every week.")}
@@ -131,10 +134,14 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
       <LineMarker aria-hidden="true">
         <TrendingUpIcon className="text-success size-4" />
       </LineMarker>
-      {t("{skill} went up to {level} since the level test.", {
-        level: rise.label,
-        skill: skillName(rise.skill),
-      })}
+      {rises.length === 1
+        ? t("{skill} went up to {level} since the level test.", {
+            level: only.label,
+            skill: skillName(only.skill),
+          })
+        : t("{skills} went up since the level test.", {
+            skills: format.list(rises.map((rise) => skillName(rise.skill))),
+          })}
     </p>
   );
 }
@@ -143,13 +150,19 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
  * Level by skill on the A1 to C2 scale: one bar per skill, the learner's target as a dashed line
  * across them, an arrow for each skill that moved since the level test, and the biggest rise.
  */
-export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }) {
+export function SkillLevelsCard({
+  className,
+  progress,
+}: {
+  className?: string;
+  progress: LanguageProgressView;
+}) {
   const t = useExtracted();
   const { levels, target } = progress;
   const targetShare = target ? getLevelShare(target.score) : null;
 
   return (
-    <LanguageCard aria-labelledby="language-levels-title">
+    <LanguageCard aria-labelledby="language-levels-title" className={className}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <LanguageCardTitle id="language-levels-title">{t("Level by skill")}</LanguageCardTitle>
         <TargetLabel target={target} targetDate={progress.goal.targetDate} />
@@ -169,7 +182,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
         {targetShare !== null && (
           <span
             aria-hidden="true"
-            className="border-success in-data-[mode=fun]:border-fun-accent-lime pointer-events-none absolute -top-1 -bottom-1 border-l-2 border-dashed"
+            className="border-success pointer-events-none absolute -top-1 -bottom-1 border-l-2 border-dashed"
             data-slot="language-level-target"
             style={{ left: `calc(${BAR_START} + (${BAR_WIDTH}) * ${targetShare})` }}
           />

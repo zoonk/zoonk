@@ -30,11 +30,20 @@ export type ExamDayChecklistKey = (typeof EXAM_DAY_CHECKLIST_KEYS)[number];
  */
 const CLASS_TEST_CHECKLIST: readonly ExamDayChecklistKey[] = ["materials", "sleep"];
 
-/** What to have ready on the exam day: a public exam's list, or a class test's short one. */
+/**
+ * What to have ready on the exam day: a public exam's list (ID, pen, gates) only when its notice
+ * says what the day is like, and a class test's short one. A test no notice or material describes
+ * (a school test the learner named) has none: the public list would ask for an ID and gates it
+ * doesn't have.
+ */
 export function getExamDayChecklist(
   blueprint: { ownerId: string | null } | null,
 ): ExamDayChecklistKey[] {
-  return blueprint?.ownerId ? [...CLASS_TEST_CHECKLIST] : [...EXAM_DAY_CHECKLIST];
+  if (!blueprint) {
+    return [];
+  }
+
+  return blueprint.ownerId ? [...CLASS_TEST_CHECKLIST] : [...EXAM_DAY_CHECKLIST];
 }
 
 /** Days until the exam, as learner-local dates; null without a date. */

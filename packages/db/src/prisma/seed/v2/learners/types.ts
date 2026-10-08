@@ -2,7 +2,6 @@ import {
   type BuddyGlasses,
   type BuddyKind,
   type ContentFeedbackReason,
-  type ExperienceMode,
   type FeedbackContentKind,
   type GoalKind,
   type GoalStatus,
@@ -193,7 +192,6 @@ export type SeedLearner = {
   plus?: boolean;
   language: SeedLanguage;
   timeZone: string;
-  mode: ExperienceMode;
   buddy?: { kind: BuddyKind; name: string; glasses: BuddyGlasses };
   birth?: { month: number; yearsOld: number };
   guardian?: { email: string; dailyLimitMinutes: number };

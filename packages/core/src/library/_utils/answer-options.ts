@@ -70,3 +70,75 @@ export function stripOptionLabels<T extends { text: string }>(options: readonly 
     text: option.text.slice(labels[index]?.length ?? 0),
   }));
 }
+
+const ORDINALS = [
+  "primeira",
+  "primeiro",
+  "segunda",
+  "segundo",
+  "terceira",
+  "terceiro",
+  "quarta",
+  "quarto",
+  "quinta",
+  "quinto",
+  "ultima",
+  "ultimo",
+  "first",
+  "second",
+  "third",
+  "fourth",
+  "fifth",
+  "last",
+  "primera",
+  "tercera",
+  "cuarta",
+  "premiere",
+  "deuxieme",
+  "troisieme",
+  "quatrieme",
+  "derniere",
+  "erste",
+  "zweite",
+  "dritte",
+  "vierte",
+  "letzte",
+].join("|");
+
+/** Words that only ever name an answer option, unlike "answer" or "statement". */
+const OPTION_NOUNS = ["opcao", "alternativa", "option", "choice", "opcion"].join("|");
+
+/** "the second option", "a alternativa C", "it's the second." */
+const POSITION_PATTERNS: readonly { cased: boolean; pattern: RegExp }[] = [
+  { cased: false, pattern: new RegExp(`\\b(?:${ORDINALS}) (?:${OPTION_NOUNS})\\b`, "gu") },
+  {
+    cased: true,
+    pattern:
+      /\b(?:[Oo]pcao|[Aa]lternativa|[Ll]etra|[Oo]ption|[Cc]hoice|[Ll]etter|[Oo]pcion|[Ll]ettre)\s+\(?[A-E]\)?(?![\p{L}\p{N}])/gu,
+  },
+  {
+    cased: false,
+    pattern: new RegExp(
+      `\\b(?:e|seria|era|foi|is|was|es|sera|est|ist) (?:a|o|the|la|el|le|die|der) (?:${ORDINALS})(?=\\s*(?:[.,;:!?)]|$))`,
+      "gu",
+    ),
+  },
+];
+
+function withoutAccents(text: string): string {
+  return text.normalize("NFD").replaceAll(/\p{M}/gu, "");
+}
+
+/**
+ * Where feedback points at an answer option by its place ("é a segunda", "option C"). Options are
+ * shuffled after they're written and every screen shows its own letters, so a position the writer
+ * meant never matches the one the learner sees: feedback names an option by what it says.
+ */
+export function findOptionPositionReferences(text: string): string[] {
+  const plain = withoutAccents(text);
+  const lower = plain.toLowerCase();
+
+  return POSITION_PATTERNS.flatMap(({ cased, pattern }) =>
+    [...(cased ? plain : lower).matchAll(pattern)].map((match) => match[0]),
+  );
+}

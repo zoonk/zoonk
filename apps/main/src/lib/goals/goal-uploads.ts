@@ -3,6 +3,7 @@
 import { uploadPresigned } from "@vercel/blob/client";
 import { authClient } from "@zoonk/auth/client";
 import { type AttachOutcome } from "@zoonk/learn/onboarding/actions";
+import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { API_URL } from "@zoonk/utils/url";
@@ -12,7 +13,6 @@ import { getWorkflowAuthHeaders } from "../workflow/auth-headers";
 
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_UNPROCESSABLE = 422;
-const HTTP_TOO_MANY_REQUESTS = 429;
 
 /** Uploads go to the private store, which only the server reads. */
 const UPLOAD_ACCESS = "private";
@@ -27,13 +27,20 @@ async function toOutcome(response: Response): Promise<AttachOutcome> {
     return { source: { id, title: getString(source, "title") ?? "" }, status: "attached" };
   }
 
+  // A plan's cap for the day or the month, or fair use asking for a short break.
+  const refusal = getUsageRefusal(body);
+
+  if (refusal) {
+    return refusal.kind === "usageLimit"
+      ? { period: refusal.period, status: "limitReached", tier: refusal.tier }
+      : { status: "slowDown" };
+  }
+
   switch (response.status) {
     case HTTP_UNAUTHORIZED:
       return { status: "signInRequired" };
     case HTTP_UNPROCESSABLE:
       return { status: "unsupported" };
-    case HTTP_TOO_MANY_REQUESTS:
-      return { status: "limitReached" };
     default:
       return { status: "failed" };
   }

@@ -3,7 +3,6 @@ import { z } from "zod";
 
 const wordBankOptionSchema = z.object({
   audioUrl: z.string().nullable(),
-  pronunciation: z.string().nullable(),
   romanization: z.string().nullable(),
   translation: z.string().nullable(),
   word: z.string(),
@@ -33,7 +32,6 @@ const serializedSentenceSchema = z.object({
 const translationOptionSchema = z.object({
   audioUrl: z.string().nullable(),
   id: z.string(),
-  pronunciation: z.string().nullable(),
   romanization: z.string().nullable(),
   word: z.string(),
 });

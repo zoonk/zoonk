@@ -218,13 +218,29 @@ export function formatMaterialPages(pages: readonly MaterialPage[]): string {
 }
 
 /** One line per page, for planning a whole curriculum from the material without reading it all. */
-export function formatMaterialIndex(pages: readonly MaterialPage[]): string {
+function formatMaterialIndex(pages: readonly MaterialPage[]): string {
   return pages
     .map((page) => {
       const line = page.text.replaceAll(/\s+/gu, " ").slice(0, INDEX_LINE_CHARACTERS);
       return `[${describePage(page)}] ${line}`;
     })
     .join("\n");
+}
+
+/**
+ * The material for planning a whole curriculum from it: every page in full when it fits in
+ * `maxCharacters` (a teacher's summary, a short handout), so nothing it says is lost, else one
+ * line per page (see `formatMaterialIndex`).
+ */
+export function formatMaterialOverview({
+  maxCharacters,
+  pages,
+}: {
+  maxCharacters: number;
+  pages: readonly MaterialPage[];
+}): string {
+  const full = formatMaterialPages(pages);
+  return full.length <= maxCharacters ? full : formatMaterialIndex(pages).slice(0, maxCharacters);
 }
 
 /** The page a model's reference points at, or null for a reference to nothing it was given. */

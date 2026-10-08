@@ -75,7 +75,7 @@ export const languageGoalPaths = {
     get: {
       ...common,
       description:
-        'What Today adds for a language goal: the unit the learner is in, a new "I can" from a unit finished this week, and a pattern noticed in recent mistakes.',
+        "What Today adds for a language goal: the level across skills with the target (shown instead of preparation), a pattern noticed in recent mistakes, and the mispronounced words due to be said again.",
       operationId: "getLanguageToday",
       requestParams: { path: goalPathParamsSchema },
       responses: {

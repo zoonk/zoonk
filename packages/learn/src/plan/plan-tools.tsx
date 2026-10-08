@@ -11,8 +11,7 @@ import {
   WrenchIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
-import { SectionLabel } from "../_components/section-label";
+import { useEffect, useRef, useState } from "react";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { PlanToolSheet } from "./plan-tool-sheet";
@@ -64,7 +63,7 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
   const t = useExtracted();
   const match = CHOICES_PATTERN.exec(tool.name)?.groups;
 
-  // Beside a moon on Fun's route the card is narrow: the button moves under the name there.
+  // On a narrow card the button moves under the name.
   return (
     <li className="grid min-h-14 grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2 py-2 @max-2xs:grid-cols-[auto_1fr]">
       <ToolIcon name={tool.name} />
@@ -84,7 +83,7 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
             ? t("Change how you'll use {tool}", { tool: tool.name })
             : t("Choose how you'll use {tool}", { tool: tool.name })
         }
-        className="in-data-[mode=fun]:fun-glass @max-2xs:col-start-2 @max-2xs:justify-self-start"
+        className="@max-2xs:col-start-2 @max-2xs:justify-self-start"
         onClick={onChoose}
         size="sm"
         variant={tool.choice ? "ghost" : "outline"}
@@ -101,37 +100,61 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
  */
 function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
   const t = useExtracted();
+  const holderRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const noteRef = useRef<HTMLParagraphElement>(null);
-  const { choose, failed, isPending } = useToolChoice(() => noteRef.current);
+  const chose = useRef(false);
+  const { choose, failed, isPending } = useToolChoice();
+  const withoutTools = tools.every((tool) => tool.choice === "none");
 
-  if (tools.every((tool) => tool.choice === "none")) {
-    return (
-      <p
-        className="text-muted-foreground focus-visible:ring-ring/50 rounded-sm text-sm outline-none focus-visible:ring-[3px]"
-        ref={noteRef}
-        tabIndex={-1}
-      >
-        {t(
-          "You won't practice on your own computer. Lessons use examples and simulations instead.",
-        )}
-      </p>
-    );
-  }
+  // The button leaves when the saved plan comes back, and the editor's sheet would take the focus
+  // it had. So the focus waits on this card (which stays) while saving, then goes to the note, or
+  // back to the button when the save fails.
+  useEffect(() => {
+    if (!chose.current) {
+      return;
+    }
+
+    if (withoutTools) {
+      chose.current = false;
+      noteRef.current?.focus();
+    } else if (failed) {
+      chose.current = false;
+      buttonRef.current?.focus();
+    }
+  }, [failed, withoutTools]);
 
   return (
-    <div className="flex flex-col gap-2">
-      <Button
-        className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 h-auto min-h-11 justify-start px-0 text-left text-sm font-normal whitespace-normal underline underline-offset-4 hover:bg-transparent"
-        disabled={isPending}
-        focusableWhenDisabled
-        onClick={() =>
-          choose({ choice: "none", system: null, tools: tools.map((tool) => tool.name) })
-        }
-        variant="ghost"
-      >
-        {t("No tools? You can do it all with examples.")}
-      </Button>
-      {failed && <PlanFailedMessage />}
+    <div className="flex flex-col gap-2 outline-none" ref={holderRef} tabIndex={-1}>
+      {withoutTools ? (
+        <p
+          className="text-muted-foreground focus-visible:ring-ring/50 rounded-sm text-sm outline-none focus-visible:ring-[3px]"
+          ref={noteRef}
+          tabIndex={-1}
+        >
+          {t(
+            "You won't practice on your own computer. Lessons use examples and simulations instead.",
+          )}
+        </p>
+      ) : (
+        <>
+          <Button
+            className="text-muted-foreground h-auto min-h-11 justify-start px-0 text-left text-sm font-normal whitespace-normal underline underline-offset-4 hover:bg-transparent"
+            disabled={isPending}
+            focusableWhenDisabled
+            onClick={() => {
+              chose.current = true;
+              holderRef.current?.focus();
+              choose({ choice: "none", system: null, tools: tools.map((tool) => tool.name) });
+            }}
+            ref={buttonRef}
+            variant="ghost"
+          >
+            {t("No tools? You can do it all with examples.")}
+          </Button>
+          {failed && <PlanFailedMessage />}
+        </>
+      )}
     </div>
   );
 }
@@ -178,15 +201,10 @@ function LaterTools({
 }
 
 /**
- * "You'll use": the tools the phase the learner is in uses, essential ones first, and the rest
- * under "More later". For each, the learner says they have it, they'll set it up (a short lesson
- * for their device comes right before the first chapter that uses it), or no install. Nothing
- * shows when no chapter uses a tool. It sits at the end of the current phase, under a rule in
- * Focus's phase card and on its own glass in Fun's route.
- *
- * ```tsx
- * <PlanPhases tools={<PlanTools />} />
- * ```
+ * "You'll use", in the plan editor: the tools the phase the learner is in uses, essential ones
+ * first, and the rest under "More later". For each, the learner says they have it, they'll set it
+ * up (a short lesson for their device comes right before the first chapter that uses it), or no
+ * install. Nothing shows when no chapter uses a tool.
  */
 export function PlanTools() {
   const t = useExtracted();
@@ -201,11 +219,10 @@ export function PlanTools() {
   }
 
   return (
-    <section
-      aria-labelledby="plan-tools-title"
-      className="border-border in-data-[mode=fun]:fun-glass @container flex flex-col gap-2 border-t pt-3 in-data-[mode=fun]:mt-1 in-data-[mode=fun]:rounded-2xl in-data-[mode=fun]:border-t-0 in-data-[mode=fun]:p-4"
-    >
-      <SectionLabel id="plan-tools-title">{t("You'll use")}</SectionLabel>
+    <section aria-labelledby="plan-tools-title" className="@container flex flex-col gap-1">
+      <h3 className="text-sm font-medium" id="plan-tools-title">
+        {t("You'll use")}
+      </h3>
 
       {now.length > 0 && (
         <ul className="divide-border flex flex-col divide-y">

@@ -113,8 +113,44 @@ async function loadWeeks({ userId, weekStart }: { userId: string; weekStart: Dat
   return { comparison: compareWeeks({ current: week, previous: lastWeek }), lastWeek, week };
 }
 
-/** The Sunday logbook for one week (the current one by default), the same data in both modes. */
+/**
+ * The week a logbook tells by default: the last finished one until the current week ends on
+ * Sunday, so a Monday never opens a recap of a week that has only just started. A learner who
+ * hasn't studied before this week has no finished week yet: their first logbook is this week's,
+ * not ready until Sunday.
+ */
+async function getDefaultWeekStart({
+  today,
+  userId,
+}: {
+  today: Date;
+  userId: string;
+}): Promise<Date> {
+  const currentWeekStart = getStartOfWeek(today);
+  const isSunday = today.getTime() >= currentWeekStart.getTime() + SUNDAY_OFFSET * MS_PER_DAY;
+
+  if (isSunday) {
+    return currentWeekStart;
+  }
+
+  const studiedBefore = await prisma.dailyProgress.findFirst({
+    select: { id: true },
+    where: { date: { lt: currentWeekStart }, timeSpentSeconds: { gt: 0 }, userId },
+  });
+
+  return studiedBefore
+    ? new Date(currentWeekStart.getTime() - DAYS_PER_WEEK * MS_PER_DAY)
+    : currentWeekStart;
+}
+
+/**
+ * The logbook for one week: the last finished week by default (see `getDefaultWeekStart`). One
+ * private cached read, so the buddy's link to it prefetches the logbook whole; the day it counts
+ * from is read with the rest, so a prefetched copy keeps the day it was read.
+ */
 export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRecapResult> {
+  "use cache: private";
+
   const session = await getSession();
 
   if (!session) {
@@ -131,7 +167,11 @@ export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRec
   const goal = owned?.status === "ready" ? owned.goal : null;
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const today = getDateInTimeZone({ date: new Date(), timeZone });
-  const weekStart = getStartOfWeek(input.weekStart ? parseLocalDate(input.weekStart) : today);
+
+  const weekStart = input.weekStart
+    ? getStartOfWeek(parseLocalDate(input.weekStart))
+    : await getDefaultWeekStart({ today, userId });
+
   const weekEnd = new Date(weekStart.getTime() + SUNDAY_OFFSET * MS_PER_DAY);
   const from = getStartOfLocalDay({ localDate: weekStart, timeZone });
   const to = getStartOfLocalDay({ localDate: new Date(weekEnd.getTime() + MS_PER_DAY), timeZone });
@@ -145,7 +185,7 @@ export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRec
     }),
     loadBuddyDiet({ from, to, userId }),
     goal ? loadPhasesFinished({ from, goalId: goal.id, to }) : [],
-    loadTomorrow(goal?.id ?? null),
+    loadTomorrow({ goalId: goal?.id ?? null, userId }),
   ]);
 
   return {

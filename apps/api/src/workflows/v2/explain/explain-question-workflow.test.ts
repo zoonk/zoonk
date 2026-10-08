@@ -376,7 +376,6 @@ describe(explainQuestionWorkflow, () => {
       expect.objectContaining({
         analytics: expect.objectContaining({ contentScope: "personal" }),
         lessonId: result.lessonId,
-        maxImages: 1,
       }),
     ]);
   });
@@ -404,7 +403,6 @@ describe(explainQuestionWorkflow, () => {
       {
         analytics: { contentScope: "shared", distinctId: first.user.id, goalId: first.goal.id },
         lessonId: result.lessonId,
-        maxImages: undefined,
       },
     ]);
 

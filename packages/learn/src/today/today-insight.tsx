@@ -2,11 +2,13 @@
 
 import { type MemoryInsightView } from "@zoonk/core/memory/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarClockIcon, LightbulbIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
+import { SURFACE_CLASS } from "../_components/surface";
 import { useLearnAnalytics } from "../learn-context";
-import { useProposalEffectText } from "../plan/use-change-sentence";
+import { useAppliedLine, useProposalEffectText } from "../plan/use-change-sentence";
 import { useTodayScreen } from "./today-context";
 
 type InsightAnswer = "accepted" | "dismissed";
@@ -54,10 +56,11 @@ function useInsightChoices(insight: MemoryInsightView) {
 
 function useAnsweredText(insight: MemoryInsightView) {
   const t = useExtracted();
+  const appliedLine = useAppliedLine();
 
   return (answer: InsightAnswer): string => {
     if (insight.kind === "planChange") {
-      return answer === "accepted" ? t("It's in your plan.") : t("Your plan stays as it was.");
+      return answer === "accepted" ? appliedLine(null) : t("Your plan stays as it was.");
     }
 
     if (insight.kind === "scheduleIdea") {
@@ -69,12 +72,19 @@ function useAnsweredText(insight: MemoryInsightView) {
 }
 
 /**
- * What a bigger plan change does before the learner says yes: "Adds 6 lessons. Ends Nov 20 instead
- * of Nov 12." A one-lesson change is already in the plan, with an undo, so it needs no numbers.
+ * What a bigger plan change does before the learner says yes: "Adds 6 lessons." Its new end is
+ * said only as the Plan tab says it: by month, for a plan without a date, from the end the plan
+ * shows now. A one-lesson change is already in the plan, with an undo, so it needs no numbers.
  */
 function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["planChange"] }) {
   const proposalEffectText = useProposalEffectText();
-  const effect = planChange?.status === "proposed" ? proposalEffectText(planChange) : null;
+  const { planEnd, today } = useTodayScreen();
+  const targetDate = today.goal.targetDate?.toISOString().slice(0, "YYYY-MM-DD".length) ?? null;
+
+  const effect =
+    planChange?.status === "proposed"
+      ? proposalEffectText(planChange, { endDate: planEnd, targetDate })
+      : null;
 
   if (!effect) {
     return null;
@@ -186,7 +196,7 @@ export function TodayInsight() {
   return (
     <aside
       aria-label={t("From your recent answers")}
-      className="bg-muted/60 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-2xl p-4"
+      className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}
     >
       <p className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
         <InsightIcon kind={insight.kind} />

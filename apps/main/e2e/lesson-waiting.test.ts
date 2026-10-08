@@ -10,7 +10,6 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { expect, test } from "./fixtures";
-import { type Mode, setDeviceMode } from "./learn-personas";
 import { openAs } from "./study-day";
 
 /**
@@ -58,7 +57,7 @@ function lessonStep(step: string, status: "completed" | "error" | "started") {
 }
 
 /** A learner whose plan's next lesson isn't written yet, with a written one after it. */
-async function createWaitingLearner(mode: Mode) {
+async function createWaitingLearner() {
   const [user, unwritten, written] = await Promise.all([
     createE2EUser(getBaseURL()),
     libraryLessonFixture({ title: `Compound interest ${randomUUID().slice(0, 6)}` }),
@@ -71,7 +70,7 @@ async function createWaitingLearner(mode: Mode) {
   await Promise.all([
     planItemFixture({ kind: "lesson", lessonId: unwritten.id, planId: plan.id, position: 0 }),
     planItemFixture({ kind: "lesson", lessonId: written.lesson.id, planId: plan.id, position: 1 }),
-    learningProfileFixture({ activeGoalId: goal.id, experienceMode: mode, userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
   return { unwritten, user, written: written.lesson };
@@ -118,9 +117,45 @@ test("opens a lesson once another app writes it, though this app saw it unwritte
   await expect(page.getByRole("button", { name: "Try again" })).toBeHidden();
 });
 
+test("a lesson another app pulls for a fix and rewrites opens as it is now, not as this app saw it", async ({
+  userWithoutProgress: page,
+}) => {
+  const { lesson } = await playableLessonFixture({
+    lesson: { title: `Electron clouds ${randomUUID().slice(0, 6)}` },
+    steps: ["explanation"],
+  });
+
+  await failLessonWriting(page);
+  await page.goto(`/learn/${lesson.id}`);
+  await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+
+  // A later review takes it out of play, straight in the database: it waits to be written again.
+  await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
+  await page.reload();
+
+  await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+  await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
+
+  // Its new version replaces the screens it had.
+  await prisma.step.deleteMany({ where: { lessonId: lesson.id } });
+
+  await libraryStepFixture({
+    content: playableStepContent.check,
+    kind: "check",
+    lessonId: lesson.id,
+    position: 0,
+  });
+
+  await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lesson.id } });
+  await page.reload();
+
+  await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+  await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
+});
+
 test.describe("A lesson still being written", () => {
   test("follows the writing live and opens the lesson on its own", async ({ browser }) => {
-    const { unwritten, user } = await createWaitingLearner("focus");
+    const { unwritten, user } = await createWaitingLearner();
     const page = await openAs(browser, user);
 
     const events = [
@@ -151,7 +186,7 @@ test.describe("A lesson still being written", () => {
   test("a run that fails says so with a ready lesson instead, and writing it again follows the new run", async ({
     browser,
   }) => {
-    const { unwritten, user, written } = await createWaitingLearner("fun");
+    const { unwritten, user, written } = await createWaitingLearner();
     const page = await openAs(browser, user);
 
     const asked = await answerLessonWriting(page, [
@@ -195,7 +230,7 @@ test.describe("A lesson still being written", () => {
   });
 
   test("a lesson set aside says so, with something ready instead", async ({ browser }) => {
-    const { unwritten, user, written } = await createWaitingLearner("focus");
+    const { unwritten, user, written } = await createWaitingLearner();
     const page = await openAs(browser, user);
 
     await page.route("**/v1/library/lessons/*/generations", (route) =>
@@ -227,7 +262,6 @@ test.describe("A lesson still being written", () => {
       }
     });
 
-    await setDeviceMode(page.context(), "fun");
     await failLessonWriting(page);
     await page.goto(`/learn/${unwritten.id}`);
 

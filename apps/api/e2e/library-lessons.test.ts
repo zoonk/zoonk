@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
+import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import {
   answerExplanationSchema,
   lessonStepCheckResultSchema,
@@ -24,6 +25,7 @@ import { readBody } from "./helpers/response";
 
 const LESSON_STEPS = ["hook", "explanation", "check", "typedAnswer", "summary"] as const;
 const RIGHT_TYPED = "It shows where the electron is likely to be";
+const OVERNIGHT_MS = 36_000_000;
 
 function stepId(steps: { id: string; kind: string }[], kind: string): string {
   return steps.find((step) => step.kind === kind)?.id ?? "";
@@ -44,16 +46,18 @@ async function startRun({ api, lessonId }: { api: APIRequestContext; lessonId: s
 function check({
   answer,
   api,
+  durationMs = 4000,
   runId,
   step,
 }: {
   answer: object;
   api: APIRequestContext;
+  durationMs?: number;
   runId: string;
   step: string;
 }) {
   return api.post(`/v1/steps/${step}/checks`, {
-    data: { answer, durationMs: 4000, runId, timeZone: "America/Sao_Paulo" },
+    data: { answer, durationMs, runId, timeZone: "America/Sao_Paulo" },
   });
 }
 
@@ -247,10 +251,12 @@ test.describe("Library lessons API", () => {
 
     expect(early.status()).toBe(422);
 
+    // Answered the next morning: a screen left open overnight still saves, counted as an hour.
     const typed = await readBody({
       response: await check({
         answer: { kind: "typedAnswer", text: RIGHT_TYPED },
         api,
+        durationMs: OVERNIGHT_MS,
         runId,
         step: stepId(steps, "typedAnswer"),
       }),
@@ -258,6 +264,30 @@ test.describe("Library lessons API", () => {
     });
 
     expect(typed).toMatchObject({ isCorrect: true, score: 1 });
+
+    const typedAttempt = await prisma.attempt.findFirstOrThrow({
+      select: { durationMs: true },
+      where: { stepId: stepId(steps, "typedAnswer"), userId },
+    });
+
+    expect(typedAttempt.durationMs).toBe(MAX_ANSWER_DURATION_MS);
+
+    // Starting again (a reload, or coming back within half an hour) resumes the run, answers kept.
+    const resumed = await readBody({
+      response: await api.post(`/v1/library/lessons/${lesson.id}/starts`, {
+        data: { timeZone: "America/Sao_Paulo" },
+      }),
+      schema: libraryLessonRunSchema,
+      status: 201,
+    });
+
+    expect(resumed).toMatchObject({
+      answers: [
+        { isCorrect: false, stepId: stepId(steps, "check") },
+        { isCorrect: true, stepId: stepId(steps, "typedAnswer") },
+      ],
+      runId,
+    });
 
     const [first, again] = await Promise.all([
       api.post(`/v1/library/lessons/${lesson.id}/completions`, { data: { runId } }),

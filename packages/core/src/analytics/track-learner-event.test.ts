@@ -22,7 +22,7 @@ const APPLE_APP_USER_AGENT = "Zoonk/42 CFNetwork/3826.500.111 Darwin/25.0.0";
 
 const EVENT = { name: "Logbook Viewed" } as const;
 
-/** A Fun learner whose active exam goal is in its second phase, plus another goal. */
+/** A learner whose active exam goal is in its second phase, plus another goal. */
 async function setup() {
   const user = await userFixture();
 
@@ -36,14 +36,14 @@ async function setup() {
   await Promise.all([
     planItemFixture({ phase: 0, planId: plan.id, position: 0, status: "done" }),
     planItemFixture({ phase: 1, planId: plan.id, position: 1 }),
-    learningProfileFixture({ activeGoalId: active.id, experienceMode: "fun", userId: user.id }),
+    learningProfileFixture({ activeGoalId: active.id, userId: user.id }),
   ]);
 
   return { active, other, user };
 }
 
 describe(trackLearnerEvents, () => {
-  it("sends each event with the learner's mode and active goal's kind, phase and language", async () => {
+  it("sends each event with the active goal's kind, phase and language", async () => {
     const { user } = await setup();
 
     await trackLearnerEvents({ events: [EVENT, EVENT], platform: "ios", userId: user.id });
@@ -53,14 +53,7 @@ describe(trackLearnerEvents, () => {
     expect(trackServerEvent).toHaveBeenCalledWith({
       ...EVENT,
       distinctId: user.id,
-      shared: {
-        goal_kind: "exam",
-        is_guest: false,
-        locale: "pt",
-        mode: "fun",
-        plan_phase: 1,
-        platform: "ios",
-      },
+      shared: { goal_kind: "exam", is_guest: false, locale: "pt", plan_phase: 1, platform: "ios" },
     });
   });
 
@@ -71,12 +64,7 @@ describe(trackLearnerEvents, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        shared: expect.objectContaining({
-          goal_kind: "language",
-          locale: "fr",
-          mode: "fun",
-          plan_phase: null,
-        }),
+        shared: expect.objectContaining({ goal_kind: "language", locale: "fr", plan_phase: null }),
       }),
     );
   });
@@ -101,7 +89,7 @@ describe(trackLearnerEvents, () => {
     );
   });
 
-  it("counts a guest without a goal or profile in Focus, the default", async () => {
+  it("describes a guest without a goal or profile", async () => {
     const user = await userFixture();
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
 
@@ -109,14 +97,7 @@ describe(trackLearnerEvents, () => {
 
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
-        shared: {
-          goal_kind: null,
-          is_guest: true,
-          locale: null,
-          mode: "focus",
-          plan_phase: null,
-          platform: null,
-        },
+        shared: { goal_kind: null, is_guest: true, locale: null, plan_phase: null, platform: null },
       }),
     );
   });

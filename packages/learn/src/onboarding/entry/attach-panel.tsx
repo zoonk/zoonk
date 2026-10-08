@@ -11,6 +11,7 @@ import {
   type AttachOutcome,
   type AttachedSource,
   type GoalAttachActions,
+  type UsageCap,
 } from "../onboarding-actions";
 import { PasteLink } from "./paste-link";
 
@@ -18,16 +19,37 @@ import { PasteLink } from "./paste-link";
 const ACCEPTED_FILES =
   ".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp,application/pdf,text/plain,text/markdown,image/jpeg,image/png,image/webp";
 
-const PANEL_CLASS =
-  "bg-card ring-foreground/10 in-data-[mode=fun]:fun-glass flex flex-col gap-3 rounded-3xl p-4 ring-1";
+const PANEL_CLASS = "bg-card ring-foreground/10 flex flex-col gap-3 rounded-3xl p-4 ring-1";
+
+/** The plan's cap on new material: the day's or the month's, with Plus for a free learner. */
+function useAttachLimitMessage() {
+  const t = useExtracted();
+
+  return ({ period, tier }: UsageCap): string => {
+    if (tier === "plus") {
+      return t("You've added as much material as your plan allows today. Try again tomorrow.");
+    }
+
+    return period === "month"
+      ? t(
+          "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.",
+        )
+      : t(
+          "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+        );
+  };
+}
 
 function useAttachError() {
   const t = useExtracted();
+  const limitMessage = useAttachLimitMessage();
 
   return (outcome: Exclude<AttachOutcome, { status: "attached" }>): string => {
     switch (outcome.status) {
       case "limitReached":
-        return t("You've added as much material as your plan allows today. Try again tomorrow.");
+        return limitMessage(outcome);
+      case "slowDown":
+        return t("You're adding material quickly. Try again in a few minutes.");
       case "unsupported":
         return t("We can't read this file. Try a PDF, a photo, Word, PowerPoint or text.");
       case "signInRequired":
@@ -113,6 +135,12 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  // Another way to add it is a new try: the last one's error is about something else.
+  const toggle = (way: "link" | "text") => {
+    setError(null);
+    setPasting((previous) => (previous === way ? null : way));
+  };
+
   const add = (run: () => Promise<AttachOutcome>) =>
     startTransition(async () => {
       setError(null);
@@ -131,7 +159,7 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
     <>
       <div className="flex flex-wrap gap-2">
         <label
-          className="border-border hover:bg-muted/60 has-focus-visible:ring-ring/50 in-data-[mode=fun]:fun-glass inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border px-3 text-sm font-medium has-focus-visible:ring-[3px]"
+          className="border-border hover:bg-muted/60 has-focus-visible:ring-ring/50 inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border px-3 text-sm font-medium has-focus-visible:ring-[3px]"
           htmlFor={fileId}
         >
           <UploadIcon aria-hidden="true" className="size-4" />
@@ -155,9 +183,9 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
 
         <Button
           aria-pressed={pasting === "text"}
-          className="in-data-[mode=fun]:fun-glass rounded-full"
+          className="rounded-full"
           disabled={isPending}
-          onClick={() => setPasting((previous) => (previous === "text" ? null : "text"))}
+          onClick={() => toggle("text")}
           size="sm"
           variant="outline"
         >
@@ -167,9 +195,9 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
 
         <Button
           aria-pressed={pasting === "link"}
-          className="in-data-[mode=fun]:fun-glass rounded-full"
+          className="rounded-full"
           disabled={isPending}
-          onClick={() => setPasting((previous) => (previous === "link" ? null : "link"))}
+          onClick={() => toggle("link")}
           size="sm"
           variant="outline"
         >

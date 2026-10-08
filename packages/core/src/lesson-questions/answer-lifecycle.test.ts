@@ -279,13 +279,10 @@ describe("lesson question answer lifecycle", () => {
         ...ANSWER_RUN,
         answer: "Stale answer",
         finishReason: "stop",
-        inputTokens: 10,
         model: "openai/gpt-6-luna",
-        outputTokens: 5,
         provider: "openai",
         questionId: question.id,
         revision: firstClaim.claim.revision,
-        totalTokens: 15,
       }),
     ).resolves.toStrictEqual({ status: "stale" });
 
@@ -294,13 +291,10 @@ describe("lesson question answer lifecycle", () => {
         ...ANSWER_RUN,
         answer: "Current answer",
         finishReason: "stop",
-        inputTokens: 12,
         model: "google/gemini-3.1-flash-lite",
-        outputTokens: 6,
         provider: "google",
         questionId: question.id,
         revision: retry.claim.revision,
-        totalTokens: 18,
       }),
     ).resolves.toStrictEqual({ status: "updated" });
 
@@ -311,14 +305,11 @@ describe("lesson question answer lifecycle", () => {
       finishReason: "stop",
       generatedAt: new Date(ANSWER_RUN.generatedAt),
       generationRevision: 2,
-      inputTokens: 12,
       model: "google/gemini-3.1-flash-lite",
-      outputTokens: 6,
       promptVersion: ANSWER_RUN.promptVersion,
       provider: "google",
       runId: ANSWER_RUN.runId,
       status: "completed",
-      totalTokens: 18,
     });
 
     const thread = await getLessonQuestionThread({

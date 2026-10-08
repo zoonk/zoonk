@@ -7,12 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
-import { requestPlanEdit } from "./request-plan-edit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
-/** Grading and plain-words edits claim small AI help, which reads the request for its rate limit. */
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /** The model call is the one external boundary; each test says what the model understood. */
 vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));
@@ -85,6 +81,7 @@ describe("plans read the learner's goals and routine", () => {
     const { goal, library, plan } = await setup();
 
     mockEdit({
+      leftOut: [],
       operations: [
         { kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] },
         // A routine never changes what the learner chose, such as their daily time.
@@ -158,31 +155,5 @@ describe("plans read the learner's goals and routine", () => {
     await createGoalPlan({ goalId: second.goal.id, graph: library.graph });
 
     expect(vi.mocked(interpretPlanEdit)).not.toHaveBeenCalled();
-  });
-
-  it("gives plain-words edits the learner's goals and routine", async () => {
-    const { goal, library } = await setup();
-
-    mockEdit({ operations: [], summary: "", understood: false });
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
-
-    mockEdit({
-      operations: [{ kind: "setWeekdayMinutes", minutes: 10, weekdays: [6] }],
-      summary: "Saturdays go down to 10 minutes.",
-      understood: true,
-    });
-
-    await requestPlanEdit({ goalId: goal.id, input: { text: "less on my busy day" } });
-
-    expect(vi.mocked(interpretPlanEdit)).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        memory: expect.arrayContaining(["Never studies on Sundays", "Wants to finish by June"]),
-        request: "less on my busy day",
-      }),
-    );
-
-    const last = vi.mocked(interpretPlanEdit).mock.lastCall?.[0];
-    expect(last?.memory).not.toContain("Works as a nurse");
-    expect(last?.purpose).toBeUndefined();
   });
 });

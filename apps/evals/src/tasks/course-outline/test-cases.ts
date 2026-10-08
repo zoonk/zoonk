@@ -137,6 +137,18 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese
+      - Beginner band of UX design for career changers: research, problem framing, information architecture, interaction, visual design, prototyping, testing and the work with a product team
+      - No two lessons of a chapter teach the same distinction: "a need is not a product goal", "a goal is not a solution" and "a solution is not a result" belong in one lesson; "a symptom is not a problem" and "a symptom is not its cause" too. Each lesson has its own move: a new idea, a procedure, a harder case or applying earlier ideas together
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { tool: "figma|figjam|penpot" },
+    id: "pt-ux-beginner-distinct-lessons",
+    userInput: { courseTitle: "Design de UX", language: "pt", level: "beginner" },
+  },
+  {
+    expectations: `
       - MUST be in Spain Spanish (not Latin American Spanish), for example "ordenador" and "fichero" or "archivo" in their European use
       - Beginner band of Python programming: running Python and the tools to write it, variables and types, strings, conditionals, loops, functions, lists, dictionaries and other collections, reading and writing files, errors and exceptions, modules and packages, virtual environments, basic testing, and a small real program
       - Programming is a field AI is changing: lessons must include working with AI assistants (describing a task, reading and reviewing generated code, finding the bug in AI code) and favor concepts and debugging over memorizing syntax
@@ -234,6 +246,139 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
           description: "Modelar situações com funções do primeiro grau.",
           key: "funcao-afim",
           name: "Usar funções do primeiro grau",
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Intermediate band of a shared speech recognition and transcription course; the learners who need the required skills prepare for a public-service exam answered on paper (certo/errado items), so WITHOUT_TOOLS is yes
+      - Every required skill is tagged on a chapter that teaches it the way such an exam asks it: how automatic speech recognition works and where it fails (acoustic and language models, word error rate), what end-to-end models change (CTC, attention, transducers), what multimodal audio LLMs do differently, how speaker diarization works (segmentation, speaker embeddings, clustering, overlap) and its limits, with no tools on those chapters
+      - The band may still have practice chapters with tools for other learners, but no required skill is tagged only on one, and none of the required skills is taught as a job task (choosing replay ranges, editing audio)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-fala-intermediate-written-exam",
+    userInput: {
+      courseTitle: "Reconhecimento de Fala e Transcrição",
+      language: "pt",
+      level: "intermediate",
+      requiredSkills: [
+        {
+          description:
+            "Explicar como um sistema de reconhecimento automático de fala converte áudio em texto e onde erra.",
+          key: "asr",
+          name: "Explicar o reconhecimento automático de fala",
+        },
+        {
+          description: "Distinguir modelos de fala de ponta a ponta das arquiteturas em etapas.",
+          key: "end-to-end",
+          name: "Comparar modelos de fala end-to-end",
+        },
+        {
+          description: "Avaliar o que LLMs multimodais de áudio nativo fazem e seus limites.",
+          key: "multimodal",
+          name: "Avaliar LLMs multimodais de áudio",
+        },
+        {
+          description: "Explicar como a diarização identifica e separa falantes e onde falha.",
+          key: "diarizacao",
+          name: "Explicar a diarização de falantes",
+        },
+      ],
+      withoutTools: true,
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Intermediate band of a shared English course whose required skills are needed by candidates of the exam in EXAMS, who read English texts at B1 to B2 and judge statements about them as right or wrong
+      - The chapters that teach the required skills are written at that depth: lessons on reading news reports, institutional and academic texts (whose claim a sentence is, whether the author endorses or only reports it, hedges and reporting verbs, reference across sentences, inference and the author's stance), never on recognizing quotation marks, who said a one-line sentence or everyday scenes
+      - No title, description or objective names the exam, its board or its notice ("Câmara dos Deputados", "Cebraspe", "concurso", "edital")
+      - Every required skill is tagged on a chapter without tools
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ingles-intermediate-exam-reading",
+    userInput: {
+      courseTitle: "Língua inglesa",
+      exams: [
+        {
+          name: "Concurso Câmara dos Deputados, Analista Legislativo - Registro e Redação",
+          style:
+            "trueFalse: Itens julgados CERTO ou ERRADO. essay: Duas questões discursivas sobre conhecimentos específicos, com até 20 linhas cada.",
+        },
+      ],
+      language: "pt",
+      level: "intermediate",
+      requiredSkills: [
+        {
+          description:
+            "Distinguir, em textos em inglês, o que o autor afirma do que ele atribui a outras fontes.",
+          key: "atribuicao",
+          name: "Identificar a quem pertence uma afirmação",
+        },
+        {
+          description: "Inferir a posição do autor a partir de escolhas de palavras e ressalvas.",
+          key: "posicao-autor",
+          name: "Inferir a posição do autor de um texto",
+        },
+        {
+          description: "Reconhecer a que se referem pronomes e expressões ao longo de um texto.",
+          key: "referencia",
+          name: "Reconhecer o referente de pronomes e expressões",
+        },
+      ],
+      withoutTools: true,
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - A private course built from one first-year high-school student's own class summary (MATERIAL) for a test on Friday: the outline teaches exactly that summary, in its order and at its depth, with its terms (teoria celular, procariontes e eucariontes, membrana e transportes com osmose e bomba de sódio e potássio, organelas e suas funções, célula animal e vegetal, núcleo)
+      - Nothing beyond the material except what one of its ideas needs: no glycocalyx, secondary active transport, respiratory chain, endosymbiosis, nuclear lamina or nuclear pore transport, and no cell division, which the summary says isn't on the test
+      - The summary's exam-style exercises (procarionte ou eucarionte, a red cell in distilled water, matching organelles to functions, animal vs plant differences) are reflected in what lessons prepare the learner to do
+      - The band is small, like the summary: a few chapters, not a whole university course
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biologia-material-class-test",
+    userInput: {
+      courseTitle: "Biologia celular",
+      language: "pt",
+      level: "intermediate",
+      material: `<page ref="S1" of="Resumo para a prova">
+Biologia 1º ano B - Prof.ª Juliana - Resumo para a prova de sexta (9/10): A CÉLULA
+1. Teoria celular: todos os seres vivos são formados por células (vírus são acelulares). A célula é a menor unidade estrutural e funcional. Toda célula vem de outra preexistente (Virchow). Hooke (1665) observou cortiça.
+2. Procariontes (bactérias e arqueas): sem núcleo organizado (nucleoide), sem organelas membranosas, têm ribossomos, membrana e parede. Eucariontes: núcleo com carioteca e organelas membranosas. CAI NA PROVA: ribossomos existem nos dois!
+3. Membrana plasmática: mosaico fluido (Singer e Nicolson, 1972), bicamada de fosfolipídios com proteínas, permeabilidade seletiva. Passivo (sem ATP): difusão simples, facilitada, osmose (água vai do hipotônico para o hipertônico). Ativo (com ATP): bomba de sódio e potássio (3 Na+ para fora, 2 K+ para dentro). Endocitose (fagocitose, pinocitose) e exocitose.
+4. Organelas: mitocôndria (respiração celular, ATP, DNA próprio); cloroplasto (fotossíntese, só plantas e algas, DNA próprio); ribossomo (síntese de proteínas); RE rugoso (proteínas) e liso (lipídios, desintoxicação); complexo golgiense (modifica, empacota, secreta; acrossomo); lisossomo (digestão intracelular); vacúolo central (vegetal); centríolos (divisão nas animais).
+5. Animal x vegetal: vegetal tem parede de celulose, cloroplastos, vacúolo central grande, geralmente sem centríolos; animal sem parede, sem cloroplastos, com centríolos.
+6. Núcleo: carioteca com poros, cromatina (DNA + proteínas), nucléolo (forma ribossomos).
+Exercícios (estilo da prova): 1) Célula com parede, ribossomos e sem núcleo organizado: procarionte ou eucarionte? Justifique. 2) Por que uma hemácia em água destilada pode se romper? Use hipotônico e hipertônico. 3) Relacione mitocôndria, lisossomo, complexo golgiense, ribossomo com digestão, secreção, ATP, proteínas. 4) Duas diferenças entre célula animal e vegetal.
+Obs.: a prova tem 5 questões abertas e 5 de marcar. Não cai divisão celular (mitose fica para o próximo bimestre).
+</page>`,
+      requiredSkills: [
+        {
+          description: "Aplicar os postulados da teoria celular.",
+          key: "teoria-celular",
+          name: "Aplicar a teoria celular",
+        },
+        {
+          description: "Distinguir células procariontes e eucariontes pela organização.",
+          key: "procariontes",
+          name: "Diferenciar procariontes e eucariontes",
+        },
+        {
+          description: "Explicar o transporte passivo e ativo pela membrana, incluindo a osmose.",
+          key: "membrana",
+          name: "Explicar os transportes pela membrana",
+        },
+        {
+          description: "Relacionar cada organela à sua função.",
+          key: "organelas",
+          name: "Relacionar organelas e funções",
         },
       ],
     },

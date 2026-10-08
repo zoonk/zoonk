@@ -1,9 +1,11 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
+import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getGoalField } from "../../library/items/item-field";
 import { type DifficultyBias, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
+import { type ExtraTime } from "../extra-time";
 import { PRACTICE_MINUTES_PER_QUESTION, type PlannedBlock } from "../session-builder";
 import { loadExamStructure } from "./load-build-inputs";
 import { loadPlanLessons } from "./load-plan-lessons";
@@ -131,10 +133,57 @@ export async function buildExtraLesson({
       chapterId: next.chapterId,
       extra: true,
       planItemId: next.planItemId,
+      planSkillId: next.planSkillId,
       skillIds: next.skillIds,
       title: next.title,
     }),
   };
+}
+
+/**
+ * The bonus block "10 more minutes" would add: mixed practice on the goal's skills, else the plan's
+ * next lesson. Null when nothing is left to practice or learn.
+ */
+export async function planExtraBlock({
+  minutes,
+  session,
+  skillIds,
+  userId,
+}: {
+  minutes: number;
+  session: StudySessionRow;
+  skillIds: string[];
+  userId: string;
+}): Promise<PlannedBlock | null> {
+  return (
+    (await buildExtraPractice({ minutes, session, skillIds, userId })) ??
+    (await buildExtraLesson({ session, userId }))
+  );
+}
+
+/**
+ * "10 more minutes" is offered only when it has something to add, so the button never leads to
+ * "nothing more to practice". The check reads what the bonus block would hold, only once the rules
+ * already allow it.
+ */
+export async function withExtraStudyCheck({
+  extraTime,
+  session,
+  userId,
+}: {
+  extraTime: ExtraTime;
+  session: StudySessionRow;
+  userId: string;
+}): Promise<ExtraTime> {
+  if (!extraTime.available) {
+    return extraTime;
+  }
+
+  const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];
+
+  const planned = await planExtraBlock({ minutes: extraTime.minutes, session, skillIds, userId });
+
+  return planned ? extraTime : { available: false, minutes: 0, reason: "nothingToStudy" };
 }
 
 /**

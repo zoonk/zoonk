@@ -36,13 +36,17 @@ test.describe("Content generation API", () => {
       anonymous.post(`/v1/library/lessons/${lessonId}/generations`),
       anonymous.get(`/v1/library/lessons/${lessonId}/readiness`),
       anonymous.post(`/v1/study-sessions/${randomUUID()}/preparations`),
+      anonymous.post(`/v1/goals/${randomUUID()}/lesson-preparations`),
       anonymous.post("/v1/me/generation-waits", {
         data: { contentKind: "lesson", milliseconds: 1200 },
       }),
       anonymous.post(`/v1/goals/${randomUUID()}/generations`),
     ]);
 
-    expect(responses.map((response) => response.status())).toStrictEqual([401, 401, 401, 401, 401]);
+    expect(responses.map((response) => response.status())).toStrictEqual([
+      401, 401, 401, 401, 401, 401,
+    ]);
+
     await anonymous.dispose();
   });
 
@@ -207,6 +211,66 @@ test.describe("Content generation API", () => {
 
     await expect(
       prisma.lesson.findUniqueOrThrow({ select: { contentStatus: true }, where: { id: later.id } }),
+    ).resolves.toStrictEqual({ contentStatus: "pending" });
+
+    await guestApi.dispose();
+  });
+
+  test("prepares a goal's first lessons before its first session, for its owner only", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "goal-lesson-preparation" }),
+      createBearerLearner({ baseURL, prefix: "goal-lesson-preparation-other" }),
+    ]);
+
+    const goal = await goalFixture({ userId });
+
+    await expect(
+      readBody({
+        response: await api.post(`/v1/goals/${goal.id}/lesson-preparations`),
+        schema: sessionPreparationSchema,
+        status: 202,
+      }),
+    ).resolves.toStrictEqual({ preparationId: expect.any(String) });
+
+    const hidden = await other.api.post(`/v1/goals/${goal.id}/lesson-preparations`);
+    expect(hidden.status()).toBe(404);
+
+    await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("writes only the plan's first lesson for a guest's goal, counted as its start", async () => {
+    const { guestApi, userId } = await createGuest(baseURL);
+    const goal = await goalFixture({ userId });
+    const plan = await planFixture({ goalId: goal.id });
+    const [first, second] = await Promise.all([libraryLessonFixture(), libraryLessonFixture()]);
+
+    await Promise.all([
+      planItemFixture({ lessonId: first.id, planId: plan.id, position: 0 }),
+      planItemFixture({ lessonId: second.id, planId: plan.id, position: 1 }),
+    ]);
+
+    await expect(
+      readBody({
+        response: await guestApi.post(`/v1/goals/${goal.id}/lesson-preparations`),
+        schema: sessionPreparationSchema,
+        status: 202,
+      }),
+    ).resolves.toStrictEqual({ preparationId: null });
+
+    await expect
+      .poll(() =>
+        prisma.usageRecord.findMany({
+          select: { targetId: true },
+          where: { kind: "lessonStart", userId },
+        }),
+      )
+      .toStrictEqual([{ targetId: first.id }]);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({
+        select: { contentStatus: true },
+        where: { id: second.id },
+      }),
     ).resolves.toStrictEqual({ contentStatus: "pending" });
 
     await guestApi.dispose();

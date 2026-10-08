@@ -1,5 +1,5 @@
 /**
- * ISO 639-1 codes for languages supported by Gemini TTS (gemini-2.5-flash-preview-tts).
+ * ISO 639-1 codes for languages supported by Gemini TTS (gemini-3.8-flash-tts and its Lite model).
  * Source: https://ai.google.dev/gemini-api/docs/speech-generation
  *
  * Some Gemini codes differ from ISO 639-1 (e.g., `cmn` for Mandarin, `fil` for Filipino,

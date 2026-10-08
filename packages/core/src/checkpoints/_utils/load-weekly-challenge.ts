@@ -15,11 +15,18 @@ import { loadCheckpointCandidates } from "./checkpoint-candidates";
 
 const WEEK_DAYS = 7;
 
-const WEEKLY_KINDS = new Set<PlanItem["kind"]>(["checkpoint", "mock"]);
+/** The plan's weekly checkpoints: an exam's mock, or a mixed challenge for other goals. */
+export const WEEKLY_CHALLENGE_KINDS = ["checkpoint", "mock"] as const satisfies PlanItem["kind"][];
+
+const WEEKLY_KINDS = new Set<PlanItem["kind"]>(WEEKLY_CHALLENGE_KINDS);
+
+export function isWeeklyChallengeItem(item: Pick<PlanItem, "kind">): boolean {
+  return WEEKLY_KINDS.has(item.kind);
+}
 
 /** The plan's next weekly checkpoint that isn't done yet. */
 export function findNextWeeklyItem(items: readonly PlanItem[]): PlanItem | undefined {
-  return items.find((item) => WEEKLY_KINDS.has(item.kind) && item.status === "todo");
+  return items.find((item) => isWeeklyChallengeItem(item) && item.status === "todo");
 }
 
 /**
@@ -107,12 +114,14 @@ export type SessionWeeklyChallenge = {
 
 /**
  * Today's weekly checkpoint when the plan scheduled one: a mock in the exam's conditions (when the
- * learner's plan includes mocks), or a mixed challenge on the week's skills outside exams.
+ * learner's plan includes mocks) on every topic of the test, or a mixed challenge on the week's
+ * skills outside exams.
  */
 export async function loadSessionWeeklyChallenge({
   goal,
   includesMockExams,
   items,
+  mockSkillIds,
   now,
   skillIds,
   structure,
@@ -122,7 +131,13 @@ export async function loadSessionWeeklyChallenge({
   goal: Pick<Goal, "examBlueprintId" | "id" | "targetDate">;
   includesMockExams: boolean;
   items: readonly PlanItem[];
+  /**
+   * The skills a mock asks: every topic of the test, the ones the plan's days left out too, as the
+   * real test does and as the full review a free plan gets in its place does.
+   */
+  mockSkillIds: readonly string[];
   now: Date;
+  /** The plan's skills, which a mixed challenge brings together. */
   skillIds: readonly string[];
   structure: ExamStructure | null;
   today: Date;
@@ -141,8 +156,10 @@ export async function loadSessionWeeklyChallenge({
     return { checkpoint: null, plusRequired: true };
   }
 
+  const asked = isMock ? mockSkillIds : skillIds;
+
   const picked = isMock
-    ? await loadMockItems({ goal, skillIds, structure, today, userId })
+    ? await loadMockItems({ goal, skillIds: asked, structure, today, userId })
     : await loadMixedItems({ examBlueprintId: goal.examBlueprintId, now, skillIds, userId });
 
   if (picked.itemIds.length < MIN_CHECKPOINT_QUESTIONS) {
@@ -158,7 +175,7 @@ export async function loadSessionWeeklyChallenge({
       phase: item.phase,
       planItemId: item.id,
       rematch: false,
-      skillIds: [...skillIds],
+      skillIds: [...asked],
       title: item.titleSnapshot,
     },
     plusRequired: false,

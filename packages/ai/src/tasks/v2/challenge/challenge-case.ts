@@ -106,7 +106,7 @@ export type ChallengeCaseParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
-  /** A learner is waiting on the lesson: the priority tier answers about twice as fast. */
+  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };

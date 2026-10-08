@@ -1,8 +1,6 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
-import { getExperienceMode } from "@/lib/learn/experience-mode";
 import { getPronunciationReviews } from "@zoonk/core/language/pronunciation/get";
-import { DeviceModeRoot, ModeProvider } from "@zoonk/learn/mode";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -21,14 +19,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function PronunciationSkeleton() {
   return (
-    <DeviceModeRoot>
-      <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
-        <Skeleton className="size-9 rounded-full" />
-        <Skeleton className="h-56 w-full rounded-3xl" />
-        <Skeleton className="mx-auto size-20 rounded-full" />
-        <Skeleton className="mt-auto h-14 w-full rounded-full" />
-      </main>
-    </DeviceModeRoot>
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-3">
+      <Skeleton className="size-9 rounded-full" />
+      <Skeleton className="h-56 w-full rounded-3xl" />
+      <Skeleton className="mx-auto size-20 rounded-full" />
+      <Skeleton className="mt-auto h-14 w-full rounded-full" />
+    </main>
   );
 }
 
@@ -36,10 +32,7 @@ async function PronunciationContent({ params, searchParams }: Props) {
   const [{ lang }, { goal }] = await Promise.all([params, searchParams]);
   const goalId = typeof goal === "string" && isUuid(goal) ? goal : undefined;
 
-  const [result, mode] = await Promise.all([
-    getPronunciationReviews({ goalId }),
-    getExperienceMode(),
-  ]);
+  const result = await getPronunciationReviews({ goalId });
 
   if (result.status === "unauthorized") {
     redirect({ href: "/login", locale: lang });
@@ -50,11 +43,9 @@ async function PronunciationContent({ params, searchParams }: Props) {
   }
 
   return (
-    <ModeProvider experienceMode={mode}>
-      <MainLearnProvider>
-        <PronunciationClient reviews={result.reviews} />
-      </MainLearnProvider>
-    </ModeProvider>
+    <MainLearnProvider>
+      <PronunciationClient reviews={result.reviews} />
+    </MainLearnProvider>
   );
 }
 

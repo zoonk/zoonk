@@ -19,7 +19,7 @@ export const milestonePaths = {
   "/me/buddy": {
     get: {
       description:
-        "The buddy's page: its Energy and whether it naps, is awake or glows, its stage and the Brain Power to the next one, what it ate this week and the glasses. Learners without a buddy get the same numbers with `buddy` null.",
+        "The buddy's page: its Energy and whether it naps, is awake or glows, its stage and the Brain Power to the next one, today's missions, what it ate this week and the glasses. Learners without a buddy get the same numbers with `buddy` null.",
       operationId: "getCurrentUserBuddy",
       requestParams: { query: buddyStatusInputSchema },
       responses: {
@@ -75,7 +75,7 @@ export const milestonePaths = {
   "/me/weekly-recap": {
     get: {
       description:
-        "The week's logbook: days studied, minutes and questions against the learner's own last week, the biggest turnaround and why, badges, what the buddy ate, phases finished and next week's focus. Ready on Sunday.",
+        "The week's logbook: days studied, minutes and questions against the learner's own previous week, the biggest turnaround and why, badges, what the buddy ate, phases finished and the next focus. By default it's the last finished week, until the current one is ready on Sunday.",
       operationId: "getCurrentUserWeeklyRecap",
       requestParams: { query: weeklyRecapInputSchema },
       responses: {

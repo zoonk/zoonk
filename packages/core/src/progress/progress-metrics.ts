@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { type DailyProgress, prisma } from "@zoonk/db";
 
 export type TotalLearningDaysData = { learningDays: number };
 
@@ -20,13 +20,23 @@ export function getUserProgress({ userId }: { userId: string }) {
  * counters. Answer attempts and empty placeholder rows do not create learning
  * days by themselves.
  */
-const LEARNING_DAY_WHERE = {
+export const LEARNING_DAY_WHERE = {
   OR: [
     { interactiveCompleted: { gt: 0 } },
     { lessonsCompleted: { gt: 0 } },
     { staticCompleted: { gt: 0 } },
   ],
 };
+
+/**
+ * The activities finished on one day (lessons, reviews, practice): more than zero exactly on a
+ * learning day. Days kept from before learning v2 only counted their lessons.
+ */
+export function countActivitiesCompleted(
+  day: Pick<DailyProgress, "interactiveCompleted" | "lessonsCompleted" | "staticCompleted">,
+): number {
+  return Math.max(day.interactiveCompleted + day.staticCompleted, day.lessonsCompleted);
+}
 
 /** Counts the learner's learning days across their complete history. */
 export async function getTotalLearningDays({

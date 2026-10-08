@@ -12,8 +12,15 @@ export type ExamActions = {
   startSpeakingMock: () => Promise<boolean>;
 };
 
-/** Where the screen links: a finished mock's result, by its block id. */
-export type ExamHrefs = { mock: (blockId: string) => string };
+/**
+ * Where the screen links: back to the Journey, a scheduled mock's intro (its plan item's
+ * challenge) and a finished mock's result (by the id it opens by).
+ */
+export type ExamHrefs = {
+  back: string;
+  challenge: (planItemId: string) => string;
+  mock: (blockId: string) => string;
+};
 
 type ExamScreenValue = { actions: ExamActions; exam: ExamView; hrefs: ExamHrefs };
 

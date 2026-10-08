@@ -1,8 +1,11 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { parsePlanPhases } from "../plans/planner/plan-state";
+import { readBlockPayload } from "../sessions/block-payload";
 import { type StudyBlockResult, getStudyBlock } from "../sessions/get-study-block";
 import { getSession } from "../users/get-session";
 import { type CheckpointPhase, type CheckpointView } from "./checkpoint-contract";
@@ -19,9 +22,37 @@ export type CheckpointResult =
 
 async function findCheckpointBlock({ blockId, userId }: { blockId: string; userId: string }) {
   return prisma.studySessionBlock.findFirst({
-    select: { id: true, session: { select: { goalId: true } }, sessionId: true },
+    include: { session: { include: { goal: true } } },
     where: { id: blockId, kind: "checkpoint", session: { userId } },
   });
+}
+
+/**
+ * A phase checkpoint that didn't pass, as things stand now rather than when it finished: its new
+ * try is tomorrow on the day it was played, back in the plan after that, and behind the learner
+ * once a later try passed.
+ */
+function getRetry({
+  goal,
+  item,
+  playedOn,
+  result,
+}: {
+  goal: Goal | null;
+  item: Pick<PlanItem, "status"> | null;
+  playedOn: Date;
+  result: CheckpointView["result"];
+}): CheckpointView["retry"] {
+  if (!result || result.passed || !item) {
+    return null;
+  }
+
+  if (item.status !== "todo") {
+    return item.status === "done" ? "passed" : null;
+  }
+
+  const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
+  return playedOn.getTime() === today.getTime() ? "tomorrow" : "open";
 }
 
 async function loadPhases(goalId: string | null): Promise<CheckpointPhase[]> {
@@ -65,10 +96,15 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
     return { status: "notFound" };
   }
 
-  const [found, phases, counts] = await Promise.all([
+  const { planItemId } = readBlockPayload(block);
+
+  const [found, phases, counts, item] = await Promise.all([
     getStudyBlock({ blockId, sessionId: block.sessionId }),
     loadPhases(block.session.goalId),
     loadMilestoneCounts(userId),
+    planItemId && isUuid(planItemId)
+      ? prisma.planItem.findUnique({ where: { id: planItemId } })
+      : null,
   ]);
 
   const checkpoint = found.status === "ready" ? found.detail.block.checkpoint : null;
@@ -79,6 +115,7 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
 
   const { detail } = found;
   const phase = phases.find((candidate) => candidate.index === checkpoint.phase) ?? null;
+  const result = getResult(detail);
 
   return {
     checkpoint: {
@@ -89,10 +126,15 @@ export async function getCheckpoint(blockId: string): Promise<CheckpointResult> 
       nextPhase: phase ? (phases.find((next) => next.index === phase.index + 1) ?? null) : null,
       passMark: checkpoint.passMark,
       phase,
+      planItemId,
       questions: detail.questions,
       reinforcementLessons: REINFORCEMENT_LESSONS,
       rematch: checkpoint.rematch,
-      result: getResult(detail),
+      result,
+      retry:
+        checkpoint.kind === "weekly"
+          ? null
+          : getRetry({ goal: block.session.goal, item, playedOn: block.session.localDate, result }),
       reward: getCheckpointReward({ counts, kind: checkpoint.kind }),
       sessionId: block.sessionId,
       status: detail.block.status,

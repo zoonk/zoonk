@@ -3,6 +3,7 @@ import { type TaskScorer } from "@/lib/types";
 import { type LessonSpec, getLessonSpecIssues } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { isJsonObject } from "@zoonk/utils/json";
 import { LESSON_SPEC_SCORE_CATEGORIES } from "./score-categories";
+import { type LessonSpecExpected } from "./visual-test-cases";
 
 type LessonLevel = Parameters<typeof getLessonSpecIssues>[0]["level"];
 
@@ -43,15 +44,41 @@ function getLevel(userInput: Record<string, unknown>): LessonLevel {
 }
 
 /**
+ * A case about pictures counts as one more part: a lesson whose ideas need seeing plans at least
+ * one picture, and one whose words are clear on their own plans none.
+ */
+function getPictureProblem({
+  expected,
+  lessons,
+}: {
+  expected: LessonSpecExpected | undefined;
+  lessons: LessonSpec[];
+}): string | null {
+  const pictures = lessons.flatMap((lesson) => lesson.screens).filter((screen) => screen.visual);
+
+  if (expected?.pictures === "some" && pictures.length === 0) {
+    return "No screen plans a picture, though the learner would have to imagine what the lesson shows.";
+  }
+
+  if (expected?.pictures === "none" && pictures.length > 0) {
+    return `Plans ${pictures.length} picture(s) where the words alone are clear.`;
+  }
+
+  return null;
+}
+
+/**
  * Each lesson is one part: it passes when it meets the size and shape rules
  * (1 to 3 skills, 5 to 12 screens, 2 to 5 minutes, a hook first, a check
  * every 2 or 3 screens, one application last, worked examples for hard
  * skills). Only passing lessons reach the judge.
  */
 function checkLessonSpecs({
+  expected,
   level,
   output,
 }: {
+  expected: LessonSpecExpected | undefined;
   level: LessonLevel;
   output: string;
 }): CodeCheckResult {
@@ -65,23 +92,28 @@ function checkLessonSpecs({
   }));
 
   const passing = results.filter((result) => result.problems.length === 0);
+  const hasPictureCheck = expected !== undefined && expected.pictures !== "any";
+  const pictureProblem = hasPictureCheck ? getPictureProblem({ expected, lessons }) : null;
 
   return {
     judgedOutput: JSON.stringify({ lessons: passing.map((result) => result.lesson) }, null, 2),
-    passed: passing.length,
+    passed: passing.length + (hasPictureCheck && !pictureProblem ? 1 : 0),
     problems:
       lessons.length === 0
         ? ["The output has no valid lesson specs."]
-        : results.flatMap((result) => result.problems),
-    total: Math.max(lessons.length, 1),
+        : [
+            ...results.flatMap((result) => result.problems),
+            ...(pictureProblem ? [pictureProblem] : []),
+          ],
+    total: Math.max(lessons.length, 1) + (hasPictureCheck ? 1 : 0),
   };
 }
 
-export const scoreLessonSpec: TaskScorer = ({ output, testCase }) => {
+export const scoreLessonSpec: TaskScorer<LessonSpecExpected> = ({ output, testCase }) => {
   const level = getLevel(testCase.userInput);
 
   return scoreWithCodeChecks({
-    check: (value) => checkLessonSpecs({ level, output: value }),
+    check: (value) => checkLessonSpecs({ expected: testCase.expected, level, output: value }),
     output,
     scoreCategories: LESSON_SPEC_SCORE_CATEGORIES,
     testCase,

@@ -2,8 +2,8 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
- * The surface a template draws on, labelled by the activity's prompt. In Fun mode it sits on the
- * paper panel and follows its tokens, so renderers only use semantic colors.
+ * The surface a template draws on, labelled by the activity's prompt. Renderers only use semantic
+ * colors, so it follows light and dark.
  */
 export function ActivityCanvas({
   className,
@@ -52,10 +52,7 @@ export function ActivityCanvasLabel({ className, ...props }: React.ComponentProp
 export function ActivityReadout({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn(
-        "in-data-[mode=fun]:font-fun-display text-2xl font-bold tracking-tight tabular-nums",
-        className,
-      )}
+      className={cn("text-2xl font-bold tracking-tight tabular-nums", className)}
       data-slot="activity-readout"
       {...props}
     />

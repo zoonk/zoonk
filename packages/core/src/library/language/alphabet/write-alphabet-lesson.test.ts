@@ -59,7 +59,7 @@ function mockAudio({ failing }: { failing?: string } = {}) {
           data: {
             provenance: {
               generatedAt: new Date().toISOString(),
-              model: "google/gemini-2.5-flash-preview-tts",
+              model: "google/gemini-3.8-flash-tts",
               promptVersion: "speech-v1",
               runId: "speech-run",
             },

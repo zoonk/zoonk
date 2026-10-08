@@ -108,6 +108,7 @@ export function toMathCheckContent({
   const problems = checkItem({
     expectedFormat: "numeric",
     item: { context, difficulty: "medium", format: "numeric", math, question },
+    language,
   });
 
   const values = getValues(math);

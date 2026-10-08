@@ -1,10 +1,10 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
 import { ActivityCanvasLabel, ActivityReadout } from "../_components/activity-canvas";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type BoardMeasure } from "./board-geometry";
 import { fanWedges } from "./board-marks";
 import { type BoardReading } from "./board-measure";

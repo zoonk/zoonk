@@ -1,9 +1,14 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
+import { syllabusViewSchema } from "@zoonk/core/view-models/syllabus/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import {
+  attemptFixture,
+  learnerSkillFixture,
+  mistakeFixture,
+} from "@zoonk/testing/fixtures/learner";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -15,12 +20,15 @@ import {
 } from "../src/lib/openapi/schemas/learn-views";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
-/** A goal with one chapter of three skills (one of them gold), a finished lesson and a mistake. */
+/**
+ * A goal with one chapter of three skills (one of them mastered, with the answer that shows it), a
+ * finished lesson and a mistake.
+ */
 async function createGoal(userId: string) {
   const [goal, chapter, lesson, skills] = await Promise.all([
     goalFixture({ title: "Percentages for the exam", userId }),
     libraryChapterFixture({ title: "Percentages" }),
-    libraryLessonFixture({ summary: { ideas: [{ text: "A percent is a share of 100." }] } }),
+    libraryLessonFixture(),
     Promise.all([1, 2, 3].map((index) => skillFixture({ name: `Skill ${index}` }))),
   ]);
 
@@ -46,6 +54,8 @@ async function createGoal(userId: string) {
       state: "mastered",
       userId,
     }),
+    // Preparation counts a skill from the learner's first answer on it, never from state alone.
+    attemptFixture({ skillId: skills[0]?.id ?? "", userId }),
     mistakeFixture({ skillId: skills[1]?.id ?? null, userId }),
   ]);
 
@@ -70,10 +80,11 @@ test.describe("Learning tab views API", () => {
     const unauthorized = await Promise.all([
       anonymous.get(`/v1/goals/${goalId}/progress`),
       anonymous.get(`/v1/goals/${goalId}/content`),
+      anonymous.get(`/v1/goals/${goalId}/syllabus`),
       anonymous.post(`/v1/goals/${goalId}/area-practice`, { data: { areaId: "any" } }),
     ]);
 
-    expect(unauthorized.map((response) => response.status())).toStrictEqual([401, 401, 401]);
+    expect(unauthorized.map((response) => response.status())).toStrictEqual([401, 401, 401, 401]);
     await anonymous.dispose();
 
     const [{ apiContext }, owner] = await Promise.all([
@@ -83,13 +94,17 @@ test.describe("Learning tab views API", () => {
 
     const { goal } = await createGoal(owner.id);
 
-    const [progress, content, invalid] = await Promise.all([
+    const [progress, content, syllabus, invalid] = await Promise.all([
       apiContext.get(`/v1/goals/${goal.id}/progress`),
       apiContext.get(`/v1/goals/${goal.id}/content`),
-      apiContext.get("/v1/goals/not-a-uuid/content"),
+      apiContext.get(`/v1/goals/${goal.id}/syllabus`),
+      apiContext.get("/v1/goals/not-a-uuid/syllabus"),
     ]);
 
-    expect([progress.status(), content.status(), invalid.status()]).toStrictEqual([404, 404, 400]);
+    expect(
+      [progress, content, syllabus, invalid].map((response) => response.status()),
+    ).toStrictEqual([404, 404, 404, 400]);
+
     await apiContext.dispose();
   });
 
@@ -107,18 +122,10 @@ test.describe("Learning tab views API", () => {
     const progress = goalProgressResponseSchema.parse(await response.json());
 
     expect(progress.goal).toMatchObject({ id: goal.id, title: "Percentages for the exam" });
-
-    expect(progress.chapters).toStrictEqual([
-      {
-        areaId: chapter.id,
-        counts: expect.objectContaining({ mastered: 1, total: 3 }),
-        title: "Percentages",
-      },
-    ]);
-
+    expect(progress.preparation?.skills).toMatchObject({ mastered: 1, total: 3 });
     expect(progress.mistakes).toStrictEqual({ open: 1 });
 
-    // The gold skill is there; the two new ones are still needed, with the plan's time for them.
+    // The mastered skill is there; the two new ones are still needed, with the plan's time for them.
     expect(progress.stillNeeded).toMatchObject({
       areas: [
         {
@@ -161,11 +168,82 @@ test.describe("Learning tab views API", () => {
     // Without a skill graph naming courses, chapters sit in no section.
     expect(content.groups[0]?.section).toBeNull();
 
-    expect(content.summaries.map((summary) => summary.ideas)).toStrictEqual([
-      ["A percent is a share of 100."],
+    await apiContext.dispose();
+  });
+
+  test("returns a goal's syllabus: its modules with their chapters and progress", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "learn-views-syllabus",
+    });
+
+    const [goal, research, figma, interview, prototype] = await Promise.all([
+      goalFixture({ title: "Become a UX designer", userId: user.id }),
+      libraryChapterFixture({ title: "User interviews" }),
+      libraryChapterFixture({ title: "Prototypes in Figma" }),
+      skillFixture({ name: "Run a user interview" }),
+      skillFixture({ name: "Prototype a flow" }),
     ]);
 
-    expect(content.reveal).toStrictEqual({ cards: false });
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Foundations" }],
+        skills: [
+          {
+            area: "User research",
+            lessons: 1,
+            name: interview.name,
+            phase: 0,
+            skillId: interview.id,
+          },
+          {
+            area: "Prototyping",
+            lessons: 1,
+            name: prototype.name,
+            phase: 0,
+            skillId: prototype.id,
+          },
+        ],
+      },
+    });
+
+    await Promise.all([
+      planItemFixture({
+        chapterId: research.id,
+        planId: plan.id,
+        position: 0,
+        skillId: interview.id,
+        status: "done",
+      }),
+      planItemFixture({
+        chapterId: figma.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: new Date("2026-10-07T00:00:00.000Z"),
+        skillId: prototype.id,
+      }),
+    ]);
+
+    const response = await apiContext.get(`/v1/goals/${goal.id}/syllabus`);
+    expect(response.status()).toBe(200);
+
+    const syllabus = syllabusViewSchema.parse(await response.json());
+
+    expect(syllabus).toMatchObject({ kind: "modules", topicCount: 0, topicsMapped: false });
+
+    expect(
+      syllabus.subjects.map((subject) => [
+        subject.key,
+        subject.name,
+        subject.lessonsDone,
+        subject.lessonsTotal,
+        subject.chapters.map((chapter) => [chapter.chapterId, chapter.state, chapter.nextDate]),
+      ]),
+    ).toStrictEqual([
+      ["user-research", "User research", 1, 1, [[research.id, "done", null]]],
+      ["prototyping", "Prototyping", 0, 1, [[figma.id, "current", "2026-10-07"]]],
+    ]);
 
     await apiContext.dispose();
   });

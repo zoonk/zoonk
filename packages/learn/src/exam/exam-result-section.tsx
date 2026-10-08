@@ -6,10 +6,11 @@ import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
+import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { FUN_PRIMARY_BUTTON_CLASS } from "../_utils/fun-primary";
+import { SURFACE_CLASS } from "../_components/surface";
 import { useExamScreen } from "./exam-context";
 
 const PASSED_VALUES = ["yes", "no", "unknown"] as const;
@@ -18,7 +19,7 @@ type Passed = (typeof PASSED_VALUES)[number];
 
 /** Options share the row but never squeeze a label ("Noch nicht") onto two lines; they wrap instead. */
 const OPTION_CLASS =
-  "border-border has-data-checked:border-foreground in-data-[mode=fun]:has-data-checked:border-fun-lime flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-2xl border px-3 text-sm";
+  "border-border has-data-checked:border-foreground flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-2xl border px-3 text-sm";
 
 function toPassed(value: Passed): boolean | null {
   if (value === "unknown") {
@@ -117,10 +118,10 @@ export function ExamResultSection() {
   return (
     <section
       aria-labelledby="exam-result-title"
-      className="border-border in-data-[mode=fun]:fun-glass flex flex-col gap-4 rounded-3xl border p-5 in-data-[mode=fun]:border-transparent"
+      className={cn(SURFACE_CLASS, "flex flex-col gap-4 p-5")}
     >
       <div className="flex flex-col gap-1">
-        <h2 className="in-data-[mode=fun]:font-fun-display font-semibold" id="exam-result-title">
+        <h2 className="font-semibold" id="exam-result-title">
           {t("How did it go?")}
         </h2>
         <p className="text-muted-foreground text-sm">
@@ -198,11 +199,7 @@ export function ExamResultSection() {
           </p>
         )}
 
-        <Button
-          className={FUN_PRIMARY_BUTTON_CLASS}
-          disabled={!canSave || status === "pending"}
-          type="submit"
-        >
+        <Button disabled={!canSave || status === "pending"} type="submit">
           {t("Save my result")}
         </Button>
       </form>

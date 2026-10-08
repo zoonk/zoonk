@@ -10,7 +10,7 @@ import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { stopStudySession } from "@zoonk/core/sessions/stop";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** "Stop for today": what was done counts, the rest is skipped, and the summary comes back. */
+/** "Stop for today": what was done counts, the rest waits, and the summary so far comes back. */
 async function createStop(
   request: NextRequest,
   context: RouteContext<"/v1/study-sessions/[sessionId]/stops">,
@@ -36,7 +36,7 @@ async function createStop(
     return studySessionError(result);
   }
 
-  // The session ended: prepare the next one.
+  // What's left waits for later: get it ready.
   await scheduleSessionPreparation(path.data.sessionId);
 
   return NextResponse.json(serializeStudySessionSummary(result.summary));

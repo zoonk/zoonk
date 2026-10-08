@@ -23,7 +23,7 @@ export async function skipAlphabetAction(goalId: unknown): Promise<boolean> {
     return false;
   }
 
-  revalidatePath("/[lang]/content", "page");
+  revalidatePath("/[lang]/journey", "page");
   revalidatePath("/[lang]/today", "page");
   return true;
 }

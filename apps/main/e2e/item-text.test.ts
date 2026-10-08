@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { expect, test } from "./fixtures";
 import { ANSWERED } from "./onboarding-fixtures";
@@ -34,7 +35,44 @@ const TABLE_QUESTION = {
   question: "Which mode of transport grew the most from 2022 to 2023?",
 };
 
-async function createGoalWithTableQuestion(userId: string) {
+/** A small drawing the browser loads without a network, standing in for a stored picture. */
+const FIGURE_URL = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="40"><circle cx="30" cy="20" r="15" fill="#7FC8A0"/></svg>',
+)}`;
+
+/** A question about a figure, as stored once its picture passed the image check. */
+const FIGURE_QUESTION = {
+  context: "Na figura, a seta aponta para uma organela da célula vegetal.",
+  image: {
+    alt: "Uma célula vegetal com uma seta apontando para o cloroplasto.",
+    prompt: "Célula vegetal com uma seta no cloroplasto.",
+  },
+  options: [
+    {
+      isCorrect: true,
+      misconception: null,
+      reason: "É verde e faz fotossíntese.",
+      text: "O cloroplasto",
+    },
+    {
+      isCorrect: false,
+      misconception: "Confunde as organelas",
+      reason: "O núcleo guarda o DNA.",
+      text: "O núcleo",
+    },
+  ],
+  question: "Qual organela a seta indica?",
+};
+
+async function createGoalWithQuestion({
+  content,
+  mediaAssetId = null,
+  userId,
+}: {
+  content: object;
+  mediaAssetId?: string | null;
+  userId: string;
+}) {
   const [goal, skill] = await Promise.all([
     goalFixture({
       details: { answered: ANSWERED, subject: "reading data" },
@@ -64,7 +102,7 @@ async function createGoalWithTableQuestion(userId: string) {
       skillId: skill.id,
       titleSnapshot: "Lesson 1",
     }),
-    itemFixture({ content: TABLE_QUESTION, skillId: skill.id }),
+    itemFixture({ content, mediaAssetId, skillId: skill.id }),
   ]);
 
   return goal;
@@ -74,7 +112,7 @@ test("a placement question shows its data as a table and its options without pri
   noProgressUser,
   userWithoutProgress: page,
 }) => {
-  const goal = await createGoalWithTableQuestion(noProgressUser.id);
+  const goal = await createGoalWithQuestion({ content: TABLE_QUESTION, userId: noProgressUser.id });
   await page.goto(`/start/${goal.id}`);
   await page.getByRole("button", { exact: true, name: "Start" }).click();
 
@@ -94,4 +132,23 @@ test("a placement question shows its data as a table and its options without pri
   await expect(page.getByText("The subway", { exact: true })).toBeVisible();
   await expect(page.getByText("The bus", { exact: true })).toBeVisible();
   await expect(page.getByText(/^[AB]\) The/u)).toHaveCount(0);
+});
+
+test("a placement question about a figure shows its picture with the question", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const picture = await mediaAssetFixture({ height: 40, url: FIGURE_URL, width: 60 });
+
+  const goal = await createGoalWithQuestion({
+    content: FIGURE_QUESTION,
+    mediaAssetId: picture.id,
+    userId: noProgressUser.id,
+  });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+  await expect(page.getByText("Qual organela a seta indica?")).toBeVisible();
+  await expect(page.getByRole("img", { name: FIGURE_QUESTION.image.alt })).toBeVisible();
 });

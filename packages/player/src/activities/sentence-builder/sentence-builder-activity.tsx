@@ -1,6 +1,7 @@
 "use client";
 
 import { sentenceEdges } from "@zoonk/core/library/activities/language";
+import { type SpokenAudioState } from "@zoonk/learn/speech";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -8,7 +9,7 @@ import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { ActivitySpeakButton } from "../_components/activity-speak-button";
 import { expectedInteraction } from "../_utils/activity-expected";
-import { useSpeech } from "../_utils/use-speech";
+import { useActivitySpeech } from "../_utils/use-activity-speech";
 import { type ActivityRendererProps } from "../activity-renderer";
 import {
   type BankTile,
@@ -68,12 +69,14 @@ function SentenceAnswer({
   built,
   canSpeak,
   onSpeak,
+  speechState,
   target,
   usedDistractors,
 }: {
   built: string;
   canSpeak: boolean;
   onSpeak: () => void;
+  speechState: SpokenAudioState;
   target: string;
   usedDistractors: readonly BankTile[];
 }) {
@@ -90,7 +93,13 @@ function SentenceAnswer({
             </span>
           ))}
         </p>
-        {canSpeak && <ActivitySpeakButton label={t("Hear the sentence")} onSpeak={onSpeak} />}
+        {canSpeak && (
+          <ActivitySpeakButton
+            label={t("Hear the sentence")}
+            onClick={onSpeak}
+            state={speechState}
+          />
+        )}
       </div>
 
       {usedDistractors.map((tile) => (
@@ -114,7 +123,7 @@ export function SentenceBuilderActivity(props: SentenceBuilderProps) {
   const { answer, content, labelId, onAnswerChange, phase } = props;
   const { fields } = content;
   const tiles = bankTiles(fields);
-  const speech = useSpeech(fields.language);
+  const speech = useActivitySpeech(fields.language);
   const edges = sentenceEdges(fields.target);
 
   const [placed, setPlaced] = useState(() =>
@@ -174,10 +183,11 @@ export function SentenceBuilderActivity(props: SentenceBuilderProps) {
           )}
         </div>
 
-        {speech.status === "ready" && placed.length > 0 && (
+        {speech.isAvailable && placed.length > 0 && (
           <ActivitySpeakButton
             label={t("Hear your sentence")}
-            onSpeak={() => speech.speak({ segments: [sentence] })}
+            onClick={() => speech.toggle("built", [sentence])}
+            state={speech.stateFor("built")}
           />
         )}
       </div>
@@ -203,8 +213,9 @@ export function SentenceBuilderActivity(props: SentenceBuilderProps) {
       {isChecked && !isAccepted && (
         <SentenceAnswer
           built={sentence}
-          canSpeak={speech.status === "ready"}
-          onSpeak={() => speech.speak({ segments: [fields.target] })}
+          canSpeak={speech.isAvailable}
+          onSpeak={() => speech.toggle("target", [fields.target])}
+          speechState={speech.stateFor("target")}
           target={fields.target}
           usedDistractors={usedDistractors}
         />

@@ -7,13 +7,25 @@ import { goalSchema } from "./goals";
 import { playableLibraryLessonResponseSchema } from "./library-lessons";
 
 const onboardingStepSchema = z
-  .enum([...ONBOARDING_QUESTIONS, "age", "mode", "buddy", "placement", "plan"])
-  .meta({ id: "OnboardingStep" });
+  .enum([...ONBOARDING_QUESTIONS, "age", "memory", "buddy", "placement", "plan"])
+  .meta({
+    description:
+      '`memory` asks a learner under 18, or one whose age is unknown, whether memory may personalize their lessons (it starts off for them); answer it with `{ question: "memory", enabled }`',
+    id: "OnboardingStep",
+  });
 
 export const onboardingResponseSchema = z
   .object({
     examSubjects: z
-      .array(z.string())
+      .array(
+        z.object({
+          name: z.string().meta({ description: "The notice's name, which `knownSubjects` sends" }),
+          shortName: z
+            .string()
+            .nullable()
+            .meta({ description: "What learners call it when the notice's name is long" }),
+        }),
+      )
       .meta({ description: "An exam's subjects from its stored notice; empty for other goals" }),
     followUps: z
       .array(z.string())
@@ -45,6 +57,13 @@ export const onboardingResponseSchema = z
       .meta({
         description:
           "A published Library course that teaches the goal, searched again once every question is answered",
+      }),
+    recommendedMinutes: z
+      .int()
+      .positive()
+      .meta({
+        description:
+          "The daily minutes the time question picks first, from how soon the goal's or its exam's date is; the plan says what that time covers",
       }),
     steps: z
       .array(onboardingStepSchema)
@@ -82,6 +101,12 @@ export const explanationResponseSchema = z
       questions: z.array(z.string()).meta({ description: "Related quick questions" }),
     }),
     goalId: z.uuid(),
+    hasStudyGoal: z
+      .boolean()
+      .meta({
+        description:
+          "Whether the learner has a goal with a plan besides quick explanations: they go back to Today after this one. Without one, Today has nothing to plan (`GET /v1/today` answers `NO_ACTIVE_GOAL`), so the next step is asking another question",
+      }),
     lesson: readyLessonSchema.shape.lesson
       .nullable()
       .meta({

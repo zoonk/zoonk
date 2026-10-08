@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Button } from "@zoonk/ui/components/button";
 import { hashSeed } from "@zoonk/utils/seeded-random";
 import { RotateCcw } from "lucide-react";
@@ -12,7 +13,6 @@ import {
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
 import { computeActivityValue } from "../_utils/compute-activity-value";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { useReducedMotion } from "../_utils/use-reduced-motion";
 import { useRevealCount } from "../_utils/use-reveal-count";
 import { type ActivityRendererProps } from "../activity-renderer";

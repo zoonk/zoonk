@@ -12,7 +12,7 @@ export const LESSON_QUESTION_MODEL = "openai/gpt-6-luna";
  * Haiku first: in the memory eval it was the fallback that never forced an unrelated memory fact
  * into an answer. Flash Lite stays last as the cheapest option.
  */
-const fallbackModels = ["anthropic/claude-haiku-4.5", "google/gemini-3.1-flash-lite"] as const;
+const fallbackModels = ["anthropic/claude-haiku-5.5", "google/gemini-3.1-flash-lite"] as const;
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 const LESSON_QUESTION_TASK = "lesson-question";
 
@@ -23,13 +23,11 @@ export type LessonQuestionAnswerCompletion = {
   answer: string;
   finishReason: string;
   generatedAt: string;
-  inputTokens?: number;
   model: string;
-  outputTokens?: number;
   promptVersion: string;
   provider: string;
+  /** The call's run, whose tokens and cost are in the AI call log. */
   runId: string;
-  totalTokens?: number;
 };
 
 type StreamLessonQuestionAnswerParams = {

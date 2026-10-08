@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatNumber } from "@zoonk/learn/format-number";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -8,7 +9,6 @@ import {
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
 import { ActivityPlot } from "../_components/activity-plot";
-import { useFormatNumber } from "../_utils/use-format-number";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BarModel } from "./area-model-bar";
 import { cutsToParts, partsToCuts, splitStep } from "./area-model-cuts";

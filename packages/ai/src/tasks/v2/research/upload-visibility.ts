@@ -94,7 +94,6 @@ export async function classifyUploadVisibility({
         ],
         providerOptions,
         reasoning,
-        temperature: 0,
       }),
     systemPrompt,
     task: "upload-visibility",

@@ -4,6 +4,7 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getAdminAccess } from "../users/get-admin-access";
+import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { findHistoryIds } from "./_utils/memory-writes";
 
 export type MemoryFactEraseResult =
@@ -11,9 +12,10 @@ export type MemoryFactEraseResult =
   | { status: "forbidden" | "notFound" | "unauthorized" };
 
 /**
- * Erases one learner fact for a support request, together with the older facts it replaced. The
- * learner's own delete keeps facts 30 days for undo; a support request to delete personal data is
- * final, so the rows are removed now. Only admins may do this.
+ * Erases one learner fact for a support request, together with the older facts it replaced and the
+ * example lines that could quote them. The learner's own delete keeps facts 30 days for undo; a
+ * support request to delete personal data is final, so the rows are removed now. Only admins may
+ * do this.
  */
 export async function eraseMemoryFactForSupport(factId: string): Promise<MemoryFactEraseResult> {
   const access = await getAdminAccess();
@@ -39,9 +41,12 @@ export async function eraseMemoryFactForSupport(factId: string): Promise<MemoryF
       transaction,
     });
 
-    const { count } = await transaction.memoryFact.deleteMany({
-      where: { id: { in: [factId, ...historyIds] }, userId: fact.userId },
-    });
+    const [{ count }] = await Promise.all([
+      transaction.memoryFact.deleteMany({
+        where: { id: { in: [factId, ...historyIds] }, userId: fact.userId },
+      }),
+      forgetExampleLines({ client: transaction, userId: fact.userId }),
+    ]);
 
     return { erased: count, userId: fact.userId };
   });

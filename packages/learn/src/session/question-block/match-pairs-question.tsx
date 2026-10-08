@@ -6,7 +6,6 @@ import { useEnterKey, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { usePrimaryVariant } from "../../_utils/fun-primary";
 import { type StudyQuestionAnswer } from "../session-types";
 
 /** Each left entry's pick, as an index into the right column; -1 while unmatched. */
@@ -71,7 +70,6 @@ export function MatchPairsQuestion({
   const complete = matches.every((match) => match !== UNMATCHED);
   const listRef = useRef<HTMLDivElement>(null);
   const checkRef = useFocusCheckWhenComplete({ complete, listRef });
-  const primaryVariant = usePrimaryVariant();
   const check = () => onAnswer({ matches });
 
   const pickLeft = (index: number) => {
@@ -162,7 +160,6 @@ export function MatchPairsQuestion({
         onClick={check}
         ref={checkRef}
         size="lg"
-        variant={primaryVariant}
       >
         {t("Check")}
       </Button>

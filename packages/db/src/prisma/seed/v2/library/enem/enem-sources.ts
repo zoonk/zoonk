@@ -34,9 +34,7 @@ export const pastPaperPassages = {
     "Leitura e interpretação de gráficos e tabelas é um dos temas mais frequentes de Matemática.",
   ecology: "Ecologia é o tema de Biologia mais cobrado em Ciências da Natureza.",
   electricity:
-    "Eletricidade, especialmente circuitos simples, é presença regular nas questões de Física.",
-  essay:
-    "Na redação, a proposta de intervenção é a competência em que mais candidatos perdem pontos.",
+    "Eletricidade, especialmente circuitos simples, é presença constante nas questões de Física.",
   functions: "Funções aparecem com frequência média, em geral ligadas a situações do dia a dia.",
   percentages:
     "Porcentagem aparece em praticamente todas as provas de Matemática, quase sempre em situações de compra, juros e variação de preços.",

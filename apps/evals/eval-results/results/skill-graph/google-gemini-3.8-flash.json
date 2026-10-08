@@ -505,6 +505,200 @@
           "ownLevel": "basic"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Membrane structure, diffusion, osmosis, active transport, organelles, nucleus, mitosis and meiosis all have dedicated skills. However, both named foundational pillars—what a cell is and prokaryotic versus eukaryotic cells—are absent, triggering the cap of 7 for two missing pillars. Exam weights stay within 1–5 and broadly emphasize the listed transport and division material; there is no official blueprint to contradict.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The course is a canonical subject, and the progression from nucleus through interphase to division is sensible. Nevertheless, multiple starting skills lack the required cellular foundations, and active transport omits a direct dependency on the gradient concepts taught under diffusion. These are several prerequisite gaps, triggering the cap of 7. The first milestone's promise of calculation is also not supported by its skills.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The map totals 24 lessons, below the 25-lesson ceiling, with consistently small one- or two-lesson skills. Its 2.4-hour estimate plausibly allows 72 minutes of lessons plus practice and review. Names begin with action verbs and are reusable. The total alone does not demonstrate padding, and no clear sizing failure triggers a cap.",
+          "score": 9,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The dedicated bulk-transport skill is unnecessary for the learner's explicitly restricted syllabus, triggering the cap of 8 for one filler skill. The remaining content is substantially relevant: interphase supports cell division, organelle functions belong to the test, and comparing mitosis with meiosis adds a useful distinction rather than merely a generic recap. There is no exam-strategy phase.",
+          "score": 8,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The output is in Brazilian Portuguese and predominantly targets the stated school cytology test. However, adding unlisted transport processes and assigning intermediate level throughout while omitting the explicitly required basic foundations creates a pattern of mismatches, triggering the cap of 7. Crossing-over and organelle energy functions remain appropriately connected to the listed topics rather than constituting separate genetics or biochemistry courses.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map appropriately emphasizes explanation, comparison, prediction and functional relationships, including osmotic responses, energy-dependent transport and division outcomes. Recognition of structures and stages is legitimate for this school exam. An AI-tool skill is not required for this goal, and no excessive rote procedure is evident.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4664,
+          "outputTokens": 1253,
+          "reasoningTokens": 382
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map omits both required foundations: explaining what a cell is and distinguishing prokaryotic from eukaryotic cells. It also adds a dedicated skill on bulk transport (phagocytosis, pinocytosis and exocytosis), outside the explicitly limited transport syllabus. All skills are labeled intermediate despite the learner's basic level, and the missing foundations leave that starting point unsupported.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Active transport requires understanding concentration gradients, but its prerequisites list only membrane structure, not the diffusion skill that introduces gradients. The first phase also promises to 'calculate' cellular behavior, whereas its skills teach qualitative explanation and prediction rather than calculation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace the bulk-transport lesson with concise foundational coverage and rebalance existing allocations to remain within 25 lessons. Explicitly connect active transport to gradient understanding, and change the first milestone from calculating to predicting cellular responses.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Small school test: only the topics the learner listed (plasma membrane and transport: diffusion, osmosis, active transport; organelles; nucleus; cell division: mitosis and meiosis) plus the minimum prerequisites (what a cell is, prokaryotic vs eukaryotic cells)\n      - The test is in three days (LESSON_BUDGET 25, the most those days hold): the skills' lessons are sized by the listed topics, not padded up to 25 and never above it; every listed topic gets a skill of its own with at least one lesson, none outside them, and no area for a discursive test or exam strategy\n      - Exam weights come from the listed material's emphasis, since there is no official blueprint\n      - Topics outside the test, such as genetics, evolution or biochemistry beyond what the listed topics need, are wrong here\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-school-exam-cytology-three-days-1",
+        "userInput": {
+          "context": "Sou do 1º ano do ensino médio. A prova de sexta é sobre membrana plasmática e transportes (difusão, osmose, transporte ativo), organelas, núcleo e divisão celular (mitose e meiose).",
+          "goal": "Prova de biologia na sexta sobre citologia",
+          "goalKind": "exam",
+          "language": "pt",
+          "lessonBudget": 25,
+          "ownLevel": "basic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six topic areas have dedicated skills, and organelles appropriately receive the highest exam weight and substantial lesson allocation. However, none uses the required topic IDs. Important membrane content is missing: membrane structure and selective permeability, plus endocytosis and exocytosis. These are substantive gaps in the supplied material, not merely absent examples.",
+          "score": 7,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The canonical Biologia course, foundational first phase, explicit prerequisite edges and capability-based milestones are sensible. However, the osmosis skill includes plant-cell volume effects before introducing the relevant plant structures, without a prerequisite on that skill. This is one clear dependency error, triggering the cap of 8.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The plan contains 14 lessons, stays below the 15-lesson ceiling, and allocates more lessons to membrane transport and organelles. Skills are action-oriented and consistently sized at one to three lessons. The 1.4-hour estimate allows 42 minutes of lessons and another 42 minutes for practice and review, a plausible compact preparation plan.",
+          "score": 10,
+          "label": "Granularity & honest size",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "There are no introduction, motivation, recap, study-strategy or filler phases. The organelle-function and plant-structure skills have distinguishable purposes rather than clearly duplicating most of their lessons.",
+          "score": 10,
+          "label": "No filler",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The output is in Brazilian Portuguese and mostly follows the learner's cell-biology notes. However, the repeated intermediate-level designation conflicts with the stated basic level, and plant-cell osmotic effects extend beyond the supplied notes. Together these constitute a pattern of mismatches, triggering the cap of 7.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The skills emphasize explaining, distinguishing, classifying and connecting structures to functions. Organellar recall is appropriate because the announced test explicitly assesses it. This school-exam goal does not require an AI-tool skill, and no unnecessary manual procedures dominate the plan.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4342,
+          "outputTokens": 1253,
+          "reasoningTokens": 478
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Every skill uses topic names instead of the required S1.1–S1.6 identifiers, so none of the blueprint IDs is explicitly mapped. Membrane coverage omits the phospholipid bilayer, selective permeability, endocytosis and exocytosis. The osmosis skill also adds effects on plant cells beyond the supplied notes.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "All skills are labeled intermediate despite the learner's basic level. Plant-cell osmotic effects appear before the skill introducing the wall and vacuole. The name 'estruturas exclusivas da célula vegetal' needs an explicit animal-versus-plant comparison to avoid implying exclusivity across all organisms.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the notes' antibiotic-versus-virus distinction explicit and specify organelle-to-function table completion as practice within the existing organelle skill. Keep this practice inside the content skills rather than adding an exam-strategy area.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - A class test on Friday from the learner's own notes, read into a blueprint with one subject (Biologia) and six topics (S1.1 to S1.6): one skill for each topic at least, never one skill for several topics, each skill's `topics` listing its topic id; every topic id appears in a skill\n      - Sized by the notes, not by the budget (LESSON_BUDGET 15, the most two days hold): roughly one to three lessons a topic, more for membrane transport (osmosis, active transport, endocytosis) and organelles (the notes say they come up a lot), never above 15 in all\n      - Only what the notes teach (cell theory, prokaryotes and eukaryotes, plasma membrane and transport, organelles, nucleus, viruses) and the prerequisites a first-year high-school student lacks, a lesson each; nothing beyond the notes (no cell division, DNA replication or genetics), and no area for a discursive test or exam strategy beyond the notes' own announcement\n      - Exam weights follow the notes' emphasis (organelles \"cai muito\")\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions starting with a verb, named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-class-test-own-notes-two-days-1",
+        "userInput": {
+          "context": "The learner's own material, page by page:\n[p1] BIOLOGIA - 1º ANO B - Prof.ª Juliana\nResumo pra prova de sexta (9/10): A CÉLULA\n1) Teoria celular: todo ser vivo é formado por células (exceto vírus); a célula é a menor unidade da vida; toda célula vem de outra célula (Virchow); Hooke viu as \"celas\" na cortiça (1665).\n2) Procarionte x eucarionte: procarionte sem núcleo (DNA solto = nucleoide), sem organelas membranosas, ex. bactérias; eucarionte com núcleo (carioteca) e organelas, ex. animais, plantas, fungos, protozoários; as duas têm membrana plasmática, citoplasma, ribossomos e DNA.\n3) Membrana plasmática: bicamada de fosfolipídios + proteínas (mosaico fluido); permeabilidade seletiva; transporte passivo sem ATP (difusão simples, difusão facilitada, osmose); osmose: água vai do meio hipotônico para o hipertônico; hemácia em água pura incha e estoura (hemólise), em solução muito salgada murcha; transporte ativo gasta ATP, contra o gradiente (bomba de sódio e potássio); endocitose (fagocitose e pinocitose) e exocitose.\n4) Organelas (CAI MUITO!!): mitocôndria (respiração celular, ATP); cloroplasto (fotossíntese, plantas e algas); ribossomos (síntese de proteínas); RE rugoso (proteínas) e RE liso (lipídios, desintoxicação); complexo golgiense (modifica, empacota e secreta); lisossomo (digestão intracelular); vacúolo (grande na célula vegetal); parede celular (celulose).\n5) Núcleo: carioteca com poros; cromatina = DNA + proteínas; nucléolo produz ribossomos.\n6) Vírus: acelulares, parasitas intracelulares obrigatórios; capsídeo de proteína + DNA ou RNA; antibiótico não funciona contra vírus.\nA prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!",
+          "examBlueprint": {
+            "name": "Biologia",
+            "notes": [
+              "Format: Questão de completar a tabela das organelas.",
+              "Format: Dissertativa sobre osmose."
+            ],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Biologia",
+                "questions": null,
+                "topics": [
+                  "Teoria celular",
+                  "Procarionte x eucarionte",
+                  "Membrana plasmática",
+                  "Organelas",
+                  "Núcleo",
+                  "Vírus"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": [{ "level": "high", "subject": "Biologia", "topic": "Organelas" }]
+          },
+          "goal": "prova de biologia sexta sobre célula",
+          "goalKind": "exam",
+          "language": "pt",
+          "lessonBudget": 15,
+          "ownLevel": "basic"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"

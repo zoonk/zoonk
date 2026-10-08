@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { generateSetupLessonOutline } from "@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline";
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -125,6 +126,49 @@ describe(choosePlanTools, () => {
       { choice: null, essential: true, later: false, name: tools.spreadsheet, system: null },
       { choice: null, essential: false, later: true, name: tools.python, system: null },
     ]);
+  });
+
+  it("lists no tools for an exam answered on paper, and the plan's tools for a practical exam", async () => {
+    const { goal } = await setup();
+    const citation = { passage: "passage", sourceId: "source" };
+
+    const written = await examBlueprintFixture({
+      structure: {
+        formats: [
+          { citation, description: "Itens de certo ou errado", kind: "trueFalse", options: null },
+        ],
+        mock: null,
+        rules: [],
+        subjects: [],
+      },
+    });
+
+    await prisma.goal.update({
+      data: { examBlueprintId: written.id, kind: "exam" },
+      where: { id: goal.id },
+    });
+
+    await expect(loadTools(goal.id)).resolves.toStrictEqual([]);
+
+    const practical = await examBlueprintFixture({
+      structure: {
+        formats: [
+          {
+            citation,
+            description: "Prova prática no computador",
+            kind: "practical",
+            options: null,
+          },
+        ],
+        mock: null,
+        rules: [],
+        subjects: [],
+      },
+    });
+
+    await prisma.goal.update({ data: { examBlueprintId: practical.id }, where: { id: goal.id } });
+
+    await expect(loadTools(goal.id)).resolves.toHaveLength(2);
   });
 
   it("adds one shared setup lesson before the first chapter that needs the tool, with an undo", async () => {

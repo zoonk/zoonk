@@ -1,66 +1,96 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
-import { createHook, getWorkflowMetadata } from "workflow";
-import { start } from "workflow/api";
+import { getWorkflowMetadata } from "workflow";
+import { type Run, start } from "workflow/api";
+import { claimRunToken, joinRun } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
-import { toResearchAnalytics } from "./_utils/research-analytics";
-import { readExamBlueprint } from "./read-exam-blueprint";
+import { type ResearchAnalytics, toResearchAnalytics } from "./_utils/research-analytics";
+import { describeExam, readExamBlueprint } from "./read-exam-blueprint";
 import { type ResearchResult, researchResultSchema } from "./research-result";
 import { type ResearchContext, findAndStoreSources, researchSources } from "./research-sources";
 import { detectResearchTopic } from "./research-topic";
+import { lookUpChoiceOptionsStep } from "./steps/choice-options-step";
+import { lookUpCourseWeightsStep } from "./steps/course-weights-step";
 import { findExamBlueprintStep } from "./steps/find-exam-blueprint-step";
 import { hasPrivateUploadsStep } from "./steps/inspect-uploads-step";
-import { linkGoalToBlueprintStep } from "./steps/link-goal-step";
+import { linkGoalToBlueprintStep, unlinkGoalFromSharedExamStep } from "./steps/link-goal-step";
 import { type ResearchGoal, loadResearchGoalStep } from "./steps/load-research-goal-step";
+import { recordNoticeFormatsStep } from "./steps/notice-formats-step";
 import { planResearchStep } from "./steps/plan-research-step";
 import { recordResearchOutcomeStep } from "./steps/record-research-outcome-step";
 import { recordResearchRunStep } from "./steps/record-research-run-step";
+import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
+import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
+import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 
 export type ResearchInput = {
   goalId: string;
   /**
-   * Uploads the learner gave after research asked for the notice; read instead of searching. By
-   * default, the material the learner uploaded with the goal.
+   * Uploads the learner gave after research asked for the notice; read instead of searching. When
+   * absent or empty, the material the learner uploaded with the goal.
    */
   sourceIds?: string[];
 };
 
 async function finishExam({
+  analytics,
   examBlueprintId,
   goal,
   isShared,
 }: {
+  analytics: ResearchAnalytics;
   examBlueprintId: string;
   goal: ResearchGoal;
   isShared: boolean;
 }): Promise<ResearchResult> {
   await linkGoalToBlueprintStep({ examBlueprintId, goalId: goal.id });
 
-  // A shared exam's notice keeps being checked while anyone studies it; a private one is an upload.
+  // A shared exam's notice keeps being checked while anyone studies it, and gets its subjects'
+  // counts, its questions' options and how often its topics are asked from past editions when it
+  // says none; a private one is an upload. An entrance exam goal also gets how its course weighs
+  // the exam's parts, and a goal aiming at a course or a position its target's last cut-off.
   if (isShared) {
-    await scheduleFreshnessChecksStep([{ examBlueprintId, kind: "exam" }]);
+    await Promise.all([
+      lookUpChoiceOptionsStep({ analytics, examBlueprintId }),
+      lookUpSubjectQuestionsStep({ analytics, examBlueprintId }),
+      lookUpTopicFrequencyStep({ analytics, examBlueprintId }),
+      lookUpCourseWeightsStep({ analytics, goalId: goal.id }),
+      lookUpTargetCutoffStep({ analytics, goalId: goal.id }),
+      scheduleFreshnessChecksStep([{ examBlueprintId, kind: "exam" }]),
+    ]);
   }
 
   return { examBlueprintId, sourceIds: [], status: "ready" };
 }
 
-/** Another learner's run is researching this exam: wait for it instead of paying twice. */
+/**
+ * Another learner's run is researching this exam: wait for it instead of paying twice. Null when
+ * it ended without a result (it failed, or stalled and was stopped): this run researches the exam
+ * itself instead of failing with it.
+ */
 async function joinRunningResearch({
   context,
   identity,
-  returnValue,
+  run,
 }: {
   context: ResearchContext;
   identity: ExamIdentity;
-  returnValue: Promise<unknown>;
-}): Promise<ResearchResult> {
-  const result = researchResultSchema.parse(await returnValue);
+  run: Run<unknown>;
+}): Promise<ResearchResult | null> {
+  const parsed = researchResultSchema.safeParse(await joinRun(run));
+
+  if (!parsed.success) {
+    return null;
+  }
+
+  const result = parsed.data;
 
   if (result.status !== "ready" || !result.examBlueprintId) {
     return result;
   }
 
   return finishExam({
+    analytics: context.analytics,
     examBlueprintId: result.examBlueprintId,
     goal: context.goal,
     isShared: !identity.ownerId,
@@ -70,7 +100,12 @@ async function joinRunningResearch({
 async function researchExam(context: ResearchContext): Promise<ResearchResult> {
   const { analytics, goal, plan, uploads } = context;
 
-  // A teacher's test is described only by the class's material: never searched, never shared.
+  // A teacher's test is described only by the class's material: never searched, never shared, and
+  // never the public notice onboarding matched by its name ("Prova de biologia").
+  if (plan.classTest) {
+    await unlinkGoalFromSharedExamStep(goal.id);
+  }
+
   if (plan.classTest && uploads.length === 0) {
     return { reason: "classMaterial", status: "needsUpload" };
   }
@@ -92,15 +127,15 @@ async function researchExam(context: ResearchContext): Promise<ResearchResult> {
   const { blueprintId, identity } = lookup;
   const isShared = !identity.ownerId;
 
-  if (blueprintId && lookup.isCurrent && uploads.length === 0) {
-    return finishExam({ examBlueprintId: blueprintId, goal, isShared });
+  if (blueprintId && lookup.isCurrent && !lookup.readsAgain && uploads.length === 0) {
+    return finishExam({ analytics, examBlueprintId: blueprintId, goal, isShared });
   }
 
-  const claim = createHook({ token: `research:${identity.language}:${lookup.identityKey}` });
-  const conflict = await claim.getConflict();
+  const { conflict } = await claimRunToken(`research:${identity.language}:${lookup.identityKey}`);
+  const joined = conflict ? await joinRunningResearch({ context, identity, run: conflict }) : null;
 
-  if (conflict) {
-    return joinRunningResearch({ context, identity, returnValue: conflict.returnValue });
+  if (joined) {
+    return joined;
   }
 
   const sourceIds =
@@ -108,16 +143,32 @@ async function researchExam(context: ResearchContext): Promise<ResearchResult> {
       ? uploads
       : await findAndStoreSources({ analytics, plan, requireOfficial: true, topic: "exam" });
 
-  const saved =
+  const reading = {
+    analytics,
+    background: false,
+    exceptGoalId: goal.id,
+    identity,
+    isNew: !blueprintId,
+    quiet: lookup.readsAgain,
+    sourceIds,
+  };
+
+  // A new exam's notice takes minutes to read, while the learner's placement waits on how its
+  // questions look: a first pass reads only that, beside the reading.
+  const [saved] =
     sourceIds.length > 0
-      ? await readExamBlueprint({
-          analytics,
-          identity,
-          isNew: !blueprintId,
-          priority: true,
-          sourceIds,
-        })
-      : null;
+      ? await Promise.all([
+          readExamBlueprint(reading),
+          !blueprintId && uploads.length === 0
+            ? recordNoticeFormatsStep({
+                analytics,
+                exam: describeExam(identity),
+                goalId: goal.id,
+                sourceIds,
+              })
+            : null,
+        ])
+      : [null];
 
   // An exam's content rarely changes between editions, so the last one still guides study.
   const examBlueprintId = saved?.examBlueprintId ?? blueprintId;
@@ -129,7 +180,7 @@ async function researchExam(context: ResearchContext): Promise<ResearchResult> {
     };
   }
 
-  return finishExam({ examBlueprintId, goal, isShared });
+  return finishExam({ analytics, examBlueprintId, goal, isShared });
 }
 
 /** Research for one goal: its topic, the plan for it, and the exam or the sources it reads. */
@@ -150,7 +201,10 @@ async function research({
 
   const analytics = toResearchAnalytics({ goal, runId });
   const plan = await planResearchStep({ analytics, goal, topic });
-  const context = { analytics, goal, plan, uploads: input.sourceIds ?? goal.uploadIds };
+  // No uploads to answer an ask with (the API starts research with an empty list) means the
+  // material the learner gave with the goal.
+  const uploads = input.sourceIds?.length ? input.sourceIds : goal.uploadIds;
+  const context = { analytics, goal, plan, uploads };
 
   if (topic === "exam") {
     return researchExam(context);
@@ -175,13 +229,14 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  // Research without uploads runs once per goal at a time: a second start waits for the first.
+  // Research without uploads runs once per goal at a time: a second start waits for the first,
+  // and researches the goal itself when the first ends without a result.
   if (!input.sourceIds?.length) {
-    const hook = createHook({ token: `research-goal:${input.goalId}` });
-    const conflict = await hook.getConflict();
+    const { conflict } = await claimRunToken(`research-goal:${input.goalId}`);
+    const joined = conflict ? researchResultSchema.safeParse(await joinRun(conflict)) : null;
 
-    if (conflict) {
-      return researchResultSchema.parse(await conflict.returnValue);
+    if (joined?.success) {
+      return joined.data;
     }
   }
 

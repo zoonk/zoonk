@@ -18,8 +18,8 @@ function isRefreshGoal(details: unknown): boolean {
 }
 
 /**
- * The map of the field for a goal (the active goal by default), the same view model for Focus and
- * Fun: every skill of the plan as a node with its mastery and prerequisites, grouped by chapter,
+ * The map of the field for a goal (the active goal by default): every skill of the plan as a node
+ * with its mastery and prerequisites, grouped by chapter,
  * phase and course, with where the learner is now. It leads with what's fading for refresh goals,
  * shows the course and its levels, and, once the plan is done, what to study next. Drawn by code
  * from the skill graph, never as a picture.

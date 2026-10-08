@@ -6,7 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ANSWER_LETTERS, AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
-import { ItemLine, ItemText } from "../questions/item-text";
+import { ItemLine, ItemSupport } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useMockScreen } from "./mock-context";
 
@@ -94,10 +94,7 @@ export function MockQuestionCard({ question }: { question: MockQuestion }) {
   const { runner } = useMockScreen();
 
   return (
-    <div
-      className="in-data-[mode=fun]:fun-paper flex flex-col gap-4 in-data-[mode=fun]:rounded-[28px] in-data-[mode=fun]:p-5"
-      data-slot="mock-question"
-    >
+    <div className="flex flex-col gap-4" data-slot="mock-question">
       <p className="text-muted-foreground text-sm">
         {question.area
           ? t("Question {number} of {total} · {area}", {
@@ -111,10 +108,15 @@ export function MockQuestionCard({ question }: { question: MockQuestion }) {
             })}
       </p>
 
-      {question.context && <ItemText className="text-muted-foreground" text={question.context} />}
-      <h1 className="text-lg leading-snug font-semibold text-balance sm:text-xl">
+      <ItemSupport
+        className="text-muted-foreground"
+        context={question.context}
+        image={question.image}
+        visual={question.visual}
+      />
+      <h2 className="text-lg leading-snug font-semibold text-balance sm:text-xl">
         <ItemLine text={question.question} />
-      </h1>
+      </h2>
 
       <MockOptions question={question} />
     </div>

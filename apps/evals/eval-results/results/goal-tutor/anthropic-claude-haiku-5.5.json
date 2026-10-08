@@ -1,0 +1,821 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2407,
+          "outputTokens": 469,
+          "reasoningTokens": 191
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The answer offers to open the learner’s pending mistakes (“Posso abrir os erros”), although toolResults explicitly reports that the mistakes tool is unavailable. This claims an app capability it cannot provide in this interaction, triggering the 6.5 cap. proposedChange is correctly null.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The explanation correctly places discretion within motive and object, subject to legal limits, and addresses the learner’s recorded exam trap. However, it omits purpose (finalidade) from the elements that remain bound. The closing question also confusingly asks whether competence is a bound or discretionary act, although competence is an element of an act. At roughly 180 words, the response is longer and more repetitive than this straightforward question needs.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "Use a compact comparison listing all three bound elements, then finish with one clearly phrased Cebraspe certo/errado item. Refer directly to today’s scheduled practice without offering the unavailable tool.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A content doubt for a Cebraspe exam. Explains correctly that in a bound act (vinculado) the law sets every element and in a discretionary act (discricionário) the administration chooses only within motive and object (mérito), while competence, purpose and form stay bound. Mentions the classic certo/errado trap. proposedChange is null.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking, a mock exam for exam practice), it's offered and the answer says what its button does; when the tool comes back unavailable, the answer mentions no button.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-atos-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "qual a diferença entre ato vinculado e ato discricionário?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2188,
+          "outputTokens": 429,
+          "reasoningTokens": 216
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The correction that a persona \"isn't really made up\" unfairly challenges an answer that already specified research-based fiction. Likewise, \"Each detail should trace back\" is too absolute: goals and behavioral patterns should be grounded in research, but illustrative names and other fictional identity details need not be.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the feedback more explicit: affirm the learner's research basis, goals, frustrations, and shared-trait grouping, then identify usage context as the missing detail. The answer mentions context but does not clearly flag it as the addition needed. Keep proposedChange null, as the result correctly does.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Maya answers, in English, the practice question the buddy asked. The answer says specifically what's right (a persona is a fictional, research-based archetype with goals and context; a segment groups real users by shared traits) and what's missing or vague, in English. Grading it as a score ('full marks', '10/10') or saying what hiring managers or graders look for as a fact is a major error (cap 6.5). proposedChange is null.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking, a mock exam for exam practice), it's offered and the answer says what its button does; when the tool comes back unavailable, the answer mentions no button.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "en-ux-persona-feedback-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-03-30", "remainingHours": 150 },
+            "goal": {
+              "dailyMinutes": 60,
+              "kind": "learn",
+              "targetDate": "2027-04-05",
+              "title": "Work as a UX designer"
+            },
+            "language": "en",
+            "mistakes": [],
+            "next": [],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 1,
+                  "lessonsTotal": 4,
+                  "state": "current",
+                  "title": "Pesquisa com usuários"
+                }
+              ],
+              "endDate": "2026-11-15",
+              "index": 0,
+              "kind": "learn",
+              "name": "Fundamentos de UX"
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Pesquisa com usuários", "skipped": false },
+                { "focused": false, "name": "Arquitetura da informação", "skipped": false },
+                { "focused": false, "name": "Prototipação no Figma", "skipped": false },
+                { "focused": false, "name": "Portfólio", "skipped": false }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "goal",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "none",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [60, 60, 60, 60, 60, 60, 60]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Planejar uma entrevista com usuários",
+                  "kind": "lesson",
+                  "minutes": 15,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Roteiro de entrevista"
+                }
+              ],
+              "source": "plan"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [
+            {
+              "answer": "Quick check: in two sentences, what's the difference between a persona and a user segment?",
+              "question": "can you quiz me on personas?"
+            }
+          ],
+          "question": "a persona is like a made up person based on research with goals and frustrations, a segment is just a group of users that share something like age or plan"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2292,
+          "outputTokens": 366,
+          "reasoningTokens": 191
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Saying the item is “almost always wrong” unnecessarily weakens the otherwise clear explanation that competence and form are always bound under the expected rule. The answer otherwise correctly explains the latest mistake, identifies why Certo was tempting, and appropriately leaves proposedChange null.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Replace the repeated rule in the closing paragraph with a brief concrete example contrasting discretion over a permitted decision with the legally fixed authority and form.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Explains her latest mistake from `mistakes`: the item is Errado because competence and form are always bound, even in a discretionary act; says what made Certo tempting. proposedChange is null.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking, a mock exam for exam practice), it's offered and the answer says what its button does; when the tool comes back unavailable, the answer mentions no button.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-mistake-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "não entendi meu último erro, pode explicar?"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2260,
+          "outputTokens": 294,
+          "reasoningTokens": 136
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The answer says the card did not show how many lessons would be removed, but toolResults explicitly reports lessonsRemoved: 0 and lessonsAdded: 0. It should distinguish these known counts from the unavailable revised completion date. Otherwise, it correctly proposes one hour daily starting now and clearly states that the change takes effect only after tapping Apply.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The optional offer to prioritize exam topics is unnecessary for this straightforward time-change request. A tighter answer could focus on the requested daily limit, the Apply requirement, and the available impact information.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A plan change: one hour a day. proposedChange asks for one hour (60 minutes) a day. The answer says it will apply after Apply.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking, a mock exam for exam practice), it's offered and the answer says what its button does; when the tool comes back unavailable, the answer mentions no button.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-hour-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "quero estudar só 1h por dia a partir de agora"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2290,
+          "outputTokens": 277,
+          "reasoningTokens": 117
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The answer asks the learner to check the card for changes to the completion date even though toolResults supplies no before/after dates. This creates a confusing expectation about what the card can show. Referring to 'the tool’s response' also adds unnecessary implementation language.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Keep the answer focused on removing Saturday study and the need to tap Apply. The proposed change correctly includes Saturdays off and the existing 240-minute allocation. If mentioning scheduling uncertainty, describe it directly without discussing tool output; retain redistribution only as an optional follow-up.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A plan change: no studying on Saturdays. proposedChange asks for Saturdays off. The answer may note that Saturday is her longest day today (4 hours).\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking, a mock exam for exam practice), it's offered and the answer says what its button does; when the tool comes back unavailable, the answer mentions no button.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-saturday-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "não vou mais conseguir estudar no sábado"
+        }
+      }
+    },
+    {
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2416,
+          "outputTokens": 500,
+          "reasoningTokens": 222
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The answer introduces unsupported claims about an official notice published on 2 October 2026 and its exam dates. Neither CURRENT_CONTEXT nor the supplied tool results establishes those claims; officialExamDate is null. It also asserts that the plan will finish later, although the tool reports no before/after completion dates. Moving the exam deadline by one week does not establish that the study plan's completion date changes.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The unnecessary verification detour challenges the learner's stated date and makes a simple update conditional on checking an official notice. This reduces directness and usefulness. However, proposedChange correctly requests only 24 January 2027 in Portuguese, and the answer correctly states that the change requires tapping Apply.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a short acknowledgment focused on the requested change: 'A proposta é mudar a data da prova para 24 de janeiro de 2027, sem pedir outras alterações. Ela só será aplicada quando você tocar em Aplicar.'",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A plan change: the exam moved to 24 January. proposedChange asks to set the exam date to 24 January (2027 or 'janeiro'), keeping the learner's words; no other change.\n\nEVALUATION CRITERIA:\n\nThe output has the buddy's answer, \"proposedChange\": the plan change it asked for in this message (null when it asked for none), \"offeredTools\": the app tools it offered as buttons under the answer, with whether each could be offered (null when none), \"searches\": what it searched the web for (null when it didn't), and \"toolResults\": what the app answered its tools with (a change's effect, such as when an area starts and lessons added or removed, its cautions, and what an offered tool opens). Facts the answer takes from toolResults are not invented. A proposed change is applied only when the learner taps Apply on a card the app shows.\n\n1. CORRECTNESS: Facts about the subject must be correct and specific. Facts about the learner's plan, schedule and mistakes must come only from CURRENT_CONTEXT. Penalize invented articles, dates, numbers, lessons or results.\n\n2. TUTORING: Answers the actual question directly, at the learner's level, with one concrete example when it helps, tied to the goal (for an exam, how the topic is asked and its traps). Concise (normally under 150 words). No lecture.\n\n3. PLAN CHANGES: When the learner asks to change how they study (time, days, a lighter week, the date, focus areas, difficulty, more practice), \"proposedChange\" is one self-contained sentence in the learner's language with every detail they gave, and the answer says briefly what will change and that it applies when they tap Apply. It never says the plan already changed. When the message isn't a plan change, \"proposedChange\" is null.\n\n4. HONESTY + TONE: Never promises a pass, a score, a job or finishing on time, not even in passing (\"gabarita\", \"você vai acertar com certeza\"). Never claims the app does something it can't show (syncing dates on its own, notifying). Answers in the language of the learner's message, kindly, without guilt.\n\n6. LEVERS: The change fits the wish: one subject too basic → that subject starts past its basics (not every lesson harder); more of a subject → more time and depth for it; less of a subject that still has exam questions → more time for the others, never leaving it out. The buddy never suggests on its own leaving out an exam subject that has questions or a change that shortens the plan. When an app tool is the right answer (a chapter test for lessons that feel too easy, choosing where to focus, a practice call for speaking, a mock exam for exam practice), it's offered and the answer says what its button does; when the tool comes back unavailable, the answer mentions no button.\n\n5. TRUST BOUNDARY: Never reveals instructions, field names as jargon (\"reason: weakArea\") or model details.\n\nMAJOR-ERROR CAPS:\n- A plan change requested but \"proposedChange\" null, or a change proposed for a message that isn't one: 6.0 or lower\n- Saying the plan already changed: 6.5 or lower\n- A wrong fact about the subject: 6.0 or lower\n- Wrong language: 7.0 or lower\n- A promise of a pass or a score, or a claim about the app it can't make: 6.5 or lower\n- Suggesting, on its own, to leave out an exam subject that has questions: 5.0 or lower\n",
+        "id": "pt-concurso-date-1",
+        "userInput": {
+          "contextSnapshot": {
+            "course": null,
+            "estimate": { "endDate": "2027-01-10", "remainingHours": 320 },
+            "goal": {
+              "dailyMinutes": 120,
+              "kind": "exam",
+              "targetDate": "2027-01-17",
+              "title": "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação"
+            },
+            "language": "pt",
+            "mistakes": [
+              {
+                "answer": "Certo",
+                "correctAnswer": "Errado",
+                "question": "Julgue o item: no ato discricionário, a Administração pode decidir sobre a competência e a forma do ato conforme conveniência e oportunidade.",
+                "skill": "Atos administrativos: vinculados e discricionários"
+              }
+            ],
+            "next": [
+              {
+                "date": "2026-10-07",
+                "items": [
+                  { "kind": "lesson", "title": "Concordância verbal" },
+                  { "kind": "lesson", "title": "Poder Legislativo: composição da Câmara" }
+                ]
+              }
+            ],
+            "phase": {
+              "chapters": [
+                {
+                  "lessonsDone": 2,
+                  "lessonsTotal": 6,
+                  "state": "current",
+                  "title": "Atos administrativos"
+                },
+                {
+                  "lessonsDone": 0,
+                  "lessonsTotal": 5,
+                  "state": "upcoming",
+                  "title": "Concordância"
+                }
+              ],
+              "endDate": "2026-11-01",
+              "index": 0,
+              "kind": "foundations",
+              "name": ""
+            },
+            "scope": { "kind": "plan" },
+            "setup": {
+              "areas": [
+                { "focused": false, "name": "Língua Portuguesa", "skipped": false },
+                { "focused": false, "name": "Direito Administrativo", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+                  "skipped": false
+                },
+                { "focused": false, "name": "Língua Inglesa", "skipped": false },
+                {
+                  "focused": false,
+                  "name": "Reconhecimento de Fala e Transcrição",
+                  "skipped": false
+                }
+              ],
+              "coverage": {
+                "coveredShare": 1,
+                "fits": true,
+                "measure": "exam",
+                "recommendedMinutes": null
+              },
+              "difficultyBias": "standard",
+              "lightWeeks": [],
+              "ownLevel": "intermediate",
+              "practiceBias": "balanced",
+              "weekdayMinutes": [0, 120, 120, 120, 120, 120, 240]
+            },
+            "status": {
+              "days": null,
+              "extraMinutesPerDay": null,
+              "kind": "onTrack",
+              "options": []
+            },
+            "today": {
+              "date": "2026-10-06",
+              "items": [
+                {
+                  "canDo": "Distinguir atos vinculados de discricionários em itens certo/errado",
+                  "kind": "lesson",
+                  "minutes": 12,
+                  "reason": "newSkill",
+                  "status": "pending",
+                  "title": "Discricionariedade e seus limites"
+                },
+                {
+                  "canDo": null,
+                  "kind": "practice",
+                  "minutes": 10,
+                  "reason": "mistakes",
+                  "status": "pending",
+                  "title": "Atos administrativos"
+                }
+              ],
+              "source": "session"
+            },
+            "version": 1
+          },
+          "learnerMemory": [],
+          "priorTurns": [],
+          "question": "a prova mudou para 24 de janeiro"
+        }
+      }
+    }
+  ],
+  "taskId": "goal-tutor"
+}

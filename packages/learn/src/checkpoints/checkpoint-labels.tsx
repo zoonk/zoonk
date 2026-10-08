@@ -1,8 +1,9 @@
 "use client";
 
 import { type CheckpointPhase, type CheckpointView } from "@zoonk/core/checkpoints/contract";
-import { useExtracted } from "next-intl";
-import { useExperienceMode } from "../mode-provider";
+import { useExtracted, useFormatter } from "next-intl";
+
+type CheckpointKind = CheckpointView["kind"];
 
 /** Phases count from one for people. */
 export function phaseNumber(checkpoint: Pick<CheckpointView, "phase">): string | null {
@@ -17,43 +18,44 @@ export function usePhaseLabel() {
     phase.name || t("Phase {number, number}", { number: phase.index + 1 });
 }
 
-/** "Phase 2 boss" in Fun, "Phase 2 checkpoint" in Focus; the weekly one by its name. */
-export function useCheckpointEyebrow(checkpoint: CheckpointView): string {
+/** "Phase 2 checkpoint"; the weekly one by its name. */
+export function useCheckpointEyebrow(checkpoint: Pick<CheckpointView, "kind" | "phase">): string {
   const t = useExtracted();
-  const mode = useExperienceMode();
   const phase = phaseNumber(checkpoint);
 
   if (checkpoint.kind === "weekly") {
-    if (mode === "fun") {
-      return t("Big Challenge");
-    }
-
     return t("Weekly challenge");
   }
 
   if (checkpoint.kind === "finalBoss") {
-    return mode === "fun" ? t("Final boss") : t("Final checkpoint");
+    return t("Final challenge");
   }
 
-  if (mode === "fun") {
-    return phase ? t("Phase {phase} boss", { phase }) : t("Phase boss");
-  }
-
-  return phase ? t("Phase {phase} checkpoint", { phase }) : t("Phase checkpoint");
+  return phase ? t("Phase {phase} challenge", { phase }) : t("Phase challenge");
 }
 
-/** "10 mixed questions, no hints. Get 7 right to win." */
-export function useCheckpointRules(checkpoint: CheckpointView): string {
+/** What a checkpoint is worth, said before it starts: a boss pays when won, a weekly one when done. */
+export function useCheckpointWorth({
+  brainPower,
+  kind,
+  phase,
+}: {
+  brainPower: number;
+  kind: CheckpointKind;
+  phase: CheckpointPhase | null;
+}): string {
   const t = useExtracted();
-  const questions = String(checkpoint.questions.length);
-  const passMark = String(checkpoint.passMark);
+  const format = useFormatter();
+  const points = format.number(brainPower);
 
-  if (checkpoint.kind === "weekly") {
-    return t("{questions} mixed questions from this week, no hints.", { questions });
+  if (kind === "weekly") {
+    return t("Finishing adds {points} Brain Power.", { points });
   }
 
-  return t("{questions} mixed questions, no hints. Get {passMark} right to win.", {
-    passMark,
-    questions,
-  });
+  return phase
+    ? t("Winning adds {points} Brain Power and completes phase {phase}.", {
+        phase: String(phase.index + 1),
+        points,
+      })
+    : t("Winning adds {points} Brain Power.", { points });
 }

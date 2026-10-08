@@ -169,9 +169,15 @@ export function useSendLessonQuestion({
     });
   }, [state.context, state.draft, state.suggestion, submitQuestion]);
 
+  /** Sends one of the tutor's suggested questions right away, as offered. */
+  const sendSuggestion = useCallback(
+    (question: string) => submitQuestion({ context: state.context, question, suggested: true }),
+    [state.context, submitQuestion],
+  );
+
   const unresolvedQuestion = state.isCreating
     ? null
     : (pendingRequestSnapshot.get(getLessonQuestionScope(state.context))?.input.question ?? null);
 
-  return { send, unresolvedQuestion };
+  return { send, sendSuggestion, unresolvedQuestion };
 }

@@ -3,7 +3,12 @@ import { toProduceBlock } from "./produce-block";
 
 const ESSAY_BLOCK_MINUTES = 20;
 
-const PRODUCE = { itemId: "essay", skillId: "skill", title: "Intervention proposal" };
+const PRODUCE = {
+  itemId: "essay",
+  minutes: ESSAY_BLOCK_MINUTES,
+  skillId: "skill",
+  title: "Intervention proposal",
+};
 
 describe(toProduceBlock, () => {
   it("plans the essay when the day has room for it", () => {
@@ -32,5 +37,17 @@ describe(toProduceBlock, () => {
     expect(toProduceBlock({ ...base, freshStart: "welcomeBack" })).toBeNull();
     expect(toProduceBlock({ ...base, examTrialEnded: true })).toBeNull();
     expect(toProduceBlock({ ...base, produce: null })).toBeNull();
+  });
+
+  it("takes the essay's own minutes: a class test's discursive answer fits a short day", () => {
+    const block = toProduceBlock({
+      examTrialEnded: false,
+      freshStart: null,
+      minBlockMinutes: 3,
+      produce: { ...PRODUCE, minutes: 8 },
+      room: 20,
+    });
+
+    expect(block).toMatchObject({ estimatedMinutes: 8, kind: "produce" });
   });
 });

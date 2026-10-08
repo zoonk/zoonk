@@ -113,6 +113,7 @@ export function serializeLearningActivity(activity: LearningActivityData) {
   return {
     ...activity,
     days: activity.days.map((day) => ({
+      activitiesCompleted: day.activitiesCompleted,
       date: serializeLogicalDate(day.date),
       lessonCompletions: day.lessonCompletions,
     })),

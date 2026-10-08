@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { io } from "next/cache";
 import {
   type LessonGenerationState,
   getLessonGenerationState,
@@ -76,6 +77,9 @@ export async function getLessonWaitingState({
   if (viewer.status !== "ready") {
     return viewer;
   }
+
+  // Live, like the run it follows: what's due now is read at request time, never in a prerender.
+  await io();
 
   const state = await getLessonGenerationState(lessonId);
 

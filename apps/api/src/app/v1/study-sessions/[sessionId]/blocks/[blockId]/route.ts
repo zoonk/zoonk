@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { withApiImageUrls } from "@/lib/file-urls";
 import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { studySessionError } from "@/lib/study-session-errors";
@@ -26,7 +27,7 @@ async function getBlock(
     return studySessionError(result);
   }
 
-  return NextResponse.json(result.detail);
+  return NextResponse.json(withApiImageUrls(result.detail));
 }
 
 export const GET = withApiErrorBoundary(getBlock);

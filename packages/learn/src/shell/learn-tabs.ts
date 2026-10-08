@@ -1,14 +1,5 @@
-/**
- * The four places of the learning experience. Both modes link to the same
- * routes; only their names and order change.
- */
-export type LearnTab = "today" | "plan" | "progress" | "content";
+/** The three places of the learning experience: what to do now, the way to the goal, the buddy. */
+export type LearnTab = "today" | "journey" | "buddy";
 
-/** Focus: Today, Plan, Progress and Content. */
-export const FOCUS_TABS: readonly LearnTab[] = ["today", "plan", "progress", "content"];
-
-/**
- * Fun's dock: Today, Route (the plan), Cards (the content) and the buddy, whose
- * page holds Fun's progress: the buddy, the logbook and the week.
- */
-export const FUN_DOCK_TABS: readonly LearnTab[] = ["today", "plan", "content", "progress"];
+/** Today, Journey and the buddy, in that order. */
+export const LEARN_TABS: readonly LearnTab[] = ["today", "journey", "buddy"];

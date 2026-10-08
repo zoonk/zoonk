@@ -2,7 +2,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 
 const DAYS_IN_A_WEEK = 7;
 
-type ReviewWhen =
+export type ReviewDate =
   | { kind: "date"; label: string }
   | { kind: "today" }
   | { kind: "tomorrow" }
@@ -24,7 +24,7 @@ export function describeReviewDate({
   locale: string;
   now?: Date;
   reviewAt: string;
-}): ReviewWhen {
+}): ReviewDate {
   const review = new Date(reviewAt);
   const days = Math.round((startOfDay(review) - startOfDay(now)) / MS_PER_DAY);
 

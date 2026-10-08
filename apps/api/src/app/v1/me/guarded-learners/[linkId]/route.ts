@@ -3,11 +3,31 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { guardianLinkPathParamsSchema } from "@/lib/openapi/schemas/guardians";
 import { parsePathParams } from "@/lib/path-params";
-import { guardedLearnerUpdateSchema } from "@zoonk/core/minors/guardian/contract";
+import {
+  type GuardedLearnerUpdateInput,
+  guardedLearnerUpdateSchema,
+} from "@zoonk/core/minors/guardian/contract";
 import { setGuardianDailyLimit } from "@zoonk/core/minors/guardian/set-daily-limit";
+import { setGuardianMemory } from "@zoonk/core/minors/guardian/set-memory";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The guardian sets or removes the learner's daily study limit. */
+/** Applies each control the guardian sent; every one checks the same link. */
+async function applyControls({
+  dailyLimitMinutes,
+  linkId,
+  memoryOff,
+}: GuardedLearnerUpdateInput & { linkId: string }) {
+  const limit =
+    dailyLimitMinutes === undefined
+      ? null
+      : await setGuardianDailyLimit({ dailyLimitMinutes, linkId });
+
+  const memory = memoryOff === undefined ? null : await setGuardianMemory({ linkId, memoryOff });
+
+  return [limit, memory].flatMap((result) => result ?? []);
+}
+
+/** The guardian sets or removes the learner's daily study limit, or turns their memory off or back. */
 async function updateLearner(
   request: NextRequest,
   context: RouteContext<"/v1/me/guarded-learners/[linkId]">,
@@ -27,13 +47,13 @@ async function updateLearner(
     return errors.validation(body.error);
   }
 
-  const result = await setGuardianDailyLimit({ ...body.data, ...parsedParams.data });
+  const results = await applyControls({ ...body.data, ...parsedParams.data });
 
-  if (result.status === "unauthorized") {
+  if (results.some((result) => result.status === "unauthorized")) {
     return errors.unauthorized();
   }
 
-  if (result.status === "notFound") {
+  if (results.some((result) => result.status === "notFound")) {
     return errors.notFound("Learner not found");
   }
 

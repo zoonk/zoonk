@@ -16,6 +16,12 @@ const PCM_24K = { rate: 24_000, type: "audio/pcm" } as const;
 const CLOSE_TIMEOUT_MS = 5000;
 
 /**
+ * GPT-Live usually starts a session within a second or two. One that hasn't started after this
+ * isn't going to, so the call says it didn't connect and offers another try instead of ringing.
+ */
+const CONNECT_TIMEOUT_MS = 15_000;
+
+/**
  * The AI SDK's realtime session with a store React can subscribe to: the session calls
  * `setState` whenever its status, audio state or Live session state change, and subscribers
  * re-read it.
@@ -43,6 +49,12 @@ export class LiveCallSession extends AbstractRealtimeSession {
   };
 
   getSnapshot = (): RealtimeState => this.snapshot;
+
+  /** A disposed call is over for good: whoever listened stops hearing about it as it closes. */
+  override dispose() {
+    this.listeners.clear();
+    super.dispose();
+  }
 }
 
 /**
@@ -54,12 +66,10 @@ export class LiveCallSession extends AbstractRealtimeSession {
  */
 export function createLiveCallSession({
   instructions,
-  onError,
   onEvent,
   setup,
 }: {
   instructions: string;
-  onError: (error: Error) => void;
   onEvent: (event: RealtimeServerEvent) => void;
   setup: LanguageConversationSetup;
 }): LiveCallSession {
@@ -72,7 +82,6 @@ export function createLiveCallSession({
       headers: () => ({}),
       provider: "gateway.live",
     }),
-    onError,
     onEvent,
     sessionConfig: {
       inputAudioFormat: PCM_24K,
@@ -81,6 +90,31 @@ export function createLiveCallSession({
       providerOptions: { openai: { delegation: { type: "client" }, store: false } },
       voice: setup.voice,
     },
+    startupTimeoutMs: CONNECT_TIMEOUT_MS,
+  });
+}
+
+/**
+ * Calls `onLost` when a call that's still open loses its connection: it never started in time,
+ * failed, or closed without GPT-Live confirming the end (a confirmed end is the call finishing).
+ * A cue GPT-Live rejected doesn't count. Disposing the session stops the watch.
+ */
+export function watchConnection({
+  isOpen,
+  onLost,
+  session,
+}: {
+  isOpen: () => boolean;
+  onLost: () => void;
+  session: LiveCallSession;
+}) {
+  session.subscribe(() => {
+    const { session: live, status } = session.getSnapshot();
+    const closedUnconfirmed = status === "disconnected" && live?.finalization !== "confirmed";
+
+    if ((status === "error" || closedUnconfirmed) && isOpen()) {
+      onLost();
+    }
   });
 }
 
@@ -113,6 +147,20 @@ export function sendLiveCallCue({
   }
 }
 
+/**
+ * Mutes or unmutes the learner's microphone in the call. GPT-Live keeps listening for the audio
+ * stream but ignores it while muted; a call that's closing ignores the change.
+ */
+export function setLiveCallMuted({ muted, session }: { muted: boolean; session: LiveCallSession }) {
+  try {
+    void session
+      .sendEvent({ type: muted ? "input-audio-mute" : "input-audio-unmute" })
+      .catch(() => null);
+  } catch {
+    // The session stopped accepting commands: the call is ending.
+  }
+}
+
 function stopTracks(stream: MediaStream) {
   for (const track of stream.getTracks()) {
     track.stop();
@@ -141,9 +189,13 @@ export async function openCallAudio(): Promise<{
 
     return {
       blocked: true,
+      // The call stops its audio when it fails, ends and closes: only the first stop closes it.
       stop: () => {
         stopTracks(destination.stream);
-        void context.close();
+
+        if (context.state !== "closed") {
+          void context.close().catch(() => null);
+        }
       },
       stream: destination.stream,
     };

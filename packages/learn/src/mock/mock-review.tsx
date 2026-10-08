@@ -2,6 +2,7 @@
 
 import { type MockReviewEntry } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
+import { DetailsDrawer } from "../_components/details-drawer";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { ItemLine } from "../questions/item-text";
@@ -28,7 +29,7 @@ function ReviewEntry({ entry }: { entry: MockReviewEntry }) {
   const answerText = useAnswerText();
 
   return (
-    <li className="border-border in-data-[mode=fun]:fun-paper flex flex-col gap-2 rounded-2xl border p-4 in-data-[mode=fun]:border-transparent">
+    <li className="border-border flex flex-col gap-2 rounded-2xl border p-4">
       {/* A mock runs in real conditions without menus; its questions are voted on in the review. */}
       <div className="flex items-center justify-between gap-2">
         <p className="text-muted-foreground text-xs">
@@ -40,6 +41,7 @@ function ReviewEntry({ entry }: { entry: MockReviewEntry }) {
           label={t("Question options")}
           screen="mock-review"
           target={{ contentId: entry.itemId, contentKind: "item" }}
+          votes={false}
         />
       </div>
       <p className="font-medium">
@@ -59,8 +61,11 @@ function ReviewEntry({ entry }: { entry: MockReviewEntry }) {
   );
 }
 
-/** The questions missed or left blank, each with the right answer and why, in the mock's order. */
-export function MockReview() {
+/**
+ * The questions missed or left blank, each with the right answer and why, in the mock's order:
+ * one text link away, in a sheet.
+ */
+export function MockReviewSheet() {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const { review } = runner.view;
@@ -70,18 +75,17 @@ export function MockReview() {
   }
 
   return (
-    <details className="group flex flex-col gap-3">
-      <summary className="text-muted-foreground cursor-pointer py-3 text-sm font-medium">
-        {t(
-          "{count, plural, one {See the question to review} other {See the # questions to review}}",
-          { count: review.length },
-        )}
-      </summary>
-      <ol className="mt-3 flex flex-col gap-3">
+    <DetailsDrawer
+      label={t("{count, plural, one {See the question} other {See the # questions}}", {
+        count: review.length,
+      })}
+      title={t("Questions to review")}
+    >
+      <ol className="flex flex-col gap-3">
         {review.map((entry) => (
           <ReviewEntry entry={entry} key={entry.itemId} />
         ))}
       </ol>
-    </details>
+    </DetailsDrawer>
   );
 }

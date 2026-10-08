@@ -30,7 +30,7 @@ type MemoryTaskRequest = {
   language: string;
   /** What the task is about to do, such as "Examples for a lesson on discounts". */
   need?: string;
-  /** Sensitive facts only reach tasks that help with them, such as the tutor. */
+  /** Sensitive facts only reach tasks that help with them, such as the tutor, and only for adults. */
   includeSensitive?: boolean;
   analytics?: AiGenerationContext;
 };
@@ -168,7 +168,13 @@ export async function findMemoryForTask({
     return [];
   }
 
-  const scope = { categories: allowed, includeSensitive, now: new Date(), userId };
+  // A minor's own correction can still be flagged sensitive; it stays listed for them, never read.
+  const scope = {
+    categories: allowed,
+    includeSensitive: includeSensitive && access.allowSensitive,
+    now: new Date(),
+    userId,
+  };
 
   return selectFacts({ analytics, language, need, scope });
 }

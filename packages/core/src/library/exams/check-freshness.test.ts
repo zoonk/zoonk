@@ -31,9 +31,12 @@ function daysFromNow(days: number) {
 async function examWithLearner({
   examDate,
   registrationEndsAt = null,
+  targetDate = null,
 }: {
   examDate: Date;
   registrationEndsAt?: Date | null;
+  /** The learner's own date: after a passed exam, the next edition they prepare for. */
+  targetDate?: Date | null;
 }) {
   servePage("A prova terá 50 questões.");
 
@@ -62,7 +65,7 @@ async function examWithLearner({
   });
 
   const user = await userFixture();
-  await goalFixture({ examBlueprintId: blueprint.id, kind: "exam", userId: user.id });
+  await goalFixture({ examBlueprintId: blueprint.id, kind: "exam", targetDate, userId: user.id });
 
   return { blueprint, source };
 }
@@ -86,6 +89,7 @@ describe(checkFreshness, () => {
     expect(check).toStrictEqual({
       blueprintUpdate: null,
       nextCheckAt: daysFromNow(1).toISOString(),
+      nextNotice: null,
       sourceChange: null,
       status: "scheduled",
     });
@@ -139,6 +143,26 @@ describe(checkFreshness, () => {
 
     const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
     expect(stored.nextCheckAt).toBeNull();
+  });
+
+  it("looks for the next notice every week while learners prepare for a later edition", async () => {
+    const { blueprint } = await examWithLearner({
+      examDate: daysFromNow(-60),
+      targetDate: daysFromNow(300),
+    });
+
+    await expect(
+      checkFreshness({ now: NOW, target: { examBlueprintId: blueprint.id, kind: "exam" } }),
+    ).resolves.toStrictEqual({
+      blueprintUpdate: null,
+      nextCheckAt: daysFromNow(7).toISOString(),
+      nextNotice: { examBlueprintId: blueprint.id },
+      sourceChange: null,
+      status: "scheduled",
+    });
+
+    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
+    expect(stored.nextCheckAt).toStrictEqual(daysFromNow(7));
   });
 
   it("stops when nobody studies the exam anymore", async () => {

@@ -1,19 +1,18 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, FlagIcon, LockIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { formatClock } from "../_utils/clock";
-import { usePrimaryVariant } from "../_utils/fun-primary";
 import { MockAnswerSheet, useSectionCounts } from "./mock-answer-sheet";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
-import { useSectionName } from "./mock-labels";
+import { MockHandInDialog } from "./mock-hand-in";
+import { useMockTitle } from "./mock-labels";
 import { MockQuestionCard } from "./mock-question";
 
 const TICK_MS = 1000;
@@ -43,28 +42,28 @@ function useSectionClock(deadline: string) {
   return remaining;
 }
 
+/**
+ * The task header's title, like every full-screen task's: the mock is the page's heading, and its
+ * quiet line is the section's clock. A timer isn't a live region, so it never reads every second.
+ */
 function ClockTitle({ deadline }: { deadline: string }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const remaining = useSectionClock(deadline);
-  const sectionName = useSectionName();
-  const section = runner.view.sections.find((item) => item.status === "current");
+  const title = useMockTitle();
 
   return (
-    <div className="flex flex-col items-center leading-tight">
-      {/* Exam days have long names ("Linguagens, Ciências Humanas e redação"): they wrap, never cut. */}
-      <span className="text-muted-foreground text-xs text-balance whitespace-normal">
-        {sectionName(section?.name ?? null)}
-      </span>
+    <div className="flex min-w-0 shrink flex-col items-center text-center">
+      <h1 className="text-foreground text-sm leading-5 font-medium">{title(runner.view)}</h1>
       {/* The server renders the clock a moment before the browser takes over. */}
-      <span
+      <p
         aria-label={t("Time left")}
-        className="text-foreground in-data-[mode=fun]:font-fun-display text-xl font-semibold tabular-nums"
+        className="text-foreground text-base leading-5 font-semibold tabular-nums"
         role="timer"
         suppressHydrationWarning
       >
         {formatClock(remaining)}
-      </span>
+      </p>
     </div>
   );
 }
@@ -78,9 +77,9 @@ function FlagButton() {
   return (
     <Button
       aria-pressed={flagged}
-      className={cn("in-data-[mode=fun]:fun-glass", flagged && "text-warning")}
+      className={cn(flagged && "text-warning")}
       onClick={runner.toggleFlag}
-      size="lg"
+      size="sm"
       variant="outline"
     >
       <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
@@ -104,9 +103,8 @@ function NextLabel({ isLast, label }: { isLast: boolean; label: string }) {
   );
 }
 
-function RunnerFooter() {
+function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   const t = useExtracted();
-  const primaryVariant = usePrimaryVariant();
   const { runner } = useMockScreen();
   const total = runner.view.current?.questions.length ?? 0;
   const isLastQuestion = runner.position >= total - 1;
@@ -114,7 +112,7 @@ function RunnerFooter() {
 
   function next() {
     if (isLastQuestion) {
-      void runner.submitSection();
+      onHandIn();
       return;
     }
 
@@ -145,7 +143,7 @@ function RunnerFooter() {
       <div className="flex items-center gap-2">
         <Button
           aria-label={t("Previous")}
-          className="in-data-[mode=fun]:fun-glass w-14 shrink-0 px-0"
+          className="w-14 shrink-0 px-0"
           disabled={runner.position === 0 || runner.pending}
           onClick={() => runner.go(runner.position - 1)}
           size="xl"
@@ -158,12 +156,11 @@ function RunnerFooter() {
           disabled={runner.pending}
           onClick={next}
           size="xl"
-          variant={primaryVariant}
         >
           {handingIn && <Spinner aria-hidden="true" />}
           {handingIn ? t("Handing in…") : <NextLabel isLast={isLastQuestion} label={nextLabel} />}
         </Button>
-        <MockAnswerSheet />
+        <MockAnswerSheet onHandIn={onHandIn} />
       </div>
     </>
   );
@@ -171,14 +168,15 @@ function RunnerFooter() {
 
 /**
  * The running section, like the exam room: the clock, one question at a time with no feedback,
- * a flag to come back to it, the answer sheet to jump around and hand the section in.
+ * a flag to come back to it, the answer sheet to jump around, and handing the section in after
+ * saying what's still blank or flagged.
  */
 export function MockRunnerView() {
   const t = useExtracted();
-  const locale = useLocale();
   const { runner } = useMockScreen();
   const { current } = runner.view;
   const counts = useSectionCounts();
+  const [confirming, setConfirming] = useState(false);
   const question = current?.questions[runner.position];
 
   if (!current || !question) {
@@ -187,21 +185,16 @@ export function MockRunnerView() {
 
   return (
     <MockFrame
-      footer={<RunnerFooter />}
+      footer={<RunnerFooter onHandIn={() => setConfirming(true)} />}
       headerEnd={<FlagButton />}
       headerTitle={<ClockTitle deadline={current.deadline} />}
+      progress={{
+        label: t("Questions answered in this section"),
+        value: counts.total > 0 ? (counts.answered / counts.total) * PERCENT : 0,
+      }}
     >
-      <ProgressRoot
-        locale={locale}
-        aria-label={t("Questions answered in this section")}
-        value={counts.total > 0 ? (counts.answered / counts.total) * PERCENT : 0}
-      >
-        <ProgressTrack className="h-1">
-          <ProgressIndicator className="in-data-[mode=fun]:bg-fun-accent-lime" />
-        </ProgressTrack>
-      </ProgressRoot>
-
       <MockQuestionCard key={question.itemId} question={question} />
+      <MockHandInDialog onOpenChange={setConfirming} open={confirming} />
     </MockFrame>
   );
 }

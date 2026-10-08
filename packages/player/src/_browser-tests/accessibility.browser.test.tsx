@@ -1,19 +1,15 @@
 import { type ContentFeedbackAdapters, ContentFeedbackProvider } from "@zoonk/learn/feedback";
 import { ContentVoteMenuItems } from "@zoonk/learn/feedback/menu-items";
-import { ContentThumbs, ContentThumbsRow } from "@zoonk/learn/feedback/thumbs";
-import { listMovingAnimations } from "@zoonk/testing/accessibility/motion";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { press } from "../_test-utils/activity-player";
-import { onDevice } from "../_test-utils/device-media";
 import { tabTo } from "../_test-utils/keyboard";
 import { languageStep } from "../_test-utils/language-steps";
 import { activityStep, spokenAnswerStep, teachingStep } from "../_test-utils/lesson-steps";
 import {
-  type PlayerMode,
   acceptedAnswerCheck,
   buildAdapters,
   buildLesson,
@@ -25,13 +21,10 @@ import { LessonPlayerShell } from "../lesson/lesson-player-shell";
 import { type LessonPlayerAdapters, type PlayableLibraryStep } from "../lesson/lesson-player-types";
 
 /**
- * Accessibility of the lesson player, in Focus (light and dark) and Fun: every kind of screen and
- * all 43 activity templates as the first screen of a lesson, then a lesson played by keyboard and
- * scanned in each state it reaches (an answer's feedback, the tutor, the screen's menu, the end),
- * and Fun's motion calming down when the device asks for less.
+ * Accessibility of the lesson player, in light and dark: every kind of screen and all 43 activity
+ * templates as the first screen of a lesson, then a lesson played by keyboard and scanned in each
+ * state it reaches (an answer's feedback, the tutor, the screen's menu, the end).
  */
-
-const MODES: PlayerMode[] = ["focus", "fun"];
 
 type ActivityTemplate = keyof typeof activityContentFixtures;
 
@@ -62,13 +55,13 @@ const SCREENS: [string, () => PlayableLibraryStep][] = [
 ];
 
 /**
- * The feedback an app puts in a lesson, as the web app does: votes in the screen's menu, thumbs
- * under an answer's why and at the end. Nothing is saved anywhere.
+ * The feedback an app puts in a lesson, as the web app does: "Report a problem" in the screen's
+ * menu. Nothing is saved anywhere.
  */
 const FEEDBACK_SLOTS: LessonPlayerSlots = {
-  answerFeedback: (target) => <ContentThumbs target={target} />,
-  completionFeedback: (target) => <ContentThumbsRow className="self-center" target={target} />,
-  screenMenuItems: (target) => <ContentVoteMenuItems screen="lesson-step" target={target} />,
+  reportMenuItem: (target) => (
+    <ContentVoteMenuItems screen="lesson-step" target={target} votes={false} />
+  ),
 };
 
 const FEEDBACK_ADAPTERS: ContentFeedbackAdapters = {
@@ -102,7 +95,7 @@ async function enterTo(next: Locator) {
 
 /**
  * Opens a layer with its button by keyboard and scans it, then Escape closes only the layer and
- * puts focus back on its button.
+ * hands focus to the screen's main action, not the button, so Enter goes on instead of reopening it.
  */
 async function scanLayer({ button, layer }: { button: string; layer: Locator }) {
   const opener = page.getByRole("button", { name: button });
@@ -113,7 +106,7 @@ async function scanLayer({ button, layer }: { button: string; layer: Locator }) 
   await expectAccessibleScreen(button);
   await press("Escape");
   await expect.element(layer).not.toBeInTheDocument();
-  await expect.element(opener).toHaveFocus();
+  await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
 }
 
 /**
@@ -121,7 +114,7 @@ async function scanLayer({ button, layer }: { button: string; layer: Locator }) 
  * a written answer the server accepts) and the summary, hosted as an app hosts it: with the tutor,
  * the app's feedback and the summary card in the screen's menu.
  */
-function openHostedLesson(mode: PlayerMode) {
+function openHostedLesson() {
   const typedAnswer = teachingStep("typedAnswer");
 
   const lesson = buildLesson(
@@ -151,98 +144,55 @@ function openHostedLesson(mode: PlayerMode) {
       </ContentFeedbackProvider>
     ),
     lesson,
-    mode,
     slots: FEEDBACK_SLOTS,
     tutor: buildTutor(),
   });
 }
 
-/** Answers a check right with the mouse, as the paper flips to its result. */
-async function answerRight() {
-  await page.getByRole("radio", { name: RIGHT_OPTION }).click();
-  await page.getByRole("button", { name: /^Check/u }).click();
-  await expect.element(verdict("Correct!")).toBeVisible();
-}
-
-/** The animations the paper itself runs, by name. */
-function paperAnimations() {
-  return document
-    .querySelector('[data-slot="fun-paper"]')
-    ?.getAnimations()
-    .map((animation) => ("animationName" in animation ? String(animation.animationName) : ""));
-}
-
 describe("lesson player accessibility", () => {
-  describe.each(MODES)("in %s", (mode) => {
-    it.each(SCREENS)("%s", async (name, buildStep) => {
-      renderLessonPlayer({ lesson: buildLesson([buildStep()]), mode });
-      await expect.element(page.getByRole("main", { name: "Lesson content" })).toBeVisible();
-      await expectAccessibleScreen(name);
-    });
-
-    it("a lesson played by keyboard, in each state", async () => {
-      openHostedLesson(mode);
-
-      await expect.element(page.getByText("Guess first · no points")).toBeVisible();
-      await pick("3", "No");
-      await enterTo(verdict("Good guess!"));
-      await expectAccessibleScreen("a guess's reveal");
-      await enterTo(page.getByText("A cloud, not a little ball"));
-
-      await scanLayer({
-        button: "Ask a question",
-        layer: page.getByRole("dialog", { name: "Ask questions" }),
-      });
-
-      await scanLayer({ button: "Screen options", layer: page.getByRole("menu") });
-
-      // Focus is back on the menu's button, where Enter would reopen it, so it moves on to Next.
-      await tabTo(page.getByRole("button", { name: /^Next/u }));
-      await enterTo(page.getByText('What does the electron "cloud" show?'));
-      await pick("1", "The electron's exact path");
-      await enterTo(verdict("Not quite"));
-      await expectAccessibleScreen("a wrong answer's feedback");
-
-      const typed = page.getByRole("textbox", {
-        name: "In your own words: why is the electron drawn as a cloud?",
-      });
-
-      await enterTo(typed);
-      await tabTo(typed);
-      await userEvent.keyboard(RIGHT_TYPED);
-      await tabTo(page.getByRole("button", { name: /^Check/u }));
-      await press("Enter");
-      await expect.element(verdict("Correct!")).toBeVisible();
-      await expectAccessibleScreen("a written answer's grade");
-      await enterTo(page.getByRole("heading", { name: "Summary" }));
-
-      // The check answered wrong comes back once at the end; this time it's answered right.
-      await enterTo(page.getByText('What does the electron "cloud" show?'));
-      await pick("2", RIGHT_OPTION);
-      await enterTo(verdict("Correct!"));
-      await enterTo(page.getByRole("heading", { level: 2, name: "Lesson complete" }));
-      await expectAccessibleScreen("the completion moment");
-    });
+  it.each(SCREENS)("%s", async (name, buildStep) => {
+    renderLessonPlayer({ lesson: buildLesson([buildStep()]) });
+    await expect.element(page.getByRole("main", { name: "Lesson content" })).toBeVisible();
+    await expectAccessibleScreen(name);
   });
 
-  it("Fun's paper flips to its result, and fades instead with reduced motion", async () => {
-    renderLessonPlayer({
-      lesson: buildLesson([teachingStep("check"), teachingStep("check")]),
-      mode: "fun",
+  it("a lesson played by keyboard, in each state", async () => {
+    openHostedLesson();
+
+    await expect.element(page.getByText("Guess first")).toBeVisible();
+    await pick("3", "No");
+    await enterTo(verdict("Good guess!"));
+    await expectAccessibleScreen("a guess's reveal");
+    await enterTo(page.getByText("A cloud, not a little ball"));
+
+    await scanLayer({ button: "Ask Pip", layer: page.getByRole("dialog", { name: "Pip" }) });
+
+    await scanLayer({ button: "Screen options", layer: page.getByRole("menu") });
+
+    // Closing the menu left focus on Next, so Enter goes on to the next screen.
+    await enterTo(page.getByText('What does the electron "cloud" show?'));
+    await pick("1", "The electron's exact path");
+    await enterTo(verdict("Not quite"));
+    await expectAccessibleScreen("a wrong answer's feedback");
+
+    const typed = page.getByRole("textbox", {
+      name: "In your own words: why is the electron drawn as a cloud?",
     });
 
-    await answerRight();
+    await enterTo(typed);
+    await tabTo(typed);
+    await userEvent.keyboard(RIGHT_TYPED);
+    await tabTo(page.getByRole("button", { name: /^Check/u }));
+    await press("Enter");
+    await expect.element(verdict("Correct!")).toBeVisible();
+    await expectAccessibleScreen("a written answer's grade");
+    await enterTo(page.getByRole("heading", { name: "Summary" }));
 
-    await expect
-      .poll(() => listMovingAnimations())
-      .toContainEqual(expect.stringContaining("fun-flip"));
-
-    await page.getByRole("button", { name: /^Continue/u }).click();
-
-    await onDevice({ reducedMotion: "reduce" }, async () => {
-      await answerRight();
-      await expect.poll(() => paperAnimations()).toContain("fun-fade-in");
-      expect(listMovingAnimations()).toStrictEqual([]);
-    });
+    // The check answered wrong comes back once at the end; this time it's answered right.
+    await enterTo(page.getByText('What does the electron "cloud" show?'));
+    await pick("2", RIGHT_OPTION);
+    await enterTo(verdict("Correct!"));
+    await enterTo(page.getByRole("heading", { level: 2, name: "Lesson complete" }));
+    await expectAccessibleScreen("the completion moment");
   });
 });

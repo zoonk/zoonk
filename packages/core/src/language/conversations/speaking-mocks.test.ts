@@ -102,12 +102,19 @@ function sleep(ms: number) {
   });
 }
 
+/** A speaking mock the learner started and connected, which the call's end then scores. */
 async function startMock(goalId: string) {
   const started = await startLanguageConversation({ goalId, kind: "speakingMock" });
 
   if (started.status !== "ready") {
     throw new Error(`Couldn't start: ${started.status}`);
   }
+
+  // Connecting (which claims call time, tested with the calls) is when a call starts.
+  await prisma.languageConversation.update({
+    data: { startedAt: new Date() },
+    where: { id: started.conversationId },
+  });
 
   return started.conversationId;
 }
@@ -310,6 +317,19 @@ describe("speaking mocks", () => {
     expect(generateConversationScenario).toHaveBeenCalledOnce();
 
     await expect(startMock(goal.id)).resolves.toBe(waiting[0]?.id);
+    expect(generateConversationScenario).toHaveBeenCalledOnce();
+  });
+
+  it("writes no next mock for one that never connected, so ending unstarted mocks can't write mocks", async () => {
+    const waitForDeferredWork = runDeferredWork();
+    const { goal } = await examGoalFixture("Preciso do TOEFL para o mestrado");
+    const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
+    const conversationId = started.status === "ready" ? started.conversationId : "";
+
+    await completeLanguageConversation({ conversationId, input: COMPLETION });
+    await waitForDeferredWork();
+
+    expect(scoreSpeakingMock).not.toHaveBeenCalled();
     expect(generateConversationScenario).toHaveBeenCalledOnce();
   });
 

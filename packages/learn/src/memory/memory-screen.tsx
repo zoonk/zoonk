@@ -14,7 +14,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { DownloadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useOptimistic, useState, useTransition } from "react";
-import { SectionLabel } from "../_components/section-label";
+import { LIST_GROUP_CLASS } from "../_components/list-group";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import {
   SettingCard,
   SettingCardControl,
@@ -60,14 +61,52 @@ function groupByCategory({
     .filter((group) => group.facts.length > 0);
 }
 
-const SECTION_CLASS =
-  "border-border bg-background in-data-[mode=fun]:fun-glass overflow-hidden rounded-2xl border";
+/** Minors' memory keeps only goals and learning, and starts off until they turn it on. */
+function isLearningOnly(categories: MemoryCategory[]): boolean {
+  return categories.every((category) => category === "goals" || category === "learning");
+}
+
+/**
+ * What the switch does, said where it's turned on: a learner under 18 reads what memory would keep
+ * and that they can ask an adult, before choosing.
+ */
+function MemorySwitchDescription({
+  enabled,
+  learningOnly,
+  offByGuardian,
+}: {
+  enabled: boolean;
+  learningOnly: boolean;
+  offByGuardian: boolean;
+}) {
+  const t = useExtracted();
+
+  if (offByGuardian) {
+    return t("Your guardian turned memory off.");
+  }
+
+  if (learningOnly) {
+    return enabled
+      ? t("Examples and answers that fit your goals and how you learn")
+      : t(
+          "Off. Turn it on and Zoonk remembers your goals and how you learn, to fit examples to you. Not sure? Ask a parent or guardian.",
+        );
+  }
+
+  return enabled
+    ? t("Personal examples and plans that fit your week")
+    : t("Memory is off. Nothing new is learned, and these facts aren't used.");
+}
 
 function MemorySwitch({
   enabled,
+  learningOnly,
+  offByGuardian,
   onChange,
 }: {
   enabled: boolean;
+  learningOnly: boolean;
+  offByGuardian: boolean;
   onChange: (enabled: boolean) => void;
 }) {
   const t = useExtracted();
@@ -75,13 +114,15 @@ function MemorySwitch({
   const labelId = useId();
 
   return (
-    <SettingCard className="bg-background gap-4">
+    <SettingCard className="gap-4">
       <SettingCardText>
         <SettingCardLabel id={labelId}>{t("Use memory")}</SettingCardLabel>
         <SettingCardDescription id={descriptionId}>
-          {enabled
-            ? t("Personal examples and plans that fit your week")
-            : t("Memory is off. Nothing new is learned, and these facts aren't used.")}
+          <MemorySwitchDescription
+            enabled={enabled}
+            learningOnly={learningOnly}
+            offByGuardian={offByGuardian}
+          />
         </SettingCardDescription>
       </SettingCardText>
 
@@ -90,6 +131,7 @@ function MemorySwitch({
           aria-describedby={descriptionId}
           aria-labelledby={labelId}
           checked={enabled}
+          disabled={offByGuardian}
           onCheckedChange={onChange}
         />
       </SettingCardControl>
@@ -163,17 +205,23 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
 
 /**
  * Everything Zoonk remembers, grouped by category, with where each fact came from. The learner can
- * correct or delete any fact (with undo), turn memory off and download it. Minors only see the
- * categories their memory may hold.
+ * correct or delete any fact (with undo), turn memory on or off and download it. Minors only see the
+ * categories their memory may hold, and their memory starts off; a guardian can keep it off.
  */
 export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memory: MemoryView }) {
   const t = useExtracted();
   const screen = useMemoryScreen({ actions, memory });
   const groups = groupByCategory({ categories: memory.categories, facts: screen.facts });
+  const learningOnly = isLearningOnly(memory.categories);
 
   return (
-    <div className="flex flex-col gap-6" data-slot="memory-screen">
-      <MemorySwitch enabled={screen.enabled} onChange={screen.setEnabled} />
+    <div className="flex flex-col gap-8" data-slot="memory-screen">
+      <MemorySwitch
+        enabled={screen.enabled}
+        learningOnly={learningOnly}
+        offByGuardian={memory.offByGuardian}
+        onChange={screen.setEnabled}
+      />
 
       {screen.lastChange && (
         <MemoryUpdated
@@ -191,22 +239,22 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
 
       {groups.length === 0 ? (
         <p className="text-muted-foreground py-6 text-center text-sm">
-          {t(
-            "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here.",
-          )}
+          {screen.enabled
+            ? t(
+                "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here.",
+              )
+            : t("Nothing here. Zoonk keeps no notes about you while memory is off.")}
         </p>
       ) : (
         groups.map((group) => (
-          <section
-            aria-labelledby={`memory-${group.category}`}
-            className="flex flex-col gap-2"
-            key={group.category}
-          >
-            <SectionLabel className="px-1" id={`memory-${group.category}`}>
-              <MemoryCategoryName category={group.category} />
-            </SectionLabel>
+          <PageSection aria-labelledby={`memory-${group.category}`} key={group.category}>
+            <PageSectionHeader>
+              <PageSectionTitle id={`memory-${group.category}`}>
+                <MemoryCategoryName category={group.category} />
+              </PageSectionTitle>
+            </PageSectionHeader>
 
-            <ul className={`${SECTION_CLASS} divide-border divide-y`}>
+            <ul className={LIST_GROUP_CLASS}>
               {group.facts.map((fact) => (
                 <MemoryFactRow
                   fact={fact}
@@ -216,15 +264,19 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
                 />
               ))}
             </ul>
-          </section>
+          </PageSection>
         ))
       )}
 
       <footer className="flex flex-col gap-4">
-        <p className="text-muted-foreground text-sm">
-          {t(
-            "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
-          )}
+        <p className="text-muted-foreground px-1 text-sm">
+          {learningOnly
+            ? t(
+                "Zoonk only remembers your goals and how you learn, never health, religion or other sensitive details.",
+              )
+            : t(
+                "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
+              )}
         </p>
         <MemoryExportButton exportMemory={actions.exportMemory} />
       </footer>

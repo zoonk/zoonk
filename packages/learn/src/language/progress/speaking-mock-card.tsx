@@ -4,7 +4,6 @@ import { type SpeakingMockExam } from "@zoonk/core/language/conversations/contra
 import { Button } from "@zoonk/ui/components/button";
 import { MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { usePrimaryVariant } from "../../_utils/fun-primary";
 import { GenerationWait } from "../../generation/generation-wait";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
 import { useCallStart } from "../conversation/use-call-start";
@@ -41,7 +40,6 @@ export function SpeakingMockCard({
   const t = useExtracted();
   const title = useSpeakingMockTitle();
   const description = useSpeakingMockDescription();
-  const primaryVariant = usePrimaryVariant();
   const call = useCallStart({ onStart, step: "writeMock" });
 
   return (
@@ -62,19 +60,14 @@ export function SpeakingMockCard({
       {call.run ? (
         <GenerationWait className="pt-2" kind="speakingMock" run={call.run}>
           {call.run.status !== "failed" && (
-            <p className="text-muted-foreground in-data-[mode=fun]:text-fun-fg2 text-sm">
+            <p className="text-muted-foreground text-sm">
               {t("Your mock opens as soon as it's ready.")}
             </p>
           )}
         </GenerationWait>
       ) : (
         <>
-          <Button
-            className="self-start"
-            disabled={call.isStarting}
-            onClick={call.start}
-            variant={primaryVariant}
-          >
+          <Button className="self-start" disabled={call.isStarting} onClick={call.start}>
             {call.isStarting ? t("Starting…") : t("Start the mock")}
           </Button>
 

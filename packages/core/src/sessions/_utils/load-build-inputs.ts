@@ -1,7 +1,5 @@
 import "server-only";
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadSessionBoss } from "../../checkpoints/_utils/load-boss";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
@@ -9,13 +7,7 @@ import { getAllowance } from "../../entitlements/get-allowance";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam, getFinalStretchStart } from "../../exams/final-stretch/final-stretch-rules";
 import { withClassTestMock } from "../../exams/mocks/class-test-mock";
-import { type GoalSkillNode, loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
-import { pickSessionPlacementItems } from "../../learner/placement/_utils/session-placement-items";
-import {
-  PLACEMENT_WEEK_DAYS,
-  SESSION_PLACEMENT_QUESTIONS,
-} from "../../learner/placement/placement-budget";
-import { getPlacementQuickFormat } from "../../learner/placement/placement-quick-format";
+import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getGoalField } from "../../library/items/item-field";
@@ -25,25 +17,29 @@ import {
 } from "../../library/language/alphabet/alphabet-intro";
 import { getDailyTimeLimitStatus } from "../../minors/get-daily-time-limit";
 import { isWritingItem } from "../../plans/_utils/plan-phase-views";
-import { daysBetween } from "../../plans/planner/plan-calendar";
-import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
+import { parsePlanGraph, parsePlanPhases } from "../../plans/planner/plan-state";
 import { type BlockCapsule } from "../block-payload";
 import { getFreshStart } from "../fresh-start";
 import { type PlannedLesson, type SessionBuildInput, getPracticeShare } from "../session-builder";
+import { getLessonLookahead, pickDayLessonItems } from "./day-lessons";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getExamPrepAccess } from "./exam-access";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadMistakeDrills, loadPracticeItems } from "./load-practice";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
-
-/** Enough upcoming lessons to fill a long day; the builder takes what fits. */
-const LESSON_LOOKAHEAD = 8;
+import { getPracticeDifficulty } from "./practice-difficulty";
+import { getFocusedSkillIds, getTestSkillIds } from "./review-skills";
+import { type SessionDayContext, loadSessionPlacement } from "./session-placement";
 
 const LEARN_KINDS = new Set<PlanItem["kind"]>(["lesson", "chapter"]);
 
-/** How the goal's exam is structured and scored, from its blueprint; null for other goals. */
+/**
+ * How the goal's exam is structured and scored, from its blueprint; null for other goals. A class
+ * test's short mock fits `dayMinutes`, the time of the day it's for, when given.
+ */
 export async function loadExamStructure(
   goal: Pick<Goal, "examBlueprintId">,
+  { dayMinutes }: { dayMinutes?: number | null } = {},
 ): Promise<ExamStructure | null> {
   if (!goal.examBlueprintId) {
     return null;
@@ -53,10 +49,21 @@ export async function loadExamStructure(
 
   return blueprint
     ? withClassTestMock({
+        dayMinutes,
         ownerId: blueprint.ownerId,
         structure: readBlueprintContent(blueprint).structure,
       })
     : null;
+}
+
+/** Whether the goal had a day before this one: day one starts nothing over. */
+async function hasEarlierDay({ goalId, today }: { goalId: string; today: Date }) {
+  const earlier = await prisma.studySession.findFirst({
+    select: { id: true },
+    where: { goalId, localDate: { lt: today } },
+  });
+
+  return earlier !== null;
 }
 
 async function loadLastStudyDate({ today, userId }: { today: Date; userId: string }) {
@@ -116,67 +123,31 @@ function withoutReservedItems({
     .filter((capsule) => capsule.itemIds.length > 0);
 }
 
-type BuildContext = { goal: Goal; localDate: Date; now: Date; timeZone: string; userId: string };
-
-/**
- * Placement's first week: a goal's sessions ask a few placement questions while a starting point
- * is unsure, unless the learner starts from nothing or chose to start from scratch.
- */
-function asksPlacement({ goal, localDate, timeZone }: Omit<BuildContext, "now" | "userId">) {
-  const details = isJsonObject(goal.details) ? goal.details : {};
-  const created = getDateInTimeZone({ date: goal.createdAt, timeZone });
-  const day = daysBetween(created, localDate);
-
-  return (
-    day >= 0 &&
-    day < PLACEMENT_WEEK_DAYS &&
-    details.level !== "none" &&
-    details.placementDeclined !== true
-  );
-}
-
-/** The first week's few placement questions, never ones a drill, capsule or checkpoint asks. */
-async function loadSessionPlacement({
-  context,
-  skills,
-  structure,
-  used,
-}: {
-  context: BuildContext;
-  skills: GoalSkillNode[];
-  structure: ExamStructure | null;
-  used: ReadonlySet<string>;
-}): Promise<string[]> {
-  if (!asksPlacement(context) || skills.length === 0) {
-    return [];
-  }
-
-  return pickSessionPlacementItems({
-    examBlueprintId: context.goal.examBlueprintId,
-    excludeItemIds: used,
-    limit: SESSION_PLACEMENT_QUESTIONS,
-    quickFormat: getPlacementQuickFormat(structure),
-    skills,
-    userId: context.userId,
-  });
-}
+type BuildContext = SessionDayContext;
 
 async function loadPlanContext({ goal, localDate, userId }: BuildContext) {
-  const [plan, goalPlan, structure, allowance, limit, lastStudyDate] = await Promise.all([
+  const [plan, goalPlan, allowance, limit, lastStudyDate, hadEarlierDay] = await Promise.all([
     prisma.plan.findUnique({
       include: { items: { orderBy: { position: "asc" } } },
       where: { goalId: goal.id },
     }),
     loadGoalPlan(goal.id),
-    loadExamStructure(goal),
     getAllowance(),
     getDailyTimeLimitStatus(),
     loadLastStudyDate({ today: localDate, userId }),
+    hasEarlierDay({ goalId: goal.id, today: localDate }),
   ]);
+
+  // The day's mock fits the day: a class test's short mock takes the time the learner gives it.
+  const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
+  const structure = await loadExamStructure(goal, { dayMinutes });
 
   return {
     allowance,
+    dayMinutes,
     finalStretchStart: getFinalStretchStart(parsePlanPhases(plan?.phases)),
+    graph: parsePlanGraph(plan?.graph),
+    isFirstDay: !hadEarlierDay,
     items: plan?.items ?? [],
     lastStudyDate,
     limit,
@@ -202,6 +173,7 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
       lessonId: alphabet.lessonId,
       minutes: alphabet.minutes,
       planItemId: null,
+      planSkillId: null,
       skillIds: [],
       title: alphabet.title,
     },
@@ -217,15 +189,27 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
 export async function loadSessionBuildInput(context: BuildContext): Promise<SessionBuildInput> {
   const { goal, localDate, now, timeZone, userId } = context;
   const plan = await loadPlanContext(context);
+  const { dayMinutes } = plan;
   const skillIds = plan.skills.map((skill) => skill.id);
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
 
   // A stand-in for lessons the Library hasn't outlined yet has nothing to teach today, so it
-  // doesn't take a lookahead slot from the written lessons after it.
-  const learnItems = plan.items.filter(
-    (item) => LEARN_KINDS.has(item.kind) && item.status === "todo" && !isWritingItem(item),
-  );
+  // doesn't take a lookahead slot from the written lessons after it; one due today keeps its time.
+  const learnItems = pickDayLessonItems({
+    graph: plan.graph,
+    isExam: goal.kind === "exam",
+    items: plan.items.filter((item) => LEARN_KINDS.has(item.kind) && item.status === "todo"),
+    today: localDate,
+  });
+
+  // Every topic of the test, the ones its days left out too: what a mock asks, and the full
+  // review a free plan gets on a mock's day.
+  const testSkillIds = getTestSkillIds({
+    graph: plan.graph,
+    planSkillIds: skillIds,
+    settings: plan.settings,
+  });
 
   const access = getExamPrepAccess({
     examPrep: plan.allowance?.examPrep ?? null,
@@ -235,7 +219,7 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
   });
 
   const [planLessons, alphabet, dueCapsules, dueDrills, boss, weekly, produce] = await Promise.all([
-    loadPlanLessons({ items: learnItems.slice(0, LESSON_LOOKAHEAD), userId }),
+    loadPlanLessons({ items: learnItems.slice(0, getLessonLookahead(dayMinutes)), userId }),
     loadAlphabetIntro({ goal, userId }),
     loadReviewCapsules({
       dailyMinutes: goal.dailyMinutes,
@@ -272,13 +256,23 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
       goal,
       includesMockExams: access.includesMockExams,
       items: plan.items,
+      mockSkillIds: testSkillIds,
       now,
       skillIds,
       structure: plan.structure,
       today: localDate,
       userId,
     }),
-    loadSessionProduce({ goal, skillIds, structure: plan.structure, today: localDate, userId }),
+    // The exam's written answers are practiced whatever its days have room for: a class test's
+    // announced essay comes up even when its topic's lessons don't fit.
+    loadSessionProduce({
+      goal,
+      planSettings: plan.settings,
+      skillIds: testSkillIds,
+      structure: plan.structure,
+      today: localDate,
+      userId,
+    }),
   ]);
 
   const lessons = [...toAlphabetLessons(alphabet), ...planLessons];
@@ -291,6 +285,7 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
     .filter((drill) => drill.itemIds.length > 0);
 
   const reserved = new Set([...drills.flatMap((drill) => drill.itemIds), ...checkpointItems]);
+
   const capsules = withoutReservedItems({ capsules: dueCapsules, reserved });
   const used = new Set([...reserved, ...capsules.flatMap((capsule) => capsule.itemIds)]);
 
@@ -301,27 +296,45 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
     used,
   });
 
+  // A mock the learner's plan doesn't include (a free plan's) leaves its day to a full review of
+  // every topic of the test, the ones its days left out too.
+  const fullReview = weekly.plusRequired;
+  const reviewPlanItemId = findReviewDay({ items: plan.items, today: localDate })?.id ?? null;
+
+  const reviewSkillIds = fullReview ? testSkillIds : skillIds;
+
   const practice = await loadPracticeItems({
-    difficultyBias: parsePlanSettings(plan.settings).difficultyBias,
+    difficultyBias: getPracticeDifficulty({
+      daysToExam: getDaysToExam({ targetDate: goal.targetDate, today: localDate }),
+      hasLessonsLeft: learnItems.length > 0,
+      settings: plan.settings,
+    }),
+    everySkill: fullReview,
     examBlueprintId: goal.examBlueprintId,
     excludeItemIds: new Set([...used, ...placementItemIds]),
     field,
+    focusSkillIds:
+      fullReview || reviewPlanItemId
+        ? getFocusedSkillIds({ graph: plan.graph, settings: plan.settings })
+        : undefined,
     now,
-    skillIds,
+    skillIds: reviewSkillIds,
     userId,
   });
 
   return {
     capsules,
     checkpoint,
-    dailyMinutes: getGoalDayMinutes({ date: localDate, goal, planSettings: plan.settings }),
+    dailyMinutes: dayMinutes,
     drills,
     examTrialEnded: access.trialEnded,
     freshStart: getFreshStart({
+      isFirstDay: plan.isFirstDay,
       isNewPhase: isNewPhase(plan.items),
       lastStudyDate: plan.lastStudyDate,
       today: localDate,
     }),
+    fullReviewSkillIds: fullReview ? reviewSkillIds : null,
     lessons,
     netScored,
     placementItemIds,
@@ -333,6 +346,6 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
     produce,
     reinforcement: boss.checkpoint ? boss.reinforcement : [],
     remainingLimitMinutes: plan.limit?.remainingMinutes ?? null,
-    reviewPlanItemId: findReviewDay({ items: plan.items, today: localDate })?.id ?? null,
+    reviewPlanItemId,
   };
 }

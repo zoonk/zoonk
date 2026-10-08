@@ -1,12 +1,18 @@
 import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { getAllowance } from "../../entitlements/get-allowance";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { getPassMarks } from "../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getDayBeforePlan, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
+import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
+import { loadTargetCutoff } from "../cutoffs/load-target-cutoff";
 import { loadGoalScoreEstimate } from "../estimates/load-goal-estimate";
 import {
   getDaysToExam,
@@ -20,7 +26,9 @@ import { loadSkillAreas } from "../mocks/_utils/mock-candidates";
 import { getMockScoring } from "../mocks/_utils/plan-weekly-mock";
 import { toExamResultView } from "../results/exam-result-contract";
 import { getExamScale } from "../scoring/exam-scales";
+import { getExamFormat } from "./_utils/exam-format";
 import { loadExamHistory } from "./_utils/exam-history";
+import { loadNextMock } from "./_utils/next-mock";
 import { type ExamView } from "./exam-view-contract";
 
 export type ExamViewResult =
@@ -55,6 +63,34 @@ async function loadMap({
     skills: [...areas].map(([skillId, area]) => ({ area, state: states.get(skillId) ?? "new" })),
     structure: content.structure,
   });
+}
+
+/** The score the learner said they aim for, in their words. */
+function readTargetScore(details: unknown): string | null {
+  const target = isJsonObject(details) ? details.targetScore : null;
+
+  if (typeof target === "number") {
+    return String(target);
+  }
+
+  return typeof target === "string" && target.trim() ? target.trim() : null;
+}
+
+/** The scoring methods a notice states that change how to answer. */
+const STATED_SCORINGS: ReadonlySet<string> = new Set([
+  "itemResponseTheory",
+  "raw",
+  "wrongCancelsRight",
+]);
+
+/**
+ * Whether the notice itself says how the exam is scored: its reading found the mock conditions and
+ * a scoring method. A class test read from the learner's material rarely says, and the mocks'
+ * default (each answer a point) is no rule to give advice from.
+ */
+function isScoringStated(structure: ExamStructure | null): boolean {
+  const method = structure?.mock?.scoring.method;
+  return method !== undefined && STATED_SCORINGS.has(method);
 }
 
 /**
@@ -94,39 +130,62 @@ export async function getExamView({
   const today = getDateInTimeZone({ date: new Date(), timeZone });
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
   const scale = getExamScale({ blueprint, goal });
-  const inputs = await loadPreparationInputs({ goalId, now: new Date(), userId });
 
-  const [map, history, estimate, result, shortPlan, finalStretchStart] = await Promise.all([
-    loadMap({ blueprint, goalId, userId }),
-    loadExamHistory(goalId),
-    loadGoalScoreEstimate({ goal, ledgerMocks: inputs.mocks }),
-    prisma.examResult.findUnique({ where: { goalId } }),
-    loadShortPlanDay({ goal, today }),
-    loadFinalStretchStart(goalId),
+  const [inputs, allowance] = await Promise.all([
+    loadPreparationInputs({ goalId, now: new Date(), userId }),
+    getAllowance(),
   ]);
+
+  // The plan's weekly mocks come with Plus: without it, the page shows them locked.
+  const { includesMockExams } = getExamPrepAccess({
+    examPrep: allowance?.examPrep ?? null,
+    goal,
+    timeZone,
+    today,
+  });
+
+  const [map, history, estimate, result, shortPlan, finalStretchStart, nextMock, cutoff] =
+    await Promise.all([
+      loadMap({ blueprint, goalId, userId }),
+      loadExamHistory({ goalId, today }),
+      loadGoalScoreEstimate({ goal, ledgerMocks: inputs.mockResults }),
+      prisma.examResult.findUnique({ where: { goalId } }),
+      loadShortPlanDay({ goal, today }),
+      loadFinalStretchStart(goalId),
+      loadNextMock({ blueprint, goal, today }),
+      loadTargetCutoff({ details: goal.details, examBlueprintId: goal.examBlueprintId }),
+    ]);
 
   return {
     exam: {
       calibration: history.calibration,
       checklist: getExamDayChecklist(blueprint),
-      dayBefore: getDayBeforePlan({ shortPlan, today }),
+      cutoff,
+      dayBefore: getDayBeforePlan({ includesMockExams, shortPlan, today }),
       days: calendar.days,
       daysEstimated: calendar.estimated,
       daysLeft: getDaysToExam({ targetDate: toExamDates(calendar)[0] ?? null, today }),
       estimate,
       examName: blueprint?.name ?? goal.title,
+      format: getExamFormat({ days: calendar.days, structure }),
       goalId,
       map,
       mocks: history.mocks,
+      mocksRequirePlus: !includesMockExams,
+      nextMock,
+      passMarks: structure ? getPassMarks(structure) : [],
+      prepared: history.prepared,
       result: result ? toExamResultView(result) : null,
       scoring: {
         method: getMockScoring({ scale, structure }),
         note: structure?.mock?.scoring.description ?? null,
         scale,
+        stated: isScoringStated(structure),
       },
       sessionsDone: history.sessionsDone,
       speakingMock: getSpeakingMockExam(goal),
       stage: getExamStage({ examDays: toExamDates(calendar), finalStretchStart, today }),
+      targetScore: readTargetScore(goal.details),
       timeZone: calendar.timeZone,
     },
     status: "ready",

@@ -1,0 +1,801 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5:none",
+  "results": [
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "flare-discount-1",
+        "userInput": {
+          "imageFile": "flare-discount-pt.webp",
+          "language": "pt",
+          "scene": {
+            "labels": [
+              { "target": "on the old tag", "text": "antes R$ 80" },
+              { "target": "on the new tag", "text": "você paga R$ 60" },
+              { "target": "on the round badge", "text": "-25%" }
+            ],
+            "layout": "sequence",
+            "motion": null,
+            "relation": "a round amber badge sits between the old tag and the new tag",
+            "supportingObjects": ["a round badge"],
+            "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "flare-electron-cloud-1",
+        "userInput": {
+          "imageFile": "flare-electron-cloud-en.webp",
+          "language": "en",
+          "scene": {
+            "labels": [
+              { "target": "next to the small red nucleus", "text": "nucleus" },
+              { "target": "next to the dense cloud of dots", "text": "electron cloud" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a cloud of tiny dots around a small red nucleus, densest in the middle and fading outward"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "flare-microwave-1",
+        "userInput": {
+          "imageFile": "flare-microwave-en.webp",
+          "language": "en",
+          "scene": {
+            "labels": [{ "target": "next to the spinning molecule", "text": "water molecules" }],
+            "layout": "sequence",
+            "motion": "curved arrows show the water molecule spinning",
+            "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
+            "supportingObjects": ["a water molecule in a circle"],
+            "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "flare-spiral-1",
+        "userInput": {
+          "imageFile": "flare-spiral-en.webp",
+          "language": "en",
+          "scene": {
+            "labels": [{ "target": "next to the blue electron", "text": "electron" }],
+            "layout": "single",
+            "motion": "a red dashed path spirals inward from the electron to the nucleus, with one arrowhead",
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a small red nucleus with a blue electron on a faint dashed circular orbit"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "flare-house-1",
+        "userInput": {
+          "imageFile": "flare-house-language.webp",
+          "language": "pt",
+          "scene": {
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": "a sign on a post stands beside the house and shows only a key symbol",
+            "supportingObjects": ["a sign on a post with a key symbol"],
+            "focalObject": "a small house with a yellow door"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "flare-cover-1",
+        "userInput": {
+          "imageFile": "flare-cover-photosynthesis.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a green leaf catching rays of sunlight",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": ["a small sun"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "gpt2-discount-1",
+        "userInput": {
+          "imageFile": "gpt2-discount-pt.webp",
+          "language": "pt",
+          "scene": {
+            "labels": [
+              { "target": "on the old tag", "text": "antes R$ 80" },
+              { "target": "on the new tag", "text": "você paga R$ 60" },
+              { "target": "on the round badge", "text": "-25%" }
+            ],
+            "layout": "sequence",
+            "motion": null,
+            "relation": "a round amber badge sits between the old tag and the new tag",
+            "supportingObjects": ["a round badge"],
+            "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "gpt2-cover-1",
+        "userInput": {
+          "imageFile": "gpt2-cover-photosynthesis.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a green leaf catching rays of sunlight",
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": ["a small sun"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. orbits are not the same size: Sun/Earth orbit is much larger than nucleus/electron orbit unrequested text: 'Sun' unrequested text: 'Earth' pill label unrequested text: 'Nucleus' unrequested text: 'Electron' pill label layout is a split panel with divider and multiple labels rather than a simple comparison of two orbits",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. orbits are not the same size: Sun/Earth orbit is much larger than nucleus/electron orbit unrequested text: 'Sun' unrequested text: 'Earth' pill label unrequested text: 'Nucleus' unrequested text: 'Electron' pill label layout is a split panel with divider and multiple labels rather than a simple comparison of two orbits",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. orbits are not the same size: Sun/Earth orbit is much larger than nucleus/electron orbit unrequested text: 'Sun' unrequested text: 'Earth' pill label unrequested text: 'Nucleus' unrequested text: 'Electron' pill label layout is a split panel with divider and multiple labels rather than a simple comparison of two orbits",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "unrequested-labels-1",
+        "userInput": {
+          "imageFile": "flare-orbits-comparison-en.webp",
+          "language": "en",
+          "scene": {
+            "labels": [
+              { "target": "under the Sun and Earth", "text": "Earth and Sun" },
+              { "target": "under the nucleus and electron", "text": "Electron and nucleus?" }
+            ],
+            "layout": "comparison",
+            "motion": null,
+            "relation": "the two orbits sit side by side at the same size",
+            "supportingObjects": ["a tiny nucleus with an electron on a dashed elliptical orbit"],
+            "focalObject": "the Sun with Earth on a dashed elliptical orbit"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. scene asks for one microwave with soup and one molecule, but the image draws two microwaves in a sequence the spinning molecule arrows are present but the thin dashed link and curved motion are duplicated across both panels",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. scene asks for one microwave with soup and one molecule, but the image draws two microwaves in a sequence the spinning molecule arrows are present but the thin dashed link and curved motion are duplicated across both panels",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. scene asks for one microwave with soup and one molecule, but the image draws two microwaves in a sequence the spinning molecule arrows are present but the thin dashed link and curved motion are duplicated across both panels",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "two-panels-1",
+        "userInput": {
+          "imageFile": "gpt2-microwave-en.webp",
+          "language": "en",
+          "scene": {
+            "labels": [{ "target": "next to the spinning molecule", "text": "water molecules" }],
+            "layout": "sequence",
+            "motion": "curved arrows show the water molecule spinning",
+            "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
+            "supportingObjects": ["a water molecule in a circle"],
+            "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'nucleus'",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'nucleus'",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'nucleus'",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "extra-label-1",
+        "userInput": {
+          "imageFile": "gpt2-spiral-en.webp",
+          "language": "en",
+          "scene": {
+            "labels": [{ "target": "next to the blue electron", "text": "electron" }],
+            "layout": "single",
+            "motion": "a red dashed path spirals inward from the electron to the nucleus, with one arrowhead",
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a small red nucleus with a blue electron on a faint dashed circular orbit"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. scene shows a house with a key sign, not a microwave oven with soup and a spinning water molecule unrequested text: none visible but focal object is wrong required label 'water molecules' is missing",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. scene shows a house with a key sign, not a microwave oven with soup and a spinning water molecule unrequested text: none visible but focal object is wrong required label 'water molecules' is missing",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. scene shows a house with a key sign, not a microwave oven with soup and a spinning water molecule unrequested text: none visible but focal object is wrong required label 'water molecules' is missing",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "wrong-idea-1",
+        "userInput": {
+          "imageFile": "flare-house-language.webp",
+          "language": "en",
+          "scene": {
+            "labels": [{ "target": "next to the spinning molecule", "text": "water molecules" }],
+            "layout": "sequence",
+            "motion": "curved arrows show the water molecule spinning",
+            "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
+            "supportingObjects": ["a water molecule in a circle"],
+            "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. price text reads 'R$ 80' and 'R$ 60' instead of 'R$ 90' and 'R$ 70'",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. price text reads 'R$ 80' and 'R$ 60' instead of 'R$ 90' and 'R$ 70'",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. price text reads 'R$ 80' and 'R$ 60' instead of 'R$ 90' and 'R$ 70'",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "wrong-prices-1",
+        "userInput": {
+          "imageFile": "flare-discount-pt.webp",
+          "language": "pt",
+          "scene": {
+            "labels": [
+              { "target": "on the old tag", "text": "antes R$ 90" },
+              { "target": "on the new tag", "text": "você paga R$ 70" },
+              { "target": "on the round badge", "text": "-25%" }
+            ],
+            "layout": "sequence",
+            "motion": null,
+            "relation": "a round amber badge sits between the old tag and the new tag",
+            "supportingObjects": ["a round badge"],
+            "focalObject": "two price tags: an old tag with its price crossed out and a new tag"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'electron cloud' unrequested text: 'nucleus'",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'electron cloud' unrequested text: 'nucleus'",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'electron cloud' unrequested text: 'nucleus'",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "text-not-allowed-1",
+        "userInput": {
+          "imageFile": "flare-electron-cloud-en.webp",
+          "language": "en",
+          "scene": {
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a cloud of tiny dots around a small red nucleus, densest in the middle and fading outward"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. focal object is a green leaf with a sun, not a red apple on a white plate image shows sunlight on a leaf instead of the requested scene",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. focal object is a green leaf with a sun, not a red apple on a white plate image shows sunlight on a leaf instead of the requested scene",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. focal object is a green leaf with a sun, not a red apple on a white plate image shows sunlight on a leaf instead of the requested scene",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "wrong-object-1",
+        "userInput": {
+          "imageFile": "flare-cover-photosynthesis.webp",
+          "language": "en",
+          "scene": {
+            "labels": [],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": [],
+            "focalObject": "a red apple on a white plate"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text in English instead of 'moléculas de água'",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text in English instead of 'moléculas de água'",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text in English instead of 'moléculas de água'",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "label-wrong-language-1",
+        "userInput": {
+          "imageFile": "flare-microwave-en.webp",
+          "language": "pt",
+          "scene": {
+            "labels": [{ "target": "next to the spinning molecule", "text": "moléculas de água" }],
+            "layout": "sequence",
+            "motion": "curved arrows show the water molecule spinning",
+            "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
+            "supportingObjects": ["a water molecule in a circle"],
+            "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "allowed-phrase-labels-1",
+        "userInput": {
+          "imageFile": "text-allowed-phrases.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a wide fuzzy shaded oval cloud of possible electron positions",
+            "labels": [
+              { "target": "above the wide region on the left", "text": "Could be anywhere here" },
+              { "target": "above the narrow region on the right", "text": "Could be here" }
+            ],
+            "layout": "comparison",
+            "motion": null,
+            "relation": "the wide region is on the left and the narrow region is on the right",
+            "supportingObjects": ["a much narrower fuzzy shaded oval cloud"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "allowed-labels-on-object-1",
+        "userInput": {
+          "imageFile": "text-allowed-on-object.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a small tabletop measurement device with a blank digital display screen",
+            "labels": [
+              { "target": "on the device, left of the screen", "text": "0" },
+              { "target": "on the device, right of the screen", "text": "1" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": "a tiny particle sits on top of the device, above the blank screen",
+            "supportingObjects": ["a tiny particle on top of the device"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "allowed-symbol-label-1",
+        "userInput": {
+          "imageFile": "text-allowed-symbol.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a small blue dot representing an electron, inside a small dashed boundary",
+            "labels": [{ "target": "above the dashed arrow", "text": "?" }],
+            "layout": "single",
+            "motion": "a dashed straight arrow pointing outward from the dot",
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'electron'",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'electron'",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. unrequested text: 'electron'",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "extra-object-name-1",
+        "userInput": {
+          "imageFile": "text-extra-object-name.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a small blue dot representing an electron, inside a small dashed boundary",
+            "labels": [{ "target": "above the dashed arrow", "text": "?" }],
+            "layout": "single",
+            "motion": "a dashed straight arrow pointing outward from the dot",
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. particle is inside a glass dome, not sitting on top of the device display screen is dark, not blank digital display unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen'",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. particle is inside a glass dome, not sitting on top of the device display screen is dark, not blank digital display unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen'",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. particle is inside a glass dome, not sitting on top of the device display screen is dark, not blank digital display unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen'",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "extra-callouts-1",
+        "userInput": {
+          "imageFile": "text-extra-callouts.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a small tabletop measurement device with a blank digital display screen",
+            "labels": [
+              { "target": "on the device, left of the screen", "text": "0" },
+              { "target": "on the device, right of the screen", "text": "1" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": "a tiny particle sits on top of the device, above the blank screen",
+            "supportingObjects": ["a tiny particle on top of the device"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. image is a photograph, not a flat illustration scene requires a dashed link, water molecule in a circle and curved spinning arrows, none present display shows text '0:45' not allowed by LABELS of none",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. image is a photograph, not a flat illustration scene requires a dashed link, water molecule in a circle and curved spinning arrows, none present display shows text '0:45' not allowed by LABELS of none",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. image is a photograph, not a flat illustration scene requires a dashed link, water molecule in a circle and curved spinning arrows, none present display shows text '0:45' not allowed by LABELS of none",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "photo-1",
+        "userInput": {
+          "imageFile": "offstyle-photo-microwave.webp",
+          "language": "en",
+          "scene": {
+            "labels": [],
+            "layout": "sequence",
+            "motion": "curved arrows show the water molecule spinning",
+            "relation": "a thin dashed line links the soup to a water molecule drawn in a circle beside the oven",
+            "supportingObjects": ["a water molecule in a circle"],
+            "focalObject": "a microwave oven with a bowl of steaming soup inside and wavy lines in the oven"
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. image is a multi-panel infographic, not a single focal illustration contains many text labels despite LABELS being none (e.g. 'Evaporation', 'Clouds', 'Ocean', 'Condensation', 'Precipitation', 'Runoff', 'Groundwater') scene requested a simple lake, cloud and small sun, but image shows six panels with many objects dark-blue header and busy multi-part layout violate flat single-focal style requirements",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. image is a multi-panel infographic, not a single focal illustration contains many text labels despite LABELS being none (e.g. 'Evaporation', 'Clouds', 'Ocean', 'Condensation', 'Precipitation', 'Runoff', 'Groundwater') scene requested a simple lake, cloud and small sun, but image shows six panels with many objects dark-blue header and busy multi-part layout violate flat single-focal style requirements",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. image is a multi-panel infographic, not a single focal illustration contains many text labels despite LABELS being none (e.g. 'Evaporation', 'Clouds', 'Ocean', 'Condensation', 'Precipitation', 'Runoff', 'Groundwater') scene requested a simple lake, cloud and small sun, but image shows six panels with many objects dark-blue header and busy multi-part layout violate flat single-focal style requirements",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "infographic-1",
+        "userInput": {
+          "imageFile": "offstyle-infographic-water-cycle.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "water evaporating from a lake and rising into a cloud",
+            "labels": [],
+            "layout": "single",
+            "motion": "dashed arrows rise from the lake to the cloud",
+            "relation": null,
+            "supportingObjects": ["a small sun"]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "question-letters-1",
+        "userInput": {
+          "imageFile": "flare-question-animal-cell-letters.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a simplified cutaway view of a round animal cell showing a large central spherical nucleus",
+            "labels": [
+              {
+                "target": "pointing to the oval mitochondrion with wavy internal folds",
+                "text": "A"
+              },
+              { "target": "pointing to the dotted folded membranes near the nucleus", "text": "B" },
+              { "target": "pointing to the stack of curved flattened sacs", "text": "C" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": "The dotted folded membranes sit directly next to the nucleus, while the stacked smooth sacs and the oval mitochondrion are positioned separately in the surrounding cytoplasm",
+            "supportingObjects": [
+              "an oval mitochondrion with internal folds, a folded membrane sheet studded with small surface dots adjacent to the nucleus, and a stack of smooth curved flattened sacs"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "fail", "predicted": "fail" },
+      "steps": [
+        {
+          "conclusion": "Expected fail; got fail. label A's pointer ends on the thin inner line region near the top-right corner rather than clearly on the thick outer green boundary label B's pointer ends on the thick outer green boundary rather than the thin inner line, so A and B targets are swapped the thin inner line is drawn as a separate lighter layer; the mapping between labels and parts is inverted relative to the scene",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. label A's pointer ends on the thin inner line region near the top-right corner rather than clearly on the thick outer green boundary label B's pointer ends on the thick outer green boundary rather than the thin inner line, so A and B targets are swapped the thin inner line is drawn as a separate lighter layer; the mapping between labels and parts is inverted relative to the scene",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected fail; got fail. label A's pointer ends on the thin inner line region near the top-right corner rather than clearly on the thick outer green boundary label B's pointer ends on the thick outer green boundary rather than the thin inner line, so A and B targets are swapped the thin inner line is drawn as a separate lighter layer; the mapping between labels and parts is inverted relative to the scene",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": false },
+        "id": "question-pointer-on-wrong-part-1",
+        "userInput": {
+          "imageFile": "flare-question-wall-membrane-wrong-pointer.webp",
+          "language": "pt",
+          "scene": {
+            "focalObject": "a simplified plant cell outline with a thick green outer hexagonal boundary and a thin inner line running just inside it with a small gap in between",
+            "labels": [
+              { "target": "at a pointer line touching the thick outer boundary", "text": "A" },
+              { "target": "at a pointer line touching the thin inner line", "text": "B" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "image-check"
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import { type LessonStepAnswer } from "@zoonk/core/lesson-player/contract";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { type Dispatch, useCallback } from "react";
@@ -19,6 +20,14 @@ export const CHECK_BOUNDS = {
   slowMs: 15_000,
   timeoutMs: { spoken: 60_000, typed: 45_000 },
 } as const;
+
+/**
+ * How long the learner took on the screen. A lesson left open overnight isn't hours of study, so
+ * the time counts up to the server's answer limit and the answer still saves.
+ */
+function getAnswerDurationMs(stepStartedAt: number): number {
+  return Math.min(Math.max(Date.now() - stepStartedAt, 0), MAX_ANSWER_DURATION_MS);
+}
 
 /** The grade, or null when it failed, threw or took longer than the screen waits. */
 async function boundedGrade<T>(ms: number, request: () => Promise<T>): Promise<T | null> {
@@ -46,7 +55,7 @@ export function useStepGrading({
   const recordInBackground = useCallback(
     ({ answer, step }: CheckContext) => {
       const usedHelp = state.helped.includes(step.id);
-      const durationMs = Date.now() - state.stepStartedAt;
+      const durationMs = getAnswerDurationMs(state.stepStartedAt);
 
       trackCheck(async () => {
         const runId = await ensureRun();
@@ -54,6 +63,12 @@ export function useStepGrading({
         const outcome = runId
           ? await adapters.checkStep({ answer, durationMs, runId, stepId: step.id, usedHelp })
           : null;
+
+        // A refusal never changes on a retry: the completion goes on, and the server's answers
+        // decide whether the lesson is finished.
+        if (outcome?.status === "refused") {
+          return true;
+        }
 
         if (outcome?.status !== "checked") {
           return false;
@@ -68,7 +83,7 @@ export function useStepGrading({
 
   const gradeOnServer = useCallback(
     async ({ answer, step }: CheckContext) => {
-      const durationMs = Date.now() - state.stepStartedAt;
+      const durationMs = getAnswerDurationMs(state.stepStartedAt);
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
 
@@ -83,8 +98,10 @@ export function useStepGrading({
       if (outcome?.status === "checked") {
         const answerText = "text" in answer ? answer.text : "";
 
+        // A written answer that wasn't checked isn't a verdict: shown with the sample answer, it
+        // counts neither way and doesn't come back.
         dispatch({
-          counts: true,
+          counts: outcome.result.checked,
           result: fromServerCheck({ answerText, result: outcome.result }),
           stepId: step.id,
           type: "checkResolved",

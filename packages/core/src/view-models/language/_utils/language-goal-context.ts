@@ -3,7 +3,7 @@ import { type Goal } from "@zoonk/db";
 import { type LanguageUnit, loadLanguageUnits } from "../../../language/units/language-units";
 import { resolveViewGoal } from "../../_utils/resolve-view-goal";
 
-export type LanguageGoalContext = {
+type LanguageGoalContext = {
   goal: Goal & { targetLanguage: string };
   units: LanguageUnit[];
   userId: string;

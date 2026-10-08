@@ -25,7 +25,13 @@ function toStartOutcome(body: unknown): LessonStartOutcome {
     const run = libraryLessonRunSchema.safeParse(body.run);
 
     return run.success
-      ? { hyperdrive: run.data.hyperdrive, reason: "started", runId: run.data.runId }
+      ? {
+          answers: run.data.answers,
+          hyperdrive: run.data.hyperdrive,
+          reason: "started",
+          runId: run.data.runId,
+          startedAt: run.data.startedAt,
+        }
       : { reason: "failed" };
   }
 

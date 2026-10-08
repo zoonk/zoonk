@@ -1,6 +1,7 @@
 "use client";
 
 import { type ActivityContentFor } from "@zoonk/core/library/activities/templates";
+import { niceDomain, niceTicks } from "@zoonk/utils/plot-scale";
 import {
   ActivityPlot,
   ActivityPlotArea,
@@ -10,7 +11,6 @@ import {
   ActivityPlotGuide,
   ActivityPlotLine,
 } from "../_components/activity-plot";
-import { niceDomain, niceTicks } from "../_utils/plot-scale";
 import { type PlotPoint } from "../_utils/sample-formula";
 
 type Variable = ActivityContentFor<"parameterSimulation">["fields"]["variables"][number];

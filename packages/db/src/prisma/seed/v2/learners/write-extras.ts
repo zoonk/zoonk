@@ -66,7 +66,6 @@ async function writeFeedback({ learner, lookup, prisma, userId }: LearnerScope) 
       const data = {
         comment: vote.comment ?? null,
         language: learner.language,
-        mode: learner.mode,
         reasons: vote.reasons ?? [],
         vote: vote.vote,
         ...SEED_PROVENANCE,

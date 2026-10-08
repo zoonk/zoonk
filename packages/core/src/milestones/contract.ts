@@ -11,7 +11,10 @@ export const weeklyRecapInputSchema = z
     weekStart: z.iso
       .date()
       .optional()
-      .meta({ description: "Any date of the week to recap; defaults to the current week" }),
+      .meta({
+        description:
+          "Any date of the week to recap; defaults to the last finished week (the current one on Sunday, or the first one before any week is finished)",
+      }),
   })
   .strict()
   .meta({ id: "WeeklyRecapQuery" });

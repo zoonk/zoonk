@@ -2,6 +2,7 @@ import { generateSourceChangeNotice } from "@zoonk/ai/tasks/v2/research/source-c
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import {
   type BlueprintNotice,
+  isPastEdition,
   previewExamBlueprintChanges,
   saveExamBlueprint,
 } from "@zoonk/core/library/exams/save";
@@ -24,6 +25,11 @@ async function writeNotice({
   identity: ExamIdentity;
   reading: BlueprintReading;
 }): Promise<BlueprintNotice | null> {
+  // A notice read again after its exam (the next one isn't out) tells learners nothing to act on.
+  if (isPastEdition({ content: reading.content })) {
+    return null;
+  }
+
   const changes = await previewExamBlueprintChanges({ content: reading.content, identity });
 
   if (!changes || changes.length === 0) {
@@ -50,17 +56,26 @@ async function writeNotice({
 export async function saveBlueprintStep({
   analytics,
   identity,
+  quiet = false,
   reading,
   sourceId,
 }: {
   analytics: ResearchAnalytics;
   identity: ExamIdentity;
+  /** A reading by newer instructions of an edition already read: no learner notice. */
+  quiet?: boolean;
   reading: BlueprintReading;
   sourceId: string;
-}): Promise<{ changedFields: string[]; created: boolean; examBlueprintId: string }> {
+}): Promise<{
+  created: boolean;
+  examBlueprintId: string;
+  /** The reading moved the exam's own days, which the exam's learners get as a change to apply. */
+  movesExamDays: boolean;
+  noticeId: string | null;
+}> {
   "use step";
 
-  const notice = await writeNotice({ analytics, identity, reading });
+  const notice = quiet ? null : await writeNotice({ analytics, identity, reading });
 
   const saved = await saveExamBlueprint({
     content: reading.content,
@@ -75,8 +90,9 @@ export async function saveBlueprintStep({
   }
 
   return {
-    changedFields: saved.changes.map((change) => change.field),
     created: saved.created,
     examBlueprintId: saved.blueprint.id,
+    movesExamDays: saved.movesExamDays,
+    noticeId: saved.noticeId,
   };
 }

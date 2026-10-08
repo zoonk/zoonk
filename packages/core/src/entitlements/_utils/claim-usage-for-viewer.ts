@@ -6,8 +6,9 @@ import {
   NEWCOMER_DAILY_SPEND_BUDGET_MICROS,
   getEstimatedCostMicros,
 } from "../limits";
+import { holdCallTimeAgain } from "./call-time";
 import { type EntitlementViewer } from "./entitlement-viewer";
-import { evaluateUsage } from "./evaluate-usage";
+import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
 import { claimNewcomerSpend } from "./newcomer-spend-budget";
 import { countUsage } from "./usage-counts";
 
@@ -49,18 +50,23 @@ async function isNewcomer({
  * Counts and records one use in a transaction that holds a per-learner lock, so two tabs starting
  * lessons at once can't both take the last one. A target the learner already used returns allowed
  * without counting again: restarting a lesson or retrying a request is free. A newcomer's use that
- * costs AI also takes its estimated cost from the newcomers' shared daily budget.
+ * costs AI also takes its estimated cost from the newcomers' shared daily budget. A live call's
+ * connection (`seconds`) holds up to that much of the plan's call time (today's and this month's)
+ * and returns what it holds; connecting the same call again holds its length again
+ * (`holdCallTimeAgain`).
  */
 export async function claimUsageForViewer({
   generated,
   kind,
   now,
+  seconds,
   targetId,
   viewer,
 }: {
   generated: boolean;
   kind: UsageKind;
   now: Date;
+  seconds?: number;
   targetId: string;
   viewer: EntitlementViewer;
 }): Promise<UsageDecision> {
@@ -74,11 +80,28 @@ export async function claimUsageForViewer({
     });
 
     if (existing) {
-      return { status: "allowed" };
+      return seconds === undefined
+        ? { status: "allowed" }
+        : holdCallTimeAgain({ now, record: existing, seconds, transaction, viewer });
     }
 
-    const costMicros = getEstimatedCostMicros({ generated, kind });
     const counts = await countUsage({ client: transaction, kind, now, userId: viewer.userId });
+
+    const hold =
+      seconds === undefined
+        ? null
+        : getCallHold({
+            left: getCallTimeLeft({
+              kind,
+              tier: viewer.tier,
+              usedThisMonth: counts.secondsThisMonth,
+              usedToday: counts.secondsToday,
+            }),
+            seconds,
+          });
+
+    const held = hold?.heldSeconds ?? 0;
+    const costMicros = getEstimatedCostMicros({ generated, kind, seconds: held });
     const decision = evaluateUsage({ costMicros, counts, generated, kind, now, tier: viewer.tier });
 
     if (decision.status !== "allowed") {
@@ -100,9 +123,23 @@ export async function claimUsageForViewer({
     }
 
     await transaction.usageRecord.create({
-      data: { costMicros, createdAt: now, generated, kind, targetId, userId: viewer.userId },
+      data: {
+        costMicros,
+        createdAt: now,
+        generated,
+        kind,
+        seconds: held,
+        targetId,
+        userId: viewer.userId,
+      },
     });
 
-    return decision;
+    if (!hold) {
+      return decision;
+    }
+
+    return hold.shortenedBy
+      ? { ...decision, heldSeconds: held, shortenedBy: hold.shortenedBy }
+      : { ...decision, heldSeconds: held };
   });
 }

@@ -17,6 +17,11 @@ export default defineConfig({
         replacement: resolve(import.meta.dirname, "./mocks/workflow.ts"),
       },
       {
+        // The World's events only exist inside the workflow runtime; tests say what a run recorded.
+        find: /^workflow\/runtime$/u,
+        replacement: resolve(import.meta.dirname, "./mocks/workflow-runtime.ts"),
+      },
+      {
         // Mock server-only module
         find: /^server-only$/u,
         replacement: resolve(import.meta.dirname, "./mocks/server-only.ts"),

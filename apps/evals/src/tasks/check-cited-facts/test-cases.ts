@@ -3,25 +3,75 @@ import { type CheckCitedFactsParams } from "@zoonk/ai/tasks/v2/research/check-ci
 import { type CheckCitedFactsExpected } from "./task";
 
 /** Passages from real notices, with true facts and planted ones that say more or contradict. */
+/** A teacher's note in a learner's class notes: both formats it announces, nothing more. */
+const CLASS_TEST_NOTE =
+  "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!";
+
 export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams>[] = [
   {
-    // The passage gives every test 45 questions but never names Matemática, so the named subject is unsupported.
-    expected: { supportedIds: ["dates.0", "mock"] },
+    // A table to fill in is a short written answer; the note gives no option count.
+    expected: {
+      supportedIds: ["formats.0", "formats.0.description", "formats.1", "formats.1.description"],
+    },
+    id: "class-test-announced-formats",
+    language: "pt",
+    userInput: {
+      facts: [
+        {
+          id: "formats.0",
+          passage: CLASS_TEST_NOTE,
+          statement:
+            "Question format: a written answer in the candidate's own words, such as an essay or a discursive question",
+        },
+        {
+          id: "formats.0.description",
+          passage: CLASS_TEST_NOTE,
+          statement: "Question format: Questão dissertativa sobre osmose.",
+        },
+        {
+          id: "formats.1",
+          passage: CLASS_TEST_NOTE,
+          statement:
+            "Question format: questions answered in writing with a short answer, such as a word, a value or a table or blank to fill in",
+        },
+        {
+          id: "formats.1.description",
+          passage: CLASS_TEST_NOTE,
+          statement: "Question format: Questão de completar a tabela das organelas.",
+        },
+        {
+          id: "formats.2",
+          passage: CLASS_TEST_NOTE,
+          statement: "Question format: multiple-choice questions, 5 options each",
+        },
+      ],
+    },
+  },
+  {
+    // The passage gives every objective test 45 questions, Matemática's among them; the essay isn't
+    // one of them, and nothing gives it a weight. (The check dropped ENEM's counts, Oct 2026.)
+    expected: { supportedIds: ["subjects.0.questions", "dates.0", "mock"] },
     id: "enem-2026",
     language: "pt",
     userInput: {
       facts: [
         {
-          id: "subjects.0",
+          id: "subjects.0.questions",
           passage:
             "3.2 O Exame será constituído de quatro provas objetivas e uma redação em Língua Portuguesa. Cada prova objetiva terá 45 (quarenta e cinco) questões de múltipla escolha.",
-          statement: 'Subject "Matemática e suas Tecnologias"; 45 questions',
+          statement: 'Subject "Matemática e suas Tecnologias" has 45 questions',
+        },
+        {
+          id: "subjects.1.questions",
+          passage:
+            "3.2 O Exame será constituído de quatro provas objetivas e uma redação em Língua Portuguesa. Cada prova objetiva terá 45 (quarenta e cinco) questões de múltipla escolha.",
+          statement: 'Subject "Redação" has 45 questions',
         },
         {
           id: "subjects.1",
           passage:
             "3.2 O Exame será constituído de quatro provas objetivas e uma redação em Língua Portuguesa. Cada prova objetiva terá 45 (quarenta e cinco) questões de múltipla escolha.",
-          statement: 'Subject "Redação"; weight 0.2',
+          statement: 'Subject "Redação" is worth 20% of the final score',
         },
         {
           id: "dates.0",

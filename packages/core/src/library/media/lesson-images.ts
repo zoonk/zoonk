@@ -2,9 +2,10 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
+import { CURRENT_STEPS } from "../lessons/lesson-versions";
 import { drawPlannedImage } from "./_utils/draw-planned-image";
 import { type ImageAnalytics, planLibraryImage } from "./_utils/plan-library-image";
-import { getStepImageRequest, pickSpacedImageSteps } from "./_utils/step-image-request";
+import { getStepImageRequest } from "./_utils/step-image-request";
 
 /**
  * `reused`: an existing image showed the same scene. `generated`: a new image
@@ -53,21 +54,24 @@ function getLessonContext(lesson: StepForImage["lesson"]): string {
 }
 
 /**
- * The screens of a lesson that still need their picture. Only screens the
- * writer marked get one, at most one every two screens, and screens that
- * already have a picture are skipped, so retries never draw twice.
+ * The screens of a lesson whose picture isn't drawn yet, in screen order. Every picture a screen
+ * asks for is one it needs, so all of them are drawn; screens that already have one are skipped,
+ * so retries never draw twice.
  */
 export async function listLessonImageSteps({ lessonId }: { lessonId: string }): Promise<string[]> {
-  const steps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { content: true, id: true, kind: true, mediaAssetId: true, position: true },
-    where: { lessonId },
+  const lesson = await prisma.lesson.findUnique({
+    select: {
+      steps: {
+        orderBy: { position: "asc" },
+        select: { content: true, id: true, kind: true, mediaAssetId: true },
+        where: CURRENT_STEPS,
+      },
+    },
+    where: { id: lessonId },
   });
 
-  const requested = steps.filter((step) => getStepImageRequest(step) !== null);
-
-  return pickSpacedImageSteps(requested)
-    .filter((step) => !step.mediaAssetId)
+  return (lesson?.steps ?? [])
+    .filter((step) => !step.mediaAssetId && getStepImageRequest(step))
     .map((step) => step.id);
 }
 

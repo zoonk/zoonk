@@ -1,6 +1,8 @@
+import { formatCast } from "../../_utils/cast";
 import { type ChapterLesson, formatChapterLessons } from "../../_utils/chapter-lessons";
 import { formatLocalContext } from "../../_utils/language-context";
 import { formatLessonDocuments } from "../../_utils/lesson-documents";
+import { type LessonExam, formatLessonExams } from "../../_utils/lesson-exams";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import {
@@ -33,6 +35,11 @@ export type LessonWritingContext = {
    * product's documentation), tagged with references, for lessons of goals built from sources.
    */
   sources?: string;
+  /**
+   * The exams the learners who study this shared lesson prepare for, so it's written and reviewed
+   * at their depth and in their questions' style for their candidates, without naming them.
+   */
+  exams?: LessonExam[];
 };
 
 /** A problem found by code or by the reviewer. `screen` is a 0-based index, or null for the whole lesson. */
@@ -109,6 +116,7 @@ export function formatLessonPlan(context: LessonWritingContext): string {
   return `
 LANGUAGE: ${getPromptLanguageName({ language: context.language })}
 ${formatLocalContext(context.language)}
+${formatCast({ language: context.language, seed: `${context.courseTitle}:${spec.title}` })}
 LEVEL: ${context.level}
 TODAY: ${getToday()}
 COURSE_TITLE: ${context.courseTitle}
@@ -117,6 +125,7 @@ LESSON_TITLE: ${spec.title}
 LESSON_DESCRIPTION: ${spec.description}
 CAN_DO: ${spec.canDo}
 SUPPORT_MODE: ${spec.supportMode}
+${formatLessonExams(context.exams)}
 CHAPTER_LESSONS: ${formatChapterLessons(context.chapterLessons)}
 
 SKILLS:

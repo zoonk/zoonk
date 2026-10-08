@@ -1,15 +1,17 @@
 import { type GenerateImageResult } from "ai";
 import { getModelFamily } from "../_utils/model-family";
+import { computeCallCostUsd } from "../pricing/call-cost";
 import { readGatewayMetadata } from "./gateway-metadata";
 import { type TaskGenerationInput, type TaskRunDetails, startTaskRun } from "./run-task-generation";
 import { type TaskProvenance, sumKnown } from "./task-provenance";
 
-type ImageGeneration = Pick<GenerateImageResult, "calls" | "usage">;
+type ImageGeneration = Pick<GenerateImageResult, "calls" | "images" | "usage">;
 
 /**
  * Image results carry one entry per provider call. The last call is the one
  * whose image the task keeps; AI Gateway's routing metadata names the model
- * that drew it, which differs from the requested one after a fallback.
+ * that drew it, which differs from the requested one after a fallback. Image
+ * models are priced by their tokens or per image, whichever the model bills.
  */
 function buildImageTaskProvenance({
   generation,
@@ -18,20 +20,26 @@ function buildImageTaskProvenance({
 }: TaskRunDetails & { generation: ImageGeneration; requestedModel: string }): TaskProvenance {
   const lastCall = generation.calls.at(-1);
   const gateway = readGatewayMetadata(lastCall?.providerMetadata);
+  const model = gateway.servedModel ?? lastCall?.response.modelId ?? requestedModel;
+
+  const usage = {
+    images: generation.images.length,
+    inputTokens: generation.usage.inputTokens,
+    outputTokens: generation.usage.outputTokens,
+    totalTokens: generation.usage.totalTokens,
+  };
 
   return {
     ...details,
-    costUsd: sumKnown(
+    costUsd: computeCallCostUsd({ model, usage }),
+    credential: gateway.credential,
+    gatewayCostUsd: sumKnown(
       generation.calls.map((call) => readGatewayMetadata(call.providerMetadata).costUsd),
     ),
-    model: gateway.servedModel ?? lastCall?.response.modelId ?? requestedModel,
+    model,
     provider: gateway.servedProvider ?? getModelFamily(requestedModel),
     requestedModel,
-    usage: {
-      inputTokens: generation.usage.inputTokens,
-      outputTokens: generation.usage.outputTokens,
-      totalTokens: generation.usage.totalTokens,
-    },
+    usage,
   };
 }
 

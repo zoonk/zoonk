@@ -7,7 +7,6 @@ export const planErrorCodes = {
   goalReferenceNotFound: "GOAL_REFERENCE_NOT_FOUND",
   planChangeConflict: "PLAN_CHANGE_CONFLICT",
   planChangeInvalid: "PLAN_CHANGE_INVALID",
-  planEditNotUnderstood: "PLAN_EDIT_NOT_UNDERSTOOD",
   planLinkTitleRequired: "PLAN_LINK_TITLE_REQUIRED",
 } as const;
 

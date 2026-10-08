@@ -8,6 +8,22 @@ export function countActiveExamGoals(examBlueprintId: string): Promise<number> {
 }
 
 /**
+ * Learners preparing for a later edition of an exam than the stored notice's: active goals whose
+ * date is after its exam.
+ */
+export function countNextEditionGoals({
+  after,
+  examBlueprintId,
+}: {
+  after: Date;
+  examBlueprintId: string;
+}): Promise<number> {
+  return prisma.goal.count({
+    where: { examBlueprintId, status: "active", targetDate: { gt: after } },
+  });
+}
+
+/**
  * Learners who still rely on a source: an active goal linked to it directly
  * (their upload or research for their goal) or through an exam blueprint read
  * from it.
@@ -39,6 +55,18 @@ export async function linkGoalToExamBlueprint({
   });
 
   return count > 0;
+}
+
+/**
+ * Takes a goal off the shared notice onboarding matched by its name once research finds the exam
+ * is a test only the learner's material describes (a class test), so its plan and Today follow
+ * that material instead of a public exam's checklist and rules. A private blueprint stays.
+ */
+export async function unlinkGoalFromSharedExam(goalId: string): Promise<void> {
+  await prisma.goal.updateMany({
+    data: { examBlueprintId: null },
+    where: { examBlueprint: { is: { visibility: "public" } }, id: goalId },
+  });
 }
 
 /** Records the sources research found for a goal that isn't an exam, such as a law or a tool's docs. */

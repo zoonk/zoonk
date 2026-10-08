@@ -22,14 +22,14 @@ import {
   unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
-import { stepPathParamsSchema } from "../schemas/step-variants";
+import { stepPathParamsSchema } from "../schemas/steps";
 import { AUTHENTICATED_SECURITY, OPTIONAL_AUTHENTICATION_SECURITY } from "../security";
 
 export const libraryLessonPaths = {
   "/library/lessons/{lessonId}": {
     get: {
       description:
-        'A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs and any "Simpler" or "Go deeper" version already made. The content is the same for everyone and includes the answers, so the app can give feedback at once. The screens load only with a session, a guest\'s included (POST /guests): without one, a written lesson returns its outline with `status: "sessionRequired"`, so lessons can\'t be scraped. While the content is being written, returns the outline with `status: "notGenerated"`. Reading screens is rate-limited per learner, and per network for guests: too many lessons in a short time is `SLOW_DOWN` (429, read it again after `Retry-After`). A private lesson is only visible to its owner.',
+        'A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content is the same for everyone and includes the answers, so the app can give feedback at once. The screens load only with a session, a guest\'s included (POST /guests): without one, a written lesson returns its outline with `status: "sessionRequired"`, so lessons can\'t be scraped. While the content is being written, returns the outline with `status: "notGenerated"`. Reading screens is rate-limited per learner, and per network for guests: too many lessons in a short time is `SLOW_DOWN` (429, read it again after `Retry-After`). A private lesson is only visible to its owner.',
       operationId: "getLibraryLesson",
       requestParams: { path: lessonPathParamsSchema },
       responses: {
@@ -94,7 +94,7 @@ export const libraryLessonPaths = {
   "/library/lessons/{lessonId}/starts": {
     post: {
       description:
-        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later.",
+        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later.",
       operationId: "createLibraryLessonStart",
       requestBody: {
         content: { "application/json": { schema: libraryLessonStartInputSchema } },
@@ -153,7 +153,7 @@ export const libraryLessonPaths = {
   "/steps/{stepId}/checks": {
     post: {
       description:
-        "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson. `LESSON_RUN_ENDED` (409) means the run finished; `TOO_MANY_ANSWERS` (429) that the screen was already answered too often in it.",
+        "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; a screen answered more often than a run allows is graded by code and not recorded. `LESSON_RUN_ENDED` (409) means the run finished.",
       operationId: "createStepCheck",
       requestBody: {
         content: { "application/json": { schema: lessonStepCheckInputSchema } },
@@ -170,7 +170,6 @@ export const libraryLessonPaths = {
         "404": notFoundResponse,
         "409": { ...conflictResponse, description: "The run already finished" },
         "422": unprocessableEntityResponse,
-        "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Check an answer to a lesson screen",

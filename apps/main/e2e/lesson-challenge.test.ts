@@ -1,28 +1,20 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
-import { setDeviceMode } from "./learn-personas";
 
 /**
  * Plays a challenge lesson (the A/B test case from `challengeCaseFixture`) from the learner's plan:
  * the intro with the team kept with the plan, decisions picked with number keys or taps and sent
  * with Confirm, the meters and the week that passes, the ending and the debrief, then the lesson's
- * completion, with no buddy in Focus. A weak ending's debrief is the player's to test
- * (`packages/player`).
+ * completion. A weak ending's debrief is the player's to test (`packages/player`).
  */
 
-/**
- * A Focus learner whose plan has the challenge lesson, which keeps its team once it first opens.
- * The buddy they picked in Fun stays on their profile.
- */
+/** A learner whose plan has the challenge lesson, which keeps its team once it first opens. */
 async function openChallenge(page: Page, userId: string) {
   const [{ lesson }, goal] = await Promise.all([
     playableLessonFixture({ lesson: { title: "Challenge: A/B tests" }, steps: ["challenge"] }),
     goalFixture({ userId }),
-    learningProfileFixture({ buddyKind: "zu", experienceMode: "focus", userId }),
-    setDeviceMode(page.context(), "focus"),
   ]);
 
   const plan = await planFixture({ goalId: goal.id });
@@ -121,9 +113,6 @@ test.describe("Challenge lesson", () => {
 
     await primary(page, /^Continue/u).click();
     await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-
-    // Focus ends with its check mark, never the buddy's cheer.
-    await expect(page.getByText("Nice one!")).toHaveCount(0);
 
     // Opening it again keeps the same people.
     await expect(readTeam(planId)).resolves.toHaveLength(4);

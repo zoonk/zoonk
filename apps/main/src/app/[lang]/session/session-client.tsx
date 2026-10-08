@@ -2,6 +2,7 @@
 
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
+import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
 import {
@@ -12,10 +13,9 @@ import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { type LessonNotWritten } from "@zoonk/learn/lesson-not-written";
-import { type LearnBuddy } from "@zoonk/learn/navigation";
 import { QuestionBlock } from "@zoonk/learn/session/block";
 import { NextStop, type NextStopLesson } from "@zoonk/learn/session/next-stop";
-import { SessionSummary } from "@zoonk/learn/session/summary";
+import { SessionSummary, type SummaryGoalKind } from "@zoonk/learn/session/summary";
 import {
   type StudyBlock,
   type StudyBlockDetail,
@@ -53,7 +53,7 @@ export function SessionBlockClient({
       exitHref={EXIT_HREF}
       key={detail.block.id}
       lessonHref={lessonHref}
-      session={{ id: session.id, missions: session.missions, sessionBar: session.sessionBar }}
+      session={{ blocks: session.blocks, id: session.id, missions: session.missions }}
     />
   );
 }
@@ -103,19 +103,23 @@ export function SessionNextStopClient({
   );
 }
 
-/** The end of the day: what changed, then Today or "10 more minutes". */
+/**
+ * The end of the day in steps: what changed, then Today or "10 more minutes". Right after stopping
+ * for today, what's done so far, then Today or "Keep going".
+ */
 export function SessionSummaryClient({
-  brainPower,
+  goalKind,
   isGuest,
   buddy,
   sessionId,
   summary,
 }: {
-  /** The learner's total now, for the belt ceremony ("You reached 7,500 Brain Power"). */
-  brainPower: number | null;
+  /** Says the goal's progress its way: preparation for an exam, the way done for the rest. */
+  goalKind: SummaryGoalKind;
   /** A guest's first session ends by asking them to save their plan with an account. */
   isGuest: boolean;
-  buddy: LearnBuddy | null;
+  /** Glad about the day's rewards, and named in the milestone when it grows. */
+  buddy: LearnerBuddy;
   sessionId: string;
   summary: StudySessionSummary;
 }) {
@@ -130,10 +134,13 @@ export function SessionSummaryClient({
           router.push(EXIT_HREF);
           return true;
         },
+        keepGoing: navigation.continueSession,
       }}
       buddy={buddy}
-      renderCeremony={(milestone) => (
-        <SessionCeremony brainPower={brainPower} milestone={milestone} buddy={buddy} />
+      exitHref={EXIT_HREF}
+      goalKind={goalKind}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
       )}
       signUpHref={isGuest ? SIGN_UP_HREF : null}
       summary={summary}

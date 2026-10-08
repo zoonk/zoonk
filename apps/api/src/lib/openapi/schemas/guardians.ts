@@ -13,6 +13,7 @@ const guardianLinkSchema = z
     expiresAt: z.iso.datetime().nullable().meta({ description: "When a pending invite expires" }),
     guardianEmail: z.email(),
     id: z.uuid(),
+    memoryOff: z.boolean().meta({ description: "Whether the guardian turned memory off" }),
     plusApprovedAt: z.iso.datetime().nullable().meta({ description: "When Plus was approved" }),
     status: z.enum(GuardianLinkStatus),
   })
@@ -39,6 +40,10 @@ const guardedLearnerSchema = z
     dailyLimitMinutes: z.int().nullable(),
     learnerName: z.string(),
     linkId: z.uuid(),
+    memoryEnabled: z
+      .boolean()
+      .meta({ description: "Whether the learner's memory is on now; what it holds stays private" }),
+    memoryOff: z.boolean().meta({ description: "Whether this guardian turned memory off" }),
     plusApprovedAt: z.iso.datetime().nullable(),
     weeklyActivity: z
       .object({

@@ -26,25 +26,43 @@ const NO_BOSS: SessionBoss = { checkpoint: null, reinforcement: [] };
  * The boss that closes a phase is reached once every lesson before it in its phase is done, or
  * on the day the plan scheduled it.
  */
+export function isBossReached({
+  boss,
+  items,
+  today,
+}: {
+  boss: PlanItem;
+  items: readonly PlanItem[];
+  today: Date;
+}): boolean {
+  if (boss.kind !== "boss" || boss.status !== "todo") {
+    return false;
+  }
+
+  if (boss.scheduledFor !== null && boss.scheduledFor <= today) {
+    return true;
+  }
+
+  return items
+    .filter(
+      (other) =>
+        other.position < boss.position && other.phase === boss.phase && LEARN_KINDS.has(other.kind),
+    )
+    .every((other) => other.status !== "todo");
+}
+
 function findReachedBoss({ items, today }: { items: readonly PlanItem[]; today: Date }) {
-  return items.find(
-    (item) =>
-      item.kind === "boss" &&
-      item.status === "todo" &&
-      ((item.scheduledFor !== null && item.scheduledFor <= today) ||
-        items
-          .filter(
-            (other) =>
-              other.position < item.position &&
-              other.phase === item.phase &&
-              LEARN_KINDS.has(other.kind),
-          )
-          .every((other) => other.status !== "todo")),
-  );
+  return items.find((boss) => isBossReached({ boss, items, today }));
 }
 
 /** The last boss of the plan, in its last phase, is the final boss that closes the plan. */
-function isFinalBoss({ boss, items }: { boss: PlanItem; items: readonly PlanItem[] }): boolean {
+export function isFinalBoss({
+  boss,
+  items,
+}: {
+  boss: PlanItem;
+  items: readonly PlanItem[];
+}): boolean {
   const lastPhase = Math.max(...items.map((item) => item.phase));
   const laterBoss = items.some((item) => item.kind === "boss" && item.position > boss.position);
 

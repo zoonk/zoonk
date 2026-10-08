@@ -2,6 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startGoalGeneration } from "@/lib/goal-content";
 import { learnerAccessError } from "@/lib/learner-errors";
+import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalGenerationQuerySchema } from "@/lib/openapi/schemas/content-generation";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
@@ -30,7 +31,14 @@ async function createGoalGeneration(
     return errors.validation(query.error);
   }
 
-  const access = await getGoalGenerationAccess({ goalId: path.data.goalId });
+  const access = await getGoalGenerationAccess({
+    goalId: path.data.goalId,
+    withResearch: Boolean(query.data.researchId),
+  });
+
+  if (access.status === "limitReached" || access.status === "slowDown") {
+    return usageDecisionError(access);
+  }
 
   if (access.status !== "ready") {
     return learnerAccessError(access.status);

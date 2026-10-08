@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { shuffleAnswerOptions, stripOptionLabels } from "./answer-options";
+import {
+  findOptionPositionReferences,
+  shuffleAnswerOptions,
+  stripOptionLabels,
+} from "./answer-options";
 
 function optionsOf(...texts: string[]) {
   return texts.map((text, index) => ({ isCorrect: index === 0, text }));
@@ -88,5 +92,47 @@ describe(shuffleAnswerOptions, () => {
     );
 
     expect(positions.size).toBeGreaterThan(2);
+  });
+});
+
+describe(findOptionPositionReferences, () => {
+  it("finds feedback that points at an option by its place, which shuffling changes", () => {
+    expect(findOptionPositionReferences("A anotação segura é a segunda.")).toStrictEqual([
+      "e a segunda",
+    ]);
+
+    expect(findOptionPositionReferences("A primeira opção ignora o prazo.")).toStrictEqual([
+      "primeira opcao",
+    ]);
+
+    expect(findOptionPositionReferences("Por isso a alternativa B está errada.")).toStrictEqual([
+      "alternativa B",
+    ]);
+
+    expect(findOptionPositionReferences("The right one is the third.")).toStrictEqual([
+      "is the third",
+    ]);
+
+    expect(findOptionPositionReferences("Option C forgets the fee.")).toStrictEqual(["Option C"]);
+
+    expect(findOptionPositionReferences("La respuesta correcta es la última.")).toStrictEqual([
+      "es la ultima",
+    ]);
+  });
+
+  it("leaves ordinals that are about the content alone", () => {
+    expect(
+      findOptionPositionReferences(
+        "A primeira lei de Newton vale aqui, e a segunda etapa do processo também.",
+      ),
+    ).toStrictEqual([]);
+
+    expect(findOptionPositionReferences("It is an option a lot of teams choose.")).toStrictEqual(
+      [],
+    );
+
+    expect(
+      findOptionPositionReferences("Recife é a segunda maior cidade do Nordeste."),
+    ).toStrictEqual([]);
   });
 });

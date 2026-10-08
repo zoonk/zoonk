@@ -6,6 +6,7 @@ import { trackEvent } from "@zoonk/core/analytics/client";
 import { logError } from "@zoonk/utils/logger";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { getCallbackHref } from "../_utils/auth-redirect";
 
 type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
 
@@ -13,7 +14,7 @@ function getLoadingState(provider: "google" | "apple"): SocialState {
   return provider === "google" ? "loadingGoogle" : "loadingApple";
 }
 
-export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
+export function SocialLogin({ redirectTo }: { redirectTo: string | null }) {
   const [state, setState] = useState<SocialState>("initial");
   const t = useExtracted();
 
@@ -21,11 +22,10 @@ export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
     setState(getLoadingState(provider));
     trackEvent({ name: "Sign In Method Chosen", properties: { method: provider } });
 
-    const callbackURL = redirectTo
-      ? `/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`
-      : "/auth/callback";
-
-    const { error } = await authClient.signIn.social({ callbackURL, provider });
+    const { error } = await authClient.signIn.social({
+      callbackURL: getCallbackHref(redirectTo),
+      provider,
+    });
 
     if (error) {
       logError("Social login error:", error);

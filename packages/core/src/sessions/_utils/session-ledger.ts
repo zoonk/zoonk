@@ -1,17 +1,7 @@
 import "server-only";
-import { type ExperienceMode, type TransactionClient, prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import { finishLearningEvent, startLearningEvent } from "../../stats/record-learning-event";
 import { type StudySessionRow } from "./study-session-access";
-
-/** The mode the learner studies in, so the ledger can compare Focus and Fun. */
-export async function getLearnerMode(userId: string): Promise<ExperienceMode | null> {
-  const profile = await prisma.userLearningProfile.findUnique({
-    select: { experienceMode: true },
-    where: { userId },
-  });
-
-  return profile?.experienceMode ?? null;
-}
 
 function sessionRowWhere({ sessionId, userId }: { sessionId: string; userId: string }) {
   return {
@@ -27,18 +17,12 @@ function sessionRowWhere({ sessionId, userId }: { sessionId: string; userId: str
  */
 export function recordSessionStart(
   tx: TransactionClient,
-  {
-    mode,
-    now,
-    session,
-    timeZone,
-  }: { mode: ExperienceMode | null; now: Date; session: StudySessionRow; timeZone: string },
+  { now, session, timeZone }: { now: Date; session: StudySessionRow; timeZone: string },
 ) {
   return startLearningEvent(tx, {
     contentIds: { studySessionId: session.id },
     goalId: session.goalId,
     kind: "session",
-    mode,
     startedAt: now,
     timeZone,
     titleSnapshot: session.goal?.title ?? null,

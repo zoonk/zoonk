@@ -21,6 +21,8 @@ A 3 to 5 minute lesson built from what you write, in this order: the new words (
 
 3 to 5 words or fixed chunks the learner needs for this exact situation and can't do without: nouns, verbs, adjectives or useful chunks. A chunk like "How much is" or "I'd like to" counts as one item when native speakers use it as a unit. Don't spend a word on a bare article or preposition; teach those inside the tip.
 
+Choose them at `LEVEL`. From B1 up, the learner already says the basics of any situation (greetings, "my name is", "nice to meet you", numbers, "thank you"), so never teach those: teach the chunks someone at `LEVEL` still needs there (in an interview's opening at B1, "Thanks for having me", "I've been working as", "walk you through"). The same goes for the sentences and the practice.
+
 - `word`: the word in `TARGET_LANGUAGE`. Include the article for gendered nouns ("o aluguel", "la fianza", "die Miete"). No parentheses, no slashes, no alternative forms, and no terminal punctuation unless the item is a question.
 - `translation`: the meaning in `LEARNER_LANGUAGE` in this situation (so "rent" is "aluguel", not "renda"). The most common natural equivalent, with the article when `LEARNER_LANGUAGE` uses one.
 - `pronunciation`: a respelling that a speaker of `LEARNER_LANGUAGE` can read aloud with no training (see Respelling).
@@ -78,8 +80,10 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 - No IPA symbols and no letters or accents that `LEARNER_LANGUAGE` doesn't use.
 - Hyphens between syllables and the stressed syllable in CAPITALS ("a-VEI-la-bou"). One stressed syllable per word; each word of a chunk gets its own.
 - Transcribe how the word really sounds, not its spelling or a similar word in another language. Skip silent letters.
+- Never add a sound the word doesn't have. Speakers of `LEARNER_LANGUAGE` tend to add vowels their language needs (a Brazilian says "is-cool" for "school" and "bigui" for "big"); a respelling with that vowel teaches the mistake. Every syllable of the respelling is a syllable of the word: "slowly" has two ("SLOU-li"), "repeat" two ("ri-PIT"), "rephrase" two ("ri-FREIZ").
+- A sound `LEARNER_LANGUAGE` has no letters for keeps the target letters that spell it, such as the English "th" for Portuguese readers ("bathroom" → "BÉTH-rum", "three" → "THRI"), and the `tip` says how to make it. Never write it with the letters of a different sound learners swap it for (for Portuguese readers, "f", "d" or "t"): the respelling would teach the very mistake. The respelling never shows a mistake the `tip` warns about.
 - Respect what `LEARNER_LANGUAGE` can read:
-  - For Brazilian Portuguese readers: never use "rr" or a word-initial "r" for an English "r" (both read as "h"); use them for the English "h" ("hello" → "rre-LOU"). For a word-initial English "r", put a vowel before it ("run" → "a-RAN"). Add "is" or "es" before s + consonant ("school" → "is-CUL"). "qu" before "e" or "i" has a silent "u", so write the "kw" sound as "cu" ("queen" → "CU-in"). Write an English final dark "l" as "u" ("apple" → "É-pou").
+  - For Brazilian Portuguese readers: an English "r" is a sound Portuguese has no letter for, so it keeps a single "r" ("run" → "RAN", "repeat" → "ri-PIT", "more" → "MÓR"), and a word with an "r" at the start of the word or of its stressed syllable gets a `tip` on making it (the tongue curls back without touching the roof of the mouth, never the "r" of "rato", which sounds like an "h"). Use "rr" only for the English "h" ("hello" → "rre-LOU"). Never put a vowel before a word-initial "r" or before s + consonant ("school" → "SKUL", "street" → "STRIT", never "a-RAN", "i-ri-PIT" or "is-CUL"), and never one after a final consonant ("big" → "BIG", never "BI-gui"). "qu" before "e" or "i" has a silent "u", so write the "kw" sound as "cu" ("queen" → "CU-in"). Write an English final dark "l" as "u" ("apple" → "É-pou").
   - For Spain Spanish readers: use "ch" or "y" for the English "j"; approximate a voiced "th" with "d" and an unvoiced one with "z"; English "v" can be written "b".
   - For US English readers: write vowels with English spellings ("ah" for an open "a", "eh", "ee", "oh", "oo"); Portuguese nasal "ão" is "owng"; "nh" is "ny"; "lh" is "ly"; a Portuguese "rr" or initial "r" is "h"; Spanish "j" is "h", "ll" is "y", "ñ" is "ny".
 - If the target word has a written accent, the stress goes on that syllable.
@@ -99,6 +103,6 @@ The `pronunciation` field shows how the word sounds using only letters and lette
 4. The tip describes what its examples and practice actually show.
 5. Each practice blank has exactly one right answer.
 6. The writing answers are all correct and cover common right variants.
-7. Respellings follow the rules for `LEARNER_LANGUAGE` readers, with the stress in capitals.
+7. Respellings follow the rules for `LEARNER_LANGUAGE` readers, with the stress in capitals, and have exactly the word's syllables: no vowel added before an "r" or an "s" + consonant, or after a final consonant.
 8. Tips and notes are true for speakers of `LEARNER_LANGUAGE`, and `null` when there is nothing real to say.
 9. The words and sentences cover every part of `LESSON_CAN_DO`.

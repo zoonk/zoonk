@@ -19,7 +19,7 @@ const columns: AdminTableColumn[] = [
   { label: "Vote" },
   { label: "Reasons" },
   { label: "Comment" },
-  { label: "Language / mode" },
+  { label: "Language" },
   { label: "Model / prompt" },
   { label: "Learner" },
 ];

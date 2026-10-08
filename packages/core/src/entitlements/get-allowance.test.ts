@@ -60,6 +60,38 @@ describe(getAllowance, () => {
     });
   });
 
+  it("shows the call time used today and this month beside the plan's caps", async () => {
+    const user = await userFixture();
+
+    await Promise.all([
+      usageRecordsFixture({
+        count: 1,
+        createdAt: NOW,
+        kind: "conversation",
+        seconds: 60,
+        userId: user.id,
+      }),
+      usageRecordsFixture({
+        count: 2,
+        createdAt: EARLIER_THIS_MONTH,
+        kind: "conversation",
+        seconds: 90,
+        userId: user.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(getAllowance()).resolves.toMatchObject({
+      callTime: {
+        limitSeconds: 120,
+        monthLimitSeconds: 300,
+        usedSeconds: 60,
+        usedSecondsThisMonth: 240,
+      },
+    });
+  });
+
   it("shows Plus as fair use with no remaining count", async () => {
     const user = await userFixture();
 

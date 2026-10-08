@@ -4,6 +4,7 @@ import {
   type ItemFormat,
   essayRubricRowSchema,
 } from "@zoonk/ai/tasks/v2/items/schemas";
+import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { shuffleAnswerOptions, stripOptionLabels } from "../_utils/answer-options";
@@ -13,6 +14,15 @@ import { shuffleAnswerOptions, stripOptionLabels } from "../_utils/answer-option
  * its options keep the paper's order, and it cites the paper.
  */
 const quotedField = { quoted: z.literal(true).optional() };
+
+/**
+ * Items stored before questions could show a chart, a timeline or a picture read as having none.
+ * A picture is only asked for here; the drawn file is linked through `Item.mediaAssetId`.
+ */
+const storedVisualFields = {
+  image: GENERATED_ITEM_SCHEMAS.typed.shape.image.default(null),
+  visual: lessonVisualSchema.nullable().default(null),
+};
 
 /** Essays stored before rubric rows had points read as rows without points of their own. */
 const storedRubricSchema = z
@@ -33,6 +43,7 @@ const ITEM_CONTENT_SCHEMAS = {
     .omit({ difficulty: true, format: true })
     .extend({
       ...quotedField,
+      ...storedVisualFields,
       /** Rows stored before letters were dropped at write time read without them too. */
       options: GENERATED_ITEM_SCHEMAS.multipleChoice.shape.options.transform(stripOptionLabels),
     }),
@@ -41,8 +52,10 @@ const ITEM_CONTENT_SCHEMAS = {
   spoken: GENERATED_ITEM_SCHEMAS.spoken.omit({ difficulty: true, format: true }),
   trueFalse: GENERATED_ITEM_SCHEMAS.trueFalse
     .omit({ difficulty: true, format: true })
-    .extend(quotedField),
-  typed: GENERATED_ITEM_SCHEMAS.typed.omit({ difficulty: true, format: true }),
+    .extend({ ...quotedField, ...storedVisualFields }),
+  typed: GENERATED_ITEM_SCHEMAS.typed
+    .omit({ difficulty: true, format: true })
+    .extend(storedVisualFields),
 } as const satisfies Record<ItemFormat, z.ZodType>;
 
 type ItemContentByFormat = {

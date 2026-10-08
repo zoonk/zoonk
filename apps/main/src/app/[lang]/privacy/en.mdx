@@ -15,7 +15,7 @@ When you use Zoonk, we may collect:
 - Account data, such as email, name, username, profile picture, country, and language.
 - Your birth month and year, if you tell us, so we know whether you are under 13, under 18, or an adult.
 - Payment and subscription data through Stripe, App Store, Play Store, or another payment provider.
-- Learning data, such as your goals, plans, lessons, answers (typed, or spoken and turned into text), progress, mistakes, time spent, feedback, and preferences like your mode and buddy.
+- Learning data, such as your goals, plans, lessons, answers (typed, or spoken and turned into text), progress, mistakes, time spent, feedback, and preferences like your buddy.
 - Memory: short facts about your learning that Zoonk remembers to help you (see section 4).
 - Content you create or upload, such as goals you describe, questions for the tutor, uploaded files, pasted text, pages, comments, and support messages.
 - Guardian data: a guardian's email address and the status of their link with a learner.
@@ -30,7 +30,7 @@ We use personal data for the following purposes and legal bases:
 
 - To create accounts, authenticate users, operate Zoonk, store progress, and provide paid plans, based on the contract with you.
 - To build and adjust your plan, personalize lessons, examples, and tutor answers, and remember your preferences, based on the contract with you and our legitimate interests.
-- To generate educational content with AI, evaluate quality and safety, improve Zoonk's AI features, and train or fine-tune systems that Zoonk operates or configures, based on the contract with you, our legitimate interests, and consent where required.
+- To generate educational content with AI, check its quality and safety, and improve Zoonk's AI features, based on the contract with you and our legitimate interests. We never train AI models on your data (see section 3).
 - To process payments, prevent fraud, handle support, and manage refunds or cancellations, based on the contract with you, legal obligations, and our legitimate interests.
 - To prevent abuse, such as fake accounts and automated traffic, and to enforce fair-use limits, based on our legitimate interests.
 - To measure usage, improve the product, debug errors and user flows, and keep the platform secure, based on our legitimate interests and consent where required.
@@ -43,7 +43,8 @@ We don't show ads, and we don't use anyone's data to target ads.
 ## 3. AI and your content
 
 - Zoonk uses AI systems to create plans, lessons, images, audio, explanations, exercises, tutor answers, suggestions, and feedback. Lessons made with AI and the AI tutor are labeled as AI.
-- We may process your prompts, uploads, answers, learning activity, feedback, and generated content to provide these AI features and to improve, evaluate, test, train, or fine-tune Zoonk's AI systems.
+- We process your prompts, uploads, answers, learning activity, feedback, and generated content to provide these AI features and to check and improve their quality.
+- We don't use your data to train or fine-tune AI models, ours or anyone else's, and data from learners under 18 will never be used for that. Our AI providers don't train on what we send them: their terms for business customers rule it out, and requests through Vercel's AI Gateway only reach providers that don't train on prompts.
 - We try to avoid sending direct account identifiers to AI providers when they are not needed, but what you type, say, or upload may contain personal data if you include it.
 - Do not include sensitive personal data about yourself or others unless it is strictly necessary for your learning use and you have the right to share it.
 - AI outputs and related inputs may be reviewed by automated systems or authorized people for safety, abuse prevention, debugging, and quality control.
@@ -56,9 +57,10 @@ We don't show ads, and we don't use anyone's data to target ads.
 - Zoonk remembers short facts that help it teach you, such as your goals, what you already know, how you like to study, your routine, and context you share. They come from your answers when you set up a goal, your questions to the tutor, and your study activity.
 - Memory is used to adapt examples in lessons, tutor answers, and the suggestions you see on Today, such as tips or changes to your plan.
 - Zoonk doesn't keep health, religion, political views, or other sensitive details, unless you are an adult and ask it to remember them.
-- In Settings, under Memory, you can see every fact, edit or delete it, undo recent changes, download everything, and turn memory off. When memory is off, Zoonk doesn't learn new facts or use the ones it has, and those facts stay until you delete them.
+- In Settings, under Memory, you can see every fact, edit or delete it, undo recent changes, download everything, and turn memory on or off. When memory is off, Zoonk doesn't learn new facts or use the ones it has, and those facts stay until you delete them.
 - Deleted facts are erased within 30 days. When a fact changes, the earlier version is kept with it so the change can be undone, and it is erased when that fact is erased.
-- For learners under 18, and for anyone who hasn't told us their age, memory only uses facts about goals and learning.
+- When you delete or correct a fact, or turn memory off, we also delete the personal examples in lessons that were written from your facts.
+- Memory is on for adults until they turn it off. For learners under 18, and for anyone who hasn't told us their age, memory is off until they turn it on, and then it only keeps facts about goals and learning. We ask them once, when they set up a goal, and "Not now" keeps it off.
 
 ---
 
@@ -68,8 +70,7 @@ We don't show ads, and we don't use anyone's data to target ads.
 - In the language level test and in "Say it again" pronunciation reviews, the sentence or word you say out loud goes to a Google Gemini audio model, through Vercel's AI Gateway, which checks each word, including sounds and stress. If that model is unavailable, we use a speech-to-text model from OpenAI or Google instead, through Vercel's AI Gateway.
 - We don't store the audio. We keep the text of your answer with your progress. Common wrong answers may also be kept as text, without any link to you, so their explanations can be reused.
 - In live AI conversations, your browser connects to OpenAI's GPT-Live voice model through Vercel's AI Gateway, with a short-lived key that works for one conversation. The audio doesn't pass through our servers, and we don't store it. During the call, your browser sends us the text of the conversation so far after each of your turns, and an AI model uses it to check which of the call's goals you've reached. After the call, it sends us the whole text, and an AI model uses it to write your feedback: what went well and one thing to improve or, after a speaking mock exam, an estimated score for each of the exam's criteria. We keep that feedback, which can quote a few of your own phrases, with the goals you reached and the conversation's result. We don't keep the rest of the conversation's text.
-- Some language activities read text aloud with your device's own voices. That speech is made on your device.
-- The audio of words and sentences in language lessons is made by text-to-speech models from OpenAI and Google. They receive only the lesson's text, never your voice or your account data.
+- The audio you hear in language lessons, the level test and reviews (words, sentences and voice messages) is made by Google's Gemini text-to-speech models, through Vercel's AI Gateway, with an OpenAI text-to-speech model as a backup. They receive only the text to read and its language, never your voice or your account data. Each clip is made once and replayed for everyone who hears the same words.
 
 ---
 
@@ -99,7 +100,7 @@ We share data only as needed to operate, protect, and improve Zoonk. The main pr
 
 - Vercel, for hosting, analytics, file storage for uploads (Vercel Blob), bot and abuse protection (BotID and Firewall), and the AI Gateway, which sends AI requests to model providers.
 - Neon, for our database.
-- AI model providers, mainly OpenAI, Anthropic, and Google, reached through Vercel's AI Gateway. The same models may run on Microsoft Azure or Google Cloud, and other providers are used as backups for some tasks, such as images. For voice, OpenAI turns spoken answers into text and runs live conversations, and Google's Gemini checks what you say in the language level test and in pronunciation reviews. Spoken answers go directly to OpenAI to be turned into text, with the AI Gateway only as a backup. Text-to-speech requests go directly to OpenAI and Google, not through the AI Gateway, and contain only lesson text.
+- AI model providers, mainly OpenAI, Anthropic, and Google, reached through Vercel's AI Gateway. The same models may run on Microsoft Azure or Google Cloud, and a few tasks use other providers as backups, always ones that don't train on prompts. For voice, OpenAI turns spoken answers into text and runs live conversations, and Google's Gemini checks what you say in the language level test and in pronunciation reviews. Spoken answers go directly to OpenAI to be turned into text, with the AI Gateway only as a backup. Text-to-speech requests go to Google's Gemini through the AI Gateway, with OpenAI directly as a backup, and contain only the text to read.
 - TypeSafe, which runs Jev, a model we use to classify text quickly, for example whether a memory fact is sensitive. It receives only the text being classified, without your account details.
 - Web search providers reached through Vercel's AI Gateway, currently Parallel. They receive only search text, such as an exam's name and organizer, never your account data or your files.
 - PostHog, for product analytics, session replay for adults, and AI usage records without prompt or answer text.
@@ -144,7 +145,7 @@ You can download your account's data as a JSON file with "Download my data" on y
 - You can delete your account at any time with "Delete account" on your profile page, or by emailing [hello@zoonk.com](mailto:hello@zoonk.com).
 - When your account is deleted, we delete your account, your learning data, your memory, your uploaded files, and anything made from your private files, such as exam details taken from them, and we cancel your web subscription. You will lose access to your account.
 - Public documents you uploaded that became shared public sources stay available, because they are no longer linked to you.
-- Analytics events already sent to our analytics providers are kept according to those providers' retention settings.
+- Within 15 days after your account is deleted, we also delete its data in PostHog, our analytics provider, including events and session replays. Analytics from a guest session that never became an account stay in PostHog under its retention settings, without a name or email.
 - We delete or anonymize personal data when we no longer need it.
 - Some information may be kept for a limited time when required for legal, billing, tax, consumer, fraud prevention, security, abuse prevention, backup, dispute resolution, or regulatory purposes.
 - We may keep app-access logs and related technical records for the periods required by the Brazilian Civil Rights Framework for the Internet and other applicable laws.
@@ -157,10 +158,11 @@ You can download your account's data as a JSON file with "Download my data" on y
 
 - Zoonk is for users 13 and older. We ask for your birth month and year when you set up your first goal. You can choose not to answer.
 - If you tell us you are under 13, we delete your account and its data right away. If we learn in another way that a user is under 13, we delete the account.
+- Once you've given your birth month and year, you can change it only by writing to us. We check a request before treating someone as older. After an answer under 13, the same browser can't answer again with a different age for a day.
 - Learners under 18 may use Zoonk only with permission and supervision from a parent or legal guardian.
-- Learners under 18, and anyone who hasn't told us their age, get the most protective settings by default: memory only uses facts about goals and learning, never sensitive facts; no session replay; and no marketing email. We don't store anyone's voice recordings.
+- Learners under 18, and anyone who hasn't told us their age, get the most protective settings by default: memory is off until they turn it on, and then it only keeps facts about goals and learning, never sensitive facts; no session replay; and no marketing email. We don't store anyone's voice recordings.
 - If you are under 18, buying Plus on our website needs a guardian's approval.
-- A learner aged 13 to 17 can invite a guardian by email. A linked guardian sees the learner's name, minutes studied, and lessons finished each day of the last week, never answers or messages. The guardian can set a daily time limit and approve Plus. We keep the guardian's email and the link's status, including after the link ends, until the learner's account is deleted.
+- A learner aged 13 to 17 can invite a guardian by email. A linked guardian sees the learner's name, minutes studied, and lessons finished each day of the last week, never answers or messages. The guardian can set a daily time limit, turn the learner's memory off, and approve Plus. A guardian sees whether memory is on, never what it holds. We keep the guardian's email and the link's status, including after the link ends, until the learner's account is deleted.
 - A guardian can end the link at any time with "End link" on their guardian page. A learner can cancel an invite that hasn't been accepted yet.
 - Anyone can set their own daily time limit. When a learner has limits from themselves and a guardian, the stricter one applies to daily study sessions.
 - There are no streaks to protect and no random rewards, and we don't profile minors for ads.
@@ -170,7 +172,13 @@ You can download your account's data as a JSON file with "Download my data" on y
 
 ## 13. International transfers
 
-Some of our providers, including those in the United States, may process data outside Brazil. When this happens, we use appropriate contractual, technical, and organizational measures to protect the data according to applicable law.
+Our providers process data outside Brazil, mainly in the United States and in the European Union. We transfer only what each service needs, for as long as you use Zoonk and then for the periods in section 11:
+
+- To provide Zoonk and the AI features you ask for: hosting, files and the AI Gateway (Vercel), our database (Neon), AI models (OpenAI, Anthropic, Google, TypeSafe) and web search (Parallel).
+- To send emails (ZeptoMail) and take payments (Stripe, Apple, Google).
+- To measure and fix Zoonk: analytics (PostHog) and error monitoring (Sentry).
+
+Transfers to the European Union rely on the ANPD's recognition that it protects personal data adequately (Resolução CD/ANPD nº 32/2026). Other transfers rely on the standard contractual clauses approved by the ANPD where the provider has adopted them, or on being necessary to perform our contract with you (LGPD, art. 33, IX). Each provider must protect the data under its own terms, including encryption in transit. Zoonk Tecnologia e Educação Ltda is responsible for these transfers and can be reached at [hello@zoonk.com](mailto:hello@zoonk.com). You can exercise your rights described in section 10 through that address, ask for the clauses that apply to a transfer, and petition the ANPD.
 
 ---
 

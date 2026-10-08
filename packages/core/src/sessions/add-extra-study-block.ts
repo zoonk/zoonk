@@ -1,12 +1,7 @@
 import "server-only";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
 import { getDailyTimeLimitStatus } from "../minors/get-daily-time-limit";
-import {
-  appendExtraBlock,
-  buildExtraLesson,
-  buildExtraPractice,
-  withSessionAppendLock,
-} from "./_utils/extra-blocks";
+import { appendExtraBlock, planExtraBlock, withSessionAppendLock } from "./_utils/extra-blocks";
 import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { readBlockPayload } from "./block-payload";
@@ -53,9 +48,12 @@ export async function addExtraStudyBlock({
         return { reason: extraTime.reason ?? "dailyCap", status: "unavailable" };
       }
 
-      const planned =
-        (await buildExtraPractice({ minutes: extraTime.minutes, session, skillIds, userId })) ??
-        (await buildExtraLesson({ session, userId }));
+      const planned = await planExtraBlock({
+        minutes: extraTime.minutes,
+        session,
+        skillIds,
+        userId,
+      });
 
       if (!planned) {
         return { status: "nothingToPractice" };

@@ -1,6 +1,7 @@
 import "server-only";
 import { type Mistake, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { io } from "next/cache";
 import {
   GRADABLE_ITEM_FORMATS,
   type QuestionView,
@@ -12,6 +13,7 @@ import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { getGoalField, getItemAudienceFilter } from "../library/items/item-field";
+import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { loadExamStructure } from "../sessions/_utils/load-build-inputs";
 import { getSession } from "../users/get-session";
 import { type MistakePracticeInput } from "./contract";
@@ -81,6 +83,7 @@ async function loadDrillMaterial({
 
   const [items, lessons] = await Promise.all([
     prisma.item.findMany({
+      include: ITEM_IMAGE_INCLUDE,
       orderBy: { id: "asc" },
       where: {
         format: { in: [...GRADABLE_ITEM_FORMATS] },
@@ -130,6 +133,11 @@ export async function getMistakePractice(
 
   const timeZone = getAnswerTimeZone({ goal: scope.goal, timeZone: input.timeZone });
 
+  // Which mistakes are from today depends on when the learner opens practice: read at request
+  // time, never in a prerender.
+  await io();
+  const today = getDateInTimeZone({ date: new Date(), timeZone });
+
   const open = await prisma.mistake.findMany({
     orderBy: { createdAt: "asc" },
     take: PRACTICE_POOL,
@@ -146,7 +154,7 @@ export async function getMistakePractice(
       ...mistake,
       createdLocalDate: getDateInTimeZone({ date: mistake.createdAt, timeZone }),
     })),
-    today: getDateInTimeZone({ date: new Date(), timeZone }),
+    today,
   });
 
   const { choices, lessons, seen } = await loadDrillMaterial({

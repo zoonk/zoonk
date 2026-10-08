@@ -18,7 +18,6 @@ const DEFAULT_ANALYSIS_BY_PATH = {
   "/stats/engagement": "active-learners",
   "/stats/growth": "new-signups",
   "/stats/learning": "daily-active-learners",
-  "/stats/modes": "focus-vs-fun",
   "/stats/outcomes": "goals-reached",
 } as const satisfies { [Path in StatsAnalysisPath]: StatsAnalysisViewAt<Path>["id"] };
 

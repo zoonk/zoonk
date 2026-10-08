@@ -3,7 +3,6 @@ export type StatsAnalysisPath =
   | "/stats/engagement"
   | "/stats/growth"
   | "/stats/learning"
-  | "/stats/modes"
   | "/stats/outcomes";
 
 type StatsAnalysisDefinition = {
@@ -123,10 +122,6 @@ export const STATS_ANALYSIS_GROUPS = [
         usesPeriod: false,
       },
     ],
-  },
-  {
-    label: "Modes",
-    views: [{ id: "focus-vs-fun", label: "Focus vs Fun", path: "/stats/modes", usesPeriod: true }],
   },
   {
     label: "Content",

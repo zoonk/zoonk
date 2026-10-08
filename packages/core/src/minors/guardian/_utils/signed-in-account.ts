@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getAgeGroup } from "@zoonk/utils/age";
+import { io } from "next/cache";
 import { getSession } from "../../../users/get-session";
 
 /**
@@ -22,6 +23,9 @@ export async function getSignedInAccount() {
   if (!user) {
     return null;
   }
+
+  // The age group reads today's date; guardian pages render per request, never prefetched.
+  await io();
 
   return {
     ageGroup: getAgeGroup({

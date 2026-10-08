@@ -28,6 +28,7 @@ describe(createSourceUploadToken, () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.useRealTimers();
   });
 
   it("requires a signed-in learner", async () => {
@@ -71,14 +72,39 @@ describe(createSourceUploadToken, () => {
     expect(issueSignedToken).not.toHaveBeenCalled();
   });
 
-  it("refuses once today's uploads are used up", async () => {
-    const user = await userFixture();
-    await usageRecordsFixture({ count: 3, kind: "upload", userId: user.id });
-    mockSession(user.id);
+  it("refuses once today's or this month's uploads are used up, saying which", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-15T12:00:00Z"));
+
+    const [today, thisMonth] = await Promise.all([userFixture(), userFixture()]);
+    const earlierThisMonth = new Date("2026-10-02T12:00:00Z");
+
+    await Promise.all([
+      usageRecordsFixture({ count: 3, kind: "upload", userId: today.id }),
+      usageRecordsFixture({
+        count: 10,
+        createdAt: earlierThisMonth,
+        kind: "upload",
+        userId: thisMonth.id,
+      }),
+    ]);
+
+    mockSession(today.id);
 
     await expect(
-      createSourceUploadToken({ pathname: `sources/${user.id}/edital.pdf` }),
-    ).resolves.toStrictEqual({ limit: 3, status: "limitReached" });
+      createSourceUploadToken({ pathname: `sources/${today.id}/edital.pdf` }),
+    ).resolves.toStrictEqual({
+      limit: { limit: 3, period: "day", resource: "upload", tier: "free" },
+      status: "limitReached",
+    });
+
+    mockSession(thisMonth.id);
+
+    await expect(
+      createSourceUploadToken({ pathname: `sources/${thisMonth.id}/edital.pdf` }),
+    ).resolves.toMatchObject({ limit: { period: "month", tier: "free" }, status: "limitReached" });
+
+    expect(issueSignedToken).not.toHaveBeenCalled();
   });
 
   it("doesn't count yesterday's uploads or other usage", async () => {
@@ -104,7 +130,10 @@ describe(createSourceUploadToken, () => {
 
     await expect(
       createSourceUploadToken({ pathname: `sources/${guest.id}/edital.pdf` }),
-    ).resolves.toStrictEqual({ limit: 0, status: "limitReached" });
+    ).resolves.toStrictEqual({
+      limit: { limit: 0, period: "total", resource: "upload", tier: "guest" },
+      status: "limitReached",
+    });
   });
 });
 

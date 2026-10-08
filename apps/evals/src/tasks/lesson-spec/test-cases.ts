@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
 import { activityTemplates } from "@zoonk/core/library/activities/templates";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
+import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
 
 /** What workflows pass: every template in the catalog. */
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = activityTemplates.map(
@@ -27,7 +28,7 @@ function outlined({ after = [], before = [] }: { after?: string[]; before?: stri
 }
 
 /** Lessons of goals built from official sources come first, so a small run checks them. */
-export const TEST_CASES: TestCase<never, LessonSpecParams>[] = [
+export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
       - MUST be in US English, with US examples (dollars, US names and cities)
@@ -377,4 +378,125 @@ export const TEST_CASES: TestCase<never, LessonSpecParams>[] = [
       skills: ["Calcular aumentos e descontos sucessivos"],
     },
   },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The lesson is shared by learners preparing for different concursos and exams: no screen names a particular exam, examining board, notice or notice item ("Câmara dos Deputados", "Cebraspe", "subitem", "edital"); checks may follow a concurso's style without naming one
+      - Examples and situations are real uses of written Portuguese for adults at work (an email, an official letter, a report, a news text), never a padaria, a feira or a child's scene
+      - People and towns come from CAST, each used once
+      - Teaches subject–verb agreement in the cases concurso items test (a postponed subject, collective nouns, "haver" meaning "existir"), with a check where the learner judges a sentence right or wrong
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-concordancia-shared-intermediate",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: ["Concordância nominal"],
+        before: ["Sujeito e predicado"],
+      }),
+      chapterTitle: "Concordância",
+      courseTitle: "Língua Portuguesa",
+      language: "pt",
+      lessonCanDo: "Julgar a concordância verbal em frases com sujeito posposto",
+      lessonDescription:
+        "Reconheça quando o verbo concorda com um sujeito que vem depois dele, com nomes coletivos e com o verbo haver no sentido de existir.",
+      lessonTitle: "Concordância verbal em casos difíceis",
+      level: "intermediate",
+      skills: ["Julgar a concordância verbal", "Aplicar a concordância do verbo haver"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+      - A UX lesson for people who work or will work in product teams: its situations happen in a product team, an app or a website and its users, never at a bakery, a market or a bus stop
+      - Plans one "Spot the AI's mistake" activity (findError) whose brief says which step the mistake is in: an early or middle step, so later steps build on it; never the final "So…" step
+      - Checks ask something new each time; no check repeats an earlier one with other names
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-ux-goals-shared-findError",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: ["Product metrics tied to tasks"],
+        before: ["People, tasks and context"],
+      }),
+      chapterTitle: "UX goals and outcomes",
+      courseTitle: "UX Design",
+      language: "en",
+      lessonCanDo: "Write a UX goal that names the change without naming a solution",
+      lessonDescription:
+        "State what should change in people's experience before choosing a design, and tell a goal from a solution in disguise.",
+      lessonTitle: "Writing UX goals",
+      level: "beginner",
+      skills: ["Write a UX goal without a solution", "Tell a UX goal from a proposed solution"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Written for candidates of the exam in EXAMS (law students and graduates): no screen explains what the OAB, the Constitution, a lawyer or the Estatuto is; the briefs plan the finalidades as the statute states them, telling the institutional ones (defend the Constitution, the legal order, human rights, social justice, the good application of laws and the quick administration of justice) from the corporate ones (representation, defense, selection and discipline of lawyers, exclusively)
+      - Briefs name the provision each rule comes from (art. 44, I and II, of Lei 8.906/1994, the Estatuto da Advocacia e da OAB) and nothing contradicts it
+      - Checks and the application are planned like that exam's multiple-choice questions on the topic: a case or a statement about the OAB's finalidades and wrong answers that are confusions candidates make (an institutional finalidade taken as corporate, an exclusive one shared with other bodies, the OAB as an ordinary professional council), never an option no candidate would pick
+      - No screen names the exam, its board or its notice (no "OAB 1ª fase", "FGV", "Exame de Ordem", "edital"); the OAB itself may be named, since the course is about it
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-finalidades-oab-exam-prep",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({ after: ["Órgãos da OAB", "Natureza jurídica da OAB"] }),
+      chapterTitle: "Estrutura e competências da OAB",
+      courseTitle:
+        "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB",
+      exams: [
+        {
+          name: "OAB Exame de Ordem Unificado, 1ª fase",
+          style:
+            "multipleChoice (4 options): Questões de múltipla escolha com 4 opções (A, B, C e D) e uma única resposta correta.",
+        },
+      ],
+      language: "pt",
+      lessonCanDo: "Distinguir as finalidades institucionais das corporativas da OAB",
+      lessonDescription:
+        "As finalidades que o Estatuto dá à OAB, na defesa da ordem jurídica e na representação dos advogados.",
+      lessonTitle: "Finalidades da OAB",
+      level: "beginner",
+      skills: ["Identificar as finalidades da OAB"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese (instructions, briefs and explanations), with the English texts the learner reads in English
+      - Written for candidates of the exam in EXAMS, who read English texts at B1 to B2: the briefs plan short authentic-style excerpts (a news report, an institutional statement, an opinion piece, a report on public policy) of several sentences, never one-line everyday sentences ("The bus is full," said Camila) or a padaria, a bus or a museum
+      - The checks ask what such an exam asks about attribution: whose claim a statement is (the author's or a quoted source's), whether the author endorses or only reports it, reporting verbs that signal stance (claim, argue, acknowledge, deny), and at least one check judges a statement about the text as right or wrong
+      - Tempting wrong answers are real reading mistakes (taking a quoted claim as the author's view, missing a hedge), never options no candidate would pick
+      - No screen names the exam, its board or its notice (no "Câmara dos Deputados", "Cebraspe", "edital")
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-citacoes-ingles-exam-prep",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({ after: ["Afirmação atribuída e relato do autor"] }),
+      chapterTitle: "Atribuição de informações em textos ingleses",
+      courseTitle: "Língua inglesa",
+      exams: [
+        {
+          name: "Concurso Câmara dos Deputados, Analista Legislativo - Registro e Redação",
+          style:
+            "trueFalse: Itens julgados CERTO ou ERRADO. essay: Duas questões discursivas sobre conhecimentos específicos, com até 20 linhas cada.",
+        },
+      ],
+      language: "pt",
+      lessonCanDo: "Identificar quem disse uma frase citada em inglês",
+      lessonDescription:
+        "Como as aspas e os verbos de fala mostram quem disse cada frase de um texto em inglês.",
+      lessonTitle: "Citações diretas e autoria",
+      level: "intermediate",
+      skills: ["Identificar quem disse uma citação direta"],
+    },
+  },
+  ...VISUAL_TEST_CASES,
 ];

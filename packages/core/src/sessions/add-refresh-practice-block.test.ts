@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -7,6 +8,7 @@ import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { SESSION_NOW, daysAgo } from "./_test-utils/session-goal";
 import { addRefreshPracticeBlock } from "./add-refresh-practice-block";
 import { readBlockPayload } from "./block-payload";
+import { getTodayStudySession } from "./get-today-study-session";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
@@ -122,11 +124,52 @@ describe(addRefreshPracticeBlock, () => {
     });
   });
 
-  it("has nothing to do when nothing is fading", async () => {
+  it("also practices a skill due later today, so Content's review count always has something to open", async () => {
+    const { goal, skills, user } = await setup();
+    const input = { timeZone: "UTC" };
+    const dueLater = skills[2]?.id ?? "";
+
+    // Nothing fading; one fresh skill comes due this evening (still today in UTC).
+    await prisma.learnerSkill.updateMany({
+      data: { due: daysAgo(-10), lastReviewedAt: SESSION_NOW, stability: 30 },
+      where: { userId: user.id },
+    });
+
+    await prisma.learnerSkill.updateMany({
+      data: { due: new Date(SESSION_NOW.getTime() + 6 * 3_600_000) },
+      where: { skillId: dueLater, userId: user.id },
+    });
+
+    // Today's session is done, so the practice can't be today's reviews block.
+    const today = await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
+    const sessionId = today.status === "ready" ? today.session.id : "";
+
+    // A question today's session hasn't asked yet, so the bonus practice has one to ask.
+    await Promise.all([
+      prisma.studySessionBlock.updateMany({ data: { status: "completed" }, where: { sessionId } }),
+      itemFixture({ content: choiceItemContent(), skillId: dueLater }),
+    ]);
+
+    const result = await addRefreshPracticeBlock({ goalId: goal.id, input });
+
+    expect(result).toMatchObject({ block: { extra: true, kind: "practice" }, status: "ready" });
+
+    const blockId = result.status === "ready" ? result.block.id : "";
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
+
+    const items = await prisma.item.findMany({
+      where: { id: { in: readBlockPayload(block).itemIds } },
+    });
+
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every((item) => item.skillId === dueLater)).toBe(true);
+  });
+
+  it("has nothing to do when nothing is fading or due today", async () => {
     const { goal, user } = await setup();
 
     await prisma.learnerSkill.updateMany({
-      data: { lastReviewedAt: SESSION_NOW, stability: 30 },
+      data: { due: daysAgo(-10), lastReviewedAt: SESSION_NOW, stability: 30 },
       where: { userId: user.id },
     });
 
