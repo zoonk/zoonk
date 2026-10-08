@@ -1,8 +1,8 @@
 "use client";
 
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { type GenerationErrorKind, type GenerationStatus } from "@/lib/workflow/generation-store";
 import { getString } from "@zoonk/utils/json";
-import { API_URL } from "@zoonk/utils/url";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { readCoursePromptGeneration } from "./read-course-prompt-generation";
 
@@ -15,9 +15,10 @@ type ReadyTarget = Extract<PromptGeneration, { status: "redirect" }>["target"];
 
 /** A terminal run can have handed ownership to another run before that winner failed. */
 async function readTerminalGenerationId({ runId, signal }: { runId: string; signal: AbortSignal }) {
-  const response = await fetch(`${API_URL}/v1/generations/${encodeURIComponent(runId)}`, {
-    signal,
-  });
+  const response = await fetch(
+    `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}`,
+    { signal },
+  );
 
   if (!response.ok) {
     throw new Error("Could not read generation status");

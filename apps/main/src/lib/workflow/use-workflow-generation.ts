@@ -1,11 +1,11 @@
 "use client";
 
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { GENERATION_VISITOR_ID_HEADER } from "@zoonk/core/generation-quotas/contract";
 import { getGenerationLimit } from "@zoonk/core/generation-quotas/parse-limit";
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
-import { API_URL } from "@zoonk/utils/url";
 import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
 import { getGenerationEventsUrl } from "./_utils/generation-events-url";
 import { getWorkflowAuthHeaders } from "./auth-headers";
@@ -138,7 +138,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   const sseUrl =
     state.status === "streaming" && state.runId
       ? getGenerationEventsUrl({
-          baseUrl: `${API_URL}/v1/generations`,
+          baseUrl: `${getBrowserApiUrl()}/v1/generations`,
           generationId: state.runId,
           reconnectCount: state.reconnectCount,
         })
@@ -171,7 +171,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
       }
 
       const response = await fetch(
-        `${API_URL}/v1/generations`,
+        `${getBrowserApiUrl()}/v1/generations`,
         getGenerationTriggerRequest({ authHeaders, target }),
       );
 

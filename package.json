@@ -2,14 +2,19 @@
   "name": "zoonk",
   "private": true,
   "scripts": {
-    "auth:generate": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 pnpx auth@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
     "android:build": "make -C apps/android build",
     "android:check": "pnpm --filter android i18n:lint && pnpm --filter android test && make -C apps/android check",
     "android:phone": "node apps/android/scripts/run-emulator.mts phone",
     "android:tablet": "node apps/android/scripts/run-emulator.mts tablet",
+    "auth:generate": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 pnpx auth@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
     "build": "turbo build",
     "build:e2e": "turbo build:e2e",
     "db:generate": "turbo db:generate",
+    "deploy": "node scripts/deploy/run.mts",
+    "deploy:ci-required": "node scripts/deploy/ci-required.mts",
+    "deploy:cleanup": "node scripts/deploy/cleanup.mts",
+    "deploy:database": "node scripts/deploy/database.mts",
+    "deploy:validate-release": "node scripts/deploy/validate-release.mts",
     "dev": "node scripts/dev/start.mts",
     "dev:direct": "node scripts/dev/start.mts --direct",
     "dev:lan": "node scripts/dev/start.mts --lan",
@@ -33,6 +38,7 @@
     "stripe:listen": "node scripts/dev/stripe-listen.mts",
     "stripe:listen:lan": "node scripts/dev/stripe-listen.mts --lan",
     "test": "turbo test",
+    "test:deploy": "vitest run",
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck && tsc --project scripts/tsconfig.json",
     "worktree:setup": "node scripts/worktree/setup.mts"
@@ -43,12 +49,15 @@
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "knip": "6.38.0",
+    "neonctl": "2.27.0",
     "oxfmt": "0.70.0",
     "oxlint": "1.85.0",
     "oxlint-tsgolint": "7.0.2003",
     "portless": "0.15.6",
     "turbo": "2.11.4",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
   },
   "engines": {
     "node": "^24"

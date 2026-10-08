@@ -34,7 +34,7 @@
     "//#quality": { "dependsOn": ["//#lint", "//#format"] },
     "//#quality:fix": { "dependsOn": ["//#lint:fix", "//#format:fix"] },
     "build": {
-      "dependsOn": ["db:generate", "db:deploy", "^build"],
+      "dependsOn": ["db:generate", "^build"],
       "outputs": [
         ".next/**",
         "!.next/cache/**",

@@ -1,6 +1,7 @@
 "use server";
 
 import { assertAdmin } from "@/lib/admin-guard";
+import { getApiDeploymentHeaders } from "@zoonk/core/security/api-deployment";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { API_URL } from "@zoonk/utils/url";
@@ -31,11 +32,12 @@ export async function retryLessonGenerationAction(
     return { error: "Invalid lesson.", status: "error", submissionId };
   }
 
-  const { data: response, error } = await safeAsync(() =>
+  const { data: response, error } = await safeAsync(async () =>
     fetch(`${API_URL}/v1/generations`, {
       body: JSON.stringify({ target: { id: lessonId, type: "lesson" } }),
       cache: "no-store",
       headers: {
+        ...(await getApiDeploymentHeaders()),
         Authorization: `Bearer ${session.session.token}`,
         "Content-Type": "application/json",
         Origin: API_ORIGIN,

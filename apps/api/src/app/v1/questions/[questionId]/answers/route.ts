@@ -145,7 +145,7 @@ async function createLessonQuestionAnswer(
 
   return createUIMessageStreamResponse({
     consumeSseStream: ({ stream }) => after(consumeStream({ stream })),
-    headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },
+    headers: { "Cache-Control": "no-store, no-transform", "X-Content-Type-Options": "nosniff" },
     stream: uiMessageStream,
   });
 }
