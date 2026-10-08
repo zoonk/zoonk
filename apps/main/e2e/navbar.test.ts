@@ -1,116 +1,156 @@
-import { expect, test } from "./fixtures";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { type Page, expect, test } from "./fixtures";
+import { openAsGuest } from "./guest-session";
 
-test.describe("Navbar - Unauthenticated", () => {
-  test("Home link shows start goals on the home page", async ({ page }) => {
+/** Opens the user menu, again until the client has hydrated its trigger. */
+async function openUserMenu(page: Page) {
+  await expect(async () => {
+    await page.getByRole("button", { name: /user menu/iu }).click();
+    await expect(page.getByRole("menu")).toBeVisible({ timeout: 1000 });
+  }).toPass();
+
+  return page.getByRole("menu").getByRole("menuitem");
+}
+
+test.describe("Catalog bar - Visitor", () => {
+  test("is a section's bar, without a logo: the way home and a way in", async ({ page }) => {
     await page.goto("/courses");
     await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
 
-    await page.getByRole("navigation").getByRole("link", { name: /home/iu }).click();
+    const bar = page.getByRole("banner");
 
-    await expect(page).toHaveURL(/\/$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
+    // The logo is for marketing pages and login; the app's goal, tabs and account stay out.
+    await expect(bar.getByRole("link", { name: "Zoonk home page" })).toHaveCount(0);
+    await expect(bar.getByRole("button", { name: /current goal/iu })).toHaveCount(0);
+    await expect(bar.getByRole("button", { name: /user menu/iu })).toHaveCount(0);
+    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+
+    // The page names itself, so the bar only leads home (the home page for a visitor), and a
+    // visitor's way in is in plain sight.
+    await expect(bar.getByRole("link", { exact: true, name: "Home" })).toHaveAttribute("href", "/");
+    await expect(bar.getByRole("link", { exact: true, name: "Back" })).toHaveCount(0);
+    await expect(bar).not.toContainText("Courses");
+    await expect(bar.getByRole("link", { name: "Log in" })).toHaveAttribute("href", "/login");
   });
 
-  test("New course link navigates to start page", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-
-    await page
-      .getByRole("navigation")
-      .getByRole("link", { exact: true, name: "New course" })
-      .click();
-
-    await expect(page).toHaveURL(/\/start$/u);
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-  });
-
-  test("Courses link navigates to courses page", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-
-    await page.getByRole("navigation").getByRole("link", { exact: true, name: "Courses" }).click();
-
-    await expect(page).toHaveURL(/\/courses$/u);
-    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
-  });
-
-  test("Courses link is active on courses page", async ({ page }) => {
+  test("leads a learner home to Today", async ({ noProgressUser, userWithoutProgress: page }) => {
+    const goal = await goalFixture({ userId: noProgressUser.id });
+    await planFixture({ goalId: goal.id });
     await page.goto("/courses");
 
-    const coursesLink = page
-      .getByRole("navigation")
-      .getByRole("link", { exact: true, name: "Courses" });
-
-    await expect(coursesLink).toHaveAttribute("aria-current", "page");
-  });
-
-  test("New course link is active on start page", async ({ page }) => {
-    await page.goto("/start");
-
-    const learnLink = page
-      .getByRole("navigation")
-      .getByRole("link", { exact: true, name: "New course" });
-
-    await expect(learnLink).toHaveAttribute("aria-current", "page");
+    const home = page.getByRole("banner").getByRole("link", { exact: true, name: "Home" });
+    await expect(home).toHaveAttribute("href", "/today");
+    await home.click();
+    await expect(page).toHaveURL(/\/today$/u);
   });
 });
 
-test.describe("Navbar - Authenticated", () => {
-  test("Home link is active on home page", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
+test.describe("User menu - Account", () => {
+  test("says whose account it is and holds search, statistics, the catalog, settings and logout; settings open on their hub and lead back", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await goalFixture({ userId: noProgressUser.id });
+    await planFixture({ goalId: goal.id });
+    await page.goto("/journey");
 
-    const homeLink = authenticatedPage
-      .getByRole("navigation")
-      .getByRole("link", { name: /home/iu });
+    const items = await openUserMenu(page);
 
-    await expect(homeLink).toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("menu")).toContainText(noProgressUser.email);
+
+    await expect(items).toHaveText([
+      /^Search/u,
+      /^Statistics/u,
+      "Explore courses",
+      "Settings",
+      "Help",
+      "Logout",
+    ]);
+
+    await page.getByRole("menuitem", { name: "Settings" }).click();
+    await expect(page).toHaveURL(/\/settings$/u);
+    // On a wide screen the hub's pages are in the sidebar, the profile beside them.
+    await expect(page.getByRole("heading", { level: 1, name: "Profile" })).toBeVisible();
+
+    // Settings replace the app's bar: no tabs, no goal, no account.
+    await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /current goal/iu })).toHaveCount(0);
+
+    // The hub lists the settings pages; each page keeps them beside it on a wide screen.
+    const hub = page.getByRole("main");
+    await hub.getByRole("link", { name: /profile/iu }).click();
+    await expect(page.getByRole("heading", { level: 1, name: /profile/iu })).toBeVisible();
+
+    const settings = page.getByRole("navigation", { name: "Settings" });
+    await settings.getByRole("link", { exact: true, name: "Help" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Help" })).toBeVisible();
+
+    // A settings page goes back to the hub, which leaves the section for the page the learner
+    // left for it.
+    await page.getByRole("banner").getByRole("link", { name: "Back to Settings" }).click();
+    await expect(page).toHaveURL(/\/settings$/u);
+    await page.getByRole("banner").getByRole("link", { exact: true, name: "Back" }).click();
+    await expect(page).toHaveURL(/\/journey$/u);
   });
 
-  test("My courses menu item navigates to my courses page", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-    await authenticatedPage.waitForLoadState("networkidle");
+  test("in the learning tabs, Search opens the palette the top bar has no button for", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const goal = await goalFixture({ userId: noProgressUser.id });
+    await planFixture({ goalId: goal.id });
+    await page.goto("/today");
 
-    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
+    const items = await openUserMenu(page);
 
-    await authenticatedPage.getByRole("menuitem", { name: /my courses/iu }).click();
+    await expect(items).toHaveText([
+      /^Search/u,
+      /^Statistics/u,
+      "Explore courses",
+      "Settings",
+      "Help",
+      "Logout",
+    ]);
 
-    await expect(authenticatedPage.getByRole("heading", { name: /my courses/iu })).toBeVisible();
+    await page.getByRole("menuitem", { name: "Search" }).click();
+
+    const palette = page.getByRole("dialog", { name: "Search" });
+    await expect(palette.getByRole("combobox", { name: "Search" })).toBeFocused();
+    await expect(palette.getByRole("group", { name: "Pages" })).toBeVisible();
   });
 
-  test("Subscription menu item navigates to subscription page", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-    await authenticatedPage.waitForLoadState("networkidle");
-
-    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
-
-    await authenticatedPage.getByRole("menuitem", { name: /subscription/iu }).click();
-
-    await expect(authenticatedPage).toHaveURL(/\/subscription$/u);
+  test("the old My courses page opens Today, which starts a goal for a learner without one", async ({
+    userWithoutProgress: page,
+  }) => {
+    await page.goto("/my");
+    await expect(page).toHaveURL(/\/start$/u);
   });
+});
 
-  test("Profile menu item navigates to profile page", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-    await authenticatedPage.waitForLoadState("networkidle");
+test.describe("User menu - Guest", () => {
+  test("a guest's menu offers an account instead of signing out", async ({ browser }) => {
+    const { context, page } = await openAsGuest(browser);
+    await page.goto("/buddy");
 
-    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
+    // A guest has no name yet ("Anonymous" to auth), so the avatar shows no initial.
+    await expect(page.getByRole("button", { name: /user menu/iu })).toHaveText("");
 
-    await authenticatedPage.getByRole("menuitem", { name: /profile/iu }).click();
+    const items = await openUserMenu(page);
 
-    await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /profile/iu }),
-    ).toBeVisible();
-  });
+    await expect(items).toHaveText([
+      /^Search/u,
+      /^Statistics/u,
+      "Explore courses",
+      "Settings",
+      "Help",
+      "Create an account",
+    ]);
 
-  test("Support menu item navigates to support page", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/");
-    await authenticatedPage.waitForLoadState("networkidle");
+    await expect(page.getByRole("menuitem", { name: "Create an account" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
 
-    await authenticatedPage.getByRole("button", { name: /user menu/iu }).click();
-
-    await authenticatedPage.getByRole("menuitem", { name: /support/iu }).click();
-
-    await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /feedback & support/iu }),
-    ).toBeVisible();
+    await context.close();
   });
 });

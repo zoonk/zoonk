@@ -9,7 +9,7 @@ struct ChapterView: View {
 
   var body: some View {
     Group {
-      switch catalog.chapterState(for: chapter.id) {
+      switch catalog.chapterState(for: chapter.key) {
       case .idle, .loading:
         ChapterLoadingView(chapter: chapter)
       case .loaded(let detail):
@@ -24,20 +24,20 @@ struct ChapterView: View {
           searchText: $searchText)
       case .failed(let failure):
         CatalogFailureRecoveryView(context: .chapter, failure: failure) {
-          await catalog.loadChapter(id: chapter.id, force: true)
+          await catalog.loadChapter(chapter.key, force: true)
         }
       }
     }
     .background(Color(uiColor: .systemBackground))
     .task(
       id: CatalogDetailTaskID(
-        resourceID: chapter.id,
+        resource: chapter.key,
         session: session.authenticatedSession)
     ) {
-      await catalog.loadChapterIfNeeded(id: chapter.id)
+      await catalog.loadChapterIfNeeded(chapter.key)
     }
     .refreshable {
-      await catalog.loadChapter(id: chapter.id, force: true)
+      await catalog.loadChapter(chapter.key, force: true)
     }
   }
 }
@@ -72,7 +72,9 @@ private struct ChapterDetailContent: View {
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        defaultEmail: session.account?.user.email)
+        context: FeedbackContext(contentID: chapter.id, contentKind: .chapter),
+        defaultEmail: session.account?.user.email,
+        token: session.authenticatedSession?.bearerToken)
     }
   }
 
@@ -88,6 +90,8 @@ private struct ChapterDetailContent: View {
 private struct ChapterDetailList: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isSearching) private var isSearching
+  // Read outside the List, which doesn't pass the page's refresh action to its rows.
+  @Environment(\.refresh) private var refresh
 
   let chapter: ChapterReference
   let detail: ChapterDetail
@@ -120,10 +124,9 @@ private struct ChapterDetailList: View {
             ) {
               CatalogNumberedRow(
                 description: lesson.displayDescription(),
-                imageURL: lesson.imageURL,
+                imageURL: nil,
                 number: lesson.position + 1,
-                symbolTint: lesson.kind.symbolTint,
-                systemImage: lesson.kind.systemImage,
+                systemImage: "book.pages",
                 title: lesson.displayTitle()
               ) {
                 if let progress = catalogLessonProgress(
@@ -134,7 +137,6 @@ private struct ChapterDetailList: View {
                 }
               }
             }
-            .accessibilityValue(Text(lesson.kind.localizedTitle))
             .listRowInsets(
               EdgeInsets(
                 top: CatalogDetailLayout.curriculumRowVerticalInset(
@@ -213,6 +215,13 @@ private struct ChapterDetailList: View {
   private var emptyLessonsView: some View {
     if catalogText(searchText) != nil {
       ContentUnavailableView.search(text: searchText)
+    } else if detail.chapter?.generationStatus.isBeingWritten == true {
+      CatalogGenerationInProgressView(
+        checkAgain: refresh,
+        title: Text(
+          "Lessons are being written",
+          tableName: "Courses",
+          comment: "Title while a chapter's lessons are still being written."))
     } else {
       ContentUnavailableView {
         Label {

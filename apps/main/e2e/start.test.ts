@@ -1,214 +1,31 @@
-import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
-import { type Page, type Route } from "@zoonk/e2e/fixtures";
-import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { normalizeString } from "@zoonk/utils/string";
-import { mockFeedbackSubmission } from "./feedback";
-import { expect, test } from "./fixtures";
-import {
-  getGenerationTriggerRequests,
-  isGenerationEvents,
-  isGenerationTrigger,
-  routeGenerationApis,
-} from "./generation-api";
+import { type Page, expect, test } from "./fixtures";
 
-const TEST_RUN_ID = "test-run-id-start-language";
+/** The old start pages without a goal in them: each opens onboarding with an empty goal box. */
+const EMPTY_START_PATHS = ["/start/learn", "/start/speak", "/start/speak/jv", "/start/exam"];
 
-/**
- * Language selection only needs to prove it enters the generation page. The
- * workflow itself is covered by API tests, so this keeps the browser test from
- * starting real AI generation.
- */
-async function mockCourseGenerationWorkflow(page: Page): Promise<void> {
-  await routeGenerationApis({ handler: handleCourseGenerationRoute, page });
+async function expectEmptyStart(page: Page, path: string) {
+  await page.goto(path);
+
+  await expect(page).toHaveURL(/\/start$/u);
+  await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue("");
 }
 
-/**
- * The generation page starts the course workflow from the browser. Returning a
- * generation ID and an empty SSE stream gives that client enough contract to render
- * without depending on the API app.
- */
-async function handleCourseGenerationRoute(route: Route): Promise<void> {
-  const url = route.request().url();
+test("old start pages open onboarding, with a course prompt's goal filled in its language", async ({
+  page,
+}) => {
+  await page.goto(`/start/learn/${encodeURIComponent("Python 3.12")}`);
 
-  if (isGenerationTrigger({ request: route.request(), targetType: "coursePrompt" })) {
-    await route.fulfill({
-      body: JSON.stringify({ id: TEST_RUN_ID, status: "pending" }),
-      contentType: "application/json",
-      status: 202,
-    });
+  await expect(page).toHaveURL(/\/start\?goal=Python(?:%20|\+)3\.12$/u);
+  await expect(page.getByRole("textbox", { name: "Your goal" })).toHaveValue("Python 3.12");
 
-    return;
+  for (const path of EMPTY_START_PATHS) {
+    // oxlint-disable-next-line no-await-in-loop -- One page visits each old path in turn.
+    await expectEmptyStart(page, path);
   }
 
-  if (isGenerationEvents(url)) {
-    await route.fulfill({ body: "", contentType: "text/event-stream", status: 200 });
-    return;
-  }
+  // Last, so the language it keeps doesn't carry over to the English paths.
+  await page.goto("/pt/start/learn/Fotografia");
 
-  await route.continue();
-}
-
-/**
- * Creates the completed Icelandic destination used to verify the language
- * route resolves an existing course without starting generation.
- */
-async function createCompletedIcelandicCourseFixture() {
-  const uniqueId = randomUUID().slice(0, 8);
-  const organization = await getAiOrganization();
-  const title = `E2E Icelandic ${uniqueId}`;
-
-  const course = await courseFixture({
-    format: "language",
-    generationStatus: "completed",
-    isPublished: true,
-    language: "en",
-    normalizedTitle: normalizeString(title),
-    organizationId: organization.id,
-    slug: `e2e-icelandic-${uniqueId}`,
-    targetLanguage: "is",
-    title,
-  });
-
-  await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: organization.id,
-    position: 0,
-    title: `E2E Icelandic Chapter ${uniqueId}`,
-  });
-
-  return course;
-}
-
-test.describe("Start page", () => {
-  test("shows goal cards and opens the learn path", async ({ page }) => {
-    await page.goto("/start");
-
-    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
-    await expect(page.getByRole("link", { name: /speak a language/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /learn something/iu })).toBeVisible();
-    await expect(page.getByRole("link", { name: /pass an exam/iu })).toBeVisible();
-    await expect(page.getByText(/coming soon/iu)).toBeVisible();
-
-    await page.getByRole("link", { name: /learn something/iu }).click();
-
-    await expect(page).toHaveURL(/\/start\/learn$/u);
-    await expect(page.getByRole("heading", { name: /what do you want to learn/iu })).toBeVisible();
-  });
-});
-
-test.describe("Start language path", () => {
-  test("filters languages and creates a controlled language request", async ({
-    authenticatedPage,
-  }) => {
-    await mockCourseGenerationWorkflow(authenticatedPage);
-    await authenticatedPage.goto("/start/speak");
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /what language do you want to learn/iu }),
-    ).toBeVisible();
-
-    await expect(authenticatedPage.getByRole("button", { name: "Português" })).not.toBeVisible();
-    await expect(authenticatedPage.getByRole("link", { name: /^english/iu })).not.toBeVisible();
-
-    await authenticatedPage.getByRole("searchbox", { name: /search languages/iu }).fill("Javanese");
-
-    await expect(authenticatedPage.getByRole("link", { name: /javanese/iu })).toBeVisible();
-    await expect(authenticatedPage.getByRole("link", { name: /^english/iu })).not.toBeVisible();
-
-    const javaneseLink = authenticatedPage.getByRole("link", { name: /javanese/iu });
-
-    await expect(javaneseLink).toHaveAttribute("href", "/start/speak/jv");
-    await expect(javaneseLink).toHaveAttribute("rel", "nofollow");
-
-    await javaneseLink.click();
-
-    await expect(authenticatedPage).toHaveURL(/\/generate\/course\/[-a-f0-9]+$/u);
-
-    const requestId = authenticatedPage.url().split("/").at(-1);
-
-    if (!requestId) {
-      throw new Error("Missing generated request id in URL");
-    }
-
-    const request = await prisma.coursePrompt.findUnique({ where: { id: requestId } });
-
-    expect(request?.targetLanguage).toBe("jv");
-  });
-
-  test("requires login before creating a missing language course", async ({ page }) => {
-    const normalizedPrompt = normalizeString("Learn Amharic");
-    const promptWhere = { languageNormalizedPrompt: { language: "en", normalizedPrompt } };
-    const promptBeforeVisit = await prisma.coursePrompt.findUnique({ where: promptWhere });
-
-    await page.goto("/start/speak/am");
-
-    await expect(page.getByRole("heading", { name: "Log in to create with AI" })).toBeVisible();
-
-    await expect(page.getByRole("link", { name: "Explore courses" })).toHaveAttribute(
-      "href",
-      "/courses",
-    );
-
-    await expect(page.getByRole("link", { name: "Log in" })).toHaveAttribute(
-      "href",
-      "/login?next=%2Fstart%2Fspeak%2Fam",
-    );
-
-    await expect(
-      getGenerationTriggerRequests({ page, targetType: "coursePrompt" }),
-    ).resolves.toHaveLength(0);
-
-    await expect(prisma.coursePrompt.findUnique({ where: promptWhere })).resolves.toStrictEqual(
-      promptBeforeVisit,
-    );
-  });
-
-  test("does not generate a course for the current app language", async ({ page }) => {
-    await mockCourseGenerationWorkflow(page);
-
-    await page.goto("/start/speak/en");
-
-    await expect(page).toHaveURL(/\/start\/speak$/u);
-
-    await expect(
-      page.getByRole("heading", { name: /what language do you want to learn/iu }),
-    ).toBeVisible();
-
-    await expect(page.getByRole("link", { name: /^english/iu })).not.toBeVisible();
-  });
-
-  test("opens an existing completed language course without generation", async ({ page }) => {
-    const course = await createCompletedIcelandicCourseFixture();
-
-    await page.goto("/start/speak/is");
-
-    await expect(page).toHaveURL(new RegExp(`/b/ai/c/${course.slug}$`, "u"));
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
-  });
-});
-
-test.describe("Start exam path", () => {
-  test("submits exam waitlist details to feedback", async ({ page }) => {
-    const feedbackSubmission = await mockFeedbackSubmission(page);
-
-    await page.goto("/start/exam");
-
-    await expect(page.getByRole("heading", { name: /pass an exam/iu })).toBeVisible();
-    await expect(page.getByText(/not available yet/iu)).toBeVisible();
-
-    await page.getByRole("textbox", { name: /email address/iu }).fill("test@example.com");
-    await page.getByRole("textbox", { name: /exam/iu }).fill("CFA Level I");
-    await page.getByRole("button", { name: /notify me/iu }).click();
-
-    await expect(page.getByText(/you're on the list/iu)).toBeVisible();
-
-    await expect(feedbackSubmission.requestBody).resolves.toStrictEqual({
-      email: "test@example.com",
-      message: "Exam waitlist request\n\nExam: CFA Level I",
-    });
-  });
+  await expect(page).toHaveURL(/\/pt\/start\?goal=Fotografia$/u);
+  await expect(page.locator("html")).toHaveAttribute("lang", "pt");
 });

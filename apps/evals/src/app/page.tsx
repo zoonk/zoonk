@@ -35,47 +35,6 @@ export default function Home() {
       <ContainerBody className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Item variant="outline">
           <ItemContent>
-            <ItemTitle>Image Test</ItemTitle>
-            <ItemDescription>Test AI-generated course thumbnails</ItemDescription>
-          </ItemContent>
-
-          <ItemActions>
-            <Link className={buttonVariants({ variant: "outline" })} href="/image-test">
-              Test Images
-            </Link>
-          </ItemActions>
-        </Item>
-
-        <Item variant="outline">
-          <ItemContent>
-            <ItemTitle>Select Image Test</ItemTitle>
-            <ItemDescription>Test AI-generated images for selectImage quiz steps</ItemDescription>
-          </ItemContent>
-
-          <ItemActions>
-            <Link className={buttonVariants({ variant: "outline" })} href="/select-image-test">
-              Test Images
-            </Link>
-          </ItemActions>
-        </Item>
-
-        <Item variant="outline">
-          <ItemContent>
-            <ItemTitle>Step Image Test</ItemTitle>
-            <ItemDescription>
-              Test AI-generated images for lesson step illustrations
-            </ItemDescription>
-          </ItemContent>
-
-          <ItemActions>
-            <Link className={buttonVariants({ variant: "outline" })} href="/step-image-test">
-              Test Images
-            </Link>
-          </ItemActions>
-        </Item>
-
-        <Item variant="outline">
-          <ItemContent>
             <ItemTitle>Audio Test</ItemTitle>
             <ItemDescription>Test AI-generated audio for words and sentences</ItemDescription>
           </ItemContent>

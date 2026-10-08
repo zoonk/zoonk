@@ -9,12 +9,16 @@
     "dev": "node ../../scripts/dev/run-service.mts evals",
     "dev:app": "next dev",
     "dev:direct": "next dev -p 3201",
+    "eval:languages": "tsx --conditions=react-server --import ./scripts/register-markdown.mts scripts/check-language-coverage.ts",
+    "eval:run": "tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts",
+    "sample:production": "tsx scripts/sample-production-inputs.ts",
     "start": "next start -p 3201",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
+    "@zoonk/db": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:",
@@ -30,6 +34,7 @@
     "@types/react-dom": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "raw-loader": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:"
   }
 }

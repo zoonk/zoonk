@@ -18,6 +18,7 @@ Run commands from the repository root using `mise x -- pnpm ...` in this environ
 | Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                         |
 
 - In a macOS sandbox, run browser-launching tests with escalated permissions on the first attempt because Chromium needs Mach services. This is an execution permission requirement, not a request to stop implementation for local review.
+- Building `apps/api` (`build`, `build:e2e`) clears the local workflow store at `apps/api/.next/workflow-data`, which a running API dev server from the same checkout uses: its in-flight workflow runs are lost. While one runs, give the build its own store, for example `WORKFLOW_TARGET_WORLD=local WORKFLOW_LOCAL_DATA_DIR=.next-e2e/workflow-data`, and pass the same variables to the E2E run that serves that build.
 
 ## Local development and sign-in
 

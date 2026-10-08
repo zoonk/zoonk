@@ -1,0 +1,182 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "classification": { "expected": "public", "predicted": "public" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "public" },
+        "id": "exam-notice-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "TRIBUNAL DE CONTAS DO DISTRITO FEDERAL (TCDF)\nCONCURSO PÚBLICO PARA O PROVIMENTO DE VAGAS E A FORMAÇÃO DE CADASTRO DE RESERVA NO CARGO DE ANALISTA ADMINISTRATIVO DE CONTROLE EXTERNO\nEDITAL Nº 1 – TCDF/ANACE, DE 8 DE JULHO DE 2026\nO PRESIDENTE DO TRIBUNAL DE CONTAS DO DISTRITO FEDERAL, no uso de suas atribuições legais, torna pública a realização de concurso público...\n1.1 O concurso público será regido por este edital e executado pelo Centro Brasileiro de Pesquisa em Avaliação e Seleção e de Promoção de Eventos (Cebraspe).",
+            "title": "edital_tcdf_2026.pdf",
+            "url": null
+          },
+          "fileName": "edital_tcdf_2026.pdf"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "public", "predicted": "public" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "public" },
+        "id": "law-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "Presidência da República\nCasa Civil\nSecretaria Especial para Assuntos Jurídicos\nLEI Nº 14.790, DE 29 DE DEZEMBRO DE 2023\nDispõe sobre a modalidade lotérica denominada apostas de quota fixa...\nO PRESIDENTE DA REPÚBLICA Faço saber que o Congresso Nacional decreta e eu sanciono a seguinte Lei:",
+            "title": "lei-14790.pdf",
+            "url": null
+          },
+          "fileName": "lei-14790.pdf"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "public", "predicted": "public" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "public" },
+        "id": "past-exam-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "EXAME NACIONAL DO ENSINO MÉDIO\nENEM 2025\n1º DIA\nCADERNO 1 AZUL\nLINGUAGENS, CÓDIGOS E SUAS TECNOLOGIAS E REDAÇÃO\nLEIA ATENTAMENTE AS INSTRUÇÕES SEGUINTES\nMinistério da Educação - Inep",
+            "title": "enem_2025_caderno_azul_dia1.pdf",
+            "url": null
+          },
+          "fileName": "enem_2025_caderno_azul_dia1.pdf"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "private", "predicted": "private" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "private" },
+        "id": "class-slides-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "Bioquímica I – Prof. Ricardo Menezes\nAula 7: Enzimas e cinética de Michaelis-Menten\nTurma 2026/1 – Farmácia\nObjetivos da aula\n- Definir Km e Vmax\n- Interpretar o gráfico de Lineweaver-Burk\nLista de exercícios 3 no Moodle",
+            "title": "Aula 07 - Enzimas.pptx",
+            "url": null
+          },
+          "fileName": "Aula 07 - Enzimas.pptx"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "private", "predicted": "private" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "private" },
+        "id": "school-exam-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "Universidade Federal – Departamento de Bioquímica\nPROVA 2 – BIOQUÍMICA I – 2025/2\nNome: ______________ Matrícula: ________\nQuestão 1 (2,0 pontos) Explique o efeito de um inibidor competitivo sobre Km e Vmax.",
+            "title": "prova_bioquimica_2025.pdf",
+            "url": null
+          },
+          "fileName": "prova_bioquimica_2025.pdf"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "private", "predicted": "private" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "private" },
+        "id": "personal-notes-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "# Resumo DC – art. 5º\n- direitos individuais: vida, liberdade, igualdade\n- cai muito no Cebraspe!! revisar remédios constitucionais\n- dúvida: HC x MS?",
+            "title": "meu resumo direito constitucional.md",
+            "url": null
+          },
+          "fileName": "meu resumo direito constitucional.md"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "private", "predicted": "private" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "private" },
+        "id": "work-document-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "Acme Corp – Internal\nSales Onboarding Playbook Q3 2026\nConfidential – do not distribute\nOwner: Maria Lopes (maria.lopes@acme.example)\n1. Our pricing tiers and discount rules",
+            "title": "Q3 onboarding playbook.docx",
+            "url": null
+          },
+          "fileName": "Q3 onboarding playbook.docx"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "private", "predicted": "private" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "visibility": "private" },
+        "id": "prep-company-book-1",
+        "userInput": {
+          "document": {
+            "file": null,
+            "images": [],
+            "text": "Kaplan SAT Prep Plus 2027\nPractice Test 4\nCopyright © Kaplan, Inc. All rights reserved. No part of this book may be reproduced...",
+            "title": "SAT_Practice_Test_4.pdf",
+            "url": null
+          },
+          "fileName": "SAT_Practice_Test_4.pdf"
+        }
+      }
+    }
+  ],
+  "taskId": "upload-visibility"
+}

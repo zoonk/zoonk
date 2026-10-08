@@ -65,6 +65,35 @@
         }
       }
     },
+    "Advanced" : {
+      "comment" : "Heading above a course's advanced chapters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortgeschrittene"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avanzado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avancé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avançado"
+          }
+        }
+      }
+    },
     "All" : {
       "comment" : "Category option that shows courses from every category.",
       "localizations" : {
@@ -123,35 +152,6 @@
         }
       }
     },
-    "Alphabet" : {
-      "comment" : "Fallback title for an alphabet lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alphabet"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alfabeto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alphabet"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alfabeto"
-          }
-        }
-      }
-    },
     "Arts" : {
       "comment" : "Course category for the arts.",
       "localizations" : {
@@ -177,6 +177,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Artes"
+          }
+        }
+      }
+    },
+    "Beginner" : {
+      "comment" : "Heading above a course's beginner chapters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anfänger"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principiante"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Débutant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciante"
           }
         }
       }
@@ -355,31 +384,89 @@
         }
       }
     },
-    "Check what you understood with a short quiz." : {
-      "comment" : "Fallback description for a quiz lesson.",
+    "Chapters are being written" : {
+      "comment" : "Title while a course's chapters are still being written.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Teste mit einem kurzen Quiz, was du verstanden hast."
+            "value" : "Kapitel werden gerade erstellt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba lo que entendiste con un breve cuestionario."
+            "value" : "Se están preparando los capítulos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérifie ce que tu as compris avec un petit quiz."
+            "value" : "Les chapitres sont en cours de rédaction"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira o que você entendeu com um quiz rápido."
+            "value" : "Estamos escrevendo os capítulos"
+          }
+        }
+      }
+    },
+    "Check again" : {
+      "comment" : "Reloads a course or chapter whose content is still being written.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut prüfen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a comprobar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifier à nouveau"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira novamente"
+          }
+        }
+      }
+    },
+    "Check again in a minute to see them." : {
+      "comment" : "Guidance while a course or chapter is still being written.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfe in einer Minute noch einmal, ob sie da sind."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a comprobarlo dentro de un minuto para verlos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifie à nouveau dans une minute pour les voir."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira novamente daqui a um minuto para ver se já estão prontos."
           }
         }
       }
@@ -906,35 +993,6 @@
         }
       }
     },
-    "Custom lesson" : {
-      "comment" : "Fallback title for a custom lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eigene Lektion"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lección personalizada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leçon personnalisée"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aula personalizada"
-          }
-        }
-      }
-    },
     "Done" : {
       "comment" : "Closes catalog information presented in a popover or sheet.",
       "localizations" : {
@@ -1022,64 +1080,6 @@
         }
       }
     },
-    "Explanation" : {
-      "comment" : "Fallback title for an explanation lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erklärung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Explicación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Explication"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Explicação"
-          }
-        }
-      }
-    },
-    "Follow a guided step-by-step tutorial." : {
-      "comment" : "Fallback description for a tutorial lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Folge einer Anleitung Schritt für Schritt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sigue un tutorial guiado paso a paso."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suis un tutoriel guidé étape par étape."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Siga um tutorial guiado passo a passo."
-          }
-        }
-      }
-    },
     "Geography" : {
       "comment" : "Course category for geography.",
       "localizations" : {
@@ -1109,31 +1109,31 @@
         }
       }
     },
-    "Grammar" : {
-      "comment" : "Fallback title for a grammar lesson.",
+    "Go back" : {
+      "comment" : "Leaves a course or chapter page whose content no longer exists.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grammatik"
+            "value" : "Zurück"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gramática"
+            "value" : "Volver"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grammaire"
+            "value" : "Retour"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gramática"
+            "value" : "Voltar"
           }
         }
       }
@@ -1192,6 +1192,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "História"
+          }
+        }
+      }
+    },
+    "Intermediate" : {
+      "comment" : "Heading above a course's intermediate chapters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mittelstufe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermedio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermédiaire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intermediário"
           }
         }
       }
@@ -1283,66 +1312,8 @@
         }
       }
     },
-    "Learn how letters and sounds work in this writing system." : {
-      "comment" : "Fallback description for an alphabet lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lerne, wie Buchstaben und Laute in diesem Schriftsystem funktionieren."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprende cómo funcionan las letras y los sonidos en este sistema de escritura."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvre comment fonctionnent les lettres et les sons dans ce système d'écriture."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprenda como as letras e os sons funcionam neste sistema de escrita."
-          }
-        }
-      }
-    },
-    "Learn new words and practice using them." : {
-      "comment" : "Fallback description for a vocabulary lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lerne neue Wörter und übe, sie zu verwenden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprende palabras nuevas y practica cómo usarlas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apprends de nouveaux mots et entraîne-toi à les utiliser."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprenda palavras novas e pratique como usar elas."
-          }
-        }
-      }
-    },
     "Lesson" : {
-      "comment" : "Fallback title while the native lesson player is unavailable.",
+      "comment" : "Fallback title for a lesson without a title.\nFallback title while the native lesson player is unavailable.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1428,60 +1399,31 @@
         }
       }
     },
-    "Listen to sentences using words you recently learned." : {
-      "comment" : "Fallback description for a listening lesson.",
+    "Lessons are being written" : {
+      "comment" : "Title while a chapter's lessons are still being written.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Höre Sätze mit Wörtern, die du kürzlich gelernt hast."
+            "value" : "Lektionen werden gerade erstellt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escucha frases con palabras que aprendiste recientemente."
+            "value" : "Se están preparando las lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Écoute des phrases avec des mots que tu viens d'apprendre."
+            "value" : "Les leçons sont en cours de rédaction"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escute frases com palavras que você aprendeu recentemente."
-          }
-        }
-      }
-    },
-    "Listening" : {
-      "comment" : "Fallback title for a listening lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hören"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escucha"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Écoute"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escuta"
+            "value" : "Estamos escrevendo as aulas"
           }
         }
       }
@@ -1921,6 +1863,35 @@
         }
       }
     },
+    "Overview" : {
+      "comment" : "Heading above a course's overview chapters.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überblick"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introducción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperçu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visão geral"
+          }
+        }
+      }
+    },
     "Please return to the catalog and choose another course." : {
       "comment" : "Guidance when a course request returns no content.",
       "localizations" : {
@@ -1979,153 +1950,8 @@
         }
       }
     },
-    "Practice" : {
-      "comment" : "Fallback title for a practice lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Práctica"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entraînement"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prática"
-          }
-        }
-      }
-    },
-    "Practice grammar patterns with examples and exercises." : {
-      "comment" : "Fallback description for a grammar lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übe Grammatikmuster mit Beispielen und Aufgaben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practica estructuras gramaticales con ejemplos y ejercicios."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entraîne-toi aux règles de grammaire avec des exemples et des exercices."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pratique estruturas gramaticais com exemplos e exercícios."
-          }
-        }
-      }
-    },
-    "Quiz" : {
-      "comment" : "Fallback title for a quiz lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quiz"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuestionario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quiz"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quiz"
-          }
-        }
-      }
-    },
-    "Read sentences using words you recently learned." : {
-      "comment" : "Fallback description for a reading lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lies Sätze mit Wörtern, die du kürzlich gelernt hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lee oraciones con palabras que aprendiste hace poco."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lis des phrases avec des mots que tu as appris récemment."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leia frases com palavras que você aprendeu recentemente."
-          }
-        }
-      }
-    },
-    "Reading" : {
-      "comment" : "Fallback title for a reading lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lesen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lectura"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lecture"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leitura"
-          }
-        }
-      }
-    },
     "Review" : {
-      "comment" : "Fallback title for a review lesson.\nReviews a completed course or chapter.",
+      "comment" : "Reviews a completed course or chapter.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2149,35 +1975,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Revisão"
-          }
-        }
-      }
-    },
-    "Review this chapter with practice based on your mistakes." : {
-      "comment" : "Fallback description for a review lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederhole dieses Kapitel mit Übungen zu deinen Fehlern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repasa este capítulo con ejercicios basados en tus errores."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Révise ce chapitre avec des exercices basés sur tes erreurs."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revise este capítulo com atividades baseadas nos seus erros."
           }
         }
       }
@@ -2704,64 +2501,6 @@
         }
       }
     },
-    "Translate words from your previous vocabulary lesson." : {
-      "comment" : "Fallback description for a translation lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übersetze Wörter aus deiner letzten Wortschatzlektion."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Traduce palabras de tu lección de vocabulario anterior."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Traduis des mots de ta leçon de vocabulaire précédente."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Traduza palavras da aula de vocabulário anterior."
-          }
-        }
-      }
-    },
-    "Translation" : {
-      "comment" : "Fallback title for a translation lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übersetzung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Traducción"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Traduction"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tradução"
-          }
-        }
-      }
-    },
     "Try again" : {
       "comment" : "Retries account restoration from My Courses.\nRetries loading My Courses after a failure.\nRetries loading catalog content after a failure.",
       "localizations" : {
@@ -2787,151 +2526,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tentar novamente"
-          }
-        }
-      }
-    },
-    "Tutorial" : {
-      "comment" : "Fallback title for a tutorial lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutorial"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutorial"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutoriel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutorial"
-          }
-        }
-      }
-    },
-    "Understand the key ideas using everyday language and practical examples." : {
-      "comment" : "Fallback description for an explanation lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verstehe die wichtigsten Ideen mit einfacher Sprache und praktischen Beispielen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comprende las ideas clave con un lenguaje sencillo y ejemplos prácticos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comprends les idées clés avec des mots simples et des exemples pratiques."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entenda as ideias principais com uma linguagem simples e exemplos práticos."
-          }
-        }
-      }
-    },
-    "Use what you learned in the previous lesson to solve real-world problems." : {
-      "comment" : "Fallback description for a practice lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nutze das Wissen aus der letzten Lektion, um Probleme aus dem Alltag zu lösen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usa lo que aprendiste en la lección anterior para resolver problemas de la vida real."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utilise ce que tu as appris dans la leçon précédente pour résoudre des problèmes concrets."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use o que você aprendeu na aula anterior para resolver problemas do dia a dia."
-          }
-        }
-      }
-    },
-    "Vocabulary" : {
-      "comment" : "Fallback title for a vocabulary lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wortschatz"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vocabulario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vocabulaire"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vocabulário"
-          }
-        }
-      }
-    },
-    "Work through a lesson created for your goal." : {
-      "comment" : "Fallback description for a custom lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bearbeite eine Lektion, die auf dein Ziel zugeschnitten ist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa una lección creada para tu objetivo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suis une leçon créée pour ton objectif."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Complete uma aula criada para o seu objetivo."
           }
         }
       }

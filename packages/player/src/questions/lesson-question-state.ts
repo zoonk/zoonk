@@ -1,9 +1,16 @@
-import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
-import { type PlayerQuestionContext } from "../player-context";
-import { type LessonQuestionApiError } from "./lesson-question-api";
 import {
+  type LessonQuestionMemoryChange,
+  type LessonQuestionResource,
+  type TutorToolOffer,
+} from "@zoonk/core/lesson-questions/contract";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { type LessonQuestionApiError } from "./lesson-question-api";
+import { type LessonQuestionContext } from "./lesson-question-context";
+import {
+  answerPlanChange,
   isSameDraftContext,
   mergeCreatedQuestion,
+  replacePlanChanges,
   updateQuestionById,
 } from "./lesson-question-state-helpers";
 import {
@@ -11,14 +18,13 @@ import {
   reduceLessonQuestionThreadAction,
 } from "./lesson-question-thread-state";
 
-type LessonQuestionError = "copy" | "create" | "load" | null;
+type LessonQuestionError = "create" | "load" | null;
 type LessonQuestionLoadStatus = "idle" | "loading" | "ready";
 
 export type LessonQuestionState = {
   activeQuestionId: string | null;
   answerError: { questionId: string; reason: LessonQuestionApiError } | null;
-  context: PlayerQuestionContext;
-  copied: boolean;
+  context: LessonQuestionContext;
   draft: string;
   earlierLoadFailed: boolean;
   error: LessonQuestionError;
@@ -28,14 +34,18 @@ export type LessonQuestionState = {
   isOpen: boolean;
   isRefreshing: boolean;
   loadStatus: LessonQuestionLoadStatus;
+  /** What each answer changed in the learner's memory, for "Memory updated" under it. */
+  memoryChanges: Record<string, LessonQuestionMemoryChange[]>;
   nextCursor: string | null;
   questions: LessonQuestionResource[];
   requestError: LessonQuestionApiError | null;
   revealedQuestionId: string | null;
+  /** The suggested question the learner picked, so sending it unchanged says it was a suggestion. */
+  suggestion: string | null;
 };
 
 export type LessonQuestionAction =
-  | { context: PlayerQuestionContext; type: "open" }
+  | { context: LessonQuestionContext; type: "open" }
   | { type: "close" }
   | { type: "threadLoadStarted" }
   | {
@@ -55,22 +65,24 @@ export type LessonQuestionAction =
     }
   | { type: "earlierThreadLoadFailed" }
   | { draft: string; type: "draftChanged" }
+  | { question: string; type: "suggestionChosen" }
   | { type: "questionCreateStarted" }
   | { question: LessonQuestionResource; type: "questionCreated" }
   | { reason: LessonQuestionApiError; type: "questionCreateFailed" }
   | { questionId: string; type: "answerStarted" }
   | { chunk: string; questionId: string; type: "answerChunkReceived" }
   | { questionId: string; type: "answerCompleted" }
-  | { questionId: string; reason: LessonQuestionApiError; type: "answerFailed" }
-  | { questionId: string; type: "answerLimitExpired" }
-  | { type: "copied" }
-  | { type: "copyFailed" };
+  | { changes: LessonQuestionMemoryChange[]; questionId: string; type: "memoryUpdated" }
+  | { change: PlanChangeView; questionId: string; type: "planChangeProposed" }
+  | { change: PlanChangeView; type: "planChangeAnswered" }
+  | { changeIds: string[]; type: "planChangesReplaced" }
+  | { offer: TutorToolOffer; questionId: string; type: "toolOffered" }
+  | { questionId: string; reason: LessonQuestionApiError; type: "answerFailed" };
 
 export const INITIAL_LESSON_QUESTION_STATE: LessonQuestionState = {
   activeQuestionId: null,
   answerError: null,
   context: { kind: "lesson" },
-  copied: false,
   draft: "",
   earlierLoadFailed: false,
   error: null,
@@ -80,10 +92,12 @@ export const INITIAL_LESSON_QUESTION_STATE: LessonQuestionState = {
   isOpen: false,
   isRefreshing: false,
   loadStatus: "idle",
+  memoryChanges: {},
   nextCursor: null,
   questions: [],
   requestError: null,
   revealedQuestionId: null,
+  suggestion: null,
 };
 
 function reduceQuestionCreated({
@@ -95,7 +109,6 @@ function reduceQuestionCreated({
 }): LessonQuestionState {
   return {
     ...state,
-    copied: false,
     draft: state.draft.trim() === question.question ? "" : state.draft,
     error: null,
     isCreating: false,
@@ -219,7 +232,6 @@ export function lessonQuestionReducer(
       return {
         ...state,
         context: action.context,
-        copied: false,
         draft: isSameDraftContext({ current: state.context, next: action.context })
           ? state.draft
           : "",
@@ -227,9 +239,17 @@ export function lessonQuestionReducer(
         revealedQuestionId: null,
       };
     case "close":
-      return { ...state, copied: false, isOpen: false };
+      return { ...state, isOpen: false };
     case "draftChanged":
-      return { ...state, copied: false, draft: action.draft, error: null, requestError: null };
+      return { ...state, draft: action.draft, error: null, requestError: null };
+    case "suggestionChosen":
+      return {
+        ...state,
+        draft: action.question,
+        error: null,
+        requestError: null,
+        suggestion: action.question,
+      };
     case "questionCreateStarted":
       return { ...state, error: null, isCreating: true, requestError: null };
     case "questionCreated":
@@ -243,15 +263,39 @@ export function lessonQuestionReducer(
     case "answerCompleted":
     case "answerFailed":
       return reduceAnswerFinished({ action, state });
-    case "answerLimitExpired":
-      return state.answerError?.questionId === action.questionId &&
-        state.answerError.reason.kind === "limit"
-        ? { ...state, answerError: null }
-        : state;
-    case "copied":
-      return { ...state, copied: true, error: null, requestError: null };
-    case "copyFailed":
-      return { ...state, copied: false, error: "copy", requestError: { kind: "unknown" } };
+    case "memoryUpdated":
+      return {
+        ...state,
+        memoryChanges: { ...state.memoryChanges, [action.questionId]: action.changes },
+      };
+    case "planChangeProposed":
+      return {
+        ...state,
+        questions: updateQuestionById({
+          questionId: action.questionId,
+          questions: state.questions,
+          update: (question) => ({ ...question, planChange: action.change }),
+        }),
+      };
+    case "planChangeAnswered":
+      return {
+        ...state,
+        questions: answerPlanChange({ change: action.change, questions: state.questions }),
+      };
+    case "planChangesReplaced":
+      return {
+        ...state,
+        questions: replacePlanChanges({ changeIds: action.changeIds, questions: state.questions }),
+      };
+    case "toolOffered":
+      return {
+        ...state,
+        questions: updateQuestionById({
+          questionId: action.questionId,
+          questions: state.questions,
+          update: (question) => ({ ...question, toolOffer: action.offer }),
+        }),
+      };
     default:
       return state;
   }

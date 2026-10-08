@@ -11,29 +11,32 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 
+/** Centered like the login page it follows, so the two steps read as one. */
 export function OTP({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex w-full flex-col items-start gap-6 p-4 text-left", className)}>
+    <div className={cn("flex w-full flex-col items-center gap-6 text-center", className)}>
       {children}
     </div>
   );
 }
 
 export function OTPHeader({ children, className }: React.ComponentProps<"header">) {
-  return <header className={cn("flex flex-col items-start gap-2", className)}>{children}</header>;
+  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
 }
 
 export function OTPTitle({ children, className }: React.ComponentProps<"h1">) {
-  return <h1 className={cn("text-xl font-bold", className)}>{children}</h1>;
+  return (
+    <h1 className={cn("text-2xl font-bold tracking-tight text-balance", className)}>{children}</h1>
+  );
 }
 
 export function OTPDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-sm text-balance", className)}>{children}</p>;
+  return <p className={cn("text-muted-foreground text-sm text-balance", className)}>{children}</p>;
 }
 
 export function OTPForm({ children, className, ...props }: React.ComponentProps<"form">) {
   return (
-    <form className={cn("flex w-full flex-col items-start gap-4", className)} {...props}>
+    <form className={cn("flex w-full flex-col items-center gap-4", className)} {...props}>
       {children}
     </form>
   );
@@ -41,13 +44,25 @@ export function OTPForm({ children, className, ...props }: React.ComponentProps<
 
 export function OTPActions({ children, className }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex w-full flex-col items-stretch gap-3", className)}>{children}</div>
+    <div className={cn("flex w-full flex-col items-stretch gap-2", className)}>{children}</div>
   );
+}
+
+/** A pasted code keeps only its digits, so "123 456" or a copied line break still fills all six. */
+function keepDigits(text: string) {
+  return text.replaceAll(/\D/gu, "");
 }
 
 export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
   return (
-    <InputOTP maxLength={6} name="otp" pattern="[0-9]*" required {...props}>
+    <InputOTP
+      maxLength={6}
+      name="otp"
+      pasteTransformer={keepDigits}
+      pattern="[0-9]*"
+      required
+      {...props}
+    >
       <InputOTPGroup>
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />

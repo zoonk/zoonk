@@ -1,4 +1,5 @@
 import { type Locator, type Page } from "@playwright/test";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
@@ -22,70 +23,58 @@ async function selectLanguage({
   await expect(page).toHaveURL((url) => url.pathname === expectedPath);
 }
 
-test.describe("Language settings page", () => {
-  test("displays language selector with current locale", async ({ page }) => {
-    await page.goto("/language");
+test.describe("Language setting in Appearance", () => {
+  test("switches the UI through every language and drops the prefix back in English", async ({
+    page,
+  }) => {
+    await page.goto("/settings/appearance");
 
-    await expect(page.getByRole("heading", { level: 1, name: /^language$/iu })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: /^appearance$/iu })).toBeVisible();
 
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-    await expect(selector).toBeVisible();
-    await expect(selector).toHaveValue("en");
+    const english = page.getByRole("combobox", { name: "App language" });
+    await expect(english).toHaveValue("en");
+    await expectAccessibleScreen(page, "the appearance settings for a visitor");
+
+    await selectLanguage({
+      expectedPath: "/pt/settings/appearance",
+      locale: "pt",
+      page,
+      selector: english,
+    });
+
+    await expect(page.getByRole("heading", { level: 1, name: /^aparência$/iu })).toBeVisible();
+
+    await selectLanguage({
+      expectedPath: "/fr/settings/appearance",
+      locale: "fr",
+      page,
+      selector: page.getByRole("combobox", { name: "Idioma do app" }),
+    });
+
+    await expect(page.getByRole("heading", { level: 1, name: /^apparence$/iu })).toBeVisible();
+
+    await selectLanguage({
+      expectedPath: "/de/settings/appearance",
+      locale: "de",
+      page,
+      selector: page.getByRole("combobox", { name: "Langue de l’application" }),
+    });
+
+    await expect(page.getByRole("heading", { level: 1, name: /^aussehen$/iu })).toBeVisible();
+
+    await selectLanguage({
+      expectedPath: "/settings/appearance",
+      locale: "en",
+      page,
+      selector: page.getByRole("combobox", { name: "App-Sprache" }),
+    });
+
+    await expect(page.getByRole("heading", { level: 1, name: /^appearance$/iu })).toBeVisible();
   });
+});
 
-  test("switches UI to Spanish when selected", async ({ page }) => {
-    await page.goto("/language");
-
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/es/language", locale: "es", page, selector });
-    await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
-  });
-
-  test("switches UI to Portuguese when selected", async ({ page }) => {
-    await page.goto("/language");
-
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/pt/language", locale: "pt", page, selector });
-    await expect(page.getByRole("heading", { level: 1, name: /^idioma$/iu })).toBeVisible();
-
-    await expect(
-      page.getByRole("heading", {
-        level: 2,
-        name: /escolha o idioma do app que você prefere neste dispositivo/iu,
-      }),
-    ).toBeVisible();
-  });
-
-  test("switches UI to French when selected", async ({ page }) => {
-    await page.goto("/language");
-
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/fr/language", locale: "fr", page, selector });
-    await expect(page.getByRole("heading", { level: 1, name: /^langue$/iu })).toBeVisible();
-  });
-
-  test("switches UI to German when selected", async ({ page }) => {
-    await page.goto("/language");
-
-    const selector = page.getByRole("combobox", { name: /update language/iu });
-
-    await selectLanguage({ expectedPath: "/de/language", locale: "de", page, selector });
-    await expect(page.getByRole("heading", { level: 1, name: /^sprache$/iu })).toBeVisible();
-  });
-
-  test("removes the prefix when switching back to English", async ({ page }) => {
-    await setLocale(page, "pt");
-    await page.goto("/language");
-
-    const selector = page.getByRole("combobox", { name: /alterar idioma/iu });
-    await selectLanguage({ expectedPath: "/language", locale: "en", page, selector });
-    await expect(page.getByRole("heading", { level: 1, name: /^language$/iu })).toBeVisible();
-  });
-
-  test("renders French privacy policy", async ({ page }) => {
+test.describe("Legal pages", () => {
+  test("renders the French privacy policy and the German terms of service", async ({ page }) => {
     await setLocale(page, "fr");
     await page.goto("/privacy");
 
@@ -94,9 +83,9 @@ test.describe("Language settings page", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /^politique de confidentialité$/iu }),
     ).toBeVisible();
-  });
 
-  test("renders German terms of service", async ({ page }) => {
+    await expectAccessibleScreen(page, "the privacy policy");
+
     await setLocale(page, "de");
     await page.goto("/terms");
 
@@ -105,5 +94,7 @@ test.describe("Language settings page", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: /^nutzungsbedingungen$/iu }),
     ).toBeVisible();
+
+    await expectAccessibleScreen(page, "the terms of service");
   });
 });

@@ -1,0 +1,326 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "The bank generally progresses appropriately: A1 retrieves basic facts, A2 handles simple sequences and information, B1 addresses purposes and opinions, and C1 interprets irony and indirect refusal. Speaking grows from six words to 21 words with a complex counterfactual. However, the second B2 reading question is plainly a B1-style stated-opinion question: the passage directly contrasts easy booking with awkward cancellation. The explicit wrong-level-question cap therefore limits this category to 5.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most marked indexes correctly identify passage-supported answers, and options are generally comparable in length. However, the C1 parcel-locker item does not make its alternatives mutually exclusive. The marked 'cautious welcome, tempered by doubts' and the option expressing skepticism that lockers will solve delivery problems both fit the concession followed by problems with space and delayed notifications. The planning-meeting alternatives also overlap between rebuking postponed decisions and questioning another meeting. The two-defensible-answers cap applies, limiting the score to 4.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Spanish is generally natural and compatible with Spain usage, including 'móvil,' 'piso,' 'nevera,' and the vosotros imperative 'llegad.' Questions, options, and translations are in English, so the wrong-language cap is not triggered. However, British spellings and vocabulary such as 'sports-centre,' 'theatre,' 'neighbourhood,' and 'flat' violate the requested US English variant. Situations are varied overall, but the two adjacent B2 sports-booking passages are unnecessarily repetitive.",
+          "score": 7,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4368,
+          "inputTokens": 4371,
+          "outputTokens": 1129,
+          "reasoningTokens": 425
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The second B2 reading question asks learners to retrieve an explicitly stated opinion: booking is easy and cancellation is awkward. This is the stated-opinion task specified for B1, triggering the calibration cap of 5. Answer exclusivity also fails in the C1 parcel-locker question: both the marked cautious welcome and skepticism about whether lockers will solve delivery problems are defensible given the opening concession followed by examples of operational problems. This triggers the answers cap of 4.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Learner-facing English is not consistently US English: 'sports-centre,' 'theatre,' 'neighbourhood,' and 'flat' appear in questions or options. Two B2 reading passages also cover nearly identical sports-booking technology problems, reducing situational variety.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the B2 reading task require an inference rather than merely labeling an explicit opinion. Replace overlapping C1 distractors with interpretations contradicted by the passage; the planning-meeting question would also benefit from separating skepticism about another meeting from criticism of repeated postponement. Replace one sports-booking passage with a different setting and consistently localize learner-facing text to US English.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Spain Spanish passages and sentences (Spain vocabulary and forms like \"vosotros\", \"piso\", \"móvil\") for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-es-1",
+        "userInput": { "learnerLanguage": "en", "targetLanguage": "es" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 and A2 generally test stated information, while B1 appropriately tests reasons, main points, and opinions. Speaking sentences increase convincingly in length and structural complexity. However, neighboring B2 and C1 are not clearly distinguishable: the C1 museum evaluation closely resembles the B2 plaza evaluation, and the C1 meeting-room implication is no more demanding than the B2 implied overnight-stay proposal. This triggers the maximum score of 5 for indistinguishable neighboring levels.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "The marked answers are generally supported, but the C1 museum question permits both the marked recognition-with-scepticism answer and the cautious-approval answer: reduced in-person visits are explicitly described as useful, and the subsequent limitations justify the qualification “cautious.” Because the latter is not clearly wrong, the two-defensible-answers cap of 4 applies. Separately, some beginner items remain solvable through transparent Spanish–Portuguese cognates, and several option sets could better balance length.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "The required languages are used throughout, so the wrong-language cap does not apply. Spanish is generally natural and compatible with Spain usage, including “coger,” “andén,” “estáis,” and “tengáis”; Portuguese is broadly Brazilian. Situations are varied, with no identifiable real people, brands, or stereotypes. Nevertheless, the platform and meeting-room listening passages read more like written reviews than natural speech. The awkward health-centre question and less precise C1 counterfactual translation also reduce linguistic quality.",
+          "score": 7,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4634,
+          "inputTokens": 4637,
+          "outputTokens": 1758,
+          "reasoningTokens": 992
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The C1 museum question has two defensible answers: the marked option acknowledges benefits while questioning access, but “Aprovação cautelosa por reduzir as consultas presenciais” also fits the explicitly praised reduction in visits followed by reservations. B2 and C1 are not clearly differentiated: the museum and meeting-room texts use essentially the same stated-benefit/implicit-limitation pattern as the B2 items. The anti-cognate requirement is also unmet in items such as the A1 cinema question, where “seis y media” maps transparently onto “seis e meia.”",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some listening passages sound like written commentary, especially the platform review and the C1 meeting-room description. The health-centre question uses the awkward Portuguese wording “Até que horas ... abre” instead of “Até que horas ... fica aberto.” Some correct options are noticeably longer than their distractors, particularly in the platform question. The C1 speaking translation would convey the completed past counterfactual more precisely with “Se eu tivesse sabido” rather than “Se eu soubesse.”",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace partially compatible distractors with interpretations that the passage clearly rules out. Make C1 distinct through more nuanced discourse, competing perspectives, and implications beyond a straightforward contrast between promises and results. For beginner questions, use distractors sharing the relevant cognate vocabulary so that recognising one transparent expression does not identify the answer. Give the more formal listening items a clearer spoken setting.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Spain Spanish passages and sentences (Spain vocabulary and forms like \"vosotros\", \"piso\", \"móvil\") for Brazilian learners: questions, options and translations in Brazilian Portuguese. Portuguese and Spanish are close, so no option can be picked by guessing a cognate. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "pt-es-1",
+        "userInput": { "learnerLanguage": "pt", "targetLanguage": "es" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 targets individual stated facts, A2 adds simple sequencing and time relationships, and B1 appropriately tests reasons, main points, and stated opinions. B2 generally requires inference, while C1 introduces irony and qualified judgments. Speaking grows from six words to a complex 24-word conditional. However, C1 passage complexity is somewhat thin and often relies on a single ironic closing sentence to distinguish it from B2. No pair of neighboring levels is wholly indistinguishable, and no question is clearly assigned the wrong level, so the calibration cap is not triggered.",
+          "score": 8,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "Most answer indexes are correct and supported by their passages. However, the B2 itinerary passage does not establish the attitude asserted by its marked answer: a tight timetable alone does not clearly demonstrate the writer's fear that travelers cannot appreciate the places. None of its options gives an unambiguously supported authorial attitude, triggering the maximum score of 4. Some other items also have conspicuously longer correct answers or weak distractors.",
+          "score": 4,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "All fields use the appropriate language, and the Spanish is natural for Spain, including 'piso,' 'aparcar,' and 'ayuntamiento.' Situations are varied, reading formats are credible, and most listening passages work as spoken messages or commentary. There are no identifiable real people, brands, or stereotypes. US-English consistency is weakened by British-leaning expressions such as 'taster session' and 'bedding in'; 'introductory session' and 'still being adjusted' would fit better. No wrong-language field appears, so the language cap is not triggered.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4573,
+          "inputTokens": 4576,
+          "outputTokens": 1524,
+          "reasoningTokens": 861
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The B2 travel-itinerary question lacks a clearly supported answer about the writer's attitude. The passage reports a tight timetable and included transport, but does not establish that the writer fears insufficient time to appreciate the destinations. The marked option turns a possible interpretation into an asserted attitude, making this item unreliable.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some listening vocabulary is more characteristic of British than US English, particularly 'taster session' and 'the schedule is still bedding in.' Some correct options are noticeably longer than their distractors, especially in the park-tap and pottery questions. Several distractors introduce unsupported concerns, such as disliking the pottery participants, making elimination too easy.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Strengthen the C1 passages with more sustained nuance and syntactic complexity: their closing irony adds difficulty, but much of the surrounding language remains quite straightforward. Preserve the successful progression in speaking length and grammatical complexity.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of US English passages and sentences for Spain Spanish speakers: questions, options and translations in Spain Spanish. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "es-en-1",
+        "userInput": { "learnerLanguage": "es", "targetLanguage": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "A1 asks for individual stated facts, A2 covers simple factual information, and B1 appropriately tests reasons, main points, and stated opinions. B2 includes supported attitude and purpose inferences. Speaking sentences increase effectively in complexity. However, the C1 venue question primarily summarizes an explicit reservation and does not clearly exceed B2; parts of the C1 tier therefore fail the required distinction. The wrong-level-question cap of 5 applies.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "All marked indexes identify the best-supported option, and no question has two clearly defensible answers or lacks a supported answer, so the cap of 4 is not triggered. However, several distractors are implausible rather than tempting misreadings, especially the restaurant inference in the outdoor-film question. Some correct options, notably the B1 cycling answer, are longer and more informative than their alternatives.",
+          "score": 8,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Passages and speaking sentences are in English, while questions, options, and translations are in Brazilian Portuguese; no wrong-language cap applies. Reading notices and listening messages generally fit their media, and situations vary substantially without brands, identifiable real people, or stereotypes. Nevertheless, 'rota' is British rather than US usage, and 'Onde o ônibus sai?' is awkward Portuguese for asking a departure location.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4454,
+          "inputTokens": 4457,
+          "outputTokens": 1130,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The C1 reading/listening tier is not consistently distinguishable from B2. Most clearly, the C1 venue question asks learners to summarize explicitly stated reservations ('I'd hesitate ... until we know'), rather than interpret tone or implication in nuanced text. This item is closer to B2 attitude comprehension and triggers the calibration cap.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors are too easily dismissed: the B2 outdoor-film item suggests that a single entrance means the event is inside a restaurant, and the C1 venue item claims neither venue has rooms available. The C1 shift message also uses the British term 'rota' rather than US English 'schedule.' The Portuguese question 'Onde o ônibus sai?' would be more natural as 'De onde sai o ônibus?'",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Balance option lengths more closely, particularly in the B1 cycling question, where the correct answer is noticeably longer and more explanatory than the distractors. Preserve the otherwise effective increase in speaking-sentence length and grammatical complexity.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of US English passages and sentences for Brazilian learners: questions, options and translations in Brazilian Portuguese. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "pt-en-1",
+        "userInput": { "learnerLanguage": "pt", "targetLanguage": "en" }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "calibration",
+          "reasoning": "The bank generally progresses well: A1 retrieves individual facts, B1 addresses reasons and opinions, and several C1 items involve understatement or qualified criticism. Speaking sentences grow from six words to approximately twenty, with increasingly complex structures. However, the B2 package notice asks for an elementary operational purpose in language no denser than the B1 passages. This clearly underleveled question triggers the maximum score of 5. The backpack inference is also relatively easy for B2.",
+          "score": 5,
+          "label": "Levels calibrated and increasing",
+          "weight": 40
+        },
+        {
+          "categoryId": "answers",
+          "reasoning": "All marked indexes identify the uniquely best supported option; no item has two defensible correct answers or lacks a supported answer, so the answer-validity cap does not apply. Answers require passage information. The principal weakness is distractor quality: several options are unrelated or easily eliminated, including the library job-search option and movie-ticket purchase on the bus. Option lengths are mostly comparable, although the B1 flexible-hours answer is noticeably longer than its distractors.",
+          "score": 8,
+          "label": "One clearly right answer",
+          "weight": 35
+        },
+        {
+          "categoryId": "language",
+          "reasoning": "Passages and speaking sentences use correct, predominantly natural Brazilian Portuguese, and questions, options, and translations use appropriate US English. No wrong-language field triggers the cap. Translations are accurate, situations vary, and there are no brands, identifiable real people, or stereotypes. Minor weaknesses in realistic contextual coherence include the unexplained connection between roadworks and a platform change and the unclear transition between the movie’s eight o’clock start and its six o’clock screening.",
+          "score": 8,
+          "label": "Languages and variety",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 11 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4539,
+          "inputTokens": 4542,
+          "outputTokens": 1143,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The B2 package-notice item is undercalibrated: identifying recipients is a straightforward operational purpose recoverable from a simple notice, rather than B2-level interpretation of denser text. Its difficulty is too close to the B1 purpose questions, weakening the intended progression.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractors are too remote from the passages to challenge even a careless reader, such as finding jobs near the library or buying movie tickets on the bus. Some everyday scenarios also have weak contextual logic: road construction does not clearly explain changing the boarding platform, and the movie notice introduces an eight o’clock start before discussing a six o’clock screening without clarifying the relationship.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the correct options less conspicuous in length, particularly in the B1 flexible-hours item. For stronger advanced-level discrimination, make distractors reflect plausible misreadings of the writer’s qualifications or attitude rather than unrelated claims.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A bank of Brazilian Portuguese passages and sentences (Brazilian words and forms, \"você\", not European Portuguese) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.",
+        "id": "en-pt-1",
+        "userInput": { "learnerLanguage": "en", "targetLanguage": "pt" }
+      }
+    }
+  ],
+  "taskId": "level-test-bank"
+}

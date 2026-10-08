@@ -1,46 +1,77 @@
 "use client";
 
-import { CircleCheck, CircleX } from "lucide-react";
+import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { cn } from "@zoonk/ui/lib/utils";
+import { CircleCheckIcon, CircleDashedIcon, CircleXIcon, SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-type Verdict = "correct" | "incorrect";
+/**
+ * "guess" and "guessRight" are a hook screen's guess, which never counts as wrong. "typo" is a
+ * right answer with a spelling slip: it counts as right and shows the spelling. "unchecked" is a
+ * written answer nothing checked, shown next to the sample answer and counted neither way.
+ */
+export type Verdict =
+  | "almost"
+  | "correct"
+  | "guess"
+  | "guessRight"
+  | "incorrect"
+  | "typo"
+  | "unchecked";
 
-const VERDICT_CONFIG: Record<Verdict, { colorClass: string; icon: typeof CircleCheck }> = {
-  correct: { colorClass: "text-success", icon: CircleCheck },
-  incorrect: { colorClass: "text-destructive", icon: CircleX },
+const VERDICT_TONE: Record<Verdict, string> = {
+  almost: "text-warning",
+  correct: "text-success",
+  guess: "text-foreground",
+  guessRight: "text-success",
+  incorrect: "text-destructive",
+  typo: "text-success",
+  unchecked: "text-foreground",
 };
 
-/**
- * Returns the user-facing label for a verdict.
- *
- * Centralizes verdict text so it can be reused across
- * components that display feedback results.
- */
-function useVerdictText(verdict: Verdict): string {
-  const t = useExtracted();
-
-  if (verdict === "correct") {
-    return t("Correct!");
+function VerdictIcon({ verdict }: { verdict: Verdict }) {
+  if (verdict === "correct" || verdict === "guessRight" || verdict === "typo") {
+    return <CircleCheckIcon aria-hidden="true" className="size-[1.1em]" />;
   }
 
-  return t("Not quite");
+  if (verdict === "guess") {
+    return <SparklesIcon aria-hidden="true" className="size-[1.1em]" />;
+  }
+
+  if (verdict === "unchecked") {
+    return <CircleDashedIcon aria-hidden="true" className="size-[1.1em]" />;
+  }
+
+  return <CircleXIcon aria-hidden="true" className="size-[1.1em]" />;
 }
 
 /**
- * Displays a verdict icon + label for answer feedback.
- *
- * Used across feedback screens to show whether the learner's answer was
- * correct or incorrect. Keeps the icon, color, and label consistent wherever
- * feedback is shown.
+ * The verdict line of every answer's feedback: icon, tone and words stay the same on lesson
+ * screens, activities and inline checks.
  */
 export function VerdictLabel({ verdict }: { verdict: Verdict }) {
-  const { colorClass, icon: Icon } = VERDICT_CONFIG[verdict];
-  const text = useVerdictText(verdict);
+  const t = useExtracted();
+
+  const labels: Record<Verdict, string> = {
+    almost: t("Almost there"),
+    correct: t("Correct!"),
+    guess: t("Here's the answer"),
+    guessRight: t("Good guess!"),
+    incorrect: t("Not quite"),
+    typo: t("Right, watch the spelling"),
+    unchecked: t("Not checked this time"),
+  };
 
   return (
-    <div className="flex items-center gap-1.5 text-sm font-medium">
-      <Icon aria-hidden="true" className={`${colorClass} size-4`} />
-      <span className={colorClass}>{text}</span>
-    </div>
+    <p
+      className={cn("flex items-start gap-2 text-lg font-semibold", VERDICT_TONE[verdict])}
+      data-slot="lesson-result-verdict"
+    >
+      {/* Sized by the verdict's type and kept on its first line. */}
+      <LineMarker>
+        <VerdictIcon verdict={verdict} />
+      </LineMarker>
+      {labels[verdict]}
+    </p>
   );
 }

@@ -11,8 +11,10 @@ function questionResource(status: LessonQuestionResource["status"]): LessonQuest
     context: { kind: "lesson" },
     createdAt: "2026-08-21T12:00:00.000Z",
     id: "0198ca70-9c50-7000-8000-000000000001",
+    planChange: null,
     question: "How does this work?",
     status,
+    toolOffer: null,
     updatedAt: "2026-08-21T12:00:00.000Z",
   };
 }

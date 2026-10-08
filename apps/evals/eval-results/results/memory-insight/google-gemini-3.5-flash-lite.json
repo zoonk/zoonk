@@ -1,0 +1,276 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "classification": { "expected": "tip", "predicted": "tip" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["tip"], "mentions": ["break", "pause", "last", "end"] },
+        "id": "en-tip-fading-sessions-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Wants Law at a public university" },
+            { "category": "routine", "statement": "Works until 7 pm on weekdays" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "en",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 96 on 5 days, 77% right.\nBy part of the session, over 6 sessions: first third 92% right (32 answers), middle third 84% right (32 answers), last third 55% right (32 answers).\nStudied on 5 of the last 7 days, 31 minutes a day on average; the plan asks for 30.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "scheduleIdea", "predicted": "scheduleIdea" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "kinds": ["scheduleIdea"],
+          "mentions": ["pm", "evening", "night", ":00"],
+          "studyHours": [20, 23]
+        },
+        "id": "en-schedule-evening-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Wants Law at a public university" },
+            { "category": "routine", "statement": "Works until 7 pm on weekdays" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "en",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 100 on 6 days, 74% right.\nBy time of day: 06:00-12:00 55% right (40 answers on 3 days); 21:00-24:00 87% right (60 answers on 4 days).\nStudied on 6 of the last 7 days, 28 minutes a day on average; the plan asks for 30.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "none", "predicted": "none" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["none"] },
+        "id": "en-none-flat-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Wants Law at a public university" },
+            { "category": "routine", "statement": "Works until 7 pm on weekdays" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "en",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 84 on 5 days, 81% right.\nBy part of the session, over 5 sessions: first third 82% right (28 answers), middle third 80% right (28 answers), last third 81% right (28 answers).\nStudied on 5 of the last 7 days, 30 minutes a day on average; the plan asks for 30.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "planChange", "predicted": "planChange" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["planChange"], "mentions": ["fraction"], "skill": 1 },
+        "id": "en-plan-change-weak-skill-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Wants Law at a public university" },
+            { "category": "routine", "statement": "Works until 7 pm on weekdays" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "en",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 58 on 4 days, 79% right.\nSkills with the most trouble:\n- Percentages: 9 of 18 right, 8 mistakes (6 content gap, 2 fell for a trap)\nRecent mistakes on Percentages:\n- \"What is 3/4 as a percentage?\": answered \"34%\", right answer \"75%\"\n- \"Write 2/5 as a percentage\": answered \"25%\", right answer \"40%\"\n- \"A price drops from $80 by 1/4. What percent off is that?\": answered \"14%\", right answer \"25%\"\nStudied on 4 of the last 7 days, 26 minutes a day on average; the plan asks for 30.",
+          "skills": ["Fractions as percentages (prepares for Percentages)"],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "tip", "predicted": "none" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["tip", "none"], "mentions": ["fraction", "percent"] },
+        "id": "en-no-plan-change-allowed-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Wants Law at a public university" },
+            { "category": "routine", "statement": "Works until 7 pm on weekdays" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "scheduleIdea"],
+          "language": "en",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 58 on 4 days, 79% right.\nSkills with the most trouble:\n- Percentages: 9 of 18 right, 8 mistakes (6 content gap, 2 fell for a trap)\nRecent mistakes on Percentages:\n- \"What is 3/4 as a percentage?\": answered \"34%\", right answer \"75%\"\n- \"Write 2/5 as a percentage\": answered \"25%\", right answer \"40%\"\n- \"A price drops from $80 by 1/4. What percent off is that?\": answered \"14%\", right answer \"25%\"\nStudied on 4 of the last 7 days, 26 minutes a day on average; the plan asks for 30.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "none", "predicted": "none" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["none"] },
+        "id": "en-none-already-said-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Wants Law at a public university" },
+            { "category": "routine", "statement": "Works until 7 pm on weekdays" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "en",
+          "recentInsights": [
+            "You miss the last questions of a session more often than the first ones. Try a two-minute break before them."
+          ],
+          "signals": "Answers in the last 7 days: 96 on 5 days, 77% right.\nBy part of the session, over 6 sessions: first third 92% right (32 answers), middle third 84% right (32 answers), last third 55% right (32 answers).\nStudied on 5 of the last 7 days, 31 minutes a day on average; the plan asks for 30.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "none", "predicted": "none" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "kinds": ["none"] },
+        "id": "en-none-too-few-answers-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Wants Law at a public university" },
+            { "category": "routine", "statement": "Works until 7 pm on weekdays" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "en",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 8 on 2 days, 50% right.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "scheduleIdea", "predicted": "scheduleIdea" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "kinds": ["scheduleIdea"],
+          "languageWords": ["voce", "seu", "sua", "estud", "quer"],
+          "mentions": ["21", "22", "noite", "h"],
+          "studyHours": [20, 23]
+        },
+        "id": "pt-schedule-evening-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Quer Direito na USP" },
+            { "category": "routine", "statement": "Trabalha até as 19h nos dias de semana" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "pt",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 100 on 6 days, 74% right.\nBy time of day: 06:00-12:00 55% right (40 answers on 3 days); 21:00-24:00 87% right (60 answers on 4 days).\nStudied on 6 of the last 7 days, 28 minutes a day on average; the plan asks for 30.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "planChange", "predicted": "planChange" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "kinds": ["planChange"],
+          "languageWords": ["voce", "quer", "aula", "licao"],
+          "mentions": ["regra de tres", "proporc", "inversa"],
+          "skill": 1
+        },
+        "id": "pt-plan-change-weak-skill-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Quer Direito na USP" },
+            { "category": "routine", "statement": "Trabalha até as 19h nos dias de semana" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "pt",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 52 on 4 days, 75% right.\nSkills with the most trouble:\n- Regra de três: 5 of 14 right, 7 mistakes (5 content gap, 2 misread the question)\nRecent mistakes on Regra de três:\n- \"Se 3 pedreiros levam 12 dias, quantos dias levam 6 pedreiros?\": answered \"24\", right answer \"6\"\n- \"Se 4 cadernos custam R$ 20, quanto custam 10?\": answered \"40\", right answer \"50\"\nStudied on 4 of the last 7 days, 25 minutes a day on average; the plan asks for 30.",
+          "skills": ["Grandezas direta e inversamente proporcionais (prepares for Regra de três)"],
+          "studyTime": "07:00"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "tip", "predicted": "tip" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "kinds": ["tip"],
+          "languageWords": ["voce", "tente", "faca", "sua", "seu"],
+          "mentions": ["pausa", "intervalo", "final", "ultimas"]
+        },
+        "id": "pt-tip-fading-sessions-1",
+        "userInput": {
+          "facts": [
+            { "category": "goals", "statement": "Quer Direito na USP" },
+            { "category": "routine", "statement": "Trabalha até as 19h nos dias de semana" }
+          ],
+          "goal": "ENEM 2026",
+          "kinds": ["tip", "planChange", "scheduleIdea"],
+          "language": "pt",
+          "recentInsights": [],
+          "signals": "Answers in the last 7 days: 96 on 5 days, 77% right.\nBy part of the session, over 6 sessions: first third 92% right (32 answers), middle third 84% right (32 answers), last third 55% right (32 answers).\nStudied on 5 of the last 7 days, 31 minutes a day on average; the plan asks for 30.",
+          "skills": [],
+          "studyTime": "07:00"
+        }
+      }
+    }
+  ],
+  "taskId": "memory-insight"
+}

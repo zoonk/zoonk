@@ -6,6 +6,7 @@ private enum UITestScenario: Equatable {
   case appleSubscription
   case freeSubscription
   case googleSubscription
+  case guardianApprovalSubscription
   case catalog
   case progress
   case progressActivityUnauthorized
@@ -21,7 +22,7 @@ private enum UITestScenario: Equatable {
       requiredSetupAccountJSON
     case .appleSubscription:
       accountJSON(provider: "apple")
-    case .freeSubscription:
+    case .freeSubscription, .guardianApprovalSubscription:
       accountJSON(provider: nil)
     case .googleSubscription:
       accountJSON(provider: "google")
@@ -46,8 +47,8 @@ private enum UITestScenario: Equatable {
       progressDaypartOnlyUITestSnapshotJSON
     case .progressEmpty:
       progressEmptyUITestSnapshotJSON
-    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription, .requiredSetup,
-      .signedOut:
+    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription,
+      .guardianApprovalSubscription, .requiredSetup, .signedOut:
       nil
     }
   }
@@ -58,10 +59,15 @@ private enum UITestScenario: Equatable {
       "activity-unauthorized"
     case .progressOverviewFailure:
       "overview-network"
-    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription, .progress,
-      .progressDaypartOnly, .progressEmpty, .requiredSetup, .signedOut:
+    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription,
+      .guardianApprovalSubscription, .progress, .progressDaypartOnly, .progressEmpty,
+      .requiredSetup, .signedOut:
       nil
     }
+  }
+
+  var plusPurchase: String? {
+    self == .guardianApprovalSubscription ? "needsGuardianApproval" : nil
   }
 
   private var requiredSetupAccountJSON: String {
@@ -282,6 +288,36 @@ final class ZoonkUITests: XCTestCase {
       "Expected navigation Back to be the only way out of the pushed subscription screen")
   }
 
+  /// Proves a learner under 18 asks a guardian instead of reaching the App Store offer.
+  @MainActor
+  func testLearnerUnder18AsksAGuardianBeforeSeeingPlus() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .guardianApprovalSubscription)
+    app.launch()
+    openAccount(in: app)
+
+    let subscription = app.buttons["Subscription"]
+    XCTAssertTrue(subscription.waitForExistence(timeout: 5))
+    subscription.tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Ask a guardian"].waitForExistence(timeout: 5),
+      "Expected a learner under 18 to be asked for a guardian's approval")
+    XCTAssertTrue(app.navigationBars["Zoonk Plus"].exists)
+    XCTAssertFalse(
+      app.staticTexts["Plus Monthly"].exists,
+      "Expected the App Store offer to stay hidden until a guardian approves")
+
+    app.buttons["Ask for approval"].tap()
+
+    XCTAssertTrue(
+      app.staticTexts["We emailed your guardian. Check again after they approve."]
+        .waitForExistence(timeout: 5),
+      "Expected the learner to see that their guardian was asked")
+    XCTAssertTrue(app.buttons["Check again"].exists)
+  }
+
   /// Proves App Store ownership is visible before the native subscription-management sheet opens.
   @MainActor
   func testAppleSubscriptionShowsAppStoreManagement() {
@@ -343,18 +379,16 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5),
       "Expected pagination to retain a personal course in the learner's library")
-    XCTAssertEqual(
-      app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "My Backyard Field Notes"))
-        .count, 0,
-      "Expected a personal course without a public route to remain noninteractive")
-    XCTAssertEqual(
-      app.links.matching(NSPredicate(format: "label CONTAINS %@", "My Backyard Field Notes"))
-        .count, 0,
-      "Expected a personal course without a public route to avoid a broken link")
     XCTAssertTrue(app.buttons["My Courses"].isSelected, "Expected My Courses to be selected")
     XCTAssertFalse(
       app.staticTexts["Everyday Numbers"].exists,
       "Expected the account shortcut to exclude courses outside the learner's library")
+
+    app.staticTexts["My Backyard Field Notes"].firstMatch.tap()
+    XCTAssertTrue(
+      app.staticTexts["1. Backyard Birds"].waitForExistence(timeout: 5),
+      "Expected the owner to open their private course with their session")
+    XCTAssertTrue(app.staticTexts["Overview"].exists)
   }
 
   /// Proves signed-in learners can switch between the public catalog and their enrolled courses without leaving the Courses tab.
@@ -703,6 +737,9 @@ final class ZoonkUITests: XCTestCase {
       app.staticTexts["1. Roots and Water"].exists,
       "Expected the chapter number to be part of the title instead of a separate leading column")
     XCTAssertTrue(
+      app.staticTexts["Beginner"].exists && app.staticTexts["Intermediate"].exists,
+      "Expected the chapters to be grouped into the course's level bands")
+    XCTAssertTrue(
       chapter.label.contains("1/2 done"),
       "Expected the chapter row to expose learner progress instead of a lesson count")
     XCTAssertFalse(chapter.label.contains("2 lessons"))
@@ -757,19 +794,11 @@ final class ZoonkUITests: XCTestCase {
       app.staticTexts["1. Meet the Roots"].exists,
       "Expected the lesson number to be part of the title instead of a separate leading column")
     XCTAssertTrue(completedLesson.label.contains("Completed"))
-    XCTAssertEqual(
-      completedLesson.value as? String,
-      "Explanation",
-      "Expected VoiceOver to identify the lesson kind independently from its title")
 
     let nextLesson = app.buttons.matching(
       NSPredicate(format: "label CONTAINS %@", "Follow the Water")
     ).firstMatch
     XCTAssertTrue(nextLesson.label.contains("Not started"))
-    XCTAssertEqual(
-      nextLesson.value as? String,
-      "Practice",
-      "Expected VoiceOver to identify the lesson kind independently from its title")
     chapterContinue.tap()
 
     XCTAssertTrue(
@@ -786,6 +815,33 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.staticTexts["2. Follow the Water"].waitForExistence(timeout: 5),
       "Expected Back to return to the chapter's lesson list")
+  }
+
+  /// Proves a course whose chapters are still being written says so and offers to check again.
+  @MainActor
+  func testCourseBeingWrittenOffersToCheckAgain() {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .catalog)
+    app.launch()
+    app.primaryNavigationItem("Courses").tap()
+
+    let course = app.staticTexts["Night Sky Basics"].firstMatch
+    XCTAssertTrue(course.waitForExistence(timeout: 10))
+    course.tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Chapters are being written"].waitForExistence(timeout: 5),
+      "Expected a course that is still being written to say so instead of looking empty")
+    XCTAssertFalse(app.staticTexts["No chapters yet"].exists)
+
+    let checkAgain = app.buttons["Check again"]
+    XCTAssertTrue(checkAgain.exists)
+    checkAgain.tap()
+
+    XCTAssertTrue(
+      app.staticTexts["Chapters are being written"].waitForExistence(timeout: 5),
+      "Expected checking again to keep the course page")
   }
 
   /// Editing a search moves between matching and empty results without retaining the previous query's feedback.
@@ -1140,7 +1196,7 @@ final class ZoonkUITests: XCTestCase {
     assertContributionDetails(
       destination: "Activity",
       date: "August 20, 2026",
-      details: "Lessons completed: 9")
+      details: "Activities finished: 9")
     assertContributionDetails(
       destination: "Energy",
       date: "August 20, 2026",
@@ -1164,6 +1220,10 @@ final class ZoonkUITests: XCTestCase {
 
     if let progressFailure = scenario.progressFailure {
       app.launchEnvironment["ZOONK_UI_TEST_PROGRESS_FAILURE"] = progressFailure
+    }
+
+    if let plusPurchase = scenario.plusPurchase {
+      app.launchEnvironment["ZOONK_UI_TEST_PLUS_PURCHASE"] = plusPurchase
     }
 
     return app

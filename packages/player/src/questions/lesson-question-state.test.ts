@@ -1,7 +1,7 @@
 import { type LessonQuestionResource } from "@zoonk/core/lesson-questions/contract";
-import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { describe, expect, it } from "vitest";
-import { type PlayerQuestionContext } from "../player-context";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import {
   INITIAL_LESSON_QUESTION_SESSIONS,
   getLessonQuestionSession,
@@ -15,54 +15,27 @@ function questionResource(overrides?: Partial<LessonQuestionResource>): LessonQu
     context: { kind: "lesson" },
     createdAt: "2026-08-21T12:00:00.000Z",
     id: "0198ca70-9c50-7000-8000-000000000001",
+    planChange: null,
     question: "How does this work?",
     status: "pending",
+    toolOffer: null,
     updatedAt: "2026-08-21T12:00:00.000Z",
     ...overrides,
   };
 }
 
-const LESSON_CONTEXT = { kind: "lesson" } satisfies PlayerQuestionContext;
+const LESSON_CONTEXT = { kind: "lesson" } satisfies LessonQuestionContext;
 
-function stepContext(id: string): PlayerQuestionContext {
-  const step = {
-    content: { text: "Visible lesson material", title: "A concept", variant: "text" },
-    fillBlankOptions: [],
-    id,
-    kind: "static",
-    matchColumnsRightItems: [],
-    position: 0,
-    sentence: null,
-    sentenceWordOptions: [],
-    sortOrderItems: [],
-    translationOptions: [],
-    vocabularyOptions: [],
-    word: null,
-    wordBankOptions: [],
-  } satisfies SerializedStep;
-
-  return { kind: "step", step, stepIndex: 0 };
+function stepContext(id: string): LessonQuestionContext {
+  return { kind: "step", step: { id }, stepIndex: 0 };
 }
 
-function answerContext(selectedOptionId: string): PlayerQuestionContext {
-  const context = stepContext("0198ca70-9c50-7000-8000-000000000010");
-
-  if (context.kind !== "step") {
-    throw new Error("Expected a step context");
-  }
-
-  const selectedAnswer = { kind: "multipleChoice" as const, selectedOptionId };
-
+function answerContext(selectedOptionId: string): LessonQuestionContext {
   return {
     kind: "answer",
-    result: {
-      answer: selectedAnswer,
-      result: { correctAnswer: "Answer A", feedback: "Try again", isCorrect: false },
-      stepId: context.step.id,
-    },
-    selectedAnswer,
-    step: context.step,
-    stepIndex: context.stepIndex,
+    selectedAnswer: { kind: "multipleChoice", selectedOptionId },
+    step: { id: "0198ca70-9c50-7000-8000-000000000010" },
+    stepIndex: 0,
   };
 }
 
@@ -518,6 +491,73 @@ describe(lessonQuestionReducer, () => {
     });
 
     expect(created.draft).toBe("A follow-up typed while waiting");
+  });
+});
+
+function planChange(overrides: Partial<PlanChangeView>): PlanChangeView {
+  return {
+    behind: null,
+    canUndo: false,
+    createdAt: "2026-08-21T12:00:00.000Z",
+    days: null,
+    effect: null,
+    id: "0198ca70-9c50-7000-8000-0000000000c1",
+    kind: "edited",
+    lessonsSkipped: 0,
+    officialDate: null,
+    operations: [{ kind: "setDailyMinutes", minutes: 60 }],
+    reason: "One hour a day.",
+    seen: false,
+    source: "planEdit",
+    status: "proposed",
+    todaySession: null,
+    ...overrides,
+  };
+}
+
+describe("plan changes in the buddy's conversation", () => {
+  it("shows a proposal under its answer, and once a newer change applies, the older one can't be undone", () => {
+    const earlier = questionResource({
+      id: "0198ca70-9c50-7000-8000-0000000000a1",
+      planChange: planChange({ canUndo: true, id: "change-a", status: "applied" }),
+      status: "completed",
+    });
+
+    const latest = questionResource({
+      id: "0198ca70-9c50-7000-8000-0000000000a2",
+      status: "running",
+    });
+
+    const loaded = lessonQuestionReducer(
+      { ...INITIAL_LESSON_QUESTION_STATE, context: { kind: "plan" } },
+      { hasMore: false, nextCursor: null, questions: [earlier, latest], type: "threadLoaded" },
+    );
+
+    const proposed = lessonQuestionReducer(loaded, {
+      change: planChange({ id: "change-b" }),
+      questionId: latest.id,
+      type: "planChangeProposed",
+    });
+
+    expect(proposed.questions.map((question) => question.planChange?.status)).toStrictEqual([
+      "applied",
+      "proposed",
+    ]);
+
+    const applied = lessonQuestionReducer(proposed, {
+      change: planChange({ canUndo: true, id: "change-b", status: "applied" }),
+      type: "planChangeAnswered",
+    });
+
+    expect(
+      applied.questions.map((question) => ({
+        canUndo: question.planChange?.canUndo,
+        status: question.planChange?.status,
+      })),
+    ).toStrictEqual([
+      { canUndo: false, status: "applied" },
+      { canUndo: true, status: "applied" },
+    ]);
   });
 });
 

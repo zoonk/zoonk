@@ -6,12 +6,16 @@ import {
   CommandGroupLabel,
   CommandItem,
 } from "@zoonk/ui/components/command";
+import { LanguageFlag, hasLanguageFlag } from "@zoonk/ui/components/language-flag";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BookOpenIcon } from "lucide-react";
 import Image from "next/image";
 import {
   type ChapterPaletteItem,
   type CoursePaletteItem,
+  type ExplanationPaletteItem,
+  type FeedbackPaletteItem,
+  type GoalPaletteItem,
   type LogoutPaletteItem,
   type NavigationPaletteItem,
   type PaletteGroup,
@@ -84,7 +88,16 @@ function PaletteOptionContent({ item }: { item: PaletteItem }) {
  * Simple command items use the menu icon and label only, matching the compact
  * page/account/help actions from the previous palette.
  */
-function SimpleOptionContent({ item }: { item: LogoutPaletteItem | NavigationPaletteItem }) {
+function SimpleOptionContent({
+  item,
+}: {
+  item:
+    | ExplanationPaletteItem
+    | FeedbackPaletteItem
+    | GoalPaletteItem
+    | LogoutPaletteItem
+    | NavigationPaletteItem;
+}) {
   const Icon = item.icon;
 
   return (
@@ -96,15 +109,21 @@ function SimpleOptionContent({ item }: { item: LogoutPaletteItem | NavigationPal
 }
 
 /**
- * Course results show the thumbnail when available so search results remain
- * recognizable without requiring learners to inspect the destination URL.
+ * Course results show the thumbnail when available (a language course's flag) so search results
+ * remain recognizable without requiring learners to inspect the destination URL.
  */
 function CourseOptionContent({ item }: { item: CoursePaletteItem }) {
   const { course } = item;
 
   return (
     <>
-      <PaletteResultImage imageUrl={course.imageUrl} title={course.title} />
+      {hasLanguageFlag(course.targetLanguage) ? (
+        <span className="flex size-8 shrink-0 items-center justify-center">
+          <LanguageFlag className="w-8" language={course.targetLanguage} />
+        </span>
+      ) : (
+        <PaletteResultImage imageUrl={course.imageUrl} title={course.title} />
+      )}
 
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium">{course.title}</p>
@@ -125,7 +144,7 @@ function ChapterOptionContent({ item }: { item: ChapterPaletteItem }) {
 
   return (
     <>
-      <PaletteResultImage imageUrl={chapter.imageUrl} title={chapter.title} />
+      <PaletteResultIcon />
 
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium">{chapter.title}</p>
@@ -137,9 +156,17 @@ function ChapterOptionContent({ item }: { item: ChapterPaletteItem }) {
 }
 
 /**
- * Catalog records do not always have thumbnails, so the fallback keeps result
- * rows aligned while still communicating that the destination is course content.
+ * Chapters and courses without an icon share this tile, so result rows stay aligned while still
+ * communicating that the destination is course content.
  */
+function PaletteResultIcon() {
+  return (
+    <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
+      <BookOpenIcon aria-hidden="true" className="size-4" />
+    </div>
+  );
+}
+
 function PaletteResultImage({ imageUrl, title }: { imageUrl: string | null; title: string }) {
   if (imageUrl) {
     return (
@@ -153,9 +180,5 @@ function PaletteResultImage({ imageUrl, title }: { imageUrl: string | null; titl
     );
   }
 
-  return (
-    <div className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-md">
-      <BookOpenIcon aria-hidden="true" className="size-4" />
-    </div>
-  );
+  return <PaletteResultIcon />;
 }

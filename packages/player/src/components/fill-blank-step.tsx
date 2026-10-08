@@ -1,11 +1,11 @@
 "use client";
 
+import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-state";
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { FillBlankWordBank } from "./fill-blank-word-bank";
@@ -61,8 +61,8 @@ function BlankSlot({
           "inline-flex min-w-16 items-center justify-center border-b-2 px-1 font-medium transition-all duration-150",
           hasResult && "pointer-events-none",
           !resultState && "border-primary/30 text-primary",
-          resultState === "correct" && "border-success/50 text-success opacity-75",
-          resultState === "incorrect" && "border-destructive/50 text-destructive opacity-75",
+          resultState === "correct" && "border-success/50 text-success",
+          resultState === "incorrect" && "border-destructive/50 text-destructive",
         )}
         disabled={hasResult}
         onClick={onRemove}
@@ -124,7 +124,7 @@ export function FillBlankStep({
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
@@ -168,10 +168,10 @@ export function FillBlankStep({
       const userAnswers = getCompletedUserAnswers(next);
 
       if (userAnswers) {
-        onSelectAnswer(step.id, { kind: "fillBlank", userAnswers });
+        onSelectAnswer({ kind: "fillBlank", userAnswers });
       }
     },
-    [blanks, onSelectAnswer, step.id],
+    [blanks, onSelectAnswer],
   );
 
   const handleRemoveWord = useCallback(
@@ -185,10 +185,10 @@ export function FillBlankStep({
       setBlanks(next);
 
       if (selectedAnswer) {
-        onSelectAnswer(step.id, null);
+        onSelectAnswer(null);
       }
     },
-    [blanks, onSelectAnswer, selectedAnswer, step.id],
+    [blanks, onSelectAnswer, selectedAnswer],
   );
 
   return (

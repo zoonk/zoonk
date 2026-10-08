@@ -30,20 +30,27 @@
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },
+    "apps/evals": { "entry": ["scripts/*.{ts,mts}!"] },
     "apps/mailbox": { "project": ["src/**/*.{ts,tsx,css}!", "!src/server/**!"] },
     "apps/main": {
       "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
+    "packages/ai": {
+      "entry": ["scripts/*.ts!"],
+      "project": ["src/**/*.ts!", "!**/_test-utils/**!"]
+    },
+    "packages/auth": { "project": ["src/**/*.ts!", "!**/_test-utils/**!"] },
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
-      "entry": ["prisma.config.ts", "src/prisma/sync-content.{ts,mts}!"],
+      "entry": ["prisma.config.ts", "src/prisma/sync-content.{ts,mts}!", "src/scripts/*.ts"],
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "prisma": false
     },
+    "packages/learn": { "entry": [".eloqnt/config.ts"], "project": ["src/**/*.{ts,tsx}!"] },
     "packages/player": {
-      "entry": [".eloqnt/config.ts"],
-      "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
+      "entry": [".eloqnt/config.ts", "scripts/base-maps/build-base-maps.ts!"],
+      "project": ["src/**/*.{ts,tsx}!", "scripts/**/*.ts!", "!**/_test-utils/**!"]
     },
     "packages/ui": { "includeEntryExports": false }
   }

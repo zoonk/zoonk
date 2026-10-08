@@ -1,3 +1,5 @@
+import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { expect, test } from "./fixtures";
 
 test.describe("Profile settings page", () => {
@@ -8,129 +10,92 @@ test.describe("Profile settings page", () => {
     await expect(page.getByRole("link", { name: /login/iu })).toBeVisible();
   });
 
-  test("updates name successfully", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/profile");
-
-    const nameInput = authenticatedPage.getByRole("textbox", { name: /^name$/iu });
-    await nameInput.clear();
-    await nameInput.fill("New Test Name");
-
-    await authenticatedPage.getByRole("button", { name: /save changes/iu }).click();
-
-    await expect(
-      authenticatedPage.getByText(/your profile has been updated successfully/iu),
-    ).toBeVisible();
-
-    // Verify name persists after reload
-    await authenticatedPage.reload();
-
-    await expect(authenticatedPage.getByRole("textbox", { name: /^name$/iu })).toHaveValue(
-      "New Test Name",
-    );
-  });
-
-  test("shows username field with @ prefix", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/profile");
-
-    await expect(authenticatedPage.getByRole("textbox", { name: /username/iu })).toBeVisible();
-    await expect(authenticatedPage.getByText("@")).toBeVisible();
-  });
-
-  test("shows validation for short username", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/profile");
-
-    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/iu });
-    await usernameInput.fill("ab");
-
-    await expect(authenticatedPage.getByText(/3-30 characters/iu)).toBeVisible();
-  });
-
-  test("disables save button for invalid username", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/profile");
-
-    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/iu });
-    await usernameInput.fill("AB!@#");
-
-    await expect(authenticatedPage.getByText(/3-30 characters/iu)).toBeVisible();
-    await expect(authenticatedPage.getByRole("button", { name: /save changes/iu })).toBeDisabled();
-  });
-
-  test("updates username successfully", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/profile");
-
-    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/iu });
-    const originalUsername = await usernameInput.inputValue();
-    const newUsername = `e2etest${Date.now().toString().slice(-6)}`;
-
-    await usernameInput.fill(newUsername);
-
-    await authenticatedPage.getByRole("button", { name: /save changes/iu }).click();
-
-    await expect(
-      authenticatedPage.getByText(/your profile has been updated successfully/iu),
-    ).toBeVisible();
-
-    // Verify username persists after reload
-    await authenticatedPage.reload();
-
-    await expect(authenticatedPage.getByRole("textbox", { name: /username/iu })).toHaveValue(
-      newUsername,
-    );
-
-    // Restore original username to avoid breaking other tests
-    await usernameInput.fill(originalUsername);
-
-    await authenticatedPage.getByRole("button", { name: /save changes/iu }).click();
-
-    await expect(
-      authenticatedPage.getByText(/your profile has been updated successfully/iu),
-    ).toBeVisible();
-  });
-
-  test("clears previous availability while a new username is debouncing", async ({
-    authenticatedPage,
+  test("holds the name and username, the learner's data and deleting the account", async ({
+    noProgressUser,
+    userWithoutProgress: page,
   }) => {
-    await authenticatedPage.clock.install();
-    await authenticatedPage.goto("/profile");
+    await page.goto("/profile");
 
-    const usernameInput = authenticatedPage.getByRole("textbox", { name: /username/iu });
-    const availableUsername = `available${Date.now().toString().slice(-8)}`;
-    await usernameInput.fill(availableUsername);
-    await expect(authenticatedPage.getByText(/is available/iu)).toBeVisible();
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: noProgressUser.id } });
 
-    /** Hold the debounce so a previous result cannot masquerade as the new input's validation. */
-    await authenticatedPage.clock.pauseAt(new Date(Date.now() + 1000));
-    await usernameInput.fill(`${availableUsername}next`);
+    await expect(page.getByRole("textbox", { exact: true, name: "Name" })).toBeVisible();
 
-    await expect(authenticatedPage.getByText(/checking/iu)).toBeVisible();
-    await expect(authenticatedPage.getByText(/is available/iu)).not.toBeVisible();
-    await expect(authenticatedPage.getByRole("button", { name: /save changes/iu })).toBeDisabled();
+    await expect(page.getByRole("textbox", { exact: true, name: "Username" })).toHaveValue(
+      user.username ?? "",
+    );
 
-    await usernameInput.fill(availableUsername);
-
-    await expect(authenticatedPage.getByText(/checking/iu)).toBeVisible();
-    await expect(authenticatedPage.getByText(/is available/iu)).not.toBeVisible();
-    await expect(authenticatedPage.getByRole("button", { name: /save changes/iu })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Download my data" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Delete account" })).toBeVisible();
   });
 
-  test("shows error for whitespace-only name", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/profile");
+  test("changes the username once it's free and follows the rule", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    await page.goto("/profile");
 
-    const nameInput = authenticatedPage.getByRole("textbox", { name: /^name$/iu });
+    const username = page.getByRole("textbox", { exact: true, name: "Username" });
+    const save = page.getByRole("button", { exact: true, name: "Save" });
+
+    await username.fill("ab");
+
+    await expect(
+      page.getByText("3-30 characters. Letters, numbers, and underscores only."),
+    ).toBeVisible();
+
+    await expect(save).toBeDisabled();
+
+    await username.fill("admin");
+    await expect(page.getByText("admin is already taken")).toBeVisible();
+    await expect(save).toBeDisabled();
+
+    const chosen = `e2e_new_${Date.now().toString().slice(-8)}`;
+    await username.fill(chosen);
+    await expect(page.getByText(`${chosen} is available`)).toBeVisible();
+    await save.click();
+
+    await expect(page.getByText("Saved.")).toBeVisible();
+
+    await expect
+      .poll(async () => {
+        const user = await prisma.user.findUniqueOrThrow({ where: { id: noProgressUser.id } });
+        return user.username;
+      })
+      .toBe(chosen);
+
+    await page.reload();
+    await expect(page.getByRole("textbox", { exact: true, name: "Username" })).toHaveValue(chosen);
+  });
+
+  test("refuses a whitespace-only name, then updates the name", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    await page.goto("/profile");
+
+    const nameInput = page.getByRole("textbox", { exact: true, name: "Name" });
     const originalName = await nameInput.inputValue();
+    await expectAccessibleScreen(page, "the profile settings");
 
     await nameInput.clear();
     await nameInput.fill("   "); // Whitespace passes HTML5 required but fails server validation
+    await page.getByRole("button", { exact: true, name: "Save" }).click();
 
-    await authenticatedPage.getByRole("button", { name: /save changes/iu }).click();
+    await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
 
-    await expect(authenticatedPage.getByText(/failed to update your profile/iu)).toBeVisible();
+    await expect(
+      prisma.user.findUniqueOrThrow({ where: { id: noProgressUser.id } }),
+    ).resolves.toMatchObject({ name: originalName });
 
-    // Verify name wasn't updated after reload
-    await authenticatedPage.reload();
+    await nameInput.fill("New Test Name");
+    await page.getByRole("button", { exact: true, name: "Save" }).click();
 
-    await expect(authenticatedPage.getByRole("textbox", { name: /^name$/iu })).toHaveValue(
-      originalName,
+    await expect(page.getByText("Saved.")).toBeVisible();
+
+    await page.reload();
+
+    await expect(page.getByRole("textbox", { exact: true, name: "Name" })).toHaveValue(
+      "New Test Name",
     );
   });
 });

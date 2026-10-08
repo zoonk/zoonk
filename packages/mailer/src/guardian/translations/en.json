@@ -1,0 +1,11 @@
+{
+  "inviteAction": "Accept the invite",
+  "inviteDisclaimer": "If you don't know {name}, you can ignore this message.",
+  "inviteExpiry": "This invite expires in 7 days.",
+  "inviteIntro": "{name} is learning on Zoonk and invited you to be their guardian.",
+  "inviteSubject": "{name} invited you to be their guardian on Zoonk",
+  "inviteWhatYouCanDo": "As a guardian, you can see their weekly activity, set a daily time limit, turn their memory off and approve a Plus subscription. Sign in with this email address to accept.",
+  "plusApprovalAction": "Review the request",
+  "plusApprovalIntro": "{name} would like to subscribe to Zoonk Plus. They can subscribe only after you approve it.",
+  "plusApprovalSubject": "{name} asked you to approve Zoonk Plus"
+}

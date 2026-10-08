@@ -1,51 +1,82 @@
 "use client";
 
-import { safeAsync } from "@zoonk/utils/error";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import {
-  type PlayerQuestionContext,
-  type PlayerQuestionSupport,
-  usePlayerRuntime,
-  usePlayerViewer,
-} from "../player-context";
-import { usePlayerQuestionContext } from "../use-player-question-context";
+import { type TutorTarget } from "@zoonk/core/lesson-questions/contract";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { useCallback, useEffect, useRef } from "react";
 import { type LessonQuestionConnection } from "./lesson-question-api";
-import { getAnswerExplanationRequestId } from "./lesson-question-request";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionScope } from "./lesson-question-scope";
 import { type LessonQuestionState } from "./lesson-question-state";
 import { useLessonQuestionAnswers } from "./use-lesson-question-answers";
 import { useLessonQuestionRecovery } from "./use-lesson-question-recovery";
-import { useLessonQuestionSessions } from "./use-lesson-question-sessions";
+import {
+  type LessonQuestionThreadPage,
+  useLessonQuestionSessions,
+} from "./use-lesson-question-sessions";
 import { useLessonQuestionThread } from "./use-lesson-question-thread";
 import { useSendLessonQuestion } from "./use-send-lesson-question";
 
-type UseLessonQuestionsInput = { connection: LessonQuestionConnection; lessonId: string };
+/**
+ * What the host tells the tutor: where the learner is, whether they may ask (signed-in learners,
+ * not visitors or guests), and a lesson's steps in the order they see them. A player loads the
+ * thread about the screen in view ahead of time; a screen's "Ask" loads it when opened (`preload`).
+ */
+export type LessonQuestionHost = {
+  activeContext: LessonQuestionContext;
+  canAskQuestions: boolean;
+  /**
+   * The thread as the page read it on the server: it shows at once, and the tutor still reads it
+   * again in the background for anything newer.
+   */
+  initialThread?: LessonQuestionThreadPage | null;
+  lessonStepIds: readonly string[];
+  /**
+   * The conversation is a page of its own (the buddy's), always on screen, not a sheet the learner
+   * opens: an answer still being written elsewhere is followed as soon as it shows.
+   */
+  page?: boolean;
+  preload?: boolean;
+};
+
+type UseLessonQuestionsInput = LessonQuestionHost & {
+  connection: LessonQuestionConnection;
+  target: TutorTarget;
+};
 
 export type LessonQuestionController = {
+  /** The learner answered a plan change an answer proposed (Apply, Not now, Undo). */
+  answerPlanChange: (change: PlanChangeView) => void;
+  canAskQuestions: boolean;
   changeDraft: (draft: string) => void;
   checkAnswer: (questionId: string) => Promise<void>;
+  /** Puts one of the tutor's suggested questions in the composer. */
+  chooseSuggestion: (question: string) => void;
   close: () => void;
-  copy: (text: string) => Promise<void>;
   load: () => Promise<boolean>;
   loadEarlier: () => Promise<void>;
-  questionSupport: PlayerQuestionSupport;
+  open: (context: LessonQuestionContext) => void;
   retryAnswer: (questionId: string) => Promise<void>;
   send: () => Promise<void>;
+  /** Sends one of the tutor's suggested questions right away. */
+  sendSuggestion: (question: string) => Promise<void>;
   state: LessonQuestionState;
   unresolvedQuestion: string | null;
 };
 
 export function useLessonQuestions({
+  activeContext,
+  canAskQuestions,
   connection,
-  lessonId,
+  initialThread = null,
+  lessonStepIds,
+  page = false,
+  preload = true,
+  target,
 }: UseLessonQuestionsInput): LessonQuestionController {
-  const activeContext = usePlayerQuestionContext();
-  const { state: playerState } = usePlayerRuntime();
-  const { isAuthenticated } = usePlayerViewer();
-  const lessonSteps = playerState.steps;
-  const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions(activeContext);
-  const canAskQuestions = isAuthenticated;
-  const canExplainAnswer = !state.activeQuestionId && !state.isCreating;
+  const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions({
+    activeContext,
+    initialThread,
+  });
 
   const { load, loadEarlier, loadThread, reconcileLatestThread } = useLessonQuestionThread({
     canAskQuestions,
@@ -53,8 +84,8 @@ export function useLessonQuestions({
     dispatch,
     dispatchToContext,
     getState,
-    lessonId,
     state,
+    target,
   });
 
   const preloadedScopes = useRef(new Set<string>());
@@ -63,14 +94,14 @@ export function useLessonQuestions({
   useEffect(() => {
     const scope = getLessonQuestionScope(activeContext);
 
-    if (canAskQuestions && !preloadedScopes.current.has(scope)) {
+    if (preload && canAskQuestions && !preloadedScopes.current.has(scope)) {
       preloadedScopes.current.add(scope);
       void loadThread(activeContext);
     }
-  }, [activeContext, canAskQuestions, loadThread]);
+  }, [activeContext, canAskQuestions, loadThread, preload]);
 
   const open = useCallback(
-    (context: PlayerQuestionContext) => {
+    (context: LessonQuestionContext) => {
       dispatchToContext({ action: { context, type: "open" }, context });
 
       const scope = getLessonQuestionScope(context);
@@ -83,6 +114,9 @@ export function useLessonQuestions({
       openedScopes.current.add(scope);
 
       if (canAskQuestions && needsRefresh) {
+        // A press replayed at hydration can open the sheet before the preload effect runs; this
+        // load counts as the preload, so the effect doesn't fetch the thread a second time.
+        preloadedScopes.current.add(scope);
         void loadThread(context);
       }
     },
@@ -96,6 +130,11 @@ export function useLessonQuestions({
     [dispatch],
   );
 
+  const chooseSuggestion = useCallback(
+    (question: string) => dispatch({ question, type: "suggestionChosen" }),
+    [dispatch],
+  );
+
   const { checkAnswer, retryAnswer, streamAnswer } = useLessonQuestionAnswers({
     canAskQuestions,
     connection,
@@ -105,16 +144,21 @@ export function useLessonQuestions({
     state,
   });
 
-  const { send, sendPrepared, unresolvedQuestion } = useSendLessonQuestion({
+  const answerPlanChange = useCallback(
+    (change: PlanChangeView) => dispatch({ change, type: "planChangeAnswered" }),
+    [dispatch],
+  );
+
+  const { send, sendSuggestion, unresolvedQuestion } = useSendLessonQuestion({
     canAskQuestions,
     connection,
     dispatchToContext,
     getState,
-    lessonId,
-    lessonSteps,
+    lessonStepIds,
     reconcileThread: reconcileLatestThread,
     state,
     streamAnswer,
+    target,
   });
 
   const resumeAnswer = useCallback(
@@ -126,70 +170,24 @@ export function useLessonQuestions({
     canAskQuestions,
     connection,
     dispatch,
+    isShown: page || state.isOpen,
     state,
     streamAnswer: resumeAnswer,
   });
 
-  const explainAnswer = useCallback(
-    async ({ context, question }: { context: PlayerQuestionContext; question: string }) => {
-      if (!canExplainAnswer) {
-        return;
-      }
-
-      dispatchToContext({ action: { context, type: "open" }, context });
-      dispatchToContext({ action: { draft: question, type: "draftChanged" }, context });
-      openedScopes.current.add(getLessonQuestionScope(context));
-
-      if (!canAskQuestions) {
-        return;
-      }
-
-      const [questions, requestId] = await Promise.all([
-        loadThread(context),
-        getAnswerExplanationRequestId({
-          context,
-          lessonStepIds: lessonSteps.map((step) => step.id),
-          question,
-        }),
-      ]);
-
-      if (!questions) {
-        return;
-      }
-
-      await sendPrepared({ context, question, questions, requestId });
-    },
-    [canAskQuestions, canExplainAnswer, dispatchToContext, lessonSteps, loadThread, sendPrepared],
-  );
-
-  const copy = useCallback(
-    async (text: string) => {
-      const { error } = await safeAsync(() => navigator.clipboard.writeText(text));
-      dispatch({ type: error ? "copyFailed" : "copied" });
-    },
-    [dispatch],
-  );
-
-  const questionSupport = useMemo<PlayerQuestionSupport>(
-    () => ({
-      canExplainAnswer,
-      interactionState: state.isOpen ? "paused" : "active",
-      onAskQuestion: open,
-      onExplainAnswer: (input) => void explainAnswer(input),
-    }),
-    [canExplainAnswer, explainAnswer, open, state.isOpen],
-  );
-
   return {
+    answerPlanChange,
+    canAskQuestions,
     changeDraft,
     checkAnswer,
+    chooseSuggestion,
     close,
-    copy,
     load,
     loadEarlier,
-    questionSupport,
+    open,
     retryAnswer,
     send,
+    sendSuggestion,
     state,
     unresolvedQuestion,
   };

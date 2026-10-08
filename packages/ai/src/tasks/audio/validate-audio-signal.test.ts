@@ -18,6 +18,7 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([speech]),
+        maxSeconds: 18,
         model: "openai/gpt-4o-mini-tts",
       }),
     ).not.toThrow();
@@ -29,6 +30,7 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([silence]),
+        maxSeconds: 18,
         model: "openai/gpt-4o-mini-tts",
       }),
     ).toThrow("returned silent audio");
@@ -41,18 +43,20 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([click]),
+        maxSeconds: 18,
         model: "openai/gpt-4o-mini-tts",
       }),
     ).toThrow("returned silent audio");
   });
 
-  it("rejects audio longer than a learner phrase", () => {
+  it("rejects audio longer than the text could take to read", () => {
     const longSpeech = new Float32Array(SAMPLE_RATE * 19).fill(0.1);
 
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([longSpeech]),
-        model: "google/gemini-2.5-flash-preview-tts",
+        maxSeconds: 18,
+        model: "google/gemini-3.8-flash-tts",
       }),
     ).toThrow("returned audio longer than 18 seconds");
   });
@@ -63,6 +67,7 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([nearSilence]),
+        maxSeconds: 18,
         model: "openai/gpt-4o-mini-tts",
       }),
     ).toThrow("returned silent audio");
@@ -74,6 +79,7 @@ describe(assertAudibleAudioSignal, () => {
     expect(() =>
       assertAudibleAudioSignal({
         audio: createDecodedAudio([quietSpeech]),
+        maxSeconds: 18,
         model: "openai/gpt-4o-mini-tts",
       }),
     ).not.toThrow();

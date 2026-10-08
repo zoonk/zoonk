@@ -1,12 +1,8 @@
 import { type APIRequestContext, type APIResponse, request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
-import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
-import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { type ZodType } from "zod";
 import {
@@ -14,7 +10,6 @@ import {
   currentUserEnergyResponseSchema,
   currentUserLevelResponseSchema,
   currentUserProgressResponseSchema,
-  currentUserProgressSnapshotResponseSchema,
   currentUserScorePatternsResponseSchema,
   currentUserScoreResponseSchema,
 } from "../src/lib/openapi/schemas/current-user-progress";
@@ -27,7 +22,6 @@ const PROGRESS_PATHS = [
   "/v1/me/progress/level",
   "/v1/me/progress/score",
   "/v1/me/progress/score/patterns",
-  "/v1/me/progress/snapshot",
 ] as const;
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
@@ -89,7 +83,6 @@ async function getProgressResponses(apiContext: APIRequestContext) {
     apiContext.get(PROGRESS_PATHS[3]),
     apiContext.get(PROGRESS_PATHS[4]),
     apiContext.get(PROGRESS_PATHS[5]),
-    apiContext.get(PROGRESS_PATHS[6]),
   ]);
 }
 
@@ -125,15 +118,6 @@ async function createPopulatedProgress({ userId }: { userId: string }) {
   const today = getCurrentUtcDate();
   const previousDay = new Date(today.getTime() - DAY_IN_MILLISECONDS);
   const otherUser = await userFixture();
-  const course = await courseFixture();
-  const chapter = await chapterFixture({ courseId: course.id });
-  const lesson = await lessonFixture({ chapterId: chapter.id });
-
-  const step = await stepFixture({
-    content: { options: [{ feedback: "Correct", isCorrect: true, text: "A" }] },
-    kind: "multipleChoice",
-    lessonId: lesson.id,
-  });
 
   await Promise.all([
     userProgressFixture({
@@ -156,6 +140,7 @@ async function createPopulatedProgress({ userId }: { userId: string }) {
         energyAtEnd: 80,
         incorrectAnswers: 1,
         interactiveCompleted: 1,
+        lessonsCompleted: 1,
         staticCompleted: 1,
         timeSpentSeconds: 120,
         userId,
@@ -166,40 +151,25 @@ async function createPopulatedProgress({ userId }: { userId: string }) {
         date: previousDay,
         energyAtEnd: 100,
         interactiveCompleted: 10,
+        lessonsCompleted: 10,
         timeSpentSeconds: 9999,
         userId: otherUser.id,
       },
     ]),
-    lessonProgressFixture({
-      completedAt: today,
-      durationSeconds: 120,
-      lessonId: lesson.id,
+    learningEventFixture({
+      correctAnswers: 1,
+      endedAt: today,
+      hour: 9,
+      localDate: today,
+      seconds: 120,
       userId,
     }),
-    lessonProgressFixture({
-      completedAt: previousDay,
-      durationSeconds: 9999,
-      lessonId: lesson.id,
-      userId: otherUser.id,
-    }),
-    stepAttemptFixture({
-      answer: { selectedOption: 0 },
-      answeredAt: today,
-      dayOfWeek: today.getUTCDay(),
-      durationSeconds: 12,
-      hourOfDay: 9,
-      isCorrect: true,
-      stepId: step.id,
-      userId,
-    }),
-    stepAttemptFixture({
-      answer: { selectedOption: 0 },
-      answeredAt: previousDay,
-      dayOfWeek: previousDay.getUTCDay(),
-      durationSeconds: 12,
-      hourOfDay: 21,
-      isCorrect: true,
-      stepId: step.id,
+    learningEventFixture({
+      correctAnswers: 100,
+      endedAt: previousDay,
+      hour: 21,
+      localDate: today,
+      seconds: 9999,
       userId: otherUser.id,
     }),
   ]);
@@ -237,7 +207,7 @@ test.describe("Learner Progress API", () => {
       prefix: "progress-empty",
     });
 
-    const [summary, activity, energy, level, score, patterns, snapshot] =
+    const [summary, activity, energy, level, score, patterns] =
       await getProgressResponses(apiContext);
 
     const summaryBody = await getSuccessfulBody({
@@ -277,15 +247,6 @@ test.describe("Learner Progress API", () => {
       getSuccessfulBody({ response: patterns, schema: currentUserScorePatternsResponseSchema }),
     ).resolves.toStrictEqual({ patterns: null });
 
-    await expect(
-      getSuccessfulBody({ response: snapshot, schema: currentUserProgressSnapshotResponseSchema }),
-    ).resolves.toMatchObject({
-      snapshot: {
-        progressSnapshot: { currentEnergy: 0, learningDays: 0, totalLearningSeconds: 0 },
-        totalBrainPower: 0,
-      },
-    });
-
     await apiContext.dispose();
   });
 
@@ -297,26 +258,18 @@ test.describe("Learner Progress API", () => {
 
     const { today } = await createPopulatedProgress({ userId });
 
-    const [summary, activity, energy, level, score, patterns, snapshot] =
+    const [summary, activity, energy, level, score, patterns] =
       await getProgressResponses(apiContext);
 
-    const [
-      summaryBody,
-      activityBody,
-      energyBody,
-      levelBody,
-      scoreBody,
-      patternsBody,
-      snapshotBody,
-    ] = await Promise.all([
-      getSuccessfulBody({ response: summary, schema: currentUserProgressResponseSchema }),
-      getSuccessfulBody({ response: activity, schema: currentUserActivityResponseSchema }),
-      getSuccessfulBody({ response: energy, schema: currentUserEnergyResponseSchema }),
-      getSuccessfulBody({ response: level, schema: currentUserLevelResponseSchema }),
-      getSuccessfulBody({ response: score, schema: currentUserScoreResponseSchema }),
-      getSuccessfulBody({ response: patterns, schema: currentUserScorePatternsResponseSchema }),
-      getSuccessfulBody({ response: snapshot, schema: currentUserProgressSnapshotResponseSchema }),
-    ]);
+    const [summaryBody, activityBody, energyBody, levelBody, scoreBody, patternsBody] =
+      await Promise.all([
+        getSuccessfulBody({ response: summary, schema: currentUserProgressResponseSchema }),
+        getSuccessfulBody({ response: activity, schema: currentUserActivityResponseSchema }),
+        getSuccessfulBody({ response: energy, schema: currentUserEnergyResponseSchema }),
+        getSuccessfulBody({ response: level, schema: currentUserLevelResponseSchema }),
+        getSuccessfulBody({ response: score, schema: currentUserScoreResponseSchema }),
+        getSuccessfulBody({ response: patterns, schema: currentUserScorePatternsResponseSchema }),
+      ]);
 
     expect(summaryBody).toMatchObject({
       activity: { learningDays: 1, totalLearningSeconds: 120, totalLessonCompletions: 1 },
@@ -332,6 +285,7 @@ test.describe("Learner Progress API", () => {
     expect(summaryBody.level).not.toHaveProperty("color");
 
     expect(activityBody.activity.days.at(-1)).toStrictEqual({
+      activitiesCompleted: 2,
       date: today.toISOString().slice(0, 10),
       lessonCompletions: 1,
     });
@@ -366,23 +320,6 @@ test.describe("Learner Progress API", () => {
     expect(patternsBody.patterns?.strongestTime).toMatchObject({
       period: "morning",
       totalAnswers: 1,
-    });
-
-    expect(snapshotBody.snapshot).toMatchObject({
-      progressSnapshot: {
-        currentEnergy: 80,
-        learningDays: 1,
-        todayBrainPower: 500,
-        todayCompletedLessons: 2,
-        totalLearningSeconds: 120,
-      },
-      totalBrainPower: 15_000,
-    });
-
-    expect(snapshotBody.snapshot.progressSnapshot.bestDayScores).toContainEqual({
-      correctAnswers: 3,
-      dayOfWeek: WEEKDAYS[today.getUTCDay()],
-      incorrectAnswers: 1,
     });
 
     await Promise.all([apiContext.dispose(), cookieContext.dispose()]);

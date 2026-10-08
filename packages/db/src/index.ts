@@ -20,67 +20,136 @@ if (process.env.NODE_ENV !== "production") {
 
 /** @public */
 export type {
+  AnswerExplanation,
+  Attempt,
   Chapter,
-  ChapterCompletion,
-  ChapterSentence,
-  ChapterWord,
+  ChapterLesson,
+  ChapterMindMap,
+  ChapterSkill,
+  ContentFeedback,
   Course,
   CourseCategory,
-  CourseCompletion,
-  CourseEditionRequest,
-  CourseFamily,
+  CourseChapter,
   CoursePrompt,
-  CourseUser,
+  DailyProgress,
+  EvaluationRun,
+  ExamBlueprint,
+  Feedback,
   GenerationStatus,
+  Goal,
+  GuardianLink,
+  InstrumentWaitlistEntry,
+  Item,
+  LanguageConversation,
+  LanguageLevelTest,
+  LanguageSkillLevel,
+  LearnerSkill,
+  LearnerSource,
+  LearningEvent,
   Lesson,
-  LessonProgress,
-  LessonKind,
   LessonQuestion,
   LessonQuestionContextKind,
   LessonQuestionStatus,
   LessonQuestionThread,
-  Member,
+  LessonSkill,
+  MediaAsset,
+  MemoryFact,
+  MemoryInsight,
+  Milestone,
+  Mistake,
+  MockExam,
+  MockExamAnswer,
+  OnboardingDraft,
   Organization,
-  Sentence,
+  Plan,
+  PlanChange,
+  PlanItem,
+  PronunciationReview,
+  Skill,
+  SkillPrerequisite,
+  Source,
+  SourceChangeNotice,
+  Step,
+  StepExampleLine,
+  StepVariant,
+  StudySession,
+  StudySessionBlock,
   Subscription,
-  StepKind,
+  SuggestedGoal,
+  TutorSharedAnswer,
   User,
+  UsageRecord,
+  UserLearningProfile,
   UserProgress,
-  Word,
-  WordPronunciation,
 } from "./generated/prisma/client";
 
-export { CourseFormat, CoursePromptIntent } from "./generated/prisma/client";
+export {
+  BuddyGlasses,
+  BuddyKind,
+  ContentFeedbackReason,
+  CourseFormat,
+  CourseLevel,
+  CoursePromptIntent,
+  FeedbackContentKind,
+  FeedbackStatus,
+  GoalKind,
+  GoalStatus,
+  GuardianLinkStatus,
+  ItemFormat,
+  LanguageConversationKind,
+  LanguageSkill,
+  LearnerSourceOrigin,
+  LearningEventKind,
+  LibraryVisibility,
+  MasteryState,
+  MediaKind,
+  MemoryCategory,
+  MemoryFactStatus,
+  MemoryInsightKind,
+  MemoryInsightStatus,
+  MemoryOrigin,
+  MilestoneKind,
+  MistakeCause,
+  MistakeStatus,
+  PlanChangeStatus,
+  PlanItemKind,
+  PlanItemStatus,
+  ResearchUploadReason,
+  SourceKind,
+  StepKind,
+  StudyBlockKind,
+  StudyBlockStatus,
+  StudyFreshStart,
+  StudySessionStatus,
+  SuggestedGoalStatus,
+  UsageKind,
+  VoteValue,
+} from "./generated/prisma/client";
 
-export type { ChapterCreateManyInput } from "./generated/prisma/models/Chapter";
-export type { ChapterGetPayload } from "./generated/prisma/models/Chapter";
-export type { ChapterSentenceGetPayload } from "./generated/prisma/models/ChapterSentence";
-export type { ChapterWordGetPayload } from "./generated/prisma/models/ChapterWord";
+export type { AiCallCreateManyInput } from "./generated/prisma/models/AiCall";
 export type {
   CoursePromptGetPayload,
   CoursePromptWhereInput,
 } from "./generated/prisma/models/CoursePrompt";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
-export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
-export type { LessonGetPayload } from "./generated/prisma/models/Lesson";
+export type { LessonUncheckedCreateInput } from "./generated/prisma/models/Lesson";
 export type { LessonQuestionGetPayload } from "./generated/prisma/models/LessonQuestion";
 export type { LessonQuestionThreadGetPayload } from "./generated/prisma/models/LessonQuestionThread";
-export type { StepGetPayload } from "./generated/prisma/models/Step";
 
 export { prisma };
 export const sql = Prisma.sql;
 export type Sql = Prisma.Sql;
 
+/** Writes SQL NULL to a nullable JSON column (a plain `null` means JSON null to Prisma). */
+export const DbNull = Prisma.DbNull;
+
 export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 
-export { isPrismaUniqueConstraintError } from "./prisma-errors";
+export { isPrismaForeignKeyError, isPrismaUniqueConstraintError } from "./prisma-errors";
 
 export {
-  getAiGenerationChapterWhere,
-  getAiGenerationCourseWhere,
-  getAiGenerationLessonWhere,
-  getPublishedChapterWhere,
+  getCourseRouteWhere,
+  getListedCourseWhere,
   getPublishedCourseWhere,
-  getPublishedLessonWhere,
-  getPublishedStepWhere,
+  isListedCourse,
 } from "./curriculum-filters";

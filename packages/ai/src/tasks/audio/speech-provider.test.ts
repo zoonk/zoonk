@@ -1,94 +1,76 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { generateSpeechWithProvider } from "./speech-provider";
 
-const { createGoogleMock, generateSpeechMock, googleSpeechMock, openAISpeechMock } = vi.hoisted(
-  () => {
-    const googleSpeech = vi.fn((modelId: string) => ({ modelId, provider: "google" }));
-
-    return {
-      createGoogleMock: vi.fn(() => ({ speech: googleSpeech })),
-      generateSpeechMock: vi.fn(),
-      googleSpeechMock: googleSpeech,
-      openAISpeechMock: vi.fn((modelId: string) => ({ modelId, provider: "openai" })),
-    };
-  },
-);
+const { gatewaySpeechMock, generateSpeechMock, openAISpeechMock } = vi.hoisted(() => ({
+  gatewaySpeechMock: vi.fn((modelId: string) => ({ modelId, provider: "gateway" })),
+  generateSpeechMock: vi.fn(),
+  openAISpeechMock: vi.fn((modelId: string) => ({ modelId, provider: "openai" })),
+}));
 
 vi.mock("ai", () => ({ generateSpeech: generateSpeechMock }));
-vi.mock("@ai-sdk/google", () => ({ createGoogle: createGoogleMock }));
-vi.mock("@ai-sdk/openai", () => ({ openai: { speech: openAISpeechMock } }));
+vi.mock("../../gateway", () => ({ zoonkGateway: { speechModel: gatewaySpeechMock } }));
+vi.mock("@ai-sdk/openai", () => ({ createOpenAI: () => ({ speech: openAISpeechMock }) }));
+
+const audio = new Uint8Array([1, 2, 3]);
+const providerMetadata = { gateway: { cost: "0.0001" } };
 
 describe(generateSpeechWithProvider, () => {
   beforeEach(() => {
-    generateSpeechMock.mockReset();
-    googleSpeechMock.mockClear();
-    openAISpeechMock.mockClear();
+    vi.clearAllMocks();
+    generateSpeechMock.mockResolvedValue({ audio: { uint8Array: audio }, providerMetadata });
   });
 
-  it("uses the AI SDK Google provider with WAV output", async () => {
-    const audio = new Uint8Array([1, 2, 3]);
-    generateSpeechMock.mockResolvedValue({ audio: { uint8Array: audio } });
-
+  it("sends Gemini through AI Gateway as WAV, its language named in the instructions", async () => {
     const result = await generateSpeechWithProvider({
-      instructions: "Speak clearly",
-      model: "google/gemini-2.5-flash-preview-tts",
-      text: "Hallo",
+      instructions: "The following text is Italiano.",
+      model: "google/gemini-3.8-flash-tts",
+      text: "Ciao, come stai?",
       voice: "Kore",
     });
 
-    expect(result).toBe(audio);
-    expect(googleSpeechMock).toHaveBeenCalledExactlyOnceWith("gemini-2.5-flash-preview-tts");
+    expect(result).toStrictEqual({ audio, providerMetadata });
+    expect(gatewaySpeechMock).toHaveBeenCalledExactlyOnceWith("google/gemini-3.8-flash-tts");
 
     expect(generateSpeechMock).toHaveBeenCalledExactlyOnceWith({
-      instructions: "Speak clearly",
-      model: { modelId: "gemini-2.5-flash-preview-tts", provider: "google" },
+      instructions: "The following text is Italiano.",
+      model: { modelId: "google/gemini-3.8-flash-tts", provider: "gateway" },
       outputFormat: "wav",
-      text: "Hallo",
+      text: "Ciao, come stai?",
       voice: "Kore",
     });
 
     expect(openAISpeechMock).not.toHaveBeenCalled();
   });
 
-  it("adds read-aloud guidance when Gemini receives no instructions", async () => {
-    const audio = new Uint8Array([1, 2, 3]);
-    generateSpeechMock.mockResolvedValue({ audio: { uint8Array: audio } });
-
+  it("never sends a language option, which no speech model reads and each warns about", async () => {
     await generateSpeechWithProvider({
-      model: "google/gemini-2.5-flash-preview-tts",
-      text: "Hello",
+      instructions: "The following text is Português Brasileiro.",
+      model: "google/gemini-3.8-flash-lite-tts",
+      text: "Oi",
       voice: "Kore",
     });
 
-    expect(generateSpeechMock).toHaveBeenCalledExactlyOnceWith({
-      instructions: "Read the supplied transcript aloud. Return audio only.",
-      model: { modelId: "gemini-2.5-flash-preview-tts", provider: "google" },
-      outputFormat: "wav",
-      text: "Hello",
-      voice: "Kore",
-    });
+    expect(generateSpeechMock.mock.calls[0]?.[0]).not.toHaveProperty("language");
   });
 
-  it("uses the AI SDK OpenAI provider with WAV output", async () => {
-    const audio = new Uint8Array([1, 2, 3]);
-    generateSpeechMock.mockResolvedValue({ audio: { uint8Array: audio } });
-
-    const result = await generateSpeechWithProvider({
+  it("calls OpenAI directly with its own voice", async () => {
+    await generateSpeechWithProvider({
+      instructions: "The following text is US English.",
       model: "openai/gpt-4o-mini-tts",
-      text: "Hallo",
+      text: "Hello",
       voice: "Kore",
     });
 
-    expect(result).toBe(audio);
     expect(openAISpeechMock).toHaveBeenCalledExactlyOnceWith("gpt-4o-mini-tts");
 
     expect(generateSpeechMock).toHaveBeenCalledExactlyOnceWith({
+      instructions: "The following text is US English.",
       model: { modelId: "gpt-4o-mini-tts", provider: "openai" },
       outputFormat: "wav",
-      text: "Hallo",
+      text: "Hello",
       voice: "marin",
     });
 
-    expect(googleSpeechMock).not.toHaveBeenCalled();
+    expect(gatewaySpeechMock).not.toHaveBeenCalled();
   });
 });

@@ -101,7 +101,8 @@ function CourseTableHeader() {
         <TableHead>Title</TableHead>
         <TableHead>Organization</TableHead>
         <TableHead>Language</TableHead>
-        <TableHead className="text-right">Completed Lessons</TableHead>
+        <TableHead className="text-right">Chapters</TableHead>
+        <TableHead className="text-right">Written Lessons</TableHead>
         <TableHead>Published</TableHead>
         <TableHead>Created At</TableHead>
       </TableRow>
@@ -124,6 +125,9 @@ function CourseSkeletonRow() {
       </TableCell>
       <TableCell>
         <Skeleton className="h-4 w-10" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="ml-auto h-4 w-10" />
       </TableCell>
       <TableCell>
         <Skeleton className="ml-auto h-4 w-10" />

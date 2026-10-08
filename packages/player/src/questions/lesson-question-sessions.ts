@@ -1,4 +1,4 @@
-import { type PlayerQuestionContext } from "../player-context";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionScope } from "./lesson-question-scope";
 import {
   INITIAL_LESSON_QUESTION_STATE,
@@ -9,7 +9,7 @@ import {
 
 export type LessonQuestionSessionAction = {
   action: LessonQuestionAction;
-  context: PlayerQuestionContext;
+  context: LessonQuestionContext;
 };
 
 type LessonQuestionSessions = Partial<Record<string, LessonQuestionState>>;
@@ -20,7 +20,7 @@ export function getLessonQuestionSession({
   context,
   sessions,
 }: {
-  context: PlayerQuestionContext;
+  context: LessonQuestionContext;
   sessions: LessonQuestionSessions;
 }): LessonQuestionState {
   return sessions[getLessonQuestionScope(context)] ?? { ...INITIAL_LESSON_QUESTION_STATE, context };

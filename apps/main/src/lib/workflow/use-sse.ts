@@ -4,17 +4,22 @@ import { type EventSourceMessage, createParser } from "eventsource-parser";
 import { useEffect, useEffectEvent, useRef } from "react";
 import { getWorkflowAuthHeaders } from "./auth-headers";
 
+/**
+ * Reads a durable workflow stream as server-sent events. A new `url` opens a new connection that
+ * resumes after the last event read, so reconnecting never replays handled events; a new
+ * `resumeKey` (another run) starts from that run's first event.
+ */
 export function useSSE<T>(
   url: string | null,
   options: {
     onComplete?: () => void;
     onError?: (error: Error) => void;
     onMessage: (data: T) => void;
-    startIndex?: number;
+    resumeKey?: string | null;
   },
 ) {
-  const indexRef = useRef(options.startIndex ?? 0);
-  const { onComplete, onError, onMessage } = options;
+  const cursor = useRef<{ index: number; key: string | null }>({ index: 0, key: null });
+  const { onComplete, onError, onMessage, resumeKey = null } = options;
 
   const onMessageEvent = useEffectEvent((data: T) => onMessage(data));
   const onCompleteEvent = useEffectEvent(() => onComplete?.());
@@ -25,11 +30,15 @@ export function useSSE<T>(
       return;
     }
 
+    if (cursor.current.key !== resumeKey) {
+      cursor.current = { index: 0, key: resumeKey };
+    }
+
     const controller = new AbortController();
 
     void (async () => {
       try {
-        const fullUrl = `${url}&startIndex=${indexRef.current}`;
+        const fullUrl = `${url}&startIndex=${cursor.current.index}`;
         const headers = await getWorkflowAuthHeaders();
 
         const response = await fetch(fullUrl, { headers, signal: controller.signal });
@@ -49,7 +58,12 @@ export function useSSE<T>(
 
         const parser = createParser({
           onEvent: (event: EventSourceMessage) => {
-            indexRef.current += 1;
+            // A closed connection's last chunk may belong to a run that's no longer followed.
+            if (controller.signal.aborted) {
+              return;
+            }
+
+            cursor.current.index += 1;
             // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- SSE data type is validated by consumer
             const data = JSON.parse(event.data) as T;
             onMessageEvent(data);
@@ -76,11 +90,5 @@ export function useSSE<T>(
     })();
 
     return () => controller.abort();
-  }, [url]);
-
-  return {
-    resetIndex: () => {
-      indexRef.current = 0;
-    },
-  };
+  }, [resumeKey, url]);
 }

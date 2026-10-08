@@ -233,6 +233,93 @@
         }
       }
     },
+    "Ask a guardian" : {
+      "comment" : "Title when a learner under 18 needs a guardian's approval before buying Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag eine erziehungsberechtigte Person"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pide autorización a tu tutor legal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à un parent ou tuteur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peça autorização a um responsável"
+          }
+        }
+      }
+    },
+    "Ask for approval" : {
+      "comment" : "Emails the learner's guardians to approve Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um Zustimmung bitten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solicitar autorización"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander l’autorisation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedir aprovação"
+          }
+        }
+      }
+    },
+    "Asking for approval" : {
+      "comment" : "Accessibility status while a guardian approval request is sent",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zustimmung wird angefragt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solicitando autorización"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demande d’autorisation en cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedindo aprovação…"
+          }
+        }
+      }
+    },
     "Blog" : {
       "comment" : "Account option for the blog",
       "localizations" : {
@@ -320,6 +407,35 @@
         }
       }
     },
+    "Check again" : {
+      "comment" : "Checks whether a guardian has approved Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut prüfen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a comprobar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifier à nouveau"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira novamente"
+          }
+        }
+      }
+    },
     "Check the information and try again." : {
       "comment" : "Error shown when profile information is invalid",
       "localizations" : {
@@ -403,6 +519,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confira seu histórico de compras na App Store e depois fale com o suporte se precisar de ajuda."
+          }
+        }
+      }
+    },
+    "Check your connection and try again." : {
+      "comment" : "Recovery guidance when a guardian approval request can't reach Zoonk\nRecovery guidance when checking Plus access fails offline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überprüfe deine Internetverbindung und versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprueba tu conexión y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifie ta connexion et réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confira sua conexão e tente novamente."
           }
         }
       }
@@ -606,35 +751,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível atualizar sua conta"
-          }
-        }
-      }
-    },
-    "Course progress" : {
-      "comment" : "Learning data removed during account deletion",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kursfortschritt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progreso del curso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progression du cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Progresso do curso"
           }
         }
       }
@@ -987,6 +1103,35 @@
         }
       }
     },
+    "Goals, plans and progress" : {
+      "comment" : "Learning goals, study plans and progress removed during account deletion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziele, Pläne und Fortschritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objetivos, planes y progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectifs, plans et progression"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metas, planos e progresso"
+          }
+        }
+      }
+    },
     "Google Play" : {
       "comment" : "Status shown when an active subscription is managed by Google Play",
       "localizations" : {
@@ -1012,6 +1157,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Google Play"
+          }
+        }
+      }
+    },
+    "Invite a guardian" : {
+      "comment" : "Opens the guardian settings on the web to invite a parent or guardian",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erziehungsberechtigte Person einladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invitar a un tutor legal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inviter un parent ou tuteur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convidar um responsável"
+          }
+        }
+      }
+    },
+    "Invite a parent or guardian first. They can approve Plus after they accept." : {
+      "comment" : "Explains that a guardian must be invited before they can approve Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lade zuerst ein Elternteil oder eine erziehungsberechtigte Person ein. Sobald die Einladung angenommen wurde, können sie Plus genehmigen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invita primero a tu madre, padre o tutor legal. Podrá autorizar Plus cuando acepte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invite d’abord un parent ou un tuteur. Il pourra donner son accord pour Plus après avoir accepté l’invitation."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convide primeiro um responsável. Depois que aceitar o convite, essa pessoa poderá aprovar o Plus."
           }
         }
       }
@@ -1070,6 +1273,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aprenda qualquer coisa. Está tudo incluído."
+          }
+        }
+      }
+    },
+    "Learners under 18 need a parent or guardian to approve Plus." : {
+      "comment" : "Explains why a learner under 18 can't buy Plus yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernende unter 18 brauchen die Zustimmung eines Elternteils oder einer erziehungsberechtigten Person, um Plus zu kaufen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los menores de 18 años necesitan la autorización de su madre, padre o tutor legal para comprar Plus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les moins de 18 ans ont besoin de l’accord d’un parent ou tuteur pour acheter Plus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quem tem menos de 18 anos precisa da aprovação de um responsável para assinar o Plus."
           }
         }
       }
@@ -1215,6 +1447,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gerenciada pelo Google Play"
+          }
+        }
+      }
+    },
+    "Memory, feedback and uploads" : {
+      "comment" : "What the app remembers about the learner, their feedback and their uploaded files, removed during account deletion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespeicherte Informationen, Feedback und Uploads"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria, comentarios y archivos subidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire, retours et fichiers importés"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memória, comentários e arquivos enviados"
           }
         }
       }
@@ -1393,31 +1654,31 @@
         }
       }
     },
-    "Personalized courses" : {
-      "comment" : "Personalized learning data removed during account deletion",
+    "Please try again in a moment." : {
+      "comment" : "Recovery guidance when checking Plus access fails",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personalisierte Kurse"
+            "value" : "Bitte versuche es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cursos personalizados"
+            "value" : "Vuelve a intentarlo dentro de un momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cours personnalisés"
+            "value" : "Réessaie dans un instant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cursos personalizados"
+            "value" : "Tente novamente daqui a pouco."
           }
         }
       }
@@ -1447,6 +1708,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O Plus oferece cursos e aulas ilimitados sobre o que você quiser aprender."
+          }
+        }
+      }
+    },
+    "Plus is unavailable" : {
+      "comment" : "Title when the app can't check whether the learner can buy Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus ist nicht verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus no está disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus n’est pas disponible"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível verificar o acesso ao Plus"
           }
         }
       }
@@ -1886,6 +2176,35 @@
         }
       }
     },
+    "Sign in to subscribe" : {
+      "comment" : "Title when Plus needs a signed-in account before it can be bought",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich an, um Plus zu abonnieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión para suscribirte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi pour t’abonner"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre na sua conta para assinar"
+          }
+        }
+      }
+    },
     "Sign in to the Zoonk account that owns this App Store purchase, or contact support for help." : {
       "comment" : "Recovery guidance when an App Store purchase belongs to another Zoonk account",
       "localizations" : {
@@ -2205,31 +2524,31 @@
         }
       }
     },
-    "This permanently deletes your profile, progress, and personalized courses. This can't be undone." : {
+    "This permanently deletes your profile, goals, plans, progress, memory, feedback and uploads. This can't be undone." : {
       "comment" : "Explains the consequences of confirming permanent account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dadurch werden dein Profil, dein Fortschritt und deine personalisierten Kurse dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden."
+            "value" : "Dein Profil, deine Ziele, Pläne, dein Fortschritt, gespeicherte Informationen, dein Feedback und deine Uploads werden dauerhaft gelöscht. Das lässt sich nicht rückgängig machen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto elimina permanentemente tu perfil, tu progreso y tus cursos personalizados. No se puede deshacer."
+            "value" : "Esto eliminará permanentemente tu perfil, objetivos, planes, progreso, memoria, comentarios y archivos subidos. Esta acción no se puede deshacer."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton profil, ta progression et tes cours personnalisés seront supprimés définitivement. Cette action est irréversible."
+            "value" : "Cette action supprimera définitivement ton profil, tes objectifs, tes plans, ta progression, ta mémoire, tes retours et tes fichiers importés. Cette action est irréversible."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso exclui permanentemente seu perfil, seu progresso e seus cursos personalizados. Não é possível desfazer."
+            "value" : "Isso apaga permanentemente seu perfil, metas, planos, progresso, memória, comentários e arquivos enviados. Não dá para desfazer."
           }
         }
       }
@@ -2264,7 +2583,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Retries loading the saved account",
+      "comment" : "Checks again whether the learner can buy Plus\nRetries loading the saved account",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2437,35 +2756,6 @@
         }
       }
     },
-    "username" : {
-      "comment" : "Placeholder for the username field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "benutzername"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nombre de usuario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nom d’utilisateur"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nome de usuário"
-          }
-        }
-      }
-    },
     "Username" : {
       "comment" : "Profile username field label",
       "localizations" : {
@@ -2491,6 +2781,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nome de usuário"
+          }
+        }
+      }
+    },
+    "username" : {
+      "comment" : "Placeholder for the username field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "benutzername"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nom d’utilisateur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nome de usuário"
           }
         }
       }
@@ -2549,6 +2868,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verificar e excluir"
+          }
+        }
+      }
+    },
+    "We couldn't ask your guardian. Try again in a moment." : {
+      "comment" : "Recovery guidance when a guardian approval request fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten deine erziehungsberechtigte Person nicht um Zustimmung bitten. Versuch es gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido pedir autorización a tu tutor legal. Vuelve a intentarlo dentro de un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu demander l’accord de ton parent ou de ton tuteur. Réessaie dans un instant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos pedir que seu responsável aprove o Plus. Tente de novo daqui a pouco."
+          }
+        }
+      }
+    },
+    "We emailed your guardian. Check again after they approve." : {
+      "comment" : "Confirms that the learner's guardians were asked to approve Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir haben deiner erziehungsberechtigten Person eine E-Mail geschickt. Prüfe erneut, nachdem sie zugestimmt hat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hemos enviado un correo a tu tutor legal. Vuelve a comprobarlo cuando dé su aprobación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous avons envoyé un e-mail à ton parent ou tuteur. Vérifie à nouveau après son accord."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviamos um email ao seu responsável. Confira novamente depois da aprovação."
           }
         }
       }

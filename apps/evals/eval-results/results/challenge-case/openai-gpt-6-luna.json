@@ -1,0 +1,365 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "BrightCart, checkout conversion, a 3 pm review, and a product manager pushing for launch make this a credible workplace application. The traffic and order counts are plausible, and the learner performs work an analyst would actually do.",
+          "score": 9,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, meters, checkpoints, and endings, and time jumps supply updated counts. The checkpoint decision provides a genuine speed-versus-evidence tradeoff, so the cap for obvious answers at every step does not apply. However, repeated promise-or-guarantee options make several decisions too easy, and the preference for three days over six lacks a defensible sample-planning basis.",
+          "score": 7,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The product manager, data scientist, and AI have distinct roles. The manager pushes for speed, the scientist challenges premature conclusions, and asking the AI is an explicitly valued option that supplies a useful, numerically correct check. Colleagues use role IDs and placeholders rather than names, and the learner is unnamed.",
+          "score": 9,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Notes are kind, strategy-focused, and generally specific, with useful alternative wording for communication mistakes. Summary sentences each express a practiced idea. However, the sample-size practice encourages writing down an unsupported count, and the initial AI-choice feedback credits communicating a reason to the product manager when the learner only requested a check.",
+          "score": 8,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "All conversion counts and percentages agree. A standard two-sided two-proportion test gives approximately p = 0.24 initially, p = 0.018 at 4,800 visits per version, and p = 0.0018 at 8,400, so the stated significance conclusions are correct. The case does not teach that one day proves a winner. The main consistency defect is calling 20% exposure a rollout to more visitors after B already received 50% of test traffic; the distinction between experimental and rollout populations is not supplied.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English, local number formats, and mostly plain-language explanations suit a beginner. Uncertainty and the limits of future predictions are handled honestly. However, 'quick check' and 'usual 5% chance check' obscure what quantity is being compared and what the threshold means; the initial conditional explanation helps but does not fully explain the later decision rule.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 6189,
+          "inputTokens": 6192,
+          "outputTokens": 1204,
+          "reasoningTokens": 318
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The sample-size decision is insufficiently grounded: three additional days are endorsed as the strong choice and six as merely fair without explaining how many visitors are needed or what improvement the test should reliably detect. The learner is rewarded for choosing a duration rather than learning how to choose a sample size.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The larger-sample path recommends rolling B out to 20% of visitors even though B already receives half the experimental traffic; the feedback then describes this as trying B with more visitors. Several weak choices explicitly promise future results, making them easy to reject rather than realistic close calls. Shared endings discuss both early and later results instead of reporting only the learner's actual path.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Have the data colleague explain a visitor target tied to a worthwhile improvement before offering checkpoints. Identify the 'quick check' as a p-value and explain the 5% threshold in beginner-friendly language. Make the sample-size practice ask learners to identify the information needed for a target rather than invent a visitor count, and make rollout wording and endings specific to the chosen path.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A marketing or e-commerce analyst judging an A/B test before a meeting, where a colleague wants to ship now. The strong path checks whether the gap could be chance and how many visitors each version had, uses the AI or a data colleague to test significance, and explains the result in plain words. Numbers must be consistent (a small gap on a small sample shouldn't be called significant). Must not teach that a single day of data proves a winner.",
+        "id": "en-ab-test-work-1",
+        "userInput": {
+          "chapterDescription": "Tell a real difference from chance in experiments like A/B tests.",
+          "chapterTitle": "Hypothesis testing",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Decide whether a gap between two groups could be chance.",
+              "name": "Tell a real difference from chance"
+            },
+            {
+              "description": "Know how many observations a comparison needs.",
+              "name": "Choose a sample size"
+            },
+            {
+              "description": "Explain a test result to people who aren't data people.",
+              "name": "Explain a test result"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The setting is playful, but the actual activity is choosing evidence for a demonstration and explaining physics to children. The signal lights are decorative rather than a problem governed by the chapter's idea. This is a quiz-like educational task, triggering the explicit cap of 6.",
+          "score": 6,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Replies, clarity changes, and final endings do differ, so decisions are not entirely cosmetic. However, the preferred answers are conspicuous at both steps, and the first option is always strong, triggering the cap of 6. The identical second scene also disregards whether the learner requested individual detections or merely looked at brightness. Time jumps introduce no new numerical observations.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The guide and simulation assistant have distinct roles: one wants an explanation suitable for children, while the other compares observations. Asking the assistant is an explicit, positively valued choice. Their responses help interpret the evidence and challenge misleading explanations. Neither colleagues nor the learner receive personal names.",
+          "score": 9,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Feedback identifies the particular strategy used, such as comparing observations or retaining both pieces of evidence. Corrections are kind and include usable replacement wording for communication mistakes. Both practice activities fit comfortably within about five minutes, and each summary sentence states a practiced idea. No generic or judgmental feedback triggers the cap.",
+          "score": 10,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The physics is sound at overview level: light can be detected in individual events while accumulated detections in a two-slit experiment exhibit interference. The misleading transformation and 'only little balls' explanations are explicitly corrected rather than taught as facts. There are no formulas, incorrect calculations, magical claims, or claims requiring a conscious observer.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "Every path has exactly two decisions, the learner-facing language is Brazilian Portuguese, and the presentation avoids formulas and technical jargon. However, it never names or simply defines 'quantum', leaving an important gap for a chapter specifically introducing that concept. The activity also leans more toward explanation selection than playful exploration.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3831,
+          "inputTokens": 3834,
+          "outputTokens": 1171,
+          "reasoningTokens": 373
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The scenario is primarily an educational quiz: the learner chooses an observation and then selects the correct explanation for children. The lunar party and signal lights do not create a meaningful what-if consequence. The scientifically preferred choices are also obvious at both decisions, and the first option is strong in both. These trigger the realism and decisions caps of 6.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The result explains energy packets but never introduces the chapter's central word, 'quantum'. All first-decision branches receive the same sensor observations, including the branch that only examines overall brightness, weakening continuity. The elapsed-time transitions provide no new numerical observations.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the signal lights or another playful device respond to the learner's investigation, so packet-like energy delivery determines what happens rather than only what explanation is selected. Offer plausible competing actions with less conspicuous quality differences, and explicitly connect a packet of light energy to the word 'quantum'.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A light \"E se?\" scenario in Brazilian Portuguese about energy coming in packets (quanta), for example \"E se a luz não viesse em pacotes?\" or a curious situation with a lamp, a solar panel or a camera. Two decisions per path, playful, no formulas, no jargon beyond \"quantum\" explained simply. Must be scientifically correct at an overview level (no claims that quantum effects are magic or that observation needs a conscious observer).",
+        "id": "pt-quantum-what-if-1",
+        "userInput": {
+          "chapterDescription": "A energia da luz e da matéria vem em pacotes chamados quanta.",
+          "chapterTitle": "O que é um quantum",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "level": "overview",
+          "skills": [
+            {
+              "description": "A energia vem em pacotes mínimos, não em qualquer quantidade.",
+              "name": "Explicar que a energia vem em pacotes"
+            },
+            {
+              "description": "A luz se comporta como onda e como partícula.",
+              "name": "Reconhecer a dualidade onda-partícula"
+            }
+          ],
+          "variant": "whatIf"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No part passed the code checks. endings: Too big: expected array to have <=3 items nodes.1.choices.0.notes.0.example: Too big: expected string to have <=160 characters nodes.2.choices.0.timeJump.panel.metrics.1.note: Too big: expected string to have <=40 characters panels.0.metrics.1.note: Too big: expected string to have <=40 characters panels.0.metrics.1.value: Too big: expected string to have <=40 characters",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. endings: Too big: expected array to have <=3 items nodes.1.choices.0.notes.0.example: Too big: expected string to have <=160 characters nodes.2.choices.0.timeJump.panel.metrics.1.note: Too big: expected string to have <=40 characters panels.0.metrics.1.note: Too big: expected string to have <=40 characters panels.0.metrics.1.value: Too big: expected string to have <=40 characters",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "No part passed the code checks. endings: Too big: expected array to have <=3 items nodes.1.choices.0.notes.0.example: Too big: expected string to have <=160 characters nodes.2.choices.0.timeJump.panel.metrics.1.note: Too big: expected string to have <=40 characters panels.0.metrics.1.note: Too big: expected string to have <=40 characters panels.0.metrics.1.value: Too big: expected string to have <=40 characters",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "A nursing case in Brazilian Portuguese on a hospital ward: checking a weight-based dose before giving it, with a physician, a pharmacist or a senior nurse and an AI assistant. The strong path double-checks the calculation and the prescription, and raises a doubt with the prescriber clearly and respectfully. Doses and units must be correct and consistent (mg/kg, mL). Must model safe practice: never give a dose that looks wrong without checking.",
+        "id": "pt-nursing-dose-work-1",
+        "userInput": {
+          "chapterDescription": "Calcular e conferir doses de medicamentos por peso com segurança.",
+          "chapterTitle": "Cálculo de doses",
+          "courseTitle": "Farmacologia para enfermagem",
+          "language": "pt",
+          "level": "intermediate",
+          "skills": [
+            {
+              "description": "Calcular a dose a partir do peso do paciente.",
+              "name": "Calcular dose por peso"
+            },
+            {
+              "description": "Conferir prescrição, unidade e via antes de administrar.",
+              "name": "Conferir a prescrição"
+            },
+            {
+              "description": "Levar uma dúvida ao médico de forma clara e segura.",
+              "name": "Comunicar uma dúvida ao médico"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "realism",
+          "reasoning": "The fictional shipping business, 1,200-row export, afternoon deadline, and shipping lead's need to retain valid orders make this a credible junior-analyst assignment. It is neither a disguised quiz nor a meta task. Actual row examples and more convincing elapsed-time pressure would make the work more tangible.",
+          "score": 8,
+          "label": "Real work (or a fun What if)",
+          "weight": 20
+        },
+        {
+          "categoryId": "decisions",
+          "reasoning": "Choices change replies, risk, time buffer, cleaning totals, and final handoff outcomes; intermediate options are present. However, the preferred behavior is obvious at every decision and a strong option is always first, triggering the cap of 6. Shared endings also fail to preserve important consequences of earlier cleaning choices.",
+          "score": 6,
+          "label": "Decisions that matter",
+          "weight": 20
+        },
+        {
+          "categoryId": "team",
+          "reasoning": "The analyst, shipping lead, and AI helper have distinct expertise and priorities. Asking AI is a genuine choice, and its useful grouping is checked by the analyst. The shipping lead applies deadline pressure without endorsing hiding uncertainty. No colleague or learner is personally named.",
+          "score": 9,
+          "label": "Team and asking for help",
+          "weight": 15
+        },
+        {
+          "categoryId": "debrief",
+          "reasoning": "Most notes kindly praise strategies, identify specific risks, and offer actionable alternatives and communication examples. Practice activities are suitably small. However, the shared handoff feedback recommends a change note that is false on the guessing and deletion paths, weakening decision-specific feedback. The last summary sentence also contains two practiced ideas.",
+          "score": 7,
+          "label": "Debrief: specific and kind",
+          "weight": 20
+        },
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The local arithmetic is correct: 1,200 minus 18 is 1,182; subtracting 28 unresolved rows leaves 1,154; removing blank rows instead leaves 1,158. However, after the guessing branch maps 31 entries and fills 24 blanks, the praised handoff example reports only 27 standardized entries and claims uncertain rows were flagged. The documented ending does not account for the selected cleaning method. This is an incorrect factual cleanup record taught as right, triggering the cap of 5.",
+          "score": 5,
+          "label": "Accuracy",
+          "weight": 15
+        },
+        {
+          "categoryId": "depth",
+          "reasoning": "The English, number formatting, scope, and practical explanations largely suit a beginner, with no promises of results or employment. However, terms such as 'standardize' and 'mapped' are used without a direct chat explanation or concrete before-and-after example, falling short of the beginner terminology requirement.",
+          "score": 8,
+          "label": "Depth, language and honesty",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5772,
+          "inputTokens": 5775,
+          "outputTokens": 1031,
+          "reasoningTokens": 192
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Branch history is lost at handoff: after guessing 55 statuses or deleting blank-status orders, the recommended note still says blanks and unclear statuses were flagged. The documented ending likewise describes safe handling regardless of earlier choices. This teaches an inaccurate cleanup record as a successful outcome. Decisions are also consistently signposted: a strong option is always first, and colleague messages largely give away the preferred action.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some beginner terminology, especially 'standardize,' is not explicitly explained in chat. The final summary sentence combines checking AI output and recording changes rather than stating one practiced idea. Deadline pressure is credible, but the review is described as approaching after only 15–40 minutes of a five-hour window, without an additional time transition.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show a few actual messy rows and their source-system matches so learners can inspect evidence rather than rely entirely on colleagues' conclusions. Add a credible trade-off where the best action is not the first or most comprehensive option.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A first-weeks case for someone new to data analysis (a career changer in a junior analyst role): a messy spreadsheet (duplicates, blanks, inconsistent dates or names) and a manager who needs numbers soon. The strong path inspects and cleans before summarizing, uses the AI assistant to speed up the work but checks what it produced, and tells the manager about the limits of the data. Numbers must add up after cleaning.",
+        "id": "en-career-change-data-cleaning-1",
+        "userInput": {
+          "chapterDescription": "Find and fix the problems in real-world data before analyzing it.",
+          "chapterTitle": "Cleaning messy data",
+          "courseTitle": "Data analysis",
+          "language": "en",
+          "level": "beginner",
+          "skills": [
+            {
+              "description": "Spot duplicates, blanks and inconsistent entries.",
+              "name": "Find problems in a data set"
+            },
+            {
+              "description": "Fix or remove bad rows and say what you changed.",
+              "name": "Clean data safely"
+            },
+            {
+              "description": "Check an AI assistant's output before using it.",
+              "name": "Check what AI produced"
+            }
+          ],
+          "variant": "work"
+        }
+      }
+    }
+  ],
+  "taskId": "challenge-case"
+}

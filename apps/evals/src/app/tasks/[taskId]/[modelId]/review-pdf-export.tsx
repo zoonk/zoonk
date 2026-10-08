@@ -83,7 +83,7 @@ export function ReviewPdfExport({
         Export review PDF
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent closeLabel="Close">
         <DialogHeader>
           <DialogTitle>Export review PDF</DialogTitle>
           <DialogDescription>
@@ -126,7 +126,7 @@ export function ReviewPdfExport({
           </p>
         )}
 
-        <DialogFooter showCloseButton>
+        <DialogFooter closeLabel="Close">
           <Button disabled={selectedEntries.length === 0} onClick={printReview}>
             <PrinterIcon />
             Print or save PDF

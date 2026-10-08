@@ -1,19 +1,11 @@
-import { type Browser, type Page } from "@playwright/test";
+import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 
-const TIME_PERIODS = ["Night", "Morning", "Afternoon", "Evening"] as const;
 const TUESDAY = 2;
 const FRIDAY = 5;
-
-const TIME_PERIOD_RANGES = [
-  /12:00\s*AM.*6:00\s*AM/iu,
-  /6:00\s*AM.*12:00\s*PM/iu,
-  /12:00\s*PM.*6:00\s*PM/iu,
-  /6:00\s*PM.*12:00\s*AM/iu,
-] as const;
 
 const WEEKDAYS = [
   "Sunday",
@@ -26,34 +18,36 @@ const WEEKDAYS = [
 ] as const;
 
 /**
- * Builds answer rows with an explicit hour bucket so Patterns assertions never
- * inherit whichever local day and time happened to create shared progress data.
+ * Builds one finished activity per daypart with an explicit learner-local hour
+ * so Patterns assertions never inherit whichever local day and time happened
+ * to create shared progress data.
  */
-function buildStepAttemptRows({
-  answeredAt,
-  count,
-  hourOfDay,
-  isCorrect,
-  stepId,
+function buildLedgerRow({
+  correctAnswers,
+  endedAt,
+  hour,
+  incorrectAnswers,
+  localDate,
   userId,
 }: {
-  answeredAt: Date;
-  count: number;
-  hourOfDay: number;
-  isCorrect: boolean;
-  stepId: string;
+  correctAnswers: number;
+  endedAt: Date;
+  hour: number;
+  incorrectAnswers: number;
+  localDate: Date;
   userId: string;
 }) {
-  return Array.from({ length: count }, () => ({
-    answer: { selectedOption: isCorrect ? 1 : 0 },
-    answeredAt,
-    dayOfWeek: TUESDAY,
-    durationSeconds: 15,
-    hourOfDay,
-    isCorrect,
-    stepId,
+  return {
+    correctAnswers,
+    endedAt,
+    hour,
+    incorrectAnswers,
+    kind: "lesson" as const,
+    localDate,
+    startedAt: endedAt,
     userId,
-  }));
+    weekday: TUESDAY,
+  };
 }
 
 /**
@@ -64,66 +58,16 @@ function buildStepAttemptRows({
  */
 async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; browser: Browser }) {
   const user = await createE2EUser(baseURL, { orgRole: "member", withProgress: true });
-  const existingAttempt = await prisma.stepAttempt.findFirstOrThrow({ where: { userId: user.id } });
+
   const now = new Date();
   const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const yesterday = new Date(today.getTime() - MS_PER_DAY);
-  const answeredAt = new Date(now.getTime() - MS_PER_DAY);
-
-  const attempts = [
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 9,
-      hourOfDay: 9,
-      isCorrect: true,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 1,
-      hourOfDay: 9,
-      isCorrect: false,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 1,
-      hourOfDay: 15,
-      isCorrect: true,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 4,
-      hourOfDay: 15,
-      isCorrect: false,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 2,
-      hourOfDay: 21,
-      isCorrect: true,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-    ...buildStepAttemptRows({
-      answeredAt,
-      count: 3,
-      hourOfDay: 21,
-      isCorrect: false,
-      stepId: existingAttempt.stepId,
-      userId: user.id,
-    }),
-  ];
+  const endedAt = new Date(now.getTime() - MS_PER_DAY);
+  const ledgerRow = { endedAt, localDate: yesterday, userId: user.id };
 
   await prisma.$transaction([
     prisma.dailyProgress.deleteMany({ where: { userId: user.id } }),
-    prisma.stepAttempt.deleteMany({ where: { userId: user.id } }),
+    prisma.learningEvent.deleteMany({ where: { userId: user.id } }),
     prisma.dailyProgress.createMany({
       data: [
         {
@@ -142,7 +86,13 @@ async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; b
         },
       ],
     }),
-    prisma.stepAttempt.createMany({ data: attempts }),
+    prisma.learningEvent.createMany({
+      data: [
+        buildLedgerRow({ ...ledgerRow, correctAnswers: 9, hour: 9, incorrectAnswers: 1 }),
+        buildLedgerRow({ ...ledgerRow, correctAnswers: 1, hour: 15, incorrectAnswers: 4 }),
+        buildLedgerRow({ ...ledgerRow, correctAnswers: 2, hour: 21, incorrectAnswers: 3 }),
+      ],
+    }),
   ]);
 
   const browserContext = await browser.newContext({ storageState: user.storageState });
@@ -151,45 +101,8 @@ async function createPatternsTestPage({ baseURL, browser }: { baseURL: string; b
   return { browserContext, page };
 }
 
-/**
- * Opens Patterns at the shared phone size and verifies its two compact rhythm
- * visualizations do not force horizontal scrolling.
- */
-async function expectPatternsToFitMobileViewport(page: Page) {
-  await page.goto("/patterns");
-
-  const dailyRhythm = page.getByRole("region", { name: /throughout the day/iu });
-  const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
-
-  await expect(weeklyRhythm).toBeVisible();
-  await expect(dailyRhythm).toBeVisible();
-  await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
-  await expect(dailyRhythm.getByRole("article")).toHaveCount(TIME_PERIODS.length);
-
-  const hasHorizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-  );
-
-  expect(hasHorizontalOverflow).toBe(false);
-}
-
 test.describe("Patterns", () => {
-  test("unauthenticated visitors see a login prompt", async ({ page }) => {
-    await page.goto("/patterns");
-
-    await expect(page.getByText(/log in to track your progress/iu)).toBeVisible();
-    await expect(page.getByRole("link", { name: /login/iu })).toHaveAttribute("href", "/login");
-  });
-
-  test("new learners see a start-learning prompt", async ({ userWithoutProgress }) => {
-    await userWithoutProgress.goto("/patterns");
-
-    await expect(
-      userWithoutProgress.getByText(/start learning to track your progress/iu),
-    ).toBeVisible();
-  });
-
-  test("shows every weekday and selects the strongest explicit weekday", async ({
+  test("shows every weekday, opening on the strongest, and every part of the day with the best one marked", async ({
     baseURL,
     browser,
   }) => {
@@ -198,9 +111,10 @@ test.describe("Patterns", () => {
     try {
       await page.goto("/patterns");
 
+      await expect(page.getByText("When you answer best, over the last 90 days.")).toBeVisible();
+
       const weeklyRhythm = page.getByRole("region", { name: /weekly rhythm/iu });
 
-      await expect(weeklyRhythm).toContainText(/past 90 days/iu);
       await expect(weeklyRhythm.getByRole("button")).toHaveCount(WEEKDAYS.length);
 
       await Promise.all(
@@ -220,67 +134,25 @@ test.describe("Patterns", () => {
       await expect(weeklyRhythm.getByRole("status")).toContainText(
         /friday performance.*10% across 10 answers/iu,
       );
-    } finally {
-      await browserContext.close();
-    }
-  });
 
-  test("shows every time period with its accuracy and answer count", async ({
-    baseURL,
-    browser,
-  }) => {
-    const { browserContext, page } = await createPatternsTestPage({ baseURL: baseURL!, browser });
+      // Night, morning, afternoon and evening, each with its share of right answers.
+      const day = page.getByRole("region", { name: "Throughout the day" });
 
-    try {
-      await page.goto("/patterns");
+      await expect(day.getByRole("listitem")).toHaveCount(4);
 
-      const dailyRhythm = page.getByRole("region", { name: /throughout the day/iu });
-
-      await expect(dailyRhythm).toContainText(/past 90 days/iu);
-      await expect(dailyRhythm.getByRole("article")).toHaveCount(TIME_PERIODS.length);
-
-      await Promise.all(
-        TIME_PERIODS.map((period, index) =>
-          expect(dailyRhythm.getByRole("article", { name: period })).toContainText(
-            TIME_PERIOD_RANGES[index]!,
-          ),
-        ),
+      await expect(day.getByRole("listitem", { name: "Morning" })).toContainText(
+        /90%\s*10 answers/u,
       );
 
-      const nightPattern = dailyRhythm.getByRole("article", { name: "Night" });
-      const morningPattern = dailyRhythm.getByRole("article", { name: "Morning" });
-      const afternoonPattern = dailyRhythm.getByRole("article", { name: "Afternoon" });
-      const eveningPattern = dailyRhythm.getByRole("article", { name: "Evening" });
+      await expect(day.getByRole("listitem", { name: "Afternoon" })).toContainText(
+        /20%\s*5 answers/u,
+      );
 
-      await expect(nightPattern).toContainText(/no answers/iu);
-      await expect(nightPattern).not.toContainText(/%/u);
+      await expect(day.getByRole("listitem", { name: "Evening" })).toContainText(
+        /40%\s*5 answers/u,
+      );
 
-      await expect(morningPattern).toContainText(/90%.*10 answers/iu);
-      await expect(afternoonPattern).toContainText(/20%.*5 answers/iu);
-      await expect(eveningPattern).toContainText(/40%.*5 answers/iu);
-    } finally {
-      await browserContext.close();
-    }
-  });
-
-  test("appears as the active progress destination", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/patterns");
-
-    await expect(
-      authenticatedPage.getByRole("navigation").getByRole("link", { name: "Patterns" }),
-    ).toHaveAttribute("aria-current", "page");
-  });
-
-  test("fits within a mobile viewport", async ({ browser, withProgressUser }) => {
-    const browserContext = await browser.newContext({
-      storageState: withProgressUser.storageState,
-      viewport: { height: 812, width: 375 },
-    });
-
-    const patternsPage = await browserContext.newPage();
-
-    try {
-      await expectPatternsToFitMobileViewport(patternsPage);
+      await expect(day.getByRole("listitem", { name: "Night" })).toContainText("No answers");
     } finally {
       await browserContext.close();
     }

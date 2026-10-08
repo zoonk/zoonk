@@ -1,0 +1,415 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true] },
+        "id": "en-synonym-automobile-1",
+        "userInput": {
+          "acceptedAnswers": ["car"],
+          "answer": "an automobile",
+          "keyPoints": ["Names a car (automobile)"],
+          "language": "en",
+          "question": "What do we call a road vehicle with four wheels and an engine that carries a few people?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "en-photosynthesis-full-paraphrase-1",
+        "userInput": {
+          "keyPoints": [
+            "Plants take in carbon dioxide (from the air)",
+            "Light provides the energy",
+            "Sugar (glucose) and oxygen are produced"
+          ],
+          "language": "en",
+          "question": "In your own words, what happens during photosynthesis?",
+          "sampleAnswer": "Using energy from light, plants turn carbon dioxide and water into sugar and release oxygen.",
+          "answer": "Sunlight powers the leaf so it can turn CO2 from the air plus water into sugar, and oxygen comes out."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, true, false] },
+        "id": "en-photosynthesis-missing-products-1",
+        "userInput": {
+          "keyPoints": [
+            "Plants take in carbon dioxide (from the air)",
+            "Light provides the energy",
+            "Sugar (glucose) and oxygen are produced"
+          ],
+          "language": "en",
+          "question": "In your own words, what happens during photosynthesis?",
+          "sampleAnswer": "Using energy from light, plants turn carbon dioxide and water into sugar and release oxygen.",
+          "answer": "The plant uses sunlight and takes in CO2 from the air."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
+        "id": "en-photosynthesis-reversed-1",
+        "userInput": {
+          "keyPoints": [
+            "Plants take in carbon dioxide (from the air)",
+            "Light provides the energy",
+            "Sugar (glucose) and oxygen are produced"
+          ],
+          "language": "en",
+          "question": "In your own words, what happens during photosynthesis?",
+          "sampleAnswer": "Using energy from light, plants turn carbon dioxide and water into sugar and release oxygen.",
+          "answer": "Plants breathe in oxygen and breathe out carbon dioxide to make their food at night."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false]; got wrong with [false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false]; got wrong with [false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false]; got wrong with [false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false] },
+        "id": "pt-language-gender-agreement-1",
+        "userInput": {
+          "acceptedAnswers": ["Ela é bonita"],
+          "answer": "Ela é bonito",
+          "keyPoints": ["Uses the feminine form of the adjective to agree with 'ela'"],
+          "language": "en",
+          "question": "Translate into Portuguese: 'She is pretty.'",
+          "sampleAnswer": "Ela é bonita.",
+          "spellingMatters": true
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false]; got wrong with [true,false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false]; got wrong with [true,false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false]; got wrong with [true,false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, false] },
+        "id": "en-feedback-partial-1",
+        "userInput": {
+          "answer": "So they still remember exactly what happened.",
+          "keyPoints": [
+            "Feedback soon after the event is specific because details are fresh",
+            "The person can adjust right away"
+          ],
+          "language": "en",
+          "question": "Why should a manager give feedback soon after the behavior happens?",
+          "sampleAnswer": "Because everyone still remembers the details, and the person can change what they do right away."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true]; got correct with [true].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true] },
+        "id": "en-spelling-slip-with-article-1",
+        "userInput": {
+          "acceptedAnswers": ["mitochondria"],
+          "answer": "the mitocondria",
+          "keyPoints": ["Names the mitochondria"],
+          "language": "en",
+          "question": "Which part of the cell releases energy from food?",
+          "sampleAnswer": "The mitochondria."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true]; got correct with [true,true,true].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-inflacao-parafrase-1",
+        "userInput": {
+          "answer": "É quando tudo vai ficando mais caro com o tempo e o mesmo dinheiro passa a comprar menos coisas.",
+          "keyPoints": [
+            "Os preços sobem de forma geral",
+            "Acontece ao longo do tempo",
+            "O dinheiro perde poder de compra"
+          ],
+          "language": "pt",
+          "question": "Explique com suas palavras o que é inflação.",
+          "sampleAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false]; got wrong with [false,false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, false] },
+        "id": "pt-ceu-azul-errado-1",
+        "userInput": {
+          "answer": "Porque o céu reflete a cor do mar.",
+          "keyPoints": [
+            "A luz do sol se espalha nas partículas do ar",
+            "A luz azul se espalha mais que as outras cores"
+          ],
+          "language": "pt",
+          "question": "Por que o céu é azul durante o dia?",
+          "sampleAnswer": "A luz do sol bate nas partículas do ar e se espalha; o azul se espalha muito mais que as outras cores."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, true, false] },
+        "id": "pt-sem-acentos-lei-de-ohm-1",
+        "userInput": {
+          "answer": "o resistor, porque a resistencia dele nao muda. a corrente e 9/6 = 1,5 A",
+          "keyPoints": [
+            "Escolher o resistor, pois ele mantém a resistência constante",
+            "Calcular 9 ÷ 6 = 1,5 A",
+            "Explicar que a resistência da lâmpada muda quando ela esquenta"
+          ],
+          "language": "pt",
+          "question": "João tem uma fonte de 9 V, um resistor de 6 Ω e uma lâmpada que mediu 6 Ω ainda fria. Qual dos dois ele pode usar para prever a corrente com a lei de Ohm, quanto ela vale e por que o outro não serve?",
+          "sampleAnswer": "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,false]; got wrong with [true,true,false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, true, false] },
+        "id": "pt-sem-acentos-fotossintese-1",
+        "userInput": {
+          "answer": "a planta usa a luz do sol como energia e pega o gas carbonico do ar, mas nao sei o que ela produz no final",
+          "keyPoints": [
+            "A planta absorve gás carbônico do ar",
+            "A luz fornece a energia",
+            "A planta produz açúcar (glicose) e libera oxigênio"
+          ],
+          "language": "pt",
+          "question": "Com suas palavras, o que acontece na fotossíntese?",
+          "sampleAnswer": "Com a energia da luz, a planta transforma gás carbônico e água em açúcar e libera oxigênio."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false]; got wrong with [false,false,false].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
+        "id": "pt-selic-vago-1",
+        "userInput": {
+          "answer": "Ele mexe na economia do país.",
+          "keyPoints": [
+            "O crédito fica mais caro (juros mais altos)",
+            "As pessoas e empresas consomem e investem menos",
+            "Isso ajuda a conter a inflação"
+          ],
+          "language": "pt",
+          "question": "O que acontece quando o Banco Central sobe a taxa Selic?",
+          "sampleAnswer": "Os juros sobem, o crédito fica mais caro, o consumo e o investimento caem e isso ajuda a segurar a inflação."
+        }
+      }
+    }
+  ],
+  "taskId": "grade-typed-answer"
+}

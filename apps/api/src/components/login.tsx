@@ -11,19 +11,25 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { Loader2Icon } from "lucide-react";
 
 export function Login({ children, className }: React.ComponentProps<"div">) {
-  return <div className={cn("flex w-full flex-col gap-6 p-4", className)}>{children}</div>;
+  return <div className={cn("flex w-full flex-col gap-6", className)}>{children}</div>;
 }
 
 export function LoginHeader({ children, className }: React.ComponentProps<"div">) {
-  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
+  return (
+    <header className={cn("flex flex-col items-center gap-2 text-center", className)}>
+      {children}
+    </header>
+  );
 }
 
 export function LoginTitle({ children, className }: React.ComponentProps<"h1">) {
-  return <h1 className={cn("text-xl font-bold", className)}>{children}</h1>;
+  return (
+    <h1 className={cn("text-2xl font-bold tracking-tight text-balance", className)}>{children}</h1>
+  );
 }
 
 export function LoginDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-center text-sm", className)}>{children}</p>;
+  return <p className={cn("text-muted-foreground text-sm text-balance", className)}>{children}</p>;
 }
 
 export function LoginDivider({ children, className }: React.ComponentProps<"div">) {

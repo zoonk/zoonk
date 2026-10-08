@@ -1,6 +1,3 @@
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture, lessonProgressFixture } from "@zoonk/testing/fixtures/lessons";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
@@ -51,11 +48,13 @@ describe("authenticated users", () => {
     expect(result?.days).toHaveLength(370);
 
     expect(result?.days.at(0)).toStrictEqual({
+      activitiesCompleted: 0,
       date: new Date("2024-01-07T00:00:00Z"),
       lessonCompletions: 0,
     });
 
     expect(result?.days.at(-1)).toStrictEqual({
+      activitiesCompleted: 0,
       date: new Date("2025-01-10T00:00:00Z"),
       lessonCompletions: 0,
     });
@@ -69,108 +68,101 @@ describe("authenticated users", () => {
     const result = await getLearningActivity();
 
     expect(result?.days.at(-1)).toStrictEqual({
+      activitiesCompleted: 0,
       date: new Date("2025-01-11T00:00:00Z"),
       lessonCompletions: 0,
     });
   });
 
-  it("uses each lesson's first completion for the lifetime total and calendar", async () => {
+  it("lights the calendar on every learning day, the same days the lifetime total counts", async () => {
     const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
     mockSession(user.id);
     mockCurrentDate(CURRENT_DATE);
 
-    const course = await courseFixture();
-    const chapter = await chapterFixture({ courseId: course.id });
-
-    const [historicalLesson, firstLesson, secondLesson, incompleteLesson, otherLesson] =
-      await Promise.all([
-        lessonFixture({ chapterId: chapter.id }),
-        lessonFixture({ chapterId: chapter.id }),
-        lessonFixture({ chapterId: chapter.id }),
-        lessonFixture({ chapterId: chapter.id }),
-        lessonFixture({ chapterId: chapter.id }),
-      ]);
-
-    await Promise.all([
-      dailyProgressFixtureMany([
-        {
-          date: new Date("2024-01-01T00:00:00Z"),
-          staticCompleted: 2,
-          timeSpentSeconds: 60,
-          userId: user.id,
-        },
-        {
-          date: new Date("2025-01-05T00:00:00Z"),
-          interactiveCompleted: 1,
-          staticCompleted: 2,
-          timeSpentSeconds: 120,
-          userId: user.id,
-        },
-        { date: new Date("2025-01-06T00:00:00Z"), timeSpentSeconds: 30, userId: user.id },
-        {
-          date: new Date("2025-01-08T00:00:00Z"),
-          staticCompleted: 1,
-          timeSpentSeconds: 45,
-          userId: user.id,
-        },
-        {
-          date: new Date("2025-01-05T00:00:00Z"),
-          interactiveCompleted: 5,
-          timeSpentSeconds: 600,
-          userId: otherUser.id,
-        },
-      ]),
-      lessonProgressFixture({
-        completedAt: new Date("2024-01-01T12:00:00Z"),
-        durationSeconds: 60,
-        lessonId: historicalLesson.id,
+    await dailyProgressFixtureMany([
+      {
+        date: new Date("2024-01-01T00:00:00Z"),
+        lessonsCompleted: 1,
+        staticCompleted: 2,
+        timeSpentSeconds: 60,
         userId: user.id,
-      }),
-      lessonProgressFixture({
-        completedAt: new Date("2025-01-05T12:00:00Z"),
-        durationSeconds: 60,
-        lessonId: firstLesson.id,
+      },
+      {
+        date: new Date("2025-01-05T00:00:00Z"),
+        interactiveCompleted: 1,
+        lessonsCompleted: 1,
+        staticCompleted: 2,
+        timeSpentSeconds: 120,
         userId: user.id,
-      }),
-      lessonProgressFixture({
-        completedAt: new Date("2025-01-08T12:00:00Z"),
-        durationSeconds: 60,
-        lessonId: secondLesson.id,
+      },
+      { date: new Date("2025-01-06T00:00:00Z"), timeSpentSeconds: 30, userId: user.id },
+      {
+        date: new Date("2025-01-07T00:00:00Z"),
+        interactiveCompleted: 2,
+        timeSpentSeconds: 300,
         userId: user.id,
-      }),
-      lessonProgressFixture({
-        completedAt: null,
-        durationSeconds: null,
-        lessonId: incompleteLesson.id,
+      },
+      {
+        date: new Date("2025-01-08T00:00:00Z"),
+        lessonsCompleted: 2,
+        staticCompleted: 1,
+        timeSpentSeconds: 45,
         userId: user.id,
-      }),
-      lessonProgressFixture({
-        completedAt: new Date("2025-01-05T12:00:00Z"),
-        durationSeconds: 60,
-        lessonId: otherLesson.id,
+      },
+      { date: new Date("2025-01-09T00:00:00Z"), lessonsCompleted: 1, userId: user.id },
+      {
+        date: new Date("2025-01-05T00:00:00Z"),
+        interactiveCompleted: 5,
+        lessonsCompleted: 5,
+        timeSpentSeconds: 600,
         userId: otherUser.id,
-      }),
+      },
     ]);
 
     const result = await getLearningActivity();
 
     expect(result).toMatchObject({
-      learningDays: 3,
-      totalLearningSeconds: 255,
-      totalLessonCompletions: 3,
+      learningDays: 5,
+      totalLearningSeconds: 555,
+      totalLessonCompletions: 5,
     });
 
     expect(
       result?.days.find((day) => day.date.getTime() === new Date("2025-01-05T00:00:00Z").getTime()),
-    ).toStrictEqual({ date: new Date("2025-01-05T00:00:00Z"), lessonCompletions: 1 });
+    ).toStrictEqual({
+      activitiesCompleted: 3,
+      date: new Date("2025-01-05T00:00:00Z"),
+      lessonCompletions: 1,
+    });
 
+    // Time alone (a lesson left halfway) isn't a learning day, in the calendar or the total.
     expect(
       result?.days.find((day) => day.date.getTime() === new Date("2025-01-06T00:00:00Z").getTime()),
-    ).toStrictEqual({ date: new Date("2025-01-06T00:00:00Z"), lessonCompletions: 0 });
+    ).toStrictEqual({
+      activitiesCompleted: 0,
+      date: new Date("2025-01-06T00:00:00Z"),
+      lessonCompletions: 0,
+    });
 
+    // A day of reviews and practice only, with no lesson finished, still counts as a learning day.
     expect(
-      result?.days.find((day) => day.date.getTime() === new Date("2025-01-08T00:00:00Z").getTime()),
-    ).toStrictEqual({ date: new Date("2025-01-08T00:00:00Z"), lessonCompletions: 1 });
+      result?.days.find((day) => day.date.getTime() === new Date("2025-01-07T00:00:00Z").getTime()),
+    ).toStrictEqual({
+      activitiesCompleted: 2,
+      date: new Date("2025-01-07T00:00:00Z"),
+      lessonCompletions: 0,
+    });
+
+    // Days kept from before learning v2 have only their lesson count.
+    expect(
+      result?.days.find((day) => day.date.getTime() === new Date("2025-01-09T00:00:00Z").getTime()),
+    ).toStrictEqual({
+      activitiesCompleted: 1,
+      date: new Date("2025-01-09T00:00:00Z"),
+      lessonCompletions: 1,
+    });
+
+    expect(result?.days.filter((day) => day.activitiesCompleted > 0)).toHaveLength(4);
 
     expect(result?.days.some((day) => day.date < new Date("2024-01-07T00:00:00Z"))).toBe(false);
   });
@@ -180,21 +172,19 @@ describe("authenticated users", () => {
     mockSession(user.id);
     mockCurrentDate(NEXT_DATE);
 
-    const course = await courseFixture();
-    const chapter = await chapterFixture({ courseId: course.id });
-    const lesson = await lessonFixture({ chapterId: chapter.id });
-
-    await lessonProgressFixture({
-      completedAt: new Date("2025-01-10T23:30:00Z"),
-      completedDate: new Date("2025-01-11T00:00:00Z"),
-      durationSeconds: 60,
-      lessonId: lesson.id,
-      userId: user.id,
-    });
+    await dailyProgressFixtureMany([
+      {
+        date: new Date("2025-01-11T00:00:00Z"),
+        interactiveCompleted: 1,
+        lessonsCompleted: 1,
+        userId: user.id,
+      },
+    ]);
 
     const result = await getLearningActivity();
 
     expect(result?.days.at(-1)).toStrictEqual({
+      activitiesCompleted: 1,
       date: new Date("2025-01-11T00:00:00Z"),
       lessonCompletions: 1,
     });

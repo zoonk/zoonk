@@ -8,6 +8,7 @@ import {
 } from "@zoonk/auth/native-apple";
 import { prisma } from "@zoonk/db";
 import { headers } from "next/headers";
+import { trackAccountDeleted } from "../analytics/server";
 import { getSession } from "./get-session";
 
 type AccountDeletionAuthorization = {
@@ -151,17 +152,26 @@ export async function deleteCurrentUser({
     return { appleAuthorizationRevoked: cleanup.appleAuthorizationRevoked };
   }
 
-  const authorization = await getAccountDeletionAuthorization({
-    appleCredentials,
-    emailCredentials,
-    requestHeaders,
-    userId: session.user.id,
-  });
+  const [authorization, user] = await Promise.all([
+    getAccountDeletionAuthorization({
+      appleCredentials,
+      emailCredentials,
+      requestHeaders,
+      userId: session.user.id,
+    }),
+    prisma.user.findUnique({ select: { analyticsDisabled: true }, where: { id: session.user.id } }),
+  ]);
 
   try {
     const cleanup = await captureAccountDeletionCleanup(() =>
       auth.api.deleteUser({ body: {}, headers: authorization.headers }),
     );
+
+    // Once the account is gone, PostHog is told so the learner's analytics can go too.
+    await trackAccountDeleted({
+      analyticsDisabled: user?.analyticsDisabled ?? false,
+      userId: session.user.id,
+    });
 
     return {
       appleAuthorizationRevoked: getAppleAuthorizationRevocationResult({

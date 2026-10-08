@@ -108,7 +108,7 @@ export function getItemVisualState({
  */
 export function getItemClassName(state: ItemVisualState): string {
   if (state === "correct") {
-    return "bg-success/5 border-transparent text-success opacity-75 pointer-events-none";
+    return "bg-success/5 border-transparent text-success pointer-events-none";
   }
 
   if (state === "incorrectFlash") {

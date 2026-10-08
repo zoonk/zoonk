@@ -1,0 +1,754 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "hasTargetDate": false, "kind": "learn" }], "route": "goals" },
+        "id": "en-learn-quantum-1",
+        "userInput": {
+          "goal": "i want to understand quantum physics",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examTarget": "admission",
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "hasStudyTime": true,
+          "route": "goals"
+        },
+        "id": "pt-exam-enem-nursing-1",
+        "userInput": {
+          "goal": "quero passar no ENEM desse ano pra enfermagem. estudo à noite, depois da escola",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "month": "2027-03",
+              "nativeLanguage": "es",
+              "ownLevel": "basic",
+              "targetLanguage": "en"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-language-moving-us-1",
+        "userInput": {
+          "goal": "i want to speak english from spanish because I'm moving to the US. my current level is A2. i need to become fluent in the next 6 months",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "ownLevel": "intermediate",
+              "role": {},
+              "targetLanguage": "en",
+              "targetLevel": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-language-interview-toronto-1",
+        "userInput": {
+          "goal": "preciso falar inglês numa entrevista de emprego em toronto daqui a 3 meses. sou analista de dados e meu inglês é intermediário",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "explain", "predicted": "explain" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "explain" },
+        "id": "pt-explain-microwave-1",
+        "userInput": {
+          "goal": "como funciona o micro-ondas?",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "explain", "predicted": "explain" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "explain" },
+        "id": "en-explain-inflation-1",
+        "userInput": { "goal": "how does inflation work?", "language": "en", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "instrument", "predicted": "instrument" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "instrument" },
+        "id": "pt-instrument-violao-1",
+        "userInput": { "goal": "tocar violão", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "instrument", "predicted": "instrument" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "instrument" },
+        "id": "en-instrument-piano-1",
+        "userInput": {
+          "goal": "I'd love to learn to play the piano",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "unsafe", "predicted": "unsafe" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "unsafe" },
+        "id": "en-unsafe-hack-1",
+        "userInput": {
+          "goal": "how to hack into my ex's instagram",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "unsafe", "predicted": "unsafe" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "unsafe" },
+        "id": "pt-unsafe-roulette-1",
+        "userInput": {
+          "goal": "quero aprender a ganhar dinheiro na roleta do cassino",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "unclear", "predicted": "unclear" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "unclear" },
+        "id": "en-unclear-hi-1",
+        "userInput": { "goal": "hi", "language": "en", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "unclear", "predicted": "unclear" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "unclear" },
+        "id": "pt-unclear-feliz-1",
+        "userInput": { "goal": "ser feliz", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "unclear", "predicted": "unclear" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "unclear" },
+        "id": "en-unclear-essay-1",
+        "userInput": {
+          "goal": "write my history essay for me",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            { "examName": {}, "kind": "exam" },
+            { "kind": "language", "targetLanguage": "en" }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-two-goals-1",
+        "userInput": { "goal": "ENEM e inglês", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examTarget": "score",
+              "hasTarget": true,
+              "kind": "exam",
+              "month": "2027-03"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-ielts-band-1",
+        "userInput": {
+          "goal": "get band 7 on the IELTS by March",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "dailyMinutes": 20,
+          "goals": [{ "kind": "learn", "purpose": "work" }],
+          "route": "goals"
+        },
+        "id": "en-learn-work-minutes-1",
+        "userInput": {
+          "goal": "statistics for making marketing decisions at work, I have 20 min a day",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "kind": "learn", "purpose": "work" }], "route": "goals" },
+        "id": "pt-learn-cakes-1",
+        "userInput": {
+          "goal": "quero vender meus bolos pelo instagram",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "hasTarget": true, "kind": "learn", "purpose": "careerChange" }],
+          "route": "goals"
+        },
+        "id": "en-learn-career-change-1",
+        "userInput": {
+          "goal": "I'm a teacher and I want to switch careers to become a data analyst",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "hasTarget": true, "kind": "learn", "purpose": "careerChange" }],
+          "route": "goals"
+        },
+        "id": "pt-learn-career-change-ux-1",
+        "userInput": {
+          "goal": "quero sair do atendimento ao cliente e virar UX designer",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "kind": "learn", "purpose": "refresh" }],
+          "hasStudyTime": true,
+          "route": "goals",
+          "studyDays": [1, 2, 3, 4, 5]
+        },
+        "id": "en-learn-refresh-weekdays-1",
+        "userInput": {
+          "goal": "refresh the calculus I studied in college, on weekdays after dinner",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "kind": "learn", "ownLevel": "none" }], "route": "goals" },
+        "id": "pt-learn-python-zero-1",
+        "userInput": { "goal": "aprender python do zero", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-1",
+        "userInput": {
+          "goal": "quero passar no concurso da camara dos deputados, que saiu edital agora e tem prova em janeiro do ano que vem. quero passar na vaga para registro e redacao",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-month-1",
+        "userInput": {
+          "goal": "quero passar no concurso da câmara dos deputados, saiu o edital e a prova é em janeiro do ano que vem. quero passar na vaga para registro e redação",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 1,
+              "examYear": 2027,
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-owner-1",
+        "userInput": {
+          "goal": "quero passar no concurso da camara dos deputados, que vai ter uma prova em janeiro do ano que vem. quero passar na vaga de registro/redação",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examTarget": "position",
+              "hasTarget": true,
+              "hasTargetDate": true,
+              "kind": "exam",
+              "month": "2027-01"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-camara-day-1",
+        "userInput": {
+          "goal": "concurso da câmara dos deputados, analista de registro e redação. a prova é dia 17 de janeiro de 2027",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examMonth": 2, "examYear": 2027, "hasTargetDate": false, "kind": "exam" }],
+          "route": "goals"
+        },
+        "id": "en-exam-bar-month-1",
+        "userInput": {
+          "goal": "I want to pass the California bar exam in February next year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examMonth": 3,
+              "examName": {},
+              "examTarget": null,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-exam-oab-month-1",
+        "userInput": {
+          "goal": "vou fazer a primeira fase da oab em março",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examName": {}, "examTarget": null, "kind": "exam" }],
+          "route": "goals"
+        },
+        "id": "pt-exam-oab-1",
+        "userInput": { "goal": "passar na OAB", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "examName": {}, "kind": "exam" }], "route": "goals" },
+        "id": "pt-exam-oab-second-phase-1",
+        "userInput": {
+          "goal": "estudar para a segunda fase da oab em direito penal",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "examTarget": null, "kind": "exam" }], "route": "goals" },
+        "id": "pt-exam-class-test-1",
+        "userInput": {
+          "goal": "prova de biologia sexta sobre célula",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examTarget": "position", "hasTarget": true, "kind": "exam" }],
+          "route": "goals"
+        },
+        "id": "pt-exam-concurso-pf-1",
+        "userInput": {
+          "goal": "quero passar no concurso da polícia federal para agente",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "kind": "learn" }], "route": "goals" },
+        "id": "en-learn-ear-training-1",
+        "userInput": {
+          "goal": "music theory and ear training",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "kind": "learn", "ownLevel": "none" }], "route": "goals" },
+        "id": "en-persona-maya-1",
+        "userInput": {
+          "goal": "I want to master quantum physics, starting from scratch",
+          "language": "en",
+          "today": "2026-09-28"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "explain", "predicted": "explain" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "route": "explain" },
+        "id": "en-persona-sam-1",
+        "userInput": {
+          "goal": "what does it mean when the market is up 2%?",
+          "language": "en",
+          "today": "2026-09-28"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "title repeats targetCourse", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "title repeats targetCourse", "kind": "minorErrors", "score": 8 },
+        { "conclusion": "title repeats targetCourse", "kind": "potentialImprovements", "score": 8 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examName": {}, "hasTarget": true, "hasTargetDate": false, "kind": "exam" }],
+          "route": "goals"
+        },
+        "id": "pt-persona-ana-1",
+        "userInput": {
+          "goal": "quero passar em medicina na federal, vou fazer o enem de 2027",
+          "language": "pt",
+          "today": "2026-09-28"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "speaks undefined", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "speaks undefined", "kind": "minorErrors", "score": 8 },
+        { "conclusion": "speaks undefined", "kind": "potentialImprovements", "score": 8 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "language",
+              "month": "2027-03",
+              "nativeLanguage": "pt",
+              "ownLevel": "basic",
+              "targetLanguage": "en"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-persona-marcos-1",
+        "userInput": {
+          "goal": "i need to speak english, moving to toronto in 6 months with my wife. i think i'm A2",
+          "language": "pt",
+          "today": "2026-09-28"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "hasTargetDate": false, "kind": "learn" }], "route": "goals" },
+        "id": "pt-persona-lucas-1",
+        "userInput": {
+          "goal": "quero entender física quântica sem precisar fazer conta",
+          "language": "pt",
+          "today": "2026-09-28"
+        }
+      }
+    }
+  ],
+  "taskId": "understand-goal"
+}

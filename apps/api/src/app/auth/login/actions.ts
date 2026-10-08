@@ -7,6 +7,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getOtpHref } from "../_utils/auth-redirect";
 
 type VerificationOTPState = { status: "idle" | "invalidEmail" | "disposableEmail" | "error" };
 
@@ -65,11 +66,5 @@ export async function sendVerificationOTPAction(
     return { status: "error" };
   }
 
-  const params = new URLSearchParams({ email });
-
-  if (redirectTo) {
-    params.set("redirectTo", redirectTo);
-  }
-
-  redirect(`/auth/otp?${params.toString()}`);
+  redirect(getOtpHref({ email, redirectTo }));
 }

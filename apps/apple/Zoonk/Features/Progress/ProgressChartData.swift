@@ -39,15 +39,15 @@ enum ProgressChartData {
   static func activityContributions(
     from days: [ActivityProgressDay]
   ) -> [ProgressContributionPoint] {
-    let maximumLessonCompletions = max(0, days.map(\.lessonCompletions).max() ?? 0)
+    let maximumActivitiesCompleted = max(0, days.map(\.activitiesCompleted).max() ?? 0)
 
     return days.map { day in
       ProgressContributionPoint(
         date: day.date,
         intensity: activityIntensity(
-          lessonCompletions: day.lessonCompletions,
-          maximumLessonCompletions: maximumLessonCompletions),
-        value: Double(day.lessonCompletions))
+          activitiesCompleted: day.activitiesCompleted,
+          maximumActivitiesCompleted: maximumActivitiesCompleted),
+        value: Double(day.activitiesCompleted))
     }
   }
 
@@ -89,15 +89,15 @@ enum ProgressChartData {
   }
 
   private static func activityIntensity(
-    lessonCompletions: Int,
-    maximumLessonCompletions: Int
+    activitiesCompleted: Int,
+    maximumActivitiesCompleted: Int
   ) -> Int {
-    guard lessonCompletions > 0, maximumLessonCompletions > 0 else {
+    guard activitiesCompleted > 0, maximumActivitiesCompleted > 0 else {
       return 0
     }
 
     let relativeIntensity = ceil(
-      Double(lessonCompletions) / Double(maximumLessonCompletions)
+      Double(activitiesCompleted) / Double(maximumActivitiesCompleted)
         * Double(activityMaximumIntensity))
 
     return min(max(Int(relativeIntensity), 1), activityMaximumIntensity)

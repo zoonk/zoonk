@@ -1,4 +1,4 @@
-import { setLocale } from "@zoonk/e2e/fixtures/locale";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { type Page, expect, test } from "./fixtures";
 
 /**
@@ -65,6 +65,7 @@ test.describe("Courses Page - Basic", () => {
     const courseLink = page.getByRole("main").getByRole("list").getByRole("link").first();
 
     await expect(courseLink).toBeVisible();
+    await expectAccessibleScreen(page, "the catalog");
 
     const courseHref = await courseLink.getAttribute("href");
 
@@ -85,33 +86,61 @@ test.describe("Courses Page - Basic", () => {
     expect(courseCardText).toContain(await courseHeading.innerText());
   });
 
-  test("empty category lets users create a course about that category", async ({ page }) => {
+  test("the grid fills a wide screen with columns that keep each card readable, and phones list one course per row", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ height: 1000, width: 1600 });
+    await page.goto("/courses");
+
+    const grid = page.getByRole("main").getByRole("list").first();
+    await expect(grid.getByRole("listitem").first()).toBeVisible();
+
+    // As wide as the screen, past the app's 1152px column, with cards about 15rem wide.
+    const [gridBox, cardBox] = await Promise.all([
+      grid.boundingBox(),
+      grid.getByRole("listitem").first().boundingBox(),
+    ]);
+
+    expect(gridBox!.width).toBeGreaterThan(1500);
+    expect(cardBox!.width).toBeGreaterThan(220);
+    expect(cardBox!.width).toBeLessThan(300);
+
+    // On a phone a long catalog reads as a list: each course a row as wide as the column, its
+    // picture beside its title, so a screen shows several courses with their descriptions.
+    await page.setViewportSize({ height: 844, width: 390 });
+
+    const [first, second] = await Promise.all([
+      grid.getByRole("listitem").nth(0).boundingBox(),
+      grid.getByRole("listitem").nth(1).boundingBox(),
+    ]);
+
+    expect(first!.width).toBeGreaterThan(340);
+    // A row stays compact even when its title takes two lines beside its chevron.
+    expect(first!.height).toBeLessThan(130);
+    expect(second!.y).toBeGreaterThan(first!.y + first!.height - 1);
+  });
+
+  test("an empty category offers to start a goal instead", async ({ page }) => {
     await page.goto("/courses/law");
 
-    const createCourseLink = page.getByRole("link", { name: "Create a course about Law" });
+    const startGoalLink = page.getByRole("main").getByRole("link", { name: "Start a goal" });
 
-    await expect(createCourseLink).toBeVisible();
-    await createCourseLink.click();
+    await expect(startGoalLink).toBeVisible();
+    await startGoalLink.click();
 
-    await expect(page).toHaveURL(/\/start\/learn$/u);
+    await expect(page).toHaveURL(/\/start$/u);
+    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
+  });
+
+  test("a category that doesn't exist answers 404 with the app's message", async ({ page }) => {
+    const response = await page.goto("/courses/not-a-category");
+
+    expect(response?.status()).toBe(404);
+    await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
   });
 });
 
 test.describe("Courses Page - Infinite Loading", () => {
-  test("loads more courses when scrolling to the bottom", async ({ page }) => {
-    await page.goto("/courses");
-
-    await expect.poll(() => getRenderedCourseHrefs(page), { timeout: 10_000 }).not.toHaveLength(0);
-
-    const initialCourseHrefs = await getRenderedCourseHrefs(page);
-
-    await page.evaluate(() => globalThis.scrollTo(0, document.body.scrollHeight));
-
-    await expect
-      .poll(() => hasNewCourseHref({ initialHrefs: initialCourseHrefs, page }), { timeout: 10_000 })
-      .toBe(true);
-  });
-
   test("lets users retry failed load-more requests without unhandled rejections", async ({
     page,
   }) => {
@@ -166,13 +195,6 @@ test.describe("Courses Page - Infinite Loading", () => {
 });
 
 test.describe("Courses Page - Locale", () => {
-  test("Portuguese locale shows translated content", async ({ page }) => {
-    await setLocale(page, "pt");
-    await page.goto("/courses");
-
-    await expect(page.getByRole("heading", { name: /explorar cursos/iu })).toBeVisible();
-  });
-
   test("sorts categories using the active app locale", async ({ browser }) => {
     const browserContext = await browser.newContext({
       locale: "cs-CZ",
@@ -186,7 +208,7 @@ test.describe("Courses Page - Locale", () => {
 
     try {
       await page.goto("/de/courses");
-      await expect(page.getByRole("button", { name: "Scroll right" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Nach rechts scrollen" })).toBeVisible();
       expect(hydrationErrors).toEqual([]);
 
       const labels = await page

@@ -77,8 +77,8 @@ final class ProgressAPITests: XCTestCase {
               "totalLearningSeconds": 600,
               "totalLessonCompletions": 3,
               "days": [
-                { "date": "2026-08-19", "lessonCompletions": 1 },
-                { "date": "2026-08-20", "lessonCompletions": 2 }
+                { "activitiesCompleted": 1, "date": "2026-08-19", "lessonCompletions": 1 },
+                { "activitiesCompleted": 4, "date": "2026-08-20", "lessonCompletions": 2 }
               ]
             }
           }
@@ -88,8 +88,35 @@ final class ProgressAPITests: XCTestCase {
     let expectedDate = try XCTUnwrap(ProgressDate("2026-08-19"))
 
     XCTAssertEqual(activity.days.first?.date, expectedDate)
-    XCTAssertEqual(activity.days.last?.lessonCompletions, 2)
+    XCTAssertEqual(activity.days.last?.activitiesCompleted, 4)
     XCTAssertEqual(activity.summary.totalLessonCompletions, 3)
+  }
+
+  /// A day with only reviews or practice is still a learning day, so the calendar lights it too.
+  func testActivityCountsDaysWithoutNewLessons() async throws {
+    let api = makeProgressAPI(
+      transport: ProgressResponseTransport(
+        expectedOperationID: "getCurrentUserActivity",
+        status: .ok,
+        responseBody:
+          #"""
+          {
+            "activity": {
+              "learningDays": 1,
+              "totalLearningSeconds": 300,
+              "totalLessonCompletions": 0,
+              "days": [
+                { "activitiesCompleted": 3, "date": "2026-08-20", "lessonCompletions": 0 }
+              ]
+            }
+          }
+          """#))
+
+    let activity = try await api.getActivity(token: "test-session")
+
+    XCTAssertEqual(activity.days.map(\.activitiesCompleted), [3])
+    XCTAssertEqual(
+      ProgressChartData.activityContributions(from: activity.days).map(\.intensity), [4])
   }
 
   func testEnergyPreservesDaysWithoutMeasurements() async throws {
@@ -330,7 +357,7 @@ final class ProgressAPITests: XCTestCase {
               "learningDays": 1,
               "totalLearningSeconds": 300,
               "totalLessonCompletions": 1,
-              "days": [{ "date": "2026-02-30", "lessonCompletions": 1 }]
+              "days": [{ "activitiesCompleted": 1, "date": "2026-02-30", "lessonCompletions": 1 }]
             }
           }
           """#))

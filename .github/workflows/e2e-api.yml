@@ -16,8 +16,6 @@ permissions:
 
 jobs:
   e2e:
-    # Temporarily paused during the learning redesign.
-    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -48,22 +46,30 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v7
 
+      # Hashed once, before dependencies are installed: a cache's post step evaluates its inputs
+      # again, and `hashFiles` would then walk every node_modules (about 20 s per cache).
+      - name: Compute cache keys
+        id: cache-keys
+        run: |
+          echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
+          echo "sources=${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
+
       - name: Cache turbo build setup
         uses: actions/cache@v6
         with:
           path: .turbo
-          key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ github.sha }}
+          key: ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-
             ${{ runner.os }}-turbo-
 
       - name: Cache Next.js build
         uses: actions/cache@v6
         with:
           path: apps/api/.next-e2e/cache
-          key: ${{ runner.os }}-nextjs-api-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-api-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-
             ${{ runner.os }}-nextjs-api-
 
       - name: Setup pnpm and Node.js

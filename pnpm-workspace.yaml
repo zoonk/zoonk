@@ -17,21 +17,24 @@ allowBuilds:
   prisma: true
   protobufjs: false
   sharp: false
+  # officeparser's OCR dependency; its postinstall only prints a funding message.
+  tesseract.js: false
 
 catalog:
   "@apple/app-store-server-library": 3.1.0
   "@dnd-kit/core": 6.3.1
   "@dnd-kit/sortable": 10.0.0
   "@dnd-kit/utilities": 3.2.2
-  "@eloqnt/cli": 0.6.32
+  "@eloqnt/cli": 0.6.33
   "@eloqnt/format-android-xml": 0.0.9
   "@eloqnt/format-apple-xcstrings": 0.0.9
   "@mdx-js/loader": 3.1.1
   "@mdx-js/react": 3.1.1
-  "@next/mdx": 16.3.6
-  "@next/third-parties": 16.3.6
+  "@next/mdx": 16.4.0
+  "@next/playwright": 16.4.0
+  "@next/third-parties": 16.4.0
   "@playwright/test": 1.63.0
-  "@sentry/nextjs": 11.0.0
+  "@sentry/nextjs": 11.5.0
   "@tailwindcss/postcss": 4.3.3
   "@testing-library/react": 16.3.3
   "@types/mdx": 2.0.14
@@ -39,27 +42,27 @@ catalog:
   "@types/react-dom": ^19.3.0
   "@types/react": ^19.3.0
   "@vercel/analytics": 2.0.1
-  "@vitejs/plugin-react": 6.1.1
-  ai: 7.0.116
+  "@vitejs/plugin-react": 6.1.2
+  ai: 7.0.130
   botid: 1.5.11
-  jsdom: 30.1.1
-  katex: 0.18.9
-  lucide-react: 1.48.0
-  next-intl: 4.14.7
-  next: 16.3.6
+  jsdom: 30.1.2
+  katex: 0.19.0
+  lucide-react: 1.52.0
+  next-intl: 4.14.9
+  next: 16.4.0
   nuqs: 2.10.1
   playwright: 1.63.0
-  posthog-js: 1.434.14
+  posthog-js: 1.438.2
   raw-loader: 4.0.2
   react-dom: 19.3.0
   react: 19.3.0
   recharts: 3.10.1
   server-only: 0.0.1
-  sharp: 0.35.4
+  sharp: 0.35.5
   tsx: 4.23.15
   typescript: 7.0.2
-  vite: 8.3.1
-  vitest: 5.0.2
+  vite: 8.3.3
+  vitest: 5.0.3
   zod: 4.6.5
 
 minimumReleaseAge: 0
@@ -67,11 +70,15 @@ minimumReleaseAge: 0
 overrides:
   # Keep this override because we don't want to install codex in this repo
   "ai-sdk-provider-codex-cli>@openai/codex": "-"
-  # Audit remediation: deepmerge-ts 8 prevents stack exhaustion on recursive inputs.
+  # Audit remediation (Prisma's config loader): deepmerge-ts 8 prevents stack exhaustion on recursive inputs.
   deepmerge-ts@<8.0.0: ^8.0.0
+  # Audit remediation (Workflow SDK pins devalue 5.9.2): 5.9.3 fixes uneval/stringify CPU, memory and prototype issues.
+  devalue@<=5.9.2: ^5.9.3
   # Keep lesson and question math on the same KaTeX version as the stylesheet.
   katex: "catalog:"
-  # Audit remediation: mysql2 3.23.1 covers credential disclosure and decompression DoS.
+  # Audit remediation (Prisma CLI): mysql2 3.23.1 covers credential disclosure and decompression DoS.
   mysql2@<=3.23.0: ^3.23.1
-  # Audit remediation: nanoid 5.1.16 covers integer overflow and negative-size loops.
+  # Audit remediation (Workflow SDK): nanoid 5.1.16 covers integer overflow and negative-size loops.
   nanoid@>=4.0.0 <5.1.16: ^5.1.16
+  # Audit remediation (@tailwindcss/typography pins 6.0.10): 7.1.6 parses flat selectors in linear time; 7.0's only break is safe insertion during iteration.
+  postcss-selector-parser@<7.1.6: ^7.1.6

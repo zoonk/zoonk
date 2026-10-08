@@ -80,19 +80,21 @@ function combineMp3Chunks({
 }
 
 /**
- * Validates provider WAV and encodes it as a compact 48 kbps MP3. Keeping one
- * final codec avoids shipping separate decoder paths and gives storage and
- * playback a consistent media contract.
+ * Validates provider WAV and encodes it as a compact 48 kbps MP3, with how long it plays. Keeping
+ * one final codec avoids shipping separate decoder paths and gives storage and playback a
+ * consistent media contract.
  */
 export async function convertWavToMp3({
   audio,
+  maxSeconds,
   model,
 }: {
   audio: Uint8Array;
+  maxSeconds: number;
   model: SpeechModelName;
-}): Promise<Uint8Array> {
+}): Promise<{ audio: Uint8Array; durationSeconds: number }> {
   const decodedAudio = decodeWavAudio({ audio, model });
-  assertAudibleAudioSignal({ audio: decodedAudio, model });
+  assertAudibleAudioSignal({ audio: decodedAudio, maxSeconds, model });
 
   const encoder = await createMp3Encoder();
 
@@ -105,5 +107,9 @@ export async function convertWavToMp3({
 
   const firstChunk = Uint8Array.from(encoder.encode(decodedAudio.channelData));
   const finalChunk = Uint8Array.from(encoder.finalize());
-  return combineMp3Chunks({ finalChunk, firstChunk });
+
+  return {
+    audio: combineMp3Chunks({ finalChunk, firstChunk }),
+    durationSeconds: decodedAudio.samplesDecoded / decodedAudio.sampleRate,
+  };
 }

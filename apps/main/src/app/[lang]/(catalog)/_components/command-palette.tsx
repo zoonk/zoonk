@@ -2,9 +2,10 @@
 
 import { Link, useRouter } from "@/i18n/navigation";
 import { logout } from "@/lib/logout";
-import { getMenu } from "@/lib/menu";
+import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { type CatalogSearchResults } from "@zoonk/core/catalog/search";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { useContentFeedback } from "@zoonk/learn/feedback";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Command,
   CommandDialog,
@@ -15,38 +16,34 @@ import {
   CommandList,
 } from "@zoonk/ui/components/command";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
-import { PlusIcon, SearchIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
-import { useCallback } from "react";
-import {
-  type PaletteItem,
-  createChapterPaletteItem,
-  createCoursePaletteItem,
-  createLogoutPaletteItem,
-  createNavigationPaletteItem,
-  getPaletteItemSearchValue,
-  getVisiblePaletteGroups,
-} from "./command-palette-items";
+import { useCallback, useEffect, useTransition } from "react";
+import { listenForCommandPaletteOpen } from "./command-palette-event";
+import { type LearnerPalette, usePaletteGroups } from "./command-palette-groups";
+import { type PaletteItem, getPaletteItemSearchValue } from "./command-palette-items";
 import { PaletteResultGroup } from "./command-palette-options";
 import { searchCatalogAction } from "./search-courses-action";
 
 const EMPTY_SEARCH_RESULTS: CatalogSearchResults = { chapters: [], courses: [] };
 
 /**
- * The catalog navbar sometimes hides the search trigger responsively while the
- * dialog logic stays unchanged. Accepting a trigger class keeps that layout
- * concern out of the command palette state and search behavior.
+ * Cmd/Ctrl+K search and navigation, the app's one search. It has no button: the shortcut and the
+ * account menu's "Search" open it. Anyone with a session gets their places and their other goals
+ * (`learner`); a visitor gets the public pages.
  */
 export function CommandPalette({
-  className,
   isLoggedIn,
+  learner,
 }: {
-  className?: string;
   isLoggedIn: boolean;
+  learner?: LearnerPalette;
 }) {
   const router = useRouter();
   const t = useExtracted();
   const locale = useLocale();
+  const contentFeedback = useContentFeedback();
+  const [, startGoalSwitch] = useTransition();
 
   const handleSearch = useCallback(
     (searchQuery: string) => searchCatalogAction({ language: locale, query: searchQuery }),
@@ -59,10 +56,34 @@ export function CommandPalette({
       onSearch: handleSearch,
     });
 
+  /** The account menu's "Search" opens this palette too. */
+  useEffect(() => listenForCommandPaletteOpen(open), [open]);
+
   function handlePaletteItemSelect(item: PaletteItem) {
     if (item.kind === "logout") {
       closePalette();
-      logout();
+      void logout();
+      return;
+    }
+
+    if (item.kind === "feedback") {
+      closePalette();
+
+      contentFeedback?.openFeedbackForm({
+        context: { screen: "command-palette" },
+        isReport: false,
+      });
+
+      return;
+    }
+
+    if (item.kind === "goal") {
+      closePalette();
+
+      startGoalSwitch(async () => {
+        await learner?.onSwitchGoal(item.goalId);
+      });
+
       return;
     }
 
@@ -70,6 +91,11 @@ export function CommandPalette({
 
     if (item.kind === "navigation") {
       router.push(item.url);
+      return;
+    }
+
+    if (item.kind === "explanation") {
+      router.push(`/explain/${item.goalId}` as const);
       return;
     }
 
@@ -84,8 +110,8 @@ export function CommandPalette({
   }
 
   const searchLabel = t("Search");
-  const searchPlaceholder = t("Search courses, chapters, or pages...");
-  const paletteGroups = usePaletteGroups({ isLoggedIn, query, results });
+  const searchPlaceholder = t("Search courses, chapters, or pages…");
+  const paletteGroups = usePaletteGroups({ isLoggedIn, learner, query, results });
 
   /**
    * The dialog may close from Escape or an outside press. The search hook owns
@@ -98,167 +124,47 @@ export function CommandPalette({
   }
 
   return (
-    <>
-      <Button
-        aria-keyshortcuts="Meta+K Control+K"
-        className={className}
-        onClick={open}
-        size="icon"
-        variant="outline"
+    <CommandDialog onOpenChange={handleDialogOpenChange} open={isOpen}>
+      <CommandDialogTitle>{searchLabel}</CommandDialogTitle>
+      <CommandDialogDescription>{searchPlaceholder}</CommandDialogDescription>
+      <Command
+        autoHighlight="always"
+        inline
+        itemToStringValue={getPaletteItemSearchValue}
+        items={paletteGroups}
+        keepHighlight
+        mode="none"
+        onValueChange={setQuery}
+        open
+        value={query}
       >
-        <SearchIcon aria-hidden="true" />
-        <span className="sr-only">{searchLabel}</span>
-      </Button>
+        <CommandInput aria-label={searchLabel} placeholder={searchPlaceholder} />
+        <CommandList>
+          <CommandEmpty>
+            <StartGoalEmptyState onSelect={onSelectItem} query={query} />
+          </CommandEmpty>
 
-      <CommandDialog onOpenChange={handleDialogOpenChange} open={isOpen}>
-        <CommandDialogTitle>{searchLabel}</CommandDialogTitle>
-        <CommandDialogDescription>{searchPlaceholder}</CommandDialogDescription>
-        <Command
-          autoHighlight="always"
-          inline
-          itemToStringValue={getPaletteItemSearchValue}
-          items={paletteGroups}
-          keepHighlight
-          mode="none"
-          onValueChange={setQuery}
-          open
-          value={query}
-        >
-          <CommandInput aria-label={searchLabel} placeholder={searchPlaceholder} />
-          <CommandList>
-            <CommandEmpty>
-              <CreateCourseEmptyState onSelect={onSelectItem} query={query} />
-            </CommandEmpty>
-
-            {paletteGroups.map((group) => (
-              <PaletteResultGroup
-                group={group}
-                key={group.id}
-                onSelectItem={handlePaletteItemSelect}
-              />
-            ))}
-          </CommandList>
-        </Command>
-      </CommandDialog>
-    </>
+          {paletteGroups.map((group) => (
+            <PaletteResultGroup
+              group={group}
+              key={group.id}
+              onSelectItem={handlePaletteItemSelect}
+            />
+          ))}
+        </CommandList>
+      </Command>
+    </CommandDialog>
   );
 }
 
 /**
- * Palette groups are assembled in a hook because translated labels must be read
- * with `t("literal")` at the render boundary, not passed through a translation
- * helper or stored outside the component.
- */
-function usePaletteGroups({
-  isLoggedIn,
-  query,
-  results,
-}: {
-  isLoggedIn: boolean;
-  query: string;
-  results: CatalogSearchResults;
-}) {
-  const t = useExtracted();
-
-  const accountItems = isLoggedIn
-    ? [
-        createNavigationPaletteItem({
-          id: "my-courses",
-          label: t("My courses"),
-          menu: getMenu("myCourses"),
-        }),
-        createNavigationPaletteItem({
-          id: "subscription",
-          label: t("Manage subscription"),
-          menu: getMenu("subscription"),
-        }),
-        createNavigationPaletteItem({
-          id: "update-language",
-          label: t("Update language"),
-          menu: getMenu("language"),
-        }),
-        createNavigationPaletteItem({
-          id: "profile",
-          label: t("Update profile"),
-          menu: getMenu("profile"),
-        }),
-        createLogoutPaletteItem({ label: t("Logout") }),
-      ]
-    : [
-        createNavigationPaletteItem({ id: "login", label: t("Login"), menu: getMenu("login") }),
-        createNavigationPaletteItem({
-          id: "language",
-          label: t("Language"),
-          menu: getMenu("language"),
-        }),
-      ];
-
-  return getVisiblePaletteGroups({
-    groups: [
-      {
-        id: "pages",
-        items: [
-          createNavigationPaletteItem({ id: "home", label: t("Home page"), menu: getMenu("home") }),
-          createNavigationPaletteItem({
-            id: "courses",
-            label: t("Courses"),
-            menu: getMenu("courses"),
-          }),
-          createNavigationPaletteItem({
-            id: "start",
-            label: t("Start a new course"),
-            menu: getMenu("start"),
-          }),
-          createNavigationPaletteItem({
-            id: "start-speak",
-            label: t("Speak a language"),
-            menu: getMenu("startSpeak"),
-          }),
-          createNavigationPaletteItem({
-            id: "start-learn",
-            label: t("Learn something"),
-            menu: getMenu("startLearn"),
-          }),
-          createNavigationPaletteItem({
-            id: "start-exam",
-            label: t("Pass an exam"),
-            menu: getMenu("startExam"),
-          }),
-        ],
-        label: t("Pages"),
-      },
-      { id: "account", items: accountItems, label: t("My account") },
-      {
-        id: "help",
-        items: [
-          createNavigationPaletteItem({ id: "blog", label: t("Blog"), menu: getMenu("blog") }),
-          createNavigationPaletteItem({
-            id: "support",
-            label: t("Feedback & Support"),
-            menu: getMenu("support"),
-          }),
-        ],
-        label: t("Help"),
-      },
-      { id: "courses", items: results.courses.map(createCoursePaletteItem), label: t("Courses") },
-      {
-        id: "chapters",
-        items: results.chapters.map(createChapterPaletteItem),
-        label: t("Chapters"),
-      },
-    ],
-    query,
-  });
-}
-
-/**
  * Empty palette searches usually mean the learner asked for something Zoonk
- * cannot find yet, so the dead end should lead into the same prompt-based
- * creation flow used by the Learn page.
+ * cannot find yet, so the dead end leads into onboarding with the search as the
+ * goal.
  */
-function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; query: string }) {
+function StartGoalEmptyState({ onSelect, query }: { onSelect: () => void; query: string }) {
   const t = useExtracted();
-  const prompt = getCreateCoursePrompt(query);
+  const prompt = getGoalPrompt(query);
 
   return (
     <div className="flex flex-col items-center gap-3 px-4">
@@ -272,13 +178,13 @@ function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; que
             size: "sm",
             variant: "outline",
           })}
-          href={getLearnPromptHref(prompt)}
+          href={getGoalStartHref(prompt)}
           onClick={onSelect}
           prefetch={false}
         >
           <PlusIcon aria-hidden="true" />
           <span className="min-w-0 wrap-break-word">
-            {t("Create a course about {term}", { term: prompt })}
+            {t("Start a goal: {term}", { term: prompt })}
           </span>
         </Link>
       )}
@@ -288,9 +194,9 @@ function CreateCourseEmptyState({ onSelect, query }: { onSelect: () => void; que
 
 /**
  * The palette input may contain only whitespace while the empty state is still
- * rendering, and the Learn route should only receive a real subject.
+ * rendering, and onboarding should only receive a real goal.
  */
-function getCreateCoursePrompt(query: string) {
+function getGoalPrompt(query: string) {
   const prompt = query.trim();
 
   if (!prompt) {
@@ -298,12 +204,4 @@ function getCreateCoursePrompt(query: string) {
   }
 
   return prompt;
-}
-
-/**
- * The Learn prompt is stored in a dynamic path segment, so the raw search term
- * must be encoded before it is sent through Next.js navigation.
- */
-function getLearnPromptHref(prompt: string) {
-  return `/start/learn/${encodeURIComponent(prompt)}` as const;
 }

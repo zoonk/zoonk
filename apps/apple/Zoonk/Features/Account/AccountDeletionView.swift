@@ -64,7 +64,7 @@ struct AccountDeletionView: View {
         }
       } message: {
         Text(
-          "This permanently deletes your profile, progress, and personalized courses. This can't be undone.",
+          "This permanently deletes your profile, goals, plans, progress, memory, feedback and uploads. This can't be undone.",
           tableName: "Account",
           comment: "Explains the consequences of confirming permanent account deletion")
       }
@@ -103,20 +103,22 @@ struct AccountDeletionView: View {
 
         Label {
           Text(
-            "Course progress",
+            "Goals, plans and progress",
             tableName: "Account",
-            comment: "Learning data removed during account deletion")
+            comment: "Learning goals, study plans and progress removed during account deletion")
         } icon: {
           Image(systemName: "chart.line.uptrend.xyaxis")
         }
 
         Label {
           Text(
-            "Personalized courses",
+            "Memory, feedback and uploads",
             tableName: "Account",
-            comment: "Personalized learning data removed during account deletion")
+            comment:
+              "What the app remembers about the learner, their feedback and their uploaded files, removed during account deletion"
+          )
         } icon: {
-          Image(systemName: "square.grid.2x2")
+          Image(systemName: "tray.full")
         }
       } header: {
         Text(

@@ -5,16 +5,8 @@ import {
   type UsernameStatus as UsernameStatusType,
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldDynamicDescription,
-  FieldError,
-  FieldLabel,
-} from "@zoonk/ui/components/field";
-import { Input } from "@zoonk/ui/components/input";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
+import { LIST_GROUP_CLASS } from "@zoonk/learn/list";
+import { FieldDescription, FieldDynamicDescription, FieldError } from "@zoonk/ui/components/field";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -23,6 +15,20 @@ import { useExtracted } from "next-intl";
 import { useActionState } from "react";
 import { profileFormAction } from "./actions";
 
+/**
+ * A field as a row of the profile's grouped list: its label above its value, the row taking the
+ * focus ring. The input fills the whole row (its text under the label), so the row is one target.
+ */
+const FIELD_ROW_CLASS =
+  "focus-within:ring-ring/50 has-[[aria-invalid=true]]:ring-destructive/30 relative h-16 focus-within:ring-[3px] focus-within:ring-inset has-[[aria-invalid=true]]:ring-[3px] has-[[aria-invalid=true]]:ring-inset";
+
+const FIELD_LABEL_CLASS =
+  "text-muted-foreground pointer-events-none absolute top-2.5 left-4 text-xs font-medium";
+
+const FIELD_INPUT_CLASS =
+  "placeholder:text-muted-foreground absolute inset-0 size-full min-w-0 bg-transparent px-4 pt-6 pb-2 text-[0.9375rem] outline-none";
+
+/** Under the username: the rule, then whether a new one is free as soon as it's checked. */
 function UsernameStatus({ status, username }: { status: UsernameStatusType; username: string }) {
   const t = useExtracted();
 
@@ -36,21 +42,15 @@ function UsernameStatus({ status, username }: { status: UsernameStatusType; user
   }
 
   if (status === "available") {
-    return <p className="text-success text-sm">{t("{username} is available", { username })}</p>;
+    return <p className="text-success">{t("{username} is available", { username })}</p>;
   }
 
   if (status === "taken") {
-    return (
-      <p className="text-destructive text-sm">{t("{username} is already taken", { username })}</p>
-    );
+    return <FieldError>{t("{username} is already taken", { username })}</FieldError>;
   }
 
   if (status === "invalid") {
-    return (
-      <p className="text-destructive text-sm">
-        {t("3-30 characters. Letters, numbers, and underscores only.")}
-      </p>
-    );
+    return <FieldError>{t("3-30 characters. Letters, numbers, and underscores only.")}</FieldError>;
   }
 
   return (
@@ -60,8 +60,11 @@ function UsernameStatus({ status, username }: { status: UsernameStatusType; user
   );
 }
 
-const initialState = { name: "", status: "idle" as "idle" | "error" | "success", username: "" };
+type FormStatus = "error" | "idle" | "success" | "usernameTaken";
 
+const initialState = { name: "", status: "idle" as FormStatus, username: "" };
+
+/** The learner's name and username, each saved with one button. */
 export function ProfileForm({
   defaultName,
   defaultUsername,
@@ -70,24 +73,23 @@ export function ProfileForm({
   defaultUsername: string;
 }) {
   const t = useExtracted();
-
+  const [state, formAction] = useActionState(profileFormAction, initialState);
   const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
 
-  const [state, formAction] = useActionState(profileFormAction, initialState);
-
   const currentName = state.name || defaultName;
-
-  const hasError = state.status === "error";
-  const isSubmitDisabled = status !== "idle" && status !== "available";
+  const canSave = status === "idle" || status === "available";
 
   return (
-    <form action={formAction} className="flex flex-col gap-6 lg:max-w-md">
-      <Field>
-        <FieldContent>
-          <FieldLabel htmlFor="name">{t("Name")}</FieldLabel>
-          <Input
-            aria-invalid={hasError}
+    <form action={formAction} className="flex flex-col gap-3">
+      <div className={LIST_GROUP_CLASS}>
+        <div className={FIELD_ROW_CLASS}>
+          <label className={FIELD_LABEL_CLASS} htmlFor="name">
+            {t("Name")}
+          </label>
+          <input
+            aria-invalid={state.status === "error"}
             autoComplete="name"
+            className={FIELD_INPUT_CLASS}
             defaultValue={currentName}
             id="name"
             key={currentName}
@@ -95,76 +97,73 @@ export function ProfileForm({
             required
             type="text"
           />
+        </div>
 
-          <FieldDynamicDescription
-            successMessage={
-              state.status === "success" ? t("Your profile has been updated successfully!") : null
-            }
-          >
-            {t("This name will be visible to other users.")}
-          </FieldDynamicDescription>
-
-          {hasError && (
-            <FieldError>
-              {t("Failed to update your profile. Please try again or contact hello@zoonk.com")}
-            </FieldError>
+        <div
+          className={cn(
+            FIELD_ROW_CLASS,
+            "before:bg-foreground/10 relative before:absolute before:top-0 before:right-0 before:left-4 before:h-px",
           )}
-        </FieldContent>
-      </Field>
+        >
+          <label className={FIELD_LABEL_CLASS} htmlFor="username">
+            {t("Username")}
+          </label>
+          <span
+            aria-hidden="true"
+            className="text-muted-foreground pointer-events-none absolute top-6 bottom-2 left-4 flex items-center text-[0.9375rem]"
+          >
+            @
+          </span>
+          <input
+            aria-invalid={status === "invalid" || status === "taken"}
+            autoCapitalize="none"
+            autoComplete="username"
+            autoCorrect="off"
+            className={cn(FIELD_INPUT_CLASS, "pl-8.5")}
+            id="username"
+            maxLength={USERNAME_MAX_LENGTH}
+            minLength={USERNAME_MIN_LENGTH}
+            name="username"
+            onChange={(event) => setUsername(event.target.value)}
+            required
+            spellCheck={false}
+            value={username}
+          />
+        </div>
+      </div>
 
-      <Field>
-        <FieldContent>
-          <FieldLabel htmlFor="username">{t("Username")}</FieldLabel>
+      <div className="text-muted-foreground px-4 text-[0.8125rem] leading-snug [&_p]:text-[0.8125rem]">
+        <UsernameStatus status={status} username={username} />
+      </div>
 
-          <InputGroup>
-            <InputGroupAddon>@</InputGroupAddon>
+      <div className="flex flex-col gap-2 pt-2">
+        <FieldDynamicDescription successMessage={state.status === "success" ? t("Saved.") : null} />
 
-            <InputGroupInput
-              autoCapitalize="none"
-              autoComplete="username"
-              autoCorrect="off"
-              id="username"
-              maxLength={USERNAME_MAX_LENGTH}
-              minLength={USERNAME_MIN_LENGTH}
-              name="username"
-              onChange={(event) => setUsername(event.target.value)}
-              required
-              spellCheck={false}
-              value={username}
-            />
-          </InputGroup>
+        {state.status === "error" && (
+          <FieldError>{t("We couldn't save your profile. Try again.")}</FieldError>
+        )}
 
-          <UsernameStatus status={status} username={username} />
-        </FieldContent>
-      </Field>
+        {state.status === "usernameTaken" && (
+          <FieldError>{t("{username} is already taken", { username: state.username })}</FieldError>
+        )}
 
-      <SubmitButton
-        className={cn("w-fit", { "opacity-50": isSubmitDisabled })}
-        disabled={isSubmitDisabled}
-      >
-        {t("Save changes")}
-      </SubmitButton>
+        <SubmitButton className="h-10 w-full sm:w-fit sm:px-6" disabled={!canSave}>
+          {t("Save")}
+        </SubmitButton>
+      </div>
     </form>
   );
 }
 
 /**
- * Keeps each profile field in place while the learner's private defaults load.
+ * Keeps the name and username fields in place while the learner's private defaults load.
  */
 export function ProfileFormSkeleton() {
   return (
-    <div className="flex flex-col gap-6 lg:max-w-md">
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-12" />
-        <Skeleton className="h-9 w-full" />
-        <Skeleton className="h-4 w-64 max-w-full" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-9 w-full" />
-        <Skeleton className="h-4 w-72 max-w-full" />
-      </div>
-      <Skeleton className="h-9 w-32" />
+    <div className="flex flex-col gap-3">
+      <Skeleton className="h-28 w-full rounded-2xl" />
+      <Skeleton className="mx-4 h-4 w-72 max-w-full" />
+      <Skeleton className="mt-2 h-10 w-full rounded-full sm:w-24" />
     </div>
   );
 }

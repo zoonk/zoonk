@@ -18,9 +18,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAccount } from "./user-account";
+import { UserAiSpend } from "./user-ai-spend";
 import { UserCourses } from "./user-courses";
+import { UserGoals } from "./user-goals";
 import { UserHeader } from "./user-header";
+import { UserLearnerSkills } from "./user-learner-skills";
+import { UserLearningProfile } from "./user-learning-profile";
 import { UserLesson } from "./user-lesson";
+import { UserMemorySection } from "./user-memory";
+import { UserStudySessions } from "./user-study-sessions";
 import { UserSubscription } from "./user-subscription";
 
 function UserBreadcrumb() {
@@ -115,7 +121,31 @@ async function UserDetailContent({ params }: Pick<PageProps<"/users/[id]">, "par
       </Suspense>
 
       <Suspense fallback={<SectionSkeleton />}>
+        <UserLearningProfile userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserGoals userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserStudySessions userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserLearnerSkills userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserMemorySection userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
         <UserCourses userId={userId} />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <UserAiSpend userId={userId} />
       </Suspense>
     </>
   );
@@ -129,6 +159,8 @@ function UserDetailSkeleton() {
   return (
     <>
       <HeaderSkeleton />
+      <SectionSkeleton />
+      <SectionSkeleton />
       <SectionSkeleton />
       <SectionSkeleton />
       <SectionSkeleton />

@@ -90,6 +90,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
     environment: {
       ...environment,
       MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
+      MAIN_APP_URL: mainUrl,
       NEXT_PUBLIC_API_URL: apiUrl,
       ZOONK_DEV_PROJECT: projectName,
     },

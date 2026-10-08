@@ -53,6 +53,28 @@ export async function createEmailCodeSession({
   return getSessionToken(response);
 }
 
+/**
+ * Creates a guest session for a client that keeps a bearer token. The auth hooks run BotID and the
+ * per-network cap first, like guest sign-in on the web.
+ */
+export async function createGuestSession({
+  headers,
+  requestURL,
+}: {
+  headers: Headers;
+  requestURL: string;
+}) {
+  const response = await callNativeAuthHandler({
+    body: {},
+    handler: auth.handler,
+    headers,
+    path: "/sign-in/anonymous",
+    requestURL,
+  });
+
+  return getSessionToken(response);
+}
+
 export async function createGoogleSession({
   headers,
   idToken,

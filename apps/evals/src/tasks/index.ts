@@ -1,66 +1,148 @@
 import { type RegisteredTask } from "@/lib/types";
-import { chapterLessonsTask } from "./chapter-lessons/task";
-import { courseCanonicalTitleTask } from "./course-canonical-title/task";
-import { courseCategoriesTask } from "./course-categories/task";
-import { courseChaptersTask } from "./course-chapters/task";
-import { courseDescriptionTask } from "./course-description/task";
-import { courseFormatTask } from "./course-format/task";
-import { courseIdentitySearchTask } from "./course-identity-search/task";
-import { courseIdentityClassificationTask } from "./course-identity/task";
+import { alphabetLessonTask } from "./alphabet-lesson/task";
+import { answerFromMaterialTask } from "./answer-from-material/task";
+import { assessPronunciationTask } from "./assess-pronunciation/task";
+import { challengeCaseTask } from "./challenge-case/task";
+import { changingFactsTask } from "./changing-facts/task";
+import { checkCitedFactsTask } from "./check-cited-facts/task";
+import { citeMaterialTask } from "./cite-material/task";
+import { conversationFeedbackTask } from "./conversation-feedback/task";
+import { conversationObjectivesTask } from "./conversation-objectives/task";
+import { conversationScenarioTask } from "./conversation-scenario/task";
+import { courseDetailsTask } from "./course-details/task";
+import { courseIconTask } from "./course-icon/task";
 import { courseIntentTask } from "./course-intent/task";
-import { courseIntroductionTask } from "./course-introduction/task";
-import { courseLandingPageTask } from "./course-landing-page/task";
-import { coursePersonalizationTask } from "./course-personalization/task";
+import { courseOutlineTask } from "./course-outline/task";
+import { coverageCheckTask } from "./coverage-check/task";
+import { examIdentityDecisionTask } from "./exam-identity-decision/task";
+import { exampleLinesTask } from "./example-lines/task";
+import { explainSpokenAnswerTask } from "./explain-spoken-answer/task";
+import { explainWrongAnswerTask } from "./explain-wrong-answer/task";
+import { extractExamBlueprintTask } from "./extract-exam-blueprint/task";
+import { findChoiceOptionsTask } from "./find-choice-options/task";
+import { findCourseWeightsTask } from "./find-course-weights/task";
+import { findExamDateTask } from "./find-exam-date/task";
+import { findOfficialSourcesTask } from "./find-official-sources/task";
+import { findSubjectQuestionsTask } from "./find-subject-questions/task";
+import { findTargetCutoffTask } from "./find-target-cutoff/task";
+import { findTopicFrequencyTask } from "./find-topic-frequency/task";
+import { generateItemsTask } from "./generate-items/task";
+import { goalSpecificityTask } from "./goal-specificity/task";
+import { goalTutorTask } from "./goal-tutor/task";
+import { gradeEssayTask } from "./grade-essay/task";
+import { gradeTypedAnswerTask } from "./grade-typed-answer/task";
+import { imageCheckTask } from "./image-check/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
-import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
-import { languageCourseChaptersTask } from "./language-course-chapters/task";
-import { lessonAlphabetTask } from "./lesson-alphabet/task";
-import { lessonDistractorsTask } from "./lesson-distractors/task";
-import { lessonExplanationTask } from "./lesson-explanation/task";
-import { lessonGrammarTask } from "./lesson-grammar/task";
-import { lessonKindTask } from "./lesson-kind/task";
-import { lessonPracticeTask } from "./lesson-practice/task";
-import { lessonPronunciationTask } from "./lesson-pronunciation/task";
+import { imageSceneTask } from "./image-scene/task";
+import { languageLessonTask } from "./language-lesson/task";
+import { lessonFixTask } from "./lesson-fix/task";
+import { lessonImageTask } from "./lesson-image/task";
+import { lessonQualityCheckTask } from "./lesson-quality-check/task";
 import { lessonQuestionTask } from "./lesson-question/task";
-import { lessonQuizTask } from "./lesson-quiz/task";
-import { lessonRomanizationTask } from "./lesson-romanization/task";
-import { lessonSentencesTask } from "./lesson-sentences/task";
-import { lessonTranslationTask } from "./lesson-translation/task";
-import { lessonTutorialTask } from "./lesson-tutorial/task";
-import { lessonVocabularyTask } from "./lesson-vocabulary/task";
-import { stepImagePromptsTask } from "./step-image-prompts/task";
+import { lessonSpecTask } from "./lesson-spec/task";
+import { lessonWriterTask } from "./lesson-writer/task";
+import { levelTestBankTask } from "./level-test-bank/task";
+import { libraryIdentityDecisionTask } from "./library-identity-decision/task";
+import { librarySearchTermsTask } from "./library-search-terms/task";
+import { liveConversationTask } from "./live-conversation/task";
+import { memoryExtractionTask } from "./memory-extraction/task";
+import { memoryGateTask } from "./memory-gate/task";
+import { memoryInsightTask } from "./memory-insight/task";
+import { memoryReconcileTask } from "./memory-reconcile/task";
+import { memoryRelevanceTask } from "./memory-relevance/task";
+import { memorySearchTermsTask } from "./memory-search-terms/task";
+import { mindMapImageTask } from "./mind-map-image/task";
+import { mistakeCauseTask } from "./mistake-cause/task";
+import { mistakePatternTask } from "./mistake-pattern/task";
+import { pastQuestionsTask } from "./past-questions/task";
+import { placementItemsTask } from "./placement-items/task";
+import { planEditIntentTask } from "./plan-edit-intent/task";
+import { questionGeneralityTask } from "./question-generality/task";
+import { quickExplanationTask } from "./quick-explanation/task";
+import { researchPlanTask } from "./research-plan/task";
+import { setupLessonOutlineTask } from "./setup-lesson-outline/task";
+import { skillGraphTask } from "./skill-graph/task";
+import { sourceChangeNoticeTask } from "./source-change-notice/task";
+import { speakingMockScoreTask } from "./speaking-mock-score/task";
+import { statuteDrillsTask } from "./statute-drills/task";
+import { stepVariantTask } from "./step-variant/task";
+import { transcribeSpeechTask } from "./transcribe-speech/task";
+import { understandGoalTask } from "./understand-goal/task";
+import { uploadVisibilityTask } from "./upload-visibility/task";
+import { workFieldTask } from "./work-field/task";
 
 export const TASKS: readonly RegisteredTask[] = [
-  lessonDistractorsTask,
-  lessonQuizTask,
+  changingFactsTask,
+  researchPlanTask,
+  findOfficialSourcesTask,
+  findExamDateTask,
+  findCourseWeightsTask,
+  findSubjectQuestionsTask,
+  findTargetCutoffTask,
+  findTopicFrequencyTask,
+  findChoiceOptionsTask,
+  extractExamBlueprintTask,
+  checkCitedFactsTask,
+  citeMaterialTask,
+  answerFromMaterialTask,
+  examIdentityDecisionTask,
+  uploadVisibilityTask,
+  sourceChangeNoticeTask,
   lessonQuestionTask,
-  lessonExplanationTask,
-  lessonGrammarTask,
-  lessonKindTask,
-  lessonPronunciationTask,
-  lessonTranslationTask,
-  lessonSentencesTask,
-  lessonPracticeTask,
-  lessonRomanizationTask,
-  lessonTutorialTask,
-  lessonAlphabetTask,
-  lessonVocabularyTask,
-  courseIdentitySearchTask,
-  courseIdentityClassificationTask,
   courseIntentTask,
-  coursePersonalizationTask,
-  courseFormatTask,
-  courseCanonicalTitleTask,
-  chapterLessonsTask,
-  courseCategoriesTask,
-  courseChaptersTask,
-  courseIntroductionTask,
-  courseDescriptionTask,
-  courseLandingPageTask,
   imageInputSafetyRewriteTask,
-  stepImagePromptsTask,
-  languageChapterLessonsTask,
-  languageCourseChaptersTask,
+  imageSceneTask,
+  lessonImageTask,
+  imageCheckTask,
+  mindMapImageTask,
+  generateItemsTask,
+  placementItemsTask,
+  statuteDrillsTask,
+  pastQuestionsTask,
+  workFieldTask,
+  gradeTypedAnswerTask,
+  gradeEssayTask,
+  explainWrongAnswerTask,
+  quickExplanationTask,
+  challengeCaseTask,
+  questionGeneralityTask,
+  skillGraphTask,
+  courseOutlineTask,
+  courseDetailsTask,
+  courseIconTask,
+  coverageCheckTask,
+  lessonSpecTask,
+  lessonWriterTask,
+  lessonQualityCheckTask,
+  lessonFixTask,
+  stepVariantTask,
+  exampleLinesTask,
+  librarySearchTermsTask,
+  libraryIdentityDecisionTask,
+  goalSpecificityTask,
+  goalTutorTask,
+  mistakeCauseTask,
+  planEditIntentTask,
+  understandGoalTask,
+  memoryExtractionTask,
+  memoryGateTask,
+  memoryReconcileTask,
+  memorySearchTermsTask,
+  memoryRelevanceTask,
+  memoryInsightTask,
+  languageLessonTask,
+  explainSpokenAnswerTask,
+  transcribeSpeechTask,
+  assessPronunciationTask,
+  conversationScenarioTask,
+  conversationFeedbackTask,
+  conversationObjectivesTask,
+  liveConversationTask,
+  speakingMockScoreTask,
+  mistakePatternTask,
+  levelTestBankTask,
+  alphabetLessonTask,
+  setupLessonOutlineTask,
 ];
 
 // Number of times each test case should be run for more reliable results

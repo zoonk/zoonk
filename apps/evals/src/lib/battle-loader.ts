@@ -1,8 +1,19 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
+import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 import { cache } from "react";
 import { resolveBattleMatchupModelIds } from "./battle-mapping";
-import { type ModelConfig, getModelById, getModelDisplayName } from "./models";
+import { estimateCostPer1000Runs, getCallCost } from "./cost";
+import { summarizeLatency } from "./latency";
+import { average, sum } from "./math";
+import {
+  type ModelConfig,
+  canJudge,
+  getModelById,
+  getModelDisplayName,
+  getModelFamily,
+} from "./models";
 import { getAllOutputsForTask } from "./output-loader";
 import { summarizeCategoryScores } from "./score-categories";
 import {
@@ -14,10 +25,6 @@ import {
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
-
-const TOKENS_PER_MILLION = 1_000_000;
-const COST_MULTIPLIER = 1000;
-const MS_TO_SECONDS = 1000;
 
 export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMatchup[]> => {
   const taskDir = path.join(BATTLES_DIR, taskId);
@@ -43,99 +50,110 @@ export const getBattleMatchups = cache(async (taskId: string): Promise<BattleMat
   }
 });
 
-function calculateCost(
-  inputTokens: number,
-  outputTokens: number,
-  inputCost: number,
-  outputCost: number,
-): number {
-  const totalInputCost = (inputTokens / TOKENS_PER_MILLION) * inputCost * COST_MULTIPLIER;
-  const totalOutputCost = (outputTokens / TOKENS_PER_MILLION) * outputCost * COST_MULTIPLIER;
-  return totalInputCost + totalOutputCost;
-}
-
 type ModelScores = {
   categoryScoreGroups: CategoryScore[][];
-  rankingCount: number;
-  totalScore: number;
-  scoresByJudge: Record<string, number>;
-  scoresByTestCase: Record<string, number>;
+  scores: number[];
+  scoresByJudge: Record<string, number[]>;
+  scoresByTestCase: Record<string, number[]>;
 };
 
+type Ranking = BattleMatchup["judgments"][number]["rankings"][number];
+type ScoredRanking = { judgeId: string; ranking: Ranking; testCaseId: string };
+
+function averageEach(groups: Record<string, number[]>): Record<string, number> {
+  return Object.fromEntries(Object.entries(groups).map(([key, values]) => [key, average(values)]));
+}
+
+/**
+ * Flattens every judgment into rankings a judge was allowed to give. Older
+ * battle files include judges scoring their own family; those are ignored so
+ * historical leaderboards follow the same rule as new battles.
+ */
+function getEligibleRankings(matchups: BattleMatchup[]): ScoredRanking[] {
+  return matchups.flatMap((matchup) =>
+    matchup.judgments.flatMap((judgment) =>
+      judgment.rankings
+        .filter((ranking) => canJudge({ judgeId: judgment.judgeId, modelId: ranking.modelId }))
+        .map((ranking) => ({ judgeId: judgment.judgeId, ranking, testCaseId: matchup.testCaseId })),
+    ),
+  );
+}
+
+/** Adds one judge's score for one test case to a model's running totals. */
+function addRanking({
+  scored: { judgeId, ranking, testCaseId },
+  scores,
+}: {
+  scored: ScoredRanking;
+  scores?: ModelScores;
+}): ModelScores {
+  const existing = scores ?? {
+    categoryScoreGroups: [],
+    scores: [],
+    scoresByJudge: {},
+    scoresByTestCase: {},
+  };
+
+  return {
+    categoryScoreGroups: ranking.categoryScores
+      ? [...existing.categoryScoreGroups, ranking.categoryScores]
+      : existing.categoryScoreGroups,
+    scores: [...existing.scores, ranking.score],
+    scoresByJudge: {
+      ...existing.scoresByJudge,
+      [judgeId]: [...(existing.scoresByJudge[judgeId] ?? []), ranking.score],
+    },
+    scoresByTestCase: {
+      ...existing.scoresByTestCase,
+      [testCaseId]: [...(existing.scoresByTestCase[testCaseId] ?? []), ranking.score],
+    },
+  };
+}
+
 function aggregateScoresFromMatchups(matchups: BattleMatchup[]): Map<string, ModelScores> {
-  const modelScores = new Map<string, ModelScores>();
-
-  for (const matchup of matchups) {
-    for (const judgment of matchup.judgments) {
-      for (const ranking of judgment.rankings) {
-        const existing = modelScores.get(ranking.modelId) ?? {
-          categoryScoreGroups: [],
-          rankingCount: 0,
-          scoresByJudge: {},
-          scoresByTestCase: {},
-          totalScore: 0,
-        };
-
-        existing.totalScore += ranking.score;
-        existing.rankingCount += 1;
-
-        if (ranking.categoryScores) {
-          existing.categoryScoreGroups.push(ranking.categoryScores);
-        }
-
-        existing.scoresByJudge[judgment.judgeId] =
-          (existing.scoresByJudge[judgment.judgeId] ?? 0) + ranking.score;
-
-        existing.scoresByTestCase[matchup.testCaseId] =
-          (existing.scoresByTestCase[matchup.testCaseId] ?? 0) + ranking.score;
-
-        modelScores.set(ranking.modelId, existing);
-      }
-    }
-  }
-
-  return modelScores;
+  return getEligibleRankings(matchups).reduce(
+    (modelScores, scored) =>
+      modelScores.set(
+        scored.ranking.modelId,
+        addRanking({ scored, scores: modelScores.get(scored.ranking.modelId) }),
+      ),
+    new Map<string, ModelScores>(),
+  );
 }
 
 function calculateModelMetrics({
   model,
   outputs,
+  prices,
 }: {
   model: ModelConfig;
   outputs?: ModelOutputs;
-}): { averageDuration: number; averageCost: number } {
-  const numOutputs = outputs?.outputs.length ?? 0;
+  prices: GatewayPrices;
+}): Pick<BattleLeaderboardEntry, "costPer1000Runs" | "latencyP50" | "latencyP95"> {
+  const entries = outputs?.outputs ?? [];
 
-  if (numOutputs === 0 || !outputs) {
-    return { averageCost: 0, averageDuration: 0 };
-  }
-
-  const totalDurationMs = outputs.outputs.reduce((sum, output) => sum + output.duration, 0);
-  const averageDuration = totalDurationMs / numOutputs / MS_TO_SECONDS;
-
-  const avgInputTokens =
-    outputs.outputs.reduce((sum, output) => sum + output.inputTokens, 0) / numOutputs;
-
-  const avgOutputTokens =
-    outputs.outputs.reduce((sum, output) => sum + output.outputTokens, 0) / numOutputs;
-
-  const averageCost = calculateCost(
-    avgInputTokens,
-    avgOutputTokens,
-    model.inputCost,
-    model.outputCost,
+  const costs = entries.map((output) =>
+    getCallCost({ modelId: model.gatewayModelId, prices, usage: output }),
   );
 
-  return { averageCost, averageDuration };
+  const latency = summarizeLatency(entries.map((output) => output.duration));
+
+  return {
+    costPer1000Runs: estimateCostPer1000Runs(costs),
+    latencyP50: latency.p50,
+    latencyP95: latency.p95,
+  };
 }
 
 function buildLeaderboardEntry({
   allOutputs,
   modelId,
+  prices,
   scores,
 }: {
   allOutputs: Map<string, ModelOutputs>;
   modelId: string;
+  prices: GatewayPrices;
   scores: ModelScores;
 }): BattleLeaderboardEntry | null {
   const model = getModelById(modelId);
@@ -144,25 +162,38 @@ function buildLeaderboardEntry({
     return null;
   }
 
-  const outputs = allOutputs.get(modelId);
-  const { averageCost, averageDuration } = calculateModelMetrics({ model, outputs });
-
   return {
-    averageCost,
-    averageDuration,
-    averageScore: scores.rankingCount > 0 ? scores.totalScore / scores.rankingCount : 0,
+    ...calculateModelMetrics({ model, outputs: allOutputs.get(modelId), prices }),
+    averageScore: average(scores.scores),
     categoryScores: summarizeCategoryScores(scores.categoryScoreGroups),
     modelId,
     modelName: getModelDisplayName(model),
-    provider: modelId.split("/")[0] ?? modelId,
-    scoresByJudge: scores.scoresByJudge,
-    scoresByTestCase: scores.scoresByTestCase,
-    totalScore: scores.totalScore,
+    provider: getModelFamily(model),
+    scoresByJudge: averageEach(scores.scoresByJudge),
+    scoresByTestCase: averageEach(scores.scoresByTestCase),
   };
+}
+
+/** Total spent on battle judges for a task, from the usage saved with each judgment. */
+export async function getBattleJudgeCost(taskId: string): Promise<number> {
+  const prices = GATEWAY_PRICES;
+  const matchups = await getBattleMatchups(taskId);
+
+  const judgeCosts = matchups
+    .flatMap((matchup) => matchup.judgments)
+    .map((judgment) =>
+      judgment.usage
+        ? getCallCost({ modelId: judgment.judgeId, prices, usage: judgment.usage })
+        : 0,
+    );
+
+  return sum(judgeCosts);
 }
 
 export const getBattleLeaderboard = cache(
   async (taskId: string): Promise<BattleLeaderboardEntry[]> => {
+    const prices = GATEWAY_PRICES;
+
     const [matchups, allOutputs] = await Promise.all([
       getBattleMatchups(taskId),
       getAllOutputsForTask(taskId),
@@ -174,16 +205,11 @@ export const getBattleLeaderboard = cache(
 
     const modelScores = aggregateScoresFromMatchups(matchups);
 
-    const entries: BattleLeaderboardEntry[] = [];
+    const entries = [...modelScores.entries()].flatMap(([modelId, scores]) => {
+      const entry = buildLeaderboardEntry({ allOutputs, modelId, prices, scores });
+      return entry ? [entry] : [];
+    });
 
-    for (const [modelId, scores] of modelScores) {
-      const entry = buildLeaderboardEntry({ allOutputs, modelId, scores });
-
-      if (entry) {
-        entries.push(entry);
-      }
-    }
-
-    return entries.toSorted((a, b) => b.totalScore - a.totalScore);
+    return entries.toSorted((a, b) => b.averageScore - a.averageScore);
   },
 );

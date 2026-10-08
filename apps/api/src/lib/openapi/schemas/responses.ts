@@ -1,4 +1,9 @@
+import { type z } from "zod";
 import { errorSchema } from "./common";
+
+export function jsonResponse<TSchema extends z.ZodType>(schema: TSchema, description: string) {
+  return { content: { "application/json": { schema } }, description };
+}
 
 export const validationErrorResponse = {
   content: { "application/json": { schema: errorSchema } },
@@ -48,4 +53,25 @@ export const tooManyRequestsResponse = {
 export const unprocessableEntityResponse = {
   content: { "application/json": { schema: errorSchema } },
   description: "The request is valid but cannot be applied to the resource",
+} as const;
+
+/**
+ * A refused claim of small AI help (an answer's explanation, grading a spoken answer, a plan
+ * edit): `USAGE_LIMIT_REACHED` with `details.limit`, or `SLOW_DOWN`.
+ */
+export const smallAiHelpRefusalResponses = {
+  "402": {
+    ...paymentRequiredResponse,
+    description: "A free learner reached today's AI budget (`USAGE_LIMIT_REACHED`)",
+  },
+  "403": {
+    ...forbiddenResponse,
+    description:
+      "A guest used today's free AI help and is asked to sign up (`USAGE_LIMIT_REACHED`)",
+  },
+  "429": {
+    ...tooManyRequestsResponse,
+    description:
+      "`SLOW_DOWN`: try again after `Retry-After`; or a Plus learner reached today's AI budget (`USAGE_LIMIT_REACHED`), back tomorrow",
+  },
 } as const;

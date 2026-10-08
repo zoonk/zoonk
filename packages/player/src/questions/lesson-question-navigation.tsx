@@ -1,20 +1,15 @@
 "use client";
 
-import { type GenerationQuotaViewer } from "@zoonk/core/generation-quotas/contract";
+import { type LessonQuestionMemoryChange } from "@zoonk/core/lesson-questions/contract";
 import { type ReactNode, createContext, use } from "react";
 import { type PlayerLinkComponent } from "../player-context";
-
-export type LessonQuestionLimitActionProps = {
-  className?: string;
-  loginHref: string;
-  viewer: GenerationQuotaViewer;
-};
 
 export type LessonQuestionNavigation = {
   linkComponent: PlayerLinkComponent;
   loginHref: string;
   subscriptionHref: string;
-  renderLimitAction: (props: LessonQuestionLimitActionProps) => ReactNode;
+  /** "Memory updated" with undo under an answer that changed memory; the host owns the undo. */
+  renderMemoryUpdate?: (changes: LessonQuestionMemoryChange[]) => ReactNode;
 };
 
 export const LessonQuestionNavigationContext = createContext<LessonQuestionNavigation | null>(null);

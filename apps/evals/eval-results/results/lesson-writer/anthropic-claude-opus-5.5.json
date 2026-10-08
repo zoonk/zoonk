@@ -1,0 +1,479 @@
+{
+  "modelId": "anthropic/claude-opus-5.5",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The box equations, boundary-condition algebra, allowed energies, node counts, numerical electron example, and generated calculation data are correct. The checks have unique defensible answers. However, the factual claim that Samsung QLED TVs use CdSe-type quantum dots is wrong: these products use cadmium-free dots. This teaches an incorrect real-world fact and triggers the maximum score of 6.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Several explicit clarity failures trigger the maximum score of 7. Notation precedes the standing-string intuition; wave function is used without explaining what it represents; 'quantizes' precedes its explanation; and normalization skips the integral evaluation that produces sqrt(2/L). Screens also introduce multiple technical concepts together, and some worked steps combine operations. Much of the prose is otherwise direct and readable for advanced learners.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The boundary-condition check, inverse-square calculation, graph check, and size application require useful reasoning and include misconception-based feedback. The slider genuinely lets learners explore energy versus n and asks about the observed relationship. However, the n = 0 check repeats essentially the exact explanation and answer supplied immediately beforehand, triggering the maximum score of 8 for a recall-only check. The node portion of the activity also relies on the preceding explanation rather than a dynamically displayed node pattern.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The lesson uses US English, opens directly with a concrete phenomenon, provides advanced mathematical content, and preserves the planned screen sequence. Several plan and task-fit slips trigger the maximum score of 7: the activity lacks the planned dynamic wave-function and probability-density displays, the derivation does not consistently reveal one move per step, and multiple summary entries violate the one-sentence-per-idea requirement. The application names a concrete product setting, but its implementation needs correction.",
+          "score": 7,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 10303,
+          "inputTokens": 10306,
+          "outputTokens": 1041,
+          "reasoningTokens": 301
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The application incorrectly identifies Samsung QLED TVs as using CdSe-type dots; Samsung's commercial QLED technology uses cadmium-free quantum dots. The required teaching order also fails: potential and wave-function notation appear before the standing-string explanation, wave function is never explained, and 'quantizes' appears before its meaning is established.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several derivation steps combine moves, including solving for energy and substituting the allowed wavenumber. Normalization jumps directly from the integral constraint to the amplitude. The activity implements an energy graph, but not the planned changing wave-function and probability-density curves; an image request cannot provide that interaction. Several summary entries contain multiple sentences rather than one sentence per idea.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Make the post-derivation check require fresh reasoning, such as deciding whether a proposed zero-energy wave can satisfy both walls and represent a particle. Distinguish a quantum dot's size-dependent confinement contribution from its full optical transition energy, so learners know what the box model can predict.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English, for advanced learners\n      - The derivation is complete and correct: the time-independent equation inside the box, boundary conditions ψ(0) = ψ(L) = 0, sine solutions, kL = nπ, and E_n = n²π²ħ²/(2mL²)\n      - Standing waves on a string come before the notation, and each new term (wave function, boundary condition, quantized) is explained when it first appears\n      - Notation is consistent across screens (ħ, m, L, n), and the worked derivation reveals one move per step\n      - The slider graph shows how energy depends on n or L, with a check about what the learner saw\n      - Checks need real understanding (why n = 0 isn't allowed, how E scales with L), with reasons for every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-particle-in-a-box-advanced-1",
+        "userInput": {
+          "chapterTitle": "The Schrödinger equation",
+          "courseTitle": "Quantum mechanics",
+          "language": "en",
+          "level": "advanced",
+          "spec": {
+            "canDo": "Derive and use the quantized energy levels of a particle in a box",
+            "description": "Solve the time-independent Schrödinger equation for an infinite 1D well, show how the boundary conditions force discrete energies E_n = n²h²/(8mL²), and use them to predict real spectra.",
+            "estimatedMinutes": 5,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Show vials of CdSe quantum dots made of the same material but different sizes: the 2 nm dots glow blue and the 6 nm dots glow red. Ask the learner to guess, without scoring, why size alone would set the color of emitted light.",
+                "kind": "hook",
+                "skills": [],
+                "visual": "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Set up the model: V(x) = 0 for 0 < x < L and V = ∞ outside, so ψ = 0 outside the box. Continuity of ψ then gives the boundary conditions ψ(0) = 0 and ψ(L) = 0, just like a guitar string pinned at both ends.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Inside the box the equation becomes −(ħ²/2m)ψ'' = Eψ, which is ψ'' = −k²ψ with k = √(2mE)/ħ. Its general solution is ψ(x) = A sin kx + B cos kx, the same oscillation as a vibrating string.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The learner applies ψ(0) = 0 to ψ = A sin kx + B cos kx and chooses which term survives. Include the tempting wrong answer 'the cos term survives because cos is maximal at 0', and give feedback that cos 0 = 1 forces B = 0.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Work through ψ(L) = 0: A sin kL = 0, and A ≠ 0 (otherwise there is no particle), so kL = nπ. Exclude n = 0 because ψ would vanish, and exclude negative n because they give the same state up to a sign. Substitute k_n = nπ/L into E = ħ²k²/2m to get E_n = n²π²ħ²/(2mL²) = n²h²/(8mL²).",
+                "kind": "workedExample",
+                "skills": [0, 1],
+                "visual": "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Ask why the lowest state is n = 1 rather than n = 0. Include the tempting wrong answer 'n = 0 is the ground state with zero energy', and explain that n = 0 gives ψ ≡ 0, so the particle can never be at rest and has a zero-point energy E_1 > 0.",
+                "kind": "check",
+                "skills": [0, 1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Normalizing ∫|ψ|²dx = 1 over the box gives A = √(2/L), so ψ_n(x) = √(2/L) sin(nπx/L). These are standing waves: ψ_n fits n half-wavelengths into L and has n − 1 interior nodes, and the level spacing grows as E_n ∝ n².",
+                "kind": "explanation",
+                "skills": [2],
+                "visual": "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked."
+              },
+              {
+                "activityTemplate": "sliderGraph",
+                "brief": "The learner moves a slider for n from 1 to 6 and watches ψ_n(x) and |ψ_n|² redraw, with E_n/E_1 displayed. Then ask how many nodes ψ_4 has (3) and what E_3/E_1 is (9, not 3).",
+                "kind": "activity",
+                "skills": [1, 2],
+                "visual": "Graph of ψ_n(x) and |ψ_n(x)|² on 0 to L with an n slider and a live readout of E_n/E_1."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Treat an electron in a box with L = 1.0 nm: E_1 = h²/(8m_eL²) ≈ 6.0 × 10⁻²⁰ J ≈ 0.38 eV, and E_2 = 4E_1 ≈ 1.50 eV. The 2 → 1 photon has ΔE = 3E_1 ≈ 1.13 eV, so λ = hc/ΔE ≈ 1100 nm, in the near infrared.",
+                "kind": "workedExample",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "The learner calculates E_1 for the same electron in a box half as wide, with L = 0.5 nm, and picks the answer ≈ 1.5 eV. Include the tempting wrong answer ≈ 0.75 eV, which assumes E ∝ 1/L instead of 1/L².",
+                "kind": "check",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Return to the quantum dots and model the confinement energy as a particle in a box, E ∝ 1/L². The learner predicts by what factor the confinement contribution grows from a 6 nm dot to a 3 nm dot (a factor of 4) and explains why smaller dots emit bluer light.",
+                "kind": "application",
+                "skills": [0, 1, 2],
+                "visual": "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue."
+              }
+            ],
+            "skills": [
+              {
+                "description": "Impose the conditions ψ(0) = ψ(L) = 0 on the general solution inside an infinite well to show that only discrete wavenumbers k_n = nπ/L are allowed.",
+                "example": "From ψ = A sin kx + B cos kx, ψ(0) = 0 gives B = 0, and ψ(L) = 0 gives kL = nπ with n = 1, 2, 3, …",
+                "hard": true,
+                "name": "Apply boundary conditions to an infinite well",
+                "topic": "Infinite square well",
+                "useCase": "Setting up any confined quantum system, from electrons in nanowires to modes in optical cavities."
+              },
+              {
+                "description": "Combine the quantized wavenumbers with E = ħ²k²/2m to get E_n = n²h²/(8mL²) and use it to compute level energies and transition photons.",
+                "example": "An electron in a 1.0 nm box has E_1 ≈ 0.38 eV, and its 2 → 1 transition emits a photon near 1100 nm.",
+                "hard": true,
+                "name": "Calculate particle-in-a-box energy levels",
+                "topic": "Energy quantization",
+                "useCase": "Estimating absorption and emission wavelengths of quantum dots, dyes and nanostructures."
+              },
+              {
+                "description": "The stationary states ψ_n = √(2/L) sin(nπx/L) are normalized standing waves with n − 1 interior nodes, and the lowest energy is never zero.",
+                "example": "ψ_3 fits three half-wavelengths in the box, has 2 nodes, and has energy 9E_1.",
+                "hard": false,
+                "name": "Describe the stationary states of a box",
+                "topic": "Stationary states",
+                "useCase": "Reading probability densities and node patterns in molecular orbitals and semiconductor devices."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Particle in a box"
+          },
+          "activityTemplates": [
+            {
+              "description": "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question. Check kinds this template supports: choice, numeric. It shows data: set `data` to `{ \"source\": { ... } }` for real data or `{ \"isExample\": true }` for an example.",
+              "id": "sliderGraph",
+              "schema": "{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"type\":\"object\",\"properties\":{\"check\":{\"oneOf\":[{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"kind\":{\"type\":\"string\",\"const\":\"choice\"},\"options\":{\"minItems\":2,\"maxItems\":5,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"isCorrect\":{\"type\":\"boolean\"},\"reason\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"text\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"value\":{\"type\":\"number\"}},\"required\":[\"id\",\"isCorrect\",\"reason\",\"text\"],\"additionalProperties\":false}},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240}},\"required\":[\"kind\",\"options\",\"question\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"interaction\"}},\"required\":[\"explanation\",\"kind\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"inputs\":{\"maxItems\":6,\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"value\":{\"type\":\"number\"}},\"required\":[\"name\",\"value\"],\"additionalProperties\":false}},\"output\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"answer\":{\"type\":\"number\"},\"explanation\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400},\"kind\":{\"type\":\"string\",\"const\":\"numeric\"},\"question\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"tolerance\":{\"type\":\"object\",\"properties\":{\"kind\":{\"type\":\"string\",\"enum\":[\"absolute\",\"relative\"]},\"value\":{\"type\":\"number\",\"minimum\":0}},\"required\":[\"kind\",\"value\"],\"additionalProperties\":false},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"answer\",\"explanation\",\"kind\",\"question\",\"tolerance\"],\"additionalProperties\":false}]},\"data\":{\"anyOf\":[{\"type\":\"object\",\"properties\":{\"isExample\":{\"type\":\"boolean\",\"const\":true}},\"required\":[\"isExample\"],\"additionalProperties\":false},{\"type\":\"object\",\"properties\":{\"source\":{\"type\":\"object\",\"properties\":{\"publisher\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"title\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"url\":{\"type\":\"string\",\"format\":\"uri\"},\"year\":{\"type\":\"integer\",\"minimum\":-9007199254740991,\"maximum\":9007199254740991}},\"required\":[\"title\"],\"additionalProperties\":false}},\"required\":[\"source\"],\"additionalProperties\":false}]},\"fields\":{\"type\":\"object\",\"properties\":{\"compareAt\":{\"type\":\"number\"},\"formula\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":300},\"output\":{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"label\"],\"additionalProperties\":false},\"variable\":{\"type\":\"object\",\"properties\":{\"initial\":{\"type\":\"number\"},\"label\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":40},\"max\":{\"type\":\"number\"},\"min\":{\"type\":\"number\"},\"name\":{\"type\":\"string\",\"pattern\":\"^[A-Z_a-z]\\\\w{0,31}$\"},\"step\":{\"type\":\"number\",\"exclusiveMinimum\":0},\"unit\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":16}},\"required\":[\"initial\",\"label\",\"max\",\"min\",\"name\",\"step\"],\"additionalProperties\":false}},\"required\":[\"formula\",\"output\",\"variable\"],\"additionalProperties\":false},\"image\":{\"type\":\"object\",\"properties\":{\"alt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":160},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":400}},\"required\":[\"alt\",\"prompt\"],\"additionalProperties\":false},\"prompt\":{\"type\":\"string\",\"minLength\":1,\"maxLength\":240},\"template\":{\"type\":\"string\",\"const\":\"sliderGraph\"}},\"required\":[\"check\",\"fields\",\"prompt\",\"template\"],\"additionalProperties\":false}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The three-year requirement, mandatory approval by a special evaluation commission, and the three loss-of-office routes are correctly identified. The discussion is appropriately scoped to misconduct or poor performance rather than claiming these exhaust every constitutional possibility. However, describing defense as guaranteed only in the last two routes creates a misleading account of the judicial route and fails the explicit all-three requirement. This triggers the cap of 6 for teaching something wrong.",
+          "score": 6,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "Stability and administrative process receive accessible explanations when first introduced. However, the loss-of-office screen packs several new legal concepts into one paragraph. Periodic performance evaluation is named rather than explained, and commission is used without explaining who makes up that body. The screen also lacks the required concrete example. These multiple clarity failures trigger the cap of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "Both substantive checks require applying the lesson to a situation rather than simply reciting a definition. Pedro's case directly tests the planned misconception that time alone produces stability, and the Recife case tests whether a superior can dismiss someone immediately. Each has exactly one defensible correct answer and explanations for every option. The distractors represent recognizable misconceptions.",
+          "score": 9,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The opening immediately presents Ana's situation without a greeting or recap. The five screens follow the planned teaching sequence, and the final check provides the intended application at the Prefeitura do Recife. The language is Brazilian Portuguese, names and locations fit Brazil, and the summary uses one sentence per entry. The explicitly requested money context in reais is missing, which is one task-fit slip and triggers the cap of 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Screen 4: This sentence is too long for a beginner learner; split it: \"Por falta ou mau desempenho, o servidor estável perde o cargo de três jeitos: por decisão da Justiça que já não aceita recurso (a sentença _transitada em julgado_); por um processo administrativo, uma investigação interna do próprio órgão; ou por uma avaliação periódica de desempenho.\"",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3769,
+          "inputTokens": 3772,
+          "outputTokens": 1104,
+          "reasoningTokens": 457
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The loss-of-office explanation guarantees the right to a defense only for the administrative process and periodic evaluation, and the summary repeats that restriction. The expectations require this protection to be explained for all three routes, including judicial proceedings.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The loss-of-office screen introduces several legal terms at once, leaves periodic performance evaluation unexplained, and lacks a concrete example. This is too compressed for the stated beginner-level requirements. Brazilian names and Recife are present, but the explicitly requested Brazilian money context is absent.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Combine the two stability requirements into one summary sentence so the time requirement cannot be read in isolation. Explain a commission as a group of people assigned to evaluate the servant, and distinguish the initial special evaluation from evaluations repeated during employment.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner, with Brazilian names, places and money (reais, a prefeitura in a Brazilian city)\n      - The stability rule matches SOURCES (Constituição, art. 41): three years of effective service AND approval in the special performance evaluation by a commission; never 24 months or 2 years, even though an old statute says so\n      - For misconduct or poor performance, the ways a stable servant loses the post are the three the article lists, each with the right to a defense; the lesson never claims these are the only ways in all cases (the Constitution also allows cuts when personnel spending exceeds its limit)\n      - \"Estabilidade\" and \"processo administrativo\" are explained in everyday words when they first appear\n      - The check uses the planned trap (thinking time alone is enough) with a reason on every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-estabilidade-sourced-1",
+        "userInput": {
+          "chapterTitle": "Agentes públicos",
+          "courseTitle": "Direito Administrativo",
+          "language": "pt",
+          "level": "beginner",
+          "sources": "<page ref=\"S1:1\" of=\"Constituição da República Federativa do Brasil de 1988, Art. 41\">\nArt. 41. São estáveis após três anos de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.\n§ 1º O servidor público estável só perderá o cargo:\nI - em virtude de sentença judicial transitada em julgado;\nII - mediante processo administrativo em que lhe seja assegurada ampla defesa;\nIII - mediante procedimento de avaliação periódica de desempenho, na forma de lei complementar, assegurada ampla defesa.\n§ 4º Como condição para a aquisição da estabilidade, é obrigatória a avaliação especial de desempenho por comissão instituída para essa finalidade.\n</page>",
+          "spec": {
+            "canDo": "Dizer quando um servidor fica estável e como pode perder o cargo",
+            "description": "Quando o servidor concursado adquire estabilidade e em que casos o servidor estável perde o cargo.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Palpite sem valer ponto: Ana passou num concurso e tomou posse. Depois de quanto tempo de exercício ela pode ficar estável? 2, 3 ou 5 anos.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O servidor nomeado por concurso para cargo efetivo fica estável após três anos de efetivo exercício, e só se for aprovado na avaliação especial de desempenho feita por uma comissão.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pedro completou três anos no cargo, mas a comissão ainda não fez a avaliação especial: ele já é estável? Pegadinha: achar que o tempo basta.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Estável não quer dizer que nunca perde o cargo: por falta ou mau desempenho, perde por sentença judicial transitada em julgado, processo administrativo com ampla defesa ou avaliação periódica de desempenho.",
+                "kind": "explanation",
+                "skills": [1],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Uma servidora estável da prefeitura de Recife é acusada de uma falta grave: o chefe pode demiti-la no mesmo dia, sem processo? Pegadinha: achar que o chefe decide sozinho.",
+                "kind": "application",
+                "skills": [1],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "O servidor concursado fica estável após três anos de efetivo exercício e aprovação na avaliação especial de desempenho.",
+                "example": "Quem tomou posse em 2023 pode ficar estável em 2026, se for aprovado na avaliação.",
+                "hard": false,
+                "name": "Identificar quando o servidor adquire estabilidade",
+                "topic": "Estabilidade do servidor",
+                "useCase": "Entender os primeiros anos de quem passa num concurso."
+              },
+              {
+                "description": "Por falta ou mau desempenho, o servidor estável perde o cargo por sentença judicial, processo administrativo ou avaliação periódica, sempre com ampla defesa.",
+                "example": "Uma falta grave leva a um processo administrativo com direito a defesa.",
+                "hard": false,
+                "name": "Reconhecer como o servidor estável pode perder o cargo",
+                "topic": "Perda do cargo",
+                "useCase": "Questões de concurso sobre direitos do servidor."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Estabilidade do servidor público"
+          },
+          "activityTemplates": []
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The essential biology and arithmetic are correct: glycolysis spends 2 ATP, produces 4 ATP, nets 2 ATP per glucose, and produces NADH without counting it as ATP. Glycolysis is correctly located outside the mitochondria, and each check has one defensible correct answer. However, calling the cytoplasm the liquid filling the cell conflates cytoplasm with cytosol. This small imprecision triggers the maximum score of 8.",
+          "score": 8,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The sentences are generally short and accessible, and the energy-currency and investment comparisons help. However, multiple unfamiliar terms are introduced together: the investment screen includes cytoplasm, mitochondria, matrix, cristae, and investment; the next includes NADH, electrons, and the respiratory chain. Several receive no everyday explanation before use. These repeated terminology issues trigger the maximum score of 7.",
+          "score": 7,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The ATP check effectively asks learners to diagnose an error, includes the tempting answer of 4, and distinguishes NADH from ATP. Both formal checks give useful reasons for every option and preserve the mitochondrial-location trap. However, the location question ultimately repeats a fact from the explanation rather than requiring its application, triggering the recall-only cap of 8. The hook also provides only a shared reveal rather than a reason for each option.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result uses Brazilian Portuguese, opens directly with glycolysis, follows all five planned screens in order, preserves the slide mnemonic and essential numbers, keeps every image null, and ends with one-sentence summary items. The school-test contexts are relevant. The application is less concrete than required, however: no specific place is named, and the brigadeiro and market examples remain suggestions rather than developed learner-facing situations. This application slip limits the score to 8.",
+          "score": 8,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Screen 1: Uses \"ATP\" before screen 2 explains it. Explain it in everyday words before this screen uses it, or say it here without the term.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4146,
+          "inputTokens": 4149,
+          "outputTokens": 1001,
+          "reasoningTokens": 335
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The cytoplasm is described as the cell's liquid, which more precisely describes the cytosol. Several technical terms appear without beginner-friendly explanations, including mitochondria, matrix, cristae, and electrons. The location check mainly asks learners to recall the stated location, despite its misconception-based context. The hook's options lack individual reasons.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Turn the suggested brigadeiro example into an actual worked comparison, introduce unfamiliar terms with everyday comparisons, and make the location check require correcting Pedro's reasoning rather than merely naming the location. Ground the application explicitly in a school-test setting.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner studying for a school test from their teacher's slides (MATERIAL)\n      - HELD_BACK_DRAFTS lists why earlier drafts were held back, and this draft has none of those problems: the net of glycolysis is 2 ATP per glucose (4 produced minus 2 spent), NADH is never counted as ATP, and glycolysis happens in the cytoplasm, never in the mitochondria\n      - It's a whole new lesson from the plan, not a patch: every planned screen is there and teaches what its brief says, with the slides' terms, numbers and memory aids\n      - The checks still use the slides' exam traps (answering 4 instead of 2; placing glycolysis in the mitochondria), with a reason on every option\n      - No pictures (every image is null): the slides have their own\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-glicolise-redraft-after-hold-1",
+        "userInput": {
+          "chapterTitle": "Glicólise",
+          "courseTitle": "Prova de biologia: respiração celular",
+          "heldBackProblems": [
+            {
+              "problem": "The explanation counts the 2 NADH as ATP and gives a net of 4 ATP per glucose; the slides give 4 − 2 = 2 ATP, and NADH carries electrons to the respiratory chain. Fix: Give the net as 2 ATP and say what NADH does.",
+              "screen": 2
+            },
+            {
+              "problem": "The check marks 'na mitocôndria' as where glycolysis happens; the slides say the cytoplasm, and the mitochondria only come in the Krebs cycle. Fix: Mark the cytoplasm as correct.",
+              "screen": 4
+            }
+          ],
+          "language": "pt",
+          "level": "beginner",
+          "material": "<page ref=\"S1:2\" of=\"Aula 5 - Glicolise, slide 2\">\nPor que as células respiram?\nObjetivo: transformar a energia da glicose em ATP\nATP = a 'moeda de energia' da célula\nRespiração aeróbia: C6H12O6 + 6 O2 → 6 CO2 + 6 H2O + energia\n</page>\n<page ref=\"S1:3\" of=\"Aula 5 - Glicolise, slide 3\">\nAs três etapas\n1. Glicólise – no citoplasma\n2. Ciclo de Krebs – na matriz mitocondrial\n3. Cadeia respiratória – nas cristas mitocondriais\nMacete da aula: 'Cito-Matriz-Cristas' (CMC)\n</page>\n<page ref=\"S1:5\" of=\"Aula 5 - Glicolise, slide 5\">\nGlicólise: fase de investimento\nGasta 2 ATP para 'ativar' a glicose\nPense num empréstimo: investe 2 para ganhar mais depois\n</page>\n<page ref=\"S1:6\" of=\"Aula 5 - Glicolise, slide 6\">\nGlicólise: fase de rendimento\nProduz 4 ATP (fosforilação no nível do substrato)\nProduz 2 NADH (carrega elétrons para a cadeia respiratória)\nSaldo: 4 − 2 = 2 ATP por glicose\n</page>\n<page ref=\"S1:10\" of=\"Aula 5 - Glicolise, slide 10\">\nPegadinhas de prova\nGlicólise NÃO acontece na mitocôndria\nO saldo da glicólise é 2 ATP, não 4\n</page>",
+          "spec": {
+            "canDo": "Calcular o saldo de ATP da glicólise",
+            "description": "Mostra quanto ATP a glicólise gasta e produz, e por que o saldo é 2 por glicose.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Palpite sem valer ponto: a glicólise produz 4 ATP. Quanto sobra por glicose?",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A glicólise acontece no citoplasma (o C do macete CMC). Fase de investimento: a célula gasta 2 ATP para ativar a glicose, como o empréstimo do slide.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Fase de rendimento: produz 4 ATP e 2 NADH (que levam elétrons à cadeia respiratória).",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte o saldo de ATP por glicose, com a pegadinha de responder 4.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte onde a glicólise acontece, com a pegadinha da mitocôndria.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "A glicólise gasta 2 ATP, produz 4 e termina com saldo de 2 ATP por glicose.",
+                "example": "4 produzidos − 2 gastos = 2 ATP",
+                "hard": false,
+                "name": "Calcular o saldo energético da glicólise",
+                "topic": "Glicólise",
+                "useCase": "Questões de prova que pedem o saldo de ATP de cada etapa"
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Saldo de ATP da glicólise"
+          },
+          "activityTemplates": []
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-writer"
+}

@@ -5,13 +5,21 @@ import { CATEGORY_ICONS } from "@/lib/categories/category-icons";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { useExtracted, useLocale } from "next-intl";
 import { useSelectedLayoutSegment } from "next/navigation";
 
+/**
+ * The row scrolls from screen edge to screen edge on phones while its first pill lines up with the
+ * page's column.
+ */
+const ROW_BLEED_CLASS = "-mx-4 sm:-mx-6 lg:-mx-8";
+const ROW_INSET_CLASS = "px-4 sm:px-6 lg:px-8";
+
 export function CategoryPillsSkeleton() {
   return (
-    <div className="flex gap-2 px-4">
+    <div className={cn("flex gap-2 overflow-hidden pb-2", ROW_BLEED_CLASS, ROW_INSET_CLASS)}>
       <Skeleton className="h-8 w-12 rounded-4xl" />
       <Skeleton className="h-8 w-16 rounded-4xl" />
       <Skeleton className="h-8 w-24 rounded-4xl" />
@@ -32,8 +40,15 @@ export function CategoryPills({
   const locale = useLocale();
 
   return (
-    <HorizontalScroll>
-      <HorizontalScrollContent aria-label={t("Course categories")} role="navigation">
+    <HorizontalScroll
+      className={ROW_BLEED_CLASS}
+      labels={{ left: t("Scroll left"), right: t("Scroll right") }}
+    >
+      <HorizontalScrollContent
+        aria-label={t("Course categories")}
+        className={ROW_INSET_CLASS}
+        role="navigation"
+      >
         <Link
           className={buttonVariants({
             size: "sm",

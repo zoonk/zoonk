@@ -1,10 +1,5 @@
 import "server-only";
-import {
-  type CourseGetPayload,
-  type Organization,
-  getPublishedCourseWhere,
-  prisma,
-} from "@zoonk/db";
+import { type CourseGetPayload, type Organization, getListedCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { cacheTag } from "next/cache";
@@ -56,9 +51,8 @@ async function findCourses({
     ...(cursor && { cursor: { id: cursor }, skip: 1 }),
     ...(offset !== undefined && { skip: Math.max(Math.trunc(offset), 0) }),
     take,
-    where: getPublishedCourseWhere({
+    where: getListedCourseWhere({
       language,
-      organization: { kind: "brand" },
       ...(category && { categories: { some: { category } } }),
     }),
   });
@@ -67,8 +61,8 @@ async function findCourses({
 }
 
 /**
- * Lists the cached published brand catalog in a stable popularity order so web
- * and API consumers share filtering, cursor pagination, and invalidation.
+ * Lists the cached catalog of listed courses (`getListedCourseWhere`) in a stable popularity order
+ * so web and API consumers share filtering, cursor pagination, and invalidation.
  */
 export async function listCourses(params: ListCoursesInput) {
   "use cache";

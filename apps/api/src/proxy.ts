@@ -2,11 +2,12 @@ import { AUTH_LOCALE_HEADER, getAuthLocale } from "@/i18n/auth-locale";
 import { errors } from "@/lib/api-errors";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { isCorsAllowedOrigin } from "@zoonk/utils/origin";
+import { API_URL } from "@zoonk/utils/url";
 import { type NextRequest, NextResponse } from "next/server";
 
 const corsHeaders = {
   "Access-Control-Allow-Credentials": "true",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Generation-Visitor-Id",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
   "Access-Control-Max-Age": "86400",
 };
@@ -14,6 +15,7 @@ const corsHeaders = {
 const AUTH_PATH = "/auth";
 const BETTER_AUTH_PATH = "/v1/auth";
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+const API_ORIGIN = new URL(API_URL).origin;
 
 /**
  * Keeps central-auth pages outside the API-specific origin guard. Next.js
@@ -37,6 +39,15 @@ function requiresSameOrigin(request: NextRequest): boolean {
     pathname === BETTER_AUTH_PATH || pathname.startsWith(`${BETTER_AUTH_PATH}/`);
 
   return !isBetterAuthRoute && !SAFE_METHODS.has(request.method) && request.headers.has("cookie");
+}
+
+/**
+ * Whether a request comes from the API itself: the origin it was reached at, or its public one.
+ * Behind Portless the first is the internal port, while the main app's server-to-server calls
+ * (`postAsLearner`) name the public URL both apps are configured with.
+ */
+function isApiOrigin(request: NextRequest, origin: string | null): boolean {
+  return origin === request.nextUrl.origin || origin === API_ORIGIN;
 }
 
 /**
@@ -70,7 +81,7 @@ export function proxy(request: NextRequest) {
 
   const origin = request.headers.get("origin");
 
-  if (requiresSameOrigin(request) && origin !== request.nextUrl.origin) {
+  if (requiresSameOrigin(request) && !isApiOrigin(request, origin)) {
     return errors.forbidden("Same-origin request required");
   }
 

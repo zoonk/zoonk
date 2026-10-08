@@ -13,8 +13,6 @@ import {
   isRetryableLessonQuestionStatusError,
 } from "./lesson-question-status";
 
-const MAX_TIMER_DELAY_MILLISECONDS = 2_147_000_000;
-
 function waitForPollDelay({ delay, signal }: { delay: number; signal: AbortSignal }) {
   if (signal.aborted) {
     return Promise.resolve();
@@ -68,24 +66,23 @@ function getRunningQuestionId(questions: LessonQuestionState["questions"]) {
   return questions.find((question) => question.status === "running")?.id ?? null;
 }
 
-function getAnswerLimit(answerError: LessonQuestionState["answerError"]) {
-  if (answerError?.reason.kind !== "limit") {
-    return null;
-  }
-
-  return { questionId: answerError.questionId, retryAt: answerError.reason.retryAt };
-}
-
+/**
+ * While the conversation is on screen (`isShown`: an open sheet, or a page), a question waiting
+ * for its answer gets one, and an answer being written by a stream this page no longer reads (a
+ * dropped connection, a reload) is followed until it's done.
+ */
 export function useLessonQuestionRecovery({
   connection,
   canAskQuestions,
   dispatch,
+  isShown,
   state,
   streamAnswer,
 }: {
   connection: LessonQuestionConnection;
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
+  isShown: boolean;
   state: LessonQuestionState;
   streamAnswer: (questionId: string) => Promise<void>;
 }) {
@@ -97,7 +94,7 @@ export function useLessonQuestionRecovery({
   useEffect(() => {
     if (
       !canAskQuestions ||
-      !state.isOpen ||
+      !isShown ||
       !pendingQuestionId ||
       state.activeQuestionId ||
       state.isCreating ||
@@ -124,17 +121,17 @@ export function useLessonQuestionRecovery({
     dispatch,
     hasRunningQuestion,
     canAskQuestions,
+    isShown,
     pendingQuestionId,
     state.activeQuestionId,
     state.isCreating,
-    state.isOpen,
     streamAnswer,
   ]);
 
   const remoteRunningQuestionId = state.activeQuestionId === null ? runningQuestionId : null;
 
   useEffect(() => {
-    if (!canAskQuestions || !state.isOpen || !remoteRunningQuestionId) {
+    if (!canAskQuestions || !isShown || !remoteRunningQuestionId) {
       return;
     }
 
@@ -195,47 +192,5 @@ export function useLessonQuestionRecovery({
     return () => {
       abortController.abort();
     };
-  }, [connection, canAskQuestions, dispatch, remoteRunningQuestionId, state.isOpen]);
-
-  const limitError = getAnswerLimit(state.answerError);
-
-  useEffect(() => {
-    if (!limitError) {
-      return;
-    }
-
-    const retryAt = Date.parse(limitError.retryAt);
-    const questionId = limitError.questionId;
-
-    if (!Number.isFinite(retryAt)) {
-      return;
-    }
-
-    const timeoutIds = new Set<ReturnType<typeof globalThis.setTimeout>>();
-
-    function scheduleLimitReset() {
-      const remainingMilliseconds = retryAt - Date.now();
-
-      if (remainingMilliseconds <= 0) {
-        dispatch({ questionId, type: "answerLimitExpired" });
-        return;
-      }
-
-      const timeoutId = globalThis.setTimeout(
-        () => {
-          timeoutIds.delete(timeoutId);
-          scheduleLimitReset();
-        },
-        Math.min(remainingMilliseconds, MAX_TIMER_DELAY_MILLISECONDS),
-      );
-
-      timeoutIds.add(timeoutId);
-    }
-
-    scheduleLimitReset();
-
-    return () => {
-      timeoutIds.forEach((timeoutId) => globalThis.clearTimeout(timeoutId));
-    };
-  }, [dispatch, limitError]);
+  }, [connection, canAskQuestions, dispatch, isShown, remoteRunningQuestionId]);
 }

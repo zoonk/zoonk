@@ -1,0 +1,11 @@
+{
+  "inviteAction": "Einladung annehmen",
+  "inviteDisclaimer": "Wenn Sie {name} nicht kennen, können Sie diese Nachricht ignorieren.",
+  "inviteExpiry": "Diese Einladung läuft in 7 Tagen ab.",
+  "inviteIntro": "{name} lernt mit Zoonk und hat Sie als erziehungsberechtigte Person eingeladen.",
+  "inviteSubject": "{name} hat Sie auf Zoonk als erziehungsberechtigte Person eingeladen",
+  "inviteWhatYouCanDo": "Als erziehungsberechtigte Person sehen Sie die Aktivität der Woche, können ein tägliches Zeitlimit festlegen, die Erinnerungen ausschalten und ein Plus-Abo genehmigen. Melden Sie sich mit dieser E-Mail-Adresse an, um die Einladung anzunehmen.",
+  "plusApprovalAction": "Anfrage ansehen",
+  "plusApprovalIntro": "{name} möchte Zoonk Plus abonnieren. Das Abo ist erst nach Ihrer Genehmigung möglich.",
+  "plusApprovalSubject": "{name} bittet Sie, Zoonk Plus zu genehmigen"
+}

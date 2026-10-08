@@ -5,11 +5,11 @@ import XCTest
 final class ProgressChartDataTests: XCTestCase {
   func testActivityContributionIntensityUsesLearnerRelativeBands() {
     let days = [
-      ActivityProgressDay(date: ProgressDate("2026-08-16")!, lessonCompletions: 0),
-      ActivityProgressDay(date: ProgressDate("2026-08-17")!, lessonCompletions: 2),
-      ActivityProgressDay(date: ProgressDate("2026-08-18")!, lessonCompletions: 3),
-      ActivityProgressDay(date: ProgressDate("2026-08-19")!, lessonCompletions: 5),
-      ActivityProgressDay(date: ProgressDate("2026-08-20")!, lessonCompletions: 8),
+      ActivityProgressDay(activitiesCompleted: 0, date: ProgressDate("2026-08-16")!),
+      ActivityProgressDay(activitiesCompleted: 2, date: ProgressDate("2026-08-17")!),
+      ActivityProgressDay(activitiesCompleted: 3, date: ProgressDate("2026-08-18")!),
+      ActivityProgressDay(activitiesCompleted: 5, date: ProgressDate("2026-08-19")!),
+      ActivityProgressDay(activitiesCompleted: 8, date: ProgressDate("2026-08-20")!),
     ]
 
     XCTAssertEqual(

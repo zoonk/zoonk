@@ -8,7 +8,7 @@ export function FullPageLoading() {
     >
       <div
         aria-hidden="true"
-        className="bg-foreground/80 animate-breathe inset-0 size-5 rounded-full"
+        className="bg-foreground/80 animate-breathe inset-0 size-5 rounded-full motion-reduce:animate-none"
       />
     </div>
   );

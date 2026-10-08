@@ -135,7 +135,9 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
       <TableCell className="text-right tabular-nums">
         {user.totalBrainPower.toLocaleString()}
       </TableCell>
-      <TableCell className="text-muted-foreground">{formatDate(user.lastCompletedAt)}</TableCell>
+      <TableCell className="text-muted-foreground">
+        {formatLearnerDate(user.lastLearningDate)}
+      </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(user.createdAt)}</TableCell>
     </TableRow>
   );
@@ -147,4 +149,12 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
  */
 function formatDate(date: Date) {
   return new Date(date).toLocaleDateString();
+}
+
+/**
+ * Learning dates are the learner's local calendar dates stored as UTC midnight,
+ * so they're formatted in UTC to show the same day the learner saw.
+ */
+function formatLearnerDate(date: Date) {
+  return new Date(date).toLocaleDateString(undefined, { timeZone: "UTC" });
 }

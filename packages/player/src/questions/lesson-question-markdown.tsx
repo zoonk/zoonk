@@ -15,6 +15,8 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { ExternalLinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type LinkSafetyModalProps, Streamdown } from "streamdown";
+// KaTeX's styles load with the tutor's answers, the only place math renders as HTML, not on every page.
+import "katex/dist/katex.min.css";
 import { getSafeLessonQuestionUrl } from "./lesson-question-url";
 
 const DISALLOWED_ANSWER_ELEMENTS = ["img"] as const;

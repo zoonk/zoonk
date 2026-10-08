@@ -1,29 +1,12 @@
-import {
-  type StepContentByKind,
-  type SupportedStepKind,
-  isSupportedStepKind,
-  parseStepContent,
-} from "@zoonk/core/steps/contract/content";
-import { type LessonKind } from "@zoonk/db";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
 import {
-  type ChapterSentenceInput,
-  type ChapterWordInput,
-  type DistractorWordDataInput,
-  type LessonDistractorWordInput,
-  type LessonStepInput,
-  type SentenceDataInput,
-  type StepDataInput,
-  type WordDataInput,
-  attachResourcesToSteps,
-  toChapterSentenceInputs,
-  toChapterWordInputs,
-  toDistractorWordInputs,
-  toSentenceWordInputs,
-} from "./_utils/lesson-data-mappers";
+  type StepContentByKind,
+  parseStepContent,
+} from "../../library/steps/contract/step-contract";
+import { getTileRomanization } from "./_utils/tile-romanization";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
-import { getPlayableLessonSteps } from "./playable-lesson-steps";
+import { type ExerciseKind, isExerciseKind } from "./exercise-content";
 import {
   type TranslationOption,
   buildDistractorWordLookup,
@@ -32,6 +15,43 @@ import {
 } from "./translation-options";
 
 export type { TranslationOption } from "./translation-options";
+
+type WordDataInput = {
+  id: string;
+  word: string;
+  romanization: string | null;
+  audioUrl: string | null;
+  translation: string;
+  distractors: string[];
+  pronunciation: string | null;
+};
+
+type SentenceDataInput = {
+  id: string;
+  sentence: string;
+  distractors: string[];
+  romanization: string | null;
+  audioUrl: string | null;
+  translation: string;
+  translationDistractors: string[];
+  explanation: string | null;
+};
+
+type DistractorWordDataInput = {
+  id: string;
+  word: string;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
+type StepDataInput = {
+  id: string;
+  content: unknown;
+  kind: string;
+  position: number;
+  word: WordDataInput | null;
+  sentence: SentenceDataInput | null;
+};
 
 export type SerializedWord = {
   id: string;
@@ -54,15 +74,15 @@ type SerializedSentence = {
   audioUrl: string | null;
 };
 
+/** An answer tile: its word, translation and audio, and romanization only for non-Latin scripts. */
 export type WordBankOption = {
   word: string;
   translation: string | null;
-  pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
 };
 
-export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> = {
+export type SerializedStep<Kind extends ExerciseKind = ExerciseKind> = {
   id: string;
   kind: Kind;
   position: number;
@@ -73,40 +93,8 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   vocabularyOptions: SerializedWord[];
   wordBankOptions: WordBankOption[];
   sentenceWordOptions: WordBankOption[];
-  sortOrderItems: string[];
   fillBlankOptions: WordBankOption[];
   matchColumnsRightItems: string[];
-};
-
-export type SerializedLesson = {
-  id: string;
-  kind: LessonKind;
-  title: string | null;
-  description: string | null;
-  language: string;
-  organizationId: string | null;
-  steps: SerializedStep[];
-  lessonWords: SerializedWord[];
-  lessonSentences: SerializedSentence[];
-};
-
-type PreparePlayerLessonSource = {
-  description: string | null;
-  id: string;
-  kind: LessonKind;
-  language: string;
-  organizationId: string | null;
-  steps: LessonStepInput[];
-  title: string | null;
-};
-
-export type PreparePlayerLessonInput = {
-  lesson: PreparePlayerLessonSource;
-  chapterSentences: ChapterSentenceInput[];
-  chapterWords: ChapterWordInput[];
-  distractorWords?: LessonDistractorWordInput[];
-  sentenceWords?: ChapterWordInput[];
-  steps?: LessonStepInput[];
 };
 
 type OptionsContent = { options: readonly unknown[] };
@@ -127,10 +115,7 @@ function serializeWord(word: WordDataInput): SerializedWord {
   };
 }
 
-/**
- * Lesson-level word serialization is shared by steps, review payloads, and the visible
- * lesson word list.
- */
+/** Every exercise offers the lesson's words as its vocabulary. */
 function serializeWords(words: WordDataInput[]): SerializedWord[] {
   return words.map((word) => serializeWord(word));
 }
@@ -163,29 +148,16 @@ function shuffleOptions<Content extends OptionsContent>(content: Content): Conte
 /**
  * Parses step content and applies server-side shuffling where needed.
  *
- * Multiple choice and select-image options are shuffled during serialization
- * so the client receives a randomized order.
+ * Multiple choice options are shuffled during serialization so the client
+ * receives a randomized order.
  * This avoids client-side shuffling which can cause hydration errors.
  */
-function parseAndShuffleContent(kind: SupportedStepKind, content: unknown) {
+function parseAndShuffleContent(kind: ExerciseKind, content: unknown) {
   if (kind === "multipleChoice") {
     return shuffleOptions(parseStepContent("multipleChoice", content));
   }
 
-  if (kind === "selectImage") {
-    return shuffleOptions(parseStepContent("selectImage", content));
-  }
-
   return parseStepContent(kind, content);
-}
-
-function buildSortOrderItems(step: SerializedStep): string[] {
-  if (step.kind !== "sortOrder") {
-    return [];
-  }
-
-  const content = parseStepContent("sortOrder", step.content);
-  return shuffle(content.items);
 }
 
 function buildFillBlankOptions(step: SerializedStep): WordBankOption[] {
@@ -198,8 +170,10 @@ function buildFillBlankOptions(step: SerializedStep): WordBankOption[] {
 
   return words.map((word) => ({
     audioUrl: null,
-    pronunciation: null,
-    romanization: content.romanizations?.[word] ?? null,
+    romanization: getTileRomanization({
+      romanization: content.romanizations?.[word] ?? null,
+      word,
+    }),
     translation: null,
     word,
   }));
@@ -215,11 +189,11 @@ function buildMatchColumnsRightItems(step: SerializedStep): string[] {
 }
 
 /**
- * Only supported step kinds reach the player. Invalid content still gets dropped so the
- * rest of the page can render instead of failing the whole lesson.
+ * Only exercises reach the language player. Invalid content still gets dropped so the rest of
+ * the lesson can play instead of failing the whole lesson.
  */
 function serializeStep(step: StepDataInput): SerializedStep | null {
-  if (!isSupportedStepKind(step.kind)) {
+  if (!isExerciseKind(step.kind)) {
     return null;
   }
 
@@ -235,7 +209,6 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
       position: step.position,
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
       sentenceWordOptions: [],
-      sortOrderItems: [],
       translationOptions: [],
       vocabularyOptions: [],
       word: step.word ? serializeWord(step.word) : null,
@@ -246,31 +219,38 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
   }
 }
 
-function buildSerializedLesson(
-  lesson: {
-    id: string;
-    kind: LessonKind;
-    title: string | null;
-    description: string | null;
-    language: string;
-    organizationId: string | null;
-    steps: StepDataInput[];
-  },
-  chapterWords: WordDataInput[],
-  chapterSentences: SentenceDataInput[],
-  sentenceWords: WordDataInput[],
-  distractorWords: DistractorWordDataInput[],
-): SerializedLesson {
-  const serializedLessonWords = serializeWords(chapterWords);
-  const serializedLessonSentences = chapterSentences.map((sentence) => serializeSentence(sentence));
-  const serializedDistractorWords = distractorWords.map((word) => serializeDistractorWord(word));
+/** The lesson's words and sentences with their translations, and the words behind the options. */
+export type ExerciseResources = {
+  distractorWords: DistractorWordDataInput[];
+  lessonSentences: SentenceDataInput[];
+  lessonWords: WordDataInput[];
+  sentenceWords: WordDataInput[];
+};
+
+/**
+ * Serializes a lesson's language exercises with their shuffled option pools: word banks,
+ * translation options and the lesson's vocabulary.
+ */
+export function serializeExerciseSteps({
+  resources,
+  steps,
+}: {
+  resources: ExerciseResources;
+  steps: StepDataInput[];
+}): SerializedStep[] {
+  const serializedLessonWords = serializeWords(resources.lessonWords);
+
+  const serializedDistractorWords = resources.distractorWords.map((word) =>
+    serializeDistractorWord(word),
+  );
+
   const distractorLookup = buildDistractorWordLookup(serializedDistractorWords);
 
   const sentenceWordMap = new Map(
-    sentenceWords.map((word) => [normalizeDistractorKey(word.word), word]),
+    resources.sentenceWords.map((word) => [normalizeDistractorKey(word.word), word]),
   );
 
-  const steps = lesson.steps.flatMap((raw) => {
+  return steps.flatMap((raw) => {
     const step = serializeStep(raw);
 
     if (!step) {
@@ -290,7 +270,6 @@ function buildSerializedLesson(
               sentenceWordMap,
             )
           : [],
-        sortOrderItems: buildSortOrderItems(step),
         translationOptions: buildTranslationOptions({
           distractorLookup,
           kind: step.kind,
@@ -306,38 +285,4 @@ function buildSerializedLesson(
       },
     ];
   });
-
-  return {
-    description: lesson.description,
-    id: lesson.id,
-    kind: lesson.kind,
-    language: lesson.language,
-    lessonSentences: serializedLessonSentences,
-    lessonWords: serializedLessonWords,
-    organizationId: lesson.organizationId,
-    steps,
-    title: lesson.title,
-  };
-}
-
-/**
- * The app should only fetch the raw player inputs. This helper keeps the entire
- * preparation pipeline inside the shared player contract so apps do not need to know about
- * serialization, shuffling, or derived option building after ids were standardized to UUIDs.
- */
-export function preparePlayerLessonData(params: PreparePlayerLessonInput): SerializedLesson {
-  const steps = getPlayableLessonSteps({
-    lesson: { kind: params.lesson.kind, steps: params.steps ?? params.lesson.steps },
-  });
-
-  return buildSerializedLesson(
-    {
-      ...params.lesson,
-      steps: attachResourcesToSteps(steps, params.chapterWords, params.chapterSentences),
-    },
-    toChapterWordInputs(params.chapterWords),
-    toChapterSentenceInputs(params.chapterSentences),
-    toSentenceWordInputs(params.sentenceWords ?? []),
-    toDistractorWordInputs(params.distractorWords ?? []),
-  );
 }

@@ -6,6 +6,7 @@
   "exports": {
     "./components/*": "./src/components/*.tsx",
     "./globals.css": "./src/styles/globals.css",
+    "./hooks/animated-progress": "./src/hooks/use-animated-progress.ts",
     "./hooks/clipboard": "./src/hooks/use-clipboard.ts",
     "./hooks/command-palette-search": "./src/hooks/use-command-palette-search.ts",
     "./hooks/debounce": "./src/hooks/use-debounce.ts",
@@ -13,11 +14,15 @@
     "./hooks/is-mounted": "./src/hooks/use-is-mounted.ts",
     "./hooks/hide-element": "./src/hooks/use-hide-element.ts",
     "./hooks/keyboard": "./src/hooks/use-keyboard.ts",
+    "./hooks/measured-width": "./src/hooks/use-measured-width.ts",
     "./hooks/mobile": "./src/hooks/use-mobile.ts",
+    "./hooks/mount-time": "./src/hooks/use-mount-time.ts",
+    "./hooks/taking-long": "./src/hooks/use-taking-long.ts",
+    "./hooks/tick-count": "./src/hooks/use-tick-count.ts",
+    "./hooks/voice-recorder": "./src/hooks/use-voice-recorder.ts",
     "./lib/*": "./src/lib/*.ts",
     "./patterns/auth/protected": "./src/patterns/auth/protected-section.tsx",
     "./patterns/buttons/submit": "./src/patterns/buttons/submit-button.tsx",
-    "./patterns/empty": "./src/patterns/empty.tsx",
     "./patterns/error": "./src/patterns/error-view.tsx",
     "./postcss.config": "./postcss.config.mjs"
   },
@@ -32,6 +37,7 @@
     "@zoonk/utils": "workspace:*",
     "class-variance-authority": "0.7.1",
     "cn": "0.4.0",
+    "flag-icons": "7.5.0",
     "input-otp": "1.5.0",
     "react-infinite-scroll-hook": "6.0.1"
   },

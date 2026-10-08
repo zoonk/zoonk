@@ -1,7 +1,8 @@
+import { CourseFormat, CourseLevel } from "@zoonk/db";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
-import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
 import { z } from "zod";
-import { courseFormatSchema, generationStatusSchema, lessonKindSchema } from "./curriculum";
+
+const generationStatusSchema = z.enum(["completed", "failed", "pending", "running"]);
 
 const DEFAULT_RESOURCE_PAGE_SIZE = 20;
 
@@ -29,14 +30,17 @@ export const catalogSearchQuerySchema = z
   })
   .meta({ id: "CatalogSearchQuery" });
 
-export const languageCourseQuerySchema = z
+export const chapterCourseContextQuerySchema = z
   .object({
-    language: z
-      .string()
-      .min(2)
-      .meta({ description: "Learner language code", examples: ["en"] }),
+    courseId: z
+      .uuid()
+      .optional()
+      .meta({
+        description:
+          "Course to read the chapter in, since a chapter can be placed in several courses. Defaults to the chapter's home course; a course that doesn't place the chapter is not found.",
+      }),
   })
-  .meta({ id: "LanguageCourseQuery" });
+  .meta({ id: "ChapterCourseContextQuery" });
 
 export const organizationSummarySchema = z
   .object({
@@ -47,18 +51,28 @@ export const organizationSummarySchema = z
   })
   .meta({ id: "OrganizationSummary" });
 
+export const nullableOrganizationSummarySchema = organizationSummarySchema
+  .nullable()
+  .meta({
+    description: "Null for a learner's private course, which has no organization or public page",
+  });
+
 export const courseResourceSchema = z
   .object({
     categories: z.array(z.enum(COURSE_CATEGORIES)),
-    coursePromptId: z.uuid().nullable(),
     description: z.string().nullable(),
-    format: courseFormatSchema,
-    generationId: z.string().nullable(),
-    generationStatus: generationStatusSchema,
+    format: z.enum(CourseFormat),
+    generationId: z
+      .string()
+      .nullable()
+      .meta({ description: "Run writing the course outline, followed through generations" }),
+    generationStatus: generationStatusSchema.meta({
+      description: "Whether every chapter of the course outline is written",
+    }),
     id: z.uuid(),
     imageUrl: z.string().nullable(),
     language: z.string(),
-    organization: organizationSummarySchema,
+    organization: nullableOrganizationSummarySchema,
     slug: z.string(),
     targetLanguage: z.string().nullable(),
     title: z.string(),
@@ -67,14 +81,23 @@ export const courseResourceSchema = z
 
 export const chapterResourceSchema = z
   .object({
-    courseId: z.uuid(),
+    courseId: z.uuid().meta({ description: "Course the chapter is read in" }),
     description: z.string(),
-    generationId: z.string().nullable(),
-    generationStatus: generationStatusSchema,
+    generationId: z
+      .string()
+      .nullable()
+      .meta({ description: "Run writing the chapter's lesson outline" }),
+    generationStatus: generationStatusSchema.meta({
+      description: "Whether the chapter's lesson titles and descriptions are written",
+    }),
     id: z.uuid(),
-    imageUrl: z.string().nullable(),
     language: z.string(),
-    position: z.number().int().min(0),
+    level: z.enum(CourseLevel).meta({ description: "Level band the course places the chapter in" }),
+    position: z
+      .number()
+      .int()
+      .min(0)
+      .meta({ description: "0-based position across the whole course outline" }),
     slug: z.string(),
     title: z.string(),
   })
@@ -84,18 +107,18 @@ const courseChapterSchema = chapterResourceSchema
   .extend({ lessonCount: z.number().int().min(0) })
   .meta({ id: "CourseChapter" });
 
-export const lessonResourceSchema = z
+const lessonResourceSchema = z
   .object({
     chapterId: z.uuid(),
     courseId: z.uuid(),
     description: z.string().nullable(),
-    generationId: z.string().nullable(),
-    generationStatus: generationStatusSchema,
+    generationId: z.string().nullable().meta({ description: "Run writing the lesson's content" }),
+    generationStatus: generationStatusSchema.meta({
+      description: "Whether the lesson's content is written",
+    }),
     id: z.uuid(),
-    imageUrl: z.string().nullable(),
-    kind: lessonKindSchema,
     language: z.string(),
-    position: z.number().int().min(0),
+    position: z.number().int().min(0).meta({ description: "0-based position in the chapter" }),
     slug: z.string(),
     title: z.string().nullable(),
   })
@@ -110,7 +133,6 @@ export const catalogSearchResponseSchema = z
         courseTitle: z.string(),
         description: z.string(),
         id: z.uuid(),
-        imageUrl: z.string().nullable(),
         language: z.string(),
         organizationSlug: z.string(),
         slug: z.string(),
@@ -125,26 +147,15 @@ export const catalogSearchResponseSchema = z
         language: z.string(),
         organizationSlug: z.string(),
         slug: z.string(),
+        targetLanguage: z
+          .string()
+          .nullable()
+          .meta({ description: "The language a language course teaches; null for other courses" }),
         title: z.string(),
       }),
     ),
   })
   .meta({ id: "CatalogSearchResponse" });
-
-const languageCourseSchema = z
-  .object({
-    id: z.uuid(),
-    imageUrl: z.string().nullable(),
-    language: z.string(),
-    slug: z.string(),
-    targetLanguage: z.enum(TTS_SUPPORTED_LANGUAGE_CODES),
-    title: z.string(),
-  })
-  .meta({ id: "LanguageCourse" });
-
-export const languageCourseListResponseSchema = z
-  .object({ data: z.array(languageCourseSchema) })
-  .meta({ id: "LanguageCourseListResponse" });
 
 export const courseChapterListResponseSchema = z
   .object({ data: z.array(courseChapterSchema) })

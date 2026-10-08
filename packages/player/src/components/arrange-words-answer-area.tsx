@@ -17,7 +17,7 @@ import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
-import { type StepResult } from "../player-reducer";
+import { type StepResult } from "../step-answer";
 import { RomanizationText } from "./romanization-text";
 
 export type PlacedWord = WordBankOption & { id: string };
@@ -69,15 +69,14 @@ function PlacedWordTile({
       {...listeners}
       aria-label={ariaLabel}
       className={cn(
-        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
+        "border-border flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
         hasResult && "pointer-events-none",
         !hasResult &&
           "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
         !hasResult && "touch-none select-none",
         isDragging && "opacity-30",
-        resultState === "correct" && "bg-success/5 text-success border-transparent opacity-75",
-        resultState === "incorrect" &&
-          "bg-destructive/5 text-destructive border-transparent opacity-75",
+        resultState === "correct" && "bg-success/5 text-success border-transparent",
+        resultState === "incorrect" && "bg-destructive/5 text-destructive border-transparent",
       )}
       disabled={hasResult}
       onClick={onClick}
@@ -94,7 +93,7 @@ function PlacedWordTile({
 
 function DragOverlayWord({ option }: { option: WordBankOption }) {
   return (
-    <div className="bg-background border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base shadow-md">
+    <div className="bg-background border-border flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base shadow-md">
       <span>{option.word}</span>
       <RomanizationText>{option.romanization}</RomanizationText>
     </div>
@@ -165,9 +164,7 @@ export function ArrangeWordsAnswerArea({
           role="group"
         >
           {placedWords.length === 0 ? (
-            <p className="text-muted-foreground/60 text-sm">
-              {t("Tap words to build your answer")}
-            </p>
+            <p className="text-muted-foreground text-sm">{t("Tap words to build your answer")}</p>
           ) : (
             placedWords.map((option, index) => (
               <PlacedWordTile

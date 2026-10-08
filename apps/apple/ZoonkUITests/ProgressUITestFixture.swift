@@ -44,10 +44,10 @@ let progressUITestSnapshotJSON =
     },
     "activity": {
       "days": [
-        { "date": "2026-05-31", "lessonCompletions": 2 },
-        { "date": "2026-06-30", "lessonCompletions": 5 },
-        { "date": "2026-07-31", "lessonCompletions": 8 },
-        { "date": "2026-08-20", "lessonCompletions": 9 }
+        { "activitiesCompleted": 2, "date": "2026-05-31" },
+        { "activitiesCompleted": 5, "date": "2026-06-30" },
+        { "activitiesCompleted": 8, "date": "2026-07-31" },
+        { "activitiesCompleted": 9, "date": "2026-08-20" }
       ],
       "summary": {
         "learningDays": 12,

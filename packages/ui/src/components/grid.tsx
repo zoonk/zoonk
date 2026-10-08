@@ -5,7 +5,7 @@ import { WIDE_CONTENT_MAX_WIDTH_CLASS } from "@zoonk/ui/components/layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { ArrowUpIcon, CircleCheckIcon, CircleDashedIcon } from "lucide-react";
+import { ArrowUpIcon } from "lucide-react";
 
 /**
  * Grid frames provide the shared wide browsing column for tile-based pages, so
@@ -22,22 +22,12 @@ const gridVariants = cva("flex w-full flex-col gap-5", {
   },
 });
 
-export type GridVariant = NonNullable<VariantProps<typeof gridVariants>["variant"]>;
-
 type GridProps = React.ComponentProps<"section"> & VariantProps<typeof gridVariants>;
 
 export function Grid({ className, variant, ...props }: GridProps) {
   return (
     <section className={cn(gridVariants({ variant }), className)} data-slot="grid" {...props} />
   );
-}
-
-/**
- * Grid toolbars sit inside the grid frame padding, so action rows and search
- * controls can align with tiles without every page resetting list padding.
- */
-export function GridToolbar({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex gap-2", className)} data-slot="grid-toolbar" {...props} />;
 }
 
 /**
@@ -67,7 +57,7 @@ export function GridBackToTop({
     <a
       className={cn(
         buttonVariants({ size: "sm", variant: "ghost" }),
-        "text-muted-foreground/80 hover:text-foreground px-2 text-xs",
+        "text-muted-foreground hover:text-foreground px-2 text-xs",
         className,
       )}
       data-slot="grid-back-to-top"
@@ -83,20 +73,26 @@ export function GridBackToTop({
 /**
  * Grid groups define the shared responsive browsing rhythm for tile-based
  * collections without coupling the layout to any app-specific data or routing.
- * The pane variant keeps card widths stable when a collection shares the
- * viewport with a persistent info rail.
+ * On phones a long collection reads best as a list: one surface of rows, each
+ * with its picture beside its title and description, set apart by their spacing
+ * and pictures rather than lines between them. From `sm` it's a grid of as many columns of at
+ * least 14rem as the width holds, so a full-width grid fills large screens while
+ * each tile's text keeps a readable measure. The pane variant keeps card widths
+ * stable when a collection shares the viewport with a persistent info rail.
  */
-const gridGroupVariants = cva("grid grid-cols-1 gap-4", {
+const gridGroupVariants = cva("grid sm:gap-4", {
   defaultVariants: { variant: "default" },
   variants: {
     variant: {
-      default: "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5",
-      pane: "sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4",
+      default: cn(
+        "max-sm:bg-card max-sm:ring-foreground/10 grid-cols-1 max-sm:overflow-hidden max-sm:rounded-2xl max-sm:ring-1 sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))]",
+      ),
+      pane: "gap-3 sm:grid-cols-2 xl:grid-cols-3",
     },
   },
 });
 
-export type GridGroupVariant = NonNullable<VariantProps<typeof gridGroupVariants>["variant"]>;
+type GridGroupVariant = NonNullable<VariantProps<typeof gridGroupVariants>["variant"]>;
 
 type GridGroupProps = React.ComponentProps<"div"> & VariantProps<typeof gridGroupVariants>;
 
@@ -129,6 +125,10 @@ export function GridGroupItem({ className, ...props }: React.ComponentProps<"div
 /**
  * Grid items are often links, but keeping the render target composable lets
  * each app provide its own router while preserving one shared tile treatment.
+ * A tile is a card with its picture as the anchor, then the title and a short
+ * description, so browsing feels like picking the next thing to learn. On phones
+ * it's a row of its group's list instead: the picture on the left, the words
+ * beside it.
  */
 export function GridItem({ className, render, ...props }: useRender.ComponentProps<"div">) {
   return useRender({
@@ -136,7 +136,9 @@ export function GridItem({ className, render, ...props }: useRender.ComponentPro
     props: mergeProps<"div">(
       {
         className: cn(
-          "group/grid-item bg-background focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-card dark:ring-border/50 dark:hover:ring-border flex h-full min-h-60 w-full min-w-0 flex-col justify-between rounded-3xl p-4 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_rgb(0_0_0/0.06)] transition-all duration-150 outline-none hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgb(0_0_0/0.05),0_14px_36px_rgb(0_0_0/0.08)] focus-visible:ring-[3px] dark:shadow-[0_1px_2px_rgb(0_0_0/0.35),0_16px_40px_rgb(0_0_0/0.3)] dark:ring-1 dark:hover:shadow-[0_2px_4px_rgb(0_0_0/0.45),0_20px_52px_rgb(0_0_0/0.42)]",
+          "group/grid-item focus-visible:border-ring focus-visible:ring-ring/50 flex h-full w-full min-w-0 outline-none focus-visible:ring-[3px]",
+          "max-sm:hover:bg-muted/50 items-center gap-4 px-4 transition-colors max-sm:focus-visible:ring-inset",
+          "sm:bg-background sm:dark:bg-card sm:dark:ring-border/50 sm:dark:hover:ring-border sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-3xl sm:p-4 sm:shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_rgb(0_0_0/0.06)] sm:transition-all sm:duration-150 sm:hover:-translate-y-0.5 sm:hover:shadow-[0_2px_4px_rgb(0_0_0/0.05),0_14px_36px_rgb(0_0_0/0.08)] sm:motion-reduce:hover:translate-y-0 sm:dark:shadow-[0_1px_2px_rgb(0_0_0/0.35),0_16px_40px_rgb(0_0_0/0.3)] sm:dark:ring-1 sm:dark:hover:shadow-[0_2px_4px_rgb(0_0_0/0.45),0_20px_52px_rgb(0_0_0/0.42)]",
           className,
         ),
       },
@@ -148,14 +150,14 @@ export function GridItem({ className, render, ...props }: useRender.ComponentPro
 }
 
 /**
- * Tile media keeps artwork in a stable circular frame so mixed asset sizes
- * still feel intentional without adding another colored surface.
+ * Tile media centers the artwork at the top of the card without a frame, so the
+ * picture itself is the anchor and mixed asset sizes still feel intentional.
  */
 export function GridItemMedia({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "mx-auto flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-full sm:size-32 [&_img]:size-[86%] [&_img]:rounded-[2rem] [&_img]:object-cover",
+        "flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl max-sm:bg-white max-sm:ring-1 max-sm:ring-black/5 sm:mx-auto sm:size-28 sm:rounded-[1.75rem] dark:max-sm:ring-white/10 [&_img]:size-full [&_img]:object-contain",
         className,
       )}
       data-slot="grid-item-media"
@@ -165,71 +167,31 @@ export function GridItemMedia({ className, ...props }: React.ComponentProps<"div
 }
 
 /**
- * Tile content stretches between media and status so cards of different copy
- * lengths keep a consistent bottom rhythm.
+ * Tile content sits under the media and takes the card's remaining height; on
+ * phones it sits beside the picture.
  */
 export function GridItemContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex min-w-0 flex-1 flex-col items-start gap-2 pt-5", className)}
+      className={cn(
+        "flex min-w-0 flex-1 flex-col items-start gap-1 py-3.5 sm:gap-1.5 sm:px-1 sm:pt-3 sm:pb-0",
+        className,
+      )}
       data-slot="grid-item-content"
       {...props}
     />
   );
 }
 
-/**
- * Tile titles wrap because grid items need enough identity to be scannable
- * without forcing every collection into dense list rows.
- */
+/** Tile titles lead the text and wrap to a second line before they're cut. */
 export function GridItemTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "line-clamp-2 text-base leading-tight font-bold text-balance sm:text-lg",
+        "line-clamp-2 text-[0.9375rem] leading-snug font-semibold text-balance sm:text-lg sm:leading-tight sm:font-bold",
         className,
       )}
       data-slot="grid-item-title"
-      {...props}
-    />
-  );
-}
-
-const gridItemPositionVariants = cva(
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-base font-bold shadow-[inset_0_0_0_1px_rgb(255_255_255/0.55)]",
-  {
-    defaultVariants: { tone: "blue" },
-    variants: {
-      tone: {
-        black: "bg-foreground/10 text-foreground",
-        blue: "bg-belt-blue/10 text-belt-blue",
-        brown: "bg-belt-brown/10 text-belt-brown",
-        gray: "bg-belt-gray/10 text-belt-gray",
-        green: "bg-belt-green/10 text-belt-green",
-        orange: "bg-belt-orange/15 text-energy",
-        purple: "bg-belt-purple/10 text-belt-purple",
-        red: "bg-belt-red/10 text-belt-red",
-        white: "bg-muted text-muted-foreground",
-        yellow: "bg-belt-yellow/25 text-warning",
-      },
-    },
-  },
-);
-
-export type GridItemTone = NonNullable<VariantProps<typeof gridItemPositionVariants>["tone"]>;
-
-type GridItemPositionProps = React.ComponentProps<"span"> &
-  VariantProps<typeof gridItemPositionVariants>;
-
-/**
- * Number prefixes are text, not decoration, and predefined tones keep app code
- * from passing raw color classes that can drift from the design tokens.
- */
-export function GridItemPosition({ className, tone, ...props }: GridItemPositionProps) {
-  return (
-    <span
-      className={cn(gridItemPositionVariants({ tone }), className)}
-      data-slot="grid-item-position"
       {...props}
     />
   );
@@ -243,7 +205,7 @@ export function GridItemDescription({ className, ...props }: React.ComponentProp
   return (
     <p
       className={cn(
-        "text-muted-foreground line-clamp-3 text-sm leading-relaxed text-pretty sm:text-base",
+        "text-muted-foreground line-clamp-2 text-[0.8125rem] leading-snug text-pretty sm:line-clamp-3 sm:text-sm sm:leading-relaxed",
         className,
       )}
       data-slot="grid-item-description"
@@ -252,104 +214,11 @@ export function GridItemDescription({ className, ...props }: React.ComponentProp
   );
 }
 
-/**
- * The footer reserves one place for secondary state so status pills do not
- * jump around based on title or description length.
- */
-export function GridItemFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex pt-4", className)} data-slot="grid-item-footer" {...props} />;
-}
-
-/**
- * Empty messages should use the same quiet centered treatment anywhere a caller
- * decides there are no grid items to show.
- */
-export function GridEmpty({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-muted-foreground py-8 text-center text-sm", className)}
-      data-slot="grid-empty"
-      {...props}
-    />
-  );
-}
-
-/**
- * Completed status is a compact success pill because completion is useful but
- * should stay secondary to the main tile action.
- */
-export function GridItemStatusCompleted({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "text-success bg-success/10 flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-        className,
-      )}
-      data-slot="grid-item-status"
-      {...props}
-    >
-      <CircleCheckIcon aria-hidden="true" className="size-3.5" />
-      {children}
-    </span>
-  );
-}
-
-/**
- * Partial progress uses a blue design token so it reads as active progress
- * rather than a warning or an unfinished error state.
- */
-export function GridItemStatusProgress({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "bg-belt-blue/10 text-belt-blue flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
-        className,
-      )}
-      data-slot="grid-item-status"
-      {...props}
-    >
-      <CircleDashedIcon aria-hidden="true" className="size-3.5" />
-      {children}
-    </span>
-  );
-}
-
-/**
- * Idle status intentionally stays neutral so untouched content remains visible
- * without creating a sense of failure.
- */
-export function GridItemStatusIdle({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "text-muted-foreground bg-muted shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold",
-        className,
-      )}
-      data-slot="grid-item-status"
-      {...props}
-    >
-      {children}
-    </span>
-  );
-}
-
 const DEFAULT_GRID_SKELETON_COUNT = 6;
 
 /**
- * The shared skeleton mirrors the same circular media, text block, and footer
- * rhythm as real grid items so loading states do not invent a second layout.
+ * The shared skeleton mirrors the same media and text block as real grid items
+ * so loading states do not invent a second layout.
  */
 export function GridSkeleton({
   count = DEFAULT_GRID_SKELETON_COUNT,
@@ -364,15 +233,13 @@ export function GridSkeleton({
         // oxlint-disable-next-line eslint/no-array-index-key -- Static skeleton placeholders.
         <GridGroupItem key={index}>
           <GridItem>
-            <Skeleton className="mx-auto size-28 rounded-full sm:size-32" />
-            <div className="flex flex-1 flex-col items-start gap-2 pt-5">
-              <Skeleton className="size-8 rounded-lg" />
-              <Skeleton className="h-5 w-4/5" />
+            <Skeleton className="size-16 shrink-0 rounded-2xl sm:mx-auto sm:size-28 sm:rounded-3xl" />
+            <div className="flex flex-1 flex-col items-start gap-2 py-3.5 sm:pt-3 sm:pb-0">
               <Skeleton className="h-5 w-3/5" />
-              <Skeleton className="mt-1 h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-2/3" />
             </div>
-            <Skeleton className="mt-4 h-7 w-24 rounded-full" />
           </GridItem>
         </GridGroupItem>
       ))}

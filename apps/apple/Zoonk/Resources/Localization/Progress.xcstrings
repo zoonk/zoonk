@@ -361,6 +361,35 @@
         }
       }
     },
+    "Activities finished: %lld" : {
+      "comment" : "Accessible count of lessons, reviews and practice the learner finished on one day of the activity calendar",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abgeschlossene Aktivitäten: %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actividades completadas: %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activités terminées : %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atividades concluídas: %lld"
+          }
+        }
+      }
+    },
     "Activity" : {
       "comment" : "Title for the learner's completed lessons and learning time progress.",
       "localizations" : {
@@ -1876,7 +1905,7 @@
       }
     },
     "Learning activity" : {
-      "comment" : "Title above the completed lesson contribution calendar",
+      "comment" : "Title above the calendar of days the learner studied",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1905,7 +1934,7 @@
       }
     },
     "Learning activity over the past 12 months" : {
-      "comment" : "Accessibility label for the completed lesson contribution calendar",
+      "comment" : "Accessibility label for the calendar of days the learner studied",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2045,35 +2074,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aulas completadas"
-          }
-        }
-      }
-    },
-    "Lessons completed: %lld" : {
-      "comment" : "Accessible daily completed lesson value in the activity calendar",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abgeschlossene Lektionen: %lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lecciones completadas: %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leçons terminées : %lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aulas completadas: %lld"
           }
         }
       }
@@ -2688,7 +2688,7 @@
       }
     },
     "Past 12 months." : {
-      "comment" : "Period shown above the completed lesson contribution calendar",
+      "comment" : "Period shown above the calendar of days the learner studied",
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -2,29 +2,34 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";
-import { getLessonQuestionAccess } from "./_utils/question-access";
 import {
   lessonQuestionResourceOmit,
+  lessonQuestionResourceQuery,
   toLessonQuestionThreadResource,
 } from "./_utils/question-resource";
-import { type GetLessonQuestionThreadInput, MAX_LESSON_QUESTION_THREAD_TURNS } from "./contract";
+import { findTutorSubject, getSubjectThreadColumn } from "./_utils/tutor-subject";
+import {
+  type GetLessonQuestionThreadInput,
+  MAX_LESSON_QUESTION_THREAD_TURNS,
+  type TutorTarget,
+} from "./contract";
 
-async function getCursorQuestion({
-  contextKind,
-  cursor,
-  lessonId,
-  stepId,
-  userId,
-}: {
+type ThreadWhere = ReturnType<typeof getSubjectThreadColumn> & { userId: string };
+
+type QuestionScope = {
   contextKind: GetLessonQuestionThreadInput["contextKind"];
-  cursor: string;
   stepId: string | undefined;
-  lessonId: string;
-  userId: string;
-}) {
+  thread: ThreadWhere;
+};
+
+function getScopeWhere({ contextKind, stepId, thread }: QuestionScope) {
+  return { contextKind, libraryStepId: stepId, thread };
+}
+
+async function getCursorQuestion({ cursor, ...scope }: QuestionScope & { cursor: string }) {
   return prisma.lessonQuestion.findFirst({
     omit: lessonQuestionResourceOmit,
-    where: { contextKind, id: cursor, stepId, thread: { lessonId, userId } },
+    where: { id: cursor, ...getScopeWhere(scope) },
   });
 }
 
@@ -42,36 +47,20 @@ function getOlderQuestionsWhere(cursorQuestion: { createdAt: Date; id: string } 
 }
 
 async function getQuestionPage({
-  contextKind,
   cursor,
-  lessonId,
-  stepId,
-  userId,
-}: {
-  contextKind: GetLessonQuestionThreadInput["contextKind"];
-  cursor: string | undefined;
-  stepId: string | undefined;
-  lessonId: string;
-  userId: string;
-}) {
-  const cursorQuestion = cursor
-    ? await getCursorQuestion({ contextKind, cursor, lessonId, stepId, userId })
-    : null;
+  ...scope
+}: QuestionScope & { cursor: string | undefined }) {
+  const cursorQuestion = cursor ? await getCursorQuestion({ cursor, ...scope }) : null;
 
   if (cursor && !cursorQuestion) {
     return { status: "invalidCursor" as const };
   }
 
   const questions = await prisma.lessonQuestion.findMany({
-    omit: lessonQuestionResourceOmit,
+    ...lessonQuestionResourceQuery,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_LESSON_QUESTION_THREAD_TURNS + 1,
-    where: {
-      contextKind,
-      stepId,
-      ...getOlderQuestionsWhere(cursorQuestion),
-      thread: { lessonId, userId },
-    },
+    where: { ...getScopeWhere(scope), ...getOlderQuestionsWhere(cursorQuestion) },
   });
 
   const hasMore = questions.length > MAX_LESSON_QUESTION_THREAD_TURNS;
@@ -85,20 +74,27 @@ async function getQuestionPage({
   };
 }
 
-/** Filters before pagination so other steps cannot displace the active step's history. */
+/**
+ * The learner's thread about a lesson, chapter, plan or finished mock, newest page first.
+ * Filters before pagination so other steps cannot displace the active step's history. Private
+ * cached, so the buddy's tab prefetches with its conversation; the conversation reads it again
+ * through the API once on screen, so nothing asked meanwhile is missed.
+ */
 export async function getLessonQuestionThread({
   contextKind,
   cursor,
-  lessonId,
   stepId,
-}: GetLessonQuestionThreadInput & { lessonId: string }) {
+  target,
+}: GetLessonQuestionThreadInput & { target: TutorTarget }) {
+  "use cache: private";
+
   const session = await getSession();
 
   if (!session) {
     return { status: "unauthorized" as const };
   }
 
-  const access = await getLessonQuestionAccess({ lessonId, userId: session.user.id });
+  const access = await findTutorSubject({ target, userId: session.user.id });
 
   if (access.status !== "ready") {
     return access;
@@ -108,18 +104,18 @@ export async function getLessonQuestionThread({
     return { status: "invalidCursor" as const };
   }
 
-  const [thread, page] = await Promise.all([
-    prisma.lessonQuestionThread.findUnique({
-      where: { userLessonQuestionThread: { lessonId, userId: session.user.id } },
-    }),
-    getQuestionPage({ contextKind, cursor, lessonId, stepId, userId: session.user.id }),
+  const thread = { ...getSubjectThreadColumn(access.subject), userId: session.user.id };
+
+  const [found, page] = await Promise.all([
+    prisma.lessonQuestionThread.findFirst({ where: thread }),
+    getQuestionPage({ contextKind, cursor, stepId, thread }),
   ]);
 
   if (page.status !== "ready") {
     return page;
   }
 
-  if (!thread) {
+  if (!found) {
     return { status: "ready" as const, thread: null };
   }
 
@@ -128,7 +124,7 @@ export async function getLessonQuestionThread({
     thread: toLessonQuestionThreadResource({
       hasMore: page.hasMore,
       nextCursor: page.nextCursor,
-      thread: { ...thread, questions: page.questions },
+      thread: { ...found, questions: page.questions },
     }),
   };
 }

@@ -6,9 +6,10 @@ import { getSession } from "../users/get-session";
 /**
  * Keeps the active and trialing status rule in one query while letting callers
  * choose whether the result is a cached display read or a fresh permission
- * check.
+ * check. Workflow bridges pass the owner of the goal they work for, never a
+ * caller's choice.
  */
-function findActiveSubscription(userId: string) {
+export function findActiveSubscription(userId: string) {
   const now = new Date();
 
   return prisma.subscription.findFirst({

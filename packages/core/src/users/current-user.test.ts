@@ -7,13 +7,19 @@ import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getUserSessionCacheTag } from "../cache/tags";
-import { getCurrentUser, updateCurrentUser } from "./current-user";
+import { getCurrentUser, suggestCurrentUsername, updateCurrentUser } from "./current-user";
 
 const authMocks = vi.hoisted(() => ({
+  isUsernameAvailable:
+    vi.fn<(input: { body: { username: string } }) => Promise<{ available: boolean }>>(),
   updateUser: vi.fn<(input: { body: { name?: string; username?: string } }) => Promise<void>>(),
 }));
 
-vi.mock("@zoonk/auth", () => ({ auth: { api: { updateUser: authMocks.updateUser } } }));
+vi.mock("@zoonk/auth", () => ({
+  auth: {
+    api: { isUsernameAvailable: authMocks.isUsernameAvailable, updateUser: authMocks.updateUser },
+  },
+}));
 
 vi.mock("next/headers", () => ({ headers: vi.fn() }));
 vi.mock("./get-session", () => ({ getSession: vi.fn() }));
@@ -93,6 +99,37 @@ describe("current user", () => {
     it("does not mutate a user for a guest", async () => {
       await expect(updateCurrentUser({ input: { name: "No actor" } })).resolves.toBeNull();
       expect(auth.api.updateUser).not.toHaveBeenCalled();
+    });
+  });
+
+  describe(suggestCurrentUsername, () => {
+    it("suggests a free username from the email to an account without one", async () => {
+      const prefix = `setup${randomUUID().slice(0, 8)}`;
+      const user = await userFixture({ email: `${prefix}@zoonk.test`, name: "" });
+      await prisma.user.update({ data: { username: null }, where: { id: user.id } });
+      mockSession(user.id);
+
+      authMocks.isUsernameAvailable.mockImplementation(async ({ body }) => ({
+        available: body.username !== prefix,
+      }));
+
+      await expect(suggestCurrentUsername()).resolves.toMatch(new RegExp(`^${prefix}_\\d+$`, "u"));
+
+      expect(auth.api.updateUser).not.toHaveBeenCalled();
+    });
+
+    it("suggests the username the account already has", async () => {
+      const user = await userFixture({ name: "" });
+      const username = `kept_${randomUUID().slice(0, 8)}`;
+      await prisma.user.update({ data: { username }, where: { id: user.id } });
+      mockSession(user.id);
+
+      await expect(suggestCurrentUsername()).resolves.toBe(username);
+      expect(auth.api.isUsernameAvailable).not.toHaveBeenCalled();
+    });
+
+    it("suggests nothing without a session", async () => {
+      await expect(suggestCurrentUsername()).resolves.toBeNull();
     });
   });
 });

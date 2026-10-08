@@ -1,8 +1,8 @@
 "use server";
 
 import { auth } from "@zoonk/auth";
+import { getAuthError } from "@zoonk/auth/errors";
 import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 
 export async function validateTrustedOriginAction(redirectTo: string): Promise<boolean> {
@@ -12,34 +12,27 @@ export async function validateTrustedOriginAction(redirectTo: string): Promise<b
     auth.api.validateTrustedOrigin({ body: { url: redirectTo }, headers: reqHeaders }),
   );
 
-  return !error;
+  if (!error) {
+    return true;
+  }
+
+  if (getAuthError(error)?.message === "UNTRUSTED_ORIGIN") {
+    return false;
+  }
+
+  throw error;
 }
 
 export async function createOneTimeTokenAction(
   redirectTo: string,
 ): Promise<{ success: true; url: string } | { success: false; error: "UNTRUSTED_ORIGIN" }> {
-  const reqHeaders = await headers();
-
-  const { error: validationError } = await safeAsync(async () =>
-    auth.api.validateTrustedOrigin({ body: { url: redirectTo }, headers: reqHeaders }),
-  );
-
-  if (validationError) {
-    logError("Untrusted origin:", JSON.stringify(redirectTo));
+  if (!(await validateTrustedOriginAction(redirectTo))) {
     return { error: "UNTRUSTED_ORIGIN", success: false };
   }
 
-  const { data, error } = await safeAsync(async () =>
-    auth.api.generateOneTimeToken({ headers: reqHeaders }),
-  );
-
-  if (error) {
-    logError("Error generating one-time token:", error);
-    return { error: "UNTRUSTED_ORIGIN", success: false };
-  }
-
+  const { token } = await auth.api.generateOneTimeToken({ headers: await headers() });
   const redirectUrl = new URL(redirectTo);
-  redirectUrl.searchParams.set("token", data?.token ?? "");
+  redirectUrl.searchParams.set("token", token);
 
   return { success: true, url: redirectUrl.toString() };
 }

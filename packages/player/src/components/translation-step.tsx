@@ -5,7 +5,7 @@ import {
   type TranslationOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer } from "../player-reducer";
+import { type SelectedAnswer } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import {
   PlayerChoiceScene,
@@ -25,22 +25,11 @@ function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   return selectedAnswer.selectedOptionId;
 }
 
-function TranslationOptionContent({
-  isSelected,
-  word,
-}: {
-  isSelected: boolean;
-  word: TranslationOption;
-}) {
+function TranslationOptionContent({ word }: { word: TranslationOption }) {
   return (
     <>
       <PlayerChoiceSceneOptionText>{word.word}</PlayerChoiceSceneOptionText>
-
       <RomanizationText>{word.romanization}</RomanizationText>
-
-      {isSelected && word.pronunciation && (
-        <span className="text-muted-foreground text-sm">{word.pronunciation}</span>
-      )}
     </>
   );
 }
@@ -50,7 +39,7 @@ export function TranslationStep({
   selectedAnswer,
   step,
 }: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
+  onSelectAnswer: (answer: SelectedAnswer) => void;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
@@ -69,7 +58,7 @@ export function TranslationStep({
     }
 
     void play(word.audioUrl);
-    onSelectAnswer(step.id, { kind: "translation", selectedOptionId: word.id });
+    onSelectAnswer({ kind: "translation", selectedOptionId: word.id });
   };
 
   if (!correctWord) {
@@ -79,7 +68,9 @@ export function TranslationStep({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <PlayerChoiceSceneEyebrow>{t("Translate this word:")}</PlayerChoiceSceneEyebrow>
+        {/* A word carries its article ("as colunas") and a chunk is several words ("Thanks for
+        having me"): the prompt names neither, so it never calls one the other. */}
+        <PlayerChoiceSceneEyebrow>{t("Translate:")}</PlayerChoiceSceneEyebrow>
         <PlayerChoiceSceneQuestion>{correctWord.translation}</PlayerChoiceSceneQuestion>
       </PlayerChoiceScenePrompt>
 
@@ -87,9 +78,7 @@ export function TranslationStep({
         keyboardEnabled={!selectedAnswer || selectedAnswer.kind === "translation"}
         onSelect={handleSelect}
         options={options.map((word) => ({
-          content: (
-            <TranslationOptionContent isSelected={selectedOptionId === word.id} word={word} />
-          ),
+          content: <TranslationOptionContent word={word} />,
           isSelected: selectedOptionId === word.id,
           key: word.id,
         }))}

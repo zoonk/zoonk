@@ -4,6 +4,7 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
+import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -35,15 +36,19 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   );
 }
 
+/**
+ * A sheet has a close button when it gets the caller's translated `closeLabel` (this package has
+ * no translations of its own).
+ */
 function SheetContent({
   className,
   children,
+  closeLabel,
   side = "right",
-  showCloseButton = true,
   ...props
 }: SheetPrimitive.Popup.Props & {
+  closeLabel?: string;
   side?: "top" | "right" | "bottom" | "left";
-  showCloseButton?: boolean;
 }) {
   return (
     <SheetPortal>
@@ -57,14 +62,14 @@ function SheetContent({
         data-slot="sheet-content"
         {...props}
       >
-        {children}
-        {showCloseButton && (
+        <PopupShortcutLayer value>{children}</PopupShortcutLayer>
+        {closeLabel && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
             render={<Button className="absolute top-4 right-4" size="icon-sm" variant="ghost" />}
           >
             <XIcon />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{closeLabel}</span>
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Popup>

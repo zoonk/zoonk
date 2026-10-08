@@ -47,4 +47,8 @@ describe(parseCreateInput, () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("rejects the removed course context", () => {
+    expect(parseCreateInput({ kind: "course" }).success).toBe(false);
+  });
 });

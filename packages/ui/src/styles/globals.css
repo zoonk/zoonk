@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./hit-area.css";
 @import "./scroll-fade.css";
 @import "./shimmer.css";
 @import "tw-animate-css";
@@ -7,6 +8,13 @@
 
 @source "../../../apps/**/src/**/*.{ts,tsx}";
 @source "../../../**/src/**/*.{ts,tsx}";
+
+/* `dark:` and the dark tokens below follow the device's light or dark theme. */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    @slot;
+  }
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -53,6 +61,12 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-energy: var(--energy);
   --color-score: var(--score);
+  --color-viz-accent: var(--viz-accent);
+  --color-viz-accent-soft: var(--viz-accent-soft);
+  --color-viz-highlight: var(--viz-highlight);
+  --color-viz-highlight-soft: var(--viz-highlight-soft);
+  --color-viz-secondary: var(--viz-secondary);
+  --color-viz-secondary-soft: var(--viz-secondary-soft);
   --color-belt-white: var(--belt-white);
   --color-belt-yellow: var(--belt-yellow);
   --color-belt-orange: var(--belt-orange);
@@ -65,10 +79,11 @@
   --color-belt-black: var(--belt-black);
   --animate-badge-land: badge-land 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
   --animate-breathe: breathe 2s ease-in-out infinite;
+  --animate-glow: glow 2.4s ease-in-out infinite;
   --animate-dot-pulse: dot-pulse 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-energy-charge: energy-charge 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-pulse-scale: pulse-scale 300ms ease-out;
-  --animate-text-cycle: text-cycle 3.2s both;
+  --animate-ring-fill: ring-fill 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
 :root {
@@ -84,13 +99,22 @@
   --secondary: var(--color-neutral-100);
   --secondary-foreground: var(--color-neutral-900);
   --muted: var(--color-neutral-100);
-  --muted-foreground: var(--color-neutral-500);
+  /*
+   * Between neutral-500 and 600: quiet text keeps AA (4.5:1) on white and on the muted, secondary
+   * and accent surfaces it often sits on (neutral-500 is 4.3:1 on neutral-100).
+   */
+  --muted-foreground: oklch(0.5 0 0);
   --accent: var(--color-neutral-100);
   --accent-foreground: var(--color-neutral-900);
-  --destructive: var(--color-pink-600);
-  --info: var(--color-blue-500);
-  --warning: var(--color-amber-600);
-  --success: var(--color-emerald-600);
+  /* 700: pink-600 is 3.8:1 on its own tint, where destructive buttons and badges put it. */
+  --destructive: var(--color-pink-700);
+  --info: var(--color-blue-600);
+  /*
+   * 600s fall under AA (4.5:1) as small text on white, and both are used for verdict text. Warning
+   * goes to 800 because amber-700 is 4.4:1 on its own tint, where eyebrows and chips put it.
+   */
+  --warning: var(--color-amber-800);
+  --success: var(--color-emerald-700);
   --border: var(--color-neutral-200);
   --input: var(--color-neutral-200);
   --ring: var(--color-primary);
@@ -107,8 +131,20 @@
   --sidebar-accent-foreground: var(--color-neutral-900);
   --sidebar-border: var(--color-neutral-200);
   --sidebar-ring: var(--color-primary);
-  --energy: var(--color-orange-500);
-  --score: var(--color-green-500);
+  /* Also text (stats numbers and labels), so they keep AA on white like --success. */
+  --energy: var(--color-orange-700);
+  --score: var(--color-green-700);
+  /*
+   * Data visualization in interactive activities: the thing the learner moves (accent), a target
+   * or highlight, and a second series. Each passes AA as text on the background, on muted
+   * surfaces and on its own soft fill.
+   */
+  --viz-accent: var(--color-indigo-600);
+  --viz-accent-soft: var(--color-indigo-100);
+  --viz-highlight: var(--color-orange-700);
+  --viz-highlight-soft: var(--color-orange-100);
+  --viz-secondary: var(--color-sky-700);
+  --viz-secondary-soft: var(--color-sky-100);
   --belt-white: var(--color-white);
   --belt-yellow: var(--color-yellow-400);
   --belt-orange: var(--color-orange-400);
@@ -163,8 +199,9 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+/* Dark tokens, through the `dark` variant: the document on a dark device. */
+:root {
+  @variant dark {
     --background: var(--color-neutral-950);
     --foreground: var(--color-neutral-50);
     --card: var(--color-neutral-900);
@@ -179,7 +216,7 @@
     --muted-foreground: var(--color-neutral-400);
     --accent: var(--color-neutral-800);
     --accent-foreground: var(--color-neutral-50);
-    --destructive: var(--color-pink-600);
+    --destructive: var(--color-pink-400);
     --info: var(--color-blue-300);
     --warning: var(--color-amber-400);
     --success: var(--color-emerald-400);
@@ -201,54 +238,83 @@
     --sidebar-ring: var(--color-primary);
     --energy: var(--color-orange-400);
     --score: var(--color-green-400);
+    --viz-accent: var(--color-indigo-300);
+    --viz-accent-soft: var(--color-indigo-950);
+    --viz-highlight: var(--color-orange-400);
+    --viz-highlight-soft: var(--color-orange-950);
+    --viz-secondary: var(--color-sky-400);
+    --viz-secondary-soft: var(--color-sky-950);
     --belt-black: var(--color-neutral-700);
   }
+}
 
-  [data-code-visual] span[style] {
+[data-code-visual] span[style] {
+  @variant dark {
     color: var(--shiki-dark) !important;
     background-color: var(--shiki-dark-bg) !important;
   }
 }
 
-@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
-  :root {
-    --background: var(--color-black);
-    --foreground: var(--color-white);
-    --card: var(--color-black);
-    --card-foreground: var(--color-white);
-    --popover: var(--color-black);
-    --popover-foreground: var(--color-white);
-    --primary: var(--color-white);
-    --primary-foreground: var(--color-black);
-    --secondary: var(--color-neutral-700);
-    --secondary-foreground: var(--color-white);
-    --muted: var(--color-neutral-600);
-    --muted-foreground: var(--color-white);
-    --accent: var(--color-neutral-700);
-    --accent-foreground: var(--color-white);
-    --destructive: var(--color-pink-600);
-    --info: var(--color-blue-100);
-    --warning: var(--color-amber-400);
-    --success: var(--color-emerald-400);
-    --border: var(--color-neutral-50);
-    --input: var(--color-neutral-50);
-    --ring: var(--color-primary);
-    --chart-1: var(--color-blue-500);
-    --chart-2: var(--color-emerald-500);
-    --chart-3: var(--color-amber-500);
-    --chart-4: var(--color-purple-500);
-    --chart-5: var(--color-rose-500);
-    --sidebar: var(--color-background);
-    --sidebar-foreground: var(--color-foreground);
-    --sidebar-primary: var(--color-primary);
-    --sidebar-primary-foreground: var(--color-primary-foreground);
-    --sidebar-accent: var(--color-neutral-700);
-    --sidebar-accent-foreground: var(--color-white);
-    --sidebar-border: var(--color-neutral-50);
-    --sidebar-ring: var(--color-primary);
-    --energy: var(--color-orange-200);
-    --score: var(--color-green-200);
-    --belt-black: var(--color-neutral-500);
+:root {
+  @variant dark {
+    @media (prefers-contrast: more) {
+      --background: var(--color-black);
+      --foreground: var(--color-white);
+      --card: var(--color-black);
+      --card-foreground: var(--color-white);
+      --popover: var(--color-black);
+      --popover-foreground: var(--color-white);
+      --primary: var(--color-white);
+      --primary-foreground: var(--color-black);
+      --secondary: var(--color-neutral-700);
+      --secondary-foreground: var(--color-white);
+      --muted: var(--color-neutral-600);
+      --muted-foreground: var(--color-white);
+      --accent: var(--color-neutral-700);
+      --accent-foreground: var(--color-white);
+      --destructive: var(--color-pink-600);
+      --info: var(--color-blue-100);
+      --warning: var(--color-amber-400);
+      --success: var(--color-emerald-400);
+      --border: var(--color-neutral-50);
+      --input: var(--color-neutral-50);
+      --ring: var(--color-primary);
+      --chart-1: var(--color-blue-500);
+      --chart-2: var(--color-emerald-500);
+      --chart-3: var(--color-amber-500);
+      --chart-4: var(--color-purple-500);
+      --chart-5: var(--color-rose-500);
+      --sidebar: var(--color-background);
+      --sidebar-foreground: var(--color-foreground);
+      --sidebar-primary: var(--color-primary);
+      --sidebar-primary-foreground: var(--color-primary-foreground);
+      --sidebar-accent: var(--color-neutral-700);
+      --sidebar-accent-foreground: var(--color-white);
+      --sidebar-border: var(--color-neutral-50);
+      --sidebar-ring: var(--color-primary);
+      --energy: var(--color-orange-200);
+      --score: var(--color-green-200);
+      --belt-black: var(--color-neutral-500);
+    }
+  }
+}
+
+/*
+ * Reduced motion: dialogs, menus, popovers and sheets keep their fade but drop the zoom, slide and
+ * spin (tw-animate-css reads these variables), so every enter and exit has a calm version.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    --tw-enter-rotate: 0 !important;
+    --tw-enter-scale: 1 !important;
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-exit-rotate: 0 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
   }
 }
 
@@ -271,6 +337,20 @@
   50% {
     transform: scale(1.3);
     opacity: 0.3;
+  }
+}
+
+/* A soft, slow pulse for something that shines, like a buddy on a high-Energy day. */
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
   }
 }
 
@@ -326,6 +406,13 @@
   }
 }
 
+/* A progress ring fills from empty to its share; the element sets `--ring-length`. */
+@keyframes ring-fill {
+  from {
+    stroke-dashoffset: var(--ring-length);
+  }
+}
+
 @keyframes pulse-scale {
   0% {
     transform: scale(1);
@@ -335,21 +422,6 @@
   }
   100% {
     transform: scale(1);
-  }
-}
-
-@keyframes text-cycle {
-  0% {
-    opacity: 0;
-  }
-  6.25% {
-    opacity: 1;
-  }
-  93.75% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
   }
 }
 

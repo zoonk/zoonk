@@ -3,7 +3,7 @@ import {
   getLanguageName,
   isOpenAITTSSupportedLanguage,
   isTTSSupportedLanguage,
-  needsRomanization,
+  usesNonLatinScript,
 } from "./languages";
 
 describe(isOpenAITTSSupportedLanguage, () => {
@@ -38,7 +38,7 @@ describe(isTTSSupportedLanguage, () => {
   });
 });
 
-describe(needsRomanization, () => {
+describe(usesNonLatinScript, () => {
   it.each([
     "ja",
     "zh",
@@ -59,18 +59,23 @@ describe(needsRomanization, () => {
     "te",
     "ml",
   ])("returns true for non-Roman script language: %s", (code) => {
-    expect(needsRomanization(code)).toBe(true);
+    expect(usesNonLatinScript(code)).toBe(true);
   });
 
   it.each(["en", "es", "fr", "de", "pt", "it"])(
     "returns false for Roman script language: %s",
     (code) => {
-      expect(needsRomanization(code)).toBe(false);
+      expect(usesNonLatinScript(code)).toBe(false);
     },
   );
 
   it("returns false for unknown language codes", () => {
-    expect(needsRomanization("xyz")).toBe(false);
+    expect(usesNonLatinScript("xyz")).toBe(false);
+  });
+
+  it("reads the language from a code with a region", () => {
+    expect(usesNonLatinScript("zh-TW")).toBe(true);
+    expect(usesNonLatinScript("pt-BR")).toBe(false);
   });
 });
 

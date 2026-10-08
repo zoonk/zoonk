@@ -1,0 +1,504 @@
+{
+  "modelId": "typesafe-ai/jev",
+  "results": [
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-example-likes-football-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Likes football examples" },
+          "need": "Write a personal example for a lesson on percentages"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-example-study-time-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Studies after 8 pm" },
+          "need": "Write a personal example for a lesson on percentages"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-plan-no-saturdays-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Can't study on Saturdays" },
+          "need": "Plan this learner's study schedule for the week"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-plan-football-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Likes football examples" },
+          "need": "Plan this learner's study schedule for the week"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-explain-mixes-interest-1",
+        "userInput": {
+          "fact": { "category": "learning", "statement": "Mixes up simple and compound interest" },
+          "need": "Explain why the learner's answer on a compound interest question was wrong"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-pronunciation-law-goal-1",
+        "userInput": {
+          "fact": { "category": "goals", "statement": "Wants Law at a public university" },
+          "need": "Write a pronunciation drill for Spanish vowels"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-example-nurse-statistics-1",
+        "userInput": {
+          "fact": { "category": "background", "statement": "Works as a nurse" },
+          "need": "Write a personal example for a statistics lesson on averages"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-tone-short-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Prefers short, direct explanations" },
+          "need": "Choose the length and tone of the tutor's replies"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-priorities-essay-1",
+        "userInput": {
+          "fact": { "category": "goals", "statement": "Needs 700+ in the essay" },
+          "need": "Decide which exam topics to prioritize in the plan"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-example-bus-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Studies on the bus in the morning" },
+          "need": "Write a personal example for a chemistry lesson on acids"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-example-futebol-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Gosta de exemplos de futebol" },
+          "need": "Escrever um exemplo pessoal para uma aula de porcentagem"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-plan-works-late-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Trabalha até as 19h nos dias de semana" },
+          "need": "Planejar a semana de estudos do aluno"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-plan-cooking-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Gosta de exemplos de culinária" },
+          "need": "Planejar a semana de estudos do aluno"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-explain-proportion-1",
+        "userInput": {
+          "fact": { "category": "learning", "statement": "Confunde grandezas diretas e inversas" },
+          "need": "Explicar o erro do aluno em uma questão de regra de três"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-example-bakery-1",
+        "userInput": {
+          "fact": { "category": "background", "statement": "É dono de uma padaria" },
+          "need": "Escrever um exemplo pessoal para uma aula de juros"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-pronunciation-medicine-1",
+        "userInput": {
+          "fact": { "category": "goals", "statement": "Quer Medicina na USP" },
+          "need": "Criar exercícios de pronúncia do inglês"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-level-engineer-1",
+        "userInput": {
+          "fact": { "category": "background", "statement": "Já é formado em Engenharia" },
+          "need": "Escolher o nível das explicações de uma aula de cálculo"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-example-night-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Estuda à noite" },
+          "need": "Escrever um exemplo pessoal para uma aula de frações"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-persona-maya-tutor-worked-example-1",
+        "userInput": {
+          "fact": {
+            "category": "learning",
+            "statement": "Does better with a worked example before trying alone"
+          },
+          "need": "A tutor answering the learner's question about a lesson: Why is 10⁻³ a small number and not a negative one?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-persona-maya-tutor-study-time-1",
+        "userInput": {
+          "fact": {
+            "category": "routine",
+            "statement": "Studies at 7:30 am, right after a night shift"
+          },
+          "need": "A tutor answering the learner's question about a lesson: Why is 10⁻³ a small number and not a negative one?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-persona-maya-plan-after-night-shift-1",
+        "userInput": {
+          "fact": {
+            "category": "routine",
+            "statement": "Studies at 7:30 am, right after a night shift"
+          },
+          "need": "Plan this learner's study schedule for the week"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "Expected irrelevant.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected irrelevant.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected irrelevant.", "kind": "potentialImprovements", "score": 6 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "en-persona-maya-plan-worked-example-1",
+        "userInput": {
+          "fact": {
+            "category": "learning",
+            "statement": "Does better with a worked example before trying alone"
+          },
+          "need": "Plan this learner's study schedule for the week"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "en-persona-sam-example-index-fund-1",
+        "userInput": {
+          "fact": {
+            "category": "context",
+            "statement": "Just started investing through an index fund"
+          },
+          "need": "Write a personal example for a quick explanation of an index going up 2%"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-persona-ana-plan-saturday-course-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Faz cursinho aos sábados de manhã" },
+          "need": "Planejar a semana de estudos do aluno"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-persona-ana-example-study-time-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Estuda à noite, depois da escola" },
+          "need": "Escrever um exemplo pessoal para uma aula de porcentagem"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-persona-lucas-tutor-no-math-1",
+        "userInput": {
+          "fact": { "category": "preferences", "statement": "Prefere explicações sem contas" },
+          "need": "A tutor answering the learner's question about a lesson: por que a luz azul tem mais energia que a vermelha?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-persona-lucas-tutor-study-time-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Estuda à noite, antes de dormir" },
+          "need": "A tutor answering the learner's question about a lesson: por que a luz azul tem mais energia que a vermelha?"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "Expected relevant.", "kind": "majorErrors", "score": 6 },
+        { "conclusion": "Expected relevant.", "kind": "minorErrors", "score": 6 },
+        { "conclusion": "Expected relevant.", "kind": "potentialImprovements", "score": 6 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-persona-marcos-example-toronto-move-1",
+        "userInput": {
+          "fact": {
+            "category": "goals",
+            "statement": "Vai se mudar para Toronto em março com a esposa"
+          },
+          "need": "Escrever um exemplo pessoal para uma aula sobre perguntar preços em inglês"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "irrelevant", "predicted": "irrelevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": false },
+        "id": "pt-persona-marcos-example-study-time-1",
+        "userInput": {
+          "fact": { "category": "routine", "statement": "Estuda às 7h, antes do trabalho" },
+          "need": "Escrever um exemplo pessoal para uma aula sobre perguntar preços em inglês"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "relevant", "predicted": "relevant" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "relevant": true },
+        "id": "pt-persona-pedro-example-allowance-1",
+        "userInput": {
+          "fact": { "category": "goals", "statement": "Quer aprender a investir a mesada" },
+          "need": "Escrever um exemplo pessoal para uma aula sobre o que é uma ação"
+        }
+      }
+    }
+  ],
+  "taskId": "memory-relevance"
+}

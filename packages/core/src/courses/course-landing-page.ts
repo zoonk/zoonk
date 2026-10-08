@@ -2,7 +2,6 @@ import { z } from "zod";
 
 const courseLandingPageContentSchema = z.object({
   audience: z.array(z.string()),
-  opportunities: z.array(z.string()),
   outcomes: z.array(z.string()),
   valueProposition: z.string(),
 });

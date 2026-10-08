@@ -2,8 +2,6 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
 import { getAllowedHosts, getBaseUrl, getDevelopmentTrustedOrigins } from "@zoonk/utils/origin";
-import { IS_RELAUNCH_WAITLIST_ENABLED } from "@zoonk/utils/relaunch";
-import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
@@ -25,8 +23,13 @@ import {
 } from "./config";
 import { ensureUserProgressAfterAuthCreate } from "./db-hooks";
 import { createEmailOTPPlugin } from "./email-otp-plugin";
-import { validateEmailBeforeOTP, validateEmailBeforeUserCreate } from "./email-signup-policy";
+import { validateEmailBeforeOTP } from "./email-signup-policy";
+import { guardUserCreation } from "./guests/account-creation-guard";
 import { ac, admin, member, owner } from "./permissions";
+import { accessGuardsPlugin } from "./plugins/access-guards";
+import { accountMarkerPlugin } from "./plugins/account-marker";
+import { botCheckPlugin } from "./plugins/bot-check";
+import { guestPlugin } from "./plugins/guest";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
@@ -50,25 +53,18 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   databaseHooks: {
-    user: {
-      create: { after: ensureUserProgressAfterAuthCreate, before: validateEmailBeforeUserCreate },
-    },
+    user: { create: { after: ensureUserProgressAfterAuthCreate, before: guardUserCreation } },
   },
-  hooks: {
-    before: createAuthMiddleware(async (context) => {
-      if (IS_RELAUNCH_WAITLIST_ENABLED && context.path === "/subscription/upgrade") {
-        throw new APIError("FORBIDDEN", { code: "SUBSCRIPTIONS_PAUSED" });
-      }
-
-      await validateEmailBeforeOTP(context);
-    }),
-  },
+  hooks: { before: validateEmailBeforeOTP },
   session: {
     cookieCache: { enabled: IS_COOKIE_CACHE_ENABLED, maxAge: 60 * COOKIE_CACHE_MINUTES },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
   trustedOrigins: ["https://appleid.apple.com", ...getDevelopmentTrustedOrigins()],
   user: { deleteUser: { beforeDelete: deleteUserDependenciesBeforeAuthDelete, enabled: true } },
+  // Better Auth would delete every expired code on any sign-in, so a learner back with an expired
+  // code would hear it's wrong instead of expired. Expired codes stay until the daily sweep.
+  verification: { disableCleanup: true },
 };
 
 export const baseAuthPlugins = [
@@ -97,11 +93,15 @@ export const baseAuthPlugins = [
 ] as const;
 
 export const fullPlugins = [
+  botCheckPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),
   stripePlugin(),
   trustedOriginPlugin(),
+  guestPlugin(),
+  accessGuardsPlugin(),
+  accountMarkerPlugin(),
   // NextCookies should be the last plugin in the array
   nextCookies(),
 ] as const;

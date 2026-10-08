@@ -418,7 +418,10 @@ private struct ProgressOverviewCard<Content: View>: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(20)
-      .background(.background, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+      .background(
+        Color(uiColor: .secondarySystemGroupedBackground),
+        in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+      )
       .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
     .buttonStyle(.plain)
@@ -522,7 +525,10 @@ private struct ProgressOverviewLoadingView: View {
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           .padding(20)
-          .background(.background, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+          .background(
+            Color(uiColor: .secondarySystemGroupedBackground),
+            in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+          )
           .redacted(reason: .placeholder)
           .accessibilityHidden(true)
         }

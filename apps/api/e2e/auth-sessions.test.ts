@@ -130,6 +130,23 @@ test.describe("Native session API", () => {
     await apiContext.dispose();
   });
 
+  test("refuses a browser-looking request without an Origin on the product contract", async () => {
+    // Node's fetch sends fetch metadata like a browser page, so Better Auth asks it for an Origin.
+    const apiContext = await request.newContext({
+      baseURL,
+      extraHTTPHeaders: { "Sec-Fetch-Mode": "cors" },
+    });
+
+    const response = await apiContext.post("/v1/email-sign-in-codes", {
+      data: { email: INVALID_CODE_EMAIL },
+    });
+
+    expect(response.status()).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({ error: { code: "UNTRUSTED_ORIGIN" } });
+
+    await apiContext.dispose();
+  });
+
   test("treats unauthenticated sign-out as an idempotent no-op", async () => {
     const apiContext = await request.newContext({ baseURL });
     const response = await apiContext.delete("/v1/sessions/current");

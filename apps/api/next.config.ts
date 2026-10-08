@@ -1,5 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
+import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withWorkflow } from "workflow/next";
@@ -18,10 +19,23 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     // The API enables Cache Components for request deduplication, not to require every auth page to navigate instantly.
     instantInsights: { validationLevel: "manual-warning" },
+    // Next 16.4.0: a dev session restored from Turbopack's file cache can answer every HMR subscription to
+    // the client entry with "restart", so auth pages reload in a loop. The API compiles quickly from scratch.
+    turbopackFileSystemCacheForDev: false,
     turbopackRustReactCompiler: true,
     typedEnv: true,
   },
   headers: getPublicAppSecurityHeaders,
+  // Lesson code checks run model-written programs in a separate process that loads these
+  // WebAssembly runtimes from @zoonk/core's packages on disk, which tracing can't see.
+  outputFileTracingIncludes: {
+    "/.well-known/workflow/**": [
+      "../../packages/core/node_modules/{pyodide,quickjs-wasi,sql.js}/package.json",
+      "../../node_modules/.pnpm/pyodide@*/node_modules/{pyodide,ws}/**",
+      "../../node_modules/.pnpm/quickjs-wasi@*/node_modules/quickjs-wasi/**",
+      "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
+    ],
+  },
   reactCompiler: true,
   turbopack: {
     resolveAlias: { ...e2eAliases },
@@ -48,7 +62,7 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withSentryConfig(withWorkflow(withNextIntl(nextConfig)), {
+export default withSentryConfig(withWorkflow(withBotId(withNextIntl(nextConfig))), {
   org: "zoonk",
   project: "zoonk-api",
   silent: true,

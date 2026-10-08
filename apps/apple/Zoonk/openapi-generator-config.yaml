@@ -3,3 +3,41 @@ generate:
   - client
 accessModifier: internal
 namingStrategy: idiomatic
+# Generates only the operations the app calls, and the schemas they reference. Add an operation here
+# when a feature starts using it.
+filter:
+  operations:
+    - createAppleSession
+    - createAppleSubscription
+    - createEmailCodeSession
+    - createEmailSignInCode
+    - createFeedback
+    - createGoogleSession
+    - deleteCurrentSession
+    - deleteCurrentUser
+    - getChapter
+    - getChapterNextLesson
+    - getChapterProgress
+    - getCourse
+    - getCourseNextLesson
+    - getCourseProgress
+    - getCurrentUser
+    - getCurrentUserActivity
+    - getCurrentUserEnergy
+    - getCurrentUserLearningProfile
+    - getCurrentUserLevel
+    - getCurrentUserProgress
+    - getCurrentUserScore
+    - getCurrentUserScorePatterns
+    - listChapterLessons
+    - listCourseChapters
+    - listCourses
+    - listCurrentUserCourses
+    - requestPlusApproval
+    - searchCatalog
+    - updateCurrentUser
+typeOverrides:
+  schemas:
+    # The app reads only the learner's protections. The profile's buddy enums grow with the buddy,
+    # which the app doesn't show yet, so they stay free-form instead of failing the Plus check.
+    LearningProfile: OpenAPIRuntime.OpenAPIObjectContainer

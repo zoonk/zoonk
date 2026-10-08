@@ -6,6 +6,201 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Message-Key: msgctxt\n"
 
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "eq8fyl"
+msgid "End link"
+msgstr "Mettre fin au lien"
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "yXrPHy"
+msgid "Stop being {name}'s guardian?"
+msgstr "Ne plus être le tuteur de {name} ?"
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "jdTv0j"
+msgid "You'll stop seeing their week, and your daily limit, memory choice and Plus approval end. They can invite you again later."
+msgstr "Tu ne verras plus son activité de la semaine, et ta limite quotidienne, ton choix concernant la mémoire et ton autorisation de Plus prendront fin. Cette personne pourra t’inviter à nouveau plus tard."
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/app/auth/guardian/end-link-button.tsx
+msgctxt "OZbt2X"
+msgid "We couldn't end the link. Try again."
+msgstr "Impossible de mettre fin au lien. Réessaie."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "JzvSPP"
+msgid "Daily time limit"
+msgstr "Limite de temps par jour"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "PfW4AI"
+msgid "No limit"
+msgstr "Aucune limite"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "AVWDvG"
+msgid "{minutes} min a day"
+msgstr "{minutes} min par jour"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Enregistrer"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "OxnxZb"
+msgid "Daily limit saved"
+msgstr "Limite quotidienne enregistrée"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "fynQpZ"
+msgid "We couldn't save the limit. Try again."
+msgstr "On n’a pas pu enregistrer la limite. Réessaie."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "NG9KbJ"
+msgid "Off. {name} can't turn it on."
+msgstr "Désactivée. {name} ne peut pas l’activer."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "qRTS8x"
+msgid "On. Zoonk remembers {name}'s goals and how they learn, to fit examples to them."
+msgstr "Activée. Zoonk mémorise les objectifs de {name} et sa façon d’apprendre pour adapter les exemples."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "s4EmrE"
+msgid "Off. It stays off unless {name} turns it on."
+msgstr "Désactivée. Elle reste désactivée tant que {name} ne l’active pas."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "aLIOCf"
+msgid "Let {name} use memory"
+msgstr "Autoriser {name} à utiliser la mémoire"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "8ArJq7"
+msgid "We couldn't save that. Try again."
+msgstr "Impossible d’enregistrer. Réessaie."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "3-s4XD"
+msgid "You approved Plus on {date}."
+msgstr "Tu as approuvé Plus le {date}."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "U9BvCE"
+msgid "{name} needs your approval to subscribe to Plus."
+msgstr "{name} a besoin de ton accord pour s’abonner à Plus."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "330Hte"
+msgid "Approve Plus"
+msgstr "Autoriser Plus"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "Mfp11j"
+msgid "We couldn't save your approval. Try again."
+msgstr "On n’a pas pu enregistrer ton approbation. Réessaie."
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "gpodmF"
+msgid "Minutes each day"
+msgstr "Minutes par jour"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "1zggxX"
+msgid "{day}: {minutes, plural, =0 {# minutes} one {# minute} other {# minutes}}, {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}"
+msgstr "{day} : {minutes, plural, =0 {# minute} one {# minute} other {# minutes}}, {lessons, plural, =0 {# leçon} one {# leçon} other {# leçons}}"
+
+#: src/app/auth/guardian/guarded-learner-card.tsx
+msgctxt "D16ndi"
+msgid "Last 7 days: {minutes, plural, =0 {# minutes} one {# minute} other {# minutes}} and {lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}}"
+msgstr "Sur les 7 derniers jours : {minutes, plural, =0 {# minute} one {# minute} other {# minutes}} et {lessons, plural, =0 {# leçon} one {# leçon} other {# leçons}}"
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "arjdPf"
+msgid "Confirm your email address first, then open the invite again."
+msgstr "Confirme d’abord ton adresse e-mail, puis rouvre l’invitation."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "6ychX4"
+msgid "This invite was sent to another email. Sign in with that email to accept it."
+msgstr "Cette invitation a été envoyée à une autre adresse e-mail. Connecte-toi avec cette adresse pour l’accepter."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "VWppro"
+msgid "This invite expired. Ask for a new one."
+msgstr "Cette invitation a expiré. Demande-en une nouvelle."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "NKNtUt"
+msgid "Sign in with the email this invite was sent to."
+msgstr "Connecte-toi avec l’adresse e-mail à laquelle cette invitation a été envoyée."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "S3n5VD"
+msgid "We couldn't find this invite. It may have been canceled."
+msgstr "On n’a pas trouvé cette invitation. Elle a peut-être été annulée."
+
+#: src/app/auth/guardian/guardian-accept.tsx
+msgctxt "8YMK0-"
+msgid "Accept invite"
+msgstr "Accepter l’invitation"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "poUf8i"
+msgid "Guardian"
+msgstr "Parent ou tuteur"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "je39I0"
+msgid "Sign in with the email this invite was sent to. It's free."
+msgstr "Connecte-toi avec l’adresse e-mail à laquelle cette invitation a été envoyée. C’est gratuit."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "ZJzI65"
+msgid "Sign in to see the learners who invited you."
+msgstr "Connecte-toi pour voir les apprenants qui t’ont invité."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "szo7Rq"
+msgid "Sign in to continue"
+msgstr "Connecte-toi pour continuer"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "lSvmLC"
+msgid "Accept the invite"
+msgstr "Accepter l’invitation"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "gtva5X"
+msgid "As their guardian, you'll see their weekly activity and can set a daily time limit, turn memory off and approve Plus. You won't see their answers or messages."
+msgstr "En tant que parent ou tuteur, tu verras son activité hebdomadaire et tu pourras fixer une limite de temps quotidienne, désactiver la mémoire et autoriser Plus. Tu ne verras pas ses réponses ni ses messages."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "JPtSV8"
+msgid "Your learners"
+msgstr "Tes apprenants"
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "xltR8k"
+msgid "Invite accepted. Here's their week and the controls you can set."
+msgstr "Invitation acceptée. Voici son activité de la semaine et les réglages que tu peux modifier."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "UmTQLH"
+msgid "Their last seven days and the controls you can set."
+msgstr "Son activité des sept derniers jours et les réglages que tu peux modifier."
+
+#: src/app/auth/guardian/page.tsx
+msgctxt "n19CR6"
+msgid "No learner has invited you yet. Invites arrive by email."
+msgstr "Aucun apprenant ne t’a encore invité. Les invitations arrivent par e-mail."
+
 #: src/app/auth/layout.tsx
 msgctxt "dVItHD"
 msgid "Sign in to Zoonk"
@@ -71,9 +266,59 @@ msgid "Continue with Apple"
 msgstr "Continuer avec Apple"
 
 #: src/app/auth/otp/otp-form.tsx
-msgctxt "HkHvQv"
-msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
-msgstr "Le code saisi est incorrect. Réessaie ou contacte hello@zoonk.com"
+msgctxt "_8e0dn"
+msgid "Something went wrong. Try again in a moment."
+msgstr "Un problème est survenu. Réessaie dans un instant."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "__wP3o"
+msgid "This code expired. Get a new one."
+msgstr "Ce code a expiré. Demande un nouveau code."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "hUjCDW"
+msgid "Too many tries. Wait a minute, then try again."
+msgstr "Tu as fait trop de tentatives. Attends une minute, puis réessaie."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "P-D93T"
+msgid "Too many wrong tries with this code. Get a new one."
+msgstr "Tu as essayé trop de fois avec ce code. Demande-en un nouveau."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "AFMAKd"
+msgid "That code isn't right. Check the email and try again."
+msgstr "Ce code est incorrect. Vérifie l’e-mail et réessaie."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "U2LhAf"
+msgid "We sent a new code to {email}."
+msgstr "On a envoyé un nouveau code à {email}."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "E05GNf"
+msgid "Wait a minute before asking for another code."
+msgstr "Attends une minute avant de demander un autre code."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "bWxjFV"
+msgid "We couldn't send a new code. Try again."
+msgstr "On n’a pas pu envoyer de nouveau code. Réessaie."
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "5UeJRL"
+msgid "Code from the email"
+msgstr "Code reçu par e-mail"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "gdlGkp"
+msgid "Send a new code"
+msgstr "Envoyer un nouveau code"
+
+#: src/app/auth/otp/otp-form.tsx
+msgctxt "3WXGFW"
+msgid "Didn't get it? Send a new code"
+msgstr "Tu n’as rien reçu ? Envoie un nouveau code"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "ChATeO"
@@ -86,19 +331,19 @@ msgid "Check your email"
 msgstr "Consulte tes e-mails"
 
 #: src/app/auth/otp/page.tsx
-msgctxt "LZHcmZ"
-msgid "Enter the code we sent to {email}:"
-msgstr "Saisis le code envoyé à {email} :"
+msgctxt "AmelVC"
+msgid "Enter the code we sent to {email}."
+msgstr "Saisis le code envoyé à {email}."
 
 #: src/app/auth/setup/page.tsx
-msgctxt "CYqIel"
-msgid "Complete your profile"
-msgstr "Complète ton profil"
+msgctxt "CjpGzJ"
+msgid "Create your profile"
+msgstr "Crée ton profil"
 
 #: src/app/auth/setup/page.tsx
-msgctxt "7463XU"
-msgid "Choose a name and username before continuing."
-msgstr "Choisis un nom et un nom d’utilisateur avant de continuer."
+msgctxt "jN5Gqb"
+msgid "Your name and a username. You can change both later in your profile."
+msgstr "Ton nom et un nom d’utilisateur. Tu pourras modifier les deux plus tard dans ton profil."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "1SvspN"
@@ -118,7 +363,7 @@ msgstr "{username} est déjà pris"
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "vLl7z0"
 msgid "3-30 characters. Letters, numbers, and underscores only."
-msgstr "3 à 30 caractères. Lettres, chiffres et tirets bas uniquement."
+msgstr "3 à 30 caractères. Lettres, chiffres et traits de soulignement uniquement."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "HAlOn1"
@@ -131,14 +376,9 @@ msgid "Username"
 msgstr "Nom d’utilisateur"
 
 #: src/app/auth/setup/setup-form.tsx
-msgctxt "XLl_pd"
-msgid "your-username"
-msgstr "ton-nom-utilisateur"
-
-#: src/app/auth/setup/setup-form.tsx
-msgctxt "yCCLud"
-msgid "Failed to set up your profile. Please try again or contact hello@zoonk.com"
-msgstr "Impossible de configurer ton profil. Réessaie ou contacte hello@zoonk.com"
+msgctxt "bz5AYp"
+msgid "We couldn't save your profile. Try again."
+msgstr "On n’a pas pu enregistrer ton profil. Réessaie."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "1vqX2W"
@@ -151,16 +391,76 @@ msgid "The destination URL is not recognized as a trusted Zoonk application."
 msgstr "L’URL de destination n’est pas reconnue comme une application Zoonk de confiance."
 
 #: src/app/auth/untrusted-origin/page.tsx
-msgctxt "wkO19y"
-msgid "Security warning"
-msgstr "Avertissement de sécurité"
-
-#: src/app/auth/untrusted-origin/page.tsx
-msgctxt "585u5Z"
-msgid "For your safety, we cannot redirect you to an unrecognized destination."
-msgstr "Pour ta sécurité, nous ne pouvons pas te rediriger vers une destination non reconnue."
-
-#: src/app/auth/untrusted-origin/page.tsx
 msgctxt "-e4BVR"
 msgid "Continue to Zoonk"
 msgstr "Continuer vers Zoonk"
+
+#: src/components/auth-frame.tsx
+msgctxt "m-X1D0"
+msgid "Back to Zoonk"
+msgstr "Retour à Zoonk"
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "Sd1Qq1"
+msgid "Below is a short test on {chapter}: passing it skips the lessons you already know."
+msgstr "Tu trouveras ci-dessous un petit test sur {chapter} : si tu le réussis, tu peux passer les leçons que tu connais déjà."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "OPj8y4"
+msgid "Below you can choose where to focus, or take a short test that chooses for you."
+msgstr "Ci-dessous, tu peux choisir sur quoi te concentrer, ou passer un petit test qui choisira à ta place."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "ejo0Qg"
+msgid "Below you can start a short practice call whenever you're ready."
+msgstr "Tu peux lancer ci-dessous un petit appel d’entraînement quand tu veux."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "c7OWI5"
+msgid "Below you can see when your plan practices {subject}."
+msgstr "Tu trouveras ci-dessous quand ton plan travaille {subject}."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "zPC6bz"
+msgid "Below is your week in review."
+msgstr "Tu trouveras ci-dessous le récapitulatif de ta semaine."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "CinPvg"
+msgid "Below you can see and change what I remember about you."
+msgstr "Tu peux voir et modifier ci-dessous ce que je retiens de toi."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "u6lEYv"
+msgid "Below is your mistakes notebook, with practice for each one."
+msgstr "Tu trouveras ci-dessous ton carnet d’erreurs, avec des exercices pour chacune."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "qmjNYT"
+msgid "Below you can choose a mock exam to take now."
+msgstr "Ci-dessous, tu peux choisir un examen blanc à passer maintenant."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "aK1CcD"
+msgid "Below is the Plus page."
+msgstr "La page Plus se trouve ci-dessous."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "KAqcUe"
+msgid "Below you can say again the words that were hard to pronounce."
+msgstr "Tu peux répéter ci-dessous les mots que tu as eu du mal à prononcer."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "BXdAAo"
+msgid "I've put the change to your plan below. Nothing changes until you apply it."
+msgstr "Tu trouveras ci-dessous le changement proposé pour ton plan. Rien ne changera tant que tu ne l’auras pas appliqué."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "cVQNWB"
+msgid "Below you can start it as a new goal."
+msgstr "Tu peux le commencer comme nouvel objectif ci-dessous."
+
+#: src/lib/tutor-confirmation.ts
+msgctxt "40I13C"
+msgid "Below are your statistics."
+msgstr "Tes statistiques sont ci-dessous."

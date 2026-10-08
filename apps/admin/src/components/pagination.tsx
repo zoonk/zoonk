@@ -1,3 +1,4 @@
+import { type AdminQueryParams, buildAdminHref } from "@/lib/admin-href";
 import {
   Pagination,
   PaginationContent,
@@ -8,20 +9,6 @@ import {
   PaginationPrevious,
 } from "@zoonk/ui/components/pagination";
 import Link from "next/link";
-
-type AdminPaginationPath =
-  | "/course-prompts"
-  | "/courses"
-  | "/leaderboard"
-  | "/lessons"
-  | "/questions"
-  | "/stats/engagement/learners"
-  | "/subscriptions"
-  | "/users";
-
-type PaginationQueryParams = Record<string, string | undefined>;
-type PaginationEntry = [string, string | undefined] | undefined;
-type PaginationHref = `${AdminPaginationPath}?${string}`;
 
 /**
  * Pagination links need to carry page state plus route-specific filters, such
@@ -34,30 +21,16 @@ function buildPageUrl({
   queryParams,
   search,
 }: {
-  basePath: AdminPaginationPath;
+  basePath: string;
   limit: number;
   pageNumber: number;
-  queryParams?: PaginationQueryParams;
+  queryParams?: AdminQueryParams;
   search?: string;
-}): PaginationHref {
-  const rawEntries: PaginationEntry[] = [
-    ...Object.entries(queryParams ?? {}),
-    ["page", pageNumber.toString()],
-    ["limit", limit.toString()],
-    search ? ["search", search] : undefined,
-  ];
-
-  const entries = rawEntries.filter((entry) => isPaginationEntry(entry));
-
-  return `${basePath}?${new URLSearchParams(entries).toString()}`;
-}
-
-/**
- * URLSearchParams only accepts complete string pairs. This guard lets callers
- * build declarative conditional arrays without leaking falsey placeholders.
- */
-function isPaginationEntry(entry: PaginationEntry): entry is [string, string] {
-  return Array.isArray(entry) && Boolean(entry[1]);
+}): string {
+  return buildAdminHref({
+    params: { ...queryParams, limit: limit.toString(), page: pageNumber.toString(), search },
+    path: basePath,
+  });
 }
 
 function getVisiblePageNumbers(currentPage: number, totalPages: number): number[] {
@@ -87,11 +60,11 @@ function AdminPaginationPageLink({
   queryParams,
   search,
 }: {
-  basePath: AdminPaginationPath;
+  basePath: string;
   currentPage: number;
   limit: number;
   pageNumber: number;
-  queryParams?: PaginationQueryParams;
+  queryParams?: AdminQueryParams;
   search?: string;
 }) {
   const isActive = pageNumber === currentPage;
@@ -119,10 +92,10 @@ export function AdminPagination({
   search,
   totalPages,
 }: {
-  basePath: AdminPaginationPath;
+  basePath: string;
   limit: number;
   page: number;
-  queryParams?: PaginationQueryParams;
+  queryParams?: AdminQueryParams;
   search?: string;
   totalPages: number;
 }) {

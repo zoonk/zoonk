@@ -1,5 +1,5 @@
 import { type Subscription, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
-import { revalidateTag } from "next/cache";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
 import { type AppleSubscriptionProduct } from "./apple-products";
 import { type VerifiedAppleSubscription } from "./apple-store-payload";
@@ -143,6 +143,6 @@ export async function reconcileAppleSubscription(input: ReconcileAppleSubscripti
     ? updateExistingAppleSubscription({ existing, input })
     : createAppleSubscription(input));
 
-  revalidateTag(getUserSubscriptionCacheTag(input.referenceId), { expire: 0 });
+  revalidateCacheTags([getUserSubscriptionCacheTag(input.referenceId)]);
   return subscription;
 }

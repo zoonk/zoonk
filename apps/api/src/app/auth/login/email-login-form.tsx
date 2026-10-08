@@ -8,7 +8,7 @@ import {
   LoginForm,
   LoginSubmit,
 } from "@/components/login";
-import { trackSignInMethodChosen } from "@/lib/track-events";
+import { trackEvent } from "@zoonk/core/analytics/client";
 import { useExtracted } from "next-intl";
 import { useActionState } from "react";
 import { sendVerificationOTPAction } from "./actions";
@@ -22,7 +22,7 @@ const initialEmailLoginState = { status: "idle" as const };
  * Keeping this as a focused client component lets the login page itself stay a
  * Server Component while still showing recoverable form errors.
  */
-export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
+export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
   const t = useExtracted();
   const [state, formAction] = useActionState(sendVerificationOTPAction, initialEmailLoginState);
   const hasError = state.status !== "idle";
@@ -37,7 +37,10 @@ export function EmailLoginForm({ redirectTo }: { redirectTo?: string }) {
   }[state.status];
 
   return (
-    <LoginForm action={formAction} onSubmit={() => trackSignInMethodChosen({ method: "otp" })}>
+    <LoginForm
+      action={formAction}
+      onSubmit={() => trackEvent({ name: "Sign In Method Chosen", properties: { method: "otp" } })}
+    >
       <input name="redirectTo" type="hidden" value={redirectTo ?? ""} />
 
       <LoginField>

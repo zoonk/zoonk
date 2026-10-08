@@ -1,0 +1,445 @@
+{
+  "modelId": "openai/gpt-6-luna",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The face-to-face restaurant interaction directly covers requesting a table, ordering food and drinks, and requesting the bill. Paulo is a plausible Brazilian waiter, and the menu prices in reais are realistic.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening is brief, greets the learner, identifies Paulo, and invites a response without completing an objective. The hints are short, usable A1 utterances covering all three objectives. 'Pois não?' is a conventional Brazilian service expression.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are three speech-checkable objectives in natural chronological order, achievable within a short conversation. Each Portuguese label starts with a verb and contains three words. The descriptions specify concrete actions; their language mismatch is assessed separately under languages.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief specifies personality, A1 speech, concrete menu items and prices, table availability, payment methods, and how to calculate and present the bill. It supplies one simple seating twist, a clear wrap-up, and explicit instructions not to perform the learner's goals.",
+          "score": 10,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The objective descriptions use Spanish, including 'Pide una mesa y di para cuántas personas,' instead of US English. This triggers the explicit maximum score of 5 for a field in the wrong language. The remaining fields follow the required language assignments, with Brazilian Portuguese learner utterances and no emojis or em dashes.",
+          "score": 5,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2056,
+          "inputTokens": 2059,
+          "outputTokens": 722,
+          "reasoningTokens": 210
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All three objective descriptions are in Spanish rather than US English. This violates the learner-language requirement and makes essential instructions less accessible to the intended learner.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Brazilian Portuguese at A1, at a restaurant. A face-to-face order or a call to a restaurant, with a Brazilian name and reais. Opening line and hints very short (A1): \"Eu quero...\", \"A conta, por favor\". Brazilian words (\"cardápio\", not \"ementa\"). Title, situation and descriptions in US English.",
+        "id": "en-pt-a1-restaurant-1",
+        "userInput": {
+          "canDo": ["Ask for a table", "Order food and drinks", "Ask for the bill"],
+          "learnerLanguage": "en",
+          "level": "A1",
+          "targetLanguage": "pt",
+          "unitDescription": "Ask for a table, order and pay at a restaurant",
+          "unitTitle": "At a restaurant"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "This is an everyday US clinic call directly practicing appointment booking and explaining symptoms and their duration. Sarah is a plausible receptionist, the clinic name and appointment times are realistic, and the brief appropriately avoids diagnosis or medication recommendations.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening greets, identifies Sarah and the clinic, and invites the learner to speak without completing an objective. It and all hints are short and accessible at B1. The hints are usable complete sentences, including an appropriate present-perfect sentence with 'since' and a polite appointment request.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The two objectives are achievable within a short call and follow a plausible sequence: explain the problem, then arrange the appointment. Both labels start with verbs and contain two to five words. The Portuguese descriptions specify speech-checkable symptoms, duration, and appointment confirmation.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, B1 guidance, concrete appointment availability, an address, required documents, safe handling of treatment questions, and a clear closing. It explicitly leaves symptom explanation and booking to the learner. The unavailable-slot twist is supported by a matching hint, though making it less dependent on one exact requested time would improve robustness.",
+          "score": 9,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions use natural Brazilian Portuguese. The place, opening, objective labels, and hints use appropriate US English, and the brief is in English. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2013,
+          "inputTokens": 2016,
+          "outputTokens": 863,
+          "reasoningTokens": 327
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the unavailable-time twist less dependent on requesting Tuesday at exactly 10:30. The matching hint supports it, but a learner using different wording or requesting another time could bypass the intended complication.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at B1, at the doctor. A call to a clinic receptionist to book an appointment and explain symptoms and since when, with a small twist (the first time is taken). Opening line and hints at B1 (up to about 15 words, connectors). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-b1-doctor-1",
+        "userInput": {
+          "canDo": [
+            "Marcar uma consulta",
+            "Explicar sintomas e desde quando",
+            "Entender as instruções do remédio"
+          ],
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "targetLanguage": "en",
+          "unitDescription": "Marque uma consulta, explique o que está sentindo e entenda as instruções",
+          "unitTitle": "No médico e na farmácia"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The apartment inquiry directly matches the unit and its practical speaking goals. Emma is a plausible US real estate agent, and the Chicago location, dollar rent, and viewing times are realistic.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening is short, identifies Emma, and invites the learner to speak without supplying objective answers. The hints are complete, usable A2 questions covering availability, rent, included bills, and requesting a visit. An additional confirmation hint would provide useful support for the scheduling twist.",
+          "score": 9,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives follow a natural call sequence and are achievable in a short conversation. Each is checkable from speech, has a verb-led label of two to five words, and has a clear description of what to ask or confirm.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies personality, explicit A2 instructions, availability, rent, included and excluded utilities, an address, and concrete viewing times. It includes one simple scheduling twist, protects learner agency, and explains when to wrap up.",
+          "score": 10,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "The title, situation, role, and objective descriptions are natural Brazilian Portuguese. The place, opening, objective labels, and hints are in English appropriate to the US context, and the brief is in English. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2362,
+          "inputTokens": 2365,
+          "outputTokens": 711,
+          "reasoningTokens": 207
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Consider adding a short confirmation hint, such as \"Saturday at 1:30 p.m. works for me.\" This would help the learner respond to the scheduling twist and finish booking the visit.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.",
+        "id": "pt-en-a2-renting-1",
+        "userInput": {
+          "canDo": [
+            "Ligar para marcar uma visita a um apartamento",
+            "Perguntar o que está incluído no aluguel",
+            "Entender um anúncio de aluguel"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
+          "unitTitle": "Alugando um apartamento"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The call directly practices asking about rent, the deposit, included expenses, and a viewing. Lucía is a plausible landlord in Madrid, and the address, euro amounts, and viewing times fit the setting. The scenario is everyday, safe, and within the unit.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening is short, introduces Lucía, and invites the learner to speak without supplying objective answers. The hints are complete, usable A2 questions with straightforward structures and relevant rental vocabulary.",
+          "score": 10,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "The three objectives follow a natural call sequence and are achievable in a short conversation. Each is checkable from speech, has a verb-led Spanish label of two to five words, and includes a clear English description.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief specifies personality, A2 speech, rent, deposit, included and excluded expenses, address, and available viewing times. It provides one simple scheduling twist, clear closing instructions, and an explicit direction not to complete the learner's goals before they ask.",
+          "score": 10,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use their required languages. The Spanish uses natural Spain vocabulary, including piso, fianza, and gastos, with an appropriate informal register. The English fields are concise and natural, and there are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2352,
+          "inputTokens": 2355,
+          "outputTokens": 740,
+          "reasoningTokens": 274
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "US English speaker learning Spain Spanish at A2, renting a flat in Madrid. A call to a landlord (\"casero\" or \"propietaria\") about a \"piso\", with euros, Spain vocabulary (\"fianza\", \"gastos\", \"piso\", not \"departamento\") and \"usted\" or natural Spain register. Opening line and hints short (A2). Title, situation and descriptions in US English.",
+        "id": "en-es-a2-renting-1",
+        "userInput": {
+          "canDo": ["Call about a flat", "Ask what's included", "Arrange a viewing"],
+          "learnerLanguage": "en",
+          "level": "A2",
+          "targetLanguage": "es",
+          "unitDescription": "Find a flat, ask about the rent and the deposit, and arrange a viewing",
+          "unitTitle": "Renting a flat in Madrid"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The scenario directly practices IELTS Speaking and explicitly identifies itself as a short, unofficial mock. Emma is a plausible US first name, her examiner role is neutral, and Test Room is an appropriate short place name. The topics are everyday and safe.",
+          "score": 10,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening appropriately greets the candidate, identifies the examiner, and asks the first Part 1 question in accessible English. The hints use B1-accessible language, but three are incomplete sentence starters and the set offers little specific support for the cue-card description. Neither the opening nor most hints are clearly above B1, so the level cap does not apply.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are exactly three objectives, using the expected IELTS part labels in the correct order. Their Portuguese descriptions specify observable spoken performance and fit the short mock's scope and approximate duration.",
+          "score": 10,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief provides a neutral examiner personality, ordered Part 1 and Part 3 questions, and the full semantic content of the Part 2 cue card: topic plus four prompts. Part 3's public-space discussion is linked to the place topic, and correction and grading are expressly prohibited. However, there is no B1-level speaking instruction or closing procedure. The required script facts are present, so the missing-facts cap does not apply.",
+          "score": 8,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "Title, situation, role, and objective descriptions are in natural Brazilian Portuguese. Place, opening, objective labels, and hints are in English, and the brief is in English with US English explicitly requested. There are no emojis or em dashes and no wrong-language fields.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2739,
+          "inputTokens": 2742,
+          "outputTokens": 891,
+          "reasoningTokens": 253
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Three of the four hints are unfinished sentence starters rather than complete sentences the learner can say as written, and none specifically supports sustaining the Part 2 description. The brief does not instruct the examiner to speak at B1 level and instead emphasizes unsimplified wording. It also lacks an instruction or line for closing the mock.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Present the Part 2 topic and its four prompts as a clearly separated cue card rather than embedding them in one spoken paragraph. All four required prompts are already present, so this would improve usability rather than supply missing content.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "IELTS Speaking practice mock for a Brazilian candidate at B1. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are the three parts in order with labels like \"Part 1: About you\", \"Part 2: Cue card\", \"Part 3: Discussion\", and the brief has the Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and Part 3 questions linked to the cue card topic, run in about 5 minutes. The opening line is the examiner's greeting and first question. Title and situation call it a practice mock in Brazilian Portuguese, never an official test. Hints are phrases to keep talking.",
+        "id": "pt-en-b1-ielts-speaking-1",
+        "userInput": {
+          "canDo": [
+            "Responder perguntas sobre você, sua rotina e seus interesses",
+            "Falar por cerca de um minuto sobre o tema de um cartão",
+            "Discutir ideias mais gerais ligadas ao tema do cartão"
+          ],
+          "learnerLanguage": "pt",
+          "level": "B1",
+          "targetLanguage": "en",
+          "unitDescription": "Um simulado curto das três partes do exame em cerca de 5 minutos: Parte 1 com perguntas sobre você, Parte 2 com um cartão para falar por cerca de um minuto e Parte 3 com uma discussão sobre o tema.",
+          "unitTitle": "IELTS Speaking test"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "unitFit",
+          "reasoning": "The campus mock fits the unit, uses a plausible neutral examiner named Emma, and explicitly avoids claiming official status. However, the title and situation do not fully communicate the required comparison with the longer real section.",
+          "score": 8,
+          "label": "Fits the unit and real life",
+          "weight": 25
+        },
+        {
+          "categoryId": "level",
+          "reasoning": "The opening uses accessible instructions and correctly ends with the first repetition sentence. The hints are mostly suitable for A2, but statements such as 'I have one reason for my opinion' and 'For example, I can share a personal experience' provide little substantive support for answering the interview questions. Simple model reasons, examples, and predictions would be more useful.",
+          "score": 8,
+          "label": "At the learner's level",
+          "weight": 20
+        },
+        {
+          "categoryId": "objectives",
+          "reasoning": "There are exactly two observable objectives, with the required task names in the correct order. Their scope fits the five-minute mock. The interview description could more clearly signal that the learner will also make a prediction.",
+          "score": 9,
+          "label": "Objectives",
+          "weight": 25
+        },
+        {
+          "categoryId": "brief",
+          "reasoning": "The English brief supplies an executable examiner script, prohibits correction and grading, and enforces one delivery per item. The seven campus sentences grow from 5 to 19 words, with dependent and relative clauses in the later items. A one-sentence introduction precedes four interview prompts progressing through personal routine, experience, opinion, and prediction, with about 45 seconds each. The wrap-up instruction is adequate, though an exact closing line would improve consistency.",
+          "score": 9,
+          "label": "Character brief",
+          "weight": 15
+        },
+        {
+          "categoryId": "languages",
+          "reasoning": "All fields use the required languages: natural Brazilian Portuguese for the title, situation, role, and objective descriptions; US English for the place, opening, labels, and hints; and English for the brief. There are no emojis or em dashes.",
+          "score": 10,
+          "label": "Right language per field",
+          "weight": 15
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 2863,
+          "inputTokens": 2866,
+          "outputTokens": 1125,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The shorter-than-real framing is incomplete: the title does not identify a shortened mock, and the situation gives five minutes without explicitly comparing it with the real section. The hints are usable sentences but mostly announce an answer strategy rather than help deliver an actual reason, example, or prediction.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Explicitly mention a prediction in the interview objective description. Give the examiner a short closing line to make the ending as consistent as the scripted opening.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "TOEFL iBT Speaking practice mock for a Brazilian candidate at A2, with the unit core sends. The character is the examiner (role \"examinador\" or \"examinadora\"), the objectives are \"Listen and Repeat\" then \"Take an Interview\", and the brief has a campus or academic setting with seven original sentences that start at about 5 words and grow to 14 to 20 with dependent or relative clauses, then a one-sentence interview introduction and four questions going from a brief fact about the candidate to describing an experience, an opinion on a broader issue and a prediction, each said once with about 45 seconds per answer. The opening line greets, gives the Listen and Repeat directions and the setting, and ends with the first sentence. Title and situation, in Brazilian Portuguese, call it a practice mock shorter than the real section, never an official test. Hints help interview answers (a reason, an example, a prediction) at A2 and never ask the examiner to repeat.",
+        "id": "pt-en-a2-toefl-speaking-1",
+        "userInput": {
+          "canDo": [
+            "Listen and Repeat: repeat seven sentences exactly as you hear them, in a campus or academic setting, each longer and more complex than the last",
+            "Take an Interview: answer four interview questions, from facts about yourself to opinions, explanations and predictions, for up to about 45 seconds each"
+          ],
+          "learnerLanguage": "pt",
+          "level": "A2",
+          "targetLanguage": "en",
+          "unitDescription": "A short mock of the TOEFL iBT Speaking section: its two tasks compressed into about five minutes instead of about eight, with an examiner who says each sentence and question once.",
+          "unitTitle": "TOEFL iBT Speaking section"
+        }
+      }
+    }
+  ],
+  "taskId": "conversation-scenario"
+}

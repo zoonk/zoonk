@@ -1,16 +1,19 @@
-import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contract";
-import { getGenerationLimit } from "@zoonk/core/generation-quotas/parse-limit";
 import {
   type CreateLessonQuestionInput,
   type GetLessonQuestionThreadInput,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
+  type TutorTarget,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { DefaultChatTransport, type UIMessageChunk } from "ai";
-import { getLessonQuestionLimitRetryAt } from "./lesson-question-limit";
+import {
+  type LessonQuestionUsageRefusal,
+  getRefusalError,
+  isRefusal,
+} from "./lesson-question-usage";
+import { getTutorQuestionsPath } from "./tutor-questions-path";
 
 export type LessonQuestionConnection = {
   apiUrl: string;
@@ -26,8 +29,8 @@ type LessonQuestionApiErrorKind =
   | "unknown";
 
 export type LessonQuestionApiError =
-  | { kind: LessonQuestionApiErrorKind }
-  | { kind: "limit"; limit: GenerationQuotaLimit; retryAt: string };
+  | LessonQuestionUsageRefusal
+  | { kind: LessonQuestionApiErrorKind };
 
 export type LessonQuestionApiResult<Value> =
   | { data: Value; status: "success" }
@@ -35,19 +38,17 @@ export type LessonQuestionApiResult<Value> =
 
 const HTTP_STATUS_BAD_REQUEST = 400;
 const HTTP_STATUS_UNAUTHORIZED = 401;
-const HTTP_STATUS_PAYMENT_REQUIRED = 402;
 const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_CONFLICT = 409;
-const HTTP_STATUS_TOO_MANY_REQUESTS = 429;
 const HTTP_STATUS_UNPROCESSABLE_ENTITY = 422;
 
-async function getApiError(response: Response): Promise<LessonQuestionApiError> {
+export async function getApiError(response: Response): Promise<LessonQuestionApiError> {
   if (response.status === HTTP_STATUS_UNAUTHORIZED) {
     return { kind: "authentication" };
   }
 
-  if (response.status === HTTP_STATUS_PAYMENT_REQUIRED) {
-    return { kind: "subscription" };
+  if (isRefusal(response)) {
+    return getRefusalError(response);
   }
 
   if (response.status === HTTP_STATUS_NOT_FOUND) {
@@ -56,19 +57,6 @@ async function getApiError(response: Response): Promise<LessonQuestionApiError> 
 
   if (response.status === HTTP_STATUS_CONFLICT) {
     return { kind: "conflict" };
-  }
-
-  if (response.status === HTTP_STATUS_TOO_MANY_REQUESTS) {
-    const { data } = await safeAsync<unknown>(() => response.json());
-    const limit = getGenerationLimit(data);
-
-    return limit
-      ? {
-          kind: "limit",
-          limit,
-          retryAt: getLessonQuestionLimitRetryAt({ now: new Date(), period: limit.period }),
-        }
-      : { kind: "unknown" };
   }
 
   if (
@@ -81,14 +69,14 @@ async function getApiError(response: Response): Promise<LessonQuestionApiError> 
   return { kind: "unknown" };
 }
 
-function lessonQuestionsUrl({
+function questionsUrl({
   connection,
   contextKind,
   cursor,
-  lessonId,
   stepId,
-}: { connection: LessonQuestionConnection; lessonId: string } & GetLessonQuestionThreadInput) {
-  const url = new URL(`/v1/lessons/${encodeURIComponent(lessonId)}/questions`, connection.apiUrl);
+  target,
+}: { connection: LessonQuestionConnection; target: TutorTarget } & GetLessonQuestionThreadInput) {
+  const url = new URL(getTutorQuestionsPath(target), connection.apiUrl);
 
   if (cursor) {
     url.searchParams.set("cursor", cursor);
@@ -105,7 +93,7 @@ function lessonQuestionsUrl({
   return url.toString();
 }
 
-function questionUrl({
+export function questionUrl({
   connection,
   questionId,
 }: {
@@ -115,57 +103,24 @@ function questionUrl({
   return new URL(`/v1/questions/${encodeURIComponent(questionId)}`, connection.apiUrl);
 }
 
-function questionAnswerUrl({
-  connection,
-  questionId,
-}: {
-  connection: LessonQuestionConnection;
-  questionId: string;
-}) {
-  return new URL(
-    `${questionUrl({ connection, questionId }).pathname}/answers`,
-    connection.apiUrl,
-  ).toString();
-}
-
 async function getJsonHeaders(connection: LessonQuestionConnection) {
   return { ...(await connection.getHeaders()), "Content-Type": "application/json" };
 }
-
-class LessonQuestionAnswerRequestError extends Error {
-  readonly apiError: LessonQuestionApiError;
-
-  constructor(apiError: LessonQuestionApiError) {
-    super("Lesson question answer request failed");
-    this.apiError = apiError;
-    this.name = "LessonQuestionAnswerRequestError";
-  }
-}
-
-const fetchLessonQuestionAnswer: typeof fetch = async (input, init) => {
-  const response = await fetch(input, init);
-
-  if (!response.ok) {
-    throw new LessonQuestionAnswerRequestError(await getApiError(response));
-  }
-
-  return response;
-};
 
 export async function getLessonQuestionThreadRequest({
   connection,
   contextKind,
   cursor,
-  lessonId,
   stepId,
+  target,
 }: {
   connection: LessonQuestionConnection;
-  lessonId: string;
+  target: TutorTarget;
 } & GetLessonQuestionThreadInput): Promise<
   LessonQuestionApiResult<LessonQuestionThreadResource | null>
 > {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(lessonQuestionsUrl({ connection, contextKind, cursor, lessonId, stepId }), {
+    fetch(questionsUrl({ connection, contextKind, cursor, stepId, target }), {
       cache: "no-store",
       headers: await connection.getHeaders(),
     }),
@@ -192,14 +147,14 @@ export async function getLessonQuestionThreadRequest({
 export async function createLessonQuestionRequest({
   connection,
   input,
-  lessonId,
+  target,
 }: {
   connection: LessonQuestionConnection;
   input: CreateLessonQuestionInput;
-  lessonId: string;
+  target: TutorTarget;
 }): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(lessonQuestionsUrl({ connection, lessonId }), {
+    fetch(questionsUrl({ connection, target }), {
       body: JSON.stringify(input),
       cache: "no-store",
       headers: await getJsonHeaders(connection),
@@ -258,74 +213,4 @@ export async function getLessonQuestionRequest({
   }
 
   return { data: parsed.data, status: "success" };
-}
-
-async function readAnswerStream({
-  onChunk,
-  reader,
-}: {
-  onChunk: (chunk: string) => void;
-  reader: ReadableStreamDefaultReader<UIMessageChunk>;
-}): Promise<number> {
-  const result = await reader.read();
-
-  if (result.done) {
-    return 0;
-  }
-
-  if (result.value.type === "error") {
-    throw new Error(result.value.errorText);
-  }
-
-  if (result.value.type !== "text-delta") {
-    return readAnswerStream({ onChunk, reader });
-  }
-
-  onChunk(result.value.delta);
-
-  return result.value.delta.length + (await readAnswerStream({ onChunk, reader }));
-}
-
-export async function streamLessonQuestionAnswerRequest({
-  connection,
-  onChunk,
-  questionId,
-}: {
-  connection: LessonQuestionConnection;
-  onChunk: (chunk: string) => void;
-  questionId: string;
-}): Promise<LessonQuestionApiResult<null>> {
-  const transport = new DefaultChatTransport({
-    api: questionAnswerUrl({ connection, questionId }),
-    fetch: fetchLessonQuestionAnswer,
-    headers: connection.getHeaders,
-  });
-
-  const { data: stream, error } = await safeAsync(() =>
-    transport.sendMessages({
-      abortSignal: undefined,
-      chatId: questionId,
-      messageId: undefined,
-      messages: [],
-      trigger: "submit-message",
-    }),
-  );
-
-  if (error instanceof LessonQuestionAnswerRequestError) {
-    return { error: error.apiError, status: "error" };
-  }
-
-  if (error || !stream) {
-    return { error: { kind: "unknown" }, status: "error" };
-  }
-
-  const { data: characterCount, error: streamError } = await safeAsync(() =>
-    readAnswerStream({ onChunk, reader: stream.getReader() }),
-  );
-
-  if (streamError || !characterCount) {
-    return { error: { kind: "unknown" }, status: "error" };
-  }
-
-  return { data: null, status: "success" };
 }

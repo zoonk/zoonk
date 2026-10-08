@@ -13,21 +13,30 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
       centered:
         "bg-background mx-auto min-h-dvh max-w-sm items-center justify-center py-4 lg:gap-8",
       default: "",
-      grid: "gap-5 px-4 pb-8 **:data-[slot=container-description]:text-base **:data-[slot=container-header]:px-0 **:data-[slot=container-title]:text-2xl **:data-[slot=container-title]:md:text-3xl",
+      grid: "gap-5 px-4 pb-8 **:data-[slot=container-header]:px-0 **:data-[slot=container-title]:text-2xl **:data-[slot=container-title]:font-bold sm:px-8 **:data-[slot=container-title]:md:text-3xl",
       list: "mx-auto pb-8 lg:max-w-xl lg:py-8",
       narrow: "mx-auto py-4 lg:max-w-xl lg:gap-8 lg:py-16",
     },
   },
 });
 
-export type ContainerProps = React.ComponentProps<"main"> & VariantProps<typeof containerVariants>;
+export type ContainerProps = useRender.ComponentProps<"main"> &
+  VariantProps<typeof containerVariants>;
 
-export function Container({ children, className, variant }: ContainerProps) {
-  return (
-    <main className={cn(containerVariants({ variant }), className)} data-slot="container">
-      {children}
-    </main>
-  );
+/**
+ * A page's main landmark. Pages inside a shell that already owns `<main>` render it as another
+ * element (`render={<div />}`), so a page never has two main landmarks.
+ */
+export function Container({ children, className, render, variant }: ContainerProps) {
+  return useRender({
+    defaultTagName: "main",
+    props: mergeProps<"main">(
+      { className: cn(containerVariants({ variant }), className) },
+      { children },
+    ),
+    render,
+    state: { slot: "container" },
+  });
 }
 
 const containerHeaderVariants = cva("flex items-center justify-between gap-2 px-4", {

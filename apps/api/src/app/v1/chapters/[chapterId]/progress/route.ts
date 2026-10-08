@@ -2,11 +2,11 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { chapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
-import { getChapterProgressResource } from "@zoonk/core/progress/get-chapter";
+import { getCatalogChapterProgress } from "@zoonk/core/catalog/progress";
 import { NextResponse } from "next/server";
 
 /**
- * Returns progress for a validated chapter resource.
+ * Returns the learner's progress in a validated chapter.
  */
 async function getChapterProgress(
   _request: Request,
@@ -18,7 +18,7 @@ async function getChapterProgress(
     return errors.validation(parsed.error);
   }
 
-  const progress = await getChapterProgressResource({ chapterId: parsed.data.chapterId });
+  const progress = await getCatalogChapterProgress({ chapterId: parsed.data.chapterId });
 
   if (!progress) {
     return errors.notFound();

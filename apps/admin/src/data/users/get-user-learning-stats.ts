@@ -1,6 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
-import { type LessonKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 
 type CompletedLessonRow = Awaited<ReturnType<typeof findUserCompletedLessonRows>>[number];
 type LearningDayRow = Awaited<ReturnType<typeof findUserLearningDayRows>>[number];
@@ -14,7 +14,7 @@ type LessonKindTotals = {
 export type UserLearningKindStat = {
   avgDurationSeconds: number | null;
   completedLessons: number;
-  kind: LessonKind;
+  kind: string;
   totalDurationSeconds: number;
 };
 
@@ -24,6 +24,8 @@ export type UserLearningStats = {
   lessonKinds: UserLearningKindStat[];
   totalLearningSeconds: number;
 };
+
+const UNKNOWN_LESSON_KIND = "unknown";
 
 const cachedGetUserLearningStats = cacheAdminData(
   async (userId: string): Promise<UserLearningStats> => {
@@ -45,25 +47,32 @@ export async function getUserLearningStats(params: { userId: string }) {
 }
 
 /**
- * LessonProgress is the source of truth for completed lesson counts and
- * duration by kind because each completion row points at the exact lesson type.
+ * Finished lesson rows in the learning ledger keep the lesson kind as a text
+ * snapshot, so the breakdown survives the lessons being deleted.
  */
 function findUserCompletedLessonRows({ userId }: { userId: string }) {
-  return prisma.lessonProgress.findMany({
-    include: { lesson: { select: { kind: true } } },
-    orderBy: [{ completedAt: "asc" }, { id: "asc" }],
-    where: { completedAt: { not: null }, userId },
+  return prisma.learningEvent.findMany({
+    orderBy: [{ endedAt: "asc" }, { id: "asc" }],
+    where: { endedAt: { not: null }, kind: "lesson", userId },
   });
 }
 
 /**
  * DailyProgress stores the learner's client-local completion date, so it stays
- * the best source for counting calendar learning days.
+ * the best source for counting calendar learning days, lesson totals and time.
+ * `lessonsCompleted` also covers days recovered from legacy lessons.
  */
 function findUserLearningDayRows({ userId }: { userId: string }) {
   return prisma.dailyProgress.findMany({
     orderBy: [{ date: "asc" }, { id: "asc" }],
-    where: { OR: [{ interactiveCompleted: { gt: 0 } }, { staticCompleted: { gt: 0 } }], userId },
+    where: {
+      OR: [
+        { interactiveCompleted: { gt: 0 } },
+        { lessonsCompleted: { gt: 0 } },
+        { staticCompleted: { gt: 0 } },
+      ],
+      userId,
+    },
   });
 }
 
@@ -79,7 +88,7 @@ function buildUserLearningStats({
   learningDays: LearningDayRow[];
 }): UserLearningStats {
   return {
-    completedLessons: completedLessons.length,
+    completedLessons: learningDays.reduce((total, row) => total + row.lessonsCompleted, 0),
     learningDays: learningDays.length,
     lessonKinds: buildLessonKindStats({ rows: completedLessons }),
     totalLearningSeconds: sumLearningTime({ rows: learningDays }),
@@ -112,16 +121,13 @@ function buildLessonKindStats({ rows }: { rows: CompletedLessonRow[] }) {
  * total completions and the number of rows that can safely contribute to an average.
  */
 function groupCompletedLessonsByKind({ rows }: { rows: CompletedLessonRow[] }) {
-  const grouped = new Map<LessonKind, LessonKindTotals>();
+  const grouped = new Map<string, LessonKindTotals>();
 
   for (const row of rows) {
-    const kind = row.lesson.kind;
+    const kind = row.lessonKind ?? UNKNOWN_LESSON_KIND;
     const totals = grouped.get(kind) ?? createEmptyLessonKindTotals();
 
-    grouped.set(
-      kind,
-      addCompletedLessonToKindTotals({ durationSeconds: row.durationSeconds, totals }),
-    );
+    grouped.set(kind, addCompletedLessonToKindTotals({ seconds: row.seconds, totals }));
   }
 
   return grouped;
@@ -136,23 +142,24 @@ function createEmptyLessonKindTotals(): LessonKindTotals {
 
 /**
  * Completed rows without a duration still count as completed lessons, but they
- * should not pull the average duration down to zero.
+ * should not pull the average duration down to zero. Backfilled legacy
+ * completions that never recorded a duration store zero seconds.
  */
 function addCompletedLessonToKindTotals({
-  durationSeconds,
+  seconds,
   totals,
 }: {
-  durationSeconds: number | null;
+  seconds: number;
   totals: LessonKindTotals;
 }): LessonKindTotals {
-  if (durationSeconds === null) {
+  if (seconds === 0) {
     return { ...totals, completedLessons: totals.completedLessons + 1 };
   }
 
   return {
     completedLessons: totals.completedLessons + 1,
     durationSampleCount: totals.durationSampleCount + 1,
-    totalDurationSeconds: totals.totalDurationSeconds + durationSeconds,
+    totalDurationSeconds: totals.totalDurationSeconds + seconds,
   };
 }
 
@@ -164,7 +171,7 @@ function buildLessonKindStat({
   kind,
   totals,
 }: {
-  kind: LessonKind;
+  kind: string;
   totals: LessonKindTotals;
 }): UserLearningKindStat {
   return {

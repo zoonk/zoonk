@@ -1,10 +1,10 @@
+import { type GenerationStatus } from "@zoonk/db";
+
 export type CourseContinueProgressChapter = {
   completedLessons: number;
-  generationStatus: string;
+  outlineStatus: GenerationStatus;
   totalLessons: number;
 };
-
-const GENERATED_CHAPTER_STATUS = "completed";
 const MAX_PERCENT = 100;
 const MIN_VISIBLE_STARTED_PERCENT = 1;
 const MAX_INCOMPLETE_PERCENT = 99;
@@ -127,11 +127,11 @@ function estimateTotalLessonsFromGeneratedChapters({
 }
 
 /**
- * A generated chapter has completed its chapter-generation workflow, so its
- * visible lesson count is stable enough to use in the course estimate.
+ * A chapter whose lesson outline is written has a lesson count stable enough
+ * to use in the course estimate.
  */
 function isGeneratedChapter(chapter: CourseContinueProgressChapter) {
-  return chapter.generationStatus === GENERATED_CHAPTER_STATUS;
+  return chapter.outlineStatus === "completed";
 }
 
 /**

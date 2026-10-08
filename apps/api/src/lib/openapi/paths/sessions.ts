@@ -1,5 +1,6 @@
 import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract";
 import { z } from "zod";
+import { accessErrorCodes } from "../../access-error-codes";
 import { sessionErrorCodes } from "../../session-error-codes";
 import {
   badRequestResponse,
@@ -43,8 +44,19 @@ const signupValidationResponse = {
 
 const emailCodeForbiddenResponse = {
   ...forbiddenResponse,
-  description: `Account disabled or email code locked. Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}.`,
+  description: `Account disabled, email code locked, or the request didn't pass BotID. Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}, ${accessErrorCodes.botDetected}.`,
 } as const;
+
+const botCheckForbiddenResponse = {
+  ...forbiddenResponse,
+  description: `The request didn't pass BotID, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
+} as const;
+
+/**
+ * Email codes create accounts, so they need a person behind the request. Vercel BotID only runs
+ * in a browser, which native apps can't provide yet.
+ */
+const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser. Native apps get 403 ${accessErrorCodes.botDetected} in production until the API accepts app attestation (App Attest on iOS, Play Integrity on Android); Sign in with Apple and Google work meanwhile.`;
 
 const googleAuthorizationResponse = {
   ...unauthorizedResponse,
@@ -66,6 +78,7 @@ const rateLimitResponse = {
 export const sessionPaths = {
   "/email-sign-in-codes": {
     post: {
+      description: `Emails a sign-in code; signing in with it creates the account the first time. ${EMAIL_CODE_BOT_CHECK}`,
       operationId: "createEmailSignInCode",
       requestBody: {
         content: { "application/json": { schema: emailSignInCodeRequestSchema } },
@@ -74,7 +87,7 @@ export const sessionPaths = {
       responses: {
         "204": { description: "Sign-in code sent" },
         "400": signupValidationResponse,
-        "403": forbiddenResponse,
+        "403": botCheckForbiddenResponse,
         "429": rateLimitResponse,
       },
       security: PUBLIC_SECURITY,
@@ -117,6 +130,7 @@ export const sessionPaths = {
   },
   "/sessions/email-code": {
     post: {
+      description: `Signs in with the code from \`POST /v1/email-sign-in-codes\`, creating the account the first time. ${EMAIL_CODE_BOT_CHECK}`,
       operationId: "createEmailCodeSession",
       requestBody: {
         content: { "application/json": { schema: emailCodeSessionRequestSchema } },

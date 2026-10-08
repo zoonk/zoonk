@@ -1,12 +1,9 @@
 "use client";
 
 import { type Dispatch, useCallback, useRef } from "react";
-import { type PlayerQuestionContext } from "../player-context";
-import {
-  type LessonQuestionConnection,
-  getLessonQuestionRequest,
-  streamLessonQuestionAnswerRequest,
-} from "./lesson-question-api";
+import { streamLessonQuestionAnswerRequest } from "./lesson-question-answer-stream";
+import { type LessonQuestionConnection, getLessonQuestionRequest } from "./lesson-question-api";
+import { type LessonQuestionContext } from "./lesson-question-context";
 import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
 import { type LessonQuestionAction, type LessonQuestionState } from "./lesson-question-state";
 import {
@@ -26,7 +23,7 @@ export function useLessonQuestionAnswers({
   canAskQuestions: boolean;
   dispatch: Dispatch<LessonQuestionAction>;
   dispatchToContext: Dispatch<LessonQuestionSessionAction>;
-  getState: (context: PlayerQuestionContext) => LessonQuestionState;
+  getState: (context: LessonQuestionContext) => LessonQuestionState;
   state: LessonQuestionState;
 }) {
   const answerChecksInFlight = useRef(new Set<string>());
@@ -36,7 +33,7 @@ export function useLessonQuestionAnswers({
       context,
       questionId,
       reason,
-    }: { context: PlayerQuestionContext } & Extract<
+    }: { context: LessonQuestionContext } & Extract<
       LessonQuestionAction,
       { type: "answerFailed" }
     >) => {
@@ -67,7 +64,7 @@ export function useLessonQuestionAnswers({
   );
 
   const streamAnswer = useCallback(
-    async ({ context, questionId }: { context: PlayerQuestionContext; questionId: string }) => {
+    async ({ context, questionId }: { context: LessonQuestionContext; questionId: string }) => {
       const currentState = getState(context);
 
       const dispatchToSession = (action: LessonQuestionAction) =>
@@ -83,9 +80,16 @@ export function useLessonQuestionAnswers({
 
       dispatchToSession({ questionId, type: "answerStarted" });
 
+      // The answer is done once it's saved; what it taught memory arrives after, as its notice.
       const result = await streamLessonQuestionAnswerRequest({
         connection,
         onChunk: (chunk) => dispatchToSession({ chunk, questionId, type: "answerChunkReceived" }),
+        onPlanChange: (change) =>
+          dispatchToSession({ change, questionId, type: "planChangeProposed" }),
+        onPlanChangesReplaced: (changeIds) =>
+          dispatchToSession({ changeIds, type: "planChangesReplaced" }),
+        onSaved: () => dispatchToSession({ questionId, type: "answerCompleted" }),
+        onToolOffer: (offer) => dispatchToSession({ offer, questionId, type: "toolOffered" }),
         questionId,
       });
 
@@ -101,6 +105,14 @@ export function useLessonQuestionAnswers({
       }
 
       dispatchToSession({ questionId, type: "answerCompleted" });
+
+      if (result.data.memoryChanges.length > 0) {
+        dispatchToSession({
+          changes: result.data.memoryChanges,
+          questionId,
+          type: "memoryUpdated",
+        });
+      }
     },
     [connection, dispatchToContext, getState, reconcileAnswerFailure],
   );

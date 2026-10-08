@@ -1,4 +1,3 @@
-import { type GenerationQuotaLimit } from "@zoonk/core/generation-quotas/contract";
 import { NextResponse } from "next/server";
 import { type z } from "zod";
 
@@ -25,14 +24,42 @@ function errorResponse(code: string, message: string, status: number, details?: 
  */
 export function createErrorResponse({
   code,
+  details,
   message,
   status,
 }: {
   code: string;
+  details?: unknown;
   message: string;
   status: number;
 }) {
-  return errorResponse(code, message, status);
+  return errorResponse(code, message, status, details);
+}
+
+/** Too much at once: `Retry-After` says when to try again. */
+export function slowDownError({
+  details,
+  message,
+  retryAfterSeconds,
+}: {
+  details: unknown;
+  message: string;
+  retryAfterSeconds: number;
+}) {
+  const response = createErrorResponse({
+    code: "SLOW_DOWN",
+    details,
+    message,
+    status: httpStatus.tooManyRequests,
+  });
+
+  response.headers.set("Retry-After", String(retryAfterSeconds));
+  return response;
+}
+
+/** Signed out, or not found: a resource of another learner reads as missing too. */
+export function accessError(status: "notFound" | "unauthorized", notFoundMessage?: string) {
+  return status === "unauthorized" ? errors.unauthorized() : errors.notFound(notFoundMessage);
 }
 
 export const errors = {
@@ -40,18 +67,9 @@ export const errors = {
   conflict: (msg = "Resource already exists") =>
     errorResponse("CONFLICT", msg, httpStatus.conflict),
   forbidden: (msg = "Access denied") => errorResponse("FORBIDDEN", msg, httpStatus.forbidden),
-  generationLimitReached: (limit: GenerationQuotaLimit) =>
-    errorResponse(
-      "GENERATION_LIMIT_REACHED",
-      "Generation limit reached",
-      httpStatus.tooManyRequests,
-      limit,
-    ),
   internal: (msg = "Internal server error") =>
     errorResponse("INTERNAL_ERROR", msg, httpStatus.internalError),
   notFound: (msg = "Resource not found") => errorResponse("NOT_FOUND", msg, httpStatus.notFound),
-  paymentRequired: (msg = "Active subscription required") =>
-    errorResponse("PAYMENT_REQUIRED", msg, httpStatus.paymentRequired),
   unauthorized: (msg = "Authentication required") =>
     errorResponse("UNAUTHORIZED", msg, httpStatus.unauthorized),
   unprocessableEntity: (msg = "Request could not be applied") =>

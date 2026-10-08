@@ -2,7 +2,13 @@ import { type AppRoute } from "@/i18n/navigation";
 import { type getMenu } from "@/lib/menu";
 import { type ChapterSearchResult, type CourseSearchResult } from "@zoonk/core/catalog/search";
 import { removeAccents } from "@zoonk/utils/string";
-import { LogOutIcon, type LucideIcon } from "lucide-react";
+import {
+  ArrowLeftRightIcon,
+  LightbulbIcon,
+  LogOutIcon,
+  type LucideIcon,
+  MessageSquareIcon,
+} from "lucide-react";
 
 type PaletteRoute = AppRoute<ReturnType<typeof getMenu>["url"]>;
 
@@ -19,6 +25,32 @@ export type LogoutPaletteItem = {
   icon: LucideIcon;
   id: string;
   kind: "logout";
+  label: string;
+  searchValue: string;
+};
+
+export type FeedbackPaletteItem = {
+  icon: LucideIcon;
+  id: string;
+  kind: "feedback";
+  label: string;
+  searchValue: string;
+};
+
+export type GoalPaletteItem = {
+  goalId: string;
+  icon: LucideIcon;
+  id: string;
+  kind: "goal";
+  label: string;
+  searchValue: string;
+};
+
+export type ExplanationPaletteItem = {
+  goalId: string;
+  icon: LucideIcon;
+  id: string;
+  kind: "explanation";
   label: string;
   searchValue: string;
 };
@@ -42,6 +74,9 @@ export type ChapterPaletteItem = {
 export type PaletteItem =
   | ChapterPaletteItem
   | CoursePaletteItem
+  | ExplanationPaletteItem
+  | FeedbackPaletteItem
+  | GoalPaletteItem
   | LogoutPaletteItem
   | NavigationPaletteItem;
 
@@ -72,11 +107,61 @@ export function createLogoutPaletteItem({ label }: { label: string }): LogoutPal
   return { icon: LogOutIcon, id: "logout", kind: "logout", label, searchValue: label };
 }
 
+/** "Send feedback" opens the feedback form over the current page instead of navigating away. */
+export function createFeedbackPaletteItem({ label }: { label: string }): FeedbackPaletteItem {
+  return {
+    icon: MessageSquareIcon,
+    id: "send-feedback",
+    kind: "feedback",
+    label,
+    searchValue: label,
+  };
+}
+
+/**
+ * Switching goals saves the learner's choice instead of navigating: every learning tab reads the
+ * active goal, so the tab on screen re-renders with it.
+ */
+export function createGoalPaletteItem({
+  goalId,
+  label,
+}: {
+  goalId: string;
+  label: string;
+}): GoalPaletteItem {
+  return {
+    goalId,
+    icon: ArrowLeftRightIcon,
+    id: `goal-${goalId}`,
+    kind: "goal",
+    label,
+    searchValue: label,
+  };
+}
+
 /**
  * Course search can match on title or description, so both fields need to stay
  * in the item's search value while the visible option keeps the compact title
  * and description layout.
  */
+/** A quick explanation opens itself: search is where one read to the end is found again. */
+export function createExplanationPaletteItem({
+  goalId,
+  title,
+}: {
+  goalId: string;
+  title: string;
+}): ExplanationPaletteItem {
+  return {
+    goalId,
+    icon: LightbulbIcon,
+    id: `explanation-${goalId}`,
+    kind: "explanation",
+    label: title,
+    searchValue: title,
+  };
+}
+
 export function createCoursePaletteItem(course: CourseSearchResult): CoursePaletteItem {
   return {
     course,

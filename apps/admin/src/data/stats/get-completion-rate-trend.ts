@@ -7,25 +7,26 @@ import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
 /**
- * Groups lessons by when learners started them and measures the completed
- * share in each bucket. This preserves the existing completion-rate definition
- * while making changes across the selected period visible.
+ * Groups lessons by when learners started them and measures the finished
+ * share in each bucket, reading the learning ledger so the trend survives
+ * lessons being deleted.
  */
 export const getCompletionRateTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
-    const dateBucketSql = getStatsDateBucketSql({ date: sql`lesson_progress.started_at`, period });
+    const dateBucketSql = getStatsDateBucketSql({ date: sql`learning_events.started_at`, period });
 
     const results = await prisma.$queryRaw<RateTrendRow[]>`
       SELECT
         ${dateBucketSql} AS date,
-        COUNT(*) FILTER (WHERE lesson_progress.completed_at IS NOT NULL) AS numerator,
+        COUNT(*) FILTER (WHERE learning_events.ended_at IS NOT NULL) AS numerator,
         COUNT(*) AS denominator
-      FROM lesson_progress
-      JOIN users ON users.id = lesson_progress.user_id
+      FROM learning_events
+      JOIN users ON users.id = learning_events.user_id
       WHERE
         ${trackedAnalyticsUserSql}
-        AND lesson_progress.started_at >= ${start}
-        AND lesson_progress.started_at <= ${end}
+        AND learning_events.kind = 'lesson'
+        AND learning_events.started_at >= ${start}
+        AND learning_events.started_at <= ${end}
       GROUP BY ${dateBucketSql}
       ORDER BY ${dateBucketSql} ASC
     `;

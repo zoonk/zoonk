@@ -1,0 +1,299 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm all intended answers: 2000 × 1.10 × 0.90 = 1980; 720 ÷ 0.72 = 1000; only rice increases in both monthly transitions; 5 × (12/60) × 30 × 0.80 = 24; and 90 ÷ 1.5 ÷ 30 = 2 hours daily. However, two questions contain numerically incorrect distractor explanations. Applying another 10% increase does not produce 2020, and using 12 minutes directly as hours does not produce 144. The cap of 5 for factual errors in two questions therefore applies despite the correct keys.",
+          "score": 5,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Several distractors have useful, specific diagnoses, including cancelling successive percentages, ignoring one price change, and failing to convert watts to kilowatts. Others are not grounded in realistic identifiable mistakes: R$ 48 is attributed to arbitrarily doubling the duration, R$ 40 to an unexplained ten-hour total, and R$ 2,020 and R$ 144 have mismatched explanations. The R$ 40 label essentially says there was an error calculating accumulated time without identifying the operation responsible, triggering the generic-misconception cap of 6. Typed key points are individually checkable but unnecessarily prescribe particular solution steps.",
+          "score": 6,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The multiple-choice questions generally use credible everyday contexts, short support texts, clear commands, and five alternatives. The table is correctly placed in context as a GFM pipe table, and the simple trend comparison fits the beginner level. Exam polish is weakened by the nonparallel 'Milho e Soja' alternative and several poorly motivated numerical alternatives, but the set is not broadly out of place as ENEM-oriented practice.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The supplied questions apply their designated skills rather than testing definitions, and all learner-facing content is in Portuguese. The percentage and energy pairs use different situations and reverse the direction of calculation without revealing their multiple-choice answers. However, table reading has no typed question at all, directly violating the required two-question coverage for every skill and leaving that skill without the requested variety of response formats.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Leitura de dados em tabelas, typed 1: Two accepted answers are the same.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4237,
+          "inputTokens": 4240,
+          "outputTokens": 1219,
+          "reasoningTokens": 388
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The table-reading skill is missing its required typed question, leaving only five of the six requested questions. Several numerical distractors have explanations that do not produce their stated values: reversing the television discount would yield R$ 2,420, not R$ 2,020, and treating 12 minutes as 12 hours would yield R$ 1,440, not R$ 144. These explanations undermine the diagnostic feedback.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The typed percentage question's key points require a particular two-stage solution, although dividing 720 directly by 0.72 is equally valid. Both typed questions request only a numerical answer while their key points require intermediate calculations. The table question also mixes single-grain alternatives with a two-grain alternative despite asking for one grain.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Vary the correct option's position instead of placing it first in every multiple-choice question. Align typed grading criteria with the requested response: either ask for a brief calculation or explicitly accept a correct numerical answer without intermediate work.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row) and one typed question asking for a short answer or explanation with checkable key points. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't repeat or give away the multiple-choice one's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
+        "id": "pt-enem-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos"
+            },
+            {
+              "description": "Ler e comparar dados apresentados em tabelas para responder a perguntas sobre valores, diferenças e variações.",
+              "level": "beginner",
+              "name": "Leitura de dados em tabelas"
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation confirms x = 12, m = 4, and a 24% decrease. The profit slope is $4.25 per additional meal, and 28 is the reservoir depth in feet on July 1. All supplied keys are correct and unique. However, the equation's explanation for 8 actually leads to 24, and the percentage explanation does not mathematically produce 20.4%. These are factual errors in two questions, triggering the at-most-5 cap.",
+          "score": 5,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Several distractors have useful, specific feedback, particularly dividing by the new value, reporting the percentage remaining, and confusing slope with intercept. However, the explanations for 8 and 20.4% do not support those values, and the explanation for 24 never identifies which terms were mishandled. Several distractors therefore lack plausible, accurately explained error paths, triggering the at-most-7 cap. The labels are generally skill-specific rather than generic.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The multiple-choice items generally use concise contexts, direct questions, and four similarly presented options. The equation typed item also fits a numeric-response format. However, the reservoir item requires prose and accepts verbal phrases, unlike Digital SAT Math student-produced responses. This makes part of the set out of place in the named exam and triggers the at-most-7 cap.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The supplied questions apply their assigned skills, stay in English, and avoid unrelated mathematical demands. The equation questions use different situations and complexity, while the model questions distinguish slope from intercept in different contexts. The missing percent-change typed question materially weakens the requested coverage and variety: that skill receives only one decrease calculation and no second situation.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "5 of 6 parts passed. Percent change, typed 1: Two accepted answers are the same.",
+          "score": 8.5,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3478,
+          "inputTokens": 3481,
+          "outputTokens": 1180,
+          "reasoningTokens": 482
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The percent-change skill is missing its required typed question. Two distractor explanations contain mathematical mismatches: failing to distribute 2/3 to -6 produces x = 24, not 8; treating the raw decrease of 204 as a percentage produces 204%, not 20.4%. The linear-model typed question requests a verbal interpretation rather than a Digital SAT student-produced numeric answer.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The linear-model typed rubric separates initial depth and depth on July 1 into overlapping key points, while many accepted answers mention only the initial depth. This leaves unclear whether an accepted answer satisfies the entire rubric.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Give an explicit erroneous calculation supporting the equation's 24 distractor rather than saying a multiplier was applied inconsistently. Replace the fractional-meal break-even distractor with a less readily dismissible slope interpretation error.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three Digital SAT skills, each with one SAT-style multiple-choice question (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value) and one typed question with checkable key points and accepted answers for short answers. The math must be right. Each question tests only its own skill, and a skill's typed question uses a different situation from its multiple-choice one.",
+        "id": "en-sat-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "language": "en",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
+              "level": "intermediate",
+              "name": "Solving linear equations in one variable"
+            },
+            {
+              "description": "Compute the percent increase or decrease between an original and a new value.",
+              "level": "intermediate",
+              "name": "Percent change"
+            },
+            {
+              "description": "Interpret the slope and y-intercept of a linear model in the context of a real situation.",
+              "level": "intermediate",
+              "name": "Interpreting linear models"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The three assertion keys are defensible: promotional institutional advertising violates article 37, paragraph 1; an originally unlawful act calls for annulment rather than retroactive revocation; and an imminent health hazard supports urgent administrative execution without prior judicial authorization. The typed revocation and compulsory fine-collection answers are also legally sound in their scenarios. However, the nepotism question has two defensible answers to a singular 'primarily violated' request, explicitly acknowledged by its key. This triggers the maximum score of 7 for one ambiguous question.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The false assertion uses a realistic confusion between annulment and revocation, and its explanation clearly distinguishes their grounds and temporal effects. The typed keys generally identify checkable legal points. However, accepted answers are empty for two typed items, and the compulsory-collection checkpoint bundles two procedural steps. No generic-misconception or implausible-distractor cap is triggered.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All quick questions are assertions judged true or false, not multiple choice, and their administrative scenarios and legal language fit intermediate Cebraspe preparation. The false assertion contains a plausible substitution of revocation for annulment. The typed questions function as the requested constructed-response supplements. No out-of-place-format cap is triggered.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions remain within their assigned skills and use Brazilian Portuguese throughout. They require applying principles, distinguishing grounds for extinguishing administrative acts, and recognizing police-power execution limits. The typed prompts do not disclose the corresponding assertion judgments. Situations vary, but difficulty is uniformly marked medium and the applications mostly involve straightforward recognition rather than a meaningful diagnostic difficulty spread. Neither the majority-recall nor duplicate-task cap is triggered.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3427,
+          "inputTokens": 3430,
+          "outputTokens": 1178,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The nepotism typed question asks for one principle 'primarily' violated, but both morality and impersonality are defensible, and its key explicitly accepts either. The prompt provides no basis for choosing a unique answer, violating the requirement for exactly one defensible correct answer.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Two typed questions have empty accepted-answer lists, leaving common correct formulations undocumented despite useful sample answers. The police-power collection key also combines registration as active debt and judicial tax enforcement in one checkpoint rather than making each independently checkable.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Vary the diagnostic difficulty rather than marking every item medium. Preserve the concrete scenarios, but include a more demanding application alongside the straightforward recognition items.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill's quick question is a Cebraspe-style assertion judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Each skill also has one typed question with checkable key points. Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, and the typed question doesn't give away the assertion's judgment.",
+        "id": "pt-cebraspe-placement-true-false-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "language": "pt",
+          "quickFormat": "trueFalse",
+          "skills": [
+            {
+              "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+              "level": "intermediate",
+              "name": "Princípios da administração pública (LIMPE)"
+            },
+            {
+              "description": "Distinguir quando a administração deve anular um ato administrativo e quando pode revogá-lo, e os efeitos de cada um.",
+              "level": "intermediate",
+              "name": "Anulação e revogação de atos administrativos"
+            },
+            {
+              "description": "Reconhecer o poder de polícia, seus atributos e limites, em situações da administração pública.",
+              "level": "intermediate",
+              "name": "Poder de polícia"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "placement-items"
+}

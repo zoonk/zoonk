@@ -3,18 +3,12 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
 } from "@zoonk/auth/username-rules";
-import {
-  COURSE_LANGUAGE_MAX_LENGTH,
-  COURSE_PROMPT_MAX_LENGTH,
-} from "@zoonk/core/courses/prompt-contract";
-import { TTS_SUPPORTED_LANGUAGE_CODES } from "@zoonk/utils/languages";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { createOpenAPIDocument } from "./create-document";
 import { openAPIDocument } from "./document";
 import { courseResultSchema } from "./schemas/courses";
-import { courseContinuationListResponseSchema } from "./schemas/current-learning";
-import { lessonContentResponseSchema } from "./schemas/lesson-resources";
+import { serializedStepSchema } from "./schemas/language-exercise";
 import { meResponseSchema } from "./schemas/me";
 import {
   chapterCompletionResponseSchema,
@@ -24,7 +18,7 @@ import {
 
 const UUID = "00000000-0000-4000-8000-000000000001";
 const ISO_DATE = "2026-07-25T12:00:00.000Z";
-const DOCUMENTED_METHODS = ["delete", "get", "patch", "post"] as const;
+const DOCUMENTED_METHODS = ["delete", "get", "patch", "post", "put"] as const;
 
 const CANONICAL_OPERATIONS = [
   { method: "post", operationId: "createEmailSignInCode", path: "/email-sign-in-codes" },
@@ -35,25 +29,14 @@ const CANONICAL_OPERATIONS = [
   { method: "get", operationId: "searchCatalog", path: "/catalog/search" },
   { method: "get", operationId: "listCourses", path: "/courses" },
   { method: "get", operationId: "getCourse", path: "/courses/{courseId}" },
-  { method: "get", operationId: "getCourseEdition", path: "/courses/{courseId}/editions" },
-  { method: "post", operationId: "resolveCourseEdition", path: "/courses/{courseId}/editions" },
   { method: "get", operationId: "listCourseChapters", path: "/courses/{courseId}/chapters" },
   { method: "get", operationId: "getChapter", path: "/chapters/{chapterId}" },
   { method: "get", operationId: "listChapterLessons", path: "/chapters/{chapterId}/lessons" },
-  { method: "get", operationId: "getLesson", path: "/lessons/{lessonId}" },
-  { method: "get", operationId: "listLanguageCourses", path: "/language-courses" },
   { method: "get", operationId: "listCurrentUserCourses", path: "/me/courses" },
-  { method: "delete", operationId: "removeCurrentUserCourse", path: "/me/courses/{courseId}" },
   {
-    method: "get",
-    operationId: "listCurrentUserCourseContinuations",
-    path: "/me/course-continuations",
-  },
-  { method: "get", operationId: "getCurrentUserLessonVisibility", path: "/me/lesson-visibility" },
-  {
-    method: "patch",
-    operationId: "updateCurrentUserLessonVisibility",
-    path: "/me/lesson-visibility",
+    method: "put",
+    operationId: "voteOnContent",
+    path: "/me/content-votes/{contentKind}/{contentId}",
   },
   { method: "get", operationId: "getCurrentUserProgress", path: "/me/progress" },
   { method: "get", operationId: "getCurrentUserActivity", path: "/me/progress/activity" },
@@ -65,7 +48,6 @@ const CANONICAL_OPERATIONS = [
     operationId: "getCurrentUserScorePatterns",
     path: "/me/progress/score/patterns",
   },
-  { method: "get", operationId: "getCurrentUserProgressSnapshot", path: "/me/progress/snapshot" },
   { method: "post", operationId: "createAppleSubscription", path: "/me/subscriptions/apple" },
   {
     method: "post",
@@ -77,14 +59,6 @@ const CANONICAL_OPERATIONS = [
     operationId: "getUsernameAvailability",
     path: "/usernames/{username}/availability",
   },
-  { method: "get", operationId: "getLessonContent", path: "/lessons/{lessonId}/content" },
-  { method: "post", operationId: "createLessonStart", path: "/lessons/{lessonId}/starts" },
-  {
-    method: "post",
-    operationId: "createLessonCompletion",
-    path: "/lessons/{lessonId}/completions",
-  },
-  { method: "post", operationId: "createLessonPreload", path: "/lessons/{lessonId}/preloads" },
   { method: "get", operationId: "getLessonQuestionThread", path: "/lessons/{lessonId}/questions" },
   { method: "post", operationId: "createLessonQuestion", path: "/lessons/{lessonId}/questions" },
   { method: "get", operationId: "getLessonQuestion", path: "/questions/{questionId}" },
@@ -93,14 +67,48 @@ const CANONICAL_OPERATIONS = [
     operationId: "createLessonQuestionAnswer",
     path: "/questions/{questionId}/answers",
   },
-  { method: "post", operationId: "createCoursePrompt", path: "/course-prompts" },
-  { method: "get", operationId: "getCoursePrompt", path: "/course-prompts/{coursePromptId}" },
   { method: "get", operationId: "getCourseProgress", path: "/courses/{courseId}/progress" },
   { method: "get", operationId: "getChapterProgress", path: "/chapters/{chapterId}/progress" },
   { method: "get", operationId: "getCourseNextLesson", path: "/courses/{courseId}/next-lesson" },
   { method: "get", operationId: "getChapterNextLesson", path: "/chapters/{chapterId}/next-lesson" },
-  { method: "get", operationId: "getLessonSuccessor", path: "/lessons/{lessonId}/next-lesson" },
-  { method: "post", operationId: "createGeneration", path: "/generations" },
+  { method: "post", operationId: "createGuestSession", path: "/guests" },
+  { method: "get", operationId: "getLibraryLesson", path: "/library/lessons/{lessonId}" },
+  {
+    method: "post",
+    operationId: "createLibraryLessonStart",
+    path: "/library/lessons/{lessonId}/starts",
+  },
+  {
+    method: "post",
+    operationId: "createLibraryLessonCompletion",
+    path: "/library/lessons/{lessonId}/completions",
+  },
+  { method: "post", operationId: "createStepCheck", path: "/steps/{stepId}/checks" },
+  {
+    method: "post",
+    operationId: "createStepAnswerExplanation",
+    path: "/steps/{stepId}/answer-explanations",
+  },
+  { method: "get", operationId: "getCurrentUserAllowance", path: "/me/allowance" },
+  { method: "get", operationId: "getCurrentUserDailyTimeLimit", path: "/me/daily-time-limit" },
+  { method: "get", operationId: "getCurrentUserLearningProfile", path: "/me/learning-profile" },
+  {
+    method: "patch",
+    operationId: "updateCurrentUserLearningProfile",
+    path: "/me/learning-profile",
+  },
+  { method: "get", operationId: "listCurrentUserGuardianLinks", path: "/me/guardian-links" },
+  { method: "post", operationId: "inviteGuardian", path: "/me/guardian-links" },
+  { method: "delete", operationId: "revokeGuardianLink", path: "/me/guardian-links/{linkId}" },
+  { method: "post", operationId: "acceptGuardianInvite", path: "/me/guardian-invite-acceptances" },
+  { method: "get", operationId: "listGuardedLearners", path: "/me/guarded-learners" },
+  { method: "patch", operationId: "updateGuardedLearner", path: "/me/guarded-learners/{linkId}" },
+  {
+    method: "post",
+    operationId: "approveGuardedLearnerPlus",
+    path: "/me/guarded-learners/{linkId}/plus-approval",
+  },
+  { method: "post", operationId: "requestPlusApproval", path: "/me/plus-approval-requests" },
   { method: "get", operationId: "getGeneration", path: "/generations/{generationId}" },
   {
     method: "get",
@@ -126,6 +134,7 @@ const pathItemContractSchema = z
     get: operationContractSchema.optional(),
     patch: operationContractSchema.optional(),
     post: operationContractSchema.optional(),
+    put: operationContractSchema.optional(),
   })
   .loose();
 
@@ -150,6 +159,25 @@ const documentContractSchema = z
   })
   .loose();
 
+/**
+ * OpenAPI 3.0 only knows singular `example`. A schema property that happens to be named
+ * `examples` (an activity's formula examples) is data, not the keyword.
+ */
+function hasExamplesKeyword(value: unknown, parentKey?: string): boolean {
+  if (Array.isArray(value)) {
+    return value.some((item) => hasExamplesKeyword(item));
+  }
+
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  return Object.entries(value).some(
+    ([key, child]) =>
+      (key === "examples" && parentKey !== "properties") || hasExamplesKeyword(child, key),
+  );
+}
+
 describe("OpenAPI document", () => {
   it("keeps the public contract on OpenAPI 3.1", () => {
     expect(openAPIDocument.openapi).toBe("3.1.0");
@@ -162,7 +190,7 @@ describe("OpenAPI document", () => {
     });
 
     expect(swiftDocument.openapi).toBe("3.0.3");
-    expect(JSON.stringify(swiftDocument)).not.toContain('"examples"');
+    expect(hasExamplesKeyword(swiftDocument)).toBe(false);
 
     expect(swiftDocument.components?.securitySchemes?.cookieAuth).toMatchObject({
       name: "__Secure-better-auth.session_token",
@@ -243,9 +271,7 @@ describe("OpenAPI document", () => {
 
     expect(document.paths["/auth/health"]?.get?.security).toStrictEqual([]);
     expect(document.paths["/courses"]?.get?.security).toStrictEqual([]);
-    expect(document.paths["/feedback"]?.post?.security).toStrictEqual([]);
-    expect(document.paths["/course-prompts"]?.post?.security).toStrictEqual(optionalAuthentication);
-    expect(document.paths["/generations"]?.post?.security).toStrictEqual(authenticated);
+    expect(document.paths["/feedback"]?.post?.security).toStrictEqual(optionalAuthentication);
     expect(document.paths["/me"]?.get?.security).toStrictEqual(authenticated);
     expect(document.paths["/me"]?.patch?.security).toStrictEqual(authenticated);
     expect(document.paths["/me/subscriptions/apple"]?.post?.security).toStrictEqual(authenticated);
@@ -331,7 +357,11 @@ describe("OpenAPI document", () => {
       .parse(document.paths["/chapters/{chapterId}/lessons"]?.get?.parameters);
 
     expect(courseChapterParameters.map((parameter) => parameter.name)).toStrictEqual(["courseId"]);
-    expect(chapterLessonParameters.map((parameter) => parameter.name)).toStrictEqual(["chapterId"]);
+
+    expect(chapterLessonParameters.map((parameter) => parameter.name)).toStrictEqual([
+      "chapterId",
+      "courseId",
+    ]);
 
     expect(document.components.schemas.CourseChapterListResponse).not.toHaveProperty(
       "properties.pagination",
@@ -369,21 +399,6 @@ describe("OpenAPI document", () => {
       ["appleCredentials"],
       ["emailCredentials"],
     ]);
-
-    expect(document.components.schemas.CourseContinuationListResponse).toMatchObject({
-      properties: { data: { maxItems: 4 } },
-    });
-
-    expect(document.components.schemas.ResolveCoursePromptRequest).toMatchObject({
-      oneOf: expect.arrayContaining([
-        expect.objectContaining({
-          properties: expect.objectContaining({
-            language: expect.objectContaining({ maxLength: COURSE_LANGUAGE_MAX_LENGTH }),
-            prompt: expect.objectContaining({ maxLength: COURSE_PROMPT_MAX_LENGTH }),
-          }),
-        }),
-      ]),
-    });
   });
 
   it("documents optional reads and public generation status", () => {
@@ -394,10 +409,6 @@ describe("OpenAPI document", () => {
       optionalAuthentication,
     );
 
-    expect(document.paths["/lessons/{lessonId}/next-lesson"]?.get?.security).toStrictEqual(
-      optionalAuthentication,
-    );
-
     expect(document.paths["/generations/{generationId}"]?.get?.security).toStrictEqual([]);
     expect(document.paths["/generations/{generationId}/events"]?.get?.security).toStrictEqual([]);
   });
@@ -405,8 +416,6 @@ describe("OpenAPI document", () => {
   it("documents every response status returned by account and feedback routes", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
-    expect(document.paths["/course-prompts"]?.post?.responses).toHaveProperty("401");
-    expect(document.paths["/course-prompts"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.delete?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.patch?.responses).toHaveProperty("500");
@@ -427,10 +436,6 @@ describe("OpenAPI document", () => {
   it("documents every response status returned by generation routes", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
-    expect(document.paths["/generations"]?.post?.responses).toHaveProperty("401");
-    expect(document.paths["/generations"]?.post?.responses).toHaveProperty("402");
-    expect(document.paths["/generations"]?.post?.responses).toHaveProperty("404");
-    expect(document.paths["/generations"]?.post?.responses).toHaveProperty("403");
     expect(document.paths["/generations/{generationId}"]?.get?.responses).toHaveProperty("400");
     expect(document.paths["/generations/{generationId}"]?.get?.responses).toHaveProperty("404");
 
@@ -455,36 +460,9 @@ describe("OpenAPI document", () => {
     );
   });
 
-  it("documents generation commands and their streamed event payloads precisely", () => {
+  it("documents generation status and its streamed event payloads precisely", () => {
     const document = documentContractSchema.parse(openAPIDocument);
-    const generation = document.paths["/generations"]?.post;
     const generationEvents = document.paths["/generations/{generationId}/events"]?.get;
-
-    expect(generation?.requestBody).toMatchObject({ required: true });
-
-    expect(generation?.responses["202"]).toMatchObject({
-      headers: { Location: { schema: { type: "string" } } },
-    });
-
-    expect(generation?.responses).not.toHaveProperty("200");
-
-    expect(document.components.schemas.CreateGenerationRequest).toMatchObject({
-      properties: { target: { $ref: "#/components/schemas/GenerationTarget" } },
-      required: ["target"],
-      type: "object",
-    });
-
-    expect(document.components.schemas.GenerationTarget).toMatchObject({
-      properties: { id: { format: "uuid" }, type: { enum: ["coursePrompt", "chapter", "lesson"] } },
-      required: ["id", "type"],
-      type: "object",
-    });
-
-    expect(document.components.schemas.LessonGenerationTarget).toMatchObject({
-      properties: { kind: { enum: ["lesson", "sourceLesson"] }, lessonId: { format: "uuid" } },
-      required: ["kind", "lessonId"],
-      type: "object",
-    });
 
     expect(document.components.schemas.Generation).toMatchObject({
       properties: {
@@ -551,8 +529,8 @@ describe("OpenAPI document", () => {
       requestBody: { required: true },
       responses: {
         "201": expect.any(Object),
-        "402": expect.any(Object),
-        "403": expect.any(Object),
+        "401": expect.any(Object),
+        "404": expect.any(Object),
         "409": expect.any(Object),
         "422": expect.any(Object),
       },
@@ -599,6 +577,9 @@ describe("OpenAPI document", () => {
       required: expect.arrayContaining(["hasMore", "nextCursor", "questions"]),
       type: "object",
     });
+
+    // The plan's "Ask" answers about its course; there is no course tutor.
+    expect(document.paths).not.toHaveProperty("/courses/{courseId}/questions");
   });
 
   it("emits client-visible formats and next-lesson variants", () => {
@@ -666,58 +647,9 @@ describe("OpenAPI document", () => {
       security: [{ bearerAuth: [] }, { cookieAuth: [] }],
     });
   });
-
-  it("uses consistent course-prompt identifiers and supported language targets", () => {
-    const document = documentContractSchema.parse(openAPIDocument);
-
-    expect(document.components.schemas.CourseResource).toMatchObject({
-      properties: { coursePromptId: { anyOf: [{ format: "uuid" }, { type: "null" }] } },
-    });
-
-    expect(document.components.schemas.CourseResource).not.toMatchObject({
-      properties: { generationPromptId: expect.anything() },
-    });
-
-    expect(document.components.schemas.LanguageCourse).toMatchObject({
-      properties: { targetLanguage: { enum: [...TTS_SUPPORTED_LANGUAGE_CODES] } },
-    });
-  });
 });
 
 describe("OpenAPI response schemas", () => {
-  it("names playable continuation targets ready instead of completed", () => {
-    const continuation = {
-      chapter: { id: UUID, slug: "chapter", title: "Chapter" },
-      course: {
-        id: UUID,
-        imageUrl: null,
-        organization: { slug: "zoonk" },
-        slug: "course",
-        title: "Course",
-      },
-      lesson: {
-        description: null,
-        id: UUID,
-        kind: "explanation",
-        position: 0,
-        slug: "lesson",
-        title: "Lesson",
-      },
-    };
-
-    expect(
-      courseContinuationListResponseSchema.safeParse({
-        data: [{ ...continuation, status: "ready" }],
-      }).success,
-    ).toBe(true);
-
-    expect(
-      courseContinuationListResponseSchema.safeParse({
-        data: [{ ...continuation, status: "completed" }],
-      }).success,
-    ).toBe(false);
-  });
-
   it("uses UUIDs for course and organization identifiers", () => {
     const result = {
       description: null,
@@ -871,45 +803,29 @@ describe("OpenAPI response schemas", () => {
     ).toBe(false);
   });
 
-  it("documents the player content for each serialized step kind", () => {
+  it("types the content of each serialized language exercise", () => {
     const step = {
-      content: { text: "Lesson content", title: "Lesson title", variant: "text" },
+      content: {
+        options: [{ feedback: "Right", id: "cloud", isCorrect: true, text: "A cloud" }],
+        question: "How do we picture an electron today?",
+      },
       fillBlankOptions: [],
       id: UUID,
-      kind: "static",
+      kind: "multipleChoice",
       matchColumnsRightItems: [],
       position: 0,
       sentence: null,
       sentenceWordOptions: [],
-      sortOrderItems: [],
       translationOptions: [],
       vocabularyOptions: [],
       word: null,
       wordBankOptions: [],
     };
 
-    const response = {
-      lesson: {
-        description: null,
-        id: UUID,
-        kind: "explanation",
-        language: "en",
-        lessonSentences: [],
-        lessonWords: [],
-        organizationId: null,
-        steps: [step],
-        title: "Lesson",
-      },
-      status: "ready",
-    };
-
-    expect(lessonContentResponseSchema.safeParse(response).success).toBe(true);
+    expect(serializedStepSchema.safeParse(step).success).toBe(true);
 
     expect(
-      lessonContentResponseSchema.safeParse({
-        ...response,
-        lesson: { ...response.lesson, steps: [{ ...step, content: { text: "Untyped content" } }] },
-      }).success,
+      serializedStepSchema.safeParse({ ...step, content: { text: "Untyped content" } }).success,
     ).toBe(false);
   });
 });

@@ -1,0 +1,38 @@
+{
+  "documents": [
+    {
+      "documentType": "notice",
+      "kind": "official",
+      "publisher": "Cebraspe",
+      "reason": "Official opening notice (Edital nº 1 de Abertura) for the 2026 TCDF Analista Administrativo exam, updated with rectifications.",
+      "title": "Edital nº 1 – Abertura – Atualizado conforme retificações",
+      "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/132841120D1767C91430042A81063E012CD5EDDBC11169982C8B711A9A932EBB.pdf"
+    },
+    {
+      "documentType": "correction",
+      "kind": "official",
+      "publisher": "Cebraspe",
+      "reason": "Official amendment notice (Edital nº 2) amending subitem 10.1 and renumbering syllabus topics for the 2026 edition.",
+      "title": "Edital nº 2 - Retificação da alínea “a” do subitem 10.1 do Edital nº 1, bem como a renumeração de tópicos de Direito Previdenciário",
+      "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/5CB46AAAA40D34A100FD4FC47162F1A1DE432F92456E8098F2FB11523DBA7876.pdf"
+    },
+    {
+      "documentType": "officialPage",
+      "kind": "official",
+      "publisher": "Cebraspe",
+      "reason": "Official examination portal hosted by Cebraspe containing notices, schedule, and updates for the 2026 edition.",
+      "title": "TC DF 26 ANALISTA",
+      "url": "https://www.cebraspe.org.br/concursos/tc_df_26_analista"
+    },
+    {
+      "documentType": "officialPage",
+      "kind": "official",
+      "publisher": "Tribunal de Contas do Distrito Federal",
+      "reason": "Official announcement by TCDF with details about vacancies, remuneration, and examination rules for the 2026 edition.",
+      "title": "TCDF publica edital de concurso para analista com 10 vagas para qualquer área de formação",
+      "url": "https://www2.tc.df.gov.br/tcdf-publica-edital-de-concurso-para-analista-com-10-vagas-para-qualquer-area-de-formacao/"
+    }
+  ],
+  "officialFound": true,
+  "searchCalls": 2
+}

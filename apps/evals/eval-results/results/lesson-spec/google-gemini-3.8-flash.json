@@ -1,0 +1,788 @@
+{
+  "modelId": "google/gemini-3.8-flash",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The two skills naturally belong together: calculating percent change and understanding its dependence on the starting value. Both are actions with descriptions, concrete examples, and practical uses. However, \"Base asymmetry\" is a nonstandard topic label for the second skill rather than a canonical topic. This is one weak skill specification, triggering the cap of 8.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook is mathematically correct and motivating. A fully worked numerical calculation is followed by a less-supported calculation, and the checks explicitly include both dividing by the new value and assuming equal percentages cancel. The final salary problem is realistic. However, the initial explanation puts the abstract definition and formula before the numerical grounding in its visual, and the signed subtraction procedure is not explicitly established before negative-answer checks. These are localized instructional weaknesses rather than an unclear overall lesson.",
+          "score": 8,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The stepSolver template fits choosing the stages of a percent-change calculation and directly supports the taught procedure. The visuals illustrate changing bases, the original-value denominator, recovery percentages, and the salary comparison; none is merely decorative. The hypothetical examples are not presented as sourced real-world data. No activity or visual cap is triggered.",
+          "score": 10,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The learner-facing briefs use accessible US English and everyday numerical examples. The formula is appropriate for a beginner procedural lesson and follows a concrete hook. Discounts appear only as context rather than as a separately taught procedure; markups and percentage points are not taught. The inflation comparison remains a light application rather than a separate lesson, and there are no filler screens. No level, scope, or language cap is triggered.",
+          "score": 9,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3478,
+          "inputTokens": 3481,
+          "outputTokens": 1171,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The first explanation leads with a definition and formula rather than explicitly walking through the concrete $40-to-$50 example before naming and symbolizing the procedure. The procedure also never explicitly defines signed change as new minus original, although subsequent checks require negative answers. The second skill's topic, \"Base asymmetry,\" is less canonical than \"Percent change.\"",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use the numerical bar comparison as the starting point of the explanation, then introduce the formula and explain positive versus negative change. Rename the second skill's topic to \"Percent change\" and its action to \"Explain why equal percent increases and decreases do not cancel.\" Remove skill index 1 from the salary application unless that application actually tests changing baselines.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Beginner lesson on percent change: explanation first; a hook such as a price that rises 50% then falls 50% and doesn't return to the start\n      - Calculating a percent change is a procedure, so it needs a worked example with real numbers followed by a similar check with less help\n      - Checks should include the classic trap of dividing by the new value instead of the original\n      - The application uses a realistic case (a rent increase, a salary raise, a sale price)\n      - Discounts, markups and percentage points belong to the other lessons and get at most a sentence\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-percent-change-beginner-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "Fractions and percentages",
+          "courseTitle": "Mathematics",
+          "language": "en",
+          "lessonCanDo": "Calculate how much a price changed in percent",
+          "lessonDescription": "Work out how much a price or a salary went up or down in percent, and why a 50% drop needs a 100% rise to recover.",
+          "lessonTitle": "Percent change",
+          "level": "beginner",
+          "otherLessonTitles": [
+            "Percent of a quantity",
+            "Discounts and markups",
+            "Percentage points"
+          ],
+          "skills": ["Calculate a percent change"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "Separating simple and compound rule of three follows a natural boundary and preserves teaching order. Direct and inverse cases appropriately remain together. Titles, descriptions, can-do lines, and verb-led skills are well scoped. However, the compound skill's concrete example is incomplete because it supplies no reference duration; this weak skill example triggers the cap of 8.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hooks pose useful real problems, classification precedes equation setup, and the inverse worked example has a valid less-supported follow-up. The displayed calculations are correct. However, there is no direct worked example, supportMode is explanationFirst in both lessons, and the compound equation-selection check supplies neither a concrete problem nor candidate equations. Its activity also lacks numerical details. Briefs too vague to write from trigger the cap of 7. Most checks lack named distractors, and the simple lesson ends with an application that does not directly exercise its stated solving skill.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The categorize activity directly exercises identifying proportional relationships, and stepSolver fits staged comparison decisions. Tables, directional arrows, and contextual displays are tied to the mathematical situations rather than unrelated decoration. No fabricated data is presented as real sourced data, and no clear template mismatch appears. The number of visuals alone is not a violation.",
+          "score": 9,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The learner-facing content is in Brazilian Portuguese, and the terminology and equations generally suit intermediate learners. The simple-to-compound progression is appropriate and contains no filler summary screens. However, the final simple-lesson application introduces electrical power and energy calculations without teaching their relationship and shifts away from finding an unknown through rule of three. This scope slip triggers the cap of 8.",
+          "score": 8,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 4434,
+          "inputTokens": 4437,
+          "outputTokens": 1214,
+          "reasoningTokens": 492
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The simple-rule lesson omits the required worked example of direct proportion: the fabric problem is only a check. Both lessons specify explanationFirst despite the requested question-first fit. The simple lesson's final application asks learners to compare power × time rather than solve an unknown using rule of three, introducing an untaught energy relationship. Several compound-lesson briefs lack the concrete problem or answer choices needed by the writer.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Most checks omit a named tempting wrong answer; the travel-time check is a good exception. The compound skill's trench example lacks the reference duration needed to determine productivity. The first skill's description also describes inverse proportion as one quantity decreasing while another increases, without specifying the reciprocal relationship, although the explanation screen gives the stronger doubling/halving test.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Reconnect the compound explanation to the opening sewing problem, explicitly showing how each quantity affects the unknown while the others stay fixed. Specify constant productivity, fixed journey distance, and identical equipment where relevant so learners can see why proportional models apply.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Intermediate lesson on direct and inverse rule of three, a topic most learners at this level partly know, so question first is a good fit\n      - Must teach how to tell direct from inverse proportion before setting up the rule of three, with a worked example of each (inverse ones are the common trap)\n      - Compound rule of three may be split into its own lesson or kept only if the lesson still fits; either is fine if the plan is coherent\n      - Applications should look like real problems (workers and days, recipes, fuel and distance)\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-regra-de-tres-intermediate-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "Razão e proporção",
+          "courseTitle": "Matemática",
+          "language": "pt",
+          "lessonCanDo": "Resolver problemas com grandezas direta e inversamente proporcionais",
+          "lessonDescription": "Monte e resolva regras de três simples e compostas, reconhecendo quando as grandezas são direta ou inversamente proporcionais.",
+          "lessonTitle": "Regra de três simples e composta",
+          "level": "intermediate",
+          "otherLessonTitles": ["Razão e escala", "Grandezas proporcionais", "Porcentagem"],
+          "skills": [
+            "Identificar grandezas direta e inversamente proporcionais",
+            "Resolver regra de três simples",
+            "Resolver regra de três composta"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The single lesson keeps the mutually defining boundary-condition and energy-quantization work together. Both skills begin with verbs and include canonical topics, one-sentence descriptions, concrete examples, and practical uses. The title, description, and can-do line are coherently scoped to the infinite well.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hook poses a meaningful mystery, the boundary check occurs in the requested position, and the final molecular application is concrete. However, the plan skips the interior Schrödinger-equation derivation that should justify both the sinusoidal solution and the energy-wave-number relation. It also lacks a less-supported boundary-condition problem after that hard skill's worked example, triggering the maximum score of 7 for a missing follow-up. The later width-scaling check does provide useful energy practice.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The sliderGraph template fits the dependence of energy and spatial modes on n and L, and the well and energy-ladder diagrams teach relevant relationships. However, the jittering probability-cloud visual is poorly chosen for illustrating nonzero ground-state kinetic energy: a stationary state's probability density is stationary. This triggers the maximum score of 8 for one poorly chosen visual. The requested string-standing-wave picture is also absent.",
+          "score": 8,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The language is US English, the mathematics is appropriate for advanced learners, and the plan avoids teaching tunneling, time-dependent evolution, or the harmonic oscillator. The quantization formula, energy ratios, and 0.376 eV electron example are correct. However, formal well notation and sinusoidal solutions precede a standing-wave intuition, rather than following the explicitly requested string picture. This ordering slip triggers the maximum score of 8.",
+          "score": 8,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3707,
+          "inputTokens": 3710,
+          "outputTokens": 1121,
+          "reasoningTokens": 368
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The plan never writes or solves the time-independent Schrödinger equation inside the well. It introduces the sine/cosine solution and later imports E = hbar^2 k^2/(2m), leaving the central differential-equation reasoning out of the requested derivation. It also introduces notation before the required standing-waves-on-a-string picture. The boundary-condition worked example has no comparable, less-supported problem; the n=0 check is useful but does not practice applying both boundaries.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The hook's 'jittering quantum probability cloud' risks suggesting that a stationary state's probability density fluctuates because its kinetic energy is nonzero. The skill example also gives a normalized wavefunction without any screen explaining how its amplitude is obtained, slightly overstating the wavefunction instruction.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use 'n=0 is a valid zero-energy state' as the more tempting boundary-check distractor. Give the slider a specific prediction to test, such as whether doubling n while doubling L preserves energy. For the hexatriene application, provide electron constants or a convenient energy coefficient and explicitly frame the calculation as an idealized independent-electron estimate.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Advanced lesson: deriving the energy levels of a particle in a one-dimensional infinite well from the time-independent Schrödinger equation (boundary conditions, sine solutions, quantized wave numbers, E_n proportional to n squared over L squared)\n      - The derivation is one idea that may not split; up to 6 minutes is allowed for one skill at the advanced level\n      - Notation is expected here but should follow a picture of standing waves on a string; a worked derivation with a check after the boundary conditions\n      - An activity such as a slider graph (energy against n or L) or a visual of the first standing waves fits\n      - The time-dependent equation, tunneling and the harmonic oscillator belong to other lessons\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-particle-in-a-box-advanced-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "The Schrödinger equation",
+          "courseTitle": "Quantum mechanics",
+          "language": "en",
+          "lessonCanDo": "Derive the energy levels of a particle in a box",
+          "lessonDescription": "Solve the time-independent Schrödinger equation for a particle trapped in a one-dimensional box and see why its energy comes in steps.",
+          "lessonTitle": "Particle in a box",
+          "level": "advanced",
+          "otherLessonTitles": [
+            "The time-independent Schrödinger equation",
+            "Quantum tunneling",
+            "The quantum harmonic oscillator"
+          ],
+          "skills": ["Derive the energy levels of a particle in a box"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "There is one coherent central idea and one verb-led skill, with a canonical topic, description, example and use case. However, the skill's immediate-escape example is inaccurate, and its use case conflates atomic stability with matter resisting collapse under its own weight. This makes the sole skill weak and triggers the maximum score of 8.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The collapse puzzle is a potentially engaging hook, and explanation-first support fits a new quantum idea. However, both checks mostly retrieve explanations just given, triggering the cap of 7. The second lacks a named distractor, and the final screen supplies an everyday claim instead of eliciting application. The sequence also moves into abstract confinement language without the requested concrete analogy.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "No interactive activity is required here, so the absence of templates is not a defect. Several proposed visuals are poorly chosen: photons mix quantum imagery into the classical radiation account, the bouncing particle suggests a classical confined object, and the force-balance diagram suggests a separate outward quantum force. These trigger the cap of 7 for several poorly chosen visuals. A clear cloud-versus-orbit comparison is also missing.",
+          "score": 7,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The result is predominantly Brazilian Portuguese and contains no formulas or mathematical notation. Nevertheless, it develops uncertainty across several screens rather than limiting the neighboring topic to a sentence, introduces an unexplained femtometer-scale example, and substitutes technical confinement language for the requested everyday story. These multiple level and scope slips trigger the cap of 7. Corrupted characters further reduce language polish.",
+          "score": 7,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3321,
+          "inputTokens": 3324,
+          "outputTokens": 1039,
+          "reasoningTokens": 270
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The quantum explanation risks teaching a false mechanical model: confinement is depicted as an outward force balancing attraction, producing a cloud with a fixed radius. Atomic clouds have spatial distributions, not rigid boundaries. The skill example also incorrectly guarantees that an electron confined to nuclear dimensions would immediately escape because of its speed; increased localization energy does not justify that claim. The application overattributes solidity to stable cloud volume, without distinguishing atomic stability from resistance to overlapping matter. Finally, the lesson develops the uncertainty principle across multiple screens despite that being a neighboring lesson, and lacks the requested story and everyday comparison.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The first check largely repeats the preceding explanation, and the second also asks for the stated reason without naming a tempting wrong answer. The final screen tells learners an application rather than asking them to use the idea. The hook attributes classical collapse to attraction alone, although the next screen correctly introduces radiative energy loss. One visual brief contains corrupted Portuguese characters.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Build the lesson around a simple everyday comparison and a side-by-side orbit-versus-probability-cloud visual, explicitly distinguishing a cloud from a blurred trajectory. Explain that an atom has a lowest-energy stable state without developing uncertainty or inventing a balancing force. Replace recall checks with a light choice between competing explanations, and end by having the learner correct an atom illustration or explain atomic stability to a curious friend.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Overview lesson for a curious adult: why the electron doesn't fall into the nucleus, told as a story with an everyday comparison (a blurred fan, a cloud) and no formulas, equations or notation\n      - A guess-first hook fits (\"the electron orbits like the Earth around the Sun?\"); checks are light and fun\n      - No worked examples are needed for an overview idea; a visual of the cloud versus the old orbit picture helps\n      - Orbitals in detail, quantum numbers and the uncertainty principle's math belong elsewhere\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-eletron-nucleo-overview-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "O átomo por dentro",
+          "courseTitle": "Física quântica",
+          "language": "pt",
+          "lessonCanDo": "Explicar por que o elétron não cai no núcleo",
+          "lessonDescription": "Descubra por que o elétron não despenca no núcleo e por que isso faz os átomos, e você, existirem.",
+          "lessonTitle": "Por que o elétron não cai no núcleo",
+          "level": "overview",
+          "otherLessonTitles": [
+            "A luz em pacotes",
+            "Onda ou partícula?",
+            "O princípio da incerteza"
+          ],
+          "skills": ["Explicar por que o elétron não cai no núcleo"]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The two skills are closely linked parts of producing a pivot-table summary. Both start with action verbs and include a topic, a one-sentence description, a concrete example and a workplace use. The title and can-do line are appropriately focused; no split is needed.",
+          "score": 10,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "Explanation-first fits beginners, and both checks involve decisions with identifiable wrong answers. However, the worked example supplies only a range and field-placement instructions, not concrete source data or results; it never teaches the Columns assignment needed for the intended report. Its follow-up is only a partial placement question rather than a similar complete procedure. The final application also lacks the file or numbers needed to write it and misses the required region-by-month question. The cap of 7 for insufficiently concrete briefs applies.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "The field-placement diagram, insertion sequence and summary-function menu are instructionally relevant. No decorative activity template is used. However, the timer comparing hours with a two-second click is a poorly chosen promotional visual rather than a grounded demonstration, triggering the cap of 8. Seeing a small source table transform into an actual cross-tabulation would be substantially more useful.",
+          "score": 8,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The text is compatible with Spain Spanish and introduces ordinary spreadsheet terminology without formulas, code or unnecessary notation. The lesson stays within pivot tables rather than expanding into the neighboring lessons on filtering, conditional functions or charts. There are no filler summary or study-tip screens.",
+          "score": 10,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 3436,
+          "inputTokens": 3439,
+          "outputTokens": 922,
+          "reasoningTokens": 241
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The worked example does not provide a small sales dataset, actual amounts or a calculated result. It omits Columns and the summary-function choice, so it does not demonstrate the required region-by-month procedure. The subsequent checks practise field placement and Recuento separately but never require choosing rows, columns and a summary function together. The final application asks about stores and average tickets rather than sales by region and month, and depends on an unspecified real file.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The hook's hours-versus-two-seconds visual makes an unsupported speed claim and exaggerates the simplicity of creating the report. Terminology and contexts shift repeatedly between Vendedor, Región, Producto, Cliente and Tienda, adding avoidable friction for beginners.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use one consistent sales table throughout. Show the source records beside the resulting region-by-month totals, then provide a similar dataset with less guidance. A stepSolver activity could let learners choose Filas, Columnas, Valores and Suma, with feedback explaining why Recuento and Promedio answer different questions.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spain Spanish (not Latin American Spanish)\n      - Beginner lesson on pivot tables in a spreadsheet for someone who builds sales reports at work\n      - Building a pivot table is a procedure, so it needs a worked example on a small sales table (rows, columns, values, summary function) and then a similar task with less help\n      - Checks should make the learner choose rows, columns and the summary (sum vs count vs average) for a question\n      - The application answers a real work question (sales by region and month); an activity like categorize or chart reading may fit, but a decorative one does not\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "es-tablas-dinamicas-beginner-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "Resumir datos",
+          "courseTitle": "Análisis de datos con hojas de cálculo",
+          "language": "es",
+          "lessonCanDo": "Resumir una tabla de ventas con una tabla dinámica",
+          "lessonDescription": "Convierte cientos de filas de ventas en un resumen por región y mes con una tabla dinámica.",
+          "lessonTitle": "Tablas dinámicas",
+          "level": "beginner",
+          "otherLessonTitles": [
+            "Ordenar y filtrar datos",
+            "Funciones SUMAR.SI y CONTAR.SI",
+            "Gráficos a partir de tablas"
+          ],
+          "skills": [
+            "Crear una tabla dinámica",
+            "Elegir la función de resumen de una tabla dinámica"
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "oneIdea",
+          "reasoning": "The two lessons follow the natural center-versus-spread boundary and teaching order. Both have canonical titles, scoped descriptions, concrete can-do lines, and three action-based skills with examples and uses. However, the standard-deviation skill's numerical example is incorrect as written and does not specify the sample convention. This is one weak skill, triggering the cap of 8.",
+          "score": 8,
+          "label": "One idea",
+          "weight": 25
+        },
+        {
+          "categoryId": "screenPlan",
+          "reasoning": "The hooks are concrete, most checks require calculation and name plausible errors, and worked examples support the harder procedures. However, standard deviation has no less-supported calculation follow-up, explicitly triggering the cap of 7. The mode distractor duplicates the correct answer, quartile-finding instructions are incomplete, and the final spread application lacks concrete numbers. Several explanations also lead with definitions rather than concrete cases.",
+          "score": 7,
+          "label": "Screen plan",
+          "weight": 35
+        },
+        {
+          "categoryId": "activitiesAndVisuals",
+          "reasoning": "Most visuals teach directly: the salary bars show outlier influence, ordered boxes show the median, and the calculation table supports standard deviation. No interactive activity is required merely for its own sake. However, the mutual-fund growth visual conflates identical average annual returns with identical cumulative outcomes; arithmetic average returns do not ensure the same compounded endpoint. This poorly chosen visual triggers the cap of 8.",
+          "score": 8,
+          "label": "Activities & visuals",
+          "weight": 15
+        },
+        {
+          "categoryId": "levelAndScope",
+          "reasoning": "The text is in US English and largely stays within the requested descriptive-statistics scope without filler or excursions into neighboring lessons. Beginner scaffolding is weaker for quartiles and for the unexplained n − 1 sample calculation. Variance, explicitly included in the requested scope, is omitted as a named concept, while the mutual-fund application adds avoidable financial complexity. These multiple level and scope slips trigger the cap of 7.",
+          "score": 7,
+          "label": "Level, scope & language",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 5306,
+          "inputTokens": 5309,
+          "outputTokens": 898,
+          "reasoningTokens": 152
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The standard-deviation skill example incorrectly says the squared deviations for 2, 4, 6 average to 4; their average is 8/3. The worked example correctly obtains sample standard deviation 2 by dividing by n − 1, but does not explain this distinction. Variance is never named or explained despite being in scope. The standard-deviation worked example also lacks a similar calculation problem with less help; the following check tests interpretation instead.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The mode check uses 4 as both the correct mode and the proposed median distractor, so it cannot distinguish those strategies. The IQR example gives quartiles without explicitly teaching how to find the medians of the two halves or handle the overall median. The final spread application supplies no numerical spreads, and its growth-line visual misleadingly suggests identical average annual returns imply identical ending values.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Introduce each new measure through an actual data set before naming it. Use a more familiar final spread application, such as delivery-time consistency, with concrete range, IQR, and standard-deviation values so learners must choose and justify an appropriate measure.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - The input bundles six skills, so the output MUST be split into several lessons, each with 1 to 3 closely linked skills, in teaching order\n      - Natural boundaries: measures of center (mean, median, mode, and which to use when there are outliers) apart from measures of spread (range, interquartile range, variance and standard deviation); standard deviation is hard and needs a worked example\n      - Each lesson needs its own canonical title, a scoped description, a concrete can-do line, a hook and one application\n\n      \n  - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens\n  - Estimated minutes are computed by code from the screen kinds; don't grade the number itself\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-describing-data-oversized-1",
+        "userInput": {
+          "activityTemplates": [
+            {
+              "description": "Move a slider and watch a formula's output redraw on a graph.",
+              "id": "sliderGraph"
+            },
+            {
+              "description": "Drag a dot along a number line; each move is drawn as a jump.",
+              "id": "numberLine"
+            },
+            {
+              "description": "Split a rectangle into parts to multiply or share out quantities.",
+              "id": "areaModel"
+            },
+            {
+              "description": "Keep a balance level by doing the same thing to both sides of an equation.",
+              "id": "balance"
+            },
+            {
+              "description": "Solve a problem one step at a time, choosing the next move.",
+              "id": "stepSolver"
+            },
+            {
+              "description": "Commit to an estimate, then see the real value and how far off it was.",
+              "id": "estimateReveal"
+            },
+            {
+              "description": "Predict an outcome, then run a simulation many times and compare.",
+              "id": "predictSimulate"
+            },
+            {
+              "description": "Read a chart of real, cited data and answer a question about it.",
+              "id": "chartReader"
+            },
+            {
+              "description": "Name the parts of a checked diagram (a cell, an engine, the heart).",
+              "id": "labeledDiagram"
+            },
+            { "description": "Place events on a timeline drawn to scale.", "id": "timeline" },
+            { "description": "Sort items into groups.", "id": "categorize" },
+            { "description": "Match items from two columns.", "id": "matchPairs" },
+            {
+              "description": "Edit and run a short JavaScript or Python program and check its output.",
+              "id": "codeRunner"
+            }
+          ],
+          "chapterTitle": "Describing data",
+          "courseTitle": "Statistics",
+          "language": "en",
+          "lessonCanDo": "Summarize a data set with the right numbers",
+          "lessonDescription": "Mean, median, mode, range, interquartile range, variance and standard deviation, and when to use each.",
+          "lessonTitle": "Summarizing a data set",
+          "level": "beginner",
+          "otherLessonTitles": ["Types of data", "Histograms", "Box plots"],
+          "skills": [
+            "Calculate the mean",
+            "Find the median",
+            "Find the mode",
+            "Calculate the range",
+            "Calculate the interquartile range",
+            "Calculate the standard deviation"
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-spec"
+}

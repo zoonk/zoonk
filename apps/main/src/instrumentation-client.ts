@@ -1,10 +1,7 @@
 import { captureRouterTransitionStart, init } from "@sentry/nextjs";
-import { getPostHogConfig } from "@zoonk/utils/posthog";
+import { loadPostHog, waitForSharedProperties } from "@zoonk/core/analytics/posthog-browser";
 import { getSentryDataCollection } from "@zoonk/utils/sentry";
 import { initBotId } from "botid/client/core";
-import posthog from "posthog-js";
-
-const postHogConfig = getPostHogConfig();
 
 if (process.env.NODE_ENV === "production") {
   init({
@@ -13,23 +10,18 @@ if (process.env.NODE_ENV === "production") {
     tracesSampleRate: 0.1,
   });
 
-  initBotId({
-    protect: [
-      { method: "POST", path: "/api/auth/*" },
-      { method: "GET", path: "/start/learn/*" },
-      // BotID sees localized browser paths before the proxy rewrites them.
-      { method: "GET", path: "/*/start/learn/*" },
-      { method: "GET", path: "/generate/*" },
-      { method: "GET", path: "/*/generate/*" },
-    ],
-  });
+  // Guests, sign-in codes and social sign-in: `botCheckPlugin` checks the same requests on the server.
+  initBotId({ protect: [{ method: "POST", path: "/api/auth/*" }] });
 }
 
-if (postHogConfig) {
-  posthog.init(postHogConfig.projectToken, {
-    api_host: postHogConfig.host,
-    defaults: postHogConfig.defaults,
-  });
-}
+/**
+ * PostHog loads once the page has, so its SDK never delays the first paint. Session replay starts
+ * only once we know the learner is an adult (see PostHogIdentify), so nobody under 18, and nobody
+ * who hasn't told us their age, is ever recorded.
+ */
+void loadPostHog();
+
+/** The root layout registers the properties every event carries, so events wait for them. */
+waitForSharedProperties();
 
 export const onRouterTransitionStart = captureRouterTransitionStart;

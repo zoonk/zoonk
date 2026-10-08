@@ -1,0 +1,11 @@
+{
+  "inviteAction": "Aceptar la invitación",
+  "inviteDisclaimer": "Si no conoce a {name}, puede ignorar este mensaje.",
+  "inviteExpiry": "Esta invitación caduca en 7 días.",
+  "inviteIntro": "{name} está aprendiendo en Zoonk y le invitó a ser su tutor legal.",
+  "inviteSubject": "{name} le invitó a ser su tutor legal en Zoonk",
+  "inviteWhatYouCanDo": "Como tutor, puede ver su actividad de la semana, fijar un límite de tiempo al día, desactivar su memoria y aprobar una suscripción Plus. Inicie sesión con este correo para aceptar.",
+  "plusApprovalAction": "Ver la solicitud",
+  "plusApprovalIntro": "{name} quiere suscribirse a Zoonk Plus. Solo puede hacerlo después de que usted lo apruebe.",
+  "plusApprovalSubject": "{name} le pidió que apruebe Zoonk Plus"
+}

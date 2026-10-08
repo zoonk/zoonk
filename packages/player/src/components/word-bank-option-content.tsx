@@ -43,7 +43,7 @@ function WordBankOptionDescription({ children, id }: { children: ReactNode; id: 
  * aria-describedby, while this component owns the actual visual description.
  */
 function hasWordBankOptionDescription(option: WordBankOption): boolean {
-  return Boolean(option.romanization || option.pronunciation);
+  return Boolean(option.romanization);
 }
 
 /**
@@ -94,7 +94,7 @@ export function WordBankOptionButton({
       aria-describedby={hasDescription && !isSelected ? descriptionId : undefined}
       aria-label={option.word}
       className={cn(
-        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-center transition-all duration-150 outline-none",
+        "border-border flex min-h-11 min-w-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-center transition-all duration-150 outline-none",
         getWordBankButtonStateClass({ disabled, isSelected }),
       )}
       disabled={isDisabled}
@@ -107,10 +107,6 @@ export function WordBankOptionButton({
         {hasDescription && (
           <WordBankOptionDescription id={descriptionId}>
             <RomanizationText>{option.romanization}</RomanizationText>
-
-            {option.pronunciation && (
-              <span className="text-muted-foreground text-xs">{option.pronunciation}</span>
-            )}
           </WordBankOptionDescription>
         )}
       </WordBankOptionContent>

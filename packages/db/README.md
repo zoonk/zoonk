@@ -64,17 +64,17 @@ Run the following commands to set up Prisma:
 
 #### Local Curriculum Content
 
-The local `zoonk` database is the source of truth for development curriculum content. The regular Prisma seed only creates local users, accounts, subscriptions, organizations, enrollments, and progress; it does not create courses or lesson content.
+The regular Prisma seed creates local users, accounts, subscriptions, organizations and progress, plus the v2 seed: a few Library courses and one learner persona per goal kind (`v2-*@zoonk.test`).
 
-To refresh the local curriculum from a database copy, provide its connection string for this command:
+To refresh the local curriculum from a database copy, run the regular seed once (it creates the local AI organization), then provide the copy's connection string:
 
 ```sh
-pnpm --filter @zoonk/db db:seed
 CONTENT_SOURCE_DATABASE_URL='postgresql://...' pnpm --filter @zoonk/db db:sync-content
-pnpm --filter @zoonk/db db:seed
 ```
 
-The content sync accepts only local development databases: `zoonk` or `zoonk_wt_<id>_dev`. It replaces the AI organization's courses, categories, chapters, lessons, vocabulary, sentences, pronunciations, resource links, and steps without importing source users or progress. Existing local prompt links, enrollments, completions, lesson progress, and attempts are mapped onto matching content in the replacement; the whole operation rolls back if any mapping is missing. Run the regular seed before the first sync to create the local AI organization, then run it afterward to initialize content-linked seed data on a new database.
+The content sync accepts only local development databases: `zoonk` or `zoonk_wt_<id>_dev`. It replaces the AI organization's catalog: its courses (updated in place by slug), every public Library chapter, lesson, step, variant, skill, item and image, and it adds or updates the organization's words, sentences and pronunciations. It never imports source users or progress, and it never touches private content or learners' own courses. Local learners' links (plans, study blocks, attempts, mistakes, question threads, mastery and example lines) move onto the matching copied content by natural key. The whole sync rolls back if a link can't be matched, or if other local rows point at content it would replace.
+
+Seeded content stays as the v2 seed wrote it. The seed gives its courses and Library rows UUID version 8 ids (`seedId`), which generated content never has, so the sync never reads those rows from the source and never removes or overwrites them locally. Everything under them stays too (a seeded lesson's steps, including ones generated locally, and the pictures they show), so the `v2-*` personas keep their goals, plans and history. A source row that shares a natural key with a row that stays (a seeded course's slug, a Library chapter, lesson or skill identity, an image's reuse key) is left out along with the rows that need it, and the sync logs how many.
 
 #### Useful Commands
 

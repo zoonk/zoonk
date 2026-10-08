@@ -1,0 +1,229 @@
+enum GoalKind {
+  learn
+  explain
+  language
+  exam
+}
+
+enum GoalStatus {
+  active
+  paused
+  completed
+  archived
+}
+
+enum PlanItemKind {
+  lesson
+  chapter
+  checkpoint
+  mock
+  review
+  boss
+}
+
+enum PlanItemStatus {
+  todo
+  done
+  skipped
+  testedOut @map("tested_out")
+}
+
+/// A suggested goal waits for the learner's answer on Today; either answer closes it for good.
+enum SuggestedGoalStatus {
+  pending
+  accepted
+  dismissed
+}
+
+/// A proposed change waits for the learner's OK; an applied one can be undone. A proposal still
+/// waiting is `replaced` when a newer change changes the same thing (the time, the date, the
+/// focus, what the exam's notice says), so the learner never answers two that contradict.
+enum PlanChangeStatus {
+  proposed
+  applied
+  declined
+  undone
+  replaced
+}
+
+/// Why research asked the learner for a document instead of guessing: no official source turned up,
+/// the one it found couldn't be verified, or the exam is a teacher's test that only the class's
+/// material describes.
+enum ResearchUploadReason {
+  noOfficialSource @map("no_official_source")
+  unverified
+  classMaterial    @map("class_material")
+}
+
+/// What a learner wants, in their words (`prompt`) and as understood fields (`details`: exam, date,
+/// target score, course or position, level, reason, purpose, role). Library rows it points at use
+/// SetNull, so a goal survives content changes.
+model Goal {
+  id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId                String                 @map("user_id") @db.Uuid
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind                  GoalKind
+  status                GoalStatus             @default(active)
+  prompt                String
+  title                 String
+  details               Json                   @default("{}")
+  language              String                 @db.VarChar(10)
+  targetLanguage        String?                @map("target_language") @db.VarChar(10)
+  targetDate            DateTime?              @map("target_date") @db.Date
+  dailyMinutes          Int                    @map("daily_minutes") @db.SmallInt
+  /// Preferred local study time, such as "20:00".
+  studyTime             String?                @map("study_time") @db.VarChar(5)
+  timezone              String?
+  examBlueprintId       String?                @map("exam_blueprint_id") @db.Uuid
+  examBlueprint         ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  primaryCourseId       String?                @map("primary_course_id") @db.Uuid
+  primaryCourse         Course?                @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  /// The run writing the goal's curriculum (or its quick explanation), followed live while it runs.
+  generationRunId       String?                @map("generation_run_id")
+  /// The run researching the goal's sources; asking for research again follows it instead of paying
+  /// again, unless it failed.
+  researchRunId         String?                @map("research_run_id")
+  /// Set when the goal's last research asked the learner to upload the notice or their material;
+  /// cleared when they answer or dismiss it, or a later research run needs nothing.
+  researchUploadReason  ResearchUploadReason?  @map("research_upload_reason")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @default(now()) @updatedAt @map("updated_at")
+  plan                  Plan?
+  studySessions         StudySession[]
+  activeProfile         UserLearningProfile?
+  learnerSources        LearnerSource[]
+  memoryInsights        MemoryInsight[]
+  languageConversations LanguageConversation[]
+  mistakePatterns       MistakePattern[]
+  mockExams             MockExam[]
+  examResult            ExamResult?
+  evaluationRuns        EvaluationRun[]
+  aiCalls               AiCall[]
+  questionThreads       LessonQuestionThread[]
+
+  @@index([userId, status])
+  @@index([examBlueprintId])
+  @@index([primaryCourseId])
+  @@map("goals")
+}
+
+/// The route to a goal: phases (name, dates and summary each) and ordered plan items. `graph` is the
+/// goal's skill graph as the planner uses it (its phases, and plain skill ids with a name snapshot, phase,
+/// size, area and exam weight) and `settings` how the learner shaped it (study days, light weeks, focus,
+/// steering, pace).
+/// Every change is a `PlanChange` with a one-sentence reason and an undo. Provenance is set when a model
+/// wrote the phases.
+model Plan {
+  id                  String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  goalId              String       @unique @map("goal_id") @db.Uuid
+  goal                Goal         @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  phases              Json         @default("[]")
+  graph               Json         @default("{}")
+  settings            Json         @default("{}")
+  estimateHours       Float?       @map("estimate_hours")
+  version             Int          @default(1)
+  model               String?
+  promptVersion       String?      @map("prompt_version")
+  runId               String?      @map("run_id")
+  generatedAt         DateTime?    @map("generated_at")
+  /// When the goal's last run building this plan gave up before it had skills; cleared when a new
+  /// run starts, so placement and the plan stop waiting and offer to try again.
+  buildFailedAt       DateTime?    @map("build_failed_at")
+  /// When the run that built the plan finished writing placement's questions (some may have
+  /// failed); until then, a skill's missing questions are still coming.
+  placementPreparedAt DateTime?    @map("placement_prepared_at")
+  /// An exam plan built before research read the exam's notice waits for that reading until this
+  /// time: the plan reveal says it's reading the notice, and a reading that lands in time becomes
+  /// part of the plan. Past it, the plan shows the exam's usual structure and the reading arrives
+  /// as a change the learner applies. Null when nothing is waited for (the plan was built from
+  /// the notice, the reading landed, or research ended without one).
+  noticeWaitUntil     DateTime?    @map("notice_wait_until")
+  /// When the plan stopped waiting for its exam's notice: the reading landed in the plan, arrived as
+  /// a change to apply, or research ended without one. A notice recorded before then is the plan's
+  /// own (it shaped the plan or that change), so Today never shows it as news.
+  noticeWaitEndedAt   DateTime?    @map("notice_wait_ended_at")
+  /// What the plan covered of its goal by its date when it was last planned (0 to 1, the share its
+  /// feasibility reads), so a new day can tell the learner when falling behind puts the date at
+  /// risk. Null for plans without a date.
+  coveredShare        Float?       @map("covered_share")
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at")
+  items               PlanItem[]
+  changes             PlanChange[]
+
+  @@map("plans")
+}
+
+/// One step of a plan. Library links use SetNull and `titleSnapshot` keeps the item readable when
+/// content is regenerated or deleted.
+model PlanItem {
+  id            String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  planId        String         @map("plan_id") @db.Uuid
+  plan          Plan           @relation(fields: [planId], references: [id], onDelete: Cascade)
+  position      Int
+  phase         Int            @db.SmallInt
+  kind          PlanItemKind
+  status        PlanItemStatus @default(todo)
+  lessonId      String?        @map("lesson_id") @db.Uuid
+  lesson        Lesson?        @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  chapterId     String?        @map("chapter_id") @db.Uuid
+  chapter       Chapter?       @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  skillId       String?        @map("skill_id") @db.Uuid
+  skill         Skill?         @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  titleSnapshot String         @map("title_snapshot")
+  scheduledFor  DateTime?      @map("scheduled_for") @db.Date
+  completedAt   DateTime?      @map("completed_at")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([planId, position], name: "planPosition")
+  @@index([lessonId])
+  @@index([chapterId])
+  @@index([skillId])
+  @@map("plan_items")
+}
+
+/// A change to a plan with its one-sentence reason, shown to the learner with an undo. `payload` holds
+/// what the planner needs to reverse it. Changes bigger than a lesson start `proposed` and wait for the
+/// learner's OK. Provenance is set when a model proposed the change.
+model PlanChange {
+  id            String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  planId        String           @map("plan_id") @db.Uuid
+  plan          Plan             @relation(fields: [planId], references: [id], onDelete: Cascade)
+  kind          String
+  status        PlanChangeStatus @default(applied)
+  reason        String
+  payload       Json             @default("{}")
+  model         String?
+  promptVersion String?          @map("prompt_version")
+  runId         String?          @map("run_id")
+  generatedAt   DateTime?        @map("generated_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  /// The buddy's answers that proposed it, when the learner asked for it by talking.
+  tutorAnswers  LessonQuestion[]
+
+  @@index([planId, createdAt])
+  @@map("plan_changes")
+}
+
+/// A course a learner was taking before goals existed, offered on Today as a goal to plan: "Continue
+/// Physics? Build a plan in 1 minute". The learning v2 reset creates these from each learner's most
+/// recent courses, and each one is shown until the learner answers it. `courseId` is a plain id without
+/// a foreign key, because a learner's own course is deleted once it's converted; `title` is the course's
+/// title then, which onboarding opens with as the goal.
+model SuggestedGoal {
+  id           String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId       String              @map("user_id") @db.Uuid
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId     String              @map("course_id") @db.Uuid
+  title        String
+  /// When the learner last studied the course, so the most recent one is offered first.
+  lastActiveAt DateTime            @map("last_active_at")
+  status       SuggestedGoalStatus @default(pending)
+  respondedAt  DateTime?           @map("responded_at")
+  createdAt    DateTime            @default(now()) @map("created_at")
+
+  @@unique([userId, courseId], name: "userCourse")
+  @@index([userId, status])
+  @@map("suggested_goals")
+}

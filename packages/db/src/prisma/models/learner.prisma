@@ -1,0 +1,113 @@
+enum MasteryState {
+  new
+  learning
+  solid
+  mastered
+}
+
+enum MistakeCause {
+  gap
+  misread
+  trap
+  time
+  guess
+}
+
+enum MistakeStatus {
+  open
+  fixed
+}
+
+/// A learner's mastery and FSRS review schedule for one skill. Skills are merged, never deleted, so the
+/// skill link is Restrict: a skill with learner state can't be removed until that state moves to the
+/// skill it was merged into. `recallDays` counts distinct days the skill was remembered (gold at 3).
+model LearnerSkill {
+  id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String       @map("user_id") @db.Uuid
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillId        String       @map("skill_id") @db.Uuid
+  skill          Skill        @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  state          MasteryState @default(new)
+  stability      Float        @default(0)
+  difficulty     Float        @default(0)
+  due            DateTime?
+  lastReviewedAt DateTime?    @map("last_reviewed_at")
+  reps           Int          @default(0)
+  lapses         Int          @default(0)
+  recallDays     Int          @default(0) @map("recall_days")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, skillId], name: "userSkill")
+  @@index([userId, due])
+  @@index([skillId])
+  @@map("learner_skills")
+}
+
+/// Every answer a learner gives, with the learner-local date, hour and weekday. Content links use
+/// SetNull, so answers outlive regenerated steps and items. `targetLanguage` is the language practiced
+/// in an answer to a language lesson or level test, kept on the row so language stats never read content.
+/// A mock's answers keep their mock, so each of its questions is recorded once however often it's finished.
+model Attempt {
+  id             String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId         String        @map("user_id") @db.Uuid
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepId         String?       @map("step_id") @db.Uuid
+  step           Step?         @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  itemId         String?       @map("item_id") @db.Uuid
+  item           Item?         @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  skillId        String?       @map("skill_id") @db.Uuid
+  skill          Skill?        @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  studySessionId String?       @map("study_session_id") @db.Uuid
+  studySession   StudySession? @relation(fields: [studySessionId], references: [id], onDelete: SetNull)
+  mockExamId     String?       @map("mock_exam_id") @db.Uuid
+  mockExam       MockExam?     @relation(fields: [mockExamId], references: [id], onDelete: SetNull)
+  answer         Json
+  targetLanguage String?       @map("target_language") @db.VarChar(10)
+  isCorrect      Boolean       @map("is_correct")
+  score          Float?
+  durationMs     Int           @map("duration_ms")
+  answeredAt     DateTime      @default(now()) @map("answered_at")
+  localDate      DateTime      @map("local_date") @db.Date
+  hour           Int           @db.SmallInt
+  weekday        Int           @db.SmallInt
+  mistakes       Mistake[]
+
+  @@unique([mockExamId, itemId], name: "mockAttempt")
+  @@index([userId, answeredAt])
+  @@index([userId, skillId])
+  @@index([stepId])
+  @@index([itemId])
+  @@index([skillId])
+  @@index([studySessionId])
+  @@map("attempts")
+}
+
+/// The mistakes notebook. `snapshot` keeps the question and the learner's answer as text, so an entry
+/// stays readable after its content changes.
+model Mistake {
+  id        String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId    String        @map("user_id") @db.Uuid
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillId   String?       @map("skill_id") @db.Uuid
+  skill     Skill?        @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  itemId    String?       @map("item_id") @db.Uuid
+  item      Item?         @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  stepId    String?       @map("step_id") @db.Uuid
+  step      Step?         @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  attemptId String?       @map("attempt_id") @db.Uuid
+  attempt   Attempt?      @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+  cause     MistakeCause?
+  status    MistakeStatus @default(open)
+  fixedAt   DateTime?     @map("fixed_at")
+  snapshot  Json
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  @@index([userId, status, createdAt])
+  @@index([skillId])
+  @@index([itemId])
+  @@index([stepId])
+  @@index([attemptId])
+  @@map("mistakes")
+}

@@ -1,6 +1,7 @@
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
+import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -14,6 +15,43 @@ const e2eAliases: Record<string, string> = isE2E
   ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
   : {};
 
+/** Paths without a locale are the default language; the others start with their locale. */
+const localePrefixes = ["", `/:locale(${SUPPORTED_LOCALES.join("|")})`];
+
+/**
+ * The old course-prompt pages (`/start/learn/{prompt}`, `/start/speak`, `/start/exam`) are now
+ * onboarding, which reads the goal from `?goal=`, so their links and search results keep working.
+ */
+const oldStartRedirects = localePrefixes.flatMap((prefix) => [
+  {
+    destination: `${prefix}/start?goal=:prompt`,
+    permanent: true,
+    source: `${prefix}/start/learn/:prompt`,
+  },
+  {
+    destination: `${prefix}/start`,
+    permanent: true,
+    source: `${prefix}/start/:page(learn|speak|exam)/:rest*`,
+  },
+]);
+
+/**
+ * Pages folded into others: the language setting lives in Appearance, "My courses" gave way to
+ * Today, where a learner's goals and their courses are, and the Journey replaced the Plan,
+ * Progress and Content tabs and the subject map. Chapter and unit pages keep their URLs. Help
+ * lives at `/support`, and `/help` is the address people guess.
+ */
+const movedPageRedirects = localePrefixes.flatMap((prefix) => [
+  { destination: `${prefix}/settings/appearance`, permanent: true, source: `${prefix}/language` },
+  { destination: `${prefix}/today`, permanent: true, source: `${prefix}/my` },
+  { destination: `${prefix}/support`, permanent: true, source: `${prefix}/help` },
+  ...["/plan", "/progress", "/content", "/content/map"].map((path) => ({
+    destination: `${prefix}/journey`,
+    permanent: true,
+    source: `${prefix}${path}`,
+  })),
+]);
+
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
@@ -22,6 +60,8 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
     exposeTestingApiInProductionBuild: isE2E,
+    // The root layout sits under `[lang]`, so URLs no route matches need `app/global-not-found.tsx`.
+    globalNotFound: true,
     turbopackRustReactCompiler: true,
     typedEnv: true,
   },
@@ -39,12 +79,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,
-  async redirects() {
-    return [
-      { destination: "/start/learn", permanent: true, source: "/learn" },
-      { destination: "/start/learn/:prompt", permanent: true, source: "/learn/:prompt" },
-    ];
-  },
+  redirects: async () => [...oldStartRedirects, ...movedPageRedirects],
   turbopack: {
     resolveAlias: { ...e2eAliases },
     rules: {
@@ -64,7 +99,7 @@ const withNextIntl = createNextIntlPlugin({
     messages: {
       format: "po",
       locales: "infer",
-      path: ["./messages", "../../packages/player/messages"],
+      path: ["./messages", "../../packages/player/messages", "../../packages/learn/messages"],
       precompile: true,
       sourceLocale: "en",
     },

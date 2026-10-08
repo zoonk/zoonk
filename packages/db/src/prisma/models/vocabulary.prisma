@@ -1,16 +1,29 @@
+/// A word in a target language, shared by every language pair learning it. `model`, `promptVersion`,
+/// `runId` and `generatedAt` name the lesson run that first wrote it with its romanization; the
+/// `audio*` columns name the text-to-speech run that voiced it. Both are null for rows made before
+/// generated rows stored their provenance.
 model Word {
-  id             String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId String              @map("organization_id") @db.Uuid
-  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage String              @map("target_language") @db.VarChar(10)
-  word           String
-  romanization   String?
-  audioUrl       String?             @map("audio_url")
-  createdAt      DateTime            @default(now()) @map("created_at")
-  updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
-  pronunciations WordPronunciation[]
-  chapterWords   ChapterWord[]
-  steps          Step[]
+  id                   String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId       String                @map("organization_id") @db.Uuid
+  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage       String                @map("target_language") @db.VarChar(10)
+  word                 String
+  romanization         String?
+  audioUrl             String?               @map("audio_url")
+  model                String?
+  promptVersion        String?               @map("prompt_version")
+  runId                String?               @map("run_id")
+  generatedAt          DateTime?             @map("generated_at")
+  audioModel           String?               @map("audio_model")
+  audioPromptVersion   String?               @map("audio_prompt_version")
+  audioRunId           String?               @map("audio_run_id")
+  audioGeneratedAt     DateTime?             @map("audio_generated_at")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  pronunciations       WordPronunciation[]
+  librarySteps         Step[]
+  lessonWords          LessonWord[]
+  pronunciationReviews PronunciationReview[]
 
   @@unique([organizationId, targetLanguage, word], name: "orgWord")
   @@map("words")
@@ -23,93 +36,102 @@ model Word {
 /// while a Portuguese speaker gets a different phonetic guide.
 /// That's why pronunciation lives in its own table keyed on
 /// (wordId, userLanguage) rather than on `Word` (no user language)
-/// or `ChapterWord` (would duplicate the same value across lessons).
+/// or `LessonWord` (would duplicate the same value across lessons).
+/// Provenance names the lesson run that last wrote the respelling or tip.
 model WordPronunciation {
-  id            String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  wordId        String   @map("word_id") @db.Uuid
-  word          Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  userLanguage  String   @map("user_language") @db.VarChar(10)
+  id            String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  wordId        String    @map("word_id") @db.Uuid
+  word          Word      @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  userLanguage  String    @map("user_language") @db.VarChar(10)
   pronunciation String
-  createdAt     DateTime @default(now()) @map("created_at")
+  /// One tip on the sound speakers of `userLanguage` tend to get wrong in this word, or null when
+  /// there is no real trap. Rows written before tips existed are filled the next time the word is taught.
+  tip           String?
+  model         String?
+  promptVersion String?   @map("prompt_version")
+  runId         String?   @map("run_id")
+  generatedAt   DateTime? @map("generated_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
 
   @@unique([wordId, userLanguage], name: "wordPronunciation")
   @@map("word_pronunciations")
 }
 
+/// A sentence in a target language, shared per target language. Provenance works like `Word`'s:
+/// the lesson run that wrote it, then the text-to-speech run that voiced it.
 model Sentence {
-  id               String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  organizationId   String            @map("organization_id") @db.Uuid
-  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage   String            @map("target_language") @db.VarChar(10)
-  sentence         String
-  romanization     String?
-  audioUrl         String?           @map("audio_url")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
-  chapterSentences ChapterSentence[]
-  steps            Step[]
+  id                 String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId     String           @map("organization_id") @db.Uuid
+  organization       Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage     String           @map("target_language") @db.VarChar(10)
+  sentence           String
+  romanization       String?
+  audioUrl           String?          @map("audio_url")
+  model              String?
+  promptVersion      String?          @map("prompt_version")
+  runId              String?          @map("run_id")
+  generatedAt        DateTime?        @map("generated_at")
+  audioModel         String?          @map("audio_model")
+  audioPromptVersion String?          @map("audio_prompt_version")
+  audioRunId         String?          @map("audio_run_id")
+  audioGeneratedAt   DateTime?        @map("audio_generated_at")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @default(now()) @updatedAt @map("updated_at")
+  librarySteps       Step[]
+  lessonSentences    LessonSentence[]
 
   @@unique([organizationId, targetLanguage, sentence], name: "orgSentence")
   @@map("sentences")
 }
 
-/// Links a canonical word to the chapter context that introduced it.
-/// Translations live here instead of a global `WordTranslation` table because
-/// the same word can have different meanings in different contexts — e.g.
-/// Spanish "banco" means "bank" in a finance chapter but "bench" in a
-/// furniture chapter. Steps point at this row directly so derived translation
-/// and review steps never have to infer the right resource lesson at render time.
-model ChapterWord {
-  id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  chapterId      String   @map("chapter_id") @db.Uuid
-  chapter        Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  sourceLessonId String   @map("source_lesson_id") @db.Uuid
-  sourceLesson   Lesson   @relation(fields: [sourceLessonId], references: [id], onDelete: Cascade)
-  wordId         String   @map("word_id") @db.Uuid
-  word           Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  userLanguage   String   @map("user_language") @db.VarChar(10)
-  translation    String   @default("")
-  /// Stores direct target-language distractor words for this chapter word.
-  /// These are generated up front so the player can render wrong options
-  /// directly instead of deriving them from semantic overlap rules.
-  distractors    String[] @default([])
-  createdAt      DateTime @default(now()) @map("created_at")
-  steps          Step[]
+/// A word a language lesson teaches, with its meaning for the lesson's language pair. The word, its
+/// audio and romanization are shared by every pair learning that target language; the translation,
+/// distractors and note belong to the lesson, because meaning depends on the situation ("banco" is
+/// a bank in one lesson and a bench in another).
+model LessonWord {
+  lessonId      String   @map("lesson_id") @db.Uuid
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  wordId        String   @map("word_id") @db.Uuid
+  word          Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  position      Int      @db.SmallInt
+  translation   String
+  /// Target-language words a learner could confuse with this one, shown as wrong options.
+  distractors   String[] @default([])
+  /// A false friend or usage trap, in the lesson's language.
+  note          String?
+  model         String
+  promptVersion String   @map("prompt_version")
+  runId         String   @map("run_id")
+  generatedAt   DateTime @default(now()) @map("generated_at")
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  @@unique([sourceLessonId, wordId], name: "chapterWordSource")
-  @@index([chapterId, wordId])
+  @@id([lessonId, wordId])
   @@index([wordId])
-  @@map("chapter_words")
+  @@map("lesson_words")
 }
 
-/// Links a sentence to the chapter context that introduced it.
-/// Follows the same pattern as `ChapterWord` — translations are scoped to
-/// chapter content rather than stored globally. While sentence-level polysemy is
-/// rarer than word-level (sentences carry their own context), the design
-/// principle is identical: explanation is inherently lesson-context-specific
-/// (a grammar lesson explains the same sentence differently than a
-/// vocabulary lesson), and fixing the schema pre-launch is far cheaper
-/// than migrating production data later.
-model ChapterSentence {
-  id                     String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  chapterId              String   @map("chapter_id") @db.Uuid
-  chapter                Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  sourceLessonId         String   @map("source_lesson_id") @db.Uuid
-  sourceLesson           Lesson   @relation(fields: [sourceLessonId], references: [id], onDelete: Cascade)
+/// A sentence a language lesson uses, with its translation and explanation for the lesson's language
+/// pair. The sentence and its audio are shared per target language.
+model LessonSentence {
+  lessonId               String   @map("lesson_id") @db.Uuid
+  lesson                 Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   sentenceId             String   @map("sentence_id") @db.Uuid
   sentence               Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-  userLanguage           String   @map("user_language") @db.VarChar(10)
-  translation            String   @default("")
-  /// Stores direct target-language distractor words for reading word banks.
+  position               Int      @db.SmallInt
+  translation            String
+  /// Why the sentence is built this way, compared with the lesson's language.
+  explanation            String
+  /// Target-language words for the sentence's word bank that don't belong in it.
   distractors            String[] @default([])
-  /// Stores direct user-language distractor words for listening word banks.
+  /// Words in the lesson's language for the translation's word bank that don't belong in it.
   translationDistractors String[] @default([]) @map("translation_distractors")
-  explanation            String?
+  model                  String
+  promptVersion          String   @map("prompt_version")
+  runId                  String   @map("run_id")
+  generatedAt            DateTime @default(now()) @map("generated_at")
   createdAt              DateTime @default(now()) @map("created_at")
-  steps                  Step[]
 
-  @@unique([sourceLessonId, sentenceId], name: "chapterSentenceSource")
-  @@index([chapterId, sentenceId])
+  @@id([lessonId, sentenceId])
   @@index([sentenceId])
-  @@map("chapter_sentences")
+  @@map("lesson_sentences")
 }

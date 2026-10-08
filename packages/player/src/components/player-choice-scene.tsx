@@ -1,8 +1,8 @@
 "use client";
 
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { usePlayerInteractionState } from "../player-context";
-import { useOptionKeyboard } from "../use-option-keyboard";
 import { OptionCard } from "./option-card";
 import { PlayerRichText } from "./player-rich-text";
 import { ContextText, QuestionText } from "./question-text";
@@ -117,11 +117,10 @@ export function PlayerChoiceSceneOptions({
   const t = useExtracted();
   const interactionState = usePlayerInteractionState();
 
-  useOptionKeyboard({
-    enabled: keyboardEnabled,
-    interactionState,
-    onSelect,
-    optionCount: options.length,
+  useNumberKeys({
+    count: options.length,
+    enabled: keyboardEnabled && interactionState !== "paused",
+    onPick: onSelect,
   });
 
   return (

@@ -1,18 +1,26 @@
 import "server-only";
-import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question";
+import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question-context";
 import { prisma } from "@zoonk/db";
+import { after } from "next/server";
+import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { getSession } from "../users/get-session";
-import { buildLessonQuestionContextSnapshot } from "./_utils/context-snapshot";
 import { toDatabaseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
-import { getLessonQuestionAccess } from "./_utils/question-access";
 import {
   type LessonQuestionResourceSource,
   lessonQuestionResourceOmit,
+  lessonQuestionResourceQuery,
   toLessonQuestionResource,
 } from "./_utils/question-resource";
 import { getLessonQuestionRequestFingerprint } from "./_utils/request-fingerprint";
 import { lockLessonQuestionThread } from "./_utils/thread-lock";
-import { type CreateLessonQuestionInput } from "./contract";
+import { buildTutorContextSnapshot } from "./_utils/tutor-context-snapshot";
+import { getTutorAskedEvent } from "./_utils/tutor-events";
+import {
+  type TutorSubject,
+  findTutorSubject,
+  getSubjectThreadColumn,
+} from "./_utils/tutor-subject";
+import { type CreateLessonQuestionInput, type TutorTarget } from "./contract";
 
 function getCreateLessonQuestionOutcome({
   question,
@@ -29,51 +37,51 @@ function getCreateLessonQuestionOutcome({
 }
 
 function findExistingLessonQuestion({
-  lessonId,
   requestId,
+  subject,
   userId,
 }: {
-  lessonId: string;
   requestId: string;
+  subject: TutorSubject;
   userId: string;
 }) {
   return prisma.lessonQuestion.findFirst({
-    omit: lessonQuestionResourceOmit,
-    where: { requestId, thread: { lessonId, userId } },
+    ...lessonQuestionResourceQuery,
+    where: { requestId, thread: { ...getSubjectThreadColumn(subject), userId } },
   });
 }
 
 async function persistLessonQuestion({
   contextSnapshot,
   input,
-  lessonId,
   requestFingerprint,
   stepId,
   stepNumber,
+  subject,
   userId,
 }: {
   contextSnapshot: LessonQuestionContextSnapshot;
   input: CreateLessonQuestionInput;
-  lessonId: string;
   requestFingerprint: string;
   stepId: string | null;
   stepNumber: number | null;
+  subject: TutorSubject;
   userId: string;
 }) {
+  const threadWhere = { ...getSubjectThreadColumn(subject), userId };
+
   return prisma.$transaction(async (transaction) => {
     await transaction.lessonQuestionThread.createMany({
-      data: [{ lessonId, userId }],
+      data: [{ ...threadWhere, kind: subject.kind }],
       skipDuplicates: true,
     });
 
-    const thread = await transaction.lessonQuestionThread.findUniqueOrThrow({
-      where: { userLessonQuestionThread: { lessonId, userId } },
-    });
+    const thread = await transaction.lessonQuestionThread.findFirstOrThrow({ where: threadWhere });
 
     await lockLessonQuestionThread({ threadId: thread.id, transaction });
 
     const existingQuestion = await transaction.lessonQuestion.findUnique({
-      omit: lessonQuestionResourceOmit,
+      ...lessonQuestionResourceQuery,
       where: { threadLessonQuestionRequest: { requestId: input.requestId, threadId: thread.id } },
     });
 
@@ -83,22 +91,22 @@ async function persistLessonQuestion({
 
     const unfinishedQuestion = await transaction.lessonQuestion.findFirst({
       omit: lessonQuestionResourceOmit,
-      where: { status: { not: "completed" }, stepId, threadId: thread.id },
+      where: { libraryStepId: stepId, status: { not: "completed" }, threadId: thread.id },
     });
 
     if (unfinishedQuestion) {
       return { status: "conflict" as const };
     }
 
-    const [question] = await Promise.all([
+    const [created] = await Promise.all([
       transaction.lessonQuestion.create({
         data: {
           contextKind: input.context.kind,
           contextSnapshot: toDatabaseLessonQuestionContextSnapshot(contextSnapshot),
+          libraryStepId: stepId,
           question: input.question,
           requestFingerprint,
           requestId: input.requestId,
-          stepId,
           stepNumber,
           threadId: thread.id,
         },
@@ -110,20 +118,23 @@ async function persistLessonQuestion({
       }),
     ]);
 
-    return getCreateLessonQuestionOutcome({ question, requestFingerprint });
+    after(() => trackLearnerEvents({ events: [getTutorAskedEvent({ input, subject })], userId }));
+
+    return getCreateLessonQuestionOutcome({ question: created, requestFingerprint });
   });
 }
 
 /**
- * Creates one durable learner turn only after live lesson access and every client-selected
- * step ID have been resolved to authoritative curriculum content owned by the server.
+ * Creates one durable learner turn only after live access to what it's about has been checked and
+ * the context the tutor sees has been built on the server: a lesson's screens from the step ids
+ * the client sent, or the chapter, plan or finished mock as a whole.
  */
 export async function createLessonQuestion({
   input,
-  lessonId,
+  target,
 }: {
   input: CreateLessonQuestionInput;
-  lessonId: string;
+  target: TutorTarget;
 }) {
   const session = await getSession();
 
@@ -131,28 +142,27 @@ export async function createLessonQuestion({
     return { status: "unauthorized" as const };
   }
 
-  const access = await getLessonQuestionAccess({ lessonId, userId: session.user.id });
+  const userId = session.user.id;
+  const access = await findTutorSubject({ target, userId });
 
   if (access.status !== "ready") {
     return access;
   }
 
+  const { subject } = access;
   const requestFingerprint = getLessonQuestionRequestFingerprint(input);
 
   const existingQuestion = await findExistingLessonQuestion({
-    lessonId,
     requestId: input.requestId,
-    userId: session.user.id,
+    subject,
+    userId,
   });
 
   if (existingQuestion) {
     return getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint });
   }
 
-  const context = await buildLessonQuestionContextSnapshot({
-    context: input.context,
-    lesson: access.lesson,
-  });
+  const context = await buildTutorContextSnapshot({ context: input.context, subject, userId });
 
   if (context.status !== "ready") {
     return context;
@@ -161,10 +171,10 @@ export async function createLessonQuestion({
   return persistLessonQuestion({
     contextSnapshot: context.contextSnapshot,
     input,
-    lessonId,
     requestFingerprint,
     stepId: context.stepId,
     stepNumber: context.stepNumber,
-    userId: session.user.id,
+    subject,
+    userId,
   });
 }

@@ -1,14 +1,37 @@
 import "server-only";
 import { type LessonQuestionPriorTurn } from "@zoonk/ai/tasks/lessons/question";
-import { type TransactionClient } from "@zoonk/db";
+import {
+  type LessonQuestionContextKind,
+  type TransactionClient,
+  type TutorSharedAnswer,
+} from "@zoonk/db";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 import { lessonQuestionResourceOmit } from "./question-resource";
+import { isSuggestedScreenQuestion } from "./request-fingerprint";
+import { getSharedAnswerKey } from "./shared-answers";
 import { lockLessonQuestionThread } from "./thread-lock";
 
 const MAX_PRIOR_TURNS = 12;
 const STALE_GENERATION_MILLISECONDS = 2 * 60 * 1000;
 
-export type ClaimLessonQuestionAnswerInput = { questionId: string; requestedModel: string };
+/**
+ * The model the answer is requested from, recorded while it's written; adapters whose task
+ * depends on what the question is about pass it by the question's context kind.
+ */
+export type ClaimLessonQuestionAnswerInput = {
+  questionId: string;
+  requestedModel: string | ((contextKind: LessonQuestionContextKind) => string);
+};
+
+function resolveRequestedModel({
+  contextKind,
+  requestedModel,
+}: {
+  contextKind: LessonQuestionContextKind;
+  requestedModel: ClaimLessonQuestionAnswerInput["requestedModel"];
+}): string {
+  return typeof requestedModel === "function" ? requestedModel(contextKind) : requestedModel;
+}
 
 function getStaleGenerationBoundary(now: Date): Date {
   return new Date(now.getTime() - STALE_GENERATION_MILLISECONDS);
@@ -38,16 +61,21 @@ function toPriorTurns(
     );
 }
 
+/** Questions about the same step share turns and wait for each other. */
+function sameStepWhere(question: { libraryStepId: string | null }) {
+  return { libraryStepId: question.libraryStepId };
+}
+
 async function getPriorTurns({
   createdAt,
   questionId,
-  stepId,
+  step,
   threadId,
   transaction,
 }: {
   createdAt: Date;
   questionId: string;
-  stepId: string | null;
+  step: { libraryStepId: string | null };
   threadId: string;
   transaction: TransactionClient;
 }) {
@@ -59,7 +87,7 @@ async function getPriorTurns({
       OR: [{ createdAt: { lt: createdAt } }, { createdAt, id: { lt: questionId } }],
       answer: { not: null },
       status: "completed",
-      stepId,
+      ...sameStepWhere(step),
       threadId,
     },
   });
@@ -71,7 +99,7 @@ async function hasBlockingQuestion({
   question,
   transaction,
 }: {
-  question: { createdAt: Date; id: string; stepId: string | null; threadId: string };
+  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
   transaction: TransactionClient;
 }) {
   const [earlierUnfinishedQuestion, otherRunningQuestion] = await Promise.all([
@@ -83,7 +111,7 @@ async function hasBlockingQuestion({
           { createdAt: question.createdAt, id: { lt: question.id } },
         ],
         status: { not: "completed" },
-        stepId: question.stepId,
+        ...sameStepWhere(question),
         threadId: question.threadId,
       },
     }),
@@ -92,13 +120,73 @@ async function hasBlockingQuestion({
       where: {
         id: { not: question.id },
         status: "running",
-        stepId: question.stepId,
+        ...sameStepWhere(question),
         threadId: question.threadId,
       },
     }),
   ]);
 
   return Boolean(earlierUnfinishedQuestion || otherRunningQuestion);
+}
+
+/** Claims only the revision that was read, while it's still unanswered or abandoned. */
+function getClaimWhere({
+  now,
+  question,
+  userId,
+}: {
+  now: Date;
+  question: { generationRevision: number; id: string };
+  userId: string;
+}) {
+  return {
+    OR: [
+      { status: { in: ["pending" as const, "failed" as const] } },
+      { status: "running" as const, updatedAt: { lt: getStaleGenerationBoundary(now) } },
+    ],
+    generationRevision: question.generationRevision,
+    id: question.id,
+    thread: { userId },
+  };
+}
+
+/**
+ * Someone already asked this on the same screen: the question is answered with the shared answer
+ * and the run that wrote it, with no new generation.
+ */
+async function completeWithSharedAnswer({
+  question,
+  shared,
+  transaction,
+  where,
+}: {
+  question: { id: string };
+  shared: TutorSharedAnswer;
+  transaction: TransactionClient;
+  where: ReturnType<typeof getClaimWhere>;
+}) {
+  const completed = await transaction.lessonQuestion.updateMany({
+    data: {
+      answer: shared.answer,
+      finishReason: null,
+      generatedAt: shared.generatedAt,
+      generationRevision: { increment: 1 },
+      model: shared.model,
+      promptVersion: shared.promptVersion,
+      provider: null,
+      requestedModel: null,
+      runId: shared.runId,
+      sharedAnswerId: shared.id,
+      status: "completed",
+    },
+    where,
+  });
+
+  if (completed.count === 0) {
+    return { status: "conflict" as const };
+  }
+
+  return { answer: shared.answer, questionId: question.id, status: "shared" as const };
 }
 
 export async function claimAnswerInTransaction({
@@ -135,43 +223,47 @@ export async function claimAnswerInTransaction({
     return { status: "conflict" as const };
   }
 
-  const staleBefore = getStaleGenerationBoundary(now);
+  const priorTurns = await getPriorTurns({
+    createdAt: question.createdAt,
+    questionId: question.id,
+    step: question,
+    threadId: question.threadId,
+    transaction,
+  });
+
+  const sharedKey = getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
+  const claimWhere = getClaimWhere({ now, question, userId });
+
+  const shared = sharedKey
+    ? await transaction.tutorSharedAnswer.findUnique({ where: { stepQuestion: sharedKey } })
+    : null;
+
+  if (shared) {
+    return completeWithSharedAnswer({ question, shared, transaction, where: claimWhere });
+  }
 
   const claimed = await transaction.lessonQuestion.updateMany({
     data: {
       answer: null,
       finishReason: null,
+      generatedAt: null,
       generationRevision: { increment: 1 },
-      inputTokens: null,
       model: null,
-      outputTokens: null,
+      promptVersion: null,
       provider: null,
-      requestedModel: input.requestedModel,
+      requestedModel: resolveRequestedModel({
+        contextKind: question.contextKind,
+        requestedModel: input.requestedModel,
+      }),
+      runId: null,
       status: "running",
-      totalTokens: null,
     },
-    where: {
-      OR: [
-        { status: { in: ["pending", "failed"] } },
-        { status: "running", updatedAt: { lt: staleBefore } },
-      ],
-      generationRevision: question.generationRevision,
-      id: question.id,
-      thread: { userId },
-    },
+    where: claimWhere,
   });
 
   if (claimed.count === 0) {
     return { status: "conflict" as const };
   }
-
-  const priorTurns = await getPriorTurns({
-    createdAt: question.createdAt,
-    questionId: question.id,
-    stepId: question.stepId,
-    threadId: question.threadId,
-    transaction,
-  });
 
   return {
     claim: {
@@ -180,6 +272,8 @@ export async function claimAnswerInTransaction({
       question: question.question,
       questionId: question.id,
       revision: question.generationRevision + 1,
+      /** A first question about a screen may be answered once for everyone who asks it there. */
+      sharing: sharedKey && { key: sharedKey, suggested: isSuggestedScreenQuestion(question) },
     },
     status: "ready" as const,
   };

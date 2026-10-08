@@ -1,4 +1,3 @@
-import { Container } from "@zoonk/ui/components/container";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
@@ -17,10 +16,12 @@ async function AuthLayoutContent({ children }: LayoutProps<"/auth">) {
 
   return (
     <html lang={locale}>
-      <body className="font-sans antialiased">
+      <body className="bg-background sm:bg-muted font-sans antialiased">
         <Suspense fallback={<FullPageLoading />}>
           <NextIntlClientProvider>
-            <Container variant="centered">{children}</Container>
+            <main className="flex min-h-dvh w-full flex-col items-center justify-center px-4 py-10">
+              {children}
+            </main>
           </NextIntlClientProvider>
         </Suspense>
       </body>

@@ -3,8 +3,12 @@ import { type SpeechModelName, isSpeechModelName, speechModels } from "@zoonk/ai
 export const DEFAULT_AUDIO_MODEL_VALUE = "default";
 
 export const AUDIO_MODEL_OPTIONS = [
-  { label: "Default (Gemini with OpenAI fallback)", value: DEFAULT_AUDIO_MODEL_VALUE },
-  { label: "Gemini 2.5 Flash TTS", value: speechModels.google },
+  {
+    label: "Default (Gemini 3.8 Flash, then Flash Lite, then OpenAI)",
+    value: DEFAULT_AUDIO_MODEL_VALUE,
+  },
+  { label: "Gemini 3.8 Flash TTS", value: speechModels.geminiFlash },
+  { label: "Gemini 3.8 Flash Lite TTS", value: speechModels.geminiFlashLite },
   { label: "GPT-4o mini TTS (Marin voice)", value: speechModels.openai },
 ] as const;
 
@@ -21,7 +25,7 @@ export function isAudioModelValue(value: string): value is AudioModelValue {
 
 /**
  * Converts the form's explicit default option into an omitted model so the
- * generation task exercises its Gemini-first, OpenAI-fallback policy.
+ * generation task exercises its automatic order.
  */
 export function getSpeechModel(value: AudioModelValue): SpeechModelName | undefined {
   return value === DEFAULT_AUDIO_MODEL_VALUE ? undefined : value;

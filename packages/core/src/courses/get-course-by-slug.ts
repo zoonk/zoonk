@@ -1,5 +1,5 @@
 import "server-only";
-import { getPublishedCourseWhere, prisma } from "@zoonk/db";
+import { getCourseRouteWhere, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
 import { decodeRouteParam } from "../navigation/decode-route-param";
@@ -14,10 +14,7 @@ async function getCachedCourse(params: { brandSlug: string; courseSlug: string }
 
   const course = await prisma.course.findFirst({
     include: { categories: true, organization: true },
-    where: getPublishedCourseWhere({
-      organization: { kind: "brand", slug: params.brandSlug },
-      slug: params.courseSlug,
-    }),
+    where: getCourseRouteWhere(params),
   });
 
   if (course) {

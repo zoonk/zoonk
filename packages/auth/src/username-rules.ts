@@ -26,3 +26,29 @@ export function isUsernameSyntaxValid(username: string): boolean {
     USERNAME_ALLOWED_CHARACTERS.test(normalizedUsername)
   );
 }
+
+const USERNAME_FALLBACK = "learner";
+
+/**
+ * A starting username from the email's name part, so nobody has to pick one: "Ana.Souza+x@…"
+ * becomes "ana_souza_x". A `suffix` (random digits, when that one is taken) goes after an
+ * underscore, and the name part is shortened to keep the whole within the length limit.
+ */
+export function suggestUsername({ email, suffix }: { email: string; suffix?: string }): string {
+  const namePart = (email.split("@")[0] ?? "")
+    .normalize("NFD")
+    .replaceAll(/[̀-ͯ]/gu, "")
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9_]+/gu, "_")
+    .replaceAll(/_+/gu, "_")
+    .replaceAll(/^_|_$/gu, "");
+
+  const base = namePart.length >= USERNAME_MIN_LENGTH ? namePart : USERNAME_FALLBACK;
+
+  if (!suffix) {
+    return base.slice(0, USERNAME_MAX_LENGTH);
+  }
+
+  const room = USERNAME_MAX_LENGTH - suffix.length - 1;
+  return `${base.slice(0, room).replace(/_$/u, "")}_${suffix}`;
+}

@@ -1,9 +1,13 @@
+import { AuthFrame } from "@/components/auth-frame";
 import { Login, LoginDivider, LoginFooter, LoginHeader, LoginTitle } from "@/components/login";
+import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
+import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
 import { getSession } from "@zoonk/core/users/session";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
+import { getCallbackHref, readRedirectTo } from "../_utils/auth-redirect";
 import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
 
@@ -28,44 +32,48 @@ function PrivacyLink(children: ReactNode) {
 }
 
 async function LoginView({ searchParams }: PageProps<"/auth/login">) {
-  const { redirectTo } = await searchParams;
+  const params = await searchParams;
+  const redirectTo = readRedirectTo(params.redirectTo);
+  const [session, locale] = await Promise.all([getSession(), getLocale()]);
 
-  const session = await getSession();
-
-  if (session && redirectTo) {
-    redirect(`/auth/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
+  if (session) {
+    redirect(getCallbackHref(redirectTo));
   }
 
   const t = await getExtracted();
 
   return (
-    <>
-      <LoginHeader>
-        <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
-      </LoginHeader>
+    <AuthFrame>
+      <RegisterSharedEventProperties
+        properties={buildSharedEventProperties({ isGuest: true, locale, platform: "web" })}
+      />
 
-      <SocialLogin redirectTo={redirectTo ? String(redirectTo) : undefined} />
+      <Login>
+        <LoginHeader>
+          <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
+        </LoginHeader>
 
-      <LoginDivider>{t("Or")}</LoginDivider>
+        <SocialLogin redirectTo={redirectTo} />
 
-      <EmailLoginForm redirectTo={redirectTo ? String(redirectTo) : undefined} />
+        <LoginDivider>{t("Or")}</LoginDivider>
 
-      <LoginFooter>
-        {t.rich(
-          "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
-          { privacy: PrivacyLink, terms: TermsLink },
-        )}
-      </LoginFooter>
-    </>
+        <EmailLoginForm redirectTo={redirectTo} />
+
+        <LoginFooter>
+          {t.rich(
+            "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+            { privacy: PrivacyLink, terms: TermsLink },
+          )}
+        </LoginFooter>
+      </Login>
+    </AuthFrame>
   );
 }
 
 export default async function LoginPage(props: PageProps<"/auth/login">) {
   return (
-    <Login>
-      <Suspense fallback={<FullPageLoading />}>
-        <LoginView {...props} />
-      </Suspense>
-    </Login>
+    <Suspense fallback={<FullPageLoading />}>
+      <LoginView {...props} />
+    </Suspense>
   );
 }
