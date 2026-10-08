@@ -93,6 +93,7 @@
     "./progress/score-date-range": "./src/progress/score-date-range.ts",
     "./progress/score-performance": "./src/progress/score-performance.ts",
     "./progress/user-progress": "./src/progress/user-progress.ts",
+    "./security/api-deployment": "./src/security/api-deployment.ts",
     "./security/headers": "./src/security/headers.ts",
     "./subscriptions/apple-contract": "./src/subscriptions/apple-contract.ts",
     "./subscriptions/apple-notification": "./src/subscriptions/process-apple-subscription-notification.ts",
@@ -122,6 +123,7 @@
   "dependencies": {
     "@apple/app-store-server-library": "catalog:",
     "@vercel/blob": "2.8.0",
+    "@vercel/oidc": "4.0.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",

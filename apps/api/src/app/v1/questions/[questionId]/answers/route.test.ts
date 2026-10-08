@@ -109,7 +109,7 @@ describe("lesson question answer route", () => {
     const response = await createAnswerResponse();
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(response.headers.get("cache-control")).toBe("no-store, no-transform");
     expect(response.headers.get("content-type")).toBe("text/event-stream");
     expect(response.headers.get("x-vercel-ai-ui-message-stream")).toBe("v1");
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");

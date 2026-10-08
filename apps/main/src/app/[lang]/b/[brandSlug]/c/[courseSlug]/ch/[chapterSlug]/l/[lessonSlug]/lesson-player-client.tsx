@@ -2,6 +2,7 @@
 
 import { GenerationLimitAction } from "@/components/generation/generation-limit-cta";
 import { Link, useRouter } from "@/i18n/navigation";
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { type SerializedLesson } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { type PlayerInitialProgress } from "@zoonk/core/player/contracts/progress-snapshot";
@@ -13,7 +14,6 @@ import {
   LessonQuestionProvider,
 } from "@zoonk/player/questions";
 import { PlayerShell } from "@zoonk/player/shell";
-import { API_URL } from "@zoonk/utils/url";
 import { useMemo } from "react";
 import { getPlayerViewer } from "./get-player-viewer";
 import {
@@ -24,7 +24,9 @@ import {
 import { useLessonPlayerHandlers } from "./use-lesson-player-handlers";
 
 const questionConnection: LessonQuestionConnection = {
-  apiUrl: API_URL,
+  get apiUrl() {
+    return getBrowserApiUrl();
+  },
   getHeaders: getWorkflowAuthHeaders,
 };
 

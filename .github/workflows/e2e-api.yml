@@ -1,23 +1,18 @@
 name: E2E Tests (API App)
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
 
 jobs:
   e2e:
-    # Temporarily paused during the learning redesign.
-    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -46,10 +41,12 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Cache turbo build setup
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ github.sha }}
@@ -58,7 +55,7 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Cache Next.js build
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
           key: ${{ runner.os }}-nextjs-api-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
@@ -67,7 +64,7 @@ jobs:
             ${{ runner.os }}-nextjs-api-
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v3
+        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
         with:
           runtime: node@24
           cache: true
