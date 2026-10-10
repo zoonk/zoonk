@@ -1,11 +1,11 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/df56a63d-e046-4745-9924-a302ef40ea37">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/84dd27e8-5e2e-4d61-aa73-2c1cede2e4ca">
-  <img alt="Minimalist brain icon with a lightning bolt in the center next to the text learn. build. shape." src="https://github.com/user-attachments/assets/84dd27e8-5e2e-4d61-aa73-2c1cede2e4ca">
+  <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/banner-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./.github/assets/banner-light.png">
+  <img alt="Zoonk logo next to the text: Turn your goal into a daily learning plan." src="./.github/assets/banner-light.png">
 </picture>
 
 <p align="center">
-  Turn any topic into clear, structured lessons.
+  Tell us your goal in your own words. Zoonk plans every day until your date, with lessons, practice and reviews shaped by it.
   <br />
   <br />
   <a href="https://www.zoonk.com">Try for free</a>
