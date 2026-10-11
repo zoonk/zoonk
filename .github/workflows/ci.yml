@@ -58,35 +58,8 @@ jobs:
   tests:
     needs: checks-needed
     if: needs.checks-needed.outputs.required == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
-      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-    services:
-      db:
-        image: postgres:18-alpine
-        ports: ["5432:5432"]
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: zoonk_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 1s
-          --health-timeout 5s
-          --health-retries 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
-        with:
-          runtime: node@24
-          cache: true
-      - name: Run database migrations
-        run: pnpm --filter @zoonk/db db:deploy
-      - name: Run unit and integration tests
-        run: pnpm test
+    uses: ./.github/workflows/unit-tests.yml
+    secrets: inherit
 
   staging:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

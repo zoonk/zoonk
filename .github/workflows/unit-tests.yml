@@ -1,0 +1,76 @@
+name: Unit Tests
+
+# Unit and integration tests (Vitest, against a fresh Postgres migrated from scratch) on every PR,
+# and again on `main` before staging, where `ci.yml` calls this workflow.
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+        default: ""
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unit-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  shard:
+    name: unit-tests-shard (${{ matrix.shard }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # Core's database tests alone take minutes, so every package's tests are split in two.
+        shard: [1, 2]
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
+      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+    services:
+      db:
+        image: postgres:18-alpine
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: zoonk_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        with:
+          runtime: node@24
+          cache: true
+
+      - name: Run database migrations
+        run: pnpm --filter @zoonk/db db:deploy
+
+      # A package with fewer test files than shards has none in the last one.
+      - name: Run unit and integration tests
+        run: pnpm test -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} --passWithNoTests
+
+  # One check for the ruleset to require, whatever the number of shards.
+  unit-tests:
+    needs: shard
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every shard to pass
+        run: test "${{ needs.shard.result }}" = "success"

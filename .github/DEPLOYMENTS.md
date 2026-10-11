@@ -6,7 +6,7 @@ This configuration takes effect on a branch when its app-level `vercel.json` fil
 
 | Event                           | Checks and deployment                                                                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| PR opened, updated, or reopened | Fast code-quality checks for PRs targeting `main`.                                                                                         |
+| PR opened, updated, or reopened | Code-quality checks and unit/integration tests (sharded, on a fresh migrated Postgres) for PRs targeting `main`.                           |
 | Preview requested               | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                  |
 | PR closed                       | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
 | Push to `main`                  | Code quality, unit/integration tests, and main/API E2E. After success, migrate staging and deploy the three staging apps.                  |
@@ -56,7 +56,7 @@ Production and local development retain direct API requests and omit these OIDC 
 
 The default build machine is Basic; production selects Turbo per deployment. On-demand concurrency is a Vercel project setting and applies across its environments. Production deployment requests are submitted concurrently; their actual build start times depend on available build capacity.
 
-The main branch ruleset requires the fast `code-quality` PR check. E2E and database test jobs run after merge.
+The main branch ruleset requires the `code-quality` and `unit-tests` PR checks. Unit tests run again on `main` before staging, since a PR doesn't have to be up to date with `main`. E2E runs after merge.
 
 ## Preview behavior
 
