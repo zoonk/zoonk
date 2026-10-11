@@ -30,6 +30,8 @@ jobs:
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      # MEASUREMENT ONLY (Postgres A/B): run every suite instead of replaying cached results.
+      TURBO_FORCE: true
     services:
       db:
         image: postgres:18-alpine
