@@ -38,7 +38,9 @@
     "./fixtures/usage": "./src/fixtures/usage.ts",
     "./fixtures/study-sessions": "./src/fixtures/study-sessions.ts",
     "./fixtures/users": "./src/fixtures/users.ts",
-    "./fixtures/words": "./src/fixtures/words.ts"
+    "./fixtures/words": "./src/fixtures/words.ts",
+    "./vitest/duration-sequencer": "./src/vitest/duration-sequencer.ts",
+    "./vitest/durations-reporter": "./src/vitest/durations-reporter.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
@@ -51,6 +53,7 @@
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
     "axe-core": "4.14.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

@@ -39,4 +39,6 @@ Use the owning package's scripts and configured test database; do not substitute
 
 Run the affected tests, then broaden only for affected consumers or unresolved risks. Investigate intermittent failures rather than hiding them with retries, forced interactions, weaker assertions, or larger timeouts. Repeat focused coverage for timing, concurrency, fixture isolation, or a reproduced flaky failure; an arbitrary five-run loop is not a completion requirement.
 
+Keep each test file well under 20 seconds locally: CI splits work by whole files, so one long file sets its shard's time. Test only what the assertion needs (a database simulation names its asserted `rules`; use fake timers, not real waits). CI splits core's and the player's files by their recorded times; after adding or reshaping a slow file, run `pnpm test:durations` in that package and commit its `vitest.durations.json`.
+
 For Vitest, a package-scoped command is `mise x -- pnpm --filter <workspace> test <test-file>`. E2E build and launch details are in the E2E reference. Report checks accurately, including failures and anything not exercised.

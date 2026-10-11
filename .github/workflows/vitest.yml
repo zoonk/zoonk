@@ -23,14 +23,27 @@ concurrency:
 
 jobs:
   shard:
-    name: vitest (${{ matrix.shard }})
+    name: vitest (${{ matrix.suite }} ${{ matrix.shard }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        # Every package's tests are split in eight: CI's runners have four cores each.
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+        include:
+          # Core's database and planner tests, most of the work, in shards of about equal time
+          # (see packages/testing/src/vitest/duration-sequencer.ts).
+          - { suite: core, filter: "--filter=@zoonk/core", shard: 1/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", shard: 2/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", shard: 3/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", shard: 4/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", shard: 5/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", shard: 6/6 }
+          # The player's browser tests on runners of their own: sharing four cores with the database
+          # tests slowed both past their timeouts.
+          - { suite: player, filter: "--filter=@zoonk/player", shard: 1/2 }
+          - { suite: player, filter: "--filter=@zoonk/player", shard: 2/2 }
+          # Every other package's tests, which take seconds each.
+          - { suite: packages, filter: "--filter=!@zoonk/core --filter=!@zoonk/player", shard: 1/1 }
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
@@ -60,7 +73,7 @@ jobs:
           runtime: node@24
           cache: true
           # Every shard installs the same store, so one saving it is enough.
-          save-cache: ${{ matrix.shard == 1 }}
+          save-cache: ${{ matrix.suite == 'core' && matrix.shard == '1/6' }}
 
       # Over TCP: the image's first start runs its setup on a server that only takes local sockets.
       - name: Wait for Postgres
@@ -68,10 +81,9 @@ jobs:
           timeout 120 sh -c 'until docker exec postgres pg_isready --host=127.0.0.1 --dbname=zoonk_test --username=postgres; do sleep 1; done'
           || { cat "$RUNNER_TEMP/postgres.log"; docker logs postgres; exit 1; }
 
-      # Turbo migrates the database first (`db:setup:test`). A package with fewer test files than
-      # shards has none in the last one.
+      # Turbo migrates the database first (`db:setup:test`).
       - name: Run Vitest
-        run: pnpm test -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} --passWithNoTests
+        run: pnpm exec turbo run test ${{ matrix.filter }} -- --shard=${{ matrix.shard }} --passWithNoTests
 
   # One check for the ruleset to require, whatever the number of shards.
   vitest:

@@ -24,6 +24,7 @@
     "i18n": "eloqnt translate",
     "maps:build": "tsx scripts/base-maps/build-base-maps.ts",
     "test": "vitest run",
+    "test:durations": "vitest run --reporter=default --reporter=@zoonk/testing/vitest/durations-reporter",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
