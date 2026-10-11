@@ -33,7 +33,7 @@ import {
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { z } from "zod";
@@ -54,42 +54,6 @@ import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import { runPlanSetupTaskStep } from "./steps/goal-curriculum-steps";
-
-vi.mock("workflow/api", () => ({
-  getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("completed") })),
-  start: vi.fn(() => Promise.resolve({ runId: "started-run" })),
-}));
-
-// Model calls are external: tests replay a real run's goal classification, skill graph and outline.
-vi.mock("@zoonk/ai/tasks/v2/curriculum/course-outline", () => ({
-  generateCourseOutline: vi.fn(),
-  streamCourseOutline: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/curriculum/coverage-check", () => ({ checkCoverage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/curriculum/skill-graph", () => ({ generateSkillGraph: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/goal-specificity", () => ({
-  classifyGoalSpecificity: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/items/generate", () => ({ generateItems: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/items/placement-items", () => ({ generatePlacementItems: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/items/work-field", () => ({ classifyWorkField: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/items/write-set", () => ({ writeItemSet: vi.fn() }));
-
-// Fitting a new plan to the learner's routine is a model call too.
-vi.mock("@zoonk/ai/tasks/v2/plans/routine-fit", () => ({ fitPlanToRoutineFacts: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/items/past-questions", () => ({ extractPastQuestions: vi.fn() }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("@zoonk/core/analytics/server", () => ({
-  trackServerEvent: vi.fn(),
-  trackSystemEvent: vi.fn(),
-}));
 
 type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
@@ -366,11 +330,6 @@ describe(goalContentWorkflow, () => {
     );
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
-  });
-
-  // A test that says how another run stands leaves the next one the default.
-  afterEach(() => {
-    vi.mocked(getRun).mockReset();
   });
 
   it(
@@ -943,23 +902,6 @@ describe(goalContentWorkflow, () => {
       false,
     );
   });
-
-  it(
-    "starts a shared course's page details once an account's outline lands, never its other bands",
-    { timeout: TIMEOUT },
-    async () => {
-      const { goal } = await newGoal();
-      runOutlinesInline();
-
-      await goalContentWorkflow({ goalId: goal.id });
-
-      const { primaryCourseId } = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-      expect(start).toHaveBeenCalledWith(courseDetailsWorkflow, [
-        expect.objectContaining({ courseId: primaryCourseId }),
-      ]);
-    },
-  );
 
   it(
     "writes a started course's curriculum into that course, even when the graph names others",

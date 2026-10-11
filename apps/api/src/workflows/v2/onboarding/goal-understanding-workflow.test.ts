@@ -13,12 +13,6 @@ import { taskResult } from "../_test-utils/recorded-outputs";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
 import { goalUnderstandingWorkflow } from "./goal-understanding-workflow";
 
-vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
-
-// Model calls are external: the understanding and the unsafe-intent classifier.
-vi.mock("@zoonk/ai/tasks/v2/goals/understand-goal", () => ({ understandGoal: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/courses/intent", () => ({ classifyCourseIntent: vi.fn() }));
-
 const LEARN: GoalUnderstanding = {
   dailyMinutes: 20,
   followUps: [],

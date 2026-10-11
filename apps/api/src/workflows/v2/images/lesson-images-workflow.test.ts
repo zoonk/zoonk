@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { generateLessonImage } from "@zoonk/ai/tasks/v2/images/generate";
 import { generateImageScene } from "@zoonk/ai/tasks/v2/images/scene";
@@ -13,22 +14,6 @@ import { buildImageReuseKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TEST_IMAGE, imageProvenance, passedCheck, sceneFor } from "./_test-utils/image-results";
 import { lessonImagesWorkflow } from "./lesson-images-workflow";
-
-/**
- * Models and Vercel Blob are the external boundaries. Identity search, the
- * blank-frame check, asset rows and links run for real.
- */
-vi.mock("@zoonk/ai/tasks/v2/images/check", () => ({ checkLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/generate", () => ({ generateLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/scene", () => ({ generateImageScene: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({
-  generateSearchTerms: vi.fn(async ({ subjects }: { subjects: unknown[] }) => ({
-    data: { subjects: subjects.map(() => ({ terms: [] })) },
-  })),
-}));
-
-vi.mock("@zoonk/core/images/upload", () => ({ uploadImage: vi.fn() }));
 
 /** Stored pictures are read back from Vercel Blob for their check: the test store serves one. */
 function serveStoredPictures() {
@@ -59,8 +44,17 @@ function lessonPictures(lessonId: string) {
   });
 }
 
+/**
+ * Models and Vercel Blob are the external boundaries. Identity search, the
+ * blank-frame check, asset rows and links run for real.
+ */
 describe(lessonImagesWorkflow, () => {
   beforeEach(() => {
+    vi.mocked(generateSearchTerms).mockImplementation(
+      async ({ subjects }) =>
+        ({ data: { subjects: subjects.map(() => ({ terms: [] })) } }) as never,
+    );
+
     vi.mocked(generateImageScene).mockImplementation(({ request }) =>
       Promise.resolve({ data: sceneFor(request) } as never),
     );

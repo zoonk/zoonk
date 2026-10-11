@@ -21,10 +21,10 @@ import { activityStep } from "../preview/preview-steps";
 /** Where the rhythm activities keep the device's measured sound delay. */
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 
-/** The son clave fixture, one round at twice its tempo: a real run as short as a run gets. */
+/** The son clave fixture, one round of it: a real run as short as the rhythm takes. */
 const QUICK_CLAVE = {
   ...activityContentFixtures.rhythmTapper,
-  fields: { ...activityContentFixtures.rhythmTapper.fields, rounds: 1, tempo: 180 },
+  fields: { ...activityContentFixtures.rhythmTapper.fields, rounds: 1 },
 };
 
 /** When each tap of the clave should land, from the first, as core grades it. */

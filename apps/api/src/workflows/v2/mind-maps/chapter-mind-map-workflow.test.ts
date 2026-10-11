@@ -14,12 +14,6 @@ import { FatalError } from "workflow";
 import { TEST_IMAGE, imageProvenance } from "../images/_test-utils/image-results";
 import { chapterMindMapWorkflow } from "./chapter-mind-map-workflow";
 
-/** Models and Vercel Blob are the external boundaries; the map's row and the claim run for real. */
-vi.mock("@zoonk/ai/tasks/v2/mind-maps/structure", () => ({ generateMindMapStructure: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/mind-maps/image", () => ({ generateMindMapImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/mind-maps/check", () => ({ checkMindMapImage: vi.fn() }));
-vi.mock("@zoonk/core/images/upload", () => ({ uploadImage: vi.fn() }));
-
 const structure = {
   branches: ["Cells", "Nucleus", "Membrane"].map((title) => ({
     drawing: "a cell",

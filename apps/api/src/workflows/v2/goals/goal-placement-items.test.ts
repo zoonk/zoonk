@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { generateLessonImage } from "@zoonk/ai/tasks/v2/images/generate";
 import { generateImageScene } from "@zoonk/ai/tasks/v2/images/scene";
@@ -28,29 +29,6 @@ import { preparePlacementItems } from "./placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import { shortPlanPracticeWorkflow } from "./short-plan-practice-workflow";
 import { pickPlacementBatchesStep, writePlacementBatchStep } from "./steps/placement-items-steps";
-
-vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
-
-// Writing questions is a paid model call.
-vi.mock("@zoonk/ai/tasks/v2/items/placement-items", () => ({ generatePlacementItems: vi.fn() }));
-
-// Drawing a question's picture is a paid model call too, and its file goes to Vercel Blob.
-vi.mock("@zoonk/ai/tasks/v2/images/check", () => ({ checkLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/generate", () => ({ generateLessonImage: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/images/scene", () => ({ generateImageScene: vi.fn() }));
-vi.mock("@zoonk/core/images/upload", () => ({ uploadImage: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({
-  generateSearchTerms: vi.fn(async ({ subjects }: { subjects: unknown[] }) => ({
-    data: { subjects: subjects.map(() => ({ terms: [] })) },
-  })),
-}));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("@zoonk/core/analytics/server", () => ({
-  trackServerEvent: vi.fn(),
-  trackSystemEvent: vi.fn(),
-}));
 
 const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 
@@ -251,6 +229,12 @@ describe(placementItemsWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generatePlacementItems).mockReset();
     vi.mocked(generatePlacementItems).mockImplementation(async (params) => writtenFor(params));
+
+    // A picture's scene is looked up in the Library first: its search terms find nothing here.
+    vi.mocked(generateSearchTerms).mockImplementation(
+      async ({ subjects }) =>
+        ({ data: { subjects: subjects.map(() => ({ terms: [] })) } }) as never,
+    );
   });
 
   it("asks a question about a figure once its picture is drawn, and checks the picture in the background", async () => {

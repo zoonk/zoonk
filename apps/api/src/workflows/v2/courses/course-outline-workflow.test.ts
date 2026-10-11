@@ -19,7 +19,7 @@ import {
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
@@ -33,27 +33,6 @@ import {
 import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
 import { courseOutlineWorkflow } from "./course-outline-workflow";
 import { saveOutlineChapterStep, writeOutlineBandStep } from "./steps/course-outline-steps";
-
-vi.mock("workflow/api", () => ({
-  getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("failed") })),
-  start: vi.fn(() => Promise.resolve({ runId: "started-run" })),
-}));
-
-// Model calls are external: the outline replays the real run's; identity search finds nothing to reuse.
-vi.mock("@zoonk/ai/tasks/v2/curriculum/course-outline", () => ({
-  generateCourseOutline: vi.fn(),
-  streamCourseOutline: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("@zoonk/core/analytics/server", () => ({
-  trackServerEvent: vi.fn(),
-  trackSystemEvent: vi.fn(),
-}));
 
 type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
@@ -196,11 +175,6 @@ describe(courseOutlineWorkflow, () => {
     vi.mocked(streamCourseOutline).mockImplementation(
       replayStreamedOutline(recordedOutline) as never,
     );
-  });
-
-  // A test that says how another run stands leaves the next one the default.
-  afterEach(() => {
-    vi.mocked(getRun).mockReset();
   });
 
   it(

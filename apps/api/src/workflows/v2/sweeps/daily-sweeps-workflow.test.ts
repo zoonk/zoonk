@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { purgeEvaluationRuns } from "@zoonk/core/evaluation-runs/purge";
 import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { prisma } from "@zoonk/db";
 import { evaluationRunFixture } from "@zoonk/testing/fixtures/evaluation-runs";
@@ -10,23 +9,13 @@ import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { start } from "workflow/api";
 import { getStartMock } from "../../_test-utils/start-mock";
 import { freshnessWorkflow } from "../freshness/freshness-workflow";
 import { laterReviewWorkflow } from "../quality/later-review-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
-import type * as EvaluationRunsPurge from "@zoonk/core/evaluation-runs/purge";
-
-vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
-
-// A sweep failing can't be produced safely with the real database: one test makes the purge
-// fail once, and every other run purges for real.
-vi.mock("@zoonk/core/evaluation-runs/purge", async (importOriginal) => {
-  const original = await importOriginal<typeof EvaluationRunsPurge>();
-  return { purgeEvaluationRuns: vi.fn(original.purgeEvaluationRuns) };
-});
 
 const DAY_MS = 86_400_000;
 /** Enough learners for real answers to replace a question's generated difficulty. */
@@ -167,21 +156,28 @@ describe(dailySweepsWorkflow, () => {
   });
 
   it("counts a sweep that failed as nothing and still runs the others", async () => {
-    // Due just before tomorrow's sweep, so other tests' due exams can't push it out of its batch.
-    const exam = await examBlueprintFixture({
-      nextCheckAt: new Date(Date.now() + DAY_MS - 60_000),
+    const [exam] = await Promise.all([
+      // Due just before tomorrow's sweep, so other tests' due exams can't push it out of its batch.
+      examBlueprintFixture({ nextCheckAt: new Date(Date.now() + DAY_MS - 60_000) }),
+      evaluationRunFixture({ createdAt: new Date(Date.now() - 31 * DAY_MS) }),
+    ]);
+
+    // The queue is down for the freshness checks: that sweep fails.
+    getStartMock().mockImplementation(async (workflow) => {
+      if (workflow === freshnessWorkflow) {
+        throw new Error("Queue unavailable");
+      }
+
+      return { runId: "started-run" } as Awaited<ReturnType<typeof start>>;
     });
 
-    vi.mocked(purgeEvaluationRuns).mockRejectedValueOnce(new Error("Database timeout"));
-
     const result = await dailySweepsWorkflow();
-
-    expect(result.evaluationRunsPurged).toBe(0);
 
     expect(start).toHaveBeenCalledWith(freshnessWorkflow, [
       { examBlueprintId: exam.id, kind: "exam" },
     ]);
 
-    expect(result.freshnessChecks).toBeGreaterThanOrEqual(1);
+    expect(result.freshnessChecks).toBe(0);
+    expect(result.evaluationRunsPurged).toBeGreaterThanOrEqual(1);
   });
 });

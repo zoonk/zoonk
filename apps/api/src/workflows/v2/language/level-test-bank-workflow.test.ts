@@ -6,9 +6,6 @@ import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
 import { levelTestBankWorkflow } from "./level-test-bank-workflow";
 
-// Writing the bank is a paid model call.
-vi.mock("@zoonk/ai/tasks/v2/language/level-test-bank", () => ({ generateLevelTestBank: vi.fn() }));
-
 const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 
 type Written = Awaited<ReturnType<typeof generateLevelTestBank>>;

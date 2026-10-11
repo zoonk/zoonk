@@ -19,19 +19,7 @@ import { MockLanguageModelV4 } from "ai/test";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST as postAnswer } from "./route";
-import type * as LessonQuestionModule from "@zoonk/ai/tasks/lessons/question";
-import type * as GoalTutorModule from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
 import type * as NextServer from "next/server";
-
-vi.mock("@zoonk/ai/tasks/lessons/question", async (importOriginal) => ({
-  ...(await importOriginal<typeof LessonQuestionModule>()),
-  streamLessonQuestionAnswer: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/tutor/goal-tutor", async (importOriginal) => ({
-  ...(await importOriginal<typeof GoalTutorModule>()),
-  streamGoalTutorAnswer: vi.fn(),
-}));
 
 vi.mock("@zoonk/core/lesson-questions/propose-plan-change", () => ({
   proposeTutorPlanChange: vi.fn(),

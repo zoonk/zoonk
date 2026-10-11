@@ -8,7 +8,6 @@ import { POST as createLessonRegeneration } from "./route";
 // Core's integration tests cover which lessons are pulled and who may pull them; this adapter
 // test covers the body, the writing runs it starts and how each outcome maps to HTTP.
 vi.mock("@zoonk/core/library/lessons/regenerate", () => ({ pullLessonsForRegeneration: vi.fn() }));
-vi.mock("workflow/api", () => ({ start: vi.fn() }));
 
 vi.mock("@/workflows/v2/lessons/lesson-content-workflow", () => ({
   lessonContentWorkflow: vi.fn(),

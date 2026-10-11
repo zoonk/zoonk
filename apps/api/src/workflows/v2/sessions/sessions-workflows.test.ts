@@ -34,24 +34,6 @@ import { taskResult } from "../_test-utils/recorded-outputs";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { sessionPreparationWorkflow } from "./session-preparation-workflow";
-import type * as StepVariantTask from "@zoonk/ai/tasks/v2/variants/step-variant";
-
-vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
-
-// Model calls are external: the personal layer's versions and questions come back as recorded.
-vi.mock("@zoonk/ai/tasks/v2/challenge/case", () => ({ generateChallengeCase: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/items/generate", () => ({ generateItems: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/items/work-field", () => ({ classifyWorkField: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/items/placement-items", () => ({ generatePlacementItems: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-scenario", () => ({
-  generateConversationScenario: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/variants/step-variant", async (importOriginal) => ({
-  ...(await importOriginal<typeof StepVariantTask>()),
-  generateStepVariant: vi.fn(),
-}));
 
 const TIME_ZONE = "UTC";
 

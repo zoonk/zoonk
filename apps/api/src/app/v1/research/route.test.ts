@@ -10,7 +10,6 @@ import { POST as createResearch } from "./route";
 // this adapter test covers when a request starts a run and when it follows the goal's last one.
 vi.mock("@zoonk/core/library/sources/upload-request", () => ({ answerGoalUploadRequest: vi.fn() }));
 
-vi.mock("workflow/api", () => ({ getRun: vi.fn(), start: vi.fn() }));
 vi.mock("@/workflows/v2/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
 
 const GOAL_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";

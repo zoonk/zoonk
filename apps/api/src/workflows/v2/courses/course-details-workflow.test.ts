@@ -12,11 +12,6 @@ import { mockHookConflict } from "../../../../mocks/workflow";
 import { TEST_IMAGE, imageProvenance } from "../images/_test-utils/image-results";
 import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
 
-// The text and image models and Vercel Blob are external; reads, checks and saves run for real.
-vi.mock("@zoonk/ai/tasks/v2/courses/details", () => ({ generateCourseDetails: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/courses/icon", () => ({ generateCourseIcon: vi.fn() }));
-vi.mock("@zoonk/core/images/upload", () => ({ uploadImage: vi.fn() }));
-
 const ICON_URL = "https://blob.test/library/courses/immunology.webp";
 
 const details = {

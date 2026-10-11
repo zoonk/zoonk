@@ -3,8 +3,6 @@ import { getRun } from "workflow/api";
 import { mockLastRunEvent, resetWorkflowRuntimeMock } from "../../../../mocks/workflow-runtime";
 import { isRunActive, readClientRunStatus } from "./run-activity";
 
-vi.mock("workflow/api", () => ({ getRun: vi.fn() }));
-
 const MINUTE_MS = 60 * 1000;
 
 function runningRun() {

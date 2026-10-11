@@ -18,22 +18,6 @@ import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workflow";
 import { citePublishedLessonStep } from "./steps/lesson-check-steps";
 import type * as CheckSteps from "./steps/lesson-check-steps";
-import type * as LessonWriter from "@zoonk/ai/tasks/v2/lesson-writer";
-
-vi.mock("workflow/api", () => ({
-  getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("failed") })),
-  start: vi.fn(() => Promise.resolve({ runId: "started-run" })),
-}));
-
-// Model calls are external: tests replay a real draft recorded for the same lesson's spec. The
-// writer's model choice for a last draft runs for real.
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer", async (importOriginal) => ({
-  ...(await importOriginal<typeof LessonWriter>()),
-  writeLessonDraft: vi.fn(),
-}));
 
 // A step fails for good only once the runtime's retries ran out, which needs the runtime: a test
 // makes the citing step end that way.

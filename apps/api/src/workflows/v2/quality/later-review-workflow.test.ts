@@ -10,19 +10,6 @@ import { start } from "workflow/api";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { laterReviewWorkflow } from "./later-review-workflow";
-import type * as LessonWriter from "@zoonk/ai/tasks/v2/lesson-writer";
-
-vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
-
-// Model calls are external: the reviewer's verdict is given per lesson, by the lesson's summary,
-// and a fresh draft replays the draft recorded for the same lesson.
-vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer", async (importOriginal) => ({
-  ...(await importOriginal<typeof LessonWriter>()),
-  writeLessonDraft: vi.fn(),
-}));
 
 type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
 

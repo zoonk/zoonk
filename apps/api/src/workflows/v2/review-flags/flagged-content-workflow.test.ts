@@ -9,15 +9,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { flaggedContentWorkflow } from "./flagged-content-workflow";
-import type * as StatuteDrillsModule from "@zoonk/ai/tasks/v2/items/statute-drills";
-
-vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
-
-// The drill writer is a paid model; its own eval covers what it writes.
-vi.mock("@zoonk/ai/tasks/v2/items/statute-drills", async (importOriginal) => ({
-  ...(await importOriginal<typeof StatuteDrillsModule>()),
-  generateStatuteDrills: vi.fn(),
-}));
 
 const LAW_TEXT =
   "Art. 13. A posse ocorrerá no prazo de quinze dias contados da publicação do ato de provimento.";

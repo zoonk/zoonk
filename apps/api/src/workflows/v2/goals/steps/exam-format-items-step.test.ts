@@ -6,8 +6,6 @@ import { describe, expect, it, vi } from "vitest";
 import { taskResult } from "../../_test-utils/recorded-outputs";
 import { prepareExamFormatItemsStep } from "./exam-format-items-step";
 
-vi.mock("@zoonk/ai/tasks/v2/items/generate", () => ({ generateItems: vi.fn() }));
-
 async function pickFor(answerFormat: ExamFormatPick["answerFormat"]): Promise<ExamFormatPick> {
   const skill = await skillFixture({ name: `History ${crypto.randomUUID()}` });
 

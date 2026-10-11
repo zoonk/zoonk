@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { seedV2 } from "@zoonk/core/seed/v2";
 import { prisma } from "@zoonk/db";
+import { writeSeedV2 } from "@zoonk/db/seed/v2";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -155,9 +155,10 @@ function describePlan(
 }
 
 describe("persona command", () => {
-  // Copies point at the seeded Library and personas.
+  // Copies point at the seeded Library and personas; each copy gets its own plan, so the seeded
+  // personas' plans (\`seedV2\`) aren't needed.
   beforeAll(async () => {
-    await seedV2();
+    await writeSeedV2(prisma);
   }, 120_000);
 
   describe(createPersona, () => {

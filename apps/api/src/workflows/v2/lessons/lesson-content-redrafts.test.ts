@@ -1,4 +1,5 @@
 import { generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { keepTeachingPictures } from "@zoonk/ai/tasks/v2/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer/fix";
 import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
@@ -15,29 +16,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
-import type * as LessonWriter from "@zoonk/ai/tasks/v2/lesson-writer";
-
-vi.mock("workflow/api", () => ({
-  getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("failed") })),
-  start: vi.fn(() => Promise.resolve({ runId: "started-run" })),
-}));
-
-// Model calls are external: tests replay a real spec and draft recorded for the same lesson. The
-// writer's model choice for a last draft runs for real.
-vi.mock("@zoonk/ai/tasks/v2/lesson-spec", () => ({ generateLessonSpec: vi.fn() }));
-
-// The picture check is a model call too: every planned picture is kept, as the recorded spec planned.
-vi.mock("@zoonk/ai/tasks/v2/lesson-spec/picture-need", () => ({
-  keepTeachingPictures: vi.fn(({ spec }: { spec: unknown }) => Promise.resolve(spec)),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer", async (importOriginal) => ({
-  ...(await importOriginal<typeof LessonWriter>()),
-  writeLessonDraft: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
 
 type RecordedSpec = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
 type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
@@ -103,8 +81,11 @@ function writeSteps() {
 }
 
 describe("lesson content redrafts", () => {
+  // Model calls replay a real spec and draft recorded for the same lesson; the writer's model
+  // choice for a last draft runs for real. The picture check keeps every planned picture.
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
+    vi.mocked(keepTeachingPictures).mockImplementation(async ({ spec }) => spec);
 
     vi.mocked(writeLessonDraft).mockImplementation(async (params) =>
       taskResult(recordedDraft, params.model ?? SOL),

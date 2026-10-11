@@ -45,11 +45,6 @@ import { storeSourceStep } from "./steps/store-sources-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 
-vi.mock("workflow/api", () => ({
-  getRun: vi.fn(),
-  start: vi.fn(() => Promise.resolve({ runId: "started-run" })),
-}));
-
 /** The run holding a token, as a joining run reads it: how it ended, or that it's still going. */
 function otherRun(status: "completed" | "failed" | "running") {
   const cancel = vi.fn(() => Promise.resolve());
@@ -62,61 +57,6 @@ function otherRun(status: "completed" | "failed" | "running") {
 
   return { cancel };
 }
-
-// Model and search calls are external: tests replay what they returned for the real TCDF 2026 notice.
-vi.mock("@zoonk/ai/tasks/v2/research/changing-facts", () => ({ detectChangingFacts: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/research/plan", () => ({ generateExamResearchPlan: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/research/source-plan", () => ({ generateSourceResearchPlan: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-official-sources", () => ({
-  findOfficialSources: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/extract-exam-blueprint", () => ({
-  extractExamBlueprint: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/check-cited-facts", () => ({ checkCitedFacts: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/research/check-exam-reading", () => ({ checkExamReading: vi.fn() }));
-
-// The first pass over a new notice reads its question formats only; each test says what it read.
-vi.mock("@zoonk/ai/tasks/v2/research/extract-question-formats", () => ({
-  extractQuestionFormats: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-subject-questions", () => ({
-  findSubjectQuestions: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-choice-options", () => ({ findChoiceOptions: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-target-cutoff", () => ({ findTargetCutoff: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-course-weights", () => ({ findCourseWeights: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-topic-frequency", () => ({
-  findTopicFrequency: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/source-change-notice", () => ({
-  generateSourceChangeNotice: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/translate-pass-marks", () => ({
-  translatePassMarks: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/exam-identity-decision", () => ({
-  decideExamIdentity: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({
-  LIBRARY_IDENTITY_MIN_PROBABILITY: 0.6,
-  decideLibraryIdentity: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
 
 const PROVENANCE = {
   costUsd: 0,
@@ -307,8 +247,6 @@ describe(researchWorkflow, () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    // A test that says how another run stands leaves the next one the default.
-    vi.mocked(getRun).mockReset();
   });
 
   it("does nothing for a goal that doesn't depend on changing facts", async () => {

@@ -3,9 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 import { getRun } from "workflow/api";
 import { loadStoredCurriculumStep } from "./stored-plan-steps";
 
-// Runs live in the workflow runtime: each test says how the research run reads.
-vi.mock("workflow/api", () => ({ getRun: vi.fn() }));
-
 function researchRun(run: { createdAt?: Promise<Date>; exists: Promise<boolean> }) {
   vi.mocked(getRun).mockReturnValue(run as unknown as ReturnType<typeof getRun>);
 }

@@ -1,5 +1,5 @@
 /** Speech models speak 16-bit mono PCM at 24 kHz. */
-export const PCM_SAMPLE_RATE = 24_000;
+const PCM_SAMPLE_RATE = 24_000;
 const BITS_PER_SAMPLE = 16;
 const BITS_PER_BYTE = 8;
 const PCM_BYTES_PER_SAMPLE = BITS_PER_SAMPLE / BITS_PER_BYTE;

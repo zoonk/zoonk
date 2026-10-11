@@ -19,26 +19,6 @@ import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { explainQuestionWorkflow } from "./explain-question-workflow";
 
-vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
-
-// Model calls are external: generality, identity search and the explanation itself.
-vi.mock("@zoonk/ai/tasks/v2/explain/question-generality", () => ({
-  classifyQuestionGenerality: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/explain/quick-explanation", () => ({
-  generateQuickExplanation: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("@zoonk/core/analytics/server", () => ({
-  trackServerEvent: vi.fn(),
-  trackSystemEvent: vi.fn(),
-}));
-
 function explanation(courseTitle: string): QuickExplanation {
   return {
     check: {

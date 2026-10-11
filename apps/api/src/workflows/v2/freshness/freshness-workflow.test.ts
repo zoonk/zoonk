@@ -24,34 +24,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { freshnessWorkflow } from "./freshness-workflow";
 import { readNoticeAgainWorkflow } from "./read-notice-again-workflow";
 
-// Model calls are external: tests replay the recorded extraction of the real TCDF 2026 notice.
-vi.mock("@zoonk/ai/tasks/v2/research/extract-exam-blueprint", () => ({
-  extractExamBlueprint: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/check-cited-facts", () => ({ checkCitedFacts: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/research/check-exam-reading", () => ({ checkExamReading: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/research/source-change-notice", () => ({
-  generateSourceChangeNotice: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/translate-pass-marks", () => ({
-  translatePassMarks: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/plan", () => ({ generateExamResearchPlan: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
-
-vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({
-  LIBRARY_IDENTITY_MIN_PROBABILITY: 0.6,
-  decideLibraryIdentity: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-official-sources", () => ({
-  findOfficialSources: vi.fn(),
-}));
-
 const DAY_MS = 86_400_000;
 
 /** A model call's result around its data, as the tasks return it. */

@@ -7,15 +7,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sourceVisibilityWorkflow } from "./source-visibility-workflow";
 
-// Model and search calls are external: tests answer with what they returned for a real notice.
-vi.mock("@zoonk/ai/tasks/v2/research/upload-visibility", () => ({
-  classifyUploadVisibility: vi.fn(),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/research/find-official-sources", () => ({
-  findOfficialSources: vi.fn(),
-}));
-
 const TASK_RESULT = {
   provenance: {
     costUsd: 0,

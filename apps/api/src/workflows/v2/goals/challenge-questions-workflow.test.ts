@@ -10,9 +10,6 @@ import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
 import { taskResult } from "../_test-utils/recorded-outputs";
 import { challengeQuestionsWorkflow } from "./challenge-questions-workflow";
 
-// Writing questions is a paid model call.
-vi.mock("@zoonk/ai/tasks/v2/items/placement-items", () => ({ generatePlacementItems: vi.fn() }));
-
 function writtenItem(sides: [number, number]) {
   const [width, height] = sides;
 

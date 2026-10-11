@@ -73,12 +73,6 @@ import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DELETE as deleteAccount } from "./route";
 
-// Core reads the request's session from Next's headers, which only exist inside a request.
-vi.mock("next/headers", () => ({ headers: vi.fn() }));
-
-// Vercel Blob is the external store of learners' private files; the mock records what is deleted.
-vi.mock("@vercel/blob", () => ({ del: vi.fn(), list: vi.fn() }));
-
 const PRIVATE_STORE = "https://store.private.blob.vercel-storage.com";
 
 const SHARED: CurriculumScope = {

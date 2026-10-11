@@ -1,14 +1,8 @@
 import { trackServerEvent, trackSystemEvent } from "@zoonk/core/analytics/server";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { trackGenerationFailedStep } from "./generation-failed-step";
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("@zoonk/core/analytics/server", () => ({
-  trackServerEvent: vi.fn(),
-  trackSystemEvent: vi.fn(),
-}));
 
 describe(trackGenerationFailedStep, () => {
   it("counts the failure for the learner who started the run, with their goal and client", async () => {

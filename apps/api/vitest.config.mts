@@ -1,6 +1,19 @@
+import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { getTestRunEnvironment } from "@zoonk/db/test-environment";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
+
+/**
+ * Test files that mock modules of their own (`vi.mock`, `vi.doMock`, `vi.unmock`): a mocked module
+ * stays mocked in its worker, so these run in a fresh worker each. Every other file shares workers
+ * and pays for loading the app, core, Prisma and its compiled queries once per worker instead of
+ * once per file; the edges every test replaces are declared once in `setup-tests.ts`.
+ */
+const OWN_MOCKS = globSync(["src/**/*.test.ts", "scripts/**/*.test.ts"], {
+  cwd: import.meta.dirname,
+}).filter((file) =>
+  /\bvi\.(?:mock|doMock|unmock)\(/u.test(readFileSync(resolve(import.meta.dirname, file), "utf8")),
+);
 
 export default defineConfig({
   assetsInclude: ["**/*.md"],
@@ -15,6 +28,11 @@ export default defineConfig({
         // Provide one shared workflow mock so workflow integration tests can reuse the same plumbing.
         find: /^workflow$/u,
         replacement: resolve(import.meta.dirname, "./mocks/workflow.ts"),
+      },
+      {
+        // Runs only exist inside the workflow runtime: tests say what started and how a run stands.
+        find: /^workflow\/api$/u,
+        replacement: resolve(import.meta.dirname, "./mocks/workflow-api.ts"),
       },
       {
         // The World's events only exist inside the workflow runtime; tests say what a run recorded.
@@ -40,6 +58,17 @@ export default defineConfig({
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
     globalSetup: ["./vitest.global-setup.ts"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          exclude: [...configDefaults.exclude, "**/e2e/**", ...OWN_MOCKS],
+          isolate: false,
+          name: "shared",
+        },
+      },
+      { extends: true, test: { include: OWN_MOCKS, name: "own-mocks" } },
+    ],
     setupFiles: ["./setup-tests.ts"],
   },
 });

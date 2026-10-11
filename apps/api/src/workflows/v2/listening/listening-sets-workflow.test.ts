@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { put } from "@vercel/blob";
 import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { type ListeningSet } from "@zoonk/ai/tasks/v2/listening/schema";
 import { writeListeningSet } from "@zoonk/ai/tasks/v2/listening/write-set";
@@ -12,16 +13,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook } from "workflow";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { listeningSetsWorkflow } from "./listening-sets-workflow";
-
-// Writing, voicing and storing a recording are paid external services: their results are faked.
-vi.mock("@zoonk/ai/tasks/v2/listening/write-set", () => ({ writeListeningSet: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/audio/listening", () => ({ voiceListeningScript: vi.fn() }));
-
-vi.mock("@vercel/blob", () => ({
-  put: vi.fn(async (pathname: string) => ({
-    url: `https://blob.test/${randomUUID()}-${pathname}`,
-  })),
-}));
 
 function provenance() {
   return {
@@ -71,7 +62,12 @@ async function examGoal(exam: Awaited<ReturnType<typeof listeningExamFixture>>) 
 }
 
 describe(listeningSetsWorkflow, () => {
+  // Writing, voicing and storing a recording are paid external services: their results are faked.
   beforeEach(() => {
+    vi.mocked(put).mockImplementation(
+      async (pathname) => ({ url: `https://blob.test/${randomUUID()}-${pathname}` }) as never,
+    );
+
     vi.mocked(writeListeningSet)
       .mockReset()
       .mockImplementation(async (params) => ({

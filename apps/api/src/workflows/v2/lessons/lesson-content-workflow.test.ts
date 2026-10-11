@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateChallengeCase } from "@zoonk/ai/tasks/v2/challenge/case";
 import { generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { keepTeachingPictures } from "@zoonk/ai/tasks/v2/lesson-spec/picture-need";
 import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
@@ -17,7 +18,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
@@ -27,29 +28,6 @@ import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 import { writeLessonContentStep } from "./steps/write-lesson-content-step";
-
-vi.mock("workflow/api", () => ({
-  getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("failed") })),
-  start: vi.fn(() => Promise.resolve({ runId: "started-run" })),
-}));
-
-// Model calls are external: tests replay a real spec and draft recorded for the same lesson.
-vi.mock("@zoonk/ai/tasks/v2/lesson-spec", () => ({ generateLessonSpec: vi.fn() }));
-
-// The picture check is a model call too: every planned picture is kept, as the recorded spec planned.
-vi.mock("@zoonk/ai/tasks/v2/lesson-spec/picture-need", () => ({
-  keepTeachingPictures: vi.fn(({ spec }: { spec: unknown }) => Promise.resolve(spec)),
-}));
-
-vi.mock("@zoonk/ai/tasks/v2/lesson-writer", () => ({ writeLessonDraft: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/challenge/case", () => ({ generateChallengeCase: vi.fn() }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("@zoonk/core/analytics/server", () => ({
-  trackServerEvent: vi.fn(),
-  trackSystemEvent: vi.fn(),
-}));
 
 type RecordedSpec = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
 type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
@@ -79,18 +57,16 @@ function runOwner({ active }: { active: boolean }) {
 }
 
 describe(lessonContentWorkflow, () => {
+  // Model calls replay a real spec and draft recorded for the same lesson. The picture check keeps
+  // every planned picture, as the recorded spec planned.
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
+    vi.mocked(keepTeachingPictures).mockImplementation(async ({ spec }) => spec);
     vi.mocked(writeLessonDraft).mockResolvedValue(taskResult(recordedDraft));
 
     vi.mocked(checkLessonQuality).mockResolvedValue(
       taskResult({ issues: [] }, "anthropic/claude-opus-5.5"),
     );
-  });
-
-  // A test that says how another run stands leaves the next one the default.
-  afterEach(() => {
-    vi.mocked(getRun).mockReset();
   });
 
   it("plans and writes a lesson, streams its progress and starts its pictures and model checks in the background", async () => {
