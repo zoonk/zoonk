@@ -19,11 +19,7 @@ import {
   TEST_CASES,
 } from "./test-cases";
 
-type PronunciationClipRun = PronunciationClipInput & {
-  model: string;
-  reasoning?: Reasoning;
-  useFallback?: boolean;
-};
+type PronunciationClipRun = PronunciationClipInput & { model: string; reasoning?: Reasoning };
 
 function toTranscriptionModel(model: string): TranscriptionModelId | undefined {
   return TRANSCRIPTION_MODELS.find((candidate) => candidate === model);
@@ -70,7 +66,7 @@ async function transcribeAndMatch({
 }
 
 async function assessClip(run: PronunciationClipRun) {
-  const { model, reasoning, useFallback, ...input } = run;
+  const { model, reasoning, ...input } = run;
   const clipPath = findSpeechClipPath({ spokenText: input.spokenText, testCases: TEST_CASES });
   const audio = new Uint8Array(await readFile(clipPath));
   const transcriptionModel = toTranscriptionModel(model);
@@ -87,7 +83,6 @@ async function assessClip(run: PronunciationClipRun) {
     mediaType: "audio/mpeg",
     model,
     reasoning,
-    useFallback,
   });
 }
 

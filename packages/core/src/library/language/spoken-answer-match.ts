@@ -1,5 +1,7 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
-import { type AlignmentStep, alignWords } from "./_utils/word-alignment";
+import { getBaseLanguage } from "@zoonk/utils/languages";
+import { Converter as createChineseConverter } from "opencc-js/t2cn";
+import { alignWords } from "./_utils/word-alignment";
 
 /**
  * How one word of the expected sentence came out: said as expected, heard as
@@ -54,9 +56,49 @@ function expandContractions({ language, text }: { language: string; text: string
   );
 }
 
+/**
+ * Speech recognition writes Chinese in traditional or simplified characters either way
+ * (gpt-transcribe wrote 圖書館 for 图书馆, 11 Oct 2026), so Chinese compares in simplified ones.
+ */
+const toSimplifiedChinese = createChineseConverter({ from: "t", to: "cn" });
+
+/**
+ * Languages written without spaces take their words from the language's word segmenter, so a
+ * comma the transcript adds or leaves out doesn't merge or split words.
+ */
+const UNSPACED_LANGUAGE_SEGMENTERS: Readonly<Record<string, Intl.Segmenter>> = {
+  ja: new Intl.Segmenter("ja", { granularity: "word" }),
+  zh: new Intl.Segmenter("zh", { granularity: "word" }),
+};
+
+function getUnspacedSegmenter(language: string): Intl.Segmenter | undefined {
+  return UNSPACED_LANGUAGE_SEGMENTERS[getBaseLanguage(language)];
+}
+
+function toComparableScript({ language, text }: { language: string; text: string }): string {
+  return getBaseLanguage(language) === "zh" ? toSimplifiedChinese(text) : text;
+}
+
 function toTokens({ language, text }: { language: string; text: string }): string[] {
-  const normalized = expandContractions({ language, text: normalizeTypedAnswer(text) });
+  const normalized = expandContractions({
+    language,
+    text: normalizeTypedAnswer(toComparableScript({ language, text })),
+  });
+
+  const segmenter = getUnspacedSegmenter(language);
+
+  if (segmenter) {
+    return [...segmenter.segment(normalized)]
+      .filter((segment) => segment.isWordLike)
+      .map((segment) => segment.segment);
+  }
+
   return normalized.split(" ").filter(Boolean);
+}
+
+/** How tokens join back into text: with spaces, or without them where the language has none. */
+function getTokenSeparator(language: string): string {
+  return getUnspacedSegmenter(language) ? "" : " ";
 }
 
 type ExpectedWord = { text: string; tokens: string[] };
@@ -69,29 +111,13 @@ function toExpectedWords({ expected, language }: { expected: string; language: s
     .filter((word): word is ExpectedWord => word.tokens.length > 0);
 }
 
-type TokenOutcome = { heard: string | null; matched: boolean };
+/** Whether an expected token was heard as itself, and which heard token stood in its place. */
+type TokenOutcome = { heardIndex: number | null; matched: boolean };
 
-function toTokenOutcome({
-  expected,
-  heard,
-  step,
-}: {
-  expected: readonly string[];
-  heard: readonly string[];
-  step: AlignmentStep;
-}): [number, TokenOutcome][] {
-  if (step.kind === "match") {
-    return [[step.expected, { heard: expected[step.expected] ?? null, matched: true }]];
-  }
-
-  if (step.kind === "substitute") {
-    return [[step.expected, { heard: heard[step.heard] ?? null, matched: false }]];
-  }
-
-  return step.kind === "delete" ? [[step.expected, { heard: null, matched: false }]] : [];
-}
-
-/** What each expected token came out as: itself, another heard token, or nothing. */
+/**
+ * What each expected token came out as: itself, another heard token, or nothing. Steps come in
+ * order, so a running position gives every match the heard token it lines up with.
+ */
 function getTokenOutcomes({
   expected,
   heard,
@@ -99,31 +125,59 @@ function getTokenOutcomes({
   expected: readonly string[];
   heard: readonly string[];
 }): TokenOutcome[] {
-  const outcomes = new Map(
-    alignWords(expected, heard).flatMap((step) => toTokenOutcome({ expected, heard, step })),
-  );
+  const outcomes = new Map<number, TokenOutcome>();
+  let heardIndex = 0;
 
-  return expected.map((_, index) => outcomes.get(index) ?? { heard: null, matched: false });
+  for (const step of alignWords(expected, heard)) {
+    if (step.kind === "match") {
+      outcomes.set(step.expected, { heardIndex, matched: true });
+      heardIndex += 1;
+    } else if (step.kind === "substitute") {
+      outcomes.set(step.expected, { heardIndex: step.heard, matched: false });
+      heardIndex = step.heard + 1;
+    } else if (step.kind === "insert") {
+      heardIndex = step.heard + 1;
+    } else {
+      outcomes.set(step.expected, { heardIndex: null, matched: false });
+    }
+  }
+
+  return expected.map((_, index) => outcomes.get(index) ?? { heardIndex: null, matched: false });
 }
 
+/**
+ * A written word is right when every one of its tokens was heard as itself. Otherwise it shows
+ * everything heard across its tokens, extra words in between included, so a sentence written
+ * without spaces shows the whole stretch that was heard instead.
+ */
 function toWordResult({
+  heardTokens,
   outcomes,
+  separator,
   word,
 }: {
+  heardTokens: readonly string[];
   outcomes: readonly TokenOutcome[];
+  separator: string;
   word: ExpectedWord;
 }): SpokenWordResult {
   if (outcomes.every((outcome) => outcome.matched)) {
     return { heard: null, status: "correct", text: word.text };
   }
 
-  const heardTokens = outcomes.flatMap((outcome) => (outcome.heard ? [outcome.heard] : []));
+  const heardIndexes = outcomes.flatMap((outcome) =>
+    outcome.heardIndex === null ? [] : [outcome.heardIndex],
+  );
 
-  if (heardTokens.length === 0) {
+  if (heardIndexes.length === 0) {
     return { heard: null, status: "missed", text: word.text };
   }
 
-  return { heard: heardTokens.join(" "), status: "different", text: word.text };
+  const heard = heardTokens
+    .slice(Math.min(...heardIndexes), Math.max(...heardIndexes) + 1)
+    .join(separator);
+
+  return { heard, status: "different", text: word.text };
 }
 
 /** Where each written word's tokens start in the flat token list. */
@@ -135,9 +189,9 @@ function getTokenOffsets(words: readonly ExpectedWord[]): number[] {
 
 /**
  * Compares what speech recognition heard with the sentence the learner was
- * asked to say, word by word. Case, punctuation and contractions never make a
- * word wrong; a different word or a missing one does. Used for spoken answers
- * and for typing a spoken step when the learner can't talk.
+ * asked to say, word by word. Case, punctuation, contractions and Chinese
+ * script never make a word wrong; a different word or a missing one does. Used
+ * for spoken answers and for typing a spoken step when the learner can't talk.
  */
 export function matchSpokenAnswer({
   expected,
@@ -158,17 +212,24 @@ export function matchSpokenAnswer({
   });
 
   const offsets = getTokenOffsets(expectedWords);
+  const separator = getTokenSeparator(language);
 
   const words = expectedWords.map((word, index) => {
     const offset = offsets[index] ?? 0;
-    return toWordResult({ outcomes: outcomes.slice(offset, offset + word.tokens.length), word });
+
+    return toWordResult({
+      heardTokens,
+      outcomes: outcomes.slice(offset, offset + word.tokens.length),
+      separator,
+      word,
+    });
   });
 
   const correctCount = words.filter((word) => word.status === "correct").length;
 
   return {
     isCorrect: words.length > 0 && correctCount === words.length,
-    normalizedHeard: heardTokens.join(" "),
+    normalizedHeard: heardTokens.join(separator),
     score: words.length === 0 ? 0 : correctCount / words.length,
     words,
   };

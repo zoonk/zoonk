@@ -4,12 +4,13 @@ export const DEFAULT_AUDIO_MODEL_VALUE = "default";
 
 export const AUDIO_MODEL_OPTIONS = [
   {
-    label: "Default (Gemini 3.8 Flash, then Flash Lite, then OpenAI)",
+    label: "Default (Gemini 3.8 Flash, then Flash Lite, then MAI-Voice, then OpenAI)",
     value: DEFAULT_AUDIO_MODEL_VALUE,
   },
   { label: "Gemini 3.8 Flash TTS", value: speechModels.geminiFlash },
   { label: "Gemini 3.8 Flash Lite TTS", value: speechModels.geminiFlashLite },
-  { label: "GPT-4o mini TTS (Marin voice)", value: speechModels.openai },
+  { label: "MAI-Voice-2.1 Flash (Harper voice)", value: speechModels.maiVoiceFlash },
+  { label: "GPT-Realtime-2.1 mini (Marin voice)", value: speechModels.openaiRealtimeMini },
 ] as const;
 
 export type AudioModelValue = (typeof AUDIO_MODEL_OPTIONS)[number]["value"];

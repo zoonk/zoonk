@@ -10,11 +10,12 @@ import { type Reasoning } from "@zoonk/ai/provider-options";
  * `evaluation` models answer through the task's `evaluate` route with
  * `experimental_decide`: Jev natively, other models through the AI SDK's
  * language-model decision adapter. `image` models draw through `generate`
- * and only run tasks whose output is an image; `transcription` models likewise
- * only run tasks whose output is a transcript, and `realtime` models only the
- * live conversation, which talks to them over a realtime session.
+ * and only run tasks whose output is an image; `speech` models likewise only
+ * run tasks whose output is audio, `transcription` models only tasks whose
+ * output is a transcript, and `realtime` models only the live conversation,
+ * which talks to them over a realtime session.
  */
-type ModelKind = "generation" | "evaluation" | "image" | "realtime" | "transcription";
+type ModelKind = "generation" | "evaluation" | "image" | "realtime" | "speech" | "transcription";
 
 export type ModelConfig = {
   /** Unique id for saved outputs, results and URLs. */
@@ -49,7 +50,6 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "deepseek/deepseek-v4-flash", name: "deepseek-v4-flash" },
   { id: "google/gemini-3.8-flash", name: "gemini-3.8-flash" },
   { id: "google/gemini-3.5-flash-lite", name: "gemini-3.5-flash-lite" },
-  { id: "google/gemini-3.5-flash", name: "gemini-3.5-flash" },
   { id: "google/gemini-3.1-pro-preview", name: "gemini-3.1-pro" },
   { id: "google/gemini-3.1-flash-lite", name: "gemini-3.1-flash-lite" },
   { id: "google/gemini-3-flash", name: "gemini-3-flash" },
@@ -62,7 +62,6 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-5.6-luna", name: "gpt-5.6-luna" },
   { id: "openai/gpt-5.5", name: "gpt-5.5" },
   { id: "openai/gpt-5.4-mini", name: "gpt-5.4-mini" },
-  { id: "openai/gpt-5.4-nano", name: "gpt-5.4-nano" },
 ];
 
 /**
@@ -87,15 +86,24 @@ const IMAGE_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-image-2", name: "gpt-image-2" },
 ];
 
+/** Text-to-speech models for a clip's audio, in the app's fallback order (see `speechModels`). */
+const SPEECH_MODELS: { id: string; name: string }[] = [
+  { id: "google/gemini-3.8-flash-tts", name: "gemini-3.8-flash-tts" },
+  { id: "google/gemini-3.8-flash-lite-tts", name: "gemini-3.8-flash-lite-tts" },
+  { id: "microsoft/mai-voice-2.1-flash", name: "mai-voice-2.1-flash" },
+  { id: "openai/gpt-realtime-2.1-mini", name: "gpt-realtime-2.1-mini" },
+];
+
 /**
  * Speech-to-text models compared for spoken answers. gpt-transcribe runs on
  * OpenAI directly (AI Gateway doesn't list it), so it needs OPENAI_API_KEY.
  */
 const TRANSCRIPTION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-transcribe", name: "gpt-transcribe" },
-  { id: "openai/gpt-4o-transcribe", name: "gpt-4o-transcribe" },
-  { id: "openai/gpt-4o-mini-transcribe", name: "gpt-4o-mini-transcribe" },
   { id: "google/gemini-3.5-transcribe", name: "gemini-3.5-transcribe" },
+  { id: "microsoft/mai-transcribe-2", name: "mai-transcribe-2" },
+  { id: "fish-audio/transcribe-1", name: "fish-audio-transcribe-1" },
+  { id: "spacexai/grok-stt", name: "grok-stt" },
 ];
 
 /**
@@ -121,6 +129,11 @@ export const EVAL_MODELS: ModelConfig[] = [
     kind: "evaluation" as const,
   })),
   ...IMAGE_MODELS.map((model) => ({ ...model, gatewayModelId: model.id, kind: "image" as const })),
+  ...SPEECH_MODELS.map((model) => ({
+    ...model,
+    gatewayModelId: model.id,
+    kind: "speech" as const,
+  })),
   ...TRANSCRIPTION_MODELS.map((model) => ({
     ...model,
     gatewayModelId: model.id,

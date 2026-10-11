@@ -17,32 +17,36 @@ import { type TaskProvenance } from "../../../provenance/task-provenance";
  */
 export const TRANSCRIPTION_MODELS = [
   "openai/gpt-transcribe",
-  "openai/gpt-4o-transcribe",
-  "openai/gpt-4o-mini-transcribe",
   "google/gemini-3.5-transcribe",
+  "microsoft/mai-transcribe-2",
+  "fish-audio/transcribe-1",
+  "spacexai/grok-stt",
 ] as const;
 
 export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
 
 /**
  * Spoken answers use gpt-transcribe, OpenAI's latest transcription model, at
- * $0.0045 a minute against $0.006 for gpt-4o-transcribe, which is likely to be
- * retired first. Speech checks flag what a listener wouldn't understand, not an
- * accent, and it hears slips the way a listener would: "I sink it's cheap"
+ * $0.0045 a minute. Speech checks flag what a listener wouldn't understand, not
+ * an accent, and it hears slips the way a listener would: "I sink it's cheap"
  * became "I think it's cheap" and "mas café" became "mais café". In the speech
  * eval (13 labeled text-to-speech clips in English, Portuguese and Spanish, 7
- * with a mistake by that rule; 28 Sep 2026) it matched 12 at 1.0s p50, as did
- * gpt-4o-transcribe at 1.1s, which kept "mas" and so flagged a sentence a
- * listener understands. The trade-off: it also normalizes a wrong form
- * ("estar" became "está"), so that sentence passes. It kept a wrong word, a
- * wrong tense and missing words ("hent", "live", a dropped "the"), and it never
- * flagged a sentence said right. It gets the language hint and the prompt as
- * context, never the expected words: as `keywords` they hid three more
- * mistakes. The fallbacks run through AI Gateway: gpt-4o-transcribe, then
- * Gemini on another provider.
+ * with a mistake by that rule; 28 Sep 2026) it matched 12 at 1.0s p50. The
+ * trade-off: it also normalizes a wrong form ("estar" became "está"), so that
+ * sentence passes. It kept a wrong word, a wrong tense and missing words
+ * ("hent", "live", a dropped "the"), and it never flagged a sentence said
+ * right. It gets the language hint and the prompt as context, never the
+ * expected words: as `keywords` they hid three more mistakes.
+ *
+ * The fallback is Gemini 3.5 Transcribe through AI Gateway, on another
+ * provider. Across that eval and the pronunciation one's 24 clips (11 Oct
+ * 2026) it matched 34 of 37 like gpt-transcribe, at 1.5s to 2.2s p50. OpenAI
+ * shuts gpt-4o-transcribe, the fallback before it, down on 26 Feb 2027; it
+ * matched 30. MAI-Transcribe-2 (preview) matched 36 but took 4.6s p50 and up
+ * to 21s p95, and Fish Audio's Transcribe 1 and Grok STT matched 32 at 0.5s.
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
-const fallbackModels = ["openai/gpt-4o-transcribe", "google/gemini-3.5-transcribe"] as const;
+const fallbackModels = ["google/gemini-3.5-transcribe"] as const;
 
 const DIRECT_MODEL = "openai/gpt-transcribe";
 

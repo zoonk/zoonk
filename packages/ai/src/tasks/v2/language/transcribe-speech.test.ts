@@ -55,22 +55,20 @@ describe(transcribeSpeech, () => {
     });
   });
 
-  it("falls back to gpt-4o-transcribe through the gateway, then Gemini, when OpenAI fails", async () => {
+  it("falls back to Gemini through the gateway when OpenAI fails", async () => {
     vi.mocked(transcribe)
       .mockRejectedValueOnce(new Error("OpenAI is down"))
-      .mockRejectedValueOnce(new Error("Gateway is down"))
       .mockResolvedValueOnce(heard("Tengo un pero"));
 
     const result = await transcribeSpeech({ audio: AUDIO, language: "es" });
 
     expect(triedModels()).toStrictEqual([
       "openai.transcription:gpt-transcribe",
-      "gateway:openai/gpt-4o-transcribe",
       "gateway:google/gemini-3.5-transcribe",
     ]);
 
     // Gemini detects the language itself and takes no OpenAI options.
-    expect(vi.mocked(transcribe).mock.calls[2]?.[0].providerOptions).toBeUndefined();
+    expect(vi.mocked(transcribe).mock.calls[1]?.[0].providerOptions).toBeUndefined();
 
     expect(result.data).toStrictEqual({ text: "Tengo un pero" });
 
@@ -85,10 +83,10 @@ describe(transcribeSpeech, () => {
       .mockRejectedValueOnce(new Error("Gateway is down"))
       .mockResolvedValueOnce(heard("I sink it's cheap"));
 
-    await transcribeSpeech({ audio: AUDIO, language: "en", model: "openai/gpt-4o-transcribe" });
+    await transcribeSpeech({ audio: AUDIO, language: "en", model: "microsoft/mai-transcribe-2" });
 
     expect(triedModels()).toStrictEqual([
-      "gateway:openai/gpt-4o-transcribe",
+      "gateway:microsoft/mai-transcribe-2",
       "gateway:google/gemini-3.5-transcribe",
     ]);
   });

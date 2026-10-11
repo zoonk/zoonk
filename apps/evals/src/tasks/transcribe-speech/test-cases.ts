@@ -134,4 +134,24 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
       targetText: "Quiero ver el piso mañana",
     },
   },
+  {
+    // gpt-transcribe may write it in traditional characters (請問，圖書館在哪裡？): still right.
+    expected: { flaggedWords: [] },
+    id: "zh-library-correct",
+    userInput: {
+      language: "zh",
+      spokenText: "请问，图书馆在哪里？",
+      targetText: "请问，图书馆在哪里？",
+    },
+  },
+  {
+    // Written without spaces, the whole sentence is one word to flag.
+    expected: { flaggedWords: ["请问，图书馆在哪里？"] },
+    id: "zh-library-station",
+    userInput: {
+      language: "zh",
+      spokenText: "请问，地铁站在哪里？",
+      targetText: "请问，图书馆在哪里？",
+    },
+  },
 ];

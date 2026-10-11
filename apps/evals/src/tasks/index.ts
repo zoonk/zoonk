@@ -6,6 +6,7 @@ import { challengeCaseTask } from "./challenge-case/task";
 import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
 import { checkExamReadingTask } from "./check-exam-reading/task";
+import { checkWordPronunciationTask } from "./check-word-pronunciation/task";
 import { citeMaterialTask } from "./cite-material/task";
 import { conversationFeedbackTask } from "./conversation-feedback/task";
 import { conversationObjectivesTask } from "./conversation-objectives/task";
@@ -37,6 +38,7 @@ import { gradeTypedAnswerTask } from "./grade-typed-answer/task";
 import { imageCheckTask } from "./image-check/task";
 import { imageInputSafetyRewriteTask } from "./image-prompt-safety-rewrite/task";
 import { imageSceneTask } from "./image-scene/task";
+import { languageAudioTask } from "./language-audio/task";
 import { languageLessonTask } from "./language-lesson/task";
 import { lessonFixTask } from "./lesson-fix/task";
 import { lessonImageTask } from "./lesson-image/task";
@@ -79,6 +81,7 @@ import { transcribeSpeechTask } from "./transcribe-speech/task";
 import { translatePassMarksTask } from "./translate-pass-marks/task";
 import { understandGoalTask } from "./understand-goal/task";
 import { uploadVisibilityTask } from "./upload-visibility/task";
+import { wordIpaTask } from "./word-ipa/task";
 import { workFieldTask } from "./work-field/task";
 import { writeItemSetTask } from "./write-item-set/task";
 import { writeListeningSetTask } from "./write-listening-set/task";
@@ -155,6 +158,9 @@ export const TASKS: readonly RegisteredTask[] = [
   explainSpokenAnswerTask,
   transcribeSpeechTask,
   assessPronunciationTask,
+  languageAudioTask,
+  wordIpaTask,
+  checkWordPronunciationTask,
   conversationScenarioTask,
   speakingMockScenarioTask,
   examSpeakingCardTask,

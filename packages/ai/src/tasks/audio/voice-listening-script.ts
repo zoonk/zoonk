@@ -45,6 +45,7 @@ type VoicedPart = { audio: EncodableAudio; provenance: TaskProvenance };
 type PartInput = {
   analytics?: AiGenerationContext;
   instructions: string;
+  language: string;
   /** The first model of the order, which provenance names as the one asked for. */
   requestedModel: SpeechModelName;
   serviceTier?: ServiceTier;
@@ -66,11 +67,12 @@ async function voicePartWithModel({
   const decoded = decodeSpeechWav({ audio, maxSeconds, model });
 
   const provenance = buildSpeechProvenance({
+    instructions,
     latencyMs: Math.round(performance.now() - startedAt),
     promptVersion: getListeningVoicePromptVersion(),
-    read: `${instructions}\n${text}`,
     requestedModel,
     runId: randomUUID(),
+    text,
     voiced: {
       durationSeconds: decoded.samplesDecoded / decoded.sampleRate,
       model,
@@ -140,6 +142,7 @@ export async function voiceListeningScript({
           {
             analytics,
             instructions: getListeningVoiceInstructions({ accent: line.accent, language }),
+            language,
             requestedModel: models[0] ?? speechModels.geminiFlashLite,
             serviceTier,
             text,

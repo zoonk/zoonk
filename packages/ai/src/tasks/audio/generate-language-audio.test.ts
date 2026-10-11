@@ -3,9 +3,16 @@ import { type convertWavToMp3 } from "./convert-wav-to-mp3";
 import { generateLanguageAudio } from "./generate-language-audio";
 import { type generateSpeechWithProvider } from "./speech-provider";
 
-const { convertWavToMp3Mock, generateSpeechWithProviderMock } = vi.hoisted(() => ({
+const {
+  checkWordPronunciationMock,
+  convertWavToMp3Mock,
+  generateSpeechWithProviderMock,
+  writeWordIpaMock,
+} = vi.hoisted(() => ({
+  checkWordPronunciationMock: vi.fn(),
   convertWavToMp3Mock: vi.fn<typeof convertWavToMp3>(),
   generateSpeechWithProviderMock: vi.fn<typeof generateSpeechWithProvider>(),
+  writeWordIpaMock: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -20,9 +27,24 @@ vi.mock("./speech-provider", () => ({
   generateSpeechWithProvider: generateSpeechWithProviderMock,
 }));
 
+vi.mock("../v2/language/word-ipa", () => ({ writeWordIpa: writeWordIpaMock }));
+
+vi.mock("../v2/language/check-word-pronunciation", () => ({
+  checkWordPronunciation: checkWordPronunciationMock,
+}));
+
+function wordIpa(data: { englishIpa: string | null; ipa: string | null }) {
+  return { data };
+}
+
+function heardAs(pronunciation: "english" | "native" | "unclear") {
+  return { data: { heard: "naːmə", pronunciation, soundsNative: pronunciation === "native" } };
+}
+
 const FLASH = "google/gemini-3.8-flash-tts";
 const FLASH_LITE = "google/gemini-3.8-flash-lite-tts";
-const OPENAI = "openai/gpt-4o-mini-tts";
+const MAI_VOICE = "microsoft/mai-voice-2.1-flash";
+const OPENAI_REALTIME = "openai/gpt-realtime-2.1-mini";
 
 const wavAudio = new Uint8Array([1, 2, 3]);
 const mp3Audio = new Uint8Array([4, 5, 6]);
@@ -52,6 +74,114 @@ describe(generateLanguageAudio, () => {
     vi.clearAllMocks();
     generateSpeechWithProviderMock.mockResolvedValue(voiced());
     convertWavToMp3Mock.mockResolvedValue({ audio: mp3Audio, durationSeconds: 2.5 });
+    writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: null, ipa: "ˈpalavɾa" }));
+    checkWordPronunciationMock.mockResolvedValue(heardAs("native"));
+  });
+
+  it("gives a word English spells the same its IPA, on Gemini Flash only", async () => {
+    writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: "neɪm", ipa: "ˈnaːmə" }));
+    generateSpeechWithProviderMock.mockRejectedValue(new Error("unavailable"));
+
+    await generateLanguageAudio({ language: "de", text: "Name" });
+
+    expect(writeWordIpaMock).toHaveBeenCalledExactlyOnceWith({ language: "de", word: "Name" });
+    expect(firstRequest().instructions).toContain("Pronounce it /ˈnaːmə/.");
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH, FLASH]);
+  });
+
+  it("voices a look-alike word again when it was read the English way", async () => {
+    writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: "neɪm", ipa: "ˈnaːmə" }));
+
+    checkWordPronunciationMock
+      .mockResolvedValueOnce(heardAs("english"))
+      .mockResolvedValue(heardAs("native"));
+
+    const result = await generateLanguageAudio({ language: "de", text: "Name" });
+
+    expect(result.error).toBeNull();
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH]);
+    // Two listens of each clip, and one listen hearing English was enough to voice it again.
+    expect(checkWordPronunciationMock).toHaveBeenCalledTimes(4);
+
+    expect(checkWordPronunciationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        audio: mp3Audio,
+        englishIpa: "neɪm",
+        ipa: "ˈnaːmə",
+        language: "de",
+        mediaType: "audio/mpeg",
+        word: "Name",
+      }),
+    );
+  });
+
+  it("fails a look-alike word every model read the English way, to voice it again later", async () => {
+    writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: "neɪm", ipa: "ˈnaːmə" }));
+    checkWordPronunciationMock.mockResolvedValue(heardAs("unclear"));
+
+    const result = await generateLanguageAudio({ language: "de", text: "Name" });
+
+    expect(result.data).toBeNull();
+    expect(result.error?.message).toContain("didn't read \"Name\" with its language's sounds");
+  });
+
+  it("keeps a look-alike word's clip when the check can't run", async () => {
+    writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: "neɪm", ipa: "ˈnaːmə" }));
+    checkWordPronunciationMock.mockRejectedValue(new Error("Gemini unavailable"));
+
+    const result = await generateLanguageAudio({ language: "de", text: "Name" });
+
+    expect(result.error).toBeNull();
+    expect(requestedModels()).toStrictEqual([FLASH]);
+  });
+
+  it("still fails a look-alike word when one listen heard English and the other couldn't run", async () => {
+    writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: "neɪm", ipa: "ˈnaːmə" }));
+
+    checkWordPronunciationMock
+      .mockRejectedValueOnce(new Error("Gemini unavailable"))
+      .mockResolvedValueOnce(heardAs("english"))
+      .mockResolvedValue(heardAs("native"));
+
+    const result = await generateLanguageAudio({ language: "de", text: "Name" });
+
+    expect(result.error).toBeNull();
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH]);
+  });
+
+  it("leaves a word of the language's own as it was", async () => {
+    generateSpeechWithProviderMock.mockRejectedValue(new Error("unavailable"));
+
+    await generateLanguageAudio({ language: "es", text: "mariposa" });
+
+    expect(firstRequest().instructions).not.toContain("Pronounce it");
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
+    expect(checkWordPronunciationMock).not.toHaveBeenCalled();
+  });
+
+  it("still voices a word whose IPA couldn't be written", async () => {
+    writeWordIpaMock.mockRejectedValue(new Error("IPA unavailable"));
+
+    const result = await generateLanguageAudio({ language: "nl", text: "fruit" });
+
+    expect(result.error).toBeNull();
+    expect(firstRequest().instructions).not.toContain("Pronounce it");
+  });
+
+  it.each([
+    ["a sentence", "es", "Hola, ¿qué tal?"],
+    ["English", "en", "fruit"],
+    ["a script English doesn't share", "ja", "電車"],
+  ])("never looks up IPA for %s", async (_, language, text) => {
+    await generateLanguageAudio({ language, text });
+
+    expect(writeWordIpaMock).not.toHaveBeenCalled();
+  });
+
+  it("never looks up IPA for an alphabet card, which reads a letter's sound", async () => {
+    await generateLanguageAudio({ language: "pl", text: "ł", usage: "alphabetSymbol" });
+
+    expect(writeWordIpaMock).not.toHaveBeenCalled();
   });
 
   it("voices Italian with Gemini Flash, naming the language in every request", async () => {
@@ -69,7 +199,7 @@ describe(generateLanguageAudio, () => {
         promptVersion: expect.stringMatching(/^[a-f0-9]{12}$/u),
         requestedModel: FLASH,
         runId: expect.any(String),
-        usage: { audioSeconds: 2.5, inputTokens: expect.any(Number) },
+        usage: { audioSeconds: 2.5, characters: 16, inputTokens: expect.any(Number) },
       }),
     });
 
@@ -77,6 +207,7 @@ describe(generateLanguageAudio, () => {
 
     expect(call).toStrictEqual({
       instructions: expect.stringContaining("The following text is Italiano."),
+      language: "it",
       model: FLASH,
       text: "Ciao, come stai?",
       voice: "Kore",
@@ -105,22 +236,39 @@ describe(generateLanguageAudio, () => {
     );
   });
 
-  it("falls back to Flash Lite, then OpenAI, for a language OpenAI speaks", async () => {
+  it("falls back to Flash Lite, then MAI-Voice, then OpenAI's realtime voice for a sentence", async () => {
     generateSpeechWithProviderMock
       .mockRejectedValueOnce(new Error("Flash unavailable"))
       .mockRejectedValueOnce(new Error("Flash Lite unavailable"))
+      .mockRejectedValueOnce(new Error("MAI-Voice unavailable"))
       .mockResolvedValueOnce(voiced());
 
-    const result = await generateLanguageAudio({ language: "es", text: "Hola" });
+    const result = await generateLanguageAudio({ language: "es", text: "Hola, ¿qué tal?" });
 
-    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, OPENAI]);
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE, OPENAI_REALTIME]);
 
     expect(result.data?.provenance).toStrictEqual(
-      expect.objectContaining({ model: OPENAI, requestedModel: FLASH }),
+      expect.objectContaining({ model: OPENAI_REALTIME, requestedModel: FLASH }),
     );
   });
 
-  it("never sends a language OpenAI doesn't speak to OpenAI", async () => {
+  it("skips MAI-Voice for a language only OpenAI speaks", async () => {
+    generateSpeechWithProviderMock.mockRejectedValue(new Error("unavailable"));
+
+    await generateLanguageAudio({ language: "ja", text: "駅までどのくらいかかりますか？" });
+
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, OPENAI_REALTIME]);
+  });
+
+  it("never gives a single word to OpenAI's realtime voice, which drops its first sound", async () => {
+    generateSpeechWithProviderMock.mockRejectedValue(new Error("unavailable"));
+
+    await generateLanguageAudio({ language: "es", text: "ferrocarril" });
+
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
+  });
+
+  it("keeps a language neither speaks on Gemini", async () => {
     generateSpeechWithProviderMock.mockRejectedValue(new Error("Gemini unavailable"));
 
     const result = await generateLanguageAudio({ language: "am", text: "ሰላም ነው።" });
@@ -143,13 +291,13 @@ describe(generateLanguageAudio, () => {
 
   it("gives an explicitly requested model a second attempt", async () => {
     convertWavToMp3Mock
-      .mockRejectedValueOnce(new Error(`${OPENAI} returned silent audio`))
+      .mockRejectedValueOnce(new Error(`${MAI_VOICE} returned silent audio`))
       .mockResolvedValueOnce({ audio: mp3Audio, durationSeconds: 1 });
 
-    const result = await generateLanguageAudio({ language: "en", model: OPENAI, text: "fruit" });
+    const result = await generateLanguageAudio({ language: "en", model: MAI_VOICE, text: "fruit" });
 
     expect(result.error).toBeNull();
-    expect(requestedModels()).toStrictEqual([OPENAI, OPENAI]);
+    expect(requestedModels()).toStrictEqual([MAI_VOICE, MAI_VOICE]);
   });
 
   it("rejects oversized audio for a short text before decoding it", async () => {

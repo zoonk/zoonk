@@ -29,6 +29,12 @@ import systemPrompt from "./assess-pronunciation.prompt.md";
  * clips test clear slips, not real accents, so real recordings should confirm
  * this.
  *
+ * No other model backs 3.8 Flash up (checked 11 Oct 2026): AI Gateway already
+ * tries it on Vertex when Google fails, and no other Gemini model is both
+ * different and lasting. Google routes 3.5 Flash to 3.6 Flash and 3.7 Flash to
+ * 3.8 Flash. 3.6 Flash matched 23 (one stress slip flagged) but Vertex stops
+ * serving it on 19 Nov 2026, and 3.5 Flash-Lite matched 6 of 20.
+ *
  * Azure Pronunciation Assessment is the specialist option, not measured here
  * (no credentials). Its short-audio REST endpoint
  * (`https://<resource>.cognitiveservices.azure.com/stt/speech/recognition/conversation/cognitiveservices/v1?language=<locale>`)
@@ -42,7 +48,6 @@ import systemPrompt from "./assess-pronunciation.prompt.md";
  * native a word sounds, so it would need thresholds to judge being understood.
  */
 const defaultModel = "google/gemini-3.8-flash";
-const fallbackModels = ["google/gemini-3.5-flash"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model writes what it heard before judging each word. */
 const schema = z.object({
@@ -74,7 +79,6 @@ export type AssessPronunciationParams = {
   language: string;
   learnerLanguage?: string;
   model?: string;
-  useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
@@ -117,11 +121,10 @@ export async function assessPronunciation({
   mediaType,
   model = defaultModel,
   reasoning,
-  useFallback = true,
 }: AssessPronunciationParams) {
   const expectedWords = splitExpectedWords(expectedText);
   const userPrompt = buildUserPrompt({ expectedText, expectedWords, language, learnerLanguage });
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,

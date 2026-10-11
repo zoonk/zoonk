@@ -54,11 +54,11 @@ export function getStatsFromResults({
   const { results } = evalResults;
 
   /**
-   * Transcription is billed per minute of audio and GPT-Live per second of session, which token
-   * prices can't express.
+   * Transcription is billed per minute of audio, speech per second of audio or per character, and
+   * GPT-Live per second of session, which token prices can't express.
    */
   const runCosts =
-    model.kind === "transcription" || model.kind === "realtime"
+    model.kind === "transcription" || model.kind === "realtime" || model.kind === "speech"
       ? []
       : results.map((result) =>
           getCallCost({ modelId: model.gatewayModelId, prices, usage: result }),

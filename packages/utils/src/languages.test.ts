@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   getLanguageName,
+  getMaiVoiceLocale,
   isOpenAITTSSupportedLanguage,
   isTTSSupportedLanguage,
   usesNonLatinScript,
@@ -13,6 +14,16 @@ describe(isOpenAITTSSupportedLanguage, () => {
 
   it("returns false for a Gemini-only language", () => {
     expect(isOpenAITTSSupportedLanguage("am")).toBe(false);
+  });
+});
+
+describe(getMaiVoiceLocale, () => {
+  it("returns the locale MAI-Voice speaks a language in", () => {
+    expect(getMaiVoiceLocale("pt")).toBe("pt-BR");
+  });
+
+  it("returns null for a language MAI-Voice doesn't speak", () => {
+    expect(getMaiVoiceLocale("ja")).toBeNull();
   });
 });
 

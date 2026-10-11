@@ -94,6 +94,37 @@ describe(matchSpokenAnswer, () => {
     expect(match.score).toBe(0);
     expect(match.words.every((word) => word.status === "missed")).toBe(true);
   });
+
+  it("accepts Chinese heard in traditional characters for a sentence written in simplified ones", () => {
+    const match = matchSpokenAnswer({
+      expected: "请问，最近的地铁站在哪里？",
+      heard: "請問最近的地鐵站在哪裡？",
+      language: "zh",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
+
+  it("still flags a different Chinese word, showing what was heard without spaces", () => {
+    const match = matchSpokenAnswer({
+      expected: "请问，最近的地铁站在哪里？",
+      heard: "请问，最近的图书馆在哪里？",
+      language: "zh",
+    });
+
+    expect(match.isCorrect).toBe(false);
+    expect(match.words[0]?.heard).toBe("请问最近的图书馆在哪里");
+  });
+
+  it("doesn't fail Japanese for a comma the transcript left out", () => {
+    const match = matchSpokenAnswer({
+      expected: "先週、友達と京都に行きました。",
+      heard: "先週友達と京都に行きました",
+      language: "ja",
+    });
+
+    expect(match.isCorrect).toBe(true);
+  });
 });
 
 describe(pickWordsToExplain, () => {

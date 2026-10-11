@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-28T08:37:40.131Z",
+  "generatedAt": "2026-10-11T18:04:16.023Z",
   "modelId": "openai/gpt-transcribe",
   "outputs": [
     {
@@ -118,6 +118,24 @@
       "systemPrompt": "",
       "testCaseId": "es-missing-el-1",
       "userPrompt": "Clip of \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1460.576833,
+      "output": "{\n  \"text\": \"請問圖書館在哪裡？\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "zh-library-correct-1",
+      "userPrompt": "Clip of \"请问，图书馆在哪里？\" (expected \"请问，图书馆在哪里？\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1348.216958,
+      "output": "{\n  \"text\": \"請問地鐵站在哪裡？\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "zh-library-station-1",
+      "userPrompt": "Clip of \"请问，地铁站在哪里？\" (expected \"请问，图书馆在哪里？\")"
     }
   ],
   "taskId": "transcribe-speech"

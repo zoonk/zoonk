@@ -11,24 +11,27 @@ import { type SpeechModelName } from "./speech-models";
 const CHARACTERS_PER_TEXT_TOKEN = 4;
 
 /**
- * Speech is billed by the second of audio it returns and the text it reads, so the clip's length
- * and its words price it. AI Gateway's routing names the provider that served a Gemini clip and its
- * own estimate is kept as a cross-check.
+ * Speech is billed by the second of audio it returns and the text it reads (its instructions and
+ * the clip's words), or by the characters of the clip's words alone (MAI-Voice), so the clip's
+ * length and its words price it. AI Gateway's routing names the provider that served a gateway
+ * clip and its own estimate is kept as a cross-check.
  */
 export function buildSpeechProvenance({
+  instructions,
   latencyMs,
   promptVersion,
-  read,
   requestedModel,
   runId,
+  text,
   voiced,
 }: {
+  instructions: string;
   latencyMs: number;
   promptVersion: string;
-  /** Everything the model read: its instructions and the clip's words. */
-  read: string;
   requestedModel: SpeechModelName;
   runId: string;
+  /** The clip's words. */
+  text: string;
   voiced: {
     durationSeconds: number;
     model: SpeechModelName;
@@ -39,7 +42,8 @@ export function buildSpeechProvenance({
 
   const usage = {
     audioSeconds: voiced.durationSeconds,
-    inputTokens: Math.ceil(read.length / CHARACTERS_PER_TEXT_TOKEN),
+    characters: text.length,
+    inputTokens: Math.ceil(`${instructions}\n${text}`.length / CHARACTERS_PER_TEXT_TOKEN),
   };
 
   return {

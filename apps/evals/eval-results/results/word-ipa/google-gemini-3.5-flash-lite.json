@@ -1,0 +1,2081 @@
+{
+  "modelId": "google/gemini-3.5-flash-lite",
+  "results": [
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈnaːmə/ (expected /ˈnaːmə/) and English /ˈneɪm/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈnaːmə/ (expected /ˈnaːmə/) and English /ˈneɪm/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈnaːmə/ (expected /ˈnaːmə/) and English /ˈneɪm/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈnaːmə", "english": "neɪm" },
+        "id": "de-name-1",
+        "userInput": { "language": "de", "word": "Name" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /kɪnt/ (expected /kɪnt/) and English /kaɪnd/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kɪnt/ (expected /kɪnt/) and English /kaɪnd/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kɪnt/ (expected /kɪnt/) and English /kaɪnd/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "kɪnt", "english": "kaɪnd" },
+        "id": "de-kind-1",
+        "userInput": { "language": "de", "word": "Kind" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /hant/ (expected /hant/) and English /hænd/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /hant/ (expected /hant/) and English /hænd/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /hant/ (expected /hant/) and English /hænd/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "hant", "english": "hænd" },
+        "id": "de-hand-1",
+        "userInput": { "language": "de", "word": "Hand" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /baŋk/ (expected /baŋk/) and English /bæŋk/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /baŋk/ (expected /baŋk/) and English /bæŋk/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /baŋk/ (expected /baŋk/) and English /bæŋk/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "baŋk", "english": "bæŋk" },
+        "id": "de-bank-1",
+        "userInput": { "language": "de", "word": "Bank" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /vɪnt/ (expected /vɪnt/) and English /waɪnd/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /vɪnt/ (expected /vɪnt/) and English /waɪnd/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /vɪnt/ (expected /vɪnt/) and English /waɪnd/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "vɪnt", "english": "wɪnd" },
+        "id": "de-wind-1",
+        "userInput": { "language": "de", "word": "Wind" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /frœyt/ (expected /frœyt/) and English /fruːt/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "frœyt", "english": "fruːt" },
+        "id": "nl-fruit-1",
+        "userInput": { "language": "nl", "word": "fruit" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /boːt/ (expected /boːt/) and English /buːt/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /boːt/ (expected /boːt/) and English /buːt/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /boːt/ (expected /boːt/) and English /buːt/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "boːt", "english": "buːt" },
+        "id": "nl-boot-1",
+        "userInput": { "language": "nl", "word": "boot" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /doːr/ (expected /doːr/) and English /dɔːr/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /doːr/ (expected /doːr/) and English /dɔːr/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /doːr/ (expected /doːr/) and English /dɔːr/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "doːr", "english": "dɔːr" },
+        "id": "nl-door-1",
+        "userInput": { "language": "nl", "word": "door" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /ˈtʃɑːlz/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /ˈtʃɑːlz/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʃaʁlis/ (expected /ˈʃaʁlis/) and English /ˈtʃɑːlz/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈʃaʁlis", "english": "tʃɑːrlz" },
+        "id": "pt-charles-1",
+        "userInput": { "language": "pt", "word": "Charles" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈtʃĩmi/ (expected /ˈtʃĩmi/) and English /ˈtaɪm/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈtʃĩmi/ (expected /ˈtʃĩmi/) and English /ˈtaɪm/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈtʃĩmi/ (expected /ˈtʃĩmi/) and English /ˈtaɪm/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈtʃĩmi", "english": "taɪm" },
+        "id": "pt-time-1",
+        "userInput": { "language": "pt", "word": "time" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈmawzi/ (expected /ˈmawzi/) and English /ˈmaʊs/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈmawzi/ (expected /ˈmawzi/) and English /ˈmaʊs/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈmawzi/ (expected /ˈmawzi/) and English /ˈmaʊs/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈmawzi", "english": "maʊs" },
+        "id": "pt-mouse-1",
+        "userInput": { "language": "pt", "word": "mouse" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /oˈtɛw/ (expected /oˈtɛw/) and English /həʊˈtɛl/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /oˈtɛw/ (expected /oˈtɛw/) and English /həʊˈtɛl/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /oˈtɛw/ (expected /oˈtɛw/) and English /həʊˈtɛl/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "oˈtɛw", "english": "hoʊˈtɛl" },
+        "id": "pt-hotel-1",
+        "userInput": { "language": "pt", "word": "hotel" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /paɪ/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /paɪ/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈpje/ (expected /pje/) and English /paɪ/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "pje", "english": "paɪ" },
+        "id": "es-pie-1",
+        "userInput": { "language": "es", "word": "pie" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈon.θe/ (expected /ˈonse/) and English /wʌns/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈon.θe/ (expected /ˈonse/) and English /wʌns/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈon.θe/ (expected /ˈonse/) and English /wʌns/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈonse", "english": "wʌns" },
+        "id": "es-once-1",
+        "userInput": { "language": "es", "word": "once" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈkome/ (expected /ˈkome/) and English /kʌm/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈkome/ (expected /ˈkome/) and English /kʌm/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈkome/ (expected /ˈkome/) and English /kʌm/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈkome", "english": "kʌm" },
+        "id": "es-come-1",
+        "userInput": { "language": "es", "word": "come" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ak-twa-l/ (expected /akˈtwal/) and English /ˈæktʃuəl/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ak-twa-l/ (expected /akˈtwal/) and English /ˈæktʃuəl/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ak-twa-l/ (expected /akˈtwal/) and English /ˈæktʃuəl/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "akˈtwal", "english": "ˈæktʃuəl" },
+        "id": "es-actual-1",
+        "userInput": { "language": "es", "word": "actual" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /pɛ̃/ (expected /pɛ̃/) and English /peɪn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pɛ̃/ (expected /pɛ̃/) and English /peɪn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pɛ̃/ (expected /pɛ̃/) and English /peɪn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "pɛ̃", "english": "peɪn" },
+        "id": "fr-pain-1",
+        "userInput": { "language": "fr", "word": "pain" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ʃa/ (expected /ʃa/) and English /tʃæt/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʃa/ (expected /ʃa/) and English /tʃæt/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʃa/ (expected /ʃa/) and English /tʃæt/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ʃa", "english": "tʃæt" },
+        "id": "fr-chat-1",
+        "userInput": { "language": "fr", "word": "chat" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /kwɛ̃/ (expected /kwɛ̃/) and English /kɔɪn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kwɛ̃/ (expected /kwɛ̃/) and English /kɔɪn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kwɛ̃/ (expected /kwɛ̃/) and English /kɔɪn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "kwɛ̃", "english": "kɔɪn" },
+        "id": "fr-coin-1",
+        "userInput": { "language": "fr", "word": "coin" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /fuʁ/ (expected /fuʁ/) and English /fɔːɹ/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fuʁ/ (expected /fuʁ/) and English /fɔːɹ/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fuʁ/ (expected /fuʁ/) and English /fɔːɹ/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "fuʁ", "english": "fɔːr" },
+        "id": "fr-four-1",
+        "userInput": { "language": "fr", "word": "four" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈpane/ (expected /ˈpaːne/) and English /none/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ˈpane/ (expected /ˈpaːne/) and English /none/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ˈpane/ (expected /ˈpaːne/) and English /none/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈpaːne", "english": "peɪn" },
+        "id": "it-pane-1",
+        "userInput": { "language": "it", "word": "pane" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈka.ze/ (expected /ˈkaːse/) and English /keɪs/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈka.ze/ (expected /ˈkaːse/) and English /keɪs/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈka.ze/ (expected /ˈkaːse/) and English /keɪs/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈkaːse", "english": "keɪs" },
+        "id": "it-case-1",
+        "userInput": { "language": "it", "word": "case" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈmaːle/ (expected /ˈmaːle/) and English /meɪl/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈmaːle/ (expected /ˈmaːle/) and English /meɪl/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈmaːle/ (expected /ˈmaːle/) and English /meɪl/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true, "native": "ˈmaːle", "english": "meɪl" },
+        "id": "it-male-1",
+        "userInput": { "language": "it", "word": "male" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈʃmɛtɐlɪŋ/ (expected /ˈʃmɛtɐlɪŋ/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʃmɛtɐlɪŋ/ (expected /ˈʃmɛtɐlɪŋ/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʃmɛtɐlɪŋ/ (expected /ˈʃmɛtɐlɪŋ/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "ˈʃmɛtɐlɪŋ" },
+        "id": "de-schmetterling-1",
+        "userInput": { "language": "de", "word": "Schmetterling" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈaɪçhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈaɪçhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈaɪçhœʁnçən/ (expected /ˈaɪçhœʁnçən/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "ˈaɪçhœʁnçən" },
+        "id": "de-eichhoernchen-1",
+        "userInput": { "language": "de", "word": "Eichhörnchen" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /maɾiˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /maɾiˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /maɾiˈposa/ (expected /maɾiˈposa/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "maɾiˈposa" },
+        "id": "es-mariposa-1",
+        "userInput": { "language": "es", "word": "mariposa" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /fero.kaˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fero.kaˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fero.kaˈril/ (expected /ferokaˈril/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "ferokaˈril" },
+        "id": "es-ferrocarril-1",
+        "userInput": { "language": "es", "word": "ferrocarril" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /papijɔ̃/ (expected /papijɔ̃/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /papijɔ̃/ (expected /papijɔ̃/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /papijɔ̃/ (expected /papijɔ̃/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "papijɔ̃" },
+        "id": "fr-papillon-1",
+        "userInput": { "language": "fr", "word": "papillon" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ɡʁə.nuj/ (expected /ɡʁənuj/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ɡʁə.nuj/ (expected /ɡʁənuj/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ɡʁə.nuj/ (expected /ɡʁənuj/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "ɡʁənuj" },
+        "id": "fr-grenouille-1",
+        "userInput": { "language": "fr", "word": "grenouille" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /farˈfalla/ (expected /farˈfalla/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /farˈfalla/ (expected /farˈfalla/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /farˈfalla/ (expected /farˈfalla/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "farˈfalla" },
+        "id": "it-farfalla-1",
+        "userInput": { "language": "it", "word": "farfalla" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /boɾboˈletɐ/ (expected /boʁboˈletɐ/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /boɾboˈletɐ/ (expected /boʁboˈletɐ/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /boɾboˈletɐ/ (expected /boʁboˈletɐ/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "boʁboˈletɐ" },
+        "id": "pt-borboleta-1",
+        "userInput": { "language": "pt", "word": "borboleta" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈvɫɪndər/ (expected /ˈvlɪndər/) and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈvɫɪndər/ (expected /ˈvlɪndər/) and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈvɫɪndər/ (expected /ˈvlɪndər/) and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false, "native": "ˈvlɪndər" },
+        "id": "nl-vlinder-1",
+        "userInput": { "language": "nl", "word": "vlinder" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ɡɪft/ and English /ɡɪft/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ɡɪft/ and English /ɡɪft/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ɡɪft/ and English /ɡɪft/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "de-gift-1",
+        "userInput": { "language": "de", "word": "Gift" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /bʁiːf/ and English /bɹiːf/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /bʁiːf/ and English /bɹiːf/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /bʁiːf/ and English /bɹiːf/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "de-brief-1",
+        "userInput": { "language": "de", "word": "Brief" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ʁɔk/ and English /ɹɑk/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʁɔk/ and English /ɹɑk/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʁɔk/ and English /ɹɑk/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "de-rock-1",
+        "userInput": { "language": "de", "word": "Rock" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈhɛndi/ and English /ˈhændi/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈhɛndi/ and English /ˈhændi/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈhɛndi/ and English /ˈhændi/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "de-handy-1",
+        "userInput": { "language": "de", "word": "Handy" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /kɔmˈpuːtɐ/ and English /kəmˈpjuːtər/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kɔmˈpuːtɐ/ and English /kəmˈpjuːtər/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kɔmˈpuːtɐ/ and English /kəmˈpjuːtər/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "de-computer-1",
+        "userInput": { "language": "de", "word": "Computer" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈʋaːtər/ and English /ˈwɔtər/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʋaːtər/ and English /ˈwɔtər/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʋaːtər/ and English /ˈwɔtər/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "nl-water-1",
+        "userInput": { "language": "nl", "word": "water" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /slɪm/ and English /slɪm/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /slɪm/ and English /slɪm/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /slɪm/ and English /slɪm/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "nl-slim-1",
+        "userInput": { "language": "nl", "word": "slim" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ʁeˈaw/ and English /ˈɹiəl/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʁeˈaw/ and English /ˈɹiəl/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʁeˈaw/ and English /ˈɹiəl/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "pt-real-1",
+        "userInput": { "language": "pt", "word": "real" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /maˈɾi.ɐ/ and English /məˈɹiː.ə/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /maˈɾi.ɐ/ and English /məˈɹiː.ə/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /maˈɾi.ɐ/ and English /məˈɹiː.ə/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "pt-maria-1",
+        "userInput": { "language": "pt", "word": "Maria" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /pan/ and English /pæn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pan/ and English /pæn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pan/ and English /pæn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "es-pan-1",
+        "userInput": { "language": "es", "word": "pan" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈson/ and English /sʌn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈson/ and English /sʌn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈson/ and English /sʌn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "es-son-1",
+        "userInput": { "language": "es", "word": "son" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /kaˈfe/ and English /none/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /kaˈfe/ and English /none/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /kaˈfe/ and English /none/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "es-cafe-1",
+        "userInput": { "language": "es", "word": "café" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /mɛ̃/ and English /meɪn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /mɛ̃/ and English /meɪn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /mɛ̃/ and English /meɪn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "fr-main-1",
+        "userInput": { "language": "fr", "word": "main" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /pa.ʁi/ and English /ˈpæɹɪs/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pa.ʁi/ and English /ˈpæɹɪs/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pa.ʁi/ and English /ˈpæɹɪs/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "fr-paris-1",
+        "userInput": { "language": "fr", "word": "Paris" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ka.fe/ and English /none/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ka.fe/ and English /none/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ka.fe/ and English /none/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "fr-cafe-1",
+        "userInput": { "language": "fr", "word": "café" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈkaːmera/ and English /kəˈmɪɹə/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈkaːmera/ and English /kəˈmɪɹə/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈkaːmera/ and English /kəˈmɪɹə/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "it-camera-1",
+        "userInput": { "language": "it", "word": "camera" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈdove/ and English /none/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ˈdove/ and English /none/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ˈdove/ and English /none/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "it-dove-1",
+        "userInput": { "language": "it", "word": "dove" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈka.ne/ and English /ˈkeɪn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈka.ne/ and English /ˈkeɪn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈka.ne/ and English /ˈkeɪn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "it-cane-1",
+        "userInput": { "language": "it", "word": "cane" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /pan/ and English /pæn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pan/ and English /pæn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /pan/ and English /pæn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "pl-pan-1",
+        "userInput": { "language": "pl", "word": "pan" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /bɑːn/ and English /none/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /bɑːn/ and English /none/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /bɑːn/ and English /none/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "sv-barn-1",
+        "userInput": { "language": "sv", "word": "barn" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈkɪsː/ and English /ˈkɪs/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈkɪsː/ and English /ˈkɪs/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈkɪsː/ and English /ˈkɪs/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "sv-kiss-1",
+        "userInput": { "language": "sv", "word": "kiss" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /on/ and English /ˈɑn/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /on/ and English /ˈɑn/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /on/ and English /ˈɑn/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "tr-on-1",
+        "userInput": { "language": "tr", "word": "on" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /aˈir/ and English /ɛər/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /aˈir/ and English /ɛər/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /aˈir/ and English /ɛər/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "id-air-1",
+        "userInput": { "language": "id", "word": "air" }
+      }
+    },
+    {
+      "classification": { "expected": "look-alike", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈpat͡ʃe/ and English /none/; the word is look-alike.",
+          "kind": "majorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ˈpat͡ʃe/ and English /none/; the word is look-alike.",
+          "kind": "minorErrors",
+          "score": 2
+        },
+        {
+          "conclusion": "Wrote /ˈpat͡ʃe/ and English /none/; the word is look-alike.",
+          "kind": "potentialImprovements",
+          "score": 2
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": true },
+        "id": "ro-pace-1",
+        "userInput": { "language": "ro", "word": "pace" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /hʊnt/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /hʊnt/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /hʊnt/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "de-hund-1",
+        "userInput": { "language": "de", "word": "Hund" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "look-alike" },
+      "steps": [
+        {
+          "conclusion": "Wrote /haʊs/ and English /haʊs/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Wrote /haʊs/ and English /haʊs/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Wrote /haʊs/ and English /haʊs/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "de-haus-1",
+        "userInput": { "language": "de", "word": "Haus" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈmɛːtçən/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈmɛːtçən/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈmɛːtçən/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "de-maedchen-1",
+        "userInput": { "language": "de", "word": "Mädchen" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈbʁœtçən/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈbʁœtçən/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈbʁœtçən/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "de-broetchen-1",
+        "userInput": { "language": "de", "word": "Brötchen" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈʏʁɡn̩/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʏʁɡn̩/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈʏʁɡn̩/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "de-juergen-1",
+        "userInput": { "language": "de", "word": "Jürgen" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /fits/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fits/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fits/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "nl-fiets-1",
+        "userInput": { "language": "nl", "word": "fiets" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /xəˈzɛl.ək/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /xəˈzɛl.ək/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /xəˈzɛl.ək/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "nl-gezellig-1",
+        "userInput": { "language": "nl", "word": "gezellig" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /kaːs/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kaːs/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /kaːs/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "nl-kaas-1",
+        "userInput": { "language": "nl", "word": "kaas" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /sawˈdadʒi/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /sawˈdadʒi/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /sawˈdadʒi/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "pt-saudade-1",
+        "userInput": { "language": "pt", "word": "saudade" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ʒaˈnɛlɐ/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʒaˈnɛlɐ/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʒaˈnɛlɐ/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "pt-janela-1",
+        "userInput": { "language": "pt", "word": "janela" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʒuˈɐ̃w̃/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "pt-joao-1",
+        "userInput": { "language": "pt", "word": "João" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈpero/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈpero/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈpero/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "es-perro-1",
+        "userInput": { "language": "es", "word": "perro" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /benˈtana/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /benˈtana/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /benˈtana/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "es-ventana-1",
+        "userInput": { "language": "es", "word": "ventana" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈfuðβol/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈfuðβol/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈfuðβol/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "es-futbol-1",
+        "userInput": { "language": "es", "word": "fútbol" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /maˈɲana/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /maˈɲana/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /maˈɲana/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "es-manana-1",
+        "userInput": { "language": "es", "word": "mañana" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /fənɛtʁ/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fənɛtʁ/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /fənɛtʁ/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "fr-fenetre-1",
+        "userInput": { "language": "fr", "word": "fenêtre" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ʃjɛ̃/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʃjɛ̃/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ʃjɛ̃/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "fr-chien-1",
+        "userInput": { "language": "fr", "word": "chien" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /mɛ.zɔ̃/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /mɛ.zɔ̃/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /mɛ.zɔ̃/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "fr-maison-1",
+        "userInput": { "language": "fr", "word": "maison" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /bənwa/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /bənwa/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /bənwa/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "fr-benoit-1",
+        "userInput": { "language": "fr", "word": "Benoît" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /biʎˈʎɛt.to/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /biʎˈʎɛt.to/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /biʎˈʎɛt.to/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "it-biglietto-1",
+        "userInput": { "language": "it", "word": "biglietto" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈɡatto/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈɡatto/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈɡatto/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "it-gatto-1",
+        "userInput": { "language": "it", "word": "gatto" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈstraːda/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈstraːda/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈstraːda/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "it-strada-1",
+        "userInput": { "language": "it", "word": "strada" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /d͡ʑɛŋˈkujɛ/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /d͡ʑɛŋˈkujɛ/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /d͡ʑɛŋˈkujɛ/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "pl-dziekuje-1",
+        "userInput": { "language": "pl", "word": "dziękuję" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /ˈfœnstɛr/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈfœnstɛr/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /ˈfœnstɛr/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "sv-fonster-1",
+        "userInput": { "language": "sv", "word": "fönster" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /teʃecˈcyɾ/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /teʃecˈcyɾ/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /teʃecˈcyɾ/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "tr-tesekkur-1",
+        "userInput": { "language": "tr", "word": "teşekkür" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /təˈrima/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /təˈrima/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /təˈrima/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "id-terima-1",
+        "userInput": { "language": "id", "word": "terima" }
+      }
+    },
+    {
+      "classification": { "expected": "own word", "predicted": "own word" },
+      "steps": [
+        {
+          "conclusion": "Wrote /feˈre̯astrə/ and English /none/; the word is own word.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /feˈre̯astrə/ and English /none/; the word is own word.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Wrote /feˈre̯astrə/ and English /none/; the word is own word.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isLookAlike": false },
+        "id": "ro-fereastra-1",
+        "userInput": { "language": "ro", "word": "fereastră" }
+      }
+    }
+  ],
+  "taskId": "word-ipa"
+}

@@ -377,6 +377,64 @@
           "targetText": "Quiero ver el piso mañana"
         }
       }
+    },
+    {
+      "classification": { "expected": "said right", "predicted": "said right" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" and we heard \"请问图书馆在哪里？\". Expected flagged words []; flagged [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" and we heard \"请问图书馆在哪里？\". Expected flagged words []; flagged [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，图书馆在哪里？\" and we heard \"请问图书馆在哪里？\". Expected flagged words []; flagged [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": [] },
+        "id": "zh-library-correct-1",
+        "userInput": {
+          "language": "zh",
+          "spokenText": "请问，图书馆在哪里？",
+          "targetText": "请问，图书馆在哪里？"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "mistake", "predicted": "mistake" },
+      "steps": [
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The clip says \"请问，地铁站在哪里？\" and we heard \"请问地铁站在哪里？\". Expected flagged words [\"请问，图书馆在哪里？\"]; flagged [\"请问，图书馆在哪里？\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "flaggedWords": ["请问，图书馆在哪里？"] },
+        "id": "zh-library-station-1",
+        "userInput": {
+          "language": "zh",
+          "spokenText": "请问，地铁站在哪里？",
+          "targetText": "请问，图书馆在哪里？"
+        }
+      }
     }
   ],
   "taskId": "transcribe-speech"

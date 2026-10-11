@@ -11,6 +11,9 @@ const READ_ALOUD_TEMPLATE =
 const NATIVE_SOUNDS_TEMPLATE =
   'Some words may look like English words but they are {{LANGUAGE}} words and must be pronounced according to {{LANGUAGE}} phonology. For example, "fruit" in Dutch is pronounced "frœyt", not the English "froot."';
 
+const WORD_IPA_TEMPLATE =
+  "The text is the {{LANGUAGE}} word, not the English word spelled the same. Pronounce it /{{IPA}}/.";
+
 function fillLanguage(template: string, languageName: string): string {
   return template.replaceAll("{{LANGUAGE}}", () => languageName);
 }
@@ -20,16 +23,20 @@ function fillLanguage(template: string, languageName: string): string {
  * included: text-to-speech otherwise guesses the language from the text, and a short or
  * borrowed-word sentence can come out with another language's sounds. Other languages also get
  * the reminder that look-alike words keep their own sounds. A usage prompt, such as an alphabet
- * card's, goes between the two.
+ * card's, goes between the two. A word English spells the same comes with its own pronunciation
+ * in IPA (`ipa`), which voices follow where the reminder alone isn't enough.
  *
- * It lives apart from the task, without its Markdown prompts, so code that only needs a clip's
- * prompt version (the speech clip cache key, and the tests that seed it) can compute it.
+ * It lives apart from the task, without its Markdown prompts, so tests can replace it on its own
+ * (the speech clip key test shows a new prompt version never changes a clip's key).
  */
 export function getLanguageAudioPrompt({
+  ipa,
   language,
   usagePrompt = "",
   voice = DEFAULT_LANGUAGE_AUDIO_VOICE,
 }: {
+  /** How the word sounds in its language, for a single word English spells the same. */
+  ipa?: string;
   language: string;
   usagePrompt?: string;
   voice?: TTSVoice;
@@ -41,6 +48,7 @@ export function getLanguageAudioPrompt({
     isEnglish ? "" : fillLanguage(NATIVE_SOUNDS_TEMPLATE, languageName),
     usagePrompt,
     fillLanguage(READ_ALOUD_TEMPLATE, languageName),
+    ipa ? fillLanguage(WORD_IPA_TEMPLATE, languageName).replace("{{IPA}}", () => ipa) : "",
   ]
     .filter(Boolean)
     .join("\n\n");

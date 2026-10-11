@@ -21,31 +21,50 @@ function geminiSpeech({ audio, text }: GeminiSpeechPrice): ModelPricing {
   };
 }
 
-/** Dollars per minute of audio of OpenAI's speech and transcription models. */
-const OPENAI_AUDIO_USD_PER_MINUTE = { speech: 0.015, transcription: 0.0045 } as const;
+/** Dollars per minute of audio gpt-transcribe hears. */
+const OPENAI_TRANSCRIPTION_USD_PER_MINUTE = 0.0045;
 
-/** gpt-4o-mini-tts's text input: $0.60 per million tokens, on top of its audio. */
-const OPENAI_SPEECH_TEXT_USD_PER_MILLION = 0.6;
+function perMinute(usd: number): ModelPricing {
+  return { input: 0, output: 0, perSecond: usd / SECONDS_PER_MINUTE };
+}
 
-function perMinute({ text = 0, usd }: { text?: number; usd: number }): ModelPricing {
-  return { input: text / TOKENS_PER_MILLION, output: 0, perSecond: usd / SECONDS_PER_MINUTE };
+/** OpenAI's realtime models speak about 20 audio tokens a second (32 for 1.6s on 11 Oct 2026). */
+const OPENAI_REALTIME_AUDIO_TOKENS_PER_SECOND = 20;
+
+/**
+ * Dollars per million tokens of an OpenAI realtime model read as speech: the text it reads and
+ * its audio out. The text it writes alongside the audio (a transcript and its reasoning, at $2.40
+ * a million on Mini) is left out, so this undercounts by about a quarter.
+ */
+function realtimeSpeech({ audio, text }: { audio: number; text: number }): ModelPricing {
+  return {
+    input: text / TOKENS_PER_MILLION,
+    output: 0,
+    perSecond: (audio / TOKENS_PER_MILLION) * OPENAI_REALTIME_AUDIO_TOKENS_PER_SECOND,
+  };
+}
+
+/** MAI-Voice-2.1 Flash bills the characters it reads: AI Gateway's dollars per million (11 Oct 2026). */
+const MAI_VOICE_FLASH_USD_PER_MILLION_CHARACTERS = 15;
+
+function perMillionCharacters(usd: number): ModelPricing {
+  return { input: 0, output: 0, perCharacter: usd / TOKENS_PER_MILLION };
 }
 
 /**
  * Models we call that the gateway's list doesn't price, from the providers' pricing pages
  * (checked 6 Oct 2026): Google's speech models, priced by the text they read and their audio
- * tokens; gpt-4o-mini-tts, about $0.015 a minute of speech plus its text; and gpt-transcribe,
- * $0.0045 a minute, which goes to OpenAI directly.
+ * tokens, and gpt-transcribe, $0.0045 a minute, which goes to OpenAI directly. Since 11 Oct 2026:
+ * MAI-Voice-2.1 Flash, per character (AI Gateway's price), and gpt-realtime-2.1-mini read as
+ * speech (OpenAI's model page).
  */
 export const PRICE_OVERRIDES: Readonly<Record<string, ModelPricing>> = {
   "google/gemini-2.5-flash-preview-tts": geminiSpeech({ audio: 10, text: 0.5 }),
   "google/gemini-3.8-flash-lite-tts": geminiSpeech({ audio: 6, text: 0.5 }),
   "google/gemini-3.8-flash-tts": geminiSpeech({ audio: 9, text: 0.5 }),
-  "openai/gpt-4o-mini-tts": perMinute({
-    text: OPENAI_SPEECH_TEXT_USD_PER_MILLION,
-    usd: OPENAI_AUDIO_USD_PER_MINUTE.speech,
-  }),
-  "openai/gpt-transcribe": perMinute({ usd: OPENAI_AUDIO_USD_PER_MINUTE.transcription }),
+  "microsoft/mai-voice-2.1-flash": perMillionCharacters(MAI_VOICE_FLASH_USD_PER_MILLION_CHARACTERS),
+  "openai/gpt-realtime-2.1-mini": realtimeSpeech({ audio: 20, text: 0.6 }),
+  "openai/gpt-transcribe": perMinute(OPENAI_TRANSCRIPTION_USD_PER_MINUTE),
 };
 
 /** A price a provider announced for a later day: from `from` (UTC), it replaces the current one. */

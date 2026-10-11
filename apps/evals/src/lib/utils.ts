@@ -57,6 +57,7 @@ function supportsModel(task: RegisteredTask, model: ModelConfig): boolean {
     task.output ||
     model.kind === "image" ||
     model.kind === "realtime" ||
+    model.kind === "speech" ||
     model.kind === "transcription"
   ) {
     return task.output === model.kind;

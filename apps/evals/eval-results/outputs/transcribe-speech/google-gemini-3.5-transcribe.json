@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-27T01:34:42.134Z",
+  "generatedAt": "2026-10-11T18:04:17.689Z",
   "modelId": "google/gemini-3.5-transcribe",
   "outputs": [
     {
@@ -69,37 +69,37 @@
       "inputTokens": 0,
       "outputTokens": 0,
       "duration": 2074.0620420000014,
-      "output": "{\n  \"text\": \"O apartamento ainda est\u00e1 dispon\u00edvel?\"\n}",
+      "output": "{\n  \"text\": \"O apartamento ainda está disponível?\"\n}",
       "systemPrompt": "",
       "testCaseId": "pt-disponivel-correct-1",
-      "userPrompt": "Clip of \"O apartamento ainda est\u00e1 dispon\u00edvel?\" (expected \"O apartamento ainda est\u00e1 dispon\u00edvel?\")"
+      "userPrompt": "Clip of \"O apartamento ainda está disponível?\" (expected \"O apartamento ainda está disponível?\")"
     },
     {
       "inputTokens": 0,
       "outputTokens": 0,
       "duration": 2003.8644999999997,
-      "output": "{\n  \"text\": \"O apartamento ainda estar dispon\u00edvel?\"\n}",
+      "output": "{\n  \"text\": \"O apartamento ainda estar disponível?\"\n}",
       "systemPrompt": "",
       "testCaseId": "pt-estar-1",
-      "userPrompt": "Clip of \"O apartamento ainda estar dispon\u00edvel?\" (expected \"O apartamento ainda est\u00e1 dispon\u00edvel?\")"
+      "userPrompt": "Clip of \"O apartamento ainda estar disponível?\" (expected \"O apartamento ainda está disponível?\")"
     },
     {
       "inputTokens": 0,
       "outputTokens": 0,
       "duration": 2637.9501249999994,
-      "output": "{\n  \"text\": \"Eu quero mais caf\u00e9.\"\n}",
+      "output": "{\n  \"text\": \"Eu quero mais café.\"\n}",
       "systemPrompt": "",
       "testCaseId": "pt-mais-mas-1",
-      "userPrompt": "Clip of \"Eu quero mas caf\u00e9\" (expected \"Eu quero mais caf\u00e9\")"
+      "userPrompt": "Clip of \"Eu quero mas café\" (expected \"Eu quero mais café\")"
     },
     {
       "inputTokens": 0,
       "outputTokens": 0,
       "duration": 1854.905541,
-      "output": "{\n  \"text\": \"\u00bfCu\u00e1nto cuesta el alquiler?\"\n}",
+      "output": "{\n  \"text\": \"¿Cuánto cuesta el alquiler?\"\n}",
       "systemPrompt": "",
       "testCaseId": "es-alquiler-correct-1",
-      "userPrompt": "Clip of \"\u00bfCu\u00e1nto cuesta el alquiler?\" (expected \"\u00bfCu\u00e1nto cuesta el alquiler?\")"
+      "userPrompt": "Clip of \"¿Cuánto cuesta el alquiler?\" (expected \"¿Cuánto cuesta el alquiler?\")"
     },
     {
       "inputTokens": 0,
@@ -114,10 +114,28 @@
       "inputTokens": 0,
       "outputTokens": 0,
       "duration": 1414.7137909999983,
-      "output": "{\n  \"text\": \"Quiero ver piso ma\u00f1ana.\"\n}",
+      "output": "{\n  \"text\": \"Quiero ver piso mañana.\"\n}",
       "systemPrompt": "",
       "testCaseId": "es-missing-el-1",
-      "userPrompt": "Clip of \"Quiero ver piso ma\u00f1ana\" (expected \"Quiero ver el piso ma\u00f1ana\")"
+      "userPrompt": "Clip of \"Quiero ver piso mañana\" (expected \"Quiero ver el piso mañana\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1459.599459,
+      "output": "{\n  \"text\": \"请问图书馆在哪里？\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "zh-library-correct-1",
+      "userPrompt": "Clip of \"请问，图书馆在哪里？\" (expected \"请问，图书馆在哪里？\")"
+    },
+    {
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "duration": 1658.1925420000002,
+      "output": "{\n  \"text\": \"请问地铁站在哪里？\"\n}",
+      "systemPrompt": "",
+      "testCaseId": "zh-library-station-1",
+      "userPrompt": "Clip of \"请问，地铁站在哪里？\" (expected \"请问，图书馆在哪里？\")"
     }
   ],
   "taskId": "transcribe-speech"

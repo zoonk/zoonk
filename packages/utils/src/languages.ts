@@ -81,7 +81,7 @@ export const TTS_SUPPORTED_LANGUAGE_CODES = [
 ] as const;
 
 /**
- * ISO 639-1 codes supported by OpenAI TTS. OpenAI documents its TTS language
+ * ISO 639-1 codes OpenAI's voices speak. OpenAI documents its speech language
  * support as following Whisper, while Gemini covers the broader course list.
  * Source: https://developers.openai.com/api/docs/guides/text-to-speech#supported-languages
  */
@@ -158,6 +158,42 @@ export function isOpenAITTSSupportedLanguage(
   code: unknown,
 ): code is (typeof OPENAI_TTS_SUPPORTED_LANGUAGE_CODES)[number] {
   return typeof code === "string" && OPENAI_TTS_SUPPORTED_LANGUAGE_SET.has(code);
+}
+
+/**
+ * The locale MAI-Voice speaks each of its 23 languages in, by ISO 639-1 code (Microsoft Learn,
+ * "MAI-Voice-2.1 and MAI-Voice-2.1-Flash", checked 11 Oct 2026). Portuguese and Spanish are
+ * Brazilian and Mexican, the regions its every-language voice speaks.
+ */
+const MAI_VOICE_LOCALES: Readonly<Record<string, string>> = {
+  cs: "cs-CZ",
+  da: "da-DK",
+  de: "de-DE",
+  en: "en-US",
+  es: "es-MX",
+  fi: "fi-FI",
+  fr: "fr-FR",
+  hi: "hi-IN",
+  hu: "hu-HU",
+  id: "id-ID",
+  it: "it-IT",
+  ko: "ko-KR",
+  nl: "nl-NL",
+  no: "nb-NO",
+  pl: "pl-PL",
+  pt: "pt-BR",
+  ro: "ro-RO",
+  ru: "ru-RU",
+  sv: "sv-SE",
+  th: "th-TH",
+  tr: "tr-TR",
+  vi: "vi-VN",
+  zh: "zh-CN",
+};
+
+/** The locale MAI-Voice speaks a language in ("pt-BR" for "pt"), or null when it doesn't. */
+export function getMaiVoiceLocale(code: string): string | null {
+  return MAI_VOICE_LOCALES[code] ?? null;
 }
 
 const TTS_SUPPORTED_LANGUAGE_SET: ReadonlySet<string> = new Set(TTS_SUPPORTED_LANGUAGE_CODES);

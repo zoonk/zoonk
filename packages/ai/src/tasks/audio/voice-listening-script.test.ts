@@ -54,6 +54,7 @@ describe(voiceListeningScript, () => {
     expect(generateSpeechWithProviderMock.mock.calls.map(([input]) => input)).toStrictEqual([
       {
         instructions: expect.stringContaining("unmistakable British English accent"),
+        language: "en",
         model: FLASH_LITE,
         serviceTier: "flex",
         text: LINES[0].text,
@@ -61,6 +62,7 @@ describe(voiceListeningScript, () => {
       },
       {
         instructions: expect.stringContaining("unmistakable Australian English accent"),
+        language: "en",
         model: FLASH_LITE,
         serviceTier: "flex",
         text: LINES[1].text,
