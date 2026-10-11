@@ -46,3 +46,7 @@ End with a short **Verification** section that tells the reviewer what was prove
 - What remains unverified.
 
 For multiline bodies, use a structured tool argument or write the exact text to a temporary file and pass `gh ... --body-file <path>`.
+
+## New commits on an open PR
+
+After pushing commits to a PR that already exists, read its live title and body and update them in the same step when the new commits change what a reviewer would read there: the behavior or scope, what must happen before merging, open decisions, or the verification (new results, or results the change made stale). Edit the live text rather than an earlier copy, so others' edits survive. Keep the description about the PR as it now stands, not a log of commits. Leave it alone when a commit changes none of that, such as a typo or lint fix.
