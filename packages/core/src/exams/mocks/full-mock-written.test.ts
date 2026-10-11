@@ -241,6 +241,9 @@ describe("a full mock of an exam with a written test", () => {
     const id = await startFull(goal.id);
     const started = await readMock(id);
 
+    // A mock of the whole exam shows the notice's pass mark.
+    expect(started.passMarks).toMatchObject({ texts: [PASS_MARK] });
+
     expect(
       started.sections.map((section) => [section.name, section.questions, section.essays]),
     ).toStrictEqual([
@@ -314,13 +317,6 @@ describe("a full mock of an exam with a written test", () => {
     await expect(
       prisma.attempt.count({ where: { itemId: essay.id, mockExamId: id, userId: user.id } }),
     ).resolves.toBe(1);
-  });
-
-  it("shows the notice's pass mark on a mock of the whole exam only", async () => {
-    const { goal } = await writtenExamSetup();
-    const id = await startFull(goal.id);
-
-    await expect(readMock(id)).resolves.toMatchObject({ passMarks: { texts: [PASS_MARK] } });
   });
 
   it("asks the written test in the plan's full mock of the final stretch, as the real exam does", async () => {

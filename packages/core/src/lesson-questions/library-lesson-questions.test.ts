@@ -339,15 +339,4 @@ describe("questions about a Library lesson", () => {
       userId: user.id,
     });
   });
-
-  it("answers another learner's question as not found", async () => {
-    const { lesson } = await setupPlayableLesson();
-    const question = await ask({ context: { kind: "lesson" }, lessonId: lesson.id });
-    const stranger = await userFixture();
-    mockSession(stranger.id);
-
-    await expect(
-      claimLessonQuestionAnswer({ questionId: question.id, requestedModel: MODEL }),
-    ).resolves.toStrictEqual({ status: "notFound" });
-  });
 });

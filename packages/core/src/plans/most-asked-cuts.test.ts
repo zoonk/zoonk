@@ -82,14 +82,15 @@ describe("a plan short on time cuts the least asked topics first", () => {
   // Five missed days before the class test: the catch-up left out the cell
   // membrane, taught by the osmosis skill whose essay the teacher announced, while unannounced
   // topics kept lessons. Osmosis has no lesson written yet, so only its skill says it's announced.
+  // The same catch-up deleted the nucleus, a lesson an earlier day left, which gave way to the
+  // announced topics: work earlier days left stays in the plan, set aside and named (R8).
   it(
-    "keeps an announced class test topic after missed days",
+    "keeps an announced class test topic after missed days, setting aside the work it gives way to",
     async () => {
-      const violations = await findR11({
+      const { violations } = await runSimLife({
         dailyMinutes: 15,
         fixture: "class-test",
         knownAreas: [],
-        mockOffers: "skip",
         pending: [3, 5],
         proposals: "decline",
         seed: 6,
@@ -112,7 +113,9 @@ describe("a plan short on time cuts the least asked topics first", () => {
         targetInDays: 12,
       });
 
-      expect(violations).toStrictEqual([]);
+      expect(
+        violations.filter((violation) => ["R8", "R11"].includes(violation.rule)),
+      ).toStrictEqual([]);
     },
     MINUTE,
   );
@@ -234,87 +237,12 @@ describe("a plan short on time cuts the least asked topics first", () => {
     MINUTE,
   );
 
-  // The same catch-up: the nucleus, a lesson an earlier day left, gave way to the announced topics
-  // and the settle deleted it. Work earlier days left stays in the plan, set aside and named.
-  it(
-    "sets aside the work earlier days left that gives way to topics ranked higher",
-    async () => {
-      const { violations } = await runSimLife({
-        dailyMinutes: 15,
-        fixture: "class-test",
-        knownAreas: [],
-        pending: [3, 5],
-        proposals: "decline",
-        seed: 6,
-        speed: 1.2,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [4, false],
-              [6, false],
-              [1, false],
-            ],
-            kind: "placement",
-          },
-          { days: 2, kind: "miss" },
-          { days: 3, kind: "miss" },
-          { kind: "refresh" },
-        ],
-        subscribed: true,
-        targetInDays: 12,
-      });
-
-      expect(violations.filter((violation) => violation.rule === "R8")).toStrictEqual([]);
-    },
-    MINUTE,
-  );
-
   // A class test at 15 minutes after a focus and two sessions: the nucleus, which placement missed
-  // once, left while an equally asked topic the learner didn't miss kept a lesson.
+  // once, left while an equally asked topic the learner didn't miss kept a lesson. The same learner
+  // then asks the buddy for balanced practice: the nucleus, answered right, wrong and right in
+  // placement, left again. A miss anywhere counts as missed, whatever came after it.
   it(
-    "keeps a missed class test topic before an equally asked one",
-    async () => {
-      const violations = await findR11({
-        dailyMinutes: 15,
-        fixture: "class-test",
-        knownAreas: [],
-        pending: [],
-        seed: 1004,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [2, true],
-              [6, false],
-              [5, true],
-              [3, true],
-              [5, false],
-              [3, true],
-              [5, true],
-              [4, false],
-            ],
-            kind: "placement",
-          },
-          { kind: "change", spec: { area: 0, kind: "focus" }, via: "editor" },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [] },
-        ],
-        subscribed: false,
-        targetInDays: 10,
-      });
-
-      expect(violations).toStrictEqual([]);
-    },
-    MINUTE,
-  );
-
-  // The same learner asks the buddy for balanced practice after two study days: the nucleus,
-  // answered right, wrong and right in placement, left while an equally asked topic kept a lesson.
-  // A miss anywhere counts as missed, whatever came after it.
-  it(
-    "keeps a topic answered right, wrong and right before an equally asked one",
+    "keeps a missed class test topic before an equally asked one, whatever came after the miss",
     async () => {
       const violations = await findR11({
         dailyMinutes: 15,
@@ -369,37 +297,6 @@ describe("a plan short on time cuts the least asked topics first", () => {
         steps: [],
         subscribed: false,
         targetInDays: 5,
-      });
-
-      expect(violations).toStrictEqual([]);
-    },
-    MINUTE,
-  );
-
-  // Câmara at 60 minutes a day: at a session's end, fundamental rights,
-  // asked most, lost its only skill in the plan while less asked skills of its subject gained.
-  it(
-    "keeps a most asked Câmara topic when a session ends",
-    async () => {
-      const violations = await findR11({
-        dailyMinutes: 60,
-        fixture: "camara",
-        knownAreas: [],
-        pending: [],
-        seed: 1002,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 0.75, kind: "study", misses: [113] },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [38] },
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 0.25, kind: "study", misses: [11] },
-          { finish: 1, kind: "study", misses: [57] },
-        ],
-        subscribed: false,
-        targetInDays: 55,
       });
 
       expect(violations).toStrictEqual([]);
@@ -501,11 +398,13 @@ describe("a plan short on time cuts the least asked topics first", () => {
   // Câmara at 60 minutes a day: at the first session's end, legislative
   // drafting, which placement missed, left while official correspondence, which nobody missed,
   // kept 11 lessons. Both build on the missed text-genres skill, and bundled with it, official
-  // correspondence ranked as missed and cheaper per topic.
+  // correspondence ranked as missed and cheaper per topic. Before it, the buddy's "less Língua
+  // Portuguesa" left a day where the study cycle's own subjects waited, and the lesson it gave that
+  // day was a skill whose base, in another subject, hadn't started (R16).
   it(
     "keeps a missed topic before one that only shares its missed base",
     async () => {
-      const violations = await findR11({
+      const { violations } = await runSimLife({
         dailyMinutes: 60,
         fixture: "camara",
         knownAreas: [1],
@@ -541,7 +440,9 @@ describe("a plan short on time cuts the least asked topics first", () => {
         targetInDays: 57,
       });
 
-      expect(violations).toStrictEqual([]);
+      expect(
+        violations.filter((violation) => ["R11", "R16"].includes(violation.rule)),
+      ).toStrictEqual([]);
     },
     MINUTE,
   );

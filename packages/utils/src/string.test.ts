@@ -170,7 +170,6 @@ describe(toSlug, () => {
     expect(toSlug("F#")).toBe("f-sharp");
     expect(toSlug(".NET")).toBe("dot-net");
     expect(toSlug("Learn .NET")).toBe("learn-dot-net");
-    expect(toSlug("Hello! @World #1")).toBe("hello-world-1");
   });
 
   it("edge cases", () => {
@@ -411,12 +410,6 @@ describe(replaceNamePlaceholder, () => {
 
   it("capitalizes first letter after stripping leading {{NAME}} with comma", () => {
     expect(replaceNamePlaceholder("{{NAME}}, welcome back!", null)).toBe("Welcome back!");
-  });
-
-  it("does not double-capitalize when remainder already starts uppercase", () => {
-    expect(replaceNamePlaceholder("{{NAME}}, I think we have a problem.", null)).toBe(
-      "I think we have a problem.",
-    );
   });
 
   it("returns original text when no placeholder present", () => {

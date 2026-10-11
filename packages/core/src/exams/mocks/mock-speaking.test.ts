@@ -147,7 +147,7 @@ async function speakingSetup() {
 }
 
 describe(startMockSpeaking, () => {
-  it("sits the speaking paper in a full mock: written once the learner reaches it, the same one after", async () => {
+  it("sits the speaking paper in a full mock only: written once the learner reaches it, the same one after", async () => {
     const { goal } = await speakingSetup();
     const paper = paperFixture();
 
@@ -155,13 +155,14 @@ describe(startMockSpeaking, () => {
     vi.mocked(getSpeakingSection).mockResolvedValue({ section: paper, status: "ready" });
 
     const options = await getMockOptions({ goalId: goal.id });
-
-    const full =
-      options.status === "ready"
-        ? options.view.options.find((option) => option.kind === "full")
-        : null;
+    const listed = options.status === "ready" ? options.view.options : [];
+    const full = listed.find((option) => option.kind === "full");
+    const half = listed.find((option) => option.kind === "half");
 
     expect(full?.leftOut.map((part) => part.part)).not.toContain("speaking");
+
+    // Half of the exam leaves the paper to full mocks, and says so.
+    expect(half?.leftOut).toContainEqual({ name: SPEAKING, part: "speaking" });
 
     const started = await startAnytimeMock({
       goalId: goal.id,
@@ -204,18 +205,5 @@ describe(startMockSpeaking, () => {
     expect(sat.status === "ready" && sat.mock.leftOut.map((part) => part.part)).not.toContain(
       "speaking",
     );
-  });
-
-  it("leaves the speaking paper to full mocks: half of the exam says so", async () => {
-    const { goal } = await speakingSetup();
-
-    const options = await getMockOptions({ goalId: goal.id });
-
-    const half =
-      options.status === "ready"
-        ? options.view.options.find((option) => option.kind === "half")
-        : null;
-
-    expect(half?.leftOut).toContainEqual({ name: SPEAKING, part: "speaking" });
   });
 });

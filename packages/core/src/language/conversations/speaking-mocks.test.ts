@@ -167,7 +167,7 @@ describe("speaking mocks", () => {
     );
   });
 
-  it("keeps the mock for the exam goal a language goal moved to, and none for other exams", async () => {
+  it("keeps the mock for the exam goal a language goal moved to", async () => {
     const { goal } = await languageGoalFixture();
     mockSession(goal.userId);
 
@@ -188,23 +188,14 @@ describe("speaking mocks", () => {
 
     await expect(startFor("IELTS")).resolves.toMatchObject({ exam: "ielts" });
     await expect(startFor("TOEFL")).resolves.toMatchObject({ exam: "toefl" });
-    await expect(startFor("TOEFL ITP")).resolves.toBe("notLanguage");
-    await expect(startFor("TOEIC")).resolves.toBe("notLanguage");
   });
 
-  it("offers no mock to an English goal without IELTS or TOEFL, or to another language", async () => {
+  it("offers no mock to an English goal without IELTS or TOEFL", async () => {
     const { goal } = await languageGoalFixture();
     mockSession(goal.userId);
 
     await expect(
       startLanguageConversation({ goalId: goal.id, kind: "speakingMock" }),
-    ).resolves.toStrictEqual({ status: "notLanguage" });
-
-    const spanish = await examGoalFixture("Vou fazer o TOEFL");
-    await prisma.goal.update({ data: { targetLanguage: "es" }, where: { id: spanish.goal.id } });
-
-    await expect(
-      startLanguageConversation({ goalId: spanish.goal.id, kind: "speakingMock" }),
     ).resolves.toStrictEqual({ status: "notLanguage" });
 
     expect(generateSpeakingMockScenario).not.toHaveBeenCalled();
@@ -243,38 +234,7 @@ describe("speaking mocks", () => {
     ).resolves.toMatchObject({ lessonKind: "speakingMock" });
   });
 
-  it("keeps IELTS feedback on the IELTS scale", async () => {
-    const { goal } = await examGoalFixture("Vou fazer o IELTS");
-    const conversationId = await startMock(goal.id);
-
-    const ieltsScore = {
-      criteria: (["fluencyCoherence", "lexicalResource", "grammar", "pronunciation"] as const).map(
-        (criterion) => ({ bandHigh: 6.5, bandLow: 6, criterion, evidence: "e", tip: "t" }),
-      ),
-      exam: "ielts" as const,
-      focus: "grammar" as const,
-      overall: { bandHigh: 6.5, bandLow: 6 },
-    };
-
-    vi.mocked(scoreSpeakingMock).mockResolvedValue({
-      ...GENERATED,
-      data: ieltsScore,
-      userPrompt: "",
-    });
-
-    const result = await completeLanguageConversation({ conversationId, input: COMPLETION });
-
-    expect(scoreSpeakingMock).toHaveBeenCalledWith(expect.objectContaining({ exam: "ielts" }));
-
-    expect(result).toMatchObject({
-      conversation: {
-        exam: "ielts",
-        result: { feedback: { ...ieltsScore, kind: "speakingMock" } },
-      },
-    });
-  });
-
-  it("scores a mock while the transcript's goals are checked", async () => {
+  it("scores an IELTS mock on the IELTS scale while the transcript's goals are checked", async () => {
     const { goal } = await examGoalFixture("Vou fazer o IELTS");
     const conversationId = await startMock(goal.id);
     const order: string[] = [];
@@ -296,9 +256,13 @@ describe("speaking mocks", () => {
     const result = await completeLanguageConversation({ conversationId, input: COMPLETION });
 
     expect(order).toStrictEqual(["score started", "goals checked"]);
+    expect(scoreSpeakingMock).toHaveBeenCalledWith(expect.objectContaining({ exam: "ielts" }));
 
     expect(result).toMatchObject({
-      conversation: { result: { feedback: { ...IELTS_SCORE, kind: "speakingMock" } } },
+      conversation: {
+        exam: "ielts",
+        result: { feedback: { ...IELTS_SCORE, kind: "speakingMock" } },
+      },
     });
   });
 

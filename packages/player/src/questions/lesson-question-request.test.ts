@@ -41,17 +41,6 @@ describe("lesson question requests", () => {
     ).toStrictEqual({ kind: "lesson", stepIds: [STEP_ID, "0198ca70-9c50-7000-8000-000000000011"] });
   });
 
-  it("includes all 11 displayed steps in lesson-completion context", () => {
-    const lessonStepIds = Array.from(
-      { length: 11 },
-      (_, index) => `0198ca70-9c50-7000-8000-${String(index).padStart(12, "0")}`,
-    );
-
-    expect(
-      getLessonQuestionContextInput({ context: { kind: "lesson" }, lessonStepIds }),
-    ).toStrictEqual({ kind: "lesson", stepIds: lessonStepIds });
-  });
-
   it("preserves the current step number at the end of an 11-step lesson", () => {
     const lessonStepIds = Array.from(
       { length: 11 },

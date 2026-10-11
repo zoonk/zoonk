@@ -49,7 +49,7 @@ export function ListeningStep({
     return null;
   }
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.translation, []);
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.translation);
   const correctWords = acceptedWordSequences[0] ?? [];
   const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
 

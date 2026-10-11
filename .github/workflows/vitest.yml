@@ -29,42 +29,47 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Core's database tests take over 10 minutes on CI's 4-core runners, so every package's
-        # tests are split in four.
-        shard: [1, 2, 3, 4]
+        # Every package's tests are split in eight: CI's runners have four cores each.
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-    services:
-      db:
-        image: postgres:18-alpine
-        ports: ["5432:5432"]
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: zoonk_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 1s
-          --health-timeout 5s
-          --health-retries 10
     steps:
+      # A throwaway database in memory that never waits on the disk, with room for every package's
+      # test workers at once (they run side by side). Started in the background, so its image
+      # downloads while the code and packages do.
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name postgres --publish 5432:5432
+          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_test
+          --tmpfs /var/lib/postgresql
+          postgres:18-alpine
+          -c max_connections=500 -c fsync=off -c synchronous_commit=off -c full_page_writes=off
+          > "$RUNNER_TEMP/postgres.log" 2>&1 &
+
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
         with:
           runtime: node@24
           cache: true
+          # Every shard installs the same store, so one saving it is enough.
+          save-cache: ${{ matrix.shard == 1 }}
 
-      - name: Run database migrations
-        run: pnpm --filter @zoonk/db db:deploy
+      # Over TCP: the image's first start runs its setup on a server that only takes local sockets.
+      - name: Wait for Postgres
+        run: >-
+          timeout 120 sh -c 'until docker exec postgres pg_isready --host=127.0.0.1 --dbname=zoonk_test --username=postgres; do sleep 1; done'
+          || { cat "$RUNNER_TEMP/postgres.log"; docker logs postgres; exit 1; }
 
-      # A package with fewer test files than shards has none in the last one.
+      # Turbo migrates the database first (`db:setup:test`). A package with fewer test files than
+      # shards has none in the last one.
       - name: Run Vitest
         run: pnpm test -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} --passWithNoTests
 

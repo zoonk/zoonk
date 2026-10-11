@@ -104,6 +104,17 @@ async function waitingGoal() {
   return { bandSkills, goal };
 }
 
+/**
+ * The outline model answers with the recorded outline's first chapter only, for tests that read
+ * what the model was asked rather than what saving a whole band writes.
+ */
+function outlineOneChapter() {
+  const oneChapter = { ...recordedOutline, chapters: recordedOutline.chapters.slice(0, 1) };
+
+  vi.mocked(generateCourseOutline).mockResolvedValue(outlineResult(oneChapter));
+  vi.mocked(streamCourseOutline).mockImplementation(replayStreamedOutline(oneChapter) as never);
+}
+
 function lessonItems(goalId: string) {
   return prisma.planItem.findMany({
     orderBy: { position: "asc" },
@@ -245,6 +256,8 @@ describe(courseOutlineWorkflow, () => {
     "writes every band at the standard tier, never priority, and bands the plan gets to in days at the flex tier",
     { timeout: TIMEOUT },
     async () => {
+      outlineOneChapter();
+
       const [{ bandSkills }, course] = await Promise.all([
         waitingGoal(),
         courseFixture({ outlineStatus: "pending", title: "Immunology" }),
@@ -335,6 +348,8 @@ describe(courseOutlineWorkflow, () => {
     "writes the band a learner waits on at the priority tier when its course is an exam's or a language's",
     { timeout: TIMEOUT },
     async () => {
+      outlineOneChapter();
+
       const [{ bandSkills }, course] = await Promise.all([
         waitingGoal(),
         courseFixture({ outlineStatus: "pending", title: "Immunology" }),
@@ -615,6 +630,8 @@ describe(courseOutlineWorkflow, () => {
     "tells the outline which of the band's skills the course's other chapters already teach",
     { timeout: TIMEOUT },
     async () => {
+      outlineOneChapter();
+
       const [{ bandSkills }, course, otherSubject, chapter, otherChapter, lesson, otherLesson] =
         await Promise.all([
           waitingGoal(),
@@ -666,6 +683,8 @@ describe(courseOutlineWorkflow, () => {
     "asks an exam answered on paper for chapters without tools, even for skills a tool chapter teaches",
     { timeout: TIMEOUT },
     async () => {
+      outlineOneChapter();
+
       const [{ bandSkills }, course, practice, lesson] = await Promise.all([
         waitingGoal(),
         courseFixture({ outlineStatus: "pending", title: "Speech recognition" }),
@@ -700,6 +719,8 @@ describe(courseOutlineWorkflow, () => {
     "tells an exam's outline the subject each skill sits in, and a shared course's outline none",
     { timeout: TIMEOUT },
     async () => {
+      outlineOneChapter();
+
       const [{ bandSkills }, examCourse, course] = await Promise.all([
         waitingGoal(),
         courseFixture({ outlineStatus: "pending", title: "ENEM" }),
@@ -813,38 +834,40 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
-  // Writes the whole recorded band, like the tests above that get the longer timeout.
-  it(
-    "leaves a shared course's background work to a learner with an account, not a guest's goal",
-    { timeout: TIMEOUT },
-    async () => {
-      const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
-      const chapter = await libraryChapterFixture();
+  it("leaves a shared course's background work to a learner with an account, even when a guest's band needs nothing", async () => {
+    const [skill, course, lesson] = await Promise.all([
+      skillFixture(),
+      courseFixture(),
+      libraryLessonFixture(),
+    ]);
 
-      await Promise.all([
-        prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
-        courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
-      ]);
+    const chapter = await libraryChapterFixture();
 
-      await expect(
-        courseOutlineWorkflow({
-          bands: [
-            {
-              level: "overview",
-              skills: [
-                { description: skill.description, id: skill.id, key: "k", name: skill.name },
-              ],
-            },
-          ],
-          courseId: course.id,
-          forGuest: true,
-          scope,
-        }),
-      ).resolves.toMatchObject({ status: "written" });
+    await Promise.all([
+      prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
+      prisma.chapterLesson.create({
+        data: { chapterId: chapter.id, lessonId: lesson.id, position: 0 },
+      }),
+    ]);
 
-      expect(start).not.toHaveBeenCalled();
-    },
-  );
+    await expect(
+      courseOutlineWorkflow({
+        bands: [
+          {
+            level: "overview",
+            skills: [{ description: skill.description, id: skill.id, key: "k", name: skill.name }],
+          },
+        ],
+        courseId: course.id,
+        forGuest: true,
+        scope,
+      }),
+    ).resolves.toStrictEqual({ bandsWritten: 0, chapterIds: [], status: "written" });
+
+    expect(generateCourseOutline).not.toHaveBeenCalled();
+    expect(start).not.toHaveBeenCalled();
+  });
 
   it(
     "retries a chapter whose reuse decisions time out on a busy provider, and the retry saves it once",

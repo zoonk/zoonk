@@ -352,8 +352,9 @@ describe("an exam's subject the learner already knows part of", () => {
     expect(planned.has("heat") && planned.has("electricity")).toBe(true);
   });
 
+  // The test above covers 22 minutes.
   it("never keeps what they know while a gap waits, whatever their time", () => {
-    for (const dailyMinutes of [15, 20, 22, 25, 30]) {
+    for (const dailyMinutes of [15, 20, 25, 30]) {
       const planned = plannedSkills(buildPlan(placedInput(dailyMinutes)));
       expect(planned.has("taxonomy") || !planned.has("mechanics")).toBe(true);
     }

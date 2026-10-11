@@ -128,7 +128,7 @@ describe("a class test's day before after skipped days", () => {
     vi.useRealTimers();
   });
 
-  it("is a full review of every topic, counting the lessons he skipped without pushing them", async () => {
+  it("is a full review of every topic, counting the lessons he skipped without pushing them, and ends without a lesson for tomorrow", async () => {
     const { session, skillIds } = await comeBackTheDayBefore();
     const review = session.blocks.find((block) => block.fullReview);
 
@@ -148,11 +148,8 @@ describe("a class test's day before after skipped days", () => {
     expect(session.catchUp?.later.lessons).toBeGreaterThan(0);
     expect(session.catchUp?.later.minutes).toBeGreaterThan(25 * 1.25);
     expect(session.catchUp?.later.offered).toBe(false);
-  });
 
-  it("ends without a lesson for tomorrow, the test's day", async () => {
-    const { session } = await comeBackTheDayBefore();
-
+    // The session's end shows no lesson for tomorrow, the test's day.
     const summary = await getStudySessionSummary({
       input: { timeZone: "UTC" },
       sessionId: session.id,

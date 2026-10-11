@@ -127,16 +127,6 @@ const CHAIN: PlanSkill[] = [
   { area: null, builds: 1 },
 ];
 
-/** An exam's math and history, each a chain of three, interleaved like the plan puts them. */
-const TWO_AREAS: PlanSkill[] = [
-  { area: "Math", builds: null },
-  { area: "History", builds: null },
-  { area: "Math", builds: 0 },
-  { area: "History", builds: 1 },
-  { area: "Math", builds: 2 },
-  { area: "History", builds: 3 },
-];
-
 /**
  * An exam's law and English, each a few skills in the Library bands the skill graph gave them, with
  * no prerequisites between them, like a notice's subjects.
@@ -173,15 +163,18 @@ async function readNext(goalId: string) {
   return result.status === "ready" ? result.placement : null;
 }
 
+type Placement = Awaited<ReturnType<typeof readNext>>;
+
+/** Answers the question `placement` asks; an answer returns the placement with the next one. */
 async function answerNext({
   answer,
   goalId,
+  placement,
 }: {
   answer: typeof RIGHT | typeof DONT_KNOW;
   goalId: string;
-}) {
-  const placement = await readNext(goalId);
-
+  placement: Placement;
+}): Promise<Placement> {
   const result = await answerPlacementQuestion({
     goalId,
     input: { answer, durationMs: 5000, itemId: placement?.next?.itemId ?? "" },
@@ -248,7 +241,7 @@ describe(getGoalPlacement, () => {
     });
 
     const before = await readNext(goal.id);
-    const after = await answerNext({ answer: RIGHT, goalId: goal.id });
+    const after = await answerNext({ answer: RIGHT, goalId: goal.id, placement: before });
 
     expect(before).toMatchObject({ answered: 1, started: false });
     expect(after).toMatchObject({ answered: 2, started: true });
@@ -357,13 +350,13 @@ describe(getGoalPlacement, () => {
     // Only the middle skill's questions are written so far: a right answer there leads on to the
     // last skill, whose questions are still being written.
     const { goal, skills } = await graphGoalFixture({ planSkills: CHAIN, withItems: [1] });
+    const first = await readNext(goal.id);
 
-    await expect(readNext(goal.id)).resolves.toMatchObject({ next: { skillId: skills[1]?.id } });
+    expect(first).toMatchObject({ next: { skillId: skills[1]?.id } });
 
-    await expect(answerNext({ answer: RIGHT, goalId: goal.id })).resolves.toMatchObject({
-      next: null,
-      status: "waitingForQuestions",
-    });
+    await expect(
+      answerNext({ answer: RIGHT, goalId: goal.id, placement: first }),
+    ).resolves.toMatchObject({ next: null, status: "waitingForQuestions" });
   });
 
   it("asks what's written once the question it would ask first couldn't be", async () => {
@@ -553,53 +546,21 @@ describe("adaptive placement", () => {
     const first = await readNext(right.goal.id);
     expect(difficultyOf({ itemId: first?.next?.itemId, items: right.items })).toBe(0);
 
-    const afterRight = await answerNext({ answer: RIGHT, goalId: right.goal.id });
+    const afterRight = await answerNext({ answer: RIGHT, goalId: right.goal.id, placement: first });
 
     expect(afterRight?.next?.skillId).toBe(right.skills[2]?.id);
     expect(difficultyOf({ itemId: afterRight?.next?.itemId, items: right.items })).toBe(1);
 
     const wrong = await graphGoalFixture({ planSkills: CHAIN });
-    const afterWrong = await answerNext({ answer: DONT_KNOW, goalId: wrong.goal.id });
+
+    const afterWrong = await answerNext({
+      answer: DONT_KNOW,
+      goalId: wrong.goal.id,
+      placement: await readNext(wrong.goal.id),
+    });
 
     expect(afterWrong?.next?.skillId).toBe(wrong.skills[0]?.id);
     expect(difficultyOf({ itemId: afterWrong?.next?.itemId, items: wrong.items })).toBe(-1);
-  });
-
-  it("samples every area of an exam before going deeper in one, and places each", async () => {
-    const { goal, skills } = await graphGoalFixture({ planSkills: TWO_AREAS });
-
-    const areaOf = (skillId?: string) =>
-      TWO_AREAS[skills.findIndex((skill) => skill.id === skillId)]?.area;
-
-    const first = await readNext(goal.id);
-    const second = await answerNext({ answer: RIGHT, goalId: goal.id });
-
-    expect([areaOf(first?.next?.skillId), areaOf(second?.next?.skillId)]).toStrictEqual([
-      "Math",
-      "History",
-    ]);
-
-    expect(second?.areas.map((area) => area.area)).toStrictEqual(["Math", "History"]);
-
-    // "I don't know yet" on everything else settles where each area starts.
-    const answers = Array.from({ length: 6 });
-
-    const final = await answers.reduce<Promise<Awaited<ReturnType<typeof readNext>>>>(
-      async (previous) => {
-        const placement = await previous;
-        return placement?.next ? answerNext({ answer: DONT_KNOW, goalId: goal.id }) : placement;
-      },
-      Promise.resolve(second),
-    );
-
-    expect(final).toMatchObject({
-      areas: [
-        { area: "Math", confident: true },
-        { area: "History", confident: true, startSkillId: skills[1]?.id },
-      ],
-      complete: true,
-      status: "done",
-    });
   });
 
   it("asks every subject of the exam, the ones the plan's time leaves out included", async () => {
@@ -612,8 +573,8 @@ describe("adaptive placement", () => {
       ESSAY_FIRST_EXAM[skills.findIndex((skill) => skill.id === skillId)]?.area;
 
     const first = await readNext(goal.id);
-    const second = await answerNext({ answer: RIGHT, goalId: goal.id });
-    const third = await answerNext({ answer: RIGHT, goalId: goal.id });
+    const second = await answerNext({ answer: RIGHT, goalId: goal.id, placement: first });
+    const third = await answerNext({ answer: RIGHT, goalId: goal.id, placement: second });
 
     expect(
       [first, second, third]
@@ -633,14 +594,14 @@ describe("adaptive placement", () => {
       withItems: ESSAY_ONLY_PLAN,
     });
 
-    await expect(readNext(goal.id)).resolves.toMatchObject({ next: { skillId: skills[0]?.id } });
+    const first = await readNext(goal.id);
+
+    expect(first).toMatchObject({ next: { skillId: skills[0]?.id } });
 
     // "I don't know yet" on the essay's first skill settles where the essay starts.
-    await expect(answerNext({ answer: DONT_KNOW, goalId: goal.id })).resolves.toMatchObject({
-      complete: false,
-      next: null,
-      status: "waitingForQuestions",
-    });
+    await expect(
+      answerNext({ answer: DONT_KNOW, goalId: goal.id, placement: first }),
+    ).resolves.toMatchObject({ complete: false, next: null, status: "waitingForQuestions" });
 
     await Promise.all(
       [2, 3].flatMap((index) =>
@@ -666,26 +627,6 @@ describe("adaptive placement", () => {
     const result = await getGoalPlacement({ goalId: goal.id, level: "none" });
 
     expect(result.status === "ready" && result.placement.next?.skillId).toBe(skills[0]?.id);
-  });
-
-  it("says which undecided skills need questions made", async () => {
-    const user = await userFixture();
-
-    const { goal, skills } = await learnerGoalFixture({
-      itemsPerSkill: 0,
-      phases: [2],
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-
-    const result = await getGoalPlacement({ goalId: goal.id });
-
-    expect(result.status === "ready" && result.placement.next).toBeNull();
-
-    expect(result.status === "ready" && result.placement.needsItems).toStrictEqual(
-      skills.map((skill) => skill.id),
-    );
   });
 });
 
@@ -912,14 +853,16 @@ describe(finishGoalPlacement, () => {
       planSkills: BANDED_EXAM,
     });
 
-    await expect(readNext(goal.id)).resolves.toMatchObject({ next: { skillId: skills[0]?.id } });
+    const first = await readNext(goal.id);
+
+    expect(first).toMatchObject({ next: { skillId: skills[0]?.id } });
 
     await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
       completion: { knownSkillIds: [] },
     });
 
     // Its own right answer confirms it, and only then is it skipped.
-    await answerNext({ answer: RIGHT, goalId: goal.id });
+    await answerNext({ answer: RIGHT, goalId: goal.id, placement: first });
 
     await expect(finishGoalPlacement({ goalId: goal.id, input: {} })).resolves.toMatchObject({
       completion: { knownSkillIds: [skills[0]?.id] },
@@ -1239,7 +1182,7 @@ describe(finishGoalPlacement, () => {
     const first = await readNext(goal.id);
     expect(first?.next?.skillId).toBe(skills[0]?.id);
 
-    const afterMiss = await answerNext({ answer: DONT_KNOW, goalId: goal.id });
+    const afterMiss = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement: first });
     expect(afterMiss).toMatchObject({ status: "asking" });
 
     const asked = new Set([first?.next?.skillId]);
@@ -1248,7 +1191,7 @@ describe(finishGoalPlacement, () => {
     for (let turn = 0; turn < topics * 2 && placement?.status === "asking"; turn += 1) {
       asked.add(placement.next?.skillId);
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
-      placement = await answerNext({ answer: RIGHT, goalId: goal.id });
+      placement = await answerNext({ answer: RIGHT, goalId: goal.id, placement });
     }
 
     expect(sortIds([...asked])).toStrictEqual(sortIds(skills.map((skill) => skill.id)));
@@ -1287,7 +1230,7 @@ describe(finishGoalPlacement, () => {
 
     for (let turn = 0; turn < skills.length && placement?.status === "asking"; turn += 1) {
       // oxlint-disable-next-line no-await-in-loop -- Each answer decides the next question.
-      placement = await answerNext({ answer: DONT_KNOW, goalId: goal.id });
+      placement = await answerNext({ answer: DONT_KNOW, goalId: goal.id, placement });
     }
 
     expect(placement).toMatchObject({

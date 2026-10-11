@@ -16,7 +16,7 @@ import { type PlanChangeView } from "../../plan-view-contract";
 import { addDays, toIsoDate } from "../../planner/plan-calendar";
 import { refreshGoalPlan } from "../../refresh-goal-plan";
 import { replanAfterPlacement } from "../../replan-after-placement";
-import { checkRules } from "../rules/check-rules";
+import { RULES_READING, checkRules } from "../rules/check-rules";
 import { type RuleAnswer } from "../rules/rule-context";
 import { toRulePlan } from "./sim-context";
 import { toRuleFormat, toSimItemFormat } from "./sim-db-items";
@@ -291,6 +291,7 @@ export async function runSimLifeInDb(
     check = checkRules,
     deleteAccount = true,
     questions = false,
+    rules,
     trace = false,
   }: {
     check?: SimCheck;
@@ -301,10 +302,25 @@ export async function runSimLifeInDb(
      * this off.
      */
     questions?: boolean;
+    /**
+     * The rules the test asserts: only their violations come back, and the life skips what only
+     * other rules read (see `RULES_READING`). Planning the screens again after every step took
+     * half of a life whose test asserts a rule on the plan itself. Every rule, when absent.
+     */
+    rules?: readonly string[];
     trace?: boolean;
   } = {},
 ): Promise<SimResult> {
-  const runner = await startDbRunner({ check, life, questions, trace });
+  const reads = (what: keyof typeof RULES_READING) =>
+    !rules || rules.some((rule) => RULES_READING[what].has(rule));
+
+  const runner = await startDbRunner({
+    check,
+    life,
+    questions,
+    reads: { preparation: reads("preparation"), screens: reads("screens") },
+    trace,
+  });
 
   // The plan onboarding leaves: made, then settled by its last answer (`settleNewPlan`).
   await createGoalPlan({ goalId: runner.goal.id, graph: runner.library.graph, setup: "steps" });
@@ -317,7 +333,7 @@ export async function runSimLifeInDb(
     Promise.resolve(),
   );
 
-  if (deleteAccount && runner.last) {
+  if (deleteAccount && reads("accountDeleted") && runner.last) {
     const user = await prisma.user.findUniqueOrThrow({ where: { id: runner.goal.userId } });
     const kind = runner.library.fixture.goal.kind;
     const plan = toRulePlan({ inputs: runner.ruleInputs, kind, plan: runner.last });
@@ -331,6 +347,8 @@ export async function runSimLifeInDb(
     events: runner.events,
     library: runner.library,
     plans: runner.plans,
-    violations: runner.violations,
+    violations: rules
+      ? runner.violations.filter((violation) => rules.includes(violation.rule))
+      : runner.violations,
   };
 }

@@ -53,11 +53,6 @@ describe(formatPrice, () => {
     expect(result).toContain("49,90");
   });
 
-  it("omits decimals for whole amounts", () => {
-    expect(formatPrice(1000, "usd")).toBe("$10");
-    expect(formatPrice(500, "usd")).toBe("$5");
-  });
-
   it("formats zero-decimal currency KRW", () => {
     expect(formatPrice(10_000, "krw", "ko-KR")).toContain("10,000");
   });

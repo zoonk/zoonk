@@ -439,8 +439,10 @@ describe("a run whose only news is lessons that landed", () => {
   } satisfies BuildPlanInput;
 
   // OAB seed 2003: planned again from the plan as saved, the next morning's landing laid the rest
-  // out another way than the session's run that saved it, and swapped 10 lessons.
-  it("keeps every other item where the plan has it, though planned again it lays them out another way", () => {
+  // out another way than the session's run that saved it, and swapped 10 lessons. Câmara seed 3:
+  // the stand-in's time, laid out again, sat on a Saturday the saved plan had already filled, and
+  // its landed lessons took that day from 70 minutes to 130.
+  it("keeps every other item where the plan has it, and no more on a day than the learner's time", () => {
     const saved = saveLater(buildPlan(long));
 
     const next = buildPlan({
@@ -453,21 +455,6 @@ describe("a run whose only news is lessons that landed", () => {
 
     expect(others(next)).toStrictEqual(others({ items: saved }));
     expect(next.items.filter((entry) => entry.skillId === "landed")).toHaveLength(8);
-  });
-
-  // Câmara seed 3: the stand-in's time, laid out again, sat on a Saturday the saved plan had
-  // already filled, and its landed lessons took that day from 70 minutes to 130.
-  it("puts no more on a day than the learner's time beside what the plan keeps there", () => {
-    const saved = saveLater(buildPlan(long));
-
-    const next = buildPlan({
-      ...long,
-      items: saved,
-      landedOnly: true,
-      lessons: [...long.lessons, ...writeLessons({ count: 8, minutes: 3, skillId: "landed" })],
-      mode: "automatic",
-    });
-
     expect(busiest(next)).toBeLessThanOrEqual(long.goal.dailyMinutes);
   });
 

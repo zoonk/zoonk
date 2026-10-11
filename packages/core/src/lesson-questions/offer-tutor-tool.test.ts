@@ -62,6 +62,24 @@ async function setup({ dailyMinutes = 12 }: { dailyMinutes?: number } = {}) {
   return { goal, library, user };
 }
 
+/**
+ * A learn goal with a plan row and no lessons, for offers decided before the plan's lessons are
+ * read: a refusal, a tool for another kind of goal, or one every learner has.
+ */
+async function learnSetup() {
+  const user = await userFixture();
+  const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+
+  await planFixture({
+    goalId: goal.id,
+    graph: { phases: [{ milestone: null, name: "Basics" }], skills: [] },
+  });
+
+  mockSession(user.id);
+
+  return { goal };
+}
+
 const MOCK_AREAS = ["Mathematics", "Languages", "Philosophy"] as const;
 const ASKED_FOR_MOCK = "I want to practice with a mock exam";
 
@@ -237,7 +255,7 @@ describe("app tools the buddy offers", () => {
   });
 
   it("only lets the generation answering the learner's own question offer a tool", async () => {
-    const { goal } = await setup();
+    const { goal } = await learnSetup();
     const other = await userFixture();
     const asked = await askBuddy(goal.id);
 
@@ -308,7 +326,7 @@ describe("app tools the buddy offers", () => {
       status: "unavailable",
     });
 
-    const { goal } = await setup();
+    const { goal } = await learnSetup();
     const learnAsked = await askBuddy(goal.id, ASKED_FOR_MOCK);
 
     await expect(offerTutorTool({ ...learnAsked, tool: "mockExam" })).resolves.toStrictEqual({
@@ -354,7 +372,7 @@ describe("every feature the buddy can suggest", () => {
   });
 
   it("starts a new goal with the learner's words and the catalog's course, locked while the free plan follows one goal", async () => {
-    const { goal } = await setup();
+    const { goal } = await learnSetup();
     const { brand, course, title } = await catalogCourseFixture(goal.language);
     const asked = await askBuddy(goal.id, "I also want to learn the guitar");
 
@@ -441,7 +459,7 @@ describe("every feature the buddy can suggest", () => {
   });
 
   it("says the words to say again for a language goal, and that other goals have none", async () => {
-    const { goal } = await setup();
+    const { goal } = await learnSetup();
     const asked = await askBuddy(goal.id, "How do I improve my pronunciation?");
 
     await expect(offerTutorTool({ ...asked, tool: "pronunciation" })).resolves.toStrictEqual({
@@ -490,7 +508,7 @@ describe("every feature the buddy can suggest", () => {
   });
 
   it("opens the written test's page for an exam that has one, locked once a free plan's first days end", async () => {
-    const { goal } = await setup();
+    const { goal } = await learnSetup();
     const asked = await askBuddy(goal.id, "I want to practise my essay");
 
     await expect(offerTutorTool({ ...asked, tool: "essay" })).resolves.toStrictEqual({
@@ -572,7 +590,7 @@ describe("every feature the buddy can suggest", () => {
   });
 
   it("opens statistics, the week in review, memory and Plus, which every learner has", async () => {
-    const { goal } = await setup();
+    const { goal } = await learnSetup();
     const asked = await askBuddy(goal.id, "How am I doing?");
 
     for (const kind of ["stats", "logbook", "memory"] as const) {

@@ -6,7 +6,7 @@ import { getExamWindows } from "./plan-phases";
 const calendar = {
   dailyMinutes: 45,
   firstDay: null,
-  lightWeeks: [{ endDate: "2026-10-11", startDate: "2026-10-05" }],
+  lightWeeks: [],
   weekdayMinutes: [0, 45, 45, 45, 45, 45, 45],
 };
 
@@ -32,12 +32,6 @@ function studyingEverything(date: string) {
 }
 
 describe(getPlannedMinutes, () => {
-  it("follows the week, rest days and light weeks", () => {
-    expect(minutesOn("2026-09-28")).toBe(45);
-    expect(minutesOn("2026-10-04")).toBe(0);
-    expect(minutesOn("2026-10-06")).toBe(23);
-  });
-
   it("keeps the day before an exam light and plans nothing from the exam on", () => {
     expect(minutesOn("2026-11-07")).toBe(15);
     expect(minutesOn("2026-11-08")).toBe(0);

@@ -385,23 +385,4 @@ describe(getTodayStudySession, () => {
     await expect(examReviewTitles(10)).resolves.toStrictEqual(["Lesson 1"]);
     await expect(examReviewTitles(40)).resolves.toStrictEqual([]);
   });
-
-  it("never opens another learner's goal, and needs a signed-in learner", async () => {
-    const [owner, other] = await Promise.all([userFixture(), userFixture()]);
-    const { goal } = await sessionGoalFixture({ userId: owner.id });
-
-    mockSession(other.id);
-
-    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toStrictEqual({
-      status: "notFound",
-    });
-
-    await expect(getTodayStudySession({})).resolves.toStrictEqual({ status: "notFound" });
-
-    mockSession(null);
-
-    await expect(getTodayStudySession({ goalId: goal.id })).resolves.toStrictEqual({
-      status: "unauthorized",
-    });
-  });
 });

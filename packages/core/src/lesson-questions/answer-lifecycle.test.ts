@@ -308,56 +308,6 @@ describe("lesson question answer lifecycle", () => {
     });
   });
 
-  it("supplies only earlier completed turns as generation history", async () => {
-    const { lesson, question } = await createLessonQuestionFixture();
-
-    const firstClaim = await claimLessonQuestionAnswer({
-      questionId: question.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
-
-    if (firstClaim.status !== "ready") {
-      throw new Error(`Expected a ready claim, received ${firstClaim.status}`);
-    }
-
-    await completeLessonQuestionAnswer({
-      ...ANSWER_RUN,
-      answer: "It builds on the earlier example.",
-      finishReason: "stop",
-      model: "openai/gpt-6-luna",
-      provider: "openai",
-      questionId: question.id,
-      revision: firstClaim.claim.revision,
-    });
-
-    const followUp = await createLessonQuestion({
-      input: {
-        context: { kind: "lesson" },
-        question: "Can you give me another example?",
-        requestId: randomUUID(),
-      },
-      target: { kind: "lesson", lessonId: lesson.id },
-    });
-
-    if (followUp.status !== "created") {
-      throw new Error(`Expected a created follow-up, received ${followUp.status}`);
-    }
-
-    const followUpClaim = await claimLessonQuestionAnswer({
-      questionId: followUp.question.id,
-      requestedModel: "openai/gpt-6-luna",
-    });
-
-    expect(followUpClaim).toMatchObject({
-      claim: {
-        priorTurns: [
-          { answer: "It builds on the earlier example.", question: "How does this connect?" },
-        ],
-      },
-      status: "ready",
-    });
-  });
-
   it("limits generation history to the latest twelve completed turns", async () => {
     const { lesson, question } = await createLessonQuestionFixture();
 

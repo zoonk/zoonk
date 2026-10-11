@@ -118,17 +118,6 @@ describe(finishMistakePractice, () => {
     expect(runs[0]?.energyDelta).toBeCloseTo(0.1);
   });
 
-  it("counts a run stopped early, so a partial day still counts", async () => {
-    const { mistake, original, user } = await setup();
-    const answerId = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
-
-    await expect(
-      finishMistakePractice({ answerIds: [answerId], timeZone: "UTC" }),
-    ).resolves.toMatchObject({ result: { correct: 1, total: 1 }, status: "ready" });
-
-    await expect(loadToday(user.id)).resolves.toMatchObject({ interactiveCompleted: 1 });
-  });
-
   it("counts a run once, however often or however fast it's finished", async () => {
     const { extra, mistake, original, user } = await setup();
 
@@ -160,6 +149,9 @@ describe(finishMistakePractice, () => {
     await expect(
       finishMistakePractice({ answerIds: [first], timeZone: "UTC" }),
     ).resolves.toMatchObject({ result: { brainPower: 2, correct: 1, total: 1 }, status: "ready" });
+
+    // A run stopped early already counts, so a partial day still counts.
+    await expect(loadToday(user.id)).resolves.toMatchObject({ interactiveCompleted: 1 });
 
     const second = await answer({ answer: RIGHT, itemId: extra.id, mistakeId: mistake.id });
 

@@ -335,7 +335,7 @@ describe("falling behind", () => {
     expect(behind?.dailyMinutes ?? 0).toBeGreaterThan(goal.dailyMinutes);
   });
 
-  it("offers the date that covers it all when, after days away, no daily time does", async () => {
+  it("offers the date that covers it all when, after days away, no daily time does, and says what more time covers as the Journey does", async () => {
     const user = await learner();
 
     const library = await planLibraryFixture({
@@ -357,47 +357,20 @@ describe("falling behind", () => {
     setToday("2020-10-07");
     await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
 
-    const [change] = await prisma.planChange.findMany({
-      where: { kind: "missedDays", planId: plan.id },
-    });
-
-    const { behind } = parsePlanChangePayload(change?.payload);
-
-    expect(behind).toMatchObject({ fullDepth: false, measure: "goal" });
-    expect(behind?.maximumShare ?? 0).toBeGreaterThan(behind?.coveredAfter ?? 1);
-    expect(behind?.maximumShare ?? 1).toBeLessThan(1);
-    expect(behind?.fittingDate ?? "").toMatch(/^\d{4}-\d{2}-\d{2}$/u);
-    expect((behind?.fittingDate ?? "") > "2020-10-09").toBe(true);
-  });
-
-  it("says what more time covers as the Journey does, from the plan as it is now", async () => {
-    const user = await learner();
-
-    const library = await planLibraryFixture({
-      skills: Array.from({ length: 12 }, () => ({ lessons: 12 })),
-    });
-
-    const { goal, plan } = await unplannedGoalFixture({
-      dailyMinutes: 12,
-      settings: { startDate: "2020-09-28" },
-      targetDate: new Date("2020-10-09T00:00:00Z"),
-      timezone: "UTC",
-      userId: user.id,
-    });
-
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
-    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
-
-    setToday("2020-10-07");
-    await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
-
-    // The plan moved after the morning's settle (lessons written, a session ended): Rafaela's
-    // card said "about 54%" while her Journey said "about 55%".
     const change = await prisma.planChange.findFirstOrThrow({
       where: { kind: "missedDays", planId: plan.id },
     });
 
     const { behind } = parsePlanChangePayload(change.payload);
+
+    expect(behind).toMatchObject({ fullDepth: false, measure: "goal" });
+    expect(behind?.maximumShare ?? 0).toBeGreaterThan(behind?.coveredAfter ?? 1);
+    expect(behind?.maximumShare ?? 1).toBeLessThan(1);
+    expect(behind?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
+    expect((behind?.fittingDate ?? "") > "2020-10-09").toBe(true);
+
+    // The plan moved after the morning's settle (lessons written, a session ended): Rafaela's
+    // card said "about 54%" while her Journey said "about 55%".
     const payload = isJsonObject(change.payload) ? change.payload : {};
 
     await prisma.planChange.update({
@@ -414,7 +387,7 @@ describe("falling behind", () => {
 
     const feasibility = journey.status === "ready" ? journey.plan.feasibility : null;
 
-    expect(feasibility?.maximum?.coveredShare ?? 0).toBeGreaterThan(0.03);
+    expect(feasibility?.maximum?.coveredShare).toBeGreaterThan(0.03);
 
     // What the missed days did stays as the settle said it.
     expect(today?.behind).toMatchObject({

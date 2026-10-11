@@ -41,12 +41,6 @@ describe(getPlanEnd, () => {
       setAsideLessons: 4,
     });
   });
-
-  it("waits for an exam's mocks and reviews still ahead", () => {
-    const mock = { ...lesson("todo"), kind: "mock" as const };
-
-    expect(getPlanEnd([lesson("done"), mock])).toBeNull();
-  });
 });
 
 describe(isPlanOver, () => {

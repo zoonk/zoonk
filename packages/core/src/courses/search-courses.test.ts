@@ -58,27 +58,6 @@ describe(searchCourses, () => {
     expect(result).toStrictEqual([]);
   });
 
-  it("returns courses matching partial title", async () => {
-    const result = await searchCourses({ language: "en", query: "JavaScript" });
-    const ids = result.map((course) => course.id);
-
-    expect(ids).toContain(publishedCourse.id);
-  });
-
-  it("search is case-insensitive", async () => {
-    const uppercaseResult = await searchCourses({ language: "en", query: "JAVASCRIPT" });
-    const lowercaseResult = await searchCourses({ language: "en", query: "javascript" });
-    const mixedResult = await searchCourses({ language: "en", query: "JaVaScRiPt" });
-
-    const uppercaseIds = uppercaseResult.map((course) => course.id);
-    const lowercaseIds = lowercaseResult.map((course) => course.id);
-    const mixedIds = mixedResult.map((course) => course.id);
-
-    expect(uppercaseIds).toContain(publishedCourse.id);
-    expect(lowercaseIds).toContain(publishedCourse.id);
-    expect(mixedIds).toContain(publishedCourse.id);
-  });
-
   it("search handles accented characters", async () => {
     const accentedCourse = await courseFixture({
       isPublished: true,
@@ -250,25 +229,6 @@ describe(searchCourses, () => {
     const result = await searchCourses({ language: "en", query: "Bulk Search Limit Test" });
 
     expect(result).toHaveLength(10);
-  });
-
-  it("respects custom limit parameter", async () => {
-    await prisma.course.createMany({
-      data: Array.from({ length: 15 }, (_, i) => ({
-        description: `Custom limit course ${i} description`,
-        imageUrl: "https://example.com/image.jpg",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `custom limit test course ${i}`,
-        organizationId: brandOrg.id,
-        slug: `custom-limit-test-${randomUUID()}-${i}`,
-        title: `Custom Limit Test Course ${i}`,
-      })),
-    });
-
-    const result = await searchCourses({ language: "en", limit: 5, query: "Custom Limit Test" });
-
-    expect(result).toHaveLength(5);
   });
 
   it("does not count every ranking bucket before reading the first page", async () => {

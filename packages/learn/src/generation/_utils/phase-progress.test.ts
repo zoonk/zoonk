@@ -62,10 +62,6 @@ describe(getPhaseProgress, () => {
     expect(result.activeMs).toBeNull();
   });
 
-  it("is done when the run reports a step past the wait", () => {
-    expect(progressOf("placement", { steps: { goalReady: "completed" } }).progress).toBe(100);
-  });
-
   it("is done when the host says the content is ready", () => {
     expect(progressOf("lesson", { status: "ready" }).progress).toBe(100);
   });

@@ -18,7 +18,7 @@ import { storeWebSource } from "@zoonk/core/library/sources/web";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
+import { examBlueprintFixture, learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { freshnessWorkflow } from "./freshness-workflow";
@@ -260,21 +260,6 @@ describe(freshnessWorkflow, () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
-  });
-
-  it("checks without a model and stores when the next check is due", async () => {
-    const { blueprint } = await examWithLearner();
-
-    const result = await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
-    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
-
-    expect(result).toStrictEqual({
-      nextCheckAt: stored.nextCheckAt?.toISOString(),
-      status: "checked",
-    });
-
-    expect(extractExamBlueprint).not.toHaveBeenCalled();
-    expect(stored.nextCheckAt!.getTime() - Date.now()).toBeGreaterThan(DAY_MS);
   });
 
   it("updates only what a corrected notice changed and records the learner notice", async () => {
@@ -565,8 +550,16 @@ describe(freshnessWorkflow, () => {
       userPrompt: "",
     });
 
-    // A check finds the same document: the reading stands.
-    await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
+    // A check finds the same document: the reading stands, without a model, and the check
+    // reports when the next one is due.
+    const check = await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
+    const checked = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
+
+    expect(check).toStrictEqual({
+      nextCheckAt: checked.nextCheckAt?.toISOString(),
+      status: "checked",
+    });
+
     expect(extractExamBlueprint).not.toHaveBeenCalled();
 
     await expect(readNoticeAgainWorkflow({ examBlueprintId: blueprint.id })).resolves.toStrictEqual(
@@ -584,20 +577,13 @@ describe(freshnessWorkflow, () => {
     );
   });
 
+  // The check's own stopping rules are core's (`checkFreshness`); the run ends with them.
   it("stops when nobody studies the exam anymore", async () => {
-    const { blueprint } = await examWithLearner();
-
-    await prisma.goal.updateMany({
-      data: { status: "archived" },
-      where: { examBlueprintId: blueprint.id },
-    });
+    const blueprint = await examBlueprintFixture();
 
     await expect(
       freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" }),
     ).resolves.toStrictEqual({ reason: "noLearners", status: "stopped" });
-
-    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
-    expect(stored.nextCheckAt).toBeNull();
   });
 
   it("writes one line when a law learners rely on changed", async () => {

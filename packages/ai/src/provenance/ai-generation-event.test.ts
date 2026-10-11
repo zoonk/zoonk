@@ -22,7 +22,7 @@ const provenance: TaskProvenance = {
 };
 
 describe(toAiGenerationEvent, () => {
-  it("attributes a learner's generation to the learner, goal and scope", () => {
+  it("attributes a learner's generation without prompt text or empty values", () => {
     const event = toAiGenerationEvent({
       context: {
         contentScope: "personal",
@@ -95,13 +95,5 @@ describe(toAiGenerationEvent, () => {
       evaluation_answers: '{"reuse":{"probability":0.8,"type":"boolean"}}',
       service_tier: "flex",
     });
-  });
-
-  it("never sends prompt or response text or empty values", () => {
-    const { properties } = toAiGenerationEvent({ provenance, task: "course-chapters" });
-
-    expect(properties).not.toHaveProperty("$ai_input");
-    expect(properties).not.toHaveProperty("$ai_output_choices");
-    expect(Object.values(properties)).not.toContain(undefined);
   });
 });

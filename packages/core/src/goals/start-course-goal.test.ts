@@ -93,16 +93,16 @@ const ROBOTICS_OUTLINE: ChapterSpec[] = [
   { lessons: [["Kinematics"]], level: "beginner", title: "Moving an arm" },
 ];
 
+/** A published course nobody outlined: enough wherever the outline is never read. */
+function publicCourse(attrs: Parameters<typeof courseFixture>[0] = {}) {
+  return courseFixture({ isPublished: true, title: "Robotics", visibility: "public", ...attrs });
+}
+
 async function outlinedCourse(
   attrs: Parameters<typeof courseFixture>[0] = {},
   specs: ChapterSpec[] = ROBOTICS_OUTLINE,
 ) {
-  const course = await courseFixture({
-    isPublished: true,
-    title: "Robotics",
-    visibility: "public",
-    ...attrs,
-  });
+  const course = await publicCourse(attrs);
 
   const names = ["Sensors", "Motors", "Build a robot", "Control loops", "Feedback", "Kinematics"];
   const created = await Promise.all(names.map((name) => skillFixture({ name })));
@@ -207,7 +207,7 @@ describe(startCourseGoal, () => {
   });
 
   it("takes a quick test as the level's answer, leaving the level to placement", async () => {
-    const [{ course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
+    const [course, user] = await Promise.all([publicCourse(), userFixture()]);
     mockSession(user.id);
 
     const result = await startCourseGoal({ courseId: course.id, input: { level: null } });
@@ -309,7 +309,7 @@ describe(startCourseGoal, () => {
   });
 
   it("says a learner's goal on the course is past onboarding once only the plan is left", async () => {
-    const [{ course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
+    const [course, user] = await Promise.all([publicCourse(), userFixture()]);
     mockSession(user.id);
 
     const goal = await goalFixture({
@@ -348,10 +348,7 @@ describe(startCourseGoal, () => {
   });
 
   it("leaves a course nobody outlined yet to the goal's first run", async () => {
-    const [course, user] = await Promise.all([
-      courseFixture({ isPublished: true, title: "Astronomy", visibility: "public" }),
-      userFixture(),
-    ]);
+    const [course, user] = await Promise.all([publicCourse({ title: "Astronomy" }), userFixture()]);
 
     mockSession(user.id);
 
@@ -405,23 +402,31 @@ describe(startCourseGoal, () => {
   });
 
   it("refuses a chapter from another course", async () => {
-    const [{ course }, other, user] = await Promise.all([
-      outlinedCourse(),
-      outlinedCourse(),
+    const [course, other, user] = await Promise.all([
+      publicCourse(),
+      publicCourse(),
       userFixture(),
+    ]);
+
+    const chapter: ChapterSpec = { lessons: [], level: "overview", title: "Introduction" };
+    const skills = new Map<string, string>();
+
+    const [, otherChapter] = await Promise.all([
+      createChapter({ courseId: course.id, position: 0, skills, spec: chapter }),
+      createChapter({ courseId: other.id, position: 0, skills, spec: chapter }),
     ]);
 
     mockSession(user.id);
 
     await expect(
-      startCourseGoal({ courseId: course.id, input: { chapterId: other.chapters[0]?.id } }),
+      startCourseGoal({ courseId: course.id, input: { chapterId: otherChapter.id } }),
     ).resolves.toStrictEqual({ status: "notFound" });
 
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
   it("keeps a free learner to one active goal", async () => {
-    const [{ course }, learner] = await Promise.all([outlinedCourse(), userFixture()]);
+    const [course, learner] = await Promise.all([publicCourse(), userFixture()]);
     await goalFixture({ userId: learner.id });
     mockSession(learner.id);
 
@@ -435,28 +440,26 @@ describe(startCourseGoal, () => {
     await useIsolatedBudgetDay();
 
     const [first, second, guest] = await Promise.all([
-      outlinedCourse(),
-      outlinedCourse({ title: "Astronomy" }),
+      publicCourse(),
+      publicCourse({ title: "Astronomy" }),
       userFixture(),
     ]);
 
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });
     mockGuestSession(guest.id);
 
-    await expect(startCourseGoal({ courseId: first.course.id, input: {} })).resolves.toMatchObject({
+    await expect(startCourseGoal({ courseId: first.id, input: {} })).resolves.toMatchObject({
       status: "created",
     });
 
-    await expect(startCourseGoal({ courseId: second.course.id, input: {} })).resolves.toMatchObject(
-      {
-        refusals: [{ decision: { limit: { tier: "guest" }, status: "limitReached" } }],
-        status: "refused",
-      },
-    );
+    await expect(startCourseGoal({ courseId: second.id, input: {} })).resolves.toMatchObject({
+      refusals: [{ decision: { limit: { tier: "guest" }, status: "limitReached" } }],
+      status: "refused",
+    });
   });
 
   it("needs a session", async () => {
-    const { course } = await outlinedCourse();
+    const course = await publicCourse();
     mockSession(null);
 
     await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toStrictEqual({

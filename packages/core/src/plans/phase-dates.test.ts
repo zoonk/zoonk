@@ -236,29 +236,6 @@ describe("phase dates through system refreshes", () => {
     vi.useRealTimers();
   });
 
-  it("keeps the first phase's end when its lessons land longer than planned", async () => {
-    const { goal, outline, plan } = await setup({ targetDate: FAR });
-    const [firstEnd] = await readPhaseEnds(plan.id);
-
-    // Ten 8-minute lessons, not ten of 4: the phase's lessons take 40 minutes more.
-    await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
-    await refreshGoalPlan({ goalId: goal.id });
-
-    const [endAfter] = await readPhaseEnds(plan.id);
-    const [challenge] = await readChallengeDates(plan.id);
-
-    expect(firstEnd).not.toBeNull();
-    expect(endAfter).toBe(firstEnd);
-    expect(challenge).toBe(firstEnd);
-
-    // The outlined lessons are in the plan.
-    const outlined = await prisma.planItem.count({
-      where: { lessonId: { not: null }, planId: plan.id, status: "todo" },
-    });
-
-    expect(outlined).toBeGreaterThanOrEqual(20);
-  });
-
   // Lessons that come out longer than planned would come after the challenge on the end the
   // learner saw, which tests them (R40). The end stays until the learner says so (R6), and Today
   // offers to move it to right after those lessons, saying why (IELTS seed 1011, lead 10 Oct).
@@ -266,10 +243,22 @@ describe("phase dates through system refreshes", () => {
     const { goal, library, outline, plan } = await setup({ targetDate: FAR });
     const ends = await readPhaseEnds(plan.id);
 
+    // Ten 8-minute lessons, not ten of 4: the phase's lessons take 40 minutes more. The refresh
+    // puts them in the plan and keeps the end and its challenge on it.
     await outline({ outline: { count: 10, minutes: 8 }, skill: 1 });
     await refreshGoalPlan({ goalId: goal.id });
 
+    const [[kept], outlined] = await Promise.all([
+      readChallengeDates(plan.id),
+      prisma.planItem.count({
+        where: { lessonId: { not: null }, planId: plan.id, status: "todo" },
+      }),
+    ]);
+
+    expect(ends[0]).not.toBeNull();
     await expect(readPhaseEnds(plan.id)).resolves.toStrictEqual(ends);
+    expect(kept).toBe(ends[0]);
+    expect(outlined).toBeGreaterThanOrEqual(20);
 
     const { moves, proposal } = await readProposedMoves(plan.id);
 

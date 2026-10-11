@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
-import { type Page } from "playwright";
+import { type CDPSession, type Page } from "playwright";
 import { defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
 
@@ -34,6 +34,46 @@ const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = asyn
   await page.emulateMedia(media);
 };
 
+/**
+ * One touch event of a finger, `waitMs` after the one before when given. `at` (ms since the epoch)
+ * is when the finger did it; without it, it's when the browser gets the event.
+ */
+type TouchStep = {
+  at?: number;
+  touchPoints: { x: number; y: number }[];
+  type: "touchEnd" | "touchMove" | "touchStart";
+  waitMs?: number;
+};
+
+const touchSessions = new WeakMap<Page, Promise<CDPSession>>();
+
+/**
+ * Plays a finger's touches through the browser's own touch input, all in one call: sent one at a
+ * time from the test, each touch took a round trip to the driver, and a screen's swipes took
+ * seconds. Typed for tests in `src/_test-utils/touch-screen.ts`.
+ */
+const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
+  const opening = touchSessions.get(page) ?? page.context().newCDPSession(page);
+  touchSessions.set(page, opening);
+  const session = await opening;
+
+  for (const { at, touchPoints, type, waitMs = 0 } of steps) {
+    if (waitMs > 0) {
+      // oxlint-disable-next-line no-await-in-loop -- The finger rests before its next touch.
+      await new Promise((resolve) => {
+        setTimeout(resolve, waitMs);
+      });
+    }
+
+    // oxlint-disable-next-line no-await-in-loop -- A finger's touches reach the page in order.
+    await session.send("Input.dispatchTouchEvent", {
+      touchPoints,
+      type,
+      ...(at === undefined ? {} : { timestamp: at / 1000 }),
+    });
+  }
+};
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -49,14 +89,14 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        test: { environment: "jsdom", exclude: browserTests, include: unitTests, name: "unit" },
+        test: { environment: "node", exclude: browserTests, include: unitTests, name: "unit" },
       },
       {
         extends: true,
         test: {
           // The player's screens played in a real browser: what learners see and do, in any app.
           browser: {
-            commands: { emulateMedia },
+            commands: { emulateMedia, touch },
             enabled: true,
             headless: true,
             instances: [

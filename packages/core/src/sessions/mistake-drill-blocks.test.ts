@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -53,6 +53,51 @@ async function drillBlockFixture(drill: Record<string, unknown>) {
 
   return { block, item, mistake, session };
 }
+
+/** A practice block of today's session as it's saved, with the payload given. */
+function practiceBlock(payload: StudySessionBlock["payload"]): StudySessionBlock {
+  const now = new Date();
+
+  return {
+    brainPower: 0,
+    canDo: null,
+    completedAt: null,
+    createdAt: now,
+    estimatedMinutes: null,
+    id: crypto.randomUUID(),
+    kind: "practice",
+    lessonId: null,
+    payload,
+    position: 0,
+    sessionId: crypto.randomUUID(),
+    startedAt: null,
+    status: "pending",
+    updatedAt: now,
+  };
+}
+
+describe(toStudyBlockView, () => {
+  // Past a free exam plan's first week the day's only practice is fixing mistakes, and Today
+  // called it "Mixed practice", the practice the free plan no longer has.
+  it("says a practice block that only fixes mistakes is that, and a mixed one isn't", () => {
+    const drills = [
+      { itemIds: [crypto.randomUUID()], kind: "retry", mistakeId: crypto.randomUUID() },
+    ];
+
+    const answeredItemIds = new Set<string>();
+
+    expect(toStudyBlockView({ answeredItemIds, block: practiceBlock({ drills }) })).toMatchObject({
+      mistakesOnly: true,
+    });
+
+    expect(
+      toStudyBlockView({
+        answeredItemIds,
+        block: practiceBlock({ drills, itemIds: [crypto.randomUUID()] }),
+      }),
+    ).toMatchObject({ mistakesOnly: false });
+  });
+});
 
 describe("mistake drills in today's session", () => {
   beforeEach(() => {
@@ -154,26 +199,6 @@ describe("mistake drills in today's session", () => {
 
     expect(drills[0]?.itemIds.length).toBeGreaterThan(0);
     expect(drills[0]?.itemIds.every((itemId) => bankIds.has(itemId))).toBe(true);
-  });
-
-  // Past a free exam plan's first week the day's only practice is fixing mistakes, and Today
-  // called it "Mixed practice", the practice the free plan no longer has.
-  it("says a practice block that only fixes mistakes is that, and a mixed one isn't", async () => {
-    const { block, item, session } = await drillBlockFixture({ kind: "retry" });
-
-    const mixed = await studySessionBlockFixture({
-      kind: "practice",
-      payload: { drills: readBlockPayload(block).drills, itemIds: [item.id] },
-      sessionId: session.id,
-    });
-
-    expect(toStudyBlockView({ answeredItemIds: new Set(), block })).toMatchObject({
-      mistakesOnly: true,
-    });
-
-    expect(toStudyBlockView({ answeredItemIds: new Set(), block: mixed })).toMatchObject({
-      mistakesOnly: false,
-    });
   });
 
   it("reads a drill without a kind as a plain retry", async () => {

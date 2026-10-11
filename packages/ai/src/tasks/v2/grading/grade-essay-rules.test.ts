@@ -44,28 +44,6 @@ function words(count: number): string {
 }
 
 describe(getEssayCriteria, () => {
-  it("uses the five ENEM competencies worth 200 each", () => {
-    const criteria = getEssayCriteria(ENEM);
-
-    expect(criteria.map((item) => item.id)).toStrictEqual(["c1", "c2", "c3", "c4", "c5"]);
-    expect(criteria.every((item) => item.maxScore === 200)).toBe(true);
-  });
-
-  it("uses fixed OAB sections that add up to 5 points", () => {
-    const criteria = getEssayCriteria(OAB);
-    const total = criteria.reduce((sum, item) => sum + item.maxScore, 0);
-
-    expect(criteria.map((item) => item.id)).toStrictEqual([
-      "addressing-and-parties",
-      "facts",
-      "legal-basis",
-      "requests",
-      "closing-and-form",
-    ]);
-
-    expect(total).toBeCloseTo(5);
-  });
-
   it("splits a custom maximum so the criteria add up to it exactly", () => {
     const criteria = getEssayCriteria({
       criteria: [
@@ -329,6 +307,21 @@ describe(buildEssayGrade, () => {
     expect(grade.zeroReason).toBeNull();
     expect(grade.enemInterventionElements).toBeNull();
     expect(grade.nextStep?.criterionId).toBe("legal-basis");
+  });
+
+  it("lets full marks in every OAB section add up to the whole 5 points", () => {
+    const grade = buildEssayGrade({
+      essay: ESSAY,
+      output: {
+        criteria: Object.fromEntries(getEssayCriteria(OAB).map(({ id }) => [id, criterion(5)])),
+        interventionElements: null,
+        zeroReason: null,
+      },
+      rubric: OAB,
+    });
+
+    expect(grade.total).toStrictEqual({ maxScore: 5, score: 5 });
+    expect(grade.nextStep).toBeNull();
   });
 
   it("rounds custom scores to hundredths with a range of a tenth of the maximum", () => {

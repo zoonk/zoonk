@@ -28,14 +28,16 @@ function item(attrs: { date: string; lessonId?: string; skillId?: string }) {
 }
 
 describe(getPlanEffect, () => {
+  // The stand-in is for the rest of a skill the plan has a lesson of: it counts the lessons still
+  // missing, as the map sizes it.
   it("counts lessons added and removed, placeholders by their size, and the end date move", () => {
     const before = [
-      item({ date: "2026-10-01", lessonId: "a" }),
+      item({ date: "2026-10-01", lessonId: "a", skillId: "fractions" }),
       item({ date: "2026-10-02", lessonId: "b" }),
     ];
 
     const after = [
-      item({ date: "2026-10-01", lessonId: "a" }),
+      item({ date: "2026-10-01", lessonId: "a", skillId: "fractions" }),
       item({ date: "2026-10-05", skillId: "fractions" }),
     ];
 
@@ -49,34 +51,15 @@ describe(getPlanEffect, () => {
   });
 
   // A stand-in's lessons are the plan's estimate until the Library writes them: Pedro's card said
-  // 8 lessons for a topic the Library wrote 5 for.
+  // 8 lessons for a topic the Library wrote 5 for. Written lessons are no estimate (the test above
+  // adds a stand-in, which is).
   it("says the lessons it adds are an estimate only when some aren't written yet", () => {
     const before = [item({ date: "2026-10-01", lessonId: "a" })];
-
     const written = [...before, item({ date: "2026-10-02", lessonId: "b" })];
-    const notWritten = [...before, item({ date: "2026-10-02", skillId: "fractions" })];
 
     expect(getPlanEffect({ after: written, before, standInLessons })).not.toHaveProperty(
       "lessonsAddedEstimated",
     );
-
-    expect(getPlanEffect({ after: notWritten, before, standInLessons })).toMatchObject({
-      lessonsAdded: 8,
-      lessonsAddedEstimated: true,
-    });
-  });
-
-  it("counts a stand-in for the rest of a skill as the lessons still missing", () => {
-    const before = [item({ date: "2026-10-01", lessonId: "a", skillId: "fractions" })];
-
-    const after = [
-      item({ date: "2026-10-01", lessonId: "a", skillId: "fractions" }),
-      item({ date: "2026-10-03", skillId: "fractions" }),
-    ];
-
-    expect(
-      getPlanEffect({ after, before, standInLessons: new Map([["fractions", 5]]) }).lessonsAdded,
-    ).toBe(5);
   });
 });
 

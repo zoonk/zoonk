@@ -1,4 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -323,6 +325,31 @@ async function weeklySetup() {
   return { challenge, goal, plan };
 }
 
+/**
+ * The week's challenge on Sunday, on a plan row the planner never built: its skill graph alone
+ * makes it the planner's plan, the one kind whose challenge can move.
+ */
+async function weeklyChallengeFixture() {
+  const user = await userFixture();
+  const goal = await goalFixture({ userId: user.id });
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: { skills: [{ lessons: 1, name: "Skill", phase: 0, skillId: randomUUID() }] },
+  });
+
+  const challenge = await checkpointItemFixture({
+    kind: "checkpoint",
+    planId: plan.id,
+    position: 0,
+    scheduledFor: new Date("2020-10-11"),
+  });
+
+  mockSession(user.id);
+
+  return { challenge, goal };
+}
+
 describe("the week's challenge before its day", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -382,7 +409,7 @@ describe("the week's challenge before its day", () => {
   });
 
   it("has no time of its own outside an exam, unless the learner said when they study", async () => {
-    const { challenge, goal } = await weeklySetup();
+    const { challenge, goal } = await weeklyChallengeFixture();
 
     await expect(challengeOf(challenge.id)).resolves.toMatchObject({
       mock: false,
@@ -399,7 +426,9 @@ describe("the week's challenge before its day", () => {
   });
 
   it("never moves from a day that's past", async () => {
-    const { challenge } = await weeklySetup();
+    const { challenge } = await weeklyChallengeFixture();
+
+    await expect(challengeOf(challenge.id)).resolves.toMatchObject({ canMove: true });
 
     vi.setSystemTime(new Date("2020-10-12T12:00:00Z"));
 

@@ -201,6 +201,18 @@ async function liveDays(lessonSkills: LessonSkills) {
   return { asked, days, finished, library, userId: user.id };
 }
 
+/**
+ * Each life is lived once per run and shared by the tests that read it: a life is several days of
+ * lessons played through the player, the slowest part of this file.
+ */
+const lives = new Map<LessonSkills, ReturnType<typeof liveDays>>();
+
+function liveDaysOnce(lessonSkills: LessonSkills): ReturnType<typeof liveDays> {
+  const lived = lives.get(lessonSkills) ?? liveDays(lessonSkills);
+  lives.set(lessonSkills, lived);
+  return lived;
+}
+
 async function openDay(goalId: string) {
   const today = await getTodayStudySession({ goalId, timeZone: TIME_ZONE });
 
@@ -276,8 +288,8 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
   it(
     "comes back in reviews and practice on the same days as one that teaches the plan's skill",
     async () => {
-      const finer = await liveDays("finer");
-      const plan = await liveDays("plan");
+      const finer = await liveDaysOnce("finer");
+      const plan = await liveDaysOnce("plan");
 
       // The day after the first lessons opens with a review of what they taught, and practice
       // follows once the bank's questions on it weren't asked the day before.
@@ -291,7 +303,7 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
   it(
     "brings each finished lesson's topic back on the day its end screen and its check said",
     async () => {
-      const { asked, finished } = await liveDays("finer");
+      const { asked, finished } = await liveDaysOnce("finer");
       const promised = finished.filter((lesson) => lesson.nextReviewDay !== null);
 
       expect(promised).toHaveLength(finished.length);
@@ -315,7 +327,7 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
   it(
     "names a review after the lesson the learner finished for its topic",
     async () => {
-      const finer = await liveDays("finer");
+      const finer = await liveDaysOnce("finer");
       const studied = new Set(finer.finished.map((lesson) => lesson.lessonId));
 
       const blocks = await prisma.studySessionBlock.findMany({

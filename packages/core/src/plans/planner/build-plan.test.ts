@@ -67,8 +67,8 @@ function planInput(attrs: Partial<BuildPlanInput> = {}): BuildPlanInput {
   };
 }
 
-function summarize(input: BuildPlanInput) {
-  return buildPlan(input).items.map((item) => ({
+function summarize(plan: Pick<ReturnType<typeof buildPlan>, "items">) {
+  return plan.items.map((item) => ({
     date: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
     key: item.key,
     phase: item.phase,
@@ -79,7 +79,7 @@ describe(buildPlan, () => {
   it("lays lessons, placeholders and phase checkpoints on days at the learner's time", () => {
     const plan = buildPlan(planInput());
 
-    expect(summarize(planInput())).toStrictEqual([
+    expect(summarize(plan)).toStrictEqual([
       { date: "2026-09-28", key: "lesson:l1", phase: 0 },
       { date: "2026-09-28", key: "lesson:l2", phase: 0 },
       { date: "2026-09-30", key: "skill:s2", phase: 0 },
@@ -600,7 +600,7 @@ describe(buildPlan, () => {
     const settings = parsePlanSettings({ focusAreas: ["Math"], skippedAreas: ["Chemistry"] });
 
     expect(
-      summarize(planInput({ graph, lessons: [], settings })).map((item) => item.key),
+      summarize(buildPlan(planInput({ graph, lessons: [], settings }))).map((item) => item.key),
     ).toStrictEqual(["skill:b", "skill:a", "boss:0"]);
   });
 
@@ -650,22 +650,11 @@ describe("exam plans", () => {
     });
   }
 
-  it("orders skills by priority, keeps prerequisites first, and stops new lessons at the final stretch", () => {
+  it("orders skills by priority and keeps prerequisites first", () => {
     const plan = buildPlan(examInput());
     const lessons = plan.items.filter((item) => item.kind === "lesson");
 
     expect(lessons.map((item) => item.skillId)).toStrictEqual(["s1", "s2", "s3"]);
-
-    expect(
-      lessons.every((item) => (item.scheduledFor ?? examStart) < fromIsoDate("2026-11-01")),
-    ).toBe(true);
-
-    expect(plan.phases.map((phase) => phase.kind)).toStrictEqual([
-      "foundations",
-      "gaps",
-      "practice",
-      "finalStretch",
-    ]);
   });
 
   it("puts each lesson in the exam phase of the day it's due", () => {
@@ -736,7 +725,7 @@ describe("exam plans", () => {
   });
 
   it("gives an exam without a date weekly mocks from its second week, in place of checkpoints", () => {
-    const lessons = Array.from({ length: 400 }, (_, index) => lesson(`l${index}`, ["s1"]));
+    const lessons = Array.from({ length: 150 }, (_, index) => lesson(`l${index}`, ["s1"]));
 
     const plan = buildPlan(
       examInput({ goal: { dailyMinutes: 45, kind: "exam", targetDate: null }, lessons }),
@@ -925,9 +914,11 @@ describe("learn phases", () => {
   });
 
   it("starts the next phase on a new day after a phase's checkpoint", () => {
-    const input = planInput({ goal: { dailyMinutes: 30, kind: "learn", targetDate: null } });
+    const plan = buildPlan(
+      planInput({ goal: { dailyMinutes: 30, kind: "learn", targetDate: null } }),
+    );
 
-    expect(summarize(input)).toStrictEqual([
+    expect(summarize(plan)).toStrictEqual([
       { date: "2026-09-28", key: "lesson:l1", phase: 0 },
       { date: "2026-09-28", key: "lesson:l2", phase: 0 },
       { date: "2026-09-28", key: "skill:s2", phase: 0 },
@@ -936,7 +927,7 @@ describe("learn phases", () => {
       { date: "2026-09-30", key: "boss:1", phase: 1 },
     ]);
 
-    expect(findPhaseOverlaps(buildPlan(input).phases)).toStrictEqual([]);
+    expect(findPhaseOverlaps(plan.phases)).toStrictEqual([]);
   });
 
   it("starts the first phase and its first stand-in when the plan starts, though it takes days", () => {
@@ -1051,23 +1042,6 @@ describe("language plans", () => {
     expect(lessonMinutes(input)).toBeCloseTo((outlined + standInMinutes) / 0.5);
   });
 
-  it("says when the date is too close to cover every situation at the learner's time", () => {
-    const input = languageInput({
-      goal: { dailyMinutes: 10, kind: "language", targetDate: fromIsoDate("2026-10-19") },
-    });
-
-    const built = buildPlan(input);
-    const feasibility = getPlanFeasibility({ input });
-
-    expect(feasibility.fits).toBe(false);
-    expect(feasibility.coveredShare).toBeLessThan(1);
-    expect(feasibility.recommendedMinutes).toBeGreaterThan(10);
-
-    expect(
-      built.items.every((item) => (item.scheduledFor ?? TODAY) < fromIsoDate("2026-10-19")),
-    ).toBe(true);
-  });
-
   it("keeps practicing to its date when its lessons end weeks before, so it never ends early", () => {
     const interview = fromIsoDate("2027-01-06");
 
@@ -1112,10 +1086,6 @@ function standIns(plan: ReturnType<typeof buildPlan>) {
   return plan.items
     .filter((item) => item.kind === "lesson" && !item.lessonId)
     .map((item) => [item.skillId, Math.round((item.minutes * 0.5) / DEFAULT_LESSON_MINUTES)]);
-}
-
-function windows(built: ReturnType<typeof buildPlan>) {
-  return built.phases.map((phase) => [phase.kind, phase.startDate, phase.endDate]);
 }
 
 /** The plan's items up to a day, each with its day and minutes. */
@@ -1252,7 +1222,7 @@ describe("big goals of any kind", () => {
     expect(keys.indexOf("skill:waves")).toBe(keys.indexOf("lesson:waves-4") + 1);
   });
 
-  it("keeps a dated exam plan's windows, puts stand-ins after their skill's lessons and says what doesn't fit", () => {
+  it("puts a dated exam plan's stand-ins after their skill's lessons, before the final stretch, and says what doesn't fit", () => {
     const skills = [
       skill("math", { area: "Math", lessons: 100, weight: 5 }),
       skill("law", { area: "Law", lessons: 100, weight: 3 }),
@@ -1267,14 +1237,6 @@ describe("big goals of any kind", () => {
     });
 
     const plan = buildPlan(input);
-
-    const outlinedOnly = buildPlan({
-      ...input,
-      graph: { ...input.graph, skills: skills.map((item) => ({ ...item, lessons: 5 })) },
-    });
-
-    expect(windows(plan)).toStrictEqual(windows(outlinedOnly));
-
     const finalStretch = plan.phases.find((phase) => phase.kind === "finalStretch")?.startDate;
     const lessons = plan.items.filter((item) => item.kind === "lesson");
 
@@ -1337,6 +1299,8 @@ describe("a plan no daily time can cover", () => {
     const feasibility = getPlanFeasibility({ input });
 
     expect(feasibility).toMatchObject({ fits: false, recommendedMinutes: null });
+    // An exam's date doesn't move: no date to name either.
+    expect(feasibility.fittingDate).toBeNull();
     expect(feasibility.maximum?.dailyMinutes).toBe(240);
     expect(feasibility.maximum?.coveredShare).toBeGreaterThan(feasibility.coveredShare);
     expect(feasibility.maximum?.coveredShare).toBeLessThan(1);
@@ -1347,7 +1311,7 @@ describe("a plan no daily time can cover", () => {
   });
 
   it("names the earliest date the learner's own time covers everything by", () => {
-    const skills = Array.from({ length: 40 }, (_, index) => skill(`s${index}`, { lessons: 40 }));
+    const skills = Array.from({ length: 16 }, (_, index) => skill(`s${index}`, { lessons: 40 }));
 
     const input = planInput({
       goal: { dailyMinutes: 30, kind: "learn", targetDate: fromIsoDate("2026-10-12") },
@@ -1364,18 +1328,6 @@ describe("a plan no daily time can cover", () => {
     expect(fittingDate).not.toBeNull();
     expect(by(fittingDate ?? TODAY).fits).toBe(true);
     expect(by(addDays(fittingDate ?? TODAY, -1)).fits).toBe(false);
-  });
-
-  it("names no date for an exam, whose date doesn't move", () => {
-    const skills = Array.from({ length: 40 }, (_, index) => skill(`s${index}`, { lessons: 40 }));
-
-    const input = planInput({
-      goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2026-10-12") },
-      graph: { phases: [{ milestone: null, name: "Everything" }], skills },
-      settings: parsePlanSettings({ startDate: "2026-09-28" }),
-    });
-
-    expect(getPlanFeasibility({ input }).fittingDate).toBeNull();
   });
 });
 

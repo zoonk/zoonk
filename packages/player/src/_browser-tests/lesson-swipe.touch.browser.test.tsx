@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { swipeFrom, tap } from "../_test-utils/touch-screen";
+import { getPreviewEntry } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, inlineImage, teachingStep } from "../preview/preview-steps";
 
@@ -37,6 +38,49 @@ function pictured({ alt, text, title }: typeof FRONTAL) {
 function heading(text: string) {
   return page.getByRole("heading", { name: text });
 }
+
+/** A screen of the player's catalog (src/preview) waiting for its answer, as lessons show it. */
+function previewScreen(id: string) {
+  const entry = getPreviewEntry(id);
+
+  if (!entry) {
+    throw new Error(`The preview catalog has no ${id} screen.`);
+  }
+
+  return entry.screen("answering");
+}
+
+/**
+ * Each kind of control real screens have, with the screen's own text: a swipe from the text turns
+ * the screen, and a swipe from the control stays with the control.
+ */
+const CONTROLS = [
+  {
+    control: () => page.getByRole("group", { name: "Word bank" }).getByRole("button").first(),
+    kind: "a word to tap",
+    screen: "language-reading",
+    text: () => page.getByText("Translate this sentence:"),
+  },
+  {
+    control: () => page.getByRole("slider"),
+    kind: "a slider",
+    screen: "activity-numberLine",
+    text: () => page.getByText("By noon it's 8 degrees warmer."),
+  },
+  {
+    control: () =>
+      page.getByRole("list", { name: "Steps, in your order" }).getByRole("button").first(),
+    kind: "a step to drag",
+    screen: "activity-processOrder",
+    text: () => page.getByText("How does a leaf turn light into sugar?"),
+  },
+  {
+    control: () => page.getByRole("textbox"),
+    kind: "a text field",
+    screen: "typed-answer",
+    text: () => page.getByRole("heading", { name: "why is the electron drawn as a cloud?" }),
+  },
+] as const;
 
 /** The nearest element that scrolls sideways, as the swipe looks for one. */
 function sidewaysScroller(element: Element): Element | null {
@@ -136,6 +180,22 @@ describe("turning lesson screens with a finger", () => {
     await expect.element(heading("How light reaches the eye")).toBeInTheDocument();
     await expect.element(heading(OCCIPITAL.title)).not.toBeInTheDocument();
   });
+
+  it.each(CONTROLS)(
+    "leaves a swipe that starts on $kind to it",
+    async ({ control, screen, text }) => {
+      renderLessonPlayer({ lesson: buildLesson([pictured(FRONTAL), previewScreen(screen)]) });
+      await swipeFrom(page.getByText("It plans what you do next."), { x: -SWIPE_PX });
+
+      await swipeFrom(control(), { x: SWIPE_PX });
+      await expect.element(text()).toBeVisible();
+      await expect.element(heading(FRONTAL.title)).not.toBeInTheDocument();
+
+      // Off the control, the same swipe goes back.
+      await swipeFrom(text(), { x: SWIPE_PX });
+      await expect.element(heading(FRONTAL.title)).toBeVisible();
+    },
+  );
 
   it("leaves a wide table's sideways swipe to the table", async () => {
     // Wider than a phone in any font: its longest words alone pass the screen's 375 pixels.

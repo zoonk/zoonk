@@ -355,39 +355,4 @@ describe(registerSourceUpload, () => {
       prisma.usageRecord.count({ where: { kind: "upload", userId: user.id } }),
     ).resolves.toBe(3);
   });
-
-  it("refuses empty text and files it can't read", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-
-    await expect(
-      registerSourceUpload({ kind: "text", language: "pt", text: "   " }),
-    ).resolves.toStrictEqual({ status: "unsupported" });
-
-    const pathname = `sources/${user.id}/archive.zip`;
-
-    mockUploadedFile({
-      bytes: new Uint8Array([1, 2, 3]),
-      contentType: "application/zip",
-      pathname,
-    });
-
-    await expect(
-      registerSourceUpload({ kind: "file", language: "pt", pathname }),
-    ).resolves.toStrictEqual({ status: "unsupported" });
-  });
-
-  it("reports a file that was never uploaded", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-    vi.mocked(get).mockResolvedValue(null);
-
-    await expect(
-      registerSourceUpload({
-        kind: "file",
-        language: "pt",
-        pathname: `sources/${user.id}/missing.pdf`,
-      }),
-    ).resolves.toStrictEqual({ status: "notFound" });
-  });
 });

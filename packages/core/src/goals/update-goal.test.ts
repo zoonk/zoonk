@@ -22,9 +22,9 @@ vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
  */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 
-async function setup() {
+/** The signed-in learner's shown goal, with a plan row the planner hasn't filled. */
+async function signedInGoal() {
   const user = await userFixture();
-  const library = await planLibraryFixture({ skills: [{ lessons: 8 }, { lessons: 6 }] });
 
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 12,
@@ -32,11 +32,22 @@ async function setup() {
     userId: user.id,
   });
 
-  await createGoalPlan({ goalId: goal.id, graph: library.graph });
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
   mockSession(user.id);
 
   return { goal, plan, user };
+}
+
+/** The same goal with the planner's plan, for updates that re-plan it. */
+async function setup() {
+  const [signedIn, library] = await Promise.all([
+    signedInGoal(),
+    planLibraryFixture({ skills: [{ lessons: 8 }, { lessons: 6 }] }),
+  ]);
+
+  await createGoalPlan({ goalId: signedIn.goal.id, graph: library.graph });
+
+  return signedIn;
 }
 
 describe(updateGoal, () => {
@@ -132,7 +143,7 @@ describe(updateGoal, () => {
   });
 
   it("moves the tabs to another active goal when the shown one is archived", async () => {
-    const { goal, user } = await setup();
+    const { goal, user } = await signedInGoal();
     const other = await goalFixture({ userId: user.id });
 
     await updateGoal({ goalId: goal.id, input: { status: "archived" } });
@@ -145,7 +156,7 @@ describe(updateGoal, () => {
   });
 
   it('sends "Goal Reached" once when the learner completes a goal', async () => {
-    const { goal, user } = await setup();
+    const { goal, user } = await signedInGoal();
 
     await prisma.goal.update({
       data: { createdAt: new Date("2020-09-18T12:00:00Z") },
@@ -169,7 +180,7 @@ describe(updateGoal, () => {
   });
 
   it("hides other learners' goals", async () => {
-    const { goal } = await setup();
+    const { goal } = await signedInGoal();
     const stranger = await userFixture();
     mockSession(stranger.id);
 

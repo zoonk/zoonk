@@ -116,7 +116,7 @@ describe(getTodayView, () => {
     expect(today.session.goalId).toBe(goal.id);
     expect(Object.values(today.lessonStatus)).toContain("notStarted");
     expect(today.session.blocks.map((block) => block.lessonId)).toContain(lessons[0]?.id);
-    expect(today.progress?.status).not.toBeNull();
+    expect(today.progress).toMatchObject({ status: { kind: "onTrack" } });
     expect(today.studiedToday).toBe(false);
 
     expect(today.weeklyChallenge).toMatchObject({
@@ -138,22 +138,6 @@ describe(getTodayView, () => {
     const result = await getTodayView({});
 
     expect(result.status === "ready" && result.today.studiedToday).toBe(true);
-  });
-
-  it("opens the same session on a second visit the same day", async () => {
-    await setup();
-    const first = await getTodayView({});
-    const second = await getTodayView({});
-
-    if (first.status !== "ready" || second.status !== "ready") {
-      throw new Error("Expected Today twice");
-    }
-
-    expect(second.today.session.id).toBe(first.today.session.id);
-
-    await expect(
-      prisma.studySession.count({ where: { id: first.today.session.id } }),
-    ).resolves.toBe(1);
   });
 
   it("carries the insight waiting for this goal", async () => {

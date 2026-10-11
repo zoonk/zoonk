@@ -855,26 +855,6 @@ describe("plan changes the buddy proposes", () => {
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
   });
 
-  it("never offers a change that would leave the plan as it is", async () => {
-    const { goal, plan } = await setup();
-
-    // Math already comes first and every lesson fits: putting it first moves nothing.
-    mockWords({
-      leftOut: [],
-      operations: [{ areas: ["Math"], kind: "focusAreas" }],
-      summary: "Math comes first in your plan.",
-      understood: true,
-    });
-
-    const asked = await askBuddy({ goalId: goal.id, question: "Put math first" });
-
-    await expect(
-      proposeTutorPlanChange({ ...asked, request: "Put math first" }),
-    ).resolves.toStrictEqual({ leftOut: [], status: "unchanged" });
-
-    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
-  });
-
   it("never offers a no-op while the Library outlines lessons the plan hasn't taken in yet", async () => {
     const user = await userFixture();
 

@@ -71,11 +71,27 @@ describe(verifyActivityPrograms, () => {
   });
 
   it(
-    "passes Python programs and traces that match their runs",
+    "passes Python programs and traces that match their runs, and holds back a trace that loops without end",
     async () => {
       await expect(
-        verifyActivityPrograms([content(fixtures.codeRunner), pythonTracer]),
-      ).resolves.toStrictEqual([[], []]);
+        verifyActivityPrograms([
+          content(fixtures.codeRunner),
+          pythonTracer,
+          withFields(pythonTracer, {
+            code: "total = 0\nfor n in [2, 3]:\n    total += n\nwhile True:\n    pass",
+          }),
+        ]),
+      ).resolves.toStrictEqual([
+        [],
+        [],
+        [
+          {
+            code: "programFails",
+            message: "The code runs more than 1000 lines; trace a shorter program",
+            path: "fields.code",
+          },
+        ],
+      ]);
     },
     PYTHON_TEST_TIMEOUT_MS,
   );
@@ -146,26 +162,6 @@ describe(verifyActivityPrograms, () => {
       expect.objectContaining({ code: "answerMismatch", path: "fields.trace.0" }),
     ]);
   });
-
-  it(
-    "holds back a trace for code that loops without end",
-    async () => {
-      const [issues] = await verifyActivityPrograms([
-        withFields(pythonTracer, {
-          code: "total = 0\nfor n in [2, 3]:\n    total += n\nwhile True:\n    pass",
-        }),
-      ]);
-
-      expect(issues).toStrictEqual([
-        {
-          code: "programFails",
-          message: "The code runs more than 1000 lines; trace a shorter program",
-          path: "fields.code",
-        },
-      ]);
-    },
-    PYTHON_TEST_TIMEOUT_MS,
-  );
 
   it("holds back a SQL solution that fails or returns other rows than expected", async () => {
     const rounded = structuredClone(fixtures.sqlPlayground);

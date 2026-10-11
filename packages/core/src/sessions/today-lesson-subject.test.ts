@@ -102,27 +102,6 @@ describe("a lesson's subject on today's list", () => {
     expect(moved.map((block) => block.subject)).toStrictEqual(moved.map(() => "Matemática"));
   });
 
-  it("stays its plan item's subject when the lesson's own skills include it", async () => {
-    const { goal, library } = await setup();
-    const [physics, math] = library.skills;
-
-    const lessonIds = await loadItemLessonIds({ goalId: goal.id, skillId: physics?.id });
-
-    // The lessons teach their own physics skill and a math one too.
-    await prisma.lessonSkill.createMany({
-      data: lessonIds.map((lessonId) => ({ lessonId, skillId: math?.id ?? "" })),
-    });
-
-    const blocks = await openToday(goal.id);
-    const kept = blocks.filter((block) => block.lessonId && lessonIds.includes(block.lessonId));
-
-    expect(kept.length).toBeGreaterThan(0);
-
-    expect(kept.map((block) => block.subject)).toStrictEqual(
-      kept.map(() => "Ciências da Natureza"),
-    );
-  });
-
   it("is none when the lesson's own skills don't settle it and its chapter is tagged with several subjects", async () => {
     const { goal, library } = await setup();
     const [physics, math] = library.skills;

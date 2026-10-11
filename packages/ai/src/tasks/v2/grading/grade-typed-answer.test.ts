@@ -295,46 +295,6 @@ describe(gradeTypedAnswer, () => {
     expect(result.data).toMatchObject({ isCorrect: true, score: 1 });
   });
 
-  it("marks the answer correct only when every key point is met", async () => {
-    vi.mocked(generateText).mockResolvedValueOnce(
-      createGenerateTextResult({
-        corrections: [],
-        feedback: "Inputs, energy source and products are all there.",
-        keyPoints: [
-          { met: true, number: 1 },
-          { met: true, number: 2 },
-          { met: true, number: 3 },
-        ],
-      }),
-    );
-
-    const result = await gradeTypedAnswer({
-      ...openAnswerParams,
-      answer: "With light as energy, plants turn CO2 and water into sugar and give off oxygen.",
-    });
-
-    expect(result.data).toMatchObject({ isCorrect: true, score: 1 });
-  });
-
-  // The feedback said "Well done!" for a placement answer the key points marked wrong: written
-  // before them, it couldn't follow their verdict.
-  it("has the model decide every key point before it writes the feedback", async () => {
-    vi.mocked(generateText).mockResolvedValueOnce(
-      createGenerateTextResult({
-        feedback: "Inputs, energy source and products are all there.",
-        keyPoints: [
-          { met: true, number: 1 },
-          { met: true, number: 2 },
-          { met: true, number: 3 },
-        ],
-      }),
-    );
-
-    await gradeTypedAnswer({ ...openAnswerParams, answer: "Light turns CO2 into sugar and O2." });
-
-    await expect(requestedSchemaFields()).resolves.toStrictEqual(["keyPoints", "feedback"]);
-  });
-
   it("sends the language-practice rules and asks for corrections only in language practice", async () => {
     const grade = createGenerateTextResult({
       corrections: [],
@@ -356,6 +316,8 @@ describe(gradeTypedAnswer, () => {
     expect(practice.systemPrompt).toBe("Grade the answer.\nLanguage practice rules.");
     expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(practice.systemPrompt);
 
+    // Key points come before the feedback: written before them, the feedback said "Well done!" for
+    // a placement answer the key points marked wrong, since it couldn't follow their verdict.
     await expect(requestedSchemaFields()).resolves.toStrictEqual([
       "keyPoints",
       "corrections",

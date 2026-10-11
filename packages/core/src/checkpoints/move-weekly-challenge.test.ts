@@ -122,8 +122,16 @@ describe(moveWeeklyChallenge, () => {
     expect(restored.payload).toMatchObject({ planItemId: back.id });
   });
 
-  it("never moves the challenge onto or past the goal's date", async () => {
-    const { block, plan } = await setup();
+  it("moves only a pending weekly challenge of the learner's own, never onto or past the goal's date", async () => {
+    const [{ block, plan, user }, other] = await Promise.all([setup(), userFixture()]);
+
+    mockSession(other.id);
+
+    await expect(moveWeeklyChallenge({ blockId: block.id, input: {} })).resolves.toStrictEqual({
+      status: "notFound",
+    });
+
+    mockSession(user.id);
 
     // A test on the Monday the challenge would move to: moving the mock there no longer prepares.
     await prisma.goal.update({
@@ -137,19 +145,12 @@ describe(moveWeeklyChallenge, () => {
 
     await expect(challengeDates(plan.id)).resolves.toContain("2020-10-11");
     await expect(statusOf(block.id)).resolves.toBe("pending");
-  });
 
-  it("moves only a pending weekly challenge of the learner's own", async () => {
-    const [{ block, user }, other] = await Promise.all([setup(), userFixture()]);
-
-    mockSession(other.id);
-
-    await expect(moveWeeklyChallenge({ blockId: block.id, input: {} })).resolves.toStrictEqual({
-      status: "notFound",
-    });
-
-    mockSession(user.id);
-    await prisma.studySessionBlock.update({ data: { status: "active" }, where: { id: block.id } });
+    // Without the date, a started challenge stays where it is.
+    await Promise.all([
+      prisma.goal.update({ data: { targetDate: null }, where: { id: plan.goalId } }),
+      prisma.studySessionBlock.update({ data: { status: "active" }, where: { id: block.id } }),
+    ]);
 
     await expect(moveWeeklyChallenge({ blockId: block.id, input: {} })).resolves.toStrictEqual({
       status: "notMovable",

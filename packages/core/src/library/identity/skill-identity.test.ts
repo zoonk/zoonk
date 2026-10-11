@@ -13,7 +13,6 @@ import {
   mockSearchTerms,
   uniqueWord,
 } from "./_test-utils/identity-mocks";
-import { MAX_MATCHES_PER_TERM } from "./_utils/text-search-sql";
 import { resolveLibraryIdentity } from "./resolve-library-identity";
 
 vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
@@ -130,15 +129,11 @@ describe("skill identity search", () => {
     vi.resetAllMocks();
   });
 
-  it("ranks a skill matching a specific term first when a broad term matches too many to rank", async () => {
+  // How a broad term's matches are capped and ranked is `findRankedIds`', tested through
+  // `findSameExam`; this checks the decision gets the skills in that rank order.
+  it("hands the decision the skills it found, best first", async () => {
     const [broad, specific] = [uniqueWord(), uniqueWord()];
-
-    await Promise.all(
-      Array.from({ length: MAX_MATCHES_PER_TERM + 1 }, () =>
-        skillFixture({ name: `Read ${broad} charts` }),
-      ),
-    );
-
+    const partial = await skillFixture({ name: `Read ${broad} charts` });
     const target = await skillFixture({ name: `Read ${broad} ${specific} charts` });
 
     mockSearchTerms([broad, specific]);
@@ -146,9 +141,6 @@ describe("skill identity search", () => {
 
     await resolveLibraryIdentity({ request: skillRequest({ name: `Plot ${uniqueWord()}` }) });
 
-    const candidateIds = getCandidateIds(decisionSpy);
-
-    expect(candidateIds[0]).toBe(target.id);
-    expect(candidateIds).toHaveLength(5);
+    expect(getCandidateIds(decisionSpy)).toStrictEqual([target.id, partial.id]);
   });
 });

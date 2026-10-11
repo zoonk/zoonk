@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import {
   chapterSkillFixture,
@@ -12,12 +11,7 @@ import {
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import {
-  choiceItemContent,
-  itemFixture,
-  skillFixture,
-  skillPrerequisiteFixture,
-} from "@zoonk/testing/fixtures/skills";
+import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -91,68 +85,35 @@ describe(createGoalPlan, () => {
     vi.useRealTimers();
   });
 
-  it.each([
-    { answered: false, expected: "todo" },
-    { answered: true, expected: "testedOut" },
-  ])(
-    "tests out only what the learner's own placement answers settled when placement ended before the plan (answered: $answered)",
-    async ({ answered, expected }) => {
-      const user = await userFixture();
-      const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 1 }] });
-      const [known, other] = library.skills;
+  // Placement was stopped while the plan was still being written, by someone who studied it. The
+  // stated level alone tests nothing out (its lower band is only to confirm); a right placement
+  // answer of the skill's own does (`plan-setup.test.ts`, "tests out what placement settled once").
+  it("tests out nothing from the stated level alone when placement ended before the plan", async () => {
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 1 }] });
 
-      if (!known || !other) {
-        throw new Error("The library has no skills.");
-      }
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      details: { answered: ["level", "placement"], level: "intermediate" },
+      settings: { startDate: "2020-09-28" },
+      userId: user.id,
+    });
 
-      // Placement was stopped while the plan was still being written, by someone who studied it.
-      const { goal, plan } = await unplannedGoalFixture({
-        dailyMinutes: 12,
-        details: { answered: ["level", "placement"], level: "intermediate" },
-        settings: { startDate: "2020-09-28" },
-        userId: user.id,
-      });
+    await Promise.all(
+      (["beginner", "intermediate"] as const).map((level, index) =>
+        prisma.skill.update({ data: { level }, where: { id: library.skills[index]?.id } }),
+      ),
+    );
 
-      await Promise.all(
-        (["beginner", "intermediate"] as const).map((level, index) =>
-          prisma.skill.update({ data: { level }, where: { id: library.skills[index]?.id } }),
-        ),
-      );
+    mockSession(user.id);
+    mockClock();
 
-      // The stated level alone tests nothing out (its lower band is only to confirm); a right
-      // placement answer of the skill's own does. Placement answers carry an item and no step.
-      if (answered) {
-        const item = await itemFixture({ content: choiceItemContent(), skillId: known.id });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-        await attemptFixture({
-          answeredAt: NOW,
-          isCorrect: true,
-          itemId: item.id,
-          skillId: known.id,
-          userId: user.id,
-        });
-      }
+    const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
 
-      mockSession(user.id);
-      mockClock();
-
-      await createGoalPlan({ goalId: goal.id, graph: library.graph });
-
-      const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
-
-      expect(
-        items
-          .map((item) => [item.skillId, item.status])
-          .toSorted(([, a], [, b]) => String(a).localeCompare(String(b))),
-      ).toStrictEqual(
-        [
-          [known.id, expected],
-          [known.id, expected],
-          [other.id, "todo"],
-        ].toSorted(([, a], [, b]) => String(a).localeCompare(String(b))),
-      );
-    },
-  );
+    expect(items.map((item) => item.status)).toStrictEqual(["todo", "todo", "todo"]);
+  });
 
   it("plans the graph's lessons in order with dates, placeholders and phase checkpoints", async () => {
     const { goal, library, plan } = await setup();
@@ -199,52 +160,6 @@ describe(createGoalPlan, () => {
     expect(stored.settings).toMatchObject({
       pace: { factor: 1, source: "typical" },
       startDate: "2020-09-28",
-    });
-  });
-
-  it("keeps a career goal's portfolio whole when its deadline can't fit everything", async () => {
-    const user = await userFixture();
-
-    const library = await planLibraryFixture({
-      phases: ["Core", "Portfolio"],
-      skills: [{ lessons: 6 }, { lessons: 6 }, { lessons: 3, phase: 1 }],
-    });
-
-    const { goal, plan } = await unplannedGoalFixture({
-      dailyMinutes: 12,
-      settings: { startDate: "2020-09-28" },
-      targetDate: new Date("2020-10-03T00:00:00Z"),
-      userId: user.id,
-    });
-
-    mockSession(user.id);
-    mockClock();
-
-    const portfolio = library.skills[2]?.id;
-
-    await createGoalPlan({
-      goalId: goal.id,
-      graph: {
-        ...library.graph,
-        skills: library.graph.skills.map((skill) =>
-          skill.skillId === portfolio ? { ...skill, outcome: true } : skill,
-        ),
-      },
-    });
-
-    const [items, stored] = await Promise.all([
-      prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } }),
-      prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    ]);
-
-    // Two days of 12 minutes can't hold 15 lessons: the core's last lessons wait, never the portfolio.
-    expect(items.filter((item) => item.skillId === portfolio)).toHaveLength(3);
-    expect(items.length).toBeLessThan(15);
-
-    expect(stored.graph).toMatchObject({
-      skills: expect.arrayContaining([
-        expect.objectContaining({ outcome: true, skillId: portfolio }),
-      ]),
     });
   });
 

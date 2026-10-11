@@ -369,6 +369,11 @@ describe("more of one subject and less of another", () => {
       before.get("Matemática")?.lessons ?? 0,
     );
 
+    // The time comes from the subject the learner wants less of, never from another one.
+    expect(after.get("Direito")?.lessons ?? 0).toBeGreaterThanOrEqual(
+      before.get("Direito")?.lessons ?? 0,
+    );
+
     expect(changed?.effect).toMatchObject(countSavedChange({ after, before }));
   });
 
@@ -394,32 +399,26 @@ describe("more of one subject and less of another", () => {
   });
 
   // Rafaela's "less Linguistics" took 43 lessons from political science and administrative law and left
-  // linguistics' alone.
-  it.each([
-    { operations: [{ areas: ["Matemática"], kind: "reduceAreas" }] as LearnerPlanOperation[] },
-    { operations: MORE_LESS },
-  ])(
-    "takes the time from the subject the learner wants less of, never from another one",
-    async ({ operations }) => {
-      const { goal, plan } = await setup({ dailyMinutes: 25 });
-      const before = await readAreas(plan.id);
+  // linguistics' alone. With more of another subject, see "gives the subject asked for more lessons".
+  it("takes the time from the subject the learner wants less of, never from another one", async () => {
+    const { goal, plan } = await setup({ dailyMinutes: 25 });
+    const before = await readAreas(plan.id);
 
-      await change(goal.id, operations);
-      const after = await readAreas(plan.id);
+    await change(goal.id, [{ areas: ["Matemática"], kind: "reduceAreas" }]);
+    const after = await readAreas(plan.id);
 
-      expect(after.get("Matemática")?.lessons ?? 0).toBeLessThan(
-        before.get("Matemática")?.lessons ?? 0,
-      );
+    expect(after.get("Matemática")?.lessons ?? 0).toBeLessThan(
+      before.get("Matemática")?.lessons ?? 0,
+    );
 
-      expect(after.get("Direito")?.lessons ?? 0).toBeGreaterThanOrEqual(
-        before.get("Direito")?.lessons ?? 0,
-      );
+    expect(after.get("Direito")?.lessons ?? 0).toBeGreaterThanOrEqual(
+      before.get("Direito")?.lessons ?? 0,
+    );
 
-      expect(after.get("Inglês")?.lessons ?? 0).toBeGreaterThanOrEqual(
-        before.get("Inglês")?.lessons ?? 0,
-      );
-    },
-  );
+    expect(after.get("Inglês")?.lessons ?? 0).toBeGreaterThanOrEqual(
+      before.get("Inglês")?.lessons ?? 0,
+    );
+  });
 
   // Sofia's "more Civil, less Philosophy" opened today with 5 criminal procedure lessons and moved
   // ethics, her heaviest subject, from first to 18th.

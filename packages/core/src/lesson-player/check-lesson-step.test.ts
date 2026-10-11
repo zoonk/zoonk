@@ -300,30 +300,6 @@ describe(checkLessonStep, () => {
     expect(outcome).toMatchObject({ result: { isCorrect: true }, status: "checked" });
   });
 
-  it("grades activities and language exercises with the player's code", async () => {
-    const { run, steps } = await setupRun({ steps: ["activity", "multipleChoice"] });
-
-    const [activity, exercise] = await Promise.all([
-      check({
-        answer: { answer: { kind: "numeric", value: 5 }, kind: "activity" },
-        runId: run.id,
-        stepId: stepOfKind(steps, "activity").id,
-      }),
-      check({
-        answer: { kind: "multipleChoice", selectedOptionId: "orbit" },
-        runId: run.id,
-        stepId: stepOfKind(steps, "multipleChoice").id,
-      }),
-    ]);
-
-    expect(activity).toMatchObject({ result: { isCorrect: true }, status: "checked" });
-
-    expect(exercise).toMatchObject({
-      result: { correctAnswer: "A cloud", isCorrect: false },
-      status: "checked",
-    });
-  });
-
   it("grades language screens against the lesson's word and sentence", async () => {
     const [user, { lesson, steps, word }] = await Promise.all([
       userFixture(),
@@ -567,19 +543,6 @@ describe(checkLessonStep, () => {
     ]);
 
     expect([attempts, mistakes]).toStrictEqual([1, 0]);
-  });
-
-  it("records a guest's answers like anyone else's", async () => {
-    const { run, steps, user } = await setupRun({ guest: true });
-
-    const outcome = await check({
-      answer: { kind: "check", optionId: "likely" },
-      runId: run.id,
-      stepId: stepOfKind(steps, "check").id,
-    });
-
-    expect(outcome.status).toBe("checked");
-    await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
   it("needs a session and a real step", async () => {

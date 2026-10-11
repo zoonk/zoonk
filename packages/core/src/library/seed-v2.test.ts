@@ -828,47 +828,102 @@ describe("v2 seed", () => {
     });
 
     /*
-     * `pnpm dev:persona` writes copies on other days of their plans: a plan rewound to its first
-     * days or started earlier is the planner's too, with exam items in their windows.
+     * `pnpm dev:persona` writes copies on other days of their plans, rewound to the first days or
+     * later. Both checks below read the same copies, so they're written once.
      */
-    it("stores the plan a refresh keeps for a copy on another day of its plan", async () => {
-      const copies = await Promise.all(
-        PERSONA_COPY_DAYS.flatMap((day) =>
-          SEED_PERSONA_NAMES.map((persona) =>
+    describe("copies on other days of their plans", () => {
+      let copies: Awaited<ReturnType<typeof seedV2PersonaCopy>>[];
+
+      beforeAll(async () => {
+        copies = await Promise.all(
+          PERSONA_COPY_DAYS.flatMap((day) =>
+            SEED_PERSONA_NAMES.map((persona) =>
+              seedV2PersonaCopy({
+                copyKey: `day-${day}`,
+                day,
+                email: `seed-copy-${persona}-day-${day}@zoonk.test`,
+                persona,
+              }),
+            ),
+          ),
+        );
+      }, 120_000);
+
+      // A plan rewound to its first days or started earlier is the planner's too, with exam items
+      // in their windows.
+      it("stores the plan a refresh keeps for a copy on another day of its plan", async () => {
+        const userIds = copies.map((copy) => copy.userId);
+
+        const examPlans = await prisma.plan.findMany({
+          include: { items: { orderBy: { position: "asc" } } },
+          where: { goal: { kind: "exam", userId: { in: userIds } } },
+        });
+
+        await expect(listPlansRefreshChanges(userIds)).resolves.toStrictEqual([]);
+        expect(examPlans).toHaveLength(PERSONA_COPY_DAYS.length);
+        expect(examPlans.flatMap((plan) => listItemsOutsidePhases(plan))).toStrictEqual([]);
+      }, 120_000);
+
+      /*
+       * A phase challenge waits silently while its phase's skills hold fewer questions than it
+       * needs, so every challenge a persona or a `pnpm dev:persona` copy reaches has enough in the
+       * bank. A language goal's challenge is a call (so the late copies skip the language persona),
+       * and a phase whose skills all start in another phase has none to ask.
+       */
+      it("has the questions for every phase challenge a seeded learner reaches", async () => {
+        const lateCopies = await Promise.all(
+          SEED_PERSONA_NAMES.filter((persona) => persona !== "language").map((persona) =>
             seedV2PersonaCopy({
-              copyKey: `day-${day}`,
-              day,
-              email: `seed-copy-${persona}-day-${day}@zoonk.test`,
+              copyKey: `bank-${LATE_COPY_DAY}`,
+              day: LATE_COPY_DAY,
+              email: `seed-bank-${persona}-day-${LATE_COPY_DAY}@zoonk.test`,
               persona,
             }),
           ),
-        ),
-      );
+        );
 
-      const userIds = copies.map((copy) => copy.userId);
+        const copyIds = [...copies, ...lateCopies].map((copy) => copy.userId);
 
-      const examPlans = await prisma.plan.findMany({
-        include: { items: { orderBy: { position: "asc" } } },
-        where: { goal: { kind: "exam", userId: { in: userIds } } },
-      });
+        const goals = await prisma.goal.findMany({
+          where: { kind: { not: "language" }, userId: { in: [...learnerIds(), ...copyIds] } },
+        });
 
-      await expect(listPlansRefreshChanges(userIds)).resolves.toStrictEqual([]);
-      expect(examPlans).toHaveLength(PERSONA_COPY_DAYS.length);
-      expect(examPlans.flatMap((plan) => listItemsOutsidePhases(plan))).toStrictEqual([]);
-    }, 120_000);
+        const short = await Promise.all(
+          goals.map(async (goal) => {
+            const plan = await loadGoalPlan(goal.id);
 
-    it("stores the plan a refresh keeps when the clocks change while it runs", async () => {
-      const today = new Date();
-      const goingBack = await listRefreshChangesSeededAt(BEFORE_CLOCKS_GO_BACK);
-      const goingForward = await listRefreshChangesSeededAt(BEFORE_CLOCKS_GO_FORWARD);
+            const bosses = await prisma.planItem.findMany({
+              where: { kind: "boss", plan: { goalId: goal.id }, status: "todo" },
+            });
 
-      // The other checks read today's seed.
-      vi.setSystemTime(today);
-      await seedV2();
+            const counts = await Promise.all(
+              bosses.map(async (boss) => {
+                const skillIds = plan.skills
+                  .filter((skill) => skill.phase === boss.phase)
+                  .map((skill) => skill.id);
 
-      expect(goingBack).toStrictEqual([]);
-      expect(goingForward).toStrictEqual([]);
-    }, 120_000);
+                const candidates = await loadCheckpointCandidates({
+                  examBlueprintId: goal.examBlueprintId,
+                  skillIds,
+                  userId: goal.userId,
+                });
+
+                const asked = selectCheckpointItems({ candidates, skillIds }).length;
+
+                return skillIds.length === 0 || asked >= MIN_CHECKPOINT_QUESTIONS
+                  ? []
+                  : [`${goal.title} phase ${boss.phase}: ${asked} questions`];
+              }),
+            );
+
+            return counts.flat();
+          }),
+        );
+
+        expect(goals.length).toBeGreaterThan(copyIds.length);
+        expect(short.flat()).toStrictEqual([]);
+      }, 120_000);
+    });
 
     /*
      * A plan its date leaves short of time stops where the time runs out (Marcos covers part of
@@ -904,69 +959,6 @@ describe("v2 seed", () => {
       expect(bosses.length).toBeGreaterThan(0);
       expect(missing).toStrictEqual([]);
     });
-
-    /*
-     * A phase challenge waits silently while its phase's skills hold fewer questions than it needs,
-     * so every challenge a persona or a `pnpm dev:persona` copy reaches has enough in the bank. A
-     * language goal's challenge is a call, and a phase whose skills all start in another phase has
-     * none to ask.
-     */
-    it("has the questions for every phase challenge a seeded learner reaches", async () => {
-      const copies = await Promise.all(
-        [...PERSONA_COPY_DAYS, LATE_COPY_DAY].flatMap((day) =>
-          SEED_PERSONA_NAMES.map((persona) =>
-            seedV2PersonaCopy({
-              copyKey: `bank-${day}`,
-              day,
-              email: `seed-bank-${persona}-day-${day}@zoonk.test`,
-              persona,
-            }),
-          ),
-        ),
-      );
-
-      const goals = await prisma.goal.findMany({
-        where: {
-          kind: { not: "language" },
-          userId: { in: [...learnerIds(), ...copies.map((copy) => copy.userId)] },
-        },
-      });
-
-      const short = await Promise.all(
-        goals.map(async (goal) => {
-          const plan = await loadGoalPlan(goal.id);
-
-          const bosses = await prisma.planItem.findMany({
-            where: { kind: "boss", plan: { goalId: goal.id }, status: "todo" },
-          });
-
-          const counts = await Promise.all(
-            bosses.map(async (boss) => {
-              const skillIds = plan.skills
-                .filter((skill) => skill.phase === boss.phase)
-                .map((skill) => skill.id);
-
-              const candidates = await loadCheckpointCandidates({
-                examBlueprintId: goal.examBlueprintId,
-                skillIds,
-                userId: goal.userId,
-              });
-
-              const asked = selectCheckpointItems({ candidates, skillIds }).length;
-
-              return skillIds.length === 0 || asked >= MIN_CHECKPOINT_QUESTIONS
-                ? []
-                : [`${goal.title} phase ${boss.phase}: ${asked} questions`];
-            }),
-          );
-
-          return counts.flat();
-        }),
-      );
-
-      expect(goals.length).toBeGreaterThan(copies.length);
-      expect(short.flat()).toStrictEqual([]);
-    }, 120_000);
 
     /*
      * The app rebuilds a learner's session for the day with blocks of its own, which hold the
@@ -1195,28 +1187,6 @@ describe("v2 seed", () => {
       expect(estimate?.scale).toBe("irt");
     });
 
-    // Seeded on a Sunday, Ana's "last Sunday" was today, so she had no mock taken.
-    it("gives the exam persona a mock taken when the seed runs on a Sunday", async () => {
-      const today = new Date();
-      vi.setSystemTime(SUNDAY_IN_SAO_PAULO);
-      await seedV2();
-
-      const { goalId } = learners.exam;
-      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-
-      const [history, estimate] = await Promise.all([
-        loadExamHistory({ goalId, today: goalToday(goal) }),
-        loadGoalScoreEstimate({ goal, ledgerMocks: [] }),
-      ]);
-
-      // The other checks read today's seed.
-      vi.setSystemTime(today);
-      await seedV2();
-
-      expect(history.mocks).toHaveLength(1);
-      expect(estimate?.scale).toBe("irt");
-    }, 120_000);
-
     /*
      * Ana's next mock was seeded on next Sunday, off the planner's days for her 45 minutes a day
      * (a mock every four weeks), so the first change that planned her days again moved it.
@@ -1427,6 +1397,48 @@ describe("v2 seed", () => {
       expect(buddy).toMatchObject({ buddyGlasses: "star", buddyKind: "otto", memoryEnabled: true });
       expect(stocks).toMatchObject({ dailyLimitMinutes: 60, memoryEnabled: true });
       expect(guest.isAnonymous).toBe(true);
+    });
+
+    /*
+     * These checks seed again at other moments; the other checks read today's seed, so it's
+     * written again once they're done.
+     */
+    describe("seeded at another moment", () => {
+      let today: Date;
+
+      beforeAll(() => {
+        today = new Date();
+      });
+
+      afterAll(async () => {
+        vi.setSystemTime(today);
+        await seedV2();
+      }, 120_000);
+
+      it("stores the plan a refresh keeps when the clocks change while it runs", async () => {
+        const goingBack = await listRefreshChangesSeededAt(BEFORE_CLOCKS_GO_BACK);
+        const goingForward = await listRefreshChangesSeededAt(BEFORE_CLOCKS_GO_FORWARD);
+
+        expect(goingBack).toStrictEqual([]);
+        expect(goingForward).toStrictEqual([]);
+      }, 120_000);
+
+      // Seeded on a Sunday, Ana's "last Sunday" was today, so she had no mock taken.
+      it("gives the exam persona a mock taken when the seed runs on a Sunday", async () => {
+        vi.setSystemTime(SUNDAY_IN_SAO_PAULO);
+        await seedV2();
+
+        const { goalId } = learners.exam;
+        const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+        const [history, estimate] = await Promise.all([
+          loadExamHistory({ goalId, today: goalToday(goal) }),
+          loadGoalScoreEstimate({ goal, ledgerMocks: [] }),
+        ]);
+
+        expect(history.mocks).toHaveLength(1);
+        expect(estimate?.scale).toBe("irt");
+      }, 120_000);
     });
   });
 });

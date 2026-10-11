@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -14,7 +16,6 @@ import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answe
 import { type LessonQuestionContextInput, type TutorTarget } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
-import { offerTutorTool } from "./offer-tutor-tool";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
@@ -66,6 +67,13 @@ async function plannedGoal(userId: string) {
   }
 
   return { chapter, goal };
+}
+
+/** A learner's goal with a plan row and no lessons, for screens that read none of its lessons. */
+async function goalWithEmptyPlan(userId: string) {
+  const goal = await goalFixture({ title: "Get a UX job", userId });
+  await planFixture({ goalId: goal.id, graph: { phases: [], skills: [] } });
+  return goal;
 }
 
 /** The learner asks on a screen and the answer's generation claims the question. */
@@ -181,25 +189,9 @@ describe("the buddy on a screen inside a goal", () => {
     });
   });
 
-  it("offers the app's features from a chapter's question", async () => {
-    const user = await userFixture();
-    const { chapter } = await plannedGoal(user.id);
-    mockSession(user.id);
-
-    const { claim, questionId } = await askAndClaim({
-      context: { kind: "chapter" },
-      question: "How am I doing in numbers?",
-      target: { chapterId: chapter.id, kind: "chapter" },
-    });
-
-    await expect(
-      offerTutorTool({ questionId, revision: claim.revision, tool: "stats" }),
-    ).resolves.toStrictEqual({ offer: { kind: "stats" }, status: "offered" });
-  });
-
   it("reads the plan with the lesson screen a learner asks about", async () => {
     const { lesson, steps, user } = await setupPlayableLesson();
-    const { goal } = await plannedGoal(user.id);
+    const goal = await goalWithEmptyPlan(user.id);
     mockSession(user.id);
     const step = stepOfKind(steps, "explanation");
 
@@ -219,8 +211,7 @@ describe("the buddy on a screen inside a goal", () => {
   });
 
   it("saves the buddy's answer without em dashes, as the learner read it", async () => {
-    const user = await userFixture();
-    const { chapter } = await plannedGoal(user.id);
+    const [user, chapter] = await Promise.all([userFixture(), libraryChapterFixture()]);
     mockSession(user.id);
 
     const target = { chapterId: chapter.id, kind: "chapter" } as const;
@@ -245,8 +236,7 @@ describe("the buddy on a screen inside a goal", () => {
   });
 
   it("answers about a chapter alone for a learner without a goal, with no plan to change", async () => {
-    const [user, owner] = await Promise.all([userFixture(), userFixture()]);
-    const { chapter } = await plannedGoal(owner.id);
+    const [user, chapter] = await Promise.all([userFixture(), libraryChapterFixture()]);
     mockSession(user.id);
 
     const { claim, questionId } = await askAndClaim({

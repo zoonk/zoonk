@@ -333,8 +333,8 @@ describe("mocks taken any time", () => {
     expect(second.result?.previous).toBe(100);
   });
 
-  it("grades it on its own: its answers, Brain Power, a ledger row and each topic", async () => {
-    const { goal, skills, user } = await anytimeSetup();
+  it("grades it on its own, then offers to skip the lessons of topics it showed the learner knows", async () => {
+    const { goal, plan, skills, user } = await anytimeSetup();
     const id = await startMath(goal.id);
     const [first, second] = skills;
 
@@ -356,11 +356,13 @@ describe("mocks taken any time", () => {
     ).toStrictEqual({ [first?.id ?? ""]: [4, 4], [second?.id ?? ""]: [0, 4] });
 
     expect(mock.review).toHaveLength(4);
+    expect(mock.adapt?.skip).toStrictEqual({ lessons: 1, topics: [first?.name] });
 
-    const [attempts, event, progress] = await Promise.all([
+    const [attempts, event, progress, testedOut] = await Promise.all([
       prisma.attempt.findMany({ where: { mockExamId: id } }),
       prisma.learningEvent.findFirst({ where: { goalId: goal.id, kind: "mock" } }),
       prisma.userProgress.findUnique({ where: { userId: user.id } }),
+      prisma.planItem.count({ where: { planId: plan.id, status: "testedOut" } }),
     ]);
 
     expect(attempts).toHaveLength(8);
@@ -373,24 +375,9 @@ describe("mocks taken any time", () => {
     });
 
     expect(Number(progress?.totalBrainPower)).toBeGreaterThan(0);
-  });
-
-  it("offers to skip the lessons of topics it showed the learner knows, applied once they say so", async () => {
-    const { goal, plan, skills } = await anytimeSetup();
-    const id = await startMath(goal.id);
-    const [first, second] = skills;
-
-    await answerSection({ id, rightOn: new Set([first?.id ?? ""]) });
-    await finishMock({ blockId: id, input: { timeZone: UTC } });
-
-    const finished = await readMock(id);
-
-    expect(finished.adapt?.skip).toStrictEqual({ lessons: 1, topics: [first?.name] });
 
     // Nothing moves until the learner says yes.
-    await expect(
-      prisma.planItem.count({ where: { planId: plan.id, status: "testedOut" } }),
-    ).resolves.toBe(0);
+    expect(testedOut).toBe(0);
 
     await expect(
       adaptPlanFromMock({ blockId: id, input: { offer: "skip", timeZone: UTC } }),
@@ -536,22 +523,6 @@ describe("mocks taken any time", () => {
     await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
       view: { options: [{ kind: "full" }, { kind: "half" }] },
     });
-  });
-
-  it("comes with Plus: the free plan sees what it would take", async () => {
-    const { goal } = await anytimeSetup({ plus: false });
-
-    await expect(getMockOptions({ goalId: goal.id })).resolves.toMatchObject({
-      view: { access: "plusRequired" },
-    });
-
-    await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE, timeZone: UTC } }),
-    ).resolves.toStrictEqual({ status: "plusRequired" });
-
-    await expect(
-      requestMockQuestions({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
-    ).resolves.toStrictEqual({ status: "plusRequired" });
   });
 });
 

@@ -75,7 +75,15 @@ describe("an exam window's challenge", () => {
     async () => {
       // A Plus learner, whose exam days outlast the free trial.
       const life = { ...(await generateSimLife({ fixture: "camara", seed: 1 })), subscribed: true };
-      const runner = await startDbRunner({ check: () => [], life, questions: true, trace: false });
+
+      const runner = await startDbRunner({
+        check: () => [],
+        life,
+        questions: true,
+        reads: { preparation: false, screens: false },
+        trace: false,
+      });
+
       const { goal, library } = runner;
 
       await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });

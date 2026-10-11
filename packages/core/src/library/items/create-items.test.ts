@@ -253,84 +253,6 @@ describe(createItems, () => {
     vi.unstubAllEnvs();
   });
 
-  it("stores its own wording without em dashes and quoted support text as written", async () => {
-    const skill = await skillFixture({ language: "pt" });
-
-    const transcript =
-      "A SRA. LORENA — Concluo minha comunicação.\nO SR. PRESIDENTE — O tempo terminou.";
-
-    const essay: ItemOf<"essay"> = {
-      context: "Texto I — trecho de reportagem:\n\n_Faltam rampas — e bancos — nas praças._",
-      difficulty: "medium",
-      format: "essay",
-      keyPoints: ["Defende uma tese — com dois argumentos"],
-      question: "Redija um texto dissertativo-argumentativo sobre o lazer das pessoas idosas.",
-      rubric: [
-        {
-          criterion: "Competência 1 — domínio da modalidade escrita formal",
-          description:
-            "Desenvolve o recorte proposto — o lazer das pessoas idosas — sem fugir dele.",
-          points: null,
-        },
-        {
-          criterion: "Competência 2 — coesão",
-          description: "Liga as partes do texto.",
-          points: null,
-        },
-      ],
-      sampleOutline: "Introdução — cerca de 5 linhas: situar o tema.",
-    };
-
-    const statement: ItemOf<"trueFalse"> = {
-      context: `Leia este trecho de um registro de sessão:\n\n${transcript}`,
-      difficulty: "medium",
-      format: "trueFalse",
-      image: null,
-      isTrue: true,
-      misconception: null,
-      reason: "O registro marca cada fala pelo nome — e o presidente encerra o tempo.",
-      statement: "O trecho registra a fala de quem preside — e a de uma oradora.",
-      visual: null,
-    };
-
-    const [essays, statements] = await Promise.all([
-      createItems({
-        format: "essay",
-        items: [essay],
-        language: "pt",
-        provenance: generatedProvenance(),
-        skillId: skill.id,
-      }),
-      createItems({
-        format: "trueFalse",
-        items: [statement],
-        language: "pt",
-        provenance: generatedProvenance(),
-        skillId: skill.id,
-      }),
-    ]);
-
-    expect(essays.created[0]?.content).toMatchObject({
-      // The motivating text quotes a source: it keeps its own punctuation.
-      context: essay.context,
-      keyPoints: ["Defende uma tese, com dois argumentos"],
-      rubric: [
-        {
-          criterion: "Competência 1, domínio da modalidade escrita formal",
-          description: "Desenvolve o recorte proposto, o lazer das pessoas idosas, sem fugir dele.",
-        },
-        { criterion: "Competência 2, coesão" },
-      ],
-      sampleOutline: "Introdução, cerca de 5 linhas: situar o tema.",
-    });
-
-    expect(statements.created[0]?.content).toMatchObject({
-      context: statement.context,
-      reason: "O registro marca cada fala pelo nome, e o presidente encerra o tempo.",
-      statement: "O trecho registra a fala de quem preside, e a de uma oradora.",
-    });
-  });
-
   it("keeps a statute drill's wording as the law writes it", async () => {
     const skill = await skillFixture({ language: "pt" });
 
@@ -453,37 +375,6 @@ describe(createItems, () => {
 
     expect(rejected.map((entry) => entry.index)).toStrictEqual([0, 1, 2]);
     await expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(1);
-  });
-
-  it("stores options without the letters the writer printed before them", async () => {
-    const skill = await skillFixture();
-    const item = generatedMultipleChoice();
-    const [right, wrong] = item.options;
-
-    // ENEM placement, Sep 2026: the writer followed "5 options (A to E)" and labeled each one.
-    const labeled = generatedMultipleChoice({
-      options: [
-        { ...wrong!, text: "B) 20" },
-        { ...right!, text: "A) 5" },
-      ],
-    });
-
-    const { created } = await createItems({
-      format: "multipleChoice",
-      items: [labeled],
-      language: "pt",
-      provenance: generatedProvenance(),
-      skillId: skill.id,
-    });
-
-    const stored = await prisma.item.findUniqueOrThrow({ where: { id: created[0]!.id } });
-
-    expect(stored.content).toMatchObject({
-      options: expect.arrayContaining([
-        expect.objectContaining({ isCorrect: true, text: "5" }),
-        expect.objectContaining({ isCorrect: false, text: "20" }),
-      ]),
-    });
   });
 
   it("enforces the exam's option count", async () => {

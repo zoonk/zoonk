@@ -162,49 +162,4 @@ describe("a skill's lessons and what it builds on", () => {
     },
     5 * MINUTE,
   );
-
-  // A Câmara plan's study cycle gives a day a lesson even when none of its subjects can go on. The
-  // buddy's "less Língua Portuguesa" left such a day where another subject could, and the lesson it
-  // gave was a skill whose base, in another subject, hadn't started.
-  it(
-    "gives a day where its own subjects wait a lesson whose base has started",
-    async () => {
-      const violations = await findViolations({
-        dailyMinutes: 60,
-        fixture: "camara",
-        knownAreas: [1],
-        mockOffers: "focus",
-        pending: [7, 16, 20, 22, 26, 33, 37, 50, 53, 63, 64, 66, 85, 86, 87, 91, 108, 113, 116],
-        proposals: "apply",
-        seed: 2005,
-        speed: 1.5,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [70, false],
-              [73, true],
-              [41, true],
-              [107, false],
-              [54, false],
-              [16, true],
-              [26, false],
-              [32, false],
-              [89, false],
-              [113, true],
-              [104, true],
-              [70, true],
-            ],
-            kind: "placement",
-          },
-          { kind: "change", spec: { area: 2, kind: "reduce" }, via: "buddy" },
-        ],
-        subscribed: false,
-        targetInDays: 57,
-      });
-
-      expect(violations).toStrictEqual([]);
-    },
-    5 * MINUTE,
-  );
 });

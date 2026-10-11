@@ -87,6 +87,7 @@ function findBases(attrs: Partial<Parameters<typeof findPlanBases>[0]> = {}) {
 }
 
 describe(findPlanBases, () => {
+  // Never cells, which the exam asks most, nor water, which nothing builds on.
   it("lists the skills a more asked topic builds on, with what each way of studying them takes", () => {
     expect(findBases()).toStrictEqual([
       {
@@ -100,13 +101,6 @@ describe(findPlanBases, () => {
         skillId: "living",
       },
     ]);
-  });
-
-  it("never offers a topic the exam asks most, nor one nothing builds on", () => {
-    const ids = findBases().map((base) => base.skillId);
-
-    expect(ids).not.toContain("cells");
-    expect(ids).not.toContain("water");
   });
 
   it("has no bases for a goal that neither weighs its topics nor has outcome skills", () => {

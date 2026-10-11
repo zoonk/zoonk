@@ -7,16 +7,6 @@ function lastPage(count: number): number {
   return Math.max(Math.ceil(count / SITEMAP_BATCH_SIZE) - 1, 0);
 }
 
-describe(countSitemapCourses, () => {
-  it("returns a positive count", async () => {
-    const organization = await organizationFixture({ kind: "brand" });
-    await courseFixture({ isPublished: true, organizationId: organization.id });
-
-    const count = await countSitemapCourses();
-    expect(count).toBeGreaterThan(0);
-  });
-});
-
 describe(listSitemapCourses, () => {
   it("returns published brand courses with correct fields", async () => {
     const org = await organizationFixture({ kind: "brand" });

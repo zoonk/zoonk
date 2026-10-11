@@ -1,14 +1,26 @@
-import { prisma } from "@zoonk/db";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
-import { userFixture } from "@zoonk/testing/fixtures/users";
+import { randomUUID } from "node:crypto";
+import { type ExamBlueprint } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
 import { getExamCalendar, getGoalDateKind } from "./exam-calendar";
 
 const citation = { passage: "", sourceId: "notice" };
 
-/** A notice's edition with its exam days, all at 13:30 in Brasília. */
-function examBlueprint({ days, year }: { days: string[]; year: number }) {
-  return examBlueprintFixture({
+/** A notice's edition with its exam days, all at 13:30 in Brasília; `ownerId` makes it a learner's own. */
+function examBlueprint({
+  days,
+  ownerId = null,
+  year,
+}: {
+  days: string[];
+  ownerId?: string | null;
+  year: number;
+}): ExamBlueprint {
+  const generatedAt = new Date("2026-09-01T00:00:00Z");
+
+  return {
+    board: null,
+    country: "BR",
+    createdAt: generatedAt,
     edition: {
       citations: [],
       dates: days.map((date, index) => ({
@@ -24,15 +36,34 @@ function examBlueprint({ days, year }: { days: string[]; year: number }) {
       timeZone: "America/Sao_Paulo",
       year,
     },
-  });
+    examDate: null,
+    generatedAt,
+    id: randomUUID(),
+    identityKey: `test-exam-${randomUUID()}`,
+    language: "pt",
+    model: "test",
+    name: "Test Exam",
+    nextCheckAt: null,
+    ownerId,
+    promptVersion: "test",
+    registrationEndsAt: null,
+    role: null,
+    runId: "test",
+    sourceId: null,
+    structure: {},
+    topicFrequency: null,
+    updatedAt: generatedAt,
+    validUntil: null,
+    visibility: ownerId ? "private" : "public",
+  };
 }
 
 const STARTED = new Date("2026-09-27T15:00:00Z");
 const GOAL = { createdAt: STARTED, details: {}, targetDate: null, timezone: "America/Sao_Paulo" };
 
 describe(getExamCalendar, () => {
-  it("uses the notice's exam days for an edition still ahead", async () => {
-    const blueprint = await examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
+  it("uses the notice's exam days for an edition still ahead", () => {
+    const blueprint = examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
 
     expect(getExamCalendar({ blueprint, goal: GOAL })).toStrictEqual({
       days: [
@@ -49,8 +80,8 @@ describe(getExamCalendar, () => {
     expect(getExamCalendar({ blueprint, goal: named })).toMatchObject({ estimated: false });
   });
 
-  it("estimates the days of the year the learner named when the notice is another year's", async () => {
-    const blueprint = await examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
+  it("estimates the days of the year the learner named when the notice is another year's", () => {
+    const blueprint = examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
     const goal = { ...GOAL, details: { examName: "ENEM", examYear: 2028 } };
 
     expect(getExamCalendar({ blueprint, goal })).toStrictEqual({
@@ -72,9 +103,9 @@ describe(getExamCalendar, () => {
     });
   });
 
-  it("moves the estimated days to the learner's date near them, keeping every day and start time", async () => {
+  it("moves the estimated days to the learner's date near them, keeping every day and start time", () => {
     // She knows the first day is a week earlier than past editions suggest: day 2 follows it.
-    const blueprint = await examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
+    const blueprint = examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
     const goal = { ...GOAL, details: { examName: "ENEM", examYear: 2028 } };
     const earlier = { ...goal, targetDate: new Date("2028-11-05T00:00:00Z") };
 
@@ -97,8 +128,8 @@ describe(getExamCalendar, () => {
     });
   });
 
-  it("shows the date the plan counts down to when it isn't one of the notice's days", async () => {
-    const blueprint = await examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
+  it("shows the date the plan counts down to when it isn't one of the notice's days", () => {
+    const blueprint = examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
     const goal = { ...GOAL, targetDate: new Date("2027-03-14T00:00:00Z") };
 
     expect(getExamCalendar({ blueprint, goal })).toStrictEqual({
@@ -109,10 +140,10 @@ describe(getExamCalendar, () => {
     });
   });
 
-  it("marks the start of the month the learner named as her month when the notice gives another month", async () => {
+  it("marks the start of the month the learner named as her month when the notice gives another month", () => {
     // She said "March"; the notice's official day is in January: the plan keeps her month until
     // she takes the notice's day, and every screen says the month, not a day in it.
-    const blueprint = await examBlueprint({ days: ["2027-01-10"], year: 2026 });
+    const blueprint = examBlueprint({ days: ["2027-01-10"], year: 2026 });
 
     const goal = {
       ...GOAL,
@@ -128,8 +159,8 @@ describe(getExamCalendar, () => {
     });
   });
 
-  it("estimates the next edition once the notice's days all passed before the goal started", async () => {
-    const blueprint = await examBlueprint({ days: ["2025-07-27"], year: 2025 });
+  it("estimates the next edition once the notice's days all passed before the goal started", () => {
+    const blueprint = examBlueprint({ days: ["2025-07-27"], year: 2025 });
 
     expect(getExamCalendar({ blueprint, goal: GOAL })).toMatchObject({
       days: [{ date: "2027-07-25", label: "Day 1", startTime: "13:30" }],
@@ -137,17 +168,9 @@ describe(getExamCalendar, () => {
     });
   });
 
-  it("never estimates a class test's day from the learner's old material: its own date counts", async () => {
+  it("never estimates a class test's day from the learner's old material: its own date counts", () => {
     // Last year's slides name last year's test day: no edition comes after it.
-    const [slides, learner] = await Promise.all([
-      examBlueprint({ days: ["2025-10-09"], year: 2025 }),
-      userFixture(),
-    ]);
-
-    const material = await prisma.examBlueprint.update({
-      data: { ownerId: learner.id, visibility: "private" },
-      where: { id: slides.id },
-    });
+    const material = examBlueprint({ days: ["2025-10-09"], ownerId: randomUUID(), year: 2025 });
 
     const dated = { ...GOAL, targetDate: new Date("2026-10-09T00:00:00Z") };
 
@@ -164,7 +187,7 @@ describe(getExamCalendar, () => {
     });
   });
 
-  it("uses the goal's own date for an exam whose notice has no days", async () => {
+  it("uses the goal's own date for an exam whose notice has no days", () => {
     const dated = { ...GOAL, targetDate: new Date("2027-03-14T00:00:00Z") };
 
     expect(getExamCalendar({ blueprint: null, goal: dated })).toStrictEqual({
@@ -177,8 +200,8 @@ describe(getExamCalendar, () => {
     expect(getExamCalendar({ blueprint: null, goal: GOAL }).days).toStrictEqual([]);
   });
 
-  it("falls back to the goal's own date when the year the learner named has passed", async () => {
-    const blueprint = await examBlueprint({ days: ["2026-11-08"], year: 2026 });
+  it("falls back to the goal's own date when the year the learner named has passed", () => {
+    const blueprint = examBlueprint({ days: ["2026-11-08"], year: 2026 });
 
     const goal = {
       ...GOAL,
@@ -198,11 +221,9 @@ function goalOn(date: string, details: object = {}) {
 }
 
 describe(getGoalDateKind, () => {
-  it("tells an estimated day, the month the learner named and a day of their own apart", async () => {
-    const [notice, january] = await Promise.all([
-      examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 }),
-      examBlueprint({ days: ["2027-01-10"], year: 2026 }),
-    ]);
+  it("tells an estimated day, the month the learner named and a day of their own apart", () => {
+    const notice = examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
+    const january = examBlueprint({ days: ["2027-01-10"], year: 2026 });
 
     // ENEM 2028: the plan counts down to the day the notice's timing gives.
     expect(

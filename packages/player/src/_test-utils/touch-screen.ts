@@ -1,18 +1,25 @@
-// The Playwright provider's types give `cdp()` its session's `send`.
-/// <reference types="@vitest/browser-playwright" />
 import { expect } from "vitest";
-import { type Locator, cdp } from "vitest/browser";
+import { type Locator, commands } from "vitest/browser";
 
 /**
  * A finger on the touch screen (`*.touch.browser.test.tsx`), sent through the browser's own touch
  * input: the page scrolls and cancels pointers the way a phone does, which synthetic touch events
- * skip.
+ * skip. Each gesture's touches go to the browser's driver in one call (the `touch` command in
+ * vitest.config.mts).
  */
 
 /** Longer than a press takes to lift an item: shorter touches scroll the page instead. */
 const HOLD_MS = 400;
 
-const MOVE_STEPS = 12;
+/** A drag's moves: enough for what's under the finger to follow it onto its target. */
+const DRAG_MOVES = 12;
+
+/**
+ * A swipe's moves: the page reads a swipe from where the finger lands and lifts, and the browser
+ * starts scrolling or a control starts following it on the first move. The browser hands the page
+ * one touch move per frame, so every move adds a frame to each swipe.
+ */
+const SWIPE_MOVES = 4;
 
 /**
  * How long a swipe's finger is on the glass, stamped on its touches: a quick flick, however long
@@ -21,6 +28,24 @@ const MOVE_STEPS = 12;
 const FLICK_MS = 200;
 
 type Point = { x: number; y: number };
+
+/**
+ * One touch event, `waitMs` after the one before when given. `at` (ms since the epoch) is when the
+ * finger did it; without it, it's when the browser gets the event.
+ */
+type TouchStep = {
+  at?: number;
+  touchPoints: Point[];
+  type: "touchEnd" | "touchMove" | "touchStart";
+  waitMs?: number;
+};
+
+declare module "vitest/browser" {
+  // oxlint-disable-next-line typescript/consistent-type-definitions -- Only an interface merges.
+  interface BrowserCommands {
+    touch: (steps: TouchStep[]) => Promise<void>;
+  }
+}
 
 /** An element's center on the page that holds the test's frame, which touch input addresses. */
 function centerOf(locator: Locator): Point {
@@ -34,43 +59,30 @@ function centerOf(locator: Locator): Point {
 }
 
 /**
- * One touch event. `at` (ms since the epoch) is when the finger did it; without it, it's when the
- * browser gets the event.
+ * The finger's `moves` in even steps from `start` to `end`, as a drag or a swipe makes them, each
+ * step at `at(step)` when given.
  */
-async function touch(
-  type: "touchEnd" | "touchMove" | "touchStart",
-  touchPoints: Point[],
-  at?: number,
-) {
-  await cdp().send("Input.dispatchTouchEvent", {
-    touchPoints,
-    type,
-    ...(at === undefined ? {} : { timestamp: at / 1000 }),
-  });
-}
-
-/**
- * Moves the finger in even steps from `start` to `end`, as a drag or a swipe does, each step at
- * `at(step)` when given.
- */
-async function moveFinger({
+function moveFinger({
   at,
   end,
+  moves,
   start,
 }: {
   at?: (step: number) => number;
   end: Point;
+  moves: number;
   start: Point;
-}) {
-  for (let step = 1; step <= MOVE_STEPS; step += 1) {
+}): TouchStep[] {
+  return Array.from({ length: moves }, (_, index) => {
+    const step = index + 1;
+
     const point = {
-      x: start.x + ((end.x - start.x) * step) / MOVE_STEPS,
-      y: start.y + ((end.y - start.y) * step) / MOVE_STEPS,
+      x: start.x + ((end.x - start.x) * step) / moves,
+      y: start.y + ((end.y - start.y) * step) / moves,
     };
 
-    // oxlint-disable-next-line no-await-in-loop -- A finger moves through each point in turn.
-    await touch("touchMove", [point], at?.(step));
-  }
+    return { at: at?.(step), touchPoints: [point], type: "touchMove" };
+  });
 }
 
 /**
@@ -84,15 +96,15 @@ export async function holdAndDrag({ from, to }: { from: Locator; to: Locator }) 
   await expect.element(from).toBeInViewport();
 
   const start = centerOf(from);
-  await touch("touchStart", [start]);
+  const [firstMove, ...moves] = moveFinger({ end: centerOf(to), moves: DRAG_MOVES, start });
 
-  // The hold is the gesture itself, not a wait for the page: a finger rests before it drags.
-  await new Promise((resolve) => {
-    setTimeout(resolve, HOLD_MS);
-  });
-
-  await moveFinger({ end: centerOf(to), start });
-  await touch("touchEnd", []);
+  await commands.touch([
+    { touchPoints: [start], type: "touchStart" },
+    // The hold is the gesture itself, not a wait for the page: a finger rests before it drags.
+    ...(firstMove ? [{ ...firstMove, waitMs: HOLD_MS }] : []),
+    ...moves,
+    { touchPoints: [], type: "touchEnd" },
+  ]);
 }
 
 /**
@@ -107,18 +119,13 @@ export async function swipeFrom(
   await expect.element(from).toBeVisible();
   const start = centerOf(from);
   const startedAt = Date.now();
-  const at = (step: number) => startedAt + (FLICK_MS * step) / (MOVE_STEPS + 1);
+  const at = (step: number) => startedAt + (FLICK_MS * step) / (SWIPE_MOVES + 1);
 
-  await touch("touchStart", [start], startedAt);
-  await moveFinger({ at, end: { x: start.x + x, y: start.y + y }, start });
-
-  if (liftReadAfterMs > 0) {
-    await new Promise((resolve) => {
-      setTimeout(resolve, liftReadAfterMs);
-    });
-  }
-
-  await touch("touchEnd", [], startedAt + FLICK_MS);
+  await commands.touch([
+    { at: startedAt, touchPoints: [start], type: "touchStart" },
+    ...moveFinger({ at, end: { x: start.x + x, y: start.y + y }, moves: SWIPE_MOVES, start }),
+    { at: startedAt + FLICK_MS, touchPoints: [], type: "touchEnd", waitMs: liftReadAfterMs },
+  ]);
 }
 
 /** A quick finger swipe up from an element, with no hold first. */
@@ -130,6 +137,8 @@ export async function tap(locator: Locator) {
   await expect.element(locator).toBeVisible();
   const point = centerOf(locator);
 
-  await touch("touchStart", [point]);
-  await touch("touchEnd", []);
+  await commands.touch([
+    { touchPoints: [point], type: "touchStart" },
+    { touchPoints: [], type: "touchEnd" },
+  ]);
 }

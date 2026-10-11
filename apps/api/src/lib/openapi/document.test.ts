@@ -7,9 +7,7 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { createOpenAPIDocument } from "./create-document";
 import { openAPIDocument } from "./document";
-import { courseResultSchema } from "./schemas/courses";
 import { serializedStepSchema } from "./schemas/language-exercise";
-import { meResponseSchema } from "./schemas/me";
 import {
   chapterCompletionResponseSchema,
   courseCompletionResponseSchema,
@@ -17,7 +15,6 @@ import {
 } from "./schemas/progress";
 
 const UUID = "00000000-0000-4000-8000-000000000001";
-const ISO_DATE = "2026-07-25T12:00:00.000Z";
 const DOCUMENTED_METHODS = ["delete", "get", "patch", "post", "put"] as const;
 
 const CANONICAL_OPERATIONS = [
@@ -416,24 +413,12 @@ describe("OpenAPI document", () => {
     expect(document.paths["/generations/{generationId}/events"]?.get?.security).toStrictEqual([]);
   });
 
+  // Every product operation's 500 is checked above.
   it("documents every response status returned by account and feedback routes", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
-    expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("500");
-    expect(document.paths["/me"]?.delete?.responses).toHaveProperty("500");
-    expect(document.paths["/me"]?.patch?.responses).toHaveProperty("500");
     expect(document.paths["/me"]?.patch?.responses).toHaveProperty("403");
     expect(document.paths["/feedback"]?.post?.responses).toHaveProperty("403");
-  });
-
-  it("documents unexpected errors for native session routes", () => {
-    const document = documentContractSchema.parse(openAPIDocument);
-
-    expect(document.paths["/email-sign-in-codes"]?.post?.responses).toHaveProperty("500");
-    expect(document.paths["/sessions/apple"]?.post?.responses).toHaveProperty("500");
-    expect(document.paths["/sessions/current"]?.delete?.responses).toHaveProperty("500");
-    expect(document.paths["/sessions/email-code"]?.post?.responses).toHaveProperty("500");
-    expect(document.paths["/sessions/google"]?.post?.responses).toHaveProperty("500");
   });
 
   it("documents every response status returned by generation routes", () => {
@@ -653,76 +638,6 @@ describe("OpenAPI document", () => {
 });
 
 describe("OpenAPI response schemas", () => {
-  it("uses UUIDs for course and organization identifiers", () => {
-    const result = {
-      description: null,
-      id: UUID,
-      imageUrl: null,
-      language: "en",
-      organization: { id: UUID, logo: null, name: "Zoonk", slug: "zoonk" },
-      slug: "course",
-      title: "Course",
-    };
-
-    expect(courseResultSchema.safeParse(result).success).toBe(true);
-    expect(courseResultSchema.safeParse({ ...result, id: 1 }).success).toBe(false);
-
-    expect(
-      courseResultSchema.safeParse({ ...result, organization: { ...result.organization, id: 1 } })
-        .success,
-    ).toBe(false);
-  });
-
-  it("uses UUID and ISO date-time formats for the current user", () => {
-    const response = {
-      account: {
-        deletion: { hasAppleAccount: false },
-        hasActiveSubscription: true,
-        subscription: {
-          cancelAt: null,
-          cancelAtPeriodEnd: false,
-          id: UUID,
-          periodEnd: ISO_DATE,
-          periodStart: ISO_DATE,
-          plan: "plus",
-          provider: "stripe",
-          status: "active",
-        },
-      },
-      user: {
-        analyticsDisabled: false,
-        createdAt: ISO_DATE,
-        displayUsername: null,
-        email: "learner@example.com",
-        emailVerified: true,
-        id: UUID,
-        image: null,
-        name: "Learner",
-        updatedAt: ISO_DATE,
-        username: null,
-      },
-    };
-
-    expect(meResponseSchema.safeParse(response).success).toBe(true);
-
-    expect(
-      meResponseSchema.safeParse({
-        ...response,
-        user: { ...response.user, createdAt: "July 25", id: "1" },
-      }).success,
-    ).toBe(false);
-
-    expect(
-      meResponseSchema.safeParse({
-        ...response,
-        account: {
-          ...response.account,
-          subscription: { ...response.account.subscription, id: "1", periodEnd: "July 25" },
-        },
-      }).success,
-    ).toBe(false);
-  });
-
   it.each([
     { completed: false, hasStarted: false, type: "empty" },
     {

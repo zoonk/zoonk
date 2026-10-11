@@ -66,6 +66,11 @@ export type DbRunner = {
   questions: boolean;
   /** Days a planning run already ran on: the first run of a day settles the days before it. */
   ranDays: Set<string>;
+  /**
+   * What the life reads after each step for the rules its test asserts (see `RULES_READING`): the
+   * plan and syllabus screens, and readiness.
+   */
+  reads: { preparation: boolean; screens: boolean };
   /** What the checks read of the Library, by the ids of the life's own copy. */
   ruleInputs: Pick<SimInputs, "announcements" | "prerequisites" | "taughtBy" | "topicLevels">;
   seen: Map<string, string>;
@@ -112,12 +117,12 @@ export async function recordDb(
     readNewChanges({ planId: runner.plan.id, seen: runner.seen }),
     readProposals({ planId: runner.plan.id, status: "declined" }),
     readProposals({ planId: runner.plan.id, status: "proposed" }),
-    getGoalPlan(goalId),
-    getSyllabusView({ goalId }),
+    runner.reads.screens ? getGoalPlan(goalId) : undefined,
+    runner.reads.screens ? getSyllabusView({ goalId }) : undefined,
     // Without questions no session asks anything: the checks of practice would read that as none.
     runner.questions ? readSimSessions(goalId) : undefined,
     // Nor does readiness have anything to count.
-    runner.questions ? readSimPreparation(goalId) : undefined,
+    runner.questions && runner.reads.preparation ? readSimPreparation(goalId) : undefined,
     loadListeningSkillIds(goalId),
   ]);
 
@@ -157,10 +162,10 @@ export async function recordDb(
     learnerChanges: runner.learnerChanges,
     preparation,
     sessions,
-    syllabus: syllabusView.status === "ready" ? syllabusView.syllabus : undefined,
+    syllabus: syllabusView?.status === "ready" ? syllabusView.syllabus : undefined,
     today: runner.today,
     todayShown,
-    view: planView.status === "ready" ? planView.plan : undefined,
+    view: planView?.status === "ready" ? planView.plan : undefined,
     waiting: proposed,
   });
 
@@ -176,11 +181,13 @@ export async function startDbRunner({
   check,
   life,
   questions,
+  reads,
   trace,
 }: {
   check: SimCheck;
   life: SimLife;
   questions: boolean;
+  reads: DbRunner["reads"];
   trace: boolean;
 }): Promise<DbRunner> {
   const inputs = await loadSimInputs(life.fixture);
@@ -260,6 +267,7 @@ export async function startDbRunner({
     progressed: false,
     questions,
     ranDays: new Set([life.start]),
+    reads,
     ruleInputs: {
       announcements: inputs.announcements,
       prerequisites,

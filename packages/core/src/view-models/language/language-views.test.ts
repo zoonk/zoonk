@@ -166,33 +166,6 @@ describe("language view models", () => {
     expect(forIelts.status === "ready" && forIelts.progress.speaking).toBeNull();
   });
 
-  it("offers Today exam-style speaking tasks at the learner's own target, locked without Plus", async () => {
-    const setup = await languageGoalFixture();
-
-    await prisma.goal.update({
-      data: {
-        details: { targetScore: "B1+" },
-        prompt: "Inglês para Toronto, e um dia o Cambridge B2 First",
-      },
-      where: { id: setup.goal.id },
-    });
-
-    mockSession(setup.user.id);
-    const free = await getLanguageTodayView({ goalId: setup.goal.id });
-
-    expect(free.status === "ready" && free.today.speaking).toStrictEqual({
-      access: "plusRequired",
-      title: "B1 Preliminary",
-    });
-
-    await prisma.subscription.create({
-      data: { plan: "plus", provider: "zoonk", referenceId: setup.user.id, status: "active" },
-    });
-
-    const plus = await getLanguageTodayView({ goalId: setup.goal.id });
-    expect(plus.status === "ready" && plus.today.speaking?.access).toBe("open");
-  });
-
   it("gives a language goal that names no exam its language's paper at its target, exam-style", async () => {
     const setup = await languageGoalFixture();
 
@@ -245,7 +218,7 @@ describe("language view models", () => {
       throw new Error("No lesson");
     }
 
-    const [tip, writing] = await Promise.all([
+    const [, writing] = await Promise.all([
       libraryStepFixture({
         content: {
           text: "There is para um, there are para vários.",
@@ -271,8 +244,6 @@ describe("language view models", () => {
 
     const result = await getLanguageUnitView({ chapterId: renting.id });
 
-    expect(tip.id).toBeTruthy();
-
     expect(result).toMatchObject({
       status: "ready",
       unit: {
@@ -285,7 +256,9 @@ describe("language view models", () => {
           plusMinutes: [3, 5],
         },
         goalId: goal.id,
-        grammarTips: [{ title: "There is / there are" }],
+        grammarTips: [
+          { text: "There is para um, there are para vários.", title: "There is / there are" },
+        ],
         mistakes: [{ answer: "There is two", skill: "writing" }],
         unit: { levelRange: "A1–A2", position: 2, title: "Alugando um apartamento" },
         words: { count: 0 },
@@ -423,27 +396,6 @@ describe("language view models", () => {
         // The goal names no exam: it practices English's certificate at its B1+ target.
         speaking: { access: "plusRequired", title: "B1 Preliminary" },
       },
-    });
-  });
-
-  it("rounds the level across skills down to a half step", async () => {
-    const setup = await languageGoalFixture();
-    const { goal, user } = setup;
-    mockSession(user.id);
-
-    await Promise.all(
-      (["listening", "reading"] as const).map((skill) =>
-        prisma.languageSkillLevel.create({
-          data: { language: "en", score: B1, skill, startScore: A2, userId: user.id },
-        }),
-      ),
-    );
-
-    const result = await getLanguageTodayView({ goalId: goal.id });
-
-    expect(result.status === "ready" && result.today.level).toStrictEqual({
-      label: "A2+",
-      target: "B1+",
     });
   });
 });

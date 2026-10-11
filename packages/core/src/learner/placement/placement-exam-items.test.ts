@@ -61,17 +61,7 @@ function examItemFixture({ blueprintId, skillId }: { blueprintId: string; skillI
 }
 
 describe("placement questions for an exam goal", () => {
-  it("asks the exam's own question over a general one on the same skill", async () => {
-    const { blueprint, goal, skill } = await examGoalFixture();
-    const exam = await examItemFixture({ blueprintId: blueprint.id, skillId: skill.id });
-
-    await expect(readPlacement(goal.id)).resolves.toMatchObject({
-      next: { itemId: exam.id },
-      status: "asking",
-    });
-  });
-
-  it("waits for the exam's question while it's written instead of asking a general one", async () => {
+  it("waits for the exam's question while it's written, then asks it over the general one", async () => {
     const { blueprint, goal, skill } = await examGoalFixture();
 
     await expect(readPlacement(goal.id)).resolves.toMatchObject({
@@ -96,17 +86,6 @@ describe("placement questions for an exam goal", () => {
       next: { itemId: general.id },
       status: "asking",
     });
-  });
-
-  it("asks a goal without an exam the general question right away", async () => {
-    const { general, goal } = await examGoalFixture();
-
-    await prisma.goal.update({
-      data: { examBlueprintId: null, kind: "learn" },
-      where: { id: goal.id },
-    });
-
-    await expect(readPlacement(goal.id)).resolves.toMatchObject({ next: { itemId: general.id } });
   });
 
   it("gives a session's placement questions from the exam's own, general ones only without them", async () => {

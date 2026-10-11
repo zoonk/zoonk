@@ -244,12 +244,18 @@ describe(runPlanSetupTask, () => {
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["routine"]);
   });
 
+  // The plan counts down to the month the learner named until they answer the notice's day on
+  // Today, never replacing it silently.
   it("asks about the notice's day once: a failed ask is retried, and a retry after it asks nothing", async () => {
     const { goal, library, plan } = await examInAnotherMonth();
 
     await expect(
       createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
     ).resolves.toMatchObject({ setupTasks: ["placement", "routine", "notice"] });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      targetDate: new Date("2020-12-01T00:00:00Z"),
+    });
 
     vi.mocked(loadNoticeDay).mockRejectedValueOnce(dropped());
 

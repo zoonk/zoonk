@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
 import { saveLessonContent } from "../lessons/_utils/save-lesson-content";
-import { createSourceChangeNotice, resolveReviewFlags } from "../sources/content-review-flags";
+import { createSourceChangeNotice } from "../sources/content-review-flags";
 import { recordSourceChangeNotice } from "../sources/source-change-notices";
 import { listFlaggedContent } from "./flagged-content";
 import { dismissReviewFlagForAdmin, getOpenReviewFlagForAdmin } from "./review-flags-admin";
@@ -150,22 +150,6 @@ describe("flags on a changed source", () => {
       prisma.contentReviewFlag.count({ where: { lessonId: lesson.id, status: "open" } }),
     ).resolves.toBe(1);
   });
-
-  it("resolves only the flags raised before the rewritten version", async () => {
-    const { citing, law } = await lawWithDependents();
-    const first = await noticeFor(law.id);
-    const writtenAt = new Date();
-
-    await prisma.$transaction((tx) =>
-      resolveReviewFlags({ target: { lessonId: citing.id }, tx, writtenAt }),
-    );
-
-    await expect(
-      prisma.contentReviewFlag.findFirstOrThrow({
-        where: { lessonId: citing.id, noticeId: first.id },
-      }),
-    ).resolves.toMatchObject({ resolvedAt: writtenAt, status: "rewritten" });
-  });
 });
 
 describe("a rewritten lesson", () => {
@@ -202,7 +186,7 @@ describe("a rewritten lesson", () => {
       prisma.contentReviewFlag.findFirstOrThrow({
         where: { lessonId: citing.id, noticeId: notice.id },
       }),
-    ).resolves.toMatchObject({ status: "rewritten" });
+    ).resolves.toMatchObject({ resolvedAt: expect.any(Date), status: "rewritten" });
   });
 });
 

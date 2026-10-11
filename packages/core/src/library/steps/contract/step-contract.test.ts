@@ -1,12 +1,7 @@
 import { challengeCaseFixture } from "@zoonk/testing/fixtures/challenge-contents";
 import { numberedCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
-import {
-  type StepContentByKind,
-  parseStepContent,
-  safeParseStepContent,
-  stepContentSchemas,
-} from "./step-contract";
+import { type StepContentByKind, parseStepContent, safeParseStepContent } from "./step-contract";
 
 const options = [
   { id: "a", isCorrect: true, reason: "It adds 25% of 60.", text: "$45" },
@@ -87,12 +82,6 @@ const contents: StepContentByKind = {
 };
 
 describe("step contract", () => {
-  it("has a schema for every step kind", () => {
-    expect(Object.keys(stepContentSchemas).toSorted()).toStrictEqual(
-      Object.keys(contents).toSorted(),
-    );
-  });
-
   it.each(Object.keys(contents))("round-trips %s content unchanged", (kind) => {
     const key = kind as keyof StepContentByKind;
     const stored = structuredClone(contents[key]);

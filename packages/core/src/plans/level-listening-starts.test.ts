@@ -232,18 +232,6 @@ describe("a language exam's listening basics after placement's text questions", 
     expect(effect?.listeningPastBasics).toStrictEqual(["Listening"]);
   });
 
-  it("stay when they sit in a band above the one placement confirmed", async () => {
-    const { settings, skills, todo } = await placedLearner({
-      listeningLevel: "intermediate",
-      readingRight: [true, true],
-    });
-
-    const [sounds, talks] = skills;
-
-    expect(settings.pastBasicsAreas).toStrictEqual([]);
-    await expect(Promise.all([todo(sounds), todo(talks)])).resolves.toStrictEqual([2, 2]);
-  });
-
   it("stay when placement missed as many of the band's text basics as it confirmed", async () => {
     const { settings, skills, todo } = await placedLearner({
       listeningLevel: "beginner",

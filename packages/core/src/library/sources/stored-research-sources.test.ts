@@ -2,7 +2,6 @@ import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
-import { MAX_MATCHES_PER_TERM } from "../identity/_utils/text-search-sql";
 import { findStoredResearchSources } from "./stored-research-sources";
 
 // The reuse decision is a model call, the one external boundary: each test says which it accepts.
@@ -155,14 +154,11 @@ describe(findStoredResearchSources, () => {
     await expect(findStoredResearchSources(request(word, "syllabus"))).resolves.toStrictEqual([]);
   });
 
-  it("ranks a source matching a specific term first when a broad term matches too many to rank", async () => {
+  // How a broad term's matches are capped and ranked is `findRankedIds`', tested through
+  // `findSameExam`; this checks the decision gets the sources in that rank order.
+  it("hands the decision the sources it found, best first", async () => {
     const [broad, specific] = [uniqueWord(), uniqueWord()];
-
-    await Promise.all(
-      Array.from({ length: MAX_MATCHES_PER_TERM + 1 }, () =>
-        storedSource({ title: `Lei ${broad}`, topic: "regulation", word: broad }),
-      ),
-    );
+    const partial = await storedSource({ title: `Lei ${broad}`, topic: "regulation", word: broad });
 
     const target = await storedSource({
       title: `Lei ${broad} ${specific}`,
@@ -179,8 +175,10 @@ describe(findStoredResearchSources, () => {
     });
 
     expect(found).toStrictEqual([target.id]);
-    expect(decision).toHaveBeenCalledOnce();
-    expect(decision.mock.calls[0]?.[0].candidates).toHaveLength(5);
-    expect(decision.mock.calls[0]?.[0].candidates[0]?.id).toBe(target.id);
+
+    expect(decision.mock.calls[0]?.[0].candidates.map((candidate) => candidate.id)).toStrictEqual([
+      target.id,
+      partial.id,
+    ]);
   });
 });

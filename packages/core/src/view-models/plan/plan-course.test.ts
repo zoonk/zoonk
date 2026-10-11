@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { type PlanItemStatus, prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -8,15 +8,25 @@ import { getPlanTabView } from "./get-plan-view";
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
-async function readPlan(statuses: Parameters<typeof courseGoalFixture>[0]["statuses"]) {
-  const fixture = await signedInCourseGoal({ statuses });
+async function readPlan() {
   const result = await getPlanTabView();
-  return { ...fixture, plan: result.status === "ready" ? result.view.plan : null };
+  return result.status === "ready" ? result.view.plan : null;
 }
 
 describe("the plan's course", () => {
-  it("says which course the plan is built from, how much of it and at which level", async () => {
-    const { course, organization, plan } = await readPlan(["done", "todo", "todo", "todo"]);
+  it("says which course the plan is built from, and is finished once every lesson was studied or tested out, only ended with one set aside", async () => {
+    const { course, items, organization } = await signedInCourseGoal({
+      statuses: ["done", "todo", "todo", "todo"],
+    });
+
+    const setStatuses = (statuses: PlanItemStatus[]) =>
+      Promise.all(
+        items.map((item, index) =>
+          prisma.planItem.update({ data: { status: statuses[index] }, where: { id: item.id } }),
+        ),
+      );
+
+    const plan = await readPlan();
 
     expect(plan?.end).toBeNull();
 
@@ -32,14 +42,14 @@ describe("the plan's course", () => {
     expect(
       plan?.course?.levels.filter((level) => level.inPlan).map((level) => level.level),
     ).toStrictEqual(["overview"]);
-  });
 
-  it("is finished once every lesson was studied or tested out, and only ended with one set aside", async () => {
-    const finished = await readPlan(["done", "testedOut", "testedOut", "done"]);
-    expect(finished.plan?.end).toStrictEqual({ kind: "finished", setAsideLessons: 0 });
+    await setStatuses(["done", "testedOut", "testedOut", "done"]);
+    const finished = await readPlan();
+    expect(finished?.end).toStrictEqual({ kind: "finished", setAsideLessons: 0 });
 
-    const ended = await readPlan(["done", "skipped", "testedOut", "done"]);
-    expect(ended.plan?.end).toStrictEqual({ kind: "ended", setAsideLessons: 1 });
+    await setStatuses(["done", "skipped", "testedOut", "done"]);
+    const ended = await readPlan();
+    expect(ended?.end).toStrictEqual({ kind: "ended", setAsideLessons: 1 });
   });
 
   it("has no levels or public page for a private course", async () => {

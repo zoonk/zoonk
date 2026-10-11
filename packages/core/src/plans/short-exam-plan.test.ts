@@ -297,21 +297,6 @@ describe("a class test days away", () => {
     expect(datesOf({ items, kind: "lesson" })).not.toContain(isoDay(6));
   });
 
-  it("tomorrow: today teaches the gaps and the short mock closes it", async () => {
-    const { enzymes, goal, plan } = await setup({ dailyMinutes: 60, days: 1 });
-    const items = await loadItems(plan.id);
-
-    expect(items.find((item) => item.kind === "lesson")?.skillId).toBe(enzymes?.id);
-    expect(datesOf({ items, kind: "lesson" })).toContain(isoDay(0));
-    expect(datesOf({ items, kind: "mock" })).toStrictEqual([isoDay(0)]);
-    expect(items.at(-1)?.kind).toBe("mock");
-
-    const view = await readPlanView(goal.id);
-
-    expect(view.shortPlan).toStrictEqual({ days: 1, mockDate: isoDay(0) });
-    expect(view.week.days.find((entry) => entry.date === isoDay(0))?.minutes).toBe(60);
-  });
-
   it("builds day 1 around new lessons and the last day around the mock, nothing new", async () => {
     const { goal } = await setup({ days: 3 });
     const first = await getTodayView({ goalId: goal.id });

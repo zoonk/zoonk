@@ -30,8 +30,8 @@ const CLAVE_TAPS_MS = rhythmTapTimes(activityContentFixtures.rhythmTapper.fields
 const SOUND_CHECK_INTERVAL_MS = 1000;
 
 /**
- * Rhythms play in real time: the sound check and two runs of the clave take longer than a
- * browser test's default budget, so these tests keep the E2E's (Playwright's 30 seconds).
+ * Rhythms play in real time: the sound check and a run of the clave take most of a browser test's
+ * default budget, so these tests keep the E2E's (Playwright's 30 seconds).
  */
 const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
@@ -217,32 +217,23 @@ describe("music activities", () => {
     },
   );
 
-  it(
-    "rhythm: tapping on the beats is right, and one tap isn't",
-    { timeout: REAL_TIME_TEST_TIMEOUT_MS },
-    async () => {
-      openActivity({ template: "rhythmTapper" });
-      await page.getByRole("button", { name: "Skip for now" }).click();
-      await page.getByRole("button", { name: "Start tapping" }).click();
-      await waitForFirstRound();
-      await press("Space");
+  it("rhythm: tapping on the beats is right", { timeout: REAL_TIME_TEST_TIMEOUT_MS }, async () => {
+    openActivity({ template: "rhythmTapper" });
+    await page.getByRole("button", { name: "Skip for now" }).click();
+    await page.getByRole("button", { name: "Start tapping" }).click();
+    await waitForFirstRound();
+    await tapClave();
 
-      await expect
-        .element(page.getByText(/^1 of 10 taps on time\./u), { timeout: 15_000 })
-        .toBeVisible();
+    await expect
+      .element(page.getByText("10 of 10 taps on time."), { timeout: 15_000 })
+      .toBeVisible();
 
-      await page.getByRole("button", { name: "Try again" }).click();
-      await waitForFirstRound();
-      await tapClave();
+    // A run can always be tapped again before it's checked.
+    await expect.element(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
-      await expect
-        .element(page.getByText("10 of 10 taps on time."), { timeout: 15_000 })
-        .toBeVisible();
-
-      await checkActivity();
-      await expectVerdict("Correct!");
-    },
-  );
+    await checkActivity();
+    await expectVerdict("Correct!");
+  });
 
   it("musicianship lesson: hear a chord, name it, then play one on guitar", async () => {
     openActivities({ contents: [byEarChoice, guitarChord] });

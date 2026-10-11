@@ -65,11 +65,71 @@ describe("the plan says every topic is in only when none is out for time", () =>
           subscribed: false,
           targetInDays: 4,
         },
-        { questions: true },
+        { questions: true, rules: ["R25"] },
       );
 
-      expect(violations.filter((violation) => violation.rule === "R25")).toStrictEqual([]);
+      expect(violations).toStrictEqual([]);
     },
     5 * MINUTE,
+  );
+});
+
+/*
+ * R25 through the real capabilities: a session's stop rebalanced a Câmara plan in one mode and the
+ * plan view read it again in another, which kept a skill more, so the view said every topic's core
+ * fits next to 12 topics out for time.
+ */
+describe("what a plan says it covers right after a session's rebalance", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it(
+    "never says every topic fits next to topics out for time in a Câmara plan",
+    async () => {
+      const { violations } = await runSimLifeInDb(
+        {
+          dailyMinutes: 240,
+          fixture: "camara",
+          knownAreas: [10],
+          mockOffers: "focus",
+          pending: [5, 6, 15, 25, 26, 38, 43, 45, 57, 67, 70, 91, 96, 108],
+          seed: 2008,
+          speed: 1.5,
+          start: "2054-10-12",
+          steps: [
+            {
+              answers: [
+                [50, true],
+                [97, false],
+                [59, false],
+                [75, true],
+                [24, true],
+                [47, true],
+                [78, false],
+                [27, true],
+                [98, false],
+                [106, true],
+                [58, true],
+              ],
+              kind: "placement",
+            },
+            { finish: 1, kind: "study", misses: [49] },
+            { count: 1, kind: "land" },
+            { finish: 0.25, kind: "study", misses: [1] },
+          ],
+          subscribed: false,
+          targetInDays: 59,
+        },
+        { questions: true, rules: ["R25"] },
+      );
+
+      expect(violations).toStrictEqual([]);
+    },
+    10 * MINUTE,
   );
 });

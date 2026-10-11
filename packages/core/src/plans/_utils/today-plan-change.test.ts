@@ -199,11 +199,16 @@ describe(loadTodayPlanChange, () => {
       source: "preparation",
     });
 
-    // "Got it" takes it off Today.
+    // "Got it" takes one off Today: a newer one the learner saw stays off it.
     await planChangeFixture({
       createdAt: hoursAgo(4),
-      kind: "missedDays",
-      payload: { days: 1, seenAt: hoursAgo(3).toISOString(), source: "system" },
+      kind: "edited",
+      payload: {
+        operations: [{ areas: ["Math"], kind: "focusAreas" }],
+        seenAt: hoursAgo(3).toISOString(),
+        source: "preparation",
+        versionAfter: plan.version,
+      },
       planId: plan.id,
       status: "applied",
     });

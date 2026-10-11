@@ -1,9 +1,4 @@
-import {
-  goalFixture,
-  planChangeFixture,
-  planFixture,
-  planItemFixture,
-} from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -134,32 +129,39 @@ describe(loadPlanCarryOver, () => {
 describe(wasLastDayStudied, () => {
   const yesterday = new Date("2026-10-12T00:00:00Z");
 
+  /** Yesterday's review, as the plan the run read holds it. */
+  const review = {
+    chapterId: null,
+    completedAt: null,
+    id: "review",
+    kind: "review" as const,
+    lessonId: null,
+    phase: 0,
+    position: 0,
+    scheduledFor: yesterday,
+    skillId: null,
+    status: "todo" as const,
+    titleSnapshot: "Review",
+  };
+
   it("counts a review day the learner did as studied", async () => {
-    const { context, goal, plan } = await setup();
+    const { context, goal } = await setup();
 
     await studySessionFixture({ goalId: goal.id, localDate: yesterday, userId: goal.userId });
 
-    const review = await planItemFixture({
+    const done = {
+      ...review,
       completedAt: new Date("2026-10-12T15:00:00Z"),
-      kind: "review",
-      planId: plan.id,
-      scheduledFor: yesterday,
-      status: "done",
-    });
+      status: "done" as const,
+    };
 
-    await expect(wasLastDayStudied({ ...context, items: [review] })).resolves.toBe(true);
+    await expect(wasLastDayStudied({ ...context, items: [done] })).resolves.toBe(true);
   });
 
   it("counts a review day left undone as missed", async () => {
-    const { context, goal, plan } = await setup();
+    const { context, goal } = await setup();
 
     await studySessionFixture({ goalId: goal.id, localDate: yesterday, userId: goal.userId });
-
-    const review = await planItemFixture({
-      kind: "review",
-      planId: plan.id,
-      scheduledFor: yesterday,
-    });
 
     await expect(wasLastDayStudied({ ...context, items: [review] })).resolves.toBe(false);
   });

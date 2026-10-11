@@ -194,42 +194,43 @@ describe("the day after a day the learner studied", () => {
 
   // A half-studied day is a studied day: the challenge it left comes first the next day, and the
   // next phase's challenge still closes that phase on the day the learner saw, its lessons giving
-  // way. Kept after them instead, a career's second phase ended two days later.
+  // way. Kept after them instead, a career's second phase ended two days later. Its last open of
+  // Today, right after that day's settling, keeps the plan as it is too (R32, see "opening Today
+  // again with nothing new").
   it(
     "keeps a career plan's phase end when a half-studied day left the phase before's challenge",
     async () => {
-      const violations = await findViolations({
-        life: {
-          dailyMinutes: 60,
-          fixture: "career",
-          knownAreas: [],
-          pending: [],
-          seed: 1016,
-          speed: 1,
-          start: "2026-10-12",
-          steps: [
-            { finish: 0.25, kind: "study", misses: [2] },
-            { finish: 1, kind: "study", misses: [] },
-            { finish: 0, kind: "study", misses: [] },
-            { finish: 0.5, kind: "study", misses: [] },
-            { finish: 0.75, kind: "study", misses: [] },
-            { days: 1, kind: "miss" },
-            { finish: 0, kind: "study", misses: [] },
-            { days: 3, kind: "miss" },
-            { finish: 0.5, kind: "study", misses: [7] },
-            { finish: 1, kind: "study", misses: [] },
-            { finish: 1, kind: "study", misses: [17] },
-            { finish: 0.5, kind: "study", misses: [] },
-            { finish: 0.5, kind: "study", misses: [] },
-            { kind: "refresh" },
-          ],
-          subscribed: false,
-          targetInDays: null,
-        },
-        rule: "R6",
+      const { violations } = await runSimLife({
+        dailyMinutes: 60,
+        fixture: "career",
+        knownAreas: [],
+        pending: [],
+        seed: 1016,
+        speed: 1,
+        start: "2026-10-12",
+        steps: [
+          { finish: 0.25, kind: "study", misses: [2] },
+          { finish: 1, kind: "study", misses: [] },
+          { finish: 0, kind: "study", misses: [] },
+          { finish: 0.5, kind: "study", misses: [] },
+          { finish: 0.75, kind: "study", misses: [] },
+          { days: 1, kind: "miss" },
+          { finish: 0, kind: "study", misses: [] },
+          { days: 3, kind: "miss" },
+          { finish: 0.5, kind: "study", misses: [7] },
+          { finish: 1, kind: "study", misses: [] },
+          { finish: 1, kind: "study", misses: [17] },
+          { finish: 0.5, kind: "study", misses: [] },
+          { finish: 0.5, kind: "study", misses: [] },
+          { kind: "refresh" },
+        ],
+        subscribed: false,
+        targetInDays: null,
       });
 
-      expect(violations).toStrictEqual([]);
+      expect(
+        violations.filter((violation) => ["R6", "R32"].includes(violation.rule)),
+      ).toStrictEqual([]);
     },
     MINUTE,
   );
@@ -483,68 +484,35 @@ describe("missed days that leave no time for earlier days' work", () => {
 // output doesn't always lay it out the same way, so a later open the same day added, lost or moved
 // lessons the learner had just seen. Building a day only settles what earlier days left.
 describe("opening Today again with nothing new", () => {
-  it.each<[string, SimLife]>([
-    [
-      "a career plan after a day's settling",
-      {
-        dailyMinutes: 60,
-        fixture: "career",
-        knownAreas: [],
-        pending: [],
-        seed: 1016,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          { count: 3, kind: "land" },
-          { finish: 0.25, kind: "study", misses: [2] },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 0, kind: "study", misses: [] },
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 0.75, kind: "study", misses: [] },
-          { days: 1, kind: "miss" },
-          { finish: 0, kind: "study", misses: [] },
-          { days: 3, kind: "miss" },
-          { finish: 0.5, kind: "study", misses: [7] },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [17] },
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 0.5, kind: "study", misses: [] },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: null,
-      },
-    ],
-    [
-      "a language plan after a day's settling",
-      {
-        dailyMinutes: 25,
-        fixture: "language",
-        knownAreas: [],
-        pending: [6, 7, 8, 10],
-        seed: 1015,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          { finish: 1, kind: "study", misses: [] },
-          { days: 3, kind: "miss" },
-          { kind: "change", spec: { bias: "morePractice", kind: "practice" }, via: "buddy" },
-          { finish: 0, kind: "study", misses: [2] },
-          { finish: 0.25, kind: "study", misses: [] },
-          { days: 1, kind: "miss" },
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 0, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [9] },
-          { kind: "change", spec: { area: 0, kind: "focus" }, via: "buddy" },
-        ],
-        subscribed: false,
-        targetInDays: 133,
-      },
-    ],
-  ])(
-    "keeps %s as it is",
-    async (_name, life) => {
-      const violations = await findViolations({ life, rule: "R32" });
+  it(
+    "keeps a language plan after a day's settling as it is",
+    async () => {
+      const violations = await findViolations({
+        life: {
+          dailyMinutes: 25,
+          fixture: "language",
+          knownAreas: [],
+          pending: [6, 7, 8, 10],
+          seed: 1015,
+          speed: 1,
+          start: "2026-10-12",
+          steps: [
+            { finish: 1, kind: "study", misses: [] },
+            { days: 3, kind: "miss" },
+            { kind: "change", spec: { bias: "morePractice", kind: "practice" }, via: "buddy" },
+            { finish: 0, kind: "study", misses: [2] },
+            { finish: 0.25, kind: "study", misses: [] },
+            { days: 1, kind: "miss" },
+            { finish: 0.5, kind: "study", misses: [] },
+            { finish: 0, kind: "study", misses: [] },
+            { finish: 1, kind: "study", misses: [9] },
+            { kind: "change", spec: { area: 0, kind: "focus" }, via: "buddy" },
+          ],
+          subscribed: false,
+          targetInDays: 133,
+        },
+        rule: "R32",
+      });
 
       expect(violations).toStrictEqual([]);
     },
@@ -558,28 +526,39 @@ describe("opening Today again with nothing new", () => {
 // right after a class test's new date lost six lessons, and one a day after a Câmara session
 // moved 111.
 describe("a refresh of a plan with a quick lesson", () => {
-  it.each<[string, SimLife]>([
-    [
-      "a class test's plan right after a new test date",
-      {
-        dailyMinutes: 15,
-        fixture: "class-test",
-        knownAreas: [],
-        pending: [],
-        seed: 1019,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          { kind: "change", spec: { days: 14, kind: "date" }, via: "buddy" },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: 4,
-      },
-    ],
-    [
-      "a Câmara plan the day after a session",
-      {
+  it(
+    "keeps a class test's plan right after a new test date as it is",
+    async () => {
+      const violations = await findViolations({
+        life: {
+          dailyMinutes: 15,
+          fixture: "class-test",
+          knownAreas: [],
+          pending: [],
+          seed: 1019,
+          speed: 1,
+          start: "2026-10-12",
+          steps: [
+            { kind: "change", spec: { days: 14, kind: "date" }, via: "buddy" },
+            { kind: "refresh" },
+          ],
+          subscribed: false,
+          targetInDays: 4,
+        },
+        rule: "R32",
+      });
+
+      expect(violations).toStrictEqual([]);
+    },
+    MINUTE,
+  );
+
+  // Its sessions keep its most asked topic too: at a session's end, fundamental rights lost its
+  // only skill in the plan while less asked skills of its subject gained (R11).
+  it(
+    "keeps a Câmara plan the day after a session as it is",
+    async () => {
+      const { violations } = await runSimLife({
         dailyMinutes: 60,
         fixture: "camara",
         knownAreas: [],
@@ -599,14 +578,11 @@ describe("a refresh of a plan with a quick lesson", () => {
         ],
         subscribed: false,
         targetInDays: 55,
-      },
-    ],
-  ])(
-    "keeps %s as it is",
-    async (_name, life) => {
-      const violations = await findViolations({ life, rule: "R32" });
+      });
 
-      expect(violations).toStrictEqual([]);
+      expect(
+        violations.filter((violation) => ["R11", "R32"].includes(violation.rule)),
+      ).toStrictEqual([]);
     },
     MINUTE,
   );

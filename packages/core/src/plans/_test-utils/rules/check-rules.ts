@@ -114,6 +114,18 @@ const CONTENT_CHECKS: readonly ((context: RuleContext) => RuleViolation[])[] = [
 ];
 
 /**
+ * What a life reads only for some rules, by the rules that read it: the plan and syllabus screens
+ * (`view`, `syllabus`), readiness (`preparation`), and the shared content deleting the account
+ * leaves (`CONTENT_CHECKS`). Each plans the goal again or deletes the account, so a database life
+ * whose test asserts other rules skips them (see `runSimLifeInDb`).
+ */
+export const RULES_READING = {
+  accountDeleted: new Set(["R29", "R30", "R31"]),
+  preparation: new Set(["R34", "R35", "R36"]),
+  screens: new Set(["R25", "R26"]),
+} as const satisfies Record<string, ReadonlySet<string>>;
+
+/**
  * Runs every rule's check on one step of a learner's life (see RULES.md). Each check finds nothing
  * when the step doesn't carry what it reads, so a caller passes what it has.
  */

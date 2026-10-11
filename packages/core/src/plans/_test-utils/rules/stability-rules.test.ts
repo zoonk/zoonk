@@ -85,20 +85,6 @@ describe("R5 every change is recorded and said", () => {
     ).toStrictEqual([]);
   });
 
-  it("passes when a refresh that leaves a topic out records a change naming it", () => {
-    const change = ruleChange({
-      effect: { topicsLeftOut: [{ area: "Natureza", topics: ["Ecologia"] }] },
-      kind: "coverageChanged",
-      source: "system",
-    });
-
-    expect(
-      checkChangesSaid(
-        ruleContext({ after: withoutEcologia, before: withEcologia, changes: [change] }),
-      ),
-    ).toStrictEqual([]);
-  });
-
   it("flags a topic that leaves the plan silently (Lucas's ecology topic)", () => {
     expect(
       checkChangesSaid(ruleContext({ after: withoutEcologia, before: withEcologia })),

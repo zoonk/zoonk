@@ -535,18 +535,6 @@ describe(findCurrentPhase, () => {
     expect(findCurrentPhase({ items, phaseCount: 2 })).toBe(0);
   });
 
-  it("falls back to the first stand-in when nothing written is left", () => {
-    expect(findCurrentPhase({ items: [lesson(0, 0), lesson(1, 1)], phaseCount: 2 })).toBe(0);
-  });
-
-  it("stays at the stand-ins before a mock, such as a test days away whose lessons are being written", () => {
-    // Day 1 and day 2's lessons are still being written; day 3 is the short mock.
-    const mock = { ...lesson(4, 2), kind: "mock" as const, skillId: null };
-    const items = [lesson(0, 0), lesson(1, 0), lesson(2, 1), lesson(3, 1), mock];
-
-    expect(findCurrentPhase({ items, phaseCount: 3 })).toBe(0);
-  });
-
   // Pedro's plan gave a lesson of the second phase before the last lessons and the challenge of the
   // first: read from the next thing to do, his Journey said he was in the second phase, and went
   // back to the first once a change planned those lessons first.

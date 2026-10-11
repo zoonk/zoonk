@@ -1,12 +1,11 @@
 import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
-import { generateLevelTestBank } from "@zoonk/ai/tasks/v2/language/level-test-bank";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
@@ -61,24 +60,6 @@ async function saveBank() {
 }
 
 describe("language level test", () => {
-  beforeEach(async () => {
-    await prisma.languageLevelTest.deleteMany({ where: { language: "pt", targetLanguage: "en" } });
-  });
-
-  it("says nothing is writing the pair's questions yet, without writing them itself", async () => {
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-
-    const result = await getLanguageLevelTest(goal.id);
-
-    expect(result).toStrictEqual({
-      status: "ready",
-      test: { expectedSeconds: 120, startedAt: null, status: "preparing" },
-    });
-
-    expect(generateLevelTestBank).not.toHaveBeenCalled();
-  });
-
   it("asks questions near the learner's level, checks only the current one, and sets levels", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();

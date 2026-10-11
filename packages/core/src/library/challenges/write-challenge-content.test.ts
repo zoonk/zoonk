@@ -58,19 +58,21 @@ describe(writeChallengeLessonContent, () => {
     vi.mocked(generateChallengeCase).mockReset();
   });
 
-  it("publishes the case as the lesson's one screen with its summary card", async () => {
+  // A case nobody reaches for hours is written at the flex tier.
+  it("publishes the case as the lesson's one screen with its summary card, at the tier asked", async () => {
     const { lessonId, workflowRunId } = await claimedChallenge();
     vi.mocked(generateChallengeCase).mockResolvedValue(written(writtenChallengeCaseFixture()));
 
-    await expect(writeChallengeLessonContent({ lessonId, workflowRunId })).resolves.toStrictEqual({
-      status: "published",
-    });
+    await expect(
+      writeChallengeLessonContent({ lessonId, serviceTier: "flex", workflowRunId }),
+    ).resolves.toStrictEqual({ status: "published" });
 
     expect(generateChallengeCase).toHaveBeenCalledWith(
       expect.objectContaining({
         chapterTitle: "A/B tests",
         level: "beginner",
         problems: [],
+        serviceTier: "flex",
         skills: [{ description: null, name: "Judge whether a gap is chance" }],
         variant: "work",
       }),
@@ -93,17 +95,6 @@ describe(writeChallengeLessonContent, () => {
       title: "Does button B sell more?",
       variant: "work",
     });
-  });
-
-  it("writes the case at the flex tier when nobody reaches it for hours", async () => {
-    const { lessonId, workflowRunId } = await claimedChallenge();
-    vi.mocked(generateChallengeCase).mockResolvedValue(written(writtenChallengeCaseFixture()));
-
-    await writeChallengeLessonContent({ lessonId, serviceTier: "flex", workflowRunId });
-
-    expect(generateChallengeCase).toHaveBeenCalledWith(
-      expect.objectContaining({ serviceTier: "flex" }),
-    );
   });
 
   it("sends what failed back for one more draft", async () => {

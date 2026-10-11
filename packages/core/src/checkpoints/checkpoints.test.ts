@@ -404,7 +404,9 @@ describe(getWeeklyChallenge, () => {
     ).toBe(false);
   });
 
-  it("puts the mock in the day's session for Plus learners", async () => {
+  // The player sends a mock to the mock screen: an answer to it as a checkpoint would check the
+  // plan's mock off with no sitting, which preparation never counts.
+  it("puts the mock in the day's session for Plus learners, taking no study answer on it", async () => {
     const user = await userFixture();
     const { goal, plan } = await sessionGoalFixture({ goal: { kind: "exam" }, userId: user.id });
 
@@ -432,35 +434,14 @@ describe(getWeeklyChallenge, () => {
       status: "ready",
     });
 
-    expect(today.status === "ready" && today.session.blocks.at(-1)).toMatchObject({
+    const block = today.status === "ready" ? today.session.blocks.at(-1) : undefined;
+
+    expect(block).toMatchObject({
       checkpoint: { kind: "weekly", mock: true, timeLimitMinutes: 27 },
       kind: "checkpoint",
       questions: 9,
     });
-  });
 
-  // The player sends a mock to the mock screen: an answer to it as a checkpoint would check the
-  // plan's mock off with no sitting, which preparation never counts.
-  it("takes no study answer on a mock, which only the mock screen sits", async () => {
-    const user = await userFixture();
-    const { goal, plan } = await sessionGoalFixture({ goal: { kind: "exam" }, userId: user.id });
-
-    await Promise.all([
-      checkpointItemFixture({
-        kind: "mock",
-        planId: plan.id,
-        position: 10,
-        scheduledFor: SESSION_TODAY,
-      }),
-      prisma.subscription.create({
-        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-      }),
-    ]);
-
-    mockSession(user.id);
-
-    const today = await getTodayStudySession({ goalId: goal.id });
-    const block = today.status === "ready" ? today.session.blocks.at(-1) : undefined;
     const sessionId = today.status === "ready" ? today.session.id : "";
     const row = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block?.id } });
 

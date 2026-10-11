@@ -176,6 +176,9 @@ describe(checkFreshness, () => {
     await expect(
       checkFreshness({ now: NOW, target: { examBlueprintId: blueprint.id, kind: "exam" } }),
     ).resolves.toStrictEqual({ reason: "noLearners", status: "stopped" });
+
+    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
+    expect(stored.nextCheckAt).toBeNull();
   });
 
   it("stops when the exam's notice was an upload with nothing to fetch", async () => {

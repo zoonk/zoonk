@@ -585,38 +585,6 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "counts a placement call whose step's retries ran out, and prepares placement with the rest",
-    { timeout: TIMEOUT },
-    async () => {
-      const { goal } = await newGoal();
-
-      // The runtime retries a failed call's step on its own; here it fails for good.
-      vi.mocked(generatePlacementItems)
-        .mockRejectedValueOnce(new Error("Provider unavailable"))
-        .mockImplementation(async (params) => placementBatchFor(params));
-
-      await goalContentWorkflow({ goalId: goal.id });
-
-      expect(trackServerEvent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: "Generation Failed",
-          properties: expect.objectContaining({ task: "placement-questions" }),
-        }),
-      );
-
-      await expect(
-        prisma.item.count({
-          where: { skill: { planItems: { some: { plan: { goalId: goal.id } } } } },
-        }),
-      ).resolves.toBeGreaterThan(0);
-
-      await expect(
-        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
-      ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
-    },
-  );
-
-  it(
     "clears a failed build when the learner starts the goal again",
     { timeout: TIMEOUT },
     async () => {
@@ -632,39 +600,6 @@ describe(goalContentWorkflow, () => {
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
       ).resolves.toMatchObject({ buildFailedAt: null, placementPreparedAt: expect.any(Date) });
-    },
-  );
-
-  it(
-    "decides who the curriculum is for while the learner is still answering",
-    { timeout: TIMEOUT },
-    async () => {
-      const onboardingId = crypto.randomUUID();
-      const { goal } = await newGoal({ details: { onboardingId, subject: "Vaccines" } });
-
-      vi.mocked(sleep).mockImplementationOnce(async () => {
-        expect(classifyGoalSpecificity).toHaveBeenCalledOnce();
-        expect(generateSkillGraph).not.toHaveBeenCalled();
-
-        await prisma.goal.update({
-          data: {
-            details: {
-              answered: ["purpose", "level"],
-              level: "basic",
-              onboardingId,
-              purpose: "overview",
-              subject: "Vaccines",
-            },
-          },
-          where: { id: goal.id },
-        });
-      });
-
-      await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
-        status: "built",
-      });
-
-      expect(classifyGoalSpecificity).toHaveBeenCalledOnce();
     },
   );
 
@@ -1489,59 +1424,6 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "writes placement's quick questions for an exam that judges assertions as true/false ones under its blueprint",
-    { timeout: TIMEOUT },
-    async () => {
-      const blueprint = await examBlueprintFixture({
-        name: "Polícia Federal",
-        role: "Agente",
-        structure: {
-          formats: [
-            {
-              citation: { passage: "Itens do tipo Certo ou Errado.", sourceId: "notice" },
-              description: "Cada item é uma afirmação julgada Certo ou Errado.",
-              kind: "trueFalse",
-              options: null,
-            },
-          ],
-          mock: null,
-          rules: [],
-          subjects: [],
-        },
-      });
-
-      const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
-
-      await goalContentWorkflow({ goalId: goal.id });
-
-      const calls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
-
-      expect(calls.length).toBeGreaterThan(0);
-
-      expect(
-        calls.every(
-          (call) =>
-            call.quickFormat === "trueFalse" && call.examFormat?.name === "Polícia Federal, Agente",
-        ),
-      ).toBe(true);
-
-      const quick = await prisma.item.findMany({
-        select: { examBlueprintId: true, format: true },
-        where: {
-          format: { not: "typed" },
-          skill: { planItems: { some: { plan: { goalId: goal.id } } } },
-        },
-      });
-
-      expect(quick.length).toBeGreaterThan(0);
-
-      expect(
-        quick.every((item) => item.format === "trueFalse" && item.examBlueprintId === blueprint.id),
-      ).toBe(true);
-    },
-  );
-
-  it(
     "builds a new exam's graph from the exam as understood without waiting for research, and keeps the plan when research reads no notice",
     { timeout: TIMEOUT },
     async () => {
@@ -1952,12 +1834,12 @@ describe(goalContentWorkflow, () => {
 
       const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
       const waits: (Date | null)[] = [];
+      // Research links the notice it read with a second of the reveal's wait left.
+      const landedWait = new Date(Date.now() + 1000);
 
       vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
 
-      // The check takes longer than what was left of the reveal's wait when the reading landed.
       vi.mocked(checkCoverage).mockImplementation(async () => {
-        await setTimeout(1500);
         const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
         waits.push(plan.noticeWaitUntil);
 
@@ -1982,10 +1864,9 @@ describe(goalContentWorkflow, () => {
         );
       });
 
-      // Research links the notice it read with a second of the reveal's wait left.
       researchEndsWhenAsked(async () => {
         await prisma.plan.update({
-          data: { noticeWaitUntil: new Date(Date.now() + 1000) },
+          data: { noticeWaitUntil: landedWait },
           where: { goalId: goal.id },
         });
 
@@ -1997,8 +1878,9 @@ describe(goalContentWorkflow, () => {
 
       await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-      // The reveal was still waiting when the check ended.
-      expect(waits[0]?.getTime()).toBeGreaterThan(Date.now());
+      // The landing moved the reveal's wait past that second before the check ran, so a check
+      // that takes longer still finds the reveal waiting.
+      expect(waits[0]?.getTime()).toBeGreaterThan(landedWait.getTime());
 
       const [plan, stored, added, proposals] = await Promise.all([
         prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
@@ -2258,13 +2140,14 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "waits for the onboarding answers that shape the graph before building it",
+    "decides who the curriculum is for while the learner is still answering, and waits for the answers that shape the graph before building it",
     { timeout: TIMEOUT },
     async () => {
       const onboardingId = crypto.randomUUID();
       const { goal } = await newGoal({ details: { onboardingId, subject: "Vaccines" } });
 
       vi.mocked(sleep).mockImplementationOnce(async () => {
+        expect(classifyGoalSpecificity).toHaveBeenCalledOnce();
         expect(generateSkillGraph).not.toHaveBeenCalled();
 
         await prisma.goal.update({
@@ -2281,9 +2164,12 @@ describe(goalContentWorkflow, () => {
         });
       });
 
-      await goalContentWorkflow({ goalId: goal.id });
+      await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+        status: "built",
+      });
 
       expect(vi.mocked(sleep)).toHaveBeenCalledWith("3s");
+      expect(classifyGoalSpecificity).toHaveBeenCalledOnce();
 
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
         ownLevel: "basic",
@@ -2382,58 +2268,6 @@ describe(goalContentWorkflow, () => {
   });
 
   it(
-    "waits for a learn goal's research, then checks its graph against the syllabi it found",
-    { timeout: TIMEOUT },
-    async () => {
-      const { goal, user } = await newGoal({ details: { level: "none", purpose: "deep" } });
-
-      const syllabus = await sourceFixture({
-        extractedText: "1. Antigens 2. Adaptive immunity 3. Vaccine trials",
-        title: "Immunology course syllabus",
-      });
-
-      vi.mocked(checkCoverage).mockResolvedValue(
-        taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
-      );
-
-      vi.mocked(getRun).mockReturnValue({
-        exists: Promise.resolve(true),
-        status: Promise.resolve("running"),
-      } as never);
-
-      // Research links the syllabus it found while the graph waits.
-      vi.mocked(sleep).mockImplementationOnce(async () => {
-        await learnerSourceFixture({
-          goalId: goal.id,
-          origin: "research",
-          sourceId: syllabus.id,
-          userId: user.id,
-        });
-
-        vi.mocked(getRun).mockReturnValue({
-          exists: Promise.resolve(true),
-          status: Promise.resolve("completed"),
-        } as never);
-      });
-
-      await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
-
-      expect(vi.mocked(sleep)).toHaveBeenCalledWith("3s");
-
-      expect(checkCoverage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          references: [
-            {
-              text: "1. Antigens 2. Adaptive immunity 3. Vaccine trials",
-              title: "Immunology course syllabus",
-            },
-          ],
-        }),
-      );
-    },
-  );
-
-  it(
     "writes original free-response questions with pointed rubric rows for an AP exam",
     { timeout: TIMEOUT },
     async () => {
@@ -2493,17 +2327,6 @@ describe(goalContentWorkflow, () => {
     },
   );
 
-  it("writes no free-response questions for other exams", { timeout: TIMEOUT }, async () => {
-    const blueprint = await examBlueprintFixture({ name: "Immunology board exam" });
-    const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
-
-    await goalContentWorkflow({ goalId: goal.id });
-
-    expect(vi.mocked(generateItems).mock.calls.some(([params]) => params.format === "essay")).toBe(
-      false,
-    );
-  });
-
   it(
     "writes a learn goal's graph while research runs, and only its coverage check waits for research",
     { timeout: TIMEOUT },
@@ -2554,6 +2377,7 @@ describe(goalContentWorkflow, () => {
       await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
       expect(events).toStrictEqual(["graph", "research ended"]);
+      expect(vi.mocked(sleep)).toHaveBeenCalledWith("3s");
 
       expect(checkCoverage).toHaveBeenCalledWith(
         expect.objectContaining({

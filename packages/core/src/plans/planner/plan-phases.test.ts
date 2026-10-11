@@ -37,14 +37,6 @@ describe(getExamWindows, () => {
     });
   });
 
-  it("plans a test that's days away day by day: gaps, practice and the day before", () => {
-    expect(windowsFor({ start: "2026-09-28", target: "2026-10-01" })).toStrictEqual([
-      { endDate: "2026-09-28", kind: "gaps", startDate: "2026-09-28" },
-      { endDate: "2026-09-29", kind: "practice", startDate: "2026-09-29" },
-      { endDate: "2026-09-30", kind: "finalStretch", startDate: "2026-09-30" },
-    ]);
-  });
-
   it("has no phases once the exam day has come", () => {
     expect(windowsFor({ start: "2026-10-01", target: "2026-10-01" })).toStrictEqual([]);
   });

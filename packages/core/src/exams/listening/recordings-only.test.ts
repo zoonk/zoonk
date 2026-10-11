@@ -281,7 +281,7 @@ describe("an exam's listening skills outside practice", () => {
     expect(capsule?.itemIds.filter((id) => heardItemIds.has(id))).toStrictEqual([]);
   });
 
-  it("leaves a recording out of the review while the day's drill holds one of its questions", async () => {
+  it("drills a missed recording question alone, and leaves its recording out of the review meanwhile", async () => {
     const { goal, heardId, user } = await listeningLearnerFixture();
     const [heard, missed] = await recordingFixture(heardId);
 
@@ -299,25 +299,9 @@ describe("an exam's listening skills outside practice", () => {
     const drills = blocks.flatMap((block) => block.payload.drills);
     const capsules = blocks.flatMap((block) => block.payload.capsules);
 
-    expect(drills.flatMap((drill) => drill.itemIds)).toStrictEqual([missed?.id]);
-    expect(capsules.flatMap((capsule) => capsule.itemIds)).not.toContain(heard?.id);
-  });
-
-  it("drills a missed recording question alone, with nothing more on its skill", async () => {
-    const { goal, heardId, user } = await listeningLearnerFixture();
-    const [, missed] = await recordingFixture(heardId);
-
-    await mistakeFixture({
-      createdAt: daysAgo(2),
-      itemId: missed?.id,
-      skillId: heardId,
-      userId: user.id,
-    });
-
-    const blocks = await openToday({ goalId: goal.id, userId: user.id });
-    const drills = blocks.flatMap((block) => block.payload.drills);
-
+    // Nothing more on its skill: the drill is the missed question alone.
     expect(drills.map((drill) => drill.itemIds)).toStrictEqual([[missed?.id]]);
+    expect(capsules.flatMap((capsule) => capsule.itemIds)).not.toContain(heard?.id);
   });
 
   it("never drills an old text mistake on it, so the day's drill goes to the next mistake", async () => {

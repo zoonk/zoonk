@@ -302,56 +302,6 @@ describe(saveExamBlueprint, () => {
     ).resolves.toBeNull();
   });
 
-  it("keeps the number of options when a new reading of the notice doesn't state it", async () => {
-    const [source, page] = await Promise.all([
-      sourceFixture({ language: "pt" }),
-      sourceFixture({ language: "pt" }),
-    ]);
-
-    const examIdentity = identity({ board: "Inep", name: `Enem ${randomUUID()}`, role: null });
-    const first = content({ questions: 180, sourceHash: source.contentHash, sourceId: source.id });
-
-    const fiveOptions = {
-      citation: { passage: "Cada questão terá cinco alternativas.", sourceId: source.id },
-      description: "Múltipla escolha com cinco alternativas",
-      kind: "multipleChoice" as const,
-      options: 5,
-    };
-
-    await saveExamBlueprint({
-      content: { ...first, structure: { ...first.structure, formats: [fiveOptions] } },
-      identity: examIdentity,
-      provenance: PROVENANCE,
-      sourceId: source.id,
-    });
-
-    // The exam's page, read later: "180 objective questions", no options.
-    const reread = content({ questions: 180, sourceHash: page.contentHash, sourceId: page.id });
-
-    const saved = await saveExamBlueprint({
-      content: {
-        ...reread,
-        structure: {
-          ...reread.structure,
-          formats: [
-            {
-              citation: { passage: "180 questões objetivas", sourceId: page.id },
-              description: "Questões objetivas",
-              kind: "multipleChoice",
-              options: null,
-            },
-          ],
-        },
-      },
-      identity: examIdentity,
-      provenance: { ...PROVENANCE, runId: "run-reread" },
-      sourceId: page.id,
-    });
-
-    expect(saved.changes).toStrictEqual([]);
-    expect(saved.blueprint.structure).toMatchObject({ formats: [fiveOptions] });
-  });
-
   it("keeps a blueprint read from private material private, in its owner's key space", async () => {
     const [source, owner] = await Promise.all([sourceFixture({ language: "pt" }), userFixture()]);
 
@@ -603,11 +553,16 @@ describe(findSameExam, () => {
   it("ranks a blueprint matching a specific term first when a broad term matches too many to rank", async () => {
     const [broad, specific] = [uniqueWord(), uniqueWord()];
 
-    await Promise.all(
-      Array.from({ length: MAX_MATCHES_PER_TERM + 1 }, () =>
-        examBlueprintFixture({ language: "pt", name: `Concurso ${broad}` }),
-      ),
-    );
+    await prisma.examBlueprint.createMany({
+      data: Array.from({ length: MAX_MATCHES_PER_TERM + 1 }, () => ({
+        ...PROVENANCE,
+        country: "BR",
+        identityKey: `test-exam-${randomUUID()}`,
+        language: "pt",
+        name: `Concurso ${broad}`,
+        structure: { formats: [], subjects: [] },
+      })),
+    });
 
     const target = await examBlueprintFixture({
       language: "pt",

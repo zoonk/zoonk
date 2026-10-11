@@ -135,25 +135,6 @@ describe("the date an exam plan counts down to", () => {
     await expect(findNoticeProposals(planned.goalId)).resolves.toStrictEqual([]);
   });
 
-  it("keeps the month the learner named when the notice sets another, and asks about the notice's day", async () => {
-    // She said December; the notice's official day is in November. The plan counts down to her
-    // month until she answers the notice's day on Today, never replacing it silently.
-    const planned = await planExamGoal({
-      days: ["2020-11-08"],
-      examMonth: 12,
-      examYear: 2020,
-      year: 2020,
-    });
-
-    expect(planned.targetDate).toBe("2020-12-01");
-
-    const proposals = await findNoticeProposals(planned.goalId);
-
-    expect(proposals.map((proposal) => proposal.payload)).toMatchObject([
-      { operations: [{ estimated: false, kind: "setNoticeDate", targetDate: "2020-11-08" }] },
-    ]);
-  });
-
   it("is the next edition's estimated first day once the notice's days passed", async () => {
     // The 2019 notice's 1st and 2nd Sundays of November fall on the 1st and 8th in 2020.
     await expect(

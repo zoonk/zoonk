@@ -223,30 +223,40 @@ describe("essays in sessions", () => {
   });
 
   it("stops grading once the day's essays are used up", async () => {
-    const { goal } = await essaySetup();
+    const { goal, user } = await essaySetup();
     const today = await getTodayStudySession({ goalId: goal.id });
-
-    const block =
-      today.status === "ready" ? today.session.blocks.find((b) => b.kind === "produce") : null;
-
-    const sessionId = today.status === "ready" ? today.session.id : "";
-    const blockId = block?.id ?? "";
+    const session = today.status === "ready" ? today.session : null;
+    const blockId = session?.blocks.find((block) => block.kind === "produce")?.id ?? "";
+    const sessionId = session?.id ?? "";
 
     await startStudyBlock({ blockId, input: {}, sessionId });
 
-    const drafts = Array.from({ length: 6 }, (_, index) => index);
+    const [{ localDate }, essay] = await Promise.all([
+      prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } }),
+      prisma.item.findFirstOrThrow({
+        where: { examBlueprintId: goal.examBlueprintId, format: "essay" },
+      }),
+    ]);
 
-    await drafts.reduce(
-      (previous) =>
-        previous.then(async () => {
-          await submitEssay({ blockId, input: { durationMs: 1000, text: "Again" } });
-        }),
-      Promise.resolve(),
-    );
+    // The day's six grades, already used on the learner's day.
+    await prisma.attempt.createMany({
+      data: Array.from({ length: 6 }, () => ({
+        answer: {},
+        durationMs: 1000,
+        hour: 12,
+        isCorrect: true,
+        itemId: essay.id,
+        localDate,
+        userId: user.id,
+        weekday: localDate.getUTCDay(),
+      })),
+    });
 
     await expect(
       submitEssay({ blockId, input: { durationMs: 1000, text: "One more" } }),
     ).resolves.toStrictEqual({ status: "limitReached" });
+
+    expect(gradeEssay).not.toHaveBeenCalled();
   });
 });
 

@@ -133,7 +133,7 @@ describe("how did it go", () => {
     });
   });
 
-  it("calibrates the exam's estimates once enough learners report", async () => {
+  it("calibrates the exam's estimates once enough learners report, deleted accounts' included", async () => {
     const { blueprint, goal, user } = await examGoal();
     vi.setSystemTime(new Date("2026-10-25T12:00:00Z"));
     await irtMock({ goalId: goal.id, theta: 1.6, userId: user.id });
@@ -143,35 +143,6 @@ describe("how did it go", () => {
 
     expect(uncalibrated).toMatchObject({ calibrated: false, mocks: 1, scale: "irt" });
 
-    const others = await Promise.all(Array.from({ length: 5 }, () => userFixture()));
-
-    await prisma.examResult.createMany({
-      data: others.map((other) => ({
-        estimateHigh: 640,
-        estimateLow: 600,
-        examBlueprintId: blueprint.id,
-        examName: "ENEM",
-        scale: "irt",
-        score: 680,
-        userId: other.id,
-      })),
-    });
-
-    mockSession(user.id);
-    const after = await getGoalPreparation(goal.id);
-    const calibrated = after.status === "ready" ? after.preparation.estimatedScore : null;
-
-    expect(calibrated).toMatchObject({ calibrated: true, scale: "irt" });
-    expect(calibrated?.low).toBe((uncalibrated?.low ?? 0) + 60);
-  });
-
-  it("keeps calibrating with the results of learners who deleted their accounts", async () => {
-    const { blueprint, goal, user } = await examGoal();
-    vi.setSystemTime(new Date("2026-10-25T12:00:00Z"));
-    await irtMock({ goalId: goal.id, theta: 1.6, userId: user.id });
-
-    const before = await getGoalPreparation(goal.id);
-    const uncalibrated = before.status === "ready" ? before.preparation.estimatedScore : null;
     const others = await Promise.all(Array.from({ length: 3 }, () => userFixture()));
     const report = { estimateHigh: 640, estimateLow: 600, scale: "irt", score: 680 };
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runSimLifeInDb } from "./_test-utils/sim/sim-db";
-import { type SimLife, generateSimLife } from "./_test-utils/sim/sim-life-plan";
+import { generateSimLife } from "./_test-utils/sim/sim-life-plan";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
@@ -18,34 +18,6 @@ vi.mock("@vercel/blob", () => ({
 }));
 
 const MINUTE = 60_000;
-
-/** Career seed 2049: tested out on 10-14, confirmed on 10-17, missed in practice on 10-25. */
-const LIFE_2049: SimLife = {
-  dailyMinutes: 60,
-  fixture: "career",
-  knownAreas: [],
-  pending: [1, 5, 13, 15, 21, 22, 24],
-  seed: 2049,
-  speed: 1,
-  start: "2026-10-12",
-  steps: [
-    { days: 2, kind: "miss" },
-    { finish: 0.75, kind: "study", misses: [9] },
-    { finish: 0.75, kind: "study", misses: [] },
-    { finish: 0.5, kind: "study", misses: [] },
-    { finish: 1, kind: "study", misses: [] },
-    { finish: 0, kind: "study", misses: [] },
-    { days: 1, kind: "miss" },
-    { kind: "refresh" },
-    { finish: 0.75, kind: "study", misses: [] },
-    { finish: 0.5, kind: "study", misses: [] },
-    { finish: 0.25, kind: "study", misses: [] },
-    { days: 2, kind: "miss" },
-    { finish: 0.75, kind: "study", misses: [0] },
-  ],
-  subscribed: true,
-  targetInDays: 164,
-};
 
 /*
  * R5: a topic that comes into the plan is named by the run that brought it in. Sim N13 (OAB seed
@@ -69,23 +41,10 @@ describe("a miss that brings a known topic's lessons back", () => {
 
       const { violations } = await runSimLifeInDb(
         { ...life, steps: life.steps.slice(0, 7) },
-        { questions: true },
+        { questions: true, rules: ["R5"] },
       );
 
-      expect(violations.filter((violation) => violation.rule === "R5")).toStrictEqual([]);
-    },
-    10 * MINUTE,
-  );
-
-  // R19: practice missed a topic the learner tested out of and confirmed, and the relearn named
-  // it with none of its lessons back (career seed 2049): the lessons still tested out read the
-  // skill as settled, and counted toward its core, so the ones that came back left the plan.
-  it(
-    "brings back the lessons of a topic practice missed after a test-out it confirmed",
-    async () => {
-      const { violations } = await runSimLifeInDb(LIFE_2049, { questions: true });
-
-      expect(violations.filter((violation) => violation.rule === "R19")).toStrictEqual([]);
+      expect(violations).toStrictEqual([]);
     },
     10 * MINUTE,
   );
@@ -100,10 +59,10 @@ describe("a miss that brings a known topic's lessons back", () => {
 
       const { violations } = await runSimLifeInDb(
         { ...life, steps: life.steps.slice(0, 10) },
-        { questions: true },
+        { questions: true, rules: ["R19"] },
       );
 
-      expect(violations.filter((violation) => violation.rule === "R19")).toStrictEqual([]);
+      expect(violations).toStrictEqual([]);
     },
     10 * MINUTE,
   );

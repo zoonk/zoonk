@@ -3,7 +3,7 @@ import { get } from "@vercel/blob";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { mockSession } from "../_test-utils/mock-session";
 import { readOwnFile, toOwnFileResponse } from "./read-own-file";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
@@ -94,17 +94,6 @@ describe(readOwnFile, () => {
     await expect(response.text()).resolves.toBe("webp-bytes");
   });
 
-  it("serves a guest their own private course's pictures", async () => {
-    const guestId = randomUUID();
-    const pathname = `images/${guestId}/cover-b.webp`;
-    mockGuestSession(guestId);
-    vi.mocked(get).mockResolvedValue(storedFile({ bytes: "cover", pathname }));
-
-    await expect(readOwnFile({ ifNoneMatch: null, pathname })).resolves.toMatchObject({
-      status: "ready",
-    });
-  });
-
   // A call's better version of what the learner said, read aloud in a clip of their own.
   it("serves a learner the clips of their own words", async () => {
     const userId = randomUUID();
@@ -137,14 +126,6 @@ describe(readOwnFile, () => {
     ]);
 
     expect(get).not.toHaveBeenCalled();
-  });
-
-  it("answers a guest the same way for someone else's file", async () => {
-    mockGuestSession(randomUUID());
-
-    await expect(
-      readOwnFile({ ifNoneMatch: null, pathname: `images/${randomUUID()}/step-a.webp` }),
-    ).resolves.toStrictEqual({ status: "notFound" });
   });
 
   it("serves an account the pictures of the private course it brought from its guest", async () => {

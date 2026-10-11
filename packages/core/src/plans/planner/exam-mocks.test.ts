@@ -59,9 +59,8 @@ function buildExamPlan({ daysAway, minutes = 60 }: { daysAway: number; minutes?:
   return { built: buildPlan(input), input };
 }
 
-function examPlan({ daysAway, minutes = 60 }: { daysAway: number; minutes?: number }) {
-  const { built, input } = buildExamPlan({ daysAway, minutes });
-
+/** What the check of a mock in every phase (R24) finds in a built plan. */
+function checkMocks({ built, input }: ReturnType<typeof buildExamPlan>) {
   return checkMocksInEveryPhase({
     after: {
       goal: input.goal,
@@ -74,6 +73,10 @@ function examPlan({ daysAway, minutes = 60 }: { daysAway: number; minutes?: numb
     event: { kind: "planCreated" },
     today: TODAY,
   });
+}
+
+function examPlan({ daysAway, minutes = 60 }: { daysAway: number; minutes?: number }) {
+  return checkMocks(buildExamPlan({ daysAway, minutes }));
 }
 
 describe("an exam plan's mocks", () => {
@@ -91,24 +94,23 @@ describe("an exam plan's mocks", () => {
   );
 });
 
-function countMocks({ daysAway, minutes }: { daysAway: number; minutes: number }) {
-  return buildExamPlan({ daysAway, minutes }).built.items.filter((item) => item.kind === "mock")
-    .length;
+function countMocks({ built }: ReturnType<typeof buildExamPlan>) {
+  return built.items.filter((item) => item.kind === "mock").length;
 }
 
 describe("an exam plan's mocks in the learner's time", () => {
   // Ana at 15 minutes a day had 44 mocks of two and a half hours in a year: more than all her time.
   it("spaces mocks longer than the learner's day, a study day's time a week, and keeps one in every phase", () => {
-    const { built } = buildExamPlan({ daysAway: 120, minutes: 15 });
-    const phases = built.phases.filter((phase) => phase.startDate !== null).length;
+    const plan = buildExamPlan({ daysAway: 120, minutes: 15 });
+    const phases = plan.built.phases.filter((phase) => phase.startDate !== null).length;
 
     // A 180-minute mock takes 12 weeks of one 15-minute study day a week: one in 120 days, besides
     // the one each phase of two weeks or more keeps.
-    expect(countMocks({ daysAway: 120, minutes: 15 })).toBeLessThanOrEqual(2 + phases);
-    expect(examPlan({ daysAway: 120, minutes: 15 })).toStrictEqual([]);
+    expect(countMocks(plan)).toBeLessThanOrEqual(2 + phases);
+    expect(checkMocks(plan)).toStrictEqual([]);
   });
 
   it("keeps a mock a week when a study day holds it", () => {
-    expect(countMocks({ daysAway: 120, minutes: 180 })).toBeGreaterThanOrEqual(14);
+    expect(countMocks(buildExamPlan({ daysAway: 120, minutes: 180 }))).toBeGreaterThanOrEqual(14);
   });
 });

@@ -63,10 +63,10 @@ describe("a plan short on time cuts the least asked topics first, with the learn
           subscribed: false,
           targetInDays: 4,
         },
-        { questions: true },
+        { questions: true, rules: ["R11"] },
       );
 
-      expect(violations.filter((violation) => violation.rule === "R11")).toStrictEqual([]);
+      expect(violations).toStrictEqual([]);
     },
     5 * MINUTE,
   );
@@ -109,10 +109,10 @@ describe("a plan short on time cuts the least asked topics first, with the learn
           subscribed: true,
           targetInDays: 4,
         },
-        { questions: true },
+        { questions: true, rules: ["R11"] },
       );
 
-      expect(violations.filter((violation) => violation.rule === "R11")).toStrictEqual([]);
+      expect(violations).toStrictEqual([]);
     },
     5 * MINUTE,
   );

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { expectCount } from "../_test-utils/activity-player";
 import {
   acceptedAnswerCheck,
   buildAdapters,
@@ -10,9 +11,10 @@ import { languageStep, teachingStep } from "../preview/preview-steps";
 
 /**
  * A language lesson's own screens: sentences built from a word bank (reading builds the sentence,
- * listening its translation), a blank that gets one chance to fix a wrong word, a sentence to
- * write, and the end, which counts each screen by its first answer. A new script's lesson shows
- * each letter with its reading and sound, then matches them.
+ * listening its translation) that takes no more words than the answer, a blank that gets one
+ * chance to fix a wrong word, and a sentence to write. In a script the learner can't read yet, the
+ * words and sentences show their reading. A new script's lesson shows each letter with its reading
+ * and sound, then matches them.
  */
 
 const SENTENCE = "How much is the rent?";
@@ -64,7 +66,7 @@ function letter({
 }
 
 describe("language lesson screens", () => {
-  it("builds sentences from the word bank, fixes a blank once, writes a sentence and counts first answers", async () => {
+  it("builds sentences from the word bank, fixes a blank once and writes a sentence", async () => {
     const writing = teachingStep("typedAnswer");
 
     const lesson = buildLesson(
@@ -81,30 +83,21 @@ describe("language lesson screens", () => {
     const graded = buildAdapters(lesson).checkStep;
     const accepted = acceptedAnswerCheck(writing);
 
-    const { completeLesson } = buildAdapters(lesson);
-
     renderLessonPlayer({
       adapters: buildAdapters(lesson, {
         // Written answers are graded only on the server; the rest the way it grades them.
         checkStep: (input) =>
           input.answer.kind === "typedAnswer" ? accepted(input) : graded(input),
-        // The server counts each screen's first answer, as the screens did.
-        completeLesson: async (input) => {
-          const outcome = await completeLesson(input);
-
-          return outcome.status === "completed"
-            ? {
-                ...outcome,
-                completion: { ...outcome.completion, correctCount: 3, incorrectCount: 1 },
-              }
-            : outcome;
-        },
       }),
       lesson,
     });
 
     await expect.element(page.getByText("Translate this sentence:")).toBeVisible();
     await pickWords(["How", "much", "is", "the", "rent?"]);
+
+    // The sentence is whole, so a word tapped after it stays in the bank.
+    await pickWords(["many"]);
+    await expectCount(page.getByRole("group", { name: "Your answer" }).getByRole("button"), 5);
     await checkRightAndContinue();
 
     await expect.element(page.getByText(SENTENCE, { exact: true })).toBeVisible();
@@ -143,10 +136,44 @@ describe("language lesson screens", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+  });
 
-    // The blank's first answer was wrong, so it counts as a miss even though it was fixed.
-    await expect.element(page.getByText("3 of 4 right")).toBeVisible();
-    await expect.element(page.getByText("+10 Brain Power")).toBeVisible();
+  it("shows the reading of a blank's sentence and of each word in the bank", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson(
+        [
+          languageStep("fillBlank", {
+            answers: ["を"],
+            distractors: ["は", "に"],
+            feedback: "を marks what you ask for.",
+            romanizations: Object.fromEntries([
+              ["お金をお願いします。", "okane o onegai shimasu."],
+              ["を", "o"],
+              ["は", "wa"],
+              ["に", "ni"],
+            ]),
+            template: "お金[BLANK]お願いします。",
+          }),
+        ],
+        { language: "pt", targetLanguage: "ja" },
+      ),
+    });
+
+    // The sentence's reading leaves its blank empty, so it doesn't give the answer away.
+    await expect.element(page.getByText("okane ____ onegai shimasu.")).toBeVisible();
+
+    const bank = page.getByRole("group", { name: "Word bank" });
+
+    for (const [word, reading] of [
+      ["を", "o"],
+      ["は", "wa"],
+      ["に", "ni"],
+    ] as const) {
+      // oxlint-disable-next-line no-await-in-loop -- Each tile is checked in turn.
+      await expect
+        .element(bank.getByRole("button", { exact: true, name: word }))
+        .toHaveAccessibleDescription(reading);
+    }
   });
 
   it("shows each letter with its reading and, when recorded, its sound, then matches them", async () => {

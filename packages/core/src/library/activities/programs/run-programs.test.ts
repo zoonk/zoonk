@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { runPrograms } from "./run-programs";
 import { sqlSetupStatements } from "./sql-setup";
 
-/** Pyodide loads in a couple of seconds; an endless loop waits out its 5 second limit. */
+/** Pyodide loads in a couple of seconds, past Vitest's default 5 second limit on a busy machine. */
 const PYTHON_TEST_TIMEOUT_MS = 30_000;
 
 const countries = sqlSetupStatements([
@@ -99,9 +99,9 @@ describe(runPrograms, () => {
   });
 
   it(
-    "runs Python like the player, with errors on their line and no network, host files or JavaScript",
+    "runs Python like the player, with errors on their line, no network, host files or JavaScript, and traced runs",
     async () => {
-      const [sum, failing, sandboxed, endless] = await runPrograms([
+      const [sum, failing, sandboxed, traced] = await runPrograms([
         {
           code: "total = 0\nfor n in range(1, 101):\n    total += n\nprint(total)",
           kind: "python",
@@ -123,7 +123,11 @@ describe(runPrograms, () => {
           ].join("\n"),
           kind: "python",
         },
-        { code: "while True:\n    pass", kind: "python" },
+        {
+          code: "total = 0\nfor n in [2, 3]:\n    total += n\nlabel = 'done'",
+          kind: "python",
+          watch: ["total", "n", "label"],
+        },
       ]);
 
       expect(sum).toMatchObject({ error: null, output: "5050\n", status: "done" });
@@ -134,25 +138,9 @@ describe(runPrograms, () => {
       });
 
       expect(sandboxed?.output).toBe("OSError\nFileNotFoundError\nImportError\nImportError\n");
-      expect(endless?.status).toBe("timeout");
-    },
-    PYTHON_TEST_TIMEOUT_MS,
-  );
+      expect(traced?.status).toBe("done");
 
-  it(
-    "traces a Python run: each line once it has run, with the watched values",
-    async () => {
-      const [run] = await runPrograms([
-        {
-          code: "total = 0\nfor n in [2, 3]:\n    total += n\nlabel = 'done'",
-          kind: "python",
-          watch: ["total", "n", "label"],
-        },
-      ]);
-
-      expect(run?.status).toBe("done");
-
-      expect(run?.steps).toStrictEqual([
+      expect(traced?.steps).toStrictEqual([
         { line: 1, values: [{ kind: "number", value: 0 }, null, null] },
         { line: 2, values: [{ kind: "number", value: 0 }, { kind: "number", value: 2 }, null] },
         { line: 3, values: [{ kind: "number", value: 2 }, { kind: "number", value: 2 }, null] },

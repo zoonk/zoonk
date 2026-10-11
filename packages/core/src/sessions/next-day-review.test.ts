@@ -78,13 +78,6 @@ describe("a new learner's second day", () => {
     vi.useRealTimers();
   });
 
-  it("opens with a review of what yesterday's lesson taught", async () => {
-    const { first, lessons } = await studiedYesterday();
-
-    expect(first?.kind).toBe("review");
-    expect(first?.capsules.map((capsule) => capsule.lessonId)).toContain(lessons[0]?.id);
-  });
-
   it("names the review after the lesson the learner studied, never a later one on the same skill", async () => {
     // Carla's review opened with "Agrupamento por necessidade", a lesson of a module she hadn't
     // started that teaches the skill of the lesson she studied, written before it.

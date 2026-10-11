@@ -120,24 +120,6 @@ describe("guest usage", () => {
     });
   });
 
-  it("gives a guest five quick explanations a day", async () => {
-    const guest = await useGuest();
-
-    await usageRecordsFixture({
-      count: 5,
-      createdAt: new Date(),
-      kind: "explanation",
-      userId: guest.id,
-    });
-
-    await expect(
-      claimUsage({ kind: "explanation", targetId: randomUUID() }),
-    ).resolves.toStrictEqual({
-      limit: { limit: 5, period: "day", resource: "explanation", tier: "guest" },
-      status: "limitReached",
-    });
-  });
-
   it.each([
     { day: 40, kind: "assist", month: 100 },
     { day: 5, kind: "explanation", month: 10 },
@@ -255,18 +237,10 @@ describe("guest usage", () => {
     await claimUsage({ kind: "goal", targetId: randomUUID() });
     await claimUsage({ kind: "assist", targetId: randomUUID() });
 
-    const expected = (["explanation", "goal", "assist"] as const).reduce(
-      (sum, kind) => sum + getEstimatedCostMicros({ generated: true, kind }),
-      0,
-    );
-
+    // A new explanation's $0.02, a goal's $1.80 and a small help's $0.005.
     await expect(
       prisma.guestSpendDay.findUnique({ where: { day: today() } }),
-    ).resolves.toMatchObject({ spentMicros: expected });
-
-    expect(getEstimatedCostMicros({ generated: false, kind: "goal" })).toBeGreaterThan(
-      getEstimatedCostMicros({ generated: true, kind: "lessonStart" }),
-    );
+    ).resolves.toMatchObject({ spentMicros: 1_825_000 });
   });
 
   it("never refuses a guest because the day's budget row was cleared while they claimed", async () => {
@@ -310,21 +284,5 @@ describe("guest usage", () => {
     await claimUsage({ kind: "assist", targetId: randomUUID() });
 
     expect(captureMessage).toHaveBeenCalledOnce();
-  });
-
-  it("gives a guest a day's worth of small AI help, then asks them to sign up", async () => {
-    const guest = await useGuest();
-
-    await usageRecordsFixture({
-      count: 40,
-      createdAt: new Date(),
-      kind: "assist",
-      userId: guest.id,
-    });
-
-    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toStrictEqual({
-      limit: { limit: 40, period: "day", resource: "assist", tier: "guest" },
-      status: "limitReached",
-    });
   });
 });

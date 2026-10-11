@@ -1,7 +1,8 @@
-import { generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { randomUUID } from "node:crypto";
 import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { fixLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer/fix";
 import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
+import { writeLessonContent } from "@zoonk/core/library/lessons/write-content";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -12,10 +13,8 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
-import { getStartMock } from "../../_test-utils/start-mock";
 import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
-import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workflow";
 import { citePublishedLessonStep } from "./steps/lesson-check-steps";
 import type * as CheckSteps from "./steps/lesson-check-steps";
@@ -26,15 +25,8 @@ vi.mock("workflow/api", () => ({
   start: vi.fn(() => Promise.resolve({ runId: "started-run" })),
 }));
 
-// Model calls are external: tests replay a real spec and draft recorded for the same lesson. The
+// Model calls are external: tests replay a real draft recorded for the same lesson's spec. The
 // writer's model choice for a last draft runs for real.
-vi.mock("@zoonk/ai/tasks/v2/lesson-spec", () => ({ generateLessonSpec: vi.fn() }));
-
-// The picture check is a model call too: every planned picture is kept, as the recorded spec planned.
-vi.mock("@zoonk/ai/tasks/v2/lesson-spec/picture-need", () => ({
-  keepTeachingPictures: vi.fn(({ spec }: { spec: unknown }) => Promise.resolve(spec)),
-}));
-
 vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
 
@@ -50,10 +42,9 @@ vi.mock("./steps/lesson-check-steps", async (importOriginal) => ({
   citePublishedLessonStep: vi.fn(),
 }));
 
-type RecordedSpec = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
 type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
 
-const recordedSpec = recordedOutput<RecordedSpec>("lesson-spec");
+const [recordedSpec] = recordedOutput<{ lessons: object[] }>("lesson-spec").lessons;
 const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
 /** What the reviewer finds wrong on the recorded draft's screen 2. */
@@ -79,16 +70,26 @@ const fixedDraft: RecordedDraft = {
 };
 
 /**
- * A lesson of a learner's plan, published by the real content workflow: what the check workflow
- * it starts after publishing receives.
+ * A lesson of a learner's plan, published from its recorded spec by the real write path (its code
+ * checks passed), with the input the content workflow starts its checks with.
  */
 async function publishedLesson() {
+  const workflowRunId = randomUUID();
+
   const [chapter, user] = await Promise.all([
     libraryChapterFixture({ title: "How vaccines train the immune system" }),
     userFixture(),
   ]);
 
-  const lesson = await libraryLessonFixture({ homeChapterId: chapter.id, level: "overview" });
+  const lesson = await libraryLessonFixture({
+    contentRunId: workflowRunId,
+    contentStatus: "running",
+    homeChapterId: chapter.id,
+    level: "overview",
+    spec: recordedSpec,
+    specStatus: "completed",
+  });
+
   const goal = await goalFixture({ userId: user.id });
   const plan = await planFixture({ goalId: goal.id });
 
@@ -97,47 +98,27 @@ async function publishedLesson() {
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
   ]);
 
-  await lessonContentWorkflow({ forExam: true, lessonId: lesson.id });
+  const written = await writeLessonContent({ forExam: true, lessonId: lesson.id, workflowRunId });
 
-  const call = getStartMock().mock.calls.findLast(([workflow]) => workflow === lessonCheckWorkflow);
-
-  const [input] = (call?.[1] ?? []) as [LessonCheckInput?];
-
-  if (!input) {
-    throw new Error("The content workflow didn't start the lesson's checks.");
+  if (written.status !== "published") {
+    throw new Error(`The test lesson wasn't published: ${written.status}`);
   }
 
-  vi.mocked(start).mockClear();
+  const input: LessonCheckInput = { forExam: true, lessonId: lesson.id, plan: written.check };
 
   return { input, item, lesson };
 }
 
 describe(lessonCheckWorkflow, () => {
   beforeEach(() => {
-    vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
-
     vi.mocked(writeLessonDraft).mockImplementation(async (params) =>
       taskResult(recordedDraft, params.model ?? "openai/gpt-6-sol"),
     );
   });
 
-  it("leaves a published version its reviewer passes as it is", async () => {
-    const { input, lesson } = await publishedLesson();
-    vi.mocked(checkLessonQuality).mockResolvedValue(taskResult({ issues: [] }));
-
-    await expect(lessonCheckWorkflow(input)).resolves.toStrictEqual({ cited: 0, status: "passed" });
-
-    expect(checkLessonQuality).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ serviceTier: "flex" }),
-    );
-
-    expect(start).not.toHaveBeenCalled();
-
-    const steps = await prisma.step.findMany({ where: { lessonId: lesson.id } });
-    expect(steps.every((step) => step.version === 1 && step.retiredAt === null)).toBe(true);
-  });
-
-  it("settles what its reviewer found when citing the version keeps failing: citations are extra", async () => {
+  // That the reviewer reads the version at flex and leaves it as it is, is core's
+  // (`checkPublishedLesson`); the run settles a pass with nothing to draw.
+  it("leaves a version its reviewer passes as it is, even when citing it keeps failing: citations are extra", async () => {
     const { input } = await publishedLesson();
     vi.mocked(checkLessonQuality).mockResolvedValue(taskResult({ issues: [] }));
 
@@ -150,6 +131,9 @@ describe(lessonCheckWorkflow, () => {
     await expect(
       lessonCheckWorkflow({ ...input, plan: { ...input.plan, cite: true } }),
     ).resolves.toStrictEqual({ cited: 0, status: "passed" });
+
+    expect(checkLessonQuality).toHaveBeenCalledOnce();
+    expect(start).not.toHaveBeenCalled();
   });
 
   it("publishes the fix of what its reviewer found as the next version, then draws the pictures it lacks", async () => {

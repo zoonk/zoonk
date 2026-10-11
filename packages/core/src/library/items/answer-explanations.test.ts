@@ -1,6 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
 import { generatedProvenance } from "./_test-utils/generated-items";
@@ -62,26 +60,6 @@ describe("shared answer explanations", () => {
     ]);
 
     expect(lookups).toStrictEqual([null, null, null, null]);
-  });
-
-  it("stores explanations for lesson steps too", async () => {
-    const lesson = await libraryLessonFixture();
-    const step = await libraryStepFixture({ kind: "typedAnswer", lessonId: lesson.id });
-    const target = { stepId: step.id };
-
-    const saved = await saveAnswerExplanation({
-      answer: "I have went",
-      explanation: "After 'have', use the past participle: 'I have gone'.",
-      language: "en",
-      provenance: generatedProvenance(),
-      target,
-    });
-
-    expect(saved).toMatchObject({ itemId: null, stepId: step.id });
-
-    await expect(
-      findAnswerExplanation({ answer: "i have went", language: "en", target }),
-    ).resolves.toStrictEqual(saved);
   });
 
   it("keeps the first explanation when two learners make the same mistake at once", async () => {

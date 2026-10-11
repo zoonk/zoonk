@@ -333,35 +333,6 @@ describe(explainQuestionWorkflow, () => {
     });
   });
 
-  it("keeps the way to go further for the next learner after the first asker is deleted", async () => {
-    const question = `why do volcanoes erupt? ${crypto.randomUUID()}`;
-    const courseTitle = `Volcanoes ${crypto.randomUUID().slice(0, 8)}`;
-    const [first, second] = await Promise.all([explainGoal(question), explainGoal(question)]);
-
-    mockGenerality(true);
-
-    vi.mocked(generateQuickExplanation).mockResolvedValue(
-      taskResult(explanation(courseTitle), "openai/gpt-6-luna"),
-    );
-
-    await explainQuestionWorkflow({ goalId: first.goal.id });
-    await prisma.user.delete({ where: { id: first.user.id } });
-
-    await expect(explainQuestionWorkflow({ goalId: second.goal.id })).resolves.toMatchObject({
-      status: "reused",
-    });
-
-    await expect(
-      prisma.goal.findUniqueOrThrow({
-        include: { primaryCourse: true },
-        where: { id: second.goal.id },
-      }),
-    ).resolves.toMatchObject({
-      details: { relatedQuestions: ["What is an index fund?", "Why do stocks fall?"] },
-      primaryCourse: { title: courseTitle },
-    });
-  });
-
   it("finds the course to go further a guest's first question never got, for everyone after", async () => {
     const question = `why do birds migrate? ${crypto.randomUUID()}`;
     const courseTitle = `Birds ${crypto.randomUUID().slice(0, 8)}`;

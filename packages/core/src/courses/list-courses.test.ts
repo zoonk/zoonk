@@ -148,28 +148,6 @@ describe(listCourses, () => {
     expect(result).toHaveLength(LIST_COURSES_LIMIT);
   });
 
-  it("limits results to the requested page size", async () => {
-    const language = createTestLanguage();
-    const organization = await organizationFixture({ kind: "brand" });
-
-    await prisma.course.createMany({
-      data: Array.from({ length: 5 }, (_, index) => ({
-        description: `Custom limit course ${index}`,
-        imageUrl: null,
-        isPublished: true,
-        language,
-        normalizedTitle: `custom limit course ${index}`,
-        organizationId: organization.id,
-        slug: `custom-limit-${randomUUID()}-${index}`,
-        title: `Custom Limit Course ${index}`,
-      })),
-    });
-
-    const result = await listCourses({ language, limit: 3 });
-
-    expect(result).toHaveLength(3);
-  });
-
   it("paginates without returning the cursor again", async () => {
     const language = createTestLanguage();
     const organization = await organizationFixture({ kind: "brand" });

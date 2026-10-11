@@ -24,12 +24,6 @@ describe(formatLocalContext, () => {
     expect(labels).toStrictEqual(PACK_LINES);
   });
 
-  it("describes the regional variant each language is written in", () => {
-    expect(formatLocalContext("en")).toContain("- Place: the United States");
-    expect(formatLocalContext("pt")).toContain("- Money: Brazilian real, written R$ 1.234,56");
-    expect(formatLocalContext("es")).toContain("- Place: Spain");
-  });
-
   it("reads regional language tags as their base language", () => {
     expect(formatLocalContext("pt-BR")).toBe(formatLocalContext("pt"));
   });

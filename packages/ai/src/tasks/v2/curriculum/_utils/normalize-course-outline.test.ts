@@ -95,22 +95,6 @@ describe(normalizeCourseOutline, () => {
     });
   });
 
-  it("reads headings, links and marks nobody can pair as plain words", () => {
-    const outline = normalizeCourseOutline({
-      level: "beginner",
-      raw: {
-        chapters: [
-          rawChapter({
-            lessons: [rawLesson({ title: "## [Juros](https://example.com) **compostos" })],
-          }),
-        ],
-      },
-      requiredSkillKeys: [],
-    });
-
-    expect(outline.chapters[0]?.lessons[0]?.title).toBe("Juros compostos");
-  });
-
   it("keeps one entry per tool, essential when any of its entries is", () => {
     const outline = normalizeCourseOutline({
       level: "beginner",

@@ -343,6 +343,9 @@ describe(researchWorkflow, () => {
       contentScope: "shared",
     });
 
+    // The notice itself was read, so no copy of it is searched.
+    expect(findOfficialSources).toHaveBeenCalledOnce();
+
     const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
       include: { source: true },
       where: {
@@ -825,15 +828,6 @@ describe(researchWorkflow, () => {
     expect(examStructureSchema.parse(blueprint.structure).subjects.length).toBeGreaterThan(0);
   });
 
-  it("searches no copies when the notice itself was read", async () => {
-    const { goal } = await examGoal();
-    await replayTcdfResearch();
-
-    await researchWorkflow({ goalId: goal.id });
-
-    expect(findOfficialSources).toHaveBeenCalledOnce();
-  });
-
   it("fails the step storing a document whose download timed out, so the runtime retries it alone", async () => {
     await replayTcdfResearch();
     const { data } = await findOfficialSources({} as never);
@@ -1239,18 +1233,6 @@ describe(researchWorkflow, () => {
     expect(cancel).toHaveBeenCalledWith({ cancelReason: expect.any(String) });
   });
 
-  it("remembers its run on the goal, so asking again follows it", async () => {
-    const { goal } = await examGoal();
-    await replayTcdfResearch();
-    findNothingOfficial();
-
-    await researchWorkflow({ goalId: goal.id });
-
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      researchRunId: expect.any(String),
-    });
-  });
-
   it("asks for the notice instead of guessing when search finds nothing official", async () => {
     const { goal } = await examGoal();
     await replayTcdfResearch();
@@ -1264,9 +1246,11 @@ describe(researchWorkflow, () => {
 
     expect(extractExamBlueprint).not.toHaveBeenCalled();
 
-    // The ask stays on the goal, so Plan and Today show it until the learner answers.
+    // The ask stays on the goal, so Plan and Today show it until the learner answers, and the run
+    // is remembered on it, so asking again follows it.
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       examBlueprintId: null,
+      researchRunId: expect.any(String),
       researchUploadReason: "noOfficialSource",
     });
   });
@@ -1378,23 +1362,6 @@ describe(researchWorkflow, () => {
     expect(structure.mock?.scoring).toStrictEqual({ description: "", method: "wrongCancelsRight" });
   });
 
-  it("asks for the notice when no fact survives the citation check", async () => {
-    const { goal } = await examGoal();
-    await replayTcdfResearch();
-    vi.mocked(checkCitedFacts).mockResolvedValue({ ...TASK_RESULT, data: { supportedIds: [] } });
-
-    await expect(researchWorkflow({ goalId: goal.id })).resolves.toStrictEqual({
-      reason: "unverified",
-      status: "needsUpload",
-    });
-
-    expect(start).not.toHaveBeenCalled();
-
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
-      researchUploadReason: "unverified",
-    });
-  });
-
   it("answers the ask with the learner's upload and rebuilds the goal's curriculum from it", async () => {
     const { goal, user } = await examGoal();
     await replayTcdfResearch();
@@ -1486,16 +1453,26 @@ describe(researchWorkflow, () => {
       status: "needsUpload",
     });
 
+    // Nothing is planned from it: the goal asks for the notice instead.
+    expect(start).not.toHaveBeenCalled();
+
     await expect(
-      prisma.examBlueprint.findUnique({
-        where: {
-          languageIdentity: {
-            identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
-            language: "pt",
+      Promise.all([
+        prisma.examBlueprint.findUnique({
+          where: {
+            languageIdentity: {
+              identityKey: buildExamIdentityKey({
+                name: plan.name,
+                ownerId: null,
+                role: plan.role,
+              }),
+              language: "pt",
+            },
           },
-        },
-      }),
-    ).resolves.toBeNull();
+        }),
+        prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      ]),
+    ).resolves.toMatchObject([null, { researchUploadReason: "unverified" }]);
   });
 
   it("reads the material a learner gave at onboarding instead of asking for it again", async () => {

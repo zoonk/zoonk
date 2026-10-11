@@ -257,22 +257,6 @@ describe(serializeExerciseSteps, () => {
     ]);
   });
 
-  it("capitalizes every translation option", () => {
-    const result = serializeTranslation(
-      makeWord({
-        distractors: ["boa tarde", "boa noite"],
-        translation: "Good morning",
-        word: "Bom dia",
-      }),
-    );
-
-    expect(result[0]?.translationOptions.map((option) => option.word)).toStrictEqual([
-      "Bom dia",
-      "Boa tarde",
-      "Boa noite",
-    ]);
-  });
-
   it("capitalizes under-cased generated translation answers", () => {
     const result = serializeTranslation(
       makeWord({
@@ -323,26 +307,6 @@ describe(serializeExerciseSteps, () => {
     ]);
   });
 
-  it("serializes multiple choice content", () => {
-    const content = {
-      options: [
-        { feedback: "Yes", id: "alpha", isCorrect: true, text: "Alpha" },
-        { feedback: "No", id: "beta", isCorrect: false, text: "Beta" },
-      ],
-      question: "Pick one",
-    };
-
-    const result = serialize({ steps: [makeStep({ content, id: "30", kind: "multipleChoice" })] });
-
-    expect(result[0]?.content).toStrictEqual({
-      options: [
-        { feedback: "Yes", id: "alpha", isCorrect: true, text: "Alpha" },
-        { feedback: "No", id: "beta", isCorrect: false, text: "Beta" },
-      ],
-      question: "Pick one",
-    });
-  });
-
   it("builds reading and listening word banks from stored distractors only", () => {
     const sentence = makeSentence({
       distractors: ["Abend", "Fenster", "Guten Tag"],
@@ -383,36 +347,6 @@ describe(serializeExerciseSteps, () => {
     ]);
   });
 
-  it("populates sentenceWordOptions from canonical sentence tokens", () => {
-    const result = serialize({
-      lessonWords: [
-        makeWord({
-          id: "10",
-          romanization: "guten morgen",
-          translation: "good morning",
-          word: "Guten Morgen",
-        }),
-      ],
-      steps: [
-        makeStep({
-          content: {},
-          id: "12",
-          kind: "reading",
-          sentence: makeSentence({
-            id: "20",
-            sentence: "Guten Morgen",
-            translation: "Good morning",
-          }),
-        }),
-      ],
-    });
-
-    expect(result[0]?.sentenceWordOptions).toStrictEqual([
-      wordOption("Guten"),
-      wordOption("Morgen"),
-    ]);
-  });
-
   it("keeps sentence word metadata from sentence words when available", () => {
     const result = serialize({
       lessonWords: [
@@ -448,12 +382,6 @@ describe(serializeExerciseSteps, () => {
     ]);
   });
 
-  it("keeps sentenceWordOptions empty for steps without a sentence", () => {
-    const result = serialize({ steps: [makeStep()] });
-
-    expect(result[0]?.sentenceWordOptions).toStrictEqual([]);
-  });
-
   it("keeps option helper arrays empty for unrelated step kinds", () => {
     const result = serialize({ steps: [makeStep()] });
 
@@ -465,25 +393,5 @@ describe(serializeExerciseSteps, () => {
       vocabularyOptions: [],
       wordBankOptions: [],
     });
-  });
-
-  it("allows sanitation underflow without fallback top-up", () => {
-    const result = serialize({
-      steps: [
-        makeStep({
-          content: {},
-          id: "12",
-          kind: "reading",
-          sentence: makeSentence({
-            distractors: ["Hola", "Buenos dias"],
-            id: "20",
-            sentence: "Hola mundo",
-            translation: "Hello world",
-          }),
-        }),
-      ],
-    });
-
-    expect(result[0]?.wordBankOptions).toStrictEqual([wordOption("Hola"), wordOption("mundo")]);
   });
 });

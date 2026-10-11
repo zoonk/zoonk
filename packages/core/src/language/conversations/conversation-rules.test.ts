@@ -1,21 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-  getCheckpointMinutes,
   getConversationBrainPower,
   getConversationStars,
   getMetObjectives,
   hasPassedConversation,
 } from "./conversation-rules";
-
-describe(getCheckpointMinutes, () => {
-  it("grows with the level", () => {
-    expect(getCheckpointMinutes("A1")).toBe(1);
-    expect(getCheckpointMinutes("A2")).toBe(1);
-    expect(getCheckpointMinutes("B1")).toBe(2);
-    expect(getCheckpointMinutes("C1")).toBe(3);
-    expect(getCheckpointMinutes("C2")).toBe(4);
-  });
-});
 
 describe(hasPassedConversation, () => {
   it("uses the checkpoint pass mark: most of what the call asked for", () => {

@@ -1,7 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { userFixture } from "@zoonk/testing/fixtures/users";
+import { toUTCMidnight } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { recalibrateItemDifficulties } from "./recalibrate-item-difficulty";
 
@@ -15,6 +15,31 @@ function isolatedNow(): Date {
   return new Date(Date.UTC(2090, 0, 1) + Math.floor(Math.random() * 1_000_000) * HOUR_MS * 24);
 }
 
+/** Each learner's answer to the item at `answeredAt`, as attempts store it. */
+function attemptRows({
+  answeredAt,
+  itemId,
+  results,
+  userIds,
+}: {
+  answeredAt: Date;
+  itemId: string;
+  results: readonly boolean[];
+  userIds: readonly string[];
+}) {
+  return userIds.map((userId, index) => ({
+    answer: { selectedIndex: 0 },
+    answeredAt,
+    durationMs: 5000,
+    hour: answeredAt.getUTCHours(),
+    isCorrect: results[index] ?? false,
+    itemId,
+    localDate: toUTCMidnight(answeredAt),
+    userId,
+    weekday: answeredAt.getUTCDay(),
+  }));
+}
+
 /** One new learner per result, each answering the item once, an hour before `now`. */
 async function answerByLearners({
   itemId,
@@ -25,16 +50,16 @@ async function answerByLearners({
   now: Date;
   results: boolean[];
 }) {
-  const users = await Promise.all(results.map(() => userFixture()));
+  const users = await prisma.user.createManyAndReturn({
+    data: results.map(() => ({ email: `learner-${randomUUID()}@example.test`, name: "Learner" })),
+  });
+
+  const userIds = users.map((user) => user.id);
   const answeredAt = new Date(now.getTime() - HOUR_MS);
 
-  await Promise.all(
-    users.map((user, index) =>
-      attemptFixture({ answeredAt, isCorrect: results[index], itemId, userId: user.id }),
-    ),
-  );
+  await prisma.attempt.createMany({ data: attemptRows({ answeredAt, itemId, results, userIds }) });
 
-  return users;
+  return userIds;
 }
 
 function repeat({ correct, wrong }: { correct: number; wrong: number }): boolean[] {
@@ -102,23 +127,21 @@ describe(recalibrateItemDifficulties, () => {
     const skill = await skillFixture();
     const item = await itemFixture({ content: FOUR_OPTIONS, difficulty: 0, skillId: skill.id });
 
-    const users = await answerByLearners({
+    const userIds = await answerByLearners({
       itemId: item.id,
       now,
       results: repeat({ correct: 2, wrong: 18 }),
     });
 
     // Every learner got it right on later reviews: none of that counts.
-    await Promise.all(
-      users.map((user) =>
-        attemptFixture({
-          answeredAt: new Date(now.getTime() - HOUR_MS / 2),
-          isCorrect: true,
-          itemId: item.id,
-          userId: user.id,
-        }),
-      ),
-    );
+    await prisma.attempt.createMany({
+      data: attemptRows({
+        answeredAt: new Date(now.getTime() - HOUR_MS / 2),
+        itemId: item.id,
+        results: userIds.map(() => true),
+        userIds,
+      }),
+    });
 
     await recalibrateItemDifficulties({ now });
 

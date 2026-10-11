@@ -148,10 +148,10 @@ async function bandChapterOf({
   return lesson;
 }
 
-describe("loadGoalPlannerLessons with the learner's stated level", () => {
-  // The level a learner states is a claim: its easier bands stay to confirm, and only placement
-  // answers of the skill's own test them out.
-  it("keeps a skill's easier band, whatever level the learner says they have", async () => {
+describe(loadGoalPlannerLessons, () => {
+  // Lessons come from every band of a skill's course: the level a learner states is a claim that
+  // leaves its easier bands to confirm, and only placement answers of the skill's own test them out.
+  it("plans every band of a skill's course, the easier ones too", async () => {
     const [user, course, skill] = await Promise.all([
       userFixture(),
       courseFixture({ title: "Constitutional law" }),
@@ -163,12 +163,7 @@ describe("loadGoalPlannerLessons with the learner's stated level", () => {
       bandChapterOf({ courseId: course.id, level: "intermediate", position: 1, skillId: skill.id }),
     ]);
 
-    const goal = {
-      details: { level: "intermediate" },
-      examBlueprintId: null,
-      kind: "learn" as const,
-      primaryCourseId: null,
-    };
+    const goal = { examBlueprintId: null, kind: "learn" as const, primaryCourseId: null };
 
     const lessons = await loadGoalPlannerLessons({
       goal,

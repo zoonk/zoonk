@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { GATEWAY_PRICES, computeCallCostUsd } from "./call-cost";
+import { computeCallCostUsd } from "./call-cost";
 
 const MILLION = 1_000_000;
 /** A speech clip costs a fraction of a cent, so its prices are compared to a millionth of a cent. */
@@ -115,16 +115,21 @@ describe(computeCallCostUsd, () => {
     expect(computeCallCostUsd({ model, usage: { images: 1 } })).toBeCloseTo(0.0336);
   });
 
+  it("prices a decision model by its input alone, since it writes no tokens", () => {
+    // The gateway lists only an input price for Jev, which answers every evaluation question.
+    const model = "typesafe-ai/jev";
+    const inputOnly = computeCallCostUsd({ model, usage: { inputTokens: 1000 } });
+
+    expect(inputOnly).toBeGreaterThan(0);
+
+    expect(computeCallCostUsd({ model, usage: { inputTokens: 1000, outputTokens: 50 } })).toBe(
+      inputOnly,
+    );
+  });
+
   it("leaves the cost unknown for a model without a price, so it never looks free", () => {
     expect(
       computeCallCostUsd({ model: "acme/unknown-model", usage: { inputTokens: 100 } }),
     ).toBeUndefined();
-  });
-});
-
-describe("the saved gateway price list", () => {
-  it("knows every model the gateway listed when the prices were last refreshed", () => {
-    expect(GATEWAY_PRICES.fetchedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/u);
-    expect(GATEWAY_PRICES.models["typesafe-ai/jev"]).toMatchObject({ output: 0 });
   });
 });

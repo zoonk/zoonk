@@ -606,34 +606,6 @@ describe(saveOutlineChapter, () => {
 });
 
 describe("course outline state", () => {
-  it("finds the goal skills no lesson or tagged chapter of the course teaches yet", async () => {
-    const [taughtByLesson, taughtByChapter, untaught, chapter, lesson, course] = await Promise.all([
-      skillFixture(),
-      skillFixture(),
-      skillFixture(),
-      libraryChapterFixture(),
-      libraryLessonFixture(),
-      courseFixture(),
-    ]);
-
-    await Promise.all([
-      prisma.lessonSkill.create({ data: { lessonId: lesson.id, skillId: taughtByLesson.id } }),
-      prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: taughtByChapter.id } }),
-      prisma.courseChapter.create({
-        data: { chapterId: chapter.id, courseId: course.id, level: "beginner", position: 0 },
-      }),
-      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
-    ]);
-
-    await expect(
-      findUntaughtSkills({
-        courseId: course.id,
-        ownerId: null,
-        skillIds: [taughtByLesson.id, taughtByChapter.id, untaught.id],
-      }),
-    ).resolves.toStrictEqual([untaught.id]);
-  });
-
   it("counts only chapters without tools as teaching an exam answered without them", async () => {
     const audio = [{ essential: true, name: "Audio editor (Audacity)" }];
 
@@ -674,8 +646,9 @@ describe("course outline state", () => {
 
     const skillIds = [byConcept.id, byToolLesson.id, byToolChapter.id];
 
+    // By default, a skill counts as taught by a lesson or a tagged chapter, tools or not.
     await expect(
-      findUntaughtSkills({ courseId: course.id, ownerId: null, skillIds, withToolChapters: true }),
+      findUntaughtSkills({ courseId: course.id, ownerId: null, skillIds }),
     ).resolves.toStrictEqual([]);
 
     await expect(

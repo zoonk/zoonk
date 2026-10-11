@@ -23,33 +23,24 @@ const PERIOD_CONFIGS: Record<TimePeriod, TimePeriodConfig> = {
   year: { getKey: getYearKey, getNormalizedDate: getFirstOfYear },
 };
 
-type AggregationStrategy = "sum" | "average";
-
 export function aggregateByPeriod<T extends { date: Date }>(
   dataPoints: T[],
   getValue: (point: T) => number,
-  strategy: AggregationStrategy,
   period: TimePeriod,
 ): { date: Date; value: number }[] {
   const { getKey, getNormalizedDate } = PERIOD_CONFIGS[period];
-  const map = new Map<string, { total: number; count: number; date: Date }>();
+  const map = new Map<string, { date: Date; value: number }>();
 
   for (const point of dataPoints) {
     const key = getKey(point.date);
     const existing = map.get(key);
 
     if (existing) {
-      existing.total += getValue(point);
-      existing.count += 1;
+      existing.value += getValue(point);
     } else {
-      map.set(key, { count: 1, date: getNormalizedDate(point.date), total: getValue(point) });
+      map.set(key, { date: getNormalizedDate(point.date), value: getValue(point) });
     }
   }
 
-  return [...map.values()]
-    .map((item) => ({
-      date: item.date,
-      value: strategy === "sum" ? item.total : item.total / item.count,
-    }))
-    .toSorted((a, b) => a.date.getTime() - b.date.getTime());
+  return [...map.values()].toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }

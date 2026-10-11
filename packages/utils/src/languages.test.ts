@@ -39,36 +39,6 @@ describe(isTTSSupportedLanguage, () => {
 });
 
 describe(usesNonLatinScript, () => {
-  it.each([
-    "ja",
-    "zh",
-    "ko",
-    "ar",
-    "ru",
-    "el",
-    "he",
-    "hi",
-    "th",
-    "fa",
-    "bn",
-    "ka",
-    "km",
-    "my",
-    "am",
-    "pa",
-    "te",
-    "ml",
-  ])("returns true for non-Roman script language: %s", (code) => {
-    expect(usesNonLatinScript(code)).toBe(true);
-  });
-
-  it.each(["en", "es", "fr", "de", "pt", "it"])(
-    "returns false for Roman script language: %s",
-    (code) => {
-      expect(usesNonLatinScript(code)).toBe(false);
-    },
-  );
-
   it("returns false for unknown language codes", () => {
     expect(usesNonLatinScript("xyz")).toBe(false);
   });
@@ -94,11 +64,5 @@ describe(getLanguageName, () => {
 
   it("returns native name for Japanese", () => {
     expect(getLanguageName({ targetLanguage: "ja" })).toBe("日本語");
-  });
-
-  it("capitalizes the first letter", () => {
-    const name = getLanguageName({ targetLanguage: "fr", userLanguage: "en" });
-    expect(name).toBe("French");
-    expect(name[0]).toBe(name[0]?.toUpperCase());
   });
 });

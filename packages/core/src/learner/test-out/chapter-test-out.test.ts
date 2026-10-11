@@ -202,18 +202,19 @@ describe(requestTestOutQuestions, () => {
 });
 
 describe(submitChapterTestOut, () => {
-  it("tests out the chapter when the learner passes, except what they missed", async () => {
+  it("skips nothing below the pass mark, but keeps what was right and counts its time in the learner's day", async () => {
     const { chapters, goal, items, planItems, skills, user } = await setup();
-    const chapterItems = items.slice(0, 4);
+    const chapterId = chapters[0]?.id ?? "";
     const flush = runDeferredWork();
 
     const result = await submitChapterTestOut({
-      chapterId: chapters[0]?.id ?? "",
+      chapterId,
       goalId: goal.id,
       input: {
-        answers: chapterItems.map((item, index) => ({
+        answers: items.slice(0, 4).map((item, index) => ({
           answer: index === 3 ? WRONG : RIGHT,
-          durationMs: 8000,
+          // A question left open for an hour counts as five minutes of study.
+          durationMs: index === 3 ? 3_600_000 : 20_000,
           itemId: item.id,
         })),
       },
@@ -231,35 +232,6 @@ describe(submitChapterTestOut, () => {
     ).resolves.toBe(0);
 
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0);
-
-    await flush();
-
-    expect(trackServerEvent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        distinctId: user.id,
-        name: "Test-out Taken",
-        properties: { chapter_id: chapters[0]?.id, passed: false, score: 75 },
-        shared: expect.objectContaining({ goal_kind: goal.kind }),
-      }),
-    );
-  });
-
-  it("counts the test-out's answering time and answers in the learner's day", async () => {
-    const { chapters, goal, items, user } = await setup();
-    const chapterId = chapters[0]?.id ?? "";
-
-    await submitChapterTestOut({
-      chapterId,
-      goalId: goal.id,
-      input: {
-        answers: items.slice(0, 4).map((item, index) => ({
-          answer: index === 3 ? WRONG : RIGHT,
-          // A question left open for an hour counts as five minutes of study.
-          durationMs: index === 3 ? 3_600_000 : 20_000,
-          itemId: item.id,
-        })),
-      },
-    });
 
     await expect(
       prisma.dailyProgress.findFirstOrThrow({ where: { userId: user.id } }),
@@ -280,6 +252,17 @@ describe(submitChapterTestOut, () => {
       lessonKind: "testOut",
       seconds: 360,
     });
+
+    await flush();
+
+    expect(trackServerEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        distinctId: user.id,
+        name: "Test-out Taken",
+        properties: { chapter_id: chapterId, passed: false, score: 75 },
+        shared: expect.objectContaining({ goal_kind: goal.kind }),
+      }),
+    );
   });
 
   it("marks the whole chapter known and skips its plan items on a pass", async () => {

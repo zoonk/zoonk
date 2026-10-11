@@ -1,5 +1,5 @@
 import { type LessonVisual } from "@zoonk/core/library/steps/contract";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { expectCount } from "../_test-utils/activity-player";
@@ -16,6 +16,9 @@ import { inlineImage, lawTimeline, lettersChart, teachingStep } from "../preview
  */
 
 const PHONE = { height: 812, width: 375 };
+
+/** The player asks again for pictures still being drawn every 4 seconds. */
+const PICTURE_POLL_MS = 4000;
 
 function check(content: object) {
   const base = teachingStep("check");
@@ -208,6 +211,13 @@ describe("lesson visuals", () => {
   });
 
   it("waits on a question's picture while it's drawn, then shows it and takes answers", async () => {
+    // The clock keeps running on its own, as the lesson's does, so only the wait is skipped ahead.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
     const request = { alt: "Otávio stands next to a blue bike", prompt: "Otávio next to a bike" };
     const base = check({ image: request, question: "Which caption fits the picture?" });
     const step = { ...base, image: null, imagePending: true };
@@ -216,8 +226,7 @@ describe("lesson visuals", () => {
 
     const getLessonPictures = vi
       .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
-      .mockResolvedValueOnce([])
-      .mockResolvedValue([{ image: drawn, stepId: step.id }]);
+      .mockResolvedValue([]);
 
     renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
@@ -228,14 +237,12 @@ describe("lesson visuals", () => {
     const firstOption = page.getByRole("radio").first();
     await expect.element(firstOption).toBeDisabled();
 
-    // The next ask, a few seconds later, brings the picture.
-    await expect
-      .element(page.getByRole("img", { name: request.alt }), { timeout: 8000 })
-      .toBeVisible();
+    // The picture is drawn, and the next ask, a few seconds later, brings it.
+    getLessonPictures.mockResolvedValue([{ image: drawn, stepId: step.id }]);
+    await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 
+    await expect.element(page.getByRole("img", { name: request.alt })).toBeVisible();
     await expect.element(firstOption).toBeEnabled();
-
-    expect(getLessonPictures).toHaveBeenCalledTimes(2);
   });
 
   it("describes a question's picture that never came, so the question still reads", async () => {

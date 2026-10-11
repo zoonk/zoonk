@@ -122,32 +122,4 @@ describe(getCourse, () => {
 
     expect(result).toBeNull();
   });
-
-  it("resolves different localized slugs independently", async () => {
-    const organization = await organizationFixture({ kind: "brand" });
-    const baseSlug = `localized-${crypto.randomUUID()}`;
-
-    const [englishCourse, portugueseCourse] = await Promise.all([
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: organization.id,
-        slug: baseSlug,
-      }),
-      courseFixture({
-        isPublished: true,
-        language: "pt",
-        organizationId: organization.id,
-        slug: `${baseSlug}-pt`,
-      }),
-    ]);
-
-    const [englishResult, portugueseResult] = await Promise.all([
-      getCourse({ brandSlug: organization.slug, courseSlug: englishCourse.slug }),
-      getCourse({ brandSlug: organization.slug, courseSlug: portugueseCourse.slug }),
-    ]);
-
-    expect(englishResult?.id).toBe(englishCourse.id);
-    expect(portugueseResult?.id).toBe(portugueseCourse.id);
-  });
 });

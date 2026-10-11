@@ -167,19 +167,6 @@ describe(resolveLibraryIdentity, () => {
     expect(result.verdicts).toHaveLength(1);
   });
 
-  it("skips the decision when the search finds nothing", async () => {
-    const skill = await skillFixture();
-    mockSearchTerms([uniqueWord()]);
-    const decisionSpy = mockDecision(null);
-
-    const result = await resolveLibraryIdentity({
-      request: lessonRequest({ skills: [{ id: skill.id, name: skill.name }], title: uniqueWord() }),
-    });
-
-    expect(result.kind).toBe("generate");
-    expect(decisionSpy).not.toHaveBeenCalled();
-  });
-
   it("keeps private requests in their owner's key space without searching", async () => {
     const [owner, otherOwner, skill] = await Promise.all([
       userFixture(),

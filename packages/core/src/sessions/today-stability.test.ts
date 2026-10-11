@@ -128,15 +128,28 @@ describe("today's session the learner was shown", () => {
   });
 
   // Lucas's Today listed languages, mathematics, the essay and strategy; when lessons landed, the
-  // day he hadn't started yet was rebuilt as languages and the essay, with no plan change.
-  it("keeps every block it showed, in order, when lessons the plan waited on land", async () => {
+  // day he hadn't started yet was rebuilt as languages and the essay, with no plan change. Carla's
+  // Today said 7 lessons and her session opened with 15: the rest landed in between.
+  it("holds the place of lessons still being outlined, says they're on the way, and keeps every block it showed when they land", async () => {
     const { course, goal, library } = await setupDayWithStandIn();
     const before = await readToday(goal.id);
+
+    const dueToday = await prisma.planItem.findMany({
+      where: { lessonId: { not: null }, plan: { goalId: goal.id }, scheduledFor: { lte: TODAY } },
+    });
+
+    const due = new Set(dueToday.map((item) => item.lessonId));
+
+    // The day keeps their place instead of filling it with later lessons, and says more are coming.
+    expect(learnLessonIds(before).length).toBeGreaterThan(0);
+    expect(learnLessonIds(before).filter((id) => !due.has(id))).toStrictEqual([]);
+    expect(before.lessonsComing).toBe(true);
 
     vi.setSystemTime(A_MINUTE_LATER);
     const landed = await landWaitingLessons({ courseId: course.id, library });
     const after = await readToday(goal.id);
 
+    expect(after.lessonsComing).toBe(false);
     expect(after.id).toBe(before.id);
 
     expect(after.blocks.slice(0, before.blocks.length).map((block) => block.id)).toStrictEqual(
@@ -147,19 +160,6 @@ describe("today's session the learner was shown", () => {
     const added = after.blocks.slice(before.blocks.length, before.blocks.length + landed.length);
 
     expect(added.map((block) => block.lessonId)).toStrictEqual(landed);
-  });
-
-  // Carla's Today said 7 lessons and her session opened with 15: the rest landed in between.
-  it("says more lessons are on the way while the day holds their place, until they land", async () => {
-    const { course, goal, library } = await setupDayWithStandIn();
-    const before = await readToday(goal.id);
-
-    expect(before.lessonsComing).toBe(true);
-
-    await landWaitingLessons({ courseId: course.id, library });
-    const after = await readToday(goal.id);
-
-    expect(after.lessonsComing).toBe(false);
   });
 
   // Carla's Today said 6 lessons of her hour, with no word of more: the next skill's stand-in
@@ -176,20 +176,6 @@ describe("today's session the learner was shown", () => {
     expect(dueToday).toBe(0);
     expect(learnLessonIds(today).length).toBeGreaterThan(0);
     expect(today.lessonsComing).toBe(true);
-  });
-
-  it("keeps the place of lessons still being outlined instead of filling it with later ones", async () => {
-    const { goal } = await setupDayWithStandIn();
-    const before = await readToday(goal.id);
-
-    const dueToday = await prisma.planItem.findMany({
-      where: { lessonId: { not: null }, plan: { goalId: goal.id }, scheduledFor: { lte: TODAY } },
-    });
-
-    const due = new Set(dueToday.map((item) => item.lessonId));
-
-    expect(learnLessonIds(before).length).toBeGreaterThan(0);
-    expect(learnLessonIds(before).filter((id) => !due.has(id))).toStrictEqual([]);
   });
 
   // A stand-in nobody is outlining (its next chapter waits for a later preparation) would hold

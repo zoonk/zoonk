@@ -43,6 +43,19 @@ async function plannedLearner() {
   return { goal, library, user };
 }
 
+/**
+ * A learner whose goal has a plan row and no lessons, for look-ups decided before the plan is read:
+ * the goal's mocks, a refusal, or another kind of goal.
+ */
+async function learnerWithEmptyPlan() {
+  const user = await userFixture();
+  const goal = await goalFixture({ userId: user.id });
+  await planFixture({ goalId: goal.id, graph: { phases: [], skills: [] } });
+  mockSession(user.id);
+
+  return { goal, user };
+}
+
 /** The buddy's answer being written for a question about the goal. */
 async function answering(goalId: string) {
   const created = await createLessonQuestion({
@@ -239,7 +252,7 @@ describe(lookUpTutorData, () => {
 
   it("reads the mocks the learner finished for the goal, with no estimate when the scoring gives none", async () => {
     const [{ goal, user }, otherGoal] = await Promise.all([
-      plannedLearner(),
+      learnerWithEmptyPlan(),
       userFixture().then((other) => goalFixture({ userId: other.id })),
     ]);
 
@@ -345,7 +358,7 @@ describe(lookUpTutorData, () => {
   });
 
   it("looks up only for the answer being written, in its learner's own goal", async () => {
-    const [{ goal }, other] = await Promise.all([plannedLearner(), userFixture()]);
+    const [{ goal }, other] = await Promise.all([learnerWithEmptyPlan(), userFixture()]);
     const asked = await answering(goal.id);
 
     await expect(lookUp(asked, { what: "noticeTopics" })).resolves.toStrictEqual({
@@ -369,7 +382,7 @@ describe(lookUpTutorData, () => {
   });
 
   it("stops looking up once the answer is saved", async () => {
-    const { goal } = await plannedLearner();
+    const { goal } = await learnerWithEmptyPlan();
     const asked = await answering(goal.id);
 
     await completeLessonQuestionAnswer({

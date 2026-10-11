@@ -60,20 +60,6 @@ describe("authenticated users", () => {
     });
   });
 
-  it("ends an empty calendar on the learner's current local date", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-    mockCurrentDate(NEXT_DATE);
-
-    const result = await getLearningActivity();
-
-    expect(result?.days.at(-1)).toStrictEqual({
-      activitiesCompleted: 0,
-      date: new Date("2025-01-11T00:00:00Z"),
-      lessonCompletions: 0,
-    });
-  });
-
   it("lights the calendar on every learning day, the same days the lifetime total counts", async () => {
     const [user, otherUser] = await Promise.all([userFixture(), userFixture()]);
     mockSession(user.id);

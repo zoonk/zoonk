@@ -216,26 +216,6 @@ describe(lessonImagesWorkflow, () => {
     });
   });
 
-  it("draws every picture a lesson asks for, on screens in a row too", async () => {
-    const lesson = await libraryLessonFixture();
-
-    const prompts = ["frontal lobe", "temporal lobe", "occipital lobe"].map(
-      (name) => `${name} ${randomUUID()}`,
-    );
-
-    await markedScreens({ lessonId: lesson.id, prompts });
-
-    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
-      failed: 0,
-      generated: 3,
-      reused: 0,
-    });
-
-    const pictures = await lessonPictures(lesson.id);
-
-    expect(pictures.map((step) => step.mediaAssetId !== null)).toStrictEqual([true, true, true]);
-  });
-
   it("draws the other screens when one screen's picture fails, and the next run draws only that one", async () => {
     const lesson = await libraryLessonFixture();
     const [failingPrompt, drawnPrompt] = [`prism ${randomUUID()}`, `lens ${randomUUID()}`];

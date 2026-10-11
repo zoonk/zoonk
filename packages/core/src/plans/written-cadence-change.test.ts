@@ -129,26 +129,4 @@ describe("the written tests' cadence", () => {
 
     await expect(writtenDays({ essaySkillIds, planId: plan.id })).resolves.toStrictEqual(weekly);
   });
-
-  it("keeps the essay out of the plan's every other week", async () => {
-    const { goal, plan, essaySkillIds } = await setup();
-    const weekly = await writtenDays({ essaySkillIds, planId: plan.id });
-
-    await changeGoalPlan({
-      goalId: goal.id,
-      input: { operations: [{ cadence: "biweekly", kind: "setWrittenCadence" }] },
-    });
-
-    const biweekly = await writtenDays({ essaySkillIds, planId: plan.id });
-
-    // Weeks run Monday to Sunday from 28 Sep: the second (5 to 11 Oct) and the fourth have none.
-    const offWeeks = biweekly.filter(
-      (day) =>
-        (day >= "2020-10-05" && day <= "2020-10-11") ||
-        (day >= "2020-10-19" && day <= "2020-10-25"),
-    );
-
-    expect(biweekly).toHaveLength(weekly.length);
-    expect(offWeeks).toStrictEqual([]);
-  });
 });

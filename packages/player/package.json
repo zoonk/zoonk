@@ -62,7 +62,6 @@
     "@zoonk/i18n": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "axe-core": "4.14.0",
-    "jsdom": "catalog:",
     "playwright": "catalog:",
     "polyclip-ts": "0.16.8",
     "sane-topojson": "4.0.0",

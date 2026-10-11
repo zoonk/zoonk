@@ -92,4 +92,16 @@ describe("what a class test's material announces", () => {
       "skill:essay",
     ]);
   });
+
+  // "Organelles" names lessons of two skills: it says nothing about which one the question asks.
+  it("marks no lesson by a word in the titles of several skills' lessons", () => {
+    const marked = markAnnouncedUnits({
+      announcements: ["Vai cair organelas"],
+      lessons: LESSONS,
+      skills: SKILLS,
+      units: UNITS,
+    });
+
+    expect(marked.filter((unit) => unit.announced)).toStrictEqual([]);
+  });
 });

@@ -1,5 +1,5 @@
 import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { press } from "../_test-utils/activity-player";
@@ -17,6 +17,9 @@ import { inlineImage, pictureCheckStep } from "../preview/preview-steps";
 
 const [GOTHIC, ROMANESQUE, BAROQUE] = pictureCheckContent.options;
 const PHONE = { height: 812, width: 375 };
+
+/** The player asks again for pictures still being drawn every 4 seconds. */
+const PICTURE_POLL_MS = 4000;
 
 function option(alt: string) {
   return page.getByRole("radio", { name: new RegExp(alt, "u") });
@@ -59,14 +62,20 @@ describe("picture options", () => {
   });
 
   it("holds the question while a picture is drawn, then takes answers once it arrives", async () => {
+    // The clock keeps running on its own, as the lesson's does, so only the wait is skipped ahead.
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
     const step = pictureCheckStep({ drawn: ["gothic", "romanesque"], imagePending: true });
     const lesson = buildLesson([step]);
     const drawn = inlineImage({ alt: BAROQUE?.picture.alt ?? "" });
 
     const getLessonPictures = vi
       .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
-      .mockResolvedValueOnce([])
-      .mockResolvedValue([{ image: drawn, optionId: "baroque", stepId: step.id }]);
+      .mockResolvedValue([]);
 
     renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
@@ -76,10 +85,11 @@ describe("picture options", () => {
 
     await expect.element(page.getByRole("radio").first()).toBeDisabled();
 
-    await expect
-      .element(page.getByRole("img", { name: BAROQUE?.picture.alt }), { timeout: 8000 })
-      .toBeVisible();
+    // The picture is drawn, and the next ask, a few seconds later, brings it.
+    getLessonPictures.mockResolvedValue([{ image: drawn, optionId: "baroque", stepId: step.id }]);
+    await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 
+    await expect.element(page.getByRole("img", { name: BAROQUE?.picture.alt })).toBeVisible();
     await expect.element(page.getByRole("radio").first()).toBeEnabled();
   });
 

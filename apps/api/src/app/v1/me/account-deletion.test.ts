@@ -71,7 +71,6 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { removeTestLearner } from "../../../../scripts/_utils/test-learners";
 import { DELETE as deleteAccount } from "./route";
 
 // Core reads the request's session from Next's headers, which only exist inside a request.
@@ -135,11 +134,6 @@ async function deleteOwnAccount(learner: Learner) {
   );
 
   expect(response.status).toBe(200);
-}
-
-/** The dev script that clears test learners between persona passes, like account deletion. */
-async function removeAsTestLearner(learner: Learner) {
-  await removeTestLearner(learner);
 }
 
 function explanation(): QuickExplanation {
@@ -655,6 +649,72 @@ async function learnerWithSharedContent() {
 
 type Built = Awaited<ReturnType<typeof learnerWithSharedContent>>;
 
+/**
+ * A learner with one row behind each record everyone keeps: an answer that is also a mock's, a
+ * finished lesson, an exam result and their feedback.
+ */
+async function learnerWithKeptRecords() {
+  const [learner, blueprint, skill, lesson] = await Promise.all([
+    userFixture(),
+    examBlueprintFixture(),
+    skillFixture(),
+    libraryLessonFixture({ contentStatus: "completed" }),
+  ]);
+
+  const userId = learner.id;
+
+  const [goal, item] = await Promise.all([
+    goalFixture({ examBlueprintId: blueprint.id, kind: "exam", userId }),
+    itemFixture({ examBlueprintId: blueprint.id, skillId: skill.id }),
+  ]);
+
+  const mock = await prisma.mockExam.create({
+    data: {
+      conditions: {},
+      examBlueprintId: blueprint.id,
+      finishedAt: MOCK_FINISHED_AT,
+      goalId: goal.id,
+      sectionStartedAt: MOCK_FINISHED_AT,
+      status: "finished",
+      userId,
+    },
+  });
+
+  const [feedback] = await Promise.all([
+    feedbackFixture({ email: learner.email, message: FEEDBACK, userId }),
+    attemptFixture({ answeredAt: MOCK_FINISHED_AT, itemId: item.id, mockExamId: mock.id, userId }),
+    learningEventFixture({
+      contentIds: { lessonId: lesson.id },
+      endedAt: LESSON_ENDED_AT,
+      goalId: goal.id,
+      seconds: 200,
+      titleSnapshot: lesson.title,
+      userId,
+    }),
+    prisma.examResult.create({
+      data: {
+        estimateHigh: 700,
+        estimateLow: 640,
+        examBlueprintId: blueprint.id,
+        examName: "Test Exam",
+        goalId: goal.id,
+        reportedAt: RESULT_REPORTED_AT,
+        scale: "irt",
+        score: 690,
+        userId,
+      },
+    }),
+  ]);
+
+  return {
+    blueprintId: blueprint.id,
+    feedbackId: feedback.id,
+    itemId: item.id,
+    learner,
+    lessonId: lesson.id,
+  };
+}
+
 /** The files the private store holds in each of the learner's folders. */
 function storeFolders(built: Built) {
   const userId = built.learner.id;
@@ -917,45 +977,45 @@ describe("deleting a learner", () => {
     vi.unstubAllEnvs();
   });
 
-  it.each([
-    ["deletes their account (DELETE /v1/me)", deleteOwnAccount],
-    ["removes them as a test learner (pnpm dev:remove-test-learners)", removeAsTestLearner],
-  ])(
-    "keeps every shared thing their study made and removes everything personal when the learner %s",
-    async (_, deleteLearner) => {
-      const built = await learnerWithSharedContent();
-      mockPrivateStore(built);
-
-      await deleteLearner(built.learner);
-
-      await expectPersonalDataGone(built);
-      await expectSharedContentKept(built);
-      await expectAnonymousRecordsKept(built);
-
-      // The private store lost the learner's own files and nothing anyone else uses.
-      expect(listDeletedFiles()).toStrictEqual(
-        [built.personal.privatePicture.url, built.personal.privateUpload.blobUrl].toSorted(
-          (first, second) => (first ?? "").localeCompare(second ?? ""),
-        ),
-      );
-
-      await expectReusableByAnotherLearner(built);
-    },
-  );
-
-  it("counts the learner once in what everyone keeps when their deletion is retried", async () => {
+  // `pnpm dev:remove-test-learners` runs the same cleanup before deleting the user (see
+  // `removeTestLearner`'s own test).
+  it("keeps every shared thing their study made and removes everything personal when the learner deletes their account (DELETE /v1/me)", async () => {
     const built = await learnerWithSharedContent();
     mockPrivateStore(built);
 
-    // The first try cleaned up before the account itself failed to go; the learner tries again.
-    await deleteUserDependenciesBeforeAuthDelete(built.learner);
     await deleteOwnAccount(built.learner);
 
     await expectPersonalDataGone(built);
+    await expectSharedContentKept(built);
     await expectAnonymousRecordsKept(built);
 
+    // The private store lost the learner's own files and nothing anyone else uses.
+    expect(listDeletedFiles()).toStrictEqual(
+      [built.personal.privatePicture.url, built.personal.privateUpload.blobUrl].toSorted(
+        (first, second) => (first ?? "").localeCompare(second ?? ""),
+      ),
+    );
+
+    await expectReusableByAnotherLearner(built);
+  });
+
+  it("counts the learner once in what everyone keeps when their deletion is retried", async () => {
+    const { blueprintId, feedbackId, itemId, learner, lessonId } = await learnerWithKeptRecords();
+    vi.mocked(list).mockResolvedValue({ blobs: [], hasMore: false } as never);
+
+    // The first try cleaned up before the account itself failed to go; the learner tries again.
+    await deleteUserDependenciesBeforeAuthDelete(learner);
+    await deleteOwnAccount(learner);
+
     await expect(
-      prisma.anonymousLessonPace.count({ where: { lessonId: built.shared.lesson.id } }),
-    ).resolves.toBe(1);
+      Promise.all([
+        prisma.user.count({ where: { id: learner.id } }),
+        prisma.anonymousFirstAnswer.count({ where: { itemId } }),
+        prisma.anonymousMockAnswer.count({ where: { examBlueprintId: blueprintId } }),
+        prisma.anonymousLessonPace.count({ where: { lessonId } }),
+        prisma.anonymousExamResult.count({ where: { examBlueprintId: blueprintId } }),
+        prisma.feedback.count({ where: { email: null, id: feedbackId, userId: null } }),
+      ]),
+    ).resolves.toStrictEqual([0, 1, 1, 1, 1, 1]);
   });
 });

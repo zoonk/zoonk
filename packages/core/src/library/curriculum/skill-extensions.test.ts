@@ -79,13 +79,9 @@ async function addChapter({
   return chapter;
 }
 
-/**
- * A language goal planned from a course that teaches "describe work experience" in one chapter of
- * five lessons, while the graph gives it twenty: the plan holds a stand-in for the other fifteen.
- */
-async function setup({ dailyMinutes = 30 }: { dailyMinutes?: number } = {}) {
-  const [user, course, skill] = await Promise.all([
-    userFixture(),
+/** A course that teaches "describe work experience" in one chapter of five lessons. */
+async function courseSetup() {
+  const [course, skill] = await Promise.all([
     courseFixture({ language: "pt", targetLanguage: "en", title: "Inglês" }),
     skillFixture({
       description: "Falar sobre empregos anteriores.",
@@ -102,6 +98,16 @@ async function setup({ dailyMinutes = 30 }: { dailyMinutes?: number } = {}) {
     skillId: skill.id,
     title: "Candidaturas e entrevistas",
   });
+
+  return { chapter, course, skill };
+}
+
+/**
+ * A language goal planned from `courseSetup`'s course, while the graph gives the skill twenty
+ * lessons: the plan holds a stand-in for the other fifteen.
+ */
+async function setup({ dailyMinutes = 30 }: { dailyMinutes?: number } = {}) {
+  const [user, { chapter, course, skill }] = await Promise.all([userFixture(), courseSetup()]);
 
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes,
@@ -379,7 +385,7 @@ describe("skill extensions", () => {
   });
 
   it("sizes the next chapter to the plan's stand-in, capped, after the chapters so far", async () => {
-    const { chapter, course, skill } = await setup();
+    const { chapter, course, skill } = await courseSetup();
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 
     // A stand-in of 15 lessons: capped at 10; of 5: those 5; none: no next chapter.
@@ -416,7 +422,7 @@ describe("skill extensions", () => {
   });
 
   it("continues after every chapter that teaches the skill, one that needs a tool included", async () => {
-    const { chapter, course, skill } = await setup();
+    const { chapter, course, skill } = await courseSetup();
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 
     const toolChapter = await addChapter({

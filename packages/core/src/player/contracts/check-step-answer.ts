@@ -63,7 +63,7 @@ function checkReadingStep(step: CheckableStep, answer: SelectedAnswer): AnswerRe
     return null;
   }
 
-  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.sentence, []);
+  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.sentence);
   const result = checkArrangeWordsAnswer(acceptedWords, answer.arrangedWords);
 
   return {
@@ -78,7 +78,7 @@ function checkListeningStep(step: CheckableStep, answer: SelectedAnswer): Answer
     return null;
   }
 
-  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.translation, []);
+  const acceptedWords = buildAcceptedArrangeWordSequences(step.sentence.translation);
   const result = checkArrangeWordsAnswer(acceptedWords, answer.arrangedWords);
 
   return {

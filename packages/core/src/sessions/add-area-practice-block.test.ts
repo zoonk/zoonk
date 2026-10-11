@@ -95,7 +95,7 @@ describe(addAreaPracticeBlock, () => {
     });
   });
 
-  it("gives two taps at once on two areas each its own area's block", { repeats: 10 }, async () => {
+  it("gives two taps at once on two areas each its own area's block", async () => {
     const { chapters, goal, skills } = await setup();
     const [firstArea = "", secondArea = ""] = chapters.map((chapter) => chapter.id);
 

@@ -133,8 +133,9 @@ describe("challenges in plans", () => {
         withToolChapters: true,
       });
 
-    await expect(load(true)).resolves.toMatchObject([{ lessonId: lesson.id }, { lessonId: id }]);
-    await expect(load(false)).resolves.toMatchObject([{ lessonId: lesson.id }]);
-    await expect(load(false)).resolves.toHaveLength(1);
+    const [withChallenges, withoutChallenges] = await Promise.all([load(true), load(false)]);
+
+    expect(withChallenges.map((taught) => taught.lessonId)).toStrictEqual([lesson.id, id]);
+    expect(withoutChallenges.map((taught) => taught.lessonId)).toStrictEqual([lesson.id]);
   });
 });

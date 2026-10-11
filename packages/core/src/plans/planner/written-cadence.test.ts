@@ -1,3 +1,4 @@
+import { once } from "@zoonk/utils/once";
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { addDays, daysBetween, fromIsoDate, getStartOfWeek, toIsoDate } from "./plan-calendar";
@@ -117,20 +118,26 @@ function rafaela(cadence?: WrittenCadence) {
   });
 }
 
-/** The scheduled lessons of the plan's written tests. */
-function writtenLessons(input: BuildPlanInput) {
-  const written = new Set(
+/** The plan's scheduled lessons, and those of its written tests among them. */
+function planLessons(input: BuildPlanInput) {
+  const writtenSkills = new Set(
     input.graph.skills.filter((skill) => skill.outcome).map((skill) => skill.skillId),
   );
 
-  return buildPlan(input).items.filter(
-    (item) =>
-      item.kind === "lesson" &&
-      item.scheduledFor &&
-      written.has(item.skillId ?? "") &&
-      item.lessonId,
+  const lessons = buildPlan(input).items.filter(
+    (item) => item.kind === "lesson" && item.scheduledFor && item.lessonId,
   );
+
+  return { lessons, written: lessons.filter((item) => writtenSkills.has(item.skillId ?? "")) };
 }
+
+/** The scheduled lessons of the plan's written tests. */
+function writtenLessons(input: BuildPlanInput) {
+  return planLessons(input).written;
+}
+
+/** Lucas's plan at the default cadence, every week, which several tests compare with: built once. */
+const lucasWeekly = once(() => planLessons(lucas()));
 
 /** The calendar weeks (Monday to Sunday, from the plan's first) the lessons fall in. */
 function weeksOf(items: readonly { scheduledFor: Date | null }[]): Set<number> {
@@ -147,28 +154,19 @@ function firstDay(items: readonly { scheduledFor: Date | null }[]): number {
 }
 
 describe("when an exam's written tests are practiced", () => {
-  it("practices them from the plan's first days by default", () => {
-    const lessons = writtenLessons(lucas());
+  it("practices them from the plan's first days by default, over every week the plan has lessons", () => {
+    const { lessons, written } = lucasWeekly();
+    const lastLessonWeek = Math.max(...weeksOf(lessons));
 
-    expect(firstDay(lessons)).toBeLessThanOrEqual(addDays(TODAY, 1).getTime());
-    expect([...weeksOf(lessons)]).toContain(1);
-  });
+    expect(firstDay(written)).toBeLessThanOrEqual(addDays(TODAY, 1).getTime());
 
-  it("spreads them over every week the plan has lessons, not only its first weeks", () => {
-    const input = lucas();
-    const lessons = writtenLessons(input);
-
-    const lastLessonWeek = Math.max(
-      ...weeksOf(buildPlan(input).items.filter((item) => item.kind === "lesson" && item.lessonId)),
-    );
-
-    expect([...weeksOf(lessons)].toSorted((a, b) => a - b)).toStrictEqual(
+    expect([...weeksOf(written)].toSorted((a, b) => a - b)).toStrictEqual(
       Array.from({ length: lastLessonWeek + 1 }, (_, week) => week),
     );
   });
 
   it("practices them every other week with the same lessons as every week", () => {
-    const weekly = writtenLessons(lucas("weekly"));
+    const weekly = lucasWeekly().written;
     const biweekly = writtenLessons(lucas("biweekly"));
 
     expect([...weeksOf(biweekly)].toSorted((a, b) => a - b)).toStrictEqual([0, 2, 4]);
@@ -176,9 +174,8 @@ describe("when an exam's written tests are practiced", () => {
   });
 
   it("practices them only in the final weeks with the same lessons as every week", () => {
-    const input = lucas("finalWeeks");
-    const weekly = writtenLessons(lucas("weekly"));
-    const final = writtenLessons(input);
+    const weekly = lucasWeekly().written;
+    const final = writtenLessons(lucas("finalWeeks"));
     const start = getFinalWeeksStart({ planStart: TODAY, targetDate: addDays(TODAY, 32) });
 
     expect(firstDay(final)).toBeGreaterThanOrEqual(start.getTime());
@@ -210,8 +207,7 @@ describe("when an exam's written tests are practiced", () => {
       written: ["Redação"],
     });
 
-    const lessons = buildPlan(input).items.filter((item) => item.kind === "lesson");
-    const final = writtenLessons(input);
+    const { lessons, written: final } = planLessons(input);
     const start = getFinalWeeksStart({ planStart: TODAY, targetDate: addDays(TODAY, 120) });
 
     const lastOther = Math.max(

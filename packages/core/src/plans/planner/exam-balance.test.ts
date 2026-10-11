@@ -1,3 +1,4 @@
+import { once } from "@zoonk/utils/once";
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { weighGraphByCourse } from "./course-weights";
@@ -115,13 +116,28 @@ function enemPlan(focusAreas: string[] = []): BuildPlanInput {
   };
 }
 
+/** The plan without a focus, which several tests read: built once. */
+const unfocused = once(() => {
+  const input = enemPlan();
+  return { input, plan: buildPlan(input) };
+});
+
 /** Each area's share of the lesson minutes on the plan's first `days` days. */
-function sharesOfFirstDays({ days, input }: { days: number; input: BuildPlanInput }) {
+function sharesOfFirstDays({
+  days,
+  input,
+  plan = buildPlan(input),
+}: {
+  days: number;
+  input: BuildPlanInput;
+  /** The plan built from `input`, when a test already has it. */
+  plan?: ReturnType<typeof buildPlan>;
+}) {
   const last = addDays(TODAY, days - 1).getTime();
   const areaOf = new Map(input.graph.skills.map((skill) => [skill.skillId, skill.area ?? ""]));
 
-  const minutes = buildPlan(input)
-    .items.filter(
+  const minutes = plan.items
+    .filter(
       (item) =>
         item.kind === "lesson" &&
         item.skillId &&
@@ -140,7 +156,7 @@ function sharesOfFirstDays({ days, input }: { days: number; input: BuildPlanInpu
 
 describe("an ENEM-like plan short on time", () => {
   it("studies every area in its first week, each in proportion to what it's worth", () => {
-    const shares = sharesOfFirstDays({ days: 7, input: enemPlan() });
+    const shares = sharesOfFirstDays({ days: 7, ...unfocused() });
 
     // Five parts worth the same: each gets about a fifth, the essay included, never most of it.
     [...AREAS, "Redação"].forEach((area) => {
@@ -151,15 +167,15 @@ describe("an ENEM-like plan short on time", () => {
 
   it("gives an area the learner focuses on a bigger share of the plan", () => {
     // Every core comes first, so the focus shows once the cores are placed: in the depth after them.
-    const unfocused = sharesOfFirstDays({ days: 16, input: enemPlan() });
+    const even = sharesOfFirstDays({ days: 16, ...unfocused() });
     const focused = sharesOfFirstDays({ days: 16, input: enemPlan(["Natureza"]) });
 
-    expect(focused.get("Natureza") ?? 0).toBeGreaterThan((unfocused.get("Natureza") ?? 0) + 0.05);
+    expect(focused.get("Natureza") ?? 0).toBeGreaterThan((even.get("Natureza") ?? 0) + 0.05);
     expect(focused.get("Redação") ?? 0).toBeGreaterThan(0.08);
   });
 
   it("keeps every topic's core, the essay's included, without keeping its whole depth", () => {
-    const plan = buildPlan(enemPlan());
+    const { plan } = unfocused();
 
     expect(plan.waitingSkillIds).toStrictEqual([]);
 
@@ -173,7 +189,7 @@ describe("an ENEM-like plan short on time", () => {
   });
 
   it("gives the parts the learner's course counts more a bigger share of the plan", () => {
-    const input = enemPlan();
+    const { input } = unfocused();
 
     // Medicine at a university that counts natural sciences and the essay twice.
     const weights = {
@@ -191,7 +207,7 @@ describe("an ENEM-like plan short on time", () => {
       ],
     };
 
-    const even = sharesOfFirstDays({ days: 16, input });
+    const even = sharesOfFirstDays({ days: 16, ...unfocused() });
 
     const weighted = sharesOfFirstDays({
       days: 16,

@@ -116,7 +116,7 @@ describe("exam screen history", () => {
     vi.useRealTimers();
   });
 
-  it("lists the goal's latest finished mocks newest first, each with the number it was given", async () => {
+  it("lists the goal's latest finished mocks newest first, and adds up calibration across every one", async () => {
     const { goal } = await historySetup();
     const result = await getExamView({ goalId: goal.id });
     const exam = result.status === "ready" ? result.exam : null;
@@ -127,13 +127,9 @@ describe("exam screen history", () => {
 
     expect(exam?.mocks[0]).toMatchObject({ correct: 16, measure: 12, scoring: "net", total: 20 });
     expect(exam?.sessionsDone).toBe(2);
-  });
 
-  it("adds up calibration across every calibrated mock, not only the ones listed", async () => {
-    const { goal } = await historySetup();
-    const result = await getExamView({ goalId: goal.id });
-
-    expect(result.status === "ready" && result.exam.calibration).toMatchObject({
+    // Every calibrated mock counts, not only the ones listed.
+    expect(exam?.calibration).toMatchObject({
       blankingGain: 11,
       sure: { answered: 22, right: 22 },
       unsure: { answered: 11, right: 0 },

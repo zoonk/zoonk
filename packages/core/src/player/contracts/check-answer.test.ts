@@ -263,18 +263,6 @@ describe(checkArrangeWordsAnswer, () => {
     ).toStrictEqual({ correctAnswer: null, feedback: null, isCorrect: false });
   });
 
-  it("accepts an alternative valid sequence", () => {
-    expect(
-      checkArrangeWordsAnswer(
-        [
-          ["Guten", "Tag"],
-          ["Guten", "Morgen"],
-        ],
-        ["Guten", "Morgen"],
-      ),
-    ).toStrictEqual({ correctAnswer: null, feedback: null, isCorrect: true });
-  });
-
   it("matches case and punctuation insensitively", () => {
     expect(checkArrangeWordsAnswer([["Hello,", "Lara!"]], ["hello", "lara"])).toStrictEqual({
       correctAnswer: null,
