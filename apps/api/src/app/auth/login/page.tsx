@@ -4,12 +4,18 @@ import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-sh
 import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
 import { getSession } from "@zoonk/core/users/session";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { MAIN_URL } from "@zoonk/utils/url";
 import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { type ReactNode, Suspense } from "react";
 import { getCallbackHref, readRedirectTo } from "../_utils/auth-redirect";
+import { getReturnAppUrl } from "../_utils/return-app";
 import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
+
+/** The terms and privacy policy live on this environment's main app. */
+const TERMS_URL = new URL("/terms", MAIN_URL).toString();
+const PRIVACY_URL = new URL("/privacy", MAIN_URL).toString();
 
 /**
  * Keeps the rich-text replacement stable between renders. The translation
@@ -18,7 +24,7 @@ import { SocialLogin } from "./social-login";
  * the page render.
  */
 function TermsLink(children: ReactNode) {
-  return <a href="https://zoonk.com/terms">{children}</a>;
+  return <a href={TERMS_URL}>{children}</a>;
 }
 
 /**
@@ -28,7 +34,7 @@ function TermsLink(children: ReactNode) {
  * inside the page render.
  */
 function PrivacyLink(children: ReactNode) {
-  return <a href="https://zoonk.com/privacy">{children}</a>;
+  return <a href={PRIVACY_URL}>{children}</a>;
 }
 
 async function LoginView({ searchParams }: PageProps<"/auth/login">) {
@@ -43,7 +49,7 @@ async function LoginView({ searchParams }: PageProps<"/auth/login">) {
   const t = await getExtracted();
 
   return (
-    <AuthFrame>
+    <AuthFrame appUrl={getReturnAppUrl(redirectTo)}>
       <RegisterSharedEventProperties
         properties={buildSharedEventProperties({ isGuest: true, locale, platform: "web" })}
       />

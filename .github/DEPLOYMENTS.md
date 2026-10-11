@@ -61,7 +61,7 @@ The main branch ruleset requires the fast `code-quality` PR check. E2E and datab
 
 Changes under `apps/api`, `apps/main`, `apps/admin`, `packages`, or shared dependency/deployment configuration deploy all three database-connected apps. This includes runtime dependencies that a build graph cannot detect. Blog-only changes do not create a database branch or these previews.
 
-The API deploys first. Its actual deployment URL is passed to main/admin as `NEXT_PUBLIC_API_URL` at build time and runtime. All three receive the same PR database URLs. The API preview uses its own Vercel hostname for self-references. Preview URLs appear in the Actions job summary.
+The API deploys first. Its actual deployment URL is passed to main/admin as `NEXT_PUBLIC_API_URL` at build time and runtime. All three receive the same PR database URLs. The API preview uses its own Vercel hostname for self-references. Preview URLs appear in the Actions job summary. The API receives main's address as `MAIN_APP_URL` (production and staging domains, or main's predictable branch URL on previews) for links back to the app; sign-in pages link back to the trusted app that started the sign-in.
 
 New commits cancel the previous Actions run and its queued/building Vercel deployments. Cancellation cleanup is scoped to that run, so it cannot cancel a newer run. Every preview submission and readiness poll verifies that its PR is still open and its commit is still current. Fork PRs run fast checks without deployment secrets and do not receive database previews.
 

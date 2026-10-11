@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { getCallbackHref, getLoginHref, readRedirectTo } from "../_utils/auth-redirect";
+import { getReturnAppUrl } from "../_utils/return-app";
 import { SetupProfileForm } from "./setup-form";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,7 +35,7 @@ async function SetupView({ searchParams }: PageProps<"/auth/setup">) {
   const [t, suggestedUsername] = await Promise.all([getExtracted(), suggestCurrentUsername()]);
 
   return (
-    <AuthFrame>
+    <AuthFrame appUrl={getReturnAppUrl(redirectTo)}>
       <Setup>
         <SetupHeader>
           <SetupTitle>{t("Create your profile")}</SetupTitle>

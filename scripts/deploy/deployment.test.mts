@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { PROJECTS } from "./config.mts";
-import { assertCurrentPreview, cancelPreviews, deploy } from "./deployment.mts";
+import { assertCurrentPreview, cancelPreviews, deploy, getMainAppUrl } from "./deployment.mts";
 
 type Call = { url: URL; body: Record<string, unknown>; method: string };
 
@@ -92,6 +92,10 @@ describe(deploy, () => {
         return { head: { sha: "tested-sha" }, state: "open" };
       }
 
+      if (call.url.pathname === "/v2/teams/test-team") {
+        return { slug: "zoonk" };
+      }
+
       if (call.method === "POST") {
         if (call.body.project !== PROJECTS[0].id && !ready.has(PROJECTS[0].id)) {
           throw new Error("Consumer deployed before the API was ready");
@@ -125,6 +129,38 @@ describe(deploy, () => {
         "NEXT_PUBLIC_API_URL",
         `https://${PROJECTS[0].id}.vercel.app`,
       );
+
+      expect(call.body.env).not.toHaveProperty("MAIN_APP_URL");
+    }
+
+    expect(submissions[0]?.body.env).toHaveProperty(
+      "MAIN_APP_URL",
+      "https://zoonk-git-main-zoonk.vercel.app",
+    );
+  });
+
+  it.each([
+    { target: "production", url: "https://www.zoonk.com" },
+    { target: "staging", url: "https://main.zoonk.dev" },
+  ] as const)("points the $target API at the $target main app", async ({ target, url }) => {
+    const submissions: Call[] = [];
+
+    intercept((call) => {
+      if (call.method === "POST") {
+        submissions.push(call);
+        return { id: String(call.body.project) };
+      }
+
+      return { aliasAssigned: true, readyState: "READY", url: `${target}.vercel.app` };
+    });
+
+    await deploy(target);
+
+    const [api, ...clients] = submissions;
+    expect(api?.body.env).toHaveProperty("MAIN_APP_URL", url);
+
+    for (const call of clients) {
+      expect(call.body.env).not.toHaveProperty("MAIN_APP_URL");
     }
   });
 
@@ -195,5 +231,19 @@ describe(assertCurrentPreview, () => {
   ])("rejects an obsolete preview: $state / $head.sha", async (pr) => {
     intercept(() => pr);
     await expect(assertCurrentPreview()).rejects.toThrow("superseded");
+  });
+});
+
+describe(getMainAppUrl, () => {
+  it("builds a preview's main app address from Vercel's branch URL pattern", () => {
+    expect(
+      getMainAppUrl({ branch: "feat/Learning_v2", target: "preview", teamSlug: "zoonk" }),
+    ).toBe("https://zoonk-git-feat-learning-v2-zoonk.vercel.app");
+  });
+
+  it("gives no preview address when Vercel would shorten it", () => {
+    expect(
+      getMainAppUrl({ branch: "a".repeat(60), target: "preview", teamSlug: "zoonk" }),
+    ).toBeNull();
   });
 });

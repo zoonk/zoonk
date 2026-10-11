@@ -3,6 +3,7 @@ import { OTP, OTPDescription, OTPHeader, OTPTitle } from "@/components/otp";
 import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { getLoginHref, readRedirectTo } from "../_utils/auth-redirect";
+import { getReturnAppUrl } from "../_utils/return-app";
 import { OTPForm } from "./otp-form";
 
 export default async function OTPPage({ searchParams }: PageProps<"/auth/otp">) {
@@ -18,7 +19,7 @@ export default async function OTPPage({ searchParams }: PageProps<"/auth/otp">) 
   const t = await getExtracted();
 
   return (
-    <AuthFrame>
+    <AuthFrame appUrl={getReturnAppUrl(redirectTo)}>
       <OTP>
         <OTPHeader>
           <OTPTitle>{t("Check your email")}</OTPTitle>

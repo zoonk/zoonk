@@ -9,7 +9,7 @@ export default async function UntrustedOriginPage() {
   const t = await getExtracted();
 
   return (
-    <AuthFrame>
+    <AuthFrame appUrl={MAIN_URL}>
       <Login>
         <LoginHeader>
           <LoginTitle>{t("Unable to redirect")}</LoginTitle>

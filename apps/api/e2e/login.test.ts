@@ -47,14 +47,35 @@ test.describe("Login Page", () => {
     await expect(page.getByText(/enter a valid email address/iu)).toBeVisible();
   });
 
-  test("the brain goes back to the main app", async ({ page }) => {
+  test("the brain goes back to the app that started the sign-in", async ({ page }) => {
     const appCallback = "http://localhost:49152/auth/callback?state=abc";
 
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(appCallback)}`);
 
     await expect(page.getByRole("link", { name: "Back to Zoonk" })).toHaveAttribute(
       "href",
+      "http://localhost:49152",
+    );
+  });
+
+  test("without an app to go back to, the brain and the legal links go to the main app", async ({
+    page,
+  }) => {
+    await page.goto("/auth/login");
+
+    await expect(page.getByRole("link", { name: "Back to Zoonk" })).toHaveAttribute(
+      "href",
       MAIN_APP_URL,
+    );
+
+    await expect(page.getByRole("link", { name: "Terms of Service" })).toHaveAttribute(
+      "href",
+      `${MAIN_APP_URL}/terms`,
+    );
+
+    await expect(page.getByRole("link", { name: "Privacy Policy" })).toHaveAttribute(
+      "href",
+      `${MAIN_APP_URL}/privacy`,
     );
   });
 
