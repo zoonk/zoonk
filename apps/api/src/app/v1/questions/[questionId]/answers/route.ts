@@ -35,6 +35,7 @@ import { after } from "next/server";
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 const SHARED_ANSWER_ID = "answer";
 const CONFIRMATION_ID = "confirmation";
+
 const RESPONSE_HEADERS = {
   "Cache-Control": "no-store, no-transform",
   "X-Content-Type-Options": "nosniff",
