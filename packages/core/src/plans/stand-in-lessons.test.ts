@@ -1,15 +1,11 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const DAY_MS = 86_400_000;
 

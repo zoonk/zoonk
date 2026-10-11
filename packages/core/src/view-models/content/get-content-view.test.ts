@@ -3,12 +3,10 @@ import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { getContentView } from "./get-content-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 async function setup() {
   const user = await userFixture();

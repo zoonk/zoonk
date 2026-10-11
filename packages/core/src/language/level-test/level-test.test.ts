@@ -15,9 +15,6 @@ import { getLanguageLevelTest } from "./get-language-level-test";
 import { gradeLevelTestSpeech } from "./grade-level-test-speech";
 import { type LevelTestBank } from "./level-test-contract";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // Writing the bank and checking speech are paid model calls.
 vi.mock("@zoonk/ai/tasks/v2/language/level-test-bank", () => ({ generateLevelTestBank: vi.fn() }));
 

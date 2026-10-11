@@ -12,11 +12,9 @@ import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { exportCurrentUserData } from "./export-current-user-data";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 /** A question the learner asked their buddy about their goal, with its answer. */
 async function buddyQuestionFixture({ goalId, userId }: { goalId: string; userId: string }) {

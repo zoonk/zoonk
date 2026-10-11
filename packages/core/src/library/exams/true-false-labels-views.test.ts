@@ -6,7 +6,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getCheckpoint } from "../../checkpoints/get-checkpoint";
 import { getMock } from "../../exams/mocks/get-mock";
@@ -19,9 +19,6 @@ import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistak
 import { statementContent } from "../../sessions/_test-utils/session-goal";
 import { getStudyBlock } from "../../sessions/get-study-block";
 import { type ExamStructure } from "./blueprint-contract";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 

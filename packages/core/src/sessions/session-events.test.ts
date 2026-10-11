@@ -20,12 +20,6 @@ import { getStudySession } from "./get-study-session";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 const MINUTE_MS = 60_000;
 const LESSON_SECONDS = 240;
 

@@ -12,8 +12,6 @@ import { answerPlacementQuestion } from "./answer-placement-question";
 import { getGoalPlacement } from "./get-goal-placement";
 import type * as Grader from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 /**
  * The grader's model is an external boundary. The real grader runs, so code settles accepted
  * answers as in production; a test that needs the model's verdict gives it once.

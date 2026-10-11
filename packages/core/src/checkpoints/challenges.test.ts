@@ -26,12 +26,7 @@ import { getCheckpoint } from "./get-checkpoint";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 import { startChallenge } from "./start-challenge";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 function byId(a: string, b: string): number {
   return a.localeCompare(b);

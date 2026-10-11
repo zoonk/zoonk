@@ -12,9 +12,6 @@ import { startStudyBlock } from "../sessions/start-study-block";
 import { stopStudySession } from "../sessions/stop-study-session";
 import { rebalancePlanAfterSession } from "./rebalance-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Wednesday in 2020, before other tests' learning events, so the planner's pace is its own. */
 const NOW = new Date("2020-09-30T12:00:00Z");
 const DAY_MS = 86_400_000;

@@ -2,11 +2,9 @@ import { randomUUID } from "node:crypto";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getOnboardingDraft } from "./get-onboarding-draft";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe(getOnboardingDraft, () => {
   it("needs a session", async () => {

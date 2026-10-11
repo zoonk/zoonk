@@ -26,12 +26,6 @@ import { addExtraStudyBlock } from "./add-extra-study-block";
 import { catchUpToday } from "./catch-up-today";
 import { getStudySessionSummary } from "./get-study-session-summary";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 const TIME_ZONE = "UTC";
 
 /**

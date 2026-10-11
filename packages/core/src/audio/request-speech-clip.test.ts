@@ -11,9 +11,6 @@ import { requestSpeechClip } from "./request-speech-clip";
 import { getSpeechClipKey } from "./speech-clip-key";
 import type * as AudioTask from "@zoonk/ai/tasks/audio";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
   ...(await importOriginal<typeof AudioTask>()),
   generateLanguageAudio: vi.fn(),

@@ -4,15 +4,12 @@ import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAlphabetIdentityKey } from "../../library/language/alphabet/alphabet-identity";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { getLanguageUnitsView } from "../../view-models/language/get-language-units-view";
 import { skipAlphabetIntro } from "./skip-alphabet-intro";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const TIME_ZONE = "UTC";
 

@@ -8,14 +8,11 @@ import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageProgressView } from "../../view-models/language/get-language-progress-view";
 import { getLanguageUnitView } from "../../view-models/language/get-language-unit-view";
 import { getLanguageUnitsView } from "../../view-models/language/get-language-units-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /** A unit the course gained while it was being written, which the learner's plan doesn't hold. */
 async function addUnplannedUnit(courseId: string) {

@@ -9,13 +9,10 @@ import {
   pictureCheckContent,
 } from "@zoonk/testing/fixtures/playable-step-contents";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getLessonPictures } from "./get-lesson-pictures";
 import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const picture = { alt: "Otávio stands next to a blue bike.", prompt: "Otávio next to a bike" };
 

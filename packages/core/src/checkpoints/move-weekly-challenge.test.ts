@@ -10,9 +10,6 @@ import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/p
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { moveWeeklyChallenge, undoWeeklyChallengeMove } from "./move-weekly-challenge";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday in 2020, before other tests' learning events, so the planner's pace is its own. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 

@@ -13,8 +13,6 @@ import { getUserProgressCacheTag } from "../cache/tags";
 import { lessonRunFixture } from "../lesson-player/_test-utils/lesson-run-fixture";
 import { getCatalogChapterProgress, getCatalogCourseProgress } from "./progress";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 describe(getCatalogCourseProgress, () => {
   beforeEach(() => {
     mockSession(null);

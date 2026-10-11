@@ -10,12 +10,6 @@ import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/p
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { updateGoal } from "./update-goal";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
  * pace, and this keeps it out of the dates these tests expect.

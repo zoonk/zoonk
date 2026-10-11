@@ -5,8 +5,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 describe(getRequestProgressDateContext, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });

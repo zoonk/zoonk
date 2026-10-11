@@ -15,9 +15,6 @@ import {
 import { type LessonScreenSuggestion } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Memory reads and memory extraction call models; each is tested apart. */
 vi.mock("../memory/get-memory-for-task", () => ({ findMemoryForTask: vi.fn() }));
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));

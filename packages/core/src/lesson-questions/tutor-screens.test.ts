@@ -33,12 +33,6 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestion } from "./get-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /** A missed mock question's cause and memory extraction call models; their modules test them. */
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));

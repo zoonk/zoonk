@@ -15,8 +15,6 @@ import { type MockView } from "./mock-contract";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };

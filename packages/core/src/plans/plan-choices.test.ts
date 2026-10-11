@@ -20,11 +20,6 @@ import { type PlanOperation } from "./plan-contract";
 import { type PlanGraph } from "./planner/plan-state";
 import { previewPlanChange } from "./preview-plan-change";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Friday: Lucas plans for ENEM. */
 const TODAY = new Date("2026-10-09T00:00:00Z");
 const DAY_MS = 86_400_000;

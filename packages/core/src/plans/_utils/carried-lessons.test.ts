@@ -122,6 +122,32 @@ describe(loadPlanCarryOver, () => {
       lessonIds: [],
     });
   });
+
+  // The day's first open set ENEM work aside, then the learner asked for more explanation in
+  // practice, which brought it back. Carried again by the next automatic run that day, the settled
+  // work was set aside once more, without a card, and 227 items moved.
+  it("carries nothing the day's settling carried once a change after it laid the plan out", async () => {
+    const { context, plan } = await setup();
+
+    await planChangeFixture({
+      createdAt: new Date("2026-10-13T09:00:00Z"),
+      kind: "missedDays",
+      payload: { carriedItemIds: ["left-1", "left-2"], source: "system" },
+      planId: plan.id,
+    });
+
+    await planChangeFixture({
+      createdAt: new Date("2026-10-13T10:00:00Z"),
+      kind: "edited",
+      payload: {
+        operations: [{ bias: "moreExplanation", kind: "setPracticeBias" }],
+        source: "learner",
+      },
+      planId: plan.id,
+    });
+
+    await expect(loadPlanCarryOver({ context, mode: "automatic" })).resolves.toBeNull();
+  });
 });
 
 // A day the plan gives to reviews is studied once its review is done: read as missed, the next

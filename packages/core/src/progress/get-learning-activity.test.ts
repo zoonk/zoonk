@@ -8,9 +8,6 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 const CURRENT_DATE = new Date("2025-01-10T00:00:00Z");
 const NEXT_DATE = new Date("2025-01-11T00:00:00Z");
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("./get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 /** Fixes the learner-local date used to build the Activity calendar. */
 function mockCurrentDate(currentDate: Date) {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({

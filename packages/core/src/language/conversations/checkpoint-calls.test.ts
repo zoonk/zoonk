@@ -15,9 +15,6 @@ import {
   startLanguageConversation,
 } from "./start-language-conversation";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // A unit's call is written by a paid model call.
 vi.mock("@zoonk/ai/tasks/v2/language/conversation-scenario", () => ({
   generateConversationScenario: vi.fn(),

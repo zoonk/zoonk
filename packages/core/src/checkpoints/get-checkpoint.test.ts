@@ -15,8 +15,6 @@ import { finishStudyBlock } from "../sessions/finish-study-block";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { getCheckpoint } from "./get-checkpoint";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 
 /** A learner whose first phase (two lessons) is done, so today's session is the phase's boss. */

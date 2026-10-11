@@ -3,12 +3,10 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getSession } from "../users/get-session";
 import { getCourseById } from "./get-course-by-id";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe(getCourseById, () => {
   beforeEach(() => {

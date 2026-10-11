@@ -11,9 +11,6 @@ import {
 } from "./_test-utils/session-goal";
 import { loadSessionBuildInput } from "./_utils/load-build-inputs";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /**
  * An IELTS learner whose placement tested out a speaking skill (its stand-in), who then took
  * Speaking out of their plan. Every skill is studied and due.

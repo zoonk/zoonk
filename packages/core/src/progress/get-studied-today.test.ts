@@ -9,9 +9,6 @@ const CURRENT_DATE = new Date("2026-07-12T00:00:00Z");
 const YESTERDAY = new Date("2026-07-11T00:00:00Z");
 const STUDY_SECONDS = 300;
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("./get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 function mockCurrentDate() {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
     currentDate: CURRENT_DATE,

@@ -2,13 +2,11 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { buildChallengeTeam } from "./challenge-team";
 import { getChallengeTeam } from "./get-challenge-team";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 async function learnerWithPlan({ language = "pt" }: { language?: string } = {}) {
   const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture({ language })]);

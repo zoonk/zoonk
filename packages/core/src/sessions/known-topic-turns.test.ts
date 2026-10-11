@@ -13,9 +13,6 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { readBlockPayload } from "./block-payload";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const TODAY = Date.UTC(2026, 9, 8);
 
 function noonOf(day: number): Date {

@@ -24,12 +24,6 @@ import { type LessonStepAnswer } from "./contract";
 import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
 import { startLibraryLesson } from "./start-library-lesson";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 const TIME_ZONE = "UTC";
 
 /**

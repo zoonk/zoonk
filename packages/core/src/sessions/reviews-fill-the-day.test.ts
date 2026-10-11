@@ -16,9 +16,6 @@ import {
 import { readBlockPayload } from "./block-payload";
 import { getLightMinutes } from "./fresh-start";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const DAILY_MINUTES = 20;
 
 /** An hour a day: a return's light day is about 25 minutes, less than twenty due skills take. */

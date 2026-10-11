@@ -11,9 +11,6 @@ import { generatedProvenance, generatedTypedItem } from "./_test-utils/generated
 import { explainAnswer } from "./explain-answer";
 import { toStoredItem } from "./item-content";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** The model call is the external boundary; persistence and reuse run for real. */
 vi.mock("@zoonk/ai/tasks/v2/grading/explain-wrong-answer", () => ({ explainWrongAnswer: vi.fn() }));
 

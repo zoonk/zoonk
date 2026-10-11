@@ -9,9 +9,6 @@ import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/p
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayStudySession } from "./_test-utils/open-today";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const NOW = new Date("2026-09-30T12:00:00Z");
 
 /** A learner whose plan studies two subjects, planned and signed in, before Today opens. */

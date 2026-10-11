@@ -10,9 +10,6 @@ import { SESSION_NOW, daysAgo } from "./_test-utils/session-goal";
 import { addRefreshPracticeBlock } from "./add-refresh-practice-block";
 import { readBlockPayload } from "./block-payload";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A goal of four skills: the first two studied long ago and fading, the others fresh. */
 async function setup() {
   const user = await userFixture();

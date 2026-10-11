@@ -10,8 +10,6 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getPlanChangedSince } from "./get-plan-changed-since";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /** Past the clock margin, so rows written before the screen's read read as unchanged. */
 const AFTER_READ_MS = 5000;
 

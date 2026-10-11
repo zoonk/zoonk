@@ -2,11 +2,9 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { findGoalStartLimit } from "./find-goal-start-limit";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 // Pedro, on the free plan, typed a second goal and only learned after the AI read it that it
 // couldn't start: the limit is known before anything is typed, so the page can say it up front.

@@ -17,9 +17,6 @@ import { loadSpeakingPaper } from "./_utils/exam-speaking-setup";
 import { getSpeakingSection } from "./get-speaking-section";
 import { startSpeakingSection } from "./start-speaking-section";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // The card, its photos and the grade are paid model calls; the photo's file goes to Blob storage.
 vi.mock("@zoonk/ai/tasks/v2/language/exam-speaking-card", () => ({
   generateExamSpeakingCard: vi.fn(),

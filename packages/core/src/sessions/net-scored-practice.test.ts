@@ -22,8 +22,6 @@ import { getStudySessionSummary } from "./get-study-session-summary";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 
 /**

@@ -8,9 +8,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { claimUsage } from "./claim-usage";
 import { getDailySpendBudgetMicros, getEstimatedCostMicros } from "./limits";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Mid-month and mid-day, so seeded usage lands in the periods the test means. */
 const NOW = new Date("2026-09-15T12:00:00Z");
 const EARLIER_THIS_MONTH = new Date("2026-09-03T09:00:00Z");

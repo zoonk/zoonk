@@ -3,14 +3,11 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getChapterView } from "../chapter/get-chapter-view";
 import { getPlanTabView } from "./get-plan-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 async function readChapter(chapterId: string) {
   const result = await getChapterView({ chapterId });

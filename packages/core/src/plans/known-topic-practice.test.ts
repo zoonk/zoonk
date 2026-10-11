@@ -21,11 +21,6 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Thursday: Pedro's biology test is on Saturday. */
 const TODAY = new Date("2026-10-08T00:00:00Z");
 const DAY_MS = 86_400_000;

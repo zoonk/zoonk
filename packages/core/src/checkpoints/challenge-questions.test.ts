@@ -16,12 +16,6 @@ import {
   requestUpcomingChallengeQuestions,
 } from "./challenge-questions";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /**
  * A goal whose first phase teaches two skills holding one question each, with its challenge
  * next: reached once both lessons are done, else on its day. A third lesson opens phase 1.

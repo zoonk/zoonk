@@ -1,12 +1,9 @@
 import { type PlanItemStatus, prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { courseGoalFixture, signedInCourseGoal } from "../_test-utils/course-goal";
 import { getPlanTabView } from "./get-plan-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 async function readPlan() {
   const result = await getPlanTabView();

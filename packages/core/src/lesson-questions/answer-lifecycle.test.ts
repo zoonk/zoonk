@@ -24,10 +24,6 @@ const ANSWER_RUN = {
   runId: "run-lesson-question-test",
 };
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Memory extraction calls a model; the memory module's own tests cover what it learns. */
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 

@@ -7,9 +7,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 describe("a lesson set aside after its drafts were held back", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });

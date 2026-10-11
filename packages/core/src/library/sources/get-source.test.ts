@@ -2,12 +2,10 @@ import { randomUUID } from "node:crypto";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSource } from "./get-source";
 import { listLearnerSources } from "./list-learner-sources";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 function privateSourceFixture(ownerId: string) {
   const contentHash = `hash-${randomUUID()}`;

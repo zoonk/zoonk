@@ -7,9 +7,6 @@ import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /** A Monday in 2020, before the learning events other tests write. */
 const START = new Date("2020-09-28T12:00:00Z");
 

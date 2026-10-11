@@ -11,11 +11,9 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { listCatalogCourseChapters } from "./course-chapters";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe(listCatalogCourseChapters, () => {
   beforeEach(() => {

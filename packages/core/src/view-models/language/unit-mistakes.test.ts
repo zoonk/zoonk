@@ -3,13 +3,10 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageUnitView } from "./get-language-unit-view";
 import { LANGUAGE_MISTAKE_SKILLS } from "./language-view-contract";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const snapshot = (format: string, question: string) => ({ answer: "x", format, question });
 

@@ -18,12 +18,6 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; asking the tutor sends an event.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /** Reading the learner's words is a model call; each test says what it understood. */
 vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));
 

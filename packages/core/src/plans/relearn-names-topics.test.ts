@@ -1,69 +1,97 @@
+import { prisma } from "@zoonk/db";
+import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { runSimLifeInDb } from "./_test-utils/sim/sim-db";
-import { generateSimLife } from "./_test-utils/sim/sim-life-plan";
+import { mockSession } from "../_test-utils/mock-session";
+import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { loadPlanCarryOver } from "./_utils/carried-lessons";
+import { parsePlanChangePayload } from "./_utils/plan-change-payload";
+import { bringBackMissedLessons } from "./bring-back-missed-lessons";
+import { createGoalPlan } from "./create-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
+/** A Monday in 2020, before the learning events other tests write, which estimates read. */
+const NOW = new Date("2020-09-28T12:00:00Z");
 
-// The mistake classifier is a paid model call: a wrong answer whose cause isn't clear is a gap here.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({
-  classifyMistakeCause: vi.fn(async () => ({ data: { cause: "gap" } })),
-}));
-
-// Vercel Blob is the external store a deleted account's files are removed from.
-vi.mock("@vercel/blob", () => ({
-  del: vi.fn(),
-  list: vi.fn(async () => ({ blobs: [], cursor: undefined, hasMore: false })),
-}));
-
-const MINUTE = 60_000;
-
-/*
- * R5: a topic that comes into the plan is named by the run that brought it in. Sim N13 (OAB seed
- * 1002, through the real capabilities): a practice miss on a topic taken as known planned the plan
- * again from today, which also brought in the legislative process and juvenile offense topics,
- * and its card named only the missed topic.
- */
 describe("a miss that brings a known topic's lessons back", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it(
-    "names every topic the plan planned again brings in, not only the missed one",
-    async () => {
-      const life = await generateSimLife({ fixture: "oab", seed: 1002 });
+  // R5 (OAB seed 1002): a practice miss on a topic taken as known planned the plan again from
+  // today, which also brought in the legislative process and juvenile offense topics, and its card
+  // named only the missed topic.
+  it("names every topic the plan planned again brings in, not only the missed one", async () => {
+    const user = await userFixture();
 
-      const { violations } = await runSimLifeInDb(
-        { ...life, steps: life.steps.slice(0, 7) },
-        { questions: true, rules: ["R5"] },
-      );
+    const library = await planLibraryFixture({
+      skills: [
+        { area: "Math", lessons: 3 },
+        { area: "Writing", lessons: 3 },
+      ],
+    });
 
-      expect(violations).toStrictEqual([]);
-    },
-    10 * MINUTE,
-  );
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-28" },
+      userId: user.id,
+    });
 
-  // R19: on a day that carried missed work, a test-out answer brought a tested-out topic back and
-  // named it, and the same step's re-plan for the lessons it skipped dropped the topic's lessons
-  // again: ranked behind the carried work before the class test (class test seed 2080).
-  it(
-    "keeps the lessons a miss brought back on later runs that day",
-    async () => {
-      const life = await generateSimLife({ fixture: "class-test", seed: 2080 });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+    const [known, left] = library.skills;
 
-      const { violations } = await runSimLifeInDb(
-        { ...life, steps: life.steps.slice(0, 10) },
-        { questions: true, rules: ["R19"] },
-      );
+    // Placement took the first skill as known; the plan the learner sees left the second out.
+    await Promise.all([
+      prisma.planItem.updateMany({
+        data: { completedAt: NOW, status: "testedOut" },
+        where: { planId: plan.id, skillId: known?.id },
+      }),
+      prisma.planItem.deleteMany({ where: { planId: plan.id, skillId: left?.id } }),
+    ]);
 
-      expect(violations).toStrictEqual([]);
-    },
-    10 * MINUTE,
-  );
+    await bringBackMissedLessons({
+      goalId: goal.id,
+      now: NOW,
+      skillIds: [known?.id ?? ""],
+      timeZone: "UTC",
+    });
+
+    const change = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "relearn", planId: plan.id },
+    });
+
+    expect(parsePlanChangePayload(change.payload).effect?.topicsAdded).toStrictEqual([
+      { area: "Math", topics: [known?.name] },
+      { area: "Writing", topics: [left?.name] },
+    ]);
+  });
+
+  // R19 (class test seed 2080): on a day that carried missed work, a test-out answer brought a
+  // tested-out topic back and named it, and the same step's re-plan for the lessons it skipped
+  // dropped the topic's lessons again: ranked behind the carried work before the class test.
+  it("carries the lessons it brought back on every later run that day", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+
+    await planChangeFixture({
+      createdAt: new Date("2020-09-28T09:00:00Z"),
+      kind: "relearn",
+      payload: { carriedItemIds: ["relearned-1", "relearned-2"], source: "system" },
+      planId: plan.id,
+      status: "applied",
+    });
+
+    const context = { goal, plan, timeZone: "UTC", today: new Date("2020-09-28T00:00:00Z") };
+
+    await expect(loadPlanCarryOver({ context, mode: "automatic" })).resolves.toStrictEqual({
+      itemIds: ["relearned-1", "relearned-2"],
+      lessonIds: [],
+    });
+  });
 });

@@ -2,15 +2,13 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { listeningGoalFixture } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadGoalPlan } from "../_utils/goal-skill-graph";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 const RIGHT = { selectedIndex: 0 };
 

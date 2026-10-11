@@ -67,6 +67,15 @@ export async function press(key: string, times = 1) {
   }
 }
 
+/** Presses a key on the page, not on a control a screen focused. */
+export function pressOnPage(key: string) {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+
+  return press(key);
+}
+
 /** Moves keyboard focus to an element once it's on screen, as tabbing to it would. */
 export async function focusOn(locator: Locator) {
   await expect.element(locator).toBeVisible();

@@ -10,9 +10,6 @@ import { getExamView } from "../view/get-exam-view";
 import { examResultInputSchema } from "./exam-result-contract";
 import { reportExamResult } from "./report-exam-result";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const EXAM_DAY = "2026-11-08";
 const citation = { passage: "", sourceId: "notice" };
 

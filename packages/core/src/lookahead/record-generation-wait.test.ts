@@ -1,14 +1,8 @@
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { recordGenerationWait } from "./record-generation-wait";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 describe(recordGenerationWait, () => {
   it("records the wait for the signed-in learner, as the client reported it", async () => {

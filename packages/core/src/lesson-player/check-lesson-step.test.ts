@@ -18,8 +18,6 @@ import { type LessonStepCheckOutcome, checkLessonStep } from "./check-lesson-ste
 import { type LessonStepAnswer } from "./contract";
 import type * as GradeTypedAnswer from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /** Accepted answers are graded by code; only answers that need the model get a stand-in. */
 vi.mock("@zoonk/ai/tasks/v2/grading/grade-typed-answer", async (importOriginal) => {
   const actual = await importOriginal<typeof GradeTypedAnswer>();

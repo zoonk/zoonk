@@ -8,8 +8,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateMemoryFact } from "./update-memory-fact";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 // The sensitivity check is a paid model call; its behavior is covered by the memory-gate eval.
 vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
 

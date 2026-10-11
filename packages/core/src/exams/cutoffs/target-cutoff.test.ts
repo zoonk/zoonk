@@ -13,9 +13,6 @@ import { getCutoffTarget } from "./cutoff-target";
 import { loadTargetCutoff } from "./load-target-cutoff";
 import { findTargetCutoffLookup, recordTargetCutoff } from "./target-cutoff-research";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const PROVENANCE = { model: "google/gemini-3.8-flash", promptVersion: "test", runId: "test" };
 const SOURCE = { title: "Notas de corte", url: "https://sisu.mec.gov.br/notas-de-corte" };
 const MEDICINA_UFMG = { institution: "UFMG", targetCourse: "Medicina", targetScore: "750" };

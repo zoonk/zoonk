@@ -15,9 +15,6 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { measureSessionState } from "../sessions/_utils/capture-snapshot";
 import { getGoalPreparation } from "./get-goal-preparation";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 const NOW = new Date();
 const DAY_MS = 86_400_000;
 const daysAgo = (days: number) => new Date(NOW.getTime() - days * DAY_MS);

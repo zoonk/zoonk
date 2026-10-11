@@ -3,7 +3,7 @@ import {
   CHALLENGE_STRONG_PATH,
   CHALLENGE_WEAK_PATH,
 } from "@zoonk/testing/fixtures/challenge-contents";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   setupPlayableLesson,
   stepOfKind,
@@ -12,9 +12,6 @@ import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const TIME_ZONE = "UTC";
 

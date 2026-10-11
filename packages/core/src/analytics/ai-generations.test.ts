@@ -4,7 +4,6 @@ import { PostHog } from "posthog-node";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerAiGenerationAnalytics } from "./ai-generations";
 
-// PostHog is an external service; the mock records what would leave the server.
 const posthogClient = vi.hoisted(() => ({ capture: vi.fn(), shutdown: vi.fn() }));
 
 vi.mock("posthog-node", () => ({

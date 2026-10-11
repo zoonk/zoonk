@@ -4,13 +4,10 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { getPlanTabView } from "./get-plan-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 describe(getPlanTabView, () => {
   it("reads the active goal's plan with the goal's header", async () => {

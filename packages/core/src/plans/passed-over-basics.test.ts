@@ -14,11 +14,6 @@ import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanGraph } from "./planner/plan-state";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 const DAY_MS = 86_400_000;

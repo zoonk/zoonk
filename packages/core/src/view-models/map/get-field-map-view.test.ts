@@ -4,12 +4,10 @@ import { courseChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getFieldMapView } from "./get-field-map-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 /** A skill studied long ago with a short memory: its chance of recall is low now. */
 function fadingSkill({ skillId, userId }: { skillId: string; userId: string }) {

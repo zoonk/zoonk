@@ -1,260 +1,249 @@
-import { describe, expect, it } from "vitest";
-import { runSimLife } from "./_test-utils/sim/sim-life";
-import { type SimLife } from "./_test-utils/sim/sim-life-plan";
+import { prisma } from "@zoonk/db";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { changeGoalPlan } from "./change-goal-plan";
+import { createGoalPlan } from "./create-goal-plan";
+import { decidePlanChange } from "./decide-plan-change";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
-const MINUTE = 60_000;
+/** A Monday in 2020, before the learning events other tests write, which estimates read. */
+const START = "2020-09-28";
 
-async function findRefreshMoves(life: SimLife) {
-  const { violations } = await runSimLife(life);
-  return violations.filter((violation) => violation.rule === "R32");
+function setToday(isoDate: string) {
+  const instant = new Date(`${isoDate}T12:00:00Z`);
+  vi.setSystemTime(instant);
+
+  vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+    currentDate: new Date(`${isoDate}T00:00:00Z`),
+    currentInstant: instant,
+    timeZone: "UTC",
+  });
 }
 
-// A system refresh with nothing new (another goal's lessons landed, the lookahead ran) right after a
-// run that re-planned the day keeps the plan that run saved. Planned again in another mode, an OAB
-// plan made on day one moved 600 items (see landing-after-runs.test.ts) and an ENEM focus lost 21
-// lessons with nothing new.
-describe("a refresh right after a learner's change", () => {
-  it(
-    "keeps an ENEM plan a focus re-planned after a half-studied day",
-    async () => {
-      const moves = await findRefreshMoves({
-        dailyMinutes: 60,
-        fixture: "enem",
-        knownAreas: [3],
-        mockOffers: "skip",
-        pending: [0, 23, 26, 34, 38, 45, 60, 89, 97, 110, 118, 128],
-        proposals: "decline",
-        seed: 2001,
-        speed: 1.5,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [100, true],
-              [133, true],
-              [112, false],
-              [104, true],
-              [46, false],
-              [58, true],
-              [81, false],
-              [34, true],
-              [113, false],
-              [52, false],
-              [97, true],
-              [90, true],
-            ],
-            kind: "placement",
-          },
-          { finish: 0.5, kind: "study", misses: [5] },
-          { kind: "change", spec: { area: 5, kind: "focus" }, via: "editor" },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: 57,
-      });
+/** A learn plan of two areas at 12 minutes a day, made today, with today's session opened. */
+async function setup() {
+  const user = await userFixture();
 
-      expect(moves).toStrictEqual([]);
-    },
-    MINUTE,
-  );
+  const library = await planLibraryFixture({
+    phases: ["Basics", "Next steps"],
+    skills: [
+      { area: "Math", lessons: 6 },
+      { area: "Writing", lessons: 6 },
+      { area: "Math", lessons: 6, phase: 1 },
+      { area: "Writing", lessons: 6, phase: 1 },
+    ],
+  });
 
-  it(
-    "keeps a career plan a focus gave today's leftover time to",
-    async () => {
-      const moves = await findRefreshMoves({
-        dailyMinutes: 30,
-        fixture: "career",
-        knownAreas: [],
-        pending: [],
-        seed: 1042,
-        speed: 1.5,
-        start: "2026-10-12",
-        steps: [
-          { finish: 0.75, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [] },
-          { days: 1, kind: "miss" },
-          { finish: 0.5, kind: "study", misses: [11] },
-          { kind: "change", spec: { days: 14, kind: "date" }, via: "buddy" },
-          { count: 1, kind: "land" },
-          { finish: 0.5, kind: "study", misses: [24] },
-          { kind: "change", spec: { kind: "time", minutes: 180 }, via: "editor" },
-          { finish: 0.75, kind: "study", misses: [20] },
-          { kind: "change", spec: { area: 8, kind: "focus", less: 5 }, via: "buddy" },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: 221,
-      });
+  const { goal, plan } = await unplannedGoalFixture({
+    dailyMinutes: 12,
+    settings: { startDate: START },
+    userId: user.id,
+  });
 
-      expect(moves).toStrictEqual([]);
-    },
-    MINUTE,
-  );
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  mockSession(user.id);
+  await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
 
-  // An ENEM plan 55 days out at an hour a day: the day's first open set work aside, then the
-  // learner asked for more explanation in practice, which brought that work back. A refresh with
-  // nothing new carried the morning's settled work again: 227 items moved, and lessons the change
-  // had brought back were set aside again without a card.
-  it(
-    "keeps an ENEM plan a change re-planned after the day's settle",
-    async () => {
-      const moves = await findRefreshMoves({
-        dailyMinutes: 60,
-        fixture: "enem",
-        knownAreas: [0],
-        pending: [14, 22, 24, 26, 30, 40, 44, 50, 53, 55, 69, 70, 86, 107, 123, 125],
-        seed: 1261,
-        speed: 0.8,
-        start: "2026-10-12",
-        steps: [
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [44] },
-          { finish: 0, kind: "study", misses: [123] },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 0.25, kind: "study", misses: [110] },
-          { kind: "change", spec: { area: 0, kind: "restore" }, via: "buddy" },
-          { finish: 0.75, kind: "study", misses: [] },
-          { finish: 0.5, kind: "study", misses: [105] },
-          { kind: "change", spec: { bias: "moreExplanation", kind: "practice" }, via: "editor" },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: 55,
-      });
+  return { goal, library, plan, user };
+}
 
-      expect(moves).toStrictEqual([]);
-    },
-    MINUTE,
-  );
+/** Opens Today three days later: the day's first run settles what the missed days left. */
+async function settleMissedDays({ goalId, planId }: { goalId: string; planId: string }) {
+  setToday("2020-10-01");
+  await getTodayStudySession({ goalId, timeZone: "UTC" });
+
+  await expect(prisma.planChange.count({ where: { kind: "missedDays", planId } })).resolves.toBe(1);
+}
+
+/** The plan as saved, with its items. */
+function readSaved(planId: string) {
+  return prisma.plan.findUniqueOrThrow({
+    include: { items: { orderBy: { position: "asc" } } },
+    where: { id: planId },
+  });
+}
+
+/**
+ * A system refresh with nothing new (a landing for another goal, the lookahead): what it says, and
+ * the plan as saved after it.
+ */
+async function refreshWithNothingNew({ goalId, planId }: { goalId: string; planId: string }) {
+  const result = await refreshGoalPlan({ goalId });
+  return { plan: await readSaved(planId), result };
+}
+
+/*
+ * R32: a system refresh with nothing new right after a run that planned the day keeps the plan that
+ * run saved: it plans from what that run planned from (see `getPlanInputsKey`), whatever mode it
+ * lays the plan out in. Planned again in another mode, an OAB plan a focus re-planned on day one
+ * moved 600 items, an ENEM focus lost 21 lessons, an ENEM plan an undo gave back moved 70 and an
+ * ENEM plan the learner changed after the day's settle moved 227.
+ */
+describe("a refresh right after a run that planned the day", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    setToday(START);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("keeps the plan a change of focus saved", async () => {
+    const { goal, plan } = await setup();
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: {
+          operations: [
+            { areas: ["Writing"], kind: "focusAreas" },
+            { areas: ["Math"], kind: "reduceAreas" },
+          ],
+        },
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    const saved = await readSaved(plan.id);
+
+    await expect(
+      refreshWithNothingNew({ goalId: goal.id, planId: plan.id }),
+    ).resolves.toStrictEqual({ plan: saved, result: { status: "unchanged" } });
+  });
+
+  it("keeps the plan the day's settle saved", async () => {
+    const { goal, plan } = await setup();
+
+    await settleMissedDays({ goalId: goal.id, planId: plan.id });
+
+    const saved = await readSaved(plan.id);
+
+    await expect(
+      refreshWithNothingNew({ goalId: goal.id, planId: plan.id }),
+    ).resolves.toStrictEqual({ plan: saved, result: { status: "unchanged" } });
+  });
+
+  it("keeps the plan a change made after the day's settle saved", async () => {
+    const { goal, plan } = await setup();
+
+    await settleMissedDays({ goalId: goal.id, planId: plan.id });
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ bias: "moreExplanation", kind: "setPracticeBias" }] },
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    const saved = await readSaved(plan.id);
+
+    await expect(
+      refreshWithNothingNew({ goalId: goal.id, planId: plan.id }),
+    ).resolves.toStrictEqual({ plan: saved, result: { status: "unchanged" } });
+  });
+
+  it("keeps the plan an undo gave back", async () => {
+    const { goal, plan } = await setup();
+
+    const changed = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setDailyMinutes", minutes: 20 }] },
+    });
+
+    await expect(
+      decidePlanChange({
+        changeId: changed.status === "applied" ? (changed.change?.id ?? "") : "",
+        goalId: goal.id,
+        input: { status: "undone" },
+      }),
+    ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
+
+    const saved = await readSaved(plan.id);
+
+    await expect(
+      refreshWithNothingNew({ goalId: goal.id, planId: plan.id }),
+    ).resolves.toStrictEqual({ plan: saved, result: { status: "unchanged" } });
+  });
 });
 
-describe("a refresh right after the day's settle", () => {
-  it(
-    "keeps a career plan settled after a quarter-studied day at less time",
-    async () => {
-      const moves = await findRefreshMoves({
-        dailyMinutes: 60,
-        fixture: "career",
-        knownAreas: [],
-        pending: [],
-        seed: 1018,
-        speed: 1.2,
-        start: "2026-10-12",
-        steps: [
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 0.75, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [26] },
-          { kind: "change", spec: { kind: "time", minutes: 15 }, via: "buddy" },
-          { finish: 0.25, kind: "study", misses: [] },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: 105,
-      });
-
-      expect(moves).toStrictEqual([]);
+/** How many lessons each day from tomorrow to Sunday holds. */
+async function countWeekLessons(planId: string) {
+  const items = await prisma.planItem.findMany({
+    where: {
+      kind: "lesson",
+      planId,
+      scheduledFor: {
+        gte: new Date("2020-09-29T00:00:00Z"),
+        lte: new Date("2020-10-04T00:00:00Z"),
+      },
     },
-    MINUTE,
-  );
+  });
 
-  it(
-    "keeps an ENEM plan settled after four missed days",
-    async () => {
-      const moves = await findRefreshMoves({
-        dailyMinutes: 120,
-        fixture: "enem",
-        knownAreas: [0],
-        pending: [
-          5, 10, 12, 21, 36, 37, 62, 71, 72, 75, 87, 95, 97, 100, 103, 111, 117, 123, 127, 131,
-        ],
-        seed: 2012,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [25, true],
-              [133, false],
-              [44, false],
-              [131, true],
-              [134, false],
-              [4, false],
-              [5, true],
-            ],
-            kind: "placement",
-          },
-          { finish: 1, kind: "study", misses: [] },
-          { kind: "change", spec: { kind: "restDay", weekday: 5 }, via: "buddy" },
-          { finish: 0.25, kind: "study", misses: [70] },
-          { finish: 0.75, kind: "study", misses: [] },
-          { days: 2, kind: "miss" },
-          { count: 1, kind: "land" },
-          { finish: 0, kind: "study", misses: [70] },
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 0.25, kind: "study", misses: [] },
-          { days: 3, kind: "miss" },
-          { days: 1, kind: "miss" },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: 32,
-      });
+  const days = Map.groupBy(items, (item) => item.scheduledFor?.toISOString().slice(0, 10) ?? "");
+  return Object.fromEntries([...days].map(([day, lessons]) => [day, lessons.length]));
+}
 
-      expect(moves).toStrictEqual([]);
-    },
-    MINUTE,
-  );
-});
+// A session whose new pace no longer fits this week's work in it lays the rest out from the next
+// day at that pace, as that day's first run would, so the next morning finds the plan it saved.
+// Kept as it was, a Câmara plan whose pace slowed spilled three days into the next week, and the
+// next morning's settling planned the week again: 29 lessons of 10 skills left the plan and 5 came
+// in.
+describe("a session whose slower pace no longer fits this week", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    setToday(START);
+  });
 
-describe("a refresh right after an undo", () => {
-  it(
-    "keeps the ENEM plan the undo gave back",
-    async () => {
-      const moves = await findRefreshMoves({
-        dailyMinutes: 120,
-        fixture: "enem",
-        knownAreas: [],
-        mockOffers: "focus",
-        pending: [8, 15, 16, 42, 47, 50, 61, 71, 78, 81, 86, 95, 103, 104, 109, 112, 114, 133],
-        proposals: "decline",
-        seed: 2033,
-        speed: 1.2,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [49, true],
-              [123, false],
-              [86, false],
-              [123, false],
-              [75, true],
-              [79, true],
-              [12, true],
-              [36, false],
-            ],
-            kind: "placement",
-          },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 1, kind: "study", misses: [] },
-          { kind: "change", spec: { area: 1, kind: "focus", less: 4 }, via: "buddy" },
-          { finish: 1, kind: "study", misses: [] },
-          { finish: 0.25, kind: "study", misses: [] },
-          { kind: "change", spec: { area: 2, kind: "pastBasics" }, via: "buddy" },
-          { finish: 0.5, kind: "study", misses: [] },
-          { finish: 0.25, kind: "study", misses: [] },
-          { finish: 0, kind: "study", misses: [] },
-          { days: 3, kind: "miss" },
-          { kind: "change", spec: { area: 2, kind: "focus", less: 0 }, undo: true, via: "buddy" },
-          { kind: "refresh" },
-        ],
-        subscribed: false,
-        targetInDays: 50,
-      });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
-      expect(moves).toStrictEqual([]);
-    },
-    MINUTE,
-  );
+  it("lays this week out again from tomorrow at the new pace", async () => {
+    const { goal, library, plan, user } = await setup();
+
+    // Two 3-minute lessons a day fit the learner's lesson time; they finished today's.
+    await expect(countWeekLessons(plan.id)).resolves.toStrictEqual({
+      "2020-09-29": 2,
+      "2020-09-30": 2,
+      "2020-10-01": 2,
+      "2020-10-02": 2,
+      "2020-10-03": 2,
+    });
+
+    await prisma.planItem.updateMany({
+      data: { completedAt: new Date(`${START}T12:00:00Z`), status: "done" },
+      where: { kind: "lesson", planId: plan.id, scheduledFor: new Date(`${START}T00:00:00Z`) },
+    });
+
+    // They took four times each lesson's estimate, long ago enough that no one else's pace reads it.
+    await Promise.all(
+      library.lessons
+        .slice(0, 8)
+        .map((lesson) =>
+          learningEventFixture({
+            contentIds: { lessonId: lesson.id },
+            endedAt: new Date("2001-01-01T12:00:00Z"),
+            seconds: 720,
+            userId: user.id,
+          }),
+        ),
+    );
+
+    await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
+
+    // At almost twice the estimate, one lesson a day fits: the week is laid out again from
+    // tomorrow, as tomorrow's first run would lay it, not kept past the learner's time.
+    await expect(countWeekLessons(plan.id)).resolves.toStrictEqual({
+      "2020-09-29": 1,
+      "2020-09-30": 1,
+      "2020-10-01": 1,
+      "2020-10-02": 1,
+      "2020-10-03": 1,
+    });
+  });
 });

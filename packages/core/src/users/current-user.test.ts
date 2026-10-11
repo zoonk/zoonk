@@ -22,7 +22,6 @@ vi.mock("@zoonk/auth", () => ({
 }));
 
 vi.mock("next/headers", () => ({ headers: vi.fn() }));
-vi.mock("./get-session", () => ({ getSession: vi.fn() }));
 
 describe("current user", () => {
   beforeEach(() => {

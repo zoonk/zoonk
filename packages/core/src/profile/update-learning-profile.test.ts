@@ -3,13 +3,11 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getLearningProfileCacheTag } from "../cache/tags";
 import { getLearningProfile } from "./get-learning-profile";
 import { updateLearningProfile } from "./update-learning-profile";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 async function useLearner() {
   const user = await userFixture();

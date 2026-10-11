@@ -12,9 +12,6 @@ import {
 } from "./_test-utils/session-goal";
 import { readBlockPayload } from "./block-payload";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 type Details = Record<string, string>;
 
 /** Starting from nothing, so the first week's placement questions stay out of these days. */

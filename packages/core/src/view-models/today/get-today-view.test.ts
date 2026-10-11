@@ -16,9 +16,6 @@ import {
 } from "../../sessions/_test-utils/session-goal";
 import { getTodayView } from "./get-today-view";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const DAYS_TO_EXAM = 32;
 
 /** A learner whose active goal is an exam 32 days away, with a weekly mock in the plan. */

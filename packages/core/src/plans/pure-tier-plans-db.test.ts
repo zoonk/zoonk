@@ -7,10 +7,6 @@ import { type SimPlan } from "./_test-utils/sim/sim-world";
 import { toIsoDate } from "./planner/plan-calendar";
 import { getItemKey } from "./planner/plan-items";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 // The mistake classifier is a paid model call: a wrong answer whose cause isn't clear is a gap here.
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({
   classifyMistakeCause: vi.fn(async () => ({ data: { cause: "gap" } })),

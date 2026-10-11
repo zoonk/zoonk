@@ -7,14 +7,11 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getStudySession } from "../sessions/get-study-session";
 import { getAnswerTimeZone } from "./_utils/owned-goal";
 import { followGoalTimeZone } from "./follow-goal-time-zone";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const SAO_PAULO = "America/Sao_Paulo";
 

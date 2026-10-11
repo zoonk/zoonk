@@ -2,13 +2,11 @@ import { randomUUID } from "node:crypto";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { getLessonProgress } from "./get-lesson-progress";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe(getLessonProgress, () => {
   it("reads the answers of the sittings the learner left unfinished this week, oldest first", async () => {

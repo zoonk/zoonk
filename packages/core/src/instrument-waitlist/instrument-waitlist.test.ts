@@ -1,14 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getInstrumentWaitlistCacheTag } from "../cache/tags";
 import { joinInstrumentWaitlist } from "./join-instrument-waitlist";
 import { leaveInstrumentWaitlist } from "./leave-instrument-waitlist";
 import { listInstrumentWaitlist } from "./list-instrument-waitlist";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe("instrument waitlist", () => {
   beforeEach(() => {

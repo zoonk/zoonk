@@ -23,15 +23,9 @@ import {
 } from "./_test-utils/choice-blueprint";
 import { chooseExamOption } from "./choose-exam-option";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 vi.mock("../../progress/get-request-date-context", () => ({
   getRequestProgressDateContext: vi.fn(),
 }));
-
-// PostHog is an external service; asking the buddy sends an event.
-vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 /** Reading the learner's words is the one model call in the buddy's proposal; the test says what it understood. */
 vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));

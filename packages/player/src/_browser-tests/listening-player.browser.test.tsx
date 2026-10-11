@@ -82,7 +82,7 @@ const recording = () => page.getByRole("region", { name: "Recording" });
 describe("listening recordings", () => {
   it("plays twice, never pausing, then has nothing left to play", async () => {
     const onPlayed = vi.fn();
-    render(<Recording onPlayed={onPlayed} plays={2} url={toneUrl(1.2)} />);
+    render(<Recording onPlayed={onPlayed} plays={2} url={toneUrl(0.5)} />);
 
     await expect.element(recording().getByText("Booking a hall")).toBeVisible();
     await expect.element(page.getByText(/You hear it twice, like in the exam/u)).toBeVisible();

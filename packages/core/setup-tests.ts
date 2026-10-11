@@ -1,21 +1,46 @@
-import { beforeEach, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, vi } from "vitest";
+import { resetBoundaries } from "./src/_test-utils/test-boundaries";
 
 vi.mock("server-only", () => ({}));
 
-vi.mock("next/cache", () => ({
-  cacheLife: vi.fn(),
-  cacheTag: vi.fn(),
-  // Outside a request, Next.js' `io()` resolves at once, as it does here.
-  io: async () => null,
-  revalidateTag: vi.fn(),
-  updateTag: vi.fn(),
-}));
+// The edges every test replaces, declared once (see `src/_test-utils/test-boundaries.ts`).
+vi.mock("next/cache", () =>
+  import("./src/_test-utils/test-boundaries").then((boundaries) => boundaries.nextCache),
+);
 
-// Tests run outside a request, where Next.js' `after` throws and `connection` has no request to wait
-// for. Tests that check deferred work run it with `runDeferredWork` from
-// `src/_test-utils/deferred-work.ts`.
-vi.mock("next/server", () => ({ after: vi.fn(), connection: vi.fn(async () => null) }));
+vi.mock("next/server", () =>
+  import("./src/_test-utils/test-boundaries").then((boundaries) => boundaries.nextServer),
+);
+
+vi.mock("next/headers", () =>
+  import("./src/_test-utils/test-boundaries").then((boundaries) => boundaries.nextHeaders),
+);
+
+vi.mock("./src/users/get-session", () =>
+  import("./src/_test-utils/test-boundaries").then((boundaries) => boundaries.session),
+);
+
+vi.mock("./src/progress/get-request-date-context", () =>
+  import("./src/_test-utils/test-boundaries").then((boundaries) => boundaries.dateContext),
+);
+
+vi.mock("./src/analytics/server", () =>
+  import("./src/_test-utils/test-boundaries").then((boundaries) => boundaries.analytics),
+);
+
+// Test files share workers: each starts as a fresh one would, and leaves no fake clock, stubbed
+// global or spy (the simulator's database tier spies on core's reads) behind for the next.
+beforeAll(async () => {
+  await resetBoundaries();
+});
 
 beforeEach(() => {
   vi.clearAllMocks();
+});
+
+afterAll(() => {
+  vi.restoreAllMocks();
+  vi.useRealTimers();
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
 });

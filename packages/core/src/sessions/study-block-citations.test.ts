@@ -5,11 +5,9 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getStudyBlock } from "./get-study-block";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe("study block citations", () => {
   it("dates a question's source for its Sources chip, and keeps a passage without a stored source plain", async () => {

@@ -9,9 +9,6 @@ import { SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/sess
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { getExamView } from "./get-exam-view";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const citation = { passage: "", sourceId: "notice" };
 
 function frequency(topic: string, level: "high" | "medium") {

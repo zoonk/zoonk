@@ -17,10 +17,6 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { catchUpToday } from "./catch-up-today";
 import { getLightMinutes } from "./fresh-start";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 function setToday(isoDate: string) {
   const instant = new Date(`${isoDate}T12:00:00Z`);
   vi.setSystemTime(instant);

@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   setupPlayableLesson,
   stepOfKind,
@@ -10,9 +10,6 @@ import { completeLibraryLesson } from "../lesson-player/complete-library-lesson"
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { startStudyBlock } from "./start-study-block";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const TIME_ZONE = "UTC";
 

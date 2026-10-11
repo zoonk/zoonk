@@ -12,9 +12,6 @@ import { createGoalPlan } from "./create-goal-plan";
 import { type PlanEffect } from "./planner/plan-effect";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 /** A Monday in 2020, before the learning events other tests write, so nobody's pace moves it. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 

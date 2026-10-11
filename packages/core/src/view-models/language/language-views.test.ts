@@ -6,15 +6,12 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageProgressView } from "./get-language-progress-view";
 import { getLanguageTodayView } from "./get-language-today-view";
 import { getLanguageUnitView } from "./get-language-unit-view";
 import { getLanguageUnitsView } from "./get-language-units-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const A2 = 1;
 const B1 = 2;

@@ -11,12 +11,7 @@ import { trackServerEvent } from "../../analytics/server";
 import { answerMaterialQuestion } from "./answer-material-question";
 import { PAGE_BREAK, PPTX_CONTENT_TYPE } from "./source-contract";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/material/answer", () => ({ answerFromMaterial: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 function mockAnswer(data: { answer: string; found: boolean; refs: string[] }) {
   vi.mocked(answerFromMaterial).mockResolvedValueOnce({

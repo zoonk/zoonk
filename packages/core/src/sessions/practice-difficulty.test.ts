@@ -13,9 +13,6 @@ import {
 } from "./_test-utils/session-goal";
 import { readBlockPayload } from "./block-payload";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Item difficulty on the IRT-style scale real answers refine: easy, medium and hard. */
 const DIFFICULTIES = { easy: -1, hard: 1, medium: 0 } as const;
 

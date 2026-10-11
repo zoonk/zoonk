@@ -12,9 +12,6 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { startGoalUnderstanding } from "./start-goal-understanding";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Model calls are the external boundary; saving a draft must never call them. */
 vi.mock("@zoonk/ai/tasks/v2/goals/understand-goal", () => ({ understandGoal: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/courses/intent", () => ({ classifyCourseIntent: vi.fn() }));

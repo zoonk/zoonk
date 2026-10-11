@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
@@ -14,11 +14,6 @@ import {
 import { type LessonQuestionContextInput, createLessonQuestionInputSchema } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 type LessonSteps = NonNullable<Parameters<typeof playableLessonFixture>[0]>["steps"];
 

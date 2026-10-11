@@ -22,8 +22,6 @@ import { getBuddyStatus } from "./get-buddy-status";
 import { getWeeklyRecap } from "./get-weekly-recap";
 import { listCurrentUserMilestones, markMilestoneShown } from "./list-milestones";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /** Sunday, Oct 4: the logbook for Sep 28 to Oct 4 is ready. */
 const SUNDAY = new Date("2026-10-04T18:00:00Z");
 const MONDAY = new Date("2026-09-28T00:00:00Z");

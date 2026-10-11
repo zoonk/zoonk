@@ -7,7 +7,7 @@ import {
   listeningSetFixture,
 } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { listListeningParts } from "../listening/listening-parts";
@@ -18,9 +18,6 @@ import { recordMockPlay } from "./record-mock-play";
 import { requestMockQuestions } from "./request-mock-questions";
 import { startAnytimeMock } from "./start-anytime-mock";
 import { submitMockSection } from "./submit-mock-section";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const FULL = { area: null, day: null, kind: "full" } as const;
 const READING_QUESTIONS = 5;

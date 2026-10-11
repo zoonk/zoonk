@@ -4,14 +4,10 @@ import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getLessonSupport } from "./get-lesson-support";
 import { startLibraryLesson } from "./start-library-lesson";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 /** A lesson that opens (after its hook) with an explanation of `opening`, and also teaches `other`. */
 async function setupLesson() {

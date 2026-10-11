@@ -15,8 +15,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getCourseCurriculumCacheTag, getLibraryChapterCacheTag } from "../../cache/tags";
 import { getLibraryCourse } from "./get-library-course";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 describe(getLibraryCourse, () => {
   beforeEach(() => {
     mockSession(null);

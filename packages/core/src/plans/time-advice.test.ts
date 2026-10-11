@@ -13,9 +13,6 @@ import { endNoticeWait, startNoticeWait } from "./notice-wait";
 import { runPlanSetupTask } from "./plan-setup";
 import { type PlanTimeAdviceInput } from "./time-advice-contract";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
  * pace, and this keeps it out of the numbers these tests expect.

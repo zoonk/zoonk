@@ -3,12 +3,10 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
 import { getGoalPlacement } from "./get-goal-placement";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 /**
  * An exam goal on one skill, with a general question on it written for another goal earlier, while

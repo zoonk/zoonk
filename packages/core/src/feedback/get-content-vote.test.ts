@@ -1,12 +1,10 @@
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getContentVote } from "./get-content-vote";
 import { voteOnContent } from "./vote-on-content";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 async function createLibraryStep() {
   const lesson = await libraryLessonFixture();

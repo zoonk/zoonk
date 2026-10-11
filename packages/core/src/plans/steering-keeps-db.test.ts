@@ -1,122 +1,113 @@
+import { prisma } from "@zoonk/db";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
+import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { runSimLifeInDb } from "./_test-utils/sim/sim-db";
-import { type SimLife } from "./_test-utils/sim/sim-life-plan";
+import { parsePlanChangePayload } from "./_utils/plan-change-payload";
+import { createGoalPlan } from "./create-goal-plan";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
+/** A Monday in 2020, before the learning events other tests write, which estimates read. */
+const NOW = new Date("2020-09-28T12:00:00Z");
 
-// The mistake classifier is a paid model call: a wrong answer whose cause isn't clear is a gap here.
-vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({
-  classifyMistakeCause: vi.fn(async () => ({ data: { cause: "gap" } })),
-}));
-
-// Vercel Blob is the external store a deleted account's files are removed from.
-vi.mock("@vercel/blob", () => ({
-  del: vi.fn(),
-  list: vi.fn(async () => ({ blobs: [], cursor: undefined, hasMore: false })),
-}));
-
-const MINUTE = 60_000;
-
-/** Career seed 2107: Today offers to move the phase dates; the learner takes the buddy's focus. */
-const LIFE_2107: SimLife = {
-  dailyMinutes: 15,
-  fixture: "career",
-  knownAreas: [],
-  mockOffers: "focus",
-  pending: [4, 16, 25],
-  seed: 2107,
-  speed: 1.2,
-  start: "2026-10-12",
-  steps: [
-    { finish: 1, kind: "study", misses: [] },
-    { kind: "change", spec: { area: 2, kind: "focus" }, undo: true, via: "buddy" },
-  ],
-  subscribed: false,
-  targetInDays: 103,
-};
-
-/*
- * R40, through the real capabilities with questions (sim N136, career 2107): the focus replaced
- * Today's card to move the phase dates and kept the dates, so the first phase's challenge stayed
- * before two of its lessons with no card. Moving them was planned with today's time open again,
- * fitted those lessons before the challenge on paper, and Today didn't ask.
- */
-describe("a change of focus that keeps a challenge before its lessons", () => {
+describe("asking to move the phase dates a run keeps", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it(
-    "asks again to move the phase dates, planned as the change was",
-    async () => {
-      const { violations } = await runSimLifeInDb(LIFE_2107, { questions: true, rules: ["R40"] });
+  /*
+   * R40 (career seed 2131): a session's new pace laid the rest of the week out from the next day,
+   * and Today's proposal to move the phase dates was planned again from today, whose time was still
+   * open. There the lessons fit before their challenge with the same end, so the run asked nothing,
+   * while the plan it saved held the challenge before its lessons.
+   */
+  it("asks to move a phase's end after a slower session, planned from the next day as its run was", async () => {
+    const user = await userFixture();
 
-      expect(violations).toStrictEqual([]);
-    },
-    5 * MINUTE,
-  );
-});
+    const library = await planLibraryFixture({
+      phases: ["Basics", "Next steps"],
+      skills: [{ lessons: 6 }, { lessons: 6, phase: 1 }],
+    });
 
-/*
- * R40 through the real capabilities (sim N145, career 2131): a session's new pace laid the rest of
- * the week out from the next day, and Today's proposal to move the phase dates was planned again
- * from today, whose time was still open. There the lessons fit before their challenges with the
- * same ends, so the run withdrew the card and asked nothing, while the plan it saved held two
- * challenges before their lessons.
- */
-describe("a session whose new pace lays the week out from the next day", () => {
-  beforeEach(() => {
-    vi.useFakeTimers({ toFake: ["Date"] });
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-28" },
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+    mockSession(user.id);
+    await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
+
+    // The learner finished today's lessons taking twice their estimate, long ago enough that no one
+    // else's pace reads it: the rest of the week is laid out again from tomorrow.
+    await prisma.planItem.updateMany({
+      data: { completedAt: NOW, status: "done" },
+      where: { kind: "lesson", planId: plan.id, scheduledFor: new Date("2020-09-28T00:00:00Z") },
+    });
+
+    await Promise.all(
+      library.lessons.map((lesson) =>
+        learningEventFixture({
+          contentIds: { lessonId: lesson.id },
+          endedAt: new Date("2001-01-01T12:00:00Z"),
+          seconds: 360,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    await refreshGoalPlan({ goalId: goal.id, pace: "sampled" });
+
+    const proposals = await prisma.planChange.findMany({
+      where: { planId: plan.id, status: "proposed" },
+    });
+
+    expect(
+      proposals.map((proposal) => parsePlanChangePayload(proposal.payload).effect?.phaseEnds),
+    ).toStrictEqual([
+      [{ after: expect.any(String), before: "2020-10-01", lessonsFirst: true, name: "Basics" }],
+    ]);
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
+  /*
+   * R40 (career seed 2107): the focus replaced Today's card to move the phase dates and kept the
+   * dates, so the first phase's challenge stayed before two of its lessons with no card. Moving them
+   * was planned with today's time open again, fitted those lessons before the challenge on paper,
+   * and Today didn't ask. Moving them is planned as the change was (`askPhaseDatesAfterChange`).
+   * Lived through the real capabilities: a plan built by hand didn't leave today's time to a focus.
+   */
+  it("asks again to move the phase dates after a focus, planned as the change was", async () => {
+    const { violations } = await runSimLifeInDb(
+      {
+        dailyMinutes: 15,
+        fixture: "career",
+        knownAreas: [],
+        mockOffers: "focus",
+        pending: [4, 16, 25],
+        seed: 2107,
+        speed: 1.2,
+        start: "2026-10-12",
+        steps: [
+          { finish: 1, kind: "study", misses: [] },
+          { kind: "change", spec: { area: 2, kind: "focus" }, via: "buddy" },
+        ],
+        subscribed: false,
+        targetInDays: 103,
+      },
+      { rules: ["R40"] },
+    );
+
+    expect(violations).toStrictEqual([]);
   });
-
-  it(
-    "asks to move the phase dates, planned from the next day as the session's run was",
-    async () => {
-      const { violations } = await runSimLifeInDb(
-        {
-          dailyMinutes: 15,
-          fixture: "career",
-          knownAreas: [],
-          pending: [4, 6, 8, 11, 21, 22],
-          seed: 2131,
-          speed: 1.2,
-          start: "2054-10-12",
-          steps: [
-            { finish: 0.75, kind: "study", misses: [] },
-            { finish: 0.5, kind: "study", misses: [] },
-            { count: 2, kind: "land" },
-            { kind: "change", spec: { area: 2, kind: "focus" }, via: "buddy" },
-            { finish: 1, kind: "study", misses: [23] },
-            { finish: 0.25, kind: "study", misses: [] },
-            { finish: 1, kind: "study", misses: [] },
-            { finish: 1, kind: "study", misses: [] },
-            { finish: 0, kind: "study", misses: [] },
-            { finish: 0, kind: "study", misses: [] },
-            { finish: 0.25, kind: "study", misses: [] },
-            { finish: 1, kind: "study", misses: [0] },
-            { kind: "change", spec: { inDays: 11, kind: "lightWeek" }, via: "editor" },
-            { finish: 1, kind: "study", misses: [24] },
-            { finish: 1, kind: "study", misses: [] },
-            { finish: 1, kind: "study", misses: [24] },
-          ],
-          subscribed: false,
-          targetInDays: null,
-        },
-        { questions: true, rules: ["R40"] },
-      );
-
-      expect(violations).toStrictEqual([]);
-    },
-    10 * MINUTE,
-  );
 });

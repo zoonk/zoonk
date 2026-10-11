@@ -12,9 +12,6 @@ import { scheduleMistakePatternCheck } from "./find-mistake-pattern";
 import { getMistakePattern } from "./get-mistake-pattern";
 import { practiceMistakePattern } from "./practice-mistake-pattern";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // Finding a pattern is a paid model call.
 vi.mock("@zoonk/ai/tasks/v2/language/mistake-pattern", () => ({ findMistakePattern: vi.fn() }));
 

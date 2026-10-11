@@ -24,9 +24,6 @@ import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // Memory's extraction, gate and reconciling are paid model calls; their behavior is covered by evals.
 vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));

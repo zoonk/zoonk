@@ -27,9 +27,6 @@ import { settleFinishedLesson } from "./settle-finished-lesson";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // Memory's session patterns and coach are paid model calls, covered by their evals.
 vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/insight", () => ({ generateMemoryInsight: vi.fn() }));

@@ -1,12 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "./_test-utils/learner-goal";
 import { getCurrentUserReviewSchedule } from "./get-current-user-review-schedule";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 const DAY_MS = 86_400_000;
 

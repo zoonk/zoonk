@@ -11,9 +11,6 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { startStudyBlock } from "./start-study-block";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday in 2020, before the learning events other tests write, so their pace stays out. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 

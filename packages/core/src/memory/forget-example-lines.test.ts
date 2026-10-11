@@ -11,8 +11,6 @@ import { undoMemoryChanges } from "./undo-memory-changes";
 import { updateMemoryFact } from "./update-memory-fact";
 import { updateMemorySettings } from "./update-memory-settings";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 // The sensitivity check after a correction is a paid model call; it runs after the response.
 vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
 

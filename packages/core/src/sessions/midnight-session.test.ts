@@ -13,9 +13,6 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { getStudySession } from "./get-study-session";
 import { startStudyBlock } from "./start-study-block";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const TIME_ZONE = "UTC";
 const BEFORE_MIDNIGHT = new Date("2026-09-30T23:50:00Z");
 const AFTER_MIDNIGHT = new Date("2026-10-01T00:05:00Z");

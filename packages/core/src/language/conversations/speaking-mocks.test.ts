@@ -11,9 +11,6 @@ import { getLanguageConversation } from "./get-language-conversation";
 import { prepareSpeakingMock } from "./prepare-language-calls";
 import { startLanguageConversation } from "./start-language-conversation";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // The examiner's script and the scores are paid model calls.
 vi.mock("@zoonk/ai/tasks/v2/language/speaking-mock-scenario", () => ({
   generateSpeakingMockScenario: vi.fn(),

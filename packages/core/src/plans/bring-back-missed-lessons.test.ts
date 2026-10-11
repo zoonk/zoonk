@@ -20,10 +20,6 @@ import { bringBackMissedLessons } from "./bring-back-missed-lessons";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday. */
 const NOW = new Date("2026-10-12T12:00:00Z");
 

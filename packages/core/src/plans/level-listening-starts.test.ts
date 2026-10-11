@@ -3,7 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { listeningBlueprintFixture } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
@@ -13,10 +13,6 @@ import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { settleNewPlan } from "./_utils/recommended-bases";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /**
  * An IELTS-like learner with what they said of their level, whose plan has two Listening basics

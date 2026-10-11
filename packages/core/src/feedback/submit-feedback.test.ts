@@ -8,8 +8,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { submitFeedback } from "./submit-feedback";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /** The email provider is an external service; tests check what would be sent instead. */
 vi.mock("@zoonk/mailer", () => ({ sendEmail: vi.fn() }));
 

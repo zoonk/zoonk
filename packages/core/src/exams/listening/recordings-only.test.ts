@@ -22,12 +22,7 @@ import {
 } from "../../sessions/_test-utils/session-goal";
 import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 /**
  * An exam's listening skills are practiced only with recordings: a text question about a

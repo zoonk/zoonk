@@ -17,9 +17,6 @@ import {
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A learner with a goal whose first lesson is done: its skill is due and has a saved mistake. */
 async function setup() {
   const user = await userFixture();

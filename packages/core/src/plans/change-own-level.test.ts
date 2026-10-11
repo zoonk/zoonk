@@ -11,9 +11,6 @@ import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanGraph } from "./planner/plan-state";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday in 2020, before other tests' learning events, so pace estimates don't move dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TIME_ZONE = "UTC";

@@ -12,9 +12,6 @@ import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-ou
 import { mockSession } from "../../_test-utils/mock-session";
 import { getStepExampleLine } from "./get-step-example-line";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** The model call is the external boundary; memory reads and the stored lines run for real. */
 vi.mock("@zoonk/ai/tasks/v2/variants/example-lines", () => ({ generateExampleLines: vi.fn() }));
 

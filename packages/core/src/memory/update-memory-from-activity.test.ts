@@ -13,8 +13,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { undoMemoryChanges } from "./undo-memory-changes";
 import { scheduleMemoryUpdate, updateMemoryFromActivity } from "./update-memory-from-activity";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 // Extraction, the gate and reconciling are paid model calls; their behavior is covered by evals.
 vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));

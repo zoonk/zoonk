@@ -3,16 +3,13 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type SectionNavigation } from "../../library/exams/blueprint-contract";
 import { getMock } from "./get-mock";
 import { type MockView } from "./mock-contract";
 import { saveMockAnswer } from "./save-mock-answer";
 import { startAnytimeMock } from "./start-anytime-mock";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const QUESTIONS = 6;

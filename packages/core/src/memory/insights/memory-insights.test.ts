@@ -4,13 +4,11 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getGoalsCacheTag, getMemoryCacheTag } from "../../cache/tags";
 import { getCurrentMemoryInsight } from "./get-current-memory-insight";
 import { respondToMemoryInsight } from "./respond-to-memory-insight";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 const DAY_MS = 86_400_000;
 

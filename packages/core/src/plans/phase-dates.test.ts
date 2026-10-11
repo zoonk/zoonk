@@ -14,8 +14,6 @@ import { decidePlanChange } from "./decide-plan-change";
 import { addDays, fromIsoDate, toIsoDate } from "./planner/plan-calendar";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /**
  * A Sunday in 2020, before the learning events other tests write (estimates read everyone's recent
  * pace): this week is only today, so a refresh lays out everything from tomorrow on.

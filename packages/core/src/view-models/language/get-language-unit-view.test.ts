@@ -10,13 +10,10 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getLanguageUnitView } from "./get-language-unit-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /** A pattern noticed in some of the learner's mistakes, as the pattern check saves it. */
 function patternFixture({

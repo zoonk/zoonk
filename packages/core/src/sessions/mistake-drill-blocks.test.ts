@@ -21,9 +21,6 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // The classifier is a paid model call; its behavior is covered by its eval.
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 

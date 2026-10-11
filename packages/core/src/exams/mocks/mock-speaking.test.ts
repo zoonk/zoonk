@@ -15,8 +15,6 @@ import { startAnytimeMock } from "./start-anytime-mock";
 import { startMockSpeaking } from "./start-mock-speaking";
 import { submitMockSection } from "./submit-mock-section";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 
 // Writing a paper's cards is a paid model call per task (its storing is tested with

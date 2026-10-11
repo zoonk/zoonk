@@ -7,13 +7,10 @@ import {
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
 import { getProgressView } from "./get-progress-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const daysAgo = (days: number) => new Date(Date.now() - days * MS_PER_DAY);
 

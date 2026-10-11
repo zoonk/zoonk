@@ -3,13 +3,10 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getMock } from "./get-mock";
 import { startAnytimeMock } from "./start-anytime-mock";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const LANGUAGES = "Languages, Codes and their Technologies";

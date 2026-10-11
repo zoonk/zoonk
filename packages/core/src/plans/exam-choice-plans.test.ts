@@ -20,9 +20,6 @@ import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { type PlanGraph, parsePlanGraph } from "./planner/plan-state";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday in 2020, before other tests' learning events, so pace estimates stay out of it. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TIME_ZONE = "Europe/Madrid";

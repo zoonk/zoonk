@@ -5,11 +5,9 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { listCurrentUserCoursesPage } from "./list-current-user-courses";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 const HOUR_MS = 3_600_000;
 

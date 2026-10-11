@@ -1,15 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { setupPlayableLesson } from "../../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { changeLanguageActivity, getLanguageActivitySettings } from "./skipped-activities";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const TIME_ZONE = "UTC";
 

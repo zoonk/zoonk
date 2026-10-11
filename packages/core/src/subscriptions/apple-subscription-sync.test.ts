@@ -15,8 +15,6 @@ import { processAppleSubscriptionNotification } from "./process-apple-subscripti
 import { reconcileAppleSubscription } from "./reconcile-apple-subscription";
 import { syncCurrentUserAppleSubscription } from "./sync-apple-subscription";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 vi.mock("./apple-store", () => ({
   getAppleSubscriptionFromNotification: vi.fn(),
   getAppleSubscriptionFromTransaction: vi.fn(),

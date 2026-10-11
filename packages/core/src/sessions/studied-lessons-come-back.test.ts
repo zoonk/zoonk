@@ -21,9 +21,6 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { readBlockPayload } from "./block-payload";
 import { startStudyBlock } from "./start-study-block";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const TIME_ZONE = "UTC";
 const DAYS = 4;
 const FIRST_DAY = Date.UTC(2026, 8, 30);

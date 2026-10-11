@@ -1,0 +1,68 @@
+import { describe, expect, it } from "vitest";
+import { type BuildPlanInput, buildPlan } from "./build-plan";
+import { getShownPhaseEnds } from "./kept-phase-ends";
+import { addDays, fromIsoDate } from "./plan-calendar";
+import { parsePlanSettings } from "./plan-state";
+
+/** A Monday. */
+const TODAY = fromIsoDate("2026-09-28");
+
+/** A learn plan of four phases, one skill each, due in 9 days at 24 minutes a day. */
+const SIZES = [8, 8, 8, 4];
+
+const input: BuildPlanInput = {
+  goal: { dailyMinutes: 24, kind: "learn", targetDate: addDays(TODAY, 9) },
+  graph: {
+    phases: SIZES.map((_, index) => ({ milestone: null, name: `Phase ${index + 1}` })),
+    skills: SIZES.map((lessons, index) => ({
+      area: `Area ${index + 1}`,
+      lessons,
+      name: `Skill ${index + 1}`,
+      phase: index,
+      skillId: `skill-${index}`,
+      weight: null,
+    })),
+  },
+  items: [],
+  lessons: SIZES.flatMap((count, skill) =>
+    Array.from({ length: count }, (_, index) => ({
+      chapterId: `chapter-${skill}`,
+      lessonId: `lesson-${skill}-${index}`,
+      minutes: 3,
+      skillIds: [`skill-${skill}`],
+      title: `Lesson ${skill}.${index}`,
+    })),
+  ),
+  mockMinutes: 150,
+  mode: "forced",
+  paceFactor: 1,
+  prerequisites: new Map(),
+  readiness: new Map(),
+  settings: parsePlanSettings({ startDate: "2026-09-28" }),
+  today: TODAY,
+};
+
+function listLessonIds(plan: ReturnType<typeof buildPlan>) {
+  return plan.items.flatMap((item) => (item.lessonId ? [item.lessonId] : []));
+}
+
+// A learner's new date re-plans the phase ends with the cut a plan short on time makes, and the
+// next runs keep those ends. Kept ends hold each challenge on its day whatever the day's time, so
+// judged on them the plan read as fitting and skipped the cut: a career plan's first landing after
+// a new date gained lessons and moved 209 items.
+describe("a plan short on time whose phase ends a run keeps", () => {
+  const made = buildPlan(input);
+  const items = made.items.map((item, position) => ({ ...item, id: item.key, position }));
+  const phaseEnds = getShownPhaseEnds({ items, phases: made.phases });
+
+  it.each(["automatic", "forced"] as const)(
+    "keeps the lessons its cut left in (%s run)",
+    (mode) => {
+      expect(listLessonIds(made).length).toBeLessThan(input.lessons.length);
+
+      const next = buildPlan({ ...input, items, mode, phaseEnds });
+
+      expect(listLessonIds(next)).toStrictEqual(listLessonIds(made));
+    },
+  );
+});

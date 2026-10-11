@@ -5,15 +5,13 @@ import {
   privateCourseFixture,
 } from "@zoonk/testing/fixtures/library-courses";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getCatalogChapter } from "./chapter";
 import { listCatalogChapterLessons } from "./chapter-lessons";
 import { listCatalogCourseChapters } from "./course-chapters";
 import { getCatalogChapterNextLesson, getCatalogCourseNextLesson } from "./next-lesson";
 import { getCatalogChapterProgress, getCatalogCourseProgress } from "./progress";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 /** Every catalog read of a course and one of its chapters, as the current session sees them. */
 async function readCourse({ chapterId, courseId }: { chapterId: string; courseId: string }) {

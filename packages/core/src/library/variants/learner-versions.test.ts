@@ -3,7 +3,7 @@ import { challengeCaseFixture } from "@zoonk/testing/fixtures/challenge-contents
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
 import {
   setupPlayableLesson,
@@ -13,9 +13,6 @@ import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { type PlayableLibraryStep } from "../../lesson-player/contract";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
 import { pickToolVersion } from "./learner-versions";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const SPREADSHEET = "Spreadsheet (Google Sheets or Excel)";
 

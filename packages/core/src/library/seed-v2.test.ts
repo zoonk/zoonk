@@ -58,8 +58,6 @@ import { parseItemContent } from "./items/item-content";
 import { STEP_CONTRACT_VERSION, parseStepContent } from "./steps/contract/step-contract";
 import type * as SessionBuilder from "../sessions/session-builder";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /** Every day the app's session builder planned while this file ran, the seed's among them. */
 const builtDays = vi.hoisted((): PlannedBlock[][] => []);
 

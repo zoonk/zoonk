@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
-import { press } from "../_test-utils/activity-player";
+import { pressOnPage } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { isReadStep } from "../lesson/_utils/lesson-steps";
 import { previewEntries } from "../preview/preview-catalog";
@@ -20,15 +20,6 @@ const AFTER = { text: "This screen comes next.", title: "After" };
 
 function heading(text: string) {
   return page.getByRole("heading", { exact: true, name: text });
-}
-
-/** Keys go to the page, not to a control a screen focused. */
-function pressOnPage(key: string) {
-  if (document.activeElement instanceof HTMLElement) {
-    document.activeElement.blur();
-  }
-
-  return press(key);
 }
 
 async function readOnUntil(title: string) {

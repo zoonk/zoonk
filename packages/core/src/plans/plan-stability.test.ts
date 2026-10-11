@@ -17,10 +17,6 @@ import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 function at(isoDate: string) {
   return new Date(`${isoDate}T12:00:00Z`);
 }

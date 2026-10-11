@@ -6,8 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { readOwnFile, toOwnFileResponse } from "./read-own-file";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 // Blob storage is an external service; tests serve the stored file from memory.
 vi.mock("@vercel/blob", () => ({ get: vi.fn() }));
 

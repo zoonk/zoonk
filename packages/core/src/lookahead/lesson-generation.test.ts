@@ -20,9 +20,6 @@ import {
 import { getLessonWaitingState } from "./get-lesson-waiting-state";
 import { requestLessonGeneration } from "./request-lesson-generation";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 async function learnerWithPlan() {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });

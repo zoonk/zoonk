@@ -14,13 +14,10 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { addDays } from "../plans/planner/plan-calendar";
 import { getSkillOutline, requestSkillOutline } from "./skill-outline";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /**
  * A learner's plan whose topics are all months away: stand-ins for skills of one course, the first

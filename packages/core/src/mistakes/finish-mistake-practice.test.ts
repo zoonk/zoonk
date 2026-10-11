@@ -9,8 +9,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 // The classifier is a paid model call; its behavior is covered by its eval.
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 

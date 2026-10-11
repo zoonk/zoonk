@@ -1,18 +1,12 @@
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { courseGoalFixture } from "../view-models/_test-utils/course-goal";
 import { continueGoalAtNextLevel } from "./continue-goal-at-next-level";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 async function setup(options: Omit<Parameters<typeof courseGoalFixture>[0], "userId"> = {}) {
   const user = await userFixture();

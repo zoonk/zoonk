@@ -13,11 +13,6 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { readBlockPayload } from "./block-payload";
 import { getStudySessionSummary } from "./get-study-session-summary";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Friday: Pedro plans for his cell biology test a week away. */
 const TODAY = new Date("2026-10-02T00:00:00Z");
 const DAY_MS = 86_400_000;

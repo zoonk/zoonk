@@ -16,8 +16,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
 import { mergeSkillForAdmin } from "./merge-skill";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 async function signInAdmin() {
   const admin = await userFixture({ role: "admin" });
 

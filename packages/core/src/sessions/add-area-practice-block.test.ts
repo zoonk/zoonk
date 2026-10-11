@@ -15,9 +15,6 @@ import {
 import { addAreaPracticeBlock } from "./add-area-practice-block";
 import { readBlockPayload } from "./block-payload";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A goal with two chapters (the areas) of two skills each, every skill studied a while ago. */
 async function setup() {
   const user = await userFixture();

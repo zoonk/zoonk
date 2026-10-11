@@ -1,12 +1,10 @@
 import { prisma } from "@zoonk/db";
 import { suggestedGoalFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getCurrentSuggestedGoal } from "./get-current-suggested-goal";
 import { respondToSuggestedGoal } from "./respond-to-suggested-goal";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

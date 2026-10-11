@@ -8,8 +8,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /** The model call is the one external boundary; each test says what the model understood. */
 vi.mock("@zoonk/ai/tasks/v2/plans/routine-fit", () => ({ fitPlanToRoutineFacts: vi.fn() }));
 

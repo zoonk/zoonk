@@ -9,9 +9,6 @@ import { DAY_MS, SESSION_NOW, daysAgo } from "../../sessions/_test-utils/session
 import { type MockConditions, type MockResult } from "../mocks/mock-contract";
 import { getExamView } from "./get-exam-view";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const MOCKS = 12;
 const QUESTIONS = 20;
 

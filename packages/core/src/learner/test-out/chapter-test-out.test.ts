@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
@@ -11,12 +11,6 @@ import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { getChapterTestOut } from "./get-chapter-test-out";
 import { requestTestOutQuestions } from "./request-test-out-questions";
 import { submitChapterTestOut } from "./submit-chapter-test-out";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };

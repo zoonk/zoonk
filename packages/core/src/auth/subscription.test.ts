@@ -4,8 +4,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
 import { getActiveSubscription, hasActiveSubscription } from "./subscription";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 /**
  * Authenticates one fixture user so subscription reads exercise the same
  * identity boundary used by web and API callers.

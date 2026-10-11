@@ -10,9 +10,6 @@ import { createGoalPlan } from "./create-goal-plan";
 import { getPlanLink } from "./get-plan-link";
 import { startGoalFromPlanLink } from "./start-goal-from-plan-link";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
  * pace, and this keeps it out of the dates these tests expect.

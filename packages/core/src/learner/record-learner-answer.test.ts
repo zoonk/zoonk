@@ -11,9 +11,6 @@ import { runDeferredWork } from "../_test-utils/deferred-work";
 import { trackServerEvent } from "../analytics/server";
 import { type LearnerAnswer, recordLearnerAnswer } from "./record-learner-answer";
 
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 const TIME_ZONE = "America/Sao_Paulo";
 
 const SNAPSHOT = {

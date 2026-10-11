@@ -21,10 +21,6 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
  * pace, and this keeps it out of the dates these tests expect.

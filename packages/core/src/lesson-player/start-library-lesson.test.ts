@@ -20,12 +20,6 @@ import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { startLibraryLesson } from "./start-library-lesson";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 const TIME_ZONE = "America/Sao_Paulo";
 
 function start(lessonId: string, studySessionId?: string) {

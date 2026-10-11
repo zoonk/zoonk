@@ -9,8 +9,6 @@ import {
   stopFreshnessChecks,
 } from "./freshness-checks";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 const HOUR_MS = 3_600_000;
 
 /** Far from the dates other tests store, so only this test's rows are due at it. */

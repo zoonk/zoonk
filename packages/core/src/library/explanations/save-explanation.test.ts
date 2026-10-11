@@ -5,7 +5,7 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getExplanation } from "../../view-models/explain/get-explanation";
 import { marketExplanation } from "./_test-utils/market-explanation";
@@ -18,9 +18,6 @@ import {
   linkGoFurtherCourse,
   saveExplanationLesson,
 } from "./save-explanation";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 const provenance = {
   generatedAt: new Date(),

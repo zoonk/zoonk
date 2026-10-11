@@ -8,9 +8,6 @@ import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday in 2020, before the learning events other tests write (see `plan-changes.test.ts`). */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TARGET = "2020-11-08";

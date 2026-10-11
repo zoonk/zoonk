@@ -14,9 +14,6 @@ import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 import { getPlanLink } from "./get-plan-link";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** The model call is the one external boundary; each test says what the model wrote. */
 vi.mock("@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline", () => ({
   generateSetupLessonOutline: vi.fn(),

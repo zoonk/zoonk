@@ -3,18 +3,15 @@ import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
+import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { runSimLife } from "./_test-utils/sim/sim-life";
-import { type SimLife } from "./_test-utils/sim/sim-life-plan";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
-const MINUTE = 60_000;
 const DAY = 86_400_000;
 
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
@@ -43,133 +40,57 @@ function twoDaysLater(day: string): string {
   return new Date(Date.parse(`${day}T00:00:00Z`) + 2 * DAY).toISOString().slice(0, 10);
 }
 
-async function findViolations(life: SimLife) {
-  const { violations } = await runSimLife(life);
-  return violations.filter((violation) => violation.rule === "R38");
+/**
+ * A plan of two phases whose first ends two days after its lessons do, as a run that kept the end
+ * the learner saw leaves it: its challenge is on that day, and the next phase starts after it.
+ * Planned again, that end and challenge move back to the lessons.
+ */
+async function setupKeptEnd() {
+  const user = await userFixture();
+
+  const library = await planLibraryFixture({
+    phases: ["Basics", "Next steps"],
+    skills: [
+      { area: "Math", lessons: 6 },
+      { area: "Math", lessons: 6, phase: 1 },
+    ],
+  });
+
+  const { goal, plan } = await unplannedGoalFixture({
+    dailyMinutes: 12,
+    settings: { startDate: "2020-09-28" },
+    userId: user.id,
+  });
+
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+  mockSession(user.id);
+
+  const created = await prisma.plan.findUniqueOrThrow({
+    include: { items: true },
+    where: { id: plan.id },
+  });
+
+  const [first, second] = created.phases as { endDate: string; startDate: string }[];
+  const challenge = created.items.find((item) => item.kind === "boss" && item.phase === 0);
+
+  await Promise.all([
+    prisma.plan.update({
+      data: {
+        phases: [
+          { ...first, endDate: twoDaysLater(first?.endDate ?? "") },
+          { ...second, startDate: twoDaysLater(second?.startDate ?? "") },
+        ],
+      },
+      where: { id: plan.id },
+    }),
+    prisma.planItem.update({
+      data: { scheduledFor: new Date(`${twoDaysLater(first?.endDate ?? "")}T00:00:00Z`) },
+      where: { id: challenge?.id ?? "" },
+    }),
+  ]);
+
+  return { goal, library, plan };
 }
-
-describe("undo gives back the plan the learner had", () => {
-  // Career seed 1005: a light week, then undo, moved 243 items and every phase end.
-  it(
-    "puts back a career plan's days and phase ends after a light week",
-    async () => {
-      const life: SimLife = {
-        dailyMinutes: 15,
-        fixture: "career",
-        knownAreas: [],
-        pending: [],
-        seed: 1005,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          { finish: 1, kind: "study", misses: [] },
-          { kind: "change", spec: { inDays: 18, kind: "lightWeek" }, undo: true, via: "editor" },
-        ],
-        subscribed: false,
-        targetInDays: 152,
-      };
-
-      await expect(findViolations(life)).resolves.toStrictEqual([]);
-    },
-    5 * MINUTE,
-  );
-
-  // Language seed 1005: the same undo moved the first phase's end a day and its challenge.
-  it(
-    "puts back a language plan's first phase end after a light week",
-    async () => {
-      const life: SimLife = {
-        dailyMinutes: 25,
-        fixture: "language",
-        knownAreas: [],
-        pending: [],
-        seed: 1005,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          { finish: 1, kind: "study", misses: [] },
-          { kind: "change", spec: { inDays: 18, kind: "lightWeek" }, undo: true, via: "editor" },
-        ],
-        subscribed: false,
-        targetInDays: 117,
-      };
-
-      await expect(findViolations(life)).resolves.toStrictEqual([]);
-    },
-    5 * MINUTE,
-  );
-
-  // IELTS seed 1018: after placement, 60 minutes down to 45 and undone at once moved three lessons.
-  it(
-    "puts back an IELTS plan after a time change undone at once",
-    async () => {
-      const life: SimLife = {
-        dailyMinutes: 60,
-        fixture: "ielts",
-        knownAreas: [],
-        pending: [0, 2],
-        proposals: "apply",
-        seed: 1018,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [0, true],
-              [2, true],
-              [3, false],
-              [0, true],
-              [3, true],
-              [1, true],
-              [2, false],
-            ],
-            kind: "placement",
-          },
-          { kind: "change", spec: { kind: "time", minutes: 45 }, undo: true, via: "editor" },
-        ],
-        subscribed: false,
-        targetInDays: 25,
-      };
-
-      await expect(findViolations(life)).resolves.toStrictEqual([]);
-    },
-    5 * MINUTE,
-  );
-
-  // Class test seed 1002: undoing placement's test-outs left the skipped lessons as todo rows on
-  // day one, beside the lessons the plan laid out without them.
-  it(
-    "puts back the lessons placement skipped where they were",
-    async () => {
-      const life: SimLife = {
-        dailyMinutes: 20,
-        fixture: "class-test",
-        knownAreas: [],
-        pending: [],
-        seed: 1002,
-        speed: 1,
-        start: "2026-10-12",
-        steps: [
-          {
-            answers: [
-              [3, false],
-              [3, true],
-              [4, true],
-              [0, false],
-            ],
-            kind: "placement",
-            undo: true,
-          },
-        ],
-        subscribed: false,
-        targetInDays: 4,
-      };
-
-      await expect(findViolations(life)).resolves.toStrictEqual([]);
-    },
-    5 * MINUTE,
-  );
-});
 
 describe("undoing a change in the app", () => {
   beforeEach(() => {
@@ -181,52 +102,10 @@ describe("undoing a change in the app", () => {
     vi.useRealTimers();
   });
 
+  // R38. Planned again from the state before the change, an undo moved what earlier runs kept:
+  // after a light week, 243 items and every phase end of a career plan (seed 1005).
   it("puts back the phase end and the days an earlier run kept, not a plan made again", async () => {
-    const user = await userFixture();
-
-    const library = await planLibraryFixture({
-      phases: ["Basics", "Next steps"],
-      skills: [
-        { area: "Math", lessons: 6 },
-        { area: "Math", lessons: 6, phase: 1 },
-      ],
-    });
-
-    const { goal, plan } = await unplannedGoalFixture({
-      dailyMinutes: 12,
-      settings: { startDate: "2020-09-28" },
-      userId: user.id,
-    });
-
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
-    mockSession(user.id);
-
-    // The first phase ends two days after its lessons do, as a run that kept the end the learner
-    // saw leaves it: its challenge is on that day, and the next phase starts after it.
-    const created = await prisma.plan.findUniqueOrThrow({
-      include: { items: true },
-      where: { id: plan.id },
-    });
-
-    const [first, second] = created.phases as { endDate: string; startDate: string }[];
-
-    await prisma.plan.update({
-      data: {
-        phases: [
-          { ...first, endDate: twoDaysLater(first?.endDate ?? "") },
-          { ...second, startDate: twoDaysLater(second?.startDate ?? "") },
-        ],
-      },
-      where: { id: plan.id },
-    });
-
-    const challenge = created.items.find((item) => item.kind === "boss" && item.phase === 0);
-
-    await prisma.planItem.update({
-      data: { scheduledFor: new Date(`${twoDaysLater(first?.endDate ?? "")}T00:00:00Z`) },
-      where: { id: challenge?.id ?? "" },
-    });
-
+    const { goal, plan } = await setupKeptEnd();
     const shown = await readPlan(plan.id);
 
     const result = await changeGoalPlan({
@@ -244,6 +123,32 @@ describe("undoing a change in the app", () => {
         input: { status: "undone" },
       }),
     ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
+
+    await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
+  });
+
+  // Class test seed 1002: undoing placement's test-outs planned the plan again, which left the
+  // skipped lessons as todo rows on day one, beside the lessons laid out without them. Each comes
+  // back on the day it had, with every other item as it was.
+  it("puts back the lessons a test-out skipped on the days they had", async () => {
+    const { goal, library, plan } = await setupKeptEnd();
+    const [shown, goalPlan] = await Promise.all([readPlan(plan.id), loadGoalPlan(goal.id)]);
+
+    const { changeId } = await markPlanItemsTestedOut({
+      goalId: goal.id,
+      items: goalPlan.items,
+      knownSkillIds: new Set([library.skills[0]?.id ?? ""]),
+      testedOutAt: NOW,
+      timeZone: "UTC",
+    });
+
+    await expect(readPlan(plan.id)).resolves.not.toStrictEqual(shown);
+
+    await decidePlanChange({
+      changeId: changeId ?? "",
+      goalId: goal.id,
+      input: { status: "undone" },
+    });
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
   });

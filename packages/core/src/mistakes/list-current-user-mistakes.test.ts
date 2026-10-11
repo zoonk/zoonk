@@ -1,13 +1,11 @@
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { mistakeListInputSchema } from "./contract";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 const query = (input: object = {}) => mistakeListInputSchema.parse(input);
 

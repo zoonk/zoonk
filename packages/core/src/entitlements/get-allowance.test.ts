@@ -6,8 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { getAllowance } from "./get-allowance";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 const NOW = new Date("2026-09-15T12:00:00Z");
 const EARLIER_THIS_MONTH = new Date("2026-09-03T09:00:00Z");
 

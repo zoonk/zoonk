@@ -17,10 +17,6 @@ import { runPlanSetupTask } from "./plan-setup";
 import type * as NoticeDay from "../exams/_utils/notice-day";
 import type * as Announcement from "./announce-tested-out-items";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /** The model call is an external boundary: each test says what the model understood. */
 vi.mock("@zoonk/ai/tasks/v2/plans/routine-fit", () => ({ fitPlanToRoutineFacts: vi.fn() }));
 

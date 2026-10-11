@@ -15,10 +15,6 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 /** A Monday in 2020, before the learning events other tests write, six weeks before the exam. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";

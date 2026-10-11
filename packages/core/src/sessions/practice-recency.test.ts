@@ -13,9 +13,6 @@ import {
 } from "./_test-utils/session-goal";
 import { readBlockPayload } from "./block-payload";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const HOUR_MS = 3_600_000;
 
 describe("today's practice", () => {

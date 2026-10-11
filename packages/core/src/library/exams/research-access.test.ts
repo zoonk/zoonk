@@ -9,8 +9,6 @@ import { getSession } from "../../users/get-session";
 import { getFreshnessCommandAccess } from "./freshness-access";
 import { getResearchAccess } from "./research-access";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 function mockSessionWithRole({ role, userId }: { role: "admin" | "user"; userId: string }) {
   vi.mocked(getSession).mockResolvedValue(
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only the identity and role are read.

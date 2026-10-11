@@ -7,8 +7,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { updateLearningProfile } from "../profile/update-learning-profile";
 import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 vi.mock("next/headers", () => ({
   cookies: vi.fn(async () => ({ get: () => {} })),
   headers: vi.fn(async () => new Headers()),

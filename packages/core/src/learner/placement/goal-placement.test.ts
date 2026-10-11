@@ -10,14 +10,12 @@ import {
 } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { finishGoalPlacement } from "./finish-goal-placement";
 import { getGoalPlacement } from "./get-goal-placement";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 const DONT_KNOW = { dontKnow: true } as const;
 const RIGHT = { selectedIndex: 0 };

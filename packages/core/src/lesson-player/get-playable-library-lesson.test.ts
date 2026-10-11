@@ -12,14 +12,11 @@ import {
 } from "@zoonk/testing/fixtures/playable-step-contents";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 describe(getPlayableLibraryLesson, () => {
   // Screens load only with a session, so most cases play as a signed-in learner.

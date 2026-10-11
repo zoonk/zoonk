@@ -16,7 +16,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { addDays } from "../plans/planner/plan-calendar";
 import {
@@ -24,8 +24,6 @@ import {
   getSessionPreparationAccess,
   listSessionPreparation,
 } from "./session-preparation";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 const TIME_ZONE = "UTC";
 

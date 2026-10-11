@@ -4,17 +4,11 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getFocusTest } from "./get-focus-test";
 import { requestFocusTestQuestions } from "./request-focus-test-questions";
 import { submitFocusTest } from "./submit-focus-test";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };

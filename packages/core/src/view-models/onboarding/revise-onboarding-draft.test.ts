@@ -4,14 +4,11 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { type GoalUnderstandingView } from "./onboarding-contract";
 import { reviseOnboardingDraft } from "./revise-onboarding-draft";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /** An exam with the 2099 notice stored: two exam days read from its official source. */
 async function createExam() {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { pressOnPage } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { swipeFrom } from "../_test-utils/touch-screen";
 import { previewEntries } from "../preview/preview-catalog";
@@ -106,7 +107,8 @@ describe("swiping through every screen", () => {
   it.each(cases)("%s", async (_name, entry, state) => {
     renderLessonPlayer({ lesson: buildLesson([explanationStep(BEFORE), entry.screen(state)]) });
 
-    await swipe(page.getByText(BEFORE.text).element(), -SWIPE_PX);
+    // The arrow key turns to the screen: each screen's own swipe is the one back from it.
+    await pressOnPage("ArrowRight");
     await expect.element(heading(BEFORE.title)).not.toBeInTheDocument();
 
     await swipe(neutralSpot(), SWIPE_PX);

@@ -12,8 +12,6 @@ import { resetExamSkillGraphForAdmin } from "./exam-skill-graph-reset";
 import { loadGoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { findReusableCurriculum, saveExamSkillGraph } from "./reusable-curriculum";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 const SHARED: CurriculumScope = {
   generalGoal: "Immunology board exam",
   language: "pt",

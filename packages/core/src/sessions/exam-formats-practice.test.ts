@@ -21,8 +21,6 @@ import { readBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
 import { startStudyBlock } from "./start-study-block";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 
 // The model that grades a typed answer code can't match is a paid call; its verdicts are covered by

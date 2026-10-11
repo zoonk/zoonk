@@ -15,24 +15,22 @@ import {
   press,
 } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { getActivityAudioContext } from "../activities/_utils/activity-audio";
-import { heardAtMs } from "../activities/rhythm-tapper/rhythm-clock";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 
 /** Where the rhythm activities keep the device's measured sound delay. */
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 
-/** When each tap of the son clave fixture should land, from the first, as core grades it. */
-const CLAVE_TAPS_MS = rhythmTapTimes(activityContentFixtures.rhythmTapper.fields);
+/** The son clave fixture, one round at twice its tempo: a real run as short as a run gets. */
+const QUICK_CLAVE = {
+  ...activityContentFixtures.rhythmTapper,
+  fields: { ...activityContentFixtures.rhythmTapper.fields, rounds: 1, tempo: 180 },
+};
 
-/** The sound check plays its clicks at 60 bpm. */
-const SOUND_CHECK_INTERVAL_MS = 1000;
+/** When each tap of the clave should land, from the first, as core grades it. */
+const CLAVE_TAPS_MS = rhythmTapTimes(QUICK_CLAVE.fields);
 
-/**
- * Rhythms play in real time: the sound check and a run of the clave take most of a browser test's
- * default budget, so these tests keep the E2E's (Playwright's 30 seconds).
- */
+/** A rhythm plays in real time, past a browser test's default budget: it keeps the E2E's. */
 const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
 const { byEar, byEarChoice } = engineModeFixtures.keyboardFretboard;
@@ -71,40 +69,10 @@ function waitForFrameWithText(text: string) {
   });
 }
 
-/** Waits for the first round on the page's own frames, since a tap's timing is the answer. */
-async function waitForFirstRound() {
-  await waitForFrameWithText("Round 1 of 2");
-}
-
 function sleepUntil(time: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, Math.max(0, time - performance.now()));
   });
-}
-
-/**
- * How long after the audio clock plays a sound the device lets it out: the machine's own speakers
- * add a few milliseconds, Bluetooth headphones a few hundred.
- */
-function outputDelayMs() {
-  const context = getActivityAudioContext();
-  return heardAtMs(context, context.currentTime) - performance.now();
-}
-
-/**
- * Taps along with the sound check's clicks as they're heard, as a learner does, a second apart
- * from the first measured one.
- */
-async function tapAlongWithSoundCheck() {
-  await waitForFrameWithText("Tap with each click · 1 of");
-  const start = performance.now() + outputDelayMs();
-
-  for (const click of [0, 1, 2, 3, 4, 5]) {
-    // oxlint-disable-next-line no-await-in-loop -- Each tap waits for its click.
-    await sleepUntil(start + click * SOUND_CHECK_INTERVAL_MS);
-    // oxlint-disable-next-line no-await-in-loop -- The taps follow the clicks in order.
-    await press("Space");
-  }
 }
 
 /** Taps the son clave on time: each Space press lands on its hit, measured from the first. */
@@ -186,47 +154,38 @@ describe("music activities", () => {
       .toBeInTheDocument();
   });
 
-  it(
-    "rhythm: a one-time sound check measures the device's delay",
-    { timeout: REAL_TIME_TEST_TIMEOUT_MS },
-    async () => {
-      const lesson = buildLesson([activityStep({ content: activityContentFixtures.rhythmTapper })]);
+  // Reading the delay from the taps is `estimateDeviceDelay`'s (core's music tests): this is when
+  // the player asks for it, without the nine seconds of clicks a real reading takes.
+  it("rhythm: the sound check is asked once per device and can be taken again", async () => {
+    const lesson = buildLesson([activityStep({ content: activityContentFixtures.rhythmTapper })]);
 
-      const firstVisit = renderLessonPlayer({ lesson });
-      await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
-      await page.getByRole("button", { name: "Start the sound check" }).click();
-      await tapAlongWithSoundCheck();
+    const firstVisit = renderLessonPlayer({ lesson });
+    await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
+    await page.getByRole("button", { name: "Skip for now" }).click();
+    await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
 
-      await expect
-        .element(page.getByText(/^Sound on this device arrives/u), { timeout: 15_000 })
-        .toBeVisible();
+    // Skipped or measured, the next visit goes straight to the rhythm.
+    firstVisit.unmount();
+    localStorage.setItem(DEVICE_DELAY_KEY, "180");
+    renderLessonPlayer({ lesson });
+    await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
+    await expectCount(page.getByRole("heading", { name: "Set up your sound" }), 0);
 
-      await page.getByRole("button", { name: "Continue" }).click();
-      await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
+    await page.getByRole("button", { name: "Check the sound delay again" }).click();
+    await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Start the sound check" })).toBeVisible();
+  });
 
-      // Measured once per device: the next visit goes straight to the rhythm.
-      firstVisit.unmount();
-      renderLessonPlayer({ lesson });
-      await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
-      await expectCount(page.getByRole("heading", { name: "Set up your sound" }), 0);
-
-      await page.getByRole("button", { name: "Check the sound delay again" }).click();
-      await expect.element(page.getByRole("heading", { name: "Set up your sound" })).toBeVisible();
-      await page.getByRole("button", { name: "Skip for now" }).click();
-      await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
-    },
-  );
-
+  // Taps are graded against the audio clock, which only a real run plays: one quick round of the
+  // clave keeps that while the grading's details are core's (`rhythmTapOffsets`).
   it("rhythm: tapping on the beats is right", { timeout: REAL_TIME_TEST_TIMEOUT_MS }, async () => {
-    openActivity({ template: "rhythmTapper" });
+    openActivities({ contents: [QUICK_CLAVE] });
     await page.getByRole("button", { name: "Skip for now" }).click();
     await page.getByRole("button", { name: "Start tapping" }).click();
-    await waitForFirstRound();
+    await waitForFrameWithText("Round 1 of 1");
     await tapClave();
 
-    await expect
-      .element(page.getByText("10 of 10 taps on time."), { timeout: 15_000 })
-      .toBeVisible();
+    await expect.element(page.getByText("5 of 5 taps on time."), { timeout: 15_000 }).toBeVisible();
 
     // A run can always be tapped again before it's checked.
     await expect.element(page.getByRole("button", { name: "Try again" })).toBeVisible();

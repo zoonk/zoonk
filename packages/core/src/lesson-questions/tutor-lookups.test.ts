@@ -7,7 +7,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { type MockConditions, type MockResult } from "../exams/mocks/mock-contract";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
@@ -16,12 +16,6 @@ import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { claimLessonQuestionAnswer, completeLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { lookUpTutorData } from "./look-up-tutor-data";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-// PostHog is an external service; asking the tutor sends an event.
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 const MODEL = "openai/gpt-6-luna";
 

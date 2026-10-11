@@ -6,9 +6,6 @@ import { trackServerEvent } from "../../analytics/server";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "../../sessions/_utils/plan-items";
 import { trackCallCanDos } from "./can-do-events";
 
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
 type Setup = Awaited<ReturnType<typeof languageGoalFixture>>;
 
 /** Checks the lesson off as the lesson player does: analytics is scheduled once it commits. */

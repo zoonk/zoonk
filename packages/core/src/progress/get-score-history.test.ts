@@ -6,9 +6,6 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getScore } from "./get-score";
 import { getScoreHistory } from "./get-score-history";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("./get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 /** Fixes the instant and timezone used by both Score capabilities. */
 function mockScoreDate(now: Date = new Date(), timeZone = "UTC") {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({

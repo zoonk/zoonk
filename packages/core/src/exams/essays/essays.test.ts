@@ -12,9 +12,6 @@ import { startStudyBlock } from "../../sessions/start-study-block";
 import { getEssay } from "./get-essay";
 import { submitEssay } from "./submit-essay";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const GRADE = {
   criteria: [1, 2, 3, 4, 5].map((index) => ({
     comment: `Comment ${index}`,

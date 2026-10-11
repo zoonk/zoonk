@@ -13,8 +13,6 @@ import { GUEST_DAILY_SPEND_BUDGET_MICROS, getEstimatedCostMicros } from "./limit
 
 vi.mock("@sentry/nextjs", () => ({ captureMessage: vi.fn() }));
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
 async function useGuest() {
   const guest = await userFixture();
   await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } });

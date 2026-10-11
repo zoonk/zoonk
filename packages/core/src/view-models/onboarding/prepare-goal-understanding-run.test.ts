@@ -4,13 +4,10 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { prepareGoalUnderstandingRun } from "./prepare-goal-understanding-run";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /** Small AI calls the learner claimed: reading a goal again takes one. */
 function countAssists(userId: string) {

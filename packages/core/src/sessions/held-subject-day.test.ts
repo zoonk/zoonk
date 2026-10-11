@@ -8,9 +8,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { DAY_MS, SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "./_test-utils/session-goal";
 import { loadSessionBuildInput } from "./_utils/load-build-inputs";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 const TOMORROW = new Date(SESSION_TODAY.getTime() + DAY_MS);
 
 /** A skill of the plan's graph in a subject. */

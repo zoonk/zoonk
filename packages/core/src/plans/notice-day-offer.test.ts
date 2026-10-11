@@ -13,11 +13,6 @@ import { getGoalPlan } from "./get-goal-plan";
 import { getPlanTimeAdvice } from "./get-time-advice";
 import { proposeNoticeChange } from "./notice-plan-change";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** A Monday in 2020, before the learning events other tests write. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";

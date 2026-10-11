@@ -12,14 +12,20 @@ import { buildLesson } from "../preview/preview-lesson";
  * the screen's width on a phone and a desktop, and accessible in light and dark.
  */
 
+/**
+ * The width is what changes between a phone and a desktop: the scan reads names, roles and
+ * contrast, which are the same at both, so it runs once, on the phone.
+ */
 const VIEWPORTS = [
-  ["phone", { height: 812, width: 375 }],
-  ["desktop", { height: 720, width: 1280 }],
+  ["phone", { height: 812, width: 375 }, { scan: true }],
+  ["desktop", { height: 720, width: 1280 }, { scan: false }],
 ] as const;
 
 const cases = previewEntries.flatMap((entry) =>
   entry.states.includes("explore")
-    ? VIEWPORTS.map(([device, size]) => [`${entry.id} on a ${device}`, entry, size] as const)
+    ? VIEWPORTS.map(
+        ([device, size, { scan }]) => [`${entry.id} on a ${device}`, entry, size, scan] as const,
+      )
     : [],
 );
 
@@ -28,7 +34,7 @@ function exploredCanvas(): Element | null {
 }
 
 describe("activities explored on explanation screens", () => {
-  it.each(cases)("draws %s", async (_name, entry, size) => {
+  it.each(cases)("draws %s", async (_name, entry, size, scan) => {
     await atViewport(size, async () => {
       renderLessonPlayer({ lesson: buildLesson([entry.screen("explore")]) });
 
@@ -40,7 +46,9 @@ describe("activities explored on explanation screens", () => {
       expect(label?.textContent).toContain(entry.label);
       expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(size.width);
 
-      await expectAccessibleScreen(`${entry.id} explored`);
+      if (scan) {
+        await expectAccessibleScreen(`${entry.id} explored`);
+      }
     });
   });
 });

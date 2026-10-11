@@ -8,9 +8,6 @@ import { getCurrentUserScorePatterns } from "./get-score-patterns";
 
 const CURRENT_DATE = new Date("2026-07-27T00:00:00.000Z");
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("./get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-
 describe(getCurrentUserProgress, () => {
   beforeEach(() => {
     mockSession(null);

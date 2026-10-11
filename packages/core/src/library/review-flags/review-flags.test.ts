@@ -14,8 +14,6 @@ import { listFlaggedContent } from "./flagged-content";
 import { dismissReviewFlagForAdmin, getOpenReviewFlagForAdmin } from "./review-flags-admin";
 import { replaceFlaggedDrills } from "./rewrite-flagged-drills";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 function mockAdminSession(userId: string) {
   vi.mocked(getSession).mockResolvedValue(
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only the identity and role are read.

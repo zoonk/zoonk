@@ -11,12 +11,10 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getSyllabusView } from "./get-syllabus-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 

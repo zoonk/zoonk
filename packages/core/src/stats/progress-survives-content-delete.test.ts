@@ -24,10 +24,6 @@ import { getCurrentUserScore } from "../progress/get-score-history";
 import { getCurrentUserScorePatterns } from "../progress/get-score-patterns";
 import { getStudiedToday } from "../progress/get-studied-today";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Every progress resource the learner's pages read. */
 function readProgress(timeZone: string) {
   return Promise.all([

@@ -16,13 +16,11 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getChapterView } from "./get-chapter-view";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
 function studied({ skillId, userId }: { skillId: string; userId: string }) {
   return learnerSkillFixture({

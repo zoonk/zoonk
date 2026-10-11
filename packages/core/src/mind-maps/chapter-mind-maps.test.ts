@@ -26,9 +26,6 @@ import { getChapterMindMap } from "./get-chapter-mind-map";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 import { requestChapterMindMap } from "./request-chapter-mind-map";
 
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Models and Vercel Blob are the external boundaries; rows, claims and files' sizes run for real. */
 vi.mock("@zoonk/ai/tasks/v2/mind-maps/structure", () => ({ generateMindMapStructure: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/mind-maps/image", () => ({ generateMindMapImage: vi.fn() }));

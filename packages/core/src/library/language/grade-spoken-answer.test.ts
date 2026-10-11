@@ -14,18 +14,12 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 // Speech recognition, the explanation model and Blob storage are paid external services.
 vi.mock("@zoonk/ai/tasks/v2/language/transcribe-speech", () => ({ transcribeSpeech: vi.fn() }));
 
 vi.mock("@zoonk/ai/tasks/v2/language/explain-spoken-answer", () => ({
   explainSpokenAnswer: vi.fn(),
 }));
-
-// PostHog is an external service; the mock records what would leave the server.
-vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
 
 function sentTips() {
   return vi

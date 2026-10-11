@@ -1,11 +1,9 @@
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { signedUpFromGuest } from "./signed-up-from-guest";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe(signedUpFromGuest, () => {
   it("is true for a new account that received a guest's goal or lessons", async () => {

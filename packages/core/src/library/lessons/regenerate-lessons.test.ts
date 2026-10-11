@@ -8,8 +8,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
 import { pullLessonsForRegeneration } from "./regenerate-lessons";
 
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-
 function mockAdminSession(userId: string) {
   vi.mocked(getSession).mockResolvedValue(
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only the identity and role are read.

@@ -4,15 +4,12 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getEstimatedCostMicros } from "../../entitlements/limits";
 import { createGoals } from "../../goals/create-goals";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
 import { getExplanation } from "./get-explanation";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 async function explainGoalFixture({
   courseId = null,

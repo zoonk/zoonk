@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import {
   ENGLISH,
@@ -19,9 +19,6 @@ import { unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { getOnboarding } from "./get-onboarding";
-
-vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 /** A new ENEM goal whose plan the planner hasn't built yet, as onboarding finds it. */
 async function setup() {

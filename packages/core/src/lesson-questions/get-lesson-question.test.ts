@@ -1,10 +1,8 @@
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { createLessonQuestionFixture } from "./_test-utils/create-question";
 import { getLessonQuestion } from "./get-lesson-question";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 describe(getLessonQuestion, () => {
   beforeEach(() => {

@@ -7,11 +7,9 @@ import {
 } from "@zoonk/testing/fixtures/library-chapters";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getCatalogChapterNextLesson, getCatalogCourseNextLesson } from "./next-lesson";
-
-vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 function finishLessons({ lessonIds, userId }: { lessonIds: string[]; userId: string }) {
   return Promise.all(
