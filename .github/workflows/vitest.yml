@@ -30,19 +30,16 @@ jobs:
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-    services:
-      db:
-        image: postgres:18-alpine
-        ports: ["5432:5432"]
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: zoonk_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 1s
-          --health-timeout 5s
-          --health-retries 10
     steps:
+      # Postgres pulls and starts while the code checks out and installs; as a service container it
+      # held the job ~13 s before its first step. Test suites run at the same time, each worker with
+      # up to 10 connections, more than Postgres' default 100 allows.
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name db --publish 5432:5432
+          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_test
+          postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
+
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -54,8 +51,18 @@ jobs:
           runtime: node@24
           cache: true
 
-      - name: Run database migrations
-        run: pnpm --filter @zoonk/db db:deploy
+      # Over TCP: while the image sets up its database, Postgres only listens on its socket.
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 120); do
+            docker exec db pg_isready --host 127.0.0.1 --quiet 2> /dev/null && exit 0
+            sleep 0.5
+          done
 
+          cat "$RUNNER_TEMP/db.log"
+          docker logs db
+          exit 1
+
+      # Migrates the test database first (`db:setup:test`), then runs every suite.
       - name: Run Vitest
         run: pnpm test
