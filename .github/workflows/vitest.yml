@@ -53,6 +53,8 @@ jobs:
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      # MEASUREMENT ONLY: run every suite instead of replaying cached results. Remove before merging.
+      TURBO_FORCE: true
     steps:
       # A throwaway database in memory that never waits on the disk, with room for every package's
       # test workers at once (they run side by side). Started in the background, so its image
