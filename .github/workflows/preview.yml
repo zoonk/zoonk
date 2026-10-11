@@ -1,11 +1,19 @@
 name: PR Preview
 
+# Previews run on request (`pnpm preview [pr]`, or "Run workflow" in Actions), not on every push.
+# Closing the PR still cleans up its preview.
 on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number
+        required: true
+        type: number
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
 
 concurrency:
-  group: preview-${{ github.event.pull_request.number }}
+  group: preview-${{ inputs.pr || github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
@@ -20,13 +28,11 @@ env:
 
 jobs:
   preview:
-    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 95
     env:
-      PR_NUMBER: ${{ github.event.pull_request.number }}
-      DEPLOY_SHA: ${{ github.event.pull_request.head.sha }}
-      DEPLOY_REF: ${{ github.event.pull_request.head.ref }}
+      PR_NUMBER: ${{ inputs.pr }}
       DEPLOY_TARGET: preview
       NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
       NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
@@ -37,52 +43,51 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
+      # Secrets deploy this code, so only an open PR from this repository can be previewed.
+      - name: Read the pull request
+        run: |
+          IFS=$'\t' read -r state repo sha ref < <(
+            gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '[.state, .head.repo.full_name, .head.sha, .head.ref] | @tsv'
+          )
+
+          if [ "$state" != "open" ] || [ "$repo" != "$GITHUB_REPOSITORY" ]; then
+            echo "::error::Only an open pull request from $GITHUB_REPOSITORY can be previewed"
+            exit 1
+          fi
+
+          echo "DEPLOY_SHA=$sha" >> "$GITHUB_ENV"
+          echo "DEPLOY_REF=$ref" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
+          ref: ${{ env.DEPLOY_SHA }}
       - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
         with:
           runtime: node@24
           cache: true
       - name: Cancel superseded remote preview builds
         run: pnpm deploy cancel-previews
-      - name: Check affected applications
-        id: affected
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: |
-          if git diff --quiet "$BASE_SHA...$DEPLOY_SHA" -- apps/main apps/api apps/admin packages package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .github/workflows/preview.yml scripts/deploy; then
-            echo "deploy=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "deploy=true" >> "$GITHUB_OUTPUT"
-          fi
       - name: Confirm this is still the current PR commit
-        if: steps.affected.outputs.deploy == 'true'
         run: pnpm deploy check-preview
       - name: Validate the preview database parent
-        if: steps.affected.outputs.deploy == 'true'
         run: pnpm deploy:database
       - name: Create or reuse the PR database branch
-        if: steps.affected.outputs.deploy == 'true'
         id: neon
         uses: neondatabase/create-branch-action@fb620d43d4c565abaf088b848a4e28e5c4ea4d9c # v6
         with:
           api_key: ${{ secrets.NEON_API_KEY }}
           project_id: ${{ vars.NEON_PROJECT_ID }}
-          branch_name: preview/pr-${{ github.event.pull_request.number }}
+          branch_name: preview/pr-${{ inputs.pr }}
           parent_branch: ${{ env.NEON_PARENT_BRANCH }}
           database: ${{ env.NEON_DATABASE }}
           role: ${{ env.NEON_ROLE }}
           suspend_timeout: 300
       - name: Migrate the PR database once
-        if: steps.affected.outputs.deploy == 'true'
         env:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_pooled }}
           DATABASE_URL_UNPOOLED: ${{ steps.neon.outputs.db_url }}
         run: pnpm --filter @zoonk/db db:deploy
-      - name: Deploy API, then its consumers against the same PR database
-        if: steps.affected.outputs.deploy == 'true'
+      - name: Deploy every app at once against the same PR database
         env:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_pooled }}
           DATABASE_URL_UNPOOLED: ${{ steps.neon.outputs.db_url }}
@@ -92,7 +97,7 @@ jobs:
         run: pnpm deploy cancel-run
 
   cleanup:
-    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:

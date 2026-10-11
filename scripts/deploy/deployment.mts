@@ -9,29 +9,32 @@ type Project = (typeof PROJECTS)[number];
 /** RFC 1035: Vercel shortens a longer generated label in a way its docs don't spell out. */
 const MAX_DNS_LABEL = 63;
 
+type AppUrls = { api: string | null; main: string | null };
+
 /**
- * The main app's address in a target, for the links the API builds (sign-in, the main app's own
- * pictures): its domain in production and staging, and on previews the branch URL Vercel gives
- * every project, `<project>-git-<branch>-<team>.vercel.app`. Null on a preview whose label Vercel
- * would shorten.
+ * An app's address in a target: its domain in production and staging, and on previews the branch
+ * URL Vercel gives every project, `<project>-git-<branch>-<team>.vercel.app`, which always serves
+ * the branch's latest deployment. Null on a preview whose label Vercel would shorten.
  */
-export function getMainAppUrl({
+export function getAppUrl({
+  app,
   branch,
   target,
   teamSlug,
 }: {
+  app: Project["app"];
   branch: string;
   target: Target;
   teamSlug: string;
 }): string | null {
-  const main = PROJECTS.find((project) => project.app === "main");
+  const project = PROJECTS.find((candidate) => candidate.app === app);
 
-  if (!main) {
-    throw new Error("Missing the main app project");
+  if (!project) {
+    throw new Error(`Missing the ${app} project`);
   }
 
   if (target !== "preview") {
-    return `https://${target === "production" ? main.productionDomain : main.stagingDomain}`;
+    return `https://${target === "production" ? project.productionDomain : project.stagingDomain}`;
   }
 
   const branchSlug = branch
@@ -39,7 +42,7 @@ export function getMainAppUrl({
     .replaceAll(/[^a-z0-9]+/gu, "-")
     .replaceAll(/^-+|-+$/gu, "");
 
-  const label = `${main.name}-git-${branchSlug}-${teamSlug}`;
+  const label = `${project.name}-git-${branchSlug}-${teamSlug}`;
 
   return label.length > MAX_DNS_LABEL ? null : `https://${label}.vercel.app`;
 }
@@ -57,24 +60,30 @@ async function getTeamSlug(): Promise<string | null> {
   }
 }
 
-/** The main app's address for this deploy; a preview whose address can't be known gets none. */
-async function resolveMainAppUrl(target: Target): Promise<string | null> {
+/**
+ * The API's and the main app's addresses for this deploy. A preview whose addresses can't be known
+ * (an unknown team, or a branch name long enough for Vercel to shorten) gets none.
+ */
+async function resolveAppUrls(target: Target): Promise<AppUrls> {
   const teamSlug = target === "preview" ? await getTeamSlug() : "";
 
   if (teamSlug === null) {
-    process.stdout.write("Unknown Vercel team slug: the API preview links to production\n");
-    return null;
+    process.stdout.write("Unknown Vercel team slug: preview addresses can't be predicted\n");
+    return { api: null, main: null };
   }
 
-  const url = getMainAppUrl({ branch: requiredEnv("DEPLOY_REF"), target, teamSlug });
+  const branch = requiredEnv("DEPLOY_REF");
 
-  if (!url) {
-    process.stdout.write(
-      "Branch name too long for a predictable URL: the API preview links to production\n",
-    );
+  const urls = {
+    api: getAppUrl({ app: "api", branch, target, teamSlug }),
+    main: getAppUrl({ app: "main", branch, target, teamSlug }),
+  };
+
+  if (!urls.api || !urls.main) {
+    process.stdout.write("Branch name too long for predictable preview addresses\n");
   }
 
-  return url;
+  return urls;
 }
 
 const deploymentSchema = z.object({
@@ -241,25 +250,25 @@ async function deployApp({
 }
 
 export async function deploy(target: Target): Promise<void> {
-  const [api, ...clients] = PROJECTS;
-  const mainAppUrl = await resolveMainAppUrl(target);
+  const urls = await resolveAppUrls(target);
 
-  if (target === "preview") {
-    const apiUrl = await deployApp({
-      apiUrl: "https://api.zoonk.dev",
-      mainAppUrl,
-      project: api,
-      target,
-    });
+  // Without the API's predictable address, the consumers wait for its actual deployment URL.
+  if (!urls.api) {
+    const [api, ...clients] = PROJECTS;
+    const apiUrl = await deployApp({ apiUrl: "", mainAppUrl: urls.main, project: api, target });
 
-    await Promise.all(clients.map((project) => deployApp({ apiUrl, mainAppUrl, project, target })));
+    await Promise.all(
+      clients.map((project) => deployApp({ apiUrl, mainAppUrl: urls.main, project, target })),
+    );
+
     return;
   }
 
-  const apiUrl = target === "production" ? "https://api.zoonk.com" : "https://api.zoonk.dev";
-  // Wait for every result: a failed app must not hide the status of the other builds.
+  const apiUrl = urls.api;
+
+  // Every app builds at once. Wait for every result: a failed app must not hide the others' status.
   const results = await Promise.allSettled(
-    PROJECTS.map((project) => deployApp({ apiUrl, mainAppUrl, project, target })),
+    PROJECTS.map((project) => deployApp({ apiUrl, mainAppUrl: urls.main, project, target })),
   );
 
   const failures = results.filter((result) => result.status === "rejected");

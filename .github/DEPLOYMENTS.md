@@ -2,11 +2,12 @@
 
 GitHub Actions owns deployments of `api`, `main`, and `admin`. Their Vercel projects keep the Git connection for fetching the exact commit, but `git.deploymentEnabled: false` prevents automatic deployments. The database-independent blog keeps its existing Vercel Git deployments.
 
-This configuration takes effect on a branch when its app-level `vercel.json` files are pushed. The PR workflow can run before it reaches `main`; a branch push without an open PR does not create these previews. Merging the configuration into `main` runs CI and deploys staging, without creating a production release or deployment.
+This configuration takes effect on a branch when its app-level `vercel.json` files are pushed. Merging the configuration into `main` runs CI and deploys staging, without creating a production release or deployment.
 
 | Event                           | Checks and deployment                                                                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| PR opened, updated, or reopened | Fast code-quality checks for PRs targeting `main`. Relevant same-repository PRs get a Neon branch and Vercel previews.                     |
+| PR opened, updated, or reopened | Fast code-quality checks for PRs targeting `main`.                                                                                         |
+| Preview requested               | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                  |
 | PR closed                       | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
 | Push to `main`                  | Code quality, unit/integration tests, and main/API E2E. After success, migrate staging and deploy the three staging apps.                  |
 | Push a `v*` tag                 | Run CI if the exact commit has not already passed CI on `main`. This supports hotfix commits outside `main`.                               |
@@ -33,7 +34,7 @@ Provider tokens live in GitHub repository secrets. Non-secret resource identifie
 
 The workflow resolves the two existing Neon branches and refuses to proceed if either is missing or both resolve to the same branch. The pinned Neon CLI retrieves pooled and direct connection strings and automatically selects a database/role when the branch has only one of each. Ambiguous selection fails instead of choosing arbitrarily. Connection strings are masked and kept within the deployment job.
 
-PR branches are children of staging, named `preview/pr-<number>`, and are reused on subsequent commits. The official Neon create-branch action receives the database/role resolved from the staging parent. PR database credentials are passed to migrations and deployments within the same job.
+PR branches are children of staging, named `preview/pr-<number>`, and are reused by later previews of the same PR. The official Neon create-branch action receives the database/role resolved from the staging parent. PR database credentials are passed to migrations and deployments within the same job.
 
 Each Vercel project has a custom environment named `staging` and its own domain:
 
@@ -59,11 +60,11 @@ The main branch ruleset requires the fast `code-quality` PR check. E2E and datab
 
 ## Preview behavior
 
-Changes under `apps/api`, `apps/main`, `apps/admin`, `packages`, or shared dependency/deployment configuration deploy all three database-connected apps. This includes runtime dependencies that a build graph cannot detect. Blog-only changes do not create a database branch or these previews.
+Previews are on request: `pnpm preview` previews the current branch's PR, and `pnpm preview <number>` any open PR from this repository. Both start the PR Preview workflow from the PR's branch, which deploys the PR's current commit. Pushing to a PR deploys nothing; request a new preview to see later commits.
 
-The API deploys first. Its actual deployment URL is passed to main/admin as `NEXT_PUBLIC_API_URL` at build time and runtime. All three receive the same PR database URLs. The API preview uses its own Vercel hostname for self-references. Preview URLs appear in the Actions job summary. The API receives main's address as `MAIN_APP_URL` (production and staging domains, or main's predictable branch URL on previews) for links back to the app; sign-in pages link back to the trusted app that started the sign-in.
+All three database-connected apps build at once. Each points at the others through the branch URL Vercel gives every project (`<project>-git-<branch>-<team>.vercel.app`), which always serves the branch's latest deployment: main/admin receive the API's as `NEXT_PUBLIC_API_URL`, and the API receives main's as `MAIN_APP_URL` for links back to the app. Sign-in pages link back to the trusted app that started the sign-in. When a branch name is long enough for Vercel to shorten its URL, the API deploys first and main/admin receive its actual deployment URL instead. All three receive the same PR database URLs. The API preview uses its own Vercel hostname for self-references. Preview URLs appear in the Actions job summary.
 
-New commits cancel the previous Actions run and its queued/building Vercel deployments. Cancellation cleanup is scoped to that run, so it cannot cancel a newer run. Every preview submission and readiness poll verifies that its PR is still open and its commit is still current. Fork PRs run fast checks without deployment secrets and do not receive database previews.
+A new request cancels the previous run for the same PR and its queued/building Vercel deployments. Cancellation cleanup is scoped to that run, so it cannot cancel a newer run. Every preview submission and readiness poll verifies that its PR is still open and its commit is still current. Fork PRs can't be previewed: the workflow refuses a PR whose branch isn't in this repository.
 
 ## Releases and hotfixes
 
