@@ -35,6 +35,12 @@ type ActivityTemplate = keyof typeof activityContentFixtures;
 
 const ACTIVITY_TEMPLATES = Object.keys(activityContentFixtures) as ActivityTemplate[];
 
+/**
+ * How long an activity's canvas may take to load: its code loads on first use, which takes the test
+ * server a few seconds when it hasn't served it yet and other test files start at the same time.
+ */
+const CANVAS_LOAD_TIMEOUT_MS = 10_000;
+
 /** Every screen a lesson can open on, by name, built the way the server serves it. */
 const SCREENS: [string, () => PlayableLibraryStep][] = [
   ["hook", () => teachingStep("hook")],
@@ -160,7 +166,9 @@ describe("lesson player accessibility", () => {
     await expect.element(page.getByRole("main", { name: "Lesson content" })).toBeVisible();
     // An activity's canvas loads on its own; the scan waits for it, so it covers what's drawn.
     await expect
-      .poll(() => document.querySelector("[data-slot='activity-canvas-skeleton']"))
+      .poll(() => document.querySelector("[data-slot='activity-canvas-skeleton']"), {
+        timeout: CANVAS_LOAD_TIMEOUT_MS,
+      })
       .toBeNull();
 
     await expectAccessibleScreen(name);

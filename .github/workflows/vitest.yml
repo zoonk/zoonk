@@ -24,26 +24,30 @@ concurrency:
 jobs:
   shard:
     name: vitest (${{ matrix.suite }} ${{ matrix.shard }})
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
         include:
           # Core's database and planner tests, most of the work, in shards of about equal time
-          # (see packages/testing/src/vitest/duration-sequencer.ts).
-          - { suite: core, filter: "--filter=@zoonk/core", shard: 1/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", shard: 2/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", shard: 3/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", shard: 4/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", shard: 5/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", shard: 6/6 }
+          # (see packages/testing/src/vitest/duration-sequencer.ts), on Arm runners: they need no
+          # browser, and the player's browser tests need Chrome, which only x64 has.
+          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 1/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 2/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 3/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 4/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 5/6 }
+          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 6/6 }
           # The player's browser tests on runners of their own: sharing four cores with the database
           # tests slowed both past their timeouts.
-          - { suite: player, filter: "--filter=@zoonk/player", shard: 1/2 }
-          - { suite: player, filter: "--filter=@zoonk/player", shard: 2/2 }
+          - { suite: player, filter: "--filter=@zoonk/player", runner: ubuntu-latest, shard: 1/2 }
+          - { suite: player, filter: "--filter=@zoonk/player", runner: ubuntu-latest, shard: 2/2 }
           # Every other package's tests, which take seconds each.
-          - { suite: packages, filter: "--filter=!@zoonk/core --filter=!@zoonk/player", shard: 1/1 }
+          - suite: packages
+            filter: "--filter=!@zoonk/core --filter=!@zoonk/player"
+            runner: ubuntu-latest
+            shard: 1/1
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
