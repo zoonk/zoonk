@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getActivityTemplate } from "./activity-templates";
+import { activityTemplates, getActivityTemplate, isExploreTemplate } from "./activity-templates";
 import { type ActivityTemplate } from "./define-activity-template";
 
 /**
@@ -11,9 +11,9 @@ function describeRules(template: ActivityTemplate): string {
   return [
     template.description,
     `Check kinds this template supports: ${template.checks.join(", ")}.`,
-    template.choicesNeedValues && "Every choice option needs the `value` it stands for.",
-    template.needsData &&
-      'It shows data: set `data` to `{ "source": { ... } }` for real data or `{ "isExample": true }` for an example.',
+    template.choicesNeedValues(null) && "Every choice option needs the `value` it stands for.",
+    template.mayShowData &&
+      'When it shows data, set `data` to `{ "source": { ... } }` for real data or `{ "isExample": true }` for an example.',
   ]
     .filter(Boolean)
     .join(" ");
@@ -38,4 +38,16 @@ export function describeActivityTemplates(ids: readonly string[]): WriterActivit
     const schema = z.toJSONSchema(template.content, { io: "input", unrepresentable: "any" });
     return [{ description: describeRules(template), id, schema: JSON.stringify(schema) }];
   });
+}
+
+/**
+ * Every template as the lesson planner reads it, in catalog order: what it teaches and whether an
+ * explanation screen can show it to explore.
+ */
+export function listPlannerTemplates(): { description: string; explore: boolean; id: string }[] {
+  return activityTemplates.map((template) => ({
+    description: template.description,
+    explore: isExploreTemplate(template.id),
+    id: template.id,
+  }));
 }

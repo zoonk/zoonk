@@ -5,7 +5,8 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
 import { filterSkippedSteps } from "../language/activities/language-activities";
 import { loadSkippedActivities } from "../language/activities/skipped-activities";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { loadLessonReviewSkillIds } from "../learner/_utils/lesson-plan-skills";
 import { getCappedLessonDurationSeconds } from "../player/contracts/completion-duration";
 import { clampEnergy } from "../progress/energy";
 import { serializeStudyBlockCompletion } from "../sessions/completion-contract";
@@ -24,6 +25,7 @@ import {
   toSittings,
 } from "./_utils/lesson-runs";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
+import { getNextReviewAt, reviewFinishedLesson } from "./_utils/plan-skill-review";
 import {
   type LibraryLessonCompletion,
   type LibraryLessonCompletionInput,
@@ -49,21 +51,6 @@ type CompletionRun = {
   timeZone: string;
   userId: string;
 };
-
-/** The earliest review of the lesson's skills, which the completion moment announces. */
-async function getNextReviewAt({ skillIds, userId }: { skillIds: string[]; userId: string }) {
-  if (skillIds.length === 0) {
-    return null;
-  }
-
-  const next = await prisma.learnerSkill.findFirst({
-    orderBy: { due: "asc" },
-    select: { due: true },
-    where: { due: { not: null }, skillId: { in: skillIds }, userId },
-  });
-
-  return next?.due?.toISOString() ?? null;
-}
 
 /**
  * A finished run keeps its outcome in the ledger, so repeating a completion (a retry, or a second
@@ -219,7 +206,14 @@ async function loadLessonAttempts({
 
   return prisma.attempt.findMany({
     orderBy: { answeredAt: "asc" },
-    select: { answeredAt: true, id: true, isCorrect: true, itemId: true, stepId: true },
+    select: {
+      answeredAt: true,
+      id: true,
+      isCorrect: true,
+      itemId: true,
+      skillId: true,
+      stepId: true,
+    },
     where: { answeredAt: { gte: sittings[0]?.startedAt }, stepId: { in: answerable }, userId },
   });
 }
@@ -297,16 +291,23 @@ export async function completeLibraryLesson({
 
   // A quick explanation never comes back in a review (reviews come with a study plan's sessions,
   // which explanations aren't part of), so its completion announces none.
-  const skillIds = isOwnExplanation(lesson)
-    ? []
-    : [
-        ...new Set([
-          ...lesson.skills.map((skill) => skill.skillId),
-          ...steps.flatMap((step) => (step.skillId ? [step.skillId] : [])),
-        ]),
-      ];
+  const explanation = isOwnExplanation(lesson);
 
-  const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
+  const [skillIds, timeZone] = await Promise.all([
+    explanation
+      ? []
+      : loadLessonReviewSkillIds({
+          lessonId,
+          ownSkillIds: [
+            ...new Set([
+              ...lesson.skills.map((skill) => skill.skillId),
+              ...steps.flatMap((step) => (step.skillId ? [step.skillId] : [])),
+            ]),
+          ],
+          userId,
+        }),
+    getLearnerTimeZone({ timeZone: input.timeZone, userId }),
+  ]);
 
   const settle = (completion: RunCompletion) =>
     withStudyBlock({ completion, lessonId, timeZone, userId });
@@ -359,7 +360,13 @@ export async function completeLibraryLesson({
     seconds: finished.seconds,
   });
 
-  const nextReviewAt = await getNextReviewAt({ skillIds, userId });
+  const nextReviewAt = await reviewFinishedLesson({
+    answers: attempts,
+    lessonId,
+    skillIds,
+    timeZone,
+    userId,
+  });
 
   return { completion: await settle({ ...finished, nextReviewAt }), status: "completed" };
 }

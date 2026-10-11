@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import {
   type ChoiceItem,
   type QuestionView,
@@ -15,7 +16,7 @@ import { fitsExamOptions, getExamChoiceFormat } from "../../../library/exams/exa
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
-import { loadExamStructure } from "../../../sessions/_utils/load-build-inputs";
+import { loadExamStructure } from "../../../sessions/_utils/exam-structure";
 import { parsePlanGraph, parsePlanSettings } from "../../planner/plan-state";
 import {
   FOCUS_TEST_MIN_AREAS,
@@ -50,23 +51,27 @@ export type FocusTest = {
 
 /**
  * The areas the goal's focus test asks about and the format it asks in, or null when the plan
- * has fewer than two areas to choose between.
+ * has fewer than two areas to choose between. Its questions are text, so the skills the exam
+ * practices only with recordings stay out (a Listening area isn't asked).
  */
 export async function loadFocusTestShape(
   goal: Pick<Goal, "examBlueprintId" | "id">,
 ): Promise<FocusTestShape | null> {
-  const [plan, structure] = await Promise.all([
+  const [plan, structure, listening] = await Promise.all([
     prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId: goal.id } }),
     loadExamStructure(goal),
+    loadListeningSkillIds(goal.id),
   ]);
 
   if (!plan) {
     return null;
   }
 
+  const graph = parsePlanGraph(plan.graph);
+
   const areas = pickFocusTestAreas(
     getFocusTestAreas({
-      graph: parsePlanGraph(plan.graph),
+      graph: { ...graph, skills: graph.skills.filter((skill) => !listening.has(skill.skillId)) },
       settings: parsePlanSettings(plan.settings),
       structure,
     }),

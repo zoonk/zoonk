@@ -105,6 +105,18 @@ describe("statute drills", () => {
     ]);
   });
 
+  // Drills are shared by every learner of the exam: an upload titled like a law is the learner's.
+  it("never drills a law from the learner's own upload", async () => {
+    const { goal } = await lawGoal();
+
+    await prisma.source.updateMany({
+      data: { kind: "upload", ownerId: goal.userId, visibility: "private" },
+      where: { learnerSources: { some: { goalId: goal.id } }, title: { startsWith: "Lei" } },
+    });
+
+    await expect(loadStatuteDrillTargets(goal.id)).resolves.toStrictEqual([]);
+  });
+
   it("stores each drill citing its article and linked to the law", async () => {
     const { goal } = await lawGoal();
     const [target] = await loadStatuteDrillTargets(goal.id);

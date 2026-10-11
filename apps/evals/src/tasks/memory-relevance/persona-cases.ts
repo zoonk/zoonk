@@ -114,8 +114,8 @@ export const PERSONA_TEST_CASES: TestCase<MemoryRelevanceExpected, MemoryRelevan
     relevant: false,
   }),
   personaCase({
-    fact: "mesada",
-    id: "example-allowance",
+    fact: "primeiro salário",
+    id: "example-first-salary",
     learnerKey: "pedro",
     need: "Escrever um exemplo pessoal para uma aula sobre o que é uma ação",
     relevant: true,

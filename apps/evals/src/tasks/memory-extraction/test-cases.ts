@@ -1,6 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type MemoryExtractionParams } from "@zoonk/ai/tasks/v2/memory/extraction";
-import { MEMORY_CATEGORIES, type MemoryFactCategory } from "@zoonk/ai/tasks/v2/memory/facts";
+import { type MemoryFactCategory } from "@zoonk/ai/tasks/v2/memory/facts";
 
 /** A fact the output must hold: in one of these categories, with one of these words. */
 export type ExpectedFact = {
@@ -24,37 +24,22 @@ type ExtractionCase = TestCase<MemoryExtractionExpected, MemoryExtractionParams>
 
 /** A Saturday, so "next Friday" is October 2 (or the Friday after, which the scorer also accepts). */
 const TODAY = "2026-09-26";
-const MINOR_CATEGORIES: MemoryFactCategory[] = ["goals", "learning"];
 
 function extractionCase({
-  categories = [...MEMORY_CATEGORIES],
   expected,
   id,
   input,
   language,
   source = "chat",
 }: {
-  categories?: MemoryFactCategory[];
   expected: MemoryExtractionExpected;
   id: string;
   input: string;
   language: string;
   source?: MemoryExtractionParams["source"];
 }): ExtractionCase {
-  return { expected, id, userInput: { categories, input, language, source, today: TODAY } };
+  return { expected, id, userInput: { input, language, source, today: TODAY } };
 }
-
-const SESSION_PATTERNS = [
-  "Answers in the last 7 days: 64 on 5 days, 71% right.",
-  "By part of the session, over 5 sessions: first third 86% right (22 answers), middle third 72% right (21 answers), last third 55% right (21 answers).",
-  "By time of day: 06:00-12:00 52% right (21 answers on 2 days); 21:00-24:00 83% right (43 answers on 4 days).",
-  "Skills with the most trouble:",
-  "- Percentages: 9 of 18 right, 7 mistakes (5 content gap, 2 fell for a trap)",
-  "Recent mistakes on Percentages:",
-  '- "What is 3/4 as a percentage?": answered "34%", right answer "75%"',
-  '- "Write 2/5 as a percentage": answered "25%", right answer "40%"',
-  "Studied on 5 of the last 7 days, 24 minutes a day on average; the plan asks for 30.",
-].join("\n");
 
 export const TEST_CASES: ExtractionCase[] = [
   extractionCase({
@@ -138,20 +123,6 @@ export const TEST_CASES: ExtractionCase[] = [
     language: "en",
   }),
   extractionCase({
-    categories: MINOR_CATEGORIES,
-    expected: {
-      facts: [
-        { categories: ["goals"], keywords: ["enem"] },
-        { categories: ["learning"], keywords: ["fraction"] },
-      ],
-      forbidden: ["recife"],
-      maxFacts: 2,
-    },
-    id: "en-chat-minor-categories",
-    input: "Learner: I live in Recife and I want to pass the ENEM. I always mix up fractions.",
-    language: "en",
-  }),
-  extractionCase({
     expected: {
       facts: [
         { categories: ["goals"], keywords: ["law"] },
@@ -169,27 +140,6 @@ export const TEST_CASES: ExtractionCase[] = [
     ].join("\n"),
     language: "en",
     source: "onboarding",
-  }),
-  extractionCase({
-    expected: {
-      facts: [
-        { categories: ["learning"], keywords: ["fraction", "percent"] },
-        { categories: ["learning"], keywords: ["night", "evening", "9 pm", "21", "pm"] },
-      ],
-      forbidden: ["tired", "24 minutes", "minutes a day", "5 of"],
-      maxFacts: 3,
-    },
-    id: "en-session-patterns",
-    input: SESSION_PATTERNS,
-    language: "en",
-    source: "session",
-  }),
-  extractionCase({
-    expected: { facts: [], maxFacts: 0 },
-    id: "en-session-too-little",
-    input: "Answers in the last 7 days: 5 on 1 day, 60% right.",
-    language: "en",
-    source: "session",
   }),
   extractionCase({
     expected: {

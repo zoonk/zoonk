@@ -31,10 +31,12 @@ import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
 import { SubjectWrittenPractice } from "./subject-written-practice";
 import { TopicFrequencyNote } from "./syllabus-notes";
+import { KnownTopicsReturnContext } from "./topic-note";
+import { useKnownLine } from "./use-subject-progress";
 
 const TOPICS_TITLE_ID = "subject-topics-title";
 
-/** Long official names ("Processo Legislativo e Regimento Interno…") take a size that still fits. */
+/** Long official names ("Legislative Process and Internal Rules…") take a size that still fits. */
 const LONG_NAME = 60;
 
 /** Where a subject's page leads: back, each chapter's page, and the plan's adjustments. */
@@ -52,10 +54,12 @@ export type SubjectHrefs = {
 
 /** The small line above the name: the notice's group, or what kind of part of the goal this is. */
 function useEyebrow({
+  document,
   fromMaterial,
   kind,
   subject,
 }: {
+  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   subject: SyllabusSubject;
@@ -67,14 +71,20 @@ function useEyebrow({
   }
 
   if (subject.source === "notice") {
-    return fromMaterial ? t("From your material") : t("Exam subject");
+    return fromMaterial
+      ? t("From your material")
+      : t("{document, select, notice {Exam subject} other {Part of the exam}}", { document });
   }
 
   if (kind !== "notice") {
     return t("Module");
   }
 
-  return fromMaterial ? t("Also in your plan") : t("Beyond the notice");
+  return fromMaterial
+    ? t("Also in your plan")
+    : t("{document, select, notice {Beyond the notice} other {Beyond the official guide}}", {
+        document,
+      });
 }
 
 /** What the subject weighs in the exam: its questions, or its share when the notice gives that. */
@@ -96,10 +106,14 @@ function useWeightFact(subject: SyllabusSubject): string | null {
   });
 }
 
-/** "45 questions · 23 topics · 9 chapters": what the subject weighs and holds, in one line. */
+/**
+ * "45 questions · 23 topics · 9 chapters": what the subject weighs and holds, in one line, and
+ * what the learner skipped because they know it under it.
+ */
 function SubjectFacts({ subject }: { subject: SyllabusSubject }) {
   const t = useExtracted();
   const weight = useWeightFact(subject);
+  const known = useKnownLine()(subject);
 
   const facts = [
     weight,
@@ -109,11 +123,12 @@ function SubjectFacts({ subject }: { subject: SyllabusSubject }) {
       t("{count, plural, one {# chapter} other {# chapters}}", { count: subject.chapters.length }),
   ].filter(Boolean);
 
-  if (facts.length === 0) {
-    return null;
-  }
-
-  return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
+  return (
+    <>
+      {facts.length > 0 && <DetailFacts>{facts.join(" · ")}</DetailFacts>}
+      {known && <DetailFacts className="pt-0">{known}</DetailFacts>}
+    </>
+  );
 }
 
 /**
@@ -160,16 +175,18 @@ function SubjectActionsRow({
 /** The subject's icon and name as the notice writes it, what it weighs and holds, and the way in. */
 function SubjectHeader({
   chapterHref,
+  document,
   fromMaterial,
   kind,
   subject,
 }: {
   chapterHref: (chapterId: string) => string;
+  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   subject: SyllabusSubject;
 }) {
-  const eyebrow = useEyebrow({ fromMaterial, kind, subject });
+  const eyebrow = useEyebrow({ document, fromMaterial, kind, subject });
 
   return (
     <>
@@ -193,28 +210,34 @@ function SubjectHeader({
 
 function TopicsSection({
   chapterHref,
+  document,
   fromMaterial,
   subject,
 }: {
   chapterHref: (chapterId: string) => string;
+  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   subject: SyllabusSubject;
 }) {
   const t = useExtracted();
-  const studied = subject.topics.filter((topic) => topic.status === "studied").length;
 
   return (
     <PageSection aria-labelledby={TOPICS_TITLE_ID}>
       <PageSectionHeader>
         <PageSectionTitle id={TOPICS_TITLE_ID}>
-          {fromMaterial ? t("Topics in your material") : t("Topics in the notice")}
+          {fromMaterial
+            ? t("Topics in your material")
+            : t(
+                "{document, select, notice {Topics in the notice} other {Topics in the official guide}}",
+                { document },
+              )}
         </PageSectionTitle>
         <PageSectionDetail>
           {subject.topicsStudied === null
             ? t("{count, plural, one {# topic} other {# topics}}", { count: subject.topics.length })
             : t(
                 "{total, plural, one {{done, number} of # topic} other {{done, number} of # topics}}",
-                { done: studied, total: subject.topics.length },
+                { done: subject.topicsStudied, total: subject.topics.length },
               )}
         </PageSectionDetail>
       </PageSectionHeader>
@@ -247,7 +270,10 @@ export function SubjectScreen({
   actions: SubjectActions;
   hrefs: SubjectHrefs;
   subject: SyllabusSubject;
-  syllabus: Pick<SyllabusView, "fromMaterial" | "kind" | "writtenPractice">;
+  syllabus: Pick<
+    SyllabusView,
+    "examDocument" | "fromMaterial" | "kind" | "knownTopicsReturn" | "writtenPractice"
+  >;
 }) {
   const t = useExtracted();
 
@@ -259,6 +285,7 @@ export function SubjectScreen({
         <DetailAside>
           <SubjectHeader
             chapterHref={hrefs.chapter}
+            document={syllabus.examDocument}
             fromMaterial={syllabus.fromMaterial}
             kind={syllabus.kind}
             subject={subject}
@@ -275,11 +302,14 @@ export function SubjectScreen({
           <SubjectChapters chapterHref={hrefs.chapter} chapters={subject.chapters} />
 
           {subject.topics.length > 0 && (
-            <TopicsSection
-              chapterHref={hrefs.chapter}
-              fromMaterial={syllabus.fromMaterial}
-              subject={subject}
-            />
+            <KnownTopicsReturnContext value={syllabus.knownTopicsReturn}>
+              <TopicsSection
+                chapterHref={hrefs.chapter}
+                document={syllabus.examDocument}
+                fromMaterial={syllabus.fromMaterial}
+                subject={subject}
+              />
+            </KnownTopicsReturnContext>
           )}
 
           <SubjectMatrix matrix={subject.matrix} />

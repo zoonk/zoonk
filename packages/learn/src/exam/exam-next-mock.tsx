@@ -16,9 +16,10 @@ import { useExamScreen } from "./exam-context";
 
 /**
  * The next weekly mock exam as a row of the mocks' list, one tap from its intro, when one is coming:
- * a short version (half the exam day) on regular weeks, the full exam in the final stretch, its
+ * half the exam (as the chooser names it) on regular weeks, the full exam in the final stretch, its
  * day and questions under it and "Next" at its end. Without Plus it's there all the same, marked
- * Plus; its intro says what Plus unlocks.
+ * Plus in place of "Next" (two marks squeezed its name at 390), and its intro says what Plus
+ * unlocks.
  */
 export function ExamNextMock() {
   const t = useExtracted();
@@ -40,7 +41,7 @@ export function ExamNextMock() {
         <KindTile kind="mock" />
       </ListRowLeading>
       <ListRowContent>
-        <ListRowTitle>{next.fullLength ? t("Full exam") : t("Short version")}</ListRowTitle>
+        <ListRowTitle>{next.fullLength ? t("Full exam") : t("Half the exam")}</ListRowTitle>
         <ListRowDescription>
           {next.date
             ? `${formatDate(next.date, "weekday")}, ${formatDate(next.date, "long")} · ${questions}`
@@ -48,10 +49,13 @@ export function ExamNextMock() {
         </ListRowDescription>
       </ListRowContent>
       <ListRowTrailing>
-        {exam.mocksRequirePlus && <PlusMark />}
-        <span className="bg-muted text-muted-foreground inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold">
-          {t("Up next")}
-        </span>
+        {exam.mocksRequirePlus ? (
+          <PlusMark />
+        ) : (
+          <span className="bg-muted text-muted-foreground inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold">
+            {t("Up next")}
+          </span>
+        )}
       </ListRowTrailing>
     </ListRowLink>
   );

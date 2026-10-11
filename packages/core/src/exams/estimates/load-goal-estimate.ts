@@ -1,8 +1,16 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { type EstimatedScore, estimateScoreRange } from "../../preparation/estimated-score";
+import { examReportsSql } from "@zoonk/db/anonymous-records";
+import { isJsonObject } from "@zoonk/utils/json";
+import {
+  type EstimatedScore,
+  type RecentMockEvidence,
+  canEstimateScore,
+  countRecentQuestions,
+  estimateScoreRange,
+} from "../../preparation/estimated-score";
 import { type MockResult as LedgerMock, RECENT_MOCKS } from "../../preparation/preparation-math";
-import { mockResultSchema } from "../mocks/mock-contract";
+import { mockResultSchema, mockShapeSchema } from "../mocks/mock-contract";
 import { pointsToPercent } from "../results/exam-result-contract";
 import {
   type ExamScale,
@@ -59,8 +67,9 @@ function toReportedResult(row: ReportRow): ReportedResult[] {
 }
 
 /**
- * Official results reported for the exam on the estimate's scale, with the estimate shown before.
- * Percent estimates also learn from scores reported in points out of a known maximum.
+ * Official results reported for the exam on the estimate's scale, with the estimate shown before,
+ * deleted learners' included. Percent estimates also learn from scores reported in points out of a
+ * known maximum.
  */
 async function loadReports({
   examBlueprintId,
@@ -73,18 +82,15 @@ async function loadReports({
     return [];
   }
 
-  const rows = await prisma.examResult.findMany({
-    orderBy: { reportedAt: "desc" },
-    select: { estimateHigh: true, estimateLow: true, maxScore: true, scale: true, score: true },
-    take: CALIBRATION_REPORTS,
-    where: {
-      estimateHigh: { not: null },
-      estimateLow: { not: null },
-      examBlueprintId,
-      scale: { in: scale === "percent" ? ["percent", "points"] : [scale] },
-      score: { not: null },
-    },
-  });
+  const scales = scale === "percent" ? ["percent", "points"] : [scale];
+
+  const rows = await prisma.$queryRaw<ReportRow[]>`
+    SELECT score, scale, max_score AS "maxScore", estimate_low AS "estimateLow",
+      estimate_high AS "estimateHigh"
+    FROM ${examReportsSql(examBlueprintId)} r
+    WHERE scale = ANY(${scales}::text[])
+    ORDER BY reported_at DESC
+    LIMIT ${CALIBRATION_REPORTS}`;
 
   return rows.flatMap((row) => toReportedResult(row));
 }
@@ -103,26 +109,63 @@ async function loadExamScale(
   return getExamScale({ blueprint, goal });
 }
 
-/** Abilities from the goal's latest mocks scored with item response theory. */
-async function loadIrtAbilities(goalId: string) {
-  const mocks = await prisma.mockExam.findMany({
+/** The goal's latest finished mocks: what they asked and how they were sat. */
+function loadRecentMocks(goalId: string) {
+  return prisma.mockExam.findMany({
     orderBy: { finishedAt: "desc" },
-    select: { result: true },
+    select: { conditions: true, result: true },
     take: RECENT_MOCKS,
     where: { goalId, status: "finished" },
   });
+}
 
+type RecentMock = Awaited<ReturnType<typeof loadRecentMocks>>[number];
+
+/** Abilities from the goal's latest mocks scored with item response theory. */
+function getIrtAbilities(mocks: readonly RecentMock[]) {
   return mocks.flatMap((mock) => {
     const irt = mockResultSchema.safeParse(mock.result).data?.irt;
     return irt ? [{ se: irt.se, theta: irt.theta }] : [];
   });
 }
 
+/** The questions a finished mock asked, as its result counts them. */
+function countMockQuestions(result: unknown): number {
+  return isJsonObject(result) && typeof result.total === "number" ? result.total : 0;
+}
+
+/** What a mock sat: a subject, half of an exam day, all of it; null for the plan's own. */
+function readMockShape(conditions: unknown) {
+  return mockShapeSchema.safeParse(isJsonObject(conditions) ? conditions.shape : null).data ?? null;
+}
+
 /**
- * The goal's estimated score, only after a mock: on the exam's own scale for exams that report on
- * one (SAT, AP, TOEFL), on its item response theory scale when its mocks are scored that way
- * (ENEM), otherwise as percent correct. Once enough learners report official results for the
- * exam, the range is calibrated against them.
+ * What the goal's latest mocks hold between them (see `canEstimateScore`): their questions, as
+ * their results or the ledger's answers count them (a mock from before its sitting was kept has
+ * only the ledger's), and whether each sat one subject.
+ */
+function getRecentMockEvidence({
+  ledgerMocks,
+  mocks,
+}: {
+  ledgerMocks: readonly LedgerMock[];
+  mocks: readonly RecentMock[];
+}): RecentMockEvidence {
+  const sitting = mocks.reduce((sum, mock) => sum + countMockQuestions(mock.result), 0);
+
+  return {
+    questions: Math.max(sitting, countRecentQuestions(ledgerMocks)),
+    subjectOnly:
+      mocks.length > 0 && mocks.every((mock) => readMockShape(mock.conditions)?.kind === "area"),
+  };
+}
+
+/**
+ * The goal's estimated score, only once its recent mocks hold enough of the exam (see
+ * `canEstimateScore`): on the exam's own scale for exams that report on one (SAT, AP, TOEFL), on
+ * its item response theory scale when its mocks are scored that way (ENEM), otherwise as percent
+ * correct. Once enough learners report official results for the exam, the range is calibrated
+ * against them.
  */
 export async function loadGoalScoreEstimate({
   goal,
@@ -132,8 +175,14 @@ export async function loadGoalScoreEstimate({
   /** Finished mocks from the ledger: right and wrong answers, for the percent estimate. */
   ledgerMocks: readonly LedgerMock[];
 }): Promise<EstimatedScore | null> {
+  const mocks = await loadRecentMocks(goal.id);
+
+  if (!canEstimateScore(getRecentMockEvidence({ ledgerMocks, mocks }))) {
+    return null;
+  }
+
   const examScale = await loadExamScale(goal);
-  const abilities = examScale ? [] : await loadIrtAbilities(goal.id);
+  const abilities = examScale ? [] : getIrtAbilities(mocks);
   const scale: EstimatedScore["scale"] = examScale ?? (abilities.length > 0 ? "irt" : "percent");
   const reports = await loadReports({ examBlueprintId: goal.examBlueprintId, scale });
   const calibration = getEstimateCalibration(reports);

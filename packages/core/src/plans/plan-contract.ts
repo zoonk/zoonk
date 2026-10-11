@@ -1,9 +1,11 @@
 import { z } from "zod";
+import { examChoicePickSchema } from "../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../language/activities/language-activities";
 import { answerTimeZoneSchema } from "../learner/contract";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "./plan-tools-contract";
 import {
   AREA_STARTS,
+  BASE_CHOICES,
   DAYS_PER_WEEK,
   DIFFICULTY_BIASES,
   MAX_DAILY_MINUTES,
@@ -18,6 +20,7 @@ const MAX_AREAS = 20;
 const MAX_TOOLS = 20;
 const MAX_PART_NAME_LENGTH = 80;
 const MAX_PART_SKILLS = 200;
+const MAX_BASE_CHOICES = 200;
 
 const areasSchema = z
   .array(z.string().trim().min(1))
@@ -34,7 +37,7 @@ const focusPartInputSchema = z
       .trim()
       .min(1)
       .max(MAX_PART_NAME_LENGTH)
-      .meta({ description: 'The part as the learner says it, such as "Biologia e Química"' }),
+      .meta({ description: "The part as the learner says it, such as biology and chemistry" }),
     skillIds: z
       .array(z.string().trim().min(1))
       .min(1)
@@ -137,11 +140,51 @@ const planOperationSchema = z
           .enum(WRITTEN_CADENCES)
           .meta({
             description:
-              "When an exam's written tests (a redação, a discursive test) are practiced: weekly (the default, spaced practice), biweekly (every other week and the final stretch) or finalWeeks (only the final weeks before the exam, which needs a date). The total practice stays the same",
+              "When an exam's written tests (an essay, a discursive test) are practiced: weekly (the default, spaced practice), biweekly (every other week and the final stretch) or finalWeeks (only the final weeks before the exam, which needs a date). The total practice stays the same",
           }),
         kind: z.literal("setWrittenCadence"),
       })
       .strict(),
+    z
+      .object({
+        fullCourse: z
+          .boolean()
+          .meta({
+            description:
+              "true: study everything, even after the exam. Until the exam the plan stays the one its date shapes (what the exam asks most first, mocks, the final stretch); what doesn't fit before it goes on after the exam at the learner's time. false: the plan ends at the exam and leaves out what doesn't fit. Exams only: other goals study everything by having no date (`setTargetDate` with null)",
+          }),
+        kind: z.literal("setFullCourse"),
+      })
+      .strict(),
+    z
+      .object({
+        choices: z
+          .array(
+            z
+              .object({
+                choice: z
+                  .enum(BASE_CHOICES)
+                  .meta({
+                    description:
+                      "deep: every lesson of it, core and depth, with the time what the plan keeps leaves. essential: its core, the first third of its lessons, before what builds on it (the default). quick: one short lesson that sums it up with a worked example. skip: none of it; what builds on it no longer waits for it, and its own topics leave the plan unless another skill teaches them. No choice ever pushes out a topic its core keeps",
+                  }),
+                skillId: z
+                  .string()
+                  .trim()
+                  .min(1)
+                  .meta({ description: "One of the plan's `bases`" }),
+              })
+              .strict(),
+          )
+          .min(1)
+          .max(MAX_BASE_CHOICES),
+        kind: z.literal("setBaseChoices"),
+      })
+      .strict()
+      .meta({
+        description:
+          "How to study some of the plan's bases (`bases`: the skills its topics or final work build on, worth less to the goal than what builds on them). Bases not named keep their choice",
+      }),
     z
       .object({
         areas: areasSchema.min(1),
@@ -206,12 +249,30 @@ const setNoticeDateOperationSchema = z.object({
   targetDate: z.iso.date(),
 });
 
+/**
+ * Moves the plan's phase dates so its lessons fit by the goal's date. A refresh keeps the dates the
+ * learner saw while lessons the Library writes take more or less time than planned; when keeping
+ * them leaves lessons out that moving them fits in, core proposes this. Learners never send it.
+ */
+const fitPhaseDatesOperationSchema = z.object({ kind: z.literal("fitPhaseDates") });
+
+/**
+ * The option the learner takes of one of their exam's choices (ENEM's foreign language): the plan
+ * studies it and no other option of that choice. Core builds it from `ExamChoiceInput` once the
+ * option is checked against the exam's notice; learners never send it.
+ */
+const setExamChoiceOperationSchema = examChoicePickSchema.extend({
+  kind: z.literal("setExamChoice"),
+});
+
 export const anyPlanOperationSchema = z.union([
   planOperationSchema,
   addSkillsOperationSchema,
   setToolsOperationSchema,
   followNoticeOperationSchema,
   setNoticeDateOperationSchema,
+  fitPhaseDatesOperationSchema,
+  setExamChoiceOperationSchema,
 ]);
 
 export type PlanOperation = z.infer<typeof anyPlanOperationSchema>;

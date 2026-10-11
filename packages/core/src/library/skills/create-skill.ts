@@ -67,21 +67,29 @@ export async function createSkill(
 }
 
 /**
- * Records skills learned before `skillId`. Existing edges are kept, and a
+ * Records the skills learned before `skillId`, as the caller decides them among `among`: an
+ * edge to one of those it doesn't list is removed, edges to any other skill are kept, and a
  * skill never becomes its own prerequisite.
  */
-export async function addSkillPrerequisites({
+export async function setSkillPrerequisites({
+  among,
   prerequisiteIds,
   skillId,
 }: {
-  prerequisiteIds: string[];
+  among: ReadonlySet<string>;
+  prerequisiteIds: readonly string[];
   skillId: string;
 }): Promise<void> {
-  const edges = [...new Set(prerequisiteIds)]
-    .filter((prerequisiteId) => prerequisiteId !== skillId)
-    .map((prerequisiteId) => ({ prerequisiteId, skillId }));
+  const kept = new Set(prerequisiteIds.filter((prerequisiteId) => prerequisiteId !== skillId));
+  const removed = [...among].filter((prerequisiteId) => !kept.has(prerequisiteId));
 
-  await prisma.skillPrerequisite.createMany({ data: edges, skipDuplicates: true });
+  await prisma.$transaction([
+    prisma.skillPrerequisite.deleteMany({ where: { prerequisiteId: { in: removed }, skillId } }),
+    prisma.skillPrerequisite.createMany({
+      data: [...kept].map((prerequisiteId) => ({ prerequisiteId, skillId })),
+      skipDuplicates: true,
+    }),
+  ]);
 
   revalidateCacheTags([getSkillCacheTag(skillId)]);
 }

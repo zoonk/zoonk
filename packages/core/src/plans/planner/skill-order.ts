@@ -37,7 +37,7 @@ export type SkillReadiness = {
  * Whether the learner has recalled the skill: studied it, or answered it right in a test, so their
  * memory of it holds a day or more. A skill never studied, or one placement found missing, hasn't.
  */
-export function isRecalled(
+function isRecalled(
   readiness: SkillReadiness | undefined,
 ): readiness is SkillReadiness & { state: Exclude<MasteryState, "new"> } {
   return (
@@ -188,13 +188,19 @@ function pickNext<TSkill extends { skillId: string }>({
   placed: ReadonlySet<string>;
   prerequisites: ReadonlyMap<string, readonly string[]>;
   remaining: readonly TSkill[];
-}): TSkill | undefined {
+}): TSkill | null {
   const available = remaining.filter((skill) =>
     isAvailable({ placed, prerequisites, skillId: skill.skillId }),
   );
 
   /** A cycle the graph normalizer missed must not stall the plan: fall back to the best left. */
-  return (available.length > 0 ? available : remaining).toSorted(compare)[0];
+  const pool = available.length > 0 ? available : remaining;
+
+  // The first of the best, as sorting would put it, in one pass: it's picked once per skill.
+  return pool.reduce<TSkill | null>(
+    (best, skill) => (best === null || compare(skill, best) < 0 ? skill : best),
+    null,
+  );
 }
 
 /**
@@ -219,15 +225,20 @@ export function orderSkills<TSkill extends { skillId: string }>({
     ]),
   );
 
-  return skills.reduce<{ ordered: TSkill[]; placed: Set<string> }>(
-    (state) => {
-      const remaining = skills.filter((skill) => !state.placed.has(skill.skillId));
-      const next = pickNext({ compare, placed: state.placed, prerequisites: inList, remaining });
+  // One list and one set, grown as skills are placed: copying both for each skill took a
+  // real-size exam's 141 skills a twentieth of every plan built.
+  const placed = new Set<string>();
+  const ordered: TSkill[] = [];
 
-      return next
-        ? { ordered: [...state.ordered, next], placed: new Set([...state.placed, next.skillId]) }
-        : state;
-    },
-    { ordered: [], placed: new Set() },
-  ).ordered;
+  skills.forEach(() => {
+    const remaining = skills.filter((skill) => !placed.has(skill.skillId));
+    const next = pickNext({ compare, placed, prerequisites: inList, remaining });
+
+    if (next) {
+      ordered.push(next);
+      placed.add(next.skillId);
+    }
+  });
+
+  return ordered;
 }

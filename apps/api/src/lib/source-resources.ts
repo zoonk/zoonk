@@ -44,6 +44,11 @@ export function toSourceResource(source: SourceRow) {
   };
 }
 
+/** The edition as clients read it: the check of its reading is research's own bookkeeping. */
+function toEditionResource({ check: _check, ...edition }: ExamBlueprintView["edition"]) {
+  return edition;
+}
+
 export function toChangeNoticeResource(notice: SourceChangeNotice) {
   return {
     createdAt: notice.createdAt.toISOString(),
@@ -59,7 +64,7 @@ export function toExamBlueprintResource(blueprint: ExamBlueprintView) {
   return {
     board: blueprint.board,
     country: blueprint.country,
-    edition: blueprint.edition,
+    edition: toEditionResource(blueprint.edition),
     examDate: blueprint.examDate?.toISOString() ?? null,
     id: blueprint.id,
     language: blueprint.language,

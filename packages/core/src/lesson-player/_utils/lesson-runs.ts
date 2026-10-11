@@ -57,6 +57,30 @@ export async function lockLessonRuns(
   );
 }
 
+/** The lessons among these the learner ever started, finished or not. */
+export async function loadStartedLessonIds({
+  lessonIds,
+  userId,
+}: {
+  lessonIds: readonly string[];
+  userId: string;
+}): Promise<Set<string>> {
+  if (lessonIds.length === 0) {
+    return new Set();
+  }
+
+  const runs = await prisma.learningEvent.findMany({
+    select: { contentIds: true },
+    where: {
+      OR: lessonIds.map((lessonId) => ({ contentIds: { equals: lessonId, path: ["lessonId"] } })),
+      kind: { in: [...LESSON_RUN_KINDS] },
+      userId,
+    },
+  });
+
+  return new Set(runs.flatMap((run) => getRunLessonId(run) ?? []));
+}
+
 /** The learner's open run of a lesson started recently enough to resume. */
 export function findResumableRun(
   tx: TransactionClient,

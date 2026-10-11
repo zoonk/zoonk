@@ -26,7 +26,7 @@ describe(getRecommendedMinutes, () => {
   });
 
   it("starts a big exam (a public exam, ENEM) at the time it takes, more the sooner it is", () => {
-    // ENEM a month away, a concurso three months away, one half a year away, one without a date.
+    // ENEM a month away, a civil service exam three months away, one half a year away, one without a date.
     const dates = ["2026-11-04", "2027-01-03", "2027-03-01", "2027-09-01", null];
 
     expect(dates.map((date) => minutesFor("big", date))).toStrictEqual([180, 120, 90, 60, 60]);

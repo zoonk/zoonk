@@ -3,6 +3,10 @@ import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
 import { type PlanGraph } from "./plan-state";
 
+const courseWeightSubjectsSchema = z.array(
+  z.object({ name: z.string(), weight: z.number().positive() }),
+);
+
 const courseWeightsSchema = z.object({
   course: z.string(),
   edition: z.string().nullable().default(null),
@@ -10,7 +14,7 @@ const courseWeightsSchema = z.object({
   source: z.object({ title: z.string().nullable(), url: z.string() }).nullable().default(null),
   status: z.enum(["found", "unknown"]),
   /** Each part of the exam (a notice subject) and its weight, when found. */
-  subjects: z.array(z.object({ name: z.string(), weight: z.number().positive() })).default([]),
+  subjects: courseWeightSubjectsSchema.default([]),
 });
 
 /**
@@ -19,6 +23,11 @@ const courseWeightsSchema = z.object({
  * course and institution it's for, so a learner who changes either gets it looked up again.
  */
 export type CourseWeights = z.infer<typeof courseWeightsSchema>;
+
+/** Each exam part's weight as the Library stores them; none when they don't read as weights. */
+export function readCourseWeightSubjects(value: unknown): CourseWeights["subjects"] {
+  return courseWeightSubjectsSchema.safeParse(value).data ?? [];
+}
 
 function readText(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
@@ -47,7 +56,7 @@ export function readCourseWeights(details: unknown): CourseWeights | null {
 
 /**
  * The graph with each skill's exam weight scaled by how much the learner's course weighs its part
- * of the exam, relative to the parts' average: a Medicina candidate's Natureza and redação count
+ * of the exam, relative to the parts' average: a medicine candidate's natural sciences and essay count
  * double where the institution counts them double, so they get more of the plan's time. Skills in
  * an area the course doesn't weigh (exam strategy) keep theirs. The stored graph never changes:
  * only the planner reads the weighted copy.

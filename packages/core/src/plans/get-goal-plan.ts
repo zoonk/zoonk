@@ -20,7 +20,11 @@ export type GoalPlanResult =
 export async function getGoalPlan(goalId: string): Promise<GoalPlanResult> {
   "use cache: private";
 
-  const owned = await findOwnedGoal(goalId);
+  // The request's date doesn't depend on the goal: it's read alongside it.
+  const [owned, { currentInstant, timeZone }] = await Promise.all([
+    findOwnedGoal(goalId),
+    getRequestProgressDateContext(),
+  ]);
 
   if (owned.status !== "ready") {
     return owned;
@@ -28,7 +32,6 @@ export async function getGoalPlan(goalId: string): Promise<GoalPlanResult> {
 
   cacheTag(getGoalsCacheTag(owned.userId), getLearnerModelCacheTag(owned.userId));
 
-  const { currentInstant, timeZone } = await getRequestProgressDateContext();
   const goalZone = owned.goal.timezone;
 
   const context = await loadPlanContext({

@@ -162,6 +162,7 @@
       }
     },
     { "files": ["apps/admin/**/*.tsx"], "rules": { "react/jsx-no-literals": "off" } },
+    { "files": ["apps/playground/**/*.tsx"], "rules": { "react/jsx-no-literals": "off" } },
     {
       "files": ["**/i18n/request.ts"],
       "rules": {

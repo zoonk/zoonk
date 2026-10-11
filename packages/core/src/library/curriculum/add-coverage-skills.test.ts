@@ -65,6 +65,23 @@ function addCoverageSkills({
   }).graph;
 }
 
+/** The exam's graph with the missing skills a check found, placed in its notice. */
+function addCoverageSkillsTo({
+  graph: checked,
+  missing: found,
+  outline,
+}: {
+  graph: GoalSkillGraph;
+  missing: ReturnType<typeof missing>[];
+  outline: ExamOutline;
+}) {
+  return applyGraphCoverage({
+    coverage: { examWeights: [], missing: found, placements: [] },
+    graph: checked,
+    outline,
+  }).graph;
+}
+
 /** The graph with the weights a check corrected, and nothing else changed. */
 function reweightExamSkills({
   examWeights,
@@ -269,6 +286,92 @@ describe(applyGraphCoverage, () => {
     });
 
     expect(needsCoverageCheck({ graph: covered, outline: OUTLINE, references: [] })).toBe(false);
+  });
+
+  it("never makes an added skill wait for an option of a choice the learner may not take", () => {
+    const outline: ExamOutline = {
+      ...OUTLINE,
+      subjects: [
+        ...OUTLINE.subjects,
+        {
+          choiceGroup: "Língua Estrangeira",
+          group: null,
+          name: "Língua Inglesa",
+          questions: 5,
+          topics: ["Leitura em inglês"],
+          weight: null,
+        },
+      ],
+    };
+
+    const english = skill({ area: "Língua Inglesa", course: "pt", key: "english" });
+
+    const covered = addCoverageSkillsTo({
+      graph: { ...examGraph, skills: [...examGraph.skills, english] },
+      missing: [
+        missing({
+          area: "Língua Portuguesa",
+          name: "Reescrever frases",
+          prerequisites: ["english"],
+        }),
+        missing({ area: "Língua Inglesa", name: "Ler manchetes", prerequisites: ["english"] }),
+      ],
+      outline,
+    });
+
+    const added = new Set(["Reescrever frases", "Ler manchetes"]);
+
+    expect(
+      covered.skills.flatMap((item) =>
+        added.has(item.name) ? [[item.area, item.prerequisites]] : [],
+      ),
+    ).toStrictEqual([
+      ["Língua Portuguesa", []],
+      ["Língua Inglesa", ["english"]],
+    ]);
+  });
+
+  it("puts a subject the graph has no skill of after the subject the notice lists before it", () => {
+    // An option the notice's reading named after the graph was written (ENEM's Spanish, listed
+    // right after the languages area): it joins its neighbor in the notice, not the start of the graph.
+    const outline: ExamOutline = {
+      ...OUTLINE,
+      subjects: [
+        OUTLINE.subjects[0],
+        {
+          choiceGroup: "Língua Estrangeira",
+          group: null,
+          name: "Língua Espanhola",
+          questions: null,
+          topics: ["Leitura em espanhol"],
+          weight: null,
+        },
+        ...OUTLINE.subjects.slice(1),
+      ].flatMap((subject) => (subject ? [subject] : [])),
+    };
+
+    const covered = addCoverageSkillsTo({
+      graph: examGraph,
+      missing: [
+        missing({
+          area: "Língua Espanhola",
+          name: "Ler textos em espanhol",
+          prerequisites: [],
+          topics: ["Leitura em espanhol"],
+        }),
+      ],
+      outline,
+    });
+
+    const areas = covered.skills.map((item) => item.area);
+
+    expect(areas.indexOf("Língua Espanhola")).toBe(areas.lastIndexOf("Língua Portuguesa") + 1);
+    expect(areas.indexOf("Ciência Política")).toBe(areas.indexOf("Língua Espanhola") + 1);
+
+    expect(covered.skills.find((item) => item.area === "Língua Espanhola")).toMatchObject({
+      course: "pt",
+      phase: 1,
+    });
   });
 
   it("asks for the check only with references or notice topics no skill teaches", () => {

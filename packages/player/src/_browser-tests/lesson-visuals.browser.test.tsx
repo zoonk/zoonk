@@ -2,15 +2,12 @@ import { type LessonVisual } from "@zoonk/core/library/steps/contract";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
-import { expectCount, inlineImage } from "../_test-utils/activity-player";
+import { expectCount } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
-import { teachingStep } from "../_test-utils/lesson-steps";
-import {
-  buildAdapters,
-  buildLesson,
-  renderLessonPlayer,
-} from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import { inlineImage, lawTimeline, lettersChart, teachingStep } from "../preview/preview-steps";
 
 /**
  * A screen that points at something to see shows it: a table written in its text, a chart or a
@@ -19,28 +16,6 @@ import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
  */
 
 const PHONE = { height: 812, width: 375 };
-
-const LETTERS_CHART: LessonVisual = {
-  axisStart: null,
-  categories: ["Maio", "Junho", "Julho"],
-  categoryLabel: "Mês",
-  chart: "bar",
-  kind: "chart",
-  series: [{ name: "Ofícios respondidos", values: [35, 36, 40] }],
-  source: null,
-  title: "Ofícios respondidos por mês",
-  unit: null,
-  valueLabel: "Ofícios",
-};
-
-const LAW_TIMELINE: LessonVisual = {
-  events: [
-    { date: "1988", detail: "Promulgada em 5 de outubro.", label: "Constituição Federal" },
-    { date: "1990", detail: null, label: "Lei nº 8.112, dos servidores federais" },
-  ],
-  kind: "timeline",
-  title: "Leis que organizam o serviço público",
-};
 
 function check(content: object) {
   const base = teachingStep("check");
@@ -96,11 +71,73 @@ describe("lesson visuals", () => {
       .toBeVisible();
   });
 
+  it("shows a table written after a guess's question as a table, above the question", async () => {
+    const hook = teachingStep("hook");
+
+    if (hook.content.variant !== "guess") {
+      throw new Error("The shared hook fixture is a guess.");
+    }
+
+    const question = "Renan mede uma peça de 50,0 mm. Qual sensor agrupa leituras perto dela?";
+
+    const lesson = buildLesson([
+      {
+        ...hook,
+        content: {
+          ...hook.content,
+          question: `${question}\n\n| Sensor | mm |\n|---|---:|\n| A | 49,8; 49,9 |\n| B | 51,0; 51,1 |`,
+        },
+      },
+    ]);
+
+    renderLessonPlayer({ lesson });
+
+    const table = page.getByRole("table");
+    await expect.element(table.getByRole("columnheader", { name: "Sensor" })).toBeVisible();
+    await expect.element(table.getByRole("cell", { exact: true, name: "B" })).toBeVisible();
+    await expect.element(page.getByRole("heading", { name: question })).toBeVisible();
+    await expect.element(page.getByText("|---", { exact: false })).not.toBeInTheDocument();
+  });
+
+  it("shows a table written in a worked example's step as a table", async () => {
+    const worked = teachingStep("workedExample");
+
+    const lesson = buildLesson([
+      {
+        ...worked,
+        content: {
+          ...worked.content,
+          result: "The sum is _(8, 8) N_: right and up.",
+          steps: [
+            { text: "Add the horizontal parts, then the vertical ones." },
+            {
+              text: "Put each force on its axis:\n\n| Force | x (N) | y (N) |\n|---|---:|---:|\n| A | 12 | 5 |\n| B | -4 | 3 |",
+            },
+          ],
+        },
+      },
+    ]);
+
+    renderLessonPlayer({ lesson });
+
+    await page.getByRole("button", { name: "Show the next step" }).click();
+
+    const table = page.getByRole("table");
+    await expect.element(table.getByRole("columnheader", { name: "x (N)" })).toBeVisible();
+    await expect.element(table.getByRole("cell", { exact: true, name: "12" })).toBeVisible();
+    await expect.element(page.getByText("Put each force on its axis:")).toBeVisible();
+    await expect.element(page.getByText("|---", { exact: false })).not.toBeInTheDocument();
+
+    const emphasis = page.getByText("(8, 8) N", { exact: true });
+    await expect.element(emphasis).toBeVisible();
+    expect(emphasis.element().tagName).toBe("EM");
+  });
+
   it("draws a chart from its data, with every value for screen readers", async () => {
     const explanation = teachingStep("explanation");
 
     const lesson = buildLesson([
-      { ...explanation, content: { ...explanation.content, visual: LETTERS_CHART } },
+      { ...explanation, content: { ...explanation.content, visual: lettersChart } },
     ]);
 
     await atViewport(PHONE, async () => {
@@ -119,7 +156,7 @@ describe("lesson visuals", () => {
 
   it("labels every day of a line chart on a phone, breaking long names over two lines", async () => {
     const days: LessonVisual = {
-      ...LETTERS_CHART,
+      ...lettersChart,
       axisStart: 0,
       categories: ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira"],
       chart: "line",
@@ -144,7 +181,7 @@ describe("lesson visuals", () => {
 
   it("starts a chart's axis where a screen about a cropped axis says", async () => {
     const cropped: LessonVisual = {
-      ...LETTERS_CHART,
+      ...lettersChart,
       axisStart: 30,
       title: "Ofícios respondidos, com o eixo a partir de 30",
     };
@@ -160,7 +197,7 @@ describe("lesson visuals", () => {
   });
 
   it("lists a timeline's events in order with their dates", async () => {
-    const lesson = buildLesson([check({ visual: LAW_TIMELINE })]);
+    const lesson = buildLesson([check({ visual: lawTimeline })]);
     renderLessonPlayer({ lesson });
 
     const timeline = page.getByRole("figure", { name: "Leis que organizam o serviço público" });

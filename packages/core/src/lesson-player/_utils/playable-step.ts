@@ -1,8 +1,15 @@
-import { type MediaAsset, type Source, type Step, type StepKind } from "@zoonk/db";
+import { definitionNamesWord } from "@zoonk/ai/tasks/v2/language/language-lesson-rules";
+import {
+  type MediaAsset,
+  type Source,
+  type Step,
+  type StepKind,
+  type StepOptionPicture,
+} from "@zoonk/db";
+import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { logError } from "@zoonk/utils/logger";
-import { getStepImageRequest } from "../../library/media/_utils/step-image-request";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
-import { isExerciseKind } from "../../player/contracts/exercise-content";
+import { type ExerciseKind, isExerciseKind } from "../../player/contracts/exercise-content";
 import {
   type ExerciseResources,
   type SerializedStep,
@@ -12,12 +19,12 @@ import {
   type PlayableLanguageStep,
   type PlayableLibraryStep,
   type PlayableSpokenAnswerStep,
-  type PlayableStepImage,
   type PlayableTeachingStep,
   type PlayableTeachingStepOf,
   type PlayableWordHints,
   type TeachingStepKind,
 } from "../contract";
+import { getScreenPictures } from "./screen-pictures";
 import { getStepCitation, markExplanationsNotInMaterial } from "./step-citation";
 
 /**
@@ -26,6 +33,8 @@ import { getStepCitation, markExplanationsNotInMaterial } from "./step-citation"
  */
 export type PlayableStepRow = Step & {
   mediaAsset: MediaAsset | null;
+  /** The pictures of a question whose options are pictures; read with the lesson's screens. */
+  optionPictures?: (StepOptionPicture & { mediaAsset: MediaAsset })[];
   source: Pick<
     Source,
     "fetchedAt" | "kind" | "mimeType" | "publisher" | "title" | "url" | "visibility"
@@ -57,57 +66,6 @@ function isTeachingKind(kind: StepKind): kind is TeachingStepKind {
   return TEACHING_KINDS.has(kind);
 }
 
-/**
- * How long after a screen is written its picture may still be on its way: pictures are drawn in
- * the background right after the lesson opens, usually in under a minute, with one retry.
- */
-const PICTURE_WAIT_MS = 300_000;
-
-/** The image file is linked through the step; its alt text comes from the step's image request. */
-export function getStepImage({
-  content,
-  mediaAsset,
-}: {
-  content: object;
-  mediaAsset: MediaAsset | null;
-}): PlayableStepImage | null {
-  if (!mediaAsset || mediaAsset.kind !== "image" || !("image" in content) || !content.image) {
-    return null;
-  }
-
-  const request = content.image;
-  const alt = typeof request === "object" && "alt" in request ? request.alt : null;
-
-  return typeof alt === "string"
-    ? {
-        alt,
-        height: mediaAsset.height,
-        id: mediaAsset.id,
-        url: mediaAsset.url,
-        width: mediaAsset.width,
-      }
-    : null;
-}
-
-/**
- * A picture the player waits on: one the screen asks for (every request is one the screen needs),
- * not drawn yet, on a screen written moments ago. Past that, a picture that never came stays out.
- */
-function isPicturePending({
-  content,
-  kind,
-  row,
-}: {
-  content: object;
-  kind: TeachingStepKind;
-  row: PlayableStepRow;
-}): boolean {
-  return (
-    getStepImageRequest({ content, kind }) !== null &&
-    Date.now() - row.generatedAt.getTime() < PICTURE_WAIT_MS
-  );
-}
-
 function buildTeachingStep<TKind extends TeachingStepKind>(
   kind: TKind,
   row: PlayableStepRow,
@@ -119,14 +77,24 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
     return null;
   }
 
-  const image = getStepImage({ content: parsed.data, mediaAsset: row.mediaAsset });
+  const { content, image, imagePending, optionPictures } = getScreenPictures({
+    content: parsed.data,
+    kind,
+    row,
+  });
+
+  if (!content) {
+    logError(`[lesson-player] Step ${row.id} asks about a numbered picture it no longer has.`);
+    return null;
+  }
 
   return {
     citation: getStepCitation(row),
-    content: parsed.data,
+    content,
     id: row.id,
     image,
-    imagePending: !image && isPicturePending({ content: parsed.data, kind, row }),
+    imagePending,
+    ...(Object.keys(optionPictures).length > 0 ? { optionPictures } : {}),
     kind,
     position: row.position,
     skillId: row.skillId,
@@ -179,16 +147,63 @@ function toTeachingStep({
   }
 }
 
+type ExerciseText = {
+  kind: ExerciseKind;
+  /** The lesson is in the learner's own language (see `isSameLanguage`). */
+  sameLanguage: boolean;
+  sentence: ExerciseResources["lessonSentences"][number] | null;
+  word: ExerciseResources["lessonWords"][number] | null;
+};
+
+/**
+ * An exercise that shows its own answer tests nothing: a word to pick for a meaning that names it
+ * ("rent" for "rent", a cognate or an English word for English readers), a sentence to build from
+ * itself, or one to hear without a recording. In the learner's own language a word whose
+ * definition names it teaches nothing either, so its card goes too. Lessons written before their
+ * writer knew this still play without those screens.
+ */
+function showsOwnAnswer({ kind, sameLanguage, sentence, word }: ExerciseText): boolean {
+  const namesItself = word
+    ? definitionNamesWord({ definition: word.translation, word: word.word })
+    : false;
+
+  const readsItself = sentence
+    ? normalizeDistractorKey(sentence.translation) === normalizeDistractorKey(sentence.sentence)
+    : false;
+
+  switch (kind) {
+    case "vocabulary":
+      return sameLanguage && namesItself;
+    case "translation":
+      return namesItself;
+    case "reading":
+      return readsItself;
+    case "listening":
+      return readsItself && !sentence?.audioUrl;
+    case "alphabet":
+    case "fillBlank":
+    case "matchColumns":
+    case "multipleChoice":
+      return false;
+    default:
+      return false;
+  }
+}
+
+type ExerciseRow = PlayableStepRow & { kind: ExerciseKind };
+
 /**
  * Word and sentence exercises read their text and translation from the lesson's pair links, so
- * one without its link can't be shown.
+ * one without its link can't be shown, and one that shows its own answer isn't.
  */
 function toExerciseInput({
   resources,
   row,
+  sameLanguage,
 }: {
   resources: ExerciseResources;
-  row: PlayableStepRow;
+  row: ExerciseRow;
+  sameLanguage: boolean;
 }) {
   const word = resources.lessonWords.find((item) => item.id === row.wordId) ?? null;
   const sentence = resources.lessonSentences.find((item) => item.id === row.sentenceId) ?? null;
@@ -201,6 +216,10 @@ function toExerciseInput({
     return [];
   }
 
+  if (showsOwnAnswer({ kind: row.kind, sameLanguage, sentence, word })) {
+    return [];
+  }
+
   return [
     { content: row.content, id: row.id, kind: row.kind, position: row.position, sentence, word },
   ];
@@ -210,12 +229,14 @@ function toExerciseInput({
 function toExerciseSteps({
   resources,
   rows,
+  sameLanguage,
 }: {
   resources: LessonPairResources;
   rows: PlayableStepRow[];
+  sameLanguage: boolean;
 }): Map<string, PlayableLanguageStep> {
-  const exerciseRows = rows.filter((row) => isExerciseKind(row.kind));
-  const inputs = exerciseRows.flatMap((row) => toExerciseInput({ resources, row }));
+  const exerciseRows = rows.filter((row): row is ExerciseRow => isExerciseKind(row.kind));
+  const inputs = exerciseRows.flatMap((row) => toExerciseInput({ resources, row, sameLanguage }));
   const serialized = serializeExerciseSteps({ resources, steps: inputs });
   const rowsById = new Map(exerciseRows.map((row) => [row.id, row]));
 
@@ -223,7 +244,7 @@ function toExerciseSteps({
     serialized.flatMap((exercise) => {
       const row = rowsById.get(exercise.id);
 
-      if (!row || !isExerciseKind(row.kind)) {
+      if (!row) {
         return [];
       }
 
@@ -254,14 +275,18 @@ function toExerciseSteps({
 function toListeningFallbacks({
   resources,
   rows,
+  sameLanguage,
 }: {
   resources: LessonPairResources;
   rows: PlayableStepRow[];
+  sameLanguage: boolean;
 }): Map<string, SerializedStep> {
   const inputs = rows.flatMap((row) => {
     const sentence = resources.lessonSentences.find((item) => item.id === row.sentenceId);
 
-    return row.kind === "spokenAnswer" && sentence
+    return row.kind === "spokenAnswer" &&
+      sentence &&
+      !showsOwnAnswer({ kind: "listening", sameLanguage, sentence, word: null })
       ? [
           {
             content: {},
@@ -287,12 +312,15 @@ function toListeningFallbacks({
 export function toPlayableSteps({
   resources,
   rows,
+  sameLanguage,
 }: {
   resources: LessonPairResources;
   rows: PlayableStepRow[];
+  /** The lesson is in the learner's own language, such as English for English readers. */
+  sameLanguage: boolean;
 }): PlayableLibraryStep[] {
-  const exercises = toExerciseSteps({ resources, rows });
-  const listening = toListeningFallbacks({ resources, rows });
+  const exercises = toExerciseSteps({ resources, rows, sameLanguage });
+  const listening = toListeningFallbacks({ resources, rows, sameLanguage });
 
   const steps = rows.flatMap((row) => {
     const step = isTeachingKind(row.kind)

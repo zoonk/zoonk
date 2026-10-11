@@ -24,6 +24,33 @@ function buildSourceWhere({
   return { AND: [{ kind, visibility }, searchWhere] };
 }
 
+/**
+ * The exams read from each source and the learners using it, counted for the page's sources only:
+ * a relation `_count` would count every source's rows.
+ */
+async function countSourceRows(sourceIds: string[]) {
+  const [examBlueprints, learnerSources] = await Promise.all([
+    prisma.examBlueprint.groupBy({
+      _count: { id: true },
+      by: ["sourceId"],
+      where: { sourceId: { in: sourceIds } },
+    }),
+    prisma.learnerSource.groupBy({
+      _count: { id: true },
+      by: ["sourceId"],
+      where: { sourceId: { in: sourceIds }, ...trackedAnalyticsUserRelationWhere },
+    }),
+  ]);
+
+  const examsBySource = new Map(examBlueprints.map((row) => [row.sourceId, row._count.id]));
+  const learnersBySource = new Map(learnerSources.map((row) => [row.sourceId, row._count.id]));
+
+  return (sourceId: string) => ({
+    examBlueprints: examsBySource.get(sourceId) ?? 0,
+    learnerSources: learnersBySource.get(sourceId) ?? 0,
+  });
+}
+
 const cachedListSources = cacheAdminData(
   async (
     limit: number,
@@ -36,14 +63,6 @@ const cachedListSources = cacheAdminData(
 
     const [sources, total] = await Promise.all([
       prisma.source.findMany({
-        include: {
-          _count: {
-            select: {
-              examBlueprints: true,
-              learnerSources: { where: trackedAnalyticsUserRelationWhere },
-            },
-          },
-        },
         omit: { blobUrl: true, extractedText: true, reusePolicy: true, structure: true },
         orderBy: [{ fetchedAt: "desc" }, { id: "desc" }],
         skip: offset,
@@ -53,7 +72,12 @@ const cachedListSources = cacheAdminData(
       prisma.source.count({ where }),
     ]);
 
-    return { sources: sources.map((source) => redactSourceTitle(source)), total };
+    const counts = await countSourceRows(sources.map((source) => source.id));
+
+    return {
+      sources: sources.map((source) => redactSourceTitle({ ...source, _count: counts(source.id) })),
+      total,
+    };
   },
 );
 

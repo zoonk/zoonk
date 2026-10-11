@@ -5,29 +5,29 @@
       "categoryScores": [
         {
           "categoryId": "legalAccuracy",
-          "reasoning": "All six keys agree with the supplied texts. The three true statements faithfully reproduce complete provisions or valid excerpts. The false statements replace the statutory basis with judicial determination, daytime with nighttime, and absence of distinction with distinction. Every explanation quotes the relevant text correctly and cites the correct reference.",
-          "score": 10,
+          "reasoning": "Drill 3 incorrectly marks a narrower, still-entailed prohibition as false, triggering the cap of 7 for one wrong key. The other five keys agree with the supplied texts. The reasons quote the relevant passages correctly and identify the appropriate caput or inciso.",
+          "score": 7,
           "label": "Legal accuracy",
           "weight": 35
         },
         {
           "categoryId": "boardTraps",
-          "reasoning": "Each false statement changes exactly one element while preserving the surrounding wording. The misconceptions specifically identify the legal-basis substitution, the day/night substitution, and the sem/com reversal. No cap is triggered.",
+          "reasoning": "Each intended false statement changes exactly one textual element: “ou” to “e”, “dia” to “noite”, or “inafiançável” to “afiançável”. Each misconception precisely names that change, and the surrounding wording is preserved. The incorrect legal effect attributed to the first substitution is assessed under legal accuracy.",
           "score": 10,
           "label": "Board-style traps",
           "weight": 30
         },
         {
           "categoryId": "styleAndLanguage",
-          "reasoning": "The result provides six Brazilian Portuguese right/wrong statements, with exactly three false. Statements retain the supplied constitutional wording except for the intended traps, and explanations clearly identify each change in Portuguese. The format fits the requested Cebraspe style.",
+          "reasoning": "All six drills use the requested right/wrong format in Brazilian Portuguese, with three labeled true and three labeled false. Statements retain the constitutional wording or faithfully paraphrase it, and explanations clearly identify the relevant text and intended changes.",
           "score": 10,
           "label": "Style & language",
           "weight": 20
         },
         {
           "categoryId": "coverage",
-          "reasoning": "All five supplied provisions are covered, difficulty labels span easy through hard, and the three false drills use distinct traps. The two caput drills approach the equality clause differently, so they do not duplicate the same trap. Broader substantive coverage would be possible by using the additional caput slot for its beneficiaries or protected rights.",
-          "score": 9,
+          "reasoning": "The six drills cover all five supplied provisions and include easy, medium, and hard difficulty labels. The two drills on inciso XI test distinct elements: emergency exceptions and the time condition for judicially ordered entry. No element is tested twice in the same way.",
+          "score": 10,
           "label": "Coverage & variety",
           "weight": 15
         },
@@ -43,20 +43,20 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 2610,
-          "inputTokens": 2613,
-          "outputTokens": 658,
-          "reasoningTokens": 215
+          "cacheWriteTokens": 0,
+          "inputTokens": 2657,
+          "outputTokens": 881,
+          "reasoningTokens": 373
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
         {
-          "conclusion": "For broader practice, the second caput drill could test the protected beneficiaries or listed rights instead of returning to equality without distinction.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+          "conclusion": "Drill 3 has a wrong key. Prohibiting treatment that is both inhuman and degrading is entailed by the supplied prohibition of treatment that is inhuman or degrading. The statement does not say that only treatment meeting both conditions is prohibited. Under the rubric's explicit rule that incomplete statements remain true, changing “ou” to “e” here does not make the statement false.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example \"todos\" to \"quase todos\", \"durante o dia\" to \"a qualquer hora\", \"determinação judicial\" to \"determinação policial\", \"inafiançável\" to \"afiançável\"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.",
@@ -99,37 +99,37 @@
       "categoryScores": [
         {
           "categoryId": "legalAccuracy",
-          "reasoning": "All keys agree with the supplied texts. The false statement contradicts the low-risk exception, the true statement accurately summarizes the documentation duty, both blanks reproduce exact sentences with substantive gaps, and each multiple-choice question has exactly one matching answer. Reasons quote the relevant text accurately and cite the correct paragraph. No wrong-key or misquotation cap applies.",
+          "reasoning": "All supplied answer keys agree with the input. The first true statement permissibly omits the timing qualification without denying it; the false statement reverses “unlikely” to “likely.” Both multiple-choice questions have exactly one text-supported answer, and all explanations quote and cite the correct paragraph. The blank reproduces an exact sentence with the correct answer removed. No wrong-key or misquotation cap applies.",
           "score": 10,
           "label": "Legal accuracy",
           "weight": 35
         },
         {
           "categoryId": "boardTraps",
-          "reasoning": "Most distractors make one precise change and their misconceptions identify it clearly. Both gaps remove load-bearing content. However, changing 'The processor shall notify the controller' to 'The controller shall notify the processor' changes two parties at once. The false true/false statement also rewrites the surrounding language rather than making a minimal textual alteration. The cap for several multi-change, absurd, or vague traps is not triggered.",
-          "score": 8,
+          "reasoning": "The false statement and every wrong option make identifiable single-element substitutions, and their misconceptions name those substitutions. However, the only gap removes the generic cross-reference noun “Article,” rather than an operative term governing a role, deadline, condition, or duty. Because this is the sole gap, the cap of 6 for mostly filler gaps applies. Several multiple-choice traps also depart from the task-specific requested trap dimensions.",
+          "score": 6,
           "label": "Board-style traps",
           "weight": 30
         },
         {
           "categoryId": "styleAndLanguage",
-          "reasoning": "The six drills provide the requested generic mix: two true/false statements, two blanks, and two four-option questions, all in English. Explanations clearly identify the changes. However, the true/false statements use paraphrases such as 'must notify' and 'including' instead of retaining the law's wording. No language-mixing or board-mismatch cap applies.",
-          "score": 8,
+          "reasoning": "The result provides the requested generic mix of true/false, a fill-in-the-blank passage, and four-option literal-text multiple choice. It consistently uses English, preserves the source's legal phrasing, and explains the substitutions clearly. No language-mixing or exam-style cap applies.",
+          "score": 9,
           "label": "Style & language",
           "weight": 20
         },
         {
           "categoryId": "coverage",
-          "reasoning": "All three paragraphs are covered, with no two drills testing the same element in the same way. Article 33(1) accounts for exactly half, not most, so the concentration cap does not apply. Coverage would nevertheless be more useful if the cross-reference-number question tested the central controller deadline instead. The item labeled hard is another straightforward literal-recall blank, so the difficulty spread is stronger in labels than in substance.",
-          "score": 8,
+          "reasoning": "All three supplied paragraphs appear, and no two drills test the same element in the same way, so the majority-concentration cap does not apply. Nevertheless, the set is one drill short, omits direct testing of the central 72-hour deadline, undue-delay requirement, and duty to document every breach, and labels a straightforward cross-reference completion as hard. These omissions limit substantive coverage and difficulty variety.",
+          "score": 7,
           "label": "Coverage & variety",
           "weight": 15
         },
         {
           "categoryId": "codeChecks",
           "label": "Code checks",
-          "reasoning": "All 8 parts passed the code checks.",
-          "score": 10,
+          "reasoning": "7 of 8 parts passed. Article 33(2) (typed): Repeats an earlier drill.",
+          "score": 8.875,
           "weight": 30
         }
       ],
@@ -137,21 +137,25 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 2957,
-          "inputTokens": 2960,
-          "outputTokens": 906,
-          "reasoningTokens": 292
+          "cacheWriteTokens": 0,
+          "inputTokens": 2898,
+          "outputTokens": 1159,
+          "reasoningTokens": 490
         }
       },
       "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "One distractor in the Article 33(2) question changes both the notifying party and the recipient, rather than exactly one element. Both true/false statements also paraphrase the supplied wording instead of preserving it with only the intended change.",
+          "conclusion": "The result supplies only five of the six requested drills. Its only fill-in-the-blank removes “Article,” a generic cross-reference completion rather than the requested load-bearing breach-notification or documentation language.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The sole “hard” drill is a simple completion and does not provide meaningful difficulty progression. The multiple-choice traps test neighboring article numbers and documentation details rather than the specifically requested deadline, notification roles, risk exception, and duty to document every breach. Neither the 72-hour deadline nor the scope of “any personal data breaches” is tested.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace the Article 55/56/57/58 recall question with a literal-text question testing the controller's 72-hour deadline and its qualification. The documentation-authority blank is useful but does not provide a convincing hard-level challenge.",
+          "conclusion": "Add a sixth drill on the 72-hour deadline, replace the existing blank with an exact passage omitting “without undue delay” or “controller,” and redirect a multiple-choice question toward the duty to document every breach. Preserve the existing accurate quotations and explicit explanations of changed words.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -189,29 +193,29 @@
       "categoryScores": [
         {
           "categoryId": "legalAccuracy",
-          "reasoning": "Checked all sixteen options against the supplied passages. Each question has exactly one literal match when read with its stem. The deadline, starting-point, negation, and reference substitutions depart from the supplied text, and the reasons quote the relevant wording correctly with the correct references. In the fourth item, the final distractor narrows the original plural formulation and therefore is not a literal match. No wrong-key or misquotation cap applies.",
+          "reasoning": "Checked against the supplied excerpts, each drill has exactly one option matching the relevant text, with the other options changing a textual element. All keys, quoted fragments, and article references are correct. Conditions omitted from the correct consequence-only options are supplied in their question stems. No wrong-key or misquotation cap applies.",
           "score": 10,
           "label": "Legal accuracy",
           "weight": 35
         },
         {
           "categoryId": "boardTraps",
-          "reasoning": "The distractors consistently change one element: a deadline, starting point, negation, cross-reference, or scope of the deadline condition. The misconceptions identify those changes specifically and concisely in Portuguese. None of the caps for multiple simultaneous changes, several absurd or vague traps, or generic misconceptions is triggered.",
-          "score": 9,
+          "reasoning": "The distractors generally make single-element changes to deadlines, triggering events, paragraph references, mandatory wording, or legal consequences. However, the option requiring an already sworn-in servant to take office within fifteen days of taking office is conspicuously circular and weakens the intended careful-reading trap. This is one implausible trap, not several, so the stated cap is not triggered.",
+          "score": 8,
           "label": "Board-style traps",
           "weight": 30
         },
         {
           "categoryId": "styleAndLanguage",
-          "reasoning": "All four drills use the requested four-option FGV-style multiple-choice format and ask for the statutory formulation. Stems and options retain the law's vocabulary, and explanations clearly identify the changes in Brazilian Portuguese. There is no language mixing or substantial board-style mismatch.",
-          "score": 9,
+          "reasoning": "All four drills use four-option multiple choice in Brazilian Portuguese, preserve statutory vocabulary, and provide Portuguese explanations of the substitutions. However, two drills mix short consequence-only options with full conditional provisions even though their stems already establish the condition. This makes the alternatives less clear and parallel than they should be. The set remains recognizably in the requested format, so the out-of-place-style cap does not apply.",
+          "score": 8,
           "label": "Style & language",
           "weight": 20
         },
         {
           "categoryId": "coverage",
-          "reasoning": "All four supplied provisions receive one item, and the set includes the requested deadlines, starting points, and consequences. However, the consequences are supplied rather than directly tested, and the easy, medium, and hard labels overstate the actual variation in challenge. The two deadline items and two consequence items use closely parallel patterns. No single provision or single trap dominates most of the set, so the explicit cap of 7 is not triggered.",
-          "score": 8,
+          "reasoning": "Each of the four supplied provisions receives one drill. The set covers both deadlines, their starting points, and the distinct consequences of missing posse and exercício deadlines. It includes easy, medium, and hard items and does not duplicate the same provision-and-element test. No concentration or repetition cap applies.",
+          "score": 10,
           "label": "Coverage & variety",
           "weight": 15
         },
@@ -227,21 +231,21 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 3390,
-          "inputTokens": 3393,
-          "outputTokens": 862,
-          "reasoningTokens": 270
+          "cacheWriteTokens": 0,
+          "inputTokens": 3538,
+          "outputTokens": 1018,
+          "reasoningTokens": 387
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The consequence-focused items provide the legal consequences in their stems rather than testing whether the learner can distinguish making the appointment void from exonerating the servant. Their distractors mainly test negation and cross-references. The item labeled hard offers little additional difficulty beyond those same literal substitutions.",
+          "conclusion": "The fourth option in the Art. 15, § 1º drill gives an already sworn-in servant a deadline to take office counted from taking office. Although it changes only one element, the circular wording makes the distractor implausible rather than subtle. The Art. 13, § 6º and Art. 15, § 2º drills also mix consequence-only answers with answers that repeat and alter conditions already supplied in the question, reducing clarity and parallelism.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Vary the correct option's position, which is first in all four items. Improve diagnostic value by replacing some cross-reference distractors with single-element changes to the legal consequence, while preserving the article's remaining wording.",
+          "conclusion": "Vary the position of the correct answer; it is first in all four drills. Make the less specific misconception labels identify the actual substitution, such as 'Troca tornar sem efeito por anular', rather than merely saying the consequence changed.",
           "kind": "potentialImprovements",
           "score": 9
         }

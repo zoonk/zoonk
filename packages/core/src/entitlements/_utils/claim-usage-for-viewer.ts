@@ -1,58 +1,23 @@
-import { type TransactionClient, type UsageKind, prisma, sql } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { type UsageKind, prisma, sql } from "@zoonk/db";
 import { type UsageDecision } from "../contract";
-import {
-  NEWCOMER_ACCOUNT_AGE_DAYS,
-  NEWCOMER_DAILY_SPEND_BUDGET_MICROS,
-  getEstimatedCostMicros,
-} from "../limits";
+import { getEstimatedCostMicros } from "../limits";
 import { holdCallTimeAgain } from "./call-time";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
-import { claimNewcomerSpend } from "./newcomer-spend-budget";
+import { claimGuestSpend } from "./guest-spend-budget";
 import { countUsage } from "./usage-counts";
 
 /** Namespaces the per-learner advisory lock so it never collides with other locks. */
 const USAGE_LOCK_NAMESPACE = 51_873;
 
 /**
- * Guests and free accounts younger than a day share the newcomers' daily budget: an account made
- * by a script is as unproven as a guest. Plus learners pay, so they never do.
- */
-async function isNewcomer({
-  now,
-  transaction,
-  viewer,
-}: {
-  now: Date;
-  transaction: TransactionClient;
-  viewer: EntitlementViewer;
-}): Promise<boolean> {
-  if (viewer.isGuest) {
-    return true;
-  }
-
-  if (viewer.tier !== "free") {
-    return false;
-  }
-
-  const user = await transaction.user.findUnique({
-    select: { createdAt: true },
-    where: { id: viewer.userId },
-  });
-
-  return Boolean(
-    user && now.getTime() - user.createdAt.getTime() < NEWCOMER_ACCOUNT_AGE_DAYS * MS_PER_DAY,
-  );
-}
-
-/**
  * Counts and records one use in a transaction that holds a per-learner lock, so two tabs starting
  * lessons at once can't both take the last one. A target the learner already used returns allowed
- * without counting again: restarting a lesson or retrying a request is free. A newcomer's use that
- * costs AI also takes its estimated cost from the newcomers' shared daily budget. A live call's
- * connection (`seconds`) holds up to that much of the plan's call time (today's and this month's)
- * and returns what it holds; connecting the same call again holds its length again
+ * without counting again: restarting a lesson or retrying a request is free. A guest's use that
+ * costs AI also takes its estimated cost from the daily budget all guests share, and once that's
+ * spent asks the guest to create a free account (`signUpRequired`). A live call's connection
+ * (`seconds`) holds up to that much of the plan's call time (today's and this month's) and
+ * returns what it holds; connecting the same call again holds its length again
  * (`holdCallTimeAgain`).
  */
 export async function claimUsageForViewer({
@@ -108,18 +73,10 @@ export async function claimUsageForViewer({
       return decision;
     }
 
-    const takesNewcomerBudget = costMicros > 0 && (await isNewcomer({ now, transaction, viewer }));
+    const takesGuestBudget = viewer.isGuest && costMicros > 0;
 
-    if (takesNewcomerBudget && !(await claimNewcomerSpend({ costMicros, now, transaction }))) {
-      return {
-        limit: {
-          limit: NEWCOMER_DAILY_SPEND_BUDGET_MICROS,
-          period: "day",
-          resource: "newcomerSpend",
-          tier: viewer.tier,
-        },
-        status: "limitReached",
-      };
+    if (takesGuestBudget && !(await claimGuestSpend({ costMicros, now, transaction }))) {
+      return { status: "signUpRequired" };
     }
 
     await transaction.usageRecord.create({

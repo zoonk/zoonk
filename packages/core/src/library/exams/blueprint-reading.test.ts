@@ -1,30 +1,20 @@
-import { EXAM_BLUEPRINT_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint-version";
 import { describe, expect, it } from "vitest";
-import { isNoticeReadAgain } from "./blueprint-reading";
+import { isCurrentEdition } from "./blueprint-reading";
 
 const NOW = new Date("2026-10-06T12:00:00.000Z");
 
-describe(isNoticeReadAgain, () => {
-  it("reads an edition still ahead again when older instructions read it", () => {
+describe(isCurrentEdition, () => {
+  it("keeps an edition current through its exam day, and leaves a passed one to the search for the next notice", () => {
     const ahead = new Date("2027-01-17T00:00:00.000Z");
+    const today = new Date("2026-10-06T00:00:00.000Z");
+    const yesterday = new Date("2026-10-05T00:00:00.000Z");
 
-    expect(
-      isNoticeReadAgain({ blueprint: { examDate: ahead, promptVersion: "older" }, now: NOW }),
-    ).toBe(true);
-
-    expect(
-      isNoticeReadAgain({
-        blueprint: { examDate: ahead, promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION },
-        now: NOW,
-      }),
-    ).toBe(false);
+    expect(isCurrentEdition({ blueprint: { examDate: ahead }, now: NOW })).toBe(true);
+    expect(isCurrentEdition({ blueprint: { examDate: today }, now: NOW })).toBe(true);
+    expect(isCurrentEdition({ blueprint: { examDate: yesterday }, now: NOW })).toBe(false);
   });
 
-  it("leaves a passed edition to the search for the next notice", () => {
-    const passed = new Date("2026-08-02T00:00:00.000Z");
-
-    expect(
-      isNoticeReadAgain({ blueprint: { examDate: passed, promptVersion: "older" }, now: NOW }),
-    ).toBe(false);
+  it("keeps an edition without an exam date current", () => {
+    expect(isCurrentEdition({ blueprint: { examDate: null }, now: NOW })).toBe(true);
   });
 });

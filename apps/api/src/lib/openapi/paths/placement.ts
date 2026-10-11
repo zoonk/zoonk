@@ -4,6 +4,7 @@ import {
   placementQuerySchema,
 } from "@zoonk/core/learner/placement/contract";
 import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
 import { z } from "zod";
 import {
   chapterTestOutResponseSchema,
@@ -15,7 +16,7 @@ import {
 } from "../schemas/learner";
 import { goalChapterPathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
 import {
-  forbiddenResponse,
+  guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
   tooManyRequestsResponse,
@@ -31,6 +32,12 @@ const learnerErrors = {
   "404": notFoundResponse,
 } as const;
 
+/** Past a free exam plan's first week a test-out comes with Plus (`ChapterView.testOut`). */
+const testOutPlusRequired = {
+  ...paymentRequiredResponse,
+  description: `A free exam plan past its first week takes the test-out with Plus only (\`testOut.plusRequired\` on the chapter): nothing is written, graded or skipped. Error code: ${LESSON_PLAYER_ERROR_CODES.plusRequired}.`,
+} as const;
+
 export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out": {
     get: {
@@ -44,6 +51,7 @@ export const placementPaths = {
           content: { "application/json": { schema: chapterTestOutResponseSchema } },
           description: "The chapter's test-out questions",
         },
+        "402": testOutPlusRequired,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get a chapter test-out",
@@ -64,6 +72,7 @@ export const placementPaths = {
           content: { "application/json": { schema: chapterTestOutResultSchema } },
           description: "The test-out result",
         },
+        "402": testOutPlusRequired,
         "422": unprocessableEntityResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -74,7 +83,7 @@ export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out/generations": {
     post: {
       description:
-        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes a few multiple-choice questions for each skill without one (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes a few multiple-choice questions for each skill without one (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. Past a free exam plan's first week it answers 402 `PLUS_REQUIRED` and nothing is written.",
       operationId: "createChapterTestOutGeneration",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {
@@ -92,8 +101,11 @@ export const placementPaths = {
               .meta({ description: "The run's status URL: GET /generations/{generationId}" }),
           }),
         },
-        "402": paymentRequiredResponse,
-        "403": forbiddenResponse,
+        "402": {
+          ...paymentRequiredResponse,
+          description: `The learner's AI help allowance is spent, or a free exam plan past its first week takes the test-out with Plus only (${LESSON_PLAYER_ERROR_CODES.plusRequired})`,
+        },
+        "403": guestRefusalResponse,
         "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,

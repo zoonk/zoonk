@@ -13,7 +13,7 @@ export type ActivityFormulaExample = { inputs: Record<string, number>; output: n
  */
 export type ActivityExpectedAnswer =
   | { kind: "assignment"; pairs: Record<string, string> }
-  | { kind: "curveShift"; curve: "demand" | "supply"; direction: "left" | "right" }
+  | { kind: "curveShift"; curve: string; direction: "down" | "left" | "right" | "up" }
   | { kind: "formula"; examples: ActivityFormulaExample[]; tolerance: ActivityTolerance }
   | { kind: "grid"; cells: string[] }
   | { kind: "links"; links: ActivityLink[] }
@@ -24,5 +24,4 @@ export type ActivityExpectedAnswer =
   | { kind: "regex"; shouldMatch: string[]; shouldNotMatch: string[] }
   | { kind: "rhythm"; tapTimesMs: number[]; toleranceMs: number }
   | { kind: "rows"; columns: string[]; orderMatters: boolean; rows: ActivityCell[][] }
-  | { kind: "selection"; ids: string[] }
-  | { kind: "text"; accepted: string[] };
+  | { kind: "selection"; ids: string[] };

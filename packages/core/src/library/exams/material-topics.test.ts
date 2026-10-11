@@ -219,7 +219,12 @@ describe(toMaterialContent, () => {
     const citation = { passage: PEDRO_ANNOUNCEMENT, sourceId: "notes" };
 
     expect(cleaned.structure.formats).toStrictEqual([
-      { citation, description: "Completar a tabela das organelas", kind: "shortAnswer", options: null },
+      {
+        citation,
+        description: "Completar a tabela das organelas",
+        kind: "shortAnswer",
+        options: null,
+      },
       { citation, description: "Dissertativa sobre osmose", kind: "essay", options: null },
     ]);
 
@@ -305,8 +310,8 @@ describe(toMaterialContent, () => {
     ]);
   });
 
-  // Pedro's teacher announced an essay on osmosis, which his notes cover under "Membrana
-  // plasmática": at 30 minutes a day his plan cut that topic first.
+  // Pedro's teacher announced an essay on osmosis, which his notes cover under "Plasma
+  // membrane": at 30 minutes a day his plan cut that topic first.
   describe("the topics the test announces a question about", () => {
     const NOTES = [
       "BIOLOGIA - 1º ANO B",

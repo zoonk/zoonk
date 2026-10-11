@@ -37,7 +37,7 @@ const schema = z.object({
 
 type FindChoiceOptionsInput = {
   board: string | null;
-  /** The exam and, when it has phases or roles, the learner's ("OAB…, 1ª fase"). */
+  /** The exam and, when it has phases or roles, the learner's ("OAB…, first phase"). */
   exam: string;
   /** The learner-local date, YYYY-MM-DD. */
   today: string;
@@ -61,7 +61,7 @@ ${formatUntrustedInput({ BOARD: input.board ?? "", EXAM: input.exam })}
 /**
  * Looks up how many options each of an exam's multiple-choice questions had in its latest
  * editions, for a notice that says its questions are multiple choice without saying how many
- * options they have (the Enem's page says "180 questões objetivas"): the questions the app writes
+ * options they have (the Enem's page says "180 objective questions"): the questions the app writes
  * and picks for the exam have that many. Only a whole number on a page a search returned is kept;
  * anything else reads as not known. Fallback models aren't used: the search tool is tied to the
  * model it's measured with.
@@ -89,6 +89,7 @@ export async function findChoiceOptions({
         stopWhen: isStepCount(MAX_STEPS),
         tools: buildResearchSearchTools({ model, searchTool }),
       }),
+    libraryInput: true,
     promptVersion: `search:${searchTool}`,
     systemPrompt,
     task: "find-choice-options",

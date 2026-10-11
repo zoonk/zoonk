@@ -61,6 +61,57 @@ export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+(?<punctuation>[!?.,;:!?。、！？؟])/gu, "$<punctuation>");
 }
 
+/**
+ * Takes em dashes out of generated copy, which the app never shows: one that opens a line (a
+ * dialogue or list mark) or closes a clause before punctuation goes away, any other becomes a
+ * comma ("statement of defense — the written defense" reads "statement of defense, the written defense"). En dashes
+ * stay: they join ranges ("B1–B2").
+ */
+export function replaceEmDashes(text: string): string {
+  if (!text.includes("—")) {
+    return text;
+  }
+
+  return text
+    .replaceAll(/^[ \t]*—[ \t]*/gmu, "")
+    .replaceAll(/[ \t]*—[ \t]*(?=[,.;:!?)]|$)/gmu, "")
+    .replaceAll(/[ \t]*—[ \t]*/gu, ", ");
+}
+
+/** What a dash still waiting for the text after it could change: trailing spaces, tabs and dashes. */
+const OPEN_DASH_TAIL = /[ \t—]*$/u;
+
+/**
+ * `replaceEmDashes` for text that arrives in pieces, such as a streamed answer: `push` returns a
+ * piece's text as soon as nothing after it can change it, holding back a trailing dash and the
+ * spaces around it until the next piece says what follows, and `end` returns what's left. Joined,
+ * the returned pieces read as `replaceEmDashes` reads the whole text.
+ */
+export function createEmDashReplacer(): { end: () => string; push: (piece: string) => string } {
+  let held = "";
+  let atLineStart = true;
+
+  // A piece that continues a line doesn't open one: a mark in front keeps a dash there mid-line.
+  const replace = (text: string) => {
+    const replaced = atLineStart ? replaceEmDashes(text) : replaceEmDashes(`x${text}`).slice(1);
+    atLineStart = text ? text.endsWith("\n") : atLineStart;
+    return replaced;
+  };
+
+  return {
+    end: () => {
+      const rest = replace(held);
+      held = "";
+      return rest;
+    },
+    push: (piece) => {
+      const text = held + piece;
+      held = OPEN_DASH_TAIL.exec(text)?.[0] ?? "";
+      return replace(text.slice(0, text.length - held.length));
+    },
+  };
+}
+
 export function stripPunctuation(text: string): string {
   return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
 }

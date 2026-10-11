@@ -10,9 +10,15 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getChapterView } from "./get-chapter-view";
 
@@ -116,6 +122,91 @@ describe(getChapterView, () => {
 
     expect(view?.lessons[1]?.skillIds).toStrictEqual([skills[3]?.id]);
     expect(view?.counts).toMatchObject({ learning: 1, new: 1, total: 2 });
+  });
+
+  // Missed days set a lesson of the first chapter aside: it isn't done, and neither is its chapter.
+  it("never marks a lesson set aside, or its chapter, as done", async () => {
+    const { chapters, lessons } = await signedInCourseGoal({
+      statuses: ["done", "skipped", "todo", "todo"],
+    });
+
+    const result = await getChapterView({ chapterId: chapters[0]?.id ?? "" });
+    const view = result.status === "ready" ? result.chapter : null;
+
+    expect(view?.chapter.state).toBe("upcoming");
+
+    // Not done, it's the chapter's lesson to open, as in a chapter the plan hasn't reached.
+    expect(view?.lessons.map((lesson) => [lesson.lessonId, lesson.state])).toStrictEqual([
+      [lessons[0]?.id, "done"],
+      [lessons[1]?.id, "next"],
+    ]);
+  });
+
+  // Carla's chapter page marked "Enunciado" next while Today opened "Escopo".
+  // A guest's course page listed "Quando o lucro fica na empresa" third while its chapter page
+  // said Chapter 2: a plan that follows one course numbers its chapters as the course does.
+  it("numbers a course plan's chapter as the course lists it, whatever order the plan teaches", async () => {
+    const { chapters, items } = await signedInCourseGoal();
+
+    // The plan teaches the second chapter first (positions are unique: moved out of the way first).
+    await Promise.all(
+      items.map((item, index) =>
+        prisma.planItem.update({ data: { position: 100 + index }, where: { id: item.id } }),
+      ),
+    );
+
+    await Promise.all(
+      items.map((item, index) =>
+        prisma.planItem.update({ data: { position: (index + 2) % 4 }, where: { id: item.id } }),
+      ),
+    );
+
+    const [first, second] = await Promise.all(
+      chapters.map((chapter) => getChapterView({ chapterId: chapter.id })),
+    );
+
+    expect(first?.status === "ready" ? first.chapter.chapter.position : null).toBe(1);
+    expect(second?.status === "ready" ? second.chapter.chapter.position : null).toBe(2);
+  });
+
+  it("marks next the lesson today's session opens next, then the plan's next one", async () => {
+    const { chapters, goal, items, lessons, user } = await signedInCourseGoal();
+    const chapterId = chapters[0]?.id ?? "";
+
+    const nextOf = async () => {
+      const result = await getChapterView({ chapterId });
+      const view = result.status === "ready" ? result.chapter : null;
+      return view?.lessons.find((lesson) => lesson.state === "next")?.lessonId;
+    };
+
+    // The plan teaches the chapter's second lesson first (positions are unique: one at a time).
+    await prisma.planItem.update({ data: { position: 10 }, where: { id: items[0]?.id } });
+    await prisma.planItem.update({ data: { position: 0 }, where: { id: items[1]?.id } });
+
+    await expect(nextOf()).resolves.toBe(lessons[1]?.id);
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
+      userId: user.id,
+    });
+
+    await Promise.all([
+      studySessionBlockFixture({
+        lessonId: lessons[1]?.id,
+        position: 0,
+        sessionId: session.id,
+        status: "pending",
+      }),
+      studySessionBlockFixture({
+        lessonId: lessons[0]?.id,
+        position: 1,
+        sessionId: session.id,
+        status: "active",
+      }),
+    ]);
+
+    await expect(nextOf()).resolves.toBe(lessons[0]?.id);
   });
 
   it("numbers a chapter in its subject, as the subject's page lists it", async () => {

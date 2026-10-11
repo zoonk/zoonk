@@ -24,8 +24,8 @@ function structureScoredBy(
 }
 
 describe(getTrueFalseLabels, () => {
-  it("judges statements right or wrong when a wrong answer cancels a right one, as in Cebraspe", () => {
-    expect(getTrueFalseLabels(structureScoredBy("wrongCancelsRight"))).toBe("rightWrong");
+  it("takes the words from the notice, never from a penalty: JEE's statements stay true or false", () => {
+    expect(getTrueFalseLabels(structureScoredBy("wrongCancelsRight"))).toBe("trueFalse");
   });
 
   it("keeps true or false for exams scored another way, like ENEM's item response theory", () => {
@@ -38,7 +38,7 @@ describe(getTrueFalseLabels, () => {
     expect(getTrueFalseLabels(null)).toBe("trueFalse");
   });
 
-  // Rafaela's Câmara placement asked "Verdadeiro ou falso" until the notice's blueprint linked.
+  // Rafaela's Câmara placement asked "True or false" until the notice's blueprint linked.
   it("judges statements right or wrong when the notice names its answers so, scoring unknown", () => {
     const format = {
       citation: {

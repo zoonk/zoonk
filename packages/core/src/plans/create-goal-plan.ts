@@ -1,7 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
+import { type Goal, type PlanSetupTask, prisma } from "@zoonk/db";
 import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import {
   getExamEditionDays,
@@ -9,22 +7,29 @@ import {
   readExamMonth,
   readExamYear,
 } from "../exams/_utils/exam-edition-days";
-import { applyPlacementToNewPlan } from "../learner/placement/_utils/apply-placement";
+import { findMeantExamDay, getKeptMonthStart } from "../exams/kept-month";
 import { examEditionSchema } from "../library/exams/blueprint-contract";
-import { fitPlanToRoutine } from "./_utils/fit-plan-to-routine";
 import { loadPlanContext } from "./_utils/plan-context";
-import { commitPlan, computePlan, isPlanUnchanged, withPlanRetry } from "./_utils/replan";
+import { isPlanUnchanged } from "./_utils/plan-unchanged";
+import { startOnRecommendedBases } from "./_utils/recommended-bases";
+import { type ComputedPlan, commitPlan, computePlan, withPlanRetry } from "./_utils/replan";
 import { trackPlanCreated } from "./_utils/track-plan-created";
-import { proposeNoticeChange } from "./notice-plan-change";
-import { toIsoDate } from "./planner/plan-calendar";
+import { setUpPlanNow } from "./plan-setup";
+import { addDays, fromIsoDate, toIsoDate } from "./planner/plan-calendar";
 import { type PlanGraph, planGraphSchema } from "./planner/plan-state";
 
 const MINUTES_PER_HOUR = 60;
 
 type Provenance = { generatedAt: Date; model: string; promptVersion: string; runId: string };
 
-/** `unchanged`: the plan was already this one, so nothing was written. */
-export type GoalPlanCreation = { status: "created" | "notFound" | "unchanged" };
+/**
+ * `unchanged`: the plan was already this one, so nothing was written. `setupTasks`: what the new
+ * plan still owes (see `runPlanSetupTask`), in the order they run.
+ */
+export type GoalPlanCreation = {
+  setupTasks: PlanSetupTask[];
+  status: "created" | "notFound" | "unchanged";
+};
 
 /** Skills the graph names that aren't in the Library can't be planned; they're left out. */
 async function keepKnownSkills(graph: PlanGraph): Promise<PlanGraph> {
@@ -44,15 +49,13 @@ async function keepKnownSkills(graph: PlanGraph): Promise<PlanGraph> {
  */
 type ExamTarget = { asksNotice: boolean; noticeDate: string | null; targetDate: string | null };
 
-const MONTH_LENGTH = "YYYY-MM".length;
-
 /**
  * An exam goal without a date takes its exam's next day from the stored notice, so the plan
  * counts down to the real day, and remembers it as the notice's (`noticeDate`). The edition is the
  * year the learner named, or the notice's own; a year without its notice yet, or the next edition
  * after a past one, has estimated days, and the plan counts down to the estimated day itself:
  * every screen shows that one date, marked as an estimate. Without a notice day, the month the
- * learner named ("em março") is the date: its first day, kept the same way, so a notice's day
+ * learner named ("in March") is the date: its first day, kept the same way, so a notice's day
  * replaces it. A notice day in another month than the one they named never replaces it silently:
  * the plan keeps their month as their own date, and the notice's day waits for their answer (see
  * `proposeNoticeChange`), since they may mean a later sitting. A later notice day arrives as a
@@ -81,23 +84,29 @@ async function getExamTarget({
     return kept;
   }
 
-  const named = getNamedMonthStart({ details: goal.details, from: today });
-  const noticeDay = await findNoticeNextDay({ goal, today });
+  const noticeDay = await findNoticeNextDay({ goal, goalDate, today });
+  const keptMonth = getKeptMonthStart({ details: goal.details, noticeDay, today });
 
-  if (named && noticeDay && named.slice(0, MONTH_LENGTH) !== noticeDay.slice(0, MONTH_LENGTH)) {
-    return { asksNotice: true, noticeDate: null, targetDate: named };
+  if (keptMonth) {
+    return { asksNotice: true, noticeDate: null, targetDate: keptMonth };
   }
 
-  const next = noticeDay ?? named;
+  const next = noticeDay ?? getNamedMonthStart({ details: goal.details, from: today });
   return next ? { asksNotice: false, noticeDate: next, targetDate: next } : kept;
 }
 
-/** The exam's next day after `today` in its stored notice; null without one. */
+/**
+ * The exam's next day after `today` in its stored notice, of the sitting the learner means (see
+ * `findMeantExamDay`): the one of the date the plan took from the notice (`goalDate`), else of the
+ * month they named, else the next one. Null without one.
+ */
 async function findNoticeNextDay({
   goal,
+  goalDate,
   today,
 }: {
   goal: Goal;
+  goalDate: string | null;
   today: string;
 }): Promise<string | null> {
   if (!goal.examBlueprintId) {
@@ -116,37 +125,27 @@ async function findNoticeNextDay({
     from: today,
   });
 
-  return days.find((day) => day.date > today)?.date ?? null;
-}
-
-/** A plan still works without placement's test-outs, so a failure only logs. */
-async function placeNewPlan(goal: Goal): Promise<void> {
-  const { error } = await safeAsync(() => applyPlacementToNewPlan(goal));
-
-  if (error) {
-    logError("[createGoalPlan] Could not apply placement to the new plan:", error);
-  }
-}
-
-/** A plan still works without fitting it to the routine, so a failed model call only logs. */
-async function fitToRoutine(goalId: string): Promise<void> {
-  const { error } = await safeAsync(() => fitPlanToRoutine(goalId));
-
-  if (error) {
-    logError("[createGoalPlan] Could not fit the plan to the learner's routine:", error);
-  }
+  const tomorrow = toIsoDate(addDays(fromIsoDate(today), 1));
+  return findMeantExamDay({ days, details: goal.details, from: tomorrow, goalDate })?.date ?? null;
 }
 
 /**
- * The notice's day in another month than the learner named waits on Today for their answer
- * (Apply or "Keep mine"). The plan works with their month meanwhile, so a failure only logs.
+ * A new plan planned again once it checked off the lessons the learner finished before it existed
+ * (see `savePlanItems`): the chapter of a guest's lesson is in progress, so its next lesson comes
+ * first (R10), where the first run, which didn't know of it, put two other chapters first. Null
+ * when nothing was finished before.
  */
-async function askAboutNoticeDay(goalId: string): Promise<void> {
-  const { error } = await safeAsync(() => proposeNoticeChange({ goalId }));
+async function planAroundFinishedLessons(goal: Goal): Promise<ComputedPlan | null> {
+  const context = await loadPlanContext({ goal });
 
-  if (error) {
-    logError("[createGoalPlan] Could not propose the notice's exam day:", error);
+  if (!context?.items.some((item) => item.kind === "lesson" && item.status === "done")) {
+    return null;
   }
+
+  const computed = await computePlan({ context, mode: "forced" });
+  await commitPlan({ change: null, computed, context });
+
+  return computed;
 }
 
 /**
@@ -155,10 +154,13 @@ async function askAboutNoticeDay(goalId: string): Promise<void> {
  * with dates at the learner's time; skills not outlined yet stand as one item each until their
  * lessons exist. Running it again replaces the graph and re-plans from today, keeping past work;
  * a run that changes nothing writes nothing (`unchanged`).
- * The first plan of a goal sends "Plan Created", tests out what placement already settled when the
- * learner ended it before the plan existed, and is fitted to the routine memory holds (days off,
- * lighter days, trips), as a change the learner sees with an undo. When it keeps the month the
- * learner named over a notice day in another month, the notice's day waits on Today.
+ * The first plan of a goal sends "Plan Created" and owes its setup, each task once (see
+ * `runPlanSetupTask`): testing out what placement already settled when the learner ended it before
+ * the plan existed, fitting it to the routine memory holds (days off, lighter days, trips) as a
+ * change the learner sees with an undo, and, when it keeps the month the learner named over a
+ * notice day in another month, the notice's day waiting on Today. A request sets the plan up
+ * before it returns (`setup: "now"`), leaving a task that failed owed for the goal's next run; a
+ * workflow runs each task as a step of its own (`setup: "steps"`). Returns the tasks still owed.
  */
 export async function createGoalPlan({
   followNotice = false,
@@ -167,6 +169,7 @@ export async function createGoalPlan({
   graph,
   platform,
   provenance = null,
+  setup = "now",
 }: {
   /**
    * The exam's notice was read before the learner saw the plan: a date the plan took from the
@@ -180,6 +183,8 @@ export async function createGoalPlan({
   /** The client that started the work, for "Plan Created"; omitted, it's read from the request. */
   platform?: AnalyticsPlatform | null;
   provenance?: Provenance | null;
+  /** A new plan's setup: run in this call, or left for the caller's steps (`runPlanSetupTask`). */
+  setup?: "now" | "steps";
 }): Promise<GoalPlanCreation> {
   const parsed = planGraphSchema.parse(graph);
 
@@ -214,45 +219,55 @@ export async function createGoalPlan({
       settings: { ...context.state.settings, noticeDate: target.noticeDate },
     };
 
-    const computed = await computePlan({ context, mode: "forced", state });
+    const planned = await computePlan({ context, mode: "forced", state });
+
+    // A new plan starts on the recommendation for its bases; a rebuilt one keeps the learner's.
+    const computed = isFirst
+      ? await startOnRecommendedBases({ computed: planned, context })
+      : planned;
 
     if (!isFirst && isPlanUnchanged({ computed, context })) {
       return { status: "unchanged" as const };
     }
 
+    // A new plan owes its setup from the moment it's saved. A notice read later proposes its day
+    // when that reading lands (the research workflow's reconciliation).
+    const setupTasks: PlanSetupTask[] = isFirst
+      ? ["placement", "routine", ...(target.asksNotice ? (["notice"] as const) : [])]
+      : [];
+
+    const plan = { ...provenance, ...(isFirst ? { setupTasks } : {}) };
+
     await commitPlan({
       change: null,
       computed,
       context,
-      extraWrites: provenance
-        ? (tx) => tx.plan.update({ data: provenance, where: { id: context.plan.id } })
-        : undefined,
+      extraWrites:
+        Object.keys(plan).length > 0
+          ? (tx) => tx.plan.update({ data: plan, where: { id: context.plan.id } })
+          : undefined,
     });
 
-    return { asksNotice: target.asksNotice, computed, goal, isFirst, status: "created" as const };
+    const settled = isFirst ? await planAroundFinishedLessons(goal) : null;
+
+    return { computed: settled ?? computed, goal, isFirst, setupTasks, status: "created" as const };
   });
 
-  if (outcome.status === "created" && outcome.isFirst) {
-    // Before the routine's fit: both re-plan, and the fit then starts from what's left to study.
-    await placeNewPlan(outcome.goal);
-
-    await Promise.all([
-      trackPlanCreated({
-        estimateHours: outcome.computed.built.estimate.totalMinutes / MINUTES_PER_HOUR,
-        fromPlanLink,
-        goal: outcome.goal,
-        phases: outcome.computed.built.phases.length,
-        platform,
-      }),
-      fitToRoutine(goalId),
-    ]);
-
-    // Last, so its effect reads the plan the learner gets. A notice read later proposes its day
-    // when that reading lands (the research workflow's reconciliation).
-    if (outcome.asksNotice) {
-      await askAboutNoticeDay(goalId);
-    }
+  if (outcome.status !== "created") {
+    return { setupTasks: [], status: outcome.status };
   }
 
-  return { status: outcome.status };
+  if (outcome.isFirst) {
+    await trackPlanCreated({
+      estimateHours: outcome.computed.built.estimate.totalMinutes / MINUTES_PER_HOUR,
+      fromPlanLink,
+      goal: outcome.goal,
+      phases: outcome.computed.built.phases.length,
+      platform,
+    });
+  }
+
+  const setupTasks = setup === "now" ? await setUpPlanNow(goalId) : outcome.setupTasks;
+
+  return { setupTasks, status: "created" };
 }

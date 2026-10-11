@@ -1,11 +1,15 @@
 import "server-only";
 import { type MasteryState, type Milestone, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { loadAnswersReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { pickCeremony } from "../../milestones/milestone-rules";
+import { addDays } from "../../plans/planner/plan-calendar";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay } from "../capsules";
+import { isExamTomorrow } from "./exam-tomorrow";
 import { getLessonComesBack } from "./lesson-block";
 import { loadPlanLessons } from "./load-plan-lessons";
+import { loadExamPrepAccess } from "./plus-only-lessons";
 import { type SessionAnswer, getDueItemIds } from "./session-answers";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -32,9 +36,7 @@ export async function loadComesBack({
   timeZone: string;
   userId: string;
 }): Promise<{ date: Date; skills: number }[]> {
-  const skillIds = [
-    ...new Set(answers.flatMap((answer) => (answer.skillId ? [answer.skillId] : []))),
-  ];
+  const skillIds = await loadAnswersReviewSkillIds({ answers, userId });
 
   const rows = await prisma.learnerSkill.findMany({
     select: { due: true },
@@ -128,16 +130,28 @@ export async function loadCeremony(userId: string): Promise<Milestone | null> {
 
 /**
  * "Tomorrow: Linear functions": the next lesson the plan has for the goal, by the title Today and
- * the session show for it (a chapter's next lesson, not the chapter's outline title).
+ * the session show for it (a chapter's next lesson, not the chapter's outline title). None the day
+ * before the goal's exam: tomorrow is the exam. None either when tomorrow is past a free exam
+ * plan's first week, whose new lessons come with Plus.
  */
 export async function loadTomorrow({
-  goalId,
+  session,
   userId,
 }: {
-  goalId: string | null;
+  session: Pick<StudySessionRow, "goal" | "goalId" | "localDate">;
   userId: string;
 }): Promise<{ title: string } | null> {
-  if (!goalId) {
+  const { goalId } = session;
+
+  if (!goalId || isExamTomorrow({ day: session.localDate, goal: session.goal })) {
+    return null;
+  }
+
+  const access = session.goal
+    ? await loadExamPrepAccess({ goal: session.goal, today: addDays(session.localDate, 1) })
+    : null;
+
+  if (access?.trialEnded) {
     return null;
   }
 

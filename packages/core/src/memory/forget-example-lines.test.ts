@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
@@ -23,9 +22,8 @@ vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
  * memory off, lets go of the learner's lines, and never anyone else's.
  */
 
-async function useAdult() {
+async function useLearner() {
   const user = await userFixture();
-  await learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: user.id });
   mockSession(user.id);
   return user;
 }
@@ -57,7 +55,7 @@ function countLines(userId: string) {
 
 describe("example lines written from memory", () => {
   it("go when the learner deletes a fact, and other learners keep theirs", async () => {
-    const [other, learner] = await Promise.all([userFixture(), useAdult()]);
+    const [other, learner] = await Promise.all([userFixture(), useLearner()]);
     const fact = await memoryFactFixture({ statement: "Works at a pharmacy", userId: learner.id });
 
     await Promise.all([writeLine(learner.id), writeLine(learner.id), writeLine(other.id)]);
@@ -69,7 +67,7 @@ describe("example lines written from memory", () => {
   });
 
   it("go when the learner corrects what a fact says, but not when they only move it", async () => {
-    const learner = await useAdult();
+    const learner = await useLearner();
     const fact = await memoryFactFixture({ statement: "Works at a pharmacy", userId: learner.id });
     await writeLine(learner.id);
 
@@ -81,7 +79,7 @@ describe("example lines written from memory", () => {
   });
 
   it("go when a newer fact replaces one and when an added fact is taken back", async () => {
-    const learner = await useAdult();
+    const learner = await useLearner();
 
     const [previous, added] = await Promise.all([
       memoryFactFixture({ statement: "Wants Medicine", userId: learner.id }),
@@ -114,7 +112,7 @@ describe("example lines written from memory", () => {
   });
 
   it("go when memory is turned off, and turning it on writes nothing back", async () => {
-    const learner = await useAdult();
+    const learner = await useLearner();
     await writeLine(learner.id);
 
     await updateMemorySettings({ enabled: true });

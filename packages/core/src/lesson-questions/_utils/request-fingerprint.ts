@@ -61,7 +61,7 @@ function getContextFingerprint(context: LessonQuestionContextInput): unknown[] {
 /**
  * Idempotency compares only the normalized client request. Authoritative curriculum snapshots may
  * change after the first commit, but replaying that request must continue to resolve its original turn.
- * A suggested question adds a marker, so requests without one keep their fingerprints.
+ * A tapped suggestion adds its name, so requests without one keep their fingerprints.
  */
 export function getLessonQuestionRequestFingerprint(
   input: Omit<CreateLessonQuestionInput, "requestId">,
@@ -70,31 +70,8 @@ export function getLessonQuestionRequestFingerprint(
     REQUEST_FINGERPRINT_VERSION,
     input.question,
     getContextFingerprint(input.context),
-    ...(input.suggested ? ["suggested"] : []),
+    ...(input.suggestion ? [input.suggestion] : []),
   ];
 
   return createHash("sha256").update(JSON.stringify(normalizedRequest)).digest("hex");
-}
-
-/**
- * Whether a question about a lesson screen was one of the tutor's suggestions, sent as offered.
- * The request said so when it created the question, and its stored fingerprint keeps that.
- */
-export function isSuggestedScreenQuestion(question: {
-  libraryStepId: string | null;
-  question: string;
-  requestFingerprint: string;
-  stepNumber: number | null;
-}): boolean {
-  if (!question.libraryStepId || !question.stepNumber) {
-    return false;
-  }
-
-  const suggestedFingerprint = getLessonQuestionRequestFingerprint({
-    context: { kind: "step", stepId: question.libraryStepId, stepNumber: question.stepNumber },
-    question: question.question,
-    suggested: true,
-  });
-
-  return question.requestFingerprint === suggestedFingerprint;
 }

@@ -1,8 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  libraryLessonFixture,
+  libraryLessonsFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture, skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getQuickLessonIdentityKey } from "../quick-lessons/quick-lesson-identity";
 import {
   getCandidateIds,
   mockDecision,
@@ -45,6 +49,26 @@ describe("lesson identity search", () => {
     ]);
 
     mockSearchTerms([`Introduction to the ${word}`]);
+    const decisionSpy = mockDecision(target.id);
+
+    await resolveLibraryIdentity({ request });
+
+    expect(getCandidateIds(decisionSpy)).toStrictEqual([target.id]);
+  });
+
+  it("never offers a skill's quick lesson as a lesson to reuse", async () => {
+    const word = uniqueWord();
+
+    const [request, target] = await Promise.all([
+      lessonRequest(),
+      libraryLessonFixture({ title: `Percent ${word}` }),
+      libraryLessonFixture({
+        identityKey: getQuickLessonIdentityKey({ ownerId: null, skillId: randomUUID() }),
+        title: `Quick lesson: Percent ${word}`,
+      }),
+    ]);
+
+    mockSearchTerms([word]);
     const decisionSpy = mockDecision(target.id);
 
     await resolveLibraryIdentity({ request });
@@ -108,5 +132,30 @@ describe("lesson identity search", () => {
 
     expect(candidateIds[0]).toBe(target.id);
     expect(candidateIds).toHaveLength(5);
+  });
+
+  // A whole core test run fills its database with fixture lessons and skills sharing words ("Test
+  // skill ..."), and the search for a lesson whose skill shares them took seconds per call.
+  it("searches a Library holding thousands of lessons and skills that share the request's words", async () => {
+    const word = uniqueWord();
+    const many = 3000;
+
+    await Promise.all([
+      skillsFixture(Array.from({ length: many }, (_, index) => `Percent ${word} ${index}`)),
+      libraryLessonsFixture(many),
+    ]);
+
+    const [skill, target] = await Promise.all([
+      skillFixture({ name: `Percent ${word}` }),
+      libraryLessonFixture({ title: `Introduction to the ${word}` }),
+    ]);
+
+    const request = { ...(await lessonRequest()), skills: [{ id: skill.id, name: skill.name }] };
+    mockSearchTerms([`Introduction to the ${word}`]);
+    const decisionSpy = mockDecision(target.id);
+
+    await resolveLibraryIdentity({ request });
+
+    expect(getCandidateIds(decisionSpy)).toStrictEqual([target.id]);
   });
 });

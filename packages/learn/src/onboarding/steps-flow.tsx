@@ -5,6 +5,7 @@ import {
   type OnboardingStep,
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type GenerationRun } from "../generation/generation-run";
@@ -16,7 +17,6 @@ import {
   type RevealedPlan,
 } from "./onboarding-actions";
 import {
-  OnboardingFrame,
   OnboardingProgressProvider,
   OnboardingTaskFrame,
   OnboardingTopBar,
@@ -38,8 +38,6 @@ const QUESTION_SCREENS = new Set<string>([
   "followUps",
   "level",
   "schedule",
-  "age",
-  "memory",
   "buddy",
 ]);
 
@@ -56,14 +54,7 @@ function getAnsweredScreens(view: OnboardingView): OnboardingStep[] {
   return Array.isArray(answered) ? answered.filter((step) => isQuestionScreen(step)) : [];
 }
 
-type FlowState = {
-  current: OnboardingStep;
-  history: OnboardingStep[];
-  /** A teen just gave their age: the guardian invite comes before the next step. */
-  inviting: boolean;
-  tooYoung: boolean;
-  view: OnboardingView;
-};
+type FlowState = { current: OnboardingStep; history: OnboardingStep[]; view: OnboardingView };
 
 function countQuestions(steps: OnboardingStep[]): number {
   return steps.filter((step) => !UNCOUNTED_STEPS.has(step)).length;
@@ -71,8 +62,8 @@ function countQuestions(steps: OnboardingStep[]): number {
 
 /**
  * The rest of onboarding for a new goal, at `/start/[goalId]`: only the questions its words
- * didn't answer, one per screen with Back and Start over, then the age, memory and buddy when the
- * profile needs them, placement while the first lessons are made, and the plan. A refresh comes
+ * didn't answer, one per screen with Back and Start over, then the buddy when the profile needs
+ * one, placement while the first lessons are made, and the plan. A refresh comes
  * back to the same screen, since each answer is saved. When the run building the plan in the
  * background couldn't start or failed, the questions say so with a way to start it again.
  */
@@ -107,31 +98,28 @@ export function StepsFlow({
   const [state, setState] = useState<FlowState>(() => ({
     current: onboarding.steps[0] ?? "plan",
     history: getAnsweredScreens(onboarding),
-    inviting: false,
-    tooYoung: false,
     view: onboarding,
   }));
 
-  const advance = (view: OnboardingView, inviting = false) =>
+  const advance = (view: OnboardingView) =>
     setState((previous) => ({
       ...previous,
       current: view.steps.find((step) => step !== previous.current) ?? "plan",
       history: [...previous.history, previous.current],
-      inviting,
       view,
     }));
 
   const answer = (input: OnboardingAnswerInput) =>
     startTransition(async () => {
       setFailed(false);
-      const outcome = await actions.answer({ goalId: state.view.goal.id, input });
 
-      if (outcome.status === "accountDeleted") {
-        setState((previous) => ({ ...previous, tooYoung: true }));
-        return;
-      }
+      // A save that fails, even by throwing, keeps the learner on this screen with what they
+      // picked: the error page's "Try again" started an IELTS learner's time question over.
+      const { data: outcome } = await safeAsync(() =>
+        actions.answer({ goalId: state.view.goal.id, input }),
+      );
 
-      if (outcome.status === "failed") {
+      if (!outcome || outcome.status === "failed") {
         setFailed(true);
         return;
       }
@@ -141,11 +129,7 @@ export function StepsFlow({
         navigation.replaceSteps(outcome.onboarding.goal.id);
       }
 
-      advance(
-        outcome.onboarding,
-        // Guardians are invited from an account; a guest is asked once they sign up.
-        input.question === "age" && outcome.onboarding.isMinor && !isGuest,
-      );
+      advance(outcome.onboarding);
     });
 
   const back = () =>
@@ -153,7 +137,6 @@ export function StepsFlow({
       ...previous,
       current: previous.history.at(-1) ?? previous.current,
       history: previous.history.slice(0, -1),
-      inviting: false,
     }));
 
   const startOver = () =>
@@ -165,27 +148,19 @@ export function StepsFlow({
   const isPlan = state.current === "plan";
   const remaining = countQuestions(state.view.steps.filter((step) => step !== state.current));
   const answeredCount = countQuestions(state.history);
-  const showDots = !UNCOUNTED_STEPS.has(state.current) && !state.tooYoung;
-
-  // A goal's questions are a task without the app's bar; saying goodbye to a learner too young for
-  // Zoonk shows the bar again, which is a visitor's once their account is gone.
-  const Frame = state.tooYoung ? OnboardingFrame : OnboardingTaskFrame;
+  const showDots = !UNCOUNTED_STEPS.has(state.current);
 
   const progress = showDots
     ? { current: answeredCount, total: answeredCount + 1 + remaining }
     : null;
 
   return (
-    <Frame>
+    <OnboardingTaskFrame>
       <OnboardingTopBar
-        end={
-          state.tooYoung || isPlan ? null : (
-            <StartOverButton disabled={isPending} onStartOver={startOver} />
-          )
-        }
+        end={isPlan ? null : <StartOverButton disabled={isPending} onStartOver={startOver} />}
         // The plan is built from the answers: changing them now happens in "Adjust", not by going
         // back through the questions.
-        onBack={state.history.length > 0 && !state.tooYoung && !isPlan ? back : undefined}
+        onBack={state.history.length > 0 && !isPlan ? back : undefined}
         progress={progress}
       />
 
@@ -200,20 +175,17 @@ export function StepsFlow({
       <OnboardingProgressProvider progress={progress}>
         <OnboardingStepScreen
           actions={actions}
-          inviting={state.inviting}
           isGuest={isGuest}
           onAnswer={answer}
-          onGuardianDone={() => setState((previous) => ({ ...previous, inviting: false }))}
           onPlacementDone={() => answer({ question: "placement" })}
           pending={isPending}
           plan={{ initialPlan: pagePlan, planActions }}
           routes={routes}
           run={generation}
           step={state.current}
-          tooYoung={state.tooYoung}
           view={state.view}
         />
       </OnboardingProgressProvider>
-    </Frame>
+    </OnboardingTaskFrame>
   );
 }

@@ -28,6 +28,10 @@ vi.mock("./live-conversation-speaking-mock-toefl.prompt.md", () =>
   readPrompt("live-conversation-speaking-mock-toefl.prompt.md"),
 );
 
+vi.mock("./live-conversation-exam-task.prompt.md", () =>
+  readPrompt("live-conversation-exam-task.prompt.md"),
+);
+
 const apartmentCall: LiveConversationInstructionsParams = {
   kind: "unit",
   learnerLanguage: "pt",
@@ -112,5 +116,68 @@ describe(buildLiveConversationInstructions, () => {
     });
 
     expect(instructions).toContain("Rent is $& and $1 a month.");
+  });
+
+  it("runs a DELE task as its examiner in Spain Spanish, with the card the candidate sees", () => {
+    const instructions = buildLiveConversationInstructions({
+      ...apartmentCall,
+      examTask: {
+        card: {
+          instructions: ["Hable durante 3 o 4 minutos."],
+          prompts: ["Limitar el uso del coche en el centro"],
+        },
+        exam: "dele",
+        task: {
+          brief: "The candidate weighs proposals, then talks with the examiner.",
+          name: "Tarea 1: Valorar propuestas y conversar sobre ellas",
+          role: "examiner",
+        },
+        title: "DELE B2",
+      },
+      kind: "examTask",
+      level: "B2",
+      minutes: 7,
+      targetLanguage: "es",
+    });
+
+    expect(instructions).not.toContain("{{");
+    expect(instructions).toContain("one task of the DELE B2 speaking paper");
+    expect(instructions).toContain("you stand in for a human examiner");
+    expect(instructions).toContain("Tarea 1: Valorar propuestas y conversar sobre ellas");
+    expect(instructions).toContain("- Limitar el uso del coche en el centro");
+    expect(instructions).toContain("listen without interrupting");
+    expect(instructions).toContain("Speak only Español de España");
+    expect(instructions).toContain("Keep the exam's standard wording at every level");
+    expect(instructions).not.toContain("You are the other candidate");
+    expect(instructions).toContain("about 7 minutes");
+  });
+
+  it("plays the other candidate of a paired Cambridge task in British English, at the exam's level", () => {
+    const instructions = buildLiveConversationInstructions({
+      ...apartmentCall,
+      examTask: {
+        card: {
+          instructions: ["Talk together for two minutes."],
+          prompts: ["having time to cook"],
+        },
+        exam: "cambridge",
+        task: {
+          brief: "A discussion question with five written prompts.",
+          name: "Part 3: Collaborative task",
+          role: "partner",
+        },
+        title: "B2 First",
+      },
+      kind: "examTask",
+      level: "B2",
+      minutes: 4,
+    });
+
+    expect(instructions).not.toContain("{{");
+    expect(instructions).toContain("you stand in for a human candidate");
+    expect(instructions).toContain("You are the other candidate, not the examiner");
+    expect(instructions).toContain("Speak only British English");
+    expect(instructions).toContain("another candidate sitting B2 First. The learner is at B2.");
+    expect(instructions).not.toContain("Run the task as the exam's examiner");
   });
 });

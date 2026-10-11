@@ -79,6 +79,11 @@ const blockPayloadSchema = z.object({
   reinforcement: z.boolean().default(false),
   skillIds: z.array(z.string()).default([]),
   title: z.string().nullable().default(null),
+  /**
+   * A review of the learner's weakest studied topics, none of them due: a day with nothing due and
+   * nothing else to study gets it instead of staying empty.
+   */
+  weakest: z.boolean().default(false),
 });
 
 export type BlockPayload = z.infer<typeof blockPayloadSchema>;

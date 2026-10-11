@@ -1,5 +1,6 @@
 import "server-only";
-import { type Item, prisma } from "@zoonk/db";
+import { type Item, prisma, sql } from "@zoonk/db";
+import { firstAnswersSql } from "@zoonk/db/anonymous-records";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 
@@ -86,9 +87,10 @@ function toRecalibration({
 }
 
 /**
- * Each learner's first answer per item, for items answered in the day before `now`: later answers come
- * after the lesson and reviews, so they would make every item look easier than it is. Essays are
- * scored on a rubric, not right or wrong, so they keep their generated difficulty.
+ * Each learner's first answer per item, deleted learners' included, for items answered in the day
+ * before `now`: later answers come after the lesson and reviews, so they would make every item look
+ * easier than it is. Essays are scored on a rubric, not right or wrong, so they keep their
+ * generated difficulty.
  */
 async function countFirstAnswers(now: Date) {
   const since = new Date(now.getTime() - MS_PER_DAY);
@@ -98,16 +100,10 @@ async function countFirstAnswers(now: Date) {
       SELECT DISTINCT a.item_id FROM attempts a
       JOIN items i ON i.id = a.item_id
       WHERE a.answered_at >= ${since} AND a.answered_at < ${now} AND i.format <> 'essay'
-    ),
-    first_answers AS (
-      SELECT DISTINCT ON (a.item_id, a.user_id) a.item_id, a.is_correct
-      FROM attempts a
-      JOIN recent r ON r.item_id = a.item_id
-      ORDER BY a.item_id, a.user_id, a.answered_at
     )
     SELECT item_id AS "itemId", count(*)::int AS answers,
       count(*) FILTER (WHERE is_correct)::int AS correct
-    FROM first_answers
+    FROM ${firstAnswersSql(sql`SELECT item_id FROM recent`)} first_answers
     GROUP BY item_id
     HAVING count(*) >= ${MIN_LEARNERS}`;
 }

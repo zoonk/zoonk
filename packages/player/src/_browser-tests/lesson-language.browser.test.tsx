@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
-import { languageStep } from "../_test-utils/language-steps";
-import { teachingStep } from "../_test-utils/lesson-steps";
 import {
   acceptedAnswerCheck,
   buildAdapters,
-  buildLesson,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { languageStep, teachingStep } from "../preview/preview-steps";
 
 /**
  * A language lesson's own screens: sentences built from a word bank (reading builds the sentence,

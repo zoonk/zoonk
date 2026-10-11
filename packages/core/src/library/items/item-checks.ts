@@ -1,9 +1,22 @@
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
-import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import {
+  type GeneratedItem,
+  type NumericEntry,
+  type OptionSelect,
+} from "@zoonk/ai/tasks/v2/items/schemas";
 import { normalizeString } from "@zoonk/utils/string";
+import { findEmDashes, findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
 import { findOptionPositionReferences, stripOptionLabels } from "../_utils/answer-options";
+import {
+  findAnswerKeyProblems,
+  findEquivalentOptions,
+  findOptionDataProblems,
+} from "../_utils/option-checks";
 import { getVisualProblems } from "../quality/_utils/visual-references";
+import { ANY_NUMBER } from "./_utils/numeric-entry";
+import { isOwnWording } from "./item-content";
 import { checkMathProblem } from "./item-math-checks";
+import { getItemWriting } from "./item-writing";
 import { optionsShowWorkedValues } from "./option-leaks";
 
 type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
@@ -17,23 +30,60 @@ function hasDuplicates(values: readonly string[], normalize = normalizeString): 
   return new Set(values.map((value) => normalize(value))).size !== values.length;
 }
 
-function checkMultipleChoice(
-  item: ItemOf<"multipleChoice">,
-  optionCount: number | null,
-): Problem[] {
+/**
+ * The right options a question needs for its picks: exactly one, exactly as many as "choose k"
+ * asks for (with more options than that), or for "select all that apply" at least one right and
+ * one wrong, so picking every option is never a sure answer.
+ */
+function checkPicks({
+  options,
+  select,
+}: {
+  options: readonly { isCorrect: boolean }[];
+  select: OptionSelect;
+}): Problem[] {
+  const correct = options.filter((option) => option.isCorrect).length;
+
+  if (select === "all") {
+    return [
+      correct === 0 && "Has no correct option.",
+      correct === options.length &&
+        "Has no wrong option, so selecting every option is always right.",
+    ];
+  }
+
+  return [
+    correct !== select && `Has ${correct} correct options instead of ${select}.`,
+    select > 1 &&
+      select >= options.length &&
+      `Asks for ${select} picks out of ${options.length} options.`,
+  ];
+}
+
+function checkMultipleChoice({
+  item,
+  language,
+  optionCount,
+  select,
+}: {
+  item: ItemOf<"multipleChoice">;
+  language: string;
+  optionCount: number | null;
+  select: OptionSelect;
+}): Problem[] {
   /** Checked as they're stored: without the letters a writer printed before them. */
   const options = stripOptionLabels(item.options);
   const texts = options.map((option) => option.text);
-  const correct = options.filter((option) => option.isCorrect);
   const wrong = options.filter((option) => !option.isCorrect);
   const [position] = options.flatMap((option) => findOptionPositionReferences(option.reason));
 
   return [
-    correct.length !== 1 && `Has ${correct.length} correct options instead of 1.`,
+    ...checkPicks({ options, select }),
     optionCount !== null &&
       options.length !== optionCount &&
       `Has ${options.length} options instead of ${optionCount}.`,
-    hasDuplicates(texts) && "Two options are the same.",
+    ...findEquivalentOptions({ language, texts }),
+    ...findOptionDataProblems({ data: [item.context, item.question], options: texts }),
     texts.some((text) => isBlank(text)) && "An option is empty.",
     options.some((option) => isBlank(option.reason)) && "An option has no reason.",
     wrong.some((option) => isBlank(option.misconception)) && "A wrong option has no misconception.",
@@ -60,6 +110,7 @@ function checkOpenAnswer(item: ItemOf<"typed"> | ItemOf<"spoken">): Problem[] {
     hasDuplicates(item.acceptedAnswers, normalizeTypedAnswer) &&
       "Two accepted answers are the same.",
     isBlank(item.sampleAnswer) && "Has no sample answer.",
+    ...(isBlank(item.sampleAnswer) ? [] : findAnswerKeyProblems(item)),
   ];
 }
 
@@ -129,10 +180,30 @@ function checkVisuals(item: GeneratedItem, language: string): Problem[] {
   });
 }
 
-function checkFormat(item: GeneratedItem, optionCount: number | null): Problem[] {
+/** Markdown a learner would see as marks, and text a writer left unfinished. */
+function checkWriting(item: GeneratedItem): string[] {
+  return getItemWriting(item).flatMap(({ layout, text }) => [
+    ...findUnrenderedMarkdown({ layout, text }),
+    ...findPlaceholderText(text),
+  ]);
+}
+
+function checkFormat({
+  entry,
+  item,
+  language,
+  optionCount,
+  select,
+}: {
+  entry: NumericEntry;
+  item: GeneratedItem;
+  language: string;
+  optionCount: number | null;
+  select: OptionSelect;
+}): Problem[] {
   switch (item.format) {
     case "multipleChoice":
-      return checkMultipleChoice(item, optionCount);
+      return checkMultipleChoice({ item, language, optionCount, select });
     case "trueFalse":
       return checkTrueFalse(item);
     case "typed":
@@ -145,25 +216,38 @@ function checkFormat(item: GeneratedItem, optionCount: number | null): Problem[]
     case "order":
       return checkOrder(item);
     case "numeric":
-      return checkMathProblem({ context: item.context, math: item.math, question: item.question });
+      return checkMathProblem({
+        context: item.context,
+        entry,
+        math: item.math,
+        otherSolutions: item.otherSolutions,
+        question: item.question,
+      });
     default:
       return [];
   }
 }
 
 /**
- * The code checks every item passes before it is stored: one right answer,
- * options a learner can tell apart, a reason and a misconception for every
- * wrong option, key points for open answers, math recomputed from its data and
- * every table, chart, timeline or picture its words point at shown with it.
+ * The code checks every item passes before it is stored: as many right options
+ * as the learner picks, options a learner can tell apart that agree with the
+ * item's data, a reason and a misconception for every wrong option, key points
+ * for open answers and a sample answer that gives an accepted one, math
+ * recomputed from its data in a form its answer box takes, Markdown the player
+ * renders, nothing left unfinished and every table, chart, timeline or picture
+ * its words point at shown with it.
  * Returns one line per problem, so an empty list means the item passes.
  */
 export function checkItem({
+  entry = ANY_NUMBER,
   expectedFormat,
   item,
   language,
   optionCount = null,
+  select = 1,
 }: {
+  /** How a numeric item's answer is typed, from the exam's format: any number by default. */
+  entry?: NumericEntry;
   /** The format the item was generated for; a model can answer in the wrong one. */
   expectedFormat?: GeneratedItem["format"];
   item: GeneratedItem;
@@ -171,13 +255,27 @@ export function checkItem({
   language: string;
   /** Options every multiple-choice item must have, such as 5 for ENEM. */
   optionCount?: number | null;
+  /** How many options a multiple-choice learner picks, from the exam's format: one by default. */
+  select?: OptionSelect;
 }): string[] {
   return [
     expectedFormat !== undefined &&
       item.format !== expectedFormat &&
       `Is ${item.format} instead of ${expectedFormat}.`,
     isBlank(getQuestion(item)) && "The question is empty.",
-    ...checkFormat(item, optionCount),
+    ...checkFormat({ entry, item, language, optionCount, select }),
+    ...checkWriting(item),
     ...checkVisuals(item, language),
   ].filter((problem) => typeof problem === "string");
+}
+
+/**
+ * The em dashes a written item has in our own wording, which storing it takes out
+ * (`toStoredItem`), for evals to report what the writer should have avoided. A quoted past
+ * question or an item citing the source it reproduces keeps every word, so it's never checked.
+ */
+export function findOwnEmDashes(item: GeneratedItem): string[] {
+  return Object.entries(item).flatMap(([key, value]) =>
+    isOwnWording(key) ? findEmDashes(value) : [],
+  );
 }

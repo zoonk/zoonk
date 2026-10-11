@@ -8,7 +8,6 @@ const cachedListMedia = cacheAdminData(
 
     const [assets, total] = await Promise.all([
       prisma.mediaAsset.findMany({
-        include: { _count: { select: { steps: true } } },
         omit: { prompt: true, scene: true },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         skip: offset,
@@ -18,7 +17,22 @@ const cachedListMedia = cacheAdminData(
       prisma.mediaAsset.count({ where }),
     ]);
 
-    return { assets, total };
+    // Counted for the page's assets only: a relation `_count` would count every asset's steps.
+    const steps = await prisma.step.groupBy({
+      _count: { id: true },
+      by: ["mediaAssetId"],
+      where: { mediaAssetId: { in: assets.map((asset) => asset.id) } },
+    });
+
+    const stepsByAsset = new Map(steps.map((row) => [row.mediaAssetId, row._count.id]));
+
+    return {
+      assets: assets.map((asset) => ({
+        ...asset,
+        _count: { steps: stepsByAsset.get(asset.id) ?? 0 },
+      })),
+      total,
+    };
   },
 );
 

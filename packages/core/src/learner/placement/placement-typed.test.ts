@@ -14,9 +14,6 @@ import type * as Grader from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
-/** Grading and plain-words edits claim small AI help, which reads the request for its rate limit. */
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /**
  * The grader's model is an external boundary. The real grader runs, so code settles accepted
  * answers as in production; a test that needs the model's verdict gives it once.

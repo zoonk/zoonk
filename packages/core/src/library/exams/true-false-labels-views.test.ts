@@ -28,11 +28,17 @@ const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 type ExamFormat = ExamStructure["formats"][number]["kind"];
 type ScoringMethod = NonNullable<ExamStructure["mock"]>["scoring"]["method"];
 
-function examStructure({ format, method }: { format: ExamFormat; method: ScoringMethod }) {
+function examStructure({
+  description = "Como as questões são",
+  format,
+  method,
+}: {
+  description?: string;
+  format: ExamFormat;
+  method: ScoringMethod;
+}) {
   return {
-    formats: [
-      { citation: CITATION, description: "Como as questões são", kind: format, options: null },
-    ],
+    formats: [{ citation: CITATION, description, kind: format, options: null }],
     mock: {
       adaptive: false,
       citations: [CITATION],
@@ -60,11 +66,15 @@ const BOSS = {
  * An exam goal whose plan has one chapter, with a statement on its first skill that today's session
  * asks in practice, in the phase's boss and in the weekly mock.
  */
-async function examGoal(structure: ExamStructure) {
+async function examGoal({ name, structure }: { name: string; structure: ExamStructure }) {
   const user = await userFixture();
 
   const [blueprint, fixture] = await Promise.all([
-    examBlueprintFixture({ structure }),
+    examBlueprintFixture({
+      identityKey: `${name.toLowerCase()}-${crypto.randomUUID()}`,
+      name,
+      structure,
+    }),
     learnerGoalFixture({ itemsPerSkill: 1, phases: [2], userId: user.id }),
   ]);
 
@@ -111,20 +121,26 @@ async function examGoal(structure: ExamStructure) {
 
 describe.each([
   {
-    exam: "a Cebraspe exam, where a wrong answer cancels a right one, are judged right or wrong",
+    exam: "a Cebraspe exam, whose notice judges them CERTO or ERRADO, are judged right or wrong",
     labels: "rightWrong",
+    name: "Câmara dos Deputados",
     scoring: "net",
-    structure: examStructure({ format: "trueFalse", method: "wrongCancelsRight" }),
+    structure: examStructure({
+      description: "Itens para julgamento: CERTO ou ERRADO",
+      format: "trueFalse",
+      method: "wrongCancelsRight",
+    }),
   },
   {
     exam: "an ENEM-style exam stay true or false",
     labels: "trueFalse",
+    name: "ENEM",
     scoring: "irt",
     structure: examStructure({ format: "multipleChoice", method: "itemResponseTheory" }),
   },
-])("statements of $exam", ({ labels, scoring, structure }) => {
+])("statements of $exam", ({ labels, name, scoring, structure }) => {
   it("in placement, the chapter test-out and the mistakes notebook", async () => {
-    const { chapterId, goalId } = await examGoal(structure);
+    const { chapterId, goalId } = await examGoal({ name, structure });
 
     const [placement, testOut, notebook, practice] = await Promise.all([
       getGoalPlacement({ goalId }),
@@ -140,7 +156,7 @@ describe.each([
   });
 
   it("in a session's practice, the phase's boss and the weekly mock, scored as the exam is", async () => {
-    const { blocks, sessionId } = await examGoal(structure);
+    const { blocks, sessionId } = await examGoal({ name, structure });
 
     const [practice, boss, mock] = await Promise.all([
       getStudyBlock({ blockId: blocks.practice.id, sessionId }),
@@ -154,13 +170,14 @@ describe.each([
   });
 });
 
-// Rafaela's Câmara goal (Cebraspe) asked "Verdadeiro ou falso" until its notice's blueprint linked,
-// though the first pass over the notice had read "CERTO ou ERRADO".
+// Rafaela's Câmara goal (Cebraspe) asked "True or false" until its notice's blueprint linked,
+// though the first pass over the notice had read "RIGHT or WRONG".
 describe("statements of an exam whose notice is still being read", () => {
   it("are judged right or wrong from the first question when its first reading names them so", async () => {
-    const { blocks, goalId, sessionId } = await examGoal(
-      examStructure({ format: "trueFalse", method: "wrongCancelsRight" }),
-    );
+    const { blocks, goalId, sessionId } = await examGoal({
+      name: "Câmara dos Deputados",
+      structure: examStructure({ format: "trueFalse", method: "wrongCancelsRight" }),
+    });
 
     const noticeFormats = [
       {

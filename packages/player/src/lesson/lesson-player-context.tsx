@@ -25,6 +25,8 @@ export type LessonPlayerActions = {
   selectAnswer: (stepId: string, answer: LessonPlayerAnswer | null) => void;
   /** Leaves a language activity out of the plan and skips its screens in this lesson. */
   skipActivity: (activity: "speaking" | "writing") => Promise<void>;
+  /** Leaves out screens that can't be played after all, such as a numbered picture that never came. */
+  skipSteps: (stepIds: string[]) => void;
   submitSpokenAnswer: (input: { audio: Blob; durationMs: number; stepId: string }) => void;
 };
 
@@ -56,7 +58,7 @@ type LessonPlayerConfig = {
   challengeTeam: ChallengeTeam | null;
   lesson: Pick<
     PlayableLibraryLesson,
-    "estimatedMinutes" | "id" | "language" | "summaryIdeas" | "title"
+    "estimatedMinutes" | "id" | "language" | "summaryIdeas" | "targetLanguage" | "title"
   >;
   linkComponent: PlayerLinkComponent;
   onExit: () => void;

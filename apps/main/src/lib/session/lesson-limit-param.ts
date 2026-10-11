@@ -3,15 +3,21 @@ import { type LessonLimit } from "@zoonk/learn/help-limit";
 /**
  * The session screen's `?limit=`: why the next lesson wasn't written when the learner's tap asked
  * for it (the API answered in their browser, before the screen opened). Only the copy's inputs
- * travel: a guest, a free cap for the day or the month, Plus's day, or a short break.
+ * travel: a guest, a free cap for the day or the month, Plus's day, a short break, or the guests'
+ * daily AI budget (`sign-up`).
  */
 export const LESSON_LIMIT_PARAM = "limit";
 
 const SLOW_DOWN_PREFIX = "slow-down-";
+const SIGN_UP_REQUIRED = "sign-up";
 
 export function toLessonLimitParam(limit: LessonLimit): string {
   if (limit.status === "slowDown") {
     return `${SLOW_DOWN_PREFIX}${Math.max(0, Math.round(limit.retryAfterSeconds))}`;
+  }
+
+  if (limit.status === "signUpRequired") {
+    return SIGN_UP_REQUIRED;
   }
 
   if (limit.tier === "free") {
@@ -43,6 +49,8 @@ export function readLessonLimitParam(value: unknown): LessonLimit | null {
       return { period: "month", status: "limitReached", tier: "free" };
     case "plus":
       return { period: "day", status: "limitReached", tier: "plus" };
+    case SIGN_UP_REQUIRED:
+      return { status: "signUpRequired" };
     default:
       return readSlowDown(value);
   }

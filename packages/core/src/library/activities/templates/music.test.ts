@@ -1,4 +1,7 @@
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { checkActivityAnswer } from "../activity-answers";
 import { activityContentSchema, getActivityTemplate } from "../activity-templates";
@@ -11,25 +14,6 @@ function issueCodes(content: unknown): string[] {
   const result = validateActivity(content);
   return result.ok ? [] : result.issues.map((item) => item.code);
 }
-
-const progression = {
-  ...fixtures.earTrainer,
-  fields: {
-    chords: [
-      { quality: "major", root: "G" },
-      { quality: "major", root: "C" },
-      { quality: "major", root: "D" },
-    ],
-    hidden: 1,
-    mode: "progression",
-    options: [
-      { id: "g", quality: "major", root: "G" },
-      { id: "c", quality: "major", root: "C" },
-      { id: "d", quality: "major", root: "D" },
-    ],
-    song: "Asa Branca",
-  },
-};
 
 describe("rhythm timing", () => {
   const clave = { pattern: "x..x..x...x.x...", rounds: 2, stepsPerBeat: 4, tempo: 90 };
@@ -136,38 +120,17 @@ describe("keyboard and fretboard", () => {
     expect(issueCodes(same)).toContain("missingInteraction");
     expect(issueCodes(fixtures.keyboardFretboard)).toStrictEqual([]);
   });
-});
 
-describe("ear trainer", () => {
-  it("expects the choice naming the hidden chord of a progression", () => {
-    const parsed = activityContentSchema.parse(progression);
+  it("grades a sound found by ear by its notes, wherever they're played", () => {
+    const fifth = activityContentSchema.parse(engineModeFixtures.keyboardFretboard.byEar);
 
-    expect(getActivityTemplate("earTrainer")?.computeExpected(parsed.fields)).toStrictEqual({
-      ids: ["c"],
-      kind: "selection",
+    expect(getActivityTemplate("keyboardFretboard")?.computeExpected(fifth.fields)).toStrictEqual({
+      kind: "pitchClasses",
+      pitchClasses: [0, 7],
     });
 
-    expect(validateActivity(progression).ok).toBe(true);
-    expect(checkActivityAnswer(parsed, { ids: ["c"], kind: "selection" })).toBe(true);
-    expect(checkActivityAnswer(parsed, { ids: ["g"], kind: "selection" })).toBe(false);
-  });
-
-  it("rejects a progression whose hidden chord isn't a choice or isn't there", () => {
-    const missing = structuredClone(progression);
-    missing.fields.options = missing.fields.options.filter((option) => option.id !== "c");
-
-    const outside = structuredClone(progression);
-    outside.fields.hidden = 3;
-
-    expect(issueCodes(missing)).toContain("inconsistentFields");
-    expect(issueCodes(outside)).toContain("inconsistentFields");
-  });
-
-  it("rejects an interval that isn't one of the choices", () => {
-    const missing = structuredClone(fixtures.earTrainer);
-    missing.fields.played = "m6";
-
-    expect(issueCodes(missing)).toContain("inconsistentFields");
+    expect(checkActivityAnswer(fifth, { kind: "notes", notes: ["G3", "C4"] })).toBe(true);
+    expect(checkActivityAnswer(fifth, { kind: "notes", notes: ["C4", "F4"] })).toBe(false);
   });
 });
 

@@ -29,7 +29,6 @@ export type StudyQuestionAnswer = QuestionAnswer;
 /** What answering can come back with, as the host maps it for the screen. */
 export type StudyAnswerOutcome =
   | { feedback: StudyAnswerFeedback; status: "answered" }
-  | { retryAfterSeconds: number; status: "slowDown" }
   | { status: "alreadyAnswered" }
   | { status: "failed" };
 

@@ -2,128 +2,21 @@ import { z } from "zod";
 import {
   explanationSchema,
   idSchema,
-  labelSchema,
   optionTextSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { identifierSchema, outputSchema, slugSchema, variableSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
-import { describeDiagrams, getDiagramParts } from "../diagrams";
 import { processIconNames } from "../process-icons";
 import { countBonds, isKnownElement, parseMolecularFormula } from "./_utils/chemistry";
-import { computeOutput, formulaModelIssues, outputFormulas } from "./_utils/formula-model";
 import { isBuildableMolecule } from "./_utils/molecule-structure";
 import { duplicateIssues, issue } from "./_utils/template-helpers";
 
-const MAX_VARIABLES = 3;
-const MAX_OUTPUTS = 4;
-const MAX_PARTS = 8;
-const MAX_DISTRACTORS = 3;
-const MAX_MIX_UPS = 4;
 const MAX_STEPS = 7;
 const MAX_ELEMENTS = 6;
 const MAX_FORMULA_LENGTH = 24;
 
 /** Past this many atoms a build no longer fits a phone screen or a few minutes of work. */
 const MAX_MOLECULE_ATOMS = 12;
-
-const parameterSimulationFields = z
-  .object({
-    model: labelSchema,
-    outputs: uniqueIdsSchema(outputSchema, { max: MAX_OUTPUTS, min: 1 }),
-    plot: z.object({ x: identifierSchema, y: idSchema }).strict(),
-    variables: z.array(variableSchema).min(1).max(MAX_VARIABLES),
-  })
-  .strict();
-
-export const parameterSimulationTemplate = defineActivityTemplate({
-  checks: ["choice", "numeric"],
-  description:
-    "Move a model's parameters and watch the result: projectile, pendulum, circuit, gas law, waves, orbits or population. A numeric check reads `output` (default: the plotted output) with the sliders at `inputs`. Fills: formulas, variables with ranges and units, what to plot and the check question.",
-  fields: parameterSimulationFields,
-  formulas: (fields) => outputFormulas(fields),
-  id: "parameterSimulation",
-  needsData: false,
-  value: (fields, target) => computeOutput({ ...fields, defaultOutput: fields.plot.y, target }),
-  verify: (fields) => [
-    ...formulaModelIssues(fields),
-    ...(fields.variables.some((variable) => variable.name === fields.plot.x)
-      ? []
-      : [issue("inconsistentFields", "fields.plot.x", "The x axis must be a slider")]),
-    ...(fields.outputs.some((output) => output.id === fields.plot.y)
-      ? []
-      : [issue("inconsistentFields", "fields.plot.y", "The y axis must be an output")]),
-  ],
-});
-
-const labeledDiagramFields = z
-  .object({
-    diagramId: slugSchema,
-    distractors: z.array(labelSchema).max(MAX_DISTRACTORS),
-    mixUps: z
-      .array(
-        z.object({ feedback: explanationSchema, labels: z.array(labelSchema).length(2) }).strict(),
-      )
-      .max(MAX_MIX_UPS),
-    parts: z
-      .array(z.object({ label: labelSchema, partId: slugSchema }).strict())
-      .min(2)
-      .max(MAX_PARTS),
-  })
-  .strict();
-
-type LabeledDiagramFields = z.output<typeof labeledDiagramFields>;
-
-/** Parts must exist in the checked drawing, which is the only thing the player can draw. */
-function diagramAssetIssues(fields: LabeledDiagramFields) {
-  const knownParts = getDiagramParts(fields.diagramId);
-
-  if (!knownParts) {
-    return [issue("unknownAsset", "fields.diagramId", `No checked diagram "${fields.diagramId}"`)];
-  }
-
-  return fields.parts
-    .filter((part) => !knownParts.includes(part.partId))
-    .map((part) =>
-      issue(
-        "unknownAsset",
-        "fields.parts",
-        `"${fields.diagramId}" has no part "${part.partId}". Its parts: ${knownParts.join(", ")}`,
-      ),
-    );
-}
-
-function labeledDiagramIssues(fields: LabeledDiagramFields) {
-  const labels = fields.parts.map((part) => part.label);
-  const names = new Set([...labels, ...fields.distractors]);
-
-  return [
-    ...duplicateIssues(
-      fields.parts.map((part) => part.partId),
-      "fields.parts",
-      "Part",
-    ),
-    ...duplicateIssues([...labels, ...fields.distractors], "fields.parts", "Label"),
-    ...fields.mixUps
-      .filter((mixUp) => mixUp.labels.some((label) => !names.has(label)))
-      .map(() =>
-        issue("inconsistentFields", "fields.mixUps", "A mix-up names a label that isn't offered"),
-      ),
-  ];
-}
-
-export const labeledDiagramTemplate = defineActivityTemplate({
-  checks: ["interaction"],
-  description: `Drag names onto the parts of a drawing from a checked library of diagrams, like the chambers of the heart. Only these diagrams and part ids exist; pick another template when none shows the idea. Fills: which diagram to use, the parts to label (each label in the lesson's language), distractor names and feedback for each likely mix-up.\nDiagrams (id (what it shows): part ids):\n${describeDiagrams()}`,
-  expected: (fields) => ({
-    kind: "assignment",
-    pairs: Object.fromEntries(fields.parts.map((part) => [part.partId, part.label])),
-  }),
-  fields: labeledDiagramFields,
-  id: "labeledDiagram",
-  needsData: false,
-  verify: (fields) => [...labeledDiagramIssues(fields), ...diagramAssetIssues(fields)],
-});
 
 const processStepSchema = z
   .object({

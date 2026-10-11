@@ -3,6 +3,8 @@ import { prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
+import { loadSkillsToRelearn } from "../../../learner/_utils/load-skill-claims";
+import { bringBackMissedLessons } from "../../../plans/bring-back-missed-lessons";
 import { loadPreparationInputs } from "../../../preparation/_utils/load-preparation-inputs";
 import {
   getPreparationComponents,
@@ -33,6 +35,24 @@ async function measurePreparation({ goalId, userId }: { goalId: string | null; u
   const inputs = await loadPreparationInputs({ goalId, now, userId });
 
   return getPreparationValue(getPreparationComponents({ ...inputs, asOf: now }));
+}
+
+/** The topics the mock asks that the learner was taken to know without studying them. */
+async function loadMockSkillsToRelearn(mock: MockSitting): Promise<Set<string>> {
+  if (!mock.goalId) {
+    return new Set();
+  }
+
+  const asked = await prisma.item.findMany({
+    select: { skillId: true },
+    where: { id: { in: getAskedItemIds(mock.conditions).map((entry) => entry.itemId) } },
+  });
+
+  return loadSkillsToRelearn({
+    goalId: mock.goalId,
+    skillIds: [...new Set(asked.map((item) => item.skillId))],
+    userId: mock.userId,
+  });
 }
 
 /** How many of the goal's latest mocks are looked through for one like this. */
@@ -169,9 +189,10 @@ export async function completeMock({
 }): Promise<MockResult> {
   const areas = mock.goalId ? await loadSkillAreas(mock.goalId) : new Map<string, string>();
 
-  const [before, previous] = await Promise.all([
+  const [before, previous, toRelearn] = await Promise.all([
     measurePreparation({ goalId: mock.goalId, userId: mock.userId }),
     loadPreviousMeasure(mock),
+    loadMockSkillsToRelearn(mock),
   ]);
 
   const graded = await gradeMock({
@@ -182,6 +203,18 @@ export async function completeMock({
   });
 
   await settleMock({ graded, mock, owned, timeZone });
+
+  // A miss on a topic the learner was taken to know brings its lessons back (see `SkillClaim`).
+  if (mock.goalId) {
+    await bringBackMissedLessons({
+      goalId: mock.goalId,
+      now: new Date(),
+      skillIds: graded.flatMap((answer) =>
+        answer.outcome !== "right" && toRelearn.has(answer.skill.id) ? [answer.skill.id] : [],
+      ),
+      timeZone,
+    });
+  }
 
   const after = await measurePreparation({ goalId: mock.goalId, userId: mock.userId });
   const spentMs = graded.reduce((sum, answer) => sum + answer.durationMs, 0);

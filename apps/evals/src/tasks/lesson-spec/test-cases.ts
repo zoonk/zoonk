@@ -1,13 +1,11 @@
 import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
-import { activityTemplates } from "@zoonk/core/library/activities/templates";
+import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
 
 /** What workflows pass: every template in the catalog. */
-const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = activityTemplates.map(
-  (template) => ({ description: template.description, id: template.id }),
-);
+const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
 
 const SHARED_EXPECTATIONS = `
   - The output is a list of lesson specs (usually one; several only when the lesson had to be split): title, description, can-do line, support mode, 1 to 3 skills and a screen plan whose screens have a kind, skill indexes (0-based into the lesson's skills), a brief for the writer, an optional visual and an activity template id on activity screens
@@ -410,7 +408,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     expectations: `
       - MUST be in US English
       - A UX lesson for people who work or will work in product teams: its situations happen in a product team, an app or a website and its users, never at a bakery, a market or a bus stop
-      - Plans one "Spot the AI's mistake" activity (findError) whose brief says which step the mistake is in: an early or middle step, so later steps build on it; never the final "So…" step
+      - Plans an activity that practices the skill: sorting goals from solutions in disguise, or a "Spot the AI's mistake" (findError) where an AI assistant's draft goal names a solution, whose brief says which step the mistake is in: an early or middle step, so later steps build on it; never the final "So…" step
       - Checks ask something new each time; no check repeats an earlier one with other names
 
       ${SHARED_EXPECTATIONS}
@@ -496,6 +494,185 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
       lessonTitle: "Citações diretas e autoria",
       level: "intermediate",
       skills: ["Identificar quem disse uma citação direta"],
+    },
+  },
+  {
+    // Exam lessons in Oct 2026 nearly all planned "Spot the AI's mistake" and no template to explore.
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Written for candidates of the exam in EXAMS, finishing secondary school: checks are planned like that exam's contextualized multiple-choice questions on proteins and enzymes
+      - No "Spot the AI's mistake": an exam lesson never frames an activity as an AI assistant's answer
+      - The explanation of how an enzyme works in steps (the substrate fits the active site, the reaction, the products leave and the enzyme is free again) shows them with a template to explore, such as the steps of a process in order, rather than a strip of drawings or text alone; a picture plans only what no template draws (a protein's folded shape, the active site's fit)
+      - An activity, if any, is one whose interaction is the skill (ordering the enzyme's steps, sorting changes that do or don't alter a protein's shape), never decoration
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { avoidTemplates: ["findError"] },
+    id: "pt-enzimas-exam-prep-activities",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: ["Nucleotídeos, ácidos nucleicos e ATP"],
+        before: ["Carboidratos e lipídios"],
+      }),
+      chapterTitle: "Biomoléculas e funções celulares",
+      courseTitle: "Biologia",
+      exams: [
+        {
+          name: "ENEM, Ciências da Natureza e suas Tecnologias",
+          style:
+            "multipleChoice (5 options): Questões de múltipla escolha contextualizadas, com 5 alternativas (A a E) e uma única resposta correta.",
+        },
+      ],
+      language: "pt",
+      lessonCanDo: "Explicar como a forma de uma enzima define a reação que ela acelera",
+      lessonDescription:
+        "Como a sequência de aminoácidos dá forma a uma proteína e como uma enzima encaixa a molécula que transforma.",
+      lessonTitle: "Proteínas e enzimas",
+      level: "intermediate",
+      skills: ["Relacionar estrutura proteica e função", "Explicar a ação de uma enzima"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Written for candidates of the exam in EXAMS (law students and graduates): the briefs plan the rules as the Estatuto da Advocacia states them (art. 27: incompatibilidade forbids all advocacy, impedimento only part of it; arts. 28 and 30 for the cases), with the provision named only when the plan is sure of it
+      - No "Spot the AI's mistake": an exam lesson never frames an activity as an AI assistant's answer
+      - An activity, if any, has the learner do what the skill asks, such as sorting situations into incompatibilidade or impedimento, or walking a case through the questions that decide which one applies; checks read like that exam's questions with confusions candidates make
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { avoidTemplates: ["findError"] },
+    id: "pt-impedimento-oab-exam-prep-activities",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: ["Cargos e funções incompatíveis"],
+        before: ["Consultoria, assessoria e direção jurídicas"],
+      }),
+      chapterTitle: "Atividade da advocacia e suas restrições",
+      courseTitle:
+        "Estatuto da Advocacia e da OAB, Regulamento Geral e Código de Ética e Disciplina da OAB",
+      exams: [
+        {
+          name: "OAB Exame de Ordem Unificado, 1ª fase",
+          style:
+            "multipleChoice (4 options): Questões de múltipla escolha com 4 opções (A, B, C e D) e uma única resposta correta.",
+        },
+      ],
+      language: "pt",
+      lessonCanDo: "Distinguir incompatibilidade de impedimento no exercício da advocacia",
+      lessonDescription:
+        "A diferença entre a proibição total de advogar e a proibição parcial, e os casos de cada uma no Estatuto.",
+      lessonTitle: "Incompatibilidade e impedimento",
+      level: "intermediate",
+      skills: ["Distinguir incompatibilidade de impedimento"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Written for candidates of the exam in EXAMS, finishing secondary school, with checks like that exam's contextualized questions that read tables and graphs
+      - No "Spot the AI's mistake": an exam lesson never frames an activity as an AI assistant's answer
+      - The explanations of how one quantity changes with another (directly proportional, inversely proportional, with the square) let the learner see it: a template to explore where a slider changes one quantity and the other follows on a curve, or a chart with exact values; never a picture carrying the numbers
+      - An activity, if any, is one whose interaction is the skill (moving a value and saying how the other changed, reading a relation off a table or a curve)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    expected: { avoidTemplates: ["categorize", "findError"] },
+    id: "pt-relacoes-grandezas-exam-prep-activities",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterLessons: outlined({
+        after: ["Componentes e soma de vetores"],
+        before: ["Inclinação e área em gráficos físicos"],
+      }),
+      chapterTitle: "Grandezas físicas e representações",
+      courseTitle: "Física",
+      exams: [
+        {
+          name: "ENEM, Ciências da Natureza e suas Tecnologias",
+          style:
+            "multipleChoice (5 options): Questões de múltipla escolha contextualizadas, com 5 alternativas (A a E) e uma única resposta correta.",
+        },
+      ],
+      language: "pt",
+      lessonCanDo: "Reconhecer relações direta, inversa e quadrática em tabelas e gráficos",
+      lessonDescription:
+        "Como uma grandeza muda com outra quando são diretamente proporcionais, inversamente proporcionais ou quando uma depende do quadrado da outra.",
+      lessonTitle: "Relações entre grandezas em tabelas e gráficos",
+      level: "intermediate",
+      skills: [
+        "Identificar proporcionalidade direta e inversa",
+        "Reconhecer dependência com o quadrado",
+      ],
+    },
+  },
+  {
+    // A base the learner chose to see as a "Quick lesson" close to the exam (Oct 2026).
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Exactly one lesson (never split) of about 3 to 5 minutes and 6 to 8 screens, whose only skill is the one given, with its name kept
+      - It sums up the skill's core for candidates of the exam in EXAMS, finishing secondary school: the order of amino acids gives a protein its shape, the shape decides what it binds and does, and an enzyme's active site fits its substrate; details and rare cases are left out, and terms are explained before use
+      - One worked example of the core reasoning (for example a changed amino acid changing the shape and the function, or an enzyme acting on its substrate), followed by a check where the learner does a similar one; the hook comes first, the application last, and no more than 3 teaching screens in a row
+      - At most one activity, only one that fits the skill (such as putting an enzyme's steps in order), and no "Spot the AI's mistake"; pictures or templates only where the learner would otherwise have to imagine a shape or a process
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-quick-proteinas-enem",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Biomoléculas e funções celulares",
+      courseTitle: "Biologia",
+      exams: [
+        {
+          name: "ENEM, Ciências da Natureza e suas Tecnologias",
+          style:
+            "multipleChoice (5 options): Questões de múltipla escolha contextualizadas, com 5 alternativas (A a E) e uma única resposta correta.",
+        },
+      ],
+      language: "pt",
+      lessonCanDo: "Relacionar estrutura proteica e função",
+      lessonDescription:
+        "A ordem dos aminoácidos define a forma da proteína, e a forma define o que ela reconhece e faz.",
+      lessonTitle: "Aula rápida: Relacionar estrutura proteica e função",
+      level: "intermediate",
+      quick: true,
+      skills: ["Relacionar estrutura proteica e função"],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Exactly one lesson (never split) of about 3 to 5 minutes and 6 to 8 screens, whose only skill is the one given, with its name kept
+      - It sums up the skill's core for candidates of the exam in EXAMS (law students and graduates): full, contained and limited efficacy of constitutional norms, what each means for a right's exercise, with one well-known example each from the Constitution only when the plan is sure of it; no screen explains what the Constitution is, and rare doctrinal classifications are left out
+      - One worked example that classifies a constitutional provision step by step (for example art. 5º, XIII, as contained efficacy), followed by a check where the learner classifies another; the hook comes first, the application last, and no more than 3 teaching screens in a row
+      - At most one activity, only one that fits the skill (such as sorting provisions by their efficacy), and no "Spot the AI's mistake"; checks read like that exam's questions with confusions candidates make
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-quick-eficacia-normas-oab",
+    userInput: {
+      activityTemplates: ACTIVITY_TEMPLATES,
+      chapterTitle: "Fundamentos do Direito Constitucional",
+      courseTitle: "Direito Constitucional",
+      exams: [
+        {
+          name: "OAB Exame de Ordem Unificado, 1ª fase",
+          style:
+            "multipleChoice (4 options): Questões de múltipla escolha com 4 opções (A, B, C e D) e uma única resposta correta.",
+        },
+      ],
+      language: "pt",
+      lessonCanDo: "Classificar normas constitucionais quanto à eficácia",
+      lessonDescription:
+        "Normas de eficácia plena, contida e limitada: o que cada uma permite e quando depende de lei.",
+      lessonTitle: "Aula rápida: Classificar normas constitucionais quanto à eficácia",
+      level: "intermediate",
+      quick: true,
+      skills: ["Classificar normas constitucionais quanto à eficácia"],
     },
   },
   ...VISUAL_TEST_CASES,

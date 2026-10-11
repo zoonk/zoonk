@@ -4,7 +4,7 @@ import {
   getMailboxCaptureUrl,
   getPortlessEnvironment,
   getProjectName,
-  getServiceName,
+  getServiceUrl,
 } from "./config.mts";
 import {
   type CommandResult,
@@ -44,25 +44,6 @@ function startProxy(environment: NodeJS.ProcessEnv): void {
   });
 }
 
-/** Uses Portless's own worktree-aware resolver so every consumer receives the exact URL registered by its service. */
-function getServiceUrl({
-  environment,
-  projectName,
-  serviceName,
-}: {
-  environment: NodeJS.ProcessEnv;
-  projectName: string;
-  serviceName: string;
-}): string {
-  const name = getServiceName({ projectName, serviceName });
-
-  return execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "get", name], {
-    cwd: currentDirectory,
-    encoding: "utf8",
-    env: environment,
-  }).trim();
-}
-
 /** Runs the preserved fixed-port topology when Portless needs to be bypassed during the trial. */
 async function startDirectDevelopment(): Promise<CommandResult> {
   writeAppleDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
@@ -78,9 +59,10 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
 
   startProxy(environment);
 
-  const mainUrl = getServiceUrl({ environment, projectName, serviceName: "main" });
-  const apiUrl = getServiceUrl({ environment, projectName, serviceName: "api" });
-  const mailboxUrl = getServiceUrl({ environment, projectName, serviceName: "mailbox" });
+  const service = { currentDirectory, environment, projectName };
+  const mainUrl = getServiceUrl({ ...service, serviceName: "main" });
+  const apiUrl = getServiceUrl({ ...service, serviceName: "api" });
+  const mailboxUrl = getServiceUrl({ ...service, serviceName: "mailbox" });
 
   writeAppleDevelopmentConfiguration({ apiUrl, currentDirectory });
   process.stdout.write(`Main: ${mainUrl}\nAPI: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);

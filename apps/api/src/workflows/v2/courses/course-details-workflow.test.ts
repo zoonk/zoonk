@@ -10,7 +10,7 @@ import {
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { TEST_IMAGE, imageProvenance } from "../images/_test-utils/image-results";
-import { courseDetailsWorkflow } from "./course-details-workflow";
+import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
 
 // The text and image models and Vercel Blob are external; reads, checks and saves run for real.
 vi.mock("@zoonk/ai/tasks/v2/courses/details", () => ({ generateCourseDetails: vi.fn() }));
@@ -150,5 +150,30 @@ describe(courseDetailsWorkflow, () => {
     });
 
     expect(generateCourseDetails).toHaveBeenCalledOnce();
+  });
+});
+
+describe(courseIconWorkflow, () => {
+  it("draws a course's icon from its title before it has an outline, and leaves a failure to its details", async () => {
+    const course = await courseFixture({ outlineStatus: "running", title: "Immunology" });
+
+    vi.mocked(uploadImage).mockResolvedValue({ data: ICON_URL, error: null });
+
+    vi.mocked(generateCourseIcon).mockResolvedValueOnce({
+      data: { image: { mediaType: "image/webp", uint8Array: TEST_IMAGE } },
+      prompt: "test prompt",
+      provenance: imageProvenance,
+    } as never);
+
+    await expect(courseIconWorkflow({ courseId: course.id })).resolves.toBe(ICON_URL);
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ imageUrl: ICON_URL });
+
+    const other = await courseFixture({ outlineStatus: "running", title: "Virology" });
+    vi.mocked(generateCourseIcon).mockRejectedValueOnce(new Error("The image model is down"));
+
+    await expect(courseIconWorkflow({ courseId: other.id })).resolves.toBeNull();
   });
 });

@@ -1,13 +1,14 @@
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { describe, expect, it } from "vitest";
 import { discountMath } from "./_test-utils/math-problems";
-import { checkItem } from "./item-checks";
+import { checkItem, findOwnEmDashes } from "./item-checks";
 
 type MultipleChoice = Extract<GeneratedItem, { format: "multipleChoice" }>;
 
 const multipleChoice: MultipleChoice = {
   context: "Four friends split a R$ 80 bill, and one pays R$ 20 more than the others.",
   difficulty: "medium",
+  fixedOrder: false,
   format: "multipleChoice",
   image: null,
   options: [
@@ -93,6 +94,7 @@ describe(checkItem, () => {
       difficulty: "easy",
       format: "numeric",
       math: discountMath,
+      otherSolutions: [],
       question: "Quanto você paga?",
     };
 
@@ -110,6 +112,47 @@ describe(checkItem, () => {
     expect(checkItem({ item, language: "en" })).toContain("Has 3 correct options instead of 1.");
   });
 
+  it("requires as many correct options as the learner picks", () => {
+    const [correct, first, second] = multipleChoice.options;
+    const fourth = { ...first!, misconception: "Rounds", text: "R$ 16" };
+
+    const twoRight = {
+      ...multipleChoice,
+      options: [correct!, { ...first!, isCorrect: true }, second!, fourth],
+    };
+
+    expect(checkItem({ item: twoRight, language: "en", select: 2 })).toStrictEqual([]);
+    expect(checkItem({ item: twoRight, language: "en", select: "all" })).toStrictEqual([]);
+
+    expect(checkItem({ item: multipleChoice, language: "en", select: 2 })).toContain(
+      "Has 1 correct options instead of 2.",
+    );
+
+    const allRight = {
+      ...multipleChoice,
+      options: multipleChoice.options.map((option) => ({ ...option, isCorrect: true })),
+    };
+
+    expect(checkItem({ item: allRight, language: "en", select: "all" })).toContain(
+      "Has no wrong option, so selecting every option is always right.",
+    );
+
+    expect(checkItem({ item: twoRight, language: "en", select: 4 })).toContain(
+      "Asks for 4 picks out of 4 options.",
+    );
+  });
+
+  it("takes up to eight options", () => {
+    const options = [15, 11, 12, 13, 14, 16, 17, 18].map((value, index) => ({
+      isCorrect: index === 0,
+      misconception: index === 0 ? null : `Splits it as ${value}`,
+      reason: `Paying R$ ${value} doesn't add up to R$ 80.`,
+      text: `R$ ${value}`,
+    }));
+
+    expect(checkItem({ item: { ...multipleChoice, options }, language: "en" })).toStrictEqual([]);
+  });
+
   it("requires distinct options, a reason each and a misconception per wrong option", () => {
     const [correct, first, second] = multipleChoice.options;
 
@@ -123,7 +166,7 @@ describe(checkItem, () => {
     };
 
     expect(checkItem({ item, language: "en" })).toStrictEqual([
-      "Two options are the same.",
+      expect.stringContaining('"R$ 15" and " r$ 15 " say the same thing'),
       "An option has no reason.",
       "A wrong option has no misconception.",
     ]);
@@ -148,9 +191,59 @@ describe(checkItem, () => {
 
     expect(checkItem({ item: labeled, language: "en" })).toStrictEqual([]);
 
-    expect(checkItem({ item: sameOnceUnlabeled, language: "en" })).toContain(
-      "Two options are the same.",
-    );
+    expect(checkItem({ item: sameOnceUnlabeled, language: "en" })).toStrictEqual([
+      expect.stringContaining("say the same thing"),
+    ]);
+  });
+
+  it("rejects options a learner can't tell apart and options the data disagrees with", () => {
+    const [correct, first, second] = multipleChoice.options;
+
+    const sameNumber = {
+      ...multipleChoice,
+      options: [correct!, first!, { ...second!, text: "R$ 15,00" }],
+    };
+
+    expect(checkItem({ item: sameNumber, language: "pt" })).toStrictEqual([
+      expect.stringContaining('"R$ 15" and "R$ 15,00" say the same thing'),
+    ]);
+
+    const sensors: MultipleChoice = {
+      ...multipleChoice,
+      context:
+        "| Sensor | mm |\n|---|---:|\n| A | 49,8 |\n| B | 50,4 |\n| C | 50,0 |\n| D | 49,6 |",
+      options: ["A", "B", "C"].map((text, index) => ({
+        isCorrect: index === 2,
+        misconception: index === 2 ? null : "Reads the largest reading as the most precise",
+        reason: "The precise one is closest to 50 mm.",
+        text,
+      })),
+      question: "Which sensor is closest to the real 50 mm?",
+    };
+
+    expect(checkItem({ item: sensors, language: "en" })).toStrictEqual([
+      expect.stringContaining("D can't be picked"),
+    ]);
+  });
+
+  it("rejects Markdown a learner would see as marks and text a writer left unfinished", () => {
+    // ENEM placement, Oct 2026: a quoted speech in italics across lines showed its underscores.
+    const quoted = {
+      ...multipleChoice,
+      context:
+        "_Presidente: A audiência é aberta.\nMoradora: Escreveram o que não puderam dizer aqui._",
+    };
+
+    expect(checkItem({ item: quoted, language: "pt" })).toStrictEqual([
+      expect.stringContaining("_Presidente"),
+      expect.stringContaining("aqui._"),
+    ]);
+
+    const unfinished = { ...multipleChoice, question: "[Insert the question here]" };
+
+    expect(checkItem({ item: unfinished, language: "en" })).toStrictEqual([
+      expect.stringContaining("placeholder"),
+    ]);
   });
 
   it("rejects options that print the worked-out values deciding the answer", () => {
@@ -159,6 +252,7 @@ describe(checkItem, () => {
       context:
         "No mercado, um pacote com 6 maçãs custa R$ 12,00, e outro com 4 maçãs custa R$ 10,00.",
       difficulty: "easy",
+      fixedOrder: false,
       format: "multipleChoice",
       image: null,
       options: [
@@ -304,6 +398,24 @@ describe(checkItem, () => {
     ]);
   });
 
+  it("rejects a sample answer that gives none of the accepted answers", () => {
+    const item: GeneratedItem = {
+      acceptedAnswers: ["8", "oito"],
+      context: null,
+      difficulty: "easy",
+      format: "typed",
+      image: null,
+      keyPoints: ["Counts the days"],
+      question: "Quantos dias tem a semana de prova?",
+      sampleAnswer: "São 7 dias.",
+      visual: null,
+    };
+
+    expect(checkItem({ item, language: "pt" })).toStrictEqual([
+      expect.stringContaining("none of the accepted answers"),
+    ]);
+  });
+
   it("gives every rubric row its points, or none", () => {
     const item: GeneratedItem = {
       context: null,
@@ -374,11 +486,40 @@ describe(checkItem, () => {
           { max: 9, min: 1, name: "b", step: 1, unit: null, value: 5 },
         ],
       },
+      otherSolutions: [],
       question: "What is {a} times {b}?",
     };
 
     expect(checkItem({ item, language: "en" })).toStrictEqual([
       "The stated answer 12 doesn't match the computed 15.",
     ]);
+  });
+});
+
+describe(findOwnEmDashes, () => {
+  it("finds em dashes in our own wording, such as an essay rubric, and not in quoted support text", () => {
+    // ENEM essays, Oct 2026: rubric rows named a competency with an em dash before storing took them out.
+    const essay = {
+      context: "A SRA. LORENA — Concluo minha comunicação.",
+      difficulty: "medium" as const,
+      format: "essay" as const,
+      keyPoints: ["Uma proposta de intervenção completa"],
+      question: "Redija um texto dissertativo-argumentativo.",
+      rubric: [
+        {
+          criterion: "Competência 1 — norma culta",
+          description: "Domina a escrita.",
+          points: null,
+        },
+        { criterion: "Competência 2", description: "Compreende a proposta.", points: null },
+      ],
+      sampleOutline: "Tese, dois argumentos e proposta.",
+    };
+
+    expect(findOwnEmDashes(essay)).toStrictEqual([expect.stringContaining("Competência 1")]);
+
+    expect(
+      findOwnEmDashes({ ...essay, rubric: [{ ...essay.rubric[0]!, criterion: "Competência 1" }] }),
+    ).toStrictEqual([]);
   });
 });

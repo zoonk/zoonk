@@ -12,6 +12,7 @@ import { uploadImage } from "@zoonk/core/images/upload";
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { listeningGoalFixture } from "@zoonk/testing/fixtures/listening";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -23,9 +24,10 @@ import { taskResult } from "../_test-utils/recorded-outputs";
 import { TEST_IMAGE, imageProvenance, sceneFor } from "../images/_test-utils/image-results";
 import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { prepareGraphPlacement } from "./goal-placement-items";
+import { preparePlacementItems } from "./placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import { shortPlanPracticeWorkflow } from "./short-plan-practice-workflow";
-import { preparePlacementItemsStep } from "./steps/goal-lookahead-steps";
+import { pickPlacementBatchesStep, writePlacementBatchStep } from "./steps/placement-items-steps";
 
 vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "started-run" })) }));
 
@@ -52,7 +54,7 @@ vi.mock("@zoonk/core/analytics/server", () => ({
 
 const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 
-/** Polícia Federal's notice as research reads it: assertions judged Certo or Errado. */
+/** Polícia Federal's notice as research reads it: assertions judged right or wrong. */
 const CEBRASPE_STRUCTURE = {
   formats: [
     { citation: CITATION, description: "Itens Certo ou Errado.", kind: "trueFalse", options: null },
@@ -81,6 +83,7 @@ const QUICK_ITEMS = {
   multipleChoice: {
     context: null,
     difficulty: "medium",
+    fixedOrder: false,
     format: "multipleChoice",
     image: null,
     options: [
@@ -219,6 +222,7 @@ describe(prepareGraphPlacement, () => {
       goalId: goal.id,
       graph: oneCoursePerSkill(keys),
       knownAreas: [],
+      ownLevel: null,
       skillIds: Promise.resolve(
         Object.fromEntries(skillIds.map((id, index) => [keys[index]!, id])),
       ),
@@ -335,6 +339,51 @@ describe(placementItemsWorkflow, () => {
     expect(trackServerEvent).not.toHaveBeenCalled();
   });
 
+  // Carla chose "Nothing": she starts from nothing, so placement asks her nothing, yet its run wrote
+  // nine calls of questions for her.
+  it("writes no placement questions for a learner who skipped placement, and still writes a test-out's", async () => {
+    const { goal, skillIds } = await goalWithSkills({ count: 3 });
+
+    await prisma.goal.update({ data: { details: { level: "none" } }, where: { id: goal.id } });
+
+    await expect(
+      placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
+    ).resolves.toStrictEqual({ failed: 0, status: "written", written: 0 });
+
+    expect(generatePlacementItems).not.toHaveBeenCalled();
+
+    // Placement doesn't wait for questions it won't ask.
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
+
+    // A chapter's test-out is the learner's own choice, whatever they said about placement.
+    await preparePlacementItems({
+      ...context,
+      formats: ["multipleChoice"],
+      goalId: goal.id,
+      skillIds,
+    });
+
+    expect(calledSkillCounts().reduce((sum, count) => sum + count, 0)).toBe(3);
+  });
+
+  it("writes no placement questions for a learner who chose where to start in the catalog", async () => {
+    const { goal, skillIds } = await goalWithSkills({ count: 2 });
+
+    // Onboarding skips placement for a learner who starts at a chapter they chose.
+    await prisma.goal.update({
+      data: { details: { courseStart: { chapterId: randomUUID() }, level: "basic" } },
+      where: { id: goal.id },
+    });
+
+    await expect(
+      placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
+    ).resolves.toStrictEqual({ failed: 0, status: "written", written: 0 });
+
+    expect(generatePlacementItems).not.toHaveBeenCalled();
+  });
+
   it("then starts a class test's practice, sized to its days, and nothing for a longer plan", async () => {
     const user = await userFixture();
     const skills = await Promise.all([skillFixture(), skillFixture()]);
@@ -389,6 +438,45 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
+  it("waits for a language exam's blueprint, not only its formats, so listening skills get no text questions", async () => {
+    const { blueprint, goal, listeningSkills, reading } = await listeningGoalFixture();
+    const listeningIds = listeningSkills.map((skill) => skill.id);
+
+    const { sleep } = await import("workflow");
+
+    // Research's first pass read the notice's formats; its blueprint is linked two polls later.
+    await prisma.goal.update({
+      data: {
+        details: { noticeFormats: MULTIPLE_CHOICE_STRUCTURE.formats },
+        examBlueprintId: null,
+      },
+      where: { id: goal.id },
+    });
+
+    vi.mocked(sleep)
+      .mockResolvedValueOnce()
+      .mockImplementationOnce(async () => {
+        await prisma.goal.update({
+          data: { examBlueprintId: blueprint.id },
+          where: { id: goal.id },
+        });
+      });
+
+    await placementItemsWorkflow({
+      analytics: context.analytics,
+      goalId: goal.id,
+      skillIds: [reading.id, ...listeningIds],
+      waitsForNotice: true,
+    });
+
+    await expect(
+      Promise.all([
+        countItems({ format: "multipleChoice", skillIds: [reading.id] }),
+        countItems({ format: "multipleChoice", skillIds: listeningIds }),
+      ]),
+    ).resolves.toStrictEqual([1, 0]);
+  });
+
   it("joins the run already writing the goal's questions", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2 });
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-run" });
@@ -400,49 +488,44 @@ describe(placementItemsWorkflow, () => {
     expect(generatePlacementItems).not.toHaveBeenCalled();
   });
 
-  it("tries a failed call once more, and counts a call that fails twice as its skills", async () => {
-    const { goal, skillIds } = await goalWithSkills({ count: 6 });
-    const failing = await skillFixture({ name: `Always fails ${crypto.randomUUID()}` });
+  it("leaves a failed call to the runtime's retry of its own step, and counts the skills of one that keeps failing", async () => {
+    const { goal, skillIds } = await goalWithSkills({ count: 2 });
+    const failing = await skillFixture({ name: `Always fails ${randomUUID()}` });
+    const unavailable = new Error("Provider unavailable");
 
-    vi.mocked(generatePlacementItems)
-      .mockRejectedValueOnce(new Error("Provider hiccup"))
-      .mockImplementation(async (params) => {
-        if (params.skills.some((skill) => skill.name === failing.name)) {
-          throw new Error("Provider unavailable");
-        }
+    vi.mocked(generatePlacementItems).mockImplementation(async (params) => {
+      if (params.skills.some((skill) => skill.name === failing.name)) {
+        throw unavailable;
+      }
 
-        return writtenFor(params);
-      });
+      return writtenFor(params);
+    });
+
+    const request = { ...context, goalId: goal.id, skillIds: [...skillIds, failing.id] };
+
+    // Once its retries ran out, the failing call's two skills are left to lessons and reviews; the
+    // other call's skill is written.
+    await expect(preparePlacementItems(request)).resolves.toStrictEqual({ failed: 2, written: 1 });
+
+    // Each call is made once here: a call that fails fails its own step, which the runtime retries
+    // alone, right away, while the others' questions are already stored.
+    expect(calledSkillCounts()).toStrictEqual([1, 2]);
+
+    const { batches, quickFormat } = await pickPlacementBatchesStep({
+      ...request,
+      skillIds: [failing.id],
+    });
 
     await expect(
-      preparePlacementItemsStep({ ...context, goalId: goal.id, skillIds }),
-    ).resolves.toStrictEqual({ failed: 0, written: 6 });
-
-    // The first pick alone, then calls of two; the first tried again after its hiccup.
-    expect(calledSkillCounts()).toStrictEqual([1, 1, 1, 2, 2]);
-
-    vi.mocked(generatePlacementItems).mockClear();
-
-    const other = await goalWithSkills({ count: 2 });
-
-    await expect(
-      preparePlacementItemsStep({
-        ...context,
-        goalId: other.goal.id,
-        skillIds: [...other.skillIds, failing.id],
-      }),
-    ).resolves.toStrictEqual({ failed: 2, written: 1 });
-
-    // The failing call twice, then its two skills are left to lessons and reviews; the other
-    // call's skill is written.
-    expect(calledSkillCounts()).toStrictEqual([1, 2, 2]);
+      writePlacementBatchStep({ ...context, quickCount: 1, quickFormat, skills: batches[0] ?? [] }),
+    ).rejects.toBe(unavailable);
   });
 
   it("writes an exam's true/false questions under its blueprint once research has read its notice", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
 
     // Before the notice is read, placement's questions are general multiple choice.
-    await preparePlacementItemsStep({ ...context, goalId: goal.id, skillIds });
+    await preparePlacementItems({ ...context, goalId: goal.id, skillIds });
 
     const blueprint = await examBlueprintFixture({
       name: "Polícia Federal",
@@ -454,7 +537,7 @@ describe(placementItemsWorkflow, () => {
     vi.mocked(generatePlacementItems).mockClear();
 
     await expect(
-      preparePlacementItemsStep({ ...context, goalId: goal.id, skillIds }),
+      preparePlacementItems({ ...context, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, written: 2 });
 
     // The exam's own questions: its true/false ones and typed ones of its own, since placement
@@ -489,7 +572,7 @@ describe(placementItemsWorkflow, () => {
 
     // A later call finds them.
     vi.mocked(generatePlacementItems).mockClear();
-    await preparePlacementItemsStep({ ...context, goalId: goal.id, skillIds });
+    await preparePlacementItems({ ...context, goalId: goal.id, skillIds });
     expect(generatePlacementItems).not.toHaveBeenCalled();
   });
 
@@ -547,7 +630,7 @@ describe(placementItemsWorkflow, () => {
 
   it("writes a multiple-choice exam's own questions once when its notice lands", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
-    await preparePlacementItemsStep({ ...context, goalId: goal.id, skillIds });
+    await preparePlacementItems({ ...context, goalId: goal.id, skillIds });
 
     const blueprint = await examBlueprintFixture({
       name: "ENEM",
@@ -559,7 +642,7 @@ describe(placementItemsWorkflow, () => {
 
     // The general questions written before the notice don't count: the exam's own are written.
     await expect(
-      preparePlacementItemsStep({ ...context, goalId: goal.id, skillIds }),
+      preparePlacementItems({ ...context, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, written: 2 });
 
     expect(vi.mocked(generatePlacementItems).mock.calls).toStrictEqual([
@@ -569,7 +652,7 @@ describe(placementItemsWorkflow, () => {
 
     // Once per exam: a later call, like the next learner of the exam, writes nothing.
     vi.mocked(generatePlacementItems).mockClear();
-    await preparePlacementItemsStep({ ...context, goalId: goal.id, skillIds });
+    await preparePlacementItems({ ...context, goalId: goal.id, skillIds });
     expect(generatePlacementItems).not.toHaveBeenCalled();
   });
 });

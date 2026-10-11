@@ -75,6 +75,96 @@ describe(toStepContent, () => {
     expect(unplanned.ok && "image" in unplanned.content).toBe(false);
   });
 
+  it("keeps each option's picture on a question whose options are pictures, never on a version", () => {
+    const doorways = {
+      context: null,
+      image: null,
+      kind: "check" as const,
+      options: [
+        {
+          isCorrect: true,
+          picture: {
+            alt: " A tall doorway with a pointed arch ",
+            prompt: "A stone church doorway with a pointed arch, alone",
+          },
+          reason: "The pointed arch is Gothic.",
+          text: "Gothic",
+        },
+        {
+          isCorrect: false,
+          picture: {
+            alt: "A low doorway with a round arch",
+            prompt: "A stone church doorway with a round arch, alone",
+          },
+          reason: "A round arch is Romanesque.",
+          text: "Romanesque",
+        },
+      ],
+      question: "Which doorway is Gothic?",
+      visual: null,
+    };
+
+    const shared = toStepContent(doorways, { allowImage: true, language: "en" });
+    const version = toStepContent(doorways, { allowImage: false, language: "en" });
+
+    const pictures = (converted: typeof shared) =>
+      converted.ok && "options" in converted.content
+        ? (converted.content.options as { picture?: { alt: string } }[]).map(
+            (option) => option.picture?.alt ?? null,
+          )
+        : null;
+
+    expect(pictures(shared)?.toSorted()).toStrictEqual([
+      "A low doorway with a round arch",
+      "A tall doorway with a pointed arch",
+    ]);
+
+    expect(pictures(version)).toStrictEqual([null, null]);
+  });
+
+  it("keeps a valid template to explore on an explanation and leaves out one that isn't", () => {
+    const explanation = screenAt(1);
+
+    if (explanation.kind !== "explanation") {
+      throw new Error("Screen 2 is an explanation");
+    }
+
+    const fields = {
+      label: "Temperature",
+      max: 7,
+      min: -5,
+      moves: [{ by: 3 }, { by: 5 }],
+      start: -3,
+      step: 1,
+      unit: "°C",
+    };
+
+    const withExplore = (content: object) => ({
+      ...explanation,
+      explore: { content: JSON.stringify(content), template: "numberLine" },
+    });
+
+    // A prompt or check written out of habit is left out; the fields are what's explored.
+    const valid = toStepContent(withExplore({ check: { kind: "numeric" }, fields }), {
+      allowImage: false,
+      language: "en",
+    });
+
+    const invalid = toStepContent(withExplore({ fields: { ...fields, moves: [] } }), {
+      allowImage: false,
+      language: "en",
+    });
+
+    expect(valid).toMatchObject({
+      content: { explore: { fields, template: "numberLine" } },
+      kind: "explanation",
+      ok: true,
+    });
+
+    expect(invalid.ok && "explore" in invalid.content).toBe(false);
+    expect(invalid.ok).toBe(true);
+  });
+
   it("stores typed answers without empty accepted answers and activities with their template", () => {
     expect(toStepContent(screenAt(6), { allowImage: false, language: "en" })).toMatchObject({
       content: { keyPoints: expect.any(Array), sampleAnswer: expect.any(String) },

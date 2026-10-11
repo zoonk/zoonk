@@ -50,7 +50,7 @@ async function TestOutBody({ params, searchParams }: Props) {
     findChapterTitle({ chapterId, goalId: goal.id }),
   ]);
 
-  if (result.status !== "ready") {
+  if (result.status !== "ready" && result.status !== "plusRequired") {
     notFound();
   }
 
@@ -60,6 +60,11 @@ async function TestOutBody({ params, searchParams }: Props) {
     closeHref: query[TEST_OUT_FROM_SESSION_PARAM] ? "/today" : `/content/chapters/${chapterId}`,
     goalId: goal.id,
   };
+
+  // Past a free exam plan's first week the test comes with Plus: it says so instead of starting.
+  if (result.status === "plusRequired") {
+    return <TestOutPreparingClient generationId={null} page={page} plusRequired />;
+  }
 
   // Its questions are written on the learner's tap (on the chapter's page, or here), never on
   // this page's load: a run started by the tap is followed here until the test opens.

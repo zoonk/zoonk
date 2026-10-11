@@ -12,6 +12,7 @@ enum LanguageConversationKind {
   practice
   checkpoint
   speakingMock @map("speaking_mock")
+  examSpeaking @map("exam_speaking")
 }
 
 enum LanguageConversationStatus {
@@ -93,7 +94,9 @@ model PronunciationReview {
 /// A live voice conversation with an AI character. `scenario` is the snapshot the call used. Neither
 /// the audio nor the transcript is stored: the transcript only reaches the separate text model that
 /// writes `feedback` (what went well, one thing to improve, pronunciation tips, or a speaking mock's
-/// criteria), kept with its provenance. A checkpoint call belongs to its session block.
+/// or exam task's criteria), kept with its provenance. A checkpoint call belongs to its session
+/// block. An exam speaking task (`examSpeaking`) is one task of a certificate's speaking paper;
+/// the tasks of one whole paper share a `sectionId`.
 model LanguageConversation {
   id             String                     @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String                     @map("user_id") @db.Uuid
@@ -105,6 +108,7 @@ model LanguageConversation {
   chapter        Chapter?                   @relation(fields: [chapterId], references: [id], onDelete: SetNull)
   studyBlockId   String?                    @unique @map("study_block_id") @db.Uuid
   studyBlock     StudySessionBlock?         @relation(fields: [studyBlockId], references: [id], onDelete: SetNull)
+  sectionId      String?                    @map("section_id") @db.Uuid
   kind           LanguageConversationKind
   status         LanguageConversationStatus @default(ready)
   /// The learner's language, for the scenario's notes and the feedback.
@@ -133,6 +137,7 @@ model LanguageConversation {
   @@index([userId, createdAt])
   @@index([goalId])
   @@index([chapterId])
+  @@index([sectionId])
   @@map("language_conversations")
 }
 

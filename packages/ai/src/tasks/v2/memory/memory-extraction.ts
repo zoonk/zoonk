@@ -7,17 +7,18 @@ import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./memory-extraction.prompt.md";
-import { type MemoryFactCategory, memoryCategorySchema } from "./memory-facts";
+import { memoryCategorySchema } from "./memory-facts";
 
 /**
- * A background call after every chat, session and onboarding. In the memory-extraction eval Luna
- * and Gemini 3.8 Flash tied at the top and Luna costs a sixteenth as much. Claude Haiku 5.5 with
- * thinking off scored 9.44 against Luna's 9.78 on 18 cases (7 Oct 2026).
+ * A background call after every chat and onboarding; a session's numbers have their own task
+ * (`findSessionPatterns`). In the memory-extraction eval Luna and Gemini 3.8 Flash tied at the top
+ * and Luna costs a sixteenth as much. Claude Haiku 5.5 with thinking off scored 9.44 against
+ * Luna's 9.78 on 18 cases (7 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
-const MEMORY_SOURCES = ["onboarding", "chat", "session"] as const;
+const MEMORY_SOURCES = ["onboarding", "chat"] as const;
 
 type MemorySourceKind = (typeof MEMORY_SOURCES)[number];
 
@@ -41,8 +42,6 @@ export type MemoryExtractionParams = {
   source: MemorySourceKind;
   /** The learner-local date as YYYY-MM-DD, to resolve "next Friday" into an expiry date. */
   today: string;
-  /** The categories this learner's memory may hold (minors keep only goals and learning). */
-  categories: readonly MemoryFactCategory[];
   /** What the learner said or did, already formatted by the caller. */
   input: string;
   model?: string;
@@ -51,12 +50,11 @@ export type MemoryExtractionParams = {
   analytics?: AiGenerationContext;
 };
 
-function buildUserPrompt({ categories, input, language, source, today }: MemoryExtractionParams) {
+function buildUserPrompt({ input, language, source, today }: MemoryExtractionParams) {
   return [
     `LANGUAGE: ${getPromptLanguageName({ language })}`,
     `SOURCE: ${source}`,
     `TODAY: ${today}`,
-    `CATEGORIES: ${categories.join(", ")}`,
     formatUntrustedInput({ INPUT: input }),
   ].join("\n");
 }

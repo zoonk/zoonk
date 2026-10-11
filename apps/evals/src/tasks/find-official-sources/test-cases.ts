@@ -116,6 +116,27 @@ const EXAMS: Exam[] = [
     },
   },
   {
+    // A learner's research on 10 Oct 2026 found the test page, both band descriptors and the
+    // Writing and Reading format pages: no Listening or Speaking page, so the plan never knew
+    // Listening's 40 questions in four parts.
+    expected: {
+      noticeHints: ["academic"],
+      officialDomains: ["ielts.org"],
+      sectionHints: ["listening", "reading", "writing", "speaking"],
+    },
+    id: "ielts-academic-sections",
+    language: "en",
+    plan: {
+      board: "IELTS (British Council, IDP, Cambridge University Press & Assessment)",
+      country: "GB",
+      edition: null,
+      name: "IELTS Academic",
+      officialDomains: ["ielts.org"],
+      queries: ["IELTS Academic test format", "IELTS Academic test sections timing questions"],
+      role: null,
+    },
+  },
+  {
     expected: { noticeHints: ["content", "structure", "2026"], officialDomains: ["ets.org"] },
     id: "toefl-ibt",
     language: "en",
@@ -210,6 +231,46 @@ const SYLLABI: Exam[] = [
 ];
 
 /**
+ * Searches for copies of an exam's documents whose site refused the download, with the production
+ * tool, as research runs them when it couldn't read the notice.
+ */
+const COPIES: (Exam & { unreadable: string[] })[] = [
+  {
+    // TJ-SP's research (10 Oct 2026): every vunesp.com.br address answered 403, and the court's news
+    // page names none of the objective test's subjects.
+    expected: {
+      copies: {
+        contentHints: ["Língua Portuguesa", "Raciocínio Lógico", "Informática", "Escrevente"],
+        refusingSites: ["vunesp.com.br"],
+      },
+      noticeHints: [],
+      officialDomains: [],
+    },
+    id: "tjsp-escrevente-2025-copies",
+    language: "pt",
+    plan: {
+      board: "Vunesp",
+      country: "BR",
+      edition: null,
+      name: "Concurso TJ-SP",
+      officialDomains: ["vunesp.com.br", "tjsp.jus.br"],
+      queries: [
+        "edital concurso TJ-SP Escrevente Técnico Judiciário Vunesp",
+        "concurso TJ-SP Escrevente Técnico Judiciário edital conteúdo programático",
+        "Tribunal de Justiça de São Paulo Escrevente edital vunesp",
+      ],
+      role: "Escrevente Técnico Judiciário",
+    },
+    unreadable: [
+      "https://documento.vunesp.com.br/documento/stream/NzEzOTYxNw==",
+      "https://documento.vunesp.com.br/documento/stream/NzMzMDg0Ng%3D%3D",
+      "https://www.vunesp.com.br/TJSP2503",
+      "https://www.vunesp.com.br/TJSP2401",
+    ],
+  },
+];
+
+/**
  * Every exam with every search tool. The model's own search comes first in each
  * exam, so `--limit 5` samples it for models compared on built-in search. Syllabi
  * run with the production tool only.
@@ -232,5 +293,16 @@ export const TEST_CASES: TestCase<FindOfficialSourcesExpected, FindOfficialSourc
     id: `${syllabus.id}:parallel`,
     language: syllabus.language,
     userInput: { plan: syllabus.plan, searchTool: "parallel" as const, topic: "syllabus" as const },
+  })),
+  ...COPIES.map((exam) => ({
+    expected: exam.expected,
+    id: `${exam.id}:parallel`,
+    language: exam.language,
+    userInput: {
+      plan: exam.plan,
+      searchTool: "parallel" as const,
+      topic: "exam" as const,
+      unreadable: exam.unreadable,
+    },
   })),
 ];

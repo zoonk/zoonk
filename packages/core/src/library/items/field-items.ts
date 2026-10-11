@@ -33,26 +33,39 @@ async function findSkillsWithoutFieldItems({
   field: string;
   skillIds: readonly string[];
 }): Promise<FieldItemTarget[]> {
-  const skills = await prisma.skill.findMany({
-    select: {
-      _count: { select: { items: { where: { field } } } },
-      description: true,
-      example: true,
-      id: true,
-      language: true,
-      level: true,
-      name: true,
-      ownerId: true,
-      targetLanguage: true,
-    },
-    where: { id: { in: [...new Set(skillIds)] }, mergedIntoId: null },
-  });
+  const uniqueSkillIds = [...new Set(skillIds)];
+
+  // Counted on their own, for these skills only: a relation `_count` counts every skill's items.
+  const [skills, fieldItemCounts] = await Promise.all([
+    prisma.skill.findMany({
+      select: {
+        description: true,
+        example: true,
+        id: true,
+        language: true,
+        level: true,
+        name: true,
+        ownerId: true,
+        targetLanguage: true,
+      },
+      where: { id: { in: uniqueSkillIds }, mergedIntoId: null },
+    }),
+    prisma.item.groupBy({
+      _count: { id: true },
+      by: ["skillId"],
+      where: { field, skillId: { in: uniqueSkillIds } },
+    }),
+  ]);
+
+  const countBySkill = new Map(fieldItemCounts.map((row) => [row.skillId, row._count.id]));
 
   return skillIds
     .flatMap((skillId) => skills.find((skill) => skill.id === skillId) ?? [])
-    .filter((skill) => !skill.targetLanguage && skill._count.items < FIELD_ITEMS_PER_SKILL)
+    .filter(
+      (skill) => !skill.targetLanguage && (countBySkill.get(skill.id) ?? 0) < FIELD_ITEMS_PER_SKILL,
+    )
     .slice(0, MAX_FIELD_SKILLS)
-    .map(({ _count, targetLanguage: _targetLanguage, ...skill }) => ({ field, skill }));
+    .map(({ targetLanguage: _targetLanguage, ...skill }) => ({ field, skill }));
 }
 
 /**

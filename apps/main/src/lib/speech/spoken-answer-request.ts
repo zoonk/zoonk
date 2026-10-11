@@ -35,6 +35,10 @@ async function toSpokenAnswerOutcome(response: Response): Promise<SpokenAnswerOu
     return { retryAfterSeconds: refusal.retryAfterSeconds, status: "slowDown" };
   }
 
+  if (refusal?.kind === "signUpRequired") {
+    return { status: "signUpRequired" };
+  }
+
   return refusal
     ? { period: refusal.period, status: "limitReached", tier: refusal.tier }
     : { status: "failed" };

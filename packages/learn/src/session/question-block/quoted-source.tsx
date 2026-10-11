@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { type StudyQuestion } from "../session-types";
 
 /**
- * Where a real past exam question comes from ("Enem 2022, 2º dia, questão 141"), shown with the
+ * Where a real past exam question comes from ("Enem 2022, day 2, question 141"), shown with the
  * question before it's answered: questions are only copied where their organizer allows it with
  * the source cited. Written questions show nothing here.
  */

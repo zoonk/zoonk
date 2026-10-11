@@ -1,8 +1,8 @@
 import "server-only";
 import { type QuestionFormat } from "@zoonk/ai/tasks/v2/research/extract-question-formats";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
+import { type ExamStructure, examStructureSchema, toAnswerFormat } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { isPassageInDocument } from "./passage-check";
 
@@ -39,6 +39,7 @@ function toCitedFormat({
         description: format.description,
         kind: format.kind,
         options: format.options,
+        ...toAnswerFormat(format),
       }
     : null;
 }
@@ -76,15 +77,46 @@ export async function recordGoalNoticeFormats({
 }
 
 /**
- * Whether a goal knows how its exam asks questions: its notice's blueprint is linked, or a first
- * pass over the notice research is reading found its formats. Placement's first questions wait
- * for it (see `placementItemsWorkflow`). A workflow bridge for the goal the run works for.
+ * Whether placement waits for a goal's exam blueprint before writing or asking questions: a
+ * language certificate (an exam goal with a target language, such as IELTS) whose notice research
+ * hasn't linked yet. Which of its skills only recordings practice comes from the blueprint's
+ * listening section (`getListeningSkillIds`), so an IELTS candidate's questions written before the
+ * link tested listening with text, and placement asked them.
  */
-export async function hasGoalExamFormat(goalId: string): Promise<boolean> {
+export function awaitsExamBlueprint(
+  goal: Pick<Goal, "examBlueprintId" | "kind" | "targetLanguage">,
+): boolean {
+  return goal.kind === "exam" && goal.targetLanguage !== null && goal.examBlueprintId === null;
+}
+
+/**
+ * What placement's first questions still wait for while research reads the exam's notice (see
+ * `placementItemsWorkflow`): a language certificate's blueprint (`awaitsExamBlueprint`), until it's
+ * linked or research ends without one; another exam's formats, until its blueprint is linked or a
+ * first pass over the notice found them; null once they can be written. A workflow bridge for the
+ * goal the run works for.
+ */
+export async function getPlacementExamWait(
+  goalId: string,
+): Promise<"blueprint" | "formats" | null> {
   const goal = await prisma.goal.findUnique({
-    select: { details: true, examBlueprintId: true },
+    select: {
+      details: true,
+      examBlueprintId: true,
+      kind: true,
+      plan: { select: { noticeWaitEndedAt: true } },
+      targetLanguage: true,
+    },
     where: { id: goalId },
   });
 
-  return Boolean(goal && (goal.examBlueprintId || readNoticeFormats(goal.details)));
+  if (!goal) {
+    return null;
+  }
+
+  if (awaitsExamBlueprint(goal)) {
+    return goal.plan?.noticeWaitEndedAt ? null : "blueprint";
+  }
+
+  return goal.examBlueprintId || readNoticeFormats(goal.details) ? null : "formats";
 }

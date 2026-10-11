@@ -4,13 +4,13 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import {
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../../sessions/_test-utils/session-goal";
-import { getTodayStudySession } from "../../sessions/get-today-study-session";
 import { finishMock } from "./finish-mock";
 import { getMock } from "./get-mock";
 import { saveMockAnswer } from "./save-mock-answer";
@@ -40,10 +40,19 @@ function mockStructure(method: "itemResponseTheory" | "raw" | "wrongCancelsRight
   };
 }
 
-/** A Plus learner's exam goal with today's weekly mock in the session. */
+/**
+ * A Plus learner's exam goal with today's weekly mock in the session. Item response theory scores
+ * on ENEM's scale, so that exam is ENEM.
+ */
 async function mockSetup(method: Parameters<typeof mockStructure>[0] = "raw") {
   const user = await userFixture();
-  const blueprint = await examBlueprintFixture({ structure: mockStructure(method) });
+
+  const blueprint = await examBlueprintFixture({
+    ...(method === "itemResponseTheory"
+      ? { identityKey: `enem-${crypto.randomUUID()}`, name: "ENEM" }
+      : {}),
+    structure: mockStructure(method),
+  });
 
   const fixture = await sessionGoalFixture({
     goal: { examBlueprintId: blueprint.id, kind: "exam" },

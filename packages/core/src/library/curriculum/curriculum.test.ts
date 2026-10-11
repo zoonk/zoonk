@@ -446,7 +446,7 @@ describe(saveOutlineChapter, () => {
     expect(skillIdsOf(lessonTitles[1] ?? "")).toContain(sharedSkills[0]?.id);
   });
 
-  // A real outline gave "Lançamento de ofício", "por declaração" and "por homologação" one skill.
+  // A real outline gave tax assessment "ex officio", "by declaration" and "by approval" one skill.
   it("keeps lessons that split one skill set apart, and finds each of them again", async () => {
     const course = await courseFixture({ outlineStatus: "running" });
     const word = uniqueWord();

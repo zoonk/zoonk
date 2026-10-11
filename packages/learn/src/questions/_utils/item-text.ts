@@ -89,3 +89,10 @@ export function parseItemText(text: string): ItemTextBlock[] {
 export function parseItemLine(text: string): InlineMarkup[] {
   return parseInline(text.trim().replaceAll(LINE_BREAKS, " "));
 }
+
+/** One line of item text without its markers, for a label read aloud or a line of plain copy. */
+export function toPlainItemLine(text: string): string {
+  return parseItemLine(text)
+    .map((segment) => segment.text)
+    .join("");
+}

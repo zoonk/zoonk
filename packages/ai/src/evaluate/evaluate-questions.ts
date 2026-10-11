@@ -18,6 +18,7 @@ import { toEvaluationRunRecord } from "./evaluation-event";
 import { fitsTokenLimit } from "./evaluation-limits";
 import { JEV_MODEL_ID, getEvaluationModel, getEvaluationTokenLimit } from "./evaluation-models";
 import { type EvaluationRunAnswer, captureEvaluationRun } from "./evaluation-run-sink";
+import { EvaluationTimeoutError } from "./evaluation-timeout";
 import { formatUntrustedInput } from "./untrusted-input";
 
 type EvaluationQuestions = Record<string, Experimental_DecisionQuestion>;
@@ -70,7 +71,11 @@ function selectModel({
   return fallbackModel;
 }
 
-/** Runs one model with its own deadline so a slow primary still leaves time to fall back. */
+/**
+ * Runs one model with its own deadline so a slow primary still leaves time to fall back. A
+ * deadline that runs out, even while the AI SDK waits to retry, is a timeout
+ * (`EvaluationTimeoutError`), never the cancellation the SDK reports it as.
+ */
 async function runModel<QUESTIONS extends EvaluationQuestions>({
   model,
   questions,
@@ -80,12 +85,22 @@ async function runModel<QUESTIONS extends EvaluationQuestions>({
   questions: QUESTIONS;
   state: string;
 }) {
+  const deadline = AbortSignal.timeout(TIMEOUT_MS);
+
   const result = await experimental_decide({
-    abortSignal: AbortSignal.timeout(TIMEOUT_MS),
+    abortSignal: deadline,
     model: getEvaluationModel(model),
     providerOptions: { gateway: NO_PROMPT_TRAINING },
     questions,
     state,
+  }).catch((error: unknown) => {
+    if (deadline.aborted) {
+      throw new EvaluationTimeoutError(`${model} didn't answer within ${TIMEOUT_MS} ms.`, {
+        cause: error,
+      });
+    }
+
+    throw error;
   });
 
   return {

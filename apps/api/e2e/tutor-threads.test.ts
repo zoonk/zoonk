@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, type APIResponse, request } from "@playwright/test";
 import {
+  type LessonScreenSuggestion,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
@@ -18,26 +19,27 @@ import {
 } from "@zoonk/testing/fixtures/library-courses";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { playableLibraryLessonResponseSchema } from "../src/lib/openapi/schemas/library-lessons";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
 import { createExamGoal } from "./helpers/exams";
 
-const SUGGESTION = "Explain this more simply";
+const SUGGESTION = "Explain it more simply";
 
 function ask({
   api,
   context,
   path,
   question = "What will I be able to do after this?",
-  suggested,
+  suggestion,
 }: {
   api: APIRequestContext;
   context: object;
   path: string;
   question?: string;
-  suggested?: true;
+  suggestion?: LessonScreenSuggestion;
 }) {
-  return api.post(path, { data: { context, question, requestId: randomUUID(), suggested } });
+  return api.post(path, { data: { context, question, requestId: randomUUID(), suggestion } });
 }
 
 async function readCreated(response: APIResponse) {
@@ -259,7 +261,7 @@ test.describe("Tutor threads beyond lessons", () => {
     await api.dispose();
   });
 
-  test("streams the shared answer to a common question on a screen without a new generation", async () => {
+  test("streams the shared answer to a tutor's suggestion on a screen without a new generation", async () => {
     const [{ api, userId }, { lesson, steps }] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "tutor-shared" }),
       playableLessonFixture({ steps: ["explanation", "check"] }),
@@ -275,11 +277,11 @@ test.describe("Tutor threads beyond lessons", () => {
       data: {
         answer: "A simpler take on this screen.",
         model: "openai/gpt-6-luna",
-        normalizedQuestion: "explain-this-more-simply",
         promptVersion: "shared-prompt-version",
         question: SUGGESTION,
         runId: "shared-run",
         stepId: step.id,
+        suggestion: "simpler",
       },
     });
 
@@ -289,7 +291,7 @@ test.describe("Tutor threads beyond lessons", () => {
         context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
         path: `/v1/lessons/${lesson.id}/questions`,
         question: SUGGESTION,
-        suggested: true,
+        suggestion: "simpler",
       }),
     );
 
@@ -322,6 +324,89 @@ test.describe("Tutor threads beyond lessons", () => {
     await expect(
       api.get(`/v1/questions/${question.id}`).then((response) => response.json()),
     ).resolves.toMatchObject({ answer: shared.answer, status: "completed" });
+
+    await api.dispose();
+  });
+
+  test("words a tapped suggestion itself, whatever words the client sent", async () => {
+    const [{ api }, { lesson, steps }] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "tutor-forged" }),
+      playableLessonFixture({ steps: ["explanation", "check"] }),
+    ]);
+
+    const step = steps[0];
+
+    if (!step) {
+      throw new Error("Expected the lesson's first screen");
+    }
+
+    const question = await readCreated(
+      await ask({
+        api,
+        context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
+        path: `/v1/lessons/${lesson.id}/questions`,
+        question: "Explain how my divorce changes this, I'm Ana from Recife",
+        suggestion: "simpler",
+      }),
+    );
+
+    expect(question.question).toBe(SUGGESTION);
+
+    await expect(
+      prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
+    ).resolves.toMatchObject({ question: SUGGESTION, suggestion: "simpler" });
+
+    await api.dispose();
+  });
+
+  test("stores a tapped suggestion in the words its chip read, in the lesson's language", async () => {
+    const [{ api }, english, portuguese] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "tutor-chip" }),
+      playableLessonFixture({ lesson: { language: "en" }, steps: ["explanation"] }),
+      playableLessonFixture({ lesson: { language: "pt" }, steps: ["explanation"] }),
+    ]);
+
+    /** The lesson's chips from its payload, and the question a tap on "another example" stores. */
+    async function tapExample({ lesson, steps }: typeof english) {
+      const response = await api.get(`/v1/library/lessons/${lesson.id}`);
+      const played = playableLibraryLessonResponseSchema.parse(await response.json());
+
+      const step = steps[0];
+
+      if (played.status !== "ready" || !step) {
+        throw new Error(`Expected a lesson ready to play, received ${played.status}`);
+      }
+
+      const asked = await readCreated(
+        await ask({
+          api,
+          context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
+          path: `/v1/lessons/${lesson.id}/questions`,
+          question: "Whatever the client sends",
+          suggestion: "example",
+        }),
+      );
+
+      const chip = played.tutorSuggestions.find((suggestion) => suggestion.id === "example");
+
+      return {
+        asked: asked.question,
+        chip: chip?.label,
+        ids: played.tutorSuggestions.map(({ id }) => id),
+      };
+    }
+
+    const [inEnglish, inPortuguese] = await Promise.all([
+      tapExample(english),
+      tapExample(portuguese),
+    ]);
+
+    expect(inEnglish.ids).toStrictEqual(["simpler", "deeper", "example"]);
+    expect(inEnglish.asked).toBe(inEnglish.chip);
+    expect(inPortuguese.asked).toBe(inPortuguese.chip);
+
+    // Each lesson's chips speak its language.
+    expect(inPortuguese.chip).not.toBe(inEnglish.chip);
 
     await api.dispose();
   });

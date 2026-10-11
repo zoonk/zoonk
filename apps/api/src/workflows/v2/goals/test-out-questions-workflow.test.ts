@@ -16,6 +16,7 @@ vi.mock("@zoonk/ai/tasks/v2/items/placement-items", () => ({ generatePlacementIt
 const writtenItem = {
   context: null,
   difficulty: "easy" as const,
+  fixedOrder: false,
   format: "multipleChoice" as const,
   image: null,
   options: [

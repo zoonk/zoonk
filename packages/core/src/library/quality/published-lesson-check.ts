@@ -10,6 +10,7 @@ import {
   type GateResult,
   checkVersion,
   citeScreens,
+  citeScreensIfPossible,
   fixVersion,
   toScreensToSave,
 } from "../lessons/_utils/checked-version";
@@ -31,7 +32,6 @@ import {
   type CheckContext,
   keepPictures,
   loadCheck,
-  loadLessonScope,
   loadVersionSteps,
   toHeldBackDraft,
   toProvenance,
@@ -63,7 +63,7 @@ async function publishFixedVersion({
   replaces: number;
 }): Promise<PublishedLessonOutcome> {
   const [citations, previous] = await Promise.all([
-    citeScreens({
+    citeScreensIfPossible({
       analytics: await toTaskAnalytics(context),
       inputs,
       lesson: checked.version.lesson,
@@ -176,22 +176,21 @@ export async function redraftPublishedLesson({
   heldBackDrafts: HeldBackDraft[];
   version: number;
 }): Promise<PublishedLessonOutcome> {
-  const [inputs, current, scope] = await Promise.all([
+  const [inputs, current, analytics] = await Promise.all([
     loadPublishedLessonInputs(context.lessonId),
     readCurrentLessonVersion(context.lessonId),
-    loadLessonScope(context),
+    toTaskAnalytics(context),
   ]);
 
   if (!inputs || current !== version) {
     return { status: "replaced" };
   }
 
-  // A private course's lesson starts from its cheaper writer, like its first draft.
-  const writer = pickDraftWriter({ heldBackDrafts, model: scope.model });
+  const writer = pickDraftWriter({ heldBackDrafts });
 
   const draft = await writeLessonDraft({
     ...toWritingContext(inputs),
-    analytics: scope.analytics,
+    analytics,
     heldBackProblems: writer.heldBackProblems,
     model: writer.model,
     serviceTier: BACKGROUND_TIER,
@@ -231,7 +230,7 @@ export async function redraftPublishedLesson({
  * Writes the citations of a version just published from documents (the learner's material or a
  * law's text): each screen gets the page it teaches from. Citing waits for nothing on the way to
  * the learner, so it follows publishing, at flex; only the version it read is updated, and only
- * while it's still the current one.
+ * while it's still the current one. A failed model call throws, so the step citing it retries.
  *
  * This is an internal workflow bridge: Library content is shared and no learner's data is written.
  */

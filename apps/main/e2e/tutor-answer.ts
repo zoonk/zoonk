@@ -1,4 +1,7 @@
 import { type Route } from "@playwright/test";
+import { anyPlanOperationSchema } from "@zoonk/core/plans/contract";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { z } from "zod";
 
 function uiMessageEvent(event: object) {
   return `data: ${JSON.stringify(event)}\n\n`;
@@ -30,4 +33,35 @@ export function fulfillTutorAnswer(
     },
     status: 200,
   });
+}
+
+const proposalPayloadSchema = z.object({ operations: z.array(anyPlanOperationSchema) });
+
+/** A proposal as the conversation shows it, from the change core saved. */
+export function toProposal(change: {
+  createdAt: Date;
+  id: string;
+  payload: unknown;
+}): PlanChangeView {
+  const { operations } = proposalPayloadSchema.parse(change.payload);
+
+  return {
+    behind: null,
+    canUndo: false,
+    createdAt: change.createdAt.toISOString(),
+    days: null,
+    effect: null,
+    examDocument: "notice",
+    id: change.id,
+    kind: "edited",
+    lessonsSkipped: 0,
+    officialDate: null,
+    operations,
+    // A change read from the learner's words is said from what it does, never the model's words.
+    reason: null,
+    seen: false,
+    source: "planEdit",
+    status: "proposed",
+    todaySession: null,
+  };
 }

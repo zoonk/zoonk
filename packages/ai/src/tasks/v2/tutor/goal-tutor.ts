@@ -1,20 +1,27 @@
 import "server-only";
-import { generateText, isStepCount, streamText, tool } from "ai";
-import { z } from "zod";
+import { generateText, isStepCount, streamText } from "ai";
 import { zoonkGateway } from "../../../gateway";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration, startTaskGeneration } from "../../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../../provenance/task-provenance";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
 import { type LessonQuestionPriorTurn } from "../../lessons/lesson-question";
-import { type PlanScopeContext } from "../../lessons/lesson-question-context";
-import { createGoalTutorMessages, serializeGoalTutorMessages } from "./goal-tutor-messages";
-import { shouldSearchFirst } from "./goal-tutor-search";
 import {
-  GOAL_TUTOR_APP_TOOLS,
-  GOAL_TUTOR_APP_TOOLS_DESCRIPTION,
-  type GoalTutorAppTool,
-} from "./goal-tutor-tools";
+  type PlanScopeContext,
+  type TutorScreenContext,
+} from "../../lessons/lesson-question-context";
+import {
+  type OfferGoalAppTool,
+  type ProposeGoalPlanChange,
+  createCardTools,
+} from "./goal-tutor-cards";
+import chapterScreenPrompt from "./goal-tutor-chapter.prompt.md";
+import examGoalPrompt from "./goal-tutor-exam.prompt.md";
+import lessonScreenPrompt from "./goal-tutor-lesson.prompt.md";
+import { LOOKUP_DEADLINE_MS, type LookUpGoalData, createLookUpTool } from "./goal-tutor-lookup";
+import { createGoalTutorMessages, serializeGoalTutorMessages } from "./goal-tutor-messages";
+import mockScreenPrompt from "./goal-tutor-mock.prompt.md";
+import { shouldSearchFirst } from "./goal-tutor-search";
 import systemPrompt from "./goal-tutor.prompt.md";
 
 /**
@@ -35,11 +42,12 @@ const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-sonnet-5.5"
 const GOAL_TUTOR_TASK = "goal-tutor";
 
 /**
- * A round of tools (a plan change, an app tool), the answer that says it, and room for one more
- * round when the model offers an app tool after the change: at most three steps. A search runs
- * inside a step, on the gateway.
+ * A lookup of the learner's data the context doesn't show, a round of card tools (a plan change,
+ * an app tool), the answer that says it, and room for one more round when the model offers an app
+ * tool after the change, or again after a change that showed no card (`changeFirst`): at most four
+ * steps. A search runs inside a step, on the gateway.
  */
-const MAX_STEPS = 3;
+const MAX_STEPS = 4;
 
 /**
  * A search finds a current source for a fact that changes over time (case law, a recent law, an
@@ -55,129 +63,15 @@ const MAX_STEPS = 3;
 const SEARCH_TOOL = "searchWeb";
 const SEARCH_RESULTS = 5;
 const SEARCH_CHARACTERS_PER_RESULT = 1500;
-const MAX_REQUEST_LENGTH = 500;
-const MAX_TOPIC_LENGTH = 80;
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty goal tutor answer";
-
-/** When the plan ends before and after a change, and the lessons it adds or removes. */
-export type GoalTutorPlanChangeEffect = {
-  /** For a focus: when each focused area's first lesson is due with the change, and now. */
-  areaStarts?: {
-    area: string;
-    firstLessonNow: string | null;
-    firstLessonWithChange: string | null;
-  }[];
-  endDateAfter: string | null;
-  endDateBefore: string | null;
-  lessonsAdded: number;
-  lessonsRemoved: number;
-  /** The exam's notice topics the change brings into the plan, by area. */
-  topicsAdded?: { area: string; topics: string[] }[];
-  /** The exam's notice topics the change leaves out of the plan, by area. */
-  topicsLeftOut?: { area: string; topics: string[] }[];
-} | null;
-
-/**
- * What asking for a plan change did, as the model reads it. The change itself only happens when
- * the learner taps Apply.
- */
-export type GoalTutorPlanChangeResult =
-  | {
-      effect: GoalTutorPlanChangeEffect;
-      /**
-       * What the change costs, to say before the learner applies it: an exam subject with
-       * questions left out, or a plan that would end weeks before its date.
-       */
-      cautions: (
-        | { area: string; kind: "leavesOutExamSubject"; questions: number }
-        | { endDate: string; kind: "endsBeforeDate"; targetDate: string }
-      )[];
-      /** Parts of the request no change covers, to answer in words. */
-      leftOut: string[];
-      /** The exam day the notice sets, when the change moves the exam off it; null otherwise. */
-      officialExamDate: { date: string; source: string | null } | null;
-      /** What the change does, as the card says it: the plan changes only this way. */
-      changes: string;
-      status: "proposed";
-    }
-  | { leftOut?: string[]; reason: string; status: "notPossible" }
-  /** The plan already works that way, or the change wouldn't move anything in it. */
-  | { leftOut: string[]; status: "unchanged" }
-  | { status: "notReady" | "notUnderstood" };
-
-/** Asks core for the change, as a proposal waiting for the learner's tap. */
-type ProposeGoalPlanChange = (request: string) => Promise<GoalTutorPlanChangeResult>;
-
-/**
- * What offering one of the app's features did, as the model reads it: the card the learner sees
- * under the answer (with what it opens, locked when their plan doesn't include it), or why the
- * feature can't help now.
- */
-export type GoalTutorAppToolResult =
-  | {
-      /**
-       * What the card opens: the chapter or unit, the lessons a passed test skips, the call
-       * lengths that fit what's left of the learner's call time (or, `callTimeUsed`, that it's
-       * used until tomorrow, next month or, for a guest, an account), the subjects a mock can
-       * also be on its own, the catalog course a new goal's card shows, the written test and when
-       * the plan practices it, the notebook's open mistakes, the words to say again.
-       */
-      offered: {
-        cadence?: "biweekly" | "finalWeeks" | "weekly";
-        callTimeUsed?: "day" | "month" | "total";
-        chapter?: string;
-        course?: string;
-        lessonsLeft?: number;
-        minutes?: number[];
-        mistakes?: number;
-        subject?: string;
-        /** The subjects a mock can be on alone, besides the full exam; empty when none can. */
-        subjects?: string[];
-        /** For Plus: the learner already has it, so its page manages it. */
-        subscribed?: boolean;
-        unit?: string;
-        words?: string[];
-      };
-      /** Their plan doesn't include it: the card shows it locked, with what Plus unlocks. */
-      plusRequired?: true;
-      status: "offered";
-      tool: GoalTutorAppTool;
-    }
-  | {
-      reason:
-        | "everythingFits"
-        | "noMistakes"
-        | "noMock"
-        | "notExam"
-        | "notLanguage"
-        | "notWritten"
-        | "nothingDue"
-        | "nothingToSkip"
-        | "onePerMessage"
-        | "unavailable";
-      status: "unavailable";
-      tool: GoalTutorAppTool;
-    };
-
-/** What the model asks for: the feature, and what some features need to open. */
-export type GoalTutorAppToolRequest = {
-  /** For a chapter's test: the plan area whose next chapter to test. */
-  area: string | null;
-  /** For a new goal: what the learner wants, in their words, to fill in. */
-  goal: string | null;
-  tool: GoalTutorAppTool;
-  /** For a new goal: its subject in a few words, to look for a course in the catalog. */
-  topic: string | null;
-};
-
-/** Asks core to offer one of the app's features under the answer. */
-type OfferGoalAppTool = (input: GoalTutorAppToolRequest) => Promise<GoalTutorAppToolResult>;
 
 type GoalTutorInput = {
   analytics?: AiGenerationContext;
   contextSnapshot: PlanScopeContext;
   /** Facts the learner shared before (their goals, routine, how they learn), when memory is on. */
   learnerMemory?: readonly string[];
+  /** Reads the learner's own data the context doesn't show; only the model sees what it finds. */
+  lookUp: LookUpGoalData;
   offerAppTool: OfferGoalAppTool;
   priorTurns: readonly LessonQuestionPriorTurn[];
   proposePlanChange: ProposeGoalPlanChange;
@@ -191,63 +85,29 @@ export type GenerateGoalTutorAnswerParams = GoalTutorInput & {
 };
 
 function createTools({
+  lookUp,
   offerAppTool,
   proposePlanChange,
-}: Pick<GoalTutorInput, "offerAppTool" | "proposePlanChange">) {
+}: Pick<GoalTutorInput, "lookUp" | "offerAppTool" | "proposePlanChange">) {
   return {
     [SEARCH_TOOL]: zoonkGateway.tools.parallelSearch({
       excerpts: { maxCharsPerResult: SEARCH_CHARACTERS_PER_RESULT },
       maxResults: SEARCH_RESULTS,
       mode: "agentic",
     }),
-    offerAppTool: tool({
-      description: GOAL_TUTOR_APP_TOOLS_DESCRIPTION,
-      execute: (request) => offerAppTool(request),
-      inputSchema: z.object({
-        area: z
-          .string()
-          .nullable()
-          .describe(
-            "For chapterTest: the plan area whose next chapter to test, exactly as setup.areas names it; null for the plan's next chapter or another tool",
-          ),
-        goal: z
-          .string()
-          .max(MAX_REQUEST_LENGTH)
-          .nullable()
-          .describe(
-            "For startGoal: the new goal alone, in the learner's own words and language, as they'd type it to start it (without their current goal's name); null for another tool",
-          ),
-        tool: z.enum(GOAL_TUTOR_APP_TOOLS),
-        topic: z
-          .string()
-          .max(MAX_TOPIC_LENGTH)
-          .nullable()
-          .describe(
-            'For startGoal: the subject in one to three words of their language, as a course would be titled ("Violão", "Inglês", "Python"); null for another tool',
-          ),
-      }),
-    }),
-    proposePlanChange: tool({
-      description:
-        "Proposes a change to the learner's study plan. The app shows it as a card with Apply and Not now; nothing changes until the learner taps Apply.",
-      execute: ({ request }) => proposePlanChange(request),
-      inputSchema: z.object({
-        request: z
-          .string()
-          .max(MAX_REQUEST_LENGTH)
-          .describe(
-            "The change the learner asked for, as one self-contained sentence in their language, with every detail the conversation gave",
-          ),
-      }),
-    }),
+    ...createCardTools({ offerAppTool, proposePlanChange }),
+    lookUp: createLookUpTool(lookUp),
   };
 }
+
+/** Only a lookup has a deadline: the card tools wait for core, whose result the card shows. */
+const TOOL_TIMEOUT = { tools: { lookUpMs: LOOKUP_DEADLINE_MS } };
 
 /**
  * The first step searches when the question rests on facts that change (`shouldSearchFirst`);
  * the gateway runs the search and the model answers from it in the same step. After a round of
  * tools, the next step says what the card or button shows and answers the rest of the message,
- * and may still offer an app tool after a change; a third step only answers, so a message never
+ * and may still offer an app tool after a change; the last step only answers, so a message never
  * ends on tool calls. Every step sends the same tools and thinking, which a provider's cache keys
  * on, so a later step reads the whole request before it from the cache.
  */
@@ -263,6 +123,34 @@ function createPrepareStep(searchFirst: Promise<boolean>) {
 
     return {};
   };
+}
+
+/**
+ * An exam goal's buddy also reads what only exams have (a cut-off, the notice's facts, mocks a plan
+ * leaves to Plus, when the written tests are practiced), after the instructions every goal shares.
+ * A goal's kind stays the same for a whole conversation, so its messages keep reading the same
+ * prompt from the cache.
+ */
+const examSystemPrompt = `${systemPrompt}\n${examGoalPrompt}`;
+
+/**
+ * A question asked from a screen (a chapter, a lesson or a finished mock) also reads that screen's
+ * instructions, last. A thread stays on one screen, so its messages keep reading the same prompt
+ * from the cache, and the buddy's own conversation never reads them.
+ */
+const SCREEN_PROMPTS = {
+  answer: lessonScreenPrompt,
+  chapter: chapterScreenPrompt,
+  lesson: lessonScreenPrompt,
+  mock: mockScreenPrompt,
+  step: lessonScreenPrompt,
+} satisfies Record<TutorScreenContext["scope"]["kind"], string>;
+
+function getSystemPrompt(contextSnapshot: PlanScopeContext): string {
+  const goalPrompt = contextSnapshot.goal.kind === "exam" ? examSystemPrompt : systemPrompt;
+  const { screen } = contextSnapshot;
+
+  return screen ? `${goalPrompt}\n${SCREEN_PROMPTS[screen.scope.kind]}` : goalPrompt;
 }
 
 /**
@@ -291,13 +179,14 @@ function createGenerationOptions({
     : Promise.resolve(false);
 
   return {
-    instructions: systemPrompt,
+    instructions: getSystemPrompt(input.contextSnapshot),
     messages: createGoalTutorMessages(input),
     model,
     prepareStep: createPrepareStep(searchFirst),
     providerOptions: buildProviderOptions({ fallbackModels, model, useFallback }),
     reasoning,
     stopWhen: isStepCount(MAX_STEPS),
+    timeout: TOOL_TIMEOUT,
     tools: createTools(input),
   };
 }
@@ -339,7 +228,7 @@ export async function generateGoalTutorAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: context,
     generate: () => generateText(options),
-    systemPrompt,
+    systemPrompt: options.instructions,
     task: GOAL_TUTOR_TASK,
   });
 
@@ -359,7 +248,7 @@ export async function generateGoalTutorAnswer({
   return {
     data: { answer, searches },
     provenance,
-    systemPrompt,
+    systemPrompt: options.instructions,
     usage: result.usage,
     userPrompt: serializeGoalTutorMessages(options.messages),
   };
@@ -374,7 +263,11 @@ export async function generateGoalTutorAnswer({
 export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
   const context = { contentScope: "personal" as const, ...analytics };
 
-  const run = startTaskGeneration({ analytics: context, systemPrompt, task: GOAL_TUTOR_TASK });
+  const run = startTaskGeneration({
+    analytics: context,
+    systemPrompt: getSystemPrompt(input.contextSnapshot),
+    task: GOAL_TUTOR_TASK,
+  });
 
   const generation = streamText({
     ...createGenerationOptions({

@@ -1,8 +1,16 @@
 import { choiceCheck, exampleData, numericCheck } from "@zoonk/testing/fixtures/activity-checks";
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
-import { type ActivityTemplateId, activityTemplates } from "./activity-templates";
-import { validateActivity } from "./validate-activity";
+import {
+  type ActivityTemplateId,
+  activityTemplates,
+  currentTemplateId,
+  exploreActivitySchema,
+} from "./activity-templates";
+import { validateActivity, validateExploreActivity } from "./validate-activity";
 
 /** Every template needs a fixture: the map won't satisfy this type with one missing. */
 const fixtures = activityContentFixtures satisfies Record<ActivityTemplateId, unknown>;
@@ -19,6 +27,16 @@ describe(validateActivity, () => {
     expect(result.ok ? [] : result.issues).toStrictEqual([]);
   });
 
+  it.each(
+    Object.entries(engineModeFixtures).flatMap(([template, modes]) =>
+      Object.entries(modes).map(([mode, content]) => [`${template} (${mode})`, content] as const),
+    ),
+  )("accepts the %s mode fixture", (_name, content) => {
+    const result = validateActivity(content);
+
+    expect(result.ok ? [] : result.issues).toStrictEqual([]);
+  });
+
   it("rejects an unknown template and a missing check", () => {
     expect(issueCodes({ ...fixtures.numberLine, template: "confetti" })).toContain(
       "unknownTemplate",
@@ -29,8 +47,8 @@ describe(validateActivity, () => {
   });
 
   it("rejects decorative activities with nothing to move", () => {
-    const flatSlider = structuredClone(fixtures.sliderGraph);
-    flatSlider.fields.variable = { ...flatSlider.fields.variable, max: 0, min: 0 };
+    const flatSlider = structuredClone(fixtures.formulaModel);
+    flatSlider.fields.variables = [{ ...flatSlider.fields.variables[0]!, max: 0, min: 0 }];
 
     const noJumps = structuredClone(fixtures.numberLine);
     noJumps.fields.moves = [{ by: 0 }];
@@ -73,7 +91,7 @@ describe(validateActivity, () => {
       "checkNotAllowed",
     );
 
-    expect(issueCodes({ ...fixtures.codeRunner, check: fixtures.listeningSpeed.check })).toContain(
+    expect(issueCodes({ ...fixtures.codeRunner, check: fixtures.notationPlayer.check })).toContain(
       "checkNotAllowed",
     );
   });
@@ -81,8 +99,8 @@ describe(validateActivity, () => {
   it("rejects answers written by the model that code computes differently", () => {
     expect(
       issueCodes({
-        ...fixtures.sliderGraph,
-        check: { ...fixtures.sliderGraph.check, answer: 4000 },
+        ...fixtures.formulaModel,
+        check: { ...fixtures.formulaModel.check, answer: 4000 },
       }),
     ).toContain("answerMismatch");
 
@@ -97,7 +115,7 @@ describe(validateActivity, () => {
       ["About 1 in 4", false, 0.25],
     ]);
 
-    expect(issueCodes({ ...fixtures.predictSimulate, check: wrongGuess })).toContain(
+    expect(issueCodes({ ...fixtures.randomSimulation, check: wrongGuess })).toContain(
       "answerMismatch",
     );
 
@@ -124,7 +142,7 @@ describe(validateActivity, () => {
   it("requires every guess option to carry its value when the answer is only a number", () => {
     expect(
       issueCodes({
-        ...fixtures.predictSimulate,
+        ...fixtures.randomSimulation,
         check: choiceCheck("How often?", [
           ["Often", true],
           ["Rarely", false],
@@ -136,36 +154,43 @@ describe(validateActivity, () => {
   it("rejects a numeric check whose inputs sit outside the slider range", () => {
     expect(
       issueCodes({
-        ...fixtures.sliderGraph,
-        check: { ...fixtures.sliderGraph.check, inputs: [{ name: "rate", value: 50 }] },
+        ...fixtures.formulaModel,
+        check: { ...fixtures.formulaModel.check, inputs: [{ name: "rate", value: 50 }] },
       }),
     ).toContain("answerMismatch");
 
     expect(
       issueCodes({
-        ...fixtures.sliderGraph,
-        check: { ...fixtures.sliderGraph.check, inputs: [{ name: "time", value: 5 }] },
+        ...fixtures.formulaModel,
+        check: { ...fixtures.formulaModel.check, inputs: [{ name: "time", value: 5 }] },
       }),
     ).toContain("answerMismatch");
   });
 
   it("rejects formulas that fail somewhere in their range", () => {
+    const growth = fixtures.formulaModel;
+
     const divideByRate = {
-      ...fixtures.sliderGraph,
+      ...growth,
       check: choiceCheck("What happens?", [
         ["It grows", true],
         ["It shrinks", false],
       ]),
-      fields: { ...fixtures.sliderGraph.fields, formula: "1000 / rate" },
+      fields: {
+        ...growth.fields,
+        outputs: [{ ...growth.fields.outputs[0]!, formula: "1000 / rate" }],
+      },
     };
 
-    const unknownName = structuredClone(fixtures.sliderGraph);
-    unknownName.fields.formula = "1000 * years";
+    const unknownName = structuredClone(growth);
+    unknownName.fields.outputs = [{ ...growth.fields.outputs[0]!, formula: "1000 * years" }];
+
+    const projectile = engineModeFixtures.formulaModel.simulation;
 
     const rootOfNegative = {
-      ...fixtures.parameterSimulation,
+      ...projectile,
       fields: {
-        ...fixtures.parameterSimulation.fields,
+        ...projectile.fields,
         outputs: [{ formula: "sqrt(angle - 10)", id: "distance", label: "Lands at" }],
       },
     };
@@ -302,15 +327,33 @@ describe(validateActivity, () => {
     ).toContain("answerMismatch");
   });
 
-  it("only labels diagrams and parts the checked drawings have", () => {
-    const unknownDiagram = structuredClone(fixtures.labeledDiagram);
-    unknownDiagram.fields.diagramId = "human-spleen";
+  it("numbers a labeled picture's parts once each, with names it offers", () => {
+    const sameTwice = structuredClone(fixtures.labeledDiagram);
+    sameTwice.fields.parts = [...sameTwice.fields.parts, { label: "Septum", part: "Aorta" }];
 
-    const unknownPart = structuredClone(fixtures.labeledDiagram);
-    unknownPart.fields.parts = [...unknownPart.fields.parts, { label: "Valve", partId: "valve" }];
+    const tooMany = structuredClone(fixtures.labeledDiagram);
 
-    expect(issueCodes(unknownDiagram)).toStrictEqual(["unknownAsset"]);
-    expect(issueCodes(unknownPart)).toStrictEqual(["unknownAsset"]);
+    tooMany.fields.parts = ["a", "b", "c", "d", "e", "f", "g"].map((part) => ({
+      label: part.toUpperCase(),
+      part,
+    }));
+
+    const unknownMixUp = structuredClone(fixtures.labeledDiagram);
+    unknownMixUp.fields.mixUps = [{ feedback: "Why.", labels: ["Aorta", "Vena cava"] }];
+
+    expect(issueCodes(sameTwice)).toContain("inconsistentFields");
+    expect(issueCodes(tooMany)).toContain("invalidSchema");
+    expect(issueCodes(unknownMixUp)).toContain("inconsistentFields");
+  });
+
+  it("lets a part say where it sits, for the drawing, beyond a label's length", () => {
+    const placed = structuredClone(fixtures.labeledDiagram);
+
+    placed.fields.parts = placed.fields.parts.map((part, index) =>
+      index === 0 ? { ...part, part: "right atrium, upper left as seen from the front" } : part,
+    );
+
+    expect(validateActivity(placed).ok).toBe(true);
   });
 
   it("offers only icons the player draws for process steps", () => {
@@ -335,6 +378,92 @@ describe(validateActivity, () => {
     expect(issueCodes(glucose)).toStrictEqual(["inconsistentFields"]);
   });
 
+  it("runs a formula model's what-ifs, plot and comparison past its rules", () => {
+    const scenario = engineModeFixtures.formulaModel.scenario;
+    const projectile = engineModeFixtures.formulaModel.simulation;
+
+    const unusedEvent = structuredClone(scenario);
+    unusedEvent.fields.events = [...scenario.fields.events, { label: "Rain", name: "rain" }];
+
+    const plotOnOutput = structuredClone(projectile);
+    plotOnOutput.fields.plot = { x: "distance", y: "distance" };
+
+    const farComparison = {
+      ...fixtures.formulaModel,
+      fields: { ...fixtures.formulaModel.fields, compareAt: 40 },
+    };
+
+    expect(issueCodes(unusedEvent)).toContain("missingInteraction");
+    expect(issueCodes(plotOnOutput)).toContain("inconsistentFields");
+    expect(issueCodes(farComparison)).toContain("inconsistentFields");
+  });
+
+  it("asks of each engine mode only the checks it can tie to what the learner does", () => {
+    const polls = engineModeFixtures.randomSimulation.sampling;
+    const dice = engineModeFixtures.combinationGrid.dice;
+
+    expect(issueCodes({ ...fixtures.randomSimulation, check: numericCheck(0.25) })).toContain(
+      "checkNotAllowed",
+    );
+
+    expect(issueCodes({ ...polls, check: numericCheck(0.5) })).toStrictEqual([]);
+
+    // 36 cells are too many to fill by hand, so dice are read, never filled.
+    expect(
+      issueCodes({ ...dice, check: { explanation: "Here is why.", kind: "interaction" } }),
+    ).toContain("checkNotAllowed");
+
+    // Polls choices can name an answer without a number; a guess at a chance can't.
+    expect(
+      issueCodes({
+        ...polls,
+        check: choiceCheck("Which poll spreads less?", [
+          ["The bigger one", true],
+          ["The smaller one", false],
+        ]),
+      }),
+    ).toStrictEqual([]);
+  });
+
+  it("asks for a source only when a guess reveals cited data", () => {
+    const cited = engineModeFixtures.guessReveal.cited;
+    const { data: _data, ...uncited } = cited;
+    const computed = validateActivity({ ...fixtures.guessReveal, data: exampleData });
+
+    expect(issueCodes(uncited)).toContain("missingDataSource");
+    expect(computed.ok && computed.content.data).toBeUndefined();
+  });
+
+  it("keeps two lines crossing, before and after the change", () => {
+    const market = fixtures.lineCrossing;
+
+    const parallel = structuredClone(market);
+    parallel.fields.lines = market.fields.lines.map((line) => ({ ...line, slope: 1 }));
+
+    const flatSideways = structuredClone(engineModeFixtures.lineCrossing.breakEven);
+
+    flatSideways.fields.lines = [
+      { id: "cost", intercept: 2000, label: "Cost", slope: 0 },
+      { id: "revenue", intercept: 0, label: "Revenue", slope: 15 },
+    ];
+
+    flatSideways.fields.shift = { amount: 100, direction: "right", line: "cost" };
+
+    const unknownLine = structuredClone(market);
+    unknownLine.fields.shift = { ...market.fields.shift, line: "taxes" };
+
+    expect(issueCodes(parallel)).toContain("inconsistentFields");
+    expect(issueCodes(flatSideways)).toContain("missingInteraction");
+    expect(issueCodes(unknownLine)).toContain("inconsistentFields");
+  });
+
+  it("keeps one gene's letter across a Punnett grid", () => {
+    const twoGenes = structuredClone(fixtures.combinationGrid);
+    twoGenes.fields.columns = { label: "Other parent", values: ["q", "q"] };
+
+    expect(issueCodes(twoGenes)).toContain("inconsistentFields");
+  });
+
   it("accepts a formula-mode pattern tester only when the solution gives every output", () => {
     const formula = {
       ...fixtures.patternTester,
@@ -356,5 +485,73 @@ describe(validateActivity, () => {
     expect(
       issueCodes({ ...formula, fields: { ...formula.fields, solution: "=A1*0.2" } }),
     ).toContain("answerMismatch");
+  });
+});
+
+/** An activity fixture without what only a question has: the prompt, the check and the picture. */
+function explored(id: ActivityTemplateId) {
+  const { data, fields, template } = fixtures[id] as {
+    data?: unknown;
+    fields: unknown;
+    template: string;
+  };
+
+  return { data, fields, template };
+}
+
+const exploreIds = exploreActivitySchema.options.map((option) => option.shape.template.value);
+
+describe(validateExploreActivity, () => {
+  it.each(exploreIds)("accepts the %s fixture explored on an explanation screen", (id) => {
+    const result = validateExploreActivity(explored(id));
+
+    expect(result.ok ? [] : result.issues).toStrictEqual([]);
+  });
+
+  it("refuses templates that only work as a question", () => {
+    expect(validateExploreActivity(explored("findError"))).toMatchObject({
+      issues: [{ code: "unknownTemplate" }],
+      ok: false,
+    });
+
+    expect(validateExploreActivity({ fields: {}, template: "confetti" }).ok).toBe(false);
+    expect(validateExploreActivity("a map").ok).toBe(false);
+  });
+
+  it("runs the template's own rules and the data rule, with no check to verify", () => {
+    const flatSlider = structuredClone(explored("formulaModel")) as {
+      fields: { variables: { max: number; min: number }[] };
+    };
+
+    flatSlider.fields.variables = flatSlider.fields.variables.map((variable) => ({
+      ...variable,
+      max: 0,
+      min: 0,
+    }));
+
+    const result = validateExploreActivity(flatSlider);
+    const unsourced = validateExploreActivity({ ...explored("chartReader"), data: undefined });
+
+    expect(result.ok ? [] : result.issues.map((item) => item.code)).toContain("missingInteraction");
+
+    expect(unsourced.ok ? [] : unsourced.issues.map((item) => item.code)).toStrictEqual([
+      "missingDataSource",
+    ]);
+  });
+
+  it("keeps no data note on a template that shows no data", () => {
+    const result = validateExploreActivity({ ...explored("processOrder"), data: exampleData });
+
+    expect(result.ok && result.content.data).toBeUndefined();
+  });
+});
+
+describe(currentTemplateId, () => {
+  it("names the engine a retired template merged into, and none for a removed one", () => {
+    expect(currentTemplateId("sliderGraph")).toBe("formulaModel");
+    expect(currentTemplateId("supplyDemand")).toBe("lineCrossing");
+    expect(currentTemplateId("earTrainer")).toBe("keyboardFretboard");
+    expect(currentTemplateId("sentenceBuilder")).toBeNull();
+    expect(currentTemplateId("timeline")).toBe("timeline");
   });
 });

@@ -1,90 +1,122 @@
 import "server-only";
-import { SKILL_GRAPH_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/curriculum/skill-graph-version";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { type PlanGraph } from "../../plans/planner/plan-state";
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
-import { type PlanSkillGraph, loadPlanSkillGraph } from "./plan-skill-graph";
+import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
+import { isSharedExamGraph } from "./shared-graph-prompt";
 
-/** The latest plans for the same notice that are checked for one that fits. */
-const CANDIDATE_PLANS = 10;
-
-/** A curriculum another goal built, with the course that goal's plan opens with. */
+/** An exam's shared curriculum, with the course a plan made from it opens with. */
 export type ReusableCurriculum = PlanSkillGraph & { primaryCourseId: string | null };
 
+type SharedInputs = Parameters<typeof isSharedExamGraph>[0]["inputs"] & {
+  goal: Pick<GoalCurriculumInputs["goal"], "examBlueprintId" | "id" | "language">;
+};
+
 /**
- * What the learner said that shapes an exam's skill graph beyond its notice: the level they gave,
- * and answers to follow-up questions, which a graph written for someone else wouldn't read.
+ * How many follow-up questions the learner answered: their answers shape a skill graph beyond the
+ * notice, which a graph written for someone else wouldn't read. The level they gave doesn't: an
+ * exam's shared graph is written without it (`toScopedGraphPrompt`).
  */
-function toGraphAnswers(details: unknown): { followUps: number; level: string | null } {
+function countFollowUps(details: unknown): number {
   const values = isJsonObject(details) ? details : {};
-
-  return {
-    followUps: Array.isArray(values.followUps) ? values.followUps.length : 0,
-    level: typeof values.level === "string" ? values.level : null,
-  };
-}
-
-/**
- * Only an exam read from its notice, for shared content, has a graph that doesn't depend on who
- * asked: a goal built from the learner's material, started from a course, sized to a test days
- * away, or in a private course is written for that learner.
- */
-function isReusableGoal({
-  inputs,
-  scope,
-}: {
-  inputs: GoalCurriculumInputs;
-  scope: CurriculumScope;
-}): boolean {
-  return (
-    inputs.goal.kind === "exam" &&
-    inputs.goal.examBlueprintId !== null &&
-    !inputs.hasMaterial &&
-    !inputs.startedCourse &&
-    !inputs.graphPrompt.lessonBudget &&
-    scope.ownerId === null
-  );
+  return Array.isArray(values.followUps) ? values.followUps.length : 0;
 }
 
 /** Whether every course of a stored graph is shared: a private course's graph is its owner's. */
-async function hasOnlySharedCourses(stored: PlanSkillGraph): Promise<boolean> {
-  const courseIds = Object.values(stored.courseIdsByKey);
-
+async function hasOnlySharedCourses(courseIds: readonly string[]): Promise<boolean> {
   const privateCourses = await prisma.course.count({
-    where: { id: { in: courseIds }, visibility: "private" },
+    where: { id: { in: [...courseIds] }, visibility: "private" },
   });
 
   return courseIds.length > 0 && privateCourses === 0;
 }
 
-/** The first of the goals, newest first, whose stored curriculum is shared. */
-async function findSharedCurriculum(
-  goals: readonly { id: string; primaryCourseId: string | null }[],
-): Promise<ReusableCurriculum | null> {
-  const [goal, ...rest] = goals;
+/**
+ * The exam whose shared graph this goal's is: an exam goal of a shared scope (see
+ * `isSharedExamGraph`) on a notice research linked, in the notice's language, whose learner
+ * answered no follow-ups (those shape a graph for them alone). Null otherwise.
+ */
+async function findSharedExam({
+  inputs,
+  scope,
+}: {
+  inputs: SharedInputs;
+  scope: CurriculumScope;
+}): Promise<string | null> {
+  const { examBlueprintId, id, language } = inputs.goal;
 
-  if (!goal) {
+  if (!isSharedExamGraph({ inputs, scope }) || !examBlueprintId) {
     return null;
   }
 
-  const stored = await loadPlanSkillGraph(goal.id);
+  const [goal, blueprint] = await Promise.all([
+    prisma.goal.findUnique({ select: { details: true }, where: { id } }),
+    prisma.examBlueprint.findUnique({ select: { language: true }, where: { id: examBlueprintId } }),
+  ]);
 
-  if (stored && (await hasOnlySharedCourses(stored))) {
-    return { ...stored, primaryCourseId: goal.primaryCourseId };
+  if (blueprint?.language !== language || countFollowUps(goal?.details) > 0) {
+    return null;
   }
 
-  return findSharedCurriculum(rest);
+  return examBlueprintId;
 }
 
 /**
- * The curriculum another learner's goal already built for the same exam notice, to plan this goal
- * from instead of writing its skill graph again: the same notice, language and stated level, no
- * follow-up answers on either side, with the current skill graph instructions, and only shared
- * courses. Its skills and courses are already in the Library, outlined and often written, so the
- * plan, placement's questions and the first lessons come in seconds, at no cost. The newest one
- * that fits, since later plans carry what research added to the notice's coverage. Null when none
- * fits; the goal's graph is written then.
+ * Keeps a goal's freshly written graph as its exam's shared graph (`ExamSkillGraph`), when the goal's
+ * graph is the exam's (`findSharedExam`): the first one written for the exam stays, whoever's run
+ * wrote it, and only that same run can complete it (its reading of the notice adding skills).
+ * Learners' plans keep their own copies; this one is the exam's, so deleting every learner of the
+ * exam never loses it, and only an admin resets it (`resetExamSkillGraphForAdmin`, in `exam-skill-graph-reset`).
+ *
+ * This is a workflow bridge: the goal comes from the run its learner's request started.
+ */
+export async function saveExamSkillGraph({
+  graph,
+  inputs,
+  provenance,
+  scope,
+}: {
+  graph: PlanGraph;
+  inputs: SharedInputs;
+  provenance: { generatedAt: Date; model: string; promptVersion: string; runId: string };
+  scope: CurriculumScope;
+}): Promise<void> {
+  const examBlueprintId = await findSharedExam({ inputs, scope });
+
+  if (!examBlueprintId || graph.skills.length === 0) {
+    return;
+  }
+
+  const goal = await prisma.goal.findUnique({
+    select: { primaryCourseId: true },
+    where: { id: inputs.goal.id },
+  });
+
+  const data = { graph, primaryCourseId: goal?.primaryCourseId ?? null, ...provenance };
+
+  const { count } = await prisma.examSkillGraph.createMany({
+    data: [{ ...data, examBlueprintId }],
+    skipDuplicates: true,
+  });
+
+  if (count === 0) {
+    await prisma.examSkillGraph.updateMany({
+      data,
+      where: { examBlueprintId, runId: provenance.runId },
+    });
+  }
+}
+
+/**
+ * The exam's shared curriculum (`ExamSkillGraph`) for a goal whose graph is the exam's
+ * (`findSharedExam`), to plan from instead of writing a skill graph again, whatever prompt version
+ * wrote it: a prompt change never rewrites an exam's graph on its own, only an admin's reset does.
+ * Its skills and courses are already in the Library, outlined and often written, so the plan,
+ * placement's questions and the first lessons come in seconds, at no cost. Whatever level either
+ * learner gave, which decides where each starts, not the graph. Null when the exam has none, or
+ * one in a private course.
  *
  * This is a workflow bridge: the goal comes from the run its learner's request started.
  */
@@ -92,42 +124,33 @@ export async function findReusableCurriculum({
   inputs,
   scope,
 }: {
-  inputs: GoalCurriculumInputs;
+  inputs: SharedInputs;
   scope: CurriculumScope;
 }): Promise<ReusableCurriculum | null> {
-  if (!isReusableGoal({ inputs, scope })) {
+  const examBlueprintId = await findSharedExam({ inputs, scope });
+
+  const stored = examBlueprintId
+    ? await prisma.examSkillGraph.findUnique({ where: { examBlueprintId } })
+    : null;
+
+  if (!stored) {
     return null;
   }
 
-  const { examBlueprintId, id, language } = inputs.goal;
+  const curriculum = await buildPlanSkillGraph({
+    graph: stored.graph,
+    plannedAt: stored.generatedAt,
+    provenance: {
+      generatedAt: stored.generatedAt.toISOString(),
+      model: stored.model,
+      promptVersion: stored.promptVersion,
+      runId: stored.runId,
+    },
+  });
 
-  const [goal, plans] = await Promise.all([
-    prisma.goal.findUnique({ select: { details: true }, where: { id } }),
-    prisma.plan.findMany({
-      orderBy: { generatedAt: "desc" },
-      select: { goal: { select: { details: true, id: true, primaryCourseId: true } } },
-      take: CANDIDATE_PLANS,
-      where: {
-        buildFailedAt: null,
-        generatedAt: { not: null },
-        goal: { examBlueprintId, id: { not: id }, kind: "exam", language },
-        promptVersion: SKILL_GRAPH_PROMPT_VERSION,
-      },
-    }),
-  ]);
-
-  const answers = toGraphAnswers(goal?.details);
-
-  if (answers.followUps > 0) {
+  if (!curriculum || !(await hasOnlySharedCourses(Object.values(curriculum.courseIdsByKey)))) {
     return null;
   }
 
-  const fitting = plans
-    .map((plan) => plan.goal)
-    .filter((other) => {
-      const theirs = toGraphAnswers(other.details);
-      return theirs.followUps === 0 && theirs.level === answers.level;
-    });
-
-  return findSharedCurriculum(fitting);
+  return { ...curriculum, primaryCourseId: stored.primaryCourseId };
 }

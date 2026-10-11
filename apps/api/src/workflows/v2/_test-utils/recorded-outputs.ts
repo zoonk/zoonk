@@ -51,6 +51,11 @@ export function taskResult<T>(data: T, model = "openai/gpt-6-sol") {
   };
 }
 
+/** `taskResult` for the course outline, which also returns the drafts it wrote again: none here. */
+export function outlineResult<T>(data: T) {
+  return { ...taskResult(data), setAside: [] };
+}
+
 type StreamedOutline<Chapter> = { chapters: readonly Chapter[] };
 
 /**

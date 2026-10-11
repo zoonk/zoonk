@@ -25,13 +25,18 @@ import { safeAsync } from "@zoonk/utils/error";
 import { TrashIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { rememberAccountDeleted } from "../../account-deleted-toast";
 import { type DeleteAccountResult, deleteAccountAction } from "./delete-account-action";
 
 const DELETE_ACCOUNT_ID = "delete-account";
 
-/** The session is gone with the account, so the browser forgets it and starts fresh at home. */
+/**
+ * The session is gone with the account, so the browser forgets it and starts fresh at home, which
+ * says the account was deleted.
+ */
 async function leaveDeletedAccount() {
   await forgetDeletedSession();
+  rememberAccountDeleted();
   globalThis.location.assign("/");
 }
 
@@ -66,7 +71,8 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
 
 /**
  * Deleting the account removes everything in it for good, so it says what goes and asks once more
- * before doing it. Afterwards the learner is signed out and back on the home page.
+ * before doing it. Afterwards the learner is signed out and back on the home page, which confirms
+ * the account was deleted.
  */
 export function DeleteAccountSection() {
   const t = useExtracted();

@@ -7,9 +7,8 @@ type ConversationScenarioInput = Omit<
 >;
 
 /**
- * Units from the language courses the plan names, across levels and pairs,
- * plus the IELTS and TOEFL speaking mocks core builds from the same task.
- * The first three are the ones a small validation run samples.
+ * Units from the language courses the plan names, across levels and pairs. Exam speaking mocks
+ * are their own task (`speaking-mock-scenario`).
  */
 export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
   {
@@ -26,39 +25,6 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
       targetLanguage: "en",
       unitDescription: "Encontre um apartamento, pergunte sobre o aluguel e marque uma visita",
       unitTitle: "Alugando um apartamento",
-    },
-  },
-  {
-    expectations: `IELTS Speaking practice mock for a Brazilian candidate at B1. The character is the examiner (role "examinador" or "examinadora"), the objectives are the three parts in order with labels like "Part 1: About you", "Part 2: Cue card", "Part 3: Discussion", and the brief has the Part 1 questions, the full Part 2 cue card (topic and four bullet prompts) and Part 3 questions linked to the cue card topic, run in about 5 minutes. The opening line is the examiner's greeting and first question. Title and situation call it a practice mock in Brazilian Portuguese, never an official test. Hints are phrases to keep talking.`,
-    id: "pt-en-b1-ielts-speaking",
-    userInput: {
-      canDo: [
-        "Responder perguntas sobre você, sua rotina e seus interesses",
-        "Falar por cerca de um minuto sobre o tema de um cartão",
-        "Discutir ideias mais gerais ligadas ao tema do cartão",
-      ],
-      learnerLanguage: "pt",
-      level: "B1",
-      targetLanguage: "en",
-      unitDescription:
-        "Um simulado curto das três partes do exame em cerca de 5 minutos: Parte 1 com perguntas sobre você, Parte 2 com um cartão para falar por cerca de um minuto e Parte 3 com uma discussão sobre o tema.",
-      unitTitle: "IELTS Speaking test",
-    },
-  },
-  {
-    expectations: `TOEFL iBT Speaking practice mock for a Brazilian candidate at A2, with the unit core sends. The character is the examiner (role "examinador" or "examinadora"), the objectives are "Listen and Repeat" then "Take an Interview", and the brief has a campus or academic setting with seven original sentences that start at about 5 words and grow to 14 to 20 with dependent or relative clauses, then a one-sentence interview introduction and four questions going from a brief fact about the candidate to describing an experience, an opinion on a broader issue and a prediction, each said once with about 45 seconds per answer. The opening line greets, gives the Listen and Repeat directions and the setting, and ends with the first sentence. Title and situation, in Brazilian Portuguese, call it a practice mock shorter than the real section, never an official test. Hints help interview answers (a reason, an example, a prediction) at A2 and never ask the examiner to repeat.`,
-    id: "pt-en-a2-toefl-speaking",
-    userInput: {
-      canDo: [
-        "Listen and Repeat: repeat seven sentences exactly as you hear them, in a campus or academic setting, each longer and more complex than the last",
-        "Take an Interview: answer four interview questions, from facts about yourself to opinions, explanations and predictions, for up to about 45 seconds each",
-      ],
-      learnerLanguage: "pt",
-      level: "A2",
-      targetLanguage: "en",
-      unitDescription:
-        "A short mock of the TOEFL iBT Speaking section: its two tasks compressed into about five minutes instead of about eight, with an examiner who says each sentence and question once.",
-      unitTitle: "TOEFL iBT Speaking section",
     },
   },
   {

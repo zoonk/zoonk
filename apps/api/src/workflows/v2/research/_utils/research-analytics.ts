@@ -17,3 +17,18 @@ export function toResearchAnalytics({
 }): ResearchAnalytics {
   return { contentScope: "shared", distinctId: goal?.userId, goalId: goal?.id, traceId: runId };
 }
+
+/**
+ * The scope of a call that reads the research plan, or writes it. A plan made from the learner's
+ * own words (a goal from their material) is theirs, even when the exam it names is shared, so those
+ * calls count as personal and never reach providers that train on prompts.
+ */
+export function toPlanAnalytics({
+  analytics,
+  personal,
+}: {
+  analytics: ResearchAnalytics;
+  personal: boolean;
+}): ResearchAnalytics {
+  return personal ? { ...analytics, contentScope: "personal" } : analytics;
+}

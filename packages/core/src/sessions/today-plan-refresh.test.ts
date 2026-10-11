@@ -7,7 +7,7 @@ import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
-import { getTodayStudySession } from "./get-today-study-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));

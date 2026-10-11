@@ -45,6 +45,25 @@ export function goBackTo(href: string): boolean {
 }
 
 /**
+ * Whether the page before this one is one of the app's, not another page of the section: a page
+ * under a section's hub opened straight from the app (Plus from a locked exam task) goes back
+ * there. False without the Navigation API.
+ */
+export function cameFromApp(): boolean {
+  const navigation = getNavigation();
+  const index = navigation?.currentEntry?.index ?? 0;
+  const previous = index > 0 ? navigation?.entries()[index - 1] : null;
+  return previous ? isAppEntry(previous) : false;
+}
+
+/** Calls `onChange` when the current history entry changes, for a bar that reads `cameFromApp`. */
+export function subscribeToHistory(onChange: () => void): () => void {
+  const navigation = getNavigation();
+  navigation?.addEventListener("currententrychange", onChange);
+  return () => navigation?.removeEventListener("currententrychange", onChange);
+}
+
+/**
  * Leaves a section (settings, statistics, the catalog) for the last app page the learner was on
  * before it, however many of the section's pages they went through. Returns whether it found one;
  * otherwise the link goes to its default.

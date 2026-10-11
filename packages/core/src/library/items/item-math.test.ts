@@ -1,6 +1,10 @@
 import { type GeneratedMathProblem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { describe, expect, it } from "vitest";
-import { discountMath, discountQuestion as question } from "./_test-utils/math-problems";
+import {
+  discountMath,
+  discountQuestion as question,
+  thirdsMath,
+} from "./_test-utils/math-problems";
 import { checkMathAnswer, withNewNumbers } from "./item-math";
 
 /** Returns the given draws in order, so each variable's value is chosen by the test. */
@@ -119,5 +123,98 @@ describe(checkMathAnswer, () => {
       isCorrect: false,
       mistake: null,
     });
+  });
+});
+
+describe("numeric entry rules", () => {
+  const thirds = thirdsMath;
+  const thirdsValues = { eaten: 1, slices: 3 };
+
+  it("takes a fraction or a decimal written to the grid's precision", () => {
+    const entry = { kind: "fraction", places: null } as const;
+
+    const grade = (answer: number) =>
+      checkMathAnswer({ answer, entry, math: thirds, values: thirdsValues }).isCorrect;
+
+    expect([2 / 3, 0.6666, 0.6667, 0.666, 0.667].map((answer) => grade(answer))).toStrictEqual([
+      true,
+      true,
+      true,
+      true,
+      true,
+    ]);
+
+    expect([0.67, 0.66, 0.7].map((answer) => grade(answer))).toStrictEqual([false, false, false]);
+  });
+
+  it("takes a number rounded or truncated to the places the question asks for", () => {
+    const entry = { kind: "decimals", places: 2 } as const;
+    const math = { ...thirds, answer: 2.3456, solution: "2.3456 + eaten - eaten" };
+
+    const grade = (answer: number) =>
+      checkMathAnswer({ answer, entry, math, values: thirdsValues }).isCorrect;
+
+    expect([2.35, 2.34, 2.3456].map((answer) => grade(answer))).toStrictEqual([true, true, true]);
+    expect([2.3, 2.33, 2.37].map((answer) => grade(answer))).toStrictEqual([false, false, false]);
+  });
+
+  it("takes only the whole number for an integer answer", () => {
+    const entry = { kind: "integer", places: null } as const;
+    const values = { discount: 25, price: 80 };
+
+    const grade = (answer: number) =>
+      checkMathAnswer({ answer, entry, math: discountMath, values }).isCorrect;
+
+    expect([60, 60.004, 59.999].map((answer) => grade(answer))).toStrictEqual([true, false, false]);
+  });
+
+  it("takes any of the other answers that are right too", () => {
+    // x² - (a + b)x + ab = 0 has the roots a and b: "one possible value of x" takes either.
+    const roots: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 2,
+      commonMistakes: [{ expression: "a + b", misconception: "Adds the roots", reason: "No." }],
+      solution: "a",
+      steps: [],
+      tolerance: { kind: "absolute", value: 0 },
+      variables: [
+        { max: 4, min: 1, name: "a", step: 1, unit: null, value: 2 },
+        { max: 9, min: 5, name: "b", step: 1, unit: null, value: 5 },
+      ],
+    };
+
+    const values = { a: 2, b: 5 };
+
+    const grade = (answer: number) =>
+      checkMathAnswer({ answer, math: roots, otherSolutions: ["b"], values });
+
+    expect(grade(2).isCorrect).toBe(true);
+    expect(grade(5).isCorrect).toBe(true);
+    expect(grade(7)).toStrictEqual({ isCorrect: false, mistake: roots.commonMistakes[0] });
+  });
+
+  it("draws only numbers whose answer is a whole number for an integer answer", () => {
+    // 10% of 15 to 25 in steps of 1: only 20 gives a whole number.
+    const math: GeneratedMathProblem = {
+      ...discountMath,
+      answer: 2,
+      commonMistakes: [{ expression: "price", misconception: "No percent", reason: "No." }],
+      solution: "price * discount / 100",
+      steps: [],
+      tolerance: { kind: "absolute", value: 0 },
+      variables: [
+        { max: 25, min: 15, name: "price", step: 1, unit: null, value: 20 },
+        { max: 10, min: 10, name: "discount", step: 1, unit: null, value: 10 },
+      ],
+    };
+
+    const result = withNewNumbers({
+      entry: { kind: "integer", places: null },
+      math,
+      question: "{discount}% of {price}?",
+      random: sequence(0, 0, 0.1, 0, 0.5, 0),
+    });
+
+    expect(result).toMatchObject({ answer: 2, values: { discount: 10, price: 20 } });
   });
 });

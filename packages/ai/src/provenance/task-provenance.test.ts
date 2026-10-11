@@ -142,6 +142,7 @@ describe(combineTaskProvenance, () => {
       runId: "run-1",
       serviceTier: undefined,
       usage: {
+        audioSeconds: undefined,
         cacheReadTokens: undefined,
         cacheWriteTokens: undefined,
         inputTokens: 300,
@@ -162,6 +163,17 @@ describe(combineTaskProvenance, () => {
     expect(combined).toMatchObject({
       model: "anthropic/claude-opus-5.5, openai/gpt-6-luna",
       provider: "anthropic, openai",
+    });
+  });
+
+  it("adds up the audio of speech calls voicing one recording", () => {
+    const speech = [4, 6.5].map((audioSeconds) =>
+      createRun({ usage: { audioSeconds, inputTokens: 20 } }),
+    );
+
+    expect(combineTaskProvenance(speech).usage).toMatchObject({
+      audioSeconds: 10.5,
+      inputTokens: 40,
     });
   });
 

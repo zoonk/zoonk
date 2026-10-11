@@ -110,7 +110,7 @@ function checkFormat(drill: StatuteDrill, article: readonly string[]): Problem[]
   return drill.format === "typed" ? checkGap(drill, article) : [];
 }
 
-/** Multiple-choice drills can share a command ("De acordo com a lei,"), so only statements and passages must differ. */
+/** Multiple-choice drills can share a command ("According to the law,"), so only statements and passages must differ. */
 function getRepeatKey(drill: StatuteDrill): string | null {
   if (drill.format === "multipleChoice") {
     return null;

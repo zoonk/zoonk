@@ -9,6 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
+import { ItemText } from "../../questions/item-text";
 
 type UnitMistake = LanguageUnitView["mistakes"][number];
 
@@ -48,7 +49,7 @@ function MistakeItem({ mistake }: { mistake: UnitMistake }) {
         </p>
       )}
       {mistake.explanation && (
-        <p className="text-muted-foreground text-sm">{mistake.explanation}</p>
+        <ItemText className="text-muted-foreground text-sm" text={mistake.explanation} />
       )}
     </li>
   );

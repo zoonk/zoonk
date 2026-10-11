@@ -218,18 +218,13 @@ export const enemAreaSkills = [
     },
     { prerequisites: ["energy-flow"] },
   ),
-  skill(
-    "carbon-cycle",
-    "intermediate",
-    {
-      description: t(
-        "Carbon moves from the air into plants by photosynthesis and back by respiration, decay and burning.",
-        "O carbono vai do ar para as plantas pela fotossíntese e volta pela respiração, decomposição e queima.",
-      ),
-      name: t("Trace the carbon cycle", "Acompanhar o ciclo do carbono"),
-    },
-    { prerequisites: ["energy-flow"] },
-  ),
+  skill("carbon-cycle", "intermediate", {
+    description: t(
+      "Carbon moves from the air into plants by photosynthesis and back by respiration, decay and burning.",
+      "O carbono vai do ar para as plantas pela fotossíntese e volta pela respiração, decomposição e queima.",
+    ),
+    name: t("Trace the carbon cycle", "Acompanhar o ciclo do carbono"),
+  }),
   skill("environmental-impact", "intermediate", {
     description: t(
       "Deforestation, pollution and invasive species break food chains and cycles that ecosystems depend on.",
@@ -266,18 +261,13 @@ export const enemAreaSkills = [
       "Explicar a política do café com leite",
     ),
   }),
-  skill(
-    "vargas-era",
-    "intermediate",
-    {
-      description: t(
-        "From 1930 to 1945, Getúlio Vargas centralized power, created labor laws and ruled as a dictator in the Estado Novo.",
-        "De 1930 a 1945, Getúlio Vargas centralizou o poder, criou leis trabalhistas e governou como ditador no Estado Novo.",
-      ),
-      name: t("Describe the Vargas Era", "Descrever a Era Vargas"),
-    },
-    { prerequisites: ["coffee-with-milk"] },
-  ),
+  skill("vargas-era", "intermediate", {
+    description: t(
+      "From 1930 to 1945, Getúlio Vargas centralized power, created labor laws and ruled as a dictator in the Estado Novo.",
+      "De 1930 a 1945, Getúlio Vargas centralizou o poder, criou leis trabalhistas e governou como ditador no Estado Novo.",
+    ),
+    name: t("Describe the Vargas Era", "Descrever a Era Vargas"),
+  }),
   skill("main-idea", "intermediate", {
     description: t(
       "The main idea is what every paragraph serves; find it before reading the options.",
@@ -285,18 +275,13 @@ export const enemAreaSkills = [
     ),
     name: t("Find a text's main idea", "Identificar a ideia central de um texto"),
   }),
-  skill(
-    "inference",
-    "intermediate",
-    {
-      description: t(
-        "An inference is what the text makes clear without saying it, and it always rests on something written.",
-        "Uma inferência é o que o texto deixa claro sem dizer, e sempre se apoia em algo escrito.",
-      ),
-      name: t("Infer what a text implies", "Inferir o que o texto sugere"),
-    },
-    { prerequisites: ["main-idea"] },
-  ),
+  skill("inference", "intermediate", {
+    description: t(
+      "An inference is what the text makes clear without saying it, and it always rests on something written.",
+      "Uma inferência é o que o texto deixa claro sem dizer, e sempre se apoia em algo escrito.",
+    ),
+    name: t("Infer what a text implies", "Inferir o que o texto sugere"),
+  }),
   skill("essay-competencies", "intermediate", {
     description: t(
       "The essay is scored on five competencies, from 0 to 200 each: grammar, the theme, the argument, cohesion and the intervention proposal.",
@@ -304,21 +289,16 @@ export const enemAreaSkills = [
     ),
     name: t("Know the five essay competencies", "Conhecer as cinco competências da redação"),
   }),
-  skill(
-    "intervention-proposal",
-    "intermediate",
-    {
-      description: t(
-        "A complete proposal says who acts, what they do, how, for what purpose, and adds one detail.",
-        "Uma proposta completa diz quem age, o que faz, como faz, para quê, e traz um detalhamento.",
-      ),
-      name: t(
-        "Write a complete intervention proposal",
-        "Escrever uma proposta de intervenção completa",
-      ),
-    },
-    { prerequisites: ["essay-competencies"] },
-  ),
+  skill("intervention-proposal", "intermediate", {
+    description: t(
+      "A complete proposal says who acts, what they do, how, for what purpose, and adds one detail.",
+      "Uma proposta completa diz quem age, o que faz, como faz, para quê, e traz um detalhamento.",
+    ),
+    name: t(
+      "Write a complete intervention proposal",
+      "Escrever uma proposta de intervenção completa",
+    ),
+  }),
   skill(
     "essay-conclusion",
     "intermediate",

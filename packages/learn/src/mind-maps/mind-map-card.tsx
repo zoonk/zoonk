@@ -10,7 +10,7 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { Maximize2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { MindMapLimitNotice } from "../_components/help-limit-notice";
+import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindTile } from "../_components/kind-tile";
 import { Surface } from "../_components/surface";
 import { useLearnRoutes } from "../learn-context";
@@ -125,24 +125,27 @@ function useStateCopy(shown: MindMapShown) {
 /** A map not drawn yet: what it is and the one tap that makes it, or that it's being made. */
 function MindMapRequestCard({
   actions,
+  cap,
   mindMap,
 }: {
   actions: MindMapActions;
+  cap: MindMapLimit | null;
   mindMap: ChapterMindMapView;
 }) {
   const routes = useLearnRoutes();
 
   const { create, isPending, limit, retry, shown } = useMindMapRequest({
     actions,
+    cap,
     chapterId: mindMap.chapterId,
     status: mindMap.status,
   });
 
   const copy = useStateCopy(shown);
   const isFailure = shown === "failed" || shown === "unreachable";
-  // A cap reached keeps the button in sight, disabled, with the notice's one thing to do under
-  // it; a short break keeps it working.
-  const isCapped = limit?.status === "limitReached";
+  // A cap reached (or a guest asked to create an account) keeps the button in sight, disabled,
+  // with the notice's one thing to do under it; a short break keeps it working.
+  const isCapped = limit !== null && limit.status !== "slowDown";
 
   return (
     <Surface className="flex flex-col gap-4 p-4" data-slot="mind-map-request">
@@ -189,10 +192,13 @@ function MindMapRequestCard({
  */
 export function MindMapCard({
   actions,
+  cap = null,
   chapterTitle,
   mindMap,
 }: {
   actions: MindMapActions;
+  /** The cap of the learner's plan their maps already reached: the button waits with its notice. */
+  cap?: MindMapLimit | null;
   chapterTitle: string;
   mindMap: ChapterMindMapView;
 }) {
@@ -203,7 +209,7 @@ export function MindMapCard({
   }
 
   if (mindMap.status !== "ready" || !mindMap.outline) {
-    return <MindMapRequestCard actions={actions} mindMap={mindMap} />;
+    return <MindMapRequestCard actions={actions} cap={cap} mindMap={mindMap} />;
   }
 
   if (mindMap.image) {

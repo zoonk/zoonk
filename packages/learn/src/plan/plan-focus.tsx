@@ -1,6 +1,5 @@
 "use client";
 
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import {
@@ -13,15 +12,15 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { safeAsync } from "@zoonk/utils/error";
 import { ChevronRightIcon, CrosshairIcon, XIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { useId, useState, useTransition } from "react";
+import { createContext, use, useId, useState } from "react";
 import { KindTile } from "../_components/kind-tile";
 import { LearnLink } from "../learn-link";
+import { PlanBases } from "./plan-bases";
+import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
-import { useChangeSentence, useProposalEffectText } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 
 const AREA_ROW_CLASS = cn(
@@ -29,13 +28,30 @@ const AREA_ROW_CLASS = cn(
   "hover:bg-muted/60 has-data-checked:border-foreground has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
 );
 
+type PlanArea = ReturnType<typeof usePlanScreen>["plan"]["areas"][number];
+
+/**
+ * The subjects to choose from: the plan's areas still in it, each with the areas that are part of
+ * it (the foreign language an ENEM candidate takes, inside the languages area), which go with it.
+ */
+function listFocusChoices(areas: readonly PlanArea[]): (PlanArea & { parts: string[] })[] {
+  const kept = areas.filter((area) => !area.skipped);
+
+  return kept
+    .filter((area) => !area.partOf)
+    .map((area) => ({
+      ...area,
+      parts: kept.filter((part) => part.partOf === area.name).map((part) => part.name),
+    }));
+}
+
 /**
  * Whether the learner can choose where to focus: their time doesn't cover everything in depth and
  * the plan has more than one subject to choose from.
  */
 export function useCanChooseFocus(): boolean {
   const { plan } = usePlanScreen();
-  const areas = plan.areas.filter((area) => !area.skipped);
+  const areas = listFocusChoices(plan.areas);
   return Boolean(plan.feasibility?.deadline && !plan.feasibility.fits && areas.length > 1);
 }
 
@@ -63,61 +79,8 @@ function FocusTestLink({ href }: { href: string }) {
 }
 
 /**
- * What a focus did, in the sheet that set it: what changes (when the subjects start, the lessons
- * they gain) with Done, and Undo while it's the plan's latest change.
- */
-function FocusApplied({ change, onDone }: { change: PlanChangeView; onDone: () => void }) {
-  const t = useExtracted();
-  const sentence = useChangeSentence();
-  const effectText = useProposalEffectText();
-  const { actions } = usePlanScreen();
-  const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
-  const effect = effectText(change);
-
-  const undo = () => {
-    setFailed(false);
-
-    startTransition(async () => {
-      const { data: undone } = await safeAsync(() =>
-        actions.decide({ changeId: change.id, status: "undone" }),
-      );
-
-      if (undone) {
-        onDone();
-      } else {
-        setFailed(true);
-      }
-    });
-  };
-
-  return (
-    <>
-      <DrawerContent className="flex flex-col gap-3 pt-2">
-        <div className="flex items-start gap-3" role="status">
-          <KindTile icon={CrosshairIcon} kind="challenge" size="sm" />
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <p className="font-medium text-balance">{sentence(change)}</p>
-            {effect && <p className="text-muted-foreground text-sm">{effect}</p>}
-          </div>
-        </div>
-      </DrawerContent>
-
-      <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
-        <Button onClick={onDone}>{t("Done")}</Button>
-        {change.canUndo && (
-          <Button disabled={isPending} focusableWhenDisabled onClick={undo} variant="outline">
-            {t("Undo")}
-          </Button>
-        )}
-        {failed && <PlanFailedMessage />}
-      </div>
-    </>
-  );
-}
-
-/**
- * A subject to pick, with the part of it in focus when the learner named one ("Only Biology and
+ * A subject to pick, with what's part of it (the language the learner takes, inside ENEM's
+ * languages area), and the part of it in focus when the learner named one ("Only Biology and
  * Chemistry"): choosing subjects again keeps it.
  */
 function AreaChoice({
@@ -125,28 +88,31 @@ function AreaChoice({
   name,
   onCheckedChange,
   part,
+  parts,
 }: {
   checked: boolean;
   name: string;
   onCheckedChange: (checked: boolean) => void;
   part: string | null;
+  parts: readonly string[];
 }) {
   const t = useExtracted();
+  const format = useFormatter();
 
   return (
     <label className={AREA_ROW_CLASS}>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="text-base font-medium">{name}</span>
+        {parts.length > 0 && (
+          <span className="text-muted-foreground text-sm">
+            {t("Includes {parts}", { parts: format.list(parts, { type: "conjunction" }) })}
+          </span>
+        )}
         {part && checked && (
           <span className="text-muted-foreground text-sm">{t("Only {part}", { part })}</span>
         )}
       </span>
-      <Checkbox
-        aria-label={name}
-        checked={checked}
-        className="size-5"
-        onCheckedChange={onCheckedChange}
-      />
+      <Checkbox checked={checked} className="size-5" onCheckedChange={onCheckedChange} />
     </label>
   );
 }
@@ -163,25 +129,24 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
   const format = useFormatter();
   const { focusTestHref, plan } = usePlanScreen();
   const { change, failed, isPending } = usePlanChange();
-  const areas = plan.areas.filter((area) => !area.skipped);
+  const areas = listFocusChoices(plan.areas);
   const current = areas.filter((area) => area.focused).map((area) => area.name);
   const [chosen, setChosen] = useState<string[]>(current);
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
 
-  const save = async () => {
-    const saved = await change([{ areas: chosen, kind: "focusAreas" }]);
+  const save = () =>
+    change([{ areas: chosen, kind: "focusAreas" }], (saved) => {
+      // A plan not built yet keeps the focus for when it is: there's no change to show.
+      if (saved?.status === "applied" && !saved.change) {
+        onSaved();
+        return;
+      }
 
-    // A plan not built yet keeps the focus for when it is: there's no change to show.
-    if (saved?.status === "applied" && !saved.change) {
-      onSaved();
-      return;
-    }
-
-    setOutcome(saved);
-  };
+      setOutcome(saved);
+    });
 
   if (outcome?.status === "applied" && outcome.change) {
-    return <FocusApplied change={outcome.change} onDone={onSaved} />;
+    return <PlanChangeApplied change={outcome.change} icon={CrosshairIcon} onDone={onSaved} />;
   }
 
   const unchanged = outcome?.status === "unchanged" ? outcome.reason : null;
@@ -231,10 +196,12 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
                   );
                 }}
                 part={area.focusPart}
+                parts={area.parts}
               />
             ))}
           </fieldset>
         </form>
+        <PlanBases />
       </DrawerContent>
 
       <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
@@ -255,34 +222,25 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
   );
 }
 
+const ChooseFocusContext = createContext<(() => void) | null>(null);
+
 /**
- * "Choose where to focus", for a plan whose time doesn't cover everything in depth: a sheet with
- * the plan's subjects, so the learner says which ones get the depth. Every topic stays in the
- * plan either way. `openOnArrival` opens it when the plan was opened to choose (the buddy's offer).
+ * Holds the "Where to focus" sheet for a plan screen, so it stays on what the choice did (with
+ * Undo) after what opened it leaves, as "Study everything" does (see `StudyEverythingHost`): the
+ * notice or the editor's coverage once the plan reads differently, which closed a focus's card by
+ * itself and lost its Undo. It opens on arrival when the host opened the plan to choose (the
+ * buddy's offer, `openFocus`).
  */
-export function ChooseFocus({
-  openOnArrival = false,
-  variant = "outline",
-}: {
-  openOnArrival?: boolean;
-  variant?: "ghost" | "outline";
-}) {
+export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
+  const { openFocus = false } = usePlanScreen();
   // Until the learner opens or closes it, it's open when the host opened the plan to choose.
   const [opened, setOpened] = useState<boolean | null>(null);
-  const open = opened ?? openOnArrival;
+  const open = opened ?? openFocus;
 
   return (
-    <>
-      <Button
-        className="self-start"
-        onClick={() => setOpened(true)}
-        size="sm"
-        type="button"
-        variant={variant}
-      >
-        {t("Choose where to focus")}
-      </Button>
+    <ChooseFocusContext value={() => setOpened(true)}>
+      {children}
 
       <Drawer onOpenChange={setOpened} open={open}>
         <DrawerPopup>
@@ -299,9 +257,30 @@ export function ChooseFocus({
             </DrawerClose>
           </DrawerHeader>
 
-          <FocusChoices onSaved={() => setOpened(false)} />
+          {open && <FocusChoices onSaved={() => setOpened(false)} />}
         </DrawerPopup>
       </Drawer>
-    </>
+    </ChooseFocusContext>
+  );
+}
+
+/**
+ * "Choose where to focus", for a plan whose time doesn't cover everything in depth: it opens the
+ * screen's sheet (see `ChooseFocusHost`) with the plan's subjects, so the learner says which ones
+ * get the depth, and an exam's prerequisites, to say how to study each. Every topic stays in the
+ * plan either way.
+ */
+export function ChooseFocus({ variant = "outline" }: { variant?: "ghost" | "outline" }) {
+  const t = useExtracted();
+  const open = use(ChooseFocusContext);
+
+  if (!open) {
+    throw new Error("ChooseFocus must be used within ChooseFocusHost");
+  }
+
+  return (
+    <Button className="self-start" onClick={open} size="sm" type="button" variant={variant}>
+      {t("Choose where to focus")}
+    </Button>
   );
 }

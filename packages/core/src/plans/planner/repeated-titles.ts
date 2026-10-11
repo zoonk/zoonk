@@ -4,7 +4,7 @@ import { type QueueUnit } from "./plan-units";
 
 /**
  * Courses and level bands sometimes each write a lesson on the same topic under the same title
- * ("Lei de Ohm" in a Physics course and in an ENEM course). A plan teaches it once: a lesson the
+ * ("Ohm's law" in a Physics course and in an ENEM course). A plan teaches it once: a lesson the
  * plan keeps (done, or this week's) holds its title, then the first in plan order does.
  */
 export function withoutRepeatedTitles({

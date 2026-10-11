@@ -20,7 +20,7 @@ function getCellClass(align: MarkdownTableAlign | undefined) {
  * users can focus it to scroll. Each text renderer draws its own cells (emphasis, code, math).
  *
  * ```tsx
- * <RichTable align={table.align} header={cells} label="Mês, Ofícios" renderCell={(cell) => <Inline segments={cell} />} rows={rows} />
+ * <RichTable align={table.align} header={cells} label="Month, Letters" renderCell={(cell) => <Inline segments={cell} />} rows={rows} />
  * ```
  */
 export function RichTable<TCell>({

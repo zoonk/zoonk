@@ -1,3 +1,4 @@
+import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingView,
@@ -7,15 +8,17 @@ import { goalSchema } from "./goals";
 import { playableLibraryLessonResponseSchema } from "./library-lessons";
 
 const onboardingStepSchema = z
-  .enum([...ONBOARDING_QUESTIONS, "age", "memory", "buddy", "placement", "plan"])
-  .meta({
-    description:
-      '`memory` asks a learner under 18, or one whose age is unknown, whether memory may personalize their lessons (it starts off for them); answer it with `{ question: "memory", enabled }`',
-    id: "OnboardingStep",
-  });
+  .enum([...ONBOARDING_QUESTIONS, "buddy", "placement", "plan"])
+  .meta({ id: "OnboardingStep" });
 
 export const onboardingResponseSchema = z
   .object({
+    examChoices: z
+      .array(examChoiceViewSchema)
+      .meta({
+        description:
+          "The exam's choices (ENEM's foreign language: English or Spanish), each with its options and the learner's pick (null until made), for the `examChoice` screen; the plan studies only the picked options. Empty for other goals",
+      }),
     examSubjects: z
       .array(
         z.object({
@@ -26,7 +29,10 @@ export const onboardingResponseSchema = z
             .meta({ description: "What learners call it when the notice's name is long" }),
         }),
       )
-      .meta({ description: "An exam's subjects from its stored notice; empty for other goals" }),
+      .meta({
+        description:
+          "An exam's subjects from its stored notice, with only the options of its choices the learner picked; empty for other goals",
+      }),
     followUps: z
       .array(z.string())
       .meta({
@@ -43,9 +49,6 @@ export const onboardingResponseSchema = z
     goalIds: z
       .array(z.uuid())
       .meta({ description: "Goals created in the same onboarding, which share the day's time" }),
-    isMinor: z
-      .boolean()
-      .meta({ description: "Under 18: protective defaults apply and a guardian can be invited" }),
     libraryCourse: z
       .object({
         brandSlug: z.string(),

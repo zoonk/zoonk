@@ -93,14 +93,40 @@ function useOpenWhenWritten({
   }, [lesson]);
 }
 
+/**
+ * How far the day is: "2 of 6 done", and, while it holds time for lessons still being outlined,
+ * that more come as the learner goes, as Today says, so the count growing when they land is no
+ * surprise.
+ */
+function useSessionProgress() {
+  const t = useExtracted();
+
+  return ({
+    lessonsComing,
+    sessionBar,
+  }: {
+    lessonsComing: boolean;
+    sessionBar: { completed: number; total: number };
+  }): string => {
+    const values = { completed: String(sessionBar.completed), total: String(sessionBar.total) };
+
+    return lessonsComing
+      ? t("{completed} of {total} done · more as you go", values)
+      : t("{completed} of {total} done", values);
+  };
+}
+
 function NextStopHeader({
   exitHref,
+  lessonsComing,
   sessionBar,
 }: {
   exitHref: string;
+  lessonsComing: boolean;
   sessionBar: { completed: number; total: number };
 }) {
   const t = useExtracted();
+  const progress = useSessionProgress();
   // Nothing is open yet, so leaving loses nothing: Escape closes, like the lesson player.
   const closeRef = useEscapeClick<HTMLAnchorElement>();
 
@@ -121,10 +147,7 @@ function NextStopHeader({
         </TaskHeaderSide>
 
         <TaskHeaderTitle
-          detail={t("{completed} of {total} done", {
-            completed: String(sessionBar.completed),
-            total: String(sessionBar.total),
-          })}
+          detail={progress({ lessonsComing, sessionBar })}
           title={t("Today's session")}
         />
 
@@ -149,6 +172,7 @@ export function NextStop({
   exitHref,
   generationId,
   lesson,
+  lessonsComing = false,
   notWritten,
   sessionBar,
 }: {
@@ -161,6 +185,8 @@ export function NextStop({
   generationId: string | null;
   /** Where the block's lesson stands; `ready` for blocks without one. */
   lesson: NextStopLesson;
+  /** The day holds time for lessons still being outlined, which join its end once they land. */
+  lessonsComing?: boolean;
   /** Why the block's lesson won't be written now, when the learner's request was turned down. */
   notWritten: LessonNotWritten | null;
   sessionBar: { completed: number; total: number };
@@ -175,7 +201,7 @@ export function NextStop({
 
   return (
     <>
-      <NextStopHeader exitHref={exitHref} sessionBar={sessionBar} />
+      <NextStopHeader exitHref={exitHref} lessonsComing={lessonsComing} sessionBar={sessionBar} />
 
       <SessionBody className="lg:justify-center-safe" data-slot="next-stop">
         <section className="bg-card my-auto flex flex-col items-center gap-4 rounded-3xl border px-6 py-8 text-center shadow-xs sm:px-8 lg:my-0">

@@ -1,16 +1,19 @@
 import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
-import { activityTemplates } from "@zoonk/core/library/activities/templates";
+import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 
 /**
  * Whether a lesson needs pictures (`visual` on some screen), must have none, or may go either way
- * when a native kind (a table, a chart, a timeline or an activity) can show what it needs.
+ * when a native kind (a table, a chart, a timeline or an activity) can show what it needs; and the
+ * activity templates its lessons must not plan, where a default one would only decorate (persona
+ * passes 8 and 9: "Encontre o erro" in 43 of 61 exam activities, then categorize in 55 of 86).
  */
-export type LessonSpecExpected = { pictures: "any" | "none" | "some" };
+export type LessonSpecExpected = {
+  avoidTemplates?: readonly string[];
+  pictures?: "any" | "none" | "some";
+};
 
-const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = activityTemplates.map(
-  (template) => ({ description: template.description, id: template.id }),
-);
+const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
 
 const VISUAL_EXPECTATIONS = `
   - Every screen the learner would otherwise have to imagine something on (how it looks, is built, is arranged or moves, a place, a comparison, data) shows it; screens whose words alone are fully clear stay text only
@@ -50,7 +53,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     courseTitle: "Human biology",
     expectations: `
       - MUST be in US English
-      - The screens that explain where each lobe is and what it does show the brain with those lobes (one picture of the brain with its lobes labeled, or the lobe in question highlighted on each screen); a lesson that names the lobes in words only fails
+      - The screens that explain where each lobe is and what it does show the brain with those lobes (one picture of the brain with its lobes labeled, the lobe in question highlighted on each screen, or a labeled diagram whose picture numbers the lobes); a lesson that names the lobes in words only fails
     `,
     id: "en-brain-lobes",
     language: "en",
@@ -83,7 +86,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     courseTitle: "Earth science",
     expectations: `
       - MUST be in US English
-      - The cycle's stages (evaporation, condensation, precipitation, collection) are shown, not only named: a picture of the cycle with its stages, and/or a labeled diagram activity of the water cycle from the catalog
+      - The cycle's stages (evaporation, condensation, precipitation, collection) are shown, not only named: a picture of the cycle with its stages, and/or a labeled diagram (one picture with the stages numbered) to name them, as an activity or explored on an explanation
     `,
     id: "en-water-cycle",
     language: "en",
@@ -148,7 +151,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     courseTitle: "Economia",
     expectations: `
       - MUST be in Brazilian Portuguese
-      - The demand curve moving right and the new price are shown, not only described: a line chart with example prices and quantities before and after (marked as an example) or a picture of the two curves and the shift
+      - The demand curve moving right and the new price are shown, not only described: a line chart with example prices and quantities before and after (marked as an example), the lines-and-crossing template with demand moving right (explored or as an activity), or a picture of the two curves and the shift
     `,
     id: "pt-deslocamento-demanda",
     language: "pt",
@@ -262,7 +265,7 @@ export const VISUAL_TEST_CASES: VisualCase[] = [
     courseTitle: "Art history",
     expectations: `
       - MUST be in US English
-      - Telling the styles apart is about how buildings look: one picture with a Romanesque and a Gothic church, labeled 1 and 2, showing round versus pointed arches, thick walls versus tall windows and flying buttresses
+      - Telling the styles apart is about how buildings look: one picture with a Romanesque and a Gothic church, labeled 1 and 2, showing round versus pointed arches, thick walls versus tall windows and flying buttresses, or a question whose options each show one church alone
     `,
     id: "en-gothic-romanesque",
     language: "en",

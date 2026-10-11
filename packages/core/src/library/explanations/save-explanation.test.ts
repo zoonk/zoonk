@@ -2,9 +2,9 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getExplanation } from "../../view-models/explain/get-explanation";
@@ -123,7 +123,7 @@ describe(linkExplanationToGoal, () => {
     const [{ goal, user }, skill, organization] = await Promise.all([
       explainGoal(),
       skillFixture(),
-      prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } }),
+      aiOrganizationFixture(),
     ]);
 
     const [course, saved] = await Promise.all([
@@ -169,11 +169,6 @@ describe(linkExplanationToGoal, () => {
       },
       status: "ready",
     });
-
-    await expect(findExplanationGoFurther(saved.lessonId)).resolves.toStrictEqual({
-      courseId: course.id,
-      relatedQuestions: ["What is an index fund?", "Why do stocks fall?"],
-    });
   });
 });
 
@@ -182,7 +177,7 @@ describe(linkGoFurtherCourse, () => {
     const [{ goal, user }, skill, organization] = await Promise.all([
       explainGoal(),
       skillFixture(),
-      prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } }),
+      aiOrganizationFixture(),
     ]);
 
     const [first, second, saved] = await Promise.all([
@@ -206,11 +201,64 @@ describe(linkGoFurtherCourse, () => {
       explanation: { goFurther: { course: null }, lesson: { id: saved.lessonId }, status: "ready" },
     });
 
-    await linkGoFurtherCourse({ courseId: first.id, goalId: goal.id });
-    await linkGoFurtherCourse({ courseId: second.id, goalId: goal.id });
+    await linkGoFurtherCourse({ courseId: first.id, goalId: goal.id, lessonId: saved.lessonId });
+    await linkGoFurtherCourse({ courseId: second.id, goalId: goal.id, lessonId: saved.lessonId });
 
     await expect(getExplanation({ goalId: goal.id })).resolves.toMatchObject({
       explanation: { goFurther: { course: { title: "Investing" } } },
+    });
+
+    await expect(findExplanationGoFurther(saved.lessonId)).resolves.toMatchObject({
+      courseId: first.id,
+    });
+  });
+});
+
+describe(findExplanationGoFurther, () => {
+  it("gives the next learner the way to go further after the first asker is deleted", async () => {
+    const [{ goal, user }, skill, organization] = await Promise.all([
+      explainGoal(),
+      skillFixture(),
+      aiOrganizationFixture(),
+    ]);
+
+    const [course, saved] = await Promise.all([
+      courseFixture({ organizationId: organization.id, title: "Markets", visibility: "public" }),
+      saveMarketExplanation({ ownerId: null, skillId: skill.id }),
+    ]);
+
+    await linkExplanationToGoal({
+      courseId: null,
+      goalId: goal.id,
+      relatedQuestions: marketExplanation().goFurther.relatedQuestions,
+      skill: { id: skill.id, name: skill.name },
+      title: "What “the market is up 2%” means",
+    });
+
+    await linkGoFurtherCourse({ courseId: course.id, goalId: goal.id, lessonId: saved.lessonId });
+    await prisma.user.delete({ where: { id: user.id } });
+
+    await expect(findExplanationGoFurther(saved.lessonId)).resolves.toStrictEqual({
+      courseId: course.id,
+      relatedQuestions: ["What is an index fund?", "Why do stocks fall?"],
+    });
+  });
+
+  it("passes on only a shared course", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+
+    const [course, saved] = await Promise.all([
+      courseFixture({ userId: user.id, visibility: "private" }),
+      saveMarketExplanation({ ownerId: null, skillId: skill.id }),
+    ]);
+
+    await prisma.lesson.update({
+      data: { goFurtherCourseId: course.id },
+      where: { id: saved.lessonId },
+    });
+
+    await expect(findExplanationGoFurther(saved.lessonId)).resolves.toMatchObject({
+      courseId: null,
     });
   });
 });

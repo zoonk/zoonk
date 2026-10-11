@@ -71,6 +71,7 @@ test.describe("Studying your own material", () => {
         ],
         route: "goals",
       },
+      userId: noProgressUser.id,
     });
 
     await openPaperclip(page);
@@ -122,11 +123,7 @@ test.describe("Studying your own material", () => {
     await page.getByText("The basics").click();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    // The time comes after the profile (birth and buddy) and placement.
-    await expect(page.getByRole("heading", { name: "When were you born?" })).toBeVisible();
-    await page.getByLabel("Month").selectOption("3");
-    await page.getByLabel("Year").selectOption("1990");
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
+    // The time comes after the buddy and placement.
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await page.getByRole("button", { name: "Start from zero" }).click();
@@ -156,6 +153,7 @@ test.describe("Studying your own material", () => {
         goals: [{ kind: "learn", subject: "the ENEM notice", title: "Understand the notice" }],
         route: "goals",
       },
+      userId: noProgressUser.id,
     });
 
     await openPaperclip(page);

@@ -13,10 +13,9 @@ test.describe("Guests API", () => {
   test("creates a guest who can use the product within the guest allowance", async () => {
     const { guestApi } = await createGuest(baseURL);
 
-    const [allowance, profile, invite, again] = await Promise.all([
+    const [allowance, profile, again] = await Promise.all([
       guestApi.get("/v1/me/allowance"),
       guestApi.get("/v1/me/learning-profile"),
-      guestApi.post("/v1/me/guardian-links", { data: { email: "parent@zoonk.test" } }),
       guestApi.post("/v1/guests"),
     ]);
 
@@ -26,8 +25,6 @@ test.describe("Guests API", () => {
     });
 
     expect(profile.status()).toBe(200);
-    expect(invite.status()).toBe(403);
-    await expect(invite.json()).resolves.toMatchObject({ error: { code: "ACCOUNT_REQUIRED" } });
     expect(again.status()).toBe(409);
 
     await guestApi.dispose();

@@ -1,4 +1,4 @@
-import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
@@ -11,13 +11,13 @@ import { createGoalPlan } from "./create-goal-plan";
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 /** The model call is the one external boundary; each test says what the model understood. */
-vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/plans/routine-fit", () => ({ fitPlanToRoutineFacts: vi.fn() }));
 
 /** A Monday in 2020, before other tests' learning events, so pace estimates don't move dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-function mockEdit(data: Awaited<ReturnType<typeof interpretPlanEdit>>["data"]) {
-  vi.mocked(interpretPlanEdit).mockResolvedValue({
+function mockFit(data: Awaited<ReturnType<typeof fitPlanToRoutineFacts>>["data"]) {
+  vi.mocked(fitPlanToRoutineFacts).mockResolvedValue({
     data,
     provenance: {
       generatedAt: NOW.toISOString(),
@@ -35,16 +35,15 @@ function mockEdit(data: Awaited<ReturnType<typeof interpretPlanEdit>>["data"]) {
   });
 }
 
-/** An adult learner: minors' and unknown ages' memory holds only goals and learning. */
-async function adultFixture({ memoryEnabled = true }: { memoryEnabled?: boolean } = {}) {
+async function learnerFixture({ memoryEnabled = true }: { memoryEnabled?: boolean } = {}) {
   const user = await userFixture();
-  await learningProfileFixture({ birthMonth: 1, birthYear: 1990, memoryEnabled, userId: user.id });
+  await learningProfileFixture({ memoryEnabled, userId: user.id });
   return user;
 }
 
 /** A learner with facts in every category, and a goal whose plan the planner hasn't built yet. */
 async function setup({ settings = {} }: { settings?: object } = {}) {
-  const user = await adultFixture();
+  const user = await learnerFixture();
 
   const [library, goal] = await Promise.all([
     planLibraryFixture({ skills: [{ lessons: 4 }, { lessons: 3 }] }),
@@ -70,7 +69,7 @@ describe("plans read the learner's goals and routine", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
-    vi.mocked(interpretPlanEdit).mockReset();
+    vi.mocked(fitPlanToRoutineFacts).mockReset();
   });
 
   afterEach(() => {
@@ -80,27 +79,20 @@ describe("plans read the learner's goals and routine", () => {
   it("fits a new plan's week to the routine, with the reason and an undo", async () => {
     const { goal, library, plan } = await setup();
 
-    mockEdit({
-      leftOut: [],
-      operations: [
-        { kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] },
-        // A routine never changes what the learner chose, such as their daily time.
-        { kind: "setDailyMinutes", minutes: 60 },
-      ],
-      summary: "Sundays are off, since you never study then.",
-      understood: true,
+    mockFit({
+      operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] }],
+      reason: "Sundays are off, since you never study then.",
     });
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    expect(vi.mocked(interpretPlanEdit)).toHaveBeenCalledWith(
+    expect(vi.mocked(fitPlanToRoutineFacts)).toHaveBeenCalledWith(
       expect.objectContaining({
         memory: expect.arrayContaining(["Never studies on Sundays", "Wants to finish by June"]),
-        purpose: "routine",
       }),
     );
 
-    const call = vi.mocked(interpretPlanEdit).mock.calls[0]?.[0];
+    const call = vi.mocked(fitPlanToRoutineFacts).mock.calls[0]?.[0];
     expect(call?.memory).not.toContain("Works as a nurse");
 
     const [stored, storedGoal, change] = await Promise.all([
@@ -126,13 +118,13 @@ describe("plans read the learner's goals and routine", () => {
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    expect(vi.mocked(interpretPlanEdit)).not.toHaveBeenCalled();
+    expect(vi.mocked(fitPlanToRoutineFacts)).not.toHaveBeenCalled();
   });
 
   it("asks nothing when memory has no goals or routine, or is turned off", async () => {
     const [withoutRoutine, memoryOff] = await Promise.all([
-      adultFixture(),
-      adultFixture({ memoryEnabled: false }),
+      learnerFixture(),
+      learnerFixture({ memoryEnabled: false }),
     ]);
 
     const [library, first, second] = await Promise.all([
@@ -154,6 +146,6 @@ describe("plans read the learner's goals and routine", () => {
     await createGoalPlan({ goalId: first.goal.id, graph: library.graph });
     await createGoalPlan({ goalId: second.goal.id, graph: library.graph });
 
-    expect(vi.mocked(interpretPlanEdit)).not.toHaveBeenCalled();
+    expect(vi.mocked(fitPlanToRoutineFacts)).not.toHaveBeenCalled();
   });
 });

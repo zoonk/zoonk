@@ -6,6 +6,7 @@ import {
   orderByQuestions,
 } from "../../library/exams/subject-questions";
 import { namesMatch } from "../_utils/name-match";
+import { listCountedSubjects } from "../choices/exam-choices";
 
 type FrequencyLevel = TopicFrequency[number]["level"];
 
@@ -23,7 +24,7 @@ type ExamMapLevel = { mastered: number; solid: number; studied: number; total: n
 type ExamMapSubject = {
   /** The subject's most frequent topic level, so "appears a lot" can mark the subject. */
   frequency: FrequencyLevel | null;
-  /** The notice's group for it, such as "Conhecimentos básicos (P1)". Null when it has none. */
+  /** The notice's group for it, such as "Basic knowledge (P1)". Null when it has none. */
   group: string | null;
   level: ExamMapLevel | null;
   name: string;
@@ -60,7 +61,8 @@ function rank(topic: Pick<ExamMapTopic, "frequency">): number {
 
 /**
  * A subject's share of the exam, from 0 to 1: the notice's weight, or its share of the questions
- * (the notice's counts, or the latest edition's when the notice gives none).
+ * (the notice's counts, or the latest edition's when the notice gives none), each question counted
+ * once: a choice's options as one, an option inside another subject in that one.
  */
 export function getSubjectShare({
   structure,
@@ -75,7 +77,7 @@ export function getSubjectShare({
 
   const questions = getSubjectQuestions({ structure, subject });
 
-  const total = structure.subjects.reduce(
+  const total = listCountedSubjects(structure.subjects).reduce(
     (sum, item) => sum + (getSubjectQuestions({ structure, subject: item }) ?? 0),
     0,
   );

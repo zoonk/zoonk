@@ -26,6 +26,11 @@ vi.mock("workflow/api", () => ({
 // writer's model choice for a last draft runs for real.
 vi.mock("@zoonk/ai/tasks/v2/lesson-spec", () => ({ generateLessonSpec: vi.fn() }));
 
+// The picture check is a model call too: every planned picture is kept, as the recorded spec planned.
+vi.mock("@zoonk/ai/tasks/v2/lesson-spec/picture-need", () => ({
+  keepTeachingPictures: vi.fn(({ spec }: { spec: unknown }) => Promise.resolve(spec)),
+}));
+
 vi.mock("@zoonk/ai/tasks/v2/lesson-writer", async (importOriginal) => ({
   ...(await importOriginal<typeof LessonWriter>()),
   writeLessonDraft: vi.fn(),
@@ -160,6 +165,30 @@ describe("lesson content redrafts", () => {
     expect(planItem.status).toBe("skipped");
 
     expect(getStreamedEvents().at(-1)).toMatchObject({ status: "error", step: "workflowError" });
+  });
+
+  it("sets a private lesson aside once its fix passes leave it held back, with no fresh draft", async () => {
+    const owner = await userFixture();
+    const { item, lesson } = await plannedLesson({ ownerId: owner.id, visibility: "private" });
+    mockDrafts(1);
+
+    await expect(lessonContentWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      lessonId: lesson.id,
+      status: "heldBack",
+    });
+
+    // Two cheap fix passes on the failing screen instead of another full draft.
+    expect(writeLessonDraft).toHaveBeenCalledOnce();
+    expect(fixLessonDraft).toHaveBeenCalledTimes(2);
+
+    const [stored, planItem] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      prisma.planItem.findUniqueOrThrow({ where: { id: item.id } }),
+    ]);
+
+    expect(stored.setAsideAt).toBeInstanceOf(Date);
+    expect(stored.heldBackDrafts).toHaveLength(1);
+    expect(planItem.status).toBe("skipped");
   });
 
   it("finishes the drafts an earlier run left: a lesson held back once gets two more", async () => {

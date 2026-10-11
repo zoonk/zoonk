@@ -95,7 +95,7 @@ function getOpenDays({
  * The written tests as areas practiced on days of their own, by the learner's cadence: each gets
  * the lesson minutes it gets in the study cycle's rotation (`scheduled`: the plan laid out that
  * way), spread evenly over its days, so its practice moves without shrinking or growing. Every
- * week, its days are every day the plan has lessons: in the rotation, ENEM's redação, a few
+ * week, its days are every day the plan has lessons: in the rotation, ENEM's essay, a few
  * dozen lessons, was done in the plan's first two weeks and never came back. Null when the plan
  * has no time for them.
  */

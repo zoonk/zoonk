@@ -1,5 +1,8 @@
 import { interactionCheck } from "@zoonk/testing/fixtures/activity-checks";
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -14,12 +17,12 @@ import {
 } from "../_test-utils/activity-player";
 
 /** The Punnett fixture graded on the filled square itself instead of a question about it. */
-const FILL_THE_SQUARE = { ...activityContentFixtures.punnettSquare, check: interactionCheck };
+const FILL_THE_SQUARE = { ...activityContentFixtures.combinationGrid, check: interactionCheck };
 
-const HEART_MIX_UP = "The drawing faces you, so the heart's right side is on your left.";
+const HEART_MIX_UP = "The picture faces you, so the heart's right side is on your left.";
 
-/** Spots number the heart's parts by where their pins sit, top to bottom, left to right. */
-const HEART_SPOTS = ["Aorta", "Right atrium", "Left atrium", "Right ventricle", "Left ventricle"];
+/** Spots number the heart's parts in the picture's order: the first part is 1. */
+const HEART_SPOTS = ["Right atrium", "Left atrium", "Right ventricle", "Left ventricle", "Aorta"];
 
 const PHOTOSYNTHESIS = [
   "Chlorophyll absorbs sunlight",
@@ -38,12 +41,28 @@ async function labelSpots(names: readonly string[]) {
   }
 }
 
-async function fillSquare(genotypes: readonly string[]) {
-  for (const [index, genotype] of genotypes.entries()) {
+/** The palette's genotype for the square being filled: the palette is named by its question. */
+/**
+ * The palette's option for the square being filled: the palette is named by its question. A
+ * genotype's option also names the trait it shows; a number's is the number alone.
+ */
+function cellOption({ square, value }: { square: number; value: string }) {
+  const isGenotype = /^[A-Za-z]+$/u.test(value);
+
+  const question = isGenotype
+    ? `Which genotype goes in square ${square}?`
+    : `What goes in square ${square}?`;
+
+  return page
+    .getByRole("group", { name: question })
+    .getByRole("button")
+    .filter({ hasText: new RegExp(isGenotype ? `^${value}` : `^${value}$`, "u") });
+}
+
+async function fillSquare(values: readonly string[]) {
+  for (const [index, value] of values.entries()) {
     // oxlint-disable-next-line no-await-in-loop -- The palette fills one square at a time.
-    await page
-      .getByRole("button", { exact: true, name: `Put ${genotype} in square ${index + 1}` })
-      .click();
+    await cellOption({ square: index + 1, value }).click();
   }
 }
 
@@ -51,12 +70,27 @@ function moveStatus() {
   return page.getByRole("status").filter({ hasText: /is over position|dropped at position/u });
 }
 
+/** A step's words, as its button is named: without the position and picture shown beside them. */
+function stepText(button: Element): string {
+  const words = button.cloneNode(true);
+
+  if (!(words instanceof Element)) {
+    return "";
+  }
+
+  for (const hidden of words.querySelectorAll("[aria-hidden='true']")) {
+    hidden.remove();
+  }
+
+  return words.textContent.trim();
+}
+
 function stepOrder(): string[] {
   return page
     .getByRole("list", { name: "Steps, in your order" })
     .getByRole("button")
     .elements()
-    .map((button) => button.getAttribute("aria-label") ?? "");
+    .map((button) => stepText(button));
 }
 
 /**
@@ -116,8 +150,9 @@ async function buildCarbonDioxide({ doubleBonds }: { doubleBonds: boolean }) {
 }
 
 describe("science activities", () => {
-  it("parameter simulation: moving the angle to 45° gives the farthest throw", async () => {
-    openActivity({ template: "parameterSimulation" });
+  it("formula model simulation: moving the angle to 45° gives the farthest throw", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.simulation, template: "formulaModel" });
+    await expect.element(page.getByText("Projectile", { exact: true })).toBeVisible();
     await expect.element(page.getByText("Peak height", { exact: true })).toBeVisible();
     await pressOnSlider("Launch angle", "ArrowRight", 15);
     await expect.element(valueInput()).toHaveValue("40.77");
@@ -125,8 +160,8 @@ describe("science activities", () => {
     await expectVerdict("Correct!");
   });
 
-  it("parameter simulation: stopping at another angle is wrong", async () => {
-    openActivity({ template: "parameterSimulation" });
+  it("formula model simulation: stopping at another angle is wrong", async () => {
+    openActivity({ content: engineModeFixtures.formulaModel.simulation, template: "formulaModel" });
     await pressOnSlider("Launch angle", "ArrowRight", 5);
     await expect.element(valueInput()).toHaveValue("38.32");
     await checkActivity();
@@ -135,7 +170,7 @@ describe("science activities", () => {
 
   it("labeled diagram: every name on its part is right", async () => {
     openActivity({ template: "labeledDiagram" });
-    await expect.element(page.getByText("Low in oxygen")).toBeVisible();
+    await expect.element(page.getByRole("img", { name: /five numbered parts/u })).toBeVisible();
     await labelSpots(HEART_SPOTS);
 
     await expect
@@ -149,15 +184,11 @@ describe("science activities", () => {
   it("labeled diagram: a swapped pair shows the writer's mix-up feedback", async () => {
     openActivity({ template: "labeledDiagram" });
 
-    await labelSpots(["Aorta", "Left atrium", "Right atrium", "Right ventricle", "Left ventricle"]);
+    await labelSpots(["Left atrium", "Right atrium", "Right ventricle", "Left ventricle", "Aorta"]);
 
-    await page.getByRole("button", { name: "Spot 5, bottom right: Left ventricle" }).click();
-
-    await expect
-      .element(page.getByRole("button", { name: "Put Left ventricle on spot 5" }))
-      .toBeVisible();
-
-    await page.getByRole("button", { name: "Put Left ventricle on spot 5" }).click();
+    await page.getByRole("button", { name: "Spot 5: Aorta" }).click();
+    await expect.element(page.getByRole("button", { name: "Put Aorta on spot 5" })).toBeVisible();
+    await page.getByRole("button", { name: "Put Aorta on spot 5" }).click();
     await checkActivity();
     await expectVerdict("Not quite");
     await expectCount(page.getByText(HEART_MIX_UP), 2);
@@ -210,8 +241,8 @@ describe("science activities", () => {
       .toBeVisible();
   });
 
-  it("Punnett square: filling the square answers the share of white flowers", async () => {
-    openActivity({ template: "punnettSquare" });
+  it("Punnett grid: filling the square answers the share of white flowers", async () => {
+    openActivity({ template: "combinationGrid" });
     await fillSquare(["Pp", "Pp", "pp", "pp"]);
     await expect.element(page.getByText("Purple: 2 of 4 · White: 2 of 4")).toBeVisible();
     await page.getByRole("radio", { name: /1 in 2/u }).click();
@@ -220,12 +251,38 @@ describe("science activities", () => {
     await expect.element(page.getByText("2 of 4 squares: White")).toBeVisible();
   });
 
-  it("Punnett square: a wrong square in a fill-the-square check is wrong", async () => {
-    openActivity({ content: FILL_THE_SQUARE, template: "punnettSquare" });
+  it("Punnett grid: a wrong square in a fill-the-square check is wrong", async () => {
+    openActivity({ content: FILL_THE_SQUARE, template: "combinationGrid" });
 
     await fillSquare(["Pp", "pp", "pp", "pp"]);
     await checkActivity();
     await expectVerdict("Not quite");
+  });
+
+  it("times table grid: filling every product is right", async () => {
+    openActivity({
+      content: engineModeFixtures.combinationGrid.timesTable,
+      template: "combinationGrid",
+    });
+
+    await fillSquare(["2", "4", "6", "3", "6", "9", "4", "8", "12"]);
+    await expect.element(page.getByText("9 of 9 squares filled")).toBeVisible();
+    await checkActivity();
+    await expectVerdict("Correct!");
+  });
+
+  it("two dice grid: shown filled to read, then the sevens are counted", async () => {
+    openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
+
+    // 36 squares are read, not filled: there is no palette to pick from.
+    await expect
+      .element(page.getByRole("group", { name: /goes in square/u }))
+      .not.toBeInTheDocument();
+
+    await valueInput().fill("0.1667");
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("6 of 36 squares: 7")).toBeVisible();
   });
 });
 
@@ -240,9 +297,7 @@ describe("science activities with a keyboard only", () => {
       await press("Enter");
       // oxlint-disable-next-line no-await-in-loop -- The spot shows the name before the next one.
       await expect
-        .element(
-          page.getByRole("button", { name: new RegExp(`^Spot ${index + 1}, .*: ${name}$`, "u") }),
-        )
+        .element(page.getByRole("button", { name: `Spot ${index + 1}: ${name}` }))
         .toBeVisible();
     }
 

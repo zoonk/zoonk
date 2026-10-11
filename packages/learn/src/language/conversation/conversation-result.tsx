@@ -255,7 +255,7 @@ function ImproveStep({
                 {improve.better}
               </p>
             </div>
-            <SpeakButton language={language} text={improve.better} />
+            <SpeakButton language={language} personal text={improve.better} />
           </div>
           <p className="text-muted-foreground text-sm">{improve.why}</p>
         </div>

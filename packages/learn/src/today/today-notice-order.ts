@@ -4,8 +4,7 @@ import { type TodayView } from "@zoonk/core/view-models/today/get";
 export type TodayNoticeKind =
   | "exam"
   | "examAccess"
-  | "freshStart"
-  | "guardianInvite"
+  | "examChoice"
   | "insight"
   | "planChange"
   | "practice"
@@ -25,7 +24,7 @@ type TodaySession = TodayView["session"];
 /** What of Today the pick reads. */
 type NoticeTodayView = {
   exam: Pick<NonNullable<TodayView["exam"]>, "resultReported" | "stage"> | null;
-  guardianInvite: boolean;
+  examChoice: Pick<NonNullable<TodayView["examChoice"]>, "group"> | null;
   insight: Pick<NonNullable<TodayView["insight"]>, "kind" | "planChange"> | null;
   planChange: Pick<NonNullable<TodayView["planChange"]>, "behind" | "id" | "status"> | null;
   session: {
@@ -71,21 +70,26 @@ function getPlanChangeStatus({
   return planChange.behind ? "proposed" : planChange.status;
 }
 
-/** A lighter day says why only until the learner starts: then it has done its job. */
-function showsFreshStart(today: NoticeTodayView): boolean {
+/**
+ * Whether the day opens by saying why it's fresh (see `TodayFreshStart`): a lighter day says why
+ * only until the learner starts, and then it has done its job.
+ */
+export function showsFreshStart(today: Pick<NoticeTodayView, "session" | "studiedToday">): boolean {
   const started = today.session.blocks.some((block) => block.status !== "pending");
   return today.session.freshStart !== null && !today.studiedToday && !started;
 }
 
 /**
- * Today shows at most one notice, the one that matters most: the exam's own days, then a plan
- * change waiting for an OK (any proposal, one an insight explains, or falling behind that puts the
- * date at risk), a change in what the goal
- * is built on (its exam notice), the exam's final stretch, the end of a free exam plan's first
- * week, a document research needs, a guardian invite for a teen who just signed up from a guest
- * session, an automatic change already made (with its undo), a tip, a
- * language's due practice, a lighter day's welcome and, last, a course from before goals. The rest
- * wait for another day or live on their own screens.
+ * Today shows at most one notice, the one that matters most: the exam's own days, then the end of
+ * a free exam plan's first week (more of the plan is Plus's, so nothing that asks more of it goes
+ * before), a plan change waiting for an OK (any proposal, one an insight explains, or falling
+ * behind that puts the date at risk), a change in what the goal is built on (its exam notice),
+ * the exam's final stretch, a document research needs, an exam choice the learner left for later (the plan studies
+ * none of its options until they pick), an automatic change already made (with its undo), a tip, a
+ * language's due practice and, last, a course from before goals, which waits while the day says
+ * why it's fresh. A fresh start's words are the session's own, never a notice: a return after a
+ * break greets the learner whatever else Today has to say. The rest wait for another day or live
+ * on their own screens.
  */
 export function pickTodayNotice({
   host,
@@ -100,18 +104,17 @@ export function pickTodayNotice({
 
   const candidates: [TodayNoticeKind, boolean][] = [
     ["exam", isExamDay(exam)],
+    ["examAccess", session.examAccess.trialEnded],
     ["planChange", planChange === "proposed"],
     ["insight", insightChange === "proposed"],
     ["sourceChange", host.sourceChange],
     ["exam", exam?.stage === "finalStretch"],
-    ["examAccess", session.examAccess.trialEnded],
     ["uploadRequest", host.uploadRequest],
-    ["guardianInvite", today.guardianInvite],
+    ["examChoice", today.examChoice !== null],
     ["planChange", planChange === "applied"],
     ["insight", insight !== null],
     ["practice", host.practice],
-    ["freshStart", showsFreshStart(today)],
-    ["suggestedGoal", today.suggestedGoal !== null],
+    ["suggestedGoal", today.suggestedGoal !== null && !showsFreshStart(today)],
   ];
 
   return candidates.find(([, available]) => available)?.[0] ?? null;

@@ -43,8 +43,11 @@ export function useGoalCreation() {
       }
 
       setError({
+        limit: outcome.status === "limitReached" ? outcome.reason : undefined,
         message: createError(outcome),
-        needsAccount: outcome.status === "limitReached" && outcome.reason === "guest",
+        needsAccount:
+          outcome.status === "limitReached" &&
+          (outcome.reason === "guest" || outcome.reason === "signUpRequired"),
       });
     });
 

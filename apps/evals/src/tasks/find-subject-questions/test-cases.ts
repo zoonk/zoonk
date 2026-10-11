@@ -6,7 +6,7 @@ type FindSubjectQuestionsCase = TestCase<FindSubjectQuestionsExpected, FindSubje
 
 const TODAY = "2026-10-06";
 
-/** The 48º Exame's 1ª fase as its notice names its subjects, without their counts (6 Oct 2026). */
+/** The 48th OAB exam's first phase as its notice names its subjects, without their counts (6 Oct 2026). */
 const OAB_SUBJECTS = [
   "Direito Administrativo",
   "Direito Civil",
@@ -32,8 +32,8 @@ const OAB_SUBJECTS = [
 
 /**
  * Real exams whose notices name subjects without counts. The OAB's distribution is published for
- * every edition and Ética has kept its 8 questions through the 2024 changes, so a found answer
- * must give it 8; a concurso split only into tests may have no source, and then "unknown" is
+ * every edition and ethics has kept its 8 questions through the 2024 changes, so a found answer
+ * must give it 8; a civil service exam split only into tests may have no source, and then "unknown" is
  * right.
  */
 export const TEST_CASES: FindSubjectQuestionsCase[] = [
@@ -44,6 +44,19 @@ export const TEST_CASES: FindSubjectQuestionsCase[] = [
       board: "FGV",
       exam: "OAB Exame de Ordem Unificado, 1ª fase",
       subjects: OAB_SUBJECTS,
+      today: TODAY,
+      total: 80,
+    },
+  },
+  {
+    // A reading of the notice that left ethics out (8 Oct 2026): the other subjects' counts are
+    // still found, adding up to less than the 80 questions.
+    expected: { counts: {}, status: "found" },
+    id: "pt-oab-1a-fase-without-ethics",
+    userInput: {
+      board: "FGV",
+      exam: "OAB Exame de Ordem Unificado, 1ª fase",
+      subjects: OAB_SUBJECTS.slice(0, -1),
       today: TODAY,
       total: 80,
     },

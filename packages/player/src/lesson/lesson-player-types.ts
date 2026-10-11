@@ -34,11 +34,15 @@ export type LessonStepResult = LessonStepCheckResult & {
 /** The learner's plan, as far as a refusal needs it: guests are asked to sign up. */
 type LessonPlayerTier = "free" | "guest" | "plus";
 
-/** Why a lesson can't start or continue right now. */
+/**
+ * Why a lesson can't start or continue right now. `plusRequired`: a free exam plan past its first
+ * week opens this new lesson of its plan with Plus only.
+ */
 export type LessonRunRefusal =
   | { reason: "failed" }
   | { period: "day" | "month" | "total"; reason: "limitReached"; tier: LessonPlayerTier }
   | { reason: "notFound" }
+  | { reason: "plusRequired" }
   | { reason: "slowDown"; retryAfterSeconds: number }
   | { reason: "unauthorized" };
 
@@ -80,12 +84,13 @@ export type LessonCompletionOutcome =
   | { status: "failed" }
   | { status: "incomplete" };
 
-/** The learner used the small AI help their plan gives for the day or the month (`period`). */
-type HelpLimitOutcome = {
-  period?: "day" | "month" | "total";
-  status: "limitReached";
-  tier: LessonPlayerTier;
-};
+/**
+ * The learner used the small AI help their plan gives for the day or the month (`period`), or a
+ * guest is asked to create a free account once the day's AI budget all guests share is spent.
+ */
+type HelpLimitOutcome =
+  | { period?: "day" | "month" | "total"; status: "limitReached"; tier: LessonPlayerTier }
+  | { status: "signUpRequired" };
 
 export type AnswerExplanationOutcome =
   | { explanation: string; status: "explained" }

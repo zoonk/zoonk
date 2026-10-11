@@ -85,7 +85,8 @@ export async function buildMockContextSnapshot({
       learnerAnswer: entry.learnerAnswer,
       number: entry.number,
       outcome: entry.outcome,
-      question: entry.question,
+      // The question as the mock showed it, with the text it reads first (the equation, the case).
+      question: [entry.context, entry.question].filter(Boolean).join("\n\n"),
       skill: skills.get(entry.itemId) ?? null,
     })),
     mistakeCauses: mock.mistakes.map((mistake) => ({ cause: mistake.cause, count: mistake.count })),

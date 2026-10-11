@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
@@ -12,7 +11,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import {
   getLessonGenerationStates,
@@ -20,16 +19,9 @@ import {
 } from "../library/generation/lesson-generation-state";
 import { getLessonWaitingState } from "./get-lesson-waiting-state";
 import { requestLessonGeneration } from "./request-lesson-generation";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 async function learnerWithPlan() {
   const user = await userFixture();
@@ -119,10 +111,6 @@ describe(releaseStaleLessonClaims, () => {
 });
 
 describe(requestLessonGeneration, () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("needs a session and hides another learner's private lesson", async () => {
     const owner = await userFixture();
     const lesson = await libraryLessonFixture({ ownerId: owner.id, visibility: "private" });

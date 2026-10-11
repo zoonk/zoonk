@@ -8,9 +8,10 @@ import {
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
-import { teachingStep } from "../_test-utils/lesson-steps";
-import { buildLesson } from "../_test-utils/render-lesson-player";
-import { buildTutor, stubTutorApi, tutorAnswerStream } from "../_test-utils/tutor-api";
+import { stubTutorApi, tutorAnswerStream } from "../_test-utils/tutor-api";
+import { buildTutor } from "../_test-utils/tutor-config";
+import { buildLesson } from "../preview/preview-lesson";
+import { teachingStep } from "../preview/preview-steps";
 import { TutorConversation } from "../questions/tutor-conversation";
 
 /**
@@ -31,6 +32,7 @@ const PROPOSED_CHANGE: PlanChangeView = {
   createdAt: "2026-10-06T12:00:00.000Z",
   days: null,
   effect: null,
+  examDocument: "notice",
   id: "01a11014-0000-7000-8000-000000000001",
   kind: "edited",
   lessonsSkipped: 0,
@@ -184,6 +186,11 @@ describe("the buddy's conversation", () => {
     renderConversation();
     await ask("How many questions does the exam have?");
     await expect.element(page.getByText("Thinking…")).toBeVisible();
+
+    // The page sees its stream drop, then schedules the first poll. Time moves only once that poll
+    // is waiting: moved any earlier, it passes before the poll exists and the poll never comes.
+    await expect.element(page.getByRole("button", { name: "Check again" })).toBeVisible();
+    await expect.poll(() => vi.getTimerCount()).toBeGreaterThan(0);
 
     const [asked] = api.questions;
     api.complete(asked?.id ?? "", "The notice says 80 questions.");

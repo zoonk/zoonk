@@ -1,4 +1,3 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -14,20 +13,15 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useIsolatedBudgetDay } from "../_test-utils/isolated-budget-day";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-inputs";
 import { parsePlanGraph } from "../plans/planner/plan-state";
-import { startCourseGoal } from "./start-course-goal";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
+import { getOnboarding } from "../view-models/onboarding/get-onboarding";
+import { findCourseGoalStart, startCourseGoal } from "./start-course-goal";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -147,7 +141,6 @@ describe(startCourseGoal, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   afterEach(() => {
@@ -188,6 +181,40 @@ describe(startCourseGoal, () => {
       phases: ["Overview", "Beginner"],
       skills: ["Sensors", "Motors", "Build a robot", "Control loops", "Feedback", "Kinematics"],
     });
+  });
+
+  // Sam left "How much do you already know?" and still had a plan with lessons being written: the
+  // start page asks the level before anything exists, and Start brings it along.
+  it("takes the level the start page asked, so onboarding goes on without asking it again", async () => {
+    const [{ course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
+    mockSession(user.id);
+
+    const known = await startCourseGoal({ courseId: course.id, input: { level: "basic" } });
+
+    expect(known).toMatchObject({
+      goal: { details: { answered: ["level"], courseStart: { chapterId: null }, level: "basic" } },
+      status: "created",
+    });
+
+    const onboarding = await getOnboarding({
+      goalId: known.status === "created" ? known.goal.id : "",
+    });
+
+    const steps = onboarding.status === "ready" ? onboarding.onboarding.steps : [];
+
+    expect(steps).not.toContain("level");
+    expect(steps).toContain("placement");
+  });
+
+  it("takes a quick test as the level's answer, leaving the level to placement", async () => {
+    const [{ course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
+    mockSession(user.id);
+
+    const result = await startCourseGoal({ courseId: course.id, input: { level: null } });
+    const goal = result.status === "created" ? result.goal : null;
+
+    expect(goal?.details).toMatchObject({ answered: ["level"] });
+    expect(goal?.details).not.toHaveProperty("level");
   });
 
   it("teaches a skill several chapters share where the course first does, in the course's order", async () => {
@@ -256,6 +283,29 @@ describe(startCourseGoal, () => {
     });
 
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(1);
+  });
+
+  // Asking a returning learner's level again on the start page would be for nothing: the page
+  // finds their goal on the course first and sends them back to it.
+  it("finds the learner's own goal on the course for its start page, and nobody else's", async () => {
+    const [{ course }, user, other] = await Promise.all([
+      outlinedCourse(),
+      userFixture(),
+      userFixture(),
+    ]);
+
+    mockSession(user.id);
+    await expect(findCourseGoalStart(course.id)).resolves.toBeNull();
+
+    const started = await startCourseGoal({ courseId: course.id, input: { level: "basic" } });
+
+    await expect(findCourseGoalStart(course.id)).resolves.toStrictEqual({
+      goalId: started.status === "created" ? started.goal.id : "",
+      inOnboarding: true,
+    });
+
+    mockSession(other.id);
+    await expect(findCourseGoalStart(course.id)).resolves.toBeNull();
   });
 
   it("says a learner's goal on the course is past onboarding once only the plan is left", async () => {
@@ -382,8 +432,7 @@ describe(startCourseGoal, () => {
   });
 
   it("keeps a guest to one goal", async () => {
-    // A day of its own, so the budget guests share in other tests never mixes in.
-    vi.setSystemTime(new Date(Date.UTC(2200, 0, 1 + Math.floor(Math.random() * 10_000), 12)));
+    await useIsolatedBudgetDay();
 
     const [first, second, guest] = await Promise.all([
       outlinedCourse(),

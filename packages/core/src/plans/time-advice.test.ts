@@ -9,6 +9,9 @@ import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { getPlanTimeAdvice } from "./get-time-advice";
+import { endNoticeWait, startNoticeWait } from "./notice-wait";
+import { runPlanSetupTask } from "./plan-setup";
+import { type PlanTimeAdviceInput } from "./time-advice-contract";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
@@ -47,8 +50,8 @@ async function setup() {
   return { goal, library, user };
 }
 
-async function readAdvice(goalId: string, studyDays: number[]) {
-  const result = await getPlanTimeAdvice({ goalId, input: { studyDays } });
+async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdviceInput = {}) {
+  const result = await getPlanTimeAdvice({ goalId, input: { studyDays, ...week } });
 
   if (result.status !== "ready") {
     throw new Error(`Expected the time advice, got ${result.status}`);
@@ -128,6 +131,44 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
+  // The time step recommended the same time a day with two hours on weekends as without them.
+  it("counts the weekend's own time: the number the plan shows once the week is set", async () => {
+    const { goal, library } = await setup();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const [everyDay, withWeekend] = await Promise.all([
+      readAdvice(goal.id, EVERY_DAY),
+      readAdvice(goal.id, EVERY_DAY, { weekendMinutes: 30 }),
+    ]);
+
+    expect(withWeekend.recommendedMinutes).toBeLessThan(everyDay.recommendedMinutes ?? 0);
+
+    // The week onboarding saves: 10 minutes on weekdays, the weekend's own 30.
+    await change(goal.id, [
+      { kind: "setDailyMinutes", minutes: 10 },
+      { kind: "setWeekdayMinutes", minutes: 30, weekdays: [0, 6] },
+    ]);
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      recommendedMinutes: withWeekend.recommendedMinutes,
+    });
+
+    // Switching to it, as the reveal's one tap does, covers the goal and leaves the weekend as is.
+    await change(goal.id, [
+      { kind: "setDailyMinutes", minutes: withWeekend.recommendedMinutes ?? 0 },
+    ]);
+
+    const plan = await getGoalPlan(goal.id);
+
+    expect(plan.status === "ready" && plan.plan.schedule.weekdayMinutes).toStrictEqual([
+      30,
+      ...WEEKDAYS.map(() => withWeekend.recommendedMinutes),
+      30,
+    ]);
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1 });
+  });
+
   it("keeps the number however other learners' lessons went since", async () => {
     const { goal, library } = await setup();
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
@@ -176,9 +217,75 @@ describe(getPlanTimeAdvice, () => {
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual({
       maximum: null,
       measure: "goal",
+      readingNotice: false,
       ready: false,
       recommendedMinutes: null,
       targetDate: null,
+      targetDateNamedMonth: false,
+    });
+  });
+
+  // A plan built after the learner ended placement tests lessons out in its setup step: asked
+  // before that step, the time question would recommend more than the plan then shows.
+  it("waits for the placement the learner ended before the plan existed, then recommends the plan's time", async () => {
+    const { goal, library } = await setup();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
+
+    await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toMatchObject({
+      ready: false,
+      recommendedMinutes: null,
+    });
+
+    await runPlanSetupTask({ goalId: goal.id, task: "placement" });
+
+    const advice = await readAdvice(goal.id, EVERY_DAY);
+
+    expect(advice).toMatchObject({ ready: true });
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      recommendedMinutes: advice.recommendedMinutes,
+    });
+  });
+
+  // A reading of the exam's notice that lands while the reveal waits builds the plan again with it:
+  // DELE's time question said 2h50 a day, and the plan, built again with the notice right after,
+  // said 2h40.
+  it("waits while the plan waits for its exam's notice reading, then recommends the plan's time", async () => {
+    const { goal, library } = await setup();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await startNoticeWait({ goalId: goal.id, now: NOW });
+
+    // The time screen says what it waits for.
+    await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toMatchObject({
+      readingNotice: true,
+      ready: false,
+      recommendedMinutes: null,
+    });
+
+    await endNoticeWait(goal.id);
+
+    const advice = await readAdvice(goal.id, EVERY_DAY);
+
+    expect(advice).toMatchObject({ readingNotice: false, ready: true });
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      recommendedMinutes: advice.recommendedMinutes,
+    });
+  });
+
+  // A reading that fails or never lands doesn't hold the time question: once the plan's wait for it
+  // runs out, the reveal shows the plan as it is, and so does the advice.
+  it("recommends the plan's time once its wait for the notice runs out without a reading", async () => {
+    const { goal, library } = await setup();
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    await startNoticeWait({ goalId: goal.id, now: new Date(NOW.getTime() - 7 * 60_000) });
+
+    const advice = await readAdvice(goal.id, EVERY_DAY);
+
+    expect(advice).toMatchObject({ readingNotice: false, ready: true });
+
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
+      recommendedMinutes: advice.recommendedMinutes,
     });
   });
 

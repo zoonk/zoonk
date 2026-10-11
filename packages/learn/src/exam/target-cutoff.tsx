@@ -14,12 +14,15 @@ import {
 import { getSourceHost } from "../_utils/source-host";
 
 /**
- * A cut-off as the learner reads it: its score in their number format, and what it's for in a few
- * words ("Medicina · UFMG · Sisu 2025 · ampla concorrência"), each part as the source names it.
- * Names stand side by side, without the prepositions an institution's name decides ("na USP").
+ * A cut-off as the learner reads it: its score on its scale in their number format ("7 out of
+ * 10"), and what it's for in a few words ("Medicine · UFMG · Sisu 2025 · open competition"), each
+ * part as the source names it. Names stand side by side, without the prepositions an institution's
+ * name decides ("na USP" in Portuguese).
  */
 export function useCutoffWords() {
+  const t = useExtracted();
   const format = useFormatter();
+  const number = (value: number) => format.number(value, { maximumFractionDigits: 1 });
 
   return {
     detail: (cutoff: TargetCutoff) =>
@@ -32,7 +35,8 @@ export function useCutoffWords() {
       ]
         .filter((part) => part !== null && part.trim() !== "")
         .join(" · "),
-    score: (cutoff: TargetCutoff) => format.number(cutoff.score, { maximumFractionDigits: 1 }),
+    score: (cutoff: TargetCutoff) =>
+      t("{score} out of {max}", { max: number(cutoff.maxScore), score: number(cutoff.score) }),
   };
 }
 

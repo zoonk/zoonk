@@ -34,7 +34,9 @@ export function CheckpointClient({
           timeZone: getLocalTimeZone(),
         });
 
-        return outcome.status === "answered" ? { isCorrect: outcome.feedback.isCorrect } : null;
+        return outcome.status === "answered"
+          ? { isCorrect: outcome.feedback.isCorrect, transcript: outcome.feedback.transcript }
+          : null;
       },
       finish: async () => {
         const outcome = await finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() });

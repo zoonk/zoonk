@@ -1,23 +1,35 @@
 import { z } from "zod";
 import { anyPlanOperationSchema } from "../plan-contract";
 import { type PlanEffect } from "../planner/plan-effect";
-import { planGraphSchema, planStateSchema } from "../planner/plan-state";
+import { planGraphSchema } from "../planner/plan-state";
 
 /**
  * What happened to a plan. `edited`: the learner or a proposal changed how it's shaped (undoable).
  * `testedOut`: placement or a test-out skipped lessons (undoable). `missedDays`: lessons earlier
  * days left came first and the rest moved forward. `estimateUpdated`: the pace estimate got more
- * precise. `resumed`: a paused goal started again from today.
+ * precise. `resumed`: a paused goal started again from today. `relearn`: a miss in practice on a
+ * topic the learner was taken to know brought its lessons back (`effect.topicsAdded` names it).
+ * `coverageChanged`: planned again as lessons were written or the learner studied, the plan
+ * teaches other topics by its date (`effect.topicsLeftOut` and `effect.topicsAdded` name them).
  */
 const PLAN_CHANGE_KINDS = [
+  "coverageChanged",
   "edited",
   "estimateUpdated",
   "missedDays",
+  "relearn",
   "resumed",
   "testedOut",
 ] as const;
 
 export type PlanChangeKind = (typeof PLAN_CHANGE_KINDS)[number];
+
+const UNDOABLE_KINDS: ReadonlySet<string> = new Set<PlanChangeKind>(["edited", "testedOut"]);
+
+/** An applied edit or test-out: the learner can undo it while the plan is as it left it. */
+export function isUndoableChange(change: { kind: string; status: string }): boolean {
+  return UNDOABLE_KINDS.has(change.kind) && change.status === "applied";
+}
 
 /**
  * Who asked for a change: "learner" in the app, "planEdit" (the AI reading their words), "system"
@@ -26,6 +38,19 @@ export type PlanChangeKind = (typeof PLAN_CHANGE_KINDS)[number];
 export type PlanChangeSource = string;
 
 export const planEffectSchema = z.object({
+  addedTopicsBeforeBasics: z.literal(true).optional(),
+  addedTopicsStart: z.string().optional(),
+  areaEnds: z
+    .array(
+      z.object({
+        after: z.string(),
+        area: z.string(),
+        before: z.string(),
+        lessonsGained: z.int().optional(),
+      }),
+    )
+    .optional(),
+  areaLessons: z.array(z.object({ after: z.int(), area: z.string(), before: z.int() })).optional(),
   areaStarts: z
     .array(
       z.object({ after: z.string().nullable(), area: z.string(), before: z.string().nullable() }),
@@ -33,8 +58,25 @@ export const planEffectSchema = z.object({
     .optional(),
   endDateAfter: z.string().nullable(),
   endDateBefore: z.string().nullable(),
+  fromPlacement: z.literal(true).optional(),
   lessonsAdded: z.int(),
+  lessonsAddedEstimated: z.literal(true).optional(),
+  lessonsLeftOut: z.array(z.string()).optional(),
   lessonsRemoved: z.int(),
+  listeningPastBasics: z.array(z.string()).optional(),
+  nextMock: z.object({ after: z.string(), before: z.string() }).optional(),
+  outcomesAdded: z.array(z.string()).optional(),
+  phaseEnds: z
+    .array(
+      z.object({
+        after: z.string(),
+        before: z.string(),
+        lessonsFirst: z.literal(true).optional(),
+        name: z.string(),
+        restDay: z.literal(true).optional(),
+      }),
+    )
+    .optional(),
   reviewFirst: z.object({ areas: z.array(z.string()), date: z.string() }).optional(),
   topicsAdded: z.array(z.object({ area: z.string(), topics: z.array(z.string()) })).optional(),
   topicsLeftOut: z.array(z.object({ area: z.string(), topics: z.array(z.string()) })).optional(),
@@ -44,8 +86,6 @@ export const planEffectSchema = z.object({
 });
 
 const planChangePayloadSchema = z.object({
-  /** The state before an applied edit, which its undo restores. */
-  before: planStateSchema.nullable().default(null),
   /**
    * For `missedDays`: falling behind made the plan cover less of its goal by its date (see
    * `FallingBehind`), so Today asks what the learner wants. Null when the date isn't at risk.
@@ -57,19 +97,33 @@ const planChangePayloadSchema = z.object({
       coveredBefore: z.number(),
       currentMinutes: z.int().default(0),
       dailyMinutes: z.int().nullable(),
+      fittingDate: z.string().nullable().default(null),
       fullDepth: z.boolean(),
+      maximumShare: z.number().nullable().default(null),
       measure: z.enum(["exam", "goal"]),
     })
     .nullable()
     .default(null),
   /**
    * For `missedDays`: the plan items earlier days left, which the new day settled first: while they
-   * aren't done, the learner is catching up (see `loadCatchUpItems`).
+   * aren't done, the learner is catching up (see `loadCatchUpItems`). For `relearn`: the lessons a
+   * miss brought back, which later runs that day keep first too (see `loadPlanCarryOver`).
    */
   carriedItemIds: z.array(z.string()).default([]),
   /** For `missedDays`: the earlier days that left lessons, now first on the plan. */
   days: z.int().nullable().default(null),
   effect: planEffectSchema.nullable().default(null),
+  /**
+   * For `testedOut`: the lessons it skipped as every screen counts them (`countLessons`, a stand-in
+   * the lessons the plan taught in its place), so Today's "We skipped 235 lessons you already know"
+   * adds up with the Journey's subjects. Null on changes saved before it was kept: one per item.
+   */
+  lessonsSkipped: z.int().min(0).nullable().default(null),
+  /**
+   * The notice edition a `followNotice` change follows (see `getNoticeEdition`): the learner's
+   * "Keep mine" holds for that edition, and a new one is offered once again.
+   */
+  noticeEdition: z.string().nullable().default(null),
   /**
    * The graph a `followNotice` change makes the plan follow: the one the reconciliation with the
    * exam's notice wrote. Kept here, not in `operations`, since clients never need it.
@@ -86,10 +140,7 @@ const planChangePayloadSchema = z.object({
     .nullable()
     .default(null),
   operations: z.array(anyPlanOperationSchema).default([]),
-  /**
-   * Items a test-out skipped, which its undo brings back. How many there are is the lessons it
-   * skipped, as the plan's rows and the test-out's result count them.
-   */
+  /** Items a test-out skipped, which its undo brings back. */
   planItemIds: z.array(z.string()).default([]),
   /**
    * When the learner said "Got it" to an applied change: the plan stops showing it. Null until then,

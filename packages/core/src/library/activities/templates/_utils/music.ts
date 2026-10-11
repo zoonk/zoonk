@@ -38,7 +38,7 @@ export type ChordQuality = (typeof CHORD_QUALITIES)[number];
  * Intervals by their usual short names, one semitone apart: m2 is a minor second (1 semitone),
  * TT the tritone (6) and P8 the octave (12).
  */
-export const INTERVAL_NAMES = [
+const INTERVAL_NAMES = [
   "m2",
   "M2",
   "m3",

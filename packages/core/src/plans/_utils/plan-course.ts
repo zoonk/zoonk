@@ -4,29 +4,7 @@ import { type PlanCourseLevel, type PlanCourseView } from "../plan-course-contra
 
 const LEVEL_ORDER = Object.values(CourseLevel);
 
-/** Lessons and chapters are what a plan teaches; checkpoints and reviews come around them. */
-const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
-
 type CourseItem = Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "status">;
-
-/** An exam's rehearsals and the reviews before its day: a plan isn't done while one is ahead. */
-const EXAM_DAY_KINDS = new Set<PlanItem["kind"]>(["mock", "review"]);
-
-/**
- * A plan is finished once every lesson and chapter in it is done, tested out or skipped: the last
- * chapter is behind the learner, even with a final checkpoint still ahead. An exam's plan also
- * keeps its mocks and the reviews before the exam: lessons tested out days before a class test
- * leave its short mock to do, so the plan isn't finished yet.
- */
-export function isPlanFinished(items: readonly Pick<PlanItem, "kind" | "status">[]): boolean {
-  const learn = items.filter((item) => LEARN_KINDS.has(item.kind));
-
-  return (
-    learn.length > 0 &&
-    learn.every((item) => item.status !== "todo") &&
-    items.every((item) => !EXAM_DAY_KINDS.has(item.kind) || item.status !== "todo")
-  );
-}
 
 /**
  * The level after the plan's highest one, even before the course has chapters there: the Library

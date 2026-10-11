@@ -4,6 +4,7 @@ import { invalidAudioError, missingAudioError } from "@/lib/language-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { pronunciationReviewPathParamsSchema } from "@/lib/openapi/schemas/pronunciation";
 import { parsePathParams } from "@/lib/path-params";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { answerPronunciationReview } from "@zoonk/core/language/pronunciation/answer";
 import { pronunciationAnswerFieldsSchema } from "@zoonk/core/language/pronunciation/contract";
 import { safeAsync } from "@zoonk/utils/error";
@@ -77,7 +78,7 @@ async function createPronunciationAnswer(
     });
   }
 
-  if (result.status === "limitReached") {
+  if (isRefusedUsage(result)) {
     return usageDecisionError(result);
   }
 

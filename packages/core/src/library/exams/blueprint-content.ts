@@ -1,50 +1,27 @@
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
+import { listChoiceGroups } from "../../exams/choices/exam-choices";
 import { type ReusePolicy } from "../sources/source-contract";
-import { type BlueprintContent, type Citation, type ExamStructure } from "./blueprint-contract";
-import { type FactEntry } from "./blueprint-facts";
+import {
+  type BlueprintContent,
+  type Citation,
+  type ExamStructure,
+  isFormatShare,
+  toAnswerFormat,
+} from "./blueprint-contract";
+import { type FactEntry } from "./blueprint-fact-claims";
+import { type KeptFacts, keptOr, toKeptFacts } from "./blueprint-kept";
+import { toTestedLanguage } from "./blueprint-language";
+import { toMock } from "./blueprint-mock-content";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { toSubjectTopics } from "./blueprint-subject-topics";
+import { getFormatShares, isObjectiveFormat } from "./format-shares";
+import { isObjectiveTestUnread } from "./objective-test";
 
 type Extraction = BlueprintExtraction;
-type MockConditions = NonNullable<ExamStructure["mock"]>;
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const CLOCK_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
-
-/** The claims both checks kept, by id, with their citations. */
-type KeptFacts = Map<string, Citation[]>;
-
-function toKeptFacts({
-  facts,
-  supportedIds,
-}: {
-  facts: FactEntry[];
-  supportedIds: string[];
-}): KeptFacts {
-  const supported = new Set(supportedIds);
-
-  return new Map(
-    facts
-      .filter((item) => item.found && supported.has(item.id))
-      .map((item) => [item.id, item.citations]),
-  );
-}
-
-/** A detail's value when its own claim was kept; otherwise a gap, never a guess. */
-function keptOr<T, TGap>({
-  gap,
-  id,
-  kept,
-  value,
-}: {
-  gap: TGap;
-  id: string;
-  kept: KeptFacts;
-  value: T;
-}): T | TGap {
-  return kept.has(id) ? value : gap;
-}
 
 /** Items of a list whose own claim was kept, with that claim's first citation. */
 function keepItems<T>({ items, kept, prefix }: { items: T[]; kept: KeptFacts; prefix: string }) {
@@ -69,94 +46,6 @@ function toTimeZone(value: string | null): string | null {
   return value && isValidTimeZone(value) ? value : null;
 }
 
-/**
- * Sections only as a whole: a mock missing one of the exam's sections would misrepresent it.
- * Days too, since a mock splits its sections by day.
- */
-function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
-  const ids = mock.sections.map((_, index) => `mock.sections.${index}`);
-
-  if (!ids.every((id) => kept.has(id))) {
-    return [];
-  }
-
-  const daysKept = mock.sections.every(
-    (section, index) => section.day === null || kept.has(`${ids[index]}.day`),
-  );
-
-  return mock.sections.map((section, index) => ({
-    day: daysKept ? section.day : null,
-    kind: section.kind,
-    minutes: keptOr({ gap: null, id: `${ids[index]}.minutes`, kept, value: section.minutes }),
-    name: section.name,
-    questions:
-      section.kind === "written"
-        ? null
-        : keptOr({ gap: null, id: `${ids[index]}.questions`, kept, value: section.questions }),
-    tasks: (section.tasks ?? []).filter(
-      (task, taskIndex) => task.count > 0 && kept.has(`${ids[index]}.tasks.${taskIndex}`),
-    ),
-  }));
-}
-
-/** The exam's scoring when its claim was kept; otherwise "other" with no description: unknown. */
-function toScoring({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
-  const { description, method } = mock.scoring;
-
-  if (!kept.has("mock.scoring")) {
-    return { description: "", method: "other" as const };
-  }
-
-  return {
-    description:
-      method === "other"
-        ? description
-        : keptOr({ gap: "", id: "mock.scoring.description", kept, value: description }),
-    method,
-  };
-}
-
-/**
- * The mock's conditions when its scoring, sections, time or length was kept, each a gap when its
- * own claim wasn't: a mock can copy an exam's sections and time without knowing how it's scored.
- */
-function toMock({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
-  const { mock } = extraction;
-  const citations = [...kept.entries()].find(([id]) => id.startsWith("mock."))?.[1];
-
-  if (!mock || !citations) {
-    return null;
-  }
-
-  const conditions = {
-    adaptive: mock.adaptive && kept.has("mock.adaptive"),
-    citations,
-    order: keptOr({ gap: null, id: "mock.order", kept, value: mock.order }),
-    scoring: toScoring({ kept, mock }),
-    sections: toSections({ kept, mock }),
-    timeLimitMinutes: keptOr({
-      gap: null,
-      id: "mock.timeLimitMinutes",
-      kept,
-      value: mock.timeLimitMinutes,
-    }),
-    totalQuestions: keptOr({
-      gap: null,
-      id: "mock.totalQuestions",
-      kept,
-      value: mock.totalQuestions,
-    }),
-  } satisfies MockConditions;
-
-  const known =
-    kept.has("mock.scoring") ||
-    conditions.sections.length > 0 ||
-    conditions.timeLimitMinutes !== null ||
-    conditions.totalQuestions !== null;
-
-  return known ? conditions : null;
-}
-
 /** A label shorter than the subject's name, or none: the name serves when it's short already. */
 function toShortName({ name, shortName }: { name: string; shortName?: string | null }) {
   const short = shortName?.trim();
@@ -179,10 +68,15 @@ function toSubject({
   item: Extraction["subjects"][number];
   kept: KeptFacts;
 }): ExamStructure["subjects"][number] {
+  const choiceGroup = keptOr({ gap: null, id: `${id}.choiceGroup`, kept, value: item.choiceGroup });
+  const partOf = keptOr({ gap: null, id: `${id}.partOf`, kept, value: item.partOf });
+
   return {
+    ...(choiceGroup && { choiceGroup }),
     citation: found,
     group: item.group && groups.has(item.group) ? item.group : null,
     name: item.name,
+    ...(partOf && { partOf }),
     questions: keptOr({ gap: null, id: `${id}.questions`, kept, value: item.questions }),
     shortName: toShortName(item),
     ...toSubjectTopics({ documents, subject: item }),
@@ -203,6 +97,72 @@ function findKeptGroups({ extraction, kept }: { extraction: Extraction; kept: Ke
   );
 }
 
+/**
+ * Subjects with only the choices that are choices: a choice the check kept for a single option
+ * (one option is no choice) and a part of a subject the reading doesn't have are repaired away, so
+ * that subject is studied and counted like any other.
+ */
+function keepRealChoices(subjects: ExamStructure["subjects"]): ExamStructure["subjects"] {
+  const choices = new Set(listChoiceGroups(subjects).map((choice) => choice.name));
+  const names = new Set(subjects.map((subject) => subject.name));
+
+  return subjects.map(({ choiceGroup, partOf, ...subject }) => ({
+    ...subject,
+    ...(choiceGroup && choices.has(choiceGroup) && { choiceGroup }),
+    ...(partOf && partOf !== subject.name && names.has(partOf) && { partOf }),
+  }));
+}
+
+/**
+ * The read formats with the share of the objective questions each takes, worked out from the
+ * counts the check kept: a format the check dropped, or a count it dropped, leaves every share out.
+ */
+function withFormatShares({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
+  const shares = getFormatShares(
+    extraction.formats.map((format, index) => ({
+      count:
+        kept.has(`formats.${index}`) && kept.has(`formats.${index}.count`)
+          ? (format.count ?? null)
+          : null,
+      kind: format.kind,
+    })),
+  );
+
+  return extraction.formats.map((format, index) => ({ ...format, share: shares[index] }));
+}
+
+/**
+ * The exam's objective questions as the counts the check kept for its formats add them up, when
+ * every objective format has one for the whole exam: "70 questões de múltipla escolha" is a
+ * format's count and the exam's total at once, and a check may reject "70 questions in total" for
+ * an exam that also has an essay while it keeps the format's count from the same line.
+ */
+function countFormatQuestions({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
+  const counts = extraction.formats.flatMap((format, index) => {
+    if (!isObjectiveFormat(format.kind)) {
+      return [];
+    }
+
+    const { count } = format;
+    const citations = kept.has(`formats.${index}`) ? kept.get(`formats.${index}.count`) : undefined;
+    const isTotal = count?.per === "exam" && count.unit === "questions";
+
+    return [isTotal && citations ? { citations, value: count.value } : null];
+  });
+
+  if (counts.length === 0 || counts.includes(null)) {
+    return null;
+  }
+
+  // A format's line often states its count too, so the same passage can cite both.
+  const citations = counts.flatMap((count) => count?.citations ?? []);
+
+  return {
+    citations: [...new Map(citations.map((item) => [JSON.stringify(item), item])).values()],
+    questions: counts.reduce((sum, count) => sum + (count?.value ?? 0), 0),
+  };
+}
+
 function toStructure({
   documents,
   extraction,
@@ -215,26 +175,36 @@ function toStructure({
   const groups = findKeptGroups({ extraction, kept });
 
   return {
-    formats: keepItems({ items: extraction.formats, kept, prefix: "formats" }).map(
-      ({ found, id, item }) => ({
-        citation: found,
-        description:
-          item.kind === "other"
-            ? item.description
-            : keptOr({ gap: "", id: `${id}.description`, kept, value: item.description }),
-        kind: item.kind,
-        options: item.options,
-      }),
-    ),
+    formats: keepItems({
+      items: withFormatShares({ extraction, kept }),
+      kept,
+      prefix: "formats",
+    }).map(({ found, id, item }) => ({
+      citation: found,
+      description:
+        item.kind === "other"
+          ? item.description
+          : keptOr({ gap: "", id: `${id}.description`, kept, value: item.description }),
+      kind: item.kind,
+      options: item.options,
+      ...toAnswerFormat(item),
+      ...(item.partialCredit && kept.has(`${id}.partialCredit`)
+        ? { partialCredit: item.partialCredit }
+        : {}),
+      ...(isFormatShare(item.share) ? { share: item.share } : {}),
+    })),
     mock: toMock({ extraction, kept }),
     rules: keepItems({ items: extraction.rules, kept, prefix: "rules" }).map(({ found, item }) => ({
       citation: found,
       kind: item.kind,
       text: item.text,
     })),
-    subjects: keepItems({ items: extraction.subjects, kept, prefix: "subjects" }).map(
-      ({ found, id, item }) => toSubject({ documents, found, groups, id, item, kept }),
+    subjects: keepRealChoices(
+      keepItems({ items: extraction.subjects, kept, prefix: "subjects" }).map(
+        ({ found, id, item }) => toSubject({ documents, found, groups, id, item, kept }),
+      ),
     ),
+    testedLanguage: toTestedLanguage({ extraction, kept }),
   };
 }
 
@@ -261,9 +231,17 @@ export function toBlueprintContent({
   const kept = toKeptFacts({ facts, supportedIds });
   const { edition } = extraction;
 
+  const formatTotal = kept.has("edition.questionCount")
+    ? null
+    : countFormatQuestions({ extraction, kept });
+
   return {
     edition: {
-      citations: kept.get("edition.year") ?? kept.get("edition.questionCount") ?? [],
+      citations:
+        kept.get("edition.year") ??
+        kept.get("edition.questionCount") ??
+        formatTotal?.citations ??
+        [],
       dates: keepItems({ items: extraction.dates, kept, prefix: "dates" })
         .filter(({ item }) => isValidDate(item.date))
         .map(({ found, id, item }) => ({
@@ -280,7 +258,7 @@ export function toBlueprintContent({
         })),
       noticeUrl,
       questionCount: keptOr({
-        gap: null,
+        gap: formatTotal?.questions ?? null,
         id: "edition.questionCount",
         kept,
         value: edition.questionCount,
@@ -325,8 +303,11 @@ function describesExam({ edition, structure }: BlueprintContent): boolean {
  * Enough to plan from: what the exam covers, or how and when it's taken. Anything less means the
  * documents weren't the notice, and the learner is asked to upload it. A shared blueprint, which
  * anyone naming the exam matches, also has to read as an exam (`describesExam`): a teacher's test
- * named after a school subject ("Prova de biologia") never becomes a public notice built from a
- * curriculum. A learner's own material only needs what it covers.
+ * named after a school subject ("Biology test") never becomes a public notice built from a
+ * curriculum. It also has to cover its objective test when it states one (`isObjectiveTestUnread`):
+ * a news page about the notice gives the questions and the essay but no subject, and an exam page
+ * listing the essay alone tells learners less than their plan. A learner's own material only needs
+ * what it covers.
  */
 export function isUsableBlueprint({
   content,
@@ -340,7 +321,7 @@ export function isUsableBlueprint({
   const plans =
     structure.subjects.length > 0 || (structure.mock !== null && edition.dates.length > 0);
 
-  return plans && (!shared || describesExam(content));
+  return plans && (!shared || (describesExam(content) && !isObjectiveTestUnread(content)));
 }
 
 /**

@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
-import { teachingStep } from "../_test-utils/lesson-steps";
-import { buildLesson, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { teachingStep } from "../preview/preview-steps";
 
 /**
  * A challenge (the A/B test case from `challengeCaseFixture`) played to a weak ending: the debrief

@@ -5,8 +5,10 @@ import { daysBetween } from "../plans/planner/plan-calendar";
 type PlanAdjustment = "addTime" | "moveDate" | "narrowScope";
 
 /**
- * On track, ahead (by how many days), a bit behind (with the fix: extra minutes a day for a few
- * days) or needs adjusting (with the choices). Words for each live in the apps.
+ * The learner's pace against their plan: keeping pace, ahead (by how many days), a bit behind
+ * (with the fix: extra minutes a day for a few days) or needs adjusting (with the choices). It
+ * never says whether the plan reaches the goal (see `PlanFeasibility`). Words for each live in the
+ * apps.
  */
 export type PlanStatus =
   | { kind: "ahead"; days: number }
@@ -50,12 +52,15 @@ function getNeedsAdjusting(targetDate: Date | null): PlanStatus {
 
 function isPastTarget({
   items,
+  studiesPastTarget,
   targetDate,
 }: {
   items: readonly PlanStatusItem[];
+  studiesPastTarget: boolean;
   targetDate: Date | null;
 }) {
   return (
+    !studiesPastTarget &&
     targetDate !== null &&
     items.some((item) => !isFinished(item) && item.scheduledFor && item.scheduledFor > targetDate)
   );
@@ -81,20 +86,32 @@ function isDue({ item, today }: { item: PlanStatusItem; today: Date }): boolean 
  * is the tolerance; beyond it the learner is ahead, or behind with a fix that fits before the
  * target date. Past work is never counted twice: items finished early count as ahead. Lessons
  * earlier days left (`catchUp`) mean the learner is behind until they're done, whatever the dates
- * say: a new day moves them first, so the dates alone would read as on track. Returns null while
- * nothing is scheduled.
+ * say: a new day moves them first, so the dates alone would read as keeping pace. Returns null while
+ * nothing is scheduled, and for a plan only Plus moves (`freeWeekOver`).
  */
 export function getPlanStatus({
   catchUp = 0,
+  freeWeekOver = false,
   items,
   minutesPerItem,
+  studiesPastTarget = false,
   targetDate,
   today,
 }: {
   /** Lessons earlier days left that aren't done yet (see `loadCatchUpItems`). */
   catchUp?: number;
+  /**
+   * A free exam plan past its first week (`ExamPrepAccess.trialEnded`): its new lessons come with
+   * Plus, so it has no pace to keep and nothing to catch up on.
+   */
+  freeWeekOver?: boolean;
   items: readonly PlanStatusItem[];
   minutesPerItem: number;
+  /**
+   * The learner chose to go on after the date (an exam's "Study everything", see
+   * `PlanSettings.fullCourse`): what comes after it is their plan, not a plan that no longer fits.
+   */
+  studiesPastTarget?: boolean;
   targetDate: Date | null;
   /** The learner-local date, as a UTC-midnight label like `scheduledFor`. */
   today: Date;
@@ -102,11 +119,11 @@ export function getPlanStatus({
   const scheduled = items.filter((item) => item.scheduledFor !== null);
   const days = new Set(scheduled.map((item) => item.scheduledFor?.getTime())).size;
 
-  if (days === 0) {
+  if (freeWeekOver || days === 0) {
     return null;
   }
 
-  if (isPastTarget({ items, targetDate })) {
+  if (isPastTarget({ items, studiesPastTarget, targetDate })) {
     return getNeedsAdjusting(targetDate);
   }
 

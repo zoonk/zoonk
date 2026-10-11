@@ -36,7 +36,7 @@ function lessonsOf({
 }
 
 /**
- * Four areas of chained skills, each skill building on the one before it, and a redação of five
+ * Four areas of chained skills, each skill building on the one before it, and an essay of five
  * outcome skills, all worth the same. In each area a chapter shared by its second and sixth skills
  * is planned where the second is taught while its later lessons count for the sixth, which builds
  * on the third to fifth: the order that left Lucas's areas waiting on their own later lessons.
@@ -142,7 +142,7 @@ describe("an ENEM-like plan short on time", () => {
   it("studies every area in its first week, each in proportion to what it's worth", () => {
     const shares = sharesOfFirstDays({ days: 7, input: enemPlan() });
 
-    // Five parts worth the same: each gets about a fifth, the redação included, never most of it.
+    // Five parts worth the same: each gets about a fifth, the essay included, never most of it.
     [...AREAS, "Redação"].forEach((area) => {
       expect(shares.get(area) ?? 0).toBeGreaterThan(0.12);
       expect(shares.get(area) ?? 0).toBeLessThan(0.3);
@@ -158,7 +158,7 @@ describe("an ENEM-like plan short on time", () => {
     expect(focused.get("Redação") ?? 0).toBeGreaterThan(0.08);
   });
 
-  it("keeps every topic's core, the redação's included, without keeping its whole depth", () => {
+  it("keeps every topic's core, the essay's included, without keeping its whole depth", () => {
     const plan = buildPlan(enemPlan());
 
     expect(plan.waitingSkillIds).toStrictEqual([]);
@@ -167,7 +167,7 @@ describe("an ENEM-like plan short on time", () => {
       (item) => item.kind === "lesson" && item.skillId?.startsWith("Redação"),
     );
 
-    // Each redação skill keeps at least its first third; not all 100 of its lessons crowd the rest out.
+    // Each essay skill keeps at least its first third; not all 100 of its lessons crowd the rest out.
     expect(essayLessons.length).toBeGreaterThanOrEqual(5 * 7);
     expect(essayLessons.length).toBeLessThan(100);
   });
@@ -175,7 +175,7 @@ describe("an ENEM-like plan short on time", () => {
   it("gives the parts the learner's course counts more a bigger share of the plan", () => {
     const input = enemPlan();
 
-    // Medicina at a university that counts Natureza and the redação twice.
+    // Medicine at a university that counts natural sciences and the essay twice.
     const weights = {
       course: "Medicina",
       edition: null,
@@ -231,7 +231,7 @@ describe("an exam's written test", () => {
   it("shares the last days with the other parts instead of taking them alone", () => {
     const input = enemPlan();
 
-    // An hour a day for two weeks fits few cores: kept whole, the redação's took the last days.
+    // An hour a day for two weeks fits few cores: kept whole, the essay's took the last days.
     const shares = writtenShareByDay({ ...input, goal: { ...input.goal, dailyMinutes: 60 } });
 
     expect(shares.slice(-3).every((share) => share < 0.6)).toBe(true);
@@ -241,7 +241,7 @@ describe("an exam's written test", () => {
     // Time for everything: nothing is cut, so only what each part is worth orders the weeks.
     const input = enemPlan();
 
-    // The learner writes well already: little gap on the redação, so little worth on its own.
+    // The learner writes well already: little gap on the essay, so little worth on its own.
     const strong = {
       reps: 6,
       retrievabilityAtTarget: 0.97,

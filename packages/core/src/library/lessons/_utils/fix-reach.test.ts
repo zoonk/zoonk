@@ -7,6 +7,7 @@ import { getFixReach } from "./fix-reach";
 function explanation(text: string): WrittenScreen {
   return {
     exampleLineIdea: null,
+    explore: null,
     image: null,
     kind: "explanation",
     text,

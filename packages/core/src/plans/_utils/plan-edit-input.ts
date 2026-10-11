@@ -11,12 +11,12 @@ function getAreas(context: PlanContext): string[] {
 
 /**
  * The plan as the plan-edit model reads it: its areas with their skills (so a focus can name part
- * of an area), its written tests, time per weekday, date and the learner's today. The request (or the routine
- * purpose) and memory are added by the caller.
+ * of an area), its written tests, time per weekday, date and the learner's today. The request and
+ * memory are added by the caller; fitting a new plan to the routine reads its week from it too.
  */
 export function toPlanEditInput(
   context: PlanContext,
-): Omit<PlanEditInput, "memory" | "purpose" | "request"> & {
+): Omit<PlanEditInput, "memory" | "request"> & {
   analytics: { contentScope: "personal"; distinctId: string; goalId: string };
 } {
   const { goal, state } = context;

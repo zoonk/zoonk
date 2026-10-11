@@ -37,23 +37,46 @@ export const numbersAlgebraActivities = {
     prompt: "Every bag weighs the same. How heavy is one bag?",
     template: "balance",
   },
-  estimateReveal: {
+  formulaModel: {
+    check: numericCheck(3869.68, { inputs: [{ name: "rate", value: 7 }] }),
+    data: exampleData,
+    fields: {
+      compareAt: 5,
+      outputs: [
+        {
+          formula: "1000 * (1 + rate / 100) ^ 20",
+          id: "value",
+          label: "Value after 20 years",
+          unit: "$",
+        },
+      ],
+      variables: [
+        { initial: 5, label: "Rate per year", max: 12, min: 0, name: "rate", step: 0.5, unit: "%" },
+      ],
+    },
+    prompt: "Move the rate. What is $1,000 worth after 20 years?",
+    template: "formulaModel",
+  },
+  guessReveal: {
     check: { ...numericCheck(11.57), tolerance: { kind: "relative", value: 0.01 } },
     fields: {
       comparison: "Less than two weeks.",
-      expression: "1000000 / 86400",
       max: 3650,
       min: 1,
       scale: "log",
       takeaway: "A billion seconds is about 32 years.",
+      truth: {
+        expression: "1000000 / 86400",
+        kind: "computed",
+        workings: [
+          { expression: "1000000 / 60", label: "minutes" },
+          { expression: "1000000 / 86400", label: "days" },
+        ],
+      },
       unit: "days",
-      workings: [
-        { expression: "1000000 / 60", label: "minutes" },
-        { expression: "1000000 / 86400", label: "days" },
-      ],
     },
     prompt: "How long is a million seconds?",
-    template: "estimateReveal",
+    template: "guessReveal",
   },
   numberLine: {
     check: numericCheck(5),
@@ -68,26 +91,6 @@ export const numbersAlgebraActivities = {
     },
     prompt: "At 7 am it's −3 °C. By noon it's 8 degrees warmer.",
     template: "numberLine",
-  },
-  sliderGraph: {
-    check: numericCheck(3869.68, { inputs: [{ name: "rate", value: 7 }] }),
-    data: exampleData,
-    fields: {
-      compareAt: 5,
-      formula: "1000 * (1 + rate / 100) ^ 20",
-      output: { label: "Value after 20 years", unit: "$" },
-      variable: {
-        initial: 5,
-        label: "Rate per year",
-        max: 12,
-        min: 0,
-        name: "rate",
-        step: 0.5,
-        unit: "%",
-      },
-    },
-    prompt: "Move the rate. What is $1,000 worth after 20 years?",
-    template: "sliderGraph",
   },
   stepSolver: {
     check: interactionCheck,

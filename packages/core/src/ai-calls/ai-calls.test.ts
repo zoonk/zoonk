@@ -129,6 +129,21 @@ describe(writeAiCalls, () => {
     });
   });
 
+  it("counts a call that ends after its guest signed up for the account their goal moved to", async () => {
+    const account = await userFixture();
+    const goal = await goalFixture({ userId: account.id });
+
+    // The guest's row is gone once sign-up moved their goal: only the goal says whose call it is.
+    const call = generation({ context: { distinctId: crypto.randomUUID(), goalId: goal.id } });
+
+    await writeAiCalls([toAiCallRow(call)]);
+
+    await expect(findRun(call.provenance.runId)).resolves.toMatchObject({
+      goalId: goal.id,
+      userId: account.id,
+    });
+  });
+
   it("stores system work as shared, and a call billed by length with its seconds", async () => {
     const call = generation({
       context: { distinctId: "zoonk-system" },

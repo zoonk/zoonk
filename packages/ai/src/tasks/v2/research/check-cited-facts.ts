@@ -67,6 +67,7 @@ export async function checkCitedFacts({
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "check-cited-facts",
   });

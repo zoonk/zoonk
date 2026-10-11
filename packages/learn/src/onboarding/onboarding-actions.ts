@@ -3,7 +3,10 @@ import { type GoalCreateInput } from "@zoonk/core/goals/contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type MaterialQuestionAnswer } from "@zoonk/core/library/sources/material-question-contract";
 import { type LessonVisual } from "@zoonk/core/library/steps/contract";
-import { type PlanTimeAdvice } from "@zoonk/core/plans/time-advice-contract";
+import {
+  type PlanTimeAdvice,
+  type PlanTimeAdviceInput,
+} from "@zoonk/core/plans/time-advice-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import {
   type OnboardingAnswerInput,
@@ -31,6 +34,8 @@ export type StartUnderstandingOutcome =
   | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
   /** A guest's one goal is taken: nothing is read, since only an account adds another. */
   | { status: "needsAccount" }
+  /** The day's AI budget all guests share is spent: a free account continues, words and all. */
+  | { status: "signUpRequired" }
   | { status: "failed" };
 
 /** Reading a typed goal in a workflow, kept as a draft a refresh shows again. */
@@ -49,7 +54,7 @@ export type UnderstandingActions = {
 /**
  * Why a goal couldn't start: a guest's one goal, the free plan's one active goal, the new goals a
  * plan allows per day or (the free plan) per month, the quick explanations the free plan allows
- * per day or per month, or too many requests at once.
+ * per day or per month, too many requests at once, or the day's AI budget all guests share.
  */
 export type GoalLimitReason =
   | "dailyExplanations"
@@ -58,6 +63,7 @@ export type GoalLimitReason =
   | "monthlyExplanations"
   | "monthlyGoals"
   | "oneActiveGoal"
+  | "signUpRequired"
   | "slowDown";
 
 export type CreateGoalsOutcome =
@@ -73,10 +79,7 @@ export type CreateGoalsOutcome =
   | { status: "failed" }
   | { reason: GoalLimitReason; status: "limitReached" };
 
-export type AnswerOutcome =
-  | { onboarding: OnboardingView; status: "saved" }
-  | { status: "accountDeleted" }
-  | { status: "failed" };
+export type AnswerOutcome = { onboarding: OnboardingView; status: "saved" } | { status: "failed" };
 
 export type WaitlistOutcome = "failed" | "joined" | "signInRequired";
 
@@ -182,11 +185,13 @@ export type OnboardingActions = {
   getPlacementMock: (goalId: string) => Promise<PlacementMockOutcome>;
   getPlan: (goalId: string) => Promise<PlanOutcome>;
   /**
-   * The daily time the goal's plan needs on these study days (Sunday is 0), for the time
-   * question; null when it couldn't be read.
+   * The daily time the goal's plan needs in the week the time question shows: its study days
+   * (Sunday is 0) and, when the weekend has its own time, the weekdays' and the weekend's. Null
+   * when it couldn't be read.
    */
-  getTimeAdvice: (input: { goalId: string; studyDays: number[] }) => Promise<PlanTimeAdvice | null>;
-  inviteGuardian: (email: string) => Promise<boolean>;
+  getTimeAdvice: (
+    input: PlanTimeAdviceInput & { goalId: string; studyDays: number[] },
+  ) => Promise<PlanTimeAdvice | null>;
   joinWaitlist: (input: { instrument: string; language: string }) => Promise<WaitlistOutcome>;
   answerPlacement: (input: {
     answer: PlacementAnswer;

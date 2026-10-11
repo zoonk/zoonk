@@ -4,6 +4,7 @@ import { isUnderstandingRunning, startUnderstandingRun } from "@/lib/goal-unders
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalUnderstandingPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
 import { prepareGoalUnderstandingRun } from "@zoonk/core/view-models/onboarding/prepare-understanding-run";
 import { type NextRequest, NextResponse } from "next/server";
@@ -40,7 +41,7 @@ async function createGoalUnderstandingGeneration(
 
   const prepared = await prepareGoalUnderstandingRun({ draftId });
 
-  if (prepared.status === "slowDown" || prepared.status === "limitReached") {
+  if (isRefusedUsage(prepared)) {
     return usageDecisionError(prepared);
   }
 

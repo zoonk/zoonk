@@ -10,6 +10,7 @@ import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
@@ -133,11 +134,26 @@ test.describe("Mind maps", () => {
     await reference.getByRole("button", { name: "Create the mind map" }).click();
     await expect(reference.getByRole("status")).toHaveText(/Drawing the mind map/u);
 
-    // The run finishes: the page shows the map without a reload.
-    await drawMap(cells.id);
-    drawn = true;
+    let pageReads = 0;
 
-    // The page reads the map's status every four seconds while it's made.
+    page.on("request", (request) => {
+      if (request.url().includes(`/content/chapters/${cells.id}`) && request.headers().rsc) {
+        pageReads += 1;
+      }
+    });
+
+    // The run says it's done before the page can read the map (Sofia's panel went back to
+    // "Create the mind map" then): it keeps waiting and reading the page, never offering to make
+    // it again.
+    drawn = true;
+    await expect.poll(() => pageReads, { timeout: 15_000 }).toBeGreaterThanOrEqual(2);
+    await expect(reference.getByRole("button", { name: "Create the mind map" })).toBeHidden();
+    await expect(reference.getByRole("status")).toHaveText(/Drawing the mind map/u);
+
+    // Once the page can read the map, it shows without a reload (it reads itself every four
+    // seconds meanwhile).
+    await drawMap(cells.id);
+
     const open = reference.getByRole("button", { name: /^Mind map: Cell parts\./u });
     await expect(open).toBeVisible({ timeout: 10_000 });
 
@@ -238,6 +254,32 @@ test.describe("Mind maps", () => {
     const finished = page.getByRole("region", { name: "Chapters you finished" });
     await expect(finished.getByRole("listitem")).toHaveCount(1);
     await expect(finished).toContainText(chapter.title);
+    await page.context().close();
+  });
+
+  test("tells a free learner at today's cap before they tap, with the button in sight", async ({
+    browser,
+  }) => {
+    const { cells, user } = await createLearner();
+    await usageRecordsFixture({ count: 3, kind: "mindMap", userId: user.id });
+    const page = await openAs(browser, user);
+    const message = "That's all the new mind maps for today.";
+
+    await page.goto(`/content/chapters/${cells.id}`);
+
+    const reference = page.getByRole("region", { name: "For reference" });
+    await expect(reference.getByText(message)).toBeVisible();
+    await expect(reference.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(reference.getByRole("button", { name: "Create the mind map" })).toBeDisabled();
+
+    // The goal's maps page says it once, and every tap waits in sight.
+    await page.goto("/mind-maps");
+    await expect(page.getByText(message)).toHaveCount(1);
+    await expect(page.getByRole("link", { name: "See Plus" })).toHaveCount(1);
+
+    const finished = page.getByRole("region", { name: "Chapters you finished" });
+    const tile = finished.getByRole("listitem").filter({ hasText: cells.title });
+    await expect(tile.getByRole("button", { name: "Create" })).toBeDisabled();
     await page.context().close();
   });
 

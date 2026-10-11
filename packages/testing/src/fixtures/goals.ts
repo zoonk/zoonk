@@ -46,13 +46,62 @@ export async function planItemFixture(attrs: FixtureAttrs<PlanItem> & Pick<PlanI
   });
 }
 
-/** Records a plan change with its one-sentence reason. */
+const UNDOABLE_KINDS = new Set(["edited", "testedOut"]);
+
+function toIsoDay(date: Date | null): string | null {
+  return date ? date.toISOString().slice(0, 10) : null;
+}
+
+/** The plan as it is now, as core's `PlanSnapshot` keeps it for an undo. */
+async function snapshotPlan(planId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({
+    include: { goal: true, items: { orderBy: { position: "asc" } } },
+    where: { id: planId },
+  });
+
+  return {
+    coveredShare: plan.coveredShare,
+    estimateHours: plan.estimateHours,
+    items: plan.items.map((item) => ({
+      chapterId: item.chapterId,
+      completedAt: item.completedAt?.toISOString() ?? null,
+      id: item.id,
+      kind: item.kind,
+      lessonId: item.lessonId,
+      lessons: item.lessons,
+      phase: item.phase,
+      scheduledFor: toIsoDay(item.scheduledFor),
+      skillId: item.skillId,
+      status: item.status,
+      titleSnapshot: item.titleSnapshot,
+    })),
+    phases: plan.phases,
+    state: {
+      goal: { dailyMinutes: plan.goal.dailyMinutes, targetDate: toIsoDay(plan.goal.targetDate) },
+      graph: plan.graph,
+      settings: plan.settings,
+    },
+  };
+}
+
+/**
+ * Records a plan change with its one-sentence reason. An applied edit or test-out keeps the plan
+ * as it is now, which its undo puts back, as the planner records one.
+ */
 export async function planChangeFixture(
   attrs: FixtureAttrs<PlanChange, "payload"> & Pick<PlanChange, "planId">,
 ) {
-  return prisma.planChange.create({
+  const change = await prisma.planChange.create({
     data: { kind: "addLesson", reason: "Test reason for the change", ...attrs },
   });
+
+  if (UNDOABLE_KINDS.has(change.kind) && change.status === "applied") {
+    await prisma.planChangeSnapshot.create({
+      data: { changeId: change.id, plan: await snapshotPlan(change.planId) },
+    });
+  }
+
+  return change;
 }
 
 /** Offers a course a learner was taking before goals existed as a goal to plan. */

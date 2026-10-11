@@ -17,13 +17,16 @@ export type PlanChangeCaution =
 
 type CautionGoal = Pick<
   Goal,
-  "createdAt" | "details" | "examBlueprintId" | "kind" | "targetDate" | "timezone"
+  "createdAt" | "details" | "examBlueprintId" | "id" | "kind" | "targetDate" | "timezone"
 >;
 
 /** A plan that ends this many days before its date or less still uses its time. */
 const EARLY_END_DAYS = 7;
 
-/** The exam subjects with questions that the change leaves out, by the notice's question counts. */
+/**
+ * The exam subjects with questions that the change leaves out, by the counts the plan weighs them
+ * by: the notice's, or the latest edition's when it gives none.
+ */
 async function findLeftOutSubjects({
   goal,
   operations,
@@ -42,10 +45,7 @@ async function findLeftOutSubjects({
   const facts = await loadExamNoticeFacts(goal);
   const subjects = facts?.subjects ?? [];
 
-  const matches = matchAreasToSubjects({
-    areas,
-    subjects: subjects.map((subject) => subject.name),
-  });
+  const matches = matchAreasToSubjects({ areas, subjects });
 
   return areas.flatMap((area) => {
     const index = matches.get(area);

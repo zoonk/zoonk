@@ -3,13 +3,15 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { changeOwnLevel } from "@zoonk/core/plans/own-level";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
  * Changes the learner's own level from the plan: lower adds foundations with an undo, higher
- * offers test-outs. Past work is never undone.
+ * offers test-outs. Past work is never undone. The foundations it adds start being written right
+ * away, as a session's preparation writes what the plan has soon.
  */
 async function updateOwnLevel(
   request: NextRequest,
@@ -33,6 +35,8 @@ async function updateOwnLevel(
   if (result.status !== "ready") {
     return accessError(result.status);
   }
+
+  await scheduleGoalPreparation(path.data.goalId);
 
   return NextResponse.json(result.ownLevel);
 }

@@ -7,6 +7,7 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
+import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
   prepareFieldItemsStep,
@@ -15,6 +16,7 @@ import {
 import {
   listPlanOutlineNeedsStep,
   listSoonStandInCourseIdsStep,
+  readPlanFirstSkillStep,
 } from "../goals/steps/goal-lookahead-steps";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { prepareLanguageCallsStep } from "./steps/language-call-steps";
@@ -29,7 +31,18 @@ import {
 } from "./steps/session-preparation-steps";
 import { listSkillExtensionsStep } from "./steps/skill-extension-steps";
 
+/**
+ * Questions to write for the topics the learner was taken to know that practice has none to ask
+ * yet (see `requestClaimQuestions`), decided and claimed by the request that started the run.
+ */
+export type ClaimQuestions = {
+  format: "multipleChoice" | "trueFalse";
+  questionsPerSkill: number;
+  skillIds: string[];
+};
+
 export type SessionPreparationInput = {
+  claimQuestions?: ClaimQuestions | null;
   goalId: string;
   /** The client whose request started the preparation, for analytics. */
   platform?: AnalyticsPlatform | null;
@@ -84,7 +97,9 @@ async function preparePersonalLayer({
  * (the next chapter of a skill a course teaches in part, and the first chapters of one no course
  * teaches yet), at the flex tier too since they're days away, except a course whose stand-ins
  * are due today (`OUTLINE_SOON_DAYS`), a skill's first chapters or its next one: Today holds their
- * time and says more lessons are on the way, so the learner waits on it. It holds the learner's preparation token
+ * time and says more lessons are on the way, so the learner waits on it, and the chapter teaching
+ * the plan's next lesson is saved as soon as it's written (`waitedSkillId`), before the rest of its
+ * band. It holds the learner's preparation token
  * only while it lists and starts, a second or two, so a session starting right after another
  * preparation is never skipped: a request while one lists is left to it, since it lists the same
  * lessons. Null when another preparation holds the token.
@@ -102,11 +117,12 @@ async function startLessonWork({
     return null;
   }
 
-  const [preparation, extensions, outlines, soon] = await Promise.all([
+  const [preparation, extensions, outlines, soon, firstSkillId] = await Promise.all([
     listSessionPreparationStep(input),
     listSkillExtensionsStep(input),
     listPlanOutlineNeedsStep({ days: OUTLINE_AHEAD_DAYS, goalId: input.goalId }),
     listSoonStandInCourseIdsStep({ days: OUTLINE_SOON_DAYS, goalId: input.goalId }),
+    readPlanFirstSkillStep(input.goalId),
   ]);
 
   const { forExam, laterLessonIds, lessonIds } = preparation;
@@ -121,12 +137,38 @@ async function startLessonWork({
     ),
     ...mergeCourseRequests([...extensions, ...outlines]).map((request) =>
       start(courseOutlineWorkflow, [
-        { ...request, analytics, background: !soonCourseIds.has(request.courseId) },
+        {
+          ...request,
+          analytics,
+          ...getOutlineWait({ courseId: request.courseId, firstSkillId, soonCourseIds }),
+        },
       ]),
     ),
   ]);
 
   return preparation;
+}
+
+/**
+ * A course whose stand-ins are due today is one the learner waits on: written at once, with the
+ * chapter teaching the plan's next lesson saved before the rest of its band. This run may be the
+ * one that writes the course while the goal's own request waits for it, as Carla's first course
+ * was, written whole before her Today had a lesson. Any other course is days away: the flex tier.
+ */
+function getOutlineWait({
+  courseId,
+  firstSkillId,
+  soonCourseIds,
+}: {
+  courseId: string;
+  firstSkillId: string | null;
+  soonCourseIds: ReadonlySet<string>;
+}): { background: boolean; waitedSkillId?: string } {
+  if (!soonCourseIds.has(courseId)) {
+    return { background: true };
+  }
+
+  return firstSkillId ? { background: false, waitedSkillId: firstSkillId } : { background: false };
 }
 
 type CourseRequest = Awaited<ReturnType<typeof listPlanOutlineNeedsStep>>[number];
@@ -187,6 +229,65 @@ async function personalizeLessons({
 }
 
 /**
+ * The questions practice needs to confirm what the learner was taken to know, in the exam's quick
+ * format, joining the shared bank so later learners of the exam reuse them. A topic that has a
+ * question by now is skipped.
+ */
+async function writeClaimQuestions({
+  analytics,
+  input,
+}: {
+  analytics: ContentAnalytics;
+  input: SessionPreparationInput;
+}) {
+  const { claimQuestions } = input;
+
+  if (!claimQuestions || claimQuestions.skillIds.length === 0) {
+    return;
+  }
+
+  const { workflowRunId } = getWorkflowMetadata();
+
+  await preparePlacementItems({
+    analytics,
+    exceptAnswered: true,
+    formats: [claimQuestions.format],
+    goalId: input.goalId,
+    quickCount: claimQuestions.questionsPerSkill,
+    skillIds: claimQuestions.skillIds,
+    workflowRunId,
+  });
+}
+
+/**
+ * Placement's questions for the plan's picks that have none, during its first week (see
+ * `preparePlacementWeekItems`). One goal's placement questions are written by one run at a
+ * time: a run writing them (the goal's own, or another preparation's) covers the same picks.
+ */
+async function writePlacementWeekQuestions({
+  analytics,
+  input,
+}: {
+  analytics: ContentAnalytics;
+  input: SessionPreparationInput;
+}) {
+  using claim = await claimRunToken(`placement-items:${input.goalId}`);
+
+  if (claim.conflict) {
+    return;
+  }
+
+  const { workflowRunId } = getWorkflowMetadata();
+
+  await preparePlacementWeekItems({
+    analytics,
+    goalId: input.goalId,
+    timeZone: input.timeZone,
+    workflowRunId,
+  });
+}
+
+/**
  * Gets a learner's upcoming lessons ready before they tap them. Every POST that moves a session
  * along starts it (a block starting, a session ending or stopping), never a page view: the next
  * few unwritten lessons of this session are written, and the next study day's first ones, more of
@@ -195,7 +296,10 @@ async function personalizeLessons({
  * lesson never waits on nothing. Lessons already written or being written are skipped. For a learner with a personal
  * layer, once the lessons it started are written, the planned lessons get their field questions,
  * tool versions and field challenge. A language goal's next checkpoint call
- * and speaking mock are written ahead too, so neither waits on a model when the learner opens it.
+ * and speaking mock are written ahead too, so neither waits on a model when the learner opens it,
+ * and a topic the learner was taken to know gets a few questions when practice has none to ask.
+ * In placement's first week, a subject the plan gained after day 1's placement gets its
+ * placement questions, which the next days' sessions ask.
  */
 export async function sessionPreparationWorkflow(
   input: SessionPreparationInput,
@@ -209,10 +313,14 @@ export async function sessionPreparationWorkflow(
     return { status: "alreadyRunning" };
   }
 
-  // A language goal's next checkpoint call and speaking mock are written alongside, once each.
+  // A language goal's next checkpoint call and speaking mock are written alongside, once each,
+  // and so are the questions practice needs for topics the learner was taken to know, and in
+  // placement's first week the placement questions the plan's picks lack.
   await Promise.all([
     preparation.personalized ? personalizeLessons({ analytics, input, preparation }) : null,
     prepareLanguageCallsStep({ goalId: input.goalId, userId: input.userId }).catch(() => null),
+    writeClaimQuestions({ analytics, input }).catch(() => null),
+    writePlacementWeekQuestions({ analytics, input }).catch(() => null),
   ]);
 
   return {

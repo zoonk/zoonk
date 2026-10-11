@@ -2,8 +2,8 @@ import { FOCUS_TEST_QUESTIONS_READY_STEP } from "@zoonk/core/library/generation/
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { createHook, getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { preparePlacementItems } from "./placement-items";
 import { focusTestQuestionsProgressStep } from "./steps/focus-test-questions-progress-step";
-import { preparePlacementItemsStep } from "./steps/goal-lookahead-steps";
 
 export type FocusTestQuestionsInput = {
   analytics?: ContentAnalytics;
@@ -56,7 +56,7 @@ export async function focusTestQuestionsWorkflow(
   await focusTestQuestionsProgressStep({ status: "started", step: "writeFocusTestQuestions" });
 
   try {
-    const { failed, written } = await preparePlacementItemsStep({
+    const { failed, written } = await preparePlacementItems({
       analytics,
       exceptAnswered: true,
       formats: [format],

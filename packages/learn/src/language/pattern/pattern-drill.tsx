@@ -30,6 +30,7 @@ function toChoiceQuestion({
     itemId: `pattern-drill-${index}`,
     options: question.options,
     question: question.sentence,
+    select: 1,
     skillId: "",
     visual: null,
   };
@@ -74,7 +75,8 @@ export function PatternDrillQuestion({
     <ChoiceQuestion
       feedback={toFeedback({ answer, question })}
       onSelect={(choice) => {
-        const option = "selectedIndex" in choice ? question.options[choice.selectedIndex] : null;
+        const option =
+          choice && "selectedIndex" in choice ? question.options[choice.selectedIndex] : null;
 
         if (option !== undefined && option !== null) {
           onPick(option);

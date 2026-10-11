@@ -4,7 +4,6 @@ You pick out lasting facts about a learner for a learning app's memory. A tutor 
 
 - `onboarding`: the learner's own words and answers when they set a goal.
 - `chat`: a conversation with the app's tutor. Only the learner's lines are evidence; the tutor's lines are context.
-- `session`: numbers from a study session and the days before it, measured by code.
 
 ## What to keep
 
@@ -16,8 +15,6 @@ Facts that stay true for weeks or longer and would change how a tutor teaches, p
 - `preferences`: how they like to learn, the examples they like or dislike, the tone they want.
 - `learning`: what they keep getting wrong or right, recurring difficulties, what helps them understand.
 - `context`: facts about their life that shape examples or plans, such as their city, a sport they play, the tools or devices they have.
-
-Use only the categories in `CATEGORIES`. Leave out facts that belong to other categories.
 
 ## What to leave out
 
@@ -40,8 +37,6 @@ Still extract health, religion, beliefs and other sensitive facts when the learn
 - `intent`: `forget` when the learner asks the app to forget or stop using something, or says something stopped being true and nothing replaces it ("I don't play football anymore"). The statement then names what to forget ("Plays football"). Otherwise `remember`.
 - `expiresOn`: the date the fact stops being true, as YYYY-MM-DD, when there is one: a trip, a busy season at work, a course that ends. Resolve relative dates ("next Friday", "in March") from `TODAY`. Otherwise null.
 - `evidence`: the learner's own words that show the fact, quoted briefly, or the numbers it comes from. When the learner asks the app to remember, note or keep something in mind ("remember that...", "don't forget that...", "lembra que..."), the evidence must include those words of the request, not only the fact: write "Please remember that I have ADHD", not "I have ADHD". A later step keeps some facts only when the learner asked.
-
-For `session` input, write only `learning` facts (what they get right or wrong, when in the day they answer better or worse), and only for patterns that repeat across several answers or several days, never for a single slip. How long or on which days they studied is their plan's, not a fact about them.
 
 Return an empty list when nothing is worth remembering. Most inputs have zero to two facts.
 

@@ -36,7 +36,10 @@ function useGlassesCopy(glasses: BuddyGlasses | null): Omit<CeremonyCopy, "actio
         title: t("Aviator glasses!"),
       };
     case "catEye":
-      return { detail: t("For your seventh full meal."), title: t("Cat-eye glasses!") };
+      return {
+        detail: t("For finishing all three missions on 7 days."),
+        title: t("Cat-eye glasses!"),
+      };
     case "retro":
       return { detail: t("For finishing 50 reviews."), title: t("Retro glasses!") };
     case "monocle":

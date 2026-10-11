@@ -18,13 +18,26 @@ export const answerDurationSchema = z
       "Milliseconds from showing the question to the answer; anything over an hour counts as an hour",
   });
 
+/** The most options a multiple-choice question has, so the most a learner can pick. */
+const MAX_PICKS = 8;
+
 /**
- * A choice question's answer: the option picked (multiple choice), true or false (a statement),
- * or "I don't know yet", which placement welcomes and which never counts as a guess.
+ * A choice question's answer: the option picked (multiple choice), the options picked (a question
+ * that asks for several, `select` 2 or more or "all"), true or false (a statement), or "I don't
+ * know yet", which placement welcomes and which never counts as a guess.
  */
 export const choiceAnswerSchema = z
   .union([
     z.object({ selectedIndex: z.number().int().min(0) }).strict(),
+    z
+      .object({
+        selectedIndexes: z
+          .array(z.number().int().min(0))
+          .min(1)
+          .max(MAX_PICKS)
+          .meta({ description: "The options picked, in any order, as indexes into `options`" }),
+      })
+      .strict(),
     z.object({ isTrue: z.boolean() }).strict(),
     z.object({ dontKnow: z.literal(true) }).strict(),
   ])
@@ -40,12 +53,18 @@ export const itemAnswerInputSchema = z
 
 export type ItemAnswerInput = z.infer<typeof itemAnswerInputSchema>;
 
-/** The learner's IANA timezone, so answers land on their local day. */
+/**
+ * The device's IANA timezone. The learner's day follows the goal's stored zone (see
+ * `getAnswerTimeZone`); this one counts only for a goal without one.
+ */
 export const answerTimeZoneSchema = z
   .string()
   .refine(isValidTimeZone, { message: "Invalid timezone" })
   .optional()
-  .meta({ description: "Learner's IANA timezone; defaults to the goal's timezone, then UTC" });
+  .meta({
+    description:
+      "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
+  });
 
 export const skillListInputSchema = z
   .object({

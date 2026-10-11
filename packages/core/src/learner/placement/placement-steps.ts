@@ -1,19 +1,11 @@
-import { type PlacementEvidence, type SkillBeliefs } from "./placement-beliefs";
+import { type PlacementEvidence } from "./placement-beliefs";
 import {
   type PlacementSkill,
   type SkillGraph,
   buildSkillGraph,
   collectRelated,
 } from "./placement-graph";
-
-/**
- * Placement is sure about a skill at 80%: known at or above it, unknown at or below 20%. It stops
- * when every area of every phase has a starting point it is that sure about, not after a set
- * number of questions.
- */
-const PLACEMENT_CONFIDENCE = 0.8;
-
-export type SkillPlacementStatus = "known" | "unknown" | "unsure";
+import { type SkillStatuses, isOpen, statusOf } from "./placement-status";
 
 /**
  * Where the learner starts in part of the plan: its first skill they can't do yet, null when they
@@ -40,18 +32,6 @@ export const START_POSITIONS: Readonly<Record<OwnLevel, number>> = {
 
 /** Without a stated level, placement starts in the middle of the plan. */
 export const DEFAULT_START_POSITION = 0.5;
-
-export function getSkillPlacementStatus(belief: number | undefined): SkillPlacementStatus {
-  if (belief === undefined) {
-    return "unsure";
-  }
-
-  if (belief >= PLACEMENT_CONFIDENCE) {
-    return "known";
-  }
-
-  return belief <= 1 - PLACEMENT_CONFIDENCE ? "unknown" : "unsure";
-}
 
 /** Splits skills (kept in plan order) by a key, in the order each key first appears. */
 function groupBy<TKey>(
@@ -81,64 +61,64 @@ function groupByPhaseAndArea(skills: readonly PlacementSkill[]): PlacementSkill[
 }
 
 /**
- * A part of the plan starts at its first skill the learner can't yet do. The start is confident
- * when placement is sure that skill is unknown, or when the whole part is known.
+ * A part of the plan starts at its first skill the learner's answers haven't confirmed. The start
+ * is confident when placement is sure that skill is unknown, or when the whole part is confirmed.
  */
 function getStart({
-  beliefs,
   skills,
+  statuses,
 }: {
-  beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
+  statuses: SkillStatuses;
 }): PlacementStart {
-  const start = skills.find((skill) => getSkillPlacementStatus(beliefs.get(skill.id)) !== "known");
+  const start = skills.find((skill) => statusOf({ skill, statuses }) !== "known");
 
   return {
-    confident: !start || getSkillPlacementStatus(beliefs.get(start.id)) === "unknown",
+    confident: !start || statusOf({ skill: start, statuses }) === "unknown",
     startSkillId: start?.id ?? null,
   };
 }
 
 /** A phase's or an area's start, confident only once each area of each phase in it is. */
 function getSettledStart({
-  beliefs,
   skills,
+  statuses,
 }: {
-  beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
+  statuses: SkillStatuses;
 }): PlacementStart {
   return {
     confident: groupByPhaseAndArea(skills).every(
-      (group) => getStart({ beliefs, skills: group }).confident,
+      (group) => getStart({ skills: group, statuses }).confident,
     ),
-    startSkillId: getStart({ beliefs, skills }).startSkillId,
+    startSkillId: getStart({ skills, statuses }).startSkillId,
   };
 }
 
 /** Where each phase starts: its first skill the learner can't yet do. */
 export function getPhaseStarts({
-  beliefs,
   skills,
+  statuses,
 }: {
-  beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
+  statuses: SkillStatuses;
 }): PhaseStart[] {
   return groupByPhase(buildSkillGraph(skills).ordered).map((phaseSkills) => ({
-    ...getSettledStart({ beliefs, skills: phaseSkills }),
+    ...getSettledStart({ skills: phaseSkills, statuses }),
     phase: phaseSkills[0]?.phase ?? 0,
   }));
 }
 
 /** Where each area starts, in the order the plan reaches them: the estimate per area. */
 export function getAreaStarts({
-  beliefs,
   skills,
+  statuses,
 }: {
-  beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
+  statuses: SkillStatuses;
 }): AreaStart[] {
   return groupByArea(buildSkillGraph(skills).ordered).map((areaSkills) => ({
-    ...getSettledStart({ beliefs, skills: areaSkills }),
+    ...getSettledStart({ skills: areaSkills, statuses }),
     area: areaSkills[0]?.sectionTitle ?? null,
   }));
 }
@@ -150,20 +130,20 @@ export function getAreaStarts({
  */
 export function isPlacementSettled({
   answeredOnly = false,
-  beliefs,
   skills,
+  statuses,
 }: {
   answeredOnly?: boolean;
-  beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
+  statuses: SkillStatuses;
 }): boolean {
   if (skills.length === 0) {
     return false;
   }
 
   return answeredOnly
-    ? getUndecidedSkills({ answeredOnly, beliefs, skills }).length === 0
-    : getSettledStart({ beliefs, skills }).confident;
+    ? getUndecidedSkills({ answeredOnly, skills, statuses }).length === 0
+    : getSettledStart({ skills, statuses }).confident;
 }
 
 /** "I'd rather start from scratch": every phase starts at its first skill. */
@@ -185,28 +165,26 @@ export function getScratchAreaStarts(skills: readonly PlacementSkill[]): AreaSta
 }
 
 /**
- * Skills that still decide a starting point: unsure skills of each area of each phase that isn't
- * settled, from that part's current start onward. Skills after a confident start don't matter yet,
- * except in a test from the learner's own material (`answeredOnly`), where every unsure topic does:
- * each one is on the test.
+ * Skills that still decide a starting point: unsure skills, and the ones taken on trust that their
+ * own answers haven't confirmed, of each area of each phase that isn't settled, from that part's
+ * current start onward. Skills after a confident start don't matter yet, except in a test from the
+ * learner's own material (`answeredOnly`), where every unsure topic does: each one is on the test.
  */
 export function getUndecidedSkills({
   answeredOnly = false,
-  beliefs,
   skills,
+  statuses,
 }: {
   answeredOnly?: boolean;
-  beliefs: SkillBeliefs;
   skills: readonly PlacementSkill[];
+  statuses: SkillStatuses;
 }): PlacementSkill[] {
   if (answeredOnly) {
-    return buildSkillGraph(skills).ordered.filter(
-      (skill) => getSkillPlacementStatus(beliefs.get(skill.id)) === "unsure",
-    );
+    return buildSkillGraph(skills).ordered.filter((skill) => isOpen(statusOf({ skill, statuses })));
   }
 
   return groupByPhaseAndArea(buildSkillGraph(skills).ordered).flatMap((group) => {
-    const start = getStart({ beliefs, skills: group });
+    const start = getStart({ skills: group, statuses });
 
     if (start.confident) {
       return [];
@@ -215,8 +193,7 @@ export function getUndecidedSkills({
     const startOrder = group.find((skill) => skill.id === start.startSkillId)?.order ?? 0;
 
     return group.filter(
-      (skill) =>
-        skill.order >= startOrder && getSkillPlacementStatus(beliefs.get(skill.id)) === "unsure",
+      (skill) => skill.order >= startOrder && isOpen(statusOf({ skill, statuses })),
     );
   });
 }
@@ -261,29 +238,59 @@ function countAnswersByArea({
   }, new Map<string | null, number>());
 }
 
+/** What decides which area placement asks about next, besides how often each was answered. */
+export type AreaPriority = {
+  /** Each area's share of the exam (`getAreaShares`): the heaviest is asked first. */
+  areaShares?: ReadonlyMap<string, number> | null;
+  /** The plan's areas the learner said are weak (`PlanSettings.focusAreas`). */
+  focusAreas?: readonly string[];
+};
+
 /**
- * The area to ask about next: the one with the fewest answers so far, so every area (a weak one
- * included) is sampled before placement goes deep in any. Ties go to the area the plan reaches
- * first.
+ * Areas in the order placement asks them: the fewest answers first, so every area is sampled
+ * before placement goes deep in any; among those, the ones the learner said are weak, then the
+ * ones worth most of the exam (the OAB's ethics, 8 of 80 questions), then in the order given (the
+ * plan's).
  */
+export function rankAreasToAsk<TArea extends string | null>({
+  answers,
+  areaShares,
+  areas,
+  focusAreas = [],
+}: AreaPriority & {
+  /** How many answers each area has so far. */
+  answers: ReadonlyMap<string | null, number>;
+  areas: readonly TArea[];
+}): TArea[] {
+  const weak = new Set(focusAreas);
+  const isWeak = (area: TArea) => (area !== null && weak.has(area) ? 0 : 1);
+  const shareOf = (area: TArea) => (area === null ? 0 : (areaShares?.get(area) ?? 0));
+
+  return areas.toSorted(
+    (a, b) =>
+      (answers.get(a) ?? 0) - (answers.get(b) ?? 0) ||
+      isWeak(a) - isWeak(b) ||
+      shareOf(b) - shareOf(a),
+  );
+}
+
+/** The area to ask about next (`rankAreasToAsk`). */
 function pickArea({
   candidates,
   evidence,
   graph,
+  priority,
 }: {
   candidates: readonly PlacementSkill[];
   evidence: readonly PlacementEvidence[];
   graph: SkillGraph;
+  priority: AreaPriority;
 }): string | null {
-  const counts = countAnswersByArea({ evidence, graph });
   const inPlanOrder = candidates.toSorted((a, b) => a.order - b.order);
   const areas = [...new Set(inPlanOrder.map((skill) => skill.sectionTitle))];
-  const countOf = (area: string | null) => counts.get(area) ?? 0;
+  const answers = countAnswersByArea({ evidence, graph });
 
-  return areas.reduce(
-    (best, area) => (countOf(area) < countOf(best) ? area : best),
-    areas[0] ?? null,
-  );
+  return rankAreasToAsk({ ...priority, answers, areas })[0] ?? null;
 }
 
 /**
@@ -322,33 +329,38 @@ function getDirectionalPool({
 }
 
 /**
- * Chooses the next skill to ask about. Areas take turns (the one with the fewest answers first),
- * so every area is sampled before placement goes deep in one. An area's first question comes from
+ * Chooses the next skill to ask about. Areas take turns (`rankAreasToAsk`: the fewest answers
+ * first, then weak ones, then the heaviest), so every area is sampled before placement goes deep in
+ * one. An area's first question comes from
  * where the learner's own level points (the middle by default); later ones bisect toward harder
  * or easier skills of that area after its last answer, so a long plan settles in a few questions
  * instead of one per skill. A test from the learner's own material (`answeredOnly`), where an
  * answer settles only its own topic, asks each topic once in the plan's order, then confirms the
- * ones still unsure. Only skills with an unseen question (`askableSkillIds`) can be asked; null
- * means nothing more can be asked right now.
+ * ones still unsure. In an area, what the learner only said they know (`claimed`) is asked before
+ * anything else, the earliest first: it's skipped only once its own answer confirms it. Only skills
+ * with an unseen question (`askableSkillIds`) can be asked; null means nothing more can be asked
+ * right now.
  */
 export function chooseNextPlacementSkill({
   answeredOnly = false,
+  areaShares,
   askableSkillIds,
-  beliefs,
   evidence,
+  focusAreas,
   ownLevel,
   skills,
-}: {
+  statuses,
+}: AreaPriority & {
   answeredOnly?: boolean;
   askableSkillIds: ReadonlySet<string>;
-  beliefs: SkillBeliefs;
   evidence: readonly PlacementEvidence[];
   ownLevel?: OwnLevel | null;
   skills: readonly PlacementSkill[];
+  statuses: SkillStatuses;
 }): string | null {
   const graph = buildSkillGraph(skills);
 
-  const candidates = getUndecidedSkills({ answeredOnly, beliefs, skills }).filter((skill) =>
+  const candidates = getUndecidedSkills({ answeredOnly, skills, statuses }).filter((skill) =>
     askableSkillIds.has(skill.id),
   );
 
@@ -367,9 +379,17 @@ export function chooseNextPlacementSkill({
     );
   }
 
-  const area = pickArea({ candidates, evidence, graph });
+  const area = pickArea({ candidates, evidence, graph, priority: { areaShares, focusAreas } });
   const inArea = candidates.filter((skill) => skill.sectionTitle === area);
   const last = evidence.findLast((answer) => graph.byId.get(answer.skillId)?.sectionTitle === area);
+
+  const claimed = inArea
+    .filter((skill) => statusOf({ skill, statuses }) === "claimed")
+    .toSorted((a, b) => a.order - b.order);
+
+  if (claimed[0]) {
+    return claimed[0].id;
+  }
 
   if (!last) {
     const position = ownLevel ? START_POSITIONS[ownLevel] : DEFAULT_START_POSITION;

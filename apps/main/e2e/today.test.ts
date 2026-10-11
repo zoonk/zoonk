@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   goalFixture,
   planChangeFixture,
@@ -13,18 +14,22 @@ import {
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { tabTo } from "./keyboard-focus";
+import { asPersona } from "./learn-personas";
 import {
   DAYS_TO_EXAM,
   LESSON_CAN_DO,
   LESSON_TITLE,
+  carryLessons,
   createStudyDay,
   openAs,
   writeStudyLesson,
@@ -33,7 +38,8 @@ import {
 /** Today reads itself again every 5 seconds while a lesson is being written. */
 const WRITING_REFRESH_MS = 5000;
 
-const WELCOME_BACK = "Welcome back! Today is a lighter session, so it's easy to pick up again.";
+/** The welcome back says how long the lighter day takes: "lighter" beside 12 activities said nothing. */
+const WELCOME_BACK = /^Welcome back! Today is lighter, about .+, so it's easy to pick up again\.$/u;
 const DAYS_PER_WEEK = 7;
 
 async function readGoalStatus(goalId: string) {
@@ -48,7 +54,6 @@ async function proposeRebalance(goalId: string) {
   return planChangeFixture({
     kind: "edited",
     payload: {
-      before: { goal: { dailyMinutes: 10, targetDate: null }, graph: {}, settings: {} },
       operations: [{ areas: ["Science"], kind: "focusAreas" }],
       source: "preparation",
       versionAfter: plan.version,
@@ -246,26 +251,38 @@ test.describe("Today", () => {
 
     await start.click();
     await expect(card.getByRole("status")).toHaveText("Opening your next step…");
-    await expect(page).not.toHaveURL(/\/today$/u);
+    await expect(page).not.toHaveURL(/\/today$/u, { timeout: SLOW_OPEN_MS + 10_000 });
 
     await page.context().close();
   });
 
-  test("puts a plan change waiting for an OK before the welcome back", async ({ browser }) => {
+  // Ana back after four days had a lighter day and no greeting: the buddy's suggestion took the
+  // one notice. The welcome back is the session's own line, so a notice never hides it.
+  test("greets a learner back beside a plan change waiting for an OK, until they start", async ({
+    browser,
+  }) => {
     const { goal, user } = await createStudyDay({ freshStart: "welcomeBack" });
     await proposeRebalance(goal.id);
     const page = await openAs(browser, user);
     await page.goto("/today");
 
     const note = page.getByRole("region", { name: "Suggested change" });
+    const card = page.getByRole("region", { name: "Today's session" });
     await expect(note).toContainText("More time for Science, where it's needed most.");
-    await expect(page.getByText(WELCOME_BACK)).toBeHidden();
+    await expect(card.getByText(WELCOME_BACK)).toBeVisible();
 
     // Answering keeps Today calm: the note says what the answer did and no other notice jumps in.
     await note.getByRole("button", { name: "Not now" }).click();
     await expect(note.getByRole("status")).toHaveText("Your plan stays as it was.");
     await expect(note.getByRole("button")).toHaveCount(0);
-    await expect(page.getByText(WELCOME_BACK)).toBeHidden();
+    await expect(card.getByText(WELCOME_BACK)).toBeVisible();
+
+    // Once the day is underway, the greeting has done its job.
+    await card.getByRole("button", { name: /^Start/u }).click();
+    await expect(page).not.toHaveURL(/\/today$/u);
+    await page.goto("/today");
+    await expect(card.getByRole("button", { name: /^Continue/u })).toBeVisible();
+    await expect(page.getByText(WELCOME_BACK)).toHaveCount(0);
 
     await page.context().close();
   });
@@ -283,43 +300,6 @@ test.describe("Today", () => {
     await suggestion.getByRole("button", { name: "Not now" }).click();
     await expect(suggestion).toBeHidden();
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await page.context().close();
-  });
-
-  test("puts the guardian invite away for good after Not now", async ({ browser }) => {
-    const { goal, user } = await createStudyDay();
-    const signedUpAt = new Date(Date.now() - 60 * 60 * 1000);
-
-    // A teen who planned the goal as a guest, then made an account an hour ago.
-    await Promise.all([
-      prisma.user.update({ data: { createdAt: signedUpAt }, where: { id: user.id } }),
-      prisma.goal.update({
-        data: { createdAt: new Date(signedUpAt.getTime() - MS_PER_DAY) },
-        where: { id: goal.id },
-      }),
-      prisma.userLearningProfile.update({
-        data: { birthMonth: 1, birthYear: new Date().getUTCFullYear() - 15 },
-        where: { userId: user.id },
-      }),
-    ]);
-
-    const page = await openAs(browser, user);
-    await page.goto("/today");
-
-    const invite = page.getByRole("complementary", { name: "Invite a parent or guardian" });
-    await invite.getByRole("button", { name: "Not now" }).click();
-    await expect(invite).toBeHidden();
-
-    await expect
-      .poll(async () => {
-        const profile = await prisma.userLearningProfile.findUnique({ where: { userId: user.id } });
-        return profile?.guardianInviteDismissedAt ?? null;
-      })
-      .not.toBeNull();
-
-    await page.reload();
-    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await expect(invite).toBeHidden();
     await page.context().close();
   });
 
@@ -417,6 +397,190 @@ test.describe("Today", () => {
   });
 });
 
+const CATCH_UP_BUTTON = /^Catch up today/u;
+
+/** The weekday of today where the learner lives, as plans count weekdays (Sunday first). */
+function getWeekdayIn(timeZone: string): number {
+  const name = new Intl.DateTimeFormat("en-US", { timeZone, weekday: "short" }).format(new Date());
+  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(name);
+}
+
+test.describe("Today after days away", () => {
+  // Rafaela set up her goal, never studied and came back days later: no welcome back, an orange
+  // "127 lessons to catch up", a 2-hour day and "Catch up today · +381 min".
+  test("welcomes back a learner who set up the goal and never studied, without pushing the backlog", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { away: 6, day: 7, persona: "exam" }, async ({ page }) => {
+      await page.goto("/today");
+
+      const card = page.getByRole("region", { name: "Today's session" });
+      await expect(card.getByText(WELCOME_BACK)).toBeVisible();
+      await expect(card.getByRole("button", { name: /^Start/u })).toBeVisible();
+
+      // The day is just the next lessons, with no backlog above the greeting ("377 lessons to
+      // catch up" read as a debt to clear).
+      await expect(page.getByRole("main").getByText(/to catch up/u)).toHaveCount(0);
+      await expect(card.getByText(/Catching up/u)).toHaveCount(0);
+      await expect(card.getByRole("button", { name: CATCH_UP_BUTTON })).toHaveCount(0);
+      await expectAccessibleScreen(page, "Today after days away");
+
+      // The Journey still says honestly what those days left.
+      await page.goto("/journey");
+      await expect(page.getByRole("main").getByText(/\d+ lessons? to catch up/u)).toBeVisible();
+    });
+  });
+
+  // Rafaela back after a month read "You're behind", three percentages and a wall of topics
+  // before her greeting, with "Study 4h a day" as the main action.
+  test("greets a learner back before falling behind's card, which says it in one sentence and asks for no more hours first", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createStudyDay({ freshStart: "welcomeBack" });
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    await planChangeFixture({
+      kind: "missedDays",
+      payload: {
+        behind: {
+          canFocus: true,
+          coveredAfter: 0.39,
+          coveredBefore: 0.48,
+          currentMinutes: 120,
+          dailyMinutes: 240,
+          fittingDate: null,
+          fullDepth: false,
+          maximumShare: 0.54,
+          measure: "exam",
+        },
+        days: 30,
+        effect: {
+          endDateAfter: null,
+          endDateBefore: null,
+          lessonsAdded: 0,
+          lessonsRemoved: 40,
+          topicsLeftOut: [
+            {
+              area: "Portuguese",
+              topics: ["Semantic categories", "Word meanings", "Logic basics", "Syntax", "Style"],
+            },
+          ],
+        },
+        source: "system",
+      },
+      planId: plan.id,
+      reason: "Lessons earlier days left come first; the rest of the plan moved forward.",
+      status: "applied",
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Today's session" });
+    const note = page.getByRole("region", { name: "Plan change" });
+
+    await expect(card.getByText(WELCOME_BACK)).toBeVisible();
+
+    await expect(
+      note.getByText("At 2h a day, your plan now covers 39% of the exam, down from 48%."),
+    ).toBeVisible();
+
+    await expect(
+      note.getByText(
+        "Semantic categories, Word meanings and 3 more topics no longer fit by your date.",
+      ),
+    ).toBeVisible();
+
+    // The greeting and the lighter day come first; the card waits under them.
+    const [cardBox, noteBox] = await Promise.all([card.boundingBox(), note.boundingBox()]);
+    expect(cardBox?.y ?? Infinity).toBeLessThan(noteBox?.y ?? 0);
+
+    // Each choice says what it buys, and more hours isn't the main action on the day she's back.
+    await expect(note.locator("a, button")).toHaveText([
+      "Choose where to focus",
+      "Keep my time",
+      "Study 4h a day · about 54%",
+      "Study everything",
+    ]);
+
+    await expect(note.getByRole("button", { name: "Study 4h a day · about 54%" })).toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)",
+    );
+
+    await page.context().close();
+  });
+
+  // Rafaela back after 30 days on her rest day saw only "Enjoy your day off!".
+  test("keeps a rest day after days away, says hello and still offers some study", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { away: 4, persona: "exam" }, async ({ page, user }) => {
+      const plan = await prisma.plan.findUniqueOrThrow({
+        include: { goal: true },
+        where: { goalId: user.goalId },
+      });
+
+      // Today is a rest day in her plan.
+      const weekdayMinutes = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
+        weekday === getWeekdayIn(user.timeZone) ? 0 : plan.goal.dailyMinutes,
+      );
+
+      await prisma.plan.update({
+        data: {
+          settings: { ...(isJsonObject(plan.settings) ? plan.settings : {}), weekdayMinutes },
+        },
+        where: { id: plan.id },
+      });
+
+      await page.goto("/today");
+
+      const card = page.getByRole("region", { name: "Today's session" });
+      await expect(card.getByRole("heading", { name: "No study planned today" })).toBeVisible();
+
+      await expect(
+        card.getByText("Welcome back! Today is a rest day in your plan, so enjoy it."),
+      ).toBeVisible();
+
+      // Nothing studied yet today: "more" would count study she hasn't done.
+      await expect(card.getByRole("button", { name: /^Study for \d+ minutes$/u })).toBeVisible();
+    });
+  });
+
+  test("offers catching up today only when it fits in about one more day", async ({ browser }) => {
+    const [few, many] = await Promise.all([createStudyDay(), createStudyDay()]);
+
+    await Promise.all([
+      carryLessons({ count: 2, goalId: few.goal.id }),
+      carryLessons({ count: 6, goalId: many.goal.id }),
+    ]);
+
+    // Two lessons of 3 minutes take less than her 10-minute day: one tap adds them.
+    const page = await openAs(browser, few.user);
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Today's session" });
+    await expect(card.getByText("2 more lessons to catch up come first tomorrow.")).toBeVisible();
+    await card.getByRole("button", { name: "Catch up today · +6 min" }).click();
+    await expect(card.getByText("See today's 5 activities")).toBeVisible();
+    await expect(card.getByRole("button", { name: CATCH_UP_BUTTON })).toHaveCount(0);
+
+    // Six take 18 minutes, nearly two of his days: the next days take them, with no button.
+    const other = await openAs(browser, many.user);
+    await other.goto("/today");
+
+    const otherCard = other.getByRole("region", { name: "Today's session" });
+
+    await expect(
+      otherCard.getByText("Your next days start with the 6 lessons left to catch up."),
+    ).toBeVisible();
+
+    await expect(otherCard.getByRole("button", { name: CATCH_UP_BUTTON })).toHaveCount(0);
+
+    await Promise.all([page.context().close(), other.context().close()]);
+  });
+});
+
 test.describe("Today without a session to start", () => {
   test("says the lessons are on their way, then shows them without a refresh", async ({
     browser,
@@ -486,6 +650,32 @@ test.describe("Today without a session to start", () => {
     await expect(card.getByRole("heading", { name: "No study planned today" })).toBeVisible();
     await expect(card.getByText("Enjoy your day off!")).toBeVisible();
     await expect(card.getByText(/Getting today's lessons ready/u)).toHaveCount(0);
+    await page.context().close();
+  });
+
+  test("says a review of the weakest topics isn't one that's due", async ({ browser }) => {
+    const { session, user } = await createStudyDay();
+
+    const review = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { kind: "review", sessionId: session.id },
+    });
+
+    // Nothing was due and nothing else filled the day: the builder reviewed the weakest topics.
+    await prisma.studySessionBlock.update({
+      data: { payload: { ...(isJsonObject(review.payload) ? review.payload : {}), weakest: true } },
+      where: { id: review.id },
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Today's session" });
+    await expect(card.getByRole("heading", { name: "Quick review" })).toBeVisible();
+
+    await expect(
+      card.getByText(/^No reviews due today · \d+ questions? on your weakest topics$/u),
+    ).toBeVisible();
+
     await page.context().close();
   });
 
@@ -615,6 +805,110 @@ test.describe("Today while a lesson is being written", () => {
     // No refresh: the row drops the note at Today's next read.
     await expect(lessonRow).toBeVisible();
     await expect(lessonRow.getByText("Being written for you…")).toBeHidden();
+    await page.context().close();
+  });
+});
+
+/**
+ * A learner whose day holds one written lesson and time for a skill whose course is still being
+ * outlined (a stand-in due today), as Carla's first day did.
+ */
+async function createDayWithLessonsComing() {
+  const [user, course] = await Promise.all([
+    createE2EUser(getBaseURL()),
+    courseFixture({ outlineStatus: "running" }),
+  ]);
+
+  const goal = await goalFixture({
+    dailyMinutes: 10,
+    primaryCourseId: course.id,
+    timezone: "UTC",
+    userId: user.id,
+  });
+
+  const [plan, played, later, skill, session] = await Promise.all([
+    planFixture({ goalId: goal.id }),
+    playableLessonFixture({ lesson: { canDo: LESSON_CAN_DO, title: LESSON_TITLE } }),
+    playableLessonFixture({ lesson: { title: "Fractions on a number line" } }),
+    skillFixture({ name: "Fractions" }),
+    studySessionFixture({ goalId: goal.id, plannedMinutes: 3, userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  const [, standIn] = await Promise.all([
+    studySessionBlockFixture({
+      canDo: LESSON_CAN_DO,
+      estimatedMinutes: 3,
+      kind: "learn",
+      lessonId: played.lesson.id,
+      payload: { skillIds: [], title: LESSON_TITLE },
+      position: 0,
+      sessionId: session.id,
+    }),
+    // The rest of the day stands in for a skill its course is still outlining.
+    planItemFixture({
+      kind: "lesson",
+      planId: plan.id,
+      scheduledFor: toUTCMidnight(new Date()),
+      skillId: skill.id,
+      titleSnapshot: "Fractions",
+    }),
+  ]);
+
+  return { course, later, session, skill, standIn, user };
+}
+
+/** The narrowest phone the app is laid out for. */
+const NARROW_PHONE_WIDTH = 320;
+
+/** A section title's height on two lines (20px type on a 28px line). */
+const TWO_TITLE_LINES = 56;
+
+test.describe("Today while some of its lessons are still being outlined", () => {
+  // Carla's Today said 7 lessons and her session opened with 15: the rest landed in between,
+  // unannounced. The day says more are coming, keeps what it showed and adds them at its end.
+  test("says more lessons come as the learner goes, then adds them after what it showed", async ({
+    browser,
+  }) => {
+    const { course, later, session, skill, standIn, user } = await createDayWithLessonsComing();
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 844, width: NARROW_PHONE_WIDTH });
+    await page.clock.install();
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Today's session" });
+    const coming = card.getByText("1 lesson so far · more as you go");
+    await expect(coming).toBeVisible();
+    await expect(card.getByText(LESSON_TITLE).first()).toBeVisible();
+
+    // On a narrow phone the line goes under the title instead of squeezing it to a word a line.
+    const [title, line] = await Promise.all([
+      card.getByRole("heading", { name: "Today's session" }).boundingBox(),
+      coming.boundingBox(),
+    ]);
+
+    expect(title?.height).toBeLessThan(TWO_TITLE_LINES);
+    expect(line?.y).toBeGreaterThanOrEqual((title?.y ?? 0) + (title?.height ?? 0));
+    expect((line?.x ?? 0) + (line?.width ?? 0)).toBeLessThanOrEqual(NARROW_PHONE_WIDTH);
+
+    // The outline lands and its lesson joins the end of the day: Today reads itself again.
+    await Promise.all([
+      prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } }),
+      prisma.planItem.update({ data: { lessonId: later.lesson.id }, where: { id: standIn.id } }),
+      studySessionBlockFixture({
+        estimatedMinutes: 3,
+        kind: "learn",
+        lessonId: later.lesson.id,
+        payload: { skillIds: [skill.id], title: "Fractions on a number line" },
+        position: 1,
+        sessionId: session.id,
+      }),
+    ]);
+
+    await page.clock.fastForward(WRITING_REFRESH_MS);
+    await expect(card.getByText("2 lessons", { exact: true })).toBeVisible();
+    await expect(card.getByText(/more as you go/u)).toHaveCount(0);
+    await expect(card.getByText(LESSON_TITLE).first()).toBeVisible();
     await page.context().close();
   });
 });
@@ -751,6 +1045,20 @@ test.describe("Today without a day to show", () => {
         .or(page.getByRole("alert").filter({ hasText: "This didn't start" })),
     ).toBeVisible();
 
+    await page.context().close();
+  });
+
+  // A session never shows more than Today said without saying so.
+  test("says on the session's next stop that more lessons come as the learner goes", async ({
+    browser,
+  }) => {
+    const { user } = await createDayWithLessonsComing();
+    const page = await openAs(browser, user);
+
+    await page.goto("/session");
+
+    await expect(page.getByText("0 of 1 done · more as you go")).toBeVisible();
+    await expect(page.getByText(LESSON_TITLE).first()).toBeVisible();
     await page.context().close();
   });
 });

@@ -1,15 +1,18 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
+import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { getGoalField } from "../../library/items/item-field";
 import { type DifficultyBias, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
 import { type ExtraTime } from "../extra-time";
 import { PRACTICE_MINUTES_PER_QUESTION, type PlannedBlock } from "../session-builder";
-import { loadExamStructure } from "./load-build-inputs";
+import { loadExamStructure } from "./exam-structure";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
+import { loadExamPrepAccess } from "./plus-only-lessons";
+import { takePracticeQuestions } from "./practice-sets";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -20,6 +23,19 @@ async function loadDifficultyBias(goalId: string | null): Promise<DifficultyBias
     : null;
 
   return parsePlanSettings(plan?.settings).difficultyBias;
+}
+
+/**
+ * A free exam plan past its first week on the session's day: its practice and new lessons come
+ * with Plus, so no bonus block adds them.
+ */
+export async function isFreeWeekOver(session: StudySessionRow): Promise<boolean> {
+  if (!session.goal) {
+    return false;
+  }
+
+  const access = await loadExamPrepAccess({ goal: session.goal, today: session.localDate });
+  return access.trialEnded;
 }
 
 /**
@@ -44,9 +60,10 @@ export async function buildExtraPractice({
 }): Promise<PlannedBlock | null> {
   const used = new Set(session.blocks.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
 
-  const [difficultyBias, structure] = await Promise.all([
+  const [difficultyBias, structure, listeningSkillIds] = await Promise.all([
     loadDifficultyBias(session.goalId),
     session.goal ? loadExamStructure(session.goal) : null,
+    session.goalId ? loadListeningSkillIds(session.goalId) : new Set<string>(),
   ]);
 
   const practice = await loadPracticeItems({
@@ -54,12 +71,16 @@ export async function buildExtraPractice({
     examBlueprintId: session.goal?.examBlueprintId ?? null,
     excludeItemIds: used,
     field: getGoalField(session.goal?.details),
+    listeningSkillIds,
     now: new Date(),
     skillIds,
     userId,
   });
 
-  const items = practice.slice(0, Math.max(1, Math.floor(minutes / PRACTICE_MINUTES_PER_QUESTION)));
+  const items = takePracticeQuestions({
+    practice,
+    room: Math.max(1, Math.floor(minutes / PRACTICE_MINUTES_PER_QUESTION)),
+  });
 
   if (items.length === 0) {
     return null;
@@ -84,6 +105,7 @@ export async function buildExtraPractice({
 /**
  * Without questions to practice, the bonus time goes to the plan's next lesson not finished today,
  * a lesson skipped earlier included. `planItemIds` narrows it to part of the plan, such as an area.
+ * A free exam plan past its first week has none to give: new lessons come with Plus.
  */
 export async function buildExtraLesson({
   areaId = null,
@@ -96,6 +118,10 @@ export async function buildExtraLesson({
   session: StudySessionRow;
   userId: string;
 }): Promise<PlannedBlock | null> {
+  if (await isFreeWeekOver(session)) {
+    return null;
+  }
+
   const done = new Set(
     session.blocks.flatMap((block) =>
       block.lessonId && block.status === "completed" ? [block.lessonId] : [],
@@ -177,6 +203,10 @@ export async function withExtraStudyCheck({
 }): Promise<ExtraTime> {
   if (!extraTime.available) {
     return extraTime;
+  }
+
+  if (await isFreeWeekOver(session)) {
+    return { available: false, minutes: 0, reason: "plusRequired" };
   }
 
   const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];

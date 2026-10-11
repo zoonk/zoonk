@@ -166,7 +166,6 @@ export const scientificNotationLesson: SeedLesson = {
             "If each atom were a person, that's more people than live in Boston, lined up across one hair.",
             "Se cada átomo fosse uma pessoa, seria mais gente do que mora em Florianópolis, enfileirada na largura de um único fio.",
           ),
-          expression: "7 * 10^(-5) / (1 * 10^(-10))",
           max: 1_000_000_000,
           min: 1,
           scale: "log",
@@ -174,21 +173,25 @@ export const scientificNotationLesson: SeedLesson = {
             "Dividing powers of ten means subtracting them: 10⁻⁵ ÷ 10⁻¹⁰ = 10⁵. So 7 × 10⁵ = 700,000.",
             "Dividir potências de dez é subtrair os expoentes: 10⁻⁵ ÷ 10⁻¹⁰ = 10⁵. Então 7 × 10⁵ = 700.000.",
           ),
+          truth: {
+            expression: "7 * 10^(-5) / (1 * 10^(-10))",
+            kind: "computed",
+            workings: [
+              { expression: "7 * 10^(-5)", label: t("Hair width (m)", "Largura do fio (m)") },
+              { expression: "1 * 10^(-10)", label: t("Atom width (m)", "Largura do átomo (m)") },
+              {
+                expression: "7 * 10^(-5) / (1 * 10^(-10))",
+                label: t("Atoms across", "Átomos lado a lado"),
+              },
+            ],
+          },
           unit: t("atoms", "átomos"),
-          workings: [
-            { expression: "7 * 10^(-5)", label: t("Hair width (m)", "Largura do fio (m)") },
-            { expression: "1 * 10^(-10)", label: t("Atom width (m)", "Largura do átomo (m)") },
-            {
-              expression: "7 * 10^(-5) / (1 * 10^(-10))",
-              label: t("Atoms across", "Átomos lado a lado"),
-            },
-          ],
         },
         prompt: t(
           "A human hair is about 0.07 mm thick. Guess first: how many hydrogen atoms fit side by side across it?",
           "Um fio de cabelo tem cerca de 0,07 mm de espessura. Chute primeiro: quantos átomos de hidrogênio cabem lado a lado nele?",
         ),
-        template: "estimateReveal",
+        template: "guessReveal",
       },
       kind: "activity",
       skill: "orders-of-magnitude",

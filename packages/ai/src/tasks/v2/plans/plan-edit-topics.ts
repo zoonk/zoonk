@@ -19,22 +19,19 @@ function cleanText({ max, text }: { max: number; text: string }): string {
 }
 
 /**
- * Topics with a name, once each, under an area the plan has (the plan's own spelling) or none. A
- * new plan fitted to the learner's routine never adds any.
+ * Topics with a name, once each, under an area the plan has (the plan's own spelling) or none,
+ * starting on the day the learner said (`startDate`) or spread through what the plan teaches next
+ * (null).
  */
 export function toTopicsOperation({
   areas,
-  purpose,
+  startDate,
   topics,
 }: {
   areas: readonly string[];
-  purpose?: "edit" | "routine";
+  startDate: string | null;
   topics: readonly PlanEditTopic[];
-}): { kind: "addTopics"; topics: PlanEditTopic[] } | null {
-  if (purpose === "routine") {
-    return null;
-  }
-
+}): { kind: "addTopics"; startDate: string | null; topics: PlanEditTopic[] } | null {
   const cleaned = topics
     .map((topic) => ({
       area: matchAreas({ areas, values: topic.area ? [topic.area] : [] })[0] ?? null,
@@ -49,5 +46,5 @@ export function toTopicsOperation({
     )
     .slice(0, MAX_TOPICS);
 
-  return cleaned.length > 0 ? { kind: "addTopics", topics: cleaned } : null;
+  return cleaned.length > 0 ? { kind: "addTopics", startDate, topics: cleaned } : null;
 }

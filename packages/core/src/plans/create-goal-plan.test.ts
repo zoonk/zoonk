@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import {
   chapterSkillFixture,
@@ -11,7 +12,12 @@ import {
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  choiceItemContent,
+  itemFixture,
+  skillFixture,
+  skillPrerequisiteFixture,
+} from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -59,6 +65,18 @@ async function setup() {
   return { goal, library, plan, user };
 }
 
+/** A four-minute lesson at `position` in a chapter, teaching the skills. */
+async function teachingLesson(chapterId: string, position: number, skillIds: string[]) {
+  const created = await libraryLessonFixture({ estimatedMinutes: 4, homeChapterId: chapterId });
+
+  await Promise.all([
+    chapterLessonFixture({ chapterId, lessonId: created.id, position }),
+    ...skillIds.map((skillId) => lessonSkillFixture({ lessonId: created.id, skillId })),
+  ]);
+
+  return created;
+}
+
 function datesOf(items: { scheduledFor: Date | null }[]) {
   return items.map((item) => item.scheduledFor?.toISOString().slice(0, 10) ?? null);
 }
@@ -73,46 +91,74 @@ describe(createGoalPlan, () => {
     vi.useRealTimers();
   });
 
-  it("tests out what the learner's level settled when placement ended before the plan", async () => {
-    const user = await userFixture();
-    const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 1 }] });
+  it.each([
+    { answered: false, expected: "todo" },
+    { answered: true, expected: "testedOut" },
+  ])(
+    "tests out only what the learner's own placement answers settled when placement ended before the plan (answered: $answered)",
+    async ({ answered, expected }) => {
+      const user = await userFixture();
+      const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 1 }] });
+      const [known, other] = library.skills;
 
-    // Placement was stopped while the plan was still being written, by someone who studied it.
-    const { goal, plan } = await unplannedGoalFixture({
-      dailyMinutes: 12,
-      details: { answered: ["level", "placement"], level: "intermediate" },
-      settings: { startDate: "2020-09-28" },
-      userId: user.id,
-    });
+      if (!known || !other) {
+        throw new Error("The library has no skills.");
+      }
 
-    await Promise.all(
-      (["beginner", "intermediate"] as const).map((level, index) =>
-        prisma.skill.update({ data: { level }, where: { id: library.skills[index]?.id } }),
-      ),
-    );
+      // Placement was stopped while the plan was still being written, by someone who studied it.
+      const { goal, plan } = await unplannedGoalFixture({
+        dailyMinutes: 12,
+        details: { answered: ["level", "placement"], level: "intermediate" },
+        settings: { startDate: "2020-09-28" },
+        userId: user.id,
+      });
 
-    mockSession(user.id);
-    mockClock();
+      await Promise.all(
+        (["beginner", "intermediate"] as const).map((level, index) =>
+          prisma.skill.update({ data: { level }, where: { id: library.skills[index]?.id } }),
+        ),
+      );
 
-    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      // The stated level alone tests nothing out (its lower band is only to confirm); a right
+      // placement answer of the skill's own does. Placement answers carry an item and no step.
+      if (answered) {
+        const item = await itemFixture({ content: choiceItemContent(), skillId: known.id });
 
-    const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
+        await attemptFixture({
+          answeredAt: NOW,
+          isCorrect: true,
+          itemId: item.id,
+          skillId: known.id,
+          userId: user.id,
+        });
+      }
 
-    expect(
-      items
-        .map((item) => [item.skillId, item.status])
-        .toSorted(([, a], [, b]) => String(a).localeCompare(String(b))),
-    ).toStrictEqual([
-      [library.skills[0]?.id, "testedOut"],
-      [library.skills[0]?.id, "testedOut"],
-      [library.skills[1]?.id, "todo"],
-    ]);
-  });
+      mockSession(user.id);
+      mockClock();
+
+      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+      const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
+
+      expect(
+        items
+          .map((item) => [item.skillId, item.status])
+          .toSorted(([, a], [, b]) => String(a).localeCompare(String(b))),
+      ).toStrictEqual(
+        [
+          [known.id, expected],
+          [known.id, expected],
+          [other.id, "todo"],
+        ].toSorted(([, a], [, b]) => String(a).localeCompare(String(b))),
+      );
+    },
+  );
 
   it("plans the graph's lessons in order with dates, placeholders and phase checkpoints", async () => {
     const { goal, library, plan } = await setup();
 
     await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toStrictEqual({
+      setupTasks: [],
       status: "created",
     });
 
@@ -473,7 +519,7 @@ describe(createGoalPlan, () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 4 }] });
 
-    // "A prova é em março": the month and year only, and the notice isn't read yet.
+    // "The test is in March": the month and year only, and the notice isn't read yet.
     const { goal } = await unplannedGoalFixture({
       dailyMinutes: 30,
       details: { examMonth: 3, examYear: 2021 },
@@ -510,6 +556,7 @@ describe(createGoalPlan, () => {
     const items = await prisma.planItem.findMany({ where: { planId: plan.id } });
 
     await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toStrictEqual({
+      setupTasks: [],
       status: "unchanged",
     });
 
@@ -527,6 +574,7 @@ describe(createGoalPlan, () => {
     const reordered = { ...library.graph, skills: [...rest, ...(first ? [first] : [])] };
 
     await expect(createGoalPlan({ goalId: goal.id, graph: reordered })).resolves.toStrictEqual({
+      setupTasks: [],
       status: "created",
     });
 
@@ -534,10 +582,113 @@ describe(createGoalPlan, () => {
     expect(changed.version).toBe(before.version + 1);
   });
 
+  it("checks off a lesson the learner finished before the plan existed, from when it ended", async () => {
+    const { goal, library, plan, user } = await setup();
+    const [finished] = library.lessons;
+    const endedAt = new Date("2020-09-28T09:00:00Z");
+
+    if (!finished) {
+      throw new Error("The library has no lessons.");
+    }
+
+    // A guest's lesson from a public page, before "Build my plan" made the goal: no goal on it.
+    await learningEventFixture({ contentIds: { lessonId: finished.id }, endedAt, userId: user.id });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const items = await prisma.planItem.findMany({
+      select: { completedAt: true, lessonId: true, status: true },
+      where: { kind: "lesson", lessonId: { not: null }, planId: plan.id },
+    });
+
+    expect(items).toHaveLength(library.lessons.length);
+
+    expect(items.find((item) => item.lessonId === finished.id)).toStrictEqual({
+      completedAt: endedAt,
+      lessonId: finished.id,
+      status: "done",
+    });
+
+    expect(
+      items.filter((item) => item.lessonId !== finished.id).map((item) => item.status),
+    ).toStrictEqual(["todo", "todo"]);
+  });
+
+  // A guest finished "What you own when you buy a share", the first lesson of its chapter, then
+  // built the plan from it: the plan put two other chapters first, though the chapter's next lesson
+  // was written and builds only on what that lesson taught. The chapter is in progress (R10).
+  it("goes on with the chapter of a lesson the learner finished before the plan existed", async () => {
+    const user = await userFixture();
+
+    const [first, other, third] = await Promise.all(
+      ["Owning a share", "Profits", "Voting"].map((title) => libraryChapterFixture({ title })),
+    );
+
+    const [owning, holder, selling] = await Promise.all(
+      ["Owning", "Being a holder", "Selling"].map((name) => skillFixture({ name })),
+    );
+
+    if (!first || !other || !third || !owning || !holder || !selling) {
+      throw new Error("Expected the guest's chapters and skills.");
+    }
+
+    // The first lesson teaches owning and being a holder; selling builds on being a holder.
+    const [finished, profits, voting, next] = await Promise.all([
+      teachingLesson(first.id, 0, [owning.id, holder.id]),
+      teachingLesson(other.id, 0, [owning.id]),
+      teachingLesson(third.id, 0, [holder.id]),
+      teachingLesson(first.id, 1, [selling.id]),
+      skillPrerequisiteFixture({ prerequisiteId: holder.id, skillId: selling.id }),
+    ]);
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-28" },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    mockClock();
+
+    await learningEventFixture({
+      contentIds: { lessonId: finished?.id ?? "" },
+      endedAt: new Date("2020-09-28T09:00:00Z"),
+      userId: user.id,
+    });
+
+    await createGoalPlan({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: "Can read a stock", name: "Basics" }],
+        skills: [owning, holder, selling].map((skill) => ({
+          area: null,
+          lessons: 1,
+          name: skill.name,
+          phase: 0,
+          skillId: skill.id,
+          weight: null,
+        })),
+      },
+    });
+
+    const items = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      select: { lessonId: true, status: true },
+      where: { kind: "lesson", planId: plan.id },
+    });
+
+    expect(items.find((item) => item.lessonId === finished?.id)?.status).toBe("done");
+
+    expect(items.flatMap((item) => (item.status === "todo" ? [item.lessonId] : []))).toStrictEqual([
+      next?.id,
+      profits?.id,
+      voting?.id,
+    ]);
+  });
+
   it("reports a goal that doesn't exist", async () => {
     await expect(
       createGoalPlan({ goalId: crypto.randomUUID(), graph: { phases: [], skills: [] } }),
-    ).resolves.toStrictEqual({ status: "notFound" });
+    ).resolves.toStrictEqual({ setupTasks: [], status: "notFound" });
   });
 });
 
@@ -586,18 +737,24 @@ describe(getGoalPlan, () => {
       status: { kind: "onTrack" },
     });
 
+    // A phase counts the lessons its stand-in teaches, not one row for them.
     expect(
       plan?.phases.map((phase) => [phase.name, phase.state, phase.lessonsTotal]),
     ).toStrictEqual([
       ["Basics", "current", 3],
-      ["Advanced", "upcoming", 1],
+      ["Advanced", "upcoming", 4],
     ]);
 
     expect(plan?.phases[0]?.chapters).toStrictEqual([
       {
         chapterId: library.chapters[0]?.id,
+        deeper: false,
+        far: false,
         lessonsDone: 0,
         lessonsTotal: 3,
+        nextDate: "2020-09-28",
+        plannedLessons: null,
+        skillId: null,
         skills: [],
         state: "current",
         testedOut: false,

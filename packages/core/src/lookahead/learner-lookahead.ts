@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { findActiveSubscription } from "../auth/subscription";
 import { type EntitlementTier } from "../entitlements/contract";
+import { OUTLINE_AHEAD_DAYS } from "./outline-ahead";
 
 /**
  * How much is written before a learner gets there. Content is written once and shared, but what
@@ -16,17 +17,29 @@ export type LearnerLookahead = {
   nextDayLessons: number;
   /**
    * Days of the plan whose courses get their level bands outlined when the plan is built; later
-   * bands are outlined as the plan gets close to them. Null outlines every band the plan needs.
+   * bands are outlined as the plan gets close to them, two weeks ahead (`OUTLINE_AHEAD_DAYS`). Plus
+   * outlines no further than free: the Library shares every outline with later learners, and a
+   * whole plan outlined up front paid for bands that changed or abandoned plans never reached.
    */
-  outlineDays: number | null;
+  outlineDays: number;
   /** First lessons of the likeliest starting phases written while placement runs. */
   speculativeLessons: number;
 };
 
 const LOOKAHEAD: Record<EntitlementTier, LearnerLookahead> = {
-  free: { lessonsAhead: 2, nextDayLessons: 1, outlineDays: 14, speculativeLessons: 2 },
+  free: {
+    lessonsAhead: 2,
+    nextDayLessons: 1,
+    outlineDays: OUTLINE_AHEAD_DAYS,
+    speculativeLessons: 2,
+  },
   guest: { lessonsAhead: 1, nextDayLessons: 0, outlineDays: 7, speculativeLessons: 0 },
-  plus: { lessonsAhead: 4, nextDayLessons: 3, outlineDays: null, speculativeLessons: 4 },
+  plus: {
+    lessonsAhead: 4,
+    nextDayLessons: 3,
+    outlineDays: OUTLINE_AHEAD_DAYS,
+    speculativeLessons: 4,
+  },
 };
 
 export function getLookahead(tier: EntitlementTier): LearnerLookahead {

@@ -23,11 +23,12 @@ import { Surface } from "../_components/surface";
 import { TestOutStartLink } from "../_components/test-out-start-link";
 import { getBlockKind } from "../session/block-kind";
 import { type StudyBlock } from "../session/session-types";
-import { useBlockDetail, useBlockTitle } from "../session/use-block-copy";
+import { getChallengePhase, useBlockDetail, useBlockTitle } from "../session/use-block-copy";
 import { CatchUpLater, useIsCatchingUp } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
 import { ContinueButton } from "./today-continue-button";
 import { TodayDayDone } from "./today-day-done";
+import { TodayFreshStart } from "./today-fresh-start";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { TodayLessonsWaiting } from "./today-lessons-waiting";
 import { useLessonBeingWritten, useSessionState } from "./use-today-copy";
@@ -40,9 +41,10 @@ const SHOWN_AFTER_NEXT = 3;
 
 /**
  * How many parts the day holds, as the learner reads them: lessons when every one is a lesson,
- * otherwise activities, so a day of practice never reads "1 lesson". A day still waiting for
- * lessons being outlined says more are on the way, so the count growing when they land is no
- * surprise.
+ * otherwise activities, so a day of practice never reads "1 lesson". A day whose lessons are still
+ * being outlined says what it holds so far and that more come as the learner goes: each block
+ * they open prepares the next ones. "More on the way" read as a delivery already running, and an
+ * IELTS learner waited 40 minutes on a 45-minute day that showed 15.
  */
 function useDayCount(blocks: readonly StudyBlock[]) {
   const t = useExtracted();
@@ -53,8 +55,10 @@ function useDayCount(blocks: readonly StudyBlock[]) {
   const total = () => {
     if (today.session.lessonsComing) {
       return lessonsOnly
-        ? t("{count, plural, one {# lesson} other {# lessons}} · more on the way", { count })
-        : t("{count, plural, one {# activity} other {# activities}} · more on the way", { count });
+        ? t("{count, plural, one {# lesson} other {# lessons}} so far · more as you go", { count })
+        : t("{count, plural, one {# activity} other {# activities}} so far · more as you go", {
+            count,
+          });
     }
 
     return lessonsOnly
@@ -85,7 +89,7 @@ function getDaySubjects(blocks: readonly StudyBlock[]): string[] {
   return [...new Set(blocks.flatMap((block) => (block.subject ? [block.subject] : [])))];
 }
 
-/** The day's subjects in one line ("Língua Portuguesa, Direito Constitucional e Língua Inglesa"). */
+/** The day's subjects in one line ("Portuguese Language, Constitutional Law and English Language"). */
 function DaySubjects() {
   const format = useFormatter();
   const { today } = useTodayScreen();
@@ -206,14 +210,17 @@ function BlockMark({ block }: { block: StudyBlock }) {
   return <KindTile kind={getBlockKind(block)} size="sm" />;
 }
 
-/** "Catching up · Língua Portuguesa": what a row in the day's list is part of. */
+/**
+ * "Catching up · Portuguese Language": what a row in the day's list is part of; a phase's challenge
+ * names its phase (see `getChallengePhase`).
+ */
 function useRowLabel() {
   const t = useExtracted();
   const isCatchingUp = useIsCatchingUp();
 
   return (block: StudyBlock): string | null => {
     if (!isCatchingUp(block)) {
-      return block.subject;
+      return block.subject ?? getChallengePhase(block);
     }
 
     return block.subject
@@ -373,6 +380,7 @@ export function TodaySessionCard() {
       </PageSectionHeader>
 
       <Surface className="flex flex-col gap-5 overflow-hidden p-5 sm:p-6">
+        <TodayFreshStart />
         <SessionCardBody />
       </Surface>
     </PageSection>

@@ -8,7 +8,8 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
-import { ItemLine } from "../questions/item-text";
+import { ItemSetStimulus } from "../questions/item-set-stimulus";
+import { ItemLine, ItemText } from "../questions/item-text";
 import { WorkedSteps, useAnswerText } from "../session/question-block/question-feedback";
 import { useCheckpointScreen } from "./checkpoint-context";
 
@@ -53,7 +54,7 @@ function ReviewItem({
           </p>
         )}
         {answer.explanation && (
-          <p className="text-muted-foreground text-sm">{answer.explanation}</p>
+          <ItemText className="text-muted-foreground text-sm" text={answer.explanation} />
         )}
         {!answer.isCorrect && <WorkedSteps steps={answer.workedSteps} />}
       </div>
@@ -67,6 +68,32 @@ function ReviewItem({
       />
     </li>
   );
+}
+
+/**
+ * The recordings a listening phase's boss played, now with their transcripts and free replays, so
+ * the learner hears what they missed.
+ */
+function ReviewRecordings() {
+  const { checkpoint, duel } = useCheckpointScreen();
+
+  const sets = [
+    ...new Map(
+      checkpoint.questions.flatMap((question) =>
+        question.set?.listening ? [[question.set.id, question.set] as const] : [],
+      ),
+    ).values(),
+  ];
+
+  return sets.map((set) => (
+    <ItemSetStimulus
+      askedIn={checkpoint.blockId}
+      key={set.id}
+      place={false}
+      set={set}
+      transcript={duel.state.transcripts[set.id] ?? null}
+    />
+  ));
 }
 
 /**
@@ -84,6 +111,7 @@ export function CheckpointReviewSheet() {
 
   return (
     <DetailsDrawer label={t("Review the answers")} title={t("The answers")}>
+      <ReviewRecordings />
       <ol className="flex flex-col">
         {answers.map((answer) => {
           const question = checkpoint.questions.find(

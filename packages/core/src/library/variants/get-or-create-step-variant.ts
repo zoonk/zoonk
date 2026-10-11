@@ -1,7 +1,6 @@
 import "server-only";
 import {
   type GenerateStepVariantParams,
-  type StepVariantKind,
   VARIANT_SCREEN_KINDS,
   generateStepVariant,
 } from "@zoonk/ai/tasks/v2/variants/step-variant";
@@ -14,6 +13,9 @@ import { toVariantKey } from "./variant-keys";
 
 /** One retry covers a draft that fails the checks; learners are waiting, so there's no third try. */
 const GENERATION_ATTEMPTS = 2;
+
+/** The versions written here; a field's case comes from the challenge writer (`field-challenge`). */
+const TOOL_KIND = "tool";
 
 type VariantScreenKind = (typeof VARIANT_SCREEN_KINDS)[number];
 
@@ -42,30 +44,22 @@ function loadStep(stepId: string) {
 
 type VariantStep = NonNullable<Awaited<ReturnType<typeof loadStep>>>;
 
-function findVariant({
-  key,
-  kind,
-  stepId,
-}: {
-  key: string;
-  kind: StepVariantKind;
-  stepId: string;
-}) {
-  return prisma.stepVariant.findUnique({ where: { stepVariantKey: { key, kind, stepId } } });
+function findVariant({ key, stepId }: { key: string; stepId: string }) {
+  return prisma.stepVariant.findUnique({
+    where: { stepVariantKey: { key, kind: TOOL_KIND, stepId } },
+  });
 }
 
 async function generateVariantContent({
   analytics,
   attempt = 1,
   key,
-  kind,
   step,
 }: {
   analytics: GenerateStepVariantParams["analytics"];
   attempt?: number;
-  /** The field or tool as the model reads it, such as the tool's full name. */
+  /** The tool as the model reads it, such as its full name. */
   key: string;
-  kind: StepVariantKind;
   step: VariantStep & { kind: VariantScreenKind };
 }): Promise<GeneratedVariant> {
   const { lesson } = step;
@@ -77,7 +71,6 @@ async function generateVariantContent({
     lessonTitle: lesson.title,
     level: lesson.level,
     screen: { content: step.content, kind: step.kind },
-    variant: kind,
   });
 
   const converted = toVariantContent({
@@ -93,13 +86,13 @@ async function generateVariantContent({
   }
 
   return attempt < GENERATION_ATTEMPTS
-    ? generateVariantContent({ analytics, attempt: attempt + 1, key, kind, step })
+    ? generateVariantContent({ analytics, attempt: attempt + 1, key, step })
     : { problems: converted.problems };
 }
 
 /**
- * Returns the shared field or tool version of a lesson screen, writing it the
- * first time anyone needs it. The `(step, kind, key)` unique key makes it one
+ * Returns the shared tool version of a lesson screen (or the version for a
+ * learner who installs nothing), writing it the first time anyone needs it. The `(step, kind, key)` unique key makes it one
  * row for everyone: when two requests race, both end with the row that was
  * stored first. Drafts pass the same contract and text checks as lessons, with
  * one retry. No cache holds versions (lesson reads load them fresh), so a new
@@ -111,14 +104,12 @@ async function generateVariantContent({
 export async function getOrCreateStepVariant({
   analytics,
   key,
-  kind,
   label,
   stepId,
 }: {
   analytics?: GenerateStepVariantParams["analytics"];
-  /** The field or tool, stored as a slug such as "nursing" or "google-sheets". */
+  /** The tool, stored as a slug such as "google-sheets", or "no-install". */
   key: string;
-  kind: StepVariantKind;
   /**
    * How the model reads the key when it says more than the slug: a tool's full name with its
    * choices ("Spreadsheet (Google Sheets or Excel)") for the key "spreadsheet".
@@ -136,7 +127,7 @@ export async function getOrCreateStepVariant({
     return { status: "unsupported" };
   }
 
-  const existing = await findVariant({ key: variantKey, kind, stepId });
+  const existing = await findVariant({ key: variantKey, stepId });
 
   if (existing) {
     return { created: false, status: "ready", variant: existing };
@@ -155,7 +146,6 @@ export async function getOrCreateStepVariant({
   const generated = await generateVariantContent({
     analytics: { contentScope: "shared", ...analytics },
     key: label ?? variantKey,
-    kind,
     step: { ...step, kind: step.kind },
   });
 
@@ -170,12 +160,12 @@ export async function getOrCreateStepVariant({
           content: generated.content,
           contractVersion: STEP_CONTRACT_VERSION,
           key: variantKey,
-          kind,
+          kind: TOOL_KIND,
           stepId,
           ...toProvenanceData(generated.provenance),
         },
       }),
-    findExisting: () => findVariant({ key: variantKey, kind, stepId }),
+    findExisting: () => findVariant({ key: variantKey, stepId }),
   });
 
   return { created, status: "ready", variant: row };

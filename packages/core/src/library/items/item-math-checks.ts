@@ -1,4 +1,4 @@
-import { type GeneratedMathProblem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type GeneratedMathProblem, type NumericEntry } from "@zoonk/ai/tasks/v2/items/schemas";
 import { evaluateFormula } from "../activities/expression/evaluate-expression";
 import { parseExpression } from "../activities/expression/parse-expression";
 import { sampleExpression } from "../activities/expression/sample-expression";
@@ -9,6 +9,7 @@ import {
   getPlaceholders,
   getValues,
 } from "./_utils/math-values";
+import { ANY_NUMBER, fitsEntry } from "./_utils/numeric-entry";
 
 const NUMBER_IN_TEXT = /(?<![\w.,])\d+(?:[.,]\d+)?(?![\w])/gu;
 const PLACEHOLDER_TEXT = /\{[A-Z_a-z]\w*\}/gu;
@@ -70,24 +71,70 @@ function checkVariables(math: GeneratedMathProblem, shownText: string): Problem[
 
 function checkMistakes(
   math: GeneratedMathProblem,
-  context: { correct: number; declared: ReadonlySet<string>; values: MathValues },
+  context: {
+    correct: number;
+    declared: ReadonlySet<string>;
+    others: readonly number[];
+    values: MathValues;
+  },
 ): Problem[] {
+  const gives = (expected: number, value: number | null) =>
+    value !== null && withinTolerance({ expected, tolerance: math.tolerance, value });
+
   return math.commonMistakes.flatMap((mistake, index) => {
     const label = `Common mistake ${index + 1}`;
     const checked = checkExpression({ ...context, expression: mistake.expression, label });
 
     return [
       ...checked.problems,
-      checked.value !== null &&
-        withinTolerance({
-          expected: context.correct,
-          tolerance: math.tolerance,
-          value: checked.value,
-        }) &&
-        `${label} gives the correct answer.`,
+      gives(context.correct, checked.value) && `${label} gives the correct answer.`,
+      context.others.some((other) => gives(other, checked.value)) &&
+        `${label} gives an answer the question takes.`,
       (!mistake.misconception.trim() || !mistake.reason.trim()) && `${label} has no reason.`,
     ];
   });
+}
+
+/**
+ * The other answers a question takes are expressions like its solution: each parses, uses only
+ * its variables, works for new numbers and gives an answer of its own (a repeat is repaired away).
+ */
+function checkOtherSolutions({
+  context,
+  math,
+  otherSolutions,
+}: {
+  context: { correct: number; declared: ReadonlySet<string>; values: MathValues };
+  math: GeneratedMathProblem;
+  otherSolutions: readonly string[];
+}): { problems: Problem[]; values: number[] } {
+  const checked = otherSolutions.map((expression, index) => {
+    const label = `Other solution ${index + 1}`;
+    const result = checkExpression({ ...context, expression, label });
+    const sampled = sampleExpression({ expression, ranges: math.variables });
+
+    return {
+      problems: [
+        ...result.problems,
+        result.problems.length === 0 &&
+          !sampled.ok &&
+          `${label} fails for new numbers: ${sampled.error}.`,
+        result.value !== null &&
+          withinTolerance({
+            expected: context.correct,
+            tolerance: math.tolerance,
+            value: result.value,
+          }) &&
+          `${label} repeats the solution's answer.`,
+      ],
+      value: result.value,
+    };
+  });
+
+  return {
+    problems: checked.flatMap((entry) => entry.problems),
+    values: checked.flatMap((entry) => (entry.value === null ? [] : [entry.value])),
+  };
 }
 
 function getNumbersInText(text: string): number[] {
@@ -161,12 +208,18 @@ function checkStep({
  */
 export function checkMathProblem({
   context = null,
+  entry = ANY_NUMBER,
   math,
+  otherSolutions = [],
   question,
 }: {
   /** The support text, which can show variables too. */
   context?: string | null;
+  /** How the answer box takes the answer: an integer answer must be a whole number. */
+  entry?: NumericEntry;
   math: GeneratedMathProblem;
+  /** Other answers the question takes, as expressions over the same variables. */
+  otherSolutions?: readonly string[];
   question: string;
 }): string[] {
   const shownText = [context, question].filter(Boolean).join("\n");
@@ -189,14 +242,23 @@ export function checkMathProblem({
   const correct = solution.value;
   const sampled = sampleExpression({ expression: math.solution, ranges: math.variables });
 
+  const others = checkOtherSolutions({
+    context: { correct, declared, values },
+    math,
+    otherSolutions,
+  });
+
   return [
     ...checkVariables(math, shownText),
     math.tolerance.value < 0 && "The tolerance is negative.",
     !withinTolerance({ expected: correct, tolerance: math.tolerance, value: math.answer }) &&
       `The stated answer ${math.answer} doesn't match the computed ${correct}.`,
+    !fitsEntry({ entry, value: correct }) &&
+      `The answer ${correct} isn't a whole number, which the answer box takes.`,
     !sampled.ok && `The solution fails for new numbers: ${sampled.error}.`,
+    ...others.problems,
     math.commonMistakes.length === 0 && "Has no common mistakes.",
-    ...checkMistakes(math, { correct, declared, values }),
+    ...checkMistakes(math, { correct, declared, others: others.values, values }),
     ...math.steps.flatMap((step, index) =>
       checkStep({ context: { answer: correct, declared, values }, index, step }),
     ),

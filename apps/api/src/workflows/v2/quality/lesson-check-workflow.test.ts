@@ -17,6 +17,8 @@ import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workflow";
+import { citePublishedLessonStep } from "./steps/lesson-check-steps";
+import type * as CheckSteps from "./steps/lesson-check-steps";
 import type * as LessonWriter from "@zoonk/ai/tasks/v2/lesson-writer";
 
 vi.mock("workflow/api", () => ({
@@ -27,12 +29,25 @@ vi.mock("workflow/api", () => ({
 // Model calls are external: tests replay a real spec and draft recorded for the same lesson. The
 // writer's model choice for a last draft runs for real.
 vi.mock("@zoonk/ai/tasks/v2/lesson-spec", () => ({ generateLessonSpec: vi.fn() }));
+
+// The picture check is a model call too: every planned picture is kept, as the recorded spec planned.
+vi.mock("@zoonk/ai/tasks/v2/lesson-spec/picture-need", () => ({
+  keepTeachingPictures: vi.fn(({ spec }: { spec: unknown }) => Promise.resolve(spec)),
+}));
+
 vi.mock("@zoonk/ai/tasks/v2/lesson-writer/fix", () => ({ fixLessonDraft: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
 
 vi.mock("@zoonk/ai/tasks/v2/lesson-writer", async (importOriginal) => ({
   ...(await importOriginal<typeof LessonWriter>()),
   writeLessonDraft: vi.fn(),
+}));
+
+// A step fails for good only once the runtime's retries ran out, which needs the runtime: a test
+// makes the citing step end that way.
+vi.mock("./steps/lesson-check-steps", async (importOriginal) => ({
+  ...(await importOriginal<typeof CheckSteps>()),
+  citePublishedLessonStep: vi.fn(),
 }));
 
 type RecordedSpec = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
@@ -120,6 +135,21 @@ describe(lessonCheckWorkflow, () => {
 
     const steps = await prisma.step.findMany({ where: { lessonId: lesson.id } });
     expect(steps.every((step) => step.version === 1 && step.retiredAt === null)).toBe(true);
+  });
+
+  it("settles what its reviewer found when citing the version keeps failing: citations are extra", async () => {
+    const { input } = await publishedLesson();
+    vi.mocked(checkLessonQuality).mockResolvedValue(taskResult({ issues: [] }));
+
+    vi.mocked(citePublishedLessonStep).mockRejectedValue(
+      new Error(
+        'Step "citePublishedLessonStep" failed after 3 retries: The provider is overloaded',
+      ),
+    );
+
+    await expect(
+      lessonCheckWorkflow({ ...input, plan: { ...input.plan, cite: true } }),
+    ).resolves.toStrictEqual({ cited: 0, status: "passed" });
   });
 
   it("publishes the fix of what its reviewer found as the next version, then draws the pictures it lacks", async () => {

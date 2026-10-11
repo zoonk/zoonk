@@ -19,8 +19,8 @@ export const activityAnswerSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("choice"), optionId: answerTextSchema }).strict(),
   z
     .object({
-      curve: z.enum(["demand", "supply"]),
-      direction: z.enum(["left", "right"]),
+      curve: answerTextSchema.meta({ description: "The id of the line the learner moved" }),
+      direction: z.enum(["down", "left", "right", "up"]),
       kind: z.literal("curveShift"),
     })
     .strict(),
@@ -76,7 +76,6 @@ export const activityAnswerSchema = z.discriminatedUnion("kind", [
     })
     .strict(),
   z.object({ ids: answerIdsSchema, kind: z.literal("selection") }).strict(),
-  z.object({ kind: z.literal("text"), text: answerTextSchema }).strict(),
 ]);
 
 export type ActivityAnswer = z.infer<typeof activityAnswerSchema>;

@@ -6,7 +6,8 @@ import { type FixedEvent } from "./schedule-units";
  * A test at most a week away (a class test on Friday) gets a plan of its own, day by day: the
  * topics the exam asks most that the learner doesn't know yet, then practice from their material,
  * and a last day with nothing new. A foundations phase, phase checkpoints and weekly mocks don't
- * fit in a few days, so a short plan has none.
+ * fit in a few days, so a short plan has none: it rehearses with one mock instead (see
+ * `getShortExamEvents`).
  */
 const SHORT_EXAM_MAX_DAYS = 7;
 
@@ -54,8 +55,8 @@ export function getShortExamPhaseDays(studyDays: number): [ShortExamPhaseKind, n
 
 /**
  * The focus of a short plan's phase. The last day rehearses with the test's short mock when it has
- * one (a class test from the learner's material); a public exam's mock is a whole exam day, so its
- * last day stays a light review.
+ * one (a class test from the learner's material); a public exam's mock is half an exam day at the
+ * least, so it opens the practice days instead and the last day stays a light review.
  */
 export function getShortExamFocus({
   kind,
@@ -69,7 +70,7 @@ export function getShortExamFocus({
   }
 
   if (kind === "practice") {
-    return "practice";
+    return shortMockMinutes ? "practice" : "mockAndPractice";
   }
 
   return shortMockMinutes ? "mockAndReview" : "lightReview";
@@ -96,7 +97,7 @@ export function isLightDayBefore({
   return daysBetween(planStart, targetDate) > 1 && !shortMockMinutes;
 }
 
-function mockEvent({
+export function mockEvent({
   date,
   minutes,
   replacesDay,
@@ -121,23 +122,34 @@ function reviewEvent({ date, minutes }: { date: Date; minutes: number }): FixedE
 /**
  * A short plan day's fixed events. The last day is the class test's short mock in place of
  * lessons, then a review of what it finds with the time left, or a public exam's light review; a
- * test tomorrow gets its short mock after the day's lessons when the day has room for both. The
- * review keeps new lessons off the last day even for a learner who fell behind.
+ * public exam rehearses with its weekly mock (half an exam day) on the first practice day
+ * instead, leaving the days after it to go over its mistakes. A test tomorrow gets its short mock
+ * after the day's lessons when the day has room for both. The review keeps new lessons off the
+ * last day even for a learner who fell behind.
  */
 export function getShortExamEvents({
   date,
+  isFirstPracticeDay,
   isLastDay,
   isOnlyDay,
   minutes,
+  mockMinutes,
   shortMockMinutes,
 }: {
   date: Date;
+  isFirstPracticeDay: boolean;
   isLastDay: boolean;
   isOnlyDay: boolean;
   /** The day's study minutes, with the light day before already applied. */
   minutes: number;
+  /** The exam's weekly mock, which a public exam's short plan rehearses with. */
+  mockMinutes: number;
   shortMockMinutes: number | null;
 }): FixedEvent[] {
+  if (isFirstPracticeDay && !shortMockMinutes) {
+    return [mockEvent({ date, minutes: mockMinutes, replacesDay: true })];
+  }
+
   if (isOnlyDay) {
     return shortMockMinutes && shortMockMinutes <= minutes * ONLY_DAY_MOCK_SHARE
       ? [mockEvent({ date, minutes: shortMockMinutes, replacesDay: false })]
@@ -154,11 +166,11 @@ export function getShortExamEvents({
 
   // The short mock fits the day: on a day the learner gives less time, it's shorter (see
   // `withClassTestMock`).
-  const mockMinutes = minutes > 0 ? Math.min(shortMockMinutes, minutes) : shortMockMinutes;
-  const reviewMinutes = minutes - mockMinutes;
+  const shortMock = minutes > 0 ? Math.min(shortMockMinutes, minutes) : shortMockMinutes;
+  const reviewMinutes = minutes - shortMock;
 
   return [
-    mockEvent({ date, minutes: mockMinutes, replacesDay: true }),
+    mockEvent({ date, minutes: shortMock, replacesDay: true }),
     ...(reviewMinutes >= MIN_REVIEW_MINUTES ? [reviewEvent({ date, minutes: reviewMinutes })] : []),
   ];
 }

@@ -17,6 +17,7 @@ vi.mock("ai", async (importOriginal) => {
 function explanation(text: string): WrittenScreen {
   return {
     exampleLineIdea: null,
+    explore: null,
     image: null,
     kind: "explanation",
     text,
@@ -94,6 +95,19 @@ describe(fixLessonDraft, () => {
     expect(data.lesson).toStrictEqual({
       screens: [explanation("One"), explanation("Two, shorter"), explanation("Three")],
       summary: ["The idea."],
+    });
+  });
+
+  it("fixes with Luna, falling back to Sol and then Opus", async () => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({ screens: [], summary: null }, "openai/gpt-6-luna"),
+    );
+
+    await fix({ screenCount: 3 });
+
+    expect(vi.mocked(generateText).mock.calls[0]?.[0]).toMatchObject({
+      model: "openai/gpt-6-luna",
+      providerOptions: { gateway: { models: ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] } },
     });
   });
 

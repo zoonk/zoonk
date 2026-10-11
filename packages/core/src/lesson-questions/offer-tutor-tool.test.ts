@@ -65,7 +65,7 @@ async function setup({ dailyMinutes = 12 }: { dailyMinutes?: number } = {}) {
 const MOCK_AREAS = ["Mathematics", "Languages", "Philosophy"] as const;
 const ASKED_FOR_MOCK = "I want to practice with a mock exam";
 
-/** Each subject's questions: Philosophy's two are too few for a mock of its own. */
+/** Each subject's questions: Philosophy's two still get it a mock of its own, at five questions. */
 const MOCK_QUESTIONS: Record<(typeof MOCK_AREAS)[number], number> = {
   Languages: 8,
   Mathematics: 8,
@@ -267,8 +267,8 @@ describe("app tools the buddy offers", () => {
         access: "open",
         goalId: goal.id,
         kind: "mockExam",
-        // Only the subjects with a mock of their own: Philosophy's two questions make none.
-        subjects: ["Mathematics", "Languages"],
+        // Every subject the plan studies has a mock of its own, Philosophy's two questions too.
+        subjects: ["Mathematics", "Languages", "Philosophy"],
       },
       status: "offered",
     });
@@ -287,7 +287,7 @@ describe("app tools the buddy offers", () => {
         access: "plusRequired",
         goalId: free.goal.id,
         kind: "mockExam",
-        subjects: ["Mathematics", "Languages"],
+        subjects: ["Mathematics", "Languages", "Philosophy"],
       },
       status: "offered",
     });
@@ -506,7 +506,7 @@ describe("every feature the buddy can suggest", () => {
       status: "unavailable",
     });
 
-    // ENEM-like: the notice has a redação with no questions, and the plan practises it.
+    // ENEM-like: the notice has an essay with no questions, and the plan practises it.
     const learner = await userFixture();
 
     const [blueprint, essaySkill] = await Promise.all([

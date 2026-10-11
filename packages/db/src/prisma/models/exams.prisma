@@ -8,7 +8,8 @@ enum MockExamStatus {
 /// questions and minutes when the mock starts (an adaptive exam picks a later module when the one
 /// before it is submitted). Answers stay drafts until the mock finishes, when they're graded and
 /// recorded as attempts. `result` keeps the analysis as numbers and title snapshots, so it survives
-/// content changes.
+/// content changes. `listeningPlays` counts each recording's plays in its listening section by item
+/// set id (`{ "<setId>": 1 }`), so another tab or device can't play it again past the exam's limit.
 model MockExam {
   id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId           String                 @map("user_id") @db.Uuid
@@ -26,6 +27,7 @@ model MockExam {
   startedAt        DateTime               @default(now()) @map("started_at")
   finishedAt       DateTime?              @map("finished_at")
   result           Json?
+  listeningPlays   Json                   @default("{}") @map("listening_plays")
   createdAt        DateTime               @default(now()) @map("created_at")
   updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
   answers          MockExamAnswer[]
@@ -41,6 +43,8 @@ model MockExam {
 /// A mock answer while the mock runs: the pick (null when the question was left blank), whether it
 /// was flagged to come back to, which also marks the answers the learner wasn't sure of, and the
 /// time spent on it. `itemId` is a plain id: the graded answer becomes an `Attempt` at the end.
+/// `changes` counts the times a given answer was changed in a section that limits them, like the
+/// GMAT's review of 3 answers at a section's end.
 model MockExamAnswer {
   id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   mockExamId String   @map("mock_exam_id") @db.Uuid
@@ -49,6 +53,7 @@ model MockExamAnswer {
   answer     Json?
   flagged    Boolean  @default(false)
   durationMs Int      @default(0) @map("duration_ms")
+  changes    Int      @default(0) @db.SmallInt
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 

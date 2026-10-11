@@ -1,7 +1,10 @@
 import { type SpeakingMockExam } from "../../language/conversations/conversation-contract";
+import { type SpeakingPaperView } from "../../language/exam-speaking/speaking-contract";
+import { type PassMarks } from "../../library/exams/pass-marks";
+import { type NoSitting, type NoticeDay } from "../../plans/plan-view-contract";
 import { type EstimatedScore } from "../../preparation/estimated-score";
-import { type ExamDay } from "../_utils/exam-calendar";
 import { type TargetCutoff } from "../cutoffs/target-cutoff-contract";
+import { type ExamDocument } from "../exam-document";
 import { type ExamDayChecklistKey, type ExamStage } from "../final-stretch/final-stretch-rules";
 import { type ExamMap } from "../map/exam-map";
 import {
@@ -21,6 +24,9 @@ import { type ExamScale } from "../scoring/exam-scales";
 export const DAY_BEFORE_PLANS = ["learn", "learnAndMock", "light", "mock", "review"] as const;
 
 export type DayBeforePlan = (typeof DAY_BEFORE_PLANS)[number];
+
+/** One exam day: its ISO date, the notice's name for it ("Day 1") and its start time. */
+export type ExamDay = { date: string; label: string | null; startTime: string | null };
 
 /**
  * The plan's next mock exam, whose intro (its plan item's challenge page) opens before its day: a
@@ -42,6 +48,8 @@ export type ExamMockSummary = {
    */
   blockId: string | null;
   correct: number;
+  /** The exam's questions for what it sat, when it asked fewer (`MockConditions.examQuestions`). */
+  examQuestions: number | null;
   finishedAt: string;
   /** The IRT score, the net score or the percent right, by `scoring`. */
   measure: number;
@@ -52,6 +60,40 @@ export type ExamMockSummary = {
   /** What a mock taken any time sat (a day, half of one, a subject); null for the plan's. */
   shape: MockShape | null;
   total: number;
+};
+
+/** One finished mock on the progress chart. */
+type ExamProgressMock = {
+  finishedAt: string;
+  number: number;
+  /**
+   * Its score as a share of its questions, from 0 to 100: its right answers, or for `net` scoring
+   * its net score (right minus wrong), which can fall below 0.
+   */
+  percent: number;
+  purpose: MockPurpose;
+  shape: MockShape | null;
+};
+
+/** One of the notice's subjects across the mocks that asked it. */
+export type ExamSubjectTrend = {
+  /** Points from its first mock to its latest; null until two mocks asked it. */
+  change: number | null;
+  name: string;
+  /** Its share right in each mock that asked it, oldest first. */
+  percents: number[];
+};
+
+/**
+ * How the learner's mocks went over time: each one's score (the latest twenty, oldest first),
+ * each subject's trend, the subjects that got better since their first mock (by ten points or
+ * more) and the ones that still need work (below 60% in their latest mock), at most two each.
+ */
+export type ExamMockProgress = {
+  improved: string[];
+  mocks: ExamProgressMock[];
+  needsWork: string[];
+  subjects: ExamSubjectTrend[];
 };
 
 /**
@@ -95,6 +137,8 @@ export type ExamView = {
   daysEstimated: boolean;
   daysLeft: number | null;
   estimate: EstimatedScore | null;
+  /** What the exam's official documents are, for the page's words (see `ExamDocument`). */
+  examDocument: ExamDocument;
   examName: string;
   /** The exam day by day as its notice sets it out; empty when the notice doesn't state it. */
   format: ExamFormatDay[];
@@ -102,21 +146,57 @@ export type ExamView = {
   map: ExamMap | null;
   mocks: ExamMockSummary[];
   /**
+   * The one day is the start of the month the learner named ("in March"), which stands for that
+   * month: the page says the month, not a day in it.
+   */
+  namedMonth: boolean;
+  /** The exam day the notice gives when the plan counts down to another (see `getNoticeDay`). */
+  noticeDay: NoticeDay | null;
+  /** The learner's month has no sitting of their exam (see `NoSitting`); null otherwise. */
+  noSitting: NoSitting | null;
+  /**
    * Mock exams come with Plus and the learner's plan doesn't include them: the page shows them
    * (the next one, a mock to take now) locked, with what Plus unlocks.
    */
   mocksRequirePlus: boolean;
   /** The plan's next weekly mock; null when the next checkpoint isn't one, or there's none left. */
   nextMock: ExamNextMock | null;
-  /** What it takes to pass, as the notice says it (see `getPassMarks`); empty when it doesn't. */
-  passMarks: string[];
+  /**
+   * How the learner's mocks went over time; null before the first one, and when mocks need Plus
+   * (`mocksRequirePlus`), where the page shows it locked.
+   */
+  progress: ExamMockProgress | null;
+  /**
+   * What it takes to pass, as the notice says it (see `getPassMarks`); none when it doesn't, or
+   * when the scale already says it in the learner's language (`scoring.noticeScale.passScore`).
+   */
+  passMarks: PassMarks | null;
   result: ExamResultView | null;
   /**
    * `scale`: the exam's own scale (SAT, AP, TOEFL) that estimates and results use. `stated`: the
    * notice says how the exam is scored; otherwise `method` is the mocks' default (a class test
    * from the learner's material, a notice that doesn't say), which no advice is drawn from.
    */
-  scoring: { method: MockScoring; note: string | null; scale: ExamScale | null; stated: boolean };
+  scoring: {
+    /** How the exam's mocks score it. */
+    method: MockScoring;
+    note: string | null;
+    /**
+     * The scale the notice says the exam reports its score on (EXANI-II's 700 to 1300), with the
+     * score that passes on it; null when the notice states none.
+     */
+    noticeScale: { max: number; min: number; name: string | null; passScore: number | null } | null;
+    /**
+     * The notice's rule that changes how to answer: item response theory (any exam scored that
+     * way), wrong answers costing points (`wrongPenalty`), or each right answer a point; null when
+     * the notice doesn't say how the exam is scored.
+     */
+    rule: "irt" | "net" | "raw" | null;
+    scale: ExamScale | null;
+    stated: boolean;
+    /** The share of a right answer each wrong one takes away; 0 where wrong answers cost nothing. */
+    wrongPenalty: number;
+  };
   /** The learner did what their plan asked before today (see `ExamMomentView`). */
   prepared: boolean;
   /** "You did 38 sessions and 3 mock exams": the work behind the day before. */
@@ -124,12 +204,20 @@ export type ExamView = {
   /** The score the learner said they aim for, in their words ("750"); null when they gave none. */
   targetScore: string | null;
   /**
+   * DELE, DELF or DALF, the Goethe-Zertifikat and Cambridge English: the exam's speaking paper, its
+   * tasks practiced one at a time on a live call with the AI as examiner or partner (Plus). Null
+   * for other exams.
+   */
+  speaking: SpeakingPaperView | null;
+  /**
    * IELTS and TOEFL iBT: the exam whose speaking test runs as a live call graded by its criteria,
    * as the language goal had it. Null for other exams.
    */
   speakingMock: SpeakingMockExam | null;
   stage: ExamStage;
   timeZone: string | null;
+  /** What the notice lets candidates use or gives them, for exam day's checklist. */
+  tools: string[];
 };
 
 /**
@@ -138,6 +226,8 @@ export type ExamView = {
  */
 export type ExamMomentView = {
   checklist: ExamDayChecklistKey[];
+  /** What the notice lets candidates use or gives them, beside the checklist; empty without it. */
+  tools: string[];
   /** What the day before holds, from the plan (a class test's short mock takes it). */
   dayBefore: DayBeforePlan;
   /** The next exam day (or the last one after the exam), with its start time. */

@@ -3,13 +3,13 @@ import { readFile } from "node:fs/promises";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { checkCitedFacts } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
+import { checkExamReading } from "@zoonk/ai/tasks/v2/research/check-exam-reading";
 import {
   type BlueprintExtraction,
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
-import { EXAM_BLUEPRINT_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint-version";
 import { findOfficialSources } from "@zoonk/ai/tasks/v2/research/find-official-sources";
-import { type ResearchPlan, generateResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
+import { type ExamResearchPlan, generateExamResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/v2/research/source-change-notice";
 import { toBlueprintContent } from "@zoonk/core/library/exams/blueprint-content";
 import { listBlueprintFacts } from "@zoonk/core/library/exams/blueprint-facts";
@@ -22,6 +22,7 @@ import { learnerSourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { freshnessWorkflow } from "./freshness-workflow";
+import { readNoticeAgainWorkflow } from "./read-notice-again-workflow";
 
 // Model calls are external: tests replay the recorded extraction of the real TCDF 2026 notice.
 vi.mock("@zoonk/ai/tasks/v2/research/extract-exam-blueprint", () => ({
@@ -29,12 +30,17 @@ vi.mock("@zoonk/ai/tasks/v2/research/extract-exam-blueprint", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/v2/research/check-cited-facts", () => ({ checkCitedFacts: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/research/check-exam-reading", () => ({ checkExamReading: vi.fn() }));
 
 vi.mock("@zoonk/ai/tasks/v2/research/source-change-notice", () => ({
   generateSourceChangeNotice: vi.fn(),
 }));
 
-vi.mock("@zoonk/ai/tasks/v2/research/plan", () => ({ generateResearchPlan: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/research/translate-pass-marks", () => ({
+  translatePassMarks: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/v2/research/plan", () => ({ generateExamResearchPlan: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
 
 vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({
@@ -66,6 +72,9 @@ const TASK = {
   userPrompt: "",
 };
 
+/** A reading as `extractExamBlueprint` returns it, without the formats' own read beside it. */
+const READING = { ...TASK, formatsProvenance: null };
+
 const PROVENANCE = {
   generatedAt: "2026-09-26T12:00:00.000Z",
   model: "google/gemini-3.8-flash",
@@ -78,7 +87,7 @@ const NEW_DATE_LINE = "Aplicação das provas objetivas e da prova discursiva 29
 const NEXT_EDITION_LINE = "Aplicação das provas objetivas e da prova discursiva 21/11/2027";
 
 /** The search's plan for the next notice: what a learner's research would plan for the exam. */
-const NEXT_NOTICE_PLAN: ResearchPlan = {
+const NEXT_NOTICE_PLAN: ExamResearchPlan = {
   board: "Cebraspe",
   classTest: false,
   country: "BR",
@@ -130,15 +139,19 @@ function withExamDate({
   };
 }
 
-/** An exam with one active learner, read from the recorded notice with every fact kept. */
-async function examWithLearner() {
+/**
+ * An exam with one active learner, read from the recorded notice with every fact kept. An
+ * `erratum` ends the stored notice with a line its reading missed.
+ */
+async function examWithLearner({ erratum }: { erratum?: string } = {}) {
   const [notice, extraction] = await Promise.all([
     readFixture("tcdf-2026-notice.txt"),
     readRecordedExtraction(),
   ]);
 
   const current = withExamDate({ extraction, line: OLD_DATE_LINE });
-  serveNotice(`${notice}\n${OLD_DATE_LINE}`);
+  const text = [notice, OLD_DATE_LINE, erratum].filter(Boolean).join("\n");
+  serveNotice(text);
 
   const source = await storeWebSource({
     kind: "official",
@@ -149,18 +162,23 @@ async function examWithLearner() {
     url: `https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/${randomUUID()}.txt`,
   });
 
-  const documents = [{ sourceId: source.id, text: `${notice}\n${OLD_DATE_LINE}` }];
+  const documents = [{ sourceId: source.id, text }];
   const facts = listBlueprintFacts({ documents, extraction: current });
 
+  const read = toBlueprintContent({
+    documents,
+    extraction: current,
+    facts,
+    noticeUrl: source.url,
+    sourceHash: source.contentHash,
+    supportedIds: facts.map((fact) => fact.id),
+  });
+
+  // Research stores a shared reading with its check, which found nothing left out.
+  const check = { checkedAt: new Date().toISOString(), problems: [], readings: 1 };
+
   const saved = await saveExamBlueprint({
-    content: toBlueprintContent({
-      documents,
-      extraction: current,
-      facts,
-      noticeUrl: source.url,
-      sourceHash: source.contentHash,
-      supportedIds: facts.map((fact) => fact.id),
-    }),
+    content: { ...read, edition: { ...read.edition, check } },
     identity: {
       board: "Cebraspe",
       country: "BR",
@@ -218,6 +236,12 @@ describe(freshnessWorkflow, () => {
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
 
+    // Readings leave nothing out unless a test says so.
+    vi.mocked(checkExamReading).mockResolvedValue({
+      ...TASK,
+      data: { missingSubjects: [], statedCounts: [] },
+    });
+
     vi.mocked(checkCitedFacts).mockImplementation(async ({ facts }) => ({
       data: { supportedIds: facts.map((fact) => fact.id) },
       provenance: {
@@ -259,6 +283,7 @@ describe(freshnessWorkflow, () => {
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       data: withExamDate({ extraction, line: NEW_DATE_LINE }),
+      formatsProvenance: null,
       provenance: {
         ...PROVENANCE,
         costUsd: 0,
@@ -315,6 +340,67 @@ describe(freshnessWorkflow, () => {
     );
   });
 
+  it("reads a corrected notice that keeps the exam day, and leaves learners' dates alone", async () => {
+    const { blueprint, extraction, notice } = await examWithLearner();
+    const extended = "Período de solicitação de inscrição prorrogado até 24/9/2026";
+    serveNotice(`${notice}\n${OLD_DATE_LINE}\n${extended}`);
+
+    // Another learner prepares for the same exam with a date of their own.
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+
+    const goal = await goalFixture({
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      targetDate: new Date("2026-11-29T00:00:00.000Z"),
+      userId: user.id,
+    });
+
+    await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [{ lessons: 2, name: skill.name, phase: 0, skillId: skill.id }],
+      },
+      phases: [],
+    });
+
+    const current = withExamDate({ extraction, line: OLD_DATE_LINE });
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      ...READING,
+      data: {
+        ...current,
+        dates: current.dates.map((date) =>
+          date.kind === "registrationEnd"
+            ? { ...date, date: "2026-09-24", passage: extended }
+            : date,
+        ),
+      },
+    });
+
+    vi.mocked(generateSourceChangeNotice).mockResolvedValue({
+      ...TASK,
+      data: { message: "As inscrições foram prorrogadas até 24 de setembro." },
+    });
+
+    await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
+
+    expect(extractExamBlueprint).toHaveBeenCalledOnce();
+
+    const [stored, changes, kept] = await Promise.all([
+      prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),
+      prisma.planChange.count({ where: { plan: { goalId: goal.id } } }),
+      prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+    ]);
+
+    expect(stored.examDate).toStrictEqual(new Date("2026-11-22T00:00:00.000Z"));
+    expect(stored.registrationEndsAt).toStrictEqual(new Date("2026-09-24T00:00:00.000Z"));
+
+    // Only the exam's own days reach learners' dates: nothing reaches this learner's Today.
+    expect(changes).toBe(0);
+    expect(kept.targetDate).toStrictEqual(new Date("2026-11-29T00:00:00.000Z"));
+  });
+
   it("searches for the next notice once the stored edition passed, and proposes its exam day to the learners preparing for it", async () => {
     const { blueprint, extraction, notice } = await examWithLearner();
     const nextUrl = `https://cdn.cebraspe.org.br/concursos/tc_df_27_analista/${randomUUID()}.txt`;
@@ -344,7 +430,7 @@ describe(freshnessWorkflow, () => {
     });
 
     serveNotice(`${notice}\n${NEXT_EDITION_LINE}`);
-    vi.mocked(generateResearchPlan).mockResolvedValue({ ...TASK, data: NEXT_NOTICE_PLAN });
+    vi.mocked(generateExamResearchPlan).mockResolvedValue({ ...TASK, data: NEXT_NOTICE_PLAN });
 
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK,
@@ -365,7 +451,7 @@ describe(freshnessWorkflow, () => {
     });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...TASK,
+      ...READING,
       data: {
         ...extraction,
         dates: extraction.dates.map((date) =>
@@ -409,14 +495,13 @@ describe(freshnessWorkflow, () => {
     ]);
   });
 
-  it("doesn't read the stored notice again when the search finds it with nothing new", async () => {
+  it("doesn't read the stored notice again when the search finds it with nothing new, whatever instructions read it", async () => {
     const { blueprint, source } = await examWithLearner();
 
+    // The stored reading's instructions (`PROVENANCE`) are older than today's: only a changed
+    // document is read again.
     await prisma.examBlueprint.update({
-      data: {
-        examDate: new Date(Date.now() - 30 * DAY_MS),
-        promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
-      },
+      data: { examDate: new Date(Date.now() - 30 * DAY_MS) },
       where: { id: blueprint.id },
     });
 
@@ -429,7 +514,7 @@ describe(freshnessWorkflow, () => {
       userId: user.id,
     });
 
-    vi.mocked(generateResearchPlan).mockResolvedValue({ ...TASK, data: NEXT_NOTICE_PLAN });
+    vi.mocked(generateExamResearchPlan).mockResolvedValue({ ...TASK, data: NEXT_NOTICE_PLAN });
 
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK,
@@ -455,6 +540,48 @@ describe(freshnessWorkflow, () => {
 
     expect(findOfficialSources).toHaveBeenCalledOnce();
     expect(extractExamBlueprint).not.toHaveBeenCalled();
+  });
+
+  // Nothing reads a settled notice again on its own; an admin can, deliberately.
+  it("reads an exam's stored notice again on an admin's request, though nothing changed", async () => {
+    // The notice ends with an erratum that moved the exam a week, which its first reading missed:
+    // reading it again cites that line.
+    const { blueprint, extraction } = await examWithLearner({ erratum: NEW_DATE_LINE });
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      data: withExamDate({ extraction, line: NEW_DATE_LINE }),
+      formatsProvenance: null,
+      provenance: {
+        ...PROVENANCE,
+        costUsd: 0,
+        latencyMs: 1,
+        provider: "google",
+        requestedModel: PROVENANCE.model,
+        runId: "read-again",
+        usage: {},
+      },
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    });
+
+    // A check finds the same document: the reading stands.
+    await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
+    expect(extractExamBlueprint).not.toHaveBeenCalled();
+
+    await expect(readNoticeAgainWorkflow({ examBlueprintId: blueprint.id })).resolves.toStrictEqual(
+      { status: "read" },
+    );
+
+    expect(extractExamBlueprint).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),
+    ).resolves.toMatchObject({ runId: "read-again" });
+
+    await expect(readNoticeAgainWorkflow({ examBlueprintId: randomUUID() })).resolves.toStrictEqual(
+      { status: "notFound" },
+    );
   });
 
   it("stops when nobody studies the exam anymore", async () => {

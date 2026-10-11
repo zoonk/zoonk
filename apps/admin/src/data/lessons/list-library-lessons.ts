@@ -11,7 +11,6 @@ type LibraryLessonFilter = {
 };
 
 const libraryLessonListInclude = {
-  _count: { select: { chapters: true, steps: { where: { retiredAt: null } } } },
   homeChapter: {
     select: { homeCourse: { select: { id: true, title: true } }, id: true, title: true },
   },
@@ -47,6 +46,33 @@ function buildLibraryLessonWhere({ model, promptVersion, search, status }: Libra
   };
 }
 
+/**
+ * The chapters using each lesson and its current screens, counted for the page's lessons only: a
+ * relation `_count` would count every lesson's rows.
+ */
+async function countLessonRows(lessonIds: string[]) {
+  const [chapters, steps] = await Promise.all([
+    prisma.chapterLesson.groupBy({
+      _count: { chapterId: true },
+      by: ["lessonId"],
+      where: { lessonId: { in: lessonIds } },
+    }),
+    prisma.step.groupBy({
+      _count: { id: true },
+      by: ["lessonId"],
+      where: { lessonId: { in: lessonIds }, retiredAt: null },
+    }),
+  ]);
+
+  const chaptersByLesson = new Map(chapters.map((row) => [row.lessonId, row._count.chapterId]));
+  const stepsByLesson = new Map(steps.map((row) => [row.lessonId, row._count.id]));
+
+  return (lessonId: string) => ({
+    chapters: chaptersByLesson.get(lessonId) ?? 0,
+    steps: stepsByLesson.get(lessonId) ?? 0,
+  });
+}
+
 const cachedListLibraryLessons = cacheAdminData(
   async (
     limit: number,
@@ -70,7 +96,9 @@ const cachedListLibraryLessons = cacheAdminData(
       prisma.lesson.count({ where }),
     ]);
 
-    return { lessons, total };
+    const counts = await countLessonRows(lessons.map((lesson) => lesson.id));
+
+    return { lessons: lessons.map((lesson) => ({ ...lesson, _count: counts(lesson.id) })), total };
   },
 );
 

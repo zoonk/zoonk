@@ -20,7 +20,7 @@ function journeyHero(page: Page) {
 /**
  * Opening Today after days away builds the day from a plan that moved forward first: what those
  * days left comes first, labeled as catching up, and the Journey says how much is left right away
- * instead of "On track". The plan changes while Today renders, where Next.js can't clear caches; the
+ * instead of "Keeping pace". The plan changes while Today renders, where Next.js can't clear caches; the
  * plan's reads are private caches no server keeps, so the Journey reads it fresh anyway.
  */
 test.describe("Plan after days away", () => {

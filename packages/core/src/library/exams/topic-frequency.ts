@@ -9,18 +9,6 @@ type Subject = ExamStructure["subjects"][number];
 /** A notice topic and how often the exam asks it, in the notice's own words. */
 export type TopicLevel = { level: TopicFrequency[number]["level"]; subject: string; topic: string };
 
-/** A notice topic and the part of its subject the notice lists it under (ENEM's "Biologia"). */
-export type TopicPart = { part: string; subject: string; topic: string };
-
-/** Each topic the notice lists under one of its subjects' headings, with that heading. */
-export function listTopicParts(structure: ExamStructure): TopicPart[] {
-  return structure.subjects.flatMap((subject) =>
-    (subject.topicGroups ?? []).flatMap((group) =>
-      group.topics.map((topic) => ({ part: group.name, subject: subject.name, topic })),
-    ),
-  );
-}
-
 /** Where a subject's topic frequency comes from, for the line that cites it. */
 export type TopicFrequencySource = { basis: string; title: string | null; url: string };
 
@@ -32,7 +20,7 @@ const MIN_RANKED_TOPICS = 4;
 
 /**
  * A subject counts as ranked once this share of its topics is rated: a reading of past papers that
- * names one of ENEM's 23 science contents ("Ecologia") ranks nothing else.
+ * names one of ENEM's 23 science contents ("Ecology") ranks nothing else.
  */
 const MIN_RATED_SHARE = 1 / 3;
 
@@ -79,9 +67,9 @@ function findOnly({
 
 /**
  * The subject's topic a past-paper reading names: the same words, else the one topic that contains
- * them or that they contain ("Ecologia" for "Ecologia e ciências ambientais"), else the one whose
- * words share the stems of all of its words ("Eletricidade" for "Fenômenos Elétricos e
- * Magnéticos"), so a reading that uses a topic's usual name still rates the notice's topic.
+ * them or that they contain ("Ecology" for "Ecology and environmental sciences"), else the one whose
+ * words share the stems of all of its words ("Electricity" for "Electric and Magnetic
+ * Phenomena"), so a reading that uses a topic's usual name still rates the notice's topic.
  */
 function findTopic({ subject, topic }: { subject: Subject; topic: string }): string | null {
   const wanted = toTopicKey(topic);
@@ -188,8 +176,8 @@ export function listUnratedSubjects({
 
 /**
  * Whether research looks up how often the exam asks its topics: a subject with several topics has
- * none rated (by its past papers or a lookup), and no lookup ran in the last month, when a source
- * may have published what the last one didn't find.
+ * none rated (by its past papers or a lookup), and no lookup finished in the last month, when a
+ * source may have published what the last one didn't find.
  */
 export function needsTopicFrequency({
   now,
@@ -200,9 +188,9 @@ export function needsTopicFrequency({
   structure: ExamStructure;
   topicFrequency: TopicFrequency;
 }): boolean {
-  const past = structure.pastTopicFrequency;
+  const checkedAt = structure.pastTopicFrequency?.checkedAt;
 
-  if (past && isRecent({ checkedAt: past.checkedAt, now })) {
+  if (checkedAt && isRecent({ checkedAt, now })) {
     return false;
   }
 

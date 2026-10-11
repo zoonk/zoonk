@@ -99,6 +99,15 @@ function cleanText(value: string | null): string | undefined {
   return text || undefined;
 }
 
+/**
+ * A course's name opens with a capital, as written on its own: a model that copied the learner's
+ * "medicina" made a plan line read "medicina na UFMG…" (Oct 2026).
+ */
+function cleanCourseName(value: string | null): string | undefined {
+  const text = cleanText(value);
+  return text && `${text.charAt(0).toLocaleUpperCase()}${text.slice(1)}`;
+}
+
 function cleanDailyMinutes(value: number | null): number | undefined {
   if (value === null || !Number.isFinite(value)) {
     return undefined;
@@ -175,7 +184,7 @@ function normalizeGoal({
     reason: cleanText(goal.reason),
     role: cleanText(goal.role),
     subject: cleanText(goal.subject) ?? title,
-    targetCourse: cleanText(goal.targetCourse),
+    targetCourse: cleanCourseName(goal.targetCourse),
     targetDate: cleanTargetDate({ date: goal.targetDate, today }),
     targetLanguage,
     targetPosition: cleanText(goal.targetPosition),

@@ -1,8 +1,8 @@
 import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
 
 /**
- * The Câmara dos Deputados notice of 2 Oct 2026 (Cebraspe), Analista Legislativo, Registro e
- * Redação, as research reads it: the basic subjects every role shares (P1) and the role's own (P2),
+ * The Câmara dos Deputados notice of 2 Oct 2026 (Cebraspe), Legislative Analyst, Records and
+ * Drafting, as research reads it: the basic subjects every role shares (P1) and the role's own (P2),
  * each with every numbered item of its syllabus.
  */
 export const CAMARA_BLUEPRINT: ExamOutline = {

@@ -73,7 +73,7 @@ export const LESSON_SPECS = {
           "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked.",
       },
       {
-        activityTemplate: "sliderGraph",
+        activityTemplate: "formulaModel",
         brief:
           "The learner moves a slider for n from 1 to 6 and watches ψ_n(x) and |ψ_n|² redraw, with E_n/E_1 displayed. Then ask how many nodes ψ_4 has (3) and what E_3/E_1 is (9, not 3).",
         kind: "activity",
@@ -220,7 +220,7 @@ export const LESSON_SPECS = {
           "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50).",
       },
       {
-        activityTemplate: "estimateReveal",
+        activityTemplate: "guessReveal",
         brief:
           "A stock falls 20%, from $100 to $80. Learner commits to an estimate of the percent rise needed to get back to $100, then sees the real answer: $20 ÷ $80 = 25%. Many will guess 20%; show how far off they were and why.",
         kind: "activity",

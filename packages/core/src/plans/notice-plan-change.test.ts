@@ -148,6 +148,49 @@ describe(proposeNoticeChange, () => {
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-20");
   });
 
+  // A new edition is something new: the plan it gives is offered once, even after Keep mine.
+  it("offers the notice's subjects again once per new edition after Keep mine", async () => {
+    const { blueprint, goal, library } = await plannedExam({
+      days: [],
+      targetDate: "2020-12-20",
+      year: 2020,
+    });
+
+    const noticeGraph: PlanGraph = {
+      ...library.graph,
+      skills: library.graph.skills.map((skill) => ({ ...skill, area: "Immunology", weight: 3 })),
+    };
+
+    const offer = () => proposeNoticeChange({ goalId: goal.id, graph: noticeGraph });
+
+    const keepMine = async () => {
+      const [proposal] = await findProposals(goal.id);
+      await decide({ changeId: proposal?.id ?? "", goalId: goal.id, status: "declined" });
+    };
+
+    await expect(offer()).resolves.toBe("proposed");
+    await keepMine();
+    await expect(offer()).resolves.toBe("none");
+
+    await prisma.examBlueprint.update({
+      data: {
+        edition: {
+          citations: [],
+          dates: [],
+          noticeUrl: null,
+          questionCount: null,
+          sourceHash: null,
+          year: 2021,
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
+    await expect(offer()).resolves.toBe("proposed");
+    await keepMine();
+    await expect(offer()).resolves.toBe("none");
+  });
+
   it("never proposes an estimated day over the goal's date, nor a day it already has", async () => {
     const estimated = await plannedExam({
       days: ["2019-11-03"],
@@ -279,6 +322,53 @@ describe(proposeNoticeChange, () => {
 
     await decide({ changeId: proposal?.id ?? "", goalId: goal.id, status: "applied" });
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-11-08");
+  });
+
+  // Sofia's understanding card said the OAB notice puts the exam on 10 January, and she kept
+  // "March"; Today then asked her the same thing again.
+  it("never asks again about a notice day the learner was offered and kept their month over", async () => {
+    const [user, blueprint, library] = await Promise.all([
+      userFixture(),
+      examBlueprint({ days: ["2020-11-08"], year: 2020 }),
+      planLibraryFixture({ skills: [{ lessons: 1 }, { lessons: 1 }] }),
+    ]);
+
+    const { goal } = await unplannedGoalFixture({
+      details: {
+        examMonth: 12,
+        examName: "Test Exam",
+        examYear: 2020,
+        offeredNoticeDay: "2020-11-08",
+      },
+      examBlueprintId: blueprint.id,
+      kind: "exam",
+      settings: { startDate: TODAY },
+      userId: user.id,
+    });
+
+    // The new plan's setup asks about the notice's day on Today, when there's one to ask about.
+    mockSession(user.id);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    await expect(findProposals(goal.id)).resolves.toHaveLength(0);
+    await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-01");
+
+    // Something new, the notice moving the exam, is asked.
+    await prisma.examBlueprint.update({
+      data: {
+        edition: {
+          citations: [],
+          dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam" }],
+          noticeUrl: null,
+          questionCount: null,
+          sourceHash: null,
+          year: 2020,
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
+    await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("proposed");
   });
 
   it("replaces a notice change still waiting with the newest one", async () => {

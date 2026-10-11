@@ -11,7 +11,7 @@ function formatOf(kind: Format["kind"], options: number | null = null): Format {
 }
 
 describe(getPlacementQuickFormat, () => {
-  it("asks true or false for an exam that judges assertions, like Cebraspe's Certo ou Errado", () => {
+  it("asks true or false for an exam that judges assertions, like Cebraspe's right-or-wrong statements", () => {
     expect(getPlacementQuickFormat({ formats: [formatOf("trueFalse"), formatOf("essay")] })).toBe(
       "trueFalse",
     );

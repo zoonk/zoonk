@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { deduplicateNormalizedTexts } from "@zoonk/utils/string";
 import { type PlayableLibraryStep, type PlayableWordHints } from "../contract";
 import { type LessonPairResources, type PlayableStepRow, toPlayableSteps } from "./playable-step";
@@ -132,5 +133,10 @@ export async function loadPlayableSteps({
   rows: PlayableStepRow[];
 }): Promise<PlayableLibraryStep[]> {
   const resources = await loadExerciseResources({ lesson, rows });
-  return toPlayableSteps({ resources, rows });
+
+  const sameLanguage = lesson.targetLanguage
+    ? isSameLanguage({ learnerLanguage: lesson.language, targetLanguage: lesson.targetLanguage })
+    : false;
+
+  return toPlayableSteps({ resources, rows, sameLanguage });
 }

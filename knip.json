@@ -33,7 +33,12 @@
     "apps/evals": { "entry": ["scripts/*.{ts,mts}!"] },
     "apps/mailbox": { "project": ["src/**/*.{ts,tsx,css}!", "!src/server/**!"] },
     "apps/main": {
-      "entry": [".eloqnt/config.ts", "src/app/*/privacy/*.mdx", "src/app/*/terms/*.mdx"],
+      "entry": [
+        ".eloqnt/config.ts",
+        "e2e/prepare-data.ts",
+        "src/app/*/privacy/*.mdx",
+        "src/app/*/terms/*.mdx"
+      ],
       "project": ["src/**/*.{ts,tsx,mdx,css}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "packages/ai": {
@@ -44,7 +49,8 @@
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
       "entry": ["prisma.config.ts", "src/prisma/sync-content.{ts,mts}!", "src/scripts/*.ts"],
-      "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
+      "project": ["**/*.{ts,mts}!", "!src/scripts/**!", "!src/prisma/seed.ts!"],
+      "ignore": ["src/prisma/seed/**"],
       "prisma": false
     },
     "packages/learn": { "entry": [".eloqnt/config.ts"], "project": ["src/**/*.{ts,tsx}!"] },

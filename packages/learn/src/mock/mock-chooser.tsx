@@ -21,11 +21,13 @@ import {
   MockWriting,
   ResultRule,
 } from "./mock-chooser-parts";
+import { MockLeftOutNote } from "./mock-notes";
 import {
   useMockOptionDetail,
   useMockOptionName,
   usePlacementLengthChoices,
 } from "./mock-option-labels";
+import { MockSizeNote } from "./mock-size-note";
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
 
@@ -36,7 +38,8 @@ export type MockStart =
   | { option: MockOptionView; purpose: "practice" }
   | { length: PlacementMockLength; purpose: "placement" };
 
-function toKey(option: MockOptionView): string {
+/** One option's key among the goal's, as the chooser and its `short` status name it. */
+export function getMockOptionKey(option: MockOptionView): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");
 }
 
@@ -53,7 +56,7 @@ function useMockChoices({
   return options.map((option) => ({
     description: detail({ option, severalDays }),
     label: name({ option, severalDays }),
-    value: toKey(option),
+    value: getMockOptionKey(option),
   }));
 }
 
@@ -123,9 +126,14 @@ function PracticeChooser({
 }) {
   const t = useExtracted();
   const [first] = view.options;
-  const [picked, setPicked] = useState(first ? toKey(first) : "");
-  const option = view.options.find((candidate) => toKey(candidate) === picked) ?? null;
+  const [picked, setPicked] = useState(first ? getMockOptionKey(first) : "");
+  const option = view.options.find((candidate) => getMockOptionKey(candidate) === picked) ?? null;
   const open = view.access === "open";
+  // How much of the picked mock is ready; picking another one starts over.
+  const short = status.kind === "short" && status.optionKey === picked ? status : null;
+
+  const shown: MockChooserStatus =
+    status.kind === "short" && !short ? { kind: "choosing" } : status;
 
   return (
     <TaskFrame
@@ -134,14 +142,20 @@ function PracticeChooser({
       exitToApp
       footer={
         <>
-          <ChooserProblem status={status} />
+          <ChooserProblem status={shown} />
           {open ? (
             <TaskMainButton
               busy={busy}
               disabled={!option}
               onClick={() => option && onStart({ option, purpose: "practice" })}
             >
-              {busy ? t("Getting it ready…") : t("Start")}
+              {busy && t("Getting it ready…")}
+              {!busy &&
+                short &&
+                t("Start with {count, plural, one {# question} other {# questions}}", {
+                  count: short.questions,
+                })}
+              {!busy && !short && t("Start")}
             </TaskMainButton>
           ) : (
             <TaskMainLink href={hrefs.plus}>{t("See Plus")}</TaskMainLink>
@@ -159,6 +173,22 @@ function PracticeChooser({
       </StepCard>
 
       <MockOptionLists onPick={setPicked} picked={picked} view={view} />
+      <div className="-mt-2 flex flex-col gap-1 px-1">
+        {first && (
+          <MockSizeNote
+            document={view.examDocument}
+            size={{ minutes: first.minutes, questions: first.questions }}
+            source={view.sizeSource}
+          />
+        )}
+        {/* The picked mock's own: a subject's leaves out less than the whole day. Half of a day
+            already says "objective part only" beside it. */}
+        {option && (
+          <MockLeftOutNote
+            leftOut={option.leftOut.filter((part) => part.part !== "writtenInFull")}
+          />
+        )}
+      </div>
 
       {open ? <ResultRule /> : <MockPlusNotice />}
     </TaskFrame>

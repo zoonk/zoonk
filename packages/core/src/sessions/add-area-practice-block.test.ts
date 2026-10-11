@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
-import { guardianLinkFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -195,12 +195,12 @@ describe(addAreaPracticeBlock, () => {
     ).resolves.toStrictEqual({ status: "notFound" });
   });
 
-  it("fits a guardian's daily limit, and adds nothing once too little of it is left", async () => {
+  it("fits the learner's daily limit, and adds nothing once too little of it is left", async () => {
     const { chapters, goal, user } = await setup();
     const input = { areaId: chapters[0]?.id ?? "", timeZone: "UTC" };
 
     await Promise.all([
-      guardianLinkFixture({ dailyLimitMinutes: 10, status: "active", userId: user.id }),
+      learningProfileFixture({ dailyLimitMinutes: 10, userId: user.id }),
       dailyProgressFixtureMany([
         { date: SESSION_TODAY, timeSpentSeconds: 7 * 60, userId: user.id },
       ]),

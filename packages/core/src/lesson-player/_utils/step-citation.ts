@@ -17,7 +17,7 @@ function citesMaterial(row: CitedRow): boolean {
 }
 
 /**
- * Where a screen came from: a page of the learner's own material ("Aula 5, slide 4"), or a public
+ * Where a screen came from: a page of the learner's own material ("Class 5, slide 4"), or a public
  * document its facts come from, with the date it was last checked.
  */
 export function getStepCitation(row: CitedRow): LessonStepCitation | null {

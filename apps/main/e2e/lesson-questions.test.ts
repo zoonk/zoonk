@@ -67,8 +67,13 @@ type QuestionLessonScenario = {
  */
 async function createQuestionLesson({
   includeSecondStep = false,
+  language = "en",
   staticOnly = false,
-}: { includeSecondStep?: boolean; staticOnly?: boolean } = {}): Promise<QuestionLessonScenario> {
+}: {
+  includeSecondStep?: boolean;
+  language?: string;
+  staticOnly?: boolean;
+} = {}): Promise<QuestionLessonScenario> {
   const uniqueId = randomUUID().slice(0, 8);
   const question = `Why does a satellite stay in orbit ${uniqueId}?`;
   const correctOption = `Gravity bends its path ${uniqueId}`;
@@ -99,7 +104,7 @@ async function createQuestionLesson({
   };
 
   const { lesson, steps } = await playableLessonFixture({
-    lesson: { title: `Staying in orbit ${uniqueId}` },
+    lesson: { language, title: `Staying in orbit ${uniqueId}` },
     steps: includeSecondStep ? [firstStep, secondStep] : [firstStep],
   });
 
@@ -318,6 +323,45 @@ test.describe("The tutor", () => {
       context: { kind: "step", stepId: scenario.stepIds[1], stepNumber: 2 },
       question: followUp,
     });
+  });
+});
+
+/** Opens the tutor on the lesson's first screen and taps "another example", as its chip reads. */
+async function tapExample({ language, page }: { language: string; page: Page }) {
+  const scenario = await createQuestionLesson({ language, staticOnly: true });
+  const api = await mockQuestionApi({ lessonId: scenario.lessonId, page });
+
+  await page.goto(scenario.url);
+  await page.getByRole("button", { name: "Ask Buddy" }).click();
+
+  const chips = page.getByRole("dialog").locator('[data-slot="empty-content"]').getByRole("button");
+
+  await expect(chips).toHaveCount(3);
+  const example = chips.nth(2);
+  const label = await example.innerText();
+
+  await example.click();
+  await expect.poll(() => api.inputs.length).toBe(1);
+
+  return { input: api.inputs[0], label };
+}
+
+test.describe("The tutor's suggestions", () => {
+  test("read the lesson's language from its payload and send which one was tapped, in those words", async ({
+    userWithoutProgress: page,
+  }) => {
+    const english = await tapExample({ language: "en", page });
+
+    expect(english).toMatchObject({
+      input: { question: "Give me another example", suggestion: "example" },
+      label: "Give me another example",
+    });
+
+    // A lesson in Portuguese suggests in Portuguese, whatever the app's language.
+    const portuguese = await tapExample({ language: "pt", page });
+
+    expect(portuguese.label).not.toBe(english.label);
+    expect(portuguese.input).toMatchObject({ question: portuguese.label, suggestion: "example" });
   });
 });
 

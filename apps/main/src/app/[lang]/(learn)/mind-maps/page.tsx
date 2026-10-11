@@ -1,5 +1,7 @@
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
+import { getReachedCap } from "@zoonk/core/entitlements/contract";
+import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -26,13 +28,22 @@ async function MindMapsBody() {
     );
   }
 
-  const result = await listGoalMindMaps({ goalId: goal.id });
+  const [result, allowance] = await Promise.all([
+    listGoalMindMaps({ goalId: goal.id }),
+    getAllowance(),
+  ]);
 
   if (result.status !== "ready") {
     notFound();
   }
 
-  return <MindMapsClient goalId={goal.id} mindMaps={result.mindMaps} />;
+  return (
+    <MindMapsClient
+      cap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
+      goalId={goal.id}
+      mindMaps={result.mindMaps}
+    />
+  );
 }
 
 function MindMapsSkeleton() {

@@ -21,6 +21,16 @@ function minutesOn(date: string, isExam = true) {
   });
 }
 
+/** The minutes on a date for an exam whose plan studies everything, going on after the exam. */
+function studyingEverything(date: string) {
+  return getPlannedMinutes({
+    calendar,
+    date: fromIsoDate(date),
+    exam: { fullCourse: true, planStart: fromIsoDate("2026-09-28"), shortMockMinutes: null },
+    targetDate: TARGET,
+  });
+}
+
 describe(getPlannedMinutes, () => {
   it("follows the week, rest days and light weeks", () => {
     expect(minutesOn("2026-09-28")).toBe(45);
@@ -31,7 +41,14 @@ describe(getPlannedMinutes, () => {
   it("keeps the day before an exam light and plans nothing from the exam on", () => {
     expect(minutesOn("2026-11-07")).toBe(15);
     expect(minutesOn("2026-11-08")).toBe(0);
+    expect(minutesOn("2026-11-09")).toBe(0);
     expect(minutesOn("2026-11-07", false)).toBe(45);
+  });
+
+  it("goes on after the exam day when the exam's plan studies everything", () => {
+    expect(studyingEverything("2026-11-07")).toBe(15);
+    expect(studyingEverything("2026-11-08")).toBe(0);
+    expect(studyingEverything("2026-11-09")).toBe(45);
   });
 });
 
@@ -43,6 +60,7 @@ describe(createExamDays, () => {
     const dayShape = createExamDays({
       calendar: { dailyMinutes: 45, firstDay: null, lightWeeks: [], weekdayMinutes: null },
       eventWeekday: 0,
+      fullMockMinutes: 300,
       mockMinutes: 150,
       practiceBias: "balanced",
       rules: { planStart, shortMockMinutes: 30 },

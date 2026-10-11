@@ -31,8 +31,7 @@ function afterPageLoad(): Promise<void> {
  * PostHog's browser SDK, loaded and started once after the page has loaded, so its size never
  * delays the first paint. Apps call it from `instrumentation-client` so every page starts it, and
  * every browser analytics call waits for it, which keeps events sent during hydration. Resolves to
- * null when PostHog isn't configured or outside the browser. Session replay is off at start:
- * `PostHogIdentify` turns it on only for learners whose age allows it.
+ * null when PostHog isn't configured or outside the browser.
  */
 export function loadPostHog(): Promise<PostHog | null> {
   const config = getPostHogConfig();
@@ -44,11 +43,7 @@ export function loadPostHog(): Promise<PostHog | null> {
   postHog ??= afterPageLoad()
     .then(() => import("posthog-js"))
     .then(({ default: client }) => {
-      client.init(config.projectToken, {
-        api_host: config.host,
-        defaults: config.defaults,
-        disable_session_recording: true,
-      });
+      client.init(config.projectToken, { api_host: config.host, defaults: config.defaults });
 
       return client;
     });

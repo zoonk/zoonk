@@ -4,7 +4,7 @@ Activities are templates the writer picks and fills, never code per lesson. An `
 
 ```ts
 {
-  template: "sliderGraph",           // one of the 43 templates
+  template: "formulaModel",          // one of the 35 templates
   prompt: "Move the rate...",        // the instruction at the top
   fields: { ... },                   // what the writer fills, per template
   check: { kind: "choice" | "numeric" | "interaction", ... },
@@ -28,13 +28,17 @@ Formulas use the safe expression language in `expression/`: numbers, variables, 
 
 ## Validation
 
-`validateActivity(content)` runs before publishing and returns `{ ok: true, content }` or `{ ok: false, issues }`. Issue codes: `invalidSchema`, `labelTooLong`, `unknownTemplate`, `missingCheck`, `checkNotAllowed`, `missingInteraction` (nothing to move, order or find), `formulaFails`, `answerMismatch`, `missingDataSource`, `inconsistentFields` and `unknownAsset` (a base map or diagram that isn't in core's checked libraries, `base-maps.ts` and `diagrams.ts`). Messages say what to fix, for the writer's repair step.
+`validateActivity(content)` runs before publishing and returns `{ ok: true, content }` or `{ ok: false, issues }`. Issue codes: `invalidSchema`, `labelTooLong`, `unknownTemplate`, `missingCheck`, `checkNotAllowed`, `missingInteraction` (nothing to move, order or find), `formulaFails`, `answerMismatch`, `missingDataSource`, `inconsistentFields` and `unknownAsset` (a base map that isn't in core's checked library, `base-maps.ts`). Messages say what to fix, for the writer's repair step.
 
 ## Code activities
 
 Code runner, code tracer and SQL playground answers are computed by running the code, not taken from the writer. `verifyActivityPrograms` (in `programs/`, called by the lesson quality gate) runs a code runner's `solution` and requires `expectedOutput` to be exactly what it prints (and the starter code not to print it already), replays a code tracer's program and requires its trace to match the run, and runs a SQL playground's `solution` and requires the expected rows. Its issues use the validator's format, with `programFails` for code that errors, loops or floods. It grades those runs with `checkActivityAnswer`, so they pass exactly when a learner doing the same would.
 
 Programs never run in the server's own process. Each batch goes to a separate Node process started with no environment variables, read access only to the runtimes' files, no child processes or workers and no code generation from strings; inside it JavaScript runs in QuickJS (`quickjs-wasi`), Python in Pyodide (loaded only when a lesson has Python) and SQL in sql.js, all WebAssembly, with network and host globals removed. Time and output limits are the player's (`program-limits.ts`), and the player's browser sandbox shares the console formatting (`console-values.ts`), SQL setup and Python error parsing, so the check and the player print the same program the same way.
+
+## Engines with modes
+
+A template is a generic engine, never one topic: the formula model covers calculators, physics simulations and what-if scenarios; lines and their crossing covers supply and demand, break-even and two equations; the combination grid covers Punnett squares, dice and times tables. When an engine's modes differ, its rules can depend on a screen's fields: `checksFor` narrows the check kinds, and `needsData` and `choicesNeedValues` take a function of the fields. Templates merged into an engine are listed in `RETIRED_TEMPLATES` (`activity-templates.ts`), so lesson plans saved before a merge name the engine; stored screens of a retired template no longer parse, so the player leaves them out and an explanation drops its explored template.
 
 ## Adding a template
 

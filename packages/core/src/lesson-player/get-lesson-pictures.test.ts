@@ -1,8 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import {
+  numberedCheckContent,
+  pictureCheckContent,
+} from "@zoonk/testing/fixtures/playable-step-contents";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
@@ -126,5 +131,75 @@ describe(getLessonPictures, () => {
     mockSession(owner.id);
     await expect(getLessonPictures({ lessonId: privateLesson.id })).resolves.toHaveLength(1);
     await expect(getLessonPictures({ lessonId: "not-a-lesson" })).resolves.toStrictEqual([]);
+  });
+
+  it("waits on a question's picture options, then hands each over keyed by its option", async () => {
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [{ content: pictureCheckContent, kind: "check" }],
+    });
+
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+
+    expect(played?.status === "ready" && played.lesson.steps[0]).toMatchObject({
+      image: null,
+      imagePending: true,
+    });
+
+    const asset = await mediaAssetFixture();
+
+    await prisma.stepOptionPicture.create({
+      data: { mediaAssetId: asset.id, optionId: "gothic", stepId: steps[0]?.id ?? "" },
+    });
+
+    const [gothic] = pictureCheckContent.options;
+
+    await expect(getLessonPictures({ lessonId: lesson.id })).resolves.toStrictEqual([
+      {
+        image: expect.objectContaining({ alt: gothic?.picture.alt, id: asset.id }),
+        optionId: "gothic",
+        stepId: steps[0]?.id,
+      },
+    ]);
+
+    const replayed = await getPlayableLibraryLesson({ lessonId: lesson.id });
+
+    // Two options still wait for theirs.
+    expect(replayed?.status === "ready" && replayed.lesson.steps[0]).toMatchObject({
+      imagePending: true,
+      optionPictures: { gothic: expect.objectContaining({ id: asset.id }) },
+    });
+  });
+
+  it("leaves out a question about a numbered picture that never came, and a diagram's key", async () => {
+    const explore = {
+      fields: activityContentFixtures.labeledDiagram.fields,
+      template: "labeledDiagram",
+    };
+
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [
+        { content: numberedCheckContent, kind: "check" },
+        { content: { explore, text: "The heart has four chambers." }, kind: "explanation" },
+        { content: activityContentFixtures.labeledDiagram, kind: "activity" },
+      ],
+    });
+
+    // Moments after the lesson was written, every screen waits for its numbered picture.
+    const fresh = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    expect(fresh?.status === "ready" && fresh.lesson.steps).toHaveLength(3);
+
+    await prisma.step.updateMany({
+      data: { generatedAt: new Date(Date.now() - 3_600_000) },
+      where: { lessonId: lesson.id },
+    });
+
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const served = played?.status === "ready" ? played.lesson.steps : [];
+
+    // Without the numbers nobody can tell which part is which: the questions are left out, and
+    // the explanation teaches with its words alone.
+    expect(served.map((step) => step.id)).toStrictEqual([steps[1]?.id]);
+    expect(served[0]).toMatchObject({ content: { text: "The heart has four chambers." } });
+    expect(served[0]?.kind === "explanation" && served[0].content.explore).toBeUndefined();
   });
 });

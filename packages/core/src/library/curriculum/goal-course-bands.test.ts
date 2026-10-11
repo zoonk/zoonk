@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   groupGoalCourseBands,
+  keepNearCourseBands,
   orderGoalCourses,
-  splitGoalCourseBands,
   toGoalCourses,
 } from "./goal-course-bands";
 import { type GoalSkillGraph } from "./save-goal-skills";
@@ -55,7 +55,16 @@ describe(groupGoalCourseBands, () => {
     expect(result[1]?.bands[0]).toStrictEqual({
       firstPhase: 2,
       level: "beginner",
-      skills: [{ description: "Idea a1", id: "id-a1", key: "a1", lessons: 2, name: "Skill a1" }],
+      skills: [
+        {
+          area: "Course A",
+          description: "Idea a1",
+          id: "id-a1",
+          key: "a1",
+          lessons: 2,
+          name: "Skill a1",
+        },
+      ],
     });
   });
 
@@ -101,8 +110,22 @@ describe(toGoalCourses, () => {
         firstPhase: 2,
         level: "beginner",
         skills: [
-          { description: "Idea a1", id: "id-a1", key: "a1", lessons: 2, name: "Skill a1" },
-          { description: "Idea a2", id: "id-a2", key: "a2", lessons: 2, name: "Skill a2" },
+          {
+            area: "Course A",
+            description: "Idea a1",
+            id: "id-a1",
+            key: "a1",
+            lessons: 2,
+            name: "Skill a1",
+          },
+          {
+            area: "Course A",
+            description: "Idea a2",
+            id: "id-a2",
+            key: "a2",
+            lessons: 2,
+            name: "Skill a2",
+          },
         ],
         withToolChapters: true,
       },
@@ -123,27 +146,20 @@ describe(toGoalCourses, () => {
   });
 });
 
-describe(splitGoalCourseBands, () => {
-  it("keeps a band near when the plan reaches any of its skills, and the rest for later", () => {
+describe(keepNearCourseBands, () => {
+  it("keeps the bands the plan reaches a skill of, and leaves the rest for later", () => {
     const needs = groupGoalCourseBands({ graph, idsByKey: ids });
-    const { far, near } = splitGoalCourseBands({ nearSkillIds: new Set(["id-a1"]), needs });
+    const near = keepNearCourseBands({ nearSkillIds: new Set(["id-a1"]), needs });
 
     expect(
       near.map((course) => [course.key, course.bands.map((band) => band.level)]),
     ).toStrictEqual([["a", ["beginner"]]]);
-
-    expect(far.map((course) => [course.key, course.bands.map((band) => band.level)])).toStrictEqual(
-      [
-        ["b", ["overview"]],
-        ["a", ["intermediate"]],
-      ],
-    );
   });
 
-  it("leaves nothing for later when the plan reaches every band", () => {
+  it("keeps every band when the plan reaches all of them", () => {
     const needs = groupGoalCourseBands({ graph, idsByKey: ids });
     const everything = new Set(Object.values(ids));
 
-    expect(splitGoalCourseBands({ nearSkillIds: everything, needs }).far).toStrictEqual([]);
+    expect(keepNearCourseBands({ nearSkillIds: everything, needs })).toStrictEqual(needs);
   });
 });

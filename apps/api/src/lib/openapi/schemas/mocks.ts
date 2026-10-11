@@ -1,34 +1,15 @@
-import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
+import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
-  MOCK_PURPOSES,
-  MOCK_SCORINGS,
   type MockOptionView,
   type MockOptionsView,
   PLACEMENT_MOCK_LENGTHS,
   type PlacementMockOptionView,
-  mockChoiceSchema,
-  mockResultSchema,
   mockShapeSchema,
 } from "@zoonk/core/exams/mocks/contract";
-import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
-import { MistakeCause } from "@zoonk/db";
 import { z } from "zod";
-import { itemCitationSchema, questionImageSchema, questionVisualSchema } from "./common";
-import { clockTimeSchema } from "./exams";
-import { logicalDateSchema } from "./study-sessions";
-
-const mockQuestionSchema = z.object({
-  area: z.string().nullable(),
-  context: z.string().nullable(),
-  format: z.enum(["multipleChoice", "trueFalse"]),
-  image: questionImageSchema,
-  itemId: z.uuid(),
-  number: z.number().int().min(1),
-  options: z.array(z.string()).nullable(),
-  question: z.string(),
-  skillId: z.uuid(),
-  visual: questionVisualSchema,
-});
+import { mockPurposeSchema } from "./mock-exam";
+import { mockLeftOutSchema } from "./mock-left-out";
+import { mockSizeSourceSchema } from "./mock-parts";
 
 const estimatedMinutesSchema = z
   .number()
@@ -42,7 +23,15 @@ const estimatedMinutesSchema = z
 const mockOptionSchema = mockShapeSchema
   .extend({
     areas: z.array(z.string()).meta({ description: "The notice's subjects it asks, in its words" }),
+    covers: z
+      .array(z.string())
+      .nullable()
+      .meta({
+        description:
+          "The exam day's sections it sits, by the notice's names (Listening, Reading), when it leaves one out that isn't a written part (IELTS's Speaking): say what it covers. Null when it sits every such section, and for a subject's mock",
+      }),
     estimatedMinutes: estimatedMinutesSchema,
+    leftOut: mockLeftOutSchema,
     minutes: z
       .number()
       .int()
@@ -52,9 +41,15 @@ const mockOptionSchema = mockShapeSchema
       .boolean()
       .meta({
         description:
-          "The exam day also has a written part (a redação, a discursive test) this mock leaves out",
+          "The exam day also has a written part (an essay, a discursive test) this mock leaves out",
       }),
     questions: z.number().int().min(0),
+    written: z
+      .array(z.string())
+      .meta({
+        description:
+          "The written parts a full mock asks beside its questions, as the notice names them (the exam's own essays, graded by its rubric once it's over)",
+      }),
   })
   .meta({ id: "MockOption" }) satisfies z.ZodType<MockOptionView>;
 
@@ -80,13 +75,6 @@ const placementMockOptionSchema = z
   })
   .meta({ id: "PlacementMockOption" }) satisfies z.ZodType<PlacementMockOptionView>;
 
-const mockPurposeSchema = z
-  .enum(MOCK_PURPOSES)
-  .meta({
-    description:
-      "`planned`: the plan's weekly mock. `practice`: one taken any time. `placement`: a diagnostic mock taken in onboarding instead of the quick placement",
-  });
-
 export const mockOptionsResponseSchema = z
   .object({
     access: z
@@ -95,6 +83,7 @@ export const mockOptionsResponseSchema = z
         description:
           "`plusRequired`: every mock exam comes with Plus (the placement one included); show the options with what it takes",
       }),
+    examDocument: examDocumentSchema,
     examName: z.string(),
     goalId: z.uuid(),
     options: z
@@ -131,20 +120,49 @@ export const mockOptionsResponseSchema = z
         description:
           "The mock taken any time the learner started and hasn't finished: continue it (GET /v1/mocks/{id}) before starting another",
       }),
+    sizeSource: mockSizeSourceSchema,
   })
   .meta({ id: "MockOptions" }) satisfies z.ZodType<MockOptionsView>;
 
 export const anytimeMockResponseSchema = z
   .object({
+    examQuestions: z
+      .number()
+      .int()
+      .min(0)
+      .optional()
+      .meta({ description: "For `short`: the questions of what was picked, in the real exam" }),
     id: z
       .uuid()
       .nullable()
-      .meta({ description: "The mock's id (GET /v1/mocks/{id}); null for needsQuestions" }),
-    status: z
-      .enum(["started", "running", "needsQuestions"])
+      .meta({
+        description: "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
+      }),
+    limit: z
+      .enum(["day", "month", "total"])
+      .nullable()
+      .optional()
       .meta({
         description:
-          "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of the mock's questions: POST /goals/{goalId}/mocks/generations, follow the run, then start again (with `acceptFewer` after the run)",
+          "For `short`: the plan's fair use for new mock questions is used for the day or the month, so new ones can be written once it renews; null when there's nothing more to write now",
+      }),
+    minutes: z
+      .number()
+      .int()
+      .min(0)
+      .optional()
+      .meta({ description: "For `short`: the mock's time for the questions it can ask" }),
+    questions: z
+      .number()
+      .int()
+      .min(0)
+      .optional()
+      .meta({ description: "For `short`: the questions the mock can ask now" }),
+    status: z
+      .enum(["started", "running", "needsQuestions", "short"])
+      .meta({
+        description:
+          "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again (with `acceptFewer` after the run). `short`: the bank holds well under the questions picked and none can be written now: tell the learner how many it asks of the exam's and in how long, and start it with `acceptFewer` if they want",
       }),
   })
   .meta({ id: "AnytimeMock" });
@@ -161,7 +179,7 @@ export const mockQuestionsGenerationSchema = z
       .enum(["ready", "preparing", "generating"])
       .meta({
         description:
-          "`ready`: start the mock now. `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `acceptFewer`",
+          "`ready`: start the mock now with `acceptFewer`: the bank holds its questions, or the plan's fair use for new questions is used for now, so it asks what the bank has (see `startAnytimeMock`). `preparing`: the goal's skill map is still being drawn; ask again in a few seconds. `generating`: follow the run's stream until `mockQuestionsReady`, then start the mock with `acceptFewer`",
       }),
   })
   .meta({ id: "MockQuestionsGeneration" });
@@ -185,106 +203,3 @@ export const mockPlanOfferResultSchema = z
     status: z.enum(["applied", "unchanged"]),
   })
   .meta({ id: "MockPlanOfferResult" });
-
-const mockAdaptSchema = z
-  .object({
-    focus: z
-      .object({ area: z.string(), correct: z.number().int(), total: z.number().int() })
-      .nullable()
-      .meta({ description: "The area that went worst, to give more of the plan's time" }),
-    skip: z
-      .object({ lessons: z.number().int().min(1), topics: z.array(z.string()) })
-      .nullable()
-      .meta({
-        description:
-          "The lessons of the topics the mock showed the learner knows (every question right), to skip",
-      }),
-  })
-  .nullable()
-  .meta({
-    description:
-      "What the finished mock offers to change in the plan, each applied only once the learner says so (POST /v1/mocks/{blockId}/plan-changes); null before it's over and for a placement mock",
-    id: "MockAdapt",
-  });
-
-export const mockViewResponseSchema = z
-  .object({
-    adapt: mockAdaptSchema,
-    blockId: z.uuid(),
-    brainPower: z.number().int(),
-    canMove: z.boolean().meta({ description: '"Move to Monday" is possible before it starts' }),
-    checklist: z.array(z.enum(EXAM_DAY_CHECKLIST)),
-    current: z
-      .object({
-        deadline: z.iso.datetime(),
-        drafts: z.array(
-          z.object({
-            answer: mockChoiceSchema.nullable(),
-            durationMs: z.number().int(),
-            flagged: z.boolean(),
-            itemId: z.uuid(),
-          }),
-        ),
-        questions: z.array(mockQuestionSchema),
-        section: z.number().int().min(0),
-      })
-      .nullable()
-      .meta({ description: "The running section, never with answers" }),
-    date: logicalDateSchema,
-    examName: z.string().nullable(),
-    fullLength: z.boolean(),
-    goalId: z.uuid().nullable(),
-    minutes: z.number().int(),
-    mistakes: z.array(
-      z.object({ cause: z.enum(MistakeCause).nullable(), count: z.number().int() }),
-    ),
-    number: z.number().int().min(1),
-    planItemId: z
-      .uuid()
-      .nullable()
-      .meta({ description: "The plan item it plays: its challenge, before and on its day" }),
-    purpose: mockPurposeSchema,
-    questions: z.number().int(),
-    result: mockResultSchema.nullable(),
-    review: z.array(
-      z.object({
-        area: z.string().nullable(),
-        citation: itemCitationSchema,
-        correctAnswer: z.string().nullable(),
-        explanation: z.string().nullable(),
-        format: z.enum(["multipleChoice", "trueFalse"]),
-        itemId: z.uuid(),
-        learnerAnswer: z.string().nullable(),
-        number: z.number().int(),
-        outcome: z.enum(["blank", "wrong"]),
-        question: z.string(),
-      }),
-    ),
-    scoring: z.enum(MOCK_SCORINGS),
-    scoringNote: z.string().nullable(),
-    sections: z.array(
-      z.object({
-        index: z.number().int(),
-        minutes: z.number().int(),
-        name: z.string().nullable(),
-        questions: z.number().int(),
-        status: z.enum(["current", "done", "upcoming"]),
-      }),
-    ),
-    sessionId: z
-      .uuid()
-      .nullable()
-      .meta({ description: "The study session it was played in; null for a mock taken any time" }),
-    shape: mockShapeSchema
-      .nullable()
-      .meta({ description: "What a mock taken any time sits; null for the plan's own" }),
-    startTime: clockTimeSchema.nullable(),
-    status: z.enum(["ready", "running", "finished"]),
-    timeZone: z.string().nullable(),
-    trueFalseLabels: trueFalseLabelsSchema,
-  })
-  .meta({ id: "MockExam" });
-
-export const mockStepResponseSchema = z
-  .object({ status: z.enum(["next", "finished"]) })
-  .meta({ id: "MockStep" });

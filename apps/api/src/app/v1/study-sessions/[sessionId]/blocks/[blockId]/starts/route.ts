@@ -5,17 +5,21 @@ import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { scheduleSessionPreparation } from "@/lib/session-preparation";
 import { studySessionError } from "@/lib/study-session-errors";
-import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
+import { studyBlockStartInputSchema } from "@zoonk/core/sessions/contract";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Starts or resumes a block; a guardian's daily limit is checked before anything new starts. */
+/**
+ * Starts or resumes a block; the learner's daily limit is checked before anything new starts. A
+ * challenge whose questions aren't written yet answers `QUESTIONS_NEEDED`: POST its generations,
+ * wait for the run, then start it again with `afterWriting`.
+ */
 async function createStart(
   request: NextRequest,
   context: RouteContext<"/v1/study-sessions/[sessionId]/blocks/[blockId]/starts">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, studySessionTimeZoneInputSchema),
+    parseBody(request, studyBlockStartInputSchema),
     context.params.then((params) =>
       parsePathParams({ params, schema: studyBlockPathParamsSchema }),
     ),

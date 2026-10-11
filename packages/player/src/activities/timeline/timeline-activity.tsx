@@ -65,18 +65,69 @@ function resultOf({
 }
 
 /**
+ * Every event at its real date on the true-to-scale axis, with the years between them: the
+ * timeline explored on an explanation screen, with nothing to place.
+ */
+function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | "labelId">) {
+  const t = useExtracted();
+  const { fields } = content;
+  const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
+  const formatYear = useFormatYear(fields.start);
+  const dated = [...fields.anchors, ...fields.events].toSorted((a, b) => a.year - b.year);
+
+  const gap = cardGap(
+    dated.map((item) => item.label),
+    width,
+  );
+
+  const axis = {
+    end: fields.end,
+    height: Math.max(MIN_HEIGHT, gap * (dated.length + 1)),
+    start: fields.start,
+  };
+
+  const { trackRef, yearAt } = useTimelineAxis(axis);
+
+  return (
+    <ActivityCanvas labelId={labelId}>
+      <div ref={ref}>
+        <TimelineTrack
+          anchors={dated}
+          axis={axis}
+          cardGap={gap}
+          cardRefs={() => null}
+          disabled
+          events={[]}
+          formatYear={formatYear}
+          onMove={() => null}
+          step={yearStep(fields.start, fields.end)}
+          trackRef={trackRef}
+          yearAt={yearAt}
+        />
+      </div>
+
+      <TimelineGaps anchors={fields.anchors} events={fields.events} formatYear={formatYear} />
+
+      <ActivityTextAlternative>
+        {t("A timeline from {start} to {end}.", {
+          end: formatYear(fields.end),
+          start: formatYear(fields.start),
+        })}{" "}
+        {dated
+          .map((item) => t("{label}: {year}.", { label: item.label, year: formatYear(item.year) }))
+          .join(" ")}
+      </ActivityTextAlternative>
+    </ActivityCanvas>
+  );
+}
+
+/**
  * Events placed on a true-to-scale axis, to feel how far apart they are. The learner drags each
  * event onto the timeline (or places it and moves it with the arrow keys), then sees where it
  * really belongs next to the guess, with the years between known dates. With an order check the
  * placed order is the answer; with a question the learner reveals the real dates first.
  */
-export function TimelineActivity({
-  content,
-  expected,
-  labelId,
-  onAnswerChange,
-  phase,
-}: TimelineProps) {
+function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }: TimelineProps) {
   const t = useExtracted();
   const { check, fields } = content;
   const { ref, width } = useMeasuredWidth<HTMLDivElement>(FALLBACK_WIDTH);
@@ -235,5 +286,14 @@ export function TimelineActivity({
           .join(" ")}
       </ActivityTextAlternative>
     </ActivityCanvas>
+  );
+}
+
+/** The timeline to place events on, or explored on an explanation screen with every date shown. */
+export function TimelineActivity(props: TimelineProps) {
+  return props.phase === "explore" ? (
+    <ExploredTimeline content={props.content} labelId={props.labelId} />
+  ) : (
+    <TimelineQuestion {...props} />
   );
 }

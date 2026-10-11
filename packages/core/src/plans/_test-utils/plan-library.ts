@@ -1,4 +1,4 @@
-import { type Skill } from "@zoonk/db";
+import { type CourseLevel, type Skill } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
@@ -6,13 +6,17 @@ import {
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { type PlanGraph } from "../planner/plan-state";
 
 type SkillSpec = {
   area?: string;
+  /** The index of the skill this one builds on: the Library's prerequisite edge between them. */
+  builds?: number;
   /** Library lessons to create for the skill; 0 leaves it to a placeholder of `size` lessons. */
   lessons: number;
+  /** The Library band the skill sits in (`Skill.level`). */
+  level?: CourseLevel;
   phase?: number;
   size?: number;
   weight?: number;
@@ -37,7 +41,9 @@ export async function planLibraryFixture({
   );
 
   const created: Skill[] = await Promise.all(
-    skills.map((_, index) => skillFixture({ name: `Planned skill ${index + 1}` })),
+    skills.map((spec, index) =>
+      skillFixture({ level: spec.level ?? null, name: `Planned skill ${index + 1}` }),
+    ),
   );
 
   const lessons = await Promise.all(
@@ -65,6 +71,17 @@ export async function planLibraryFixture({
         return lesson;
       }),
     ),
+  );
+
+  await Promise.all(
+    skills.flatMap((spec, index) => {
+      const skillId = created[index]?.id;
+      const prerequisiteId = spec.builds === undefined ? undefined : created[spec.builds]?.id;
+
+      return skillId && prerequisiteId
+        ? [skillPrerequisiteFixture({ prerequisiteId, skillId })]
+        : [];
+    }),
   );
 
   const graph: PlanGraph = {

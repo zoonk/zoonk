@@ -12,6 +12,7 @@ import { getKnownReusePolicy } from "../sources/reuse-policy";
 import { reusePolicySchema } from "../sources/source-contract";
 import { checkItem } from "./item-checks";
 import { toStoredItem } from "./item-content";
+import { repairItem } from "./item-repairs";
 import { checkPastQuestion } from "./past-question-checks";
 
 /** The goal's skills a paper's questions are matched to; more makes the prompt long for little. */
@@ -22,7 +23,7 @@ const IMPORT_LOCK_NAMESPACE = 51_880;
 
 /** One allowed past paper of an exam, and what its questions are copied into. */
 export type PastPaperTarget = {
-  /** The exam as the paper names it, such as "Enem" or "Polícia Federal, Agente". */
+  /** The exam as the paper names it, such as "Enem" or "Polícia Federal, Agent". */
   exam: string;
   examBlueprintId: string;
   format: PastQuestionFormat;
@@ -143,8 +144,33 @@ export async function loadPastPaperText(paperId: string): Promise<string | null>
 type RejectedQuestion = { number: string; problems: string[] };
 
 /**
+ * A copied question after code repaired what it can (`repairItem`), with what the item and quote
+ * checks still find and the skill it tests.
+ */
+function checkQuestion({
+  paperText,
+  question: written,
+  target,
+}: {
+  paperText: string;
+  question: PastQuestion;
+  target: PastPaperTarget;
+}) {
+  const { language, optionCount } = target;
+  const question = { ...written, item: repairItem({ item: written.item, language, optionCount }) };
+
+  const problems = [
+    ...checkItem({ expectedFormat: target.format, item: question.item, language, optionCount }),
+    ...checkPastQuestion({ paperText, question, skillCount: target.skills.length }),
+  ];
+
+  return { problems, question, skillId: target.skills[question.skill - 1]?.id };
+}
+
+/**
  * Stores the questions copied from a past paper that pass the item checks and the quote checks
- * (every quoted part is in the paper as printed, the citation names the question), each on the
+ * once code repaired what it can (every quoted part is in the paper as printed, the citation
+ * names the question), each on the
  * skill it tests, marked as quoted, in the paper's option order, citing it (`sourceCitation`)
  * and linked to it (`sourceId`), so practice shows where each came from. A paper is imported
  * once per exam: a second run for the same paper, even at the same moment, stores nothing.
@@ -162,19 +188,7 @@ export async function savePastQuestions({
   questions: readonly PastQuestion[];
   target: PastPaperTarget;
 }): Promise<{ created: number; rejected: RejectedQuestion[] }> {
-  const checked = questions.map((question) => ({
-    problems: [
-      ...checkItem({
-        expectedFormat: target.format,
-        item: question.item,
-        language: target.language,
-        optionCount: target.optionCount,
-      }),
-      ...checkPastQuestion({ paperText, question, skillCount: target.skills.length }),
-    ],
-    question,
-    skillId: target.skills[question.skill - 1]?.id,
-  }));
+  const checked = questions.map((question) => checkQuestion({ paperText, question, target }));
 
   const passing = checked.flatMap(({ problems, question, skillId }) =>
     problems.length === 0 && skillId ? [{ question, skillId }] : [],

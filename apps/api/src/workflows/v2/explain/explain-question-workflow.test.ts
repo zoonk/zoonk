@@ -191,7 +191,8 @@ describe(explainQuestionWorkflow, () => {
       visibility: "public",
     });
 
-    expect(lesson.skills[0]?.skill.name).toBe(question);
+    // Named by the explanation's neutral title, never the asker's own words.
+    expect(lesson.skills[0]?.skill.name).toBe("What “the market is up 2%” means");
     expect(stored.plan?.items).toMatchObject([{ kind: "lesson", lessonId: lesson.id }]);
     expect(stored.primaryCourse).toMatchObject({ title: courseTitle, visibility: "public" });
 
@@ -313,8 +314,12 @@ describe(explainQuestionWorkflow, () => {
     // Written while the search looked, and discarded once it found the first one.
     expect(generateQuickExplanation).toHaveBeenCalledOnce();
 
+    const taught = await prisma.lessonSkill.findFirstOrThrow({
+      where: { lessonId: written.lessonId ?? "" },
+    });
+
     await expect(
-      prisma.lesson.count({ where: { skills: { some: { skill: { name: question } } } } }),
+      prisma.lesson.count({ where: { skills: { some: { skillId: taught.skillId } } } }),
     ).resolves.toBe(1);
 
     await expect(
@@ -326,6 +331,78 @@ describe(explainQuestionWorkflow, () => {
       details: { relatedQuestions: ["What is an index fund?", "Why do stocks fall?"] },
       primaryCourse: { title: courseTitle },
     });
+  });
+
+  it("keeps the way to go further for the next learner after the first asker is deleted", async () => {
+    const question = `why do volcanoes erupt? ${crypto.randomUUID()}`;
+    const courseTitle = `Volcanoes ${crypto.randomUUID().slice(0, 8)}`;
+    const [first, second] = await Promise.all([explainGoal(question), explainGoal(question)]);
+
+    mockGenerality(true);
+
+    vi.mocked(generateQuickExplanation).mockResolvedValue(
+      taskResult(explanation(courseTitle), "openai/gpt-6-luna"),
+    );
+
+    await explainQuestionWorkflow({ goalId: first.goal.id });
+    await prisma.user.delete({ where: { id: first.user.id } });
+
+    await expect(explainQuestionWorkflow({ goalId: second.goal.id })).resolves.toMatchObject({
+      status: "reused",
+    });
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({
+        include: { primaryCourse: true },
+        where: { id: second.goal.id },
+      }),
+    ).resolves.toMatchObject({
+      details: { relatedQuestions: ["What is an index fund?", "Why do stocks fall?"] },
+      primaryCourse: { title: courseTitle },
+    });
+  });
+
+  it("finds the course to go further a guest's first question never got, for everyone after", async () => {
+    const question = `why do birds migrate? ${crypto.randomUUID()}`;
+    const courseTitle = `Birds ${crypto.randomUUID().slice(0, 8)}`;
+
+    const [guest, learner, later] = await Promise.all([
+      explainGoal(question),
+      explainGoal(question),
+      explainGoal(question),
+    ]);
+
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.user.id } });
+    mockGenerality(true);
+
+    vi.mocked(generateQuickExplanation).mockResolvedValue(
+      taskResult(explanation(courseTitle), "openai/gpt-6-luna"),
+    );
+
+    const written = await explainQuestionWorkflow({ goalId: guest.goal.id });
+
+    await expect(explainQuestionWorkflow({ goalId: learner.goal.id })).resolves.toMatchObject({
+      status: "reused",
+    });
+
+    const course = await prisma.course.findFirstOrThrow({ where: { title: courseTitle } });
+
+    expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
+      expect.objectContaining({ courseId: course.id }),
+    ]);
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: written.lessonId ?? "" } }),
+    ).resolves.toMatchObject({ goFurtherCourseId: course.id });
+
+    await explainQuestionWorkflow({ goalId: later.goal.id });
+
+    await expect(
+      prisma.goal.findMany({
+        select: { primaryCourseId: true },
+        where: { id: { in: [learner.goal.id, later.goal.id] } },
+      }),
+    ).resolves.toStrictEqual([{ primaryCourseId: course.id }, { primaryCourseId: course.id }]);
   });
 
   it("answers with the explanation already written even when the new writing fails", async () => {

@@ -7,7 +7,6 @@ import {
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../../cache/tags";
-import { parseCourseLandingPageContent } from "../../courses/course-landing-page";
 import { type LibraryProvenance } from "../_utils/library-rows";
 
 type DetailsAnalytics = CourseDetailsParams["analytics"];
@@ -34,12 +33,15 @@ function findCourse(courseId: string) {
 
 type DetailsCourse = NonNullable<Awaited<ReturnType<typeof findCourse>>>;
 
-/** What the course's public page still lacks. Filled fields are never rewritten. */
+/**
+ * What the course's public page still lacks. Filled fields are never rewritten, not even a landing
+ * page stored in an older shape: the change that moved the shape migrates it.
+ */
 function findMissingDetails(course: DetailsCourse) {
   return {
     categories: course.categories.length === 0,
     description: !course.description,
-    landingPage: !parseCourseLandingPageContent(course.landingPage),
+    landingPage: course.landingPage === null,
   };
 }
 

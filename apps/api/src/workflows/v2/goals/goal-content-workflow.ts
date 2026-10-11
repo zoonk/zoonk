@@ -8,13 +8,18 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken } from "../_shared/run-token";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
 import { isBuiltBeforeResearch, waitForGraphInputs } from "./goal-content-inputs";
-import { type BuiltCurriculum, buildCurriculum, startOutlines } from "./goal-curriculum";
+import { type BuiltCurriculum, buildCurriculum, setUpPlan, startOutlines } from "./goal-curriculum";
 import { followPlanStart } from "./goal-lookahead";
 import { preparePlanPlacement } from "./goal-placement-items";
 import { reconcileResearch, reconcileStoredPlan } from "./goal-research-reconcile";
 import { type GoalRunContext } from "./goal-run-context";
 import { isPlanPreparedStep, recordGoalBuildFailureStep } from "./steps/goal-build-outcome-steps";
-import { decideGoalScopeStep, loadGoalCurriculumStep } from "./steps/goal-curriculum-steps";
+import {
+  decideGoalScopeStep,
+  keepMaterialPrivate,
+  listPlanSetupTasksStep,
+  loadGoalCurriculumStep,
+} from "./steps/goal-curriculum-steps";
 import {
   listPlanOutlineNeedsStep,
   readGoalLookaheadStep,
@@ -110,7 +115,8 @@ async function reconcileRestartedResearch({
  * A goal that came with its plan (a plan link, a course start) gets what a built plan gets ahead,
  * once: outlines for the stand-ins its courses haven't written (within the learner's outline
  * window; later ones as the plan gets close), placement's questions for its skills, the likeliest
- * first lessons, and a language's level test.
+ * first lessons, and a language's level test. Setup its plan still owes (a task the request that
+ * built it, or an earlier run, couldn't finish) is done first, every time.
  */
 async function prepareExistingPlan({
   context,
@@ -122,6 +128,8 @@ async function prepareExistingPlan({
   researchId?: string | null;
 }): Promise<GoalContentResult> {
   const goalId = inputs.goal.id;
+
+  await setUpPlan({ goalId, tasks: await listPlanSetupTasksStep(goalId) });
 
   if (await isPlanPreparedStep(goalId)) {
     await goalProgressStep({ entityId: goalId, status: "completed", step: GOAL_READY_STEP });
@@ -181,7 +189,7 @@ async function buildPlan({
 
   // Who the curriculum is for needs only the goal as typed, so it's decided while the learner
   // answers the questions that shape the graph, and while research reads their material.
-  const [inputs, scope] = await Promise.all([
+  const [inputs, decided] = await Promise.all([
     waitForGraphInputs({ initial, researchId: input.researchId }),
     decideGoalScopeStep({ ...context, inputs: initial }),
     rebuild ? null : startPairLevelTest({ context, goal: initial.goal }),
@@ -191,8 +199,8 @@ async function buildPlan({
     return null;
   }
 
-  // A notice research read again before the graph (see `waitForGraphInputs`) is already in it.
-  const researchId = initial.readsNoticeAgain ? null : (input.researchId ?? null);
+  const scope = keepMaterialPrivate({ inputs, scope: decided });
+  const researchId = input.researchId ?? null;
   const curriculum = await buildCurriculum({ context, inputs, rebuild, researchId, scope });
 
   return { curriculum, inputs, researchId, scope };

@@ -105,6 +105,18 @@ describe(readOwnFile, () => {
     });
   });
 
+  // A call's better version of what the learner said, read aloud in a clip of their own.
+  it("serves a learner the clips of their own words", async () => {
+    const userId = randomUUID();
+    const pathname = `audio/${userId}/it-a.mp3`;
+    mockSession(userId);
+    vi.mocked(get).mockResolvedValue(storedFile({ bytes: "mp3", pathname }));
+
+    await expect(readOwnFile({ ifNoneMatch: null, pathname })).resolves.toMatchObject({
+      status: "ready",
+    });
+  });
+
   it("answers another learner as if the file didn't exist, without reading it", async () => {
     mockSession(randomUUID());
 
@@ -112,11 +124,13 @@ describe(readOwnFile, () => {
       [
         `images/${randomUUID()}/step-a.webp`,
         `sources/${randomUUID()}/notes.pdf`,
+        `audio/${randomUUID()}/it-a.mp3`,
         `speech/${randomUUID()}/take.webm`,
       ].map((pathname) => readOwnFile({ ifNoneMatch: null, pathname })),
     );
 
     expect(files).toStrictEqual([
+      { status: "notFound" },
       { status: "notFound" },
       { status: "notFound" },
       { status: "notFound" },

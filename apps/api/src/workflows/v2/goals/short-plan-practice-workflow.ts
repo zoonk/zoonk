@@ -1,7 +1,7 @@
 import { type ShortPlanPracticeNeed } from "@zoonk/core/lookahead/short-plan-practice";
 import { createHook, getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { preparePlacementItemsStep } from "./steps/goal-lookahead-steps";
+import { preparePlacementItems } from "./placement-items";
 
 export type ShortPlanPracticeInput = {
   analytics?: ContentAnalytics;
@@ -32,7 +32,7 @@ export async function shortPlanPracticeWorkflow(
     return { status: "joined" };
   }
 
-  await preparePlacementItemsStep({
+  await preparePlacementItems({
     analytics,
     goalId,
     quickCount: need.questionsPerSkill,

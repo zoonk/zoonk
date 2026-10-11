@@ -5,13 +5,13 @@ import {
 } from "@zoonk/core/library/curriculum/course-start-graph";
 import {
   groupGoalCourseBands,
+  keepNearCourseBands,
   orderGoalCourses,
-  splitGoalCourseBands,
   toGoalCourses,
 } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CourseBandNeed, type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
-import { OUTLINE_AHEAD_DAYS } from "@zoonk/core/lookahead/outline-ahead";
+import { type PlanSetupTask } from "@zoonk/core/plans/setup";
 import { start } from "workflow/api";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
@@ -22,6 +22,8 @@ import {
   checkGraphCoverageStep,
   createGoalPlanStep,
   linkSkillPrerequisitesStep,
+  runPlanSetupTaskStep,
+  saveExamSkillGraphStep,
   saveGoalSkillsStep,
 } from "./steps/goal-curriculum-steps";
 import {
@@ -32,6 +34,7 @@ import {
 } from "./steps/goal-lookahead-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { startNoticeWaitStep } from "./steps/notice-steps";
+import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
 import { reuseCurriculumStep } from "./steps/stored-plan-steps";
 
 /** Skills go to the Library in slices, so every step stays short and retries alone. */
@@ -45,8 +48,9 @@ export function toSlices<T>(items: readonly T[]): T[][] {
 
 /**
  * The goal's skill graph, checked against its references for skills they expect that it missed,
- * and, for an exam, against its notice for topics no skill teaches yet. A learn goal's graph is
- * written while research finds those references.
+ * and, for an exam, against its notice for topics no skill teaches yet, then with the skills it
+ * wrote twice in other words merged. A learn goal's graph is written while research finds those
+ * references.
  */
 async function buildGraph({
   context,
@@ -66,17 +70,11 @@ async function buildGraph({
 
   const outline = inputs.graphPrompt.examBlueprint;
 
-  if (!needsCoverageCheck({ graph: built.graph, outline, references })) {
-    return built;
-  }
+  const covered = needsCoverageCheck({ graph: built.graph, outline, references })
+    ? await checkGraphCoverageStep({ ...context, graph: built.graph, inputs, references, scope })
+    : built;
 
-  const { graph } = await checkGraphCoverageStep({
-    ...context,
-    graph: built.graph,
-    prompt: inputs.graphPrompt,
-    references,
-    scope,
-  });
+  const graph = await mergeSkillTwinsStep({ ...context, graph: covered.graph, scope });
 
   return { ...built, graph };
 }
@@ -109,22 +107,39 @@ function pinStartedCourse({
     : built;
 }
 
+/**
+ * The setup a new plan owes (see `runPlanSetupTask`), one step per task, in order: the runtime
+ * retries each, and a task that still fails stays owed, for the goal's next run, while this run
+ * goes on without it.
+ */
+export function setUpPlan({
+  goalId,
+  tasks,
+}: {
+  goalId: string;
+  tasks: readonly PlanSetupTask[];
+}): Promise<unknown> {
+  return tasks.reduce<Promise<unknown>>(
+    (previous, task) =>
+      previous.then(() => runPlanSetupTaskStep({ goalId, task }).catch(() => null)),
+    Promise.resolve(),
+  );
+}
+
 /** One course's level bands to outline, in the order the learner reaches them. */
 type OutlineCourse = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
 
 /**
  * The courses' outlines, the band the learner reaches first first. A guest's goal leaves the
  * courses' background work (their page details) to the next learner with an account whose plan
- * needs them. `background` bands are days away, so they're written at the flex tier.
+ * needs them.
  */
 export async function startOutlines({
-  background = false,
   context,
   courses,
   firstSkillId,
   forGuest,
 }: {
-  background?: boolean;
   context: GoalRunContext;
   courses: OutlineCourse[];
   firstSkillId: string | null;
@@ -136,7 +151,6 @@ export async function startOutlines({
         {
           ...course,
           analytics: context.analytics,
-          background,
           forGuest,
           waitedSkillId: firstSkillId ?? undefined,
         },
@@ -166,11 +180,16 @@ async function saveCurriculum({
   return { courseIdsByKey, idsByKey };
 }
 
-/** Once everything it's built from is saved: the plan, then the outlines. */
+/**
+ * Once everything it's built from is saved: the plan, then the outlines. A graph this run wrote
+ * becomes its exam's shared graph when it's the exam's (`saveExamSkillGraphStep`); one it reused
+ * already is.
+ */
 async function createPlanAndOutlines({
   built,
   context,
   inputs,
+  reused,
   saved,
   scope,
   waitsForNotice,
@@ -178,6 +197,7 @@ async function createPlanAndOutlines({
   built: BuiltGraph;
   context: GoalRunContext;
   inputs: GoalCurriculumInputs;
+  reused: boolean;
   saved: Promise<SavedCurriculum>;
   scope: CurriculumScope;
   /** An exam's plan built before research read the notice waits for that reading from now on. */
@@ -187,7 +207,7 @@ async function createPlanAndOutlines({
   const goalId = inputs.goal.id;
   const { courseIdsByKey, idsByKey } = await saved;
 
-  await createGoalPlanStep({
+  const setupTasks = await createGoalPlanStep({
     courseIdsByKey,
     goalId,
     graph,
@@ -196,8 +216,15 @@ async function createPlanAndOutlines({
     provenance,
   });
 
+  if (!reused) {
+    await saveExamSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });
+  }
+
+  await setUpPlan({ goalId, tasks: setupTasks });
+
+  // The wait only shapes the reveal: once its step's retries run out, the plan goes on without it.
   if (waitsForNotice) {
-    await startNoticeWaitStep(goalId);
+    await startNoticeWaitStep(goalId).catch(() => null);
   }
 
   await goalProgressStep({ entityId: goalId, status: "completed", step: "createPlan" });
@@ -207,37 +234,25 @@ async function createPlanAndOutlines({
     readGoalLookaheadStep(goalId),
   ]);
 
-  const nearSkillIds = await listPlanSkillIdsWithinStep({
-    days: lookahead.outlineDays ?? OUTLINE_AHEAD_DAYS,
-    goalId,
-  });
+  const nearSkillIds = await listPlanSkillIdsWithinStep({ days: lookahead.outlineDays, goalId });
 
-  // The learner's first lesson is always near, even in a plan with nothing scheduled yet.
-  const split = splitGoalCourseBands({
+  // Bands the plan reaches within the learner's outline window are outlined now; the rest are left
+  // for the session preparations that get close to them, so bands a plan may never reach aren't
+  // paid for up front. The learner's first lesson is always near, even in a plan with nothing
+  // scheduled yet.
+  const near = keepNearCourseBands({
     nearSkillIds: new Set([...nearSkillIds, ...(firstSkillId ? [firstSkillId] : [])]),
     needs: groupGoalCourseBands({ graph, idsByKey }),
   });
 
-  const toOutlineCourses = (needs: typeof split.near): OutlineCourse[] =>
-    toGoalCourses({
-      courseIdsByKey,
-      needs,
-      ownerId: scope.ownerId,
-      withToolChapters: inputs.usesTools,
-    }).map((course) => ({ ...course, scope }));
+  const courses = toGoalCourses({
+    courseIdsByKey,
+    needs: near,
+    ownerId: scope.ownerId,
+    withToolChapters: inputs.usesTools,
+  }).map((course) => ({ ...course, scope }));
 
-  // Bands the plan reaches within the learner's outline window are outlined now; the rest are
-  // written at the flex tier for a Plus subscriber, and left for the session preparations that
-  // get close to them for everyone else, so a learner who may never come back doesn't pay for an
-  // exam's every course up front.
-  const outlines = { context, firstSkillId, forGuest: inputs.isGuest };
-
-  await Promise.all([
-    startOutlines({ ...outlines, courses: toOutlineCourses(split.near) }),
-    lookahead.outlineDays === null
-      ? startOutlines({ ...outlines, background: true, courses: toOutlineCourses(split.far) })
-      : null,
-  ]);
+  await startOutlines({ context, courses, firstSkillId, forGuest: inputs.isGuest });
 
   await goalProgressStep({ entityId: goalId, status: "started", step: "outlineCourses" });
 
@@ -309,7 +324,7 @@ async function prepareCurriculum({
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
-}): Promise<SavingCurriculum & { built: BuiltGraph }> {
+}): Promise<SavingCurriculum & { built: BuiltGraph; reused: boolean }> {
   const reused = rebuild ? null : await reuseCurriculumStep({ inputs, scope });
 
   if (reused) {
@@ -317,6 +332,7 @@ async function prepareCurriculum({
 
     return {
       built: reused,
+      reused: true,
       saved: Promise.resolve(reused),
       skillIds: Promise.resolve(reused.idsByKey),
     };
@@ -329,7 +345,7 @@ async function prepareCurriculum({
 
   await goalProgressStep({ entityId: inputs.goal.id, status: "started", step: "saveSkills" });
 
-  return { built, ...saveBuiltGraph({ built, context, inputs, scope }) };
+  return { built, reused: false, ...saveBuiltGraph({ built, context, inputs, scope }) };
 }
 
 /**
@@ -352,7 +368,7 @@ export async function buildCurriculum({
 }): Promise<BuiltCurriculum> {
   const goalId = inputs.goal.id;
 
-  const { built, saved, skillIds } = await prepareCurriculum({
+  const { built, reused, saved, skillIds } = await prepareCurriculum({
     context,
     inputs,
     rebuild,
@@ -367,7 +383,7 @@ export async function buildCurriculum({
   const waitsForNotice = !rebuild && isBuiltBeforeResearch({ inputs, researchId });
 
   const [written] = await Promise.all([
-    createPlanAndOutlines({ built, context, inputs, saved, scope, waitsForNotice }),
+    createPlanAndOutlines({ built, context, inputs, reused, saved, scope, waitsForNotice }),
     rebuild
       ? null
       : prepareGraphPlacement({
@@ -376,6 +392,7 @@ export async function buildCurriculum({
           goalId,
           graph: built.graph,
           knownAreas: inputs.knownSubjects,
+          ownLevel: inputs.graphPrompt.ownLevel ?? null,
           skillIds,
           waitsForNotice: waitsForNotice && inputs.goal.kind === "exam",
         }),

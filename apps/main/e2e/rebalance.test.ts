@@ -5,32 +5,15 @@ import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
 /**
- * The rebalance a session left on the learner's plan: time moved to "Science", with the state its
+ * The rebalance a session left on the learner's plan: time moved to "Science", with the plan its
  * undo restores, as the planner records any applied change.
  */
 async function addRebalance(persona: E2EPersona) {
-  const goal = await prisma.goal.findUniqueOrThrow({
-    include: { plan: true },
-    where: { id: persona.goalId },
-  });
-
-  const plan = goal.plan;
-
-  if (!plan) {
-    throw new Error("Expected the persona's plan");
-  }
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: persona.goalId } });
 
   return planChangeFixture({
     kind: "edited",
     payload: {
-      before: {
-        goal: {
-          dailyMinutes: goal.dailyMinutes,
-          targetDate: goal.targetDate?.toISOString().slice(0, 10) ?? null,
-        },
-        graph: plan.graph ?? {},
-        settings: plan.settings ?? {},
-      },
       operations: [{ areas: ["Science"], kind: "focusAreas" }],
       source: "preparation",
       versionAfter: plan.version,

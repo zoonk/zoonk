@@ -3,6 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { getUnderstandingLocation, startUnderstandingRun } from "@/lib/goal-understanding";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { goalUnderstandingInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { startGoalUnderstanding } from "@zoonk/core/view-models/onboarding/start-understanding";
 import { type NextRequest, NextResponse } from "next/server";
@@ -23,11 +24,7 @@ async function createGoalUnderstanding(request: NextRequest) {
 
   const result = await startGoalUnderstanding(parsed.data);
 
-  if (
-    result.status === "unauthorized" ||
-    result.status === "slowDown" ||
-    result.status === "limitReached"
-  ) {
+  if (result.status === "unauthorized" || isRefusedUsage(result)) {
     return usageDecisionError(result);
   }
 

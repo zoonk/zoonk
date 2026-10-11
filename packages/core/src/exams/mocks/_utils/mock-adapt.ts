@@ -1,10 +1,12 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { type GoalPlan, loadGoalPlan } from "../../../learner/_utils/goal-skill-graph";
+import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../../../plans/planner/plan-state";
 import { findSkippableItems, findWeakestArea, getAcedSkillIds } from "../mock-adapt-rules";
-import { type MockAdaptView, type MockPurpose, type MockResult } from "../mock-contract";
+import { type MockPurpose, type MockResult } from "../mock-contract";
+import { type MockAdaptView } from "../mock-view-contract";
 
 /** What a finished mock can change in its goal's plan, with the plan as it is now. */
 export type MockPlanOffers = {
@@ -57,13 +59,18 @@ export async function loadMockPlanOffers({
     return null;
   }
 
+  // Counted as the plan change that skips them will be, a stand-in as the lessons it plans.
+  const skippedItems = await prisma.planItem.findMany({
+    where: { id: { in: skippable.map((item) => item.id) } },
+  });
+
   return {
     aced,
     focusAreas,
     plan,
     view: {
       focus: focus && { area: focus.name, correct: focus.correct, total: focus.total },
-      skip: skippable.length > 0 ? { lessons: skippable.length, topics } : null,
+      skip: skippable.length > 0 ? { lessons: countLessons(skippedItems), topics } : null,
     },
   };
 }

@@ -1,5 +1,6 @@
 import { type GenerateImageResult } from "ai";
 import { getModelFamily } from "../_utils/model-family";
+import { type PromptTrainingInput, runUnderPromptTrainingRule } from "../data-protection";
 import { computeCallCostUsd } from "../pricing/call-cost";
 import { readGatewayMetadata } from "./gateway-metadata";
 import { type TaskGenerationInput, type TaskRunDetails, startTaskRun } from "./run-task-generation";
@@ -49,14 +50,21 @@ function buildImageTaskProvenance({
  */
 export async function runImageTaskGeneration<TGeneration extends ImageGeneration>({
   generate,
+  libraryInput,
   requestedModel,
   ...input
-}: TaskGenerationInput & {
-  generate: () => Promise<TGeneration>;
-  requestedModel: string;
-}): Promise<{ provenance: TaskProvenance; result: TGeneration }> {
+}: TaskGenerationInput &
+  PromptTrainingInput & {
+    generate: (rule: { promptTraining: boolean }) => Promise<TGeneration>;
+    requestedModel: string;
+  }): Promise<{ provenance: TaskProvenance; result: TGeneration }> {
   const run = startTaskRun(input);
-  const result = await generate();
+
+  const result = await runUnderPromptTrainingRule({
+    contentScope: input.analytics?.contentScope,
+    generate,
+    libraryInput,
+  });
 
   const provenance = await run.finish((details) =>
     buildImageTaskProvenance({ ...details, generation: result, requestedModel }),

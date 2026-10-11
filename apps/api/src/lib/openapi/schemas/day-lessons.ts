@@ -15,3 +15,10 @@ export const lessonsComingSchema = z
     description:
       "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, and on a day without blocks (`emptyDay` says why)",
   });
+
+export const examTomorrowSchema = z
+  .boolean()
+  .meta({
+    description:
+      "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there",
+  });

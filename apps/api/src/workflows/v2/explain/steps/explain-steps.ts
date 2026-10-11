@@ -166,13 +166,15 @@ async function createQuestionSkill({
   provenance: ExplanationProvenance;
   scope: { language: string; ownerId: string | null };
 }): Promise<string> {
+  // A shared explanation's skill is named by its neutral title, never the asker's own words; a
+  // private one keeps their question.
   const created = await createSkill({
     ...scope,
     description: explanation.title,
     example: null,
     identityKey,
     level: "overview",
-    name: goal.question,
+    name: scope.ownerId ? goal.question : explanation.title,
     provenance,
     targetLanguage: null,
   });

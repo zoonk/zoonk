@@ -22,6 +22,8 @@ const MS_PER_SECOND = 1000;
 
 function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   const { romanization, targetText, translation } = step.content;
+  // A lesson in the learner's own language has nothing to translate.
+  const showsTranslation = translation && translation.trim() !== targetText.trim();
 
   return (
     <div className="bg-muted/50 flex flex-col gap-1 rounded-2xl p-4">
@@ -29,7 +31,7 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
         {targetText}
       </p>
       {romanization && <p className="text-muted-foreground text-base">{romanization}</p>}
-      {translation && <p className="text-muted-foreground text-base">{translation}</p>}
+      {showsTranslation && <p className="text-muted-foreground text-base">{translation}</p>}
     </div>
   );
 }

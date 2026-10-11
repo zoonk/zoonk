@@ -191,7 +191,8 @@ function RewriteGuide({ onSeeGrade }: { onSeeGrade: () => void }) {
     return null;
   }
 
-  const criterion = grade.criteria.find((item) => item.id === grade.nextStep.criterionId);
+  const { nextStep } = grade;
+  const criterion = grade.criteria.find((item) => item.id === nextStep?.criterionId);
 
   return (
     <Callout>
@@ -203,7 +204,7 @@ function RewriteGuide({ onSeeGrade }: { onSeeGrade: () => void }) {
               {t("Next step: {criterion}", { criterion: criterionName(criterion) })}{" "}
             </span>
           )}
-          {grade.nextStep.text}
+          {nextStep ? nextStep.text : t("Every criterion has full marks in this estimate.")}
         </p>
         <button
           className="self-start font-medium underline underline-offset-4"

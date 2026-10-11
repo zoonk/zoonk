@@ -2,7 +2,7 @@ import { defineScoreCategories } from "@/lib/score-categories";
 
 export const GENERATE_ITEMS_SCORE_CATEGORIES = defineScoreCategories([
   {
-    expectations: `Solve every question yourself before reading its key. Each question must have exactly one defensible correct answer, the keyed answer must be that answer, and every fact, number, rule and legal or scientific statement must be accurate for the country and date the question implies. For numeric items, recompute the answer and check that the worked steps lead to it. Score at most 7 when one question has a wrong key, two defensible answers or a factual error; at most 5 when two or more do.`,
+    expectations: `Solve every question yourself before reading its key. Each question must have exactly one defensible correct answer (for a question that asks the learner to pick several options, exactly one defensible set of correct options, each option right or wrong on its own), the keyed answer must be that answer, and every fact, number, rule and legal or scientific statement must be accurate for the country and date the question implies. For numeric items, recompute the answer and check that the worked steps lead to it. Score at most 7 when one question has a wrong key, two defensible answers or a factual error; at most 5 when two or more do.`,
     id: "correctness",
     label: "Correctness",
     weight: 30,

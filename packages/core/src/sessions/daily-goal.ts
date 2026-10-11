@@ -144,17 +144,3 @@ export function getSessionMinutesDone(
     .filter((block) => block.status === "completed")
     .reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0);
 }
-
-/** Minutes a session's finished blocks took, each counted by `getBlockMinutes`. */
-export function getSessionBlockMinutes(blocks: readonly TimedBlock[]): number {
-  return blocks.reduce(
-    (sum, block) =>
-      sum +
-      getBlockMinutes({
-        completedAt: block.completedAt,
-        estimatedMinutes: block.estimatedMinutes ?? 0,
-        startedAt: block.startedAt,
-      }),
-    0,
-  );
-}

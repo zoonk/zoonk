@@ -2,7 +2,6 @@
 
 import {
   type OnboardingAnswerInput,
-  type OnboardingOwnLevel,
   type OnboardingPurpose,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { Input } from "@zoonk/ui/components/input";
@@ -10,19 +9,16 @@ import { Label } from "@zoonk/ui/components/label";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import {
   BriefcaseBusinessIcon,
-  GraduationCapIcon,
   HistoryIcon,
   LayersIcon,
   PencilLineIcon,
   RouteIcon,
-  SchoolIcon,
-  SproutIcon,
   TelescopeIcon,
-  TestTubeDiagonalIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { type Choice, ChoiceList } from "../choice-list";
+import { type LevelChoice, LevelChoiceList, toLevelAnswer } from "./level-choices";
 import { StepForm } from "./step-form";
 import { TextField } from "./text-field";
 
@@ -95,60 +91,28 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   );
 }
 
-/** "Not sure" still counts as an answer: placement finds the level instead. */
-const QUICK_TEST = "test";
-
-type LevelChoice = OnboardingOwnLevel | typeof QUICK_TEST;
-
-export function LevelStep({ onAnswer, pending, subject }: StepProps) {
+export function LevelStep({
+  initialLevel = null,
+  onAnswer,
+  pending,
+  subject,
+}: StepProps & {
+  /** What the learner picked before, shown again when they come Back to it. */
+  initialLevel?: LevelChoice | null;
+}) {
   const t = useExtracted();
-  const [level, setLevel] = useState<LevelChoice | null>(null);
-
-  const choices: Choice<LevelChoice>[] = [
-    {
-      description: t("From scratch, with everyday examples"),
-      icon: <SproutIcon />,
-      label: t("Nothing, I'm just starting"),
-      value: "none",
-    },
-    {
-      description: t("I know a few things"),
-      icon: <SchoolIcon />,
-      label: t("The basics"),
-      value: "basic",
-    },
-    {
-      description: t("We'll skip what you already know"),
-      icon: <GraduationCapIcon />,
-      label: t("I studied it before"),
-      value: "intermediate",
-    },
-    {
-      description: t("Only what's new or hard"),
-      icon: <LayersIcon />,
-      label: t("I know it well"),
-      value: "advanced",
-    },
-    {
-      description: t("Adapts to your answers, about 2 min"),
-      icon: <TestTubeDiagonalIcon />,
-      label: t("Not sure, give me a quick test"),
-      value: QUICK_TEST,
-    },
-  ];
+  const [level, setLevel] = useState<LevelChoice | null>(initialLevel);
 
   return (
     <StepForm
       canContinue={level !== null}
       description={t("It only changes where your plan starts.")}
       subject={subject}
-      onContinue={() =>
-        level && onAnswer({ level: level === QUICK_TEST ? null : level, question: "level" })
-      }
+      onContinue={() => level && onAnswer({ level: toLevelAnswer(level), question: "level" })}
       pending={pending}
       title={t("How much do you already know?")}
     >
-      <ChoiceList choices={choices} label={t("Your level")} onChange={setLevel} value={level} />
+      <LevelChoiceList onChange={setLevel} value={level} />
     </StepForm>
   );
 }
@@ -272,7 +236,10 @@ export function FollowUpsStep({
   );
 }
 
-/** A deadline is optional: without one, the plan shows when each milestone arrives. */
+/**
+ * A deadline is optional: without one, the learner studies everything at their own pace and the
+ * plan shows when each milestone arrives.
+ */
 export function DateStep({ onAnswer, pending }: Omit<StepProps, "subject">) {
   const t = useExtracted();
   const inputId = useId();
@@ -282,11 +249,13 @@ export function DateStep({ onAnswer, pending }: Omit<StepProps, "subject">) {
   return (
     <StepForm
       canContinue={date > today}
-      description={t("Without a date, we'll show when you reach each milestone at your pace.")}
+      description={t(
+        "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
+      )}
       onContinue={() => onAnswer({ question: "targetDate", targetDate: date })}
       onSkip={() => onAnswer({ question: "targetDate", targetDate: null })}
       pending={pending}
-      skipLabel={t("No date")}
+      skipLabel={t("No date, study everything")}
       title={t("Is there a date you're aiming for?")}
     >
       <div className="flex flex-col gap-2">

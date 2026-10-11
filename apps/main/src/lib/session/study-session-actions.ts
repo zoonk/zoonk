@@ -139,7 +139,7 @@ export async function answerStudyQuestionAction(
     return { feedback: result.feedback, status: "answered" };
   }
 
-  if (result.status === "slowDown" || result.status === "alreadyAnswered") {
+  if (result.status === "alreadyAnswered") {
     return result;
   }
 

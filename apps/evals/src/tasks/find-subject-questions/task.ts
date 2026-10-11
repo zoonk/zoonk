@@ -31,7 +31,7 @@ function findWrongCounts({
   questions,
 }: {
   expected: FindSubjectQuestionsExpected;
-  questions: readonly number[];
+  questions: readonly (number | null)[];
 }): string[] {
   return Object.entries(expected.counts).flatMap(([subject, count]) => {
     const found = questions[Number(subject) - 1];

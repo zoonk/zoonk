@@ -131,6 +131,7 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
     runId: first.runId,
     serviceTier: first.serviceTier,
     usage: {
+      audioSeconds: sum((usage) => usage.audioSeconds),
       cacheReadTokens: sum((usage) => usage.cacheReadTokens),
       cacheWriteTokens: sum((usage) => usage.cacheWriteTokens),
       inputTokens: sum((usage) => usage.inputTokens),

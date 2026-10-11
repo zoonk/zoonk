@@ -1,12 +1,15 @@
 "use client";
 
-import { type TutorTarget } from "@zoonk/core/lesson-questions/contract";
+import {
+  type LessonTutorSuggestion,
+  type TutorTarget,
+} from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useCallback, useEffect, useRef } from "react";
 import { type LessonQuestionConnection } from "./lesson-question-api";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionScope } from "./lesson-question-scope";
-import { type LessonQuestionState } from "./lesson-question-state";
+import { type LessonQuestionState, type OfferedSuggestion } from "./lesson-question-state";
 import { useLessonQuestionAnswers } from "./use-lesson-question-answers";
 import { useLessonQuestionRecovery } from "./use-lesson-question-recovery";
 import {
@@ -36,7 +39,14 @@ export type LessonQuestionHost = {
    */
   page?: boolean;
   preload?: boolean;
+  /**
+   * The tutor's suggestions for a lesson's screens, worded by the server in the lesson's language
+   * (`wordTutorSuggestions`): their chips read the words the question is stored with.
+   */
+  suggestions?: readonly LessonTutorSuggestion[];
 };
+
+const NO_SUGGESTIONS: readonly LessonTutorSuggestion[] = [];
 
 type UseLessonQuestionsInput = LessonQuestionHost & {
   connection: LessonQuestionConnection;
@@ -50,7 +60,7 @@ export type LessonQuestionController = {
   changeDraft: (draft: string) => void;
   checkAnswer: (questionId: string) => Promise<void>;
   /** Puts one of the tutor's suggested questions in the composer. */
-  chooseSuggestion: (question: string) => void;
+  chooseSuggestion: (suggestion: OfferedSuggestion) => void;
   close: () => void;
   load: () => Promise<boolean>;
   loadEarlier: () => Promise<void>;
@@ -58,8 +68,10 @@ export type LessonQuestionController = {
   retryAnswer: (questionId: string) => Promise<void>;
   send: () => Promise<void>;
   /** Sends one of the tutor's suggested questions right away. */
-  sendSuggestion: (question: string) => Promise<void>;
+  sendSuggestion: (suggestion: OfferedSuggestion) => Promise<void>;
   state: LessonQuestionState;
+  /** The tutor's suggestions for a lesson's screens, as the host's payload words them. */
+  suggestions: readonly LessonTutorSuggestion[];
   unresolvedQuestion: string | null;
 };
 
@@ -71,6 +83,7 @@ export function useLessonQuestions({
   lessonStepIds,
   page = false,
   preload = true,
+  suggestions = NO_SUGGESTIONS,
   target,
 }: UseLessonQuestionsInput): LessonQuestionController {
   const { state, dispatch, dispatchToContext, getState } = useLessonQuestionSessions({
@@ -131,7 +144,7 @@ export function useLessonQuestions({
   );
 
   const chooseSuggestion = useCallback(
-    (question: string) => dispatch({ question, type: "suggestionChosen" }),
+    (suggestion: OfferedSuggestion) => dispatch({ suggestion, type: "suggestionChosen" }),
     [dispatch],
   );
 
@@ -189,6 +202,7 @@ export function useLessonQuestions({
     send,
     sendSuggestion,
     state,
+    suggestions,
     unresolvedQuestion,
   };
 }

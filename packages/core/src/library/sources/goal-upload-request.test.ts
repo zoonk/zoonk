@@ -56,7 +56,13 @@ describe(getGoalUploadRequest, () => {
     mockSession(user.id);
 
     await expect(getGoalUploadRequest({ goalId: goal.id })).resolves.toStrictEqual({
-      request: { goalId: goal.id, goalKind: "exam", language: "en", reason: "noOfficialSource" },
+      request: {
+        examDocument: "notice",
+        goalId: goal.id,
+        goalKind: "exam",
+        language: "en",
+        reason: "noOfficialSource",
+      },
       status: "ready",
     });
 

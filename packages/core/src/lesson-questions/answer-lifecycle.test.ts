@@ -1,12 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
 import { createLessonQuestionFixture } from "./_test-utils/create-question";
-import { mockQuestionGenerality } from "./_test-utils/question-generality";
 import {
   parseLessonQuestionContextSnapshot,
   toDatabaseLessonQuestionContextSnapshot,
@@ -18,7 +16,6 @@ import {
 } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 /** The run that wrote a test answer, as the answers route passes it from the task's provenance. */
 const ANSWER_RUN = {
@@ -30,17 +27,6 @@ const ANSWER_RUN = {
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
-
-/** The generality check calls a model; each test says whether its question is general. */
-vi.mock("@zoonk/ai/tasks/v2/explain/question-generality", () => ({
-  classifyQuestionGenerality: vi.fn(),
-}));
 
 /** Memory extraction calls a model; the memory module's own tests cover what it learns. */
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
@@ -66,9 +52,7 @@ async function createFollowUpQuestion({
 
 describe("lesson question answer lifecycle", () => {
   beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
     vi.mocked(updateMemoryFromActivity).mockResolvedValue([]);
-    mockQuestionGenerality(false);
     mockSession(null);
   });
 

@@ -1,12 +1,5 @@
-import { BuddyGlasses, BuddyKind, MemoryCategory } from "@zoonk/db";
+import { BuddyGlasses, BuddyKind } from "@zoonk/db";
 import { z } from "zod";
-
-const ageGroupSchema = z
-  .enum(["child", "teen", "adult", "unknown"])
-  .meta({
-    description: "Age group from the birth month and year; unknown until answered",
-    id: "AgeGroup",
-  });
 
 const buddySchema = z
   .object({
@@ -19,14 +12,9 @@ const buddySchema = z
 export const learningProfileSchema = z
   .object({
     activeGoalId: z.uuid().nullable().meta({ description: "The goal the tabs show" }),
-    ageGroup: ageGroupSchema,
     availableGlasses: z
       .array(z.enum(BuddyGlasses))
       .meta({ description: "Glasses the buddy can wear: round plus the earned ones" }),
-    birth: z
-      .object({ month: z.int(), year: z.int() })
-      .nullable()
-      .meta({ description: "Birth month and year, or null until answered" }),
     buddy: buddySchema.nullable().meta({ description: "The learner's buddy, or null" }),
     dailyLimitMinutes: z
       .int()
@@ -38,27 +26,6 @@ export const learningProfileSchema = z
   })
   .meta({ id: "LearningProfile" });
 
-const learnerProtectionsSchema = z
-  .object({
-    ageGroup: ageGroupSchema,
-    marketingEmailAllowed: z.boolean().meta({ description: "Whether marketing email may be sent" }),
-    memoryCategories: z
-      .array(z.enum(MemoryCategory))
-      .meta({ description: "Memory categories that may be stored and read" }),
-    memoryOnByDefault: z
-      .boolean()
-      .meta({ description: "Whether memory is on until the learner chooses; only for adults" }),
-    plusPurchase: z
-      .enum(["allowed", "guestNotAllowed", "needsGuardianApproval"])
-      .meta({ description: "Whether the learner can subscribe to Plus now" }),
-    sessionReplayAllowed: z.boolean().meta({ description: "Whether session replay may record" }),
-  })
-  .meta({
-    description:
-      "Protective defaults: under 18 or without an age answer, the most protective apply",
-    id: "LearnerProtections",
-  });
-
 export const learningProfileResponseSchema = z
-  .object({ profile: learningProfileSchema, protections: learnerProtectionsSchema })
+  .object({ profile: learningProfileSchema })
   .meta({ id: "LearningProfileResponse" });

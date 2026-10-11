@@ -23,17 +23,10 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { getCurrentUserScore } from "../progress/get-score-history";
 import { getCurrentUserScorePatterns } from "../progress/get-score-patterns";
 import { getStudiedToday } from "../progress/get-studied-today";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so lesson starts here are never rate limited. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 /** Every progress resource the learner's pages read. */
 function readProgress(timeZone: string) {

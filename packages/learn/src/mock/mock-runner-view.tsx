@@ -4,7 +4,14 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon, FlagIcon, LockIcon } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  FlagIcon,
+  HistoryIcon,
+  LockIcon,
+  PencilRulerIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { formatClock } from "../_utils/clock";
@@ -13,7 +20,10 @@ import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
 import { useMockTitle } from "./mock-labels";
-import { MockQuestionCard } from "./mock-question";
+import { ItemClock, MovesNote } from "./mock-moves";
+import { useMockShortLine } from "./mock-notes";
+import { MockQuestionCard, MockRecording } from "./mock-question";
+import { isDraftAnswered } from "./use-mock-drafts";
 
 const TICK_MS = 1000;
 const PERCENT = 100;
@@ -46,7 +56,7 @@ function useSectionClock(deadline: string) {
  * The task header's title, like every full-screen task's: the mock is the page's heading, and its
  * quiet line is the section's clock. A timer isn't a live region, so it never reads every second.
  */
-function ClockTitle({ deadline }: { deadline: string }) {
+export function ClockTitle({ deadline }: { deadline: string }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const remaining = useSectionClock(deadline);
@@ -103,14 +113,66 @@ function NextLabel({ isLast, label }: { isLast: boolean; label: string }) {
   );
 }
 
+/**
+ * The question's own clock where the exam times each one, what may be used in the section and how
+ * it moves, as the notice says them, the mock's rule in a quiet line, and when it asks questions
+ * the learner answered before (the bank had no new ones left), a line saying how many, so the
+ * score reads right.
+ */
+function RunnerNotes() {
+  const t = useExtracted();
+  const { runner } = useMockScreen();
+  const reused = runner.view.reusedQuestions;
+  const short = useMockShortLine(runner.view);
+  const tools = runner.view.sections.find((section) => section.status === "current")?.tools;
+
+  return (
+    <div className="text-muted-foreground flex flex-col items-center gap-1 text-center text-xs">
+      <ItemClock />
+      {/* What the notice lets learners use in this section, as on the exam's cover page. */}
+      {tools && (
+        <p className="text-balance">
+          <PencilRulerIcon
+            aria-hidden="true"
+            className="mr-1.5 inline size-3.5 align-[-0.1875rem]"
+          />
+          {tools}
+        </p>
+      )}
+      <MovesNote />
+      <p className="flex items-center gap-1.5">
+        <LockIcon aria-hidden="true" className="size-3.5 shrink-0" />
+        {t("No feedback until the end, just like on exam day.")}
+      </p>
+      {short && <p className="text-balance">{short}</p>}
+      {reused > 0 && (
+        <p className="text-balance">
+          <HistoryIcon aria-hidden="true" className="mr-1.5 inline size-3.5 align-[-0.1875rem]" />
+          {t(
+            "{count, plural, one {# question repeats.} other {# questions repeat, missed ones first.}}",
+            { count: reused },
+          )}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const total = runner.view.current?.questions.length ?? 0;
   const isLastQuestion = runner.position >= total - 1;
   const isLastSection = runner.view.sections.at(-1)?.status === "current";
+  const itemId = runner.view.current?.questions[runner.position]?.itemId ?? "";
+  // A section that asks for an answer before moving on keeps Next until there is one.
+  const waiting = runner.moves.mustAnswer && !isDraftAnswered(runner.drafts[itemId]);
 
   function next() {
+    if (waiting) {
+      return;
+    }
+
     if (isLastQuestion) {
       onHandIn();
       return;
@@ -123,10 +185,10 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
 
   // Enter moves on after a number key picked an answer; handing in stays a deliberate click.
   useEnterKey(() => runner.go(runner.position + 1), {
-    enabled: !isLastQuestion && !runner.pending,
+    enabled: !isLastQuestion && !runner.pending && !waiting,
   });
 
-  useKeyboardCallback("ArrowRight", () => runner.go(runner.position + 1), screenKey);
+  useKeyboardCallback("ArrowRight", () => !waiting && runner.go(runner.position + 1), screenKey);
   useKeyboardCallback("ArrowLeft", () => runner.go(runner.position - 1), screenKey);
 
   const nextLabel = isLastSection ? t("Hand in the mock exam") : t("Hand in this section");
@@ -136,15 +198,14 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   return (
     <>
       <MockStepStatus />
-      <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-xs">
-        <LockIcon aria-hidden="true" className="size-3.5" />
-        {t("No feedback until the end, just like on exam day.")}
-      </p>
+      <RunnerNotes />
       <div className="flex items-center gap-2">
         <Button
           aria-label={t("Previous")}
           className="w-14 shrink-0 px-0"
-          disabled={runner.position === 0 || runner.pending}
+          disabled={
+            runner.position === 0 || runner.pending || !runner.moves.canOpen(runner.position - 1)
+          }
           onClick={() => runner.go(runner.position - 1)}
           size="xl"
           variant="outline"
@@ -153,7 +214,7 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
         </Button>
         <Button
           className={cn("flex-1", handingIn && "disabled:opacity-100")}
-          disabled={runner.pending}
+          disabled={runner.pending || waiting}
           onClick={next}
           size="xl"
         >
@@ -193,6 +254,7 @@ export function MockRunnerView() {
         value: counts.total > 0 ? (counts.answered / counts.total) * PERCENT : 0,
       }}
     >
+      <MockRecording key={question.set?.id ?? "none"} question={question} />
       <MockQuestionCard key={question.itemId} question={question} />
       <MockHandInDialog onOpenChange={setConfirming} open={confirming} />
     </MockFrame>

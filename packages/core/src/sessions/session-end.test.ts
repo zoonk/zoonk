@@ -1,5 +1,5 @@
-import { extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
 import { generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
+import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
@@ -10,6 +10,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -19,10 +20,8 @@ import {
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 import { addExtraStudyBlock } from "./add-extra-study-block";
-import { BRAIN_POWER_BONUS } from "./brain-power";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudySessionSummary } from "./get-study-session-summary";
-import { getTodayStudySession } from "./get-today-study-session";
 import { scoreLessonAnswers } from "./score-lesson-answers";
 import { settleFinishedLesson } from "./settle-finished-lesson";
 import { startStudyBlock } from "./start-study-block";
@@ -31,8 +30,8 @@ import { stopStudySession } from "./stop-study-session";
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
-// Memory's extraction and coach are paid model calls, covered by their evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
+// Memory's session patterns and coach are paid model calls, covered by their evals.
+vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/insight", () => ({ generateMemoryInsight: vi.fn() }));
 
 /** A new learner's day one: lessons only, with some Brain Power from before. */
@@ -82,10 +81,11 @@ describe("ending a session", () => {
       userId: user.id,
     });
 
+    // One mission done (nothing was due or needed fixing): no bonus for all three.
     expect(moment).toMatchObject({
       blockId: first?.id,
-      brainPower: 40 + BRAIN_POWER_BONUS.fullMeal,
-      fullMeal: { paid: true },
+      brainPower: 40,
+      fullMeal: { paid: false },
       sessionBar: { completed: 1, total: session.blocks.length },
       sessionCompleted: false,
     });
@@ -116,12 +116,23 @@ describe("ending a session", () => {
 
     await startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId: session.id });
 
-    await learningEventFixture({
-      brainPower: 40,
-      contentIds: { lessonId: lessons[0]?.id ?? "" },
-      endedAt: new Date(),
-      userId: user.id,
-    });
+    // The lesson took two minutes, whatever the plan gave it; one played outside the session
+    // isn't the session's time.
+    await Promise.all([
+      learningEventFixture({
+        brainPower: 40,
+        contentIds: { lessonId: lessons[0]?.id ?? "", studySessionId: session.id },
+        endedAt: new Date(),
+        seconds: 125,
+        userId: user.id,
+      }),
+      learningEventFixture({
+        contentIds: { lessonId: lessons[2]?.id ?? "" },
+        endedAt: new Date(),
+        seconds: 600,
+        userId: user.id,
+      }),
+    ]);
 
     await prisma.userProgress.update({
       data: { totalBrainPower: { increment: 40 } },
@@ -148,14 +159,15 @@ describe("ending a session", () => {
       "pending",
     ]);
 
-    // Nothing was due and nothing needed fixing, so the lesson alone completes the day's meal.
+    // Nothing was due and nothing needed fixing: one mission done, so no bonus for all three.
     expect(stopped.summary).toMatchObject({
       belt: { after: { color: "yellow" }, before: { color: "white" }, colorChanged: true },
-      brainPower: 40 + BRAIN_POWER_BONUS.fullMeal,
+      brainPower: 40,
       capsulesSealed: [{ lessonId: lessons[0]?.id, title: "Lesson 1" }],
       extraTime: { available: false, reason: "sessionNotFinished" },
       finished: false,
-      fullMeal: true,
+      fullMeal: false,
+      minutes: 2,
       status: "active",
       tomorrow: { title: "Lesson 2" },
     });
@@ -211,8 +223,9 @@ describe("ending a session", () => {
 
     await learningEventFixture({
       brainPower: 40,
-      contentIds: { lessonId: lessons[0]?.id ?? "" },
+      contentIds: { lessonId: lessons[0]?.id ?? "", studySessionId: today.session.id },
       endedAt: new Date(),
+      seconds: 200,
       userId: user.id,
     });
 
@@ -222,12 +235,9 @@ describe("ending a session", () => {
       sessionId: today.session.id,
     });
 
-    // The idea is due after the exam, so it comes back on the last day before it.
+    // The idea is due after the exam, so no review before it asks it: the end screen names no day.
     expect(finished).toMatchObject({
-      completion: {
-        comesBackOn: new Date(SESSION_TODAY.getTime() + 2 * DAY_MS),
-        sessionCompleted: true,
-      },
+      completion: { comesBackOn: null, sessionCompleted: true },
       status: "ready",
     });
 
@@ -246,6 +256,13 @@ describe("ending a session", () => {
 
     expect(ended.status === "ready" && ended.summary.belt).toBeTruthy();
     expect(later).toStrictEqual(ended);
+
+    // The time the session took is the time its lesson took, in its summary and its ledger row.
+    expect(ended.status === "ready" && ended.summary.minutes).toBe(3);
+
+    await expect(
+      prisma.learningEvent.findFirst({ where: { kind: "session", userId: user.id } }),
+    ).resolves.toMatchObject({ seconds: 200 });
 
     const view = await getTodayStudySession({ goalId: goal.id });
 
@@ -274,10 +291,10 @@ describe("ending a session", () => {
       ),
     );
 
-    vi.mocked(extractMemoryFacts).mockResolvedValue({
-      data: { facts: [] },
+    vi.mocked(findSessionPatterns).mockResolvedValue({
+      data: { patterns: [] },
       provenance: { generatedAt: "", model: "test", promptVersion: "test", runId: "test" },
-    } as unknown as Awaited<ReturnType<typeof extractMemoryFacts>>);
+    } as unknown as Awaited<ReturnType<typeof findSessionPatterns>>);
 
     // Two stops at once (a double tap) and one later: only the first runs memory and the rebalance.
     await Promise.all([
@@ -292,8 +309,8 @@ describe("ending a session", () => {
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
     ).resolves.toMatchObject({ endedAt: null, stoppedAt: expect.any(Date) });
 
-    expect(extractMemoryFacts).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ source: "session" }),
+    expect(findSessionPatterns).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ activity: expect.any(String) }),
     );
 
     expect(generateMemoryInsight).toHaveBeenCalledExactlyOnceWith(

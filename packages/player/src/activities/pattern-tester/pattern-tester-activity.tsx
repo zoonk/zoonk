@@ -92,6 +92,7 @@ function passingSummary(
  * Write a regular expression or a spreadsheet formula and watch it tested against every example
  * as you type, the same way grading tests it. Symbol buttons save hunting on a phone keyboard,
  * and hints come one at a time on request. After the check, a pattern that works is shown.
+ * Explored on an explanation screen, it starts with a pattern that works, to read and change.
  */
 export function PatternTesterActivity({
   answer,
@@ -105,7 +106,16 @@ export function PatternTesterActivity({
   const { fields } = content;
   const isChecked = phase === "checked";
   const isRegex = fields.mode === "regex";
-  const [pattern, setPattern] = useState(answer?.kind === "pattern" ? answer.pattern : "");
+  const isExploring = phase === "explore";
+
+  const [pattern, setPattern] = useState(() => {
+    if (isExploring) {
+      return fields.solution;
+    }
+
+    return answer?.kind === "pattern" ? answer.pattern : "";
+  });
+
   const regexSnippets = useRegexSnippets();
   const formulaSnippets = useFormulaSnippets(fields);
   const summary = passingSummary(fields, pattern);
@@ -180,7 +190,7 @@ export function PatternTesterActivity({
           })}
       </p>
 
-      <PatternHints hints={fields.hints} isChecked={isChecked} />
+      {!isExploring && <PatternHints hints={fields.hints} isChecked={isChecked} />}
 
       {isChecked && (
         <div className="flex flex-col gap-1">

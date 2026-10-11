@@ -4,8 +4,8 @@ import { heldBackDraftFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
-import { getTodayStudySession } from "./get-today-study-session";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));

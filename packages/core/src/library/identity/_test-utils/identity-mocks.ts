@@ -29,12 +29,16 @@ export function mockSearchTermsFor(write: (subject: LibraryIdentitySubject) => s
   );
 }
 
+/** A decision that picks `matchId` when the search offered it, as the real one only picks a candidate. */
 export function mockDecision(matchId: string | null) {
   return vi
     .mocked(decideLibraryIdentity)
     .mockImplementation(({ candidates }) =>
       Promise.resolve({
-        match: matchId ? { id: matchId, model: "test/jev", probability: MATCH_PROBABILITY } : null,
+        match:
+          matchId && candidates.some((candidate) => candidate.id === matchId)
+            ? { id: matchId, model: "test/jev", probability: MATCH_PROBABILITY }
+            : null,
         verdicts: candidates.map((candidate) => ({
           id: candidate.id,
           model: "test/jev",

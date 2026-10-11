@@ -1,15 +1,24 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type PrismaClient } from "../../../../generated/prisma/client";
 import { daysFrom, localDayFrom } from "../_utils/dates";
 import { SEED_PROVENANCE } from "../_utils/provenance";
 import { seedId } from "../_utils/seed-id";
 import { libraryIds } from "../library/library-ids";
 import { type CourseLookup } from "./course-lookup";
-import { buildPlanGraph } from "./plan-graph";
-import { type ScheduledItem, type ScheduledPhase, schedulePlan } from "./plan-schedule";
-import { type SeedGoal, type SeedLearner } from "./types";
+import { buildPlanGraph, itemLessonKeys } from "./plan-graph";
+import { type SeedGoal, type SeedLearner, type SeedPlanItem } from "./types";
 
-const MINUTES_PER_HOUR = 60;
+const DAYS_PER_WEEK = 7;
+const SUNDAY = 0;
+
+/**
+ * The pace a plan is saved with before anyone's lessons set one: the lessons' own estimates. Saved
+ * with the plan, so the planner lays out the same plan on any database, whatever pace other
+ * learners' lessons there would sample.
+ */
+const LESSON_PACE = { factor: 1, source: "typical" } as const;
+
+/** Past any plan's length: existing items move here first, so no two ever share a position. */
+const POSITION_OFFSET = 1_000_000;
 
 export type LearnerScope = {
   learner: SeedLearner;
@@ -36,83 +45,80 @@ export function planItemId(learner: SeedLearner, goal: SeedGoal, position: numbe
   return seedId(`learner:${learner.key}:goal:${goal.key}:item:${position}`);
 }
 
-/** A persona's item keeps its id; items the schedule planned are known by their planner key. */
-function scheduledItemId(scope: LearnerScope, goal: SeedGoal, item: ScheduledItem): string {
-  return item.source === undefined
-    ? seedId(`learner:${scope.learner.key}:goal:${goal.key}:item:${item.key}`)
-    : planItemId(scope.learner, goal, item.source);
-}
-
-function planItemContent(scope: LearnerScope, item: ScheduledItem) {
-  const { lookup } = scope;
-
-  if (item.lesson) {
-    const lesson = lookup.lesson(item.lesson);
-
-    return {
-      chapterId: lesson.chapterId,
-      lessonId: lesson.id,
-      skillId: null,
-      titleSnapshot: lesson.title,
-    };
-  }
-
-  // A stand-in for lessons the Library hasn't outlined yet is known by its skill.
-  if (item.skill) {
-    return {
-      chapterId: null,
-      lessonId: null,
-      skillId: lookup.skill(item.skill),
-      titleSnapshot: lookup.skillName(item.skill),
-    };
-  }
-
-  return { chapterId: null, lessonId: null, skillId: null, titleSnapshot: item.title ?? item.kind };
-}
-
 /**
- * An exam's items as the persona wrote them: the exam planner's windows, mocks and reviews aren't
- * planned by the seed.
+ * One item the seed writes: the persona's item, or one lesson of a chapter the persona wrote as a
+ * whole, as the planner stores chapters.
  */
-function listExamItems(goal: SeedGoal): ScheduledItem[] {
-  return goal.plan.items.map((item, source) => ({
-    chapter: item.chapter,
-    day: item.day ?? 0,
-    key: `item:${source}`,
-    kind: item.kind,
-    lesson: item.lesson,
-    minutes: 0,
-    phase: item.phase,
-    source,
-    status: item.status,
-    title: item.title,
-  }));
+type WrittenItem = { day: number; id: string; item: SeedPlanItem; lesson?: string };
+
+/** Weeks run Monday to Sunday, as the planner's do: the days until this week's Sunday. */
+function getWeekEnd(scope: LearnerScope): number {
+  const weekday = scopeDay(scope, 0).getUTCDay();
+  return weekday === SUNDAY ? 0 : DAYS_PER_WEEK - weekday;
 }
 
-/** Past any plan's length: existing items move here first, so no two ever share a position. */
-const POSITION_OFFSET = 1_000_000;
+/** A persona's item already on the plan: finished, or due this week, which the planner keeps. */
+function isOnPlan(item: SeedPlanItem, weekEnd: number): boolean {
+  if (item.status !== "todo") {
+    return true;
+  }
 
-function chapterContent(scope: LearnerScope, item: ScheduledItem) {
-  const chapter = scope.lookup.chapter(item.chapter ?? "");
+  if (item.day !== undefined && item.day < 0) {
+    throw new Error("A seeded plan item still to do can't be due before today");
+  }
 
-  return {
-    chapterId: chapter.id,
-    lessonId: null,
-    skillId: null,
-    titleSnapshot: item.title ?? chapter.title,
-  };
+  return item.day !== undefined && item.day <= weekEnd;
 }
 
 /**
- * Writes the plan's items in order. A run on another day plans other items, so the ones it no
- * longer has go, and the rest step aside before taking their new positions.
+ * The persona's items already on the plan, a chapter as its lessons. The planner lays out the
+ * rest (see `planSeededGoal` in core), so the persona's later items only set the graph's order.
+ */
+function listWrittenItems(scope: LearnerScope, goal: SeedGoal): WrittenItem[] {
+  const weekEnd = getWeekEnd(scope);
+  const prefix = `learner:${scope.learner.key}:goal:${goal.key}:item`;
+
+  return goal.plan.items.flatMap((item, source): WrittenItem[] => {
+    if (!isOnPlan(item, weekEnd)) {
+      return [];
+    }
+
+    const day = item.day ?? 0;
+
+    if (!item.chapter || item.lesson) {
+      return [{ day, id: planItemId(scope.learner, goal, source), item, lesson: item.lesson }];
+    }
+
+    return itemLessonKeys(goal.course, item).map((lesson) => ({
+      day,
+      id: seedId(`${prefix}:lesson:${lesson}`),
+      item,
+      lesson,
+    }));
+  });
+}
+
+function writtenContent(scope: LearnerScope, { item, lesson }: WrittenItem) {
+  if (!lesson) {
+    return { chapterId: null, lessonId: null, titleSnapshot: item.title ?? item.kind };
+  }
+
+  const found = scope.lookup.lesson(lesson);
+  return { chapterId: found.chapterId, lessonId: found.id, titleSnapshot: found.title };
+}
+
+/**
+ * Writes the persona's items on the plan in order. Every run plans the rest again, so the items
+ * it doesn't write go, and the rest step aside before taking their positions. Their skills are
+ * the planner's to assign.
  */
 async function writePlanItems(
   scope: LearnerScope,
-  { goal, items, planId }: { goal: SeedGoal; items: readonly ScheduledItem[]; planId: string },
-) {
+  { goal, planId }: { goal: SeedGoal; planId: string },
+): Promise<WrittenItem[]> {
   const { prisma } = scope;
-  const ids = items.map((item) => scheduledItemId(scope, goal, item));
+  const written = listWrittenItems(scope, goal);
+  const ids = written.map((entry) => entry.id);
 
   await prisma.planItem.deleteMany({ where: { id: { notIn: ids }, planId } });
 
@@ -122,21 +128,20 @@ async function writePlanItems(
   });
 
   await Promise.all(
-    items.map((item, position) => {
-      const id = ids[position] ?? "";
+    written.map((entry, position) => {
+      const { day, id, item } = entry;
       const isDone = item.status === "done" || item.status === "testedOut";
 
-      const content =
-        item.chapter && !item.lesson ? chapterContent(scope, item) : planItemContent(scope, item);
-
       const data = {
-        ...content,
-        completedAt: isDone ? daysFrom(scope.now, item.day) : null,
-        kind: item.kind,
+        ...writtenContent(scope, entry),
+        completedAt: isDone ? daysFrom(scope.now, day) : null,
+        kind: entry.lesson ? ("lesson" as const) : item.kind,
+        lessons: null,
         phase: item.phase,
         planId,
         position,
-        scheduledFor: scopeDay(scope, item.day),
+        scheduledFor: scopeDay(scope, day),
+        skillId: null,
         status: item.status,
       };
 
@@ -144,29 +149,30 @@ async function writePlanItems(
     }),
   );
 
-  return ids;
+  return written;
 }
 
 async function writePlanChanges(
   scope: LearnerScope,
-  {
-    goal,
-    itemIds,
-    items,
-    planId,
-  }: {
-    goal: SeedGoal;
-    itemIds: readonly string[];
-    items: readonly ScheduledItem[];
-    planId: string;
-  },
+  { goal, planId, written }: { goal: SeedGoal; planId: string; written: readonly WrittenItem[] },
 ) {
-  const testedOut = itemIds.filter((_, index) => items[index]?.status === "testedOut");
+  const testedOut = written
+    .filter((entry) => entry.item.status === "testedOut")
+    .map((entry) => entry.id);
+
+  const changes = (goal.plan.changes ?? []).map((change, index) => ({
+    change,
+    id: seedId(`learner:${scope.learner.key}:goal:${goal.key}:change:${index}`),
+  }));
+
+  // The persona's plan is the seed's: changes the app made to it since the last run go with it,
+  // or Today keeps announcing them.
+  await scope.prisma.planChange.deleteMany({
+    where: { id: { notIn: changes.map((entry) => entry.id) }, planId },
+  });
 
   await Promise.all(
-    (goal.plan.changes ?? []).map((change, index) => {
-      const id = seedId(`learner:${scope.learner.key}:goal:${goal.key}:change:${index}`);
-
+    changes.map(({ change, id }) => {
       const data = {
         createdAt: daysFrom(scope.now, change.day),
         kind: change.kind,
@@ -189,50 +195,10 @@ async function writePlanChanges(
   );
 }
 
-/** An exam's phases are its windows, each as long as its days at the goal's daily minutes. */
-function listExamPhases(goal: SeedGoal): ScheduledPhase[] {
-  return goal.plan.phases.map((phase) => {
-    const startDay = phase.startDay ?? 0;
-    const endDay = phase.endDay ?? startDay;
-
-    return {
-      endDay,
-      milestone: phase.milestone ?? null,
-      minutes: (endDay - startDay + 1) * goal.dailyMinutes,
-      name: phase.name,
-      startDay,
-    };
-  });
-}
-
 /**
- * The plan as the app plans it: from its skill graph outside exams (see `schedulePlan`), and for
- * an exam, the persona's items in its windows.
- */
-function planGoal(scope: LearnerScope, goal: SeedGoal) {
-  if (goal.kind === "exam") {
-    const phases = listExamPhases(goal);
-    const minutes = phases.reduce((total, phase) => total + phase.minutes, 0);
-    return { items: listExamItems(goal), phases, totalMinutes: minutes };
-  }
-
-  const today = scopeDay(scope, 0);
-
-  // The plan reads a target date by its calendar day, as the goal's date column keeps it.
-  const targetDay = goal.targetDate
-    ? Math.round(
-        (new Date(goal.targetDate.toISOString().slice(0, "yyyy-mm-dd".length)).getTime() -
-          today.getTime()) /
-          MS_PER_DAY,
-      )
-    : null;
-
-  return schedulePlan({ goal, targetDay, todayWeekday: today.getUTCDay() });
-}
-
-/**
- * Writes a goal with its plan: phases with dates, ordered items pointing at the course's lessons
- * and chapters, and plan changes with their reasons.
+ * Writes a goal with what the persona wrote of its plan: the skill graph, the settings, the items
+ * it finished and this week's, and plan changes with their reasons. The planner lays out the rest
+ * and dates the phases (see `planSeededGoal` in core).
  */
 export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<string> {
   const { learner, lookup, now, prisma, userId } = scope;
@@ -257,23 +223,20 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
     userId,
   };
 
-  const planned = planGoal(scope, goal);
-
-  const phases = planned.phases.map((phase, index) => ({
-    endDate: phase.endDay === null ? null : isoDay(scope, phase.endDay),
-    kind: goal.plan.phases[index]?.kind ?? "learn",
-    milestone: phase.milestone,
-    minutes: phase.minutes,
-    name: phase.name,
-    startDate: phase.startDay === null ? null : isoDay(scope, phase.startDay),
-  }));
-
   const planData = {
-    estimateHours: planned.totalMinutes / MINUTES_PER_HOUR,
+    estimateHours: null,
     goalId,
     graph: buildPlanGraph(scope, goal),
-    phases,
-    settings: { focusAreas: goal.plan.focusAreas ?? [], startDate: isoDay(scope, goal.createdDay) },
+    phases: [],
+    settings: {
+      examChoices: (goal.plan.examChoices ?? []).map((choice) => ({
+        group: choice.group.in(learner.language),
+        subject: choice.subject.in(learner.language),
+      })),
+      focusAreas: goal.plan.focusAreas ?? [],
+      pace: LESSON_PACE,
+      startDate: isoDay(scope, goal.createdDay),
+    },
     ...SEED_PROVENANCE,
     generatedAt: daysFrom(now, goal.createdDay),
   };
@@ -290,8 +253,8 @@ export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<st
     where: { id: planId },
   });
 
-  const itemIds = await writePlanItems(scope, { goal, items: planned.items, planId });
-  await writePlanChanges(scope, { goal, itemIds, items: planned.items, planId });
+  const written = await writePlanItems(scope, { goal, planId });
+  await writePlanChanges(scope, { goal, planId, written });
 
   return goalId;
 }

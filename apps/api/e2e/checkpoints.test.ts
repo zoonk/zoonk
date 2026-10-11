@@ -7,6 +7,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
+  challengeGenerationSchema,
   challengeResponseSchema,
   challengeStartResponseSchema,
   checkpointResponseSchema,
@@ -21,8 +22,17 @@ const SKILL_NAMES = ["Discounts", "Ratios"];
 /** The boss asks every question of the phase's skills, since there are fewer than ten. */
 const BOSS_QUESTIONS = QUESTIONS_PER_SKILL * SKILL_NAMES.length;
 
-/** A goal whose first phase (two lessons) is done, so today's session is the phase's boss. */
-async function createGoalAtBoss(userId: string) {
+function addQuestions({ count, skillId }: { count: number; skillId: string }) {
+  return Array.from({ length: count }, () =>
+    itemFixture({ content: choiceItemContent(), skillId }),
+  );
+}
+
+/**
+ * A goal whose first phase (two lessons) is done, so today's session is the phase's boss, its two
+ * skills holding `questionsPerSkill` questions each.
+ */
+async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PER_SKILL) {
   const [goal, skills, lessons] = await Promise.all([
     goalFixture({ dailyMinutes: 30, timezone: "UTC", userId }),
     Promise.all(SKILL_NAMES.map((name) => skillFixture({ name }))),
@@ -39,11 +49,7 @@ async function createGoalAtBoss(userId: string) {
   });
 
   await Promise.all([
-    ...skills.flatMap((skill) =>
-      Array.from({ length: QUESTIONS_PER_SKILL }, () =>
-        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
-      ),
-    ),
+    ...skills.flatMap((skill) => addQuestions({ count: questionsPerSkill, skillId: skill.id })),
     ...skills.map((skill, index) =>
       lessonSkillFixture({ lessonId: lessons[index]?.id ?? "", skillId: skill.id }),
     ),
@@ -95,11 +101,10 @@ test.describe("Checkpoints API", () => {
       api.post(`/v1/challenges/${id}/starts`, { data: { timeZone: "UTC" } }),
       api.post(`/v1/challenges/${id}/moves`, { data: { timeZone: "UTC" } }),
       api.delete(`/v1/challenges/${id}/moves/${randomUUID()}?timeZone=UTC`),
+      api.post(`/v1/challenges/${id}/generations`),
     ]);
 
-    expect(responses.map((response) => response.status())).toStrictEqual([
-      401, 401, 401, 401, 401, 401, 401,
-    ]);
+    expect(responses.map((response) => response.status())).toStrictEqual(responses.map(() => 401));
 
     await api.dispose();
   });
@@ -223,5 +228,72 @@ test.describe("Checkpoints API", () => {
 
     // Only the week's challenge moves to Monday; a boss keeps its day.
     expect(bossMove.status()).toBe(409);
+  });
+
+  // A boss the bank held too few questions for stays in the day: starting it says so, and its
+  // generations write what it lacks of its ten (a model call, so each counts as AI help).
+  test("a boss short of questions asks for them to be written before it starts", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "challenge-thin" }),
+      createBearerLearner({ baseURL, prefix: "challenge-thin-other" }),
+    ]);
+
+    const goal = await createGoalAtBoss(userId, 1);
+
+    const boss = await prisma.planItem.findFirstOrThrow({
+      where: { kind: "boss", plan: { goalId: goal.id } },
+    });
+
+    const path = `/v1/challenges/${boss.id}`;
+
+    const intro = await readBody({
+      response: await api.get(`${path}?timeZone=UTC`),
+      schema: challengeResponseSchema,
+    });
+
+    expect(intro).toMatchObject({ passMark: 7, questions: 10, status: "ready" });
+
+    const refused = await api.post(`${path}/starts`, { data: { timeZone: "UTC" } });
+    expect(refused.status()).toBe(409);
+    await expect(refused.json()).resolves.toMatchObject({ error: { code: "QUESTIONS_NEEDED" } });
+
+    const [hidden, writing] = await Promise.all([
+      other.api.post(`${path}/generations`),
+      api.post(`${path}/generations`),
+    ]);
+
+    expect(hidden.status()).toBe(404);
+
+    const run = await readBody({
+      response: writing,
+      schema: challengeGenerationSchema,
+      status: 202,
+    });
+
+    expect(run).toStrictEqual({ generationId: expect.any(String), status: "generating" });
+    expect(writing.headers().location).toBe(`/v1/generations/${run.generationId}`);
+
+    // Once the bank holds them, nothing is written and it starts.
+    const skills = await prisma.lessonSkill.findMany({
+      where: { lesson: { planItems: { some: { phase: 0, plan: { goalId: goal.id } } } } },
+    });
+
+    await Promise.all(
+      skills.flatMap((skill) => addQuestions({ count: 4, skillId: skill.skillId })),
+    );
+
+    await expect(
+      readBody({
+        response: await api.post(`${path}/generations`),
+        schema: challengeGenerationSchema,
+      }),
+    ).resolves.toStrictEqual({ generationId: null, status: "ready" });
+
+    const started = await readBody({
+      response: await api.post(`${path}/starts`, { data: { timeZone: "UTC" } }),
+      schema: challengeStartResponseSchema,
+    });
+
+    expect(started).toMatchObject({ blockId: intro.blockId, kind: "checkpoint" });
   });
 });

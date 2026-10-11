@@ -48,6 +48,8 @@ model LearnerSkill {
 /// SetNull, so answers outlive regenerated steps and items. `targetLanguage` is the language practiced
 /// in an answer to a language lesson or level test, kept on the row so language stats never read content.
 /// A mock's answers keep their mock, so each of its questions is recorded once however often it's finished.
+/// `isPlacement` marks an answer to one of placement's questions, in placement itself or inside a first-week
+/// session: a test's answer, never practice, even when a session asked it.
 model Attempt {
   id             String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String        @map("user_id") @db.Uuid
@@ -65,6 +67,7 @@ model Attempt {
   answer         Json
   targetLanguage String?       @map("target_language") @db.VarChar(10)
   isCorrect      Boolean       @map("is_correct")
+  isPlacement    Boolean       @default(false) @map("is_placement")
   score          Float?
   durationMs     Int           @map("duration_ms")
   answeredAt     DateTime      @default(now()) @map("answered_at")

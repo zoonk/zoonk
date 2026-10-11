@@ -1,5 +1,6 @@
 import { type BlueprintContent, type ExamEdition, type ExamStructure } from "./blueprint-contract";
 import { keepKnownSubjectFacts } from "./blueprint-subject-merge";
+import { countsEverySubject } from "./subject-questions";
 
 export type BlueprintChange = { after: unknown; before: unknown; field: string };
 
@@ -7,18 +8,23 @@ export type BlueprintMerge = { changes: BlueprintChange[]; content: BlueprintCon
 
 type Section = { after: unknown; before: unknown; field: string; isEmpty: boolean };
 
-/** Citations say where a fact came from; a new passage for the same fact isn't a change. */
-function withoutCitations(value: unknown): unknown {
+/**
+ * Citations say where a fact came from and a pass mark's translations say it again: a new passage
+ * or wording for the same fact isn't a change.
+ */
+const RESTATING_KEYS = new Set(["citation", "citations", "translations"]);
+
+function withoutRestatements(value: unknown): unknown {
   if (Array.isArray(value)) {
-    return value.map((item) => withoutCitations(item));
+    return value.map((item) => withoutRestatements(item));
   }
 
   if (value && typeof value === "object") {
     return Object.fromEntries(
       Object.entries(value)
-        .filter(([key]) => key !== "citation" && key !== "citations")
+        .filter(([key]) => !RESTATING_KEYS.has(key))
         .toSorted(([first], [second]) => first.localeCompare(second))
-        .map(([key, item]) => [key, withoutCitations(item)]),
+        .map(([key, item]) => [key, withoutRestatements(item)]),
     );
   }
 
@@ -27,7 +33,34 @@ function withoutCitations(value: unknown): unknown {
 
 /** Key order differs between parsed output and stored JSON, so values are compared sorted. */
 function isSame(first: unknown, second: unknown): boolean {
-  return JSON.stringify(withoutCitations(first)) === JSON.stringify(withoutCitations(second));
+  return JSON.stringify(withoutRestatements(first)) === JSON.stringify(withoutRestatements(second));
+}
+
+type ExamRule = ExamStructure["rules"][number];
+
+/**
+ * The stored rules, when a new reading says the same, with the new reading's translation of each
+ * pass mark it translated: a blueprint read before translations gets them when read again.
+ */
+function keepRulesWithTranslations({
+  current,
+  next,
+}: {
+  current: ExamRule[];
+  next: ExamRule[];
+}): ExamRule[] {
+  const translated = new Map(
+    next.flatMap((rule) => (rule.translations ? [[rule.text, rule.translations] as const] : [])),
+  );
+
+  if (!current.some((rule) => translated.has(rule.text))) {
+    return current;
+  }
+
+  return current.map((rule) => {
+    const translations = translated.get(rule.text);
+    return translations ? { ...rule, translations } : rule;
+  });
 }
 
 function isEmptyValue(value: unknown): boolean {
@@ -38,7 +71,7 @@ type ExamFormat = ExamStructure["formats"][number];
 
 /**
  * A new reading's formats, where one that doesn't state its number of options (a notice that says
- * "180 questões objetivas" without "cinco alternativas") is the stored format of the same kind that
+ * "180 objective questions" without "five options") is the stored format of the same kind that
  * does, with the passage that states it: a reading that leaves the count out hasn't changed it,
  * and items are written and picked by it (ENEM's five options).
  */
@@ -108,7 +141,11 @@ function mergeEdition({
   const hasNewCount =
     changedFields.has("edition.year") || changedFields.has("edition.questionCount");
 
+  // The check is of the reading that's stored now: the new one's, once a new reading was checked.
+  const check = next.check ?? current.check;
+
   return {
+    ...(check ? { check } : {}),
     citations: hasNewCount ? next.citations : current.citations,
     dates: pick({
       changed: changedFields.has("edition.dates"),
@@ -139,20 +176,25 @@ function mergeEdition({
 }
 
 /**
- * The subjects' counts the lookup gave, kept across readings, except a lookup that found none
- * while the reading changes the subjects: it was asked for other subjects (a reading that missed
- * the OAB's Ética left 79 of 80 questions to match), so research asks again for the new ones
- * instead of waiting a month.
+ * The subjects' counts the lookup gave, kept across readings, except a lookup that doesn't count
+ * every subject of a reading that changes the subjects: it was asked for other subjects (a reading
+ * that missed the OAB's ethics left 72 of 80 questions to match), so research asks again for the
+ * new ones instead of waiting a month.
  */
 function keepPastQuestions({
   current,
+  next,
   subjectsChanged,
 }: {
   current: ExamStructure;
+  next: ExamStructure;
   subjectsChanged: boolean;
 }): ExamStructure["pastQuestions"] {
   const past = current.pastQuestions;
-  return past && subjectsChanged && past.subjects.length === 0 ? undefined : past;
+
+  return past && subjectsChanged && !countsEverySubject({ past, subjects: next.subjects })
+    ? undefined
+    : past;
 }
 
 /**
@@ -170,7 +212,7 @@ function withLookups({
   subjectsChanged: boolean;
 }) {
   const pastOptions = current.pastOptions ?? next.pastOptions;
-  const pastQuestions = keepPastQuestions({ current, subjectsChanged }) ?? next.pastQuestions;
+  const pastQuestions = keepPastQuestions({ current, next, subjectsChanged }) ?? next.pastQuestions;
   const pastTopicFrequency = current.pastTopicFrequency ?? next.pastTopicFrequency;
 
   return {
@@ -234,8 +276,8 @@ export function mergeBlueprintContent({
   const changes = getSections({ current, next })
     .filter((section) => isChanged(section))
     .map(({ after, before, field }) => ({
-      after: withoutCitations(after),
-      before: withoutCitations(before),
+      after: withoutRestatements(after),
+      before: withoutRestatements(before),
       field,
     }));
 
@@ -262,16 +304,19 @@ export function mergeBlueprintContent({
           next: next.structure,
           subjectsChanged: has("subjects"),
         }),
-        rules: pick({
-          changed: has("rules"),
-          current: current.structure.rules,
-          next: next.structure.rules,
-        }),
+        rules: has("rules")
+          ? next.structure.rules
+          : keepRulesWithTranslations({
+              current: current.structure.rules,
+              next: next.structure.rules,
+            }),
         subjects: pick({
           changed: has("subjects"),
           current: current.structure.subjects,
           next: next.structure.subjects,
         }),
+        // An exam doesn't stop testing its language: a reading that misses it keeps the known one.
+        testedLanguage: next.structure.testedLanguage ?? current.structure.testedLanguage ?? null,
       },
       topicFrequency: pick({
         changed: has("topicFrequency"),

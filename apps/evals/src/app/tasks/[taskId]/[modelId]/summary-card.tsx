@@ -40,6 +40,10 @@ export function SummaryCard({ averageScore, stats }: { averageScore: number; sta
         {stats.judgeCost > 0 && (
           <StatItem label="Spent on the judge" value={formatDollars(stats.judgeCost)} />
         )}
+
+        {stats.extraCost > 0 && (
+          <StatItem label="Spent on other calls" value={formatDollars(stats.extraCost)} />
+        )}
       </CardContent>
     </Card>
   );

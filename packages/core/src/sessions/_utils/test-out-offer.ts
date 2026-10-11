@@ -1,8 +1,9 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
+import { loadTestOutPlan } from "../../learner/_utils/goal-skill-graph";
 import { countSkippableItems, getChapterSkills } from "../../learner/test-out/_utils/chapter-items";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
+import { type TestOutOffer } from "../completion-contract";
 import { readFinishedLessonId } from "./lesson-block";
 
 /** Lessons of one chapter in a row with every answer right before its test-out is offered. */
@@ -13,21 +14,6 @@ const MIN_LESSON_ANSWERS = 3;
 
 /** Fewer lessons to skip than this aren't worth a test: the learner just finishes them. */
 const MIN_LESSONS_LEFT = 2;
-
-/**
- * "This is easy? Take the chapter's test and skip the rest": offered once, right after the lesson
- * that made it a streak, for the chapter the lesson is planned in.
- */
-export type TestOutOffer = {
-  chapterId: string;
-  chapterTitle: string;
-  goalId: string;
-  /**
-   * The plan's lessons passing the test can skip: the chapter's still to do, and the ones elsewhere
-   * that teach only the same skills.
-   */
-  lessonsLeft: number;
-};
 
 type LessonFinish = { correct: number; incorrect: number; lessonId: string };
 
@@ -136,7 +122,7 @@ export async function findTestOutOffer({
     return null;
   }
 
-  const plan = await loadGoalPlan(goalId);
+  const plan = await loadTestOutPlan(goalId);
   const skills = getChapterSkills({ chapterId: chapter.id, plan });
   const skippable = countSkippableItems({ plan, skills });
 

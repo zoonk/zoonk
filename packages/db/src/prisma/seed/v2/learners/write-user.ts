@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { type PrismaClient } from "../../../../generated/prisma/client";
 import { seedAccounts } from "../../accounts";
 import { daysFrom } from "../_utils/dates";
@@ -6,7 +5,6 @@ import { seedId } from "../_utils/seed-id";
 import { type SeedLearner } from "./types";
 
 const SUBSCRIPTION_DAYS = 365;
-const GUARDIAN_ACCEPTED_DAYS_AGO = 10;
 
 /** The learner's account, credential login for tests, and Plus when the persona has it. */
 async function writeAccount(prisma: PrismaClient, learner: SeedLearner): Promise<string> {
@@ -32,6 +30,18 @@ async function writeAccount(prisma: PrismaClient, learner: SeedLearner): Promise
   return user.id;
 }
 
+/** A year of Plus, granted by Zoonk rather than bought through a store. */
+export function getSeedPlus({ now, userId }: { now: Date; userId: string }) {
+  return {
+    periodEnd: daysFrom(now, SUBSCRIPTION_DAYS),
+    periodStart: now,
+    plan: "plus",
+    provider: "zoonk" as const,
+    referenceId: userId,
+    status: "active",
+  };
+}
+
 async function writePlus({
   learner,
   now,
@@ -50,50 +60,13 @@ async function writePlus({
     return;
   }
 
-  const data = {
-    periodEnd: daysFrom(now, SUBSCRIPTION_DAYS),
-    periodStart: now,
-    plan: "plus",
-    provider: "zoonk" as const,
-    referenceId: userId,
-    status: "active",
-  };
-
+  const data = getSeedPlus({ now, userId });
   await prisma.subscription.upsert({ create: { id, ...data }, update: data, where: { id } });
 }
 
-async function writeGuardian({
-  learner,
-  now,
-  prisma,
-  userId,
-}: {
-  learner: SeedLearner;
-  now: Date;
-  prisma: PrismaClient;
-  userId: string;
-}) {
-  if (!learner.guardian) {
-    return;
-  }
-
-  const id = seedId(`learner:${learner.key}:guardian`);
-
-  const data = {
-    acceptedAt: daysFrom(now, -GUARDIAN_ACCEPTED_DAYS_AGO),
-    dailyLimitMinutes: learner.guardian.dailyLimitMinutes,
-    guardianEmail: learner.guardian.email,
-    status: "active" as const,
-    tokenHash: createHash("sha256").update(`seed-guardian:${learner.key}`).digest("hex"),
-    userId,
-  };
-
-  await prisma.guardianLink.upsert({ create: { id, ...data }, update: data, where: { id } });
-}
-
 /**
- * Creates or refreshes the learner's user, sign-in account, learning profile (buddy, birth month
- * for minors, memory switch), Plus and guardian link. Returns the user id.
+ * Creates or refreshes the learner's user, sign-in account, learning profile (buddy, daily limit)
+ * and Plus. Returns the user id.
  */
 export async function writeLearnerUser({
   learner,
@@ -107,14 +80,11 @@ export async function writeLearnerUser({
   const userId = await writeAccount(prisma, learner);
 
   const profile = {
-    birthMonth: learner.birth?.month ?? null,
-    birthYear: learner.birth ? now.getUTCFullYear() - learner.birth.yearsOld : null,
     buddyGlasses: learner.buddy?.glasses ?? "round",
     buddyKind: learner.buddy?.kind ?? null,
     buddyName: learner.buddy?.name ?? null,
-    // Memory starts off without an adult's age answer. The adults here skipped the question and
-    // turned memory on; Pedro (15) keeps a minor's default, off.
-    memoryEnabled: learner.birth ? null : true,
+    dailyLimitMinutes: learner.dailyLimitMinutes ?? null,
+    memoryEnabled: true,
   };
 
   await Promise.all([
@@ -124,7 +94,6 @@ export async function writeLearnerUser({
       where: { userId },
     }),
     writePlus({ learner, now, prisma, userId }),
-    writeGuardian({ learner, now, prisma, userId }),
   ]);
 
   return userId;

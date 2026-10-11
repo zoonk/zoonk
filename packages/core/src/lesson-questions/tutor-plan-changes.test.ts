@@ -1,16 +1,21 @@
 import { randomUUID } from "node:crypto";
+import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
+import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { type TopicSkillName, nameTopicSkills } from "@zoonk/ai/tasks/v2/plans/topic-skill-names";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { buildSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import {
@@ -40,6 +45,9 @@ vi.mock("@zoonk/ai/tasks/v2/plans/edit-intent", () => ({ interpretPlanEdit: vi.f
 /** Finding a topic's Library skill asks models for search terms and a verdict; the search is real. */
 vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
+
+/** Naming an added topic as its shared skill is a model call too; each test says what it named. */
+vi.mock("@zoonk/ai/tasks/v2/plans/topic-skill-names", () => ({ nameTopicSkills: vi.fn() }));
 
 /** A Monday in 2020, before the learning events other tests write, so estimates stay put. */
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -71,6 +79,26 @@ function mockWords(data: Awaited<ReturnType<typeof interpretPlanEdit>>["data"]) 
     usage: {} as never,
     userPrompt: "",
   });
+}
+
+/** The shared names the naming step gives the topics; by default each topic's own. */
+function mockSkillNames(name: (topic: { description: string; name: string }) => TopicSkillName) {
+  vi.mocked(nameTopicSkills).mockImplementation(async ({ topics }) => ({
+    data: topics.map((topic) => name(topic)),
+    provenance: {
+      generatedAt: NOW.toISOString(),
+      latencyMs: 1,
+      model: "google/gemini-3.5-flash-lite",
+      promptVersion: "test",
+      provider: "google",
+      requestedModel: "google/gemini-3.5-flash-lite",
+      runId: "run-topic-skill-names",
+      usage: {},
+    },
+    systemPrompt: "",
+    usage: {} as never,
+    userPrompt: "",
+  }));
 }
 
 async function setup() {
@@ -155,18 +183,24 @@ async function proposeInAnswer({
   return result.change.id;
 }
 
-function readStatuses(ids: string[]) {
-  return prisma.planChange.findMany({
-    orderBy: { createdAt: "asc" },
+/**
+ * The changes' statuses in the order asked. The clock is faked, so changes made in one test share
+ * a `createdAt` and can't be ordered by it.
+ */
+async function readStatuses(ids: string[]) {
+  const changes = await prisma.planChange.findMany({
     select: { id: true, status: true },
     where: { id: { in: ids } },
   });
+
+  return ids.map((id) => changes.find((change) => change.id === id));
 }
 
 describe("plan changes the buddy proposes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
+    mockSkillNames((topic) => topic);
   });
 
   afterEach(() => {
@@ -243,6 +277,7 @@ describe("plan changes the buddy proposes", () => {
       operations: [
         {
           kind: "addTopics",
+          startDate: null,
           topics: [
             {
               area: "Math",
@@ -286,6 +321,155 @@ describe("plan changes the buddy proposes", () => {
     ).resolves.toBe(1);
   });
 
+  // The owner's rule: a topic the learner adds is a shared skill under a canonical name, never
+  // under the learner's own words ("…for Ms. Ana's test").
+  it("adds a topic asked for with personal details as a shared skill named without them", async () => {
+    const { goal, plan } = await setup();
+    const word = uniqueWord();
+    const canonical = `Complete comparison tables of cell organelles ${word}`;
+
+    mockSearchTerms([word]);
+    mockDecision(null);
+
+    mockSkillNames(() => ({
+      description: "Fill in tables that compare what each cell organelle does.",
+      name: canonical,
+    }));
+
+    mockWords({
+      leftOut: [],
+      operations: [
+        {
+          kind: "addTopics",
+          startDate: null,
+          topics: [
+            {
+              area: "Biology",
+              description: "The table Ms. Ana asked for on Friday's test at Saint Paul's.",
+              name: "Fill in the organelles table for Ms. Ana's Friday test",
+            },
+          ],
+        },
+      ],
+      summary: "The organelles table comes into your plan.",
+      understood: true,
+    });
+
+    const asked = await askBuddy({ goalId: goal.id, question: "add the organelles table" });
+    const result = await proposeTutorPlanChange({ ...asked, request: "add Ms. Ana's table" });
+    const changeId = result.status === "proposed" ? result.change.id : "";
+    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    const skill = await prisma.skill.findFirstOrThrow({ where: { name: canonical } });
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const graph = stored.graph as { skills: { name: string; skillId: string }[] };
+
+    expect(skill).toMatchObject({ ownerId: null, visibility: "public" });
+    expect(skill.description).not.toMatch(/Ana|Friday|Saint Paul/u);
+    expect(graph.skills.find((entry) => entry.skillId === skill.id)?.name).toBe(canonical);
+
+    // Only the naming step reads the learner's words; the shared search and decision never do.
+    const shared = JSON.stringify([
+      vi.mocked(generateSearchTerms).mock.calls,
+      vi.mocked(decideLibraryIdentity).mock.calls,
+    ]);
+
+    expect(shared).not.toMatch(/Ana|Friday|Saint Paul/u);
+
+    expect(vi.mocked(nameTopicSkills).mock.lastCall?.[0]).toMatchObject({
+      analytics: { contentScope: "personal", distinctId: goal.userId, goalId: goal.id },
+    });
+  });
+
+  // Only what the learner's own material teaches is private: a topic they ask for in words joins
+  // the shared Library even when their course is a private one (a class test from their notes).
+  it("adds a topic to a plan built from the learner's material as a shared skill", async () => {
+    const { goal, user } = await setup();
+    const word = uniqueWord();
+    const canonical = `Explain osmosis in plant cells ${word}`;
+    const course = await courseFixture({ userId: user.id, visibility: "private" });
+
+    await prisma.goal.update({ data: { primaryCourseId: course.id }, where: { id: goal.id } });
+
+    mockSearchTerms([word]);
+    mockDecision(null);
+
+    mockSkillNames(() => ({
+      description: "Explain how water moves in plant cells.",
+      name: canonical,
+    }));
+
+    mockWords({
+      leftOut: [],
+      operations: [
+        {
+          kind: "addTopics",
+          startDate: null,
+          topics: [
+            { area: "Biology", description: "Osmosis in plants.", name: "Osmosis in plants" },
+          ],
+        },
+      ],
+      summary: "Osmosis in plants comes into your plan.",
+      understood: true,
+    });
+
+    const asked = await askBuddy({ goalId: goal.id, question: "add osmosis in plants" });
+    const result = await proposeTutorPlanChange({ ...asked, request: "add osmosis in plants" });
+
+    expect(result.status).toBe("proposed");
+
+    await expect(
+      prisma.skill.findFirstOrThrow({ where: { name: canonical } }),
+    ).resolves.toMatchObject({ ownerId: null, visibility: "public" });
+  });
+
+  it("reuses the shared skill that already teaches a topic the learner asks for", async () => {
+    const { goal, plan } = await setup();
+    const word = uniqueWord();
+    const canonical = `Complete comparison tables of cell organelles ${word}`;
+
+    const existing = await skillFixture({
+      identityKey: buildSkillIdentityKey({ name: canonical, targetLanguage: null }),
+      language: goal.language,
+      name: canonical,
+    });
+
+    mockSearchTerms([word]);
+    mockDecision(null);
+    mockSkillNames(() => ({ description: "Fill in organelle tables.", name: canonical }));
+
+    mockWords({
+      leftOut: [],
+      operations: [
+        {
+          kind: "addTopics",
+          startDate: null,
+          topics: [
+            {
+              area: "Biology",
+              description: "The table for Friday's test.",
+              name: `Fill in the organelles table for my test ${word}`,
+            },
+          ],
+        },
+      ],
+      summary: "The organelles table comes into your plan.",
+      understood: true,
+    });
+
+    const asked = await askBuddy({ goalId: goal.id, question: "add the organelles table" });
+    const result = await proposeTutorPlanChange({ ...asked, request: "add the organelles table" });
+    const changeId = result.status === "proposed" ? result.change.id : "";
+    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const graph = stored.graph as { skills: { skillId: string }[] };
+
+    expect(graph.skills.map((entry) => entry.skillId)).toContain(existing.id);
+    await expect(prisma.skill.count({ where: { name: { contains: word } } })).resolves.toBe(1);
+  });
+
   it("spreads several added topics through what the learner hasn't started", async () => {
     const user = await userFixture();
 
@@ -313,6 +497,7 @@ describe("plan changes the buddy proposes", () => {
       operations: [
         {
           kind: "addTopics",
+          startDate: null,
           topics: names.map((name) => ({ area: "Math", description: `${name}.`, name })),
         },
       ],
@@ -342,6 +527,107 @@ describe("plan changes the buddy proposes", () => {
     const gaps = positions.slice(1).map((position, index) => position - (positions[index] ?? 0));
     expect(gaps.every((gap) => gap > 1)).toBe(true);
   });
+
+  // Carla asked to start her school's portfolio project "logo": it landed seven weeks out, and
+  // the card didn't say when.
+  it.each([
+    { startDate: "2020-09-28", when: "soon" },
+    { startDate: "2020-10-05", when: "from next week" },
+  ])(
+    "starts added topics the learner wants $when as their next new skill, and says when",
+    async ({ startDate }) => {
+      const user = await userFixture();
+
+      const library = await planLibraryFixture({
+        skills: Array.from({ length: 6 }, () => ({ area: "Math", lessons: 4 })),
+      });
+
+      const { goal, plan } = await unplannedGoalFixture({
+        dailyMinutes: 12,
+        settings: { startDate: "2020-09-28" },
+        userId: user.id,
+      });
+
+      await createGoalPlan({ goalId: goal.id, graph: library.graph });
+      mockSession(user.id);
+
+      // The learner is into the first skill: it keeps its place.
+      const [started] = await prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        take: 1,
+        where: { kind: "lesson", planId: plan.id },
+      });
+
+      await prisma.planItem.update({
+        data: { completedAt: NOW, status: "done" },
+        where: { id: started?.id ?? "" },
+      });
+
+      const word = uniqueWord();
+      const name = `Run a UX case study at my school ${word}`;
+
+      mockSearchTerms([word]);
+      mockDecision(null);
+
+      mockWords({
+        leftOut: [],
+        operations: [
+          {
+            kind: "addTopics",
+            startDate,
+            topics: [{ area: "Math", description: "A case study at school.", name }],
+          },
+        ],
+        summary: "Your school project comes into your plan.",
+        understood: true,
+      });
+
+      const asked = await askBuddy({ goalId: goal.id, question: "start my school project soon" });
+      const result = await proposeTutorPlanChange({ ...asked, request: "school project soon" });
+
+      const items = await prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { kind: "lesson", planId: plan.id },
+      });
+
+      // The skill the project comes before: the first one not started whose lessons begin on
+      // that day or later.
+      const firstDays = Map.groupBy(
+        items.filter((item) => item.skillId !== started?.skillId),
+        (item) => item.skillId ?? "",
+      );
+
+      const [anchorId] =
+        [...firstDays].find(
+          ([, skillItems]) =>
+            (skillItems[0]?.scheduledFor?.toISOString().slice(0, 10) ?? "") >= startDate,
+        ) ?? [];
+
+      const changeId = result.status === "proposed" ? result.change.id : "";
+      await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+      const skill = await prisma.skill.findFirstOrThrow({ where: { name } });
+      const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+      const graph = stored.graph as { skills: { skillId: string }[] };
+      const order = graph.skills.map((entry) => entry.skillId);
+
+      expect(anchorId).toBeDefined();
+      expect(order.indexOf(skill.id)).toBe(order.indexOf(anchorId ?? "") - 1);
+
+      // Asked for soon, it comes right after the skill the learner is into.
+      expect(startDate > "2020-09-28" || order.indexOf(skill.id) === 1).toBe(true);
+
+      const standIn = await prisma.planItem.findFirstOrThrow({
+        where: { kind: "lesson", lessonId: null, planId: plan.id, skillId: skill.id },
+      });
+
+      const due = standIn.scheduledFor?.toISOString().slice(0, 10) ?? "";
+
+      // The card says the day its lessons are due, from the day the learner said.
+      expect(result).toMatchObject({ change: { effect: { addedTopicsStart: due } } });
+      expect([startDate, due].toSorted()).toStrictEqual([startDate, due]);
+    },
+  );
 
   it("waits for the learner's tap even for a small change, then applies it", async () => {
     const { goal, plan } = await setup();
@@ -412,14 +698,7 @@ describe("plan changes the buddy proposes", () => {
   it("fills in what the words leave open from the learner's goals and routine", async () => {
     const { goal, user } = await setup();
 
-    // An adult with memory on: minors' and unknown ages' memory holds only goals and learning.
     await Promise.all([
-      learningProfileFixture({
-        birthMonth: 1,
-        birthYear: 1990,
-        memoryEnabled: true,
-        userId: user.id,
-      }),
       memoryFactFixture({ category: "routine", statement: "Busy on Saturdays", userId: user.id }),
       memoryFactFixture({
         category: "goals",
@@ -448,7 +727,6 @@ describe("plan changes the buddy proposes", () => {
 
     const last = vi.mocked(interpretPlanEdit).mock.lastCall?.[0];
     expect(last?.memory).not.toContain("Works as a nurse");
-    expect(last?.purpose).toBeUndefined();
   });
 
   it("replaces a waiting proposal when a newer one changes the same thing, and says so", async () => {
@@ -1145,12 +1423,13 @@ describe("plan changes the buddy proposes", () => {
   it("starts one subject past its basics when its lessons are too basic", async () => {
     const user = await userFixture();
 
-    // English goes on past its basics; Law sits in one phase, so all of it is what the goal asks.
+    // English goes on past its basics, which what comes after builds on; Law sits in one phase, so
+    // all of it is what the goal asks.
     const library = await planLibraryFixture({
       phases: ["Basics", "Deeper"],
       skills: [
         { area: "English", lessons: 3, phase: 0 },
-        { area: "English", lessons: 3, phase: 1 },
+        { area: "English", builds: 0, lessons: 3, phase: 1 },
         { area: "Law", lessons: 3, phase: 0 },
       ],
     });

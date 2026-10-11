@@ -28,7 +28,7 @@ function isBelow({ band, floor }: { band: CourseLevel | null | undefined; floor:
  * chapter takes only the intermediate one for someone who studied it before. A skill taught only
  * in an easier band keeps those lessons, so no skill loses its lessons.
  */
-export function keepLevelBands<TLesson extends Pick<PlannerLesson, "band" | "skillIds">>({
+function keepLevelBands<TLesson extends Pick<PlannerLesson, "band" | "skillIds">>({
   floor,
   lessons,
 }: {
@@ -57,14 +57,17 @@ const PAST_BASICS_FLOOR: CourseLevel = "intermediate";
 
 /**
  * The lessons of the areas the learner said they're past the basics of keep only their higher
- * bands where a skill is also taught there (`keepLevelBands`); other areas' lessons stay as they are.
+ * bands where a skill is also taught there (`keepLevelBands`); other areas' lessons stay as they
+ * are, and so do a skill's the learner then missed a question on (`keepSkillIds`).
  */
 export function keepPastBasicsBands({
   graph,
+  keepSkillIds = new Set(),
   lessons,
   pastBasicsAreas,
 }: {
   graph: PlanGraph;
+  keepSkillIds?: ReadonlySet<string>;
   lessons: PlannerLesson[];
   pastBasicsAreas: readonly string[];
 }): PlannerLesson[] {
@@ -72,7 +75,9 @@ export function keepPastBasicsBands({
 
   const skillIds = new Set(
     graph.skills
-      .filter((skill) => areas.has(getSkillArea({ graph, skill })))
+      .filter(
+        (skill) => areas.has(getSkillArea({ graph, skill })) && !keepSkillIds.has(skill.skillId),
+      )
       .map((skill) => skill.skillId),
   );
 

@@ -1,5 +1,9 @@
 import { createFixedScore } from "@/lib/score";
 import { type Task, type TaskScorer } from "@/lib/types";
+import { type NumericEntry, type OptionSelect } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type PartialCreditRule } from "@zoonk/ai/tasks/v2/research/partial-credit";
+import { isUsableBlueprint } from "@zoonk/core/library/exams/blueprint-content";
+import { getFormatShares } from "@zoonk/core/library/exams/format-shares";
 import { normalizeString } from "@zoonk/utils/string";
 import {
   type ExtractionEvalInput,
@@ -17,32 +21,82 @@ type ExpectedFact =
   | { kind: "topic"; subject: string; topic: string }
   /** The part of the exam the notice puts a subject in. */
   | { kind: "group"; subject: string; group: string }
+  /**
+   * Subjects a candidate takes only one of, each its own subject sharing one `choiceGroup`, and
+   * counted inside `partOf` when given.
+   */
+  | { kind: "choice"; options: string[]; partOf?: string }
   | { kind: "section"; minutes?: number; questions?: number }
-  | { kind: "format"; format: ExtractionEvalOutput["formats"][number]["kind"] }
+  /** A listening section's recordings: how many, each one's questions and how often it's played. */
+  | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
+  /**
+   * A format the notice states, with what it says of it when given: how many options it asks to
+   * pick, its answer box, how several picks earn part of the marks and its share of the questions.
+   */
+  | {
+      kind: "format";
+      format: ExtractionEvalOutput["formats"][number]["kind"];
+      entry?: NumericEntry["kind"];
+      partialCredit?: PartialCreditRule;
+      select?: OptionSelect;
+      share?: number;
+    }
   | { kind: "scoring"; method: NonNullable<ExtractionEvalOutput["mock"]>["scoring"]["method"] }
+  /** The share of a right answer's points each wrong answer takes away. */
+  | { kind: "wrongPenalty"; value: number }
+  /** The scale the result is reported on. */
+  | { kind: "scale"; max: number; min: number }
+  /** The break the notice gives after a section, in minutes. */
+  | { kind: "breakAfter"; minutes: number }
+  /** What a section lets candidates use, mentioning this word. */
+  | { kind: "tools"; mentions: string }
+  /** The language the exam certifies or measures (ISO 639-1), or null for an exam of subjects. */
+  | { kind: "testedLanguage"; language: string | null }
   | { kind: "timeLimit"; minutes: number };
 
-export type ExtractionExpected = { facts: ExpectedFact[] };
+export type ExtractionExpected = {
+  facts: ExpectedFact[];
+  /**
+   * Whether research may store what both checks kept as the exam's shared blueprint, judged by the
+   * pipeline's own rule (`isUsableBlueprint`): false when the documents are too thin to plan from,
+   * such as a news page that gives the objective test's size but none of its subjects.
+   */
+  usable?: boolean;
+};
 
 /** What the expected facts are looked up in: the model's reading, or what both checks kept. */
 type Reading = {
   dates: Pick<ExtractionEvalOutput["dates"][number], "date" | "kind">[];
-  formats: Pick<ExtractionEvalOutput["formats"][number], "kind">[];
+  formats: (Pick<ExtractionEvalOutput["formats"][number], "kind"> & {
+    entry?: NumericEntry | null;
+    partialCredit?: PartialCreditRule | null;
+    select?: OptionSelect | null;
+    share?: number | null;
+  })[];
   mock:
-    | (Pick<
-        NonNullable<ExtractionEvalOutput["mock"]>,
-        "scoring" | "timeLimitMinutes" | "totalQuestions"
-      > & {
-        sections: Pick<
+    | (Pick<NonNullable<ExtractionEvalOutput["mock"]>, "timeLimitMinutes" | "totalQuestions"> & {
+        scoring: Pick<NonNullable<ExtractionEvalOutput["mock"]>["scoring"], "method"> & {
+          scale?: { max: number; min: number } | null;
+          wrongPenalty?: number | null;
+        };
+        sections: (Pick<
           NonNullable<ExtractionEvalOutput["mock"]>["sections"][number],
           "day" | "minutes" | "name" | "questions"
-        >[];
+        > & {
+          breakAfterMinutes?: number | null;
+          kind?: string;
+          tasks?: { count: number; plays?: number | null }[];
+          tools?: string | null;
+        })[];
       })
     | null;
   questionCount: number | null;
   subjects: (Pick<ExtractionEvalOutput["subjects"][number], "name" | "questions" | "topics"> & {
+    choiceGroup?: string | null;
     group?: string | null;
+    partOf?: string | null;
   })[];
+  testedLanguage: string | null;
 };
 
 const MIN_SCORE = 6;
@@ -67,6 +121,27 @@ function hasSection({
       (fact.questions === undefined || section.questions === fact.questions) &&
       (fact.minutes === undefined || section.minutes === fact.minutes),
   );
+}
+
+function hasListeningParts({
+  fact,
+  reading,
+}: {
+  fact: Extract<ExpectedFact, { kind: "listeningParts" }>;
+  reading: Reading;
+}) {
+  return (reading.mock?.sections ?? []).some((section) => {
+    const tasks = section.tasks ?? [];
+
+    return (
+      section.kind === "listening" &&
+      tasks.length === fact.parts &&
+      tasks.every(
+        (task) =>
+          task.count === fact.questions && (fact.plays === undefined || task.plays === fact.plays),
+      )
+    );
+  });
 }
 
 /** Parts without a count, such as an essay, don't add questions. */
@@ -95,7 +170,124 @@ function findSubject({ name, reading }: { name: string; reading: Reading }) {
   );
 }
 
+/** Each option is a subject of its own, all of one choice, inside `partOf` when the fact names it. */
+function hasChoice({
+  fact,
+  reading,
+}: {
+  fact: Extract<ExpectedFact, { kind: "choice" }>;
+  reading: Reading;
+}): boolean {
+  const options = fact.options.map((option) =>
+    reading.subjects.find((subject) =>
+      normalizeString(subject.name).includes(normalizeString(option)),
+    ),
+  );
+
+  const groups = new Set(options.map((option) => option?.choiceGroup ?? null));
+  const [group] = groups;
+
+  const isInside = (option: Reading["subjects"][number] | undefined) =>
+    fact.partOf === undefined ||
+    normalizeString(option?.partOf ?? "").includes(normalizeString(fact.partOf));
+
+  return Boolean(group) && groups.size === 1 && options.every((option) => isInside(option));
+}
+
+/** Two shares read from counts can round differently: 12 of 48 is 0.25 either way. */
+const SHARE_TOLERANCE = 0.02;
+
+/** A format of the fact's kind with everything else the fact states about it. */
+function hasFormat({
+  fact,
+  reading,
+}: {
+  fact: Extract<ExpectedFact, { kind: "format" }>;
+  reading: Reading;
+}): boolean {
+  return reading.formats.some(
+    (format) =>
+      format.kind === fact.format &&
+      (fact.entry === undefined || format.entry?.kind === fact.entry) &&
+      (fact.partialCredit === undefined || format.partialCredit === fact.partialCredit) &&
+      (fact.select === undefined || format.select === fact.select) &&
+      (fact.share === undefined ||
+        (typeof format.share === "number" &&
+          Math.abs(format.share - fact.share) <= SHARE_TOLERANCE)),
+  );
+}
+
+const MOCK_FACT_KINDS = [
+  "breakAfter",
+  "listeningParts",
+  "scale",
+  "scoring",
+  "section",
+  "timeLimit",
+  "tools",
+  "wrongPenalty",
+] as const;
+
+/** A fact about how the exam runs: its sections, recordings, breaks, tools, scoring and time. */
+type MockFact = Extract<ExpectedFact, { kind: (typeof MOCK_FACT_KINDS)[number] }>;
+
+function isMockFact(fact: ExpectedFact): fact is MockFact {
+  return MOCK_FACT_KINDS.some((kind) => kind === fact.kind);
+}
+
+/** A scoring fact: the method, what a wrong answer takes away, or the scale it's reported on. */
+function isScoringFactFound({
+  fact,
+  scoring,
+}: {
+  fact: Extract<MockFact, { kind: "scale" | "scoring" | "wrongPenalty" }>;
+  scoring: NonNullable<Reading["mock"]>["scoring"] | null;
+}): boolean {
+  switch (fact.kind) {
+    case "scoring":
+      return scoring?.method === fact.method;
+    case "wrongPenalty":
+      return scoring?.wrongPenalty === fact.value;
+    case "scale":
+      return scoring?.scale?.min === fact.min && scoring.scale.max === fact.max;
+    default:
+      return false;
+  }
+}
+
+function isMockFactFound({ fact, reading }: { fact: MockFact; reading: Reading }): boolean {
+  const sections = reading.mock?.sections ?? [];
+
+  switch (fact.kind) {
+    case "section":
+      return hasSection({ fact, reading });
+    case "listeningParts":
+      return hasListeningParts({ fact, reading });
+    case "scale":
+    case "scoring":
+    case "wrongPenalty":
+      return isScoringFactFound({ fact, scoring: reading.mock?.scoring ?? null });
+    case "breakAfter":
+      return sections.some((section) => section.breakAfterMinutes === fact.minutes);
+    case "tools":
+      return sections.some((section) =>
+        normalizeString(section.tools ?? "").includes(normalizeString(fact.mentions)),
+      );
+    case "timeLimit":
+      return (
+        reading.mock?.timeLimitMinutes === fact.minutes ||
+        (reading.mock?.sections ?? []).some((section) => section.minutes === fact.minutes)
+      );
+    default:
+      return false;
+  }
+}
+
 function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }): boolean {
+  if (isMockFact(fact)) {
+    return isMockFactFound({ fact, reading });
+  }
+
   switch (fact.kind) {
     case "date":
       return reading.dates.some(
@@ -119,24 +311,29 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
       return normalizeString(findSubject({ name: fact.subject, reading })?.group ?? "").includes(
         normalizeString(fact.group),
       );
-    case "section":
-      return hasSection({ fact, reading });
+    case "choice":
+      return hasChoice({ fact, reading });
     case "format":
-      return reading.formats.some((format) => format.kind === fact.format);
-    case "scoring":
-      return reading.mock?.scoring.method === fact.method;
-    case "timeLimit":
-      return (
-        reading.mock?.timeLimitMinutes === fact.minutes ||
-        (reading.mock?.sections ?? []).some((section) => section.minutes === fact.minutes)
-      );
+      return hasFormat({ fact, reading });
+    case "testedLanguage":
+      return reading.testedLanguage === fact.language;
     default:
       return false;
   }
 }
 
+/** The reading as research reads it, each format's share worked out from the read counts. */
 function fromExtraction(output: ExtractionEvalOutput): Reading {
-  return { ...output, questionCount: output.edition.questionCount };
+  const shares = getFormatShares(
+    output.formats.map((format) => ({ count: format.count ?? null, kind: format.kind })),
+  );
+
+  return {
+    ...output,
+    formats: output.formats.map((format, index) => ({ ...format, share: shares[index] })),
+    questionCount: output.edition.questionCount,
+    testedLanguage: output.testedLanguage?.language ?? null,
+  };
 }
 
 function fromKept({ kept }: ExtractionEvalOutput): Reading {
@@ -146,6 +343,7 @@ function fromKept({ kept }: ExtractionEvalOutput): Reading {
     mock: kept.structure.mock,
     questionCount: kept.edition.questionCount,
     subjects: kept.structure.subjects,
+    testedLanguage: kept.structure.testedLanguage?.language ?? null,
   };
 }
 
@@ -176,17 +374,29 @@ const scoreExtraction: TaskScorer<ExtractionExpected> = ({ output, testCase }) =
   }
 
   const facts = testCase.expected?.facts ?? [];
+  const usable = testCase.expected?.usable;
   const missing = (reading: Reading) => facts.filter((fact) => !isFactFound({ fact, reading }));
   const dropped = missing(fromKept(parsed));
   const unread = missing(fromExtraction(parsed));
-  const factShare = facts.length === 0 ? 1 : (facts.length - dropped.length) / facts.length;
+  const isUsable = isUsableBlueprint({ content: parsed.kept, shared: true });
+  // Whether research would store the reading counts as one more fact when the case says.
+  const usableWrong = usable !== undefined && isUsable !== usable;
+  const expectedCount = facts.length + (usable === undefined ? 0 : 1);
+  const right = expectedCount - dropped.length - (usableWrong ? 1 : 0);
+  const factShare = expectedCount === 0 ? 1 : right / expectedCount;
   const { found, total } = parsed.passageCheck;
   const passageShare = total === 0 ? 0 : found / total;
 
   const conclusion = [
     `Facts kept ${facts.length - dropped.length}/${facts.length} (read ${facts.length - unread.length})`,
     `passages found ${found}/${total}`,
+    parsed.reading
+      ? `readings ${parsed.reading.readings}, problems left ${parsed.reading.problems.length}`
+      : "",
     dropped.length > 0 ? `missing: ${dropped.map((fact) => describeFact(fact)).join("; ")}` : "",
+    usableWrong
+      ? `research would ${isUsable ? "store" : "not store"} it as the exam's blueprint`
+      : "",
   ]
     .filter(Boolean)
     .join(". ");

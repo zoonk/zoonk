@@ -1,6 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { toListeningExam } from "../exams/listening/listening-exam";
+import { getListeningSkillIds } from "../exams/listening/listening-skills";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { addDays, daysBetween, fromIsoDate, getPlanCalendar } from "../plans/planner/plan-calendar";
 import { getExamDayRules, getPlannedMinutes } from "../plans/planner/plan-days";
@@ -40,10 +42,7 @@ export async function getShortPlanPracticeNeed(
   goalId: string,
 ): Promise<ShortPlanPracticeNeed | null> {
   const goal = await prisma.goal.findUnique({
-    include: {
-      examBlueprint: { select: { ownerId: true } },
-      plan: { select: { graph: true, settings: true } },
-    },
+    include: { examBlueprint: true, plan: { select: { graph: true, settings: true } } },
     where: { id: goalId },
   });
 
@@ -52,7 +51,15 @@ export async function getShortPlanPracticeNeed(
   }
 
   const settings = parsePlanSettings(goal.plan.settings);
-  const skillIds = parsePlanGraph(goal.plan.graph).skills.map((skill) => skill.skillId);
+  const graph = parsePlanGraph(goal.plan.graph);
+
+  // A listening area's skills get recordings, never text questions (`getListeningSkillIds`).
+  const listening = getListeningSkillIds({ exam: toListeningExam(goal), graph });
+
+  const skillIds = graph.skills
+    .map((skill) => skill.skillId)
+    .filter((skillId) => !listening.has(skillId));
+
   const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
   const planStart = settings.startDate ? fromIsoDate(settings.startDate) : today;
   const { targetDate } = goal;

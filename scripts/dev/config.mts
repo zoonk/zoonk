@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { basename, dirname, join } from "node:path";
+import { getPnpmCommand } from "./process.mts";
 
 const DNS_LABEL_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/u;
 
@@ -53,6 +54,28 @@ export function getServiceName({
   serviceName: string;
 }): string {
   return `${serviceName}.${projectName}`;
+}
+
+/** Uses Portless's own worktree-aware resolver so every consumer receives the exact URL registered by its service. */
+export function getServiceUrl({
+  currentDirectory,
+  environment,
+  projectName,
+  serviceName,
+}: {
+  currentDirectory: string;
+  environment: NodeJS.ProcessEnv;
+  projectName: string;
+  serviceName: string;
+}): string {
+  const pnpmCommand = getPnpmCommand(environment);
+  const name = getServiceName({ projectName, serviceName });
+
+  return execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "get", name], {
+    cwd: currentDirectory,
+    encoding: "utf8",
+    env: environment,
+  }).trim();
 }
 
 /**

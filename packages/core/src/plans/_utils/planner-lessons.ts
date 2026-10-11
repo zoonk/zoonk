@@ -1,6 +1,5 @@
 import "server-only";
-import { type CourseLevel, type Goal, prisma } from "@zoonk/db";
-import { getOwnLevel } from "../../learner/placement/placement-contract";
+import { type Goal, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { needsTool } from "../../library/chapters/chapter-tools";
 import {
@@ -9,9 +8,9 @@ import {
   loadChapterTaughtLessons,
   mergePlannerLessons,
 } from "../../library/curriculum/chapter-taught-lessons";
+import { QUICK_LESSON_KEY_WHERE } from "../../library/quick-lessons/quick-lesson-identity";
 import { type PlanGraph } from "../planner/plan-state";
 import { type PlannerLesson } from "../planner/plan-units";
-import { getLevelFloor, keepLevelBands } from "./level-bands";
 import { goalUsesTools } from "./plan-tools";
 import { type SkillCourses, getSkillCourses, pickSkillPlaces } from "./skill-courses";
 
@@ -63,8 +62,9 @@ async function loadLessons({
       skillId: true,
     },
     where: {
-      // A lesson set aside after its last held-back draft can't be taught: plans leave it out.
-      lesson: { ...libraryRowsVisibleTo(userId), setAsideAt: null },
+      // A lesson set aside after its last held-back draft can't be taught: plans leave it out. A
+      // skill's quick lesson isn't one of its lessons: plans place it only where a learner chose it.
+      lesson: { ...libraryRowsVisibleTo(userId), NOT: QUICK_LESSON_KEY_WHERE, setAsideAt: null },
       skillId: { in: skillIds },
     },
   });
@@ -130,19 +130,16 @@ async function loadLessons({
 /**
  * The Library lessons a plan turns these skills into: the lessons that teach each one, and the
  * lessons of the chapters a course outline tagged with it (a graph skill that spans several
- * lessons), in course order. With the learner's level (`levelFloor`), a skill also taught at it
- * leaves its easier bands out (`keepLevelBands`).
+ * lessons), in course order, every band included: the level a learner states only leaves its
+ * easier bands to confirm, and placement answers of a skill's own test them out.
  */
 export async function loadSkillLessons({
   goal,
-  levelFloor = null,
   skillCourses = new Map(),
   skillIds,
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "kind">;
-  /** The band the learner's level starts at (`getLevelFloor`); null takes every band. */
-  levelFloor?: CourseLevel | null;
   /** The courses the goal learns its skills in; skills left out take lessons from any course. */
   skillCourses?: SkillCourses;
   skillIds: string[];
@@ -161,16 +158,13 @@ export async function loadSkillLessons({
     }),
   ]);
 
-  return keepLevelBands({
-    floor: levelFloor,
-    lessons: mergePlannerLessons({ chapterTaught, taught }),
-  });
+  return mergePlannerLessons({ chapterTaught, taught });
 }
 
 /**
  * A skill the graph lists no course for (a prerequisite a change added, a setup skill, a plan made
  * before its courses were known) learns from the goal's own course when that course teaches it, so
- * its lessons don't come from every subject sharing the skill ("Lei de Ohm" from a Physics, an
+ * its lessons don't come from every subject sharing the skill ("Ohm's law" from a Physics, an
  * Electricity and an ENEM course in one plan). Skills that course doesn't teach take any course.
  */
 async function withGoalCourse({
@@ -218,15 +212,15 @@ async function withGoalCourse({
 }
 
 /**
- * The Library lessons a goal's plan turns its graph into, from the courses it learns each skill in,
- * at the learner's level: the lessons the planner plans and its stand-ins count against.
+ * The Library lessons a goal's plan turns its graph into, from the courses it learns each skill in:
+ * the lessons the planner plans and its stand-ins count against.
  */
 export async function loadGoalPlannerLessons({
   goal,
   graph,
   userId,
 }: {
-  goal: Pick<Goal, "details" | "examBlueprintId" | "kind" | "primaryCourseId">;
+  goal: Pick<Goal, "examBlueprintId" | "kind" | "primaryCourseId">;
   graph: PlanGraph;
   userId: string;
 }): Promise<PlannerLesson[]> {
@@ -239,11 +233,5 @@ export async function loadGoalPlannerLessons({
     userId,
   });
 
-  return loadSkillLessons({
-    goal,
-    levelFloor: getLevelFloor(getOwnLevel({ goal })),
-    skillCourses,
-    skillIds,
-    userId,
-  });
+  return loadSkillLessons({ goal, skillCourses, skillIds, userId });
 }

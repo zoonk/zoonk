@@ -13,6 +13,7 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
     citation: null,
     context: null,
     drill: null,
+    entry: null,
     format: "multipleChoice" as const,
     image: null,
     itemId,
@@ -23,6 +24,8 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
     question: `Question ${itemId}?`,
     quoted: false,
     right: null,
+    select: 1 as const,
+    set: null,
     skillId: "skill",
     timeMachine: null,
     unit: null,
@@ -44,6 +47,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   id: "block",
   kind: "practice",
   lessonId: null,
+  mistakesOnly: false,
   netScored: false,
   oftenTested: false,
   planItemId: null,
@@ -53,6 +57,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   status: "active",
   subject: null,
   title: null,
+  weakest: false,
 };
 
 function detailWith(questions: ReturnType<typeof question>[]): StudyBlockDetail {
@@ -68,6 +73,7 @@ const feedback: StudyAnswerFeedback = {
   mistakeFixed: false,
   pauseSuggested: false,
   savedToNotebook: false,
+  transcript: null,
   trap: null,
   workedSteps: [],
 };
@@ -128,9 +134,9 @@ describe(questionBlockReducer, () => {
   });
 
   it("keeps the question open when an answer couldn't be saved", () => {
-    const failed = reduce(start, { retryAfterSeconds: 30, type: "answerFailed" });
+    const failed = reduce(start, { type: "answerFailed" });
 
     expect(failed.index).toBe(0);
-    expect(failed.phase).toStrictEqual({ kind: "answerFailed", retryAfterSeconds: 30 });
+    expect(failed.phase).toStrictEqual({ kind: "answerFailed" });
   });
 });

@@ -13,11 +13,11 @@ describe("dragging activity items with a finger", () => {
 
     await holdAndDrag({
       from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
-      to: page.getByRole("button", { name: "Spot 4, bottom: empty" }),
+      to: page.getByRole("button", { name: "Spot 3: empty" }),
     });
 
     await expect
-      .element(page.getByRole("button", { name: "Spot 4, bottom: Right ventricle" }))
+      .element(page.getByRole("button", { name: "Spot 3: Right ventricle" }))
       .toBeVisible();
   });
 
@@ -53,7 +53,7 @@ describe("dragging activity items with a finger", () => {
 
   it("labeled diagram: a quick swipe over the names scrolls instead of dragging", async () => {
     openActivity({ template: "labeledDiagram" });
-    const lastSpot = page.getByRole("button", { name: "Spot 5, bottom right: empty" });
+    const lastSpot = page.getByRole("button", { name: "Spot 5: empty" });
     await expect.element(lastSpot).toBeVisible();
     await expect.element(lastSpot).not.toBeInViewport();
 
@@ -66,6 +66,6 @@ describe("dragging activity items with a finger", () => {
   it("labeled diagram: tapping a name still puts it on the highlighted spot", async () => {
     openActivity({ template: "labeledDiagram" });
     await tap(page.getByRole("button", { name: "Put Aorta on spot 1" }));
-    await expect.element(page.getByRole("button", { name: /^Spot 1, .*: Aorta$/u })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Spot 1: Aorta" })).toBeVisible();
   });
 });

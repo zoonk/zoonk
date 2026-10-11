@@ -106,7 +106,7 @@ const OAB_ETHICS =
 const OAB_PHILOSOPHY = "Filosofia do Direito";
 const OAB_CIVIL_PROCEDURE = "Direito Processual Civil";
 
-/** Sofia's OAB 1ª fase plan: the notice's 20 subjects and test strategy, two hours a day. */
+/** Sofia's OAB first phase plan: the notice's 20 subjects and test strategy, two hours a day. */
 function oabInput(request: string): PlanEditInput {
   return {
     areas: [
@@ -184,18 +184,47 @@ function careerInput(request: string): PlanEditInput {
 
 export const TEST_CASES: PlanEditTestCase[] = [
   editCase({
-    changes: [{ kind: "addTopics", topics: ["Inglês", "Inglês", "Inglês"] }],
+    changes: [{ date: null, kind: "addTopics", topics: ["Inglês", "Inglês", "Inglês"] }],
     id: "pt-language-add-field-topics",
     userInput: interviewInput(
       "quero mais conteúdo da minha área de dados no plano: SQL, dashboards e stakeholders",
     ),
   }),
   editCase({
-    changes: [{ kind: "addTopics", topics: ["Portfólio de UX"] }],
+    changes: [{ date: TODAY, kind: "addTopics", topics: ["Portfólio de UX"] }],
     id: "pt-career-add-portfolio-project",
     userInput: careerInput(
       "coloca no plano aquele projeto de estudo de caso na escola que você sugeriu, quero começar o portfólio já",
     ),
+  }),
+  // The buddy's words for Carla's first ask (Oct 2026), once read as a focus on the portfolio
+  // area, which already started that day: "I can't move it earlier", and no card.
+  editCase({
+    changes: [{ date: TODAY, kind: "addTopics", topics: ["Portfólio de UX"] }],
+    id: "pt-career-own-project-soon",
+    userInput: careerInput(
+      "Começar o Portfólio logo, usando como projeto algo da escola onde dou aula.",
+    ),
+  }),
+  // Carla's second ask (Oct 2026): her school's own problem named the shared skill.
+  editCase({
+    changes: [
+      {
+        date: TODAY,
+        kind: "addTopics",
+        topics: ["Portfólio de UX"],
+        topicsAvoid: ["pais", "calendário de provas", "onde dou aula"],
+      },
+    ],
+    id: "pt-career-own-project-general-topic",
+    userInput: careerInput(
+      "Adicionar logo, como primeiro projeto do portfólio, investigar por que os pais se perdem para achar o calendário de provas e os avisos no app da escola onde dou aula.",
+    ),
+  }),
+  editCase({
+    changes: [{ date: "2026-10-05", kind: "addTopics", topics: ["Inglês"] }],
+    id: "pt-language-add-topic-next-week",
+    userInput: interviewInput("a partir da semana que vem quero aulas sobre SQL no meu plano"),
   }),
   editCase({
     changes: [{ cadence: "biweekly", kind: "setWrittenCadence" }],
@@ -410,7 +439,7 @@ export const TEST_CASES: PlanEditTestCase[] = [
       request: "coloca ciências da natureza e redação primeiro e quero mirar 800 pontos",
     }),
   }),
-  // Sofia's change, as her buddy asked for it: Filosofia must get less time, never more.
+  // Sofia's change, as her buddy asked for it: philosophy must get less time, never more.
   editCase({
     changes: [
       { kind: "setWeekdayMinutes", minutes: 60, weekdays: [0] },

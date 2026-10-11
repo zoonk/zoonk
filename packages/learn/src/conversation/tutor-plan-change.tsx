@@ -19,9 +19,10 @@ import { PlanFailedMessage } from "../plan/plan-failed-message";
 import {
   useAppliedLine,
   useChangeSentence,
+  useKeepOfficialDateLabel,
   useOfficialDateLine,
-  useProposalEffectText,
 } from "../plan/use-change-sentence";
+import { useProposalEffectText } from "../plan/use-effect-text";
 
 type Decision = Extract<PlanChangeDecisionInput["status"], "applied" | "declined" | "undone">;
 
@@ -125,17 +126,20 @@ function useAnswer({
 function ChangeActions({
   answer,
   canUndo,
+  document,
   isPending,
   overridesNotice,
   status,
 }: {
   answer: (status: Decision) => void;
   canUndo: boolean;
+  document: PlanChangeView["examDocument"];
   isPending: boolean;
   overridesNotice: boolean;
   status: PlanChangeView["status"];
 }) {
   const t = useExtracted();
+  const keepOfficialDate = useKeepOfficialDateLabel();
 
   if (status === "proposed") {
     return (
@@ -149,7 +153,7 @@ function ChangeActions({
           onClick={() => answer("declined")}
           variant="ghost"
         >
-          {overridesNotice ? t("Keep the notice's date") : t("Not now")}
+          {overridesNotice ? keepOfficialDate(document) : t("Not now")}
         </Button>
       </div>
     );
@@ -229,6 +233,7 @@ export function TutorPlanChange({
       <ChangeActions
         answer={answer}
         canUndo={change.canUndo}
+        document={change.examDocument}
         isPending={isPending}
         overridesNotice={change.officialDate !== null}
         status={change.status}

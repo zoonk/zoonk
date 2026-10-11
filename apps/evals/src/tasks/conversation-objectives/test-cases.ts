@@ -11,7 +11,10 @@ export type ConversationObjectivesExpected = { met: string[] };
 
 type Turn = CheckConversationObjectivesParams["turns"][number];
 
-type Call = Pick<CheckConversationObjectivesParams, "characterNotes" | "objectives" | "situation">;
+type Call = Pick<
+  CheckConversationObjectivesParams,
+  "characterNotes" | "exam" | "objectives" | "situation"
+>;
 
 const RENTING: Call = {
   characterNotes:
@@ -65,6 +68,7 @@ const NEIGHBOR: Call = {
 const IELTS: Call = {
   characterNotes:
     "Part 1: name, hometown, work or studies, free time. Part 2 cue card: Describe a place you like to visit in your city. Part 3: why cities need public spaces; how technology changes free time.",
+  exam: "ielts",
   objectives: [
     { description: "Answer short questions about yourself and your routine.", label: "Part 1" },
     { description: "Talk for about a minute about the cue card topic.", label: "Part 2" },
@@ -76,6 +80,7 @@ const IELTS: Call = {
 const TOEFL: Call = {
   characterNotes:
     "Listen and Repeat sentences: 1. The library opens at eight. 2. Please show your student card at the door. 3. Quiet study rooms are on the second floor. Take an Interview questions: 1. How do you usually get to school or work? 2. Should universities give students free bus passes?",
+  exam: "toefl",
   objectives: [
     { description: "Repita cada frase exatamente como ouvir.", label: "Listen and Repeat" },
     { description: "Responda às perguntas da entrevista.", label: "Take an Interview" },

@@ -1,6 +1,6 @@
 "use client";
 
-import { NOTICE_SOURCE } from "@zoonk/core/plans/change-contract";
+import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { REBALANCE_SOURCE } from "@zoonk/core/preparation/rebalance";
@@ -12,7 +12,9 @@ import {
   CalendarClockIcon,
   FastForwardIcon,
   FileClockIcon,
+  type LucideIcon,
   RefreshCwIcon,
+  RotateCcwIcon,
   ScaleIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -28,12 +30,15 @@ import {
 import { SURFACE_CLASS } from "../_components/surface";
 import { BuddyArt } from "../buddies/buddy-art";
 import { useLearnAnalytics } from "../learn-context";
+import { PhaseEndMoves } from "../plan/phase-end-moves";
 import {
   useAppliedLine,
-  useChangeSentence,
+  useKeepOfficialDateLabel,
   useOfficialDateLine,
-  useProposalEffectText,
 } from "../plan/use-change-sentence";
+import { useProposalEffectText } from "../plan/use-effect-text";
+import { ListeningBasicsLine, MovedTopicsLines } from "./moved-topics-line";
+import { useTodayChangeSentence } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
 
@@ -41,24 +46,21 @@ type Change = NonNullable<TodayView["planChange"]>;
 type Decision = PlanChangeDecisionInput["status"];
 type AnswerState = { answer: Decision; answered: PlanChangeView } | { failed: true } | null;
 
+/** The icons of the changes that have one of their own; the rest share the plan's. */
+const KIND_ICONS: Partial<Record<string, LucideIcon>> = {
+  missedDays: CalendarClockIcon,
+  relearn: RotateCcwIcon,
+  testedOut: FastForwardIcon,
+};
+
 function getChangeIcon(change: Change) {
   if (change.source === NOTICE_SOURCE) {
     return FileClockIcon;
   }
 
-  if (change.kind === "testedOut") {
-    return FastForwardIcon;
-  }
-
-  if (change.kind === "missedDays") {
-    return CalendarClockIcon;
-  }
-
-  if (change.source === REBALANCE_SOURCE) {
-    return ScaleIcon;
-  }
-
-  return RefreshCwIcon;
+  return (
+    KIND_ICONS[change.kind] ?? (change.source === REBALANCE_SOURCE ? ScaleIcon : RefreshCwIcon)
+  );
 }
 
 /**
@@ -77,7 +79,7 @@ function ChangeLeading({ change }: { change: Change }) {
 
 /**
  * The notice's title: what kind of change it is, before the sentence that says what it does. A
- * change the exam's notice brings says so in its own sentence ("The exam notice puts the exam on…"),
+ * change the exam's notice brings says so in its own sentence ("The exam notice says…"),
  * so that sentence is the title.
  */
 function useChangeTitle() {
@@ -100,39 +102,22 @@ function useChangeTitle() {
   };
 }
 
-/** "We skipped 3 lessons of Electric circuits"; any other change in the plan's own words. */
-function useTodayChangeSentence() {
-  const t = useExtracted();
-  const changeSentence = useChangeSentence();
-
-  return (change: Change): string => {
-    if (change.kind !== "testedOut") {
-      return changeSentence(change);
-    }
-
-    return change.chapterTitle
-      ? t("We skipped {lessons, plural, one {# lesson} other {# lessons}} of {chapter}", {
-          chapter: change.chapterTitle,
-          lessons: change.lessonsSkipped,
-        })
-      : t("We skipped {lessons, plural, one {# lesson} other {# lessons}} you already know", {
-          lessons: change.lessonsSkipped,
-        });
-  };
-}
-
-/** What a proposal does to the plan, said as the Journey says its end: "Adds 6 lessons." */
-function ProposalEffect({ change }: { change: Change }) {
+/**
+ * What a change does to the plan, said as the Journey says its end: "Adds 6 lessons." Today's
+ * other notices that change the plan say it the same way.
+ */
+export function ProposalEffect({ change }: { change: Pick<PlanChangeView, "effect"> }) {
   const proposalEffectText = useProposalEffectText();
   const { planEnd, today } = useTodayScreen();
   const targetDate = today.goal.targetDate?.toISOString().slice(0, "YYYY-MM-DD".length) ?? null;
   const effect = proposalEffectText(change, { endDate: planEnd, targetDate });
 
-  if (!effect) {
-    return null;
-  }
-
-  return <NoticeCardDescription>{effect}</NoticeCardDescription>;
+  return (
+    <>
+      {effect && <NoticeCardDescription>{effect}</NoticeCardDescription>}
+      <PhaseEndMoves effect={change.effect} />
+    </>
+  );
 }
 
 /** What the answer did, said where the buttons were: an applied change says what it did to today. */
@@ -159,8 +144,9 @@ function useAnsweredText(change: Change) {
 }
 
 /**
- * "Apply" or "Not now" for a proposal ("Keep mine" for one the exam's notice brings, since the
- * answer stays); "Got it", and "Undo" while it can be, for a change made.
+ * "Apply" or "Not now" for a proposal ("Keep mine" for one the exam's notice brings or one that
+ * moves the phase dates, since the answer stays); "Got it", and "Undo" while it can be, for a
+ * change made.
  */
 function ChangeActions({
   change,
@@ -172,8 +158,12 @@ function ChangeActions({
   onAnswer: (answer: Decision) => void;
 }) {
   const t = useExtracted();
+  const keepOfficialDate = useKeepOfficialDateLabel();
   const proposal = change.status === "proposed";
   const overridesNotice = proposal && change.officialDate !== null;
+  // Answering the notice or the phase dates keeps what the learner has, and the answer stays.
+  const keepsMine =
+    proposal && (change.source === NOTICE_SOURCE || change.source === PHASE_DATES_SOURCE);
 
   return (
     <NoticeCardActions>
@@ -196,9 +186,9 @@ function ChangeActions({
           size="sm"
           variant="ghost"
         >
-          {proposal && change.source === NOTICE_SOURCE && t("Keep mine")}
-          {overridesNotice && t("Keep the notice's date")}
-          {proposal && change.source !== NOTICE_SOURCE && !overridesNotice && t("Not now")}
+          {keepsMine && !overridesNotice && t("Keep mine")}
+          {overridesNotice && keepOfficialDate(change.examDocument)}
+          {proposal && !keepsMine && !overridesNotice && t("Not now")}
           {!proposal && t("Undo")}
         </Button>
       )}
@@ -307,11 +297,14 @@ function PlanChangeNotice({
           <>
             <NoticeCardTitle>{title}</NoticeCardTitle>
             <NoticeCardDescription>{sentence(change)}</NoticeCardDescription>
+            {change.kind === "testedOut" && <MovedTopicsLines change={change} />}
           </>
         ) : (
           <NoticeCardTitle>{sentence(change)}</NoticeCardTitle>
         )}
+        <ListeningBasicsLine change={change} />
         {proposal && <ProposalEffect change={change} />}
+        {!proposal && <PhaseEndMoves effect={change.effect} />}
         {officialDate && <p className="text-sm font-medium">{officialDate}</p>}
 
         {state && "answer" in state ? (

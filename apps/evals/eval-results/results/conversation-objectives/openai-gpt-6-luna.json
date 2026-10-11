@@ -53,42 +53,6 @@
       }
     },
     {
-      "classification": { "expected": "none", "predicted": "none" },
-      "steps": [
-        { "conclusion": "Expected none; marked none.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected none; marked none.", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Expected none; marked none.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "met": [] },
-        "id": "pt-renting-viewing-not-agreed-1",
-        "userInput": {
-          "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
-          "objectives": [
-            {
-              "description": "Marque um dia e horário para ver o apartamento.",
-              "label": "Book a viewing"
-            }
-          ],
-          "situation": "Você viu um anúncio de apartamento em Toronto. Ligue para a proprietária, Linda.",
-          "learnerLanguage": "pt",
-          "targetLanguage": "en",
-          "turns": [
-            { "speaker": "character", "text": "Hi! Are you calling about the apartment?" },
-            { "speaker": "learner", "text": "Yes. Can I see the apartment?" },
-            {
-              "speaker": "character",
-              "text": "Sure! Saturday at 10 or at 2, which is better for you?"
-            }
-          ]
-        }
-      }
-    },
-    {
       "classification": { "expected": "Book a viewing", "predicted": "Book a viewing" },
       "steps": [
         {
@@ -289,56 +253,6 @@
       }
     },
     {
-      "classification": { "expected": "Part 1", "predicted": "Part 1" },
-      "steps": [
-        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "minorErrors", "score": 10 },
-        {
-          "conclusion": "Expected Part 1; marked Part 1.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "met": ["Part 1"] },
-        "id": "pt-ielts-part-one-done-1",
-        "userInput": {
-          "characterNotes": "Part 1: name, hometown, work or studies, free time. Part 2 cue card: Describe a place you like to visit in your city. Part 3: why cities need public spaces; how technology changes free time.",
-          "objectives": [
-            {
-              "description": "Answer short questions about yourself and your routine.",
-              "label": "Part 1"
-            },
-            {
-              "description": "Talk for about a minute about the cue card topic.",
-              "label": "Part 2"
-            }
-          ],
-          "situation": "A short practice of the IELTS Speaking test, with its three parts in about five minutes.",
-          "learnerLanguage": "pt",
-          "targetLanguage": "en",
-          "turns": [
-            { "speaker": "character", "text": "Can you tell me your full name, please?" },
-            { "speaker": "learner", "text": "My name is Ana Paula Souza." },
-            { "speaker": "character", "text": "Where are you from, and what do you do?" },
-            {
-              "speaker": "learner",
-              "text": "I am from Recife. I work as a nurse in a public hospital."
-            },
-            { "speaker": "character", "text": "What do you like to do in your free time?" },
-            {
-              "speaker": "learner",
-              "text": "I like to go to the beach with my family and read books."
-            },
-            {
-              "speaker": "character",
-              "text": "Thank you. Now I'm going to give you a topic: describe a place you like to visit in your city."
-            }
-          ]
-        }
-      }
-    },
-    {
       "classification": { "expected": "Apresentar-se", "predicted": "Apresentar-se" },
       "steps": [
         {
@@ -390,50 +304,6 @@
               "speaker": "character",
               "text": "Adoraria! Mas tenho uma reunião ao meio-dia e meia. Pode ser à uma?"
             }
-          ]
-        }
-      }
-    },
-    {
-      "classification": { "expected": "Combinar um almoço", "predicted": "Combinar um almoço" },
-      "steps": [
-        {
-          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "met": ["Combinar um almoço"] },
-        "id": "en-work-lunch-agreed-1",
-        "userInput": {
-          "characterNotes": "Mariana, team manager at a design studio in São Paulo. Hours 9am to 6pm, home office on Mondays and Fridays. Twist: she has a meeting at 12:30 today, so she suggests lunch at 1pm instead.",
-          "objectives": [
-            {
-              "description": "Invite Mariana to lunch and agree on a time.",
-              "label": "Combinar um almoço"
-            }
-          ],
-          "situation": "It's your first day at a design studio in São Paulo. Meet Mariana, your team manager.",
-          "learnerLanguage": "en",
-          "targetLanguage": "pt",
-          "turns": [
-            { "speaker": "learner", "text": "Você quer almoçar comigo hoje?" },
-            {
-              "speaker": "character",
-              "text": "Adoraria! Mas tenho uma reunião ao meio-dia e meia. Pode ser à uma?"
-            },
-            { "speaker": "learner", "text": "Claro, uma hora está ótimo pra mim." }
           ]
         }
       }
@@ -659,9 +529,141 @@
       ],
       "testCase": {
         "expected": { "met": [] },
+        "id": "pt-renting-viewing-not-agreed-1",
+        "userInput": {
+          "characterNotes": "Linda, a friendly Toronto landlord. The apartment on Queen Street is still available; rent $2,400 a month, utilities not included; deposit is first and last month's rent; viewings on Saturday at 10am or 2pm.",
+          "objectives": [
+            {
+              "description": "Marque um dia e horário para ver o apartamento.",
+              "label": "Book a viewing"
+            }
+          ],
+          "situation": "Você viu um anúncio de apartamento em Toronto. Ligue para a proprietária, Linda.",
+          "learnerLanguage": "pt",
+          "targetLanguage": "en",
+          "turns": [
+            { "speaker": "character", "text": "Hi! Are you calling about the apartment?" },
+            { "speaker": "learner", "text": "Yes. Can I see the apartment?" },
+            {
+              "speaker": "character",
+              "text": "Sure! Saturday at 10 or at 2, which is better for you?"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "Part 1", "predicted": "Part 1" },
+      "steps": [
+        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected Part 1; marked Part 1.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected Part 1; marked Part 1.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "met": ["Part 1"] },
+        "id": "pt-ielts-part-one-done-1",
+        "userInput": {
+          "characterNotes": "Part 1: name, hometown, work or studies, free time. Part 2 cue card: Describe a place you like to visit in your city. Part 3: why cities need public spaces; how technology changes free time.",
+          "exam": "ielts",
+          "objectives": [
+            {
+              "description": "Answer short questions about yourself and your routine.",
+              "label": "Part 1"
+            },
+            {
+              "description": "Talk for about a minute about the cue card topic.",
+              "label": "Part 2"
+            }
+          ],
+          "situation": "A short practice of the IELTS Speaking test, with its three parts in about five minutes.",
+          "learnerLanguage": "pt",
+          "targetLanguage": "en",
+          "turns": [
+            { "speaker": "character", "text": "Can you tell me your full name, please?" },
+            { "speaker": "learner", "text": "My name is Ana Paula Souza." },
+            { "speaker": "character", "text": "Where are you from, and what do you do?" },
+            {
+              "speaker": "learner",
+              "text": "I am from Recife. I work as a nurse in a public hospital."
+            },
+            { "speaker": "character", "text": "What do you like to do in your free time?" },
+            {
+              "speaker": "learner",
+              "text": "I like to go to the beach with my family and read books."
+            },
+            {
+              "speaker": "character",
+              "text": "Thank you. Now I'm going to give you a topic: describe a place you like to visit in your city."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "Combinar um almoço", "predicted": "Combinar um almoço" },
+      "steps": [
+        {
+          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected Combinar um almoço; marked Combinar um almoço.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "met": ["Combinar um almoço"] },
+        "id": "en-work-lunch-agreed-1",
+        "userInput": {
+          "characterNotes": "Mariana, team manager at a design studio in São Paulo. Hours 9am to 6pm, home office on Mondays and Fridays. Twist: she has a meeting at 12:30 today, so she suggests lunch at 1pm instead.",
+          "objectives": [
+            {
+              "description": "Invite Mariana to lunch and agree on a time.",
+              "label": "Combinar um almoço"
+            }
+          ],
+          "situation": "It's your first day at a design studio in São Paulo. Meet Mariana, your team manager.",
+          "learnerLanguage": "en",
+          "targetLanguage": "pt",
+          "turns": [
+            { "speaker": "learner", "text": "Você quer almoçar comigo hoje?" },
+            {
+              "speaker": "character",
+              "text": "Adoraria! Mas tenho uma reunião ao meio-dia e meia. Pode ser à uma?"
+            },
+            { "speaker": "learner", "text": "Claro, uma hora está ótimo pra mim." }
+          ]
+        }
+      }
+    },
+    {
+      "classification": { "expected": "none", "predicted": "none" },
+      "steps": [
+        { "conclusion": "Expected none; marked none.", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected none; marked none.", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Expected none; marked none.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "met": [] },
         "id": "pt-ielts-name-only-1",
         "userInput": {
           "characterNotes": "Part 1: name, hometown, work or studies, free time. Part 2 cue card: Describe a place you like to visit in your city. Part 3: why cities need public spaces; how technology changes free time.",
+          "exam": "ielts",
           "objectives": [
             {
               "description": "Answer short questions about yourself and your routine.",
@@ -702,6 +704,7 @@
         "id": "pt-toefl-first-repetition-1",
         "userInput": {
           "characterNotes": "Listen and Repeat sentences: 1. The library opens at eight. 2. Please show your student card at the door. 3. Quiet study rooms are on the second floor. Take an Interview questions: 1. How do you usually get to school or work? 2. Should universities give students free bus passes?",
+          "exam": "toefl",
           "objectives": [
             {
               "description": "Repita cada frase exatamente como ouvir.",
@@ -747,6 +750,7 @@
         "id": "pt-toefl-repetitions-done-1",
         "userInput": {
           "characterNotes": "Listen and Repeat sentences: 1. The library opens at eight. 2. Please show your student card at the door. 3. Quiet study rooms are on the second floor. Take an Interview questions: 1. How do you usually get to school or work? 2. Should universities give students free bus passes?",
+          "exam": "toefl",
           "objectives": [
             {
               "description": "Repita cada frase exatamente como ouvir.",
@@ -799,6 +803,7 @@
         "id": "pt-toefl-interview-done-1",
         "userInput": {
           "characterNotes": "Listen and Repeat sentences: 1. The library opens at eight. 2. Please show your student card at the door. 3. Quiet study rooms are on the second floor. Take an Interview questions: 1. How do you usually get to school or work? 2. Should universities give students free bus passes?",
+          "exam": "toefl",
           "objectives": [
             { "description": "Responda às perguntas da entrevista.", "label": "Take an Interview" }
           ],

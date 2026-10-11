@@ -5,10 +5,10 @@ import { readBlockPayload } from "../block-payload";
 import { getBlockSubject } from "./block-subject";
 
 /**
- * Each block's subject by its short name, for Today's labels. A lesson's block names the skill of
- * its plan item, since the lesson's own skills are finer than the plan's: the one the block kept,
- * or for blocks built before it kept one, its plan item's while the item exists. Other blocks go
- * by their skills. Empty for goals with fewer than two subjects.
+ * Each block's subject by its short name, for Today's labels (see `getBlockSubject`). A lesson's
+ * block falls back on the skill of its plan item: the one the block kept, or for blocks built
+ * before it kept one, its plan item's while the item exists. Empty for goals with fewer than two
+ * subjects.
  */
 export async function loadBlockSubjects({
   blocks,
@@ -23,12 +23,20 @@ export async function loadBlockSubjects({
     !payload.planSkillId && payload.planItemId ? [payload.planItemId] : [],
   );
 
-  const [skillSubjects, planItems] = await Promise.all([
+  const chapterIds = [...new Set(payloads.flatMap(({ payload }) => payload.chapterId ?? []))];
+
+  const [skillSubjects, planItems, chapterSkills] = await Promise.all([
     loadSkillSubjects(goal),
     planItemIds.length > 0
       ? prisma.planItem.findMany({
           select: { id: true, skillId: true },
           where: { id: { in: planItemIds } },
+        })
+      : [],
+    chapterIds.length > 0
+      ? prisma.chapterSkill.findMany({
+          select: { chapterId: true, skillId: true },
+          where: { chapterId: { in: chapterIds } },
         })
       : [],
   ]);
@@ -42,6 +50,9 @@ export async function loadBlockSubjects({
   return new Map(
     payloads.flatMap(({ block, payload }) => {
       const subject = getBlockSubject({
+        chapterSkillIds: chapterSkills.flatMap((row) =>
+          row.chapterId === payload.chapterId ? [row.skillId] : [],
+        ),
         planItemSkillId:
           payload.planSkillId ??
           (payload.planItemId ? planItemSkills.get(payload.planItemId) : null),

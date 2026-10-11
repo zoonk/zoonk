@@ -27,13 +27,16 @@ async function toOutcome(response: Response): Promise<AttachOutcome> {
     return { source: { id, title: getString(source, "title") ?? "" }, status: "attached" };
   }
 
-  // A plan's cap for the day or the month, or fair use asking for a short break.
+  // A plan's cap for the day or the month, fair use asking for a short break, or a guest's
+  // account to create.
   const refusal = getUsageRefusal(body);
 
+  if (refusal?.kind === "usageLimit") {
+    return { period: refusal.period, status: "limitReached", tier: refusal.tier };
+  }
+
   if (refusal) {
-    return refusal.kind === "usageLimit"
-      ? { period: refusal.period, status: "limitReached", tier: refusal.tier }
-      : { status: "slowDown" };
+    return refusal.kind === "slowDown" ? { status: "slowDown" } : { status: "signInRequired" };
   }
 
   switch (response.status) {

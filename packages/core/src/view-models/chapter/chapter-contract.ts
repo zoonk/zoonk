@@ -7,6 +7,12 @@ const chapterLessonSchema = z
   .object({
     lessonId: z.uuid(),
     minutes: z.int().min(0),
+    plusRequired: z
+      .boolean()
+      .meta({
+        description:
+          "A free exam plan past its first week opens this new lesson with Plus only: show it marked Plus; starting it answers 402",
+      }),
     skillIds: z
       .array(z.uuid())
       .meta({ description: "Skills it teaches, so tapping a skill on the map lists its lessons" }),
@@ -71,6 +77,14 @@ export const chapterViewSchema = z
     summaries: z
       .array(z.object({ ideas: z.array(z.string()), lessonId: z.uuid(), title: z.string() }))
       .meta({ description: "Summary cards of the chapter's finished lessons, in lesson order" }),
+    testOut: z.object({
+      plusRequired: z
+        .boolean()
+        .meta({
+          description:
+            "A free exam plan past its first week takes the chapter's test-out with Plus only: show it marked Plus; its endpoints answer 402",
+        }),
+    }),
   })
   .meta({ id: "GoalChapter" });
 

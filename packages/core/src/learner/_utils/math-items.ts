@@ -60,6 +60,8 @@ function toUnitView({ language, unit }: { language: string; unit: string | null 
 export function toMathQuestionView({ item, version }: { item: MathItem; version: MathVersion }) {
   return {
     context: version.context,
+    /** How the answer box takes the number: any number, a whole one, n decimals or a fraction. */
+    entry: item.content.entry,
     format: item.format,
     /** New numbers each time, so a math problem never asks about a figure. */
     image: null,
@@ -94,7 +96,13 @@ export function gradeMathAnswer({
   const graded =
     answer === null
       ? { isCorrect: false, mistake: null }
-      : checkMathAnswer({ answer, math: item.content.math, values: version.values });
+      : checkMathAnswer({
+          answer,
+          entry: item.content.entry,
+          math: item.content.math,
+          otherSolutions: item.content.otherSolutions,
+          values: version.values,
+        });
 
   const explanation = graded.mistake?.reason ?? null;
 

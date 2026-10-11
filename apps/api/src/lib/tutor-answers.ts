@@ -7,13 +7,16 @@ import {
   type LessonQuestionContextSnapshot,
   type PlanScopeContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
+import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
 import {
-  GOAL_TUTOR_MODEL,
   type GoalTutorAppToolRequest,
   type GoalTutorAppToolResult,
   type GoalTutorPlanChangeResult,
-  streamGoalTutorAnswer,
-} from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
+} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
+import {
+  type GoalTutorLookUpRequest,
+  type GoalTutorLookUpResult,
+} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
 import { type claimLessonQuestionAnswer } from "@zoonk/core/lesson-questions/answer-lifecycle";
 import {
   LESSON_QUESTION_PLAN_CHANGE_PART,
@@ -21,11 +24,13 @@ import {
   LESSON_QUESTION_TOOL_OFFER_PART,
   type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
+import { lookUpTutorData } from "@zoonk/core/lesson-questions/look-up";
 import { offerTutorTool } from "@zoonk/core/lesson-questions/offer-tool";
 import { proposeTutorPlanChange } from "@zoonk/core/lesson-questions/propose-plan-change";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { createEmDashReplacer } from "@zoonk/utils/string";
 import { type LanguageModelUsage, type UIMessageChunk, toUIMessageStream } from "ai";
 import { toAppToolResult } from "./tutor-app-tool-result";
 import { toPlanChangeModelResult } from "./tutor-plan-change-result";
@@ -80,7 +85,8 @@ const OFFER_APP_TOOL = "offerAppTool";
 /**
  * The buddy's answer in a goal's conversation. A plan change it asks for is saved as a proposal
  * tied to this answer, and an app tool it offers is saved with the answer; the stream sends each
- * as soon as it's ready.
+ * as soon as it's ready. The buddy's tools keep one card per message (`createCardTools`). What it
+ * looks up reaches the model only: its tool chunks never reach the client (`toClientChunks`).
  */
 function startGoalTutorAnswer({
   claim,
@@ -92,14 +98,7 @@ function startGoalTutorAnswer({
   const proposals: AnswerRun["proposals"] = [];
   const offers: TutorToolOffer[] = [];
 
-  /** One card per message: a plan change's or a feature's, whichever the answer showed first. */
-  const hasCard = () => proposals.length > 0 || offers.length > 0;
-
-  const proposeOnce = async (request: string): Promise<GoalTutorPlanChangeResult> => {
-    if (hasCard()) {
-      return { reason: "onePerMessage", status: "notPossible" };
-    }
-
+  const proposePlanChange = async (request: string): Promise<GoalTutorPlanChangeResult> => {
     const { data, error } = await safeAsync(() =>
       proposeTutorPlanChange({ questionId: claim.questionId, request, revision: claim.revision }),
     );
@@ -116,16 +115,12 @@ function startGoalTutorAnswer({
     return toPlanChangeModelResult(data);
   };
 
-  const offerOnce = async ({
+  const offerAppTool = async ({
     area,
     goal,
     tool,
     topic,
   }: GoalTutorAppToolRequest): Promise<GoalTutorAppToolResult> => {
-    if (hasCard()) {
-      return { reason: "onePerMessage", status: "unavailable", tool };
-    }
-
     const { data, error } = await safeAsync(() =>
       offerTutorTool({
         area,
@@ -149,25 +144,25 @@ function startGoalTutorAnswer({
     return toAppToolResult({ result: data, tool });
   };
 
-  // Calls in one step run together; one after another through one queue, a later call sees the
-  // card an earlier one showed, so two calls in the same step never both show one. Neither
-  // rejects (errors become `notPossible` or `unavailable`), so the queue never breaks.
-  const cardQueue: { last: Promise<unknown> } = { last: Promise.resolve() };
+  const lookUp = async (request: GoalTutorLookUpRequest): Promise<GoalTutorLookUpResult> => {
+    const { data, error } = await safeAsync(() =>
+      lookUpTutorData({ ...request, questionId: claim.questionId, revision: claim.revision }),
+    );
 
-  const inTurn = <T>(call: () => Promise<T>): Promise<T> => {
-    const result = cardQueue.last.then(call);
-    cardQueue.last = result;
-    return result;
+    if (error) {
+      logError("[Goal Tutor Lookup Error]", { questionId: claim.questionId, what: request.what });
+    }
+
+    return !data || data.status === "unauthorized"
+      ? { reason: "error", status: "unavailable", what: request.what }
+      : data;
   };
-
-  const proposePlanChange = (request: string) => inTurn(() => proposeOnce(request));
-
-  const offerAppTool = (request: GoalTutorAppToolRequest) => inTurn(() => offerOnce(request));
 
   const answer = streamGoalTutorAnswer({
     analytics: { ...claim.analytics, contentScope: "personal" },
     contextSnapshot,
     learnerMemory: claim.learnerMemory,
+    lookUp,
     offerAppTool,
     priorTurns: claim.priorTurns,
     proposePlanChange,
@@ -182,10 +177,16 @@ function startGoalTutorAnswer({
   };
 }
 
-function startLessonQuestionAnswer(claim: ClaimedAnswer): AnswerRun {
+function startLessonQuestionAnswer({
+  claim,
+  contextSnapshot,
+}: {
+  claim: ClaimedAnswer;
+  contextSnapshot: Exclude<LessonQuestionContextSnapshot, PlanScopeContext>;
+}): AnswerRun {
   const answer = streamLessonQuestionAnswer({
     analytics: { ...claim.analytics, contentScope: claim.shareAnswer ? "shared" : "personal" },
-    contextSnapshot: claim.contextSnapshot,
+    contextSnapshot,
     learnerMemory: claim.learnerMemory,
     priorTurns: claim.priorTurns,
     question: claim.question,
@@ -203,13 +204,26 @@ function isGoalSnapshot(snapshot: LessonQuestionContextSnapshot): snapshot is Pl
   return snapshot.scope.kind === "plan";
 }
 
-/** A goal's questions go to the buddy as the goal's tutor; everything else to the lesson tutor. */
+/**
+ * A question inside one of the learner's goals goes to the buddy, the goal's tutor, with the plan
+ * and the screen it was asked from. An answer written once for everyone who asks the same thing on
+ * a lesson screen goes to the lesson tutor with the screen alone, never the learner's plan, and so
+ * does a question from a learner without a goal.
+ */
 export function startTutorAnswer(claim: ClaimedAnswer): AnswerRun {
   const { contextSnapshot } = claim;
 
-  return isGoalSnapshot(contextSnapshot)
-    ? startGoalTutorAnswer({ claim, contextSnapshot })
-    : startLessonQuestionAnswer(claim);
+  if (isGoalSnapshot(contextSnapshot) && !claim.shareAnswer) {
+    return startGoalTutorAnswer({ claim, contextSnapshot });
+  }
+
+  const screen = isGoalSnapshot(contextSnapshot) ? contextSnapshot.screen : contextSnapshot;
+
+  if (!screen) {
+    throw new Error("A shared answer needs the screen it's about");
+  }
+
+  return startLessonQuestionAnswer({ claim, contextSnapshot: screen });
 }
 
 export function getTutorModel(contextKind: string): string {
@@ -269,11 +283,13 @@ export function getAnswerLanguage(snapshot: LessonQuestionContextSnapshot): stri
 /**
  * Tool calls stay on the server: a proposed plan change and an offered app tool reach the client
  * as one data part each (a search's results don't), and the words of each step read as one
- * answer, a paragraph apart.
+ * answer, a paragraph apart, without the em dashes the app never shows (`createEmDashReplacer`
+ * holds back a dash until the words after it arrive).
  */
 export function toClientChunks(run: AnswerRun) {
   const text = { pendingBreak: false, written: false };
   const toolNames = new Map<string, string>();
+  const replacers = new Map<string, ReturnType<typeof createEmDashReplacer>>();
   const sent: SentParts = { offers: 0, proposals: 0 };
 
   return new TransformStream<UIMessageChunk, UIMessageChunk>({
@@ -297,6 +313,7 @@ export function toClientChunks(run: AnswerRun) {
 
       if (chunk.type === "text-start") {
         text.pendingBreak = text.written;
+        replacers.set(chunk.id, createEmDashReplacer());
       }
 
       if (chunk.type === "text-delta" && chunk.delta) {
@@ -306,6 +323,22 @@ export function toClientChunks(run: AnswerRun) {
         }
 
         text.written = true;
+        const delta = replacers.get(chunk.id)?.push(chunk.delta) ?? chunk.delta;
+
+        if (delta) {
+          controller.enqueue({ ...chunk, delta });
+        }
+
+        return;
+      }
+
+      if (chunk.type === "text-end") {
+        const rest = replacers.get(chunk.id)?.end();
+        replacers.delete(chunk.id);
+
+        if (rest) {
+          controller.enqueue({ delta: rest, id: chunk.id, type: "text-delta" });
+        }
       }
 
       controller.enqueue(chunk);

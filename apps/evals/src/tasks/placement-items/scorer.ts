@@ -5,7 +5,7 @@ import {
   type PlacementSkillItems,
 } from "@zoonk/ai/tasks/v2/items/placement-items";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
-import { checkItem } from "@zoonk/core/library/items/checks";
+import { checkItem, findOwnEmDashes } from "@zoonk/core/library/items/checks";
 import { GENERATE_ITEMS_SCORE_CATEGORIES } from "../generate-items/score-categories";
 
 type PlacementItemsCase = Pick<
@@ -15,7 +15,10 @@ type PlacementItemsCase = Pick<
 
 type RoleCheck = { passing: GeneratedItem[]; problems: string[]; wanted: number };
 
-/** One skill's questions in one role, checked the way production checks them before storing. */
+/**
+ * One skill's questions in one role, checked the way production checks them before storing, with
+ * the em dashes storing them takes out of our own wording.
+ */
 function checkRole({
   format,
   items,
@@ -33,9 +36,10 @@ function checkRole({
 }): RoleCheck {
   const checked = items.map((item, index) => ({
     item,
-    problems: checkItem({ expectedFormat: format, item, language, optionCount }).map(
-      (problem) => `${label} ${index + 1}: ${problem}`,
-    ),
+    problems: [
+      ...checkItem({ expectedFormat: format, item, language, optionCount }),
+      ...findOwnEmDashes(item),
+    ].map((problem) => `${label} ${index + 1}: ${problem}`),
   }));
 
   return {

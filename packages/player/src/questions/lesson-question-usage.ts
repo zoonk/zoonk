@@ -22,18 +22,24 @@ const limitReachedSchema = z.object({
   details: z.object({ limit: usageLimitSchema }),
 });
 
+const signUpRequiredSchema = z.object({
+  code: z.literal(LESSON_PLAYER_ERROR_CODES.signUpRequired),
+});
+
 const usageErrorSchema = z.object({
-  error: z.discriminatedUnion("code", [slowDownSchema, limitReachedSchema]),
+  error: z.discriminatedUnion("code", [slowDownSchema, limitReachedSchema, signUpRequiredSchema]),
 });
 
 export type LessonQuestionUsageRefusal =
+  | { kind: "signUpRequired" }
   | { kind: "slowDown"; retryAfterSeconds: number }
   | { kind: "usageLimit"; period: "day" | "month" | "total"; tier: "free" | "guest" | "plus" };
 
 /**
  * Which allowance refused an API request, read from its error body: fair use asks the learner to
- * slow down, and a plan's cap asks guests to sign up and free learners to upgrade or wait. The
- * tutor's answers and the web player's "Simpler" and "Go deeper" read refusals this way.
+ * slow down, a plan's cap asks guests to sign up and free learners to upgrade or wait, and the
+ * day's AI budget all guests share asks a guest to create a free account. The tutor's answers and
+ * the web player's "Simpler" and "Go deeper" read refusals this way.
  */
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
   const parsed = usageErrorSchema.safeParse(body);
@@ -43,6 +49,10 @@ export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | nul
   }
 
   const { error } = parsed.data;
+
+  if (error.code === LESSON_PLAYER_ERROR_CODES.signUpRequired) {
+    return { kind: "signUpRequired" };
+  }
 
   return error.code === LESSON_PLAYER_ERROR_CODES.slowDown
     ? { kind: "slowDown", retryAfterSeconds: error.details.retryAfterSeconds }

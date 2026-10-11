@@ -1,5 +1,7 @@
 import { type TopicFrequencyLevel } from "../../../library/exams/blueprint-contract";
+import { type PassMarks } from "../../../library/exams/pass-marks";
 import { type TopicFrequencySource } from "../../../library/exams/topic-frequency";
+import { type TodayLearnBlock } from "../../../plans/_utils/up-next-item";
 import { type ExistingPlanItem } from "../../../plans/planner/plan-items";
 import { type WrittenPractice } from "../../../plans/written-practice-contract";
 import { type SyllabusView } from "../syllabus-contract";
@@ -12,18 +14,23 @@ export type NoticeSubject = {
   /** A skills matrix's statements, when the topics are its contents (see `matrix` on the blueprint). */
   matrix?: readonly string[];
   name: string;
+  /**
+   * The subject the notice counts it in, for an option of a choice the learner picked (ENEM's
+   * foreign language, inside its languages area): it's shown as part of that subject.
+   */
+  partOf?: string | null;
   questions: number | null;
   share: number | null;
-  /** The notice's own short label ("Direito Constitucional"), when its name is long. */
+  /** The notice's own short label ("Constitutional Law"), when its name is long. */
   shortName: string | null;
   /** How often past exams asked each of its topics, by the topic's words, where something says. */
   topicFrequency?: ReadonlyMap<string, TopicFrequencyLevel>;
-  /** The notice's heading each of its topics sits under, by the topic's words (ENEM's "Física"). */
+  /** The notice's heading each of its topics sits under, by the topic's words (ENEM's "Physics"). */
   topicHeadings?: ReadonlyMap<string, string>;
   topics: readonly string[];
   /**
-   * What the subject's written test asks, as the notice says it ("peça técnica sobre
-   * conhecimentos específicos"): a plan's area for one of them is part of the subject.
+   * What the subject's written test asks, as the notice says it ("legal brief on
+   * specific knowledge"): a plan's area for one of them is part of the subject.
    */
   writtenTasks: readonly string[];
 };
@@ -42,8 +49,10 @@ export type SyllabusSkill = {
 export type SyllabusItem = Pick<
   ExistingPlanItem,
   | "chapterId"
+  | "id"
   | "kind"
   | "lessonId"
+  | "lessons"
   | "phase"
   | "scheduledFor"
   | "skillId"
@@ -65,11 +74,21 @@ export type SyllabusInput = {
     courseWeights: SyllabusView["courseWeights"];
     /** Read from the learner's own material (a class test's slides or notes), not a notice. */
     fromMaterial: boolean;
-    passMarks: readonly string[];
+    passMarks: PassMarks | null;
     questionsSource: SyllabusView["questionsSource"];
     subjects: readonly NoticeSubject[];
     url: string | null;
   } | null;
+  /**
+   * Skills the learner showed they know (a right test answer or a test-out, not missed since; see
+   * `SkillClaim`): one with no lessons in the plan is still in it, as practice.
+   */
+  knownSkillIds: ReadonlySet<string>;
+  /**
+   * How far ahead the plan writes lessons (`getOutlinedUntil`): a topic starting after it names
+   * its skill, to ask for its lessons early. Without it, none does.
+   */
+  outlinedUntil?: string | null;
   /**
    * Skills the plan starts past: a subject's basics the learner said they know, or does well in
    * with harder lessons (see `getPastBasicsSkillIds`).
@@ -77,6 +96,16 @@ export type SyllabusInput = {
   pastBasicsSkillIds: ReadonlySet<string>;
   skills: readonly SyllabusSkill[];
   skippedAreas: readonly string[];
+  /** Bases the learner chose to skip (see `PlanSettings.baseChoices`). */
+  skippedBaseIds?: ReadonlySet<string>;
+  /** Stand-in skills chapters already teach (`listTaughtStandInSkills`): none to ask for early. */
+  taughtSkillIds?: ReadonlySet<string>;
+  /**
+   * Today's lessons not done yet, as Today opens them (`loadTodayLearnBlocks`), which the page
+   * reads apart: the chapter up next is the one Today opens (`findUpNextItem`). Without them, it's
+   * the plan's next lesson.
+   */
+  todayBlocks?: readonly TodayLearnBlock[];
   /** When the exam's written tests are practiced (see `getWrittenPracticeView`). */
   writtenPractice?: WrittenPractice | null;
 };

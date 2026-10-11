@@ -5,6 +5,7 @@ import {
   TILE_CLASS,
   TILE_ICON_CLASS,
 } from "@/components/public/landing-styles";
+import { wordTutorSuggestionLabels } from "@zoonk/player/tutor/suggestion-words";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import {
@@ -64,7 +65,7 @@ function PracticeTile({
  * product itself.
  */
 export async function PracticeSection({ locale }: { locale: SupportedLocale }) {
-  const t = await getExtracted();
+  const [t, suggestions] = await Promise.all([getExtracted(), wordTutorSuggestionLabels(locale)]);
 
   return (
     <section
@@ -158,7 +159,7 @@ export async function PracticeSection({ locale }: { locale: SupportedLocale }) {
           }
           title={t("Keep up in class")}
         >
-          <ClassPreview />
+          <ClassPreview suggestions={suggestions} />
         </PracticeTile>
 
         <PracticeTile

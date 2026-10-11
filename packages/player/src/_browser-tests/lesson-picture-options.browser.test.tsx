@@ -1,0 +1,105 @@
+import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
+import { describe, expect, it, vi } from "vitest";
+import { page } from "vitest/browser";
+import { expectAccessibleScreen } from "../_test-utils/accessibility";
+import { press } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import { inlineImage, pictureCheckStep } from "../preview/preview-steps";
+
+/**
+ * A question whose options are pictures, to tell separate things apart by how they look: each is
+ * named by what it looks like until the answer is checked, waited for while it's drawn, and
+ * described in words when its drawing never came.
+ */
+
+const [GOTHIC, ROMANESQUE, BAROQUE] = pictureCheckContent.options;
+const PHONE = { height: 812, width: 375 };
+
+function option(alt: string) {
+  return page.getByRole("radio", { name: new RegExp(alt, "u") });
+}
+
+/** Checks the pick and waits for the verdict the check screen announces. */
+async function checkAnswer(expected: "Correct!" | "Not quite") {
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await expect.element(page.getByRole("status").filter({ hasText: expected })).toBeVisible();
+}
+
+describe("picture options", () => {
+  it("picks a picture by what it looks like, and names every option once checked", async () => {
+    renderLessonPlayer({ lesson: buildLesson([pictureCheckStep()]) });
+
+    await expect.element(page.getByRole("img", { name: GOTHIC?.picture.alt })).toBeVisible();
+    // The names would give the answer away, so they wait for the check.
+    await expect.element(page.getByText("Romanesque", { exact: true })).not.toBeInTheDocument();
+
+    await option(GOTHIC?.picture.alt ?? "").click();
+    await checkAnswer("Correct!");
+
+    await expect.element(page.getByText("Gothic", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Romanesque", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Baroque", { exact: true })).toBeVisible();
+  });
+
+  it("picks with a number key, and marks a wrong pick next to the right one", async () => {
+    renderLessonPlayer({ lesson: buildLesson([pictureCheckStep()]) });
+
+    await expect.element(page.getByRole("img", { name: ROMANESQUE?.picture.alt })).toBeVisible();
+    await press("2");
+
+    await expect
+      .element(option(ROMANESQUE?.picture.alt ?? ""))
+      .toHaveAttribute("aria-checked", "true");
+
+    await checkAnswer("Not quite");
+    await expect.element(page.getByText(ROMANESQUE?.reason ?? "")).toBeVisible();
+  });
+
+  it("holds the question while a picture is drawn, then takes answers once it arrives", async () => {
+    const step = pictureCheckStep({ drawn: ["gothic", "romanesque"], imagePending: true });
+    const lesson = buildLesson([step]);
+    const drawn = inlineImage({ alt: BAROQUE?.picture.alt ?? "" });
+
+    const getLessonPictures = vi
+      .fn<NonNullable<LessonPlayerAdapters["getLessonPictures"]>>()
+      .mockResolvedValueOnce([])
+      .mockResolvedValue([{ image: drawn, optionId: "baroque", stepId: step.id }]);
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
+
+    await expect
+      .element(page.getByRole("status").filter({ hasText: "Drawing the picture…" }))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByRole("radio").first()).toBeDisabled();
+
+    await expect
+      .element(page.getByRole("img", { name: BAROQUE?.picture.alt }), { timeout: 8000 })
+      .toBeVisible();
+
+    await expect.element(page.getByRole("radio").first()).toBeEnabled();
+  });
+
+  it("describes a picture that never came, so the question still plays", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([pictureCheckStep({ drawn: ["gothic", "romanesque"] })]),
+    });
+
+    await expect.element(page.getByText(BAROQUE?.picture.alt ?? "")).toBeVisible();
+    await option(BAROQUE?.picture.alt ?? "").click();
+    await checkAnswer("Not quite");
+  });
+
+  it("fits a phone and is accessible in light and dark", async () => {
+    await atViewport(PHONE, async () => {
+      renderLessonPlayer({ lesson: buildLesson([pictureCheckStep()]) });
+
+      await expect.element(page.getByRole("img", { name: BAROQUE?.picture.alt })).toBeVisible();
+      expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(PHONE.width);
+      await expectAccessibleScreen("picture options");
+    });
+  });
+});

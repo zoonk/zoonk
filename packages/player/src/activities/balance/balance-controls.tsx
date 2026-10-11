@@ -37,7 +37,7 @@ function PanControls({
 
       <div className="flex gap-2">
         <Button
-          aria-label={takeLabel(objects.unknown.label)}
+          aria-label={`−${objects.unknown.symbol}, ${takeLabel(objects.unknown.label)}`}
           className="flex-1 tabular-nums"
           disabled={pan.x < 1}
           onClick={() => onMove({ kind: "takeX", side })}
@@ -48,7 +48,7 @@ function PanControls({
         </Button>
 
         <Button
-          aria-label={takeLabel(objects.unit.label)}
+          aria-label={`−${objects.unit.symbol}, ${takeLabel(objects.unit.label)}`}
           className="flex-1 tabular-nums"
           disabled={pan.units < 1}
           onClick={() => onMove({ kind: "takeUnit", side })}

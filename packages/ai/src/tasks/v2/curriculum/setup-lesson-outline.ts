@@ -83,6 +83,7 @@ export async function generateSetupLessonOutline(params: SetupLessonOutlineParam
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "setup-lesson-outline",
   });

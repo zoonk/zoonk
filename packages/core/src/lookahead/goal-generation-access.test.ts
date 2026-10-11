@@ -1,21 +1,13 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getGoalGenerationAccess } from "./goal-generation-access";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 async function learnerGoal({ built }: { built: boolean }) {
   const user = await userFixture();
@@ -26,10 +18,6 @@ async function learnerGoal({ built }: { built: boolean }) {
 }
 
 describe(getGoalGenerationAccess, () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("starts a goal's first run with its research without counting it: the goal was claimed", async () => {
     const { goal, user } = await learnerGoal({ built: false });
 

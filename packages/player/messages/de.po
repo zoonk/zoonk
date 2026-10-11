@@ -220,7 +220,6 @@ msgstr "Quelle:"
 #: src/activities/_components/activity-feedback.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
 #: src/activities/pattern-table/pattern-row.tsx
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
 #: src/components/inline-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "QAJ_Tl"
@@ -228,8 +227,8 @@ msgid "Correct answer:"
 msgstr "Richtige Antwort:"
 
 #: src/activities/_components/activity-feedback.tsx
+#: src/activities/combination-grid/grid-board.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
-#: src/activities/punnett-square/punnett-grid.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
@@ -288,7 +287,7 @@ msgid "Drag to guess"
 msgstr "Zum Schätzen ziehen"
 
 #: src/activities/_components/activity-guess-scale.tsx
-#: src/activities/predict-simulate/predict-simulate-activity.tsx
+#: src/activities/random-simulation/chance-simulation.tsx
 msgctxt "09XKt8"
 msgid "Your guess: {value}"
 msgstr "Deine Schätzung: {value}"
@@ -304,8 +303,6 @@ msgid "No guess yet"
 msgstr "Noch keine Schätzung"
 
 #: src/activities/_components/activity-model-sliders.tsx
-#: src/activities/parameter-simulation/parameter-simulation-activity.tsx
-#: src/activities/slider-graph/slider-graph-activity.tsx
 msgctxt "9uS9GA"
 msgid "{input}. {output}: {value}"
 msgstr "{input}. {output}: {value}"
@@ -376,8 +373,8 @@ msgid "Running"
 msgstr "Wird ausgeführt"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
-#: src/activities/predict-simulate/predict-simulate-activity.tsx
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
+#: src/activities/random-simulation/chance-simulation.tsx
+#: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "zG-cZG"
 msgid "Run again"
 msgstr "Erneut ausführen"
@@ -466,91 +463,6 @@ msgstr "{note}-Moll"
 msgctxt "21DLs1"
 msgid "{note} minor seventh"
 msgstr "{note}-Mollseptakkord"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "N6KlCY"
-msgid "Major second"
-msgstr "Große Sekunde"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "6n41IE"
-msgid "Major third"
-msgstr "Große Terz"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "4Y4Qbu"
-msgid "Major sixth"
-msgstr "Große Sexte"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "wib_rG"
-msgid "Major seventh"
-msgstr "Große Septime"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "SFF9Bk"
-msgid "Perfect fourth"
-msgstr "Reine Quarte"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "54F9Ld"
-msgid "Perfect fifth"
-msgstr "Reine Quinte"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "rE1cwx"
-msgid "Octave"
-msgstr "Oktave"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "1FaP3E"
-msgid "Tritone"
-msgstr "Tritonus"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "E2MF2M"
-msgid "Minor second"
-msgstr "Kleine Sekunde"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "sez6zs"
-msgid "Minor third"
-msgstr "Kleine Terz"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "WWUnEq"
-msgid "Minor sixth"
-msgstr "Kleine Sexte"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "nX08VI"
-msgid "Minor seventh"
-msgstr "Kleine Septime"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "pYCd4A"
-msgid "Augmented"
-msgstr "Übermäßig"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "tAagrW"
-msgid "Diminished"
-msgstr "Vermindert"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "YYom5i"
-msgid "Dominant seventh"
-msgstr "Dominantseptakkord"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "ZTyts5"
-msgid "Major"
-msgstr "Dur"
-
-#: src/activities/_utils/use-music-labels.ts
-msgctxt "mHaGH9"
-msgid "Minor"
-msgstr "Moll"
 
 #: src/activities/area-model/area-model-activity.tsx
 msgctxt "8BGkFK"
@@ -951,6 +863,11 @@ msgid "Line {number}, yours to edit"
 msgstr "Zeile {number} zum Bearbeiten"
 
 #: src/activities/code-runner/code-runner-activity.tsx
+msgctxt "Xtp3VI"
+msgid "A {language} program of {count} lines. Run it to see what it prints."
+msgstr "Ein {language}-Programm mit {count} Zeilen. Führe es aus, um zu sehen, was es ausgibt."
+
+#: src/activities/code-runner/code-runner-activity.tsx
 msgctxt "46pcVH"
 msgid "A {language} program of {count} lines. Edit your lines, run it, and compare its output with the expected output: {expected}"
 msgstr "Ein {language}-Programm mit {count} Zeilen. Bearbeite deine Zeilen, führe es aus und vergleiche die Ausgabe mit der erwarteten Ausgabe: {expected}"
@@ -971,11 +888,6 @@ msgid "Stopped because it printed too much. Is there a loop that never ends?"
 msgstr "Abgebrochen, weil das Programm zu viel ausgegeben hat. Gibt es eine Schleife, die nie endet?"
 
 #: src/activities/code-runner/code-runner-output.tsx
-msgctxt "e2tgwJ"
-msgid "Your output"
-msgstr "Deine Ausgabe"
-
-#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "SqYSJ3"
 msgid "Run the code to see it"
 msgstr "Führe den Code aus, um die Ausgabe zu sehen"
@@ -986,6 +898,16 @@ msgid "Nothing printed"
 msgstr "Nichts ausgegeben"
 
 #: src/activities/code-runner/code-runner-output.tsx
+msgctxt "fio5op"
+msgid "Output"
+msgstr "Ausgabe"
+
+#: src/activities/code-runner/code-runner-output.tsx
+msgctxt "e2tgwJ"
+msgid "Your output"
+msgstr "Deine Ausgabe"
+
+#: src/activities/code-runner/code-runner-output.tsx
 msgctxt "6srLb2"
 msgid "Expected"
 msgstr "Erwartete Ausgabe"
@@ -994,6 +916,21 @@ msgstr "Erwartete Ausgabe"
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
 msgstr "Du hast den Code geändert. Führe ihn noch einmal aus, um die neue Ausgabe zu sehen."
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "isBSlr"
+msgid "Step forward to run the next line."
+msgstr "Geh einen Schritt weiter, um die nächste Zeile auszuführen."
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "6uNMzr"
+msgid "That's the whole run."
+msgstr "Das war der komplette Durchlauf."
+
+#: src/activities/code-tracer/code-tracer-activity.tsx
+msgctxt "PZfuUl"
+msgid "That's the whole run. Check your predictions when you're ready."
+msgstr "Das war der ganze Durchlauf. Überprüfe deine Vorhersagen, wenn du bereit bist."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "vRrYUS"
@@ -1014,16 +951,6 @@ msgstr "Gib zuerst deine Vorhersage ab. Geh dann einen Schritt weiter, um zu seh
 msgctxt "OsfnDf"
 msgid "Step forward to see if you're right."
 msgstr "Geh einen Schritt weiter, um zu sehen, ob du richtigliegst."
-
-#: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "isBSlr"
-msgid "Step forward to run the next line."
-msgstr "Geh einen Schritt weiter, um die nächste Zeile auszuführen."
-
-#: src/activities/code-tracer/code-tracer-activity.tsx
-msgctxt "PZfuUl"
-msgid "That's the whole run. Check your predictions when you're ready."
-msgstr "Das war der ganze Durchlauf. Überprüfe deine Vorhersagen, wenn du bereit bist."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "ZyQ9Lj"
@@ -1074,6 +1001,66 @@ msgstr "Du hast {guess} vorhergesagt, und das stimmt."
 msgctxt "lv9wls"
 msgid "You said {guess}; it was {traced}."
 msgstr "Du hast {guess} vorhergesagt; tatsächlich war es {traced}."
+
+#: src/activities/combination-grid/combination-grid-activity.tsx
+msgctxt "j4PT7S"
+msgid "A Punnett square for {trait}: {rowParent} ({rowAlleles}) down the side, {columnParent} ({columnAlleles}) across the top."
+msgstr "Ein Punnett-Quadrat für {trait}: {rowParent} ({rowAlleles}) an der Seite und {columnParent} ({columnAlleles}) oben."
+
+#: src/activities/combination-grid/combination-grid-activity.tsx
+msgctxt "BcBYIY"
+msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnValues}) across the top, each square their sum."
+msgstr "{title}: {rowLabel} ({rowValues}) stehen seitlich untereinander, {columnLabel} ({columnValues}) oben nebeneinander. Jedes Feld zeigt die Summe der jeweiligen Werte."
+
+#: src/activities/combination-grid/combination-grid-activity.tsx
+msgctxt "7MYSHq"
+msgid "{title}: {rowLabel} ({rowValues}) down the side, {columnLabel} ({columnValues}) across the top, each square their product."
+msgstr "{title}: {rowLabel} ({rowValues}) stehen seitlich untereinander, {columnLabel} ({columnValues}) oben nebeneinander. Jedes Feld zeigt das Produkt der jeweiligen Werte."
+
+#: src/activities/combination-grid/grid-board.tsx
+msgctxt "_RHUYG"
+msgid "Square {number}, {row} and {column}: empty"
+msgstr "Feld {number}, Zeile {row} und Spalte {column}: leer"
+
+#: src/activities/combination-grid/grid-board.tsx
+msgctxt "Sb4hnT"
+msgid "Square {number}, {row} and {column}:"
+msgstr "Feld {number}, {row} und {column}:"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "Sx_zdo"
+msgid "{count} of {total} squares: {what}"
+msgstr "{count} von {total} Feldern: {what}"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "vQ-Abi"
+msgid "{count} of {total} squares right"
+msgstr "{count} von {total} Kästchen richtig"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "Q20WRf"
+msgid "{count} of {total} squares filled"
+msgstr "{count} von {total} Feldern ausgefüllt"
+
+#: src/activities/combination-grid/grid-caption.tsx
+msgctxt "hyp4AH"
+msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
+msgstr "{dominant}: {dominantCount} von {total} · {recessive}: {recessiveCount} von {total}"
+
+#: src/activities/combination-grid/grid-palette.tsx
+msgctxt "fewxxc"
+msgid "Every square is filled. Tap one to change it."
+msgstr "Alle Felder sind ausgefüllt. Tippe auf eins, um es zu ändern."
+
+#: src/activities/combination-grid/grid-palette.tsx
+msgctxt "ZJ9RKr"
+msgid "Which genotype goes in square {number}?"
+msgstr "Welcher Genotyp gehört in Feld {number}?"
+
+#: src/activities/combination-grid/grid-palette.tsx
+msgctxt "_Z7gdQ"
+msgid "What goes in square {number}?"
+msgstr "Was gehört in Feld {number}?"
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "rUq4jt"
@@ -1195,77 +1182,6 @@ msgctxt "ev_E2X"
 msgid "{between} of values fall between {from} and {to}, {below} below and {above} above."
 msgstr "{between} der Werte liegen zwischen {from} und {to}; {below} darunter und {above} darüber."
 
-#: src/activities/ear-trainer/ear-trainer-activity.tsx
-#: src/components/player-choice-scene.tsx
-msgctxt "akd-cv"
-msgid "Answer options"
-msgstr "Antwortmöglichkeiten"
-
-#: src/activities/ear-trainer/ear-trainer-activity.tsx
-msgctxt "H1FGIE"
-msgid "A sound to name by ear. Press play to hear it, then pick what you heard."
-msgstr "Ein Klang, den du nach Gehör erkennen sollst. Drücke auf „Abspielen“, um ihn anzuhören, und wähle dann aus, was du gehört hast."
-
-#: src/activities/ear-trainer/ear-trainer-answer.tsx
-msgctxt "RqQsRH"
-msgid "{count, plural, one {# half step} other {# half steps}}: {notes}"
-msgstr "{count, plural, one {# Halbton} other {# Halbtöne}}: {notes}"
-
-#: src/activities/ear-trainer/ear-trainer-answer.tsx
-msgctxt "VRjsMi"
-msgid "What played: {notes}"
-msgstr "Gespielt wurde: {notes}"
-
-#: src/activities/ear-trainer/ear-trainer-answer.tsx
-msgctxt "aAOWcz"
-msgid "The notes that played"
-msgstr "Die gespielten Töne"
-
-#: src/activities/ear-trainer/ear-trainer-answer.tsx
-msgctxt "7qkHo6"
-msgid "You know it from:"
-msgstr "Das kennst du aus:"
-
-#: src/activities/ear-trainer/ear-trainer-answer.tsx
-msgctxt "wQX2Dj"
-msgid "Hear your pick to compare"
-msgstr "Höre dir deine Auswahl zum Vergleichen an"
-
-#: src/activities/ear-trainer/ear-trainer-player.tsx
-msgctxt "58-Aba"
-msgid "Two notes, low then high"
-msgstr "Zwei Töne, erst tief, dann hoch"
-
-#: src/activities/ear-trainer/ear-trainer-player.tsx
-msgctxt "4qwn9s"
-msgid "One chord, then its notes one by one"
-msgstr "Ein Akkord, dann seine Töne einzeln"
-
-#: src/activities/ear-trainer/ear-trainer-player.tsx
-msgctxt "Vzba2L"
-msgid "{count} chords, one after another"
-msgstr "{count} Akkorde nacheinander"
-
-#: src/activities/ear-trainer/ear-trainer-player.tsx
-msgctxt "Hb0vp0"
-msgid "The chords you hear"
-msgstr "Die Akkorde, die du hörst"
-
-#: src/activities/ear-trainer/ear-trainer-player.tsx
-msgctxt "6nz1QT"
-msgid "The chord to name"
-msgstr "Der Akkord, den du benennen sollst"
-
-#: src/activities/ear-trainer/ear-trainer-player.tsx
-msgctxt "B4oZhQ"
-msgid "Play again"
-msgstr "Noch einmal abspielen"
-
-#: src/activities/ear-trainer/ear-trainer-player.tsx
-msgctxt "J3ca41"
-msgid "Play"
-msgstr "Abspielen"
-
 #: src/activities/find-error/find-error-activity.tsx
 msgctxt "H1sDdt"
 msgid "Step {number}: {text}"
@@ -1310,6 +1226,67 @@ msgstr "Antwort einer KI in {count} Schritten. Ein Schritt ist falsch. Wähle ih
 msgctxt "Z2DktY"
 msgid "A worked answer in {count} steps. One step is wrong; pick it."
 msgstr "Ein Lösungsweg mit {count} Schritten. Ein Schritt ist falsch; wähle ihn aus."
+
+#: src/activities/formula-model/formula-model-activity.tsx
+msgctxt "99zN0Y"
+msgid "At {input}: {value}"
+msgstr "Bei {input}: {value}"
+
+#: src/activities/formula-model/formula-model-description.tsx
+msgctxt "6IiaDB"
+msgid "What ifs switched on: {events}."
+msgstr "Aktivierte Was-wäre-wenn-Szenarien: {events}."
+
+#: src/activities/formula-model/formula-model-description.tsx
+msgctxt "0lhPDV"
+msgid "No what ifs switched on."
+msgstr "Es sind keine Was-wäre-wenn-Szenarien aktiviert."
+
+#: src/activities/formula-model/formula-model-description.tsx
+msgctxt "dC7niS"
+msgid "Sliders and a chart of {output} across {variable}."
+msgstr "Schieberegler und ein Diagramm zu {output} in Abhängigkeit von {variable}."
+
+#: src/activities/formula-model/formula-model-description.tsx
+msgctxt "ASiIBJ"
+msgid "For comparison, at {input} it's {value}."
+msgstr "Zum Vergleich: Bei {input} beträgt der Wert {value}."
+
+#: src/activities/formula-model/formula-model-events.tsx
+msgctxt "b42_4_"
+msgid "What-if events"
+msgstr "Was-wäre-wenn-Szenarien"
+
+#: src/activities/formula-model/formula-model-events.tsx
+msgctxt "3eJe1c"
+msgid "With the what-ifs"
+msgstr "Mit den Was-wäre-wenn-Szenarien"
+
+#: src/activities/formula-model/formula-model-events.tsx
+msgctxt "tgvES0"
+msgid "Now"
+msgstr "Jetzt"
+
+#: src/activities/formula-model/formula-model-events.tsx
+#: src/activities/line-crossing/line-crossing-chart.tsx
+msgctxt "VWGEKN"
+msgid "Before"
+msgstr "Vorher"
+
+#: src/activities/formula-model/formula-model-events.tsx
+msgctxt "MJBzql"
+msgid "At the start"
+msgstr "Zu Beginn"
+
+#: src/activities/formula-model/formula-model-view.ts
+msgctxt "rnVZYF"
+msgid "{value} before"
+msgstr "{value} vorher"
+
+#: src/activities/formula-model/formula-model-view.ts
+msgctxt "SyTAdx"
+msgid "{change} from the start"
+msgstr "{change} gegenüber dem Start"
 
 #: src/activities/geometry-board/board-corner.tsx
 msgctxt "TNTtw-"
@@ -1458,6 +1435,11 @@ msgid "A piano keyboard from C to B. Pressed: {notes}."
 msgstr "Eine Klaviatur von C bis H. Gedrückt: {notes}."
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "S7Oawr"
+msgid "By ear"
+msgstr "Nach Gehör"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "0kfXGd"
 msgid "{count, plural, one {# note} other {# notes}}"
 msgstr "{count, plural, one {# Ton} other {# Töne}}"
@@ -1473,19 +1455,24 @@ msgid "On the keys: {notes}"
 msgstr "Auf den Tasten: {notes}"
 
 #: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
+msgctxt "qJkgjx"
+msgid "Play the sound"
+msgstr "Ton abspielen"
+
+#: src/activities/keyboard-fretboard/keyboard-fretboard-header.tsx
 msgctxt "f6zKAc"
 msgid "Hear it"
 msgstr "Anhören"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "ke7mb_"
-msgid "Spot {number}, {position}: {name}"
-msgstr "Stelle {number}, {position}: {name}"
+msgctxt "6KJB-Z"
+msgid "Spot {number}: empty"
+msgstr "Feld {number}: leer"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
-msgctxt "qASQI9"
-msgid "Spot {number}, {position}: empty"
-msgstr "Stelle {number}, {position}: leer"
+msgctxt "uAzl00"
+msgid "Spot {number}:"
+msgstr "Feld {number}:"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "uilHxe"
@@ -1508,9 +1495,14 @@ msgid "{name} taken off."
 msgstr "{name} entfernt."
 
 #: src/activities/labeled-diagram/labeled-diagram-activity.tsx
-msgctxt "e5dB3V"
-msgid "{count, plural, one {# numbered spot} other {# numbered spots}} to label."
-msgstr "{count, plural, one {# nummerierte Stelle} other {# nummerierte Stellen}} zum Beschriften."
+msgctxt "0zsZYj"
+msgid "{count, plural, one {# numbered spot} other {# numbered spots}} on the picture to label."
+msgstr "{count, plural, one {# nummerierte Stelle} other {# nummerierte Stellen}} auf dem Bild zum Beschriften."
+
+#: src/activities/labeled-diagram/labeled-diagram-activity.tsx
+msgctxt "iHn5yd"
+msgid "What each number shows"
+msgstr "Was die einzelnen Zahlen zeigen"
 
 #: src/activities/labeled-diagram/name-bank.tsx
 msgctxt "jG0-gv"
@@ -1532,200 +1524,81 @@ msgctxt "vhw8-j"
 msgid "Names"
 msgstr "Namen"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "aj9luK"
-msgid "A drawing of an animal cell"
-msgstr "Zeichnung einer tierischen Zelle"
+#: src/activities/line-crossing/line-crossing-chart.tsx
+#: src/lesson/steps/challenge/challenge-conversation.tsx
+msgctxt "Xup5P8"
+msgid "What happened"
+msgstr "Was passiert ist"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "b0HSQL"
-msgid "A drawing of an atom with its nucleus and electron shells"
-msgstr "Zeichnung eines Atoms mit Atomkern und Elektronenschalen"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "tMdNPI"
+msgid "{axis} goes down"
+msgstr "{axis} sinkt"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "0oC66C"
-msgid "A drawing of the digestive system, from the front"
-msgstr "Zeichnung des Verdauungssystems von vorn"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "4Cd_mH"
+msgid "{axis} stays the same"
+msgstr "{axis} bleibt gleich"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "Lx_5qm"
-msgid "A drawing of the Earth cut in half to show its layers"
-msgstr "Zeichnung der Erde im Querschnitt mit ihren Schichten"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "sCCYcO"
+msgid "{axis} goes up"
+msgstr "{axis} steigt"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "9vCELn"
-msgid "A drawing of a simple electric circuit"
-msgstr "Zeichnung eines einfachen Stromkreises"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "m3ASYj"
+msgid "Move the line {line}"
+msgstr "Verschiebe die Linie {line}"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "Fk8O4v"
-msgid "A drawing of a flower cut in half"
-msgstr "Zeichnung einer Blüte im Querschnitt"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "4Xe-ib"
+msgid "{line} hasn't moved"
+msgstr "{line} wurde nicht verschoben"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "OK_Ovi"
-msgid "A drawing of the ear, cut open"
-msgstr "Zeichnung eines aufgeschnittenen Ohrs"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "B36SVg"
+msgid "{line} moved right"
+msgstr "{line} wurde nach rechts verschoben"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "kujAvC"
-msgid "A drawing of the eye from the side, with light coming in from the left"
-msgstr "Zeichnung eines Auges von der Seite, in das Licht von links einfällt"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "cToHM6"
+msgid "{line} moved left"
+msgstr "{line} wurde nach links verschoben"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "ozCl0q"
-msgid "A drawing of the heart seen from the front, so its right side is on your left"
-msgstr "Zeichnung des Herzens von vorn: Seine rechte Seite liegt links im Bild"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "8OY5Eu"
+msgid "{line} moved up"
+msgstr "{line} wurde nach oben verschoben"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "DTilgq"
-msgid "A drawing of an insect from above"
-msgstr "Zeichnung eines Insekts von oben"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "PXTpay"
+msgid "{line} moved down"
+msgstr "{line} wurde nach unten verschoben"
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "bIYrM_"
-msgid "A drawing of a leaf cut across"
-msgstr "Zeichnung eines Blattquerschnitts"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "PHEAQb"
+msgid "Drag a line by its handle."
+msgstr "Ziehe eine Linie an ihrem Griff."
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "0AwAO8"
-msgid "A drawing of a neuron"
-msgstr "Zeichnung eines Neurons"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "5H0MTv"
+msgid "Drag a line by its handle, or use the arrow keys."
+msgstr "Ziehe eine Linie an ihrem Griff oder nutze die Pfeiltasten."
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "vfzysR"
-msgid "A drawing of a flowering plant, from its roots to its flower"
-msgstr "Zeichnung einer blühenden Pflanze von den Wurzeln bis zur Blüte"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "QqIq-i"
+msgid "A chart of two lines, {first} and {second}, with {y} against {x}."
+msgstr "Ein Diagramm mit den beiden Linien {first} und {second}, das {y} in Abhängigkeit von {x} zeigt."
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "UlpfYB"
-msgid "A drawing of a plant cell"
-msgstr "Zeichnung einer Pflanzenzelle"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "1eICpE"
+msgid "Neither line has moved yet."
+msgstr "Keine der beiden Linien wurde bisher verschoben."
 
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "ao0Ny6"
-msgid "A drawing of the respiratory system, from the front"
-msgstr "Zeichnung des Atmungssystems von vorn"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "NSC68f"
-msgid "A drawing of a volcano cut open while it erupts"
-msgstr "Zeichnung eines aufgeschnittenen, ausbrechenden Vulkans"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "_cPwg3"
-msgid "A drawing of the water cycle over the sea and land"
-msgstr "Zeichnung des Wasserkreislaufs über Meer und Land"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "FJvu6U"
-msgid "Low in oxygen"
-msgstr "Sauerstoffarm"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "OXIHxz"
-msgid "Rich in oxygen"
-msgstr "Sauerstoffreich"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "MeBKMm"
-msgid "bottom"
-msgstr "unten"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "1IkU7X"
-msgid "bottom left"
-msgstr "unten links"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "6_voLT"
-msgid "bottom right"
-msgstr "unten rechts"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "1zWn0E"
-msgid "center"
-msgstr "Mitte"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "QADzWR"
-msgid "left side"
-msgstr "linke Seite"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "PenP3G"
-msgid "right side"
-msgstr "rechte Seite"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "D6yns0"
-msgid "top"
-msgstr "oben"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "fRtz-z"
-msgid "top left"
-msgstr "oben links"
-
-#: src/activities/labeled-diagram/use-diagram-words.ts
-msgctxt "YX5Gym"
-msgid "top right"
-msgstr "oben rechts"
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "t52zif"
-msgid "Play the message"
-msgstr "Nachricht abspielen"
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "tFFMkF"
-msgid "Pause"
-msgstr "Pause"
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "KPtD4W"
-msgid "Sentence {current} of {total}"
-msgstr "Satz {current} von {total}"
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "p7W--E"
-msgid "One sentence back"
-msgstr "Einen Satz zurück"
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "YHuJ2h"
-msgid "There's no voice for this language here, so the message can't play."
-msgstr "Für diese Sprache ist hier keine Stimme verfügbar, deshalb kann die Nachricht nicht abgespielt werden."
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "y4n5Lg"
-msgid "The words open after you answer"
-msgstr "Der Text wird nach deiner Antwort angezeigt"
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "0b9YII"
-msgid "Can't listen now? Show the words"
-msgstr "Kannst du gerade nicht hören? Wörter anzeigen"
-
-#: src/activities/listening-speed/listening-speed-activity.tsx
-msgctxt "PlsZD4"
-msgid "A voice message you can play at different speeds. Its words show after you answer."
-msgstr "Eine Sprachnachricht, die du in verschiedenen Geschwindigkeiten abspielen kannst. Der Text wird nach deiner Antwort angezeigt."
-
-#: src/activities/listening-speed/listening-transcript.tsx
-msgctxt "IzGuII"
-msgid "The words"
-msgstr "Der Text"
-
-#: src/activities/listening-speed/speed-picker.tsx
-msgctxt "QWTP0t"
-msgid "Speed"
-msgstr "Geschwindigkeit"
-
-#: src/activities/listening-speed/speed-picker.tsx
-msgctxt "S5WPOu"
-msgid "{speed}×"
-msgstr "{speed}×"
+#: src/activities/line-crossing/line-crossing-parts.tsx
+msgctxt "dSVAFh"
+msgid "The new crossing is at {value}."
+msgstr "Der neue Schnittpunkt liegt bei {value}."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "KP7hl9"
@@ -2018,14 +1891,14 @@ msgid "Build {formula}."
 msgstr "Baue {formula}."
 
 #: src/activities/molecule-builder/molecule-example.tsx
-msgctxt "ggyvec"
-msgid "One correct build"
-msgstr "Ein korrekter Aufbau"
-
-#: src/activities/molecule-builder/molecule-example.tsx
 msgctxt "w3g_U0"
 msgid "{count, plural, one {# bond} other {# bonds}} in all, counting a double bond as two."
 msgstr "{count, plural, one {# Bindung} other {# Bindungen}} insgesamt, wobei eine Doppelbindung als zwei Bindungen zählt."
+
+#: src/activities/molecule-builder/molecule-example.tsx
+msgctxt "ggyvec"
+msgid "One correct build"
+msgstr "Ein korrekter Aufbau"
 
 #: src/activities/molecule-builder/molecule-palette.tsx
 msgctxt "oSYNbz"
@@ -2236,26 +2109,6 @@ msgstr "Ein Zahlenstrahl für {label} von {min} bis {max}. Er beginnt bei {start
 msgctxt "dzkrMe"
 msgid "The jumps go {jumps} and land at {landing}."
 msgstr "Die Sprünge betragen {jumps} und enden bei {landing}."
-
-#: src/activities/parameter-simulation/simulation-parts.tsx
-msgctxt "_5PEj6"
-msgid "Dashed: at the start ({settings})"
-msgstr "Gestrichelt: zu Beginn ({settings})"
-
-#: src/activities/parameter-simulation/simulation-parts.tsx
-msgctxt "Kh0jD_"
-msgid "{model}: a graph of {output} as {variable} goes from {min} to {max}."
-msgstr "{model}: Ein Diagramm, das {output} zeigt, wenn {variable} von {min} bis {max} verändert wird."
-
-#: src/activities/parameter-simulation/simulation-parts.tsx
-msgctxt "IGMppc"
-msgid "Held at: {others}."
-msgstr "Konstant gehalten bei: {others}."
-
-#: src/activities/parameter-simulation/simulation-parts.tsx
-msgctxt "2izTRZ"
-msgid "It's highest at {x}: {y}."
-msgstr "Der Höchstwert liegt bei {x}: {y}."
 
 #: src/activities/pattern-table/pattern-row.tsx
 msgctxt "mgXw7n"
@@ -2480,31 +2333,6 @@ msgctxt "JiJxIE"
 msgid "{passing} of {total} pass"
 msgstr "{passing} von {total} passen"
 
-#: src/activities/predict-simulate/predict-simulate-activity.tsx
-msgctxt "YuYZWw"
-msgid "{runs} runs of {trial}"
-msgstr "{runs} Durchläufe mit {trial}"
-
-#: src/activities/predict-simulate/predict-simulate-activity.tsx
-msgctxt "b8C_tk"
-msgid "Pick your guess, then check it to run the simulation."
-msgstr "Wähle deine Schätzung und prüfe sie, um die Simulation zu starten."
-
-#: src/activities/predict-simulate/predict-simulate-activity.tsx
-msgctxt "icFXM1"
-msgid "{hit} in {share} of the runs."
-msgstr "{hit} kam in {share} der Durchläufe vor."
-
-#: src/activities/predict-simulate/predict-simulate-activity.tsx
-msgctxt "uhzSro"
-msgid "{hit} in {share} of the runs. The exact chance is {exact}."
-msgstr "{hit} kam in {share} der Durchläufe vor. Die genaue Wahrscheinlichkeit beträgt {exact}."
-
-#: src/activities/predict-simulate/predict-simulate-activity.tsx
-msgctxt "0xVUIe"
-msgid "{runs}: {hit} came up in {share} of them."
-msgstr "{runs}: {hit} kam in {share} davon vor."
-
 #: src/activities/process-order/process-order-activity.tsx
 msgctxt "NI6DvQ"
 msgid "You had it at {position}"
@@ -2530,50 +2358,90 @@ msgctxt "GYbMfc"
 msgid "{count, plural, one {# step} other {# steps}} to put in order."
 msgstr "{count, plural, one {# Schritt} other {# Schritte}} in die richtige Reihenfolge bringen."
 
-#: src/activities/punnett-square/punnett-caption.tsx
-msgctxt "Sx_zdo"
-msgid "{count} of {total} squares: {what}"
-msgstr "{count} von {total} Feldern: {what}"
+#: src/activities/random-simulation/chance-simulation.tsx
+msgctxt "YuYZWw"
+msgid "{runs} runs of {trial}"
+msgstr "{runs} Durchläufe mit {trial}"
 
-#: src/activities/punnett-square/punnett-caption.tsx
-msgctxt "vQ-Abi"
-msgid "{count} of {total} squares right"
-msgstr "{count} von {total} Kästchen richtig"
+#: src/activities/random-simulation/chance-simulation.tsx
+msgctxt "b8C_tk"
+msgid "Pick your guess, then check it to run the simulation."
+msgstr "Wähle deine Schätzung und prüfe sie, um die Simulation zu starten."
 
-#: src/activities/punnett-square/punnett-caption.tsx
-msgctxt "hyp4AH"
-msgid "{dominant}: {dominantCount} of {total} · {recessive}: {recessiveCount} of {total}"
-msgstr "{dominant}: {dominantCount} von {total} · {recessive}: {recessiveCount} von {total}"
+#: src/activities/random-simulation/chance-simulation.tsx
+msgctxt "icFXM1"
+msgid "{hit} in {share} of the runs."
+msgstr "{hit} kam in {share} der Durchläufe vor."
 
-#: src/activities/punnett-square/punnett-grid.tsx
-msgctxt "wcotiW"
-msgid "Square {number}, {row} and {column}: {value}"
-msgstr "Feld {number}, Zeile {row} und Spalte {column}: {value}"
+#: src/activities/random-simulation/chance-simulation.tsx
+msgctxt "uhzSro"
+msgid "{hit} in {share} of the runs. The exact chance is {exact}."
+msgstr "{hit} kam in {share} der Durchläufe vor. Die genaue Wahrscheinlichkeit beträgt {exact}."
 
-#: src/activities/punnett-square/punnett-grid.tsx
-msgctxt "_RHUYG"
-msgid "Square {number}, {row} and {column}: empty"
-msgstr "Feld {number}, Zeile {row} und Spalte {column}: leer"
+#: src/activities/random-simulation/chance-simulation.tsx
+msgctxt "0xVUIe"
+msgid "{runs}: {hit} came up in {share} of them."
+msgstr "{runs}: {hit} kam in {share} davon vor."
 
-#: src/activities/punnett-square/punnett-palette.tsx
-msgctxt "fewxxc"
-msgid "Every square is filled. Tap one to change it."
-msgstr "Alle Felder sind ausgefüllt. Tippe auf eins, um es zu ändern."
+#: src/activities/random-simulation/sampling-expected-spread.tsx
+msgctxt "FwKyO_"
+msgid "What the math says"
+msgstr "Was die Mathematik sagt"
 
-#: src/activities/punnett-square/punnett-palette.tsx
-msgctxt "ZJ9RKr"
-msgid "Which genotype goes in square {number}?"
-msgstr "Welcher Genotyp gehört in Feld {number}?"
+#: src/activities/random-simulation/sampling-expected-spread.tsx
+msgctxt "FHcnng"
+msgid "From {smallest} to {largest}, the margin shrinks to {share} of its size."
+msgstr "Von {smallest} bis {largest} schrumpft die Spanne auf {share} ihrer ursprünglichen Größe."
 
-#: src/activities/punnett-square/punnett-palette.tsx
-msgctxt "Q5jJ7P"
-msgid "Put {genotype} in square {number}"
-msgstr "Setze {genotype} in Feld {number}"
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "S9tzzs"
+msgid "Sample size"
+msgstr "Stichprobengröße"
 
-#: src/activities/punnett-square/punnett-square-activity.tsx
-msgctxt "j4PT7S"
-msgid "A Punnett square for {trait}: {rowParent} ({rowAlleles}) down the side, {columnParent} ({columnAlleles}) across the top."
-msgstr "Ein Punnett-Quadrat für {trait}: {rowParent} ({rowAlleles}) an der Seite und {columnParent} ({columnAlleles}) oben."
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "igq63s"
+msgid "{runs} samples of {size} from {population}. The true value is {truth}; 95% of samples landed between {from} and {to}."
+msgstr "{runs} Stichproben der Größe {size} aus {population}. Der wahre Wert ist {truth}; 95 % der Stichproben lagen zwischen {from} und {to}."
+
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "k4Y2Ej"
+msgid "95% of samples land within"
+msgstr "95 % der Stichproben liegen innerhalb von"
+
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "tXYVJd"
+msgid "{from} to {to}"
+msgstr "{from} bis {to}"
+
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "Dv2Fkx"
+msgid "True value: {value}"
+msgstr "Tatsächlicher Wert: {value}"
+
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "TFz_E5"
+msgid "{size}. 95% of samples within {margin}."
+msgstr "{size}. 95 % der Stichproben liegen innerhalb von {margin}."
+
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "GvL6oK"
+msgid "{runs} samples of {size}"
+msgstr "{runs} Stichproben der Größe {size}"
+
+#: src/activities/random-simulation/sampling-simulation.tsx
+msgctxt "-Dxr5R"
+msgid "Running {count} of {runs}…"
+msgstr "Berechne {count} von {runs}…"
+
+#: src/activities/random-simulation/use-sampling-format.ts
+msgctxt "t4sTE6"
+msgid "±{value} points"
+msgstr "±{value} Prozentpunkte"
+
+#: src/activities/random-simulation/use-sampling-format.ts
+msgctxt "_dayPZ"
+msgid "±{value}"
+msgstr "±{value}"
 
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "pSyQZq"
@@ -2712,162 +2580,6 @@ msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
 msgstr "Ein Rhythmus mit {length} Schritten und einem Schlag alle {perBeat} Schritte. Tippe bei den Schritten {hits} mit, während bei jedem Schlag ein Klick ertönt."
 
-#: src/activities/sampling-simulator/sampling-expected-spread.tsx
-msgctxt "FwKyO_"
-msgid "What the math says"
-msgstr "Was die Mathematik sagt"
-
-#: src/activities/sampling-simulator/sampling-expected-spread.tsx
-msgctxt "FHcnng"
-msgid "From {smallest} to {largest}, the margin shrinks to {share} of its size."
-msgstr "Von {smallest} bis {largest} schrumpft die Spanne auf {share} ihrer ursprünglichen Größe."
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "S9tzzs"
-msgid "Sample size"
-msgstr "Stichprobengröße"
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "igq63s"
-msgid "{runs} samples of {size} from {population}. The true value is {truth}; 95% of samples landed between {from} and {to}."
-msgstr "{runs} Stichproben der Größe {size} aus {population}. Der wahre Wert ist {truth}; 95 % der Stichproben lagen zwischen {from} und {to}."
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "k4Y2Ej"
-msgid "95% of samples land within"
-msgstr "95 % der Stichproben liegen innerhalb von"
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "tXYVJd"
-msgid "{from} to {to}"
-msgstr "{from} bis {to}"
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "Dv2Fkx"
-msgid "True value: {value}"
-msgstr "Tatsächlicher Wert: {value}"
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "TFz_E5"
-msgid "{size}. 95% of samples within {margin}."
-msgstr "{size}. 95 % der Stichproben liegen innerhalb von {margin}."
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "GvL6oK"
-msgid "{runs} samples of {size}"
-msgstr "{runs} Stichproben der Größe {size}"
-
-#: src/activities/sampling-simulator/sampling-simulator-activity.tsx
-msgctxt "-Dxr5R"
-msgid "Running {count} of {runs}…"
-msgstr "Berechne {count} von {runs}…"
-
-#: src/activities/sampling-simulator/use-sampling-format.ts
-msgctxt "t4sTE6"
-msgid "±{value} points"
-msgstr "±{value} Prozentpunkte"
-
-#: src/activities/sampling-simulator/use-sampling-format.ts
-msgctxt "_dayPZ"
-msgid "±{value}"
-msgstr "±{value}"
-
-#: src/activities/scenario-simulator/scenario-simulator-activity.tsx
-msgctxt "b42_4_"
-msgid "What-if events"
-msgstr "Was-wäre-wenn-Szenarien"
-
-#: src/activities/scenario-simulator/scenario-simulator-activity.tsx
-msgctxt "3eJe1c"
-msgid "With the what-ifs"
-msgstr "Mit den Was-wäre-wenn-Szenarien"
-
-#: src/activities/scenario-simulator/scenario-simulator-activity.tsx
-#: src/activities/supply-demand/supply-demand-chart.tsx
-msgctxt "VWGEKN"
-msgid "Before"
-msgstr "Vorher"
-
-#: src/activities/scenario-simulator/scenario-simulator-activity.tsx
-msgctxt "rnVZYF"
-msgid "{value} before"
-msgstr "{value} vorher"
-
-#: src/activities/scenario-simulator/scenario-simulator-activity.tsx
-msgctxt "6IiaDB"
-msgid "What ifs switched on: {events}."
-msgstr "Aktivierte Was-wäre-wenn-Szenarien: {events}."
-
-#: src/activities/scenario-simulator/scenario-simulator-activity.tsx
-msgctxt "0lhPDV"
-msgid "No what ifs switched on."
-msgstr "Es sind keine Was-wäre-wenn-Szenarien aktiviert."
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "sGNwci"
-msgid "Hear the sentence"
-msgstr "Satz anhören"
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "UHpdkl"
-msgid "Your sentence"
-msgstr "Dein Satz"
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "fS7fQP"
-msgid "Remove {word}"
-msgstr "{word} entfernen"
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "a8CU4O"
-msgid "Hear your sentence"
-msgstr "Deinen Satz anhören"
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "lh48Ks"
-msgid "Word tiles"
-msgstr "Wortbausteine"
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "dSIgxB"
-msgid "Your sentence: {sentence}"
-msgstr "Dein Satz: {sentence}"
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "0JD9m2"
-msgid "Your sentence is empty"
-msgstr "Dein Satz ist leer"
-
-#: src/activities/sentence-builder/sentence-builder-activity.tsx
-msgctxt "Incev_"
-msgid "Build the sentence from the word tiles. Some tiles don't belong."
-msgstr "Setze den Satz aus den Wortbausteinen zusammen. Einige Bausteine passen nicht."
-
-#: src/activities/slider-calculator/slider-calculator-activity.tsx
-msgctxt "SyTAdx"
-msgid "{change} from the start"
-msgstr "{change} gegenüber dem Start"
-
-#: src/activities/slider-calculator/slider-calculator-activity.tsx
-msgctxt "d4FtLi"
-msgid "A calculator with sliders and a chart of {output} across {variable}."
-msgstr "Ein Rechner mit Schiebereglern und einem Diagramm, das {output} in Abhängigkeit von {variable} zeigt."
-
-#: src/activities/slider-graph/slider-graph-activity.tsx
-msgctxt "99zN0Y"
-msgid "At {input}: {value}"
-msgstr "Bei {input}: {value}"
-
-#: src/activities/slider-graph/slider-graph-activity.tsx
-msgctxt "JBm3r4"
-msgid "A graph of {output} as {variable} goes from {min} to {max}: it goes from {start} to {end}. At {input}, {output} is {value}."
-msgstr "Ein Diagramm zeigt {output} in Abhängigkeit von {variable} ({min} bis {max}): {output} verändert sich von {start} auf {end}. Bei {input} beträgt {output} {value}."
-
-#: src/activities/slider-graph/slider-graph-activity.tsx
-msgctxt "ASiIBJ"
-msgid "For comparison, at {input} it's {value}."
-msgstr "Zum Vergleich: Bei {input} beträgt der Wert {value}."
-
 #: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "8bxX7Z"
 msgid "What to mark"
@@ -2902,6 +2614,11 @@ msgstr "Die Abfrage dauerte länger als {seconds} Sekunden und wurde abgebrochen
 msgctxt "ubVY3z"
 msgid "SQLite didn't load. Check your connection and try again."
 msgstr "SQLite konnte nicht geladen werden. Überprüfe deine Verbindung und versuche es noch einmal."
+
+#: src/activities/sql-playground/sql-playground-activity.tsx
+msgctxt "qj71j1"
+msgid "Query"
+msgstr "Abfrage"
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "Vpa3uJ"
@@ -2989,117 +2706,6 @@ msgctxt "5nqose"
 msgid "Your first pick: {choice}"
 msgstr "Deine erste Auswahl: {choice}"
 
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "gTN8Id"
-msgid "Price goes down"
-msgstr "Der Preis sinkt"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "63SUaE"
-msgid "Price stays the same"
-msgstr "Der Preis bleibt gleich"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "77xN0o"
-msgid "Price goes up"
-msgstr "Der Preis steigt"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "4CdNLM"
-msgid "Quantity goes down"
-msgstr "Die Menge sinkt"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "iIxM3f"
-msgid "Quantity stays the same"
-msgstr "Die Menge bleibt gleich"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "bEJ973"
-msgid "Quantity goes up"
-msgstr "Die Menge steigt"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "_Z4IsZ"
-msgid "Move the supply curve"
-msgstr "Verschiebe die Angebotskurve"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "4MIPAO"
-msgid "Move the demand curve"
-msgstr "Verschiebe die Nachfragekurve"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "KDNQx_"
-msgid "Supply hasn't moved"
-msgstr "Die Angebotskurve wurde nicht verschoben"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "Xshvq6"
-msgid "Demand hasn't moved"
-msgstr "Die Nachfragekurve wurde nicht verschoben"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "00lALB"
-msgid "Supply moved right"
-msgstr "Die Angebotskurve wurde nach rechts verschoben"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "jiwRwT"
-msgid "Supply moved left"
-msgstr "Die Angebotskurve wurde nach links verschoben"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "X9DxBe"
-msgid "Demand moved right"
-msgstr "Die Nachfragekurve wurde nach rechts verschoben"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "melWUk"
-msgid "Demand moved left"
-msgstr "Die Nachfragekurve wurde nach links verschoben"
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "ZlH4ha"
-msgid "Drag a curve by its handle."
-msgstr "Zieh eine Kurve am Griff."
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "W6J3sb"
-msgid "Drag a curve by its handle, or use the arrow keys."
-msgstr "Ziehe eine Kurve am Griff oder benutze die Pfeiltasten."
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "FO8gGp"
-msgid "A supply and demand chart of {price} against {quantity}."
-msgstr "Ein Angebots- und Nachfragediagramm mit {price} auf der y-Achse und {quantity} auf der x-Achse."
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "DsatZX"
-msgid "Neither curve has moved yet."
-msgstr "Noch hat sich keine der beiden Kurven verschoben."
-
-#: src/activities/supply-demand/supply-demand-activity.tsx
-msgctxt "dSVAFh"
-msgid "The new crossing is at {value}."
-msgstr "Der neue Schnittpunkt liegt bei {value}."
-
-#: src/activities/supply-demand/supply-demand-chart.tsx
-msgctxt "yDWONj"
-msgid "Demand"
-msgstr "Nachfrage"
-
-#: src/activities/supply-demand/supply-demand-chart.tsx
-msgctxt "37xGo5"
-msgid "Supply"
-msgstr "Angebot"
-
-#: src/activities/supply-demand/supply-demand-chart.tsx
-#: src/lesson/steps/challenge/challenge-conversation.tsx
-msgctxt "Xup5P8"
-msgid "What happened"
-msgstr "Was passiert ist"
-
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "QexIf7"
 msgid "{year} BCE"
@@ -3111,11 +2717,6 @@ msgid "{year} CE"
 msgstr "{year} n. Chr."
 
 #: src/activities/timeline/timeline-activity.tsx
-msgctxt "nq2tGo"
-msgid "Show the real dates"
-msgstr "Die tatsächlichen Jahreszahlen anzeigen"
-
-#: src/activities/timeline/timeline-activity.tsx
 msgctxt "sCg6O3"
 msgid "A timeline from {start} to {end}."
 msgstr "Eine Zeitleiste von {start} bis {end}."
@@ -3124,6 +2725,11 @@ msgstr "Eine Zeitleiste von {start} bis {end}."
 msgctxt "6JCoGQ"
 msgid "{label}: {year}."
 msgstr "{label}: {year}."
+
+#: src/activities/timeline/timeline-activity.tsx
+msgctxt "nq2tGo"
+msgid "Show the real dates"
+msgstr "Die tatsächlichen Jahreszahlen anzeigen"
 
 #: src/activities/timeline/timeline-activity.tsx
 msgctxt "ZVA9gF"
@@ -3320,6 +2926,16 @@ msgctxt "lYWSeP"
 msgid "Play pronunciation"
 msgstr "Aussprache abspielen"
 
+#: src/components/player-choice-scene.tsx
+msgctxt "akd-cv"
+msgid "Answer options"
+msgstr "Antwortmöglichkeiten"
+
+#: src/components/translation-step.tsx
+msgctxt "anLbqe"
+msgid "Which one means this?"
+msgstr "Welches davon bedeutet das?"
+
 #: src/components/translation-step.tsx
 msgctxt "fpO9TK"
 msgid "Translate:"
@@ -3385,6 +3001,7 @@ msgctxt "G8bo_b"
 msgid "Not in your material"
 msgstr "Nicht in deinem Material"
 
+#: src/lesson/_components/lesson-picture-options.tsx
 #: src/lesson/_components/lesson-pictures.tsx
 msgctxt "ct0jk_"
 msgid "Drawing the picture…"
@@ -3548,12 +3165,6 @@ msgstr "Das ist knifflig. {name} kann es dir anders erklären."
 msgctxt "zd4MuO"
 msgid "Taking your time? {name} can explain it another way."
 msgstr "Brauchst du gerade etwas mehr Zeit? {name} kann es dir anders erklären."
-
-#: src/lesson/controls/ask-buddy-offer.tsx
-#: src/questions/lesson-question-thread.tsx
-msgctxt "AcKlQI"
-msgid "Explain it more simply"
-msgstr "Erklär es einfacher"
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/lesson/tutor/ask-tutor-button.tsx
@@ -3936,11 +3547,6 @@ msgid "Start speaking"
 msgstr "Jetzt sprechen"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "QuYUAL"
-msgid "The microphone is blocked. Type your answer instead."
-msgstr "Das Mikrofon ist gesperrt. Gib deine Antwort stattdessen ein."
-
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "T1F6Co"
 msgid "Listening… {seconds}s. Tap to stop."
 msgstr "Aufnahme läuft… {seconds} s. Tippe zum Stoppen."
@@ -3964,6 +3570,11 @@ msgstr "Stattdessen sprechen"
 msgctxt "E7aQC2"
 msgid "Type it instead"
 msgstr "Stattdessen tippen"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "QuYUAL"
+msgid "The microphone is blocked. Type your answer instead."
+msgstr "Das Mikrofon ist gesperrt. Gib deine Antwort stattdessen ein."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"
@@ -4086,6 +3697,11 @@ msgid "Take a short break, then ask again."
 msgstr "Leg kurz eine Pause ein und frag dann noch einmal."
 
 #: src/questions/lesson-question-errors.tsx
+msgctxt "aFV0Wu"
+msgid "Create your free account to continue."
+msgstr "Erstelle dein kostenloses Konto, um weiterzumachen."
+
+#: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Etwas ist schiefgelaufen. Versuch es noch einmal."
@@ -4184,16 +3800,6 @@ msgstr "Erkläre mir diese Antwort Schritt für Schritt"
 msgctxt "hE0dmj"
 msgid "What will I be able to do after this chapter?"
 msgstr "Was werde ich nach diesem Kapitel können?"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "s6QqT3"
-msgid "I want to go deeper"
-msgstr "Ich will tiefer einsteigen"
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "KPsIMl"
-msgid "Give me another example"
-msgstr "Gib mir ein weiteres Beispiel"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "nd7C7Y"
@@ -4354,3 +3960,18 @@ msgstr "Frühere Nachrichten laden"
 msgctxt "WGAYmP"
 msgid "Conversation with {name}"
 msgstr "Unterhaltung mit {name}"
+
+#: src/questions/tutor-suggestion-words.ts
+msgctxt "tutorSuggestions.s6QqT3"
+msgid "I want to go deeper"
+msgstr "Ich will tiefer einsteigen"
+
+#: src/questions/tutor-suggestion-words.ts
+msgctxt "tutorSuggestions.KPsIMl"
+msgid "Give me another example"
+msgstr "Gib mir ein weiteres Beispiel"
+
+#: src/questions/tutor-suggestion-words.ts
+msgctxt "tutorSuggestions.AcKlQI"
+msgid "Explain it more simply"
+msgstr "Erklär es einfacher"

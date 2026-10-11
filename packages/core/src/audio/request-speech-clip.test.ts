@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -11,16 +10,9 @@ import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { requestSpeechClip } from "./request-speech-clip";
 import { getSpeechClipKey } from "./speech-clip-key";
 import type * as AudioTask from "@zoonk/ai/tasks/audio";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The firewall, the text-to-speech model and the file store are external boundaries. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 vi.mock("@zoonk/ai/tasks/audio", async (importOriginal) => ({
   ...(await importOriginal<typeof AudioTask>()),
@@ -118,7 +110,6 @@ describe(requestSpeechClip, () => {
     });
 
     expect(generateLanguageAudio).not.toHaveBeenCalled();
-    expect(isRateLimited).not.toHaveBeenCalled();
     await expect(assistClaims(guest.id)).resolves.toBe(0);
   });
 
@@ -138,7 +129,7 @@ describe(requestSpeechClip, () => {
     expect(again).toStrictEqual(first);
 
     expect(generateLanguageAudio).toHaveBeenCalledExactlyOnceWith({
-      analytics: { distinctId: learner.id },
+      analytics: { contentScope: "shared", distinctId: learner.id },
       language: "it",
       text,
     });
@@ -165,6 +156,75 @@ describe(requestSpeechClip, () => {
     });
 
     await expect(assistClaims(learner.id)).resolves.toBe(1);
+  });
+
+  // A call's better version of what the learner said is their own sentence: their data.
+  it("keeps a learner's own words in a private clip of theirs alone", async () => {
+    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "private-store-token");
+    const learner = await signIn();
+    const text = uniqueSentence();
+    voiceSucceeds();
+
+    const own = await requestSpeechClip({ language: "it", personal: true, text });
+
+    expect(own.status).toBe("ready");
+
+    expect(put).toHaveBeenCalledExactlyOnceWith(`audio/${learner.id}/it.mp3`, expect.any(Buffer), {
+      access: "private",
+      addRandomSuffix: true,
+      storeId: undefined,
+      token: "private-store-token",
+    });
+
+    await expect(
+      prisma.mediaAsset.findUniqueOrThrow({
+        where: { reuseKey: getSpeechClipKey({ language: "it", ownerId: learner.id, text }) },
+      }),
+    ).resolves.toMatchObject({ ownerId: learner.id, prompt: text, visibility: "private" });
+
+    expect(generateLanguageAudio).toHaveBeenCalledWith(
+      expect.objectContaining({ analytics: { contentScope: "personal", distinctId: learner.id } }),
+    );
+
+    // Nobody else gets it: the same words as shared words, or as another learner's own, are
+    // voiced apart.
+    const shared = await requestSpeechClip({ language: "it", text });
+    const other = await signIn();
+    const theirs = await requestSpeechClip({ language: "it", personal: true, text });
+
+    expect(shared).not.toStrictEqual(own);
+    expect(theirs).not.toStrictEqual(own);
+
+    expect(put).toHaveBeenLastCalledWith(`audio/${other.id}/it.mp3`, expect.any(Buffer), {
+      access: "private",
+      addRandomSuffix: true,
+      storeId: undefined,
+      token: "private-store-token",
+    });
+
+    vi.unstubAllEnvs();
+  });
+
+  it("never stores a learner's own words in the public store when the private one is missing", async () => {
+    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");
+    const learner = await signIn();
+    const text = uniqueSentence();
+    voiceSucceeds();
+
+    await expect(
+      requestSpeechClip({ language: "it", personal: true, text }),
+    ).resolves.toStrictEqual({ status: "failed" });
+
+    expect(put).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.mediaAsset.count({
+        where: { reuseKey: getSpeechClipKey({ language: "it", ownerId: learner.id, text }) },
+      }),
+    ).resolves.toBe(0);
+
+    vi.unstubAllEnvs();
   });
 
   it("keeps a clip apart for each language", async () => {
@@ -224,17 +284,6 @@ describe(requestSpeechClip, () => {
     });
 
     await expect(prisma.mediaAsset.count({ where: { reuseKey } })).resolves.toBe(1);
-  });
-
-  it("slows down a learner who asks for too many new clips, before voicing", async () => {
-    await signIn();
-    vi.mocked(isRateLimited).mockResolvedValueOnce(true);
-
-    await expect(
-      requestSpeechClip({ language: "it", text: uniqueSentence() }),
-    ).resolves.toStrictEqual({ retryAfterSeconds: 60, status: "slowDown" });
-
-    expect(generateLanguageAudio).not.toHaveBeenCalled();
   });
 
   it("asks a guest who used today's help to sign up before voicing a new clip", async () => {

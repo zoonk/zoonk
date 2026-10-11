@@ -12,9 +12,9 @@ function isRootRelative(url: string): boolean {
 }
 
 /**
- * A stored image's address for API clients, which have no page to resolve a path against: a public
- * file keeps its CDN URL, a private picture points at `GET /v1/files/...` (only its owner can read
- * it), and a path the web app serves from its own origin gets that origin.
+ * A stored file's address for API clients, which have no page to resolve a path against: a public
+ * file keeps its CDN URL, a private picture or clip points at `GET /v1/files/...` (only its owner
+ * can read it), and a path the web app serves from its own origin gets that origin.
  */
 export function toApiImageUrl(url: string): string {
   const fileUrl = toOwnFileUrl({ baseUrl: OWN_FILES_URL, url });

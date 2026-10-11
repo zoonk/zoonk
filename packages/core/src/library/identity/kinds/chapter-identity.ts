@@ -25,9 +25,11 @@ async function findExactChapter({
 }
 
 /**
- * Public chapters in the same language, level and target language whose words match, from any
- * course: a course on the same subject under another name can share them, which the reuse
- * decision judges from both sides' courses.
+ * Public chapters in the same language, level and target language whose words match, from other
+ * courses: a course on the same subject under another name can share them, which the reuse
+ * decision judges from both sides' courses. The course's own chapters are only matched exactly
+ * (a retry finds its chapter by its key): a chapter its outline writes is a new one, such as a
+ * skill's next chapter, which reads like the one it continues.
  */
 async function findChapterCandidateIds({
   request,
@@ -41,7 +43,11 @@ async function findChapterCandidateIds({
     filters: sql`c.language = ${request.language}
       AND c.level = ${request.level}::"CourseLevel"
       AND c.visibility = 'public'
-      AND c.target_language IS NOT DISTINCT FROM ${request.targetLanguage}`,
+      AND c.target_language IS NOT DISTINCT FROM ${request.targetLanguage}
+      AND NOT EXISTS (
+        SELECT 1 FROM course_chapters cc
+        WHERE cc.chapter_id = c.id AND cc.course_id = ${request.course.id}::uuid
+      )`,
     search,
   });
 }

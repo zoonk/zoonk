@@ -60,7 +60,7 @@ function screenOf(base: BaseLesson, screen: number): WrittenScreen {
   return found;
 }
 
-const { eletron, regra, temperature } = BASE_LESSONS;
+const { doorways, eletron, regra, temperature } = BASE_LESSONS;
 const { estabilidade, taxDeadlines } = SOURCED_BASE_LESSONS;
 
 /** The sourced cases come first, so a small `--limit` run checks that sources settle facts. */
@@ -84,17 +84,20 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       options: [
         {
           isCorrect: true,
+          picture: null,
           reason:
             "Você distingue cobrar providências de decidir um caso: a demora pode motivar uma cobrança da OAB, não transferir a ela o papel dos juízes.",
           text: "A OAB pode cobrar melhorias na Justiça, mas não assumir o julgamento do recurso.",
         },
         {
           isCorrect: false,
+          picture: null,
           reason: "Advogados não são juízes, e Raimundo não é advogado.",
           text: "A OAB pode julgar o recurso, porque toda pessoa que espera um processo é advogada.",
         },
         {
           isCorrect: false,
+          picture: null,
           reason: "A OAB não decide recursos: seu papel é outro.",
           text: "A OAB deve fechar o tribunal até o recurso ser julgado.",
         },
@@ -110,6 +113,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     id: "en-tax-deadlines-contradicts-source",
     userInput: plant(taxDeadlines, 3, {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "If your forms aren't ready, send **Form 4868** by April 15 and both deadlines move 6 months: you can file and pay until October 15, 2026, at no extra cost.",
@@ -123,6 +127,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     id: "pt-estabilidade-contradicts-source",
     userInput: plant(estabilidade, 2, {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem entra por concurso ganha essa garantia depois de **dois anos** (24 meses) trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
@@ -134,6 +139,49 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     expected: { verdict: "pass" },
     id: "en-temperature-clean",
     userInput: { ...temperature, lesson: temperature.lesson },
+  },
+  {
+    // Each doorway is a picture; its name shows only once the learner answers.
+    expected: { verdict: "pass" },
+    id: "en-doorways-picture-options-clean",
+    userInput: doorways,
+  },
+  {
+    // The app draws the numbers on the thermometer in `parts` order, so "3" marks 3 °C.
+    expected: { verdict: "pass" },
+    id: "en-temperature-numbered-picture-clean",
+    userInput: plant(temperature, 8, {
+      context:
+        "It's −6 °C on a winter morning in Chicago, and the forecast says it will warm up 9 degrees.",
+      image: {
+        alt: "A thermometer from −10 °C to 10 °C with three numbered marks.",
+        parts: ["−6 °C mark", "zero mark", "3 °C mark"],
+        prompt: "A thermometer from −10 °C to 10 °C.",
+      },
+      kind: "check",
+      options: [
+        {
+          isCorrect: true,
+          picture: null,
+          reason: "Six degrees reach zero and three more go above it, to 3 °C.",
+          text: "3",
+        },
+        {
+          isCorrect: false,
+          picture: null,
+          reason: "That's where the morning starts, before the 9 degree rise.",
+          text: "1",
+        },
+        {
+          isCorrect: false,
+          picture: null,
+          reason: "Zero is only 6 degrees up: the rise goes 3 more past it.",
+          text: "2",
+        },
+      ],
+      question: "Which number on the thermometer marks where it ends up?",
+      visual: null,
+    }),
   },
   {
     expected: { verdict: "pass" },
@@ -161,6 +209,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     id: "en-temperature-filler",
     userInput: plant(temperature, 5, {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "Thermometers have a long history. Galileo built an early one around 1593, and Daniel Fahrenheit made the mercury thermometer popular in 1714. Today they're everywhere, from kitchens to hospitals.",
@@ -199,6 +248,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     id: "pt-regra-jargon",
     userInput: plant(regra, 3, {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "Grandezas inversamente proporcionais têm produto constante: $x \\cdot y = k$, em que $k$ é a constante de proporcionalidade. Já nas diretamente proporcionais, a razão $y/x$ é invariante. Identifique a relação funcional antes de montar a proporção.",
@@ -243,23 +293,27 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       options: [
         {
           isCorrect: false,
+          picture: null,
           reason:
             "É tentador pensar que a equipe maior acelera, mas o prazo depende só do tamanho do pedido.",
           text: "Cai pela metade; depois dobra.",
         },
         {
           isCorrect: true,
+          picture: null,
           reason: "Qualquer aumento, de equipe ou de pedido, aumenta o prazo na mesma proporção.",
           text: "Dobra nos dois casos.",
         },
         {
           isCorrect: false,
+          picture: null,
           reason:
             "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe.",
           text: "Cai pela metade nos dois casos.",
         },
         {
           isCorrect: false,
+          picture: null,
           reason:
             "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo.",
           text: "Dobra; depois cai pela metade.",
@@ -272,6 +326,7 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     id: "pt-eletron-formula-in-overview",
     userInput: plant(eletron, 5, {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "O arranjo mais estável minimiza a energia total $E = \\frac{\\hbar^2}{2 m r^2} - \\frac{e^2}{4 \\pi \\varepsilon_0 r}$. Derivando em $r$ e igualando a zero, você obtém o raio de Bohr, $a_0 \\approx 0{,}53$ Å.",
@@ -308,21 +363,63 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
       options: [
         {
           isCorrect: true,
+          picture: null,
           reason: "Six degrees reach zero and three more go above it.",
           text: "3 °C",
         },
         {
           isCorrect: false,
+          picture: null,
           reason: "That's what you get by moving down 9 degrees instead of up.",
           text: "−3 °C",
         },
         {
           isCorrect: false,
+          picture: null,
           reason: "You added the numbers without their signs: the start is below zero.",
           text: "15 °C",
         },
       ],
       question: "What will the thermometer show?",
+      visual: null,
+    }),
+  },
+  {
+    // The table lists five stations and the options offer four, as a lesson on sensors did (Oct 2026).
+    expected: { kinds: ["unclear", "incorrect"], screen: 8, verdict: "fail" },
+    id: "en-temperature-data-disagrees-with-options",
+    userInput: plant(temperature, 8, {
+      context:
+        "Five weather stations logged the dawn temperature and the rise forecast for the day:\n\n| Station | Dawn | Rise |\n|---|---:|---:|\n| A | −6 °C | 9 degrees |\n| B | −4 °C | 3 degrees |\n| C | −2 °C | 1 degree |\n| D | −5 °C | 3 degrees |\n| E | −8 °C | 2 degrees |",
+      image: null,
+      kind: "check",
+      options: [
+        {
+          isCorrect: true,
+          picture: null,
+          reason: "Six degrees take A to zero and three more go above it: 3 °C.",
+          text: "Station A",
+        },
+        {
+          isCorrect: false,
+          picture: null,
+          reason: "Three degrees take B from −4 °C to −1 °C, still below zero.",
+          text: "Station B",
+        },
+        {
+          isCorrect: false,
+          picture: null,
+          reason: "One degree takes C from −2 °C to −1 °C, still below zero.",
+          text: "Station C",
+        },
+        {
+          isCorrect: false,
+          picture: null,
+          reason: "Three degrees take D from −5 °C to −2 °C, still below zero.",
+          text: "Station D",
+        },
+      ],
+      question: "Which station ends the day above zero?",
       visual: null,
     }),
   },
@@ -340,6 +437,76 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
         ],
       },
     },
+  },
+  {
+    // A summary that turns "they change together" into a definition of proportion, as a cheaper
+    // writer's did (Oct 2026): ages and heights grow together without being proportional.
+    expected: { kinds: ["incorrect"], screen: null, verdict: "fail" },
+    id: "pt-regra-over-broad-summary",
+    userInput: {
+      ...regra,
+      lesson: {
+        ...(regra.lesson as WrittenLesson),
+        summary: [
+          "Duas grandezas são diretamente proporcionais sempre que aumentam ou diminuem juntas, e inversamente proporcionais sempre que uma aumenta enquanto a outra diminui.",
+          "Na regra de três simples, você ajusta o prazo pela razão da única grandeza que mudou.",
+          "Na regra de três composta, você ajusta o prazo por cada mudança: razão direta para a quantidade de trabalho e razão inversa para a capacidade de produção.",
+        ],
+      },
+    },
+  },
+  {
+    // Two options name the same mistake, so the one marked wrong is right too (Oct 2026).
+    expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
+    id: "en-temperature-two-right-options",
+    userInput: plant(temperature, 8, {
+      context:
+        "It's −3 °C in Denver, and the forecast says it will warm up 5 degrees. Maya says the thermometer will read 8 °C.",
+      image: null,
+      kind: "check",
+      options: [
+        {
+          isCorrect: true,
+          picture: null,
+          reason:
+            "From −3 °C, three degrees reach zero and two more reach 2 °C; 8 °C comes from starting at 3 instead.",
+          text: "She added 5 to 3 instead of to −3.",
+        },
+        {
+          isCorrect: false,
+          picture: null,
+          reason:
+            "The minus sign isn't what went wrong: Maya counted the rise in the wrong direction.",
+          text: "She left out the minus sign on −3 °C.",
+        },
+        {
+          isCorrect: false,
+          picture: null,
+          reason: "Counting 5 degrees down from −3 °C gives −8 °C, not 8 °C.",
+          text: "She counted the 5 degrees down instead of up.",
+        },
+      ],
+      question: "What did Maya do wrong?",
+      visual: null,
+    }),
+  },
+  {
+    // The right option with a reason that teaches something false, as a cheaper writer's did (Oct 2026).
+    expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
+    id: "pt-eletron-wrong-reason-on-right-option",
+    userInput: plant(eletron, 4, {
+      ...(screenOf(eletron, 4) as Extract<WrittenScreen, { kind: "check" }>),
+      options: (screenOf(eletron, 4) as Extract<WrittenScreen, { kind: "check" }>).options.map(
+        (option) =>
+          option.isCorrect
+            ? {
+                ...option,
+                reason:
+                  "Isso mesmo: bem perto do núcleo a atração fica mais fraca, então nada puxa o elétron para mais perto.",
+              }
+            : option,
+      ),
+    }),
   },
   {
     expected: { verdict: "pass" },

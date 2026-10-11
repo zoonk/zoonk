@@ -276,7 +276,7 @@ test.describe("Command Palette - Authenticated", () => {
 
     // Verify user sees subscription page
     await expect(
-      page.getByRole("heading", { level: 1, name: "Get ready for your exam, new job or move." }),
+      page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
     ).toBeVisible();
   });
 

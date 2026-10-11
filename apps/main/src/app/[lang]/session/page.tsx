@@ -115,9 +115,11 @@ function findAlternative({ next, session }: { next: StudyBlock; session: StudySe
 async function SessionSummaryView({
   goalKind,
   session,
+  stopped,
 }: {
   goalKind: TodayView["goal"]["kind"];
   session: StudySession;
+  stopped: boolean;
 }) {
   const [result, viewer, buddy] = await Promise.all([
     getStudySessionSummary({ input: {}, sessionId: session.id }),
@@ -135,6 +137,7 @@ async function SessionSummaryView({
       isGuest={Boolean(viewer?.user.isAnonymous)}
       buddy={buddy}
       sessionId={session.id}
+      stopped={stopped}
       summary={result.summary}
     />
   );
@@ -153,7 +156,7 @@ async function SessionView({
   const { lessonStatus, session } = today;
 
   if (stopped) {
-    return <SessionSummaryView goalKind={today.goal.kind} session={session} />;
+    return <SessionSummaryView goalKind={today.goal.kind} session={session} stopped />;
   }
 
   const active = session.blocks.find(
@@ -173,7 +176,7 @@ async function SessionView({
   const next = session.blocks.find((block) => block.id === session.nextBlockId);
 
   if (!next) {
-    return <SessionSummaryView goalKind={today.goal.kind} session={session} />;
+    return <SessionSummaryView goalKind={today.goal.kind} session={session} stopped={false} />;
   }
 
   const lesson = getNextStopLesson({ lessonStatus, next });

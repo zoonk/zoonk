@@ -7,14 +7,15 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { z } from "zod";
 import { expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
-import { createStudyDay, openAs } from "./study-day";
+import { createStudyDay, openAs, pastFreeWeek } from "./study-day";
 
 /**
- * The structure of a goal, visible and trustworthy: a concurso's notice subjects (grouped as the
+ * The structure of a goal, visible and trustworthy: a civil service exam's notice subjects (grouped as the
  * notice groups them) with their topics ticked from the plan, each subject's page with its topics
  * and chapters, and the way back from a chapter to its subject. Today labels lessons with their
  * subject.
@@ -58,11 +59,12 @@ function graphSkill({
 }
 
 /**
- * A concurso learner three months from the exam. Portuguese: spelling studied, cohesion begun, verb
+ * A civil service candidate three months from the exam. Portuguese: spelling studied, cohesion begun, verb
  * tenses taught by no skill yet. Constitutional law ahead (the plan calls it "Constitutional Law"). The
- * legislative process taken out of the plan, and an exam-strategy area the notice doesn't list.
+ * legislative process taken out of the plan, and an exam-strategy area the notice doesn't list. With
+ * `setAside`, days she missed set a second spelling lesson aside.
  */
-async function createConcursoLearner() {
+async function createCivilServiceLearner({ setAside = false }: { setAside?: boolean } = {}) {
   const user = await createE2EUser(getBaseURL());
   const today = toUTCMidnight(new Date());
   const day = (offset: number) => new Date(today.getTime() + offset * MS_PER_DAY);
@@ -154,7 +156,7 @@ async function createConcursoLearner() {
     position: number,
     chapterId: string,
     skillId: string,
-    status: "done" | "todo" = "todo",
+    status: "done" | "skipped" | "todo" = "todo",
   ) =>
     planItemFixture({
       chapterId,
@@ -174,7 +176,12 @@ async function createConcursoLearner() {
     lesson(5, timingChapter.id, timing.id),
     planItemFixture({ kind: "mock", planId: plan.id, position: 6, scheduledFor: day(6) }),
     planItemFixture({ kind: "boss", planId: plan.id, position: 7, scheduledFor: day(8) }),
+    setAside && lesson(8, spellingChapter.id, spelling.id, "skipped"),
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    // She opened Today earlier, so her day is built. Otherwise building it (Today's link prefetch
+    // does) plans this hand-written plan again from its graph, sometimes before her subject page
+    // reads it, and cohesion's lesson to go is gone.
+    studySessionFixture({ goalId: goal.id, userId: user.id }),
   ]);
 
   return { cohesionChapter, goal, user };
@@ -314,22 +321,48 @@ async function readSkippedAreas(goalId: string) {
 }
 
 test.describe("A goal's structure", () => {
-  test("a concurso learner sees every subject of the notice, ticks its topics and comes back from a chapter", async ({
+  // Past a free exam plan's first week its phase challenge comes with Plus: the path said nothing
+  // while its page offered Plus.
+  test("past a free exam plan's first week, the path marks its phase challenge Plus", async ({
     browser,
   }) => {
-    const { cohesionChapter, goal, user } = await createConcursoLearner();
+    const { goal, user } = await createCivilServiceLearner();
+    await pastFreeWeek(goal.id);
+
     const page = await openAs(browser, user);
     await page.goto("/journey");
 
-    // The path is a timeline: the phase she's in with its challenge, no chapters. Mocks come with
-    // Plus, so her free plan's path leaves them out instead of listing ones she can't take.
     const path = page.getByRole("list", { name: "Your journey" });
     const current = path.locator('li[aria-current="step"]');
 
-    await expect(current.getByRole("link", { name: /^Mock exam/u })).toHaveCount(0);
-    await expect(path.getByText(/^\d+ mock exams?$/u)).toHaveCount(0);
+    await expect(
+      current.getByRole("link", { name: /^Phase challenge.*Available with Plus/u }),
+    ).toHaveAttribute("href", /^\/challenge\/[\da-f-]{36}$/u);
 
+    await expect(page.getByText("Your free week of exam prep is over")).toBeVisible();
+    await page.context().close();
+  });
+
+  test("a civil service candidate sees every subject of the notice, ticks its topics and comes back from a chapter", async ({
+    browser,
+  }) => {
+    const { cohesionChapter, goal, user } = await createCivilServiceLearner();
+    const page = await openAs(browser, user);
+    await page.goto("/journey");
+
+    // The path is a timeline: the phase she's in with its next mock and its challenge, no
+    // chapters. Mocks come with Plus: her free plan's path shows them as they are, marked Plus.
+    const path = page.getByRole("list", { name: "Your journey" });
+    const current = path.locator('li[aria-current="step"]');
+
+    // Her free week isn't over yet: the challenge is hers to take.
     await expect(current.getByRole("link", { name: /^Phase challenge/u })).toBeVisible();
+    await expect(current.getByRole("link", { name: /^Phase challenge.*Plus/u })).toHaveCount(0);
+
+    await expect(
+      current.getByRole("link", { name: /^Mock exam.*Available with Plus/u }),
+    ).toHaveAttribute("href", "/exam");
+
     await expect(path.getByRole("link", { name: /Linking ideas/u })).toHaveCount(0);
 
     // What's on the exam: the notice's subjects in its groups, then what the plan adds.
@@ -347,7 +380,8 @@ test.describe("A goal's structure", () => {
       `${PORTUGUESE}1 of 3 topics30 questions`,
       `${CONSTITUTIONAL}0 of 3 topics20 questions`,
       `${PROCESS}Not in your plan10 questions`,
-      "Exam strategy0 of 1 lesson",
+      // As many of its lessons as the plan's time holds.
+      /^Exam strategy0 of \d+ lessons?$/u,
     ]);
 
     // A subject's page: its topics in the notice's words, each ticked, opening to its chapters.
@@ -461,6 +495,34 @@ test.describe("A goal's structure", () => {
     await page.context().close();
   });
 
+  // Rafaela studied one lesson, then missed days set the next one aside: her subject page said she
+  // had studied the topic and finished its chapter.
+  test("a lesson set aside never counts as studied on a subject's page", async ({ browser }) => {
+    const { user } = await createCivilServiceLearner({ setAside: true });
+    const page = await openAs(browser, user);
+    await page.goto("/journey/portuguese-language");
+
+    const topics = page
+      .getByRole("region", { name: "Topics in the notice" })
+      .getByRole("list")
+      .first()
+      .getByRole("listitem");
+
+    // Nothing of it is left in the plan: begun, and the rest out for time.
+    await expect(topics.first()).toHaveText(/^Spelling, in progress/u);
+    await expect(topics.first()).toContainText("Doesn't fit in the time you have");
+
+    await expect(
+      page.getByRole("article").getByText("0 of 3 topics", { exact: true }),
+    ).toBeVisible();
+
+    const chapters = page.getByRole("region", { name: "Chapters" });
+    await expect(chapters.getByRole("link", { name: /Spelling in context/u })).toBeVisible();
+    await expect(chapters.getByRole("button", { name: /chapters? done$/u })).toHaveCount(0);
+
+    await page.context().close();
+  });
+
   test("an entrance exam learner studies its contents under the notice's headings, sees the ones asked most, its skills matrix as the notice prints it and how their course weighs the parts", async ({
     browser,
   }) => {
@@ -482,7 +544,7 @@ test.describe("A goal's structure", () => {
     );
 
     // The subject's topics are the contents candidates study; under them, the notice's skills
-    // matrix: each competência a row with its label, opening to every skill with its own code.
+    // matrix: each competency a row with its label, opening to every skill with its own code.
     await syllabus.getByRole("link", { name: new RegExp(`^${NATURE}`, "u") }).click();
     const topicsSection = page.getByRole("region", { name: "Topics in the notice" });
 

@@ -46,10 +46,7 @@ function getExamAreas({
 }): FocusTestArea[] | null {
   const names = areas.map((area) => area.name);
 
-  const matches = matchAreasToSubjects({
-    areas: names,
-    subjects: structure.subjects.map((subject) => subject.name),
-  });
+  const matches = matchAreasToSubjects({ areas: names, subjects: structure.subjects });
 
   if (!followsNotice({ areas: names, matches })) {
     return null;

@@ -1,3 +1,4 @@
+import { EvaluationTimeoutError } from "@zoonk/ai/evaluate/timeout";
 import { APICallError, RetryError } from "ai";
 import { describe, expect, it } from "vitest";
 import { RetryableError } from "workflow";
@@ -25,6 +26,18 @@ describe(withAiRetry, () => {
     ],
   ])("retries the step after a minute on %s", async (_name, rateLimit) => {
     const thrown = await withAiRetry(() => Promise.reject(rateLimit)).catch(
+      (error: unknown) => error,
+    );
+
+    expect(thrown).toBeInstanceOf(RetryableError);
+    expect(thrown).toMatchObject({ retryAfter: "1m" });
+  });
+
+  it.each([
+    ["a decision model past its deadline", new EvaluationTimeoutError("Jev didn't answer.")],
+    ["a request past its deadline", new DOMException("The operation timed out.", "TimeoutError")],
+  ])("retries the step after a minute on %s, a busy provider", async (_name, timeout) => {
+    const thrown = await withAiRetry(() => Promise.reject(timeout)).catch(
       (error: unknown) => error,
     );
 

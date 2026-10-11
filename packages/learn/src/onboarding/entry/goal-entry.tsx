@@ -54,6 +54,7 @@ export function GoalEntry({
   error,
   exploreHref,
   fromSharedPlan = false,
+  notice,
   onAttach,
   onSubmit,
   signUpHref,
@@ -67,6 +68,8 @@ export function GoalEntry({
   exploreHref: string;
   /** Opened from someone's plan link: the goal starts from that plan. */
   fromSharedPlan?: boolean;
+  /** What the learner should know before typing, such as a goal limit Plus lifts. */
+  notice?: React.ReactNode;
   onAttach?: () => void;
   onSubmit: (goal: string) => void;
   signUpHref: string;
@@ -95,6 +98,8 @@ export function GoalEntry({
             : t("Tell us in your own words. We'll build the plan.")}
         </OnboardingDescription>
       </OnboardingHeading>
+
+      {notice}
 
       <form
         className="bg-muted/60 focus-within:ring-ring/40 flex items-end gap-2 rounded-3xl p-2 pl-4 focus-within:ring-[3px]"

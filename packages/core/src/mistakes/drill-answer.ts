@@ -8,22 +8,23 @@ type DrillRules = { kind: MistakeDrillKind; timeLimitSeconds: number | null };
 
 /** The first misconception a question's wrong answers carry, when it names one. */
 function getFirstTrap(item: SessionItem): string | null {
-  if (item.format === "matchPairs") {
-    return null;
+  switch (item.format) {
+    case "multipleChoice":
+      return (
+        item.content.options.find((option) => !option.isCorrect && option.misconception)
+          ?.misconception ?? null
+      );
+    case "numeric":
+      return item.content.math.commonMistakes[0]?.misconception ?? null;
+    case "trueFalse":
+      return item.content.misconception ?? null;
+    case "matchPairs":
+    case "order":
+    case "typed":
+      return null;
+    default:
+      throw new Error("Unknown session item format.");
   }
-
-  if (item.format === "numeric") {
-    return item.content.math.commonMistakes[0]?.misconception ?? null;
-  }
-
-  if (item.format === "trueFalse") {
-    return item.content.misconception ?? null;
-  }
-
-  return (
-    item.content.options.find((option) => !option.isCorrect && option.misconception)
-      ?.misconception ?? null
-  );
 }
 
 /**

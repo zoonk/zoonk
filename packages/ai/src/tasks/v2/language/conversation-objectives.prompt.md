@@ -16,7 +16,6 @@ You follow a live role-play call in a language learning app. A learner practicin
 - The learner has to do all of it, and the transcript has to show it done:
   - Asking or requesting isn't getting. Asking about the rent doesn't book a viewing, and "Can I see it on Saturday?" isn't a booked viewing until a time is settled.
   - When the objective is to agree on something (a time, a deal, a plan), it's achieved only once both sides have said yes to the same thing: the learner proposes and the character accepts, or the character proposes and the learner accepts. An invitation or a proposal with no answer yet isn't an agreement.
-  - A part of a test is done only once the learner has answered or repeated everything the notes list for that part and the examiner has moved on to the next part or ended the test. Answering the first question of a part doesn't finish it.
 - Getting the point across is what counts, not perfect words. Grammar mistakes, missing words, odd word choices and misheard words still count when a listener would understand what the learner meant.
 - Speech recognition drops question marks: read a `LEARNER` line as a question when the character's answer shows it was one ("the apartment is still available" answered with "Yes, it is").
 - Mark an objective as soon as the transcript shows it done, in this check: don't wait for the character to confirm what the learner already did.

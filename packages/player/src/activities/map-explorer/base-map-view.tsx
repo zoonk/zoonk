@@ -179,7 +179,7 @@ export function BaseMapView({
 
       {pins.map((pin) => (
         <button
-          aria-label={pin.label}
+          aria-label={`${pin.number}. ${pin.label}`}
           aria-pressed={pin.isSelected}
           className="focus-visible:ring-ring/50 absolute flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full outline-none focus-visible:ring-[3px]"
           data-slot="map-pin"

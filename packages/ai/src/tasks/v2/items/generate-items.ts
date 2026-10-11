@@ -10,7 +10,14 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import taskPrompt from "./generate-items.prompt.md";
 import { withItemRules } from "./item-rules";
-import { GENERATED_ITEM_SCHEMAS, type GeneratedItem, type ItemFormat } from "./item-schemas";
+import {
+  GENERATED_ITEM_SCHEMAS,
+  type GeneratedItem,
+  type ItemFormat,
+  type NumericEntry,
+  type OptionSelect,
+} from "./item-schemas";
+import { formatPastQuestions } from "./past-question-lines";
 
 /**
  * From the generate-items eval (8 cases, Sep 2026): Sol scored 9.05 at $16 per
@@ -23,8 +30,6 @@ import { GENERATED_ITEM_SCHEMAS, type GeneratedItem, type ItemFormat } from "./i
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
-
-const systemPrompt = withItemRules(taskPrompt);
 
 const DEFAULT_COUNT = 4;
 const MAX_COUNT = 10;
@@ -40,7 +45,30 @@ export type ItemExamFormat = {
   style: string;
   /** Options per multiple-choice question, such as 5 for ENEM and 4 for the SAT. */
   optionCount?: number | null;
+  /** How many options a multiple-choice question asks to pick: JEE Advanced's "one or more". */
+  select?: OptionSelect | null;
+  /** How a numeric answer is typed: the SAT's grid-ins, JEE Main's integers. */
+  entry?: NumericEntry | null;
+  /**
+   * A few real questions from the exam's past papers (allowed to be quoted), as printed: what new
+   * questions match in difficulty, length and steps, never copy. Empty or absent without any.
+   */
+  pastQuestions?: readonly string[] | null;
 };
+
+/** Whether the exam asks to pick several options, not one (`SELECT`). */
+function picksSeveral(examFormat: ItemExamFormat | null | undefined): boolean {
+  return Boolean(examFormat?.select) && examFormat?.select !== 1;
+}
+
+/** The `ENTRY` line's value for an answer box that takes less than any number, or null. */
+function describeEntry(entry: NumericEntry | null | undefined): string | null {
+  if (!entry || entry.kind === "number") {
+    return null;
+  }
+
+  return entry.kind === "decimals" ? `decimals: ${entry.places ?? 0}` : entry.kind;
+}
 
 export type GenerateItemsParams = {
   skill: { name: string; description: string; example?: string | null };
@@ -60,24 +88,36 @@ export type GenerateItemsParams = {
 };
 
 function buildUserPrompt(params: GenerateItemsParams): string {
-  const { examFormat, skill } = params;
+  const { examFormat, field, format, skill } = params;
   const count = Math.min(params.count ?? DEFAULT_COUNT, MAX_COUNT);
 
+  // Only multiple-choice questions have options, and only a field's questions are set in it.
+  const optionCount =
+    format === "multipleChoice"
+      ? `\n    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}`
+      : "";
+
+  const select =
+    format === "multipleChoice" && picksSeveral(examFormat)
+      ? `\n    SELECT: ${examFormat?.select}`
+      : "";
+
+  const entry = format === "numeric" ? describeEntry(examFormat?.entry) : null;
+  const entryLine = entry ? `\n    ENTRY: ${entry}` : "";
+  const fieldLine = field ? `\n    FIELD: ${field}` : "";
+
   return `
-    FORMAT: ${params.format}
-    COUNT: ${count}
-    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}
+    FORMAT: ${format}
+    COUNT: ${count}${optionCount}${select}${entryLine}
     LEVEL: ${params.level}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-    TARGET_LANGUAGE: none
 ${formatLocalContext(params.language)}
-    ${formatCast({ language: params.language, seed: `${skill.name}:${params.format}` })}
+    ${formatCast({ language: params.language, seed: `${skill.name}:${format}` })}
     SKILL: ${skill.name}
     SKILL_DESCRIPTION: ${skill.description}
-    SKILL_EXAMPLE: ${skill.example ?? "none"}
-    FIELD: ${params.field ?? "none"}
+    SKILL_EXAMPLE: ${skill.example ?? "none"}${fieldLine}
     EXAM: ${examFormat?.name ?? "none"}
-    EXAM_STYLE: ${examFormat?.style ?? "none"}
+    EXAM_STYLE: ${examFormat?.style ?? "none"}${formatPastQuestions(examFormat)}
   `;
 }
 
@@ -98,6 +138,16 @@ export async function generateItems(params: GenerateItemsParams) {
   } = params;
 
   const userPrompt = buildUserPrompt(params);
+
+  // No caller writes a language goal's questions with this task: placement-items writes those.
+  const systemPrompt = withItemRules(taskPrompt, {
+    field: Boolean(params.field),
+    formats: [format],
+    languageGoal: false,
+    numericEntry: format === "numeric" && describeEntry(params.examFormat?.entry) !== null,
+    severalPicks: format === "multipleChoice" && picksSeveral(params.examFormat),
+  });
+
   const schema = z.object({ items: z.array(GENERATED_ITEM_SCHEMAS[format]) });
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
@@ -112,6 +162,7 @@ export async function generateItems(params: GenerateItemsParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "generate-items",
   });

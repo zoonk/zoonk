@@ -1,7 +1,7 @@
 import "server-only";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
 import { type LibraryProvenance } from "../_utils/library-rows";
-import { addSkillPrerequisites } from "../skills/create-skill";
+import { setSkillPrerequisites } from "../skills/create-skill";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 import { resolveScopeSkills } from "./resolve-lesson-skills";
 
@@ -39,7 +39,11 @@ export async function saveGoalSkills({
 
 /**
  * Records the graph's prerequisite edges between Library skills, so the planner and placement
- * read the same order on every goal that shares them. Edges already stored are kept.
+ * read the same order on every goal that shares them. The newest graph decides the edges between
+ * its own skills: one an older graph drew between two of them that this graph doesn't is
+ * removed, since a plan short on time teaches every prerequisite of a topic it keeps (an ENEM
+ * graph once put ecology behind tissues and the classification of living beings, and every goal
+ * sharing those skills paid for them). Edges to skills outside the graph are kept.
  */
 export async function linkGoalSkillPrerequisites({
   idsByKey,
@@ -48,12 +52,23 @@ export async function linkGoalSkillPrerequisites({
   idsByKey: Readonly<Record<string, string>>;
   skills: readonly Pick<GraphSkill, "key" | "prerequisites">[];
 }): Promise<void> {
-  const edges = skills.flatMap((skill) => {
+  const among = new Set(Object.values(idsByKey).filter(Boolean));
+
+  // A skill learned in several courses has a key for each: it needs what any of them lists.
+  const listed = skills.reduce((bySkill, skill) => {
     const skillId = idsByKey[skill.key];
+
+    if (!skillId) {
+      return bySkill;
+    }
+
     const prerequisiteIds = skill.prerequisites.flatMap((key) => idsByKey[key] ?? []);
+    return bySkill.set(skillId, [...(bySkill.get(skillId) ?? []), ...prerequisiteIds]);
+  }, new Map<string, string[]>());
 
-    return skillId && prerequisiteIds.length > 0 ? [{ prerequisiteIds, skillId }] : [];
-  });
-
-  await Promise.all(edges.map((edge) => addSkillPrerequisites(edge)));
+  await Promise.all(
+    [...listed].map(([skillId, prerequisiteIds]) =>
+      setSkillPrerequisites({ among, prerequisiteIds, skillId }),
+    ),
+  );
 }

@@ -66,16 +66,10 @@ function Outline({ titles }: { titles: string[] }) {
 }
 
 const DEEPER_ROW_CLASS =
-  "bg-card ring-foreground/10 hover:bg-muted/60 focus-visible:ring-ring/50 flex min-h-16 w-full items-center gap-3 rounded-3xl px-4 py-3 text-left ring-1 outline-none focus-visible:ring-[3px] disabled:pointer-events-none";
+  "bg-card ring-foreground/10 hover:bg-muted/60 focus-visible:ring-ring/50 flex min-h-16 w-full items-center gap-3 rounded-3xl px-4 py-3 text-left ring-1 outline-none focus-visible:ring-[3px]";
 
 /** "I want to learn this in depth" and what that builds, with where the row leads at its end. */
-function DeeperRowContent({
-  description,
-  pending = false,
-}: {
-  description: string;
-  pending?: boolean;
-}) {
+function DeeperRowContent({ description }: { description: string }) {
   const t = useExtracted();
 
   return (
@@ -87,51 +81,20 @@ function DeeperRowContent({
         <span className="font-medium">{t("I want to learn this in depth")}</span>
         <span className="text-muted-foreground text-sm">{description}</span>
       </span>
-      {pending ? (
-        <Spinner className="text-muted-foreground size-4 shrink-0" />
-      ) : (
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-      )}
+      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
     </>
   );
 }
 
-/** Where the learner can go instead: onboarding with the subject as the goal. */
+/**
+ * Where the learner can go instead: the subject's course start page, which asks their level before
+ * anything is created, or onboarding with the subject as the goal when there's no course.
+ */
 export function ExplainDeeperLink({ description, href }: { description: string; href: string }) {
   return (
     <LearnLink className={DEEPER_ROW_CLASS} href={href}>
       <DeeperRowContent description={description} />
     </LearnLink>
-  );
-}
-
-/**
- * Where the learner can go instead, in one tap: the host starts a plan from the subject's course
- * and goes on to what onboarding still asks. Pending shows in the row while it starts.
- */
-export function ExplainDeeperButton({
-  description,
-  onClick,
-  pending,
-}: {
-  description: string;
-  onClick: () => void;
-  pending: boolean;
-}) {
-  const t = useExtracted();
-
-  return (
-    <>
-      <button className={DEEPER_ROW_CLASS} disabled={pending} onClick={onClick} type="button">
-        <DeeperRowContent description={description} pending={pending} />
-      </button>
-
-      {pending && (
-        <span className="sr-only" role="status">
-          {t("Starting your plan…")}
-        </span>
-      )}
-    </>
   );
 }
 
@@ -167,8 +130,8 @@ export function ExplainWaiting({
 }: {
   closeHref: string;
   /**
-   * "I want to learn this in depth", the host's control: `ExplainDeeperButton` to start the
-   * subject's course, or `ExplainDeeperLink` into onboarding when there's no course.
+   * "I want to learn this in depth", the host's `ExplainDeeperLink`: to the subject's course start
+   * page, or into onboarding when there's no course.
    */
   deeper: ReactNode;
   explanation: Pick<ExplanationView, "lesson" | "outline" | "title">;

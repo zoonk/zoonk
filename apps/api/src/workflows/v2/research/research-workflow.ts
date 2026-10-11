@@ -1,3 +1,4 @@
+import { type ExamResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import { getWorkflowMetadata } from "workflow";
 import { type Run, start } from "workflow/api";
@@ -11,12 +12,12 @@ import { type ResearchContext, findAndStoreSources, researchSources } from "./re
 import { detectResearchTopic } from "./research-topic";
 import { lookUpChoiceOptionsStep } from "./steps/choice-options-step";
 import { lookUpCourseWeightsStep } from "./steps/course-weights-step";
-import { findExamBlueprintStep } from "./steps/find-exam-blueprint-step";
+import { type ExamBlueprintLookup, findExamBlueprintStep } from "./steps/find-exam-blueprint-step";
 import { hasPrivateUploadsStep } from "./steps/inspect-uploads-step";
 import { linkGoalToBlueprintStep, unlinkGoalFromSharedExamStep } from "./steps/link-goal-step";
 import { type ResearchGoal, loadResearchGoalStep } from "./steps/load-research-goal-step";
 import { recordNoticeFormatsStep } from "./steps/notice-formats-step";
-import { planResearchStep } from "./steps/plan-research-step";
+import { planExamResearchStep, planSourceResearchStep } from "./steps/plan-research-step";
 import { recordResearchOutcomeStep } from "./steps/record-research-outcome-step";
 import { recordResearchRunStep } from "./steps/record-research-run-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
@@ -48,14 +49,18 @@ async function finishExam({
   // A shared exam's notice keeps being checked while anyone studies it, and gets its subjects'
   // counts, its questions' options and how often its topics are asked from past editions when it
   // says none; a private one is an upload. An entrance exam goal also gets how its course weighs
-  // the exam's parts, and a goal aiming at a course or a position its target's last cut-off.
+  // the exam's parts, and a goal aiming at a course or a position its target's last cut-off. The
+  // lookups only add to the notice and the plan: one whose retries ran out is left to the next
+  // research, and this one ends with the notice.
   if (isShared) {
     await Promise.all([
-      lookUpChoiceOptionsStep({ analytics, examBlueprintId }),
-      lookUpSubjectQuestionsStep({ analytics, examBlueprintId }),
-      lookUpTopicFrequencyStep({ analytics, examBlueprintId }),
-      lookUpCourseWeightsStep({ analytics, goalId: goal.id }),
-      lookUpTargetCutoffStep({ analytics, goalId: goal.id }),
+      Promise.allSettled([
+        lookUpChoiceOptionsStep({ analytics, examBlueprintId }),
+        lookUpSubjectQuestionsStep({ analytics, examBlueprintId }),
+        lookUpTopicFrequencyStep({ analytics, examBlueprintId }),
+        lookUpCourseWeightsStep({ analytics, goalId: goal.id }),
+        lookUpTargetCutoffStep({ analytics, goalId: goal.id }),
+      ]),
       scheduleFreshnessChecksStep([{ examBlueprintId, kind: "exam" }]),
     ]);
   }
@@ -73,7 +78,7 @@ async function joinRunningResearch({
   identity,
   run,
 }: {
-  context: ResearchContext;
+  context: ResearchContext<ExamResearchPlan>;
   identity: ExamIdentity;
   run: Run<unknown>;
 }): Promise<ResearchResult | null> {
@@ -97,11 +102,48 @@ async function joinRunningResearch({
   });
 }
 
-async function researchExam(context: ResearchContext): Promise<ResearchResult> {
+/**
+ * A stored notice whose reading's check found what it left out is read
+ * again by the research that reuses it, before the goal is linked, so the goal (and every learner
+ * of the exam after it) gets the corrected reading. Another learner's research holding the exam
+ * is reading it already, so this one goes on with the stored reading.
+ */
+async function readStoredNoticeAgain({
+  analytics,
+  goalId,
+  lookup,
+}: {
+  analytics: ResearchAnalytics;
+  goalId: string;
+  lookup: ExamBlueprintLookup;
+}): Promise<void> {
+  const { identity, identityKey, readAgainNoticeId } = lookup;
+
+  if (!readAgainNoticeId) {
+    return;
+  }
+
+  const { conflict } = await claimRunToken(`research:${identity.language}:${identityKey}`);
+
+  if (conflict) {
+    return;
+  }
+
+  await readExamBlueprint({
+    analytics,
+    background: false,
+    exceptGoalId: goalId,
+    identity,
+    isNew: false,
+    sourceIds: [readAgainNoticeId],
+  });
+}
+
+async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise<ResearchResult> {
   const { analytics, goal, plan, uploads } = context;
 
   // A teacher's test is described only by the class's material: never searched, never shared, and
-  // never the public notice onboarding matched by its name ("Prova de biologia").
+  // never the public notice onboarding matched by its name ("Biology test").
   if (plan.classTest) {
     await unlinkGoalFromSharedExamStep(goal.id);
   }
@@ -127,7 +169,8 @@ async function researchExam(context: ResearchContext): Promise<ResearchResult> {
   const { blueprintId, identity } = lookup;
   const isShared = !identity.ownerId;
 
-  if (blueprintId && lookup.isCurrent && !lookup.readsAgain && uploads.length === 0) {
+  if (blueprintId && lookup.isCurrent && uploads.length === 0) {
+    await readStoredNoticeAgain({ analytics, goalId: goal.id, lookup });
     return finishExam({ analytics, examBlueprintId: blueprintId, goal, isShared });
   }
 
@@ -141,15 +184,22 @@ async function researchExam(context: ResearchContext): Promise<ResearchResult> {
   const sourceIds =
     uploads.length > 0
       ? uploads
-      : await findAndStoreSources({ analytics, plan, requireOfficial: true, topic: "exam" });
+      : await findAndStoreSources({
+          analytics,
+          personalPlan: goal.planPersonal,
+          plan,
+          requireOfficial: true,
+          topic: "exam",
+        });
 
+  // A reading of the learner's uploads is theirs, even when the exam it describes is shared: it
+  // counts as personal, so its calls never reach providers that train on prompts.
   const reading = {
-    analytics,
+    analytics: uploads.length > 0 ? { ...analytics, contentScope: "personal" as const } : analytics,
     background: false,
     exceptGoalId: goal.id,
     identity,
     isNew: !blueprintId,
-    quiet: lookup.readsAgain,
     sourceIds,
   };
 
@@ -200,17 +250,17 @@ async function research({
   }
 
   const analytics = toResearchAnalytics({ goal, runId });
-  const plan = await planResearchStep({ analytics, goal, topic });
   // No uploads to answer an ask with (the API starts research with an empty list) means the
   // material the learner gave with the goal.
   const uploads = input.sourceIds?.length ? input.sourceIds : goal.uploadIds;
-  const context = { analytics, goal, plan, uploads };
 
   if (topic === "exam") {
-    return researchExam(context);
+    const plan = await planExamResearchStep({ analytics, goal });
+    return researchExam({ analytics, goal, plan, uploads });
   }
 
-  return researchSources({ ...context, topic });
+  const plan = await planSourceResearchStep({ analytics, goal, topic });
+  return researchSources({ analytics, goal, plan, topic, uploads });
 }
 
 /**

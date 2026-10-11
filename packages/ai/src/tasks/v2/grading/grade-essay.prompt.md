@@ -12,8 +12,10 @@ Read `ESSAY`, written for `PROMPT`, and score every criterion in `CRITERIA` from
 - Score each criterion on its own evidence. A strength in one never makes up for a weakness in another.
 - Full marks mean an examiner would find nothing to take off in that criterion. Practice essays usually land in the middle levels; use the top and bottom levels when the essay clearly earns them.
 - `KEY_POINTS`, when given, list what a full answer must cover. A point the essay leaves out, gets wrong or only names without explaining earns nothing.
+- Points are earned when the essay does what a level asks, even with small slips that don't change the meaning; never for restating the prompt, listing terms without using them, or a claim with no support.
 - Follow the rubric in `RUBRIC` below.
 
+{{#enem}}
 # RUBRIC: enem
 
 The ENEM essay (redação) is a dissertative-argumentative text in formal Portuguese. Score each competency 0, 40, 80, 120, 160 or 200.
@@ -31,6 +33,8 @@ The ENEM essay (redação) is a dissertative-argumentative text in formal Portug
   - The level is the number of valid elements: 5 elements for 200, 4 for 160, 3 for 120, 2 for 80, 1 for 40. A proposal written as a condition ("if X were done, Y would improve") scores at most 80. A tangent essay scores at most 40. No proposal, a proposal unrelated to the theme, or one that disrespects human rights (violence, torture, "justice with one's own hands", discrimination, taking away rights) scores 0.
 - `zeroReason`: `offTopic` when the essay ignores the theme and its subject entirely (writing only about the broad subject is a tangent, scored with C2, C3 and C5 at most 40, not annulled); `notArgumentative` when most of the text is another type (a story, a poem, a letter, a description). Otherwise null. When you set it, still write the comments, explaining why the essay can't be scored.
 
+{{/enem}}
+{{#oab}}
 # RUBRIC: oab
 
 The OAB 2nd phase legal brief (peça prático-profissional), graded like FGV's answer standard. `CRITERIA` gives each section's maximum; score in steps of 0.05.
@@ -42,19 +46,23 @@ The OAB 2nd phase legal brief (peça prático-profissional), graded like FGV's a
 - `closing-and-form`: the value of the claim when the brief needs one, and place, date, lawyer and OAB number as placeholders, never invented personal data.
 - The wrong type of brief for the case scores 0 in every section; say which brief was needed.
 
+{{/oab}}
+{{#ap}}
 # RUBRIC: ap
 
 An AP free-response answer, scored the way AP Readers apply a question's scoring guidelines. `CRITERIA` lists each row with its points and what earns them.
 
-- Score each row in whole points only, from 0 to its maximum, on that row's own description. A point is earned when the answer does what the row asks, even with small slips that don't change the meaning; it isn't earned for restating the prompt, listing terms without using them, or a claim with no support.
+- Score each row in whole points only, from 0 to its maximum, on that row's own description.
 - Task verbs set the bar: "identify" needs a correct answer, "describe" needs the relevant features, "explain" needs how or why, "justify" needs evidence or reasoning tied to the claim. A row that asks to explain earns nothing for an identification.
 - A row worth several points rises one point per level its description sets (such as evidence without commentary, then evidence with commentary that supports the claim). Don't take a point off one row for a weakness another row scores.
-- Set `interventionElements` and `zeroReason` to null.
 
+{{/ap}}
+{{#custom}}
 # RUBRIC: custom
 
-`CRITERIA` lists each criterion with its maximum and what it assesses. Score each one by its description; when the description uses its own scale (such as IELTS bands), convert it to the criterion's maximum. Set `interventionElements` and `zeroReason` to null.
+`CRITERIA` lists each criterion with its maximum and what it assesses. Score each one by its description; when the description uses its own scale (such as IELTS bands), convert it to the criterion's maximum.
 
+{{/custom}}
 # Comments, quotes, examples and next steps
 
 For every criterion:
@@ -73,5 +81,7 @@ Describe the essay, not the person. Never promise a score, a pass, an approval o
 # Output
 
 - `criteria`: one entry per id in `CRITERIA`, with `comment`, `example`, `nextStep`, `quote` and `score`.
+{{#enem}}
 - `interventionElements`: for `enem`, the elements of the most complete proposal (all false when there is none); null otherwise.
 - `zeroReason`: for `enem`, as described above; null otherwise.
+{{/enem}}

@@ -71,6 +71,21 @@ describe(buildWeekView, () => {
     expect(days.slice(0, 2).map((day) => day.state)).toStrictEqual(["missed", "done"]);
   });
 
+  // Missed days set lessons aside on the days they were due: nothing is left to do on Monday, but
+  // the learner never studied it, so its dot isn't done. Tuesday's lesson was tested out: done.
+  it("never counts a past day whose lessons were set aside as done", () => {
+    const { days } = buildWeek({
+      items: [
+        lesson("2026-09-21", "done"),
+        { ...lesson("2026-09-21", "skipped"), id: "set-aside" },
+        lesson("2026-09-22", "testedOut"),
+      ],
+      studiedDates: ["2026-09-21"],
+    });
+
+    expect(days.slice(0, 2).map((day) => day.state)).toStrictEqual(["missed", "done"]);
+  });
+
   it("names a skill whose lessons are being written by its course, not its raw name", () => {
     const standIn = {
       ...lesson("2026-09-23", "todo"),

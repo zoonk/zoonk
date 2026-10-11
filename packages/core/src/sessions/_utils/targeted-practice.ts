@@ -2,10 +2,10 @@ import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { getDailyTimeLimitStatus } from "../../minors/get-daily-time-limit";
 import { readBlockPayload } from "../block-payload";
 import { ensureStudySession } from "../ensure-study-session";
 import { type ExtraTimeReason, getExtraTime } from "../extra-time";
+import { getDailyTimeLimitStatus } from "../get-daily-time-limit";
 import {
   appendExtraBlock,
   buildExtraLesson,
@@ -132,7 +132,7 @@ async function addToLockedSession({
  * Adds a bonus block of practice on some of a goal's skills to today's session (a chapter's
  * "Practice now", Content's "Review" of fading and due skills). It can start before the day's
  * session is done, but it counts as extra time like "10 more minutes": at most two bonus blocks a
- * day, never past a guardian's limit, and its Brain Power is capped. Two taps at once see each
+ * day, never past the learner's daily limit, and its Brain Power is capped. Two taps at once see each
  * other's block.
  */
 export async function addTargetedPracticeBlock({

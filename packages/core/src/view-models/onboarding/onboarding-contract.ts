@@ -1,5 +1,9 @@
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
+import {
+  type ExamChoiceView,
+  examChoicePickSchema,
+} from "../../exams/choices/exam-choice-contract";
 import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
 import {
@@ -13,6 +17,8 @@ const MAX_GOAL_TEXT_LENGTH = 2000;
 const MAX_ANSWER_LENGTH = 200;
 /** A notice lists a few dozen subjects at most. */
 const MAX_KNOWN_SUBJECTS = 40;
+/** An exam has a few choices at most (a foreign language, an elective or two). */
+const MAX_EXAM_CHOICES = 5;
 const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
@@ -68,6 +74,8 @@ export type OnboardingExamDate = {
   /** No notice for that year yet: the day the exam usually falls on, labeled as an estimate. */
   estimated: boolean;
   label: string;
+  /** The notice gives its sitting's last day to register, and that day has passed. */
+  registrationClosed: boolean;
   /** The page it was read from, so the learner can check it; null for an estimate. */
   source: { title: string | null; url: string } | null;
 };
@@ -141,10 +149,6 @@ const ONBOARDING_DRAFT_TEXT_FIELDS = [
   "targetScore",
 ] as const;
 
-/** Exam years the card accepts; the understanding keeps the same range. */
-const MIN_EXAM_YEAR = 1900;
-const MAX_EXAM_YEAR = 2200;
-
 /** A sanity bound: understandings name a few goals at most. */
 const MAX_DRAFT_GOAL_INDEX = 9;
 
@@ -157,9 +161,8 @@ const draftGoalSchema = z
 const draftTextSchema = z.string().trim().min(1).max(MAX_ANSWER_LENGTH);
 
 /**
- * One fix on the "Here's what I understood" card. Fields that depend on it follow: a new exam year
- * reads that year's exam dates (official or estimated) and drops a deadline set for the old year;
- * the learner's own deadline replaces the exam's dates on the card, and null brings them back; a
+ * One fix on the "Here's what I understood" card. Fields that depend on it follow: the learner's
+ * own date (any full date) replaces the exam's dates on the card, and null brings them back; a
  * study time replaces the time the words gave. Fixing the words themselves is a new understanding.
  */
 export const onboardingDraftEditSchema = z
@@ -179,13 +182,6 @@ export const onboardingDraftEditSchema = z
           .date()
           .nullable()
           .meta({ description: "The learner's own deadline; null brings back the exam's dates" }),
-      })
-      .strict(),
-    z
-      .object({
-        field: z.literal("examYear"),
-        goal: draftGoalSchema,
-        value: z.int().min(MIN_EXAM_YEAR).max(MAX_EXAM_YEAR),
       })
       .strict(),
     z
@@ -226,20 +222,15 @@ export const ONBOARDING_QUESTIONS = [
   "target",
   "targetDate",
   "followUps",
+  "examChoice",
   "level",
   "schedule",
 ] as const;
 
 export type OnboardingQuestion = (typeof ONBOARDING_QUESTIONS)[number];
 
-/**
- * Everything after the questions: about the learner, not the goal. `memory` asks a learner under
- * 18, or one whose age we don't know, whether memory may personalize their lessons, since it
- * starts off for them.
- */
-type OnboardingProfileStep = "age" | "buddy" | "memory";
-
-export type OnboardingStep = OnboardingProfileStep | OnboardingQuestion | "placement" | "plan";
+/** `buddy` comes after the questions: it's about the learner, not the goal. */
+export type OnboardingStep = OnboardingQuestion | "buddy" | "placement" | "plan";
 
 /** A Library course that already teaches the goal, offered once the questions are answered. */
 export type OnboardingLibraryCourse = {
@@ -251,6 +242,12 @@ export type OnboardingLibraryCourse = {
 
 /** The rest of onboarding for one new goal. */
 export type OnboardingView = {
+  /**
+   * The exam's choices, such as ENEM's foreign language (English or Spanish), each with its options
+   * and the learner's pick (null until they make it), for the `examChoice` question. The plan
+   * studies only the picked options. Empty for other goals and exams without choices.
+   */
+  examChoices: ExamChoiceView[];
   /**
    * An exam's subjects from its stored notice, for the level question and before placement: the
    * notice's name (what `knownSubjects` sends back) and what learners call it when that's long.
@@ -267,8 +264,6 @@ export type OnboardingView = {
   goal: GoalView;
   /** Goals created in the same onboarding, which share the day's time. */
   goalIds: string[];
-  /** The learner is under 18: protective defaults, and the guardian invite is offered. */
-  isMinor: boolean;
   /**
    * A published Library course that teaches the goal's subject, searched again once every
    * question is answered; null before that and when none fits.
@@ -289,6 +284,13 @@ const nullableAnswer = z.string().trim().min(1).max(MAX_ANSWER_LENGTH).nullable(
 const scheduleAnswerSchema = z
   .object({
     dailyMinutes: z.int().min(MIN_DAILY_MINUTES).max(MAX_DAILY_MINUTES),
+    fullCourse: z
+      .boolean()
+      .optional()
+      .meta({
+        description:
+          "Exams only: study everything, even after the exam (see the plan change `setFullCourse`). Until the exam the plan stays the one its date shapes; what doesn't fit goes on after it",
+      }),
     question: z.literal("schedule"),
     studyDays: z
       .array(
@@ -315,9 +317,8 @@ const scheduleAnswerSchema = z
 
 /**
  * One onboarding answer. Skippable questions take null. "Placement" marks placement done, after
- * the learner finished it, stopped it or chose to start from scratch. Age, memory and buddy are
- * saved on the learner's profile; a birth date under 13 deletes the account, since Zoonk is for 13
- * and older.
+ * the learner finished it, stopped it or chose to start from scratch. The buddy is saved on the
+ * learner's profile.
  */
 export const onboardingAnswerInputSchema = z
   .discriminatedUnion("question", [
@@ -342,6 +343,21 @@ export const onboardingAnswerInputSchema = z
       .strict(),
     z
       .object({
+        choices: z
+          .array(examChoicePickSchema)
+          .min(1)
+          .max(MAX_EXAM_CHOICES)
+          .nullable()
+          .meta({
+            description:
+              "The option the learner takes for each of the exam's choices (`examChoices`); null to decide later, from the plan",
+          }),
+        question: z.literal("examChoice"),
+        timeZone: timeZoneSchema,
+      })
+      .strict(),
+    z
+      .object({
         knownSubjects: z
           .array(z.string().trim().min(1).max(MAX_ANSWER_LENGTH))
           .max(MAX_KNOWN_SUBJECTS)
@@ -356,26 +372,6 @@ export const onboardingAnswerInputSchema = z
       .strict(),
     scheduleAnswerSchema,
     z.object({ question: z.literal("placement") }).strict(),
-    z
-      .object({
-        birth: learningProfileUpdateSchema.shape.birth
-          .unwrap()
-          .nullable()
-          .meta({ description: "Null when the learner prefers not to say" }),
-        question: z.literal("age"),
-      })
-      .strict(),
-    z
-      .object({
-        enabled: z
-          .boolean()
-          .meta({
-            description:
-              'Whether memory may personalize the learner\'s lessons: true for yes, false for "Not now"',
-          }),
-        question: z.literal("memory"),
-      })
-      .strict(),
     z
       .object({
         buddy: learningProfileUpdateSchema.shape.buddy.unwrap(),

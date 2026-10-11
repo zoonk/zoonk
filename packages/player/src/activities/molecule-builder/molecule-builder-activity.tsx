@@ -16,7 +16,7 @@ import {
 import { useReducedMotion } from "../_utils/use-reduced-motion";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { MoleculeCanvas } from "./molecule-canvas";
-import { MoleculeExample } from "./molecule-example";
+import { ExploredMolecule, MoleculeExample } from "./molecule-example";
 import {
   type Build,
   bondTotal,
@@ -92,13 +92,7 @@ function useChangeAnnouncement() {
  * Dots show each atom's open bonds; code knows every element's valence and grades any complete
  * structure with the formula's atoms. After the check, one correct build appears when needed.
  */
-export function MoleculeBuilderActivity({
-  answer,
-  content,
-  labelId,
-  onAnswerChange,
-  phase,
-}: MoleculeProps) {
+function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: MoleculeProps) {
   const t = useExtracted();
   const reducedMotion = useReducedMotion();
   const nameOf = useAtomName();
@@ -194,5 +188,20 @@ export function MoleculeBuilderActivity({
         {t("Build {formula}.", { formula: formulaText(target, order) })} {describe(build)}
       </ActivityTextAlternative>
     </ActivityCanvas>
+  );
+}
+
+/** The molecule to build, or explored on an explanation screen as one complete build of it. */
+export function MoleculeBuilderActivity(props: MoleculeProps) {
+  const target = parseMolecularFormula(props.content.fields.formula) ?? {};
+
+  return props.phase === "explore" ? (
+    <ExploredMolecule
+      formula={formulaText(target, Object.keys(target))}
+      labelId={props.labelId}
+      target={target}
+    />
+  ) : (
+    <MoleculeQuestion {...props} />
   );
 }

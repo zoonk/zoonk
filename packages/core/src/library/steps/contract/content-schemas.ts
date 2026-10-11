@@ -9,6 +9,7 @@ const STEP_TEXT_LIMITS = {
   id: 40,
   label: 40,
   option: 160,
+  part: 80,
   prompt: 240,
   richText: 1200,
 } as const;
@@ -18,6 +19,12 @@ export const labelSchema = z.string().min(1).max(STEP_TEXT_LIMITS.label);
 export const optionTextSchema = z.string().min(1).max(STEP_TEXT_LIMITS.option);
 export const promptSchema = z.string().min(1).max(STEP_TEXT_LIMITS.prompt);
 export const explanationSchema = z.string().min(1).max(STEP_TEXT_LIMITS.explanation);
+
+/**
+ * A part a picture's number marks, in English for the drawing and its check, never shown: its name,
+ * and where it sits when that's easy to mistake ("right atrium, upper left as seen from the front").
+ */
+export const partSchema = z.string().min(1).max(STEP_TEXT_LIMITS.part);
 
 /**
  * Rich text is Markdown limited to emphasis, lists, inline code and `$...$` LaTeX, the same subset
@@ -42,8 +49,20 @@ export const citationSchema = z
  * never stored as a URL in step JSON. `prompt` describes the scene and `alt` is the text
  * alternative screen readers announce.
  */
-export const stepImageRequestSchema = z
+export const pictureRequestSchema = z
   .object({ alt: optionTextSchema, prompt: explanationSchema })
+  .strict();
+
+/** Numbers a picture can carry legibly, one per part. */
+const MAX_NUMBERED_PARTS = 6;
+
+/**
+ * A screen's picture request. `parts` numbers the parts the screen asks about, in English and in
+ * order (1 is the first): code draws each number on its part, so the answer key (which number
+ * is which part) comes from this list, never from what the drawing decided.
+ */
+export const stepImageRequestSchema = pictureRequestSchema
+  .extend({ parts: z.array(partSchema).min(2).max(MAX_NUMBERED_PARTS).optional() })
   .strict();
 
 function hasUniqueIds(items: readonly { id: string }[]): boolean {

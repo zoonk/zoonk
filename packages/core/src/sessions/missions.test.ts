@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getMissions, isFullMeal } from "./missions";
+import { countDoneMissions, getMissions, isFullMeal } from "./missions";
 
 describe(getMissions, () => {
   it("tracks the three missions from today's session", () => {
@@ -38,9 +38,9 @@ describe(getMissions, () => {
 });
 
 describe(isFullMeal, () => {
-  it("needs every mission done or with nothing to do today", () => {
+  it("needs all three missions done", () => {
     const missions = getMissions({
-      fix: { available: false, fixedToday: 0 },
+      fix: { available: true, fixedToday: 1 },
       learn: { completed: 1, lessons: 1 },
       review: { capsules: 2, opened: 2 },
     });
@@ -48,7 +48,25 @@ describe(isFullMeal, () => {
     expect(isFullMeal(missions)).toBe(true);
   });
 
-  it("is not a meal while a mission is left or when nothing was done", () => {
+  // Pedro's first 74-second lesson paid the bonus on a day with nothing to review or fix.
+  it("doesn't count a mission with nothing due as done", () => {
+    const nothingToFix = getMissions({
+      fix: { available: false, fixedToday: 0 },
+      learn: { completed: 1, lessons: 1 },
+      review: { capsules: 2, opened: 2 },
+    });
+
+    const firstDay = getMissions({
+      fix: { available: false, fixedToday: 0 },
+      learn: { completed: 1, lessons: 6 },
+      review: { capsules: 0, opened: 0 },
+    });
+
+    expect(isFullMeal(nothingToFix)).toBe(false);
+    expect(isFullMeal(firstDay)).toBe(false);
+  });
+
+  it("is not paid while a mission is left or when nothing was done", () => {
     const partial = getMissions({
       fix: { available: true, fixedToday: 0 },
       learn: { completed: 1, lessons: 1 },
@@ -63,5 +81,24 @@ describe(isFullMeal, () => {
 
     expect(isFullMeal(partial)).toBe(false);
     expect(isFullMeal(empty)).toBe(false);
+  });
+});
+
+describe(countDoneMissions, () => {
+  it("counts only the missions actually done, never one with nothing due", () => {
+    const waiting = getMissions({
+      fix: { available: false, fixedToday: 0 },
+      learn: { completed: 0, lessons: 6 },
+      review: { capsules: 0, opened: 0 },
+    });
+
+    const firstLesson = getMissions({
+      fix: { available: false, fixedToday: 0 },
+      learn: { completed: 1, lessons: 6 },
+      review: { capsules: 0, opened: 0 },
+    });
+
+    expect(countDoneMissions(waiting)).toBe(0);
+    expect(countDoneMissions(firstLesson)).toBe(1);
   });
 });

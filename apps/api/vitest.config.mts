@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { getTestEnvironment } from "@zoonk/db/test-environment";
+import { getTestRunEnvironment } from "@zoonk/db/test-environment";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -34,7 +34,7 @@ export default defineConfig({
   test: {
     env: {
       AI_GATEWAY_API_KEY: "",
-      ...getTestEnvironment("test"),
+      ...getTestRunEnvironment(),
       NEXT_PUBLIC_APP_DOMAIN: "localhost:9002",
     },
     environment: "node",

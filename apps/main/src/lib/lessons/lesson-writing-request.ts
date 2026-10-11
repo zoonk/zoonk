@@ -10,13 +10,15 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 /**
  * What asking for a lesson's content answered: `writing` once a run writes it (followed by its
  * id), `ready` when it's written, `refused` when the learner's allowance says not now (and why),
- * `setAside` when every draft failed its checks, so nothing writes it again, and `failed` when
- * the request didn't go through.
+ * `plusRequired` when a free exam plan past its first week holds it for Plus, `setAside` when
+ * every draft failed its checks, so nothing writes it again, and `failed` when the request didn't
+ * go through.
  */
 export type LessonWritingAnswer =
   | { generationId: string; status: "writing" }
   | { limit: LessonLimit; status: "refused" }
   | { status: "failed" }
+  | { status: "plusRequired" }
   | { status: "ready" }
   | { status: "setAside" };
 
@@ -29,13 +31,17 @@ function readAnswer({
   body: unknown;
   response: Response;
 }): LessonWritingAnswer {
+  const code = isJsonObject(body) ? getString(body.error, "code") : null;
+
+  if (code === LESSON_PLAYER_ERROR_CODES.plusRequired) {
+    return { status: "plusRequired" };
+  }
+
   const limit = readRefusedLimit({ body, status: response.status });
 
   if (limit) {
     return { limit, status: "refused" };
   }
-
-  const code = isJsonObject(body) ? getString(body.error, "code") : null;
 
   if (response.status === HTTP_CONFLICT && code === LESSON_PLAYER_ERROR_CODES.lessonSetAside) {
     return { status: "setAside" };

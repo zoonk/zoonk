@@ -1,5 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { prisma } from "@zoonk/db";
+import { anonymizeLearnerRecords } from "@zoonk/db/anonymous-records";
 import { revokeStoredAppleAuthorization } from "./providers/apple-revocation";
 import { stripeClient } from "./stripe/client";
 import { deleteUserBlobs } from "./user-blobs";
@@ -9,6 +10,9 @@ type AccountDeletionCleanupReporter = {
 };
 
 const accountDeletionCleanupReporter = new AsyncLocalStorage<AccountDeletionCleanupReporter>();
+
+/** Keeping a long-time learner's anonymous records copies all their answers, past the default. */
+const ANONYMIZE_TIMEOUT_MS = 60_000;
 
 /**
  * Runs Better Auth's user deletion with a request-local channel for provider
@@ -68,8 +72,9 @@ function getEmailOTPIdentifiers(email: string) {
  * Removes local dependencies that must be gone before the User cascade runs.
  * The explicit subscription cleanup closes the normal deletion path promptly;
  * user-owned store rows also have a cascade so a concurrent notification cannot
- * survive the later User deletion. These independent deletes are idempotent, so
- * a later Better Auth failure can be retried safely.
+ * survive the later User deletion. What the learner's study teaches everyone is
+ * kept anonymously, and their feedback without their email. These steps are
+ * idempotent, so a later Better Auth failure can be retried safely.
  */
 async function deleteLocalUserDependencies({ email, userId }: { email: string; userId: string }) {
   await Promise.all([
@@ -77,6 +82,10 @@ async function deleteLocalUserDependencies({ email, userId }: { email: string; u
     prisma.verification.deleteMany({
       where: { identifier: { in: getEmailOTPIdentifiers(email) } },
     }),
+    prisma.$transaction(
+      (transaction) => anonymizeLearnerRecords({ emails: [email], transaction, userIds: [userId] }),
+      { timeout: ANONYMIZE_TIMEOUT_MS },
+    ),
   ]);
 }
 

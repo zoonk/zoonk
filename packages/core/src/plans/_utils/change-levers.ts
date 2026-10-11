@@ -1,14 +1,54 @@
 import { NOTICE_SOURCE } from "../plan-change-contract";
 import { type PlanOperation } from "../plan-contract";
+import { type StudyOperation, isStudyOperation } from "../planner/study-operations";
+
+/**
+ * The one thing each change only core proposes is about: what the exam's notice says, or the
+ * plan's phase dates.
+ */
+const CORE_PROPOSAL_LEVERS = { fitPhaseDates: "phaseDates", followNotice: "notice" } as const;
+
+type CoreProposal = Extract<PlanOperation, { kind: keyof typeof CORE_PROPOSAL_LEVERS }>;
+
+function isCoreProposal(operation: PlanOperation): operation is CoreProposal {
+  return operation.kind in CORE_PROPOSAL_LEVERS;
+}
+
+/** How the learner studies: practice, difficulty, written tests, after the exam, one base. */
+function toStudyLevers(operation: StudyOperation): string[] {
+  switch (operation.kind) {
+    case "setPracticeBias":
+      return ["practice"];
+    case "setDifficultyBias":
+      return ["difficulty"];
+    case "setWrittenCadence":
+      return ["writtenCadence"];
+    case "setFullCourse":
+      return ["fullCourse"];
+    case "setBaseChoices":
+      return operation.choices.map((entry) => `base:${entry.skillId}`);
+    default:
+      return operation satisfies never;
+  }
+}
 
 /**
  * What one operation changes, in the learner's terms: the study time (any day's), the date, the
  * focus (which areas get more time, and which less), one area's start or place in the plan, how
- * hard or practice-heavy lessons are, when the written tests are practiced, one language activity,
- * one light week, one moved weekly event, one added skill, one tool, and what the exam's notice
- * says.
+ * hard or practice-heavy lessons are, when the written tests are practiced, studying everything
+ * after the exam, one base, one language activity, one light week, one moved weekly event, one
+ * added skill, one tool, one of the exam's choices, what the exam's notice says, and the plan's
+ * phase dates.
  */
 function toLevers(operation: PlanOperation): string[] {
+  if (isCoreProposal(operation)) {
+    return [CORE_PROPOSAL_LEVERS[operation.kind]];
+  }
+
+  if (isStudyOperation(operation)) {
+    return toStudyLevers(operation);
+  }
+
   switch (operation.kind) {
     case "setDailyMinutes":
     case "setWeekdayMinutes":
@@ -31,18 +71,12 @@ function toLevers(operation: PlanOperation): string[] {
     case "skipActivities":
     case "restoreActivities":
       return operation.activities.map((activity) => `activity:${activity}`);
-    case "setPracticeBias":
-      return ["practice"];
-    case "setDifficultyBias":
-      return ["difficulty"];
-    case "setWrittenCadence":
-      return ["writtenCadence"];
     case "addSkills":
       return operation.skills.map((skill) => `skill:${skill.skillId}`);
     case "setTools":
       return operation.tools.map((tool) => `tool:${tool.name}`);
-    case "followNotice":
-      return ["notice"];
+    case "setExamChoice":
+      return [`examChoice:${operation.group}`];
     default:
       return operation satisfies never;
   }

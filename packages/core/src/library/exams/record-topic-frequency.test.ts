@@ -84,6 +84,51 @@ describe(recordTopicFrequency, () => {
     ).toStrictEqual(["Ciências da Natureza e suas Tecnologias"]);
   });
 
+  it("keeps what a lookup that couldn't reach every subject found, and leaves the rest to the next one", async () => {
+    const humanas = [
+      "Cultura e história",
+      "Espaço geográfico",
+      "Trabalho e sociedade",
+      "Cidadania",
+    ];
+
+    const blueprint = await examBlueprintFixture({
+      name: "ENEM",
+      role: null,
+      structure: {
+        ...structure,
+        subjects: [
+          subject("Ciências da Natureza e suas Tecnologias", NATUREZA),
+          subject("Ciências Humanas e suas Tecnologias", humanas),
+        ],
+      },
+    });
+
+    // Natural sciences' lookup answered; human sciences' failed, so this lookup didn't finish.
+    await recordTopicFrequency({
+      complete: false,
+      examBlueprintId: blueprint.id,
+      subjects: [
+        {
+          basis: "questões de 2009 a 2024",
+          name: "Ciências da Natureza e suas Tecnologias",
+          source: { title: "Assuntos que mais caem", url: "https://example.com/enem" },
+          topics: [
+            { appearances: 41, level: "high", topic: "Hereditariedade e diversidade da vida" },
+            { appearances: 12, level: "low", topic: "A Mecânica e o funcionamento do Universo" },
+          ],
+        },
+      ],
+    });
+
+    // A retry of the step, or the next learner's research, looks up only the subject it missed.
+    await expect(
+      findTopicFrequencyLookup({ examBlueprintId: blueprint.id }),
+    ).resolves.toMatchObject({
+      subjects: [{ name: "Ciências Humanas e suas Tecnologias", topics: humanas }],
+    });
+  });
+
   it("never looks up a private blueprint read from a learner's material", async () => {
     const owner = await userFixture();
     const blueprint = await examBlueprintFixture({ ownerId: owner.id, structure });

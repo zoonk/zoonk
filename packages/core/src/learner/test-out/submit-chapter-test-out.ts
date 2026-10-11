@@ -6,12 +6,13 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import { recordAnsweredActivity } from "../../stats/record-answered-activity";
 import { gradeChoiceAnswer, parseChoiceItem } from "../_utils/choice-items";
-import { loadGoalPlan } from "../_utils/goal-skill-graph";
+import { loadTestOutPlan } from "../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut } from "../_utils/known-skills";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
 import { getChapterSkills } from "./_utils/chapter-items";
+import { isTestOutPlusOnly } from "./_utils/test-out-access";
 import { type ChapterTestOutInput } from "./test-out-contract";
 import { type TestOutScore, scoreTestOut } from "./test-out-rules";
 
@@ -21,6 +22,8 @@ type ChapterTestOutOutcome = TestOutScore & {
   answers: { isCorrect: boolean; itemId: string }[];
   /** The plan change that skipped the lessons, so the result can offer its undo right there. */
   changeId: string | null;
+  /** The lessons it skipped, as the plan change and the Journey count them. */
+  lessonsSkipped: number;
   testedOutPlanItemIds: string[];
 };
 
@@ -28,6 +31,7 @@ export type SubmitChapterTestOutResult =
   | { outcome: ChapterTestOutOutcome; status: "ready" }
   | { status: "invalidItem" }
   | { status: "notFound" }
+  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
 function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInput[] {
@@ -41,7 +45,7 @@ function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInpu
  * evidence for its skill: nothing the test-out didn't ask about is assumed known. Its answering
  * time counts in the learner's day like any other study. Passing tests
  * out the plan items that teach only skills answered right, so the plan skips them. Every answered
- * question must belong to the chapter.
+ * question must belong to the chapter. Past a free exam plan's first week it comes with Plus.
  */
 export async function submitChapterTestOut({
   chapterId,
@@ -58,7 +62,11 @@ export async function submitChapterTestOut({
     return owned;
   }
 
-  const plan = await loadGoalPlan(goalId);
+  if (await isTestOutPlusOnly(owned.goal)) {
+    return { status: "plusRequired" };
+  }
+
+  const plan = await loadTestOutPlan(goalId);
   const chapterSkillIds = getChapterSkills({ chapterId, plan }).map((skill) => skill.id);
 
   if (chapterSkillIds.length === 0) {
@@ -143,7 +151,7 @@ export async function submitChapterTestOut({
         testedOutAt: answeredAt,
         timeZone,
       })
-    : { changeId: null, planItemIds: [] };
+    : { changeId: null, lessonsSkipped: 0, planItemIds: [] };
 
   revalidateCacheTags([
     getLearnerModelCacheTag(owned.userId),
@@ -175,6 +183,7 @@ export async function submitChapterTestOut({
         itemId: answer.itemId,
       })),
       changeId: testedOut.changeId,
+      lessonsSkipped: testedOut.lessonsSkipped,
       testedOutPlanItemIds: testedOut.planItemIds,
     },
     status: "ready",

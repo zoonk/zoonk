@@ -4,7 +4,14 @@ import { generateText, streamText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration, startTaskGeneration } from "../../provenance/run-task-generation";
 import { type TaskProvenance } from "../../provenance/task-provenance";
-import { type LessonQuestionContextSnapshot } from "./lesson-question-context";
+import beyondLessonPrompt from "./lesson-question-beyond.prompt.md";
+import chapterPrompt from "./lesson-question-chapter.prompt.md";
+import {
+  type LessonQuestionContextSnapshot,
+  type PlanScopeContext,
+} from "./lesson-question-context";
+import lessonPrompt from "./lesson-question-lesson.prompt.md";
+import mockPrompt from "./lesson-question-mock.prompt.md";
 import systemPrompt from "./lesson-question.prompt.md";
 
 export const LESSON_QUESTION_MODEL = "openai/gpt-6-luna";
@@ -17,6 +24,25 @@ const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answ
 const LESSON_QUESTION_TASK = "lesson-question";
 
 export type LessonQuestionPriorTurn = { answer: string; question: string };
+
+/** What the lesson tutor answers about: a goal's plan goes to the buddy, the goal's tutor. */
+type LessonTutorContextSnapshot = Exclude<LessonQuestionContextSnapshot, PlanScopeContext>;
+
+/**
+ * Each scope's own rules come after the ones every question shares: a lesson, a screen or an
+ * answer gets the rules for those, and a chapter or a finished mock what its context describes.
+ */
+const SCOPE_PROMPTS = {
+  answer: lessonPrompt,
+  chapter: `${beyondLessonPrompt}\n${chapterPrompt}`,
+  lesson: lessonPrompt,
+  mock: `${beyondLessonPrompt}\n${mockPrompt}`,
+  step: lessonPrompt,
+} satisfies Record<LessonTutorContextSnapshot["scope"]["kind"], string>;
+
+function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
+  return `${systemPrompt}\n${SCOPE_PROMPTS[contextSnapshot.scope.kind]}`;
+}
 
 /** A finished answer with the run that wrote it, as the tutor stores it. */
 export type LessonQuestionAnswerCompletion = {
@@ -32,7 +58,7 @@ export type LessonQuestionAnswerCompletion = {
 
 type StreamLessonQuestionAnswerParams = {
   analytics?: AiGenerationContext;
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
   /** Facts the learner shared before (their goals, how they learn), when memory is on. */
   learnerMemory?: readonly string[];
   priorTurns: readonly LessonQuestionPriorTurn[];
@@ -41,7 +67,7 @@ type StreamLessonQuestionAnswerParams = {
 
 export type GenerateLessonQuestionAnswerParams = {
   analytics?: AiGenerationContext;
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory?: readonly string[];
   model?: string;
   priorTurns: readonly LessonQuestionPriorTurn[];
@@ -72,7 +98,7 @@ function createCurrentQuestionMessage({
   learnerMemory,
   question,
 }: {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory: readonly string[];
   question: string;
 }) {
@@ -96,7 +122,7 @@ function createLessonQuestionMessages({
   priorTurns,
   question,
 }: {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory: readonly string[];
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
@@ -116,7 +142,7 @@ function createLessonQuestionGenerationOptions({
   reasoning,
   useFallback,
 }: {
-  contextSnapshot: LessonQuestionContextSnapshot;
+  contextSnapshot: LessonTutorContextSnapshot;
   learnerMemory?: readonly string[];
   model: string;
   priorTurns: readonly LessonQuestionPriorTurn[];
@@ -125,7 +151,7 @@ function createLessonQuestionGenerationOptions({
   useFallback: boolean;
 }) {
   return {
-    instructions: systemPrompt,
+    instructions: getSystemPrompt(contextSnapshot),
     messages: createLessonQuestionMessages({
       contextSnapshot,
       learnerMemory,
@@ -176,7 +202,7 @@ export async function generateLessonQuestionAnswer({
   const { provenance, result } = await runTaskGeneration({
     analytics: { contentScope: "personal", ...analytics },
     generate: () => generateText(generationOptions),
-    systemPrompt,
+    systemPrompt: generationOptions.instructions,
     task: LESSON_QUESTION_TASK,
   });
 
@@ -187,7 +213,7 @@ export async function generateLessonQuestionAnswer({
   return {
     data: { answer: result.text },
     provenance,
-    systemPrompt,
+    systemPrompt: generationOptions.instructions,
     usage: result.usage,
     userPrompt: serializeLessonQuestionMessages(generationOptions.messages),
   };
@@ -211,7 +237,7 @@ export function streamLessonQuestionAnswer({
 } {
   const run = startTaskGeneration({
     analytics: { contentScope: "personal", ...analytics },
-    systemPrompt,
+    systemPrompt: getSystemPrompt(contextSnapshot),
     task: LESSON_QUESTION_TASK,
   });
 

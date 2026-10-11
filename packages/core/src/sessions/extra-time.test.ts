@@ -47,7 +47,7 @@ describe(getExtraTime, () => {
     ).toStrictEqual({ available: false, minutes: 10, reason: "dailyCap" });
   });
 
-  it("fits a guardian's limit and hides once it's reached", () => {
+  it("fits the learner's daily limit and hides once it's reached", () => {
     expect(getExtraTime({ blocks: [done], remainingLimitMinutes: 6 })).toStrictEqual({
       available: true,
       minutes: 6,

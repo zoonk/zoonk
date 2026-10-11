@@ -7,7 +7,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAlphabetIdentityKey } from "../../library/language/alphabet/alphabet-identity";
-import { getTodayStudySession } from "../../sessions/get-today-study-session";
+import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { getLanguageUnitsView } from "../../view-models/language/get-language-units-view";
 import { skipAlphabetIntro } from "./skip-alphabet-intro";
 

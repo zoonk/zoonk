@@ -60,7 +60,7 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
     expectations: `
       - MUST be in US English
       - Overview for a curious adult: 3 to 6 chapters, plain words, no formulas, equations or notation
-      - Big ideas to cover at a high level: energy comes in packets (quantization), wave-particle duality, uncertainty, superposition and measurement, atoms and orbitals (why the electron doesn't fall into the nucleus), tunneling, entanglement, and quantum technology in everyday life (lasers, semiconductors and chips, MRI, quantum computing)
+      - Big ideas, judged by category rather than by any one example: the quantum foundations (quantization, wave-particle duality, uncertainty, superposition and measurement), what quantum physics says about atoms and matter, entanglement, and at least one modern application of quantum effects (a technology people use, or quantum computing)
       - Lessons are short stories about one idea each, not a textbook sequence
 
       ${SHARED_EXPECTATIONS}
@@ -72,7 +72,7 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
     expectations: `
       - MUST be in Brazilian Portuguese
       - Overview: 3 to 6 chapters of big ideas in plain words, no formulas or equations
-      - Big ideas: scarcity and choices, supply and demand and prices, money, banks and interest rates, inflation, GDP, growth and unemployment, the government's role (taxes, spending, public debt), international trade and exchange rates, and how people really decide (behavioral economics); Brazilian examples are welcome
+      - Big ideas, judged by category rather than by any one example: scarcity and choices; markets and prices; the financial system (money, banks and credit); core ideas of macroeconomics such as output, growth, inflation, unemployment and public finances; trade with other countries; and how people actually decide. Brazilian examples are welcome
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -125,7 +125,8 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Beginner band of statistics: types of data and variables, tables and charts, measures of center and spread, percentiles and box plots, distributions and the normal curve, basic probability, sampling and bias, correlation vs causation, an introduction to estimation (confidence intervals) and to hypothesis tests only at a beginner depth
+      - Beginner band of statistics, judged by category rather than by any one example: describing data (types of variables, tables and charts, center, spread and position), probability and distributions at a beginner level, sampling and bias, relationships between variables (correlation is not causation), and a first look at inference (estimation and hypothesis testing)
+      - Level fit: inference stays at a beginner's first look; several separate test procedures (t tests for different designs, ANOVA, chi-square) go past the band and are a level-fit error
       - Practical work with spreadsheets and real data should appear, and a field AI is changing should include checking analyses and charts made with AI tools
       - Formulas may appear where the idea needs them, explained in everyday words
 
@@ -205,7 +206,8 @@ export const TEST_CASES: TestCase<CourseOutlineExpected, CourseOutlineParams>[] 
   {
     expectations: `
       - MUST be in Brazilian Portuguese
-      - Beginner band of a canonical mathematics course from zero: whole-number operations, fractions and decimals, ratio and proportion, percentages, powers and roots, basic algebra and linear equations, units and measurement, plane geometry and areas, reading charts and tables, basic statistics (mean, median, mode), first-degree functions
+      - Beginner band of a canonical mathematics course from zero, judged by category rather than by any one example: numbers and operations (whole numbers, fractions, decimals, powers and roots), proportional reasoning (ratio, proportion, percentages), first algebra (expressions, linear equations, first-degree functions), measurement and plane geometry, and reading data (charts, tables, basic statistics)
+      - Level fit: content past a from-zero beginner band (quadratic functions, trigonometry, analytic geometry) is a level-fit error
       - Every required skill key must be tagged on the chapter that teaches it: porcentagem, razao-proporcao, leitura-graficos, estatistica-basica, geometria-plana, funcao-afim
       - Shared by all learners: exam-specific tricks for ENEM don't belong in a canonical course outline
 
@@ -381,6 +383,342 @@ Obs.: a prova tem 5 questões abertas e 5 de marcar. Não cai divisão celular (
           name: "Relacionar organelas e funções",
         },
       ],
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Intermediate band of a shared ENEM course, from a real run (10 Oct 2026) that put Portuguese text lessons, math chart lessons and physics wave lessons in one chapter ("Painéis visuais e representações de ondas") and joined Linguagens with Ciências Humanas in another
+      - Every chapter's tagged skills share one area (each skill's \`area\`), and every lesson of a chapter belongs to that area: no text or map lessons in a chapter tagged with a math or physics skill
+      - Each EXTEND_SKILLS skill gets one new chapter that continues its listed chapters without repeating their lessons
+      - No title, description or objective names the exam ("ENEM")
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-enem-intermediate-one-area-per-chapter",
+    userInput: {
+      courseTitle: "ENEM",
+      exams: [
+        {
+          name: "ENEM",
+          style:
+            "multipleChoice (5 options): Múltipla escolha com cinco alternativas, de A a E essay: Redação dissertativo-argumentativa de até 30 linhas Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.",
+        },
+      ],
+      extendSkills: [
+        {
+          area: "Ciências da Natureza",
+          chapters: [
+            {
+              lessons: [
+                "Raio atômico e posição periódica",
+                "Energia de ionização e eletronegatividade",
+                "Ligação iônica e propriedades",
+                "Ligações covalentes e metálicas",
+              ],
+              title: "Propriedades periódicas e ligações",
+            },
+            {
+              lessons: [
+                "Grupos, períodos e elétrons externos",
+                "Raio atômico e raio iônico",
+                "Tendências da energia de ionização",
+                "Eletronegatividade na tabela periódica",
+              ],
+              title: "Tendências e comparações periódicas",
+            },
+            {
+              lessons: [
+                "Blindagem eletrônica e carga nuclear efetiva",
+                "Energias de ionização sucessivas",
+                "Afinidade eletrônica",
+                "Estabilidade de subníveis e exceções periódicas",
+                "Caráter metálico na tabela periódica",
+                "Reatividade dos metais alcalinos",
+                "Reatividade dos halogênios",
+                "Caráter ácido e básico de óxidos",
+                "Polarizabilidade de íons",
+                "Tendências nos metais de transição",
+              ],
+              title: "Exceções e reatividade na tabela periódica",
+            },
+          ],
+          description:
+            "Usar a organização periódica para comparar características e propriedades dos elementos.",
+          key: "01a122ed-b691-70ed-bd88-151e261d77fa",
+          lessons: 6,
+          name: "Comparar propriedades periódicas",
+        },
+        {
+          area: "Ciências da Natureza",
+          chapters: [
+            {
+              lessons: [
+                "Raio atômico e posição periódica",
+                "Energia de ionização e eletronegatividade",
+                "Ligação iônica e propriedades",
+                "Ligações covalentes e metálicas",
+              ],
+              title: "Propriedades periódicas e ligações",
+            },
+            {
+              lessons: [
+                "Geometria molecular e repulsão eletrônica",
+                "Pares não ligantes e forma molecular",
+                "Polaridade molecular e simetria",
+                "Forças de dispersão e polarizabilidade",
+                "Interações dipolo-dipolo",
+                "Ligações de hidrogênio entre moléculas",
+                "Forças intermoleculares e temperatura de ebulição",
+                "Viscosidade e tensão superficial",
+                "Sólidos cristalinos e amorfos",
+                "Polimorfismo cristalino",
+              ],
+              title: "Forma molecular e organização das partículas",
+            },
+          ],
+          description: "Distinguir ligações iônicas, covalentes e metálicas",
+          key: "01a12220-bb3f-70cc-be04-8e001d907327",
+          lessons: 10,
+          name: "Relacionar ligações e propriedades",
+        },
+        {
+          area: "Matemática",
+          chapters: [
+            { lessons: ["Leitura de gráficos"], title: "Estatística" },
+            {
+              lessons: [
+                "Eixos truncados",
+                "Valores absolutos e proporções",
+                "Gráficos acumulados",
+                "Gráficos com dois eixos verticais",
+                "Séries indexadas",
+                "Pictogramas e proporção visual",
+              ],
+              title: "Comparações e distorções em gráficos",
+            },
+            {
+              lessons: [
+                "Tabelas de características biológicas",
+                "Bactérias, arqueias e eucariontes",
+                "Diversidade dos eucariontes",
+                "Grupos de plantas",
+                "Grupos de animais",
+                "Cladogramas e parentesco",
+                "Mapas de calor",
+                "Gráficos de dispersão",
+                "Diagrama de caixa",
+                "Barras de erro em gráficos",
+              ],
+              title: "Dados de biodiversidade e classificação",
+            },
+          ],
+          description:
+            "Leia o título, os eixos e as unidades antes dos números, e só então compare o que a questão pede.",
+          key: "588e45be-560f-86b2-824c-bb3c0479f598",
+          lessons: 10,
+          name: "Ler gráficos e tabelas",
+        },
+        {
+          area: "Linguagens",
+          chapters: [
+            {
+              lessons: [
+                "Variação regional, social e situacional",
+                "Norma-padrão e preconceito linguístico",
+                "Escolha lexical e posicionamento",
+                "Marcas lexicais de avaliação",
+              ],
+              title: "Variação linguística e escolhas lexicais",
+            },
+            {
+              lessons: [
+                "Alternância de registro",
+                "Escrita digital e situação de uso",
+                "Oralidade representada na escrita",
+                "Variação geracional",
+                "Contato entre variedades regionais",
+                "Linguagem de grupos e pertencimento",
+                "Empréstimos linguísticos",
+                "Línguas indígenas e português brasileiro",
+                "Variedades linguísticas na ficção",
+                "Variação linguística e registro formal",
+              ],
+              title: "Língua em contato e situações de uso",
+            },
+          ],
+          description:
+            "Identificar variedades da língua portuguesa e explicar sua relação com grupos e situações de uso.",
+          key: "01a122ed-ade1-7368-91ad-a81e1c90aff0",
+          lessons: 10,
+          name: "Reconhecer variação linguística",
+        },
+        {
+          area: "Ciências Humanas",
+          chapters: [
+            { lessons: ["A Primeira República"], title: "Brasil República" },
+            {
+              lessons: [
+                "Os limites da alternância presidencial",
+                "Interesses de São Paulo e Minas Gerais",
+                "A Primeira República",
+                "A Reação Republicana de 1922",
+                "A disputa pela sucessão de 1930",
+                "Aliança Liberal e ruptura de 1930",
+              ],
+              title: "Acordos e rupturas das oligarquias",
+            },
+            {
+              lessons: [
+                "Federalismo e poder estadual",
+                "Limites do direito ao voto",
+                "Clientelismo e apoio político",
+                "Voto aberto e pressão sobre eleitores",
+                "Fraudes na apuração",
+                "Verificação de poderes e degola",
+                "A cadeia de apoio da política dos governadores",
+                "Convênio de Taubaté e sustentação dos preços",
+                "Custos públicos da valorização do café",
+                "Fontes eleitorais e alcance do controle oligárquico",
+              ],
+              title: "Engrenagens do domínio oligárquico",
+            },
+          ],
+          description:
+            "De 1894 a 1930, as elites de São Paulo e Minas Gerais dominaram a presidência, muitas vezes se alternando.",
+          key: "c3f3f373-5fcb-89f3-8dd5-6bdb196e5dcb",
+          lessons: 10,
+          name: "Explicar a política do café com leite",
+        },
+        {
+          area: "Redação",
+          chapters: [
+            { lessons: ["As cinco competências"], title: "Redação" },
+            {
+              lessons: [
+                "Desvios de norma na competência I",
+                "Recorte temático na competência II",
+                "Sustentação argumentativa na competência III",
+                "Relações de sentido na competência IV",
+                "Elementos da intervenção na competência V",
+                "Problemas simultâneos em um trecho",
+              ],
+              title: "Diagnóstico das competências da redação",
+            },
+            {
+              lessons: [
+                "Recorrência de desvios na competência I",
+                "Variação linguística e registro formal",
+                "Repertório produtivo na competência II",
+                "Uso dos textos motivadores",
+                "Sustentação argumentativa na competência III",
+                "Desenvolvimento de exemplos",
+                "Ambiguidade na referência",
+                "Conectivos e relações efetivas",
+                "Elementos da intervenção na competência V",
+                "Direitos humanos na proposta de intervenção",
+              ],
+              title: "Calibração das competências da redação",
+            },
+          ],
+          description:
+            "A redação vale cinco competências, de 0 a 200 cada: norma culta, tema, argumentação, coesão e proposta de intervenção.",
+          key: "5dbcc48f-5cf6-8de9-88af-5ff186e54f50",
+          lessons: 10,
+          name: "Conhecer as cinco competências da redação",
+        },
+      ],
+      language: "pt",
+      level: "intermediate",
+      otherLevelChapters: [
+        "Porcentagem",
+        "Funções",
+        "Cadeias de reajustes percentuais",
+        "Modelos lineares em tarifas e faixas",
+        "Otimização quadrática com restrições",
+        "Preço final em ofertas com condições",
+        "Estatística",
+        "Desconto real em compras por quantidade",
+        "Percentuais além dos casos inteiros",
+        "Medidas centrais em conjuntos de dados",
+        "Fatores percentuais em valores compostos",
+        "Comparações e distorções em gráficos",
+        "Razão e proporção",
+        "Dados de biodiversidade e classificação",
+        "Ecologia",
+        "Proporcionalidade inversa e composta",
+        "Escalas em mapas, plantas e maquetes",
+        "Ecologia: Destinos da energia nas teias alimentares",
+        "Ecologia: Estimativas de energia em teias alimentares",
+        "Eletricidade",
+        "Eletricidade: Tensões e falhas em circuitos série",
+        "Lei de Ohm em gráficos e circuitos",
+        "Brasil República",
+        "Brasil República: Conflitos e queda do Estado Novo",
+        "Acordos e rupturas das oligarquias",
+        "Engrenagens do domínio oligárquico",
+        "Interpretação de texto",
+        "Inferência, coesão e vozes textuais",
+        "Foco textual e pertinência do repertório",
+        "Uso crítico de repertório na argumentação",
+        "Inferências em argumentos e vozes do texto",
+        "Redação",
+        "Coerência e escolhas no fechamento da redação",
+        "Proposta de intervenção detalhada",
+        "Diagnóstico das competências da redação",
+        "Calibração das competências da redação",
+        "Medidas e movimento",
+        "Precisão de medidas e chances em experimentos",
+        "Unidades em situações e gráficos físicos",
+        "Escalas e unidades em medidas especializadas",
+        "Propriedades periódicas e ligações",
+        "Tendências e comparações periódicas",
+        "Exceções e reatividade na tabela periódica",
+        "Forma molecular e organização das partículas",
+        "Variação linguística e escolhas lexicais",
+        "Língua em contato e situações de uso",
+        "Recursos linguísticos e efeitos de sentido",
+        "Nomeação e enquadramento lexical",
+        "Decisão entre alternativas",
+      ],
+      requiredSkills: [
+        {
+          area: "Linguagens",
+          description:
+            "Relacionar palavras, imagens e outros recursos para interpretar textos de diferentes gêneros.",
+          key: "01a1221f-40fc-77ad-a11d-d8a466e14767",
+          name: "Interpretar textos multimodais",
+        },
+        {
+          area: "Ciências da Natureza",
+          description:
+            "Relacionar frequência, comprimento de onda e velocidade à propagação de oscilações e ondas.",
+          key: "01a122ed-b690-7ea1-9fb6-54fea3ff6c5d",
+          name: "Analisar a propagação de ondas",
+        },
+        {
+          area: "Ciências da Natureza",
+          description:
+            "Usar modelos atômicos e partículas subatômicas para explicar a constituição da matéria.",
+          key: "01a122ed-b690-7fcc-ac2b-e84e1fa28d64",
+          name: "Interpretar modelos atômicos",
+        },
+        {
+          area: "Ciências Humanas",
+          description:
+            "Comparar a produção agrária e outras formas de organização do trabalho segundo a propriedade, a técnica e as relações sociais.",
+          key: "01a122ed-ade3-73bd-bf80-6754435d94ab",
+          name: "Comparar sistemas produtivos e relações de trabalho",
+        },
+        {
+          area: "Ciências Humanas",
+          description:
+            "Relacionar identidades culturais, costumes e formas de convivência às condições históricas em que se formam.",
+          key: "01a122ed-ade1-73b4-a3ab-d158ba1de158",
+          name: "Analisar a formação de identidades culturais",
+        },
+      ],
+      withoutTools: true,
     },
   },
 ];

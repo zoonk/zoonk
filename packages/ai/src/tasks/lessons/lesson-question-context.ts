@@ -122,10 +122,24 @@ export type ExamFactsContext = {
   rules: string[];
   /** How the exam is scored, as the notice says. */
   scoring: string | null;
+  /**
+   * Where the subjects' counts marked `fromLatestEdition` come from: the exam's latest edition, as
+   * one source counted it. Absent when the notice counts its subjects itself.
+   */
+  questionsSource?: { edition: string | null; title: string | null; url: string } | null;
   /** Where the facts come from: the notice's address. */
   source: string | null;
-  /** The notice's subjects in its order, with their questions and grouping when it gives them. */
-  subjects: { group: string | null; name: string; questions: number | null }[];
+  /**
+   * The notice's subjects in its order, with their grouping when it gives one and their questions:
+   * the notice's count, or, when it gives none, the count in the exam's latest edition
+   * (`fromLatestEdition`), which the plan weighs the subject by and the app shows.
+   */
+  subjects: {
+    fromLatestEdition?: true;
+    group: string | null;
+    name: string;
+    questions: number | null;
+  }[];
 };
 
 /**
@@ -149,6 +163,11 @@ export type PlanScopeContext = {
      */
     cutoff?: {
       edition: string | null;
+      /**
+       * The top of the scale `score` is on: 7 out of 10 reads differently from 7 out of 100.
+       * Absent from questions asked before the buddy knew it.
+       */
+      maxScore?: number;
       quota: string | null;
       score: number;
       source: string;
@@ -186,6 +205,11 @@ export type PlanScopeContext = {
   } | null;
   scope: { kind: "plan" };
   /**
+   * The page the learner asked from, when it isn't the buddy's own conversation: a chapter, a
+   * lesson (one of its screens, or an answer given on one) or a mock exam they finished.
+   */
+  screen?: TutorScreenContext;
+  /**
    * How the learner shaped the plan, so the buddy can say what a change would touch: the plan's
    * areas (focused, given less time, started past their basics or left out), minutes per weekday
    * (Sunday first, 0 for rest days), light weeks, how lessons feel, the level the learner gave and
@@ -195,7 +219,7 @@ export type PlanScopeContext = {
   setup?: {
     areas: {
       focused: boolean;
-      /** The part of a focused area the learner named ("Biologia e Química"); absent when whole. */
+      /** The part of a focused area the learner named ("Biology and Chemistry"); absent when whole. */
       focusPart?: string | null;
       name: string;
       pastBasics?: boolean;
@@ -267,7 +291,8 @@ export type MockScopeContext = {
     explanation: string | null;
     learnerAnswer: string | null;
     number: number;
-    outcome: "blank" | "wrong";
+    /** `partial`: a question with several picks that earned part of its points. */
+    outcome: "blank" | "partial" | "wrong";
     question: string;
     skill: string | null;
   }[];
@@ -285,6 +310,9 @@ export type MockScopeContext = {
   sections: { name: string | null; questions: number }[];
   version: 1;
 };
+
+/** A page of the app the learner can ask the buddy about, besides their plan. */
+export type TutorScreenContext = ChapterScopeContext | LessonScopeContext | MockScopeContext;
 
 export type LessonQuestionContextSnapshot =
   | ChapterScopeContext

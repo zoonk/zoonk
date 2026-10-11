@@ -1,6 +1,5 @@
 "use client";
 
-import { NOTICE_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
@@ -13,13 +12,15 @@ import { CalendarDaysIcon, ClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { FactChip, FactChips } from "../../_components/fact-chips";
-import { daysUntilIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { daysUntilIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
 import { JourneyPath } from "../../journey/journey-path";
+import { usePlanEndText } from "../../journey/use-phase-when";
 import { LearnLink } from "../../learn-link";
+import { PlanChoices } from "../../plan/plan-choices";
 import {
   type PlanActions,
   type PlanGoal,
@@ -28,6 +29,7 @@ import {
 } from "../../plan/plan-context";
 import { PlanEditor } from "../../plan/plan-editor";
 import { PlanNotice } from "../../plan/plan-notice";
+import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
 import { SyllabusSummary } from "../../syllabus/syllabus-summary";
 import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
@@ -39,7 +41,8 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
-import { NoticeDateNote, NoticeReading, UsualStructureNote } from "./notice-reading";
+import { NoticeReading, UsualStructureNote } from "./notice-reading";
+import { RevealNoticeDay } from "./reveal-notice-day";
 import { StepLoading } from "./step-parts";
 import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
 
@@ -100,12 +103,11 @@ function StartButton({ href }: { href: string }) {
  */
 function RevealFacts() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
   const today = useMountTime();
   const formatDuration = useFormatDuration();
+  const planEnd = usePlanEndText();
   const { plan } = usePlanScreen();
   const { dailyMinutes, targetDate, targetDateEstimated } = plan.schedule;
-  const { endDate } = plan.estimate;
 
   return (
     <FactChips>
@@ -121,10 +123,10 @@ function RevealFacts() {
               })}
         </FactChip>
       )}
-      {!targetDate && endDate && (
+      {!targetDate && planEnd && (
         <FactChip>
           <CalendarDaysIcon aria-hidden="true" />
-          {t("Until about {date}", { date: formatDate(endDate, "month") })}
+          {planEnd}
         </FactChip>
       )}
       <FactChip>
@@ -133,20 +135,6 @@ function RevealFacts() {
       </FactChip>
     </FactChips>
   );
-}
-
-/**
- * The notice's exam day waiting for the learner's answer on Today: the notice puts the exam on
- * another day than the one they gave (another month than the one they said), and the plan keeps
- * theirs until they choose. Null when no such change waits.
- */
-function findWaitingNoticeDay(changes: PlanView["changes"]): string | null {
-  const operation = changes
-    .filter((change) => change.status === "proposed" && change.source === NOTICE_SOURCE)
-    .flatMap((change) => change.operations)
-    .find((candidate) => candidate.kind === "setNoticeDate");
-
-  return operation?.kind === "setNoticeDate" ? operation.targetDate : null;
 }
 
 function RevealBody({
@@ -163,8 +151,6 @@ function RevealBody({
   const t = useExtracted();
   const [editing, setEditing] = useState(false);
   const { goal, plan } = usePlanScreen();
-  // A class test's day comes from the learner, or their own material: never from a notice.
-  const noticeDay = syllabus?.fromMaterial ? null : findWaitingNoticeDay(plan.changes);
 
   return (
     <OnboardingColumn>
@@ -175,8 +161,9 @@ function RevealBody({
         </OnboardingHeading>
 
         <RevealFacts />
-        {noticeDay && plan.notice !== "usual" && <NoticeDateNote isoDate={noticeDay} />}
+        <RevealNoticeDay />
         <PlanNotice onAdjust={() => setEditing(true)} />
+        <PlanChoices />
         {plan.notice === "usual" && <UsualStructureNote />}
       </div>
 
@@ -229,7 +216,8 @@ function usePlanWait({
 
 /**
  * The last onboarding screen: the plan's shape in two facts, honest about how much of the goal
- * their time covers ("Adjust" when it doesn't cover it all), the goal's structure (an exam's
+ * their time covers ("Adjust" when it doesn't cover it all), the choices it starts with (its
+ * prerequisites on the recommendation, studying everything instead), the goal's structure (an exam's
  * notice subjects and topics, or the plan's modules, all one tap away) and its path of phases to
  * the goal. One button starts.
  */
@@ -323,7 +311,9 @@ export function PlanReveal({
   // An exam's plan waits for research's reading of the notice, so the learner sees the notice's
   // plan; the wait has a cap, and a later reading arrives on Today as a change to apply.
   if (readingNotice) {
-    return <NoticeReading lastNotice={plan.schedule.targetDateEstimated} />;
+    return (
+      <NoticeReading document={plan.examDocument} lastNotice={plan.schedule.targetDateEstimated} />
+    );
   }
 
   // After a change, the plan is read again; a failed read keeps the plan as it was.
@@ -335,8 +325,10 @@ export function PlanReveal({
 
   const refreshingActions: PlanActions = {
     change: (operations) => refreshAfter(planActions.change(operations)),
+    chooseExamOption: (input) => refreshAfter(planActions.chooseExamOption(input)),
     chooseTools: (input) => refreshAfter(planActions.chooseTools(input)),
     decide: (input) => refreshAfter(planActions.decide(input)),
+    preview: planActions.preview,
   };
 
   return (
@@ -349,12 +341,14 @@ export function PlanReveal({
         shareHref: planLinkHref(plan.planId),
       }}
     >
-      <RevealBody
-        isGuest={isGuest}
-        signUpHref={signUpHref}
-        syllabus={syllabus}
-        todayHref={todayHref}
-      />
+      <PlanSheetHosts>
+        <RevealBody
+          isGuest={isGuest}
+          signUpHref={signUpHref}
+          syllabus={syllabus}
+          todayHref={todayHref}
+        />
+      </PlanSheetHosts>
     </PlanScreenProvider>
   );
 }

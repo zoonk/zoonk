@@ -50,7 +50,7 @@ type SwitcherGoal = {
  * paused or finished one says so instead.
  */
 function GoalLine({ goal }: { goal: SwitcherGoal }) {
-  const t = useExtracted();
+  const t = useExtracted("goalSwitcher");
   const today = useMountTime();
   const days = goal.targetDate ? daysUntilIsoDate({ isoDate: goal.targetDate, today }) : null;
 
@@ -143,7 +143,7 @@ const TRIGGER_CLASS =
  * one.
  */
 function NoGoalLink({ newGoalHref }: { newGoalHref: string }) {
-  const t = useExtracted();
+  const t = useExtracted("goalSwitcher");
 
   return (
     <LearnLink className={TRIGGER_CLASS} href={newGoalHref}>
@@ -177,7 +177,7 @@ export function GoalSwitcher({
   newGoalHref: string;
   onSelect: (goalId: string) => Promise<void>;
 }) {
-  const t = useExtracted();
+  const t = useExtracted("goalSwitcher");
   const [isPending, startTransition] = useTransition();
   const followed = goals.filter((goal) => goal.kind !== "explain");
   const explanations = goals.filter((goal) => goal.kind === "explain");

@@ -17,7 +17,6 @@ import {
   examStructureSchema,
   topicFrequencySchema,
 } from "../exams/blueprint-contract";
-import { isNoticeReadAgain } from "../exams/blueprint-reading";
 import { type CandidateExam, toGoalCandidateExams } from "../exams/candidate-exams";
 import { getSubjectQuestions } from "../exams/subject-questions";
 import { listTopicLevels } from "../exams/topic-frequency";
@@ -29,6 +28,7 @@ import {
 } from "../sources/material-pages";
 import { type StartedCourse } from "./course-start-graph";
 import { getLessonBudget } from "./lesson-budget";
+import { toExamIdentity, toSharedContext } from "./shared-graph-prompt";
 
 type GraphPrompt = Omit<SkillGraphParams, "analytics" | "model" | "reasoning" | "useFallback">;
 
@@ -71,7 +71,15 @@ export type GoalCurriculumInputs = {
     | "title"
     | "userId"
   >;
+  /** The skill graph's prompt for a private course: the goal as typed, what onboarding heard. */
   graphPrompt: GraphPrompt;
+  /** The details a shared curriculum reads instead (see `toScopedGraphPrompt`). */
+  sharedContext: string | undefined;
+  /**
+   * The exam an exam goal prepares for, as its shared graph and outlines name it (see
+   * `toExamIdentity`); null for other goals.
+   */
+  examIdentity: string | null;
   /** The exam its shared outlines are written for (see `toGoalCandidateExams`). */
   exams: CandidateExam[];
   /**
@@ -80,11 +88,6 @@ export type GoalCurriculumInputs = {
    * checked against it once it's in. Null when the goal has no blueprint.
    */
   blueprintReference: { text: string; title: string } | null;
-  /**
-   * Research reads the notice of the goal's shared blueprint again (see `isNoticeReadAgain`), so
-   * the graph waits for that reading instead of being built from the older one.
-   */
-  readsNoticeAgain: boolean;
   /**
    * The goal's sources as references for the coverage check: its exam notice, a law's text or a
    * product's docs, the syllabi research found for a big learn goal, or the learner's uploads.
@@ -185,11 +188,12 @@ function toExamNotes(structure: ExamStructure | undefined): string[] {
 }
 
 /**
- * The exam's notice as the curriculum reads it: each subject with its group, its share of the
- * score and every topic of its syllabus, what the notice says about format and scoring, and how
- * often the board asks each topic in past papers (read with the notice, or looked up).
+ * The exam's notice as the curriculum reads it: each subject with its group, the choice it's an
+ * option of (the exam's shared graph teaches every option), its share of the score and every topic
+ * of its syllabus, what the notice says about format and scoring, and how often the board asks
+ * each topic in past papers (read with the notice, or looked up).
  */
-function toExamOutline(
+export function toExamOutline(
   blueprint: Pick<ExamBlueprint, "name" | "structure" | "topicFrequency">,
 ): ExamOutline {
   const structure = examStructureSchema.safeParse(blueprint.structure).data;
@@ -197,9 +201,11 @@ function toExamOutline(
 
   const subjects = structure
     ? structure.subjects.map((subject) => ({
+        choiceGroup: subject.choiceGroup ?? null,
         group: subject.group ?? null,
         name: subject.name,
         questions: getSubjectQuestions({ structure, subject }),
+        shortName: subject.shortName ?? null,
         topics: subject.topics,
         weight: subject.weight,
       }))
@@ -364,10 +370,14 @@ export async function loadGoalCurriculumInputs(
       ? { text: formatExamOutline(outline), title: goal.examBlueprint.name }
       : null;
 
+  const exams = toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind });
+
   return {
     awaitingAnswers: isAwaitingAnswers(goal, details),
     blueprintReference: blueprint,
-    exams: toGoalCandidateExams({ blueprint: goal.examBlueprint, kind: goal.kind }),
+    examIdentity:
+      goal.kind === "exam" ? toExamIdentity({ details, exams, title: goal.title }) : null,
+    exams,
     goal: {
       examBlueprintId: goal.examBlueprintId,
       id: goal.id,
@@ -394,12 +404,8 @@ export async function loadGoalCurriculumInputs(
     isGuest: goal.user.isAnonymous,
     knownSubjects: getKnownSubjects(goal),
     ownMaterialTest: isOwnMaterialTest(goal.examBlueprint),
-    readsNoticeAgain: Boolean(
-      goal.examBlueprint &&
-      !goal.examBlueprint.ownerId &&
-      isNoticeReadAgain({ blueprint: goal.examBlueprint, now: new Date() }),
-    ),
     references,
+    sharedContext: toSharedContext(details),
     startedCourse: toStartedCourse({ course: goal.primaryCourse, details }),
     usesTools: usesTools({ examStructure: goal.examBlueprint?.structure ?? null, kind: goal.kind }),
   };

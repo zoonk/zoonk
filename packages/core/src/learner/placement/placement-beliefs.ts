@@ -263,9 +263,43 @@ function getPriorBelief({
 }
 
 /**
+ * What placement believes of each skill before any answer: what the learner's own level (and the
+ * subjects they said they know well) says about its band, or no opinion. A test from the
+ * learner's own material (`answeredOnly`) takes neither: only answers settle its topics.
+ */
+export function getPlacementPriors({
+  answeredOnly = false,
+  knownAreas = [],
+  ownLevel = null,
+  skills,
+}: {
+  answeredOnly?: boolean;
+  knownAreas?: readonly string[];
+  ownLevel?: OwnLevel | null;
+  skills: readonly PlacementSkill[];
+}): SkillBeliefs {
+  const known = new Set(answeredOnly ? [] : knownAreas);
+  const areaBandRanks = getAreaBandRanks(skills);
+
+  return new Map(
+    skills.map((skill) => [
+      skill.id,
+      getPriorBelief({
+        areaBandRank: areaBandRanks.get(skill.sectionTitle) ?? -1,
+        knownAreas: known,
+        ownLevel: answeredOnly ? null : ownLevel,
+        skill,
+      }),
+    ]),
+  );
+}
+
+/**
  * Replays every answer on the goal's skills, oldest first, into a belief per skill, starting from
  * what the learner's own level (and the subjects they know well) says about each skill's band.
- * Answers on skills outside the graph are ignored.
+ * Answers on skills outside the graph are ignored. It's placement's guess of where the learner
+ * stands, which steers what it asks: what it skips is only what a skill's own answers confirm (see
+ * `readSkillStatuses`).
  */
 export function getPlacementBeliefs({
   answeredOnly = false,
@@ -287,20 +321,7 @@ export function getPlacementBeliefs({
   skills: readonly PlacementSkill[];
 }): SkillBeliefs {
   const graph = buildSkillGraph(skills);
-  const known = new Set(answeredOnly ? [] : knownAreas);
-  const areaBandRanks = getAreaBandRanks(skills);
-
-  const initial: SkillBeliefs = new Map(
-    skills.map((skill) => [
-      skill.id,
-      getPriorBelief({
-        areaBandRank: areaBandRanks.get(skill.sectionTitle) ?? -1,
-        knownAreas: known,
-        ownLevel: answeredOnly ? null : ownLevel,
-        skill,
-      }),
-    ]),
-  );
+  const initial = getPlacementPriors({ answeredOnly, knownAreas, ownLevel, skills });
 
   return evidence.reduce(
     (beliefs, answer) => applyEvidence({ answeredOnly, beliefs, evidence: answer, graph }),

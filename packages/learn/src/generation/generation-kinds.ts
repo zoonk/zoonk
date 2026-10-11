@@ -1,4 +1,5 @@
 import {
+  type ChallengeQuestionsStepName,
   type ExplanationStepName,
   type FocusTestQuestionsStepName,
   type GoalContentStepName,
@@ -51,8 +52,6 @@ export type GenerationKindDefinition<TStep extends string, TPhase extends string
 const GOAL_PHASES = [
   { id: "goal", seconds: 8 },
   { id: "notice", optional: true, seconds: 15 },
-  // An exam's stored notice read again with newer instructions: a few minutes, once per exam.
-  { id: "edital", optional: true, seconds: 180 },
   { id: "skills", seconds: 60 },
 ] as const;
 
@@ -61,7 +60,6 @@ const GOAL_STEPS = {
   buildSkillGraph: "skills",
   joinRunningGoal: "join",
   readExamNotice: "notice",
-  readNotice: "edital",
   understandGoal: "goal",
 } as const;
 
@@ -94,7 +92,7 @@ const curriculum = {
   },
 } as const satisfies GenerationKindDefinition<
   GoalContentStepName,
-  "edital" | "goal" | "notice" | "plan" | "skills"
+  "goal" | "notice" | "plan" | "skills"
 >;
 
 /**
@@ -115,7 +113,7 @@ const placement = {
   },
 } as const satisfies GenerationKindDefinition<
   GoalContentStepName,
-  "edital" | "goal" | "notice" | "questions" | "skills"
+  "goal" | "notice" | "questions" | "skills"
 >;
 
 /** Day 1 opens once the plan is saved: Today builds the first day from it. */
@@ -133,7 +131,7 @@ const firstLesson = {
   },
 } as const satisfies GenerationKindDefinition<
   GoalContentStepName,
-  "day" | "edital" | "goal" | "notice" | "skills"
+  "day" | "goal" | "notice" | "skills"
 >;
 
 /** The plan, then the outlines of its courses: the first band of the first course takes longest. */
@@ -152,7 +150,6 @@ const courseOutline = {
     prepareFirstLessons: "done",
     preparePlacement: "plan",
     readExamNotice: "skills",
-    readNotice: "skills",
     saveSkills: "plan",
     understandGoal: "skills",
   },
@@ -199,6 +196,20 @@ const mockQuestions = {
   phases: [{ id: "questions", seconds: 100 }],
   steps: { joinMockQuestions: "join", mockQuestionsReady: "done", writeMockQuestions: "questions" },
 } as const satisfies GenerationKindDefinition<MockQuestionsStepName, "questions">;
+
+/**
+ * A challenge's questions, written when the learner starts one the shared bank is short of: what
+ * it lacks of its ten, one call per skill or two, all at once. About half a minute for ten on two
+ * skills (calls of 24s and 32s, measured on the dev server on 2026-10-10).
+ */
+const challengeQuestions = {
+  phases: [{ id: "questions", seconds: 32 }],
+  steps: {
+    challengeQuestionsReady: "done",
+    joinChallengeQuestions: "join",
+    writeChallengeQuestions: "questions",
+  },
+} as const satisfies GenerationKindDefinition<ChallengeQuestionsStepName, "questions">;
 
 /**
  * A new explanation can be read once writing completes (it's saved then); the run goes on to link
@@ -255,13 +266,25 @@ const speakingMock = {
 } as const satisfies GenerationKindDefinition<"writeMock", "write">;
 
 /**
+ * An exam's speaking task the learner starts: one request writes its card like the exam's sheet,
+ * then draws its photos when the task has some. Estimated from the speaking mock's script (about
+ * 22 s) plus a low-quality photo; tuned on the first real runs.
+ */
+const examSpeaking = {
+  phases: [{ id: "write", seconds: 30 }],
+  steps: { writeTask: "write" },
+} as const satisfies GenerationKindDefinition<"writeTask", "write">;
+
+/**
  * Every generation wait: which run it follows and how that run's steps read as phases, weighted
  * by how long each usually takes. The copy for each phase lives with the wait component.
  */
 const GENERATION_KINDS = {
+  challengeQuestions,
   conversationCall,
   courseOutline,
   curriculum,
+  examSpeaking,
   explanation,
   firstLesson,
   focusTestQuestions,

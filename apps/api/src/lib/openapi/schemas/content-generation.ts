@@ -52,7 +52,8 @@ export const sessionPreparationSchema = z
       .string()
       .nullable()
       .meta({
-        description: "The run getting this and the next session's lessons ready; null for guests",
+        description:
+          "The run getting this and the next session's lessons ready; null for guests, and for a free exam plan past its first week, whose new lessons come with Plus (nothing is prepared)",
       }),
   })
   .meta({ id: "SessionPreparation" });

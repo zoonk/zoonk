@@ -7,11 +7,9 @@ import {
   prisma,
 } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { parseItemContent } from "../../../library/items/item-content";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { getSession } from "../../../users/get-session";
-
-type EssayContent = Extract<ReturnType<typeof parseItemContent>, { format: "essay" }>["content"];
+import { type EssayContent, readEssayContent } from "./essay-content";
 
 type OwnedEssay = {
   blueprint: ExamBlueprint | null;
@@ -29,15 +27,6 @@ export type OwnedEssayResult =
   | { owned: OwnedEssay; status: "ready" }
   | { status: "notFound" }
   | { status: "unauthorized" };
-
-function readEssay(item: Item | null): EssayContent | null {
-  if (item?.format !== "essay") {
-    return null;
-  }
-
-  const parsed = parseItemContent({ content: item.content, format: "essay" });
-  return parsed.format === "essay" ? parsed.content : null;
-}
 
 /**
  * One of the signed-in learner's writing blocks (produce), by its block id, with the essay it
@@ -61,7 +50,7 @@ export async function findOwnedEssay(blockId: string): Promise<OwnedEssayResult>
 
   const itemId = block ? readBlockPayload(block).itemIds[0] : undefined;
   const item = itemId ? await prisma.item.findUnique({ where: { id: itemId } }) : null;
-  const content = readEssay(item);
+  const content = readEssayContent(item);
 
   if (!block || !item || !content) {
     return { status: "notFound" };

@@ -1,11 +1,10 @@
 import { type EssayRubric } from "@zoonk/ai/tasks/v2/grading/grade-essay";
 import { type ExamBlueprint } from "@zoonk/db";
-import { getExamScale } from "../scoring/exam-scales";
+import { getExamScale, isEnemExam } from "../scoring/exam-scales";
 
 /** Custom rubrics (Cebraspe discursive answers, school essays) are scored out of ten. */
 const CUSTOM_MAX_SCORE = 10;
 
-const ENEM_PATTERN = /\benem\b/iu;
 const OAB_PATTERN = /\boab\b/iu;
 
 type RubricRow = { criterion: string; description: string; points: number | null };
@@ -33,7 +32,7 @@ export function getEssayRubric({
 }): EssayRubric {
   const names = blueprint ? `${blueprint.identityKey} ${blueprint.name}` : "";
 
-  if (ENEM_PATTERN.test(names)) {
+  if (isEnemExam({ blueprint, goal: null })) {
     return { kind: "enem" };
   }
 

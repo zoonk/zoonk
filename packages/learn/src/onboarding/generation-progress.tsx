@@ -86,7 +86,6 @@ function useStepLabels(): Record<GenerationStep, string> {
     prepareFirstLessons: t("Getting your first lessons ready"),
     preparePlacement: t("Writing your questions"),
     readExamNotice: t("Reading your material"),
-    readNotice: t("Reading the exam notice"),
     saveSkills: t("Matching them with lessons in the Library"),
     understandGoal: t("Reading your goal"),
     writeExplanation: t("Writing about 5 short screens"),

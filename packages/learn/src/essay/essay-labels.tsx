@@ -66,8 +66,8 @@ export function useFormatScore() {
 }
 
 /**
- * What the learner writes: an essay for ENEM's redação; an answer for every other written question
- * (a discursive question, a class test's dissertativa, an AP free-response question, a brief).
+ * What the learner writes: an essay for ENEM; an answer for every other written question
+ * (a discursive question, a class test's essay question, an AP free-response question, a brief).
  */
 export function useWritingName() {
   const t = useExtracted();

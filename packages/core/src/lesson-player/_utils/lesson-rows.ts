@@ -5,9 +5,13 @@ import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { citedSourceSelect } from "../../library/sources/source-citation";
 import { withLearnerVersionRows } from "../../library/variants/learner-versions";
 
-/** What `toPlayableStep` reads: the step's image file and the learner's material or public source it cites. */
+/**
+ * What `toPlayableStep` reads: the step's image file, its options' pictures and the learner's
+ * material or public source it cites.
+ */
 export const playableStepInclude = {
   mediaAsset: true,
+  optionPictures: { include: { mediaAsset: true } },
   source: { select: { ...citedSourceSelect, kind: true, mimeType: true, visibility: true } },
 };
 

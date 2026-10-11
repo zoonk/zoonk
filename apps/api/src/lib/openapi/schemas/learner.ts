@@ -3,7 +3,7 @@ import { placementStatusSchema } from "@zoonk/core/learner/placement/contract";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { MasteryState } from "@zoonk/db";
 import { z } from "zod";
-import { questionImageSchema, questionVisualSchema } from "./common";
+import { questionImageSchema, questionSelectSchema, questionVisualSchema } from "./common";
 
 const skillIdSchema = z.uuid().meta({ description: "Skill ID" });
 
@@ -91,8 +91,11 @@ export const bankQuestionSchema = z
     z.object({
       ...questionBaseShape,
       format: z.literal("multipleChoice"),
-      options: z.array(z.string()).meta({ description: "Answer with the chosen option's index" }),
+      options: z
+        .array(z.string())
+        .meta({ description: "Answer with the chosen option's index, or indexes" }),
       question: z.string(),
+      select: questionSelectSchema,
     }),
     z.object({
       ...questionBaseShape,
@@ -257,6 +260,13 @@ export const chapterTestOutResultSchema = z
     knownSkillIds: z
       .array(skillIdSchema)
       .meta({ description: "Skills answered right; skills missed or not asked stay in the plan" }),
+    lessonsSkipped: z
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "The lessons it skipped, the count its plan change says: a topic still being written counts the lessons the plan teaches in its place",
+      }),
     missedSkillIds: z.array(skillIdSchema),
     passed: z.boolean(),
     testedOutPlanItemIds: z.array(z.uuid()),

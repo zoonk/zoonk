@@ -4,7 +4,7 @@ import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract"
 type GroupableSubject = Pick<SyllabusSubject, "group"> & Partial<Pick<SyllabusSubject, "source">>;
 
 /**
- * A run of subjects shown together: the notice's group ("Conhecimentos básicos (P1)"), the notice's
+ * A run of subjects shown together: the notice's group ("Basic knowledge (P1)"), the notice's
  * subjects when it has no groups (`name` null), or the areas the plan adds outside the notice.
  */
 export type SubjectGroup<Subject extends GroupableSubject = SyllabusSubject> = {

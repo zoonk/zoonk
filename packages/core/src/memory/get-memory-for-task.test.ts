@@ -11,13 +11,10 @@ import { getMemoryForTask } from "./get-memory-for-task";
 vi.mock("@zoonk/ai/tasks/v2/memory/search-terms", () => ({ generateMemorySearchTerms: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/relevance", () => ({ selectRelevantMemoryFacts: vi.fn() }));
 
-const ADULT_BIRTH = { birthMonth: 5, birthYear: 1990 };
-const TEEN_BIRTH = { birthMonth: 1, birthYear: new Date().getUTCFullYear() - 15 };
 const MINUTE_MS = 60_000;
 
-async function adultWithFacts(facts: { category: MemoryCategory; statement: string }[]) {
+async function learnerWithFacts(facts: { category: MemoryCategory; statement: string }[]) {
   const user = await userFixture();
-  await learningProfileFixture({ ...ADULT_BIRTH, userId: user.id });
 
   const created = await Promise.all(
     facts.map((fact, index) =>
@@ -54,7 +51,7 @@ describe(getMemoryForTask, () => {
   });
 
   it("returns a small memory whole, newest first, without any model and marks it used", async () => {
-    const { facts, user } = await adultWithFacts([
+    const { facts, user } = await learnerWithFacts([
       { category: "preferences", statement: "Likes football examples" },
       { category: "background", statement: "Works as a nurse" },
       { category: "routine", statement: "Studies after 8 pm" },
@@ -90,7 +87,7 @@ describe(getMemoryForTask, () => {
   });
 
   it("returns nothing while memory is off", async () => {
-    const { user } = await adultWithFacts([{ category: "goals", statement: "Wants Law" }]);
+    const { user } = await learnerWithFacts([{ category: "goals", statement: "Wants Law" }]);
     await learningProfileFixture({ memoryEnabled: false, userId: user.id });
 
     await expect(
@@ -98,30 +95,14 @@ describe(getMemoryForTask, () => {
     ).resolves.toStrictEqual([]);
   });
 
-  it("reads nothing for a minor who hasn't turned memory on", async () => {
-    const user = await userFixture();
-
-    await Promise.all([
-      learningProfileFixture({ ...TEEN_BIRTH, userId: user.id }),
-      memoryFactFixture({ category: "goals", statement: "Wants Medicine", userId: user.id }),
-    ]);
-
-    await expect(
-      getMemoryForTask({ categories: ["goals"], language: "pt", userId: user.id }),
-    ).resolves.toStrictEqual([]);
-  });
-
-  it("reads only goals and learning for learners who may not keep other facts", async () => {
-    const user = await userFixture();
-
-    await Promise.all([
-      learningProfileFixture({ memoryEnabled: true, userId: user.id }),
-      memoryFactFixture({ category: "context", statement: "Lives in Recife", userId: user.id }),
-      memoryFactFixture({ category: "learning", statement: "Mixes up signs", userId: user.id }),
+  it("reads only the categories the task asks for", async () => {
+    const { user } = await learnerWithFacts([
+      { category: "context", statement: "Lives in Recife" },
+      { category: "learning", statement: "Mixes up signs" },
     ]);
 
     const result = await getMemoryForTask({
-      categories: ["context", "learning"],
+      categories: ["learning"],
       language: "pt",
       userId: user.id,
     });
@@ -130,7 +111,9 @@ describe(getMemoryForTask, () => {
   });
 
   it("leaves sensitive facts out unless the task helps with them", async () => {
-    const { user } = await adultWithFacts([{ category: "learning", statement: "Mixes up signs" }]);
+    const { user } = await learnerWithFacts([
+      { category: "learning", statement: "Mixes up signs" },
+    ]);
 
     await memoryFactFixture({
       category: "learning",
@@ -154,33 +137,8 @@ describe(getMemoryForTask, () => {
     ]);
   });
 
-  it("never hands a minor's sensitive fact to a task, even one that helps with them", async () => {
-    const user = await userFixture();
-
-    await Promise.all([
-      learningProfileFixture({ ...TEEN_BIRTH, memoryEnabled: true, userId: user.id }),
-      memoryFactFixture({ category: "learning", statement: "Mixes up signs", userId: user.id }),
-      // A teen can write anything into a fact they correct; the check flags it, and it stays theirs.
-      memoryFactFixture({
-        category: "learning",
-        sensitive: true,
-        statement: "Has ADHD",
-        userId: user.id,
-      }),
-    ]);
-
-    const facts = await getMemoryForTask({
-      categories: ["learning"],
-      includeSensitive: true,
-      language: "en",
-      userId: user.id,
-    });
-
-    expect(facts.map((fact) => fact.statement)).toStrictEqual(["Mixes up signs"]);
-  });
-
   it("searches a large memory with model terms and keeps what the relevance check keeps", async () => {
-    const { user } = await adultWithFacts([
+    const { user } = await learnerWithFacts([
       { category: "preferences", statement: "Likes football examples" },
       { category: "preferences", statement: "Prefers short explanations" },
       { category: "background", statement: "Works as a nurse at night" },
@@ -222,7 +180,7 @@ describe(getMemoryForTask, () => {
   });
 
   it("falls back to the most recent facts when the search fails", async () => {
-    const { user } = await adultWithFacts(notes({ category: "goals", count: 11 }));
+    const { user } = await learnerWithFacts(notes({ category: "goals", count: 11 }));
 
     vi.mocked(generateMemorySearchTerms).mockRejectedValue(new Error("Gateway down"));
 

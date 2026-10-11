@@ -3,13 +3,20 @@
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
 import { TaskMainButton } from "../shell/task-frame";
+import { MockBreak } from "./mock-break";
 import { type MockActions, type MockHrefs, MockProvider, useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { MockResultView } from "./mock-result-view";
 import { MockRunnerView } from "./mock-runner-view";
+import { MockSpeakingView } from "./mock-speaking";
 import { useMockRunner } from "./use-mock-runner";
 
-export type { MockActions, MockPlanOfferOutcome } from "./mock-context";
+export type {
+  MockActions,
+  MockEssayGrading,
+  MockPlanOfferOutcome,
+  MockPlayOutcome,
+} from "./mock-context";
 
 /** Every section was handed in but grading didn't finish: one tap grades it now. */
 function MockGrading() {
@@ -45,6 +52,14 @@ function MockStage() {
 
   if (view.status === "finished") {
     return <MockResultView />;
+  }
+
+  if (view.breakUntil && !view.current) {
+    return <MockBreak until={view.breakUntil} />;
+  }
+
+  if (view.current?.kind === "speaking") {
+    return <MockSpeakingView />;
   }
 
   return view.current ? <MockRunnerView /> : <MockGrading />;

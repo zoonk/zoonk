@@ -1,17 +1,16 @@
 import {
   changePlanAction,
+  chooseExamOptionAction,
   choosePlanToolsAction,
   decidePlanChangeAction,
+  previewPlanChangeAction,
 } from "@/app/[lang]/(learn)/journey/journey-actions";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
-import { isUnderMinimumAge } from "@/lib/guest/minimum-age";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
-import { OnboardingChromeProvider } from "@zoonk/learn/onboarding/frame";
-import { TooYoungScreen } from "@zoonk/learn/onboarding/too-young";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -19,7 +18,6 @@ import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
-import { VisitorTopBar } from "../_components/start-chrome";
 import { StepsClient } from "./steps-client";
 
 type Props = PageProps<"/[lang]/start/[goalId]">;
@@ -45,18 +43,6 @@ async function StepsContent({ params }: Props) {
     getSession(),
   ]);
 
-  // Right after an under-13 answer deletes the account, the page renders once more without it,
-  // under the visitor's bar: the account is gone, whatever the layout's bar read before.
-  if (result.status !== "ready" && (await isUnderMinimumAge())) {
-    return (
-      <MainLearnProvider>
-        <OnboardingChromeProvider chrome={<VisitorTopBar />}>
-          <TooYoungScreen />
-        </OnboardingChromeProvider>
-      </MainLearnProvider>
-    );
-  }
-
   if (result.status === "unauthorized") {
     redirect({ href: "/start", locale: lang });
   }
@@ -81,8 +67,10 @@ async function StepsContent({ params }: Props) {
         onboarding={result.onboarding}
         planActions={{
           change: changePlanAction.bind(null, goalId),
+          chooseExamOption: chooseExamOptionAction.bind(null, goalId),
           chooseTools: choosePlanToolsAction.bind(null, goalId),
           decide: decidePlanChangeAction.bind(null, goalId),
+          preview: previewPlanChangeAction.bind(null, goalId),
         }}
       />
     </MainLearnProvider>

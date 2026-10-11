@@ -19,9 +19,10 @@ import { CircleAlertIcon, WifiOffIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { getDetailLine } from "./_utils/detail-line";
 import { type PhaseProgress, type PhaseStatus, getPhaseProgress } from "./_utils/phase-progress";
+import { type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind, getGenerationKind } from "./generation-kinds";
 import { type GenerationFailure, type GenerationRun } from "./generation-run";
-import { type PhaseCopy, useGenerationCopy } from "./use-generation-copy";
+import { useGenerationCopy } from "./use-generation-copy";
 
 function isFollowing(run: GenerationRun): boolean {
   return run.status === "waiting" || run.status === "following";

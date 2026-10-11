@@ -1,23 +1,32 @@
 import { type BuildPlanInput } from "./build-plan";
+import { getMockWeeks } from "./mock-days";
 import { type ExistingPlanItem } from "./plan-items";
 import { addPracticeDays } from "./practice-days";
 import { type PlanDay, type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
 import { isShortExam } from "./short-exam-plan";
 import { addSpareMocks } from "./spare-mocks";
 
-/** The plan's last lesson day: what this run scheduled, or what this week keeps. */
+/**
+ * The plan's last lesson day: what this run scheduled (`units`), what this week keeps, and where a
+ * stand-in this week began ends past its day (`keptUntil`, see `layOutAfterThisWeek`). The run's
+ * copies of this week's other work don't count: a career's last lessons, kept on Sunday, ended on
+ * Monday in them, and the refresh took Monday's practice day out of the plan.
+ */
 export function getLastLessonDate({
   kept,
+  keptUntil,
   units,
 }: {
   kept: readonly ExistingPlanItem[];
+  keptUntil: Date | null;
   units: readonly ScheduledUnit[];
 }): Date | null {
   const dates = [
-    ...units.filter((unit) => unit.kind === "lesson").map((unit) => unit.date.getTime()),
+    ...units.flatMap((unit) => (unit.kind === "lesson" ? [unit.date.getTime()] : [])),
     ...kept.flatMap((item) =>
       item.kind === "lesson" && item.scheduledFor ? [item.scheduledFor.getTime()] : [],
     ),
+    ...(keptUntil ? [keptUntil.getTime()] : []),
   ];
 
   return dates.length > 0 ? new Date(Math.max(...dates)) : null;
@@ -55,15 +64,23 @@ export function getPlanEvents({
   }
 
   const practice = addPracticeDays({ days, events, lastLessonDate });
+  const mockMinutes = input.fullMockMinutes ?? input.mockMinutes;
 
   return input.goal.kind === "exam"
     ? addSpareMocks({
         days,
         events: practice,
         lastLessonDate,
-        mockMinutes: input.mockMinutes,
+        mockMinutes,
         moves: input.settings.movedEvents,
         targetDate,
+        weeks: getMockWeeks({
+          calendar: {
+            dailyMinutes: input.goal.dailyMinutes,
+            weekdayMinutes: input.settings.weekdayMinutes,
+          },
+          minutes: mockMinutes,
+        }),
       })
     : practice;
 }

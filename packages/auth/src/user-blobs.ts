@@ -43,20 +43,27 @@ async function deleteFolderPage({
 }
 
 /**
- * A guest's private course moves to the account they sign up with, and its pictures stay in the
- * guest's folder, so the account's own rows find them.
+ * A guest's private course moves to the account they sign up with, and its pictures (its lessons'
+ * and its chapters' mind maps) stay in the guest's folder, so the account's own rows find them.
  */
 async function deleteMovedPictures(userId: string): Promise<void> {
-  const pictures = await prisma.mediaAsset.findMany({
-    select: { url: true },
-    where: { NOT: { url: { contains: `/${getPrivateImageFolder(userId)}` } }, ownerId: userId },
-  });
+  const [pictures, maps] = await Promise.all([
+    prisma.mediaAsset.findMany({ select: { url: true }, where: { ownerId: userId } }),
+    prisma.chapterMindMap.findMany({
+      select: { imageUrl: true, thumbnailUrl: true },
+      where: { chapter: { ownerId: userId, visibility: "private" } },
+    }),
+  ]);
 
-  if (pictures.length > 0) {
-    await del(
-      pictures.map((picture) => picture.url),
-      getPrivateBlobStore(),
-    );
+  const ownFolder = `/${getPrivateImageFolder(userId)}`;
+
+  const moved = [
+    ...pictures.map((picture) => picture.url),
+    ...maps.flatMap((map) => [map.imageUrl, map.thumbnailUrl]),
+  ].filter((url): url is string => url !== null && !url.includes(ownFolder));
+
+  if (moved.length > 0) {
+    await del(moved, getPrivateBlobStore());
   }
 }
 

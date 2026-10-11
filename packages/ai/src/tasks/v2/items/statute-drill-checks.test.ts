@@ -53,6 +53,7 @@ function gap(question: string, acceptedAnswers: string[], reference = CAPUT): St
 const multipleChoice: StatuteDrill = {
   context: null,
   difficulty: "medium",
+  fixedOrder: false,
   format: "multipleChoice",
   image: null,
   options: [

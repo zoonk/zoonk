@@ -112,6 +112,32 @@ function checkElements({
   });
 }
 
+/**
+ * A grade with every point scored has nothing to work on, so no next step is right only then;
+ * whether full marks were deserved is the band check's call.
+ */
+function checkNextStep({
+  expected,
+  grade,
+}: {
+  expected: GradeEssayExpected;
+  grade: EssayGrade;
+}): Check {
+  if (!grade.nextStep) {
+    return {
+      detail: `No next step, with ${grade.total.score} of ${grade.total.maxScore} points.`,
+      name: "nextStep",
+      passed: grade.criteria.every((criterion) => criterion.score === criterion.maxScore),
+    };
+  }
+
+  return {
+    detail: `Next step on ${grade.nextStep.criterionId}, expected one of ${expected.nextStepCriteria.join(", ")}.`,
+    name: "nextStep",
+    passed: expected.nextStepCriteria.includes(grade.nextStep.criterionId),
+  };
+}
+
 /** A too-short text never reaches a model, so there is no feedback to check. */
 function checkFeedback({
   essay,
@@ -126,7 +152,11 @@ function checkFeedback({
     return [];
   }
 
-  const feedback = [...grade.criteria.map((criterion) => criterion.comment), grade.nextStep.text];
+  const feedback = [
+    ...grade.criteria.map((criterion) => criterion.comment),
+    ...(grade.nextStep ? [grade.nextStep.text] : []),
+  ];
+
   const language = detectLanguage(feedback.join(" "));
 
   const quoted = grade.criteria.filter(
@@ -175,11 +205,7 @@ function getChecks({
       name: "zeroReason",
       passed: grade.zeroReason === expected.zeroReason,
     },
-    {
-      detail: `Next step on ${grade.nextStep.criterionId}, expected one of ${expected.nextStepCriteria.join(", ")}.`,
-      name: "nextStep",
-      passed: expected.nextStepCriteria.includes(grade.nextStep.criterionId),
-    },
+    checkNextStep({ expected, grade }),
     ...checkElements({ expected, grade }),
     ...checkFeedback({ essay, expected, grade }),
   ];

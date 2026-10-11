@@ -117,7 +117,7 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
       title={offer.subject}
     >
       {locked ? (
-        <PlusNotice inset>{t("Plus grades your essays all the way to the exam.")}</PlusNotice>
+        <PlusNotice inset>{t("Essay practice with grading comes with Plus.")}</PlusNotice>
       ) : (
         <OfferLink href={href}>{t("Open")}</OfferLink>
       )}

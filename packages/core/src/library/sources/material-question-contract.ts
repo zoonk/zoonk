@@ -25,7 +25,7 @@ export const materialQuestionInputSchema = z
 export type MaterialQuestionInput = z.infer<typeof materialQuestionInputSchema>;
 
 /**
- * A page of the learner's own material that an answer or a lesson screen came from: "Aula 5,
+ * A page of the learner's own material that an answer or a lesson screen came from: "Class 5,
  * slide 4". `page` is null for material without pages (Word, text).
  */
 export type MaterialCitation = {

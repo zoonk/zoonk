@@ -62,6 +62,13 @@ export function getImageScope(lesson: Pick<LessonTarget, "owner" | "ownerId">): 
   return lesson.ownerId ? "personal" : "shared";
 }
 
+/** The pictures a published lesson gets: none for a language lesson or a challenge (see `write`). */
+function getPublishedImageScope(lesson: LessonTarget): ImageScope {
+  return lesson.targetLanguage || parseChallengeLessonSpec(lesson.spec)
+    ? null
+    : getImageScope(lesson);
+}
+
 function toOutcome(status: string): WriteResult {
   return status === "heldBack" ? { status: "heldBack" } : { status: "notWritten" };
 }
@@ -108,13 +115,7 @@ async function write({
       : toOutcome(challenge.status);
   }
 
-  const result = await writeLessonContent({
-    ...input,
-    analytics,
-    model: getScopeModel(lesson),
-    reuse,
-    serviceTier,
-  });
+  const result = await writeLessonContent({ ...input, analytics, reuse, serviceTier });
 
   return result.status === "published"
     ? { check: result.check, imageScope: getImageScope(lesson), status: "published" }
@@ -133,6 +134,8 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
 
   const lesson = await prisma.lesson.findUnique({
     select: {
+      contentRunId: true,
+      contentStatus: true,
       owner: { select: { isAnonymous: true } },
       ownerId: true,
       spec: true,
@@ -143,6 +146,13 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
 
   if (!lesson) {
     return { status: "notWritten" };
+  }
+
+  // The runtime runs a step's body again when its result was lost after the body ended (an
+  // invocation that timed out, a stream write that failed): a lesson this run already published
+  // is published, not written again. The model checks that attempt planned are lost with it.
+  if (lesson.contentStatus === "completed" && lesson.contentRunId === input.workflowRunId) {
+    return { check: null, imageScope: getPublishedImageScope(lesson), status: "published" };
   }
 
   await using stream = createStepStream<LessonStreamStep>();

@@ -35,7 +35,7 @@ import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import { generateOutputs } from "@/lib/output-generator";
 import { removeModelOutputRuns } from "@/lib/output-loader";
-import { type TaskStats, getStatsFromResults } from "@/lib/stats";
+import { type TaskStats, getSpent, getStatsFromResults } from "@/lib/stats";
 import { getTestCaseRunId } from "@/lib/test-case-runs";
 import { type RegisteredTask, type TaskEvalResults, type TestCase } from "@/lib/types";
 import { RUNS_PER_TEST_CASE, getTaskById } from "@/tasks";
@@ -240,7 +240,7 @@ function formatRow({ hasBudget, row }: { hasBudget: boolean; row: ReportRow }): 
     formatSeconds(row.stats.latencyP50),
     formatSeconds(row.stats.latencyP95),
     ...(hasBudget ? [formatLatencyVerdict(row.meetsBudget)] : []),
-    formatDollars(row.stats.runCost + row.stats.judgeCost),
+    formatDollars(getSpent(row.stats)),
     formatDollars(row.stats.costPer1000Runs),
   ].join(" | ");
 }
@@ -323,7 +323,7 @@ async function main() {
 
   const totalSpent = reports
     .flatMap((report) => report.rows)
-    .reduce((total, row) => total + row.stats.runCost + row.stats.judgeCost, 0);
+    .reduce((total, row) => total + getSpent(row.stats), 0);
 
   const output = [
     ...reports.map((report) => formatReport(report)),

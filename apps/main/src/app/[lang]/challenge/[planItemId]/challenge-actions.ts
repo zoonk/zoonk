@@ -5,7 +5,10 @@ import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { type ChallengeDestination } from "@zoonk/core/checkpoints/challenge-contract";
 import { moveChallenge, undoChallengeMove } from "@zoonk/core/checkpoints/challenge-move";
 import { startChallenge } from "@zoonk/core/checkpoints/challenge-start";
-import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
+import {
+  studyBlockStartInputSchema,
+  studySessionTimeZoneInputSchema,
+} from "@zoonk/core/sessions/contract";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { z } from "zod";
 import { MOVED_PARAM } from "./challenge-params";
@@ -19,15 +22,18 @@ const localeSchema = z.enum(SUPPORTED_LOCALES);
 type ChallengePage = { locale: unknown; sessionId: unknown };
 
 /**
- * "Start" on a challenge's day: today's block for it starts and the result says where it's played.
- * Inputs are untrusted, so they're parsed with the API's schemas.
+ * "Start" on a challenge's day: today's block for it starts and the result says where it's played,
+ * or that the bank holds too few questions for it yet (`questionsNeeded`: they're written first,
+ * and once the learner waited for that, `afterWriting` starts it with what was written). Inputs
+ * are untrusted, so they're parsed with the API's schemas.
  */
 export async function startChallengeAction(
   planItemId: unknown,
   timeZone: unknown,
-): Promise<ChallengeDestination | "dailyLimitReached" | null> {
+  afterWriting: unknown = false,
+): Promise<ChallengeDestination | "dailyLimitReached" | "questionsNeeded" | null> {
   const id = planItemIdSchema.safeParse(planItemId);
-  const input = studySessionTimeZoneInputSchema.safeParse({ timeZone });
+  const input = studyBlockStartInputSchema.safeParse({ afterWriting, timeZone });
 
   if (!id.success || !input.success) {
     return null;
@@ -35,8 +41,8 @@ export async function startChallengeAction(
 
   const result = await startChallenge({ input: input.data, planItemId: id.data });
 
-  if (result.status === "dailyLimitReached") {
-    return "dailyLimitReached";
+  if (result.status === "dailyLimitReached" || result.status === "questionsNeeded") {
+    return result.status;
   }
 
   return result.status === "ready" ? result.destination : null;

@@ -1,21 +1,19 @@
 import { randomUUID } from "node:crypto";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { claimUsage } from "../entitlements/claim-usage";
 import {
   setupPlayableLesson,
   stepOfKind,
 } from "../lesson-player/_test-utils/playable-lesson-setup";
 import { toMemoryFactView } from "../memory/_utils/memory-fact-view";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
-import { mockQuestionGenerality } from "./_test-utils/question-generality";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import {
   claimLessonQuestionAnswer,
@@ -25,7 +23,7 @@ import {
 import { type LessonQuestionContextInput } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
+import type * as ClaimUsage from "../entitlements/claim-usage";
 
 /** The run that wrote a test answer, as the answers route passes it from the task's provenance. */
 const ANSWER_RUN = {
@@ -38,19 +36,14 @@ vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
-
-/** The generality check calls a model; each test says whether its question is general. */
-vi.mock("@zoonk/ai/tasks/v2/explain/question-generality", () => ({
-  classifyQuestionGenerality: vi.fn(),
-}));
-
 /** Memory extraction calls a model; the memory module's own tests cover what it learns. */
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
+
+/** The real allowance runs; one test makes its claim fail, as a database outage would. */
+vi.mock("../entitlements/claim-usage", async (importOriginal) => {
+  const actual = await importOriginal<typeof ClaimUsage>();
+  return { ...actual, claimUsage: vi.fn(actual.claimUsage) };
+});
 
 const MODEL = "openai/gpt-6-luna";
 
@@ -77,9 +70,7 @@ async function ask({
 
 describe("questions about a Library lesson", () => {
   beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
     vi.mocked(updateMemoryFromActivity).mockResolvedValue([]);
-    mockQuestionGenerality(false);
   });
 
   it("keeps a step's question in the learner's thread for the Library lesson", async () => {
@@ -206,11 +197,7 @@ describe("questions about a Library lesson", () => {
   it("claims the answer from the tutor allowance and reads the learner's memory", async () => {
     const { lesson, user } = await setupPlayableLesson();
 
-    // An adult: memory is on for them until they turn it off, and off for minors until they turn it on.
-    await Promise.all([
-      learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: user.id }),
-      memoryFactFixture({ statement: "Studies chemistry for a nursing exam", userId: user.id }),
-    ]);
+    await memoryFactFixture({ statement: "Studies chemistry for a nursing exam", userId: user.id });
 
     const question = await ask({ context: { kind: "lesson" }, lessonId: lesson.id });
 
@@ -266,11 +253,8 @@ describe("questions about a Library lesson", () => {
   it("releases the claimed answer when the allowance check fails, so a retry can claim it", async () => {
     const { lesson } = await setupPlayableLesson();
     const question = await ask({ context: { kind: "lesson" }, lessonId: lesson.id });
-    const outage = new Error("Firewall unavailable");
-
-    // The allowance's rate-limit check is the only step that can fail without breaking the test
-    // database too, so the firewall adapter stands in for an outage there.
-    vi.mocked(isRateLimited).mockRejectedValueOnce(outage);
+    const outage = new Error("Database unavailable");
+    vi.mocked(claimUsage).mockRejectedValueOnce(outage);
 
     await expect(
       claimLessonQuestionAnswer({ questionId: question.id, requestedModel: MODEL }),

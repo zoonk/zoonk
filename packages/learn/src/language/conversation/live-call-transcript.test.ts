@@ -1,3 +1,7 @@
+import {
+  MAX_CONVERSATION_TURNS,
+  MAX_CONVERSATION_TURN_LENGTH,
+} from "@zoonk/core/language/conversations/contract";
 import { describe, expect, it } from "vitest";
 import {
   type TranscriptTurn,
@@ -60,12 +64,14 @@ describe(toConversationTurns, () => {
   it("drops empty turns and keeps saved turns within the limits", () => {
     const turns = [
       ...addTypedReply([], "   "),
-      ...Array.from({ length: 130 }, () => addTypedReply([], "x".repeat(2100))).flat(),
+      ...Array.from({ length: MAX_CONVERSATION_TURNS + 10 }, () =>
+        addTypedReply([], "x".repeat(MAX_CONVERSATION_TURN_LENGTH + 100)),
+      ).flat(),
     ];
 
     const saved = toConversationTurns(turns);
 
-    expect(saved).toHaveLength(120);
-    expect(saved[0]?.text).toHaveLength(2000);
+    expect(saved).toHaveLength(MAX_CONVERSATION_TURNS);
+    expect(saved[0]?.text).toHaveLength(MAX_CONVERSATION_TURN_LENGTH);
   });
 });

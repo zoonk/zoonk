@@ -14,6 +14,7 @@ const cachedGetExam = cacheAdminData(async (examBlueprintId: string) => {
           items: true,
         },
       },
+      skillGraph: { select: { generatedAt: true, graph: true, model: true, promptVersion: true } },
       source: { select: { id: true, title: true, visibility: true } },
     },
     where: { id: examBlueprintId },

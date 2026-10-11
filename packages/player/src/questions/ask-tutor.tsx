@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Suspense, lazy, useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
@@ -37,8 +38,12 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
   }
 }
 
-/** The button's size: small beside a screen's content, the bar's size in a page's top bar. */
-type AskTutorSize = "bar" | "sm";
+/**
+ * The button's size: small beside a screen's content, the bar's size in a page's top bar, and in
+ * a task's header (a mock's result) small with its name only from `sm`: on a phone the buddy's
+ * face alone, as wide as the close button across, so the header's title between stays clear.
+ */
+type AskTutorSize = "bar" | "sm" | "task";
 
 /** "Ask Zu": the learner's buddy, by face and name, answers about what the screen shows. */
 function AskTutorButton({
@@ -54,19 +59,23 @@ function AskTutorButton({
   const { open } = useLessonQuestionController();
   const label = useAskLabel({ kind, name: identity.name });
 
+  const inTask = size === "task";
+
   return (
     <Button
       aria-label={label}
-      className="pl-1.5"
+      className={cn("pl-1.5", inTask && "max-sm:size-9 max-sm:px-0")}
       onClick={() => open({ kind })}
-      size={size}
+      size={inTask ? "sm" : size}
       type="button"
       variant="outline"
     >
       <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
         {identity.avatar}
       </span>
-      {t("Ask {name}", { name: identity.name })}
+      <span className={cn(inTask && "max-sm:hidden")}>
+        {t("Ask {name}", { name: identity.name })}
+      </span>
     </Button>
   );
 }

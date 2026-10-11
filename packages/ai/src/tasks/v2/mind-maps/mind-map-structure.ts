@@ -106,6 +106,7 @@ export async function generateMindMapStructure({
         prompt: userPrompt,
         providerOptions,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "mind-map-structure",
   });

@@ -10,6 +10,7 @@ import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
+import { ExamSpeakingResult } from "../exam-speaking/exam-speaking-result";
 import { CallLimitMessage } from "./call-limit-message";
 import { ConversationIntro } from "./conversation-intro";
 import { useConversationTitle } from "./conversation-labels";
@@ -25,11 +26,16 @@ export type ConversationActions = LiveCallActions & {
   complete: (
     input: Omit<LanguageConversationCompletionInput, "timeZone">,
   ) => Promise<LanguageConversationView | null>;
-  /** Starts another speaking mock and opens it; only for mocks. */
+  /** Starts another speaking mock, or the same exam task with a new card, and opens it. */
   startAgain?: () => Promise<void>;
 };
 
-export type ConversationHrefs = { exit: string; next: string };
+/**
+ * Where the call leads: out (`exit`), on after its result (`next`), and for an exam task, the
+ * paper's next task opened where its list is (`nextTask`, by key; nothing is written until the
+ * learner starts it).
+ */
+export type ConversationHrefs = { exit: string; next: string; nextTask?: (task: string) => string };
 
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
@@ -242,17 +248,23 @@ function LiveCallRun({
 
 /**
  * A live conversation from its intro to its result: a unit's practice call, a language goal's
- * checkpoint or an IELTS or TOEFL speaking mock. The host supplies the view model, how to save the
- * call and where to go after.
+ * checkpoint, an IELTS or TOEFL speaking mock, or a task of a DELE, DELF, Goethe or Cambridge
+ * speaking paper. The host supplies the view model, how to save the call and where to go after.
  */
 export function ConversationScreen({
   actions,
   conversation,
   hrefs,
+  onSaved,
 }: {
   actions: ConversationActions;
   conversation: LanguageConversationView;
   hrefs: ConversationHrefs;
+  /**
+   * Leads on once the call is saved instead of showing its result: a running mock's task, since a
+   * mock gives no feedback until it's over (its result opens each task's then).
+   */
+  onSaved?: () => void;
 }) {
   const [view, setView] = useState(conversation);
   const [run, setRun] = useState<{ attempt: number; startWith: RunStart }>(FIRST_RUN);
@@ -265,6 +277,22 @@ export function ConversationScreen({
         exitHref={hrefs.exit}
         feedback={result.feedback?.kind === "speakingMock" ? result.feedback : null}
         nextHref={hrefs.next}
+        onTryAgain={actions.startAgain ?? null}
+      />
+    );
+  }
+
+  if (result && view.examTask) {
+    return (
+      <ExamSpeakingResult
+        conversation={view}
+        examTask={view.examTask}
+        exitHref={hrefs.exit}
+        feedback={result.feedback?.kind === "examSpeaking" ? result.feedback : null}
+        nextHref={hrefs.next}
+        nextTaskHref={
+          view.examTask.nextTask && hrefs.nextTask ? hrefs.nextTask(view.examTask.nextTask) : null
+        }
         onTryAgain={actions.startAgain ?? null}
       />
     );
@@ -288,7 +316,7 @@ export function ConversationScreen({
       hrefs={hrefs}
       key={run.attempt}
       onRestart={(startWith) => setRun((current) => ({ attempt: current.attempt + 1, startWith }))}
-      onSaved={setView}
+      onSaved={onSaved ?? setView}
       startWith={run.startWith}
     />
   );

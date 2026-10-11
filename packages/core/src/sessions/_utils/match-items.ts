@@ -1,8 +1,8 @@
 import { type Item } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
-import { hashSeed } from "@zoonk/utils/seeded-random";
 import { parseItemContent } from "../../library/items/item-content";
 import { type QuestionAnswer } from "../contract";
+import { getShownOrder } from "./shown-order";
 
 type MatchPairsContent = Extract<
   ReturnType<typeof parseItemContent>,
@@ -29,20 +29,9 @@ export function parseMatchItem(item: BankItem): MatchItem | null {
   }
 }
 
-/**
- * The right column's order as the learner sees it: shuffled, but the same every time the question
- * is shown, so an answer can be graded against it without storing anything. Never the pairs'
- * own order, which would give the answer away.
- */
+/** The right column's order as the learner sees it (`getShownOrder`). */
 function getRightOrder(item: MatchItem): number[] {
-  const indexes = item.content.pairs.map((_, index) => index);
-
-  const shuffled = indexes.toSorted(
-    (a, b) => hashSeed(`${item.id}:${a}`) - hashSeed(`${item.id}:${b}`),
-  );
-
-  const unchanged = shuffled.every((value, index) => value === index);
-  return unchanged ? [...shuffled.slice(1), ...shuffled.slice(0, 1)] : shuffled;
+  return getShownOrder({ count: item.content.pairs.length, seed: item.id });
 }
 
 /** A matching question as the learner sees it: the right column shuffled, never its answer. */

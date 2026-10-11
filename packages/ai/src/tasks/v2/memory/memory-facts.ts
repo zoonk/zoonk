@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /** The database's `MemoryCategory` values; this package doesn't depend on the database. */
-export const MEMORY_CATEGORIES = [
+const MEMORY_CATEGORIES = [
   "goals",
   "background",
   "routine",

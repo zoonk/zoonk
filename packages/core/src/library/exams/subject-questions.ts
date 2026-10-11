@@ -16,17 +16,44 @@ const OBJECTIVE_FORMATS: ReadonlySet<ExamStructure["formats"][number]["kind"]> =
   "trueFalse",
 ]);
 
-function findPastCount({ structure, subject }: { structure: ExamStructure; subject: Subject }) {
+type PastQuestions = NonNullable<ExamStructure["pastQuestions"]>;
+
+function findCount({
+  past,
+  subject,
+}: {
+  past: PastQuestions | null | undefined;
+  subject: Subject;
+}) {
   const name = normalizeString(subject.name);
-  return structure.pastQuestions?.subjects.find((item) => normalizeString(item.name) === name);
+  return past?.subjects.find((item) => normalizeString(item.name) === name);
+}
+
+function findPastCount({ structure, subject }: { structure: ExamStructure; subject: Subject }) {
+  return findCount({ past: structure.pastQuestions, subject });
+}
+
+/**
+ * Whether a lookup counted every one of these subjects. A lookup may count some only (its source
+ * counts a subject the notice's reading named otherwise, or none it missed): a reading that
+ * changes the subjects then asks again for the new ones (see `keepPastQuestions`).
+ */
+export function countsEverySubject({
+  past,
+  subjects,
+}: {
+  past: PastQuestions;
+  subjects: readonly Subject[];
+}): boolean {
+  return subjects.every((subject) => findCount({ past, subject }));
 }
 
 /**
  * A subject's questions: the notice's own count, or, when the notice gives none, its count in the
  * exam's latest edition (`pastQuestions`), so the plan, its coverage and every screen weigh the
- * subjects the way candidates do. Null when neither says, and for a written test (a redação, a
+ * subjects the way candidates do. Null when neither says, and for a written test (ENEM's essay, a
  * discursive test) the notice doesn't count: a lookup lists it with 0 questions, which says
- * nothing of what it's worth, and read as a count it left ENEM's redação out of the plan's time.
+ * nothing of what it's worth, and read as a count it left ENEM's essay out of the plan's time.
  */
 export function getSubjectQuestions({
   structure,
@@ -65,8 +92,9 @@ function isRecent({ checkedAt, now }: { checkedAt: string; now: Date }): boolean
 
 /**
  * Whether research looks up the subjects' counts in the latest editions: an objective exam with
- * several subjects whose notice gives none of their counts or weights, not looked up yet (or not
- * found for a month, or found for subjects the notice now names otherwise).
+ * several subjects whose notice gives none of their counts or weights, not looked up yet, or
+ * looked up a month ago without a count for every subject (a source may publish them by then). A
+ * reading that renames the subjects drops the lookup it doesn't cover (`keepPastQuestions`).
  */
 export function needsPastQuestions({
   now,
@@ -91,17 +119,16 @@ export function needsPastQuestions({
     return true;
   }
 
-  if (pastQuestions.subjects.length === 0) {
-    return !isRecent({ checkedAt: pastQuestions.checkedAt, now });
-  }
-
-  return subjects.some((subject) => !findPastCount({ structure, subject }));
+  return (
+    !countsEverySubject({ past: pastQuestions, subjects }) &&
+    !isRecent({ checkedAt: pastQuestions.checkedAt, now })
+  );
 }
 
 /**
  * Subjects in the order candidates think of them. A notice that lists every subject in one test
  * without grouping them is read by weight: the subjects with the most questions first (the OAB's
- * Ética, with 8, before Direito Financeiro, with 2), ties in the notice's order. A notice that
+ * ethics, with 8, before financial law, with 2), ties in the notice's order. A notice that
  * groups its subjects (P1, P2), or doesn't count every one, keeps its own order.
  */
 export function orderByQuestions<T extends { group?: string | null; questions: number | null }>(

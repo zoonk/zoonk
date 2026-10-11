@@ -1,14 +1,15 @@
 import { decodeHtmlEntities } from "../../_utils/html-entities";
 import { type FocusPart, joinPartsByArea, toPartName } from "./focus-part-names";
 import { matchAreas } from "./plan-edit-areas";
+import {
+  type DateOperation,
+  type TimeOperation,
+  isValidDate,
+  toDateOperation,
+  toTimeOperation,
+} from "./plan-edit-calendar";
 import { type PlanEditTopic, toTopicsOperation } from "./plan-edit-topics";
 import { keepReducedOutOfFocus } from "./reduced-focus";
-
-const MIN_DAILY_MINUTES = 5;
-const MAX_DAILY_MINUTES = 240;
-const LAST_WEEKDAY = 6;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/u;
-const ISO_DATE_LENGTH = 10;
 
 const PRACTICE_BIASES = ["moreExplanation", "balanced", "morePractice"] as const;
 export const LANGUAGE_ACTIVITIES = ["vocabulary", "listening", "writing", "speaking"] as const;
@@ -28,12 +29,10 @@ type PlanEditOperation =
   | { areas: string[]; kind: "setAreaStart"; start: (typeof AREA_STARTS)[number] }
   | { bias: (typeof DIFFICULTY_BIASES)[number]; kind: "setDifficultyBias" }
   | { bias: (typeof PRACTICE_BIASES)[number]; kind: "setPracticeBias" }
-  | { kind: "addLightWeek"; startDate: string }
-  | { kind: "setDailyMinutes"; minutes: number }
-  | { kind: "setTargetDate"; targetDate: string | null }
-  | { kind: "setWeekdayMinutes"; minutes: number; weekdays: number[] }
+  | DateOperation
+  | TimeOperation
   | { cadence: (typeof WRITTEN_CADENCES)[number]; kind: "setWrittenCadence" }
-  | { kind: "addTopics"; topics: PlanEditTopic[] };
+  | { kind: "addTopics"; startDate: string | null; topics: PlanEditTopic[] };
 
 export type PlanEdit = {
   /** Parts of the request no change covers (a target score, a question), in the learner's words. */
@@ -74,43 +73,19 @@ export type PlanEditSkill = { area: string; name: string; skillId: string };
 type Context = {
   areas: readonly string[];
   goalKind: string;
-  /** `routine` fits a new plan to the learner's routine: it only changes days and weeks. */
-  purpose?: "edit" | "routine";
-  /** The learner's language, for a part's name joined from several ("Biologia e Química"). */
+  /** The learner's language, for a part's name joined from several ("Biology and Chemistry"). */
   language?: string;
   /** The plan's skills, for a focus on part of an area; absent when the caller lists none. */
   skills?: readonly PlanEditSkill[];
   targetDate?: string | null;
   today: string;
-  /** The exam's written tests (a redação, a discursive test); absent or empty when it has none. */
+  /** The exam's written tests (ENEM's essay, a discursive test); absent or empty when it has none. */
   writtenParts?: readonly string[];
 };
 
 /** A skill's key in the prompt: its place in the list, from 1 ("K12"). */
 export function toSkillKey(index: number): string {
   return `K${index + 1}`;
-}
-
-function isValidDate(value: string | null): value is string {
-  return (
-    value !== null &&
-    ISO_DATE.test(value) &&
-    new Date(`${value}T00:00:00Z`).toISOString().slice(0, ISO_DATE_LENGTH) === value
-  );
-}
-
-function toMinutes({ min, value }: { min: number; value: number | null }): number | null {
-  return value === null || !Number.isFinite(value)
-    ? null
-    : Math.min(MAX_DAILY_MINUTES, Math.max(min, Math.round(value)));
-}
-
-function toWeekdays(values: readonly number[] | null): number[] {
-  const valid = (values ?? []).filter(
-    (value) => Number.isInteger(value) && value >= 0 && value <= LAST_WEEKDAY,
-  );
-
-  return [...new Set(valid)].toSorted((a, b) => a - b);
 }
 
 function toAreas({ context, values }: { context: Context; values: readonly string[] | null }) {
@@ -257,38 +232,16 @@ function toBiasOperation(change: RawChange): PlanEditOperation | null {
   return null;
 }
 
-function toTimeOperation(change: RawChange): PlanEditOperation | null {
-  if (change.kind === "setDailyMinutes") {
-    const minutes = toMinutes({ min: MIN_DAILY_MINUTES, value: change.minutes });
-    return minutes === null ? null : { kind: "setDailyMinutes", minutes };
-  }
-
-  const minutes = toMinutes({ min: 0, value: change.minutes });
-  const weekdays = toWeekdays(change.weekdays);
-
-  return minutes === null || weekdays.length === 0
-    ? null
-    : { kind: "setWeekdayMinutes", minutes, weekdays };
-}
-
-function toDateOperation({ change, context }: { change: RawChange; context: Context }) {
-  if (change.kind === "clearTargetDate") {
-    return { kind: "setTargetDate", targetDate: null } satisfies PlanEditOperation;
-  }
-
-  if (!isValidDate(change.date)) {
+/**
+ * The day added topics start, when the learner said when ("logo", "next week"): from today, and
+ * before the goal's date, since topics after it are never studied. Null spreads them instead.
+ */
+function toTopicsStart({ context, date }: { context: Context; date: string | null }) {
+  if (!isValidDate(date) || date < context.today) {
     return null;
   }
 
-  if (change.kind === "addLightWeek") {
-    return change.date >= context.today
-      ? ({ kind: "addLightWeek", startDate: change.date } satisfies PlanEditOperation)
-      : null;
-  }
-
-  return change.date > context.today
-    ? ({ kind: "setTargetDate", targetDate: change.date } satisfies PlanEditOperation)
-    : null;
+  return context.targetDate && date >= context.targetDate ? null : date;
 }
 
 function toOperation({
@@ -305,7 +258,7 @@ function toOperation({
     case "addLightWeek":
     case "setTargetDate":
     case "clearTargetDate":
-      return toDateOperation({ change, context });
+      return toDateOperation({ change, today: context.today });
     case "focusAreas":
       return toFocusOperation({ change, context });
     case "skipAreas":
@@ -322,7 +275,7 @@ function toOperation({
     case "addTopics":
       return toTopicsOperation({
         areas: context.areas,
-        purpose: context.purpose,
+        startDate: toTopicsStart({ context, date: change.date }),
         topics: change.topics ?? [],
       });
     default:

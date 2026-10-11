@@ -1,13 +1,17 @@
 import { type ReferenceSyllabusNeed } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
-import { getResearchGoal } from "@zoonk/core/library/exams/learners";
+import { getResearchGoal, toResearchPlanInput } from "@zoonk/core/library/exams/learners";
 import { type GoalKind } from "@zoonk/db";
 
 export type ResearchGoal = {
-  /** The goal's understood fields as JSON, for the research plan prompt. */
+  /** The goal's details the research plan may read, as JSON (see `toResearchPlanInput`). */
   details: string;
   id: string;
   kind: GoalKind;
   language: string;
+  /** The goal as the research plan reads it (see `toResearchPlanInput`). */
+  planGoal: string;
+  /** The plan reads the learner's own words (a goal from their material), so it's personal. */
+  planPersonal: boolean;
   prompt: string;
   /** Whether a learn goal is big enough for reference syllabi, or still waiting for its purpose. */
   referenceSyllabi: ReferenceSyllabusNeed;
@@ -27,5 +31,7 @@ export async function loadResearchGoalStep(goalId: string): Promise<ResearchGoal
     return null;
   }
 
-  return { ...goal, details: JSON.stringify(goal.details) };
+  const plan = toResearchPlanInput(goal);
+
+  return { ...goal, details: plan.details, planGoal: plan.goal, planPersonal: plan.personal };
 }

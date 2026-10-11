@@ -16,7 +16,7 @@ export type StartMockResult = {
 };
 
 /**
- * Starts a scheduled mock when the learner takes it on: its session block starts (a guardian's
+ * Starts a scheduled mock when the learner takes it on: its session block starts (the learner's
  * daily limit is checked there), the sections are fixed and the first one's clock starts. Starting
  * a running mock again resumes it, a mock taken any time included.
  */
@@ -45,6 +45,11 @@ export async function startMock({
   }
 
   const started = await startStudyBlock({ blockId, input, sessionId: owned.block.sessionId });
+
+  // A mock's block never waits for questions there: a mock writes its own (`requestMockQuestions`).
+  if (started.status === "questionsNeeded") {
+    throw new Error(`Mock block ${blockId} was asked for checkpoint questions.`);
+  }
 
   if (started.status !== "ready") {
     return { status: started.status };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseInlineMarkup } from "./inline-markup";
+import { parseInlineMarkup, parseInlineMarkupRanges } from "./inline-markup";
 
 describe(parseInlineMarkup, () => {
   it("reads bold, italics with stars or underscores and inline code", () => {
@@ -57,5 +57,27 @@ describe(parseInlineMarkup, () => {
       { kind: "code", text: "a << b >> c" },
       { kind: "text", text: " and «" },
     ]);
+  });
+});
+
+describe(parseInlineMarkupRanges, () => {
+  it("places each segment in the line, its marks included", () => {
+    const line = "O **10** vale `x_y` e «isso» _fica";
+
+    expect(
+      parseInlineMarkupRanges(line).map(({ end, kind, start }) => [kind, line.slice(start, end)]),
+    ).toStrictEqual([
+      ["text", "O "],
+      ["bold", "**10**"],
+      ["text", " vale "],
+      ["code", "`x_y`"],
+      ["text", " e "],
+      ["italic", "«isso»"],
+      ["text", " _fica"],
+    ]);
+  });
+
+  it("finds nothing in an empty line", () => {
+    expect(parseInlineMarkupRanges("")).toStrictEqual([]);
   });
 });

@@ -9,6 +9,7 @@ import {
   CHECKPOINT_MINUTES_PER_QUESTION,
   MIN_CHECKPOINT_QUESTIONS,
   getPassMark,
+  getPlannedQuestions,
   selectCheckpointItems,
 } from "../checkpoint-rules";
 import { loadCheckpointCandidates } from "./checkpoint-candidates";
@@ -56,7 +57,7 @@ async function loadMockItems({
 }
 
 /** Skills the learner answered on in the last week: what a weekly challenge brings together. */
-async function loadWeekSkillIds({
+export async function loadWeekSkillIds({
   now,
   skillIds,
   userId,
@@ -78,7 +79,12 @@ async function loadWeekSkillIds({
   return rows.flatMap((row) => (row.skillId ? [row.skillId] : []));
 }
 
-async function loadMixedItems({
+/**
+ * A mixed challenge's questions on the week's skills (`loadWeekSkillIds`), planned at its full
+ * size while the bank holds too few (see `getPlannedQuestions`); none to write without a week's
+ * skills.
+ */
+export async function loadMixedItems({
   examBlueprintId,
   now,
   skillIds,
@@ -101,8 +107,9 @@ async function loadMixedItems({
 
   return {
     itemIds,
-    minutes: itemIds.length * CHECKPOINT_MINUTES_PER_QUESTION,
+    minutes: getPlannedQuestions(itemIds.length) * CHECKPOINT_MINUTES_PER_QUESTION,
     timeLimitMinutes: null,
+    writable: weekSkills.length > 0,
   };
 }
 
@@ -158,20 +165,27 @@ export async function loadSessionWeeklyChallenge({
 
   const asked = isMock ? mockSkillIds : skillIds;
 
-  const picked = isMock
-    ? await loadMockItems({ goal, skillIds: asked, structure, today, userId })
+  // A mock's missing questions are written by its own start (`requestMockQuestions`).
+  const { writable, ...picked } = isMock
+    ? {
+        ...(await loadMockItems({ goal, skillIds: asked, structure, today, userId })),
+        writable: false,
+      }
     : await loadMixedItems({ examBlueprintId: goal.examBlueprintId, now, skillIds, userId });
 
-  if (picked.itemIds.length < MIN_CHECKPOINT_QUESTIONS) {
+  // A mixed challenge short of questions keeps its day: they're written when it starts.
+  if (picked.itemIds.length < MIN_CHECKPOINT_QUESTIONS && !writable) {
     return { checkpoint: null, plusRequired: false };
   }
+
+  const questions = isMock ? picked.itemIds.length : getPlannedQuestions(picked.itemIds.length);
 
   return {
     checkpoint: {
       ...picked,
       kind: "weekly",
       mock: isMock,
-      passMark: getPassMark(picked.itemIds.length),
+      passMark: getPassMark(questions),
       phase: item.phase,
       planItemId: item.id,
       rematch: false,

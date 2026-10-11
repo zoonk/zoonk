@@ -1,4 +1,5 @@
-import { type MockConditions, type MockSectionView } from "../mock-contract";
+import { type MockConditions } from "../mock-contract";
+import { type MockSectionView } from "../mock-view-contract";
 
 /**
  * Every question the mock asks, in order. A routed module that was never reached asks its easier
@@ -13,6 +14,11 @@ export function getAskedItemIds(conditions: MockConditions): { itemId: string; s
       .slice(0, Math.max(section.questions, section.itemIds.length))
       .map((itemId) => ({ itemId, section: index }));
   });
+}
+
+/** Every essay the mock asks (a full mock's written parts), in order. */
+export function getEssayItemIds(conditions: MockConditions): string[] {
+  return conditions.sections.flatMap((section) => section.essays);
 }
 
 /** Where each section's questions start in the mock's numbering (1-based). */
@@ -36,11 +42,15 @@ export function toSectionViews({
   finished: boolean;
 }): MockSectionView[] {
   return conditions.sections.map((section, index) => ({
+    breakAfterMinutes: section.breakAfterMinutes ?? null,
+    essays: section.essays.length,
     index,
     minutes: section.minutes,
     name: section.name,
+    navigation: section.navigation ?? null,
     questions: section.questions,
     status: getSectionStatus({ current, finished, index }),
+    tools: section.tools ?? null,
   }));
 }
 

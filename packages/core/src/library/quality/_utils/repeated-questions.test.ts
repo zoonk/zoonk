@@ -8,8 +8,8 @@ function check(question: string): WrittenScreen {
     image: null,
     kind: "check",
     options: [
-      { isCorrect: true, reason: "Right.", text: "A" },
-      { isCorrect: false, reason: "Not quite.", text: "B" },
+      { isCorrect: true, picture: null, reason: "Right.", text: "A" },
+      { isCorrect: false, picture: null, reason: "Not quite.", text: "B" },
     ],
     question,
     visual: null,
@@ -40,6 +40,7 @@ function mathCheck(question: string): WrittenScreen {
 function explanation(text: string): WrittenScreen {
   return {
     exampleLineIdea: null,
+    explore: null,
     image: null,
     kind: "explanation",
     text,

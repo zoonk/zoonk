@@ -2,11 +2,20 @@
 
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { ArrowRightIcon, ChevronRightIcon, LibraryIcon, PartyPopperIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  ChevronRightIcon,
+  FlagIcon,
+  LibraryIcon,
+  PartyPopperIcon,
+} from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { useLevelName } from "../course/use-level-name";
 import { LearnLink } from "../learn-link";
+import { usePlanScreen } from "../plan/plan-context";
+import { useFullCourse } from "../plan/plan-full-course";
+import { StudyEverything } from "../plan/study-everything";
 
 type CourseLink = StudyNextView["related"][number];
 
@@ -78,26 +87,17 @@ function RelatedCourses({
 }
 
 /**
- * Once every lesson is done, the path's finish: say so, and what to study next. The next level of
- * the same course is one tap; the other courses the plan drew from are a link each.
+ * How the plan came to its end: finished, celebrated, or ended with lessons set aside, said plainly
+ * with how many stayed out and the ways to study them (everything, or changing the plan, which
+ * brings set-aside lessons back where they fit), never as a plan finished.
  */
-export function StudyNext({
-  courseHref,
-  next,
-  onContinue,
-}: {
-  courseHref: (course: CourseLink) => string;
-  next: StudyNextView;
-  onContinue: () => Promise<boolean>;
-}) {
+function PlanEndHeader({ hasNext, onAdjust }: { hasNext: boolean; onAdjust: () => void }) {
   const t = useExtracted();
-  const hasNext = next.nextLevel !== null || next.related.length > 0;
+  const { plan } = usePlanScreen();
+  const course = useFullCourse();
 
-  return (
-    <section
-      aria-labelledby="study-next-title"
-      className="bg-muted/60 motion-safe:animate-in motion-safe:fade-in flex flex-col gap-4 rounded-3xl p-5"
-    >
+  if (plan.end?.kind !== "ended") {
+    return (
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"
@@ -114,7 +114,64 @@ export function StudyNext({
           )}
         </div>
       </div>
+    );
+  }
 
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="bg-background text-muted-foreground flex size-11 shrink-0 items-center justify-center rounded-xl"
+        >
+          <FlagIcon className="size-5" />
+        </span>
+        <div className="flex min-w-0 flex-col">
+          <h2 className="font-semibold" id="study-next-title">
+            {t("Your plan ended")}
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            {t("{count, plural, one {# lesson was left out} other {# lessons were left out}}", {
+              count: plan.end.setAsideLessons,
+            })}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-start gap-2">
+        {course && !course.on && <StudyEverything course={course} />}
+        <Button onClick={onAdjust} size="sm" type="button" variant="ghost">
+          {t("Adjust plan")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Once nothing of the plan is left, the path's finish: say how it ended, and what to study next.
+ * The next level of the same course is one tap, finished or ended (the learner's choice); the
+ * other courses the plan drew from are a link each.
+ */
+export function StudyNext({
+  courseHref,
+  next: { onContinue, view: next },
+  onAdjust,
+}: {
+  courseHref: (course: CourseLink) => string;
+  /** What to study next, and the host's "Continue at the next level". */
+  next: { onContinue: () => Promise<boolean>; view: StudyNextView };
+  /** Opens the plan editor: changing the plan brings set-aside lessons back where they fit. */
+  onAdjust: () => void;
+}) {
+  const hasNext = next.nextLevel !== null || next.related.length > 0;
+
+  return (
+    <section
+      aria-labelledby="study-next-title"
+      className="bg-muted/60 motion-safe:animate-in motion-safe:fade-in flex flex-col gap-4 rounded-3xl p-5"
+    >
+      <PlanEndHeader hasNext={hasNext} onAdjust={onAdjust} />
       {next.nextLevel && <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />}
       <RelatedCourses courseHref={courseHref} related={next.related} />
     </section>

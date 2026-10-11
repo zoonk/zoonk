@@ -8,7 +8,10 @@ const SWIPE_DISTANCE = 48;
 /** Sideways must win clearly over up and down, so scrolling a long screen never turns it. */
 const SWIPE_RATIO = 1.2;
 
-/** A swipe is a quick flick; a finger that rests first is selecting text or scrolling. */
+/**
+ * A swipe is a quick flick; a finger that rests first is selecting text or scrolling. Timed by the
+ * touches themselves (`timeStamp`), so a page busy when the finger lifts never makes a flick slow.
+ */
 const SWIPE_MAX_MS = 800;
 
 const ZOOMED_SCALE = 1.01;
@@ -124,7 +127,7 @@ export function useSwipeNavigation({
       const isSwipe =
         Math.abs(deltaX) > SWIPE_DISTANCE &&
         Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_RATIO &&
-        Date.now() - start.startedAt < SWIPE_MAX_MS &&
+        event.timeStamp - start.startedAt < SWIPE_MAX_MS &&
         !isZoomed();
 
       if (!isSwipe) {
@@ -147,7 +150,7 @@ export function useSwipeNavigation({
 
       gesture =
         touch && !isZoomed() && !startsOnOwnGesture(event.target, element)
-          ? { id: touch.identifier, startedAt: Date.now(), x: touch.clientX, y: touch.clientY }
+          ? { id: touch.identifier, startedAt: event.timeStamp, x: touch.clientX, y: touch.clientY }
           : null;
     };
 

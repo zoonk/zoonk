@@ -37,7 +37,12 @@ async function createMathItem({
     return null;
   }
 
-  const stored = toStoredItem({ ...screen.mathItem, difficulty: "medium", format: "numeric" });
+  const stored = toStoredItem({
+    ...screen.mathItem,
+    difficulty: "medium",
+    format: "numeric",
+    otherSolutions: [],
+  });
 
   const item = await tx.item.create({
     data: { ...stored, language, skillId: screen.skillId, ...toProvenanceData(screen.provenance) },

@@ -27,6 +27,7 @@ import {
   MessagesSquareIcon,
   ThumbsUpIcon,
   TrophyIcon,
+  UserXIcon,
   Users,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -47,6 +48,7 @@ const menuGroups = [
       { icon: Users, label: "Users", url: "/users" },
       { icon: TrophyIcon, label: "Leaderboard", url: "/leaderboard" },
       { icon: CreditCardIcon, label: "Subscriptions", url: "/subscriptions" },
+      { icon: UserXIcon, label: "Account deletions", url: "/account-deletions" },
     ],
     label: "Learners",
   },

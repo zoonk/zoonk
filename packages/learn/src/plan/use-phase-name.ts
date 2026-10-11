@@ -33,6 +33,8 @@ export function usePhaseName() {
         return t("Practice");
       case "finalStretch":
         return t("Final stretch");
+      case "afterExam":
+        return t("After the exam");
       case "learn":
         return t("Phase {number, number}", { number: phase.index + 1 });
       default:

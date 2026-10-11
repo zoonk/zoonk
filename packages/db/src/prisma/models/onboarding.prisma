@@ -4,12 +4,15 @@ enum OnboardingDraftStatus {
   failed
 }
 
-/// What onboarding understood from a typed goal: its kind, the goals it names and the facts it
-/// already answers. Shared by everyone who types the same words in the same language, since it
-/// reads only those words; relative dates ("this year") make it fresh for a day. Provenance is
+/// What onboarding understood from a goal a learner typed: its kind, the goals it names and the
+/// facts it already answers. The same words typed again by the same learner reuse it, fresh for a
+/// day since relative dates ("this year") change. It reads the learner's own words and the details
+/// they gave, so it's theirs alone: never another learner's, and deleted with them. Provenance is
 /// the run that wrote it.
 model GoalUnderstanding {
   id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   language         String   @db.VarChar(10)
   normalizedPrompt String   @map("normalized_prompt")
   result           Json
@@ -20,13 +23,13 @@ model GoalUnderstanding {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
 
-  @@unique([language, normalizedPrompt], name: "languageNormalizedPrompt")
+  @@unique([userId, language, normalizedPrompt], name: "userLanguagePrompt")
   @@map("goal_understandings")
 }
 
 /// A learner waiting for lessons that teach them to play an instrument. Those lessons need to hear
 /// the learner play, so onboarding offers musicianship as a learn goal and this waitlist instead.
-/// `instrument` is in the learner's words ("violão"); `normalizedInstrument` keeps one entry per
+/// `instrument` is in the learner's words ("guitar"); `normalizedInstrument` keeps one entry per
 /// instrument per learner.
 model InstrumentWaitlistEntry {
   id                   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid

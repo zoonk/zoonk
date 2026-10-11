@@ -1,10 +1,13 @@
 import { prisma } from "@zoonk/db";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -12,9 +15,11 @@ import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../learner/_utils/known-skills";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { loadTodayPlanChange } from "./_utils/today-plan-change";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
+import { parsePlanGraph } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
@@ -26,6 +31,7 @@ vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateC
  */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 const THURSDAY = new Date("2020-10-01T12:00:00Z");
+const FRIDAY = new Date("2020-10-02T12:00:00Z");
 
 async function setup() {
   const user = await userFixture();
@@ -109,6 +115,65 @@ describe(refreshGoalPlan, () => {
     await expect(refreshGoalPlan({ goalId: unbuilt.goal.id })).resolves.toStrictEqual({
       status: "notReady",
     });
+  });
+
+  it("lays out a plan whose graph is ready but was never laid out when a day is built", async () => {
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 3 }] });
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 12,
+      settings: { startDate: "2020-09-28" },
+      userId: user.id,
+    });
+
+    await prisma.plan.update({ data: { graph: library.graph }, where: { id: plan.id } });
+
+    await expect(refreshGoalPlan({ goalId: goal.id, settleOnly: true })).resolves.toStrictEqual({
+      status: "refreshed",
+    });
+
+    const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    const lessons = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
+
+    expect(after.phases).not.toStrictEqual([]);
+    expect(lessons.map((item) => item.scheduledFor !== null)).toStrictEqual([true, true, true]);
+  });
+
+  it("keeps the chapter an unstarted lesson teaches from when the refresh moves it", async () => {
+    vi.setSystemTime(FRIDAY);
+    const user = await userFixture();
+
+    const [goal, chapter, skill] = await Promise.all([
+      goalFixture({ timezone: "UTC", userId: user.id }),
+      libraryChapterFixture({ title: "Fundamental principles" }),
+      skillFixture({ name: "Apply the fundamental principles" }),
+    ]);
+
+    // A plan saved before this read: its pace and start not set yet, so the refresh writes it.
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: {
+        phases: [{ milestone: null, name: "Foundations" }],
+        skills: [{ area: null, lessons: 2, name: skill.name, phase: 0, skillId: skill.id }],
+      },
+    });
+
+    const item = await planItemFixture({
+      chapterId: chapter.id,
+      planId: plan.id,
+      scheduledFor: new Date("2020-10-05"),
+      skillId: skill.id,
+    });
+
+    await expect(refreshGoalPlan({ goalId: goal.id })).resolves.toStrictEqual({
+      status: "refreshed",
+    });
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: item.id } }),
+    ).resolves.toMatchObject({ chapterId: chapter.id, status: "todo" });
   });
 });
 
@@ -292,7 +357,9 @@ describe("test-outs on the plan", () => {
     expect(todoLessonIds).toContain(outlined[1]?.id);
   });
 
-  it("counts a skip as the plan's own rows, and its undo forgets what it only assumed", async () => {
+  // Juliana's Today said "We skipped 49 lessons you already know" while her Journey's subjects
+  // added up to 235: the change counted rows, a stand-in as one, and the Journey its lessons.
+  it("counts a skip's lessons as the Journey does, and its undo forgets what it only assumed", async () => {
     const user = await userFixture();
 
     // The first skill's lessons aren't written yet: one stand-in plans six of them.
@@ -325,16 +392,19 @@ describe("test-outs on the plan", () => {
       timeZone: "UTC",
     });
 
-    // The stand-in is one row on the plan, as in the result that lists these ids.
+    // The stand-in is one row on the plan, as in the result that lists these ids, and six lessons.
     expect(ids).toHaveLength(3);
 
-    const change = await prisma.planChange.findFirstOrThrow({
-      where: { kind: "testedOut", planId: plan.id },
-    });
+    const [change, today] = await Promise.all([
+      prisma.planChange.findFirstOrThrow({ where: { kind: "testedOut", planId: plan.id } }),
+      loadTodayPlanChange({ goal, now: MONDAY }),
+    ]);
+
+    expect(today?.lessonsSkipped).toBe(8);
 
     await expect(
       decidePlanChange({ changeId: change.id, goalId: goal.id, input: { status: "undone" } }),
-    ).resolves.toMatchObject({ change: { lessonsSkipped: 3, status: "undone" } });
+    ).resolves.toMatchObject({ change: { lessonsSkipped: 8, status: "undone" } });
 
     const known = await prisma.learnerSkill.findMany({ where: { userId: user.id } });
 
@@ -344,5 +414,67 @@ describe("test-outs on the plan", () => {
     });
 
     expect(known.find((row) => row.skillId === answered?.id)?.reps).toBe(1);
+  });
+});
+
+describe("the lessons a plan counted for each skill", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(MONDAY);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // A challenge sizes a skill's core by them (`listCoreLessonItems`): a count older than the plan's
+  // key let it ask a skill whose core grew, here from two lessons to three.
+  it("follows the Library when it grows past what a plan short on time keeps", async () => {
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 4 }, { lessons: 6 }] });
+
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 6,
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-09-30T00:00:00Z"),
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+
+    const grown = library.skills[1];
+    const chapterId = library.chapters[0]?.id ?? "";
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const itemsBefore = await prisma.planItem.findMany({ where: { planId: plan.id } });
+
+    const lesson = await libraryLessonFixture({
+      estimatedMinutes: 3,
+      homeChapterId: chapterId,
+      title: `Lesson 2.7 ${crypto.randomUUID()}`,
+    });
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId, lessonId: lesson.id, position: 106 }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: grown?.id ?? "" }),
+    ]);
+
+    await expect(refreshGoalPlan({ goalId: goal.id })).resolves.toStrictEqual({
+      status: "unchanged",
+    });
+
+    const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    const itemsAfter = await prisma.planItem.findMany({ where: { planId: plan.id } });
+
+    const counted = (graph: unknown) =>
+      parsePlanGraph(graph).skills.find((skill) => skill.skillId === grown?.id)?.plannedLessons;
+
+    // The plan keeps the same lessons and version; only the count follows the Library.
+    expect(new Set(itemsAfter.map((item) => item.lessonId))).toStrictEqual(
+      new Set(itemsBefore.map((item) => item.lessonId)),
+    );
+
+    expect(after.version).toBe(before.version);
+    expect([counted(before.graph), counted(after.graph)]).toStrictEqual([6, 7]);
   });
 });

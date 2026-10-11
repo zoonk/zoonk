@@ -4,6 +4,10 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import {
+  numberedCheckContent,
+  pictureCheckContent,
+} from "@zoonk/testing/fixtures/playable-step-contents";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
@@ -77,6 +81,25 @@ describe(listLearnerVersionTargets, () => {
         stepId: step?.id,
       })),
     );
+  });
+
+  it("keeps the shared version of a question asked about its pictures", async () => {
+    const { chapter, goal, plan } = await planWith({ choice: "have" });
+
+    const { lesson, steps } = await playableLessonFixture({
+      steps: [
+        "check",
+        { content: pictureCheckContent, kind: "check" },
+        { content: numberedCheckContent, kind: "check" },
+      ],
+    });
+
+    await planItemFixture({ chapterId: chapter.id, lessonId: lesson.id, planId: plan.id });
+
+    const targets = await listLearnerVersionTargets({ goalId: goal.id, lessonIds: [lesson.id] });
+
+    // Versions are written without pictures: only the question in words gets one.
+    expect(targets.tools.map((target) => target.stepId)).toStrictEqual([steps[0]?.id]);
   });
 
   it("lists the no-install version for a learner who installs nothing", async () => {

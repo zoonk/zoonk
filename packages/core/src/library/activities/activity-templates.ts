@@ -1,98 +1,74 @@
 import { z } from "zod";
 import { type ActivityTemplate } from "./define-activity-template";
-import { beforeAfterTemplate, predictRevealTemplate } from "./templates/any-subject";
+import { beforeAfterTemplate } from "./templates/any-subject";
 import { balanceTemplate } from "./templates/balance";
+import { combinationGridTemplate } from "./templates/combination-grid";
 import {
   codeRunnerTemplate,
   codeTracerTemplate,
   sqlPlaygroundTemplate,
 } from "./templates/computing";
 import { decisionTreeTemplate } from "./templates/decision-tree";
+import { formulaModelTemplate } from "./templates/formula-model";
 import { geometryBoardTemplate, unitCircleTemplate } from "./templates/geometry";
+import { guessRevealTemplate } from "./templates/guess-reveal";
 import {
   causeEffectChainTemplate,
   mapExplorerTemplate,
   sourceComparisonTemplate,
   timelineTemplate,
 } from "./templates/history-society";
+import { labeledDiagramTemplate } from "./templates/labeled-diagram";
+import { dialogueSimulatorTemplate, patternTableTemplate } from "./templates/languages";
+import { lineCrossingTemplate } from "./templates/line-crossing";
 import {
-  dialogueSimulatorTemplate,
-  listeningSpeedTemplate,
-  patternTableTemplate,
-  sentenceBuilderTemplate,
-} from "./templates/languages";
-import {
-  scenarioSimulatorTemplate,
-  sliderCalculatorTemplate,
-  supplyDemandTemplate,
-} from "./templates/money-business";
-import {
-  earTrainerTemplate,
   keyboardFretboardTemplate,
   notationPlayerTemplate,
   rhythmTapperTemplate,
 } from "./templates/music";
 import {
   areaModelTemplate,
-  estimateRevealTemplate,
   numberLineTemplate,
-  sliderGraphTemplate,
   stepSolverTemplate,
 } from "./templates/numbers-algebra";
 import { patternTesterTemplate } from "./templates/pattern-tester";
-import {
-  chartReaderTemplate,
-  distributionExplorerTemplate,
-  predictSimulateTemplate,
-  samplingSimulatorTemplate,
-} from "./templates/probability-data";
-import { punnettSquareTemplate } from "./templates/punnett-square";
+import { chartReaderTemplate, distributionExplorerTemplate } from "./templates/probability-data";
+import { randomSimulationTemplate } from "./templates/random-simulation";
 import {
   argumentBuilderTemplate,
   categorizeTemplate,
   findErrorTemplate,
   matchPairsTemplate,
 } from "./templates/reasoning-writing";
-import {
-  labeledDiagramTemplate,
-  moleculeBuilderTemplate,
-  parameterSimulationTemplate,
-  processOrderTemplate,
-} from "./templates/science";
+import { moleculeBuilderTemplate, processOrderTemplate } from "./templates/science";
 
 /**
  * Every activity template in catalog order. Each is data: a field schema the writer fills and how
  * code computes its check. Adding a template means adding it here and to `activityContentSchema`.
  */
 export const activityTemplates = [
-  sliderGraphTemplate,
+  formulaModelTemplate,
   numberLineTemplate,
   areaModelTemplate,
   balanceTemplate,
   stepSolverTemplate,
-  estimateRevealTemplate,
+  guessRevealTemplate,
   geometryBoardTemplate,
   unitCircleTemplate,
-  predictSimulateTemplate,
+  randomSimulationTemplate,
   distributionExplorerTemplate,
   chartReaderTemplate,
-  samplingSimulatorTemplate,
-  parameterSimulationTemplate,
   labeledDiagramTemplate,
   processOrderTemplate,
   moleculeBuilderTemplate,
-  punnettSquareTemplate,
-  sliderCalculatorTemplate,
-  supplyDemandTemplate,
-  scenarioSimulatorTemplate,
+  combinationGridTemplate,
+  lineCrossingTemplate,
   codeRunnerTemplate,
   codeTracerTemplate,
   sqlPlaygroundTemplate,
   patternTesterTemplate,
-  sentenceBuilderTemplate,
   patternTableTemplate,
   dialogueSimulatorTemplate,
-  listeningSpeedTemplate,
   timelineTemplate,
   mapExplorerTemplate,
   causeEffectChainTemplate,
@@ -104,9 +80,7 @@ export const activityTemplates = [
   decisionTreeTemplate,
   keyboardFretboardTemplate,
   notationPlayerTemplate,
-  earTrainerTemplate,
   rhythmTapperTemplate,
-  predictRevealTemplate,
   beforeAfterTemplate,
 ] as const;
 
@@ -117,34 +91,28 @@ export type ActivityTemplateId = (typeof activityTemplates)[number]["id"];
  * `template` so renderers get typed fields after checking the template id.
  */
 export const activityContentSchema = z.discriminatedUnion("template", [
-  sliderGraphTemplate.content,
+  formulaModelTemplate.content,
   numberLineTemplate.content,
   areaModelTemplate.content,
   balanceTemplate.content,
   stepSolverTemplate.content,
-  estimateRevealTemplate.content,
+  guessRevealTemplate.content,
   geometryBoardTemplate.content,
   unitCircleTemplate.content,
-  predictSimulateTemplate.content,
+  randomSimulationTemplate.content,
   distributionExplorerTemplate.content,
   chartReaderTemplate.content,
-  samplingSimulatorTemplate.content,
-  parameterSimulationTemplate.content,
   labeledDiagramTemplate.content,
   processOrderTemplate.content,
   moleculeBuilderTemplate.content,
-  punnettSquareTemplate.content,
-  sliderCalculatorTemplate.content,
-  supplyDemandTemplate.content,
-  scenarioSimulatorTemplate.content,
+  combinationGridTemplate.content,
+  lineCrossingTemplate.content,
   codeRunnerTemplate.content,
   codeTracerTemplate.content,
   sqlPlaygroundTemplate.content,
   patternTesterTemplate.content,
-  sentenceBuilderTemplate.content,
   patternTableTemplate.content,
   dialogueSimulatorTemplate.content,
-  listeningSpeedTemplate.content,
   timelineTemplate.content,
   mapExplorerTemplate.content,
   causeEffectChainTemplate.content,
@@ -156,19 +124,73 @@ export const activityContentSchema = z.discriminatedUnion("template", [
   decisionTreeTemplate.content,
   keyboardFretboardTemplate.content,
   notationPlayerTemplate.content,
-  earTrainerTemplate.content,
   rhythmTapperTemplate.content,
-  predictRevealTemplate.content,
   beforeAfterTemplate.content,
 ]);
 
 export type ActivityStepContent = z.infer<typeof activityContentSchema>;
 
-/** One template's content, narrowed by id: `ActivityContentFor<"sliderGraph">["fields"]`. */
+/** One template's content, narrowed by id: `ActivityContentFor<"formulaModel">["fields"]`. */
 export type ActivityContentFor<TId extends ActivityTemplateId> = Extract<
   ActivityStepContent,
   { template: TId }
 >;
+
+/**
+ * The templates an explanation screen can show to explore, with no question and no check: a model
+ * to move (a slider, a curve, a simulation), a process, a timeline, a tree, a map or a program to
+ * run. Templates that only make sense as a question (sort, match, find the error, guess then see)
+ * stay activities.
+ */
+export const exploreActivitySchema = z.discriminatedUnion("template", [
+  formulaModelTemplate.explore,
+  numberLineTemplate.explore,
+  areaModelTemplate.explore,
+  balanceTemplate.explore,
+  geometryBoardTemplate.explore,
+  unitCircleTemplate.explore,
+  randomSimulationTemplate.explore,
+  distributionExplorerTemplate.explore,
+  chartReaderTemplate.explore,
+  labeledDiagramTemplate.explore,
+  processOrderTemplate.explore,
+  moleculeBuilderTemplate.explore,
+  combinationGridTemplate.explore,
+  lineCrossingTemplate.explore,
+  codeRunnerTemplate.explore,
+  codeTracerTemplate.explore,
+  sqlPlaygroundTemplate.explore,
+  patternTesterTemplate.explore,
+  timelineTemplate.explore,
+  mapExplorerTemplate.explore,
+  causeEffectChainTemplate.explore,
+  decisionTreeTemplate.explore,
+  keyboardFretboardTemplate.explore,
+  notationPlayerTemplate.explore,
+  beforeAfterTemplate.explore,
+]);
+
+export type ExploreActivityContent = z.infer<typeof exploreActivitySchema>;
+
+export type ExploreTemplateId = ExploreActivityContent["template"];
+
+const exploreTemplateIds: ReadonlySet<string> = new Set(
+  exploreActivitySchema.options.map((option) => option.shape.template.value),
+);
+
+/**
+ * Whether the template shows its solved state when explored (the steps in order, the program that
+ * prints its output): its canvas only answers, with every check an interaction. Others are played
+ * with freely.
+ */
+export function exploresSolved(template: string): boolean {
+  return getActivityTemplate(template)?.checks.every((kind) => kind === "interaction") ?? false;
+}
+
+/** Whether an explanation screen can show the template to explore. */
+export function isExploreTemplate(id: string): id is ExploreTemplateId {
+  return exploreTemplateIds.has(id);
+}
 
 const templatesById: ReadonlyMap<string, ActivityTemplate> = new Map(
   activityTemplates.map((template): [string, ActivityTemplate] => [template.id, template]),
@@ -179,10 +201,35 @@ export function getActivityTemplate(id: string): ActivityTemplate | null {
 }
 
 /**
- * Whether the template shows data (a chart, a simulation's numbers), whose source it cites or
- * which it labels as an example. A sorting or matching activity shows none, so a data note on it
- * would say something false.
+ * Templates merged into a generic engine or removed on 8 Oct 2026, by the engine that took each
+ * one over (null when none did). Lesson plans saved before then still name the old ids.
  */
-export function showsActivityData(template: string): boolean {
-  return getActivityTemplate(template)?.needsData === true;
+const RETIRED_TEMPLATES: Readonly<Record<string, ActivityTemplateId | null>> = {
+  earTrainer: "keyboardFretboard",
+  estimateReveal: "guessReveal",
+  listeningSpeed: null,
+  parameterSimulation: "formulaModel",
+  predictReveal: "guessReveal",
+  predictSimulate: "randomSimulation",
+  punnettSquare: "combinationGrid",
+  samplingSimulator: "randomSimulation",
+  scenarioSimulator: "formulaModel",
+  sentenceBuilder: null,
+  sliderCalculator: "formulaModel",
+  sliderGraph: "formulaModel",
+  supplyDemand: "lineCrossing",
+};
+
+/** The template a saved plan means today: a retired id becomes its engine, or none. */
+export function currentTemplateId(id: string): string | null {
+  return Object.hasOwn(RETIRED_TEMPLATES, id) ? (RETIRED_TEMPLATES[id] ?? null) : id;
+}
+
+/**
+ * Whether an activity shows data (a chart, a simulation's numbers), whose source it cites or which
+ * it labels as an example. A sorting or matching activity shows none, so a data note on it would
+ * say something false; an engine with modes decides from its fields.
+ */
+export function showsActivityData(content: { fields: unknown; template: string }): boolean {
+  return getActivityTemplate(content.template)?.showsData(content.fields) ?? false;
 }

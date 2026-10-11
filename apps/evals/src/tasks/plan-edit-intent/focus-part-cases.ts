@@ -86,8 +86,8 @@ function enemInput(request: string): PlanEditInput {
 }
 
 /**
- * Focus on part of an area: ENEM's Ciências da Natureza holds biology, chemistry and physics, and
- * its Ciências Humanas history, geography, philosophy and sociology. A learner who names some
+ * Focus on part of an area: ENEM's natural sciences hold biology, chemistry and physics, and
+ * its human sciences history, geography, philosophy and sociology. A learner who names some
  * disciplines gets those skills, every one and no other; one who names a whole area gets no part.
  */
 export const FOCUS_PART_TEST_CASES: PlanEditTestCase[] = [

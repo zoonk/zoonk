@@ -1,11 +1,7 @@
 import "server-only";
 import { type LibraryIdentityCandidate } from "@zoonk/ai/tasks/v2/identity/subject";
 import { prisma, sql } from "@zoonk/db";
-import {
-  buildImageReuseKey,
-  getImageReuseKeyPrefix,
-  scopeIdentityKey,
-} from "@zoonk/utils/identity-key";
+import { buildImageReuseKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isInRequestScope } from "../_utils/exact-match-scope";
 import { type IdentityKindSearch, type ImageIdentityRequest } from "../_utils/identity-requests";
 import { IMAGE_SCENE_DOCUMENT } from "../_utils/search-documents";
@@ -34,9 +30,8 @@ async function findExactImage({
 }
 
 /**
- * Public images in the same style whose scene matches. Images
- * without text serve any language; images with labels only their own, and
- * never a language course, which shows no text.
+ * Public images whose scene matches, whatever style drew them. Images without text serve any
+ * language; images with labels only their own, and never a language course, which shows no text.
  */
 async function findImageCandidateIds({
   request,
@@ -45,16 +40,12 @@ async function findImageCandidateIds({
   request: ImageIdentityRequest;
   search: TextSearch;
 }): Promise<string[]> {
-  const keyPrefix = getImageReuseKeyPrefix(request);
-
   // A scene is English whatever language its labels are in.
   return findRankedIds({
     document: IMAGE_SCENE_DOCUMENT,
     filters: sql`m.kind = 'image'
       AND m.visibility = 'public'
       AND m.prompt IS NOT NULL
-      AND m.style_version = ${request.styleVersion}
-      AND starts_with(m.reuse_key, ${keyPrefix})
       AND (m.language IS NULL OR (${request.textAllowed} AND m.language = ${request.language}))`,
     search,
   });
@@ -73,7 +64,6 @@ export function getImageIdentitySearch(request: ImageIdentityRequest): IdentityK
     key: buildImageReuseKey({
       language: request.hasLabels ? request.language : null,
       prompt: request.prompt,
-      styleVersion: request.styleVersion,
     }),
     ownerId: request.ownerId,
   });

@@ -10,6 +10,11 @@ import { TEST_CASES } from "./test-cases";
 export type FindTargetCutoffExpected = {
   /** The range a real cut-off of the target falls in; null when none is published. */
   range: { max: number; min: number } | null;
+  /**
+   * The top of the scale the cut-off is on, which the app needs to show it at all ("7 out of 10"):
+   * left out when the case doesn't check it.
+   */
+  maxScore?: number;
 };
 
 function parseOutput(output: string): TargetCutoffFinding | null {
@@ -22,8 +27,9 @@ function parseOutput(output: string): TargetCutoffFinding | null {
 
 /**
  * 10 for a cut-off in its plausible range with its source (or "unknown" where none is published);
- * 8 for one it missed, which only leaves the learner without the reference; 6 for a cut-off out of
- * range or made up for a target that has none, which would mislead the learner about the bar.
+ * 8 for one it missed or gave without its scale, which only leaves the learner without the
+ * reference (the app hides a number without its scale); 6 for a cut-off out of range, on a wrong
+ * scale or made up for a target that has none, which would mislead the learner about the bar.
  */
 const scoreTargetCutoff: TaskScorer<FindTargetCutoffExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
@@ -45,9 +51,20 @@ const scoreTargetCutoff: TaskScorer<FindTargetCutoffExpected> = ({ output, testC
 
   const inRange = found.score >= expected.range.min && found.score <= expected.range.max;
 
-  return inRange
-    ? createFixedScore({ conclusion: "None", score: 10 })
-    : createFixedScore({ conclusion: `Cut-off ${found.score} out of range`, score: 6 });
+  if (!inRange) {
+    return createFixedScore({ conclusion: `Cut-off ${found.score} out of range`, score: 6 });
+  }
+
+  if (expected.maxScore === undefined || found.maxScore === expected.maxScore) {
+    return createFixedScore({ conclusion: "None", score: 10 });
+  }
+
+  return found.maxScore === null
+    ? createFixedScore({ conclusion: "No scale, so the app shows no number", score: 8 })
+    : createFixedScore({
+        conclusion: `Scale up to ${found.maxScore}, not ${expected.maxScore}`,
+        score: 6,
+      });
 };
 
 export const findTargetCutoffTask: Task<

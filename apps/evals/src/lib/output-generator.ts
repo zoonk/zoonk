@@ -76,6 +76,7 @@ async function generateOutputForTestCase({
   return {
     ...toTokenUsage(result.usage),
     duration,
+    extraCalls: result.extraCalls,
     output: JSON.stringify(result.data, null, 2),
     probabilities: result.probabilities,
     systemPrompt: result.systemPrompt,

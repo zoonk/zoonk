@@ -4,8 +4,10 @@ import {
   buildChapterIdentityKey,
   buildImageReuseKey,
   buildLessonIdentityKey,
+  buildSetupSkillIdentityKey,
   buildSkillIdentityKey,
   buildSourceIdentityKey,
+  isSetupSkillIdentityKey,
   normalizeIdentityText,
   scopeIdentityKey,
 } from "./identity-key";
@@ -31,6 +33,28 @@ describe(buildSkillIdentityKey, () => {
     expect(buildSkillIdentityKey({ name: "Conjugate ser", targetLanguage: "es" })).not.toBe(
       buildSkillIdentityKey({ name: "Conjugate ser", targetLanguage: "pt" }),
     );
+  });
+});
+
+describe(isSetupSkillIdentityKey, () => {
+  it("tells setup skills apart, shared or private", () => {
+    const setupKey = buildSetupSkillIdentityKey({ system: "windows", tool: "Python" });
+
+    expect(isSetupSkillIdentityKey(setupKey)).toBe(true);
+
+    expect(isSetupSkillIdentityKey(scopeIdentityKey({ key: setupKey, ownerId: "user-1" }))).toBe(
+      true,
+    );
+
+    expect(
+      isSetupSkillIdentityKey(
+        buildSkillIdentityKey({ name: "Set up Python", targetLanguage: null }),
+      ),
+    ).toBe(false);
+
+    expect(
+      isSetupSkillIdentityKey(buildSkillIdentityKey({ name: "setup", targetLanguage: "en" })),
+    ).toBe(false);
   });
 });
 
@@ -146,13 +170,13 @@ describe(buildSourceIdentityKey, () => {
 });
 
 describe(buildImageReuseKey, () => {
-  it("matches the same scene in the same style and label language only", () => {
-    const scene = { language: null, prompt: "A red apple on a table", styleVersion: 2 };
+  it("matches the same scene and label language, whatever style drew it", () => {
+    const scene = { language: null, prompt: "A red apple on a table" };
 
     const key = buildImageReuseKey(scene);
 
     expect(buildImageReuseKey({ ...scene, prompt: "a red apple on a table." })).toBe(key);
-    expect(buildImageReuseKey({ ...scene, styleVersion: 3 })).not.toBe(key);
+    expect(key).toMatch(/^image:any:/u);
     expect(buildImageReuseKey({ ...scene, language: "pt" })).not.toBe(key);
   });
 });

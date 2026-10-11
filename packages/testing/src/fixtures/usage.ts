@@ -23,9 +23,9 @@ const FIRST_TEST_ONLY_YEAR = 2100;
 const FIRST_TEST_ONLY_DAY = new Date(Date.UTC(FIRST_TEST_ONLY_YEAR, 0, 1));
 
 /**
- * Clears the AI budget all newcomers share for real days. Every test account is younger than a
- * day, so without this a day of test runs would spend the budget and refuse later tests' claims.
+ * Clears the AI budget all guests share for real days, so a day of test runs with guests never
+ * spends it and refuses later tests' claims.
  */
-export async function resetNewcomerSpend() {
-  await prisma.newcomerSpendDay.deleteMany({ where: { day: { lt: FIRST_TEST_ONLY_DAY } } });
+export async function resetGuestSpend() {
+  await prisma.guestSpendDay.deleteMany({ where: { day: { lt: FIRST_TEST_ONLY_DAY } } });
 }

@@ -7,7 +7,8 @@ import { toStepContent } from "../../steps/written-screens";
 
 /**
  * What a version keeps from the original screen: its example-line slot. A field or tool version
- * changes the example, so the original's picture may not fit and stays behind.
+ * changes the example, so the original's picture or explored template may not fit and stays
+ * behind.
  */
 function getCarriedFields(original: unknown): Record<string, unknown> {
   if (!isJsonObject(original) || original.exampleLineSlot === undefined) {
@@ -35,7 +36,9 @@ export function toVariantContent({
   stepKind: StepKind;
   written: WrittenVariant;
 }): { content: object; ok: true } | { ok: false; problems: string[] } {
-  const screen = written.kind === "explanation" ? { ...written, exampleLineIdea: null } : written;
+  const screen =
+    written.kind === "explanation" ? { ...written, exampleLineIdea: null, explore: null } : written;
+
   const converted = toStepContent(screen, { allowImage: false, language });
 
   if (!converted.ok) {

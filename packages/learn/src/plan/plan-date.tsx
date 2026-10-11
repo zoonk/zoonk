@@ -1,0 +1,143 @@
+"use client";
+
+import { Button } from "@zoonk/ui/components/button";
+import { Input } from "@zoonk/ui/components/input";
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import { useExtracted } from "next-intl";
+import { useId, useState } from "react";
+import { toLocalIsoDate, useFormatGoalDate } from "../_utils/iso-date";
+import { UseDateButton, useNoticeDayText } from "./notice-day";
+import { usePlanScreen } from "./plan-context";
+import { PlanFailedMessage } from "./plan-failed-message";
+import { FullCourseSwitch, useFullCourse } from "./plan-full-course";
+import { StudyEverything } from "./study-everything";
+import { usePlanChange } from "./use-plan-change";
+
+/** The plan's date has to be after today: a plan counts down to a day still ahead. */
+function getTomorrow(): string {
+  return toLocalIsoDate(new Date(Date.now() + MS_PER_DAY));
+}
+
+/**
+ * What the date field says above it: a named month stands for the month until the learner picks a
+ * day ("March for now"), and a goal without a deadline studies everything at its own pace.
+ */
+function useDateNote() {
+  const t = useExtracted();
+  const formatGoalDate = useFormatGoalDate();
+
+  return function dateNote({
+    isExam,
+    namedMonth,
+    targetDate,
+  }: {
+    isExam: boolean;
+    namedMonth: boolean;
+    targetDate: string | null;
+  }): string | null {
+    if (namedMonth && targetDate) {
+      return t("{month} for now. Pick the day when you know it.", {
+        month: formatGoalDate({ isoDate: targetDate, namedMonth: true }),
+      });
+    }
+
+    return targetDate || isExam ? null : t("No deadline: you study everything at your own pace.");
+  };
+}
+
+/**
+ * The goal's date (an exam's, or a deadline), which the learner can change any time: the full
+ * date, saved as one change that re-plans from today. A month the learner named ("March") stays a
+ * month until they pick its day: the field starts empty instead of showing a day they never chose
+ * (Sofia's "March" read 01/03/2027). When the plan counts down to another day than the exam's
+ * notice gives, that day is offered with one tap. A goal that isn't an exam can drop its deadline
+ * to study everything at its own pace, and set one again; an exam keeps its date and can go on
+ * after it instead (see `FullCourseSwitch`). Not for quick explanations, which have no plan days.
+ */
+export function PlanDate() {
+  const t = useExtracted();
+  const inputId = useId();
+  const noteId = useId();
+  const { goal, plan } = usePlanScreen();
+  const { change, failed, isPending } = usePlanChange();
+  const noticeDayText = useNoticeDayText();
+  const { noticeDay, targetDate, targetDateNamedMonth } = plan.schedule;
+  const namedMonth = targetDateNamedMonth && targetDate !== null;
+  const noteFor = useDateNote();
+  const course = useFullCourse();
+  const [value, setValue] = useState(namedMonth ? "" : (targetDate ?? ""));
+
+  if (goal.kind === "explain") {
+    return null;
+  }
+
+  const setDate = async (date: string) => {
+    const outcome = await change([{ kind: "setTargetDate", targetDate: date }]);
+
+    if (outcome?.status === "applied") {
+      setValue(date);
+    }
+
+    return outcome?.status === "applied";
+  };
+
+  const note = noteFor({ isExam: goal.kind === "exam", namedMonth, targetDate });
+  const tomorrow = getTomorrow();
+  // A month's first day is a day of its own once the learner picks it.
+  const canSave = value !== "" && (namedMonth || value !== targetDate) && value >= tomorrow;
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-sm font-medium" htmlFor={inputId}>
+        {goal.kind === "exam" ? t("Exam date") : t("Deadline")}
+      </label>
+
+      {note && (
+        <p className="text-muted-foreground text-sm" id={noteId}>
+          {note}
+        </p>
+      )}
+
+      <form
+        className="flex gap-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+
+          if (canSave) {
+            void setDate(value);
+          }
+        }}
+      >
+        <Input
+          aria-describedby={note ? noteId : undefined}
+          className="max-w-48"
+          disabled={isPending}
+          id={inputId}
+          min={tomorrow}
+          onChange={(event) => setValue(event.target.value)}
+          type="date"
+          value={value}
+        />
+        {canSave && (
+          <Button disabled={isPending} type="submit" variant="outline">
+            {isPending ? t("Saving…") : t("Save")}
+          </Button>
+        )}
+      </form>
+
+      {noticeDay && (
+        <div className="flex flex-col items-start gap-2 text-sm">
+          <p className="text-muted-foreground">
+            {noticeDayText({ ...noticeDay, document: plan.examDocument })}
+          </p>
+          <UseDateButton onUse={() => setDate(noticeDay.date)} />
+        </div>
+      )}
+
+      {course && !course.isExam && <StudyEverything course={course} />}
+      {goal.kind === "exam" && <FullCourseSwitch />}
+
+      {failed && <PlanFailedMessage />}
+    </div>
+  );
+}

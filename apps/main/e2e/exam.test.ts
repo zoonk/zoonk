@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import {
   QUOTED_STATEMENT_CITATION,
@@ -47,6 +48,30 @@ async function holdServerActions(page: Page, matches: (body: string) => boolean)
   };
 }
 
+/** Phone widths a result's header must fit, from small to large. */
+const PHONE_WIDTHS = [360, 390, 430];
+
+/**
+ * On a phone, a result's header keeps its step dots clear of "Ask", the buddy's face alone there.
+ * The page goes back to its own size after.
+ */
+async function expectDotsClearOfAsk(page: Page) {
+  const size = page.viewportSize() ?? { height: 844, width: 1280 };
+  const dots = page.locator('[data-slot="step-dots"]');
+  const ask = page.getByRole("button", { name: "Ask Buddy about this mock exam" });
+
+  for (const width of PHONE_WIDTHS) {
+    // oxlint-disable-next-line no-await-in-loop -- One width at a time, on the same page.
+    await page.setViewportSize({ height: 844, width });
+    // oxlint-disable-next-line no-await-in-loop -- Measured after each resize.
+    const [dotsBox, askBox] = await Promise.all([dots.boundingBox(), ask.boundingBox()]);
+
+    expect((dotsBox?.x ?? 0) + (dotsBox?.width ?? 0)).toBeLessThan(askBox?.x ?? 0);
+  }
+
+  await page.setViewportSize(size);
+}
+
 test.describe("Exam goal", () => {
   test("a day, a mock in real conditions with its answer sheet, bounded waits and a tutor once handed in, its result and preparation", async ({
     browser,
@@ -77,7 +102,8 @@ test.describe("Exam goal", () => {
       await page.goto(`/mock/${mock.blockId}`);
       await expect(page).toHaveURL(new RegExp(`/challenge/${mock.planItemId}$`, "u"));
 
-      await expect(page.getByRole("heading", { level: 1, name: "Mock exam 1" })).toBeVisible();
+      // Her second: she took her first one last Sunday.
+      await expect(page.getByRole("heading", { level: 1, name: "Mock exam 2" })).toBeVisible();
 
       await expect(page.getByText(/only shows at the end/u)).toBeVisible();
       await expectAccessibleScreen(page, "a mock's intro");
@@ -155,11 +181,12 @@ test.describe("Exam goal", () => {
       // The result one thing at a time. First, the score: a range labeled as an estimate, never a
       // single number.
       await expect(
-        page.getByRole("heading", { level: 1, name: /^Mock exam 1 done\s*\d+–\d+$/u }),
+        page.getByRole("heading", { level: 1, name: /^Mock exam 2 done\s*\d+–\d+$/u }),
       ).toBeVisible();
 
       await expect(page.getByText(/^Estimated score · /u)).toBeVisible();
       await expectAccessibleScreen(page, "a mock's result");
+      await expectDotsClearOfAsk(page);
 
       // One score per area of the exam day, each named once; never the day's name for an area.
       await nextStep(page);
@@ -200,7 +227,10 @@ test.describe("Exam goal", () => {
 
       expect(asked).toStrictEqual([
         {
-          input: expect.objectContaining({ context: { kind: "mock" }, suggested: true }),
+          input: expect.objectContaining({
+            context: { kind: "mock" },
+            question: "What should I practice first?",
+          }),
           path: `/v1/mocks/${mock.blockId}/questions`,
         },
       ]);
@@ -241,6 +271,7 @@ test.describe("Exam goal", () => {
         /^Linguagens, Ciências Humanas e redação\s*90 questions$/u,
       ]);
 
+      await expect(page.getByRole("link", { name: /^Mock exam 2/u })).toBeVisible();
       await expect(page.getByRole("link", { name: /^Mock exam 1/u })).toBeVisible();
       await expectAccessibleScreen(page, "the exam page");
     });
@@ -270,11 +301,15 @@ test.describe("Exam goal", () => {
         page.getByRole("heading", { level: 1, name: /^Your essay\s*660–740$/u }),
       ).toBeVisible();
 
-      await expect(page.getByText("Estimated", { exact: true })).toBeVisible();
+      await expect(
+        page.getByText("Estimated score, from 0 to 1,000", { exact: true }),
+      ).toBeVisible();
 
       const scores = page.getByRole("list", { name: "Score by criterion" });
 
       await expect(scores.getByText("Intervention proposal")).toBeVisible();
+      // Each competency out of its own points, as ENEM scores it.
+      await expect(scores.getByText("80 of 200", { exact: true })).toBeVisible();
       await expectAccessibleScreen(page, "a graded essay");
 
       await nextStep(page);
@@ -365,6 +400,7 @@ test.describe("Exam goal", () => {
         ],
         route: "goals",
       },
+      userId: await ensureGuest(page),
     });
 
     await page.goto("/start");
@@ -393,6 +429,33 @@ test.describe("Exam goal", () => {
     await page.reload();
 
     await expect(page.getByRole("heading", { name: "What score do you need?" })).toBeVisible();
+  });
+
+  test("an essay with full marks on every competency has nothing left to work on", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const essay = await addGradedEssay({ fullMarks: true, goalId: user.goalId, userId: user.id });
+      await page.goto(`/essay/${essay.blockId}`);
+
+      // No competency stands out as the one to work on, and the next step says nothing is left.
+      const scores = page.getByRole("list", { name: "Score by criterion" });
+      await expect(scores.getByText("200 of 200", { exact: true })).toHaveCount(5);
+
+      await nextStep(page);
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Nothing left to work on" }),
+      ).toBeVisible();
+
+      await page.getByRole("button", { name: "Rewrite" }).click();
+
+      await expect(
+        page.getByText("Every criterion has full marks in this estimate."),
+      ).toBeVisible();
+
+      await expect(page.getByText(/^Next step:/u)).toHaveCount(0);
+    });
   });
 
   test("an AP free-response answer scored by its rows' points", async ({ browser }) => {

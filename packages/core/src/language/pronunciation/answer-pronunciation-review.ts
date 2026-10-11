@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
-import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import {
   type SpokenAudio,
@@ -86,7 +86,7 @@ export async function answerPronunciationReview({
     return { status: "noSpeech" };
   }
 
-  const timeZone = getAnswerTimeZone({ goal: null, timeZone: fields.timeZone });
+  const timeZone = await getLearnerTimeZone({ timeZone: fields.timeZone, userId });
   const now = new Date();
 
   const recorded = await recordLearnerAnswer({

@@ -29,10 +29,7 @@ test.describe("Energy Page", () => {
       ]),
     ]);
 
-    const browserContext = await browser.newContext({
-      storageState: user.storageState,
-      timezoneId: "UTC",
-    });
+    const browserContext = await browser.newContext({ storageState: user.storageState });
 
     const page = await browserContext.newPage();
 
@@ -85,10 +82,7 @@ test.describe("Energy Page", () => {
       ]),
     ]);
 
-    const browserContext = await browser.newContext({
-      storageState: user.storageState,
-      timezoneId: "UTC",
-    });
+    const browserContext = await browser.newContext({ storageState: user.storageState });
 
     const page = await browserContext.newPage();
     const starts = "Energy starts after your first day of study, and grows as you learn.";

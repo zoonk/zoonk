@@ -46,7 +46,7 @@ type QuestionSchema = ReturnType<typeof questionSchema>;
 export type PastQuestion = z.infer<QuestionSchema>;
 
 export type ExtractPastQuestionsParams = {
-  /** The exam, such as "Enem" or "Cebraspe, Polícia Federal, Agente". */
+  /** The exam, such as "Enem" or "Cebraspe, Polícia Federal, Agent". */
   exam: string;
   format: PastQuestionFormat;
   language: string;
@@ -106,6 +106,7 @@ export async function extractPastQuestions(params: ExtractPastQuestionsParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "past-questions",
   });

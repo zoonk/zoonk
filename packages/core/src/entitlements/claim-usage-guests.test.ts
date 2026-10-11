@@ -1,32 +1,19 @@
 import { randomUUID } from "node:crypto";
 import { captureMessage } from "@sentry/nextjs";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useIsolatedBudgetDay } from "../_test-utils/isolated-budget-day";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { claimUsageForViewer } from "./_utils/claim-usage-for-viewer";
 import { claimUsage } from "./claim-usage";
-import { NEWCOMER_DAILY_SPEND_BUDGET_MICROS, getEstimatedCostMicros } from "./limits";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
+import { GUEST_DAILY_SPEND_BUDGET_MICROS, getEstimatedCostMicros } from "./limits";
 
 vi.mock("@sentry/nextjs", () => ({ captureMessage: vi.fn() }));
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
-
-vi.mock("next/headers", () => ({
-  headers: vi.fn(
-    async () =>
-      new Headers({ "x-real-ip": "198.51.100.23", "x-vercel-ja4-digest": "t13d1516h2_test" }),
-  ),
-}));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 async function useGuest() {
   const guest = await userFixture();
@@ -40,26 +27,15 @@ function startLesson({ generated = false } = {}) {
   return claimUsage({ generated, kind: "lessonStart", targetId: randomUUID() });
 }
 
-/**
- * A day of its own, so the budget newcomers share in other tests never mixes in. Rows outlive a
- * run in the shared test database, so a day an earlier run drew starts empty again.
- */
-async function useIsolatedDay() {
-  const day = Math.floor(Math.random() * 10_000);
-  vi.setSystemTime(new Date(Date.UTC(2200, 0, 1 + day, 12)));
-  await prisma.newcomerSpendDay.deleteMany({ where: { day: today() } });
-}
-
 function today() {
   const now = new Date();
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 }
 
-describe("guest and newcomer usage", () => {
+describe("guest usage", () => {
   beforeEach(async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
-    await useIsolatedDay();
-    vi.mocked(isRateLimited).mockResolvedValue(false);
+    await useIsolatedBudgetDay();
   });
 
   afterEach(() => {
@@ -191,34 +167,88 @@ describe("guest and newcomer usage", () => {
     },
   );
 
-  it("stops newcomers' AI work for everyone when the shared daily budget runs out", async () => {
-    await prisma.newcomerSpendDay.create({
-      data: { day: today(), spentMicros: NEWCOMER_DAILY_SPEND_BUDGET_MICROS },
+  it("asks a guest to create an account once the budget all guests share is spent, while an account goes on", async () => {
+    await prisma.guestSpendDay.create({
+      data: { day: today(), spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS },
     });
 
     const guest = await useGuest();
+    const signUpRequired = { status: "signUpRequired" };
 
-    await expect(startLesson({ generated: true })).resolves.toMatchObject({
-      limit: { resource: "newcomerSpend" },
-      status: "limitReached",
-    });
+    await expect(startLesson({ generated: true })).resolves.toStrictEqual(signUpRequired);
 
-    await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toMatchObject({
-      limit: { resource: "newcomerSpend" },
-      status: "limitReached",
-    });
+    await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toStrictEqual(
+      signUpRequired,
+    );
 
-    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toMatchObject({
-      limit: { resource: "newcomerSpend" },
-      status: "limitReached",
-    });
+    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toStrictEqual(
+      signUpRequired,
+    );
 
     // A lesson that's already written costs no AI, so it never needs the budget.
     await expect(startLesson({ generated: false })).resolves.toStrictEqual({ status: "allowed" });
     await expect(prisma.usageRecord.count({ where: { userId: guest.id } })).resolves.toBe(1);
+
+    // An account made a minute ago never shares the guests' budget: only its own caps apply.
+    const account = await userFixture();
+    mockSession(account.id);
+
+    await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toStrictEqual({
+      status: "allowed",
+    });
+
+    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toStrictEqual({
+      status: "allowed",
+    });
   });
 
-  it("takes each use's estimated cost from the newcomers' budget, a goal weighing most", async () => {
+  it("lets a guest continue once they create an account, with their usage moved to its caps", async () => {
+    await prisma.guestSpendDay.create({
+      data: { day: today(), spentMicros: GUEST_DAILY_SPEND_BUDGET_MICROS },
+    });
+
+    const guest = await useGuest();
+
+    await usageRecordsFixture({
+      count: 20,
+      createdAt: new Date(),
+      kind: "assist",
+      userId: guest.id,
+    });
+
+    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toStrictEqual({
+      status: "signUpRequired",
+    });
+
+    // Signing up moves the guest's usage to the new account (auth's guest link, tested there).
+    const account = await userFixture();
+
+    await prisma.usageRecord.updateMany({
+      data: { userId: account.id },
+      where: { userId: guest.id },
+    });
+
+    mockSession(account.id);
+
+    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toStrictEqual({
+      status: "allowed",
+    });
+
+    // The guest's help counts toward the account's own day: 100 small helps for a free account.
+    await usageRecordsFixture({
+      count: 79,
+      createdAt: new Date(),
+      kind: "assist",
+      userId: account.id,
+    });
+
+    await expect(claimUsage({ kind: "assist", targetId: randomUUID() })).resolves.toMatchObject({
+      limit: { limit: 100, period: "day", resource: "assist", tier: "free" },
+      status: "limitReached",
+    });
+  });
+
+  it("takes each guest use's estimated cost from the budget all guests share, a goal weighing most", async () => {
     await useGuest();
 
     await claimUsage({ generated: true, kind: "explanation", targetId: randomUUID() });
@@ -231,7 +261,7 @@ describe("guest and newcomer usage", () => {
     );
 
     await expect(
-      prisma.newcomerSpendDay.findUnique({ where: { day: today() } }),
+      prisma.guestSpendDay.findUnique({ where: { day: today() } }),
     ).resolves.toMatchObject({ spentMicros: expected });
 
     expect(getEstimatedCostMicros({ generated: false, kind: "goal" })).toBeGreaterThan(
@@ -239,10 +269,41 @@ describe("guest and newcomer usage", () => {
     );
   });
 
-  it("tells Sentry once when newcomers pass 80% of the day's budget", async () => {
-    const alertLine = NEWCOMER_DAILY_SPEND_BUDGET_MICROS * 0.8;
+  it("never refuses a guest because the day's budget row was cleared while they claimed", async () => {
+    const guests = await Promise.all(Array.from({ length: 20 }, () => userFixture()));
+    const now = new Date();
+    const claiming = new AbortController();
 
-    await prisma.newcomerSpendDay.create({ data: { day: today(), spentMicros: alertLine - 1 } });
+    // E2E runs clear the day's row before every test, while other workers' guests claim from it.
+    const clear = (async () => {
+      while (!claiming.signal.aborted) {
+        // oxlint-disable-next-line no-await-in-loop -- Each clear waits for the one before.
+        await prisma.guestSpendDay.deleteMany({ where: { day: today() } });
+      }
+    })();
+
+    const decisions = await Promise.all(
+      guests.map((guest) =>
+        claimUsageForViewer({
+          generated: false,
+          kind: "assist",
+          now,
+          targetId: randomUUID(),
+          viewer: { isGuest: true, tier: "guest", userId: guest.id },
+        }),
+      ),
+    );
+
+    claiming.abort();
+    await clear;
+
+    expect(decisions.map((decision) => decision.status)).toStrictEqual(guests.map(() => "allowed"));
+  });
+
+  it("tells Sentry once when guests pass 80% of the day's budget", async () => {
+    const alertLine = GUEST_DAILY_SPEND_BUDGET_MICROS * 0.8;
+
+    await prisma.guestSpendDay.create({ data: { day: today(), spentMicros: alertLine - 1 } });
 
     await useGuest();
     await claimUsage({ kind: "assist", targetId: randomUUID() });
@@ -265,49 +326,5 @@ describe("guest and newcomer usage", () => {
       limit: { limit: 40, period: "day", resource: "assist", tier: "guest" },
       status: "limitReached",
     });
-  });
-
-  it("counts an account younger than a day as a newcomer, but not an older one", async () => {
-    const [young, old] = await Promise.all([userFixture(), userFixture()]);
-
-    await Promise.all([
-      prisma.user.update({ data: { createdAt: new Date() }, where: { id: young.id } }),
-      prisma.user.update({
-        data: { createdAt: new Date(Date.now() - 2 * MS_PER_DAY) },
-        where: { id: old.id },
-      }),
-    ]);
-
-    await prisma.newcomerSpendDay.create({
-      data: { day: today(), spentMicros: NEWCOMER_DAILY_SPEND_BUDGET_MICROS },
-    });
-
-    mockSession(young.id);
-
-    await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toMatchObject({
-      limit: { resource: "newcomerSpend", tier: "free" },
-      status: "limitReached",
-    });
-
-    mockSession(old.id);
-
-    await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toStrictEqual({
-      status: "allowed",
-    });
-  });
-
-  it("rate-limits guests by network and browser fingerprint, not by guest", async () => {
-    const guest = await useGuest();
-    vi.mocked(isRateLimited).mockResolvedValue(true);
-
-    await expect(startLesson()).resolves.toMatchObject({ status: "slowDown" });
-
-    expect(isRateLimited).toHaveBeenCalledWith(
-      expect.objectContaining({ key: expect.stringMatching(/^network:[0-9a-f]{32}$/u) }),
-    );
-
-    expect(isRateLimited).not.toHaveBeenCalledWith(
-      expect.objectContaining({ key: `user:${guest.id}` }),
-    );
   });
 });

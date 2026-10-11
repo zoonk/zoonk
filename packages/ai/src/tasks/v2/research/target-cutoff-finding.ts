@@ -17,15 +17,18 @@ export type RawTargetCutoffFinding = {
 export type TargetCutoffFinding =
   | {
       edition: string | null;
+      /** The top of the scale the score is on, when the source or the exam states it. */
+      maxScore: number | null;
       quota: string | null;
       score: number;
       source: { title: string | null; url: string };
       status: "found";
     }
-  | { edition: null; quota: null; score: null; source: null; status: "unknown" };
+  | { edition: null; maxScore: null; quota: null; score: null; source: null; status: "unknown" };
 
 const UNKNOWN: TargetCutoffFinding = {
   edition: null,
+  maxScore: null,
   quota: null,
   score: null,
   source: null,
@@ -36,13 +39,18 @@ function toLabel(value: string | null, length: number): string | null {
   return value?.trim().slice(0, length) || null;
 }
 
+/** A scale's top is a positive number; anything else says nothing about the scale. */
+function toMaxScore(maxScore: number | null): number | null {
+  return maxScore !== null && Number.isFinite(maxScore) && maxScore > 0 ? maxScore : null;
+}
+
 /** A cut-off is a positive score, and never above the scale's top when the scale says one. */
 function isScore({ maxScore, score }: { maxScore: number | null; score: number | null }) {
   return (
     score !== null &&
     Number.isFinite(score) &&
     score > 0 &&
-    (maxScore === null || !Number.isFinite(maxScore) || score <= maxScore)
+    (maxScore === null || score <= maxScore)
   );
 }
 
@@ -59,11 +67,12 @@ export function toTargetCutoffFinding({
   raw: RawTargetCutoffFinding;
 }): TargetCutoffFinding {
   const url = raw.sourceUrl?.trim();
+  const maxScore = toMaxScore(raw.maxScore);
 
   if (
     raw.status !== "found" ||
     raw.score === null ||
-    !isScore(raw) ||
+    !isScore({ maxScore, score: raw.score }) ||
     !url ||
     !URL.canParse(url) ||
     !isSearched(url)
@@ -73,6 +82,7 @@ export function toTargetCutoffFinding({
 
   return {
     edition: toLabel(raw.edition, MAX_LABEL_LENGTH),
+    maxScore,
     quota: toLabel(raw.quota, MAX_LABEL_LENGTH),
     score: raw.score,
     source: { title: toLabel(raw.sourceTitle, MAX_TITLE_LENGTH), url },

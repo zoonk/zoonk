@@ -1,6 +1,7 @@
 import { type SeedLanguage } from "../_utils/localize";
 import { libraryIds } from "../library/library-ids";
 import { type SeedChapter, type SeedCourse, type SeedLesson } from "../library/types";
+import { type SkillIds, skillIdOf } from "../library/write-skills";
 
 function findLesson(
   course: SeedCourse,
@@ -30,8 +31,11 @@ function findChapter(course: SeedCourse, key: string): SeedChapter {
   return chapter;
 }
 
-/** Ids and titles of a seeded course's rows in one language, looked up by key. */
-export function courseLookup(course: SeedCourse, language: SeedLanguage) {
+/**
+ * Ids and titles of a seeded course's rows in one language, looked up by key, with its skills' rows
+ * from `findSkillIds`.
+ */
+export function courseLookup(course: SeedCourse, language: SeedLanguage, skillIds: SkillIds) {
   return {
     chapter: (key: string) => {
       const chapter = findChapter(course, key);
@@ -57,13 +61,13 @@ export function courseLookup(course: SeedCourse, language: SeedLanguage) {
         chapterKey: chapter?.key ?? null,
         id: libraryIds.lesson(course.key, key, language),
         minutes: lesson.minutes,
-        skillIds: lesson.skills.map((skill) => libraryIds.skill(course.key, skill, language)),
+        skillIds: lesson.skills.map((skill) => skillIdOf(course, skillIds, skill)),
         skillKeys: lesson.skills,
         steps: lesson.steps ?? [],
         title: lesson.title.in(language),
       };
     },
-    skill: (key: string) => libraryIds.skill(course.key, key, language),
+    skill: (key: string) => skillIdOf(course, skillIds, key),
     skillName: (key: string) => {
       const skill = course.skills.find((item) => item.key === key);
 

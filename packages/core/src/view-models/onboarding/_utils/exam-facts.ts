@@ -4,9 +4,10 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { getExamEditionDays } from "../../../exams/_utils/exam-edition-days";
-import { type ExamDate, examEditionSchema } from "../../../library/exams/blueprint-contract";
-import { findSameExam } from "../../../library/exams/exam-identity";
+import { type EditionExamDay, getExamEditionDays } from "../../../exams/_utils/exam-edition-days";
+import { getKeptMonthStart } from "../../../exams/kept-month";
+import { examEditionSchema } from "../../../library/exams/blueprint-contract";
+import { findSameExam } from "../../../library/exams/find-same-exam";
 import { type OnboardingExamDate } from "../onboarding-contract";
 
 /**
@@ -30,6 +31,11 @@ export type NamedExam = {
   institution?: string | null;
   /** The position for a public-service exam, in the learner's words. */
   role?: string | null;
+  /**
+   * The language a language certificate tests (Spanish for DELE), whose notice is often written,
+   * and stored, in it. Null for other exams.
+   */
+  targetLanguage?: string | null;
   /** What the learner typed, which may name the edition they mean ("in March"). */
   words?: string | null;
 };
@@ -40,7 +46,7 @@ type AiGenerationContext = FindExamDateParams["analytics"];
 const LOOKUP_TIMEOUT_MS = 30_000;
 
 /** Each day with the public page it was read from, so the learner can check it. */
-async function withSources(days: ExamDate[]): Promise<OnboardingExamDate[]> {
+async function withSources(days: EditionExamDay[]): Promise<OnboardingExamDate[]> {
   const sources = await prisma.source.findMany({
     select: { id: true, title: true, url: true },
     where: { id: { in: days.map((day) => day.citation.sourceId) }, visibility: "public" },
@@ -53,6 +59,7 @@ async function withSources(days: ExamDate[]): Promise<OnboardingExamDate[]> {
       date: day.date,
       estimated: false,
       label: day.label,
+      registrationClosed: day.registrationClosed,
       source: source?.url ? { title: source.title, url: source.url } : null,
     };
   });
@@ -85,7 +92,13 @@ async function findStoredDates({
   const ahead = days.filter((day) => day.date >= today);
 
   return estimated
-    ? ahead.map((day) => ({ date: day.date, estimated: true, label: day.label, source: null }))
+    ? ahead.map((day) => ({
+        date: day.date,
+        estimated: true,
+        label: day.label,
+        registrationClosed: false,
+        source: null,
+      }))
     : withSources(ahead);
 }
 
@@ -133,7 +146,48 @@ async function lookUpExamDays({
   }
 
   const { dates, source } = lookup.value.data;
-  return dates.map((day) => ({ ...day, estimated: false, source }));
+  return dates.map((day) => ({ ...day, estimated: false, registrationClosed: false, source }));
+}
+
+/** The shared blueprint of the exam the learner named, stored in `language`. */
+async function findStoredExamIn({ exam, language }: { exam: NamedExam; language: string }) {
+  // A match the evaluation model couldn't confirm reads as no stored notice: the card still shows,
+  // and research finds the notice once the goal exists.
+  const { data: blueprint, error } = await safeAsync(() =>
+    findSameExam({
+      request: {
+        board: null,
+        country: null,
+        language,
+        name: exam.examName,
+        ownerId: null,
+        role: exam.role ?? null,
+      },
+      // The role ranks the right one of a notice's many roles among the candidates.
+      searchTerms: [exam.institution, exam.role].filter((term) => typeof term === "string"),
+    }),
+  );
+
+  if (error) {
+    logError("The stored exam match failed:", error);
+  }
+
+  return blueprint ?? null;
+}
+
+/**
+ * The stored blueprint of the exam the learner named: in their language, else, for a language
+ * certificate, in the language it tests, which research stores its notice in (DELE's in Spanish).
+ */
+async function findStoredExam({ exam, language }: { exam: NamedExam; language: string }) {
+  const own = await findStoredExamIn({ exam, language });
+  const tested = exam.targetLanguage;
+
+  if (own || !tested || tested === language) {
+    return own;
+  }
+
+  return findStoredExamIn({ exam, language: tested });
 }
 
 /**
@@ -141,8 +195,9 @@ async function lookUpExamDays({
  * another name or a role written another way counts) and its days still ahead, official with
  * their source or estimated from its usual timing. When no stored notice gives an official day, a
  * quick search looks for the published one; the day it finds becomes the goal's date, with its
- * source. An exam nobody has published a day for yet has no dates: the card says it's to be
- * confirmed, and research fills it in once the goal exists.
+ * source, unless it's in another month than the one the learner named, which the plan keeps. An
+ * exam nobody has published a day for yet has no dates: the card says it's to be confirmed, and
+ * research fills it in once the goal exists.
  */
 export async function findExamFacts({
   analytics,
@@ -164,26 +219,7 @@ export async function findExamFacts({
   allowSearch?: () => Promise<boolean>;
   today: string;
 }): Promise<ExamFacts> {
-  // A match the evaluation model couldn't confirm reads as no stored notice: the card still shows,
-  // and research finds the notice once the goal exists.
-  const { data: blueprint, error } = await safeAsync(() =>
-    findSameExam({
-      request: {
-        board: null,
-        country: null,
-        language,
-        name: exam.examName,
-        ownerId: null,
-        role: exam.role ?? null,
-      },
-      // The role ranks the right one of a notice's many roles among the candidates.
-      searchTerms: [exam.institution, exam.role].filter((term) => typeof term === "string"),
-    }),
-  );
-
-  if (error) {
-    logError("The stored exam match failed:", error);
-  }
+  const blueprint = await findStoredExam({ exam, language });
 
   const stored = blueprint
     ? await findStoredDates({
@@ -207,7 +243,17 @@ export async function findExamFacts({
   const found = await lookUpExamDays({ analytics, exam, language, today });
   const [first] = found;
 
-  return first
-    ? { blueprintId, dates: found, targetDate: first.date }
-    : { blueprintId, dates: stored, targetDate: null };
+  if (!first) {
+    return { blueprintId, dates: stored, targetDate: null };
+  }
+
+  // A day in another month than the one the learner named is only offered: they may mean another
+  // sitting, so the plan keeps their month (see `getKeptMonthStart`).
+  const keptMonth = getKeptMonthStart({
+    details: { examMonth: exam.examMonth, examYear: exam.examYear },
+    noticeDay: first.date,
+    today,
+  });
+
+  return { blueprintId, dates: found, targetDate: keptMonth ? null : first.date };
 }

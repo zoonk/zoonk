@@ -1,11 +1,9 @@
 import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
 import { accessErrorCodes } from "../../access-error-codes";
 import { allowanceResponseSchema } from "../schemas/allowance";
-import { dailyTimeLimitResponseSchema } from "../schemas/guardians";
+import { dailyTimeLimitResponseSchema } from "../schemas/daily-time-limit";
 import { learningProfileResponseSchema } from "../schemas/learning-profile";
 import {
-  conflictResponse,
-  forbiddenResponse,
   notFoundResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
@@ -37,13 +35,13 @@ export const learnerProfilePaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: dailyTimeLimitResponseSchema } },
-          description: "Minutes studied today and the guardian limit, if any",
+          description: "Minutes studied today and the learner's daily limit, if any",
         },
         "401": unauthorizedResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get current user's daily time limit",
-      tags: ["Guardians"],
+      tags: ["Account"],
     },
   },
   "/me/learning-profile": {
@@ -52,7 +50,7 @@ export const learnerProfilePaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: learningProfileResponseSchema } },
-          description: "Buddy, age answer, settings, active goal and the protections they imply",
+          description: "Buddy, settings and active goal",
         },
         "401": unauthorizedResponse,
       },
@@ -61,8 +59,7 @@ export const learnerProfilePaths = {
       tags: ["Account"],
     },
     patch: {
-      description:
-        "Send only the fields that changed. A birth month and year under 13 deletes the account. Once given, the birth month and year can only be corrected toward younger; support corrects an answer that makes the learner older.",
+      description: "Send only the fields that changed.",
       operationId: "updateCurrentUserLearningProfile",
       requestBody: {
         content: { "application/json": { schema: learningProfileUpdateSchema } },
@@ -75,17 +72,9 @@ export const learnerProfilePaths = {
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
-        "403": {
-          ...forbiddenResponse,
-          description: `The age answer is under 13, so the account and its data were deleted; sign out. Error code: ${accessErrorCodes.underMinimumAge}.`,
-        },
         "404": {
           ...notFoundResponse,
           description: `The active goal isn't one of the learner's goals. Error code: ${accessErrorCodes.goalNotFound}.`,
-        },
-        "409": {
-          ...conflictResponse,
-          description: `The new birth month and year make the learner older than the saved answer, which only support can change. Error code: ${accessErrorCodes.birthChangeNeedsSupport}.`,
         },
         "422": {
           ...unprocessableEntityResponse,

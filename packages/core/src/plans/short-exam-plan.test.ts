@@ -1,5 +1,5 @@
 import { type PlanItem, prisma } from "@zoonk/db";
-import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
+import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -9,8 +9,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getExamView } from "../exams/view/get-exam-view";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { readBlockPayload } from "../sessions/block-payload";
-import { getTodayStudySession } from "../sessions/get-today-study-session";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
@@ -379,10 +379,15 @@ describe("a class test days away", () => {
     const { goal } = await setup({ dailyMinutes: 10, days: 3 });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     const skillIds = parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId);
-    const view = await readPlanView(goal.id);
 
-    // Ten minutes a day leave some of her topics out of the plan's days, and she did those days.
-    expect(view.feasibility?.coreFits).toBe(false);
+    const taught = await prisma.planItem.findMany({
+      select: { skillId: true },
+      where: { kind: "lesson", planId: plan.id, status: "todo" },
+    });
+
+    // Ten minutes a day leave some of her topics without lessons in the plan's days, and she did
+    // those days.
+    expect(skillIds.some((skillId) => !taught.some((item) => item.skillId === skillId))).toBe(true);
 
     await prisma.planItem.updateMany({
       data: { completedAt: day(1), status: "done" },
@@ -482,11 +487,15 @@ describe("a class test days away", () => {
       sessionsDone: 1,
     });
 
-    // Once she finished her plan's days, the card can say she prepared.
+    // Once she finished her plan's days, their lessons included, the card can say she prepared.
     await Promise.all([
       prisma.studySession.updateMany({
         data: { status: "completed" },
         where: { goalId: goal.id, localDate: day(0) },
+      }),
+      prisma.planItem.updateMany({
+        data: { completedAt: day(1), status: "done" },
+        where: { kind: "lesson", planId: plan.id, status: "todo" },
       }),
       studySessionFixture({
         goalId: goal.id,
@@ -500,6 +509,84 @@ describe("a class test days away", () => {
     const after = await getTodayView({ goalId: goal.id });
 
     expect(after.status === "ready" && after.today.exam).toMatchObject({ prepared: true });
+  });
+
+  // Pedro's full review the day before asked the placement questions he had answered right again.
+  it("asks the day before's full review in questions not seen yet, repeating only the missed ones", async () => {
+    const { goal, user } = await setup({ days: 3, plus: false });
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+    const skillIds = parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId);
+
+    await Promise.all(
+      skillIds.flatMap((skillId) =>
+        [0, 1, 2, 3].map(() => itemFixture({ content: choiceItemContent(), skillId })),
+      ),
+    );
+
+    const items = await prisma.item.findMany({
+      orderBy: { id: "asc" },
+      where: { skillId: { in: skillIds } },
+    });
+
+    // On her first day she answered two questions of each topic right and missed a third.
+    const answered = skillIds.flatMap((skillId) =>
+      items.filter((item) => item.skillId === skillId).slice(0, 3),
+    );
+
+    const missedIds = new Set(
+      skillIds.flatMap((skillId) => {
+        const own = answered.filter((item) => item.skillId === skillId);
+        return own.at(-1)?.id ?? [];
+      }),
+    );
+
+    await Promise.all(
+      answered.map((item) =>
+        attemptFixture({
+          answeredAt: new Date(day(0).getTime() + 10 * 60 * 60 * 1000),
+          isCorrect: !missedIds.has(item.id),
+          itemId: item.id,
+          skillId: item.skillId,
+          userId: user.id,
+        }),
+      ),
+    );
+
+    const rightIds = new Set(
+      answered.filter((item) => !missedIds.has(item.id)).map(({ id }) => id),
+    );
+
+    setClock(2);
+
+    const today = await getTodayView({ goalId: goal.id });
+
+    if (today.status !== "ready") {
+      throw new Error(`Expected Today, got ${today.status}`);
+    }
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { id: { in: today.today.session.blocks.map((block) => block.id) } },
+    });
+
+    const payloads = blocks.map((block) => readBlockPayload(block));
+    const review = payloads.find((payload) => payload.fullReview);
+
+    const asked = payloads.flatMap((payload) => [
+      ...payload.itemIds,
+      ...payload.capsules.flatMap((capsule) => capsule.itemIds),
+    ]);
+
+    expect(asked.some((id) => rightIds.has(id))).toBe(false);
+
+    // Every topic's new questions come before the one it missed.
+    const order = review?.itemIds ?? [];
+    const firstMissed = order.findIndex((id) => missedIds.has(id));
+
+    const answeredIds = new Set(answered.map((item) => item.id));
+
+    expect(order.some((id) => missedIds.has(id))).toBe(true);
+    expect(order.slice(0, firstMissed).some((id) => answeredIds.has(id))).toBe(false);
   });
 
   // Pedro asked the buddy for more osmosis and organelles tomorrow; nothing in his plan could do it.
@@ -552,7 +639,7 @@ describe("a class test days away", () => {
     expect(payload.fullReview).toBe(true);
   });
 
-  // Pedro's teacher announced "uma dissertativa sobre osmose": at 30 minutes, osmosis didn't fit
+  // Pedro's teacher announced "an essay on osmosis": at 30 minutes, osmosis didn't fit
   // his first day, and the essay written for it never came up.
   it("practices the essay the material announces even when its topic's lessons don't fit", async () => {
     const { goal } = await setup({ days: 3, plus: false });
@@ -566,7 +653,7 @@ describe("a class test days away", () => {
     expect(kinds).toContain("produce");
   });
 
-  // Pedro's teacher announced "uma dissertativa sobre osmose": a 20-minute essay took two thirds
+  // Pedro's teacher announced "an essay on osmosis": a 20-minute essay took two thirds
   // of his 30-minute day and left out the lesson on osmosis the plan had for it.
   it("keeps the day's lessons next to a class test's discursive answer, which is short", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 30, days: 3, plus: false });
@@ -599,6 +686,65 @@ describe("a class test days away", () => {
     );
   });
 
+  // Pedro's first look on the day before dropped the four lessons Thursday left, two of them his
+  // own request, while the day before is a full review with no room for lessons.
+  it("keeps the lessons day 1 left on the day before: the full review stays and they're offered", async () => {
+    const { goal, plan } = await setup({ days: 2, plus: false });
+    const first = await getTodayStudySession({ goalId: goal.id });
+
+    if (first.status !== "ready") {
+      throw new Error(`Expected day 1's session, got ${first.status}`);
+    }
+
+    const done = first.session.blocks.find((block) => block.kind === "learn");
+
+    await prisma.planItem.update({
+      data: { completedAt: day(0), status: "done" },
+      where: { id: done?.planItemId ?? "" },
+    });
+
+    const todo = () =>
+      prisma.planItem
+        .findMany({ where: { kind: "lesson", planId: plan.id, status: "todo" } })
+        .then((items) =>
+          items.flatMap((item) => item.lessonId ?? []).toSorted((a, b) => a.localeCompare(b)),
+        );
+
+    const left = await todo();
+
+    setClock(1);
+    const last = await getTodayStudySession({ goalId: goal.id });
+
+    if (last.status !== "ready") {
+      throw new Error(`Expected the day before's session, got ${last.status}`);
+    }
+
+    expect(left.length).toBeGreaterThan(0);
+    await expect(todo()).resolves.toStrictEqual(left);
+
+    expect(last.session.blocks.map((block) => block.kind)).not.toContain("learn");
+    expect(last.session.blocks.some((block) => block.fullReview)).toBe(true);
+    expect(last.session.catchUp).toMatchObject({ lessonsLeft: left.length });
+  });
+
+  // Pedro's day before opened its quick review with a placement question ("We're adjusting your
+  // plan"), and its right answer rebuilt his full review into a short practice.
+  it("asks no placement question on the day before: nothing is left to place", async () => {
+    const { goal } = await setup({ days: 2, plus: false });
+
+    // Placement ran yesterday, when the goal was set: this week's sessions ask what it left unsure.
+    await prisma.goal.update({ data: { createdAt: day(0), details: {} }, where: { id: goal.id } });
+
+    setClock(1);
+    const last = await getTodayStudySession({ goalId: goal.id });
+    const ids = last.status === "ready" ? last.session.blocks.map((block) => block.id) : [];
+    const blocks = await prisma.studySessionBlock.findMany({ where: { id: { in: ids } } });
+    const payloads = blocks.map((block) => readBlockPayload(block));
+
+    expect(payloads.some((payload) => payload.fullReview)).toBe(true);
+    expect(payloads.flatMap((payload) => payload.placementItemIds)).toStrictEqual([]);
+  });
+
   it("still runs the short mock for a learner who first opens the app the day before", async () => {
     const { goal } = await setup({ days: 3 });
 
@@ -629,14 +775,20 @@ describe("other exams", () => {
     vi.useRealTimers();
   });
 
-  it("gives a public exam days away the same days, with a light review instead of a mock", async () => {
+  it("gives a public exam days away the same days, its mock opening the practice and a light review the day before", async () => {
     const { goal, plan } = await setup({ days: 3, isPrivate: false });
     const items = await loadItems(plan.id);
     const view = await readPlanView(goal.id);
 
-    expect(datesOf({ items, kind: "mock" })).toStrictEqual([]);
+    expect(datesOf({ items, kind: "mock" })).toStrictEqual([isoDay(1)]);
     expect(datesOf({ items, kind: "review" })).toStrictEqual([isoDay(2)]);
-    expect(view.shortPlan).toStrictEqual({ days: 3, mockDate: null });
+    expect(view.shortPlan).toStrictEqual({ days: 3, mockDate: isoDay(1) });
+
+    expect(view.phases.map((phase) => phase.short?.focus)).toStrictEqual([
+      "mapAndGaps",
+      "mockAndPractice",
+      "lightReview",
+    ]);
 
     expect(view.phases.at(-1)?.short).toStrictEqual({
       firstDay: 3,

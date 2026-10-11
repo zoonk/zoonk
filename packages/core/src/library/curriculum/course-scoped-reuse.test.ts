@@ -238,6 +238,45 @@ describe("reuse across courses", () => {
     expect(other.lessonIds[0]).toBe(first.lessonIds[0]);
     expect(decisionCalls("lesson")).toStrictEqual([]);
   });
+
+  it("writes a skill's next chapter as its own, never as a chapter the course already has", async () => {
+    // Helena's "Interpret historical sources": every next chapter the course wrote for the skill
+    // was matched to the chapter it continues, so its lessons were never written.
+    const word = uniqueWord();
+    const [, history] = await twoSubjects(word);
+    mockSearchTerms([word]);
+
+    const first = await outlineIn({
+      chapter: outlineChapter({
+        lessons: [{ skills: [`Interpretar fontes ${word}`], title: `Fontes e memória ${word}` }],
+        title: `Fontes históricas e disputas de memória ${word}`,
+      }),
+      courseId: history.id,
+    });
+
+    // The reuse decision reads both as the same subject: the course's own chapter is never offered.
+    mockDecision(first.chapterId);
+
+    const next = await outlineIn({
+      chapter: outlineChapter({
+        lessons: [
+          { skills: [`Avaliar arquivos ${uniqueWord()}`], title: `Seleção nos arquivos ${word}` },
+        ],
+        title: `Arquivos, testemunhos e circulação de narrativas ${word}`,
+      }),
+      courseId: history.id,
+      position: 1,
+    });
+
+    expect(next.chapterId).not.toBe(first.chapterId);
+    expect(next.lessonIds.some((id) => first.lessonIds.includes(id))).toBe(false);
+
+    const asked = decisionCalls("chapter").flatMap((input) =>
+      input.candidates.map((candidate) => candidate.id),
+    );
+
+    expect(asked).not.toContain(first.chapterId);
+  });
 });
 
 describe("taught skills per course", () => {

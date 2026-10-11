@@ -2,13 +2,13 @@ import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { type BlockPayload, toBlockPayload } from "../../sessions/block-payload";
 
 /**
- * Writing practice for exams with an essay (ENEM's redação, OAB's brief): a focused stretch of
+ * Writing practice for exams with an essay (ENEM's essay, OAB's brief): a focused stretch of
  * writing graded with the official rubric, a few times a week.
  */
 const ESSAY_BLOCK_MINUTES = 20;
 
 /**
- * A class test's discursive question ("uma dissertativa sobre osmose") asks a few lines: Pedro's
+ * A class test's discursive question ("an essay question on osmosis") asks a few lines: Pedro's
  * 20-minute essay took two thirds of his 30-minute day and left out the osmosis lesson before it.
  */
 const DISCURSIVE_ANSWER_MINUTES = 8;

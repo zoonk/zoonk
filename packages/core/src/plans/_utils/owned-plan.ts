@@ -2,7 +2,10 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { type PlanChangeView } from "../plan-view-contract";
-import { toPlanChangeView } from "./plan-change-view";
+import { parsePlanGraph } from "../planner/plan-state";
+import { foldChangeAreas } from "./fold-part-areas";
+import { loadGraphPartAreas } from "./part-areas";
+import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
 import { type PlanContext, loadPlanContext } from "./plan-context";
 
 export type OwnedPlan =
@@ -31,9 +34,27 @@ export async function findOwnedPlan({
 /** A change as the learner sees it right after it happened. */
 export async function loadPlanChangeView(changeId: string): Promise<PlanChangeView> {
   const change = await prisma.planChange.findUniqueOrThrow({
-    include: { plan: { select: { version: true } } },
+    include: {
+      plan: {
+        select: {
+          goal: { select: { ...changeGoalSelect, examBlueprintId: true } },
+          graph: true,
+          version: true,
+        },
+      },
+    },
     where: { id: changeId },
   });
 
-  return toPlanChangeView({ change, planVersion: change.plan.version });
+  const { goal, graph, version } = change.plan;
+
+  const partAreas = await loadGraphPartAreas({
+    examBlueprintId: goal.examBlueprintId,
+    graph: parsePlanGraph(graph),
+  });
+
+  return foldChangeAreas({
+    change: toPlanChangeView({ change, goal, planVersion: version }),
+    partAreas,
+  });
 }

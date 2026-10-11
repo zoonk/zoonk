@@ -104,6 +104,7 @@ export async function checkMindMapImage({
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "mind-map-check",
   });

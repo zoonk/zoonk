@@ -10,9 +10,9 @@ function isSameName(first: Subject, second: Subject): boolean {
 
 /**
  * The stored subject a new reading's subject is: the one of the same name, or else the one its
- * name's words match ("Prova de Redação" for "Redação"), when that's the only stored subject it
+ * name's words match ("Essay test" for "Essay"), when that's the only stored subject it
  * matches and no other of the reading's subjects matches it. A stored subject another of the
- * reading's subjects has by name is never taken ("Direito Civil" isn't "Direito Processual Civil").
+ * reading's subjects has by name is never taken ("Civil Law" isn't "Civil Procedure Law").
  */
 function findStoredSubject({
   current,
@@ -58,8 +58,10 @@ function withStoredFacts({ stored, subject }: { stored: Subject; subject: Subjec
   return {
     ...subject,
     ...withoutUndefined({
+      choiceGroup: subject.choiceGroup ?? stored.choiceGroup,
       group: subject.group ?? stored.group,
       name: stored.name,
+      partOf: subject.partOf ?? stored.partOf,
       questions: subject.questions ?? stored.questions,
       shortName: subject.shortName ?? stored.shortName,
       topicGroups: subject.topicGroups?.length ? subject.topicGroups : stored.topicGroups,
@@ -95,10 +97,10 @@ function addLeftOut({
 /**
  * A new reading's subjects with what the stored reading already knew: each subject it reads again
  * keeps its name, so plans, lookups and screens keep finding it, and its question count, weight,
- * group, short name, topics and their headings wherever the new reading leaves them out; a subject
+ * group, choice, short name, topics and their headings wherever the new reading leaves them out; a subject
  * it leaves out stays. A reading that names a subject differently, reads fewer documents or skips
  * one hasn't changed the exam (ENEM read again from its reference matrix states no counts and
- * calls its essay "Prova de Redação"; an OAB reading once missed Ética): one that states a new
+ * calls its essay "Essay test"; an OAB reading once missed ethics): one that states a new
  * count or group replaces it, and subjects it adds are added.
  */
 export function keepKnownSubjectFacts({

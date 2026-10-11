@@ -18,7 +18,7 @@ function readText(value: unknown): string | null {
  * The goal's target with a published cut-off, from what the learner said: a course at an
  * institution (cut-offs differ by institution, so a course alone has none), or the position they
  * named, by the exam's own role when it has one, which names it the same way for everyone. An
- * exam's role alone isn't a target: it can be a phase ("1ª fase") that passes everyone above a
+ * exam's role alone isn't a target: it can be a phase ("first phase") that passes everyone above a
  * mark. Null otherwise.
  */
 export function getCutoffTarget({

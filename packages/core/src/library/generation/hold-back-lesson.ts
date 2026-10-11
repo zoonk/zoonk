@@ -8,6 +8,12 @@ import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./he
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
 
 /**
+ * A private lesson serves one learner, so it gets no fresh draft (only reusable lessons get model
+ * work beyond the first draft and its fix passes): its first held-back draft sets it aside.
+ */
+const PRIVATE_LESSON_DRAFTS = 1;
+
+/**
  * Takes a set-aside lesson out of what learners have ahead: its todo plan items are skipped and
  * open session blocks for it are skipped, so Today goes to the next stop instead of waiting on a
  * lesson nothing will write. Other lessons that teach its skills stay in the plans. Returns the
@@ -45,8 +51,8 @@ export async function moveOnWithoutLesson(
  * Ends the content claim of a run whose draft the quality gate held back: the claim ends as
  * failed and the draft is recorded with its writer and problems, so the next draft is told what
  * held it back (and the last one comes from another writer). When that was the lesson's last
- * allowed draft, the lesson is set aside and every plan moves on without it. Returns null when
- * this run no longer held the claim.
+ * allowed draft (a private lesson's first), the lesson is set aside and every plan moves on
+ * without it. Returns null when this run no longer held the claim.
  */
 export async function holdBackLessonDraft({
   lessonId,
@@ -60,14 +66,14 @@ export async function holdBackLessonDraft({
   workflowRunId: string;
 }): Promise<{ setAside: boolean } | null> {
   const lesson = await prisma.lesson.findUnique({
-    select: { heldBackDrafts: true },
+    select: { heldBackDrafts: true, ownerId: true },
     where: { id: lessonId },
   });
 
   const now = new Date();
   const draft = { heldBackAt: now.toISOString(), model, problems, runId: workflowRunId };
   const drafts = [...parseHeldBackDrafts(lesson?.heldBackDrafts), draft];
-  const setAside = drafts.length >= MAX_LESSON_DRAFTS;
+  const setAside = drafts.length >= (lesson?.ownerId ? PRIVATE_LESSON_DRAFTS : MAX_LESSON_DRAFTS);
 
   const userIds = await prisma.$transaction(async (tx) => {
     const { count } = await tx.lesson.updateMany({

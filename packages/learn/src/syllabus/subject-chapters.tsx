@@ -43,10 +43,40 @@ function ChapterRows({
     <li key={chapter.chapterId ?? chapter.title}>
       <SyllabusChapterRow
         chapter={chapter}
+        chapterHref={chapterHref}
         href={chapter.chapterId ? chapterHref(chapter.chapterId) : null}
       />
     </li>
   ));
+}
+
+/**
+ * "4 chapters done, 2 skipped because you already know them": the ones studied, and apart, the
+ * ones skipped because the learner showed they know them.
+ */
+function useDoneLine() {
+  const t = useExtracted();
+
+  return (chapters: readonly SyllabusChapter[]): string => {
+    const known = chapters.filter((chapter) => chapter.known).length;
+    const done = chapters.length - known;
+
+    if (known === 0) {
+      return t("{count, plural, one {# chapter done} other {# chapters done}}", { count: done });
+    }
+
+    if (done === 0) {
+      return t(
+        "{count, plural, one {# chapter skipped because you already know it} other {# chapters skipped because you already know them}}",
+        { count: known },
+      );
+    }
+
+    return t(
+      "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# skipped because you already know it} other {# skipped because you already know them}}",
+      { done, known },
+    );
+  };
 }
 
 /** The chapters already done, folded into the list's first row, opening them in place. */
@@ -57,20 +87,17 @@ function DoneChapters({
   chapterHref: (chapterId: string) => string;
   chapters: readonly SyllabusChapter[];
 }) {
-  const t = useExtracted();
+  const doneLine = useDoneLine();
 
   return (
     <Collapsible>
       <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/done")}>
         <ListRowLeading>
-          <StatusMark status="done" />
+          {/* Every folded chapter skipped because the learner knows it: the skip mark, as each. */}
+          <StatusMark status={chapters.every((chapter) => chapter.known) ? "skipped" : "done"} />
         </ListRowLeading>
         <ListRowContent className="min-h-13 py-2.5">
-          <ListRowTitle className="text-muted-foreground">
-            {t("{count, plural, one {# chapter done} other {# chapters done}}", {
-              count: chapters.length,
-            })}
-          </ListRowTitle>
+          <ListRowTitle className="text-muted-foreground">{doneLine(chapters)}</ListRowTitle>
         </ListRowContent>
         <ChevronDownIcon
           aria-hidden="true"
@@ -90,6 +117,7 @@ function DoneChapters({
  * A subject's chapters under their header, the way in to study it: the ones done folded into the
  * list's first row, the next one marked, then the ones after it in the plan's order (the first few
  * in sight, the rest one tap away), so a subject with forty chapters still leads with what to do.
+ * The header counts the chapters studied; the ones skipped because the learner knows them aren't.
  */
 export function SubjectChapters({
   chapterHref,
@@ -101,6 +129,7 @@ export function SubjectChapters({
   const t = useExtracted();
   const [showAll, setShowAll] = useState(false);
   const done = chapters.filter((chapter) => chapter.state === "done");
+  const studied = done.filter((chapter) => !chapter.known);
   const ahead = chapters.filter((chapter) => chapter.state !== "done");
   // The next one and the few after it.
   const shown = showAll ? ahead : ahead.slice(0, SHOWN_UPCOMING + 1);
@@ -115,7 +144,7 @@ export function SubjectChapters({
       <PageSectionHeader>
         <PageSectionTitle id={CHAPTERS_TITLE_ID}>{t("Chapters")}</PageSectionTitle>
         <PageSectionDetail>
-          {t("{done, number} of {total, number}", { done: done.length, total: chapters.length })}
+          {t("{done, number} of {total, number}", { done: studied.length, total: chapters.length })}
         </PageSectionDetail>
       </PageSectionHeader>
 

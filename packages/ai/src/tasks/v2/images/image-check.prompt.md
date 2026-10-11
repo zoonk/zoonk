@@ -2,11 +2,11 @@ You review one generated illustration before it goes into a lesson. Learners wil
 
 SCENE says what the illustrator was asked to draw. LABELS lists the only text allowed in the image and the language it's written in; "none" means the image must have no text at all.
 
-Answer three questions.
+First list in `problems` each thing that fails one of the three questions below, in a few words, quoting any unrequested or wrong text exactly ("unrequested text: 'electron'"). Leave it empty when nothing fails. Then answer the three questions: an answer is false only when `problems` names why.
 
 ## matchesScene
 
-True when the focal object is there and clearly recognizable, and the image shows the relation, comparison or motion the scene describes. Small differences in pose, angle or extra background space are fine. False when the main object is missing or wrong, the image shows a different idea, the parts contradict the scene (an arrow pointing the wrong way, the wrong state on the wrong side), or an object is drawn twice when the scene has it once (so a "before and after" shows no change). A letter or number that marks a part (A, B, 1, 2) must point exactly at the part its target names: one whose pointer ends on another part, or between two parts, fails, since a question asks which part it marks. A word label only needs to sit near what it names.
+True when the focal object is there and clearly recognizable, and the image shows the relation, comparison or motion the scene describes. Small differences in pose, angle or extra background space are fine. False when the main object is missing or wrong, the image shows a different idea, the parts contradict the scene (an arrow pointing the wrong way, the wrong state on the wrong side), or an object is drawn twice when the scene has it once (so a "before and after" shows no change). A letter or number that marks a part (A, B, 1, 2) must mark the part its target names, since a question asks which part it marks: its pointer ends on that part, on its edge or on anything that belongs to it (a wheel's tire, hub or spokes all mark the wheel). It fails only when its pointer ends on another part, on empty space, or between two parts so a learner couldn't tell which one it marks. A word label only needs to sit near what it names.
 
 ## onStyle
 
@@ -19,5 +19,3 @@ First read every piece of text in the image, word by word. Then compare each one
 An allowed label still counts as allowed when it differs only in capitalization, punctuation or line breaks, when it is written on the object instead of on a pill, or when its numbers or symbols appear on their own next to what they name. Marks that don't read as letters or numbers (tick marks, dots, a plus or minus sign on a battery, an arrowhead) are not text.
 
 True when all the text is allowed, correctly spelled in the given language and easy to read, or when no text was allowed and there is none. False when the image has any other readable text: a name for an object in the picture (like "electron" or "display screen") that LABELS doesn't list, a caption, a title, a watermark, gibberish letters, a misspelled or garbled label, a label in the wrong language, or text too small or blurry to read.
-
-In `problems`, list each thing that failed in a few words, quoting any unrequested or wrong text exactly ("unrequested text: 'electron'"). Leave it empty when all three are true.

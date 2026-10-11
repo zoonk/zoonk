@@ -4,6 +4,7 @@ import { invalidAudioError, missingAudioError } from "@/lib/language-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
 import { gradeSpokenAnswer } from "@zoonk/core/library/language/grade-spoken-answer";
 import { spokenAnswerFieldsSchema } from "@zoonk/core/library/language/spoken-answer-contract";
@@ -79,7 +80,7 @@ async function createSpokenAnswer(
     });
   }
 
-  if (result.status === "limitReached") {
+  if (isRefusedUsage(result)) {
     return usageDecisionError(result);
   }
 

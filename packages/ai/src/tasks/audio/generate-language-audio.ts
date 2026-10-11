@@ -7,30 +7,19 @@ import {
   isOpenAITTSSupportedLanguage,
 } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
-import { getModelFamily } from "../../_utils/model-family";
-import { computeCallCostUsd } from "../../pricing/call-cost";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { captureAiGeneration } from "../../provenance/ai-generation-sink";
-import { readGatewayMetadata } from "../../provenance/gateway-metadata";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
 import { DEFAULT_LANGUAGE_AUDIO_VOICE, getLanguageAudioPrompt } from "./language-audio-prompt";
+import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
 import { type SpeechModelName, speechModels } from "./speech-models";
+import { buildSpeechProvenance } from "./speech-provenance";
 import { generateSpeechWithProvider } from "./speech-provider";
 
 const TASK = "language-audio";
 const MS_PER_SECOND = 1000;
-
-/** Both providers return 24 kHz, 16-bit mono WAV. */
-const WAV_BYTES_PER_SECOND = 48_000;
-const WAV_HEADER_ALLOWANCE_BYTES = 1024;
-
-/** Even a one-letter clip may take this long, with the pauses a voice leaves around it. */
-const MIN_MAX_SECONDS = 18;
-
-/** Slower than any voice reads aloud, so audio longer than this means the model read something else. */
-const MIN_CHARACTERS_PER_SECOND = 8;
 
 /**
  * The text-to-speech run that voiced a clip, stored with the audio like every generated row's
@@ -86,39 +75,6 @@ function getSpeechModels({
     speechModels.geminiFlashLite,
     ...(isOpenAITTSSupportedLanguage(getBaseLanguage(language)) ? [speechModels.openai] : []),
   ];
-}
-
-/**
- * How long the clip may play. A model that reads its instructions aloud, or keeps talking,
- * returns far more audio than the text needs, so longer audio falls through to the next model.
- */
-function getMaxSeconds(text: string): number {
-  return Math.max(MIN_MAX_SECONDS, Math.ceil(text.length / MIN_CHARACTERS_PER_SECOND));
-}
-
-/**
- * Rejects suspiciously large audio from every provider before decoding it. Keeping one
- * task-level limit prevents a provider-specific implementation from bypassing the prompt-leak
- * safeguard.
- */
-function assertExpectedAudioSize({
-  audio,
-  maxSeconds,
-  model,
-}: {
-  audio: Uint8Array;
-  maxSeconds: number;
-  model: SpeechModelName;
-}) {
-  const maxBytes = maxSeconds * WAV_BYTES_PER_SECOND + WAV_HEADER_ALLOWANCE_BYTES;
-
-  if (audio.byteLength <= maxBytes) {
-    return;
-  }
-
-  throw new Error(
-    `${model} returned oversized audio: ${audio.byteLength} bytes. Expected at most ${maxBytes} bytes.`,
-  );
 }
 
 /**
@@ -182,55 +138,6 @@ async function generateWithFallback({
     logError("All TTS providers failed after retries:", lastError);
     throw lastError;
   }
-}
-
-/**
- * The text a speech model reads (its instructions and the clip's words), in tokens: the SDK
- * doesn't report them, and at about four characters a token they're a small part of the price.
- */
-const CHARACTERS_PER_TEXT_TOKEN = 4;
-
-/**
- * Speech is billed by the second of audio it returns and the text it reads, so the clip's length
- * and its words price it. AI Gateway's routing names the provider that served a Gemini clip and its
- * own estimate is kept as a cross-check.
- */
-function buildSpeechProvenance({
-  latencyMs,
-  promptVersion,
-  read,
-  requestedModel,
-  runId,
-  voiced,
-}: {
-  latencyMs: number;
-  promptVersion: string;
-  /** Everything the model read: its instructions and the clip's words. */
-  read: string;
-  requestedModel: SpeechModelName;
-  runId: string;
-  voiced: VoicedAudio;
-}): TaskProvenance {
-  const gateway = readGatewayMetadata(voiced.providerMetadata);
-
-  const usage = {
-    audioSeconds: voiced.durationSeconds,
-    inputTokens: Math.ceil(read.length / CHARACTERS_PER_TEXT_TOKEN),
-  };
-
-  return {
-    costUsd: computeCallCostUsd({ model: voiced.model, usage }),
-    credential: gateway.credential,
-    gatewayCostUsd: gateway.costUsd,
-    generatedAt: new Date().toISOString(),
-    latencyMs,
-    model: voiced.model,
-    promptVersion,
-    provider: gateway.servedProvider ?? getModelFamily(voiced.model),
-    requestedModel,
-    runId,
-    usage,
-  };
 }
 
 /**

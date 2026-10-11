@@ -169,7 +169,7 @@ function insightCase({
   facts = FACTS,
   goal = "ENEM 2026",
   id,
-  kinds = ALL_KINDS,
+  kinds,
   language = "en",
   recentInsights = [],
   signals,
@@ -183,7 +183,17 @@ function insightCase({
   return {
     expected,
     id,
-    userInput: { facts, goal, kinds, language, recentInsights, signals, skills, studyTime },
+    userInput: {
+      facts,
+      goal,
+      // As the app does: a plan change is allowed only on a day with a gap to fill.
+      kinds: kinds ?? (skills.length > 0 ? ALL_KINDS : NO_PLAN_CHANGE),
+      language,
+      recentInsights,
+      signals,
+      skills,
+      studyTime,
+    },
   };
 }
 

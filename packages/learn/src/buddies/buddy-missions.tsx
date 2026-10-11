@@ -1,7 +1,8 @@
 "use client";
 
+import { countDoneMissions } from "@zoonk/core/sessions/missions";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, UtensilsIcon } from "lucide-react";
+import { BrainIcon, CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { KindTile, type LearnKind } from "../_components/kind-tile";
@@ -14,11 +15,6 @@ const MISSION_KIND: Record<BuddyMission["kind"], LearnKind> = {
   review: "review",
   somethingNew: "lesson",
 };
-
-/** A mission with nothing to do today still counts toward the full meal. */
-export function isMissionComplete(mission: BuddyMission): boolean {
-  return mission.status !== "todo";
-}
 
 /** "Review", "Something new", "Fix a mistake": the three missions by name. */
 function useMissionName() {
@@ -39,8 +35,8 @@ function useMissionName() {
 }
 
 /**
- * What a mission still asks today, or that there was nothing to do, which still counts. A mission
- * done says nothing more: its check does.
+ * What a mission still asks today, or that there was nothing to do, which isn't done and leaves
+ * the bonus for another day. A mission done says nothing more: its check does.
  */
 function MissionDetail({ mission }: { mission: BuddyMission }) {
   const t = useExtracted();
@@ -60,16 +56,14 @@ function MissionDetail({ mission }: { mission: BuddyMission }) {
 
   return (
     <span className="text-muted-foreground text-sm">
-      {mission.status === "nothingToday"
-        ? t("Nothing due today. It still counts.")
-        : todo[mission.kind]}
+      {mission.status === "nothingToday" ? t("Nothing due today.") : todo[mission.kind]}
     </span>
   );
 }
 
 function MissionCheck({ mission }: { mission: BuddyMission }) {
   const t = useExtracted();
-  const complete = isMissionComplete(mission);
+  const complete = mission.status === "done";
 
   return (
     <span
@@ -99,8 +93,8 @@ function MissionRow({ mission }: { mission: BuddyMission }) {
   );
 }
 
-/** The full meal the three missions make together, or the line saying it's done. */
-function FullMealLine({ today }: { today: BuddyToday }) {
+/** The bonus for doing all three missions, or the line saying it's earned. */
+function MissionsBonusLine({ today }: { today: BuddyToday }) {
   const t = useExtracted();
   const points = String(today.fullMeal.bonus);
 
@@ -111,23 +105,23 @@ function FullMealLine({ today }: { today: BuddyToday }) {
         today.fullMeal.earned ? "text-success font-medium" : "text-muted-foreground",
       )}
     >
-      <UtensilsIcon aria-hidden="true" className="size-4 shrink-0" />
+      <BrainIcon aria-hidden="true" className="size-4 shrink-0" />
       {today.fullMeal.earned
-        ? t("Full meal! +{points} Brain Power", { points })
-        : t("All three make a full meal: +{points} Brain Power.", { points })}
+        ? t("All three missions done: +{points} Brain Power", { points })
+        : t("+{points} Brain Power for finishing all three missions.", { points })}
     </p>
   );
 }
 
 /**
- * Today's three missions, done by doing the session, and the full meal they make together, on one
+ * Today's three missions, done by doing the session, and the bonus for doing all three, on one
  * card. Before today's session exists there's nothing to count yet, so the card says when they
  * start.
  */
 export function BuddyMissions({ today }: { today: BuddyToday | null }) {
   const t = useExtracted();
   const titleId = useId();
-  const complete = today?.missions.filter(isMissionComplete).length ?? 0;
+  const complete = countDoneMissions(today?.missions ?? []);
 
   return (
     <section
@@ -154,7 +148,7 @@ export function BuddyMissions({ today }: { today: BuddyToday | null }) {
             ))}
           </ul>
 
-          <FullMealLine today={today} />
+          <MissionsBonusLine today={today} />
         </>
       ) : (
         <p className="text-muted-foreground text-sm">

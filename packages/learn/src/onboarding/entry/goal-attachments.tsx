@@ -114,6 +114,7 @@ export function AttachableGoalEntry({
   error,
   fromSharedPlan,
   intent,
+  notice,
   onAttachedChange,
   onIntentChange,
   onSubmit,
@@ -126,6 +127,7 @@ export function AttachableGoalEntry({
   error: GoalError | null;
   fromSharedPlan: boolean;
   intent: MaterialIntent | null;
+  notice?: React.ReactNode;
   onAttachedChange: (items: AttachedSource[]) => void;
   onIntentChange: (intent: MaterialIntent) => void;
   onSubmit: (goal: string) => void;
@@ -157,6 +159,7 @@ export function AttachableGoalEntry({
       error={error}
       exploreHref={routes.explore}
       fromSharedPlan={fromSharedPlan}
+      notice={notice}
       onAttach={() => setOpen((previous) => !previous)}
       onSubmit={onSubmit}
       signUpHref={routes.signUp}

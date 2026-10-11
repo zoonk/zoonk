@@ -3,18 +3,12 @@ import {
   defineActivityRenderer,
 } from "./_utils/define-activity-renderer";
 
-/** Music: keyboard and fretboard, notation, ear training and rhythm. Spread into `activityRenderers`. */
+/** Music: keyboard and fretboard (ear training included), notation and rhythm. Spread into `activityRenderers`. */
 export const musicRenderers: ActivityRendererMap<
-  "earTrainer" | "keyboardFretboard" | "notationPlayer" | "rhythmTapper"
+  "keyboardFretboard" | "notationPlayer" | "rhythmTapper"
 > = {
-  earTrainer: defineActivityRenderer({
-    badge: "earTraining",
-    load: () =>
-      import("./ear-trainer/ear-trainer-activity").then((module) => module.EarTrainerActivity),
-    template: "earTrainer",
-  }),
   keyboardFretboard: defineActivityRenderer({
-    badge: "playIt",
+    badge: ({ fields }) => (fields.byEar ? "earTraining" : "playIt"),
     load: () =>
       import("./keyboard-fretboard/keyboard-fretboard-activity").then(
         (module) => module.KeyboardFretboardActivity,

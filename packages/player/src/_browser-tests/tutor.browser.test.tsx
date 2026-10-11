@@ -5,16 +5,17 @@ import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { expectCount, focusOn, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
-import { teachingStep } from "../_test-utils/lesson-steps";
-import { buildLesson, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import {
   TUTOR_ANSWER,
-  buildTutor,
   stubTutorApi,
   tutorAnswerResponse,
   tutorAnswerStream,
 } from "../_test-utils/tutor-api";
+import { buildTutor } from "../_test-utils/tutor-config";
 import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import { teachingStep } from "../preview/preview-steps";
 import { type LessonQuestionNavigation } from "../questions/lesson-question-navigation";
 
 /**
@@ -1163,7 +1164,37 @@ describe("the learner's buddy", () => {
     await sheet.getByRole("button", { name: "Explain it more simply" }).click();
 
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
-    expect(api.inputs[0]).toMatchObject({ question: "Explain it more simply", suggested: true });
+
+    expect(api.inputs[0]).toMatchObject({
+      question: "Explain it more simply",
+      suggestion: "simpler",
+    });
+  });
+
+  it("words the lesson's suggestions as the server sent them, in the lesson's language", async () => {
+    const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
+    api.next("answer", () => Promise.resolve(tutorAnswerResponse(TUTOR_ANSWER)));
+
+    const suggestions = [
+      { id: "simpler" as const, label: "Explique de um jeito mais simples" },
+      { id: "deeper" as const, label: "Quero ir mais a fundo" },
+      { id: "example" as const, label: "Me dê outro exemplo" },
+    ];
+
+    renderLessonPlayer({ lesson, tutor: buildTutor({}, { suggestions }) });
+
+    const sheet = await openTutor();
+
+    await expect
+      .element(sheet.getByRole("button", { name: "Quero ir mais a fundo" }))
+      .toBeVisible();
+
+    await sheet.getByRole("button", { name: "Me dê outro exemplo" }).click();
+
+    await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
+
+    // The chip's words are the question the API stores for this suggestion.
+    expect(api.inputs[0]).toMatchObject({ question: "Me dê outro exemplo", suggestion: "example" });
   });
 
   it("offers the buddy's help after two misses on the same idea, with the question ready", async () => {

@@ -102,10 +102,7 @@ export async function loadResearchedInputs({
   return loadGoalCurriculumStep(inputs.goal.id);
 }
 
-/**
- * Waits for research to read the learner's material, or the exam's notice again, saying so for an
- * exam.
- */
+/** Waits for research to read the learner's material, saying so for an exam. */
 async function waitForReading({
   inputs,
   researchId,
@@ -115,17 +112,15 @@ async function waitForReading({
 }): Promise<GoalCurriculumInputs | null> {
   const entityId = inputs.goal.id;
   const isExam = inputs.goal.kind === "exam";
-  // The learner's own material, or the exam's notice read again: the wait says which.
-  const step = inputs.hasMaterial ? "readExamNotice" : "readNotice";
 
   if (isExam) {
-    await goalProgressStep({ entityId, status: "started", step });
+    await goalProgressStep({ entityId, status: "started", step: "readExamNotice" });
   }
 
   const researched = await loadResearchedInputs({ inputs, researchId });
 
   if (isExam) {
-    await goalProgressStep({ entityId, status: "completed", step });
+    await goalProgressStep({ entityId, status: "completed", step: "readExamNotice" });
   }
 
   return researched;
@@ -139,11 +134,8 @@ async function waitForReading({
  * created with (a class test from the teacher's slides, not the exam of the same name). An exam's
  * graph doesn't wait for research: it's written from the blueprint the goal has, or from the exam
  * as onboarding understood it (its name, year and what the learner said), and the plan is
- * reconciled with a new notice once research reads it (`reconcileResearch`). The exception is a
- * notice research reads again because older instructions read it (`readsNoticeAgain`): its
- * topics come back worded and numbered as the notice has them, so the graph waits for that
- * reading instead of being matched against it topic by topic. A goal whose plan exists waits for
- * nothing, since nothing is built for it.
+ * reconciled with a new notice once research reads it (`reconcileResearch`). A goal whose plan
+ * exists waits for nothing, since nothing is built for it.
  */
 export async function waitForGraphInputs({
   initial,
@@ -154,11 +146,7 @@ export async function waitForGraphInputs({
 }): Promise<GoalCurriculumInputs | null> {
   const inputs = initial.awaitingAnswers ? await waitForAnswers(initial.goal.id) : initial;
 
-  if (!inputs || !researchId || inputs.hasPlanGraph) {
-    return inputs;
-  }
-
-  if (!inputs.hasMaterial && !inputs.readsNoticeAgain) {
+  if (!inputs || !researchId || inputs.hasPlanGraph || !inputs.hasMaterial) {
     return inputs;
   }
 

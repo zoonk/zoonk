@@ -486,6 +486,8 @@ test.describe("public Library chapter and course pages", () => {
     await expect(page.getByRole("dialog", { name: "Report a problem" })).toBeVisible();
 
     await page.goto(chapterPath);
+    await expect(page.getByRole("button", { name: "Chapter options" })).toBeVisible();
+    await expect(page.getByText("No account needed for your first lesson.")).toHaveCount(0);
     await page.getByRole("button", { name: "Chapter options" }).click();
 
     await expect(page.getByRole("menu").getByRole("menuitem")).toHaveText(["Report a problem"]);

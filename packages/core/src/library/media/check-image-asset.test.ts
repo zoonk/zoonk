@@ -3,6 +3,7 @@ import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
+import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { readStoredImage } from "../../images/read-stored-image";
@@ -114,6 +115,41 @@ describe(checkImageAsset, () => {
     expect(stored).toBeNull();
     expect(screen.mediaAssetId).toBeNull();
     expect(question).toBeNull();
+  });
+
+  it("takes an option's picture out of use when its redraws fail, so the option is described", async () => {
+    const [asset, lesson] = await Promise.all([
+      mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} doorway` }) }),
+      libraryLessonFixture(),
+    ]);
+
+    const step = await libraryStepFixture({
+      content: pictureCheckContent,
+      kind: "check",
+      lessonId: lesson.id,
+    });
+
+    await prisma.stepOptionPicture.create({
+      data: { mediaAssetId: asset.id, optionId: "gothic", stepId: step.id },
+    });
+
+    mockImageChecks([false, false, false]);
+    mockDrawnImages([await drawTestImage(), await drawTestImage()]);
+
+    await expect(checkImageAsset({ assetId: asset.id })).resolves.toStrictEqual({
+      status: "removed",
+    });
+
+    const [option, screen] = await Promise.all([
+      prisma.stepOptionPicture.findUnique({
+        where: { stepId_optionId: { optionId: "gothic", stepId: step.id } },
+      }),
+      prisma.step.findUniqueOrThrow({ where: { id: step.id } }),
+    ]);
+
+    // The question stays and shows that option's description; its row changed for the cache.
+    expect(option).toBeNull();
+    expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
   });
 
   it("does nothing for a picture that's gone", async () => {

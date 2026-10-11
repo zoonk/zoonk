@@ -19,15 +19,19 @@ export function useSpeakingMockTitle() {
   return (exam: SpeakingMockExam) => titles[exam];
 }
 
-/** What kind of call this is, as the header says it. */
+/** What kind of call this is, as the header says it; an exam task names its exam ("DELE B2"). */
 export function useConversationTitle(
-  conversation: Pick<LanguageConversationView, "exam" | "kind">,
+  conversation: Pick<LanguageConversationView, "exam" | "examTask" | "kind">,
 ) {
   const t = useExtracted();
   const mockTitle = useSpeakingMockTitle();
 
   if (conversation.exam) {
     return mockTitle(conversation.exam);
+  }
+
+  if (conversation.examTask) {
+    return conversation.examTask.title;
   }
 
   if (conversation.kind === "checkpoint") {

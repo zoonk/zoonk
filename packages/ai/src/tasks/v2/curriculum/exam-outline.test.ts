@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { type ExamOutline, findUncoveredTopics, formatExamOutline } from "./exam-outline";
+import {
+  type ExamOutline,
+  findUncoveredTopics,
+  formatExamOutline,
+  placeInExam,
+} from "./exam-outline";
 
 const outline: ExamOutline = {
   name: "Concurso da Câmara dos Deputados",
@@ -48,6 +53,28 @@ describe(formatExamOutline, () => {
       ].join("\n\n"),
     );
   });
+
+  it("says which subjects are options of a choice candidates take only one of", () => {
+    const choice = {
+      name: "ENEM",
+      notes: [],
+      subjects: [
+        {
+          choiceGroup: "Língua Estrangeira",
+          group: null,
+          name: "Língua Espanhola",
+          questions: 5,
+          topics: [],
+          weight: null,
+        },
+      ],
+      topicFrequency: [],
+    };
+
+    expect(formatExamOutline(choice)).toContain(
+      'S1. Língua Espanhola (an option of "Língua Estrangeira": each candidate takes only one option; 5 questions)',
+    );
+  });
 });
 
 describe(findUncoveredTopics, () => {
@@ -66,5 +93,69 @@ describe(findUncoveredTopics, () => {
       { subject: "Língua Portuguesa", topic: "5.5 Concordância verbal e nominal" },
       { subject: "Ciência Política", topic: "Regimes políticos" },
     ]);
+  });
+});
+
+const OAB: ExamOutline = {
+  name: "Exame de Ordem",
+  notes: [],
+  subjects: [
+    {
+      group: null,
+      name: "Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB",
+      questions: 8,
+      shortName: "Ética Profissional",
+      topics: [],
+      weight: null,
+    },
+    {
+      group: null,
+      name: "Direito Tributário e Processual Tributário",
+      questions: 5,
+      shortName: "Direito Tributário",
+      topics: [],
+      weight: null,
+    },
+  ],
+  topicFrequency: [],
+};
+
+describe(placeInExam, () => {
+  // Sofia's graph called the notice's ethics subject by its short name, and her plan showed the
+  // heaviest subject of the exam as outside the plan.
+  it("places an area named as learners call a subject in that subject", () => {
+    expect(placeInExam({ area: "Ética Profissional", outline: OAB, topics: [] })).toStrictEqual({
+      area: OAB.subjects[0]?.name,
+      topics: [],
+    });
+
+    expect(placeInExam({ area: "Direito Tributário", outline: OAB, topics: [] })).toStrictEqual({
+      area: "Direito Tributário e Processual Tributário",
+      topics: [],
+    });
+  });
+
+  // DELE B2's notice is in Spanish; a graph written for a Portuguese speaker spelled one subject in
+  // Portuguese, which then read as outside the notice.
+  it("places an area written in another language's spelling of a subject in that subject", () => {
+    const dele: ExamOutline = {
+      name: "DELE B2",
+      notes: [],
+      subjects: ["Expresión e interacción escritas", "Expresión e interacción orales"].map(
+        (name) => ({ group: null, name, questions: null, topics: [], weight: null }),
+      ),
+      topicFrequency: [],
+    };
+
+    expect(
+      placeInExam({ area: "Expressão e interação escritas", outline: dele, topics: [] }),
+    ).toStrictEqual({ area: "Expresión e interacción escritas", topics: [] });
+  });
+
+  it("keeps an area the notice has no subject for", () => {
+    expect(placeInExam({ area: "Estratégia de prova", outline: OAB, topics: [] })).toStrictEqual({
+      area: "Estratégia de prova",
+      topics: [],
+    });
   });
 });

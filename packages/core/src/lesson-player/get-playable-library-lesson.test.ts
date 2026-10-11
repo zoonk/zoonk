@@ -1,12 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import {
-  chapterLessonFixture,
-  libraryLessonFixture,
-} from "@zoonk/testing/fixtures/library-lessons";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   languageLessonFixture,
@@ -23,16 +17,9 @@ import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { validateActivity } from "../library/activities/validate-activity";
 import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 describe(getPlayableLibraryLesson, () => {
   // Screens load only with a session, so most cases play as a signed-in learner.
@@ -116,94 +103,6 @@ describe(getPlayableLibraryLesson, () => {
     expect(guest?.status === "ready" ? guest.lesson.steps.length : 0).toBe(
       TEACHING_LESSON_STEPS.length,
     );
-  });
-
-  it("slows down a learner reading screens too fast, keyed on the account or a guest's network", async () => {
-    const { lesson } = await playableLessonFixture({ steps: TEACHING_LESSON_STEPS });
-    const learnerId = randomUUID();
-    mockSession(learnerId);
-    vi.mocked(isRateLimited).mockResolvedValueOnce(true);
-
-    const limited = await getPlayableLibraryLesson({ lessonId: lesson.id });
-
-    expect(limited).toStrictEqual({
-      lesson: {
-        description: lesson.description,
-        estimatedMinutes: lesson.estimatedMinutes,
-        id: lesson.id,
-        language: lesson.language,
-        title: lesson.title,
-      },
-      retryAfterSeconds: 60,
-      status: "slowDown",
-    });
-
-    expect(isRateLimited).toHaveBeenCalledWith(
-      expect.objectContaining({ key: `user:${learnerId}`, rule: "lesson-steps" }),
-    );
-
-    mockGuestSession(randomUUID());
-    await getPlayableLibraryLesson({ lessonId: lesson.id });
-
-    expect(vi.mocked(isRateLimited).mock.lastCall?.[0].key).not.toMatch(/^user:/u);
-
-    // Visitors only get the outline, so their reads aren't counted.
-    vi.mocked(isRateLimited).mockClear();
-    mockSession(null);
-    await getPlayableLibraryLesson({ lessonId: lesson.id });
-    expect(isRateLimited).not.toHaveBeenCalled();
-  });
-
-  it("never counts reading a written lesson of the learner's own plan, so its lists can load it ahead", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-
-    const [asLesson, inChapter, elsewhere, unwritten, chapter, goal] = await Promise.all([
-      playableLessonFixture({ steps: TEACHING_LESSON_STEPS }),
-      playableLessonFixture({ steps: TEACHING_LESSON_STEPS }),
-      playableLessonFixture({ steps: TEACHING_LESSON_STEPS }),
-      libraryLessonFixture({ contentStatus: "pending" }),
-      libraryChapterFixture(),
-      goalFixture({ userId: user.id }),
-    ]);
-
-    const [plan] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      chapterLessonFixture({ chapterId: chapter.id, lessonId: inChapter.lesson.id, position: 0 }),
-    ]);
-
-    // A plan names a lesson of its own, or a chapter it studies whole.
-    await Promise.all([
-      planItemFixture({
-        kind: "lesson",
-        lessonId: asLesson.lesson.id,
-        planId: plan.id,
-        position: 0,
-      }),
-      planItemFixture({ chapterId: chapter.id, kind: "chapter", planId: plan.id, position: 1 }),
-      planItemFixture({ kind: "lesson", lessonId: unwritten.id, planId: plan.id, position: 2 }),
-    ]);
-
-    vi.mocked(isRateLimited).mockClear();
-    vi.mocked(isRateLimited).mockResolvedValue(true);
-
-    const [own, chapterLesson, other, notWritten] = await Promise.all([
-      getPlayableLibraryLesson({ lessonId: asLesson.lesson.id }),
-      getPlayableLibraryLesson({ lessonId: inChapter.lesson.id }),
-      getPlayableLibraryLesson({ lessonId: elsewhere.lesson.id }),
-      getPlayableLibraryLesson({ lessonId: unwritten.id }),
-    ]);
-
-    expect(own?.status).toBe("ready");
-    expect(chapterLesson?.status).toBe("ready");
-    expect(other?.status).toBe("slowDown");
-    expect(isRateLimited).toHaveBeenCalledOnce();
-
-    // A plan's lesson that isn't written has no screens to load ahead: its outline only. Asking
-    // for it to be written is what counts, as a lesson start (`requestLessonGeneration`).
-    expect(notWritten?.status).toBe("notGenerated");
-
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   it("serves the lesson's summary card for the lesson menu, and none when it has none", async () => {
@@ -294,6 +193,43 @@ describe(getPlayableLibraryLesson, () => {
     });
   });
 
+  it("leaves out screens that show their own answer, such as an English word for English readers defined by itself", async () => {
+    const [ownLanguage, silent] = await Promise.all([
+      languageLessonFixture({
+        language: "en",
+        sentenceAudioUrl: "https://audio.zoonk.test/en-rent.mp3",
+        sentenceTranslation: "How much is the rent?",
+        wordTranslation: "rent",
+      }),
+      languageLessonFixture({
+        language: "en",
+        sentenceTranslation: "How much is the rent?",
+        wordTranslation: "money you pay each month to live somewhere",
+      }),
+    ]);
+
+    const [heard, unheard] = await Promise.all([
+      getPlayableLibraryLesson({ lessonId: ownLanguage.lesson.id }),
+      getPlayableLibraryLesson({ lessonId: silent.lesson.id }),
+    ]);
+
+    // "rent: rent" teaches nothing, and building "How much is the rent?" from the same sentence
+    // (or from no recording) tests nothing; hearing it and building it does.
+    expect(heard?.status === "ready" && heard.lesson.steps.map((step) => step.kind)).toStrictEqual([
+      "listening",
+      "spokenAnswer",
+    ]);
+
+    expect(
+      unheard?.status === "ready" && unheard.lesson.steps.map((step) => step.kind),
+    ).toStrictEqual(["vocabulary", "translation", "spokenAnswer"]);
+
+    expect(unheard?.status === "ready" && unheard.lesson.steps.at(-1)).toMatchObject({
+      kind: "spokenAnswer",
+      listening: null,
+    });
+  });
+
   it("drops screens it can't serve instead of failing the lesson", async () => {
     const { lesson } = await playableLessonFixture({
       steps: [
@@ -321,6 +257,41 @@ describe(getPlayableLibraryLesson, () => {
     expect(
       result?.status === "ready" && result.lesson.steps.map((step) => step.kind),
     ).toStrictEqual(["explanation", "check"]);
+  });
+
+  it("keeps playing a lesson whose screens use a template merged into an engine since", async () => {
+    // Stored before sliderGraph and supplyDemand became formulaModel and lineCrossing.
+    const retiredActivity = {
+      check: { explanation: "Why.", kind: "interaction" },
+      fields: { formula: "rate", output: { label: "Value" }, variable: { name: "rate" } },
+      prompt: "Move the rate.",
+      template: "sliderGraph",
+    };
+
+    const { lesson } = await playableLessonFixture({
+      steps: [
+        {
+          content: {
+            explore: { fields: { event: "Bird flu." }, template: "supplyDemand" },
+            text: "Prices rise when supply falls.",
+          },
+          kind: "explanation",
+        },
+        { content: retiredActivity, kind: "activity" },
+        "check",
+      ],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+    const [explanation] = steps;
+
+    expect(steps.map((step) => step.kind)).toStrictEqual(["explanation", "check"]);
+
+    expect(explanation?.kind === "explanation" && explanation.content).toStrictEqual({
+      explore: undefined,
+      text: "Prices rise when supply falls.",
+    });
   });
 
   it("cites a public document with the date it was checked, the learner's material by its slide, and says what isn't in it", async () => {
@@ -443,6 +414,5 @@ describe(getLibraryLessonOutline, () => {
 
     await expect(getLibraryLessonOutline({ lessonId: privateLesson.id })).resolves.toBeNull();
     await expect(getLibraryLessonOutline({ lessonId: "not-a-uuid" })).resolves.toBeNull();
-    expect(isRateLimited).not.toHaveBeenCalled();
   });
 });

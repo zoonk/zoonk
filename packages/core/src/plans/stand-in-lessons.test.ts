@@ -1,0 +1,87 @@
+import { prisma } from "@zoonk/db";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
+import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createGoalPlan } from "./create-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
+vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
+vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
+
+const DAY_MS = 86_400_000;
+
+/** Each skill's size in the graph, three of its lessons written: 27 left to outline. */
+const SKILL_SIZE = 30;
+const WRITTEN = 3;
+
+/**
+ * Lucas's far topics said "about 25 lessons" for skills his plan, short on time, teaches a few
+ * lessons of: a topic not outlined yet says the lessons the plan teaches it, never its skill's
+ * whole size.
+ */
+describe("a topic whose lessons aren't written yet", () => {
+  it("counts the lessons the plan teaches it after cutting what doesn't fit, wherever it shows", async () => {
+    const user = await userFixture();
+
+    const library = await planLibraryFixture({
+      skills: Array.from({ length: 4 }, () => ({
+        area: "Biologia",
+        lessons: WRITTEN,
+        size: SKILL_SIZE,
+      })),
+    });
+
+    // Five minutes a day for two months: every skill's core fits, not all its depth.
+    const { goal, plan } = await unplannedGoalFixture({
+      dailyMinutes: 5,
+      targetDate: new Date(Date.now() + 60 * DAY_MS),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const standIns = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      where: { chapterId: null, kind: "lesson", lessonId: null, planId: plan.id },
+    });
+
+    const saved = new Map(standIns.map((item) => [item.skillId, item.lessons ?? 0]));
+    const left = SKILL_SIZE - WRITTEN;
+
+    // Each stand-in keeps the lessons the plan teaches in its place: some, never all 27 left.
+    expect(standIns.length).toBeGreaterThan(0);
+    expect([...saved.values()].every((lessons) => lessons >= 1 && lessons < left)).toBe(true);
+
+    const [viewed, syllabus] = await Promise.all([
+      getGoalPlan(goal.id),
+      getSyllabusView({ goalId: goal.id }),
+    ]);
+
+    const writingRows =
+      viewed.status === "ready"
+        ? viewed.plan.phases.flatMap((phase) => phase.chapters.filter((row) => row.writing))
+        : [];
+
+    // The plan's row for the course's topics not written yet adds them up.
+    expect(writingRows.reduce((sum, row) => sum + row.lessonsTotal, 0)).toBe(
+      [...saved.values()].reduce((sum, lessons) => sum + lessons, 0),
+    );
+
+    // The module's page gives each topic its own count.
+    const topicRows =
+      syllabus.status === "ready"
+        ? syllabus.syllabus.subjects.flatMap((subject) =>
+            subject.chapters.filter((chapter) => chapter.writing),
+          )
+        : [];
+
+    expect(topicRows.map((row) => row.lessonsTotal)).toStrictEqual(
+      standIns.map((item) => item.lessons),
+    );
+  });
+});

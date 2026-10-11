@@ -7,9 +7,11 @@
     "./fixtures": "./src/fixtures.ts",
     "./fixtures/accessibility": "./src/fixtures/accessibility.ts",
     "./fixtures/base-url": "./src/fixtures/base-url.ts",
+    "./fixtures/guests": "./src/fixtures/guests.ts",
     "./fixtures/locale": "./src/fixtures/locale.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/personas": "./src/fixtures/personas.ts",
+    "./fixtures/seed-v2": "./src/fixtures/seed-v2.ts",
     "./fixtures/users": "./src/fixtures/users.ts"
   },
   "scripts": {

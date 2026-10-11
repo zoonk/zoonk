@@ -1,6 +1,6 @@
 import { toStems } from "../../library/exams/topic-key";
-import { getSkillArea } from "../planner/graph-areas";
 import { type PlanOperation } from "../plan-contract";
+import { getSkillArea } from "../planner/graph-areas";
 import { type PlanContext } from "./plan-context";
 
 type FocusOperation = Extract<PlanOperation, { kind: "focusAreas" }>;
@@ -14,7 +14,9 @@ function listSkillStems(context: PlanContext): { skillId: string; stems: Set<str
 
     return {
       skillId: skill.skillId,
-      stems: new Set([skill.name, ...(skill.topics ?? []), ...titles].flatMap((text) => toStems(text))),
+      stems: new Set(
+        [skill.name, ...(skill.topics ?? []), ...titles].flatMap((text) => toStems(text)),
+      ),
     };
   });
 }
@@ -43,7 +45,7 @@ function findTopicWords({
 /** A part's name stays a few words, as a learner says it. */
 const MAX_NAME_WORDS = 4;
 
-/** "osmose e organelas" as a part's name: "Osmose e organelas". */
+/** "osmosis and organelles" as a part's name: "Osmosis and organelles". */
 function toPartName({ language, words }: { language: string; words: readonly string[] }): string {
   const list = new Intl.ListFormat(language, { type: "conjunction" });
   const name = list.format(words.slice(0, MAX_NAME_WORDS));
@@ -52,7 +54,7 @@ function toPartName({ language, words }: { language: string; words: readonly str
 
 /**
  * The part of a plan's only area a focus means, from the topics the learner's words name: in a
- * class test's plan (one subject), "amanhã só osmose e organelas" focuses the skills whose name,
+ * class test's plan (one subject), "tomorrow only osmosis and organelles" focuses the skills whose name,
  * notice topics or lessons say osmosis or the organelles. The plan-edit model sometimes reads such
  * a focus as the whole area, which, being the whole plan, changes nothing; a plan with several
  * areas, or a focus that already names its part, stays as the model read it.
@@ -83,7 +85,11 @@ export function withTopicPart({
   return {
     ...operation,
     parts: [
-      { area, name: toPartName({ language: context.goal.language, words }), skillIds: [...skillIds] },
+      {
+        area,
+        name: toPartName({ language: context.goal.language, words }),
+        skillIds: [...skillIds],
+      },
     ],
   };
 }

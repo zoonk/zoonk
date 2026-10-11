@@ -18,16 +18,9 @@ import { answerPronunciationReview } from "./answer-pronunciation-review";
 import { finishPronunciationRound } from "./finish-pronunciation-round";
 import { getPronunciationReviews } from "./get-pronunciation-reviews";
 import { schedulePronunciationReviews } from "./schedule-pronunciation-reviews";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 // The audio model that judges a word, and the transcription it falls back to, are paid external services.
 vi.mock("@zoonk/ai/tasks/v2/language/assess-pronunciation", () => ({

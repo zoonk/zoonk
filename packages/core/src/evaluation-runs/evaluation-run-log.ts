@@ -3,11 +3,18 @@ import { type EvaluationRunRecord, registerEvaluationRunSink } from "@zoonk/ai/e
 import { DbNull, isPrismaForeignKeyError, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 
+/**
+ * A run deciding about shared Library content reads only Library text, so it belongs to the
+ * Library, not to the learner whose request started it: it isn't linked to them and stays when
+ * they go. A run that read a learner's own text goes away with its learner and goal.
+ */
 function toRow(run: EvaluationRunRecord) {
+  const personal = run.contentScope === "personal";
+
   return {
     answers: run.answers,
     contentScope: run.contentScope,
-    goalId: isUuid(run.goalId) ? run.goalId : null,
+    goalId: personal && isUuid(run.goalId) ? run.goalId : null,
     input: run.input ?? DbNull,
     inputHash: run.inputHash,
     latencyMs: run.latencyMs,
@@ -17,7 +24,7 @@ function toRow(run: EvaluationRunRecord) {
     runId: run.runId,
     task: run.task,
     traceId: run.traceId ?? null,
-    userId: isUuid(run.distinctId) ? run.distinctId : null,
+    userId: personal && isUuid(run.distinctId) ? run.distinctId : null,
   };
 }
 

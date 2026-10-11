@@ -151,23 +151,31 @@ export const whyColorsExistLesson: SeedLesson = {
         data: { source: { publisher: "NIST", title: "Atomic Spectra Database: hydrogen lines" } },
         fields: {
           compareAt: 1.89,
-          formula: "1240 / energy",
-          output: { label: t("Wavelength", "Comprimento de onda"), unit: "nm" },
-          variable: {
-            initial: 1.89,
-            label: t("Energy of the drop", "Energia da queda"),
-            max: 3.2,
-            min: 1.7,
-            name: "energy",
-            step: 0.01,
-            unit: "eV",
-          },
+          outputs: [
+            {
+              formula: "1240 / energy",
+              id: "output",
+              label: t("Wavelength", "Comprimento de onda"),
+              unit: "nm",
+            },
+          ],
+          variables: [
+            {
+              initial: 1.89,
+              label: t("Energy of the drop", "Energia da queda"),
+              max: 3.2,
+              min: 1.7,
+              name: "energy",
+              step: 0.01,
+              unit: "eV",
+            },
+          ],
         },
         prompt: t(
           "Move the size of the drop and watch the wavelength. Hydrogen's next drop, from step 4 to step 2, releases 2.55 eV. Set it and read the wavelength.",
           "Mova o tamanho da queda e veja o comprimento de onda. A próxima queda do hidrogênio, do degrau 4 para o 2, libera 2,55 eV. Ajuste e leia o comprimento de onda.",
         ),
-        template: "sliderGraph",
+        template: "formulaModel",
       },
       kind: "activity",
       skill: "photon-wavelength",

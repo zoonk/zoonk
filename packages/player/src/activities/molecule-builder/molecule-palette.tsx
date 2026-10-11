@@ -56,20 +56,21 @@ export function MoleculeElements({
     <div className="grid grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-2">
       {elements.map((element) => (
         <button
-          aria-label={
-            selectedName
-              ? t("Add {element} bonded to {atom}", {
-                  atom: selectedName,
-                  element: nameOf(element),
-                })
-              : t("Add {element}", { element: nameOf(element) })
-          }
           className="bg-background hover:bg-accent focus-visible:ring-ring/50 flex min-h-11 items-center justify-center gap-2 rounded-2xl border px-2 outline-none focus-visible:ring-[3px] disabled:opacity-50"
           disabled={!canAdd}
           key={element}
           onClick={() => onAdd(element)}
           type="button"
         >
+          {/* Named by what it does, then by the bonds it shows, so its name holds its text. */}
+          <span className="sr-only">
+            {selectedName
+              ? t("Add {element} bonded to {atom}", {
+                  atom: selectedName,
+                  element: nameOf(element),
+                })
+              : t("Add {element}", { element: nameOf(element) })}
+          </span>
           <ElementSwatch element={element} />
           <span className="text-muted-foreground text-[13px] whitespace-nowrap">
             {t("{count, plural, one {# bond} other {# bonds}}", { count: valenceOf(element) })}

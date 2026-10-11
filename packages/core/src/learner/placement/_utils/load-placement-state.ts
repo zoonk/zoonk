@@ -1,31 +1,47 @@
 import "server-only";
-import { type ItemFormat, prisma } from "@zoonk/db";
-import { isJsonObject } from "@zoonk/utils/json";
+import { prisma } from "@zoonk/db";
+import { toChosenStructure } from "../../../exams/choices/exam-choices";
+import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readNoticeFormats } from "../../../library/exams/notice-formats";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
+import { getAreaShares } from "../../../plans/_utils/exam-subject-shares";
+import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
+import {
+  type PlanGraph,
+  type PlanSettings,
+  parsePlanGraph,
+  parsePlanSettings,
+} from "../../../plans/planner/plan-state";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { type PlacementEvidence, getPlacementBeliefs } from "../placement-beliefs";
+import { type PlacementEvidence } from "../placement-beliefs";
 import { isPlacementBudgetUsed } from "../placement-budget";
-import { type PlacementStatus, getKnownSubjects, getOwnLevel } from "../placement-contract";
+import {
+  type PlacementStatus,
+  getKnownSubjects,
+  getOwnLevel,
+  isLevelMeasured,
+} from "../placement-contract";
 import { getTargetDifficulty } from "../placement-difficulty";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
+import { listKnownByMeasuredLevel, listKnownSkillIds, readSkillStatuses } from "../placement-known";
 import { isOwnMaterialTest } from "../placement-material";
 import { type PlacementQuickFormat, getPlacementQuickFormat } from "../placement-quick-format";
+import { type SkillStatuses } from "../placement-status";
 import {
   type AreaStart,
   type OwnLevel,
   type PhaseStart,
   getAreaStarts,
   getPhaseStarts,
-  getSkillPlacementStatus,
   getUndecidedSkills,
   isPlacementSettled,
 } from "../placement-steps";
 import { chooseNextSkill } from "./next-placement-skill";
 import { hasPlacementStarted, isPlacementAnswerOn } from "./placement-answers";
 import { loadPlacementItems } from "./placement-bank-items";
+import { loadEvidence } from "./placement-evidence";
 import {
   type PlacementQuestionView,
   parsePlacementItem,
@@ -48,6 +64,7 @@ export type PlacementState = {
    * first week's sessions ask the rest a few at a time.
    */
   dayBudgetUsed: boolean;
+  /** The skills placement takes as known: their own answers confirm them (see `listKnownSkillIds`). */
   knownSkillIds: string[];
   needsItems: string[];
   next: PlacementQuestionView | null;
@@ -63,69 +80,25 @@ export type PlacementState = {
   trueFalseLabels: TrueFalseLabels;
 };
 
-/** Most skills need one or two questions: more than 1000 answers on one goal's skills is noise. */
-const MAX_EVIDENCE = 1000;
-
-type AttemptRow = {
-  answer: unknown;
-  answeredAt: Date;
-  durationMs: number;
-  isCorrect: boolean;
-  item: { format: ItemFormat } | null;
-  itemId: string | null;
-  localDate: Date;
-  skillId: string | null;
-  stepId: string | null;
-  studySessionId: string | null;
-};
-
-function getOutcome(attempt: AttemptRow): PlacementEvidence["outcome"] {
-  if (attempt.isCorrect) {
-    return "correct";
-  }
-
-  return isJsonObject(attempt.answer) && attempt.answer.dontKnow === true ? "dontKnow" : "wrong";
-}
-
-function toEvidence(attempt: AttemptRow): PlacementEvidence | null {
-  if (!attempt.skillId) {
-    return null;
-  }
-
-  return {
-    // Lesson screens aren't bank items; their questions are about as guessable as multiple choice.
-    format: attempt.item?.format ?? "multipleChoice",
-    outcome: getOutcome(attempt),
-    skillId: attempt.skillId,
-  };
-}
-
-export async function loadEvidence({ skillIds, userId }: { skillIds: string[]; userId: string }) {
-  const attempts = await prisma.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: {
-      answer: true,
-      answeredAt: true,
-      durationMs: true,
-      isCorrect: true,
-      item: { select: { format: true } },
-      itemId: true,
-      localDate: true,
-      skillId: true,
-      stepId: true,
-      studySessionId: true,
-    },
-    take: MAX_EVIDENCE,
-    where: { skillId: { in: skillIds }, userId },
-  });
-
-  const chronological = attempts.toReversed();
-
-  return {
-    attempts: chronological,
-    evidence: chronological.map((attempt) => toEvidence(attempt)).filter((item) => item !== null),
-    seenItemIds: new Set(chronological.map((attempt) => attempt.itemId)),
-  };
+/**
+ * Each of the plan's areas' share of the exam (`getAreaShares`), counting only the options the
+ * learner takes of its choices (ENEM's English or Spanish); null without a notice.
+ */
+function getChosenAreaShares({
+  graph,
+  settings,
+  structure,
+}: {
+  graph: PlanGraph;
+  settings: PlanSettings;
+  structure: ExamStructure | null;
+}): Map<string, number> | null {
+  return structure
+    ? getAreaShares({
+        graph,
+        structure: toChosenStructure({ choices: settings.examChoices, structure }),
+      })
+    : null;
 }
 
 /**
@@ -136,29 +109,48 @@ async function loadGoalExam(goalId: string): Promise<{
   /** A test from the learner's own material: only answered topics are settled (`answeredOnly`). */
   answeredOnly: boolean;
   examBlueprintId: string | null;
+  /** The plan's areas the learner said are weak, which placement asks first. */
+  /** Each of the plan's areas' share of the exam, when the notice says (`getAreaShares`). */
+  areaShares: Map<string, number> | null;
+  focusAreas: string[];
+  /** The skills the learner asked to focus on: their area's, or the part of it they named. */
+  focusedSkillIds: Set<string>;
   goalCreatedAt: Date | null;
   /** The level the learner gave for the goal, stored on it. */
   goalLevel: OwnLevel | null;
   /** The exam's subjects the learner said they know well. */
   knownAreas: string[];
+  /** A language level test's measured level, which counts as evidence (see `isLevelMeasured`). */
+  measuredLevel: OwnLevel | null;
   quickFormat: PlacementQuickFormat;
   trueFalseLabels: TrueFalseLabels;
 }> {
   const goal = await prisma.goal.findUnique({
-    select: { createdAt: true, details: true, examBlueprint: true },
+    select: {
+      createdAt: true,
+      details: true,
+      examBlueprint: true,
+      plan: { select: { graph: true, settings: true } },
+    },
     where: { id: goalId },
   });
 
   const blueprint = goal?.examBlueprint ?? null;
   const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
   const notice = readNoticeFormats(goal?.details);
+  const graph = parsePlanGraph(goal?.plan?.graph);
+  const settings = parsePlanSettings(goal?.plan?.settings);
 
   return {
     answeredOnly: isOwnMaterialTest(blueprint),
+    areaShares: getChosenAreaShares({ graph, settings, structure }),
     examBlueprintId: blueprint?.id ?? null,
+    focusAreas: settings.focusAreas,
+    focusedSkillIds: listFocusedSkillIds({ graph, settings }),
     goalCreatedAt: goal?.createdAt ?? null,
     goalLevel: goal ? getOwnLevel({ goal }) : null,
     knownAreas: goal ? getKnownSubjects(goal) : [],
+    measuredLevel: goal && isLevelMeasured(goal) ? getOwnLevel({ goal }) : null,
     // Before the notice's blueprint is linked, the formats a first pass over it read.
     quickFormat: getPlacementQuickFormat(structure ?? notice),
     trueFalseLabels: getTrueFalseLabels(structure ?? notice),
@@ -224,12 +216,18 @@ function getStatus({
  * With `today` (the learner-local day), it stops asking once that day's few minutes are used.
  */
 export async function loadPlacementState({
+  answer: sessionAnswer = null,
   goalId,
   ownLevel: requestedLevel,
   plan,
   today = null,
   userId,
 }: {
+  /**
+   * A placement question a first-week session just asked, answered: one of placement's own too,
+   * though asked inside a session (see `listKnownSkillIds`).
+   */
+  answer?: PlacementEvidence | null;
   goalId: string;
   /** A level the request gave; the one stored on the goal otherwise. */
   ownLevel?: OwnLevel | null;
@@ -243,26 +241,33 @@ export async function loadPlacementState({
   const {
     answeredOnly,
     examBlueprintId,
+    areaShares,
+    focusAreas,
+    focusedSkillIds,
     goalCreatedAt,
     goalLevel,
     knownAreas,
+    measuredLevel,
     quickFormat,
     trueFalseLabels,
   } = await loadGoalExam(goalId);
 
   const ownLevel = requestedLevel ?? goalLevel;
 
-  const [{ attempts, evidence, seenItemIds }, { bankItems, build }] = await Promise.all([
-    loadEvidence({ skillIds, userId }),
-    loadPlanBuild({ everySkill: answeredOnly, goalId, knownAreas }).then(async (planBuild) => ({
-      bankItems: await loadPlacementItems({
-        examBlueprintId,
-        skillIds,
-        writingSkillIds: planBuild.preparingSkillIds,
-      }),
-      build: planBuild,
-    })),
-  ]);
+  const [{ attempts, evidence, placementAnswers, seenItemIds }, { bankItems, build }] =
+    await Promise.all([
+      loadEvidence({ skillIds, userId }),
+      loadPlanBuild({ everySkill: answeredOnly, focusAreas, goalId, knownAreas, ownLevel }).then(
+        async (planBuild) => ({
+          bankItems: await loadPlacementItems({
+            examBlueprintId,
+            skillIds,
+            writingSkillIds: planBuild.preparingSkillIds,
+          }),
+          build: planBuild,
+        }),
+      ),
+    ]);
 
   const items: PlacementItemCandidate[] = bankItems.map((item) => ({
     ...item,
@@ -282,17 +287,36 @@ export async function loadPlacementState({
       topics,
     });
 
-  const beliefs = getPlacementBeliefs({ answeredOnly, evidence, knownAreas, ownLevel, skills });
-  const complete = isPlacementSettled({ answeredOnly, beliefs, skills });
+  const answers = sessionAnswer ? [...placementAnswers, sessionAnswer] : placementAnswers;
+
+  const measuredKnown = new Set(
+    listKnownByMeasuredLevel({ evidence, level: measuredLevel, skills }),
+  );
+
+  const statuses: SkillStatuses = new Map(
+    [
+      ...readSkillStatuses({
+        answeredOnly,
+        answers,
+        evidence,
+        focusedSkillIds,
+        knownAreas,
+        ownLevel,
+        skills,
+      }),
+    ].map(([skillId, status]) => [skillId, measuredKnown.has(skillId) ? "known" : status]),
+  );
+
+  const complete = isPlacementSettled({ answeredOnly, skills, statuses });
   const askableSkillIds = new Set(items.filter((item) => !item.seen).map((item) => item.skillId));
 
-  const needsItems = getUndecidedSkills({ answeredOnly, beliefs, skills })
+  const needsItems = getUndecidedSkills({ answeredOnly, skills, statuses })
     .filter((skill) => !askableSkillIds.has(skill.id))
     .map((skill) => skill.id);
 
   const nextSkillId = chooseNextSkill({
     askableSkillIds,
-    choice: { answeredOnly, beliefs, evidence, ownLevel, skills },
+    choice: { answeredOnly, areaShares, evidence, focusAreas, ownLevel, skills, statuses },
     preparingSkillIds: build.preparingSkillIds,
     quickSkillIds: new Set(
       items.filter((item) => !item.seen && item.format === quickFormat).map((item) => item.skillId),
@@ -302,7 +326,7 @@ export async function loadPlacementState({
   const waitsForNext = nextSkillId !== null && !askableSkillIds.has(nextSkillId);
 
   const nextItem =
-    nextSkillId && !waitsForNext
+    nextSkillId && !waitsForNext && !build.waitsForExam
       ? pickPlacementItem({
           confirming: evidence.some(
             (answer) => answer.skillId === nextSkillId && answer.outcome === "correct",
@@ -323,15 +347,18 @@ export async function loadPlacementState({
 
   return {
     answered: evidence.length,
-    areas: getAreaStarts({ beliefs, skills }),
+    areas: getAreaStarts({ skills, statuses }),
     complete,
     dayBudgetUsed,
-    knownSkillIds: skillIds.filter(
-      (skillId) => getSkillPlacementStatus(beliefs.get(skillId)) === "known",
-    ),
+    knownSkillIds: [
+      ...new Set([
+        ...listKnownSkillIds({ answers, evidence, focusedSkillIds, skillIds }),
+        ...measuredKnown,
+      ]),
+    ],
     needsItems,
     next,
-    phases: getPhaseStarts({ beliefs, skills }),
+    phases: getPhaseStarts({ skills, statuses }),
     started: hasPlacementStarted({ attempts, since: goalCreatedAt }),
     status: getStatus({
       answered: evidence.length,
@@ -339,7 +366,8 @@ export async function loadPlacementState({
       complete,
       dayBudgetUsed,
       hasNext: next !== null,
-      hasSkills: skills.length > 0,
+      // A language certificate's skills are known once its blueprint is (see `loadPlanBuild`).
+      hasSkills: skills.length > 0 && !build.waitsForExam,
       waitsForQuestions: waitsForNext,
     }),
     trueFalseLabels,

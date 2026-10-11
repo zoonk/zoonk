@@ -16,10 +16,12 @@ import { LearnLink } from "../learn-link";
 import { goBackToApp } from "./app-history";
 
 function TaskCloseLink({
+  beforeExit,
   closeOnEscape,
   href,
   toApp,
 }: {
+  beforeExit?: () => Promise<unknown> | null;
   closeOnEscape: boolean;
   href: string | null;
   toApp: boolean;
@@ -31,10 +33,20 @@ function TaskCloseLink({
     return <span aria-hidden="true" className="size-9 shrink-0" />;
   }
 
-  // A task opened from several pages leaves for the one it was opened from, as it was.
+  // A task opened from several pages leaves for the one it was opened from, as it was. Work still
+  // being saved finishes first: the same link is followed once it has.
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const isPlainClick =
       event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+
+    const saving = isPlainClick ? beforeExit?.() : null;
+
+    if (saving) {
+      event.preventDefault();
+      const link = event.currentTarget;
+      void saving.finally(() => link.click());
+      return;
+    }
 
     if (toApp && isPlainClick && goBackToApp()) {
       event.preventDefault();
@@ -63,6 +75,7 @@ function TaskCloseLink({
  * pattern drills all use it.
  */
 export function TaskFrame({
+  beforeExit,
   children,
   closeOnEscape = false,
   exitHref,
@@ -72,6 +85,11 @@ export function TaskFrame({
   headerTitle,
   progress,
 }: {
+  /**
+   * Work still being saved when the learner leaves (a mock's last answer): a promise the exit waits
+   * for, so leaving never drops it; null when nothing is in flight.
+   */
+  beforeExit?: () => Promise<unknown> | null;
   children: React.ReactNode;
   /** Escape leaves too, for a screen with nothing to lose (a result); never mid-task. */
   closeOnEscape?: boolean;
@@ -93,7 +111,12 @@ export function TaskFrame({
       <TaskHeader>
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
-            <TaskCloseLink closeOnEscape={closeOnEscape} href={exitHref} toApp={exitToApp} />
+            <TaskCloseLink
+              beforeExit={beforeExit}
+              closeOnEscape={closeOnEscape}
+              href={exitHref}
+              toApp={exitToApp}
+            />
           </TaskHeaderSide>
           <div className="text-muted-foreground flex min-w-0 shrink justify-center text-center text-sm text-balance">
             {headerTitle}

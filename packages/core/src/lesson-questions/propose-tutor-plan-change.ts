@@ -12,7 +12,7 @@ import { type PlanOperation } from "../plans/plan-contract";
 import { type PlanChangeView } from "../plans/plan-view-contract";
 import { type PlanOperationError } from "../plans/planner/plan-operations";
 import { getSession } from "../users/get-session";
-import { findAnsweringQuestion } from "./_utils/answering-question";
+import { findAnsweringGoal } from "./_utils/answering-question";
 
 /** Parts of the learner's words no change covers ("and aim for 800"), for the buddy to answer. */
 type LeftOut = { leftOut: string[] };
@@ -136,7 +136,8 @@ async function proposeForGoal({
  * a change that moves an exam off the day its notice sets carries that day (`officialDate`). What
  * the change costs (an exam subject with questions left out, a plan ending weeks before its date)
  * comes back as `cautions`, for the buddy to say before the learner applies it.
- * Only the generation answering the learner's own question about one of their goals may ask.
+ * Only the generation answering the learner's own question inside one of their goals may ask: in
+ * the buddy's conversation, or on a chapter, a lesson or a mock of that goal.
  */
 export async function proposeTutorPlanChange({
   questionId,
@@ -160,15 +161,13 @@ export async function proposeTutorPlanChange({
     return { status: "notFound" };
   }
 
-  const question = await findAnsweringQuestion({ questionId, revision, userId: session.user.id });
+  const goal = await findAnsweringGoal({ questionId, revision, userId: session.user.id });
 
-  const goalId = question?.thread.goalId;
-
-  if (!goalId) {
+  if (!goal) {
     return { status: "notFound" };
   }
 
-  const proposed = await proposeForGoal({ goalId, request: text });
+  const proposed = await proposeForGoal({ goalId: goal.id, request: text });
 
   if (proposed.status !== "proposed") {
     return proposed;

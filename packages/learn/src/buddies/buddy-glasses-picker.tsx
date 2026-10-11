@@ -12,7 +12,7 @@ import { BuddyGlassesHowToEarn, BuddyGlassesName } from "./buddy-labels";
 import { type BuddyLook } from "./buddy-picker";
 
 /**
- * One pair as the picker shows it. A pair earned by counting (full meals, reviews) brings how far
+ * One pair as the picker shows it. A pair earned by counting (mission days, reviews) brings how far
  * the learner is; a pair earned once only says how.
  */
 export type BuddyGlassesOption = {
@@ -22,13 +22,13 @@ export type BuddyGlassesOption = {
   target?: number;
 };
 
-/** Pairs earned by counting (7 full meals, 50 reviews) show how far along the learner is. */
+/** Pairs earned by counting (7 days with all three missions, 50 reviews) show how far along the learner is. */
 const COUNTED_GLASSES = new Set<BuddyGlasses>(["catEye", "retro"]);
 
 const OPTION_CLASS =
   "border-border has-data-checked:border-foreground has-focus-visible:ring-ring/50 flex min-h-16 cursor-pointer items-center gap-3 rounded-2xl border p-2 pr-3 has-focus-visible:ring-[3px] has-data-disabled:cursor-default";
 
-/** "2 of 7 full meals", "38 of 50 reviews": how far a counted pair is. */
+/** "2 of 7 days", "38 of 50 reviews": how far a counted pair is. */
 function CountLine({
   current,
   glasses,
@@ -42,7 +42,7 @@ function CountLine({
   const counts = { current: String(current), target: String(target) };
 
   return glasses === "catEye"
-    ? t("{current} of {target} full meals", counts)
+    ? t("{current} of {target} days with all three missions", counts)
     : t("{current} of {target} reviews", counts);
 }
 

@@ -95,7 +95,7 @@ export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
     case "aviator":
       return t("Finish your first weekly challenge");
     case "catEye":
-      return t("Get 7 full meals");
+      return t("Finish all three missions on 7 days");
     case "retro":
       return t("Finish 50 reviews");
     case "monocle":

@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { parseStepContent } from "../../steps/contract/step-contract";
-import { languageLessonDraft } from "../_test-utils/language-lesson-draft";
+import { languageLessonDraft, sameLanguageLessonDraft } from "../_test-utils/language-lesson-draft";
 import { buildLanguageLessonSteps } from "./language-lesson-steps";
 
 const WORD_IDS = ["word-rent", "word-deposit", "word-utilities"];
 const SENTENCE_IDS = ["sentence-rent", "sentence-deposit", "sentence-utilities"];
 
-function build(content = languageLessonDraft()) {
+function build(content = languageLessonDraft(), learnerLanguage = "pt") {
   return buildLanguageLessonSteps({
     content,
+    learnerLanguage,
     sentenceIds: SENTENCE_IDS,
     targetLanguage: "en",
     wordIds: WORD_IDS,
@@ -95,5 +96,37 @@ describe(buildLanguageLessonSteps, () => {
 
     expect(steps.some((step) => step.kind === "spokenAnswer")).toBe(false);
     expect(steps.filter((step) => step.kind === "reading")).toHaveLength(2);
+  });
+
+  it("in the learner's own language, hears and builds every sentence instead of translating it", () => {
+    const steps = build(sameLanguageLessonDraft(), "en");
+
+    expect(steps.map((step) => step.kind)).toStrictEqual([
+      "vocabulary",
+      "vocabulary",
+      "vocabulary",
+      "translation",
+      "translation",
+      "translation",
+      "explanation",
+      "fillBlank",
+      "listening",
+      "listening",
+      "listening",
+      "spokenAnswer",
+      "typedAnswer",
+      "summary",
+    ]);
+
+    expect(steps.find((step) => step.kind === "spokenAnswer")?.content).toStrictEqual({
+      language: "en",
+      prompt: "Read the fact about plants aloud.",
+      targetText: "Plants need water to grow",
+    });
+
+    expect(steps.find((step) => step.kind === "explanation")?.content).toStrictEqual({
+      text: "After a plural subject like `plants`, the verb has no -s.\n\n- `Plants need water`\n- `Do plants need light?`",
+      title: "Verbs after plural subjects",
+    });
   });
 });

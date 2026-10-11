@@ -14,6 +14,7 @@ import {
   loadGoalCurriculumInputs,
 } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
+import { saveExamSkillGraph } from "@zoonk/core/library/curriculum/reusable-curriculum";
 import {
   type GoalSkillGraph,
   linkGoalSkillPrerequisites,
@@ -21,10 +22,13 @@ import {
 } from "@zoonk/core/library/curriculum/save-goal-skills";
 import {
   type CurriculumScope,
+  getContentReuse,
   getScopeModel,
   getScopeReuse,
 } from "@zoonk/core/library/curriculum/scope";
+import { toScopedGraphPrompt } from "@zoonk/core/library/curriculum/shared-graph-prompt";
 import { createGoalPlan } from "@zoonk/core/plans/create";
+import { type PlanSetupTask, listPlanSetupTasks, runPlanSetupTask } from "@zoonk/core/plans/setup";
 import { safeAsync } from "@zoonk/utils/error";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
@@ -38,6 +42,30 @@ export async function loadGoalCurriculumStep(goalId: string): Promise<GoalCurric
   "use step";
 
   return loadGoalCurriculumInputs(goalId);
+}
+
+/** A private course for the goal's learner: lessons from their own material, or too specific to share. */
+function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
+  return {
+    generalGoal: null,
+    language: goal.language,
+    ownerId: goal.userId,
+    targetLanguage: goal.targetLanguage,
+  };
+}
+
+/**
+ * A goal whose material linked after its scope was decided (an upload while the learner answered
+ * onboarding) gets the private course that material always gets: it reaches the graph's context.
+ */
+export function keepMaterialPrivate({
+  inputs,
+  scope,
+}: {
+  inputs: Pick<GoalCurriculumInputs, "goal" | "hasMaterial">;
+  scope: CurriculumScope;
+}): CurriculumScope {
+  return inputs.hasMaterial && !scope.ownerId ? toPrivateScope(inputs.goal) : scope;
 }
 
 /**
@@ -66,7 +94,7 @@ export async function decideGoalScopeStep({
 
   // Lessons built from the learner's own material teach from it and cite it: never shared.
   if (inputs.hasMaterial) {
-    return { ...shared, generalGoal: null, ownerId: goal.userId };
+    return toPrivateScope(goal);
   }
 
   const { data } = await withAiRetry(() =>
@@ -78,18 +106,39 @@ export async function decideGoalScopeStep({
   );
 
   if (data.privateCourse) {
-    return { ...shared, generalGoal: null, ownerId: goal.userId };
+    return toPrivateScope(goal);
   }
 
-  return { ...shared, exams: inputs.exams, generalGoal: data.generalGoal ?? goal.title };
+  // An exam's shared content is written for the exam, never for the general form a model wrote from
+  // the learner's words, which can carry their target ("750 points for medicine").
+  const generalGoal = inputs.examIdentity ?? data.generalGoal ?? goal.title;
+
+  return { ...shared, exams: inputs.exams, generalGoal };
 }
 
 /**
  * The learner watches the graph being built, so an exam's or a language's graph, which later
  * learners of the same notice or language reuse, runs at the priority tier (`chooseServiceTier`).
+ * A new exam's graph is an exam's before research finds its notice too: Rafaela's first placement
+ * question waited 94 s on hers at the standard tier.
  */
-function getGraphTier(scope: CurriculumScope) {
-  return chooseServiceTier({ reuse: getScopeReuse(scope), wait: "learner" });
+function getGraphTier({
+  goalKind,
+  scope,
+}: {
+  goalKind: GoalCurriculumInputs["graphPrompt"]["goalKind"];
+  scope: CurriculumScope;
+}) {
+  const reuse =
+    goalKind === "exam"
+      ? getContentReuse({
+          forExam: true,
+          ownerId: scope.ownerId,
+          targetLanguage: scope.targetLanguage,
+        })
+      : getScopeReuse(scope);
+
+  return chooseServiceTier({ reuse, wait: "learner" });
 }
 
 /**
@@ -106,7 +155,12 @@ async function generateGraph({
   scope: CurriculumScope;
 }) {
   const model = getScopeModel(scope);
-  const params = { ...prompt, analytics, serviceTier: getGraphTier(scope) };
+
+  const params = {
+    ...prompt,
+    analytics,
+    serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
+  };
 
   if (!model) {
     return generateSkillGraph(params);
@@ -127,7 +181,8 @@ async function generateGraph({
 
 /**
  * The goal's skill graph: the skills it needs with their prerequisites, the courses and level
- * bands that teach them, and its phases.
+ * bands that teach them, and its phases. A shared curriculum's graph reads only the goal's general
+ * form and fixed choices (`toScopedGraphPrompt`), never the learner's own words.
  */
 export async function buildSkillGraphStep({
   analytics,
@@ -146,7 +201,7 @@ export async function buildSkillGraphStep({
   const { data, provenance } = await withAiRetry(() =>
     generateGraph({
       analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
-      prompt: inputs.graphPrompt,
+      prompt: toScopedGraphPrompt({ inputs, scope }),
       scope,
     }),
   );
@@ -167,22 +222,23 @@ export async function buildSkillGraphStep({
 export async function checkGraphCoverageStep({
   analytics,
   graph,
-  prompt,
+  inputs,
   references,
   scope,
   workflowRunId,
 }: RunScope & {
   graph: GoalSkillGraph;
-  /** What the goal is, in which language and its exam's notice, as the skill graph read it. */
-  prompt: Pick<
-    GoalCurriculumInputs["graphPrompt"],
-    "examBlueprint" | "goal" | "goalKind" | "language"
+  /** The goal, its language and its exam's notice, read as the skill graph read them. */
+  inputs: Pick<
+    GoalCurriculumInputs,
+    "examIdentity" | "goal" | "graphPrompt" | "hasMaterial" | "sharedContext" | "startedCourse"
   >;
   references: GoalCurriculumInputs["references"];
   scope: CurriculumScope;
 }): Promise<{ changed: boolean; graph: GoalSkillGraph }> {
   "use step";
 
+  const prompt = toScopedGraphPrompt({ inputs, scope });
   const outline = prompt.goalKind === "exam" ? prompt.examBlueprint : undefined;
 
   const coverage = await withAiRetry(() =>
@@ -193,7 +249,7 @@ export async function checkGraphCoverageStep({
       goalKind: prompt.goalKind,
       language: prompt.language,
       references,
-      serviceTier: getGraphTier(scope),
+      serviceTier: getGraphTier({ goalKind: prompt.goalKind, scope }),
       skills: graph.skills.map(({ area, description, examWeight, key, name, topics }) => ({
         area,
         description,
@@ -244,7 +300,8 @@ export async function linkSkillPrerequisitesStep(input: {
 /**
  * Builds the plan from the graph at the learner's daily minutes: phases with dates, and one stand-in
  * per skill until the outlines give it lessons. Each skill's lessons come only from the Library
- * course found for its graph course. Placement can start as soon as this is saved.
+ * course found for its graph course. Placement can start as soon as this is saved. Returns the
+ * setup a new plan owes, which the run does one step per task (`runPlanSetupTaskStep`).
  */
 export async function createGoalPlanStep({
   courseIdsByKey,
@@ -264,10 +321,10 @@ export async function createGoalPlanStep({
   /** The client that started the run, for "Plan Created". */
   platform: AnalyticsPlatform | null;
   provenance: GraphProvenance;
-}): Promise<boolean> {
+}): Promise<PlanSetupTask[]> {
   "use step";
 
-  const result = await createGoalPlan({
+  const { setupTasks } = await createGoalPlan({
     followNotice,
     goalId,
     graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
@@ -278,7 +335,62 @@ export async function createGoalPlanStep({
       promptVersion: provenance.promptVersion,
       runId: provenance.runId,
     },
+    setup: "steps",
   });
 
-  return result.status === "created";
+  return setupTasks;
+}
+
+/**
+ * Keeps a graph this goal's run wrote as its exam's shared graph, when the goal's graph is the
+ * exam's (`saveExamSkillGraph`): the first written for the exam, which only this run completes.
+ */
+export async function saveExamSkillGraphStep({
+  courseIdsByKey,
+  graph,
+  idsByKey,
+  inputs,
+  provenance,
+  scope,
+}: {
+  courseIdsByKey: Record<string, string>;
+  graph: GoalSkillGraph;
+  idsByKey: Record<string, string>;
+  inputs: GoalCurriculumInputs;
+  provenance: GraphProvenance;
+  scope: CurriculumScope;
+}): Promise<void> {
+  "use step";
+
+  await saveExamSkillGraph({
+    graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
+    inputs,
+    provenance: {
+      generatedAt: new Date(provenance.generatedAt),
+      model: provenance.model,
+      promptVersion: provenance.promptVersion,
+      runId: provenance.runId,
+    },
+    scope,
+  });
+}
+
+/**
+ * One setup task the new plan owes (see `runPlanSetupTask`), done once. A failure throws, so the
+ * runtime retries it; the routine's fit is a model call, retried after a minute when rate limited.
+ */
+export async function runPlanSetupTaskStep(input: {
+  goalId: string;
+  task: PlanSetupTask;
+}): Promise<void> {
+  "use step";
+
+  await withAiRetry(() => runPlanSetupTask(input));
+}
+
+/** The setup the goal's plan still owes, in the order it runs. */
+export async function listPlanSetupTasksStep(goalId: string): Promise<PlanSetupTask[]> {
+  "use step";
+
+  return listPlanSetupTasks(goalId);
 }

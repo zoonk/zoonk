@@ -20,7 +20,9 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { areaPracticeResponseSchema } from "../src/lib/openapi/schemas/learn-views";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
 
@@ -237,6 +239,39 @@ test.describe("Goal maps API", () => {
 
     const finished = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(finished.status).toBe("completed");
+
+    await apiContext.dispose();
+  });
+
+  // Missed days set the plan's last lesson aside: nothing is left to do, but the plan ended rather
+  // than finished, with what's next all the same, and the next level is the learner's choice.
+  test("ends a plan whose last lesson was set aside, with what's next and the next level", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "maps-ended",
+    });
+
+    const { course, goal } = await createCourseGoal({
+      statuses: ["done", "skipped"],
+      userId: user.id,
+    });
+
+    const plan = await readBody({
+      response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
+      schema: planResponseSchema,
+    });
+
+    expect(plan.end).toStrictEqual({ kind: "ended", setAsideLessons: 1 });
+
+    const map = await readBody({
+      response: await apiContext.get(`/v1/goals/${goal.id}/map`),
+      schema: fieldMapViewSchema,
+    });
+
+    expect(map.next?.nextLevel).toMatchObject({ courseId: course.id, level: "beginner" });
+
+    const response = await apiContext.post(`/v1/goals/${goal.id}/next-level`);
+    expect(response.status()).toBe(201);
 
     await apiContext.dispose();
   });

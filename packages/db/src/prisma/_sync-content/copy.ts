@@ -139,6 +139,7 @@ function getCurriculumTables({
 
   const lessons = applyTransforms(catalog.library_lessons, [
     keepKnown({ column: "home_chapter_id", known: chapterIds }),
+    remap({ column: "go_further_course_id", ids: courseIds }),
     byImage,
   ]);
 

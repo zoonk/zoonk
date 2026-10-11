@@ -1,24 +1,15 @@
 import "server-only";
-import { gradeEssay } from "@zoonk/ai/tasks/v2/grading/grade-essay";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { recordLearnerAnswer } from "../../learner/record-learner-answer";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { countGradesLeft } from "./_utils/essay-drafts";
+import { gradeEssayText, recordEssayGrade } from "./_utils/grade-essay-answer";
 import { findOwnedEssay } from "./_utils/owned-essay";
 import { type EssayGradeView, type EssaySubmissionInput } from "./essay-contract";
-import { getEssayRubric } from "./essay-rubric";
-
-/** A draft at 60% of the rubric's points reads as a good answer, like ENEM's 600. */
-const GOOD_SHARE = 0.6;
 
 export type SubmitEssayResult =
   | { grade: EssayGradeView; status: "graded" }
   | { status: "blockNotActive" | "limitReached" | "notFound" | "unauthorized" };
-
-function joinPrompt({ context, question }: { context: string | null; question: string }) {
-  return context ? `${context}\n\n${question}` : question;
-}
 
 /**
  * Grades a draft of the block's essay with the official rubric (ENEM's five competencies, OAB's
@@ -59,25 +50,21 @@ export async function submitEssay({
     return { status: "limitReached" };
   }
 
-  const { data: grade } = await gradeEssay({
-    analytics: { contentScope: "personal", distinctId: userId, goalId: goal?.id },
-    essay: input.text,
-    keyPoints: content.keyPoints,
+  const grade = await gradeEssayText({
+    blueprint,
+    content,
+    goalId: goal?.id,
     language: goal?.language ?? item.language,
-    prompt: joinPrompt(content),
-    rubric: getEssayRubric({ blueprint, criteria: content.rubric }),
+    text: input.text,
+    userId,
   });
 
-  const share = grade.total.maxScore > 0 ? grade.total.score / grade.total.maxScore : 0;
-
-  await recordLearnerAnswer({
-    answer: { grade, text: input.text },
-    graded: { durationMs: input.durationMs, isCorrect: share >= GOOD_SHARE, score: share },
-    itemId: item.id,
-    language: item.language,
-    purpose: "learning",
-    skillId: item.skillId,
+  await recordEssayGrade({
+    durationMs: input.durationMs,
+    grade,
+    item,
     studySessionId: sessionId,
+    text: input.text,
     timeZone,
     userId,
   });

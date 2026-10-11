@@ -71,7 +71,7 @@ test.describe("Asking for the notice research couldn't find", () => {
     await page.goto("/today");
 
     const ask = page.getByRole("region", { name: "We couldn't find the official notice" });
-    await expect(ask).toContainText("Upload it so your plan follows the real exam.");
+    await expect(ask).toContainText("Upload the notice so your plan follows the real exam.");
     await expectAccessibleScreen(page, "Today asking for the notice");
 
     await ask.getByRole("button", { name: "Upload the notice" }).click();

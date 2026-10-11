@@ -1,5 +1,5 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { choiceCheck, citedData, exampleData, numericCheck } from "./activity-checks";
+import { choiceCheck, citedData, numericCheck } from "./activity-checks";
 
 /** Geometry, probability and data: one valid activity per template. */
 export const geometryProbabilityActivities = {
@@ -58,7 +58,7 @@ export const geometryProbabilityActivities = {
     prompt: "Drag a corner and watch the angles.",
     template: "geometryBoard",
   },
-  predictSimulate: {
+  randomSimulation: {
     check: choiceCheck("How often do you get exactly 5 heads?", [
       ["Almost always", false, 0.9],
       ["About half the time", false, 0.5],
@@ -67,6 +67,7 @@ export const geometryProbabilityActivities = {
     ]),
     fields: {
       hitLabel: "Exactly 5 heads",
+      mode: "chance",
       model: {
         hit: { comparison: "exactly", value: 5 },
         kind: "binomial",
@@ -77,24 +78,7 @@ export const geometryProbabilityActivities = {
       trialLabel: "10 flips",
     },
     prompt: "Flip a coin 10 times.",
-    template: "predictSimulate",
-  },
-  samplingSimulator: {
-    check: choiceCheck("Asking 4 times the people makes the error…", [
-      ["Half as big", true, 0.5],
-      ["A quarter as big", false, 0.25],
-      ["The same", false, 1],
-    ]),
-    data: exampleData,
-    fields: {
-      population: { kind: "proportion", proportion: 0.5 },
-      populationLabel: "Example town",
-      runs: 200,
-      sampleSizes: [100, 400],
-      sizeLabel: "People per poll",
-    },
-    prompt: "Run 200 polls of each size.",
-    template: "samplingSimulator",
+    template: "randomSimulation",
   },
   unitCircle: {
     check: { ...numericCheck(0.5), inputs: [{ name: "angle", value: 30 }], output: "sin" },

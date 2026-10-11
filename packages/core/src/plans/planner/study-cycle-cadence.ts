@@ -53,6 +53,7 @@ export function toCadencedLanes({
       {
         area,
         joinDay: 0,
+        minutes,
         openDays,
         openLeft: getOpenLeft({ context, openDays }),
         order: 0,
@@ -70,6 +71,23 @@ export function hasCadencedLeft(lane: CadencedLane): boolean {
   return lane.units.length > 0 && lane.quota > EPSILON;
 }
 
+/**
+ * Whether an area practiced on days of its own has had less of its minutes than its days' lesson
+ * time gone by gives it: on days shorter than a lesson, it's the subject most due.
+ */
+export function isCadencedBehind({
+  dayIndex,
+  lane,
+}: {
+  dayIndex: number;
+  lane: CadencedLane;
+}): boolean {
+  const total = lane.openLeft[0] ?? 0;
+  const gone = total - (lane.openLeft[dayIndex] ?? 0);
+
+  return (lane.minutes - lane.quota) * total + EPSILON < lane.minutes * gone;
+}
+
 /** The areas practiced on days of their own that this day is one of, with lessons left to place. */
 export function listOpenCadenced({
   dayIndex,
@@ -83,9 +101,11 @@ export function listOpenCadenced({
 
 /**
  * Each open area's block of the day, before the rotation's: its even part of the minutes it has
- * left over the days it has left, at least one lesson (as any subject chosen for a day), so a
- * day a lesson didn't fit evens out on the next. What it builds on in other subjects comes first
- * in theirs.
+ * left over the days it has left, so a day a lesson didn't fit evens out on the next. A day whose
+ * part is shorter than its next lesson has none of it, unless the area is behind its even spread
+ * (see `isCadencedBehind`): then it takes one lesson. Taking one every day, at 10 minutes a day
+ * the essay took every day's only lesson until its minutes ran out, and day one opened with it
+ * instead of the learner's gaps. What it builds on in other subjects comes first in theirs.
  */
 export function takeCadencedBlocks({
   context,
@@ -106,6 +126,13 @@ export function takeCadencedBlocks({
     pullPrerequisites({ context, lane, lanes: [...state.lanes, lane], left: state.left });
 
     const share = Math.min(1, lane.quota / Math.max(lane.openLeft[dayIndex] ?? 0, EPSILON));
-    lane.quota -= takeBlock({ budget: room * share, context, dayEnd, lane, state });
+    const budget = room * share;
+    const head = lane.units[0];
+
+    if (head && head.minutes > budget + EPSILON && !isCadencedBehind({ dayIndex, lane })) {
+      return;
+    }
+
+    lane.quota -= takeBlock({ budget, context, dayEnd, lane, state });
   });
 }

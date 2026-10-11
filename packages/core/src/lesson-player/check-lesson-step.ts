@@ -2,15 +2,16 @@ import "server-only";
 import { type StepKind, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { recordLanguageStepEvidence } from "../language/levels/record-language-evidence";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { canGradeWithModel } from "../learner/_utils/model-grading";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { type RecordedLearnerAnswer, recordLearnerAnswer } from "../learner/record-learner-answer";
+import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { scheduleMistakeCause } from "../mistakes/resolve-mistake-cause";
 import { getSession } from "../users/get-session";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./_utils/grade-lesson-answer";
 import { findPlayableStepRow, getAnswerSkillId, isOwnExplanation } from "./_utils/lesson-rows";
 import { findLessonRun, getRunStudySessionId } from "./_utils/lesson-runs";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
+import { getScreenComesBack } from "./_utils/plan-skill-review";
 import { getStepQuestion } from "./_utils/step-question";
 import {
   type LessonStepAnswer,
@@ -84,49 +85,46 @@ function toCheckResult({
   };
 }
 
-/**
- * A quick explanation never comes back in a review (reviews come with a study plan's sessions,
- * which explanations aren't part of), so its screens don't say when their skill does.
- */
-function fromRecorded({
-  explanation,
-  recorded,
-  verdict,
-}: {
+type ComesBackInput = Omit<Parameters<typeof getScreenComesBack>[0], "ownDue"> & {
   explanation: boolean;
-  recorded: RecordedLearnerAnswer;
-  verdict: LessonAnswerVerdict;
-}): LessonStepCheckResult {
-  return toCheckResult({
-    nextReviewAt: explanation ? null : (recorded.learnerSkill?.due ?? null),
-    savedMistake: recorded.mistake !== null,
-    verdict,
-  });
+};
+
+/**
+ * When the screen's idea comes back (see `getScreenComesBack`). A quick explanation never comes
+ * back in a review (reviews come with a study plan's sessions, which explanations aren't part of),
+ * so its screens don't say when their skill does.
+ */
+function getComesBack({
+  explanation,
+  ownDue,
+  ...input
+}: ComesBackInput & { ownDue: Date | null }): Promise<Date | null> | null {
+  return explanation ? null : getScreenComesBack({ ...input, ownDue });
 }
 
 /**
  * An answer past the run's cap, or a written one nothing checked, isn't recorded: the verdict,
- * with when the skill already comes back (never for a quick explanation) and no new mistake.
+ * with when the idea already comes back and no new mistake.
  */
 async function checkWithoutRecording({
-  explanation,
   skillId,
-  userId,
   verdict,
-}: {
-  explanation: boolean;
+  ...comesBack
+}: ComesBackInput & {
   skillId: string | null;
-  userId: string;
   verdict: LessonAnswerVerdict;
 }): Promise<LessonStepCheckOutcome> {
   const learnerSkill =
-    skillId && !explanation
-      ? await prisma.learnerSkill.findFirst({ select: { due: true }, where: { skillId, userId } })
+    skillId && !comesBack.explanation
+      ? await prisma.learnerSkill.findFirst({
+          select: { due: true },
+          where: { skillId, userId: comesBack.userId },
+        })
       : null;
 
   return {
     result: toCheckResult({
-      nextReviewAt: learnerSkill?.due ?? null,
+      nextReviewAt: await getComesBack({ ...comesBack, ownDue: learnerSkill?.due ?? null }),
       savedMistake: false,
       verdict,
     }),
@@ -198,8 +196,9 @@ export async function checkLessonStep({
     return { status: "invalid" };
   }
 
-  const answers = await countRunAnswers({ startedAt: run.startedAt, stepId: row.id, userId });
-  const isRecorded = answers < MAX_ANSWERS_PER_STEP_IN_RUN;
+  const isRecorded =
+    (await countRunAnswers({ startedAt: run.startedAt, stepId: row.id, userId })) <
+    MAX_ANSWERS_PER_STEP_IN_RUN;
 
   const verdict = await gradeRunAnswer({
     answer: input.answer,
@@ -218,10 +217,18 @@ export async function checkLessonStep({
     stepSkillId: row.skillId,
   });
 
-  const explanation = isOwnExplanation(row.lesson);
+  const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
+
+  const comesBack: ComesBackInput = {
+    explanation: isOwnExplanation(row.lesson),
+    lessonId: row.lessonId,
+    runStartedAt: run.startedAt,
+    timeZone,
+    userId,
+  };
 
   if (!isRecorded || !verdict.checked) {
-    return checkWithoutRecording({ explanation, skillId, userId, verdict });
+    return checkWithoutRecording({ ...comesBack, skillId, verdict });
   }
 
   const questionText = getStepQuestion(step);
@@ -255,7 +262,7 @@ export async function checkLessonStep({
     stepId: row.id,
     studySessionId: getRunStudySessionId(run),
     targetLanguage: row.lesson.targetLanguage,
-    timeZone: getAnswerTimeZone({ goal: null, timeZone: input.timeZone }),
+    timeZone,
     userId,
   });
 
@@ -268,5 +275,15 @@ export async function checkLessonStep({
     userId,
   });
 
-  return { result: fromRecorded({ explanation, recorded, verdict }), status: "checked" };
+  return {
+    result: toCheckResult({
+      nextReviewAt: await getComesBack({
+        ...comesBack,
+        ownDue: recorded.learnerSkill?.due ?? null,
+      }),
+      savedMistake: recorded.mistake !== null,
+      verdict,
+    }),
+    status: "checked",
+  };
 }

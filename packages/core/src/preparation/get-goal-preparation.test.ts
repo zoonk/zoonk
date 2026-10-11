@@ -113,6 +113,7 @@ describe(getGoalPreparation, () => {
 
   it("measures studied skills, unseen questions and an exam's mocks by area", async () => {
     const { chapters, goal, items, skills, user } = await setup();
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
 
     await Promise.all([
       prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } }),
@@ -150,6 +151,7 @@ describe(getGoalPreparation, () => {
             isCorrect: index !== 5,
             itemId: item.id,
             skillId: item.skillId,
+            studySessionId: session.id,
             userId: user.id,
           }),
         ),
@@ -160,6 +162,17 @@ describe(getGoalPreparation, () => {
         incorrectAnswers: 18,
         kind: "mock",
         userId: user.id,
+      }),
+      prisma.mockExam.create({
+        data: {
+          conditions: { purpose: "planned", shape: null },
+          finishedAt: daysAgo(3),
+          goalId: goal.id,
+          result: { correct: 27, total: 45 },
+          sectionStartedAt: daysAgo(3),
+          status: "finished",
+          userId: user.id,
+        },
       }),
     ]);
 
@@ -199,6 +212,7 @@ describe(getGoalPreparation, () => {
     const { goal, items, skills, user } = await setup();
     const ids = skills.map((skill) => skill.id);
     const easy = new Set(ids.slice(0, 2));
+    const practice = await studySessionFixture({ goalId: goal.id, userId: user.id });
 
     // The first two skills' questions are easy for every learner, the last two's hard.
     await Promise.all([
@@ -219,6 +233,7 @@ describe(getGoalPreparation, () => {
             isCorrect: true,
             itemId: item.id,
             skillId: item.skillId,
+            studySessionId: practice.id,
             userId: user.id,
           }),
         ),
@@ -279,8 +294,8 @@ describe(getGoalPreparation, () => {
     expect(shown.status === "ready" && shown.preparation.value).toBeGreaterThan(0);
   });
 
-  it("never counts 'I don't know yet' as studying a skill", async () => {
-    const { goal, items, skills } = await setup();
+  it("never counts 'I don't know yet', and a right placement answer only once practice confirms it", async () => {
+    const { goal, items, skills, user } = await setup();
     const itemOf = (index: number) => items.find((item) => item.skillId === skills[index]?.id);
 
     // A focus test or placement answered "I don't know yet" on three skills: evidence of not knowing.
@@ -309,6 +324,25 @@ describe(getGoalPreparation, () => {
 
     mockClock(new Date());
 
+    // One right answer frees the topic from its lessons; it isn't covered until practice says so.
+    const claimed = await getGoalPreparation(goal.id);
+
+    expect(claimed.status === "ready" && claimed.preparation.components.coverage).toMatchObject({
+      studiedSkills: 0,
+    });
+
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+    const practiced = items.filter((item) => item.skillId === skills[3]?.id)[1];
+
+    await attemptFixture({
+      itemId: practiced?.id ?? null,
+      skillId: skills[3]?.id ?? null,
+      studySessionId: session.id,
+      userId: user.id,
+    });
+
+    mockClock(new Date());
+
     const shown = await getGoalPreparation(goal.id);
 
     expect(shown.status === "ready" && shown.preparation.components.coverage).toMatchObject({
@@ -317,8 +351,8 @@ describe(getGoalPreparation, () => {
     });
   });
 
-  // Pedro's "Seu preparo" read "Cobertura 100% · 8 de 8 habilidades": placement's miss on osmosis
-  // counted as studying it, and so did the one right answer that let his plan leave Núcleo out.
+  // Pedro's "Your preparation" read "Coverage 100% · 8 of 8 skills": placement's miss on osmosis
+  // counted as studying it, and so did the one right answer that let his plan leave the nucleus out.
   it("never counts a missed test answer, nor the test answer a skill left out of the plan rests on", async () => {
     const { goal, items, plan, skills, user } = await setup();
     const leftOut = await skillFixture({ name: "Left out for now" });
@@ -378,6 +412,39 @@ describe(getGoalPreparation, () => {
     });
   });
 
+  it("counts a practice answer for its own plan skill only, not another whose lessons also teach it", async () => {
+    const { goal, items, planItems, skills, user } = await setup();
+    const [first, second] = skills;
+    const lesson = await libraryLessonFixture();
+
+    // The first skill's lesson also teaches the second, a plan skill of its own.
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: first?.id ?? "" }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: second?.id ?? "" }),
+      prisma.planItem.update({
+        data: { lessonId: lesson.id },
+        where: { id: planItems[0]?.id ?? "" },
+      }),
+    ]);
+
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    await attemptFixture({
+      answeredAt: NOW,
+      itemId: items.find((item) => item.skillId === second?.id)?.id ?? null,
+      skillId: second?.id ?? "",
+      studySessionId: session.id,
+      userId: user.id,
+    });
+
+    const result = await getGoalPreparation(goal.id);
+
+    expect(result.status === "ready" && result.preparation.components.coverage).toMatchObject({
+      studiedSkills: 1,
+      totalSkills: 4,
+    });
+  });
+
   it("counts a lesson's answers for the plan skill the lesson teaches", async () => {
     const { goal, planItems, user } = await setup();
     const [lesson, lessonSkill] = await Promise.all([libraryLessonFixture(), skillFixture()]);
@@ -415,6 +482,63 @@ describe(getGoalPreparation, () => {
       value: 0.25,
     });
 
+    expect(preparation?.components.retention.value).toBeGreaterThan(0.9);
+  });
+
+  it("reads the plan skill's own memory once reviews keep it, not the finer skill its lesson trained once", async () => {
+    const { goal, items, planItems, user } = await setup();
+    const [lesson, lessonSkill] = await Promise.all([libraryLessonFixture(), skillFixture()]);
+    const planSkillId = planItems[0]?.skillId ?? "";
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: lesson.id, skillId: lessonSkill.id }),
+      prisma.planItem.update({
+        data: { lessonId: lesson.id, status: "done" },
+        where: { id: planItems[0]?.id ?? "" },
+      }),
+    ]);
+
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+
+    // Two months ago the lesson's screens trained its finer skill, which nothing asks again; reviews
+    // ask the plan's skill, and the learner answered its review right yesterday.
+    await Promise.all([
+      learnerSkillFixture({
+        createdAt: daysAgo(60),
+        difficulty: 5,
+        lastReviewedAt: daysAgo(60),
+        recallDays: 3,
+        reps: 1,
+        skillId: lessonSkill.id,
+        stability: 3,
+        state: "learning",
+        userId: user.id,
+      }),
+      attemptFixture({ answeredAt: daysAgo(60), skillId: lessonSkill.id, userId: user.id }),
+      learnerSkillFixture({
+        createdAt: daysAgo(60),
+        difficulty: 5,
+        lastReviewedAt: daysAgo(1),
+        recallDays: 60,
+        reps: 4,
+        skillId: planSkillId,
+        stability: 60,
+        state: "solid",
+        userId: user.id,
+      }),
+      attemptFixture({
+        answeredAt: daysAgo(1),
+        itemId: items.find((item) => item.skillId === planSkillId)?.id ?? null,
+        skillId: planSkillId,
+        studySessionId: session.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const result = await getGoalPreparation(goal.id);
+    const preparation = result.status === "ready" ? result.preparation : null;
+
+    expect(preparation?.components.coverage).toMatchObject({ studiedSkills: 1 });
     expect(preparation?.components.retention.value).toBeGreaterThan(0.9);
   });
 
@@ -596,6 +720,81 @@ describe(getGoalPreparation, () => {
       taken: 0,
       value: null,
     });
+  });
+
+  it("estimates a score only once the recent mocks hold enough of the exam", async () => {
+    const { goal, user } = await setup();
+
+    await Promise.all([
+      prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+    ]);
+
+    /** A finished mock: its sitting (`shape`) and its answers in the ledger. */
+    async function finishMock({
+      correct,
+      days,
+      shape,
+      total,
+    }: {
+      correct: number;
+      days: number;
+      shape: { area: string | null; day: null; kind: "area" | "full" | "half" };
+      total: number;
+    }) {
+      await Promise.all([
+        prisma.mockExam.create({
+          data: {
+            conditions: { purpose: "practice", shape },
+            createdAt: daysAgo(days),
+            finishedAt: daysAgo(days),
+            goalId: goal.id,
+            result: { correct, total },
+            sectionStartedAt: daysAgo(days),
+            status: "finished",
+            userId: user.id,
+          },
+        }),
+        learningEventFixture({
+          correctAnswers: correct,
+          endedAt: daysAgo(days),
+          goalId: goal.id,
+          incorrectAnswers: total - correct,
+          kind: "mock",
+          userId: user.id,
+        }),
+      ]);
+    }
+
+    const estimate = async () => {
+      const result = await getGoalPreparation(goal.id);
+      return result.status === "ready" ? result.preparation.estimatedScore : undefined;
+    };
+
+    const ethics = { area: "Ética", day: null, kind: "area" } as const;
+
+    // Seven of eight on one subject says little about that subject and nothing about the exam.
+    await finishMock({ correct: 7, days: 6, shape: ethics, total: 8 });
+    await expect(estimate()).resolves.toBeNull();
+
+    // Enough questions, but every recent mock sat one subject: still none.
+    await finishMock({ correct: 30, days: 4, shape: ethics, total: 40 });
+    await expect(estimate()).resolves.toBeNull();
+
+    // Half of the exam among the recent mocks: an estimate, as a range that never reaches 100%.
+    await finishMock({
+      correct: 30,
+      days: 2,
+      shape: { area: null, day: null, kind: "half" },
+      total: 40,
+    });
+
+    const range = await estimate();
+
+    expect(range).toMatchObject({ mocks: 3, scale: "percent" });
+    expect(range?.high).toBeLessThan(100);
   });
 
   it("has no preparation for a quick explanation", async () => {

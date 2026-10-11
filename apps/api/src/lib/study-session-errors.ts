@@ -1,5 +1,5 @@
 import { type ExtraStudyBlockResult } from "@zoonk/core/sessions/extra-block";
-import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-errors";
+import { createErrorResponse, errors, httpStatus } from "./api-errors";
 
 /** Stable codes clients use to recover from a session request that can't be applied. */
 export const studySessionErrorCodes = {
@@ -14,7 +14,8 @@ export const studySessionErrorCodes = {
   noAnswers: "NO_ANSWERS",
   nothingToCatchUp: "NOTHING_TO_CATCH_UP",
   nothingToPractice: "NOTHING_TO_PRACTICE",
-  slowDown: "SLOW_DOWN",
+  plusRequired: "PLUS_REQUIRED",
+  questionsNeeded: "QUESTIONS_NEEDED",
   unanswered: "UNANSWERED_QUESTIONS",
 } as const;
 
@@ -23,7 +24,6 @@ type ExtraTimeReason = Extract<ExtraStudyBlockResult, { status: "unavailable" }>
 
 type StudySessionRefusal =
   | { reason: ExtraTimeReason; status: "unavailable" }
-  | { retryAfterSeconds: number; status: "slowDown" }
   | {
       status:
         | "alreadyAnswered"
@@ -37,6 +37,8 @@ type StudySessionRefusal =
         | "notFound"
         | "nothingToCatchUp"
         | "nothingToPractice"
+        | "plusRequired"
+        | "questionsNeeded"
         | "unanswered"
         | "unauthorized";
     };
@@ -64,6 +66,14 @@ const REFUSALS = {
     message: "There is nothing more to practice today",
     status: httpStatus.unprocessableEntity,
   },
+  plusRequired: {
+    message: "The learner's plan leaves this to Plus",
+    status: httpStatus.paymentRequired,
+  },
+  questionsNeeded: {
+    message: "Its questions aren't written yet: write them, then start it again",
+    status: httpStatus.conflict,
+  },
   unanswered: {
     message: "A checkpoint needs every question answered",
     status: httpStatus.unprocessableEntity,
@@ -78,14 +88,6 @@ export function studySessionError(refusal: StudySessionRefusal) {
 
   if (refusal.status === "notFound") {
     return errors.notFound();
-  }
-
-  if (refusal.status === "slowDown") {
-    return slowDownError({
-      details: { retryAfterSeconds: refusal.retryAfterSeconds },
-      message: "Take a short break, then keep reviewing",
-      retryAfterSeconds: refusal.retryAfterSeconds,
-    });
   }
 
   if (refusal.status === "unavailable") {

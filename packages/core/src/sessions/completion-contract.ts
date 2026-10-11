@@ -1,7 +1,6 @@
 import { type Milestone } from "@zoonk/db";
 import { z } from "zod";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
-import { type TestOutOffer } from "./_utils/test-out-offer";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
 
@@ -19,8 +18,23 @@ export type CheckpointResultView = CheckpointOutcome & {
 };
 
 /**
- * The moment after a block: a check mark, the Brain Power earned (the full meal included when it
- * just completed), one more step on the session bar, when a lesson comes back as a capsule, the
+ * "This is easy? Take the chapter's test and skip the rest": offered once, right after the lesson
+ * that made it a streak, for the chapter the lesson is planned in.
+ */
+export type TestOutOffer = {
+  chapterId: string;
+  chapterTitle: string;
+  goalId: string;
+  /**
+   * The plan's lessons passing the test can skip: the chapter's still to do, and the ones elsewhere
+   * that teach only the same skills.
+   */
+  lessonsLeft: number;
+};
+
+/**
+ * The moment after a block: a check mark, the Brain Power earned (with the bonus for all three
+ * missions when it just paid), one more step on the session bar, when a lesson comes back as a capsule, the
  * missions, and any milestone earned (the end of the session shows at most one as a ceremony).
  */
 export type StudyBlockCompletion = {
@@ -58,10 +72,13 @@ const countSchema = z.number().int().min(0);
 export const questionAnswerSchema = z
   .union([
     z.object({ selectedIndex: countSchema }),
+    z.object({ selectedIndexes: z.array(countSchema) }),
     z.object({ isTrue: z.boolean() }),
     z.object({ dontKnow: z.literal(true) }),
     z.object({ matches: z.array(countSchema) }),
     z.object({ number: z.number() }),
+    z.object({ text: z.string() }),
+    z.object({ order: z.array(countSchema) }),
   ])
   .meta({ id: "StudyQuestionAnswer" });
 
@@ -110,7 +127,9 @@ const checkpointResultSchema = z.object({
 export const studyBlockCompletionSchema = z
   .object({
     blockId: idSchema,
-    brainPower: countSchema.meta({ description: "Earned by the block, the full meal included" }),
+    brainPower: countSchema.meta({
+      description: "Earned by the block, with the bonus for all three missions when it just paid",
+    }),
     capsulesOpened: countSchema,
     checkpoint: checkpointResultSchema
       .nullable()

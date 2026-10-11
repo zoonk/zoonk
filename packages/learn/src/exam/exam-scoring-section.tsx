@@ -1,7 +1,8 @@
 "use client";
 
-import { FlagIcon, ScaleIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { getBreakEven } from "@zoonk/core/exams/net-score";
+import { FlagIcon, GaugeIcon, ScaleIcon } from "lucide-react";
+import { useExtracted, useFormatter } from "next-intl";
 import {
   ListGroup,
   ListRow,
@@ -12,6 +13,8 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { useFormatShare } from "../_utils/percent";
+import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { useExamScreen } from "./exam-context";
 import { TargetCutoffRow } from "./target-cutoff";
 
@@ -60,17 +63,26 @@ function Calibration() {
  */
 function useScoringRule(): { rule: string; title: string } | null {
   const t = useExtracted();
+  const formatShare = useFormatShare();
   const { exam } = useExamScreen();
+  const { rule, wrongPenalty } = exam.scoring;
 
-  if (!exam.scoring.stated) {
+  if (!rule) {
     return null;
   }
 
-  switch (exam.scoring.method) {
+  switch (rule) {
     case "net":
       return {
-        rule: t("Answer only when you're more than 50% sure."),
-        title: t("A wrong answer cancels a right one"),
+        rule: t("Answer only when you're more than {share} sure.", {
+          share: formatShare(getBreakEven(wrongPenalty)),
+        }),
+        title:
+          wrongPenalty === 1
+            ? t("A wrong answer cancels a right one")
+            : t("A wrong answer costs {share} of a right one", {
+                share: formatShare(wrongPenalty),
+              }),
       };
     case "irt":
       return {
@@ -86,12 +98,17 @@ function useScoringRule(): { rule: string; title: string } | null {
   }
 }
 
-/** What it takes to pass, as the notice says it ("Aprovado com no mínimo 40 dos 80 pontos"). */
+/**
+ * What it takes to pass, as the notice says it (such as at least 40 of the 80 points), saying its
+ * language when it isn't the learner's.
+ */
 function PassMarksRow() {
   const t = useExtracted();
   const { exam } = useExamScreen();
+  const { passMarks } = exam;
+  const note = usePassMarksNote(passMarks);
 
-  if (exam.passMarks.length === 0) {
+  if (!passMarks) {
     return null;
   }
 
@@ -104,9 +121,52 @@ function PassMarksRow() {
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>{t("To pass")}</ListRowTitle>
-        {exam.passMarks.map((passMark) => (
-          <ListRowDescription key={passMark}>{passMark}</ListRowDescription>
+        {passMarks.texts.map((text) => (
+          <ListRowDescription key={text} lang={passMarks.language}>
+            {text}
+          </ListRowDescription>
         ))}
+        {note && <ListRowDescription>{note}</ListRowDescription>}
+      </ListRowContent>
+    </ListRow>
+  );
+}
+
+/** The scale the notice says the exam reports its score on, with the score that passes on it. */
+function NoticeScaleRow() {
+  const t = useExtracted();
+  const format = useFormatter();
+  const { exam } = useExamScreen();
+  const scale = exam.scoring.noticeScale;
+
+  if (!scale) {
+    return null;
+  }
+
+  return (
+    <ListRow role="note">
+      <ListRowLeading>
+        <ListRowIcon>
+          <GaugeIcon />
+        </ListRowIcon>
+      </ListRowLeading>
+      <ListRowContent>
+        <ListRowTitle>
+          {scale.name
+            ? t("Scored on the {name} scale", { name: scale.name })
+            : t("Scored on its own scale")}
+        </ListRowTitle>
+        <ListRowDescription>
+          {t("From {min} to {max}.", {
+            max: format.number(scale.max),
+            min: format.number(scale.min),
+          })}
+        </ListRowDescription>
+        {scale.passScore !== null && (
+          <ListRowDescription>
+            {t("To pass: {score} or more.", { score: format.number(scale.passScore) })}
+          </ListRowDescription>
+        )}
       </ListRowContent>
     </ListRow>
   );
@@ -130,16 +190,17 @@ function ScoringRuleRow({ rule }: { rule: { rule: string; title: string } }) {
 }
 
 /**
- * "How the score works", as one list: what it takes to pass as the notice says it, where the bar
- * was for the learner's target (its last cut-off), and the one scoring rule that changes how to
- * answer, with the learner's calibration after their mocks. Nothing when none of them applies.
+ * "How the score works", as one list: the one scoring rule that changes how to answer, with the
+ * learner's calibration after their mocks, the scale the notice reports on, what it takes to pass
+ * as the notice says it, and where the bar was for the learner's target (its last cut-off).
+ * Nothing when none of them applies.
  */
 export function ExamScoringSection() {
   const t = useExtracted();
   const rule = useScoringRule();
   const { exam } = useExamScreen();
 
-  if (!rule && !exam.cutoff && exam.passMarks.length === 0) {
+  if (!rule && !exam.cutoff && !exam.passMarks && !exam.scoring.noticeScale) {
     return null;
   }
 
@@ -151,6 +212,7 @@ export function ExamScoringSection() {
 
       <ListGroup>
         {rule && <ScoringRuleRow rule={rule} />}
+        <NoticeScaleRow />
         <PassMarksRow />
         <TargetCutoffRow cutoff={exam.cutoff} targetScore={exam.targetScore} />
       </ListGroup>

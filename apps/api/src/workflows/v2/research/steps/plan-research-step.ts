@@ -1,29 +1,51 @@
+import { type ExamResearchPlan, generateExamResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
 import {
-  type ResearchPlan,
-  type ResearchTopic,
-  generateResearchPlan,
-} from "@zoonk/ai/tasks/v2/research/plan";
+  type SourceResearchPlan,
+  type SourceResearchTopic,
+  generateSourceResearchPlan,
+} from "@zoonk/ai/tasks/v2/research/source-plan";
 import { withAiRetry } from "../../_shared/ai-retry";
-import { type ResearchAnalytics } from "../_utils/research-analytics";
+import { type ResearchAnalytics, toPlanAnalytics } from "../_utils/research-analytics";
 import { type ResearchGoal } from "./load-research-goal-step";
 
-/** Names the canonical exam (or law, product or subject) and where its organizer publishes. */
-export async function planResearchStep({
+/** Names the canonical exam (its name and role) and where its organizer publishes. */
+export async function planExamResearchStep({
+  analytics,
+  goal,
+}: {
+  analytics: ResearchAnalytics;
+  goal: ResearchGoal;
+}): Promise<ExamResearchPlan> {
+  "use step";
+
+  const { data } = await withAiRetry(() =>
+    generateExamResearchPlan({
+      analytics: toPlanAnalytics({ analytics, personal: goal.planPersonal }),
+      details: goal.details,
+      goal: goal.planGoal,
+    }),
+  );
+
+  return data;
+}
+
+/** Names the canonical law, product or subject and where it's published. */
+export async function planSourceResearchStep({
   analytics,
   goal,
   topic,
 }: {
   analytics: ResearchAnalytics;
   goal: ResearchGoal;
-  topic: ResearchTopic;
-}): Promise<ResearchPlan> {
+  topic: SourceResearchTopic;
+}): Promise<SourceResearchPlan> {
   "use step";
 
   const { data } = await withAiRetry(() =>
-    generateResearchPlan({
-      analytics,
+    generateSourceResearchPlan({
+      analytics: toPlanAnalytics({ analytics, personal: goal.planPersonal }),
       details: goal.details,
-      goal: `${goal.title}\n${goal.prompt}`,
+      goal: goal.planGoal,
       topic,
     }),
   );

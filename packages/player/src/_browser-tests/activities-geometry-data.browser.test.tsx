@@ -1,3 +1,4 @@
+import { engineModeFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -10,6 +11,8 @@ import {
   pressOnSlider,
   valueInput,
 } from "../_test-utils/activity-player";
+
+const polls = engineModeFixtures.randomSimulation.sampling;
 
 describe("geometry and data activities", () => {
   it("geometry board: the angles are worked out from the parts", async () => {
@@ -74,8 +77,8 @@ describe("geometry and data activities", () => {
     await expectVerdict("Not quite");
   });
 
-  it("sampling simulator: bigger samples bunch up", async () => {
-    openActivity({ template: "samplingSimulator" });
+  it("random simulation by sampling: bigger samples bunch up", async () => {
+    openActivity({ content: polls, template: "randomSimulation" });
     await expect.element(page.getByText("200 samples of 400")).toBeVisible();
     // Its numbers are made up for the example, and it says so.
     await expect.element(page.getByText("Example numbers, not real data")).toBeVisible();
@@ -88,8 +91,8 @@ describe("geometry and data activities", () => {
       .toBeVisible();
   });
 
-  it("sampling simulator: the wrong guess is marked", async () => {
-    openActivity({ template: "samplingSimulator" });
+  it("random simulation by sampling: the wrong guess is marked", async () => {
+    openActivity({ content: polls, template: "randomSimulation" });
     await page.getByRole("radio", { name: /The same/u }).click();
     await checkActivity();
     await expectVerdict("Not quite");
@@ -124,8 +127,8 @@ describe("geometry and data activities with a keyboard or a pointer", () => {
       .not.toHaveAttribute("aria-valuetext", expect.stringMatching(/^At 1, 3\./u));
   });
 
-  it("sampling simulator: the size slider switches the runs", async () => {
-    openActivity({ template: "samplingSimulator" });
+  it("random simulation by sampling: the size slider switches the runs", async () => {
+    openActivity({ content: polls, template: "randomSimulation" });
     await pressOnSlider("People per poll", "ArrowLeft", 1);
     await expect.element(page.getByText("200 samples of 100")).toBeVisible();
     await page.getByRole("button", { name: "Run again" }).click();

@@ -14,7 +14,7 @@ export const LESSON_WRITER_SCORE_CATEGORIES = defineScoreCategories([
     weight: 25,
   },
   {
-    expectations: `Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Score at most 8 for one recall-only check or a weak reason; at most 7 for several; at most 6 when checks mostly don't test understanding.`,
+    expectations: `Audit the checks. Each makes the learner use the idea (predict, calculate, classify, spot the error), never repeat a sentence from a screen. Wrong options are real misconceptions, including the tempting wrong answer the plan names, and every option's reason explains why it's right, or why it's tempting and wrong. Checks after worked examples give less help. Typed answers have key points a grader can check. Activities make the learner do something that shows the idea, with a check about it. Every learner reads the same screens whatever they picked, so a screen after a check builds on its question and right answer and never praises or corrects the learner's pick ("you started with the right question", "you got it"). Score at most 8 for one recall-only check, a weak reason or a screen that judges the learner's pick; at most 7 for several; at most 6 when checks mostly don't test understanding.`,
     id: "checks",
     label: "Checks & feedback",
     weight: 20,

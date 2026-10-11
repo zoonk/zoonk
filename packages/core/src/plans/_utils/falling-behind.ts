@@ -1,4 +1,5 @@
 import { getSkillArea } from "../planner/graph-areas";
+import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanState } from "../planner/plan-state";
 import { getRecommendedTime } from "../time-advice-contract";
 import { type PlanContext } from "./plan-context";
@@ -13,8 +14,10 @@ const PERCENT = 100;
  * Falling behind made the plan cover less of its goal by its date: what it covered when it was
  * last planned and now (of the exam, or of the goal: `measure`), and the daily time to offer: the
  * one that covers everything in depth again (`fullDepth`), or, when no time does, the most time a
- * day; null when the learner already gives that. The learner chooses: that time, less depth, or
- * where to focus (`canFocus`: the plan has more than one area to choose between).
+ * day, with the share it covers (`maximumShare`); null when the learner already gives that. The
+ * learner chooses: that time, less depth, or where to focus (`canFocus`: the plan has more than one
+ * area to choose between); when no time covers a goal that isn't an exam, moving its date to the
+ * day their time covers it all by (`fittingDate`) instead of more time.
  */
 export type FallingBehind = {
   canFocus: boolean;
@@ -23,7 +26,11 @@ export type FallingBehind = {
   /** The learner's daily time now, which covers `coveredAfter`. */
   currentMinutes: number;
   dailyMinutes: number | null;
+  /** When no daily time covers a goal that isn't an exam: the date their time covers it all by. */
+  fittingDate: string | null;
   fullDepth: boolean;
+  /** When no daily time covers the goal: the share the most time a day covers by its date. */
+  maximumShare: number | null;
   measure: "exam" | "goal";
 };
 
@@ -37,6 +44,33 @@ function hasAreasToFocus({ graph, settings }: Pick<PlanState, "graph" | "setting
 
 function toWholePercent(share: number): number {
   return Math.round(share * PERCENT);
+}
+
+type BehindChoices = Omit<FallingBehind, "coveredAfter" | "coveredBefore">;
+
+/**
+ * What the learner can choose when falling behind, read from a computed plan: the daily time to
+ * offer and what it covers, the date their time covers it all by, and whether they can focus.
+ */
+export function getBehindChoices(
+  computed: Pick<ComputedPlan, "feasibility" | "state">,
+): BehindChoices {
+  const { feasibility } = computed;
+  const dailyTime = computed.state.goal.dailyMinutes;
+  const recommended = getRecommendedTime(feasibility);
+  const dailyMinutes = recommended?.dailyMinutes ?? null;
+  const { fittingDate } = feasibility;
+
+  return {
+    canFocus: hasAreasToFocus(computed.state),
+    currentMinutes: dailyTime,
+    dailyMinutes: dailyMinutes !== null && dailyMinutes > dailyTime ? dailyMinutes : null,
+    fittingDate: fittingDate ? toIsoDate(fittingDate) : null,
+    fullDepth: feasibility.recommendedMinutes !== null,
+    maximumShare:
+      recommended?.kind === "more" ? toWholePercent(recommended.coveredShare) / PERCENT : null,
+    measure: feasibility.measure,
+  };
 }
 
 /**
@@ -53,7 +87,6 @@ export function getFallingBehind({
 }): FallingBehind | null {
   const before = context.plan.coveredShare;
   const { feasibility } = computed;
-  const dailyTime = computed.state.goal.dailyMinutes;
 
   if (before === null || !feasibility.deadline) {
     return null;
@@ -66,15 +99,9 @@ export function getFallingBehind({
     return null;
   }
 
-  const dailyMinutes = getRecommendedTime(feasibility)?.dailyMinutes ?? null;
-
   return {
-    canFocus: hasAreasToFocus(computed.state),
+    ...getBehindChoices(computed),
     coveredAfter: toWholePercent(after) / PERCENT,
     coveredBefore: toWholePercent(before) / PERCENT,
-    currentMinutes: dailyTime,
-    dailyMinutes: dailyMinutes !== null && dailyMinutes > dailyTime ? dailyMinutes : null,
-    fullDepth: feasibility.recommendedMinutes !== null,
-    measure: feasibility.measure,
   };
 }

@@ -5,7 +5,9 @@ import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
-import systemPrompt from "./find-target-cutoff.prompt.md";
+import coursePrompt from "./find-target-cutoff-course.prompt.md";
+import positionPrompt from "./find-target-cutoff-position.prompt.md";
+import basePrompt from "./find-target-cutoff.prompt.md";
 import {
   type ResearchSearchTool,
   buildResearchSearchTools,
@@ -26,6 +28,10 @@ const defaultReasoning: Reasoning = "low";
 
 /** A few searches and the answer. */
 const MAX_STEPS = 5;
+
+/** Each call reads how to search for its own kind of target only. */
+const courseSystemPrompt = `${basePrompt}\n${coursePrompt}`;
+const positionSystemPrompt = `${basePrompt}\n${positionPrompt}`;
 
 const schema = z.object({
   edition: z.string().nullable(),
@@ -57,16 +63,30 @@ export type FindTargetCutoffParams = FindTargetCutoffInput & {
   searchTool?: ResearchSearchTool;
 };
 
+/** The target's own inputs only: a course's call never reads `POSITION`, nor a position's `COURSE`. */
+function formatTarget(input: FindTargetCutoffInput): Record<string, string> {
+  const { position } = input;
+
+  if (position !== null) {
+    return {
+      EXAM: input.exam,
+      ...(input.institution ? { INSTITUTION: input.institution } : {}),
+      POSITION: position,
+    };
+  }
+
+  return {
+    COURSE: input.course ?? "none",
+    EXAM: input.exam,
+    INSTITUTION: input.institution ?? "none",
+  };
+}
+
 function buildUserPrompt(input: FindTargetCutoffInput): string {
   return `
     TODAY: ${input.today}
 
-${formatUntrustedInput({
-  COURSE: input.course ?? "none",
-  EXAM: input.exam,
-  INSTITUTION: input.institution ?? "none",
-  POSITION: input.position ?? "none",
-})}
+${formatUntrustedInput(formatTarget(input))}
   `;
 }
 
@@ -86,6 +106,8 @@ export async function findTargetCutoff({
   ...input
 }: FindTargetCutoffParams) {
   const userPrompt = buildUserPrompt(input);
+  // A target is a course at an institution or a position (see `getCutoffTarget`), never both.
+  const systemPrompt = input.position === null ? courseSystemPrompt : positionSystemPrompt;
   const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
 
   const { provenance, result } = await runTaskGeneration({

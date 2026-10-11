@@ -362,21 +362,41 @@ test.describe("Library lesson player", () => {
     }
   });
 
-  test("asks for a short break when lessons are read too fast, then opens the lesson", async ({
+  test("keeps a signed-in learner when the session check fails, and opens the lesson on a retry", async ({
     userWithoutProgress: page,
   }) => {
     const { lesson } = await playableLessonFixture({ steps: ["explanation", "check"] });
 
-    // E2E servers stand in for the Vercel Firewall: this header answers as the rule's limit would.
-    await page.setExtraHTTPHeaders({ "x-e2e-rate-limited": "lesson-steps" });
+    const sessionCookie = async () => {
+      const cookies = await page.context().cookies();
+      return cookies.find((cookie) => cookie.name.includes("session_token"))?.value;
+    };
+
+    const signedIn = await sessionCookie();
+    expect(signedIn).toBeTruthy();
+    const guestSignIns: string[] = [];
+
+    page.on("request", (request) => {
+      if (request.url().includes("/sign-in/anonymous")) {
+        guestSignIns.push(request.url());
+      }
+    });
+
+    // A rate limit (or a network error) on the check says nothing about the session: never a guest.
+    await page.route("**/api/auth/get-session**", (route) =>
+      route.fulfill({ body: "{}", contentType: "application/json", status: 429 }),
+    );
+
     await page.goto(`/learn/${lesson.id}`);
 
-    await expect(page.getByRole("heading", { name: "Take a short break" })).toBeVisible();
-    await expect(page.getByText(/This one opens in \d+ seconds\./u)).toBeVisible();
-    await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
+    await expect(page.getByRole("heading", { name: "We couldn't open this lesson" })).toBeVisible();
+    expect(guestSignIns).toStrictEqual([]);
 
-    await page.setExtraHTTPHeaders({});
-    await page.reload();
+    await page.unroute("**/api/auth/get-session**");
+    await page.getByRole("button", { name: "Try again" }).click();
+
     await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
+    expect(guestSignIns).toStrictEqual([]);
+    await expect.poll(sessionCookie).toBe(signedIn);
   });
 });

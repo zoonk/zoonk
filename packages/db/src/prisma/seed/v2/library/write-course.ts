@@ -7,7 +7,7 @@ import { seedId } from "../_utils/seed-id";
 import { buildLessonSpec } from "./lesson-spec";
 import { libraryIds } from "./library-ids";
 import { type SeedChapter, type SeedCourse, type SeedLesson } from "./types";
-import { writeItems, writeSkills, writeVocabulary } from "./write-skills";
+import { type SkillIds, skillIdOf, writeItems, writeSkills, writeVocabulary } from "./write-skills";
 
 const SEEDED_COURSES_CREATED_AT = new Date("2026-01-01T00:00:00.000Z");
 
@@ -17,6 +17,7 @@ type CourseContext = {
   language: SeedLanguage;
   prisma: PrismaClient;
   sentenceIds: ReadonlyMap<string, string>;
+  skillIds: SkillIds;
   wordIds: ReadonlyMap<string, string>;
 };
 
@@ -38,6 +39,33 @@ function lookup(ids: ReadonlyMap<string, string>, text: string | undefined): str
   return id;
 }
 
+/** A row's place in a list the seed orders: a level band of a course's chapters, or a chapter's lessons. */
+type Slot = { id: string; position: number };
+
+/**
+ * The places to write for the seed's rows in one of its lists. A list holding only seeded rows
+ * takes the seed's order. The app adds its own rows to seeded lists and renumbers them (a chapter
+ * in teaching order, a split lesson right after the one it came from), so in a list it has touched,
+ * the rows already there keep their places and a missing one takes its seeded position, or goes
+ * after the last row when another holds that position.
+ */
+function arrangeSlots(placed: readonly Slot[], seeded: readonly Slot[]): Slot[] {
+  const seededIds = new Set(seeded.map((slot) => slot.id));
+
+  if (placed.every((slot) => seededIds.has(slot.id))) {
+    return [...seeded];
+  }
+
+  const placedIds = new Set(placed.map((slot) => slot.id));
+  const taken = new Set(placed.map((slot) => slot.position));
+  const missing = seeded.filter((slot) => !placedIds.has(slot.id));
+  const free = missing.filter((slot) => !taken.has(slot.position));
+  const moved = missing.filter((slot) => taken.has(slot.position));
+  const end = Math.max(-1, ...[...placed, ...free].map((slot) => slot.position)) + 1;
+
+  return [...free, ...moved.map((slot, index) => ({ ...slot, position: end + index }))];
+}
+
 /** The summary card is the lesson's `summary` step, stored on the lesson for Content and SEO. */
 function lessonSummary(lesson: SeedLesson, language: SeedLanguage) {
   const summary = lesson.steps?.find((step) => step.kind === "summary");
@@ -45,7 +73,7 @@ function lessonSummary(lesson: SeedLesson, language: SeedLanguage) {
 }
 
 async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: string) {
-  const { course, language, prisma, sentenceIds, wordIds } = context;
+  const { course, language, prisma, sentenceIds, skillIds, wordIds } = context;
   const steps = lesson.steps ?? [];
 
   const ids = await Promise.all(
@@ -60,7 +88,7 @@ async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: 
         lessonId,
         position,
         sentenceId: lookup(sentenceIds, step.sentence),
-        skillId: skillKey ? libraryIds.skill(course.key, skillKey, language) : null,
+        skillId: skillKey ? skillIdOf(course, skillIds, skillKey) : null,
         wordId: lookup(wordIds, step.word),
         ...SEED_PROVENANCE,
       };
@@ -110,6 +138,35 @@ async function writeLessonVocabulary(context: CourseContext, lesson: SeedLesson,
   ]);
 }
 
+/**
+ * Whether the app has written a seeded lesson: it wrote steps of its own (a learner reached the
+ * outline lesson, or it was written again), or it started writing an outline lesson (its spec or
+ * content is no longer pending).
+ */
+async function isWrittenByApp(
+  prisma: PrismaClient,
+  { id, isWritten }: { id: string; isWritten: boolean },
+): Promise<boolean> {
+  const existing = await prisma.lesson.findUnique({
+    select: {
+      contentStatus: true,
+      specStatus: true,
+      steps: { select: { id: true }, take: 1, where: { runId: { not: SEED_PROVENANCE.runId } } },
+    },
+    where: { id },
+  });
+
+  if (!existing) {
+    return false;
+  }
+
+  if (existing.steps.length > 0) {
+    return true;
+  }
+
+  return !isWritten && (existing.specStatus !== "pending" || existing.contentStatus !== "pending");
+}
+
 /** A lesson with its skills and steps. Quick explanations have no home chapter and no course. */
 async function writeLesson(
   context: CourseContext,
@@ -122,7 +179,7 @@ async function writeLesson(
   const { course, courseId, language, prisma } = context;
   const id = libraryIds.lesson(course.key, lesson.key, language);
   const title = lesson.title.in(language);
-  const skillIds = lesson.skills.map((skill) => libraryIds.skill(course.key, skill, language));
+  const skillIds = lesson.skills.map((skill) => skillIdOf(course, context.skillIds, skill));
   const isWritten = Boolean(lesson.steps?.length);
   const targetLanguage = targetLanguageOf(course);
 
@@ -131,11 +188,8 @@ async function writeLesson(
       ? buildLessonSpec({ language, lesson, skills: course.skills })
       : Prisma.DbNull;
 
-  const data = {
-    canDo: lesson.canDo?.in(language) ?? null,
-    contentStatus: isWritten ? ("completed" as const) : ("pending" as const),
+  const outline = {
     description: lesson.description.in(language),
-    estimatedMinutes: lesson.minutes,
     homeChapterId,
     identityKey: buildLessonIdentityKey({
       courseId: homeChapterId ? courseId : null,
@@ -147,15 +201,31 @@ async function writeLesson(
     level,
     normalizedTitle: normalizeString(title),
     slug: toSlug(title),
-    spec,
-    specStatus: isWritten ? ("completed" as const) : ("pending" as const),
-    summary: lessonSummary(lesson, language),
     targetLanguage,
     title,
     ...SEED_PROVENANCE,
   };
 
-  await prisma.lesson.upsert({ create: { id, ...data }, update: data, where: { id } });
+  // What a lesson's writing sets: a written lesson's as the seed wrote it, an outline lesson's
+  // empty until a learner reaches it and the app writes it.
+  const content = {
+    canDo: lesson.canDo?.in(language) ?? null,
+    contentStatus: isWritten ? ("completed" as const) : ("pending" as const),
+    estimatedMinutes: lesson.minutes,
+    spec,
+    specStatus: isWritten ? ("completed" as const) : ("pending" as const),
+    summary: lessonSummary(lesson, language),
+  };
+
+  // A reseed never throws away what the app wrote, which would make it pay to write it again: the
+  // seed writes a lesson's content only while it's the seed's or still empty.
+  const keepsContent = await isWrittenByApp(prisma, { id, isWritten });
+
+  await prisma.lesson.upsert({
+    create: { id, ...outline, ...content },
+    update: keepsContent ? outline : { ...outline, ...content },
+    where: { id },
+  });
 
   await Promise.all(
     skillIds.map((skillId) =>
@@ -167,6 +237,10 @@ async function writeLesson(
     ),
   );
 
+  if (keepsContent) {
+    return id;
+  }
+
   await writeSteps(context, lesson, id);
 
   if (lesson.words || lesson.sentences) {
@@ -176,7 +250,7 @@ async function writeLesson(
   return id;
 }
 
-async function writeChapter(context: CourseContext, chapter: SeedChapter, position: number) {
+async function writeChapter(context: CourseContext, chapter: SeedChapter) {
   const { course, courseId, language, prisma } = context;
   const id = libraryIds.chapter(course.key, chapter.key, language);
   const title = chapter.title.in(language);
@@ -200,26 +274,30 @@ async function writeChapter(context: CourseContext, chapter: SeedChapter, positi
 
   await prisma.chapter.upsert({ create: { id, ...data }, update: data, where: { id } });
 
-  await prisma.courseChapter.upsert({
-    create: { chapterId: id, courseId, level: chapter.level, position },
-    update: { level: chapter.level, position },
-    where: { courseId_chapterId: { chapterId: id, courseId } },
+  const lessonIds = await Promise.all(
+    chapter.lessons.map((lesson) =>
+      writeLesson(context, { homeChapterId: id, lesson, level: chapter.level }),
+    ),
+  );
+
+  const placed = await prisma.chapterLesson.findMany({
+    select: { lessonId: true, position: true },
+    where: { chapterId: id },
   });
 
-  await Promise.all(
-    chapter.lessons.map(async (lesson, lessonPosition) => {
-      const lessonId = await writeLesson(context, {
-        homeChapterId: id,
-        lesson,
-        level: chapter.level,
-      });
+  const slots = arrangeSlots(
+    placed.map((row) => ({ id: row.lessonId, position: row.position })),
+    lessonIds.map((lessonId, position) => ({ id: lessonId, position })),
+  );
 
-      await prisma.chapterLesson.upsert({
-        create: { chapterId: id, lessonId, position: lessonPosition },
-        update: { position: lessonPosition },
+  await Promise.all(
+    slots.map(({ id: lessonId, position }) =>
+      prisma.chapterLesson.upsert({
+        create: { chapterId: id, lessonId, position },
+        update: { position },
         where: { chapterId_lessonId: { chapterId: id, lessonId } },
-      });
-    }),
+      }),
+    ),
   );
 }
 
@@ -266,17 +344,48 @@ async function writeCourseRow({
   return id;
 }
 
-/** Positions restart in each level band, which is how a course places its chapters. */
-function bandPosition(course: SeedCourse, chapter: SeedChapter): number {
-  return course.chapters
-    .filter((item) => item.level === chapter.level)
-    .findIndex((item) => item.key === chapter.key);
+/**
+ * Puts the course's chapters in its outline, each level band ordered as the seed lists it (see
+ * `arrangeSlots`).
+ */
+async function writeOutline({ course, courseId, language, prisma }: CourseContext): Promise<void> {
+  const placed = await prisma.courseChapter.findMany({
+    select: { chapterId: true, level: true, position: true },
+    where: { courseId },
+  });
+
+  const levels = [...new Set(course.chapters.map((chapter) => chapter.level))];
+
+  const slots = levels.flatMap((level) =>
+    arrangeSlots(
+      placed
+        .filter((row) => row.level === level)
+        .map((row) => ({ id: row.chapterId, position: row.position })),
+      course.chapters
+        .filter((chapter) => chapter.level === level)
+        .map((chapter, position) => ({
+          id: libraryIds.chapter(course.key, chapter.key, language),
+          position,
+        })),
+    ).map((slot) => ({ ...slot, level })),
+  );
+
+  await Promise.all(
+    slots.map(({ id: chapterId, level, position }) =>
+      prisma.courseChapter.upsert({
+        create: { chapterId, courseId, level, position },
+        update: { level, position },
+        where: { courseId_chapterId: { chapterId, courseId } },
+      }),
+    ),
+  );
 }
 
 /**
  * Writes one Library course in every language it has: skills and their graph, the outline of
  * chapters and lessons in level bands, the written lessons' steps, summaries and specs, and the
- * question bank. Rows are upserted by stable ids, so running it again only brings content up to date.
+ * question bank. Rows are upserted by stable ids, so running it again only brings content up to date,
+ * and on a database learners have used it keeps the skills and outline places the app wrote.
  */
 export async function writeLibraryCourse({
   course,
@@ -300,25 +409,25 @@ export async function writeLibraryCourse({
     course.languages.map(async (language) => {
       const base = { course, language, prisma };
 
-      await writeSkills(base);
+      const skillIds = await writeSkills(base);
 
       const [courseId, vocabulary] = await Promise.all([
         writeCourseRow({ ...base, organizationId }),
         writeVocabulary({ ...base, organizationId }),
       ]);
 
-      const context: CourseContext = { ...base, courseId, ...vocabulary };
+      const context: CourseContext = { ...base, courseId, skillIds, ...vocabulary };
 
       await Promise.all([
-        ...course.chapters.map((chapter) =>
-          writeChapter(context, chapter, bandPosition(course, chapter)),
-        ),
+        ...course.chapters.map((chapter) => writeChapter(context, chapter)),
         ...(course.explanations ?? []).map((lesson) =>
           writeLesson(context, { homeChapterId: null, lesson, level: "overview" }),
         ),
       ]);
 
-      await writeItems(base);
+      await writeOutline(context);
+
+      await writeItems({ ...base, skillIds });
     }),
   );
 }

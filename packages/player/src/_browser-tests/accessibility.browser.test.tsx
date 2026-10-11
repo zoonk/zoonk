@@ -7,18 +7,23 @@ import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
 import { press } from "../_test-utils/activity-player";
 import { tabTo } from "../_test-utils/keyboard";
-import { languageStep } from "../_test-utils/language-steps";
-import { activityStep, spokenAnswerStep, teachingStep } from "../_test-utils/lesson-steps";
 import {
   acceptedAnswerCheck,
   buildAdapters,
-  buildLesson,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
-import { buildTutor, stubTutorApi } from "../_test-utils/tutor-api";
+import { stubTutorApi } from "../_test-utils/tutor-api";
+import { buildTutor } from "../_test-utils/tutor-config";
 import { type LessonPlayerSlots } from "../lesson/lesson-player-context";
 import { LessonPlayerShell } from "../lesson/lesson-player-shell";
 import { type LessonPlayerAdapters, type PlayableLibraryStep } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import {
+  activityStep,
+  languageStep,
+  spokenAnswerStep,
+  teachingStep,
+} from "../preview/preview-steps";
 
 /**
  * Accessibility of the lesson player, in light and dark: every kind of screen and all 43 activity
@@ -153,6 +158,11 @@ describe("lesson player accessibility", () => {
   it.each(SCREENS)("%s", async (name, buildStep) => {
     renderLessonPlayer({ lesson: buildLesson([buildStep()]) });
     await expect.element(page.getByRole("main", { name: "Lesson content" })).toBeVisible();
+    // An activity's canvas loads on its own; the scan waits for it, so it covers what's drawn.
+    await expect
+      .poll(() => document.querySelector("[data-slot='activity-canvas-skeleton']"))
+      .toBeNull();
+
     await expectAccessibleScreen(name);
   });
 

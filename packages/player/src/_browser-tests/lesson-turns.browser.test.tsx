@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
-import { inlineImage, press } from "../_test-utils/activity-player";
+import { press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { onDevice } from "../_test-utils/device-media";
-import { explanationStep, teachingStep } from "../_test-utils/lesson-steps";
-import { buildLesson, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { explanationStep, inlineImage, teachingStep } from "../preview/preview-steps";
 
 /**
  * Lessons read like stories on every device: a reading screen leads with its picture, a new screen

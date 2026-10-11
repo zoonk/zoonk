@@ -2,11 +2,9 @@ import { randomUUID } from "node:crypto";
 import { extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
 import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
 import { reconcileMemoryFact } from "@zoonk/ai/tasks/v2/memory/reconcile";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { guardianLinkFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import {
   examBlueprintFixture,
@@ -16,7 +14,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
 import { type GoalDraft } from "../../goals/goal-contract";
@@ -25,16 +23,9 @@ import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 // Memory's extraction, gate and reconciling are paid model calls; their behavior is covered by evals.
 vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
@@ -115,11 +106,7 @@ async function getSteps(goalId: string) {
 }
 
 describe("onboarding a new goal", () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
-  it("learns who an adult is from onboarding once their age turns memory on", async () => {
+  it("learns who the learner is from onboarding, since memory starts on", async () => {
     const user = await useLearner();
     const flush = runDeferredWork();
     mockWorkFact("Works as a data analyst");
@@ -134,12 +121,7 @@ describe("onboarding a new goal", () => {
 
     const goalId = goal?.id ?? "";
     expect(goal?.title).toBe("Get better at SQL");
-
-    // Memory starts off while the learner's age is unknown, so nothing is learned yet.
-    await answerOnboardingQuestion({
-      goalId,
-      input: { birth: { month: 3, year: 1990 }, question: "age" },
-    });
+    await expect(getCurrentUserMemory()).resolves.toMatchObject({ enabled: true });
 
     await answerOnboardingQuestion({ goalId, input: { dailyMinutes: 15, question: "schedule" } });
     await flush();
@@ -193,18 +175,7 @@ describe("onboarding a new goal", () => {
         generationId: null,
         goal: { id: goal?.id },
         goalIds: [goal?.id],
-        isMinor: false,
-        steps: [
-          "purpose",
-          "targetDate",
-          "level",
-          "age",
-          "memory",
-          "buddy",
-          "placement",
-          "schedule",
-          "plan",
-        ],
+        steps: ["purpose", "targetDate", "level", "buddy", "placement", "schedule", "plan"],
       },
       status: "ready",
     });
@@ -221,7 +192,7 @@ describe("onboarding a new goal", () => {
   });
 
   /*
-   * The notice also lists its written tests among its subjects (a "Prova discursiva" grouped under
+   * The notice also lists its written tests among its subjects (a discursive test grouped under
    * its own test, an essay): those aren't bodies of knowledge a learner already knows well.
    */
   it("lists an exam's knowledge subjects from its stored notice, not its written tests", async () => {
@@ -357,8 +328,6 @@ describe("onboarding a new goal", () => {
     await answerOnboardingQuestion({ goalId, input: { level: "basic", question: "level" } });
 
     await expect(getSteps(goalId)).resolves.toStrictEqual([
-      "age",
-      "memory",
       "buddy",
       "placement",
       "schedule",
@@ -583,15 +552,10 @@ describe("onboarding a new goal", () => {
     expect(saved.map((goal) => goal.dailyMinutes)).toStrictEqual([40, 20]);
   });
 
-  it("saves the age and buddy on the profile and asks them only once", async () => {
+  it("saves the buddy on the profile and asks it only once", async () => {
     const user = await useLearner();
     const [goal] = await createGoal();
     const goalId = goal?.id ?? "";
-
-    await answerOnboardingQuestion({
-      goalId,
-      input: { birth: { month: 3, year: 1990 }, question: "age" },
-    });
 
     await answerOnboardingQuestion({
       goalId,
@@ -602,30 +566,8 @@ describe("onboarding a new goal", () => {
       where: { userId: user.id },
     });
 
-    expect(profile).toMatchObject({
-      birthMonth: 3,
-      birthYear: 1990,
-      buddyKind: "otto",
-      buddyName: "Octavia",
-    });
-
-    await expect(getSteps(goalId)).resolves.not.toStrictEqual(
-      expect.arrayContaining(["age", "buddy"]),
-    );
-  });
-
-  it("deletes the account of someone under 13, kindly and completely", async () => {
-    const user = await useLearner();
-    const [goal] = await createGoal();
-    const thisYear = new Date().getUTCFullYear();
-
-    const result = await answerOnboardingQuestion({
-      goalId: goal?.id ?? "",
-      input: { birth: { month: 1, year: thisYear - 10 }, question: "age" },
-    });
-
-    expect(result).toStrictEqual({ status: "accountDeleted" });
-    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
+    expect(profile).toMatchObject({ buddyKind: "otto", buddyName: "Octavia" });
+    await expect(getSteps(goalId)).resolves.not.toContain("buddy");
   });
 
   it("saves the exam's subjects the learner knows well with their level", async () => {
@@ -644,7 +586,42 @@ describe("onboarding a new goal", () => {
     expect(saved.details).not.toHaveProperty("level");
   });
 
-  it("saves a concurso's target as its position, which research and the plan read", async () => {
+  // An IELTS learner went Back to the subjects question and chose "None of them yet": the plan
+  // still skipped the Listening and Reading basics they had ticked before.
+  it("replaces the subjects the learner knows when they go back and answer again", async () => {
+    await useLearner();
+    const [goal] = await createGoal([draft({ kind: "exam", title: "Pass IELTS" })]);
+    const goalId = goal?.id ?? "";
+
+    await answerOnboardingQuestion({
+      goalId,
+      input: { knownSubjects: ["Listening", "Reading"], level: null, question: "level" },
+    });
+
+    await answerOnboardingQuestion({
+      goalId,
+      input: { knownSubjects: [], level: null, question: "level" },
+    });
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+    expect(saved.details).not.toHaveProperty("knownSubjects");
+  });
+
+  it("replaces the level the learner gave when they go back and ask for the quick test", async () => {
+    await useLearner();
+    const [goal] = await createGoal();
+    const goalId = goal?.id ?? "";
+
+    await answerOnboardingQuestion({ goalId, input: { level: "intermediate", question: "level" } });
+    await answerOnboardingQuestion({ goalId, input: { level: null, question: "level" } });
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+    expect(saved.details).not.toHaveProperty("level");
+  });
+
+  it("saves a civil service exam's target as its position, which research and the plan read", async () => {
     await useLearner();
 
     const [goal] = await createGoal([
@@ -671,105 +648,10 @@ describe("onboarding a new goal", () => {
     await expect(getSteps(goal?.id ?? "")).resolves.toStrictEqual([
       "target",
       "level",
-      "age",
-      "memory",
       "placement",
       "schedule",
       "plan",
     ]);
-  });
-
-  it("marks a minor, so the guardian invite is offered", async () => {
-    const user = await useLearner();
-    const thisYear = new Date().getUTCFullYear();
-
-    await prisma.userLearningProfile.create({
-      data: { birthMonth: 1, birthYear: thisYear - 15, userId: user.id },
-    });
-
-    const [goal] = await createGoal();
-    const result = await getOnboarding({ goalId: goal?.id ?? "" });
-
-    expect(result).toMatchObject({ onboarding: { isMinor: true }, status: "ready" });
-    expect(result.status === "ready" && result.onboarding.steps).not.toContain("age");
-    expect(result.status === "ready" && result.onboarding.steps).toContain("buddy");
-  });
-
-  it("asks a teen once whether memory may personalize lessons, and Not now keeps it off", async () => {
-    const user = await useLearner({ plus: true });
-    const thisYear = new Date().getUTCFullYear();
-
-    await prisma.userLearningProfile.create({
-      data: { birthMonth: 1, birthYear: thisYear - 15, userId: user.id },
-    });
-
-    const [goal] = await createGoal();
-    const goalId = goal?.id ?? "";
-
-    await expect(getSteps(goalId)).resolves.toStrictEqual(
-      expect.arrayContaining(["memory", "buddy"]),
-    );
-
-    await expect(
-      answerOnboardingQuestion({ goalId, input: { enabled: false, question: "memory" } }),
-    ).resolves.toStrictEqual({ status: "saved" });
-
-    await expect(
-      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ memoryEnabled: false });
-
-    await expect(getSteps(goalId)).resolves.not.toContain("memory");
-
-    const [nextGoal] = await createGoal();
-    await expect(getSteps(nextGoal?.id ?? "")).resolves.not.toContain("memory");
-  });
-
-  it("turns memory on when a learner of unknown age says yes", async () => {
-    const user = await useLearner();
-    const [goal] = await createGoal();
-    const goalId = goal?.id ?? "";
-
-    await answerOnboardingQuestion({ goalId, input: { birth: null, question: "age" } });
-    await expect(getSteps(goalId)).resolves.toContain("memory");
-
-    await answerOnboardingQuestion({ goalId, input: { enabled: true, question: "memory" } });
-
-    await expect(
-      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ memoryEnabled: true });
-
-    await expect(getCurrentUserMemory()).resolves.toMatchObject({ enabled: true });
-  });
-
-  it("doesn't ask adults, whose memory is already on, or teens whose guardian keeps it off", async () => {
-    const [adult, teen] = await Promise.all([userFixture(), userFixture()]);
-    const thisYear = new Date().getUTCFullYear();
-
-    await guardianLinkFixture({
-      acceptedAt: new Date(),
-      memoryOff: true,
-      status: "active",
-      userId: teen.id,
-    });
-
-    await prisma.userLearningProfile.create({
-      data: { birthMonth: 1, birthYear: thisYear - 15, userId: teen.id },
-    });
-
-    mockSession(adult.id);
-    const [adultGoal] = await createGoal();
-    const adultGoalId = adultGoal?.id ?? "";
-
-    await answerOnboardingQuestion({
-      goalId: adultGoalId,
-      input: { birth: { month: 3, year: 1990 }, question: "age" },
-    });
-
-    await expect(getSteps(adultGoalId)).resolves.not.toContain("memory");
-
-    mockSession(teen.id);
-    const [teenGoal] = await createGoal();
-    await expect(getSteps(teenGoal?.id ?? "")).resolves.not.toContain("memory");
   });
 
   it("keeps other learners' goals private", async () => {

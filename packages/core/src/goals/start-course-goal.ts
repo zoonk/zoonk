@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getSession } from "../users/get-session";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { loadCourseOutline } from "./_utils/course-outline";
 import { toCoursePlanGraph } from "./_utils/course-plan-graph";
@@ -55,6 +56,32 @@ async function toExistingResult(goalId: string): Promise<CourseGoalStartResult> 
   return { goal, inOnboarding: steps.some((step) => step !== "plan"), status: "existing" };
 }
 
+/**
+ * The learner's goal already following this course, with whether its onboarding still has
+ * screens to show, so the course's start page sends them back to it instead of asking their level
+ * again. Null without one or without a session.
+ */
+export async function findCourseGoalStart(
+  courseId: string,
+): Promise<{ goalId: string; inOnboarding: boolean } | null> {
+  const session = await getSession();
+
+  const goal =
+    session && isUuid(courseId)
+      ? await findCourseGoal({ courseId, userId: session.user.id })
+      : null;
+
+  if (!goal) {
+    return null;
+  }
+
+  const existing = await toExistingResult(goal.id);
+
+  return existing.status === "existing"
+    ? { goalId: goal.id, inOnboarding: existing.inOnboarding }
+    : null;
+}
+
 async function loadGoalView({ goal, userId }: { goal: GoalView; userId: string }) {
   const [row, activeGoalId] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
@@ -69,11 +96,11 @@ async function loadGoalView({ goal, userId }: { goal: GoalView; userId: string }
  * Starts a Library course (or one of its chapters) as the learner's goal, with nothing to type or
  * confirm: a learn goal on the course, or a language goal for a language course, with its plan
  * built from the course's own outline right away (the plan starts at the chapter when one was
- * picked). Onboarding then asks only what still matters: the learner's level and placement (a
- * language's level test), their time, and the profile screens. It counts against the plan's goal
- * limits like any new goal; the learner's goal already on that course comes back instead of a
- * second one. A course nobody outlined yet gets its plan from the goal's first run, like a typed
- * goal. Guests can start one.
+ * picked). Onboarding then asks only what still matters: the learner's level (unless the start
+ * page asked it) and placement (a language's level test), their time, and the profile screens.
+ * It counts against the plan's goal limits like any new goal; the learner's goal already on that
+ * course comes back instead of a second one. A course nobody outlined yet gets its plan from the
+ * goal's first run, like a typed goal. Guests can start one.
  */
 export async function startCourseGoal({
   courseId,
@@ -138,6 +165,14 @@ export async function startCourseGoal({
 
   if (!goal) {
     return { status: created.status === "unauthorized" ? "unauthorized" : "notFound" };
+  }
+
+  // The level the start page asked is onboarding's answer, saved as its own screen saves it.
+  if (input.level !== undefined) {
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { level: input.level, question: "level" },
+    });
   }
 
   const graph = toCoursePlanGraph({ chapters: outline, course, startChapterId: chapterId });

@@ -1,4 +1,5 @@
-import { prisma } from "@zoonk/db";
+import { type GenerationStatus, prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   chapterLessonFixture,
@@ -11,7 +12,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
-import { getTodayStudySession } from "./get-today-study-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
@@ -38,15 +39,20 @@ async function readToday(goalId: string) {
  * written skill and one written for later, as Carla's and Lucas's first days did while their
  * courses were still being outlined.
  */
-async function setupDayWithStandIn({ dailyMinutes = 45 }: { dailyMinutes?: number } = {}) {
-  const user = await userFixture();
+async function setupDayWithStandIn({
+  dailyMinutes = 45,
+  outlineStatus = "running",
+  standInSize = LANDING,
+}: { dailyMinutes?: number; outlineStatus?: GenerationStatus; standInSize?: number } = {}) {
+  const [user, course] = await Promise.all([userFixture(), courseFixture({ outlineStatus })]);
 
   const library = await planLibraryFixture({
-    skills: [{ lessons: 2 }, { lessons: 0, size: LANDING }, { lessons: 8 }],
+    skills: [{ lessons: 2 }, { lessons: 0, size: standInSize }, { lessons: 8 }],
   });
 
   const { goal } = await unplannedGoalFixture({
     dailyMinutes,
+    primaryCourseId: course.id,
     settings: { startDate: "2026-09-30" },
     timezone: "UTC",
     userId: user.id,
@@ -59,14 +65,22 @@ async function setupDayWithStandIn({ dailyMinutes = 45 }: { dailyMinutes?: numbe
 
   mockSession(user.id);
 
-  return { goal, library };
+  return { course, goal, library };
 }
 
 /**
  * The waiting skill's lessons land in the Library (`count`, as many as its stand-in planned unless
  * the outline wrote more) and the system re-plans the goals using it.
  */
-async function landWaitingLessons(library: Library, count = LANDING): Promise<string[]> {
+async function landWaitingLessons({
+  count = LANDING,
+  courseId,
+  library,
+}: {
+  count?: number;
+  courseId: string;
+  library: Library;
+}): Promise<string[]> {
   const [chapter] = library.chapters;
   const skillId = library.skills[1]?.id ?? "";
 
@@ -92,6 +106,7 @@ async function landWaitingLessons(library: Library, count = LANDING): Promise<st
   );
 
   await replanGoalsWaitingOnSkills({ skillIds: [skillId] });
+  await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: courseId } });
 
   return lessons;
 }
@@ -112,14 +127,14 @@ describe("today's session the learner was shown", () => {
     vi.useRealTimers();
   });
 
-  // Lucas's Today listed Linguagens, Matemática, Redação and Estratégia; when lessons landed, the
-  // day he hadn't started yet was rebuilt as Linguagens and Redação, with no plan change.
+  // Lucas's Today listed languages, mathematics, the essay and strategy; when lessons landed, the
+  // day he hadn't started yet was rebuilt as languages and the essay, with no plan change.
   it("keeps every block it showed, in order, when lessons the plan waited on land", async () => {
-    const { goal, library } = await setupDayWithStandIn();
+    const { course, goal, library } = await setupDayWithStandIn();
     const before = await readToday(goal.id);
 
     vi.setSystemTime(A_MINUTE_LATER);
-    const landed = await landWaitingLessons(library);
+    const landed = await landWaitingLessons({ courseId: course.id, library });
     const after = await readToday(goal.id);
 
     expect(after.id).toBe(before.id);
@@ -136,15 +151,31 @@ describe("today's session the learner was shown", () => {
 
   // Carla's Today said 7 lessons and her session opened with 15: the rest landed in between.
   it("says more lessons are on the way while the day holds their place, until they land", async () => {
-    const { goal, library } = await setupDayWithStandIn();
+    const { course, goal, library } = await setupDayWithStandIn();
     const before = await readToday(goal.id);
 
     expect(before.lessonsComing).toBe(true);
 
-    await landWaitingLessons(library);
+    await landWaitingLessons({ courseId: course.id, library });
     const after = await readToday(goal.id);
 
     expect(after.lessonsComing).toBe(false);
+  });
+
+  // Carla's Today said 6 lessons of her hour, with no word of more: the next skill's stand-in
+  // was longer than what the day had left, so it was due the next day though it started that day.
+  it("says more lessons are on the way when the stand-in starting in the day is due a day later", async () => {
+    const { goal } = await setupDayWithStandIn({ standInSize: 20 });
+
+    const dueToday = await prisma.planItem.count({
+      where: { lessonId: null, plan: { goalId: goal.id }, scheduledFor: { lte: TODAY } },
+    });
+
+    const today = await readToday(goal.id);
+
+    expect(dueToday).toBe(0);
+    expect(learnLessonIds(today).length).toBeGreaterThan(0);
+    expect(today.lessonsComing).toBe(true);
   });
 
   it("keeps the place of lessons still being outlined instead of filling it with later ones", async () => {
@@ -161,12 +192,50 @@ describe("today's session the learner was shown", () => {
     expect(learnLessonIds(before).filter((id) => !due.has(id))).toStrictEqual([]);
   });
 
+  // A stand-in nobody is outlining (its next chapter waits for a later preparation) would hold
+  // the day's time for lessons that never come.
+  it("fills the day as usual when no one is outlining the lessons it waits for", async () => {
+    const { goal, library } = await setupDayWithStandIn({ outlineStatus: "completed" });
+    const later = new Set(library.lessons.slice(2).map((lesson) => lesson.id));
+    const today = await readToday(goal.id);
+
+    expect(today.lessonsComing).toBe(false);
+
+    const dueToday = await prisma.planItem.findMany({
+      where: { lessonId: { not: null }, plan: { goalId: goal.id }, scheduledFor: { lte: TODAY } },
+    });
+
+    const due = new Set(dueToday.map((item) => item.lessonId));
+
+    expect(learnLessonIds(today).some((id) => later.has(id) && !due.has(id))).toBe(true);
+  });
+
+  // Helena's first day held time for a skill whose outline ended without writing its lessons:
+  // the day said more was on the way and stayed short for good.
+  it("fills the rest of the day once the outline it waited for ends without its lessons", async () => {
+    const { course, goal } = await setupDayWithStandIn();
+    const before = await readToday(goal.id);
+
+    expect(before.lessonsComing).toBe(true);
+
+    await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
+    const after = await readToday(goal.id);
+
+    expect(after.lessonsComing).toBe(false);
+
+    expect(after.blocks.slice(0, before.blocks.length).map((block) => block.id)).toStrictEqual(
+      before.blocks.map((block) => block.id),
+    );
+
+    expect(after.blocks.length).toBeGreaterThan(before.blocks.length);
+  });
+
   // Lucas's landed lessons were planned on the day he had already been shown, beyond its time, so
   // the next day would have opened by "catching up" on lessons he never saw.
   it("plans what the shown day can't hold on later days, not as work the day left", async () => {
-    const { goal, library } = await setupDayWithStandIn();
+    const { course, goal, library } = await setupDayWithStandIn();
     await readToday(goal.id);
-    await landWaitingLessons(library, LANDING * 3);
+    await landWaitingLessons({ count: LANDING * 3, courseId: course.id, library });
     const today = await readToday(goal.id);
     const held = new Set(learnLessonIds(today));
 

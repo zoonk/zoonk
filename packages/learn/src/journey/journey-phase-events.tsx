@@ -9,6 +9,7 @@ import { KindTile } from "../_components/kind-tile";
 import { PlusMark } from "../_components/plus-lock";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
+import { usePlanScreen } from "../plan/plan-context";
 import { type JourneyPathLinks } from "./journey-links";
 
 /**
@@ -34,7 +35,10 @@ function EventChevron() {
   );
 }
 
-/** The phase's checkpoint, the Trickster's challenge, at the end of its phase. */
+/**
+ * The phase's checkpoint, the Trickster's challenge, at the end of its phase. Past a free exam
+ * plan's first week one still to win is marked Plus, as its page says.
+ */
 export function CheckpointRow({
   checkpoint,
   links,
@@ -44,13 +48,21 @@ export function CheckpointRow({
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const { plan } = usePlanScreen();
   const isDone = checkpoint.state === "done";
+  const locked = !isDone && plan.access.freeWeekOver;
 
   return (
     <LearnLink className={EVENT_ROW_CLASS} href={links.challenge(checkpoint.planItemId)}>
       <Trickster className="size-7" />
-      <span className={cn("min-w-0 flex-1 font-medium", isDone && "text-muted-foreground")}>
+      <span
+        className={cn(
+          "flex min-w-0 flex-1 items-center gap-2 font-medium",
+          isDone && "text-muted-foreground",
+        )}
+      >
         {t("Phase challenge")}
+        {locked && <PlusMark />}
       </span>
       <span className="text-muted-foreground shrink-0 text-sm">
         {isDone && t("Won")}
@@ -62,16 +74,51 @@ export function CheckpointRow({
 }
 
 /**
+ * How many mock exams a phase ahead holds; after the exam (`forNextSitting`), what they're for:
+ * the next sitting, on its first day when the notice lists it.
+ */
+export function usePhaseMocksLine() {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+
+  return ({
+    count,
+    forNextSitting,
+    nextSitting,
+  }: {
+    count: number;
+    forNextSitting: boolean;
+    nextSitting: string | null;
+  }): string => {
+    if (!forNextSitting) {
+      return t("{count, plural, one {# mock exam} other {# mock exams}}", { count });
+    }
+
+    return nextSitting
+      ? t(
+          "{count, plural, one {# mock exam} other {# mock exams}} for the next sitting, on {date}",
+          { count, date: formatDate(nextSitting, "day") },
+        )
+      : t("{count, plural, one {# mock exam} other {# mock exams}} for the next sitting", {
+          count,
+        });
+  };
+}
+
+/**
  * The phase's next mock exam and its day; an exam's opens "About the exam", where its mocks are.
- * The mock itself opens from Today on its day. Without Plus it's marked Plus (`locked`).
+ * The mock itself opens from Today on its day. Without Plus it's marked Plus (`locked`). After the
+ * exam (`forNextSitting`), it says it's for the next sitting.
  */
 export function MockRow({
   date,
   examHref,
+  forNextSitting = false,
   locked = false,
 }: {
   date: string;
   examHref: string | null;
+  forNextSitting?: boolean;
   locked?: boolean;
 }) {
   const t = useExtracted();
@@ -81,7 +128,7 @@ export function MockRow({
     <>
       <KindTile className="size-7" kind="mock" size="sm" />
       <span className="flex min-w-0 flex-1 items-center gap-2 font-medium">
-        {t("Mock exam")}
+        {forNextSitting ? t("Mock exam for the next sitting") : t("Mock exam")}
         {locked && <PlusMark />}
       </span>
       <span className="text-muted-foreground shrink-0 text-sm">{formatDate(date, "day")}</span>

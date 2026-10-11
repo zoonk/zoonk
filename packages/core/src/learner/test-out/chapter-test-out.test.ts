@@ -6,20 +6,14 @@ import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
+import { getChapterView } from "../../view-models/chapter/get-chapter-view";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { getChapterTestOut } from "./get-chapter-test-out";
 import { requestTestOutQuestions } from "./request-test-out-questions";
 import { submitChapterTestOut } from "./submit-chapter-test-out";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 // PostHog is an external service; the mock records what would leave the server.
 vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
@@ -416,5 +410,68 @@ describe(submitChapterTestOut, () => {
     });
 
     expect(result).toStrictEqual({ status: "invalidItem" });
+  });
+});
+
+// A free exam plan past its first week opens new lessons with Plus only, and a test-out takes its
+// learner past them (and writes questions with AI): the free plan shows it marked Plus.
+describe("a free exam plan past its first week", () => {
+  const DAY_MS = 86_400_000;
+
+  async function pastFreeWeek({ plus = false }: { plus?: boolean } = {}) {
+    const fixture = await setup();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { createdAt: new Date(Date.now() - 10 * DAY_MS), kind: "exam" },
+        where: { id: fixture.goal.id },
+      }),
+      plus &&
+        prisma.subscription.create({
+          data: { plan: "plus", provider: "zoonk", referenceId: fixture.user.id, status: "active" },
+        }),
+    ]);
+
+    return { ...fixture, chapterId: fixture.chapters[0]?.id ?? "" };
+  }
+
+  it("holds the chapter test-out for Plus: nothing written, graded or skipped", async () => {
+    const { chapterId, goal, items, user } = await pastFreeWeek();
+    const target = { chapterId, goalId: goal.id };
+
+    await expect(getChapterTestOut(target)).resolves.toStrictEqual({ status: "plusRequired" });
+
+    await expect(requestTestOutQuestions(target)).resolves.toStrictEqual({
+      status: "plusRequired",
+    });
+
+    await expect(
+      submitChapterTestOut({
+        ...target,
+        input: { answers: [{ answer: RIGHT, durationMs: 8000, itemId: items[0]?.id ?? "" }] },
+      }),
+    ).resolves.toStrictEqual({ status: "plusRequired" });
+
+    await expect(getChapterView(target)).resolves.toMatchObject({
+      chapter: { testOut: { plusRequired: true } },
+      status: "ready",
+    });
+
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.planItem.count({ where: { plan: { goalId: goal.id }, status: "testedOut" } }),
+    ).resolves.toBe(0);
+  });
+
+  it("keeps it open with Plus", async () => {
+    const { chapterId, goal } = await pastFreeWeek({ plus: true });
+    const target = { chapterId, goalId: goal.id };
+
+    await expect(getChapterTestOut(target)).resolves.toMatchObject({ status: "ready" });
+
+    await expect(getChapterView(target)).resolves.toMatchObject({
+      chapter: { testOut: { plusRequired: false } },
+    });
   });
 });

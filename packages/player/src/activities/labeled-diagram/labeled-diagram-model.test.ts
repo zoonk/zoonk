@@ -1,90 +1,71 @@
 import { describe, expect, it } from "vitest";
 import {
   assignmentAnswer,
+  diagramSlots,
   mixUpFeedback,
   nextEmptySlot,
-  orderSlots,
   placeName,
   removeName,
   unplacedNames,
 } from "./labeled-diagram-model";
 
-const drawing = {
-  height: 200,
-  parts: {
-    apex: { anchor: [100, 180] as const },
-    left: { anchor: [40, 100] as const },
-    right: { anchor: [160, 96] as const },
-    top: { anchor: [120, 30] as const, pin: [100, 20] as const },
-  },
-  width: 200,
-};
+const slots = diagramSlots([
+  { label: "Aorta" },
+  { label: "Right atrium" },
+  { label: "Left atrium" },
+  { label: "Left ventricle" },
+]);
 
-const slots = orderSlots({
-  drawing,
-  parts: [
-    { label: "Apex", partId: "apex" },
-    { label: "Right", partId: "right" },
-    { label: "Top", partId: "top" },
-    { label: "Left", partId: "left" },
-  ],
-});
-
-describe(orderSlots, () => {
-  it("numbers spots by where their pins sit, top to bottom and left to right", () => {
-    expect(slots.map((slot) => [slot.number, slot.partId])).toStrictEqual([
-      [1, "top"],
-      [2, "left"],
-      [3, "right"],
-      [4, "apex"],
+describe(diagramSlots, () => {
+  it("numbers the spots in the picture's order, the first part as 1", () => {
+    expect(slots.map((slot) => [slot.number, slot.key, slot.label])).toStrictEqual([
+      [1, "1", "Aorta"],
+      [2, "2", "Right atrium"],
+      [3, "3", "Left atrium"],
+      [4, "4", "Left ventricle"],
     ]);
-  });
-
-  it("uses the pin, not the anchor, for offset parts and describes where each sits", () => {
-    expect(slots[0]).toMatchObject({ anchor: [120, 30], pin: [100, 20], position: "top" });
-    expect(slots.map((slot) => slot.position)).toStrictEqual(["top", "left", "right", "bottom"]);
-  });
-
-  it("leaves out parts the drawing doesn't have", () => {
-    expect(orderSlots({ drawing, parts: [{ label: "Tail", partId: "tail" }] })).toStrictEqual([]);
   });
 });
 
 describe(placeName, () => {
-  it("moves a name that was already on another part", () => {
-    const placements = placeName({ name: "Top", partId: "left", placements: { top: "Top" } });
-    expect(placements).toStrictEqual({ left: "Top" });
+  it("moves a name that was already on another spot", () => {
+    const placements = placeName({ key: "2", name: "Aorta", placements: { "1": "Aorta" } });
+    expect(placements).toStrictEqual({ "2": "Aorta" });
   });
 
-  it("replaces the name on the part, sending the old one back to the bank", () => {
-    const placements = placeName({ name: "Left", partId: "top", placements: { top: "Top" } });
+  it("replaces the name on the spot, sending the old one back to the bank", () => {
+    const placements = placeName({ key: "1", name: "Valve", placements: { "1": "Aorta" } });
 
-    expect(placements).toStrictEqual({ top: "Left" });
-    expect(unplacedNames(["Top", "Left", "Valve"], placements)).toStrictEqual(["Top", "Valve"]);
+    expect(placements).toStrictEqual({ "1": "Valve" });
+
+    expect(unplacedNames(["Aorta", "Valve", "Septum"], placements)).toStrictEqual([
+      "Aorta",
+      "Septum",
+    ]);
   });
 });
 
 describe(nextEmptySlot, () => {
   it("finds the next empty spot after the current one, wrapping around", () => {
-    expect(nextEmptySlot({ after: "left", placements: { right: "R" }, slots })).toBe("apex");
-    expect(nextEmptySlot({ after: "apex", placements: { right: "R" }, slots })).toBe("top");
-    expect(nextEmptySlot({ after: null, placements: {}, slots })).toBe("top");
+    expect(nextEmptySlot({ after: "2", placements: { "3": "L" }, slots })).toBe("4");
+    expect(nextEmptySlot({ after: "4", placements: { "3": "L" }, slots })).toBe("1");
+    expect(nextEmptySlot({ after: null, placements: {}, slots })).toBe("1");
   });
 
   it("returns null once every spot has a name", () => {
-    const full = { apex: "A", left: "L", right: "R", top: "T" };
-    expect(nextEmptySlot({ after: "top", placements: full, slots })).toBeNull();
+    const full = { "1": "A", "2": "R", "3": "L", "4": "V" };
+    expect(nextEmptySlot({ after: "1", placements: full, slots })).toBeNull();
   });
 });
 
 describe(assignmentAnswer, () => {
   it("answers only when every spot has a name", () => {
-    const partial = { left: "Left", top: "Top" };
+    const partial = { "1": "Aorta", "2": "Right atrium" };
     expect(assignmentAnswer(slots, partial)).toBeNull();
 
-    const full = { ...partial, apex: "Apex", right: "Right" };
+    const full = { ...partial, "3": "Left atrium", "4": "Left ventricle" };
     expect(assignmentAnswer(slots, full)).toStrictEqual({ kind: "assignment", pairs: full });
-    expect(assignmentAnswer(slots, removeName(full, "apex"))).toBeNull();
+    expect(assignmentAnswer(slots, removeName(full, "4"))).toBeNull();
   });
 });
 

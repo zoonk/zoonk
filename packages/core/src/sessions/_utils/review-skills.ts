@@ -19,6 +19,23 @@ export function getFocusedSkillIds({
   );
 }
 
+/** The skills of the areas the learner took out of the plan (`skipAreas`). */
+export function getSkippedSkillIds({
+  graph,
+  settings,
+}: {
+  graph: PlanGraph;
+  settings: unknown;
+}): Set<string> {
+  const skipped = new Set(parsePlanSettings(settings).skippedAreas);
+
+  return new Set(
+    graph.skills
+      .filter((skill) => skipped.has(getSkillArea({ graph, skill })))
+      .map((skill) => skill.skillId),
+  );
+}
+
 /**
  * Every skill the test asks: the skill graph's, but for the areas the learner took out, and the
  * ones the plan's lessons teach, whether or not its days had room for them.
@@ -32,11 +49,10 @@ export function getTestSkillIds({
   planSkillIds: readonly string[];
   settings: unknown;
 }): string[] {
-  const skipped = new Set(parsePlanSettings(settings).skippedAreas);
+  const skipped = getSkippedSkillIds({ graph, settings });
+  const graphSkillIds = graph.skills.map((skill) => skill.skillId);
 
-  const graphSkillIds = graph.skills
-    .filter((skill) => !skipped.has(getSkillArea({ graph, skill })))
-    .map((skill) => skill.skillId);
-
-  return [...new Set([...planSkillIds, ...graphSkillIds])];
+  return [...new Set([...planSkillIds, ...graphSkillIds])].filter(
+    (skillId) => !skipped.has(skillId),
+  );
 }

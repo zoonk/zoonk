@@ -1,0 +1,722 @@
+import { type TestCase } from "@/lib/types";
+
+export type PictureNeedInput = {
+  lesson: string;
+  picture: string;
+  previousPicture: string | null;
+  screen: { brief: string; kind: string };
+};
+
+export type PictureNeedExpected = { teaches: boolean };
+
+function pictureCase({
+  decorative,
+  id,
+  ...input
+}: PictureNeedInput & { decorative: boolean; id: string }): TestCase<
+  PictureNeedExpected,
+  PictureNeedInput
+> {
+  return { expected: { teaches: !decorative }, id, userInput: input };
+}
+
+/**
+ * Pictures lesson plans asked for (Oct 2026): the lesson-spec eval's plans and the lesson-writer
+ * eval's hand-written plans, labeled by hand when the owner asked that every picture teach. The
+ * decorative ones repeat what the words say (a scene described in a sentence, numbers as price
+ * tags or bars), draw text (a formula, a derivation), show what everyone knows (a camel), repeat
+ * the picture before or give a check's answer away.
+ */
+export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
+  pictureCase({
+    decorative: true,
+    id: "spec-en-particle-in-a-box-advanced-1",
+    lesson: "Particle in a box",
+    picture: "Two impenetrable walls with a particle in the space between them.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "A particle is trapped between two impenetrable walls a fixed distance apart. Ask which describes its lowest possible energy: zero, one specific positive value, or any positive value; reveal that it is one specific positive value, without explaining why yet.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-en-particle-in-a-box-advanced-2",
+    lesson: "Particle in a box",
+    picture:
+      "A one-dimensional box with walls labeled x = 0 and x = L, the interior labeled V = 0, the exterior labeled V = ∞, and ψ marked zero at both walls.",
+    previousPicture: "Two impenetrable walls with a particle in the space between them.",
+    screen: {
+      brief:
+        "Show the ideal box: its potential is zero between x = 0 and x = L and infinite outside. Introduce the boundary conditions ψ(0) = ψ(L) = 0: like a rope fixed at both ends, the wave must reach zero at each wall.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-pt-eletron-nucleo-overview-2",
+    lesson: "Por que o elétron não cai no núcleo",
+    picture:
+      "Um átomo com o núcleo destacado no centro e uma região difusa ao redor, identificada como a região onde o elétron pode ser encontrado.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Mostre o núcleo no centro e a região ao seu redor onde o elétron pode ser encontrado. Explique que o núcleo atrai o elétron: se só essa atração importasse, esperaríamos que ele se aproximasse cada vez mais.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-pt-eletron-nucleo-overview-3",
+    lesson: "Por que o elétron não cai no núcleo",
+    picture:
+      "O núcleo dentro de uma nuvem eletrônica difusa, com dois pontos separados marcando lugares possíveis para encontrar o elétron; nenhuma trajetória liga os pontos.",
+    previousPicture:
+      "Um átomo com o núcleo destacado no centro e uma região difusa ao redor, identificada como a região onde o elétron pode ser encontrado.",
+    screen: {
+      brief:
+        "Apresente a ideia de nuvem eletrônica: não é uma trilha que o elétron percorre como um planeta, mas uma região espalhada onde ele pode ser encontrado. Compare com uma mancha difusa, não com um pontinho seguindo uma linha.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-pt-eletron-nucleo-overview-5",
+    lesson: "Por que o elétron não cai no núcleo",
+    picture:
+      "Dois desenhos do mesmo núcleo, identificados como 1 e 2: no 1, uma nuvem eletrônica espalhada ao redor dele; no 2, uma nuvem muito comprimida junto a ele.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Compare a região espalhada com a tentativa de apertar o elétron num espaço minúsculo junto ao núcleo. Explique que, por seu comportamento de onda, confiná-lo assim aumenta a energia ligada ao seu movimento: aproximar não é sempre uma economia de energia.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-brain-lobes-2",
+    lesson: "The lobes of the brain",
+    picture:
+      "Side view of a brain facing left, divided into four differently colored sections at the front, upper middle, lower side, and back; sections are not yet named.",
+    previousPicture:
+      "Side view of a brain facing left, with only the area at the very back shaded; no lobe names.",
+    screen: {
+      brief:
+        "Introduce a lobe as one of the brain’s large sections, like a room within a house. Show the four sections together so their positions make sense before naming them.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-brain-lobes-5",
+    lesson: "The lobes of the brain",
+    picture:
+      "Side view of the whole brain facing left, with the frontal lobe labeled at the front and the parietal lobe labeled at the upper middle.",
+    previousPicture:
+      "Side view of the whole brain facing left, with the parietal lobe highlighted and labeled at the upper middle; the frontal lobe remains labeled for orientation.",
+    screen: {
+      brief:
+        "Hector can move his arm but has trouble telling where someone touched it. Ask which labeled lobe is more closely linked to that difficulty: parietal or frontal. Include frontal as the tempting answer because moving the arm still works.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-brain-lobes-9",
+    lesson: "The lobes of the brain",
+    picture:
+      "Side view of the whole brain facing left, with four distinct regions numbered: 1 at the front (frontal), 2 at the upper middle (parietal), 3 on the lower side (temporal), and 4 at the back (occipital); no lobe names shown.",
+    previousPicture:
+      "Side view of the whole brain facing left, with all four lobes labeled in their positions.",
+    screen: {
+      brief:
+        "Ryan has trouble planning the order of several errands, but can still see, hear, and feel normally. Ask the learner to choose the numbered region to investigate and explain which job connects it to Ryan’s difficulty. The answer is region 1, the frontal lobe, because it helps with planning; region 2, the parietal lobe, is a tempting alternative.",
+      kind: "application",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-comparar-pinturas-1",
+    lesson: "Renascimento e Barroco: comparando pinturas",
+    picture:
+      "Duas pinturas lado a lado: 1, «A Escola de Atenas», de Rafael, com figuras distribuídas sob arcos claros; 2, «A Vocação de São Mateus», de Caravaggio, com figuras em uma sala escura atingidas por um feixe de luz.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Mostre duas pinturas, identificadas apenas por 1 e 2, e pergunte: «Em qual delas a luz faz a cena parecer mais teatral?» Opções: 1, 2; revele imediatamente que é a 2, sem explicar o motivo ainda.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-comparar-pinturas-4",
+    lesson: "Renascimento e Barroco: comparando pinturas",
+    picture:
+      "Duas pinturas lado a lado: 1, «A Entrega das Chaves a São Pedro», com edifício central e grupos distribuídos dos dois lados; 2, «A Elevação da Cruz», com a cruz e os corpos inclinados em diagonal.",
+    previousPicture:
+      "«O Casamento da Virgem», de Rafael, inteiro, com o edifício ao centro e os grupos de pessoas dos dois lados visíveis.",
+    screen: {
+      brief:
+        "Mostre «A Entrega das Chaves a São Pedro», de Perugino, e «A Elevação da Cruz», de Rubens. Pergunte qual tem a composição mais equilibrada; a resposta é a primeira, não a segunda, cujos corpos e a cruz seguem uma diagonal.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "spec-visual-en-water-cycle-1",
+    lesson: "The water cycle",
+    picture:
+      "A shallow tray in sunlight, with a lower water level marked and salt left at the bottom.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Darius leaves a shallow tray of salt water in the sun. The water level drops, but the salt remains. Ask where the missing water went: into the air as unseen water (correct), straight into nearby clouds as liquid drops, or into the salt. Reveal the answer after the learner picks; explain why on the next screen.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-water-cycle-2",
+    lesson: "The water cycle",
+    picture:
+      "The ocean under the sun, with an upward arrow from its surface showing invisible water entering the air; label the arrow “evaporation.”",
+    previousPicture:
+      "A shallow tray in sunlight, with a lower water level marked and salt left at the bottom.",
+    screen: {
+      brief:
+        "Explain evaporation: liquid water changes into invisible water in the air, like the water missing from Darius’s tray. Sunlight can help this happen at the ocean’s surface, even when the water is not boiling.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-mapa-imperio-romano-1",
+    lesson: "A expansão do Império Romano",
+    picture:
+      "Mapa sem territórios coloridos, mostrando Europa, África e Índia, com Roma e as três áreas das opções marcadas.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Rosana pergunta: «Roma chegou a governar qual destas áreas fora da Europa?» Ofereça norte da África (correta), Índia e sul da África; revele a resposta assim que você escolher, sem explicar o motivo ainda.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-mapa-imperio-romano-5",
+    lesson: "A expansão do Império Romano",
+    picture:
+      "Mapa das ilhas Britânicas em 117, com Britânia e Irlanda identificadas e apenas a parte da Britânia sob domínio romano colorida.",
+    previousPicture:
+      "Ampliação da parte ocidental do mapa de 117, com Mediterrâneo, Roma e Cartago identificados; a margem africana em Cartago aparece dentro da área romana colorida.",
+    screen: {
+      brief:
+        "Em outro trecho do mapa, pergunte qual ilha tinha parte de seu território sob domínio romano: a Britânia (correta) ou a Irlanda (resposta tentadora). Peça que você confira onde termina a área colorida; deixe visível que ela não cobre toda a Britânia.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-lever-1",
+    lesson: "How a lever multiplies force",
+    picture:
+      "A board resting on a block near a rock at one end, with two hand positions labeled “near the block” and “far end”; show where the rock will rise.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Show a board resting on a block, with a rock at one end. Ask which hand position would make the rock easiest to lift: near the block, at the far end of the board, or either position equally. Reveal “at the far end” immediately after the choice; leave the reason for the next screen.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-lever-7",
+    lesson: "How a lever multiplies force",
+    picture:
+      "A lever with a 60-pound load 2 inches to one side of the labeled fulcrum and a downward hand push 6 inches to the other side.",
+    previousPicture:
+      "A lever with the fulcrum between a rock labeled “80-pound weight” and a downward hand push; label the distances from the fulcrum “3 inches” on the rock side and “12 inches” on the hand side.",
+    screen: {
+      brief:
+        "Give a 60-pound load 2 inches from the fulcrum and a hand 6 inches away. Ask for the push needed to start lifting it: 20 pounds, 60 pounds, or 180 pounds; 180 pounds is the tempting answer from reversing the distance ratio.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-syntax-tree-6",
+    lesson: "Syntax trees",
+    picture:
+      "A complete branching tree for “The bell rang”: S at the top; NP and VP beneath it; “The” and “bell” beneath NP, and “rang” beneath VP.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Introduce a syntax tree as a branching drawing of which words belong together. Show “The bell rang” with S at the top, branching to NP above “The bell” and VP above “rang”; define S as sentence, and point back to the two phrase names already learned.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-syntax-tree-8",
+    lesson: "Syntax trees",
+    picture:
+      "Two trees labeled 1 and 2 for “The small engine rattled loudly,” each showing S, NP, VP, and every word; tree 1 has the correct grouping, while tree 2 places “loudly” under NP.",
+    previousPicture:
+      "A complete branching tree for “The shy drummer played loudly”: S branches to NP over “The shy drummer” and VP over “played loudly,” with each word shown beneath its phrase.",
+    screen: {
+      brief:
+        "Ask which of two trees correctly groups “The small engine rattled loudly.” The tempting wrong tree puts “loudly” under NP and leaves only “rattled” under VP; the correct tree puts “The small engine” under NP and “rattled loudly” under VP.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "spec-visual-pt-ligacao-covalente-1",
+    lesson: "Ligação covalente",
+    picture:
+      "Dois átomos de hidrogênio separados, identificados por H, cada um com um elétron representado por um ponto.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Mostre dois átomos de hidrogênio separados, cada um com um elétron. Pergunte o que pode uni-los: A) compartilhar os dois elétrons; B) um entregar seu elétron ao outro; C) cada um guardar o seu elétron longe do outro. Revele A assim que você escolher, sem explicar o motivo ainda.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-ligacao-covalente-2",
+    lesson: "Ligação covalente",
+    picture:
+      "Dois desenhos lado a lado: à esquerda, dois H separados com um ponto cada; à direita, os dois H com os dois pontos entre eles.",
+    previousPicture:
+      "Dois átomos de hidrogênio separados, identificados por H, cada um com um elétron representado por um ponto.",
+    screen: {
+      brief:
+        "Mostre os mesmos átomos antes e depois de se aproximarem: o elétron de cada um passa a ficar no espaço entre os dois. Explique que ambos compartilham esse par, em vez de um átomo ficar com os dois elétrons.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-ligacao-covalente-6",
+    lesson: "Ligação covalente",
+    picture:
+      "Dois átomos de flúor separados, identificados por F, cada um com sete pontos externos; um ponto de cada átomo está voltado para o outro.",
+    previousPicture:
+      "Dois desenhos lado a lado: no primeiro, dois Cl com sete pontos externos cada; no segundo, Cl e Cl unidos por um par de pontos destacado entre eles, com os demais pontos ao redor, e a representação Cl—Cl abaixo.",
+    screen: {
+      brief:
+        "Mostre dois átomos de flúor, cada um com sete elétrons externos, e peça que você escolha a representação de uma ligação simples entre eles: F—F, F F ou F—F—F. A resposta é F—F; F F é a opção tentadora para quem percebe o compartilhamento, mas esquece de representá-lo pelo traço.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-soccer-formation-2",
+    lesson: "The 4-3-3 formation",
+    picture:
+      "The whole field from above, with both goals labeled and ten outfield players in rows of four, three, and three; the four nearest their own goal are highlighted and labeled “defenders.”",
+    previousPicture:
+      "A top-down soccer field with each goal labeled “your goal” or “opponent’s goal”; groups of four, three, and three dots wait outside the field, with none placed yet.",
+    screen: {
+      brief:
+        "Show the four players nearest their own goal and call them defenders: they form a back line that helps protect the goal, like a barrier in front of a doorway.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-soccer-formation-5",
+    lesson: "The 4-3-3 formation",
+    picture:
+      "A top-down field with the opponent’s goal on the left and your goal on the right; three players are near the left goal, three in the middle, and four near the right goal.",
+    previousPicture:
+      "The full-field lineup with the front row of three highlighted and labeled “forwards”; both goals and the other two rows remain visible.",
+    screen: {
+      brief:
+        "On a field where your team attacks to the left, ask which group connects the back line to the front line. The answer is the middle three; include the four nearest your goal and the three nearest the opponent’s goal as tempting options.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-earth-mars-5",
+    lesson: "Earth and Mars compared",
+    picture:
+      "Earth and Mars side by side, labeled, each surrounded by a schematic air layer; many air dots surround Earth and far fewer surround Mars.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Introduce atmosphere as the air surrounding a planet, like a blanket around it. Compare Earth’s substantial atmosphere with Mars’s very thin atmosphere; the air dots in the drawing represent relative amounts, not a layer drawn to scale.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "spec-visual-pt-camelo-adaptacoes-1",
+    lesson: "Adaptações do camelo ao deserto",
+    picture: "Camelo de lado, com a saliência nas costas bem visível, sem rótulos.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Pergunte: «O que fica guardado na saliência nas costas do camelo?» Ofereça gordura, água e areia; revele imediatamente que a resposta é gordura, sem explicar ainda o motivo.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "spec-visual-pt-camelo-adaptacoes-2",
+    lesson: "Adaptações do camelo ao deserto",
+    picture: "Camelo inteiro de lado, com a corcova destacada e identificada.",
+    previousPicture: "Camelo de lado, com a saliência nas costas bem visível, sem rótulos.",
+    screen: {
+      brief:
+        "Dê à saliência o nome de corcova e explique que ela guarda gordura, uma reserva que o corpo pode usar quando falta alimento; ela não é um tanque de água.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-camelo-adaptacoes-3",
+    lesson: "Adaptações do camelo ao deserto",
+    picture:
+      "Cabeça de um camelo durante uma ventania de areia, com olhos, cílios e narinas identificados; as narinas aparecem fechadas.",
+    previousPicture: "Camelo inteiro de lado, com a corcova destacada e identificada.",
+    screen: {
+      brief:
+        "Mostre como os cílios compridos ajudam a proteger os olhos da areia e como o camelo pode fechar as narinas quando a areia é soprada pelo vento.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-pt-camelo-adaptacoes-5",
+    lesson: "Adaptações do camelo ao deserto",
+    picture:
+      "Camelo inteiro sobre areia fofa, com os pés destacados; um detalhe ampliado mostra um pé largo apoiado na areia.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Mostre os pés largos apoiados na areia fofa e explique que eles distribuem o peso do camelo, ajudando-o a afundar menos.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-gothic-romanesque-1",
+    lesson: "Romanesque and Gothic churches",
+    picture:
+      "Two church exteriors labeled 1 and 2: church 1 has rounded doorway arches, broad stretches of stone wall, and small windows; church 2 has pointed doorway arches and tall, large windows.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Ask which of two medieval churches was more likely built later: 1, with rounded arches and small windows, or 2, with pointed arches and large windows. Reveal 2 immediately; leave the architectural clues for the next screens.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-gothic-romanesque-4",
+    lesson: "Romanesque and Gothic churches",
+    picture:
+      "A new stone church entrance with a clearly rounded arch, shown with enough surrounding wall to identify it as part of a church.",
+    previousPicture:
+      "A Gothic church exterior with a pointed doorway arch and tall, large windows; the arch's two curved sides and peak are clearly visible.",
+    screen: {
+      brief:
+        "Show a different church entrance and ask which style its arch suggests. The correct answer is Romanesque because the arch is rounded; include Gothic as the tempting alternative.",
+      kind: "check",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "spec-visual-en-gothic-romanesque-7",
+    lesson: "Romanesque and Gothic churches",
+    picture:
+      "One church with a small rounded-arch side doorway and, across its much larger main section, pointed arches and tall windows; the doorway and main section are both clearly shown.",
+    previousPicture:
+      "A new church side wall with several tall, large windows and narrow stretches of stone between them; no doorway or arch is visible.",
+    screen: {
+      brief:
+        "Explain that a church can contain features from more than one building period, so one doorway may not settle its style. Compare several visible clues before choosing a label.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-en-particle-in-a-box-advanced-1",
+    lesson: "Particle in a box",
+    picture:
+      "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Show vials of CdSe quantum dots made of the same material but different sizes: the 2 nm dots glow blue and the 6 nm dots glow red. Ask the learner to guess, without scoring, why size alone would set the color of emitted light.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-en-particle-in-a-box-advanced-2",
+    lesson: "Particle in a box",
+    picture:
+      "Potential diagram: a flat floor from 0 to L with infinitely tall walls, with ψ = 0 marked outside and pinned points at x = 0 and x = L.",
+    previousPicture:
+      "A row of glowing vials from blue to red, each labeled with its dot diameter from about 2 nm to 6 nm.",
+    screen: {
+      brief:
+        "Set up the model: V(x) = 0 for 0 < x < L and V = ∞ outside, so ψ = 0 outside the box. Continuity of ψ then gives the boundary conditions ψ(0) = 0 and ψ(L) = 0, just like a guitar string pinned at both ends.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-particle-in-a-box-advanced-5",
+    lesson: "Particle in a box",
+    picture:
+      "A step-by-step derivation column with the key condition sin kL = 0 highlighted and the allowed k_n shown as evenly spaced points on a k axis.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Work through ψ(L) = 0: A sin kL = 0, and A ≠ 0 (otherwise there is no particle), so kL = nπ. Exclude n = 0 because ψ would vanish, and exclude negative n because they give the same state up to a sign. Substitute k_n = nπ/L into E = ħ²k²/2m to get E_n = n²π²ħ²/(2mL²) = n²h²/(8mL²).",
+      kind: "workedExample",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-en-particle-in-a-box-advanced-7",
+    lesson: "Particle in a box",
+    picture:
+      "Energy ladder with levels at 1, 4, 9 and 16 times E_1, with ψ_1 to ψ_4 drawn on each rung and their nodes marked.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Normalizing ∫|ψ|²dx = 1 over the box gives A = √(2/L), so ψ_n(x) = √(2/L) sin(nπx/L). These are standing waves: ψ_n fits n half-wavelengths into L and has n − 1 interior nodes, and the level spacing grows as E_n ∝ n².",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-particle-in-a-box-advanced-11",
+    lesson: "Particle in a box",
+    picture:
+      "Side-by-side energy ladders for a 6 nm and a 3 nm box drawn to scale, with the emitted photon arrows colored red and blue.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Return to the quantum dots and model the confinement energy as a particle in a box, E ∝ 1/L². The learner predicts by what factor the confinement contribution grows from a 6 nm dot to a 3 nm dot (a factor of 4) and explains why smaller dots emit bluer light.",
+      kind: "application",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-percent-change-beginner-1",
+    lesson: "Percent change",
+    picture:
+      "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Pose a quick guess that doesn't count: a $100 sneaker drops 50% in a sale, then its price rises 50%. Is it back to $100? Options: yes, more than $100, less than $100. Don't reveal the answer yet; say we'll find out.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-percent-change-beginner-2",
+    lesson: "Percent change",
+    picture:
+      "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top.",
+    previousPicture:
+      "A price tag reading $100, an arrow down labeled -50%, then an arrow up labeled +50% ending at a tag with a question mark.",
+    screen: {
+      brief:
+        "Start concrete: a movie ticket went from $20 to $25. The change is new minus old: $25 - $20 = $5. Explain that $5 alone doesn't tell us if that's a big jump, because $5 on a $20 ticket feels bigger than $5 on a $500 TV.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-percent-change-beginner-3",
+    lesson: "Percent change",
+    picture:
+      "The formula 'percent change = (new − old) ÷ old × 100' with each piece labeled: 'the change', 'the starting value', 'turn into percent'.",
+    previousPicture:
+      "Two bars side by side: a $20 bar and a $25 bar, with the extra $5 piece highlighted on top.",
+    screen: {
+      brief:
+        "Introduce percent change: compare the change to the ORIGINAL price, like asking 'how many cents of change per dollar we started with?' Show the recipe piece by piece: change ÷ original × 100. Stress that 'original' means the starting value, before the change.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-percent-change-beginner-6",
+    lesson: "Percent change",
+    picture:
+      "A bar for $80 with the top $20 section shaded and crossed out, leaving $60, labeled '20 out of 80 = 25% off'.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Show a decrease: a jacket goes from $80 to $60. Change = 60 - 80 = -20; -20 ÷ 80 = -0.25; × 100 = -25%. A minus sign means the price went down 25%. Point out we still divide by the starting price, $80.",
+      kind: "workedExample",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-percent-change-beginner-8",
+    lesson: "Percent change",
+    picture:
+      "Before-and-after: left, $100 bar with half removed (−50% of 100); right, $50 bar doubled back to $100 (+100% of 50).",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Return to the hook: $100 drops 50% to $50. A 50% rise from $50 is only $25, giving $75, not $100. To get back, the price must rise $50 on a base of $50: 50 ÷ 50 = 100%. The starting value changed, so the same dollar amount is a bigger percent.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-eletron-nucleo-overview-1",
+    lesson: "Por que o elétron não cai no núcleo",
+    picture:
+      "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "O núcleo atrai o elétron. Peça um palpite, sem valer ponto: por que o elétron não termina espremido no núcleo?",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-eletron-nucleo-overview-2",
+    lesson: "Por que o elétron não cai no núcleo",
+    picture:
+      "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica.",
+    previousPicture:
+      "Núcleo no centro e elétron representado por uma região ao redor, com uma seta indicando a atração.",
+    screen: {
+      brief:
+        "Troque a imagem de uma bolinha dando voltas pela de uma região onde o elétron pode ser encontrado. Essa região é chamada de nuvem eletrônica; ela não é uma trilha nem uma nuvem de matéria comum.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-eletron-nucleo-overview-3",
+    lesson: "Por que o elétron não cai no núcleo",
+    picture:
+      "A mesma nuvem em dois tamanhos: espalhada ao redor do núcleo e muito comprimida junto a ele, com indicação de que comprimir exige energia.",
+    previousPicture:
+      "Lado a lado: órbita de bolinha riscada e região difusa ao redor do núcleo identificada como nuvem eletrônica.",
+    screen: {
+      brief:
+        "Explique que a atração puxa o elétron para perto, mas concentrar sua nuvem num espaço minúsculo exige mais energia. Compare com apertar algo que resiste a ficar confinado, sem sugerir que exista uma mola dentro do átomo.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-pt-eletron-nucleo-overview-5",
+    lesson: "Por que o elétron não cai no núcleo",
+    picture:
+      "Núcleo cercado por uma nuvem de tamanho definido, contrastada com um ponto minúsculo no centro marcado como concentração excessiva.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Mostre que o arranjo mais estável combina a atração pelo núcleo com o custo de confinar demais o elétron. Mesmo no estado de menor energia, a nuvem ocupa uma região ao redor do núcleo.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-pt-regra-de-tres-intermediate-3",
+    lesson: "Regra de três simples e composta",
+    picture:
+      "Dois pares de cenas da gráfica: pedido fixo com equipes de tamanhos diferentes; equipe fixa com pedidos de tamanhos diferentes.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Compare os dois casos: para o mesmo pedido, mais trabalhadores significam menos tempo, uma relação inversa; com a mesma equipe, mais trabalho significa mais tempo, uma relação direta. Destaque que é preciso dizer o que permanece fixo.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-python-range-beginner-2",
+    lesson: "Count with range() in Python",
+    picture: "The numbers 1 to 6 on a line, with range(1, 5) highlighting 1 to 4 and 5 left out.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "range(start, stop) starts at start and stops before stop: range(1, 5) gives 1, 2, 3, 4. To reach 5, the stop is 6. The count of numbers is stop minus start.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-en-tree-key-beginner-2",
+    lesson: "Name a tree from one leaf",
+    picture:
+      "A simple tree key drawn as branches: needles or broad leaves, then bundles or single needles, then rounded or pointed lobes.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "A tree key asks one question at a time about what you can see. First: needles or broad leaves? Needles in bundles mean a pine; single needles on the twig mean a spruce or fir. Broad leaves with rounded lobes mean an oak; pointed lobes mean a maple.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-camaras-do-coracao-beginner-2",
+    lesson: "As quatro câmaras do coração",
+    picture:
+      "Coração visto de frente, com os átrios em cima, os ventrículos embaixo e o septo no meio.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "O coração tem quatro câmaras: dois átrios em cima, que recebem o sangue, e dois ventrículos embaixo, que bombeiam. O lado direito manda sangue para os pulmões; o esquerdo, para o corpo todo. O septo separa os dois lados.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: true,
+    id: "plan-en-compound-interest-beginner-2",
+    lesson: "Compound interest",
+    picture:
+      "A curve of the balance growing year by year: $1,000 at the start, $1,100, $1,210 and $1,331 after 3 years.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Compound interest: each year's interest is added to the balance, so next year's 10% is taken on more money. Year 1 adds $100, year 2 adds $110, year 3 adds $121.",
+      kind: "explanation",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-imagens-e-legendas-beginner-1",
+    lesson: "Imagens e legendas",
+    picture: "Danilo standing at a door, holding a closed red umbrella; no rain.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Guess first: a picture shows Danilo standing at a door holding a closed red umbrella. Which caption fits: he holds a closed red umbrella; he walks in the rain under an open red umbrella; he holds a red backpack.",
+      kind: "hook",
+    },
+  }),
+  pictureCase({
+    decorative: false,
+    id: "plan-pt-imagens-e-legendas-beginner-5",
+    lesson: "Imagens e legendas",
+    picture:
+      "Two panels labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of the same red box.",
+    previousPicture: null,
+    screen: {
+      brief:
+        "Two scenes side by side, labeled 1 and 2: in 1 Nayara puts a book into a red box; in 2 she takes a book out of it. The learner picks which scene fits 'Nayara coloca um livro na caixa vermelha'. Tempting wrong answer: scene 2 (same box and book, opposite action).",
+      kind: "application",
+    },
+  }),
+];

@@ -23,7 +23,7 @@ export type UploadContent = {
 /** What a pasted link may point at: a web page, a PDF or plain text. */
 const LINK_CONTENT_TYPES = new Set(["application/pdf", "text/html", "text/markdown", "text/plain"]);
 
-/** A page's address without the scheme, readable: "pt.wikipedia.org/wiki/Glicólise". */
+/** A page's address without the scheme, readable: "en.wikipedia.org/wiki/Glycolysis". */
 function getTitleFromUrl(value: string): string {
   const url = new URL(value);
   const path = decodeURIComponent(url.pathname).replace(/\/+$/u, "");

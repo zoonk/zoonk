@@ -1,6 +1,7 @@
 import { type StudyFreshStart, type StudySessionBlock } from "@zoonk/db";
 import { type PlannedProduce, toProduceBlock } from "../exams/essays/produce-block";
 import { MINUTES_PER_REVIEW, REVIEW_SHARE_OF_DAY } from "../learner/review-load";
+import { takePracticeQuestions } from "./_utils/practice-sets";
 import {
   type BlockCapsule,
   type BlockCheckpoint,
@@ -8,7 +9,9 @@ import {
   type BlockPayload,
   toBlockPayload,
 } from "./block-payload";
+import { takeCapsules } from "./capsules";
 import { getLightMinutes } from "./fresh-start";
+import { countFullReviewQuestions, isFullReview, isFullReviewDay } from "./full-review";
 
 /** An exam-format question takes longer than a quick review: reading, working it out, checking. */
 export const PRACTICE_MINUTES_PER_QUESTION = 1.5;
@@ -18,43 +21,6 @@ export const MIN_BLOCK_MINUTES = 3;
 
 /** Fresh starts carry no backlog: reviews take half their usual share of the day. */
 const FRESH_START_REVIEW_FACTOR = 0.5;
-
-/**
- * Mixed practice stays small while the basics are learned, then grows with the plan, and most of
- * all in the month and week before an exam, when practicing in the exam's format pays the most.
- */
-const BASICS_SHARE_OF_PLAN = 0.15;
-const EARLY_PRACTICE_SHARE = 0.1;
-const BASE_PRACTICE_SHARE = 0.2;
-const PRACTICE_GROWTH = 0.3;
-const EXAM_MONTH_DAYS = 30;
-const EXAM_MONTH_BOOST = 0.2;
-const EXAM_WEEK_DAYS = 7;
-const MAX_PRACTICE_SHARE = 0.6;
-
-/** The share of a session's learning time that goes to mixed practice. */
-export function getPracticeShare({
-  daysToExam,
-  planProgress,
-}: {
-  /** Days until the exam, or null for goals without one. */
-  daysToExam: number | null;
-  /** The share of plan items done, from 0 to 1. */
-  planProgress: number;
-}): number {
-  if (daysToExam !== null && daysToExam <= EXAM_WEEK_DAYS) {
-    return MAX_PRACTICE_SHARE;
-  }
-
-  const base =
-    planProgress < BASICS_SHARE_OF_PLAN
-      ? EARLY_PRACTICE_SHARE
-      : BASE_PRACTICE_SHARE + PRACTICE_GROWTH * planProgress;
-
-  const boost = daysToExam !== null && daysToExam <= EXAM_MONTH_DAYS ? EXAM_MONTH_BOOST : 0;
-
-  return Math.min(MAX_PRACTICE_SHARE, base + boost);
-}
 
 /** A lesson or chapter from the plan, ready to become a learn block. */
 export type PlannedLesson = {
@@ -67,6 +33,11 @@ export type PlannedLesson = {
   planSkillId: string | null;
   skillIds: string[];
   title: string;
+  /**
+   * The plan has it before a challenge the day asks (a phase's last lessons can share its
+   * challenge's day): it comes first even on a first duel's day (see `getNewLessons`).
+   */
+  beforeChallenge?: boolean;
 };
 
 export type PlannedCheckpoint = BlockCheckpoint & {
@@ -77,13 +48,20 @@ export type PlannedCheckpoint = BlockCheckpoint & {
   title: string;
 };
 
-/** A practice question: its skill, weakest skills first so the block ends on stronger ground. */
-export type PracticeItem = { itemId: string; skillId: string };
+/**
+ * A practice question: its skill, weakest skills first so the block ends on stronger ground, and
+ * its set when it shares a stimulus with the questions next to it (asked whole, never cut).
+ */
+export type PracticeItem = { itemId: string; setId?: string; skillId: string };
 
 export type SessionBuildInput = {
   /** Today's due capsules, most urgent first, with their questions picked. */
   capsules: BlockCapsule[];
-  checkpoint: PlannedCheckpoint | null;
+  /**
+   * The day's challenges, the earlier phase's first (two when a half-studied day left one and the
+   * next phase ends today), or its weekly checkpoint or mock.
+   */
+  checkpoints: PlannedCheckpoint[];
   dailyMinutes: number;
   /** Today's mistake drill: the oldest open mistake from an earlier day. */
   drills: BlockDrill[];
@@ -101,7 +79,7 @@ export type SessionBuildInput = {
   practice: PracticeItem[];
   /** An exam's essay to write today, graded with the official rubric; null on other days. */
   produce: PlannedProduce | null;
-  /** The share of the day for mixed practice, from `getPracticeShare`. */
+  /** The share of the day for mixed practice, from `getPracticeShare` (practice-share.ts). */
   practiceShare: number;
   /** Two short lessons before a boss rematch. */
   reinforcement: PlannedLesson[];
@@ -113,13 +91,24 @@ export type SessionBuildInput = {
   fullReviewSkillIds?: readonly string[] | null;
   /** A review day the plan scheduled: no new lessons, the day goes to reviews and practice. */
   reviewPlanItemId: string | null;
-  /** Minutes left under a guardian's daily limit, or null without one. */
+  /**
+   * The capsules aren't due: a day with nothing due and nothing else to study reviews the
+   * learner's weakest studied topics instead of staying empty, briefly, and says so.
+   */
+  weakestReview?: boolean;
+  /** Minutes left under the learner's daily limit, or null without one. */
   remainingLimitMinutes: number | null;
   /**
    * Minutes the day's session already holds in blocks it keeps, when a plan change rebuilds the
    * rest of a day already underway: the new blocks fill what's left.
    */
   usedMinutes?: number;
+  /**
+   * Practice's share of the day as it opened, as its block's minutes of the day's, when a plan
+   * change rebuilds the rest of a day already underway: practice keeps that share of the whole
+   * day, not its share of what's left, so a change that leaves today alone leaves it as it was.
+   */
+  openedPractice?: { dayMinutes: number; minutes: number };
 };
 
 export type PlannedBlock = Pick<StudySessionBlock, "canDo" | "kind" | "lessonId"> & {
@@ -131,35 +120,22 @@ function toMinutes(value: number): number {
   return Math.max(1, Math.round(value));
 }
 
+/** The questions the day's mistake drills ask, ahead of practice's own. */
+function countDrilled(drills: readonly BlockDrill[]): number {
+  return drills.reduce((sum, drill) => sum + drill.itemIds.length, 0);
+}
+
+/**
+ * The day's minutes. A welcome back is lighter, except on a full review: Pedro came back on his
+ * class test's eve after five days away, and a light day asked 5 questions on 3 of his 11 topics.
+ */
 function getSessionBudget(input: SessionBuildInput): number {
-  const day =
-    input.freshStart === "welcomeBack" ? getLightMinutes(input.dailyMinutes) : input.dailyMinutes;
+  const light = input.freshStart === "welcomeBack" && !isFullReviewDay(input);
+  const day = light ? getLightMinutes(input.dailyMinutes) : input.dailyMinutes;
 
   const minutes = Math.max(0, day - (input.usedMinutes ?? 0));
 
   return Math.min(minutes, input.remainingLimitMinutes ?? minutes);
-}
-
-/** Capsules that fit the review share of the day; at least the most urgent one when any is due. */
-function takeCapsules({
-  budget,
-  capsules,
-  freshStart,
-}: {
-  budget: number;
-  capsules: readonly BlockCapsule[];
-  freshStart: StudyFreshStart | null;
-}): BlockCapsule[] {
-  const factor = freshStart ? FRESH_START_REVIEW_FACTOR : 1;
-  const maxQuestions = Math.floor((budget * REVIEW_SHARE_OF_DAY * factor) / MINUTES_PER_REVIEW);
-
-  return capsules.filter((_, index) => {
-    const questions = capsules
-      .slice(0, index + 1)
-      .reduce((sum, capsule) => sum + capsule.itemIds.length, 0);
-
-    return index === 0 || questions <= maxQuestions;
-  });
 }
 
 export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): PlannedBlock {
@@ -181,7 +157,8 @@ export function toLessonBlock(lesson: PlannedLesson, reinforcement: boolean): Pl
 
 /**
  * New lessons in plan order while they fit. The next lesson is always offered when there's some
- * room, even if it runs a little long, except under a guardian's limit, which is never exceeded.
+ * room, even if it runs a little long, except under the learner's daily limit, which is never
+ * exceeded.
  */
 function takeLessons({
   budget,
@@ -207,20 +184,6 @@ function getLessonMinutes(lessons: readonly PlannedLesson[]): number {
   return lessons.reduce((sum, lesson) => sum + toMinutes(lesson.minutes), 0);
 }
 
-/** A full review asks every one of the goal's skills; one that misses some is only practice. */
-function isFullReview({
-  fullReviewSkillIds,
-  skillIds,
-}: {
-  fullReviewSkillIds: readonly string[] | null | undefined;
-  skillIds: readonly string[];
-}): boolean {
-  return (
-    Boolean(fullReviewSkillIds?.length) &&
-    (fullReviewSkillIds ?? []).every((skillId) => skillIds.includes(skillId))
-  );
-}
-
 function buildPracticeBlock({
   drills,
   fullReviewSkillIds,
@@ -228,6 +191,7 @@ function buildPracticeBlock({
   netScored,
   planItemId,
   practice,
+  reviewedSkillIds,
 }: {
   drills: readonly BlockDrill[];
   fullReviewSkillIds: readonly string[] | null | undefined;
@@ -235,10 +199,15 @@ function buildPracticeBlock({
   netScored: boolean;
   planItemId: string | null;
   practice: readonly PracticeItem[];
+  /**
+   * The skills the day's quick review asks before it: the day asks them too, so a full review
+   * needs only the rest (the review may hold a skill's last unseen questions).
+   */
+  reviewedSkillIds: readonly string[];
 }): PlannedBlock | null {
-  const drillItems = drills.reduce((sum, drill) => sum + drill.itemIds.length, 0);
+  const drillItems = countDrilled(drills);
   const room = Math.floor(minutes / PRACTICE_MINUTES_PER_QUESTION) - drillItems;
-  const items = practice.slice(0, Math.max(0, room));
+  const items = takePracticeQuestions({ practice, room: Math.max(0, room) });
   const questions = drillItems + items.length;
   const practiceMinutes = questions * PRACTICE_MINUTES_PER_QUESTION;
   const skillIds = [...new Set(items.map((item) => item.skillId))];
@@ -254,7 +223,10 @@ function buildPracticeBlock({
     lessonId: null,
     payload: toBlockPayload({
       drills: [...drills],
-      fullReview: isFullReview({ fullReviewSkillIds, skillIds }),
+      fullReview: isFullReview({
+        fullReviewSkillIds,
+        skillIds: [...skillIds, ...reviewedSkillIds],
+      }),
       itemIds: items.map((item) => item.itemId),
       netScored,
       planItemId,
@@ -266,10 +238,10 @@ function buildPracticeBlock({
 /** The easy start: a few placement questions in the first week, then today's capsules. */
 function buildReviewBlock({
   capsules,
-  placementItemIds,
+  input: { placementItemIds, weakestReview = false },
 }: {
   capsules: readonly BlockCapsule[];
-  placementItemIds: readonly string[];
+  input: Pick<SessionBuildInput, "placementItemIds" | "weakestReview">;
 }): PlannedBlock | null {
   const questions =
     placementItemIds.length + capsules.reduce((sum, capsule) => sum + capsule.itemIds.length, 0);
@@ -287,8 +259,44 @@ function buildReviewBlock({
       capsules: [...capsules],
       placementItemIds: [...placementItemIds],
       skillIds: capsules.flatMap((capsule) => capsule.skillIds),
+      weakest: weakestReview,
     }),
   };
+}
+
+/**
+ * The review of a day nothing else fills (no lesson, no practice question: a free exam plan past
+ * its first days, say): its due capsules take the time the day's other blocks leave, not just the
+ * review's share, so a big study day's lessons don't wait a week to come back. The daily review
+ * cap still holds (the capsules come under it). A review of the weakest topics stays brief.
+ */
+function fillReview({
+  blocks,
+  budget,
+  input,
+}: {
+  blocks: readonly PlannedBlock[];
+  budget: number;
+  input: SessionBuildInput;
+}): PlannedBlock[] {
+  const others = blocks.filter((block) => block.kind !== "review");
+  const left = budget - others.reduce((sum, block) => sum + block.estimatedMinutes, 0);
+
+  const fillsDay =
+    !input.weakestReview &&
+    !others.some((block) => block.kind === "learn" || block.payload.itemIds.length > 0);
+
+  const review =
+    fillsDay &&
+    buildReviewBlock({
+      capsules: takeCapsules({
+        capsules: input.capsules,
+        maxQuestions: Math.floor(left / MINUTES_PER_REVIEW) - input.placementItemIds.length,
+      }),
+      input,
+    });
+
+  return blocks.map((block) => (review && block.kind === "review" ? review : block));
 }
 
 function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBlock {
@@ -305,47 +313,56 @@ function buildCheckpointBlock(checkpoint: PlannedCheckpoint): PlannedBlock {
 
 /** A day the plan gives to reviews and practice: a review day, or a full review for a mock's. */
 function isReviewDay(input: SessionBuildInput): boolean {
-  return Boolean(input.reviewPlanItemId) || Boolean(input.fullReviewSkillIds?.length);
+  return Boolean(input.reviewPlanItemId) || isFullReviewDay(input);
 }
 
 /**
  * New lessons wait on the day of a first duel (practice prepares for it), on a review day and
- * after a free exam trial. A rematch never holds them back: losing a boss never locks the next
- * phase.
+ * after a free exam trial. The lessons the plan has before the duel come first all the same: a
+ * challenge comes after the lessons it tests (R40). A rematch never holds them back: losing a boss
+ * never locks the next phase.
  */
 function getNewLessons(input: SessionBuildInput): readonly PlannedLesson[] {
-  const checkpoint = input.checkpoint;
-  const firstDuel = checkpoint !== null && checkpoint.kind !== "weekly" && !checkpoint.rematch;
+  const firstDuel = input.checkpoints.some((entry) => entry.kind !== "weekly" && !entry.rematch);
+  const due = firstDuel ? input.lessons.filter((lesson) => lesson.beforeChallenge) : input.lessons;
 
-  return firstDuel || input.examTrialEnded || isReviewDay(input) ? [] : input.lessons;
+  return input.examTrialEnded || isReviewDay(input) ? [] : due;
 }
 
 /**
- * The minutes mixed practice takes from what's left of the day: its share, at most what its
- * questions fill, so a day with few questions to practice (the first one) gives lessons the rest
- * instead of coming up short.
+ * The minutes mixed practice takes from what's left of the day: its share (in the rest of a day
+ * underway, its share of the whole day as it opened), at most what its questions fill, so a day
+ * with few questions to practice (the first one) gives lessons the rest instead of coming up short.
  */
 function getPracticeMinutes({
+  budget,
   input,
   remaining,
 }: {
+  budget: number;
   input: SessionBuildInput;
   remaining: number;
 }): number {
   const share = isReviewDay(input) ? 1 : input.practiceShare;
   const practice = input.examTrialEnded ? [] : input.practice;
-  const drilled = input.drills.reduce((sum, drill) => sum + drill.itemIds.length, 0);
+  const drilled = countDrilled(input.drills);
+  const opened = input.openedPractice;
 
-  return Math.min(remaining * share, (practice.length + drilled) * PRACTICE_MINUTES_PER_QUESTION);
+  // Multiplied before dividing, so a day that keeps its minutes gets its practice's exactly.
+  const target = opened
+    ? (opened.minutes * (budget + (input.usedMinutes ?? 0))) / opened.dayMinutes
+    : remaining * share;
+
+  return Math.min(target, (practice.length + drilled) * PRACTICE_MINUTES_PER_QUESTION);
 }
 
 /**
  * Builds one day's session in the session shape: an easy start (capsules), the hard part in the
- * middle (new lessons, then mixed practice with mistake drills first), and the checkpoint last.
- * It fits the day's minutes: reviews take their share, a checkpoint takes what it needs, mixed
+ * middle (new lessons, then mixed practice with mistake drills first), and the checkpoints last.
+ * It fits the day's minutes: reviews take their share, checkpoints take what they need, mixed
  * practice gets its growing share (as far as it has questions), and lessons fill the rest in plan
- * order. A welcome back is
- * lighter, and a guardian's daily limit caps it.
+ * order. A welcome back is lighter, a full review asks every skill whatever the day's time, and
+ * the learner's daily limit caps it.
  */
 export function buildSessionBlocks(input: SessionBuildInput): {
   blocks: PlannedBlock[];
@@ -357,10 +374,18 @@ export function buildSessionBlocks(input: SessionBuildInput): {
     return { blocks: [], plannedMinutes: 0 };
   }
 
-  const capsules = takeCapsules({ budget, capsules: input.capsules, freshStart: input.freshStart });
-  const review = buildReviewBlock({ capsules, placementItemIds: input.placementItemIds });
-  const checkpoint = input.examTrialEnded ? null : input.checkpoint;
-  const base = (review?.estimatedMinutes ?? 0) + (checkpoint?.minutes ?? 0);
+  const reviewFactor = input.freshStart ? FRESH_START_REVIEW_FACTOR : 1;
+
+  const capsules = takeCapsules({
+    capsules: input.capsules,
+    maxQuestions: Math.floor((budget * REVIEW_SHARE_OF_DAY * reviewFactor) / MINUTES_PER_REVIEW),
+  });
+
+  const review = buildReviewBlock({ capsules, input });
+
+  const checkpoints = input.examTrialEnded ? [] : input.checkpoints;
+  const checkpointMinutes = checkpoints.reduce((total, entry) => total + entry.minutes, 0);
+  const base = (review?.estimatedMinutes ?? 0) + checkpointMinutes;
 
   const produce = toProduceBlock({
     ...input,
@@ -368,11 +393,24 @@ export function buildSessionBlocks(input: SessionBuildInput): {
     room: budget - base,
   });
 
-  const remaining = Math.max(0, budget - base - (produce?.estimatedMinutes ?? 0));
+  const open = Math.max(0, budget - base - (produce?.estimatedMinutes ?? 0));
+
+  // A full review takes what asking every skill once needs, except under the learner's daily
+  // limit, which is never exceeded.
+  const fullReviewMinutes =
+    countFullReviewQuestions({
+      drilled: countDrilled(input.drills),
+      fullReviewSkillIds: input.fullReviewSkillIds,
+      practice: input.practice,
+      reviewedSkillIds: review?.payload.skillIds ?? [],
+    }) * PRACTICE_MINUTES_PER_QUESTION;
+
+  const remaining = input.remainingLimitMinutes === null ? Math.max(open, fullReviewMinutes) : open;
+
   const reinforcement = input.examTrialEnded ? [] : input.reinforcement;
 
   const learnBudget =
-    remaining - getPracticeMinutes({ input, remaining }) - getLessonMinutes(reinforcement);
+    remaining - getPracticeMinutes({ budget, input, remaining }) - getLessonMinutes(reinforcement);
 
   const lessons = takeLessons({
     budget: learnBudget,
@@ -382,7 +420,7 @@ export function buildSessionBlocks(input: SessionBuildInput): {
 
   const learnMinutes = getLessonMinutes([...reinforcement, ...lessons]);
 
-  const blocks = [
+  const built = [
     review,
     ...reinforcement.map((lesson) => toLessonBlock(lesson, true)),
     ...lessons.map((lesson) => toLessonBlock(lesson, false)),
@@ -393,10 +431,13 @@ export function buildSessionBlocks(input: SessionBuildInput): {
       netScored: input.netScored,
       planItemId: input.reviewPlanItemId,
       practice: input.examTrialEnded ? [] : input.practice,
+      reviewedSkillIds: review?.payload.skillIds ?? [],
     }),
     produce,
-    checkpoint ? buildCheckpointBlock(checkpoint) : null,
+    ...checkpoints.map((checkpoint) => buildCheckpointBlock(checkpoint)),
   ].filter((block) => block !== null);
+
+  const blocks = fillReview({ blocks: built, budget, input });
 
   return { blocks, plannedMinutes: blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0) };
 }

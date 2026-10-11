@@ -12,16 +12,16 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import {
   type BlockPayload,
   readBlockPayload,
   toBlockPayload,
 } from "../../../sessions/block-payload";
 import { getSession } from "../../../users/get-session";
-import { withClassTestMock } from "../class-test-mock";
+import { readExamChoices } from "../../choices/exam-choices";
 import { type MockConditions, mockConditionsSchema } from "../mock-contract";
 import { getAskedItemIds } from "./mock-sections";
+import { readMockStructure } from "./read-mock-structure";
 
 export type MockSitting = Omit<MockExam, "conditions"> & {
   answers: MockExamAnswer[];
@@ -66,16 +66,6 @@ export async function findMockSitting(
   );
 }
 
-/** The structure a mock copies: the blueprint's, or a short test for a class test's. */
-function readMockStructure(blueprint: ExamBlueprint | null): ExamStructure | null {
-  return blueprint
-    ? withClassTestMock({
-        ownerId: blueprint.ownerId,
-        structure: readBlueprintContent(blueprint).structure,
-      })
-    : null;
-}
-
 async function findScheduledMock({
   id,
   userId,
@@ -86,7 +76,11 @@ async function findScheduledMock({
   const block = await prisma.studySessionBlock.findFirst({
     include: {
       mockExam: { include: { answers: true } },
-      session: { include: { goal: { include: { examBlueprint: true } } } },
+      session: {
+        include: {
+          goal: { include: { examBlueprint: true, plan: { select: { settings: true } } } },
+        },
+      },
     },
     where: { id, kind: "checkpoint", session: { userId } },
   });
@@ -107,7 +101,12 @@ async function findScheduledMock({
     mock: toSitting(mockExam),
     payload,
     sessionDate: studySession.localDate,
-    structure: readMockStructure(blueprint),
+    structure: blueprint
+      ? readMockStructure({
+          blueprint,
+          choices: readExamChoices(studySession.goal?.plan?.settings),
+        })
+      : null,
     userId,
   };
 }
@@ -124,7 +123,11 @@ async function findAnytimeMock({
   userId: string;
 }): Promise<OwnedMock | null> {
   const row = await prisma.mockExam.findFirst({
-    include: { answers: true, examBlueprint: true, goal: true },
+    include: {
+      answers: true,
+      examBlueprint: true,
+      goal: { include: { plan: { select: { settings: true } } } },
+    },
     where: { blockId: null, id, userId },
   });
 
@@ -149,7 +152,12 @@ async function findAnytimeMock({
     mock,
     payload: toBlockPayload({ itemIds }),
     sessionDate: getDateInTimeZone({ date: mock.startedAt, timeZone }),
-    structure: readMockStructure(examBlueprint),
+    structure: examBlueprint
+      ? readMockStructure({
+          blueprint: examBlueprint,
+          choices: readExamChoices(goal?.plan?.settings),
+        })
+      : null,
     userId,
   };
 }

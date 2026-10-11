@@ -93,23 +93,48 @@
     "order": null,
     "scoring": {
       "description": "Cada acerto confere 1,00 ponto, cada erro desconta 1,00 ponto e itens sem marcação ou marcação dupla recebem 0,00 ponto.",
-      "method": "wrongCancelsRight"
+      "method": "wrongCancelsRight",
+      "relative": false,
+      "scale": null,
+      "wrongPenalty": null
     },
     "sections": [
-      { "day": 1, "minutes": null, "name": "(P1) Objetiva Conhecimentos básicos", "questions": 35 },
+      {
+        "day": 1,
+        "minutes": null,
+        "name": "(P1) Objetiva Conhecimentos básicos",
+        "navigation": null,
+        "passages": [],
+        "questions": 35,
+        "tasks": []
+      },
       {
         "day": 1,
         "minutes": null,
         "name": "(P2) Objetiva Conhecimentos específicos",
-        "questions": 45
+        "navigation": null,
+        "passages": [],
+        "questions": 45,
+        "tasks": []
       },
       {
         "day": 1,
         "minutes": null,
         "name": "(P3) Objetiva Conhecimentos especializados",
-        "questions": 70
+        "navigation": null,
+        "passages": [],
+        "questions": 70,
+        "tasks": []
       },
-      { "day": 1, "minutes": 240, "name": "(P4) Discursiva", "questions": null }
+      {
+        "day": 1,
+        "minutes": 240,
+        "name": "(P4) Discursiva",
+        "navigation": null,
+        "passages": [],
+        "questions": null,
+        "tasks": []
+      }
     ],
     "timeLimitMinutes": null,
     "totalQuestions": null

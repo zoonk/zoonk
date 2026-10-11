@@ -31,35 +31,6 @@ Keep it everyday and safe: no emergencies, conflict, money trouble or sensitive 
 - `openingLine`: what the character says first, in `TARGET_LANGUAGE`: a greeting that names who they are or the place, and an invitation to talk ("Hi, this is Sarah from Queen Street Apartments. How can I help?"). It must not answer any objective yet.
 - `hints`: 3 to 5 phrases in `TARGET_LANGUAGE` the learner can say to reach the objectives, one per objective at least, as complete sentences they could say as they are ("Is the flat still available?").
 
-# When the unit is a speaking exam
-
-When `UNIT_TITLE` names a speaking exam (like "IELTS Speaking test" or "TOEFL iBT Speaking section") and `UNIT_CAN_DO` lists its parts or tasks, write a short mock of that exam instead of an everyday call. Everything above still applies, with these changes:
-
-- The character is the examiner: a common first name, `character.role` is "examiner" in `LEARNER_LANGUAGE`, and `character.place` is a short test room name in `TARGET_LANGUAGE` ("Test centre").
-- `title` and `situation` say it's a practice mock of the exam in `LEARNER_LANGUAGE`, never a real or official test. When `UNIT_DESCRIPTION` says the mock is shorter than the real test, `situation` says so too.
-- `objectives` are the exam's parts or tasks, in order, one each, with the `label` in `TARGET_LANGUAGE` and a `description` in `LEARNER_LANGUAGE` of what the candidate does in it.
-- `characterBrief` is the examiner's script, with everything the examiner will say written exactly as they will say it. The examiner stays neutral and polite, doesn't correct or grade anything, and moves on when time is up. No twist.
-- Every sentence, question and topic is your own: never copy items from official or published test materials.
-- The examiner uses the exam's usual clear, natural wording at every level, not simplified; `LEVEL` shapes the hints.
-- `hints`: general phrases a candidate can use to buy time, give an opinion or add an example ("Let me think about that for a moment", "In my opinion"). Never an answer about a topic, since the candidate gives their own.
-
-For the IELTS Speaking test:
-
-- `objectives`: its three parts, labeled like "Part 1: About you", "Part 2: Cue card", "Part 3: Discussion".
-- `characterBrief`: how to run each part in the time the unit gives, 3 or 4 short questions about the candidate for Part 1, the full cue card for Part 2 (the topic line and its four bullet prompts), and 3 or 4 discussion questions linked to the cue card topic for Part 3.
-- `openingLine`: the examiner's greeting, their name and the first Part 1 question ("Good morning. My name is Sarah. Can you tell me your full name, please?").
-- `hints` may include asking the examiner to repeat ("Could you repeat the question, please?").
-
-For the TOEFL iBT Speaking section:
-
-- `objectives`: its two tasks, labeled "Listen and Repeat" and "Take an Interview".
-- `characterBrief`, in this order:
-  - Listen and Repeat: a one-line setting on a campus or in an academic building, told as what the candidate is doing there (a guide shows new students around the science building), and seven numbered sentences the guide or staff member says in that setting, in the order they're said. Each is a natural thing to say there, with contractions where natural and no rare or technical words. The first has 4 to 6 words and one simple clause; each next one is a little longer and more complex, and the last two have 14 to 20 words with a dependent or relative clause.
-  - Take an Interview: a one-sentence introduction of the interview in an academic or campus situation (a researcher studying how students use the library, a committee member for a study abroad scholarship), and four numbered questions on its topic, in order: a brief question of fact about the candidate's own experience, one asking them to describe or explain an experience, one asking their opinion on a broader issue with reasons, and one asking for a prediction or a harder opinion about the same issue.
-  - How to run it: each sentence and question is said once, the candidate answers each question for up to about 45 seconds, and there are no follow-up questions.
-- `openingLine`: the examiner's greeting and name, one sentence saying that the candidate will listen to sentences and repeat each one exactly, the setting, and the first of the seven sentences ("Hello, I'm Sarah. First, listen to each sentence and repeat it exactly. You're starting a tour of the science building. Welcome to the science building.").
-- `hints`: phrases for the interview answers, such as giving a reason, an example or a prediction ("One reason is that...", "For example...", "In the future, I think..."). Never ask the examiner to repeat, since each item is heard once.
-
 # Level
 
 The opening line and hints use the words and structures a learner at `LEVEL` knows:

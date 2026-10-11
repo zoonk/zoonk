@@ -12,11 +12,7 @@ type MemoryGateOutput = Pick<MemoryGateVerdict, "decision">;
  * Runs the production questions with the requested model and no fallback, so each row measures
  * that model, and turns the probabilities into the production verdict.
  */
-async function gateCandidate({
-  allowSensitive,
-  candidate,
-  model,
-}: MemoryGateInput & { model: string }) {
+async function gateCandidate({ candidate, model }: MemoryGateInput & { model: string }) {
   const { answers, state, usage } = await evaluateQuestions({
     fallbackModel: model,
     input: memoryGateClassifier.toInput(candidate),
@@ -32,7 +28,7 @@ async function gateCandidate({
   };
 
   return {
-    data: { decision: decideMemoryGate({ allowSensitive, probabilities }).decision },
+    data: { decision: decideMemoryGate(probabilities).decision },
     probabilities,
     systemPrompt: memoryGateClassifier.questions.lasting.instructions,
     usage,

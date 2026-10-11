@@ -8,25 +8,50 @@ import {
 import { ChoiceQuestion, type ChoiceResult } from "./choice-question";
 import { MatchPairsQuestion } from "./match-pairs-question";
 import { NumericQuestion } from "./numeric-question";
+import { OrderQuestion, type OrderResult } from "./order-question";
 import { type QuestionBlockPhase } from "./question-block-state";
 import { TrueFalseQuestion } from "./true-false-question";
+import { TypedQuestion } from "./typed-question";
 
-/** What a graded choice question marks: the right option and, when it was missed, the pick. */
+/** The options an answer picks: one, several, or none for another shape. */
+function getPicks(answer: StudyQuestionAnswer | null): number[] {
+  if (!answer) {
+    return [];
+  }
+
+  if ("selectedIndex" in answer) {
+    return [answer.selectedIndex];
+  }
+
+  return "selectedIndexes" in answer ? answer.selectedIndexes : [];
+}
+
+/** What a graded choice question marks: the right options, and the ones the learner picked. */
 function getChoiceResult(phase: QuestionBlockPhase): ChoiceResult | null {
-  if (phase.kind !== "feedback" || !("selectedIndex" in phase.answer)) {
+  if (phase.kind !== "feedback") {
+    return null;
+  }
+
+  const picked = getPicks(phase.answer);
+  return picked.length > 0 ? { correct: getPicks(phase.feedback.correctAnswer), picked } : null;
+}
+
+/** Where a graded ordering question put each step, and where each one goes. */
+function getOrderResult(phase: QuestionBlockPhase): OrderResult | null {
+  if (phase.kind !== "feedback" || !("order" in phase.answer)) {
     return null;
   }
 
   const correct = phase.feedback.correctAnswer;
-  const correctIndex = correct && "selectedIndex" in correct ? correct.selectedIndex : null;
 
   return {
-    correctIndex,
-    pickedIndex: phase.feedback.isCorrect ? null : phase.answer.selectedIndex,
+    correctOrder: correct && "order" in correct ? correct.order : [],
+    order: phase.answer.order,
   };
 }
 
-function getNumericResult(phase: QuestionBlockPhase): "correct" | "wrong" | null {
+/** A typed answer's mark once graded, a number's or a word's. */
+function getAnswerMark(phase: QuestionBlockPhase): "correct" | "wrong" | null {
   if (phase.kind !== "feedback") {
     return null;
   }
@@ -64,9 +89,25 @@ export function QuestionView({
     return (
       <NumericQuestion
         disabled={locked}
+        entry={question.entry}
         onAnswer={onAnswer}
-        result={getNumericResult(phase)}
+        result={getAnswerMark(phase)}
         unit={question.unit}
+      />
+    );
+  }
+
+  if (question.format === "typed") {
+    return <TypedQuestion disabled={locked} onAnswer={onAnswer} result={getAnswerMark(phase)} />;
+  }
+
+  if (question.format === "order") {
+    return (
+      <OrderQuestion
+        disabled={locked}
+        onAnswer={onAnswer}
+        result={getOrderResult(phase)}
+        steps={question.options ?? []}
       />
     );
   }
@@ -100,6 +141,7 @@ export function QuestionView({
       onAnswer={onAnswer}
       options={question.options ?? []}
       result={getChoiceResult(phase)}
+      select={question.select}
     />
   );
 }

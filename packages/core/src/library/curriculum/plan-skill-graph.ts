@@ -1,5 +1,6 @@
 import "server-only";
 import { type CourseLevel, prisma } from "@zoonk/db";
+import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { type GoalSkillGraph } from "./save-goal-skills";
@@ -58,20 +59,27 @@ function toGraphSkills({
   }));
 }
 
-/**
- * The skill graph a goal's stored plan was made from, rebuilt from the plan and the Library: for
- * a reading of the exam's notice that lands after the run that built the plan ended (research
- * restarted), which is checked against the plan as the first build's would have been. Keys are
- * the skills' Library ids (with the course when a skill is learned in several), so the plan the
- * graph turns back into is the same one. Null when the goal has no plan with skills.
- *
- * This is a workflow bridge: the goal comes from a run the learner's request started.
- */
-export async function loadPlanSkillGraph(goalId: string): Promise<PlanSkillGraph | null> {
-  const plan = await prisma.plan.findUnique({ where: { goalId } });
-  const planGraph = parsePlanGraph(plan?.graph);
+/** Who wrote a stored graph: the run, its model and the prompt version it read. */
+type GraphProvenance = PlanSkillGraph["provenance"];
 
-  if (!plan || planGraph.skills.length === 0) {
+/**
+ * The skill graph a stored plan graph stands for, rebuilt from it and the Library: keys are the
+ * skills' Library ids (with the course when a skill is learned in several), so the plan the graph
+ * turns back into is the same one. Null when it has no skills.
+ */
+export async function buildPlanSkillGraph({
+  graph,
+  plannedAt,
+  provenance,
+}: {
+  graph: unknown;
+  plannedAt: Date | null;
+  provenance: GraphProvenance;
+}): Promise<PlanSkillGraph | null> {
+  // The whole graph, the options the learner doesn't take of the exam's choices included.
+  const planGraph = joinOptionSkills(parsePlanGraph(graph));
+
+  if (planGraph.skills.length === 0) {
     return null;
   }
 
@@ -117,6 +125,28 @@ export async function loadPlanSkillGraph(goalId: string): Promise<PlanSkillGraph
     },
     // A key is its skill's id, followed by a course for the skill's other courses.
     idsByKey: Object.fromEntries(skills.map((skill) => [skill.key, skill.key.split(":")[0] ?? ""])),
+    plannedAt,
+    provenance,
+  };
+}
+
+/**
+ * The skill graph a goal's stored plan was made from (`buildPlanSkillGraph`): for a reading of the
+ * exam's notice that lands after the run that built the plan ended (research restarted), which is
+ * checked against the plan as the first build's would have been. Null when the goal has no plan
+ * with skills.
+ *
+ * This is a workflow bridge: the goal comes from a run the learner's request started.
+ */
+export async function loadPlanSkillGraph(goalId: string): Promise<PlanSkillGraph | null> {
+  const plan = await prisma.plan.findUnique({ where: { goalId } });
+
+  if (!plan) {
+    return null;
+  }
+
+  return buildPlanSkillGraph({
+    graph: plan.graph,
     plannedAt: plan.generatedAt,
     provenance: {
       generatedAt: (plan.generatedAt ?? plan.createdAt).toISOString(),
@@ -124,5 +154,5 @@ export async function loadPlanSkillGraph(goalId: string): Promise<PlanSkillGraph
       promptVersion: plan.promptVersion ?? "",
       runId: plan.runId ?? "",
     },
-  };
+  });
 }

@@ -34,7 +34,7 @@ export type PlacementSkill = {
   prerequisiteIds: readonly string[];
   /**
    * The area the skill graph put the skill in: the course it belongs to, such as an exam's
-   * subject ("História"). Null when the graph names none. Placement places each area on its own.
+   * subject ("History"). Null when the graph names none. Placement places each area on its own.
    */
   sectionTitle: string | null;
 };

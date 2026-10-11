@@ -92,6 +92,35 @@ describe(getAreaShares, () => {
     );
   });
 
+  // Sofia's plan named the OAB's ethics subject by its short name: left without its 8 questions'
+  // share, "less Philosophy" cut ethics lessons too.
+  it("gives an area named by a subject's short name that subject's share", () => {
+    const oab: ExamStructure = {
+      formats: [],
+      mock: null,
+      rules: [],
+      subjects: [
+        {
+          ...subject("Estatuto da Advocacia e da OAB e Código de Ética e Disciplina da OAB", 8),
+          shortName: "Ética Profissional",
+        },
+        subject("Filosofia do Direito", 2),
+      ],
+    };
+
+    expect(
+      getAreaShares({
+        graph: graphOf(["Ética Profissional", "Filosofia do Direito"]),
+        structure: oab,
+      }),
+    ).toStrictEqual(
+      new Map([
+        ["Ética Profissional", 0.8],
+        ["Filosofia do Direito", 0.2],
+      ]),
+    );
+  });
+
   it("gives a written test the latest edition counts no questions for an average share", () => {
     const counted: ExamStructure = {
       ...enem,

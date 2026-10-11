@@ -1,8 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type StepKind, prisma } from "@zoonk/db";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { getGoalField } from "../items/item-field";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
+import { getOptionPictureRequests, getStepImageRequest } from "../media/_utils/step-image-request";
 import {
   TOOL_VERSION_SCREENS,
   type ToolVersion,
@@ -55,10 +56,21 @@ async function loadToolByLesson({
   );
 }
 
-function loadVersionSteps(lessonIds: readonly string[]) {
-  return prisma.step.findMany({
+/**
+ * A question asked about its pictures: options that are pictures, or numbers on the parts of one
+ * picture. Versions are written without pictures, so it keeps its shared version: its pictures
+ * show things as they look, whatever the learner's tool or field.
+ */
+function asksAboutItsPictures(step: { content: unknown; kind: StepKind }): boolean {
+  return getOptionPictureRequests(step).length > 0 || Boolean(getStepImageRequest(step)?.parts);
+}
+
+/** The screens a lesson's versions may replace. */
+async function loadVersionSteps(lessonIds: readonly string[]) {
+  const steps = await prisma.step.findMany({
     orderBy: { position: "asc" },
     select: {
+      content: true,
       id: true,
       itemId: true,
       kind: true,
@@ -73,6 +85,8 @@ function loadVersionSteps(lessonIds: readonly string[]) {
       ...CURRENT_STEPS,
     },
   });
+
+  return steps.filter((step) => !asksAboutItsPictures(step));
 }
 
 type VersionStep = Awaited<ReturnType<typeof loadVersionSteps>>[number];

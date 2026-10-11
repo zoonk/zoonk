@@ -106,11 +106,17 @@ export function PageSection({ className, ...props }: React.ComponentProps<"secti
   );
 }
 
-/** The section's title with its count or one action on the same line. */
+/**
+ * The section's title with its count or one action on the same line, or under it when the line is
+ * too narrow for both, so a long detail never squeezes the title to a word a line.
+ */
 export function PageSectionHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex min-h-7 items-center justify-between gap-3 px-1", className)}
+      className={cn(
+        "flex min-h-7 flex-wrap items-center justify-between gap-x-3 gap-y-0.5 px-1",
+        className,
+      )}
       data-slot="page-section-header"
       {...props}
     />
@@ -133,7 +139,7 @@ export function PageSectionTitle({ children, className, ...props }: React.Compon
 export function PageSectionDetail({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-muted-foreground shrink-0 text-sm tabular-nums", className)}
+      className={cn("text-muted-foreground min-w-0 text-sm tabular-nums", className)}
       data-slot="page-section-detail"
       {...props}
     />

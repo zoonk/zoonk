@@ -2,10 +2,10 @@ import { randomUUID } from "node:crypto";
 import { type Locator } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { normalizeIdentityText } from "@zoonk/utils/identity-key";
 import { normalizeString } from "@zoonk/utils/string";
@@ -13,8 +13,9 @@ import { type Page, expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
 
 /**
- * Onboarding from a typed goal, as a visitor who becomes a guest when they submit it. The
- * understanding is stored the way a real one is, so the flow runs without the AI task. Each screen
+ * Onboarding from a typed goal, as a visitor who becomes a guest. The understanding is stored the
+ * way a real one is, as that guest's own (a reading is its learner's), so the flow runs without
+ * the AI task. Each screen
  * is scanned for accessibility once, in a flow that shows it; the scans are spread over several
  * flows (onboarding-steps and onboarding-course-start too) so none runs long.
  */
@@ -23,10 +24,16 @@ type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const GOAL_URL = /\/start\/[0-9a-f-]{36}$/u;
 
-/** Stores what the words mean, as a real read leaves it, and returns the words made unique. */
-async function storeUnderstanding({ result, words }: { result: Understanding; words: string }) {
+/**
+ * Stores what the words mean for the page's guest, as a real read leaves it, and returns the words
+ * made unique.
+ */
+async function storeUnderstanding(
+  page: Page,
+  { result, words }: { result: Understanding; words: string },
+) {
   const goal = `${words} ${randomUUID().slice(0, 8)}`;
-  await goalUnderstandingFixture({ goal, result });
+  await goalUnderstandingFixture({ goal, result, userId: await ensureGuest(page) });
   return goal;
 }
 
@@ -41,7 +48,7 @@ async function sendGoal(page: Page, goal: string) {
 }
 
 async function typeGoal(page: Page, { result, words }: { result: Understanding; words: string }) {
-  const goal = await storeUnderstanding({ result, words });
+  const goal = await storeUnderstanding(page, { result, words });
   await openStart(page);
   await sendGoal(page, goal);
 
@@ -65,11 +72,6 @@ async function continueWith(page: Page, heading: string, choose?: () => Promise<
   await expect(page.getByRole("heading", { name: heading })).toBeVisible();
   await choose?.();
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-}
-
-async function chooseBirth(page: Page, year: number) {
-  await page.getByLabel("Month").selectOption("3");
-  await page.getByLabel("Year").selectOption(String(year));
 }
 
 /** Scans a question as it looks right before moving on: answered, so Continue is enabled. */
@@ -127,7 +129,7 @@ const QUANTUM: Understanding = {
 
 test.describe("Onboarding from a typed goal", () => {
   test("a visitor goes from a goal in their words to a plan, by keyboard", async ({ page }) => {
-    const goal = await storeUnderstanding({
+    const goal = await storeUnderstanding(page, {
       result: QUANTUM,
       words: "i want to understand quantum physics",
     });
@@ -158,11 +160,6 @@ test.describe("Onboarding from a typed goal", () => {
     await answerByKeyboard(page, {
       choose: () => page.getByText("The basics").click(),
       heading: "How much do you already know?",
-    });
-
-    await answerByKeyboard(page, {
-      choose: () => chooseBirth(page, 1995),
-      heading: "When were you born?",
     });
 
     // Everyone's first onboarding brings a buddy: one comes picked and its name is optional, so
@@ -239,9 +236,8 @@ test.describe("Onboarding from a typed goal", () => {
 
     expect(profile).toMatchObject({
       activeGoalId: created.id,
-      birthMonth: 3,
-      birthYear: 1995,
       buddyKind: "zu",
+      memoryEnabled: true,
     });
   });
 
@@ -281,8 +277,6 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText("20 min a day")).toBeVisible();
     const created = await confirmGoal(page, goal);
 
-    await continueWith(page, "When were you born?", () => chooseBirth(page, 1990));
-
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("radio", { name: /Otto/u }).click();
     await page.getByRole("textbox", { name: "Name" }).fill("Octavia");
@@ -310,7 +304,7 @@ test.describe("Onboarding from a typed goal", () => {
     const id = randomUUID().slice(0, 8);
     const name = `Zoonk test exam ${id}`;
     const title = `Pass the ${name} on the first try`;
-    const thisYear = new Date().getFullYear();
+    const thisYear = new Date().getUTCFullYear();
     const noticeYear = thisYear + 1;
     const namedYear = thisYear + 3;
     const source = await sourceFixture({ title: `${name} notice` });
@@ -373,16 +367,16 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText("Exam year", { exact: true })).toBeHidden();
     await expect(page.getByRole("link", { name: /source:/u })).toBeHidden();
 
-    // The same row fixes the year: the notice's year brings its official days, with their source.
-    const noticeDays = new RegExp(`^November\\s8 and November\\s15,\\s${noticeYear}$`, "u");
+    // The same row takes any full date of her own: no estimated day is offered over it.
+    const ownDay = `${namedYear}-10-20`;
+    const ownDate = `October 20, ${namedYear}`;
     await page.getByRole("button", { name: "Edit Exam dates" }).click();
-    await page.getByRole("spinbutton", { name: "Exam year" }).fill(String(noticeYear));
+    await page.getByLabel("Exam date").fill(ownDay);
     await page.getByRole("button", { name: "Save" }).click();
-    await expect(page.getByText(noticeDays)).toBeVisible();
-    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
+    await expect(page.getByText(ownDate, { exact: true })).toBeVisible();
     await expect(page.getByText(/We'll tell you when the official ones are out/u)).toBeHidden();
-    await expect(page.getByText(/days? left/u)).toBeVisible();
-    await expect(page.getByRole("button", { name: "Edit Exam dates" })).toBeFocused();
+    await expect(page.getByRole("button", { name: "Use this date" })).toBeHidden();
+    await expect(page.getByRole("button", { name: "Edit Exam date" })).toBeFocused();
 
     // Fix facts in place: the goal's title and when they study. Each fix is saved on the draft;
     // closing an edit gives focus back to that row's pencil.
@@ -403,15 +397,16 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();
     await expect(page.getByText(goal, { exact: true })).toBeVisible();
     await expect(page.getByText(title, { exact: true })).toBeVisible();
-    await expect(page.getByText(noticeDays)).toBeVisible();
+    await expect(page.getByText(ownDate, { exact: true })).toBeVisible();
     await expect(page.getByText("8:00 PM")).toBeVisible();
 
     const created = await confirmGoal(page, goal);
 
     expect(created).toMatchObject({
-      details: { examYear: noticeYear },
+      details: { examYear: namedYear },
       kind: "exam",
       studyTime: "20:00",
+      targetDate: new Date(`${ownDay}T00:00:00.000Z`),
       title,
     });
 
@@ -424,7 +419,6 @@ test.describe("Onboarding from a typed goal", () => {
       page.getByText("The basics").click(),
     );
 
-    await continueWith(page, "When were you born?", () => chooseBirth(page, 1990));
     await continueWith(page, "Choose your buddy");
     await page.getByRole("button", { name: "Start from zero" }).click();
 
@@ -437,6 +431,142 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("radio", { exact: true, name: "1h" })).toBeChecked();
 
     await expect(page.getByText("When will you study?")).toBeHidden();
+  });
+
+  // Sofia's card said "You said March; the notice sets this date" over the notice's day and let her
+  // fix only the year. Her month stays; the notice's day is one tap away, and so is any date.
+  test("an exam card keeps the month the learner named, offers the notice's day in one tap and takes any date", async ({
+    page,
+  }) => {
+    const id = randomUUID().slice(0, 8);
+    const name = `Zoonk month exam ${id}`;
+    const noticeYear = new Date().getUTCFullYear() + 1;
+    const source = await sourceFixture({ title: `${name} notice` });
+
+    await examBlueprintFixture({
+      edition: {
+        citations: [],
+        dates: [
+          {
+            citation: { passage: "Day 1", sourceId: source.id },
+            date: `${noticeYear}-11-08`,
+            kind: "exam",
+            label: "Day 1",
+            startTime: null,
+          },
+        ],
+        noticeUrl: source.url,
+        questionCount: null,
+        sourceHash: null,
+        timeZone: null,
+        year: noticeYear,
+      },
+      identityKey: normalizeIdentityText(name),
+      name,
+    });
+
+    await typeGoal(page, {
+      result: {
+        followUps: [],
+        goals: [
+          {
+            examMonth: 3,
+            examName: name,
+            examYear: noticeYear,
+            kind: "exam",
+            subject: name,
+            title: `Pass the ${name} in March`,
+          },
+        ],
+        route: "goals",
+      },
+      words: `pass the ${name} in march ${noticeYear}`,
+    });
+
+    // The plan counts down to her month; the notice's day is offered, with its source.
+    const noticeDay = /^The exam notice says November\s8,\s\d{4}\./u;
+    await expect(page.getByText("Exam date", { exact: true })).toBeVisible();
+    await expect(page.getByText(`March ${noticeYear}`, { exact: true })).toBeVisible();
+    await expect(page.getByText(noticeDay)).toBeVisible();
+    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
+
+    // She sets an exact day of her own: still not the notice's, which stays one tap away.
+    await page.getByRole("button", { name: "Edit Exam date" }).click();
+    await page.getByLabel("Exam date").fill(`${noticeYear}-03-20`);
+    await page.getByRole("button", { name: "Save" }).click();
+    await expect(page.getByText(`March 20, ${noticeYear}`, { exact: true })).toBeVisible();
+    await expect(page.getByText(noticeDay)).toBeVisible();
+
+    // One tap takes the notice's day, which then counts down with its source.
+    await page.getByRole("button", { name: "Use this date" }).click();
+    await expect(page.getByText(`November 8, ${noticeYear}`, { exact: true })).toBeVisible();
+    await expect(page.getByText(noticeDay)).toBeHidden();
+    await expect(page.getByRole("button", { name: "Use this date" })).toBeHidden();
+    await expect(page.getByText(/days? left/u)).toBeVisible();
+    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
+  });
+
+  // Dele's DELE B2 without a date listed every sitting and planned for the one six days away, whose
+  // registration had closed.
+  test("an exam held several times a year asks which date, from the next ones still open", async ({
+    page,
+  }) => {
+    const id = randomUUID().slice(0, 8);
+    const name = `Zoonk sittings exam ${id}`;
+    const year = new Date().getUTCFullYear() + 1;
+    const source = await sourceFixture({ title: `${name} calendar` });
+    const citation = { passage: "Calendar", sourceId: source.id };
+
+    const day = (date: string, kind: "exam" | "registrationEnd") => ({
+      citation,
+      date,
+      kind,
+      label: kind === "exam" ? "Exam" : "Registration closes",
+      startTime: null,
+    });
+
+    await examBlueprintFixture({
+      edition: {
+        citations: [],
+        dates: [
+          // March's registration already closed.
+          day(`${year - 2}-12-01`, "registrationEnd"),
+          day(`${year}-03-06`, "exam"),
+          day(`${year}-05-15`, "exam"),
+          day(`${year}-07-10`, "exam"),
+          day(`${year}-10-09`, "exam"),
+        ],
+        noticeUrl: source.url,
+        questionCount: null,
+        sourceHash: null,
+        timeZone: null,
+        year,
+      },
+      identityKey: normalizeIdentityText(name),
+      name,
+    });
+
+    await typeGoal(page, {
+      result: {
+        followUps: [],
+        goals: [{ examName: name, kind: "exam", subject: name, title: `Pass the ${name}` }],
+        route: "goals",
+      },
+      words: `pass the ${name}`,
+    });
+
+    await expect(page.getByText("Pick your date", { exact: true })).toBeVisible();
+    await expect(page.getByText(/held several times a year/u)).toBeVisible();
+    await expect(page.getByRole("button", { name: `Mar 6, ${year}` })).toBeHidden();
+    await expect(page.getByRole("button", { name: `May 15, ${year}` })).toBeVisible();
+    await expect(page.getByRole("button", { name: `Oct 9, ${year}` })).toBeVisible();
+
+    // One tap makes it her date, with its source and the days left.
+    await page.getByRole("button", { name: `Jul 10, ${year}` }).click();
+    await expect(page.getByText(`July 10, ${year}`, { exact: true })).toBeVisible();
+    await expect(page.getByText("Pick your date", { exact: true })).toBeHidden();
+    await expect(page.getByText(/days? left/u)).toBeVisible();
+    await expect(page.getByRole("link", { name: /source:/u })).toBeVisible();
   });
 
   test("the card never repeats what the goal's title says, and gives the goal one date", async ({
@@ -503,14 +633,14 @@ test.describe("Onboarding from a typed goal", () => {
 
     await page.getByRole("button", { name: "Looks right" }).click();
 
-    // Nothing left to ask about the goal: the learner comes next, and the time after placement.
-    await expect(page.getByRole("heading", { name: "When were you born?" })).toBeVisible();
+    // Nothing left to ask about the goal: the learner's buddy comes next, the time after placement.
+    await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
   });
 
   test("an unsafe goal is declined kindly, and a vague one asks for a bit more", async ({
     page,
   }) => {
-    const unsafe = await storeUnderstanding({
+    const unsafe = await storeUnderstanding(page, {
       result: { route: "unsafe" },
       words: "how to get into someone's account",
     });
@@ -524,7 +654,11 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
 
     // A vague goal isn't guessed at.
-    const vague = await storeUnderstanding({ result: { route: "unclear" }, words: "be better" });
+    const vague = await storeUnderstanding(page, {
+      result: { route: "unclear" },
+      words: "be better",
+    });
+
     await sendGoal(page, vague);
     await expect(page.getByRole("heading", { name: "Tell us a bit more" })).toBeVisible();
   });
@@ -546,72 +680,5 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page).toHaveURL(GOAL_URL);
 
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
-  });
-
-  test("an account under 13 says goodbye under the visitor's bar, not the deleted learner's", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const goal = await goalFixture({
-      details: { answered: ["schedule", "targetDate"], level: "none", purpose: "overview" },
-      kind: "learn",
-      title: `Learn about dinosaurs ${randomUUID().slice(0, 8)}`,
-      userId: noProgressUser.id,
-    });
-
-    // The goal's questions are a task: no app bar while they're answered.
-    await page.goto(`/start/${goal.id}`);
-    await expect(page.getByRole("heading", { name: "When were you born?" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Current goal:/u })).toHaveCount(0);
-
-    await continueWith(page, "When were you born?", async () => {
-      await chooseBirth(page, new Date().getFullYear() - 10);
-      await expectAccessibleAnswer(page, "When were you born?");
-    });
-
-    await expect(
-      page.getByRole("heading", { name: "Zoonk is for learners 13 and older" }),
-    ).toBeVisible();
-
-    const bar = page.getByRole("banner");
-    await expect(bar.getByRole("link", { name: "Log in" })).toBeVisible();
-    await expect(bar.getByRole("button", { name: "User menu" })).toBeHidden();
-    await expect(bar.getByRole("link", { name: "Start a goal" })).toBeHidden();
-    await expect(bar.getByRole("button", { name: /Current goal:/u })).toBeHidden();
-
-    await expect
-      .poll(() => prisma.user.findUnique({ where: { id: noProgressUser.id } }))
-      .toBeNull();
-
-    // For a day, the same device can't answer again with an older age: the new guest goes too.
-    const words = await typeGoal(page, {
-      result: {
-        followUps: [],
-        goals: [
-          {
-            kind: "language",
-            level: "A2",
-            nativeLanguage: "pt",
-            ownLevel: "basic",
-            reason: "Travel",
-            subject: "English",
-            targetDate: "2099-03-31",
-            targetLanguage: "en",
-            title: "Speak English when I travel",
-          },
-        ],
-        route: "goals",
-      },
-      words: "i want english for travel, i'm A2",
-    });
-
-    const retried = await confirmGoal(page, words);
-    await continueWith(page, "When were you born?", () => chooseBirth(page, 1990));
-
-    await expect(
-      page.getByRole("heading", { name: "Zoonk is for learners 13 and older" }),
-    ).toBeVisible();
-
-    await expect.poll(() => prisma.user.findUnique({ where: { id: retried.userId } })).toBeNull();
   });
 });

@@ -12,13 +12,13 @@ import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { MAX_MATCHES_PER_TERM } from "../identity/_utils/text-search-sql";
 import { type BlueprintContent } from "./blueprint-contract";
+import { type ExamIdentity, buildExamIdentityKey } from "./exam-identity";
+import { type ExamRequest, findSameExam } from "./find-same-exam";
 import {
-  type ExamIdentity,
-  type ExamRequest,
-  buildExamIdentityKey,
-  findSameExam,
-} from "./exam-identity";
-import { previewExamBlueprintChanges, saveExamBlueprint } from "./save-exam-blueprint";
+  findNoticeReading,
+  previewExamBlueprintChanges,
+  saveExamBlueprint,
+} from "./save-exam-blueprint";
 
 /** Whether two exams are the same is an evaluation model's call: each test says what it answers. */
 vi.mock("@zoonk/ai/tasks/v2/research/exam-identity-decision", () => ({
@@ -282,7 +282,7 @@ describe(saveExamBlueprint, () => {
     ).resolves.toBe(0);
   });
 
-  it("tells learners nothing when the same notice is read again with new instructions", async () => {
+  it("tells learners nothing when the same document is read again", async () => {
     const source = await sourceFixture({ language: "pt" });
     const examIdentity = identity();
     const first = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
@@ -294,7 +294,7 @@ describe(saveExamBlueprint, () => {
       sourceId: source.id,
     });
 
-    // The same document, read by newer instructions that now see the notice's groups.
+    // The same document, read again: a reading may word it differently, but the exam didn't change.
     const reread = content({ questions: 90, sourceHash: source.contentHash, sourceId: source.id });
 
     await expect(
@@ -325,7 +325,7 @@ describe(saveExamBlueprint, () => {
       sourceId: source.id,
     });
 
-    // The exam's page, read by newer instructions: "180 questões objetivas", no options.
+    // The exam's page, read later: "180 objective questions", no options.
     const reread = content({ questions: 180, sourceHash: page.contentHash, sourceId: page.id });
 
     const saved = await saveExamBlueprint({
@@ -406,6 +406,138 @@ describe(saveExamBlueprint, () => {
     await expect(
       prisma.examBlueprint.findUnique({ where: { id: shared.blueprint.id } }),
     ).resolves.not.toBeNull();
+  });
+});
+
+describe(findNoticeReading, () => {
+  const checkedAt = "2026-10-09T00:00:00.000Z";
+
+  it("reads a checked notice once, whatever instructions read it, and again only for a changed or newer document", async () => {
+    const [source, next] = await Promise.all([
+      sourceFixture({ language: "pt" }),
+      sourceFixture({ language: "pt" }),
+    ]);
+
+    const examIdentity = identity();
+    const read = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
+
+    // Read by reading instructions older than today's, and its check found nothing left out.
+    await saveExamBlueprint({
+      content: {
+        ...read,
+        edition: { ...read.edition, check: { checkedAt, problems: [], readings: 1 } },
+      },
+      identity: examIdentity,
+      provenance: { ...PROVENANCE, promptVersion: "older-instructions" },
+      sourceId: source.id,
+    });
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
+    ).resolves.toStrictEqual({ status: "settled" });
+
+    // The board published a newer notice for the same exam.
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: next.id }),
+    ).resolves.toStrictEqual({ status: "unread" });
+
+    // The same address now serves a corrected document.
+    await prisma.source.update({
+      data: { contentHash: `corrected-${randomUUID()}` },
+      where: { id: source.id },
+    });
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
+    ).resolves.toStrictEqual({ status: "unread" });
+  });
+
+  it("reads a notice again while its check found something left out, a few times at most", async () => {
+    const source = await sourceFixture({ language: "pt" });
+    const examIdentity = identity();
+    const read = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
+
+    const problems = [
+      {
+        citation: { passage: "bem como Estatuto da Advocacia e da OAB", sourceId: source.id },
+        kind: "missingSubject" as const,
+        name: "Estatuto da Advocacia e da OAB",
+      },
+    ];
+
+    const saved = await saveExamBlueprint({
+      content: {
+        ...read,
+        edition: { ...read.edition, check: { checkedAt, problems, readings: 2 } },
+      },
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
+    ).resolves.toStrictEqual({ problems, readings: 2, status: "readAgain" });
+
+    // Read as many times as it may be: it waits for the notice to change.
+    await prisma.examBlueprint.update({
+      data: { edition: { ...read.edition, check: { checkedAt, problems, readings: 4 } } },
+      where: { id: saved.blueprint.id },
+    });
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
+    ).resolves.toStrictEqual({ status: "settled" });
+
+    // A reading with no check (stored before readings were checked, or its check failed) is
+    // used as it is: only a check that found problems reads a notice again, never a code change.
+    await prisma.examBlueprint.update({
+      data: { edition: read.edition },
+      where: { id: saved.blueprint.id },
+    });
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
+    ).resolves.toStrictEqual({ status: "settled" });
+  });
+
+  // A change to how editions are stored never reads a notice again: the reading stands, and the
+  // change that moved the shape migrates its rows.
+  it("never reads a notice again because its stored reading is in an older shape", async () => {
+    const source = await sourceFixture({ language: "pt" });
+    const examIdentity = identity();
+
+    const saved = await saveExamBlueprint({
+      content: content({ questions: 10, sourceHash: source.contentHash, sourceId: source.id }),
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    await prisma.examBlueprint.update({
+      data: { edition: { questionCount: "ten", sourceHash: source.contentHash } },
+      where: { id: saved.blueprint.id },
+    });
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
+    ).resolves.toStrictEqual({ status: "settled" });
+  });
+
+  it("never reads a learner's own material again for a check", async () => {
+    const [user, source] = await Promise.all([userFixture(), sourceFixture({ language: "pt" })]);
+    const examIdentity = identity({ ownerId: user.id });
+
+    await saveExamBlueprint({
+      content: content({ questions: 10, sourceHash: source.contentHash, sourceId: source.id }),
+      identity: examIdentity,
+      provenance: PROVENANCE,
+      sourceId: source.id,
+    });
+
+    await expect(
+      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
+    ).resolves.toStrictEqual({ status: "settled" });
   });
 });
 

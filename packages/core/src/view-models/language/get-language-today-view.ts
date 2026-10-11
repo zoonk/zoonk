@@ -1,5 +1,6 @@
 import "server-only";
 import { readGoalDetails } from "../../language/_utils/language-goal";
+import { loadSpeakingPaperEntry } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import {
   getTargetLevel,
   loadLanguageSkillLevels,
@@ -17,7 +18,7 @@ export type LanguageTodayViewResult =
 /**
  * What Today adds for a language goal: the level across skills with the target ("A2+ → B1+"),
  * which stands in for preparation, a pattern noticed in recent mistakes that wasn't practiced yet,
- * and the words to say again today.
+ * the words to say again today, and the exam-style speaking tasks to practice any time.
  */
 export async function getLanguageTodayView(
   input: { goalId?: string } = {},
@@ -33,10 +34,11 @@ export async function getLanguageTodayView(
   const { goal, userId } = loaded.context;
   const details = readGoalDetails(goal);
 
-  const [levels, pattern, pronunciation] = await Promise.all([
+  const [levels, pattern, pronunciation, speaking] = await Promise.all([
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
     findFreshMistakePattern({ language: goal.targetLanguage, userId }),
     loadDuePronunciation({ language: goal.targetLanguage, userId }),
+    loadSpeakingPaperEntry({ goal }),
   ]);
 
   const label = getOverallLevel(levels.map((level) => level.score));
@@ -47,6 +49,7 @@ export async function getLanguageTodayView(
       level: label ? { label, target: getTargetLevel(details)?.label ?? null } : null,
       pattern,
       pronunciation,
+      speaking,
     },
   };
 }

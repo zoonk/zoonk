@@ -1,5 +1,6 @@
 "use client";
 
+import { countDoneMissions } from "@zoonk/core/sessions/missions";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
@@ -20,7 +21,7 @@ import { useFormatShare } from "../_utils/percent";
 import { toBeltColor, useBeltName } from "../_utils/use-belt-name";
 import { LearnLink } from "../learn-link";
 import { BuddyStageName } from "./buddy-labels";
-import { BuddyMissions, isMissionComplete } from "./buddy-missions";
+import { BuddyMissions } from "./buddy-missions";
 import { type BuddyStatusView } from "./buddy-status-view";
 import { MissionsRing } from "./missions-ring";
 
@@ -199,7 +200,7 @@ function useMissionsValue(status: BuddyStatusView): string {
     return t("Not yet");
   }
 
-  const done = today.missions.filter((mission) => mission.status !== "todo").length;
+  const done = countDoneMissions(today.missions);
 
   return t("{done, number} of {total, number}", { done, total: today.missions.length });
 }
@@ -213,7 +214,7 @@ function useMissionsLabel(status: BuddyStatusView): string {
     return t("Missions");
   }
 
-  const done = today.missions.filter((mission) => mission.status !== "todo").length;
+  const done = countDoneMissions(today.missions);
 
   return t("{done} of {total} missions", {
     done: String(done),
@@ -288,7 +289,7 @@ export function BuddyToday({
               <MissionsRing
                 className="size-5"
                 missions={{
-                  done: status.today.missions.filter(isMissionComplete).length,
+                  done: countDoneMissions(status.today.missions),
                   total: status.today.missions.length,
                 }}
                 moment={false}

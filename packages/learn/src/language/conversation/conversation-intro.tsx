@@ -5,15 +5,26 @@ import { CircleIcon, ClockIcon, MicIcon, PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FactChip, FactChips } from "../../_components/fact-chips";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
+import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterAvatar } from "./conversation-parts";
 
 /**
  * Before the call, as one card: who the learner talks to and how long it lasts, then why and what
  * to get across; by the button, that they can speak or type and the microphone is only used
- * during the call. One button (or Enter) starts it; Escape leaves, since nothing has started.
+ * during the call. One button (or Enter) starts it; Escape leaves, since nothing has started. An
+ * exam's speaking task shows its card instead (`ExamTaskIntro`).
  */
-export function ConversationIntro({
+export function ConversationIntro(props: {
+  conversation: LanguageConversationView;
+  exitHref: string;
+  onStart: () => void;
+}) {
+  const { examTask } = props.conversation;
+  return examTask ? <ExamTaskIntro {...props} examTask={examTask} /> : <CallIntro {...props} />;
+}
+
+function CallIntro({
   conversation,
   exitHref,
   onStart,

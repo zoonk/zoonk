@@ -34,31 +34,8 @@ type LanguageUnitHrefs = {
   pronunciation: string;
 };
 
-type UnitLesson = LanguageUnitView["lessons"][number];
-
 const PRACTICE_TITLE_ID = "unit-practice-title";
 const EXTRAS_TITLE_ID = "unit-extras-title";
-
-function getLessonState({ isDone, isNext }: { isDone: boolean; isNext: boolean }) {
-  if (isDone) {
-    return "done" as const;
-  }
-
-  return isNext ? ("next" as const) : ("upcoming" as const);
-}
-
-/** The unit's lessons in order, the first not done being the one to open next. */
-function toLessonStates(lessons: readonly UnitLesson[]) {
-  const nextIndex = lessons.findIndex((lesson) => !lesson.done);
-
-  return lessons.map((lesson, index) => ({
-    lessonId: lesson.lessonId,
-    minutes: lesson.minutes,
-    state: getLessonState({ isDone: lesson.done, isNext: index === nextIndex }),
-    title: lesson.title,
-    written: lesson.written,
-  }));
-}
 
 /** The unit's folded extras: its grammar tips, its words and its summaries. */
 function UnitExtras({
@@ -211,7 +188,7 @@ export function LanguageUnitScreen({
 
         <DetailContent>
           {unit.lessons.length > 0 && (
-            <LessonList lessonHref={hrefs.lesson} lessons={toLessonStates(unit.lessons)} />
+            <LessonList lessonHref={hrefs.lesson} lessons={unit.lessons} />
           )}
           <UnitObjectives view={unit} />
           <UnitPractice actions={actions} hrefs={hrefs} unit={unit} />

@@ -1,11 +1,12 @@
 "use client";
 
-import { type MockReviewEntry } from "@zoonk/core/exams/mocks/contract";
+import { type MockReviewEntry } from "@zoonk/core/exams/mocks/view-contract";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
-import { ItemLine } from "../questions/item-text";
+import { ItemSetStimulus } from "../questions/item-set-stimulus";
+import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useMockScreen } from "./mock-context";
 
@@ -24,7 +25,14 @@ function useAnswerText() {
   };
 }
 
-function ReviewEntry({ entry }: { entry: MockReviewEntry }) {
+function ReviewEntry({
+  continued,
+  entry,
+}: {
+  /** The entry before it reads the same text, so a phone folds this one. */
+  continued: boolean;
+  entry: MockReviewEntry;
+}) {
   const t = useExtracted();
   const answerText = useAnswerText();
 
@@ -44,16 +52,27 @@ function ReviewEntry({ entry }: { entry: MockReviewEntry }) {
           votes={false}
         />
       </div>
+      {entry.set && <ItemSetStimulus continued={continued} set={entry.set} />}
+      {entry.context && <ItemText className="text-muted-foreground text-sm" text={entry.context} />}
       <p className="font-medium">
         <ItemLine text={entry.question} />
       </p>
+      {entry.outcome === "partial" && (
+        <p className="text-muted-foreground text-sm">
+          {t("Partly right: it earned part of its points.")}
+        </p>
+      )}
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
         <dt className="text-muted-foreground">{t("Yours")}</dt>
-        <dd>{answerText(entry, entry.learnerAnswer)}</dd>
+        <dd>
+          <ItemLine text={answerText(entry, entry.learnerAnswer)} />
+        </dd>
         <dt className="text-muted-foreground">{t("Right answer")}</dt>
-        <dd className="font-medium">{answerText(entry, entry.correctAnswer)}</dd>
+        <dd className="font-medium">
+          <ItemLine text={answerText(entry, entry.correctAnswer)} />
+        </dd>
       </dl>
-      {entry.explanation && <p className="text-sm">{entry.explanation}</p>}
+      {entry.explanation && <ItemText className="text-sm" text={entry.explanation} />}
       {entry.citation && (
         <ItemCitationNote citation={entry.citation} className="text-muted-foreground" />
       )}
@@ -82,8 +101,12 @@ export function MockReviewSheet() {
       title={t("Questions to review")}
     >
       <ol className="flex flex-col gap-3">
-        {review.map((entry) => (
-          <ReviewEntry entry={entry} key={entry.itemId} />
+        {review.map((entry, index) => (
+          <ReviewEntry
+            continued={entry.set !== null && review[index - 1]?.set?.id === entry.set.id}
+            entry={entry}
+            key={entry.itemId}
+          />
         ))}
       </ol>
     </DetailsDrawer>

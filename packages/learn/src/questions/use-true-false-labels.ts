@@ -5,7 +5,7 @@ import { useExtracted } from "next-intl";
 
 /**
  * The words a true-or-false statement is answered with, from the goal's exam: right or wrong where a
- * wrong answer cancels a right one (Cebraspe's Certo or Errado), true or false everywhere else.
+ * wrong answer cancels a right one (Cebraspe's exams), true or false everywhere else.
  * Every screen with statements labels them here, so buttons, feedback and reviews always agree.
  */
 export function useTrueFalseLabels(labels: TrueFalseLabels) {

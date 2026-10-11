@@ -1,5 +1,6 @@
 import "server-only";
 import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
+import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
 import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
@@ -8,6 +9,7 @@ import {
   type SpeakingMockExam,
   conversationScenarioSchema,
 } from "../conversation-contract";
+import { SPEAKING_MOCK_MINUTES } from "../conversation-rules";
 
 type ScenarioUnit = {
   description: string;
@@ -16,37 +18,6 @@ type ScenarioUnit = {
   objectives: string[];
   targetLanguage: string;
   title: string;
-};
-
-/**
- * What each exam's speaking mock asks for, in English: the scenario writer turns it into the
- * examiner. TOEFL iBT Speaking is about 8 minutes: 7 sentences to repeat, then 4 interview
- * questions with 45 seconds each (ETS, "Updated TOEFL iBT Test Overview", checked Sep 2026:
- * https://www.in.ets.org/content/dam/ets-india/pdfs/toefl/toefl-ibt-test-overview.pdf).
- */
-const SPEAKING_MOCK_UNITS: Record<
-  SpeakingMockExam,
-  { canDo: string[]; description: string; title: string }
-> = {
-  ielts: {
-    canDo: [
-      "Part 1: answer short questions about yourself, your home and your routine",
-      "Part 2: talk for about a minute about a cue card topic",
-      "Part 3: discuss wider questions about the same topic",
-    ],
-    description:
-      "A short mock of the IELTS Speaking test: its three parts compressed into about five minutes, with an examiner who asks the questions and keeps time.",
-    title: "IELTS Speaking test",
-  },
-  toefl: {
-    canDo: [
-      "Listen and Repeat: repeat seven sentences exactly as you hear them, in a campus or academic setting, each longer and more complex than the last",
-      "Take an Interview: answer four interview questions, from facts about yourself to opinions, explanations and predictions, for up to about 45 seconds each",
-    ],
-    description:
-      "A short mock of the TOEFL iBT Speaking section: its two tasks compressed into about five minutes instead of about eight, with an examiner who says each sentence and question once.",
-    title: "TOEFL iBT Speaking section",
-  },
 };
 
 function findSavedScenario({ chapterId, level }: { chapterId: string; level: CefrLevel }) {
@@ -134,16 +105,13 @@ export async function getSpeakingMockScenario({
   targetLanguage: string;
   userId: string;
 }): Promise<ConversationScenario> {
-  const unit = SPEAKING_MOCK_UNITS[exam];
-
-  const { data } = await generateConversationScenario({
+  const { data } = await generateSpeakingMockScenario({
     analytics: { contentScope: "personal", distinctId: userId, goalId },
-    canDo: unit.canDo,
+    exam,
     learnerLanguage: language,
     level,
+    minutes: SPEAKING_MOCK_MINUTES,
     targetLanguage,
-    unitDescription: unit.description,
-    unitTitle: unit.title,
   });
 
   return conversationScenarioSchema.parse(data);

@@ -73,7 +73,13 @@ test.describe("Research upload requests API", () => {
     expect(own.status()).toBe(200);
 
     expect(goalUploadRequestResponseSchema.parse(await own.json())).toStrictEqual({
-      request: { goalId: goal.id, goalKind: "exam", language: "en", reason: "noOfficialSource" },
+      request: {
+        examDocument: "notice",
+        goalId: goal.id,
+        goalKind: "exam",
+        language: "en",
+        reason: "noOfficialSource",
+      },
     });
 
     expect([hidden.status(), hiddenDismissal.status()]).toStrictEqual([404, 404]);

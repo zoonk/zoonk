@@ -15,10 +15,12 @@ import {
   type ExamDate,
   examEditionSchema,
   examStructureSchema,
+  readStoredSourceHash,
   topicFrequencySchema,
 } from "./blueprint-contract";
 import { type BlueprintChange, mergeBlueprintContent, movesExamDays } from "./blueprint-diff";
 import { type ExamIdentity, buildExamIdentityKey, findExamBlueprintByKey } from "./exam-identity";
+import { getReadingStatus } from "./reading-check";
 
 export type BlueprintNotice = { message: string; provenance: LibraryProvenance };
 
@@ -31,6 +33,9 @@ export type SaveExamBlueprintInput = {
   /** The line shown to learners when an existing blueprint changed. */
   notice?: BlueprintNotice | null;
 };
+
+/** How a stored blueprint stands with a document research found for it (`findNoticeReading`). */
+export type NoticeReading = { status: "unread" } | ReturnType<typeof getReadingStatus>;
 
 export type SavedExamBlueprint = {
   blueprint: ExamBlueprint;
@@ -115,8 +120,7 @@ export function isPastEdition({
  * What a new reading would change on the stored blueprint, so the workflow
  * can ask a model for the learner notice before saving. Null when there's
  * nothing to tell learners: the exam has no blueprint yet, or the reading is of
- * the very document the blueprint was read from (newer reading instructions
- * read it again: the exam didn't change, only how well it's read).
+ * the very document the blueprint was read from, so the exam didn't change.
  */
 export async function previewExamBlueprintChanges({
   content,
@@ -198,19 +202,19 @@ async function updateBlueprint({
 }
 
 /**
- * Whether the exam's stored blueprint was already read from this very notice with the current
- * reading instructions (`promptVersion`), so reading it again would only repeat that reading: a
- * new edition, a corrected notice or new instructions are read again.
+ * How the exam's stored blueprint stands with this document: `unread` when it wasn't read from
+ * this very document (a new edition, a corrected notice, or no blueprint yet), which research
+ * reads; otherwise how its reading stands (`getReadingStatus`). Newer reading instructions or a
+ * new shape for stored editions never read a notice again, since every learner of the exam shares
+ * the one reading: only a reading whose check found problems is read again.
  */
-export async function isNoticeAlreadyRead({
+export async function findNoticeReading({
   identity,
-  promptVersion,
   sourceId,
 }: {
   identity: ExamIdentity;
-  promptVersion: string;
   sourceId: string;
-}): Promise<boolean> {
+}): Promise<NoticeReading> {
   const [blueprint, source] = await Promise.all([
     findExamBlueprintByKey({
       identityKey: buildExamIdentityKey(identity),
@@ -220,12 +224,12 @@ export async function isNoticeAlreadyRead({
   ]);
 
   if (!blueprint || !source) {
-    return false;
+    return { status: "unread" };
   }
 
-  const { sourceHash } = readBlueprintContent(blueprint).edition;
-
-  return blueprint.promptVersion === promptVersion && sourceHash === source.contentHash;
+  return readStoredSourceHash(blueprint.edition) === source.contentHash
+    ? getReadingStatus(blueprint)
+    : { status: "unread" };
 }
 
 /**

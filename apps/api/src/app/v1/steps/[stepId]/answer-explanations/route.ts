@@ -44,6 +44,7 @@ async function createAnswerExplanation(
     case "correct":
       return errors.unprocessableEntity("That answer is right, so there's nothing to explain");
     case "limitReached":
+    case "signUpRequired":
     case "slowDown":
       return usageDecisionError(result);
     case "explained":

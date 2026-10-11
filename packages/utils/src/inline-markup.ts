@@ -106,28 +106,6 @@ function findItalic(text: string, from = 0): Span | null {
   return { content: text.slice(first.start + 1, close), end: close + 1, start: first.start };
 }
 
-function plainText(text: string): InlineMarkup[] {
-  return text ? [{ kind: "text", text }] : [];
-}
-
-function splitAround({
-  kind,
-  rest,
-  span,
-  text,
-}: {
-  kind: InlineMarkup["kind"];
-  rest: (text: string) => InlineMarkup[];
-  span: Span;
-  text: string;
-}): InlineMarkup[] {
-  return [
-    ...rest(text.slice(0, span.start)),
-    { kind, text: span.content },
-    ...rest(text.slice(span.end)),
-  ];
-}
-
 type MarkedSpan = Span & { kind: "bold" | "italic" };
 
 /**
@@ -148,19 +126,57 @@ function findFirstMark(text: string): MarkedSpan | null {
   return marks.toSorted((left, right) => left.start - right.start)[0] ?? null;
 }
 
-function parseEmphasis(text: string): InlineMarkup[] {
+/** A segment of a line with where it is: `start` to `end` (exclusive) cover its marks too. */
+export type InlineMarkupRange = InlineMarkup & { end: number; start: number };
+
+/** A marked span with what's around it, each side read again by `rest` from where it starts. */
+function rangesAround({
+  kind,
+  offset,
+  rest,
+  span,
+  text,
+}: {
+  kind: InlineMarkup["kind"];
+  offset: number;
+  rest: (text: string, offset: number) => InlineMarkupRange[];
+  span: Span;
+  text: string;
+}): InlineMarkupRange[] {
+  return [
+    ...rest(text.slice(0, span.start), offset),
+    { end: offset + span.end, kind, start: offset + span.start, text: span.content },
+    ...rest(text.slice(span.end), offset + span.end),
+  ];
+}
+
+function parseEmphasis(text: string, offset: number): InlineMarkupRange[] {
   const mark = findFirstMark(text);
 
-  return mark
-    ? splitAround({ kind: mark.kind, rest: parseEmphasis, span: mark, text })
-    : plainText(text);
+  if (mark) {
+    return rangesAround({ kind: mark.kind, offset, rest: parseEmphasis, span: mark, text });
+  }
+
+  return text ? [{ end: offset + text.length, kind: "text", start: offset, text }] : [];
+}
+
+function parseMarkup(text: string, offset: number): InlineMarkupRange[] {
+  const code = findCode(text);
+
+  return code
+    ? rangesAround({ kind: "code", offset, rest: parseMarkup, span: code, text })
+    : parseEmphasis(text, offset);
+}
+
+/**
+ * `parseInlineMarkup` with where each segment is in the line, so a caller can change the marks
+ * left as text, or take marks out, without touching anything else.
+ */
+export function parseInlineMarkupRanges(text: string): InlineMarkupRange[] {
+  return parseMarkup(text, 0);
 }
 
 /** Parses one line: inline code first, so its punctuation stays literal, then bold and italics. */
 export function parseInlineMarkup(text: string): InlineMarkup[] {
-  const code = findCode(text);
-
-  return code
-    ? splitAround({ kind: "code", rest: parseInlineMarkup, span: code, text })
-    : parseEmphasis(text);
+  return parseInlineMarkupRanges(text).map(({ kind, text: segment }) => ({ kind, text: segment }));
 }

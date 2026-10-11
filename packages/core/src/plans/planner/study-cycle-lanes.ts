@@ -59,6 +59,8 @@ export type CadencedArea = {
 
 /** A cadenced area's lane: its units, its days and the minutes it has left to place. */
 export type CadencedLane = Lane & {
+  /** The lesson minutes it gets in all (see `CadencedArea`). */
+  minutes: number;
   /** Lesson minutes of its days from each day on, so each day takes its even part of what's left. */
   openLeft: readonly number[];
   openDays: ReadonlySet<number>;
@@ -85,6 +87,8 @@ export type CycleState = {
 export type CycleContext = {
   /** The subject each skill is taught in. */
   areas: ReadonlyMap<string, string>;
+  /** Each skill's units the cycle places (`countBySkill`), to tell one it has started. */
+  counts: ReadonlyMap<string, number>;
   /** Lesson minutes the days offer, added up day by day. */
   cumulative: readonly number[];
   days: readonly PlanDay[];
@@ -95,6 +99,11 @@ export type CycleContext = {
 export function getJoinWindow(days: readonly PlanDay[]): number {
   const studyDays = days.filter((day) => getLessonCapacity(day) > 0).length;
   return Math.min(MAX_JOIN_DAYS, studyDays * JOIN_SHARE);
+}
+
+/** A unit of a skill's core, which what builds on the skill waits for (see `orderOwnPrerequisites`). */
+function isOwnCore(unit: QueueUnit): boolean {
+  return Boolean(unit.skillId && !unit.depth);
 }
 
 /**
@@ -114,7 +123,7 @@ export function orderOwnPrerequisites({
 }): QueueUnit[] {
   // A skill's depth comes after every core (`putCoresFirst`), and what builds on it needs only its core.
   const cores = Map.groupBy(
-    units.filter((unit) => unit.skillId && !unit.depth),
+    units.filter((unit) => isOwnCore(unit)),
     (unit) => unit.skillId ?? "",
   );
 
@@ -122,8 +131,12 @@ export function orderOwnPrerequisites({
   const visiting = new Set<string>();
   const ordered: QueueUnit[] = [];
 
+  // Each skill's cores not placed yet: once none are left, what builds on it skips it instead of
+  // walking its cores again for each of its own units (thousands on a real-size exam).
+  const coresLeft = new Map([...cores].map(([skillId, own]) => [skillId, own.length]));
+
   const placeSkill = (skillId: string): void => {
-    if (!visiting.has(skillId)) {
+    if (!visiting.has(skillId) && (coresLeft.get(skillId) ?? 0) > 0) {
       (cores.get(skillId) ?? []).forEach((unit) => place(unit));
     }
   };
@@ -141,8 +154,14 @@ export function orderOwnPrerequisites({
       visiting.delete(skillId);
     }
 
-    if (pending.delete(unit)) {
-      ordered.push(unit);
+    if (!pending.delete(unit)) {
+      return;
+    }
+
+    ordered.push(unit);
+
+    if (isOwnCore(unit) && skillId) {
+      coresLeft.set(skillId, (coresLeft.get(skillId) ?? 0) - 1);
     }
   };
 
@@ -179,7 +198,7 @@ function getOpeningGroup({
  * to the learner (the exam's weight for their course and their gaps), then the teaching order. The
  * cuts of a plan short on time agree: gaps stay first and what the learner knows goes first (see
  * `rankCores`). A learner who just showed they don't know English yet sees it on day one, and one
- * who said they know Linguagens and Matemática starts with Natureza and Humanas, not with them.
+ * who said they know languages and mathematics starts with natural and human sciences, not with them.
  */
 function orderAreas({
   firstAreas,
@@ -282,7 +301,12 @@ function isSameSubject({
   return context.areas.get(prerequisiteId) === context.areas.get(skillId);
 }
 
-/** A unit can go once its skill's prerequisites in its own subject are placed. */
+/**
+ * A unit can go once its skill's prerequisites in its own subject are placed, and the ones in
+ * other subjects have started: the subjects of a cycle move side by side, so another subject's
+ * skill needn't be finished, but a skill never starts before what it builds on (Câmara's plans put
+ * a subject's skill days before its base in another subject).
+ */
 export function isUnitReady({
   context,
   left,
@@ -298,14 +322,18 @@ export function isUnitReady({
     return true;
   }
 
-  // Another subject's prerequisites don't hold a skill back: the subjects of a cycle move side by
-  // side, and the ones a subject needs are brought forward when it joins (`pullPrerequisites`).
-  return (context.prerequisites.get(skillId) ?? []).every(
-    (id) =>
+  // Another subject's prerequisites only need to have started; the ones a subject needs are
+  // brought forward when it reaches them (`pullPrerequisites`).
+  return (context.prerequisites.get(skillId) ?? []).every((id) => {
+    const toPlace = left.get(id) ?? 0;
+
+    return (
       id === skillId ||
-      !isSameSubject({ context, prerequisiteId: id, skillId }) ||
-      (left.get(id) ?? 0) === 0,
-  );
+      toPlace === 0 ||
+      (!isSameSubject({ context, prerequisiteId: id, skillId }) &&
+        toPlace < (context.counts.get(id) ?? 0))
+    );
+  });
 }
 
 /**
@@ -341,7 +369,12 @@ function listUnmetPrerequisites({
  * writing and parliamentary procedure gets them taught next instead of waiting for whole subjects
  * to get there, which a short plan never would. A skill that opens another subject is worth what
  * that subject is, so time goes to it before the rest of its own subject. The skills brought
- * forward keep their subject's order among themselves, so each still follows what it needs.
+ * forward keep their subject's order among themselves, so each still follows what it needs. In a
+ * plan short on time, a core its subject's cut left out (`rankedOut`) stays where the cut put it:
+ * ahead of the cores the subject keeps, it would push them past the deadline, and the subject that
+ * needs it waits for it instead. Political science's least asked topic brought the Constitution's
+ * principles and federal organization, which the cut left out, ahead of fundamental rights, the
+ * constitutional topic asked most, which then didn't fit.
  */
 export function pullPrerequisites({
   context,
@@ -361,7 +394,14 @@ export function pullPrerequisites({
   }
 
   const needed = listUnmetPrerequisites({ context, left, skillId });
-  const isNeeded = (unit: QueueUnit) => unit.skillId !== null && needed.has(unit.skillId);
+
+  // Nothing to bring forward: every day of every subject asks, and most need nothing.
+  if (needed.size === 0) {
+    return;
+  }
+
+  const isNeeded = (unit: QueueUnit) =>
+    unit.skillId !== null && needed.has(unit.skillId) && !unit.rankedOut;
 
   // The subject's own lane too: its units already follow what they build on (`toLanes`), so this
   // only moves forward what the head needs, in the order it was in.

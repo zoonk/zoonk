@@ -49,24 +49,55 @@ export function toClaimSource({
   };
 }
 
+type FormatPassages = Pick<
+  BlueprintExtraction["formats"][number],
+  "countPassage" | "document" | "markingPassage"
+>;
+
+/** The passage a format quotes for how it's marked, when apart from its own (`markingPassage`). */
+export function listMarkingPassages(format: FormatPassages): Passage[] {
+  return format.markingPassage
+    ? [{ document: format.document, passage: format.markingPassage }]
+    : [];
+}
+
+/** The passage a format quotes for how many questions take it, when apart from its own. */
+export function listCountPassages(format: FormatPassages): Passage[] {
+  return format.countPassage ? [{ document: format.document, passage: format.countPassage }] : [];
+}
+
 /** Every passage an extraction quotes, in the order research numbered its parts. */
 export function listExtractionPassages(extraction: BlueprintExtraction): Passage[] {
   const { document, passage } = extraction.reusePolicy;
 
   return [
     ...extraction.subjects.flatMap((subject) => subject.passages),
-    ...extraction.formats,
+    ...extraction.formats.flatMap((format) => [
+      format,
+      ...listMarkingPassages(format),
+      ...listCountPassages(format),
+    ]),
     ...(extraction.mock?.passages ?? []),
+    ...(extraction.mock?.sections ?? []).flatMap((section) => [
+      ...section.passages,
+      ...section.tasks.flatMap((task) => task.passages),
+    ]),
     ...extraction.edition.passages,
     ...extraction.rules,
     ...extraction.dates,
     ...extraction.topicFrequency,
+    ...(extraction.testedLanguage ? [extraction.testedLanguage] : []),
     ...(document !== null && passage ? [{ document, passage }] : []),
   ].map((item) => ({ document: item.document, passage: item.passage }));
 }
 
 function toPassageKey({ document, passage }: Passage): string {
   return `${document}:${passage}`;
+}
+
+/** Each passage once, in order: a claim reads its own and its part's, which can repeat. */
+export function uniquePassages(passages: Passage[]): Passage[] {
+  return [...new Map(passages.map((passage) => [toPassageKey(passage), passage])).values()];
 }
 
 /** The extraction's passages code found in their documents, each once. */
@@ -81,12 +112,12 @@ export function listFoundPassages({
     (passage) => resolvePassage({ documents, passage })?.found,
   );
 
-  return [...new Map(found.map((passage) => [toPassageKey(passage), passage])).values()];
+  return uniquePassages(found);
 }
 
 /**
  * Whether a passage names a part of the exam: every word of the name, in any order, since a
- * notice writes "a prova discursiva (P4)" where the extraction names the part "(P4) Discursiva".
+ * notice writes "the discursive test (P4)" where the extraction names the part "(P4) Discursive".
  */
 function namesPart({ name, passage }: { name: string; passage: string }): boolean {
   const words = new Set(name.match(WORD_PATTERN));
@@ -111,13 +142,8 @@ export function toPartPassages({
   name: string;
   own: Passage[];
 }): Passage[] {
-  const ownKeys = new Set(own.map((passage) => toPassageKey(passage)));
-
-  return [
+  return uniquePassages([
     ...own,
-    ...found.filter(
-      (passage) =>
-        !ownKeys.has(toPassageKey(passage)) && namesPart({ name, passage: passage.passage }),
-    ),
-  ];
+    ...found.filter((passage) => namesPart({ name, passage: passage.passage })),
+  ]);
 }

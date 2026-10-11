@@ -17,6 +17,8 @@ export function useShortFocusName() {
         return t("Exam map and gaps");
       case "practice":
         return t("Practice");
+      case "mockAndPractice":
+        return mocksRequirePlus ? t("Full review and practice") : t("Mock and practice");
       case "mockAndReview":
         return mocksRequirePlus ? t("Full review") : t("Short mock and review");
       case "lightReview":

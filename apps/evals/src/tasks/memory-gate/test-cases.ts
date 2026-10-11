@@ -4,27 +4,22 @@ import {
   type MemoryGateVerdict,
 } from "@zoonk/ai/tasks/v2/memory/decisions";
 
-export type MemoryGateInput = { allowSensitive: boolean; candidate: MemoryGateCandidate };
+export type MemoryGateInput = { candidate: MemoryGateCandidate };
 export type MemoryGateExpected = Pick<MemoryGateVerdict, "decision">;
 
 type GateCase = TestCase<MemoryGateExpected, MemoryGateInput>;
 
-/**
- * `allowSensitive` is false for minors and learners of unknown age, so their sensitive facts are
- * dropped even when they ask. Evidence is what extraction quoted: the learner's words or numbers.
- */
+/** Evidence is what extraction quoted: the learner's words or numbers. */
 function gateCase({
-  allowSensitive = true,
   candidate,
   decision,
   id,
 }: {
-  allowSensitive?: boolean;
   candidate: MemoryGateCandidate;
   decision: MemoryGateExpected["decision"];
   id: string;
 }): GateCase {
-  return { expected: { decision }, id, userInput: { allowSensitive, candidate } };
+  return { expected: { decision }, id, userInput: { candidate } };
 }
 
 export const TEST_CASES: GateCase[] = [
@@ -172,16 +167,6 @@ export const TEST_CASES: GateCase[] = [
     },
     decision: "keep",
     id: "en-sensitive-asked-adult",
-  }),
-  gateCase({
-    allowSensitive: false,
-    candidate: {
-      category: "learning",
-      evidence: "Please remember that I have ADHD, so keep lessons short",
-      statement: "Has ADHD",
-    },
-    decision: "sensitive",
-    id: "en-sensitive-asked-minor",
   }),
   gateCase({
     candidate: {

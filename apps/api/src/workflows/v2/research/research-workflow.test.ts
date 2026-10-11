@@ -4,25 +4,30 @@ import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { detectChangingFacts } from "@zoonk/ai/tasks/v2/research/changing-facts";
 import { checkCitedFacts } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
+import { checkExamReading } from "@zoonk/ai/tasks/v2/research/check-exam-reading";
 import { decideExamIdentity } from "@zoonk/ai/tasks/v2/research/exam-identity-decision";
 import {
   type BlueprintExtraction,
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
-import { EXAM_BLUEPRINT_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint-version";
 import { extractQuestionFormats } from "@zoonk/ai/tasks/v2/research/extract-question-formats";
 import { findChoiceOptions } from "@zoonk/ai/tasks/v2/research/find-choice-options";
+import { findCourseWeights } from "@zoonk/ai/tasks/v2/research/find-course-weights";
 import { findOfficialSources } from "@zoonk/ai/tasks/v2/research/find-official-sources";
 import { findSubjectQuestions } from "@zoonk/ai/tasks/v2/research/find-subject-questions";
 import { findTargetCutoff } from "@zoonk/ai/tasks/v2/research/find-target-cutoff";
 import { findTopicFrequency } from "@zoonk/ai/tasks/v2/research/find-topic-frequency";
-import { type ResearchPlan, generateResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
+import { type ExamResearchPlan, generateExamResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/v2/research/source-change-notice";
-import { examStructureSchema } from "@zoonk/core/library/exams/blueprint-contract";
+import { generateSourceResearchPlan } from "@zoonk/ai/tasks/v2/research/source-plan";
+import { translatePassMarks } from "@zoonk/ai/tasks/v2/research/translate-pass-marks";
+import {
+  examEditionSchema,
+  examStructureSchema,
+} from "@zoonk/core/library/exams/blueprint-contract";
 import { buildExamIdentityKey } from "@zoonk/core/library/exams/identity";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
@@ -36,6 +41,9 @@ import { mockHookConflict } from "../../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
 import { researchWorkflow } from "./research-workflow";
+import { storeSourceStep } from "./steps/store-sources-step";
+import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
+import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 
 vi.mock("workflow/api", () => ({
   getRun: vi.fn(),
@@ -57,7 +65,9 @@ function otherRun(status: "completed" | "failed" | "running") {
 
 // Model and search calls are external: tests replay what they returned for the real TCDF 2026 notice.
 vi.mock("@zoonk/ai/tasks/v2/research/changing-facts", () => ({ detectChangingFacts: vi.fn() }));
-vi.mock("@zoonk/ai/tasks/v2/research/plan", () => ({ generateResearchPlan: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/research/plan", () => ({ generateExamResearchPlan: vi.fn() }));
+
+vi.mock("@zoonk/ai/tasks/v2/research/source-plan", () => ({ generateSourceResearchPlan: vi.fn() }));
 
 vi.mock("@zoonk/ai/tasks/v2/research/find-official-sources", () => ({
   findOfficialSources: vi.fn(),
@@ -68,6 +78,7 @@ vi.mock("@zoonk/ai/tasks/v2/research/extract-exam-blueprint", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/v2/research/check-cited-facts", () => ({ checkCitedFacts: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/research/check-exam-reading", () => ({ checkExamReading: vi.fn() }));
 
 // The first pass over a new notice reads its question formats only; each test says what it read.
 vi.mock("@zoonk/ai/tasks/v2/research/extract-question-formats", () => ({
@@ -82,12 +93,18 @@ vi.mock("@zoonk/ai/tasks/v2/research/find-choice-options", () => ({ findChoiceOp
 
 vi.mock("@zoonk/ai/tasks/v2/research/find-target-cutoff", () => ({ findTargetCutoff: vi.fn() }));
 
+vi.mock("@zoonk/ai/tasks/v2/research/find-course-weights", () => ({ findCourseWeights: vi.fn() }));
+
 vi.mock("@zoonk/ai/tasks/v2/research/find-topic-frequency", () => ({
   findTopicFrequency: vi.fn(),
 }));
 
 vi.mock("@zoonk/ai/tasks/v2/research/source-change-notice", () => ({
   generateSourceChangeNotice: vi.fn(),
+}));
+
+vi.mock("@zoonk/ai/tasks/v2/research/translate-pass-marks", () => ({
+  translatePassMarks: vi.fn(),
 }));
 
 vi.mock("@zoonk/ai/tasks/v2/research/exam-identity-decision", () => ({
@@ -120,6 +137,9 @@ const TASK_RESULT = {
   userPrompt: "",
 };
 
+/** A reading as `extractExamBlueprint` returns it, without the formats' own read beside it. */
+const READING_RESULT = { ...TASK_RESULT, formatsProvenance: null };
+
 type RecordedSearch = Awaited<ReturnType<typeof findOfficialSources>>["data"];
 
 async function readFixture(name: string) {
@@ -137,7 +157,7 @@ async function readJsonFixture<T>(name: string): Promise<T> {
  */
 async function replayTcdfResearch() {
   const [plan, search, extraction, notice] = await Promise.all([
-    readJsonFixture<ResearchPlan>("tcdf-2026-plan.json"),
+    readJsonFixture<ExamResearchPlan>("tcdf-2026-plan.json"),
     readJsonFixture<RecordedSearch>("tcdf-2026-search.json"),
     readJsonFixture<BlueprintExtraction>("tcdf-2026-extraction.json"),
     readFixture("tcdf-2026-notice.txt"),
@@ -151,14 +171,14 @@ async function replayTcdfResearch() {
     url: `${document.url}?test=${suffix}`,
   }));
 
-  vi.mocked(generateResearchPlan).mockResolvedValue({ ...TASK_RESULT, data: uniquePlan });
+  vi.mocked(generateExamResearchPlan).mockResolvedValue({ ...TASK_RESULT, data: uniquePlan });
 
   vi.mocked(findOfficialSources).mockResolvedValue({
     ...TASK_RESULT,
     data: { ...search, documents },
   });
 
-  vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK_RESULT, data: extraction });
+  vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: extraction });
 
   // The first pass finds the notice's formats, and one the notice doesn't state.
   vi.mocked(extractQuestionFormats).mockResolvedValue({
@@ -166,11 +186,17 @@ async function replayTcdfResearch() {
     data: [
       ...extraction.formats,
       {
+        count: null,
+        countPassage: null,
         description: "Questões de múltipla escolha.",
         document: 1,
+        entry: null,
         kind: "multipleChoice",
+        markingPassage: null,
         options: 5,
+        partialCredit: null,
         passage: "As questões terão cinco alternativas.",
+        select: null,
       },
     ],
   });
@@ -189,11 +215,6 @@ async function replayTcdfResearch() {
   );
 
   return { extraction, plan: uniquePlan };
-}
-
-/** A recorded date ten years on, so a test's exam days stay ahead. */
-function inTenYears(date: string): string {
-  return date.replace("2026", "2036").replace("2027", "2037");
 }
 
 function supportAll() {
@@ -252,6 +273,12 @@ describe(researchWorkflow, () => {
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
 
+    // Readings leave nothing out unless a test says so.
+    vi.mocked(checkExamReading).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { missingSubjects: [], statedCounts: [] },
+    });
+
     // No source gives the subjects' counts or the options unless a test says one does.
     vi.mocked(findSubjectQuestions).mockResolvedValue({
       ...TASK_RESULT,
@@ -267,7 +294,14 @@ describe(researchWorkflow, () => {
 
     vi.mocked(findTargetCutoff).mockResolvedValue({
       ...TASK_RESULT,
-      data: { edition: null, quota: null, score: null, source: null, status: "unknown" },
+      data: {
+        edition: null,
+        maxScore: null,
+        quota: null,
+        score: null,
+        source: null,
+        status: "unknown",
+      },
     });
   });
 
@@ -286,7 +320,8 @@ describe(researchWorkflow, () => {
       status: "notNeeded",
     });
 
-    expect(generateResearchPlan).not.toHaveBeenCalled();
+    expect(generateExamResearchPlan).not.toHaveBeenCalled();
+    expect(generateSourceResearchPlan).not.toHaveBeenCalled();
   });
 
   it("builds the blueprint from official sources, keeps every fact's passage and links the goal", async () => {
@@ -297,6 +332,16 @@ describe(researchWorkflow, () => {
 
     expect(result).toMatchObject({ sourceIds: [], status: "ready" });
     expect(detectChangingFacts).not.toHaveBeenCalled();
+
+    // The plan read only the exam's name and target, which every learner of it shares, and so does
+    // the search that reads the plan.
+    expect(vi.mocked(generateExamResearchPlan).mock.calls[0]?.[0].analytics).toMatchObject({
+      contentScope: "shared",
+    });
+
+    expect(vi.mocked(findOfficialSources).mock.calls[0]?.[0].analytics).toMatchObject({
+      contentScope: "shared",
+    });
 
     const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
       include: { source: true },
@@ -358,6 +403,58 @@ describe(researchWorkflow, () => {
 
     // The notice is checked from the next daily sweep on.
     expect(blueprint.nextCheckAt).not.toBeNull();
+  });
+
+  // DELE's pass mark showed in Spanish in a Portuguese screen.
+  it("translates the notice's pass marks into the app's languages beside its checks", async () => {
+    const { goal } = await examGoal();
+    const { extraction, plan } = await replayTcdfResearch();
+    const [scoring, minimum] = extraction.rules;
+
+    if (!scoring || !minimum) {
+      throw new Error("The recorded reading has its scoring and minimum rules.");
+    }
+
+    const passMark = { ...minimum, kind: "passMark" as const };
+    const rules = [{ ...scoring, kind: "other" as const }, passMark];
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({
+      ...READING_RESULT,
+      data: { ...extraction, rules },
+    });
+
+    const english = "Candidates scoring below 7.00 in P1 are eliminated.";
+
+    vi.mocked(translatePassMarks).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { language: "pt", translations: { en: [english] } },
+    });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    expect(vi.mocked(translatePassMarks).mock.calls[0]?.[0]).toMatchObject({
+      languages: ["en", "es", "pt", "fr", "de"],
+      serviceTier: "priority",
+      texts: [passMark.text],
+    });
+
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+      where: {
+        languageIdentity: {
+          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          language: "pt",
+        },
+      },
+    });
+
+    const stored = examStructureSchema.parse(blueprint.structure).rules;
+
+    expect(stored).toMatchObject([
+      { kind: "other", text: scoring.text },
+      { kind: "passMark", text: passMark.text, translations: { en: english } },
+    ]);
+
+    expect(stored[0]).not.toHaveProperty("translations");
   });
 
   it("looks up how many questions each subject got in the latest edition when the notice names none", async () => {
@@ -439,6 +536,80 @@ describe(researchWorkflow, () => {
     });
   });
 
+  it("lets a lookup that fails throw, so the runtime retries it, and links the goal when it keeps failing", async () => {
+    const { goal } = await examGoal();
+    await replayTcdfResearch();
+    const searchFailed = new Error("The search provider failed");
+
+    vi.mocked(findSubjectQuestions).mockRejectedValue(searchFailed);
+    vi.mocked(findTopicFrequency).mockRejectedValue(searchFailed);
+
+    // The lookups only add to the notice: research ends ready once their retries ran out.
+    const result = await researchWorkflow({ goalId: goal.id });
+    expect(result).toMatchObject({ status: "ready" });
+
+    const examBlueprintId = result.status === "ready" ? (result.examBlueprintId ?? "") : "";
+    const lookup = { analytics: { contentScope: "shared" as const }, examBlueprintId };
+
+    // A step that catches its own failure is never retried, so each one throws it.
+    await expect(lookUpSubjectQuestionsStep(lookup)).rejects.toBe(searchFailed);
+    await expect(lookUpTopicFrequencyStep(lookup)).rejects.toBe(searchFailed);
+  });
+
+  it("looks up again only the subjects whose topic frequency lookup failed, keeping the others", async () => {
+    const { goal } = await examGoal();
+    const { extraction } = await replayTcdfResearch();
+    const ranked = extraction.subjects.filter((subject) => subject.topics.length >= 4);
+    const failing = ranked.at(-1)?.name;
+
+    vi.mocked(findTopicFrequency).mockImplementation(async ({ subjects }) => {
+      if (subjects.some((subject) => subject.name === failing)) {
+        throw new Error("The search provider failed");
+      }
+
+      return {
+        ...TASK_RESULT,
+        data: {
+          subjects: subjects.map((subject) => ({
+            basis: "questões de 2019 a 2025",
+            name: subject.name,
+            source: { title: "Assuntos que mais caem", url: "https://example.com/cebraspe" },
+            topics: subject.topics.map((topic) => ({
+              appearances: 3,
+              level: "high" as const,
+              topic,
+            })),
+          })),
+        },
+      };
+    });
+
+    const result = await researchWorkflow({ goalId: goal.id });
+    const examBlueprintId = result.status === "ready" ? (result.examBlueprintId ?? "") : "";
+
+    // The step's retry asks only for the subject it missed, which answers this time.
+    vi.mocked(findTopicFrequency).mockClear();
+    vi.mocked(findTopicFrequency).mockResolvedValue({ ...TASK_RESULT, data: { subjects: [] } });
+
+    await lookUpTopicFrequencyStep({ analytics: { contentScope: "shared" }, examBlueprintId });
+
+    expect(
+      vi
+        .mocked(findTopicFrequency)
+        .mock.calls.map(([input]) => input.subjects.map((subject) => subject.name)),
+    ).toStrictEqual([[failing]]);
+
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+      where: { id: examBlueprintId },
+    });
+
+    expect(
+      examStructureSchema
+        .parse(blueprint.structure)
+        .pastTopicFrequency?.subjects.map((subject) => subject.name),
+    ).toStrictEqual(ranked.slice(0, -1).map((subject) => subject.name));
+  });
+
   it("reads the notice when official pages that store no text come before it", async () => {
     const { goal } = await examGoal();
     const { plan } = await replayTcdfResearch();
@@ -488,16 +659,212 @@ describe(researchWorkflow, () => {
     expect(blueprint.source?.url).toContain("132841120D");
   });
 
-  it("reuses a current blueprint without searching again", async () => {
+  it("reads every readable document search found, a format page it listed after marking guides too", async () => {
+    const { goal } = await examGoal();
+    await replayTcdfResearch();
+
+    const [recorded, noticeText] = await Promise.all([
+      readJsonFixture<RecordedSearch>("tcdf-2026-search.json"),
+      readFixture("tcdf-2026-notice.txt"),
+    ]);
+
+    const suffix = randomUUID();
+    const notice = recorded.documents.find((document) => document.url.includes("132841120D"));
+
+    if (!notice) {
+      throw new Error("The recorded search has no notice.");
+    }
+
+    // IELTS Academic's search (10 Oct 2026) listed two band descriptors before the section pages,
+    // and the Reading page, the fifth readable document, alone stated its 40 questions.
+    const pages = [
+      "Writing band descriptors",
+      "Speaking band descriptors",
+      "Writing test format",
+      "Reading test format",
+      "Listening test format",
+    ].map((title, index) => ({
+      documentType: "officialPage" as const,
+      kind: "official" as const,
+      publisher: "Cebraspe",
+      reason: "The exam's format",
+      title,
+      url: `https://www.cebraspe.org.br/concursos/tc_df_26_format_${index}?test=${suffix}`,
+    }));
+
+    vi.mocked(findOfficialSources).mockResolvedValue({
+      ...TASK_RESULT,
+      data: {
+        ...recorded,
+        documents: [{ ...notice, url: `${notice.url}?test=${suffix}` }, ...pages],
+      },
+    });
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url: string) =>
+        Promise.resolve(
+          url.includes("132841120D")
+            ? new Response(noticeText, { headers: { "content-type": "text/plain" } })
+            : new Response(
+                `<main>${`<p>${url} states the section's time and questions.</p>`.repeat(4)}</main>`,
+                { headers: { "content-type": "text/html" } },
+              ),
+        ),
+      ),
+    );
+
+    await researchWorkflow({ goalId: goal.id });
+
+    const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
+    const texts = reading?.documents.map((document) => document.text ?? "") ?? [];
+
+    expect(texts).toHaveLength(pages.length + 1);
+    expect(pages.every((page) => texts.some((text) => text.includes(page.url)))).toBe(true);
+  });
+
+  /*
+   * TJ-SP's research (10 Oct 2026): every vunesp.com.br address answered 403, so it read only the
+   * court's news page, which names the objective test's size but none of its subjects.
+   */
+  it("reads a copy from another site when the notice's own site refuses the download", async () => {
+    const { goal } = await examGoal();
+    const { extraction, plan } = await replayTcdfResearch();
+
+    const [recorded, noticeText] = await Promise.all([
+      readJsonFixture<RecordedSearch>("tcdf-2026-search.json"),
+      readFixture("tcdf-2026-notice.txt"),
+    ]);
+
+    // The reading quotes the notice's copy, the second document read.
+    const fromCopy = JSON.parse(
+      JSON.stringify(extraction).replaceAll('"document":1', '"document":2'),
+    ) as BlueprintExtraction;
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: fromCopy });
+
+    const suffix = randomUUID();
+
+    const found = recorded.documents.map((document) => ({
+      ...document,
+      url: `${document.url}?test=${suffix}`,
+    }));
+
+    const notice = found.find((document) => document.documentType === "notice");
+    const newsPage = found.find((document) => document.url.includes("tc.df.gov.br"));
+
+    if (!notice || !newsPage) {
+      throw new Error("The recorded search has the notice and the court's news page.");
+    }
+
+    const copy = (url: string) => ({
+      ...notice,
+      kind: "secondary" as const,
+      publisher: "Exam site",
+      url: `${url}?test=${suffix}`,
+    });
+
+    // Another of the refusing site's addresses would refuse too; the exam site's copy reads.
+    const blockedCopy = copy("https://arquivos.cdn.cebraspe.org.br/edital-tcdf.pdf");
+    const readableCopy = copy("https://www.examsite.com.br/editais/tcdf-2026.pdf");
+
+    vi.mocked(findOfficialSources).mockImplementation(async ({ unreadable = [] }) => ({
+      ...TASK_RESULT,
+      data: {
+        documents: unreadable.length > 0 ? [blockedCopy, readableCopy] : found,
+        officialFound: true,
+        searchCalls: 2,
+      },
+    }));
+
+    const fetchMock = vi.fn((url: string) => {
+      if (url.includes("cebraspe.org.br")) {
+        return Promise.resolve(new Response("Access Denied", { status: 403 }));
+      }
+
+      return Promise.resolve(
+        url.includes("examsite.com.br")
+          ? new Response(noticeText, { headers: { "content-type": "text/plain" } })
+          : new Response(`<main>${`<p>${url} announces the notice.</p>`.repeat(4)}</main>`, {
+              headers: { "content-type": "text/html" },
+            }),
+      );
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await researchWorkflow({ goalId: goal.id });
+
+    expect(result).toMatchObject({ examBlueprintId: expect.any(String), status: "ready" });
+
+    // The second search knows what couldn't be read, and is the exam's like the first.
+    const searches = vi.mocked(findOfficialSources).mock.calls.map(([input]) => input);
+
+    expect(searches).toHaveLength(2);
+    expect(searches[1]?.unreadable).toContain(notice.url);
+    expect(searches[1]?.analytics).toMatchObject({ contentScope: "shared" });
+
+    expect(fetchMock.mock.calls.some(([url]) => url.includes("arquivos.cdn"))).toBe(false);
+
+    // The court's page is read first, as the official document, and the notice's copy after it.
+    const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
+    const urls = reading?.documents.map((document) => document.url) ?? [];
+
+    expect(urls).toStrictEqual([newsPage.url, readableCopy.url]);
+
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+      include: { source: true },
+      where: {
+        languageIdentity: {
+          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          language: "pt",
+        },
+      },
+    });
+
+    expect(examStructureSchema.parse(blueprint.structure).subjects.length).toBeGreaterThan(0);
+  });
+
+  it("searches no copies when the notice itself was read", async () => {
+    const { goal } = await examGoal();
+    await replayTcdfResearch();
+
+    await researchWorkflow({ goalId: goal.id });
+
+    expect(findOfficialSources).toHaveBeenCalledOnce();
+  });
+
+  it("fails the step storing a document whose download timed out, so the runtime retries it alone", async () => {
+    await replayTcdfResearch();
+    const { data } = await findOfficialSources({} as never);
+    const notice = data.documents.find((document) => document.url.includes("132841120D"));
+    const timedOut = new DOMException("The operation was aborted due to timeout", "TimeoutError");
+
+    if (!notice) {
+      throw new Error("The recorded search has no notice.");
+    }
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.reject(timedOut)),
+    );
+
+    await expect(storeSourceStep({ document: notice, language: "pt", topic: "exam" })).rejects.toBe(
+      timedOut,
+    );
+  });
+
+  it("reuses a current blueprint without searching or reading again, whatever instructions read it", async () => {
     const { goal } = await examGoal();
     const { plan } = await replayTcdfResearch();
 
+    // Read by instructions older than today's: the notice is read once and shared.
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 30 * 86_400_000),
       identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
       language: "pt",
       name: plan.name,
-      promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
+      promptVersion: "older-instructions",
       role: plan.role,
     });
 
@@ -509,6 +876,115 @@ describe(researchWorkflow, () => {
 
     expect(findOfficialSources).not.toHaveBeenCalled();
     expect(extractExamBlueprint).not.toHaveBeenCalled();
+  });
+
+  it("checks a notice's reading for a subject it left out and reads it again, told what it left out", async () => {
+    const { goal } = await examGoal();
+    const { extraction, plan } = await replayTcdfResearch();
+    const contracts = extraction.subjects.at(-1);
+    const passage = contracts?.passages[0]?.passage ?? "";
+    const leftOut = { ...extraction, subjects: extraction.subjects.slice(0, -1) };
+
+    // The first reading leaves contract management out; read again, told so, it lists it.
+    vi.mocked(extractExamBlueprint).mockImplementation(async ({ corrections }) => ({
+      ...READING_RESULT,
+      data: corrections?.length ? extraction : leftOut,
+    }));
+
+    vi.mocked(checkExamReading).mockImplementation(async ({ subjects }) => ({
+      ...TASK_RESULT,
+      data: {
+        missingSubjects: subjects.some((subject) => subject.name === contracts?.name)
+          ? []
+          : [{ document: 1, name: "Gestão de Contratos", passage }],
+        statedCounts: [],
+      },
+    }));
+
+    const result = await researchWorkflow({ goalId: goal.id });
+    expect(result).toMatchObject({ status: "ready" });
+
+    // The check reads beside the citation checks, at the reading's tier.
+    expect(vi.mocked(checkExamReading).mock.calls[0]?.[0]).toMatchObject({
+      serviceTier: "priority",
+      total: extraction.mock?.totalQuestions ?? extraction.edition.questionCount,
+    });
+
+    expect(
+      vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input.corrections),
+    ).toStrictEqual([
+      [],
+      [{ document: 1, kind: "missingSubject", name: "Gestão de Contratos", passage }],
+    ]);
+
+    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
+      where: {
+        languageIdentity: {
+          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+          language: "pt",
+        },
+      },
+    });
+
+    expect(examStructureSchema.parse(blueprint.structure).subjects.at(-1)?.name).toBe(
+      contracts?.name,
+    );
+
+    expect(examEditionSchema.parse(blueprint.edition).check).toMatchObject({
+      problems: [],
+      readings: 2,
+    });
+  });
+
+  it("never stores a reading whose check keeps finding a subject it left out as valid: the next research reads it again, a few times at most", async () => {
+    const [first, second, third] = await Promise.all([examGoal(), examGoal(), examGoal()]);
+    const { extraction, plan } = await replayTcdfResearch();
+    const passage = extraction.subjects.at(-1)?.passages[0]?.passage ?? "";
+    const leftOut = { ...extraction, subjects: extraction.subjects.slice(0, -1) };
+    const missing = { document: 1, name: "Gestão de Contratos", passage };
+
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: leftOut });
+
+    vi.mocked(checkExamReading).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { missingSubjects: [missing], statedCounts: [] },
+    });
+
+    await researchWorkflow({ goalId: first.goal.id });
+
+    const identityKey = buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role });
+    const where = { languageIdentity: { identityKey, language: "pt" } };
+    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where });
+
+    expect(examEditionSchema.parse(stored.edition).check).toMatchObject({
+      problems: [{ kind: "missingSubject", name: "Gestão de Contratos" }],
+      readings: 2,
+    });
+
+    // The next learner's research reads the stored notice again, told what it left out, without
+    // searching for it.
+    await expect(researchWorkflow({ goalId: second.goal.id })).resolves.toMatchObject({
+      examBlueprintId: stored.id,
+      status: "ready",
+    });
+
+    expect(findOfficialSources).toHaveBeenCalledOnce();
+    expect(extractExamBlueprint).toHaveBeenCalledTimes(4);
+
+    expect(vi.mocked(extractExamBlueprint).mock.calls[2]?.[0].corrections).toStrictEqual([
+      { ...missing, kind: "missingSubject" },
+    ]);
+
+    // Read as many times as it may be, it waits for the notice itself to change.
+    await researchWorkflow({ goalId: third.goal.id });
+    expect(extractExamBlueprint).toHaveBeenCalledTimes(4);
+
+    const repaired = await prisma.examBlueprint.findUniqueOrThrow({ where });
+    expect(examEditionSchema.parse(repaired.edition).check).toMatchObject({ readings: 4 });
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ where: { id: third.goal.id } }),
+    ).resolves.toMatchObject({ examBlueprintId: stored.id });
   });
 
   it("looks up the position's last cut-off once a year for everyone aiming at it", async () => {
@@ -526,7 +1002,6 @@ describe(researchWorkflow, () => {
       identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
       language: "pt",
       name: plan.name,
-      promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
       role: plan.role,
     });
 
@@ -536,6 +1011,7 @@ describe(researchWorkflow, () => {
       ...TASK_RESULT,
       data: {
         edition: "TCDF 2021",
+        maxScore: 100,
         quota: "ampla concorrência",
         score: 78.5,
         source,
@@ -553,8 +1029,89 @@ describe(researchWorkflow, () => {
     await expect(
       prisma.targetCutoff.findMany({ where: { examBlueprintId: blueprint.id } }),
     ).resolves.toMatchObject([
-      { edition: "TCDF 2021", score: 78.5, sourceUrl: source.url, status: "found" },
+      { edition: "TCDF 2021", maxScore: 100, score: 78.5, sourceUrl: source.url, status: "found" },
     ]);
+  });
+
+  it("looks up a course's weights once a year for everyone aiming at it, kept after its first learner goes", async () => {
+    const [first, second] = await Promise.all([examGoal(), examGoal()]);
+    const { plan } = await replayTcdfResearch();
+    const citation = { passage: "Prova objetiva", sourceId: "notice" };
+
+    const subject = (name: string) => ({
+      citation,
+      group: null,
+      name,
+      questions: 45,
+      shortName: null,
+      topics: [],
+      weight: null,
+    });
+
+    // Both learners named the course and the institution, each in their own words.
+    await Promise.all([
+      prisma.goal.update({
+        data: { details: { institution: "UnB", targetCourse: "Direito" } },
+        where: { id: first.goal.id },
+      }),
+      prisma.goal.update({
+        data: { details: { institution: "unb", targetCourse: "direito" } },
+        where: { id: second.goal.id },
+      }),
+    ]);
+
+    const blueprint = await examBlueprintFixture({
+      examDate: new Date(Date.now() + 30 * 86_400_000),
+      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
+      language: "pt",
+      name: plan.name,
+      role: plan.role,
+      structure: {
+        formats: [{ citation, description: "Cinco opções", kind: "multipleChoice", options: 5 }],
+        mock: null,
+        rules: [],
+        subjects: [subject("Linguagens"), subject("Humanas")],
+      },
+    });
+
+    const source = { title: "Pesos do curso", url: `https://www.unb.br/${randomUUID()}` };
+
+    vi.mocked(findCourseWeights).mockResolvedValue({
+      ...TASK_RESULT,
+      data: { edition: "SISU 2026", source, status: "found", weights: [3, 2] },
+    });
+
+    await researchWorkflow({ goalId: first.goal.id });
+    await prisma.user.delete({ where: { id: first.user.id } });
+    await researchWorkflow({ goalId: second.goal.id });
+
+    expect(findCourseWeights).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.examCourseWeights.findMany({ where: { examBlueprintId: blueprint.id } }),
+    ).resolves.toMatchObject([
+      {
+        edition: "SISU 2026",
+        sourceUrl: source.url,
+        status: "found",
+        targetKey: "course:direito|unb",
+      },
+    ]);
+
+    await expect(
+      prisma.goal.findUniqueOrThrow({ where: { id: second.goal.id } }),
+    ).resolves.toMatchObject({
+      details: {
+        courseWeights: {
+          course: "direito",
+          institution: "unb",
+          subjects: [
+            { name: "Linguagens", weight: 3 },
+            { name: "Humanas", weight: 2 },
+          ],
+        },
+      },
+    });
   });
 
   it("looks up how many options the questions have when the notice says only that they're multiple choice", async () => {
@@ -567,7 +1124,6 @@ describe(researchWorkflow, () => {
       identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
       language: "pt",
       name: plan.name,
-      promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
       role: plan.role,
       structure: {
         formats: [{ citation, description: "Objetivas", kind: "multipleChoice", options: null }],
@@ -600,110 +1156,6 @@ describe(researchWorkflow, () => {
     const next = await examGoal();
     await researchWorkflow({ goalId: next.goal.id });
     expect(findChoiceOptions).toHaveBeenCalledOnce();
-  });
-
-  it("reads a current notice again when older instructions read it, so it gains what they missed", async () => {
-    const { goal } = await examGoal();
-    const { plan } = await replayTcdfResearch();
-
-    const blueprint = await examBlueprintFixture({
-      examDate: new Date(Date.now() + 30 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
-      language: "pt",
-      name: plan.name,
-      promptVersion: "older-instructions",
-      role: plan.role,
-    });
-
-    vi.mocked(generateSourceChangeNotice).mockResolvedValue({
-      ...TASK_RESULT,
-      data: { message: "O edital foi lido de novo." },
-    });
-
-    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({
-      examBlueprintId: blueprint.id,
-      status: "ready",
-    });
-
-    expect(extractExamBlueprint).toHaveBeenCalledOnce();
-
-    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
-    expect(examStructureSchema.parse(stored.structure).subjects.length).toBeGreaterThan(0);
-
-    // The exam didn't change, only how well it's read: learners get no "the notice changed".
-    expect(generateSourceChangeNotice).not.toHaveBeenCalled();
-
-    await expect(
-      prisma.sourceChangeNotice.count({ where: { examBlueprintId: blueprint.id } }),
-    ).resolves.toBe(0);
-  });
-
-  it("tells the exam's other learners nothing when newer instructions read the same exam day", async () => {
-    const { goal } = await examGoal();
-    const { extraction, plan } = await replayTcdfResearch();
-
-    // The newer reading finds the notice's registration and result days around the same exam day.
-    vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...TASK_RESULT,
-      data: {
-        ...extraction,
-        dates: extraction.dates.map((date) => ({ ...date, date: inTenYears(date.date) })),
-      },
-    });
-
-    // Older instructions read the exam's day and nothing else of the schedule.
-    const blueprint = await examBlueprintFixture({
-      edition: {
-        citations: [],
-        dates: [
-          {
-            citation: { passage: "Aplicação das provas 22/11", sourceId: "older" },
-            date: "2036-11-22",
-            kind: "exam",
-            label: "Aplicação das provas",
-          },
-        ],
-        noticeUrl: null,
-        questionCount: null,
-        sourceHash: null,
-        year: 2036,
-      },
-      examDate: new Date(Date.now() + 30 * 86_400_000),
-      identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
-      language: "pt",
-      name: plan.name,
-      promptVersion: "older-instructions",
-      role: plan.role,
-    });
-
-    // Another learner prepares for the same exam with a date of their own.
-    const [other, skill] = await Promise.all([userFixture(), skillFixture()]);
-
-    const otherGoal = await goalFixture({
-      examBlueprintId: blueprint.id,
-      kind: "exam",
-      targetDate: new Date("2036-11-29T00:00:00.000Z"),
-      userId: other.id,
-    });
-
-    await planFixture({
-      goalId: otherGoal.id,
-      graph: {
-        phases: [{ milestone: null, name: "Basics" }],
-        skills: [{ lessons: 2, name: skill.name, phase: 0, skillId: skill.id }],
-      },
-      phases: [],
-    });
-
-    await researchWorkflow({ goalId: goal.id });
-
-    expect(extractExamBlueprint).toHaveBeenCalledOnce();
-    expect(generateSourceChangeNotice).not.toHaveBeenCalled();
-
-    // The exam's day didn't move: nothing reaches the other learner's Today.
-    await expect(
-      prisma.planChange.count({ where: { plan: { goalId: otherGoal.id } } }),
-    ).resolves.toBe(0);
   });
 
   it("joins another learner's research for the same exam instead of paying twice", async () => {
@@ -746,7 +1198,7 @@ describe(researchWorkflow, () => {
     );
 
     await expect(researchWorkflow({ goalId: goal.id })).resolves.toStrictEqual(result);
-    expect(generateResearchPlan).not.toHaveBeenCalled();
+    expect(generateExamResearchPlan).not.toHaveBeenCalled();
     expect(findOfficialSources).not.toHaveBeenCalled();
   });
 
@@ -862,7 +1314,7 @@ describe(researchWorkflow, () => {
 
     // The only notice online is the one of the edition that already happened.
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...TASK_RESULT,
+      ...READING_RESULT,
       data: {
         ...extraction,
         dates: extraction.dates.map((date) => ({
@@ -982,12 +1434,12 @@ describe(researchWorkflow, () => {
     const { goal } = await examGoal();
     const { plan } = await replayTcdfResearch();
 
-    // Onboarding matched the test's name ("Prova de biologia") to a public notice of that name.
+    // Onboarding matched the test's name ("Biology test") to a public notice of that name.
     const notice = await examBlueprintFixture({ language: "pt", name: "Prova de Biologia" });
 
     await prisma.goal.update({ data: { examBlueprintId: notice.id }, where: { id: goal.id } });
 
-    vi.mocked(generateResearchPlan).mockResolvedValue({
+    vi.mocked(generateExamResearchPlan).mockResolvedValue({
       ...TASK_RESULT,
       data: { ...plan, classTest: true },
     });
@@ -1013,7 +1465,7 @@ describe(researchWorkflow, () => {
 
     // What the BNCC gives for a school subject: subjects and topics, nothing about an exam.
     vi.mocked(extractExamBlueprint).mockResolvedValue({
-      ...TASK_RESULT,
+      ...READING_RESULT,
       data: {
         ...extraction,
         dates: [],
@@ -1052,7 +1504,7 @@ describe(researchWorkflow, () => {
     const material = await readFixture("tcdf-2026-notice.txt");
     const contentHash = `hash-${randomUUID()}`;
 
-    vi.mocked(generateResearchPlan).mockResolvedValue({
+    vi.mocked(generateExamResearchPlan).mockResolvedValue({
       ...TASK_RESULT,
       data: { ...plan, classTest: true },
     });
@@ -1077,11 +1529,38 @@ describe(researchWorkflow, () => {
     expect(result).toMatchObject({ status: "ready" });
     expect(findOfficialSources).not.toHaveBeenCalled();
 
+    // The plan read the learner's own words, so it never reaches providers that train on prompts.
+    expect(vi.mocked(generateExamResearchPlan).mock.calls[0]?.[0].analytics).toMatchObject({
+      contentScope: "personal",
+    });
+
     // The learner's own notes serve only them: no premium for the reading they wait on.
     expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBeUndefined();
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       researchUploadReason: null,
+    });
+  });
+
+  it("searches the notice as the learner's own when the plan read their own words", async () => {
+    const { goal } = await examGoal();
+    await replayTcdfResearch();
+
+    // A goal from the learner's own material, with nothing uploaded yet: the plan read what they
+    // wrote, and the search reads the plan.
+    await prisma.goal.update({
+      data: { details: { materialIntent: "exam" } },
+      where: { id: goal.id },
+    });
+
+    await researchWorkflow({ goalId: goal.id });
+
+    expect(vi.mocked(generateExamResearchPlan).mock.calls[0]?.[0].analytics).toMatchObject({
+      contentScope: "personal",
+    });
+
+    expect(vi.mocked(findOfficialSources).mock.calls[0]?.[0].analytics).toMatchObject({
+      contentScope: "personal",
     });
   });
 
@@ -1139,15 +1618,11 @@ const DAY_MS = 86_400_000;
 
 function syllabusPlan(word: string, queries = ["quantum mechanics course syllabus topics"]) {
   return {
-    board: null,
-    classTest: false,
     country: "ZZ",
-    edition: null,
     language: "en",
     name: `Quantum Mechanics ${word}`,
     officialDomains: ["ocw.mit.edu"],
     queries,
-    role: null,
     searchTerms: [`quantum mechanics ${word}`],
   };
 }
@@ -1207,7 +1682,11 @@ describe("research for goals that aren't exams", () => {
     const word = `zq${randomUUID().slice(0, 8)}`;
     const goal = await learnGoal({ purpose: "deep" });
     vi.mocked(detectChangingFacts).mockResolvedValue("none");
-    vi.mocked(generateResearchPlan).mockResolvedValue({ ...TASK_RESULT, data: syllabusPlan(word) });
+
+    vi.mocked(generateSourceResearchPlan).mockResolvedValue({
+      ...TASK_RESULT,
+      data: syllabusPlan(word),
+    });
 
     vi.mocked(findOfficialSources).mockResolvedValue({
       ...TASK_RESULT,
@@ -1222,7 +1701,11 @@ describe("research for goals that aren't exams", () => {
 
     expect(result).toMatchObject({ examBlueprintId: null, status: "ready" });
     expect(result.status === "ready" && result.sourceIds).toHaveLength(2);
-    expect(vi.mocked(generateResearchPlan).mock.calls[0]?.[0]).toMatchObject({ topic: "syllabus" });
+
+    expect(vi.mocked(generateSourceResearchPlan).mock.calls[0]?.[0]).toMatchObject({
+      topic: "syllabus",
+    });
+
     expect(vi.mocked(findOfficialSources).mock.calls[0]?.[0]).toMatchObject({ topic: "syllabus" });
 
     const links = await prisma.learnerSource.findMany({
@@ -1258,14 +1741,14 @@ describe("research for goals that aren't exams", () => {
     });
 
     expect(vi.mocked(sleep)).toHaveBeenCalledWith("3s");
-    expect(generateResearchPlan).not.toHaveBeenCalled();
+    expect(generateSourceResearchPlan).not.toHaveBeenCalled();
   });
 
   it("searches nothing for a subject no university course teaches", async () => {
     const goal = await learnGoal({ purpose: "careerChange" });
     vi.mocked(detectChangingFacts).mockResolvedValue("none");
 
-    vi.mocked(generateResearchPlan).mockResolvedValue({
+    vi.mocked(generateSourceResearchPlan).mockResolvedValue({
       ...TASK_RESULT,
       data: syllabusPlan(`zq${randomUUID().slice(0, 8)}`, []),
     });
@@ -1294,18 +1777,14 @@ describe("research for goals that aren't exams", () => {
       validUntil: new Date(Date.now() + 10 * DAY_MS),
     });
 
-    vi.mocked(generateResearchPlan).mockResolvedValue({
+    vi.mocked(generateSourceResearchPlan).mockResolvedValue({
       ...TASK_RESULT,
       data: {
-        board: null,
-        classTest: false,
         country: "BR",
-        edition: null,
         language: "pt",
         name: `LGPD ${word}`,
         officialDomains: ["planalto.gov.br"],
         queries: ["lei 13.709 texto compilado"],
-        role: null,
         searchTerms: [`Proteção de Dados ${word}`],
       },
     });

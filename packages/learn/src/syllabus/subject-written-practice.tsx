@@ -8,7 +8,7 @@ import { type SubjectActions } from "./subject-not-planned";
 
 /**
  * A written test's page says when it's practiced and changes it in one tap, as "Adjust your plan"
- * does: the learner who opens their redação to see what's planned decides it there.
+ * does: the learner who opens their essay to see what's planned decides it there.
  */
 export function SubjectWrittenPractice({
   actions,

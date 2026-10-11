@@ -7,6 +7,7 @@ import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   SESSION_NOW,
   daysAgo,
@@ -16,7 +17,6 @@ import {
 import { addExtraStudyBlock } from "./add-extra-study-block";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudySession } from "./get-study-session";
-import { getTodayStudySession } from "./get-today-study-session";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 

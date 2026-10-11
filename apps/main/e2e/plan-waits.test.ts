@@ -19,6 +19,8 @@ import { openAs } from "./study-day";
 /** Stand-ins are read again every 10 seconds while lessons are being written. */
 const WRITING_REFRESH_MS = 10_000;
 
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
 /** A learner whose active goal has a plan. */
 async function createPlanLearner() {
   const user = await createE2EUser(getBaseURL());
@@ -36,13 +38,15 @@ async function createPlanLearner() {
 
 /**
  * A plan whose first lessons stand in for a skill until its outline lands (no lesson, no chapter),
- * scheduled today, and the outline that lands for them.
+ * scheduled today, and the outline that lands for them. The plan was saved an hour before the
+ * learner opens it, so nothing in it changed since the page read it until the outline lands.
  */
 async function createPlanBeingWritten(goalId: string) {
   const suffix = randomUUID().slice(0, 6);
+  const savedAt = new Date(Date.now() - ONE_HOUR_MS);
 
   const [plan, skill, chapter, lesson] = await Promise.all([
-    planFixture({ goalId }),
+    planFixture({ goalId, updatedAt: savedAt }),
     skillFixture({ name: `Unit rates ${suffix}` }),
     libraryChapterFixture({ title: `Rates and ratios ${suffix}` }),
     libraryLessonFixture({ title: `What a unit rate is ${suffix}` }),
@@ -53,6 +57,7 @@ async function createPlanBeingWritten(goalId: string) {
     scheduledFor: toUTCMidnight(new Date()),
     skillId: skill.id,
     titleSnapshot: "",
+    updatedAt: savedAt,
   });
 
   /** The outline lands the way the API's run writes it: the stand-in gets its lesson and chapter. */
@@ -91,6 +96,48 @@ test.describe("Lessons being written in the plan", () => {
     );
 
     await expect(path.getByText("Lessons on the way")).toBeHidden();
+    await page.context().close();
+  });
+
+  // An open Journey waiting on lessons used to read itself whole every 10 seconds (~500 queries
+  // each time): it asks whether anything changed, and reads itself again only when it did.
+  test("while nothing lands, the Journey asks whether it changed instead of reading itself again", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createPlanLearner();
+    await createPlanBeingWritten(goal.id);
+
+    const page = await openAs(browser, user);
+    await page.clock.install();
+    await page.goto("/journey");
+
+    const path = page.getByRole("list", { name: "Your journey" });
+    await expect(path.getByText("Lessons on the way")).toBeVisible();
+
+    const requests = { asked: 0, readsAfterAsking: 0 };
+
+    // Counted as they're sent. A page that hydrates after the clock moved on reads itself once as
+    // an old copy (`useRefreshWhenOld`) before it starts asking; what matters is that asking never
+    // reads it.
+    page.on("request", (request) => {
+      const headers = request.headers();
+
+      if (headers["next-action"]) {
+        requests.asked += 1;
+      } else if (headers.rsc && !headers["next-router-prefetch"] && requests.asked > 0) {
+        requests.readsAfterAsking += 1;
+      }
+    });
+
+    // The page starts asking once it hydrates, so the clock moves on until it has asked three
+    // times: each ask goes out after the answer before it, and any read that answer started.
+    await expect(async () => {
+      await page.clock.fastForward(WRITING_REFRESH_MS);
+      expect(requests.asked).toBeGreaterThanOrEqual(3);
+    }).toPass();
+
+    expect(requests.readsAfterAsking).toBe(0);
+    await expect(path.getByText("Lessons on the way")).toBeVisible();
     await page.context().close();
   });
 });

@@ -4,9 +4,11 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
 import { claimUsage } from "../entitlements/claim-usage";
-import { type UsageDecision } from "../entitlements/contract";
+import { type RefusedUsage } from "../entitlements/contract";
+import { getCertificateLanguage } from "../exams/language-exam";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
+import { readTestedLanguage } from "../library/exams/blueprint-language";
 import { fromIsoDate, toIsoDate } from "../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
 import { getSession } from "../users/get-session";
@@ -14,11 +16,11 @@ import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { splitDailyBudget } from "./daily-budget";
 import { type GoalCreateInput, type GoalDraft, type GoalView } from "./goal-contract";
 
-/** Why one goal wasn't created: the plan's goal limits, or too many requests at once. */
-export type GoalRefusal = {
-  decision: Extract<UsageDecision, { status: "limitReached" | "slowDown" }>;
-  index: number;
-};
+/**
+ * Why one goal wasn't created: the plan's goal limits, too many requests at once, or a guest asked
+ * to create an account.
+ */
+export type GoalRefusal = { decision: RefusedUsage; index: number };
 
 export type GoalCreateResult =
   | { goals: GoalView[]; refused: GoalRefusal[]; status: "created" }
@@ -60,6 +62,32 @@ async function hasValidReferences({ goals, userId }: { goals: GoalDraft[]; userI
   return blueprints === blueprintIds.length && courses === courseIds.length;
 }
 
+/**
+ * The language each exam the exam goals point at tests, by blueprint, as its notice says ("en" for
+ * IELTS or PTE Academic). Exams whose notice names none aren't in it.
+ */
+async function loadTestedLanguages(goals: GoalDraft[]): Promise<Map<string, string>> {
+  const ids = [
+    ...new Set(goals.flatMap((goal) => (goal.kind === "exam" && goal.examBlueprintId) || [])),
+  ];
+
+  if (ids.length === 0) {
+    return new Map();
+  }
+
+  const blueprints = await prisma.examBlueprint.findMany({
+    select: { id: true, structure: true },
+    where: { id: { in: ids } },
+  });
+
+  return new Map(
+    blueprints.flatMap((blueprint) => {
+      const language = readTestedLanguage(blueprint.structure);
+      return language ? [[blueprint.id, language] as const] : [];
+    }),
+  );
+}
+
 /** Goals without their own minutes share the day's time; the first of them is the main one. */
 function assignDailyMinutes(input: GoalCreateInput): number[] {
   const shared = input.goals.filter((goal) => goal.dailyMinutes === undefined).length;
@@ -74,17 +102,23 @@ function assignDailyMinutes(input: GoalCreateInput): number[] {
   });
 }
 
+/**
+ * Creates one goal and its empty plan. An exam goal learns the language its notice says the exam
+ * tests (`testedLanguage`), else the one onboarding read, else the one a certificate's name gives.
+ */
 async function createGoal({
   dailyMinutes,
   draft,
   id,
   input,
+  testedLanguage,
   userId,
 }: {
   dailyMinutes: number;
   draft: GoalDraft;
   id: string;
   input: GoalCreateInput;
+  testedLanguage: string | null;
   userId: string;
 }): Promise<void> {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
@@ -102,7 +136,7 @@ async function createGoal({
         prompt: draft.prompt,
         studyTime: input.studyTime ?? null,
         targetDate: draft.targetDate ? fromIsoDate(draft.targetDate) : null,
-        targetLanguage: draft.targetLanguage ?? null,
+        targetLanguage: testedLanguage ?? draft.targetLanguage ?? getCertificateLanguage(draft),
         timezone: input.timeZone ?? null,
         title: draft.title,
         userId,
@@ -171,7 +205,11 @@ export async function createGoals(
   }
 
   const minutes = assignDailyMinutes(input);
-  const replacing = await isOwnGoal({ goalId: replacesGoalId, userId });
+
+  const [replacing, testedLanguages] = await Promise.all([
+    isOwnGoal({ goalId: replacesGoalId, userId }),
+    loadTestedLanguages(input.goals),
+  ]);
 
   /** One at a time, so each claim counts the goals created before it. */
   const results = await input.goals.reduce<Promise<{ ids: string[]; refused: GoalRefusal[] }>>(
@@ -201,6 +239,8 @@ export async function createGoals(
         draft,
         id,
         input,
+        testedLanguage:
+          (draft.kind === "exam" && testedLanguages.get(draft.examBlueprintId ?? "")) || null,
         userId,
       });
 

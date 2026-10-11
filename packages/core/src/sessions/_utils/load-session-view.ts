@@ -5,16 +5,17 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { getDailyTimeLimitStatus } from "../../minors/get-daily-time-limit";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { type PlanDay, getWeekDayKind, getWeekDays } from "../daily-goal";
+import { getDailyTimeLimitStatus } from "../get-daily-time-limit";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { isCurrentSession } from "./current-session";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
+import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { loadSessionAnswers } from "./session-answers";
 import { countMistakesFixedToday, getSessionMissions } from "./session-missions";
 import { type EmptyDay, type StudySessionView, toStudySessionView } from "./session-view";
@@ -31,21 +32,35 @@ async function loadWeek({ session, userId }: { session: StudySessionRow; userId:
 
   const weekDates = { gte: weekStart, lt: new Date(weekStart.getTime() + WEEK_DAYS * MS_PER_DAY) };
 
-  const [days, completed, goals] = await Promise.all([
+  const [days, sessions, goals] = await Promise.all([
     prisma.dailyProgress.findMany({
       select: { date: true, timeSpentSeconds: true },
       where: { date: weekDates, userId },
     }),
     prisma.studySession.findMany({
-      select: { localDate: true },
-      // Ended once: "10 more minutes" reopens a finished session, and the day still counts.
-      where: { endedAt: { not: null }, localDate: weekDates, userId },
+      select: { endedAt: true, goalId: true, localDate: true, plannedMinutes: true },
+      where: { localDate: weekDates, userId },
     }),
     prisma.goal.findMany({
       include: { plan: { select: { settings: true } } },
       where: { status: "active", userId },
     }),
   ]);
+
+  // Ended once: "10 more minutes" reopens a finished session, and the day still counts.
+  const completed = sessions.filter((day) => day.endedAt !== null);
+
+  /**
+   * A day already past asks what its session asked when it was built: a daily time changed since
+   * doesn't measure it again (Ana's 45-minute days read as partial once she chose 3 hours).
+   */
+  const getPastMinutes = (goalId: string, date: Date): number | null => {
+    const asked = sessions.find(
+      (day) => day.goalId === goalId && day.localDate.getTime() === date.getTime(),
+    )?.plannedMinutes;
+
+    return date < session.localDate && asked ? asked : null;
+  };
 
   const started = goals.map((goal) => ({
     goal,
@@ -61,7 +76,9 @@ async function loadWeek({ session, userId }: { session: StudySessionRow; userId:
       (sum, { goal, startDate }) =>
         date < startDate
           ? sum
-          : sum + getGoalDayMinutes({ date, goal, planSettings: goal.plan?.settings }),
+          : sum +
+            (getPastMinutes(goal.id, date) ??
+              getGoalDayMinutes({ date, goal, planSettings: goal.plan?.settings })),
       0,
     );
 
@@ -139,7 +156,7 @@ async function loadEmptyDay({
 
 /**
  * Whether the day holds time for lessons still being outlined: it's the learner's day, not done,
- * with time left for a lesson, and lessons due by then are stand-ins (`hasStandInsDue`), which
+ * with time left for a lesson, and its outlines are being written (`isDayAwaitingOutlines`); they
  * join its end once they land (`refreshDayFromPlan`).
  */
 async function loadLessonsComing({
@@ -153,24 +170,11 @@ async function loadLessonsComing({
 }): Promise<boolean> {
   const hasTime = dayMinutes - session.plannedMinutes >= DEFAULT_LESSON_MINUTES;
 
-  if (!current || !hasTime || session.status === "completed" || !session.goalId) {
+  if (!current || !hasTime || session.status === "completed" || !session.goal) {
     return false;
   }
 
-  const waiting = await prisma.planItem.findFirst({
-    select: { id: true },
-    where: {
-      chapterId: null,
-      kind: "lesson",
-      lessonId: null,
-      plan: { goalId: session.goalId },
-      scheduledFor: { lte: session.localDate },
-      skillId: { not: null },
-      status: "todo",
-    },
-  });
-
-  return waiting !== null;
+  return isDayAwaitingOutlines({ goal: session.goal, localDate: session.localDate });
 }
 
 /** Loads what the session view model reads: answers, missions, the week, limits and access. */
@@ -224,6 +228,15 @@ export async function loadStudySessionView({
     loadLessonsComing({ current, dayMinutes, session }),
   ]);
 
+  const examAccess = session.goal
+    ? getExamPrepAccess({
+        examPrep: allowance?.examPrep ?? null,
+        goal: session.goal,
+        timeZone,
+        today: session.localDate,
+      })
+    : { includesMockExams: true, trialEnded: false };
+
   const view = toStudySessionView({
     answers,
     blockSubjects,
@@ -231,14 +244,7 @@ export async function loadStudySessionView({
     dailyLimit,
     dayMinutes,
     emptyDay,
-    examAccess: session.goal
-      ? getExamPrepAccess({
-          examPrep: allowance?.examPrep ?? null,
-          goal: session.goal,
-          timeZone,
-          today: session.localDate,
-        })
-      : { includesMockExams: true, trialEnded: false },
+    examAccess,
     lessonsComing,
     missions: getSessionMissions({ answeredItemIds, blocks: session.blocks, fixedToday }),
     oftenTestedSkillIds,
@@ -249,7 +255,15 @@ export async function loadStudySessionView({
   const [extraTime, withMinutes, catchUp] = await Promise.all([
     withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
     withLessonMinutes(view),
-    loadCatchUpView({ blocks: session.blocks, goalId: session.goalId, userId }),
+    loadCatchUpView({
+      blocks: session.blocks,
+      dailyMinutes: session.goal?.dailyMinutes ?? 0,
+      examTomorrow: view.examTomorrow,
+      freshStart: session.freshStart,
+      goalId: session.goalId,
+      trialEnded: examAccess.trialEnded,
+      userId,
+    }),
   ]);
 
   return { ...withMinutes, catchUp, extraTime };

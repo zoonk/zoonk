@@ -208,17 +208,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. orbits are not the same size: Sun/Earth orbit is much larger than nucleus/electron orbit unrequested text: 'Sun' unrequested text: 'Earth' pill label unrequested text: 'Nucleus' unrequested text: 'Electron' pill label layout is a split panel with divider and multiple labels rather than a simple comparison of two orbits",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' orbits are not the same size: Sun-Earth orbit is much larger than nucleus-electron orbit",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. orbits are not the same size: Sun/Earth orbit is much larger than nucleus/electron orbit unrequested text: 'Sun' unrequested text: 'Earth' pill label unrequested text: 'Nucleus' unrequested text: 'Electron' pill label layout is a split panel with divider and multiple labels rather than a simple comparison of two orbits",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' orbits are not the same size: Sun-Earth orbit is much larger than nucleus-electron orbit",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. orbits are not the same size: Sun/Earth orbit is much larger than nucleus/electron orbit unrequested text: 'Sun' unrequested text: 'Earth' pill label unrequested text: 'Nucleus' unrequested text: 'Electron' pill label layout is a split panel with divider and multiple labels rather than a simple comparison of two orbits",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Sun' unrequested text: 'Earth' unrequested text: 'Nucleus' unrequested text: 'Electron' orbits are not the same size: Sun-Earth orbit is much larger than nucleus-electron orbit",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -244,22 +244,22 @@
       }
     },
     {
-      "classification": { "expected": "fail", "predicted": "fail" },
+      "classification": { "expected": "fail", "predicted": "pass" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. scene asks for one microwave with soup and one molecule, but the image draws two microwaves in a sequence the spinning molecule arrows are present but the thin dashed link and curved motion are duplicated across both panels",
+          "conclusion": "Expected fail; got pass. scene asks for a sequence layout with a single relation; image shows two panels with a dashed arrow between them, which is acceptable as sequence, so no failure there the spinning molecule has curved arrows but the dashed link from soup to molecule is present; matches scene",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected fail; got fail. scene asks for one microwave with soup and one molecule, but the image draws two microwaves in a sequence the spinning molecule arrows are present but the thin dashed link and curved motion are duplicated across both panels",
+          "conclusion": "Expected fail; got pass. scene asks for a sequence layout with a single relation; image shows two panels with a dashed arrow between them, which is acceptable as sequence, so no failure there the spinning molecule has curved arrows but the dashed link from soup to molecule is present; matches scene",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected fail; got fail. scene asks for one microwave with soup and one molecule, but the image draws two microwaves in a sequence the spinning molecule arrows are present but the thin dashed link and curved motion are duplicated across both panels",
+          "conclusion": "Expected fail; got pass. scene asks for a sequence layout with a single relation; image shows two panels with a dashed arrow between them, which is acceptable as sequence, so no failure there the spinning molecule has curved arrows but the dashed link from soup to molecule is present; matches scene",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -319,17 +319,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. scene shows a house with a key sign, not a microwave oven with soup and a spinning water molecule unrequested text: none visible but focal object is wrong required label 'water molecules' is missing",
+          "conclusion": "Expected fail; got fail. scene requires a microwave oven with soup, but image shows a house with a key sign no spinning water molecule, dashed link, or curved motion arrows present label 'water molecules' is absent from the image",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. scene shows a house with a key sign, not a microwave oven with soup and a spinning water molecule unrequested text: none visible but focal object is wrong required label 'water molecules' is missing",
+          "conclusion": "Expected fail; got fail. scene requires a microwave oven with soup, but image shows a house with a key sign no spinning water molecule, dashed link, or curved motion arrows present label 'water molecules' is absent from the image",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. scene shows a house with a key sign, not a microwave oven with soup and a spinning water molecule unrequested text: none visible but focal object is wrong required label 'water molecules' is missing",
+          "conclusion": "Expected fail; got fail. scene requires a microwave oven with soup, but image shows a house with a key sign no spinning water molecule, dashed link, or curved motion arrows present label 'water molecules' is absent from the image",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -355,17 +355,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. price text reads 'R$ 80' and 'R$ 60' instead of 'R$ 90' and 'R$ 70'",
+          "conclusion": "Expected fail; got fail. old tag reads 'antes R$ 80' instead of 'antes R$ 90' new tag reads 'você paga R$ 60' instead of 'você paga R$ 70'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. price text reads 'R$ 80' and 'R$ 60' instead of 'R$ 90' and 'R$ 70'",
+          "conclusion": "Expected fail; got fail. old tag reads 'antes R$ 80' instead of 'antes R$ 90' new tag reads 'você paga R$ 60' instead of 'você paga R$ 70'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. price text reads 'R$ 80' and 'R$ 60' instead of 'R$ 90' and 'R$ 70'",
+          "conclusion": "Expected fail; got fail. old tag reads 'antes R$ 80' instead of 'antes R$ 90' new tag reads 'você paga R$ 60' instead of 'você paga R$ 70'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -431,17 +431,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. focal object is a green leaf with a sun, not a red apple on a white plate image shows sunlight on a leaf instead of the requested scene",
+          "conclusion": "Expected fail; got fail. focal object is a green leaf, not a red apple on a white plate unrequested depiction: sun with light rays image shows a leaf and sun instead of the requested apple and plate",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. focal object is a green leaf with a sun, not a red apple on a white plate image shows sunlight on a leaf instead of the requested scene",
+          "conclusion": "Expected fail; got fail. focal object is a green leaf, not a red apple on a white plate unrequested depiction: sun with light rays image shows a leaf and sun instead of the requested apple and plate",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. focal object is a green leaf with a sun, not a red apple on a white plate image shows sunlight on a leaf instead of the requested scene",
+          "conclusion": "Expected fail; got fail. focal object is a green leaf, not a red apple on a white plate unrequested depiction: sun with light rays image shows a leaf and sun instead of the requested apple and plate",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -467,17 +467,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text in English instead of 'moléculas de água'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text is in English instead of required 'moléculas de água' in Português Brasileiro",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text in English instead of 'moléculas de água'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text is in English instead of required 'moléculas de água' in Português Brasileiro",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text in English instead of 'moléculas de água'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'water molecules' label text is in English instead of required 'moléculas de água' in Português Brasileiro",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -617,17 +617,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. particle is inside a glass dome, not sitting on top of the device display screen is dark, not blank digital display unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle sits inside a glass dome, not on top of the device above the screen '0' and '1' labels sit above the two lamps rather than left and right of the screen as requested",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. particle is inside a glass dome, not sitting on top of the device display screen is dark, not blank digital display unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle sits inside a glass dome, not on top of the device above the screen '0' and '1' labels sit above the two lamps rather than left and right of the screen as requested",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. particle is inside a glass dome, not sitting on top of the device display screen is dark, not blank digital display unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen'",
+          "conclusion": "Expected fail; got fail. unrequested text: 'Particle' unrequested text: 'Indicator lamp' unrequested text: 'Display screen' particle sits inside a glass dome, not on top of the device above the screen '0' and '1' labels sit above the two lamps rather than left and right of the screen as requested",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -656,17 +656,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. image is a photograph, not a flat illustration scene requires a dashed link, water molecule in a circle and curved spinning arrows, none present display shows text '0:45' not allowed by LABELS of none",
+          "conclusion": "Expected fail; got fail. photorealistic photo instead of flat illustration dark busy background no dashed line, water molecule circle, or curved spinning arrows shown unrequested text: '0:45' on display unrequested text: '1' on oven panel",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. image is a photograph, not a flat illustration scene requires a dashed link, water molecule in a circle and curved spinning arrows, none present display shows text '0:45' not allowed by LABELS of none",
+          "conclusion": "Expected fail; got fail. photorealistic photo instead of flat illustration dark busy background no dashed line, water molecule circle, or curved spinning arrows shown unrequested text: '0:45' on display unrequested text: '1' on oven panel",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. image is a photograph, not a flat illustration scene requires a dashed link, water molecule in a circle and curved spinning arrows, none present display shows text '0:45' not allowed by LABELS of none",
+          "conclusion": "Expected fail; got fail. photorealistic photo instead of flat illustration dark busy background no dashed line, water molecule circle, or curved spinning arrows shown unrequested text: '0:45' on display unrequested text: '1' on oven panel",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -692,17 +692,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. image is a multi-panel infographic, not a single focal illustration contains many text labels despite LABELS being none (e.g. 'Evaporation', 'Clouds', 'Ocean', 'Condensation', 'Precipitation', 'Runoff', 'Groundwater') scene requested a simple lake, cloud and small sun, but image shows six panels with many objects dark-blue header and busy multi-part layout violate flat single-focal style requirements",
+          "conclusion": "Expected fail; got fail. multi-panel infographic with many parts instead of single focal illustration unrequested text: 'The Water Cycle' unrequested text: 'Evaporation' unrequested text: 'Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'Why It Matters' unrequested text: 'Clouds' unrequested text: 'Ocean' unrequested text: 'Snow' unrequested text: 'Rain' unrequested text: 'Groundwater'",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. image is a multi-panel infographic, not a single focal illustration contains many text labels despite LABELS being none (e.g. 'Evaporation', 'Clouds', 'Ocean', 'Condensation', 'Precipitation', 'Runoff', 'Groundwater') scene requested a simple lake, cloud and small sun, but image shows six panels with many objects dark-blue header and busy multi-part layout violate flat single-focal style requirements",
+          "conclusion": "Expected fail; got fail. multi-panel infographic with many parts instead of single focal illustration unrequested text: 'The Water Cycle' unrequested text: 'Evaporation' unrequested text: 'Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'Why It Matters' unrequested text: 'Clouds' unrequested text: 'Ocean' unrequested text: 'Snow' unrequested text: 'Rain' unrequested text: 'Groundwater'",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. image is a multi-panel infographic, not a single focal illustration contains many text labels despite LABELS being none (e.g. 'Evaporation', 'Clouds', 'Ocean', 'Condensation', 'Precipitation', 'Runoff', 'Groundwater') scene requested a simple lake, cloud and small sun, but image shows six panels with many objects dark-blue header and busy multi-part layout violate flat single-focal style requirements",
+          "conclusion": "Expected fail; got fail. multi-panel infographic with many parts instead of single focal illustration unrequested text: 'The Water Cycle' unrequested text: 'Evaporation' unrequested text: 'Transpiration' unrequested text: 'Condensation' unrequested text: 'Precipitation' unrequested text: 'Infiltration & Percolation' unrequested text: 'Collection & Storage' unrequested text: 'The Cycle Continues' unrequested text: 'Legend' unrequested text: 'Why It Matters' unrequested text: 'Clouds' unrequested text: 'Ocean' unrequested text: 'Snow' unrequested text: 'Rain' unrequested text: 'Groundwater'",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -761,17 +761,17 @@
       "classification": { "expected": "fail", "predicted": "fail" },
       "steps": [
         {
-          "conclusion": "Expected fail; got fail. label A's pointer ends on the thin inner line region near the top-right corner rather than clearly on the thick outer green boundary label B's pointer ends on the thick outer green boundary rather than the thin inner line, so A and B targets are swapped the thin inner line is drawn as a separate lighter layer; the mapping between labels and parts is inverted relative to the scene",
+          "conclusion": "Expected fail; got fail. unrequested text: none (no extra text visible)",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. label A's pointer ends on the thin inner line region near the top-right corner rather than clearly on the thick outer green boundary label B's pointer ends on the thick outer green boundary rather than the thin inner line, so A and B targets are swapped the thin inner line is drawn as a separate lighter layer; the mapping between labels and parts is inverted relative to the scene",
+          "conclusion": "Expected fail; got fail. unrequested text: none (no extra text visible)",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected fail; got fail. label A's pointer ends on the thin inner line region near the top-right corner rather than clearly on the thick outer green boundary label B's pointer ends on the thick outer green boundary rather than the thin inner line, so A and B targets are swapped the thin inner line is drawn as a separate lighter layer; the mapping between labels and parts is inverted relative to the scene",
+          "conclusion": "Expected fail; got fail. unrequested text: none (no extra text visible)",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -787,6 +787,110 @@
             "labels": [
               { "target": "at a pointer line touching the thick outer boundary", "text": "A" },
               { "target": "at a pointer line touching the thin inner line", "text": "B" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "numbered-animal-cell-1",
+        "userInput": {
+          "imageFile": "numbered-animal-cell.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "an animal cell as seen under a microscope, cut open: the cell membrane around it, the nucleus with its nucleolus, several mitochondria, the Golgi apparatus and the rough endoplasmic reticulum",
+            "labels": [
+              { "target": "pointing at the cell membrane", "text": "1" },
+              { "target": "pointing at the nucleus", "text": "2" },
+              { "target": "pointing at the nucleolus", "text": "3" },
+              { "target": "pointing at the mitochondrion", "text": "4" },
+              { "target": "pointing at the Golgi apparatus", "text": "5" },
+              { "target": "pointing at the rough endoplasmic reticulum", "text": "6" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        { "conclusion": "Expected pass; got pass. ", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "Expected pass; got pass. ", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "numbered-flower-1",
+        "userInput": {
+          "imageFile": "numbered-flower.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a flower cut in half lengthwise to show its petals, sepals, stamens with anthers, the stigma on top of the style and the ovary at the base",
+            "labels": [
+              { "target": "pointing at the petal", "text": "1" },
+              { "target": "pointing at the sepal", "text": "2" },
+              { "target": "pointing at the anther", "text": "3" },
+              { "target": "pointing at the stigma", "text": "4" },
+              { "target": "pointing at the ovary", "text": "5" }
+            ],
+            "layout": "single",
+            "motion": null,
+            "relation": null,
+            "supportingObjects": []
+          }
+        }
+      }
+    },
+    {
+      "classification": { "expected": "pass", "predicted": "pass" },
+      "steps": [
+        {
+          "conclusion": "Expected pass; got pass. label 5 pointer ends on the tire's outer edge, which is part of the front wheel, so it passes label 6 pointer ends on the top tube of the frame, correct",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. label 5 pointer ends on the tire's outer edge, which is part of the front wheel, so it passes label 6 pointer ends on the top tube of the frame, correct",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected pass; got pass. label 5 pointer ends on the tire's outer edge, which is part of the front wheel, so it passes label 6 pointer ends on the top tube of the frame, correct",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "passed": true },
+        "id": "numbered-bicycle-tire-1",
+        "userInput": {
+          "imageFile": "numbered-bicycle.webp",
+          "language": "en",
+          "scene": {
+            "focalObject": "a bicycle seen from the side",
+            "labels": [
+              { "target": "pointing at the handlebars", "text": "1" },
+              { "target": "pointing at the saddle", "text": "2" },
+              { "target": "pointing at the chain", "text": "3" },
+              { "target": "pointing at the pedal", "text": "4" },
+              { "target": "pointing at the front wheel", "text": "5" },
+              { "target": "pointing at the frame", "text": "6" }
             ],
             "layout": "single",
             "motion": null,

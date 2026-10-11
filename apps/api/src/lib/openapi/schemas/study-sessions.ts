@@ -3,9 +3,9 @@ import { missionSchema, questionAnswerSchema } from "@zoonk/core/sessions/comple
 import { StudyBlockKind, StudyBlockStatus, StudyFreshStart, StudySessionStatus } from "@zoonk/db";
 import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
-import { itemCitationSchema, questionImageSchema, questionVisualSchema } from "./common";
-import { emptyDaySchema, lessonsComingSchema } from "./day-lessons";
-import { mistakeDrillSchema } from "./mistakes";
+import { emptyDaySchema, examTomorrowSchema, lessonsComingSchema } from "./day-lessons";
+import { listeningTranscriptSchema } from "./item-set";
+import { studyBlockQuestionSchema } from "./study-block-question";
 
 export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local calendar date" });
 const idSchema = z.uuid();
@@ -67,6 +67,12 @@ export const studyBlockSchema = z
     id: idSchema,
     kind: z.enum(StudyBlockKind),
     lessonId: idSchema.nullable(),
+    mistakesOnly: z
+      .boolean()
+      .meta({
+        description:
+          "A practice block that only fixes the learner's mistakes (their drills, no practice questions): name it for that, not as mixed practice",
+      }),
     netScored: z
       .boolean()
       .meta({
@@ -91,6 +97,12 @@ export const studyBlockSchema = z
           "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
       }),
     title: z.string().nullable(),
+    weakest: z
+      .boolean()
+      .meta({
+        description:
+          "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty. Say so rather than calling it due",
+      }),
   })
   .meta({ id: "StudyBlock" });
 
@@ -99,11 +111,11 @@ export const extraTimeSchema = z
     available: z.boolean(),
     minutes: z.number().int().min(0),
     reason: z
-      .enum(["dailyCap", "dailyLimit", "nothingToStudy", "sessionNotFinished"])
+      .enum(["dailyCap", "dailyLimit", "nothingToStudy", "plusRequired", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: the day's two bonus blocks are used, the daily time limit leaves too little, nothing is left to practice or learn, or the session isn't finished",
+          "Why it isn't offered: the day's two bonus blocks are used, the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
       }),
   })
   .meta({ id: "StudyExtraTime" });
@@ -116,8 +128,7 @@ const dailyLimitSchema = z
     usedMinutes: z.number().int().min(0),
   })
   .meta({
-    description:
-      "The daily time limit, when the learner or a guardian set one: the strictest applies",
+    description: "The learner's own daily time limit, when they set one",
     id: "DailyTimeLimit",
   });
 
@@ -135,6 +146,7 @@ export const studySessionResponseSchema = z
     dailyLimit: dailyLimitSchema.nullable(),
     emptyDay: emptyDaySchema,
     examAccess: z.object({ includesMockExams: z.boolean(), trialEnded: z.boolean() }),
+    examTomorrow: examTomorrowSchema,
     extraTime: extraTimeSchema,
     freshStart: z.enum(StudyFreshStart).nullable(),
     fullMeal: z.object({ bonus: z.number().int(), earned: z.boolean(), ready: z.boolean() }),
@@ -188,79 +200,7 @@ export const studyBlockDetailResponseSchema = z
   .object({
     block: studyBlockSchema,
     hints: z.boolean().meta({ description: "False in checkpoints: a duel without hints" }),
-    questions: z.array(
-      z.object({
-        answered: z
-          .object({
-            blank: z
-              .boolean()
-              .meta({
-                description:
-                  "Left blank where a wrong answer cancels a right one: counts as neither",
-              }),
-            isCorrect: z.boolean(),
-          })
-          .nullable(),
-        capsuleKey: z.string().nullable(),
-        citation: itemCitationSchema.meta({
-          description: "The passage it quotes, such as an article of law, with its dated source",
-        }),
-        context: z.string().nullable(),
-        drill: mistakeDrillSchema
-          .nullable()
-          .meta({ description: "A saved mistake's drill, played the way its cause calls for" }),
-        format: z
-          .enum(["multipleChoice", "trueFalse", "matchPairs", "numeric"])
-          .meta({
-            description:
-              "numeric: a math problem, answered with a number. Its numbers are drawn for this block, so they stay the same on every visit and change in the next block that asks it",
-          }),
-        image: questionImageSchema,
-        itemId: idSchema,
-        left: z.array(z.string()).nullable().meta({ description: "Match pairs: the left column" }),
-        mistakeId: idSchema.nullable(),
-        options: z.array(z.string()).nullable(),
-        placement: z
-          .boolean()
-          .meta({
-            description:
-              "A placement question of the goal's first week: it fine-tunes where the plan starts, is never saved as a mistake, and welcomes `{ dontKnow: true }`",
-          }),
-        question: z.string(),
-        quoted: z
-          .boolean()
-          .meta({
-            description:
-              "A real past exam question copied as printed, where its organizer allows it: show `citation` with it before it's answered",
-          }),
-        right: z
-          .array(z.string())
-          .nullable()
-          .meta({ description: "Match pairs: the right column" }),
-        skillId: idSchema,
-        timeMachine: z
-          .object({
-            answer: z.string().nullable(),
-            answeredAt: z.iso.datetime(),
-            isCorrect: z.boolean(),
-          })
-          .nullable()
-          .meta({
-            description:
-              "The learner's last answer to this question before today: when, and whether it was right. `answer` holds its text only when it was wrong, so it never gives today's answer away; show it after the learner answers. A math answer given with other numbers has no answer text",
-          }),
-        unit: z
-          .object({
-            position: z
-              .enum(["prefix", "suffix"])
-              .meta({ description: "Where the unit goes: before the number for money (R$ 45)" }),
-            symbol: z.string(),
-          })
-          .nullable()
-          .meta({ description: "A math problem's unit, shown next to the answer field" }),
-        visual: questionVisualSchema,
-      }),
-    ),
+    questions: z.array(studyBlockQuestionSchema),
     trueFalseLabels: trueFalseLabelsSchema,
   })
   .meta({ id: "StudyBlockDetail" });
@@ -292,6 +232,10 @@ export const studyAnswerFeedbackResponseSchema = z
     mistakeFixed: z.boolean(),
     pauseSuggested: z.boolean(),
     savedToNotebook: z.boolean(),
+    transcript: listeningTranscriptSchema.meta({
+      description:
+        "A recording's transcript (who said what, in order) once this answer completes its questions in the block; null otherwise, and always before, since it would answer them",
+    }),
     trap: z
       .string()
       .nullable()

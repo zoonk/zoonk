@@ -2,6 +2,7 @@ import { type TestCase } from "@/lib/types";
 import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
 import { type SkillGraphParams } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
 import { CAMARA_BLUEPRINT } from "./camara-blueprint";
+import { ENEM_SCIENCE_BLUEPRINT } from "./enem-science-blueprint";
 
 const SHARED_EXPECTATIONS = `
   - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
@@ -17,6 +18,7 @@ const ENEM_BLUEPRINT: ExamOutline = {
     "Format: 5 options per question, no penalty for wrong answers. 5h30 on day 1, 5h on day 2.",
     "Scoring: item response theory (TRI). Getting hard questions right while missing easy ones counts as inconsistent and lowers the score.",
     "Rule: Essay: dissertative-argumentative text on a social issue, graded 0 to 1000 in five competencies of 200 points each: C1 formal written Portuguese; C2 understanding the prompt and building a dissertative-argumentative text with knowledge from several areas; C3 selecting and organizing arguments; C4 cohesion; C5 an intervention proposal that respects human rights.",
+    "Rule: Bring an official photo ID and a black ballpoint pen in transparent material. Gates close at 13h. Phones and other electronics stay off, in the envelope provided, for the whole exam.",
   ],
   subjects: [
     {
@@ -244,6 +246,90 @@ const POLICIA_FEDERAL_BLUEPRINT: ExamOutline = {
   ],
 };
 
+/**
+ * The 48th OAB exam's first phase as research read its notice (9 Oct 2026): 20 subjects with no
+ * syllabus of their own, each counted by the 42nd exam's paper since the notice gives no counts,
+ * and the notice's format, scoring and rules.
+ */
+const OAB_BLUEPRINT: ExamOutline = {
+  name: "OAB Exame de Ordem Unificado",
+  notes: [
+    "Format: Questões de múltipla escolha com quatro opções (A, B, C e D) e uma única resposta correta.",
+    "Scoring: Cada questão vale 1,00 ponto, sendo a nota o somatório de acertos, variando de 0 a 80 pontos.",
+    "Rule: Aprovado na prova objetiva quem obtiver no mínimo 50% de acertos, ou seja, nota igual ou superior a 40,00 pontos.",
+    "Rule: A prova objetiva conterá no mínimo 15% de questões sobre Estatuto da Advocacia e da OAB, Regulamento Geral, Código de Ética e Disciplina, Direitos Humanos e Filosofia do Direito.",
+    "Rule: Permitida somente caneta esferográfica transparente de tinta azul ou preta e documento de identidade original com foto.",
+    "Rule: Os portões fecham às 12h30min no horário oficial de Brasília/DF.",
+    "Rule: Permanência obrigatória mínima de 2 horas no local de prova após o início.",
+    "Rule: A prova objetiva é realizada sem consulta.",
+  ],
+  subjects: [
+    { name: "Direito Administrativo", questions: 5 },
+    { name: "Direito Civil", questions: 6 },
+    { name: "Direito Processual Civil", questions: 6, shortName: "Processo Civil" },
+    { name: "Direito Constitucional", questions: 6 },
+    { name: "Direito do Trabalho", questions: 5 },
+    { name: "Direito Processual do Trabalho", questions: 5, shortName: "Processo do Trabalho" },
+    { name: "Direito Empresarial", questions: 4 },
+    { name: "Direito Penal", questions: 6 },
+    { name: "Direito Processual Penal", questions: 6, shortName: "Processo Penal" },
+    {
+      name: "Direito Tributário e Processual Tributário",
+      questions: 5,
+      shortName: "Direito Tributário",
+    },
+    { name: "Direitos Humanos", questions: 2 },
+    { name: "Direito do Consumidor", questions: 2 },
+    { name: "Direito da Criança e do Adolescente", questions: 2, shortName: "ECA" },
+    { name: "Direito Ambiental", questions: 2 },
+    { name: "Direito Internacional", questions: 2 },
+    { name: "Filosofia do Direito", questions: 2 },
+    { name: "Direito Financeiro", questions: 2 },
+    { name: "Direito Previdenciário", questions: 2 },
+    { name: "Direito Eleitoral", questions: 2 },
+    {
+      name: "Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB",
+      questions: 8,
+      shortName: "Ética Profissional",
+    },
+  ].map((subject) => ({ group: null, shortName: null, topics: [], weight: null, ...subject })),
+  topicFrequency: [],
+};
+
+/**
+ * Part of the Rio Branco diplomat exam's second phase (CACD 2025, Edital nº 1 of 14 May 2025 by
+ * Cebraspe, read 10 Oct 2026): every candidate writes in English, and each picks one additional
+ * language, Spanish or French, at registration (item 4.1.1). Topics are the annex's own.
+ */
+const CACD_LANGUAGES_BLUEPRINT: ExamOutline = {
+  name: "Concurso de Admissão à Carreira de Diplomata (CACD), Segunda Fase",
+  notes: ["Format: Provas escritas discursivas da Segunda Fase."],
+  subjects: [
+    {
+      group: "Segunda Fase",
+      name: "Língua Inglesa",
+      questions: null,
+      topics: [
+        "Redação em língua inglesa: expressão em nível avançado; domínio da gramática; qualidade e propriedade no emprego da linguagem; organização e desenvolvimento de ideias",
+        "Resumo: capacidade de síntese; respeito à qualidade e ao registro do texto-fonte; correção morfossintática e lexical",
+      ],
+      weight: null,
+    },
+    ...(["Espanhola", "Francesa"] as const).map((language) => ({
+      choiceGroup: "Idioma adicional",
+      group: "Segunda Fase",
+      name: `Língua ${language}`,
+      questions: null,
+      topics: [
+        `Elaboração de resumo, em ${language === "Espanhola" ? "espanhol" : "francês"}, a partir de texto escrito na língua, avaliadas a capacidade de síntese e de reelaboração em um registro culto`,
+        `Versão de um texto do português para o ${language === "Espanhola" ? "espanhol" : "francês"}: fidelidade ao texto-fonte, respeito à qualidade e ao registro do texto-fonte e correção morfossintática e lexical`,
+      ],
+      weight: null,
+    })),
+  ],
+  topicFrequency: [],
+};
+
 export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
   {
     expectations: `
@@ -273,21 +359,36 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       - Exam goal with a blueprint: all four areas (Linguagens, Humanas, Natureza, Matemática) and the essay must be covered, including the five essay competencies (C1 to C5)
       - Exam weights must follow the blueprint's frequency: statistics and chart reading, percentages and proportions, ecology, Brazilian history and citizenship, and text interpretation should weigh more than rarely tested topics
       - Exam strategy the exam scores belongs here, such as keeping answers consistent under item response theory (easy questions first) and managing time
+      - The exam day's procedures (the ID and pen to bring, gate times, electronics) aren't skills: the app's exam-day checklist covers them. A skill about following the exam's procedures or what to bring is a mistake
       - Topics outside the ENEM syllabus don't belong
-      - The graph maps the whole exam even though the learner has little time; prioritization is the planner's job, but weights must make it possible
-      - Starting point: the learner is finishing secondary school, so Portuguese, mathematics and science skills sit at the depth ENEM asks (mostly the intermediate band or above). Elementary content, such as naming word classes, reading everyday notices, invitations or recipes, or drilling basic arithmetic, doesn't belong
+      - The graph maps the whole exam; prioritization is the planner's job, but weights must make it possible
+      - Starting point: ENEM's candidates are finishing secondary school, so Portuguese, mathematics and science skills sit at the depth ENEM asks (mostly the intermediate band or above). Elementary content, such as naming word classes, reading everyday notices, invitations or recipes, or drilling basic arithmetic, doesn't belong
 
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-enem-2026",
+    // A shared exam graph reads the exam alone (`toScopedGraphPrompt`): never a learner's words,
+    // target or level.
+    userInput: { examBlueprint: ENEM_BLUEPRINT, goal: "ENEM", goalKind: "exam", language: "pt" },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Two subjects of the ENEM notice: every topic of both is taught by some skill, at the depth ENEM asks
+      - Prerequisites are hard dependencies only: a skill lists a prerequisite only when its lessons can't be followed without it, never because it comes earlier in a textbook or in the same subject. Most skills have none, one or two
+      - Ecology and environmental science skills (food chains and webs, cycles of matter, population dynamics and relationships between species, environmental impacts) don't depend on cell and tissue biology, the classification of living beings or comparative physiology
+      - Real dependencies stay: stoichiometry and solution concentration build on balanced chemical equations and the mole, and genetics' inheritance patterns build on how genetic information is passed on
+      - Physics topics don't form one chain through mechanics when they don't use it: heat and electricity don't need Newton's laws
+      - Exam weights follow the topic frequency: ecology, cells, heredity, electricity, waves, heat, organic chemistry, statistics and numbers weigh more than water or energy in chemical transformations
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-enem-science-prerequisites",
     userInput: {
-      context:
-        "Tenho 17 anos, quero Enfermagem numa federal. Estudo à noite e faltam uns 46 dias pra prova. Sou melhor em humanas, tenho dificuldade em matemática.",
-      examBlueprint: ENEM_BLUEPRINT,
-      goal: "Passar no ENEM 2026",
+      examBlueprint: ENEM_SCIENCE_BLUEPRINT,
+      goal: "ENEM",
       goalKind: "exam",
       language: "pt",
-      ownLevel: "basic",
     },
   },
   {
@@ -295,20 +396,19 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       - MUST be in Brazilian Portuguese
       - Public-service exam: every block of the blueprint is covered (Portuguese, administrative, constitutional, criminal and procedural law, special legislation, statistics, logic, informática, accounting, the essay) with weights that follow the blueprint's frequency, and the physical tests at least as preparation
       - Exam strategy the exam scores belongs here: with a wrong item cancelling a right one, deciding when to leave an item blank
-      - Starting point: an adult graduate with a basic level of the exam's content. Portuguese starts at the depth the exam asks (comprehension, cohesion, syntax, punctuation, agreement, regency and crase, rewriting) in the intermediate band or above. Elementary content, such as naming nouns, articles and numerals, reading notices, invitations or recipes, or drilling basic arithmetic, doesn't belong
+      - Starting point: the exam's candidates are adults with a university degree in any field. Portuguese starts at the depth the exam asks (comprehension, cohesion, syntax, punctuation, agreement, regency and crase, rewriting) in the intermediate band or above. Elementary content, such as naming nouns, articles and numerals, reading notices, invitations or recipes, or drilling basic arithmetic, doesn't belong
       - Law, accounting and informática may start in the beginner band, since they're new to most candidates
 
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-cebraspe-policia-federal",
+    // A shared exam graph reads the exam alone (`toScopedGraphPrompt`): never a learner's words,
+    // target or level.
     userInput: {
-      context:
-        "Tenho 29 anos, sou formado em administração e trabalho durante o dia. Quero ser agente da Polícia Federal e estudo à noite, depois do trabalho.",
       examBlueprint: POLICIA_FEDERAL_BLUEPRINT,
-      goal: "Passar no concurso da Polícia Federal para agente",
+      goal: "Concurso da Polícia Federal, Agente de Polícia Federal",
       goalKind: "exam",
       language: "pt",
-      ownLevel: "basic",
     },
   },
   {
@@ -319,20 +419,85 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       - The exam is answered on paper (certo/errado items, plus the discursive test): every skill is what its items ask about a topic, at the exam's depth. The speech subject's skills explain how automatic speech recognition, end-to-end models, multimodal audio LLMs and speaker diarization work and fail, and how transcripts are post-processed, never job tasks with tools (reviewing recordings in an audio editor, choosing which range to replay, running pyannote or Whisper, writing Python)
       - Only the discursive test's skills are outcome skills (every candidate sits it and it's scored apart); no other skill is
       - Exam strategy the exam scores belongs here: with a wrong item cancelling a right one, deciding when to leave an item blank; and the discursive test (a technical piece) is prepared
-      - Starting point: an adult graduate with a law degree, weak in IT and English. Law subjects need less from zero; IT and English need their foundations at the depth the exam asks
+      - Starting point: the role requires a university degree in any field, so candidates come from law and from other fields alike. Every subject gets the foundations it needs at the depth the exam asks, law's included, since placement skips what each learner already knows; no school basics
       - Weights follow the notice: the P1 and P2 tests have 90 items each, so the role's four subjects together weigh as much as the five basic ones
 
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-camara-registro-redacao",
     userInput: {
-      context:
-        "Tenho 27 anos e sou formada em direito. Sou fraca em informática e inglês. Estudo 2h por dia de semana e 4h aos sábados.",
       examBlueprint: CAMARA_BLUEPRINT,
-      goal: "quero passar no concurso da câmara dos deputados para analista legislativo, área de registro e redação. a prova é em janeiro",
+      goal: "Concurso Câmara dos Deputados, Analista Legislativo - Registro e Redação",
       goalKind: "exam",
       language: "pt",
-      ownLevel: "intermediate",
+    },
+  },
+  {
+    // Câmara, Oct 2026 (persona pass 9): IT opened on a 26-lesson records-formats skill written
+    // for the role, with no notice topic, while the notice's own IT topics got a lesson or two.
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Two subjects of the Câmara notice: every numbered item of both is taught by some skill, named as the notice names it
+      - Tecnologia da Informação e Dados opens on its notice topics (Office, networks and the Internet, communication tools, security and digital governance, data); a skill beyond the notice, such as formats or preservation of digital records for the role, never opens the subject or comes before them, and no notice topic waits behind it as a prerequisite
+      - Each skill is sized by what its notice topics ask on certo/errado items, not by the role's daily work
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-camara-ti-notice-topics-first",
+    userInput: {
+      examBlueprint: {
+        ...CAMARA_BLUEPRINT,
+        subjects: CAMARA_BLUEPRINT.subjects.filter((subject) =>
+          [
+            "Tecnologia da Informação e Dados",
+            "Reconhecimento de Fala, Transcrição e Inteligência Artificial",
+          ].includes(subject.name),
+        ),
+      },
+      goal: "Concurso Câmara dos Deputados, Analista Legislativo - Registro e Redação",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    // OAB, Oct 2026 (persona pass 10): tax law's skills came chained one after another
+    // in a manual's order (6 of 7).
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Bar exam whose notice lists 20 subjects with no syllabus of their own: every subject is an area, named as the notice names it or by its short name, with weights that follow its questions. Ética Profissional (the Estatuto da Advocacia e da OAB, its Regulamento Geral and the Código de Ética e Disciplina, 8 questions) is present and weighs the most; the 2-question subjects weigh the least
+      - Prerequisites are hard dependencies only: a subject's skills aren't chained in the order of its code or a manual. Direito Tributário's competence and its limits, the kinds of tributos, the tax obligation, the tax credit, liability, enforcement and the ways to challenge it don't form one chain; most skills have none, one or two prerequisites
+      - Starting point: the exam's candidates studied law, so no skill explains what a law, the Constitution or a lawyer is
+      - The exam day's procedures (the pen and ID to bring, gate times, the 2 hours before leaving) aren't skills: the app's exam-day checklist covers them
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-oab-1a-fase",
+    // A shared exam graph reads the exam alone (`toScopedGraphPrompt`), named by its notice.
+    userInput: {
+      examBlueprint: OAB_BLUEPRINT,
+      goal: "OAB Exame de Ordem Unificado, 1ª fase",
+      goalKind: "exam",
+      language: "pt",
+    },
+  },
+  {
+    // Owner, 10 Oct 2026: a choice of subjects (a language, an elective) works for any exam, so a
+    // new exam's graph teaches every option from the start and the learner's pick decides.
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Língua Espanhola and Língua Francesa are options of one choice (each candidate takes one): each is an area named exactly as the notice names it, with skills that teach both of its topics (a summary in the language, a version from Portuguese). Teaching both is right: the graph has no field for the choice, its area is how the plan knows each option, and the plan studies only the one the learner picks. Don't expect the graph to mark the choice, and judge the size of the path one option at a time
+      - No skill outside an option builds on that option's skills: neither the other option's skills nor Língua Inglesa's list them as prerequisites
+      - Língua Inglesa is every candidate's: its writing and summary skills reach the advanced level the notice asks
+      - The phase is written: no listening or speaking skills
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-cacd-additional-language-options",
+    userInput: {
+      examBlueprint: CACD_LANGUAGES_BLUEPRINT,
+      goal: "CACD, Segunda Fase",
+      goalKind: "exam",
+      language: "pt",
     },
   },
   {
@@ -489,6 +654,7 @@ A prof disse: vai ter questão de completar a tabela das organelas e uma dissert
       },
       goal: "prova de biologia sexta sobre célula",
       goalKind: "exam",
+      hasMaterial: true,
       language: "pt",
       lessonBudget: 15,
       ownLevel: "basic",

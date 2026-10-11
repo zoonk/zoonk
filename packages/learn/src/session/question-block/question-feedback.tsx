@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { ItemCitationNote } from "../../_components/item-citation";
+import { toPlainItemLine } from "../../questions/_utils/item-text";
+import { ItemLine, ItemText } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import {
   type StudyAnswerFeedback,
@@ -41,7 +43,19 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
     }
 
     if ("selectedIndex" in answer) {
-      return question.options?.[answer.selectedIndex] ?? null;
+      const option = question.options?.[answer.selectedIndex];
+      return option === undefined ? null : toPlainItemLine(option);
+    }
+
+    if ("selectedIndexes" in answer || "order" in answer) {
+      const [picks, separator] =
+        "order" in answer ? [answer.order, " → "] : [answer.selectedIndexes, "; "];
+
+      return picks.map((index) => toPlainItemLine(question.options?.[index] ?? "")).join(separator);
+    }
+
+    if ("text" in answer) {
+      return answer.text;
     }
 
     if ("isTrue" in answer) {
@@ -50,7 +64,10 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
 
     if ("matches" in answer) {
       return (question.left ?? [])
-        .map((entry, index) => `${entry} → ${question.right?.[answer.matches[index] ?? -1] ?? ""}`)
+        .map((entry, index) => {
+          const match = question.right?.[answer.matches[index] ?? -1] ?? "";
+          return `${toPlainItemLine(entry)} → ${toPlainItemLine(match)}`;
+        })
         .join("; ");
     }
 
@@ -79,7 +96,9 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
       <p className="font-medium">{t("How to solve it")}</p>
       <ol className="text-muted-foreground list-decimal space-y-0.5 pl-5 leading-relaxed">
         {steps.map((step) => (
-          <li key={step}>{step}</li>
+          <li key={step}>
+            <ItemLine text={step} />
+          </li>
         ))}
       </ol>
     </div>
@@ -111,8 +130,17 @@ function useCorrectAnswerLine({
   return answerText({ answer: feedback.correctAnswer, question });
 }
 
-/** One quiet note under the grade: the mistake was fixed, or saved to come back. */
-function MistakeNote({ feedback }: { feedback: StudyAnswerFeedback }) {
+/**
+ * One quiet note under the grade: the mistake was fixed, or saved to come back, tomorrow unless
+ * tomorrow is the exam.
+ */
+function MistakeNote({
+  examTomorrow,
+  feedback,
+}: {
+  examTomorrow: boolean;
+  feedback: StudyAnswerFeedback;
+}) {
   const t = useExtracted();
 
   if (feedback.mistakeFixed) {
@@ -135,7 +163,9 @@ function MistakeNote({ feedback }: { feedback: StudyAnswerFeedback }) {
       <LineMarker>
         <NotebookPenIcon aria-hidden="true" className="size-4" />
       </LineMarker>
-      {t("Saved to your mistakes · it comes back tomorrow")}
+      {examTomorrow
+        ? t("Saved to your mistakes")
+        : t("Saved to your mistakes · it comes back tomorrow")}
     </p>
   );
 }
@@ -177,12 +207,15 @@ function useGrade(feedback: StudyAnswerFeedback) {
  */
 export function QuestionFeedback({
   children,
+  examTomorrow,
   feedback,
   question,
   trueFalseLabels,
 }: {
   /** Notes a mistake's drill adds after the grade, such as the trap it set. */
   children?: React.ReactNode;
+  /** The goal's exam is tomorrow: a saved mistake doesn't come back then. */
+  examTomorrow: boolean;
   feedback: StudyAnswerFeedback;
   question: StudyQuestion;
   trueFalseLabels: TrueFalseLabels;
@@ -215,7 +248,10 @@ export function QuestionFeedback({
       {correct && <p className="text-sm">{t("Right answer: {answer}", { answer: correct })}</p>}
 
       {feedback.explanation && (
-        <p className="text-muted-foreground text-sm leading-relaxed">{feedback.explanation}</p>
+        <ItemText
+          className="text-muted-foreground text-sm leading-relaxed"
+          text={feedback.explanation}
+        />
       )}
 
       {!feedback.isCorrect && <WorkedSteps steps={feedback.workedSteps} />}
@@ -228,7 +264,7 @@ export function QuestionFeedback({
       )}
 
       {children}
-      <MistakeNote feedback={feedback} />
+      <MistakeNote examTomorrow={examTomorrow} feedback={feedback} />
     </section>
   );
 }

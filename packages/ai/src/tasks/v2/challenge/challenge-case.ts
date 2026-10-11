@@ -157,6 +157,7 @@ export async function generateChallengeCase(params: ChallengeCaseParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "challenge-case",
   });

@@ -4,12 +4,14 @@ import { describeActivityTemplates } from "@zoonk/core/library/activities/writer
 import { GLYCOLYSIS_SLIDES } from "../cite-material/material-fixtures";
 import { ACTIVITY_LESSON_SPECS } from "./activity-lesson-specs";
 import { PRICE_IMPACT_CHAPTER_LESSONS, PRICE_IMPACT_SPEC } from "./chapter-lesson-specs";
-import { EXAM_PREP_LESSON } from "./exam-prep-lesson-spec";
+import { EXAM_PREP_LESSON, QUESTION_FIRST_EXAM_LESSON } from "./exam-prep-lesson-spec";
+import { EXPLORE_LESSON_SPECS } from "./explore-lesson-specs";
 import { LESSON_SPECS } from "./lesson-specs";
 import { MATERIAL_LESSON_SPEC } from "./material-lesson-spec";
 import { SETUP_LESSON_SPEC } from "./setup-lesson-spec";
 import { SOURCED_LESSONS } from "./sourced-lesson-specs";
 import { VISUAL_LESSON_SPECS } from "./visual-lesson-specs";
+import { WALK_LESSONS } from "./walk-lesson-specs";
 
 type LessonWriterInput = Omit<
   WriteLessonDraftParams,
@@ -33,6 +35,7 @@ const SHARED_EXPECTATIONS = `
   - Activities are JSON inside \`content\`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea
   - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on
   - Charts and timelines in \`visual\` are drawn by the app from their data; judge whether the data is right and matches the text
+  - An explanation's \`explore\` is a template the app draws under the text with nothing asked, its fields as JSON in \`content\`; judge whether its fields are right and match the text
   - Don't evaluate JSON formatting
 `;
 
@@ -55,6 +58,43 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       language: "en",
       level: "beginner",
       spec: ACTIVITY_LESSON_SPECS["en-ux-goals-spot-ai"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
+      - The keyboard activity is by ear (\`byEar\`): it plays an A minor chord (A, C, E) together without naming it, and the learner names what they heard (major or minor) with minor correct; the question never says which chord it is
+      - The explanation's notes are right (C, E, G is major; C, Eb, G is minor), and the check's right answer is E dropping to Eb, with the top-note trap
+      - The application's fix is B to Bb
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-major-minor-by-ear",
+    userInput: toInput({
+      chapterTitle: "Chords",
+      courseTitle: "Music basics",
+      language: "en",
+      level: "beginner",
+      spec: ACTIVITY_LESSON_SPECS["en-major-minor-by-ear"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
+      - The combination grid crosses alleles P and p (rows) with p and p (columns), names the traits (purple dominant, white recessive), and its check gives 1 in 2 white, with the 1-in-4 trap
+      - The random simulation is in chance mode: batches of 100 seeds, each white with chance 1/2, a hit of exactly 50 white, and a guess about how often that happens whose closest option (about 8%) is right, with feedback that batches spread around 50 instead of hitting it
+      - The grid has 4 cells, so the learner fills it before answering whatever its check (the app's rule), and the question about the share comes after the fill
+      - The application keeps 47 of 100 consistent with a 1 in 2 chance
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-pea-crosses-chance",
+    userInput: toInput({
+      chapterTitle: "Heredity",
+      courseTitle: "Biology",
+      language: "en",
+      level: "beginner",
+      spec: ACTIVITY_LESSON_SPECS["en-pea-crosses-chance"],
     }),
   },
   {
@@ -100,7 +140,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     expectations: `
       - MUST be in Brazilian Portuguese, for beginners
       - Atria receive and ventricles pump; the right side sends blood to the lungs and the left side to the whole body; the septum keeps the two sides apart
-      - The labeled diagram uses the checked heart diagram and its part ids, with labels in Portuguese, and its feedback explains the left-right mix-up of a heart seen from the front
+      - The labeled diagram's \`picture\` is the heart seen from the front with no words in it; its parts are the four chambers and the septum, each named in Portuguese with the part it marks in English, and its feedback explains the left-right mix-up of a heart seen from the front
       - The check about which chamber pumps to the body uses the right-ventricle trap and explains the thicker wall of the left ventricle
       - The application about a hole in the septum follows from what the lesson taught
 
@@ -113,6 +153,24 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       language: "pt",
       level: "beginner",
       spec: ACTIVITY_LESSON_SPECS["pt-camaras-do-coracao-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese, for intermediate learners
+      - The lines-and-crossing activity has a supply and a demand line with example numbers marked as an example, and its \`shift\` moves supply to the left (the bird flu), so the crossing rises to a higher price and a smaller quantity; the feedback covers moving demand instead and moving the wrong way
+      - The 2022 egg prices are presented as real (about US$ 1.80 to over US$ 4 a dozen) and the activity's own numbers as an example
+      - The check moves demand to the right (price and quantity both rise) with the supply trap, and the application moves the bread's supply right (price falls)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-demanda-ovos-deslocamento",
+    userInput: toInput({
+      chapterTitle: "Oferta e demanda",
+      courseTitle: "Economia",
+      language: "pt",
+      level: "intermediate",
+      spec: ACTIVITY_LESSON_SPECS["pt-demanda-ovos-deslocamento"],
     }),
   },
   {
@@ -233,6 +291,7 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
       courseTitle: "Set up Python on Windows",
       language: "en",
       level: "beginner",
+      setup: true,
       spec: SETUP_LESSON_SPEC,
     }),
   },
@@ -392,6 +451,113 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   },
   {
     expectations: `
+      - MUST be in US English, for beginners
+      - The check about the three doorways gives every option a \`picture\` (one doorway alone each, no text in the picture) and the screen no \`image\` or \`visual\`
+      - Each option's \`picture.alt\` says what that doorway looks like (its arch, columns, walls or decoration) without naming its style, so it never gives the answer away; \`text\` names the style (the app shows each option's \`text\` only once the learner answers, so the question can name the style it asks for)
+      - Exactly the Gothic doorway (the pointed arch) is correct, and each reason says what in the doorway's shape gives its style away
+      - No other screen gives its options pictures
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-church-doorways-picture-options",
+    userInput: toInput({
+      chapterTitle: "Reading buildings",
+      courseTitle: "Art history",
+      language: "en",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["en-church-doorways-beginner"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
+      - The check about the flower has an \`image\` of one flower cut in half whose \`parts\` lists the petal, stamen, stigma and ovary in English, and whose \`prompt\` asks for no labels or text
+      - Its options are numbers from 1 to the number of parts, and exactly the ovary's number (its place in \`parts\`, 1 for the first) is correct; the stigma's number is among the wrong options, with a reason about the stalk it sits on
+      - No other picture numbers parts (only a check's \`image\` has \`parts\`), and no option has a \`picture\`
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-flower-parts-numbered",
+    userInput: toInput({
+      chapterTitle: "How plants reproduce",
+      courseTitle: "Biology",
+      language: "en",
+      level: "beginner",
+      spec: VISUAL_LESSON_SPECS["en-flower-parts-numbered"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
+      - The second screen's \`explore\` is a formulaModel whose slider is the yearly rate from 0 to 12 (starting at 5) and whose output formula gives the balance of $1,000 after 20 years, 1000 * (1 + rate/100)^20; its labels and units fit the text
+      - Every number in the text matches what that formula gives (about $2,191 at 4% and $4,661 at 8%)
+      - No screen has a picture
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-compound-growth-explore",
+    userInput: toInput({
+      chapterTitle: "Saving and investing",
+      courseTitle: "Personal finance",
+      language: "en",
+      level: "beginner",
+      spec: EXPLORE_LESSON_SPECS["en-compound-growth-explore"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in US English, for beginners
+      - The second screen's \`explore\` is a labeledDiagram whose \`picture\` is the heart seen from the front with no words in it, and whose parts are the right atrium, left atrium, right ventricle, left ventricle and septum, each named as the text names it
+      - The text explains that the heart is seen from the front, so its right side is on the viewer's left
+      - No screen has an \`image\`: the labeled diagram's picture is its own
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-heart-chambers-explore",
+    userInput: toInput({
+      chapterTitle: "The circulatory system",
+      courseTitle: "Human biology",
+      language: "en",
+      level: "beginner",
+      spec: EXPLORE_LESSON_SPECS["en-heart-chambers-explore"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The second screen's \`explore\` is a processOrder with the five steps in their true order (light absorbed by chlorophyll, water split releasing oxygen, energy stored in ATP and NADPH, the Calvin cycle fixing CO2 into sugar, sugar stored as starch), each step after the first with why it comes there
+      - No screen has a picture
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-fotossintese-explore",
+    userInput: toInput({
+      chapterTitle: "Fotossíntese",
+      courseTitle: "Biologia",
+      language: "pt",
+      level: "beginner",
+      spec: EXPLORE_LESSON_SPECS["pt-fotossintese-explore"],
+    }),
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - The second screen's \`explore\` is a mapExplorer on the roman-empire-117 base map with Roma, Cartago, Alexandria, Londinium and Antioquia at their real coordinates (Rome about 41.9 N 12.5 E, Carthage 36.9 N 10.3 E, Alexandria 31.2 N 29.9 E, London 51.5 N 0.1 W, Antioch 36.2 N 36.2 E), each revealing something true about the empire, and its data cites a real source
+      - No screen has a picture
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-imperio-romano-explore",
+    userInput: toInput({
+      chapterTitle: "Roma antiga",
+      courseTitle: "História",
+      language: "pt",
+      level: "beginner",
+      spec: EXPLORE_LESSON_SPECS["pt-imperio-romano-explore"],
+    }),
+  },
+  {
+    expectations: `
       - MUST be in Brazilian Portuguese
       - Written for candidates of the exam in EXAMS, who studied law: no screen explains what the OAB, the Constitution, a lawyer, the Estatuto or human rights are, and the OAB isn't introduced as "a entidade dos advogados"
       - The finalidades match art. 44 of Lei 8.906/1994 and are cited as such: I (defend the Constitution, the legal order of the democratic rule of law, human rights and social justice, and pursue the good application of laws, the quick administration of justice and the improvement of legal culture and institutions) and II (promote, exclusively, the representation, defense, selection and discipline of lawyers throughout Brazil); nothing says the OAB judges cases or that its exclusivity covers the finalidades of item I
@@ -402,5 +568,51 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     `,
     id: "pt-finalidades-oab-exam-prep",
     userInput: toInput(EXAM_PREP_LESSON),
+  },
+  {
+    // Juliana, TJ-SP (persona pass 12): the explanation after the first check opened by praising
+    // the question she had just missed.
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
+      - The explanation right after the bicycle check starts from that check's question and its right answer (whose bicycle it is), and never says how the learner answered it: no praise ("você começou pela pergunta certa", "acertou") and no correction, since every learner reads it, including those who picked a wrong option
+      - No explanation or worked example judges an answer the learner gave to an earlier screen
+      - The elements are analyzed in order (tipicidade, then ilicitude, then culpabilidade), with arts. 155, 23, II, 25, 163, 22 and 27 of the Código Penal applied as the briefs say
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-tipicidade-question-first-no-praise",
+    userInput: toInput(QUESTION_FIRST_EXAM_LESSON),
+  },
+  {
+    // Lucas, ENEM (persona pass 9): the guess marked 10 units right after 1.000, 120 and 14, then
+    // the lesson showed shares of 12% and 14% and said not to apply a 10% rule automatically.
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
+      - The guess's answer agrees with its own chart and with the later screens: each of 1.000, 120 and 14 units is about 12% of the one before, so the group that eats the fish has about 1 or 2 units. The plan's 10 units (over 70% of 14) is never marked right or called a possible value, and nothing marked right rests on a fixed 10% rule, which a later screen says not to apply automatically
+      - The screens with 900, 108 and 15 units give the shares as 12% and about 14% and say the share varies with what is eaten and the energy organisms use
+      - The checks use the planned traps (energy destroyed in cellular respiration; all the food's energy passing intact to the next consumer; choosing the predators because they're at the top), with a reason on every option
+      - The planned bar charts are \`visual\`s of kind chart (\`bar\`) with the planned values, and every number in the text matches them
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-piramide-energia-guess",
+    userInput: toInput(WALK_LESSONS["pt-piramide-energia"]),
+  },
+  {
+    // Lucas, ENEM (persona pass 8): the guess's table listed sensors A to E and its options A to D.
+    expectations: `
+      - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
+      - The guess shows the sensors' readings as a Markdown table and asks which sensor's readings are grouped and close to 50,0 mm, with sensor A (49,8 to 50,0 mm) right and a reveal that doesn't explain why yet
+      - The guess's options name only sensors its table lists, and every sensor the table lists is an option: a guess has at most 4 options, so its table keeps at most four of the plan's five sensors, A among them, never A to D offered under a table that also lists E
+      - Precision is how close the readings are to each other and accuracy how close their center is to the reference; the checks use the planned traps (the group near the reference taken as the more grouped one; the whole spread taken as the margin)
+      - Every center is the midpoint of the extreme readings and every margin half the distance between them: 8,2 ± 0,2 cm, 18,8 ± 0,2 mm, 11,9 ± 0,2 cm, 32,0 ± 0,4 °C, and in the application A 49,6 ± 0,1 mm and B 50,0 ± 0,2 mm, with B meeting both conditions
+      - No screen names the exam, its board or its notice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-precisao-sensores",
+    userInput: toInput(WALK_LESSONS["pt-precisao-sensores"]),
   },
 ];

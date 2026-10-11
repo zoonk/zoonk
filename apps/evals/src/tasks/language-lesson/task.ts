@@ -5,6 +5,7 @@ import {
   generateLanguageLesson,
 } from "@zoonk/ai/tasks/v2/language/language-lesson";
 import { LANGUAGE_LESSON_SCORE_CATEGORIES } from "./score-categories";
+import { scoreLanguageLesson } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
 export const languageLessonTask: Task<LanguageLessonParams, LanguageLessonContent> = {
@@ -13,6 +14,7 @@ export const languageLessonTask: Task<LanguageLessonParams, LanguageLessonConten
   generate: generateLanguageLesson,
   id: "language-lesson",
   name: "Language Lesson",
+  score: scoreLanguageLesson,
   scoreCategories: LANGUAGE_LESSON_SCORE_CATEGORIES,
   testCases: TEST_CASES,
 };

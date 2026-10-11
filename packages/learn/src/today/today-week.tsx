@@ -1,42 +1,33 @@
 "use client";
 
-import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, GraduationCapIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { KindTile } from "../_components/kind-tile";
-import {
-  ListRowContent,
-  ListRowDescription,
-  ListRowLeading,
-  ListRowLink,
-  ListRowTitle,
-  ListRowTrailing,
-} from "../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { Surface } from "../_components/surface";
-import { toLabelCase } from "../_utils/label-case";
-import { useFormatDuration } from "../_utils/time-format";
 import { type StudySession } from "../session/session-types";
 import { useTodayScreen } from "./today-context";
+import {
+  type Challenge,
+  ChallengeRow,
+  getChallengeKind,
+  isSameDay,
+  useChallengeDayName,
+  useWeekdayLabel,
+} from "./today-week-challenge";
 
 type WeekDay = StudySession["week"]["days"][number];
-type Challenge = NonNullable<TodayView["weeklyChallenge"]>;
 
 const WEEK_TITLE_ID = "today-week-title";
 const FULL_TURN_DEGREES = 360;
 
 const DAY_CELL_CLASS = "flex min-h-11 flex-col items-center gap-1.5 rounded-xl py-1.5";
-
-function isSameDay(a: Date, b: Date | null): boolean {
-  return b !== null && a.getTime() === b.getTime();
-}
 
 /** How much of the day's goal was done, drawn as a filling pie. */
 function getDayShare(day: WeekDay): number {
@@ -52,11 +43,16 @@ function isMissed(day: WeekDay, localDate: Date): boolean {
   return day.kind === "study" && !day.studied && !day.isToday && day.date < localDate;
 }
 
+/** A day before the plan started or after it ends: no study was asked, so nothing to fill. */
+function isOutsidePlan(day: WeekDay): boolean {
+  return !day.studied && (day.kind === "beforeStart" || day.kind === "afterEnd");
+}
+
 /**
  * A day's dot: a filled disc with a check once its goal is reached, a pie of how much of it was
  * done, a dashed ring for a study day missed, a thick ring for today, a soft disc for a day ahead
- * (fainter on a rest day), an empty ring outside the plan. The exam's day (or the goal's date)
- * carries a cap.
+ * (fainter on a rest day), and only a short dash outside the plan, so days before it started never
+ * read as missed. The exam's day (or the goal's date) carries a cap.
  */
 function getDayDotClass(day: WeekDay, localDate: Date): string {
   if (day.hitGoal) {
@@ -71,10 +67,6 @@ function getDayDotClass(day: WeekDay, localDate: Date): string {
     return "border-foreground/20 border-2 border-dashed";
   }
 
-  if (day.kind === "beforeStart" || day.kind === "afterEnd") {
-    return "border-border border";
-  }
-
   if (day.kind === "rest") {
     return "bg-foreground/4 dark:bg-white/5";
   }
@@ -84,6 +76,15 @@ function getDayDotClass(day: WeekDay, localDate: Date): string {
 
 function DayDot({ day }: { day: WeekDay }) {
   const { today } = useTodayScreen();
+
+  if (isOutsidePlan(day) && !day.isToday) {
+    return (
+      <span aria-hidden="true" className="flex size-9 items-center justify-center">
+        <span className="bg-foreground/15 h-0.5 w-3 rounded-full" />
+      </span>
+    );
+  }
+
   const share = getDayShare(day);
   const isTarget = !day.studied && (day.kind === "exam" || day.kind === "deadline");
   const partial = share > 0 && !day.hitGoal;
@@ -121,7 +122,7 @@ function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }
         "size-9 rounded-full",
         day.isToday && "ring-foreground ring-2 ring-offset-2 ring-offset-transparent",
       )}
-      kind={challenge.kind === "mock" ? "mock" : "challenge"}
+      kind={getChallengeKind(challenge)}
       size="sm"
     />
   );
@@ -185,12 +186,6 @@ function useDayStatus() {
   };
 }
 
-/** "Thursday", as a label starts. */
-function useWeekdayLabel() {
-  const format = useFormatter();
-  return (date: Date) => toLabelCase(format.dateTime(date, { timeZone: "UTC", weekday: "long" }));
-}
-
 /**
  * The challenge's day, flagged in its kind's color, says what it is once ("Thursday: mock exam",
  * and how the day went once it's here). The row under the days, by name, opens its intro, so the
@@ -207,9 +202,10 @@ function ChallengeDay({
 }) {
   const t = useExtracted();
   const weekdayLabel = useWeekdayLabel();
+  const dayName = useChallengeDayName();
   const { today } = useTodayScreen();
   const weekday = weekdayLabel(day.date);
-  const name = challenge.kind === "mock" ? t("mock exam") : t("weekly challenge");
+  const name = dayName(challenge);
   const ahead = day.date > today.session.localDate;
 
   return (
@@ -222,50 +218,6 @@ function ChallengeDay({
           : t("{day}: {name}, {status}", { day: weekday, name, status })}
       </span>
     </span>
-  );
-}
-
-/**
- * The week's challenge under the days: its name, then its day, questions and time; the row opens
- * its intro.
- */
-function ChallengeRow({ challenge, date }: { challenge: Challenge; date: Date }) {
-  const t = useExtracted();
-  const format = useFormatter();
-  const formatDuration = useFormatDuration();
-  const weekdayLabel = useWeekdayLabel();
-  const { actions, today } = useTodayScreen();
-  const name = challenge.kind === "mock" ? t("Mock exam") : t("Weekly challenge");
-
-  // A challenge in a later week names its date too, so "Sunday" never reads as this one.
-  const inWeek = today.session.week.days.some((day) => isSameDay(day.date, date));
-
-  const day = inWeek
-    ? weekdayLabel(date)
-    : `${weekdayLabel(date)}, ${format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" })}`;
-
-  const facts = [
-    day,
-    challenge.questions > 0 &&
-      t("{count, plural, one {# question} other {# questions}}", { count: challenge.questions }),
-    challenge.timeLimitMinutes !== null && formatDuration(challenge.timeLimitMinutes),
-  ].filter(Boolean);
-
-  return (
-    <ListRowLink className="border-t" href={actions.challengeHref(challenge.planItemId)}>
-      <ListRowLeading>
-        <KindTile kind={challenge.kind === "mock" ? "mock" : "challenge"} size="sm" />
-      </ListRowLeading>
-      <ListRowContent className="min-h-13 py-2.5">
-        <ListRowTitle>{name}</ListRowTitle>
-        <ListRowDescription>{facts.join(" · ")}</ListRowDescription>
-      </ListRowContent>
-      {challenge.access === "plusRequired" && (
-        <ListRowTrailing>
-          <PlusMark />
-        </ListRowTrailing>
-      )}
-    </ListRowLink>
   );
 }
 
@@ -294,7 +246,8 @@ function WeekDetail() {
 /**
  * The week under its header, as one row of days, each filled by how much of its goal was done,
  * today ringed. The day of the week's challenge (or mock exam) carries a flag that opens it, and
- * the challenge is named under the days. Every week starts fresh on Monday, so nothing piles up.
+ * the challenge is named under the days when it falls this week. Every week starts fresh on Monday,
+ * so nothing piles up.
  */
 export function TodayWeek() {
   const t = useExtracted();
@@ -302,6 +255,12 @@ export function TodayWeek() {
   const dayStatus = useDayStatus();
   const { today } = useTodayScreen();
   const challenge = today.weeklyChallenge;
+
+  // A challenge in a later week waits for its week: "This week" named next Sunday's mock (the
+  // exam page and the Journey say when the next one is).
+  const inWeek = today.session.week.days.some((day) =>
+    isSameDay(day.date, challenge?.date ?? null),
+  );
 
   return (
     <PageSection aria-labelledby={WEEK_TITLE_ID}>
@@ -329,7 +288,7 @@ export function TodayWeek() {
           ))}
         </ol>
 
-        {challenge?.date && <ChallengeRow challenge={challenge} date={challenge.date} />}
+        {challenge?.date && inWeek && <ChallengeRow challenge={challenge} date={challenge.date} />}
       </Surface>
     </PageSection>
   );

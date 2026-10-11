@@ -24,21 +24,6 @@ export async function identifyPostHogUser({
 }
 
 /**
- * Records sessions only for learners whose age allows it. Replay is off at init, so a page never
- * records before this decision.
- */
-export async function syncPostHogSessionReplay(allowed: boolean) {
-  const posthog = await loadPostHog();
-
-  if (allowed) {
-    posthog?.startSessionRecording();
-    return;
-  }
-
-  posthog?.stopSessionRecording();
-}
-
-/**
  * Unlinks future browser events from the previous signed-in user after logout. Callers wait for it
  * before leaving the page, because PostHog loads after the page does.
  */

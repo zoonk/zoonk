@@ -1,5 +1,3 @@
-import { type GuardianLinkView } from "@zoonk/core/minors/guardian/contract";
-import { listGuardianLinks } from "@zoonk/core/minors/guardian/list-links";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { getEnergyLevel } from "@zoonk/core/progress/get-energy-level";
@@ -20,26 +18,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** The shortest daily limit an active guardian set, if any. */
-function getGuardianLimitMinutes(links: GuardianLinkView[] | null): number | null {
-  const limits = (links ?? []).flatMap((link) =>
-    link.status === "active" && link.dailyLimitMinutes !== null ? [link.dailyLimitMinutes] : [],
-  );
-
-  return limits.length > 0 ? Math.min(...limits) : null;
-}
-
 /**
- * The learning profile is Appearance's view; the belt and Energy only draw the buddy, and a
- * guardian's limit shows in the daily limit. Every setting but the language is saved on the
- * profile, so visitors only get the language.
+ * The learning profile is Appearance's view; the belt and Energy only draw the buddy. Every
+ * setting but the language is saved on the profile, so visitors only get the language.
  */
 async function AppearanceContent() {
-  const [profile, belt, energy, guardianLinks] = await Promise.all([
+  const [profile, belt, energy] = await Promise.all([
     getLearningProfile(),
     getBeltLevel(),
     getEnergyLevel(),
-    listGuardianLinks(),
   ]);
 
   return (
@@ -49,8 +36,6 @@ async function AppearanceContent() {
         buddy: profile?.buddy ?? null,
         canPersonalize: profile !== null,
         dailyLimitMinutes: profile?.dailyLimitMinutes ?? null,
-        guardianLimitMinutes: getGuardianLimitMinutes(guardianLinks),
-        isMinor: profile?.ageGroup === "teen",
         look: { beltColor: belt?.color ?? "white", energy: energy?.currentEnergy ?? 0 },
         soundsEnabled: profile?.soundsEnabled ?? true,
       }}

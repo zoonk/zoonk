@@ -5,7 +5,7 @@ import { after } from "next/server";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
-import { getMemoryAccess } from "./_utils/memory-access";
+import { isMemoryEnabled } from "./_utils/memory-access";
 import { checkDailyInsight } from "./insights/_utils/check-insight";
 import { hasEnoughActivity, loadGoalActivity } from "./insights/_utils/goal-activity";
 import { updateMemoryFromActivity } from "./update-memory-from-activity";
@@ -28,9 +28,8 @@ type AfterSessionRequest = {
  */
 async function runMemoryAfterSession(request: AfterSessionRequest): Promise<void> {
   const { sessionId, timeZone, userId } = request;
-  const access = await getMemoryAccess(userId);
 
-  if (!access.enabled) {
+  if (!(await isMemoryEnabled(userId))) {
     return;
   }
 

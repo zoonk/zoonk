@@ -3,14 +3,15 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
 import { freshnessCommandRequestSchema } from "@/lib/openapi/schemas/research-sources";
 import { freshnessWorkflow } from "@/workflows/v2/freshness/freshness-workflow";
+import { readNoticeAgainWorkflow } from "@/workflows/v2/freshness/read-notice-again-workflow";
 import { getFreshnessCommandAccess } from "@zoonk/core/library/exams/freshness-access";
 import { stopFreshnessChecks } from "@zoonk/core/library/exams/freshness-checks";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
 /**
- * Lets an admin check an exam or source now, or stop its checks until a learner's goal needs
- * them again.
+ * Lets an admin check an exam or source now, read an exam's stored notice again (the only way a
+ * reading is redone), or stop its checks until a learner's goal needs them again.
  */
 async function sendFreshnessCommand(request: NextRequest) {
   const parsed = await parseBody(request, freshnessCommandRequestSchema);
@@ -20,6 +21,10 @@ async function sendFreshnessCommand(request: NextRequest) {
   }
 
   const { command, target } = parsed.data;
+
+  if (command === "readAgain" && target.kind !== "exam") {
+    return errors.badRequest("Only an exam's notice can be read again");
+  }
 
   const access =
     command === "stop"
@@ -42,7 +47,9 @@ async function sendFreshnessCommand(request: NextRequest) {
     return NextResponse.json({ status: "stopped" });
   }
 
-  await start(freshnessWorkflow, [target]);
+  await (target.kind === "exam" && command === "readAgain"
+    ? start(readNoticeAgainWorkflow, [{ examBlueprintId: target.examBlueprintId }])
+    : start(freshnessWorkflow, [target]));
 
   return NextResponse.json({ status: "started" });
 }

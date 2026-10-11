@@ -1,10 +1,11 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CallWait, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
+import { keepTeachingPictures } from "@zoonk/ai/tasks/v2/lesson-spec/picture-need";
 import { claimLibraryGeneration } from "@zoonk/core/library/claims/generation";
 import { loadLessonSpecInputs } from "@zoonk/core/library/curriculum/lesson-spec-inputs";
 import { saveLessonSpecs } from "@zoonk/core/library/curriculum/save-lesson-specs";
-import { getScopeModel } from "@zoonk/core/library/curriculum/scope";
+import { getLessonSpecModel } from "@zoonk/core/library/curriculum/scope";
 import { releaseStaleLessonClaims } from "@zoonk/core/library/generation/state";
 import { loadLessonReuse } from "@zoonk/core/library/lessons/reuse";
 import { prisma } from "@zoonk/db";
@@ -73,9 +74,14 @@ async function planLesson({
     generateLessonSpec({
       ...inputs.prompt,
       analytics: context,
-      model: getScopeModel(inputs.scope),
+      model: getLessonSpecModel(inputs.scope),
       serviceTier: chooseServiceTier({ reuse, wait }),
     }),
+  );
+
+  // Pictures that would only decorate go before the writer asks for them, so none is drawn.
+  const specs = await Promise.all(
+    data.lessons.map((spec) => keepTeachingPictures({ analytics: context, spec })),
   );
 
   const saved = await saveLessonSpecs({
@@ -84,7 +90,7 @@ async function planLesson({
     lessonId,
     provenance,
     scope: inputs.scope,
-    specs: data.lessons,
+    specs,
     workflowRunId,
   });
 
@@ -93,8 +99,9 @@ async function planLesson({
 
 /**
  * Makes sure a lesson has its spec: 1 to 3 skills, the screen plan and where an activity or a
- * picture teaches. Specs are usually written a chapter ahead, so most lessons skip this; one that
- * another run is planning right now is waited for instead of planned twice.
+ * picture teaches (a planned picture that would only decorate is dropped before it's drawn).
+ * Specs are usually written a chapter ahead, so most lessons skip this; one that another run is
+ * planning right now is waited for instead of planned twice.
  */
 export async function writeLessonSpecStep(input: SpecInput): Promise<LessonSpecOutcome> {
   "use step";

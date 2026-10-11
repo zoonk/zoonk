@@ -9,7 +9,7 @@ function toWords(text: string): string {
 
 /**
  * Whether the goal's title already says this fact, as whole words regardless of accents and case
- * ("Câmara dos Deputados" in "Passar no concurso da Câmara dos Deputados"), so the card doesn't
+ * ("Câmara dos Deputados" in "Pass the Câmara dos Deputados civil service exam"), so the card doesn't
  * repeat it on a row of its own. A fact inside a longer word ("dev" in "development") isn't said.
  */
 export function isSaidInTitle({ title, value }: { title: string; value: string }): boolean {

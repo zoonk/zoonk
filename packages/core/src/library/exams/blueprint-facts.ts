@@ -1,43 +1,44 @@
 import { type CitedFact } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
 import { type BlueprintExtraction } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
+import { type FormatCount } from "@zoonk/ai/tasks/v2/research/extract-question-formats";
+import { type PartialCreditRule } from "@zoonk/ai/tasks/v2/research/partial-credit";
 import { splitEvenly } from "@zoonk/utils/split-evenly";
-import { type Citation } from "./blueprint-contract";
+import { type FactEntry, type FactSource, toFacts } from "./blueprint-fact-claims";
+import { testedLanguageFacts } from "./blueprint-language";
+import { mockFacts } from "./blueprint-mock-facts";
 import {
   type ExtractionDocument,
   type Passage,
+  listCountPassages,
   listFoundPassages,
-  toClaimSource,
+  listMarkingPassages,
   toPartPassages,
 } from "./blueprint-passages";
 import { findNamesInDocument } from "./passage-check";
 
-/**
- * One claim the model check judges against its passages, and whether code found every passage
- * in the document it cites.
- */
-export type FactEntry = { citations: Citation[]; found: boolean; id: string; statement: string };
-
 type Extraction = BlueprintExtraction;
-type Mock = NonNullable<Extraction["mock"]>;
 
 const FORMAT_WORDS: Record<Extraction["formats"][number]["kind"], string> = {
   essay: "a written answer in the candidate's own words, such as an essay or a discursive question",
-  multipleChoice: "multiple-choice questions",
+  multipleChoice:
+    "multiple-choice questions, answered by picking among given options or by picking words or items in a text",
   numeric: "questions answered with a number",
   oral: "an oral exam",
   other: "other questions",
   practical: "a practical test",
   shortAnswer:
-    "questions answered in writing with a short answer, such as a word, a value or a table or blank to fill in",
+    "questions answered by writing or typing a short answer, such as a word, a value, a sentence, or a table or blank to fill in",
   trueFalse: "items judged true or false (right or wrong)",
 };
 
-const SCORING_WORDS: Record<Exclude<Mock["scoring"]["method"], "other">, string> = {
-  itemResponseTheory: "scored with item response theory",
-  raw: "the score is the number or share of right answers",
-  scaled: "the result is reported on a score scale, such as bands or points",
-  wrongCancelsRight: "a wrong answer cancels a right one",
-};
+/**
+ * A format as a claim about it names it: its kind and the line it quotes for itself. Never the
+ * description, which the model writes and its own claim checks: a detail it adds that no line
+ * states would drop every claim that names the format with it.
+ */
+function nameFormat(format: Pick<Extraction["formats"][number], "kind" | "passage">): string {
+  return `${FORMAT_WORDS[format.kind]} ("${format.passage}")`;
+}
 
 const DATE_WORDS: Record<Extraction["dates"][number]["kind"], string> = {
   exam: "The exam takes place",
@@ -49,33 +50,13 @@ const DATE_WORDS: Record<Extraction["dates"][number]["kind"], string> = {
 
 const PERCENT = 100;
 
-type Claim = { id: string; statement: string };
-
-/** What every group of claims is built from, with the passages code found in their documents. */
-type FactSource = { documents: ExtractionDocument[]; extraction: Extraction; found: Passage[] };
-
-/** Claims that share their passages, each judged on its own so one wrong detail drops only itself. */
-function toFacts({
-  claims,
-  documents,
-  passages,
-}: {
-  claims: (Claim | false)[];
-  documents: ExtractionDocument[];
-  passages: Passage[];
-}): FactEntry[] {
-  const source = toClaimSource({ documents, passages });
-
-  return claims.filter((claim) => claim !== false).map((claim) => ({ ...claim, ...source }));
-}
-
 function describeParts(parts: (string | false | null)[]): string {
   return parts.filter(Boolean).join("; ");
 }
 
 /**
- * A subject is kept when its passages name it; its question count, weight and group are claims of
- * their own, often stated elsewhere in the notice. Its topics are checked by code
+ * A subject is kept when its passages name it; its question count, weight, group and choice are
+ * claims of their own, often stated elsewhere in the notice. Its topics are checked by code
  * (`findStatedTopics`).
  */
 function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[] {
@@ -98,10 +79,101 @@ function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[]
           id: `${id}.group`,
           statement: `${name} is part of "${subject.group}"`,
         },
+        Boolean(subject.choiceGroup) && {
+          id: `${id}.choiceGroup`,
+          statement: `${name} is one of the options of "${subject.choiceGroup}", of which each candidate takes only one`,
+        },
+        Boolean(subject.partOf) && {
+          id: `${id}.partOf`,
+          statement: `${name}'s questions are part of "${subject.partOf}"`,
+        },
       ],
       documents,
       passages: toPartPassages({ found, name: subject.name, own: subject.passages }),
     });
+  });
+}
+
+const PARTIAL_CREDIT_WORDS: Record<PartialCreditRule, string> = {
+  allOrNothing: "only picking all the right options and no wrong one earns a question's marks",
+  perOption:
+    "each right option picked earns part of the marks while no wrong option is picked, all of them the full marks, and a wrong pick loses marks",
+  perRightPick:
+    "each right option picked earns its share of the marks while no wrong option is picked",
+  plusMinus: "each right pick earns a mark and each wrong pick loses one",
+};
+
+/**
+ * How a format with several picks scores a question answered partly right, as its own claim: a
+ * notice often states it with the scoring, away from the format, so it reads the passage quoted
+ * for its marking (`markingPassage`) and the scoring's passages too. It names the format, since a
+ * notice often marks one question type apart from the others, and a rule claimed for every
+ * question that asks for several options says more than that passage.
+ */
+function partialCreditFacts({
+  documents,
+  extraction,
+  format,
+  id,
+}: Omit<FactSource, "found"> & { format: Extraction["formats"][number]; id: string }): FactEntry[] {
+  const rule = format.select && format.select !== 1 ? format.partialCredit : null;
+
+  return rule
+    ? toFacts({
+        claims: [
+          {
+            id: `${id}.partialCredit`,
+            statement: `In ${nameFormat(format)} that ask for several options, ${PARTIAL_CREDIT_WORDS[rule]}`,
+          },
+        ],
+        documents,
+        passages: [format, ...listMarkingPassages(format), ...(extraction.mock?.passages ?? [])],
+      })
+    : [];
+}
+
+const COUNT_PART_WORDS: Record<FormatCount["per"], string> = {
+  exam: "in the exam",
+  paper: "in each paper",
+  section: "in its section",
+  subject: "in each subject",
+};
+
+/**
+ * How many of the exam's questions a format takes, as its own claim stating the number its line
+ * gives word for word: a notice counts them with its sections or its scoring, away from the
+ * format, so it reads the line quoted for its count (`countPassage`). Code works out the share
+ * from every format's kept count (`getFormatShares`), which no passage states.
+ */
+function countFacts({
+  documents,
+  format,
+  id,
+}: Omit<FactSource, "extraction" | "found"> & {
+  format: Extraction["formats"][number];
+  id: string;
+}): FactEntry[] {
+  const { count } = format;
+
+  if (!count || count.value <= 0) {
+    return [];
+  }
+
+  const kind = nameFormat(format);
+  const part = COUNT_PART_WORDS[count.per];
+
+  return toFacts({
+    claims: [
+      {
+        id: `${id}.count`,
+        statement:
+          count.unit === "percent"
+            ? `Share of the questions ${part} that are ${kind}: about ${count.value}%`
+            : `Number of ${kind} ${part}: ${count.value}`,
+      },
+    ],
+    documents,
+    passages: [format, ...listCountPassages(format)],
   });
 }
 
@@ -112,7 +184,7 @@ function formatFacts({ documents, extraction }: FactSource): FactEntry[] {
     const options = format.options === null ? "" : `, ${format.options} options each`;
     const isOther = format.kind === "other";
 
-    return toFacts({
+    const claims = toFacts({
       claims: [
         {
           id,
@@ -126,90 +198,13 @@ function formatFacts({ documents, extraction }: FactSource): FactEntry[] {
       documents,
       passages: [format],
     });
+
+    return [
+      ...claims,
+      ...partialCreditFacts({ documents, extraction, format, id }),
+      ...countFacts({ documents, format, id }),
+    ];
   });
-}
-
-function describeScoring(scoring: Mock["scoring"]): string {
-  return scoring.method === "other" ? scoring.description : SCORING_WORDS[scoring.method];
-}
-
-/** A section's claims read the mock's passages and those naming the section, like a subject's. */
-function sectionFacts({
-  documents,
-  found,
-  mock,
-}: {
-  documents: ExtractionDocument[];
-  found: Passage[];
-  mock: Mock;
-}): FactEntry[] {
-  return mock.sections.flatMap((section, index) => {
-    const id = `mock.sections.${index}`;
-    const name = `Exam section "${section.name}"`;
-
-    return toFacts({
-      claims: [
-        { id, statement: name },
-        section.questions !== null && {
-          id: `${id}.questions`,
-          statement: `${name} has ${section.questions} questions`,
-        },
-        section.minutes !== null && {
-          id: `${id}.minutes`,
-          statement: `${name} lasts ${section.minutes} minutes`,
-        },
-        section.day !== null && {
-          id: `${id}.day`,
-          statement: `${name} is on exam day ${section.day}`,
-        },
-        ...(section.tasks ?? []).map((task, taskIndex) => ({
-          id: `${id}.tasks.${taskIndex}`,
-          statement: `${name} asks ${task.count} × ${task.description}`,
-        })),
-      ],
-      documents,
-      passages: toPartPassages({ found, name: section.name, own: mock.passages }),
-    });
-  });
-}
-
-/**
- * The conditions a mock copies, one claim each: a notice states them in several places, and a
- * derived detail (a day's length given to one section) shouldn't drop the scoring with it.
- */
-function mockFacts({ documents, extraction, found }: FactSource): FactEntry[] {
-  const { mock } = extraction;
-
-  if (!mock) {
-    return [];
-  }
-
-  const conditions = toFacts({
-    claims: [
-      { id: "mock.scoring", statement: `Scoring: ${describeScoring(mock.scoring)}` },
-      mock.scoring.method !== "other" && {
-        id: "mock.scoring.description",
-        statement: `Scoring: ${mock.scoring.description}`,
-      },
-      mock.totalQuestions !== null && {
-        id: "mock.totalQuestions",
-        statement: `The exam has ${mock.totalQuestions} questions in total`,
-      },
-      mock.timeLimitMinutes !== null && {
-        id: "mock.timeLimitMinutes",
-        statement: `The exam lasts ${mock.timeLimitMinutes} minutes in total`,
-      },
-      mock.order !== null && { id: "mock.order", statement: `The exam's order: ${mock.order}` },
-      mock.adaptive && {
-        id: "mock.adaptive",
-        statement: "A later section's questions depend on the results of an earlier one",
-      },
-    ],
-    documents,
-    passages: mock.passages,
-  });
-
-  return [...conditions, ...sectionFacts({ documents, found, mock })];
 }
 
 function editionFacts({ documents, extraction }: FactSource): FactEntry[] {
@@ -305,6 +300,7 @@ export function listBlueprintFacts({
     ...mockFacts(source),
     ...editionFacts(source),
     ...singleFacts(source),
+    ...testedLanguageFacts(source),
     ...reusePolicyFacts(source),
   ];
 }

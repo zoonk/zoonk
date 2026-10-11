@@ -1,31 +1,17 @@
 import { randomUUID } from "node:crypto";
-import { findExamDate } from "@zoonk/ai/tasks/v2/goals/find-exam-date";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { type GoalUnderstandingView } from "./onboarding-contract";
 import { reviseOnboardingDraft } from "./revise-onboarding-draft";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
-
-/** The quick search for a published notice is a web search: here nothing is published. */
-vi.mock("@zoonk/ai/tasks/v2/goals/find-exam-date", () => ({
-  findExamDate: vi.fn(async () => ({ data: { dates: [], source: null, status: "unknown" } })),
-}));
 
 /** An exam with the 2099 notice stored: two exam days read from its official source. */
 async function createExam() {
@@ -127,73 +113,6 @@ describe(reviseOnboardingDraft, () => {
     expect(card.goals[1]?.draft.details?.onboardingId).toBe(draft.id);
   });
 
-  it("reads another exam year's dates and drops the deadline set for the old one", async () => {
-    const { draft, exam } = await setup();
-
-    const later = readCard(
-      await reviseOnboardingDraft({
-        draftId: draft.id,
-        edit: { field: "examYear", goal: 0, value: 2100 },
-      }),
-    );
-
-    const [goal] = later.goals;
-
-    expect(goal?.draft.targetDate).toBeUndefined();
-    expect(goal?.draft.examBlueprintId).toBe(exam.blueprint.id);
-    expect(goal?.draft.details?.examYear).toBe(2100);
-    expect(goal?.draft.title).toBe("Pass the exam in 2100");
-    expect(goal?.examDates.length).toBeGreaterThan(0);
-
-    expect(goal?.examDates.every((date) => date.estimated && date.date.startsWith("2100-"))).toBe(
-      true,
-    );
-
-    const official = readCard(
-      await reviseOnboardingDraft({
-        draftId: draft.id,
-        edit: { field: "examYear", goal: 0, value: 2099 },
-      }),
-    );
-
-    const source = { title: "Official notice", url: exam.source.url };
-
-    expect(official.goals[0]?.examDates).toStrictEqual([
-      { date: "2099-11-08", estimated: false, label: "Day 1", source },
-      { date: "2099-11-15", estimated: false, label: "Day 2", source },
-    ]);
-  });
-
-  it("searches another year's day only as small AI help, and past the cap leaves it to be confirmed", async () => {
-    const { draft, user } = await setup();
-
-    readCard(
-      await reviseOnboardingDraft({
-        draftId: draft.id,
-        edit: { field: "examYear", goal: 0, value: 2101 },
-      }),
-    );
-
-    expect(findExamDate).toHaveBeenCalledOnce();
-
-    await expect(
-      prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
-    ).resolves.toBe(1);
-
-    await usageRecordsFixture({ count: 99, kind: "assist", userId: user.id });
-    vi.mocked(findExamDate).mockClear();
-
-    const capped = readCard(
-      await reviseOnboardingDraft({
-        draftId: draft.id,
-        edit: { field: "examYear", goal: 0, value: 2102 },
-      }),
-    );
-
-    expect(findExamDate).not.toHaveBeenCalled();
-    expect(capped.goals[0]?.draft.details?.examYear).toBe(2102);
-  });
-
   it("keeps the learner's own deadline in place of the exam's dates, and null brings them back", async () => {
     const { draft } = await setup();
 
@@ -258,14 +177,6 @@ describe(reviseOnboardingDraft, () => {
     const results = await Promise.all([
       reviseOnboardingDraft({
         draftId: draft.id,
-        edit: { field: "examYear", goal: 1, value: 2100 },
-      }),
-      reviseOnboardingDraft({
-        draftId: draft.id,
-        edit: { field: "examYear", goal: 0, value: 2001 },
-      }),
-      reviseOnboardingDraft({
-        draftId: draft.id,
         edit: { field: "targetDate", goal: 0, value: "2001-01-01" },
       }),
       reviseOnboardingDraft({
@@ -274,12 +185,7 @@ describe(reviseOnboardingDraft, () => {
       }),
     ]);
 
-    expect(results.map((result) => result.status)).toStrictEqual([
-      "invalid",
-      "invalid",
-      "invalid",
-      "invalid",
-    ]);
+    expect(results.map((result) => result.status)).toStrictEqual(["invalid", "invalid"]);
 
     const stored = await prisma.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
     expect(stored.updatedAt).toStrictEqual(draft.updatedAt);

@@ -74,10 +74,7 @@ function listSubjectShares({
     (area) => area.length > 0,
   );
 
-  const matches = matchAreasToSubjects({
-    areas,
-    subjects: structure.subjects.map((subject) => subject.name),
-  });
+  const matches = matchAreasToSubjects({ areas, subjects: structure.subjects });
 
   if (!followsNotice({ areas, matches })) {
     return null;

@@ -4,10 +4,15 @@ import { useExtracted } from "next-intl";
 import { TaskFrame } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 
-/** The mock's frame: leave on the left, the mock and its clock in the middle, the flag on the right. */
-export function MockFrame(props: Omit<React.ComponentProps<typeof TaskFrame>, "exitHref">) {
-  const { hrefs } = useMockScreen();
-  return <TaskFrame {...props} exitHref={hrefs.exit} />;
+/**
+ * The mock's frame: leave on the left, the mock and its clock in the middle, the flag on the
+ * right. Leaving right after an answer waits for it to be saved.
+ */
+export function MockFrame(
+  props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref">,
+) {
+  const { hrefs, runner } = useMockScreen();
+  return <TaskFrame {...props} beforeExit={runner.savesInFlight} exitHref={hrefs.exit} />;
 }
 
 /**

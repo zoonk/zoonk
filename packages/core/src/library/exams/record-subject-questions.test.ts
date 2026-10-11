@@ -73,6 +73,31 @@ describe(recordSubjectQuestions, () => {
     await expect(findSubjectQuestionsLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
   });
 
+  it("keeps the counts a source gives when it doesn't count every subject", async () => {
+    const blueprint = await examBlueprintFixture({ structure });
+
+    await recordSubjectQuestions({
+      edition: null,
+      examBlueprintId: blueprint.id,
+      questions: [7, null, 8],
+      source: { title: "Distribuição", url: "https://example.com/oab" },
+      subjects: ["Direito Civil", "Direito Penal", "Ética Profissional"],
+    });
+
+    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
+
+    expect(examStructureSchema.parse(stored.structure).pastQuestions).toMatchObject({
+      source: { url: "https://example.com/oab" },
+      subjects: [
+        { name: "Direito Civil", questions: 7 },
+        { name: "Ética Profissional", questions: 8 },
+      ],
+    });
+
+    // Looked up just now: the next research doesn't ask again for the subject it couldn't count.
+    await expect(findSubjectQuestionsLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
+  });
+
   it("never looks up a private blueprint read from a learner's material", async () => {
     const owner = await userFixture();
 

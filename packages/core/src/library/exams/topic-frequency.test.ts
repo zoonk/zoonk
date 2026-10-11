@@ -132,7 +132,7 @@ describe(needsTopicFrequency, () => {
   it("tries again a month later for the subjects a lookup didn't find", () => {
     const later = new Date("2026-11-20T12:00:00.000Z");
 
-    // Natureza is rated; Humanas isn't, so a month on it's looked up again.
+    // Natural sciences are rated; human sciences aren't, so a month on it's looked up again.
     expect(needsTopicFrequency({ now: later, structure: looked, topicFrequency: [] })).toBe(true);
   });
 

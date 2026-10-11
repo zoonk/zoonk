@@ -19,6 +19,13 @@ export const speechClipInputSchema = z.object({
       message: "There's no voice for this language",
     })
     .meta({ description: 'The language the text is in, such as "it", "es" or "pt-BR"' }),
+  personal: z
+    .boolean()
+    .default(false)
+    .meta({
+      description:
+        "The words are the learner's own (a better version of what they said in a call): the clip is kept for them alone, in their private files, never shared",
+    }),
   text: z
     .string()
     .trim()
@@ -27,7 +34,7 @@ export const speechClipInputSchema = z.object({
     .meta({ description: "What the clip says: a word, a sentence or a short passage" }),
 });
 
-export type SpeechClipInput = z.infer<typeof speechClipInputSchema>;
+export type SpeechClipInput = z.input<typeof speechClipInputSchema>;
 
 export const speechClipSchema = z.object({
   durationMs: z
@@ -38,7 +45,12 @@ export const speechClipSchema = z.object({
     .meta({ description: "How long the clip plays, when known" }),
   id: z.uuid(),
   language: z.string(),
-  url: z.url().meta({ description: "The MP3 file to play" }),
+  url: z
+    .url()
+    .meta({
+      description:
+        "The MP3 file to play: a shared clip's public file, or a personal one's file route, which only its learner can read",
+    }),
 });
 
 export type SpeechClip = z.infer<typeof speechClipSchema>;

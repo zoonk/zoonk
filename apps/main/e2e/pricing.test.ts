@@ -95,7 +95,7 @@ test.describe("Pricing for visitors", () => {
       `${limits.lessonsPerDay} lessons a day, up to ${limits.lessonsPerMonth} a month`,
       "The first week of exam prep",
       `${limits.tutorMessagesPerDay} tutor messages and ${limits.uploadsPerDay} uploads a day`,
-      "Speaking calls, with lower limits than Plus",
+      "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)",
     ]);
 
     // No plan says how many minutes of calls it has.

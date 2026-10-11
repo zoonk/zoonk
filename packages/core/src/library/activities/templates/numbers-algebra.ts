@@ -2,66 +2,20 @@ import { z } from "zod";
 import {
   choiceOptionSchema,
   choiceOptionsSchema,
-  explanationSchema,
   idSchema,
   labelSchema,
   optionTextSchema,
   promptSchema,
   uniqueIdsSchema,
 } from "../../steps/contract/content-schemas";
-import { expressionSchema, unitSchema, variableSchema } from "../activity-schemas";
+import { expressionSchema, unitSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
-import {
-  evaluateOrNull,
-  guessScaleIssues,
-  isClose,
-  issue,
-  resolveSliderValues,
-  toRange,
-  variableIssues,
-} from "./_utils/template-helpers";
+import { evaluateOrNull, isClose, issue } from "./_utils/template-helpers";
 
 const MAX_MOVES = 5;
 const MAX_TICKS = 40;
 const MAX_PARTS = 4;
 const MAX_SOLVER_STEPS = 5;
-const MAX_WORKINGS = 5;
-
-export const sliderGraphTemplate = defineActivityTemplate({
-  checks: ["choice", "numeric"],
-  description:
-    "Move one input on a slider and watch a formula's output redraw on a graph. Fills: the formula, the slider range and unit, axis labels, a value to compare against, the source and the check question.",
-  fields: z
-    .object({
-      compareAt: z.number().optional(),
-      formula: expressionSchema,
-      output: z.object({ label: labelSchema, unit: unitSchema.optional() }).strict(),
-      variable: variableSchema,
-    })
-    .strict(),
-  formulas: (fields) => [
-    { expression: fields.formula, path: "fields.formula", ranges: [toRange(fields.variable)] },
-  ],
-  id: "sliderGraph",
-  needsData: true,
-  value: (fields, target) => {
-    const values = resolveSliderValues([fields.variable], target);
-    return values ? evaluateOrNull(fields.formula, values) : null;
-  },
-  verify: (fields) => [
-    ...variableIssues(fields.variable, "fields.variable"),
-    ...(fields.compareAt !== undefined &&
-    (fields.compareAt < fields.variable.min || fields.compareAt > fields.variable.max)
-      ? [
-          issue(
-            "inconsistentFields",
-            "fields.compareAt",
-            "The comparison is outside the slider range",
-          ),
-        ]
-      : []),
-  ],
-});
 
 const numberLineFields = z
   .object({
@@ -226,49 +180,4 @@ export const stepSolverTemplate = defineActivityTemplate({
             ),
           ];
     }),
-});
-
-const estimateRevealFields = z
-  .object({
-    comparison: explanationSchema,
-    expression: expressionSchema,
-    max: z.number(),
-    min: z.number(),
-    scale: z.enum(["linear", "log"]),
-    takeaway: explanationSchema,
-    unit: unitSchema,
-    workings: z
-      .array(z.object({ expression: expressionSchema, label: labelSchema }).strict())
-      .min(1)
-      .max(MAX_WORKINGS),
-  })
-  .strict();
-
-export const estimateRevealTemplate = defineActivityTemplate({
-  checks: ["numeric"],
-  description:
-    "Guess on a scale first, then see the real value next to the guess. The true value is computed from `expression`, and the workings show how. Fills: the question, the answer expression and its workings, the scale (linear or log) and range, a concrete comparison and the takeaway.",
-  fields: estimateRevealFields,
-  formulas: (fields) => [
-    { expression: fields.expression, path: "fields.expression", ranges: [] },
-    ...fields.workings.map((working, index) => ({
-      expression: working.expression,
-      path: `fields.workings.${index}.expression`,
-      ranges: [],
-    })),
-  ],
-  id: "estimateReveal",
-  needsData: false,
-  value: (fields) => evaluateOrNull(fields.expression),
-  verify: (fields) => {
-    const value = evaluateOrNull(fields.expression);
-    const lastWorking = evaluateOrNull(fields.workings.at(-1)?.expression ?? "");
-
-    return [
-      ...guessScaleIssues({ ...fields, trueValue: value, trueValuePath: "fields.expression" }),
-      ...(value !== null && lastWorking !== null && !isClose(lastWorking, value)
-        ? [issue("answerMismatch", "fields.workings", "The last working doesn't reach the answer")]
-        : []),
-    ];
-  },
 });

@@ -1,5 +1,8 @@
 import { choiceCheck } from "@zoonk/testing/fixtures/activity-checks";
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -40,9 +43,12 @@ const chainQuestion = {
   ]),
 };
 
+const { calculator, scenario } = engineModeFixtures.formulaModel;
+const { breakEven } = engineModeFixtures.lineCrossing;
+
 describe("money and society activities", () => {
-  it("slider calculator: moving the extra payment gives the months to check", async () => {
-    openActivity({ template: "sliderCalculator" });
+  it("formula model calculator: moving the extra payment gives the months to check", async () => {
+    openActivity({ content: calculator, template: "formulaModel" });
     await pressOnSlider("Extra per month", "ArrowRight", 4);
 
     await expect.element(valueInput()).toHaveValue("251.54");
@@ -51,15 +57,15 @@ describe("money and society activities", () => {
     await expectVerdict("Correct!");
   });
 
-  it("slider calculator: a number that isn't the model's is wrong", async () => {
-    openActivity({ template: "sliderCalculator" });
+  it("formula model calculator: a number that isn't the model's is wrong", async () => {
+    openActivity({ content: calculator, template: "formulaModel" });
     await valueInput().fill("300");
     await checkActivity();
     await expectVerdict("Not quite");
   });
 
-  it("scenario simulator: the rent event and the price give the profit", async () => {
-    openActivity({ template: "scenarioSimulator" });
+  it("formula model what-ifs: the rent event and the price give the profit", async () => {
+    openActivity({ content: scenario, template: "formulaModel" });
     await page.getByRole("button", { name: "Rent goes up $500" }).click();
 
     await expect
@@ -73,30 +79,39 @@ describe("money and society activities", () => {
     await expectVerdict("Correct!");
   });
 
-  it("scenario simulator: leaving the event off gives the wrong profit", async () => {
-    openActivity({ template: "scenarioSimulator" });
+  it("formula model what-ifs: leaving the event off gives the wrong profit", async () => {
+    openActivity({ content: scenario, template: "formulaModel" });
     await pressOnSlider("Price per cup", "ArrowRight", 2);
     await expect.element(valueInput()).toHaveValue("1500");
     await checkActivity();
     await expectVerdict("Not quite");
   });
 
-  it("supply and demand: moving supply left explains the spike", async () => {
-    openActivity({ template: "supplyDemand" });
-    await pressOnSlider("Move the supply curve", "ArrowLeft", 1);
-    await expect.element(page.getByText("Price goes up", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("Quantity goes down", { exact: true })).toBeVisible();
+  it("line crossing: moving supply left explains the spike", async () => {
+    openActivity({ template: "lineCrossing" });
+    await pressOnSlider("Move the line Supply", "ArrowLeft", 1);
+    await expect.element(page.getByText("Price per dozen goes up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Eggs sold goes down", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
   });
 
-  it("supply and demand: moving demand gets the wrong-curve feedback", async () => {
-    openActivity({ template: "supplyDemand" });
-    await pressOnSlider("Move the demand curve", "ArrowRight", 2);
+  it("line crossing: moving demand gets the wrong-line feedback", async () => {
+    openActivity({ template: "lineCrossing" });
+    await pressOnSlider("Move the line Demand", "ArrowRight", 2);
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("People didn't want more eggs.")).toBeVisible();
     await expect.element(page.getByText("Supply moved left.")).toBeVisible();
+  });
+
+  it("line crossing: moving the cost line up gives the new break-even", async () => {
+    openActivity({ content: breakEven, template: "lineCrossing" });
+    await pressOnSlider("Move the line Cost", "ArrowUp", 4);
+    await expect.element(page.getByText("Lamps sold goes up", { exact: true })).toBeVisible();
+    await expect.element(valueInput()).toHaveValue("250");
+    await checkActivity();
+    await expectVerdict("Correct!");
   });
 
   it("timeline: events placed in order are right, and the real gaps show", async () => {
@@ -235,27 +250,34 @@ describe("money and society activities by dragging", () => {
     await expect.element(placed).toHaveAttribute("aria-valuetext", expect.stringMatching(/BCE/u));
   });
 
-  it("supply and demand: dragging the supply handle left raises the price", async () => {
-    openActivity({ template: "supplyDemand" });
-    await dragBy(page.getByRole("slider", { name: "Move the supply curve" }), { x: -60, y: 0 });
+  it("line crossing: dragging the supply handle left raises the price", async () => {
+    openActivity({ template: "lineCrossing" });
+    await dragBy(page.getByRole("slider", { name: "Move the line Supply" }), { x: -60, y: 0 });
 
-    await expect.element(page.getByText("Price goes up", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Price per dozen goes up", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
+  });
+
+  it("line crossing: dragging the cost handle up moves the break-even", async () => {
+    openActivity({ content: breakEven, template: "lineCrossing" });
+    await dragBy(page.getByRole("slider", { name: "Move the line Cost" }), { x: 0, y: -40 });
+
+    await expect.element(page.getByText("Lamps sold goes up", { exact: true })).toBeVisible();
   });
 });
 
 describe("money and society activities with a keyboard only", () => {
-  it("slider calculator", async () => {
-    openActivity({ template: "sliderCalculator" });
+  it("formula model calculator", async () => {
+    openActivity({ content: calculator, template: "formulaModel" });
     await pressOnSlider("Extra per month", "ArrowRight", 4);
     await focusOn(page.getByRole("button", { name: "Check" }));
     await press("Enter");
     await expectVerdict("Correct!");
   });
 
-  it("scenario simulator", async () => {
-    openActivity({ template: "scenarioSimulator" });
+  it("formula model what-ifs", async () => {
+    openActivity({ content: scenario, template: "formulaModel" });
     await focusOn(page.getByRole("button", { name: "Rent goes up $500" }));
     await press("Space");
     await press("Tab");
@@ -266,9 +288,9 @@ describe("money and society activities with a keyboard only", () => {
     await expectVerdict("Correct!");
   });
 
-  it("supply and demand", async () => {
-    openActivity({ template: "supplyDemand" });
-    await pressOnSlider("Move the supply curve", "ArrowLeft", 2);
+  it("line crossing", async () => {
+    openActivity({ template: "lineCrossing" });
+    await pressOnSlider("Move the line Supply", "ArrowLeft", 2);
     await press("Enter");
     await expectVerdict("Correct!");
   });

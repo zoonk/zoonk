@@ -20,14 +20,6 @@ import {
 const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 
-/**
- * Every image call keeps to providers that don't train on prompts (`noPromptTrainingImageMiddleware`),
- * which rules out FLUX and Recraft (BFL's terms also forbid data about anyone under 18), and
- * Seedream refuses images under 3.7 megapixels. Sunburst letters as well as Flare at the same
- * price (mind-map eval, 7 Oct 2026).
- */
-const fallbackModels = ["openai/gpt-image-2.5-sunburst"] as const;
-
 export type LessonImageParams = {
   scene: ImageScene;
   /** What the check rejected in the previous drawing of this scene, for a second attempt. */
@@ -61,7 +53,7 @@ export async function generateLessonImage({
 
   const { provenance, result } = await runImageTaskGeneration({
     analytics,
-    generate: () =>
+    generate: ({ promptTraining }) =>
       generateImageWithSafetyRetry({
         analytics,
         buildPrompt: ({ input }) => buildLessonImagePrompt({ palette, sceneInput: input }),
@@ -69,11 +61,14 @@ export async function generateLessonImage({
         maxImagesPerCall: 1,
         model,
         providerOptions: buildImageProviderOptions({
-          fallbackModels: useFallback ? fallbackModels : [],
+          promptTraining,
           quality,
+          size: IMAGE_SIZE,
+          useFallback,
         }),
         size: IMAGE_SIZE,
       }),
+    libraryInput: true,
     promptVersion: `style-v${IMAGE_STYLE_VERSION}`,
     requestedModel: model,
     systemPrompt: LESSON_IMAGE_TEMPLATE,

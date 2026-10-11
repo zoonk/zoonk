@@ -27,7 +27,7 @@ async function setup() {
 describe(loadTodayPlanChange, () => {
   it("says nothing when the plan didn't change", async () => {
     const { goal } = await setup();
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toBeNull();
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
   });
 
   it("carries the newest proposal waiting for an OK, whoever proposed it, before any change", async () => {
@@ -59,7 +59,7 @@ describe(loadTodayPlanChange, () => {
     ]);
 
     // A change read from the learner's words is said from what it does, not the model's words.
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toMatchObject({
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       id: newest.id,
       operations: [{ kind: "setDailyMinutes", minutes: 20 }],
       reason: null,
@@ -89,7 +89,7 @@ describe(loadTodayPlanChange, () => {
       status: "applied",
     });
 
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toBeNull();
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
     const atRisk = await planChangeFixture({
       createdAt: hoursAgo(1),
@@ -99,12 +99,58 @@ describe(loadTodayPlanChange, () => {
       status: "applied",
     });
 
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toMatchObject({
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       behind,
       id: atRisk.id,
       kind: "missedDays",
     });
   });
+
+  // Missed days and a pause that leave topics out of the plan are news, even on track: Today names
+  // the topics they move.
+  it.each(["missedDays", "resumed"] as const)(
+    "brings up a %s change that moves topics in or out of the plan",
+    async (kind) => {
+      const { goal, plan } = await setup();
+
+      const effect = {
+        endDateAfter: null,
+        endDateBefore: null,
+        lessonsAdded: 0,
+        lessonsRemoved: 6,
+        topicsLeftOut: [{ area: "Natureza", topics: ["Genética"] }],
+      };
+
+      await planChangeFixture({
+        createdAt: hoursAgo(2),
+        kind,
+        payload: {
+          behind: null,
+          days: 1,
+          effect: { ...effect, topicsLeftOut: [] },
+          source: "system",
+        },
+        planId: plan.id,
+        status: "applied",
+      });
+
+      await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
+
+      const moved = await planChangeFixture({
+        createdAt: hoursAgo(1),
+        kind,
+        payload: { behind: null, days: 1, effect, source: "system" },
+        planId: plan.id,
+        status: "applied",
+      });
+
+      await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
+        effect: { topicsLeftOut: effect.topicsLeftOut },
+        id: moved.id,
+        kind,
+      });
+    },
+  );
 
   it("carries the newest automatic change of the last day until it's seen", async () => {
     const { goal, plan } = await setup();
@@ -145,7 +191,7 @@ describe(loadTodayPlanChange, () => {
       }),
     ]);
 
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toMatchObject({
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       canUndo: true,
       chapterTitle: null,
       id: rebalance.id,
@@ -162,7 +208,7 @@ describe(loadTodayPlanChange, () => {
       status: "applied",
     });
 
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toMatchObject({
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       id: rebalance.id,
     });
   });
@@ -191,7 +237,7 @@ describe(loadTodayPlanChange, () => {
       status: "applied",
     });
 
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toMatchObject({
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       canUndo: true,
       chapterTitle: "Electric circuits",
       id: oneChapter.id,
@@ -207,7 +253,7 @@ describe(loadTodayPlanChange, () => {
       status: "applied",
     });
 
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toMatchObject({
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       canUndo: false,
       chapterTitle: null,
       id: twoChapters.id,

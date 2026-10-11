@@ -10,6 +10,185 @@
       "testCase": {
         "expected": {
           "gaps": [
+            "Angular momentum and spin",
+            "Time-independent perturbation theory",
+            "Identical particles and the Pauli exclusion principle",
+            "Scattering theory"
+          ]
+        },
+        "id": "en-quantum-mechanics-two-syllabi-1",
+        "userInput": {
+          "goal": "Master quantum physics from scratch",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [
+            {
+              "text": "Wave functions and the Born rule\nThe time-independent Schrödinger equation\nInfinite square well and harmonic oscillator\nOperators, observables and commutators\nThe uncertainty principle\nAngular momentum and spin\nThe hydrogen atom",
+              "title": "PHYS 341: Quantum Mechanics I"
+            },
+            {
+              "text": "Time-independent perturbation theory\nIdentical particles and the Pauli exclusion principle\nEntanglement and Bell's inequalities\nScattering theory",
+              "title": "PHYS 342: Quantum Mechanics II"
+            }
+          ],
+          "skills": [
+            {
+              "description": "Interpret a wave function with the Born rule.",
+              "key": "wave-function",
+              "name": "Interpret a wave function with the Born rule"
+            },
+            {
+              "description": "Solve the time-independent Schrödinger equation.",
+              "key": "schrodinger",
+              "name": "Solve the time-independent Schrödinger equation"
+            },
+            {
+              "description": "Solve the infinite square well.",
+              "key": "square-well",
+              "name": "Solve the infinite square well"
+            },
+            {
+              "description": "Solve the quantum harmonic oscillator.",
+              "key": "oscillator",
+              "name": "Solve the quantum harmonic oscillator"
+            },
+            {
+              "description": "Use operators, observables and commutators.",
+              "key": "operators",
+              "name": "Use operators, observables and commutators"
+            },
+            {
+              "description": "Apply the uncertainty principle.",
+              "key": "uncertainty",
+              "name": "Apply the uncertainty principle"
+            },
+            {
+              "description": "Describe the hydrogen atom's energy levels.",
+              "key": "hydrogen",
+              "name": "Describe the hydrogen atom's energy levels"
+            },
+            {
+              "description": "Explain entanglement and Bell's inequalities.",
+              "key": "entanglement",
+              "name": "Explain entanglement and Bell's inequalities"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": ["5 Sistemas eleitorais"],
+          "placements": [
+            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
+            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
+          ]
+        },
+        "id": "pt-camara-notice-topics-1",
+        "userInput": {
+          "examOutline": {
+            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
+            "notes": ["Scoring: cada item errado anula um item certo"],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos de gêneros variados",
+                  "3 Domínio da ortografia",
+                  "5 Domínio da estrutura morfossintática do período",
+                  "5.5 Concordância verbal e nominal",
+                  "5.7 Emprego do sinal indicativo de crase"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Conhecimentos específicos (P2)",
+                "name": "Ciência Política",
+                "questions": null,
+                "topics": [
+                  "1 Regimes políticos",
+                  "2 Sistemas e formas de governo",
+                  "5 Sistemas eleitorais"
+                ],
+                "weight": null
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
+          "goalKind": "exam",
+          "language": "pt",
+          "references": [],
+          "skills": [
+            {
+              "description": "Interpretar textos de gêneros variados.",
+              "key": "leitura",
+              "name": "Interpretar textos de gêneros variados",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
+            },
+            {
+              "description": "Aplicar as regras de ortografia.",
+              "key": "ortografia",
+              "name": "Aplicar as regras de ortografia",
+              "examWeight": 3,
+              "area": "Língua Portuguesa",
+              "topics": ["3 Domínio da ortografia"]
+            },
+            {
+              "description": "Empregar o acento grave indicativo de crase.",
+              "key": "crase",
+              "name": "Empregar o acento grave indicativo de crase",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Fazer a concordância do verbo e do nome.",
+              "key": "concordancia",
+              "name": "Fazer a concordância do verbo e do nome",
+              "examWeight": 4,
+              "area": "Língua Portuguesa",
+              "topics": []
+            },
+            {
+              "description": "Comparar regimes políticos.",
+              "key": "regimes",
+              "name": "Comparar regimes políticos",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["1 Regimes políticos"]
+            },
+            {
+              "description": "Distinguir sistemas e formas de governo.",
+              "key": "governo",
+              "name": "Distinguir sistemas e formas de governo",
+              "examWeight": 3,
+              "area": "Ciência Política",
+              "topics": ["2 Sistemas e formas de governo"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
             "Geometria espacial: volumes de prismas, cilindros, cones e esferas",
             "Análise combinatória: princípio fundamental da contagem",
             "Probabilidade de eventos simples"
@@ -152,81 +331,6 @@
         { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "gaps": [
-            "Angular momentum and spin",
-            "Time-independent perturbation theory",
-            "Identical particles and the Pauli exclusion principle",
-            "Scattering theory"
-          ]
-        },
-        "id": "en-quantum-mechanics-two-syllabi-1",
-        "userInput": {
-          "goal": "Master quantum physics from scratch",
-          "goalKind": "learn",
-          "language": "en",
-          "references": [
-            {
-              "text": "Wave functions and the Born rule\nThe time-independent Schrödinger equation\nInfinite square well and harmonic oscillator\nOperators, observables and commutators\nThe uncertainty principle\nAngular momentum and spin\nThe hydrogen atom",
-              "title": "PHYS 341: Quantum Mechanics I"
-            },
-            {
-              "text": "Time-independent perturbation theory\nIdentical particles and the Pauli exclusion principle\nEntanglement and Bell's inequalities\nScattering theory",
-              "title": "PHYS 342: Quantum Mechanics II"
-            }
-          ],
-          "skills": [
-            {
-              "description": "Interpret a wave function with the Born rule.",
-              "key": "wave-function",
-              "name": "Interpret a wave function with the Born rule"
-            },
-            {
-              "description": "Solve the time-independent Schrödinger equation.",
-              "key": "schrodinger",
-              "name": "Solve the time-independent Schrödinger equation"
-            },
-            {
-              "description": "Solve the infinite square well.",
-              "key": "square-well",
-              "name": "Solve the infinite square well"
-            },
-            {
-              "description": "Solve the quantum harmonic oscillator.",
-              "key": "oscillator",
-              "name": "Solve the quantum harmonic oscillator"
-            },
-            {
-              "description": "Use operators, observables and commutators.",
-              "key": "operators",
-              "name": "Use operators, observables and commutators"
-            },
-            {
-              "description": "Apply the uncertainty principle.",
-              "key": "uncertainty",
-              "name": "Apply the uncertainty principle"
-            },
-            {
-              "description": "Describe the hydrogen atom's energy levels.",
-              "key": "hydrogen",
-              "name": "Describe the hydrogen atom's energy levels"
-            },
-            {
-              "description": "Explain entanglement and Bell's inequalities.",
-              "key": "entanglement",
-              "name": "Explain entanglement and Bell's inequalities"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
         "expected": { "gaps": [] },
         "id": "es-python-no-gaps-1",
         "userInput": {
@@ -349,110 +453,6 @@
               "key": "words-in-context",
               "name": "Determine a word's meaning and a text's structure and purpose",
               "examWeight": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "gaps": ["5 Sistemas eleitorais"],
-          "placements": [
-            { "key": "crase", "topics": ["5.7 Emprego do sinal indicativo de crase"] },
-            { "key": "concordancia", "topics": ["5.5 Concordância verbal e nominal"] }
-          ]
-        },
-        "id": "pt-camara-notice-topics-1",
-        "userInput": {
-          "examOutline": {
-            "name": "Concurso da Câmara dos Deputados, Analista Legislativo",
-            "notes": ["Scoring: cada item errado anula um item certo"],
-            "subjects": [
-              {
-                "group": "Conhecimentos básicos (P1)",
-                "name": "Língua Portuguesa",
-                "questions": null,
-                "topics": [
-                  "1 Compreensão e interpretação de textos de gêneros variados",
-                  "3 Domínio da ortografia",
-                  "5 Domínio da estrutura morfossintática do período",
-                  "5.5 Concordância verbal e nominal",
-                  "5.7 Emprego do sinal indicativo de crase"
-                ],
-                "weight": null
-              },
-              {
-                "group": "Conhecimentos específicos (P2)",
-                "name": "Ciência Política",
-                "questions": null,
-                "topics": [
-                  "1 Regimes políticos",
-                  "2 Sistemas e formas de governo",
-                  "5 Sistemas eleitorais"
-                ],
-                "weight": null
-              }
-            ],
-            "topicFrequency": []
-          },
-          "goal": "quero passar no concurso da câmara dos deputados para analista legislativo",
-          "goalKind": "exam",
-          "language": "pt",
-          "references": [],
-          "skills": [
-            {
-              "description": "Interpretar textos de gêneros variados.",
-              "key": "leitura",
-              "name": "Interpretar textos de gêneros variados",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": ["1 Compreensão e interpretação de textos de gêneros variados"]
-            },
-            {
-              "description": "Aplicar as regras de ortografia.",
-              "key": "ortografia",
-              "name": "Aplicar as regras de ortografia",
-              "examWeight": 3,
-              "area": "Língua Portuguesa",
-              "topics": ["3 Domínio da ortografia"]
-            },
-            {
-              "description": "Empregar o acento grave indicativo de crase.",
-              "key": "crase",
-              "name": "Empregar o acento grave indicativo de crase",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Fazer a concordância do verbo e do nome.",
-              "key": "concordancia",
-              "name": "Fazer a concordância do verbo e do nome",
-              "examWeight": 4,
-              "area": "Língua Portuguesa",
-              "topics": []
-            },
-            {
-              "description": "Comparar regimes políticos.",
-              "key": "regimes",
-              "name": "Comparar regimes políticos",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": ["1 Regimes políticos"]
-            },
-            {
-              "description": "Distinguir sistemas e formas de governo.",
-              "key": "governo",
-              "name": "Distinguir sistemas e formas de governo",
-              "examWeight": 3,
-              "area": "Ciência Política",
-              "topics": ["2 Sistemas e formas de governo"]
             }
           ]
         }

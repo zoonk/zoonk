@@ -1,11 +1,16 @@
 import "server-only";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
-import { getDailyTimeLimitStatus } from "../minors/get-daily-time-limit";
-import { appendExtraBlock, planExtraBlock, withSessionAppendLock } from "./_utils/extra-blocks";
+import {
+  appendExtraBlock,
+  isFreeWeekOver,
+  planExtraBlock,
+  withSessionAppendLock,
+} from "./_utils/extra-blocks";
 import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { readBlockPayload } from "./block-payload";
 import { type ExtraTimeReason, getExtraTime } from "./extra-time";
+import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 
 export type ExtraStudyBlockResult =
   | { block: StudyBlockView; status: "ready" }
@@ -17,7 +22,8 @@ export type ExtraStudyBlockResult =
 /**
  * "10 more minutes" after the day's session: one bonus block of mixed practice (or the next
  * lesson when there's nothing to practice), offered only after the planned blocks are done, at
- * most twice a day, and never past a guardian's daily limit. Its Brain Power is capped.
+ * most twice a day, and never past the learner's daily limit. Its Brain Power is capped. A free
+ * exam plan past its first week has none: its practice and new lessons come with Plus.
  */
 export async function addExtraStudyBlock({
   sessionId,
@@ -28,6 +34,10 @@ export async function addExtraStudyBlock({
 
   if (owned.status !== "ready") {
     return owned;
+  }
+
+  if (await isFreeWeekOver(owned.session)) {
+    return { reason: "plusRequired", status: "unavailable" };
   }
 
   const { userId } = owned;

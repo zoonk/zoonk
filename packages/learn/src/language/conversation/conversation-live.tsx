@@ -6,8 +6,6 @@ import { Input } from "@zoonk/ui/components/input";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
-  CircleCheckIcon,
-  CircleIcon,
   ClockIcon,
   LifeBuoyIcon,
   LightbulbIcon,
@@ -21,50 +19,12 @@ import { useId, useState } from "react";
 import { TaskHeaderTitle } from "../../_components/task-header";
 import { formatClock } from "../../_utils/clock";
 import { TaskFrame } from "../../shell/task-frame";
+import { useTaskRoleNoun } from "../exam-speaking/exam-speaking-labels";
+import { CallObjectives } from "./call-objectives";
 import { CharacterAvatar } from "./conversation-parts";
 import { type LiveCall } from "./use-live-call";
 
 const MS_PER_SECOND = 1000;
-
-function Objectives({
-  conversation,
-  met,
-}: {
-  conversation: LanguageConversationView;
-  met: string[];
-}) {
-  const t = useExtracted();
-
-  return (
-    <ul aria-label={t("Goals of the call")} className="flex flex-wrap justify-center gap-2">
-      {conversation.objectives.map((objective) => {
-        const done = met.includes(objective.label);
-
-        return (
-          <li
-            className={cn(
-              "flex items-start gap-1.5 rounded-2xl border px-3 py-1 text-xs",
-              done && "border-success text-success",
-            )}
-            key={objective.label}
-            lang={conversation.targetLanguage}
-          >
-            {/* A long goal wraps inside the chip with its mark on the first line. */}
-            <LineMarker>
-              {done ? (
-                <CircleCheckIcon aria-hidden="true" className="size-3.5" />
-              ) : (
-                <CircleIcon aria-hidden="true" className="size-3.5" />
-              )}
-            </LineMarker>
-            {objective.label}
-            <span className="sr-only">{done ? t("done") : t("not yet")}</span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
 
 function Transcript({
   call,
@@ -241,7 +201,8 @@ function MicControl({ call, name }: { call: LiveCall; name: string }) {
  * The call itself, like a phone call: the character, the goals as they're met, what was said and a
  * tip for the next goal (or, when the plan's call time is running out, that it is); the call's title
  * and its clock on top; at the bottom a typed reply and three controls (Help with phrases to use,
- * the microphone, which mutes, and End). Nothing is graded while talking.
+ * the microphone, which mutes, and End). Nothing is graded while talking. An exam task shows its
+ * card where the goals would be.
  */
 export function ConversationLive({
   call,
@@ -257,11 +218,14 @@ export function ConversationLive({
   usedHelp: boolean;
 }) {
   const t = useExtracted();
+  const roleNoun = useTaskRoleNoun();
   const { character } = conversation;
 
-  const next = conversation.objectives.find(
-    (objective) => !call.metLabels.includes(objective.label),
-  );
+  const { examTask } = conversation;
+
+  const next = examTask
+    ? undefined
+    : conversation.objectives.find((objective) => !call.metLabels.includes(objective.label));
 
   const clock = t("{elapsed} / {limit}", {
     elapsed: formatClock(call.elapsedSeconds * MS_PER_SECOND),
@@ -292,12 +256,14 @@ export function ConversationLive({
         <div>
           <p className="font-semibold">{character.name}</p>
           <p className="text-muted-foreground text-sm">
-            {t("{role} · {place}", { place: character.place, role: character.role })}
+            {examTask
+              ? roleNoun(examTask.task.role)
+              : t("{role} · {place}", { place: character.place, role: character.role })}
           </p>
         </div>
       </div>
 
-      <Objectives conversation={conversation} met={call.metLabels} />
+      <CallObjectives conversation={conversation} met={call.metLabels} />
 
       <Transcript call={call} conversation={conversation} />
 

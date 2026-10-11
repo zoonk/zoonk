@@ -5,29 +5,45 @@ import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
 const DEFAULT_ESTIMATED_MINUTES = 4;
 
+type LessonAttrs = FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary">;
+
+/** A lesson row with a unique identity key and, unless given one, a unique title. */
+function lessonData(attrs?: LessonAttrs) {
+  const key = randomUUID();
+  const title = attrs?.title ?? `Test Library Lesson ${key.split("-")[0]}`;
+
+  return {
+    description: "Test library lesson description",
+    estimatedMinutes: DEFAULT_ESTIMATED_MINUTES,
+    identityKey: `test-lesson-${key}`,
+    language: "en",
+    level: "beginner" as const,
+    normalizedTitle: normalizeString(title),
+    slug: `test-library-lesson-${key}`,
+    title,
+    ...fixtureProvenance(),
+    ...attrs,
+  };
+}
+
 /**
  * Creates a shared Library lesson outline (title and description) with a unique identity key and,
  * unless given one, a unique title: plans teach a title once, so lessons of one plan need their own.
  */
-export async function libraryLessonFixture(
-  attrs?: FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary">,
-) {
-  const key = randomUUID();
-  const title = attrs?.title ?? `Test Library Lesson ${key.split("-")[0]}`;
+export async function libraryLessonFixture(attrs?: LessonAttrs) {
+  return prisma.lesson.create({ data: lessonData(attrs) });
+}
 
-  return prisma.lesson.create({
-    data: {
-      description: "Test library lesson description",
-      estimatedMinutes: DEFAULT_ESTIMATED_MINUTES,
-      identityKey: `test-lesson-${key}`,
-      language: "en",
-      level: "beginner",
-      normalizedTitle: normalizeString(title),
-      slug: `test-library-lesson-${key}`,
-      title,
-      ...fixtureProvenance(),
-      ...attrs,
-    },
+/**
+ * `count` lessons like `libraryLessonFixture`'s, each with a title of its own, in one statement: a
+ * test that outlines whole chapters doesn't wait on a round trip per lesson.
+ */
+export async function libraryLessonsFixture(
+  count: number,
+  attrs?: Omit<LessonAttrs, "identityKey" | "normalizedTitle" | "slug" | "title">,
+) {
+  return prisma.lesson.createManyAndReturn({
+    data: Array.from({ length: count }, () => lessonData(attrs)),
   });
 }
 

@@ -5,6 +5,7 @@ import {
 } from "@zoonk/ai/tasks/v2/goals/understand-goal";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
+import { findMeantExamDay, getKeptMonthStart } from "../../../exams/kept-month";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
@@ -46,6 +47,30 @@ function getAnsweredByWords(understanding: Extract<GoalUnderstanding, { route: "
   return understanding.dailyMinutes === undefined ? [] : ["schedule"];
 }
 
+/**
+ * The notice's day the card offers next to the month the learner named, when it's in another month
+ * (see `getKeptMonthStart`): confirming the card without taking it keeps their month, an answer the
+ * goal remembers (`readOfferedNoticeDay`). Estimated days aren't offered.
+ */
+function getOfferedNoticeDay({
+  dates,
+  goal,
+  today,
+}: {
+  dates: readonly { date: string; estimated: boolean }[];
+  goal: Pick<UnderstoodGoal, "examMonth" | "examYear">;
+  today: string;
+}): string | undefined {
+  const details = { examMonth: goal.examMonth, examYear: goal.examYear };
+  const day = findMeantExamDay({ days: dates, details, from: today, goalDate: null });
+
+  if (!day || dates.some((date) => date.estimated)) {
+    return undefined;
+  }
+
+  return getKeptMonthStart({ details, noticeDay: day.date, today }) ? day.date : undefined;
+}
+
 async function toGoalView({
   answered,
   context,
@@ -72,6 +97,7 @@ async function toGoalView({
             examYear: goal.examYear,
             institution: goal.institution,
             role: goal.targetPosition,
+            targetLanguage: goal.targetLanguage ?? null,
             words: context.goal,
           },
           language,
@@ -92,6 +118,7 @@ async function toGoalView({
     level: goal.ownLevel,
     levelNote: goal.level,
     nativeLanguage: goal.nativeLanguage,
+    offeredNoticeDay: getOfferedNoticeDay({ dates: exam?.dates ?? [], goal, today }),
     onboardingId,
     purpose: goal.purpose,
     reason: goal.reason,

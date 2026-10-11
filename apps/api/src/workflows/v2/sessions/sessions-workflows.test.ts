@@ -1,5 +1,6 @@
 import { generateChallengeCase } from "@zoonk/ai/tasks/v2/challenge/case";
 import { generateItems } from "@zoonk/ai/tasks/v2/items/generate";
+import { generatePlacementItems } from "@zoonk/ai/tasks/v2/items/placement-items";
 import { classifyWorkField } from "@zoonk/ai/tasks/v2/items/work-field";
 import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
 import { generateStepVariant } from "@zoonk/ai/tasks/v2/variants/step-variant";
@@ -18,7 +19,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -41,6 +42,7 @@ vi.mock("workflow/api", () => ({ start: vi.fn(() => Promise.resolve({ runId: "st
 vi.mock("@zoonk/ai/tasks/v2/challenge/case", () => ({ generateChallengeCase: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/items/generate", () => ({ generateItems: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/items/work-field", () => ({ classifyWorkField: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/items/placement-items", () => ({ generatePlacementItems: vi.fn() }));
 
 vi.mock("@zoonk/ai/tasks/v2/language/conversation-scenario", () => ({
   generateConversationScenario: vi.fn(),
@@ -52,6 +54,40 @@ vi.mock("@zoonk/ai/tasks/v2/variants/step-variant", async (importOriginal) => ({
 }));
 
 const TIME_ZONE = "UTC";
+
+/** A skill of a plan's graph, in its first phase. */
+function graphSkill(area: string, skillId: string) {
+  return { area, lessons: 1, name: skillId, phase: 0, skillId };
+}
+
+/** The model writes each skill's quick questions as asked, and no typed one. */
+function writePlacementQuestions() {
+  vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
+    taskResult({
+      skills: params.skills.map(() => ({
+        quick: Array.from({ length: params.quickCount }, (_, index) => ({
+          context: null,
+          difficulty: "medium" as const,
+          fixedOrder: false,
+          format: "multipleChoice" as const,
+          image: null,
+          options: [
+            { isCorrect: true, misconception: null, reason: "Right.", text: "O nucléolo" },
+            {
+              isCorrect: false,
+              misconception: "Troca as estruturas",
+              reason: "No.",
+              text: "A carioteca",
+            },
+          ],
+          question: `Onde se formam os ribossomos? (${index})`,
+          visual: null,
+        })),
+        typed: [],
+      })),
+    }),
+  );
+}
 
 /**
  * An ICU nurse who installs nothing, with a lesson teaching a skill and the chapter's challenge in
@@ -107,6 +143,7 @@ async function nurseWithWrittenLessons() {
   vi.mocked(generateStepVariant).mockResolvedValue(
     taskResult({
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation" as const,
       text: "Here's what `python --version` prints: `Python 3.13.1`.",
@@ -121,6 +158,7 @@ async function nurseWithWrittenLessons() {
         {
           context: "A patient's chart shows two doses a day.",
           difficulty: "easy" as const,
+          fixedOrder: false,
           format: "multipleChoice" as const,
           image: null,
           options: [
@@ -218,7 +256,7 @@ describe(sessionPreparationWorkflow, () => {
     await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
 
     expect(generateStepVariant).toHaveBeenCalledWith(
-      expect.objectContaining({ key: "no-install", variant: "tool" }),
+      expect.objectContaining({ key: "no-install" }),
     );
 
     expect(generateChallengeCase).toHaveBeenCalledWith(
@@ -376,8 +414,10 @@ describe(sessionPreparationWorkflow, () => {
   });
 
   // Lucas's first day held time for subjects whose lessons weren't outlined yet: their outlines,
-  // started at the flex tier, landed minutes after he started his day.
-  it("outlines at the standard tier the chapters of a skill the plan stands in for today", async () => {
+  // started at the flex tier, landed minutes after he started his day. Carla's first chapter was
+  // outlined by her session's preparation, which didn't say she was waiting on it, so it wasn't
+  // saved before the rest of its band: her Today waited for all of it.
+  it("outlines today's stand-in as the band the learner waits on, at the standard tier", async () => {
     const user = await userFixture();
     const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
 
@@ -410,7 +450,7 @@ describe(sessionPreparationWorkflow, () => {
     await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
 
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
-      expect.objectContaining({ background: false, courseId: course.id }),
+      expect.objectContaining({ background: false, courseId: course.id, waitedSkillId: skill.id }),
     ]);
   });
 
@@ -472,12 +512,19 @@ describe(sessionPreparationWorkflow, () => {
 
       await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
 
-      const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
+      const ref = {
+        area: null,
+        description: skill.description,
+        id: skill.id,
+        key: skill.id,
+        name: skill.name,
+      };
 
       expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
         {
           analytics: { distinctId: user.id, goalId: goal.id },
           background,
+          ...(background ? {} : { waitedSkillId: skill.id }),
           bands: [
             {
               extend: [{ lessons: 11, skill: ref }],
@@ -487,7 +534,14 @@ describe(sessionPreparationWorkflow, () => {
             },
           ],
           courseId: course.id,
-          scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
+          // A shared course's outline sees the goal's title, never the learner's own prompt.
+          scope: {
+            exams: [],
+            generalGoal: goal.title,
+            language: course.language,
+            ownerId: null,
+            targetLanguage: course.targetLanguage,
+          },
         },
       ]);
     },
@@ -512,6 +566,97 @@ describe(sessionPreparationWorkflow, () => {
     expect(generateConversationScenario).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ unitTitle: renting.title }),
     );
+  });
+
+  // One right answer frees a topic from its lessons, never from practice: Pedro's nucleus topic had only
+  // the placement question he answered, so practice could never confirm it.
+  it("writes a few questions for a topic the learner was taken to know that practice can't ask", async () => {
+    const user = await userFixture();
+
+    const [goal, nucleus] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      skillFixture({ name: "Identificar as funções do núcleo" }),
+    ]);
+
+    await planFixture({ goalId: goal.id });
+
+    writePlacementQuestions();
+
+    await sessionPreparationWorkflow({
+      claimQuestions: { format: "multipleChoice", questionsPerSkill: 3, skillIds: [nucleus.id] },
+      goalId: goal.id,
+      timeZone: TIME_ZONE,
+      userId: user.id,
+    });
+
+    expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        quickCount: 3,
+        quickFormat: "multipleChoice",
+        skills: [expect.objectContaining({ name: nucleus.name })],
+        typedCount: 0,
+      }),
+    );
+
+    await expect(
+      prisma.item.count({ where: { format: "multipleChoice", skillId: nucleus.id } }),
+    ).resolves.toBe(3);
+  });
+
+  // Rafaela's placement ran on the plan built before the notice was read; the notice's English and
+  // IT came after it, with no placement question, so her first week never placed her in them.
+  it("writes the placement questions a subject the plan gained after placement lacks, in placement's first week only", async () => {
+    const user = await userFixture();
+
+    const [goal, reading, english] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      skillFixture({ name: "Interpretar textos" }),
+      skillFixture({ name: "Ler textos em inglês" }),
+    ]);
+
+    await Promise.all([
+      planFixture({
+        goalId: goal.id,
+        graph: {
+          phases: [{ milestone: null, name: "Fundamentos" }],
+          skills: [
+            graphSkill("Língua Portuguesa", reading.id),
+            graphSkill("Língua Inglesa", english.id),
+          ],
+        },
+      }),
+      // Day 1's placement wrote Portuguese its question.
+      itemFixture({ skillId: reading.id }),
+    ]);
+
+    writePlacementQuestions();
+
+    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+
+    // Nobody waits: the next days' sessions ask it, so it's written at the flex tier.
+    expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        serviceTier: "flex",
+        skills: [expect.objectContaining({ name: english.name })],
+      }),
+    );
+
+    await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(1);
+
+    // Past placement's first week, lessons and reviews place the learner instead.
+    vi.mocked(generatePlacementItems).mockClear();
+
+    await Promise.all([
+      prisma.goal.update({
+        data: { createdAt: new Date(Date.now() - 8 * 86_400_000) },
+        where: { id: goal.id },
+      }),
+      prisma.item.deleteMany({ where: { skillId: english.id } }),
+    ]);
+
+    await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
+
+    expect(generatePlacementItems).not.toHaveBeenCalled();
   });
 
   it("leaves the learner's lessons to a preparation that is already running", async () => {

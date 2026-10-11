@@ -66,7 +66,7 @@ export type SkillIdentityRequest = IdentityRequestBase & {
   name: string;
   description: string;
   /**
-   * The course or plan area the skill is studied in ("Língua Inglesa"), when known: reading a text
+   * The course or plan area the skill is studied in ("English Language"), when known: reading a text
    * for an exam's English isn't the skill of reading one for its Portuguese, though the words match.
    */
   course?: string | null;
@@ -84,7 +84,6 @@ export type ImageIdentityRequest = IdentityRequestBase & {
   kind: "image";
   /** The scene in English, as `describeImageScene` writes it. */
   prompt: string;
-  styleVersion: number;
   /** Whether the new image carries labels in `language`. One without text serves every language. */
   hasLabels: boolean;
   /** Language courses show no text, so only images without text can serve them. */

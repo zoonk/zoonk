@@ -39,7 +39,8 @@ function stateFromAnswer(answer: SqlPlaygroundProps["answer"]): QueryState {
 /**
  * Query the lesson's tables with real SQLite in the browser. The learner writes a query, runs
  * it and reads the result; the rows of the last run are the answer. After the check, missing
- * and extra rows are marked against the expected result, with a query that works.
+ * and extra rows are marked against the expected result, with a query that works. Explored on an
+ * explanation screen, the editor starts with the query that works, to run and change.
  */
 export function SqlPlaygroundActivity({
   answer,
@@ -54,7 +55,7 @@ export function SqlPlaygroundActivity({
   const { fields } = content;
   const isChecked = phase === "checked";
   const runtime = useSandboxRuntime("sql");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(phase === "explore" ? fields.solution : "");
   const [state, setState] = useState<QueryState>(() => stateFromAnswer(answer));
   const [isRunning, setIsRunning] = useState(false);
   const [isStale, setIsStale] = useState(false);
@@ -121,7 +122,7 @@ export function SqlPlaygroundActivity({
       {!isChecked && (
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium" htmlFor={editorId}>
-            {t("Your query")}
+            {phase === "explore" ? t("Query") : t("Your query")}
           </label>
 
           <ActivityCodeEditor

@@ -27,8 +27,10 @@ describe(toMockConditions, () => {
           day: 2,
           fullLength: false,
           minutes: 75,
+          reused: 0,
           sections: [
             {
+              essays: [],
               itemIds: ["a", "b"],
               minutes: 75,
               name: "Science and Math",
@@ -39,12 +41,14 @@ describe(toMockConditions, () => {
           written: [],
         },
         structure,
+        typed: [],
       }),
     ).toStrictEqual({
       fullLength: false,
+      leftOut: [],
       netScoring: true,
       questions: 2,
-      sections: [{ minutes: 75, name: "Science and Math", questions: 2 }],
+      sections: [{ minutes: 75, name: "Science and Math", questions: 2, tools: null }],
       timeLimitMinutes: 75,
       written: [],
     });

@@ -8,7 +8,9 @@ import {
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
+import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type LanguageProgressView } from "@zoonk/core/view-models/language/contract";
 import {
@@ -19,6 +21,7 @@ import {
   type JourneyStanding,
   type PlanTutor,
 } from "@zoonk/learn/journey";
+import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { useSyncExternalStore } from "react";
 
 /**
@@ -70,9 +73,13 @@ function getJourneyLinks({
   };
 }
 
-/** The buddy's "Choose where to focus" leads to the Journey with this, which opens the sheet. */
+/**
+ * The buddy's "Choose where to focus" and Today's "Study everything" lead to the Journey with
+ * this, which opens their sheet.
+ */
 const FOCUS_PARAM = "focus";
 const CHOOSE_FOCUS = "choose";
+const STUDY_EVERYTHING = "everything";
 
 /** The address the Journey opened at doesn't change while it's open: nothing to listen to. */
 function subscribeToArrival(): () => void {
@@ -81,16 +88,22 @@ function subscribeToArrival(): () => void {
   };
 }
 
-/** Whether the Journey was opened to choose where to focus; read in the browser, after the shell. */
-function useOpenFocus(): boolean {
+/**
+ * Which sheet the Journey was opened to choose in (where to focus, or studying everything); read
+ * in the browser, after the shell.
+ */
+function useArrivalChoice(): string | null {
   return useSyncExternalStore(
     subscribeToArrival,
-    () => new URLSearchParams(globalThis.location.search).get(FOCUS_PARAM) === CHOOSE_FOCUS,
-    () => false,
+    () => new URLSearchParams(globalThis.location.search).get(FOCUS_PARAM),
+    () => null,
   );
 }
 
-/** A language goal's level, with its speaking mock opening the call screen. */
+/**
+ * A language goal's level, with its exam-style speaking tasks on their own page or its speaking
+ * mock opening the call screen.
+ */
 function useLanguageStanding(language: LanguageProgressView | null): JourneyStanding | null {
   const startConversation = useStartLanguageConversation();
 
@@ -101,6 +114,7 @@ function useLanguageStanding(language: LanguageProgressView | null): JourneyStan
   return {
     kind: "language",
     language,
+    speakingHref: "/speaking",
     startSpeakingMock: () => startConversation({ goalId: language.goal.id, kind: "speakingMock" }),
   };
 }
@@ -166,9 +180,11 @@ export function JourneyClient({
 }: JourneyClientProps & { buddy: PlanTutor["buddy"] }) {
   const router = useRouter();
   useRefreshWhenOld(readAt);
+  const refreshOnPlanChange = useRefreshOnPlanChange({ goalId, readAt, watch: "plan" });
   const languageStanding = useLanguageStanding(language);
   const status = useGoalStatus({ goalId, status: goalStatus });
-  const openFocus = useOpenFocus();
+  const arrival = useArrivalChoice();
+  const outlineActions = useTopicOutlineActions(goalId);
 
   // The next level replaces the finished goal, so the Journey reads it (its plan building) next.
   const continueNextLevel = async (onContinue: () => Promise<boolean>) => {
@@ -182,15 +198,18 @@ export function JourneyClient({
   };
 
   return (
-    <JourneyScreen
-      {...props}
-      goalStatus={status}
-      links={getJourneyLinks({ goalKind: props.goal.kind, hasMindMaps })}
-      next={next && { ...next, onContinue: () => continueNextLevel(next.onContinue) }}
-      openFocus={openFocus}
-      refresh={() => router.refresh()}
-      standing={languageStanding ?? preparation}
-      tutor={{ buddy, href: "/buddy" }}
-    />
+    <TopicOutlineProvider value={outlineActions}>
+      <JourneyScreen
+        {...props}
+        goalStatus={status}
+        links={getJourneyLinks({ goalKind: props.goal.kind, hasMindMaps })}
+        next={next && { ...next, onContinue: () => continueNextLevel(next.onContinue) }}
+        openFocus={arrival === CHOOSE_FOCUS}
+        openFullCourse={arrival === STUDY_EVERYTHING}
+        refresh={refreshOnPlanChange}
+        standing={languageStanding ?? preparation}
+        tutor={{ buddy, href: "/buddy" }}
+      />
+    </TopicOutlineProvider>
   );
 }

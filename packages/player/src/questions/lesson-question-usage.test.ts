@@ -39,6 +39,12 @@ describe(getRefusalError, () => {
     });
   });
 
+  it("asks a guest to create an account once the guests' daily AI budget is spent", async () => {
+    await expect(
+      refusal({ body: { error: { code: "SIGN_UP_REQUIRED", message: "" } }, status: 403 }),
+    ).resolves.toStrictEqual({ kind: "signUpRequired" });
+  });
+
   it("asks for a plan when access needs one and treats other refusals as unknown", async () => {
     await expect(
       refusal({ body: { error: { code: "PAYMENT_REQUIRED", message: "" } }, status: 402 }),

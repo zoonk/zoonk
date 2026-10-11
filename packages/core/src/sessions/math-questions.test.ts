@@ -10,6 +10,7 @@ import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { discountMath, discountQuestion } from "../library/items/_test-utils/math-problems";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -22,7 +23,6 @@ import {
 import { answerStudyQuestion } from "./answer-study-question";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
-import { getTodayStudySession } from "./get-today-study-session";
 import { startStudyBlock } from "./start-study-block";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));

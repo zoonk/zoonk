@@ -76,6 +76,8 @@ const noSubscription = () => () => {
 
 const emptySnapshot = () => EMPTY_STATE;
 
+const skipObjectiveChecks = () => Promise.resolve(null);
+
 function toConnectionError(
   status: Exclude<ConversationConnection["status"], "ready">,
 ): LiveCallError {
@@ -119,7 +121,9 @@ function useCallObjectives({
     [labels, sessionRef],
   );
 
-  return useObjectiveChecks({ checkObjectives, conversation, getTurns, onChange });
+  // An exam task's one goal is the task itself, graded when the call ends: nothing to check.
+  const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
+  return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChange });
 }
 
 /**
@@ -192,6 +196,7 @@ export function useLiveCall({
   const opening = useOpeningCue(conversation.openingLine);
 
   const { elapsedSeconds, limitNear, limitSeconds, markLearnerActive, startClock } = useCallClock({
+    cues: conversation.examTask?.cues,
     hangUp,
     minutes: conversation.minutes,
     session: phase === "live" ? session : null,

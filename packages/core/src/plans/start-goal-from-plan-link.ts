@@ -8,6 +8,7 @@ import { getSession } from "../users/get-session";
 import { getLinkSubject, keepPublicGraph, loadLinkedPlan } from "./_utils/linked-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanLinkStartInput } from "./plan-link-contract";
+import { joinOptionSkills } from "./planner/option-skills";
 import { parsePlanGraph } from "./planner/plan-state";
 
 export type PlanLinkStartResult =
@@ -100,7 +101,8 @@ export async function startGoalFromPlanLink({
   await createGoalPlan({
     fromPlanLink: true,
     goalId: goal.id,
-    graph: await keepPublicGraph(parsePlanGraph(source.graph)),
+    // The visitor picks their own options of the exam's choices: the plan starts with them all.
+    graph: await keepPublicGraph(joinOptionSkills(parsePlanGraph(source.graph))),
   });
 
   return {

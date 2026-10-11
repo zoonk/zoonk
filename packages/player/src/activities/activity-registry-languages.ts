@@ -3,10 +3,8 @@ import {
   defineActivityRenderer,
 } from "./_utils/define-activity-renderer";
 
-/** Languages: sentence builder, pattern table, dialogue and listening at any speed. Spread into `activityRenderers`. */
-export const languageRenderers: ActivityRendererMap<
-  "dialogueSimulator" | "listeningSpeed" | "patternTable" | "sentenceBuilder"
-> = {
+/** Languages: pattern tables and dialogues. Spread into `activityRenderers`. */
+export const languageRenderers: ActivityRendererMap<"dialogueSimulator" | "patternTable"> = {
   dialogueSimulator: defineActivityRenderer({
     badge: "reply",
     load: () =>
@@ -15,14 +13,6 @@ export const languageRenderers: ActivityRendererMap<
       ),
     template: "dialogueSimulator",
   }),
-  listeningSpeed: defineActivityRenderer({
-    badge: "listen",
-    load: () =>
-      import("./listening-speed/listening-speed-activity").then(
-        (module) => module.ListeningSpeedActivity,
-      ),
-    template: "listeningSpeed",
-  }),
   patternTable: defineActivityRenderer({
     badge: "spotPattern",
     load: () =>
@@ -30,13 +20,5 @@ export const languageRenderers: ActivityRendererMap<
         (module) => module.PatternTableActivity,
       ),
     template: "patternTable",
-  }),
-  sentenceBuilder: defineActivityRenderer({
-    badge: "buildSentence",
-    load: () =>
-      import("./sentence-builder/sentence-builder-activity").then(
-        (module) => module.SentenceBuilderActivity,
-      ),
-    template: "sentenceBuilder",
   }),
 };

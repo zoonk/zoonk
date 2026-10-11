@@ -1,5 +1,6 @@
 import { type GoalRefusal } from "@zoonk/core/goals/create";
 import { createErrorResponse, httpStatus, slowDownError } from "./api-errors";
+import { signUpRequiredError } from "./lesson-player-errors";
 
 /** Stable codes for the goal and plan endpoints. */
 export const planErrorCodes = {
@@ -13,9 +14,11 @@ export const planErrorCodes = {
 const OPERATION_MESSAGES = {
   badMove: "A weekly checkpoint can move to a later day within a week",
   noStudyDays: "A plan needs at least one study day",
+  notExam: "Only an exam's plan goes on after its date: other goals study everything without one",
   nothingLeft: "A plan can't skip every area",
   pastDate: "That date has already passed",
   unknownArea: "That area isn't in this plan",
+  unknownOption: "That option isn't one of the exam's choices",
   unknownTool: "That tool isn't in this plan",
 } as const;
 
@@ -37,8 +40,15 @@ export function planChangeConflict() {
   });
 }
 
-/** A goal the learner's plan doesn't allow: a limit to show, or a moment to wait. */
+/**
+ * A goal the learner's plan doesn't allow: a limit to show, a moment to wait, or (a guest) a free
+ * account to create.
+ */
 export function goalRefusedError(decision: GoalRefusal["decision"]) {
+  if (decision.status === "signUpRequired") {
+    return signUpRequiredError();
+  }
+
   if (decision.status === "slowDown") {
     return slowDownError({
       details: decision,

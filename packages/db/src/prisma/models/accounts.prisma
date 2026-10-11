@@ -51,7 +51,6 @@ model User {
   contentFeedback       ContentFeedback[]
   feedback              Feedback[]
   learningEvents        LearningEvent[]
-  guardianLinks         GuardianLink[]
   usageRecords          UsageRecord[]
   instrumentWaitlist    InstrumentWaitlistEntry[]
   mockExams             MockExam[]
@@ -62,6 +61,7 @@ model User {
   mistakePatterns       MistakePattern[]
   suggestedGoals        SuggestedGoal[]
   onboardingDrafts      OnboardingDraft[]
+  goalUnderstandings    GoalUnderstanding[]
 
   @@unique([email])
   @@unique([username])
@@ -220,4 +220,18 @@ model RateLimit {
   lastRequest BigInt @map("last_request")
 
   @@map("rate_limits")
+}
+
+/// One account a learner deleted, kept so its analytics can be removed from PostHog by hand. `userId`
+/// is the deleted account's id, which is its PostHog distinct id; it's a plain id since the user row is
+/// gone, and nothing else about the person is kept. `analyticsRemovedAt` is null until an admin
+/// removes that person in PostHog and marks it done.
+model AccountDeletion {
+  id                 String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId             String    @map("user_id") @db.Uuid
+  deletedAt          DateTime  @default(now()) @map("deleted_at")
+  analyticsRemovedAt DateTime? @map("analytics_removed_at")
+
+  @@index([analyticsRemovedAt, deletedAt])
+  @@map("account_deletions")
 }

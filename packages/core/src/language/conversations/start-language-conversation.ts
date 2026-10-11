@@ -1,8 +1,10 @@
 import "server-only";
 import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getSession } from "../../users/get-session";
 import { findLearnerLanguageGoal } from "../_utils/language-goal";
+import { startExamTask } from "../exam-speaking/_utils/start-exam-task";
 import { findLanguageCheckpointBlock, toCheckpointScenarioUnit } from "./_utils/checkpoint-block";
 import { getSpeakingLevel } from "./_utils/conversation-goal";
 import { findUnitScenario, getUnitScenario } from "./_utils/conversation-scenario";
@@ -15,13 +17,22 @@ import {
 import { type LanguageConversationStartInput } from "./conversation-contract";
 import { getCheckpointMinutes } from "./conversation-rules";
 
-export type StartLanguageConversationResult =
+type StartedCall =
   | { conversationId: string; status: "ready" }
   | { status: "notFound" | "notLanguage" | "unauthorized" };
 
+/**
+ * An exam's speaking task comes with Plus, like every mock exam, and waits when the plan's call
+ * time left can't fit it.
+ */
+export type StartLanguageConversationResult =
+  | StartedCall
+  | { limit: AllowanceLimit; status: "limitReached" }
+  | { status: "plusRequired" };
+
 /** Opening a checkpoint's screen: its call, or the unit whose call isn't written yet. */
 export type OpenLanguageCheckpointCallResult =
-  | StartLanguageConversationResult
+  | StartedCall
   | { status: "preparing"; unitTitle: string };
 
 async function startPractice({
@@ -30,7 +41,7 @@ async function startPractice({
 }: {
   input: Extract<LanguageConversationStartInput, { kind: "practice" }>;
   userId: string;
-}): Promise<StartLanguageConversationResult> {
+}): Promise<StartedCall> {
   const chapter = await prisma.chapter.findFirst({
     where: { ...libraryRowsVisibleTo(userId), id: input.chapterId },
   });
@@ -149,7 +160,7 @@ async function startSpeakingMock({
 }: {
   goalId: string;
   userId: string;
-}): Promise<StartLanguageConversationResult> {
+}): Promise<StartedCall> {
   const setup = await findSpeakingMockSetup({ goalId, userId });
 
   if (!setup) {
@@ -162,9 +173,11 @@ async function startSpeakingMock({
 
 /**
  * Starts a live conversation for the learner: practice for a unit (1 to 5 minutes), a language
- * goal's checkpoint (the unit's call, its length set by the learner's level), or a speaking mock
- * for IELTS or TOEFL iBT, as the goal names it. The character speaks at the learner's speaking
- * level. Nothing is charged until the call connects.
+ * goal's checkpoint (the unit's call, its length set by the learner's level), a speaking mock for
+ * IELTS or TOEFL iBT, as the goal names it, or one task of a DELE, DELF, Goethe or Cambridge
+ * speaking paper (Plus only), its call as long as the task's official time. The character speaks
+ * at the learner's speaking level, an exam's examiner at the exam's. Nothing is charged until the
+ * call connects.
  */
 export async function startLanguageConversation(
   input: LanguageConversationStartInput,
@@ -185,6 +198,10 @@ export async function startLanguageConversation(
 
   if (input.kind === "speakingMock") {
     return startSpeakingMock({ goalId: input.goalId, userId });
+  }
+
+  if (input.kind === "examSpeaking") {
+    return startExamTask({ goalId: input.goalId, task: input.task, userId });
   }
 
   return startPractice({ input, userId });

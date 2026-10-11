@@ -106,11 +106,14 @@ export function PlayerChoiceSceneOptionText({ children }: { children: React.Reac
 export function PlayerChoiceSceneOptions({
   ariaLabel,
   keyboardEnabled = true,
+  layout = "list",
   onSelect,
   options,
 }: {
   ariaLabel?: string;
   keyboardEnabled?: boolean;
+  /** `grid` lays picture options out side by side, two to a row. */
+  layout?: "grid" | "list";
   onSelect: (index: number) => void;
   options: readonly PlayerChoiceSceneOption[];
 }) {
@@ -126,7 +129,7 @@ export function PlayerChoiceSceneOptions({
   return (
     <div
       aria-label={ariaLabel ?? t("Answer options")}
-      className="flex flex-col gap-3"
+      className={layout === "grid" ? "grid grid-cols-2 gap-3" : "flex flex-col gap-3"}
       data-slot="player-choice-scene-options"
       role="radiogroup"
     >
@@ -137,6 +140,7 @@ export function PlayerChoiceSceneOptions({
           isDimmed={option.isDimmed}
           isSelected={option.isSelected}
           key={option.key}
+          layout={layout === "grid" ? "stacked" : "row"}
           onSelect={() => onSelect(index)}
           resultState={option.resultState ?? null}
         >

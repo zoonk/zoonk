@@ -22,16 +22,28 @@ export type CurriculumScope = {
 };
 
 /**
- * Private courses serve one learner, so their outlines, specs and lessons use the cheaper model
- * every curriculum eval ranked right behind the default (Gemini 3.8 Flash: outline 7.87, spec
- * 8.44, writer 7.74 at about a third to two thirds of the cost). The quality gate still reviews
- * their lessons from another family.
+ * Private courses serve one learner, so their outlines and challenges use the cheaper model the
+ * curriculum evals ranked right behind the default (Gemini 3.8 Flash: outline 7.87 at about a
+ * third to two thirds of the cost). Their lessons are written by the shared writer (Sol): every
+ * cheaper writer taught more wrong ideas in the lesson-writer eval.
  */
 const PRIVATE_CONTENT_MODEL = "google/gemini-3.8-flash";
+
+/**
+ * A private lesson's spec: in the lesson-spec eval (4 cases, 9 Oct 2026) GPT-6 Luna scored 8.49
+ * and Gemini 3.8 Flash 7.59, at $2.71 and $18.89 per 1,000 specs; Luna is slower (p50 37 s
+ * against 21 s), which only shows on a spec planned while the learner waits.
+ */
+const PRIVATE_LESSON_SPEC_MODEL = "openai/gpt-6-luna";
 
 /** The model override for content in a scope: the cheaper one for private courses, else the task's default. */
 export function getScopeModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {
   return scope.ownerId ? PRIVATE_CONTENT_MODEL : undefined;
+}
+
+/** The model that plans a lesson in a scope: Luna for a private course's, else the spec's default. */
+export function getLessonSpecModel(scope: Pick<CurriculumScope, "ownerId">): string | undefined {
+  return scope.ownerId ? PRIVATE_LESSON_SPEC_MODEL : undefined;
 }
 
 /**
@@ -80,6 +92,8 @@ export type GoalSkillRef = {
    */
   lessons?: number;
   name: string;
+  /** The part of the goal it sits in (an exam's subject): an exam's chapters keep to one. */
+  area?: string | null;
 };
 
 /**

@@ -1,12 +1,13 @@
 import { prisma } from "@zoonk/db";
+import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
 import { DAY_MS, SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
 import { finishStudyBlock } from "../../sessions/finish-study-block";
-import { getTodayStudySession } from "../../sessions/get-today-study-session";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { getEssay } from "./get-essay";
 import { submitEssay } from "./submit-essay";
@@ -355,7 +356,11 @@ async function writesToday({
 }) {
   const { goal, plan } = await essaySetup();
 
+  // Studied yesterday: a day after a break would be a lighter welcome back, too short to write.
   await Promise.all([
+    dailyProgressFixtureMany([
+      { date: new Date("2026-09-29T00:00:00Z"), timeSpentSeconds: 600, userId: goal.userId },
+    ]),
     prisma.goal.update({
       data: { targetDate: new Date(`${targetDate}T00:00:00Z`) },
       where: { id: goal.id },

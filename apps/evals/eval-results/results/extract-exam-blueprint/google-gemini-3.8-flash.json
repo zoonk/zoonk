@@ -79,52 +79,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 6/6 (read 6). passages found 14/14",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 6/6 (read 6). passages found 14/14",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 6/6 (read 6). passages found 14/14",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 48 },
-            { "kind": "section", "minutes": 100, "questions": 42 },
-            { "kind": "section", "minutes": 90, "questions": 6 },
-            { "kind": "timeLimit", "minutes": 190 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "date": "2027-05-10", "dateKind": "exam", "kind": "date" }
-          ]
-        },
-        "id": "ap-calculus-ab-2027-1",
-        "language": "en",
-        "userInput": {
-          "documents": [
-            {
-              "title": "AP Calculus AB: About the Exam",
-              "url": "https://apstudents.collegeboard.org/courses/ap-calculus-ab/assessment"
-            },
-            {
-              "title": "2027 AP Exam Dates",
-              "url": "https://apstudents.collegeboard.org/exam-dates"
-            }
-          ],
-          "exam": "AP Calculus AB 2027"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 5/5 (read 5). passages found 17/17",
           "kind": "majorErrors",
           "score": 10
@@ -160,144 +114,6 @@
             }
           ],
           "exam": "TOEFL iBT"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 40/40",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 40/40",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 40/40",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 150 },
-            { "kind": "section", "questions": 35 },
-            { "kind": "section", "questions": 45 },
-            { "kind": "section", "questions": 70 },
-            { "format": "trueFalse", "kind": "format" },
-            { "kind": "scoring", "method": "wrongCancelsRight" },
-            { "kind": "timeLimit", "minutes": 240 },
-            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
-            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
-          ]
-        },
-        "id": "tcdf-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital nº 1 – TCDF/ANACE, de 8 de julho de 2026",
-              "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/7971F586B9A9CE2C60801C731D8A1CD87F4C5136CA1F1E346C27C5C743773A73.pdf"
-            }
-          ],
-          "exam": "Concurso TCDF, Analista Administrativo de Controle Externo"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 28/28",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 28/28",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 7/7 (read 7). passages found 28/28",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 98 },
-            { "kind": "section", "minutes": 64, "questions": 54 },
-            { "kind": "section", "minutes": 70, "questions": 44 },
-            { "kind": "timeLimit", "minutes": 134 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "date": "2027-03-06", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-02-19", "dateKind": "registrationEnd", "kind": "date" }
-          ]
-        },
-        "id": "sat-1",
-        "language": "en",
-        "userInput": {
-          "documents": [
-            {
-              "title": "SAT Test Structure",
-              "url": "https://satsuite.collegeboard.org/sat/whats-on-the-test/structure"
-            },
-            {
-              "title": "SAT Suite Test Dates and Deadlines",
-              "url": "https://satsuite.collegeboard.org/sat/dates-deadlines"
-            }
-          ],
-          "exam": "SAT"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 3/5 (read 4). passages found 31/31. missing: {\"kind\":\"timeLimit\",\"minutes\":165}; {\"format\":\"essay\",\"kind\":\"format\"}",
-          "kind": "majorErrors",
-          "score": 8.719999999999999
-        },
-        {
-          "conclusion": "Facts kept 3/5 (read 4). passages found 31/31. missing: {\"kind\":\"timeLimit\",\"minutes\":165}; {\"format\":\"essay\",\"kind\":\"format\"}",
-          "kind": "minorErrors",
-          "score": 8.719999999999999
-        },
-        {
-          "conclusion": "Facts kept 3/5 (read 4). passages found 31/31. missing: {\"kind\":\"timeLimit\",\"minutes\":165}; {\"format\":\"essay\",\"kind\":\"format\"}",
-          "kind": "potentialImprovements",
-          "score": 8.719999999999999
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "timeLimit", "minutes": 165 },
-            { "kind": "section", "minutes": 30, "questions": 40 },
-            { "kind": "section", "minutes": 60, "questions": 40 },
-            { "format": "essay", "kind": "format" },
-            { "format": "oral", "kind": "format" }
-          ]
-        },
-        "id": "ielts-academic-1",
-        "language": "en",
-        "userInput": {
-          "documents": [
-            {
-              "title": "IELTS Academic test",
-              "url": "https://ielts.org/take-a-test/test-types/ielts-academic-test"
-            },
-            {
-              "title": "IELTS Academic test format in detail",
-              "url": "https://ielts.org/organisations/ielts-for-organisations/test-types/ielts-academic-test"
-            }
-          ],
-          "exam": "IELTS Academic"
         }
       }
     },
@@ -425,99 +241,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 59/59",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 59/59",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 10/10 (read 10). passages found 59/59",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "subject", "name": "Ética" },
-            { "kind": "subject", "name": "Direitos Humanos" },
-            { "kind": "subject", "name": "Filosofia do Direito" },
-            { "kind": "subject", "name": "Direito Eleitoral" },
-            { "kind": "subject", "name": "Direito Civil" },
-            { "kind": "subject", "name": "Direito Processual Penal" },
-            { "kind": "section", "minutes": 300, "questions": 80 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "date": "2027-01-10", "dateKind": "exam", "kind": "date" },
-            { "date": "2027-02-28", "dateKind": "other", "kind": "date" }
-          ]
-        },
-        "id": "oab-48-1a-fase-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
-              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
-            }
-          ],
-          "exam": "OAB Exame de Ordem Unificado, 1ª fase"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 4/11 (read 10). passages found 29/29. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
-          "kind": "majorErrors",
-          "score": 7.963636363636364
-        },
-        {
-          "conclusion": "Facts kept 4/11 (read 10). passages found 29/29. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
-          "kind": "minorErrors",
-          "score": 7.963636363636364
-        },
-        {
-          "conclusion": "Facts kept 4/11 (read 10). passages found 29/29. missing: {\"date\":\"2026-11-08\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"date\":\"2026-11-15\",\"dateKind\":\"exam\",\"kind\":\"date\"}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
-          "kind": "potentialImprovements",
-          "score": 7.963636363636364
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            { "kind": "questionCount", "value": 180 },
-            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
-            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
-            { "kind": "subject", "name": "Linguagens", "questions": 45 },
-            { "kind": "subject", "name": "Matemática", "questions": 45 },
-            { "format": "multipleChoice", "kind": "format" },
-            { "format": "essay", "kind": "format" },
-            { "kind": "scoring", "method": "itemResponseTheory" },
-            { "kind": "timeLimit", "minutes": 330 },
-            { "kind": "timeLimit", "minutes": 300 }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 13/13 (read 13). passages found 41/41",
           "kind": "majorErrors",
           "score": 10
@@ -577,6 +300,699 @@
             }
           ],
           "exam": "Câmara dos Deputados, Analista Legislativo – Registro e Redação"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 10/10 (read 10). passages found 43/43. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 10/10 (read 10). passages found 43/43. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 10/10 (read 10). passages found 43/43. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "subject", "name": "Ética" },
+            { "kind": "subject", "name": "Direitos Humanos" },
+            { "kind": "subject", "name": "Filosofia do Direito" },
+            { "kind": "subject", "name": "Direito Eleitoral" },
+            { "kind": "subject", "name": "Direito Civil" },
+            { "kind": "subject", "name": "Direito Processual Penal" },
+            { "kind": "section", "minutes": 300, "questions": 80 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "date": "2027-01-10", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-02-28", "dateKind": "other", "kind": "date" }
+          ]
+        },
+        "id": "oab-48-1a-fase-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 42/42. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 42/42. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 42/42. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "subject", "name": "Ética" },
+            { "kind": "subject", "name": "Direitos Humanos" },
+            { "kind": "subject", "name": "Direito Civil" },
+            { "kind": "section", "minutes": 300, "questions": 80 }
+          ]
+        },
+        "id": "oab-48-1a-fase-told-ethics-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 48º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf"
+            }
+          ],
+          "exam": "OAB Exame de Ordem Unificado, 1ª fase",
+          "leftOut": [
+            {
+              "citation": {
+                "passage": "Direito Eleitoral, bem como Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB.",
+                "sourceId": "document-1"
+              },
+              "kind": "missingSubject",
+              "name": "Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 9/12 (read 11). passages found 38/38. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "majorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Facts kept 9/12 (read 11). passages found 38/38. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Facts kept 9/12 (read 11). passages found 38/38. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}; {\"kind\":\"timeLimit\",\"minutes\":330}; {\"kind\":\"timeLimit\",\"minutes\":300}",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 180 },
+            { "date": "2026-11-08", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-11-15", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-06-05", "dateKind": "registrationEnd", "kind": "date" },
+            { "kind": "subject", "name": "Linguagens", "questions": 45 },
+            { "kind": "subject", "name": "Matemática", "questions": 45 },
+            { "kind": "choice", "options": ["Inglês", "Espanhol"], "partOf": "Linguagens" },
+            { "format": "multipleChoice", "kind": "format" },
+            { "format": "essay", "kind": "format" },
+            { "kind": "scoring", "method": "itemResponseTheory" },
+            { "kind": "timeLimit", "minutes": 330 },
+            { "kind": "timeLimit", "minutes": 300 }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            }
+          ],
+          "exam": "ENEM"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 23/23. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "choice", "options": ["Historia de España", "Filosofía"] },
+            {
+              "kind": "choice",
+              "options": ["alemán", "francés", "inglés", "italiano", "portugués"]
+            }
+          ]
+        },
+        "id": "pau-spain-ciencias-1",
+        "language": "es",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Real Decreto 534/2024 (prueba de acceso a la universidad), texto consolidado",
+              "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2024-11858"
+            }
+          ],
+          "exam": "Prueba de Acceso a la Universidad (PAU), modalidad de Ciencias y Tecnología"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 20/20. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 20/20. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 2/2 (read 2). passages found 20/20. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "subject", "name": "Língua Inglesa" },
+            { "kind": "choice", "options": ["Espanhola", "Francesa"] }
+          ]
+        },
+        "id": "cacd-2025-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "EDITAL Nº 1, DE 14 DE MAIO DE 2025. CONCURSO DE ADMISSÃO À CARREIRA DE DIPLOMATA.\n\nO concurso será realizado em duas fases, ambas de responsabilidade do Cebraspe: Primeira Fase: prova objetiva, constituída de questões do tipo CERTO ou ERRADO de Língua Portuguesa, História do Brasil, História Mundial, Geografia, Língua Inglesa, Política Internacional, Economia e Direito, de caráter eliminatório; Segunda Fase: provas escritas de Língua Portuguesa, Língua Inglesa, História do Brasil, Política Internacional, Geografia, Economia, Direito e um idioma adicional (Língua Espanhola ou Língua Francesa), de caráter eliminatório e classificatório.\n\nNo sistema de inscrição, o candidato deverá optar pela cidade de provas e pelo idioma adicional (Língua Espanhola ou Língua Francesa) para as provas escritas da Segunda Fase.\n\nA Segunda Fase consistirá das seguintes provas escritas: Prova | Duração | Tipo | Pontuação máxima. Língua Inglesa | 4 horas | Redação sobre tema geral, com extensão mínima de 65 linhas e máxima de 70 linhas | 70,00; Elaboração de um resumo, com extensão mínima de 15 linhas e máxima de 30 linhas | 30,00. Língua Espanhola | 4 horas | Elaboração de resumo, em espanhol, a partir de texto escrito em Língua Espanhola, com extensão mínima de 30 e máxima de 60 linhas, e de versão de um texto do português para o espanhol, com extensão mínima de 30 e máximo de 60 linhas. | 100,00. Língua Francesa | 4 horas | Elaboração de resumo, em francês, a partir de texto escrito em Língua Francesa, com extensão mínima de 30 e máxima de 60 linhas, e de versão de um texto do português para o francês, com extensão mínima de 30 e máximo de 60 linhas. | 100,00.",
+              "title": "Edital nº 1, de 14 de maio de 2025 (CACD 2025, Instituto Rio Branco)"
+            }
+          ],
+          "exam": "Concurso de Admissão à Carreira de Diplomata (CACD)"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 53/53. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "majorErrors",
+          "score": 9.127272727272729
+        },
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 53/53. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "minorErrors",
+          "score": 9.127272727272729
+        },
+        {
+          "conclusion": "Facts kept 8/11 (read 8). passages found 53/53. readings 1, problems left 0. missing: {\"kind\":\"section\",\"questions\":35}; {\"kind\":\"section\",\"questions\":45}; {\"kind\":\"section\",\"questions\":70}",
+          "kind": "potentialImprovements",
+          "score": 9.127272727272729
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 150 },
+            { "kind": "section", "questions": 35 },
+            { "kind": "section", "questions": 45 },
+            { "kind": "section", "questions": 70 },
+            { "format": "trueFalse", "kind": "format" },
+            { "kind": "scoring", "method": "wrongCancelsRight" },
+            { "kind": "wrongPenalty", "value": 1 },
+            { "kind": "timeLimit", "minutes": 240 },
+            { "date": "2026-11-22", "dateKind": "exam", "kind": "date" },
+            { "date": "2026-08-26", "dateKind": "registrationStart", "kind": "date" },
+            { "date": "2026-09-17", "dateKind": "registrationEnd", "kind": "date" }
+          ]
+        },
+        "id": "tcdf-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital nº 1 – TCDF/ANACE, de 8 de julho de 2026",
+              "url": "https://cdn.cebraspe.org.br/concursos/tc_df_26_analista/arquivos/7971F586B9A9CE2C60801C731D8A1CD87F4C5136CA1F1E346C27C5C743773A73.pdf"
+            }
+          ],
+          "exam": "Concurso TCDF, Analista Administrativo de Controle Externo"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 8/8 (read 8). passages found 28/28. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 8/8 (read 8). passages found 28/28. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 8/8 (read 8). passages found 28/28. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 98 },
+            { "kind": "section", "minutes": 64, "questions": 54 },
+            { "kind": "section", "minutes": 70, "questions": 44 },
+            { "kind": "timeLimit", "minutes": 134 },
+            { "kind": "breakAfter", "minutes": 10 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "date": "2027-03-06", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-02-19", "dateKind": "registrationEnd", "kind": "date" }
+          ]
+        },
+        "id": "sat-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "SAT Test Structure",
+              "url": "https://satsuite.collegeboard.org/sat/whats-on-the-test/structure"
+            },
+            {
+              "title": "SAT Suite Test Dates and Deadlines",
+              "url": "https://satsuite.collegeboard.org/sat/dates-deadlines"
+            }
+          ],
+          "exam": "SAT"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/7 (read 6). passages found 16/16. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}",
+          "kind": "majorErrors",
+          "score": 9.542857142857143
+        },
+        {
+          "conclusion": "Facts kept 6/7 (read 6). passages found 16/16. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}",
+          "kind": "minorErrors",
+          "score": 9.542857142857143
+        },
+        {
+          "conclusion": "Facts kept 6/7 (read 6). passages found 16/16. readings 1, problems left 0. missing: {\"kind\":\"section\",\"minutes\":90,\"questions\":6}",
+          "kind": "potentialImprovements",
+          "score": 9.542857142857143
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 48 },
+            { "kind": "section", "minutes": 100, "questions": 42 },
+            { "kind": "section", "minutes": 90, "questions": 6 },
+            { "kind": "timeLimit", "minutes": 190 },
+            { "kind": "tools", "mentions": "calculator" },
+            { "format": "multipleChoice", "kind": "format" },
+            { "date": "2027-05-10", "dateKind": "exam", "kind": "date" }
+          ]
+        },
+        "id": "ap-calculus-ab-2027-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "AP Calculus AB: About the Exam",
+              "url": "https://apstudents.collegeboard.org/courses/ap-calculus-ab/assessment"
+            },
+            {
+              "title": "2027 AP Exam Dates",
+              "url": "https://apstudents.collegeboard.org/exam-dates"
+            }
+          ],
+          "exam": "AP Calculus AB 2027"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 28/28. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\",\"partialCredit\":\"plusMinus\",\"select\":\"all\"}",
+          "kind": "majorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 28/28. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\",\"partialCredit\":\"plusMinus\",\"select\":\"all\"}",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 28/28. readings 1, problems left 0. missing: {\"format\":\"multipleChoice\",\"kind\":\"format\",\"partialCredit\":\"plusMinus\",\"select\":\"all\"}",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "testedLanguage", "language": "en" },
+            { "kind": "scale", "max": 90, "min": 10 },
+            { "format": "multipleChoice", "kind": "format", "select": "all" },
+            {
+              "format": "multipleChoice",
+              "kind": "format",
+              "partialCredit": "plusMinus",
+              "select": "all"
+            }
+          ]
+        },
+        "id": "pte-academic-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            { "title": "PTE Academic", "url": "https://www.pearsonpte.com/pte-academic" },
+            {
+              "title": "PTE Academic test format: Listening",
+              "url": "https://www.pearsonpte.com/pte-academic/test-format/listening"
+            }
+          ],
+          "exam": "PTE Academic"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 14/15. readings 1, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
+          "kind": "majorErrors",
+          "score": 9.146666666666667
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 14/15. readings 1, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
+          "kind": "minorErrors",
+          "score": 9.146666666666667
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 14/15. readings 1, problems left 0. missing: {\"format\":\"numeric\",\"kind\":\"format\",\"share\":0.25}",
+          "kind": "potentialImprovements",
+          "score": 9.146666666666667
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "format": "multipleChoice", "kind": "format", "select": "all" },
+            {
+              "format": "multipleChoice",
+              "kind": "format",
+              "partialCredit": "perOption",
+              "select": "all"
+            },
+            { "entry": "decimals", "format": "numeric", "kind": "format" },
+            { "format": "numeric", "kind": "format", "share": 0.25 }
+          ]
+        },
+        "id": "jee-advanced-2026-paper-1-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "JEE (Advanced) 2026 Paper 1 (English)",
+              "url": "https://jeeadv.ac.in/documents/p1_english.pdf"
+            }
+          ],
+          "exam": "JEE Advanced 2026"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/7 (read 7). passages found 56/56. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "majorErrors",
+          "score": 9.542857142857143
+        },
+        {
+          "conclusion": "Facts kept 6/7 (read 7). passages found 56/56. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "minorErrors",
+          "score": 9.542857142857143
+        },
+        {
+          "conclusion": "Facts kept 6/7 (read 7). passages found 56/56. readings 1, problems left 0. missing: {\"format\":\"essay\",\"kind\":\"format\"}",
+          "kind": "potentialImprovements",
+          "score": 9.542857142857143
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "timeLimit", "minutes": 165 },
+            { "kind": "section", "minutes": 30, "questions": 40 },
+            { "kind": "section", "minutes": 60, "questions": 40 },
+            { "kind": "listeningParts", "parts": 4, "plays": 1, "questions": 10 },
+            { "format": "essay", "kind": "format" },
+            { "format": "oral", "kind": "format" },
+            { "kind": "testedLanguage", "language": "en" }
+          ]
+        },
+        "id": "ielts-academic-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "IELTS Academic test",
+              "url": "https://ielts.org/take-a-test/test-types/ielts-academic-test"
+            },
+            {
+              "title": "IELTS Academic test format in detail",
+              "url": "https://ielts.org/organisations/ielts-for-organisations/test-types/ielts-academic-test"
+            }
+          ],
+          "exam": "IELTS Academic"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 7/7 (read 7). passages found 86/86. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 7/7 (read 7). passages found 86/86. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 7/7 (read 7). passages found 86/86. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "date": "2027-04-02", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-05-22", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-07-09", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-10-15", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-11-13", "dateKind": "exam", "kind": "date" },
+            { "date": "2027-02-10", "dateKind": "registrationEnd", "kind": "date" },
+            { "kind": "testedLanguage", "language": "es" }
+          ]
+        },
+        "id": "dele-b2-sittings-1",
+        "language": "es",
+        "userInput": {
+          "documents": [
+            { "title": "Cuándo es el DELE", "url": "https://examenes.cervantes.es/es/dele/cuando" },
+            {
+              "title": "Guía de examen DELE B2",
+              "url": "https://examenes.cervantes.es/sites/default/files/guia_examen_dele_b2_0.pdf"
+            }
+          ],
+          "exam": "DELE B2"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 49/49. readings 1, problems left 0. missing: {\"format\":\"oral\",\"kind\":\"format\"}",
+          "kind": "majorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 49/49. readings 1, problems left 0. missing: {\"format\":\"oral\",\"kind\":\"format\"}",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Facts kept 3/4 (read 4). passages found 49/49. readings 1, problems left 0. missing: {\"format\":\"oral\",\"kind\":\"format\"}",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "timeLimit", "minutes": 165 },
+            { "kind": "section", "minutes": 60, "questions": 40 },
+            { "format": "essay", "kind": "format" },
+            { "format": "oral", "kind": "format" }
+          ]
+        },
+        "id": "ielts-academic-research-pages-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "title": "IELTS Academic test format and sections",
+              "url": "https://ielts.org/take-a-test/test-types/ielts-academic-test"
+            },
+            {
+              "title": "IELTS Academic: Writing test format",
+              "url": "https://ielts.org/take-a-test/test-types/ielts-academic-test/ielts-academic-format-writing"
+            },
+            {
+              "title": "Speaking Band Descriptors",
+              "url": "https://ielts.org/cdn/ielts-guides/ielts-speaking-band-descriptors.pdf"
+            },
+            {
+              "title": "Writing Band Descriptors",
+              "url": "https://ielts.org/cdn/Guides/ielts-writing-band-descriptors.pdf"
+            },
+            {
+              "title": "IELTS Academic: Reading test format",
+              "url": "https://ielts.org/take-a-test/test-types/ielts-academic-test/ielts-academic-format-reading"
+            }
+          ],
+          "exam": "IELTS Academic"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 20/20. readings 1, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 20/20. readings 1, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 3/3 (read 3). passages found 20/20. readings 1, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 70 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "format": "essay", "kind": "format" }
+          ],
+          "usable": false
+        },
+        "id": "tjsp-escrevente-2025-news-page-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "TJSP publica edital de abertura de concurso para escrevente técnico judiciário na Capital e CJs da 1ª RAJ",
+              "url": "https://www.tjsp.jus.br/Noticias/Noticia?codigoNoticia=108814"
+            }
+          ],
+          "exam": "Concurso TJ-SP, Escrevente Técnico Judiciário"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 9/9 (read 9). passages found 41/41. readings 2, problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 9/9 (read 9). passages found 41/41. readings 2, problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 9/9 (read 9). passages found 41/41. readings 2, problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            { "kind": "questionCount", "value": 70 },
+            { "kind": "subject", "name": "Língua Portuguesa", "questions": 16 },
+            { "kind": "subject", "name": "Direito", "questions": 30 },
+            { "kind": "subject", "name": "Informática", "questions": 9 },
+            { "kind": "subject", "name": "Raciocínio Lógico", "questions": 7 },
+            { "format": "multipleChoice", "kind": "format" },
+            { "format": "essay", "kind": "format" },
+            { "kind": "scale", "max": 10, "min": 0 },
+            { "date": "2025-12-07", "kind": "date" }
+          ],
+          "usable": true
+        },
+        "id": "tjsp-escrevente-2025-notice-copy-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "TJSP publica edital de abertura de concurso para escrevente técnico judiciário na Capital e CJs da 1ª RAJ",
+              "url": "https://www.tjsp.jus.br/Noticias/Noticia?codigoNoticia=108814"
+            },
+            {
+              "title": "Edital TJ SP Escrevente 2025",
+              "url": "https://blog-static.infra.grancursosonline.com.br/wp-content/uploads/2025/08/01003721/edital-tj-sp-2025.pdf"
+            }
+          ],
+          "exam": "Concurso TJ-SP, Escrevente Técnico Judiciário"
         }
       }
     }

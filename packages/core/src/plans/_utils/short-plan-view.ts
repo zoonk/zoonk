@@ -1,6 +1,7 @@
 import { type Goal } from "@zoonk/db";
-import { type ShortExamFocus, type ShortPhaseView } from "../plan-view-contract";
-import { daysBetween, fromIsoDate } from "../planner/plan-calendar";
+import { type PlanView, type ShortExamFocus, type ShortPhaseView } from "../plan-view-contract";
+import { daysBetween, fromIsoDate, toIsoDate } from "../planner/plan-calendar";
+import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanPhase, type PlanSettings } from "../planner/plan-state";
 import {
   type ShortExamPhaseKind,
@@ -118,4 +119,21 @@ export function findShortPlanPhase({
   }
 
   return Math.min(todayPhase, progressPhase);
+}
+
+/** A short plan's days and the day of its short mock, as the plan scheduled it. */
+export function toShortPlanView({
+  items,
+  shape,
+}: {
+  items: readonly Pick<ExistingPlanItem, "kind" | "scheduledFor">[];
+  shape: ShortPlanShape | null;
+}): PlanView["shortPlan"] {
+  if (!shape) {
+    return null;
+  }
+
+  const mock = items.find((item) => item.kind === "mock" && item.scheduledFor);
+
+  return { days: shape.days, mockDate: mock?.scheduledFor ? toIsoDate(mock.scheduledFor) : null };
 }

@@ -24,7 +24,7 @@ export const identifierSchema = z.string().regex(/^[A-Z_a-z]\w{0,31}$/u);
 export const unitSchema = z.string().min(1).max(UNIT_MAX_LENGTH);
 export const codeSchema = z.string().min(1).max(CODE_MAX_LENGTH);
 
-/** Ids of checked assets such as diagrams and base maps, like "human-heart". */
+/** Ids of checked assets such as base maps, like "world-continents". */
 export const slugSchema = z
   .string()
   .max(SLUG_MAX_LENGTH)

@@ -1,28 +1,29 @@
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
-import { itemFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
+import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
+import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { createGoalPlan } from "../plans/create-goal-plan";
+import { getGoalPreparation } from "../preparation/get-goal-preparation";
+import { getRequestProgressDateContext } from "../progress/get-request-date-context";
+import { getTodayView } from "../view-models/today/get-today-view";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import { answerStudyQuestion } from "./answer-study-question";
 import { getStudyBlock } from "./get-study-block";
-import { getTodayStudySession } from "./get-today-study-session";
 import { startStudyBlock } from "./start-study-block";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
+vi.mock("../progress/get-request-date-context", () => ({ getRequestProgressDateContext: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 // The classifier is a paid model call; placement answers never reach it.
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 const TIME_ZONE = "UTC";
 
@@ -68,6 +69,40 @@ async function openPlacementBlock(goalId: string) {
   return { blockId: review.id, sessionId: session.id };
 }
 
+/**
+ * A goal the planner built yesterday, whose one skill placement answered right once: its lessons
+ * wait, and the first week's sessions still ask about it.
+ */
+async function plannedSetup() {
+  const user = await userFixture();
+  const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
+  const skillId = library.skills[0]?.id ?? "";
+
+  const { goal, plan } = await unplannedGoalFixture({
+    createdAt: new Date(Date.now() - DAY_MS),
+    timezone: TIME_ZONE,
+    userId: user.id,
+  });
+
+  await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+  const [answered, asked] = await Promise.all([
+    itemFixture({ content: choiceItemContent(), skillId }),
+    itemFixture({ content: choiceItemContent(), skillId }),
+  ]);
+
+  await attemptFixture({
+    answeredAt: new Date(Date.now() - DAY_MS),
+    isCorrect: true,
+    itemId: answered.id,
+    skillId,
+    userId: user.id,
+  });
+
+  mockSession(user.id);
+  return { goal, placementItemId: asked.id, plan, skillId };
+}
+
 /** Whether the goal's session opens with a review block: placement questions (no capsules are due). */
 async function hasReviewBlock({ goal, user }: { goal: { id: string }; user: { id: string } }) {
   mockSession(user.id);
@@ -77,7 +112,21 @@ async function hasReviewBlock({ goal, user }: { goal: { id: string }; user: { id
   return blocks.some((block) => block.kind === "review");
 }
 
+function mockClock() {
+  const now = new Date();
+
+  vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+    currentDate: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())),
+    currentInstant: now,
+    timeZone: TIME_ZONE,
+  });
+}
+
 describe("placement in the first week's sessions", () => {
+  beforeEach(() => {
+    mockClock();
+  });
+
   it("opens the session with the unsure skill's question, marked as placement", async () => {
     const { goal, placementItemId } = await setup();
     const { blockId, sessionId } = await openPlacementBlock(goal.id);
@@ -155,6 +204,115 @@ describe("placement in the first week's sessions", () => {
     await expect(
       prisma.learnerSkill.findFirst({ where: { reps: { gt: 0 }, userId: user.id } }),
     ).resolves.not.toBeNull();
+  });
+
+  it("brings back the lessons one right answer skipped when the week's question on them is missed", async () => {
+    const { goal, placementItemId, plan, skillId } = await plannedSetup();
+
+    const statuses = () =>
+      prisma.planItem
+        .findMany({ where: { kind: "lesson", planId: plan.id, skillId } })
+        .then((items) => [...new Set(items.map((item) => item.status))]);
+
+    await finishGoalPlacement({ goalId: goal.id, input: {} });
+    await expect(statuses()).resolves.toStrictEqual(["testedOut"]);
+
+    const { blockId, sessionId } = await openPlacementBlock(goal.id);
+
+    await answerStudyQuestion({
+      blockId,
+      input: {
+        answer: { selectedIndex: 1 },
+        durationMs: 3000,
+        itemId: placementItemId,
+        timeZone: TIME_ZONE,
+      },
+      sessionId,
+    });
+
+    await expect(statuses()).resolves.toStrictEqual(["todo"]);
+  });
+
+  // A placement question stays a test inside a session: its right answer frees the topic from its
+  // lessons, never from practice, and shows nothing preparation counts.
+  it("reads a right placement answer in a session as a test's, never as practice", async () => {
+    const { goal, placementItemId, skillId } = await plannedSetup();
+
+    await finishGoalPlacement({ goalId: goal.id, input: {} });
+    const { blockId, sessionId } = await openPlacementBlock(goal.id);
+
+    await answerStudyQuestion({
+      blockId,
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 3000,
+        itemId: placementItemId,
+        timeZone: TIME_ZONE,
+      },
+      sessionId,
+    });
+
+    await expect(
+      loadSkillsToConfirm({ goalId: goal.id, skillIds: [skillId], userId: goal.userId }),
+    ).resolves.toStrictEqual(new Set([skillId]));
+
+    mockClock();
+    const preparation = await getGoalPreparation(goal.id);
+
+    expect(
+      preparation.status === "ready" && preparation.preparation.components.coverage,
+    ).toMatchObject({ studiedSkills: 0 });
+  });
+
+  // Pedro's quick review on the day before held a placement question: his right answer skipped
+  // lessons and rebuilt the rest of the day, his full review turned into a short practice.
+  it("keeps the rest of the day as shown when a placement answer in it skips lessons", async () => {
+    const { goal, placementItemId, plan, skillId } = await plannedSetup();
+    const { blockId, sessionId } = await openPlacementBlock(goal.id);
+
+    const blocks = () =>
+      prisma.studySessionBlock.findMany({ orderBy: { position: "asc" }, where: { sessionId } });
+
+    const shown = await blocks();
+
+    await answerStudyQuestion({
+      blockId,
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 3000,
+        itemId: placementItemId,
+        timeZone: TIME_ZONE,
+      },
+      sessionId,
+    });
+
+    const [after, skipped] = await Promise.all([
+      blocks(),
+      prisma.planItem.findMany({ where: { planId: plan.id, skillId, status: "testedOut" } }),
+    ]);
+
+    const skippedLessons = new Set(skipped.flatMap((item) => item.lessonId ?? []));
+
+    expect(skippedLessons.size).toBeGreaterThan(0);
+    expect(after.map((block) => block.id)).toStrictEqual(shown.map((block) => block.id));
+
+    expect(
+      after
+        .filter((block) => block.lessonId && skippedLessons.has(block.lessonId))
+        .map((block) => block.status),
+    ).toStrictEqual(
+      shown
+        .filter((block) => block.lessonId && skippedLessons.has(block.lessonId))
+        .map(() => "skipped"),
+    );
+
+    // Today says what the answer skipped, with its undo, instead of changing without a word.
+    const today = await getTodayView({ goalId: goal.id });
+
+    expect(today.status === "ready" && today.today.planChange).toMatchObject({
+      canUndo: true,
+      kind: "testedOut",
+    });
   });
 
   it("never saves a wrong placement answer as a mistake", async () => {

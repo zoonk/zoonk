@@ -62,10 +62,12 @@ export function usePreparationParts(preparation: Preparation): PreparationPart[]
 
   return [
     {
-      caption: t("{studied, number} of {total, plural, one {# skill} other {# skills}}", {
-        studied: coverage.studiedSkills,
-        total: coverage.totalSkills,
-      }),
+      // The ring weighs each skill by its importance, as the headline does: the count alone would
+      // read as a different share.
+      caption: t(
+        "{studied, number} of {total, plural, one {# skill} other {# skills}}, weighted by importance",
+        { studied: coverage.studiedSkills, total: coverage.totalSkills },
+      ),
       key: "coverage",
       label: t("Coverage"),
       value: coverage.value,
@@ -82,7 +84,8 @@ export function usePreparationParts(preparation: Preparation): PreparationPart[]
             }),
       key: "mastery",
       label: t("Mastery"),
-      value: mastery.value,
+      // What the headline counts: a few right answers say less than many.
+      value: mastery.supported,
     },
     {
       caption: retention.value === null ? notYet : t("Of what you studied"),

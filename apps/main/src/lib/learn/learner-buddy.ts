@@ -5,6 +5,7 @@ import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { getEnergyLevel } from "@zoonk/core/progress/get-energy-level";
 import { getEnergyStarted } from "@zoonk/core/progress/get-energy-started";
 import { getStudiedToday } from "@zoonk/core/progress/get-studied-today";
+import { countDoneMissions } from "@zoonk/core/sessions/missions";
 
 /**
  * The learner's buddy: kind, name and glasses from the profile, growth from the belt and glow from
@@ -37,8 +38,8 @@ export async function getLearnerBuddy() {
 export type LearnerBuddy = Awaited<ReturnType<typeof getLearnerBuddy>>;
 
 /**
- * Today's missions as the buddy's tab counts them (a mission with nothing to do today counts as
- * done, as the missions sheet says), or null before today's session exists or without a session.
+ * Today's missions as the buddy's tab counts them (`countDoneMissions`: a mission with nothing to
+ * do today counts once another is done), or null before today's session exists or without one.
  */
 export async function getTodayMissions(): Promise<{ done: number; total: number } | null> {
   const result = await getBuddyStatus({});
@@ -48,8 +49,5 @@ export async function getTodayMissions(): Promise<{ done: number; total: number 
     return null;
   }
 
-  return {
-    done: today.missions.filter((mission) => mission.status !== "todo").length,
-    total: today.missions.length,
-  };
+  return { done: countDoneMissions(today.missions), total: today.missions.length };
 }

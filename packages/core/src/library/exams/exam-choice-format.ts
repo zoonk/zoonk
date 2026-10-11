@@ -29,8 +29,8 @@ export function getExamFormats(structure: FormatsOf): ExamFormat[] {
 
 /**
  * How an exam asks the questions a learner answers by picking: the first choice format its notice
- * lists, such as ENEM's five options or Cebraspe's assertions judged right or wrong (Certo ou
- * Errado), with its number of options (`getExamFormats`). Null when the notice lists none, like an
+ * lists, such as ENEM's five options or Cebraspe's assertions judged right or wrong,
+ * with its number of options (`getExamFormats`). Null when the notice lists none, like an
  * essay-only exam or a blueprint without formats.
  */
 export function getExamChoiceFormat(structure: FormatsOf | null): ExamChoiceFormat | null {
@@ -65,7 +65,7 @@ export function fitsExamOptions({ choice, item }: ChoiceFit): boolean {
 /**
  * Whether a placement question looks like the exam's own: a typed one confirms any skill, and a
  * quick one is in the exam's choice format, with its number of options (`fitsExamOptions`). A
- * Certo-or-Errado exam never asks multiple choice, and a five-option exam never asks four. Any
+ * right-or-wrong exam never asks multiple choice, and a five-option exam never asks four. Any
  * question fits a goal without an exam's choice format (`choice` null).
  */
 export function fitsExamChoice({ choice, item }: ChoiceFit): boolean {

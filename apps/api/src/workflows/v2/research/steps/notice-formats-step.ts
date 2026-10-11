@@ -3,6 +3,7 @@ import { extractQuestionFormats } from "@zoonk/ai/tasks/v2/research/extract-ques
 import { recordGoalNoticeFormats } from "@zoonk/core/library/exams/notice-formats";
 import { loadSourceDocuments } from "@zoonk/core/library/sources/load-documents";
 import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 /**
@@ -31,11 +32,18 @@ export async function recordNoticeFormatsStep({
   // The notice serves every learner of the exam, and the learner waits for placement on it.
   const serviceTier = chooseServiceTier({ reuse: "bounded", wait: "learner" });
 
-  const { data } = await safeAsync(() =>
+  // One try (the AI SDK's own retries included): the reading beside it reads the formats too,
+  // with its step's retries, and retries here would only hold research's end.
+  const { data, error } = await safeAsync(() =>
     extractQuestionFormats({ analytics, documents, exam, serviceTier }),
   );
 
-  if (!data) {
+  if (error) {
+    logError(
+      `The first pass over the notice of "${exam}" failed; its reading has the formats:`,
+      error,
+    );
+
     return;
   }
 

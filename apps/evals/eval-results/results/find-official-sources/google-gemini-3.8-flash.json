@@ -749,6 +749,92 @@
           "topic": "exam"
         }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "noticeHints": ["academic"],
+          "officialDomains": ["ielts.org"],
+          "sectionHints": ["listening", "reading", "writing", "speaking"]
+        },
+        "id": "ielts-academic-sections:parallel-1",
+        "language": "en",
+        "userInput": {
+          "plan": {
+            "board": "IELTS (British Council, IDP, Cambridge University Press & Assessment)",
+            "country": "GB",
+            "edition": null,
+            "name": "IELTS Academic",
+            "officialDomains": ["ielts.org"],
+            "queries": [
+              "IELTS Academic test format",
+              "IELTS Academic test sections timing questions"
+            ],
+            "role": null
+          },
+          "searchTool": "parallel",
+          "topic": "exam"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "A downloadable copy states the notice's content",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A downloadable copy states the notice's content",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A downloadable copy states the notice's content",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "copies": {
+            "contentHints": ["Língua Portuguesa", "Raciocínio Lógico", "Informática", "Escrevente"],
+            "refusingSites": ["vunesp.com.br"]
+          },
+          "noticeHints": [],
+          "officialDomains": []
+        },
+        "id": "tjsp-escrevente-2025-copies:parallel-1",
+        "language": "pt",
+        "userInput": {
+          "plan": {
+            "board": "Vunesp",
+            "country": "BR",
+            "edition": null,
+            "name": "Concurso TJ-SP",
+            "officialDomains": ["vunesp.com.br", "tjsp.jus.br"],
+            "queries": [
+              "edital concurso TJ-SP Escrevente Técnico Judiciário Vunesp",
+              "concurso TJ-SP Escrevente Técnico Judiciário edital conteúdo programático",
+              "Tribunal de Justiça de São Paulo Escrevente edital vunesp"
+            ],
+            "role": "Escrevente Técnico Judiciário"
+          },
+          "searchTool": "parallel",
+          "topic": "exam",
+          "unreadable": [
+            "https://documento.vunesp.com.br/documento/stream/NzEzOTYxNw==",
+            "https://documento.vunesp.com.br/documento/stream/NzMzMDg0Ng%3D%3D",
+            "https://www.vunesp.com.br/TJSP2503",
+            "https://www.vunesp.com.br/TJSP2401"
+          ]
+        }
+      }
     }
   ],
   "taskId": "find-official-sources"

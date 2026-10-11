@@ -7,7 +7,7 @@ import {
   gradeChoiceAnswer,
   parseChoiceItem,
 } from "../learner/_utils/choice-items";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { recordLearnerAnswer } from "../learner/record-learner-answer";
 import { getSession } from "../users/get-session";
 import { type MistakePracticeAnswerInput } from "./contract";
@@ -108,7 +108,7 @@ export async function answerMistakePractice({
     practicedMistakeId: mistake.id,
     purpose: "learning",
     skillId: item.skillId,
-    timeZone: getAnswerTimeZone({ goal: null, timeZone: input.timeZone }),
+    timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
     userId,
   });
 

@@ -3,6 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
 import { parsePathParams } from "@/lib/path-params";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { getStepExampleLine } from "@zoonk/core/library/variants/example-line";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -38,7 +39,7 @@ async function requestExampleLine(
     });
   }
 
-  if (result.status === "limitReached") {
+  if (isRefusedUsage(result)) {
     return usageDecisionError(result);
   }
 

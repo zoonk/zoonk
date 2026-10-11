@@ -67,10 +67,38 @@ function StopNotice({ language, run }: { language: "javascript" | "python"; run:
   );
 }
 
+/** What the last run printed, colored right or wrong when there's an output to reach. */
+function PrintedOutput({
+  hasTarget,
+  matches,
+  run,
+}: {
+  hasTarget: boolean;
+  matches: boolean;
+  run: ProgramRun | null;
+}) {
+  const t = useExtracted();
+
+  if (run === null) {
+    return <p className="text-muted-foreground py-1 text-sm">{t("Run the code to see it")}</p>;
+  }
+
+  if (run.output === "") {
+    return <p className="text-muted-foreground py-1 text-sm">{t("Nothing printed")}</p>;
+  }
+
+  return (
+    <OutputText
+      className={cn(hasTarget && (matches ? "text-success" : "text-destructive"))}
+      text={run.output.trimEnd()}
+    />
+  );
+}
+
 /**
  * What the program printed next to what it should print, plus why a run stopped and the
  * feedback written for a likely mistake. The expected output is part of the task, so it shows
- * from the start.
+ * from the start. A program explored on an explanation screen has no task: only its output shows.
  */
 export function CodeRunnerOutput({
   expectedOutput,
@@ -80,7 +108,8 @@ export function CodeRunnerOutput({
   mistake,
   run,
 }: {
-  expectedOutput: string;
+  /** Null when there's no output to reach, as when the program is explored. */
+  expectedOutput: string | null;
   isStale: boolean;
   language: "javascript" | "python";
   matches: boolean;
@@ -91,25 +120,24 @@ export function CodeRunnerOutput({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="bg-background grid grid-cols-2 overflow-hidden rounded-2xl border">
-        <OutputCell className={cn(isStale && "opacity-60")} label={t("Your output")}>
-          {run === null && (
-            <p className="text-muted-foreground py-1 text-sm">{t("Run the code to see it")}</p>
-          )}
-          {run !== null && run.output === "" && (
-            <p className="text-muted-foreground py-1 text-sm">{t("Nothing printed")}</p>
-          )}
-          {run !== null && run.output !== "" && (
-            <OutputText
-              className={matches ? "text-success" : "text-destructive"}
-              text={run.output.trimEnd()}
-            />
-          )}
+      <div
+        className={cn(
+          "bg-background grid overflow-hidden rounded-2xl border",
+          expectedOutput !== null && "grid-cols-2",
+        )}
+      >
+        <OutputCell
+          className={cn(isStale && "opacity-60")}
+          label={expectedOutput === null ? t("Output") : t("Your output")}
+        >
+          <PrintedOutput hasTarget={expectedOutput !== null} matches={matches} run={run} />
         </OutputCell>
 
-        <OutputCell className="border-l" label={t("Expected")}>
-          <OutputText text={expectedOutput.trimEnd()} />
-        </OutputCell>
+        {expectedOutput !== null && (
+          <OutputCell className="border-l" label={t("Expected")}>
+            <OutputText text={expectedOutput.trimEnd()} />
+          </OutputCell>
+        )}
       </div>
 
       {isStale && run && (

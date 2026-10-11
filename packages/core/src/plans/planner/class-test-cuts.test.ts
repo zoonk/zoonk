@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { type TopicLevel } from "../../library/exams/topic-frequency";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
+import { getPlanFeasibility } from "./plan-feasibility";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 import { type SkillReadiness } from "./skill-order";
@@ -41,7 +42,7 @@ const SKILLS: PlanGraphSkill[] = Object.entries(TOPICS).map(([id, topic]) => ({
   weight: 3,
 }));
 
-/** His notes stress the organelles ("CAI MUITO!!"); the teacher announced an essay on osmosis. */
+/** His notes stress the organelles ("ALWAYS ON THE TEST!!"); the teacher announced an essay on osmosis. */
 const LEVELS: TopicLevel[] = [
   { level: "high", subject: "Biologia", topic: TOPICS.organelles },
   { level: "high", subject: "Biologia", topic: TOPICS.membrane },
@@ -104,6 +105,11 @@ function classTest({
   };
 }
 
+/** The titles of the lessons in the plan. */
+function plannedTitles(plan: ReturnType<typeof buildPlan>): string[] {
+  return plan.items.flatMap((item) => (item.kind === "lesson" ? [item.titleSnapshot] : []));
+}
+
 /** The skills with any of their lessons in the plan, so the topics they teach are in it. */
 function plannedSkills(plan: ReturnType<typeof buildPlan>): Set<string> {
   return new Set(plan.skillMinutes.filter((item) => item.covered > 0).map((item) => item.skillId));
@@ -129,11 +135,13 @@ describe("a class test whose days don't fit every topic", () => {
     }
   });
 
-  it("keeps what placement found missing before what the material stresses, at any level", () => {
-    // The organelles "CAI MUITO!!" but nobody asked him about them; he missed the virus question.
+  it("keeps what the material stresses before a gap it stresses less, the gaps first among the rest", () => {
+    // The organelles are "ALWAYS ON THE TEST!!": they come before the virus question he missed, which his notes
+    // don't stress, and the virus before the cell theory nobody asked him about.
     const short = plannedSkills(buildPlan(classTest({ dailyMinutes: 20, levels: LEVELS })));
 
-    expect([...short].toSorted()).toStrictEqual(["membrane", "virus"]);
+    expect(short.has("membrane") && short.has("organelles")).toBe(true);
+    expect(short.has("theory") && !short.has("virus")).toBe(false);
 
     const plan = buildPlan(classTest({ dailyMinutes: 30, levels: LEVELS }));
     const planned = plannedSkills(plan);
@@ -148,12 +156,17 @@ describe("a class test whose days don't fit every topic", () => {
  * (osmosis, on the passive transport skill, and the organelles' roles), tested out three skills
  * and answered the other three right once. His teacher announced a table of the organelles and an
  * essay on osmosis. At 30 minutes a day the plan kept the virus lesson he had answered right and
- * cut "Osmose em células animais e vegetais", the lesson on what he missed.
+ * cut "Osmosis in animal and plant cells", the lesson on what he missed.
  */
 describe("Pedro's notes at 30 minutes a day", () => {
   const THURSDAY = fromIsoDate("2026-10-08");
 
-  type PedroSkill = { skillId: string; titles: [string, number][]; topics: string[]; weight: number };
+  type PedroSkill = {
+    skillId: string;
+    titles: [string, number][];
+    topics: string[];
+    weight: number;
+  };
 
   const PEDRO_SPECS: PedroSkill[] = [
     {
@@ -274,7 +287,10 @@ describe("Pedro's notes at 30 minutes a day", () => {
 
   const ANNOUNCED = ["Completar a tabela das organelas", "Dissertativa sobre osmose"];
 
-  function pedroPlan(dailyMinutes: number, announcements: readonly string[] = ANNOUNCED) {
+  function pedroInput(
+    dailyMinutes: number,
+    announcements: readonly string[] = ANNOUNCED,
+  ): BuildPlanInput {
     const graph = {
       phases: [
         { milestone: null, name: "Organização celular e membrana" },
@@ -283,11 +299,12 @@ describe("Pedro's notes at 30 minutes a day", () => {
       skills: PEDRO_SKILLS,
     };
 
-    return buildPlan({
+    return {
       announcements,
       goal: { dailyMinutes, kind: "exam", targetDate: addDays(THURSDAY, 2) },
       graph: weighGraphByTopicFrequency({ graph, levels: PEDRO_LEVELS }),
       items: TESTED_OUT,
+      knownSkillIds: new Set(["golgi", "nucleus", "virus"]),
       lessons: PEDRO_LESSONS,
       missedSkillIds: new Set(["passive", "organelles"]),
       mockMinutes: 30,
@@ -304,12 +321,71 @@ describe("Pedro's notes at 30 minutes a day", () => {
       settings: parsePlanSettings({ shortMockMinutes: 30, startDate: toIsoDate(THURSDAY) }),
       today: THURSDAY,
       topicLevels: PEDRO_LEVELS,
-    });
+    };
   }
 
-  function plannedTitles(plan: ReturnType<typeof buildPlan>): string[] {
-    return plan.items.flatMap((item) => (item.kind === "lesson" ? [item.titleSnapshot] : []));
+  function pedroPlan(dailyMinutes: number, announcements: readonly string[] = ANNOUNCED) {
+    return buildPlan(pedroInput(dailyMinutes, announcements));
   }
+
+  // His reveal said his time "doesn't reach every topic" next to "6 topics, all in your plan": a
+  // skill of "Organelles" was cut while the topic kept its other skill's lessons.
+  it("says every topic is in while each keeps a lesson, as the topics sheet does", () => {
+    const input = pedroInput(35);
+    const plan = buildPlan(input);
+
+    const taught = new Set(
+      plan.items.flatMap((item) => (item.kind === "lesson" && item.skillId ? [item.skillId] : [])),
+    );
+
+    const inPlan = new Set(
+      PEDRO_SPECS.filter((spec) => taught.has(spec.skillId)).flatMap((spec) => spec.topics),
+    );
+
+    expect(taught.has("golgi")).toBe(false);
+    expect(inPlan).toStrictEqual(new Set(PEDRO_SPECS.flatMap((spec) => spec.topics)));
+    expect(getPlanFeasibility({ input, planned: plan }).coreFits).toBe(true);
+  });
+
+  // His reveal said his 30 minutes studied "the ones that come up most in more depth": the topics
+  // his notes say come up a lot were cut to their first lessons while the others were whole, and
+  // the one he answered right once had none.
+  it("says the most asked topics get more depth only while they keep more of it", () => {
+    const input = pedroInput(30);
+
+    expect(getPlanFeasibility({ input }).deepensMostAsked).toBe(false);
+
+    // Had his notes marked the topics his time keeps whole as the ones that come up a lot.
+    const wholeAreMostAsked = {
+      ...input,
+      topicLevels: [
+        { level: "high" as const, subject: "Biologia", topic: "Teoria celular" },
+        { level: "high" as const, subject: "Biologia", topic: "Procarionte x eucarionte" },
+      ],
+    };
+
+    expect(getPlanFeasibility({ input: wholeAreMostAsked }).deepensMostAsked).toBe(true);
+  });
+
+  // One right answer frees a topic from its lessons, never from practice: at 30 minutes the nucleus,
+  // which he answered right once, has no lesson, and practice keeps it in his plan.
+  it("says a topic waits only when none of its skills keeps a lesson and he hasn't shown he knows it", () => {
+    const input = pedroInput(30);
+    const plan = buildPlan(input);
+
+    expect(plan.items.some((item) => item.skillId === "nucleus")).toBe(false);
+    expect(getPlanFeasibility({ input, planned: plan }).coreFits).toBe(true);
+
+    const unanswered = {
+      ...input,
+      knownSkillIds: new Set<string>(),
+      readiness: new Map<string, SkillReadiness>(),
+    };
+
+    const short = buildPlan(unanswered);
+
+    expect(getPlanFeasibility({ input: unanswered, planned: short }).coreFits).toBe(false);
+  });
 
   it("keeps the lesson on what he missed and his teacher announced", () => {
     expect(plannedTitles(pedroPlan(30))).toContain("Osmose em células animais e vegetais");

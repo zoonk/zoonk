@@ -1,21 +1,23 @@
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
+import { examDocumentSchema } from "../../exams/exam-document";
 import { TOPIC_FREQUENCY_LEVELS } from "../../library/exams/blueprint-contract";
+import { passMarksSchema } from "../../library/exams/pass-marks";
 import { writtenPracticeSchema } from "../../plans/written-practice-contract";
 
 const countSchema = z.int().min(0);
 const isoDateSchema = z.iso.date();
 
 /**
- * Why a topic or a subject isn't in the plan: the learner took it out, they start past it, time,
- * or nothing teaches it yet.
+ * Why a topic or a subject isn't in the plan: the learner took it out, they start past it, they
+ * chose to skip it as a base, time, or nothing teaches it yet.
  */
 const notPlannedReasonSchema = z
-  .enum(["skipped", "pastBasics", "time", "missing"])
+  .enum(["skipped", "pastBasics", "skippedBase", "time", "missing"])
   .nullable()
   .meta({
     description:
-      "Why it isn't in the plan: `skipped` (the learner took the subject out; `restoreAreas` with its `areas` brings it back), `pastBasics` (a subject's basics the plan starts past: the learner said they know them, or does well in the subject with harder lessons), `time` (it doesn't fit before the deadline at the current pace), `missing` (no skill of the plan teaches it yet). Null when it's in the plan",
+      "Why it isn't in the plan: `skipped` (the learner took the subject out; `restoreAreas` with its `areas` brings it back), `pastBasics` (a subject's basics the plan starts past: the learner said they know them, or does well in the subject with harder lessons), `skippedBase` (a base the learner chose to skip; `setBaseChoices` with `learn` brings it back), `time` (it doesn't fit before the deadline at the current pace), `missing` (no skill of the plan teaches it yet). Null when it's in the plan",
   });
 
 const syllabusChapterSchema = z
@@ -27,11 +29,31 @@ const syllabusChapterSchema = z
         description:
           "Its page is `GET /v1/goals/{goalId}/chapters/{chapterId}`; null while its lessons are still being written",
       }),
+    far: z
+      .boolean()
+      .meta({
+        description:
+          "A topic whose lessons aren't written yet and start after the two weeks the plan writes ahead: say the lessons the plan teaches it (`plannedLessons`, about that many) and when it starts (`nextDate`), not that they're on the way. False for every other row",
+      }),
+    known: z
+      .boolean()
+      .meta({
+        description:
+          "Done only because the learner showed they know it: every lesson tested out, none studied. Say it was skipped, apart from the chapters done",
+      }),
     lessonsDone: countSchema,
     lessonsTotal: countSchema,
     nextDate: isoDateSchema
       .nullable()
       .meta({ description: "The next day the plan studies it; null once it's done" }),
+    plannedLessons: z
+      .int()
+      .min(1)
+      .nullable()
+      .meta({
+        description:
+          "A topic's lessons the plan teaches while they aren't written yet, after its cuts and base choices. Null for a chapter, and for a topic of a plan saved before it stored them (until its next change): say no count then",
+      }),
     position: z
       .int()
       .min(1)
@@ -39,13 +61,23 @@ const syllabusChapterSchema = z
         description:
           "Its number in the subject, in the subject's order (the ones done first): every screen calls it Chapter 4",
       }),
+    skillId: z
+      .uuid()
+      .nullable()
+      .meta({
+        description:
+          "A `far` topic no chapter teaches yet: its skill, whose lesson plan is `GET /v1/goals/{goalId}/skills/{skillId}/outline` (POST `.../outline/generations` writes it now). Null for a chapter, for a topic whose lessons are on the way, and for one chapters already teach (the plan writes its next chapter as the learner gets close)",
+      }),
     state: z
       .enum(["done", "current", "upcoming"])
       .meta({ description: "`current` holds the plan's next lesson; at most one chapter has it" }),
     title: z.string(),
     writing: z
       .boolean()
-      .meta({ description: "Lessons still being written: its counts are stand-ins" }),
+      .meta({
+        description:
+          "A topic whose lessons aren't written yet (the plan writes them two weeks ahead). One starting after those weeks is `far`; any other's lessons are on the way",
+      }),
   })
   .meta({ id: "SyllabusChapter" });
 
@@ -69,7 +101,7 @@ const syllabusTopicSchema = z
       .nullable()
       .meta({
         description:
-          'The heading the notice lists it under inside its subject, such as "Física" in ENEM\'s Ciências da Natureza: topics with the same heading come together, in order. Null when the subject has no headings',
+          "The heading the notice lists it under inside its subject, such as physics in ENEM's natural sciences: topics with the same heading come together, in order. Null when the subject has no headings",
       }),
     name: z.string().meta({ description: "In the source's own words, as the notice lists it" }),
     nextDate: isoDateSchema
@@ -77,11 +109,11 @@ const syllabusTopicSchema = z
       .meta({ description: "When the plan studies it next; null once studied or when unknown" }),
     notPlannedReason: notPlannedReasonSchema,
     status: z
-      .enum(["studied", "inProgress", "toStudy", "notPlanned"])
+      .enum(["studied", "known", "inProgress", "toStudy", "notPlanned"])
       .nullable()
       .meta({
         description:
-          "From the plan's lessons on it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): show the topic without a status",
+          "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): show the topic without a status",
       }),
   })
   .meta({ id: "SyllabusTopic" });
@@ -103,7 +135,7 @@ const syllabusSubjectSchema = z
     group: z
       .string()
       .nullable()
-      .meta({ description: 'The notice\'s grouping, such as "Conhecimentos básicos (P1)"' }),
+      .meta({ description: "The notice's grouping, such as its basic knowledge part (P1)" }),
     imageUrl: z
       .string()
       .nullable()
@@ -111,13 +143,23 @@ const syllabusSubjectSchema = z
     key: z
       .string()
       .meta({ description: "Stable within the goal's syllabus, URL-safe: the subject's page" }),
-    lessonsDone: countSchema,
-    lessonsTotal: countSchema,
+    lessonsDone: countSchema.meta({
+      description:
+        "Its lessons the learner studied, never ones the plan set aside or they tested out of (`lessonsKnown`), so taking test-out credit back never lowers it",
+    }),
+    lessonsKnown: countSchema.meta({
+      description:
+        'Its lessons the learner skipped because they showed they know them (tested out); a miss on one of those topics brings them back to study, lowering this, never `lessonsDone`. Show apart: "25 skipped because you know them"',
+    }),
+    lessonsTotal: countSchema.meta({
+      description:
+        "Its size: each skill's lessons in the plan, never fewer than the skill graph sizes it, so progress moves only with the learner's own work, not when the plan cuts, restores or sets lessons aside",
+    }),
     matrix: z
       .array(z.string())
       .meta({
         description:
-          "When the notice's syllabus for it is a skills matrix (ENEM's competências and habilidades) and its `topics` are the contents the matrix is paired with: the matrix's statements, word for word, as detail. Empty otherwise",
+          "When the notice's syllabus for it is a skills matrix (ENEM's competencies and abilities) and its `topics` are the contents the matrix is paired with: the matrix's statements, word for word, as detail. Empty otherwise",
       }),
     name: z.string().meta({ description: "The notice's own name for it, or the module's" }),
     nextDate: isoDateSchema
@@ -156,9 +198,15 @@ const syllabusSubjectSchema = z
     topics: z
       .array(syllabusTopicSchema)
       .meta({ description: "The notice's topics in its own order; empty for modules" }),
+    topicsKnown: countSchema
+      .nullable()
+      .meta({
+        description:
+          "Topics `known` (the learner showed they know them), shown apart from the ones studied; null when the plan doesn't map topics",
+      }),
     topicsStudied: countSchema
       .nullable()
-      .meta({ description: "Topics studied; null when the plan doesn't map topics" }),
+      .meta({ description: "Topics `studied`; null when the plan doesn't map topics" }),
   })
   .meta({ id: "SyllabusSubject" });
 
@@ -182,6 +230,7 @@ export const syllabusViewSchema = z
         description:
           "How the learner's course weighs each of the exam's parts at their institution (an entrance exam's selection weights), as one source gives them; the plan gives the parts weighed more a bigger share of the time. Null when the goal names no course and institution or the weights weren't found",
       }),
+    examDocument: examDocumentSchema,
     fromMaterial: z
       .boolean()
       .meta({
@@ -195,13 +244,19 @@ export const syllabusViewSchema = z
         description:
           "`notice`: an exam whose notice lists its subjects and topics. `modules`: the plan's own areas",
       }),
+    knownTopicsReturn: z
+      .enum(["practice", "reviews"])
+      .meta({
+        description:
+          "Where a `known` topic comes back to be confirmed: `practice`, or `reviews` for a free exam plan past its first week, whose practice is Plus (the quick review asks it then)",
+      }),
     noticeUrl: z
       .string()
       .nullable()
       .meta({ description: "The notice the subjects were read from" }),
-    passMarks: z
-      .array(z.string())
-      .meta({ description: "What it takes to pass, as the notice says it; empty when it doesn't" }),
+    passMarks: passMarksSchema
+      .nullable()
+      .meta({ description: "What it takes to pass, as the notice says it; null when it doesn't" }),
     questionsSource: z
       .object({ edition: z.string().nullable(), title: z.string().nullable(), url: z.string() })
       .nullable()

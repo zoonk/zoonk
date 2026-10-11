@@ -41,25 +41,29 @@ export function toAiCallRow({ context = {}, provenance, task }: AiGeneration): A
   };
 }
 
-/** The learner and goal ids of the rows that still exist, to keep only links that can be saved. */
+/**
+ * The learners that still exist and the owner of each goal that does, to keep only links that can
+ * be saved.
+ */
 async function findLinkedIds(rows: readonly AiCallRow[]) {
   const userIds = [...new Set(rows.flatMap((row) => (row.userId ? [row.userId] : [])))];
   const goalIds = [...new Set(rows.flatMap((row) => (row.goalId ? [row.goalId] : [])))];
 
   const [users, goals] = await Promise.all([
     prisma.user.findMany({ select: { id: true }, where: { id: { in: userIds } } }),
-    prisma.goal.findMany({ select: { id: true }, where: { id: { in: goalIds } } }),
+    prisma.goal.findMany({ select: { id: true, userId: true }, where: { id: { in: goalIds } } }),
   ]);
 
   return {
-    goalIds: new Set(goals.map((goal) => goal.id)),
+    goalOwners: new Map(goals.map((goal) => [goal.id, goal.userId])),
     userIds: new Set(users.map((user) => user.id)),
   };
 }
 
 /**
  * Saves AI calls in one insert. A learner or goal deleted while its calls ran keeps the calls,
- * and their cost, without the link.
+ * and their cost, without the link. A guest who signed up while theirs ran is gone too, but their
+ * goal moved to the account (see `linkGuestAccount`), so the goal's owner gets the call.
  */
 export async function writeAiCalls(rows: readonly AiCallRow[]): Promise<void> {
   try {
@@ -72,11 +76,15 @@ export async function writeAiCalls(rows: readonly AiCallRow[]): Promise<void> {
     const linked = await findLinkedIds(rows);
 
     await prisma.aiCall.createMany({
-      data: rows.map((row) => ({
-        ...row,
-        goalId: row.goalId && linked.goalIds.has(row.goalId) ? row.goalId : null,
-        userId: row.userId && linked.userIds.has(row.userId) ? row.userId : null,
-      })),
+      data: rows.map((row) => {
+        const goalOwner = row.goalId ? linked.goalOwners.get(row.goalId) : undefined;
+
+        return {
+          ...row,
+          goalId: goalOwner ? row.goalId : null,
+          userId: row.userId && linked.userIds.has(row.userId) ? row.userId : (goalOwner ?? null),
+        };
+      }),
     });
   }
 }

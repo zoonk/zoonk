@@ -1,7 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type LanguageLessonParams } from "@zoonk/ai/tasks/v2/language/language-lesson";
 
-type LanguageLessonInput = Omit<
+export type LanguageLessonInput = Omit<
   LanguageLessonParams,
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
@@ -9,7 +9,9 @@ type LanguageLessonInput = Omit<
 /**
  * One case per language pair the plan names (learner language to target
  * language), across levels and situations. Evals focus on English and
- * Portuguese; Spanish is checked in its Spain variant.
+ * Portuguese; Spanish is checked in its Spain variant. Learners who read the
+ * app in the language they're preparing in (an IELTS candidate reading it in
+ * English) get lessons in that one language.
  */
 export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
   {
@@ -47,7 +49,7 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
-    expectations: `Brazilian Portuguese speaker learning US English, B1, in a job interview, asking the interviewer to repeat, rephrase or slow down ("Could you repeat that?", "Could you rephrase the question?", "more slowly", "Let me make sure I understood"). Respellings have exactly the word's syllables and never the vowel Brazilians add: "repeat" is "ri-PIT", "rephrase" is "ri-FREIZ", "slowly" is "SLOU-li", "question" is "CUÉS-tchan", never "i-ri-PIT", "a-ri-FREIZ" or "is-LOU-li". Words starting with an English "r" get a tip on making it. B1 sentences fit a real interview, not A1 greetings.`,
+    expectations: `Brazilian Portuguese speaker learning US English, B1, in a job interview, asking the interviewer to repeat, rephrase or slow down ("Could you repeat that?", "Could you rephrase the question?", "more slowly", "Let me make sure I understood"). Respellings have exactly the word's syllables and never the vowel Brazilians add: "repeat" is "ri-PIT", "rephrase" is "ri-FREIZ", "slowly" is "SLOU-li", "question" is "CUÉS-tchan", never "i-ri-PIT", "a-ri-FREIZ" or "is-LOU-li". Words starting with an English "r" get a tip on making it. B1 sentences fit a real interview, not A1 greetings. The lesson is shared by learners of every field: the learner's own lines never give them a job or field ("my experience in sales"), only general ones ("my most recent role").`,
     id: "pt-en-b1-interview-repeat",
     userInput: {
       knownWords: ["Good morning", "Nice to meet you", "I work with data"],
@@ -66,7 +68,7 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
     },
   },
   {
-    expectations: `Brazilian Portuguese speaker learning US English, B1, opening a job interview by greeting and introducing themselves. At B1 the learner already says "Good morning", "My name is" and "Nice to meet you": none of those is taught as a new word. The words are what a B1 candidate still needs in the first minute ("Thanks for having me", "I've been working as", "a data analyst at", "walk you through"), and the sentences sound like a real interview opening, up to about 12 words.`,
+    expectations: `Brazilian Portuguese speaker learning US English, B1, opening a job interview by greeting and introducing themselves. At B1 the learner already says "Good morning", "My name is" and "Nice to meet you": none of those is taught as a new word. The words are what a B1 candidate still needs in the first minute ("Thanks for having me", "I've been working as", "my most recent role", "walk you through"), and the sentences sound like a real interview opening, up to about 12 words. The lesson is shared by learners of every field: the learner's own lines never give them a job or field, only general ones.`,
     id: "pt-en-b1-interview-opening",
     userInput: {
       knownWords: [],
@@ -146,6 +148,44 @@ export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
         "Pedir ayuda a un compañero",
       ],
       unitTitle: "Tu primera semana en el trabajo",
+    },
+  },
+  {
+    expectations: `An IELTS candidate reads the app in English and prepares in English, so the lesson is in English only and nothing is translated. Each word's \`translation\` is a short plain-English definition of its meaning in an academic passage, the way a learner's dictionary writes it, and never the word itself or a form of it (the lesson that failed had "need" defined as "need" and "grow" as "grow"). Sentence \`translation\` fields repeat the sentence exactly. Explanations, tips and notes never compare with "your language" or another language: tips name a sound English learners commonly get wrong, or are null; notes name a usage trap or a word often confused with it, or are null. The writing prompt gives the information to write in other words, never a sentence to copy. Sentences fit a short academic passage at A1–A2.`,
+    id: "en-en-a1-ielts-frequent-words",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Recognize familiar words to understand a short academic passage",
+      lessonDescription: "Common words carry much of the meaning in short academic passages.",
+      lessonTitle: "Frequent words in short passages",
+      level: "A1–A2",
+      targetLanguage: "en",
+      unitCanDos: [
+        "Recognize frequent English words in short passages",
+        "Use nearby words to choose a familiar word’s meaning",
+        "Find details stated directly in a passage",
+      ],
+      unitTitle: "Words in short passages",
+    },
+  },
+  {
+    expectations: `An IELTS candidate reads the app in English and learns to hear words that differ in their first consonant ("pat" and "bat", "pin" and "bin"). Nothing is translated: words get short plain-English definitions that never contain the word, and sentence \`translation\` fields repeat the sentence. The lesson is about hearing a sound, which writing can't test: a written word gives its spelling away, so practice never asks about a sound or letter in writing ("The first sound in pat is ___" with options "p", "t", "b" fails). Practice tests the contrast through meaning instead: a sentence where only one word of the pair fits ("He hit the ball with a ___": "bat", with "pat" as a wrong option). Each sentence uses one word of a pair, and its distractors include the other word of that pair, so hearing the sentence and building it tests the sound. Tips say how to make each sound, without claims about "your language".`,
+    id: "en-en-a1-ielts-consonant-contrasts",
+    userInput: {
+      knownWords: [],
+      learnerLanguage: "en",
+      lessonCanDo: "Tell apart words that start with different consonants.",
+      lessonDescription:
+        "Initial consonant contrasts help you distinguish words such as “pat” and “bat” before the rest of a phrase unfolds.",
+      lessonTitle: "Initial consonant contrasts",
+      level: "A1–A2",
+      targetLanguage: "en",
+      unitCanDos: [
+        "Distinguish consonant and vowel sounds that change a word",
+        "Use endings, clusters and stress to identify spoken words",
+      ],
+      unitTitle: "Hearing the sounds in words",
     },
   },
 ];

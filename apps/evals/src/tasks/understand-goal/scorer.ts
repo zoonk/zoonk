@@ -25,8 +25,12 @@ type ExpectedGoal = {
   kind: "exam" | "language" | "learn";
   /** A target (score, course or position) is filled in. */
   hasTarget?: boolean;
-  /** A language goal's target level (`targetScore`), such as /B2/. */
-  targetLevel?: RegExp;
+  /** The target score (`targetScore`): a language goal's level, such as /B2/, or an exam's, /750/. */
+  targetScore?: RegExp;
+  /** An entrance exam's course as the app shows it (`targetCourse`), such as /^Medicina$/. */
+  targetCourse?: RegExp;
+  /** The school or university aimed for (`institution`), such as /^UFMG$/. */
+  institution?: RegExp;
   /** The learner's current job, when the goal is for that work (`role`), such as /dados/. */
   role?: RegExp;
   /** Words the title must keep, such as the institution that names an exam. */
@@ -57,6 +61,11 @@ function readOutput(output: string): Output | null {
   }
 }
 
+/** Whether a text field matches what the case expects of it; a field the case leaves out passes. */
+function matchesText({ pattern, value }: { pattern: RegExp | undefined; value: unknown }) {
+  return !pattern || (typeof value === "string" && pattern.test(value));
+}
+
 /** The exam's own facts: its name, year, month and what its learner aims for. */
 function getExamChecks({
   expected,
@@ -67,8 +76,7 @@ function getExamChecks({
 }): [boolean, string][] {
   return [
     [
-      !expected.examName ||
-        (typeof goal.examName === "string" && expected.examName.test(goal.examName)),
+      matchesText({ pattern: expected.examName, value: goal.examName }),
       `exam ${show(goal.examName)}`,
     ],
     [
@@ -116,20 +124,21 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
     ],
     [!expected.ownLevel || goal.ownLevel === expected.ownLevel, `level ${show(goal.ownLevel)}`],
     [
-      !expected.targetLevel ||
-        (typeof goal.targetScore === "string" && expected.targetLevel.test(goal.targetScore)),
-      `target level ${show(goal.targetScore)}`,
+      matchesText({ pattern: expected.targetScore, value: goal.targetScore }),
+      `target score ${show(goal.targetScore)}`,
+    ],
+    [
+      matchesText({ pattern: expected.targetCourse, value: goal.targetCourse }),
+      `course ${show(goal.targetCourse)}`,
+    ],
+    [
+      matchesText({ pattern: expected.institution, value: goal.institution }),
+      `institution ${show(goal.institution)}`,
     ],
     [!expected.purpose || goal.purpose === expected.purpose, `purpose ${show(goal.purpose)}`],
-    [
-      !expected.role || (typeof goal.role === "string" && expected.role.test(goal.role)),
-      `role ${show(goal.role)}`,
-    ],
+    [matchesText({ pattern: expected.role, value: goal.role }), `role ${show(goal.role)}`],
     [!expected.hasTarget || hasTarget, "target missing"],
-    [
-      !expected.title || (typeof goal.title === "string" && expected.title.test(goal.title)),
-      `title ${show(goal.title)}`,
-    ],
+    [matchesText({ pattern: expected.title, value: goal.title }), `title ${show(goal.title)}`],
   ];
 
   return [...checks.filter(([ok]) => !ok).map(([, problem]) => problem), ...checkTitle(goal)];

@@ -35,12 +35,19 @@ async function findAsset(assetId: string) {
 
 type CheckedAsset = NonNullable<Awaited<ReturnType<typeof findAsset>>>;
 
+/** Screens showing the picture, as theirs or as one of their options'. */
+function usesPicture(assetId: string) {
+  return {
+    OR: [{ mediaAssetId: assetId }, { optionPictures: { some: { mediaAssetId: assetId } } }],
+  };
+}
+
 /** Lessons showing the picture, so their cached copies are read again. */
 async function findLessonTags(assetId: string): Promise<string[]> {
   const steps = await prisma.step.findMany({
     distinct: ["lessonId"],
     select: { lessonId: true },
-    where: { mediaAssetId: assetId },
+    where: usesPicture(assetId),
   });
 
   return steps.map((step) => getLibraryLessonCacheTag(step.lessonId));
@@ -60,20 +67,25 @@ async function replacePicture({ asset, drawn }: { asset: CheckedAsset; drawn: Dr
       data: { ...file, ...toProvenanceData(drawn.provenance) },
       where: { id: asset.id },
     }),
-    prisma.step.updateMany({ data: { updatedAt: now }, where: { mediaAssetId: asset.id } }),
+    prisma.step.updateMany({ data: { updatedAt: now }, where: usesPicture(asset.id) }),
     prisma.item.updateMany({ data: { updatedAt: now }, where: { mediaAssetId: asset.id } }),
   ]);
 }
 
 /**
  * Takes a picture no drawing could get right out of use: lesson screens go without it (they show
- * its description), and questions about it are deleted, since a question never goes without the
- * picture it points at. Answers keep their snapshots.
+ * its description, and so does a picture option), and questions about it are deleted, since a
+ * question never goes without the picture it points at. Answers keep their snapshots.
  */
 async function removePicture(asset: CheckedAsset) {
   await prisma.$transaction([
     prisma.item.deleteMany({ where: { mediaAssetId: asset.id } }),
+    prisma.step.updateMany({
+      data: { updatedAt: new Date() },
+      where: { optionPictures: { some: { mediaAssetId: asset.id } } },
+    }),
     prisma.step.updateMany({ data: { mediaAssetId: null }, where: { mediaAssetId: asset.id } }),
+    // Its option rows go with it (they cascade), so those options show their description.
     prisma.mediaAsset.delete({ where: { id: asset.id } }),
   ]);
 }

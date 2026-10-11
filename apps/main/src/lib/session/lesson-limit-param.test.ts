@@ -24,6 +24,7 @@ describe(toLessonLimitParam, () => {
       { retryAfterSeconds: 300, status: "slowDown" },
       { retryAfterSeconds: 300, status: "slowDown" },
     ],
+    [{ status: "signUpRequired" }, { status: "signUpRequired" }],
     // What the notice says only depends on these; a guest's daily budget reads like their lessons.
     [
       { period: "day", status: "limitReached", tier: "guest" },

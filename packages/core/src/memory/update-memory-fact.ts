@@ -6,7 +6,6 @@ import { getMemoryCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
 import { scheduleSensitivityCheck } from "./_utils/fact-sensitivity";
 import { forgetExampleLines } from "./_utils/forget-example-lines";
-import { getMemoryAccess } from "./_utils/memory-access";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import { type MemoryFactUpdateInput, type MemoryFactView } from "./memory-contract";
 
@@ -15,14 +14,13 @@ const LEARNER_CONFIDENCE = 1;
 
 export type MemoryFactUpdateResult =
   | { fact: MemoryFactView; status: "updated" }
-  | { status: "categoryNotAllowed" | "notFound" | "unauthorized" };
+  | { status: "notFound" | "unauthorized" };
 
 /**
  * Saves the learner's correction of one fact in place, so the old wording isn't kept anywhere, not
  * even in an example line written from it.
  * The fact becomes something the learner said, and a new wording is checked for sensitive details
- * after the response. A category outside what their memory may hold (only goals and learning for
- * minors) is refused.
+ * after the response.
  */
 export async function updateMemoryFact({
   factId,
@@ -42,11 +40,6 @@ export async function updateMemoryFact({
   }
 
   const userId = session.user.id;
-  const access = await getMemoryAccess(userId);
-
-  if (input.category && !access.categories.includes(input.category)) {
-    return { status: "categoryNotAllowed" };
-  }
 
   const { count } = await prisma.memoryFact.updateMany({
     data: {

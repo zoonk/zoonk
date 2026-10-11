@@ -103,9 +103,9 @@ type LearningEvents = {
     questions: number;
   };
   "Pronunciation Tip Shown": { skill_id: string | null; target_language: string };
-  /** A live call ended: practice, a unit's checkpoint or a speaking mock. */
+  /** A live call ended: practice, a unit's checkpoint, a speaking mock or an exam's speaking task. */
   "Conversation Finished": {
-    conversation_kind: "checkpoint" | "practice" | "speaking_mock";
+    conversation_kind: "checkpoint" | "exam_speaking" | "practice" | "speaking_mock";
     objectives: number;
     objectives_met: number;
     spoken_seconds: number;
@@ -164,8 +164,6 @@ type MechanicsEvents = {
 type SettingsEvents = { "Memory Turned Off": NoProperties; "Plan Edited": { change_kind: string } };
 
 type AccountEvents = {
-  /** Sent once an account is deleted, with no properties, so its PostHog person can be deleted too. */
-  "Account Deleted": NoProperties;
   "Sign In Completed": NoProperties;
   "Sign In Method Chosen": { method: "apple" | "google" | "otp" };
   /** The plan's "Signed Up". */

@@ -7,7 +7,6 @@ import {
 } from "@zoonk/db";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 import { lessonQuestionResourceOmit } from "./question-resource";
-import { isSuggestedScreenQuestion } from "./request-fingerprint";
 import { getSharedAnswerKey } from "./shared-answers";
 import { lockLessonQuestionThread } from "./thread-lock";
 
@@ -235,7 +234,7 @@ export async function claimAnswerInTransaction({
   const claimWhere = getClaimWhere({ now, question, userId });
 
   const shared = sharedKey
-    ? await transaction.tutorSharedAnswer.findUnique({ where: { stepQuestion: sharedKey } })
+    ? await transaction.tutorSharedAnswer.findUnique({ where: { stepSuggestion: sharedKey } })
     : null;
 
   if (shared) {
@@ -272,8 +271,8 @@ export async function claimAnswerInTransaction({
       question: question.question,
       questionId: question.id,
       revision: question.generationRevision + 1,
-      /** A first question about a screen may be answered once for everyone who asks it there. */
-      sharing: sharedKey && { key: sharedKey, suggested: isSuggestedScreenQuestion(question) },
+      /** The answer is written once for everyone who taps the same suggestion on the screen. */
+      shareAnswer: sharedKey !== null,
     },
     status: "ready" as const,
   };

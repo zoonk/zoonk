@@ -63,20 +63,26 @@ describe(normalizeCoverage, () => {
     expect(result.map((skill) => skill.reference)).toStrictEqual(["Statistics syllabus"]);
   });
 
-  it("drops gaps with a made-up quote, a name already in the graph or a repeated name", () => {
+  it("drops gaps with a made-up quote, a name already in the graph or a repeated name, and writes the rest as plain lines", () => {
     const result = normalizeCoverage({
       exam: false,
       graphSkills,
       missing: [
         missing({ syllabusLine: "Unidade 9: Trigonometria" }),
         missing({ name: "calcular PORCENTAGENS" }),
-        missing({}),
-        missing({ name: "Calcular juros compostos " }),
+        missing({ name: "Calcular as porcentagens" }),
+        missing({
+          description: "Juros sobre juros — o montante **cresce.",
+          name: "Calcular _juros_ — compostos",
+        }),
+        missing({ name: "Calcular os juros compostos " }),
       ],
       references,
     });
 
-    expect(result.map((skill) => skill.name)).toStrictEqual(["Calcular juros compostos"]);
+    expect(result.map((skill) => [skill.name, skill.description])).toStrictEqual([
+      ["Calcular juros, compostos", "Juros sobre juros, o montante cresce."],
+    ]);
   });
 
   it("keeps an exam's new skill weight as a whole number from 1 to 5", () => {
@@ -221,5 +227,30 @@ describe("an exam's notice", () => {
     ]);
 
     expect(normalizePlacements({ graphSkills: skills, placements: result })).toStrictEqual([]);
+  });
+
+  // A graph written before the notice was read keeps the names learners use, such as the OAB's
+  // "Professional Ethics": the check moves them to the notice's subject even when it places nothing.
+  it("moves skills whose area is a subject's short name to that subject", () => {
+    const ethics = {
+      group: null,
+      name: "Estatuto da Advocacia e da OAB e Código de Ética e Disciplina da OAB",
+      questions: 8,
+      shortName: "Ética Profissional",
+      topics: [],
+      weight: null,
+    };
+
+    const result = normalizePlacements({
+      graphSkills: [
+        { area: "Ética Profissional", key: "fees", name: "Aplicar regras de honorários" },
+        { area: "Língua Portuguesa", key: "spelling", name: "Escrever" },
+        { area: "Estratégia de prova", key: "blanks", name: "Deixar em branco" },
+      ],
+      outline: { ...outline, subjects: [...outline.subjects, ethics] },
+      placements: [],
+    });
+
+    expect(result).toStrictEqual([{ area: ethics.name, key: "fees", topics: [] }]);
   });
 });

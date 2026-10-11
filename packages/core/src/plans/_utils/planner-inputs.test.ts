@@ -13,7 +13,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { loadSkillLessons } from "./planner-lessons";
+import { loadGoalPlannerLessons, loadSkillLessons } from "./planner-lessons";
 
 const citation = { passage: "passage", sourceId: "source" };
 
@@ -148,45 +148,49 @@ async function bandChapterOf({
   return lesson;
 }
 
-describe("loadSkillLessons with the learner's level", () => {
-  it("leaves out a skill's easier band when the skill is also taught at the learner's level", async () => {
-    const [user, course, both, onlyBasics] = await Promise.all([
+describe("loadGoalPlannerLessons with the learner's stated level", () => {
+  // The level a learner states is a claim: its easier bands stay to confirm, and only placement
+  // answers of the skill's own test them out.
+  it("keeps a skill's easier band, whatever level the learner says they have", async () => {
+    const [user, course, skill] = await Promise.all([
       userFixture(),
       courseFixture({ title: "Constitutional law" }),
       skillFixture({ name: "Read the Constitution's structure" }),
-      skillFixture({ name: "Tell State from government" }),
     ]);
 
-    const [basicLesson, levelLesson, onlyLesson] = await Promise.all([
-      bandChapterOf({ courseId: course.id, level: "beginner", position: 0, skillId: both.id }),
-      bandChapterOf({ courseId: course.id, level: "intermediate", position: 0, skillId: both.id }),
-      bandChapterOf({
-        courseId: course.id,
-        level: "beginner",
-        position: 1,
-        skillId: onlyBasics.id,
-      }),
+    const [basicLesson, levelLesson] = await Promise.all([
+      bandChapterOf({ courseId: course.id, level: "beginner", position: 0, skillId: skill.id }),
+      bandChapterOf({ courseId: course.id, level: "intermediate", position: 1, skillId: skill.id }),
     ]);
 
-    const load = (levelFloor: "intermediate" | null) =>
-      loadSkillLessons({
-        goal: { examBlueprintId: null, kind: "learn" },
-        levelFloor,
-        skillCourses: new Map([
-          [both.id, [course.id]],
-          [onlyBasics.id, [course.id]],
-        ]),
-        skillIds: [both.id, onlyBasics.id],
-        userId: user.id,
-      }).then((lessons) => lessons.map((lesson) => lesson.lessonId).toSorted());
+    const goal = {
+      details: { level: "intermediate" },
+      examBlueprintId: null,
+      kind: "learn" as const,
+      primaryCourseId: null,
+    };
 
-    await expect(load(null)).resolves.toStrictEqual(
-      [basicLesson.id, levelLesson.id, onlyLesson.id].toSorted(),
-    );
+    const lessons = await loadGoalPlannerLessons({
+      goal,
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [
+          {
+            area: null,
+            courseIds: [course.id],
+            lessons: 2,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+            weight: null,
+          },
+        ],
+      },
+      userId: user.id,
+    });
 
-    // A skill taught only in the easier band keeps it: a plan never loses a skill's lessons.
-    await expect(load("intermediate")).resolves.toStrictEqual(
-      [levelLesson.id, onlyLesson.id].toSorted(),
+    expect(lessons.map((lesson) => lesson.lessonId).toSorted()).toStrictEqual(
+      [basicLesson.id, levelLesson.id].toSorted(),
     );
   });
 });

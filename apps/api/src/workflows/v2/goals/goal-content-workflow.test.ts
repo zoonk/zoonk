@@ -5,7 +5,6 @@ import {
 } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
 import { checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
 import { generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-graph";
-import { SKILL_GRAPH_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/curriculum/skill-graph-version";
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/v2/identity/goal-specificity";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
@@ -17,12 +16,15 @@ import {
 } from "@zoonk/ai/tasks/v2/items/placement-items";
 import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/v2/items/schemas";
 import { classifyWorkField } from "@zoonk/ai/tasks/v2/items/work-field";
-import { EXAM_BLUEPRINT_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint-version";
+import { writeItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
+import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -39,13 +41,19 @@ import { mockHookConflict } from "../../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
 import { getStartMock } from "../../_test-utils/start-mock";
-import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
+import {
+  outlineResult,
+  recordedOutput,
+  replayStreamedOutline,
+  taskResult,
+} from "../_test-utils/recorded-outputs";
 import { courseDetailsWorkflow } from "../courses/course-details-workflow";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { levelTestBankWorkflow } from "../language/level-test-bank-workflow";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import { placementItemsWorkflow } from "./placement-items-workflow";
+import { runPlanSetupTaskStep } from "./steps/goal-curriculum-steps";
 
 vi.mock("workflow/api", () => ({
   getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("completed") })),
@@ -70,6 +78,10 @@ vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms
 vi.mock("@zoonk/ai/tasks/v2/items/generate", () => ({ generateItems: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/items/placement-items", () => ({ generatePlacementItems: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/items/work-field", () => ({ classifyWorkField: vi.fn() }));
+vi.mock("@zoonk/ai/tasks/v2/items/write-set", () => ({ writeItemSet: vi.fn() }));
+
+// Fitting a new plan to the learner's routine is a model call too.
+vi.mock("@zoonk/ai/tasks/v2/plans/routine-fit", () => ({ fitPlanToRoutineFacts: vi.fn() }));
 
 vi.mock("@zoonk/ai/tasks/v2/items/past-questions", () => ({ extractPastQuestions: vi.fn() }));
 
@@ -82,6 +94,11 @@ vi.mock("@zoonk/core/analytics/server", () => ({
 type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
 type Specificity = Awaited<ReturnType<typeof classifyGoalSpecificity>>["data"];
+
+/** A written graph as the graph task returns it, with nothing code repaired. */
+function graphResult(graph: SkillGraph) {
+  return { ...taskResult(graph), repaired: [] };
+}
 
 const recordedGraph = recordedOutput<SkillGraph>("skill-graph");
 
@@ -107,17 +124,23 @@ const recordedOutline = recordedOutput<CourseOutline>("course-outline");
 
 /** The part of a stored plan graph that says which course each skill's lessons come from. */
 const planCoursesSchema = z.object({
-  skills: z.array(z.object({ courseIds: z.array(z.string()) })),
+  skills: z.array(z.object({ courseIds: z.array(z.string()), skillId: z.string() })),
 });
 
 const recordedSpecificity = recordedOutput<Specificity>("goal-specificity");
 const TIMEOUT = 60_000;
+
+/** The Library skills a stored plan teaches, in its order. */
+function planSkillIdsOf(plan: { graph: unknown }): string[] {
+  return planCoursesSchema.parse(plan.graph).skills.map((skill) => skill.skillId);
+}
 /** How long the research in a test runs at most before ending on its own. */
 const RESEARCH_LIMIT_MS = 3000;
 
 const placementItem = {
   context: null,
   difficulty: "easy" as const,
+  fixedOrder: false,
   format: "multipleChoice" as const,
   image: null,
   options: [
@@ -184,23 +207,24 @@ const trueFalsePlacementItem = {
   visual: null,
 };
 
-/** Placement's writer: a quick question in the asked format and, when asked, a typed one. */
+/** Placement's writer: the quick questions asked in the asked format and, when asked, a typed one. */
 function placementBatchFor(params: PlacementItemsParams) {
   const quick = params.quickFormat === "trueFalse" ? trueFalsePlacementItem : placementItem;
 
   return taskResult({
     skills: params.skills.map(() => ({
-      quick: [quick],
+      quick: Array.from({ length: params.quickCount }, () => quick),
       typed: params.typedCount > 0 ? [typedPlacementItem] : [],
     })),
   });
 }
 
+/** A learner who knows the basics, so placement asks them questions and its run writes them. */
 async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
   const user = await userFixture();
 
   const goal = await goalFixture({
-    details: { level: "none", purpose: "overview" },
+    details: { level: "basic", purpose: "overview" },
     prompt: "Understand how vaccines train the immune system",
     title: "How vaccines work",
     userId: user.id,
@@ -321,8 +345,8 @@ describe(goalContentWorkflow, () => {
       taskResult(recordedSpecificity, "openai/gpt-6-luna"),
     );
 
-    vi.mocked(generateSkillGraph).mockResolvedValue(taskResult(graph));
-    vi.mocked(generateCourseOutline).mockResolvedValue(taskResult(recordedOutline));
+    vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
+    vi.mocked(generateCourseOutline).mockResolvedValue(outlineResult(recordedOutline));
 
     vi.mocked(streamCourseOutline).mockImplementation(
       replayStreamedOutline(recordedOutline) as never,
@@ -561,19 +585,23 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "tries a placement question that failed once more before counting it",
+    "counts a placement call whose step's retries ran out, and prepares placement with the rest",
     { timeout: TIMEOUT },
     async () => {
       const { goal } = await newGoal();
 
+      // The runtime retries a failed call's step on its own; here it fails for good.
       vi.mocked(generatePlacementItems)
-        .mockRejectedValueOnce(new Error("Provider hiccup"))
+        .mockRejectedValueOnce(new Error("Provider unavailable"))
         .mockImplementation(async (params) => placementBatchFor(params));
 
       await goalContentWorkflow({ goalId: goal.id });
 
-      expect(trackServerEvent).not.toHaveBeenCalledWith(
-        expect.objectContaining({ name: "Generation Failed" }),
+      expect(trackServerEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "Generation Failed",
+          properties: expect.objectContaining({ task: "placement-questions" }),
+        }),
       );
 
       await expect(
@@ -581,6 +609,10 @@ describe(goalContentWorkflow, () => {
           where: { skill: { planItems: { some: { plan: { goalId: goal.id } } } } },
         }),
       ).resolves.toBeGreaterThan(0);
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+      ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
     },
   );
 
@@ -636,6 +668,83 @@ describe(goalContentWorkflow, () => {
     },
   );
 
+  // Other learners' plans reuse a shared graph's skills and phases: a learner's role ("teacher") once
+  // named a shared skill "Relate teaching experience to UX work".
+  it(
+    "builds a shared graph from the goal's general form, never the learner's own words",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal } = await newGoal({
+        details: {
+          level: "none",
+          purpose: "careerChange",
+          reason: "Cansei de dar aula na escola Santa Rita",
+          role: "Professora em Pelotas",
+        },
+        prompt: "Sou a Joana, professora em Pelotas, e quero entender como vacinas funcionam",
+      });
+
+      await goalContentWorkflow({ goalId: goal.id, platform: "web" });
+
+      const [params] = vi.mocked(generateSkillGraph).mock.calls[0] ?? [];
+
+      expect(params?.goal).toBe(recordedSpecificity.generalGoal ?? goal.title);
+      expect(JSON.stringify(params)).not.toMatch(/Joana|Pelotas|Santa Rita|Professora/u);
+    },
+  );
+
+  it(
+    "sets a new plan up in steps of its own, and finishes a task that kept failing on the goal's next run",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal, user } = await newGoal();
+
+      await Promise.all([
+        learningProfileFixture({ memoryEnabled: true, userId: user.id }),
+        memoryFactFixture({
+          category: "routine",
+          statement: "Never studies on Sundays",
+          userId: user.id,
+        }),
+      ]);
+
+      const overloaded = new Error("The provider is overloaded");
+      vi.mocked(fitPlanToRoutineFacts).mockRejectedValue(overloaded);
+
+      // Fitting the routine fails for good on this run, and the goal is built without it.
+      await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
+        status: "built",
+      });
+
+      const setupOf = async () => {
+        const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+        return plan.setupTasks;
+      };
+
+      await expect(setupOf()).resolves.toStrictEqual(["routine"]);
+
+      // Its step throws, so the runtime retries it.
+      await expect(runPlanSetupTaskStep({ goalId: goal.id, task: "routine" })).rejects.toBe(
+        overloaded,
+      );
+
+      vi.mocked(fitPlanToRoutineFacts).mockResolvedValue(
+        taskResult({
+          operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] }],
+          reason: "Sundays are off, since you never study then.",
+        }),
+      );
+
+      await goalContentWorkflow({ goalId: goal.id });
+
+      await expect(setupOf()).resolves.toStrictEqual([]);
+
+      await expect(
+        prisma.planChange.findMany({ where: { plan: { goalId: goal.id }, status: "applied" } }),
+      ).resolves.toMatchObject([{ reason: "Sundays are off, since you never study then." }]);
+    },
+  );
+
   it("reports a goal that no longer exists without building anything", async () => {
     const goalId = crypto.randomUUID();
 
@@ -680,6 +789,66 @@ describe(goalContentWorkflow, () => {
       await expect(goalContentWorkflow({ goalId: plusGoal.id })).resolves.toMatchObject({
         speculativeLessonIds: expect.toSatisfy((ids: string[]) => ids.length === 4),
       });
+    },
+  );
+
+  it(
+    "outlines only the courses a Plus subscriber's plan reaches within two weeks, like anyone's",
+    { timeout: TIMEOUT },
+    async () => {
+      const [phase] = graph.phases;
+      const [course] = graph.courses;
+
+      // A second course the plan gets to only after weeks of the first one's lessons.
+      vi.mocked(generateSkillGraph).mockResolvedValue(
+        graphResult({
+          ...graph,
+          courses: course ? [course, { ...course, key: "later", title: `${course.title} 2` }] : [],
+          phases: phase ? [phase, { ...phase, title: `${phase.title} 2` }] : [],
+          skills: graph.skills.map((skill, index) =>
+            index < 12
+              ? { ...skill, estimatedLessons: 12 }
+              : { ...skill, course: "later", phase: 2, prerequisites: [] },
+          ),
+        }),
+      );
+
+      const { goal, user } = await newGoal();
+
+      await prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      });
+
+      await goalContentWorkflow({ goalId: goal.id });
+
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+      const { skills } = planCoursesSchema.parse(plan.graph);
+      const courseIds = new Set(skills.flatMap((skill) => skill.courseIds));
+      const [firstCourseId, laterCourseId] = [...courseIds];
+
+      const laterFirst = await prisma.planItem.findFirstOrThrow({
+        orderBy: { position: "asc" },
+        where: {
+          kind: "lesson",
+          plan: { goalId: goal.id },
+          skillId: {
+            in: skills
+              .filter((skill) => skill.courseIds.includes(laterCourseId ?? ""))
+              .map((skill) => skill.skillId),
+          },
+        },
+      });
+
+      // The later course is weeks away: its outline waits for the preparations that get close.
+      expect(laterFirst.scheduledFor?.getTime()).toBeGreaterThan(Date.now() + 14 * DAY_MS);
+
+      const outlined = getStartMock().mock.calls.flatMap(([workflow, args]) =>
+        workflow === courseOutlineWorkflow
+          ? (args as Parameters<typeof courseOutlineWorkflow>).map((input) => input.courseId)
+          : [],
+      );
+
+      expect(outlined).toStrictEqual([firstCourseId]);
     },
   );
 
@@ -738,7 +907,7 @@ describe(goalContentWorkflow, () => {
 
       // Two phases: placement may start a learner who knows the basics in either one.
       vi.mocked(generateSkillGraph).mockResolvedValue(
-        taskResult({
+        graphResult({
           ...graph,
           phases: phase ? [phase, { ...phase, title: `${phase.title} 2` }] : [],
           skills: graph.skills.map((skill, index) => (index < 8 ? skill : { ...skill, phase: 2 })),
@@ -871,7 +1040,7 @@ describe(goalContentWorkflow, () => {
 
       // The model split the goal across two courses; the learner started one.
       vi.mocked(generateSkillGraph).mockResolvedValue(
-        taskResult({
+        graphResult({
           ...graph,
           courses: [
             ...graph.courses,
@@ -1167,6 +1336,9 @@ describe(goalContentWorkflow, () => {
         goalKind: "exam",
       });
 
+      // A class test's graph is the learner's own, so it never takes the priority tier.
+      expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
+
       // The graph was checked against the material once; the material is the curriculum, so the
       // plan isn't reconciled with research again.
       expect(checkCoverage).toHaveBeenCalledExactlyOnceWith(
@@ -1195,13 +1367,14 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "builds an exam's graph at once when onboarding already found its current blueprint",
+    "builds an exam's graph at once when onboarding already found its current blueprint, whatever instructions read it",
     { timeout: TIMEOUT },
     async () => {
+      // Read by instructions older than today's: the notice is read once and shared.
       const blueprint = await examBlueprintFixture({
         examDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
         name: "Immunology board exam",
-        promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
+        promptVersion: "older-instructions",
       });
 
       const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
@@ -1228,25 +1401,40 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "plans a later learner of the same notice from the curriculum an earlier one's goal built, without writing a graph",
+    "plans a later learner of the same notice from the exam's graph, whatever prompt wrote it and after its first learner left, without writing one",
     { timeout: TIMEOUT },
     async () => {
       const blueprint = await examBlueprintFixture({
         examDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
         name: "Immunology board exam",
-        promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
       });
 
-      // The graph the current instructions wrote, as the plan built from it records.
-      const written = taskResult(graph);
+      // The graph instructions that changed since wrote: still the exam's.
+      const written = graphResult(graph);
 
       vi.mocked(generateSkillGraph).mockResolvedValue({
         ...written,
-        provenance: { ...written.provenance, promptVersion: SKILL_GRAPH_PROMPT_VERSION },
+        provenance: { ...written.provenance, promptVersion: "older-instructions" },
       });
 
       const earlier = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
       await goalContentWorkflow({ goalId: earlier.goal.id });
+
+      // The exam's graph is written for the exam, not for its first learner: not their level, and
+      // not the general form a model wrote from their words.
+      expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
+        context: undefined,
+        goal: "Immunology board exam",
+        ownLevel: undefined,
+      });
+
+      const [earlierGoal, earlierPlan] = await Promise.all([
+        prisma.goal.findUniqueOrThrow({ where: { id: earlier.goal.id } }),
+        prisma.plan.findUniqueOrThrow({ where: { goalId: earlier.goal.id } }),
+      ]);
+
+      // The exam's first learner leaves: their goal and plan go, the exam's graph stays.
+      await prisma.user.delete({ where: { id: earlierGoal.userId } });
 
       const [later, otherLevel] = await Promise.all([
         newGoal({ examBlueprintId: blueprint.id, kind: "exam" }),
@@ -1271,20 +1459,12 @@ describe(goalContentWorkflow, () => {
       expect(generateSearchTerms).not.toHaveBeenCalled();
       expect(generatePlacementItems).not.toHaveBeenCalled();
 
-      const [earlierGoal, laterGoal, earlierPlan, laterPlan] = await Promise.all([
-        prisma.goal.findUniqueOrThrow({ where: { id: earlier.goal.id } }),
+      const [laterGoal, laterPlan] = await Promise.all([
         prisma.goal.findUniqueOrThrow({ where: { id: later.goal.id } }),
-        prisma.plan.findUniqueOrThrow({ where: { goalId: earlier.goal.id } }),
         prisma.plan.findUniqueOrThrow({ where: { goalId: later.goal.id } }),
       ]);
 
-      const skillIdsOf = (plan: typeof earlierPlan) =>
-        planCoursesSchema
-          .extend({ skills: z.array(z.object({ skillId: z.string() })) })
-          .parse(plan.graph)
-          .skills.map((skill) => skill.skillId);
-
-      expect(skillIdsOf(laterPlan)).toStrictEqual(skillIdsOf(earlierPlan));
+      expect(planSkillIdsOf(laterPlan)).toStrictEqual(planSkillIdsOf(earlierPlan));
       expect(laterGoal.primaryCourseId).toBe(earlierGoal.primaryCourseId);
 
       // Its plan counts as written now, so placement waits for questions still being written.
@@ -1292,70 +1472,19 @@ describe(goalContentWorkflow, () => {
         earlierPlan.generatedAt?.getTime() ?? 0,
       );
 
-      // A learner who gave another level gets a graph of their own.
+      // A learner who gave another level plans from it too, on the same Library skills and courses
+      // (so the same outlines): their level decides where they start (placement, the plan's level
+      // floor), not which graph or outlines are written.
       await goalContentWorkflow({ goalId: otherLevel.goal.id });
-      expect(generateSkillGraph).toHaveBeenCalledOnce();
-    },
-  );
 
-  it(
-    "waits for research to read a current notice again when older instructions read it, and builds from that reading",
-    { timeout: TIMEOUT },
-    async () => {
-      const blueprint = await examBlueprintFixture({
-        examDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-        name: "Immunology board exam",
-        promptVersion: "older-instructions",
-      });
-
-      const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
-
-      vi.mocked(getRun).mockReturnValue({
-        exists: Promise.resolve(true),
-        status: Promise.resolve("running"),
-      } as never);
-
-      // Research reads the notice again meanwhile: the new reading names the notice's groups.
-      vi.mocked(sleep).mockImplementationOnce(async () => {
-        expect(generateSkillGraph).not.toHaveBeenCalled();
-
-        await prisma.examBlueprint.update({
-          data: {
-            name: "Immunology board exam (read again)",
-            promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
-          },
-          where: { id: blueprint.id },
-        });
-
-        vi.mocked(getRun).mockReturnValue({
-          exists: Promise.resolve(true),
-          status: Promise.resolve("completed"),
-        } as never);
-      });
-
-      await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
-
-      expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
-        examBlueprint: expect.objectContaining({ name: "Immunology board exam (read again)" }),
-      });
-
-      // The wait says it's reading the exam's notice, not the learner's material.
-      const events = getStreamedEvents().map(
-        (event) => `${String(event.step)}:${String(event.status)}`,
-      );
-
-      expect(events.slice(1, 4)).toStrictEqual([
-        "readNotice:started",
-        "readNotice:completed",
-        "buildSkillGraph:started",
+      const [otherLevelGoal, otherLevelPlan] = await Promise.all([
+        prisma.goal.findUniqueOrThrow({ where: { id: otherLevel.goal.id } }),
+        prisma.plan.findUniqueOrThrow({ where: { goalId: otherLevel.goal.id } }),
       ]);
 
-      // The plan was built from the new reading: nothing to reconcile or wait for afterwards.
-      expect(checkCoverage).not.toHaveBeenCalled();
-
-      await expect(
-        prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
-      ).resolves.toMatchObject({ noticeWaitUntil: null });
+      expect(generateSkillGraph).not.toHaveBeenCalled();
+      expect(planSkillIdsOf(otherLevelPlan)).toStrictEqual(planSkillIdsOf(earlierPlan));
+      expect(otherLevelGoal.primaryCourseId).toBe(earlierGoal.primaryCourseId);
     },
   );
 
@@ -1426,7 +1555,7 @@ describe(goalContentWorkflow, () => {
 
       vi.mocked(generateSkillGraph).mockImplementation(async () => {
         order.push("graph");
-        return taskResult(graph);
+        return graphResult(graph);
       });
 
       // Research finds no official notice for a new exam.
@@ -1445,12 +1574,20 @@ describe(goalContentWorkflow, () => {
 
       expect(order).toStrictEqual(["graph", "research ended"]);
 
-      // The exam and its year reach the graph through what onboarding understood.
+      // The exam reaches the graph as onboarding understood it, and nothing else the learner said.
+      // An exam's graph is shared with its later learners, so the learner waiting on it gets the
+      // priority tier even before its notice is found (Rafaela's first question waited 94 s on the
+      // graph).
       const [params] = vi.mocked(generateSkillGraph).mock.calls[0] ?? [];
 
-      expect(params).toMatchObject({ examBlueprint: undefined, goalKind: "exam" });
-      expect(params?.context).toContain('"examName":"Immunology board exam"');
-      expect(params?.context).toContain('"examYear":2027');
+      expect(params).toMatchObject({
+        context: undefined,
+        examBlueprint: undefined,
+        goal: "Immunology board exam",
+        goalKind: "exam",
+        ownLevel: undefined,
+        serviceTier: "priority",
+      });
 
       expect(getStreamedEvents().some((event) => event.step === "readExamNotice")).toBe(false);
 
@@ -1464,7 +1601,7 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "reconciles a new exam's plan with the notice research reads: adds what it missed, corrects weights and plans to the exam's day",
+    "reconciles a new exam's plan with the notice research reads: adds what it missed once, corrects weights and plans to the exam's day",
     { timeout: TIMEOUT },
     async () => {
       const { goal } = await newGoal({
@@ -1493,9 +1630,11 @@ describe(goalContentWorkflow, () => {
       };
 
       const [vaccines, reweighted] = weighted.skills;
-      const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
+      const suffix = crypto.randomUUID().slice(0, 8);
+      const missed = `Describe how antibodies are built ${suffix}`;
+      const twin = `Explain how antibodies are built ${suffix}`;
 
-      vi.mocked(generateSkillGraph).mockResolvedValue(taskResult(weighted));
+      vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(weighted));
 
       // The notice's subject is the graph's course, under its own name: the check places the first
       // skill on the topic it teaches, and adds a skill for the topic none does.
@@ -1514,12 +1653,32 @@ describe(goalContentWorkflow, () => {
                 syllabusLine: "Antibody structure",
                 topics: ["Antibody structure"],
               },
+              // The check wrote the same skill again in other words.
+              {
+                area: "Immunology",
+                description: "The chains an antibody is made of and where it binds the antigen.",
+                examWeight: 5,
+                name: twin,
+                prerequisites: [],
+                reference: "Immunology board exam",
+                syllabusLine: "Antibody structure",
+                topics: ["Antibody structure"],
+              },
             ],
             placements: [{ area: "Immunology", key: vaccines?.key ?? "", topics: ["Vaccines"] }],
           },
           "google/gemini-3.8-flash",
         ),
       );
+
+      // The reuse decision finds the twin is the skill added just before it.
+      vi.mocked(decideLibraryIdentity).mockImplementation(async ({ candidates, subject }) => ({
+        match:
+          subject.item.title === twin && candidates[0]
+            ? { id: candidates[0].id, model: "test/jev", probability: 0.9 }
+            : null,
+        verdicts: [],
+      }));
 
       const testedOut: string[] = [];
       const preparedAt: (Date | null)[] = [];
@@ -1578,6 +1737,18 @@ describe(goalContentWorkflow, () => {
         prisma.skill.findFirstOrThrow({ where: { name: reweighted?.name } }),
         prisma.planItem.findMany({ where: { plan: { goalId: goal.id } } }),
       ]);
+
+      // The twin merged into the skill it repeats before either reached the Library.
+      expect(decideLibraryIdentity).toHaveBeenCalledWith(
+        expect.objectContaining({
+          candidates: [
+            expect.objectContaining({ item: expect.objectContaining({ title: missed }) }),
+          ],
+          subject: expect.objectContaining({ item: expect.objectContaining({ title: twin }) }),
+        }),
+      );
+
+      await expect(prisma.skill.count({ where: { name: twin } })).resolves.toBe(0);
 
       // The missing topic opens its subject, as the notice lists it first, with its weight; the
       // weight the notice showed was off moved, and every other skill kept its own.
@@ -1677,7 +1848,7 @@ describe(goalContentWorkflow, () => {
 
       const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
 
-      vi.mocked(generateSkillGraph).mockResolvedValue(taskResult(graph));
+      vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
 
       vi.mocked(checkCoverage).mockResolvedValue(
         taskResult(
@@ -1782,7 +1953,7 @@ describe(goalContentWorkflow, () => {
       const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
       const waits: (Date | null)[] = [];
 
-      vi.mocked(generateSkillGraph).mockResolvedValue(taskResult(graph));
+      vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
 
       // The check takes longer than what was left of the reveal's wait when the reading landed.
       vi.mocked(checkCoverage).mockImplementation(async () => {
@@ -1859,7 +2030,6 @@ describe(goalContentWorkflow, () => {
       const blueprint = await examBlueprintFixture({
         edition: examDayEdition(planned),
         name: "Moved board exam",
-        promptVersion: EXAM_BLUEPRINT_PROMPT_VERSION,
         structure: examStructure(["Antibody structure", "Vaccines"]),
       });
 
@@ -1907,7 +2077,7 @@ describe(goalContentWorkflow, () => {
       });
 
       // The first build's research failed: the plan was built from the exam as understood.
-      vi.mocked(generateSkillGraph).mockResolvedValue(taskResult(graph));
+      vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
       await goalContentWorkflow({ goalId: goal.id });
 
       const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
@@ -2000,7 +2170,7 @@ describe(goalContentWorkflow, () => {
         structure: examStructure(["Vaccines"]),
       });
 
-      vi.mocked(generateSkillGraph).mockResolvedValue(taskResult(graph));
+      vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
 
       vi.mocked(checkCoverage).mockResolvedValue(
         taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
@@ -2048,7 +2218,7 @@ describe(goalContentWorkflow, () => {
       // The graph covers last edition's only topic, so the plan needs no check until the new one.
       vi.mocked(generateSkillGraph).mockImplementation(async () => {
         order.push("graph");
-        return taskResult(withTopic({ graph, topic: "Vaccines" }));
+        return graphResult(withTopic({ graph, topic: "Vaccines" }));
       });
 
       vi.mocked(checkCoverage).mockResolvedValue(
@@ -2294,6 +2464,35 @@ describe(goalContentWorkflow, () => {
     },
   );
 
+  it(
+    "writes question sets for an exam goal's first areas in the background, never for a guest",
+    { timeout: TIMEOUT },
+    async () => {
+      const blueprint = await examBlueprintFixture({ name: "Immunology board exam" });
+
+      const [{ goal }, guest] = await Promise.all([
+        newGoal({ examBlueprintId: blueprint.id, kind: "exam" }),
+        newGoal({ examBlueprintId: blueprint.id, kind: "exam" }),
+      ]);
+
+      await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.user.id } });
+      await goalContentWorkflow({ goalId: guest.goal.id });
+      expect(writeItemSet).not.toHaveBeenCalled();
+
+      await goalContentWorkflow({ goalId: goal.id });
+
+      const calls = vi.mocked(writeItemSet).mock.calls.map(([params]) => params);
+      expect(calls.length).toBeGreaterThan(0);
+
+      expect(calls[0]).toMatchObject({
+        examFormat: expect.objectContaining({ name: "Immunology board exam" }),
+        serviceTier: "flex",
+      });
+
+      expect(calls.every((params) => params.skills.length >= 2)).toBe(true);
+    },
+  );
+
   it("writes no free-response questions for other exams", { timeout: TIMEOUT }, async () => {
     const blueprint = await examBlueprintFixture({ name: "Immunology board exam" });
     const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
@@ -2321,7 +2520,7 @@ describe(goalContentWorkflow, () => {
       vi.mocked(generateSkillGraph).mockImplementation(async () => {
         events.push("graph");
         markGraphWritten(true);
-        return taskResult(graph);
+        return graphResult(graph);
       });
 
       vi.mocked(checkCoverage).mockResolvedValue(
@@ -2502,6 +2701,7 @@ describe(goalContentWorkflow, () => {
                 item: {
                   context: "Uma vacina protege 90 de 100 pessoas.",
                   difficulty: "easy" as const,
+                  fixedOrder: false,
                   format: "multipleChoice" as const,
                   image: null,
                   options: [

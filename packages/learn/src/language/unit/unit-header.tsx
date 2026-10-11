@@ -61,7 +61,7 @@ export function UnitHeader({
   const t = useExtracted();
   const { lessons, unit } = view;
   const done = lessons.filter((lesson) => lesson.done).length;
-  const next = lessons.find((lesson) => !lesson.done);
+  const next = lessons.find((lesson) => lesson.state === "next");
 
   return (
     <>

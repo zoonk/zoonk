@@ -107,18 +107,20 @@ describe("the date an exam plan counts down to", () => {
     ).resolves.toBe("2020-11-08");
   });
 
+  // The next year, not one further: a plan two years long fills hundreds of practice days after its
+  // one lesson, which is planning work that says nothing about the date.
   it("is the estimated first day of a year the notice isn't for, the day the exam screen shows", async () => {
-    // The notice's 2nd and 3rd Sundays of November fall on the 13th and 20th in 2022.
+    // The notice's 2nd and 3rd Sundays of November fall on the 14th and 21st in 2021.
     await expect(
-      planExam({ days: ["2020-11-08", "2020-11-15"], examYear: 2022, year: 2020 }),
-    ).resolves.toBe("2022-11-13");
+      planExam({ days: ["2020-11-08", "2020-11-15"], examYear: 2021, year: 2020 }),
+    ).resolves.toBe("2021-11-14");
   });
 
   it("is the estimated day in the month the learner named", async () => {
     // The notice's 2nd Sunday of November moves to the 2nd Sunday of the March the learner said.
     await expect(
-      planExam({ days: ["2020-11-08"], examMonth: 3, examYear: 2022, year: 2020 }),
-    ).resolves.toBe("2022-03-13");
+      planExam({ days: ["2020-11-08"], examMonth: 3, examYear: 2021, year: 2020 }),
+    ).resolves.toBe("2021-03-14");
   });
 
   it("follows the notice's day when it's in the month the learner named", async () => {

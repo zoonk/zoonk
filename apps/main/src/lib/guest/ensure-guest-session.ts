@@ -1,8 +1,18 @@
 import { authClient } from "@zoonk/auth/client";
 import { logError } from "@zoonk/utils/logger";
 
+/**
+ * Only a check that answered "no session" makes a guest. A check that failed (a rate limit, a
+ * network error) says nothing about the session, and signing in anonymously then would replace a
+ * signed-in learner's session with a new guest: callers show a retryable error instead.
+ */
 async function startGuestSession(): Promise<boolean> {
-  const { data } = await authClient.getSession();
+  const { data, error: checkError } = await authClient.getSession();
+
+  if (checkError) {
+    logError("[ensureGuestSession] Could not check the session:", checkError);
+    return false;
+  }
 
   if (data) {
     return true;

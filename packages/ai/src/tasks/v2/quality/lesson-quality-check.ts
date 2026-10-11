@@ -113,6 +113,7 @@ ${formatLesson(lesson)}
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "lesson-quality-check",
   });

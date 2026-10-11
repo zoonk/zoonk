@@ -15,7 +15,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { openAs } from "./study-day";
+import { openAs, pastFreeWeek } from "./study-day";
 
 const GENERATIONS_URL = "**/v1/goals/*/chapters/*/test-out/generations";
 const RIGHT = "Right answer";
@@ -134,15 +134,11 @@ async function createTestOutChapter({
 /** The right option of the question shown, picked by its number key, then Enter moves on. */
 async function answerRightByKeyboard(page: Page) {
   // Each option reads as its number key followed by its text.
-  const options = await page.getByRole("main").getByRole("listitem").allTextContents();
+  const options = await page.getByRole("main").getByRole("radio").allTextContents();
   const key = options.findIndex((option, index) => option === `${index + 1}${RIGHT}`) + 1;
 
   await page.keyboard.press(String(key));
-
-  await expect(page.getByRole("button", { exact: true, name: RIGHT })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await expect(page.getByRole("radio", { exact: true, name: RIGHT })).toBeChecked();
 
   await expect(page.getByRole("button", { name: /^(?:Next|Finish)$/u })).toBeEnabled();
   await page.keyboard.press("Enter");
@@ -222,7 +218,7 @@ test.describe("Chapter test-out", () => {
       // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
       await expectQuestion(page, number, SKILLS);
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("button", { exact: true, name: RIGHT }).click();
+      await page.getByRole("radio", { exact: true, name: RIGHT }).click();
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
       await page.getByRole("button", { name: "Next" }).click();
     }
@@ -268,7 +264,7 @@ test.describe("Chapter test-out", () => {
       // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
       await expectQuestion(page, number, SKILLS);
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("button", { exact: true, name: RIGHT }).click();
+      await page.getByRole("radio", { exact: true, name: RIGHT }).click();
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
       await page.getByRole("button", { name: "Next" }).click();
     }
@@ -283,7 +279,7 @@ test.describe("Chapter test-out", () => {
       // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
       await expectQuestion(page, number, SKILLS);
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("button", { exact: true, name: RIGHT }).click();
+      await page.getByRole("radio", { exact: true, name: RIGHT }).click();
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
       await page.getByRole("button", { name: /^(?:Next|Finish)$/u }).click();
     }
@@ -291,6 +287,45 @@ test.describe("Chapter test-out", () => {
     const result = page.getByRole("status").filter({ hasText: "You already know this" });
     await expect(result.getByText(`${SKILLS} of ${SKILLS} right`)).toBeVisible();
     await expect.poll(() => countTestedOut(goal.id)).toBe(SKILLS);
+    await page.context().close();
+  });
+
+  test("Enter sends the answer picked, after a tap on another button or on the answer", async ({
+    browser,
+  }) => {
+    const SKILLS = 5;
+
+    const { chapter, goal, user, writeQuestions } = await createTestOutChapter({
+      planned: true,
+      skills: SKILLS,
+    });
+
+    await writeQuestions();
+    const page = await openAs(browser, user);
+    await page.goto(`/test-out/${chapter.id}`);
+
+    // A tap on "I don't know yet", then the keyboard: Enter sends what the number key picked.
+    await expectQuestion(page, 1, SKILLS);
+    await page.getByRole("button", { name: "I don't know yet" }).click();
+
+    for (const number of [2, 3]) {
+      // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
+      await expectQuestion(page, number, SKILLS);
+      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
+      await answerRightByKeyboard(page);
+    }
+
+    // A tap on an answer, then Enter: the answer tapped goes.
+    await expectQuestion(page, 4, SKILLS);
+    await page.getByRole("main").getByText(RIGHT, { exact: true }).click();
+    await page.keyboard.press("Enter");
+
+    await expectQuestion(page, SKILLS, SKILLS);
+    await answerRightByKeyboard(page);
+
+    const result = page.getByRole("status").filter({ hasText: "You already know this" });
+    await expect(result.getByText(`4 of ${SKILLS} right`)).toBeVisible();
+    await expect.poll(() => countTestedOut(goal.id)).toBe(4);
     await page.context().close();
   });
 
@@ -395,6 +430,43 @@ test.describe("Chapter test-out", () => {
 
     await page.getByRole("link", { name: "Close" }).click();
     await expect(page).toHaveURL(new RegExp(`/content/chapters/${chapter.id}$`, "u"));
+    await page.context().close();
+  });
+
+  // A test-out takes the learner past lessons the free plan no longer opens, and writes its
+  // questions with AI: past a free exam plan's first week it comes with Plus, as those lessons do.
+  test("past a free exam plan's first week, the test comes with Plus", async ({ browser }) => {
+    const { chapter, goal, user } = await createTestOutChapter({ skills: 3 });
+
+    await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
+    await pastFreeWeek(goal.id);
+
+    const page = await openAs(browser, user);
+
+    // Stands in for the API, which answers this way (see the API's E2E).
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({ json: { error: { code: "PLUS_REQUIRED" } }, status: 402 }),
+    );
+
+    await page.goto(`/content/chapters/${chapter.id}`);
+
+    const entry = page.getByRole("button", { name: /^Already know this\?.*Available with Plus/u });
+    await entry.click();
+
+    await expect(page.getByText("Your free week of exam prep is over")).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/content/chapters/${chapter.id}$`, "u"));
+
+    // Opened any other way, it offers Plus instead of starting.
+    await page.goto(`/test-out/${chapter.id}`);
+    await expect(page.getByText("Your free week of exam prep is over")).toBeVisible();
+
+    await expect(page.getByRole("link", { name: "See Plus" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    await expect(page.getByRole("button", { name: "Start the test" })).toHaveCount(0);
+    await expect(countTestedOut(goal.id)).resolves.toBe(0);
     await page.context().close();
   });
 });

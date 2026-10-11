@@ -228,7 +228,9 @@ export function LessonWaiting({
           </Button>
         )}
 
-        {(request.status === "refused" || request.status === "setAside") && (
+        {(request.status === "refused" ||
+          request.status === "plusRequired" ||
+          request.status === "setAside") && (
           <>
             <LessonNotWrittenNotice
               linkComponent={Link}

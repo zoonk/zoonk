@@ -24,6 +24,7 @@ const MOCK_PLAN_POSITION = 10_000;
 const STRONG = 160;
 const GOOD = 140;
 const WEAK = 80;
+const FULL = 200;
 const ESSAY_SCORES = [STRONG, STRONG, GOOD, STRONG, WEAK];
 const INTERVENTION_INDEX = 4;
 
@@ -177,8 +178,19 @@ export async function playMock({ answers, page }: { answers: MockAnswers; page: 
 /**
  * A writing block already open in today's session, with one draft graded by ENEM's rubric: essays
  * are graded by a model, which tests don't call, so the grade is stored the way grading stores it.
+ * `fullMarks` grades every competency 200, which leaves no next step.
  */
-export async function addGradedEssay({ goalId, userId }: { goalId: string; userId: string }) {
+export async function addGradedEssay({
+  fullMarks = false,
+  goalId,
+  userId,
+}: {
+  fullMarks?: boolean;
+  goalId: string;
+  userId: string;
+}) {
+  const scores = fullMarks ? ESSAY_SCORES.map(() => FULL) : ESSAY_SCORES;
+
   const [goal, session] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),
     findTodaySession({ goalId, userId }),
@@ -201,9 +213,12 @@ export async function addGradedEssay({ goalId, userId }: { goalId: string; userI
     data: {
       answer: {
         grade: {
-          criteria: ESSAY_SCORES.map((score, index) => ({
+          criteria: scores.map((score, index) => ({
             comment: `Comment on competency ${index + 1}.`,
-            example: index === INTERVENTION_INDEX ? "por meio de campanhas nas escolas" : null,
+            example:
+              index === INTERVENTION_INDEX && !fullMarks
+                ? "por meio de campanhas nas escolas"
+                : null,
             id: `c${index + 1}`,
             maxScore: 200,
             name: `C${index + 1}`,
@@ -213,13 +228,15 @@ export async function addGradedEssay({ goalId, userId }: { goalId: string; userI
           enemInterventionElements: {
             action: true,
             agent: true,
-            detail: false,
+            detail: fullMarks,
             effect: true,
-            means: false,
+            means: fullMarks,
           },
-          nextStep: { criterionId: "c5", text: "Say by what means the proposal will work." },
-          range: { high: 740, low: 660 },
-          total: { maxScore: 1000, score: 700 },
+          nextStep: fullMarks
+            ? null
+            : { criterionId: "c5", text: "Say by what means the proposal will work." },
+          range: fullMarks ? { high: 1000, low: 960 } : { high: 740, low: 660 },
+          total: { maxScore: 1000, score: scores.reduce((sum, score) => sum + score, 0) },
           zeroReason: null,
         },
         text: "Meu primeiro rascunho da redação.",

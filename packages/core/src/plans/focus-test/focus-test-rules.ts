@@ -7,7 +7,7 @@
 
 /**
  * The most areas a test asks about: the ones worth most, so it stays around a quarter of an hour
- * even for a notice of many subjects (a concurso's nine or ten).
+ * even for a notice of many subjects (a civil service exam's nine or ten).
  */
 const FOCUS_TEST_MAX_AREAS = 10;
 

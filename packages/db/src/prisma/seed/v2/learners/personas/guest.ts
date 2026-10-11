@@ -11,7 +11,6 @@ export const guest: SeedLearner = {
     {
       answer: { selectedOptionId: "chances" },
       day: 0,
-      inSession: true,
       isCorrect: true,
       key: "cloud-chances",
       seconds: 17,
@@ -21,7 +20,6 @@ export const guest: SeedLearner = {
     {
       answer: { selectedOptionId: "fast" },
       day: 0,
-      inSession: true,
       isCorrect: false,
       key: "cloud-spins-fast",
       mistake: {
@@ -81,12 +79,7 @@ export const guest: SeedLearner = {
   memory: [],
   milestones: [],
   name: "Guest",
-  session: {
-    blocks: [
-      { brainPower: 60, kind: "learn", lesson: "electron-cloud", minutes: 6, status: "completed" },
-    ],
-    status: "completed",
-  },
+  session: null,
   skills: [
     { memory: "learning", skill: "electron-cloud" },
     { memory: "learning", skill: "ground-state" },

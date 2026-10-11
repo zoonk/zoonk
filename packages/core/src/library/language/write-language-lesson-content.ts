@@ -5,6 +5,7 @@ import {
   generateLanguageLesson,
 } from "@zoonk/ai/tasks/v2/language/language-lesson";
 import { prisma } from "@zoonk/db";
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { finishLibraryGeneration } from "../claims/generation-claim";
 import { cleanLanguageLesson } from "./_utils/clean-language-lesson";
@@ -106,6 +107,7 @@ export async function writeLanguageLessonContent({
   const cleaned = cleanLanguageLesson({
     content: draft.data,
     knownWords: inputs.writerInput.knownWords ?? [],
+    sameLanguage: isSameLanguage(inputs),
   });
 
   if (cleaned.words.length === 0 || cleaned.sentences.length < MIN_SENTENCES) {
@@ -136,7 +138,11 @@ export async function writeLanguageLessonContent({
     wordIds: [...shared.wordIdsByText.values()],
   });
 
-  const steps = buildLanguageLessonSteps({ ...stored, targetLanguage: inputs.targetLanguage });
+  const steps = buildLanguageLessonSteps({
+    ...stored,
+    learnerLanguage: inputs.learnerLanguage,
+    targetLanguage: inputs.targetLanguage,
+  });
 
   const saved = await saveLanguageLesson({
     ...stored,

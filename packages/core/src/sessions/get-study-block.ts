@@ -4,17 +4,13 @@ import { readNoticeFormats } from "../library/exams/notice-formats";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { isQuotedItem } from "../library/items/item-content";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
-import {
-  type ItemCitation,
-  citedSourceSelect,
-  toItemCitation,
-} from "../library/sources/source-citation";
-import { type DrillView, loadDrillLessons, toDrillView } from "../mistakes/drill-lessons";
-import { loadExamStructure } from "./_utils/load-build-inputs";
+import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
+import { citedSourceSelect, toItemCitation } from "../library/sources/source-citation";
+import { loadDrillLessons, toDrillView } from "../mistakes/drill-lessons";
+import { loadExamStructure } from "./_utils/exam-structure";
 import { isLeftBlank } from "./_utils/net-score";
 import {
   type SessionItem,
-  type SessionQuestion,
   describeEarlierAnswer,
   parseSessionItem,
   toSessionQuestion,
@@ -22,43 +18,7 @@ import {
 import { type StudyBlockView, toStudyBlockView } from "./_utils/session-view";
 import { findOwnedStudyBlock } from "./_utils/study-session-access";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "./block-payload";
-
-/**
- * The learner's last answer to a capsule question before this session: when, whether it was right
- * and, only when it was wrong, the answer as text ("On Sep 30 you answered $18"). A right one is
- * never sent, since it would give today's answer away. Match answers have no single text, and a
- * math answer given with other numbers says nothing about today's, so those only say whether it
- * was right.
- */
-type TimeMachine = { answer: string | null; answeredAt: Date; isCorrect: boolean };
-
-type StudyBlockQuestion = SessionQuestion & {
-  /**
-   * Set once answered in this session: a checkpoint shows right or wrong without hints, and a
-   * net-scored statement left blank counts as neither.
-   */
-  answered: { blank: boolean; isCorrect: boolean } | null;
-  capsuleKey: string | null;
-  /**
-   * The passage the question quotes, such as an article of law, with its source's title, link and
-   * the date it was last checked, for the dated "Sources" chip.
-   */
-  citation: ItemCitation | null;
-  /** How a saved mistake's drill plays this question, by the mistake's cause. */
-  drill: DrillView | null;
-  mistakeId: string | null;
-  /**
-   * A placement question in the goal's first week: it fine-tunes where the plan starts, isn't
-   * graded as learning, and welcomes "I don't know yet".
-   */
-  placement: boolean;
-  /**
-   * A real past exam question copied as printed, where its organizer allows it with the source
-   * cited: it shows where it's from before it's answered.
-   */
-  quoted: boolean;
-  timeMachine: TimeMachine | null;
-};
+import { type StudyBlockQuestion, type TimeMachine } from "./study-block-question";
 
 type StudyBlockDetail = {
   block: StudyBlockView;
@@ -145,7 +105,11 @@ export async function getStudyBlock({
 
   const [rows, answers, drillLessons, structure] = await Promise.all([
     prisma.item.findMany({
-      include: { ...ITEM_IMAGE_INCLUDE, source: { select: citedSourceSelect } },
+      include: {
+        ...ITEM_IMAGE_INCLUDE,
+        ...ITEM_SET_INCLUDE,
+        source: { select: citedSourceSelect },
+      },
       where: { id: { in: itemIds } },
     }),
     prisma.attempt.findMany({
@@ -175,6 +139,10 @@ export async function getStudyBlock({
     ),
   );
 
+  // A recording's transcript shows once every one of its questions in the block is answered.
+  const isSetAnswered = (setId: string | null) =>
+    rows.filter((row) => row.setId === setId).every((row) => answered.has(row.id));
+
   const questions = itemIds.flatMap((itemId): StudyBlockQuestion[] => {
     const item = items.find((candidate) => candidate.id === itemId);
     const row = rows.find((candidate) => candidate.id === itemId);
@@ -192,6 +160,7 @@ export async function getStudyBlock({
             mistakeId: drill?.mistakeId ?? null,
             placement: payload.placementItemIds.includes(itemId),
             quoted: row ? isQuotedItem(row.content) : false,
+            set: row ? toItemSetView({ item: row, reveal: isSetAnswered(row.setId) }) : null,
             timeMachine: timeMachines.get(itemId) ?? null,
           },
         ]

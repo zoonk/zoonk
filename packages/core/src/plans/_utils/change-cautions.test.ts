@@ -5,6 +5,7 @@ const GOAL = {
   createdAt: new Date("2026-10-01T00:00:00Z"),
   details: {},
   examBlueprintId: null,
+  id: "goal",
   kind: "language" as const,
   targetDate: new Date("2027-01-06T00:00:00Z"),
   timezone: "UTC",

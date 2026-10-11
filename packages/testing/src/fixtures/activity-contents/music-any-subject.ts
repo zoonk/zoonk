@@ -22,26 +22,6 @@ export const musicAnySubjectActivities = {
     prompt: "What did the moving line change?",
     template: "beforeAfter",
   },
-  earTrainer: {
-    check: {
-      explanation:
-        "That was a perfect fifth, 7 half steps. A fourth is 5. The fifth is the leap at the start of Twinkle, Twinkle, Little Star.",
-      kind: "interaction",
-    },
-    fields: {
-      mode: "interval",
-      options: [
-        { id: "M3", song: "Oh When the Saints" },
-        { id: "P4", song: "Here Comes the Bride" },
-        { id: "P5", song: "Twinkle, Twinkle, Little Star" },
-        { id: "P8", song: "Somewhere Over the Rainbow" },
-      ],
-      played: "P5",
-      root: "C4",
-    },
-    prompt: "Which interval do you hear?",
-    template: "earTrainer",
-  },
   keyboardFretboard: {
     check: {
       explanation:
@@ -69,20 +49,6 @@ export const musicAnySubjectActivities = {
     },
     prompt: "Follow the notes while the melody plays.",
     template: "notationPlayer",
-  },
-  predictReveal: {
-    check: { ...numericCheck(14), tolerance: { kind: "absolute", value: 2 } },
-    data: { source: { title: "The True Size of Africa", year: 2010 } },
-    fields: {
-      explanation: "The map stretches land near the poles.",
-      max: 30,
-      min: 1,
-      scale: "linear",
-      trueValue: 14,
-      unit: "times",
-    },
-    prompt: "How many Greenlands fit in Africa?",
-    template: "predictReveal",
   },
   rhythmTapper: {
     check: {

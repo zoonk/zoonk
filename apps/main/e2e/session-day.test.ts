@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
@@ -194,10 +195,10 @@ test.describe("Today's session", () => {
     await expect(page.getByText(/^\d+ questions$/u)).toBeVisible();
     await expectAccessibleScreen(page, "the session's summary");
 
-    // A review, something new and nothing to fix: the missions make a full meal.
+    // A review and something new, with nothing to fix: two missions, so no bonus for all three.
     await continueToStep(page, /Brain Power$/u, { keyboard: true });
     await expect(page.getByRole("heading", { level: 1, name: /Brain Power$/u })).toBeFocused();
-    await expect(page.getByText("Full meal", { exact: true })).toBeVisible();
+    await expect(page.getByText("All three done", { exact: true })).toHaveCount(0);
     await expect(page.getByText(/^\d+ right in a row$/u)).toBeVisible();
 
     // Back goes to the step before, by the arrow key too; the last step's Finish goes to Today.
@@ -286,6 +287,45 @@ test.describe("Today's session", () => {
     });
 
     expect(extra).toMatchObject({ kind: "learn", lessonId: lesson.id, status: "active" });
+    await page.context().close();
+  });
+
+  test("10 more minutes at the session's end goes straight into the bonus practice", async ({
+    browser,
+  }) => {
+    const { lesson, session, user } = await createStudyDay({ reviewDone: true });
+
+    const { skillId } = await prisma.lessonSkill.findFirstOrThrow({
+      where: { lessonId: lesson.id },
+    });
+
+    // The lesson is done and taught a skill with a question left to practice; the practice is left.
+    await Promise.all([
+      prisma.studySessionBlock.updateMany({
+        data: { status: "completed" },
+        where: { kind: "learn", sessionId: session.id },
+      }),
+      learnerSkillFixture({ reps: 1, skillId, state: "learning", userId: user.id }),
+      itemFixture({ content: choiceItemContent(`Bonus one: ${randomUUID()}?`), skillId }),
+    ]);
+
+    const page = await openAs(browser, user);
+    await page.goto("/session");
+    await page.getByRole("button", { name: /^Start/u }).click();
+    await playPractice(page);
+
+    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await continueToLastStep(page);
+    await page.getByRole("button", { name: /^Study \d+ more minutes/u }).click();
+
+    // The learner asked for more, so the practice opens right here, not the pause after "Stop for today".
+    await expect(page.getByRole("heading", { level: 1, name: "Bonus practice" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Done for now" })).toHaveCount(0);
+    await answerRight(page, /^Bonus one/u);
+
+    // Its last answer ends the day again.
+    await expect(page.getByRole("heading", { level: 1, name: "Session complete" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Keep going" })).toHaveCount(0);
     await page.context().close();
   });
 

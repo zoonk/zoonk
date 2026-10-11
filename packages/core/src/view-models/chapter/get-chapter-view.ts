@@ -1,7 +1,10 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { cacheTag } from "next/cache";
+import { getUserSubscriptionCacheTag } from "../../cache/tags";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { loadExamPrepAccess, loadPlusOnlyLessonIds } from "../../sessions/_utils/plus-only-lessons";
 import { loadGoalMap } from "../_utils/goal-map";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 import { loadChapterNumbering } from "../syllabus/_utils/chapter-numbers";
@@ -29,7 +32,7 @@ async function loadStudiedSkills({ skillIds, userId }: { skillIds: string[]; use
 
 /**
  * A chapter of the learner's plan (the active goal by default): its map of skills with mastery,
- * its lessons with the next one to open, open mistakes on its skills and the summary cards its
+ * its lessons with the next one to open (the one Today opens next when it's here), open mistakes on its skills and the summary cards its
  * finished lessons left. Every chapter a plan item points at has one; a chapter outside the goal's
  * plan isn't found.
  */
@@ -76,14 +79,33 @@ export async function getChapterView({
     ]),
   ];
 
-  const [studied, openMistakes] = await Promise.all([
+  // Subscribing opens the lessons a free exam plan held for Plus.
+  cacheTag(getUserSubscriptionCacheTag(goal.userId));
+
+  const access = await loadExamPrepAccess({ goal });
+
+  const [studied, openMistakes, plusOnlyLessonIds] = await Promise.all([
     loadStudiedSkills({ skillIds, userId: goal.userId }),
     prisma.mistake.count({
       where: { skillId: { in: skillIds }, status: "open", userId: goal.userId },
     }),
+    loadPlusOnlyLessonIds({
+      access,
+      goalId: goal.id,
+      lessonIds: lessons.map((lesson) => lesson.id),
+      userId: goal.userId,
+    }),
   ]);
 
-  const lessonStates = buildChapterLessons({ chapterId, items: map.items, lessons, studied });
+  const lessonStates = buildChapterLessons({
+    chapterId,
+    items: map.items,
+    lessons,
+    plusOnlyLessonIds,
+    sessionLessonIds: map.todayBlocks.flatMap((block) => block.lessonId ?? []),
+    studied,
+  });
+
   const number = numbering({ chapterId, planPosition: area.position });
 
   return {
@@ -102,6 +124,8 @@ export async function getChapterView({
       mistakes: { open: openMistakes },
       skills: area.skills,
       summaries: buildChapterSummaries({ lessons, states: lessonStates }),
+      // The test-out comes with Plus on the same rule (`isTestOutPlusOnly`).
+      testOut: { plusRequired: access.trialEnded },
     },
     status: "ready",
   };

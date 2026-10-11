@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { mockAnswersSql } from "@zoonk/db/anonymous-records";
 
 /**
  * Answers outside these bounds aren't a pace: a question skipped or guessed in a few seconds, or a
@@ -21,8 +22,9 @@ type PaceRow = { answers: number; learners: number; ms: number | null };
 
 /**
  * How long learners really take on one of the exam's questions, in minutes: the average answer in
- * its latest finished mocks, everyone's. Null until enough learners took enough of them, when the
- * exam's own pace (its clock) is the estimate. Shared by every learner of the exam.
+ * its latest finished mocks, everyone's (deleted learners' included). Null until enough learners
+ * took enough of them, when the exam's own pace (its clock) is the estimate. Shared by every
+ * learner of the exam.
  */
 export async function loadMockPace(examBlueprintId: string | null): Promise<number | null> {
   "use cache";
@@ -32,19 +34,10 @@ export async function loadMockPace(examBlueprintId: string | null): Promise<numb
   }
 
   const [row] = await prisma.$queryRaw<PaceRow[]>`
-    SELECT
-      count(*)::int AS answers,
-      count(DISTINCT a.user_id)::int AS learners,
-      avg(a.duration_ms)::float AS ms
-    FROM (
-      SELECT id
-      FROM mock_exams
-      WHERE exam_blueprint_id = ${examBlueprintId}::uuid AND status = 'finished'
-      ORDER BY finished_at DESC
-      LIMIT ${RECENT_MOCKS}
-    ) m
-    JOIN attempts a ON a.mock_exam_id = m.id
-    WHERE a.duration_ms BETWEEN ${MIN_ANSWER_MS} AND ${MAX_ANSWER_MS}`;
+    SELECT count(*)::int AS answers, count(DISTINCT learner)::int AS learners,
+      avg(duration_ms)::float AS ms
+    FROM ${mockAnswersSql({ examBlueprintId, mocks: RECENT_MOCKS })} a
+    WHERE duration_ms BETWEEN ${MIN_ANSWER_MS} AND ${MAX_ANSWER_MS}`;
 
   if (!row || row.ms === null || row.answers < MIN_ANSWERS || row.learners < MIN_LEARNERS) {
     return null;

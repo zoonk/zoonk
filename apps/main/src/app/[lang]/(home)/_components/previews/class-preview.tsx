@@ -1,6 +1,7 @@
 "use client";
 
 import { PREVIEW_CARD_CLASS } from "@/components/public/landing-styles";
+import { type LessonScreenSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -8,7 +9,9 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { renderBold } from "../rich-text";
 
-type Ask = "simpler" | "deeper";
+type Ask = Extract<LessonScreenSuggestion, "simpler" | "deeper">;
+
+const ASKS: readonly Ask[] = ["simpler", "deeper"];
 
 /** A buddy studied with today: awake and cheerful. */
 const BUDDY_ENERGY = 70;
@@ -16,8 +19,14 @@ const BUDDY_ENERGY = 70;
 /**
  * A class topic on one screen, with the buddy beside it. The tile tells visitors to ask, so the
  * suggestions work: each one gets the buddy's answer, and tapping it again takes the answer away.
+ * The chips read the tutor's own suggestions (`wordTutorSuggestions`), as a lesson's do.
  */
-export function ClassPreview() {
+export function ClassPreview({
+  suggestions,
+}: {
+  /** The tutor's suggestions in the page's language, by id (`wordTutorSuggestionLabels`). */
+  suggestions: Record<LessonScreenSuggestion, string>;
+}) {
   const t = useExtracted();
   const [ask, setAsk] = useState<Ask | null>(null);
 
@@ -82,22 +91,17 @@ export function ClassPreview() {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
-        <Button
-          aria-pressed={ask === "simpler"}
-          onClick={() => toggle("simpler")}
-          size="sm"
-          variant={ask === "simpler" ? "default" : "outline"}
-        >
-          {t("Explain it more simply")}
-        </Button>
-        <Button
-          aria-pressed={ask === "deeper"}
-          onClick={() => toggle("deeper")}
-          size="sm"
-          variant={ask === "deeper" ? "default" : "outline"}
-        >
-          {t("I want to go deeper")}
-        </Button>
+        {ASKS.map((id) => (
+          <Button
+            aria-pressed={ask === id}
+            key={id}
+            onClick={() => toggle(id)}
+            size="sm"
+            variant={ask === id ? "default" : "outline"}
+          >
+            {suggestions[id]}
+          </Button>
+        ))}
       </div>
     </div>
   );

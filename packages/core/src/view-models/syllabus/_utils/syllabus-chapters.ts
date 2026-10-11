@@ -1,17 +1,16 @@
-import { type PlanItemStatus } from "@zoonk/db";
 import { isWritingItem } from "../../../plans/_utils/plan-phase-views";
+import {
+  getOpenEarlySkill,
+  isFarTopic,
+  sumPlannedLessons,
+} from "../../../plans/_utils/stand-in-lessons";
+import { getWorkProgress, isWorkFinished } from "../../../plans/_utils/work-progress";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { type SyllabusChapter } from "../syllabus-contract";
 import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 
 /** A chapter with the key its lessons are grouped by, so topics can point at it. */
 export type KeyedChapter = SyllabusChapter & { key: string };
-
-export type ChapterKeyOf = (item: SyllabusItem) => string;
-
-export function isFinished(status: PlanItemStatus): boolean {
-  return status !== "todo";
-}
 
 export function getEarliestTodoDate(items: readonly SyllabusItem[]): string | null {
   const dates = items.flatMap((item) =>
@@ -22,25 +21,13 @@ export function getEarliestTodoDate(items: readonly SyllabusItem[]): string | nu
 }
 
 /**
- * A row per chapter. Lessons still being written (or settled before they were) join the chapter
- * that already teaches their skill, since they're more of it; a skill without one is its own row.
+ * A row per chapter, counting the lessons its page lists. Lessons still being written (or settled
+ * before they were) are their skill's own row: they become its next chapter once outlined, so
+ * counting them in the chapter that teaches the skill first said "4 of 10" over Sofia's chapter
+ * of nine lessons.
  */
-export function getChapterKeyOf(items: readonly SyllabusItem[]): ChapterKeyOf {
-  const skillChapters = new Map(
-    items
-      .flatMap((item) =>
-        item.chapterId && item.skillId ? [[item.skillId, item.chapterId] as const] : [],
-      )
-      .toReversed(),
-  );
-
-  return function chapterKeyOf(item) {
-    return (
-      item.chapterId ??
-      (item.skillId ? skillChapters.get(item.skillId) : undefined) ??
-      `skill:${item.skillId ?? item.titleSnapshot}`
-    );
-  };
+export function chapterKeyOf(item: SyllabusItem): string {
+  return item.chapterId ?? `skill:${item.skillId ?? item.titleSnapshot}`;
 }
 
 function getChapterState({
@@ -77,23 +64,34 @@ function compareChapters(first: UnnumberedChapter, second: UnnumberedChapter): n
 
 /**
  * A subject's chapters: the ones done, then in the order the plan studies them next, each numbered
- * in that order (the number every screen gives it), with lessons done of the total and the one
- * holding the plan's next lesson. Skills without a chapter yet are named by the skill.
+ * in that order (the number every screen gives it), with lessons done of the total, whether the
+ * learner only showed they know it (`known`), and the one holding the plan's next lesson. Skills without a chapter yet are named by the skill, with the
+ * lessons the plan expects for them (`lessonsOf`), whether they start after the weeks the plan
+ * writes ahead (`outlinedUntil`), and then the skill to ask for them by, unless chapters already
+ * teach it (`taughtSkillIds`).
  */
 export function buildChapters({
-  chapterKeyOf,
   chapterTitles,
   items,
+  lessonsOf,
   nextKey,
+  outlinedUntil,
   skillNames,
+  taughtSkillIds,
 }: {
-  chapterKeyOf: ChapterKeyOf;
   chapterTitles: ReadonlyMap<string, string>;
   items: readonly SyllabusItem[];
+  /** How many lessons each item is (`countItemLessons`): a stand-in, the ones the plan teaches. */
+  lessonsOf: (item: SyllabusItem) => number;
   nextKey: string | null;
+  outlinedUntil?: string | null;
   skillNames: ReadonlyMap<string, string>;
+  taughtSkillIds: ReadonlySet<string>;
 }): KeyedChapter[] {
   const keys = [...new Set(items.map((item) => chapterKeyOf(item)))];
+
+  const sum = (list: readonly SyllabusItem[]) =>
+    list.reduce((total, item) => total + lessonsOf(item), 0);
 
   const chapters = keys.flatMap((key): UnnumberedChapter[] => {
     const inChapter = items.filter((item) => chapterKeyOf(item) === key);
@@ -104,22 +102,29 @@ export function buildChapters({
       return [];
     }
 
-    const lessonsDone = inChapter.filter((item) => isFinished(item.status)).length;
-    const done = lessonsDone === inChapter.length;
+    const finished = inChapter.filter((item) => isWorkFinished(item.status));
+    const done = finished.length === inChapter.length;
     const standInTitle = first.skillId ? skillNames.get(first.skillId) : undefined;
+    const writing = !written && isWritingItem(first) && !done;
+    const nextDate = getEarliestTodoDate(inChapter);
+    const far = isFarTopic({ nextDate, outlinedUntil, writing });
 
     return [
       {
         chapterId: written?.chapterId ?? null,
+        far,
         key,
-        lessonsDone,
-        lessonsTotal: inChapter.length,
-        nextDate: getEarliestTodoDate(inChapter),
+        known: done && inChapter.every((item) => getWorkProgress(item.status) === "testedOut"),
+        lessonsDone: sum(finished),
+        lessonsTotal: sum(inChapter),
+        nextDate,
+        plannedLessons: writing ? sumPlannedLessons(inChapter) : null,
+        skillId: getOpenEarlySkill({ far, skillIds: [first.skillId], taughtSkillIds }),
         state: getChapterState({ done, key, nextKey }),
         title: written?.chapterId
           ? chapterTitles.get(written.chapterId) || written.titleSnapshot
           : standInTitle || first.titleSnapshot,
-        writing: !written && isWritingItem(first) && !done,
+        writing,
       },
     ];
   });

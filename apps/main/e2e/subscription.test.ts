@@ -6,10 +6,6 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import {
-  guardianLinkFixture,
-  learningProfileFixture,
-} from "@zoonk/testing/fixtures/learning-profiles";
 import { expect, test } from "./fixtures";
 import { openAsGuest } from "./guest-session";
 
@@ -148,7 +144,7 @@ const STRIPE_CHECKOUTS = [
 ];
 
 test.describe("Subscription Page - Guest", () => {
-  test("offers Plus for the guest's goal and asks them to sign in before subscribing", async ({
+  test("offers Plus plainly and asks a guest to sign in before subscribing", async ({
     browser,
   }) => {
     const { context, page, user } = await openAsGuest(browser);
@@ -156,11 +152,14 @@ test.describe("Subscription Page - Guest", () => {
     await page.goto("/subscription");
 
     await expect(page).toHaveURL(/\/subscription$/u);
-    await expect(page.getByText("Your goal: Speak English in Toronto")).toBeVisible();
 
+    // Said plainly: what it is, then what it includes and its price, never a slogan.
     await expect(
-      page.getByRole("heading", { level: 1, name: "Keep going with Plus." }),
+      page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
     ).toBeVisible();
+
+    await expect(page.getByText(/your goal:/iu)).toHaveCount(0);
+    await expect(page.getByText("Plus gives you everything Zoonk has.")).toHaveCount(0);
 
     // Without an account, the free plan's answer starts with trying lessons first.
     const questions = page.getByRole("region", { name: "Common questions" });
@@ -187,12 +186,9 @@ test.describe("Subscription Page - No Subscription", () => {
 
     await expect(page).toHaveURL(/\/subscription$/u);
 
-    // Without a goal yet, the offer says what Zoonk gets people ready for.
     await expect(
-      page.getByRole("heading", { level: 1, name: "Get ready for your exam, new job or move." }),
+      page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
     ).toBeVisible();
-
-    await expect(page.getByText(/your goal:/iu)).toHaveCount(0);
 
     // A settings page like the others: the section's bar with its pills, one centered column.
     await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
@@ -219,64 +215,6 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(page.getByRole("button", { name: /yearly/iu })).toBeVisible();
     await expect(page.getByRole("radio")).toHaveCount(0);
     await expectAccessibleScreen(page, "the Plus offer");
-  });
-});
-
-const TEEN_BIRTH_YEAR = new Date().getUTCFullYear() - 15;
-
-/**
- * A 15-year-old signed in to a new browser context, with an active guardian who hasn't approved
- * Plus yet, or with none.
- */
-async function openAsTeen(browser: Browser, { withGuardian }: { withGuardian: boolean }) {
-  const teen = await createE2EUser(getBaseURL());
-
-  await Promise.all([
-    learningProfileFixture({ birthMonth: 1, birthYear: TEEN_BIRTH_YEAR, userId: teen.id }),
-    withGuardian &&
-      guardianLinkFixture({ acceptedAt: new Date(), status: "active", userId: teen.id }),
-  ]);
-
-  const context = await browser.newContext({ storageState: teen.storageState });
-  return { context, page: await context.newPage() };
-}
-
-test.describe("Subscription Page - Learner under 18", () => {
-  test("asks the guardian to approve Plus instead of a checkout that can't work", async ({
-    browser,
-  }) => {
-    const { context, page } = await openAsTeen(browser, { withGuardian: true });
-    await page.goto("/subscription");
-
-    await expect(
-      page.getByText("You're under 18, so a guardian approves Plus before you subscribe."),
-    ).toBeVisible();
-
-    await expect(page.getByRole("button", { exact: true, name: "Subscribe" })).toHaveCount(0);
-
-    await page.getByRole("button", { name: "Ask my guardian" }).click();
-
-    await expect(
-      page
-        .getByRole("status")
-        .filter({ hasText: "We emailed your guardian. Once they approve, come back here" }),
-    ).toBeVisible();
-
-    await context.close();
-  });
-
-  test("without a guardian, points to the invite first", async ({ browser }) => {
-    const { context, page } = await openAsTeen(browser, { withGuardian: false });
-    await page.goto("/subscription");
-
-    await page.getByRole("button", { name: "Ask my guardian" }).click();
-
-    await expect(page.getByRole("link", { name: "Invite a guardian" })).toHaveAttribute(
-      "href",
-      "/settings/guardian",
-    );
-
-    await context.close();
   });
 });
 
@@ -317,7 +255,10 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     await expect(page.getByText(/subscription will end on/iu)).not.toBeVisible();
 
     const included = page.getByRole("region", { name: "What's included" });
-    await expect(included.getByText("Full exam prep, with mock exams")).toBeVisible();
+
+    await expect(
+      included.getByText("Full exam prep, with mock exams and speaking tasks"),
+    ).toBeVisible();
 
     await expect(page.getByRole("heading", { name: /get ready for your exam/iu })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);

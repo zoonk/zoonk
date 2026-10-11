@@ -1,8 +1,8 @@
-import { addDays, daysBetween } from "./plan-calendar";
-import { type PlanPhaseKind, type PracticeBias } from "./plan-state";
+import { addDays, daysBetween, fromIsoDate } from "./plan-calendar";
+import { type PlanPhase, type PlanPhaseKind, type PracticeBias } from "./plan-state";
 import { getShortExamPhaseDays, isShortExam } from "./short-exam-plan";
 
-type ExamPhaseKind = Exclude<PlanPhaseKind, "learn">;
+type ExamPhaseKind = Exclude<PlanPhaseKind, "afterExam" | "learn">;
 
 /** A time-boxed exam phase: the first and last study day it covers. */
 export type ExamWindow = { endDate: Date; kind: ExamPhaseKind; startDate: Date };
@@ -13,6 +13,7 @@ export type ExamWindow = { endDate: Date; kind: ExamPhaseKind; startDate: Date }
  * nears, and the final stretch has none.
  */
 const LEARNING_SHARE: Record<PlanPhaseKind, number> = {
+  afterExam: 0.5,
   finalStretch: 0,
   foundations: 0.6,
   gaps: 0.5,
@@ -102,6 +103,62 @@ export function getExamWindows({
 
       return { endDate: addDays(startDate, days - 1), kind, startDate };
     });
+}
+
+/** An exam's phases as the learner sees them, with their dates (see `getKeptExamWindows`). */
+export function toExamWindows(phases: readonly PlanPhase[]): ExamWindow[] {
+  return phases.flatMap(({ endDate, kind, startDate }) =>
+    kind !== "afterExam" && kind !== "learn" && startDate && endDate
+      ? [{ endDate: fromIsoDate(endDate), kind, startDate: fromIsoDate(startDate) }]
+      : [],
+  );
+}
+
+/**
+ * An exam's phases for its date (see `getExamWindows`), keeping the one the learner is in open: a
+ * new date that would end it before today lays it and the phases after it out again from today,
+ * as a plan starting today would, the phase still starting where it did, and the phases behind
+ * keep their dates. Ana moved ENEM from 400 days away to 36, two weeks into her foundations: laid
+ * out from the plan's start, they ended two days earlier with 4 of their lessons done, and read as
+ * finished. Once laid out for this date they're the ones shown, so the next day's plan keeps them.
+ */
+export function getKeptExamWindows({
+  planStart,
+  shown,
+  targetDate,
+  today,
+}: {
+  planStart: Date;
+  /** The exam phases the learner sees, with their dates; empty for a new plan. */
+  shown: readonly ExamWindow[];
+  targetDate: Date;
+  today: Date;
+}): ExamWindow[] {
+  const planned = getExamWindows({ planStart, targetDate });
+  const current = findExamWindow({ date: today, windows: shown });
+  const open = planned.find((window) => window.kind === current?.kind);
+
+  if (!current || (open && open.endDate >= today)) {
+    return planned;
+  }
+
+  if (shown.at(-1)?.endDate.getTime() === addDays(targetDate, -1).getTime()) {
+    return [...shown];
+  }
+
+  const fresh = getExamWindows({ planStart: today, targetDate });
+  const from = fresh.findIndex((window) => window.kind === current.kind);
+  const [first] = fresh.slice(from);
+
+  if (from === -1 || !first) {
+    return planned;
+  }
+
+  return [
+    ...shown.filter((window) => window.endDate < current.startDate),
+    { ...first, startDate: current.startDate },
+    ...fresh.slice(from + 1),
+  ];
 }
 
 /** The exam phase a date falls in, or null outside the plan's days. */

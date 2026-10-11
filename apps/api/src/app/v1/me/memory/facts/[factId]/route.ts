@@ -1,7 +1,6 @@
-import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
+import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
-import { memoryErrorCodes } from "@/lib/memory-error-codes";
 import { memoryFactPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { memoryFactUpdateSchema } from "@zoonk/core/memory/contract";
@@ -15,22 +14,6 @@ function parseFactPath(context: FactContext) {
   return context.params.then((params) =>
     parsePathParams({ params, schema: memoryFactPathParamsSchema }),
   );
-}
-
-function getUpdateErrorResponse(status: "categoryNotAllowed" | "notFound" | "unauthorized") {
-  if (status === "unauthorized") {
-    return errors.unauthorized();
-  }
-
-  if (status === "notFound") {
-    return errors.notFound();
-  }
-
-  return createErrorResponse({
-    code: memoryErrorCodes.categoryNotAllowed,
-    message: "This learner's memory can't hold facts in this category",
-    status: httpStatus.unprocessableEntity,
-  });
 }
 
 /** Saves the learner's correction of one fact. */
@@ -51,7 +34,7 @@ async function updateFact(request: NextRequest, context: FactContext) {
   const result = await updateMemoryFact({ factId: path.data.factId, input: body.data });
 
   if (result.status !== "updated") {
-    return getUpdateErrorResponse(result.status);
+    return result.status === "unauthorized" ? errors.unauthorized() : errors.notFound();
   }
 
   return NextResponse.json({ fact: result.fact });

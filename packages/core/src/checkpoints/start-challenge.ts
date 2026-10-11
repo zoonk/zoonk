@@ -1,15 +1,30 @@
 import "server-only";
 import { startMock } from "../exams/mocks/start-mock";
 import { readBlockPayload } from "../sessions/block-payload";
-import { type StudySessionTimeZoneInput } from "../sessions/contract";
+import { type StudyBlockStartInput } from "../sessions/contract";
 import { ensureStudySession } from "../sessions/ensure-study-session";
 import { startStudyBlock } from "../sessions/start-study-block";
+import { needsPlus } from "./_utils/challenge-plus";
 import { findOwnedChallenge } from "./_utils/owned-challenge";
 import { type ChallengeDestination } from "./challenge-contract";
 
+/**
+ * `questionsNeeded`: the bank still holds too few questions for it; once they're written
+ * (`requestChallengeQuestions`), starting it again asks them. `plusRequired`: the learner's plan
+ * leaves it to Plus (a mock, or a phase challenge past a free exam plan's first week).
+ */
 export type StartChallengeResult =
   | { destination: ChallengeDestination; status: "ready" }
-  | { status: "blockFinished" | "dailyLimitReached" | "notFound" | "notToday" | "unauthorized" };
+  | {
+      status:
+        | "blockFinished"
+        | "dailyLimitReached"
+        | "notFound"
+        | "notToday"
+        | "plusRequired"
+        | "questionsNeeded"
+        | "unauthorized";
+    };
 
 type StartedBlock = { id: string; isMock: boolean; isCall: boolean; sessionId: string };
 
@@ -19,7 +34,7 @@ async function startBlock({
   input,
 }: {
   block: StartedBlock;
-  input: StudySessionTimeZoneInput;
+  input: StudyBlockStartInput;
 }): Promise<StartChallengeResult["status"]> {
   // A language goal's checkpoint is the unit's call: its own screen opens it.
   if (block.isCall) {
@@ -38,13 +53,14 @@ async function startBlock({
 /**
  * "Start" on a challenge's intro, on its day: today's session is planned if it isn't yet, the
  * challenge's block in it starts (or resumes) and the result says where it's played. A
- * challenge today's session doesn't hold, such as one whose day hasn't come, can't start.
+ * challenge today's session doesn't hold, such as one whose day hasn't come, can't start, and
+ * one the bank holds too few questions for needs them written first (see `startStudyBlock`).
  */
 export async function startChallenge({
   input,
   planItemId,
 }: {
-  input: StudySessionTimeZoneInput;
+  input: StudyBlockStartInput;
   planItemId: string;
 }): Promise<StartChallengeResult> {
   const owned = await findOwnedChallenge({ planItemId, timeZone: input.timeZone });
@@ -58,6 +74,10 @@ export async function startChallenge({
   // A paused, completed or archived goal has no day to plan.
   if (goal.status !== "active") {
     return { status: "notToday" };
+  }
+
+  if (await needsPlus(owned.challenge)) {
+    return { status: "plusRequired" };
   }
 
   const session = await ensureStudySession({ goal, localDate: today, timeZone, userId });

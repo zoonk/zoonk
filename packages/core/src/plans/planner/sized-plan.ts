@@ -1,7 +1,7 @@
 import { type BuildPlanInput } from "./build-plan";
 import { type ExistingPlanItem } from "./plan-items";
-import { getSettledSkillIds } from "./plan-queue";
 import { DEFAULT_LESSON_MINUTES } from "./plan-units";
+import { getSettledSkillIds } from "./settled-skills";
 
 /** The plan as its graph sizes it, and the minutes of each skill the learner already finished. */
 export type SizedPlanInput = {
@@ -54,8 +54,16 @@ export function toSizedPlanInput(input: BuildPlanInput): SizedPlanInput {
       .map(([skillId, count]) => [skillId, count * DEFAULT_LESSON_MINUTES * input.paceFactor]),
   );
 
+  // Its phases follow the graph's size, not the ends a refresh keeps for written lessons.
   return {
     doneMinutes,
-    input: { ...input, graph: { ...input.graph, skills }, items: [], lessons: [], mode: "forced" },
+    input: {
+      ...input,
+      graph: { ...input.graph, skills },
+      items: [],
+      lessons: [],
+      mode: "forced",
+      phaseEnds: undefined,
+    },
   };
 }

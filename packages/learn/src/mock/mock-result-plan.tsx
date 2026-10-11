@@ -1,6 +1,6 @@
 "use client";
 
-import { type MockAdaptView } from "@zoonk/core/exams/mocks/contract";
+import { type MockAdaptView } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { CircleCheckIcon } from "lucide-react";
@@ -155,6 +155,7 @@ export function MockSkipStep({ skip }: { skip: NonNullable<MockAdaptView["skip"]
 /** The area that went worst, and the offer to give it more of the plan's time. */
 export function MockFocusStep({ focus }: { focus: NonNullable<MockAdaptView["focus"]> }) {
   const t = useExtracted();
+  const format = useFormatter();
 
   return (
     <StepCard>
@@ -165,7 +166,10 @@ export function MockFocusStep({ focus }: { focus: NonNullable<MockAdaptView["foc
         <StepDetail>
           {t(
             "It went hardest: {correct} of {total} right. Your plan can give it more time and start it sooner.",
-            { correct: String(focus.correct), total: String(focus.total) },
+            {
+              correct: format.number(focus.correct, { maximumFractionDigits: 2 }),
+              total: String(focus.total),
+            },
           )}
         </StepDetail>
       </StepHeader>

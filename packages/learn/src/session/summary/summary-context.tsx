@@ -37,6 +37,8 @@ type SessionSummaryValue = {
   goalKind: SummaryGoalKind;
   /** Where a guest creates an account to keep their plan; null for learners who have one. */
   signUpHref: string | null;
+  /** The learner just tapped "Stop for today": what's done so far, the rest waiting on Today. */
+  stopped: boolean;
   summary: StudySessionSummary;
 };
 
@@ -63,9 +65,9 @@ export function useSessionSummary(): SessionSummaryValue {
 }
 
 /**
- * A summary right after "Stop for today": the session isn't finished, and the rest of it waits on
- * Today.
+ * A summary right after "Stop for today", as the host says: the rest of the session waits on
+ * Today. An unfinished session alone doesn't say so, since "10 more minutes" adds a block too.
  */
 export function useIsStopped(): boolean {
-  return !useSessionSummary().summary.finished;
+  return useSessionSummary().stopped;
 }

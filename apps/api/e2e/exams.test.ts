@@ -2,20 +2,27 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { examResultResponseSchema, examViewResponseSchema } from "../src/lib/openapi/schemas/exams";
+import {
+  mockEssayGradesResponseSchema,
+  mockStepResponseSchema,
+  mockViewResponseSchema,
+} from "../src/lib/openapi/schemas/mock-exam";
 import {
   anytimeMockResponseSchema,
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
-  mockStepResponseSchema,
-  mockViewResponseSchema,
 } from "../src/lib/openapi/schemas/mocks";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
+import { FORMATS_QUESTIONS, createFormatsExamGoal } from "./helpers/exam-formats";
 import {
+  BREAK_SECTION_QUESTIONS,
   DAY_MS,
   EXAM_IN_DAYS,
   MOCK_QUESTIONS,
+  createBreakExamGoal,
   createExamGoal,
   examEdition,
   isoDayFromToday,
@@ -46,6 +53,7 @@ test.describe("Exams API", () => {
       api.get(`/v1/mocks/${id}`),
       api.post(`/v1/mocks/${id}/starts`, { data: {} }),
       api.post(`/v1/mocks/${id}/finishes`, { data: {} }),
+      api.post(`/v1/mocks/${id}/break-ends`),
       api.post(`/v1/mocks/${id}/plan-changes`, { data: { offer: "skip", timeZone: "UTC" } }),
       api.get(`/v1/goals/${id}/mocks`),
       api.post(`/v1/goals/${id}/mocks`, { data: {} }),
@@ -232,6 +240,15 @@ test.describe("Exams API", () => {
 
     expect(saved.map((response) => response.status())).toStrictEqual([204, 204]);
 
+    // Its essays are graded once it's handed in.
+    const gradedTooSoon = await api.post(`${path}/essay-grades`, inUtc);
+
+    expect(gradedTooSoon.status()).toBe(409);
+
+    await expect(gradedTooSoon.json()).resolves.toMatchObject({
+      error: { code: "MOCK_NOT_FINISHED" },
+    });
+
     const refusals = await Promise.all([
       other.api.post(`${path}/finishes`, inUtc),
       api.post("/v1/mocks/not-a-block/finishes", inUtc),
@@ -266,6 +283,17 @@ test.describe("Exams API", () => {
     const retried = await api.post(`${path}/finishes`, inUtc);
 
     expect(retried.status()).toBe(200);
+
+    // A weekly mock that asks no essay has none to grade.
+    expect(view.essays).toStrictEqual([]);
+
+    await expect(
+      readBody({
+        response: await api.post(`${path}/essay-grades`, inUtc),
+        schema: mockEssayGradesResponseSchema,
+      }),
+    ).resolves.toStrictEqual({ status: "graded" });
+
     await Promise.all([api.dispose(), other.api.dispose()]);
   });
 
@@ -377,6 +405,258 @@ test.describe("Exams API", () => {
     });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("takes a mock again as often as the learner wants, then shows how the mocks went", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "anytime-mock-again" });
+    const { goal } = await createExamGoal(userId);
+    const mocksPath = `/v1/goals/${goal.id}/mocks`;
+    const half = { area: null, day: null, kind: "half" } as const;
+
+    /** Takes the half mock to its end, the first `right` questions right and the rest wrong. */
+    async function takeHalf(right: number) {
+      const started = await readBody({
+        response: await api.post(mocksPath, { data: { shape: half, timeZone: "UTC" } }),
+        schema: anytimeMockResponseSchema,
+        status: 201,
+      });
+
+      const path = `/v1/mocks/${started.id}`;
+
+      const running = await readBody({
+        response: await api.get(path),
+        schema: mockViewResponseSchema,
+      });
+
+      await (running.current?.questions ?? []).reduce(async (previous, question, index) => {
+        await previous;
+
+        await api.put(`${path}/answers`, {
+          data: {
+            answer: { selectedIndex: index < right ? 0 : 1 },
+            durationMs: 5000,
+            flagged: false,
+            itemId: question.itemId,
+          },
+        });
+      }, Promise.resolve());
+
+      await api.post(`${path}/sections/0/submissions`, { data: { timeZone: "UTC" } });
+      return running;
+    }
+
+    const first = await takeHalf(MOCK_QUESTIONS);
+    expect(first.reusedQuestions).toBe(0);
+
+    // Every question in the bank is answered and the plan's new questions for today are used: the
+    // same mock starts at once (201, never `needsQuestions`) with the questions answered before.
+    await usageRecordsFixture({ count: 2, kind: "mockQuestions", userId });
+
+    const second = await takeHalf(MOCK_QUESTIONS / 2);
+    expect(second).toMatchObject({ questions: MOCK_QUESTIONS, reusedQuestions: MOCK_QUESTIONS });
+
+    const exam = await readBody({
+      response: await api.get(`/v1/goals/${goal.id}/exam`),
+      schema: examViewResponseSchema,
+    });
+
+    // A wrong answer cancels a right one: all right is 100%, half right is a net of 0.
+    expect(exam.progress?.mocks.map((mock) => [mock.number, mock.percent])).toStrictEqual([
+      [1, 100],
+      [2, 0],
+    ]);
+
+    await api.dispose();
+  });
+
+  test("keeps the notice's break between sections, with each section's tools, and ends it early on request", async () => {
+    const [{ api, userId }, other] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "mock-break" }),
+      createBearerLearner({ baseURL, prefix: "mock-break-other" }),
+    ]);
+
+    const { goal } = await createBreakExamGoal(userId);
+    const full = { area: null, day: null, kind: "full" } as const;
+
+    const started = await readBody({
+      response: await api.post(`/v1/goals/${goal.id}/mocks`, {
+        data: { shape: full, timeZone: "UTC" },
+      }),
+      schema: anytimeMockResponseSchema,
+      status: 201,
+    });
+
+    const path = `/v1/mocks/${started.id}`;
+
+    const readMock = async () =>
+      readBody({ response: await api.get(path), schema: mockViewResponseSchema });
+
+    const running = await readMock();
+
+    expect(running).toMatchObject({
+      breakUntil: null,
+      sections: [
+        { breakAfterMinutes: 10, status: "current", tools: "No calculator." },
+        { breakAfterMinutes: null, status: "upcoming", tools: "Calculator allowed." },
+      ],
+    });
+
+    expect(running.current?.questions).toHaveLength(BREAK_SECTION_QUESTIONS);
+
+    const tooSoon = await api.post(`${path}/break-ends`);
+
+    expect(tooSoon.status()).toBe(409);
+    await expect(tooSoon.json()).resolves.toMatchObject({ error: { code: "MOCK_NOT_ON_BREAK" } });
+
+    const step = await readBody({
+      response: await api.post(`${path}/sections/0/submissions`, { data: { timeZone: "UTC" } }),
+      schema: mockStepResponseSchema,
+    });
+
+    expect(step.status).toBe("next");
+
+    // On the break: no section runs, and the next one's clock starts when it ends.
+    const onBreak = await readMock();
+    const breakLeft = new Date(onBreak.breakUntil ?? 0).getTime() - Date.now();
+
+    expect(onBreak.current).toBeNull();
+    expect(breakLeft).toBeGreaterThan(9 * 60_000);
+    expect(breakLeft).toBeLessThanOrEqual(10 * 60_000);
+
+    const [hidden, ended] = await Promise.all([
+      other.api.post(`${path}/break-ends`),
+      api.post(`${path}/break-ends`),
+    ]);
+
+    expect(hidden.status()).toBe(404);
+    expect(ended.status()).toBe(204);
+
+    const next = await readMock();
+
+    expect(next).toMatchObject({
+      breakUntil: null,
+      sections: [{ status: "done" }, { status: "current", tools: "Calculator allowed." }],
+    });
+
+    expect(next.current?.questions).toHaveLength(BREAK_SECTION_QUESTIONS);
+
+    await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("asks and scores the exam's own answer formats: several picks with the notice's partial credit, a number and a word", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mock-formats" });
+    const { goal, itemIds } = await createFormatsExamGoal(userId);
+
+    const started = await readBody({
+      response: await api.post(`/v1/goals/${goal.id}/mocks`, {
+        data: { shape: { area: null, day: null, kind: "full" }, timeZone: "UTC" },
+      }),
+      schema: anytimeMockResponseSchema,
+      status: 201,
+    });
+
+    const path = `/v1/mocks/${started.id}`;
+
+    const readMock = async () =>
+      readBody({ response: await api.get(path), schema: mockViewResponseSchema });
+
+    const running = await readMock();
+    const questions = running.current?.questions ?? [];
+    const byId = new Map(questions.map((question) => [question.itemId, question]));
+
+    expect(questions).toHaveLength(FORMATS_QUESTIONS);
+    expect(byId.get(itemIds.picks)).toMatchObject({ format: "multipleChoice", select: "all" });
+
+    expect(byId.get(itemIds.number)).toMatchObject({
+      entry: { kind: "fraction", places: null },
+      format: "numeric",
+    });
+
+    expect(byId.get(itemIds.word)).toMatchObject({ format: "typed", options: null });
+
+    const save = (itemId: string, answer: object) =>
+      api.put(`${path}/answers`, { data: { answer, durationMs: 4000, flagged: false, itemId } });
+
+    // Words only go to a question answered in words.
+    const wrongShape = await save(itemIds.picks, { text: "2 + 2 = 4" });
+
+    expect(wrongShape.status()).toBe(422);
+
+    const quick = questions.filter((question) => question.format === "multipleChoice");
+
+    const saved = await Promise.all([
+      save(itemIds.picks, { selectedIndexes: [0] }),
+      save(itemIds.number, { number: 2 / 3 }),
+      save(itemIds.word, { text: "prime" }),
+      ...quick
+        .filter((question) => question.itemId !== itemIds.picks)
+        .map((question) => save(question.itemId, { selectedIndex: 0 })),
+    ]);
+
+    expect(saved.map((response) => response.status())).toStrictEqual(saved.map(() => 204));
+
+    await api.post(`${path}/sections/0/submissions`, { data: { timeZone: "UTC" } });
+
+    // One of the two right options earns a quarter of its question: +1 of +4.
+    const finished = await readMock();
+
+    expect(finished.result).toMatchObject({ correct: FORMATS_QUESTIONS - 0.75 });
+    expect(finished.review).toMatchObject([{ itemId: itemIds.picks, outcome: "partial" }]);
+
+    await api.dispose();
+  });
+
+  test("keeps a forward-only section's answers left behind, and opens where the learner got to", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mock-forward" });
+
+    const { goal } = await createBreakExamGoal(userId, {
+      navigation: { answerChanges: null, forwardOnly: true, itemSeconds: null, mustAnswer: true },
+    });
+
+    const started = await readBody({
+      response: await api.post(`/v1/goals/${goal.id}/mocks`, {
+        data: { shape: { area: null, day: null, kind: "full" }, timeZone: "UTC" },
+      }),
+      schema: anytimeMockResponseSchema,
+      status: 201,
+    });
+
+    const path = `/v1/mocks/${started.id}`;
+
+    const running = await readBody({
+      response: await api.get(path),
+      schema: mockViewResponseSchema,
+    });
+
+    const [first, second] = running.current?.questions ?? [];
+
+    expect(running.sections[0]?.navigation).toStrictEqual({
+      answerChanges: null,
+      forwardOnly: true,
+      itemSeconds: null,
+      mustAnswer: true,
+    });
+
+    const put = (itemId: string, selectedIndex: number) =>
+      api.put(`${path}/answers`, {
+        data: { answer: { selectedIndex }, durationMs: 5000, flagged: false, itemId },
+      });
+
+    // The second answer leaves the first behind, so it can't change anymore.
+    const saved = [await put(first?.itemId ?? "", 0), await put(second?.itemId ?? "", 0)];
+
+    expect(saved.map((response) => response.status())).toStrictEqual([204, 204]);
+
+    const locked = await put(first?.itemId ?? "", 1);
+
+    expect(locked.status()).toBe(409);
+    await expect(locked.json()).resolves.toMatchObject({ error: { code: "MOCK_ANSWER_LOCKED" } });
+
+    await expect(
+      readBody({ response: await api.get(path), schema: mockViewResponseSchema }),
+    ).resolves.toMatchObject({ current: { changesLeft: null, resume: 1 } });
+
+    await api.dispose();
   });
 
   test("every mock exam comes with Plus, the diagnostic one in onboarding included", async () => {

@@ -117,6 +117,13 @@ export const TEST_CASES: ReconcileCase[] = [
     id: "pt-ignore-already-known",
     newFact: fact("routine", "Estuda depois das 20h"),
   }),
+  // Persona pass 9: a goal replaced by its own paraphrase, so "Memory updated" showed both.
+  reconcileCase({
+    actions: ["ignore"],
+    existing: [fact("goals", "Quer criar portfólio com caso de matrícula online")],
+    id: "pt-ignore-goal-paraphrase",
+    newFact: fact("goals", "Quer criar portfólio com estudo de matrícula online"),
+  }),
   reconcileCase({
     actions: ["replace_1"],
     existing: [fact("context", "Mora em Recife"), fact("background", "Trabalha como professora")],

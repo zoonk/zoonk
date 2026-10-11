@@ -91,6 +91,23 @@ function CheckedStep({ result, step }: { result: StepResult; step: ProcessStep }
   );
 }
 
+/** One step of the process explored on an explanation screen, with why it comes here. */
+function ExploredStep({ position, step }: { position: number; step: ProcessStep }) {
+  return (
+    <li className="flex gap-3 rounded-2xl border px-3 py-2.5">
+      <StepMarks icon={step.icon} position={position} state={null} />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
+        <p className="text-sm leading-snug font-medium">
+          <LessonRichText text={step.text} />
+        </p>
+
+        {step.why && <p className="text-muted-foreground text-sm leading-snug">{step.why}</p>}
+      </div>
+    </li>
+  );
+}
+
 function initialOrder(answer: ProcessOrderProps["answer"], shuffled: readonly ProcessStep[]) {
   return answer?.kind === "order" ? answer.ids : shuffled.map((step) => step.id);
 }
@@ -98,7 +115,8 @@ function initialOrder(answer: ProcessOrderProps["answer"], shuffled: readonly Pr
 /**
  * The steps of a process, shuffled, to put in order by dragging or with the keyboard. Once
  * checked, they show in their true order with why each needs the one before, and where the
- * learner had the ones out of place.
+ * learner had the ones out of place. Explored on an explanation screen, they show in their true
+ * order with each one's why, nothing to drag.
  */
 export function ProcessOrderActivity({
   answer,
@@ -121,6 +139,18 @@ export function ProcessOrderActivity({
   function handleReorder(ids: string[]) {
     setOrder(ids);
     onAnswerChange({ ids, kind: "order" });
+  }
+
+  if (phase === "explore") {
+    return (
+      <ActivityCanvas className="gap-2" labelId={labelId}>
+        <ol className="flex flex-col gap-2">
+          {steps.map((step, index) => (
+            <ExploredStep key={step.id} position={index + 1} step={step} />
+          ))}
+        </ol>
+      </ActivityCanvas>
+    );
   }
 
   if (phase === "checked") {

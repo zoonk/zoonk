@@ -5,6 +5,7 @@ import {
 } from "@zoonk/ai/tasks/v2/identity/subject";
 import { type Sql, prisma, sql } from "@zoonk/db";
 import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
+import { QUICK_LESSON_KEY_SQL_PATTERN } from "../../quick-lessons/quick-lesson-identity";
 import { listChaptersCourses } from "../_utils/candidate-courses";
 import { isInRequestScope } from "../_utils/exact-match-scope";
 import { type IdentityKindSearch, type LessonIdentityRequest } from "../_utils/identity-requests";
@@ -44,12 +45,16 @@ const LESSON_WITH_SKILLS_DOCUMENT = {
     WHERE ls.lesson_id = l.id)`,
 };
 
-/** Public lessons in the request's language, level and target language. */
+/**
+ * Public lessons in the request's language, level and target language. A skill's quick lesson is
+ * never a lesson to reuse: it only stands in where a learner chose the short version.
+ */
 function toEligibleLessonSql(request: LessonIdentityRequest): Sql {
   return sql`l.language = ${request.language}
     AND l.level = ${request.level}::"CourseLevel"
     AND l.visibility = 'public'
-    AND l.target_language IS NOT DISTINCT FROM ${request.targetLanguage}`;
+    AND l.target_language IS NOT DISTINCT FROM ${request.targetLanguage}
+    AND l.identity_key !~ ${QUICK_LESSON_KEY_SQL_PATTERN}`;
 }
 
 /** Eligible lessons whose own words match the query. */
@@ -58,7 +63,13 @@ function toLessonsHoldingSql({ eligible, query }: { eligible: Sql; query: Sql })
     WHERE ${eligible}`;
 }
 
-/** Eligible lessons teaching a skill whose words match the query. A lesson's skills share its language. */
+/**
+ * Eligible lessons teaching a skill whose words match the query, reached from the matching skills
+ * through their lessons, one step at a time. A lesson's skills share its language. Postgres can't
+ * tell how many lessons the request's filters keep and guesses a handful, so joined freely it read
+ * every eligible lesson and searched the skills again for each: with 2,000 lessons and skills
+ * sharing a word, one search took 5 seconds instead of a few milliseconds.
+ */
 function toLessonsTeachingSql({
   eligible,
   language,
@@ -68,10 +79,15 @@ function toLessonsTeachingSql({
   language: string;
   query: Sql;
 }): Sql {
+  // Each `OFFSET 0` keeps Postgres from merging a step into the others and reordering them.
   return sql`SELECT l.id FROM ${toIndexedMatchesSql({ document: SKILL_DOCUMENT, query })}
-    JOIN lesson_skills ls ON ls.skill_id = s.id
-    JOIN library_lessons l ON l.id = ls.lesson_id
-    WHERE s.language = ${language} AND ${eligible}`;
+    CROSS JOIN LATERAL (
+      SELECT ls.lesson_id FROM lesson_skills ls WHERE ls.skill_id = s.id OFFSET 0
+    ) ls
+    CROSS JOIN LATERAL (
+      SELECT l.id FROM library_lessons l WHERE l.id = ls.lesson_id AND ${eligible} OFFSET 0
+    ) l
+    WHERE s.language = ${language}`;
 }
 
 function toWordQueries(term: SearchTerm): string[] {

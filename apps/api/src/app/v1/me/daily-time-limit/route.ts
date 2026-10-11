@@ -1,9 +1,9 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { getDailyTimeLimitStatus } from "@zoonk/core/minors/daily-time-limit";
+import { getDailyTimeLimitStatus } from "@zoonk/core/sessions/daily-time-limit";
 import { NextResponse } from "next/server";
 
-/** How much of today's study time is left under the limits the learner's guardians set. */
+/** How much of today's study time is left under the learner's daily limit. */
 async function getCurrentUserDailyTimeLimit() {
   const status = await getDailyTimeLimitStatus();
 

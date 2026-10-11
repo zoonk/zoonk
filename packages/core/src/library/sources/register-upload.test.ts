@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { del, get } from "@vercel/blob";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -8,7 +7,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { registerSourceUpload } from "./register-upload";
-import type * as RateLimitModule from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
@@ -19,12 +17,6 @@ vi.mock("@vercel/blob", () => ({ del: vi.fn(), get: vi.fn() }));
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimitModule>()),
-  isRateLimited: vi.fn(),
-}));
 
 const NOTICE_TEXT = "ENEM 2026: 180 questoes objetivas e uma redacao.";
 
@@ -75,7 +67,6 @@ function uploadNotice({ text, userId }: { text: string; userId: string }) {
 describe(registerSourceUpload, () => {
   beforeEach(() => {
     mockSession(null);
-    vi.mocked(isRateLimited).mockResolvedValue(false);
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", PRIVATE_STORE.storeId);
   });
 

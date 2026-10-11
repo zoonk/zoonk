@@ -30,7 +30,7 @@ export const samExplain: SeedLearner = {
     kind: "explain",
     plan: {
       items: [
-        { day: 0, kind: "lesson", lesson: "market-up-two-percent", phase: 0, status: "done" },
+        { day: 0, kind: "lesson", lesson: "market-up-two-percent", phase: 0, status: "todo" },
       ],
       phases: [{ name: "Quick explanation" }],
     },
@@ -50,18 +50,7 @@ export const samExplain: SeedLearner = {
   ],
   milestones: [],
   name: "Sam Rivera",
-  session: {
-    blocks: [
-      {
-        brainPower: 30,
-        kind: "learn",
-        lesson: "market-up-two-percent",
-        minutes: 4,
-        status: "completed",
-      },
-    ],
-    status: "completed",
-  },
+  session: { finished: 1 },
   skills: [{ memory: "learning", skill: "read-market-headline" }],
   timeZone: "America/Chicago",
   username: "sam_asks",

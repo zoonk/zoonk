@@ -7,10 +7,13 @@ import {
 } from "@zoonk/core/language/pronunciation/contract";
 import { useMemo, useState, useTransition } from "react";
 
-/** What the host's grader returns for one recording. */
+/**
+ * What the host's grader returns for one recording: `signUpRequired` asks a guest to create an
+ * account once the day's AI budget all guests share is spent.
+ */
 export type PronunciationAnswerOutcome =
   | { grade: PronunciationAnswerGrade; status: "graded" }
-  | { status: "failed" | "noSpeech" };
+  | { status: "failed" | "noSpeech" | "signUpRequired" };
 
 /** The host saves answers and the round through core; null when the round didn't go through. */
 export type PronunciationRoundActions = {
@@ -24,12 +27,15 @@ export type PronunciationRoundActions = {
 };
 
 type WordState =
-  | { kind: "ready"; notice: "failed" | "noSpeech" | null }
+  | { kind: "ready"; notice: PronunciationNotice | null }
   | { grade: PronunciationAnswerGrade; kind: "graded" };
 
 type RoundStep =
   | { index: number; kind: "word"; word: WordState }
   | { kind: "result"; result: PronunciationRoundResult | null };
+
+/** Why the last recording wasn't graded. */
+export type PronunciationNotice = "failed" | "noSpeech" | "signUpRequired";
 
 const READY: WordState = { kind: "ready", notice: null };
 

@@ -17,6 +17,8 @@ function entry(
       itemId: `${mistakeId}-${index}`,
       options: ["Right", "Wrong"],
       question: `Question ${index}?`,
+      select: 1 as const,
+      set: null,
       skillId: "skill",
       visual: null,
     })),

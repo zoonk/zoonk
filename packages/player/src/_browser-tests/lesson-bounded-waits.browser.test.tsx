@@ -1,13 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { teachingStep } from "../_test-utils/lesson-steps";
-import {
-  buildAdapters,
-  buildLesson,
-  renderLessonPlayer,
-} from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { CHECK_BOUNDS } from "../lesson/use-step-grading";
+import { buildLesson } from "../preview/preview-lesson";
+import { teachingStep } from "../preview/preview-steps";
 
 /**
  * Waits inside a lesson never hang: a typed answer's grade that takes longer than usual says it's

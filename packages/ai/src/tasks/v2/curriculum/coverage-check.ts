@@ -6,6 +6,7 @@ import { type AiGenerationContext } from "../../../provenance/ai-generation-even
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
+import { selectPromptVariants } from "../../_utils/prompt-variants";
 import {
   type CoverageReference,
   type ExamWeightChange,
@@ -15,7 +16,7 @@ import {
   normalizeExamWeights,
   normalizePlacements,
 } from "./_utils/normalize-coverage";
-import systemPrompt from "./coverage-check.prompt.md";
+import template from "./coverage-check.prompt.md";
 import {
   type ExamOutline,
   findUncoveredTopics,
@@ -34,8 +35,37 @@ import {
 const defaultModel = "anthropic/claude-sonnet-5.5";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6-sol"] as const;
 
+const examWeightsSchema = z.array(z.object({ examWeight: z.number(), key: z.string() }));
+
+/** Any goal's check: only the skills the graph is missing. */
 const schema = z.object({
-  examWeights: z.array(z.object({ examWeight: z.number(), key: z.string() })),
+  missing: z.array(
+    z.object({
+      description: z.string(),
+      name: z.string(),
+      prerequisites: z.array(z.string()),
+      syllabusLine: z.string(),
+    }),
+  ),
+});
+
+/** An exam's check also weighs the missing skills and corrects the graph's weights. */
+const examSchema = z.object({
+  examWeights: examWeightsSchema,
+  missing: z.array(
+    z.object({
+      description: z.string(),
+      examWeight: z.number().nullable(),
+      name: z.string(),
+      prerequisites: z.array(z.string()),
+      syllabusLine: z.string(),
+    }),
+  ),
+});
+
+/** With the exam's notice, it also places the missing skills and the graph's in the notice. */
+const noticeSchema = z.object({
+  examWeights: examWeightsSchema,
   missing: z.array(
     z.object({
       area: z.string(),
@@ -49,6 +79,21 @@ const schema = z.object({
   ),
   placements: z.array(z.object({ area: z.string(), key: z.string(), topics: z.array(z.string()) })),
 });
+
+/** What any of the three answers, with the fields a goal's check doesn't ask for left out. */
+type RawCoverage = {
+  examWeights?: ExamWeightChange[];
+  missing: {
+    area?: string;
+    description: string;
+    examWeight?: number | null;
+    name: string;
+    prerequisites: string[];
+    syllabusLine: string;
+    topics?: string[];
+  }[];
+  placements?: SkillPlacement[];
+};
 
 type CoverageSkill = {
   key: string;
@@ -106,8 +151,31 @@ function formatSkill({ outline, skill }: { outline?: ExamOutline; skill: Coverag
   return `${line}${place}${weight}`;
 }
 
+/** An exam's notice, which the check places the graph in; never another goal's. */
+function getNoticeOutline(params: CoverageCheckParams): ExamOutline | undefined {
+  return params.goalKind === "exam" ? params.examOutline : undefined;
+}
+
+/**
+ * Which instructions and answer a check gets: an exam's weighs its skills, and with its notice also
+ * places them in it, so another goal's check never reads the rules or fills the fields of either.
+ */
+function toPromptVariants(params: CoverageCheckParams) {
+  return { exam: params.goalKind === "exam", notice: Boolean(getNoticeOutline(params)) };
+}
+
+function getSchema(params: CoverageCheckParams): z.ZodType<RawCoverage> {
+  const variants = toPromptVariants(params);
+
+  if (variants.notice) {
+    return noticeSchema;
+  }
+
+  return variants.exam ? examSchema : schema;
+}
+
 function formatUncovered(params: CoverageCheckParams): string {
-  const outline = params.examOutline;
+  const outline = getNoticeOutline(params);
 
   if (!outline) {
     return "";
@@ -131,7 +199,7 @@ ${uncovered.join("\n") || "none"}
 }
 
 function buildUserPrompt(params: CoverageCheckParams): string {
-  const outline = params.examOutline;
+  const outline = getNoticeOutline(params);
 
   const untrusted = formatUntrustedInput({
     GOAL: params.goal,
@@ -167,6 +235,7 @@ ${untrusted}
  */
 export async function checkCoverage(params: CoverageCheckParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const systemPrompt = selectPromptVariants({ template, variants: toPromptVariants(params) });
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
@@ -176,35 +245,41 @@ export async function checkCoverage(params: CoverageCheckParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: getSchema(params) }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "coverage-check",
   });
 
   const exam = params.goalKind === "exam";
-  const outline = exam ? params.examOutline : undefined;
+  const outline = getNoticeOutline(params);
 
   const data: CoverageCheckResult = {
     examWeights: normalizeExamWeights({
-      changes: result.output.examWeights,
+      changes: result.output.examWeights ?? [],
       exam,
       graphSkills: params.skills,
     }),
     missing: normalizeCoverage({
       exam,
       graphSkills: params.skills,
-      missing: result.output.missing,
+      missing: result.output.missing.map((skill) => ({
+        area: "",
+        examWeight: null,
+        topics: [],
+        ...skill,
+      })),
       outline,
       references: params.references,
     }),
     placements: normalizePlacements({
       graphSkills: params.skills,
       outline,
-      placements: result.output.placements,
+      placements: result.output.placements ?? [],
     }),
   };
 

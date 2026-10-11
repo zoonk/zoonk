@@ -33,6 +33,17 @@ describe(readRefusedLimit, () => {
     ).toStrictEqual({ period: "total", status: "limitReached", tier: "guest" });
   });
 
+  it("asks a guest to create an account once the guests' daily AI budget is spent", () => {
+    expect(
+      readRefusedLimit({
+        body: {
+          error: { code: "SIGN_UP_REQUIRED", message: "Create your free account to continue" },
+        },
+        status: 403,
+      }),
+    ).toStrictEqual({ status: "signUpRequired" });
+  });
+
   it("tells a short break from Plus's cap for today", () => {
     expect(
       readRefusedLimit({

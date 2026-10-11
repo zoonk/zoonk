@@ -2,12 +2,16 @@ import "server-only";
 import { buildLiveConversationInstructions } from "@zoonk/ai/tasks/v2/language/live-conversation-instructions";
 import { type Chapter, type LanguageConversation } from "@zoonk/db";
 import { isCefrLevel } from "@zoonk/utils/cefr";
+import { type ExamTaskSnapshot } from "../../exam-speaking/speaking-contract";
+import { getSpeakingFormat, getSpeakingTask } from "../../exam-speaking/speaking-formats";
+import { toExamTaskView } from "../../exam-speaking/speaking-views";
 import {
   type ConversationScenario,
   type LanguageConversationView,
   type SpeakingMockExam,
   conversationFeedbackSchema,
   conversationScenarioSchema,
+  examSpeakingScenarioSchema,
   speakingMockScenarioSchema,
 } from "../conversation-contract";
 import {
@@ -20,22 +24,52 @@ export type ConversationRow = LanguageConversation & {
   chapter: Pick<Chapter, "id" | "title"> | null;
 };
 
-export type SavedScenario = ConversationScenario & { exam: SpeakingMockExam | null };
+export type SavedScenario = ConversationScenario & {
+  exam: SpeakingMockExam | null;
+  examTask: ExamTaskSnapshot | null;
+};
 
 /**
- * The scenario saved with a call. A speaking mock's also names the exam it follows, which only
- * mocks have. Null when it doesn't parse.
+ * The scenario saved with a call. A speaking mock's also names the exam it follows, and an exam
+ * task's its paper, task and card. Null when it doesn't parse.
  */
 export function readSavedScenario(
   row: Pick<LanguageConversation, "kind" | "scenario">,
 ): SavedScenario | null {
   if (row.kind === "speakingMock") {
     const mock = speakingMockScenarioSchema.safeParse(row.scenario);
-    return mock.success ? mock.data : null;
+    return mock.success ? { ...mock.data, examTask: null } : null;
+  }
+
+  if (row.kind === "examSpeaking") {
+    const task = examSpeakingScenarioSchema.safeParse(row.scenario);
+    return task.success ? { ...task.data, exam: null } : null;
   }
 
   const scenario = conversationScenarioSchema.safeParse(row.scenario);
-  return scenario.success ? { ...scenario.data, exam: null } : null;
+  return scenario.success ? { ...scenario.data, exam: null, examTask: null } : null;
+}
+
+/** Whom the voice model plays: an exam task's examiner or partner, a mock's examiner, or a role. */
+function toLiveRole(data: SavedScenario) {
+  if (data.examTask) {
+    const format = getSpeakingFormat(data.examTask);
+    const task = format ? getSpeakingTask({ format, task: data.examTask.task }) : null;
+
+    return format && task
+      ? {
+          examTask: {
+            card: data.examTask.card,
+            exam: format.exam,
+            task: { brief: task.brief, name: task.name, role: task.role },
+            title: format.title,
+          },
+          kind: "examTask" as const,
+        }
+      : null;
+  }
+
+  return data.exam ? { exam: data.exam, kind: "speakingMock" as const } : { kind: "unit" as const };
 }
 
 /** A checkpoint call pays the boss bonus; the block's own kind tells a final boss apart. */
@@ -101,8 +135,9 @@ export function toConversationView({
   row: ConversationRow;
 }): LanguageConversationView | null {
   const data = readSavedScenario(row);
+  const role = data ? toLiveRole(data) : null;
 
-  if (!data || !isCefrLevel(row.level)) {
+  if (!data || !role || !isCefrLevel(row.level)) {
     return null;
   }
 
@@ -111,7 +146,7 @@ export function toConversationView({
   const instructions =
     row.status === "ready"
       ? buildLiveConversationInstructions({
-          ...(data.exam ? { exam: data.exam, kind: "speakingMock" } : { kind: "unit" }),
+          ...role,
           learnerLanguage: row.language,
           level: row.level,
           minutes: row.minutes,
@@ -123,6 +158,9 @@ export function toConversationView({
   return {
     character: data.character,
     exam: data.exam,
+    examTask: data.examTask
+      ? toExamTaskView({ sectionId: row.sectionId, snapshot: data.examTask })
+      : null,
     goalId: row.goalId,
     hints: data.hints,
     id: row.id,

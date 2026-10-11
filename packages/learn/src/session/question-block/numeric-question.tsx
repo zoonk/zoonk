@@ -8,11 +8,13 @@ import { type StudyQuestion, type StudyQuestionAnswer } from "../session-types";
 /** A math problem in a block: type the number, then Check (or Enter). */
 export function NumericQuestion({
   disabled,
+  entry,
   onAnswer,
   result,
   unit,
 }: {
   disabled: boolean;
+  entry: StudyQuestion["entry"];
   onAnswer: (answer: StudyQuestionAnswer) => void;
   result: "correct" | "wrong" | null;
   unit: StudyQuestion["unit"];
@@ -21,6 +23,7 @@ export function NumericQuestion({
 
   return (
     <NumericAnswerField
+      entry={entry}
       locked={disabled || result !== null}
       onSubmit={(number) => onAnswer({ number })}
       result={result}

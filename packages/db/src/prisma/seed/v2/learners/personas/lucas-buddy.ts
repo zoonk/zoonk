@@ -1,23 +1,34 @@
 import { physicsCourse } from "../../library/physics/physics-course";
-import { type SeedLearner } from "../types";
+import { type SeedAttempt, type SeedLearner } from "../types";
+
+/** Answers inside the lessons he finished, two in each, on the skill each lesson teaches. */
+const lessonAnswers: SeedAttempt[] = (
+  [
+    [-18, "atom-scale"],
+    [-16, "quantum-rules"],
+    [-11, "light-wave"],
+    [-9, "photon"],
+    [-7, "duality"],
+    [-1, "atom-structure"],
+  ] as const
+).flatMap(([day, skill]) =>
+  [1, 2].map((index): SeedAttempt => ({
+    answer: { selectedIndex: 0 },
+    day,
+    isCorrect: true,
+    key: `lesson-${skill}-${index}`,
+    seconds: 25,
+    skill,
+  })),
+);
 
 /**
  * A learner with a grown buddy: Otto the octopus, wearing the Star glasses from his first boss, after
- * two Trickster checkpoints. Lucas wants the ideas of quantum physics without the math, 15 minutes a
+ * two Trickster checkpoints, whose questions core picks for his past sessions (see `SeededPast`). Lucas wants the ideas of quantum physics without the math, 15 minutes a
  * night.
  */
 export const lucasBuddy: SeedLearner = {
   attempts: [
-    {
-      answer: { isTrue: true },
-      day: 0,
-      inSession: true,
-      isCorrect: true,
-      item: "color-wavelength",
-      key: "review-color",
-      seconds: 7,
-      skill: "light-wave",
-    },
     {
       answer: { isTrue: true },
       day: -4,
@@ -39,6 +50,7 @@ export const lucasBuddy: SeedLearner = {
       seconds: 12,
       skill: "photon",
     },
+    ...lessonAnswers,
   ],
   brainPower: 310,
   buddy: { glasses: "star", kind: "otto", name: "Otto" },
@@ -111,28 +123,7 @@ export const lucasBuddy: SeedLearner = {
     { bossDay: -4, day: -4, key: "trapHunter", kind: "badge", shown: true },
   ],
   name: "Lucas Pereira",
-  session: {
-    blocks: [
-      {
-        brainPower: 20,
-        capsules: [
-          { format: "swipe", items: ["color-wavelength"], skills: ["light-wave"], title: "Luz" },
-        ],
-        kind: "review",
-        minutes: 3,
-        status: "completed",
-      },
-      { kind: "learn", lesson: "electron-cloud", minutes: 6, status: "pending" },
-      {
-        drills: [{ items: ["photon-brightness"], mistake: "brighter-photons" }],
-        kind: "practice",
-        minutes: 6,
-        status: "pending",
-        title: "Corrigir um erro",
-      },
-    ],
-    status: "active",
-  },
+  session: { finished: 0, started: true },
   skills: [
     { memory: "mastered", skill: "atom-scale" },
     { memory: "solid", skill: "quantum-rules" },

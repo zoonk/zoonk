@@ -40,6 +40,8 @@ export type LessonWritingContext = {
    * at their depth and in their questions' style for their candidates, without naming them.
    */
   exams?: LessonExam[];
+  /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
+  setup?: boolean;
 };
 
 /** A problem found by code or by the reviewer. `screen` is a 0-based index, or null for the whole lesson. */
@@ -81,7 +83,10 @@ function formatScreen({
     `   Skills: ${skillNames.length > 0 ? skillNames.join("; ") : "none"}`,
     `   Brief: ${screen.brief}`,
     `   Visual: ${screen.visual ?? "none"}`,
-    screen.activityTemplate && `   Activity template: ${screen.activityTemplate}`,
+    screen.activityTemplate &&
+      (screen.kind === "explanation"
+        ? `   Explore template: ${screen.activityTemplate}`
+        : `   Activity template: ${screen.activityTemplate}`),
   ]
     .filter(Boolean)
     .join("\n");
@@ -100,7 +105,10 @@ function formatTemplates(templates: readonly LessonActivityTemplate[]): string {
     .join("\n");
 }
 
-/** Setup lessons say when their steps were written, since software changes fast. */
+/**
+ * Setup lessons say when their steps were written, since software changes fast; no other lesson
+ * reads the date.
+ */
 function getToday(): string {
   return new Date().toISOString().slice(0, "yyyy-mm-dd".length);
 }
@@ -117,8 +125,7 @@ export function formatLessonPlan(context: LessonWritingContext): string {
 LANGUAGE: ${getPromptLanguageName({ language: context.language })}
 ${formatLocalContext(context.language)}
 ${formatCast({ language: context.language, seed: `${context.courseTitle}:${spec.title}` })}
-LEVEL: ${context.level}
-TODAY: ${getToday()}
+LEVEL: ${context.level}${context.setup ? `\nTODAY: ${getToday()}` : ""}
 COURSE_TITLE: ${context.courseTitle}
 CHAPTER_TITLE: ${context.chapterTitle}
 LESSON_TITLE: ${spec.title}

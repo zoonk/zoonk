@@ -8,6 +8,7 @@ import { uploadImage } from "@zoonk/core/images/upload";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
+import { pictureCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { buildImageReuseKey } from "@zoonk/utils/identity-key";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TEST_IMAGE, imageProvenance, passedCheck, sceneFor } from "./_test-utils/image-results";
@@ -136,11 +137,7 @@ describe(lessonImagesWorkflow, () => {
       libraryLessonFixture(),
       mediaAssetFixture({
         prompt: describeImageScene(reusedScene),
-        reuseKey: buildImageReuseKey({
-          language: null,
-          prompt: describeImageScene(reusedScene),
-          styleVersion: IMAGE_STYLE_VERSION,
-        }),
+        reuseKey: buildImageReuseKey({ language: null, prompt: describeImageScene(reusedScene) }),
         styleVersion: IMAGE_STYLE_VERSION,
       }),
     ]);
@@ -164,6 +161,53 @@ describe(lessonImagesWorkflow, () => {
     expect(steps[0]?.mediaAssetId).toBe(existing.id);
     expect(steps[1]?.mediaAssetId).toStrictEqual(expect.any(String));
     expect(generateLessonImage).toHaveBeenCalledOnce();
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 0,
+      reused: 0,
+    });
+  });
+
+  it("draws a picture for each option of a question whose options are pictures, and checks each", async () => {
+    const lesson = await libraryLessonFixture();
+    const drawing = randomUUID();
+
+    // Each option's own scene, new to the store, so nothing is reused.
+    const content = {
+      ...pictureCheckContent,
+      options: pictureCheckContent.options.map((option) => ({
+        ...option,
+        picture: { ...option.picture, prompt: `${option.picture.prompt} ${drawing}` },
+      })),
+    };
+
+    const step = await libraryStepFixture({ content, kind: "check", lessonId: lesson.id });
+
+    await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
+      failed: 0,
+      generated: 3,
+      reused: 0,
+    });
+
+    const pictures = await prisma.stepOptionPicture.findMany({
+      orderBy: { optionId: "asc" },
+      where: { stepId: step.id },
+    });
+
+    expect(pictures.map((picture) => picture.optionId)).toStrictEqual([
+      "baroque",
+      "gothic",
+      "romanesque",
+    ]);
+
+    expect(new Set(pictures.map((picture) => picture.mediaAssetId)).size).toBe(3);
+    expect(checkLessonImage).toHaveBeenCalledTimes(3);
+
+    // The question has no picture of its own; the next run finds nothing left to draw.
+    await expect(prisma.step.findUnique({ where: { id: step.id } })).resolves.toMatchObject({
+      mediaAssetId: null,
+    });
 
     await expect(lessonImagesWorkflow({ lessonId: lesson.id })).resolves.toStrictEqual({
       failed: 0,

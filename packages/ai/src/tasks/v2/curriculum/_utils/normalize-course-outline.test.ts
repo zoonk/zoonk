@@ -64,6 +64,53 @@ describe(normalizeCourseOutline, () => {
     });
   });
 
+  it("takes em dashes and Markdown marks out of what learners read, and drops unfinished titles", () => {
+    // Câmara and OAB chapters, Oct 2026: "what AI can — and can't — conclude".
+    const outline = normalizeCourseOutline({
+      level: "beginner",
+      raw: {
+        chapters: [
+          rawChapter({
+            description: "O que a IA pode — e não pode — concluir.",
+            lessons: [
+              rawLesson({ canDo: "Ler — e explicar", title: "**Porcentagens** simples" }),
+              rawLesson({ title: "[Inserir título]" }),
+            ],
+            objectives: ["Comparar _preços_ — e decidir"],
+            title: "Frações — e porcentagens",
+          }),
+          rawChapter({ title: "TODO" }),
+        ],
+      },
+      requiredSkillKeys: [],
+    });
+
+    expect(outline.chapters).toHaveLength(1);
+
+    expect(outline.chapters[0]).toMatchObject({
+      description: "O que a IA pode, e não pode, concluir.",
+      lessons: [{ canDo: "Ler, e explicar", title: "Porcentagens simples" }],
+      objectives: ["Comparar preços, e decidir"],
+      title: "Frações, e porcentagens",
+    });
+  });
+
+  it("reads headings, links and marks nobody can pair as plain words", () => {
+    const outline = normalizeCourseOutline({
+      level: "beginner",
+      raw: {
+        chapters: [
+          rawChapter({
+            lessons: [rawLesson({ title: "## [Juros](https://example.com) **compostos" })],
+          }),
+        ],
+      },
+      requiredSkillKeys: [],
+    });
+
+    expect(outline.chapters[0]?.lessons[0]?.title).toBe("Juros compostos");
+  });
+
   it("keeps one entry per tool, essential when any of its entries is", () => {
     const outline = normalizeCourseOutline({
       level: "beginner",
@@ -155,5 +202,41 @@ describe(normalizeCourseOutline, () => {
     ]);
 
     expect(outline.uncoveredSkillKeys).toStrictEqual(["vectors"]);
+  });
+
+  it("splits a chapter that mixes an exam's areas by its lessons, and reports an area none teaches", () => {
+    const outline = normalizeCourseOutline({
+      level: "intermediate",
+      raw: {
+        chapters: [
+          rawChapter({
+            lessons: [
+              rawLesson({ skills: ["Read a chart"], title: "Bar charts" }),
+              rawLesson({ skills: ["Calculate a percentage"], title: "Percent change" }),
+            ],
+            skillKeys: ["charts", "percent", "waves"],
+          }),
+        ],
+      },
+      requiredSkillKeys: ["charts", "percent", "waves"],
+      skillAreas: [
+        { area: "Languages", key: "charts", name: "Read a chart" },
+        { area: "Mathematics", key: "percent", name: "Calculate a percentage" },
+        { area: "Natural sciences", key: "waves", name: "Analyze waves" },
+      ],
+    });
+
+    expect(
+      outline.chapters.map((chapter) => [
+        chapter.title,
+        chapter.skillKeys,
+        chapter.lessons.map((lesson) => lesson.title),
+      ]),
+    ).toStrictEqual([
+      ["Fractions and percentages", ["charts"], ["Bar charts"]],
+      ["Percent change", ["percent"], ["Percent change"]],
+    ]);
+
+    expect(outline.uncoveredSkillKeys).toStrictEqual(["waves"]);
   });
 });

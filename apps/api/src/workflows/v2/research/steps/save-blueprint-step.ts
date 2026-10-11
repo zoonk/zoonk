@@ -1,4 +1,5 @@
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/v2/research/source-change-notice";
+import { type ReadingCheck } from "@zoonk/core/library/exams/blueprint-contract";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import {
   type BlueprintNotice,
@@ -48,22 +49,45 @@ async function writeNotice({
   return { message: data.message, provenance };
 }
 
+/** What the check of the stored reading found, and how many times its document was read. */
+type ReadingCheckInput = Omit<ReadingCheck, "checkedAt">;
+
+/** The reading with its check on its edition, when it was checked. */
+function withCheck({
+  check,
+  reading,
+}: {
+  check: ReadingCheckInput | null;
+  reading: BlueprintReading;
+}): BlueprintReading {
+  if (!check) {
+    return reading;
+  }
+
+  const edition = {
+    ...reading.content.edition,
+    check: { ...check, checkedAt: new Date().toISOString() },
+  };
+
+  return { ...reading, content: { ...reading.content, edition } };
+}
+
 /**
  * Stores the blueprint, or updates only what changed on the existing one. A
  * change also gets its one-line notice for the exam's learners, written only
- * when something actually changed.
+ * when something actually changed. A shared exam's reading is stored with its
+ * check (`check`), so one with problems is read again by the next research.
  */
 export async function saveBlueprintStep({
   analytics,
+  check,
   identity,
-  quiet = false,
-  reading,
+  reading: unchecked,
   sourceId,
 }: {
   analytics: ResearchAnalytics;
+  check: ReadingCheckInput | null;
   identity: ExamIdentity;
-  /** A reading by newer instructions of an edition already read: no learner notice. */
-  quiet?: boolean;
   reading: BlueprintReading;
   sourceId: string;
 }): Promise<{
@@ -75,7 +99,8 @@ export async function saveBlueprintStep({
 }> {
   "use step";
 
-  const notice = quiet ? null : await writeNotice({ analytics, identity, reading });
+  const reading = withCheck({ check, reading: unchecked });
+  const notice = await writeNotice({ analytics, identity, reading });
 
   const saved = await saveExamBlueprint({
     content: reading.content,

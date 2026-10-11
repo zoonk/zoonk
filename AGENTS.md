@@ -6,6 +6,8 @@
 - **DRY:** Keep a single source of truth for behavior that must stay consistent, including repeated UI patterns and runtime schemas used by documentation. Extract for real shared rules or known extensions; a small number of callers is not a reason to leave competing implementations.
 - **SOLID:** Keep functions and modules focused, composable, and responsible for one concern. Use clear boundaries and dependencies; apply these principles without adding unnecessary class hierarchies, interfaces, or abstraction layers. Prefer functional composition and immutable transformations.
 - Think from first principles. Preserve intended behavior, question assumptions and existing patterns, and choose maintainable designs without expanding the requested scope.
+- Before declaring a capability unavailable, adding infrastructure, or implementing behavior a dependency might own, check installed versions and current official documentation. Research relevant newer models, products, and libraries when they could materially simplify the solution; prefer supported capabilities and composition over rebuilding them. Use [capability research](.agents/skills/zoonk-capability-research/SKILL.md) for these decisions.
+- Write engineering work in US English: code, identifiers, comments, docs, commit messages, and examples in them. Use other languages only where the content is about that language or its learners: translation catalogs, language guides, test inputs and fixtures, eval cases, and AI prompt variants written for a language.
 - Preserve unrelated formatting; `oxfmt` owns formatting. Do not hard-wrap Markdown prose.
 
 ## Scope and completion
@@ -13,6 +15,7 @@
 - Own the user’s intended outcome through implementation and verification. Before declaring completion, reconcile the intended outcome, the resulting implementation, and the evidence collected. Close material gaps that can be investigated within the authorized task. Passing selected checks establishes only what those checks exercise. Carry earlier evidence forward only while subsequent changes leave it applicable.
 - Keep changes within the requested scope. Refactor supporting code when needed for a complete solution, and remove code, tests, types, and layout left over from superseded requirements.
 - Treat review comments and specs as hypotheses. Verify the actual path, product assumptions, and impact. In review/assessment work, fix confirmed bugs unless the user asks for findings only or the fix requires a meaningful product or architecture decision. Explain unsupported claims without changing code to satisfy them.
+- Act as a product peer: when a requested approach or repository rule creates observed UX friction or unnecessary complexity, explain the conflict and propose a simpler way to achieve the user's goal. Make improvements within the authorized scope; surface decisions that would change explicit requirements.
 - Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
 - Report the outcome and verification in plain language, distinguishing observed behavior, static review, and passed checks. Base progress and completion claims on observed results, accounting for failures across the relevant run. Identify running, blocked, or unrun checks and material verification limits.
 - Don't patch dependencies unless explicitly requested. If a library bug is discovered, report it instead and figure out a workaround we can use in the meantime.
@@ -28,6 +31,7 @@
 
 - Derive verification scope from the behavior and contracts being changed, including affected consumers and tests in unchanged files. Use focused checks when that scope is demonstrably bounded. When the impact is broad or uncertain, run the relevant containing suites. For behavior changes, prefer a failing regression test before implementation when practical. For documentation, copy, styling, or other low-impact edits, use relevant validation without adding tests that mirror the edit.
 - Use [zoonk-testing](.agents/skills/zoonk-testing/SKILL.md) when writing or changing tests: E2E for user flows, Vitest browser tests in `packages/player` for lesson player behavior, real-database integration tests for persistence and business logic, and unit tests for non-trivial pure helpers. Do not write React component unit tests. Do not add tests for `admin`, `evals`, or `blog`.
+- For user-facing changes, use [zoonk-persona-walkthrough](.agents/skills/zoonk-persona-walkthrough/SKILL.md) to use the running product as contrasting learner personas, from entry to outcome and return visits, including their bad days, with eyes that haven't seen the implementation where possible. Judge clarity, effort, honesty, recovery, and unnecessary UI; passing automated happy paths is insufficient. Fix observed issues, add regression coverage for reproducible problems, and report the evidence.
 - Run relevant local checks and fix failures caused by the requested change without pausing for review after each step. Investigate failures, including intermittent ones; do not rerun until green and dismiss them. Fix failures in the affected scope, and report unrelated failures with evidence instead of silently expanding the task.
 - Once the affected scope has been verified, broaden or repeat checks only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
 
@@ -54,6 +58,8 @@ Read the scoped `AGENTS.md` files governing paths you change, including when wor
 ## Maintaining these instructions
 
 Keep repository rules focused on project constraints and non-obvious decisions. Put task-specific procedures in the relevant skill and load supporting references only as needed.
+
+Keep `.agents/skills` as the source of truth. When adding, renaming, or removing a skill, update its relative symlink in `.claude/skills` and verify every canonical skill resolves there to the same directory.
 
 <!-- BEGIN:turborepo-agent-rules -->
 

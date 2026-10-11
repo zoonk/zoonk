@@ -66,6 +66,7 @@ The app shows one translation for text that appears in more than one catalog, so
 - "Answer options": "Antwortmöglichkeiten"
 - "Ask": "Frage stellen"
 - "Continue": "Weiter"
+- "Create your free account to continue.": "Erstelle dein kostenloses Konto, um weiterzumachen."
 - "Explain it more simply": "Erklär es einfacher"
 - "Fix a mistake": "Einen Fehler korrigieren"
 - "I want to go deeper": "Ich will tiefer einsteigen"

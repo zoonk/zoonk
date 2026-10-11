@@ -4,7 +4,8 @@ import { type ChallengeStatus } from "../challenge-contract";
 /**
  * Where a challenge stands today, from its plan item and today's block for it. On its day, today's
  * session is planned before this is asked, so a due challenge without a block waits for the next
- * session. A mock the plan doesn't include needs Plus, before its day too.
+ * session. One the plan leaves to Plus (a mock, or a phase challenge past a free exam plan's first
+ * week) says so, before its day too and whatever today's session holds, since starting it refuses.
  */
 export function getChallengeStatus({
   due,
@@ -22,6 +23,10 @@ export function getChallengeStatus({
     return "done";
   }
 
+  if (plusRequired) {
+    return "plusRequired";
+  }
+
   if (todayBlockStatus === "active") {
     return "started";
   }
@@ -33,10 +38,6 @@ export function getChallengeStatus({
   // Finished today and still to do: a phase checkpoint that didn't pass tries again tomorrow.
   if (todayBlockStatus === "completed") {
     return "tried";
-  }
-
-  if (plusRequired) {
-    return "plusRequired";
   }
 
   return due ? "waiting" : "upcoming";

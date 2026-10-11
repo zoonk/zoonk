@@ -1,4 +1,4 @@
-import { type Task } from "@/lib/types";
+import { type Task, toTokenUsage } from "@/lib/types";
 import {
   type CourseOutlineParams,
   generateCourseOutline,
@@ -15,7 +15,18 @@ export const courseOutlineTask: Task<
 > = {
   description:
     "Write one level band of a shared course: chapters with objectives and tools, and every lesson's title, description, can-do line, minutes and skills",
-  generate: generateCourseOutline,
+  // A draft written again for mixing an exam's subjects counts in what the outline spent.
+  generate: async (params) => {
+    const result = await generateCourseOutline(params);
+
+    return {
+      ...result,
+      extraCalls: result.setAside.map(({ model, usage }) => ({
+        modelId: model,
+        usage: toTokenUsage(usage),
+      })),
+    };
+  },
   id: "course-outline",
   name: "Course Outline",
   score: scoreCourseOutline,

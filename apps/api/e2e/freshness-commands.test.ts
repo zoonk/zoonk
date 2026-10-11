@@ -74,4 +74,30 @@ test.describe("Freshness commands API", () => {
 
     await apiContext.dispose();
   });
+
+  // Nothing reads a stored notice again on its own: an admin asks for it.
+  test("reads an exam's notice again on an admin's request, never a source's", async () => {
+    const [apiContext, exam, source] = await Promise.all([
+      createBearerAdmin({ baseURL, prefix: "freshness-read-again" }),
+      examBlueprintFixture(),
+      sourceFixture(),
+    ]);
+
+    const [readExam, readSource, unknown] = await Promise.all([
+      apiContext.post(PATH, {
+        data: { command: "readAgain", target: { examBlueprintId: exam.id, kind: "exam" } },
+      }),
+      apiContext.post(PATH, {
+        data: { command: "readAgain", target: { kind: "source", sourceId: source.id } },
+      }),
+      apiContext.post(PATH, {
+        data: { command: "readAgain", target: { examBlueprintId: randomUUID(), kind: "exam" } },
+      }),
+    ]);
+
+    expect(await readExam.json()).toStrictEqual({ status: "started" });
+    expect([readSource.status(), unknown.status()]).toStrictEqual([400, 404]);
+
+    await apiContext.dispose();
+  });
 });

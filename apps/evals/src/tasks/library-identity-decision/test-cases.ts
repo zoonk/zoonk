@@ -782,6 +782,67 @@ const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
       language: "en",
     },
   }),
+  // Twins inside one new graph (`mergeGraphSkillTwins`): the Câmara's graph wrote this skill twice
+  // in one area (Oct 2026), and both became Library skills.
+  pairCase({
+    candidate: {
+      courses: ["Língua Portuguesa"],
+      description: "Reconhecer a finalidade e a estrutura de cada tipo e gênero de texto.",
+      title: "Distinguir tipos e gêneros textuais",
+    },
+    id: "pt-skill-graph-twin-reordered",
+    reuse: true,
+    subject: {
+      goal: "Passar no concurso da Câmara dos Deputados",
+      item: {
+        courses: ["Língua Portuguesa"],
+        description: "Identificar o gênero e o tipo textual de um texto pela sua função e forma.",
+        title: "Distinguir gêneros e tipos textuais",
+      },
+      kind: "skill",
+      language: "pt",
+    },
+  }),
+  pairCase({
+    candidate: {
+      courses: ["Matemática e suas Tecnologias"],
+      description: "Tirar valores, tendências e comparações de gráficos e tabelas.",
+      title: "Interpretar gráficos e tabelas",
+    },
+    id: "pt-skill-graph-twin-reworded",
+    reuse: true,
+    subject: {
+      goal: "Passar no ENEM",
+      item: {
+        courses: ["Matemática e suas Tecnologias"],
+        description: "Ler os dados de gráficos e tabelas e comparar o que mostram.",
+        title: "Ler e comparar dados em gráficos e tabelas",
+      },
+      kind: "skill",
+      language: "pt",
+    },
+  }),
+  // Siblings whose names share what they act on but are different skills: the twin check asks
+  // about them too, and both must stay.
+  pairCase({
+    candidate: {
+      courses: ["Matemática e suas Tecnologias"],
+      description: "Calcular o montante quando os juros incidem só sobre o capital inicial.",
+      title: "Calcular juros simples",
+    },
+    id: "pt-skill-graph-sibling-not-twin",
+    reuse: false,
+    subject: {
+      goal: "Passar no ENEM",
+      item: {
+        courses: ["Matemática e suas Tecnologias"],
+        description: "Calcular o montante quando os juros de cada período entram no capital.",
+        title: "Calcular juros compostos",
+      },
+      kind: "skill",
+      language: "pt",
+    },
+  }),
 ];
 
 /** Production judges up to five candidates of one search together: the labeled one and four more. */

@@ -1,6 +1,5 @@
 import "server-only";
 import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
-import { toProvenanceData } from "../../library/_utils/library-rows";
 import { type PlanOperation } from "../plan-contract";
 import { withTopicPart } from "./focus-topic-part";
 import { type PlanContext } from "./plan-context";
@@ -12,8 +11,9 @@ type PlanEdit = Awaited<ReturnType<typeof interpretPlanEdit>>;
 
 /**
  * The planner's operations for the changes the words asked for: topics to add become the Library
- * skills that teach them (`toTopicSkills`), added as the learner's next work, and a focus on a
- * one-subject plan's only area takes the topics the words name (`withTopicPart`).
+ * skills that teach them (`toTopicSkills`), from the day the learner said or spread through what
+ * comes next, and a focus on a one-subject plan's only area takes the topics the words name
+ * (`withTopicPart`).
  */
 async function toPlanOperations({
   context,
@@ -36,7 +36,7 @@ async function toPlanOperations({
 
       const skills = await toTopicSkills({
         context,
-        provenance: toProvenanceData(edit.provenance),
+        startDate: operation.startDate,
         topics: operation.topics,
       });
 

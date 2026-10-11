@@ -9,6 +9,7 @@ export function OptionCard({
   index,
   isDimmed,
   isSelected,
+  layout = "row",
   onSelect,
   resultState,
 }: {
@@ -17,6 +18,8 @@ export function OptionCard({
   index: number;
   isDimmed?: boolean;
   isSelected: boolean;
+  /** `stacked` puts a picture option's number over its picture, the words under it. */
+  layout?: "row" | "stacked";
   onSelect: () => void;
   resultState: "correct" | "incorrect" | null;
 }) {
@@ -25,7 +28,8 @@ export function OptionCard({
       aria-checked={isSelected}
       aria-keyshortcuts={getNumberKeyShortcut(index) ?? undefined}
       className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-start gap-3 rounded-xl border px-4 py-3.5 text-left transition-all duration-150 outline-none focus-visible:ring-[3px]",
+        "focus-visible:border-ring focus-visible:ring-ring/50 relative flex w-full rounded-xl border text-left transition-all duration-150 outline-none focus-visible:ring-[3px]",
+        layout === "row" ? "items-start gap-3 px-4 py-3.5" : "flex-col gap-2 p-2",
         !disabled && !isSelected && "border-border hover:bg-accent",
         !disabled && isSelected && "border-primary bg-primary/5",
         disabled && "pointer-events-none",
@@ -41,7 +45,9 @@ export function OptionCard({
       type="button"
     >
       {/* One option line tall, so the number sits on the first line when the text wraps. */}
-      <LineMarker className="text-base leading-6">
+      <LineMarker
+        className={cn("text-base leading-6", layout === "stacked" && "absolute top-3 left-3 z-10")}
+      >
         <ResultKbd isSelected={isSelected} resultState={resultState ?? undefined}>
           {index + 1}
         </ResultKbd>

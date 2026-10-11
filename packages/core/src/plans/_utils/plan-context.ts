@@ -15,7 +15,10 @@ import {
 export type PlanContext = {
   goal: Goal;
   items: ExistingPlanItem[];
-  plan: Pick<Plan, "coveredShare" | "estimateHours" | "id" | "noticeWaitUntil" | "version">;
+  plan: Pick<
+    Plan,
+    "coveredShare" | "estimateHours" | "id" | "inputsKey" | "noticeWaitUntil" | "version"
+  >;
   phases: ReturnType<typeof parsePlanPhases>;
   state: PlanState;
   timeZone: string;
@@ -28,6 +31,7 @@ const itemSelect = {
   id: true,
   kind: true,
   lessonId: true,
+  lessons: true,
   phase: true,
   position: true,
   scheduledFor: true,
@@ -90,6 +94,7 @@ export async function loadPlanContext({
       coveredShare: plan.coveredShare,
       estimateHours: plan.estimateHours,
       id: plan.id,
+      inputsKey: plan.inputsKey,
       noticeWaitUntil: plan.noticeWaitUntil,
       version: plan.version,
     },

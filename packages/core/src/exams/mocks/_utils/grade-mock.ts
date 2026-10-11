@@ -1,25 +1,28 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type JsonObject } from "@zoonk/utils/json";
-import { getQuestionText, gradeChoiceAnswer } from "../../../learner/_utils/choice-items";
+import { gradeTypedItemAnswer } from "../../../learner/_utils/typed-grading";
 import { recordLearnerAnswer } from "../../../learner/record-learner-answer";
 import { scheduleMistakeCause } from "../../../mistakes/resolve-mistake-cause";
+import { getPickOutcome } from "../../scoring/partial-credit";
 import { type GradedMockAnswer } from "../mock-analysis";
-import { type MockChoice, readMockChoice } from "../mock-contract";
+import { type MockAnswer } from "../mock-answer-contract";
+import { readMockAnswer } from "./mock-answers";
+import { type MockItemGrade, gradeMockItem } from "./mock-item-grading";
 import { type MockItem, loadMockItems } from "./mock-items";
 import { getAskedItemIds } from "./mock-sections";
 import { type MockSitting } from "./owned-mock";
 
-const BLANK = { dontKnow: true } as const;
 const MS_PER_MINUTE = 60_000;
 
 type AskedQuestion = {
-  choice: MockChoice | null;
+  answer: MockAnswer | null;
   durationMs: number;
   flagged: boolean;
   item: MockItem;
   section: number;
 };
+
+type GradedQuestion = AskedQuestion & { grade: MockItemGrade };
 
 /** The exam's pace for a section, so a slow answer reads as the time the exam allows. */
 function getPaceMs({ mock, section }: { mock: MockSitting; section: number }): number | null {
@@ -34,35 +37,33 @@ function getPaceMs({ mock, section }: { mock: MockSitting; section: number }): n
  * A mock taken as placement measures what the learner already knows, like placement's own
  * questions: nothing it asks goes to the mistakes notebook.
  */
-function isDiagnostic({ choice, mock }: { choice: MockChoice | null; mock: MockSitting }) {
-  return !choice || mock.conditions.purpose === "placement";
+function isDiagnostic({ grade, mock }: { grade: MockItemGrade; mock: MockSitting }) {
+  return !grade.answered || mock.conditions.purpose === "placement";
 }
 
 async function recordAnswer({
-  asked,
+  graded,
   mock,
   sessionId,
   timeZone,
 }: {
-  asked: AskedQuestion;
+  graded: GradedQuestion;
   mock: MockSitting;
   sessionId: string | null;
   timeZone: string;
 }) {
-  const { choice, durationMs, item } = asked;
-  const answer: JsonObject = choice ?? BLANK;
-  const graded = gradeChoiceAnswer({ answer: choice ?? BLANK, item });
-  const paceMs = getPaceMs({ mock, section: asked.section });
-  const diagnostic = isDiagnostic({ choice, mock });
+  const { durationMs, grade, item } = graded;
+  const paceMs = getPaceMs({ mock, section: graded.section });
+  const diagnostic = isDiagnostic({ grade, mock });
 
   const recorded = await recordLearnerAnswer({
-    answer,
-    graded: { durationMs, expectedDurationMs: paceMs ?? undefined, isCorrect: graded.isCorrect },
+    answer: grade.recorded,
+    graded: { durationMs, expectedDurationMs: paceMs ?? undefined, isCorrect: grade.isCorrect },
     itemId: item.id,
     language: item.language,
     mistake:
-      choice && !diagnostic
-        ? { questionText: getQuestionText(item), snapshot: graded.snapshot, timeLimitMs: paceMs }
+      grade.answered && !diagnostic
+        ? { questionText: grade.snapshot.question, snapshot: grade.snapshot, timeLimitMs: paceMs }
         : null,
     mockExamId: mock.id,
     // A question left blank says the learner didn't know it; it isn't a mistake in the notebook.
@@ -74,6 +75,45 @@ async function recordAnswer({
   });
 
   scheduleMistakeCause(recorded.causeRequest);
+}
+
+/**
+ * Grades a question: by code, and a typed answer code doesn't accept by a model too, since it
+ * may be right in other words (capped per question and day). One recorded already (a finish that
+ * stopped halfway) keeps the verdict it was recorded with.
+ */
+async function gradeAsked({
+  asked,
+  mock,
+  recorded,
+}: {
+  asked: AskedQuestion;
+  mock: MockSitting;
+  recorded: ReadonlyMap<string, boolean>;
+}): Promise<GradedQuestion> {
+  const { item } = asked;
+
+  const grade = gradeMockItem({
+    answer: asked.answer,
+    item,
+    mockId: mock.id,
+    partialCredit: mock.conditions.partialCredit,
+  });
+
+  if (item.format !== "typed" || !grade.answered || grade.isCorrect) {
+    return { ...asked, grade };
+  }
+
+  const text = asked.answer && "text" in asked.answer ? asked.answer.text : "";
+
+  const verdict = recorded.has(item.id)
+    ? { isCorrect: recorded.get(item.id) === true }
+    : await gradeTypedItemAnswer({ item, text, userId: mock.userId });
+
+  return {
+    ...asked,
+    grade: { ...grade, credit: Number(verdict.isCorrect), isCorrect: verdict.isCorrect },
+  };
 }
 
 /**
@@ -89,7 +129,7 @@ function getGradedQuestions({
   mock: MockSitting;
 }): AskedQuestion[] {
   return mock.conditions.purpose === "placement"
-    ? asked.filter((question) => question.choice !== null)
+    ? asked.filter((question) => question.answer !== null)
     : asked;
 }
 
@@ -115,12 +155,19 @@ export async function gradeMock({
   const askedIds = getAskedItemIds(mock.conditions);
   const itemIds = askedIds.map((entry) => entry.itemId);
 
-  const [items, recorded] = await Promise.all([
+  const [items, attempts] = await Promise.all([
     loadMockItems(itemIds),
-    prisma.attempt.findMany({ select: { itemId: true }, where: { mockExamId: mock.id } }),
+    prisma.attempt.findMany({
+      select: { isCorrect: true, itemId: true },
+      where: { mockExamId: mock.id },
+    }),
   ]);
 
-  const recordedIds = new Set(recorded.map((attempt) => attempt.itemId));
+  const recorded = new Map(
+    attempts.flatMap((attempt) =>
+      attempt.itemId ? [[attempt.itemId, attempt.isCorrect] as const] : [],
+    ),
+  );
 
   const allAsked = askedIds.flatMap((entry): AskedQuestion[] => {
     const item = items.get(entry.itemId);
@@ -129,7 +176,7 @@ export async function gradeMock({
     return item
       ? [
           {
-            choice: readMockChoice(draft?.answer),
+            answer: readMockAnswer(draft?.answer),
             durationMs: draft?.durationMs ?? 0,
             flagged: draft?.flagged ?? false,
             item,
@@ -139,19 +186,24 @@ export async function gradeMock({
       : [];
   });
 
-  const asked = getGradedQuestions({ asked: allAsked, mock });
+  // Typed answers a model grades are independent of each other, so they're graded at once.
+  const graded = await Promise.all(
+    getGradedQuestions({ asked: allAsked, mock }).map((asked) =>
+      gradeAsked({ asked, mock, recorded }),
+    ),
+  );
 
-  await asked
-    .filter((question) => !recordedIds.has(question.item.id))
+  await graded
+    .filter((question) => !recorded.has(question.item.id))
     .reduce(
       (previous, question) =>
-        previous.then(() => recordAnswer({ asked: question, mock, sessionId, timeZone })),
+        previous.then(() => recordAnswer({ graded: question, mock, sessionId, timeZone })),
       Promise.resolve(),
     );
 
-  const skillNames = await loadSkillNames(asked.map((question) => question.item.skillId));
+  const skillNames = await loadSkillNames(graded.map((question) => question.item.skillId));
 
-  return asked.map((question) => toGraded({ areas, mock, question, skillNames }));
+  return graded.map((question) => toGraded({ areas, mock, question, skillNames }));
 }
 
 /** Each topic's name, so the result can say how each went. */
@@ -164,20 +216,6 @@ async function loadSkillNames(skillIds: readonly string[]): Promise<Map<string, 
   return new Map(skills.map((skill) => [skill.id, skill.name]));
 }
 
-function getOutcome({
-  choice,
-  item,
-}: {
-  choice: MockChoice | null;
-  item: MockItem;
-}): GradedMockAnswer["outcome"] {
-  if (!choice) {
-    return "blank";
-  }
-
-  return gradeChoiceAnswer({ answer: choice, item }).isCorrect ? "right" : "wrong";
-}
-
 function toGraded({
   areas,
   mock,
@@ -186,14 +224,15 @@ function toGraded({
 }: {
   areas: Map<string, string>;
   mock: MockSitting;
-  question: AskedQuestion;
+  question: GradedQuestion;
   skillNames: ReadonlyMap<string, string>;
 }): GradedMockAnswer {
-  const { choice, item, section } = question;
-  const outcome = getOutcome({ choice, item });
+  const { grade, item, section } = question;
+  const outcome = getPickOutcome({ answered: grade.answered, credit: grade.credit });
 
   return {
     area: areas.get(item.skillId) ?? null,
+    credit: grade.credit,
     durationMs: question.durationMs,
     flagged: question.flagged,
     irtItem: item.irt,

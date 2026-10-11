@@ -10,6 +10,11 @@ export type ExistingPlanItem = {
   id: string;
   kind: PlanItemKind;
   lessonId: string | null;
+  /**
+   * A stand-in's lessons: how many of its skill's lessons the plan teaches in its place, after
+   * cuts and base choices, as the plan saved it. Null or absent for every other item.
+   */
+  lessons?: number | null;
   phase: number;
   position: number;
   scheduledFor: Date | null;
@@ -105,13 +110,26 @@ function fromEvent(event: ScheduledEvent): PlannedItem {
   };
 }
 
-/** Events of learn plans belong to the phase of the lessons before them. */
+/**
+ * Events of learn plans belong to the phase of the lessons before them, never one after the phase
+ * the work still to do after them studies: a lesson of a later phase done ahead dated that phase's
+ * weekly challenge, which then read as running before the phases still to study (R39, language
+ * seed 1049).
+ */
 function fillEventPhases(items: readonly PlannedItem[]): PlannedItem[] {
   const firstPhase = items.find((item) => item.phase >= 0)?.phase ?? 0;
 
-  return items.reduce<PlannedItem[]>((filled, item) => {
+  // The phase of the first item still to do from each index on, events aside.
+  const nextTodo = items.reduceRight<(number | undefined)[]>((next, item, index) => {
+    next[index] = item.phase >= 0 && item.status === "todo" ? item.phase : next[index + 1];
+    return next;
+  }, []);
+
+  return items.reduce<PlannedItem[]>((filled, item, index) => {
     const previous = filled.at(-1)?.phase ?? firstPhase;
-    filled.push(item.phase >= 0 ? item : { ...item, phase: previous });
+    const studied = nextTodo[index + 1] ?? previous;
+
+    filled.push(item.phase >= 0 ? item : { ...item, phase: Math.min(previous, studied) });
     return filled;
   }, []);
 }
@@ -119,7 +137,9 @@ function fillEventPhases(items: readonly PlannedItem[]): PlannedItem[] {
 /**
  * Puts finished work, items kept from this week, and newly scheduled lessons and events in one
  * order: by date, then finished first, lessons in queue order, fixed events last. New items reuse
- * the id of the todo item they replace, so an item keeps its identity while its date moves.
+ * the id of the todo item they replace, so an item keeps its identity while its date moves, and
+ * the chapter it teaches from: a skill's item linked to a chapter (whose next lesson the session
+ * picks) stays that chapter's instead of turning into a stand-in waiting for lessons.
  */
 export function mergePlanItems({
   events,
@@ -135,9 +155,18 @@ export function mergePlanItems({
   units: readonly ScheduledUnit[];
 }): PlannedItem[] {
   const keptKeys = new Set(kept.map((item) => item.key));
-  const replacedIds = new Map(replaced.map((item) => [getItemKey(item), item.id]));
+  const replacedItems = new Map(replaced.map((item) => [getItemKey(item), item]));
 
-  const withId = (item: PlannedItem) => ({ ...item, id: replacedIds.get(item.key) ?? null });
+  const withId = (item: PlannedItem): PlannedItem => {
+    const previous = replacedItems.get(item.key);
+
+    return {
+      ...item,
+      chapterId: item.chapterId ?? previous?.chapterId ?? null,
+      id: previous?.id ?? null,
+    };
+  };
+
   const isFresh = (item: PlannedItem) => !keptKeys.has(item.key);
 
   const ranked: RankedItem[] = [

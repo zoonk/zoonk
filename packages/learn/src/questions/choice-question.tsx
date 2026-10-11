@@ -7,8 +7,14 @@ import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ItemLine, ItemSupport } from "./item-text";
+import { useState } from "react";
+import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
+import { ItemLine, ItemSupport, ItemText } from "./item-text";
+import { PickRule, isCompletePick, isMultiPick, togglePick } from "./pick-rule";
 import { useTrueFalseLabels } from "./use-true-false-labels";
+
+/** The question's title, which a run of questions focuses as each new one shows. */
+export const CHOICE_QUESTION_TITLE_SLOT = "choice-question-title";
 
 /** A bank question as learners see it: never which answer is right. */
 export type ChoiceQuestionView = Extract<
@@ -16,11 +22,15 @@ export type ChoiceQuestionView = Extract<
   { status: "ready" }
 >["testOut"]["questions"][number];
 
-export type ChoiceAnswer = { dontKnow: true } | { isTrue: boolean } | { selectedIndex: number };
+export type ChoiceAnswer =
+  | { dontKnow: true }
+  | { isTrue: boolean }
+  | { selectedIndex: number }
+  | { selectedIndexes: number[] };
 
 /** Shown after an answer when the flow gives feedback (practice); tests give none. */
 export type ChoiceFeedback = {
-  correctAnswer: { isTrue: boolean } | { selectedIndex: number };
+  correctAnswer: { isTrue: boolean } | { selectedIndex: number } | { selectedIndexes: number[] };
   explanation: string | null;
   isCorrect: boolean;
 };
@@ -54,25 +64,73 @@ function isSame(a: ChoiceAnswer | null, b: ChoiceAnswer): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-function getOptionResult(
-  option: Option,
-  feedback: ChoiceFeedback | null,
-  selected: ChoiceAnswer | null,
-) {
+/** Whether an answer picks the option at `index`, as its one pick or one of several. */
+function picksOption({ answer, index }: { answer: ChoiceAnswer | null; index: number }) {
+  if (answer && "selectedIndexes" in answer) {
+    return answer.selectedIndexes.includes(index);
+  }
+
+  return answer !== null && "selectedIndex" in answer && answer.selectedIndex === index;
+}
+
+function getOptionResult({
+  feedback,
+  index,
+  option,
+  picked,
+}: {
+  feedback: ChoiceFeedback | null;
+  index: number;
+  option: Option;
+  picked: boolean;
+}) {
   if (!feedback) {
     return null;
   }
 
-  if (isSame(feedback.correctAnswer, option.answer)) {
+  const right =
+    isSame(feedback.correctAnswer, option.answer) ||
+    picksOption({ answer: feedback.correctAnswer, index });
+
+  if (right) {
     return "right";
   }
 
-  return isSame(selected, option.answer) ? "wrong" : null;
+  return picked ? "wrong" : null;
+}
+
+/**
+ * The options picked so far for a question that asks for several, kept per question and shown
+ * whether or not they're enough to send yet. A sent answer's picks show again after a reload.
+ */
+function usePicks({
+  question,
+  selected,
+}: {
+  question: ChoiceQuestionView;
+  selected: ChoiceAnswer | null;
+}) {
+  const initial = selected && "selectedIndexes" in selected ? selected.selectedIndexes : [];
+  const [state, setState] = useState({ itemId: question.itemId, picks: initial });
+
+  const current =
+    state.itemId === question.itemId ? state : { itemId: question.itemId, picks: initial };
+
+  if (state.itemId !== question.itemId) {
+    setState(current);
+  }
+
+  return [
+    current.picks,
+    (picks: number[]) => setState({ itemId: question.itemId, picks }),
+  ] as const;
 }
 
 /**
  * One multiple-choice or true-or-false question, for test-outs and mistake practice. The host
- * decides what happens on an answer; with feedback, the right answer and why appear in place.
+ * decides what happens on an answer; with feedback, the right answer and why appear in place. A
+ * question that asks for several options (`select`) toggles them, and the host gets an answer
+ * only once as many as it asks are picked (null before).
  */
 export function ChoiceQuestion({
   disabled = false,
@@ -84,7 +142,7 @@ export function ChoiceQuestion({
 }: {
   disabled?: boolean;
   feedback?: ChoiceFeedback | null;
-  onSelect: (answer: ChoiceAnswer) => void;
+  onSelect: (answer: ChoiceAnswer | null) => void;
   question: ChoiceQuestionView;
   selected: ChoiceAnswer | null;
   /** How true-or-false questions are answered: the goal's exam's words, or true or false. */
@@ -93,18 +151,30 @@ export function ChoiceQuestion({
   const t = useExtracted();
   const options = useOptions({ question, trueFalseLabels });
   const locked = disabled || feedback !== null;
+  const select = question.format === "multipleChoice" ? question.select : null;
+  const [picks, setPicks] = usePicks({ question, selected });
 
-  useNumberKeys({
-    count: options.length,
-    enabled: !locked,
-    onPick: (index) => {
-      const option = options[index];
+  const isPicked = (option: Option, index: number) =>
+    isMultiPick(select) ? picks.includes(index) : isSame(selected, option.answer);
 
-      if (option) {
-        onSelect(option.answer);
-      }
-    },
-  });
+  const choose = (index: number) => {
+    const option = options[index];
+
+    if (!option) {
+      return;
+    }
+
+    if (!isMultiPick(select)) {
+      onSelect(option.answer);
+      return;
+    }
+
+    const next = togglePick(picks, index);
+    setPicks(next);
+    onSelect(isCompletePick({ picks: next, select }) ? { selectedIndexes: next } : null);
+  };
+
+  useNumberKeys({ count: options.length, enabled: !locked, onPick: choose });
 
   return (
     <div className="flex flex-col gap-4">
@@ -114,37 +184,41 @@ export function ChoiceQuestion({
         image={question.image}
         visual={question.visual}
       />
-      <h2 className="text-lg font-medium">
+      <h2
+        className="text-lg font-medium outline-none"
+        data-slot={CHOICE_QUESTION_TITLE_SLOT}
+        tabIndex={-1}
+      >
         <ItemLine text={question.question} />
       </h2>
 
-      <ul className="flex flex-col gap-2">
+      {isMultiPick(select) && <PickRule select={select} />}
+
+      {/* Picked like an exam's answer sheet: Enter on a picked answer sends it, as a radio does. */}
+      <AnswerOptionGroup role={isMultiPick(select) ? "group" : "radiogroup"}>
         {options.map((option, index) => {
-          const result = getOptionResult(option, feedback, selected);
+          const picked = isPicked(option, index);
+          const result = getOptionResult({ feedback, index, option, picked });
 
           return (
-            <li key={option.key}>
-              <button
-                aria-pressed={isSame(selected, option.answer)}
-                className={cn(
-                  // The number and mark sit on the label's first line when it wraps.
-                  "border-border focus-visible:ring-ring/50 flex min-h-12 w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left outline-none focus-visible:ring-[3px]",
-                  "aria-pressed:border-foreground aria-pressed:bg-muted",
-                  result === "right" && "border-success bg-success/10",
-                  result === "wrong" && "border-destructive bg-destructive/10",
-                )}
-                disabled={locked}
-                onClick={() => onSelect(option.answer)}
-                type="button"
-              >
-                <LineMarker aria-hidden="true" className="text-sm">
-                  <span className="bg-muted flex size-6 items-center justify-center rounded-md text-xs font-semibold">
-                    {index + 1}
-                  </span>
-                </LineMarker>
-                <span className="flex-1 text-sm">{option.label}</span>
+            <AnswerOption
+              className={cn(
+                result === "right" && "border-success bg-success/10",
+                result === "wrong" && "border-destructive bg-destructive/10",
+              )}
+              disabled={locked}
+              key={option.key}
+              marker={index + 1}
+              onClick={() => choose(index)}
+              picked={picked}
+              role={isMultiPick(select) ? "checkbox" : "radio"}
+            >
+              <span className="flex items-start gap-3">
+                <span className="flex-1">
+                  <ItemLine text={option.label} />
+                </span>
                 {result && (
-                  <LineMarker className="text-sm">
+                  <LineMarker>
                     {result === "right" && (
                       <CheckIcon aria-label={t("Right answer")} className="text-success size-4" />
                     )}
@@ -153,17 +227,17 @@ export function ChoiceQuestion({
                     )}
                   </LineMarker>
                 )}
-              </button>
-            </li>
+              </span>
+            </AnswerOption>
           );
         })}
-      </ul>
+      </AnswerOptionGroup>
 
       {feedback && (
         <div aria-live="polite" className="bg-muted rounded-2xl p-4 text-sm" role="status">
           <p className="font-medium">{feedback.isCorrect ? t("Right!") : t("Not quite.")}</p>
           {feedback.explanation && (
-            <p className="text-muted-foreground mt-1">{feedback.explanation}</p>
+            <ItemText className="text-muted-foreground mt-1" text={feedback.explanation} />
           )}
         </div>
       )}

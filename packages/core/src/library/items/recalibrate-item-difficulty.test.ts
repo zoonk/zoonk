@@ -127,6 +127,29 @@ describe(recalibrateItemDifficulties, () => {
     expect(updated.difficulty).toBeGreaterThan(1);
   });
 
+  it("counts the first answers of learners who deleted their accounts, kept without them", async () => {
+    const now = isolatedNow();
+    const skill = await skillFixture();
+    const item = await itemFixture({ content: FOUR_OPTIONS, difficulty: 0, skillId: skill.id });
+
+    await Promise.all([
+      answerByLearners({ itemId: item.id, now, results: repeat({ correct: 0, wrong: 10 }) }),
+      prisma.anonymousFirstAnswer.createMany({
+        data: repeat({ correct: 0, wrong: 10 }).map((isCorrect) => ({
+          isCorrect,
+          itemId: item.id,
+        })),
+      }),
+    ]);
+
+    const result = await recalibrateItemDifficulties({ now });
+    const updated = await prisma.item.findUniqueOrThrow({ where: { id: item.id } });
+
+    // Ten live learners alone are too few; with the ten who left, nobody got it right.
+    expect(result.recalibrated).toBe(1);
+    expect(updated.difficulty).toBeGreaterThan(1);
+  });
+
   it("keeps the generated difficulty until enough learners answered", async () => {
     const now = isolatedNow();
     const skill = await skillFixture();

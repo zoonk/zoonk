@@ -1,6 +1,5 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { namesMatch } from "../_utils/name-match";
-import { type MockOption, getSubjectShares, isOptionArea, subjectName } from "./mock-options";
+import { type MockOption, findAreaSubject, getSubjectShares, isOptionArea } from "./mock-options";
 import {
   type MockCandidate,
   type MockPlan,
@@ -8,12 +7,13 @@ import {
   getPlannedItemIds,
   planMock,
 } from "./mock-plan";
-import { isWrittenSubject } from "./written-subject";
+import { type MockEssayCandidate } from "./written-parts";
+import { isQuestionSubject } from "./written-subject";
 
 /**
- * The questions a mock may ask, each under its notice subject's short name, the one the exam's
- * sections name ("Matemática" in "Ciências da Natureza e Matemática") where the plan names its
- * areas in full ("Matemática e suas Tecnologias"). A question of a written test (a redação) or of
+ * The questions a mock may ask, each under its notice subject's name, as the Journey names it,
+ * whatever name the plan gives its area ("Professional Ethics" for the OAB's "Statute of the Legal
+ * Profession and of the OAB…"). A question of a written test (an essay) or of
  * an area outside the notice's objective subjects (study strategy) is never asked. When no
  * question's area is one of the notice's subjects, they stay as they are.
  */
@@ -24,16 +24,10 @@ export function toSubjectCandidates({
   candidates: readonly MockCandidate[];
   structure: ExamStructure | null;
 }): MockCandidate[] {
-  const objective = (structure?.subjects ?? []).filter(
-    (subject) => structure && !isWrittenSubject({ structure, subject }),
-  );
-
-  const subjectOf = (area: string | null) =>
-    area
-      ? objective.find(
-          (subject) => namesMatch(area, subject.name) || namesMatch(area, subjectName(subject)),
-        )
-      : undefined;
+  const subjectOf = (area: string | null) => {
+    const subject = area ? findAreaSubject({ area, structure }) : undefined;
+    return subject && structure && isQuestionSubject({ structure, subject }) ? subject : undefined;
+  };
 
   const matched = candidates.map((candidate) => ({
     candidate,
@@ -45,7 +39,7 @@ export function toSubjectCandidates({
   }
 
   return matched.flatMap(({ candidate, subject }) =>
-    subject ? [{ ...candidate, area: subjectName(subject) }] : [],
+    subject ? [{ ...candidate, area: subject.name }] : [],
   );
 }
 
@@ -83,6 +77,7 @@ export function planWholeExam({
     day: null,
     fullLength: true,
     minutes: plans.reduce((sum, plan) => sum + plan.minutes, 0),
+    reused: plans.reduce((sum, plan) => sum + plan.reused, 0),
     sections: plans.flatMap((plan) => plan.sections),
     written: [],
   };
@@ -140,23 +135,36 @@ function toSubjectStructure({
  */
 export function planOptionMock({
   candidates,
+  essays = [],
+  listening,
   option,
+  speaking,
   structure,
 }: {
   candidates: readonly MockCandidate[];
+  /** The exam's essays, which a full mock's written parts ask (see `loadMockEssays`). */
+  essays?: readonly MockEssayCandidate[];
+  /** The recordings an exam day's listening sections play (see `planMock`). */
+  listening?: ReadonlyMap<string, readonly MockCandidate[]>;
   option: MockOption;
+  /** The goal's exam has a speaking paper, which a full mock sits (see `planMock`). */
+  speaking?: boolean;
   structure: ExamStructure | null;
 }): MockPlan {
   if (option.kind === "area" && structure) {
     const section = getSubjectSectionName(option);
+    const parts = option.areas.filter((name) => name !== section);
 
-    // The subject's questions carry its section's name, so the section asks every one of them.
-    const own = candidates
-      .filter(
-        (candidate) =>
-          candidate.area !== null && isOptionArea({ area: candidate.area, option, structure }),
-      )
-      .map((candidate) => ({ ...candidate, area: section }));
+    // The subject's questions carry its section's name, so the section asks every one of them;
+    // an option counted inside it keeps its own name, so the section asks its share of them.
+    const own = candidates.flatMap((candidate) => {
+      if (candidate.area === null || !isOptionArea({ area: candidate.area, option, structure })) {
+        return [];
+      }
+
+      const subject = findAreaSubject({ area: candidate.area, structure })?.name;
+      return [{ ...candidate, area: subject && parts.includes(subject) ? subject : section }];
+    });
 
     return planMock({
       adaptive: false,
@@ -164,17 +172,30 @@ export function planOptionMock({
       fullLength: true,
       mockNumber: 0,
       structure: toSubjectStructure({ option, structure }),
+      subjectShares:
+        parts.length > 0
+          ? getSubjectShares(structure).filter((share) => option.areas.includes(share.name))
+          : [],
     });
   }
 
   const days = getMockDays(structure);
-  const bySubject = toSubjectCandidates({ candidates, structure });
+
+  // A full mock is the real exam: questions the learner answered before never pad it, so a bank
+  // short of new ones leaves it short (said on the mock) rather than repeating them.
+  const asked =
+    option.kind === "full" ? candidates.filter((candidate) => !candidate.answered) : candidates;
+
+  const bySubject = toSubjectCandidates({ candidates: asked, structure });
 
   return planMock({
     adaptive: structure?.mock?.adaptive ?? false,
     candidates: bySubject,
+    essays,
     fullLength: option.kind === "full",
+    listening,
     mockNumber: Math.max(0, days.indexOf(option.day)),
+    speaking,
     structure,
     subjectShares: getSubjectShares(structure),
   });

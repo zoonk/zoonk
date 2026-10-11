@@ -4,7 +4,7 @@ import { estimateCostPer1000Runs, getCallCost } from "./cost";
 import { summarizeLatency } from "./latency";
 import { average, sum } from "./math";
 import { getModelById } from "./models";
-import { type EvalResult, type TaskEvalResults } from "./types";
+import { type ModelCall, type TaskEvalResults } from "./types";
 
 export type TaskStats = {
   averageInputTokens: number;
@@ -17,15 +17,20 @@ export type TaskStats = {
   runCost: number;
   /** What scoring these outputs actually cost. Zero for code-scored tasks. */
   judgeCost: number;
+  /** What the generations' other model calls cost, such as a pipeline's checks (`extraCalls`). */
+  extraCost: number;
   classification: ClassificationSummary | null;
 };
 
-function getJudgeCost({ prices, result }: { prices: GatewayPrices; result: EvalResult }): number {
-  if (!result.judge) {
-    return 0;
-  }
+function getCallsCost({ calls, prices }: { calls: ModelCall[]; prices: GatewayPrices }): number {
+  return sum(
+    calls.map((call) => getCallCost({ modelId: call.modelId, prices, usage: call.usage })),
+  );
+}
 
-  return getCallCost({ modelId: result.judge.modelId, prices, usage: result.judge.usage });
+/** Everything a run spent: the evaluated model's answers, the judge and every other call. */
+export function getSpent(stats: Pick<TaskStats, "extraCost" | "judgeCost" | "runCost">): number {
+  return stats.runCost + stats.judgeCost + stats.extraCost;
 }
 
 /**
@@ -68,7 +73,11 @@ export function getStatsFromResults({
       results.flatMap((result) => (result.classification ? [result.classification] : [])),
     ),
     costPer1000Runs: estimateCostPer1000Runs(runCosts),
-    judgeCost: sum(results.map((result) => getJudgeCost({ prices, result }))),
+    extraCost: getCallsCost({
+      calls: results.flatMap((result) => result.extraCalls ?? []),
+      prices,
+    }),
+    judgeCost: getCallsCost({ calls: results.flatMap((result) => result.judge ?? []), prices }),
     latencyP50: latency.p50,
     latencyP95: latency.p95,
     runCost: sum(runCosts),

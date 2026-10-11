@@ -6,10 +6,12 @@ import { getLearnerModelCacheTag } from "../cache/tags";
 import { loadGoalScoreEstimate } from "../exams/estimates/load-goal-estimate";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { readGoalPlan } from "../learner/_utils/read-goal-plan";
 import { type SkillStateCounts, countSkillStates } from "../learner/mastery-state";
 import { getStartOfWeek } from "../plans/planner/plan-calendar";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { loadCatchUpItems } from "../sessions/_utils/catch-up";
+import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import { loadPreparationInputs } from "./_utils/load-preparation-inputs";
 import { type AreaPreparation, getAreaPreparations } from "./area-preparation";
 import { type EstimatedScore } from "./estimated-score";
@@ -26,8 +28,8 @@ const WEEK_DAYS = 7;
 
 /**
  * Preparation for one goal, overall and per area.
- * `value` and every part run from 0 to 1. `estimatedScore` exists only after a mock exam and is a
- * range, labeled "Estimated" wherever it shows.
+ * `value` and every part run from 0 to 1. `estimatedScore` exists only once recent mock exams hold
+ * enough of the exam (see `canEstimateScore`) and is a range, labeled "Estimated" wherever it shows.
  */
 type GoalPreparation = {
   areas: AreaPreparation[];
@@ -57,7 +59,11 @@ export type GoalPreparationResult =
 export async function getGoalPreparation(goalId: string): Promise<GoalPreparationResult> {
   "use cache: private";
 
-  const owned = await findOwnedGoal(goalId);
+  // The request's date doesn't depend on the goal: it's read alongside it.
+  const [owned, { currentInstant: now, timeZone: requestTimeZone }] = await Promise.all([
+    findOwnedGoal(goalId),
+    getRequestProgressDateContext(),
+  ]);
 
   if (owned.status !== "ready") {
     return owned;
@@ -70,7 +76,6 @@ export async function getGoalPreparation(goalId: string): Promise<GoalPreparatio
 
   cacheTag(getLearnerModelCacheTag(owned.userId));
 
-  const { currentInstant: now, timeZone: requestTimeZone } = await getRequestProgressDateContext();
   const { goal } = owned;
 
   const timeZone =
@@ -81,9 +86,10 @@ export async function getGoalPreparation(goalId: string): Promise<GoalPreparatio
   // Areas keep a rolling seven days: rebalancing reads their trend on any day, Mondays included.
   const weekAgo = new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY);
 
-  const [inputs, catchUp] = await Promise.all([
-    loadPreparationInputs({ goalId, now, userId: owned.userId }),
+  const [inputs, catchUp, access] = await Promise.all([
+    loadPreparationInputs({ goalId, now, readPlan: readGoalPlan, userId: owned.userId }),
     loadCatchUpItems(goalId),
+    loadExamPrepAccess({ goal, timeZone, today }),
   ]);
 
   const measure = (asOf: Date) => getPreparationComponents({ ...inputs, asOf });
@@ -107,11 +113,13 @@ export async function getGoalPreparation(goalId: string): Promise<GoalPreparatio
       stage: getPreparationStage(value),
       status: getPlanStatus({
         catchUp: catchUp.length,
+        freeWeekOver: access.trialEnded,
         items: inputs.planItems,
         minutesPerItem: getMinutesPerItem({
           estimateHours: inputs.estimateHours,
           itemCount: inputs.planItems.length,
         }),
+        studiesPastTarget: inputs.studiesPastTarget,
         targetDate: goal.targetDate,
         today,
       }),

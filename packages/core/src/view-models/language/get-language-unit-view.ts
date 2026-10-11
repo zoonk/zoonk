@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { findLearnerLanguageGoal } from "../../language/_utils/language-goal";
 import { getSpeakingLevel } from "../../language/conversations/_utils/conversation-goal";
@@ -11,6 +11,8 @@ import { loadLanguageUnits } from "../../language/units/language-units";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { getSession } from "../../users/get-session";
+import { loadTodayLearnBlocks } from "../_utils/today-lesson-order";
+import { findUpNextLessonId } from "../_utils/up-next-lesson";
 import { loadGrammarTips, loadUnitMistakes, loadUnitWords } from "./_utils/unit-content";
 import { type LanguageUnitView } from "./language-view-contract";
 
@@ -38,6 +40,44 @@ function findVisibleUnit({ chapterId, userId }: { chapterId: string; userId: str
     },
     where: { ...libraryRowsVisibleTo(userId), id: chapterId },
   });
+}
+
+/**
+ * The order the unit's lessons come in for the learner: today's session's, then the plan's
+ * lessons not done, so the page's next lesson is the one Today opens (`findUpNextLessonId`).
+ */
+async function loadLessonOrder({
+  goal,
+  lessonIds,
+}: {
+  goal: Goal | null;
+  lessonIds: string[];
+}): Promise<{ planLessonIds: string[]; sessionLessonIds: string[] }> {
+  if (!goal) {
+    return { planLessonIds: [], sessionLessonIds: [] };
+  }
+
+  const [items, todayBlocks] = await Promise.all([
+    prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      select: { lessonId: true },
+      where: { lessonId: { in: lessonIds }, plan: { goalId: goal.id }, status: "todo" },
+    }),
+    loadTodayLearnBlocks(goal),
+  ]);
+
+  return {
+    planLessonIds: items.flatMap((item) => (item.lessonId ? [item.lessonId] : [])),
+    sessionLessonIds: todayBlocks.flatMap((block) => block.lessonId ?? []),
+  };
+}
+
+function getLessonState({ done, next }: { done: boolean; next: boolean }) {
+  if (done) {
+    return "done" as const;
+  }
+
+  return next ? ("next" as const) : ("upcoming" as const);
 }
 
 /**
@@ -77,13 +117,14 @@ export async function getLanguageUnitView({
   const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
-  const [units, level, grammarTips, words, mistakes, pronunciation] = await Promise.all([
+  const [units, level, grammarTips, words, mistakes, pronunciation, order] = await Promise.all([
     goal ? loadLanguageUnits(goal) : [],
     getSpeakingLevel({ goal, targetLanguage, userId }),
     loadGrammarTips(lessonIds),
     loadUnitWords(lessonIds),
     loadUnitMistakes({ lessonIds, userId }),
     loadDuePronunciation({ language: targetLanguage, userId }),
+    loadLessonOrder({ goal, lessonIds }),
   ]);
 
   const unit = units.find((candidate) => candidate.chapterId === chapter.id);
@@ -91,6 +132,11 @@ export async function getLanguageUnitView({
   const done = new Set(
     unit?.lessons.filter((lesson) => lesson.done).map((lesson) => lesson.lessonId),
   );
+
+  const nextId = findUpNextLessonId({
+    lessons: lessonIds.map((lessonId) => ({ done: done.has(lessonId), lessonId })),
+    ...order,
+  });
 
   const pattern =
     mistakes.length > 0
@@ -116,6 +162,7 @@ export async function getLanguageUnitView({
         done: done.has(lesson.id),
         lessonId: lesson.id,
         minutes: lesson.estimatedMinutes,
+        state: getLessonState({ done: done.has(lesson.id), next: lesson.id === nextId }),
         title: lesson.title,
         written: lesson.contentStatus === "completed",
       })),

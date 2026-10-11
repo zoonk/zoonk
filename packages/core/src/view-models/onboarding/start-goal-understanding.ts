@@ -17,8 +17,8 @@ export type StartGoalUnderstandingResult =
 
 /**
  * Saves a goal the learner typed on the first onboarding screen as a draft, so a refresh shows the
- * same screen. The same words in the same language on the same day reuse one understanding, so
- * example goals are understood at once and cost nothing; other words come back `understanding`,
+ * same screen. Words the learner had read today are understood again at once and cost nothing
+ * (another learner's reading of the same words is never theirs); other words come back `understanding`,
  * for the caller to start the run that reads them (`POST /v1/goal-understandings/{id}/generations`).
  * Anyone with a session can ask, guests included; reading new words is one of the learner's small
  * AI calls (`claimAssist`), so asking often is slowed down and a guest's day has a cap. A reused
@@ -46,6 +46,7 @@ export async function startGoalUnderstanding(
     language: input.language,
     normalizedPrompt: normalizeString(input.goal),
     now: new Date(),
+    userId: session.user.id,
   });
 
   const usage = cached ? null : await claimAssist();

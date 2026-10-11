@@ -26,8 +26,8 @@ export async function createSkill() {
 
 /**
  * Gives a learner one row of everything a guest can create: a goal with its plan, a typed goal
- * not confirmed yet, a skill, an answer, a memory, votes, a milestone, a day of stats, usage and a
- * profile.
+ * not confirmed yet, a skill, an answer, a memory, votes, a milestone, a day of stats, usage, an AI
+ * call and a profile.
  */
 export async function seedLearnerData({
   brainPower,
@@ -77,6 +77,21 @@ export async function seedLearnerData({
       data: { brainPowerEarned: brainPower, date: STUDY_DAY, dayOfWeek: STUDY_WEEKDAY, userId },
     }),
     prisma.usageRecord.create({ data: { kind: "lessonStart", targetId: randomUUID(), userId } }),
+    prisma.aiCall.create({
+      data: {
+        contentScope: "personal",
+        costUsd: 0.01,
+        goalId: goal.id,
+        latencyMs: 1000,
+        model: "test-model",
+        promptVersion: "test",
+        provider: "test",
+        requestedModel: "test-model",
+        runId: `test-run-${contentId}`,
+        task: "test-task",
+        userId,
+      },
+    }),
     prisma.userProgress.update({ data: { totalBrainPower: brainPower }, where: { userId } }),
   ]);
 
@@ -103,6 +118,7 @@ export async function countLearnerRows(userId: string) {
     prisma.milestone.count(byUser),
     prisma.dailyProgress.count(byUser),
     prisma.usageRecord.count(byUser),
+    prisma.aiCall.count(byUser),
   ]);
 
   const [
@@ -117,9 +133,11 @@ export async function countLearnerRows(userId: string) {
     milestones,
     days,
     usage,
+    aiCalls,
   ] = counts;
 
   return {
+    aiCalls,
     attempts,
     days,
     drafts,

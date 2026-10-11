@@ -39,7 +39,12 @@
 - "goal" (what the learner is working toward): "meta"
 - "start a goal" (the learner begins a new goal): "começar uma meta" ("Start a new goal" = "Começar uma nova meta"; never "adicionar", "definir" or "criar" uma meta)
 - "Free" (the free plan, next to "Plus"): "Grátis"
+- "Plus" and "Zoonk Plus" take the article inside a sentence: "Assine o Zoonk Plus", "vem com o Plus"
 - "Try free" (the visitors' call to action): "Experimente de graça"
+- "prerequisite" (a skill a goal's topics or final work build on, which the learner chooses to study in depth, for its essentials, with a quick lesson or skip): "base" ("prerequisites" = "bases", "Prerequisites" as a title = "Bases"; never "pré-requisito")
+- The four ways to study a prerequisite, as choices: "In depth" = "A fundo", "Essential" = "Essencial", "Quick lesson" = "Aula rápida", "Skip" = "Pular". "the essentials" (the first third of a prerequisite's lessons) = "o essencial"; "a quick lesson" = "uma aula rápida"
+- "Study everything" (studying the whole goal at the learner's own pace, with no end date; an exam's even after the exam): "Estudar tudo"
+- "skipped" (lessons or topics a test or placement showed the learner already knows, so they don't study them): "pulado/pulada" ("12 lessons skipped" = "12 aulas puladas"; never "ignorado")
 
 ### Learning features
 
@@ -85,6 +90,7 @@ The app shows one translation for text that appears in more than one catalog, so
 - "Answer feedback": "Resultado da resposta"
 - "Correct!": "Certo!"
 - "Create a free account": "Crie uma conta grátis"
+- "Create your free account to continue.": "Crie sua conta grátis para continuar."
 - "Done:": "Concluído:"
 - "Explain it more simply": "Explique de um jeito mais simples"
 - "I want to go deeper": "Quero ir mais a fundo"

@@ -6,9 +6,33 @@ import { type TopicGroup, groupTopicsByHeading } from "./topic-groups";
 
 type ExtractionSubject = BlueprintExtraction["subjects"][number];
 
+/** An item's number ahead of its words, such as "1. " or "4.1 ". */
+const ITEM_NUMBER = /^\d+(?:\.\d+)*[.)]?\s+/u;
+
 /** A topic as a syllabus line reads: its words, without the period that ends the item. */
 function toTopic(topic: string): string {
   return topic.trim().replace(/[.;,:]+$/u, "");
+}
+
+/**
+ * The subject with its topics as its documents write them: a reading numbers a list the syllabus
+ * doesn't ("1. Crase" for "Crase"), and a topic the documents don't state word for word is dropped,
+ * so a number the documents don't have is taken off. An item the syllabus numbers keeps it.
+ */
+function withoutAddedNumbers({
+  documents,
+  subject,
+}: {
+  documents: ExtractionDocument[];
+  subject: ExtractionSubject;
+}): ExtractionSubject {
+  const stated = new Set(findStatedTopics({ documents, subject }));
+
+  const topics = subject.topics.map((topic) =>
+    stated.has(topic) ? topic : topic.trim().replace(ITEM_NUMBER, ""),
+  );
+
+  return { ...subject, topics };
 }
 
 /**
@@ -29,7 +53,7 @@ function toMatrix({
 }
 
 /**
- * The subject's topics under the syllabus's own headings (ENEM's Física, Química and Biologia),
+ * The subject's topics under the syllabus's own headings (ENEM's physics, chemistry and biology),
  * for headings its documents state; nothing for a syllabus without them, so others keep their
  * shape.
  */
@@ -74,11 +98,12 @@ export function toSubjectTopics({
   documents: ExtractionDocument[];
   subject: ExtractionSubject;
 }): Pick<ExamStructure["subjects"][number], "matrix" | "topicGroups" | "topics"> {
-  const stated = findStatedTopics({ documents, subject });
+  const read = withoutAddedNumbers({ documents, subject });
+  const stated = findStatedTopics({ documents, subject: read });
 
   return {
     topics: [...new Set(stated.map((topic) => toTopic(topic)))],
-    ...toMatrix({ documents, subject }),
-    ...toTopicGroups({ documents, stated: new Set(stated), subject }),
+    ...toMatrix({ documents, subject: read }),
+    ...toTopicGroups({ documents, stated: new Set(stated), subject: read }),
   };
 }

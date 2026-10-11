@@ -1,9 +1,7 @@
-import { isCurrentEdition, isNoticeReadAgain } from "@zoonk/core/library/exams/blueprint-reading";
-import {
-  type ExamIdentity,
-  buildExamIdentityKey,
-  findSameExam,
-} from "@zoonk/core/library/exams/identity";
+import { isCurrentEdition } from "@zoonk/core/library/exams/blueprint-reading";
+import { findSameExam } from "@zoonk/core/library/exams/find-same-exam";
+import { type ExamIdentity, buildExamIdentityKey } from "@zoonk/core/library/exams/identity";
+import { getReadingStatus } from "@zoonk/core/library/exams/reading-check";
 import { withAiRetry } from "../../_shared/ai-retry";
 
 export type ExamBlueprintLookup = {
@@ -14,8 +12,11 @@ export type ExamBlueprintLookup = {
   blueprintId: string | null;
   /** False when the stored edition's exam has passed, so a new notice is looked for. */
   isCurrent: boolean;
-  /** The stored edition is current but was read with older instructions (`isNoticeReadAgain`). */
-  readsAgain: boolean;
+  /**
+   * The notice the stored edition was read from, when its reading's check found what it left out
+   * (`getReadingStatus`), so research reads it again; null otherwise.
+   */
+  readAgainNoticeId: string | null;
 };
 
 /**
@@ -35,15 +36,13 @@ export async function findExamBlueprintStep({
 
   const blueprint = await withAiRetry(() => findSameExam({ request: identity, searchTerms }));
 
-  const now = new Date();
-
   if (!blueprint) {
     return {
       blueprintId: null,
       identity,
       identityKey: buildExamIdentityKey(identity),
       isCurrent: false,
-      readsAgain: false,
+      readAgainNoticeId: null,
     };
   }
 
@@ -58,7 +57,8 @@ export async function findExamBlueprintStep({
       role: blueprint.role,
     },
     identityKey: blueprint.identityKey,
-    isCurrent: isCurrentEdition({ blueprint, now }),
-    readsAgain: isNoticeReadAgain({ blueprint, now }),
+    isCurrent: isCurrentEdition({ blueprint, now: new Date() }),
+    readAgainNoticeId:
+      getReadingStatus(blueprint).status === "readAgain" ? blueprint.sourceId : null,
   };
 }

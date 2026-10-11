@@ -32,9 +32,10 @@ export function useMockOptionName() {
 }
 
 /**
- * What a mock asks and how long it takes, honestly: its questions and about how long learners take
- * on them, the day's subjects for a day of an exam of several, and when the day's written part is
- * left out.
+ * What a mock asks and how long it takes, honestly: the papers it covers when it leaves one out
+ * ("Listening and Reading" without IELTS's Speaking), its questions (and a full mock's written
+ * part) and about how long learners take on them, the day's subjects for a day of an exam of
+ * several, and when the day's written part is left out.
  */
 export function useMockOptionDetail() {
   const t = useExtracted();
@@ -42,19 +43,31 @@ export function useMockOptionDetail() {
   const duration = useFormatDuration();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
-    const size = t("{count, plural, one {# question} other {# questions}} · about {time}", {
-      count: option.questions,
-      time: duration(option.estimatedMinutes),
-    });
+    const time = duration(option.estimatedMinutes);
+
+    // A full mock's written part comes with its questions: "90 questions + Essay".
+    const size =
+      option.written.length > 0
+        ? t("{count, plural, one {# question} other {# questions}} + {written} · about {time}", {
+            count: option.questions,
+            time,
+            written: format.list(option.written, { type: "conjunction" }),
+          })
+        : t("{count, plural, one {# question} other {# questions}} · about {time}", {
+            count: option.questions,
+            time,
+          });
 
     const subjects =
       severalDays && option.kind !== "area" && option.areas.length > 0
         ? format.list(option.areas, { type: "conjunction" })
         : null;
 
-    const objective = option.objectiveOnly ? t("objective part only") : null;
+    const covers = option.covers ? format.list(option.covers, { type: "conjunction" }) : null;
+    // The papers it covers already say the written part isn't one of them.
+    const objective = option.objectiveOnly && !covers ? t("objective part only") : null;
 
-    return [subjects, size, objective].filter(Boolean).join(" · ");
+    return [covers, subjects, size, objective].filter(Boolean).join(" · ");
   };
 }
 

@@ -11,7 +11,7 @@ type PlacementAnswerRow = {
  * Placement's own answers: bank questions answered outside a lesson and outside a session
  * (sessions carry their own few questions).
  */
-function isPlacementAnswer(attempt: PlacementAnswerRow): boolean {
+export function isPlacementAnswer(attempt: PlacementAnswerRow): boolean {
   return attempt.itemId !== null && attempt.stepId === null && attempt.studySessionId === null;
 }
 

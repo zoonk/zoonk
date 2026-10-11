@@ -18,6 +18,7 @@ import { getLessonScreen } from "./lesson-player-screen";
 import { type LessonPlayerState, createInitialState } from "./lesson-player-state";
 import {
   type LessonPlayerAdapters,
+  type LessonPlayerAnswer,
   type LessonPlayerRoutes,
   type LessonRunAnswers,
   type PlayableLibraryLesson,
@@ -40,11 +41,32 @@ function getOptionIds(step: PlayableLibraryStep): string[] {
   return [];
 }
 
+/** The first screen's answer: an option id picked on the public page, or a whole answer. */
+function toFirstAnswer({
+  first,
+  firstAnswer,
+}: {
+  first: PlayableLibraryStep;
+  firstAnswer: LessonPlayerAnswer | string;
+}): LessonPlayerAnswer | null {
+  if (typeof firstAnswer !== "string") {
+    return firstAnswer;
+  }
+
+  if (!getOptionIds(first).includes(firstAnswer)) {
+    return null;
+  }
+
+  return first.kind === "hook"
+    ? { kind: "hook", optionId: firstAnswer }
+    : { kind: "check", optionId: firstAnswer };
+}
+
 /**
  * A lesson the learner comes back to opens where they left off (`resume`, the open run's answers
  * read with the page). A public lesson page lets a visitor answer the first question right there:
  * the player opens with that answer picked, and checks it at once, so the tap counts as the
- * lesson's first step.
+ * lesson's first step. The playground opens a screen checked the same way, with any answer.
  */
 function createStartingState({
   firstAnswer,
@@ -52,24 +74,20 @@ function createStartingState({
   resume,
   support,
 }: {
-  firstAnswer: string | null;
+  firstAnswer: LessonPlayerAnswer | string | null;
   lesson: PlayableLibraryLesson;
   resume: LessonRunAnswers;
   support: LessonSupport | null;
 }): LessonPlayerState {
   const first = lesson.steps[0];
+  const answer = first && firstAnswer ? toFirstAnswer({ first, firstAnswer }) : null;
 
-  if (!firstAnswer || !first || !getOptionIds(first).includes(firstAnswer)) {
+  if (!first || !answer) {
     return resumeLesson(createInitialState(lesson, support), resume);
   }
 
   /** The visitor already answered the first screen, so the lesson keeps its own order. */
   const state = createInitialState(lesson);
-
-  const answer =
-    first.kind === "hook"
-      ? { kind: "hook" as const, optionId: firstAnswer }
-      : { kind: "check" as const, optionId: firstAnswer };
 
   return lessonPlayerReducer(state, { answer, stepId: first.id, type: "selectAnswer" });
 }
@@ -82,8 +100,11 @@ export type LessonPlayerProviderProps = {
    */
   challengeTeam?: ChallengeTeam | null;
   children: React.ReactNode;
-  /** The option a visitor picked on the lesson's public page, checked as soon as the player opens. */
-  firstAnswer?: string | null;
+  /**
+   * The first screen's answer, checked as soon as the player opens: the option a visitor picked
+   * on the lesson's public page, or a whole answer (the playground's checked screens).
+   */
+  firstAnswer?: LessonPlayerAnswer | string | null;
   lesson: PlayableLibraryLesson;
   linkComponent: PlayerLinkComponent;
   /** Called by Escape. */
@@ -172,6 +193,7 @@ export function LessonPlayerProvider({
         id: lesson.id,
         language: lesson.language,
         summaryIdeas: lesson.summaryIdeas,
+        targetLanguage: lesson.targetLanguage,
         title: lesson.title,
       },
       linkComponent,
@@ -192,6 +214,7 @@ export function LessonPlayerProvider({
         <LessonTutor tutor={tutor}>
           <LessonPicturesProvider
             getLessonPictures={adapters.getLessonPictures}
+            onPicturesLost={actions.skipSteps}
             steps={lesson.steps}
           >
             <UserNameProvider initialName={viewer.userName}>{children}</UserNameProvider>

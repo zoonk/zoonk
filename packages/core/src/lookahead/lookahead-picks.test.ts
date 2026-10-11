@@ -633,4 +633,53 @@ describe(pickPlacementItemSkills, () => {
       "Moradores de Olinda marcaram uma reunião pacífica na praça central, sem armas, e avisaram a prefeitura.",
     ]);
   });
+
+  // Sofia's ethics mock asked placement's case again (a lawyer with six cases in another state)
+  // under another name: the question she had answered was left out of the situations to avoid.
+  it("keeps the situations of questions the learner answered, first, when only unanswered ones count", async () => {
+    const { blueprint, goal, skillIds } = await examGoalWithSkills({
+      count: 1,
+      structure: ENEM_STRUCTURE,
+    });
+
+    const [skillId = ""] = skillIds;
+    const placementCase = "Thaís tem seis ações judiciais distintas no Maranhão neste ano.";
+
+    const newer = Array.from(
+      { length: 9 },
+      (_, index) => `Situação ainda não respondida ${index}.`,
+    );
+
+    const answered = await itemFixture({
+      content: { ...choiceContent(5), context: placementCase },
+      createdAt: new Date("2026-10-01T00:00:00Z"),
+      examBlueprintId: blueprint.id,
+      skillId,
+    });
+
+    await Promise.all([
+      attemptFixture({ itemId: answered.id, skillId, userId: goal.userId }),
+      ...newer.map((context, index) =>
+        itemFixture({
+          content: { ...TYPED_CONTENT, context },
+          createdAt: new Date(`2026-10-02T00:0${index}:00Z`),
+          examBlueprintId: blueprint.id,
+          format: "typed",
+          skillId,
+        }),
+      ),
+    ]);
+
+    const picked = await pickPlacementItemSkills({
+      exceptAnswered: true,
+      formats: ["multipleChoice"],
+      goalId: goal.id,
+      skillIds,
+    });
+
+    expect(picked.skills.map((skill) => skill.id)).toStrictEqual([skillId]);
+    expect(picked.skills[0]?.usedSituations[0]).toBe(placementCase);
+    expect(picked.skills[0]?.usedSituations).toHaveLength(8);
+    expect(picked.skills[0]?.usedSituations[1]).toBe(newer.at(-1));
+  });
 });

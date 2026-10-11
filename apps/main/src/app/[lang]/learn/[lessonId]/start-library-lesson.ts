@@ -44,7 +44,7 @@ function toStartOutcome(body: unknown): LessonStartOutcome {
     return { period: readPeriod(body), reason: "limitReached", tier: readTier(body) };
   }
 
-  return status === "unauthorized" || status === "notFound"
+  return status === "unauthorized" || status === "notFound" || status === "plusRequired"
     ? { reason: status }
     : { reason: "failed" };
 }
@@ -60,8 +60,9 @@ export async function startLibraryLesson({
   lessonId: string;
   studySessionId: string | null;
 }): Promise<LessonStartOutcome> {
+  // A session check or guest sign-in that failed is worth retrying; it never means "signed out".
   if (!(await ensureGuestSession())) {
-    return { reason: "unauthorized" };
+    return { reason: "failed" };
   }
 
   const { data: response, error } = await safeAsync(() =>

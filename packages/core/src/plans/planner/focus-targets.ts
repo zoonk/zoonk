@@ -3,7 +3,7 @@ import { type PlanGraph, type PlanSettings } from "./plan-state";
 
 /**
  * What a focus asks to come first or get more of, under the name the learner sees: a whole area,
- * or the part of one they named ("Biologia e Química" of ENEM's Ciências da Natureza).
+ * or the part of one they named ("Biology and Chemistry" of ENEM's natural sciences).
  */
 export type FocusTarget = { name: string; skillIds: ReadonlySet<string> };
 
@@ -28,6 +28,24 @@ export function getFocusTargets({
 
     return { name: part?.name ?? area, skillIds: new Set(skillIds) };
   });
+}
+
+/**
+ * The skills of every focus the learner set (see `getFocusTargets`): their own answers take them as
+ * known twice (see `meetsKnownBar`).
+ */
+export function listFocusedSkillIds({
+  graph,
+  settings,
+}: {
+  graph: PlanGraph;
+  settings: Pick<PlanSettings, "focusAreas" | "focusParts">;
+}): Set<string> {
+  return new Set(
+    getFocusTargets({ areas: settings.focusAreas, graph, settings }).flatMap((target) => [
+      ...target.skillIds,
+    ]),
+  );
 }
 
 /** The name of the focus each skill counts for, or null for a skill outside every focus. */

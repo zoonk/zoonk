@@ -8,8 +8,9 @@ import {
   mockResultSchema,
 } from "../../mocks/mock-contract";
 import { sumCalibration } from "../../scoring/net-score";
-import { type ExamMockSummary } from "../exam-view-contract";
+import { type ExamMockProgress, type ExamMockSummary } from "../exam-view-contract";
 import { loadExamWork } from "./exam-work";
+import { getMockProgress } from "./mock-progress";
 
 /**
  * The id a finished mock's result opens by: its session block's for a scheduled one (null once
@@ -36,8 +37,8 @@ const HISTORY_SIZE = 10;
 
 /**
  * The goal's finished mocks, newest first, in the exam's own terms, Cebraspe calibration added up
- * across all of them (how often the learner is right when sure and when not), and the work behind
- * them (see `loadExamWork`).
+ * across all of them (how often the learner is right when sure and when not), how they went over
+ * time (see `getMockProgress`), and the work behind them (see `loadExamWork`).
  */
 export async function loadExamHistory({
   goalId,
@@ -50,6 +51,7 @@ export async function loadExamHistory({
   calibration: MockResult["calibration"];
   mocks: ExamMockSummary[];
   prepared: boolean;
+  progress: ExamMockProgress | null;
   sessionsDone: number;
 }> {
   const [rows, work] = await Promise.all([
@@ -68,8 +70,22 @@ export async function loadExamHistory({
     const purpose = conditions?.purpose ?? "planned";
     const shape = conditions?.shape ?? null;
 
+    const reused = conditions?.reused ?? 0;
+    const examQuestions = conditions?.examQuestions ?? null;
+
     return result && row.finishedAt
-      ? [{ ...row, finishedAt: row.finishedAt, index, purpose, result, shape }]
+      ? [
+          {
+            ...row,
+            examQuestions,
+            finishedAt: row.finishedAt,
+            number: index + 1,
+            purpose,
+            result,
+            reused,
+            shape,
+          },
+        ]
       : [];
   });
 
@@ -77,9 +93,10 @@ export async function loadExamHistory({
     .map((row) => ({
       blockId: getOpenId({ blockId: row.blockId, id: row.id, purpose: row.purpose }),
       correct: row.result.correct,
+      examQuestions: row.examQuestions,
       finishedAt: row.finishedAt.toISOString(),
       measure: getMockMeasure(row.result),
-      number: row.index + 1,
+      number: row.number,
       purpose: row.purpose,
       scoring: row.result.scoring,
       shape: row.shape,
@@ -92,13 +109,16 @@ export async function loadExamHistory({
     row.result.calibration ? [row.result.calibration] : [],
   );
 
-  const summed = calibrations.length > 0 ? sumCalibration(calibrations) : null;
+  // The exam's latest penalty sets the break-even the advice reads against.
+  const penalty = finished.at(-1)?.result.net?.penalty ?? 1;
+  const summed = calibrations.length > 0 ? sumCalibration({ calibrations, penalty }) : null;
 
   return {
     calibration: summed
       ? { ...summed, blankingGain: calibrations.reduce((sum, item) => sum + item.blankingGain, 0) }
       : null,
     mocks,
+    progress: getMockProgress(finished),
     ...work,
   };
 }

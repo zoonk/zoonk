@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { gunzipSync } from "node:zlib";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { createCeremonyLearner } from "./ceremony-fixtures";
@@ -202,6 +203,7 @@ test("a goal sent from the home page counts once as typed, then as classified on
       goals: [{ kind: "learn", subject: "quantum physics", title: "Understand quantum physics" }],
       route: "goals",
     },
+    userId: await ensureGuest(page),
   });
 
   const sent = await capturePostHog(page);

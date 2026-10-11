@@ -4,7 +4,11 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { readCourseWeights } from "../plans/planner/course-weights";
-import { findCourseWeightsLookup, recordCourseWeights } from "./course-weights-research";
+import {
+  copyStoredCourseWeights,
+  findCourseWeightsLookup,
+  recordCourseWeights,
+} from "./course-weights-research";
 
 const citation = { passage: "…", sourceId: "notice" };
 
@@ -21,42 +25,58 @@ const structure = {
 
 const SUBJECTS = ["Ciências da Natureza", "Matemática", "Redação"];
 
-async function enemGoal(details: Record<string, string>) {
+const YEAR = 2026;
+
+const provenance = { model: "google/gemini-3.8-flash", promptVersion: "v1", runId: "run" };
+
+const FOUND = {
+  edition: "SISU 2026",
+  source: { title: "Pesos", url: "https://ufmg.br/pesos" },
+  status: "found" as const,
+  weights: [2, 1, 2],
+};
+
+async function enemGoal(details: Record<string, string>, examBlueprintId?: string) {
   const [user, blueprint] = await Promise.all([
     userFixture(),
-    examBlueprintFixture({ name: "ENEM", structure }),
+    examBlueprintId ? null : examBlueprintFixture({ name: "ENEM", structure }),
   ]);
 
   return goalFixture({
     details: { followUps: [], ...details },
-    examBlueprintId: blueprint.id,
+    examBlueprintId: examBlueprintId ?? blueprint?.id,
     kind: "exam",
     userId: user.id,
   });
 }
 
+async function lookUp(goalId: string, year = YEAR) {
+  const lookup = await findCourseWeightsLookup({ goalId, year });
+
+  if (!lookup) {
+    throw new Error("The goal has nothing to look up.");
+  }
+
+  return lookup;
+}
+
 describe(findCourseWeightsLookup, () => {
   it("looks up an entrance exam goal's course weights once, and the planner then reads them", async () => {
     const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
-    const lookup = await findCourseWeightsLookup({ goalId: goal.id });
+    const lookup = await lookUp(goal.id);
 
     expect(lookup).toStrictEqual({
       course: "Medicina",
       exam: "ENEM",
+      examBlueprintId: goal.examBlueprintId,
       institution: "UFMG",
+      key: "course:medicina|ufmg",
       subjects: SUBJECTS,
+      year: YEAR,
     });
 
-    await recordCourseWeights({
-      finding: {
-        edition: "SISU 2026",
-        source: { title: "Pesos", url: "https://ufmg.br/pesos" },
-        status: "found",
-        weights: [2, 1, 2],
-      },
-      goalId: goal.id,
-      lookup: lookup!,
-    });
+    await expect(copyStoredCourseWeights({ goalId: goal.id, lookup })).resolves.toBe(false);
+    await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
@@ -68,27 +88,27 @@ describe(findCourseWeightsLookup, () => {
 
     // The learner's other answers stay, and the same course isn't looked up again.
     expect(saved.details).toMatchObject({ followUps: [], institution: "UFMG" });
-    await expect(findCourseWeightsLookup({ goalId: goal.id })).resolves.toBeNull();
+    await expect(findCourseWeightsLookup({ goalId: goal.id, year: YEAR })).resolves.toBeNull();
   });
 
   it("remembers weights it couldn't find, and looks up again for another course", async () => {
     const goal = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
-    const lookup = await findCourseWeightsLookup({ goalId: goal.id });
 
     await recordCourseWeights({
       finding: { edition: null, source: null, status: "unknown", weights: [] },
       goalId: goal.id,
-      lookup: lookup!,
+      lookup: await lookUp(goal.id),
+      provenance,
     });
 
-    await expect(findCourseWeightsLookup({ goalId: goal.id })).resolves.toBeNull();
+    await expect(findCourseWeightsLookup({ goalId: goal.id, year: YEAR })).resolves.toBeNull();
 
     await prisma.goal.update({
       data: { details: { followUps: [], institution: "UFMG", targetCourse: "Direito" } },
       where: { id: goal.id },
     });
 
-    await expect(findCourseWeightsLookup({ goalId: goal.id })).resolves.toMatchObject({
+    await expect(findCourseWeightsLookup({ goalId: goal.id, year: YEAR })).resolves.toMatchObject({
       course: "Direito",
     });
   });
@@ -104,7 +124,106 @@ describe(findCourseWeightsLookup, () => {
       userId: user.id,
     });
 
-    await expect(findCourseWeightsLookup({ goalId: noInstitution.id })).resolves.toBeNull();
-    await expect(findCourseWeightsLookup({ goalId: learnGoal.id })).resolves.toBeNull();
+    await expect(
+      findCourseWeightsLookup({ goalId: noInstitution.id, year: YEAR }),
+    ).resolves.toBeNull();
+
+    await expect(findCourseWeightsLookup({ goalId: learnGoal.id, year: YEAR })).resolves.toBeNull();
+  });
+});
+
+describe(copyStoredCourseWeights, () => {
+  it("gives the next learner aiming at the same course the weights, after the first learner leaves", async () => {
+    const first = await enemGoal({ institution: "UFMG", targetCourse: "Medicina" });
+    const examBlueprintId = first.examBlueprintId ?? "";
+
+    await recordCourseWeights({
+      finding: FOUND,
+      goalId: first.id,
+      lookup: await lookUp(first.id),
+      provenance,
+    });
+
+    await prisma.user.delete({ where: { id: first.userId } });
+
+    // Spelled their own way: the same course at the same institution.
+    const next = await enemGoal({ institution: "ufmg", targetCourse: "medicina" }, examBlueprintId);
+
+    await expect(
+      copyStoredCourseWeights({ goalId: next.id, lookup: await lookUp(next.id) }),
+    ).resolves.toBe(true);
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: next.id } });
+
+    expect(readCourseWeights(saved.details)).toMatchObject({
+      course: "medicina",
+      edition: "SISU 2026",
+      institution: "ufmg",
+      source: { title: "Pesos", url: "https://ufmg.br/pesos" },
+      subjects: [
+        { name: "Ciências da Natureza", weight: 2 },
+        { name: "Matemática", weight: 1 },
+        { name: "Redação", weight: 2 },
+      ],
+    });
+
+    await expect(findCourseWeightsLookup({ goalId: next.id, year: YEAR })).resolves.toBeNull();
+  });
+
+  it("shares weights nobody found for the year, and looks them up again the next year", async () => {
+    const first = await enemGoal({ institution: "USP", targetCourse: "Direito" });
+    const examBlueprintId = first.examBlueprintId ?? "";
+
+    await recordCourseWeights({
+      finding: { edition: null, source: null, status: "unknown", weights: [] },
+      goalId: first.id,
+      lookup: await lookUp(first.id),
+      provenance,
+    });
+
+    const next = await enemGoal({ institution: "USP", targetCourse: "Direito" }, examBlueprintId);
+
+    await expect(
+      copyStoredCourseWeights({ goalId: next.id, lookup: await lookUp(next.id) }),
+    ).resolves.toBe(true);
+
+    await expect(findCourseWeightsLookup({ goalId: next.id, year: YEAR })).resolves.toBeNull();
+
+    const later = await enemGoal({ institution: "USP", targetCourse: "Direito" }, examBlueprintId);
+
+    await expect(
+      copyStoredCourseWeights({ goalId: later.id, lookup: await lookUp(later.id, YEAR + 1) }),
+    ).resolves.toBe(false);
+  });
+
+  it("keeps the first lookup's weights when two learners' lookups land at once", async () => {
+    const first = await enemGoal({ institution: "UFRJ", targetCourse: "Medicina" });
+
+    const second = await enemGoal(
+      { institution: "UFRJ", targetCourse: "Medicina" },
+      first.examBlueprintId ?? "",
+    );
+
+    const [firstLookup, secondLookup] = await Promise.all([lookUp(first.id), lookUp(second.id)]);
+
+    await recordCourseWeights({
+      finding: FOUND,
+      goalId: first.id,
+      lookup: firstLookup,
+      provenance,
+    });
+
+    await recordCourseWeights({
+      finding: { ...FOUND, weights: [1, 3, 1] },
+      goalId: second.id,
+      lookup: secondLookup,
+      provenance,
+    });
+
+    const saved = await prisma.goal.findUniqueOrThrow({ where: { id: second.id } });
+
+    expect(readCourseWeights(saved.details)?.subjects.map((part) => part.weight)).toStrictEqual([
+      2, 1, 2,
+    ]);
   });
 });

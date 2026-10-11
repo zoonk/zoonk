@@ -6,6 +6,7 @@ import { logError } from "@zoonk/utils/logger";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { getNextExamCheck, getNextSourceCheck } from "../sources/freshness-schedule";
 import { refreshWebSource } from "../sources/web-sources";
+import { readStoredSourceHash } from "./blueprint-contract";
 import {
   countActiveExamGoals,
   countActiveSourceGoals,
@@ -196,7 +197,7 @@ async function checkExam({
 
   await prisma.examBlueprint.update({ data: { nextCheckAt }, where: { id: blueprint.id } });
 
-  const isBehind = sourceHash !== content.edition.sourceHash;
+  const isBehind = sourceHash !== readStoredSourceHash(blueprint.edition);
 
   return {
     blueprintUpdate: isBehind

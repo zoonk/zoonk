@@ -1,6 +1,5 @@
 import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
 import { prisma } from "@zoonk/db";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { logError } from "@zoonk/utils/logger";
@@ -35,18 +34,15 @@ function deferredChecks() {
   return vi.mocked(after).mock.calls.map(([task]) => task as () => Promise<void>);
 }
 
-async function adultFact({ sensitive = false }: { sensitive?: boolean } = {}) {
+async function learnerFact({ sensitive = false }: { sensitive?: boolean } = {}) {
   const user = await userFixture();
 
-  const [fact] = await Promise.all([
-    memoryFactFixture({
-      category: "background",
-      sensitive,
-      statement: "Works nights",
-      userId: user.id,
-    }),
-    learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: user.id }),
-  ]);
+  const fact = await memoryFactFixture({
+    category: "background",
+    sensitive,
+    statement: "Works nights",
+    userId: user.id,
+  });
 
   mockSession(user.id);
   return fact;
@@ -58,7 +54,7 @@ describe("sensitivity of a corrected fact", () => {
   });
 
   it("keeps the flag on the wording it checked, so a newer correction wins", async () => {
-    const fact = await adultFact();
+    const fact = await learnerFact();
 
     await updateMemoryFact({ factId: fact.id, input: { statement: SENSITIVE } });
     await updateMemoryFact({ factId: fact.id, input: { statement: "Likes chess" } });
@@ -75,7 +71,7 @@ describe("sensitivity of a corrected fact", () => {
   });
 
   it("clears the flag once a correction no longer says anything sensitive", async () => {
-    const fact = await adultFact({ sensitive: true });
+    const fact = await learnerFact({ sensitive: true });
 
     await updateMemoryFact({ factId: fact.id, input: { statement: "Likes chess" } });
     await Promise.all(deferredChecks().map((check) => check()));
@@ -86,7 +82,7 @@ describe("sensitivity of a corrected fact", () => {
   });
 
   it("leaves the flag as it was when the check fails", async () => {
-    const fact = await adultFact();
+    const fact = await learnerFact();
     vi.mocked(gateMemoryFact).mockRejectedValue(new Error("Gateway down"));
 
     await updateMemoryFact({ factId: fact.id, input: { statement: SENSITIVE } });

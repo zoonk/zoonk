@@ -20,9 +20,6 @@ import type * as GradeTypedAnswer from "@zoonk/ai/tasks/v2/grading/grade-typed-a
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 
-/** Grading and plain-words edits claim small AI help, which reads the request for its rate limit. */
-vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
 /** Accepted answers are graded by code; only answers that need the model get a stand-in. */
 vi.mock("@zoonk/ai/tasks/v2/grading/grade-typed-answer", async (importOriginal) => {
   const actual = await importOriginal<typeof GradeTypedAnswer>();

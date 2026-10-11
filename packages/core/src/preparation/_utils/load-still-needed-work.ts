@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { isPlanReady } from "../../plans/_utils/apply-plan-change";
 import { loadPlanContext } from "../../plans/_utils/plan-context";
 import { computePlan } from "../../plans/_utils/replan";
@@ -28,7 +28,7 @@ export async function loadStillNeededWork({
   }
 
   const [plan, computed] = await Promise.all([
-    loadGoalPlan(context.goal.id),
+    readGoalPlan(context.goal.id),
     isPlanReady(context) ? computePlan({ context, mode: "automatic", now, pace: "saved" }) : null,
   ]);
 

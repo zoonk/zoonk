@@ -1,5 +1,4 @@
 import "server-only";
-import { readExamMonth } from "../../../exams/_utils/exam-edition-days";
 import { loadTargetCutoff } from "../../../exams/cutoffs/load-target-cutoff";
 import { type GoalDraft } from "../../../goals/goal-contract";
 import {
@@ -7,8 +6,6 @@ import {
   type OnboardingDraftEdit,
   type UnderstoodGoalView,
 } from "../onboarding-contract";
-import { allowDateSearch } from "./date-search";
-import { findExamFacts } from "./exam-facts";
 
 type GoalsUnderstanding = Extract<GoalUnderstandingView, { status: "goals" }>;
 type GoalEdit = Exclude<OnboardingDraftEdit, { field: "studyTime" }>;
@@ -20,14 +17,6 @@ function withoutKey<Value extends object, Key extends keyof Value>(
 ): Omit<Value, Key> {
   const { [key]: _removed, ...rest } = value;
   return rest;
-}
-
-function readText(value: unknown): string | null {
-  return typeof value === "string" && value.trim() ? value : null;
-}
-
-function readYear(isoDate: string): number {
-  return new Date(isoDate).getUTCFullYear();
 }
 
 function setDetail({
@@ -60,69 +49,7 @@ function reviseTargetDate({
   return { ...goal, draft: value === null ? draft : { ...draft, targetDate: value } };
 }
 
-/**
- * A title that names the old year ("Pass ENEM 2027") names the new one: the year is part of what
- * the title says, not a separate fact.
- */
-function retitleForYear({ from, title, to }: { from: unknown; title: string; to: number }): string {
-  return typeof from === "number"
-    ? title.replaceAll(new RegExp(`\\b${from}\\b`, "gu"), String(to))
-    : title;
-}
-
-/**
- * Another year of the same exam: that year's dates (from its notice or a quick search for the
- * published one, or estimated from its usual timing) and blueprint, a title naming the old year
- * names the new one, and a deadline set for the old year no longer holds.
- */
-async function reviseExamYear({
-  goal,
-  today,
-  value,
-}: {
-  goal: UnderstoodGoalView;
-  today: string;
-  value: number;
-}): Promise<UnderstoodGoalView | null> {
-  const details = goal.draft.details ?? {};
-  const { examName } = details;
-
-  if (goal.draft.kind !== "exam" || typeof examName !== "string" || value < readYear(today)) {
-    return null;
-  }
-
-  // The learner can type any year, so its day is searched for only as one of their small AI calls.
-  const facts = await findExamFacts({
-    allowSearch: allowDateSearch,
-    exam: {
-      examMonth: readExamMonth(details),
-      examName,
-      examYear: value,
-      institution: readText(details.institution),
-      role: readText(details.targetPosition),
-      words: goal.draft.prompt,
-    },
-    language: goal.draft.language,
-    today,
-  });
-
-  const draft = withoutKey(goal.draft, "targetDate");
-
-  return {
-    // Another year's exam may be another notice: `reviseUnderstanding` reads its cut-off again.
-    cutoff: null,
-    draft: {
-      ...withoutKey(draft, "examBlueprintId"),
-      ...(facts.blueprintId ? { examBlueprintId: facts.blueprintId } : {}),
-      ...(facts.targetDate ? { targetDate: facts.targetDate } : {}),
-      details: { ...details, examYear: value },
-      title: retitleForYear({ from: details.examYear, title: draft.title, to: value }),
-    },
-    examDates: facts.dates,
-  };
-}
-
-async function reviseGoal({
+function reviseGoal({
   edit,
   goal,
   today,
@@ -130,14 +57,12 @@ async function reviseGoal({
   edit: GoalEdit;
   goal: UnderstoodGoalView;
   today: string;
-}): Promise<UnderstoodGoalView | null> {
+}): UnderstoodGoalView | null {
   switch (edit.field) {
     case "title":
       return { ...goal, draft: { ...goal.draft, title: edit.value } };
     case "targetDate":
       return reviseTargetDate({ goal, today, value: edit.value });
-    case "examYear":
-      return reviseExamYear({ goal, today, value: edit.value });
     case "institution":
     case "reason":
     case "role":
@@ -177,7 +102,7 @@ function reviseStudyTime({
 
 /**
  * The card with one fix applied and every field that depends on it recomputed. Null when the fix
- * doesn't apply: no such goal, a year for a goal that isn't an exam, or a day or year already past.
+ * doesn't apply: no such goal, or a day already past.
  */
 export async function reviseUnderstanding({
   edit,
@@ -185,7 +110,7 @@ export async function reviseUnderstanding({
   understanding,
 }: {
   edit: OnboardingDraftEdit;
-  /** The learner's own today, so past days and years are refused. */
+  /** The learner's own today, so past days are refused. */
   today: string;
   understanding: GoalsUnderstanding;
 }): Promise<GoalsUnderstanding | null> {
@@ -194,13 +119,13 @@ export async function reviseUnderstanding({
   }
 
   const goal = understanding.goals[edit.goal];
-  const revised = goal ? await reviseGoal({ edit, goal, today }) : null;
+  const revised = goal ? reviseGoal({ edit, goal, today }) : null;
 
   if (!revised) {
     return null;
   }
 
-  // Another course, institution, position or year has its own cut-off, when one is known.
+  // Another course, institution or position has its own cut-off, when one is known.
   const cutoff = await loadTargetCutoff({
     details: revised.draft.details,
     examBlueprintId: revised.draft.examBlueprintId,

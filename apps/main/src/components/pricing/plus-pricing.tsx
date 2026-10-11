@@ -1,7 +1,6 @@
 import {
   Container,
   ContainerBody,
-  ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
   type ContainerProps,
@@ -37,34 +36,31 @@ const PRICING_PAGE_VARIANTS = {
   hero: {
     body: "sm:px-4",
     container: "gap-8 py-4 sm:py-8 lg:gap-10 lg:py-10",
-    description: "text-base leading-relaxed sm:text-lg",
     header: "",
     title: "text-4xl leading-[0.95] font-semibold tracking-[-0.04em] text-balance sm:text-5xl",
   },
   settings: {
     body: "px-0 pb-0",
     container: "gap-6",
-    description: "leading-normal",
     header: "px-0",
     title: "text-foreground text-2xl leading-tight font-semibold tracking-tight",
   },
 } as const;
 
 /**
- * The offer's headline, in the words people use for what they're getting ready for, over one
- * column. Visitors read it on the public pricing page and learners in the app's subscription
- * page. A learner with a goal reads that goal instead, so the offer is about keeping it going.
+ * The offer's headline over one column. Visitors read the public pricing page's, in the words
+ * people use for what they're getting ready for; learners in the app's subscription page read
+ * plainly what it is ("Subscribe to Zoonk Plus"), with what it includes and its price in the offer
+ * under it, never a slogan.
  */
 export async function PlusPricingPage({
   children,
   className,
-  goalTitle,
   render,
   variant = "hero",
 }: {
   children: ReactNode;
   className?: string;
-  goalTitle?: string;
   render?: ContainerProps["render"];
   variant?: keyof typeof PRICING_PAGE_VARIANTS;
 }) {
@@ -75,21 +71,11 @@ export async function PlusPricingPage({
     <Container className={cn(classes.container, className)} render={render}>
       <ContainerHeader className={cn("items-start", classes.header)}>
         <ContainerHeaderGroup className={variant === "hero" ? "gap-4" : "gap-1.5"}>
-          {goalTitle && (
-            <p className="text-muted-foreground text-sm font-medium text-pretty sm:text-base">
-              {t("Your goal: {goal}", { goal: goalTitle })}
-            </p>
-          )}
-
           <ContainerTitle className={classes.title}>
-            {goalTitle
-              ? t("Keep going with Plus.")
-              : t("Get ready for your exam, new job or move.")}
+            {variant === "hero"
+              ? t("Get ready for your exam, new job or move.")
+              : t("Subscribe to Zoonk Plus")}
           </ContainerTitle>
-
-          <ContainerDescription className={classes.description}>
-            {t("Plus gives you everything Zoonk has.")}
-          </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 

@@ -1,13 +1,11 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { type TrueFalseLabels } from "../library/exams/true-false-labels";
 import { type BlockCheckpoint } from "../sessions/block-payload";
-import { type StudyBlockResult } from "../sessions/get-study-block";
+import { type StudyBlockQuestion } from "../sessions/study-block-question";
 import { type CheckpointReward } from "./checkpoint-reward";
 import { type ExamDayChecklistItem } from "./weekly-challenge-rules";
 
-type BlockDetail = Extract<StudyBlockResult, { status: "ready" }>["detail"];
-
-export type CheckpointQuestion = BlockDetail["questions"][number];
+export type CheckpointQuestion = StudyBlockQuestion;
 
 export type CheckpointPhase = { index: number; name: string };
 

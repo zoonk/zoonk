@@ -6,6 +6,7 @@ import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type MemoryFactText, formatMemoryFactList } from "./memory-facts";
+import planChangePrompt from "./memory-insight-plan-change.prompt.md";
 import { type MemoryInsightKindName, memoryInsightOutputSchema } from "./memory-insight-rules";
 import systemPrompt from "./memory-insight.prompt.md";
 
@@ -51,6 +52,16 @@ export type MemoryInsightParams = {
   analytics?: AiGenerationContext;
 };
 
+/**
+ * Only a day with a gap the plan could fill allows a plan change: its rules, examples and the gaps
+ * themselves are added then, after the instructions every day shares.
+ */
+const planChangeSystemPrompt = `${systemPrompt}\n${planChangePrompt}`;
+
+function allowsPlanChange(params: MemoryInsightParams): boolean {
+  return params.kinds.includes("planChange");
+}
+
 function formatList(items: readonly string[]): string {
   return items.length === 0
     ? "none"
@@ -78,6 +89,10 @@ function formatSkill(skill: MemoryInsightSkill): string {
 }
 
 function buildUserPrompt(params: MemoryInsightParams): string {
+  const skills: Record<string, string> = allowsPlanChange(params)
+    ? { SKILLS: formatList(params.skills.map((skill) => formatSkill(skill))) }
+    : {};
+
   return [
     `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
     `KINDS: ${params.kinds.join(", ")}`,
@@ -87,7 +102,7 @@ function buildUserPrompt(params: MemoryInsightParams): string {
       FACTS: formatMemoryFactList(params.facts),
       GOAL: params.goal,
       RECENT_INSIGHTS: formatList(params.recentInsights),
-      SKILLS: formatList(params.skills.map((skill) => formatSkill(skill))),
+      ...skills,
     }),
   ].join("\n\n");
 }
@@ -100,6 +115,7 @@ function buildUserPrompt(params: MemoryInsightParams): string {
  */
 export async function generateMemoryInsight(params: MemoryInsightParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
+  const instructions = allowsPlanChange(params) ? planChangeSystemPrompt : systemPrompt;
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
@@ -107,16 +123,22 @@ export async function generateMemoryInsight(params: MemoryInsightParams) {
     analytics,
     generate: () =>
       generateText({
-        instructions: systemPrompt,
+        instructions,
         model,
         output: Output.object({ schema: memoryInsightOutputSchema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
       }),
-    systemPrompt,
+    systemPrompt: instructions,
     task: "memory-insight",
   });
 
-  return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return {
+    data: result.output,
+    provenance,
+    systemPrompt: instructions,
+    usage: result.usage,
+    userPrompt,
+  };
 }

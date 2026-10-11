@@ -75,7 +75,8 @@ function NodeCard({
  * Link causes to what they led to: the learner picks a cause, then its effect, and an arrow joins
  * them. Events are listed in time order, which never gives away the links. With a question check
  * each link is confirmed or turned down at once with why; with a links check the learner's set is
- * the answer and the check shows the right, wrong and missed links.
+ * the answer and the check shows the right, wrong and missed links. Explored on an explanation
+ * screen, every link is drawn with its why and nothing is picked.
  */
 export function CauseEffectChainActivity({
   content,
@@ -88,12 +89,14 @@ export function CauseEffectChainActivity({
   const { check, fields } = content;
   const nodes = orderNodes(fields.nodes);
   const order = nodes.map((node) => node.id);
-  const [links, setLinks] = useState<Link[]>([]);
+  const isExploring = phase === "explore";
+  const [links, setLinks] = useState<Link[]>(() => (isExploring ? fields.links : []));
   const [causeId, setCauseId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const { centers, containerRef, register } = useCardCenters();
   const isChecked = phase === "checked";
-  const isGuided = check.kind === "choice";
+  const isGuided = check.kind === "choice" && !isExploring;
+  const isLocked = isChecked || isExploring;
   const labelOf = (id: string) => fields.nodes.find((node) => node.id === id)?.label ?? id;
 
   function update(next: Link[]) {
@@ -148,22 +151,24 @@ export function CauseEffectChainActivity({
 
   return (
     <ActivityCanvas labelId={labelId}>
-      <div className="flex items-baseline justify-between gap-3">
-        <ActivityCanvasLabel className="text-sm">
-          {causeId
-            ? t("Now pick what {cause} led to.", { cause: labelOf(causeId) })
-            : t("Pick a cause, then pick what it led to.")}
-        </ActivityCanvasLabel>
-
-        {check.kind === "interaction" && (
-          <ActivityCanvasLabel className="shrink-0 tabular-nums">
-            {t("{count} of {total} links", {
-              count: format(links.length),
-              total: format(fields.links.length),
-            })}
+      {!isExploring && (
+        <div className="flex items-baseline justify-between gap-3">
+          <ActivityCanvasLabel className="text-sm">
+            {causeId
+              ? t("Now pick what {cause} led to.", { cause: labelOf(causeId) })
+              : t("Pick a cause, then pick what it led to.")}
           </ActivityCanvasLabel>
-        )}
-      </div>
+
+          {check.kind === "interaction" && (
+            <ActivityCanvasLabel className="shrink-0 tabular-nums">
+              {t("{count} of {total} links", {
+                count: format(links.length),
+                total: format(fields.links.length),
+              })}
+            </ActivityCanvasLabel>
+          )}
+        </div>
+      )}
 
       <div className="relative" style={{ paddingLeft: ARC_GUTTER }}>
         <CauseEffectArcs centers={centers} links={arcs} order={order} />
@@ -172,7 +177,7 @@ export function CauseEffectChainActivity({
           {nodes.map((node) => (
             <NodeCard
               cardRef={register(node.id)}
-              disabled={isChecked}
+              disabled={isLocked}
               isCandidate={causeId !== null && causeId !== node.id}
               isCause={causeId === node.id}
               key={node.id}
@@ -191,16 +196,16 @@ export function CauseEffectChainActivity({
       </div>
 
       <p aria-live="polite" className="text-muted-foreground min-h-5 text-sm">
-        {isChecked ? "" : notice}
+        {isLocked ? "" : notice}
       </p>
 
       <CauseEffectLinkList
-        canRemove={!isChecked && !isGuided}
+        canRemove={!isLocked && !isGuided}
         explanations={fields.links}
         labelOf={labelOf}
         links={arcs}
         onRemove={(link) => update(toggleLink(links, link))}
-        showWhy={isGuided || isChecked}
+        showWhy={isGuided || isLocked}
       />
 
       <ActivityTextAlternative>

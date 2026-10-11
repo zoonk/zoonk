@@ -1,3 +1,5 @@
+import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
+import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { ownLevelSchema } from "@zoonk/core/learner/placement/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
@@ -8,7 +10,10 @@ import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { writtenPracticeSchema } from "@zoonk/core/plans/written-practice-contract";
 import { GoalKind, PlanItemKind, PlanItemStatus } from "@zoonk/db";
 import { z } from "zod";
+import { noSittingSchema, noticeDaySchema } from "./notice-dates";
 import { planAreaSchema } from "./plan-areas";
+import { planBasesSchema } from "./plan-bases";
+import { planFeasibilitySchema } from "./plan-feasibility";
 import { phaseKindSchema, planPhaseSchema } from "./plan-phases";
 import { planStatusSchema } from "./preparation";
 import { shortPlanSchema } from "./short-exam-plans";
@@ -32,7 +37,7 @@ const planItemSchema = z
       .string()
       .meta({
         description:
-          "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown)",
+          "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")",
       }),
     writing: z
       .boolean()
@@ -84,9 +89,18 @@ export const planResponseSchema = z
   .object({
     access: z.object({
       freeUntil: isoDateSchema.nullable().meta({ description: "Last day a free exam plan covers" }),
+      freeWeekOver: z
+        .boolean()
+        .meta({
+          description:
+            "A free exam plan past its first week: its new lessons, practice, challenges and mocks come with Plus, while reviews and fixing mistakes stay free",
+        }),
       mocksRequirePlus: z.boolean(),
     }),
     areas: z.array(planAreaSchema),
+    bases: planBasesSchema
+      .nullable()
+      .meta({ description: "The plan's bases to choose how to study; null when it has none" }),
     changes: z
       .array(planChangeSchema)
       .meta({ description: "Proposals first, then the last two weeks" }),
@@ -96,6 +110,24 @@ export const planResponseSchema = z
         description: "The Library course the plan is built from, with its levels; null without one",
       }),
     currentPhase: z.int().nullable(),
+    end: z
+      .object({
+        kind: z
+          .enum(["ended", "finished"])
+          .meta({
+            description:
+              "`finished`: every lesson was studied or tested out; celebrate it. `ended`: some were set aside (missed days the plan couldn't fit back, or its date came); never celebrate it as finished, say how many stayed out",
+          }),
+        setAsideLessons: z
+          .int()
+          .min(0)
+          .meta({ description: "The lessons set aside; 0 when finished" }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "Nothing of the plan is left to do: time for what to study next (`GET /v1/goals/{goalId}/map`'s `next`, and POST `/v1/goals/{goalId}/next-level`). Null while something is",
+      }),
     estimate: z.object({
       endDate: isoDateSchema.nullable(),
       pace: z
@@ -104,56 +136,14 @@ export const planResponseSchema = z
       remainingHours: z.number().min(0),
       totalHours: z.number().min(0),
     }),
-    feasibility: z
-      .object({
-        alternative: z
-          .object({ dailyMinutes: z.int(), endDate: isoDateSchema.nullable() })
-          .nullable()
-          .meta({ description: "Without a deadline: when the plan ends with more time a day" }),
-        coreFits: z
-          .boolean()
-          .meta({
-            description:
-              "Every topic (every skill's core) is in the plan, the ones worth more in more depth; false only when even the cores don't fit before the deadline",
-          }),
-        coreMinutes: z
-          .int()
-          .nullable()
-          .meta({
-            description:
-              "When the cores don't all fit: the daily minutes that bring every topic in",
-          }),
-        coveredShare: z
-          .number()
-          .min(0)
-          .max(1)
-          .meta({
-            description: "Share of everything, in depth, covered before the deadline (see measure)",
-          }),
-        deadline: isoDateSchema.nullable(),
-        fits: z.boolean(),
-        maximum: z
-          .object({ coveredShare: z.number().min(0).max(1), dailyMinutes: z.int() })
-          .nullable()
-          .meta({
-            description:
-              "When no daily time covers everything: the share the most daily minutes cover, when it's more",
-          }),
-        measure: z
-          .enum(["exam", "goal"])
-          .meta({
-            description:
-              "exam: a share of the exam's questions and points; goal: of the goal's skills by weight",
-          }),
-        recommendedMinutes: z
-          .int()
-          .nullable()
-          .meta({ description: "Daily minutes that would cover everything in depth" }),
-      })
-      .nullable(),
-    finished: z
-      .boolean()
-      .meta({ description: "Every lesson and chapter is done: time for what to study next" }),
+    examChoices: z
+      .array(examChoiceViewSchema)
+      .meta({
+        description:
+          "The exam's choices (ENEM's foreign language: English or Spanish), each with its options and the one the learner takes (null until picked), which POST /v1/goals/{goalId}/plan/exam-choices changes; the plan studies only the picked options. Empty without choices",
+      }),
+    examDocument: examDocumentSchema,
+    feasibility: planFeasibilitySchema.nullable(),
     goalId: z.uuid(),
     notice: z
       .enum(["reading", "usual"])
@@ -171,12 +161,32 @@ export const planResponseSchema = z
 
     schedule: z.object({
       dailyMinutes: z.int(),
+      fullCourse: z
+        .boolean()
+        .meta({
+          description:
+            "The exam plan studies everything: what doesn't fit before the exam goes on after it (`setFullCourse`); the exam keeps its date. False for other goals, which study everything without a date",
+        }),
       lightWeeks: z.array(z.object({ endDate: isoDateSchema, startDate: isoDateSchema })),
+      nextSitting: isoDateSchema
+        .nullable()
+        .meta({
+          description:
+            "For a plan that goes on after its exam (`fullCourse`), whose mocks there are for the exam's next sitting: that sitting's first day, when the notice lists it; null otherwise",
+        }),
+      noSitting: noSittingSchema,
+      noticeDay: noticeDaySchema,
       studyDays: z.int().min(0).max(7),
       targetDate: isoDateSchema.nullable(),
       targetDateEstimated: z
         .boolean()
         .meta({ description: "The date is the likely day of an exam whose notice isn't out yet" }),
+      targetDateNamedMonth: z
+        .boolean()
+        .meta({
+          description:
+            "The date is the start of the month the learner named, standing for that month: say the month, not the day",
+        }),
       weekdayMinutes: z.array(z.int()).meta({ description: "Sunday first; 0 for rest days" }),
     }),
     shortPlan: shortPlanSchema,
@@ -210,7 +220,7 @@ export const planResponseSchema = z
       .nullable()
       .meta({
         description:
-          "When the exam's written tests (a redação, a discursive test) are practiced, which the learner chooses; the total practice stays the same. Null for plans without written tests and for a test days away",
+          "When the exam's written tests (an essay, a discursive test) are practiced, which the learner chooses; the total practice stays the same. Null for plans without written tests and for a test days away",
       }),
   })
   .meta({ id: "Plan" }) satisfies z.ZodType<PlanView>;
@@ -245,13 +255,13 @@ export const planChangeResultSchema = z
       .optional()
       .meta({
         description:
-          "Why a focus changed nothing (`unchanged`): `alreadyIn` (its subjects already have every lesson in the plan) or `cantMove` (they already start as early as what they build on allows, and more of them doesn't fit)",
+          "Why a change of focus changed nothing (`unchanged`): `alreadyIn` (the subjects it focuses on already have every lesson in the plan) or `cantMove` (they already start as early as what they build on allows, and more of them doesn't fit)",
       }),
     status: z
       .enum(["applied", "proposed", "unchanged"])
       .meta({
         description:
-          "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: a change that only focuses on subjects would leave the plan as it is, so nothing was saved",
+          "Proposed changes wait for the learner's OK: they move more than a lesson. `unchanged`: a change of focus alone wouldn't do what it asks (focusing on subjects would leave the plan as it is, or more or less of some subjects would do the opposite in the plan the learner sees), so nothing was saved",
       }),
   })
   .meta({ id: "PlanChangeResult" });

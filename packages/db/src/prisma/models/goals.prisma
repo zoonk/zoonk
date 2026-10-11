@@ -28,6 +28,13 @@ enum PlanItemStatus {
   testedOut @map("tested_out")
 }
 
+/// One piece of a new plan's setup, done once after the plan is built (see `Plan.setupTasks`).
+enum PlanSetupTask {
+  placement
+  routine
+  notice
+}
+
 /// A suggested goal waits for the learner's answer on Today; either answer closes it for good.
 enum SuggestedGoalStatus {
   pending
@@ -114,40 +121,50 @@ model Goal {
 /// Every change is a `PlanChange` with a one-sentence reason and an undo. Provenance is set when a model
 /// wrote the phases.
 model Plan {
-  id                  String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  goalId              String       @unique @map("goal_id") @db.Uuid
-  goal                Goal         @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  phases              Json         @default("[]")
-  graph               Json         @default("{}")
-  settings            Json         @default("{}")
-  estimateHours       Float?       @map("estimate_hours")
-  version             Int          @default(1)
+  id                  String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  goalId              String          @unique @map("goal_id") @db.Uuid
+  goal                Goal            @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  phases              Json            @default("[]")
+  graph               Json            @default("{}")
+  settings            Json            @default("{}")
+  estimateHours       Float?          @map("estimate_hours")
+  version             Int             @default(1)
   model               String?
-  promptVersion       String?      @map("prompt_version")
-  runId               String?      @map("run_id")
-  generatedAt         DateTime?    @map("generated_at")
+  promptVersion       String?         @map("prompt_version")
+  runId               String?         @map("run_id")
+  generatedAt         DateTime?       @map("generated_at")
   /// When the goal's last run building this plan gave up before it had skills; cleared when a new
   /// run starts, so placement and the plan stop waiting and offer to try again.
-  buildFailedAt       DateTime?    @map("build_failed_at")
+  buildFailedAt       DateTime?       @map("build_failed_at")
   /// When the run that built the plan finished writing placement's questions (some may have
   /// failed); until then, a skill's missing questions are still coming.
-  placementPreparedAt DateTime?    @map("placement_prepared_at")
+  placementPreparedAt DateTime?       @map("placement_prepared_at")
   /// An exam plan built before research read the exam's notice waits for that reading until this
   /// time: the plan reveal says it's reading the notice, and a reading that lands in time becomes
   /// part of the plan. Past it, the plan shows the exam's usual structure and the reading arrives
   /// as a change the learner applies. Null when nothing is waited for (the plan was built from
   /// the notice, the reading landed, or research ended without one).
-  noticeWaitUntil     DateTime?    @map("notice_wait_until")
+  noticeWaitUntil     DateTime?       @map("notice_wait_until")
   /// When the plan stopped waiting for its exam's notice: the reading landed in the plan, arrived as
   /// a change to apply, or research ended without one. A notice recorded before then is the plan's
   /// own (it shaped the plan or that change), so Today never shows it as news.
-  noticeWaitEndedAt   DateTime?    @map("notice_wait_ended_at")
+  noticeWaitEndedAt   DateTime?       @map("notice_wait_ended_at")
   /// What the plan covered of its goal by its date when it was last planned (0 to 1, the share its
   /// feasibility reads), so a new day can tell the learner when falling behind puts the date at
   /// risk. Null for plans without a date.
-  coveredShare        Float?       @map("covered_share")
-  createdAt           DateTime     @default(now()) @map("created_at")
-  updatedAt           DateTime     @default(now()) @updatedAt @map("updated_at")
+  coveredShare        Float?          @map("covered_share")
+  /// The key of what the plan was last planned from (the planner's input and the learner's
+  /// progress): a system refresh that would plan from the same writes nothing, so opening the app
+  /// with nothing new never moves the plan. Null until a run saves one.
+  inputsKey           String?         @map("inputs_key")
+  /// What a new plan still owes once it's built, each once: the placement the learner ended before
+  /// the plan existed (`placement`), fitting the plan to the routine memory holds (`routine`), and
+  /// asking about the notice's exam day in another month than the one the learner named (`notice`).
+  /// A task leaves the list in the same transaction as its effect, so a retry or a later request
+  /// finishes what's left and never repeats one. Empty once the plan is set up.
+  setupTasks          PlanSetupTask[] @default([]) @map("setup_tasks")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @default(now()) @updatedAt @map("updated_at")
   items               PlanItem[]
   changes             PlanChange[]
 
@@ -170,6 +187,9 @@ model PlanItem {
   chapter       Chapter?       @relation(fields: [chapterId], references: [id], onDelete: SetNull)
   skillId       String?        @map("skill_id") @db.Uuid
   skill         Skill?         @relation(fields: [skillId], references: [id], onDelete: SetNull)
+  /// A stand-in's size: how many of its skill's lessons the plan teaches in its place, after cuts
+  /// and base choices (the time the item holds). Null for every other item.
+  lessons       Int?           @db.SmallInt
   titleSnapshot String         @map("title_snapshot")
   scheduledFor  DateTime?      @map("scheduled_for") @db.Date
   completedAt   DateTime?      @map("completed_at")
@@ -187,23 +207,38 @@ model PlanItem {
 /// what the planner needs to reverse it. Changes bigger than a lesson start `proposed` and wait for the
 /// learner's OK. Provenance is set when a model proposed the change.
 model PlanChange {
-  id            String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  planId        String           @map("plan_id") @db.Uuid
-  plan          Plan             @relation(fields: [planId], references: [id], onDelete: Cascade)
+  id            String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  planId        String              @map("plan_id") @db.Uuid
+  plan          Plan                @relation(fields: [planId], references: [id], onDelete: Cascade)
   kind          String
-  status        PlanChangeStatus @default(applied)
+  status        PlanChangeStatus    @default(applied)
   reason        String
-  payload       Json             @default("{}")
+  payload       Json                @default("{}")
   model         String?
-  promptVersion String?          @map("prompt_version")
-  runId         String?          @map("run_id")
-  generatedAt   DateTime?        @map("generated_at")
-  createdAt     DateTime         @default(now()) @map("created_at")
+  promptVersion String?             @map("prompt_version")
+  runId         String?             @map("run_id")
+  generatedAt   DateTime?           @map("generated_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
   /// The buddy's answers that proposed it, when the learner asked for it by talking.
   tutorAnswers  LessonQuestion[]
+  /// The plan right before it, which its undo puts back, while it can be undone.
+  snapshot      PlanChangeSnapshot?
 
   @@index([planId, createdAt])
   @@map("plan_changes")
+}
+
+/// The plan as it was right before a change the learner can undo (an edit, or a test-out's skipped
+/// lessons): `plan` holds its state, phases, numbers and items, which the undo puts back as they were.
+/// Only a plan's latest change can be undone, so every commit deletes the plan's earlier snapshots.
+model PlanChangeSnapshot {
+  id        String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  changeId  String     @unique @map("change_id") @db.Uuid
+  change    PlanChange @relation(fields: [changeId], references: [id], onDelete: Cascade)
+  plan      Json
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  @@map("plan_change_snapshots")
 }
 
 /// A course a learner was taking before goals existed, offered on Today as a goal to plan: "Continue

@@ -12,7 +12,7 @@ import { StepForm } from "./step-form";
 /** A new buddy is a baby with half its Energy, the same as on day 1. */
 const NEW_BUDDY_LOOK = { beltColor: "white" as const, energy: 50 };
 
-/** A buddy to feed by learning, with the learner's own name for it. */
+/** A buddy that grows as the learner learns, with the learner's own name for it. */
 export function BuddyStep({
   onAnswer,
   pending,
@@ -38,7 +38,7 @@ export function BuddyStep({
 
   return (
     <StepForm
-      description={t("You feed your buddy by learning. It grows with you.")}
+      description={t("Your buddy grows as you learn.")}
       onContinue={() => {
         analytics.track({
           name: "Buddy Chosen",

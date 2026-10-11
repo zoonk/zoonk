@@ -8,6 +8,7 @@ import { useLearnAnalytics } from "../learn-context";
 import { getClassifiedKind, useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
 import { AttachableGoalEntry } from "./entry/goal-attachments";
+import { GoalLimitNotice } from "./entry/goal-limit-notice";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
@@ -19,6 +20,7 @@ import { useGoalCreation } from "./entry/use-goal-creation";
 import { type GoalError, useStartError } from "./goal-errors";
 import {
   type AttachedSource,
+  type GoalLimitReason,
   type OnboardingActions,
   type OnboardingNavigation,
   type OnboardingRoutes,
@@ -53,7 +55,8 @@ function getBack({
  * fixes, or the way to try again. A question goes on to its quick explanation, an instrument to
  * the waitlist with musicianship offered, and an unsafe goal is declined kindly. Confirming
  * creates the goals and continues on the goal's own onboarding screens. A guest whose one goal is
- * taken is asked to create an account instead, before typing anything.
+ * taken is asked to create an account instead, before typing anything; a learner whose plan can't
+ * start another goal (`goalLimit`) is told up front, with the box open for quick questions.
  */
 export function StartFlow({
   needsAccount = false,
@@ -79,6 +82,7 @@ function GoalStartFlow({
   canAttach = false,
   defaultGoal = "",
   fromSharedPlan = false,
+  goalLimit = null,
   initialDraft = null,
   navigation,
   routes,
@@ -91,6 +95,8 @@ function GoalStartFlow({
   defaultGoal?: string;
   /** Opened from someone's plan link: the goal starts from that plan. */
   fromSharedPlan?: boolean;
+  /** A goal limit the learner already reached, said before they type. */
+  goalLimit?: GoalLimitReason | null;
   /** The draft in the address, to show again after a refresh or when coming back. */
   initialDraft?: OnboardingDraftView | null;
   navigation: OnboardingNavigation;
@@ -213,6 +219,7 @@ function GoalStartFlow({
           error={state.error}
           fromSharedPlan={fromSharedPlan}
           intent={intent}
+          notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
           onAttachedChange={setAttached}
           onIntentChange={setIntent}
           onSubmit={submit}

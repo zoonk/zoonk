@@ -3,7 +3,7 @@ import { z } from "zod";
 import { mindMapGenerationSchema } from "../schemas/mind-maps";
 import { goalChapterPathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
 import {
-  forbiddenResponse,
+  guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
   tooManyRequestsResponse,
@@ -65,7 +65,7 @@ export const mindMapPaths = {
         },
         ...readErrors,
         "402": paymentRequiredResponse,
-        "403": forbiddenResponse,
+        "403": guestRefusalResponse,
         "422": {
           ...unprocessableEntityResponse,
           description:

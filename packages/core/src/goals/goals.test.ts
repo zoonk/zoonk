@@ -1,6 +1,6 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -9,16 +9,9 @@ import { createGoals } from "./create-goals";
 import { getGoal } from "./get-goal";
 import { type GoalDraft } from "./goal-contract";
 import { listCurrentUserGoals } from "./list-current-user-goals";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -53,7 +46,6 @@ describe(createGoals, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   afterEach(() => {
@@ -107,6 +99,73 @@ describe(createGoals, () => {
     });
 
     expect(profile.activeGoalId).toBe(goalId);
+  });
+
+  it("gives a language certificate's exam goal the language it tests when onboarding leaves it out", async () => {
+    await useLearner();
+
+    const result = await createGoals({
+      dailyMinutes: 30,
+      goals: [
+        draft({
+          details: { examName: "DELE B2" },
+          kind: "exam",
+          prompt: "quero passar no DELE B2",
+          title: "Passar no DELE B2",
+        }),
+      ],
+    });
+
+    const goalId = result.status === "created" ? result.goals[0]?.id : "";
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+    expect(goal.targetLanguage).toBe("es");
+  });
+
+  it("gives an exam goal the language its notice says the exam tests, whatever the exam is called", async () => {
+    await useLearner({ plus: true });
+
+    const testedLanguage = {
+      citation: {
+        passage: "PTE Academic is a computer-based academic English test.",
+        sourceId: "s",
+      },
+      language: "en",
+    };
+
+    const [pte, ielts] = await Promise.all([
+      examBlueprintFixture({
+        name: "PTE Academic",
+        structure: { formats: [], mock: null, rules: [], subjects: [], testedLanguage },
+      }),
+      // Read before notices said which language they test: the certificate's name still does.
+      examBlueprintFixture({ name: "IELTS Academic" }),
+    ]);
+
+    const result = await createGoals({
+      dailyMinutes: 30,
+      goals: [
+        draft({
+          examBlueprintId: pte.id,
+          kind: "exam",
+          prompt: "I need 65 in PTE Academic",
+          title: "PTE Academic 65",
+        }),
+        draft({
+          examBlueprintId: ielts.id,
+          kind: "exam",
+          prompt: "IELTS band 7",
+          title: "IELTS Academic band 7",
+        }),
+      ],
+    });
+
+    const ids = result.status === "created" ? result.goals.map((goal) => goal.id) : [];
+    const goals = await prisma.goal.findMany({ where: { id: { in: ids } } });
+
+    expect(
+      Object.fromEntries(goals.map((goal) => [goal.title, goal.targetLanguage])),
+    ).toStrictEqual({ "IELTS Academic band 7": "en", "PTE Academic 65": "en" });
   });
 
   it("splits one daily budget between two subjects, the first as the main goal", async () => {
@@ -177,10 +236,6 @@ describe(createGoals, () => {
 });
 
 describe(listCurrentUserGoals, () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("lists the learner's goals with the day's total and hides archived ones", async () => {
     const user = await useLearner({ plus: true });
 
@@ -243,6 +298,62 @@ describe(listCurrentUserGoals, () => {
     await planItemFixture({ kind: "mock", phase: 2, planId: plan.id, position: 4 });
 
     await expect(getGoal(goal.id)).resolves.toMatchObject({ goal: { plan: { currentPhase: 0 } } });
+  });
+
+  // Pedro's plan gave a lesson of the second phase before the first phase's last lesson and its
+  // challenge: read from the next thing to do, he was in the second phase, and back in the first
+  // once a change planned that lesson first.
+  it("is in the earliest phase with work left, though a later phase's lesson comes first", async () => {
+    const user = await useLearner();
+    const goal = await goalFixture({ userId: user.id });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      phases: ["Basics", "Projects"].map((name) => ({ endDate: null, kind: "learn", name })),
+    });
+
+    await Promise.all(
+      [
+        { phase: 0, status: "done" as const },
+        { phase: 1 },
+        { phase: 0 },
+        { kind: "boss" as const, phase: 0 },
+        { phase: 1 },
+      ].map((item, position) =>
+        planItemFixture({ ...item, planId: plan.id, position, skillId: null }),
+      ),
+    );
+
+    await expect(getGoal(goal.id)).resolves.toMatchObject({ goal: { plan: { currentPhase: 0 } } });
+  });
+
+  // The goal list counted every lesson not left to do as done, so lessons set aside after missed
+  // days read as studied. It counts as the Journey's phases do: lessons studied, of every lesson
+  // the plan teaches (a stand-in's saved size) but the ones tested out.
+  it("counts the plan's lessons as the Journey does, never a lesson set aside as done", async () => {
+    const user = await useLearner();
+    const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      phases: [{ endDate: null, kind: "learn", name: "Basics" }],
+    });
+
+    await Promise.all(
+      [
+        { status: "done" as const },
+        { status: "skipped" as const },
+        { status: "testedOut" as const },
+        { status: "todo" as const },
+        { lessons: 3, skillId: skill.id, status: "skipped" as const },
+      ].map((item, position) =>
+        planItemFixture({ skillId: null, ...item, planId: plan.id, position }),
+      ),
+    );
+
+    await expect(getGoal(goal.id)).resolves.toMatchObject({
+      goal: { plan: { lessonsDone: 1, lessonsTotal: 6 } },
+    });
   });
 
   it("leads with the first active goal while none is picked, the goal the tabs show", async () => {

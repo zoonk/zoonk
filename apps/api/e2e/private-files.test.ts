@@ -67,6 +67,27 @@ test.describe("Private files API", () => {
     await Promise.all([owner.api.dispose(), other.api.dispose(), visitor.dispose()]);
   });
 
+  // A call's better version of what the learner said, read aloud, is their own clip.
+  test("serves a learner's own clips to them alone", async () => {
+    const [owner, other, visitor] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "private-clip-owner" }),
+      createBearerLearner({ baseURL, prefix: "private-clip-other" }),
+      request.newContext({ baseURL }),
+    ]);
+
+    const filePath = `audio/${owner.userId}/it-${randomUUID()}.mp3`;
+
+    const [otherResponse, visitorResponse] = await Promise.all([
+      other.api.get(`/v1/files/${filePath}`),
+      visitor.get(`/v1/files/${filePath}`),
+    ]);
+
+    expect(otherResponse.status()).toBe(404);
+    expect(visitorResponse.status()).toBe(401);
+
+    await Promise.all([owner.api.dispose(), other.api.dispose(), visitor.dispose()]);
+  });
+
   test("only knows the private store's folders", async () => {
     const learner = await createBearerLearner({ baseURL, prefix: "private-file-folder" });
 

@@ -1,8 +1,9 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
 import { type StepKind } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { getOptionId, shuffleAnswerOptions } from "../_utils/answer-options";
-import { validateActivity } from "../activities/validate-activity";
+import { validateActivity, validateExploreActivity } from "../activities/validate-activity";
 import { type MathCheckInput, toMathCheckContent } from "./_utils/math-check-content";
 import { optionTextSchema } from "./contract/content-schemas";
 import { describeContentIssues, safeParseStepContent } from "./contract/step-contract";
@@ -27,18 +28,63 @@ function optional(key: string, value: string | null | undefined): Record<string,
   return cleaned ? { [key]: cleaned } : {};
 }
 
+/** A screen's picture, with the parts its numbers mark when a question asks where one sits. */
 function imageField(
-  screen: { image: { alt: string; prompt: string } | null },
+  screen: { image: { alt: string; parts?: string[] | null; prompt: string } | null },
   allowImage: boolean,
 ) {
-  return allowImage && screen.image
-    ? { image: { alt: screen.image.alt.trim(), prompt: screen.image.prompt.trim() } }
+  if (!allowImage || !screen.image) {
+    return {};
+  }
+
+  const { alt, parts, prompt } = screen.image;
+
+  return {
+    image: {
+      alt: alt.trim(),
+      ...(parts ? { parts: parts.map((part) => part.trim()) } : {}),
+      prompt: prompt.trim(),
+    },
+  };
+}
+
+/** A picture option's own picture: drawn alone, like a screen's (see `imageField`). */
+function pictureField(
+  option: { picture?: { alt: string; prompt: string } | null },
+  allowImage: boolean,
+) {
+  return allowImage && option.picture
+    ? { picture: { alt: option.picture.alt.trim(), prompt: option.picture.prompt.trim() } }
     : {};
 }
 
 /** A chart or timeline is drawn by code from its data, so any screen may carry one. */
 function visualField(screen: { visual: LessonVisual | null }) {
   return screen.visual ? { visual: screen.visual } : {};
+}
+
+/**
+ * The template an explanation shows to explore, when its JSON is valid and passes the same rules
+ * as an activity's. One that doesn't is left out: the screen still teaches with its words, so it's
+ * never a reason to hold the lesson back.
+ */
+function exploreField(explore: { content: string; template: string } | null) {
+  const parsed = explore ? parseActivityJson(explore.content) : null;
+
+  if (!explore || !parsed?.ok) {
+    return {};
+  }
+
+  // Only the fields and data matter here: a prompt or check written out of habit is left out.
+  const value = isJsonObject(parsed.value) ? parsed.value : {};
+
+  const validated = validateExploreActivity({
+    data: value.data,
+    fields: value.fields,
+    template: explore.template,
+  });
+
+  return validated.ok ? { explore: validated.content } : {};
 }
 
 /** Writer fields map one to one onto the contract, except for ids, nulls and empty lists. */
@@ -80,6 +126,7 @@ function toTeachingContent(
           ...(screen.exampleLineIdea?.trim()
             ? { exampleLineSlot: { idea: screen.exampleLineIdea.trim() } }
             : {}),
+          ...exploreField(screen.explore),
           text: screen.text.trim(),
           ...optional("title", screen.title),
           ...visualField(screen),
@@ -109,6 +156,7 @@ function toTeachingContent(
           options: shuffleAnswerOptions(screen.options).map((option, index) => ({
             id: getOptionId(index),
             isCorrect: option.isCorrect,
+            ...pictureField(option, allowImage),
             reason: option.reason.trim(),
             text: option.text.trim(),
           })),

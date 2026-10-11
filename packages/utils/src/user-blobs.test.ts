@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getPrivateBlobPathname, isOwnPrivateFile, toOwnFileUrl } from "./user-blobs";
+import {
+  getPrivateBlobPathname,
+  isOwnPrivateFile,
+  toOwnFileUrl,
+  toWebOwnFileUrl,
+} from "./user-blobs";
 
 const USER_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
 const PRIVATE_STORE = "https://abc123.private.blob.vercel-storage.com";
@@ -12,6 +17,10 @@ describe(isOwnPrivateFile, () => {
     );
 
     expect(isOwnPrivateFile({ pathname: `images/${USER_ID}/step-a1.webp`, userId: USER_ID })).toBe(
+      true,
+    );
+
+    expect(isOwnPrivateFile({ pathname: `audio/${USER_ID}/it-a1.mp3`, userId: USER_ID })).toBe(
       true,
     );
   });
@@ -68,5 +77,21 @@ describe(toOwnFileUrl, () => {
     const url = `${PUBLIC_STORE}/library/images/step-a1.webp`;
 
     expect(toOwnFileUrl({ baseUrl: "/api/files", url })).toBe(url);
+  });
+});
+
+describe(toWebOwnFileUrl, () => {
+  it("serves an API file route's file from the web app's own route", () => {
+    expect(toWebOwnFileUrl(`https://api.zoonk.com/v1/files/audio/${USER_ID}/it-a1.mp3`)).toBe(
+      `/api/files/audio/${USER_ID}/it-a1.mp3`,
+    );
+  });
+
+  it("leaves any other address as it is", () => {
+    expect(toWebOwnFileUrl(`${PUBLIC_STORE}/library/audio/it.mp3`)).toBe(
+      `${PUBLIC_STORE}/library/audio/it.mp3`,
+    );
+
+    expect(toWebOwnFileUrl("/catalog/chapters/cover.webp")).toBe("/catalog/chapters/cover.webp");
   });
 });

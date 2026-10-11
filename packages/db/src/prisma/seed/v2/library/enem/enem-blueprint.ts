@@ -1,5 +1,3 @@
-import { readFileSync } from "node:fs";
-import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { type PrismaClient } from "../../../../../generated/prisma/client";
 import { daysFrom } from "../../_utils/dates";
 import { SEED_LANGUAGES, type SeedLanguage, localizeObject, t } from "../../_utils/localize";
@@ -11,33 +9,29 @@ import { getNoticePassages, pastPaperPassages, writeEnemSources } from "./enem-s
 const NOTICE = libraryIds.source("enem-notice");
 const PAST_PAPERS = libraryIds.source("enem-past-papers");
 const QUESTIONS_PER_AREA = 45;
+/**
+ * The notice doesn't count the foreign language's questions: the latest edition's answer key has
+ * an English and a Spanish column for questions 1 to 5 of day 1, inside the languages area's 45.
+ */
+const FOREIGN_LANGUAGE_QUESTIONS = 5;
+
+const PAST_EDITION_ANSWER_KEY = {
+  title: "Gabarito do Enem 2025, 1º dia, Caderno 1 Azul (Inep)",
+  url: "https://download.inep.gov.br/enem/provas_e_gabaritos/2025_GB_impresso_D1_CD1.pdf",
+};
+
 const DAY_ONE_MINUTES = 330;
 const DAY_TWO_MINUTES = 300;
 const RECHECK_DAYS = 7;
 /** Enem starts at 1:30 pm, Brasília time, on both days. */
 const START_TIME = "13:30";
 
-/** The instructions research reads a notice with (`EXAM_BLUEPRINT_PROMPT_VERSION` in `@zoonk/ai`). */
-const READING_PROMPT = new URL(
-  "../../../../../../../ai/src/tasks/v2/research/extract-exam-blueprint.prompt.md",
-  import.meta.url,
-);
-
-/**
- * The seeded notice counts as read with today's instructions, as a reading research just stored
- * would: an older version makes research read it again for the first ENEM learner, minutes of
- * waiting before their first question (see `isNoticeReadAgain`). Only the seed writes this.
- */
-function getReadingPromptVersion(): string {
-  return getPromptVersion({ systemPrompt: readFileSync(READING_PROMPT, "utf8") });
-}
-
 function cite(sourceId: string, passage: string) {
   return { passage, sourceId };
 }
 
 /*
- * The notice's contents ("objetos de conhecimento") as it words them, the ones past papers rate
+ * The notice's contents ("objects of knowledge") as it words them, the ones past papers rate
  * named once so the topic frequency below names them exactly.
  */
 const LANGUAGES_READING = t(
@@ -65,7 +59,7 @@ const SCIENCE_ELECTRICITY = t(
   "Fenômenos Elétricos e Magnéticos",
 );
 
-/** Ciências da Natureza's contents under the notice's headings: physics, chemistry and biology. */
+/** Natural sciences' contents under the notice's headings: physics, chemistry and biology. */
 const SCIENCE_GROUPS = [
   {
     name: t("Physics", "Física"),
@@ -113,7 +107,71 @@ const SCIENCE_GROUPS = [
   },
 ];
 
-/** The notice's five parts, each with its contents as the notice words them. */
+const LANGUAGES = t(
+  "Languages, Codes and their Technologies",
+  "Linguagens, Códigos e suas Tecnologias",
+);
+
+const ENGLISH = { name: t("English", "Língua Inglesa"), shortName: t("English", "Inglês") };
+const SPANISH = { name: t("Spanish", "Língua Espanhola"), shortName: t("Spanish", "Espanhol") };
+
+/**
+ * The foreign language each candidate picks at registration, English or Spanish, inside the
+ * languages area's 45 questions, each option with the matrix's foreign-language skills (H5 to H8)
+ * as its contents. The notice doesn't count its questions: the latest edition's do
+ * (`pastQuestions`).
+ */
+function buildForeignLanguages(notice: ReturnType<typeof getNoticePassages>) {
+  const option = ({
+    language,
+    name,
+    shortName,
+  }: {
+    language: [string, string];
+    name: ReturnType<typeof t>;
+    shortName: ReturnType<typeof t>;
+  }) => {
+    const [en, pt] = language;
+
+    return {
+      choiceGroup: t("Foreign language", "Língua Estrangeira"),
+      citation: cite(NOTICE, notice.foreignLanguage),
+      name,
+      partOf: LANGUAGES,
+      questions: null,
+      shortName,
+      topics: [
+        t(
+          `Words and expressions in ${en} texts and their theme`,
+          `Vocábulos e expressões de textos em ${pt} e seu tema`,
+        ),
+        t(
+          `${en} as a way to reach information, technologies and cultures`,
+          `O ${pt} como meio de acesso a informações, tecnologias e culturas`,
+        ),
+        t(
+          `Texts in ${en}: linguistic structures, their function and social use`,
+          `Textos em ${pt}: estruturas linguísticas, sua função e seu uso social`,
+        ),
+        t(
+          `Cultural production in ${en} and linguistic and cultural diversity`,
+          `Produção cultural em ${pt} como representação da diversidade cultural e linguística`,
+        ),
+      ],
+      weight: null,
+    };
+  };
+
+  return [
+    option({ language: ["English", "inglês"], ...ENGLISH }),
+    option({ language: ["Spanish", "espanhol"], ...SPANISH }),
+  ];
+}
+
+/**
+ * The notice's parts (its four areas, the foreign language each candidate picks and the essay),
+ * each with its contents as the notice words them.
+ */
 function buildSubjects(notice: ReturnType<typeof getNoticePassages>) {
   const area = (name: ReturnType<typeof t>, topics: ReturnType<typeof t>[]) => ({
     citation: cite(NOTICE, notice.areas),
@@ -124,7 +182,7 @@ function buildSubjects(notice: ReturnType<typeof getNoticePassages>) {
   });
 
   return [
-    area(t("Languages, Codes and their Technologies", "Linguagens, Códigos e suas Tecnologias"), [
+    area(LANGUAGES, [
       LANGUAGES_READING,
       t(
         "Body practices: body language as social integration and identity",
@@ -155,6 +213,7 @@ function buildSubjects(notice: ReturnType<typeof getNoticePassages>) {
         "Estudo dos gêneros digitais: tecnologia da comunicação e informação: impacto e função social",
       ),
     ]),
+    ...buildForeignLanguages(notice),
     area(t("Humanities and their Technologies", "Ciências Humanas e suas Tecnologias"), [
       t(
         "Cultural diversity, conflicts and life in society",
@@ -200,7 +259,20 @@ function buildSubjects(notice: ReturnType<typeof getNoticePassages>) {
   ];
 }
 
-function buildStructure(notice: ReturnType<typeof getNoticePassages>) {
+/** The foreign language's questions in the latest edition, which the notice doesn't count. */
+function buildPastQuestions(now: Date) {
+  return {
+    checkedAt: now.toISOString(),
+    edition: "Enem 2025",
+    source: PAST_EDITION_ANSWER_KEY,
+    subjects: [ENGLISH, SPANISH].map(({ name }) => ({
+      name,
+      questions: FOREIGN_LANGUAGE_QUESTIONS,
+    })),
+  };
+}
+
+function buildStructure(notice: ReturnType<typeof getNoticePassages>, now: Date) {
   return {
     formats: [
       {
@@ -257,6 +329,7 @@ function buildStructure(notice: ReturnType<typeof getNoticePassages>) {
       timeLimitMinutes: null,
       totalQuestions: 180,
     },
+    pastQuestions: buildPastQuestions(now),
     rules: [
       {
         citation: cite(NOTICE, notice.options),
@@ -372,10 +445,13 @@ function buildEdition(
   edition: EnemEdition,
   notice: ReturnType<typeof getNoticePassages>,
   noticeHash: string,
+  now: Date,
 ) {
   const [firstDay, secondDay] = edition.examDays;
 
   return {
+    // Written by hand from the notice: research has no reading of it to check again.
+    check: { checkedAt: now.toISOString(), problems: [], readings: 1 },
     citations: [cite(NOTICE, notice.title), cite(NOTICE, notice.areas)],
     dates: [
       {
@@ -432,7 +508,7 @@ async function writeBlueprint(
   const data = {
     board: "Inep",
     country: "BR",
-    edition: localizeObject(buildEdition(edition, notice, noticeHash), language),
+    edition: localizeObject(buildEdition(edition, notice, noticeHash, now), language),
     examDate,
     identityKey: "enem",
     language,
@@ -440,11 +516,10 @@ async function writeBlueprint(
     nextCheckAt: daysFrom(now, RECHECK_DAYS),
     registrationEndsAt: new Date(`${edition.registration.end}T00:00:00.000Z`),
     sourceId: NOTICE,
-    structure: localizeObject(buildStructure(notice), language),
+    structure: localizeObject(buildStructure(notice, now), language),
     topicFrequency: topicFrequency.map((entry) => localizeObject(entry, language)),
     validUntil: examDate,
     ...SEED_PROVENANCE,
-    promptVersion: getReadingPromptVersion(),
   };
 
   await prisma.examBlueprint.upsert({ create: { id, ...data }, update: data, where: { id } });

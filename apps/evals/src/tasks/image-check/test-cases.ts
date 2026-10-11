@@ -35,6 +35,52 @@ function checkCase({
 }
 
 /**
+ * Numbered pictures, drawn with the parts' numbers as their only labels (8 Oct 2026, drawn-in
+ * numbers for labeled diagrams): each number marks its part, on its body, its edge or anything
+ * that belongs to it. The check rejected these three good drawings: the cell for a label it
+ * miscounted, the flower over how it was cut, and the bicycle's 5 on the front wheel's tire.
+ */
+function numberedScene(focalObject: string, parts: readonly string[]): ImageScene {
+  return {
+    focalObject,
+    labels: parts.map((part, index) => ({
+      target: `pointing at the ${part}`,
+      text: String(index + 1),
+    })),
+    layout: "single",
+    motion: null,
+    relation: null,
+    supportingObjects: [],
+  };
+}
+
+const numberedAnimalCell = numberedScene(
+  "an animal cell as seen under a microscope, cut open: the cell membrane around it, the nucleus with its nucleolus, several mitochondria, the Golgi apparatus and the rough endoplasmic reticulum",
+  [
+    "cell membrane",
+    "nucleus",
+    "nucleolus",
+    "mitochondrion",
+    "Golgi apparatus",
+    "rough endoplasmic reticulum",
+  ],
+);
+
+const numberedFlower = numberedScene(
+  "a flower cut in half lengthwise to show its petals, sepals, stamens with anthers, the stigma on top of the style and the ovary at the base",
+  ["petal", "sepal", "anther", "stigma", "ovary"],
+);
+
+const numberedBicycle = numberedScene("a bicycle seen from the side", [
+  "handlebars",
+  "saddle",
+  "chain",
+  "pedal",
+  "front wheel",
+  "frame",
+]);
+
+/**
  * Pictures a question is about (7 Oct 2026, a class test's chapter test-out): the letters are the
  * question's only text, and each one must point at the part its target names, since the answer
  * depends on it. The wall-and-membrane drawing passed its check with B touching the wall.
@@ -315,5 +361,23 @@ export const TEST_CASES = [
     id: "question-pointer-on-wrong-part",
     imageFile: "flare-question-wall-membrane-wrong-pointer.webp",
     input: { language: "pt", scene: wallAndMembrane },
+  }),
+  checkCase({
+    expected: true,
+    id: "numbered-animal-cell",
+    imageFile: "numbered-animal-cell.webp",
+    input: { language: "en", scene: numberedAnimalCell },
+  }),
+  checkCase({
+    expected: true,
+    id: "numbered-flower",
+    imageFile: "numbered-flower.webp",
+    input: { language: "en", scene: numberedFlower },
+  }),
+  checkCase({
+    expected: true,
+    id: "numbered-bicycle-tire",
+    imageFile: "numbered-bicycle.webp",
+    input: { language: "en", scene: numberedBicycle },
   }),
 ];

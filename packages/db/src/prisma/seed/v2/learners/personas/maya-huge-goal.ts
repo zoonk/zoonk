@@ -32,19 +32,8 @@ export const mayaHugeGoal: SeedLearner = {
       skill: "powers-of-ten",
     },
     {
-      answer: { isTrue: true },
-      day: 0,
-      inSession: true,
-      isCorrect: true,
-      item: "three-quarters",
-      key: "review-fraction",
-      seconds: 9,
-      skill: "fractions",
-    },
-    {
       answer: { selectedIndex: 0 },
-      day: 0,
-      inSession: true,
+      day: -1,
       isCorrect: true,
       item: "thirty-percent",
       key: "review-percent",
@@ -193,35 +182,7 @@ export const mayaHugeGoal: SeedLearner = {
   milestones: [{ day: -6, key: "yellow", kind: "belt", shown: true }],
   name: "Maya Chen",
   plus: true,
-  session: {
-    blocks: [
-      {
-        brainPower: 25,
-        capsules: [
-          { items: ["three-quarters"], skills: ["fractions"], title: "Fractions and percentages" },
-          {
-            items: ["thirty-percent"],
-            skills: ["percent-of"],
-            title: "Finding a percent of a number",
-          },
-        ],
-        kind: "review",
-        minutes: 6,
-        status: "completed",
-      },
-      { kind: "learn", lesson: "scientific-notation", minutes: 12, status: "active" },
-      {
-        drills: [{ items: ["negative-power"], mistake: "negative-power" }],
-        items: ["sci-notation-moon", "orders-of-magnitude-ratio"],
-        kind: "practice",
-        minutes: 12,
-        status: "pending",
-        title: "Practice with powers of ten",
-      },
-      { kind: "learn", lesson: "multiply-divide-powers", minutes: 15, status: "pending" },
-    ],
-    status: "active",
-  },
+  session: { finished: 1, started: true },
   skills: [
     { memory: "mastered", skill: "fractions" },
     { memory: "mastered", skill: "percent-of" },

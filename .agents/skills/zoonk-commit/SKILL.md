@@ -37,6 +37,12 @@ chore(agents): simplify repository instructions
 
 ## PR description
 
-Describe the concrete problem and resulting behavior for a reviewer who has not seen the conversation. Keep it brief; include a trigger or before/after example when useful. Rewrite the title and body around the final implementation if the scope changes. Omit conversational history and verification command lists.
+Describe the concrete problem and resulting behavior for a reviewer who has not seen the conversation. Keep it brief; include a trigger or before/after example when useful. Rewrite the title and body around the final implementation if the scope changes. Omit conversational history.
+
+End with a short **Verification** section that tells the reviewer what was proven and what wasn't, in plain language rather than command lists or logs:
+
+- For user-facing changes, the [persona walkthroughs](../zoonk-persona-walkthrough/SKILL.md): which personas, which journeys including bad-day paths, what they exposed and what changed.
+- The regression tests added for problems found, and the suites that matter for the change, with their results.
+- What remains unverified.
 
 For multiline bodies, use a structured tool argument or write the exact text to a temporary file and pass `gh ... --body-file <path>`.

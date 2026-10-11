@@ -52,6 +52,7 @@ export async function rewriteImageInputForSafetyRetry({
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "image-prompt-safety-rewrite",
   });

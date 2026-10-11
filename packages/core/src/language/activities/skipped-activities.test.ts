@@ -1,22 +1,15 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { setupPlayableLesson } from "../../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { changeLanguageActivity, getLanguageActivitySettings } from "./skipped-activities";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 const TIME_ZONE = "UTC";
 
@@ -55,10 +48,6 @@ async function startAndComplete(lessonId: string) {
 }
 
 describe("skipping language activities", () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("leaves writing out of the plan until it's brought back", async () => {
     const { plan, user } = await languageLessonSetup();
     mockSession(user.id);

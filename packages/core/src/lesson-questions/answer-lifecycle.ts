@@ -1,7 +1,9 @@
 import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { type LessonQuestionAnswerCompletion } from "@zoonk/ai/tasks/lessons/question";
+import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/question-context";
 import { prisma } from "@zoonk/db";
+import { replaceEmDashes } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
@@ -12,14 +14,15 @@ import {
   claimAnswerInTransaction,
 } from "./_utils/answer-claim";
 import { lessonQuestionResourceOmit } from "./_utils/question-resource";
-import { getSharedAnswerKey, saveSharedAnswer, shouldShareAnswer } from "./_utils/shared-answers";
+import { getSharedAnswerKey, saveSharedAnswer } from "./_utils/shared-answers";
 import { findTutorMemory, markTutorMemoryUsed, rememberTutorExchange } from "./_utils/tutor-memory";
 import { type TutorSubject, findThreadSubject } from "./_utils/tutor-subject";
+import { findSubjectGoal } from "./_utils/tutored-goal";
 
 type CompleteLessonQuestionAnswerInput = LessonQuestionAnswerCompletion & {
   questionId: string;
   revision: number;
-  /** The claim decided the answer is shared by everyone who asks the same thing on the screen. */
+  /** The claim decided the answer is shared by everyone who taps the same suggestion there. */
   shareAnswer?: boolean;
 };
 
@@ -79,31 +82,10 @@ type ClaimedQuestion = Extract<
 >["claim"];
 
 /**
- * Whether the answer can be written once for everyone who asks the same thing on the screen. Only
- * a first question about a lesson screen can be.
- */
-async function decideSharing({
-  question,
-  userId,
-}: {
-  question: ClaimedQuestion;
-  userId: string;
-}): Promise<boolean> {
-  return question.sharing
-    ? shouldShareAnswer({
-        question: question.question,
-        suggested: question.sharing.suggested,
-        userId,
-      })
-    : false;
-}
-
-/**
  * A new answer counts against the learner's `tutorMessage` allowance (guests sign up first), even
  * when it's written to share. A personal answer reads what the learner's memory holds about their
- * learning and goals; a shared one is written without it, for anyone who asks the same thing.
- * Nothing is read before the allowance says yes; then memory is read while sharing is decided,
- * and dropped when the answer turns out shared (a suggested question is always shared).
+ * learning and goals; a shared one (a tutor's suggestion on a lesson screen) is written without
+ * it, for everyone who taps the same suggestion. Nothing is read before the allowance says yes.
  */
 async function claimTutorAnswer({
   question,
@@ -129,42 +111,44 @@ async function claimTutorAnswer({
     return usage;
   }
 
-  const [shareAnswer, facts] = await Promise.all([
-    decideSharing({ question, userId }),
-    question.sharing?.suggested
-      ? []
-      : findTutorMemory({ language: subject.language, question: question.question, userId }),
-  ]);
-
-  if (shareAnswer) {
-    return { learnerMemory: [], shareAnswer, status: "ready" };
+  if (question.shareAnswer) {
+    return { learnerMemory: [], shareAnswer: true, status: "ready" };
   }
+
+  const facts = await findTutorMemory({
+    language: subject.language,
+    question: question.question,
+    userId,
+  });
 
   const learnerMemory = await markTutorMemoryUsed({ facts, userId });
 
-  return { learnerMemory, shareAnswer, status: "ready" };
+  return { learnerMemory, shareAnswer: false, status: "ready" };
 }
 
 /**
  * Who the answer's AI calls run for, so the tutor's cost is summed per learner, and per goal for
- * the buddy's answers in a goal's conversation.
+ * the buddy's answers inside a goal (its conversation, or a chapter, lesson or mock of it).
  */
-function getAnswerAnalytics({
+async function getAnswerAnalytics({
+  contextSnapshot,
   subject,
   userId,
 }: {
+  contextSnapshot: LessonQuestionContextSnapshot;
   subject: TutorSubject;
   userId: string;
-}): Pick<AiGenerationContext, "distinctId" | "goalId"> {
-  return subject.kind === "plan"
-    ? { distinctId: userId, goalId: subject.goal.id }
-    : { distinctId: userId };
+}): Promise<Pick<AiGenerationContext, "distinctId" | "goalId">> {
+  const goal =
+    contextSnapshot.scope.kind === "plan" ? await findSubjectGoal({ subject, userId }) : null;
+
+  return goal ? { distinctId: userId, goalId: goal.id } : { distinctId: userId };
 }
 
 /**
- * Atomically claims a pending, failed, or abandoned answer generation for its owner. A first
- * question about a lesson screen that someone already asked there is answered right away with the
- * shared answer (`shared`), without a generation, the allowance or memory.
+ * Atomically claims a pending, failed, or abandoned answer generation for its owner. A tutor's
+ * suggestion about a lesson screen that someone already tapped there is answered right away with
+ * the shared answer (`shared`), without a generation, the allowance or memory.
  */
 export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswerInput) {
   const session = await getSession();
@@ -196,11 +180,10 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   const { contextSnapshot, priorTurns, question, questionId, revision } = claimed.claim;
 
-  const tutor = await claimTutorAnswer({
-    question: claimed.claim,
-    subject: access.subject,
-    userId,
-  });
+  const [tutor, analytics] = await Promise.all([
+    claimTutorAnswer({ question: claimed.claim, subject: access.subject, userId }),
+    getAnswerAnalytics({ contextSnapshot, subject: access.subject, userId }),
+  ]);
 
   if (tutor.status !== "ready") {
     return { decision: tutor, status: "usageRefused" as const };
@@ -210,7 +193,7 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   return {
     claim: {
-      analytics: getAnswerAnalytics({ subject: access.subject, userId }),
+      analytics,
       contextSnapshot,
       learnerMemory,
       priorTurns,
@@ -246,7 +229,8 @@ async function getConditionalWriteOutcome({
 
 /**
  * Saves the answer and the run that wrote it, only while the generation still owns the claimed
- * revision. A shared answer becomes its screen's answer for everyone who asks the same thing.
+ * revision, without the em dashes the app never shows, as the learner read it streamed. A shared
+ * answer becomes its screen's answer for everyone who taps the same suggestion.
  */
 function saveCompletedAnswer({
   input,
@@ -255,7 +239,8 @@ function saveCompletedAnswer({
   input: CompleteLessonQuestionAnswerInput;
   userId: string;
 }) {
-  const { questionId, revision, shareAnswer, ...completion } = input;
+  const { questionId, revision, shareAnswer, ...generated } = input;
+  const completion = { ...generated, answer: replaceEmDashes(generated.answer) };
 
   const provenance = {
     generatedAt: new Date(completion.generatedAt),

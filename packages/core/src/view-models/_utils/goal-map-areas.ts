@@ -3,9 +3,11 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { countSkillStates } from "../../learner/mastery-state";
 import {
   findCurrentPhase,
-  findNextItem,
   getProgressState,
+  isPhaseFinished,
 } from "../../plans/_utils/plan-phase-views";
+import { type TodayLearnBlock, findUpNextItem } from "../../plans/_utils/up-next-item";
+import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { type MapArea, type MapPhase, type MapSkill } from "../map/map-contract";
 
 /** Lessons and chapters are what a plan teaches; checkpoints and reviews come around them. */
@@ -44,7 +46,7 @@ function getAreaState({
   }
 
   const inArea = items.filter((item) => item.areaId === areaId);
-  const isDone = inArea.length > 0 && inArea.every((item) => item.status !== "todo");
+  const isDone = inArea.length > 0 && inArea.every((item) => isWorkFinished(item.status));
 
   return isDone ? "done" : "upcoming";
 }
@@ -54,19 +56,21 @@ function getAreaState({
  * chapters exist) with its state and whether the learner is there now, then the phases with their
  * state and counts. A chapter with no skills yet still shows, so the map never hides a chapter.
  * The current phase is the plan's (see `findCurrentPhase`), and the learner is in the area of the
- * next lesson in that phase.
+ * lesson up next (`findUpNextItem`), in whichever phase, as on Today.
  */
 export function buildGoalMapAreas({
   areaDetails,
   items,
   nodes,
   phaseNames,
+  todayBlocks,
 }: {
   areaDetails: ReadonlyMap<string, AreaDetails>;
   items: readonly MapItem[];
   nodes: readonly MapNode[];
   phaseNames: readonly string[];
-}): { areas: MapArea[]; phases: MapPhase[] } {
+  todayBlocks: readonly TodayLearnBlock[];
+}): { areas: MapArea[]; phases: MapPhase[]; upNextItemId: string | null } {
   const nodesBySkill = new Map(nodes.map((node) => [node.skill.skillId, node]));
 
   const learnItems = items
@@ -87,8 +91,8 @@ export function buildGoalMapAreas({
   const phaseCount = Math.max(phaseNames.length, ...grouped.map((area) => area.phase + 1));
   const currentPhase = findCurrentPhase({ items, phaseCount });
 
-  const currentAreaId =
-    findNextItem(learnItems.filter((item) => item.phase === currentPhase))?.areaId ?? null;
+  const upNext = findUpNextItem({ items: learnItems, todayBlocks });
+  const currentAreaId = upNext?.areaId ?? null;
 
   const areas = grouped.map(({ areaId, phase, skills }): MapArea => {
     const details = areaDetails.get(areaId);
@@ -112,8 +116,12 @@ export function buildGoalMapAreas({
     ),
     index,
     name: phaseNames[index] ?? "",
-    state: getProgressState({ current: currentPhase, index }),
+    state: getProgressState({
+      current: currentPhase,
+      finished: isPhaseFinished(items.filter((item) => item.phase === index)),
+      index,
+    }),
   }));
 
-  return { areas, phases };
+  return { areas, phases, upNextItemId: upNext?.id ?? null };
 }

@@ -225,7 +225,34 @@ describe(buildEssayGrade, () => {
       rubric: ENEM,
     });
 
-    expect(grade.nextStep.criterionId).toBe("c2");
+    expect(grade.nextStep?.criterionId).toBe("c2");
+  });
+
+  it("has no next step when every criterion has full marks", () => {
+    // Pedro's answer got every point, and the next step still pointed at its first criterion.
+    const grade = buildEssayGrade({
+      essay: ESSAY,
+      output: {
+        criteria: {
+          "criterion-1": criterion(3.34),
+          "criterion-2": criterion(3.33),
+          "criterion-3": criterion(3.33),
+        },
+        interventionElements: null,
+        zeroReason: null,
+      },
+      rubric: {
+        criteria: ["Concentration gradient", "Container A", "Container B"].map((name) => ({
+          criterion: name,
+          description: `${name} explained`,
+        })),
+        kind: "custom",
+        maxScore: 10,
+      },
+    });
+
+    expect(grade.total).toStrictEqual({ maxScore: 10, score: 10 });
+    expect(grade.nextStep).toBeNull();
   });
 
   it("keeps quotes found in the essay as the essay wrote them and drops the rest", () => {
@@ -301,7 +328,7 @@ describe(buildEssayGrade, () => {
     expect(grade.range).toStrictEqual({ high: 3.35, low: 2.35 });
     expect(grade.zeroReason).toBeNull();
     expect(grade.enemInterventionElements).toBeNull();
-    expect(grade.nextStep.criterionId).toBe("legal-basis");
+    expect(grade.nextStep?.criterionId).toBe("legal-basis");
   });
 
   it("rounds custom scores to hundredths with a range of a tenth of the maximum", () => {
@@ -327,7 +354,7 @@ describe(buildEssayGrade, () => {
     expect(grade.criteria.map((item) => item.score)).toStrictEqual([5, 9]);
     expect(grade.total).toStrictEqual({ maxScore: 18, score: 14 });
     expect(grade.range).toStrictEqual({ high: 15.8, low: 12.2 });
-    expect(grade.nextStep.criterionId).toBe("criterion-1");
+    expect(grade.nextStep?.criterionId).toBe("criterion-1");
   });
 });
 
@@ -371,7 +398,7 @@ describe("AP scoring guidelines", () => {
     expect(grade.criteria.map((item) => item.score)).toStrictEqual([1, 2, 2]);
     expect(grade.total).toStrictEqual({ maxScore: 6, score: 5 });
     expect(grade.range).toStrictEqual({ high: 6, low: 4 });
-    expect(grade.nextStep.criterionId).toBe("criterion-2");
+    expect(grade.nextStep?.criterionId).toBe("criterion-2");
   });
 
   it("rejects a row worth no points", () => {
@@ -396,7 +423,7 @@ describe(buildTooShortEssayGrade, () => {
   });
 
   it("points other rubrics at the section worth the most", () => {
-    expect(buildTooShortEssayGrade(OAB).nextStep.criterionId).toBe("legal-basis");
+    expect(buildTooShortEssayGrade(OAB).nextStep?.criterionId).toBe("legal-basis");
   });
 });
 

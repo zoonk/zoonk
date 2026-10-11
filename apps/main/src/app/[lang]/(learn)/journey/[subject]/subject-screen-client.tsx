@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { SubjectScreen } from "@zoonk/learn/subject";
+import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { changePlanAction } from "../journey-actions";
 
 /**
@@ -21,9 +23,13 @@ export function SubjectScreenClient({
   /** Whether one of its chapters is on the goal's mind maps page. */
   hasMindMaps: boolean;
   subject: SyllabusSubject;
-  syllabus: Pick<SyllabusView, "fromMaterial" | "kind" | "writtenPractice">;
+  syllabus: Pick<
+    SyllabusView,
+    "examDocument" | "fromMaterial" | "kind" | "knownTopicsReturn" | "writtenPractice"
+  >;
 }) {
   const router = useRouter();
+  const outlineActions = useTopicOutlineActions(goalId);
 
   const change = async (operations: LearnerPlanOperation[]) => {
     const changed = (await changePlanAction(goalId, operations)) !== null;
@@ -36,20 +42,22 @@ export function SubjectScreenClient({
   };
 
   return (
-    <SubjectScreen
-      actions={{
-        restore: (areas) => change([{ areas, kind: "restoreAreas" }]),
-        setWrittenCadence: (cadence) => change([{ cadence, kind: "setWrittenCadence" }]),
-      }}
-      hrefs={{
-        adjust: "/journey",
-        back: "/journey",
-        chapter: (chapterId) =>
-          `/content/chapters/${chapterId}?from=${encodeURIComponent(subject.key)}`,
-        mindMaps: hasMindMaps ? (key) => `/mind-maps#${encodeURIComponent(key)}` : undefined,
-      }}
-      subject={subject}
-      syllabus={syllabus}
-    />
+    <TopicOutlineProvider value={outlineActions}>
+      <SubjectScreen
+        actions={{
+          restore: (areas) => change([{ areas, kind: "restoreAreas" }]),
+          setWrittenCadence: (cadence) => change([{ cadence, kind: "setWrittenCadence" }]),
+        }}
+        hrefs={{
+          adjust: "/journey",
+          back: "/journey",
+          chapter: (chapterId) =>
+            `/content/chapters/${chapterId}?from=${encodeURIComponent(subject.key)}`,
+          mindMaps: hasMindMaps ? (key) => `/mind-maps#${encodeURIComponent(key)}` : undefined,
+        }}
+        subject={subject}
+        syllabus={syllabus}
+      />
+    </TopicOutlineProvider>
   );
 }

@@ -19,10 +19,23 @@ const listedRatesSchema = z.object({
   output: listedPriceSchema.optional(),
 });
 
+/**
+ * A per-image price that varies by size, or by a style or quality we don't ask for (Recraft's
+ * vector style, a low quality), which has no size of its own.
+ */
+const listedImagePriceSchema = z.object({
+  cost: listedPriceSchema,
+  quality: z.string().optional(),
+  size: z.string().optional(),
+  style: z.string().optional(),
+});
+
+type ListedImagePrice = z.infer<typeof listedImagePriceSchema>;
+
 const listedPricingSchema = listedRatesSchema.extend({
-  image_dimension_quality_pricing: z
-    .array(z.object({ cost: listedPriceSchema, size: z.string() }))
-    .optional(),
+  /** The price of one image at the model's default size and style (Black Forest Labs, Recraft). */
+  image: listedPriceSchema.optional(),
+  image_dimension_quality_pricing: z.array(listedImagePriceSchema).optional(),
   input_cache_read_tiers: z.array(listedTierSchema).optional(),
   input_cache_write_tiers: z.array(listedTierSchema).optional(),
   input_tiers: z.array(listedTierSchema).optional(),
@@ -103,11 +116,18 @@ function toTierRates(rates: ListedRates | undefined): TierRates | undefined {
   }).data;
 }
 
+/** The prices of each size at the default style and quality. */
+function getSizePrices(prices: ListedImagePrice[] | undefined): { cost: number; size: string }[] {
+  return (prices ?? []).flatMap(({ cost, quality, size, style }) =>
+    size && !quality && !style ? [{ cost, size }] : [],
+  );
+}
+
 /** Each size's image price, for models that price sizes apart; undefined for a single price. */
 function getImagePricesBySize(
-  prices: { cost: number; size: string }[] | undefined,
+  prices: ListedImagePrice[] | undefined,
 ): Record<string, number> | undefined {
-  const sizes = (prices ?? []).filter((price) => price.size !== "default");
+  const sizes = getSizePrices(prices).filter((price) => price.size !== "default");
 
   return sizes.length > 1
     ? Object.fromEntries(sizes.map((price) => [price.size, price.cost]))
@@ -115,10 +135,15 @@ function getImagePricesBySize(
 }
 
 /** The price of an image at the model's default size, for models that bill per image. */
-function getDefaultImagePrice(
-  prices: { cost: number; size: string }[] | undefined,
-): number | undefined {
-  return (prices?.find((price) => price.size === "default") ?? prices?.[0])?.cost;
+function getDefaultImagePrice({
+  image,
+  prices,
+}: {
+  image?: number;
+  prices?: ListedImagePrice[];
+}): number | undefined {
+  const sizes = getSizePrices(prices);
+  return image ?? (sizes.find((price) => price.size === "default") ?? sizes[0])?.cost;
 }
 
 /**
@@ -145,7 +170,11 @@ function toModelPricing({
   const perSecond =
     price.realtime_session_duration_cost_per_second ?? price.transcription_duration_cost_per_second;
 
-  const perImage = getDefaultImagePrice(price.image_dimension_quality_pricing);
+  const perImage = getDefaultImagePrice({
+    image: price.image,
+    prices: price.image_dimension_quality_pricing,
+  });
+
   const perCharacter = price.speech_input_character_cost;
 
   const hasTokenPrices =

@@ -1,9 +1,22 @@
+import { namesMatchAcrossSpellings } from "@zoonk/utils/name-words";
 import { normalizeString } from "@zoonk/utils/string";
 
 /** One subject of an exam's notice, as the curriculum maps skills onto it. */
 type ExamSubject = {
+  /**
+   * The choice it's an option of, when candidates take only one of several subjects (ENEM's
+   * foreign language: English or Spanish); null or absent otherwise. A learner studies the one
+   * they pick, so no other skill builds on an option's.
+   */
+  choiceGroup?: string | null;
   name: string;
-  /** The part of the exam the notice puts it in, such as "Conhecimentos básicos (P1)". */
+  /**
+   * What learners call it when the notice's name is long ("Professional Ethics" for "Statute of the
+   * Legal Profession and of the OAB… and Code of Ethics and Discipline of the OAB"): a graph area by that name is this
+   * subject.
+   */
+  shortName?: string | null;
+  /** The part of the exam the notice puts it in, such as "Basic knowledge (P1)". */
   group: string | null;
   questions: number | null;
   /** Its share of the final score, from 0 to 1. */
@@ -35,6 +48,9 @@ function toTopicId({ subject, topic }: { subject: number; topic: number }): stri
 function describeSubject({ index, subject }: { index: number; subject: ExamSubject }): string {
   const details = [
     subject.group,
+    subject.choiceGroup
+      ? `an option of "${subject.choiceGroup}": each candidate takes only one option`
+      : null,
     subject.questions === null ? null : `${subject.questions} questions`,
     subject.weight === null ? null : `weight ${Math.round(subject.weight * PERCENT)}%`,
   ].filter(Boolean);
@@ -91,7 +107,11 @@ function findTopic({ outline, value }: { outline: ExamOutline; value: string }):
   }, null);
 }
 
-/** The subject a name stands for: the same words, or a subject the name is part of or contains. */
+/**
+ * The subject a name stands for: the same words as its name or its short name, a subject the name
+ * is part of or contains, or else the one subject it names in another language's spelling (a
+ * Spanish notice's subject written in Portuguese).
+ */
 function findSubjectByName({ name, outline }: { name: string; outline: ExamOutline }) {
   const wanted = normalizeString(name);
 
@@ -106,11 +126,27 @@ function findSubjectByName({ name, outline }: { name: string; outline: ExamOutli
     return exact;
   }
 
+  const short = outline.subjects.findIndex(
+    (subject) => subject.shortName && normalizeString(subject.shortName) === wanted,
+  );
+
+  if (short !== -1) {
+    return short;
+  }
+
   const partial = names.flatMap((subject, index) =>
     subject.includes(wanted) || wanted.includes(subject) ? [index] : [],
   );
 
-  return partial.length === 1 ? (partial[0] ?? -1) : -1;
+  if (partial.length > 0) {
+    return partial.length === 1 ? (partial[0] ?? -1) : -1;
+  }
+
+  const respelled = outline.subjects.flatMap((subject, index) =>
+    namesMatchAcrossSpellings(name, subject.name) ? [index] : [],
+  );
+
+  return respelled.length === 1 ? (respelled[0] ?? -1) : -1;
 }
 
 /** The subject most of the topics belong to; the earliest one on a tie. */
@@ -125,6 +161,27 @@ function findMainSubject(refs: readonly TopicRef[]): number {
       .toSorted(([subjectA, countA], [subjectB, countB]) => countB - countA || subjectA - subjectB)
       .map(([subject]) => subject)[0] ?? -1
   );
+}
+
+/**
+ * Whether a skill of `area` may build on a skill of `prerequisiteArea`: never on an option of a
+ * choice (see `choiceGroup`) unless it's a skill of that same option, since a learner may take
+ * another option and never study it.
+ */
+export function canBuildOn({
+  area,
+  outline,
+  prerequisiteArea,
+}: {
+  area: string;
+  outline: ExamOutline;
+  prerequisiteArea: string;
+}): boolean {
+  const isOption = outline.subjects.some(
+    (subject) => subject.choiceGroup && subject.name === prerequisiteArea,
+  );
+
+  return !isOption || area === prerequisiteArea;
 }
 
 /**
@@ -159,7 +216,7 @@ export function placeInExam({
 
 const TOPIC_NUMBER_PATTERN = /^(?<number>\d+(?:\.\d+)*)[.)]?\s/u;
 
-/** The number a syllabus gives a topic ("5.7" in "5.7 Emprego do sinal indicativo de crase"). */
+/** The number a syllabus gives a topic ("5.7" in "5.7 Use of commas"). */
 function getTopicNumber(topic: string): string | null {
   return TOPIC_NUMBER_PATTERN.exec(topic)?.groups?.number ?? null;
 }
@@ -220,11 +277,11 @@ export function getTopicId({
   return topicIndex === -1 ? null : toTopicId({ subject: subjectIndex, topic: topicIndex });
 }
 
-/** How a notice names a test answered in writing: a discursive test, a redação, a peça técnica. */
+/** How a notice names a test answered in writing, in Portuguese: a discursive test, an essay, a legal brief. */
 const WRITTEN_TEST = /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica/iu;
 
 /**
- * Whether a notice subject is the exam's written test (its "Prova discursiva", in its own group):
+ * Whether a notice subject is the exam's written test (its discursive test, in its own group):
  * every candidate sits it and it's scored apart, so a plan short on time keeps its skills whole.
  */
 export function isWrittenTestSubject(subject: Pick<ExamSubject, "group" | "name">): boolean {

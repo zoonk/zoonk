@@ -1,11 +1,13 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
+import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { type MapArea, type MapPhase } from "../map/map-contract";
 import { type MapItem, type MapNode, buildGoalMapAreas } from "./goal-map-areas";
+import { loadTodayLearnBlocks } from "./today-lesson-order";
 
 /** The goal's skills as the maps draw them, grouped by chapter and phase, in plan order. */
 export type GoalMap = {
@@ -15,6 +17,10 @@ export type GoalMap = {
   /** The plan's items with the skills each teaches, for chapter pages. */
   items: MapItem[];
   phases: MapPhase[];
+  /** Today's lessons not done yet, as Today opens them (`loadTodayLearnBlocks`). */
+  todayBlocks: TodayLearnBlock[];
+  /** The plan item of the lesson up next on every screen (`findUpNextItem`). */
+  upNextItemId: string | null;
 };
 
 /**
@@ -89,15 +95,22 @@ async function loadAreaDetails({
 /**
  * Loads a goal's skills with the learner's state on each (New, Learning, Solid, Mastered and
  * fading), their prerequisites inside the goal and the chapter and phase each sits in, plus where
- * the learner is now. The field map and the chapter pages read it, so both draw the same nodes.
+ * the learner is now: the lesson up next, as Today opens it. The field map and the chapter pages
+ * read it, so both draw the same nodes.
  */
 export async function loadGoalMap({
   goal,
 }: {
-  goal: Pick<Goal, "id" | "primaryCourseId" | "userId">;
+  goal: Pick<Goal, "id" | "primaryCourseId" | "timezone" | "userId">;
 }): Promise<GoalMap> {
   const now = new Date();
-  const [graph, rows] = await Promise.all([loadGoalPlan(goal.id), loadPlanRows(goal.id)]);
+
+  const [graph, rows, todayBlocks] = await Promise.all([
+    readGoalPlan(goal.id),
+    loadPlanRows(goal.id),
+    loadTodayLearnBlocks(goal),
+  ]);
+
   const skillIds = graph.skills.map((skill) => skill.id);
 
   // Areas without a chapter are phases ("phase:0"), which aren't ids a chapter query accepts.
@@ -150,12 +163,18 @@ export async function loadGoalMap({
 
   const items = rows.items.map((item) => ({ ...item, skillIds: itemSkills.get(item.id) ?? [] }));
 
-  const built = buildGoalMapAreas({ areaDetails, items, nodes, phaseNames: rows.phaseNames });
+  const built = buildGoalMapAreas({
+    areaDetails,
+    items,
+    nodes,
+    phaseNames: rows.phaseNames,
+    todayBlocks,
+  });
 
   const courseIds = built.areas.flatMap((area) => {
     const details = areaDetails.get(area.areaId);
     return [area.courseId ?? [], details?.courseIds ?? []].flat();
   });
 
-  return { ...built, courseIds: [...new Set(courseIds)], items };
+  return { ...built, courseIds: [...new Set(courseIds)], items, todayBlocks };
 }

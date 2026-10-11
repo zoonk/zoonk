@@ -6,6 +6,7 @@ import { type AiGenerationContext } from "../../../provenance/ai-generation-even
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
+import { selectPromptVariants } from "../../_utils/prompt-variants";
 import {
   type EssayCriterionDefinition,
   buildEssayGrade,
@@ -13,7 +14,7 @@ import {
   getEssayCriteria,
   isEssayTooShort,
 } from "./grade-essay-rules";
-import systemPrompt from "./grade-essay.prompt.md";
+import promptTemplate from "./grade-essay.prompt.md";
 
 /**
  * In the grade-essay eval (9 cases in Portuguese and English: ENEM essays at
@@ -88,8 +89,11 @@ export type EssayGrade = {
   total: { score: number; maxScore: number };
   /** The "Estimated" range shown instead of a single number. */
   range: { low: number; high: number };
-  /** Exactly one next step, on the criterion with the most points to gain. */
-  nextStep: { criterionId: string; text: string };
+  /**
+   * Exactly one next step, on the criterion with the most points to gain; null when every
+   * criterion has full marks.
+   */
+  nextStep: { criterionId: string; text: string } | null;
   enemInterventionElements: EnemInterventionElements | null;
   /** ENEM annulment cases. When set, every score and the total are 0. */
   zeroReason: "offTopic" | "notArgumentative" | "tooShort" | null;
@@ -115,15 +119,49 @@ const interventionElementsSchema = z.object({
  * Criteria are keyed by id so a schema-following model can't skip or repeat
  * one, which an array allows.
  */
-function buildOutputSchema(criteria: EssayCriterionDefinition[]) {
+function buildCriteriaSchema(criteria: EssayCriterionDefinition[]) {
   return z.object({
     criteria: z.object(Object.fromEntries(criteria.map(({ id }) => [id, criterionOutputSchema]))),
-    interventionElements: interventionElementsSchema.nullable(),
-    zeroReason: z.enum(["offTopic", "notArgumentative"]).nullable(),
   });
 }
 
-export type EssayModelOutput = z.infer<ReturnType<typeof buildOutputSchema>>;
+/** Only ENEM counts the intervention proposal's elements and annuls an essay for its content. */
+const enemOutputSchema = z.object({
+  interventionElements: interventionElementsSchema.nullable(),
+  zeroReason: z.enum(["offTopic", "notArgumentative"]).nullable(),
+});
+
+/** Every other rubric's answer leaves out the ENEM-only fields. */
+export type EssayModelOutput = z.infer<ReturnType<typeof buildCriteriaSchema>> &
+  Partial<z.infer<typeof enemOutputSchema>>;
+
+function buildOutputSchema({
+  criteria,
+  rubric,
+}: {
+  criteria: EssayCriterionDefinition[];
+  rubric: EssayRubric;
+}): z.ZodType<EssayModelOutput> {
+  const schema = buildCriteriaSchema(criteria);
+  return rubric.kind === "enem" ? schema.extend(enemOutputSchema.shape) : schema;
+}
+
+/**
+ * Each call reads the shared grading rules and only its own rubric, in place, so an OAB brief's
+ * prompt never carries the ENEM competencies, and a rubric's change leaves the others' prompt
+ * versions alone.
+ */
+function getSystemPrompt(rubric: EssayRubric): string {
+  return selectPromptVariants({
+    template: promptTemplate,
+    variants: {
+      ap: rubric.kind === "ap",
+      custom: rubric.kind === "custom",
+      enem: rubric.kind === "enem",
+      oab: rubric.kind === "oab",
+    },
+  });
+}
 
 function formatCriterion(criterion: EssayCriterionDefinition): string {
   const description = criterion.description ? `: ${criterion.description}` : "";
@@ -171,6 +209,7 @@ ${essayBlock}
 export async function gradeEssay(params: GradeEssayParams) {
   const { analytics, essay, model = defaultModel, reasoning, rubric, useFallback = true } = params;
   const criteria = getEssayCriteria(rubric);
+  const systemPrompt = getSystemPrompt(rubric);
   const userPrompt = buildUserPrompt({ criteria, params });
 
   if (isEssayTooShort({ essay, rubric })) {
@@ -191,7 +230,7 @@ export async function gradeEssay(params: GradeEssayParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema: buildOutputSchema(criteria) }),
+        output: Output.object({ schema: buildOutputSchema({ criteria, rubric }) }),
         prompt: userPrompt,
         providerOptions,
         reasoning,

@@ -18,11 +18,8 @@ import { Suspense } from "react";
 const START_TOP_BAR_CLASS =
   "static bg-transparent backdrop-blur-none supports-backdrop-filter:bg-transparent";
 
-/**
- * The home page's bar, for visitors and guests: also the bar right after an under-13 answer
- * deletes the account, since the session read earlier in that request still names the learner.
- */
-export function VisitorTopBar() {
+/** The home page's bar, for visitors and guests. */
+function VisitorTopBar() {
   return <PublicTopBar actions={<LoginBarLink />} className={START_TOP_BAR_CLASS} />;
 }
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { usesNonLatinScript } from "@zoonk/utils/languages";
+import { isSameLanguage, usesNonLatinScript } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
@@ -7,7 +7,11 @@ import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
 import { formatLocalContext } from "../../_utils/language-context";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
-import systemPrompt from "./language-lesson.prompt.md";
+import { selectPromptVariants } from "../../_utils/prompt-variants";
+import respellingForEnglish from "./language-lesson-respelling-en.prompt.md";
+import respellingForSpanish from "./language-lesson-respelling-es.prompt.md";
+import respellingForPortuguese from "./language-lesson-respelling-pt.prompt.md";
+import basePrompt from "./language-lesson.prompt.md";
 
 /**
  * Written once per language pair and shared by every learner of that pair, so
@@ -38,6 +42,33 @@ const MAX_WRITING_ANSWERS = 4;
 const MAX_KEY_POINTS = 3;
 const MIN_SUMMARY_LINES = 2;
 const MAX_SUMMARY_LINES = 4;
+
+/**
+ * What each reader's alphabet can spell, by the learner's language. It takes its place among the
+ * respelling rules every reader shares; a reader with no rules here gets the shared ones alone.
+ */
+const RESPELLING_RULES: Partial<Record<string, string>> = {
+  en: respellingForEnglish,
+  es: respellingForSpanish,
+  pt: respellingForPortuguese,
+};
+
+/**
+ * The rules for this pair: a learner who reads the app in the language they're learning gets
+ * definitions instead of translations, and nothing compared with another language.
+ */
+function getSystemPrompt({
+  learnerLanguage,
+  targetLanguage,
+}: Pick<LanguageLessonParams, "learnerLanguage" | "targetLanguage">): string {
+  const respelling = RESPELLING_RULES[learnerLanguage] ?? "";
+  const sameLanguage = isSameLanguage({ learnerLanguage, targetLanguage });
+
+  return selectPromptVariants({
+    template: basePrompt,
+    variants: { bilingual: !sameLanguage, sameLanguage },
+  }).replace("{{READER_RESPELLING}}\n", () => respelling);
+}
 
 const sentenceDistractors = z
   .array(z.string())
@@ -165,6 +196,7 @@ ${formatList(params.knownWords)}
  */
 export async function generateLanguageLesson(params: LanguageLessonParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const systemPrompt = getSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
@@ -179,6 +211,7 @@ export async function generateLanguageLesson(params: LanguageLessonParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "language-lesson",
   });

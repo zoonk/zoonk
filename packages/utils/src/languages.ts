@@ -231,6 +231,20 @@ export function getBaseLanguage(language: string): string {
   return language.toLowerCase().split(/[-_]/u)[0] ?? "";
 }
 
+/**
+ * Whether the learner reads the app in the language they're learning, such as an IELTS candidate
+ * reading it in English: nothing can be translated, so a word's meaning is a definition.
+ */
+export function isSameLanguage({
+  learnerLanguage,
+  targetLanguage,
+}: {
+  learnerLanguage: string;
+  targetLanguage: string;
+}): boolean {
+  return getBaseLanguage(learnerLanguage) === getBaseLanguage(targetLanguage);
+}
+
 /** Whether a language (an ISO code like "ja" or "pt-BR") uses a script other than the Latin one. */
 export function usesNonLatinScript(language: string): boolean {
   return NON_LATIN_SCRIPT_LANGUAGES.has(getBaseLanguage(language));

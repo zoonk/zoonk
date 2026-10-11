@@ -1,5 +1,12 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import {
+  chapterSkillFixture,
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,9 +31,10 @@ const AREAS = ["Matemática", "Direito", "Inglês"] as const;
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
 /** Each area's basics in the first phase and what builds on them in the next, a topic each. */
-const SKILLS = AREAS.flatMap((area) => [
+// Each area's application builds on its fundamentals, the skill before it.
+const SKILLS = AREAS.flatMap((area, index) => [
   { area, lessons: 6, phase: 0, topic: `${area}: fundamentos` },
-  { area, lessons: 6, phase: 1, topic: `${area}: aplicação` },
+  { area, builds: index * 2, lessons: 6, phase: 1, topic: `${area}: aplicação` },
 ]);
 
 /**
@@ -140,7 +148,7 @@ describe("a plan's headline and its topics tell one truth", () => {
 
   it("says topics don't fit exactly when subject pages leave some out, and the time that brings them in", async () => {
     // Enough time for every topic as the skill graph sizes them, not as the lessons are written.
-    const { goal } = await setup({ dailyMinutes: 8 });
+    const { goal } = await setup({ dailyMinutes: 7 });
 
     const short = await readTruth(goal.id);
 
@@ -169,5 +177,47 @@ describe("a plan's headline and its topics tell one truth", () => {
 
     expect(truth.reasons["Direito: fundamentos"]).toBe("pastBasics");
     expect(truth).toMatchObject({ coreFits: true, outForTime: [] });
+  });
+
+  it("keeps a topic whose skill only shares a chapter with a lesson placement skipped, and says so", async () => {
+    const { goal, library } = await setup({ dailyMinutes: 30 });
+    const english = AREAS.indexOf("Inglês") * 2;
+    const [basics, applied] = [library.skills[english], library.skills[english + 1]];
+    const [basicsChapter] = library.chapters;
+    const shared = library.lessons[english * 6];
+
+    if (!basics || !applied || !basicsChapter || !shared) {
+      throw new Error("The library has no English skills.");
+    }
+
+    // A course outline tags its basics chapter with the basics and another chapter with what
+    // builds on them, and that chapter also holds the basics' first lesson (Rafaela's "Voz do
+    // autor", in her interpretation chapter and in the inference one).
+    const [course, appliedChapter] = await Promise.all([
+      courseFixture(),
+      libraryChapterFixture({ title: `English in use ${goal.id}` }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: basicsChapter.id, courseId: course.id, position: 0 }),
+      courseChapterFixture({ chapterId: appliedChapter.id, courseId: course.id, position: 1 }),
+      chapterSkillFixture({ chapterId: basicsChapter.id, skillId: basics.id }),
+      chapterSkillFixture({ chapterId: appliedChapter.id, skillId: applied.id }),
+      chapterLessonFixture({ chapterId: appliedChapter.id, lessonId: shared.id, position: 0 }),
+    ]);
+
+    // Placement found the learner knows the basics: their first lesson is skipped, nothing else.
+    await prisma.planItem.updateMany({
+      data: { completedAt: NOW, status: "testedOut" },
+      where: { lessonId: shared.id },
+    });
+
+    await change(goal.id, [{ kind: "setDailyMinutes", minutes: 35 }]);
+
+    await expect(readTruth(goal.id)).resolves.toMatchObject({
+      coreFits: true,
+      outForTime: [],
+      reasons: expect.objectContaining({ "Inglês: aplicação": null }),
+    });
   });
 });

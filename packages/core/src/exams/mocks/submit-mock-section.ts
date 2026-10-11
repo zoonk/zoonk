@@ -1,25 +1,37 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { gradeChoiceAnswer } from "../../learner/_utils/choice-items";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { routeNextModule } from "../scoring/adaptive-routing";
 import { endMock } from "./_utils/end-mock";
+import { readMockAnswer } from "./_utils/mock-answers";
+import { gradeMockItem } from "./_utils/mock-item-grading";
 import { loadMockItems } from "./_utils/mock-items";
 import { type MockSitting, findOwnedMock, getSectionDeadline } from "./_utils/owned-mock";
-import { type MockConditions, type MockTimeZoneInput, readMockChoice } from "./mock-contract";
+import { type MockConditions, type MockTimeZoneInput } from "./mock-contract";
 
 export type SubmitMockSectionResult = {
   status: "finished" | "next" | "notFound" | "notRunning" | "unauthorized";
 };
 
-/** How the submitted module went, graded in memory: the drafts stay drafts until the end. */
+/**
+ * How the submitted module went, graded in memory by code alone: the drafts stay drafts until the
+ * end, when a model also grades the typed answers code doesn't accept.
+ */
 async function countRight({ itemIds, mock }: { itemIds: readonly string[]; mock: MockSitting }) {
   const items = await loadMockItems(itemIds);
 
   return itemIds.filter((itemId) => {
     const item = items.get(itemId);
-    const choice = readMockChoice(mock.answers.find((answer) => answer.itemId === itemId)?.answer);
-    return item && choice ? gradeChoiceAnswer({ answer: choice, item }).isCorrect : false;
+    const answer = readMockAnswer(mock.answers.find((draft) => draft.itemId === itemId)?.answer);
+
+    return item
+      ? gradeMockItem({
+          answer,
+          item,
+          mockId: mock.id,
+          partialCredit: mock.conditions.partialCredit,
+        }).isCorrect
+      : false;
   }).length;
 }
 
@@ -61,10 +73,13 @@ async function advanceConditions({
   };
 }
 
+const MS_PER_MINUTE = 60_000;
+
 /**
  * Hands in the running section, by the learner or when its time runs out: the next section's
- * clock starts (an adaptive exam's next module is picked here), and handing in the last one ends
- * the mock. A section handed in twice, from two tabs, moves the mock on once.
+ * clock starts (an adaptive exam's next module is picked here), after the break the notice gives
+ * between them, which the learner may end early (`endMockBreak`); handing in the last one ends the
+ * mock. A section handed in twice, from two tabs, moves the mock on once.
  */
 export async function submitMockSection({
   blockId,
@@ -97,8 +112,14 @@ export async function submitMockSection({
     return { status: await endMock({ conditions, mock, owned, timeZone }) };
   }
 
+  const breakMs = (mock.conditions.sections[section]?.breakAfterMinutes ?? 0) * MS_PER_MINUTE;
+
   const { count } = await prisma.mockExam.updateMany({
-    data: { conditions, sectionIndex: section + 1, sectionStartedAt: now },
+    data: {
+      conditions,
+      sectionIndex: section + 1,
+      sectionStartedAt: new Date(now.getTime() + breakMs),
+    },
     where: { id: mock.id, sectionIndex: section, status: "active" },
   });
 

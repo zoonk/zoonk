@@ -1,12 +1,15 @@
+import { type GoalKind } from "@zoonk/db";
 import { type AddedSkill, type PlanOperation } from "../plan-contract";
 import { applyAreaOperation, isAreaOperation } from "./area-operations";
 import { addDays, daysBetween, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanState } from "./plan-state";
 import { setTools } from "./plan-tools";
+import { applyStudyOperation, isStudyOperation } from "./study-operations";
 
 export type PlanOperationError =
   | "badMove"
   | "noStudyDays"
+  | "notExam"
   | "nothingLeft"
   | "pastDate"
   | "unknownArea";
@@ -141,24 +144,38 @@ function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanSt
 }
 
 /** The plan counts down to the notice's exam day, which stays the notice's (`noticeDate`). */
-function setNoticeDate({
+/**
+ * The plan counting down to a new date (null for none). Once the date it had passed (the exam is
+ * behind the learner), the new one starts a new preparation from today: its phases are measured
+ * from today, not from the first plan's day.
+ */
+function withTargetDate({
+  noticeDate,
   state,
   targetDate,
   today,
 }: {
+  /** The day taken from the exam's notice (see `PlanSettings.noticeDate`), when it is one. */
+  noticeDate?: string;
   state: PlanState;
-  targetDate: string;
+  targetDate: string | null;
   today: string;
 }): OperationResult {
-  if (targetDate <= today) {
+  if (targetDate !== null && targetDate <= today) {
     return { error: "pastDate" };
   }
+
+  const passed = state.goal.targetDate !== null && state.goal.targetDate < today;
 
   return {
     state: {
       ...state,
       goal: { ...state.goal, targetDate },
-      settings: { ...state.settings, noticeDate: targetDate },
+      settings: {
+        ...state.settings,
+        ...(noticeDate === undefined ? {} : { noticeDate }),
+        ...(passed ? { startDate: today } : {}),
+      },
     },
   };
 }
@@ -197,12 +214,34 @@ function moveWeeklyEvent({
   };
 }
 
+/** The learner's option for one of the exam's choices, in place of any earlier one for it. */
+function setExamChoice({
+  operation,
+  state,
+}: {
+  operation: Extract<PlanOperation, { kind: "setExamChoice" }>;
+  state: PlanState;
+}): PlanState {
+  const choice = { group: operation.group, subject: operation.subject };
+  const current = state.settings.examChoices;
+  const isPicked = current.some((item) => item.group === operation.group);
+
+  // A changed pick keeps its place, so the picks stay in the order the learner first made them.
+  const examChoices = isPicked
+    ? current.map((item) => (item.group === operation.group ? choice : item))
+    : [...current, choice];
+
+  return { ...state, settings: { ...state.settings, examChoices } };
+}
+
 function applyOperation({
+  goalKind,
   noticeGraph,
   operation,
   state,
   today,
 }: {
+  goalKind: GoalKind;
   noticeGraph: PlanGraph | null;
   operation: PlanOperation;
   state: PlanState;
@@ -210,6 +249,10 @@ function applyOperation({
 }): OperationResult {
   if (isAreaOperation(operation)) {
     return applyAreaOperation({ operation, state });
+  }
+
+  if (isStudyOperation(operation)) {
+    return applyStudyOperation({ goalKind, operation, state });
   }
 
   switch (operation.kind) {
@@ -237,9 +280,7 @@ function applyOperation({
     case "moveWeeklyEvent":
       return moveWeeklyEvent({ from: operation.from, state, to: operation.to, today });
     case "setTargetDate":
-      return operation.targetDate !== null && operation.targetDate <= today
-        ? { error: "pastDate" }
-        : { state: { ...state, goal: { ...state.goal, targetDate: operation.targetDate } } };
+      return withTargetDate({ state, targetDate: operation.targetDate, today });
     case "skipActivities":
       return {
         state: {
@@ -264,16 +305,6 @@ function applyOperation({
           },
         },
       };
-    case "setPracticeBias":
-      return { state: { ...state, settings: { ...state.settings, practiceBias: operation.bias } } };
-    case "setDifficultyBias":
-      return {
-        state: { ...state, settings: { ...state.settings, difficultyBias: operation.bias } },
-      };
-    case "setWrittenCadence":
-      return {
-        state: { ...state, settings: { ...state.settings, writtenCadence: operation.cadence } },
-      };
     case "addSkills":
       return { state: addSkills({ skills: operation.skills, state }) };
     case "setTools":
@@ -281,7 +312,17 @@ function applyOperation({
     case "followNotice":
       return { state: followNotice({ graph: noticeGraph, state }) };
     case "setNoticeDate":
-      return setNoticeDate({ state, targetDate: operation.targetDate, today });
+      return withTargetDate({
+        noticeDate: operation.targetDate,
+        state,
+        targetDate: operation.targetDate,
+        today,
+      });
+    case "fitPhaseDates":
+      // Nothing the learner set changes: applying it re-plans, which moves the phase dates.
+      return { state };
+    case "setExamChoice":
+      return { state: setExamChoice({ operation, state }) };
     default:
       return operation satisfies never;
   }
@@ -293,11 +334,14 @@ function applyOperation({
  * change, so none of it applies.
  */
 export function applyPlanOperations({
+  goalKind,
   noticeGraph = null,
   operations,
   state,
   today,
 }: {
+  /** The goal's kind: studying everything after the date is for exams only. */
+  goalKind: GoalKind;
   /** The graph a `followNotice` operation follows, kept with its change. */
   noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
@@ -310,7 +354,7 @@ export function applyPlanOperations({
     (result, operation) =>
       "error" in result
         ? result
-        : applyOperation({ noticeGraph, operation, state: result.state, today: day }),
+        : applyOperation({ goalKind, noticeGraph, operation, state: result.state, today: day }),
     { state },
   );
 }

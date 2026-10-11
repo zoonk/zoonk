@@ -348,22 +348,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "Python is central, and the executable statements and stated values are correct. However, the explicitly required printout of 25.0 is not demonstrated: the only print statement outputs 25%. The combined arithmetic step also misses the requested one-move structure. The wrong-syntax-or-output cap is not triggered because the output shown for the actual print statement is accurate.",
-          "score": 7,
+          "reasoning": "The explanation uses valid spreadsheet syntax, places the five scores in a matching range, and correctly states that =AVERAGE(A1:A5) returns 85 in both Google Sheets and Excel. The original title and text fields are filled. However, it lacks the tool-focused check specified in this category.",
+          "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The example preserves the ticket price change from R$ 80 to R$ 100, divides the increase by the initial price, and correctly concludes a 25% increase. All numerical claims are accurate, with no contradictory mathematical content.",
+          "reasoning": "The same five scores are preserved, their mean is correctly given as 85, and the explanation retains the add-and-divide definition. There are no factual errors, contradictions, or unrelated lesson concepts.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen uses natural Brazilian Portuguese, short reader-directed instructions, and a concise four-step presentation. It has no introductory filler or promises and remains suitable for a single screen.",
-          "score": 9,
+          "reasoning": "The result is a short, beginner-friendly screen in US English. Direct instructions address the learner naturally, and there is no introduction, filler, or promise of results.",
+          "score": 10,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -372,25 +372,86 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 2134,
-          "inputTokens": 2137,
-          "outputTokens": 752,
-          "reasoningTokens": 305
+          "cacheWriteTokens": 0,
+          "inputTokens": 1979,
+          "outputTokens": 635,
+          "reasoningTokens": 292
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The tool-version expectations call for a check asking what the spreadsheet does or shows. The result explains the output but includes no learner check.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "en-tool-spreadsheet-mean-1",
+        "userInput": {
+          "key": "Spreadsheet (Google Sheets or Excel)",
+          "language": "en",
+          "lessonTitle": "The mean",
+          "level": "beginner",
+          "screen": {
+            "content": {
+              "text": "The **mean** is the typical value: add all the values and divide by how many there are. Quiz scores of 80, 90, 75, 95 and 85 add up to 425, and 425 ÷ 5 = 85.",
+              "title": "Add, then divide"
+            },
+            "kind": "explanation"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "versionFit",
+          "reasoning": "Python is central to the example. The individual code snippets use valid assignments, arithmetic and print syntax; executed in sequence, print(percentual) correctly prints 25.0. No syntax or output cap applies. Presenting the initial assignments on separate lines would improve usability.",
+          "score": 8,
+          "label": "Actually the version asked for",
+          "weight": 40
+        },
+        {
+          "categoryId": "faithful",
+          "reasoning": "The ticket, R$ 80 starting price, R$ 100 final price, starting-value denominator and 25% increase are preserved correctly, with no unrelated concepts. However, the original screen's calculation fields are left unfilled, and one step combines two calculation moves. These are structural fidelity failures rather than factual or numerical errors.",
+          "score": 8,
+          "label": "Faithful and correct",
+          "weight": 35
+        },
+        {
+          "categoryId": "writing",
+          "reasoning": "The screen uses natural Brazilian Portuguese, concise instructions and direct address through imperatives. It remains short and has no introduction, filler or promises. No writing cap applies.",
+          "score": 10,
+          "label": "Short, plain writing",
+          "weight": 25
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2150,
+          "outputTokens": 782,
+          "reasoningTokens": 337
         }
       },
       "steps": [
         {
-          "conclusion": "The required Python printout of 25.0 is missing. The calculation correctly produces that value, but it is only labeled “Resultado”; the actual print statement displays 25%. Add print(percentual) with the exact output 25.0.",
+          "conclusion": "The requirement to fill every field is not met: all four math fields are null, whereas the original screen supplies a calculation in each. The calculations appear in the text, but the worked-example calculation fields remain empty.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Step 3 combines division by the starting price and multiplication by 100, despite the requirement that each step contain one move. These can be separated while staying within the eight-step limit.",
+          "conclusion": "Step 3 combines division by the starting price and multiplication by 100, contrary to the requirement that each step contain one move. Splitting it would still keep the example within the allowed 2–8 steps.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Replace the formatted-string demonstration with a simple print(percentual). Decimal-formatting syntax adds an unnecessary concept for a beginner learning percentage change.",
+          "conclusion": "Show the two initial assignments on separate code lines so a beginner can copy them together without accidentally including the Portuguese connector 'e'.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -421,8 +482,7 @@
               "title": "De R$ 80 para R$ 100"
             },
             "kind": "workedExample"
-          },
-          "variant": "tool"
+          }
         }
       }
     },
@@ -430,22 +490,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The command and exact example output are presented for reading, without asking the learner to open, install, download, or run anything. There is no missing-out language. However, the explanation does not explicitly state that the output confirms Python is available, which is one of the required takeaways.",
-          "score": 8,
+          "reasoning": "Successfully converts the device action into an example to read: “Imagine typing” does not ask the learner to operate their computer. It shows the exact command and a concrete output, connects that output to an installed Python version, and never suggests the learner is missing out.",
+          "score": 10,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The screen preserves the original version-checking idea and title, with populated title and text fields. The command, example output, and interpretation of the version number are accurate, and no unrelated lesson content is introduced.",
+          "reasoning": "Preserves the original explanation screen, title, and central idea of checking Python’s version. Both original content fields are filled. The command and example output are accurate, and no unrelated lesson content is introduced.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The writing is concise, beginner-friendly US English and comparable to the original in length, without filler or an introductory preamble. It does not use the requested direct address, “you.”",
-          "score": 8,
+          "reasoning": "Uses concise, beginner-friendly US English and addresses the reader with “you.” It is approximately the original length, with no introduction, filler, or promises.",
+          "score": 10,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -454,24 +514,16 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 1887,
-          "inputTokens": 1890,
-          "outputTokens": 556,
-          "reasoningTokens": 171
+          "cacheWriteTokens": 0,
+          "inputTokens": 1868,
+          "outputTokens": 597,
+          "reasoningTokens": 287
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The explanation identifies the version number but leaves implicit that this output also confirms Python is available. It also never addresses the learner as “you,” as requested.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Replace the final sentence with “This tells you Python is available and its version is 3.13.1.” This makes both takeaways explicit while keeping the screen short.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in US English\n      - Never asks the learner to open a terminal, install, download or run anything on their computer\n      - Shows what would be typed (`python3 --version`) and exactly what it prints (such as `Python 3.13.1`), and what that tells you (Python is there, and which version)\n      - Doesn't say the learner is missing out\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
@@ -487,8 +539,7 @@
               "title": "Ask Python its version"
             },
             "kind": "explanation"
-          },
-          "variant": "tool"
+          }
         }
       }
     },
@@ -496,22 +547,22 @@
       "categoryScores": [
         {
           "categoryId": "versionFit",
-          "reasoning": "The check successfully becomes a read-only spreadsheet example: it shows the three cells and the valid formula, asks what A4 displays, and never requires opening Excel or typing. It retains exactly one correct option and explanations for realistic mistakes. The only completeness issue is the three null fields despite the requirement that every field be filled.",
+          "reasoning": "The check correctly replaces hands-on instructions with a scenario to read. It supplies all three cell values and the formula, then asks what A4 displays without requiring the learner to open or use Excel. It retains one correct answer and explains realistic distractors. No device-use or syntax cap applies. However, the null fields leave the explicit all-fields-filled requirement unmet.",
           "score": 8,
           "label": "Actually the version asked for",
           "weight": 40
         },
         {
           "categoryId": "faithful",
-          "reasoning": "The original idea and values are preserved. SOMA(A1:A3) correctly sums 10, 20, and 30 to 60. Both distractors and their explanations accurately address the intended beginner mistakes, without introducing another lesson.",
+          "reasoning": "The original idea and example are preserved accurately: SOMA(A1:A3) adds 10, 20, and 30 to produce 60. The incorrect options represent summing only two cells and treating the formula as displayed text. Every option has a correct explanation, and no unrelated concept is introduced. No accuracy or topic-drift cap applies.",
           "score": 10,
           "label": "Faithful and correct",
           "weight": 35
         },
         {
           "categoryId": "writing",
-          "reasoning": "The screen uses natural Brazilian Portuguese, concise sentences, and direct instructions. Its length is comparable to the original, with no unnecessary introduction, filler, or promises.",
-          "score": 10,
+          "reasoning": "The wording is natural Brazilian Portuguese, beginner-friendly, and short enough for one check screen. There is no introductory framing, filler, or promise of results, so no writing cap applies. Some feedback could be tightened slightly.",
+          "score": 9,
           "label": "Short, plain writing",
           "weight": 25
         }
@@ -520,20 +571,24 @@
         "modelId": "openai/gpt-6-astra",
         "usage": {
           "cacheReadTokens": 0,
-          "cacheWriteTokens": 2109,
-          "inputTokens": 2112,
-          "outputTokens": 762,
-          "reasoningTokens": 401
+          "cacheWriteTokens": 0,
+          "inputTokens": 2114,
+          "outputTokens": 752,
+          "reasoningTokens": 310
         }
       },
       "steps": [
         { "conclusion": "None", "kind": "majorErrors", "score": 10 },
         {
-          "conclusion": "The context, image, and visual fields are null, so the literal requirement that every field be filled is not fully met. The question and all answer explanations are complete.",
+          "conclusion": "The screen's instructional content is complete, but context, image, visual, and each option's picture are null. This falls short of the explicit requirement that every field be filled, although it does not prevent answering the check.",
           "kind": "minorErrors",
           "score": 8
         },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+        {
+          "conclusion": "The explanations could be slightly shorter while preserving their value—for example, 'Somou só A1 e A2; faltou A3.'",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
       ],
       "testCase": {
         "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The check no longer asks the learner to open Excel or type anything: it shows the cells (10, 20 and 30 in A1 to A3) and the formula `=SOMA(A1:A3)`, and asks what the cell would show\n      - Still exactly one right option (60) and a reason on every option, with the wrong options from real slips (such as adding only two cells or reading the formula as text)\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
@@ -563,70 +618,7 @@
               "question": "Abra o Excel, digite 10, 20 e 30 em A1, A2 e A3 e, em A4, digite =SOMA(A1:A3). O que aparece em A4?"
             },
             "kind": "check"
-          },
-          "variant": "tool"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "versionFit",
-          "reasoning": "The explanation shows a genuine spreadsheet workflow with a specified input range, the valid formula =AVERAGE(A1:A5), and its correct output, 85. These instructions work in both Google Sheets and Excel without tool-exclusive features.",
-          "score": 10,
-          "label": "Actually the version asked for",
-          "weight": 40
-        },
-        {
-          "categoryId": "faithful",
-          "reasoning": "The result preserves the mean, the same five quiz scores, and the correct answer without introducing unrelated concepts. However, it leaves addition implicit in “total” rather than explicitly retaining the required add-then-divide explanation. Both fields from the original screen, title and text, are filled.",
-          "score": 8,
-          "label": "Faithful and correct",
-          "weight": 35
-        },
-        {
-          "categoryId": "writing",
-          "reasoning": "The screen is short, beginner-friendly, and written in US English. Direct second-person instructions address the learner naturally, with no introductory framing, filler, or promises.",
-          "score": 10,
-          "label": "Short, plain writing",
-          "weight": 25
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 1932,
-          "inputTokens": 1935,
-          "outputTokens": 846,
-          "reasoningTokens": 469
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The arithmetic explanation is slightly incomplete: “the total divided by the number of scores” does not explicitly tell the learner to add the values first, as required. Saying that the five scores add to 425 and that 425 ÷ 5 = 85 would close this gap.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST be in US English\n      - Shows the mean the way it's done in a spreadsheet: the AVERAGE function over a range, such as `=AVERAGE(B2:B6)`, which works the same in Google Sheets and Excel, and what it returns for these scores (85)\n      - Still says the mean adds the values and divides by how many there are, with the same five scores\n      - No menus or functions that exist in only one of the two\n\n      \n  - The output is the same kind of screen as the original, with every field filled\n  - Don't evaluate JSON formatting\n\n    ",
-        "id": "en-tool-spreadsheet-mean-1",
-        "userInput": {
-          "key": "Spreadsheet (Google Sheets or Excel)",
-          "language": "en",
-          "lessonTitle": "The mean",
-          "level": "beginner",
-          "screen": {
-            "content": {
-              "text": "The **mean** is the typical value: add all the values and divide by how many there are. Quiz scores of 80, 90, 75, 95 and 85 add up to 425, and 425 ÷ 5 = 85.",
-              "title": "Add, then divide"
-            },
-            "kind": "explanation"
-          },
-          "variant": "tool"
+          }
         }
       }
     }

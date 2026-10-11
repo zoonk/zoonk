@@ -7,7 +7,13 @@ import {
   prisma,
 } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { getKnownSubjects } from "../learner/placement/placement-contract";
+import { toListeningExam } from "../exams/listening/listening-exam";
+import { getListeningSkillIds } from "../exams/listening/listening-skills";
+import {
+  getKnownSubjects,
+  getOwnLevel,
+  isPlacementSkipped,
+} from "../learner/placement/placement-contract";
 import { pickPlacementItemSkillIds } from "../learner/placement/placement-item-picks";
 import { isOwnMaterialTest } from "../learner/placement/placement-material";
 import {
@@ -23,7 +29,8 @@ import {
 import { type NoticeFormats, readNoticeFormats } from "../library/exams/notice-formats";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../library/items/item-field";
-import { parsePlanGraph } from "../plans/planner/plan-state";
+import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
+import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 
 /** An exam goal's questions look like the exam's own: its name, format and option count. */
 type PlacementItemExam = {
@@ -32,6 +39,11 @@ type PlacementItemExam = {
   name: string;
   /** Options per multiple-choice question, such as 5 for ENEM; null when the notice doesn't say. */
   optionCount: number | null;
+  /**
+   * Real questions from the exam's quoted past papers, for a writer to match in difficulty and
+   * steps (`listPastQuestionExamples`); absent where a picker doesn't load them.
+   */
+  pastQuestions?: string[];
   /** How the exam's questions look and score, in the notice's words. */
   style: string;
 };
@@ -71,8 +83,18 @@ function getItemSituation(content: unknown): string | null {
   return text ? text.replaceAll(/\s+/gu, " ").trim().slice(0, MAX_SITUATION_LENGTH) : null;
 }
 
-function getUsedSituations(items: readonly { content: unknown }[]): string[] {
-  const situations = items.flatMap((item) => getItemSituation(item.content) ?? []);
+/**
+ * The situations of a skill's questions, the learner's own first: a mock for Sofia's ethics put
+ * placement's case (a lawyer with six cases in another state) back under another name, since the
+ * questions she had answered were the ones left out. The rest follow newest first.
+ */
+function getUsedSituations(items: readonly SkillItem[]): string[] {
+  const ordered = [
+    ...items.filter((item) => isAnswered(item)),
+    ...items.filter((item) => !isAnswered(item)),
+  ];
+
+  const situations = ordered.flatMap((item) => getItemSituation(item.content) ?? []);
   return [...new Set(situations)].slice(0, MAX_USED_SITUATIONS);
 }
 
@@ -148,24 +170,46 @@ function getGoalItemExam(
   return { exam: notice ? toNoticeItemExam({ name: goal.title, notice }) : null, formats: notice };
 }
 
-/** The picks from the goal's plan, or the ones the run picked from its skill graph. */
-function readPickedSkillIds({
-  everySkill,
-  knownAreas,
-  planGraph,
+type PickingGoal = Pick<Goal, "details"> & {
+  examBlueprint: ExamBlueprint | null;
+  plan: { graph: unknown; settings: unknown } | null;
+};
+
+/**
+ * The picks from the goal's plan, or the ones the run picked from its skill graph; none of
+ * placement's own (`forPlacement`) for a learner who skipped placement (`isPlacementSkipped`),
+ * and never a skill only recordings practice (`listeningSkillIds`).
+ */
+async function readPickedSkillIds({
+  forPlacement,
+  goal,
+  listeningSkillIds,
   skillIds,
 }: {
-  everySkill: boolean;
-  knownAreas: readonly string[];
-  planGraph: unknown;
+  forPlacement: boolean;
+  goal: PickingGoal | null;
+  listeningSkillIds: ReadonlySet<string>;
   skillIds?: string[];
-}): string[] {
-  return [
-    ...new Set(
-      skillIds ??
-        pickPlacementItemSkillIds({ everySkill, graph: parsePlanGraph(planGraph), knownAreas }),
-    ),
-  ];
+}): Promise<string[]> {
+  if (forPlacement && goal && isPlacementSkipped(goal)) {
+    return [];
+  }
+
+  if (skillIds) {
+    return [...new Set(skillIds)].filter((skillId) => !listeningSkillIds.has(skillId));
+  }
+
+  const graph = parsePlanGraph(goal?.plan?.graph);
+
+  return pickPlacementItemSkillIds({
+    everySkill: isOwnMaterialTest(goal?.examBlueprint ?? null),
+    focusAreas: parsePlanSettings(goal?.plan?.settings).focusAreas,
+    graph,
+    knownAreas: goal ? getKnownSubjects(goal) : [],
+    listeningSkillIds,
+    ownLevel: goal ? getOwnLevel({ goal }) : null,
+    prerequisites: await loadSkillPrerequisites(graph.skills.map((skill) => skill.skillId)),
+  });
 }
 
 /** The formats a run writes for placement: a quick one to ask a skill, and a typed confirmation. */
@@ -184,9 +228,14 @@ function isQuickFormat(format: PlacementItemFormat): format is PlacementQuickFor
   return format !== "typed";
 }
 
-type SkillRow = Omit<PlacementItemSkill, "exam" | "usedSituations"> & {
-  items: { content: unknown; format: ItemFormat }[];
-};
+/** A question of the skill, with the goal's learner's answer to it when they gave one. */
+type SkillItem = { attempts: { id: string }[]; content: unknown; format: ItemFormat };
+
+type SkillRow = Omit<PlacementItemSkill, "exam" | "usedSituations"> & { items: SkillItem[] };
+
+function isAnswered(item: SkillItem): boolean {
+  return item.attempts.length > 0;
+}
 
 /**
  * A picked skill that still needs placement's questions, or null when this goal's placement can
@@ -196,6 +245,7 @@ type SkillRow = Omit<PlacementItemSkill, "exam" | "usedSituations"> & {
  */
 function toPick({
   exam,
+  exceptAnswered,
   fits,
   quickFormat,
   quickNeeded,
@@ -203,13 +253,16 @@ function toPick({
   writesTyped,
 }: {
   exam: PlacementItemExam | null;
-  fits: (item: SkillRow["items"][number]) => boolean;
+  /** Questions the goal's learner already answered don't cover the skill: they won't be asked. */
+  exceptAnswered: boolean;
+  fits: (item: SkillItem) => boolean;
   quickFormat: PlacementQuickFormat;
   quickNeeded: number;
   row: SkillRow;
   writesTyped: boolean;
 }): PlacementItemPick | null {
-  const fitting = row.items.filter((item) => fits(item));
+  const fitting = row.items.filter((item) => fits(item) && !(exceptAnswered && isAnswered(item)));
+
   const formats = new Set(fitting.map((item) => item.format));
   const quick = fitting.filter((item) => item.format === quickFormat).length;
 
@@ -236,7 +289,8 @@ function toPick({
  * questions (see `preferExamItems`), so only those count: a skill with only general ones gets the
  * exam's written once, shared by every later learner of that exam. Other goals, and a run that
  * narrows `formats` (a test-out's multiple choice, which asks general questions too), count
- * general ones and the exam's; never another exam's or a field's.
+ * general ones and the exam's; never another exam's or a field's, nor a set's questions, which are
+ * asked only with their stimulus.
  */
 function getCoveringItemFilter({
   blueprintId,
@@ -248,7 +302,7 @@ function getCoveringItemFilter({
   formats?: readonly PlacementItemFormat[];
 }) {
   return exam && !formats
-    ? { examBlueprintId: exam.blueprintId, field: null }
+    ? { examBlueprintId: exam.blueprintId, field: null, setId: null }
     : getItemAudienceFilter({ examBlueprintId: blueprintId });
 }
 
@@ -269,6 +323,7 @@ function getCoveringItemFilter({
  */
 export async function pickPlacementItemSkills({
   exceptAnswered = false,
+  forPlacement = false,
   formats,
   goalId,
   quickNeeded = 1,
@@ -276,6 +331,12 @@ export async function pickPlacementItemSkills({
 }: {
   /** Questions the goal's learner already answered don't count: they won't be asked again. */
   exceptAnswered?: boolean;
+  /**
+   * Placement's own questions (day 1's, the plan's picks): none for a learner who skipped
+   * placement (`isPlacementSkipped`), whom placement never asks. A test-out, a mock or practice
+   * writes its questions either way.
+   */
+  forPlacement?: boolean;
   formats?: readonly PlacementItemFormat[];
   goalId: string;
   /**
@@ -290,19 +351,20 @@ export async function pickPlacementItemSkills({
       details: true,
       examBlueprint: true,
       kind: true,
-      plan: { select: { graph: true } },
+      plan: { select: { graph: true, settings: true } },
+      targetLanguage: true,
       title: true,
       userId: true,
     },
     where: { id: goalId },
   });
 
-  const picked = readPickedSkillIds({
-    everySkill: isOwnMaterialTest(goal?.examBlueprint ?? null),
-    knownAreas: goal ? getKnownSubjects(goal) : [],
-    planGraph: goal?.plan?.graph,
-    skillIds,
-  });
+  // A listening area's skills get recordings, never text questions (`getListeningSkillIds`).
+  const listeningSkillIds = goal
+    ? getListeningSkillIds({ exam: toListeningExam(goal), graph: parsePlanGraph(goal.plan?.graph) })
+    : new Set<string>();
+
+  const picked = await readPickedSkillIds({ forPlacement, goal, listeningSkillIds, skillIds });
 
   const blueprint = goal?.examBlueprint ?? null;
   const { exam, formats: structure } = goal ? getGoalItemExam(goal) : { exam: null, formats: null };
@@ -311,7 +373,7 @@ export async function pickPlacementItemSkills({
   // Placement asks only questions in its exam's choice format (`loadPlacementItems`); a caller
   // that narrows the formats, such as a test-out, asks the rest too, but never a question with
   // another number of options than the exam's.
-  const fits = (item: SkillRow["items"][number]) =>
+  const fits = (item: SkillItem) =>
     formats ? fitsExamOptions({ choice, item }) : fitsExamChoice({ choice, item });
 
   const quickFormat =
@@ -325,11 +387,19 @@ export async function pickPlacementItemSkills({
       description: true,
       id: true,
       items: {
-        select: { content: true, format: true },
+        orderBy: { createdAt: "desc" },
+        select: {
+          attempts: {
+            select: { id: true },
+            take: 1,
+            where: { userId: { in: goal ? [goal.userId] : [] } },
+          },
+          content: true,
+          format: true,
+        },
         where: {
           format: { in: needed },
           ...getCoveringItemFilter({ blueprintId: blueprint?.id ?? null, exam, formats }),
-          ...(exceptAnswered && goal ? { attempts: { none: { userId: goal.userId } } } : {}),
         },
       },
       language: true,
@@ -343,7 +413,11 @@ export async function pickPlacementItemSkills({
 
   const picks = picked
     .map((id) => skills.find((row) => row.id === id))
-    .map((row) => (row ? toPick({ exam, fits, quickFormat, quickNeeded, row, writesTyped }) : null))
+    .map((row) =>
+      row
+        ? toPick({ exam, exceptAnswered, fits, quickFormat, quickNeeded, row, writesTyped })
+        : null,
+    )
     .filter((pick) => pick !== null);
 
   return { quickFormat, skills: picks };

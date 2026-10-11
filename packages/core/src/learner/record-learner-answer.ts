@@ -29,6 +29,11 @@ export type LearnerAnswer = {
   answer: JsonObject;
   answeredAt?: Date;
   graded: GradedAnswer;
+  /**
+   * An answer to one of placement's questions, in placement itself or inside a first-week session:
+   * a test's answer, never practice, even when a session asked it.
+   */
+  isPlacement?: boolean;
   itemId?: string | null;
   /** The question's language, for the cause classifier. */
   language: string;
@@ -98,6 +103,7 @@ function createAttempt({ answeredAt, input, itemId, skillId, stepId }: AnswerCon
       answeredAt,
       durationMs: input.graded.durationMs,
       isCorrect: input.graded.isCorrect,
+      isPlacement: input.isPlacement ?? false,
       itemId,
       mockExamId: input.mockExamId ?? null,
       score: input.graded.score ?? null,

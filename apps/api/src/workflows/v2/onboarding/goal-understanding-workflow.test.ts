@@ -83,9 +83,10 @@ describe(goalUnderstandingWorkflow, () => {
 
     const cached = await prisma.goalUnderstanding.findUnique({
       where: {
-        languageNormalizedPrompt: {
+        userLanguagePrompt: {
           language: "en",
           normalizedPrompt: normalizeString(draft.prompt),
+          userId: draft.userId,
         },
       },
     });

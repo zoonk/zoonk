@@ -1,48 +1,64 @@
 import "server-only";
 import { type MistakeCause, prisma } from "@zoonk/db";
-import { gradeChoiceAnswer } from "../../../learner/_utils/choice-items";
-import { itemAnswerInputSchema } from "../../../learner/contract";
-import { type MockConditions, type MockReviewEntry } from "../mock-contract";
-import { type MockItem, loadMockItems } from "./mock-items";
+import { getPickOutcome } from "../../scoring/partial-credit";
+import { type MockConditions } from "../mock-contract";
+import { type MockReviewEntry } from "../mock-view-contract";
+import { gradeMockItem, readRecordedMockAnswer } from "./mock-item-grading";
+import { type MockItem, loadMockItems, toMockQuestionView } from "./mock-items";
 import { getAskedItemIds } from "./mock-sections";
 
-const BLANK = { dontKnow: true } as const;
-
+/**
+ * A question's review entry, or null when it was right. Its attempt's verdict decides (a model may
+ * have graded a typed answer right that code doesn't accept); grading it again by code gives the
+ * answers to show and the share of points several picks earned.
+ */
 function toEntry({
-  answer,
   area,
+  attempt,
+  conditions,
   item,
+  mockExamId,
   number,
 }: {
-  answer: unknown;
   area: string | null;
+  attempt: { answer: unknown; isCorrect: boolean };
+  conditions: MockConditions;
   item: MockItem;
+  mockExamId: string;
   number: number;
 }): MockReviewEntry | null {
-  const parsed = itemAnswerInputSchema.shape.answer.safeParse(answer);
-  const choice = parsed.success ? parsed.data : BLANK;
-  const graded = gradeChoiceAnswer({ answer: choice, item });
-
-  if (graded.isCorrect) {
+  if (attempt.isCorrect) {
     return null;
   }
+
+  const grade = gradeMockItem({
+    answer: readRecordedMockAnswer(attempt.answer),
+    item,
+    mockId: mockExamId,
+    partialCredit: conditions.partialCredit,
+  });
+
+  const outcome = getPickOutcome({ answered: grade.answered, credit: grade.credit });
+  const shown = toMockQuestionView({ item, mockId: mockExamId });
 
   return {
     area,
     citation: item.citation,
-    correctAnswer: graded.snapshot.correctAnswer ?? null,
-    explanation: graded.snapshot.explanation ?? null,
+    context: shown.context,
+    correctAnswer: grade.snapshot.correctAnswer ?? null,
+    explanation: grade.snapshot.explanation ?? null,
     format: item.format,
     itemId: item.id,
-    learnerAnswer: graded.snapshot.answer,
+    learnerAnswer: grade.snapshot.answer,
     number,
-    outcome: "dontKnow" in choice ? "blank" : "wrong",
-    question: graded.snapshot.question,
+    outcome: outcome === "blank" || outcome === "partial" ? outcome : "wrong",
+    question: shown.question,
+    set: shown.set,
   };
 }
 
 type FinishedMockAnswers = {
-  attempts: { answer: unknown; id: string; itemId: string | null }[];
+  attempts: { answer: unknown; id: string; isCorrect: boolean; itemId: string | null }[];
   items: Map<string, MockItem>;
 };
 
@@ -60,10 +76,10 @@ async function loadFinishedAnswers({
 
   const [attempts, items] = await Promise.all([
     prisma.attempt.findMany({
-      select: { answer: true, id: true, itemId: true },
+      select: { answer: true, id: true, isCorrect: true, itemId: true },
       where: { itemId: { in: itemIds }, mockExamId, userId },
     }),
-    loadMockItems(itemIds),
+    loadMockItems(itemIds, { reveal: true }),
   ]);
 
   return { attempts, items };
@@ -98,9 +114,11 @@ export async function loadMockReview({
     }
 
     const reviewed = toEntry({
-      answer: attempt.answer,
       area: areas.get(item.skillId) ?? null,
+      attempt,
+      conditions,
       item,
+      mockExamId,
       number: index + 1,
     });
 

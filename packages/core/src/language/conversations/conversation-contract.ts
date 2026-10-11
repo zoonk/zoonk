@@ -6,15 +6,24 @@ import {
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
+import {
+  examSpeakingFeedbackSchema,
+  examTaskSnapshotSchema,
+  examTaskViewSchema,
+} from "../exam-speaking/speaking-contract";
 
-const MAX_CONVERSATION_MINUTES = 5;
+const MAX_PRACTICE_MINUTES = 5;
+
+/** The longest call: an exam task's official time, up to DALF C1's 20-minute interview. */
+const MAX_CALL_MINUTES = 20;
 
 /** Practice calls last from 1 to 5 minutes, as the unit page offers them. */
-export const PRACTICE_CONVERSATION_MINUTES = [1, 2, 3, MAX_CONVERSATION_MINUTES] as const;
-/** The most turns a saved call keeps, and the longest turn: a five-minute call stays well under both. */
-export const MAX_CONVERSATION_TURNS = 120;
+export const PRACTICE_CONVERSATION_MINUTES = [1, 2, 3, MAX_PRACTICE_MINUTES] as const;
+/** The most turns a saved call keeps, and the longest turn: the longest exam task stays under both. */
+export const MAX_CONVERSATION_TURNS = 300;
 export const MAX_CONVERSATION_TURN_LENGTH = 2000;
-const MAX_SPOKEN_SECONDS = 900;
+/** The longest call and the minute it may run over while the character says goodbye. */
+const MAX_SPOKEN_SECONDS = 1260;
 
 const speakerSchema = z.enum(["learner", "character"]);
 
@@ -51,6 +60,11 @@ export type ConversationScenario = z.infer<typeof conversationScenarioSchema>;
  */
 export const speakingMockScenarioSchema = conversationScenarioSchema.extend({
   exam: speakingMockExamSchema,
+});
+
+/** An exam task's call also keeps its paper's exam, level, task and the card the learner saw. */
+export const examSpeakingScenarioSchema = conversationScenarioSchema.extend({
+  examTask: examTaskSnapshotSchema,
 });
 
 const callFeedbackSchema = z
@@ -104,6 +118,7 @@ const speakingMockFeedbackSchema = z
 export const conversationFeedbackSchema = z.discriminatedUnion("kind", [
   callFeedbackSchema,
   speakingMockFeedbackSchema,
+  examSpeakingFeedbackSchema,
 ]);
 
 export type ConversationFeedback = z.infer<typeof conversationFeedbackSchema>;
@@ -141,6 +156,24 @@ export const languageConversationStartInputSchema = z
               "An English goal preparing for IELTS or TOEFL iBT (a language goal, or the exam goal it moved to); the mock follows that exam",
           }),
         kind: z.literal("speakingMock"),
+      })
+      .strict(),
+    z
+      .object({
+        goalId: z
+          .uuid()
+          .meta({
+            description:
+              "A goal preparing for DELE, DELF or DALF, a Goethe-Zertifikat or Cambridge English, in that exam's language (`speaking` on the goal's exam or language view)",
+          }),
+        kind: z.literal("examSpeaking"),
+        task: z
+          .string()
+          .min(1)
+          .max(10)
+          .meta({
+            description: "The task's key in the exam's speaking paper (`speaking.tasks[].key`)",
+          }),
       })
       .strict(),
   ])
@@ -188,14 +221,19 @@ export const languageConversationViewSchema = z
     exam: speakingMockExamSchema
       .nullable()
       .meta({ description: "The exam a speaking mock follows; null for other calls" }),
+    examTask: examTaskViewSchema
+      .nullable()
+      .meta({
+        description: "The exam task an `examSpeaking` call practices; null for other calls",
+      }),
     goalId: z.uuid().nullable(),
     hints: z.array(z.string()),
     id: z.uuid(),
     /** What the voice model is told; the app sends it when the call connects. */
     instructions: z.string().nullable(),
-    kind: z.enum(["practice", "checkpoint", "speakingMock"]),
+    kind: z.enum(["practice", "checkpoint", "speakingMock", "examSpeaking"]),
     level: z.enum(CEFR_LEVELS),
-    minutes: z.int().min(1).max(MAX_CONVERSATION_MINUTES),
+    minutes: z.int().min(1).max(MAX_CALL_MINUTES),
     objectives: z.array(objectiveViewSchema),
     openingLine: z.string(),
     result: z

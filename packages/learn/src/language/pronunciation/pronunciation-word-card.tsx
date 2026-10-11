@@ -7,9 +7,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { MicIcon, SnailIcon, SquareIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
+import { CreateAccountLink } from "../../_components/create-account-link";
 import { ItemLine } from "../../questions/item-text";
 import { SpeechFailedNote, SpeechStatusIcon, withoutFailure } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
+import { type PronunciationNotice } from "./use-pronunciation-round";
 
 const MS_PER_SECOND = 1000;
 
@@ -118,11 +120,15 @@ export function PronunciationWordCard({ language, word }: { language: string; wo
 }
 
 /** Why the last recording wasn't graded, or null to ask for the word. */
-function useNoticeMessage(notice: "failed" | "noSpeech" | null): string | null {
+function useNoticeMessage(notice: PronunciationNotice | null): string | null {
   const t = useExtracted();
 
   if (notice === "noSpeech") {
     return t("We couldn't hear the word. Try again a little closer.");
+  }
+
+  if (notice === "signUpRequired") {
+    return t("Create your free account to continue.");
   }
 
   return notice === "failed" ? t("That didn't go through. Try again.") : null;
@@ -134,7 +140,7 @@ export function PronunciationRecorder({
   onRecorded,
   pending,
 }: {
-  notice: "failed" | "noSpeech" | null;
+  notice: PronunciationNotice | null;
   onRecorded: (recording: { audio: Blob; durationMs: number }) => void;
   pending: boolean;
 }) {
@@ -180,6 +186,8 @@ export function PronunciationRecorder({
           })}
         {!pending && !isRecording && (message ?? t("Tap and say the word out loud"))}
       </p>
+
+      {notice === "signUpRequired" && <CreateAccountLink />}
     </div>
   );
 }

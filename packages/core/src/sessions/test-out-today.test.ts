@@ -8,7 +8,7 @@ import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
-import { getTodayStudySession } from "./get-today-study-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import { startStudyBlock } from "./start-study-block";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));

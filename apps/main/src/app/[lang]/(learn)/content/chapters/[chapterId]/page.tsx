@@ -2,6 +2,8 @@ import { JourneyPageBar } from "@/components/learn/journey-page-bar";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { redirect } from "@/i18n/navigation";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
+import { getReachedCap } from "@zoonk/core/entitlements/contract";
+import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { getChapterMindMap } from "@zoonk/core/mind-maps/get-chapter";
 import { getChapterView } from "@zoonk/core/view-models/chapter/get";
 import { getLanguageUnitsView } from "@zoonk/core/view-models/language/units";
@@ -40,12 +42,13 @@ async function loadBack(from: string | string[] | undefined) {
 async function ChapterBody({ params, searchParams }: Props) {
   const [{ chapterId, lang }, { from }] = await Promise.all([params, searchParams]);
 
-  const [result, tutor, language, back, mindMap] = await Promise.all([
+  const [result, tutor, language, back, mindMap, allowance] = await Promise.all([
     getChapterView({ chapterId }),
     getTutorViewer(),
     getLanguageUnitsView(),
     loadBack(from),
     getChapterMindMap({ chapterId }),
+    getAllowance(),
   ]);
 
   if (result.status === "unauthorized") {
@@ -68,6 +71,7 @@ async function ChapterBody({ params, searchParams }: Props) {
         back={back}
         chapter={result.chapter}
         mindMap={mindMap.status === "ready" ? mindMap.mindMap : null}
+        mindMapCap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
         tutor={tutor}
       />
     </ClientMessagesProvider>

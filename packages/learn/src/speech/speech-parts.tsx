@@ -6,7 +6,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { RotateCcwIcon, SquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { type HelpLimit, useHelpLimitMessage } from "../_components/help-limit-notice";
+import { CreateAccountLink } from "../_components/create-account-link";
+import {
+  type HelpLimit,
+  needsAccount,
+  useHelpLimitMessage,
+} from "../_components/help-limit-notice";
 import { type SpokenAudioState } from "./use-spoken-audio";
 
 /**
@@ -66,7 +71,8 @@ function LimitMessage({ limit }: { limit: HelpLimit }) {
 
 /**
  * What a learner sees when a sound didn't come: why, a way to try again unless a cap stands in
- * the way, and, when the screen gives it, the words the sound says, so they can keep going.
+ * the way (a guest gets the link to create a free account instead), and, when the screen gives
+ * it, the words the sound says, so they can keep going.
  */
 export function SpeechFailedNote({
   className,
@@ -82,7 +88,7 @@ export function SpeechFailedNote({
   text?: string;
 }) {
   const t = useExtracted();
-  const canRetry = limit?.status !== "limitReached";
+  const canRetry = !limit || limit.status === "slowDown";
 
   return (
     <div className={cn("flex flex-col items-start gap-2 text-sm", className)} role="status">
@@ -103,6 +109,8 @@ export function SpeechFailedNote({
           {t("Try again")}
         </Button>
       )}
+
+      {limit && needsAccount(limit) && <CreateAccountLink />}
     </div>
   );
 }

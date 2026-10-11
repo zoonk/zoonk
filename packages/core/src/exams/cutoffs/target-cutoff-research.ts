@@ -81,6 +81,7 @@ export async function recordTargetCutoff({
     data: {
       edition: finding.edition,
       examBlueprintId: lookup.examBlueprintId,
+      maxScore: finding.maxScore,
       model: provenance.model,
       promptVersion: provenance.promptVersion,
       quota: finding.quota,

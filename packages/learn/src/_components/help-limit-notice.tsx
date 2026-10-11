@@ -7,27 +7,42 @@ import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 
 /**
+ * A guest's new AI work once the day's AI budget all guests share is spent: a free account
+ * continues it, with the guest's work moved over.
+ */
+type SignUpRequired = { status: "signUpRequired" };
+
+/**
  * Why small AI help (an answer's explanation, grading a spoken answer, a plan edit in plain words)
- * isn't given now: fair use asks for a short break, or the plan's help for the day or the month
- * (`period`; the day's when unsaid) is used up.
+ * isn't given now: fair use asks for a short break, the plan's help for the day or the month
+ * (`period`; the day's when unsaid) is used up, or a guest is asked to create an account.
  */
 export type HelpLimit =
   | { retryAfterSeconds: number; status: "slowDown" }
-  | { period?: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier };
+  | { period?: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
+  | SignUpRequired;
 
 /**
- * Why a new lesson can't be written now: fair use asks for a short break, or the plan's cap for
- * the day, the month or (a guest's) for good is reached.
+ * Why a new lesson can't be written now: fair use asks for a short break, the plan's cap for the
+ * day, the month or (a guest's) for good is reached, or a guest is asked to create an account.
  */
 export type LessonLimit =
   | { retryAfterSeconds: number; status: "slowDown" }
-  | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier };
+  | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
+  | SignUpRequired;
 
 /**
  * Why a new mind map isn't made now, with the same shape as a lesson's cap: fair use asks for a
  * short break, or the plan's maps for the day, the month or (a guest's) for good are made.
  */
 export type MindMapLimit = LessonLimit;
+
+/**
+ * Why a far topic's lessons aren't written early now, with the same shape: fair use asks for a
+ * short break, or the plan's topics opened early for the day, the month or (a guest's) for good
+ * are used. The plan still writes them as it gets close.
+ */
+export type OutlineLimit = LessonLimit;
 
 /**
  * Why a speaking call can't start now: the plan's call time for today or this month is used, or
@@ -45,6 +60,13 @@ type LimitNoticeProps = {
 
 const TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 
+/** Whether the one thing to do is creating a free account: a guest's cap or the guests' budget. */
+export function needsAccount(limit: HelpLimit): boolean {
+  return (
+    limit.status === "signUpRequired" || (limit.status === "limitReached" && limit.tier === "guest")
+  );
+}
+
 /**
  * The one thing to do about a cap: a guest creates a free account, a free learner gets Plus. Plus
  * and fair use have nothing to do but wait, so the message stands alone.
@@ -59,7 +81,7 @@ function LimitNoticeBody({
   const t = useExtracted();
   const action = buttonVariants({ size: "sm", variant: "outline" });
 
-  if (limit.status === "slowDown" || limit.tier === "plus") {
+  if (limit.status === "slowDown" || (limit.status === "limitReached" && limit.tier === "plus")) {
     return <p className={cn(TEXT_CLASS, className)}>{message}</p>;
   }
 
@@ -67,7 +89,7 @@ function LimitNoticeBody({
     <div className={cn("flex flex-col items-start gap-2", className)}>
       <p className={TEXT_CLASS}>{message}</p>
 
-      {limit.tier === "guest" ? (
+      {needsAccount(limit) ? (
         <LinkComponent className={action} href={routes.signUp}>
           {t("Create a free account")}
         </LinkComponent>
@@ -80,12 +102,23 @@ function LimitNoticeBody({
   );
 }
 
+/** What a guest reads once the day's AI budget all guests share is spent, whatever they asked. */
+function useSignUpRequiredMessage(): string {
+  const t = useExtracted();
+  return t("Create your free account to continue.");
+}
+
 /** Why the help didn't come, in one sentence, for screens that show it without a link. */
 export function useHelpLimitMessage(limit: HelpLimit): string {
   const t = useExtracted();
+  const signUpRequired = useSignUpRequiredMessage();
 
   if (limit.status === "slowDown") {
     return t("Take a short break, then try again.");
+  }
+
+  if (limit.status === "signUpRequired") {
+    return signUpRequired;
   }
 
   const thisMonth = limit.period === "month" || limit.period === "total";
@@ -109,9 +142,14 @@ export function useHelpLimitMessage(limit: HelpLimit): string {
 
 function useLessonLimitMessage(limit: LessonLimit): string {
   const t = useExtracted();
+  const signUpRequired = useSignUpRequiredMessage();
 
   if (limit.status === "slowDown") {
     return t("Take a short break, then try again.");
+  }
+
+  if (limit.status === "signUpRequired") {
+    return signUpRequired;
   }
 
   if (limit.tier === "guest") {
@@ -135,9 +173,14 @@ function useLessonLimitMessage(limit: LessonLimit): string {
 
 function useMindMapLimitMessage(limit: MindMapLimit): string {
   const t = useExtracted();
+  const signUpRequired = useSignUpRequiredMessage();
 
   if (limit.status === "slowDown") {
     return t("Take a short break, then try again.");
+  }
+
+  if (limit.status === "signUpRequired") {
+    return signUpRequired;
   }
 
   if (limit.tier === "guest") {
@@ -156,6 +199,37 @@ function useMindMapLimitMessage(limit: MindMapLimit): string {
       )
     : t(
         "That's all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now.",
+      );
+}
+
+function useOutlineLimitMessage(limit: OutlineLimit): string {
+  const t = useExtracted();
+  const signUpRequired = useSignUpRequiredMessage();
+
+  if (limit.status === "slowDown") {
+    return t("Take a short break, then try again.");
+  }
+
+  if (limit.status === "signUpRequired") {
+    return signUpRequired;
+  }
+
+  if (limit.tier === "guest") {
+    return t(
+      "You've seen the topic you can see ahead of time without an account. Create a free account to see more.",
+    );
+  }
+
+  if (limit.tier === "plus") {
+    return t("That's all the topics you can see ahead of time today. You can see more tomorrow.");
+  }
+
+  return limit.period === "month"
+    ? t(
+        "That's all the topics you can see ahead of time this month. You can see more next month, or get Plus to keep going now.",
+      )
+    : t(
+        "That's all the topics you can see ahead of time today. You can see more tomorrow, or get Plus to keep going now.",
       );
 }
 
@@ -204,6 +278,18 @@ export function MindMapLimitNotice({
   ...props
 }: LimitNoticeProps & { limit: MindMapLimit }) {
   return <LimitNoticeBody {...props} limit={limit} message={useMindMapLimitMessage(limit)} />;
+}
+
+/**
+ * Says why a far topic's lessons aren't written early, the same way: a guest creates a free
+ * account, a free learner opens more when their cap starts over or gets Plus now, and Plus
+ * tomorrow. Topics already written never count, and the plan writes every topic as it gets close.
+ */
+export function OutlineLimitNotice({
+  limit,
+  ...props
+}: LimitNoticeProps & { limit: OutlineLimit }) {
+  return <LimitNoticeBody {...props} limit={limit} message={useOutlineLimitMessage(limit)} />;
 }
 
 /**

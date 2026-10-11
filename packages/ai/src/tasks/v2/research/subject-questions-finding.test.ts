@@ -28,12 +28,28 @@ describe(toSubjectQuestionsFinding, () => {
     });
   });
 
-  it("drops counts that miss a subject, don't add up to the exam's total or come from nowhere", () => {
-    const unknown = { edition: null, questions: [], source: null, status: "unknown" };
+  it("keeps the counts it has when a subject has none or two, never more than the exam's total", () => {
+    // The OAB's source counts ethics too, which this reading's 4th subject list lacks.
+    expect(
+      toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 4, total: 22 }),
+    ).toMatchObject({ questions: [8, 6, 6, null], status: "found" });
 
     expect(
-      toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 4, total: null }),
-    ).toStrictEqual(unknown);
+      toSubjectQuestionsFinding({
+        isSearched: searched,
+        raw: { ...raw, counts: [...raw.counts, { questions: 2, subject: 1 }] },
+        subjectCount: 3,
+        total: null,
+      }),
+    ).toMatchObject({ questions: [null, 6, 6], status: "found" });
+
+    expect(
+      toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 4, total: 18 }),
+    ).toMatchObject({ status: "unknown" });
+  });
+
+  it("drops counts for every subject that don't add up to the exam's total, or that come from nowhere", () => {
+    const unknown = { edition: null, questions: [], source: null, status: "unknown" };
 
     expect(
       toSubjectQuestionsFinding({ isSearched: searched, raw, subjectCount: 3, total: 80 }),
@@ -51,7 +67,7 @@ describe(toSubjectQuestionsFinding, () => {
     expect(
       toSubjectQuestionsFinding({
         isSearched: searched,
-        raw: { ...raw, counts: [...raw.counts, { questions: 2, subject: 1 }] },
+        raw: { ...raw, counts: [{ questions: 0, subject: 1 }] },
         subjectCount: 3,
         total: null,
       }),

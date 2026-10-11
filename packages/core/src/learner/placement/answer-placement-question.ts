@@ -1,17 +1,16 @@
 import "server-only";
-import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
-import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getItemAudienceFilter } from "../../library/items/item-field";
 import { gradeChoiceAnswer } from "../_utils/choice-items";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
-import { canGradeWithModel } from "../_utils/model-grading";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
+import { gradeTypedItemAnswer } from "../_utils/typed-grading";
+import { type TypedItem } from "../_utils/typed-items";
 import { recordLearnerAnswer } from "../record-learner-answer";
 import { type PlacementState, loadPlacementState } from "./_utils/load-placement-state";
-import { type PlacementItem, type TypedItem, parsePlacementItem } from "./_utils/placement-items";
+import { type PlacementItem, parsePlacementItem } from "./_utils/placement-items";
 import { type PlacementAnswerInput, getOwnLevel } from "./placement-contract";
 
 export type PlacementAnswerResult =
@@ -50,11 +49,9 @@ async function findGoalItem({
 }
 
 /**
- * A typed answer: code settles an accepted answer, and a fast model grades the rest one key point
- * at a time (not counted as small AI help: grading must stay right). Only an answer that states
- * every key point counts as right, so a vague one can't skip a phase. "I don't know yet" is never
- * graded. Placement asks each question once, so only a client answering one question over and over
- * gets past the day's model-graded answers, where only an accepted answer counts.
+ * A typed answer, graded by `gradeTypedItemAnswer`. "I don't know yet" is never graded. Placement
+ * asks each question once, so only a client answering one question over and over gets past the
+ * day's model-graded answers, where only an accepted answer counts.
  */
 async function gradeTyped({
   answer,
@@ -73,26 +70,8 @@ async function gradeTyped({
     return null;
   }
 
-  const { content } = item;
-
-  if (!(await canGradeWithModel({ question: { itemId: item.id }, userId }))) {
-    return (
-      matchTypedAnswer({ acceptedAnswers: content.acceptedAnswers ?? [], answer: answer.text })
-        .kind !== "none"
-    );
-  }
-
-  const { data } = await gradeTypedAnswer({
-    acceptedAnswers: content.acceptedAnswers,
-    analytics: { contentScope: "personal", distinctId: userId },
-    answer: answer.text,
-    keyPoints: content.keyPoints,
-    language: item.language,
-    question: content.context ? `${content.context}\n\n${content.question}` : content.question,
-    sampleAnswer: content.sampleAnswer,
-  });
-
-  return data.isCorrect;
+  const verdict = await gradeTypedItemAnswer({ item, text: answer.text, userId });
+  return verdict.isCorrect;
 }
 
 /** Whether the answer is right, or null when its shape doesn't fit the question. */
@@ -152,6 +131,7 @@ export async function answerPlacementQuestion({
   await recordLearnerAnswer({
     answer: input.answer,
     graded: { durationMs: input.durationMs, isCorrect },
+    isPlacement: true,
     itemId: item.id,
     language: item.language,
     purpose: "diagnostic",

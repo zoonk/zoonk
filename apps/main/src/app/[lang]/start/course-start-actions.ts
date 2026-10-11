@@ -5,6 +5,7 @@ import { startGoalWork } from "@/lib/goals/start-goal-work";
 import { CHAPTER_PARAM, getCourseStartHref } from "@/lib/public/public-hrefs";
 import { courseGoalStartInputSchema } from "@zoonk/core/goals/course-start-contract";
 import { startCourseGoal } from "@zoonk/core/goals/start-course";
+import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getLocale } from "next-intl/server";
@@ -23,21 +24,24 @@ export type CourseStartOutcome =
 
 /**
  * Starts a Library course (or one of its chapters) as the learner's goal: the same capability as
- * `POST /v1/courses/{courseId}/goals`. A new goal's run then writes ahead what its plan needs;
- * a run that couldn't start shows on the steps with a retry. The learner's goal already on the
- * course starts nothing new.
+ * `POST /v1/courses/{courseId}/goals`, with the level the start page asked (null for a quick
+ * test). A new goal's run then writes ahead what its plan needs; a run that couldn't start shows
+ * on the steps with a retry. The learner's goal already on the course starts nothing new.
  */
 export async function startCourseAction({
   chapterId,
   courseId,
+  level,
   timeZone,
 }: {
   chapterId?: string | null;
   courseId: string;
+  level?: OnboardingOwnLevel | null;
   timeZone?: string;
 }): Promise<CourseStartOutcome> {
   const input = courseGoalStartInputSchema.safeParse({
     chapterId: chapterId ?? undefined,
+    level,
     timeZone,
   });
 

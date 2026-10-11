@@ -66,6 +66,7 @@ The app shows one translation for text that appears in more than one catalog, so
 - "Answer feedback": "Retour sur ta réponse"
 - "Answer options": "Options de réponse"
 - "Correct!": "Bonne réponse !"
+- "Create your free account to continue.": "Crée ton compte gratuit pour continuer."
 - "Done:": "Fait :"
 - "Explain it more simply": "Explique-le plus simplement"
 - "Fix a mistake": "Corriger une erreur"

@@ -1,13 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
-import { teachingStep } from "../_test-utils/lesson-steps";
-import {
-  buildAdapters,
-  buildLesson,
-  renderLessonPlayer,
-  startedRun,
-} from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer, startedRun } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { teachingStep } from "../preview/preview-steps";
 
 /**
  * What a learner sees after answering, and the quiet controls around it: one why and one line on

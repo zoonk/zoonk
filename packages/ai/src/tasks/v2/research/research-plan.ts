@@ -29,7 +29,7 @@ const schema = z.object({
   searchTerms: z.array(z.string()),
 });
 
-export type ResearchPlan = z.infer<typeof schema>;
+export type ExamResearchPlan = z.infer<typeof schema>;
 
 /**
  * What research reads for a goal: an exam's official documents, a law's or a product's current
@@ -38,11 +38,16 @@ export type ResearchPlan = z.infer<typeof schema>;
  */
 export type ResearchTopic = Exclude<ChangingFactsTopic, "none"> | "syllabus";
 
-export type ResearchPlanParams = {
+/** What every research plan names, an exam's or a source's: what to search for and where. */
+export type ResearchSearchPlan = Pick<
+  ExamResearchPlan,
+  "country" | "language" | "name" | "officialDomains" | "queries" | "searchTerms"
+>;
+
+export type ExamResearchPlanParams = {
   goal: string;
   /** The understood fields of the goal (exam, date, role), as JSON. */
   details?: string | null;
-  topic: ResearchTopic;
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -59,7 +64,8 @@ function toDomain(value: string): string {
     .replace(/\/+$/u, "");
 }
 
-function normalizePlan(plan: ResearchPlan): ResearchPlan {
+/** Codes in their canonical case, bare domains, and no more domains, queries or terms than search uses. */
+export function normalizeResearchPlan<TPlan extends ResearchSearchPlan>(plan: TPlan): TPlan {
   return {
     ...plan,
     country: plan.country.trim().toUpperCase(),
@@ -73,26 +79,35 @@ function normalizePlan(plan: ResearchPlan): ResearchPlan {
   };
 }
 
+/** The learner's goal and what onboarding understood of it, marked as data, after today's date. */
+export function formatResearchGoal({
+  details,
+  goal,
+}: {
+  details?: string | null;
+  goal: string;
+}): string {
+  return `TODAY: ${new Date().toISOString().slice(0, 10)}
+
+${formatUntrustedInput({ DETAILS: details ?? "none", GOAL: goal })}`;
+}
+
 /**
- * Names what research looks for: the canonical exam (name and role, which are
- * its identity), law, product or subject, where its organizer publishes, and the
- * queries that find the current notice or the reference syllabi. It never
- * states facts about the exam itself.
+ * Names what research looks for when a goal prepares for an exam: the canonical
+ * exam (name and role, which are its identity), whether it's a teacher's own test,
+ * where its organizer publishes, and the queries that find the current notice. It
+ * never states facts about the exam itself. Laws, products and syllabi have their
+ * own plan (`generateSourceResearchPlan`).
  */
-export async function generateResearchPlan({
+export async function generateExamResearchPlan({
   analytics,
   details,
   goal,
   model = defaultModel,
   reasoning,
-  topic,
   useFallback = true,
-}: ResearchPlanParams) {
-  const userPrompt = `TOPIC: ${topic}
-TODAY: ${new Date().toISOString().slice(0, 10)}
-
-${formatUntrustedInput({ DETAILS: details ?? "none", GOAL: goal })}`;
-
+}: ExamResearchPlanParams) {
+  const userPrompt = formatResearchGoal({ details, goal });
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
@@ -106,12 +121,13 @@ ${formatUntrustedInput({ DETAILS: details ?? "none", GOAL: goal })}`;
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "research-plan",
   });
 
   return {
-    data: normalizePlan(result.output),
+    data: normalizeResearchPlan(result.output),
     provenance,
     systemPrompt,
     usage: result.usage,

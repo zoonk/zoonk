@@ -1,6 +1,7 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { LESSON_SPECS } from "../lesson-writer/lesson-specs";
+import { VISUAL_LESSON_SPECS } from "../lesson-writer/visual-lesson-specs";
 
 /**
  * Lessons the reviewer reads. The Portuguese ones are Sol's drafts from the
@@ -18,6 +19,114 @@ type BaseLesson = {
 };
 
 export const BASE_LESSONS = {
+  /**
+   * The writer's doorways lesson (8 Oct 2026), with its hook no longer naming a style before it's
+   * explained: a question whose options are pictures, each named only once the learner answers.
+   */
+  doorways: {
+    chapterTitle: "Reading buildings",
+    courseTitle: "Art history",
+    language: "en",
+    lesson: {
+      screens: [
+        {
+          image: null,
+          kind: "hookText",
+          text: "Around 1160, builders in Paris began pointing the arches over church doors. The shape carried the weight down slender columns, so churches could grow taller and lighter. A doorway's shape still tells you when it was built.",
+          visual: null,
+        },
+        {
+          exampleLineIdea: null,
+          explore: null,
+          image: null,
+          kind: "explanation",
+          text: "A round arch in thick walls with small openings points to **Romanesque**. A pointed arch on thin columns, reaching upward, points to **Gothic**. Twisting columns, sweeping curves and rich decoration point to **Baroque**. Start with the arch’s shape, then check the details around it.",
+          title: "Look at the arch first",
+          visual: null,
+        },
+        {
+          context: null,
+          image: null,
+          kind: "check",
+          options: [
+            {
+              isCorrect: false,
+              picture: {
+                alt: "A rounded stone arch sits deep within thick walls beside small openings.",
+                prompt:
+                  "One church doorway alone on a plain background: a clearly semicircular stone arch deeply set in thick, solid masonry, with small openings nearby. No text or labels.",
+              },
+              reason:
+                "You can see a round arch and thick stonework. The age of the stone may make it tempting, but a Gothic arch comes to a point.",
+              text: "Romanesque doorway",
+            },
+            {
+              isCorrect: true,
+              picture: {
+                alt: "A tall stone arch meets at a point above slender columns.",
+                prompt:
+                  "One church doorway alone on a plain background: a tall, clearly pointed stone arch supported by slender columns, with little decoration. No text or labels.",
+              },
+              reason:
+                "You can see the pointed arch rising above thin columns. Those shapes are the strongest clues here.",
+              text: "Gothic doorway",
+            },
+            {
+              isCorrect: false,
+              picture: {
+                alt: "Twisting columns frame an entrance covered with curved, elaborate carvings.",
+                prompt:
+                  "One church doorway alone on a plain background: twisting columns frame the entrance, with sweeping curves and abundant carved decoration above it; no pointed arch. No text or labels.",
+              },
+              reason:
+                "You might pick the most decorated doorway, but rich decoration and twisting columns point to Baroque, not Gothic.",
+              text: "Baroque doorway",
+            },
+          ],
+          question: "Which doorway is Gothic?",
+          visual: null,
+        },
+        {
+          context:
+            "Ana visits a church in Lisbon. Its doorway has a round arch set in thick walls.",
+          image: null,
+          kind: "check",
+          options: [
+            {
+              isCorrect: true,
+              picture: null,
+              reason:
+                "You used both visible clues. A round arch set in thick walls fits a Romanesque doorway.",
+              text: "Romanesque: the round arch and thick walls fit.",
+            },
+            {
+              isCorrect: false,
+              picture: null,
+              reason:
+                "You may connect Gothic with old churches, but age alone does not identify the doorway. Look for a pointed arch and thin columns instead.",
+              text: "Gothic: the church is old.",
+            },
+            {
+              isCorrect: false,
+              picture: null,
+              reason:
+                "You may notice that a round arch curves, but Baroque doorways stand out for sweeping decorative curves, often with twisting columns.",
+              text: "Baroque: the arch is curved.",
+            },
+          ],
+          question: "Which style does the doorway most likely show, and why?",
+          visual: null,
+        },
+      ],
+      summary: [
+        "Start with the arch’s shape, then check the details around a church doorway.",
+        "Romanesque doorways have round arches, thick walls and small openings; Gothic doorways have pointed arches and thin columns.",
+        "Baroque doorways often have twisting columns, sweeping curves and rich decoration.",
+      ],
+    },
+    level: "beginner",
+    spec: VISUAL_LESSON_SPECS["en-church-doorways-beginner"],
+  },
   eletron: {
     chapterTitle: "O átomo por dentro",
     courseTitle: "Física quântica",
@@ -44,6 +153,7 @@ export const BASE_LESSONS = {
         },
         {
           exampleLineIdea: "a imagem de um elétron desenhado como bolinha em uma aula ou vídeo",
+          explore: null,
           image: {
             alt: "Uma órbita de bolinha aparece riscada ao lado de uma região difusa chamada nuvem eletrônica.",
             prompt:
@@ -56,6 +166,7 @@ export const BASE_LESSONS = {
         },
         {
           exampleLineIdea: null,
+          explore: null,
           image: {
             alt: "A nuvem espalhada é comparada a uma nuvem comprimida, cuja compressão exige energia.",
             prompt:
@@ -73,18 +184,21 @@ export const BASE_LESSONS = {
           options: [
             {
               isCorrect: false,
+              picture: null,
               reason:
                 "Essa imagem parece explicar por que ele não cai, mas trata o elétron como uma bolinha em órbita. Ela não descreve sua nuvem.",
               text: "Porque ele gira rápido como um planeta.",
             },
             {
               isCorrect: true,
+              picture: null,
               reason:
                 "Você precisa considerar tanto a atração pelo núcleo quanto a energia necessária para confinar o elétron.",
               text: "Porque concentrar sua nuvem demais exige energia.",
             },
             {
               isCorrect: false,
+              picture: null,
               reason:
                 "Pode parecer que a atração precisa parar, mas ela continua. O custo de concentrar o elétron é que impede essa explicação simples.",
               text: "Porque o núcleo deixa de atraí-lo quando chega perto.",
@@ -95,6 +209,7 @@ export const BASE_LESSONS = {
         },
         {
           exampleLineIdea: "os átomos que formam a tela de um celular",
+          explore: null,
           image: {
             alt: "Uma nuvem ocupa uma região ao redor do núcleo, em vez de se concentrar num ponto central.",
             prompt:
@@ -112,18 +227,21 @@ export const BASE_LESSONS = {
           options: [
             {
               isCorrect: true,
+              picture: null,
               reason:
                 "Você corrige o sentido da atração e considera o custo de confinar o elétron.",
               text: "O núcleo atrai o elétron, mas concentrá-lo demais exige energia.",
             },
             {
               isCorrect: false,
+              picture: null,
               reason:
                 "Você acerta que há atração, mas volta à imagem de uma bolinha em órbita. O elétron ocupa uma nuvem, não uma trilha.",
               text: "O núcleo atrai o elétron, que escapa por girar como um planeta.",
             },
             {
               isCorrect: false,
+              picture: null,
               reason:
                 "A frase erra ao dizer que o núcleo empurra. Isso não significa que não exista atração.",
               text: "O núcleo não atrai nem empurra o elétron.",
@@ -188,24 +306,28 @@ export const BASE_LESSONS = {
           options: [
             {
               isCorrect: true,
+              picture: null,
               reason:
                 "Com o pedido fixo, o dobro de gente divide o tempo pela metade. Com a equipe fixa, o dobro de trabalho exige o dobro de tempo.",
               text: "Cai pela metade; depois dobra.",
             },
             {
               isCorrect: false,
+              picture: null,
               reason:
                 "É tentador pensar que qualquer aumento aumenta o prazo. Mas uma equipe maior termina o mesmo pedido mais rápido.",
               text: "Dobra nos dois casos.",
             },
             {
               isCorrect: false,
+              picture: null,
               reason:
                 "Uma equipe maior reduz o prazo, mas um pedido maior aumenta o tempo quando você mantém a equipe.",
               text: "Cai pela metade nos dois casos.",
             },
             {
               isCorrect: false,
+              picture: null,
               reason:
                 "Você trocou os efeitos: mais gente acelera o trabalho, enquanto mais trabalho leva mais tempo.",
               text: "Dobra; depois cai pela metade.",
@@ -218,6 +340,7 @@ export const BASE_LESSONS = {
         {
           exampleLineIdea:
             "O prazo de um pedido quando muda só a equipe ou só a quantidade encomendada.",
+          explore: null,
           image: {
             alt: "Com o pedido fixo, uma equipe maior leva menos tempo; com a equipe fixa, um pedido maior leva mais tempo.",
             prompt:
@@ -231,6 +354,7 @@ export const BASE_LESSONS = {
         {
           exampleLineIdea:
             "O tempo para concluir um serviço quando muda apenas o tamanho da equipe.",
+          explore: null,
           image: null,
           kind: "explanation",
           text: "Para o mesmo muro, uma equipe de 4 pessoas leva 6 dias. Se ela dobra para 8 pessoas, o prazo cai pela metade. Calcular um valor mudando só uma grandeza, com a obra fixa, é uma **regra de três simples**. Aqui, equipe e tempo têm relação inversa.",
@@ -303,6 +427,7 @@ export const BASE_LESSONS = {
         {
           exampleLineIdea:
             "O prazo de uma encomenda quando mudam o tamanho do pedido e o número de máquinas.",
+          explore: null,
           image: null,
           kind: "explanation",
           text: "Agora imagine um pedido maior feito por mais impressoras. Mais etiquetas aumentam o tempo; mais impressoras o reduzem. Isso é uma **regra de três composta**: parta do tempo inicial, multiplique pela razão entre as quantidades de etiquetas e pela razão inversa entre os números de impressoras.",
@@ -463,6 +588,7 @@ export const BASE_LESSONS = {
         },
         {
           exampleLineIdea: "A cold morning where the learner lives.",
+          explore: null,
           image: {
             alt: "A thermometer with an arrow going up past zero.",
             prompt: "A thermometer from −5 °C to 5 °C with an arrow going up past zero.",
@@ -521,6 +647,7 @@ export const BASE_LESSONS = {
         },
         {
           exampleLineIdea: null,
+          explore: null,
           image: null,
           kind: "explanation",
           text: "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
@@ -550,16 +677,19 @@ export const BASE_LESSONS = {
           options: [
             {
               isCorrect: true,
+              picture: null,
               reason: "Six degrees reach zero and three more go above it.",
               text: "3 °C",
             },
             {
               isCorrect: false,
+              picture: null,
               reason: "That's what you get by moving down 9 degrees instead of up.",
               text: "−15 °C",
             },
             {
               isCorrect: false,
+              picture: null,
               reason: "You added the numbers without their signs: the start is below zero.",
               text: "15 °C",
             },

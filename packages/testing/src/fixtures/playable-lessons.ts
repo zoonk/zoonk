@@ -57,13 +57,24 @@ export async function playableLessonFixture({
 /**
  * An English lesson for Portuguese speakers with its language pair: the word "rent" and the
  * sentence "How much is the rent?" with their translations, a note and a sound tip, and one
- * vocabulary, translation, reading, listening and "say it out loud" screen on them.
+ * vocabulary, translation, reading, listening and "say it out loud" screen on them. Another
+ * `language` and its translations make the same lesson for other readers, such as English ones.
  */
-export async function languageLessonFixture() {
+export async function languageLessonFixture({
+  language = "pt",
+  sentenceAudioUrl = null,
+  sentenceTranslation = "Quanto é o aluguel?",
+  wordTranslation = "aluguel",
+}: {
+  language?: string;
+  sentenceAudioUrl?: string | null;
+  sentenceTranslation?: string;
+  wordTranslation?: string;
+} = {}) {
   const organization = await organizationFixture();
 
   const [lesson, word, sentence] = await Promise.all([
-    libraryLessonFixture({ contentStatus: "completed", language: "pt", targetLanguage: "en" }),
+    libraryLessonFixture({ contentStatus: "completed", language, targetLanguage: "en" }),
     prisma.word.create({
       data: {
         organizationId: organization.id,
@@ -71,7 +82,7 @@ export async function languageLessonFixture() {
           create: {
             pronunciation: "rént",
             tip: "O r do começo é suave, não como em rato.",
-            userLanguage: "pt",
+            userLanguage: language,
           },
         },
         targetLanguage: "en",
@@ -80,6 +91,7 @@ export async function languageLessonFixture() {
     }),
     prisma.sentence.create({
       data: {
+        audioUrl: sentenceAudioUrl,
         organizationId: organization.id,
         sentence: "How much is the rent?",
         targetLanguage: "en",
@@ -94,7 +106,7 @@ export async function languageLessonFixture() {
         lessonId: lesson.id,
         note: "Não confunda com renda, que é income.",
         position: 0,
-        translation: "aluguel",
+        translation: wordTranslation,
         wordId: word.id,
         ...fixtureProvenance(),
       },
@@ -106,7 +118,7 @@ export async function languageLessonFixture() {
         lessonId: lesson.id,
         position: 0,
         sentenceId: sentence.id,
-        translation: "Quanto é o aluguel?",
+        translation: sentenceTranslation,
         translationDistractors: ["renda", "custa"],
         ...fixtureProvenance(),
       },
@@ -122,7 +134,7 @@ export async function languageLessonFixture() {
             language: "en",
             prompt: "Pergunte quanto é o aluguel.",
             targetText: "How much is the rent?",
-            translation: "Quanto é o aluguel?",
+            translation: sentenceTranslation,
           },
           kind: "spokenAnswer" as const,
           sentenceId: sentence.id,

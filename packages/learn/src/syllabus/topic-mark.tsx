@@ -7,10 +7,13 @@ import { StatusMark } from "../_components/status-mark";
 const MIN_RING_SHARE = 0.15;
 
 export type TopicMarkState =
-  | { kind: "notPlanned" | "studied" | "toStudy" }
+  | { kind: "known" | "notPlanned" | "studied" | "toStudy" }
   | { kind: "inProgress"; share: number };
 
-/** A topic's tick, as the subject's chapters mark theirs: studied, begun (a ring), to study, or out of the plan. */
+/**
+ * A topic's tick, as the subject's chapters mark theirs: studied or known, begun (a ring), to
+ * study, or out of the plan.
+ */
 export function TopicMark({
   mark,
   small = false,
@@ -18,11 +21,11 @@ export function TopicMark({
   mark: TopicMarkState | null;
   small?: boolean;
 }) {
-  if (mark?.kind === "studied" || mark?.kind === "toStudy") {
+  if (mark?.kind === "studied" || mark?.kind === "known" || mark?.kind === "toStudy") {
     return (
       <StatusMark
         className={cn(small && "size-4.5 [&_svg]:size-3")}
-        status={mark.kind === "studied" ? "done" : "todo"}
+        status={mark.kind === "toStudy" ? "todo" : "done"}
       />
     );
   }

@@ -6,13 +6,14 @@ import {
 } from "@zoonk/ui/components/generation-timeline";
 import { FastForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
 import { KindTile } from "../_components/kind-tile";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { TaskMainButton } from "../shell/task-frame";
+import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { QuestionsHeader } from "./questions-header";
 
 /**
@@ -44,13 +45,15 @@ function TestOutCard() {
  * header, and the test opens by itself once they exist (the host reads the page again). Opened
  * without a run (a link from elsewhere), it shows the test as one card and waits for the learner's
  * Start (or Enter), since loading a page never writes anything; a refusal says why with the one
- * thing to do.
+ * thing to do. Past a free exam plan's first week (`plusRequired`) the test comes with Plus: the
+ * card stays, with the free week's end and "See Plus" in place of Start.
  */
 export function TestOutPreparing({
   chapterTitle,
   closeHref,
   limit,
   onStart,
+  plusRequired = false,
   run,
   starting,
 }: {
@@ -58,6 +61,7 @@ export function TestOutPreparing({
   closeHref: string;
   /** The learner's small AI help doesn't cover writing it now. */
   limit: HelpLimit | null;
+  plusRequired?: boolean;
   onStart: () => void;
   /** The run writing the questions, once the learner asked for them. */
   run: GenerationRun | null;
@@ -94,9 +98,18 @@ export function TestOutPreparing({
             </div>
 
             <div className="flex flex-col gap-2 pt-6">
-              {limit ? (
+              {plusRequired && (
+                <>
+                  <FreeWeekOverNotice cta={false} />
+                  <TaskMainLink href={routes.upgrade}>{t("See Plus")}</TaskMainLink>
+                </>
+              )}
+
+              {!plusRequired && limit && (
                 <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
-              ) : (
+              )}
+
+              {!plusRequired && !limit && (
                 <TaskMainButton busy={starting} onClick={onStart}>
                   {starting ? t("Starting…") : t("Start the test")}
                 </TaskMainButton>

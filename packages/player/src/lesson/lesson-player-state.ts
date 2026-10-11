@@ -91,6 +91,7 @@ export type LessonPlayerAction =
   | { result: LessonStepCheckResult; stepId: string; type: "checkConfirmed" }
   | { direction: "next" | "prev"; type: "navigate" }
   | { kinds: PlayableLibraryStep["kind"][]; type: "skipKinds" }
+  | { stepIds: string[]; type: "skipSteps" }
   | { refusal: LessonRunRefusal; type: "runRefused" }
   | { result: LessonPlayerCompletionState["result"]; type: "completionSaved" }
   | {

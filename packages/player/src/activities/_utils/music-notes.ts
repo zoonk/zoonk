@@ -1,7 +1,6 @@
 import {
   CHORD_QUALITIES,
   type ChordQuality,
-  type IntervalName,
   chordIntervals,
   chordPitchClasses,
   pitchClass,
@@ -19,22 +18,6 @@ const SHARP_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#",
 
 /** Chord roots the way musicians usually write them: Eb and Bb, but F#. */
 const ROOT_NAMES = ["C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"] as const;
-
-/** Letters above the root for each interval: a third is two letters up, a fifth four. */
-const INTERVAL_LETTER_STEPS: Record<IntervalName, number> = {
-  M2: 1,
-  M3: 2,
-  M6: 5,
-  M7: 6,
-  P4: 3,
-  P5: 4,
-  P8: 7,
-  TT: 3,
-  m2: 1,
-  m3: 2,
-  m6: 5,
-  m7: 6,
-};
 
 /** Chords stack thirds, so each tone above the root is two more letters up (C, E, G, B). */
 const LETTERS_PER_THIRD = 2;
@@ -116,17 +99,6 @@ export function spellChord(root: string, quality: ChordQuality): string[] {
   ];
 }
 
-/** The note an interval above the root lands on, spelled from the root: a fifth above C is G. */
-export function spellInterval(root: string, interval: IntervalName): string {
-  const name = rootName(root);
-
-  return spellAbove({
-    distance: semitones(interval),
-    letterSteps: INTERVAL_LETTER_STEPS[interval],
-    root: name,
-  });
-}
-
 /** A chord voiced upward from its root, as MIDI numbers: C4 minor is 60, 63, 67. */
 export function chordMidis(root: string, quality: ChordQuality): number[] {
   const base = noteToMidi(root) ?? 0;
@@ -144,21 +116,6 @@ export function nameChord(
   ).find(({ quality, root }) => JSON.stringify(chordPitchClasses(root, quality)) === target);
 
   return match ?? null;
-}
-
-/** Short chord symbols, the way they're written above lyrics: C, Cm, C7, Cmaj7. */
-const CHORD_SUFFIXES: Record<ChordQuality, string> = {
-  augmented: "aug",
-  diminished: "dim",
-  dominant7: "7",
-  major: "",
-  major7: "maj7",
-  minor: "m",
-  minor7: "m7",
-};
-
-export function chordSymbol(root: string, quality: ChordQuality): string {
-  return `${rootName(root)}${CHORD_SUFFIXES[quality]}`;
 }
 
 /** German names B natural "H" and B flat "B", as learners there read them. */

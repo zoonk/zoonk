@@ -13,8 +13,8 @@ function isReduce(operation: { kind: string }): operation is ReduceOperation {
 
 /**
  * An area the learner wants less of is never in a focus, which would give it more time: a model
- * may name every area of "mais Processo Civil e menos Filosofia" in the focus. A focus on part of
- * an area wins over less time for the whole area ("mais biologia, física pode ser menos" in a
+ * may name every area of "more Civil Procedure and less Philosophy" in the focus. A focus on part of
+ * an area wins over less time for the whole area ("more biology, physics can be less" in a
  * sciences area): the part's focus already gives the rest less. A change left with no area is
  * dropped; every other change passes through as it is.
  */

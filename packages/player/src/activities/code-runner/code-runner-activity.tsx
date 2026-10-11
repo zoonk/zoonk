@@ -27,7 +27,8 @@ const DEFAULT_FILE_NAMES = { javascript: "main.js", python: "main.py" } as const
  * Real code in the browser: the learner edits the lines that are theirs, runs the program and
  * compares what it prints with what it should print. The output of the last run is the answer,
  * so editing after a run waits for the next run. Likely mistakes explain themselves by what
- * they print; errors point at their line.
+ * they print; errors point at their line. Explored on an explanation screen, the program starts
+ * solved and shows only what it prints.
  */
 /** A saved output from an earlier visit, shown as the last run. */
 function runFromAnswer(answer: CodeRunnerProps["answer"]): ProgramRun | null {
@@ -47,12 +48,14 @@ export function CodeRunnerActivity({
   const locale = useLocale();
   const { fields } = content;
   const isChecked = phase === "checked";
+  const isExploring = phase === "explore";
   const runtime = useSandboxRuntime(fields.language);
   const [edits, setEdits] = useState<Record<number, string>>({});
   const [run, setRun] = useState<ProgramRun | null>(() => runFromAnswer(answer));
   const [isRunning, setIsRunning] = useState(false);
   const [isStale, setIsStale] = useState(false);
-  const program = programWithEdits(fields.starterCode, edits);
+  // Explored, the program starts solved: there's nothing to fix, only code to run and change.
+  const program = programWithEdits(isExploring ? fields.solution : fields.starterCode, edits);
   const lines = program.split("\n");
   const highlighted = highlightCode(program, fields.language);
   const editable = new Set(fields.editableLines);
@@ -60,7 +63,9 @@ export function CodeRunnerActivity({
   const matches = run !== null && sameOutput(run.output, fields.expectedOutput);
 
   const mistake =
-    run && !matches ? (mistakeFor(run.output, fields.mistakes)?.feedback ?? null) : null;
+    run && !matches && !isExploring
+      ? (mistakeFor(run.output, fields.mistakes)?.feedback ?? null)
+      : null;
 
   async function handleRun() {
     if (isChecked || isRunning) {
@@ -107,13 +112,15 @@ export function CodeRunnerActivity({
           <p className="text-muted-foreground font-mono text-xs">
             {fields.fileName ?? DEFAULT_FILE_NAMES[fields.language]}
           </p>
-          <p className="text-muted-foreground flex items-center gap-1 text-xs">
-            <Pencil aria-hidden="true" className="size-3" />
-            {t("{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}", {
-              count: fields.editableLines.length,
-              lines: yours,
-            })}
-          </p>
+          {!isExploring && (
+            <p className="text-muted-foreground flex items-center gap-1 text-xs">
+              <Pencil aria-hidden="true" className="size-3" />
+              {t("{count, plural, one {Line {lines} is yours} other {Lines {lines} are yours}}", {
+                count: fields.editableLines.length,
+                lines: yours,
+              })}
+            </p>
+          )}
         </div>
 
         <ActivityCodeBlock aria-label={t("Code")} role="group">
@@ -158,7 +165,7 @@ export function CodeRunnerActivity({
       </div>
 
       <CodeRunnerOutput
-        expectedOutput={fields.expectedOutput}
+        expectedOutput={isExploring ? null : fields.expectedOutput}
         isStale={isStale}
         language={fields.language}
         matches={matches}
@@ -179,10 +186,19 @@ export function CodeRunnerActivity({
       )}
 
       <ActivityTextAlternative>
-        {t(
-          "A {language} program of {count} lines. Edit your lines, run it, and compare its output with the expected output: {expected}",
-          { count: String(lines.length), expected: fields.expectedOutput, language: runtimeName },
-        )}
+        {isExploring
+          ? t("A {language} program of {count} lines. Run it to see what it prints.", {
+              count: String(lines.length),
+              language: runtimeName,
+            })
+          : t(
+              "A {language} program of {count} lines. Edit your lines, run it, and compare its output with the expected output: {expected}",
+              {
+                count: String(lines.length),
+                expected: fields.expectedOutput,
+                language: runtimeName,
+              },
+            )}
       </ActivityTextAlternative>
     </ActivityCanvas>
   );

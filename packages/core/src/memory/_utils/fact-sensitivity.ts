@@ -10,7 +10,6 @@ import { getMemoryCacheTag } from "../../cache/tags";
 async function checkSensitivity(fact: MemoryFact): Promise<void> {
   const { data, error } = await safeAsync(() =>
     gateMemoryFact({
-      allowSensitive: true,
       candidate: { category: fact.category, evidence: fact.statement, statement: fact.statement },
     }),
   );

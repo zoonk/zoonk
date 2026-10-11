@@ -2,7 +2,7 @@ import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { namesMatch } from "../exams/_utils/name-match";
-import { isWrittenSection } from "../exams/mocks/mock-plan";
+import { isWrittenSection } from "../exams/mocks/written-subject";
 import { getExamScale } from "../exams/scoring/exam-scales";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { getSkillArea } from "../plans/planner/graph-areas";
@@ -18,7 +18,7 @@ const FREE_RESPONSE_SKILLS = 3;
  */
 const CLASS_TEST_WRITTEN_KINDS: ReadonlySet<string> = new Set(["essay", "shortAnswer"]);
 
-/** Shorter words ("de", "da", "the") say nothing about what a question is about. */
+/** Shorter words ("of", "the", "and") say nothing about what a question is about. */
 const MIN_MATCH_WORD_LENGTH = 4;
 
 type GraphSkill = ReturnType<typeof parsePlanGraph>["skills"][number];
@@ -28,13 +28,13 @@ type ExamStructure = ReturnType<typeof readBlueprintContent>["structure"];
 /** A skill to write a written question for, and the question's form when the exam names one. */
 type WrittenPick = { skill: GraphSkill; style: string | null };
 
-/** An area named for a written part of the exam ("Prova discursiva"), in graphs older than kinds. */
+/** An area named for a written part of the exam (a discursive test, an essay or a legal brief, by its Portuguese name), in graphs older than kinds. */
 const WRITTEN_AREA_NAME = /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica/iu;
 
 /**
  * The plan's skills an exam's written test practices: an AP goal's first phase (its free-response
  * questions span the course), or the skills of the areas named for the exam's written parts (a
- * Cebraspe "Prova discursiva", a redação). Empty for exams answered only in objective questions.
+ * Cebraspe discursive test, ENEM's essay). Empty for exams answered only in objective questions.
  */
 function findWrittenSkills({
   blueprint,
@@ -82,7 +82,7 @@ function toWords(text: string): Set<string> {
 
 /**
  * The skill an announced question is about: the one whose name shares the most words with it
- * ("uma dissertativa sobre osmose" is the membrane transport skill that names osmosis), the most
+ * ("an essay on osmosis" is the membrane transport skill that names osmosis), the most
  * weighted on a tie.
  */
 function findQuestionSkill({
@@ -105,7 +105,7 @@ function findQuestionSkill({
 
 /**
  * A class test read from the learner's own material: each written question the material
- * announces ("vai ter uma dissertativa sobre osmose", a table of organelles to complete) is
+ * announces ("there will be an essay on osmosis", a table of organelles to complete) is
  * practiced on the skill it's about, in that question's own form, so the days before the test
  * rehearse the questions the teacher said would come, not only multiple choice.
  */
@@ -149,7 +149,7 @@ function pickWritten({
  * The skills an exam goal gets essay questions for, so its essay block practices the exam's
  * written answers graded by their rubric: an AP goal's first-phase skills (College Board doesn't
  * allow reusing its questions, so they're written new, with scoring guidelines whose rows carry
- * their own points), the skills of an exam's written test (a discursive test, a peça técnica)
+ * their own points), the skills of an exam's written test (a discursive test, the OAB's legal brief)
  * in the notice's own tasks, or a class test's announced written questions, each in its own form.
  * The most weighted skills first, skipping skills that already have one for this exam (questions
  * are shared). Empty for other goals.

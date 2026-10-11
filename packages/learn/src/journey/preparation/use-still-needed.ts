@@ -19,7 +19,11 @@ export type StillNeededItem = {
   plusRequired: boolean;
 };
 
-/** Skills still below their bar, with the plan's time for them. */
+/**
+ * Skills still below their bar, with the plan's time for them. No count: Coverage already counts
+ * the skills studied, and a second count of another kind ("29 to go" beside "3 of 35") read as a
+ * contradiction.
+ */
 function useSkillsItem(stillNeeded: ProgressView["stillNeeded"]): StillNeededItem {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -27,14 +31,9 @@ function useSkillsItem(stillNeeded: ProgressView["stillNeeded"]): StillNeededIte
 
   return {
     detail:
-      left === 0
-        ? null
-        : [
-            t("{count, plural, one {# skill to go} other {# skills to go}}", { count: left }),
-            minutes > 0 && t("about {time} in your plan", { time: formatDuration(minutes) }),
-          ]
-            .filter(Boolean)
-            .join(" · "),
+      left > 0 && minutes > 0
+        ? t("About {time} in your plan", { time: formatDuration(minutes) })
+        : null,
     done: left === 0,
     key: "skills",
     kind: "lesson",

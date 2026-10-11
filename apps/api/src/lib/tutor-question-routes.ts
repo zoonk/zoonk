@@ -10,6 +10,7 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { createLessonQuestion } from "@zoonk/core/lesson-questions/create";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
+import { wordTutorSuggestion } from "@zoonk/player/tutor/suggestion-words";
 import { type NextRequest, NextResponse } from "next/server";
 import { type z } from "zod";
 
@@ -74,7 +75,11 @@ export function tutorQuestionRoutes<TPath>({
       return errors.validation(body.error);
     }
 
-    const result = await createLessonQuestion({ input: body.data, target: toTarget(path.data) });
+    const result = await createLessonQuestion({
+      input: body.data,
+      target: toTarget(path.data),
+      wordSuggestion: wordTutorSuggestion,
+    });
 
     if (result.status === "invalidContext") {
       return errors.unprocessableEntity("Question context is not available here");

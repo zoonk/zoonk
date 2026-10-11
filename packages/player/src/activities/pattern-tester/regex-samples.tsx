@@ -20,7 +20,7 @@ function MarkedSample({ result, shouldMatch }: { result: SampleResult; shouldMat
       <mark
         className={cn(
           "rounded px-px",
-          shouldMatch ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive",
+          shouldMatch ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
         )}
       >
         {sample.slice(match.start, match.end)}

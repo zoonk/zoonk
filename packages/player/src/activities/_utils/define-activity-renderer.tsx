@@ -8,15 +8,15 @@ import { type ActivityBadgeKind } from "../_components/activity-badge";
 import { type ActivityRenderer, type AnyActivityRendererProps } from "../activity-renderer";
 
 export type ActivityRendererEntry<TId extends ActivityTemplateId> = {
-  /** The badge above the prompt, naming what the learner does. */
-  badge: ActivityBadgeKind;
+  /** The badge above the prompt, naming what the learner does on this screen. */
+  badge: (content: ActivityStepContent) => ActivityBadgeKind;
   /** Loaded on first use, so a lesson only downloads the templates it shows. */
   Canvas: LazyExoticComponent<ComponentType<AnyActivityRendererProps>>;
   /**
-   * The check sits above the canvas, for predict-first templates whose canvas shows what
+   * Whether the check sits above the canvas, for predict-first screens whose canvas shows what
    * happens after the guess. Otherwise it follows the canvas.
    */
-  checkFirst: boolean;
+  checkFirst: (content: ActivityStepContent) => boolean;
   template: TId;
 };
 
@@ -42,12 +42,13 @@ function isTemplate<TId extends ActivityTemplateId>(
  */
 export function defineActivityRenderer<TId extends ActivityTemplateId>({
   badge,
-  checkFirst = false,
+  checkFirst = () => false,
   load,
   template,
 }: {
-  badge: ActivityBadgeKind;
-  checkFirst?: boolean;
+  /** One badge for every screen, or one per screen for an engine whose modes differ. */
+  badge: ActivityBadgeKind | ((content: ActivityContentFor<TId>) => ActivityBadgeKind);
+  checkFirst?: (content: ActivityContentFor<TId>) => boolean;
   load: () => Promise<ActivityRenderer<TId>>;
   template: TId;
 }): ActivityRendererEntry<TId> {
@@ -62,5 +63,19 @@ export function defineActivityRenderer<TId extends ActivityTemplateId>({
     return { default: TemplateCanvas };
   });
 
-  return { Canvas, badge, checkFirst, template };
+  function badgeFor(content: ActivityStepContent): ActivityBadgeKind {
+    if (typeof badge === "string") {
+      return badge;
+    }
+
+    // The registry only hands a renderer its own template's content; the guard narrows the type.
+    return isTemplate(content, template) ? badge(content) : "explore";
+  }
+
+  return {
+    Canvas,
+    badge: badgeFor,
+    checkFirst: (content) => isTemplate(content, template) && checkFirst(content),
+    template,
+  };
 }

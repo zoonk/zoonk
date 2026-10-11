@@ -18,7 +18,8 @@ describe(listGoalFieldItemTargets, () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
 
-    const [covered, needed, later, otherField] = await Promise.all([
+    const [covered, needed, partly, later, otherField] = await Promise.all([
+      skillFixture(),
       skillFixture(),
       skillFixture(),
       skillFixture(),
@@ -32,6 +33,7 @@ describe(listGoalFieldItemTargets, () => {
           skills: [
             planSkill({ phase: 0, skillId: covered.id }),
             planSkill({ phase: 0, skillId: needed.id }),
+            planSkill({ phase: 0, skillId: partly.id }),
             planSkill({ phase: 0, skillId: otherField.id }),
             planSkill({ phase: 1, skillId: later.id }),
           ],
@@ -40,12 +42,21 @@ describe(listGoalFieldItemTargets, () => {
       ...Array.from({ length: FIELD_ITEMS_PER_SKILL }, () =>
         itemFixture({ field: "nursing", skillId: covered.id }),
       ),
+      // One question short of enough: each skill's own questions count, not the field's in all.
+      ...Array.from({ length: FIELD_ITEMS_PER_SKILL - 1 }, () =>
+        itemFixture({ field: "nursing", skillId: partly.id }),
+      ),
       itemFixture({ field: "law", skillId: otherField.id }),
     ]);
 
     const targets = await listGoalFieldItemTargets({ field: "nursing", goalId: goal.id });
 
-    expect(targets.map((target) => target.skill.id)).toStrictEqual([needed.id, otherField.id]);
+    expect(targets.map((target) => target.skill.id)).toStrictEqual([
+      needed.id,
+      partly.id,
+      otherField.id,
+    ]);
+
     expect(targets.every((target) => target.field === "nursing")).toBe(true);
   });
 });

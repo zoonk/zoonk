@@ -1,6 +1,6 @@
 import { type PlanItem } from "@zoonk/db";
 import { countSkillStates } from "../../../learner/mastery-state";
-import { findNextItem } from "../../../plans/_utils/plan-phase-views";
+import { isWorkFinished } from "../../../plans/_utils/work-progress";
 import { type GoalMap } from "../../_utils/goal-map";
 import { type MapArea, type MapSkill } from "../../map/map-contract";
 
@@ -15,6 +15,10 @@ function uniqueSkills(skills: readonly MapSkill[]): MapSkill[] {
   );
 }
 
+/**
+ * A chapter's state from its own lessons: done once they all are, else current when it holds the
+ * lesson up next (`GoalMap.upNextItemId`, the one Today opens), else upcoming.
+ */
 function getItemAreaState({
   chapterId,
   map,
@@ -25,11 +29,35 @@ function getItemAreaState({
   const learnItems = map.items.filter((item) => LEARN_KINDS.has(item.kind));
   const inChapter = learnItems.filter((item) => item.chapterId === chapterId);
 
-  if (inChapter.every((item) => item.status !== "todo")) {
+  if (inChapter.every((item) => isWorkFinished(item.status))) {
     return "done";
   }
 
-  return findNextItem(learnItems)?.chapterId === chapterId ? "current" : "upcoming";
+  const upNext = learnItems.find((item) => item.id === map.upNextItemId);
+  return upNext?.chapterId === chapterId ? "current" : "upcoming";
+}
+
+/**
+ * A chapter's state from its own lessons, not its area's: the map files a skill under the chapter
+ * that teaches it first, so a chapter whose skill goes on in a later chapter has that chapter's
+ * lessons in its area. Its area wasn't done while the learner had finished every lesson it has
+ * (Lucas's first chapter offered no mind map), and was current while the lesson Today opens sat in
+ * the later chapter. A chapter without lessons of its own keeps its area's state.
+ */
+function getChapterState({
+  area,
+  chapterId,
+  map,
+}: {
+  area: MapArea;
+  chapterId: string;
+  map: GoalMap;
+}): MapArea["state"] {
+  const own = map.items.filter(
+    (item) => LEARN_KINDS.has(item.kind) && item.chapterId === chapterId,
+  );
+
+  return own.length === 0 ? area.state : getItemAreaState({ chapterId, map });
 }
 
 /**
@@ -80,7 +108,12 @@ export function findChapterArea({
   const position = index + 1;
 
   if (area) {
-    return { counts: area.counts, position, skills: area.skills, state: area.state };
+    return {
+      counts: area.counts,
+      position,
+      skills: area.skills,
+      state: getChapterState({ area, chapterId, map }),
+    };
   }
 
   return { ...buildItemArea({ chapterId, map }), position };

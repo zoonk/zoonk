@@ -6,6 +6,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   NET_SCORED_EXAM_STRUCTURE,
   SESSION_NOW,
@@ -18,7 +19,6 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { getStudySessionSummary } from "./get-study-session-summary";
-import { getTodayStudySession } from "./get-today-study-session";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 

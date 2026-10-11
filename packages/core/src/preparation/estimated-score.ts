@@ -20,8 +20,43 @@ export type EstimatedScore = {
 /** A 90% interval around the share of right answers is never narrower than 3 points each side. */
 const MIN_HALF_WIDTH = 0.03;
 
+/**
+ * The questions the recent mocks need between them before a score is estimated: with fewer, the
+ * 90% range spans 30 points or more (a 7 of 8 read as 68% to 100%), which says nothing and looks
+ * like a promise.
+ */
+const MIN_ESTIMATE_QUESTIONS = 30;
+
 function toPercent(value: number): number {
   return Math.round(Math.min(1, Math.max(0, value)) * 100);
+}
+
+/** The last three mocks with questions, newest first: what an estimate reads. */
+function getRecentMocks(mocks: readonly MockResult[]): MockResult[] {
+  return mocks
+    .filter((mock) => mock.total > 0)
+    .toSorted((a, b) => b.endedAt.getTime() - a.endedAt.getTime())
+    .slice(0, RECENT_MOCKS);
+}
+
+/** The questions the last three mocks asked between them, as the ledger counts their answers. */
+export function countRecentQuestions(mocks: readonly MockResult[]): number {
+  return getRecentMocks(mocks).reduce((sum, mock) => sum + mock.total, 0);
+}
+
+/**
+ * What the goal's last three mocks hold between them: their questions, and whether every one sat a
+ * single subject, which says how that subject goes, never the exam.
+ */
+export type RecentMockEvidence = { questions: number; subjectOnly: boolean };
+
+/**
+ * Whether the recent mocks say enough to estimate the exam's score: `MIN_ESTIMATE_QUESTIONS`
+ * between them, and not one subject alone. Until then the score waits, and the learner hears what
+ * it waits for.
+ */
+export function canEstimateScore(evidence: RecentMockEvidence): boolean {
+  return evidence.questions >= MIN_ESTIMATE_QUESTIONS && !evidence.subjectOnly;
 }
 
 /**
@@ -29,11 +64,7 @@ function toPercent(value: number): number {
  * before a first mock, and the range narrows as more mock questions are answered.
  */
 export function estimateScoreRange(mocks: readonly MockResult[]): EstimatedScore | null {
-  const recent = mocks
-    .filter((mock) => mock.total > 0)
-    .toSorted((a, b) => b.endedAt.getTime() - a.endedAt.getTime())
-    .slice(0, RECENT_MOCKS);
-
+  const recent = getRecentMocks(mocks);
   const total = recent.reduce((sum, mock) => sum + mock.total, 0);
 
   if (total === 0) {

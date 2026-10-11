@@ -90,6 +90,7 @@ export async function generateSearchTerms({
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "library-search-terms",
   });

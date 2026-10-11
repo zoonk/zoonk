@@ -1,19 +1,13 @@
 "use client";
 
 import { LessonPlayerClient } from "@/app/[lang]/learn/[lessonId]/lesson-player-client";
-import { CourseStartFailureNote } from "@/components/public/course-start-failure";
-import { useCourseStart } from "@/components/public/use-course-start";
 import { useRouter } from "@/i18n/navigation";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
-import { getGoalStartHref } from "@/lib/public/public-hrefs";
+import { getCourseStartHref, getGoalStartHref } from "@/lib/public/public-hrefs";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { ExplainEnding } from "@zoonk/learn/explain/ending";
-import {
-  ExplainDeeperButton,
-  ExplainDeeperLink,
-  ExplainWaiting,
-} from "@zoonk/learn/explain/waiting";
+import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
 import { useExtracted, useLocale } from "next-intl";
 import { type ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import { retryExplanationAction } from "./explain-actions";
@@ -42,33 +36,9 @@ function getHomeHref(explanation: ExplanationView) {
   return explanation.hasStudyGoal ? "/today" : "/start";
 }
 
-type GoFurtherCourse = NonNullable<ExplanationView["goFurther"]["course"]>;
-
 /**
- * "Build a {course} plan" in one tap: the subject's Overview course becomes the learner's goal
- * (no goal to type or confirm), and they go on to what onboarding still asks. A refusal or
- * failure says so under the row, with what to do about it.
- */
-function CourseDeeperStart({ course }: { course: GoFurtherCourse }) {
-  const t = useExtracted();
-  const { failure, pending, start } = useCourseStart({ courseId: course.id });
-
-  return (
-    <div className="flex flex-col gap-3">
-      <ExplainDeeperButton
-        description={t("Build a {course} plan", { course: course.title })}
-        onClick={start}
-        pending={pending}
-      />
-
-      <CourseStartFailureNote className="max-w-none" failure={failure} onRetry={start} />
-    </div>
-  );
-}
-
-/**
- * The explanation's title as words inside a sentence: "como funciona a inflação" for "Como
- * funciona a inflação", leaving an acronym ("PIB") as it is.
+ * The explanation's title as words inside a sentence: "how inflation works" for "How
+ * inflation works", leaving an acronym ("GDP") as it is.
  */
 function toTopic(title: string): string {
   const topic = title.trim().replace(/[?!.]+$/u, "");
@@ -78,16 +48,22 @@ function toTopic(title: string): string {
 }
 
 /**
- * "I want to learn this in depth": the Overview course's plan in one tap, or, before a course is
- * linked (or when the subject has none), onboarding with the topic as the goal, said as the
- * learner would say it ("Quero entender a fundo como funciona a inflação").
+ * "I want to learn this in depth": the Overview course's start page, which asks the learner's
+ * level before anything is created, or, before a course is linked (or when the subject has none),
+ * onboarding with the topic as the goal, said as the learner would say it ("I want to understand
+ * how inflation works in depth").
  */
 function DeeperStart({ explanation }: { explanation: ExplanationView }) {
   const t = useExtracted();
   const { course } = explanation.goFurther;
 
   if (course) {
-    return <CourseDeeperStart course={course} />;
+    return (
+      <ExplainDeeperLink
+        description={t("Build a plan for {course}", { course: course.title })}
+        href={getCourseStartHref({ courseId: course.id })}
+      />
+    );
   }
 
   return (

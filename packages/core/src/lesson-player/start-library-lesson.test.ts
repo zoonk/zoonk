@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
@@ -13,27 +12,19 @@ import {
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
-import { RATE_LIMIT_RETRY_SECONDS } from "../entitlements/limits";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
 import { startLibraryLesson } from "./start-library-lesson";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 // PostHog is an external service; the mock records what would leave the server.
 vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 const TIME_ZONE = "America/Sao_Paulo";
 
@@ -42,10 +33,6 @@ function start(lessonId: string, studySessionId?: string) {
 }
 
 describe(startLibraryLesson, () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("needs a session", async () => {
     mockSession(null);
 
@@ -342,22 +329,6 @@ describe(startLibraryLesson, () => {
     ).resolves.toBe(0);
   });
 
-  it("still slows down starting the guest's own quick explanation over and over", async () => {
-    const { lesson, user } = await setupPlayableLesson({ guest: true });
-    const goal = await goalFixture({ kind: "explain", userId: user.id });
-    const plan = await planFixture({ goalId: goal.id });
-
-    await planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id });
-    vi.mocked(isRateLimited).mockResolvedValue(true);
-
-    await expect(start(lesson.id)).resolves.toStrictEqual({
-      retryAfterSeconds: RATE_LIMIT_RETRY_SECONDS,
-      status: "slowDown",
-    });
-
-    expect(isRateLimited).toHaveBeenCalledWith(expect.objectContaining({ rule: "lesson-start" }));
-  });
-
   it("counts an explanation lesson from someone else's goal like any lesson", async () => {
     const [{ lesson, user }, owner] = await Promise.all([
       setupPlayableLesson({ guest: true }),
@@ -376,8 +347,14 @@ describe(startLibraryLesson, () => {
   });
 
   it("asks the learner to slow down when fair use spaces starts out", async () => {
-    const { lesson } = await setupPlayableLesson();
-    vi.mocked(isRateLimited).mockResolvedValue(true);
+    const { lesson, user } = await setupPlayableLesson();
+
+    await Promise.all([
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+      }),
+      usageRecordsFixture({ count: 200, kind: "lessonStart", userId: user.id }),
+    ]);
 
     await expect(start(lesson.id)).resolves.toMatchObject({ status: "slowDown" });
   });

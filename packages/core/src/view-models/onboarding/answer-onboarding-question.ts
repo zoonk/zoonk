@@ -1,72 +1,75 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { pickExamOptions } from "../../exams/choices/choose-exam-option";
 import { splitDailyBudget } from "../../goals/daily-budget";
 import { type GoalUpdateInput } from "../../goals/goal-contract";
 import { updateGoal } from "../../goals/update-goal";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { scheduleMemoryUpdate } from "../../memory/update-memory-from-activity";
-import { updateMemorySettings } from "../../memory/update-memory-settings";
-import { type LearningProfileUpdateInput } from "../../profile/learning-profile-contract";
+import { settleNewPlan } from "../../plans/_utils/recommended-bases";
 import { updateLearningProfile } from "../../profile/update-learning-profile";
 import { type OnboardingAnswerInput } from "./onboarding-contract";
 import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "./onboarding-steps";
 
-export type OnboardingAnswerResult = {
-  status: "accountDeleted" | "invalid" | "notFound" | "saved" | "unauthorized";
-};
+export type OnboardingAnswerResult = { status: "invalid" | "notFound" | "saved" | "unauthorized" };
 
-function getProfileUpdate(input: OnboardingAnswerInput): LearningProfileUpdateInput | null {
-  switch (input.question) {
-    case "age":
-      return input.birth ? { birth: input.birth } : null;
-    case "buddy":
-      return { buddy: input.buddy };
-    case "followUps":
-    case "level":
-    case "memory":
-    case "placement":
-    case "purpose":
-    case "reason":
-    case "role":
-    case "schedule":
-    case "target":
-    case "targetDate":
-      return null;
-    default:
-      return null;
-  }
-}
-
-/**
- * Age, memory and buddy belong to the learner, not the goal, so they're saved on the profile. The
- * memory answer is the learner's own choice, the same as the switch in Settings; a guardian's
- * "memory off" still wins over a yes.
- */
-async function saveProfileAnswer(
-  input: OnboardingAnswerInput,
-): Promise<"accountDeleted" | "invalid" | "saved"> {
-  if (input.question === "memory") {
-    const result = await updateMemorySettings({ enabled: input.enabled });
-    return result.status === "updated" ? "saved" : "invalid";
-  }
-
-  const update = getProfileUpdate(input);
-
-  if (!update) {
+/** The buddy belongs to the learner, not the goal, so it's saved on the profile. */
+async function saveProfileAnswer(input: OnboardingAnswerInput): Promise<"invalid" | "saved"> {
+  if (input.question !== "buddy") {
     return "saved";
   }
 
-  const result = await updateLearningProfile(update);
-
-  if (result.status === "accountDeleted") {
-    return "accountDeleted";
-  }
-
+  const result = await updateLearningProfile({ buddy: input.buddy });
   return result.status === "updated" ? "saved" : "invalid";
 }
 
+/**
+ * The options the learner takes of their exam's choices go with their plan, which studies only
+ * those; "decide later" (no picks) leaves the choice for the plan.
+ */
+async function saveExamChoices({
+  goal,
+  input,
+}: {
+  goal: Goal;
+  input: OnboardingAnswerInput;
+}): Promise<"invalid" | "saved"> {
+  if (input.question !== "examChoice" || !input.choices) {
+    return "saved";
+  }
+
+  const result = await pickExamOptions({
+    choices: input.choices,
+    followToday: false,
+    goal,
+    timeZone: input.timeZone,
+  });
+
+  return result.status === "applied" ? "saved" : "invalid";
+}
+
 type Details = Record<string, unknown>;
+
+/** What the level question stores: the level the learner gave, or the subjects they know well. */
+const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level"]);
+
+/**
+ * The details an answer builds on. A new level answer replaces the last one whole: an IELTS learner
+ * who went back to "None of them yet" kept the Listening and Reading they had ticked, and the plan
+ * skipped their basics.
+ */
+function withoutReplacedAnswer({
+  details,
+  input,
+}: {
+  details: Details;
+  input: OnboardingAnswerInput;
+}): Details {
+  return input.question === "level"
+    ? Object.fromEntries(Object.entries(details).filter(([key]) => !LEVEL_ANSWER_KEYS.has(key)))
+    : details;
+}
 
 /** Only the answers the learner gave: skipped fields add nothing. */
 function compactAnswers(answers: Record<string, string | null | undefined>): Details {
@@ -74,7 +77,7 @@ function compactAnswers(answers: Record<string, string | null | undefined>): Det
 }
 
 /**
- * Where the target answer goes: the position a concurso ranks for and the score a test reports
+ * Where the target answer goes: the position a civil service exam ranks for and the score a test reports
  * are the goal's own fields, which research and the plan read; a course and score together stay
  * in the learner's words.
  */
@@ -125,9 +128,8 @@ function getDetailChanges({
         ...(input.level ? { level: input.level } : {}),
         ...(input.knownSubjects?.length ? { knownSubjects: input.knownSubjects } : {}),
       };
-    case "age":
     case "buddy":
-    case "memory":
+    case "examChoice":
     case "placement":
     case "schedule":
     case "targetDate":
@@ -216,8 +218,8 @@ async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleA
 /**
  * Saves one onboarding answer for the learner's new goal: understood details, the goal's date,
  * its schedule (which re-plans, splits the day's time between goals typed together and lets
- * memory learn from the onboarding), or the learner's age and buddy. Every question answered or skipped is remembered on the goal, so
- * onboarding never asks it twice. An age under 13 deletes the account, goal included.
+ * memory learn from the onboarding), or the learner's buddy. Every question answered or skipped is
+ * remembered on the goal, so onboarding never asks it twice.
  */
 export async function answerOnboardingQuestion({
   goalId,
@@ -232,13 +234,17 @@ export async function answerOnboardingQuestion({
     return owned;
   }
 
-  const profile = await saveProfileAnswer(input);
+  const { goal } = owned;
 
-  if (profile !== "saved") {
-    return { status: profile };
+  const [profile, choices] = await Promise.all([
+    saveProfileAnswer(input),
+    saveExamChoices({ goal, input }),
+  ]);
+
+  if (profile !== "saved" || choices !== "saved") {
+    return { status: "invalid" };
   }
 
-  const { goal } = owned;
   const details = isJsonObject(goal.details) ? goal.details : {};
   const answered = [...new Set([...getAnsweredQuestions(details), input.question])];
 
@@ -249,7 +255,11 @@ export async function answerOnboardingQuestion({
     input: {
       ...getScheduleChanges(input),
       dailyMinutes: shared?.dailyMinutes,
-      details: { ...details, ...getDetailChanges({ details, input }), answered },
+      details: {
+        ...withoutReplacedAnswer({ details, input }),
+        ...getDetailChanges({ details, input }),
+        answered,
+      },
       weekendMinutes: shared?.weekendMinutes,
     },
   });
@@ -258,10 +268,13 @@ export async function answerOnboardingQuestion({
     return result.status === "limitReached" ? { status: "invalid" } : { status: result.status };
   }
 
-  // The daily time is onboarding's last question: everything the learner said about themselves
-  // is on the goal, and their age (or their own answer) has decided whether memory is on, so what
-  // they said can personalize their first lessons. Memory respects "off" and minors' limits.
+  // The daily time is onboarding's last question: the new plan settles (studying everything after
+  // the exam when the learner chose it, its bases on the recommendation for their time), and
+  // everything the learner said about themselves is on the goal, so what they said can
+  // personalize their first lessons (unless memory is off).
   if (input.question === "schedule") {
+    await settleNewPlan({ fullCourse: input.fullCourse, goalId });
+
     scheduleMemoryUpdate({
       goalId,
       source: { goalId, kind: "onboarding" },

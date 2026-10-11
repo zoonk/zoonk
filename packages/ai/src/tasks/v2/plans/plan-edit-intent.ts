@@ -16,13 +16,14 @@ import {
   toSkillKey,
 } from "./normalize-plan-edit";
 import systemPrompt from "./plan-edit-intent.prompt.md";
+import { formatMemory, formatToday, formatWeek } from "./plan-prompt-format";
 
 /**
  * From the plan-edit-intent eval (22 cases in English and Portuguese, code scoring, 26 Sep 2026):
  * Gemini 3.5 Flash Lite got every change right at p50 1.0s and $0.58 per 1,000 runs; Luna ($0.10,
  * p50 2.0s) applied an adversarial "skip every area" request; Haiku started "next week" on a
  * Tuesday. Jev can't fill minutes, days, dates or areas, so it only named the kind (21 of 22).
- * With language practice changes ("não preciso de escrita"), Flash Lite got 24 of 24 (27 Sep 2026).
+ * With language practice changes ("I don't need writing"), Flash Lite got 24 of 24 (27 Sep 2026).
  * With memory (edits that lean on the learner's routine, and fitting a new plan to it: 7 cases in
  * English and Portuguese), Flash Lite got 7 of 7 and 38 of 39 overall, $0.74 per 1,000 runs, p50
  * 1.4s (27 Sep 2026). Checked again for cost on all 49 cases (7 Oct 2026): Flash Lite got 47 right
@@ -36,7 +37,7 @@ import systemPrompt from "./plan-edit-intent.prompt.md";
  * against $1.06, but its tail is looser (p95 1.9 to 2.9s against 1.7s, single calls up to 9.7s
  * against Flash Lite's 1.8s at most) while learners wait, for a saving of under $0.001 a change.
  * Luna with no reasoning still got 44 at p50 2.2s. The parts a model splits within one area
- * ("Biologia", "Química") are joined in `normalizePlanEdit`. With topics to add (8 Oct 2026),
+ * ("Biology", "Chemistry") are joined in `normalizePlanEdit`. With topics to add (8 Oct 2026),
  * Flash Lite got both cases (a field's three topics, a portfolio project) and kept the 5 requests
  * that aren't changes unchanged, after the prompt said that three named topics are three entries.
  */
@@ -104,11 +105,6 @@ export type PlanEditInput = {
    * from memory. It fills in what the request leaves open and never adds a change on its own.
    */
   memory?: readonly string[];
-  /**
-   * `edit`: the learner wrote `request`. `routine`: a new plan's week is fitted to the routine in
-   * `memory`, with only days off, lighter days and dated light weeks; `request` is empty.
-   */
-  purpose?: "edit" | "routine";
   /** What the learner wrote. */
   request: string;
   /**
@@ -122,7 +118,7 @@ export type PlanEditInput = {
   /** Minutes per weekday, Sunday first. */
   weekdayMinutes: number[];
   /**
-   * The exam's written tests (a redação, a discursive test), whose practice the learner can space
+   * The exam's written tests (ENEM's essay, a discursive test), whose practice the learner can space
    * out; absent or empty when it has none.
    */
   writtenParts?: readonly string[];
@@ -134,30 +130,6 @@ export type PlanEditParams = PlanEditInput & {
   reasoning?: Reasoning;
   useFallback?: boolean;
 };
-
-const WEEKDAY_NAMES = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
-
-function formatWeek(weekdayMinutes: readonly number[]): string {
-  return weekdayMinutes
-    .map((minutes, weekday) => `${WEEKDAY_NAMES[weekday]}: ${minutes}`)
-    .join(", ");
-}
-
-function formatToday(today: string): string {
-  return `${today} (${WEEKDAY_NAMES[new Date(`${today}T00:00:00Z`).getUTCDay()]})`;
-}
-
-function formatMemory(memory: readonly string[] | undefined): string {
-  return memory && memory.length > 0 ? memory.map((fact) => `- ${fact}`).join("\n") : "none";
-}
 
 /** Each area, with its skills under their keys when the caller lists them ("  K12 Genetics"). */
 function formatAreas(input: PlanEditInput): string {
@@ -181,10 +153,8 @@ function formatAreas(input: PlanEditInput): string {
 
 function buildUserPrompt(input: PlanEditInput): string {
   const areas = formatAreas(input);
-  const purpose = input.purpose ?? "edit";
 
   return `
-    PURPOSE: ${purpose}
     LANGUAGE: ${getPromptLanguageName({ language: input.language })}
     TODAY: ${formatToday(input.today)}
     GOAL_KIND: ${input.goalKind}
@@ -194,10 +164,7 @@ function buildUserPrompt(input: PlanEditInput): string {
     AREAS: ${areas}
     WRITTEN_PARTS: ${input.writtenParts?.length ? input.writtenParts.join(", ") : "none"}
 
-${formatUntrustedInput({
-  MEMORY: formatMemory(input.memory),
-  REQUEST: purpose === "routine" ? "none" : input.request,
-})}
+${formatUntrustedInput({ MEMORY: formatMemory(input.memory), REQUEST: input.request })}
   `;
 }
 
@@ -205,8 +172,7 @@ ${formatUntrustedInput({
  * Turns a learner's plain-words request about their plan ("less on weekends", "focus on math",
  * "I'm traveling next week") into structured changes and one sentence saying what will change,
  * reading what memory holds about their goals and routine to fill in what the request leaves
- * open ("less on my late days"). With `purpose: "routine"`, it fits a new plan's week to that
- * routine instead. Changes the planner can't apply (unknown areas, past dates, impossible times)
+ * open ("less on my late days"). Changes the planner can't apply (unknown areas, past dates, impossible times)
  * are dropped, and a request that isn't a plan change comes back as not understood. Parts of a
  * request no change covers ("and aim for 800") come back as `leftOut`, so whoever asked can answer
  * them instead of dropping them silently.

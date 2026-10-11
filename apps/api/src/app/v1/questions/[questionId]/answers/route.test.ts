@@ -1,22 +1,23 @@
 import { streamLessonQuestionAnswer } from "@zoonk/ai/tasks/lessons/question";
 import { GOAL_TUTOR_MODEL, streamGoalTutorAnswer } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
-import { GOAL_TUTOR_APP_TOOLS } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-tools";
+import { createCardTools } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
+import { createLookUpTool } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
 import {
   claimLessonQuestionAnswer,
   completeLessonQuestionAnswer,
   failLessonQuestionAnswer,
   rememberLessonQuestionAnswer,
 } from "@zoonk/core/lesson-questions/answer-lifecycle";
+import { lookUpTutorData } from "@zoonk/core/lesson-questions/look-up";
 import { offerTutorTool } from "@zoonk/core/lesson-questions/offer-tool";
 import { proposeTutorPlanChange } from "@zoonk/core/lesson-questions/propose-plan-change";
 import { type MemoryChange } from "@zoonk/core/memory/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { logError } from "@zoonk/utils/logger";
-import { isStepCount, simulateReadableStream, streamText, tool } from "ai";
+import { isStepCount, simulateReadableStream, streamText } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { z } from "zod";
 import { POST as postAnswer } from "./route";
 import type * as LessonQuestionModule from "@zoonk/ai/tasks/lessons/question";
 import type * as GoalTutorModule from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
@@ -37,6 +38,8 @@ vi.mock("@zoonk/core/lesson-questions/propose-plan-change", () => ({
 }));
 
 vi.mock("@zoonk/core/lesson-questions/offer-tool", () => ({ offerTutorTool: vi.fn() }));
+
+vi.mock("@zoonk/core/lesson-questions/look-up", () => ({ lookUpTutorData: vi.fn() }));
 
 /** The source words, filled in: the catalogs' translations aren't what this adapter test checks. */
 vi.mock("next-intl/server", () => ({
@@ -89,6 +92,28 @@ const successfulProviderStream: MockLanguageModelV4["doStream"] = async () => ({
         usage: {
           inputTokens: { cacheRead: undefined, cacheWrite: undefined, noCache: 80, total: 80 },
           outputTokens: { reasoning: undefined, text: 12, total: 12 },
+        },
+      },
+    ],
+  }),
+});
+
+/** Words with em dashes, cut where a provider may cut them: a dash alone, a dash ending a piece. */
+const emDashProviderStream: MockLanguageModelV4["doStream"] = async () => ({
+  stream: simulateReadableStream({
+    chunks: [
+      { id: "answer", type: "text-start" },
+      { delta: "Dá para começar cedo, sim ", id: "answer", type: "text-delta" },
+      { delta: "—", id: "answer", type: "text-delta" },
+      { delta: " e o caso é bom —", id: "answer", type: "text-delta" },
+      { delta: "\n— Comece pela pesquisa.", id: "answer", type: "text-delta" },
+      { id: "answer", type: "text-end" },
+      {
+        finishReason: { raw: undefined, unified: "stop" },
+        type: "finish",
+        usage: {
+          inputTokens: { cacheRead: undefined, cacheWrite: undefined, noCache: 50, total: 50 },
+          outputTokens: { reasoning: undefined, text: 6, total: 6 },
         },
       },
     ],
@@ -154,6 +179,7 @@ const PROPOSED_CHANGE: PlanChangeView = {
     lessonsAdded: 0,
     lessonsRemoved: 0,
   },
+  examDocument: "notice",
   id: "019c9bd7-bf11-73cb-9cc8-fe371298190d",
   kind: "edited",
   lessonsSkipped: 0,
@@ -231,6 +257,7 @@ const CHANGE_AND_TEST_CALLS: ProviderStreamPart[] = [
  */
 function createGoalTutorGeneration({
   calls = CHANGE_AND_TEST_CALLS,
+  lookUp,
   offerAppTool,
   proposePlanChange,
   silent = false,
@@ -278,23 +305,12 @@ function createGoalTutorGeneration({
     prompt: "No studying on Saturdays",
     stopWhen: isStepCount(2),
     tools: {
-      offerAppTool: tool({
-        execute: (input) => offerAppTool(input),
-        inputSchema: z.object({
-          area: z.string().nullable(),
-          goal: z.string().nullable(),
-          tool: z.enum(GOAL_TUTOR_APP_TOOLS),
-          topic: z.string().nullable(),
-        }),
-      }),
-      proposePlanChange: tool({
-        execute: ({ request }) => proposePlanChange(request),
-        inputSchema: z.object({ request: z.string() }),
-      }),
+      ...createCardTools({ offerAppTool, proposePlanChange }),
+      lookUp: createLookUpTool(lookUp),
     },
   });
 
-  // The real stream also offers a search; this one only calls the two tools the app answers.
+  // The real stream also offers a search; this one calls the card tools and the lookup.
   return { generation, provenance: Promise.resolve(PROVENANCE) } as unknown as ReturnType<
     typeof streamGoalTutorAnswer
   >;
@@ -663,7 +679,6 @@ describe("lesson question answer route", () => {
         officialExamDate: null,
         status: "proposed",
       },
-      { reason: "onePerMessage", status: "unavailable", tool: "chapterTest" },
     ]);
 
     // The proposal reaches the client as a data part; the tool calls stay on the server.
@@ -685,6 +700,49 @@ describe("lesson question answer route", () => {
         revision: 2,
       }),
     );
+  });
+
+  // Marcos asked for a speaking call and for SQL lessons in one message, and the call's card won.
+  it("gives the message's card to the plan change when the model offers a feature first", async () => {
+    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
+      claim: {
+        analytics: { distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: { language: "en", scope: { kind: "plan" } },
+        learnerMemory: [],
+        priorTurns: [],
+        question: "I want a mock exam, and no studying on Saturdays",
+        questionId: QUESTION_ID,
+        revision: 6,
+        shareAnswer: false,
+      },
+      status: "ready",
+    } as never);
+
+    vi.mocked(proposeTutorPlanChange).mockResolvedValue({
+      cautions: [],
+      change: PROPOSED_CHANGE,
+      leftOut: [],
+      replaced: [],
+      status: "proposed",
+    });
+
+    vi.mocked(offerTutorTool).mockResolvedValue({ offer: OFFERED_MOCK, status: "offered" });
+
+    vi.mocked(streamGoalTutorAnswer).mockImplementation((input) =>
+      createGoalTutorGeneration({
+        ...input,
+        calls: [MOCK_CALL, ...CHANGE_AND_TEST_CALLS.slice(0, 1)],
+      }),
+    );
+
+    const response = await createAnswerResponse();
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    expect(offerTutorTool).not.toHaveBeenCalled();
+    expect(proposeTutorPlanChange).toHaveBeenCalledOnce();
+    expect(body).toContain('"type":"data-plan-change"');
+    expect(body).not.toContain('"type":"data-tool-offer"');
   });
 
   it("confirms in words what a buddy that only acted put under its answer, and saves it", async () => {
@@ -874,12 +932,229 @@ describe("lesson question answer route", () => {
       topic: "Guitar",
     });
 
-    expect(modelRead).toStrictEqual([
-      { offered: {}, status: "offered", tool: "startGoal" },
-      { reason: "onePerMessage", status: "unavailable", tool: "mockExam" },
-    ]);
+    expect(modelRead).toStrictEqual([{ offered: {}, status: "offered", tool: "startGoal" }]);
 
     expect(body).toContain('"kind":"startGoal"');
     expect(body).not.toContain('"kind":"mockExam"');
+  });
+
+  // Carla asked the chapter's buddy to fit a portfolio case study in, and it couldn't see her plan.
+  it("answers a question from a chapter inside a goal as the buddy, with the plan and the chapter", async () => {
+    const chapter = { chapter: { title: "Research methods" }, scope: { kind: "chapter" } };
+    const snapshot = { language: "pt", scope: { kind: "plan" }, screen: chapter };
+
+    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
+      claim: {
+        analytics: { distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: snapshot,
+        learnerMemory: [],
+        priorTurns: [],
+        question: "Dá para começar o estudo de caso já?",
+        questionId: QUESTION_ID,
+        revision: 1,
+        shareAnswer: false,
+      },
+      status: "ready",
+    } as never);
+
+    vi.mocked(streamGoalTutorAnswer).mockImplementation((input) =>
+      createGoalTutorGeneration({ ...input, calls: [] }),
+    );
+
+    const response = await createAnswerResponse();
+    await response.text();
+    await Promise.all(afterTasks);
+
+    expect(streamLessonQuestionAnswer).not.toHaveBeenCalled();
+
+    expect(streamGoalTutorAnswer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        analytics: { contentScope: "personal", distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: snapshot,
+      }),
+    );
+  });
+
+  it("writes a lesson screen's shared answer from the screen alone, never the learner's plan", async () => {
+    const snapshot = { language: "pt", scope: { kind: "plan" }, screen: LESSON_SNAPSHOT };
+
+    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
+      claim: {
+        analytics: { distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: snapshot,
+        learnerMemory: [],
+        priorTurns: [],
+        question: "Explain this more simply",
+        questionId: QUESTION_ID,
+        revision: 1,
+        shareAnswer: true,
+      },
+      status: "ready",
+    } as never);
+
+    const response = await createAnswerResponse();
+    await response.text();
+    await Promise.all(afterTasks);
+
+    expect(streamGoalTutorAnswer).not.toHaveBeenCalled();
+
+    expect(streamLessonQuestionAnswer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        analytics: { contentScope: "shared", distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: LESSON_SNAPSHOT,
+      }),
+    );
+  });
+
+  it("never streams an em dash, wherever the provider cuts the answer", async () => {
+    vi.mocked(streamLessonQuestionAnswer).mockImplementation(() =>
+      createTestGeneration(emDashProviderStream),
+    );
+
+    const response = await createAnswerResponse();
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    const words = body
+      .split("\n")
+      .filter((line) => line.startsWith("data: {"))
+      .map((line) => JSON.parse(line.slice("data: ".length)) as { delta?: string; type: string })
+      .filter((chunk) => chunk.type === "text-delta")
+      .map((chunk) => chunk.delta)
+      .join("");
+
+    expect(words).toBe("Dá para começar cedo, sim, e o caso é bom\nComece pela pesquisa.");
+  });
+
+  it("keeps what the buddy looked up on the server and tells the model what it found", async () => {
+    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
+      claim: {
+        analytics: { distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: { language: "pt", scope: { kind: "plan" } },
+        learnerMemory: [],
+        priorTurns: [],
+        question: "como estou em constitucional?",
+        questionId: QUESTION_ID,
+        revision: 3,
+        shareAnswer: false,
+      },
+      status: "ready",
+    } as never);
+
+    const found = {
+      status: "found" as const,
+      subjects: [
+        {
+          answers: { right: 18, total: 30 },
+          chapters: [],
+          lessonsDone: 4,
+          lessonsTestedOut: 0,
+          lessonsTotal: 22,
+          moreChapters: 0,
+          name: "Direito Constitucional private-progress",
+          nextDate: null,
+          openMistakes: 5,
+          topics: 15,
+          topicsStudied: 3,
+        },
+      ],
+      what: "subjectProgress" as const,
+    };
+
+    vi.mocked(lookUpTutorData).mockResolvedValue(found);
+    const modelRead: unknown[] = [];
+
+    const lookUpCall: ProviderStreamPart = {
+      input: JSON.stringify({
+        area: "Direito Constitucional",
+        query: null,
+        what: "subjectProgress",
+      }),
+      toolCallId: "call-lookup",
+      toolName: "lookUp",
+      type: "tool-call",
+    };
+
+    vi.mocked(streamGoalTutorAnswer).mockImplementation((input) =>
+      createGoalTutorGeneration({
+        ...input,
+        calls: [lookUpCall],
+        lookUp: async (request) => {
+          const result = await input.lookUp(request);
+          modelRead.push(result);
+          return result;
+        },
+      }),
+    );
+
+    const response = await createAnswerResponse();
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    expect(lookUpTutorData).toHaveBeenCalledExactlyOnceWith({
+      area: "Direito Constitucional",
+      query: null,
+      questionId: QUESTION_ID,
+      revision: 3,
+      what: "subjectProgress",
+    });
+
+    expect(modelRead).toStrictEqual([found]);
+    expect(body).not.toContain("private-progress");
+    expect(body).not.toContain('"type":"tool-');
+  });
+
+  it("tells the model a lookup failed and still answers, without showing the error", async () => {
+    vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
+      claim: {
+        analytics: { distinctId: USER_ID, goalId: GOAL_ID },
+        contextSnapshot: { language: "pt", scope: { kind: "plan" } },
+        learnerMemory: [],
+        priorTurns: [],
+        question: "o que o edital cobra?",
+        questionId: QUESTION_ID,
+        revision: 4,
+        shareAnswer: false,
+      },
+      status: "ready",
+    } as never);
+
+    vi.mocked(lookUpTutorData).mockRejectedValue(new Error("connection reset private-detail"));
+    const modelRead: unknown[] = [];
+
+    vi.mocked(streamGoalTutorAnswer).mockImplementation((input) =>
+      createGoalTutorGeneration({
+        ...input,
+        calls: [
+          {
+            input: JSON.stringify({ area: null, query: null, what: "noticeTopics" }),
+            toolCallId: "call-lookup",
+            toolName: "lookUp",
+            type: "tool-call",
+          },
+        ],
+        lookUp: async (request) => {
+          const result = await input.lookUp(request);
+          modelRead.push(result);
+          return result;
+        },
+      }),
+    );
+
+    const response = await createAnswerResponse();
+    const body = await response.text();
+    await Promise.all(afterTasks);
+
+    expect(modelRead).toStrictEqual([
+      { reason: "error", status: "unavailable", what: "noticeTopics" },
+    ]);
+
+    expect(logError).toHaveBeenCalledWith("[Goal Tutor Lookup Error]", {
+      questionId: QUESTION_ID,
+      what: "noticeTopics",
+    });
+
+    expect(body).not.toContain("private-detail");
+    expect(completeLessonQuestionAnswer).toHaveBeenCalledOnce();
   });
 });

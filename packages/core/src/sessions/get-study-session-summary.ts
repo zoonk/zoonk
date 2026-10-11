@@ -3,7 +3,6 @@ import { type Milestone, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { io } from "next/cache";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { getDailyTimeLimitStatus } from "../minors/get-daily-time-limit";
 import { measureSessionState } from "./_utils/capture-snapshot";
 import { isCurrentSession } from "./_utils/current-session";
 import { withExtraStudyCheck } from "./_utils/extra-blocks";
@@ -18,6 +17,7 @@ import {
 } from "./_utils/load-summary-parts";
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { loadSessionAnswers } from "./_utils/session-answers";
+import { sumSessionSeconds } from "./_utils/session-ledger";
 import { countMistakesFixedToday, getSessionMissions } from "./_utils/session-missions";
 import {
   type SessionState,
@@ -30,7 +30,10 @@ import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-sess
 import { scoreAnswers } from "./brain-power";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type ExtraTime } from "./extra-time";
+import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 import { type Mission } from "./missions";
+
+const SECONDS_PER_MINUTE = 60;
 
 type Change<TValue> = { after: TValue; before: TValue };
 
@@ -55,6 +58,7 @@ type StudySessionSummary = {
   /** Every block is done or skipped. False right after "Stop for today", while the rest waits. */
   finished: boolean;
   fullMeal: boolean;
+  /** The time the session's lessons and questions took, as the learner's stats count it. */
   minutes: number;
   missions: Mission[];
   mistakesSaved: number;
@@ -132,12 +136,13 @@ export async function getStudySessionSummary({
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
   const snapshot = readSessionSnapshot(session.startSnapshot);
 
-  const [answers, after, fixedToday, mistakesSaved, dailyLimit] = await Promise.all([
+  const [answers, after, fixedToday, mistakesSaved, dailyLimit, seconds] = await Promise.all([
     loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
     measureSummaryState({ session, timeZone, userId }),
     countMistakesFixedToday({ localDate: session.localDate, timeZone, userId }),
     prisma.mistake.count({ where: { attempt: { studySessionId: sessionId }, userId } }),
     getDailyTimeLimitStatus(),
+    sumSessionSeconds(prisma, { sessionId, userId }),
   ]);
 
   const moves = snapshot ? getMovedSkills({ current: after.skillStates, snapshot }) : [];
@@ -168,7 +173,7 @@ export async function getStudySessionSummary({
       loadSealedCapsules({ session, timeZone, userId }),
       loadBuddyMeal({ answers, newIdeas: newSkillIds.length, session, userId }),
       loadCeremony(userId),
-      loadTomorrow({ goalId: session.goalId, userId }),
+      loadTomorrow({ session, userId }),
       withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
       netScoredItemIds.length > 0
         ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })
@@ -194,7 +199,7 @@ export async function getStudySessionSummary({
       extraTime,
       finished: view.nextBlockId === null,
       fullMeal: view.fullMeal.earned,
-      minutes: view.minutes.done,
+      minutes: Math.round(seconds / SECONDS_PER_MINUTE),
       missions: view.missions,
       mistakesSaved,
       netScore,

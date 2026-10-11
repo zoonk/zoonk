@@ -12,8 +12,8 @@ const LESSONS_PER_SKILL = 6;
 type AreaSpec = { area: string; outcome?: boolean; phase?: number; weight?: number };
 
 /**
- * ENEM's four parts and its redação, each skill building on the one before it in its part, and
- * exam strategy outside the notice. Linguagens and Matemática weigh a little more on their own, as
+ * ENEM's four parts and its essay, each skill building on the one before it in its part, and
+ * exam strategy outside the notice. Languages and mathematics weigh a little more on their own, as
  * they did for Lucas once the basics he said he knows were skipped.
  */
 const NOTICE_AREAS: AreaSpec[] = [
@@ -101,12 +101,12 @@ function dayOneAreas(input: BuildPlanInput): string[] {
 }
 
 describe("an exam plan's first day", () => {
-  // Lucas said he knows Linguagens and Matemática: his first day was those two, Redação and nine
-  // exam-strategy lessons, with no Natureza or Humanas until days later.
+  // Lucas said he knows languages and mathematics: his first day was those two, the essay and nine
+  // exam-strategy lessons, with no natural or human sciences until days later.
   it("opens with the parts the learner didn't say they know, then theirs, then what's beyond the notice", () => {
     const areas = dayOneAreas(enemPlan({ knownAreas: new Set(["Linguagens", "Matemática"]) }));
 
-    // The redação comes on the days of its own cadence, apart from this order.
+    // The essay comes on the days of its own cadence, apart from this order.
     const parts = areas.filter((area) => area !== "Redação");
 
     expect(parts.slice(0, 2).toSorted()).toStrictEqual(["Humanas", "Natureza"]);

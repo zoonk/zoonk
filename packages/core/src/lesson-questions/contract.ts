@@ -15,6 +15,22 @@ const lessonQuestionThreadCursorSchema = z.uuid();
 /** The things a learner can ask the tutor about beyond a lesson; each has one thread. */
 const SCREEN_CONTEXT_KINDS = ["chapter", "plan", "mock"] as const;
 
+/**
+ * The tutor's suggestions a learner taps to ask about a lesson screen: explain it more simply, go
+ * deeper, another example.
+ */
+const LESSON_SCREEN_SUGGESTIONS = ["simpler", "deeper", "example"] as const;
+
+/**
+ * One of the tutor's suggestions for a lesson's screens as its chip reads, worded by the server in
+ * the lesson's language: tapping it sends `id` as the question's `suggestion`, and the question is
+ * stored in these same words.
+ */
+export const lessonTutorSuggestionSchema = z
+  .object({ id: z.enum(LESSON_SCREEN_SUGGESTIONS), label: z.string() })
+  .strict()
+  .meta({ id: "LessonTutorSuggestion" });
+
 export const getLessonQuestionThreadInputSchema = z
   .object({
     contextKind: z.enum(["lesson", "step", "answer", ...SCREEN_CONTEXT_KINDS]).optional(),
@@ -63,10 +79,11 @@ export const createLessonQuestionInputSchema = z
     question: z.string().trim().min(1).max(MAX_LESSON_QUESTION_LENGTH),
     requestId: z.uuid(),
     /**
-     * The learner sent one of the tutor's suggested questions as offered. A suggested question
-     * about a lesson screen is answered once for everyone who asks it there.
+     * The tutor's suggestion the learner tapped. The server words the question itself, in the
+     * thread's language, and answers a lesson screen's suggestion once for everyone who taps it
+     * there; anything a learner types is answered as their own.
      */
-    suggested: z.literal(true).optional(),
+    suggestion: z.enum(LESSON_SCREEN_SUGGESTIONS).optional(),
   })
   .strict();
 
@@ -286,6 +303,8 @@ export type LessonScopeContextInput = Extract<
 >;
 export type LessonQuestionContextSummary = z.infer<typeof lessonQuestionContextSummarySchema>;
 export type LessonQuestionScreenKind = (typeof SCREEN_CONTEXT_KINDS)[number];
+export type LessonScreenSuggestion = (typeof LESSON_SCREEN_SUGGESTIONS)[number];
+export type LessonTutorSuggestion = z.infer<typeof lessonTutorSuggestionSchema>;
 
 /**
  * What a tutor thread is about: a Library lesson, a chapter, the plan of one of the learner's

@@ -51,8 +51,7 @@ export const memorySettingsUpdateSchema = z
     enabled: z
       .boolean()
       .meta({
-        description:
-          "Off stops Zoonk from learning and using facts; the facts stay listed. A guardian's off wins",
+        description: "Off stops Zoonk from learning and using facts; the facts stay listed",
       }),
   })
   .strict()
@@ -119,18 +118,8 @@ export type MemoryFactView = {
   updatedAt: Date;
 };
 
-/**
- * The Memory screen: the switch (off until an under-18 turns it on, and kept off while a guardian
- * says so), the categories this learner's memory may hold (only goals and learning for minors) and
- * every active fact, newest first.
- */
-export type MemoryView = {
-  enabled: boolean;
-  /** A guardian turned memory off, so the learner can't turn it on. */
-  offByGuardian: boolean;
-  categories: MemoryCategory[];
-  facts: MemoryFactView[];
-};
+/** The Memory screen: the switch, on until the learner turns it off, and every active fact. */
+export type MemoryView = { enabled: boolean; facts: MemoryFactView[] };
 
 /**
  * What one write did, shown as "Memory updated" with undo. `fact` is what memory holds now and

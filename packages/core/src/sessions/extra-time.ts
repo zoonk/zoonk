@@ -9,13 +9,19 @@ const MAX_EXTRA_BLOCKS_PER_DAY = 2;
 
 /**
  * Why "10 more minutes" isn't offered: the day's two bonus blocks are used, the daily time limit
- * leaves too little, nothing is left to practice or learn, or the session isn't finished yet.
+ * leaves too little, nothing is left to practice or learn, the session isn't finished yet, or a
+ * free exam plan's first week is over (its practice and new lessons come with Plus).
  */
-export type ExtraTimeReason = "dailyCap" | "dailyLimit" | "nothingToStudy" | "sessionNotFinished";
+export type ExtraTimeReason =
+  | "dailyCap"
+  | "dailyLimit"
+  | "nothingToStudy"
+  | "plusRequired"
+  | "sessionNotFinished";
 
 export type ExtraTime = {
   available: boolean;
-  /** Minutes the bonus block would take, shorter when a guardian's limit leaves less. */
+  /** Minutes the bonus block would take, shorter when the learner's daily limit leaves less. */
   minutes: number;
   reason: ExtraTimeReason | null;
 };
@@ -26,7 +32,7 @@ function isFinished(status: StudyBlockStatus): boolean {
 
 /**
  * Whether "10 more minutes" is offered: only after the day's blocks are done or stopped, up to the
- * daily cap of bonus blocks, and never past a guardian's daily limit.
+ * daily cap of bonus blocks, and never past the learner's daily limit.
  */
 export function getExtraTime({
   anytime = false,
@@ -36,7 +42,7 @@ export function getExtraTime({
   /** Practice the learner asks for elsewhere (an area in Progress) doesn't wait for the session. */
   anytime?: boolean;
   blocks: readonly { extra: boolean; status: StudyBlockStatus }[];
-  /** Minutes left under a guardian's limit, or null without one. */
+  /** Minutes left under the learner's daily limit, or null without one. */
   remainingLimitMinutes: number | null;
 }): ExtraTime {
   const minutes = Math.min(EXTRA_BLOCK_MINUTES, remainingLimitMinutes ?? EXTRA_BLOCK_MINUTES);

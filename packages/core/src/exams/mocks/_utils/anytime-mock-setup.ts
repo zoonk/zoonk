@@ -1,36 +1,54 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
+import { findExamSpeakingSetup } from "../../../language/exam-speaking/_utils/exam-speaking-setup";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
-import { withClassTestMock } from "../class-test-mock";
+import { loadExamChoices } from "../../choices/load-exam-choices";
 import { type AnytimeMockChoice } from "../mock-contract";
+import { getDaySections } from "../mock-day-sections";
+import { getMockFormatMix } from "../mock-format-mix";
 import { type MockOption, findMockOption, listMockOptions } from "../mock-options";
-import { getMockDays } from "../mock-plan";
+import { type MockCandidate, getMockDays } from "../mock-plan";
+import { type MockSizeSource } from "../mock-view-contract";
 import {
   type PlacementMockOption,
   type PlacementSkill,
   getRecommendedPlacementLength,
   listPlacementMockOptions,
 } from "../placement-mock";
+import { type MockEssayCandidate } from "../written-parts";
 import { loadSkillAreas } from "./mock-candidates";
+import { loadMockEssays } from "./mock-essays";
+import { loadListeningCandidates } from "./mock-listening";
 import { countFinishedMocksBefore } from "./mock-number";
 import { loadMockPace } from "./mock-pace";
+import { loadBankTypedParts } from "./mock-typed-parts";
+import { readMockSizeSource, readMockStructure } from "./read-mock-structure";
 
 /** An exam goal's mocks as they can be taken any time: the exam they copy and their options. */
 export type AnytimeMockSetup = {
   blueprint: ExamBlueprint | null;
+  /** The exam's essays, which a full mock's written parts ask. */
+  essays: MockEssayCandidate[];
   examName: string;
   /** The plan's areas, which a mock's questions come from. */
   goalAreas: string[];
+  /** The recordings each listening section plays, by its name (`loadListeningCandidates`). */
+  listening: ReadonlyMap<string, readonly MockCandidate[]>;
+  /** The listening sections a part of which has no recording yet, which a mock's start writes. */
+  unvoiced: ReadonlySet<string>;
   options: MockOption[];
   /** A diagnostic mock's lengths, for placement in onboarding. */
   placement: PlacementMockOption[];
+  /** Where the options' size comes from, to say beside them. */
+  sizeSource: MockSizeSource;
+  /** The goal's exam has a speaking paper, which its full mocks sit (`findExamSpeakingSetup`). */
+  speaking: boolean;
   structure: ExamStructure | null;
 };
 
@@ -68,42 +86,82 @@ async function canBuildMock({
  * as the weekly mocks take turns. None while no mock can be built (see `canBuildMock`).
  */
 export async function loadAnytimeMockSetup(goal: Goal): Promise<AnytimeMockSetup> {
-  const [blueprint, areas, finished, pace] = await Promise.all([
+  const [blueprint, areas, finished, pace, essays, choices, typed, speaking] = await Promise.all([
     goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : null,
     loadSkillAreas(goal.id),
     countFinishedMocksBefore({ goalId: goal.id }),
     loadMockPace(goal.examBlueprintId),
+    loadMockEssays({ goal, userId: goal.userId }),
+    loadExamChoices(goal.id),
+    loadBankTypedParts(goal.examBlueprintId),
+    findExamSpeakingSetup({ goalId: goal.id, userId: goal.userId }),
   ]);
 
   const buildable = await canBuildMock({ blueprint, skillIds: [...areas.keys()] });
 
-  const structure = blueprint
-    ? withClassTestMock({
-        ownerId: blueprint.ownerId,
-        structure: readBlueprintContent(blueprint).structure,
-      })
-    : null;
+  const structure = blueprint ? readMockStructure({ blueprint, choices }) : null;
+
+  const { recordings, unvoiced } = await loadListeningCandidates({
+    goalId: goal.id,
+    mix: getMockFormatMix(structure),
+    userId: goal.userId,
+  });
 
   const days = getMockDays(structure);
   const goalAreas = [...new Set(areas.values())];
 
   return {
     blueprint,
+    essays,
     examName: blueprint?.name ?? goal.title,
     goalAreas,
+    listening: recordings,
+    // A listening section without its recordings yet is still sat: the mock's start writes them.
     options: buildable
       ? listMockOptions({
           dayInTurn: days[finished % days.length] ?? null,
+          essays,
           goalAreas,
+          listening: new Set([...recordings.keys(), ...unvoiced]),
           pace,
+          speaking: speaking !== null,
           structure,
+          typed,
         })
       : [],
     placement: buildable ? listPlacementMockOptions({ goalAreas, pace, structure }) : [],
+    sizeSource: readMockSizeSource(blueprint),
+    speaking: speaking !== null,
     structure,
+    unvoiced,
   };
+}
+
+/**
+ * The listening sections a picked exam day (in full or half) sits whose recordings aren't voiced
+ * yet: starting the mock writes them first (see `requestMockQuestions`). None for a subject's mock
+ * or placement, which ask no recordings.
+ */
+export function listMissingRecordings({
+  pick,
+  setup,
+}: {
+  pick: AnytimeMockPick;
+  setup: AnytimeMockSetup;
+}): string[] {
+  if (pick.purpose !== "practice" || pick.option.kind === "area" || setup.unvoiced.size === 0) {
+    return [];
+  }
+
+  return getDaySections({
+    day: pick.option.day,
+    listening: setup.unvoiced,
+    structure: setup.structure,
+  })
+    .filter((section) => section.kind === "listening")
+    .flatMap((section) => section.name ?? []);
 }
 
 /** The mock a learner asked for: one of the goal's options, or a diagnostic one as placement. */

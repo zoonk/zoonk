@@ -15,7 +15,7 @@ export async function pickFreeResponseSkillsStep(goalId: string): Promise<Placem
 /**
  * Writes one original written question for a skill the exam asks in writing (an AP free-response
  * question with the rows and points its scoring guidelines would give, a discursive answer or a
- * peça técnica as the notice sets them), so the goal's essay block can practice and grade it. It
+ * legal brief as the notice sets them), so the goal's essay block can practice and grade it. It
  * joins the shared bank under the exam, for every learner of that exam.
  */
 export async function prepareFreeResponseItemStep({

@@ -49,7 +49,7 @@ function useQuestionChoices({
 
   return (question.options ?? []).map((option, index) => ({
     icon: <span className="text-sm font-semibold">{LETTERS[index]}</span>,
-    label: option,
+    label: <ItemLine text={option} />,
     value: String(index),
   }));
 }

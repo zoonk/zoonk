@@ -1,7 +1,6 @@
 import { type ActivityAnswer } from "../../activity-answer-schema";
 import { type ActivityCell, type ActivityExpectedAnswer } from "../../activity-expected-answer";
 import { isCompleteMolecule } from "./chemistry";
-import { sentenceKey } from "./language";
 import { notesPitchClasses, rhythmTapOffsets } from "./music";
 import { formulaPassesExamples, regexPassesExamples } from "./pattern-checks";
 import { characters } from "./template-helpers";
@@ -28,9 +27,13 @@ function linkKeys(links: readonly { from: string; to: string }[]): string[] {
   return links.map((link) => JSON.stringify([link.from, link.to]));
 }
 
-/** Genotypes compare with the dominant allele first, however the learner ordered the pair. */
-function genotypeKey(cell: string): string {
-  return characters(cell.trim()).toSorted().join("");
+/**
+ * Genotypes compare with the dominant allele first, however the learner ordered the pair; numbers
+ * compare as written.
+ */
+function cellKey(cell: string): string {
+  const trimmed = cell.trim();
+  return /^[A-Za-z]+$/u.test(trimmed) ? characters(trimmed).toSorted().join("") : trimmed;
 }
 
 function gradeAssignment(expected: ExpectedOf<"assignment">, answer: ActivityAnswer): boolean {
@@ -55,16 +58,9 @@ function gradeGrid(expected: ExpectedOf<"grid">, answer: ActivityAnswer): boolea
   return (
     answer.kind === "grid" &&
     sameList(
-      answer.cells.map((cell) => genotypeKey(cell)),
-      expected.cells.map((cell) => genotypeKey(cell)),
+      answer.cells.map((cell) => cellKey(cell)),
+      expected.cells.map((cell) => cellKey(cell)),
     )
-  );
-}
-
-function gradeText(expected: ExpectedOf<"text">, answer: ActivityAnswer): boolean {
-  return (
-    answer.kind === "text" &&
-    expected.accepted.map((sentence) => sentenceKey(sentence)).includes(sentenceKey(answer.text))
   );
 }
 
@@ -166,8 +162,6 @@ export function matchesExpectedAnswer(
       return gradeRhythm(expected, answer);
     case "rows":
       return gradeRows(expected, answer);
-    case "text":
-      return gradeText(expected, answer);
     default:
       return false;
   }

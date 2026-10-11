@@ -22,16 +22,7 @@ const FREE_CALL_SECONDS_A_MONTH = 300;
 const GOAL_DAYS_AHEAD = 90;
 
 /** Every onboarding question before the level test, so `/start/:goalId` opens on the test. */
-const ANSWERED = [
-  "reason",
-  "targetDate",
-  "level",
-  "schedule",
-  "age",
-  "memory",
-  "buddy",
-  "followUps",
-];
+const ANSWERED = ["reason", "targetDate", "level", "schedule", "buddy", "followUps"];
 
 /** The first minute of this month by the server's clock (UTC), when the month's calls count from. */
 function startOfThisMonth(): Date {
@@ -180,21 +171,20 @@ function clipAudio(): Buffer {
 
 /**
  * `POST /v1/speech-clips` as the API answers it (main's E2E runs without the API, whose own tests
- * cover the endpoint), and the generated file it points to.
+ * cover the endpoint), and the generated file it points to: `url` as the API gives it, `file` as
+ * the page loads it (a private clip plays through main's own file route).
  */
-async function routeSpeechClips(page: Page) {
+async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } = {}) {
   const requests: unknown[] = [];
   let fileLoaded = false;
 
   await page.route("**/v1/speech-clips", async (route) => {
     requests.push(route.request().postDataJSON());
 
-    await route.fulfill({
-      json: { durationMs: 300, id: randomUUID(), language: "en", url: CLIP_URL },
-    });
+    await route.fulfill({ json: { durationMs: 300, id: randomUUID(), language: "en", url } });
   });
 
-  await page.route(CLIP_URL, async (route) => {
+  await page.route(file, async (route) => {
     fileLoaded = true;
     await route.fulfill({ body: clipAudio(), contentType: "audio/wav" });
   });
@@ -240,6 +230,22 @@ test.describe("Language calls", () => {
     await expect(page.locator("p", { hasText: "Is it still available?" })).toBeVisible();
     await expect(page.getByText("Em perguntas, o verbo vem antes do sujeito.")).toBeVisible();
     await expect(page.getByText("available", { exact: true })).toBeVisible();
+
+    // The better version is the learner's own sentence: its clip is theirs alone, played from
+    // their private files through main's file route.
+    const ownFile = `audio/${user.id}/better.mp3`;
+
+    const clip = await routeSpeechClips(page, {
+      file: `**/api/files/${ownFile}`,
+      url: `https://api.test/v1/files/${ownFile}`,
+    });
+
+    await page.getByRole("button", { name: "Listen to Is it still available?" }).click();
+    await expect.poll(() => clip.fileLoaded()).toBe(true);
+
+    expect(clip.requests).toStrictEqual([
+      { language: "en", personal: true, text: "Is it still available?" },
+    ]);
 
     // A checkpoint goes back to today's session, which opens the next block; closing goes to Today.
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
@@ -757,7 +763,11 @@ test.describe("Language practice in the plan", () => {
     await expect(page.getByRole("button", { name: "Play the message again" })).toBeVisible();
 
     expect(clip.requests).toStrictEqual([
-      { language: "en", text: expect.stringMatching(/^A short listening text at [ABC][12]\.$/u) },
+      {
+        language: "en",
+        personal: false,
+        text: expect.stringMatching(/^A short listening text at [ABC][12]\.$/u),
+      },
     ]);
 
     expect(clip.fileLoaded()).toBe(true);

@@ -18,12 +18,14 @@ import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { ArrowRightIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { ListGroup } from "../_components/list-group";
 import { ProgressRing } from "../_components/progress-ring";
 import { Surface } from "../_components/surface";
 import { daysUntilIsoDate } from "../_utils/iso-date";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { getBandFill } from "../language/_utils/level-scale";
+import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
@@ -35,7 +37,8 @@ const PERCENT = 100;
 
 /**
  * Where the learner stands, as the hero shows it: preparation for exam and learn goals, the level
- * across skills for a language goal (with its speaking mock, when the goal's exam has one).
+ * across skills for a language goal (with its exam's speaking paper or speaking mock, when the goal
+ * prepares for one).
  */
 export type JourneyStanding =
   | {
@@ -48,7 +51,13 @@ export type JourneyStanding =
       preparation: NonNullable<ProgressView["preparation"]>;
       stillNeeded: ProgressView["stillNeeded"];
     }
-  | { kind: "language"; language: LanguageProgressView; startSpeakingMock: () => Promise<boolean> };
+  | {
+      kind: "language";
+      language: LanguageProgressView;
+      /** The goal's exam-style speaking tasks, on their own page. */
+      speakingHref: string;
+      startSpeakingMock: () => Promise<boolean>;
+    };
 
 type PlanStatus = PlanView["status"];
 
@@ -171,7 +180,7 @@ function SheetBody({ examHref, standing }: { examHref: string | null; standing: 
     );
   }
 
-  const { language, startSpeakingMock } = standing;
+  const { language, speakingHref, startSpeakingMock } = standing;
 
   return (
     <div className="flex flex-col gap-7">
@@ -180,6 +189,11 @@ function SheetBody({ examHref, standing }: { examHref: string | null; standing: 
         progress={language}
       />
       <CanDoList canDo={language.canDo} />
+      {language.speaking && (
+        <ListGroup>
+          <SpeakingPracticeRow entry={language.speaking} href={speakingHref} />
+        </ListGroup>
+      )}
       {language.speakingMock && (
         <SpeakingMockCard exam={language.speakingMock} onStart={startSpeakingMock} />
       )}

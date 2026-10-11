@@ -1,6 +1,5 @@
 import { getCourseHref } from "@/data/courses/course-href";
 import { getPathname } from "@/i18n/navigation";
-import { forgetDeletedSession } from "@/lib/forget-deleted-session";
 import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
@@ -24,7 +23,6 @@ import {
   getPlacementAction,
   getPlacementMockAction,
   getPlanAction,
-  inviteGuardianAction,
   joinWaitlistAction,
   startOverAction,
   stopPlacementMockAction,
@@ -39,16 +37,7 @@ import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
  * through the uploads API from the browser, since files go straight to storage.
  */
 export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
-  answer: async ({ goalId, input }) => {
-    const outcome = await answerOnboardingAction(goalId, input);
-
-    // An age under 13 deleted the account: the browser forgets its session too.
-    if (outcome.status === "accountDeleted") {
-      await forgetDeletedSession();
-    }
-
-    return outcome;
-  },
+  answer: ({ goalId, input }) => answerOnboardingAction(goalId, input),
   answerPlacement: (input) => answerPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   askMaterial: askMaterialQuestion,
   attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
@@ -59,7 +48,6 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   getPlacementMock: getPlacementMockAction,
   getPlan: getPlanAction,
   getTimeAdvice: getGoalTimeAdvice,
-  inviteGuardian: inviteGuardianAction,
   joinWaitlist: joinWaitlistAction,
   languageLevelTest: (goalId) => ({
     answer: (input) => answerLevelTestAction(goalId, input),

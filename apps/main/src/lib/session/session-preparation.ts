@@ -31,10 +31,10 @@ export function writeLessonAhead(lessonId: string): void {
 }
 
 /**
- * Starts getting a goal's first lessons written after the response is sent, before its first
- * session is built: when placement ends, Day 1's next lessons and the next study day's first ones
- * (the first lesson itself is asked for with `writeLessonAhead`). A failure is logged; the first
- * block the learner opens prepares again.
+ * Starts getting a goal's next lessons written after the response is sent, before a session asks:
+ * when placement ends, Day 1's next lessons and the next study day's first ones (the first lesson
+ * itself is asked for with `writeLessonAhead`), and after a plan change, the outlines of the topics
+ * it brings in soon. A failure is logged; the next block the learner opens prepares again.
  */
 export function prepareGoalLessons(goalId: string): void {
   after(async () => {

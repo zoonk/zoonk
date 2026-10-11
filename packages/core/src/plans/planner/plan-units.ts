@@ -55,6 +55,11 @@ export type QueueUnit = {
    * the final weeks.
    */
   startsAt?: number;
+  /**
+   * The day, by its place in the days a run lays units on, a kept phase end's challenge stays on
+   * even past that day's time (see `keepPhaseEnds`): a shown end never moves without the learner.
+   */
+  heldOn?: number;
   chapterId: string | null;
   /**
    * Lessons past its skill's core, which a plan short on time studies once every skill's core is
@@ -62,10 +67,21 @@ export type QueueUnit = {
    */
   depth?: boolean;
   /**
+   * The day the plan the learner sees has the next lesson of the chapter they're in the middle of:
+   * an exam's study cycle gives its subject a turn by then (see `putChapterInProgressFirst`).
+   */
+  dueBy?: Date;
+  /**
    * A lesson of an area the learner asked to focus on: a plan short on time studies its depth
    * before other areas' depth (see `putCoresFirst`).
    */
   focused?: boolean;
+  /**
+   * A lesson of the chapter the learner is in the middle of that the plan they see holds (see
+   * `putChapterInProgressFirst`): it stays with its skill's core, so no re-plan sends the rest of
+   * that chapter after other skills.
+   */
+  inProgress?: boolean;
   key: string;
   kind: "boss" | "lesson";
   lessonId: string | null;
@@ -75,6 +91,12 @@ export type QueueUnit = {
   /** A lesson of one of the goal's outcome skills: a plan short on time leaves others out first. */
   outcome?: boolean;
   phase: number;
+  /**
+   * A core a plan short on time ranks out of its subject's time (see `putLeastWorthCoresLast`):
+   * the deadline cuts it first, and a skill of another subject that builds on it doesn't bring it
+   * forward, ahead of the cores its subject keeps (see `pullPrerequisites`).
+   */
+  rankedOut?: boolean;
   /**
    * A lesson of an area the learner wants less of: a plan short on time studies its depth after
    * other areas' depth (see `putCoresFirst`).
@@ -319,40 +341,81 @@ export function getStandInLessons({
 }
 
 /**
+ * The skill a lesson is planned under: the first of its skills taught, so a chapter shared by
+ * several stays whole, unless the skill it teaches builds on one taught after that, whose lessons
+ * would then come after it; then its own. Wireframes build on content structure, and a "less" on
+ * content sent it after the flows chapter the wireframes share, whose wireframe lessons came first.
+ */
+function getPlannedSkillId({
+  lesson,
+  place,
+  prerequisites,
+  skills,
+  teaches,
+}: {
+  lesson: PlannerLesson;
+  place: ReadonlyMap<string, number>;
+  prerequisites: ReadonlyMap<string, readonly string[]>;
+  skills: readonly UnitSkill[];
+  teaches: string | undefined;
+}): string | undefined {
+  const first = skills.find((skill) => lesson.skillIds.includes(skill.skillId))?.skillId;
+  const firstPlace = place.get(first ?? "") ?? 0;
+
+  const buildsOnLater = (prerequisites.get(teaches ?? "") ?? []).some(
+    (skillId) => (place.get(skillId) ?? -1) > firstPlace,
+  );
+
+  return buildsOnLater ? teaches : first;
+}
+
+/**
  * Turns skills in teaching order into lessons: each skill's Library lessons in chapter order, and
  * one placeholder for a skill whose lessons aren't outlined yet. A lesson shared by several skills
  * is planned once, where the first of them is taught, so a chapter stays whole, and counts once, for
- * the skill it teaches (see `getStandInLessons`). A skill the Library outlined only in part keeps
- * the graph's size while a chapter's worth is missing: the rest follows its lessons as a
- * placeholder.
+ * the skill it teaches (see `getStandInLessons`), never before what that skill builds on (see
+ * `getPlannedSkillId`). A skill the Library outlined only in part keeps the graph's size while a
+ * chapter's worth is missing: the rest follows its lessons as a placeholder.
  */
 export function buildLessonUnits({
   lessons,
   paceFactor,
+  prerequisites = new Map(),
   skills,
 }: {
   lessons: readonly PlannerLesson[];
   paceFactor: number;
+  /** What each skill builds on, by skill id. */
+  prerequisites?: ReadonlyMap<string, readonly string[]>;
   skills: readonly UnitSkill[];
 }): QueueUnit[] {
   const bySkillId = new Map(skills.map((skill) => [skill.skillId, skill]));
   const teaching = assignLessonSkills({ lessons, skills });
   const counts = countAssigned(teaching);
+  const place = new Map(skills.map((skill, index) => [skill.skillId, index]));
   const firstSkill = new Map<string, string>();
 
   lessons.forEach((lesson) => {
-    const skillId = skills.find((skill) => lesson.skillIds.includes(skill.skillId))?.skillId;
+    const skillId = getPlannedSkillId({
+      lesson,
+      place,
+      prerequisites,
+      skills,
+      teaches: teaching.get(lesson.lessonId),
+    });
 
     if (skillId && !firstSkill.has(lesson.lessonId)) {
       firstSkill.set(lesson.lessonId, skillId);
     }
   });
 
-  return skills.flatMap((skill) => {
-    const taught = lessons.filter((lesson) => lesson.skillIds.includes(skill.skillId));
+  // Each skill's own lessons in the plan's order, found in one pass: filtering every lesson for each
+  // skill of a real-size exam was a twentieth of each plan built.
+  const byFirstSkill = Map.groupBy(lessons, (lesson) => firstSkill.get(lesson.lessonId));
 
-    const own = taught
-      .filter((lesson) => firstSkill.get(lesson.lessonId) === skill.skillId)
+  return skills.flatMap((skill) => {
+    const own = (byFirstSkill.get(skill.skillId) ?? [])
+      .filter((lesson) => lesson.skillIds.includes(skill.skillId))
       .map((lesson) =>
         toLessonUnit({
           lesson,

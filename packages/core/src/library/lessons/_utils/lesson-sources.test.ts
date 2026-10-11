@@ -1,6 +1,8 @@
+import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
@@ -79,6 +81,34 @@ describe(loadLessonDocuments, () => {
         title: "Law 8,112 of 1990",
         unit: "page",
       },
+    ]);
+  });
+
+  it("keeps reading the law its screens cite after the learner whose research found it leaves", async () => {
+    const [lesson, law] = await Promise.all([libraryLessonFixture(), statute()]);
+    const { goal, user } = await planningGoal({ lessonId: lesson.id });
+
+    await Promise.all([
+      learnerSourceFixture({
+        goalId: goal.id,
+        origin: "research",
+        sourceId: law.id,
+        userId: user.id,
+      }),
+      libraryStepFixture({ lessonId: lesson.id, sourceId: law.id, sourcePage: 2 }),
+    ]);
+
+    await prisma.user.delete({ where: { id: user.id } });
+
+    const documents = await loadLessonDocuments({
+      chapterId: null,
+      courseId: null,
+      lessonId: lesson.id,
+      query: QUERY,
+    });
+
+    expect(documents.sources.map((page) => [page.sourceId, page.text])).toStrictEqual([
+      [law.id, STATUTE_PAGES[1]],
     ]);
   });
 

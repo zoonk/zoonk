@@ -14,7 +14,7 @@ const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
 
 const languageSchema = z.string().min(MIN_LANGUAGE_LENGTH).max(MAX_LANGUAGE_LENGTH);
 
-const dailyMinutesSchema = z
+export const dailyMinutesSchema = z
   .int()
   .min(MIN_DAILY_MINUTES)
   .max(MAX_DAILY_MINUTES)
@@ -148,7 +148,9 @@ export type GoalView = {
     ready: boolean;
     currentPhase: number | null;
     endDate: string | null;
+    /** Lessons studied, as the Journey's phases count them (`countLessonProgress`). */
     lessonsDone: number;
+    /** Every lesson the plan teaches but those tested out. */
     lessonsTotal: number;
     phaseCount: number;
   } | null;

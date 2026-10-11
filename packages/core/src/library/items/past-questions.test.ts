@@ -101,6 +101,7 @@ function copiedQuestion(overrides: Partial<PastQuestion> = {}): PastQuestion {
     item: {
       context: "Um celular custava R$ 1.000,00 e teve dois aumentos seguidos de 10%.",
       difficulty: "easy",
+      fixedOrder: false,
       format: "multipleChoice",
       image: null,
       options: options.map((text) => ({

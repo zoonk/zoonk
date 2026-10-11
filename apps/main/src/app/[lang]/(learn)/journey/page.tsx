@@ -20,9 +20,11 @@ import { Suspense } from "react";
 import { LearnNoGoal } from "../_components/learn-no-goal";
 import {
   changePlanAction,
+  chooseExamOptionAction,
   choosePlanToolsAction,
   continueNextLevelAction,
   decidePlanChangeAction,
+  previewPlanChangeAction,
 } from "./journey-actions";
 import { JourneyBuildingClient, JourneyClient } from "./journey-client";
 import { JourneySetup } from "./journey-setup";
@@ -32,9 +34,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Journey") };
 }
 
-/** What to study next once every lesson of the plan is done; read only then. */
-async function loadStudyNext({ finished, goalId }: { finished: boolean; goalId: string }) {
-  if (!finished) {
+/** What to study next once nothing of the plan is left (finished or ended); read only then. */
+async function loadStudyNext({ goalId, over }: { goalId: string; over: boolean }) {
+  if (!over) {
     return null;
   }
 
@@ -110,7 +112,7 @@ async function JourneyContent() {
 
   const { goal, plan } = result.view;
 
-  const next = await loadStudyNext({ finished: plan.finished, goalId: goal.id });
+  const next = await loadStudyNext({ goalId: goal.id, over: plan.end !== null });
   const standing = progress.status === "ready" ? progress.progress : null;
   const alphabet = units.status === "ready" ? units.units.alphabet : null;
 
@@ -118,8 +120,10 @@ async function JourneyContent() {
     <JourneyClient
       actions={{
         change: changePlanAction.bind(null, goal.id),
+        chooseExamOption: chooseExamOptionAction.bind(null, goal.id),
         chooseTools: choosePlanToolsAction.bind(null, goal.id),
         decide: decidePlanChangeAction.bind(null, goal.id),
+        preview: previewPlanChangeAction.bind(null, goal.id),
       }}
       alphabet={
         alphabet && {

@@ -1,6 +1,5 @@
 import "server-only";
 import { type GoalUnderstanding } from "@zoonk/ai/tasks/v2/goals/understand-goal";
-import { UNDERSTAND_GOAL_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/goals/understand-goal-version";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { z } from "zod";
@@ -44,27 +43,26 @@ const storedUnderstandingSchema = z.discriminatedUnion("route", [
   }),
 ]) satisfies z.ZodType<GoalUnderstanding>;
 
-type CacheKey = { language: string; normalizedPrompt: string };
+/** The learner who typed the words: their words and what they say are theirs alone. */
+type CacheKey = { language: string; normalizedPrompt: string; userId: string };
 
 /**
- * The understanding of these exact words from the last day by the current prompt, when there is
- * one: a reading an older prompt wrote (a longer title, say) is read again and replaced.
+ * The learner's understanding of these exact words from the last day, when there is one, whatever
+ * prompt version wrote it: a prompt change never reads stored words again on its own. Another
+ * learner's reading of the same words is never theirs.
  */
 export async function findCachedUnderstanding({
   language,
   now,
   normalizedPrompt,
+  userId,
 }: CacheKey & { now: Date }): Promise<GoalUnderstanding | null> {
   const row = await prisma.goalUnderstanding.findUnique({
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+    where: { userLanguagePrompt: { language, normalizedPrompt, userId } },
   });
 
   // Relative dates ("this year", "in 6 months") resolve against the day: reuse lasts a day.
-  if (
-    !row ||
-    row.promptVersion !== UNDERSTAND_GOAL_PROMPT_VERSION ||
-    now.getTime() - row.generatedAt.getTime() > MS_PER_DAY
-  ) {
+  if (!row || now.getTime() - row.generatedAt.getTime() > MS_PER_DAY) {
     return null;
   }
 
@@ -72,12 +70,13 @@ export async function findCachedUnderstanding({
   return parsed.success ? parsed.data : null;
 }
 
-/** Stores what the task understood with the run that wrote it, fresh from now. */
+/** Stores what the task understood for the learner with the run that wrote it, fresh from now. */
 export async function saveUnderstanding({
   language,
   normalizedPrompt,
   provenance,
   result,
+  userId,
 }: CacheKey & {
   provenance: { model: string; promptVersion: string; runId: string };
   result: GoalUnderstanding;
@@ -86,8 +85,8 @@ export async function saveUnderstanding({
   const data = { generatedAt: new Date(), model, promptVersion, result, runId };
 
   await prisma.goalUnderstanding.upsert({
-    create: { ...data, language, normalizedPrompt },
+    create: { ...data, language, normalizedPrompt, userId },
     update: data,
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+    where: { userLanguagePrompt: { language, normalizedPrompt, userId } },
   });
 }

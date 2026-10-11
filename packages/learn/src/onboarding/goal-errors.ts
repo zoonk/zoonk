@@ -10,12 +10,20 @@ import { type GoalLimitReason, type StartUnderstandingOutcome } from "./onboardi
  * pages too: the home page's goal box and a course's "Start this course".
  */
 export type GoalError = {
+  /** The goal limit that refused it, when one did: one Plus lifts shows as the Plus notice. */
+  limit?: GoalLimitReason;
   message: string;
-  /** A guest's one goal is taken, or their small AI calls for today: an account keeps going. */
+  /**
+   * A guest's one goal is taken, their small AI calls for today, or the guests' daily AI budget: an
+   * account keeps going.
+   */
   needsAccount: boolean;
 };
 
-/** Why a new goal couldn't start: a guest's one goal, the free plan's one, the day's, or haste. */
+/**
+ * Why a new goal couldn't start: a guest's one goal or the guests' daily AI budget, the free plan's
+ * one, the day's, or haste.
+ */
 export function useGoalLimitMessage() {
   const t = useExtracted("goalErrors");
 
@@ -34,8 +42,9 @@ export function useGoalLimitMessage() {
       "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.",
     ),
     oneActiveGoal: t(
-      "The free plan follows one goal at a time. To start this one, pause your current goal from the goal menu on Today, or get Plus.",
+      "The free plan follows one goal at a time. To start this one, pause your current goal from the menu on Journey, or get Plus.",
     ),
+    signUpRequired: t("Create your free account to continue."),
     slowDown: t("You're starting goals quickly. Try again in a few minutes."),
   };
 
@@ -102,6 +111,10 @@ export function useStartError() {
 
     if (outcome.status === "needsAccount") {
       return { message: goalLimitMessage("guest"), needsAccount: true };
+    }
+
+    if (outcome.status === "signUpRequired") {
+      return { message: goalLimitMessage("signUpRequired"), needsAccount: true };
     }
 
     return {

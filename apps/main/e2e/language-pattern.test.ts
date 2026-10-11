@@ -25,7 +25,7 @@ async function answerDrill(page: Page) {
   await page.keyboard.press("Enter");
 
   await expect(page.getByText("We've lived here ___ three years.")).toBeVisible();
-  await page.getByRole("button", { name: /for$/u }).click();
+  await page.getByRole("radio", { name: /for$/u }).click();
   await expect(page.getByRole("status").filter({ hasText: /^Right!/u })).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
 

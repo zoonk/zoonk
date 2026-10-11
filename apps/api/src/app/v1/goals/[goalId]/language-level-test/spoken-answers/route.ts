@@ -5,6 +5,7 @@ import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { levelTestError } from "@/lib/level-test-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { gradeLevelTestSpeech } from "@zoonk/core/language/level-test/speech";
 import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest, NextResponse } from "next/server";
@@ -61,7 +62,7 @@ async function answerLevelTestOutLoud(
     });
   }
 
-  if (result.status === "limitReached") {
+  if (isRefusedUsage(result)) {
     return usageDecisionError(result);
   }
 

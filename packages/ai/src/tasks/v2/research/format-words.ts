@@ -1,4 +1,4 @@
-/** Shorter words ("de", "the", "uma") say nothing about what a question asks. */
+/** Shorter words ("of", "the", "one") say nothing about what a question asks. */
 const MIN_WORD_LENGTH = 4;
 
 /** Words every format's description has, in the languages notes are written in: they tell none apart. */
@@ -43,7 +43,7 @@ type DescribedFormat = { description: string; kind: string };
 
 /**
  * The same question format, read twice: one kind (or one read as `other`, which the other names)
- * asking about the same thing ("tabela das organelas" in both).
+ * asking about the same thing ("organelles table" in both).
  */
 export function isSameFormat(first: DescribedFormat, second: DescribedFormat): boolean {
   const sameKind = first.kind === second.kind || first.kind === "other" || second.kind === "other";

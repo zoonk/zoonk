@@ -1,25 +1,38 @@
+function getSubjects(
+  skillIds: readonly string[],
+  skillSubjects: ReadonlyMap<string, string>,
+): Set<string> {
+  return new Set(skillIds.flatMap((skillId) => skillSubjects.get(skillId) ?? []));
+}
+
 /**
- * The one subject a block studies: its plan item's skill's when it has one (a lesson's own skills
- * are finer than the plan's), else the one subject all its skills share. Skills outside the goal's
- * graph don't count; mixed subjects, or none, give null.
+ * The one subject a block studies: the one all its own skills share, else its plan item's skill's
+ * (a lesson's own skills can be finer than the graph's), unless the lesson's chapter is tagged with
+ * skills of several subjects, where the plan item's is a guess. Skills outside the goal's graph
+ * don't count; nothing settled gives null.
  */
 export function getBlockSubject({
+  chapterSkillIds = [],
   planItemSkillId,
   skillIds,
   skillSubjects,
 }: {
+  chapterSkillIds?: readonly string[];
   planItemSkillId?: string | null;
   skillIds: readonly string[];
   skillSubjects: ReadonlyMap<string, string>;
 }): string | null {
-  const planned = planItemSkillId ? skillSubjects.get(planItemSkillId) : undefined;
+  const own = getSubjects(skillIds, skillSubjects);
 
-  if (planned) {
-    return planned;
+  if (own.size === 1) {
+    return [...own][0] ?? null;
   }
 
-  const subjects = new Set(skillIds.flatMap((skillId) => skillSubjects.get(skillId) ?? []));
-  const [subject] = subjects;
+  const planned = planItemSkillId ? skillSubjects.get(planItemSkillId) : undefined;
 
-  return subjects.size === 1 ? (subject ?? null) : null;
+  if (!planned || getSubjects(chapterSkillIds, skillSubjects).size > 1) {
+    return null;
+  }
+
+  return planned;
 }

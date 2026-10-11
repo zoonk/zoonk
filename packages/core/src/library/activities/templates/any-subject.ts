@@ -7,29 +7,9 @@ import {
 } from "../../steps/contract/content-schemas";
 import { unitSchema } from "../activity-schemas";
 import { defineActivityTemplate } from "../define-activity-template";
-import { guessScaleIssues, issue } from "./_utils/template-helpers";
+import { issue } from "./_utils/template-helpers";
 
 const MAX_FACTS = 4;
-
-export const predictRevealTemplate = defineActivityTemplate({
-  checks: ["numeric"],
-  description:
-    "Commit to a guess on a scale before the explanation, so the gap is memorable, like how much the usual world map shrinks Africa. The true value is cited data. Fills: the question, the scale range, the true value with its source and the explanation.",
-  fields: z
-    .object({
-      explanation: explanationSchema,
-      max: z.number(),
-      min: z.number(),
-      scale: z.enum(["linear", "log"]),
-      trueValue: z.number(),
-      unit: unitSchema,
-    })
-    .strict(),
-  id: "predictReveal",
-  needsData: true,
-  value: (fields) => fields.trueValue,
-  verify: (fields) => guessScaleIssues({ ...fields, trueValuePath: "fields.trueValue" }),
-});
 
 const factSchema = z
   .object({ id: idSchema, label: labelSchema, unit: unitSchema.optional(), value: z.number() })

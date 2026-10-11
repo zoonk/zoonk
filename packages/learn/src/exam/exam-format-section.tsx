@@ -33,7 +33,10 @@ function useFormatTitle(days: number): string {
   return days === 2 ? t("The two days") : t("The {count, number} days", { count: days });
 }
 
-/** "180 questions and the Redação": what the whole exam holds, beside the header. */
+/**
+ * "180 questions · Essay": what the whole exam holds, beside the header of an exam of several days.
+ * One day's rows already say it, and beside "The exam day" it wrapped the title word by word.
+ */
 function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
   const t = useExtracted();
   const parts = format.flatMap((day) => day.parts);
@@ -103,7 +106,7 @@ export function ExamFormatSection() {
     <PageSection aria-labelledby={FORMAT_TITLE_ID} data-slot="exam-format">
       <PageSectionHeader>
         <PageSectionTitle id={FORMAT_TITLE_ID}>{title}</PageSectionTitle>
-        {detail && <PageSectionDetail>{detail}</PageSectionDetail>}
+        {detail && exam.format.length > 1 && <PageSectionDetail>{detail}</PageSectionDetail>}
       </PageSectionHeader>
 
       {exam.format.map((day) => {

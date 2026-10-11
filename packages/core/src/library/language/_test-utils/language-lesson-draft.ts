@@ -92,3 +92,99 @@ export function languageLessonDraft(
     ...overrides,
   };
 }
+
+/**
+ * An English lesson for a learner who reads the app in English (an IELTS candidate), as the writer
+ * returns it: words have definitions, and sentences come back as they are.
+ */
+export function sameLanguageLessonDraft(
+  overrides: Partial<LanguageLessonContent> = {},
+): LanguageLessonContent {
+  return languageLessonDraft({
+    practice: [
+      {
+        answer: "need",
+        distractors: ["needs", "needing"],
+        feedback: "Use 'need' after a plural subject like 'plants'.",
+        question: null,
+        template: "Plants [BLANK] water to grow",
+      },
+    ],
+    sentences: [
+      {
+        distractors: ["needs", "feed"],
+        explanation: "The subject 'plants' is plural, so the verb has no -s.",
+        romanization: null,
+        sentence: "Plants need water to grow",
+        speakingPrompt: "Read the fact about plants aloud.",
+        translation: "Plants need water to grow",
+        translationDistractors: ["needs", "feed"],
+      },
+      {
+        distractors: ["does", "needs"],
+        explanation: "A yes-or-no question starts with 'do' before a plural subject.",
+        romanization: null,
+        sentence: "Do plants need light?",
+        speakingPrompt: null,
+        translation: "Do plants need light?",
+        translationDistractors: ["does", "needs"],
+      },
+      {
+        distractors: ["grows", "glow"],
+        explanation: "'Grow' takes no -s after 'plants'.",
+        romanization: null,
+        sentence: "Plants grow in many places",
+        speakingPrompt: null,
+        translation: "Plants grow in many places",
+        translationDistractors: ["grows", "glow"],
+      },
+    ],
+    summary: [
+      "'Plants need water' states what plants require.",
+      "'Do plants grow?' asks a question.",
+    ],
+    tip: {
+      examples: [
+        { sentence: "Plants need water", translation: "Plants need water" },
+        { sentence: "Do plants need light?", translation: "Do plants need light?" },
+      ],
+      text: "After a plural subject like `plants`, the verb has no -s.",
+      title: "Verbs after plural subjects",
+    },
+    words: [
+      {
+        distractors: ["feed", "read", "have"],
+        note: null,
+        pronunciation: "NEED",
+        romanization: null,
+        tip: null,
+        translation: "need",
+        word: "need",
+      },
+      {
+        distractors: ["weather", "air", "soil"],
+        note: null,
+        pronunciation: "WAW-ter",
+        romanization: null,
+        tip: null,
+        translation: "the clear liquid that falls as rain",
+        word: "water",
+      },
+      {
+        distractors: ["go", "glow", "shrink"],
+        note: null,
+        pronunciation: "GROH",
+        romanization: null,
+        tip: null,
+        translation: "to get bigger over time",
+        word: "grow",
+      },
+    ],
+    writing: {
+      answers: ["Plants need light to grow."],
+      keyPoints: ["Uses 'need' after 'plants'"],
+      prompt: "Write one sentence saying that plants require light so they can get bigger.",
+    },
+    ...overrides,
+  });
+}

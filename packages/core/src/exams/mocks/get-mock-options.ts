@@ -1,6 +1,7 @@
 import "server-only";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
+import { getExamDocument } from "../exam-document";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
 import {
   findPlacementMock,
@@ -52,6 +53,7 @@ export async function getMockOptions({
     status: "ready",
     view: {
       access,
+      examDocument: getExamDocument(goal),
       examName: setup.examName,
       goalId: goal.id,
       options: setup.options,
@@ -67,6 +69,7 @@ export async function getMockOptions({
         running && conditions
           ? { id: running.id, purpose: conditions.purpose, shape: conditions.shape }
           : null,
+      sizeSource: setup.sizeSource,
     },
   };
 }

@@ -63,7 +63,8 @@ const googleAuthorizationResponse = {
   description: `Google authorization is invalid or expired. Error code: ${sessionErrorCodes.googleAuthorizationInvalid}.`,
 } as const;
 
-const rateLimitResponse = {
+/** Better Auth's rate limit, by IP and path: the same answer on every auth endpoint. */
+export const authRateLimitResponse = {
   ...tooManyRequestsResponse,
   description: `Request rate limit exceeded. Error code: ${sessionErrorCodes.rateLimitExceeded}.`,
   headers: z.object({
@@ -88,7 +89,7 @@ export const sessionPaths = {
         "204": { description: "Sign-in code sent" },
         "400": signupValidationResponse,
         "403": botCheckForbiddenResponse,
-        "429": rateLimitResponse,
+        "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Send an email sign-in code",
@@ -107,7 +108,7 @@ export const sessionPaths = {
         "400": signupValidationResponse,
         "401": appleAuthorizationResponse,
         "403": accountDisabledResponse,
-        "429": rateLimitResponse,
+        "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Sign in with Apple",
@@ -140,7 +141,7 @@ export const sessionPaths = {
         "200": sessionTokenResponse,
         "400": emailCodeErrorResponse,
         "403": emailCodeForbiddenResponse,
-        "429": rateLimitResponse,
+        "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Sign in with an email code",
@@ -159,7 +160,7 @@ export const sessionPaths = {
         "400": signupValidationResponse,
         "401": googleAuthorizationResponse,
         "403": accountDisabledResponse,
-        "429": rateLimitResponse,
+        "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
       summary: "Sign in with Google",

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
+import { type WrittenItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
 
 type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
 
@@ -8,6 +9,7 @@ export function generatedMultipleChoice(attrs?: Partial<ItemOf<"multipleChoice">
   return {
     context: null,
     difficulty: "medium",
+    fixedOrder: false,
     format: "multipleChoice",
     image: null,
     options: [
@@ -48,5 +50,57 @@ export function generatedProvenance() {
     model: "openai/gpt-6-sol",
     promptVersion: "test-prompt",
     runId: `test-run-${randomUUID()}`,
+  };
+}
+
+const PASSAGE = [
+  "Last year the town library began opening on Sundays, after a vote in which families asked for",
+  "more time to visit together. The change cost little: two librarians moved a weekday shift to",
+  "the weekend. By December, visits had risen by a third, and most new visitors came with children.",
+  "Weekday visits stayed the same, so the Sunday hours added readers instead of moving them.",
+  "The council now wants to try the same idea at the sports centre, although its staff warn that",
+  "a pool needs lifeguards, who are harder to find than librarians.",
+].join(" ");
+
+/** A written ENEM-style set: a passage and three true-or-false statements, two of them on skill 1. */
+export function writtenItemSet(attrs?: Partial<WrittenItemSet>): WrittenItemSet {
+  return {
+    kind: "text",
+    questions: [
+      {
+        difficulty: "easy",
+        evidence: "visits had risen by a third",
+        format: "trueFalse",
+        isTrue: true,
+        misconception: null,
+        reason: "Visits rose by a third by December.",
+        skill: 1,
+        statement: "Opening on Sundays brought more visits to the library.",
+      },
+      {
+        difficulty: "medium",
+        evidence: "Weekday visits stayed the same",
+        format: "trueFalse",
+        isTrue: false,
+        misconception: "Assumes visits moved to Sunday",
+        reason: "Weekday visits stayed the same, so Sunday added readers.",
+        skill: 2,
+        statement: "The Sunday visitors were weekday readers who changed days.",
+      },
+      {
+        difficulty: "hard",
+        evidence: "a pool needs lifeguards, who are harder to find than librarians",
+        format: "trueFalse",
+        isTrue: true,
+        misconception: null,
+        reason: "The staff warn that lifeguards are harder to find.",
+        skill: 1,
+        statement: "The sports centre may find Sunday hours harder to staff than the library did.",
+      },
+    ],
+    text: PASSAGE,
+    title: "Sundays at the library",
+    visual: null,
+    ...attrs,
   };
 }

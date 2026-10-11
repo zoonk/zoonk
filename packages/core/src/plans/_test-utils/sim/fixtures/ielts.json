@@ -1,0 +1,188 @@
+{
+  "about": "IELTS Academic: the exam's skill graph, with Listening skills practiced only with its recordings",
+  "blueprint": {
+    "edition": null,
+    "owned": false,
+    "structure": {
+      "mock": {
+        "order": "Listening, Reading, Writing, Speaking",
+        "scoring": { "method": "scaled", "description": "Band scores from 0 to 9" },
+        "adaptive": false,
+        "sections": [
+          {
+            "day": null,
+            "kind": "listening",
+            "name": "Listening",
+            "tasks": [
+              {
+                "count": 10,
+                "plays": 1,
+                "description": "Part 1: a conversation between two speakers in an everyday social situation, for example, a conversation about travel arrangements"
+              },
+              {
+                "count": 10,
+                "plays": 1,
+                "description": "Part 2: there is only one main speaker in an everyday social situation, for example, a speech about local facilities"
+              },
+              {
+                "count": 10,
+                "plays": 1,
+                "description": "Part 3: a conversation between two main speakers in an educational or training situation, for example, two university students in discussion, perhaps guided by a tutor"
+              },
+              {
+                "count": 10,
+                "plays": 1,
+                "description": "Part 4: only one person speaks on an academic subject"
+              }
+            ],
+            "minutes": 30,
+            "questions": 40
+          },
+          {
+            "day": null,
+            "kind": "objective",
+            "name": "Reading",
+            "tasks": [],
+            "minutes": 60,
+            "questions": 40
+          },
+          {
+            "day": null,
+            "kind": "written",
+            "name": "Writing",
+            "tasks": [],
+            "minutes": 60,
+            "questions": null
+          },
+          {
+            "day": null,
+            "kind": "speaking",
+            "name": "Speaking",
+            "tasks": [],
+            "minutes": 14,
+            "questions": null
+          }
+        ],
+        "citations": [],
+        "totalQuestions": 80,
+        "timeLimitMinutes": null
+      },
+      "rules": [],
+      "formats": [],
+      "subjects": []
+    },
+    "topicFrequency": null
+  },
+  "chapters": [],
+  "courses": [],
+  "exportedFrom": { "at": "2026-10-10", "graph": "exam_skill_graphs" },
+  "format": 1,
+  "goal": {
+    "details": {},
+    "kind": "exam",
+    "language": "pt",
+    "primaryCourse": null,
+    "targetLanguage": "en"
+  },
+  "graph": {
+    "phases": [{ "milestone": "Exam ready", "name": "Base" }],
+    "skills": [
+      {
+        "area": "Listening",
+        "lessons": 3,
+        "name": "Understand everyday conversations",
+        "phase": 0,
+        "skillId": "s1",
+        "weight": null
+      },
+      {
+        "area": "Listening",
+        "lessons": 3,
+        "name": "Understand talks about everyday topics",
+        "phase": 0,
+        "skillId": "s2",
+        "weight": null
+      },
+      {
+        "area": "Listening",
+        "lessons": 3,
+        "name": "Follow academic discussions and lectures",
+        "phase": 0,
+        "skillId": "s3",
+        "weight": null
+      },
+      {
+        "area": "Reading",
+        "lessons": 3,
+        "name": "Read academic texts for detail",
+        "phase": 0,
+        "skillId": "s4",
+        "weight": null
+      },
+      {
+        "area": "Reading",
+        "lessons": 3,
+        "name": "Skim and scan academic texts",
+        "phase": 0,
+        "skillId": "s5",
+        "weight": null
+      },
+      {
+        "area": "Reading",
+        "lessons": 3,
+        "name": "Judge statements against a text",
+        "phase": 0,
+        "skillId": "s6",
+        "weight": null
+      },
+      {
+        "area": "Writing",
+        "lessons": 3,
+        "name": "Describe charts, tables and processes",
+        "phase": 0,
+        "skillId": "s7",
+        "weight": null
+      },
+      {
+        "area": "Writing",
+        "lessons": 3,
+        "name": "Write an argument essay",
+        "phase": 0,
+        "skillId": "s8",
+        "weight": null
+      },
+      {
+        "area": "Speaking",
+        "lessons": 3,
+        "name": "Speak at length from a cue card",
+        "phase": 0,
+        "skillId": "s9",
+        "weight": null
+      },
+      {
+        "area": "Speaking",
+        "lessons": 3,
+        "name": "Discuss abstract ideas",
+        "phase": 0,
+        "skillId": "s10",
+        "weight": null
+      }
+    ]
+  },
+  "lessonSkills": [],
+  "lessons": [],
+  "name": "ielts",
+  "prerequisites": [],
+  "skills": [
+    ["s1", null],
+    ["s2", null],
+    ["s3", null],
+    ["s4", null],
+    ["s5", null],
+    ["s6", null],
+    ["s7", null],
+    ["s8", null],
+    ["s9", null],
+    ["s10", null]
+  ]
+}

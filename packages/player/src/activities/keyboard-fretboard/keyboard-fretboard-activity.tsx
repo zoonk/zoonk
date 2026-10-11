@@ -23,6 +23,7 @@ import {
   pitchSpelling,
   pitchesToNotes,
   targetPitches,
+  targetSound,
   togglePitch,
 } from "./keyboard-fretboard-notes";
 
@@ -42,12 +43,13 @@ function PianoBoard(props: KeyboardFretboardProps) {
   const start = targetPitches(fields.start);
   const target = targetPitches(fields.target);
   const spell = pitchSpelling([fields.target, fields.start]);
-  const showAnswer = isChecked && check.kind === "interaction";
+  // A target found by ear shows once answered, even when the question only asked to name it.
+  const showAnswer = isChecked && (check.kind === "interaction" || Boolean(fields.byEar));
   const shown = showAnswer ? expectedPitches(expected, target) : pressed;
   const notes = pressed.map((pitch) => spell(pitch));
 
   const marks: Map<number, NoteMarkKind> = showAnswer
-    ? checkedMarks({ expected: shown, pressed })
+    ? checkedMarks({ expected: shown, pressed: check.kind === "interaction" ? pressed : shown })
     : answeringMarks({ pressed, start });
 
   function handlePress(midi: number) {
@@ -68,6 +70,14 @@ function PianoBoard(props: KeyboardFretboardProps) {
   return (
     <ActivityCanvas labelId={labelId}>
       <KeyboardFretboardHeader
+        byEar={
+          fields.byEar
+            ? {
+                isRevealed: phase !== "answering",
+                onPlay: () => void piano.play(targetSound(fields.target)),
+              }
+            : null
+        }
         notes={showAnswer ? shown.map((pitch) => spell(pitch)) : notes}
         onHear={() =>
           void piano.play(

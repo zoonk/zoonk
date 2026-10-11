@@ -17,13 +17,11 @@ import { type MindMapStructure } from "./mind-map-schema";
  * as webp. On the eval's four maps (three in Portuguese, 7 Oct 2026) it lettered every word right
  * on 9 of 9 pictures, in 11 to 14 seconds for about $0.01 a map. Medium cost $0.017 for the same
  * result; Sunburst matched it at the same price but took 17 to 19 seconds; Nano Banana 2.1 cost
- * $0.05 at 2K and wrote a word on a sketch, and dropped a branch at 1K. Sunburst is the fallback:
- * it letters Portuguese as well at the same price, and it serves calls that disallow prompt
- * training, which BFL's and Recraft's models don't.
+ * $0.05 at 2K and wrote a word on a sketch, and dropped a branch at 1K. Sunburst is the first
+ * fallback (`buildImageProviderOptions`): it letters Portuguese as well at the same price.
  */
 const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
-const fallbackModels = ["openai/gpt-image-2.5-sunburst"] as const;
 
 /** Square, the size main draws icons at: the small print reads when the learner zooms in. */
 const IMAGE_SIZE = "1024x1024";
@@ -62,7 +60,7 @@ export async function generateMindMapImage({
 
   const { provenance, result } = await runImageTaskGeneration({
     analytics,
-    generate: () =>
+    generate: ({ promptTraining }) =>
       generateImageWithSafetyRetry({
         analytics,
         buildPrompt: ({ input }) => buildMindMapImagePrompt(input),
@@ -70,11 +68,14 @@ export async function generateMindMapImage({
         maxImagesPerCall: 1,
         model,
         providerOptions: buildImageProviderOptions({
-          fallbackModels: useFallback ? fallbackModels : [],
+          promptTraining,
           quality,
+          size: IMAGE_SIZE,
+          useFallback,
         }),
         size: IMAGE_SIZE,
       }),
+    libraryInput: true,
     promptVersion: `mind-map-style-v${MIND_MAP_STYLE_VERSION}`,
     requestedModel: model,
     systemPrompt: MIND_MAP_IMAGE_TEMPLATE,

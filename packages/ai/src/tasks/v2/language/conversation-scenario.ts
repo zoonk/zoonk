@@ -1,48 +1,27 @@
 import "server-only";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { Output, generateText } from "ai";
-import { z } from "zod";
+import { type z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
 import { formatLocalContext } from "../../_utils/language-context";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
+import { scenarioSchema } from "./_utils/scenario-schema";
 import systemPrompt from "./conversation-scenario.prompt.md";
 
 /**
  * Cached per chapter and level and shared by every learner there, so it runs
- * rarely. In the eval (pt-en A2 renting, the pt-en B1 IELTS mock and en-es A2,
+ * rarely. In the eval (pt-en A2 renting, a pt-en B1 IELTS mock and en-es A2,
  * Sep 2026) Luna scored 9.22 at 9.5s p50 and $0.69 per 1k runs; Gemini 3.1
  * Flash Lite 8.63 at 2.2s and $1.06. Luna swapped label and description
  * languages in the Spanish case, which the prompt now checks (spot-checked).
- * With the TOEFL mock added (27 Sep), Luna scored 9.3 on the IELTS and 8.7 on
- * the TOEFL mock: seven original sentences from 5 to 19 words and four
- * questions from a fact to a prediction.
+ * Exam mocks have their own task (`speaking-mock-scenario`).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
 
-const MIN_OBJECTIVES = 2;
-const MAX_OBJECTIVES = 4;
-const MIN_HINTS = 3;
-const MAX_HINTS = 5;
-
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the character's facts come before the lines and hints that use them. */
-const schema = z.object({
-  title: z.string(),
-  situation: z.string(),
-  character: z.object({ name: z.string(), role: z.string(), place: z.string() }),
-  characterBrief: z.string(),
-  objectives: z
-    .array(z.object({ label: z.string(), description: z.string() }))
-    .min(MIN_OBJECTIVES)
-    .max(MAX_OBJECTIVES),
-  openingLine: z.string(),
-  hints: z.array(z.string()).min(MIN_HINTS).max(MAX_HINTS),
-});
-/* oxlint-enable eslint/sort-keys */
-
-export type GenerateConversationScenarioSchema = z.infer<typeof schema>;
+export type GenerateConversationScenarioSchema = z.infer<typeof scenarioSchema>;
 
 export type GenerateConversationScenarioParams = {
   /** The unit's title in the learner's language. */
@@ -96,11 +75,12 @@ export async function generateConversationScenario(params: GenerateConversationS
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: scenarioSchema }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "conversation-scenario",
   });

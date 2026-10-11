@@ -30,10 +30,11 @@ export async function learnMessages(locale: string): Promise<LearnMessages> {
  * apps offer votes and the feedback form everywhere, why a goal couldn't start
  * (`useExtracted("goalErrors")`), since goals start from public pages too, the plan's phase names
  * (`useExtracted("planPhases")`), since a shared plan's public page names them, and the belt names
- * (`useExtracted("belts")`), since a signed-in learner's avatar shows theirs on public pages too.
+ * (`useExtracted("belts")`) and the goal switcher's (`useExtracted("goalSwitcher")`), since a
+ * signed-in learner's top bar shows their avatar and their goals on public pages too.
  * Apps ship these everywhere and the rest of the catalog only where learn screens render.
  */
 export async function learnSiteMessages(locale: string): Promise<LearnMessages> {
-  const { belts, feedback, goalErrors, planPhases } = await learnMessages(locale);
-  return { belts, feedback, goalErrors, planPhases };
+  const { belts, feedback, goalErrors, goalSwitcher, planPhases } = await learnMessages(locale);
+  return { belts, feedback, goalErrors, goalSwitcher, planPhases };
 }

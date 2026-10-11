@@ -1,5 +1,6 @@
 "use client";
 
+import { type LessonScreenSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { createContext, use, useMemo } from "react";
 import { type LessonQuestionContext } from "../../questions/lesson-question-context";
@@ -15,8 +16,11 @@ import { type LessonTutorConfig } from "./lesson-tutor-context";
 /** The learner's buddy in the lesson: who it is, and a way to ask it about where they are. */
 type LessonBuddyTutor = {
   identity: TutorIdentity;
-  /** Opens the questions sheet about where the learner is, with `suggestion` ready to send. */
-  open: (suggestion?: string) => void;
+  /**
+   * Opens the questions sheet about where the learner is, with one of the lesson's `suggestions`
+   * ready to send, in the words its chip reads.
+   */
+  open: (suggestion?: LessonScreenSuggestion) => void;
 };
 
 const LessonTutorContext = createContext<LessonBuddyTutor | null>(null);
@@ -53,20 +57,21 @@ function TutorInteraction({
 }) {
   const controller = useLessonQuestionController();
   const activeContext = useTutorContext();
-  const { chooseSuggestion, open } = controller;
+  const { chooseSuggestion, open, suggestions } = controller;
 
   const buddy = useMemo(
     () => ({
       identity,
-      open: (suggestion?: string) => {
+      open: (suggestion?: LessonScreenSuggestion) => {
         open(activeContext);
+        const offered = suggestions.find(({ id }) => id === suggestion);
 
-        if (suggestion) {
-          chooseSuggestion(suggestion);
+        if (offered) {
+          chooseSuggestion({ question: offered.label, suggestion: offered.id });
         }
       },
     }),
-    [activeContext, chooseSuggestion, identity, open],
+    [activeContext, chooseSuggestion, identity, open, suggestions],
   );
 
   return (
@@ -97,7 +102,12 @@ function LessonTutorHost({
   return (
     <LessonQuestionHostProvider
       connection={tutor.connection}
-      host={{ activeContext, canAskQuestions: tutor.canAsk, lessonStepIds }}
+      host={{
+        activeContext,
+        canAskQuestions: tutor.canAsk,
+        lessonStepIds,
+        suggestions: tutor.suggestions,
+      }}
       target={target}
     >
       <TutorInteraction identity={identity}>{children}</TutorInteraction>

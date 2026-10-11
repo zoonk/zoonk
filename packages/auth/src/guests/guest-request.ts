@@ -16,10 +16,7 @@ export async function findRequestGuest(context: GenericEndpointContext) {
     return null;
   }
 
-  const session = await prisma.session.findUnique({
-    include: { user: { include: { learningProfile: true } } },
-    where: { token },
-  });
+  const session = await prisma.session.findUnique({ include: { user: true }, where: { token } });
 
   if (!session || session.expiresAt <= new Date() || !session.user.isAnonymous) {
     return null;

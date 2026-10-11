@@ -3,10 +3,140 @@ import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 /**
  * Specs written by hand in the shape the spec task makes, so the writer is judged on activities
  * whose content code checks hardest: a code runner whose solution is run before publishing, a
- * labeled diagram from the checked diagram library, and a decision tree whose case comes with a
- * picture.
+ * labeled diagram whose picture code numbers from its parts, a decision tree whose case comes
+ * with a picture, and the engines merged in Oct 2026 (a combination grid and a random simulation,
+ * two lines and their crossing, a chord heard by ear).
  */
 export const ACTIVITY_LESSON_SPECS = {
+  "en-major-minor-by-ear": {
+    canDo: "Hear whether a chord is major or minor",
+    description: "Hear the one note that turns a bright major chord into a darker minor one.",
+    estimatedMinutes: 3,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Happy birthday sounds bright and a sad film theme sounds dark, often with the same root note. Open with that contrast: one note makes the difference.",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "A major chord is a root, a major third (4 half steps up) and a fifth: C, E, G. Lower the middle note one half step and you get a minor chord: C, Eb, G. Major sounds bright; minor sounds darker.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "keyboardFretboard",
+        brief:
+          "By ear: the app plays an A minor chord (A, C, E) together, without naming it. The learner picks whether it was major or minor, then sees it on the keys. Tempting wrong answer: major, from not hearing the lowered third.",
+        kind: "activity",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Ask which note changes when C major becomes C minor. Correct: E drops to Eb. Tempting wrong answer: G drops to Gb, the top note.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Maya plays G, B, D on her keyboard for a sad song and it sounds too bright. Ask which single key she should change (B to Bb) and why.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "A major chord's middle note is 4 half steps above the root; lowering it one half step makes the chord minor and darker.",
+        example: "C, E, G is C major; C, Eb, G is C minor.",
+        hard: false,
+        name: "Tell major and minor chords apart",
+        topic: "Chords",
+        useCase: "Choosing chords that fit the mood of a song you play.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Major or minor?",
+  },
+  "en-pea-crosses-chance": {
+    canDo: "Predict the share of offspring with a trait from one cross",
+    description: "Fill a Punnett square, then see 100 seeds land close to what it predicts.",
+    estimatedMinutes: 4,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Mendel crossed purple and white pea plants and counted thousands of seeds: the white flowers came back in neat proportions. Open with that surprise.",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Each parent passes one of its two alleles. P (purple) is dominant over p (white): Pp is purple, only pp is white. A Pp × pp cross gives Pp or pp, each half the time.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "combinationGrid",
+        brief:
+          "The learner fills the Punnett square for a purple Pp plant crossed with a white pp plant, then answers what share of the seeds grow white flowers (1 in 2). Tempting wrong answer: 1 in 4, from remembering the Pp × Pp cross.",
+        kind: "activity",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "randomSimulation",
+        brief:
+          "Chance mode: plant batches of 100 seeds from the same Pp × pp cross, each white with chance 1/2. The learner guesses how often a batch has exactly 50 white flowers, then runs many batches: they land near 50, rarely on it (about 8% of the time). Tempting wrong answer: most of the time.",
+        kind: "activity",
+        skills: [1],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "A gardener gets 47 white flowers out of 100 seeds from a Pp × pp cross. Ask whether the 1 in 2 prediction was wrong. Correct: no, chance spreads results around 50.",
+        kind: "application",
+        skills: [0, 1],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "A Punnett square pairs each parent's alleles to show every possible offspring, and the share of squares gives each trait's chance.",
+        example: "Pp × pp gives two Pp and two pp squares: 1 in 2 white.",
+        hard: false,
+        name: "Use a Punnett square to predict a trait",
+        topic: "Mendelian genetics",
+        useCase: "Predicting what a garden cross or a pet breeding will produce.",
+      },
+      {
+        description:
+          "A chance tells you what to expect over many tries, not exactly what one batch will show.",
+        example: "With chance 1/2, 100 seeds give about 50 white flowers, often 45 to 55.",
+        hard: false,
+        name: "Expect chance results to spread",
+        topic: "Probability",
+        useCase: "Not overreacting when a real batch misses the prediction a little.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "From Punnett squares to real seeds",
+  },
   "en-python-range-beginner": {
     canDo: "Make a Python loop run exactly the numbers you want",
     description:
@@ -272,5 +402,66 @@ export const ACTIVITY_LESSON_SPECS = {
     ],
     supportMode: "explanationFirst",
     title: "As quatro câmaras do coração",
+  },
+  "pt-demanda-ovos-deslocamento": {
+    canDo: "Prever o que acontece com o preço e a quantidade quando a demanda ou a oferta muda",
+    description: "Arraste a curva certa e veja o novo preço de equilíbrio aparecer no gráfico.",
+    estimatedMinutes: 4,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Em 2022, a gripe aviária matou milhões de galinhas nos EUA e a dúzia de ovos passou de cerca de US$ 1,80 para mais de US$ 4. Peça um palpite: o que mudou, a oferta ou a demanda?",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "O preço de equilíbrio fica onde a curva de oferta cruza a de demanda. Menos galinhas é menos oferta: a curva de oferta vai para a esquerda, e o cruzamento sobe para um preço maior com menos ovos vendidos.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: "lineCrossing",
+        brief:
+          "O aprendiz arrasta a curva certa para mostrar a gripe aviária (oferta para a esquerda) e vê o novo preço de equilíbrio. Use números de exemplo marcados como exemplo. Erro tentador: mover a demanda para a direita, porque o preço subiu.",
+        kind: "activity",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Pergunte o que acontece com o preço e a quantidade de ovos se uma dieta da moda fizer muita gente comer mais ovos. Certa: demanda para a direita, preço e quantidade sobem. Tentadora: a oferta aumenta.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Uma padaria em Recife vê o preço do trigo cair depois de uma safra recorde. Pergunte o que acontece com a oferta de pão e o seu preço, e por quê.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Uma mudança na oferta ou na demanda desloca uma das curvas, e o novo cruzamento dá o novo preço e a nova quantidade.",
+        example:
+          "Menos galinhas deslocam a oferta de ovos para a esquerda: preço sobe, quantidade cai.",
+        hard: true,
+        name: "Prever o novo equilíbrio após um deslocamento",
+        topic: "Oferta e demanda",
+        useCase: "Entender por que o preço de um alimento dispara ou cai no mercado.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Quando a curva se desloca",
   },
 } satisfies Record<string, LessonSpec>;

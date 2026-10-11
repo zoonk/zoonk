@@ -30,7 +30,7 @@ export const zoonkGateway = createGateway({
  * The provider apps register as the AI SDK's default (`AI_SDK_DEFAULT_PROVIDER`), which resolves
  * every task's model id: the gateway, with each call's system prompt marked for Anthropic's prompt
  * cache (`promptCacheMiddleware`), and every text and image call kept away from providers that
- * train on prompts (`noPromptTrainingMiddleware`).
+ * train on prompts unless it makes shared Library content (`noPromptTrainingMiddleware`).
  */
 export const zoonkDefaultProvider = wrapProvider({
   imageModelMiddleware: noPromptTrainingImageMiddleware,

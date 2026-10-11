@@ -3,7 +3,7 @@ import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 
 /** About two thousand words: longer than any exam essay, short enough to grade in one call. */
-const MAX_ESSAY_CHARACTERS = 12_000;
+export const MAX_ESSAY_CHARACTERS = 12_000;
 
 /** An hour and a half covers the longest exam essay; anything more is a tab left open. */
 const MAX_WRITING_MS = 5_400_000;
@@ -65,7 +65,13 @@ export const essayGradeSchema = z
       })
       .nullable()
       .meta({ description: "ENEM's five intervention proposal elements; null for other rubrics" }),
-    nextStep: z.object({ criterionId: z.string(), text: z.string() }),
+    nextStep: z
+      .object({ criterionId: z.string(), text: z.string() })
+      .nullable()
+      .meta({
+        description:
+          "The one thing to work on, on the criterion with the most points to gain; null when every criterion has full marks",
+      }),
     range: z
       .object({ high: z.number(), low: z.number() })
       .meta({ description: "The estimated range, labeled Estimated" }),

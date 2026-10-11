@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
+import { replanAfterPlacement } from "../../plans/replan-after-placement";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { applyPlacement } from "./_utils/apply-placement";
@@ -50,9 +51,10 @@ async function declinePlacement(goal: Goal) {
 
 /**
  * Ends placement for a goal, whenever the learner wants ("Stop anytime"): skills placement is sure
- * the learner can do become known in the learner model, and plan items teaching only known skills
- * are tested out. "Start from scratch" changes nothing else and starts every phase at its
- * beginning; the first week's sessions then ask no placement questions.
+ * the learner can do become known in the learner model, plan items teaching only known skills are
+ * tested out, and the plan follows what the answers found missing. "Start from scratch" changes
+ * nothing else and starts every phase at its beginning; the first week's sessions then ask no
+ * placement questions.
  */
 export async function finishGoalPlacement({
   goalId,
@@ -88,13 +90,21 @@ export async function finishGoalPlacement({
     };
   }
 
-  const { state, testedOutPlanItemIds } = await applyPlacement({
+  const now = new Date();
+  const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
+
+  const { changeId, pastBasicsAreas, state, testedOutPlanItemIds } = await applyPlacement({
     goalId,
-    now: new Date(),
+    now,
     plan,
-    timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone }),
+    timeZone,
     userId: owned.userId,
   });
+
+  // A skip re-plans as it's announced; answers that skipped nothing re-plan here.
+  if (!changeId) {
+    await replanAfterPlacement({ goalId, now, pastBasicsAreas, timeZone });
+  }
 
   return {
     completion: {

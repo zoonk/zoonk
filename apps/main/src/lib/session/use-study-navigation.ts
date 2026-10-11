@@ -64,6 +64,8 @@ export function useGoToStudyDestination() {
         openSession(answer.status === "refused" ? answer.limit : null);
       } else if (destination.kind === "lesson") {
         router.push(`/learn/${destination.lessonId}?session=${destination.sessionId}`);
+      } else if (destination.kind === "challenge") {
+        router.push(`/challenge/${destination.planItemId}?session=${destination.sessionId}`);
       } else if (destination.kind === "checkpoint") {
         router.push(`/checkpoint/${destination.blockId}?session=${destination.sessionId}`);
       } else if (destination.kind === "mock") {

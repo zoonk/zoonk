@@ -1,6 +1,7 @@
 import { type ExtractedMemoryFact, extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
 import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
 import { reconcileMemoryFact } from "@zoonk/ai/tasks/v2/memory/reconcile";
+import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -18,8 +19,7 @@ vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/reconcile", () => ({ reconcileMemoryFact: vi.fn() }));
-
-const ADULT_BIRTH = { birthMonth: 5, birthYear: 1990 };
+vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
 
 const PROVENANCE = {
   generatedAt: "2026-09-26T12:00:00.000Z",
@@ -61,12 +61,6 @@ function mockReconcile(
   >);
 }
 
-async function adult() {
-  const user = await userFixture();
-  await learningProfileFixture({ ...ADULT_BIRTH, userId: user.id });
-  return user;
-}
-
 function chat(userId: string, text = "I switched from Medicine to Law") {
   return {
     source: {
@@ -87,7 +81,7 @@ describe(updateMemoryFromActivity, () => {
   });
 
   it("adds a new fact from a chat with its source, confidence and provenance", async () => {
-    const user = await adult();
+    const user = await userFixture();
     mockExtraction([extracted({ expiresOn: "2099-11-08" })]);
 
     const changes = await updateMemoryFromActivity(chat(user.id));
@@ -98,7 +92,6 @@ describe(updateMemoryFromActivity, () => {
 
     expect(extractMemoryFacts).toHaveBeenCalledWith(
       expect.objectContaining({
-        categories: ["goals", "background", "routine", "preferences", "learning", "context"],
         input: "Learner: I switched from Medicine to Law",
         language: "en",
         source: "chat",
@@ -121,7 +114,6 @@ describe(updateMemoryFromActivity, () => {
     });
 
     expect(gateMemoryFact).toHaveBeenCalledWith({
-      allowSensitive: true,
       candidate: expect.objectContaining({
         evidence: "I want to study Law",
         statement: "Wants Law",
@@ -130,7 +122,7 @@ describe(updateMemoryFromActivity, () => {
   });
 
   it("replaces the fact a new one updates, and undo puts the old one back", async () => {
-    const user = await adult();
+    const user = await userFixture();
     mockSession(user.id);
     const medicine = await memoryFactFixture({ statement: "Wants Medicine", userId: user.id });
     mockExtraction([extracted({})]);
@@ -164,7 +156,7 @@ describe(updateMemoryFromActivity, () => {
   });
 
   it("removes what the learner asks to forget without asking the gate", async () => {
-    const user = await adult();
+    const user = await userFixture();
 
     const football = await memoryFactFixture({
       category: "context",
@@ -191,7 +183,7 @@ describe(updateMemoryFromActivity, () => {
   });
 
   it("stores nothing the gate drops and never adds a fact to forget", async () => {
-    const user = await adult();
+    const user = await userFixture();
 
     mockExtraction([
       extracted({ category: "background", statement: "Has asthma" }),
@@ -204,8 +196,8 @@ describe(updateMemoryFromActivity, () => {
     await expect(prisma.memoryFact.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
-  it("keeps a sensitive fact an adult asked to remember, flagged as sensitive", async () => {
-    const user = await adult();
+  it("keeps a sensitive fact the learner asked to remember, flagged as sensitive", async () => {
+    const user = await userFixture();
     mockExtraction([extracted({ category: "learning", statement: "Has ADHD" })]);
     mockGate("keep", true);
 
@@ -216,7 +208,7 @@ describe(updateMemoryFromActivity, () => {
   });
 
   it("ignores an exact repeat without asking the reconcile model", async () => {
-    const user = await adult();
+    const user = await userFixture();
     await memoryFactFixture({ statement: "Wants law", userId: user.id });
     mockExtraction([extracted({ statement: "Wants Law" })]);
 
@@ -226,46 +218,15 @@ describe(updateMemoryFromActivity, () => {
   });
 
   it("learns nothing while memory is off", async () => {
-    const user = await adult();
+    const user = await userFixture();
     await learningProfileFixture({ memoryEnabled: false, userId: user.id });
 
     await expect(updateMemoryFromActivity(chat(user.id))).resolves.toStrictEqual([]);
     expect(extractMemoryFacts).not.toHaveBeenCalled();
   });
 
-  it("learns nothing for a learner of unknown age until they turn memory on", async () => {
-    const user = await userFixture();
-
-    // Memory starts off for anyone who hasn't said they're an adult, so nothing is read or sent.
-    await expect(updateMemoryFromActivity(chat(user.id))).resolves.toStrictEqual([]);
-    expect(extractMemoryFacts).not.toHaveBeenCalled();
-  });
-
-  it("keeps only goals and learning for learners of unknown age, and never sensitive ones", async () => {
-    const user = await userFixture();
-    await learningProfileFixture({ memoryEnabled: true, userId: user.id });
-
-    mockExtraction([
-      extracted({ category: "context", statement: "Lives in Recife" }),
-      extracted({ category: "learning", statement: "Mixes up fractions" }),
-    ]);
-
-    await updateMemoryFromActivity(chat(user.id));
-
-    expect(extractMemoryFacts).toHaveBeenCalledWith(
-      expect.objectContaining({ categories: ["goals", "learning"] }),
-    );
-
-    expect(gateMemoryFact).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ allowSensitive: false }),
-    );
-
-    const stored = await prisma.memoryFact.findMany({ where: { userId: user.id } });
-    expect(stored.map((fact) => fact.statement)).toStrictEqual(["Mixes up fractions"]);
-  });
-
   it("reads who the learner is from their goal and follow-up answers, never the goal's time or schedule", async () => {
-    const user = await adult();
+    const user = await userFixture();
 
     // The time a day, the hour and the days are settings of this goal (30 minutes for an exam,
     // 10 for a language): memory would carry them into every other goal.
@@ -314,7 +275,7 @@ describe(updateMemoryFromActivity, () => {
   });
 
   it("doesn't read another learner's goal", async () => {
-    const [owner, learner] = await Promise.all([userFixture(), adult()]);
+    const [owner, learner] = await Promise.all([userFixture(), userFixture()]);
     const goal = await goalFixture({ userId: owner.id });
 
     await expect(
@@ -327,31 +288,47 @@ describe(updateMemoryFromActivity, () => {
     expect(extractMemoryFacts).not.toHaveBeenCalled();
   });
 
-  it("keeps only noticed learning facts from session numbers, never when or how long they study", async () => {
-    const user = await adult();
+  it("keeps a session's patterns as learning facts it noticed, from their own task", async () => {
+    const user = await userFixture();
 
-    mockExtraction([
-      extracted({ category: "goals", origin: "noticed", statement: "Wants a high score" }),
-      extracted({ category: "routine", origin: "said", statement: "Studies after 8 pm" }),
-    ]);
+    vi.mocked(findSessionPatterns).mockResolvedValue({
+      data: {
+        patterns: [{ evidence: "9 of 18 right on Percentages", statement: "Mixes up fractions" }],
+      },
+      provenance: PROVENANCE,
+    } as Awaited<ReturnType<typeof findSessionPatterns>>);
 
     await updateMemoryFromActivity({
       source: {
         activity: "Answers in the last 7 days: 40",
-        id: null,
+        id: "session-1",
         kind: "session",
         language: "en",
       },
       userId: user.id,
     });
 
-    const stored = await prisma.memoryFact.findMany({ where: { userId: user.id } });
+    expect(extractMemoryFacts).not.toHaveBeenCalled();
 
-    expect(stored).toStrictEqual([]);
+    expect(findSessionPatterns).toHaveBeenCalledWith(
+      expect.objectContaining({ activity: "Answers in the last 7 days: 40", language: "en" }),
+    );
+
+    await expect(prisma.memoryFact.findMany({ where: { userId: user.id } })).resolves.toMatchObject(
+      [
+        {
+          category: "learning",
+          confidence: 0.6,
+          origin: "noticed",
+          sourceRef: { id: "session-1", kind: "session" },
+          statement: "Mixes up fractions",
+        },
+      ],
+    );
   });
 
   it("changes nothing when another update replaced the fact first", async () => {
-    const user = await adult();
+    const user = await userFixture();
     const medicine = await memoryFactFixture({ statement: "Wants Medicine", userId: user.id });
     mockExtraction([extracted({})]);
 
@@ -375,7 +352,7 @@ describe(updateMemoryFromActivity, () => {
 
 describe(scheduleMemoryUpdate, () => {
   it("learns after the response is sent", async () => {
-    const user = await adult();
+    const user = await userFixture();
     mockGate("keep");
     vi.mocked(reconcileMemoryFact).mockResolvedValue(null);
     mockExtraction([extracted({})]);

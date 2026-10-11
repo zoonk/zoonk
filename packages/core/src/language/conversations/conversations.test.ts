@@ -2,7 +2,6 @@ import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversat
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
 import { createLiveConversationToken } from "@zoonk/ai/tasks/v2/language/live-conversation-token";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
@@ -14,22 +13,15 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
-import { loadSessionBoss } from "../../checkpoints/_utils/load-boss";
+import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { connectLanguageConversation } from "./connect-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
 import { startLanguageConversation } from "./start-language-conversation";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 // Scenarios, objective checks, feedback and Live tokens are paid model calls.
 vi.mock("@zoonk/ai/tasks/v2/language/conversation-scenario", () => ({
@@ -128,7 +120,6 @@ async function connectPractice(chapterId: string) {
 
 describe("language conversations", () => {
   beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
     vi.mocked(createLiveConversationToken).mockResolvedValue(CONNECTION);
 
     vi.mocked(checkConversationObjectives).mockResolvedValue(
@@ -411,24 +402,6 @@ describe("language conversations", () => {
     expect(checkConversationObjectives).not.toHaveBeenCalled();
   });
 
-  it("slows a learner down under the AI rate limit before checking anything", async () => {
-    const { renting, user } = await languageGoalFixture();
-    mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
-    vi.mocked(isRateLimited).mockResolvedValue(true);
-
-    await expect(
-      checkLanguageConversationObjectives({ conversationId, input: { turns: TURNS } }),
-    ).resolves.toMatchObject({ status: "slowDown" });
-
-    expect(vi.mocked(isRateLimited).mock.calls.at(-1)?.[0]).toMatchObject({
-      key: `user:${user.id}`,
-      rule: "ai-usage",
-    });
-
-    expect(checkConversationObjectives).not.toHaveBeenCalled();
-  });
-
   it("reviews nothing for a call that never connected, whatever turns it's sent: only connecting claims call time", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
@@ -590,9 +563,11 @@ describe("language conversations", () => {
     const boss = await planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 });
     const planItems = await prisma.planItem.findMany({ where: { planId: plan.id } });
 
-    const scheduled = await loadSessionBoss({
+    const scheduled = await loadSessionBosses({
       examBlueprintId: null,
       goalKind: "language",
+      graphSkills: [],
+      itemSkillIds: new Map(),
       items: planItems,
       skills: [],
       today: new Date(),
@@ -601,7 +576,7 @@ describe("language conversations", () => {
 
     expect(items).toHaveLength(4);
 
-    expect(scheduled.checkpoint).toMatchObject({
+    expect(scheduled.checkpoints[0]).toMatchObject({
       itemIds: [],
       kind: "finalBoss",
       planItemId: boss.id,

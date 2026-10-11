@@ -13,7 +13,7 @@ import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { writeLessonContent } from "../lessons/write-lesson-content";
-import { PAGE_BREAK, PPTX_CONTENT_TYPE } from "../sources/source-contract";
+import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import {
   checkPublishedLesson,
@@ -95,6 +95,7 @@ function withScreen(lesson: WrittenLesson, index: number, screen: WrittenScreen)
 function explanation(text: string): WrittenScreen {
   return {
     exampleLineIdea: null,
+    explore: null,
     image: null,
     kind: "explanation",
     text,
@@ -372,7 +373,9 @@ describe(citePublishedLesson, () => {
       }),
     ).resolves.toBe(1);
 
-    expect(citeMaterial).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
+    expect(citeMaterial).toHaveBeenCalledWith(
+      expect.objectContaining({ documents: "material", serviceTier: "flex" }),
+    );
 
     const steps = await listSteps(published.lesson.id);
 
@@ -382,6 +385,92 @@ describe(citePublishedLesson, () => {
       [slides.id, 2],
       [null, null],
     ]);
+  });
+
+  it("cites a shared lesson from the public sources its facts come from as official documents", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const [plan, guidance] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      sourceFixture({
+        extractedText: [
+          "Agency history and contact details.",
+          "A forecast rise adds to the temperature, even below zero: from −3 °C, a rise of 5 degrees reads 2 °C on the thermometer.",
+        ].join(PAGE_BREAK),
+        mimeType: PDF_CONTENT_TYPE,
+        publisher: "National Weather Service",
+        title: "Reading temperature forecasts",
+      }),
+    ]);
+
+    const published = await publishLesson({
+      prepare: (lessonId) =>
+        Promise.all([
+          planItemFixture({ lessonId, phase: 0, planId: plan.id, position: 0 }),
+          learnerSourceFixture({
+            goalId: goal.id,
+            origin: "research",
+            sourceId: guidance.id,
+            userId: user.id,
+          }),
+        ]),
+    });
+
+    vi.mocked(citeMaterial).mockResolvedValueOnce({
+      data: { citations: [{ ref: null, screen: 1 }] },
+      provenance: provenance("openai/gpt-6-luna"),
+      systemPrompt: "",
+      usage: {} as never,
+      userPrompt: "",
+    });
+
+    await citePublishedLesson({
+      lessonId: published.lesson.id,
+      plan: published.plan,
+      workflowRunId: randomUUID(),
+    });
+
+    expect(citeMaterial).toHaveBeenLastCalledWith(
+      expect.objectContaining({ documents: "sources", serviceTier: "flex" }),
+    );
+  });
+
+  it("throws when the citing call fails, so the workflow step citing the version retries it", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const [plan, slides] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      sourceFixture({
+        extractedText: ["Temperatures", "A rise moves up, even below zero"].join(PAGE_BREAK),
+        kind: "upload",
+        mimeType: PPTX_CONTENT_TYPE,
+        ownerId: user.id,
+        title: "Class 3",
+        visibility: "private",
+      }),
+    ]);
+
+    const published = await publishLesson({
+      ownerId: user.id,
+      prepare: (lessonId) =>
+        Promise.all([
+          planItemFixture({ lessonId, phase: 0, planId: plan.id, position: 0 }),
+          learnerSourceFixture({ goalId: goal.id, sourceId: slides.id, userId: user.id }),
+        ]),
+    });
+
+    const busy = new Error("The provider is overloaded");
+    vi.mocked(citeMaterial).mockRejectedValueOnce(busy);
+
+    await expect(
+      citePublishedLesson({
+        lessonId: published.lesson.id,
+        plan: published.plan,
+        workflowRunId: randomUUID(),
+      }),
+    ).rejects.toBe(busy);
   });
 });
 

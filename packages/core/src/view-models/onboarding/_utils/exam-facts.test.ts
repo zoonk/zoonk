@@ -88,11 +88,24 @@ describe(findExamFacts, () => {
 
     const officialSource = { title: "Official notice", url: source.url };
 
+    // Their registration closed on May 20, the notice's deadline.
     const expected = {
       blueprintId: blueprint.id,
       dates: [
-        { date: "2026-11-08", estimated: false, label: "Day 2", source: officialSource },
-        { date: "2026-11-15", estimated: false, label: "Day 3", source: officialSource },
+        {
+          date: "2026-11-08",
+          estimated: false,
+          label: "Day 2",
+          registrationClosed: true,
+          source: officialSource,
+        },
+        {
+          date: "2026-11-15",
+          estimated: false,
+          label: "Day 3",
+          registrationClosed: true,
+          source: officialSource,
+        },
       ],
       targetDate: null,
     };
@@ -104,6 +117,26 @@ describe(findExamFacts, () => {
 
     expect(named).toStrictEqual(expected);
     expect(unnamed).toStrictEqual(expected);
+    expect(findExamDate).not.toHaveBeenCalled();
+  });
+
+  // A Portuguese speaker's DELE B2: its notice is stored in Spanish, the language it certifies, so
+  // the card looked the date up on the web and offered the next sitting, whose registration closed.
+  it("finds a language certificate's notice stored in the language it tests", async () => {
+    const { blueprint, examName } = await storedExam({
+      days: ["2026-11-14", "2027-04-02"],
+      language: "es",
+      year: 2026,
+    });
+
+    const facts = await findExamFacts({
+      exam: { examName, targetLanguage: "es" },
+      language: "pt",
+      today: TODAY,
+    });
+
+    expect(facts).toMatchObject({ blueprintId: blueprint.id, targetDate: null });
+    expect(facts.dates.map((day) => day.date)).toStrictEqual(["2026-11-14", "2027-04-02"]);
     expect(findExamDate).not.toHaveBeenCalled();
   });
 
@@ -168,8 +201,20 @@ describe(findExamFacts, () => {
     ).resolves.toStrictEqual({
       blueprintId: null,
       dates: [
-        { date: "2027-01-17", estimated: false, label: "Objective test", source },
-        { date: "2027-01-24", estimated: false, label: "Written test", source },
+        {
+          date: "2027-01-17",
+          estimated: false,
+          label: "Objective test",
+          registrationClosed: false,
+          source,
+        },
+        {
+          date: "2027-01-24",
+          estimated: false,
+          label: "Written test",
+          registrationClosed: false,
+          source,
+        },
       ],
       targetDate: "2027-01-17",
     });
@@ -177,6 +222,41 @@ describe(findExamFacts, () => {
     expect(findExamDate).toHaveBeenCalledWith(
       expect.objectContaining({ role: "Analyst", today: TODAY, year: 2027 }),
     );
+  });
+
+  it("only offers a published day in another month than the one the learner named", async () => {
+    // Sofia said "March"; the search finds January's sitting. Her month stays the plan's, and the
+    // day comes with its source, for her to take or not.
+    const source = { title: "Notice 1", url: NOTICE_URL };
+
+    lookupAnswers({
+      dates: [{ date: "2027-01-10", label: "Objective test" }],
+      source,
+      status: "official",
+    });
+
+    const exam = { examName: `Unstored Exam ${randomUUID()}`, examYear: 2027 };
+
+    const [march, january] = await Promise.all([
+      findExamFacts({ exam: { ...exam, examMonth: 3 }, language: "en", today: TODAY }),
+      findExamFacts({ exam: { ...exam, examMonth: 1 }, language: "en", today: TODAY }),
+    ]);
+
+    expect(march).toStrictEqual({
+      blueprintId: null,
+      dates: [
+        {
+          date: "2027-01-10",
+          estimated: false,
+          label: "Objective test",
+          registrationClosed: false,
+          source,
+        },
+      ],
+      targetDate: null,
+    });
+
+    expect(january.targetDate).toBe("2027-01-10");
   });
 
   it("never guesses: a notice that isn't out leaves the date to be confirmed", async () => {
@@ -225,8 +305,20 @@ describe(findExamFacts, () => {
     ).resolves.toStrictEqual({
       blueprintId: blueprint.id,
       dates: [
-        { date: "2026-11-08", estimated: true, label: "Day 1", source: null },
-        { date: "2026-11-15", estimated: true, label: "Day 2", source: null },
+        {
+          date: "2026-11-08",
+          estimated: true,
+          label: "Day 1",
+          registrationClosed: false,
+          source: null,
+        },
+        {
+          date: "2026-11-15",
+          estimated: true,
+          label: "Day 2",
+          registrationClosed: false,
+          source: null,
+        },
       ],
       targetDate: null,
     });
@@ -253,7 +345,15 @@ describe(findExamFacts, () => {
         today: TODAY,
       }),
     ).resolves.toMatchObject({
-      dates: [{ date: "2027-03-28", estimated: true, label: "Day 1", source: null }],
+      dates: [
+        {
+          date: "2027-03-28",
+          estimated: true,
+          label: "Day 1",
+          registrationClosed: false,
+          source: null,
+        },
+      ],
       targetDate: null,
     });
   });

@@ -7,9 +7,9 @@ import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
 
 /**
- * Records skills placement inferred the learner knows without asking about each one as one right
- * answer now. Skills the learner is already learning keep their memory: real answers outrank an
- * inference. Undoing the skip that followed takes it back (`forgetAssumedSkills`).
+ * Records skills placement takes as known (each one's own answers confirmed it) as one right answer
+ * now. Skills the learner is already learning keep their memory: their real answers outrank this
+ * record. Undoing the skip that followed takes it back (`forgetAssumedSkills`).
  */
 export async function markSkillsKnown({
   knownAt,
@@ -151,24 +151,41 @@ async function addTestedOutStandIns({
  * them. Placement also passes the skills it placed (`placedSkills`, from `loadPlacementPlan`): the
  * known ones the plan leaves out get tested-out stand-ins (`addTestedOutStandIns`). Only items
  * still to do change; done and skipped items stay as they are. The plan then says what it skipped
- * and re-plans from today. Returns the ids and the plan change that announced them (null when the
- * plan isn't the planner's yet), whose undo brings them back.
+ * and re-plans from today. Returns the ids, the plan change that announced them (null when the
+ * plan isn't the planner's yet), whose undo brings them back, and the lessons it says it skipped
+ * (`countLessons`: a stand-in, the lessons the plan taught in its place), so a result says the
+ * count Today and the Journey say.
  */
 export async function markPlanItemsTestedOut({
+  announceAlso = [],
+  extraWrites,
+  followToday = true,
   goalId,
   items,
   knownSkillIds,
+  now,
+  pastBasicsAreas,
   placedSkills = [],
   testedOutAt,
   timeZone,
 }: {
+  /** Items tested out before that were never announced, for the announcement to carry too. */
+  announceAlso?: readonly string[];
+  /** Other writes that must land with the announcement (see `announceTestedOutItems`). */
+  extraWrites?: (tx: TransactionClient) => Promise<unknown>;
+  /** Today's blocks not started follow the re-plan (see `announceTestedOutItems`). */
+  followToday?: boolean;
   goalId: string;
   items: readonly GoalPlanItem[];
   knownSkillIds: ReadonlySet<string>;
+  /** When the plan is planned again from: `testedOutAt`, unless a retry kept an earlier one. */
+  now?: Date;
+  /** Areas the same answers start past their basics (see `announceTestedOutItems`). */
+  pastBasicsAreas?: readonly string[];
   placedSkills?: readonly LeftOutSkill[];
   testedOutAt: Date;
   timeZone: string;
-}): Promise<{ changeId: string | null; planItemIds: string[] }> {
+}): Promise<{ changeId: string | null; lessonsSkipped: number; planItemIds: string[] }> {
   const ids = items
     .filter(
       (item) =>
@@ -189,19 +206,27 @@ export async function markPlanItemsTestedOut({
   ]);
 
   const planItemIds = [...ids, ...standInIds];
+  const announced = [...new Set([...announceAlso, ...planItemIds])];
 
-  if (planItemIds.length === 0) {
-    return { changeId: null, planItemIds: [] };
+  if (announced.length === 0) {
+    return { changeId: null, lessonsSkipped: 0, planItemIds: [] };
   }
 
-  const changeId = await announceTestedOutItems({
+  const announcement = await announceTestedOutItems({
+    extraWrites,
+    followToday,
     goalId,
-    now: testedOutAt,
-    planItemIds,
+    now: now ?? testedOutAt,
+    pastBasicsAreas,
+    planItemIds: announced,
     timeZone,
   });
 
-  return { changeId, planItemIds };
+  return {
+    changeId: announcement?.changeId ?? null,
+    lessonsSkipped: announcement?.lessonsSkipped ?? planItemIds.length,
+    planItemIds,
+  };
 }
 
 /** The skills some of a goal's plan items teach, such as the ones a skip's undo brings back. */

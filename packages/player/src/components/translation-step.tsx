@@ -35,10 +35,13 @@ function TranslationOptionContent({ word }: { word: TranslationOption }) {
 }
 
 export function TranslationStep({
+  definesWords = false,
   onSelectAnswer,
   selectedAnswer,
   step,
 }: {
+  /** The lesson is in the learner's own language: the prompt is a definition, not a translation. */
+  definesWords?: boolean;
   onSelectAnswer: (answer: SelectedAnswer) => void;
   selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
@@ -70,7 +73,9 @@ export function TranslationStep({
       <PlayerChoiceScenePrompt>
         {/* A word carries its article ("as colunas") and a chunk is several words ("Thanks for
         having me"): the prompt names neither, so it never calls one the other. */}
-        <PlayerChoiceSceneEyebrow>{t("Translate:")}</PlayerChoiceSceneEyebrow>
+        <PlayerChoiceSceneEyebrow>
+          {definesWords ? t("Which one means this?") : t("Translate:")}
+        </PlayerChoiceSceneEyebrow>
         <PlayerChoiceSceneQuestion>{correctWord.translation}</PlayerChoiceSceneQuestion>
       </PlayerChoiceScenePrompt>
 

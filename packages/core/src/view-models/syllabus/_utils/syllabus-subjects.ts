@@ -20,8 +20,12 @@ export type SubjectDraft = Pick<
   frequencySource?: TopicFrequencySource | null;
   matrix?: readonly string[];
   noticeShortName: string | null;
-  /** Areas for one part of the subject's written test (a peça técnica): they don't name it. */
+  /**
+   * Areas that don't name the subject: one part of its written test (a legal brief), or an option
+   * counted inside it (ENEM's foreign language).
+   */
   partAreas?: readonly string[];
+  partOf?: NoticeSubject["partOf"];
   topicFrequency?: NoticeSubject["topicFrequency"];
   topicHeadings?: NoticeSubject["topicHeadings"];
   topics: readonly string[];
@@ -46,7 +50,7 @@ function toModule(area: string): SubjectDraft {
 
 /**
  * An area the names don't place that teaches one part of a subject's written test (the plan's
- * "Peça técnica" for the notice's "Prova discursiva", whose test asks a peça técnica) belongs to
+ * "Legal brief" for the notice's "Discursive test", whose test asks a legal brief) belongs to
  * that subject, when only one subject's test asks it.
  */
 function matchWrittenTasks({
@@ -73,9 +77,63 @@ function matchWrittenTasks({
   );
 }
 
+function addCounts(first: number | null, second: number | null): number | null {
+  return first === null || second === null ? first : first + second;
+}
+
+/** A subject with the options counted inside it (see `foldPartsIntoSubjects`). */
+function addParts({ parts, whole }: { parts: readonly SubjectDraft[]; whole: SubjectDraft }) {
+  if (parts.length === 0) {
+    return whole;
+  }
+
+  const sum = (key: "questions" | "share") =>
+    parts.reduce<number | null>((total, part) => addCounts(total, part[key]), whole[key]);
+
+  const partAreas = parts.flatMap((part) => part.areas);
+
+  return {
+    ...whole,
+    areas: [...whole.areas, ...partAreas],
+    partAreas: [...(whole.partAreas ?? []), ...partAreas],
+    questions: sum("questions"),
+    share: sum("share"),
+    topicFrequency: new Map([
+      ...(whole.topicFrequency ?? []),
+      ...parts.flatMap((part) => [...(part.topicFrequency ?? [])]),
+    ]),
+    topicHeadings: new Map([
+      ...(whole.topicHeadings ?? []),
+      ...parts.flatMap((part) => part.topics.map((topic) => [topic, part.name] as const)),
+    ]),
+    topics: [...whole.topics, ...parts.flatMap((part) => part.topics)],
+  };
+}
+
+/**
+ * A picked option the notice counts inside another subject (the foreign language a candidate
+ * takes, inside ENEM's languages area) is part of that subject, never one of its own: its areas,
+ * questions and topics join the subject's, its topics under its name. The plan still studies it in
+ * its own area.
+ */
+function foldPartsIntoSubjects(drafts: readonly SubjectDraft[]): SubjectDraft[] {
+  const names = new Set(drafts.map((draft) => draft.name));
+  const isPart = (draft: SubjectDraft) => Boolean(draft.partOf && names.has(draft.partOf));
+
+  return drafts
+    .filter((draft) => !isPart(draft))
+    .map((whole) =>
+      addParts({
+        parts: drafts.filter((part) => isPart(part) && part.partOf === whole.name),
+        whole,
+      }),
+    );
+}
+
 /**
  * The subjects to show: the notice's, in its order, with the plan's areas each gathers and the
- * areas the plan adds outside it after them; or, without a notice the plan follows, its areas.
+ * areas the plan adds outside it after them; or, without a notice the plan follows, its areas. A
+ * picked option counted inside another subject shows inside it (`foldPartsIntoSubjects`).
  */
 export function draftSubjects({
   areas,
@@ -86,7 +144,7 @@ export function draftSubjects({
 }): { drafts: SubjectDraft[]; kind: SyllabusView["kind"] } {
   const subjects = notice?.subjects ?? [];
 
-  const named = matchAreasToSubjects({ areas, subjects: subjects.map((subject) => subject.name) });
+  const named = matchAreasToSubjects({ areas, subjects });
 
   const parts = matchWrittenTasks({ areas, matches: named, subjects });
   const matches = new Map([...named, ...parts]);
@@ -96,21 +154,24 @@ export function draftSubjects({
   }
 
   const fromNotice = orderByQuestions(
-    subjects.map((subject, index) => ({
-      areas: areas.filter((area) => matches.get(area) === index),
-      frequencySource: subject.frequencySource ?? null,
-      group: subject.group,
-      matrix: subject.matrix,
-      name: subject.name,
-      noticeShortName: subject.shortName,
-      partAreas: areas.filter((area) => parts.get(area) === index),
-      questions: subject.questions,
-      share: subject.share,
-      source: "notice" as const,
-      topicFrequency: subject.topicFrequency,
-      topicHeadings: subject.topicHeadings,
-      topics: subject.topics,
-    })),
+    foldPartsIntoSubjects(
+      subjects.map((subject, index) => ({
+        areas: areas.filter((area) => matches.get(area) === index),
+        frequencySource: subject.frequencySource ?? null,
+        group: subject.group,
+        matrix: subject.matrix,
+        name: subject.name,
+        noticeShortName: subject.shortName,
+        partAreas: areas.filter((area) => parts.get(area) === index),
+        partOf: subject.partOf ?? null,
+        questions: subject.questions,
+        share: subject.share,
+        source: "notice" as const,
+        topicFrequency: subject.topicFrequency,
+        topicHeadings: subject.topicHeadings,
+        topics: subject.topics,
+      })),
+    ),
   );
 
   const extras = areas.filter((area) => !matches.has(area)).map((area) => toModule(area));

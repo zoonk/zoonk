@@ -1,13 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { get } from "@vercel/blob";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { registerSourceUpload } from "./register-upload";
 import { MAX_SOURCE_UPLOAD_BYTES } from "./source-contract";
-import type * as RateLimitModule from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
@@ -15,12 +13,6 @@ vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("@vercel/blob", () => ({ del: vi.fn(), get: vi.fn() }));
 
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimitModule>()),
-  isRateLimited: vi.fn(),
-}));
 
 function mockStoredFile({
   bytes,
@@ -80,7 +72,6 @@ async function expectNothingKept(userId: string) {
 
 describe("uploads that can't be read", () => {
   beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "store_test");
   });
 

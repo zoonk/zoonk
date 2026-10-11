@@ -31,9 +31,6 @@ export type AppearanceView = {
   availableGlasses: BuddyGlasses[];
   canPersonalize: boolean;
   dailyLimitMinutes: number | null;
-  /** The shortest limit an active guardian set, which applies whatever the learner picks. */
-  guardianLimitMinutes: number | null;
-  isMinor: boolean;
   look: BuddyLook;
   buddy: AppearanceBuddy | null;
   soundsEnabled: boolean;
@@ -166,8 +163,6 @@ export function AppearanceScreen({
         <PageSection>
           <SectionTitle>{t("Healthy use")}</SectionTitle>
           <DailyLimitSetting
-            guardianMinutes={view.guardianLimitMinutes}
-            isMinor={view.isMinor}
             minutes={appearance.dailyLimitMinutes}
             onChange={appearance.setDailyLimit}
           />

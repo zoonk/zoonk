@@ -2,31 +2,14 @@
   "modelId": "typesafe-ai/jev",
   "results": [
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-preference-football-1",
         "userInput": {
           "allowSensitive": true,
@@ -39,31 +22,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-background-nurse-1",
         "userInput": {
           "allowSensitive": true,
@@ -76,31 +42,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-goal-exam-date-1",
         "userInput": {
           "allowSensitive": true,
@@ -113,31 +62,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-learning-noticed-1",
         "userInput": {
           "allowSensitive": true,
@@ -150,31 +82,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "sensitive"
-      },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "en-sensitive-health-stated-1",
         "userInput": {
           "allowSensitive": true,
@@ -187,31 +102,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "sensitive"
-      },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "en-sensitive-religion-1",
         "userInput": {
           "allowSensitive": true,
@@ -224,21 +122,10 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "sensitive", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "Expected sensitive; got notLasting.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Expected sensitive; got notLasting.",
-          "kind": "minorErrors",
-          "score": 7
-        },
+        { "conclusion": "Expected sensitive; got notLasting.", "kind": "majorErrors", "score": 7 },
+        { "conclusion": "Expected sensitive; got notLasting.", "kind": "minorErrors", "score": 7 },
         {
           "conclusion": "Expected sensitive; got notLasting.",
           "kind": "potentialImprovements",
@@ -246,9 +133,7 @@
         }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "en-sensitive-politics-1",
         "userInput": {
           "allowSensitive": true,
@@ -261,31 +146,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-sensitive-asked-adult-1",
         "userInput": {
           "allowSensitive": true,
@@ -298,31 +166,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "sensitive"
-      },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "en-sensitive-asked-minor-1",
         "userInput": {
           "allowSensitive": false,
@@ -335,31 +186,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "sensitive"
-      },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "en-sensitive-injected-label-1",
         "userInput": {
           "allowSensitive": true,
@@ -372,31 +206,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "pt-keep-goal-direito-1",
         "userInput": {
           "allowSensitive": true,
@@ -409,31 +226,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "pt-keep-context-city-1",
         "userInput": {
           "allowSensitive": true,
@@ -446,31 +246,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "pt-keep-preference-short-1",
         "userInput": {
           "allowSensitive": true,
@@ -483,31 +266,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "sensitive"
-      },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "pt-sensitive-pregnancy-1",
         "userInput": {
           "allowSensitive": true,
@@ -520,31 +286,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "sensitive"
-      },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "pt-sensitive-debt-1",
         "userInput": {
           "allowSensitive": true,
@@ -557,31 +306,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "sensitive",
-        "predicted": "sensitive"
-      },
+      "classification": { "expected": "sensitive", "predicted": "sensitive" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "sensitive"
-        },
+        "expected": { "decision": "sensitive" },
         "id": "pt-sensitive-orientation-stated-1",
         "userInput": {
           "allowSensitive": true,
@@ -594,31 +326,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "pt-sensitive-asked-adult-1",
         "userInput": {
           "allowSensitive": true,
@@ -631,31 +346,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "en-goal-setting-daily-time-1",
         "userInput": {
           "allowSensitive": true,
@@ -668,31 +366,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "pt-goal-setting-sunday-hour-1",
         "userInput": {
           "allowSensitive": true,
@@ -705,31 +386,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "pt-goal-setting-focus-1",
         "userInput": {
           "allowSensitive": true,
@@ -742,31 +406,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-goal-law-1",
         "userInput": {
           "allowSensitive": true,
@@ -779,31 +426,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-routine-evenings-1",
         "userInput": {
           "allowSensitive": true,
@@ -816,31 +446,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "en-goal-exam-date-1",
         "userInput": {
           "allowSensitive": true,
@@ -853,31 +466,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "pt-goal-exam-month-1",
         "userInput": {
           "allowSensitive": true,
@@ -890,31 +486,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-dated-move-1",
         "userInput": {
           "allowSensitive": true,
@@ -927,31 +506,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "en-transient-tired-1",
         "userInput": {
           "allowSensitive": true,
@@ -964,31 +526,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "en-transient-one-question-1",
         "userInput": {
           "allowSensitive": true,
@@ -1001,31 +546,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "en-transient-on-the-bus-1",
         "userInput": {
           "allowSensitive": true,
@@ -1038,31 +566,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "en-transient-one-lesson-opinion-1",
         "userInput": {
           "allowSensitive": true,
@@ -1075,31 +586,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "pt-keep-routine-bus-1",
         "userInput": {
           "allowSensitive": true,
@@ -1112,31 +606,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "pt-transient-headache-1",
         "userInput": {
           "allowSensitive": true,
@@ -1149,31 +626,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "notLasting",
-        "predicted": "notLasting"
-      },
+      "classification": { "expected": "notLasting", "predicted": "notLasting" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "notLasting"
-        },
+        "expected": { "decision": "notLasting" },
         "id": "pt-transient-last-question-1",
         "userInput": {
           "allowSensitive": true,
@@ -1186,31 +646,14 @@
       }
     },
     {
-      "classification": {
-        "expected": "keep",
-        "predicted": "keep"
-      },
+      "classification": { "expected": "keep", "predicted": "keep" },
       "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
       ],
       "testCase": {
-        "expected": {
-          "decision": "keep"
-        },
+        "expected": { "decision": "keep" },
         "id": "en-keep-routine-with-sensitive-evidence-1",
         "userInput": {
           "allowSensitive": true,

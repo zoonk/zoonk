@@ -257,6 +257,45 @@ describe("deleting a learner's private files", () => {
     expect(del).toHaveBeenCalledExactlyOnceWith([movedUrl], PRIVATE_STORE);
   });
 
+  it("deletes the mind map of a private chapter that came from their guest, still in the guest's folder", async () => {
+    const user = await createTestUser();
+    const id = randomUUID();
+    const guestFolder = `https://blob.test/images/${randomUUID()}`;
+    vi.mocked(list).mockResolvedValue(listed({ urls: [] }));
+
+    await prisma.chapter.create({
+      data: {
+        description: "A chapter of the learner's own course",
+        identityKey: `private:${user.id}:chapter:${id}`,
+        language: "en",
+        level: "beginner",
+        mindMap: {
+          create: {
+            imageUrl: `${guestFolder}/map-${id}.webp`,
+            language: "en",
+            status: "completed",
+            thumbnailUrl: `${guestFolder}/map-${id}-small.webp`,
+          },
+        },
+        model: "test-model",
+        normalizedTitle: "my chapter",
+        ownerId: user.id,
+        promptVersion: "test",
+        runId: `test-run-${id}`,
+        slug: `my-chapter-${id}`,
+        title: "My chapter",
+        visibility: "private",
+      },
+    });
+
+    await deleteUserDependenciesBeforeAuthDelete(user);
+
+    expect(del).toHaveBeenCalledExactlyOnceWith(
+      [`${guestFolder}/map-${id}.webp`, `${guestFolder}/map-${id}-small.webp`],
+      PRIVATE_STORE,
+    );
+  });
+
   it("has nothing to delete where no private store was ever configured", async () => {
     const user = await createTestUser();
     vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");

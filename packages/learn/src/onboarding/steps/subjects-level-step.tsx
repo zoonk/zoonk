@@ -24,18 +24,24 @@ type ExamSubject = { name: string; shortName: string | null };
  * check once picked.
  */
 export function SubjectsLevelStep({
+  initialKnown,
   onAnswer,
   pending,
   subject,
   subjects,
 }: {
+  /** The subjects the learner ticked before, shown again when they come Back to it. */
+  initialKnown: readonly string[];
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
   subject: string;
   subjects: ExamSubject[];
 }) {
   const t = useExtracted();
-  const [known, setKnown] = useState<string[]>([]);
+
+  const [known, setKnown] = useState<string[]>(() =>
+    initialKnown.filter((name) => subjects.some((item) => item.name === name)),
+  );
 
   return (
     <StepForm
@@ -59,7 +65,6 @@ export function SubjectsLevelStep({
               )}
             </ListRowContent>
             <Checkbox
-              aria-label={item.shortName ?? item.name}
               checked={known.includes(item.name)}
               className={CHOICE_CONTROL_CLASS}
               onCheckedChange={(checked) =>

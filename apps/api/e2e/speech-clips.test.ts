@@ -78,6 +78,43 @@ test.describe("Speech clips API", () => {
     await apiContext.dispose();
   });
 
+  // A call's better version of what the learner said is their own sentence, kept for them alone.
+  test("plays a learner's own words from their private clip, through the file route", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "speech-personal",
+    });
+
+    const text = uniqueSentence();
+    const filePath = `audio/${user.id}/it-${randomUUID()}.mp3`;
+
+    const clip = await mediaAssetFixture({
+      durationMs: 1700,
+      kind: "audio",
+      language: "it",
+      ownerId: user.id,
+      reuseKey: getSpeechClipKey({ language: "it", ownerId: user.id, text }),
+      url: `https://store.private.blob.vercel-storage.com/${filePath}`,
+      visibility: "private",
+    });
+
+    const [personal, shared] = await Promise.all([
+      apiContext.post("/v1/speech-clips", { data: { language: "it", personal: true, text } }),
+      storedClip({ language: "it", text }).then(() =>
+        apiContext.post("/v1/speech-clips", { data: { language: "it", text } }),
+      ),
+    ]);
+
+    const body = await personal.json();
+
+    expect(body).toMatchObject({ id: clip.id });
+    expect(new URL(body.url).pathname).toBe(`/v1/files/${filePath}`);
+
+    // The same words asked as shared words never reach the learner's own clip.
+    await expect(shared.json()).resolves.not.toMatchObject({ id: clip.id });
+    await apiContext.dispose();
+  });
+
   test("refuses a language without a voice, empty text and text too long for one clip", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,
@@ -95,24 +132,6 @@ test.describe("Speech clips API", () => {
 
     await expect(responses[0]?.json()).resolves.toMatchObject({
       error: { code: "VALIDATION_ERROR" },
-    });
-
-    await apiContext.dispose();
-  });
-
-  test("slows down a learner asking for too many new clips", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({ baseURL, prefix: "speech-slow" });
-
-    const response = await apiContext.post("/v1/speech-clips", {
-      data: { language: "it", text: uniqueSentence() },
-      headers: { "x-e2e-rate-limited": "ai-usage" },
-    });
-
-    expect(response.status()).toBe(429);
-    expect(response.headers()["retry-after"]).toBe("60");
-
-    await expect(response.json()).resolves.toMatchObject({
-      error: { code: "SLOW_DOWN", details: { retryAfterSeconds: 60 } },
     });
 
     await apiContext.dispose();

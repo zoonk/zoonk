@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { getQuickLessonIdentityKey } from "@zoonk/core/library/quick-lessons/identity";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -75,6 +77,20 @@ describe(listSitemapLibraryLessons, () => {
       lessonSlug: lesson.slug,
       updatedAt: lesson.updatedAt,
     });
+  });
+
+  it("leaves out a skill's quick lesson, which no chapter lists", async () => {
+    const { chapter } = await homeChapter();
+
+    const quick = await libraryLessonFixture({
+      homeChapterId: chapter.id,
+      identityKey: getQuickLessonIdentityKey({ ownerId: null, skillId: randomUUID() }),
+      language: "pt",
+    });
+
+    const lessons = await listedLessons();
+
+    expect(lessons.find((item) => item.lessonSlug === quick.slug)).toBeUndefined();
   });
 
   it("never lists private lessons", async () => {

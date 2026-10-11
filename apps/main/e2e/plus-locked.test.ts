@@ -5,40 +5,44 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EPersona } from "@zoonk/e2e/fixtures/personas";
 import { expect, test } from "./fixtures";
 import { openUserAsGuest } from "./guest-session";
+import { openPersona } from "./learn-personas";
 
 type Plan = "free" | "guest" | "plus";
 
 /**
- * A private copy of the exam persona (Ana, ENEM, weekly mocks in her plan) on the plan the test
- * asks for: Plus as seeded, the free plan without her subscription, or a guest without an account.
+ * The day of Ana's plan whose week holds her first mock: an exam plan's mocks begin on the event
+ * day of its second week, and at her 45 minutes a day they come every few weeks after that.
+ */
+const FIRST_MOCK_WEEK_DAY = 8;
+
+/**
+ * A private copy of the exam persona (Ana, ENEM, mocks in her plan) in the week of her first mock,
+ * on the plan the test asks for: Plus as seeded, the free plan without her subscription, or a
+ * guest without an account.
  */
 async function openExamLearner(browser: Browser, plan: Plan) {
-  const user = await createE2EPersona(getBaseURL(), { persona: "exam" });
+  const user = await createE2EPersona(getBaseURL(), { day: FIRST_MOCK_WEEK_DAY, persona: "exam" });
 
   if (plan === "plus") {
-    const context = await browser.newContext({ storageState: user.storageState });
-    return { context, page: await context.newPage() };
+    return openPersona(browser, user);
   }
 
   await prisma.subscription.deleteMany({ where: { referenceId: user.id } });
 
-  if (plan === "guest") {
-    return openUserAsGuest(browser, user);
-  }
-
-  const context = await browser.newContext({ storageState: user.storageState });
-  return { context, page: await context.newPage() };
+  return plan === "guest" ? openUserAsGuest(browser, user) : openPersona(browser, user);
 }
 
-/** The locked mocks a learner without Plus sees on Today: under the week and under practice. */
+/**
+ * What a learner without Plus sees on Today: the week names the mock's day for what their plan
+ * makes it, a full review of every topic, and the mocks stay in sight, locked, under practice.
+ */
 async function expectLockedMocksOnToday(page: Page) {
   await page.goto("/today");
 
   const week = page.getByRole("region", { name: "This week" });
 
-  await expect(
-    week.getByRole("link", { name: /^Mock exam .*Available with Plus$/u }),
-  ).toBeVisible();
+  await expect(week.getByText(/^Full review$/u)).toBeVisible();
+  await expect(week.getByText(/mock exam/iu)).toHaveCount(0);
 
   const practice = page.getByRole("region", { name: "Practice anytime" });
 
@@ -60,7 +64,7 @@ async function expectLockedMocksOnExamPage(page: Page) {
   const mocks = page.getByRole("region", { name: "Mock exams" });
 
   await expect(
-    mocks.getByRole("link", { name: /^(?<size>Short version|Full exam).*Available with Plus/u }),
+    mocks.getByRole("link", { name: /^(?<size>Half the exam|Full exam).*Available with Plus/u }),
   ).toHaveAttribute("href", /^\/challenge\/[\da-f-]{36}$/u);
 
   await expect(
@@ -68,7 +72,9 @@ async function expectLockedMocksOnExamPage(page: Page) {
   ).toBeVisible();
 
   await expect(
-    mocks.getByText("Mock exams come with Plus: whenever you want, and every week in your plan."),
+    mocks.getByText(
+      "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.",
+    ),
   ).toBeVisible();
 
   await expect(page.getByRole("link", { name: "See Plus" })).toHaveCount(1);
@@ -110,7 +116,7 @@ test.describe("Plus features are never hidden", () => {
 
     // With the keyboard, the next mock opens its intro, which says what Plus unlocks: "See Plus"
     // is its one action, never a start that would be refused.
-    const next = page.getByRole("link", { name: /^(?<size>Short version|Full exam)/u });
+    const next = page.getByRole("link", { name: /^(?<size>Half the exam|Full exam)/u });
     await next.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/challenge\/[\da-f-]{36}$/u);
@@ -165,7 +171,7 @@ test.describe("Plus features are never hidden", () => {
     }
 
     await expect(
-      page.getByRole("link", { name: /^(?<size>Short version|Full exam)/u }),
+      page.getByRole("link", { name: /^(?<size>Half the exam|Full exam)/u }),
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: /^Take a mock exam/u })).toBeVisible();

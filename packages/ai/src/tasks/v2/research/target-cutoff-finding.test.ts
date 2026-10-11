@@ -14,17 +14,38 @@ const raw = {
   status: "found" as const,
 };
 
-const UNKNOWN = { edition: null, quota: null, score: null, source: null, status: "unknown" };
+const UNKNOWN = {
+  edition: null,
+  maxScore: null,
+  quota: null,
+  score: null,
+  source: null,
+  status: "unknown",
+};
+
+/** A cut-off of 7 on a scale whose top the lookup gave as `maxScore`. */
+function readSeven(maxScore: number | null) {
+  return toTargetCutoffFinding({ isSearched: searched, raw: { ...raw, maxScore, score: 7 } });
+}
 
 describe(toTargetCutoffFinding, () => {
   it("keeps a cut-off with its edition, list and source", () => {
     expect(toTargetCutoffFinding({ isSearched: searched, raw })).toStrictEqual({
       edition: "Sisu 2025",
+      maxScore: 1000,
       quota: "ampla concorrência",
       score: 790.8,
       source: { title: "Notas de corte", url: PAGE },
       status: "found",
     });
+  });
+
+  // TJ-SP's cut-off page said "7,0" without the scale: the app shows the number only with one.
+  it("keeps the scale's top only when it's a real one above the cut-off", () => {
+    expect(readSeven(10)).toMatchObject({ maxScore: 10, score: 7 });
+    expect(readSeven(null)).toMatchObject({ maxScore: null, score: 7 });
+    expect(readSeven(Number.NaN)).toMatchObject({ maxScore: null, score: 7 });
+    expect(readSeven(0)).toMatchObject({ maxScore: null, score: 7 });
   });
 
   it("says nothing for a score off the scale, a missing score or a page no search returned", () => {

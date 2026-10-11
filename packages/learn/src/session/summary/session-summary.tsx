@@ -27,6 +27,7 @@ export function SessionSummary({
   goalKind,
   renderCeremony,
   signUpHref = null,
+  stopped = false,
   summary,
 }: {
   actions: SessionSummaryActions;
@@ -38,11 +39,22 @@ export function SessionSummary({
   renderCeremony?: CeremonyRenderer;
   /** For guests: after their first session, "Save your plan" asks for an account. */
   signUpHref?: string | null;
+  /** The learner just tapped "Stop for today": what's done so far, then Keep going. */
+  stopped?: boolean;
   summary: StudySessionSummary;
 }) {
   return (
     <SessionSummaryProvider
-      value={{ actions, buddy, ceremony: renderCeremony, exitHref, goalKind, signUpHref, summary }}
+      value={{
+        actions,
+        buddy,
+        ceremony: renderCeremony,
+        exitHref,
+        goalKind,
+        signUpHref,
+        stopped,
+        summary,
+      }}
     >
       <SummarySteps />
     </SessionSummaryProvider>

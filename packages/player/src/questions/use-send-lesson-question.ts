@@ -2,6 +2,7 @@
 
 import {
   type CreateLessonQuestionInput,
+  type LessonScreenSuggestion,
   type TutorTarget,
 } from "@zoonk/core/lesson-questions/contract";
 import { type Dispatch, useCallback, useRef, useState } from "react";
@@ -10,7 +11,7 @@ import { type LessonQuestionContext } from "./lesson-question-context";
 import { getLessonQuestionContextInput } from "./lesson-question-request";
 import { getLessonQuestionScope } from "./lesson-question-scope";
 import { type LessonQuestionSessionAction } from "./lesson-question-sessions";
-import { type LessonQuestionState } from "./lesson-question-state";
+import { type LessonQuestionState, type OfferedSuggestion } from "./lesson-question-state";
 import { doesLessonQuestionBlockNewQuestion } from "./lesson-question-status";
 
 type PendingQuestionCreateRequest = {
@@ -27,13 +28,13 @@ function getQuestionCreateRequest({
   lessonStepIds,
   pendingRequest,
   question,
-  suggested,
+  suggestion,
 }: {
   context: LessonQuestionContext;
   lessonStepIds: readonly string[];
   pendingRequest: PendingQuestionCreateRequest | null;
   question: string;
-  suggested: boolean;
+  suggestion?: LessonScreenSuggestion;
 }): PendingQuestionCreateRequest {
   if (pendingRequest) {
     return pendingRequest;
@@ -43,7 +44,7 @@ function getQuestionCreateRequest({
     input: {
       context: getLessonQuestionContextInput({ context, lessonStepIds: [...lessonStepIds] }),
       question,
-      ...(suggested && { suggested: true as const }),
+      ...(suggestion && { suggestion }),
     },
     requestId: crypto.randomUUID(),
   };
@@ -81,12 +82,12 @@ export function useSendLessonQuestion({
     async ({
       context,
       question,
-      suggested,
+      suggestion,
     }: {
       context: LessonQuestionContext;
       question: string;
-      /** The learner sent a suggested question unchanged. */
-      suggested: boolean;
+      /** The lesson screen suggestion the learner sent unchanged. */
+      suggestion?: LessonScreenSuggestion;
     }) => {
       const scope = getLessonQuestionScope(context);
       const currentState = getState(context);
@@ -116,7 +117,7 @@ export function useSendLessonQuestion({
         lessonStepIds,
         pendingRequest,
         question,
-        suggested,
+        suggestion,
       });
 
       const input = { ...request.input, requestId: request.requestId };
@@ -165,13 +166,14 @@ export function useSendLessonQuestion({
     await submitQuestion({
       context: state.context,
       question,
-      suggested: question === state.suggestion,
+      suggestion: question === state.suggestion?.question ? state.suggestion.suggestion : undefined,
     });
   }, [state.context, state.draft, state.suggestion, submitQuestion]);
 
   /** Sends one of the tutor's suggested questions right away, as offered. */
   const sendSuggestion = useCallback(
-    (question: string) => submitQuestion({ context: state.context, question, suggested: true }),
+    ({ question, suggestion }: OfferedSuggestion) =>
+      submitQuestion({ context: state.context, question, suggestion }),
     [state.context, submitQuestion],
   );
 

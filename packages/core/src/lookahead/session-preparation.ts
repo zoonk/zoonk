@@ -9,6 +9,7 @@ import {
 import { getGoalFieldInput } from "../library/items/item-field";
 import { findPlanFirstLessonId } from "../plans/_utils/plan-first-lesson";
 import { parsePlanSettings } from "../plans/planner/plan-state";
+import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import { findOwnedStudySession } from "../sessions/_utils/study-session-access";
 import { type LearnerLookahead, getLearnerTier, getLookahead } from "./learner-lookahead";
 
@@ -21,6 +22,11 @@ export type SessionPreparationAccess =
    * first learn block still to do), counted as its start like opening it; nothing else.
    */
   | { lessonId: string | null; status: "guest" }
+  /**
+   * A free exam plan past its first week: its new lessons, practice and challenges come with Plus,
+   * so nothing is written ahead for it.
+   */
+  | { status: "plusRequired" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -72,6 +78,12 @@ function findNextLessonId(blocks: readonly StudySessionBlock[]): string | null {
   return next?.lessonId ?? null;
 }
 
+/** Past a free exam plan's first week its new work comes with Plus: nothing is prepared ahead. */
+async function isPrepHeldForPlus(goal: Goal): Promise<boolean> {
+  const access = await loadExamPrepAccess({ goal });
+  return access.trialEnded;
+}
+
 /**
  * Whether the signed-in learner may prepare this study session's content, and what preparing it
  * needs. Guests never trigger the whole preparation: only the lesson they reach next is written
@@ -99,8 +111,12 @@ export async function getSessionPreparationAccess({
     return { lessonId: findNextLessonId(session.blocks), status: "guest" };
   }
 
-  if (!session.goalId) {
+  if (!session.goalId || !session.goal) {
     return { status: "notFound" };
+  }
+
+  if (await isPrepHeldForPlus(session.goal)) {
+    return { status: "plusRequired" };
   }
 
   return {
@@ -135,6 +151,10 @@ export async function getGoalPreparationAccess({
 
   if (user?.isAnonymous) {
     return { lessonId: await findPlanFirstLessonId(goalId), status: "guest" };
+  }
+
+  if (await isPrepHeldForPlus(owned.goal)) {
+    return { status: "plusRequired" };
   }
 
   return {

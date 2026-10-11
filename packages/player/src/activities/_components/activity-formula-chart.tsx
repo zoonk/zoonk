@@ -61,6 +61,7 @@ function DeltaMark({ from, label, to, x }: { from: number; label: string; to: nu
  */
 export function ActivityFormulaChart({
   baseline,
+  compare = null,
   current,
   deltaLabel,
   expected,
@@ -71,6 +72,8 @@ export function ActivityFormulaChart({
   yDomain,
 }: {
   baseline: Curve | null;
+  /** A point marked to compare with, like the value at last year's rate. */
+  compare?: { x: number; y: number } | null;
   current: Curve;
   deltaLabel: string | null;
   expected: { x: number; y: number } | null;
@@ -107,6 +110,15 @@ export function ActivityFormulaChart({
           radius={MARK_RADIUS}
           x={x}
           y={baseline.y}
+        />
+      )}
+
+      {compare && (
+        <ActivityPlotDot
+          className="fill-viz-accent-soft stroke-viz-accent"
+          radius={MARK_RADIUS}
+          x={compare.x}
+          y={compare.y}
         />
       )}
 

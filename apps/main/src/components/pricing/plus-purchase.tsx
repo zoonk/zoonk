@@ -14,7 +14,6 @@ import { useExtracted, useLocale } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { type BillingPeriod, BillingPriceSummary } from "./billing-price-summary";
 import { getYearlyPriceComparison } from "./billing-prices";
-import { GuardianApprovalRequest } from "./guardian-approval-request";
 import { PLUS_CTA_CLASS } from "./plus-cta";
 
 type RequestState = "error" | "idle" | "loading";
@@ -24,11 +23,7 @@ type StripeLocaleOverride = "de" | "es" | "fr" | "pt-BR";
  * Who is looking at the offer. A `guest` tried lessons without an account inside the app; a
  * `visitor` is on the public pricing page and can start free before deciding.
  */
-export type PlusViewerState =
-  | { status: "free" }
-  | { status: "guardian" }
-  | { status: "guest" }
-  | { status: "visitor" };
+export type PlusViewerState = { status: "free" } | { status: "guest" } | { status: "visitor" };
 
 const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | undefined>> = {
   de: "de",
@@ -177,8 +172,6 @@ export function PlusPurchase({
             {t("Get Plus")}
           </Link>
         )}
-
-        {viewerState.status === "guardian" && <GuardianApprovalRequest />}
 
         {viewerState.status === "free" && (
           <Button

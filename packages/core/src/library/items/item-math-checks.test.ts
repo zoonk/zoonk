@@ -125,4 +125,38 @@ describe(checkMathProblem, () => {
       "A variable uses the reserved name result.",
     ]);
   });
+
+  it("checks the other answers a question takes like its solution", () => {
+    expect(
+      checkMathProblem({ math: discountMath, otherSolutions: ["price - total"], question }),
+    ).toStrictEqual(["Other solution 1 uses undeclared total."]);
+
+    // The price paid and the discount are different questions: one of them is a mistake.
+    expect(
+      checkMathProblem({
+        math: discountMath,
+        otherSolutions: ["price * discount / 100"],
+        question,
+      }),
+    ).toStrictEqual(["Common mistake 1 gives an answer the question takes."]);
+  });
+
+  it("requires a whole-number answer when the answer is entered as an integer", () => {
+    const entry = { kind: "integer", places: null } as const;
+
+    expect(checkMathProblem({ entry, math: discountMath, question })).toStrictEqual([]);
+
+    const decimal = {
+      ...discountMath,
+      answer: 60.5,
+      solution: "price - 20",
+      variables: discountMath.variables.map((variable) =>
+        variable.name === "price" ? { ...variable, value: 80.5 } : variable,
+      ),
+    };
+
+    expect(checkMathProblem({ entry, math: decimal, question })).toContain(
+      "The answer 60.5 isn't a whole number, which the answer box takes.",
+    );
+  });
 });

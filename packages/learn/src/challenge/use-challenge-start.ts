@@ -40,7 +40,10 @@ export function useChallengeStart(actions: ChallengeActions): ChallengeStartStat
     const outcome = settled?.status === "settled" ? settled.value : "failed";
 
     // Once it started, the host is already opening the block: the button stays busy until then.
-    if (outcome !== "started") {
+    // While its questions are written, the host shows the wait instead.
+    if (outcome === "writing") {
+      setBusy(false);
+    } else if (outcome !== "started") {
       setBusy(false);
       setProblem(outcome);
     }

@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { isSinglePick } from "../../learner/_utils/choice-items";
 import { getItemAudienceFilter } from "../../library/items/item-field";
 import {
   QUESTION_ITEM_FORMATS,
@@ -11,7 +12,8 @@ import { type CheckpointItemCandidate } from "../checkpoint-rules";
 /**
  * Questions on a set of skills as checkpoint candidates (choice questions and math problems):
  * whether a wrong answer carries a misconception (a classic trap) and whether the learner has seen
- * the question. Another exam's questions never count: general ones and the goal's exam's do.
+ * the question. Another exam's questions never count: general ones and the goal's exam's do. A
+ * duel is answered with one tap, so a question that asks for several options never comes up.
  */
 export async function loadCheckpointCandidates({
   examBlueprintId,
@@ -43,6 +45,7 @@ export async function loadCheckpointCandidates({
   return items
     .map((item) => parseSessionItem(item))
     .filter((item) => item !== null)
+    .filter((item) => item.format !== "multipleChoice" || isSinglePick(item))
     .map((item) => ({
       hasMisconceptions: hasTraps(item),
       id: item.id,

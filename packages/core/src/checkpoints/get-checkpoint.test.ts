@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerBlockInOrder } from "../sessions/_test-utils/answer-block";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
   SESSION_NOW,
   checkpointItemFixture,
@@ -11,7 +12,6 @@ import {
 } from "../sessions/_test-utils/session-goal";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { finishStudyBlock } from "../sessions/finish-study-block";
-import { getTodayStudySession } from "../sessions/get-today-study-session";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { getCheckpoint } from "./get-checkpoint";
 

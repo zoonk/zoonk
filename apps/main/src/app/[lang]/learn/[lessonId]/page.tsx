@@ -16,6 +16,7 @@ import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getLessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
+import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -25,7 +26,6 @@ import { GuestLessonPlayer } from "./guest-lesson-player";
 import { LessonGuestGate } from "./lesson-guest-gate";
 import { LessonPlayerClient, type LessonRouting } from "./lesson-player-client";
 import { getLessonRouting } from "./lesson-routing";
-import { LessonSlowDownView } from "./lesson-slow-down-view";
 import { LessonWaitingView } from "./lesson-waiting-view";
 
 type Props = PageProps<"/[lang]/learn/[lessonId]">;
@@ -128,10 +128,6 @@ function LessonWithoutScreens({
     return <LessonGuestGate lesson={result.lesson} />;
   }
 
-  if (result.status === "slowDown") {
-    return <LessonSlowDownView retryAfterSeconds={result.retryAfterSeconds} />;
-  }
-
   return <LessonWaitingView hasSession={hasSession} inSession={inSession} lesson={result.lesson} />;
 }
 
@@ -189,9 +185,10 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 
   const played = result?.status === "ready" ? await withLanguageActivities(result.lesson) : null;
 
-  const [challengeTeam, routing] = await Promise.all([
+  const [challengeTeam, routing, tutorSuggestions] = await Promise.all([
     getLessonChallengeTeam(played),
     getRouting({ inSession: sessionContext !== null, isGuest, lesson: played?.lesson ?? null }),
+    played ? wordTutorSuggestions(played.lesson.language) : [],
   ]);
 
   if (!result) {
@@ -228,6 +225,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           studySessionId={studySessionId}
           support={support}
           tutor={tutor}
+          tutorSuggestions={tutorSuggestions}
         />
       )}
 

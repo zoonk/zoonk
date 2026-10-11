@@ -36,13 +36,17 @@ async function loadItemLessonIds(planItemIds: readonly string[]): Promise<string
  * A test-out or placement settled some lessons: the one the learner has open on an open day is
  * skipped, so Today goes on with the next stop instead of restarting a lesson they just showed
  * they know. The ones not started leave with the rest of the day's not-started part, which follows
- * the plan (see `followPlanToday`).
+ * the plan (see `followPlanToday`), or, when the day keeps what it showed (`notStarted`), on their
+ * own.
  */
 export async function skipTestedOutBlocks({
   goalId,
+  notStarted = false,
   planItemIds,
 }: {
   goalId: string;
+  /** Skips the settled lessons' blocks not started yet too: the rest of the day stays as it is. */
+  notStarted?: boolean;
   planItemIds: readonly string[];
 }): Promise<void> {
   const lessonIds = await loadItemLessonIds(planItemIds);
@@ -57,7 +61,7 @@ export async function skipTestedOutBlocks({
       kind: "learn",
       lessonId: { in: lessonIds },
       session: { goalId, status: { in: OPEN_SESSION_STATUSES } },
-      status: "active",
+      status: { in: notStarted ? ["active", "pending"] : ["active"] },
     },
   });
 }

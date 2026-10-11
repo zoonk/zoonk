@@ -1,4 +1,3 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -10,19 +9,12 @@ import {
 import { checkLessonStep } from "../lesson-player/check-lesson-step";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
 import { startLibraryLesson } from "../lesson-player/start-library-lesson";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import { getStudySession } from "./get-study-session";
-import { getTodayStudySession } from "./get-today-study-session";
 import { startStudyBlock } from "./start-study-block";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 const TIME_ZONE = "UTC";
 const BEFORE_MIDNIGHT = new Date("2026-09-30T23:50:00Z");
@@ -97,7 +89,6 @@ async function startLessonBeforeMidnight() {
 describe("a session the learner is in when midnight comes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   afterEach(() => {

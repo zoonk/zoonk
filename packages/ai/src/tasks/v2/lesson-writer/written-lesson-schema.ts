@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { imageRequestSchema } from "../images/image-request-schema";
+import { imageRequestSchema, numberedImageRequestSchema } from "../images/image-request-schema";
 import { GENERATED_ITEM_SCHEMAS } from "../items/item-schemas";
 import { type LessonScreenKind } from "../lesson-spec/lesson-spec-rules";
 import { lessonVisualSchema } from "../visuals/visual-schema";
@@ -45,6 +45,11 @@ const explanationScreen = z.object({
   exampleLineIdea: z.string().nullable(),
   image: imageRequestSchema,
   visual,
+  /**
+   * The template the plan asks the screen to show to explore, nothing asked: `content` is its
+   * `{ fields, data }` as JSON text, which code validates like an activity's. Null otherwise.
+   */
+  explore: z.object({ template: z.string(), content: z.string() }).nullable(),
 });
 
 const workedExampleScreen = z.object({
@@ -65,10 +70,18 @@ const checkScreen = z.object({
   context: z.string().nullable(),
   question: z.string(),
   options: z
-    .array(z.object({ text: z.string(), isCorrect: z.boolean(), reason: z.string() }))
+    .array(
+      z.object({
+        text: z.string(),
+        isCorrect: z.boolean(),
+        reason: z.string(),
+        /** For telling separate things apart by how they look: the option's own picture, or null. */
+        picture: imageRequestSchema,
+      }),
+    )
     .min(MIN_OPTIONS)
     .max(MAX_CHECK_OPTIONS),
-  image: imageRequestSchema,
+  image: numberedImageRequestSchema,
   visual,
 });
 

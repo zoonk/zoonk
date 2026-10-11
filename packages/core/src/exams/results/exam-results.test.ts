@@ -165,18 +165,69 @@ describe("how did it go", () => {
     expect(calibrated?.low).toBe((uncalibrated?.low ?? 0) + 60);
   });
 
+  it("keeps calibrating with the results of learners who deleted their accounts", async () => {
+    const { blueprint, goal, user } = await examGoal();
+    vi.setSystemTime(new Date("2026-10-25T12:00:00Z"));
+    await irtMock({ goalId: goal.id, theta: 1.6, userId: user.id });
+
+    const before = await getGoalPreparation(goal.id);
+    const uncalibrated = before.status === "ready" ? before.preparation.estimatedScore : null;
+    const others = await Promise.all(Array.from({ length: 3 }, () => userFixture()));
+    const report = { estimateHigh: 640, estimateLow: 600, scale: "irt", score: 680 };
+
+    // Three learners still here and two who left: five reports, enough to calibrate.
+    await Promise.all([
+      prisma.examResult.createMany({
+        data: others.map((other) => ({
+          ...report,
+          examBlueprintId: blueprint.id,
+          examName: "ENEM",
+          userId: other.id,
+        })),
+      }),
+      prisma.anonymousExamResult.createMany({
+        data: Array.from({ length: 2 }, () => ({
+          ...report,
+          examBlueprintId: blueprint.id,
+          reportedOn: new Date("2026-01-20T00:00:00Z"),
+        })),
+      }),
+    ]);
+
+    mockSession(user.id);
+    const after = await getGoalPreparation(goal.id);
+    const calibrated = after.status === "ready" ? after.preparation.estimatedScore : null;
+
+    expect(calibrated).toMatchObject({ calibrated: true, scale: "irt" });
+    expect(calibrated?.low).toBe((uncalibrated?.low ?? 0) + 60);
+  });
+
   it("keeps the percent estimate as points for a score reported in points, and calibrates with it", async () => {
     const { blueprint, goal, user } = await examGoal();
     vi.setSystemTime(new Date("2026-11-20T12:00:00Z"));
 
-    await learningEventFixture({
-      correctAnswers: 30,
-      endedAt: new Date("2026-10-20T12:00:00Z"),
-      goalId: goal.id,
-      incorrectAnswers: 10,
-      kind: "mock",
-      userId: user.id,
-    });
+    // A whole exam day's mock: its answers in the ledger, and its sitting.
+    await Promise.all([
+      learningEventFixture({
+        correctAnswers: 30,
+        endedAt: new Date("2026-10-20T12:00:00Z"),
+        goalId: goal.id,
+        incorrectAnswers: 10,
+        kind: "mock",
+        userId: user.id,
+      }),
+      prisma.mockExam.create({
+        data: {
+          conditions: {},
+          finishedAt: new Date("2026-10-20T12:00:00Z"),
+          goalId: goal.id,
+          result: { correct: 30, total: 40 },
+          sectionStartedAt: new Date("2026-10-20T10:00:00Z"),
+          status: "finished",
+          userId: user.id,
+        },
+      }),
+    ]);
 
     const input = { maxScore: 80, passed: true, scale: "points" as const, score: 64 };
     await reportExamResult({ goalId: goal.id, input });

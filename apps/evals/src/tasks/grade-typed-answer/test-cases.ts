@@ -268,6 +268,31 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
+    // An own-words message whose key point names the phrase the lesson taught, though the
+    // question doesn't ask for it: another correct way to say it meets the point (a persona walk,
+    // Oct 2026, graded it "1 of 2" and saved it as a mistake).
+    expected: { isCorrect: true, keyPoints: [true, true] },
+    id: "pt-language-own-words-paraphrase-of-taught-phrase",
+    userInput: {
+      acceptedAnswers: [
+        "I'll stay with a friend.",
+        "I will stay with a friend.",
+        "I'm going to stay with a friend.",
+        "I am going to stay with a friend.",
+      ],
+      answer: "I'll stay at a friend's house.",
+      keyPoints: [
+        "Indica um plano futuro de hospedagem.",
+        "Usa “stay with a friend” para dizer que vai ficar na casa de um amigo.",
+      ],
+      language: "pt",
+      practicedLanguage: "en",
+      question:
+        "Escreva uma mensagem com seu plano de hospedagem: “Vou ficar na casa de um amigo.”",
+      sampleAnswer: "I'll stay with a friend.",
+    },
+  },
+  {
     expected: { isCorrect: true, keyPoints: [true, true, true, true] },
     id: "pt-entrevista-pergunta-concreta",
     userInput: {
@@ -394,6 +419,26 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
         "Renan compara ao microscópio uma lâmina de tecido de folha e outra de mucosa da boca. Nas duas, identifica pequenas unidades delimitadas que compõem os tecidos.\n\nQue postulado da teoria celular essa comparação ajuda a fundamentar? Explique também por que a observação microscópica foi importante para formulá-lo.",
       sampleAnswer:
         "A comparação ajuda a fundamentar o postulado de que os seres vivos são constituídos por células. O microscópio permitiu identificar essas unidades nos tecidos de uma planta e de um animal, revelando uma organização comum que não seria visível a olho nu.",
+    },
+  },
+  {
+    // Helena's placement answer (ENEM strategy, Oct 2026): a sound check said its own way, graded
+    // wrong for not naming elimination, which is the same check from the other side.
+    expected: { isCorrect: true, keyPoints: [true, true, true] },
+    id: "pt-enem-estrategia-duas-alternativas",
+    userInput: {
+      answer:
+        "Voltar ao comando da questão e conferir qual alternativa responde exatamente o que foi pedido, com base no texto. Se continuar na dúvida, marcar a que parece melhor, anotar a questão e seguir em frente para voltar no fim se sobrar tempo.",
+      keyPoints: [
+        "Conferir o que o enunciado pede e comparar cada alternativa com o trecho que poderia sustentá-la.",
+        "Eliminar uma alternativa se ela contrariar o texto ou afirmar mais do que ele permite.",
+        "Se não houver critério para desempatar após essa verificação, escolher a mais sustentada, avançar e voltar à questão se sobrar tempo.",
+      ],
+      language: "pt",
+      question:
+        "Durante um simulado do ENEM em Chapecó, Lorena reduz uma questão de interpretação a duas alternativas. As duas parecem possíveis à primeira leitura. Ela ainda tem várias questões para fazer e percebe que está relendo o mesmo trecho sem encontrar um argumento novo.\n\nQue verificação você recomendaria a Lorena antes de decidir? Se a dúvida continuar, como ela deve administrar essa questão?",
+      sampleAnswer:
+        "Eu conferiria exatamente o que o enunciado pede e procuraria no texto o apoio para cada alternativa. Se uma delas contradisser o trecho ou exagerar o que ele diz, eu a eliminaria. Se as duas ainda parecerem possíveis e a releitura não trouxer nada novo, marcaria a mais sustentada, seguiria em frente e voltaria se sobrasse tempo.",
     },
   },
   {

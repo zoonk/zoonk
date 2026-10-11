@@ -91,6 +91,7 @@ export async function generateAlphabetLesson(params: GenerateAlphabetLessonParam
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "alphabet-lesson",
   });

@@ -1,20 +1,22 @@
 import { readRefusedLimit } from "@/lib/api/refused-limit";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
-import { getString } from "@zoonk/utils/json";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import { API_URL } from "@zoonk/utils/url";
 
 export type QuestionWriting =
   | { generationId: string; status: "writing" }
   | { limit: HelpLimit; status: "refused" }
-  | { status: "failed" | "preparing" | "ready" };
+  | { status: "failed" | "plusRequired" | "preparing" | "ready" };
 
 /**
  * Asks the API to write the questions a test still needs (a chapter's test-out, a plan's focus
  * test, a mock), when the learner taps for it (a POST, never on page load): `ready` when it has
  * them, `preparing` while the goal's skill map is still drawn (ask again soon), or the run writing
- * them. `path` is the test's generations endpoint under `/v1`; `body`, what the endpoint asks for.
+ * them, or `plusRequired` when a free exam plan past its first week takes the test with Plus only.
+ * `path` is the test's generations endpoint under `/v1`; `body`, what the endpoint asks for.
  */
 export async function requestQuestionWriting(
   path: string,
@@ -33,6 +35,14 @@ export async function requestQuestionWriting(
   }
 
   const answer: unknown = await response.json().catch(() => null);
+
+  if (
+    getString(isJsonObject(answer) ? answer.error : null, "code") ===
+    LESSON_PLAYER_ERROR_CODES.plusRequired
+  ) {
+    return { status: "plusRequired" };
+  }
+
   const limit = readRefusedLimit({ body: answer, status: response.status });
 
   if (limit) {

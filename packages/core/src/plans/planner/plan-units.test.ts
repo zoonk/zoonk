@@ -80,6 +80,31 @@ describe(buildLessonUnits, () => {
     ]);
   });
 
+  it("plans a shared chapter's lesson at its own skill's place when that skill builds on one taught after the chapter", () => {
+    // Wireframes build on content structure, which a "less" sent after the flows chapter the two
+    // share: the wireframe lessons of that chapter wait for it instead of coming first.
+    expect(
+      plannedLessons({
+        lessons: [
+          ...lessonsOf("flows", 4, ["flows", "wireframes"]),
+          ...lessonsOf("structure", 1, ["structure"]),
+        ],
+        prerequisites: new Map([["wireframes", ["flows", "structure"]]]),
+        skills: skillsOf({ flows: 2, structure: 1, wireframes: 2 }, [
+          "flows",
+          "structure",
+          "wireframes",
+        ]),
+      }),
+    ).toStrictEqual([
+      ["flows-1", "flows"],
+      ["flows-2", "flows"],
+      ["structure-1", "structure"],
+      ["flows-3", "wireframes"],
+      ["flows-4", "wireframes"],
+    ]);
+  });
+
   it("counts a lesson a chapter shares among several skills once, so each keeps a stand-in for the rest", () => {
     // A unit's first chapter of five lessons tagged with five situations of eight lessons each:
     // one lesson of each, not five of each.

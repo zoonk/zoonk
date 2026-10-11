@@ -1,10 +1,10 @@
 import { toTopicKey } from "../../../library/exams/topic-key";
+import { getWorkProgress, isWorkFinished } from "../../../plans/_utils/work-progress";
 import { type NotPlannedReason, type SyllabusTopic } from "../syllabus-contract";
 import {
-  type ChapterKeyOf,
   type KeyedChapter,
+  chapterKeyOf,
   getEarliestTodoDate,
-  isFinished,
   withoutKey,
 } from "./syllabus-chapters";
 import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
@@ -16,14 +16,20 @@ import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 export function getNotPlannedReason({
   hasItems,
   hasSkills,
+  known = false,
   pastBasics = false,
   skipped,
+  skippedBase = false,
 }: {
   hasItems: boolean;
   hasSkills: boolean;
+  /** Every skill that teaches it is one the learner showed they know: practice keeps it in. */
+  known?: boolean;
   /** Every skill that teaches it is one of a subject's basics the plan starts past. */
   pastBasics?: boolean;
   skipped: boolean;
+  /** Every skill that teaches it is a base the learner chose to skip. */
+  skippedBase?: boolean;
 }): NotPlannedReason | null {
   if (skipped) {
     return "skipped";
@@ -33,21 +39,43 @@ export function getNotPlannedReason({
     return "missing";
   }
 
-  if (hasItems) {
+  if (hasItems || known) {
     return null;
+  }
+
+  if (skippedBase) {
+    return "skippedBase";
   }
 
   return pastBasics ? "pastBasics" : "time";
 }
 
+/**
+ * A topic's status from its lessons: known when the plan has none on it but the learner showed
+ * they know it, or tested out of every one, since practice is all that's left of it. Lessons set
+ * aside are neither studied nor known (`getWorkProgress`).
+ */
 function getTopicStatus(items: readonly SyllabusItem[]): SyllabusTopic["status"] {
-  const done = items.filter((item) => isFinished(item.status)).length;
+  const done = items.filter((item) => isWorkFinished(item.status)).length;
+
+  if (items.every((item) => getWorkProgress(item.status) === "testedOut")) {
+    return "known";
+  }
 
   if (done === items.length) {
     return "studied";
   }
 
   return done > 0 ? "inProgress" : "toStudy";
+}
+
+/**
+ * Nothing of the topic is left to do, and some of it was set aside (missed days the plan couldn't
+ * fit back by the date): what the plan doesn't teach of it is out for time.
+ */
+function isRestSetAside(items: readonly SyllabusItem[]): boolean {
+  const progress = new Set(items.map((item) => getWorkProgress(item.status)));
+  return progress.has("setAside") && !progress.has("todo");
 }
 
 /** The skills that teach a topic, by the topic's exact words or the same words written otherwise. */
@@ -76,25 +104,29 @@ export function namesAnyTopic({
  * else any), when the plan says which skills teach which topic; otherwise the topic alone.
  */
 export function buildTopic({
-  chapterKeyOf,
   chapters,
   items,
+  knownSkillIds,
   mapped,
   pastBasicsSkillIds,
   skills,
   skipped,
+  skippedBaseIds = new Set(),
   topic,
 }: {
-  chapterKeyOf: ChapterKeyOf;
   chapters: readonly KeyedChapter[];
   /** The subject's lessons, then every lesson for a topic only another subject's skills teach. */
   items: { all: readonly SyllabusItem[]; own: readonly SyllabusItem[] };
+  /** Skills the learner showed they know (see `SyllabusInput`). */
+  knownSkillIds: ReadonlySet<string>;
   mapped: boolean;
   /** Skills the plan starts past (see `SyllabusInput`). */
   pastBasicsSkillIds: ReadonlySet<string>;
   /** The subject's skills, then every skill when none of them teaches it. */
   skills: { all: readonly SyllabusSkill[]; own: readonly SyllabusSkill[] };
   skipped: boolean;
+  /** Bases the learner chose to skip (see `SyllabusInput`). */
+  skippedBaseIds?: ReadonlySet<string>;
   topic: string;
 }): Omit<SyllabusTopic, "frequency" | "heading"> {
   const empty = { chapters: [], name: topic, nextDate: null };
@@ -109,27 +141,77 @@ export function buildTopic({
   const lessons = own.length > 0 ? items.own : items.all;
   const taught = lessons.filter((item) => item.skillId && skillIds.has(item.skillId));
 
+  const known = teaching.every((skill) => knownSkillIds.has(skill.skillId));
+
   const reason = getNotPlannedReason({
     hasItems: taught.length > 0,
     hasSkills: teaching.length > 0,
+    known,
     pastBasics: teaching.every((skill) => pastBasicsSkillIds.has(skill.skillId)),
     skipped,
+    skippedBase: teaching.every((skill) => skippedBaseIds.has(skill.skillId)),
   });
+
+  const studied = taught.filter((item) => isWorkFinished(item.status));
+
+  // A subject the learner took out keeps what they studied of it, with its note: shown as not in
+  // the plan with nothing under it, its lessons done read as never studied (R25, ENEM).
+  if (reason === "skipped" && studied.length > 0) {
+    return {
+      ...topicChapters({ chapters, items: studied }),
+      name: topic,
+      nextDate: null,
+      notPlannedReason: reason,
+      status: getTopicStatus(studied),
+    };
+  }
 
   if (reason) {
     return { ...empty, notPlannedReason: reason, status: "notPlanned" };
   }
 
-  const keys = new Set(taught.map((item) => chapterKeyOf(item)));
+  // One right answer frees a topic from its lessons, never from practice: it's in the plan.
+  if (taught.length === 0) {
+    return { ...empty, notPlannedReason: null, status: "known" };
+  }
+
+  // Lessons set aside are out of the plan for time: a topic with nothing else left to do says so
+  // rather than "to study" with nothing planned (R25), and keeps what the learner studied of it.
+  if (isRestSetAside(taught)) {
+    return studied.length > 0
+      ? {
+          ...topicChapters({ chapters, items: studied }),
+          name: topic,
+          nextDate: null,
+          notPlannedReason: "time",
+          status: getTopicStatus(taught),
+        }
+      : { ...empty, notPlannedReason: "time", status: "notPlanned" };
+  }
+
+  return {
+    ...topicChapters({ chapters, items: taught }),
+    name: topic,
+    nextDate: getEarliestTodoDate(taught),
+    notPlannedReason: null,
+    status: getTopicStatus(taught),
+  };
+}
+
+/** The subject's chapters these lessons of a topic are in. */
+function topicChapters({
+  chapters,
+  items,
+}: {
+  chapters: readonly KeyedChapter[];
+  items: readonly SyllabusItem[];
+}): Pick<SyllabusTopic, "chapters"> {
+  const keys = new Set(items.map((item) => chapterKeyOf(item)));
 
   return {
     chapters: chapters
       .filter((chapter) => keys.has(chapter.key))
       .map((chapter) => withoutKey(chapter)),
-    name: topic,
-    nextDate: getEarliestTodoDate(taught),
-    notPlannedReason: null,
-    status: getTopicStatus(taught),
   };
 }
 
@@ -145,12 +227,17 @@ type BuiltTopic = ReturnType<typeof buildTopic>;
 /** A heading's status from the items numbered under it that the plan has. */
 function getHeadingStatus(children: readonly BuiltTopic[]): SyllabusTopic["status"] {
   const planned = children.filter((child) => child.status !== "notPlanned");
+  const isCovered = (child: BuiltTopic) => child.status === "studied" || child.status === "known";
 
-  if (planned.every((child) => child.status === "studied")) {
+  if (planned.every((child) => child.status === "known")) {
+    return "known";
+  }
+
+  if (planned.every((child) => isCovered(child))) {
     return "studied";
   }
 
-  return planned.some((child) => child.status === "studied" || child.status === "inProgress")
+  return planned.some((child) => isCovered(child) || child.status === "inProgress")
     ? "inProgress"
     : "toStudy";
 }

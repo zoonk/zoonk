@@ -1,4 +1,5 @@
 import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
+import { definitionNamesWord } from "@zoonk/ai/tasks/v2/language/language-lesson-rules";
 import { normalizeDistractorKey, sanitizeDistractors } from "@zoonk/utils/distractors";
 import { normalizePunctuation, segmentWords } from "@zoonk/utils/string";
 
@@ -44,12 +45,28 @@ function withoutWordsOf({ distractors, text }: { distractors: string[]; text: st
   );
 }
 
+/** A word's meaning the learner can learn from: a definition never names its own word. */
+function hasMeaning({
+  sameLanguage,
+  word,
+}: {
+  sameLanguage: boolean;
+  word: LanguageLessonContent["words"][number];
+}): boolean {
+  return (
+    Boolean(word.translation) &&
+    !(sameLanguage && definitionNamesWord({ definition: word.translation, word: word.word }))
+  );
+}
+
 function cleanWords({
   content,
   knownWords,
+  sameLanguage,
 }: {
   content: LanguageLessonContent;
   knownWords: readonly string[];
+  sameLanguage: boolean;
 }): LanguageLessonContent["words"] {
   const known = new Set(knownWords.map((word) => normalizeDistractorKey(word)));
 
@@ -60,7 +77,9 @@ function cleanWords({
       word: cleanText(word.word),
     })),
     (word) => normalizeDistractorKey(word.word),
-  ).filter((word) => word.translation && !known.has(normalizeDistractorKey(word.word)));
+  ).filter(
+    (word) => hasMeaning({ sameLanguage, word }) && !known.has(normalizeDistractorKey(word.word)),
+  );
 
   const lessonKeys = new Set(words.map((word) => normalizeDistractorKey(word.word)));
 
@@ -78,13 +97,35 @@ function cleanWords({
   }));
 }
 
-function cleanSentences(content: LanguageLessonContent): LanguageLessonContent["sentences"] {
-  const sentences = content.sentences.map((sentence) => ({
+/**
+ * In the learner's own language a sentence is read as it is: hearing it, the learner builds the
+ * sentence itself from its words and its wrong options.
+ */
+function readAsItIs(
+  sentence: LanguageLessonContent["sentences"][number],
+): LanguageLessonContent["sentences"][number] {
+  return {
     ...sentence,
-    explanation: cleanText(sentence.explanation),
-    sentence: cleanText(sentence.sentence),
-    translation: cleanText(sentence.translation),
-  }));
+    translation: sentence.sentence,
+    translationDistractors: sentence.distractors,
+  };
+}
+
+function cleanSentences({
+  content,
+  sameLanguage,
+}: {
+  content: LanguageLessonContent;
+  sameLanguage: boolean;
+}): LanguageLessonContent["sentences"] {
+  const sentences = content.sentences
+    .map((sentence) => (sameLanguage ? readAsItIs(sentence) : sentence))
+    .map((sentence) => ({
+      ...sentence,
+      explanation: cleanText(sentence.explanation),
+      sentence: cleanText(sentence.sentence),
+      translation: cleanText(sentence.translation),
+    }));
 
   return uniqueBy(sentences, (sentence) => normalizeDistractorKey(sentence.sentence))
     .filter((sentence) => sentence.translation && sentence.explanation)
@@ -140,28 +181,32 @@ function cleanWriting(content: LanguageLessonContent): LanguageLessonContent["wr
  * Code repairs what a model gets subtly wrong before anything is stored:
  * whitespace before punctuation, repeated words or sentences, words the unit
  * already taught, wrong options that are really right, and practice questions
- * without exactly one blank. Items that can't be repaired are dropped.
+ * without exactly one blank. Items that can't be repaired are dropped. In the
+ * learner's own language (`sameLanguage`), a word defined by itself is dropped
+ * and sentences and the tip's examples are read as they are.
  */
 export function cleanLanguageLesson({
   content,
   knownWords,
+  sameLanguage,
 }: {
   content: LanguageLessonContent;
   knownWords: readonly string[];
+  sameLanguage: boolean;
 }): LanguageLessonContent {
   return {
     practice: cleanPractice(content),
-    sentences: cleanSentences(content),
+    sentences: cleanSentences({ content, sameLanguage }),
     summary: content.summary.map(cleanText).filter(Boolean),
     tip: {
       examples: content.tip.examples.map((example) => ({
         sentence: cleanText(example.sentence),
-        translation: cleanText(example.translation),
+        translation: cleanText(sameLanguage ? example.sentence : example.translation),
       })),
       text: cleanText(content.tip.text),
       title: cleanText(content.tip.title),
     },
-    words: cleanWords({ content, knownWords }),
+    words: cleanWords({ content, knownWords, sameLanguage }),
     writing: cleanWriting(content),
   };
 }

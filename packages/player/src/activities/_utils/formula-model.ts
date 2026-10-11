@@ -10,18 +10,6 @@ export function startingValues(variables: readonly Variable[]): Record<string, n
   return Object.fromEntries(variables.map((variable) => [variable.name, variable.initial]));
 }
 
-/** The output the check reads (or the first), which the chart draws. */
-export function primaryOutput<TOutput extends { id: string }>({
-  check,
-  fields,
-}: {
-  check: { kind: string; output?: string };
-  fields: { outputs: readonly TOutput[] };
-}): TOutput | undefined {
-  const target = check.kind === "interaction" ? undefined : check.output;
-  return fields.outputs.find((output) => output.id === target) ?? fields.outputs[0];
-}
-
 /** Whether any slider other than `except` moved from where it started. */
 export function othersMoved({
   except,

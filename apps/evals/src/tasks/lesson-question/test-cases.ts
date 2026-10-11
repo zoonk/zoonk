@@ -5,12 +5,9 @@ import {
   type LessonScopeContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
 import {
-  ACCOUNTING_PLAN,
   COMPOUND_INTEREST_CHAPTER,
   ENEM_MOCK,
-  ENEM_PLAN,
   EXPONENTS_CHAPTER,
-  QUANTUM_PLAN,
   RAW_SCORED_MOCK,
   REVIEWS_LESSON,
 } from "./screen-contexts";
@@ -532,75 +529,6 @@ ${SCREEN_EXPECTATIONS}
       contextSnapshot: COMPOUND_INTEREST_CHAPTER,
       priorTurns: [],
       question: "Por onde eu continuo neste capítulo?",
-    },
-  },
-  {
-    expectations: `
-CASE-SPECIFIC GUIDANCE:
-- Explain each of today's items from its reason: "Powers of ten" is a review that was due so it doesn't fade; "Scientific notation" is the next new lesson in the plan (it lets them write an atom's size in scientific notation); the practice on "Fractions and ratios" targets their weakest skills so far.
-- It can tie them to the current phase, "Math you'll need", on the way to quantum physics.
-- If it mentions the status, say honestly and kindly that the plan is about two days behind and that about 10 extra minutes a day catches up; no guilt, no promise.
-- Do not invent reasons or items.
-
-${SCREEN_EXPECTATIONS}
-    `,
-    id: "en-plan-why-today",
-    userInput: {
-      contextSnapshot: QUANTUM_PLAN,
-      priorTurns: [],
-      question: "Why am I studying this today?",
-    },
-  },
-  {
-    expectations: `
-CASE-SPECIFIC GUIDANCE:
-- Asked from the plan, about the course it's built from: entanglement is a chapter at the advanced level, after the intermediate level's "The Schrödinger equation" and "Spin and measurement", and before "Quantum computing".
-- It may place it after the current phase's math chapters, but must not give it a date or promise when the learner gets there.
-- Do not invent chapters, lesson counts or levels.
-
-${SCREEN_EXPECTATIONS}
-    `,
-    id: "en-plan-course-where-topic-sits",
-    userInput: {
-      contextSnapshot: QUANTUM_PLAN,
-      priorTurns: [],
-      question: "When does this course get to entanglement?",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Answer in Portuguese.
-
-CASE-SPECIFIC GUIDANCE:
-- Asked from the plan, about the course it's built from: explain its two levels in order, overview ("Para que serve a contabilidade", "Regimes de caixa e competência") then beginner ("Balanço patrimonial", "Demonstração do resultado", "Fluxo de caixa").
-- It may say the learner finished "Para que serve a contabilidade" and is now in "Regimes de caixa e competência", in the "O básico" phase.
-- Do not invent chapters, lesson counts or levels (there is no intermediate level listed), and give no dates for later chapters.
-
-${SCREEN_EXPECTATIONS}
-    `,
-    id: "pt-plan-course-how-organized",
-    userInput: {
-      contextSnapshot: ACCOUNTING_PLAN,
-      priorTurns: [],
-      question: "Como esse curso está organizado?",
-    },
-  },
-  {
-    expectations: `
-LANGUAGE REQUIREMENT: Answer in Portuguese.
-
-CASE-SPECIFIC GUIDANCE:
-- After today's review and the week's mock ("Simulado da semana"), the next days bring "Funções do 1º grau" with a review of porcentagem, then "Leitura de gráficos".
-- It may say the plan is on track. It must not promise a pass or a score on the ENEM.
-- Do not invent items or dates.
-
-${SCREEN_EXPECTATIONS}
-    `,
-    id: "pt-plan-what-comes-next",
-    userInput: {
-      contextSnapshot: ENEM_PLAN,
-      priorTurns: [],
-      question: "O que vem depois de hoje?",
     },
   },
   {

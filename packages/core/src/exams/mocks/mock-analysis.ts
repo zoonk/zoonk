@@ -5,10 +5,17 @@ import { type MockConditions, type MockResult, type MockScoring } from "./mock-c
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 const PERCENT = 100;
+/** Partial credit keeps two decimals: two thirds of a question reads 0.67. */
+const POINT_DECIMALS = 100;
 
 /** One asked question after grading, with where it sat and how long it took. */
 export type GradedMockAnswer = {
   area: string | null;
+  /**
+   * The share of the question's points it earned: 1 right, 0 wrong or blank, and in between for a
+   * question with several picks answered partly right where the notice gives partial credit.
+   */
+  credit: number;
   durationMs: number;
   flagged: boolean;
   irtItem: IrtItem;
@@ -55,6 +62,12 @@ function getTargetSeconds({
   return paces.length > 0 ? paces.reduce((sum, pace) => sum + pace, 0) / paces.length : null;
 }
 
+/** Right answers, each partly right one adding the share of its points it earned. */
+function countPoints(answers: readonly GradedMockAnswer[]): number {
+  const points = answers.reduce((sum, answer) => sum + answer.credit, 0);
+  return Math.round(points * POINT_DECIMALS) / POINT_DECIMALS;
+}
+
 function toResponses(answers: readonly GradedMockAnswer[]) {
   return answers.map((answer) => ({ correct: answer.outcome === "right", item: answer.irtItem }));
 }
@@ -76,7 +89,7 @@ function toAreaResult({
   const { answers, name } = group;
 
   return {
-    correct: answers.filter((answer) => answer.outcome === "right").length,
+    correct: countPoints(answers),
     name,
     score: scoring === "irt" ? toScaleRange(estimateAbility(toResponses(answers))) : null,
     secondsPerQuestion: averageSeconds(answers),
@@ -160,17 +173,18 @@ export function analyzeMock({
 }): MockResult {
   const { scoring } = conditions;
   const groups = groupByArea({ answers, conditions });
-  const correct = answers.filter((answer) => answer.outcome === "right").length;
+  const correct = countPoints(answers);
 
   return {
     areas: groups.map((group) => toAreaResult({ conditions, group, scoring })),
     blank: answers.filter((answer) => answer.outcome === "blank").length,
-    calibration: scoring === "net" ? getNetCalibration(answers) : null,
+    calibration:
+      scoring === "net" ? getNetCalibration({ answers, penalty: conditions.wrongPenalty }) : null,
     coherence: scoring === "irt" ? getIrtCoherence(toResponses(answers)) : null,
     correct,
     irt: scoring === "irt" ? getOverallIrt(groups) : null,
     minutesUsed,
-    net: scoring === "net" ? getNetScore(answers) : null,
+    net: scoring === "net" ? getNetScore({ answers, penalty: conditions.wrongPenalty }) : null,
     plannedMinutes: conditions.sections.reduce((sum, section) => sum + section.minutes, 0),
     preparation,
     previous,

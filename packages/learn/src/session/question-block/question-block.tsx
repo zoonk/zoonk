@@ -4,15 +4,14 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef } from "react";
 import { EnterButton } from "../../_components/enter-button";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
+import { OpenNextStep } from "../open-next-step";
 import { SessionBody } from "../session-body";
 import { type StudyBlockDetail, type StudySession } from "../session-types";
 import { StudyMoment } from "../study-moment";
 import { useBlockTitle } from "../use-block-copy";
 import { useMomentEvents } from "../use-moment-events";
-import { useSessionAction } from "../use-session-action";
 import { BlockDrillNotes, BlockQuestion, useBlockDrill } from "./block-question";
 import { PauseSuggestion } from "./pause-suggestion";
 import { QuestionBlockHeader } from "./question-block-header";
@@ -24,7 +23,7 @@ import { TimeMachine } from "./time-machine";
 import { useCapsuleEvents } from "./use-capsule-events";
 import { type QuestionBlockActions, useQuestionBlock } from "./use-question-block";
 
-type SessionContext = Pick<StudySession, "blocks" | "id" | "missions">;
+type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id" | "missions">;
 
 type SessionActions = QuestionBlockActions & {
   continueSession: () => Promise<boolean>;
@@ -37,11 +36,7 @@ function PhaseMessage({ onRetry, phase }: { onRetry: () => void; phase: Question
   if (phase.kind === "answerFailed") {
     return (
       <p className="text-destructive text-sm" role="alert">
-        {phase.retryAfterSeconds === null
-          ? t("We couldn't save that answer. Pick it again.")
-          : t("Take a short break: you can keep reviewing in {seconds} seconds.", {
-              seconds: String(phase.retryAfterSeconds),
-            })}
+        {t("We couldn't save that answer. Pick it again.")}
       </p>
     );
   }
@@ -77,48 +72,6 @@ function NextButton({ onNext }: { onNext: () => void }) {
   return <EnterButton onClick={onNext}>{t("Continue")}</EnterButton>;
 }
 
-/**
- * The session's last block ends on the summary itself: a moment that only says "See what changed"
- * would be one more tap. It opens as soon as the block is saved.
- */
-function SessionEnd({ onEnd }: { onEnd: () => Promise<boolean> }) {
-  const t = useExtracted();
-  const { failed, run } = useSessionAction({ action: onEnd });
-  const opened = useRef(false);
-  const openSummary = useEffectEvent(run);
-
-  useEffect(() => {
-    if (!opened.current) {
-      opened.current = true;
-      openSummary();
-    }
-  }, []);
-
-  if (failed) {
-    return (
-      <SessionBody>
-        <div className="flex flex-col items-start gap-2" role="alert">
-          <p className="text-destructive text-sm">
-            {t("We couldn't open the next step. Try again.")}
-          </p>
-          <Button onClick={run} size="sm" variant="outline">
-            {t("Try again")}
-          </Button>
-        </div>
-      </SessionBody>
-    );
-  }
-
-  return (
-    <SessionBody className="items-center justify-center">
-      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
-        <Spinner />
-        {t("Saving your answers…")}
-      </p>
-    </SessionBody>
-  );
-}
-
 function FinishedBlock({
   actions,
   detail,
@@ -130,10 +83,13 @@ function FinishedBlock({
   moment: Extract<QuestionBlockPhase, { kind: "finished" }>["moment"];
   session: SessionContext;
 }) {
+  const t = useExtracted();
   useMomentEvents({ missionsBefore: session.missions, moment });
 
+  // The session's last block ends on the summary itself: a moment that only says "See what
+  // changed" would be one more tap.
   if (moment.sessionCompleted) {
-    return <SessionEnd onEnd={actions.continueSession} />;
+    return <OpenNextStep onOpen={actions.continueSession} status={t("Saving your answers…")} />;
   }
 
   return (
@@ -246,6 +202,7 @@ export function QuestionBlock({
         {phase.kind === "feedback" && question && (
           <>
             <QuestionFeedback
+              examTomorrow={session.examTomorrow}
               feedback={phase.feedback}
               question={question}
               trueFalseLabels={detail.trueFalseLabels}

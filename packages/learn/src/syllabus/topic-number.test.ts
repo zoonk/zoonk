@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupTopics } from "./topic-number";
+import { groupTopics, toTopicWords } from "./topic-number";
 
 function outline(names: string[]) {
   return groupTopics(names.map((name) => ({ name }))).map((group) => [
@@ -83,6 +83,28 @@ describe(groupTopics, () => {
     expect(groups.map((group) => [group.text, group.children.length])).toStrictEqual([
       ["Coesão", 0],
       ["Coerência", 0],
+    ]);
+  });
+});
+
+describe(toTopicWords, () => {
+  it("says a topic in its words, without the notice's number or code", () => {
+    expect(
+      [
+        "12 Noções de Direito Constitucional",
+        "3.3 Relações de subordinação",
+        "5.7. Emprego da crase",
+        "H18 - Relacionar informações",
+        "2026 em números",
+        "Ortografia oficial",
+      ].map((name) => toTopicWords(name)),
+    ).toStrictEqual([
+      "Noções de Direito Constitucional",
+      "Relações de subordinação",
+      "Emprego da crase",
+      "Relacionar informações",
+      "2026 em números",
+      "Ortografia oficial",
     ]);
   });
 });

@@ -20,6 +20,12 @@ const examDateSchema = z
           "No notice for that year is stored yet: the day the exam usually falls on, to show as an estimate",
       }),
     label: z.string(),
+    registrationClosed: z
+      .boolean()
+      .meta({
+        description:
+          "The notice gives this sitting's last day to register, and it has passed: left out of the sittings a learner without a date picks from",
+      }),
     source: z
       .object({ title: z.string().nullable(), url: z.string() })
       .nullable()

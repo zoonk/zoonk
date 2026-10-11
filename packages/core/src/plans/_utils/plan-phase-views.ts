@@ -8,45 +8,32 @@ import { toIsoDate } from "../planner/plan-calendar";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanPhase } from "../planner/plan-state";
 import { type ShortPlanShape, toShortPhaseView } from "./short-plan-view";
+import {
+  countItemLessons,
+  getOpenEarlySkill,
+  isFarTopic,
+  sumPlannedLessons,
+} from "./stand-in-lessons";
+import { countLessonProgress, getWorkProgress, isWorkFinished } from "./work-progress";
 
 const MINUTES_PER_HOUR = 60;
 
-const isFinished = (status: PlanItemStatus) => status !== "todo";
+const isTodo = (status: PlanItemStatus) => getWorkProgress(status) === "todo";
+
+const isTestedOut = (item: Pick<ExistingPlanItem, "status">) =>
+  getWorkProgress(item.status) === "testedOut";
 
 type PhaseItem = Pick<ExistingPlanItem, "chapterId" | "kind" | "lessonId" | "phase" | "status">;
 
-/**
- * The next thing to do, from the first item to do and the first one that isn't a stand-in. A
- * stand-in waiting for lessons the Library hasn't outlined yet doesn't hold the plan back while
- * written lessons come after it: the learner is already doing those. An event after stand-ins (a
- * mock, a checkpoint) does wait for them: it comes after their lessons, so the plan is still at
- * the stand-ins, such as day 1 of a test days away whose lessons are being written.
- */
-export function chooseNextItem<Item extends Pick<PhaseItem, "kind">>({
-  first,
-  written,
-  writtenIsLater,
-}: {
-  first: Item | undefined;
-  written: Item | undefined;
-  /** Stand-ins come before the written item. */
-  writtenIsLater: boolean;
-}): Item | undefined {
-  return written && (!writtenIsLater || written.kind === "lesson") ? written : first;
-}
-
-/** The next thing to do in plan order (see `chooseNextItem`). */
-export function findNextItem<Item extends PhaseItem>(items: readonly Item[]): Item | undefined {
-  const todo = items.filter((item) => item.status === "todo");
-  const [first] = todo;
-  const written = todo.find((item) => !isWritingItem(item));
-
-  return chooseNextItem({ first, written, writtenIsLater: written !== first });
-}
+/** What a phase's work is: its lessons, written or still being written, and its challenge. */
+export const PHASE_WORK_KINDS = new Set<PhaseItem["kind"]>(["boss", "chapter", "lesson"]);
 
 /**
- * The phase the learner is in, the same on Plan and on the map: the phase of the next thing to
- * do, or the last phase once everything is done.
+ * The phase the learner is in, the same on Plan, on the map, on Today and on the exam page: the
+ * earliest phase with work left, its challenge included, or the last phase once everything is done.
+ * A later phase's lesson the plan gives first doesn't move the learner on: read from the next thing
+ * to do, Pedro's Journey said he was in the second phase, and went back to the first once a change
+ * planned that phase's last lessons first (see `loadCurrentPhases`, its SQL twin).
  */
 export function findCurrentPhase({
   items,
@@ -55,17 +42,45 @@ export function findCurrentPhase({
   items: readonly PhaseItem[];
   phaseCount: number;
 }): number | null {
-  const next = findNextItem(items);
+  const left = items.flatMap((item) =>
+    item.status === "todo" && PHASE_WORK_KINDS.has(item.kind) ? [item.phase] : [],
+  );
 
-  if (next) {
-    return next.phase;
+  if (left.length > 0) {
+    return Math.min(...left);
   }
 
   return phaseCount > 0 && items.length > 0 ? phaseCount - 1 : null;
 }
 
+/**
+ * The learner finished a phase's work: every lesson and its challenge studied, won or tested out.
+ * One whose work was set aside isn't, though the plan moved past it: Rafaela's first phase, one
+ * lesson studied before 30 days away set the rest aside, read "done" on her Journey.
+ */
+export function isPhaseFinished(items: readonly Pick<PhaseItem, "kind" | "status">[]): boolean {
+  return items.every((item) => !PHASE_WORK_KINDS.has(item.kind) || isWorkFinished(item.status));
+}
+
 /** Each skill's area: the course a stand-in for its lessons is shown under. */
 export type SkillAreas = ReadonlyMap<string, string | null>;
+
+/**
+ * Each skill's area to show its stand-ins under (see `getWritingTitle`). The goal's own course (a
+ * learn goal's, a language) says nothing the goal doesn't, so its skills have none and apps say
+ * "More lessons": every phase of Maya's plan had a row named after her goal.
+ */
+export function getSkillAreas({
+  courseTitle,
+  skills,
+}: {
+  courseTitle: string | null;
+  skills: readonly { area: string | null; skillId: string }[];
+}): SkillAreas {
+  return new Map(
+    skills.map((skill) => [skill.skillId, skill.area === courseTitle ? null : skill.area]),
+  );
+}
 
 /** A stand-in for a skill whose lessons the Library hasn't outlined yet. */
 export function isWritingItem(
@@ -99,7 +114,7 @@ function getGroupKey({ item, skillAreas }: { item: ExistingPlanItem; skillAreas:
   }
 
   const title = getWritingTitle({ item, skillAreas });
-  return isFinished(item.status) ? `settled:${title}` : `writing:${title}`;
+  return isTestedOut(item) ? `settled:${title}` : `writing:${title}`;
 }
 
 /**
@@ -109,7 +124,7 @@ function getGroupKey({ item, skillAreas }: { item: ExistingPlanItem; skillAreas:
 function getSettledSkills(inGroup: readonly ExistingPlanItem[]): string[] {
   const [first] = inGroup;
 
-  if (!first || !isWritingItem(first) || !isFinished(first.status)) {
+  if (!first || !isWritingItem(first) || !isTestedOut(first)) {
     return [];
   }
 
@@ -133,24 +148,37 @@ function getChapterTitle({
 }
 
 /**
- * A phase chapter by chapter, in plan order: lessons done of the total, and, in the current phase,
- * which one the learner is in: the one holding the next thing to do, as on the map. Skills whose
- * lessons aren't outlined yet group under their course as one `writing` row until their chapters
- * exist; the ones placement tested out before then are one finished row of their own.
+ * A phase chapter by chapter, in plan order: lessons done of the total, and which one the learner
+ * is in: the one holding the lesson up next (`findUpNextItem`), in whichever phase, as on Today and
+ * the map. Skills whose lessons aren't outlined yet group under their course as one `writing` row
+ * until their chapters exist; the ones placement tested out before then are one finished row of
+ * their own.
  */
 function buildChapters({
   chapterTitles,
-  isCurrent,
+  isEarlier,
   lessons,
+  lessonsOf,
+  outlinedUntil,
   skillAreas,
+  taughtSkillIds,
+  upNextItemId,
 }: {
   chapterTitles: ReadonlyMap<string, string>;
-  /** Only the current phase has a chapter the learner is in. */
-  isCurrent: boolean;
+  /** The skill belongs to an earlier phase than this one (see `PlanChapterView.deeper`). */
+  isEarlier: (skillId: string | null) => boolean;
   lessons: readonly ExistingPlanItem[];
+  /** How many lessons each item is (`countItemLessons`): a stand-in, the ones the plan teaches. */
+  lessonsOf: (item: ExistingPlanItem) => number;
+  outlinedUntil: string | null;
   skillAreas: SkillAreas;
+  taughtSkillIds: ReadonlySet<string>;
+  upNextItemId: string | null;
 }): PlanChapterView[] {
   const keys = [...new Set(lessons.map((item) => getGroupKey({ item, skillAreas })))];
+
+  const sum = (list: readonly ExistingPlanItem[]) =>
+    list.reduce((total, item) => total + lessonsOf(item), 0);
 
   const groups = keys.flatMap((key) => {
     const inGroup = lessons.filter((item) => getGroupKey({ item, skillAreas }) === key);
@@ -160,19 +188,33 @@ function buildChapters({
       return [];
     }
 
+    const todo = inGroup.filter((item) => isTodo(item.status));
+    const writing = isWritingItem(first) && todo.length > 0;
+    const nextDate = getEarliestDate(todo);
+    const far = isFarTopic({ nextDate, outlinedUntil, writing });
+
     return {
       chapterId: first.chapterId,
+      deeper: inGroup.every((item) => isEarlier(item.skillId)),
+      far,
       key,
-      lessonsDone: inGroup.filter((item) => isFinished(item.status)).length,
-      lessonsTotal: inGroup.length,
+      lessonsDone: sum(inGroup.filter((item) => isWorkFinished(item.status))),
+      lessonsTotal: sum(inGroup),
+      nextDate,
+      plannedLessons: writing ? sumPlannedLessons(inGroup) : null,
+      skillId: getOpenEarlySkill({
+        far,
+        skillIds: todo.map((item) => item.skillId),
+        taughtSkillIds,
+      }),
       skills: getSettledSkills(inGroup),
-      testedOut: inGroup.every((item) => item.status === "testedOut"),
+      testedOut: inGroup.every((item) => isTestedOut(item)),
       title: getChapterTitle({ chapterTitles, item: first, skillAreas }),
-      writing: isWritingItem(first) && !isFinished(first.status),
+      writing,
     };
   });
 
-  const next = isCurrent ? findNextItem(lessons) : undefined;
+  const next = lessons.find((item) => item.id === upNextItemId);
   const currentKey = next ? getGroupKey({ item: next, skillAreas }) : null;
 
   /** A chapter finished ahead of the current one (lessons often interleave) still reads as done. */
@@ -183,6 +225,12 @@ function buildChapters({
 
     return { ...group, state: key === currentKey ? ("current" as const) : ("upcoming" as const) };
   });
+}
+
+/** The earliest day the items are scheduled; null when none is. */
+function getEarliestDate(items: readonly ExistingPlanItem[]): string | null {
+  const dates = items.flatMap((item) => (item.scheduledFor ? [toIsoDate(item.scheduledFor)] : []));
+  return dates.toSorted()[0] ?? null;
 }
 
 /** The checkpoint that closes the phase, the Trickster's, when it has one. */
@@ -196,7 +244,7 @@ function buildCheckpoint(items: readonly ExistingPlanItem[]): PlanPhaseCheckpoin
   return {
     date: boss.scheduledFor ? toIsoDate(boss.scheduledFor) : null,
     planItemId: boss.id,
-    state: isFinished(boss.status) ? "done" : "upcoming",
+    state: isWorkFinished(boss.status) ? "done" : "upcoming",
   };
 }
 
@@ -213,10 +261,22 @@ function buildMocks(items: readonly ExistingPlanItem[]): PlanPhaseView["mocks"] 
   return { count: mocks.length, nextDate: next ?? null };
 }
 
-/** Where a phase or chapter stands against the current one; every one is done without one. */
-export function getProgressState({ current, index }: { current: number | null; index: number }) {
+/**
+ * Where a phase stands against the current one; every one is done without one. One the plan
+ * moved past is done only once the learner finished its work (`isPhaseFinished`): with work set
+ * aside it's `unfinished`.
+ */
+export function getProgressState({
+  current,
+  finished,
+  index,
+}: {
+  current: number | null;
+  finished: boolean;
+  index: number;
+}) {
   if (current === null || index < current) {
-    return "done" as const;
+    return finished ? ("done" as const) : ("unfinished" as const);
   }
 
   return index === current ? ("current" as const) : ("upcoming" as const);
@@ -257,19 +317,31 @@ export function buildPhaseViews({
   currentPhase,
   estimateMinutes = null,
   items,
+  outlinedUntil = null,
   phases,
   shortPlan = null,
   skillAreas,
+  skillPhases = new Map(),
+  taughtSkillIds = new Set(),
+  upNextItemId,
 }: {
   chapterTitles: ReadonlyMap<string, string>;
   currentPhase: number | null;
   /** The whole plan's estimate, for phases saved without their own minutes. */
   estimateMinutes?: number | null;
   items: readonly ExistingPlanItem[];
+  /** How far ahead the plan writes lessons (`getOutlinedUntil`): topics after it open early. */
+  outlinedUntil?: string | null;
   phases: readonly PlanPhase[];
   /** A test days away: its phases say which of its days they cover. */
   shortPlan?: ShortPlanShape | null;
   skillAreas: SkillAreas;
+  /** Each skill's phase in the graph: a learn phase's rows of earlier phases' skills go deeper. */
+  skillPhases?: ReadonlyMap<string, number>;
+  /** Stand-in skills chapters already teach (`listTaughtStandInSkills`): none to ask for early. */
+  taughtSkillIds?: ReadonlySet<string>;
+  /** The plan item of the lesson up next (`findUpNextItem`): its chapter is the current one. */
+  upNextItemId: string | null;
 }): PlanPhaseView[] {
   return phases.map((phase, index) => {
     const inPhase = items.filter((item) => item.phase === index);
@@ -280,23 +352,27 @@ export function buildPhaseViews({
       chapterCount: new Set(lessons.map((item) => getGroupKey({ item, skillAreas }))).size,
       chapters: buildChapters({
         chapterTitles,
-        isCurrent: index === currentPhase,
+        isEarlier: (skillId) =>
+          phase.kind === "learn" && skillId !== null && (skillPhases.get(skillId) ?? index) < index,
         lessons,
+        lessonsOf: countItemLessons,
+        outlinedUntil,
         skillAreas,
+        taughtSkillIds,
+        upNextItemId,
       }),
       checkpoint: buildCheckpoint(inPhase),
       endDate: phase.endDate,
       hours: Math.round((minutes / MINUTES_PER_HOUR) * 10) / 10,
       index,
       kind: phase.kind,
-      lessonsDone: lessons.filter((item) => isFinished(item.status)).length,
-      lessonsTotal: lessons.length,
+      ...countLessonProgress(lessons),
       milestone: phase.milestone,
       mocks: buildMocks(inPhase),
       name: phase.name,
       short: toShortPhaseView({ phase, shape: shortPlan }),
       startDate: phase.startDate,
-      state: getProgressState({ current: currentPhase, index }),
+      state: getProgressState({ current: currentPhase, finished: isPhaseFinished(inPhase), index }),
     };
   });
 }

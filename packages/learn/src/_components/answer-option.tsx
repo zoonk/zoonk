@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 
 export const ANSWER_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
 
-/** The picks of a checkpoint or mock question, one at a time like an exam's answer sheet. */
+/** The picks of a question, one at a time like an exam's answer sheet. */
 export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<"div">) {
   const t = useExtracted();
 
@@ -21,7 +21,10 @@ export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<
   );
 }
 
-/** One pick, with its letter (or mark) in a circle. Tapping the picked one again clears it. */
+/**
+ * One pick, with its letter (or mark) in a circle, or in a box where a question takes several
+ * (`role="checkbox"`). Tapping the picked one again clears it.
+ */
 export function AnswerOption({
   children,
   className,
@@ -47,6 +50,8 @@ export function AnswerOption({
         <span
           className={cn(
             "bg-muted text-muted-foreground flex size-7 items-center justify-center rounded-full text-xs font-semibold [&_svg]:size-4",
+            // Several picks tick boxes, as an exam's answer sheet does for them.
+            props.role === "checkbox" && "rounded-md",
             picked && "bg-foreground text-background",
           )}
         >

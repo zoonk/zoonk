@@ -4,6 +4,7 @@ import {
   type LearnerPlanOperation,
   type PlanChangeDecisionInput,
 } from "@zoonk/core/plans/contract";
+import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { createContext, use, useCallback, useEffect, useRef } from "react";
@@ -25,10 +26,21 @@ export type PlanChangeOutcome =
  */
 export type PlanActions = {
   change: (operations: LearnerPlanOperation[]) => Promise<PlanChangeOutcome | null>;
+  /** What a change would do before the learner makes it; nothing is saved. Null when it failed. */
+  preview: (operations: LearnerPlanOperation[]) => Promise<PlanChangePreview | null>;
   decide: (input: {
     changeId: string;
     status: PlanChangeDecisionInput["status"];
   }) => Promise<boolean>;
+  /**
+   * The option the learner takes of one of their exam's choices, from the plan editor: the change
+   * it made (null when the pick changed nothing, or the plan isn't built yet), or null when it
+   * didn't work.
+   */
+  chooseExamOption: (input: {
+    group: string;
+    subject: string;
+  }) => Promise<{ change: PlanChangeView | null } | null>;
   /** The learner's answer for these tools, from the plan editor. */
   chooseTools: (input: {
     choice: ToolChoice;

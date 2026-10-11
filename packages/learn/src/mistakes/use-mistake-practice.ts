@@ -94,7 +94,7 @@ export function useMistakePractice({
     notSure: () => void check({ answer: NOT_SURE, timedOut: false }),
     // Reading the question counts toward the answer's time, so the reveal keeps the clock going.
     reveal: () => dispatch({ type: "reveal" }),
-    select: (answer: ChoiceAnswer) => dispatch({ answer, type: "select" }),
+    select: (answer: ChoiceAnswer | null) => dispatch({ answer, type: "select" }),
     start: () => {
       shownAt.current = Date.now();
       dispatch({ type: "start" });

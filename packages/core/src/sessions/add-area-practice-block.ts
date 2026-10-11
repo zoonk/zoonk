@@ -12,7 +12,7 @@ export type AreaPracticeResult =
  * "Practice now" on a chapter's page: a bonus block of practice on that area's studied skills (or
  * its next lesson when nothing is left to practice), added to today's session. It can start
  * before the day's session is done, but it counts as extra time like "10 more minutes": at most
- * two bonus blocks a day, never past a guardian's limit, and its Brain Power is capped. A second
+ * two bonus blocks a day, never past the learner's daily limit, and its Brain Power is capped. A second
  * tap opens the area's unfinished block.
  */
 export async function addAreaPracticeBlock({

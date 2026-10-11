@@ -6,9 +6,6 @@ import {
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { onTestFinished, vi } from "vitest";
-import { type LessonTutorConfig } from "../lesson/lesson-player-types";
-import { type LessonQuestionNavigation } from "../questions/lesson-question-navigation";
-import { TestLink } from "./render-lesson-player";
 
 /** What a question carries before an answer proposes or offers anything. */
 const UNANSWERED = { planChange: null, toolOffer: null } as const;
@@ -19,8 +16,8 @@ const UNANSWERED = { planChange: null, toolOffer: null } as const;
  * the learner's saved questions in memory. Tests change what it says one request at a time.
  */
 
-const TUTOR_API_URL = "https://api.zoonk.test";
-const TUTOR_AUTHORIZATION = "Bearer tutor-test-token";
+export const TUTOR_API_URL = "https://api.zoonk.test";
+export const TUTOR_AUTHORIZATION = "Bearer tutor-test-token";
 
 const HTTP_STATUS_UNAUTHORIZED = 401;
 const HTTP_STATUS_NOT_FOUND = 404;
@@ -369,37 +366,4 @@ export function stubTutorApi({
   onTestFinished(() => fetchSpy.mockRestore());
 
   return api;
-}
-
-/** A learner's buddy as the host reads it: Zu, named Pip by the learner. */
-const TEST_BUDDY: NonNullable<LessonTutorConfig["buddy"]> = {
-  beltColor: "white",
-  energy: null,
-  glasses: "round",
-  kind: "zu",
-  name: "Pip",
-};
-
-/**
- * The tutor as a host app sets it up for a learner who may ask, reaching the faked API. The
- * learner's buddy (Pip) answers unless a test passes `buddy: null` (no buddy picked yet).
- */
-export function buildTutor(
-  navigation: Partial<LessonQuestionNavigation> = {},
-  { buddy = TEST_BUDDY }: { buddy?: LessonTutorConfig["buddy"] } = {},
-): LessonTutorConfig {
-  return {
-    buddy,
-    canAsk: true,
-    connection: {
-      apiUrl: TUTOR_API_URL,
-      getHeaders: () => Promise.resolve({ Authorization: TUTOR_AUTHORIZATION }),
-    },
-    navigation: {
-      linkComponent: TestLink,
-      loginHref: "/login",
-      subscriptionHref: "/subscription",
-      ...navigation,
-    },
-  };
 }

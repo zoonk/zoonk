@@ -285,4 +285,33 @@ test.describe("A lesson still being written", () => {
     const session = await page.request.get("/api/auth/get-session");
     expect(await session.json()).toMatchObject({ user: { isAnonymous: true } });
   });
+
+  test("a guest asked to create an account once the guests' AI budget is spent gets the link to it", async ({
+    page,
+  }) => {
+    const unwritten = await libraryLessonFixture({
+      title: `Annuities ${randomUUID().slice(0, 6)}`,
+    });
+
+    // The API's answer once the day's AI budget all guests share is spent. Spending the real
+    // budget would refuse every other guest in this run, so the answer stands in for it; core's
+    // tests cover the budget and the API's tests this answer.
+    await page.route("**/v1/library/lessons/*/generations", (route) =>
+      route.fulfill({
+        json: { error: { code: "SIGN_UP_REQUIRED", message: "Create your free account" } },
+        status: 403,
+      }),
+    );
+
+    await page.goto(`/learn/${unwritten.id}`);
+    await page.getByRole("button", { name: "Start this lesson" }).click();
+
+    const notice = page
+      .getByRole("status")
+      .filter({ hasText: "Create your free account to continue." });
+
+    await expect(notice).toBeVisible();
+    await expect(notice.getByRole("link", { name: "Create a free account" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Try again" })).toBeHidden();
+  });
 });

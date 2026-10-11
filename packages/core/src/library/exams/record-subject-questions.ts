@@ -66,8 +66,11 @@ export async function recordSubjectQuestions({
   edition: string | null;
   examBlueprintId: string;
   now?: Date;
-  /** One count per subject, in the order of `subjects`; empty when nothing was found. */
-  questions: readonly number[];
+  /**
+   * One count per subject, in the order of `subjects` (null for one the source gave no count);
+   * empty when nothing was found.
+   */
+  questions: readonly (number | null)[];
   source: { title: string | null; url: string } | null;
   subjects: readonly string[];
 }): Promise<void> {
@@ -80,7 +83,7 @@ export async function recordSubjectQuestions({
 
   const counted = subjects.flatMap((name, index) => {
     const count = questions[index];
-    return count === undefined ? [] : [{ name, questions: count }];
+    return count === undefined || count === null ? [] : [{ name, questions: count }];
   });
 
   const pastQuestions: NonNullable<ExamStructure["pastQuestions"]> = {

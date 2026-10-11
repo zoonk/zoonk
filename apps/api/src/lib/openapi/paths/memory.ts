@@ -21,7 +21,6 @@ import {
   conflictResponse,
   notFoundResponse,
   unauthorizedResponse,
-  unprocessableEntityResponse,
   validationErrorResponse,
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
@@ -30,7 +29,7 @@ export const memoryPaths = {
   "/me/memory": {
     get: {
       description:
-        "Every active fact Zoonk remembers about the learner, newest first, grouped by the categories their memory may hold (only goals and learning for minors), with the memory switch.",
+        "Every active fact Zoonk remembers about the learner, newest first, with the memory switch.",
       operationId: "getCurrentUserMemory",
       responses: {
         "200": {
@@ -143,10 +142,6 @@ export const memoryPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "404": notFoundResponse,
-        "422": {
-          ...unprocessableEntityResponse,
-          description: `A minor's memory can only hold goals and learning facts. Error code: ${memoryErrorCodes.categoryNotAllowed}.`,
-        },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Correct a memory fact",

@@ -205,7 +205,7 @@ describe("a class test days away", () => {
 });
 
 describe("a public exam days away", () => {
-  it("shares the days but keeps the light review the day before, without a mock", () => {
+  it("shares the days, rehearses with the short mock on the first practice day and keeps the day before light", () => {
     const plan = buildPlan(classTest({ days: 3, shortMockMinutes: null }));
 
     expect(plan.phases.map((phase) => phase.kind)).toStrictEqual([
@@ -214,9 +214,22 @@ describe("a public exam days away", () => {
       "finalStretch",
     ]);
 
-    expect(datesOf({ items: plan.items, kind: "mock" })).toStrictEqual([]);
+    expect(datesOf({ items: plan.items, kind: "mock" })).toStrictEqual(["2026-10-01"]);
+    expect(plan.items.find((item) => item.kind === "mock")?.minutes).toBe(15);
     expect(datesOf({ items: plan.items, kind: "boss" })).toStrictEqual([]);
     expect(plan.items.find((item) => item.kind === "review")?.minutes).toBe(15);
+  });
+
+  it("in seven days: the mock opens the two practice days", () => {
+    const plan = buildPlan(classTest({ days: 7, shortMockMinutes: null }));
+
+    expect(datesOf({ items: plan.items, kind: "mock" })).toStrictEqual(["2026-10-04"]);
+  });
+
+  it("tomorrow: the one day goes to the gaps, without a mock", () => {
+    const plan = buildPlan(classTest({ days: 1, shortMockMinutes: null }));
+
+    expect(datesOf({ items: plan.items, kind: "mock" })).toStrictEqual([]);
   });
 });
 

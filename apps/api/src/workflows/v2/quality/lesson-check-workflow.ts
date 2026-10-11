@@ -124,8 +124,10 @@ export async function lessonCheckWorkflow({
   const { workflowRunId } = getWorkflowMetadata();
   const context: CheckContext = { ...input, workflowRunId };
 
+  // Citations are extra: once their step's retries run out, the version goes without them and
+  // the reviewer's finding is still settled.
   const [cited, outcome] = await Promise.all([
-    plan.cite ? citePublishedLessonStep({ ...context, plan }) : 0,
+    plan.cite ? citePublishedLessonStep({ ...context, plan }).catch(() => 0) : 0,
     plan.review
       ? checkPublishedLessonStep({ ...context, plan })
       : ({ status: "passed" } satisfies PublishedLessonOutcome),

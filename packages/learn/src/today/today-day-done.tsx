@@ -12,6 +12,7 @@ import { useBuddyName } from "../buddies/use-buddy-name";
 import { LearnLink } from "../learn-link";
 import { ExtraTimeButton } from "../session/extra-time-button";
 import { TodayCardStatus, TodayStatusTile } from "./today-card-status";
+import { CatchUpLater } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
 import { useSessionState } from "./use-today-copy";
 
@@ -50,16 +51,26 @@ function useDayEnd(): DayEnd {
   return rest ? "rest" : "done";
 }
 
-/** The day's end in one bold line and a kind one under it. */
+/**
+ * The day's end in one bold line and a kind one under it. A rest day that's a return after a break
+ * keeps its rest and still says hello, like a study day's lighter session does.
+ */
 function useDayEndCopy(end: DayEnd): { detail: string | null; title: string } {
   const t = useExtracted();
+  const { today } = useTodayScreen();
 
   if (end === "limit") {
     return { detail: t("See you tomorrow!"), title: t("That's today's study time") };
   }
 
   if (end === "rest") {
-    return { detail: t("Enjoy your day off!"), title: t("No study planned today") };
+    return {
+      detail:
+        today.session.freshStart === "welcomeBack"
+          ? t("Welcome back! Today is a rest day in your plan, so enjoy it.")
+          : t("Enjoy your day off!"),
+      title: t("No study planned today"),
+    };
   }
 
   if (end === "ahead") {
@@ -193,11 +204,13 @@ function AheadActions() {
 }
 
 /**
- * The day's blocks are done (or a guardian's limit was reached, or it's a rest day): the buddy, one
- * line, what changed, and "Study 10 more minutes" while it's offered. Extra time is capped and
- * never passes the limit. A study day with nothing new says so and offers what's still useful.
+ * The day's blocks are done (or the learner's daily limit was reached, or it's a rest day): the
+ * buddy, one line, what changed, "Study 10 more minutes" while it's offered ("Study for 10
+ * minutes" on a rest day with no study yet) and the lessons left to catch up. Extra time is capped
+ * and never passes the limit. A study day with nothing new says so and offers what's still useful.
  */
 export function TodayDayDone() {
+  const t = useExtracted();
   const end = useDayEnd();
   const copy = useDayEndCopy(end);
   const { limitReached } = useSessionState();
@@ -210,8 +223,18 @@ export function TodayDayDone() {
       {end === "ahead" && <AheadActions />}
 
       {end !== "ahead" && extraTime.available && !limitReached && (
-        <ExtraTimeButton action={actions.addExtraTime} minutes={extraTime.minutes} />
+        <ExtraTimeButton
+          action={actions.addExtraTime}
+          label={
+            today.studiedToday
+              ? undefined
+              : t("Study for {minutes} minutes", { minutes: String(extraTime.minutes) })
+          }
+          minutes={extraTime.minutes}
+        />
       )}
+
+      {end === "done" && <CatchUpLater />}
     </TodayCardStatus>
   );
 }

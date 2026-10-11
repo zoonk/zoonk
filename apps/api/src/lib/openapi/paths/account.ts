@@ -86,7 +86,7 @@ export const accountPaths = {
   "/me/export": {
     get: {
       description:
-        "Everything Zoonk keeps about the learner as one JSON download: the account, learning profile, goals and plans, the progress ledger, answers, skills, mistakes, milestones, memory, feedback and guardian links.",
+        "Everything Zoonk keeps about the learner as one JSON download: the account, learning profile, goals and plans, the progress ledger, answers, skills, mistakes, milestones, memory and feedback.",
       operationId: "exportCurrentUserData",
       responses: {
         "200": {

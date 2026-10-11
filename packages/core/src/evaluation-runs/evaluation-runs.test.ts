@@ -60,6 +60,30 @@ describe(registerEvaluationRunLog, () => {
     await expect(prisma.evaluationRun.findUnique({ where: { id: stored.id } })).resolves.toBeNull();
   });
 
+  it("keeps a decision about shared Library content when the learner who started it is deleted", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const record = runRecord({
+      contentScope: "shared",
+      distinctId: user.id,
+      goalId: goal.id,
+      input: { SUBJECT: "Calculate a discount" },
+      task: "library-identity-decision",
+    });
+
+    await recordEvaluationRun(record);
+    await prisma.user.delete({ where: { id: user.id } });
+
+    await expect(findByHash(record.inputHash)).resolves.toMatchObject({
+      contentScope: "shared",
+      goalId: null,
+      input: { SUBJECT: "Calculate a discount" },
+      task: "library-identity-decision",
+      userId: null,
+    });
+  });
+
   it("keeps the verdict but drops the link and input when the learner is already gone", async () => {
     const record = runRecord({ distinctId: crypto.randomUUID() });
 

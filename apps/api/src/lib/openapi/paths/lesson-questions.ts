@@ -110,7 +110,7 @@ export const lessonQuestionPaths = {
   "/lessons/{lessonId}/questions": tutorQuestionPaths({
     about: "a Library lesson",
     context:
-      "`context` is the whole lesson (`lesson`, with the step ids in the order the learner saw them), one screen (`step`) or an answer given on a screen (`answer`). A first question about a screen that someone already asked there is answered with the shared answer; send `suggested: true` when the learner sent one of the tutor's suggested questions as offered.",
+      "`context` is the whole lesson (`lesson`, with the step ids in the order the learner saw them), one screen (`step`) or an answer given on a screen (`answer`). When the learner taps one of the tutor's suggestions, send its `suggestion`: the server words the question itself, and a screen's first suggestion that someone already tapped there is answered with the shared answer. Anything the learner types is answered for them alone.",
     operation: "Lesson",
     pathSchema: lessonPathParamsSchema,
     tag: "Lessons",

@@ -21,19 +21,22 @@ type MockSummary = ExamView["mocks"][number];
 
 function useMeasureText() {
   const t = useExtracted();
+  const format = useFormatter();
+  // Partial credit and a fractional penalty leave decimals: "2,25" in Portuguese.
+  const points = (value: number) => format.number(value, { maximumFractionDigits: 2 });
 
   return (mock: MockSummary): string => {
     // An IRT score is only ever an estimate shown as a range (on the Journey), so a past mock
     // shows what it certainly was: its right answers.
     if (mock.scoring === "net") {
       return t("Net {score} of {total}", {
-        score: String(mock.measure),
+        score: points(mock.measure),
         total: String(mock.total),
       });
     }
 
     return t("{correct} of {total} right", {
-      correct: String(mock.correct),
+      correct: points(mock.correct),
       total: String(mock.total),
     });
   };
@@ -46,7 +49,16 @@ function MockRow({ mock }: { mock: MockSummary }) {
   const measure = useMeasureText();
   const shapeLabel = useMockShapeLabel();
   const date = format.dateTime(new Date(mock.finishedAt), { day: "numeric", month: "short" });
-  const label = shapeLabel(mock);
+  const shape = shapeLabel(mock);
+
+  // A mock that asked fewer than the exam's questions says so beside what it sat.
+  const label =
+    mock.examQuestions !== null && mock.examQuestions > mock.total
+      ? t(
+          "{shape}, {count, plural, one {# of {examQuestions, number} questions} other {# of {examQuestions, number} questions}}",
+          { count: mock.total, examQuestions: mock.examQuestions, shape },
+        )
+      : shape;
 
   const content = (
     <>

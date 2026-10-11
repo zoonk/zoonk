@@ -1,15 +1,18 @@
-import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
-import { type Item, type ItemFormat } from "@zoonk/db";
-import { logError } from "@zoonk/utils/logger";
-import { type ParsedItemContent, parseItemContent } from "../../../library/items/item-content";
-import { type ItemImage, toItemImage } from "../../../library/items/item-image";
+import { type ItemFormat } from "@zoonk/db";
 import {
   type BankItem,
   type ChoiceItem,
   type QuestionView,
+  isSinglePick,
   parseChoiceItem,
   toQuestionView,
 } from "../../_utils/choice-items";
+import {
+  type TypedItem,
+  type TypedQuestionView,
+  parseTypedItem,
+  toTypedQuestionView,
+} from "../../_utils/typed-items";
 
 /**
  * What placement asks: quick multiple choice and true or false for breadth, and typed answers,
@@ -21,70 +24,26 @@ export const PLACEMENT_ITEM_FORMATS = [
   "typed",
 ] as const satisfies ItemFormat[];
 
-type TypedContent = Extract<ParsedItemContent, { format: "typed" }>;
-
-export type TypedItem = Pick<Item, "id" | "language" | "skillId"> &
-  TypedContent & { image: ItemImage | null };
-
 export type PlacementItem = ChoiceItem | TypedItem;
-
-/** A typed question as the learner sees it: never its key points or accepted answers. */
-type TypedQuestionView = {
-  context: string | null;
-  format: "typed";
-  image: ItemImage | null;
-  itemId: string;
-  options: null;
-  question: string;
-  skillId: string;
-  visual: LessonVisual | null;
-};
 
 export type PlacementQuestionView = QuestionView | TypedQuestionView;
 
-function parseTypedItem(item: BankItem): TypedItem | null {
-  if (item.format !== "typed") {
-    return null;
-  }
-
-  try {
-    const parsed = parseItemContent({ content: item.content, format: item.format });
-
-    return parsed.format === "typed"
-      ? {
-          ...parsed,
-          id: item.id,
-          image: toItemImage({ content: parsed.content, mediaAsset: item.mediaAsset }),
-          language: item.language,
-          skillId: item.skillId,
-        }
-      : null;
-  } catch (error) {
-    logError(`Item ${item.id} has content that doesn't match its format.`, error);
-    return null;
-  }
-}
-
-/** Reads a bank item as a placement question, or null for formats placement doesn't ask. */
+/**
+ * Reads a bank item as a placement question, or null for one placement doesn't ask: other formats,
+ * and questions that ask for several options, since placement asks one quick pick per skill.
+ */
 export function parsePlacementItem(item: BankItem): PlacementItem | null {
-  return parseChoiceItem(item) ?? parseTypedItem(item);
+  const choice = parseChoiceItem(item);
+
+  if (choice) {
+    return isSinglePick(choice) ? choice : null;
+  }
+
+  return parseTypedItem(item);
 }
 
 export function toPlacementQuestionView(item: PlacementItem): PlacementQuestionView {
-  if (item.format !== "typed") {
-    return toQuestionView(item);
-  }
-
-  return {
-    context: item.content.context,
-    format: item.format,
-    image: item.image,
-    itemId: item.id,
-    options: null,
-    question: item.content.question,
-    skillId: item.skillId,
-    visual: item.content.visual,
-  };
+  return item.format === "typed" ? toTypedQuestionView(item) : toQuestionView(item);
 }
 
 type AudienceItem = { examBlueprintId: string | null; skillId: string };

@@ -67,11 +67,7 @@ export async function adaptPlanFromMock({
     revalidateCacheTags([getLearnerModelCacheTag(userId)]);
 
     return skipped.planItemIds.length > 0
-      ? {
-          changeId: skipped.changeId,
-          lessonsSkipped: skipped.planItemIds.length,
-          status: "applied",
-        }
+      ? { changeId: skipped.changeId, lessonsSkipped: skipped.lessonsSkipped, status: "applied" }
       : { reason: null, status: "unchanged" };
   }
 

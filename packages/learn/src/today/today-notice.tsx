@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { type TodayHostNotices, useTodayScreen } from "./today-context";
 import { TodayExamAccess } from "./today-exam-access";
+import { TodayExamChoice } from "./today-exam-choice";
 import { TodayExamMoment } from "./today-exam-moment";
-import { TodayFreshStart } from "./today-fresh-start";
-import { TodayGuardianInvite } from "./today-guardian-invite";
 import { TodayInsight } from "./today-insight";
 import {
   type TodayHostNoticeState,
@@ -48,10 +47,8 @@ export function TodayNotice() {
       return <TodayExamMoment />;
     case "examAccess":
       return <TodayExamAccess />;
-    case "freshStart":
-      return <TodayFreshStart />;
-    case "guardianInvite":
-      return <TodayGuardianInvite />;
+    case "examChoice":
+      return <TodayExamChoice />;
     case "insight":
       return <TodayInsight />;
     case "planChange":

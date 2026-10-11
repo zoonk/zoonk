@@ -4,16 +4,29 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActivityDropTarget } from "../_components/activity-drag-drop";
-import { type PinState, SpotNumber } from "./diagram-figure";
 import { type DiagramSlot } from "./labeled-diagram-model";
-import { useSpotPosition } from "./use-diagram-words";
+import { SpotNumber, type SpotState } from "./spot-number";
 
-function slotState({ isActive, name }: { isActive: boolean; name: string | undefined }): PinState {
+function slotState({ isActive, name }: { isActive: boolean; name: string | undefined }): SpotState {
   if (isActive) {
     return "active";
   }
 
   return name ? "filled" : "empty";
+}
+
+/**
+ * Which spot it is, said before what it shows (its name, or "Pick a name" while it's the one names
+ * go to), so the spot's name always holds its text. An empty spot that shows nothing says so.
+ */
+function SpotPlace({ isEmpty, number }: { isEmpty: boolean; number: string }) {
+  const t = useExtracted();
+
+  return (
+    <span className="sr-only">
+      {isEmpty ? t("Spot {number}: empty", { number }) : t("Spot {number}:", { number })}
+    </span>
+  );
 }
 
 /** A spot to fill: tap it to make it the one names go to, or to take its name back off. */
@@ -29,18 +42,11 @@ function SlotButton({
   slot: DiagramSlot;
 }) {
   const t = useExtracted();
-  const positionOf = useSpotPosition();
-  const { dropRef, isOver } = useActivityDropTarget({ id: `slot:${slot.partId}` });
-  const position = positionOf(slot.position);
+  const { dropRef, isOver } = useActivityDropTarget({ id: `slot:${slot.key}` });
   const number = String(slot.number);
 
   return (
     <button
-      aria-label={
-        name
-          ? t("Spot {number}, {position}: {name}", { name, number, position })
-          : t("Spot {number}, {position}: empty", { number, position })
-      }
       aria-pressed={isActive}
       className={cn(
         "focus-visible:ring-ring/50 flex min-h-11 w-full items-center gap-3 rounded-2xl border px-2.5 py-1.5 text-left text-sm outline-none focus-visible:ring-[3px] motion-safe:transition-[border-color,box-shadow,background-color]",
@@ -53,6 +59,7 @@ function SlotButton({
       ref={dropRef}
       type="button"
     >
+      <SpotPlace isEmpty={!name && !isActive} number={number} />
       <SpotNumber number={slot.number} state={slotState({ isActive, name })} />
 
       {name ? (
@@ -80,7 +87,7 @@ function CheckedSlot({
   slot: DiagramSlot;
 }) {
   const t = useExtracted();
-  const state: PinState = correct ? "correct" : "incorrect";
+  const state: SpotState = correct ? "correct" : "incorrect";
 
   return (
     <div
@@ -115,16 +122,16 @@ function CheckedSlot({
 }
 
 export function DiagramSlots({
-  activePartId,
+  activeKey,
   checked,
   onSelect,
   placements,
   slots,
 }: {
-  activePartId: string | null;
+  activeKey: string | null;
   /** Once checked, each spot's mix-up feedback (or null); null while answering. */
   checked: ReadonlyMap<string, string | null> | null;
-  onSelect: (partId: string) => void;
+  onSelect: (key: string) => void;
   placements: Readonly<Record<string, string>>;
   slots: readonly DiagramSlot[];
 }) {
@@ -133,19 +140,19 @@ export function DiagramSlots({
   return (
     <ol aria-label={t("Spots to label")} className="flex flex-col gap-2">
       {slots.map((slot) => (
-        <li key={slot.partId}>
+        <li key={slot.key}>
           {checked ? (
             <CheckedSlot
-              correct={placements[slot.partId] === slot.label}
-              mixUp={checked.get(slot.partId) ?? null}
-              name={placements[slot.partId]}
+              correct={placements[slot.key] === slot.label}
+              mixUp={checked.get(slot.key) ?? null}
+              name={placements[slot.key]}
               slot={slot}
             />
           ) : (
             <SlotButton
-              isActive={activePartId === slot.partId}
-              name={placements[slot.partId]}
-              onSelect={() => onSelect(slot.partId)}
+              isActive={activeKey === slot.key}
+              name={placements[slot.key]}
+              onSelect={() => onSelect(slot.key)}
               slot={slot}
             />
           )}

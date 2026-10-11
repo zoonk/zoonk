@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/client.ts",
-    "./guardian-emails": "./src/guardian/guardian-emails.ts"
+    ".": "./src/client.ts"
   },
   "scripts": {
     "test": "vitest run",

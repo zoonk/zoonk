@@ -1,4 +1,5 @@
-import { type MockWrittenPart } from "../exams/mocks/mock-plan";
+import { type MockLeftOut } from "../exams/mocks/mock-view-contract";
+import { type MockDayWrittenPart } from "../exams/mocks/written-parts";
 import { type CheckpointKind } from "../sessions/brain-power";
 import { type CheckpointPhase } from "./checkpoint-contract";
 import { type CheckpointReward } from "./checkpoint-reward";
@@ -10,7 +11,8 @@ import { type CheckpointReward } from "./checkpoint-reward";
  * - `started`: it's running; opening it continues where the learner left it.
  * - `tried`: a phase checkpoint finished today without passing; a new try comes tomorrow.
  * - `done`: it's behind the learner (passed, or the week's challenge finished).
- * - `plusRequired`: it's today's mock, which the learner's plan doesn't include.
+ * - `plusRequired`: the learner's plan leaves it to Plus: a mock without mocks in the plan, or a
+ *   phase challenge once a free exam plan's first week is over.
  * - `waiting`: it's due, but today's session was planned without it (such as a phase checkpoint
  *   reached during the day); the next one has it.
  */
@@ -33,6 +35,8 @@ export type ChallengeSection = {
   minutes: number;
   name: string | null;
   questions: number;
+  /** What may be used or is given in it, in the notice's words. */
+  tools: string | null;
 };
 
 /**
@@ -62,7 +66,9 @@ export type ChallengeView = {
   /** Time on the clock for a mock; about how long a checkpoint takes otherwise. */
   minutes: number;
   mock: boolean;
-  /** Wrong answers cancel right ones, as in Cebraspe exams. */
+  /** What a mock leaves out of the real exam, each with why; empty for any other challenge. */
+  leftOut: MockLeftOut[];
+  /** Wrong answers cost points, as in Cebraspe exams (see `wrongPenalty`). */
   netScored: boolean;
   /** "Mock exam 3": this goal's mocks, counting this one. */
   number: number | null;
@@ -71,17 +77,31 @@ export type ChallengeView = {
   phase: CheckpointPhase | null;
   planItemId: string;
   questions: number;
+  /**
+   * The recordings a listening phase's checkpoint asks its questions on, each played as in the
+   * exam; 0 when it asks text questions (and before its day, while its questions aren't picked).
+   */
+  recordings: number;
   /** A phase checkpoint not passed on an earlier day, back again. */
   rematch: boolean;
   /** Short lessons on what a checkpoint missed, before its new try. */
   reinforcementLessons: number;
+  /**
+   * How a phase checkpoint's last finished try went, so one already won says so instead of
+   * inviting a new duel; null before its first try and for the week's challenge.
+   */
+  result: { correct: number; passed: boolean; total: number } | null;
   reward: CheckpointReward;
   sections: ChallengeSection[];
+  /** The share of a right answer each wrong one takes away; 0 where wrong answers cost nothing. */
+  wrongPenalty: number;
   /**
-   * A full-length mock's parts answered in writing (a discursive test, a peça técnica), as the
-   * notice states them: never objective questions. Empty otherwise.
+   * A full-length mock's parts answered in writing (a discursive test, a legal brief), as the
+   * notice states them: never objective questions. `asked`: the mock asks it with the exam's own
+   * essay, graded after hand-in; otherwise the learner practices it in essay sessions. Empty for a
+   * short mock.
    */
-  written: MockWrittenPart[];
+  written: MockDayWrittenPart[];
   /**
    * "HH:MM": when the real exam starts on the day a mock copies (in `timeZone`), else the time the
    * learner said they study (in their own zone, `timeZone` null). Null for any time that day.

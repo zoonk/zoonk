@@ -1,10 +1,10 @@
 import "server-only";
 import { type ExamEdition } from "../../../library/exams/blueprint-contract";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import { getExamScale } from "../../scoring/exam-scales";
+import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring/mock-scoring";
 import { type MockConditions } from "../mock-contract";
 import { type OwnedMock } from "./owned-mock";
-import { getMockScoring, planWeeklyMock } from "./plan-weekly-mock";
+import { planWeeklyMock } from "./plan-weekly-mock";
 
 /**
  * When the real exam starts on the day a mock copies: the start time of that exam day, or of the
@@ -29,7 +29,9 @@ export function getExamStartTime({
  * The conditions of a scheduled mock: its questions (picked when the session was built) split
  * into the exam day's sections at the real pace, the scoring, and when the real exam starts.
  */
-export async function buildMockConditions(owned: OwnedMock): Promise<MockConditions> {
+export async function buildMockConditions(
+  owned: Pick<OwnedMock, "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "userId">,
+): Promise<MockConditions> {
   const { blueprint, goal, payload, sessionDate, structure, userId } = owned;
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
 
@@ -48,13 +50,17 @@ export async function buildMockConditions(owned: OwnedMock): Promise<MockConditi
 
   return {
     day: plan.day,
+    examQuestions: null,
     fullLength: plan.fullLength,
+    partialCredit: getPartialCredit(structure),
     purpose: "planned",
-    scoring: getMockScoring({ scale: getExamScale({ blueprint, goal }), structure }),
+    reused: plan.reused,
+    scoring: getMockScoring({ blueprint, goal, structure }),
     sections: plan.sections,
     shape: null,
     startTime: getExamStartTime({ day: plan.day, edition }),
     timeZone: edition?.timeZone ?? null,
     timedOutSections: [],
+    wrongPenalty: getWrongPenalty(structure),
   };
 }

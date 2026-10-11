@@ -1,20 +1,21 @@
 import "server-only";
-import { getAllowance } from "../entitlements/get-allowance";
 import { countFinishedMocksBefore } from "../exams/mocks/_utils/mock-number";
 import { loadMockPace } from "../exams/mocks/_utils/mock-pace";
 import { getMock } from "../exams/mocks/get-mock";
+import { readMockWrittenParts } from "../exams/mocks/mock-left-out";
 import { estimateMockMinutes } from "../exams/mocks/mock-options";
-import { outlineMock } from "../exams/mocks/mock-plan";
+import { getWrongPenalty } from "../exams/scoring/mock-scoring";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { parsePlanPhases } from "../plans/planner/plan-state";
-import { getExamPrepAccess } from "../sessions/_utils/exam-access";
 import { readBlockPayload } from "../sessions/block-payload";
 import { type CheckpointKind } from "../sessions/brain-power";
 import { type StudySessionTimeZoneInput } from "../sessions/contract";
 import { ensureStudySession } from "../sessions/ensure-study-session";
+import { countBlockRecordings } from "./_utils/boss-recordings";
 import { getMovableDay, loadChallengeMoveRules } from "./_utils/challenge-move";
+import { needsPlus } from "./_utils/challenge-plus";
 import { getChallengeStatus } from "./_utils/challenge-status";
 import { findLastCheckpointResult } from "./_utils/checkpoint-results";
 import { isBossReached, isFinalBoss } from "./_utils/load-boss";
@@ -34,6 +35,7 @@ import {
   CHECKPOINT_QUESTIONS,
   REINFORCEMENT_LESSONS,
   getPassMark,
+  getPlannedQuestions,
 } from "./checkpoint-rules";
 
 export type ChallengeResult =
@@ -46,6 +48,7 @@ type ChallengeSize = {
   fullLength: boolean;
   minutes: number;
   written: ChallengeView["written"];
+  leftOut: ChallengeView["leftOut"];
   netScored: boolean;
   number: number | null;
   questions: number;
@@ -73,24 +76,24 @@ async function loadMockSize({
     return {
       estimatedMinutes: estimateMockMinutes({ ...mock, pace }),
       fullLength: mock.fullLength,
+      leftOut: mock.leftOut,
       minutes: mock.minutes,
       netScored: mock.scoring === "net",
       number: mock.number,
       questions: mock.questions,
-      sections: mock.sections.map(({ index, minutes, name, questions }) => ({
-        index,
-        minutes,
-        name,
-        questions,
-      })),
+      sections: mock.sections.flatMap(({ index, minutes, name, questions, tools }) =>
+        questions > 0 ? [{ index, minutes, name, questions, tools }] : [],
+      ),
       startTime: mock.startTime,
       timeZone: mock.timeZone,
-      written: outlineMock({
+      written: readMockWrittenParts({
+        day: mock.day,
+        essays: mock.sections.reduce((sum, section) => sum + section.essays, 0),
         fullLength: mock.fullLength,
         structure: challenge.goal.examBlueprint
           ? readBlueprintContent(challenge.goal.examBlueprint).structure
           : null,
-      }).written,
+      }),
     };
   }
 
@@ -108,12 +111,13 @@ async function loadMockSize({
       questions: card.conditions.questions,
     }),
     fullLength: card.conditions.fullLength,
+    leftOut: card.conditions.leftOut,
     minutes: card.conditions.timeLimitMinutes,
     netScored: card.conditions.netScoring,
     number: finished + 1,
     questions: card.conditions.questions,
-    sections: card.conditions.sections.flatMap(({ minutes, name, questions }, index) =>
-      minutes && questions ? [{ index, minutes, name, questions }] : [],
+    sections: card.conditions.sections.flatMap(({ minutes, name, questions, tools }, index) =>
+      minutes && questions ? [{ index, minutes, name, questions, tools }] : [],
     ),
     startTime: card.startTime,
     timeZone: card.startTime ? card.timeZone : null,
@@ -121,14 +125,21 @@ async function loadMockSize({
   };
 }
 
-/** A checkpoint's questions: its block's, or about ten before its day. */
+/**
+ * A checkpoint's questions: its block's, or about ten before its day and while its block waits
+ * for the questions it starts by writing (`getPlannedQuestions`).
+ */
 function getCheckpointSize(block: ChallengeBlock | null): ChallengeSize {
-  const questions = block ? readBlockPayload(block).itemIds.length : CHECKPOINT_QUESTIONS;
+  const questions = block
+    ? getPlannedQuestions(readBlockPayload(block).itemIds.length)
+    : CHECKPOINT_QUESTIONS;
+
   const minutes = Math.round(questions * CHECKPOINT_MINUTES_PER_QUESTION);
 
   return {
     estimatedMinutes: minutes,
     fullLength: false,
+    leftOut: [],
     minutes,
     netScored: false,
     number: null,
@@ -156,22 +167,6 @@ function isDue(challenge: OwnedChallenge): boolean {
   }
 
   return item.scheduledFor !== null && item.scheduledFor <= today;
-}
-
-/** An exam's weekly mock is a Plus feature: the free plan says so instead of hiding it. */
-async function needsPlus(challenge: OwnedChallenge): Promise<boolean> {
-  if (challenge.item.kind !== "mock") {
-    return false;
-  }
-
-  const allowance = await getAllowance();
-
-  return !getExamPrepAccess({
-    examPrep: allowance?.examPrep ?? null,
-    goal: challenge.goal,
-    timeZone: challenge.timeZone,
-    today: challenge.today,
-  }).includesMockExams;
 }
 
 /** The week's challenge moves before it starts, from today or a later day. */
@@ -236,7 +231,7 @@ function getChallengePassMark({
 async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, timeZone, today, userId } = challenge;
   const due = isDue(challenge) && item.status === "todo";
-  const plusRequired = item.status === "todo" && (await needsPlus(challenge));
+  const plusRequired = await needsPlus(challenge);
 
   if (due && !plusRequired && goal.status === "active") {
     await ensureStudySession({ goal, localDate: today, timeZone, userId });
@@ -279,12 +274,13 @@ export async function getChallenge({
   const isMock = item.kind === "mock";
   const { block, status, todayBlock } = await loadChallengeDay(challenge);
 
-  const [size, canMoveIt, lastResult, counts] = await Promise.all([
+  const [size, canMoveIt, lastResult, counts, recordings] = await Promise.all([
     isMock ? loadMockSize({ block, challenge }) : getCheckpointSize(block),
     // A mock the plan doesn't include has no day of its own to move.
     status !== "plusRequired" && canMove({ challenge, todayBlock }),
     kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
     loadMilestoneCounts(userId),
+    isMock || !block ? 0 : countBlockRecordings(readBlockPayload(block).itemIds),
   ]);
 
   return {
@@ -298,6 +294,7 @@ export async function getChallenge({
       fullLength: size.fullLength,
       goalId: goal.id,
       kind,
+      leftOut: size.leftOut,
       minutes: size.minutes,
       mock: isMock,
       netScored: size.netScored,
@@ -306,9 +303,13 @@ export async function getChallenge({
       phase: findPhase(challenge),
       planItemId: item.id,
       questions: size.questions,
+      recordings,
       reinforcementLessons: REINFORCEMENT_LESSONS,
       // A new try is one after a day that didn't pass; today's is "tried" until tomorrow.
       rematch: Boolean(lastResult && !lastResult.passed && lastResult.localDate < today),
+      result: lastResult
+        ? { correct: lastResult.correct, passed: lastResult.passed, total: lastResult.total }
+        : null,
       reward: getCheckpointReward({ counts, kind }),
       sections: size.sections,
       // The exam's real start time when it has one, else the time the learner's own words gave.
@@ -318,6 +319,11 @@ export async function getChallenge({
       title: item.titleSnapshot,
       today: toIsoDate(today),
       written: size.written,
+      wrongPenalty: isMock
+        ? getWrongPenalty(
+            goal.examBlueprint ? readBlueprintContent(goal.examBlueprint).structure : null,
+          )
+        : 0,
     },
     status: "ready",
   };

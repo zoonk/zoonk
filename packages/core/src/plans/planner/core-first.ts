@@ -1,3 +1,4 @@
+import { type PlanGraph } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 
 /**
@@ -6,7 +7,7 @@ import { type QueueUnit } from "./plan-units";
  */
 const CORE_SHARE = 1 / 3;
 
-function getCoreLessons(lessons: number): number {
+export function getCoreLessons(lessons: number): number {
   return Math.max(1, Math.ceil(lessons * CORE_SHARE));
 }
 
@@ -15,7 +16,7 @@ function countLessons(unit: QueueUnit): number {
 }
 
 /** Each skill's lessons in the plan, its stand-ins counted as the lessons they plan. */
-function countSkillLessons(units: readonly QueueUnit[]): Map<string, number> {
+export function countSkillLessons(units: readonly QueueUnit[]): Map<string, number> {
   return units.reduce((totals, unit) => {
     if (unit.kind !== "lesson" || !unit.skillId) {
       return totals;
@@ -23,6 +24,39 @@ function countSkillLessons(units: readonly QueueUnit[]): Map<string, number> {
 
     return totals.set(unit.skillId, (totals.get(unit.skillId) ?? 0) + countLessons(unit));
   }, new Map<string, number>());
+}
+
+/**
+ * The graph as the plan saves it: each skill with the lessons this build counted for it
+ * (`countSkillLessons`, before any cut), none for a skill it planned no lesson of. A skill's core
+ * is the first third of them, the same for the plan, its challenges and its checks.
+ */
+export function withPlannedLessons({
+  graph,
+  skillLessons,
+}: {
+  graph: PlanGraph;
+  skillLessons: ReadonlyMap<string, number>;
+}): PlanGraph {
+  return {
+    ...graph,
+    skills: graph.skills.map((skill) => ({
+      ...skill,
+      plannedLessons: skillLessons.get(skill.skillId) ?? 0,
+    })),
+  };
+}
+
+/**
+ * The graph as a planning run reads it: without the lessons the last build counted
+ * (`withPlannedLessons`), which every run counts again from its own queue. A run that read them
+ * would take the last build's counts for something new.
+ */
+export function withoutPlannedLessons(graph: PlanGraph): PlanGraph {
+  return {
+    ...graph,
+    skills: graph.skills.map((skill) => ({ ...skill, plannedLessons: undefined })),
+  };
 }
 
 /** A stand-in that spans the end of its skill's core, as its core part and its depth part. */
@@ -34,6 +68,17 @@ function splitStandIn({ core, unit }: { core: number; unit: QueueUnit }): QueueU
     { ...unit, lessons: core, minutes: perLesson * core },
     { ...unit, depth: true, lessons: lessons - core, minutes: perLesson * (lessons - core) },
   ];
+}
+
+/** The checkpoint that closes the plan, which stays last, apart from the units before it. */
+export function splitClosing(units: readonly QueueUnit[]): {
+  closing: QueueUnit | null;
+  rest: QueueUnit[];
+} {
+  const last = units.at(-1);
+  const closing = last?.kind === "boss" ? last : null;
+
+  return { closing, rest: closing ? units.slice(0, -1) : [...units] };
 }
 
 /** Minutes a list of units takes. */
@@ -48,17 +93,23 @@ function sumMinutes(units: readonly QueueUnit[]): number {
  * ones'. In the queue's order, a career change's research depth ran until February of a
  * six-month plan while prototyping and testing, later in the path, lost most of theirs.
  */
-function interleaveByArea(
-  units: readonly QueueUnit[],
-  ranks: ReadonlyMap<string, number>,
-): QueueUnit[] {
+function interleaveByArea({
+  askedOf,
+  ranks,
+  units,
+}: {
+  askedOf: (skillId: string | null) => number;
+  ranks: ReadonlyMap<string, number>;
+  units: readonly QueueUnit[];
+}): QueueUnit[] {
   const rankOf = (unit: QueueUnit) => (unit.skillId ? (ranks.get(unit.skillId) ?? 0) : 0);
 
-  // Inside an area, the depth of the skills worth most first, so a plan cut short keeps it.
+  // Inside an area, the depth of the topics the exam asks most first, then of the skills worth
+  // most, so a plan cut short cuts the depth of the least asked first.
   const byArea = new Map(
     [...Map.groupBy(units, (unit) => unit.area)].map(([area, own]) => [
       area,
-      own.toSorted((a, b) => rankOf(b) - rankOf(a)),
+      own.toSorted((a, b) => askedOf(b.skillId) - askedOf(a.skillId) || rankOf(b) - rankOf(a)),
     ]),
   );
 
@@ -102,18 +153,27 @@ function interleaveByArea(
  * checkpoint stays after its phase's cores, except the one that closes the plan, which still
  * closes it. With `wholeOutcomes`, an outcome skill (a career change's portfolio and job search,
  * which get the learner the job) is all core, so it stays whole. An exam's outcome skills (its
- * written test: a redação, a discursive test) keep their core like every topic and get depth in
- * proportion to what they're worth, like the exam's other parts: kept whole, ENEM's redação, one of
+ * written test: ENEM's essay, a discursive test) keep their core like every topic and get depth in
+ * proportion to what they're worth, like the exam's other parts: kept whole, ENEM's essay, one of
  * five parts of the score, took most of a month-long plan's days. A lesson on what the class test
- * announces (`QueueUnit.announced`) is core, so a plan short on time keeps it with its skill.
+ * announces (`QueueUnit.announced`) is core, so a plan short on time keeps it with its skill, and
+ * so is the rest of the chapter the learner is in the middle of (`QueueUnit.inProgress`), so a
+ * re-plan never sends it after other skills' cores.
  */
 export function putCoresFirst(
   units: readonly QueueUnit[],
   {
+    askedOf = () => 0,
     kept = new Map(),
     ranks = new Map(),
     wholeOutcomes = true,
   }: {
+    /**
+     * How often the exam asks each skill's topics (see `getAskedScore`): an area's depth of the
+     * topics asked most comes first, so the cut takes the least asked's first. Absent for goals
+     * that aren't exams with a notice: each area's depth then follows `ranks`.
+     */
+    askedOf?: (skillId: string | null) => number;
     /**
      * Each skill's lessons the plan already holds outside `units` (done, or kept this week): they
      * come first in its teaching order and count toward its core, so a re-plan never asks a skill
@@ -141,13 +201,22 @@ export function putCoresFirst(
 
     // A lesson on what the class test announces is core too, wherever its skill teaches it:
     // Pedro's plan cut the osmosis lesson his teacher announced an essay on, his skill's third.
-    if (unit.kind !== "lesson" || !skillId || (unit.outcome && wholeOutcomes) || unit.announced) {
+    // A skill beyond the notice that nothing builds on is depth already (see `putBeyondNoticeLast`).
+    if (
+      unit.kind !== "lesson" ||
+      !skillId ||
+      (unit.outcome && wholeOutcomes) ||
+      unit.announced ||
+      unit.depth
+    ) {
       return [unit];
     }
 
     const lessons = countLessons(unit);
     const before = taken.get(skillId) ?? 0;
-    const core = Math.max(0, Math.min(lessons, getCoreLessons(totals.get(skillId) ?? 1) - before));
+    const left = getCoreLessons(totals.get(skillId) ?? 1) - before;
+    // The rest of the chapter the learner is in is core, and counts toward its skill's core.
+    const core = unit.inProgress ? lessons : Math.max(0, Math.min(lessons, left));
     taken.set(skillId, before + lessons);
 
     if (core === lessons) {
@@ -157,24 +226,25 @@ export function putCoresFirst(
     return core === 0 ? [{ ...unit, depth: true }] : splitStandIn({ core, unit });
   });
 
-  const last = parts.at(-1);
-  const closing = last?.kind === "boss" ? last : null;
-  const rest = closing ? parts.slice(0, -1) : parts;
+  const { closing, rest } = splitClosing(parts);
 
   return [
     ...rest.filter((unit) => !unit.depth),
-    ...interleaveByArea(
-      rest.filter((unit) => unit.depth && unit.focused),
+    ...interleaveByArea({
+      askedOf,
       ranks,
-    ),
-    ...interleaveByArea(
-      rest.filter((unit) => unit.depth && !unit.focused && !unit.reduced),
+      units: rest.filter((unit) => unit.depth && unit.focused),
+    }),
+    ...interleaveByArea({
+      askedOf,
       ranks,
-    ),
-    ...interleaveByArea(
-      rest.filter((unit) => unit.depth && unit.reduced),
+      units: rest.filter((unit) => unit.depth && !unit.focused && !unit.reduced),
+    }),
+    ...interleaveByArea({
+      askedOf,
       ranks,
-    ),
+      units: rest.filter((unit) => unit.depth && unit.reduced),
+    }),
     ...(closing ? [closing] : []),
   ];
 }

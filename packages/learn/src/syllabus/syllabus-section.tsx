@@ -79,8 +79,8 @@ function useSectionCount(syllabus: SyllabusView): string {
 }
 
 /**
- * One subject: its icon, its name as the notice writes it, how far the learner is in it, and its
- * questions on the exam when they're known.
+ * One subject: its icon, its name as the notice writes it, how far the learner is in it (what they
+ * know already apart), and its questions on the exam when they're known.
  */
 function SubjectRow({ href, subject }: { href: string; subject: SyllabusSubject }) {
   const t = useExtracted();
@@ -114,6 +114,10 @@ function SubjectRow({ href, subject }: { href: string; subject: SyllabusSubject 
             {progress.label}
           </span>
         </span>
+
+        {progress.known && (
+          <span className="text-muted-foreground text-xs tabular-nums">{progress.known}</span>
+        )}
       </ListRowContent>
 
       {questions && <ListRowTrailing className="text-xs">{questions}</ListRowTrailing>}
@@ -126,15 +130,17 @@ function getGroupId(index: number): string {
 }
 
 function GroupHeading({
+  document,
   fromMaterial,
   group,
   id,
 }: {
+  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   group: SubjectGroup;
   id: string;
 }) {
-  const name = useGroupName({ fromMaterial, group });
+  const name = useGroupName({ document, fromMaterial, group });
 
   if (!name) {
     return null;
@@ -168,7 +174,12 @@ export function SyllabusSection({
 
       {groups.map((group, index) => (
         <div className="flex flex-col gap-2" key={group.extra ? "extra" : (group.name ?? "all")}>
-          <GroupHeading fromMaterial={syllabus.fromMaterial} group={group} id={getGroupId(index)} />
+          <GroupHeading
+            document={syllabus.examDocument}
+            fromMaterial={syllabus.fromMaterial}
+            group={group}
+            id={getGroupId(index)}
+          />
 
           <ul
             aria-labelledby={group.extra || group.name ? getGroupId(index) : SECTION_TITLE_ID}

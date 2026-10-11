@@ -37,7 +37,7 @@ const schema = z.object({
 
 type FindSubjectQuestionsInput = {
   board: string | null;
-  /** The exam and, when it has phases or roles, the learner's ("OAB…, 1ª fase"). */
+  /** The exam and, when it has phases or roles, the learner's ("OAB…, first phase"). */
   exam: string;
   subjects: string[];
   /** The learner-local date, YYYY-MM-DD. */
@@ -68,7 +68,7 @@ ${formatUntrustedInput({
 
 /**
  * Looks up how many questions each of an exam's subjects got in its latest editions, for a notice
- * that names its subjects without their counts (the OAB's 1ª fase): candidates study the subjects
+ * that names its subjects without their counts (the OAB's first phase): candidates study the subjects
  * that get the most questions first, and the plan weighs them the same way. Only one source's
  * counts for one edition, adding up to the exam's total, on a page a search returned, are kept;
  * anything else reads as not known. Fallback models aren't used: the search tool is tied to the
@@ -97,6 +97,7 @@ export async function findSubjectQuestions({
         stopWhen: isStepCount(MAX_STEPS),
         tools: buildResearchSearchTools({ model, searchTool }),
       }),
+    libraryInput: true,
     promptVersion: `search:${searchTool}`,
     systemPrompt,
     task: "find-subject-questions",

@@ -1,17 +1,17 @@
 import { randomUUID } from "node:crypto";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
@@ -23,19 +23,12 @@ import { completeLibraryLesson } from "./complete-library-lesson";
 import { type LessonStepAnswer } from "./contract";
 import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
 import { startLibraryLesson } from "./start-library-lesson";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 // PostHog is an external service; the mock records what would leave the server.
 vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 const TIME_ZONE = "UTC";
 
@@ -104,10 +97,6 @@ async function playLesson({ checkOption = "likely" }: { checkOption?: string } =
 }
 
 describe(completeLibraryLesson, () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("closes the run and adds Brain Power, Energy and the day's first completion", async () => {
     const { lesson, runId, user } = await playLesson({ checkOption: "path" });
 
@@ -394,6 +383,88 @@ describe(completeLibraryLesson, () => {
     await expect(
       prisma.learnerSkill.findFirst({ where: { skillId: setup.skill.id, userId: setup.user.id } }),
     ).resolves.toMatchObject({ due: expect.any(Date) });
+  });
+
+  it("reviews the plan's skill its lesson is held for once, from every screen, and says when it comes back", async () => {
+    // Production's outlines hold a lesson for the plan's skill while its screens teach a finer
+    // skill of their own, where each answer lands; reviews and practice ask the plan's skill.
+    const setup = await setupPlayableLesson({
+      steps: Array.from({ length: 8 }, () => "check" as const),
+    });
+
+    const [goal, planSkill] = await Promise.all([
+      goalFixture({ timezone: TIME_ZONE, userId: setup.user.id }),
+      skillFixture(),
+    ]);
+
+    const plan = await planFixture({ goalId: goal.id });
+
+    await planItemFixture({
+      kind: "lesson",
+      lessonId: setup.lesson.id,
+      planId: plan.id,
+      skillId: planSkill.id,
+    });
+
+    const runId = await startRun(setup.lesson.id);
+    const promises: (string | null)[] = [];
+
+    for (const step of setup.steps) {
+      // oxlint-disable-next-line no-await-in-loop -- the learner answers one screen after another
+      const checked = await answer({
+        runId,
+        stepId: step.id,
+        value: { kind: "check", optionId: "likely" },
+      });
+
+      promises.push(checked.status === "checked" ? checked.result.nextReviewAt : "unchecked");
+    }
+
+    const outcome = await complete({ lessonId: setup.lesson.id, runId });
+
+    const [planMemory, ownMemory] = await Promise.all([
+      prisma.learnerSkill.findFirstOrThrow({
+        where: { skillId: planSkill.id, userId: setup.user.id },
+      }),
+      prisma.learnerSkill.findFirstOrThrow({
+        where: { skillId: setup.skill.id, userId: setup.user.id },
+      }),
+    ]);
+
+    expect(ownMemory.reps).toBe(8);
+    expect(planMemory.reps).toBe(1);
+
+    const comesBack = planMemory.due?.toISOString();
+
+    expect(comesBack).toStrictEqual(expect.any(String));
+    expect(outcome).toMatchObject({ completion: { nextReviewAt: comesBack }, status: "completed" });
+    expect(promises).toStrictEqual(promises.map(() => comesBack));
+  });
+
+  it("never reviews a plan's skill again when the lesson's screens train it themselves", async () => {
+    const setup = await setupPlayableLesson({ steps: ["check", "check"] });
+    const goal = await goalFixture({ timezone: TIME_ZONE, userId: setup.user.id });
+    const plan = await planFixture({ goalId: goal.id });
+
+    await planItemFixture({
+      kind: "lesson",
+      lessonId: setup.lesson.id,
+      planId: plan.id,
+      skillId: setup.skill.id,
+    });
+
+    const runId = await startRun(setup.lesson.id);
+
+    for (const step of setup.steps) {
+      // oxlint-disable-next-line no-await-in-loop -- the learner answers one screen after another
+      await answer({ runId, stepId: step.id, value: { kind: "check", optionId: "likely" } });
+    }
+
+    await complete({ lessonId: setup.lesson.id, runId });
+
+    await expect(
+      prisma.learnerSkill.findFirst({ where: { skillId: setup.skill.id, userId: setup.user.id } }),
+    ).resolves.toMatchObject({ reps: 2 });
   });
 
   it("finishes a quick explanation with its lesson, and the tabs move to a goal with a plan", async () => {

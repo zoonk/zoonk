@@ -116,6 +116,11 @@ export function toTokenUsage(usage: TaskUsage): TokenUsage {
 type TaskResult<T = unknown> = {
   data: T;
   usage: TaskUsage;
+  /**
+   * The generation's other model calls, beside the evaluated model's answer in `usage`: the checks
+   * a pipeline runs on it, or a reading it set aside, each priced at the model that answered.
+   */
+  extraCalls?: ModelCall[];
   userPrompt: string;
   systemPrompt: string;
   /** Label probabilities from evaluation models, kept for threshold tuning. */
@@ -129,8 +134,11 @@ type TaskResult<T = unknown> = {
  */
 export type ClassificationOutcome = { expected: string; predicted: string | null };
 
+/** A model call and what it used, priced at that model's gateway price. */
+export type ModelCall = { modelId: string; usage: TokenUsage };
+
 /** The model that scored an output and what that call used, so judge spend is visible. */
-export type JudgeRun = { modelId: string; usage: TokenUsage };
+export type JudgeRun = ModelCall;
 
 export type TaskScoreResult = {
   score: number;
@@ -155,6 +163,7 @@ type TaskGenerateInput<TInput> = TInput & {
 export type EvalResult = TokenUsage & {
   testCase: TestCase;
   output: string;
+  extraCalls?: ModelCall[];
   steps: Score["steps"];
   categoryScores?: CategoryScore[];
   classification?: ClassificationOutcome;
@@ -207,6 +216,7 @@ export type RegisteredTask = Omit<Task<never, unknown, never>, "score" | "testCa
 export type OutputEntry = TokenUsage & {
   testCaseId: string;
   output: string;
+  extraCalls?: ModelCall[];
   duration: number;
   systemPrompt: string;
   userPrompt: string;

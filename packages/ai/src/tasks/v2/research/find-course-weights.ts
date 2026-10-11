@@ -70,7 +70,7 @@ ${formatUntrustedInput({
 
 /**
  * Looks up the weights the learner's course uses for each part of an entrance exam at the
- * learner's institution (Medicina at UFMG counts Natureza and the redação more), so the plan gives
+ * learner's institution (medicine at UFMG counts natural sciences and the essay more), so the plan gives
  * those parts their share of the time and the learner sees why. Only one source's weights for one
  * selection, on a page a search returned, are kept; anything else reads as not known. Fallback
  * models aren't used: the search tool is tied to the model it's measured with.

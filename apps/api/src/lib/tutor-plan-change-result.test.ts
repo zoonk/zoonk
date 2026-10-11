@@ -15,6 +15,7 @@ const CHANGE: PlanChangeView = {
     lessonsRemoved: 2,
     weeklyEvents: { after: 6, before: 0, kind: "mock" },
   },
+  examDocument: "notice",
   id: "019c9bd7-bf11-73cb-9cc8-fe371298190d",
   kind: "edited",
   lessonsSkipped: 0,
@@ -56,14 +57,54 @@ describe(toPlanChangeModelResult, () => {
             firstLessonWithChange: "2026-10-07",
           },
         ],
-        endDateAfter: "2027-01-10",
-        endDateBefore: "2027-01-10",
+        endDateAfter: null,
+        endDateBefore: null,
         lessonsAdded: 4,
         lessonsRemoved: 2,
       },
       leftOut: [],
       officialExamDate: null,
       status: "proposed",
+    });
+  });
+
+  // Carla's card added a project, and the buddy said "the plan would still end on April 7" about
+  // her goal of April 8.
+  it("says when the added topics start, and the plan's end only when the change moves it", () => {
+    const result = toPlanChangeModelResult({
+      cautions: [],
+      change: {
+        ...CHANGE,
+        effect: {
+          addedTopicsStart: "2026-10-10",
+          endDateAfter: "2027-04-07",
+          endDateBefore: "2027-04-07",
+          lessonsAdded: 8,
+          lessonsRemoved: 13,
+        },
+        operations: [
+          {
+            kind: "addSkills",
+            skills: [
+              {
+                area: "Portfólio",
+                beforeSkillId: null,
+                lessons: 8,
+                name: "Investigar o calendário da escola",
+                skillId: "skill",
+              },
+            ],
+          },
+        ],
+      },
+      leftOut: [],
+      replaced: [],
+      status: "proposed",
+    });
+
+    expect(result).toMatchObject({
+      changes: "adds Investigar o calendário da escola",
+      effect: { addedTopicsStart: "2026-10-10", endDateAfter: null, endDateBefore: null },
     });
   });
 });

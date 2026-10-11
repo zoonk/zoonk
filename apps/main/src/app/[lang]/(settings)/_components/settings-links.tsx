@@ -21,12 +21,11 @@ import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 /**
- * Which settings pages apply: the profile to an account, memory to a session, guardian to a teen;
- * the way out to an account, and the plan beside "Subscription" when it's Plus.
+ * Which settings pages apply: the profile to an account, memory to a session; the way out to an
+ * account, and the plan beside "Subscription" when it's Plus.
  */
 export type SettingsPagesShown = {
   plus: boolean;
-  showGuardian: boolean;
   showLogout: boolean;
   showMemory: boolean;
   showProfile: boolean;
@@ -37,14 +36,13 @@ function toPage(key: Parameters<typeof getMenu>[0], label: string, trail?: strin
 }
 
 /** The settings pages in two groups: the learner's own, then the plan and help. */
-function useSettingsPages({ plus, showGuardian, showMemory, showProfile }: SettingsPagesShown) {
+function useSettingsPages({ plus, showMemory, showProfile }: SettingsPagesShown) {
   const t = useExtracted();
 
   const yours = [
     showProfile && toPage("profile", t("Profile")),
     toPage("appearance", t("Appearance")),
     showMemory && toPage("memory", t("Memory")),
-    showGuardian && toPage("guardian", t("Guardian")),
   ].filter((item) => item !== false);
 
   const plan = [

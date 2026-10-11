@@ -152,6 +152,7 @@ export function useStepGrading({
 
       const issue =
         outcome?.status === "limitReached" ||
+        outcome?.status === "signUpRequired" ||
         outcome?.status === "slowDown" ||
         outcome?.status === "noSpeech"
           ? outcome

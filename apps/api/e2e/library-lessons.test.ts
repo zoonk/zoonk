@@ -10,6 +10,8 @@ import {
 import { lessonQuestionResourceSchema } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { answerExplanationFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -19,6 +21,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { playableLibraryLessonResponseSchema } from "../src/lib/openapi/schemas/library-lessons";
 import { createBearerLearner, createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
@@ -26,6 +29,9 @@ import { readBody } from "./helpers/response";
 const LESSON_STEPS = ["hook", "explanation", "check", "typedAnswer", "summary"] as const;
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const OVERNIGHT_MS = 36_000_000;
+
+/** Days since a free exam goal started that put it past its free first week. */
+const FREE_WEEK_OVER_DAYS = 10;
 
 function stepId(steps: { id: string; kind: string }[], kind: string): string {
   return steps.find((step) => step.kind === kind)?.id ?? "";
@@ -158,46 +164,6 @@ test.describe("Library lessons API", () => {
     ]);
 
     await api.dispose();
-  });
-
-  test("slows down a learner or guest reading lessons' screens too fast", async () => {
-    const [{ api }, { guestApi }, { lesson }] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "library-lesson-reads" }),
-      createGuest(baseURL),
-      playableLessonFixture({ steps: [...LESSON_STEPS] }),
-    ]);
-
-    // E2E servers stand in for the Vercel Firewall: this header answers as the rule's limit would.
-    const overLimit = { headers: { "x-e2e-rate-limited": "lesson-steps" } };
-    const path = `/v1/library/lessons/${lesson.id}`;
-
-    const [learner, guest, otherRule] = await Promise.all([
-      api.get(path, overLimit),
-      guestApi.get(path, overLimit),
-      api.get(path, { headers: { "x-e2e-rate-limited": "lesson-start" } }),
-    ]);
-
-    await Promise.all(
-      [learner, guest].map(async (response) => {
-        expect(response.status()).toBe(429);
-        expect(response.headers()["retry-after"]).toBe("60");
-
-        const text = await response.text();
-        expect(text).not.toContain('"steps"');
-
-        expect(JSON.parse(text)).toMatchObject({
-          error: { code: "SLOW_DOWN", details: { retryAfterSeconds: 60 } },
-        });
-      }),
-    );
-
-    const body = await readBody({
-      response: otherRule,
-      schema: playableLibraryLessonResponseSchema,
-    });
-
-    expect(body.status).toBe("ready");
-    await Promise.all([api.dispose(), guestApi.dispose()]);
   });
 
   test("returns the outline of a lesson still being written and 404 for unknown lessons", async () => {
@@ -365,6 +331,51 @@ test.describe("Library lessons API", () => {
     });
 
     await guestApi.dispose();
+  });
+
+  // rafa3 (Câmara, free, day 12): Today said Plus opens new lessons, yet her plan's lessons
+  // opened and were written for her.
+  test("holds a free exam plan's new lessons for Plus once its first week is over", async () => {
+    const [{ api, userId }, { lesson }, unwritten] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "free-week" }),
+      playableLessonFixture({ steps: [...LESSON_STEPS] }),
+      libraryLessonFixture(),
+    ]);
+
+    const goal = await goalFixture({
+      createdAt: new Date(Date.now() - FREE_WEEK_OVER_DAYS * MS_PER_DAY),
+      kind: "exam",
+      timezone: "America/Sao_Paulo",
+      userId,
+    });
+
+    const plan = await planFixture({ goalId: goal.id });
+
+    await Promise.all([
+      learningProfileFixture({ activeGoalId: goal.id, userId }),
+      planItemFixture({ lessonId: lesson.id, planId: plan.id, position: 0 }),
+      planItemFixture({ lessonId: unwritten.id, planId: plan.id, position: 1 }),
+    ]);
+
+    const plusRequired = { error: { code: "PLUS_REQUIRED" } };
+
+    const start = await api.post(`/v1/library/lessons/${lesson.id}/starts`, {
+      data: { timeZone: "America/Sao_Paulo" },
+    });
+
+    expect(start.status()).toBe(402);
+    await expect(start.json()).resolves.toMatchObject(plusRequired);
+
+    const writing = await api.post(`/v1/library/lessons/${unwritten.id}/generations`);
+
+    expect(writing.status()).toBe(402);
+    await expect(writing.json()).resolves.toMatchObject(plusRequired);
+
+    // Nothing was counted, started or written.
+    await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
+    await expect(prisma.learningEvent.count({ where: { userId } })).resolves.toBe(0);
+
+    await api.dispose();
   });
 
   test("explains a wrong typed answer with the shared explanation", async () => {

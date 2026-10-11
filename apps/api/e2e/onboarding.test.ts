@@ -61,6 +61,7 @@ test.describe("Onboarding API", () => {
         route: "goals",
         studyTime: "20:00",
       },
+      userId: user.id,
     });
 
     const draft = await readBody({
@@ -137,25 +138,6 @@ test.describe("Onboarding API", () => {
     });
 
     expect(invalid.status()).toBe(400);
-    await apiContext.dispose();
-  });
-
-  test("deletes the account when the learner is under 13", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "onboarding-age",
-    });
-
-    const goal = await goalFixture({ userId: user.id });
-    const thisYear = new Date().getUTCFullYear();
-
-    const response = await apiContext.post(`/v1/goals/${goal.id}/onboarding/answers`, {
-      data: { birth: { month: 1, year: thisYear - 9 }, question: "age" },
-    });
-
-    expect(response.status()).toBe(403);
-    expect(await response.json()).toMatchObject({ error: { code: "UNDER_MINIMUM_AGE" } });
-    await expect.poll(() => prisma.user.findUnique({ where: { id: user.id } })).toBeNull();
     await apiContext.dispose();
   });
 

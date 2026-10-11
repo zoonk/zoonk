@@ -2,7 +2,7 @@ import { TEST_OUT_QUESTIONS_READY_STEP } from "@zoonk/core/library/generation/st
 import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { createHook, getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { preparePlacementItemsStep } from "./steps/goal-lookahead-steps";
+import { preparePlacementItems } from "./placement-items";
 import { testOutQuestionsProgressStep } from "./steps/test-out-questions-progress-step";
 
 export type TestOutQuestionsInput = {
@@ -60,7 +60,7 @@ export async function testOutQuestionsWorkflow(
   await testOutQuestionsProgressStep({ status: "started", step: "writeTestOutQuestions" });
 
   try {
-    const { failed, written } = await preparePlacementItemsStep({
+    const { failed, written } = await preparePlacementItems({
       analytics,
       formats: TEST_OUT_FORMATS,
       goalId,

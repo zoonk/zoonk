@@ -22,6 +22,7 @@ import {
   OnboardingSecondaryButton,
   OnboardingTitle,
 } from "../onboarding-frame";
+import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 
 const BUBBLE_CLASS =
   "bg-muted self-end rounded-3xl rounded-br-lg px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap";
@@ -42,7 +43,7 @@ export function SignUpLink({ href }: { href: string }) {
 /**
  * Why the goal couldn't be read or created, said where the learner tried. A limit only an account
  * lifts (a guest's one goal, their day's AI help) isn't an error: it says why, and creating a free
- * account is the way on.
+ * account is the way on. One Plus lifts (the free plan's one goal at a time) is the Plus notice.
  */
 export function GoalErrorAlert({
   error,
@@ -53,6 +54,14 @@ export function GoalErrorAlert({
 }) {
   if (!error) {
     return null;
+  }
+
+  if (error.limit && isPlusGoalLimit(error.limit)) {
+    return (
+      <div role="alert">
+        <GoalLimitNotice reason={error.limit} />
+      </div>
+    );
   }
 
   if (!error.needsAccount) {

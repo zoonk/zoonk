@@ -5,6 +5,7 @@ import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { createUploadRequestSchema } from "@/lib/openapi/schemas/research-sources";
 import { toSourceResource } from "@/lib/source-resources";
 import { sourceVisibilityWorkflow } from "@/workflows/v2/research/source-visibility-workflow";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { registerSourceUpload } from "@zoonk/core/library/sources/register-upload";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
@@ -42,7 +43,7 @@ async function createUpload(request: NextRequest) {
     );
   }
 
-  if (result.status === "limitReached" || result.status === "slowDown") {
+  if (isRefusedUsage(result)) {
     return usageDecisionError(result);
   }
 

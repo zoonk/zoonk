@@ -9,8 +9,8 @@ import {
 } from "../_test-utils/activity-player";
 
 describe("lesson activities", () => {
-  it("slider graph: moving the rate produces the value to check", async () => {
-    openActivity({ template: "sliderGraph" });
+  it("formula model: moving the rate produces the value to check", async () => {
+    openActivity({ template: "formulaModel" });
     await pressOnSlider("Rate per year", "ArrowRight", 4);
 
     await expect.element(valueInput()).toHaveValue("3869.68");
@@ -78,8 +78,8 @@ describe("lesson activities", () => {
     await expect.element(page.getByText("Your first pick: Add the tax")).toBeVisible();
   });
 
-  it("estimate then reveal: the real value shows next to the guess", async () => {
-    openActivity({ template: "estimateReveal" });
+  it("guess then reveal: the computed value shows next to the guess, with its workings", async () => {
+    openActivity({ template: "guessReveal" });
     await expect.element(page.getByText("Drag to guess")).toBeVisible();
     await pressOnSlider("Your guess", "ArrowRight", 20);
     await expect.element(page.getByText(/Your guess: /u)).toBeVisible();
@@ -87,10 +87,11 @@ describe("lesson activities", () => {
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("A billion seconds is about 32 years.")).toBeVisible();
+    await expect.element(page.getByText("minutes", { exact: true })).toBeVisible();
   });
 
-  it("predict then simulate: the runs start after the guess is checked", async () => {
-    openActivity({ template: "predictSimulate" });
+  it("random simulation by chance: the runs start after the guess is checked", async () => {
+    openActivity({ template: "randomSimulation" });
 
     await expect
       .element(page.getByText("Pick your guess, then check it to run the simulation."))

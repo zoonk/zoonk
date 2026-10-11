@@ -131,7 +131,7 @@ export async function MotivationSection() {
         </h2>
         <p className={SECTION_LEAD_CLASS}>
           {t(
-            "Studying feeds your buddy, and every phase ends with a challenge. Mistakes never cost you anything.",
+            "Your buddy grows as you study, and every phase ends with a challenge. Mistakes never cost you anything.",
           )}
         </p>
       </div>
@@ -141,7 +141,7 @@ export async function MotivationSection() {
           description={t(
             "Three missions a day: a review, something new and a mistake to fix. Your buddy grows as you learn.",
           )}
-          title={t("A buddy you feed by learning")}
+          title={t("A buddy that grows as you learn")}
         >
           <BuddyPreview />
         </MotivationTile>

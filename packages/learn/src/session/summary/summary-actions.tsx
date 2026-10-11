@@ -51,8 +51,8 @@ function KeepGoingButton() {
 
 /**
  * Under Finish: after the day's session, "10 more minutes" while there's something left to study
- * (capped, and never past a guardian's limit); right after stopping for today, "Keep going". A
- * guest is asked, softly, to save their plan.
+ * (capped, and never past the learner's daily limit); right after stopping for today, "Keep
+ * going". A guest is asked, softly, to save their plan.
  */
 export function SummaryOptions() {
   const stopped = useIsStopped();

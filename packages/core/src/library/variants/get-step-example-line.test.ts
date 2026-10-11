@@ -72,10 +72,8 @@ async function createTwoSlotLesson() {
   return { check, discount, interest, lesson, plain };
 }
 
-/** An adult, since minors' and unknown ages' memory keeps no background or preferences. */
 async function createLearner() {
   const learner = await userFixture();
-  await learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: learner.id });
   mockSession(learner.id);
   return learner;
 }
@@ -130,10 +128,7 @@ describe(getStepExampleLine, () => {
   it("asks a guest who used today's help to sign up before writing a line", async () => {
     const [guest, step] = await Promise.all([useGuestOutOfHelp(), createExplanation()]);
 
-    await Promise.all([
-      learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: guest.id }),
-      shareFact(guest.id),
-    ]);
+    await shareFact(guest.id);
 
     await expect(getStepExampleLine({ stepId: step.id })).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
     expect(generateExampleLines).not.toHaveBeenCalled();
@@ -337,47 +332,6 @@ describe(getStepExampleLine, () => {
       line: "Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10.",
       status: "ready",
     });
-  });
-
-  it("writes nothing for a minor until they turn memory on, then only from goals and learning", async () => {
-    const learner = await userFixture();
-    mockSession(learner.id);
-    const step = await createExplanation();
-
-    await Promise.all([
-      shareFact(learner.id),
-      memoryFactFixture({
-        category: "goals",
-        statement: "Wants to become a vet",
-        userId: learner.id,
-      }),
-      goalFixture({ title: "Pass the ENEM", userId: learner.id }).then((goal) =>
-        learningProfileFixture({
-          activeGoalId: goal.id,
-          birthMonth: 1,
-          birthYear: new Date().getUTCFullYear() - 15,
-          userId: learner.id,
-        }),
-      ),
-    ]);
-
-    // Memory starts off for a teen: nothing they shared reaches the model.
-    await expect(getStepExampleLine({ stepId: step.id })).resolves.toStrictEqual({
-      line: null,
-      status: "ready",
-    });
-
-    expect(generateExampleLines).not.toHaveBeenCalled();
-
-    // Turned on, their memory still keeps no life outside learning: the background fact stays out.
-    await learningProfileFixture({ memoryEnabled: true, userId: learner.id });
-
-    mockLines(["Numa clínica veterinária, 25% de desconto numa ração de R$ 80 tira R$ 20."]);
-    await getStepExampleLine({ stepId: step.id });
-
-    expect(generateExampleLines).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ facts: ["Wants to become a vet"] }),
-    );
   });
 
   it("uses no facts when the learner turned memory off", async () => {

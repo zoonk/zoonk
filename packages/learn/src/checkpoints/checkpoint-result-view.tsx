@@ -1,7 +1,5 @@
 "use client";
 
-import { Trickster } from "@zoonk/ui/components/trickster";
-import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, FlagIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { Callout } from "../_components/callout";
@@ -14,6 +12,7 @@ import { useCheckpointScreen } from "./checkpoint-context";
 import { usePhaseLabel } from "./checkpoint-labels";
 import { CheckpointReviewSheet } from "./checkpoint-review";
 import { CheckpointRewardsStep } from "./checkpoint-rewards";
+import { TricksterArt } from "./trickster-art";
 
 type Outcome = { correct: number; passed: boolean; total: number };
 
@@ -64,7 +63,6 @@ function useScoreLine(outcome: Outcome): string {
   });
 }
 
-/** The Trickster as the result's art: beaten, he leans back; otherwise he still holds his sign. */
 function ResultArt() {
   const { checkpoint } = useCheckpointScreen();
   const won = useIsWon();
@@ -73,12 +71,7 @@ function ResultArt() {
     return <KindTile kind="challenge" size="lg" />;
   }
 
-  return (
-    <Trickster
-      className={cn("size-28 sm:size-32", won && "rotate-12 opacity-80")}
-      pose={won ? "sly" : "hero"}
-    />
-  );
+  return <TricksterArt beaten={won} />;
 }
 
 /** A duel not won still earns Brain Power for its right answers, said beside the score. */

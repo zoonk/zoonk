@@ -1,4 +1,6 @@
 import { prisma } from "@zoonk/db";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -13,8 +15,10 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
+import { getBlockItemIds, readBlockPayload } from "../sessions/block-payload";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { finishStudyBlock } from "../sessions/finish-study-block";
+import { requestChallengeQuestions } from "./challenge-questions";
 import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
@@ -24,10 +28,17 @@ vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
 
+// PostHog is an external service; the mock records what would leave the server.
+vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
+
+function byId(a: string, b: string): number {
+  return a.localeCompare(b);
+}
+
 /** A goal whose first phase (two lessons) is done, so its boss is reached today. */
-async function bossSetup() {
+async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
   const user = await userFixture();
-  const fixture = await sessionGoalFixture({ lessons: 3, userId: user.id });
+  const fixture = await sessionGoalFixture({ itemsPerSkill, lessons: 3, userId: user.id });
   const [first, second, third] = fixture.planItems;
 
   await prisma.planItem.update({ data: { phase: 1, position: 5 }, where: { id: third?.id } });
@@ -109,6 +120,49 @@ describe("a phase checkpoint's challenge", () => {
     ).resolves.toMatchObject({ status: "active" });
   });
 
+  // r16-seed's thin bank: the challenge was left out of the session and never asked. Now it stays
+  // in the day, and Start asks for its questions to be written until the bank holds enough.
+  it("with too few questions, Start asks for them to be written, then starts with the ones written since", async () => {
+    const { boss, skills } = await bossSetup({ itemsPerSkill: 1 });
+
+    await expect(challengeOf(boss.id)).resolves.toMatchObject({
+      passMark: 7,
+      questions: 10,
+      status: "ready",
+    });
+
+    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
+      status: "questionsNeeded",
+    });
+
+    // One of the run's calls is done, on one skill; the other is still writing.
+    await Promise.all(
+      Array.from({ length: 4 }, () =>
+        itemFixture({ content: choiceItemContent(), skillId: skills[0]?.id ?? "" }),
+      ),
+    );
+
+    // Start in between waits for the run instead of opening on the one skill written so far.
+    await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
+      status: "questionsNeeded",
+    });
+
+    // The run ended with the other call failed: what's there is enough to judge the phase.
+    const started = await startChallenge({ input: { afterWriting: true }, planItemId: boss.id });
+
+    if (started.status !== "ready") {
+      throw new Error(`Expected the challenge to start, got ${started.status}`);
+    }
+
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({
+      where: { id: started.destination.blockId },
+    });
+
+    expect(block).toMatchObject({ estimatedMinutes: 9, status: "active" });
+    expect(getBlockItemIds(readBlockPayload(block))).toHaveLength(6);
+    expect(readBlockPayload(block).checkpoint).toMatchObject({ passMark: 5 });
+  });
+
   it("not passed, it tries again tomorrow, then is back in the plan, as the result says", async () => {
     const { boss } = await bossSetup();
     const lost = await playBoss({ optionIndex: 1, planItemId: boss.id });
@@ -116,6 +170,7 @@ describe("a phase checkpoint's challenge", () => {
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
       blockId: lost.blockId,
       rematch: false,
+      result: { correct: 0, passed: false, total: 6 },
       status: "tried",
     });
 
@@ -134,8 +189,10 @@ describe("a phase checkpoint's challenge", () => {
 
     const won = await playBoss({ optionIndex: 0, planItemId: boss.id });
 
+    // Reopened once won, the challenge says how the win went rather than inviting a new duel.
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
       blockId: won.blockId,
+      result: { correct: 6, passed: true, total: 6 },
       status: "done",
     });
 
@@ -155,6 +212,89 @@ describe("a phase checkpoint's challenge", () => {
     await expect(startChallenge({ input: {}, planItemId: boss.id })).resolves.toStrictEqual({
       status: "notFound",
     });
+  });
+});
+
+describe("the week's mixed challenge with too few questions", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(SESSION_NOW);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // It used to leave the session without a word when the week's skills held fewer than five.
+  it("keeps its day, and starts once the questions it lacks are written", async () => {
+    const user = await userFixture();
+
+    const { items, plan, skills } = await sessionGoalFixture({
+      itemsPerSkill: 1,
+      lessons: 3,
+      userId: user.id,
+    });
+
+    const [weekly] = await Promise.all([
+      checkpointItemFixture({
+        kind: "checkpoint",
+        planId: plan.id,
+        position: 10,
+        scheduledFor: SESSION_TODAY,
+      }),
+      ...items
+        .slice(0, 2)
+        .map((item) =>
+          attemptFixture({
+            answeredAt: new Date(SESSION_NOW.getTime() - 2 * DAY_MS),
+            itemId: item.id,
+            skillId: item.skillId,
+            userId: user.id,
+          }),
+        ),
+    ]);
+
+    mockSession(user.id);
+
+    await expect(challengeOf(weekly.id)).resolves.toMatchObject({
+      kind: "weekly",
+      questions: 10,
+      status: "ready",
+    });
+
+    await expect(startChallenge({ input: {}, planItemId: weekly.id })).resolves.toStrictEqual({
+      status: "questionsNeeded",
+    });
+
+    // Written on the skills the week studied, in no particular order.
+    const writing = await requestChallengeQuestions({ planItemId: weekly.id });
+
+    expect(writing).toMatchObject({
+      status: "start",
+      writes: [{ questionsPerSkill: 4, target: 5 }],
+    });
+
+    expect(writing.status === "start" && writing.writes[0]?.skillIds.toSorted(byId)).toStrictEqual(
+      [skills[0]?.id ?? "", skills[1]?.id ?? ""].toSorted(byId),
+    );
+
+    await Promise.all(
+      Array.from({ length: 4 }, () =>
+        itemFixture({ content: choiceItemContent(), skillId: skills[1]?.id ?? "" }),
+      ),
+    );
+
+    const started = await startChallenge({ input: { afterWriting: true }, planItemId: weekly.id });
+
+    if (started.status !== "ready") {
+      throw new Error(`Expected the challenge to start, got ${started.status}`);
+    }
+
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({
+      where: { id: started.destination.blockId },
+    });
+
+    expect(getBlockItemIds(readBlockPayload(block))).toHaveLength(6);
   });
 });
 

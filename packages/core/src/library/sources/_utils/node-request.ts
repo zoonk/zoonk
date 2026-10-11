@@ -55,7 +55,12 @@ function receiveResponse({ ca, headers, lookup, signal, url }: NodeRequest) {
       ? httpsGet(url, options, resolve)
       : httpGet(url, options, resolve);
 
-    request.on("error", reject);
+    // Node reports an aborted request as an `AbortError`, which a workflow step takes for a
+    // cancellation and never retries; like fetch, a request past its deadline fails with the
+    // signal's reason (a `TimeoutError`), which the step retries.
+    request.on("error", (error) =>
+      reject(signal.aborted && signal.reason instanceof Error ? signal.reason : error),
+    );
   });
 }
 

@@ -25,8 +25,8 @@ function hashContext({ facts, goal }: Pick<ExampleLineContext, "facts" | "goal">
 
 /**
  * What an example line may use about one learner: the facts memory hands to tasks, of every kind
- * (the most recent, never sensitive ones, none while memory is off, and for minors only the goals
- * and learning their memory keeps), and the title of the goal they study for.
+ * (the most recent, never sensitive ones, none while memory is off), and the title of the goal
+ * they study for.
  * Memory is read without a search, so the same facts give the same key and the cached line stays.
  * Null without such facts: a line built from the goal's name alone is filler ("While studying for
  * ENEM 2026, …"), so no model runs.

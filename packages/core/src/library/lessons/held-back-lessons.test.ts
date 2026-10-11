@@ -33,7 +33,6 @@ vi.mock("@zoonk/ai/tasks/v2/material/cite", () => ({ citeMaterial: vi.fn() }));
 
 const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";
-const GEMINI = "google/gemini-3.8-flash";
 
 function taskResult<T>(data: T, model: string) {
   return {
@@ -210,25 +209,6 @@ describe("held-back lessons", () => {
       "pending",
       "pending",
     ]);
-  });
-
-  it("gives a private lesson's last draft to Sol when Gemini wrote the held-back ones", async () => {
-    const user = await userFixture();
-
-    const { lesson, workflowRunId } = await claimedLesson({
-      heldBackDrafts: [
-        heldBackDraftFixture({ model: GEMINI }),
-        heldBackDraftFixture({ model: GEMINI }),
-      ],
-      ownerId: user.id,
-      visibility: "private",
-    });
-
-    mockDraft({ heldBack: false, model: SOL });
-
-    await writeLessonContent({ lessonId: lesson.id, model: GEMINI, workflowRunId });
-
-    expect(vi.mocked(writeLessonDraft).mock.calls[0]?.[0].model).toBe(SOL);
   });
 
   it("clears the held-back drafts when a later draft is published", async () => {

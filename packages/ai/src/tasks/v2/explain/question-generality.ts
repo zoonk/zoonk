@@ -53,7 +53,7 @@ export async function classifyQuestionGenerality({
     analytics,
     fallbackModel,
     input: questionGeneralityClassifier.toInput({ question }),
-    // The question is stored with the goal or tutor thread that asked it.
+    // The question is stored with the goal that asked it.
     keepInput: true,
     questions: { isGeneral: questionGeneralityClassifier.question },
     task: "question-generality",

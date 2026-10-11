@@ -1,7 +1,6 @@
 "use server";
 
 import { startGoalWork } from "@/lib/goals/start-goal-work";
-import { isUnderMinimumAge, markUnderMinimumAge } from "@/lib/guest/minimum-age";
 import { prepareGoalLessons, writeLessonAhead } from "@/lib/session/session-preparation";
 import { moveLanguageGoalToExam } from "@zoonk/core/exams/language-goal";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
@@ -18,9 +17,6 @@ import {
 } from "@zoonk/core/learner/placement/contract";
 import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
-import { guardianInviteSchema } from "@zoonk/core/minors/guardian/contract";
-import { inviteGuardian } from "@zoonk/core/minors/guardian/invite";
-import { refuseAgeRetry } from "@zoonk/core/minors/refuse-age-retry";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
@@ -83,21 +79,7 @@ export async function answerOnboardingAction(
     return { status: "failed" };
   }
 
-  // This device said under 13 within the last day: a new age answer can't undo that.
-  const retry =
-    parsed.data.question === "age" && (await isUnderMinimumAge()) ? await refuseAgeRetry() : null;
-
-  if (retry?.status === "accountDeleted") {
-    await markUnderMinimumAge();
-    return { status: "accountDeleted" };
-  }
-
   const result = await answerOnboardingQuestion({ goalId, input: parsed.data });
-
-  if (result.status === "accountDeleted") {
-    await markUnderMinimumAge();
-    return { status: "accountDeleted" };
-  }
 
   // "Pass an exam" inside a language goal: a reason naming a certificate moves it to an exam goal.
   const moved =
@@ -253,17 +235,6 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
     status: "ready",
     syllabus: syllabus.status === "ready" ? syllabus.syllabus : null,
   };
-}
-
-export async function inviteGuardianAction(email: unknown): Promise<boolean> {
-  const parsed = guardianInviteSchema.safeParse({ email });
-
-  if (!parsed.success) {
-    return false;
-  }
-
-  const result = await inviteGuardian(parsed.data);
-  return result.status === "invited";
 }
 
 export async function joinWaitlistAction(input: unknown): Promise<WaitlistOutcome> {

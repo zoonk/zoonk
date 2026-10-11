@@ -25,6 +25,7 @@ export type LessonWritingContext = Pick<
   | "language"
   | "level"
   | "material"
+  | "setup"
   | "sources"
   | "spec"
 >;

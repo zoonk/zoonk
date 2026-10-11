@@ -4,11 +4,14 @@ import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CalendarClockIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { FreeWeekOverNotice } from "../_components/free-week-over";
+import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
+import { daysBetween } from "../_utils/iso-date";
 import { useLearnRoutes } from "../learn-context";
+import { LearnLink } from "../learn-link";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
-import { daysBetween } from "./challenge-labels";
 
 /** Where the challenge stands when it can't start yet, as a status pill the eye finds. */
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
@@ -75,7 +78,14 @@ function StartProblem() {
 
 function StartButton() {
   const t = useExtracted();
-  const { challenge, move, start } = useChallengeScreen();
+  const routes = useLearnRoutes();
+  const { challenge, move, start, writing } = useChallengeScreen();
+
+  // Its questions need writing and the learner's AI help doesn't cover them now: say why, with
+  // the one thing to do.
+  if (writing?.kind === "refused") {
+    return <HelpLimitNotice limit={writing.limit} linkComponent={LearnLink} routes={routes} />;
+  }
 
   return (
     <>
@@ -162,9 +172,13 @@ function StatusFooter() {
     case "plusRequired":
       return (
         <>
-          <PlusNotice cta={false}>
-            {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
-          </PlusNotice>
+          {challenge.mock ? (
+            <PlusNotice cta={false}>
+              {t("Mock exams come with Plus: whenever you want, and every week in your plan.")}
+            </PlusNotice>
+          ) : (
+            <FreeWeekOverNotice cta={false} />
+          )}
           <TaskMainLink href={routes.upgrade}>{t("See Plus")}</TaskMainLink>
         </>
       );

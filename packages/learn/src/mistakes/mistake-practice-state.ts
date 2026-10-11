@@ -62,7 +62,7 @@ type PracticeState = {
 type PracticeAction =
   | { type: "start" }
   | { type: "reveal" }
-  | { answer: ChoiceAnswer; type: "select" }
+  | { answer: ChoiceAnswer | null; type: "select" }
   | { answer: ChoiceAnswer; timedOut: boolean; type: "check" }
   | { feedback: Graded; mistakeId: string; type: "answered" }
   | { type: "answerFailed" }

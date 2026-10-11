@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  type NotPlannedReason,
   type SyllabusChapter,
   type SyllabusTopic,
 } from "@zoonk/core/view-models/syllabus/contract";
@@ -11,7 +10,7 @@ import {
   CollapsibleTrigger,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenIcon, ChevronDownIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   LIST_GROUP_CLASS,
@@ -23,9 +22,10 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { PageSectionLabel } from "../_components/page";
-import { LearnLink } from "../learn-link";
 import { FrequencyChip, setsApart } from "./frequency-chip";
+import { TopicChapters } from "./subject-topic-chapters";
 import { TopicMark, type TopicMarkState } from "./topic-mark";
+import { TopicNote } from "./topic-note";
 import { type TopicGroup, groupTopics } from "./topic-number";
 import { TopicNumber } from "./topic-number-label";
 
@@ -76,11 +76,20 @@ function getGroupMark(topics: readonly SyllabusTopic[]): TopicMarkState | null {
   }
 
   const planned = topics.filter((topic) => topic.status !== "notPlanned");
-  const studied = planned.filter((topic) => topic.status === "studied").length;
+  const known = planned.filter((topic) => topic.status === "known").length;
+
+  const studied = planned.filter(
+    (topic) => topic.status === "studied" || topic.status === "known",
+  ).length;
+
   const begun = planned.filter((topic) => topic.status === "inProgress").length;
 
   if (planned.length === 0) {
     return { kind: "notPlanned" };
+  }
+
+  if (known === planned.length) {
+    return { kind: "known" };
   }
 
   if (studied === planned.length) {
@@ -105,6 +114,8 @@ function useStatusText() {
     switch (mark.kind) {
       case "studied":
         return t(", studied");
+      case "known":
+        return t(", you know this");
       case "inProgress":
         return t(", in progress");
       case "notPlanned":
@@ -115,79 +126,6 @@ function useStatusText() {
         return mark satisfies never;
     }
   };
-}
-
-/** Why a topic isn't in the plan, in a few words under its name. */
-function ReasonText({ reason }: { reason: NotPlannedReason | null }) {
-  const t = useExtracted();
-
-  if (!reason) {
-    return null;
-  }
-
-  return (
-    <span className="text-muted-foreground text-xs">
-      {reason === "skipped" && t("You took this subject out of your plan")}
-      {reason === "pastBasics" && t("You start past the basics")}
-      {reason === "time" && t("Doesn't fit in the time you have")}
-      {reason === "missing" && t("No lessons on it yet")}
-    </span>
-  );
-}
-
-/** A chapter that teaches a topic, one line under it, opening the chapter's page. */
-function TopicChapterLink({
-  chapter,
-  chapterHref,
-}: {
-  chapter: SyllabusChapter;
-  chapterHref: (chapterId: string) => string;
-}) {
-  const t = useExtracted();
-
-  const content = (
-    <>
-      <BookOpenIcon aria-hidden="true" className="size-4 shrink-0" />
-      <span className="line-clamp-2 min-w-0 flex-1 py-1">{chapter.title}</span>
-    </>
-  );
-
-  if (!chapter.chapterId) {
-    return (
-      <span className="text-muted-foreground flex min-h-11 items-center gap-2 text-sm">
-        {content}
-        <span className="shrink-0 text-xs">{t("Lessons on the way")}</span>
-      </span>
-    );
-  }
-
-  return (
-    <LearnLink
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm transition-colors outline-none focus-visible:ring-[3px]"
-      href={chapterHref(chapter.chapterId)}
-    >
-      {content}
-      <ChevronRightIcon aria-hidden="true" className="size-4 shrink-0" />
-    </LearnLink>
-  );
-}
-
-function TopicChapters({
-  chapterHref,
-  chapters,
-}: {
-  chapterHref: (chapterId: string) => string;
-  chapters: readonly SyllabusChapter[];
-}) {
-  return (
-    <ul className="flex flex-col">
-      {chapters.map((chapter) => (
-        <li key={chapter.chapterId ?? chapter.title}>
-          <TopicChapterLink chapter={chapter} chapterHref={chapterHref} />
-        </li>
-      ))}
-    </ul>
-  );
 }
 
 /** A sub-item inside its open group: its tick and words, and why it's out. */
@@ -206,7 +144,7 @@ function ChildTopic({ child }: { child: Group["children"][number] }) {
           {child.text}
           <span className="sr-only">{statusText(mark)}</span>
         </span>
-        <ReasonText reason={child.topic.notPlannedReason} />
+        <TopicNote topic={child.topic} />
       </div>
     </li>
   );
@@ -221,7 +159,9 @@ function GroupCount({ group }: { group: Group }) {
     return null;
   }
 
-  const studied = topics.filter((topic) => topic.status === "studied").length;
+  const studied = topics.filter(
+    (topic) => topic.status === "studied" || topic.status === "known",
+  ).length;
 
   return (
     <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
@@ -260,7 +200,7 @@ function GroupLine({ group, showFrequency }: { group: Group; showFrequency: bool
           {group.text}
           <span className="sr-only">{statusText(mark)}</span>
         </ListRowTitle>
-        {group.children.length === 0 && <ReasonText reason={group.topic.notPlannedReason} />}
+        {group.children.length === 0 && <TopicNote topic={group.topic} />}
       </ListRowContent>
       <ListRowTrailing className="empty:hidden">
         {showFrequency && <FrequencyChip frequency={getGroupFrequency(group)} />}
@@ -324,7 +264,7 @@ function TopicGroupRow({
   );
 }
 
-/** The subject's topics in runs under the notice's headings ("Física"), in its order. */
+/** The subject's topics in runs under the notice's headings ("Physics"), in its order. */
 type HeadingRun = { heading: string | null; topics: SyllabusTopic[] };
 
 function splitByHeading(topics: readonly SyllabusTopic[]): HeadingRun[] {
@@ -343,7 +283,7 @@ const getHeadingId = (index: number) => `subject-topics-heading-${index}`;
 /**
  * A subject's topics as the notice's own outline, in its words, numbers and order: each top-level
  * item one line with its tick, opening to the items under it and the chapters that teach them.
- * Under the notice's own headings ("Física", "Química", "Biologia") when it has them, each a
+ * Under the notice's own headings ("Physics", "Chemistry", "Biology") when it has them, each a
  * label over its own list. "Appears a lot" marks the items past exams asked most, when it sets
  * some apart.
  */

@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
+import { planChangedSinceSchema } from "@zoonk/core/plans/changed-since-contract";
 import { planTimeAdviceSchema } from "@zoonk/core/plans/time-advice-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
@@ -29,11 +30,14 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
 const LESSONS = 12;
+const LESSONS_PER_DAY = 4;
 const DAY_MS = 86_400_000;
+const HOUR_MS = 3_600_000;
 
 /**
  * A goal whose plan has its skill graph (what the goal-driven workflow writes) and a Library chapter
- * with twelve 3-minute lessons for its one skill, for a public course.
+ * with twelve 3-minute lessons for its one skill, for a public course, planned four a day from today
+ * as the planner lays them out at 12 minutes a day.
  */
 async function createPlannedGoal(userId: string) {
   const [course, chapter, skill] = await Promise.all([
@@ -84,6 +88,21 @@ async function createPlannedGoal(userId: string) {
     ],
   });
 
+  const today = Math.floor(Date.now() / DAY_MS) * DAY_MS;
+
+  await Promise.all(
+    lessons.map((lesson, position) =>
+      planItemFixture({
+        lessonId: lesson.id,
+        planId: plan.id,
+        position,
+        scheduledFor: new Date(today + Math.floor(position / LESSONS_PER_DAY) * DAY_MS),
+        skillId: skill.id,
+        titleSnapshot: lesson.title,
+      }),
+    ),
+  );
+
   return { chapter, course, goal, plan, skill };
 }
 
@@ -114,6 +133,7 @@ test.describe("Goals and plans API", () => {
       apiContext.patch(`/v1/goals/${goalId}`, { data: { title: "x" } }),
       apiContext.get(`/v1/goals/${goalId}/plan`),
       apiContext.get(`/v1/goals/${goalId}/plan/time-advice`),
+      apiContext.get(`/v1/goals/${goalId}/plan/changed-since?since=${new Date().toISOString()}`),
       apiContext.post(`/v1/goals/${goalId}/plan/changes`, {
         data: { operations: [{ kind: "setDailyMinutes", minutes: 20 }] },
       }),
@@ -307,11 +327,13 @@ test.describe("Goals and plans API", () => {
       where: { id: goal.id },
     });
 
-    const [everyDay, weekdays, plan, invalid, hidden] = await Promise.all([
+    const [everyDay, weekdays, weekend, plan, invalid, tooLong, hidden] = await Promise.all([
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice`),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=1,2,3,4,5`),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=120`),
       apiContext.get(`/v1/goals/${goal.id}/plan`),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=7`),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=999`),
       apiContext.get(`/v1/goals/${other.goal.id}/plan/time-advice`),
     ]);
 
@@ -328,7 +350,59 @@ test.describe("Goals and plans API", () => {
       readBody({ response: weekdays, schema: planTimeAdviceSchema }),
     ).resolves.toMatchObject({ ready: true });
 
-    expect([invalid.status(), hidden.status()]).toStrictEqual([400, 404]);
+    // The weekend's own time is part of the week asked about (core's tests check what it changes).
+    await expect(
+      readBody({ response: weekend, schema: planTimeAdviceSchema }),
+    ).resolves.toMatchObject({ ready: true });
+
+    expect([invalid.status(), tooLong.status(), hidden.status()]).toStrictEqual([400, 400, 404]);
+    await apiContext.dispose();
+  });
+
+  test("says whether a plan changed since the client read it, for a screen waiting on lessons", async () => {
+    const [{ apiContext, user }, stranger] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "plans-changed-since" }),
+      userFixture(),
+    ]);
+
+    const [{ goal }, other] = await Promise.all([
+      createPlannedGoal(user.id),
+      createPlannedGoal(stranger.id),
+    ]);
+
+    // Core's tests cover which writes count; here, a read from before the plan was saved and one
+    // from after it (writes up to two seconds before a read still count).
+    const before = new Date(Date.now() - HOUR_MS).toISOString();
+    const after = new Date(Date.now() + 5000).toISOString();
+    const path = `/v1/goals/${goal.id}/plan/changed-since`;
+
+    const [changed, unchanged, today, invalidTime, invalidWatch, missing, hidden] =
+      await Promise.all([
+        apiContext.get(`${path}?since=${before}`),
+        apiContext.get(`${path}?since=${after}`),
+        apiContext.get(`${path}?since=${after}&watch=today`),
+        apiContext.get(`${path}?since=yesterday`),
+        apiContext.get(`${path}?since=${after}&watch=week`),
+        apiContext.get(path),
+        apiContext.get(`/v1/goals/${other.goal.id}/plan/changed-since?since=${before}`),
+      ]);
+
+    await expect(
+      readBody({ response: changed, schema: planChangedSinceSchema }),
+    ).resolves.toStrictEqual({ changed: true });
+
+    await expect(
+      readBody({ response: unchanged, schema: planChangedSinceSchema }),
+    ).resolves.toStrictEqual({ changed: false });
+
+    await expect(
+      readBody({ response: today, schema: planChangedSinceSchema }),
+    ).resolves.toStrictEqual({ changed: false });
+
+    expect(
+      [invalidTime, invalidWatch, missing, hidden].map((response) => response.status()),
+    ).toStrictEqual([400, 400, 400, 404]);
+
     await apiContext.dispose();
   });
 

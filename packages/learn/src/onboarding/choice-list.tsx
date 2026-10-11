@@ -16,7 +16,8 @@ import {
 export type Choice<Value extends string> = {
   description?: string;
   icon?: React.ReactNode;
-  label: string;
+  /** Text, or a question's option with its emphasis (`ItemLine`). */
+  label: React.ReactNode;
   value: Value;
 };
 

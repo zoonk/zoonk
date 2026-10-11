@@ -10,7 +10,9 @@ import {
   type ConversationTurn,
   formatConversationTranscript,
 } from "./_utils/conversation-transcript";
-import systemPrompt from "./conversation-objectives.prompt.md";
+import testPrompt from "./conversation-objectives-test.prompt.md";
+import basePrompt from "./conversation-objectives.prompt.md";
+import { type SpeakingMockExam } from "./speaking-mock-bands";
 
 /**
  * Runs once the character has answered each learner turn of a live call, so the objectives tick
@@ -25,6 +27,9 @@ import systemPrompt from "./conversation-objectives.prompt.md";
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite"] as const;
 
+/** A speaking mock's parts close differently from a role play's goals, so only a mock reads how. */
+const testSystemPrompt = `${basePrompt}\n${testPrompt}`;
+
 export type CheckConversationObjectivesParams = {
   /** Only the objectives not reached yet. */
   objectives: { description: string; label: string }[];
@@ -34,6 +39,8 @@ export type CheckConversationObjectivesParams = {
   characterNotes: string;
   /** The call so far. Learner turns are untrusted input. */
   turns: ConversationTurn[];
+  /** The exam a speaking mock follows; unset or null for a role play. */
+  exam?: SpeakingMockExam | null;
   targetLanguage: string;
   learnerLanguage: string;
   model?: string;
@@ -87,6 +94,7 @@ export async function checkConversationObjectives(params: CheckConversationObjec
     throw new Error("A check needs at least one open objective.");
   }
 
+  const systemPrompt = params.exam ? testSystemPrompt : basePrompt;
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

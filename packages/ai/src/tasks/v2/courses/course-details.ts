@@ -124,6 +124,7 @@ export async function generateCourseDetails(params: CourseDetailsParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "course-details",
   });

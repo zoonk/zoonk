@@ -2,7 +2,8 @@ import "server-only";
 import { type CourseLevel, type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
-import { isPlanFinished, loadPlanCourse } from "../plans/_utils/plan-course";
+import { loadPlanCourse } from "../plans/_utils/plan-course";
+import { isPlanOver } from "../plans/_utils/plan-end";
 import { parsePlanSettings } from "../plans/planner/plan-state";
 import { trackGoalReached } from "./_utils/track-goal-reached";
 import { createGoals } from "./create-goals";
@@ -70,7 +71,7 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
     where: { plan: { goalId } },
   });
 
-  if (!isPlanFinished(items)) {
+  if (!isPlanOver(items)) {
     return { status: "notFinished" };
   }
 

@@ -37,8 +37,11 @@ export type LanguageLevelTestActions = {
    * learner's tap (Start or Try again), never when the screen opens. False when it couldn't start.
    */
   prepare: () => Promise<boolean>;
-  /** The sentence out loud; "noSpeech" when nothing was heard. */
-  speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | null>;
+  /**
+   * The sentence out loud; "noSpeech" when nothing was heard, "signUpRequired" when a guest is
+   * asked to create an account (the day's AI budget all guests share is spent).
+   */
+  speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null>;
   /** Shows the app in the learner's own language. */
   switchLanguage: (language: string) => void;
 };

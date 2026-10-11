@@ -5,18 +5,21 @@ import { FlagIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSectionFooter } from "../_components/page";
 import { getSourceHost } from "../_utils/source-host";
+import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { FrequencyChip, setsApart } from "./frequency-chip";
 import { type SubjectGroup } from "./group-subjects";
 
 /**
- * A group's heading: the notice's own ("Conhecimentos básicos (P1)"), "Beyond the notice" for the
+ * A group's heading: the notice's own ("Basic knowledge (P1)"), "Beyond the notice" for the
  * areas the plan adds outside it, or "Also in your plan" when the subjects come from the learner's
  * own material rather than a notice.
  */
 export function useGroupName({
+  document,
   fromMaterial,
   group,
 }: {
+  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   group: SubjectGroup;
 }): string | null {
@@ -26,12 +29,16 @@ export function useGroupName({
     return group.name;
   }
 
-  return fromMaterial ? t("Also in your plan") : t("Beyond the notice");
+  return fromMaterial
+    ? t("Also in your plan")
+    : t("{document, select, notice {Beyond the notice} other {Beyond the official guide}}", {
+        document,
+      });
 }
 
 /**
  * Where the subjects' question counts come from when the notice gives none: "Questions per subject
- * in the 45º Exame, as counted by example.com", linked to the page.
+ * in the 45th Exam, as counted by example.com", linked to the page.
  */
 export function QuestionsSourceNote({ source }: { source: SyllabusView["questionsSource"] }) {
   const t = useExtracted();
@@ -78,7 +85,7 @@ function frequencyTag() {
  * topics past exams asked most, when it sets some apart, and the plan gives them more of the
  * learner's time; when time is short the ones asked least wait. The source is cited when a lookup
  * found it; a reading of the exam's past papers has none to cite. In the learner's own material,
- * it marks the topics their notes stressed ("CAI MUITO!!").
+ * it marks the topics their notes stressed ("ALWAYS ON THE TEST!!").
  */
 export function TopicFrequencyNote({
   fromMaterial,
@@ -157,7 +164,7 @@ export function TopicFrequencyNote({
   );
 }
 
-/** A source's site, not its page title: page titles run long ("Termo de Adesão da UFMG ao SiSU…"). */
+/** A source's site, not its page title: page titles run long ("UFMG's terms of participation in SiSU…"). */
 /** The parts of the exam the learner's course weighs more than the others, by their short names. */
 function getHeavierParts({
   subjects,
@@ -175,7 +182,7 @@ function getHeavierParts({
 
 /**
  * How the learner's course weighs the exam's parts at their institution, under the card, with
- * where the weights come from: "Medicina at UFMG counts Natureza and Redação more, so your plan
+ * where the weights come from: "Medicine at UFMG counts natural sciences and the essay more, so your plan
  * gives them more of your time. Weights from ufmg.br."
  */
 export function CourseWeightsNote({
@@ -228,20 +235,26 @@ export function CourseWeightsNote({
   );
 }
 
-/** What it takes to pass, as the notice says it, under the card: said once, where the plan starts. */
-export function PassMarks({ passMarks }: { passMarks: readonly string[] }) {
-  if (passMarks.length === 0) {
+/**
+ * What it takes to pass, as the notice says it, under the card: said once, where the plan starts,
+ * with its language when it isn't the learner's.
+ */
+export function PassMarks({ passMarks }: { passMarks: SyllabusView["passMarks"] }) {
+  const note = usePassMarksNote(passMarks);
+
+  if (!passMarks) {
     return null;
   }
 
   return (
     <ul className="text-muted-foreground flex flex-col gap-1 px-1 text-sm">
-      {passMarks.map((passMark) => (
-        <li className="flex items-start gap-2" key={passMark}>
+      {passMarks.texts.map((text) => (
+        <li className="flex items-start gap-2" key={text}>
           <FlagIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-          <span>{passMark}</span>
+          <span lang={passMarks.language}>{text}</span>
         </li>
       ))}
+      {note && <li className="pl-6">{note}</li>}
     </ul>
   );
 }

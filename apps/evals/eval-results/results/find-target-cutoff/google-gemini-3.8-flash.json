@@ -54,6 +54,60 @@
           "today": "2026-10-07"
         }
       }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "range": { "max": 120, "min": 40 } },
+        "id": "pt-concurso-pf-agente-1",
+        "userInput": {
+          "course": null,
+          "exam": "Concurso Polícia Federal, Agente de Polícia Federal",
+          "institution": null,
+          "position": "Agente de Polícia Federal",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "range": null },
+        "id": "en-position-made-up-exam-1",
+        "userInput": {
+          "course": null,
+          "exam": "Northern Plains Civil Service Exam, Junior Records Officer",
+          "institution": null,
+          "position": "Junior Records Officer",
+          "today": "2026-10-07"
+        }
+      }
+    },
+    {
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "maxScore": 10, "range": { "max": 10, "min": 5 } },
+        "id": "pt-concurso-tjsp-escrevente-1",
+        "userInput": {
+          "course": null,
+          "exam": "Concurso TJ-SP, Escrevente Técnico Judiciário",
+          "institution": null,
+          "position": "Escrevente Técnico Judiciário",
+          "today": "2026-10-07"
+        }
+      }
     }
   ],
   "taskId": "find-target-cutoff"

@@ -3,7 +3,9 @@
 /// `ai_calls`, by `runId`. `input` holds the fields the model read only for tasks whose text is
 /// stored elsewhere anyway (a goal's prompt, a tutor question, Library titles); tasks that read text
 /// nobody keeps, like memory candidates, store only `inputHash`. Rows are kept 30 days for audits,
-/// threshold tuning and eval sampling, and go away with their learner or goal.
+/// threshold tuning and eval sampling. A run that read a learner's own text (`personal`) goes away
+/// with its learner or goal; a run deciding about shared Library content is linked to neither, so
+/// deleting the learner whose request started it keeps it.
 model EvaluationRun {
   id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   task           String

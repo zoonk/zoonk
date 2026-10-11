@@ -65,12 +65,31 @@ export const TEST_CASES: UnderstandGoalCase[] = [
           ownLevel: "intermediate",
           role: /dados/iu,
           targetLanguage: "en",
-          targetLevel: /B2/u,
+          targetScore: /B2/u,
         },
       ],
       route: "goals",
     },
     goal: "preciso falar inglês numa entrevista de emprego em toronto daqui a 3 meses. sou analista de dados e meu inglês é intermediário",
+    language: "pt",
+  }),
+  // Persona pass 9: the course came back as "medicina", so a sentence opened "medicina na UFMG…".
+  testCase("pt-exam-enem-medicina-ufmg", {
+    expected: {
+      goals: [
+        {
+          examName: /enem/iu,
+          examTarget: "admission",
+          hasTargetDate: false,
+          institution: /^UFMG$/u,
+          kind: "exam",
+          targetCourse: /^Medicina$/u,
+          targetScore: /750/u,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "quero tirar 750 no enem pra passar em medicina na ufmg",
     language: "pt",
   }),
   testCase("pt-explain-microwave", {
@@ -134,12 +153,30 @@ export const TEST_CASES: UnderstandGoalCase[] = [
           hasTarget: true,
           kind: "exam",
           month: "2027-03",
+          targetLanguage: "en",
         },
       ],
       route: "goals",
     },
     goal: "get band 7 on the IELTS by March",
     language: "en",
+  }),
+  // A language certificate's goal needs the language it certifies: its speaking paper is a call in it.
+  testCase("pt-exam-dele-b2-language", {
+    expected: {
+      goals: [{ examName: /dele/iu, kind: "exam", targetLanguage: "es" }],
+      route: "goals",
+    },
+    goal: "quero passar no DELE B2 em maio do ano que vem",
+    language: "pt",
+  }),
+  testCase("pt-exam-goethe-b1-language", {
+    expected: {
+      goals: [{ examName: /goethe/iu, kind: "exam", targetLanguage: "de" }],
+      route: "goals",
+    },
+    goal: "preciso do Goethe-Zertifikat B1 pra visto de trabalho na Alemanha",
+    language: "pt",
   }),
   testCase("en-learn-work-minutes", {
     expected: { dailyMinutes: 20, goals: [{ kind: "learn", purpose: "work" }], route: "goals" },

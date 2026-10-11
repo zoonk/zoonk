@@ -73,6 +73,68 @@ async function saveAndDraw({
   return saved;
 }
 
+type GoFurtherCourse = Awaited<ReturnType<typeof findGoFurtherCourseStep>>;
+
+/**
+ * Links the subject's Overview course to the goal and its explanation for "Want to go further?",
+ * outlining its overview band in the background when the course is new.
+ */
+async function linkGoFurther({
+  course,
+  goal,
+  lessonId,
+}: {
+  course: GoFurtherCourse;
+  goal: { id: string; language: string };
+  lessonId: string;
+}): Promise<void> {
+  if (course?.created) {
+    const scope = {
+      generalGoal: null,
+      language: goal.language,
+      ownerId: null,
+      targetLanguage: null,
+    };
+
+    await start(courseOutlineWorkflow, [
+      { bands: [{ level: "overview", skills: [] }], courseId: course.courseId, scope },
+    ]);
+  }
+
+  if (course) {
+    await linkGoFurtherCourseStep({ courseId: course.courseId, goalId: goal.id, lessonId });
+  }
+}
+
+/**
+ * An explanation a guest asked first has no course to go further, since a guest's question never
+ * makes one: the next learner's run finds it from the explanation it wrote meanwhile, for them and
+ * everyone after. Nothing when that writing failed.
+ */
+async function completeGoFurther({
+  goal,
+  lessonId,
+  writing,
+}: {
+  goal: WriteContext["goal"];
+  lessonId: string;
+  writing: ReturnType<typeof writeChecked>;
+}): Promise<void> {
+  const written = await writing.catch(() => null);
+
+  if (!written || written.problems.length > 0) {
+    return;
+  }
+
+  const course = await findGoFurtherCourseStep({
+    language: goal.language,
+    provenance: written.provenance,
+    title: written.explanation.goFurther.overviewCourse,
+  });
+
+  await linkGoFurther({ course, goal, lessonId });
+}
+
 async function finish(result: ExplainQuestionResult): Promise<ExplainQuestionResult> {
   const succeeded = result.status === "ready" || result.status === "reused";
 
@@ -162,7 +224,14 @@ export async function explainQuestionWorkflow({
       title: goal.title,
     });
 
-    return finish({ goalId, lessonId: skill.existingLessonId, status: "reused" });
+    const reused = await finish({ goalId, lessonId: skill.existingLessonId, status: "reused" });
+
+    // Once the learner is reading, like a new explanation's course.
+    if (!goFurther.courseId && !goal.isGuest) {
+      await completeGoFurther({ goal, lessonId: skill.existingLessonId, writing });
+    }
+
+    return reused;
   }
 
   const written = await writing;
@@ -190,22 +259,7 @@ export async function explainQuestionWorkflow({
         }),
   ]);
 
-  if (course?.created) {
-    const scope = {
-      generalGoal: null,
-      language: goal.language,
-      ownerId: null,
-      targetLanguage: null,
-    };
-
-    await start(courseOutlineWorkflow, [
-      { bands: [{ level: "overview", skills: [] }], courseId: course.courseId, scope },
-    ]);
-  }
-
-  if (course) {
-    await linkGoFurtherCourseStep({ courseId: course.courseId, goalId });
-  }
+  await linkGoFurther({ course, goal, lessonId: saved.lessonId });
 
   return finish({ goalId, lessonId: saved.lessonId, status: "ready" });
 }

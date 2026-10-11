@@ -1,4 +1,3 @@
-import { underMinimumAgeError } from "@/lib/access-error-codes";
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
@@ -30,10 +29,6 @@ async function createOnboardingAnswer(
 
   const { goalId } = path.data;
   const result = await answerOnboardingQuestion({ goalId, input: body.data });
-
-  if (result.status === "accountDeleted") {
-    return underMinimumAgeError();
-  }
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

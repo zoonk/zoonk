@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { type BlockCapsule, getBlockItemIds, toBlockPayload } from "./block-payload";
+import { getPracticeShare } from "./practice-share";
 import {
   type PlannedCheckpoint,
   type PlannedLesson,
   type SessionBuildInput,
   buildSessionBlocks,
-  getPracticeShare,
 } from "./session-builder";
 
 function capsule(key: string, questions = 3): BlockCapsule {
@@ -58,7 +58,7 @@ function getScoring(input: SessionBuildInput) {
 
 const baseInput: SessionBuildInput = {
   capsules: [capsule("a"), capsule("b"), capsule("c")],
-  checkpoint: null,
+  checkpoints: [],
   dailyMinutes: 45,
   drills: [
     {
@@ -81,6 +81,11 @@ const baseInput: SessionBuildInput = {
   remainingLimitMinutes: null,
   reviewPlanItemId: null,
 };
+
+/** The day's practice block's payload, where a full review is marked. */
+function getFullReview(input: SessionBuildInput) {
+  return buildSessionBlocks(input).blocks.find((block) => block.kind === "practice")?.payload;
+}
 
 describe(buildSessionBlocks, () => {
   it("builds an easy start, the hard middle and fits the day", () => {
@@ -142,7 +147,7 @@ describe(buildSessionBlocks, () => {
   it("puts reinforcement lessons before a boss rematch and waits on new lessons", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
-      checkpoint: boss,
+      checkpoints: [boss],
       reinforcement: [lesson("r1", 3), lesson("r2", 3)],
     });
 
@@ -166,10 +171,27 @@ describe(buildSessionBlocks, () => {
     });
   });
 
+  // A phase's last lessons can share its challenge's day: they come first, and only the lessons
+  // past the challenge wait. Held back too, they came after the challenge that tests them (R40).
+  it("gives the lessons its plan has before a challenge on its day first, and waits on the rest", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [boss],
+      lessons: [{ ...lesson("l1", 5), beforeChallenge: true }, lesson("l2", 10)],
+    });
+
+    expect(blocks.map((block) => [block.kind, block.lessonId])).toStrictEqual([
+      ["review", null],
+      ["learn", "l1"],
+      ["practice", null],
+      ["checkpoint", null],
+    ]);
+  });
+
   it("never holds new lessons back on a rematch, so a lost boss locks nothing", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
-      checkpoint: { ...boss, rematch: true },
+      checkpoints: [{ ...boss, rematch: true }],
       reinforcement: [lesson("r1", 3), lesson("r2", 3)],
     });
 
@@ -210,6 +232,19 @@ describe(buildSessionBlocks, () => {
     expect(new Set(review?.skillIds)).toStrictEqual(new Set(skills));
   });
 
+  // Pedro's day before (round 9): the quick review took the last questions of the plant cell
+  // skill, so practice asked every other skill and the day read as plain practice.
+  it("counts the skills the day's quick review asks toward its full review", () => {
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      dailyMinutes: 30,
+      fullReviewSkillIds: ["s0", "s1", "s2", "a-skill"],
+    });
+
+    expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
+    expect(blocks[1]?.payload.fullReview).toBe(true);
+  });
+
   it("doesn't call a day's practice a full review when it can't ask every skill", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
@@ -219,6 +254,50 @@ describe(buildSessionBlocks, () => {
 
     expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
     expect(blocks[1]?.payload.fullReview).toBe(false);
+  });
+
+  describe("a full review on a day with little time", () => {
+    const skills = Array.from({ length: 11 }, (_, index) => `t${index}`);
+
+    // Every skill in turn, as practice orders a full review's questions.
+    const pool = Array.from({ length: 33 }, (_, index) => ({
+      itemId: `t-q${index}`,
+      skillId: `t${index % 11}`,
+    }));
+
+    const fullReviewDay: SessionBuildInput = {
+      ...baseInput,
+      capsules: [capsule("a")],
+      dailyMinutes: 25,
+      drills: [],
+      fullReviewSkillIds: skills,
+      practice: pool,
+    };
+
+    // Pedro skipped five days and came back on his class test's eve: the welcome back made the day
+    // 10 minutes, 5 questions on 3 of his 11 topics, and the day read as plain practice.
+    it("keeps the day before's full review whole on a welcome back", () => {
+      const review = getFullReview({ ...fullReviewDay, freshStart: "welcomeBack" });
+
+      expect(review?.fullReview).toBe(true);
+      expect(new Set(review?.skillIds)).toStrictEqual(new Set(skills));
+    });
+
+    it("asks every skill once when the day's minutes hold fewer questions", () => {
+      const review = getFullReview({ ...fullReviewDay, dailyMinutes: 10 });
+
+      expect(review?.fullReview).toBe(true);
+    });
+
+    it("stays within the learner's daily limit", () => {
+      const { plannedMinutes } = buildSessionBlocks({
+        ...fullReviewDay,
+        dailyMinutes: 10,
+        remainingLimitMinutes: 10,
+      });
+
+      expect(plannedMinutes).toBeLessThanOrEqual(10);
+    });
   });
 
   it("scores mixed practice net for exams where a wrong answer cancels a right one", () => {
@@ -236,14 +315,18 @@ describe(buildSessionBlocks, () => {
   });
 
   it("keeps reviews and mistake fixes free when a free exam trial has ended", () => {
-    const { blocks } = buildSessionBlocks({ ...baseInput, checkpoint: boss, examTrialEnded: true });
+    const { blocks } = buildSessionBlocks({
+      ...baseInput,
+      checkpoints: [boss],
+      examTrialEnded: true,
+    });
 
     expect(blocks.map((block) => block.kind)).toStrictEqual(["review", "practice"]);
     expect(blocks[1]?.payload.itemIds).toStrictEqual([]);
     expect(blocks[1]?.payload.drills).toHaveLength(1);
   });
 
-  it("fits a guardian's daily limit and builds nothing once it's reached", () => {
+  it("fits the learner's daily limit and builds nothing once it's reached", () => {
     const limited = buildSessionBlocks({ ...baseInput, remainingLimitMinutes: 12 });
     expect(limited.plannedMinutes).toBeLessThanOrEqual(12);
 
@@ -296,6 +379,34 @@ describe(buildSessionBlocks, () => {
 
     expect(blocks.map((block) => block.kind)).toStrictEqual(["practice"]);
     expect(plannedMinutes).toBe(30);
+  });
+
+  it("asks a question set whole or leaves it for another day, never cut", () => {
+    const passage = Array.from({ length: 4 }, (_, index) => ({
+      itemId: `passage-q${index}`,
+      setId: "passage",
+      skillId: "s0",
+    }));
+
+    const withSet = {
+      ...baseInput,
+      capsules: [],
+      drills: [],
+      lessons: [],
+      practice: [practice[0], ...passage, practice[1], practice[2]].filter(
+        (item) => item !== undefined,
+      ),
+    };
+
+    const getAsked = (minutes: number) =>
+      buildSessionBlocks({ ...withSet, remainingLimitMinutes: minutes }).blocks.find(
+        (block) => block.kind === "practice",
+      )?.payload.itemIds;
+
+    // Room for four questions: the passage's four with the first one wouldn't fit.
+    expect(getAsked(6)).toStrictEqual(["p0", "p1", "p2"]);
+
+    expect(getAsked(9)).toStrictEqual(["p0", ...passage.map((item) => item.itemId), "p1"]);
   });
 });
 

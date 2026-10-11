@@ -1,14 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { getOnboardingSteps } from "./onboarding-steps";
 
-const NEW_PROFILE = { asksMemory: false, hasBirth: false, hasBuddy: false, hasEarlierGoals: false };
+const NEW_PROFILE = { hasBuddy: false, hasEarlierGoals: false };
 
-const SET_UP_PROFILE = {
-  asksMemory: false,
-  hasBirth: true,
-  hasBuddy: false,
-  hasEarlierGoals: true,
-};
+const SET_UP_PROFILE = { hasBuddy: false, hasEarlierGoals: true };
 
 /** The steps of an exam goal whose words gave these details. */
 function examSteps(details: Record<string, unknown>) {
@@ -29,7 +24,6 @@ describe(getOnboardingSteps, () => {
       "purpose",
       "targetDate",
       "level",
-      "age",
       "buddy",
       "placement",
       "schedule",
@@ -118,8 +112,8 @@ describe(getOnboardingSteps, () => {
     expect(withTarget).toStrictEqual(["level", "placement", "schedule", "plan"]);
   });
 
-  it("asks only for the target the exam has: a position for a concurso, nothing for a pass", () => {
-    // A concurso that named its position, one that didn't, and the OAB, which is only passed.
+  it("asks only for the target the exam has: a position for a civil service exam, nothing for a pass", () => {
+    // A civil service exam that named its position, one that didn't, and the OAB, which is only passed.
     expect(examSteps({ examTarget: "position", targetPosition: "Agente" })).not.toContain("target");
     expect(examSteps({ examTarget: "position", targetScore: "80 pontos" })[0]).toBe("target");
     expect(examSteps({ examName: "OAB" })).not.toContain("target");
@@ -202,7 +196,7 @@ describe(getOnboardingSteps, () => {
   it("remembers a buddy answer, picked or skipped", () => {
     expect(
       getOnboardingSteps({
-        goal: { details: { answered: ["buddy", "age"] }, kind: "learn", targetDate: null },
+        goal: { details: { answered: ["buddy"] }, kind: "learn", targetDate: null },
         profile: NEW_PROFILE,
       }),
     ).not.toContain("buddy");
@@ -214,7 +208,7 @@ describe(getOnboardingSteps, () => {
       profile: NEW_PROFILE,
     });
 
-    expect(steps).toStrictEqual(["level", "age", "buddy", "placement", "schedule", "plan"]);
+    expect(steps).toStrictEqual(["level", "buddy", "placement", "schedule", "plan"]);
   });
 
   it("gives a language course its level test, without asking why they learn it", () => {

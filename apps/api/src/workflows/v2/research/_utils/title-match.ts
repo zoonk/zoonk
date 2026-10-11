@@ -1,6 +1,6 @@
 import { removeAccents } from "@zoonk/utils/string";
 
-/** Words this short ("de", "nº", "of") appear in every title. */
+/** Words this short ("of", "in", "to") appear in every title. */
 const MIN_WORD_LENGTH = 3;
 const MIN_SHARED_WORDS = 0.6;
 const WORD_PATTERN = /[\p{L}\p{N}]+/gu;

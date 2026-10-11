@@ -30,23 +30,17 @@ export type MemoryGateVerdict = {
 };
 
 /**
- * Turns the gate's three probabilities into one verdict. `allowSensitive` is false for minors and
- * learners of unknown age, whose memory never holds sensitive facts, even when they ask.
+ * Turns the gate's three probabilities into one verdict: a sensitive fact stays only when the
+ * learner clearly asked to keep it.
  */
-export function decideMemoryGate({
-  allowSensitive,
-  probabilities,
-}: {
-  allowSensitive: boolean;
-  probabilities: MemoryGateProbabilities;
-}): MemoryGateVerdict {
+export function decideMemoryGate(probabilities: MemoryGateProbabilities): MemoryGateVerdict {
   const sensitive = probabilities.sensitive >= SENSITIVE_AT;
 
   if (probabilities.lasting < LASTING_AT) {
     return { decision: "notLasting", sensitive };
   }
 
-  if (sensitive && !(allowSensitive && probabilities.explicitlyAsked >= EXPLICITLY_ASKED_AT)) {
+  if (sensitive && probabilities.explicitlyAsked < EXPLICITLY_ASKED_AT) {
     return { decision: "sensitive", sensitive };
   }
 

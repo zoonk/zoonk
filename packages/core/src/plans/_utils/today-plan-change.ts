@@ -1,9 +1,16 @@
 import "server-only";
-import { type PlanChange, prisma } from "@zoonk/db";
+import { type Goal, type PlanChange, prisma } from "@zoonk/db";
 import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
+import { parsePlanGraph } from "../planner/plan-state";
+import { isPlanReady } from "./apply-plan-change";
+import { getBehindChoices } from "./falling-behind";
+import { foldChangeAreas } from "./fold-part-areas";
+import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
-import { toPlanChangeView } from "./plan-change-view";
+import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
+import { loadPlanContext } from "./plan-context";
+import { computePlan } from "./replan";
 
 /** An automatic change is news for a day; after that it's simply how the plan is. */
 const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
@@ -23,15 +30,18 @@ export type TodayPlanChangeView = PlanChangeView & { chapterTitle: string | null
 
 /**
  * Lessons earlier days left coming first is what Today's list already shows; it's news only when
- * falling behind puts the date at risk, and the learner chooses what to do about it.
+ * falling behind puts the date at risk, and the learner chooses what to do about it, or when it
+ * moves topics in or out of the plan, which Today names. A quiet kind (a sharper estimate, a goal
+ * back from a pause) is news only then too.
  */
 function isAutomatic(change: PlanChange): boolean {
-  const { behind, source } = parsePlanChangePayload(change.payload);
+  const { behind, effect, source } = parsePlanChangePayload(change.payload);
+  const movesTopics = (effect?.topicsLeftOut?.length ?? 0) + (effect?.topicsAdded?.length ?? 0) > 0;
 
   return (
-    !QUIET_KINDS.has(change.kind) &&
     !LEARNER_SOURCES.has(source) &&
-    (change.kind !== "missedDays" || behind !== null)
+    (movesTopics ||
+      (!QUIET_KINDS.has(change.kind) && (change.kind !== "missedDays" || behind !== null)))
   );
 }
 
@@ -84,20 +94,59 @@ async function findTodayChange({ now, planId }: { now: Date; planId: string }) {
   );
 }
 
+type Behind = NonNullable<PlanChangeView["behind"]>;
+
+/**
+ * Falling behind's choices as the plan offers them now, as the Journey reads them: the plan can
+ * move after the day's settle (lessons written, a session ended), and Rafaela's card said "about
+ * 54%" beside her Journey's "about 55%". What the missed days did (covered before and after)
+ * stays the settle's.
+ */
+async function loadCurrentBehind({
+  behind,
+  goal,
+  now,
+  timeZone,
+}: {
+  behind: Behind;
+  goal: Goal;
+  now: Date;
+  timeZone?: string | null;
+}): Promise<Behind> {
+  const context = await loadPlanContext({ goal, now, timeZone });
+
+  if (!context || context.phases.length === 0 || !isPlanReady(context)) {
+    return behind;
+  }
+
+  const computed = await computePlan({ context, mode: "automatic", now, pace: "saved" });
+
+  return { ...behind, ...getBehindChoices(computed) };
+}
+
 /**
  * The one plan change Today carries, so the learner can answer it where they are: OK or not now
  * for a proposal, and "Got it" (or an undo, while the plan is still as the change left it) for an
  * automatic change. Null when there's nothing to say.
  */
 export async function loadTodayPlanChange({
-  goalId,
+  goal,
   now,
+  timeZone,
 }: {
-  goalId: string;
+  goal: Goal;
   now: Date;
+  timeZone?: string | null;
 }): Promise<TodayPlanChangeView | null> {
+  const goalId = goal.id;
+
   const plan = await prisma.plan.findUnique({
-    select: { id: true, version: true },
+    select: {
+      goal: { select: { ...changeGoalSelect, examBlueprintId: true } },
+      graph: true,
+      id: true,
+      version: true,
+    },
     where: { goalId },
   });
 
@@ -107,8 +156,21 @@ export async function loadTodayPlanChange({
     return null;
   }
 
-  const { planItemIds } = parsePlanChangePayload(change.payload);
-  const chapterTitle = await loadSkippedChapterTitle({ kind: change.kind, planItemIds });
+  const { behind, planItemIds } = parsePlanChangePayload(change.payload);
 
-  return { ...toPlanChangeView({ change, planVersion: plan.version }), chapterTitle };
+  const [chapterTitle, partAreas, currentBehind] = await Promise.all([
+    loadSkippedChapterTitle({ kind: change.kind, planItemIds }),
+    loadGraphPartAreas({
+      examBlueprintId: plan.goal.examBlueprintId,
+      graph: parsePlanGraph(plan.graph),
+    }),
+    behind ? loadCurrentBehind({ behind, goal, now, timeZone }) : null,
+  ]);
+
+  const view = toPlanChangeView({ change, goal: plan.goal, planVersion: plan.version });
+
+  return {
+    ...foldChangeAreas({ change: { ...view, behind: currentBehind }, partAreas }),
+    chapterTitle,
+  };
 }

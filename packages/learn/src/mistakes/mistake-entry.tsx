@@ -4,7 +4,7 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ItemLine } from "../questions/item-text";
+import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { type MistakeEntry } from "./mistakes-notebook";
 import { useCauseLabel } from "./use-cause-label";
@@ -65,10 +65,18 @@ export function MistakeEntryCard({
       <p className="font-medium">
         <ItemLine text={snapshot.question} />
       </p>
-      {answer && <AnswerLine kind="learner">{answer}</AnswerLine>}
-      {correct && <AnswerLine kind="right">{correct}</AnswerLine>}
+      {answer && (
+        <AnswerLine kind="learner">
+          <ItemLine text={answer} />
+        </AnswerLine>
+      )}
+      {correct && (
+        <AnswerLine kind="right">
+          <ItemLine text={correct} />
+        </AnswerLine>
+      )}
       {snapshot.explanation && (
-        <p className="text-muted-foreground leading-relaxed">{snapshot.explanation}</p>
+        <ItemText className="text-muted-foreground leading-relaxed" text={snapshot.explanation} />
       )}
     </li>
   );

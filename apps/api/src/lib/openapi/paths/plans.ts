@@ -28,7 +28,7 @@ import {
 } from "../schemas/plans";
 import {
   conflictResponse,
-  forbiddenResponse,
+  guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
   tooManyRequestsResponse,
@@ -49,7 +49,7 @@ export const planPaths = {
   "/goals/{goalId}/plan": {
     get: {
       description:
-        "The plan at every zoom level: each phase with the current one chapter by chapter, this week day by day, the status (on track, ahead, a bit behind with the fix, or needs adjusting), the estimate and its pace, what fits in the learner's time and what more time would change, the areas to focus on or skip, and recent changes with proposals waiting for an OK. Free exam plans mark mocks and days past the first week as Plus.",
+        "The plan at every zoom level: each phase with the current one chapter by chapter, this week day by day, the status (the learner's pace against the plan: keeping pace, ahead, a bit behind with the fix, or needs adjusting), the estimate and its pace, what fits in the learner's time and what more time would change, the areas to focus on or skip, and recent changes with proposals waiting for an OK. Free exam plans mark mocks and days past the first week as Plus.",
       operationId: "getGoalPlan",
       requestParams: { path: goalPathParamsSchema },
       responses: {
@@ -67,7 +67,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/changes": {
     post: {
       description:
-        "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone. A change that only focuses on subjects and would move nothing isn't saved: it answers `unchanged` with the reason.",
+        "Applies a change the learner made in the plan: daily time, a weekday's time or a rest day, a light week, the date, areas to focus on (more time and depth, starting right away), skip or bring back, areas to start past their basics, or steering. It re-plans from today and can be undone. A change of focus alone (`focusAreas`, `reduceAreas`) that wouldn't do what it asks isn't saved: focusing on subjects that would move nothing, or more or less of some that would do the opposite in the plan the learner sees, answers `unchanged` with the reason.",
       operationId: "createPlanChange",
       requestBody: {
         content: { "application/json": { schema: planChangeInputSchema } },
@@ -172,7 +172,7 @@ export const planPaths = {
           }),
         },
         "402": paymentRequiredResponse,
-        "403": forbiddenResponse,
+        "403": guestRefusalResponse,
         "429": tooManyRequestsResponse,
       },
       security: AUTHENTICATED_SECURITY,
@@ -205,7 +205,7 @@ export const planPaths = {
   "/goals/{goalId}/plan/time-advice": {
     get: {
       description:
-        "The daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, on the study days asked about, or, when no daily time does, what the most time a day covers. The time question recommends and picks it first, and the plan says the same number once the learner chooses. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "The daily time the goal needs: the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), or, when no daily time does, what the most time a day covers. The time question recommends and picks it first, and the plan says the same number once the learner chooses. `ready` is false while the plan is being built: ask again in a few seconds.",
       operationId: "getPlanTimeAdvice",
       requestParams: { path: goalPathParamsSchema, query: planTimeAdviceQuerySchema },
       responses: {
@@ -282,6 +282,7 @@ export const planPaths = {
           content: { "application/json": { schema: goalSchema } },
           description: "The new goal",
         },
+        "403": guestRefusalResponse,
         "422": unprocessableEntityResponse,
         "429": tooManyRequestsResponse,
       },

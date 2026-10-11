@@ -62,19 +62,27 @@ export function useOpeningCue(openingLine: string) {
 /** How long a connected call may run, as the server set it when the call connected. */
 type CallLength = Pick<LanguageConversationSetup, "endsAtLimit" | "seconds">;
 
+/** What the app tells the voice model when the call has run this long, as an examiner keeps time. */
+type TimedCue = { atSeconds: number; say: string };
+
+const NO_CUES: readonly TimedCue[] = [];
+
 /**
  * The call's clock while it's live. It runs for the call's length, or for what the server let it
  * run when it connected (`startClock`), which is less when it reaches the plan's call time. Near
  * the end the character wraps up, and when that's the plan's call time running out, today's or this
  * month's, `limitNear` says which; just after the end the call ends on its own. A learner quiet for a while (nothing said
  * or typed, `markLearnerActive` marks both) is asked once whether they're there, and the call ends
- * if they stay quiet: the voice session is paid by the second, silence included.
+ * if they stay quiet: the voice session is paid by the second, silence included. An exam task's
+ * `cues` go out once each when the call has run that long (the examiner moving to the questions).
  */
 export function useCallClock({
+  cues = NO_CUES,
   hangUp,
   minutes,
   session,
 }: {
+  cues?: readonly TimedCue[];
   hangUp: () => void;
   minutes: number;
   session: LiveCallSession | null;
@@ -86,6 +94,7 @@ export function useCallClock({
   const wrappedUp = useRef(false);
   const lastLearnerAt = useRef(0);
   const nudged = useRef(false);
+  const cuesSent = useRef(0);
   const limitSeconds = length?.seconds ?? minutes * SECONDS_PER_MINUTE;
 
   const startClock = useCallback((connected: CallLength) => {
@@ -112,6 +121,13 @@ export function useCallClock({
       const quiet = (tick - lastLearnerAt.current) / MS_PER_SECOND;
       setNow(tick);
 
+      const cue = cues[cuesSent.current];
+
+      if (cue && !wrappedUp.current && elapsed >= cue.atSeconds) {
+        cuesSent.current += 1;
+        sendLiveCallCue({ content: cue.say, session });
+      }
+
       if (!wrappedUp.current && elapsed >= limitSeconds - WRAP_UP_SECONDS) {
         wrappedUp.current = true;
         setWrappingUp(true);
@@ -129,7 +145,7 @@ export function useCallClock({
     }, TICK_MS);
 
     return () => clearInterval(timer);
-  }, [hangUp, limitSeconds, session, startedAt]);
+  }, [cues, hangUp, limitSeconds, session, startedAt]);
 
   const elapsedSeconds = startedAt === null ? 0 : Math.floor((now - startedAt) / MS_PER_SECOND);
 

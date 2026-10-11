@@ -1,8 +1,7 @@
-import {
-  type MockPlan,
-  type MockWrittenPart,
-  countPlannedQuestions,
-} from "../exams/mocks/mock-plan";
+import { type MockTypedPart, listMockLeftOut } from "../exams/mocks/mock-left-out";
+import { type MockPlan, countPlannedQuestions } from "../exams/mocks/mock-plan";
+import { type MockLeftOut } from "../exams/mocks/mock-view-contract";
+import { type MockDayWrittenPart } from "../exams/mocks/written-parts";
 import { type ExamStructure } from "../library/exams/blueprint-contract";
 
 /**
@@ -26,13 +25,23 @@ export type MockConditions = {
    * what regular weeks hold.
    */
   fullLength: boolean;
+  /** What it leaves out of the real exam, each with why (see `MockLeftOut`). */
+  leftOut: MockLeftOut[];
   /** Wrong answers cancel right ones, as in Cebraspe exams: scored as a net score. */
   netScoring: boolean;
   questions: number;
-  sections: { minutes: number | null; name: string | null; questions: number | null }[];
+  sections: {
+    minutes: number | null;
+    name: string | null;
+    questions: number | null;
+    tools: string | null;
+  }[];
   timeLimitMinutes: number;
-  /** A full-length mock's written parts, as the notice states them (see `MockWrittenPart`). */
-  written: MockWrittenPart[];
+  /**
+   * A full-length mock's written parts, as the notice states them, each asked in the mock or left
+   * for essay practice (see `MockDayWrittenPart`).
+   */
+  written: MockDayWrittenPart[];
 };
 
 /**
@@ -42,15 +51,28 @@ export type MockConditions = {
 export function toMockConditions({
   plan,
   structure,
+  typed,
 }: {
   plan: MockPlan;
   structure: ExamStructure | null;
+  /** The exam's typed formats its bank asks (see `loadBankTypedParts`). */
+  typed: readonly MockTypedPart[];
 }): MockConditions {
   return {
     fullLength: plan.fullLength,
+    leftOut: listMockLeftOut({
+      asked: plan.written.filter((part) => part.asked).map((part) => part.name),
+      day: plan.day,
+      kind: plan.fullLength ? "full" : "half",
+      structure,
+      typed,
+    }),
     netScoring: isNetScored(structure),
     questions: countPlannedQuestions(plan),
-    sections: plan.sections.map(({ minutes, name, questions }) => ({ minutes, name, questions })),
+    // A written test with its own time is listed with the written parts, not as questions.
+    sections: plan.sections.flatMap(({ minutes, name, questions, tools }) =>
+      questions > 0 ? [{ minutes, name, questions, tools: tools ?? null }] : [],
+    ),
     timeLimitMinutes: plan.minutes,
     written: plan.written,
   };

@@ -15,8 +15,28 @@ import { type Preparation, usePreparationParts } from "./use-preparation-parts";
 import { type StillNeededItem, useStillNeeded } from "./use-still-needed";
 
 /**
- * The estimated score exists only after a mock exam, always as a range and always labeled
- * "Estimated", so it never reads as a promise.
+ * After mock exams that don't hold enough of the exam yet for an estimate (too few questions, or
+ * one subject at a time), one line says what it waits for, where the estimate will show.
+ */
+function EstimateWaits({ preparation }: { preparation: Preparation }) {
+  const t = useExtracted();
+  const { mocks } = preparation.components;
+
+  if (mocks.kind !== "mockExams" || mocks.taken === 0) {
+    return null;
+  }
+
+  return (
+    <p className="text-muted-foreground flex items-center gap-3 text-sm" data-slot="estimate-waits">
+      <KindTile kind="mock" size="sm" />
+      {t("Take more mock exams of the whole exam or half of it to see your estimated score.")}
+    </p>
+  );
+}
+
+/**
+ * The estimated score exists only once recent mock exams hold enough of the exam, always as a
+ * range and always labeled "Estimated", so it never reads as a promise.
  */
 function EstimatedScore({ preparation }: { preparation: Preparation }) {
   const t = useExtracted();
@@ -24,7 +44,7 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   const score = preparation.estimatedScore;
 
   if (!score) {
-    return null;
+    return <EstimateWaits preparation={preparation} />;
   }
 
   return (

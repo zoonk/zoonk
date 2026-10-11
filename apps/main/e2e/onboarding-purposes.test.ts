@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { expect, test } from "./fixtures";
 
@@ -20,6 +21,7 @@ test("work asks for the role and what it's used for there", async ({ page }) => 
       goals: [{ kind: "learn", subject: "statistics", title: "Learn statistics" }],
       route: "goals",
     },
+    userId: await ensureGuest(page),
   });
 
   await page.goto("/start");

@@ -6,6 +6,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { z } from "zod";
 import { ConversationClient } from "./conversation-client";
 
 type Props = PageProps<"/[lang]/conversation/[conversationId]">;
@@ -28,8 +29,8 @@ function ConversationSkeleton() {
   );
 }
 
-async function ConversationContent({ params }: Props) {
-  const { conversationId, lang } = await params;
+async function ConversationContent({ params, searchParams }: Props) {
+  const [{ conversationId, lang }, query] = await Promise.all([params, searchParams]);
 
   const result = await getLanguageConversation(conversationId);
 
@@ -43,14 +44,20 @@ async function ConversationContent({ params }: Props) {
 
   return (
     <MainLearnProvider>
-      <ConversationClient conversation={result.conversation} />
+      <ConversationClient
+        conversation={result.conversation}
+        fromExam={query.from === "exam"}
+        fromMock={z.uuid().safeParse(query.mock).data ?? null}
+      />
     </MainLearnProvider>
   );
 }
 
 /**
  * A live conversation, full screen like a lesson: a unit's practice call, a language goal's
- * checkpoint or a speaking mock, from its intro to its feedback.
+ * checkpoint, a speaking mock or an exam's speaking task, from its intro to its feedback.
+ * `?from=exam` leads back to the exam screen it was started from, and `?mock=` to the mock whose
+ * speaking section it's a task of.
  */
 export default function ConversationPage(props: Props) {
   return (

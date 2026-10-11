@@ -1,0 +1,93 @@
+import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
+
+const NATUREZA = "Ciências da Natureza e suas Tecnologias";
+const MATEMATICA = "Matemática e suas Tecnologias";
+
+/**
+ * Two subjects of the ENEM notice as the curriculum read it (Oct 2026), with the board's topic
+ * frequency: its natural sciences topics are the notice's own headings, where a graph once chained
+ * ecology behind tissues and the classification of living beings.
+ */
+export const ENEM_SCIENCE_BLUEPRINT: ExamOutline = {
+  name: "ENEM",
+  notes: [
+    "Format: Múltipla escolha com cinco alternativas, de A a E",
+    "Scoring: Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.",
+    "Rule: Cada questão tem uma única alternativa correta.",
+  ],
+  subjects: [
+    {
+      group: null,
+      name: NATUREZA,
+      questions: 45,
+      topics: [
+        "Conhecimentos básicos e fundamentais",
+        "O movimento, o equilíbrio e a descoberta de leis físicas",
+        "Energia, trabalho e potência",
+        "A Mecânica e o funcionamento do Universo",
+        "Fenômenos Elétricos e Magnéticos",
+        "Oscilações, ondas, óptica e radiação",
+        "O calor e os fenômenos térmicos",
+        "Transformações Químicas",
+        "Representação das transformações químicas",
+        "Materiais, suas propriedades e usos",
+        "Água",
+        "Transformações Químicas e Energia",
+        "Dinâmica das Transformações Químicas",
+        "Transformação Química e Equilíbrio",
+        "Compostos de Carbono",
+        "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+        "Energias Químicas no Cotidiano",
+        "Moléculas, células e tecidos",
+        "Hereditariedade e diversidade da vida",
+        "Identidade dos seres vivos",
+        "Ecologia e ciências ambientais",
+        "Origem e evolução da vida",
+        "Qualidade de vida das populações humanas",
+      ],
+      weight: null,
+    },
+    {
+      group: null,
+      name: MATEMATICA,
+      questions: 45,
+      topics: [
+        "Conhecimentos numéricos",
+        "Conhecimentos geométricos",
+        "Conhecimentos de estatística e probabilidade",
+        "Conhecimentos algébricos",
+        "Conhecimentos algébricos/geométricos",
+      ],
+      weight: null,
+    },
+  ],
+  topicFrequency: [
+    { level: "high", subject: MATEMATICA, topic: "Conhecimentos numéricos" },
+    { level: "high", subject: MATEMATICA, topic: "Conhecimentos de estatística e probabilidade" },
+    { level: "medium", subject: MATEMATICA, topic: "Conhecimentos algébricos" },
+    {
+      level: "medium",
+      subject: NATUREZA,
+      topic: "O movimento, o equilíbrio e a descoberta de leis físicas",
+    },
+    { level: "medium", subject: NATUREZA, topic: "Energia, trabalho e potência" },
+    { level: "high", subject: NATUREZA, topic: "Fenômenos Elétricos e Magnéticos" },
+    { level: "high", subject: NATUREZA, topic: "Oscilações, ondas, óptica e radiação" },
+    { level: "high", subject: NATUREZA, topic: "O calor e os fenômenos térmicos" },
+    { level: "medium", subject: NATUREZA, topic: "Transformações Químicas" },
+    { level: "medium", subject: NATUREZA, topic: "Materiais, suas propriedades e usos" },
+    { level: "low", subject: NATUREZA, topic: "Água" },
+    { level: "medium", subject: NATUREZA, topic: "Transformações Químicas e Energia" },
+    { level: "high", subject: NATUREZA, topic: "Dinâmica das Transformações Químicas" },
+    { level: "high", subject: NATUREZA, topic: "Compostos de Carbono" },
+    {
+      level: "high",
+      subject: NATUREZA,
+      topic: "Relações da Química com as Tecnologias, a Sociedade e o Meio Ambiente",
+    },
+    { level: "high", subject: NATUREZA, topic: "Moléculas, células e tecidos" },
+    { level: "high", subject: NATUREZA, topic: "Hereditariedade e diversidade da vida" },
+    { level: "high", subject: NATUREZA, topic: "Ecologia e ciências ambientais" },
+    { level: "high", subject: NATUREZA, topic: "Qualidade de vida das populações humanas" },
+  ],
+};

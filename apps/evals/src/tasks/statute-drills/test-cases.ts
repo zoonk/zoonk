@@ -5,8 +5,8 @@ type StatuteDrillsInput = Omit<StatuteDrillParams, "model" | "useFallback" | "re
 
 /**
  * Article texts are copied from the official sources in each case's `law.url`
- * (Sep 2026), without the site's editorial notes such as "(Redação dada pela
- * Emenda Constitucional nº 19, de 1998)". congress.gov blocks scripted reads,
+ * (Sep 2026), without the site's editorial notes such as "(Wording given by
+ * Constitutional Amendment No. 19 of 1998)". congress.gov blocks scripted reads,
  * so the Fifth Amendment comes from the National Archives transcript.
  */
 const CF88 = {

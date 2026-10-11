@@ -1,18 +1,24 @@
 import "server-only";
 import { recordLiveConversationUsage } from "@zoonk/ai/tasks/v2/language/live-conversation-usage";
-import { isCefrLevel, parseCefrScore } from "@zoonk/utils/cefr";
+import { type CefrLevel, isCefrLevel, parseCefrScore } from "@zoonk/utils/cefr";
 import { after } from "next/server";
 import { type AnalyticsEvent } from "../../analytics/events";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { settleCallTime } from "../../entitlements/settle-call-time";
-import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { getSession } from "../../users/get-session";
+import { getExamTaskEvidence } from "../exam-speaking/speaking-evidence";
 import { recordLanguageSkillEvidence } from "../levels/record-language-evidence";
+import { type LevelEvidence } from "../levels/skill-level-rules";
 import { trackCallCanDos } from "../units/can-do-events";
-import { reviewConversation } from "./_utils/conversation-feedback";
-import { readSavedScenario, toConversationView } from "./_utils/conversation-view";
+import { type WrittenFeedback, reviewConversation } from "./_utils/conversation-feedback";
+import {
+  type SavedScenario,
+  readSavedScenario,
+  toConversationView,
+} from "./_utils/conversation-view";
 import { settleConversation } from "./_utils/settle-conversation";
 import {
   type LanguageConversationCompletionInput,
@@ -55,8 +61,44 @@ function readCallRun({
   };
 }
 
+/**
+ * What the call says about the learner's speaking: its goals met at the level it ran at, or an exam
+ * task's criteria rated at the exam's level. A call where the learner said nothing says nothing.
+ */
+function getSpeakingEvidence({
+  feedback,
+  level,
+  objectivesMet,
+  scenario,
+  spokenSeconds,
+}: {
+  feedback: WrittenFeedback | null;
+  level: CefrLevel;
+  objectivesMet: number;
+  scenario: SavedScenario;
+  spokenSeconds: number;
+}): LevelEvidence | null {
+  if (spokenSeconds === 0) {
+    return null;
+  }
+
+  if (scenario.examTask) {
+    return getExamTaskEvidence({
+      feedback: feedback?.feedback.kind === "examSpeaking" ? feedback.feedback : null,
+      snapshot: scenario.examTask,
+    });
+  }
+
+  return {
+    ceiling: parseCefrScore(level) ?? 0,
+    correct: objectivesMet,
+    total: scenario.objectives.length,
+  };
+}
+
 const LEDGER_KIND = {
   checkpoint: "checkpoint",
+  examSpeaking: "exam_speaking",
   practice: "practice",
   speakingMock: "speaking_mock",
 } as const;
@@ -159,7 +201,7 @@ export async function completeLanguageConversation({
       objectivesMet,
       row: owned.row,
       spokenSeconds,
-      timeZone: getAnswerTimeZone({ goal: null, timeZone: input.timeZone }),
+      timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
       usedHelp: input.usedHelp,
       userId,
     });
@@ -169,15 +211,19 @@ export async function completeLanguageConversation({
       objectivesMet: objectivesMet.length,
     });
 
+    const evidence = getSpeakingEvidence({
+      feedback,
+      level,
+      objectivesMet: objectivesMet.length,
+      scenario,
+      spokenSeconds,
+    });
+
     if (settled) {
       await Promise.all([
-        spokenSeconds > 0 &&
+        evidence &&
           recordLanguageSkillEvidence({
-            evidence: {
-              ceiling: parseCefrScore(level) ?? 0,
-              correct: objectivesMet.length,
-              total: scenario.objectives.length,
-            },
+            evidence,
             language: owned.row.targetLanguage,
             skill: "speaking",
             userId,

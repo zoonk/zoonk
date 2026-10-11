@@ -1,8 +1,19 @@
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
+import { type ListeningSetView } from "@zoonk/core/library/listening/view";
 import { type StudyBlockCompletionView } from "@zoonk/core/sessions/completion-contract";
 
-/** What the learner picked: an option, true or false for a statement, or a math answer. */
-export type CheckpointAnswer = { selectedIndex: number } | { isTrue: boolean } | { number: number };
+/**
+ * What the learner picked: an option, true or false for a statement, a math answer, or a few typed
+ * words (a recording's gap to fill).
+ */
+export type CheckpointAnswer =
+  | { selectedIndex: number }
+  | { isTrue: boolean }
+  | { number: number }
+  | { text: string };
+
+/** Who said what in a recording, once its questions are answered. */
+type Transcript = NonNullable<ListeningSetView["transcript"]>;
 
 type DuelPhase = "duel" | "result";
 
@@ -21,6 +32,8 @@ export type CheckpointDuelState = {
   pending: boolean;
   phase: DuelPhase;
   selected: CheckpointAnswer | null;
+  /** A recording's transcript by its set, from the answer that finished its questions. */
+  transcripts: Record<string, Transcript>;
   /** Each answered question's verdict, by item. */
   verdicts: Record<string, boolean>;
 };
@@ -28,7 +41,13 @@ export type CheckpointDuelState = {
 type CheckpointDuelAction =
   | { answer: CheckpointAnswer | null; type: "select" }
   | { error: DuelError; type: "failed" }
-  | { isCorrect: boolean; itemId: string; type: "answered" }
+  | {
+      isCorrect: boolean;
+      itemId: string;
+      /** The question's recording and its transcript, when this answer finished its questions. */
+      recording: { setId: string; transcript: Transcript } | null;
+      type: "answered";
+    }
   | { completion: StudyBlockCompletionView; type: "finished" }
   | { type: "next" }
   | { type: "pending" };
@@ -48,6 +67,7 @@ export function createDuelState(checkpoint: CheckpointView): CheckpointDuelState
     pending: false,
     phase: checkpoint.status === "completed" ? "result" : "duel",
     selected: null,
+    transcripts: {},
     verdicts,
   };
 }
@@ -71,6 +91,9 @@ export function checkpointDuelReducer(
           : null,
         pending: false,
         selected: null,
+        transcripts: action.recording
+          ? { ...state.transcripts, [action.recording.setId]: action.recording.transcript }
+          : state.transcripts,
         verdicts: { ...state.verdicts, [action.itemId]: action.isCorrect },
       };
     case "next":

@@ -7,7 +7,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/p
 import { loadTodayPlanChange } from "../plans/_utils/today-plan-change";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanSettings } from "../plans/planner/plan-state";
-import { getTodayStudySession } from "../sessions/get-today-study-session";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { startStudyBlock } from "../sessions/start-study-block";
 import { stopStudySession } from "../sessions/stop-study-session";
 import { rebalancePlanAfterSession } from "./rebalance-plan";
@@ -137,7 +137,7 @@ describe(rebalancePlanAfterSession, () => {
     await expect(rebalances(plan.id)).resolves.toHaveLength(1);
 
     // Today carries it the next day, with its undo.
-    await expect(loadTodayPlanChange({ goalId: goal.id, now: NOW })).resolves.toMatchObject({
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       canUndo: true,
       chapterTitle: null,
       operations: [{ areas: ["Science"], kind: "focusAreas" }],

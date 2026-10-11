@@ -2,12 +2,13 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../library/exams/true-false-labels";
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
-import { loadExamStructure } from "../../sessions/_utils/load-build-inputs";
+import { loadExamStructure } from "../../sessions/_utils/exam-structure";
 import { type QuestionView, parseChoiceItem, toQuestionView } from "../_utils/choice-items";
-import { loadGoalPlan } from "../_utils/goal-skill-graph";
+import { loadTestOutPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal } from "../_utils/owned-goal";
 import { pickPlacementItem } from "../placement/placement-item-choice";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
+import { isTestOutPlusOnly } from "./_utils/test-out-access";
 import {
   TEST_OUT_PASS_MARK,
   getQuestionsPerSkill,
@@ -36,6 +37,7 @@ type ChapterTestOut = {
 
 export type ChapterTestOutResult =
   | { status: "notFound" }
+  | { status: "plusRequired" }
   | { status: "ready"; testOut: ChapterTestOut }
   | { status: "unauthorized" };
 
@@ -87,7 +89,7 @@ export async function loadChapterTestOut({
   goal: Pick<Goal, "examBlueprintId" | "id">;
   userId: string;
 }): Promise<ChapterTestOut | null> {
-  const plan = await loadGoalPlan(goal.id);
+  const plan = await loadTestOutPlan(goal.id);
   const chapterSkills = getChapterSkills({ chapterId, plan });
 
   if (chapterSkills.length === 0) {
@@ -149,7 +151,8 @@ export async function loadChapterTestOut({
  * Builds the test-out for one chapter of a goal's plan: four to eight questions, more the more
  * lessons a pass skips, spread over the chapter's sampled skills (a chapter of one skill asks it
  * several times), unseen questions first, once every sampled skill has its share. Nothing is
- * stored until the learner submits the answers.
+ * stored until the learner submits the answers. Past a free exam plan's first week it comes with
+ * Plus (`isTestOutPlusOnly`).
  */
 export async function getChapterTestOut({
   chapterId,
@@ -162,6 +165,10 @@ export async function getChapterTestOut({
 
   if (owned.status !== "ready") {
     return owned;
+  }
+
+  if (await isTestOutPlusOnly(owned.goal)) {
+    return { status: "plusRequired" };
   }
 
   const testOut = await loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });

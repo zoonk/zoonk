@@ -38,8 +38,15 @@ export type TodayActions = {
    * date at risk). Resolves to the change, or null when it wasn't saved.
    */
   changePlan: (operations: PlanOperation[]) => Promise<PlanChangeView | null>;
+  /**
+   * The option the learner takes of one of their exam's choices (`TodayView.examChoice`). Resolves
+   * to the change it made, or null when it wasn't saved.
+   */
+  chooseExamOption: (input: { group: string; subject: string }) => Promise<PlanChangeView | null>;
   /** Where choosing where the plan's depth goes opens (the plan's focus). */
   chooseFocusHref: string;
+  /** Where studying everything at the learner's own pace opens (the plan's sheet for it). */
+  studyEverythingHref: string;
   continueSession: () => Promise<boolean>;
   /**
    * Answers the plan change on Today: apply or not now for a proposal, undo or "Got it" for a
@@ -50,12 +57,13 @@ export type TodayActions = {
     changeId: string;
     status: PlanChangeDecisionInput["status"];
   }) => Promise<PlanChangeView | null>;
-  /** "Not now" to inviting a guardian: Today stops offering it, on every device. */
-  dismissGuardianInvite: () => Promise<boolean>;
   /** Where the mistakes notebook opens, from "Practice anytime". */
   mistakesHref: string;
-  /** Reads Today again, so a stop whose lesson is being written updates once it's written. */
-  refresh: () => void;
+  /**
+   * Called every few seconds while a stop's lesson is being written: the host reads Today again
+   * once something changed, so the stop updates when its lesson is written.
+   */
+  refresh: () => unknown;
   /** "Already know this?" on the next lesson: opens its chapter's test (`chapterId`). */
   startTestOut: (chapterId: string) => Promise<TestOutStart>;
   /** Where an exam goal's screen is (exam map, mocks, "How did it go?"); none for other hosts. */

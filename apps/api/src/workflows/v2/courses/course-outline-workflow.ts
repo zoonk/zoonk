@@ -9,9 +9,8 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken, joinRun } from "../_shared/run-token";
 import { claimCourseWhenFree } from "./claim-course-when-free";
-import { courseDetailsWorkflow } from "./course-details-workflow";
+import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
 import { type BandPlan } from "./steps/band-outline";
-import { createCourseIconStep } from "./steps/course-details-steps";
 import {
   finishCourseOutlineStep,
   placeContinuationsStep,
@@ -216,7 +215,7 @@ export async function courseOutlineWorkflow(
   const context: RunContext = { ...input, workflowRunId };
 
   const [, outlined] = await Promise.allSettled([
-    drawIconEarly(context),
+    startIconEarly(context),
     writeOutline({ context, input, workflowRunId }),
   ]);
 
@@ -229,21 +228,17 @@ export async function courseOutlineWorkflow(
 
 /**
  * A shared course's icon needs only its title, not its outline: it's drawn while the outline is
- * written, so the plan shows the subject's icon from the learner's first look instead of minutes
- * later, once the whole run ends and the page details are written. A guest's run leaves it to the
- * next learner with an account, like the rest of the course's background work; a failure leaves it
- * to the details that run after the outline.
+ * written, in a run of its own (see `courseIconWorkflow`), so the plan shows the subject's icon from
+ * the learner's first look and the outline never waits for the picture. A guest's run leaves it to
+ * the next learner with an account, like the rest of the course's background work; a failure
+ * leaves it to the details that run after the outline.
  */
-async function drawIconEarly(context: RunContext): Promise<string | null> {
+async function startIconEarly(context: RunContext): Promise<void> {
   if (context.scope.ownerId || context.forGuest) {
-    return null;
+    return;
   }
 
-  return createCourseIconStep({
-    analytics: context.analytics,
-    courseId: context.courseId,
-    workflowRunId: context.workflowRunId,
-  });
+  await start(courseIconWorkflow, [{ analytics: context.analytics, courseId: context.courseId }]);
 }
 
 async function writeOutline({

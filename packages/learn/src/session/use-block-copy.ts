@@ -1,19 +1,29 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { useShortList } from "../plan/use-short-list";
 import { type StudyBlock } from "./session-types";
 
 type BlockCopyInput = Pick<
   StudyBlock,
   | "capsules"
   | "checkpoint"
+  | "estimatedMinutes"
   | "extra"
   | "fullReview"
   | "kind"
+  | "mistakesOnly"
   | "questions"
   | "reinforcement"
   | "title"
+  | "weakest"
 >;
+
+/**
+ * A review up to this long is a quick one. A longer one, as on a day nothing but reviews fills
+ * (a free exam plan past its first week), is named plainly, its minutes beside it.
+ */
+const QUICK_REVIEW_MAX_MINUTES = 15;
 
 /** What a checkpoint is called. */
 function useCheckpointTitle() {
@@ -41,6 +51,15 @@ function useCheckpointTitle() {
 }
 
 /**
+ * The phase a phase's challenge closes, by name: every row of one says it, so two challenges due
+ * the same day (one a half-studied day left, and the next phase's) never read the same. Null for
+ * other blocks and a weekly challenge.
+ */
+export function getChallengePhase(block: Pick<StudyBlock, "checkpoint" | "title">): string | null {
+  return block.checkpoint && block.checkpoint.kind !== "weekly" && block.title ? block.title : null;
+}
+
+/**
  * A review block's questions come in capsules, except the first week's warm-up, which is placement
  * questions only: it's named and counted as questions, never as "0 capsules".
  */
@@ -50,8 +69,9 @@ function hasCapsules(block: Pick<StudyBlock, "capsules" | "kind">): boolean {
 
 /**
  * A block's name on Today and in the session: the lesson's title for lessons, what the block is
- * for the rest ("Quick review", "Mixed practice", or "What you already know" for placement's
- * questions in the first week).
+ * for the rest ("Quick review" or "Reviews" by its length, "Mixed practice", "Practice mistakes"
+ * when it only fixes mistakes, or "What you already know" for placement's questions in the first
+ * week).
  */
 export function useBlockTitle() {
   const t = useExtracted();
@@ -63,8 +83,12 @@ export function useBlockTitle() {
     }
 
     // The first week's warm-up is only placement's questions: it checks, it doesn't review.
+    if (block.kind === "review" && !hasCapsules(block)) {
+      return t("What you already know");
+    }
+
     if (block.kind === "review") {
-      return hasCapsules(block) ? t("Quick review") : t("What you already know");
+      return block.estimatedMinutes > QUICK_REVIEW_MAX_MINUTES ? t("Reviews") : t("Quick review");
     }
 
     if (block.kind === "learn") {
@@ -79,6 +103,10 @@ export function useBlockTitle() {
       return t("Full review");
     }
 
+    if (block.mistakesOnly) {
+      return t("Practice mistakes");
+    }
+
     return block.extra ? t("Bonus practice") : t("Mixed practice");
   };
 }
@@ -86,20 +114,51 @@ export function useBlockTitle() {
 /** The line under a block's name: what's inside it, in a few words. */
 export function useBlockDetail() {
   const t = useExtracted();
+  const shortList = useShortList();
 
   return (block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null => {
-    // In plain words: how many questions and on what, never "capsules".
-    if (hasCapsules(block)) {
-      const titles = block.capsules.map((capsule) => capsule.title).join(", ");
+    // In plain words: how many questions and on what, never "capsules". The first week's
+    // placement questions in it are on what the learner already knows, not on the capsules' topics:
+    // Lucas's "6 questions" named one topic while three were about others.
+    // Nothing was due, so the day reviews what the learner knows least: never called due.
+    if (hasCapsules(block) && block.weakest) {
+      return t(
+        "No reviews due today · {count, plural, one {# question} other {# questions}} on your weakest topics",
+        { count: block.questions },
+      );
+    }
 
-      return t("{count, plural, one {# question} other {# questions}} · {titles}", {
-        count: block.questions,
-        titles,
-      });
+    // A few topics by name and a count of the rest: a return after a break once listed 19.
+    if (hasCapsules(block)) {
+      const titles = shortList(
+        block.capsules.map((capsule) => capsule.title),
+        "topics",
+      );
+
+      const reviewed = block.capsules.reduce((sum, capsule) => sum + capsule.questions, 0);
+
+      return block.questions > reviewed
+        ? t(
+            "{count, plural, one {# question} other {# questions}} · {titles}, plus what you already know",
+            { count: block.questions, titles },
+          )
+        : t("{count, plural, one {# question} other {# questions}} · {titles}", {
+            count: block.questions,
+            titles,
+          });
     }
 
     if (block.kind === "learn") {
       return block.reinforcement ? t("Short lesson before the rematch") : block.canDo;
+    }
+
+    const phase = getChallengePhase(block);
+
+    if (phase) {
+      return t("{phase} · {count, plural, one {# question} other {# questions}}, no hints", {
+        count: block.questions,
+        phase,
+      });
     }
 
     if (block.checkpoint) {

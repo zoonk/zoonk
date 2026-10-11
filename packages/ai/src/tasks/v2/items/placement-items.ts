@@ -10,7 +10,10 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { type ItemExamFormat } from "./generate-items";
 import { withItemRules } from "./item-rules";
-import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
+import { GENERATED_ITEM_SCHEMAS, type GeneratedItem, type ItemFormat } from "./item-schemas";
+import trueFalseBalance from "./placement-items-true-false.prompt.md";
+import typedAnswers from "./placement-items-typed-answers.prompt.md";
+import typedCheck from "./placement-items-typed-check.prompt.md";
 import taskPrompt from "./placement-items.prompt.md";
 
 /**
@@ -26,12 +29,13 @@ import taskPrompt from "./placement-items.prompt.md";
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
-const systemPrompt = withItemRules(taskPrompt);
-
 const DEFAULT_OPTION_COUNT = 4;
 
+/** The goal's clause for the typed questions that confirm a right quick answer. */
+const TYPED_GOAL = " and exactly `TYPED_COUNT` in the `typed` format";
+
 /** How placement asks quickly: one right option, or one assertion judged right or wrong. */
-export type QuickItemFormat = "multipleChoice" | "trueFalse";
+type QuickItemFormat = "multipleChoice" | "trueFalse";
 
 type PlacementItemsSkill = {
   name: string;
@@ -66,6 +70,8 @@ export type PlacementItemsParams = {
 /** One skill's questions, in the order of the skills asked for; empty when the model left it out. */
 export type PlacementSkillItems = { quick: GeneratedItem[]; typed: GeneratedItem[] };
 
+type WrittenSkill = { skill: number; quick: GeneratedItem[]; typed?: GeneratedItem[] };
+
 function formatUsedSituations(situations: readonly string[] | undefined): string {
   return situations?.length
     ? situations.map((situation) => `\n     - ${situation}`).join("")
@@ -81,25 +87,55 @@ function formatSkills(skills: readonly PlacementItemsSkill[]): string {
     .join("\n");
 }
 
-function formatTargetLanguage({ language, targetLanguage }: PlacementItemsParams): string {
-  return targetLanguage
-    ? getPromptLanguageName({ language: targetLanguage, userLanguage: language })
-    : "none";
+/**
+ * The writer's own rules, with the typed questions' only when it writes them (placement's
+ * confirmations; mocks, focus tests and test-outs ask quick questions alone) and the true/false
+ * balance only for true/false questions.
+ */
+function buildTaskPrompt({ quickFormat, typedCount }: PlacementItemsParams): string {
+  const writesTyped = typedCount > 0;
+
+  return taskPrompt
+    .replace("{{TYPED_GOAL}}", () => (writesTyped ? TYPED_GOAL : ""))
+    .replace("{{TYPED_CHECK}}\n", () => (writesTyped ? typedCheck : ""))
+    .replace("{{TRUE_FALSE_BALANCE}}\n", () =>
+      quickFormat === "trueFalse" ? trueFalseBalance : "",
+    )
+    .replace("{{TYPED_ANSWERS}}\n", () => (writesTyped ? typedAnswers : ""));
+}
+
+function buildSystemPrompt(params: PlacementItemsParams): string {
+  const formats: ItemFormat[] =
+    params.typedCount > 0 ? [params.quickFormat, "typed"] : [params.quickFormat];
+
+  return withItemRules(buildTaskPrompt(params), {
+    field: false,
+    formats,
+    languageGoal: Boolean(params.targetLanguage),
+  });
 }
 
 function buildUserPrompt(params: PlacementItemsParams): string {
-  const { examFormat } = params;
+  const { examFormat, language, quickFormat, targetLanguage, typedCount } = params;
+
+  // Each line only when something the call reads refers to it.
+  const typedLine = typedCount > 0 ? `\n    TYPED_COUNT: ${typedCount}` : "";
+
+  const optionCount =
+    quickFormat === "multipleChoice"
+      ? `\n    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}`
+      : "";
+
+  const targetLanguageLine = targetLanguage
+    ? `\n    TARGET_LANGUAGE: ${getPromptLanguageName({ language: targetLanguage, userLanguage: language })}`
+    : "";
 
   return `
-    QUICK_FORMAT: ${params.quickFormat}
-    QUICK_COUNT: ${params.quickCount}
-    TYPED_COUNT: ${params.typedCount}
-    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}
-    LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-    TARGET_LANGUAGE: ${formatTargetLanguage(params)}
-${formatLocalContext(params.language)}
-    ${formatCast({ language: params.language, seed: params.skills.map((skill) => skill.name).join(":") })}
-    FIELD: none
+    QUICK_FORMAT: ${quickFormat}
+    QUICK_COUNT: ${params.quickCount}${typedLine}${optionCount}
+    LANGUAGE: ${getPromptLanguageName({ language })}${targetLanguageLine}
+${formatLocalContext(language)}
+    ${formatCast({ language, seed: params.skills.map((skill) => skill.name).join(":") })}
     EXAM: ${examFormat?.name ?? "none"}
     EXAM_STYLE: ${examFormat?.style ?? "none"}
     SKILLS:
@@ -108,22 +144,23 @@ ${formatSkills(params.skills)}
 }
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model names the skill before writing about it. */
-function buildSchema(quickFormat: QuickItemFormat) {
+function buildSchema({ quickFormat, typedCount }: PlacementItemsParams) {
+  const quick = { skill: z.number().int(), quick: z.array(GENERATED_ITEM_SCHEMAS[quickFormat]) };
+
   return z.object({
     skills: z.array(
-      z.object({
-        skill: z.number().int(),
-        quick: z.array(GENERATED_ITEM_SCHEMAS[quickFormat]),
-        typed: z.array(GENERATED_ITEM_SCHEMAS.typed),
-      }),
+      typedCount > 0
+        ? z.object({ ...quick, typed: z.array(GENERATED_ITEM_SCHEMAS.typed) })
+        : z.object(quick),
     ),
   });
 }
 /* oxlint-enable eslint/sort-keys */
 
 /**
- * Writes placement's questions for several skills in one call: quick ones (multiple choice, or
- * the exam's true/false judgments) to ask each skill, and typed ones to confirm a right answer.
+ * Writes the bank's questions for several skills in one call: quick ones (multiple choice, or
+ * the exam's true/false judgments) to ask each skill, and, for placement, typed ones to confirm a
+ * right answer. Mocks, focus tests and test-outs ask for quick ones alone.
  * One call per few skills repeats the shared instructions far less than one call per skill and
  * format; a few skills per call keep each wait short, since output is written token by token.
  * Callers run the item checks in `@zoonk/core` before storing.
@@ -132,13 +169,13 @@ export async function generatePlacementItems(params: PlacementItemsParams) {
   const {
     analytics,
     model = defaultModel,
-    quickFormat,
     reasoning,
     serviceTier,
     skills,
     useFallback = true,
   } = params;
 
+  const systemPrompt = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
@@ -148,16 +185,20 @@ export async function generatePlacementItems(params: PlacementItemsParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema: buildSchema(quickFormat) }),
+        output: Output.object({ schema: buildSchema(params) }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "placement-items",
   });
 
-  const written = new Map(result.output.skills.map((entry) => [entry.skill, entry]));
+  // Without typed questions to write, the answer has no `typed` list.
+  const written = new Map<number, WrittenSkill>(
+    result.output.skills.map((entry) => [entry.skill, entry]),
+  );
 
   const items: PlacementSkillItems[] = skills.map((_, index) => ({
     quick: written.get(index + 1)?.quick ?? [],

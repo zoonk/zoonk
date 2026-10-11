@@ -1,6 +1,7 @@
 import "server-only";
 import { type PlanItem, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { getFoundationSkillIds, getSkillArea } from "../../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type PlacementSkill } from "../placement/placement-graph";
@@ -295,7 +296,16 @@ async function loadPlan({
 
   const graph = parsePlanGraph(plan.graph);
   const sections = new Map(graph.skills.map((skill) => [skill.skillId, skill.area]));
-  const foundations = getFoundationSkillIds(graph);
+
+  const foundations = getFoundationSkillIds({
+    graph,
+    prerequisites: new Map(
+      [...Map.groupBy(edges, (edge) => edge.skillId)].map(([skillId, list]) => [
+        skillId,
+        list.map((edge) => edge.prerequisiteId),
+      ]),
+    ),
+  });
 
   const bandOf = new Map(bands.map((skill) => [skill.id, skill.level]));
 
@@ -338,9 +348,41 @@ async function loadPlan({
   };
 }
 
+/**
+ * Which of a goal's skills each answered skill counts for: a goal skill for itself, and a finer
+ * skill its lessons teach (where their screens' answers and mistakes land) for the first goal skill
+ * whose lessons teach it.
+ */
+export function getSkillOwners(
+  skills: readonly Pick<GoalSkillNode, "id" | "memberSkillIds">[],
+): Map<string, string> {
+  return new Map([
+    ...skills
+      .toReversed()
+      .flatMap((skill) => skill.memberSkillIds.map((id): [string, string] => [id, skill.id])),
+    ...skills.map((skill): [string, string] => [skill.id, skill.id]),
+  ]);
+}
+
 /** The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. */
 export function loadGoalPlan(goalId: string): Promise<GoalPlan> {
   return loadPlan({ goalId, withLeftOut: false });
+}
+
+/** A plan without the skills its exam practices only with recordings (`loadListeningSkillIds`). */
+async function loadTextTestPlan({
+  goalId,
+  withLeftOut,
+}: {
+  goalId: string;
+  withLeftOut: boolean;
+}): Promise<GoalPlan> {
+  const [plan, listening] = await Promise.all([
+    loadPlan({ goalId, withLeftOut }),
+    loadListeningSkillIds(goalId),
+  ]);
+
+  return { ...plan, skills: plan.skills.filter((skill) => !listening.has(skill.id)) };
 }
 
 /**
@@ -349,10 +391,21 @@ export function loadGoalPlan(goalId: string): Promise<GoalPlan> {
  * their time, while the plan holds only what the default time fits (an ENEM plan at 15 minutes a
  * day had only its essay), and what the learner already knows decides what fits once they pick
  * it, so placement asks every subject the goal has, and its questions are written for the graph's
- * skills too.
+ * skills too. Except the skills its exam practices only with recordings (`loadListeningSkillIds`):
+ * a text question tests reading, not listening, so placement never asks or skips them, and their
+ * lessons stay.
  */
 export function loadPlacementPlan(goalId: string): Promise<GoalPlan> {
-  return loadPlan({ goalId, withLeftOut: true });
+  return loadTextTestPlan({ goalId, withLeftOut: true });
+}
+
+/**
+ * The goal's plan as a chapter test-out reads it: without the skills its exam practices only with
+ * recordings, which a text question can't show known, so a pass never skips their lessons and a
+ * chapter that teaches only them offers no test-out.
+ */
+export function loadTestOutPlan(goalId: string): Promise<GoalPlan> {
+  return loadTextTestPlan({ goalId, withLeftOut: false });
 }
 
 /** The ids of every skill a goal's plan covers, in plan order. */

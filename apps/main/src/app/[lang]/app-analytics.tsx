@@ -3,8 +3,6 @@ import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { Analytics } from "@vercel/analytics/next";
 import { RegisterSharedEventProperties } from "@zoonk/core/analytics/register-shared-properties";
 import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-properties";
-import { getProtectionsForAgeGroup } from "@zoonk/core/minors/age-protections";
-import { getLearningProfile } from "@zoonk/core/profile/get";
 import { logError } from "@zoonk/utils/logger";
 import { unstable_rethrow } from "next/navigation";
 import { lang } from "next/root-params";
@@ -12,12 +10,7 @@ import { PostHogIdentify } from "./posthog-identify";
 
 async function loadAnalyticsState() {
   try {
-    return await Promise.all([
-      getCurrentUserAnalyticsState(),
-      lang(),
-      getLearningProfile(),
-      getCurrentGoal(),
-    ]);
+    return await Promise.all([getCurrentUserAnalyticsState(), lang(), getCurrentGoal()]);
   } catch (error) {
     // Next's own signals (dynamic rendering, redirects) must keep propagating.
     unstable_rethrow(error);
@@ -39,7 +32,7 @@ export async function AppAnalytics() {
     return null;
   }
 
-  const [{ analyticsDisabled, plan, userId, username }, locale, profile, goal] = state;
+  const [{ analyticsDisabled, plan, userId, username }, locale, goal] = state;
 
   return (
     <>
@@ -54,9 +47,6 @@ export async function AppAnalytics() {
       <PostHogIdentify
         analyticsDisabled={analyticsDisabled}
         plan={plan}
-        sessionReplayAllowed={
-          getProtectionsForAgeGroup(profile?.ageGroup ?? "unknown").sessionReplayAllowed
-        }
         userId={userId}
         username={username}
       />

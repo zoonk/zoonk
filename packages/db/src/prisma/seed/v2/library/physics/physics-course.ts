@@ -1,12 +1,16 @@
 import { t } from "../../_utils/localize";
 import { type SeedCourse } from "../types";
+import { atomLightChallengeItems } from "./atom-light-challenge-items";
 import { classicalChapters, quantumChapters } from "./deep-chapters";
+import { foundationsChallengeItems } from "./foundations-challenge-items";
 import { physicsItems } from "./items";
 import { mathChapters } from "./math-chapters";
 import { mathSkills } from "./math-skills";
 import { overviewChapters } from "./overview-chapters";
 import { overviewSkills } from "./overview-skills";
 import { classicalSkills, quantumSkills } from "./physics-skills";
+import { quantumDevicesChallengeItems } from "./quantum-devices-challenge-items";
+import { quantumSystemsChallengeItems } from "./quantum-systems-challenge-items";
 import { physicsReviewItems } from "./review-items";
 
 /**
@@ -21,7 +25,14 @@ export const physicsCourse: SeedCourse = {
     "Da matemática que a física usa ao átomo, à luz e ao emaranhamento, uma lição curta de cada vez.",
   ),
   format: "core",
-  items: [...physicsItems, ...physicsReviewItems],
+  items: [
+    ...physicsItems,
+    ...physicsReviewItems,
+    ...foundationsChallengeItems,
+    ...atomLightChallengeItems,
+    ...quantumSystemsChallengeItems,
+    ...quantumDevicesChallengeItems,
+  ],
   key: "quantum-physics",
   languages: ["en", "pt"],
   skills: [...overviewSkills, ...mathSkills, ...classicalSkills, ...quantumSkills],

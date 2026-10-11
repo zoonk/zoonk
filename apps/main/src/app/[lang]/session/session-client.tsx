@@ -53,7 +53,12 @@ export function SessionBlockClient({
       exitHref={EXIT_HREF}
       key={detail.block.id}
       lessonHref={lessonHref}
-      session={{ blocks: session.blocks, id: session.id, missions: session.missions }}
+      session={{
+        blocks: session.blocks,
+        examTomorrow: session.examTomorrow,
+        id: session.id,
+        missions: session.missions,
+      }}
     />
   );
 }
@@ -96,6 +101,7 @@ export function SessionNextStopClient({
         exitHref={EXIT_HREF}
         generationId={generationId}
         lesson={lesson}
+        lessonsComing={session.lessonsComing}
         notWritten={notWritten}
         sessionBar={session.sessionBar}
       />
@@ -112,6 +118,7 @@ export function SessionSummaryClient({
   isGuest,
   buddy,
   sessionId,
+  stopped,
   summary,
 }: {
   /** Says the goal's progress its way: preparation for an exam, the way done for the rest. */
@@ -121,6 +128,8 @@ export function SessionSummaryClient({
   /** Glad about the day's rewards, and named in the milestone when it grows. */
   buddy: LearnerBuddy;
   sessionId: string;
+  /** The learner just stopped for today (`?stopped`). */
+  stopped: boolean;
   summary: StudySessionSummary;
 }) {
   const router = useRouter();
@@ -143,6 +152,7 @@ export function SessionSummaryClient({
         <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
       )}
       signUpHref={isGuest ? SIGN_UP_HREF : null}
+      stopped={stopped}
       summary={summary}
     />
   );

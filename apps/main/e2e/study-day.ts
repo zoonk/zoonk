@@ -1,9 +1,15 @@
 import { randomUUID } from "node:crypto";
 import { type Browser, type Page, expect } from "@playwright/test";
+import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planChangeFixture,
+  planFixture,
+  planItemFixture,
+} from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -180,9 +186,55 @@ export async function createStudyDay({
   return { goal, lesson, session, user };
 }
 
-/** Opens a page as the learner in UTC, the goal's timezone, so the day never shifts at midnight. */
+/**
+ * Lessons earlier days left, as the plan's last new-day settling carried them: written lessons of 3
+ * minutes each that today's time didn't fit, first on tomorrow's plan.
+ */
+export async function carryLessons({ count, goalId }: { count: number; goalId: string }) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+
+  const lessons = await Promise.all(
+    Array.from({ length: count }, (_, index) =>
+      playableLessonFixture({
+        lesson: { estimatedMinutes: 3, title: `Missed lesson ${index + 1}` },
+        steps: ["check"],
+      }),
+    ),
+  );
+
+  const items = await Promise.all(
+    lessons.map(({ lesson }, index) =>
+      planItemFixture({
+        kind: "lesson",
+        lessonId: lesson.id,
+        planId: plan.id,
+        position: index + 1,
+        scheduledFor: new Date(toUTCMidnight(new Date()).getTime() + MS_PER_DAY),
+        titleSnapshot: lesson.title,
+      }),
+    ),
+  );
+
+  await planChangeFixture({
+    kind: "missedDays",
+    payload: { carriedItemIds: items.map((item) => item.id), days: 1, source: "system" },
+    planId: plan.id,
+  });
+}
+
+/** Moves a free exam goal's start back, so its free first week of exam prep is over. */
+export async function pastFreeWeek(goalId: string) {
+  const days = getFreePlanLimits().examPrepDays ?? 0;
+
+  await prisma.goal.update({
+    data: { createdAt: new Date(Date.now() - (days + 1) * MS_PER_DAY) },
+    where: { id: goalId },
+  });
+}
+
+/** Opens a page signed in as the learner, in a browser context of its own. */
 export async function openAs(browser: Browser, user: E2EUser): Promise<Page> {
-  const context = await browser.newContext({ storageState: user.storageState, timezoneId: "UTC" });
+  const context = await browser.newContext({ storageState: user.storageState });
   return context.newPage();
 }
 

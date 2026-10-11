@@ -4,8 +4,10 @@ import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { TaskHeaderTitle } from "../_components/task-header";
+import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
+import { TypedAnswerField } from "../questions/typed-answer-field";
 import { TaskMainButton } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getCurrentQuestion, getDuelScore } from "./checkpoint-duel-state";
@@ -51,9 +53,54 @@ function getVerdictResult(verdict: { isCorrect: boolean } | null) {
   return verdict.isCorrect ? "correct" : "wrong";
 }
 
+/** How the question is answered: a number, a few typed words, or one option. */
+function DuelAnswer({
+  question,
+  verdict,
+}: {
+  question: CheckpointQuestion;
+  verdict: { isCorrect: boolean } | null;
+}) {
+  const { duel } = useCheckpointScreen();
+  const { feedback, pending, selected } = duel.state;
+  const locked = verdict !== null || pending;
+
+  if (question.format === "numeric") {
+    return (
+      <NumericAnswerField
+        locked={locked}
+        onChange={(number) => duel.select(number === null ? null : { number })}
+        onSubmit={() => void duel.confirm()}
+        result={getVerdictResult(verdict)}
+        unit={question.unit}
+      />
+    );
+  }
+
+  if (question.format === "typed") {
+    return (
+      <TypedAnswerField
+        locked={locked}
+        onChange={(text) => duel.select(text ? { text } : null)}
+        onSubmit={() => void duel.confirm()}
+        result={getVerdictResult(verdict)}
+      />
+    );
+  }
+
+  return (
+    <CheckpointOptions
+      onSelect={duel.select}
+      question={question}
+      selected={feedback?.itemId === question.itemId ? feedback.answer : selected}
+      verdict={verdict}
+    />
+  );
+}
+
 function QuestionCard({ question }: { question: CheckpointQuestion }) {
   const { duel } = useCheckpointScreen();
-  const { feedback, selected } = duel.state;
+  const { feedback } = duel.state;
   const verdict = feedback?.itemId === question.itemId ? { isCorrect: feedback.isCorrect } : null;
 
   return (
@@ -68,25 +115,38 @@ function QuestionCard({ question }: { question: CheckpointQuestion }) {
         <ItemLine text={question.question} />
       </h2>
 
-      {question.format === "numeric" ? (
-        <NumericAnswerField
-          locked={verdict !== null || duel.state.pending}
-          onChange={(number) => duel.select(number === null ? null : { number })}
-          onSubmit={() => void duel.confirm()}
-          result={getVerdictResult(verdict)}
-          unit={question.unit}
-        />
-      ) : (
-        <CheckpointOptions
-          onSelect={duel.select}
-          question={question}
-          selected={feedback?.itemId === question.itemId ? feedback.answer : selected}
-          verdict={verdict}
-        />
-      )}
-
+      <DuelAnswer question={question} verdict={verdict} />
       {verdict && <Verdict isCorrect={verdict.isCorrect} />}
     </div>
+  );
+}
+
+/**
+ * A listening phase's recording above its questions, played as strictly as a mock: every play
+ * counts, a reload's too. Keyed by its set, it keeps playing while the learner answers along, and
+ * once its last question is answered it plays freely with its transcript.
+ */
+function DuelRecording({ question }: { question: CheckpointQuestion }) {
+  const { checkpoint, duel } = useCheckpointScreen();
+  const { set } = question;
+
+  if (!set?.listening) {
+    return null;
+  }
+
+  const onRecording = checkpoint.questions.filter((other) => other.set?.id === set.id);
+
+  return (
+    <ItemSetStimulus
+      askedIn={checkpoint.blockId}
+      key={set.id}
+      questions={{
+        current: onRecording.findIndex((other) => other.itemId === question.itemId),
+        prompts: onRecording.map((other) => other.question),
+      }}
+      set={set}
+      transcript={duel.state.transcripts[set.id] ?? null}
+    />
   );
 }
 
@@ -149,6 +209,7 @@ export function CheckpointDuelView() {
       }
     >
       {isBoss && <TricksterShield broken={score.correct} segments={checkpoint.passMark} />}
+      {question && <DuelRecording question={question} />}
       {question && <QuestionCard key={question.itemId} question={question} />}
     </CheckpointFrame>
   );

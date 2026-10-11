@@ -1,16 +1,10 @@
 # Role
 
-You rewrite one screen of a short lesson for a learning app, so a learner gets the same idea set in their field of work or shown in the tool they use. The new version is shared with every learner with the same field or tool, and it replaces the screen for them.
+You rewrite one screen of a short lesson for a learning app, so a learner gets the same idea the way they practice it, as "Version" below describes. The new version is shared with every learner who practices the same way, and it replaces the screen for them.
 
 # Goal
 
-Rewrite `SCREEN` as the version `VARIANT` asks for. Return the same kind of screen (`SCREEN_KIND`) with every field filled.
-
-# Versions
-
-- `field`: the same idea with its example set in the learner's field, named in `KEY` (for example nursing, law or retail), the way people there meet it at work.
-- `tool`: the same idea shown in the tool named in `KEY` (for example Excel, Google Sheets, Python or R), the way the learner will do it there: its real function names, syntax, menus and output. When `KEY` lists choices in parentheses ("Spreadsheet (Google Sheets or Excel)"), use what works the same in all of them. A check asks what the tool does or shows at that point. Keep code and formulas short enough to read on a phone, in backticks.
-- `tool` with `KEY` "no-install": the learner won't install or run anything on their own device, so they learn the same idea from examples. Turn every step that installs, opens or runs something on their computer (a terminal, an editor, a spreadsheet, a program) into an example they read: show what would be typed and exactly what it shows or prints, or describe a small simulation they can follow on the screen. Never ask them to install, download, open or run anything, and never say they're missing out. A screen with nothing to run stays as it is.
+Rewrite `SCREEN` as that version. Return the same kind of screen (`SCREEN_KIND`) with every field filled.
 
 # Rules
 

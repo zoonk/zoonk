@@ -18,6 +18,7 @@ const PRINTED_ITEM = {
   context:
     'Uma loja anunciou: "Tudo com 20% de desconto". Depois, sobre o preço já com desconto, deu mais 10% para pagamento à vista. Disponível em: www.exemplo.gov.br. Acesso em: 5 maio 2023 (adaptado).',
   difficulty: "medium" as const,
+  fixedOrder: false,
   format: "multipleChoice" as const,
   image: null,
   options: ["28%.", "30%.", "18%.", "32%.", "25%."].map((text, index) => ({

@@ -6,12 +6,16 @@ import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 /**
  * Opens a learner made by a fixture as a guest: someone who tried lessons without an account, so
  * they have a session but no account yet. The session cookie's cached copy still says "signed
- * up": dropping it makes the server read the guest.
+ * up": dropping it makes the server read the guest. A persona's browser is in its own time zone.
  */
-export async function openUserAsGuest(browser: Browser, user: E2EUser) {
+export async function openUserAsGuest(browser: Browser, user: E2EUser & { timeZone?: string }) {
   await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
 
-  const context = await browser.newContext({ storageState: user.storageState, timezoneId: "UTC" });
+  const context = await browser.newContext({
+    storageState: user.storageState,
+    ...(user.timeZone && { timezoneId: user.timeZone }),
+  });
+
   await context.clearCookies({ name: /session_data/u });
 
   return { context, page: await context.newPage() };

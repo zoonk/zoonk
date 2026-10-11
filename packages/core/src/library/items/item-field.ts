@@ -57,15 +57,20 @@ export function getGoalField(details: unknown): WorkField | null {
  * The items a learner may get for a goal: general ones, and their goal's field's and exam's.
  * Another field's questions are practice for someone else's job and another exam's are set in
  * that exam ("on the first day of ENEM…"), so they never reach this learner, except the questions
- * in `keepIds` they already answered (a mistake's own question comes back in its drill).
+ * in `keepIds` they already answered (a mistake's own question comes back in its drill). A
+ * question of a set (a text, a case, a recording with several questions) can't be answered
+ * without its stimulus, so only reads that ask whole sets (`inSets`) get them, and reads that show
+ * a kept one with its stimulus (a mistake's own question).
  */
 export function getItemAudienceFilter({
   examBlueprintId = null,
   field = null,
+  inSets = false,
   keepIds = [],
 }: {
   examBlueprintId?: string | null;
   field?: string | null;
+  inSets?: boolean;
   keepIds?: readonly string[];
 }) {
   const kept = keepIds.length > 0 ? [{ id: { in: [...keepIds] } }] : [];
@@ -76,6 +81,7 @@ export function getItemAudienceFilter({
       {
         OR: [{ examBlueprintId: null }, ...(examBlueprintId ? [{ examBlueprintId }] : []), ...kept],
       },
+      ...(inSets ? [] : [{ OR: [{ setId: null }, ...kept] }]),
     ],
   };
 }

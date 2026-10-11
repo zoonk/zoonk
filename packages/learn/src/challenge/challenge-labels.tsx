@@ -1,17 +1,11 @@
 "use client";
 
 import { type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
-import { isoDateToUtc, useFormatIsoDate } from "../_utils/iso-date";
+import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatTimeOfDay } from "../_utils/time-format";
 
 const DAYS_IN_A_WEEK = 7;
-
-/** Whole days from `from` to `to`, both YYYY-MM-DD. */
-export function daysBetween(from: string, to: string): number {
-  return Math.round((isoDateToUtc(to).getTime() - isoDateToUtc(from).getTime()) / MS_PER_DAY);
-}
 
 /** "Today", "Tomorrow", "Sunday" within the week, or the date further away. */
 function useChallengeDay(today: string) {

@@ -15,14 +15,9 @@ import { countLearnerRows, createSkill, seedLearnerData } from "./_test-utils/le
 vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: false }) }));
 
 const THIRTY_DAYS_MS = 2_592_000_000;
-const CHILD_BIRTH = { birthMonth: 1, birthYear: 2018 };
 
 function daysAgo(milliseconds: number) {
   return new Date(Date.now() - milliseconds);
-}
-
-async function setGuestBirth(guestId: string) {
-  await prisma.userLearningProfile.create({ data: { ...CHILD_BIRTH, userId: guestId } });
 }
 
 describe("guest accounts", () => {
@@ -51,6 +46,7 @@ describe("guest accounts", () => {
     const { userId } = await signUp({ email: createTestEmail(), headers });
 
     await expect(countLearnerRows(userId)).resolves.toStrictEqual({
+      aiCalls: 1,
       attempts: 1,
       days: 1,
       drafts: 1,
@@ -178,54 +174,6 @@ describe("guest accounts", () => {
     await signInWithOneTimeToken({ email: account.email, guestHeaders: guest.headers });
 
     await expect(countLearnerRows(account.userId)).resolves.toMatchObject({ goals: 1, skills: 1 });
-    await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
-  });
-});
-
-describe("guests under 13", () => {
-  it("can't create an account from the guest session", async () => {
-    const { guestId, headers } = await signInAsGuest();
-    const email = createTestEmail();
-
-    await setGuestBirth(guestId);
-
-    await expect(signUp({ email, headers })).rejects.toMatchObject({
-      body: { code: "UNDER_MINIMUM_AGE" },
-      statusCode: 403,
-    });
-
-    await expect(prisma.user.findUnique({ where: { email } })).resolves.toBeNull();
-  });
-
-  it("lose the account they just created on the auth host", async () => {
-    const [account, guest] = await Promise.all([
-      createExistingAccount({ createdAt: new Date() }),
-      signInAsGuest(),
-    ]);
-
-    await setGuestBirth(guest.guestId);
-
-    await expect(
-      signInWithOneTimeToken({ email: account.email, guestHeaders: guest.headers }),
-    ).rejects.toMatchObject({ body: { code: "UNDER_MINIMUM_AGE" } });
-
-    await expect(prisma.user.findUnique({ where: { id: account.userId } })).resolves.toBeNull();
-  });
-
-  it("leave an older account that signs in on the same device unchanged", async () => {
-    const [account, guest] = await Promise.all([
-      createExistingAccount({ createdAt: daysAgo(THIRTY_DAYS_MS) }),
-      signInAsGuest(),
-    ]);
-
-    await setGuestBirth(guest.guestId);
-
-    await signInWithOneTimeToken({ email: account.email, guestHeaders: guest.headers });
-
-    await expect(
-      prisma.userLearningProfile.findUnique({ where: { userId: account.userId } }),
-    ).resolves.toBeNull();
-
     await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
   });
 });

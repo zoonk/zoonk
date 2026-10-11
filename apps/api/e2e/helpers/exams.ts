@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { type SectionNavigation } from "@zoonk/core/library/exams/blueprint-contract";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -6,7 +8,9 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 
 /** The exam's section asks more than the bank holds; the mock uses the bank's questions. */
 export const MOCK_QUESTIONS = 6;
-const citation = { passage: "", sourceId: "notice" };
+
+/** Where a fixture exam's facts come from: its notice. */
+export const citation = { passage: "", sourceId: "notice" };
 
 export const DAY_MS = 86_400_000;
 export const EXAM_IN_DAYS = 60;
@@ -101,4 +105,96 @@ export async function createExamGoal(userId: string) {
   ]);
 
   return { blueprintId: blueprint.id, goal };
+}
+
+const BREAK_AREAS = ["Physics", "Mathematics"] as const;
+
+/** Questions in each of the break exam's two sections, all in the exam's bank. */
+export const BREAK_SECTION_QUESTIONS = 4;
+
+/**
+ * A Plus learner's exam goal whose exam day has two sections with a ten-minute break between
+ * them, each with the notice's tools, and enough of the exam's questions for its full mock. With
+ * `navigation`, the first section moves as it says (one question after another, say).
+ */
+export async function createBreakExamGoal(
+  userId: string,
+  { navigation = null }: { navigation?: SectionNavigation | null } = {},
+) {
+  const [blueprint, skills] = await Promise.all([
+    examBlueprintFixture({
+      name: "Break Test",
+      structure: {
+        formats: [],
+        mock: {
+          adaptive: false,
+          citations: [],
+          order: null,
+          scoring: { description: "", method: "raw" },
+          sections: BREAK_AREAS.map((name, index) => ({
+            breakAfterMinutes: index === 0 ? 10 : null,
+            day: null,
+            minutes: 12,
+            name,
+            navigation: index === 0 ? navigation : null,
+            questions: BREAK_SECTION_QUESTIONS,
+            tools: index === 0 ? "No calculator." : "Calculator allowed.",
+          })),
+          timeLimitMinutes: 24,
+          totalQuestions: BREAK_SECTION_QUESTIONS * BREAK_AREAS.length,
+        },
+        rules: [],
+        subjects: BREAK_AREAS.map((name) => ({
+          citation,
+          name,
+          questions: BREAK_SECTION_QUESTIONS,
+          topics: [],
+          weight: null,
+        })),
+      },
+    }),
+    Promise.all(BREAK_AREAS.map((area) => skillFixture({ name: `${area} ${randomUUID()}` }))),
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },
+    }),
+  ]);
+
+  const goal = await goalFixture({
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    timezone: "UTC",
+    userId,
+  });
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Basics" }],
+      skills: skills.map((skill, index) => ({
+        area: BREAK_AREAS[index] ?? "",
+        lessons: 1,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
+      })),
+    },
+  });
+
+  await Promise.all([
+    ...skills.map((skill, position) =>
+      planItemFixture({ kind: "lesson", planId: plan.id, position, skillId: skill.id }),
+    ),
+    ...skills.flatMap((skill) =>
+      Array.from({ length: BREAK_SECTION_QUESTIONS }, () =>
+        itemFixture({
+          content: choiceItemContent(),
+          examBlueprintId: blueprint.id,
+          skillId: skill.id,
+        }),
+      ),
+    ),
+  ]);
+
+  return { goal };
 }

@@ -1,101 +1,40 @@
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
-import { type DiagramPoint } from "../_assets/diagrams/diagram-types";
+import { spotNumber } from "@zoonk/core/library/activities/labeled-diagram";
 
-/** Which name the learner put on each part, by part id. */
+/** Which name the learner put on each spot, by the spot's number. */
 export type Placements = Readonly<Record<string, string>>;
 
-/** Where a spot sits on the drawing, in words for screen readers. */
-export type SpotPosition =
-  | "bottom"
-  | "bottomLeft"
-  | "bottomRight"
-  | "center"
-  | "left"
-  | "right"
-  | "top"
-  | "topLeft"
-  | "topRight";
-
-export type DiagramSlot = {
-  anchor: DiagramPoint;
-  label: string;
-  number: number;
-  partId: string;
-  pin: DiagramPoint;
-  position: SpotPosition;
-};
-
-/** Pins closer than this vertically read as one row, left to right. */
-const ROW_HEIGHT = 36;
-const THIRDS = 3;
-
-const POSITIONS: readonly (readonly SpotPosition[])[] = [
-  ["topLeft", "top", "topRight"],
-  ["left", "center", "right"],
-  ["bottomLeft", "bottom", "bottomRight"],
-];
-
-function third(value: number, size: number): number {
-  return Math.min(Math.floor((value / size) * THIRDS), THIRDS - 1);
-}
-
-function spotPosition([x, y]: DiagramPoint, size: { height: number; width: number }): SpotPosition {
-  return POSITIONS[third(y, size.height)]?.[third(x, size.width)] ?? "center";
-}
+/** A numbered spot of the picture and the name that belongs on it. */
+export type DiagramSlot = { key: string; label: string; number: number };
 
 /**
- * The lesson's parts as numbered spots, numbered in reading order of their pins (top to bottom,
- * left to right), so the numbers never hint at the order the writer listed the answers in.
+ * The parts as numbered spots, in the picture's order: the first part is spot 1, keyed like the
+ * answer key core computes.
  */
-export function orderSlots({
-  drawing,
-  parts,
-}: {
-  drawing: {
-    height: number;
-    parts: Readonly<Record<string, { anchor: DiagramPoint; pin?: DiagramPoint }>>;
-    width: number;
-  };
-  parts: readonly { label: string; partId: string }[];
-}): DiagramSlot[] {
-  return parts
-    .flatMap((part) => {
-      const placement = drawing.parts[part.partId];
-
-      if (!placement) {
-        return [];
-      }
-
-      const pin = placement.pin ?? placement.anchor;
-      return [{ ...part, anchor: placement.anchor, pin, position: spotPosition(pin, drawing) }];
-    })
-    .toSorted(
-      (first, second) =>
-        Math.round(first.pin[1] / ROW_HEIGHT) - Math.round(second.pin[1] / ROW_HEIGHT) ||
-        first.pin[0] - second.pin[0],
-    )
-    .map((slot, index) => ({ ...slot, number: index + 1 }));
+export function diagramSlots(parts: readonly { label: string }[]): DiagramSlot[] {
+  return parts.map((part, index) => ({
+    key: spotNumber(index),
+    label: part.label,
+    number: index + 1,
+  }));
 }
 
-/** Puts a name on a part. A name already on another part moves; the one it replaces goes back. */
+/** Puts a name on a spot. A name already on another spot moves; the one it replaces goes back. */
 export function placeName({
+  key,
   name,
-  partId,
   placements,
 }: {
+  key: string;
   name: string;
-  partId: string;
   placements: Placements;
 }): Placements {
-  const others = Object.entries(placements).filter(
-    ([id, placed]) => id !== partId && placed !== name,
-  );
-
-  return Object.fromEntries([...others, [partId, name]]);
+  const others = Object.entries(placements).filter(([id, placed]) => id !== key && placed !== name);
+  return Object.fromEntries([...others, [key, name]]);
 }
 
-export function removeName(placements: Placements, partId: string): Placements {
-  return Object.fromEntries(Object.entries(placements).filter(([id]) => id !== partId));
+export function removeName(placements: Placements, key: string): Placements {
+  return Object.fromEntries(Object.entries(placements).filter(([id]) => id !== key));
 }
 
 /** The first empty spot after `after` (wrapping around), or null when every spot has a name. */
@@ -108,10 +47,10 @@ export function nextEmptySlot({
   placements: Placements;
   slots: readonly DiagramSlot[];
 }): string | null {
-  const start = slots.findIndex((slot) => slot.partId === after) + 1;
+  const start = slots.findIndex((slot) => slot.key === after) + 1;
   const rotated = [...slots.slice(start), ...slots.slice(0, start)];
 
-  return rotated.find((slot) => placements[slot.partId] === undefined)?.partId ?? null;
+  return rotated.find((slot) => placements[slot.key] === undefined)?.key ?? null;
 }
 
 /** Names still waiting to be placed, in the bank's order. */
@@ -125,7 +64,7 @@ export function assignmentAnswer(
   slots: readonly DiagramSlot[],
   placements: Placements,
 ): ActivityAnswer | null {
-  const isComplete = slots.every((slot) => placements[slot.partId] !== undefined);
+  const isComplete = slots.every((slot) => placements[slot.key] !== undefined);
   return isComplete ? { kind: "assignment", pairs: { ...placements } } : null;
 }
 

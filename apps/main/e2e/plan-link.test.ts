@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { z } from "zod";
 import { expect, test } from "./fixtures";
 
@@ -55,6 +55,7 @@ test.describe("Plan links", () => {
     await goalUnderstandingFixture({
       goal: subject,
       result: { followUps: [], goals: [{ kind: "exam", subject, title: subject }], route: "goals" },
+      userId: await ensureGuest(page),
     });
 
     await page.getByRole("link", { name: "Start from this plan" }).click();
@@ -82,10 +83,7 @@ test.describe("Plan links", () => {
     noProgressUser,
     userWithoutProgress: page,
   }) => {
-    const [plan] = await Promise.all([
-      findSeededPlan("v2-learn@zoonk.test"),
-      learningProfileFixture({ birthMonth: 3, birthYear: 1995, userId: noProgressUser.id }),
-    ]);
+    const plan = await findSeededPlan("v2-learn@zoonk.test");
 
     await page.goto(`/plan-link/${plan.id}`);
 

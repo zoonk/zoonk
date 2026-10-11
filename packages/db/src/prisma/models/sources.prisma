@@ -34,6 +34,7 @@ model Source {
   updatedAt      DateTime             @default(now()) @updatedAt @map("updated_at")
   examBlueprints ExamBlueprint[]
   items          Item[]
+  itemSets       ItemSet[]
   learnerSources LearnerSource[]
   changeNotices  SourceChangeNotice[]
   steps          Step[]
@@ -52,41 +53,46 @@ model Source {
 /// a teacher's slides for a school exam) is private to that learner, keyed in their own key space, and
 /// deleted with them.
 model ExamBlueprint {
-  id                 String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  language           String               @db.VarChar(10)
-  identityKey        String               @map("identity_key")
-  name               String
-  country            String               @db.VarChar(2)
-  board              String?
-  role               String?
-  visibility         LibraryVisibility    @default(public)
-  ownerId            String?              @map("owner_id") @db.Uuid
-  owner              User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id                   String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language             String                @db.VarChar(10)
+  identityKey          String                @map("identity_key")
+  name                 String
+  country              String                @db.VarChar(2)
+  board                String?
+  role                 String?
+  visibility           LibraryVisibility     @default(public)
+  ownerId              String?               @map("owner_id") @db.Uuid
+  owner                User?                 @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   /// Subjects, weights, question formats, rules and mock conditions (questions, sections, order, time
   /// limits and scoring).
-  structure          Json
+  structure            Json
   /// Year, notice URL, dates and number of questions of the current edition.
-  edition            Json?
+  edition              Json?
   /// How often the board asks each topic, from past papers.
-  topicFrequency     Json?                @map("topic_frequency")
-  sourceId           String?              @map("source_id") @db.Uuid
-  source             Source?              @relation(fields: [sourceId], references: [id], onDelete: SetNull)
-  validUntil         DateTime?            @map("valid_until")
-  nextCheckAt        DateTime?            @map("next_check_at")
-  registrationEndsAt DateTime?            @map("registration_ends_at")
-  examDate           DateTime?            @map("exam_date")
-  model              String
-  promptVersion      String               @map("prompt_version")
-  runId              String               @map("run_id")
-  generatedAt        DateTime             @default(now()) @map("generated_at")
-  createdAt          DateTime             @default(now()) @map("created_at")
-  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
-  items              Item[]
-  goals              Goal[]
-  changeNotices      SourceChangeNotice[]
-  mockExams          MockExam[]
-  examResults        ExamResult[]
-  targetCutoffs      TargetCutoff[]
+  topicFrequency       Json?                 @map("topic_frequency")
+  sourceId             String?               @map("source_id") @db.Uuid
+  source               Source?               @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  validUntil           DateTime?             @map("valid_until")
+  nextCheckAt          DateTime?             @map("next_check_at")
+  registrationEndsAt   DateTime?             @map("registration_ends_at")
+  examDate             DateTime?             @map("exam_date")
+  model                String
+  promptVersion        String                @map("prompt_version")
+  runId                String                @map("run_id")
+  generatedAt          DateTime              @default(now()) @map("generated_at")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  items                Item[]
+  itemSets             ItemSet[]
+  goals                Goal[]
+  changeNotices        SourceChangeNotice[]
+  mockExams            MockExam[]
+  examResults          ExamResult[]
+  targetCutoffs        TargetCutoff[]
+  courseWeights        ExamCourseWeights[]
+  anonymousMockAnswers AnonymousMockAnswer[]
+  anonymousExamResults AnonymousExamResult[]
+  skillGraph           ExamSkillGraph?
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@index([nextCheckAt])
@@ -101,8 +107,8 @@ enum TargetCutoffStatus {
 }
 
 /// The last published cut-off of one target of a shared exam: a course at an institution in an
-/// entrance exam's selection (SISU's last cut-off for Medicina at UFMG), or a public-service
-/// exam's position, for the general list ("ampla concorrência"), with the page it came from. It's
+/// entrance exam's selection (SISU's last cut-off for medicine at UFMG), or a public-service
+/// exam's position, for the general list, with the page it came from. It's
 /// looked up once a year per exam and target and shared by every learner aiming there; `unknown`
 /// means the lookup found none, so nothing is shown and nothing is guessed. `targetKey` is the
 /// normalized course and institution, or position.
@@ -116,9 +122,11 @@ model TargetCutoff {
   status          TargetCutoffStatus
   /// On the exam's own scale, as the source gives it.
   score           Float?
+  /// The top of that scale, as the source or the exam states it (ENEM's 1000).
+  maxScore        Float?             @map("max_score")
   /// The selection it's from, as the source names it ("Sisu 2025").
   edition         String?
-  /// The list it's for, as the source names it ("ampla concorrência").
+  /// The list it's for, as the source names it (such as Brazil's general list).
   quota           String?
   sourceUrl       String?            @map("source_url")
   sourceTitle     String?            @map("source_title")
@@ -130,6 +138,67 @@ model TargetCutoff {
 
   @@unique([examBlueprintId, targetKey, year], name: "blueprintTargetYear")
   @@map("target_cutoffs")
+}
+
+enum CourseWeightsStatus {
+  found
+  unknown
+}
+
+/// How one course at one institution weighs each part of a shared entrance exam in its selection
+/// (SISU's weights for Medicina at UFMG), with the page they came from. Looked up once a year per
+/// exam and target and shared by every learner aiming there, whose goals copy it
+/// (`details.courseWeights`) for the planner; `unknown` means the lookup found none, so nothing is
+/// weighed and nothing is guessed. `targetKey` is the normalized course and institution. It holds
+/// no learner link, so it stays when the learner whose research looked it up goes.
+model ExamCourseWeights {
+  id              String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  examBlueprintId String              @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint       @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  targetKey       String              @map("target_key")
+  /// The year it was looked up in: the next year looks it up again.
+  year            Int                 @db.SmallInt
+  status          CourseWeightsStatus
+  /// Each part of the exam (a notice subject) with its weight, in the notice's order; empty when
+  /// unknown.
+  subjects        Json                @default("[]")
+  /// The selection they're from, as the source names it ("SISU 2026").
+  edition         String?
+  sourceUrl       String?             @map("source_url")
+  sourceTitle     String?             @map("source_title")
+  model           String
+  promptVersion   String              @map("prompt_version")
+  runId           String              @map("run_id")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([examBlueprintId, targetKey, year], name: "blueprintTargetYear")
+  @@map("exam_course_weights")
+}
+
+/// An exam's skill graph as shared Library content: the phases and skills (with their Library ids,
+/// courses, sizes and weights) the first build of the exam's shared graph wrote (see
+/// `isSharedExamGraph`). Every later learner of the notice plans from it, whatever prompt version
+/// wrote it, with no AI call. It belongs to the exam, never to a learner's plan, so deleting
+/// learners never loses it; only an admin resets it, and the next learner writes a new one.
+model ExamSkillGraph {
+  id              String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  examBlueprintId String        @unique @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
+  /// The graph as plans store it (`PlanGraph`).
+  graph           Json
+  /// The course a plan made from it opens with.
+  primaryCourseId String?       @map("primary_course_id") @db.Uuid
+  primaryCourse   Course?       @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
+  model           String
+  promptVersion   String        @map("prompt_version")
+  runId           String        @map("run_id")
+  generatedAt     DateTime      @map("generated_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  @@index([primaryCourseId])
+  @@map("exam_skill_graphs")
 }
 
 enum LearnerSourceOrigin {

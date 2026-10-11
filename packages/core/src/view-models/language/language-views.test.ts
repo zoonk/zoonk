@@ -161,6 +161,69 @@ describe("language view models", () => {
 
     expect(forIelts.status === "ready" && forIelts.progress.speakingMock).toBe("ielts");
     expect(forToefl.status === "ready" && forToefl.progress.speakingMock).toBe("toefl");
+
+    // A goal naming its exam practices that exam, never another certificate's paper.
+    expect(forIelts.status === "ready" && forIelts.progress.speaking).toBeNull();
+  });
+
+  it("offers Today exam-style speaking tasks at the learner's own target, locked without Plus", async () => {
+    const setup = await languageGoalFixture();
+
+    await prisma.goal.update({
+      data: {
+        details: { targetScore: "B1+" },
+        prompt: "Inglês para Toronto, e um dia o Cambridge B2 First",
+      },
+      where: { id: setup.goal.id },
+    });
+
+    mockSession(setup.user.id);
+    const free = await getLanguageTodayView({ goalId: setup.goal.id });
+
+    expect(free.status === "ready" && free.today.speaking).toStrictEqual({
+      access: "plusRequired",
+      title: "B1 Preliminary",
+    });
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: setup.user.id, status: "active" },
+    });
+
+    const plus = await getLanguageTodayView({ goalId: setup.goal.id });
+    expect(plus.status === "ready" && plus.today.speaking?.access).toBe("open");
+  });
+
+  it("gives a language goal that names no exam its language's paper at its target, exam-style", async () => {
+    const setup = await languageGoalFixture();
+
+    await prisma.goal.update({
+      data: { details: { targetLevel: "B2" }, targetLanguage: "es", title: "Espanhol" },
+      where: { id: setup.goal.id },
+    });
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: setup.user.id, status: "active" },
+    });
+
+    mockSession(setup.user.id);
+
+    const [today, progress] = await Promise.all([
+      getLanguageTodayView({ goalId: setup.goal.id }),
+      getLanguageProgressView({ goalId: setup.goal.id }),
+    ]);
+
+    expect(today.status === "ready" && today.today.speaking).toStrictEqual({
+      access: "open",
+      title: "DELE B2",
+    });
+
+    expect(progress.status === "ready" && progress.progress.speaking).toMatchObject({
+      access: "open",
+      exam: "dele",
+      level: "B2",
+    });
+
+    expect(progress.status === "ready" && progress.progress.speakingMock).toBeNull();
   });
 
   it("is not for other goals", async () => {
@@ -357,6 +420,8 @@ describe("language view models", () => {
         level: { label: "A2", target: "B1+" },
         pattern: { id: pattern.id, kind: "pattern", title: "since e for" },
         pronunciation: null,
+        // The goal names no exam: it practices English's certificate at its B1+ target.
+        speaking: { access: "plusRequired", title: "B1 Preliminary" },
       },
     });
   });

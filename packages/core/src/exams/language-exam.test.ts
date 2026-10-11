@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detectLanguageExam, getSpeakingMockExam } from "./language-exam";
+import { detectLanguageExam, getCertificateLanguage, getSpeakingMockExam } from "./language-exam";
 
 describe(detectLanguageExam, () => {
   it.each([
@@ -16,6 +16,37 @@ describe(detectLanguageExam, () => {
   it("finds nothing in a reason without an exam", () => {
     expect(detectLanguageExam("to travel to Toronto and talk to people")).toBeNull();
     expect(detectLanguageExam("delete my old habits")).toBeNull();
+  });
+
+  it("reads Portuguese's and Spanish's word dele as the DELE only in capitals or with a level", () => {
+    expect(detectLanguageExam("morar com a família dele em Madri")).toBeNull();
+    expect(detectLanguageExam("Dele eu só sei que fala espanhol")).toBeNull();
+    expect(detectLanguageExam("quero passar no dele b2")).toBe("DELE");
+    expect(detectLanguageExam("dele-C1 em novembro")).toBe("DELE");
+  });
+});
+
+describe(getCertificateLanguage, () => {
+  it.each([
+    [{ details: { examName: "DELE B2" }, title: "Passar no DELE B2" }, "es"],
+    [{ details: { examName: "Goethe-Zertifikat B1" }, title: "Goethe-Zertifikat B1" }, "de"],
+    [{ details: {}, title: "Passar no DELF B1" }, "fr"],
+    [{ details: { examName: "IELTS" }, title: "Pass the IELTS" }, "en"],
+    [{ details: { examName: "Cambridge B2 First" }, title: "Pass B2 First" }, "en"],
+    [{ details: { examName: "Celpe-Bras" }, title: "Celpe-Bras" }, "pt"],
+    [{ details: { examName: "HSK 4" }, title: "HSK 4" }, "zh"],
+  ])("gives the language %o certifies", (goal, language) => {
+    expect(getCertificateLanguage({ ...goal, kind: "exam" })).toBe(language);
+  });
+
+  it("gives none for other exams and goals", () => {
+    expect(
+      getCertificateLanguage({ details: { examName: "ENEM" }, kind: "exam", title: "ENEM" }),
+    ).toBeNull();
+
+    expect(
+      getCertificateLanguage({ details: {}, kind: "learn", title: "Prepare for the IELTS" }),
+    ).toBeNull();
   });
 });
 

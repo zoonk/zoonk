@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChordQuality, type IntervalName } from "@zoonk/core/library/activities/music";
+import { type ChordQuality } from "@zoonk/core/library/activities/music";
 import { useExtracted, useLocale } from "next-intl";
 import { displayNoteName } from "./music-notes";
 
@@ -46,49 +46,6 @@ export function useChordName() {
       major7: t("{note} major seventh", { note }),
       minor: t("{note} minor", { note }),
       minor7: t("{note} minor seventh", { note }),
-    };
-
-    return names[quality];
-  };
-}
-
-/** An interval's name, like "Perfect fifth". */
-export function useIntervalName() {
-  const t = useExtracted();
-
-  return (interval: IntervalName): string => {
-    const names: Record<IntervalName, string> = {
-      M2: t("Major second"),
-      M3: t("Major third"),
-      M6: t("Major sixth"),
-      M7: t("Major seventh"),
-      P4: t("Perfect fourth"),
-      P5: t("Perfect fifth"),
-      P8: t("Octave"),
-      TT: t("Tritone"),
-      m2: t("Minor second"),
-      m3: t("Minor third"),
-      m6: t("Minor sixth"),
-      m7: t("Minor seventh"),
-    };
-
-    return names[interval];
-  };
-}
-
-/** A chord quality alone, like "Minor", for naming what was heard. */
-export function useChordQualityName() {
-  const t = useExtracted();
-
-  return (quality: ChordQuality): string => {
-    const names: Record<ChordQuality, string> = {
-      augmented: t("Augmented"),
-      diminished: t("Diminished"),
-      dominant7: t("Dominant seventh"),
-      major: t("Major"),
-      major7: t("Major seventh"),
-      minor: t("Minor"),
-      minor7: t("Minor seventh"),
     };
 
     return names[quality];

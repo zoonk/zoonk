@@ -35,7 +35,7 @@ type GoalDraft = UnderstoodGoalView["draft"];
 function readEditValue({ draft, row }: { draft: GoalDraft; row: UnderstoodRow }): string {
   const field = row.editable;
 
-  if (!field || field.key === "studyTime" || field.key === "examYear") {
+  if (!field || field.key === "studyTime") {
     return row.editDefault ?? row.value;
   }
 
@@ -63,10 +63,6 @@ function toDraftEdit({
 }): OnboardingDraftEdit {
   if (field.key === "studyTime") {
     return { field: "studyTime", value };
-  }
-
-  if (field.key === "examYear") {
-    return { field: "examYear", goal, value: Number(value) };
   }
 
   return { field: field.key, goal, value };
@@ -126,9 +122,9 @@ function GoalCard({
 
 /**
  * "Here's what I understood": every fact the typed goal already gave, one row each, with its
- * source when it's official. Confirming is one tap. One wrong fact is fixed in place, and the facts
- * that depend on it follow (another exam year reads that year's dates); "Fix something" changes the
- * words themselves, which are read again from scratch.
+ * source when it's official. Confirming is one tap. One wrong fact is fixed in place (any full date
+ * for the exam, or the notice's day with one tap); "Fix something" changes the words themselves,
+ * which are read again from scratch.
  */
 export function UnderstoodScreen({
   draft,

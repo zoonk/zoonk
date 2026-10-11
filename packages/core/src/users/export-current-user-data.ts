@@ -65,20 +65,11 @@ function loadFeedback(userId: string) {
   ]);
 }
 
-/** Guardian links as the learner sees them: the invite token stays in the guardian's email. */
-function loadGuardianLinks(userId: string) {
-  return prisma.guardianLink.findMany({
-    omit: { tokenHash: true },
-    orderBy: byCreation,
-    where: { userId },
-  });
-}
-
 /**
  * Everything Zoonk keeps about the signed-in learner, as one download: the account, the learning
  * profile, goals and plans, the progress ledger, study sessions and mocks, answers, skills,
  * mistakes, milestones, language learning, memory, the buddy's conversations and the example lines
- * written from memory, sources, usage, feedback and guardian links. Uncached, so it reflects what's
+ * written from memory, sources, usage and feedback. Uncached, so it reflects what's
  * stored at that moment.
  */
 export async function exportCurrentUserData() {
@@ -99,7 +90,6 @@ export async function exportCurrentUserData() {
     [skills, mistakes, milestones],
     memory,
     [contentVotes, feedbackMessages],
-    guardianLinks,
     buddy,
     study,
     language,
@@ -117,7 +107,6 @@ export async function exportCurrentUserData() {
     loadLearnerModel(userId),
     loadMemoryExport(userId),
     loadFeedback(userId),
-    loadGuardianLinks(userId),
     loadBuddyExport(userId),
     loadStudyExport(userId),
     loadLanguageExport(userId),
@@ -132,7 +121,6 @@ export async function exportCurrentUserData() {
     exportedAt: new Date(),
     feedback: { contentVotes, messages: feedbackMessages },
     goals,
-    guardianLinks,
     language,
     learnerModel: { milestones, mistakes, skills },
     memory,

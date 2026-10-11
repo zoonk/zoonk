@@ -1,5 +1,6 @@
 "use client";
 
+import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -17,6 +18,7 @@ import { useExtracted } from "next-intl";
 import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage } from "./lesson-question-errors";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
+import { type OfferedSuggestion } from "./lesson-question-state";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { ThreadViewport, ThreadViewportSkeleton } from "./lesson-question-thread-viewport";
 import { QuestionTurn } from "./lesson-question-turn";
@@ -46,25 +48,46 @@ function ThreadLoadError({
   );
 }
 
+/** A lesson's suggestions as chips: their words are the server's, and a tap sends their id. */
+function toOffered(suggestions: readonly LessonTutorSuggestion[]): OfferedSuggestion[] {
+  return suggestions.map(({ id, label }) => ({ question: label, suggestion: id }));
+}
+
 /**
  * The buddy's suggested questions for what the learner is asking about; a few, never a list. In a
- * lesson they include what the old "Simpler" and "Go deeper" buttons did, as questions to the buddy.
+ * lesson they are what the old "Simpler" and "Go deeper" buttons did, as questions to the buddy,
+ * worded by the server in the lesson's payload so the chip reads what the thread will.
  */
-function useSuggestions(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
+function useSuggestions({
+  contextKind,
+  lessonSuggestions,
+}: {
+  contextKind: LessonQuestionController["state"]["context"]["kind"];
+  lessonSuggestions: readonly LessonTutorSuggestion[];
+}): OfferedSuggestion[] {
   const t = useExtracted();
 
   switch (contextKind) {
     case "answer":
-      return [t("Walk me through this answer"), t("Explain it more simply")];
+      return [
+        { question: t("Walk me through this answer") },
+        ...toOffered(lessonSuggestions.filter(({ id }) => id === "simpler")),
+      ];
     case "chapter":
-      return [t("What will I be able to do after this chapter?")];
+      return [{ question: t("What will I be able to do after this chapter?") }];
     case "lesson":
     case "step":
-      return [t("Explain it more simply"), t("I want to go deeper"), t("Give me another example")];
+      return toOffered(lessonSuggestions);
     case "mock":
-      return [t("What should I practice first?"), t("Why did I miss these questions?")];
+      return [
+        { question: t("What should I practice first?") },
+        { question: t("Why did I miss these questions?") },
+      ];
     case "plan":
-      return [t("Why am I studying this today?"), t("What comes next?")];
+      return [
+        { question: t("Why am I studying this today?") },
+        { question: t("What comes next?") },
+      ];
     default:
       return contextKind satisfies never;
   }
@@ -97,14 +120,16 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
 function EmptyThread({
   contextKind,
   identity,
+  lessonSuggestions,
   onSelect,
 }: {
   contextKind: LessonQuestionController["state"]["context"]["kind"];
   identity: TutorIdentity;
-  onSelect: (question: string) => void;
+  lessonSuggestions: readonly LessonTutorSuggestion[];
+  onSelect: (suggestion: OfferedSuggestion) => void;
 }) {
   const t = useExtracted();
-  const suggestions = useSuggestions(contextKind);
+  const suggestions = useSuggestions({ contextKind, lessonSuggestions });
 
   return (
     <Empty className="min-h-full p-6">
@@ -123,13 +148,13 @@ function EmptyThread({
         {suggestions.map((suggestion) => (
           <Button
             className="h-auto min-h-8 py-1.5 whitespace-normal"
-            key={suggestion}
+            key={suggestion.question}
             onClick={() => onSelect(suggestion)}
             size="sm"
             type="button"
             variant="outline"
           >
-            {suggestion}
+            {suggestion.question}
           </Button>
         ))}
       </EmptyContent>
@@ -169,6 +194,7 @@ export function QuestionThread({
   isAuthenticated: boolean;
 }) {
   const t = useExtracted();
+  const { renderPlanChange, renderToolOffer } = useLessonQuestionNavigation();
   const { state } = controller;
   const threadLabel = useThreadLabel(state.context.kind);
 
@@ -202,7 +228,8 @@ export function QuestionThread({
         <EmptyThread
           contextKind={state.context.kind}
           identity={identity}
-          onSelect={(question) => void controller.sendSuggestion(question)}
+          lessonSuggestions={controller.suggestions}
+          onSelect={(suggestion) => void controller.sendSuggestion(suggestion)}
         />
       </ThreadViewport>
     );
@@ -250,7 +277,15 @@ export function QuestionThread({
               memoryChanges={state.memoryChanges[question.id]}
               onCheckAgain={(questionId) => void controller.checkAnswer(questionId)}
               onRetry={(questionId) => void controller.retryAnswer(questionId)}
+              planChange={
+                question.planChange &&
+                renderPlanChange?.({
+                  change: question.planChange,
+                  onAnswered: controller.answerPlanChange,
+                })
+              }
               question={question}
+              toolOffer={question.toolOffer && renderToolOffer?.(question.toolOffer)}
             />
           </MessageScrollerItem>
         ))}

@@ -14,7 +14,7 @@ function subject(name: string, questions: number | null, shortName: string | nul
   return { citation: CITATION, name, questions, shortName, topics: [], weight: null };
 }
 
-/** ENEM's shape: two days of 90 questions, the first with the redação as a written part. */
+/** ENEM's shape: two days of 90 questions, the first with the essay as a written part. */
 const ENEM: ExamStructure = {
   formats: [],
   mock: {
@@ -108,10 +108,10 @@ describe(listPlacementMockOptions, () => {
 
     // The written test has no questions to ask.
     expect(options[0]?.areas).toStrictEqual([
-      "Linguagens",
-      "Ciências Humanas",
-      "Ciências da Natureza",
-      "Matemática",
+      "Linguagens, Códigos e suas Tecnologias",
+      "Ciências Humanas e suas Tecnologias",
+      "Ciências da Natureza e suas Tecnologias",
+      "Matemática e suas Tecnologias",
     ]);
 
     expect(getRecommendedPlacementLength(options)).toBe("short");
@@ -181,6 +181,7 @@ const SKILLS: PlacementSkill[] = ENEM_AREAS.slice(0, 4).flatMap((area) =>
 
 const BANK: MockCandidate[] = SKILLS.flatMap((skill) =>
   Array.from({ length: 2 }, (_, copy) => ({
+    answered: false,
     area: skill.area,
     difficulty: null,
     itemId: `${skill.skillId}/${copy}`,
@@ -259,6 +260,7 @@ describe(planPlacementMock, () => {
     );
 
     const bank: MockCandidate[] = skills.map((skill) => ({
+      answered: false,
       area: skill.area,
       difficulty: null,
       itemId: `${skill.skillId}/0`,

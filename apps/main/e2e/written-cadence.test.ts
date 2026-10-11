@@ -10,7 +10,7 @@ import { asPersona } from "./learn-personas";
  * target, the last cut-off with its source, shows on the exam page.
  */
 
-/** Ana's ENEM two months away; her seeded plan has the redação as a written test, as ENEM's do. */
+/** Ana's ENEM two months away; her seeded plan has the essay as a written test, as ENEM's do. */
 async function twoMonthsAway(goalId: string) {
   await prisma.goal.update({
     data: { targetDate: new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY) },
@@ -31,7 +31,7 @@ async function openEditor(page: Page) {
 }
 
 test.describe("Written practice cadence", () => {
-  test("practices the redação every week by default, and only in the final weeks when she says so", async ({
+  test("practices the essay every week by default, and only in the final weeks when she says so", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
@@ -78,29 +78,40 @@ test.describe("Written practice cadence", () => {
         where: { id: user.goalId },
       });
 
-      // Shared by every copy of Ana, who all aim at the same course: one row a year.
-      await prisma.targetCutoff.createMany({
-        data: {
-          edition: "Sisu 2025",
-          examBlueprintId: goal.examBlueprintId ?? "",
-          model: "test",
-          promptVersion: "test",
-          quota: "ampla concorrência",
-          runId: "test",
-          score: 790.8,
-          sourceTitle: "Notas de corte",
-          sourceUrl: "https://sisu.mec.gov.br/notas-de-corte",
-          status: "found",
-          targetKey: "course:medicina|ufmg",
-          year: new Date().getUTCFullYear(),
+      const cutoff = {
+        edition: "Sisu 2025",
+        examBlueprintId: goal.examBlueprintId ?? "",
+        maxScore: 1000,
+        model: "test",
+        promptVersion: "test",
+        quota: "ampla concorrência",
+        runId: "test",
+        score: 790.8,
+        sourceTitle: "Notas de corte",
+        sourceUrl: "https://sisu.mec.gov.br/notas-de-corte",
+        status: "found" as const,
+        targetKey: "course:medicina|ufmg",
+        year: new Date().getUTCFullYear(),
+      };
+
+      // Shared by every copy of Ana, who all aim at the same course: one row a year, which an
+      // earlier run may have written before cut-offs had their scale.
+      await prisma.targetCutoff.upsert({
+        create: cutoff,
+        update: cutoff,
+        where: {
+          blueprintTargetYear: {
+            examBlueprintId: cutoff.examBlueprintId,
+            targetKey: cutoff.targetKey,
+            year: cutoff.year,
+          },
         },
-        skipDuplicates: true,
       });
 
       await page.goto("/exam");
       const note = page.getByRole("note", { name: "Last cut-off" });
 
-      await expect(note).toContainText("Last cut-off: 790.8");
+      await expect(note).toContainText("Last cut-off: 790.8 out of 1,000");
 
       await expect(note).toContainText(
         "Medicina · UFMG · Sisu 2025 · ampla concorrência, according to sisu.mec.gov.br",

@@ -11,7 +11,7 @@ import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
-import { getTodayStudySession } from "../sessions/get-today-study-session";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";

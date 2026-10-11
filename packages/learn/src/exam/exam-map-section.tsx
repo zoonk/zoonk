@@ -128,7 +128,7 @@ const getGroupId = (index: number) => `exam-map-group-${index}`;
 
 /**
  * What's on the exam, as a short list: each of the notice's subjects with its weight, in the
- * notice's groups ("Conhecimentos básicos (P1)") when it has them, and its topics one tap away with
+ * notice's groups ("Basic knowledge (P1)") when it has them, and its topics one tap away with
  * how often the board asks them. How ready the learner is in each lives on the Journey.
  */
 export function ExamMapSection() {

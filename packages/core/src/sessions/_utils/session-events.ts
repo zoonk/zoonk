@@ -4,10 +4,12 @@ import { safeAsync } from "@zoonk/utils/error";
 import { after } from "next/server";
 import { type AnalyticsEvent } from "../../analytics/events";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
-import { getSessionBlockMinutes } from "../daily-goal";
 import { getGoalDayMinutes } from "./day-minutes";
+import { sumSessionSeconds } from "./session-ledger";
 import { getSessionBar } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
+
+const SECONDS_PER_MINUTE = 60;
 
 type SessionRef = Pick<StudySessionRow, "goalId" | "id" | "userId">;
 
@@ -92,11 +94,16 @@ async function isDailyGoalMet({
  * blocks' final states.
  */
 export function trackSessionCompleted(session: StudySessionRow): void {
-  const minutes = Math.round(getSessionBlockMinutes(session.blocks));
-
-  // A failed plan lookup only loses the event, like a PostHog failure would.
+  // A failed lookup only loses the event, like a PostHog failure would.
   after(() =>
     safeAsync(async () => {
+      const seconds = await sumSessionSeconds(prisma, {
+        sessionId: session.id,
+        userId: session.userId,
+      });
+
+      const minutes = Math.round(seconds / SECONDS_PER_MINUTE);
+
       const event: AnalyticsEvent = {
         name: "Session Completed",
         properties: {

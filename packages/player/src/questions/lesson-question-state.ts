@@ -1,6 +1,7 @@
 import {
   type LessonQuestionMemoryChange,
   type LessonQuestionResource,
+  type LessonScreenSuggestion,
   type TutorToolOffer,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
@@ -40,9 +41,15 @@ export type LessonQuestionState = {
   questions: LessonQuestionResource[];
   requestError: LessonQuestionApiError | null;
   revealedQuestionId: string | null;
-  /** The suggested question the learner picked, so sending it unchanged says it was a suggestion. */
-  suggestion: string | null;
+  /** The suggested question the learner picked, so sending it unchanged says which one it was. */
+  suggestion: OfferedSuggestion | null;
 };
+
+/**
+ * One of the tutor's suggested questions, as offered. A lesson screen's names its `suggestion`:
+ * the server words that one itself and may answer it once for everyone who taps it.
+ */
+export type OfferedSuggestion = { question: string; suggestion?: LessonScreenSuggestion };
 
 export type LessonQuestionAction =
   | { context: LessonQuestionContext; type: "open" }
@@ -65,7 +72,7 @@ export type LessonQuestionAction =
     }
   | { type: "earlierThreadLoadFailed" }
   | { draft: string; type: "draftChanged" }
-  | { question: string; type: "suggestionChosen" }
+  | { suggestion: OfferedSuggestion; type: "suggestionChosen" }
   | { type: "questionCreateStarted" }
   | { question: LessonQuestionResource; type: "questionCreated" }
   | { reason: LessonQuestionApiError; type: "questionCreateFailed" }
@@ -245,10 +252,10 @@ export function lessonQuestionReducer(
     case "suggestionChosen":
       return {
         ...state,
-        draft: action.question,
+        draft: action.suggestion.question,
         error: null,
         requestError: null,
-        suggestion: action.question,
+        suggestion: action.suggestion,
       };
     case "questionCreateStarted":
       return { ...state, error: null, isCreating: true, requestError: null };

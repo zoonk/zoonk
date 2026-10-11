@@ -5,9 +5,9 @@ import { getBuddyStage } from "@zoonk/utils/buddy";
 /**
  * Milestones come from the ledger, never from chance, and each says upfront how it's earned.
  * Glasses: Round comes with the buddy, Star for the first boss beaten, Aviator for the first Big
- * Challenge, Cat-eye for seven full meals, Retro for fifty capsules opened and Monocle for the final
- * boss. Badges ("Trap hunter" for a boss won) go to the logbook. A new belt color and the buddy's next
- * stage are celebrated once each.
+ * Challenge, Cat-eye for seven days with all three missions done, Retro for fifty capsules opened
+ * and Monocle for the final boss. Badges ("Trap hunter" for a boss won) go to the logbook. A new
+ * belt color and the buddy's next stage are celebrated once each.
  */
 export type MilestoneCounts = {
   bigChallenges: number;
@@ -38,7 +38,7 @@ export type GlassesProgress = {
   target: number;
 };
 
-/** Every pair of glasses with how far the learner is: "4/7 full meals", "38/50 capsules". */
+/** Every pair of glasses with how far the learner is: "4/7 mission days", "38/50 capsules". */
 export function getGlassesProgress(counts: MilestoneCounts): GlassesProgress[] {
   return [
     { current: 0, earned: true, glasses: "round", target: 0 },

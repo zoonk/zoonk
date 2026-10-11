@@ -8,6 +8,10 @@ import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/co
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
+import {
+  numberedCheckContent,
+  pictureCheckContent,
+} from "@zoonk/testing/fixtures/playable-step-contents";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildImageReuseKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { revalidateTag } from "next/cache";
@@ -25,7 +29,12 @@ import {
   resetImageModels,
   testScene,
 } from "./_test-utils/image-mocks";
-import { createStepImage, listLessonImageSteps } from "./lesson-images";
+import {
+  createStepImage,
+  createStepOptionPicture,
+  listLessonImageSteps,
+  listLessonOptionPictures,
+} from "./lesson-images";
 
 /** Vercel Blob is an external service; the stored URL is all these tests need from it. */
 vi.mock("../../images/upload-image", () => ({ uploadImage: vi.fn() }));
@@ -56,7 +65,6 @@ function stepKey(scene: ReturnType<typeof testScene>) {
   return buildImageReuseKey({
     language: scene.labels.length > 0 ? "en" : null,
     prompt: describeImageScene(scene),
-    styleVersion: IMAGE_STYLE_VERSION,
   });
 }
 
@@ -269,6 +277,7 @@ describe(createStepImage, () => {
   });
 
   it("keeps a private lesson's picture private and language courses free of text", async () => {
+    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "private-store-token");
     const owner = await userFixture();
 
     const [privateLesson, languageLesson] = await Promise.all([
@@ -318,5 +327,174 @@ describe(createStepImage, () => {
     expect(uploadImage).toHaveBeenLastCalledWith(
       expect.objectContaining({ access: "public", fileName: "library/images/step.webp" }),
     );
+
+    vi.unstubAllEnvs();
+  });
+
+  it("draws no picture for a private lesson while the private store isn't set up", async () => {
+    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");
+    const owner = await userFixture();
+    const lesson = await libraryLessonFixture({ ownerId: owner.id, visibility: "private" });
+
+    const [step, question] = await Promise.all([
+      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 0 }),
+      libraryStepFixture({
+        content: pictureCheckContent,
+        kind: "check",
+        lessonId: lesson.id,
+        position: 1,
+      }),
+    ]);
+
+    const sceneSpy = mockImageScene(testScene({ focalObject: `our ${randomUUID()} notes` }));
+    const drawSpy = mockDrawnImages([await drawTestImage()]);
+
+    // The picture couldn't be kept, so it isn't planned or drawn: no AI is spent and the screen
+    // shows its description, once, instead of failing at the upload on every retry.
+    await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "failed" });
+
+    await expect(
+      createStepOptionPicture({ optionId: "gothic", stepId: question.id }),
+    ).resolves.toStrictEqual({ status: "failed" });
+
+    expect(sceneSpy).not.toHaveBeenCalled();
+    expect(drawSpy).not.toHaveBeenCalled();
+    expect(uploadImage).not.toHaveBeenCalled();
+
+    await expect(prisma.step.findUnique({ where: { id: step.id } })).resolves.toMatchObject({
+      mediaAssetId: null,
+    });
+
+    vi.unstubAllEnvs();
+  });
+});
+
+describe("pictures questions are asked about", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+
+    vi.mocked(uploadImage).mockImplementation(({ fileName }) =>
+      Promise.resolve({ data: `https://blob.test/${fileName}-${randomUUID()}`, error: null }),
+    );
+  });
+
+  it("lists each picture option not drawn yet, in screen order", async () => {
+    const [lesson, asset] = await Promise.all([libraryLessonFixture(), mediaAssetFixture()]);
+
+    const [first, second] = await Promise.all([
+      libraryStepFixture({
+        content: pictureCheckContent,
+        kind: "check",
+        lessonId: lesson.id,
+        position: 0,
+      }),
+      libraryStepFixture({
+        content: pictureCheckContent,
+        kind: "check",
+        lessonId: lesson.id,
+        position: 1,
+      }),
+      libraryStepFixture({ content: explanation(), lessonId: lesson.id, position: 2 }),
+    ]);
+
+    await prisma.stepOptionPicture.create({
+      data: { mediaAssetId: asset.id, optionId: "gothic", stepId: first.id },
+    });
+
+    await expect(listLessonOptionPictures({ lessonId: lesson.id })).resolves.toStrictEqual([
+      { optionId: "romanesque", stepId: first.id },
+      { optionId: "baroque", stepId: first.id },
+      { optionId: "gothic", stepId: second.id },
+      { optionId: "romanesque", stepId: second.id },
+      { optionId: "baroque", stepId: second.id },
+    ]);
+  });
+
+  it("draws a picture option alone, without text or its name, and links it to its option", async () => {
+    const lesson = await libraryLessonFixture();
+
+    const step = await libraryStepFixture({
+      content: pictureCheckContent,
+      kind: "check",
+      lessonId: lesson.id,
+    });
+
+    const sceneSpy = mockImageScene(testScene({ focalObject: `a ${randomUUID()} doorway` }));
+    mockSearchTerms([]);
+    mockDrawnImages([await drawTestImage()]);
+
+    const outcome = await createStepOptionPicture({ optionId: "gothic", stepId: step.id });
+
+    expect(outcome).toMatchObject({ status: "generated" });
+
+    // The question is the picture's context; the option's name would give the answer away.
+    expect(sceneSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ screenText: pictureCheckContent.question, textAllowed: false }),
+    );
+
+    expect(JSON.stringify(sceneSpy.mock.calls)).not.toContain('"Gothic"');
+
+    await expect(
+      prisma.stepOptionPicture.findUniqueOrThrow({
+        where: { stepId_optionId: { optionId: "gothic", stepId: step.id } },
+      }),
+    ).resolves.toMatchObject({
+      mediaAssetId: outcome.status === "generated" && outcome.mediaAssetId,
+    });
+
+    expect(revalidateTag).toHaveBeenCalledWith(getLibraryLessonCacheTag(lesson.id), { expire: 0 });
+
+    await expect(
+      createStepOptionPicture({ optionId: "gothic", stepId: step.id }),
+    ).resolves.toStrictEqual({ status: "none" });
+  });
+
+  it("numbers a question's picture from its parts, in order, and draws no words", async () => {
+    const lesson = await libraryLessonFixture();
+
+    const step = await libraryStepFixture({
+      content: numberedCheckContent,
+      kind: "check",
+      lessonId: lesson.id,
+    });
+
+    // Whatever words the planner suggests, the numbers are the picture's only labels.
+    const sceneSpy = mockImageScene(
+      testScene({
+        focalObject: `a ${randomUUID()} flower cut in half`,
+        labels: [{ target: "the ovary", text: "ovary" }],
+      }),
+    );
+
+    mockSearchTerms([]);
+    mockDrawnImages([await drawTestImage()]);
+
+    await expect(createStepImage({ stepId: step.id })).resolves.toMatchObject({
+      status: "generated",
+    });
+
+    expect(sceneSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        request: expect.stringContaining("Show each of these parts clearly: petal; stigma; ovary."),
+        textAllowed: false,
+      }),
+    );
+
+    const linked = await prisma.step.findUniqueOrThrow({
+      include: { mediaAsset: true },
+      where: { id: step.id },
+    });
+
+    expect(linked.mediaAsset?.scene).toMatchObject({
+      labels: [
+        { target: "pointing at the petal", text: "1" },
+        { target: "pointing at the stigma", text: "2" },
+        { target: "pointing at the ovary", text: "3" },
+      ],
+    });
+
+    // Numbers read the same in every language, so one numbered picture serves them all.
+    expect(linked.mediaAsset?.language).toBeNull();
   });
 });

@@ -4,11 +4,12 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
 import { safeParseStepContent } from "../library/steps/contract/step-contract";
 import { getSession } from "../users/get-session";
-import { getStepImage } from "./_utils/playable-step";
+import { getOptionPictures, getStepImage } from "./_utils/screen-pictures";
 import { type LessonPicture } from "./contract";
 
 /**
- * The pictures a lesson's screens have so far, read fresh from the database: they're drawn by a
+ * The pictures a lesson's screens and their picture options have so far, read fresh from the
+ * database: they're drawn by a
  * workflow in another app right after the lesson opens, so a cached lesson in this app doesn't
  * have them yet. The player asks for them while a screen's picture is pending
  * (`imagePending`), for the lesson it already plays. Like the lesson's screens, they go only to
@@ -29,9 +30,9 @@ export async function getLessonPictures({
       select: {
         ownerId: true,
         steps: {
-          include: { mediaAsset: true },
+          include: { mediaAsset: true, optionPictures: { include: { mediaAsset: true } } },
           orderBy: { position: "asc" },
-          where: { mediaAssetId: { not: null } },
+          where: { OR: [{ mediaAssetId: { not: null } }, { optionPictures: { some: {} } }] },
         },
         visibility: true,
       },
@@ -46,10 +47,29 @@ export async function getLessonPictures({
   return lesson.steps.flatMap((step) => {
     const parsed = safeParseStepContent(step.kind, step.content);
 
-    const image = parsed.success
-      ? getStepImage({ content: parsed.data, mediaAsset: step.mediaAsset })
-      : null;
+    if (!parsed.success) {
+      return [];
+    }
 
-    return image ? [{ image, stepId: step.id }] : [];
+    const image = getStepImage({
+      content: parsed.data,
+      kind: step.kind,
+      mediaAsset: step.mediaAsset,
+    });
+
+    const options = getOptionPictures({
+      content: parsed.data,
+      kind: step.kind,
+      pictures: step.optionPictures,
+    });
+
+    return [
+      ...(image ? [{ image, stepId: step.id }] : []),
+      ...Object.entries(options).map(([optionId, picture]) => ({
+        image: picture,
+        optionId,
+        stepId: step.id,
+      })),
+    ];
   });
 }

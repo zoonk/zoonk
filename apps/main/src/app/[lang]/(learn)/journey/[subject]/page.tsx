@@ -72,8 +72,10 @@ async function SubjectBody({ params }: Props) {
       hasMindMaps={hasSubjectMindMaps({ mindMaps, subject })}
       subject={subject}
       syllabus={{
+        examDocument: result.syllabus.examDocument,
         fromMaterial: result.syllabus.fromMaterial,
         kind: result.syllabus.kind,
+        knownTopicsReturn: result.syllabus.knownTopicsReturn,
         writtenPractice: result.syllabus.writtenPractice,
       }}
     />

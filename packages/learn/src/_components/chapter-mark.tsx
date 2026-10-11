@@ -13,9 +13,18 @@ type MarkedChapter = {
 
 /**
  * A chapter's mark in a list: a filled play for the next one, a ring for one begun, a filled check
- * once done, an empty circle ahead. The Journey's path and a subject's chapters use the same marks.
+ * once done, a skip mark once done without studying it (`skipped`: the learner showed they know
+ * it), an empty circle ahead. The Journey's path and a subject's chapters use the same marks.
  */
-export function ChapterMark({ chapter, isNext }: { chapter: MarkedChapter; isNext: boolean }) {
+export function ChapterMark({
+  chapter,
+  isNext,
+  skipped = false,
+}: {
+  chapter: MarkedChapter;
+  isNext: boolean;
+  skipped?: boolean;
+}) {
   const t = useExtracted();
   const { lessonsDone, lessonsTotal, state, writing } = chapter;
 
@@ -38,7 +47,11 @@ export function ChapterMark({ chapter, isNext }: { chapter: MarkedChapter; isNex
   }
 
   if (state === "done") {
-    return <StatusMark label={t("Done")} status="done" />;
+    return skipped ? (
+      <StatusMark label={t("Skipped")} status="skipped" />
+    ) : (
+      <StatusMark label={t("Done")} status="done" />
+    );
   }
 
   return <StatusMark status="todo" />;

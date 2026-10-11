@@ -4,6 +4,7 @@ import { parseBody } from "@/lib/body-parser";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { uploadTokenRequestSchema } from "@/lib/openapi/schemas/research-sources";
 import { handleUploadPresigned } from "@vercel/blob/client";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { createSourceUploadToken } from "@zoonk/core/library/sources/upload-token";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -37,7 +38,7 @@ async function createUploadToken(request: NextRequest) {
     return errors.badRequest("Uploads go in your own folder: sources/{userId}/");
   }
 
-  if (result.status === "limitReached") {
+  if (isRefusedUsage(result)) {
     return usageDecisionError(result);
   }
 

@@ -1,10 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { checkLessonImage } from "@zoonk/ai/tasks/v2/images/check";
+import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { uploadImage } from "../../images/upload-image";
 import { mockSearchTerms } from "../identity/_test-utils/identity-mocks";
@@ -21,6 +23,7 @@ import {
   generatedProvenance,
   generatedTypedItem,
 } from "./_test-utils/generated-items";
+import { discountMath, discountQuestion } from "./_test-utils/math-problems";
 import { createItems } from "./create-items";
 import { parseItemContent } from "./item-content";
 
@@ -31,6 +34,8 @@ vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms
 vi.mock("@zoonk/ai/tasks/v2/images/check", () => ({ checkLessonImage: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/images/generate", () => ({ generateLessonImage: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/images/scene", () => ({ generateImageScene: vi.fn() }));
+
+type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
 
 const FIGURE_CONTEXT = "Na figura, uma seta aponta para uma organela da célula vegetal.";
 
@@ -98,7 +103,55 @@ describe(createItems, () => {
 
     expect(
       parseItemContent({ content: created[0]!.content, format: "multipleChoice" }),
-    ).toStrictEqual({ content: expectedContent, format: "multipleChoice" });
+    ).toStrictEqual({ content: { ...expectedContent, select: 1 }, format: "multipleChoice" });
+  });
+
+  it("stores how its exam answers a question: the options picked and how a number is typed", async () => {
+    const skill = await skillFixture();
+    const [right, wrong] = generatedMultipleChoice().options;
+    const second = { ...right!, text: "10/2" };
+    const third = { ...wrong!, text: "2" };
+    const twoRight = generatedMultipleChoice({ options: [right!, second, wrong!, third] });
+    const oneRight = generatedMultipleChoice({ options: [right!, wrong!, third] });
+
+    const picks = await createItems({
+      format: "multipleChoice",
+      items: [twoRight, oneRight],
+      language: "en",
+      provenance: generatedProvenance(),
+      select: 2,
+      skillId: skill.id,
+    });
+
+    expect(picks.rejected).toStrictEqual([
+      { index: 1, problems: ["Has 1 correct options instead of 2."] },
+    ]);
+
+    expect(picks.created.map((item) => item.content)).toStrictEqual([
+      expect.objectContaining({ select: 2 }),
+    ]);
+
+    const numbers = await createItems({
+      entry: { kind: "integer", places: null },
+      format: "numeric",
+      items: [
+        {
+          context: null,
+          difficulty: "medium",
+          format: "numeric",
+          math: discountMath,
+          otherSolutions: [],
+          question: discountQuestion,
+        },
+      ],
+      language: "en",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    });
+
+    expect(numbers.created.map((item) => item.content)).toStrictEqual([
+      expect.objectContaining({ entry: { kind: "integer", places: null } }),
+    ]);
   });
 
   it("stores a question about a figure with its picture, leaving the picture's check to the caller, and a retried step stores no copies", async () => {
@@ -169,6 +222,142 @@ describe(createItems, () => {
     });
   });
 
+  it("leaves out a private skill's question about a figure, drawing nothing, while the private store isn't set up", async () => {
+    vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "");
+    vi.stubEnv("PRIVATE_BLOB_STORE_ID", "");
+    mockUploads();
+    const owner = await userFixture();
+    const skill = await skillFixture({ ownerId: owner.id, visibility: "private" });
+    const plain = generatedMultipleChoice();
+    const pictured = generatedMultipleChoice({ context: FIGURE_CONTEXT, image: figure });
+    const sceneSpy = mockImageScene(testScene({ focalObject: `a plant cell ${randomUUID()}` }));
+    const drawSpy = mockDrawnImages([await drawTestImage()]);
+
+    const result = await createItems({
+      format: "multipleChoice",
+      items: [plain, pictured],
+      language: "pt",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    });
+
+    expect(result.created).toHaveLength(1);
+
+    expect(result.rejected).toStrictEqual([
+      { index: 1, problems: [expect.stringContaining("picture")] },
+    ]);
+
+    expect(sceneSpy).not.toHaveBeenCalled();
+    expect(drawSpy).not.toHaveBeenCalled();
+    expect(uploadImage).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+  });
+
+  it("stores its own wording without em dashes and quoted support text as written", async () => {
+    const skill = await skillFixture({ language: "pt" });
+
+    const transcript =
+      "A SRA. LORENA — Concluo minha comunicação.\nO SR. PRESIDENTE — O tempo terminou.";
+
+    const essay: ItemOf<"essay"> = {
+      context: "Texto I — trecho de reportagem:\n\n_Faltam rampas — e bancos — nas praças._",
+      difficulty: "medium",
+      format: "essay",
+      keyPoints: ["Defende uma tese — com dois argumentos"],
+      question: "Redija um texto dissertativo-argumentativo sobre o lazer das pessoas idosas.",
+      rubric: [
+        {
+          criterion: "Competência 1 — domínio da modalidade escrita formal",
+          description:
+            "Desenvolve o recorte proposto — o lazer das pessoas idosas — sem fugir dele.",
+          points: null,
+        },
+        {
+          criterion: "Competência 2 — coesão",
+          description: "Liga as partes do texto.",
+          points: null,
+        },
+      ],
+      sampleOutline: "Introdução — cerca de 5 linhas: situar o tema.",
+    };
+
+    const statement: ItemOf<"trueFalse"> = {
+      context: `Leia este trecho de um registro de sessão:\n\n${transcript}`,
+      difficulty: "medium",
+      format: "trueFalse",
+      image: null,
+      isTrue: true,
+      misconception: null,
+      reason: "O registro marca cada fala pelo nome — e o presidente encerra o tempo.",
+      statement: "O trecho registra a fala de quem preside — e a de uma oradora.",
+      visual: null,
+    };
+
+    const [essays, statements] = await Promise.all([
+      createItems({
+        format: "essay",
+        items: [essay],
+        language: "pt",
+        provenance: generatedProvenance(),
+        skillId: skill.id,
+      }),
+      createItems({
+        format: "trueFalse",
+        items: [statement],
+        language: "pt",
+        provenance: generatedProvenance(),
+        skillId: skill.id,
+      }),
+    ]);
+
+    expect(essays.created[0]?.content).toMatchObject({
+      // The motivating text quotes a source: it keeps its own punctuation.
+      context: essay.context,
+      keyPoints: ["Defende uma tese, com dois argumentos"],
+      rubric: [
+        {
+          criterion: "Competência 1, domínio da modalidade escrita formal",
+          description: "Desenvolve o recorte proposto, o lazer das pessoas idosas, sem fugir dele.",
+        },
+        { criterion: "Competência 2, coesão" },
+      ],
+      sampleOutline: "Introdução, cerca de 5 linhas: situar o tema.",
+    });
+
+    expect(statements.created[0]?.content).toMatchObject({
+      context: statement.context,
+      reason: "O registro marca cada fala pelo nome, e o presidente encerra o tempo.",
+      statement: "O trecho registra a fala de quem preside, e a de uma oradora.",
+    });
+  });
+
+  it("keeps a statute drill's wording as the law writes it", async () => {
+    const skill = await skillFixture({ language: "pt" });
+
+    const drill: ItemOf<"trueFalse"> = {
+      context: null,
+      difficulty: "medium",
+      format: "trueFalse",
+      image: null,
+      isTrue: true,
+      misconception: null,
+      reason: "O texto diz: “é assegurado — nos termos da lei — o direito de resposta”.",
+      statement: "É assegurado — nos termos da lei — o direito de resposta.",
+      visual: null,
+    };
+
+    const { created } = await createItems({
+      format: "trueFalse",
+      items: [drill],
+      language: "pt",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+      sourceCitation: "CF/88, Art. 5º, V",
+    });
+
+    expect(created[0]?.content).toMatchObject({ reason: drill.reason, statement: drill.statement });
+  });
+
   it("keeps items that fail the checks out and reports why", async () => {
     const skill = await skillFixture();
     const good = generatedMultipleChoice();
@@ -195,12 +384,83 @@ describe(createItems, () => {
     ]);
   });
 
+  it("repairs what code can before storing: Markdown learners would see and an option written twice", async () => {
+    const skill = await skillFixture();
+    const [right, wrong] = generatedMultipleChoice().options;
+
+    const items = [
+      // ENEM placement, Oct 2026: italics split across lines showed their underscores.
+      generatedMultipleChoice({
+        context: "_Presidente: A audiência é aberta.\nMoradora: Escreveram aqui._",
+      }),
+      // "5,0" is the right answer written again.
+      generatedMultipleChoice({ options: [right!, wrong!, { ...wrong!, text: "5,0" }] }),
+    ];
+
+    const { created, rejected } = await createItems({
+      format: "multipleChoice",
+      items,
+      language: "pt",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    });
+
+    expect(rejected).toStrictEqual([]);
+
+    const stored = created.map((item) => parseItemContent(item).content);
+
+    expect(stored[0]).toMatchObject({
+      context: "Presidente: A audiência é aberta.\nMoradora: Escreveram aqui.",
+    });
+
+    expect(stored[1]).toMatchObject({
+      options: expect.not.arrayContaining([expect.objectContaining({ text: "5,0" })]),
+    });
+
+    expect(stored[1]).toMatchObject({ options: [expect.anything(), expect.anything()] });
+  });
+
+  it("never stores what code can't repair: unfinished text, a question left with one option, or data the options miss", async () => {
+    const skill = await skillFixture();
+    const good = generatedMultipleChoice();
+    const [right, wrong] = good.options;
+
+    const items = [
+      generatedMultipleChoice({ question: "[Insert the question here]" }),
+      generatedMultipleChoice({ options: [right!, { ...wrong!, text: "5,0" }] }),
+      generatedMultipleChoice({
+        context: "| Sensor | mm |\n|---|---:|\n| A | 49,8 |\n| B | 50,0 |\n| C | 50,3 |",
+        options: [
+          { ...right!, text: "A" },
+          { ...wrong!, text: "B" },
+        ],
+        question: "Which sensor reads closest to 50 mm?",
+      }),
+      good,
+    ];
+
+    const { created, rejected } = await createItems({
+      format: "multipleChoice",
+      items,
+      language: "pt",
+      provenance: generatedProvenance(),
+      skillId: skill.id,
+    });
+
+    expect(created.map((item) => parseItemContent(item).content)).toStrictEqual([
+      expect.objectContaining({ question: good.question }),
+    ]);
+
+    expect(rejected.map((entry) => entry.index)).toStrictEqual([0, 1, 2]);
+    await expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(1);
+  });
+
   it("stores options without the letters the writer printed before them", async () => {
     const skill = await skillFixture();
     const item = generatedMultipleChoice();
     const [right, wrong] = item.options;
 
-    // ENEM placement, Sep 2026: the writer followed "5 alternativas (A a E)" and labeled each one.
+    // ENEM placement, Sep 2026: the writer followed "5 options (A to E)" and labeled each one.
     const labeled = generatedMultipleChoice({
       options: [
         { ...wrong!, text: "B) 20" },

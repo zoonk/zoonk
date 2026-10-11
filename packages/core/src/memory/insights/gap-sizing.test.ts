@@ -1,8 +1,10 @@
-import { type ExtractedMemoryFact, extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
 import { generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
+import {
+  type SessionPattern,
+  findSessionPatterns,
+} from "@zoonk/ai/tasks/v2/memory/session-patterns";
 import { type Skill, prisma } from "@zoonk/db";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
@@ -24,12 +26,12 @@ import { respondToMemoryInsight } from "./respond-to-memory-insight";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 
-// Extraction and the coach are paid model calls; their behavior is covered by their evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
+// Noticing patterns and the coach are paid model calls; their behavior is covered by their evals.
+vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/insight", () => ({ generateMemoryInsight: vi.fn() }));
 
 const DAY_MS = 86_400_000;
-const NO_FACTS: ExtractedMemoryFact[] = [];
+const NO_PATTERNS: SessionPattern[] = [];
 const ANSWERS_PER_DAY = 7;
 
 const PROVENANCE = {
@@ -54,10 +56,12 @@ async function setup() {
 
   const weak = library.skills[1]!;
 
-  const [{ goal, plan }] = await Promise.all([
-    unplannedGoalFixture({ dailyMinutes: 20, kind: "learn", language: "en", userId: user.id }),
-    learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: user.id }),
-  ]);
+  const { goal, plan } = await unplannedGoalFixture({
+    dailyMinutes: 20,
+    kind: "learn",
+    language: "en",
+    userId: user.id,
+  });
 
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
@@ -75,10 +79,10 @@ async function setup() {
     ),
   );
 
-  vi.mocked(extractMemoryFacts).mockResolvedValue({
-    data: { facts: NO_FACTS },
+  vi.mocked(findSessionPatterns).mockResolvedValue({
+    data: { patterns: NO_PATTERNS },
     provenance: PROVENANCE,
-  } as Awaited<ReturnType<typeof extractMemoryFacts>>);
+  } as Awaited<ReturnType<typeof findSessionPatterns>>);
 
   vi.mocked(generateMemoryInsight).mockResolvedValue({
     data: {

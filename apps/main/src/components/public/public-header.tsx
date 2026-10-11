@@ -2,7 +2,6 @@ import { UserAvatarMenu } from "@/app/[lang]/(catalog)/_components/user-avatar-m
 import { LearnGoalMenu } from "@/app/[lang]/(learn)/_components/learn-goal-menu";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { LoginBarLink } from "@/components/login-bar-link";
-import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { getSession } from "@zoonk/core/users/session";
 import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
@@ -24,11 +23,9 @@ async function BarStart() {
   }
 
   return (
-    <ClientMessagesProvider scope="learn">
-      <MainLearnProvider>
-        <LearnGoalMenu />
-      </MainLearnProvider>
-    </ClientMessagesProvider>
+    <MainLearnProvider>
+      <LearnGoalMenu />
+    </MainLearnProvider>
   );
 }
 

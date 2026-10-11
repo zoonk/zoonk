@@ -160,6 +160,7 @@ export function useLessonPlayerActions({
           dispatch({ kinds: [SKIPPED_KINDS[activity]], type: "skipKinds" });
         }
       },
+      skipSteps: (stepIds) => dispatch({ stepIds, type: "skipSteps" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
     [adapters, check, dispatch, ensureRun, submitSpokenAnswer],

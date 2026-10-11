@@ -8,6 +8,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { getReferenceSyllabusNeed, loadGoalCurriculumInputs } from "./goal-curriculum-inputs";
+import { toScopedGraphPrompt } from "./shared-graph-prompt";
 
 const citation = { passage: "passage", sourceId: "source" };
 
@@ -83,13 +84,23 @@ describe(loadGoalCurriculumInputs, () => {
       notes: [],
       subjects: [
         {
+          choiceGroup: null,
           group: null,
           name: "Mathematics",
           questions: 45,
+          shortName: null,
           topics: ["Percentages", "Functions"],
           weight: 0.25,
         },
-        { group: null, name: "Languages", questions: 45, topics: ["Reading"], weight: null },
+        {
+          choiceGroup: null,
+          group: null,
+          name: "Languages",
+          questions: 45,
+          shortName: null,
+          topics: ["Reading"],
+          weight: null,
+        },
       ],
       topicFrequency: [{ level: "high", subject: "Mathematics", topic: "Percentages" }],
     });
@@ -183,7 +194,134 @@ describe(loadGoalCurriculumInputs, () => {
     await expect(loadGoalCurriculumInputs(goal.id)).resolves.toMatchObject({
       awaitingAnswers: true,
       graphPrompt: { context: '{"role":"Teacher"}', purpose: "careerChange" },
+      sharedContext: undefined,
     });
+  });
+
+  // A learner's role ("teacher") once named a shared skill "Relate teaching experience to UX
+  // work", which other learners' plans could reuse.
+  it("gives a shared curriculum the goal's general form and fixed choices, never the learner's words", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      details: {
+        followUps: [{ answer: "Na escola Santa Rita, em Pelotas", question: "Onde?" }],
+        level: "none",
+        purpose: "careerChange",
+        reason: "Cansei de dar aula para a Maria",
+        role: "Professora",
+        targetPosition: "UX designer",
+      },
+      prompt: "Sou a Joana, professora em Pelotas, e quero virar UX designer",
+      title: "Tornar-se UX designer",
+      userId: user.id,
+    });
+
+    const inputs = await loadGoalCurriculumInputs(goal.id);
+
+    if (!inputs) {
+      throw new Error("Expected the goal's inputs");
+    }
+
+    const shared = toScopedGraphPrompt({ inputs, scope: { generalGoal: null, ownerId: null } });
+
+    const general = toScopedGraphPrompt({
+      inputs,
+      scope: { generalGoal: "Trabalhar como UX designer", ownerId: null },
+    });
+
+    const owned = toScopedGraphPrompt({ inputs, scope: { generalGoal: null, ownerId: user.id } });
+
+    expect(shared).toMatchObject({
+      context: '{"targetPosition":"UX designer"}',
+      goal: "Tornar-se UX designer",
+      purpose: "careerChange",
+    });
+
+    expect(general.goal).toBe("Trabalhar como UX designer");
+    expect(JSON.stringify(shared)).not.toMatch(/Joana|Pelotas|Professora|Maria|Santa Rita/u);
+
+    // The learner's own private course still reads everything they told onboarding.
+    expect(owned.goal).toBe(goal.prompt);
+    expect(owned.context).toMatch(/Professora/u);
+
+    // A learn goal's graph starts where the learner is.
+    expect(shared.ownLevel).toBe("none");
+  });
+
+  // The first learner's "750 points for medicine" once reached the shared ENEM graph every later
+  // learner plans from, through the goal's general form and its details.
+  it("writes an exam's shared graph from the exam alone, never its first learner's words, target or level", async () => {
+    const [user, blueprint] = await Promise.all([
+      userFixture(),
+      examBlueprintFixture({ name: "ENEM", role: null }),
+    ]);
+
+    const details = {
+      examName: "ENEM",
+      examTarget: "admission",
+      examYear: 2027,
+      institution: "UFMG",
+      knownSubjects: ["Ciências Humanas"],
+      level: "advanced",
+      reason: "Meu pai é médico em Pelotas",
+      targetCourse: "Medicina",
+      targetScore: "750",
+    };
+
+    const [linked, understood] = await Promise.all([
+      goalFixture({
+        details,
+        examBlueprintId: blueprint.id,
+        kind: "exam",
+        prompt: "Sou o Lucas: quero tirar 750 no ENEM pra passar em Medicina na UFMG",
+        title: "Passar no ENEM com 750 em Medicina",
+        userId: user.id,
+      }),
+      // Before research reads the notice, the exam is the one onboarding understood.
+      goalFixture({
+        details,
+        kind: "exam",
+        prompt: "Sou o Lucas: quero tirar 750 no ENEM pra passar em Medicina na UFMG",
+        title: "Passar no ENEM com 750 em Medicina",
+        userId: user.id,
+      }),
+    ]);
+
+    const [linkedInputs, understoodInputs] = await Promise.all([
+      loadGoalCurriculumInputs(linked.id),
+      loadGoalCurriculumInputs(understood.id),
+    ]);
+
+    if (!linkedInputs || !understoodInputs) {
+      throw new Error("Expected the goals' inputs");
+    }
+
+    // The general form a model wrote from the learner's words is no exam's identity.
+    const scope = {
+      generalGoal: "Preparação para o ENEM com foco em 750 pontos para Medicina",
+      ownerId: null,
+    };
+
+    const prompts = [linkedInputs, understoodInputs].map((inputs) =>
+      toScopedGraphPrompt({ inputs, scope }),
+    );
+
+    for (const prompt of prompts) {
+      expect(prompt).toMatchObject({ context: undefined, goal: "ENEM", ownLevel: undefined });
+      expect(JSON.stringify(prompt)).not.toMatch(/Lucas|Pelotas|pai|750|Medicina|UFMG|Humanas/u);
+    }
+
+    expect(linkedInputs.examIdentity).toBe("ENEM");
+
+    // A private course is the learner's own and still reads what they told onboarding.
+    const owned = toScopedGraphPrompt({
+      inputs: linkedInputs,
+      scope: { generalGoal: null, ownerId: user.id },
+    });
+
+    expect(owned).toMatchObject({ goal: linked.prompt, ownLevel: "advanced" });
+    expect(owned.context).toMatch(/Medicina/u);
   });
 });
 

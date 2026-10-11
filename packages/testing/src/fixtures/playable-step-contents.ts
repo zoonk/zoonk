@@ -125,6 +125,69 @@ export const playableStepContent = {
 
 export type PlayableStepKind = keyof typeof playableStepContent;
 
+/**
+ * A question whose options are pictures, to tell separate things apart by how they look: each
+ * option asks for its own picture, described without naming it.
+ */
+export const pictureCheckContent = {
+  options: [
+    {
+      id: "gothic",
+      isCorrect: true,
+      picture: {
+        alt: "A tall stone doorway with a pointed arch and thin columns",
+        prompt: "A stone church doorway with a tall pointed arch and thin columns, alone",
+      },
+      reason: "The pointed arch carries the weight down thin columns: that's Gothic.",
+      text: "Gothic",
+    },
+    {
+      id: "romanesque",
+      isCorrect: false,
+      picture: {
+        alt: "A low stone doorway with a round arch and thick walls",
+        prompt: "A stone church doorway with a round arch in thick walls, alone",
+      },
+      reason: "A round arch on thick walls is Romanesque, older than Gothic.",
+      text: "Romanesque",
+    },
+    {
+      id: "baroque",
+      isCorrect: false,
+      picture: {
+        alt: "A doorway framed by twisting columns and swirling decoration",
+        prompt: "A church doorway framed by twisting columns and swirling carved decoration, alone",
+      },
+      reason: "Twisting columns and swirls are Baroque, which came long after Gothic.",
+      text: "Baroque",
+    },
+  ],
+  question: "Which doorway is Gothic?",
+};
+
+/**
+ * A question about where a part sits in one whole: code draws a number on each part, in the
+ * order of `image.parts`, so the right option (the ovary's number) comes from that list.
+ */
+export const numberedCheckContent = {
+  image: {
+    alt: "A flower cut in half lengthwise, with three numbered parts",
+    parts: ["petal", "stigma", "ovary"],
+    prompt: "A flower cut in half lengthwise, showing a petal, the stigma and the ovary",
+  },
+  options: [
+    { id: "a", isCorrect: true, reason: "The ovary is the swollen base of the pistil.", text: "3" },
+    { id: "b", isCorrect: false, reason: "That's a petal, which draws insects in.", text: "1" },
+    {
+      id: "c",
+      isCorrect: false,
+      reason: "The stigma sits on top of the same stalk and catches pollen.",
+      text: "2",
+    },
+  ],
+  question: "Which number is the ovary?",
+};
+
 /** Every teaching screen once, in the order a lesson uses them. */
 export const TEACHING_LESSON_STEPS: PlayableStepKind[] = [
   "hook",

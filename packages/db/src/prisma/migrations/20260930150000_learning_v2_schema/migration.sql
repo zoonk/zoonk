@@ -9,10 +9,16 @@
 CREATE TYPE "TutorThreadKind" AS ENUM ('lesson', 'chapter', 'plan', 'mock');
 
 -- CreateEnum
+CREATE TYPE "LessonScreenSuggestion" AS ENUM ('simpler', 'deeper', 'example');
+
+-- CreateEnum
 CREATE TYPE "MockExamStatus" AS ENUM ('active', 'finished');
 
 -- CreateEnum
 CREATE TYPE "TargetCutoffStatus" AS ENUM ('found', 'unknown');
+
+-- CreateEnum
+CREATE TYPE "CourseWeightsStatus" AS ENUM ('found', 'unknown');
 
 -- CreateEnum
 CREATE TYPE "VoteValue" AS ENUM ('up', 'down');
@@ -39,6 +45,9 @@ CREATE TYPE "PlanItemKind" AS ENUM ('lesson', 'chapter', 'checkpoint', 'mock', '
 CREATE TYPE "PlanItemStatus" AS ENUM ('todo', 'done', 'skipped', 'tested_out');
 
 -- CreateEnum
+CREATE TYPE "PlanSetupTask" AS ENUM ('placement', 'routine', 'notice');
+
+-- CreateEnum
 CREATE TYPE "SuggestedGoalStatus" AS ENUM ('pending', 'accepted', 'dismissed');
 
 -- CreateEnum
@@ -51,7 +60,7 @@ CREATE TYPE "ResearchUploadReason" AS ENUM ('no_official_source', 'unverified', 
 CREATE TYPE "LanguageSkill" AS ENUM ('reading', 'listening', 'speaking', 'writing');
 
 -- CreateEnum
-CREATE TYPE "LanguageConversationKind" AS ENUM ('practice', 'checkpoint', 'speaking_mock');
+CREATE TYPE "LanguageConversationKind" AS ENUM ('practice', 'checkpoint', 'speaking_mock', 'exam_speaking');
 
 -- CreateEnum
 CREATE TYPE "LanguageConversationStatus" AS ENUM ('ready', 'completed');
@@ -108,6 +117,9 @@ CREATE TYPE "OnboardingDraftStatus" AS ENUM ('understanding', 'understood', 'fai
 CREATE TYPE "ItemFormat" AS ENUM ('multiple_choice', 'true_false', 'typed', 'spoken', 'essay', 'match_pairs', 'order', 'numeric');
 
 -- CreateEnum
+CREATE TYPE "ItemSetKind" AS ENUM ('text', 'chart', 'case', 'audio');
+
+-- CreateEnum
 CREATE TYPE "SourceKind" AS ENUM ('official', 'secondary', 'upload');
 
 -- CreateEnum
@@ -132,16 +144,13 @@ CREATE TYPE "StudyBlockStatus" AS ENUM ('pending', 'active', 'completed', 'skipp
 CREATE TYPE "StudyFreshStart" AS ENUM ('welcome_back', 'new_week', 'new_phase');
 
 -- CreateEnum
-CREATE TYPE "UsageKind" AS ENUM ('lesson_start', 'explanation', 'goal', 'tutor_message', 'upload', 'conversation', 'assist', 'mind_map');
+CREATE TYPE "UsageKind" AS ENUM ('lesson_start', 'explanation', 'goal', 'tutor_message', 'upload', 'conversation', 'assist', 'mind_map', 'outline', 'mock_questions');
 
 -- CreateEnum
 CREATE TYPE "BuddyKind" AS ENUM ('zu', 'noodle', 'beep', 'otto');
 
 -- CreateEnum
 CREATE TYPE "BuddyGlasses" AS ENUM ('round', 'star', 'aviator', 'cat_eye', 'retro', 'monocle');
-
--- CreateEnum
-CREATE TYPE "GuardianLinkStatus" AS ENUM ('pending', 'active', 'revoked');
 
 -- AlterEnum
 -- This migration adds more than one value to an enum.
@@ -192,6 +201,7 @@ ADD COLUMN     "plan_change_id" UUID,
 ADD COLUMN     "prompt_version" TEXT,
 ADD COLUMN     "run_id" TEXT,
 ADD COLUMN     "shared_answer_id" UUID,
+ADD COLUMN     "suggestion" "LessonScreenSuggestion",
 ADD COLUMN     "tool_offer" JSONB;
 
 -- AlterTable
@@ -206,14 +216,11 @@ ADD COLUMN     "run_id" TEXT;
 
 -- AlterTable
 ALTER TABLE "user_learning_profiles" ADD COLUMN     "active_goal_id" UUID,
-ADD COLUMN     "birth_month" SMALLINT,
-ADD COLUMN     "birth_year" SMALLINT,
 ADD COLUMN     "buddy_glasses" "BuddyGlasses" NOT NULL DEFAULT 'round',
 ADD COLUMN     "buddy_kind" "BuddyKind",
 ADD COLUMN     "buddy_name" TEXT,
 ADD COLUMN     "daily_limit_minutes" SMALLINT,
-ADD COLUMN     "guardian_invite_dismissed_at" TIMESTAMP(3),
-ADD COLUMN     "memory_enabled" BOOLEAN,
+ADD COLUMN     "memory_enabled" BOOLEAN NOT NULL DEFAULT true,
 ADD COLUMN     "sounds_enabled" BOOLEAN NOT NULL DEFAULT true;
 
 -- AlterTable
@@ -302,6 +309,7 @@ CREATE TABLE "mock_exams" (
     "started_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "finished_at" TIMESTAMP(3),
     "result" JSONB,
+    "listening_plays" JSONB NOT NULL DEFAULT '{}',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -316,6 +324,7 @@ CREATE TABLE "mock_exam_answers" (
     "answer" JSONB,
     "flagged" BOOLEAN NOT NULL DEFAULT false,
     "duration_ms" INTEGER NOT NULL DEFAULT 0,
+    "changes" SMALLINT NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -352,6 +361,7 @@ CREATE TABLE "target_cutoffs" (
     "year" SMALLINT NOT NULL,
     "status" "TargetCutoffStatus" NOT NULL,
     "score" DOUBLE PRECISION,
+    "max_score" DOUBLE PRECISION,
     "edition" TEXT,
     "quota" TEXT,
     "source_url" TEXT,
@@ -363,6 +373,42 @@ CREATE TABLE "target_cutoffs" (
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "target_cutoffs_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "exam_course_weights" (
+    "id" UUID NOT NULL DEFAULT uuidv7(),
+    "exam_blueprint_id" UUID NOT NULL,
+    "target_key" TEXT NOT NULL,
+    "year" SMALLINT NOT NULL,
+    "status" "CourseWeightsStatus" NOT NULL,
+    "subjects" JSONB NOT NULL DEFAULT '[]',
+    "edition" TEXT,
+    "source_url" TEXT,
+    "source_title" TEXT,
+    "model" TEXT NOT NULL,
+    "prompt_version" TEXT NOT NULL,
+    "run_id" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "exam_course_weights_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "exam_skill_graphs" (
+    "id" UUID NOT NULL DEFAULT uuidv7(),
+    "exam_blueprint_id" UUID NOT NULL,
+    "graph" JSONB NOT NULL,
+    "primary_course_id" UUID,
+    "model" TEXT NOT NULL,
+    "prompt_version" TEXT NOT NULL,
+    "run_id" TEXT NOT NULL,
+    "generated_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "exam_skill_graphs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -442,6 +488,8 @@ CREATE TABLE "plans" (
     "notice_wait_until" TIMESTAMP(3),
     "notice_wait_ended_at" TIMESTAMP(3),
     "covered_share" DOUBLE PRECISION,
+    "inputs_key" TEXT,
+    "setup_tasks" "PlanSetupTask"[] DEFAULT ARRAY[]::"PlanSetupTask"[],
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -459,6 +507,7 @@ CREATE TABLE "plan_items" (
     "lesson_id" UUID,
     "chapter_id" UUID,
     "skill_id" UUID,
+    "lessons" SMALLINT,
     "title_snapshot" TEXT NOT NULL,
     "scheduled_for" DATE,
     "completed_at" TIMESTAMP(3),
@@ -483,6 +532,16 @@ CREATE TABLE "plan_changes" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "plan_changes_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "plan_change_snapshots" (
+    "id" UUID NOT NULL DEFAULT uuidv7(),
+    "change_id" UUID NOT NULL,
+    "plan" JSONB NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "plan_change_snapshots_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -551,6 +610,7 @@ CREATE TABLE "language_conversations" (
     "goal_id" UUID,
     "chapter_id" UUID,
     "study_block_id" UUID,
+    "section_id" UUID,
     "kind" "LanguageConversationKind" NOT NULL,
     "status" "LanguageConversationStatus" NOT NULL DEFAULT 'ready',
     "language" VARCHAR(10) NOT NULL,
@@ -658,6 +718,7 @@ CREATE TABLE "attempts" (
     "answer" JSONB NOT NULL,
     "target_language" VARCHAR(10),
     "is_correct" BOOLEAN NOT NULL,
+    "is_placement" BOOLEAN NOT NULL DEFAULT false,
     "score" DOUBLE PRECISION,
     "duration_ms" INTEGER NOT NULL,
     "answered_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -690,7 +751,7 @@ CREATE TABLE "mistakes" (
 CREATE TABLE "tutor_shared_answers" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
     "step_id" UUID NOT NULL,
-    "normalized_question" TEXT NOT NULL,
+    "suggestion" "LessonScreenSuggestion" NOT NULL,
     "question" TEXT NOT NULL,
     "answer" TEXT NOT NULL,
     "model" TEXT NOT NULL,
@@ -774,6 +835,8 @@ CREATE TABLE "library_lessons" (
     "held_back_drafts" JSONB NOT NULL DEFAULT '[]',
     "set_aside_at" TIMESTAMP(3),
     "summary" JSONB,
+    "related_questions" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "go_further_course_id" UUID,
     "model" TEXT NOT NULL,
     "prompt_version" TEXT NOT NULL,
     "run_id" TEXT NOT NULL,
@@ -819,6 +882,16 @@ CREATE TABLE "library_steps" (
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "library_steps_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "library_step_option_pictures" (
+    "step_id" UUID NOT NULL,
+    "option_id" TEXT NOT NULL,
+    "media_asset_id" UUID NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "library_step_option_pictures_pkey" PRIMARY KEY ("step_id","option_id")
 );
 
 -- CreateTable
@@ -964,6 +1037,7 @@ CREATE TABLE "milestones" (
 -- CreateTable
 CREATE TABLE "goal_understandings" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
+    "user_id" UUID NOT NULL,
     "language" VARCHAR(10) NOT NULL,
     "normalized_prompt" TEXT NOT NULL,
     "result" JSONB NOT NULL,
@@ -1016,6 +1090,7 @@ CREATE TABLE "skills" (
     "description" TEXT NOT NULL,
     "example" TEXT,
     "level" "CourseLevel",
+    "is_quantitative" BOOLEAN,
     "merged_into_id" UUID,
     "visibility" "LibraryVisibility" NOT NULL DEFAULT 'public',
     "owner_id" UUID,
@@ -1061,6 +1136,8 @@ CREATE TABLE "items" (
     "source_id" UUID,
     "source_citation" TEXT,
     "media_asset_id" UUID,
+    "set_id" UUID,
+    "set_position" INTEGER,
     "model" TEXT NOT NULL,
     "prompt_version" TEXT NOT NULL,
     "run_id" TEXT NOT NULL,
@@ -1069,6 +1146,26 @@ CREATE TABLE "items" (
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "items_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "item_sets" (
+    "id" UUID NOT NULL DEFAULT uuidv7(),
+    "language" VARCHAR(10) NOT NULL,
+    "kind" "ItemSetKind" NOT NULL,
+    "content" JSONB NOT NULL,
+    "exam_blueprint_id" UUID,
+    "source_id" UUID,
+    "source_citation" TEXT,
+    "media_asset_id" UUID,
+    "model" TEXT NOT NULL,
+    "prompt_version" TEXT NOT NULL,
+    "run_id" TEXT NOT NULL,
+    "generated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "item_sets_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -1269,29 +1366,21 @@ CREATE TABLE "usage_records" (
 );
 
 -- CreateTable
-CREATE TABLE "newcomer_spend_days" (
+CREATE TABLE "guest_spend_days" (
     "day" DATE NOT NULL,
     "spent_micros" INTEGER NOT NULL DEFAULT 0,
 
-    CONSTRAINT "newcomer_spend_days_pkey" PRIMARY KEY ("day")
+    CONSTRAINT "guest_spend_days_pkey" PRIMARY KEY ("day")
 );
 
 -- CreateTable
-CREATE TABLE "guardian_links" (
+CREATE TABLE "account_deletions" (
     "id" UUID NOT NULL DEFAULT uuidv7(),
     "user_id" UUID NOT NULL,
-    "guardian_email" TEXT NOT NULL,
-    "status" "GuardianLinkStatus" NOT NULL DEFAULT 'pending',
-    "token_hash" TEXT NOT NULL,
-    "daily_limit_minutes" SMALLINT,
-    "plus_approved_at" TIMESTAMP(3),
-    "memory_off" BOOLEAN NOT NULL DEFAULT false,
-    "expires_at" TIMESTAMP(3),
-    "accepted_at" TIMESTAMP(3),
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deleted_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "analytics_removed_at" TIMESTAMP(3),
 
-    CONSTRAINT "guardian_links_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "account_deletions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -1327,6 +1416,51 @@ CREATE TABLE "lesson_sentences" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "lesson_sentences_pkey" PRIMARY KEY ("lesson_id","sentence_id")
+);
+
+-- CreateTable
+CREATE TABLE "anonymous_first_answers" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "item_id" UUID NOT NULL,
+    "is_correct" BOOLEAN NOT NULL,
+
+    CONSTRAINT "anonymous_first_answers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "anonymous_mock_answers" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "exam_blueprint_id" UUID NOT NULL,
+    "mock_key" UUID NOT NULL,
+    "learner_key" UUID NOT NULL,
+    "finished_on" DATE NOT NULL,
+    "duration_ms" INTEGER NOT NULL,
+
+    CONSTRAINT "anonymous_mock_answers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "anonymous_lesson_paces" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "lesson_id" UUID NOT NULL,
+    "local_date" DATE NOT NULL,
+    "seconds" INTEGER NOT NULL,
+
+    CONSTRAINT "anonymous_lesson_paces_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "anonymous_exam_results" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "exam_blueprint_id" UUID NOT NULL,
+    "score" DOUBLE PRECISION NOT NULL,
+    "scale" TEXT NOT NULL,
+    "max_score" DOUBLE PRECISION,
+    "estimate_low" DOUBLE PRECISION NOT NULL,
+    "estimate_high" DOUBLE PRECISION NOT NULL,
+    "reported_on" DATE NOT NULL,
+
+    CONSTRAINT "anonymous_exam_results_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -1384,6 +1518,15 @@ CREATE INDEX "exam_results_exam_blueprint_id_reported_at_idx" ON "exam_results"(
 CREATE UNIQUE INDEX "target_cutoffs_exam_blueprint_id_target_key_year_key" ON "target_cutoffs"("exam_blueprint_id", "target_key", "year");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "exam_course_weights_exam_blueprint_id_target_key_year_key" ON "exam_course_weights"("exam_blueprint_id", "target_key", "year");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "exam_skill_graphs_exam_blueprint_id_key" ON "exam_skill_graphs"("exam_blueprint_id");
+
+-- CreateIndex
+CREATE INDEX "exam_skill_graphs_primary_course_id_idx" ON "exam_skill_graphs"("primary_course_id");
+
+-- CreateIndex
 CREATE INDEX "content_feedback_content_kind_content_id_idx" ON "content_feedback"("content_kind", "content_id");
 
 -- CreateIndex
@@ -1426,6 +1569,9 @@ CREATE UNIQUE INDEX "plan_items_plan_id_position_key" ON "plan_items"("plan_id",
 CREATE INDEX "plan_changes_plan_id_created_at_idx" ON "plan_changes"("plan_id", "created_at");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "plan_change_snapshots_change_id_key" ON "plan_change_snapshots"("change_id");
+
+-- CreateIndex
 CREATE INDEX "suggested_goals_user_id_status_idx" ON "suggested_goals"("user_id", "status");
 
 -- CreateIndex
@@ -1460,6 +1606,9 @@ CREATE INDEX "language_conversations_goal_id_idx" ON "language_conversations"("g
 
 -- CreateIndex
 CREATE INDEX "language_conversations_chapter_id_idx" ON "language_conversations"("chapter_id");
+
+-- CreateIndex
+CREATE INDEX "language_conversations_section_id_idx" ON "language_conversations"("section_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "conversation_scenarios_chapter_id_level_key" ON "conversation_scenarios"("chapter_id", "level");
@@ -1519,7 +1668,7 @@ CREATE INDEX "mistakes_step_id_idx" ON "mistakes"("step_id");
 CREATE INDEX "mistakes_attempt_id_idx" ON "mistakes"("attempt_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tutor_shared_answers_step_id_normalized_question_key" ON "tutor_shared_answers"("step_id", "normalized_question");
+CREATE UNIQUE INDEX "tutor_shared_answers_step_id_suggestion_key" ON "tutor_shared_answers"("step_id", "suggestion");
 
 -- CreateIndex
 CREATE INDEX "library_chapters_language_level_normalized_title_idx" ON "library_chapters"("language", "level", "normalized_title");
@@ -1547,6 +1696,9 @@ CREATE INDEX "library_lessons_language_level_normalized_title_idx" ON "library_l
 
 -- CreateIndex
 CREATE INDEX "library_lessons_owner_id_idx" ON "library_lessons"("owner_id");
+
+-- CreateIndex
+CREATE INDEX "library_lessons_go_further_course_id_idx" ON "library_lessons"("go_further_course_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "library_lessons_language_identity_key_key" ON "library_lessons"("language", "identity_key");
@@ -1585,6 +1737,9 @@ CREATE INDEX "library_steps_retired_at_idx" ON "library_steps"("retired_at");
 CREATE UNIQUE INDEX "library_steps_lesson_id_version_position_key" ON "library_steps"("lesson_id", "version", "position");
 
 -- CreateIndex
+CREATE INDEX "library_step_option_pictures_media_asset_id_idx" ON "library_step_option_pictures"("media_asset_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "step_variants_step_id_kind_key_key" ON "step_variants"("step_id", "kind", "key");
 
 -- CreateIndex
@@ -1621,7 +1776,7 @@ CREATE UNIQUE INDEX "memory_insights_user_id_local_date_key" ON "memory_insights
 CREATE UNIQUE INDEX "milestones_user_id_kind_key_key" ON "milestones"("user_id", "kind", "key");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "goal_understandings_language_normalized_prompt_key" ON "goal_understandings"("language", "normalized_prompt");
+CREATE UNIQUE INDEX "goal_understandings_user_id_language_normalized_prompt_key" ON "goal_understandings"("user_id", "language", "normalized_prompt");
 
 -- CreateIndex
 CREATE INDEX "instrument_waitlist_entries_normalized_instrument_idx" ON "instrument_waitlist_entries"("normalized_instrument");
@@ -1661,6 +1816,18 @@ CREATE INDEX "items_source_id_idx" ON "items"("source_id");
 
 -- CreateIndex
 CREATE INDEX "items_media_asset_id_idx" ON "items"("media_asset_id");
+
+-- CreateIndex
+CREATE INDEX "items_set_id_idx" ON "items"("set_id");
+
+-- CreateIndex
+CREATE INDEX "item_sets_exam_blueprint_id_idx" ON "item_sets"("exam_blueprint_id");
+
+-- CreateIndex
+CREATE INDEX "item_sets_source_id_idx" ON "item_sets"("source_id");
+
+-- CreateIndex
+CREATE INDEX "item_sets_media_asset_id_idx" ON "item_sets"("media_asset_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "answer_explanations_item_id_normalized_answer_language_key" ON "answer_explanations"("item_id", "normalized_answer", "language");
@@ -1756,10 +1923,7 @@ CREATE INDEX "usage_records_user_id_created_at_idx" ON "usage_records"("user_id"
 CREATE UNIQUE INDEX "usage_records_user_id_kind_target_id_key" ON "usage_records"("user_id", "kind", "target_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "guardian_links_token_hash_key" ON "guardian_links"("token_hash");
-
--- CreateIndex
-CREATE INDEX "guardian_links_user_id_idx" ON "guardian_links"("user_id");
+CREATE INDEX "account_deletions_analytics_removed_at_deleted_at_idx" ON "account_deletions"("analytics_removed_at", "deleted_at");
 
 -- CreateIndex
 CREATE INDEX "lesson_words_word_id_idx" ON "lesson_words"("word_id");
@@ -1806,6 +1970,18 @@ CREATE UNIQUE INDEX "user_learning_profiles_active_goal_id_key" ON "user_learnin
 -- CreateIndex
 CREATE INDEX "users_is_anonymous_created_at_idx" ON "users"("is_anonymous", "created_at");
 
+-- CreateIndex
+CREATE INDEX "anonymous_first_answers_item_id_idx" ON "anonymous_first_answers"("item_id");
+
+-- CreateIndex
+CREATE INDEX "anonymous_mock_answers_exam_blueprint_id_finished_on_idx" ON "anonymous_mock_answers"("exam_blueprint_id", "finished_on");
+
+-- CreateIndex
+CREATE INDEX "anonymous_lesson_paces_local_date_idx" ON "anonymous_lesson_paces"("local_date");
+
+-- CreateIndex
+CREATE INDEX "anonymous_exam_results_exam_blueprint_id_reported_on_idx" ON "anonymous_exam_results"("exam_blueprint_id", "reported_on");
+
 -- AddForeignKey
 ALTER TABLE "evaluation_runs" ADD CONSTRAINT "evaluation_runs_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -1846,6 +2022,15 @@ ALTER TABLE "exam_results" ADD CONSTRAINT "exam_results_exam_blueprint_id_fkey" 
 ALTER TABLE "target_cutoffs" ADD CONSTRAINT "target_cutoffs_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "exam_course_weights" ADD CONSTRAINT "exam_course_weights_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "exam_skill_graphs" ADD CONSTRAINT "exam_skill_graphs_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "exam_skill_graphs" ADD CONSTRAINT "exam_skill_graphs_primary_course_id_fkey" FOREIGN KEY ("primary_course_id") REFERENCES "courses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "content_feedback" ADD CONSTRAINT "content_feedback_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -1877,6 +2062,9 @@ ALTER TABLE "plan_items" ADD CONSTRAINT "plan_items_skill_id_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "plan_changes" ADD CONSTRAINT "plan_changes_plan_id_fkey" FOREIGN KEY ("plan_id") REFERENCES "plans"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "plan_change_snapshots" ADD CONSTRAINT "plan_change_snapshots_change_id_fkey" FOREIGN KEY ("change_id") REFERENCES "plan_changes"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "suggested_goals" ADD CONSTRAINT "suggested_goals_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -2002,6 +2190,9 @@ ALTER TABLE "library_lessons" ADD CONSTRAINT "library_lessons_home_chapter_id_fk
 ALTER TABLE "library_lessons" ADD CONSTRAINT "library_lessons_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "library_lessons" ADD CONSTRAINT "library_lessons_go_further_course_id_fkey" FOREIGN KEY ("go_further_course_id") REFERENCES "courses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "chapter_lessons" ADD CONSTRAINT "chapter_lessons_chapter_id_fkey" FOREIGN KEY ("chapter_id") REFERENCES "library_chapters"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -2027,6 +2218,12 @@ ALTER TABLE "library_steps" ADD CONSTRAINT "library_steps_media_asset_id_fkey" F
 
 -- AddForeignKey
 ALTER TABLE "library_steps" ADD CONSTRAINT "library_steps_source_id_fkey" FOREIGN KEY ("source_id") REFERENCES "sources"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "library_step_option_pictures" ADD CONSTRAINT "library_step_option_pictures_step_id_fkey" FOREIGN KEY ("step_id") REFERENCES "library_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "library_step_option_pictures" ADD CONSTRAINT "library_step_option_pictures_media_asset_id_fkey" FOREIGN KEY ("media_asset_id") REFERENCES "media_assets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "step_variants" ADD CONSTRAINT "step_variants_step_id_fkey" FOREIGN KEY ("step_id") REFERENCES "library_steps"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -2062,6 +2259,9 @@ ALTER TABLE "milestones" ADD CONSTRAINT "milestones_user_id_fkey" FOREIGN KEY ("
 ALTER TABLE "instrument_waitlist_entries" ADD CONSTRAINT "instrument_waitlist_entries_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "goal_understandings" ADD CONSTRAINT "goal_understandings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "onboarding_drafts" ADD CONSTRAINT "onboarding_drafts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -2093,6 +2293,18 @@ ALTER TABLE "items" ADD CONSTRAINT "items_source_id_fkey" FOREIGN KEY ("source_i
 
 -- AddForeignKey
 ALTER TABLE "items" ADD CONSTRAINT "items_media_asset_id_fkey" FOREIGN KEY ("media_asset_id") REFERENCES "media_assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "items" ADD CONSTRAINT "items_set_id_fkey" FOREIGN KEY ("set_id") REFERENCES "item_sets"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "item_sets" ADD CONSTRAINT "item_sets_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "item_sets" ADD CONSTRAINT "item_sets_source_id_fkey" FOREIGN KEY ("source_id") REFERENCES "sources"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "item_sets" ADD CONSTRAINT "item_sets_media_asset_id_fkey" FOREIGN KEY ("media_asset_id") REFERENCES "media_assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "answer_explanations" ADD CONSTRAINT "answer_explanations_item_id_fkey" FOREIGN KEY ("item_id") REFERENCES "items"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -2155,9 +2367,6 @@ ALTER TABLE "usage_records" ADD CONSTRAINT "usage_records_user_id_fkey" FOREIGN 
 ALTER TABLE "user_learning_profiles" ADD CONSTRAINT "user_learning_profiles_active_goal_id_fkey" FOREIGN KEY ("active_goal_id") REFERENCES "goals"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "guardian_links" ADD CONSTRAINT "guardian_links_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "lesson_words" ADD CONSTRAINT "lesson_words_lesson_id_fkey" FOREIGN KEY ("lesson_id") REFERENCES "library_lessons"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -2168,6 +2377,18 @@ ALTER TABLE "lesson_sentences" ADD CONSTRAINT "lesson_sentences_lesson_id_fkey" 
 
 -- AddForeignKey
 ALTER TABLE "lesson_sentences" ADD CONSTRAINT "lesson_sentences_sentence_id_fkey" FOREIGN KEY ("sentence_id") REFERENCES "sentences"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "anonymous_first_answers" ADD CONSTRAINT "anonymous_first_answers_item_id_fkey" FOREIGN KEY ("item_id") REFERENCES "items"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "anonymous_mock_answers" ADD CONSTRAINT "anonymous_mock_answers_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "anonymous_lesson_paces" ADD CONSTRAINT "anonymous_lesson_paces_lesson_id_fkey" FOREIGN KEY ("lesson_id") REFERENCES "library_lessons"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "anonymous_exam_results" ADD CONSTRAINT "anonymous_exam_results_exam_blueprint_id_fkey" FOREIGN KEY ("exam_blueprint_id") REFERENCES "exam_blueprints"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Library text search. Prisma's schema can't express SQL functions or expression indexes, so they
 -- live here: one search vector per language, accent-insensitive, used by the Library's identity search.

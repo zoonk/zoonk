@@ -4,8 +4,13 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
-import systemPrompt from "./find-official-sources.prompt.md";
-import { type ResearchPlan, type ResearchTopic } from "./research-plan";
+import { selectPromptVariants } from "../../_utils/prompt-variants";
+import promptTemplate from "./find-official-sources.prompt.md";
+import {
+  type ExamResearchPlan,
+  type ResearchSearchPlan,
+  type ResearchTopic,
+} from "./research-plan";
 import {
   type ResearchSearchTool,
   buildResearchSearchTools,
@@ -50,24 +55,51 @@ const schema = z.object({ documents: z.array(documentSchema), officialFound: z.b
 
 export type FoundSourceDocument = z.infer<typeof documentSchema>;
 
+/** What search reads of a research plan: an exam's also names its board, edition and role. */
+type SearchedPlan = Pick<ResearchSearchPlan, "country" | "name" | "officialDomains" | "queries"> &
+  Partial<Pick<ExamResearchPlan, "board" | "edition" | "role">>;
+
 export type FindOfficialSourcesParams = {
-  plan: Pick<
-    ResearchPlan,
-    "board" | "country" | "edition" | "name" | "officialDomains" | "queries" | "role"
-  >;
+  plan: SearchedPlan;
   /** What research reads; left out when confirming an upload, whose topic isn't known. */
   topic?: ResearchTopic;
+  /**
+   * Documents an earlier search found that couldn't be downloaded (a board's site that refuses
+   * automated downloads): the search looks for the same documents on other sites instead.
+   */
+  unreadable?: readonly string[];
   searchTool?: ResearchSearchTool;
   model?: string;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-function toPlanPrompt({ plan, topic }: Pick<FindOfficialSourcesParams, "plan" | "topic">): string {
+/**
+ * Only the fields search uses, picked at runtime: a whole plan also carries its search terms,
+ * language and whether it's a class test, which search never reads.
+ */
+function toSearchedFields(plan: SearchedPlan): Required<SearchedPlan> {
+  return {
+    board: plan.board ?? null,
+    country: plan.country,
+    edition: plan.edition ?? null,
+    name: plan.name,
+    officialDomains: plan.officialDomains,
+    queries: plan.queries,
+    role: plan.role ?? null,
+  };
+}
+
+function toPlanPrompt({
+  plan,
+  topic,
+  unreadable = [],
+}: Pick<FindOfficialSourcesParams, "plan" | "topic" | "unreadable">): string {
   return [
     topic && `TOPIC: ${topic}`,
     `TODAY: ${new Date().toISOString().slice(0, 10)}`,
-    `PLAN:\n${JSON.stringify(plan, null, 2)}`,
+    unreadable.length > 0 && `UNREADABLE:\n${unreadable.map((url) => `- ${url}`).join("\n")}`,
+    `PLAN:\n${JSON.stringify(toSearchedFields(plan), null, 2)}`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -75,10 +107,11 @@ function toPlanPrompt({ plan, topic }: Pick<FindOfficialSourcesParams, "plan" | 
 
 /**
  * Searches official domains first for an exam's current notice, a law's text,
- * a product's documentation or a subject's reference syllabi. Addresses on
- * sites no search returned are dropped, since the model invented them.
- * Fallback models aren't used: each search tool is tied to the model it's
- * measured with.
+ * a product's documentation or a subject's reference syllabi, or, given the
+ * documents that couldn't be downloaded (`unreadable`), copies of them on other
+ * sites. Addresses on sites no search returned are dropped, since the model
+ * invented them. Fallback models aren't used: each search tool is tied to the
+ * model it's measured with.
  */
 export async function findOfficialSources({
   analytics,
@@ -87,8 +120,16 @@ export async function findOfficialSources({
   reasoning,
   searchTool = defaultSearchTool,
   topic,
+  unreadable = [],
 }: FindOfficialSourcesParams) {
-  const userPrompt = toPlanPrompt({ plan, topic });
+  const userPrompt = toPlanPrompt({ plan, topic, unreadable });
+
+  // A search for copies of documents that couldn't be downloaded reads its own rules.
+  const systemPrompt = selectPromptVariants({
+    template: promptTemplate,
+    variants: { unreadable: unreadable.length > 0 },
+  });
+
   const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
 
   const { provenance, result } = await runTaskGeneration({
@@ -104,6 +145,7 @@ export async function findOfficialSources({
         stopWhen: isStepCount(MAX_STEPS),
         tools: buildResearchSearchTools({ model, searchTool }),
       }),
+    libraryInput: true,
     promptVersion: `search:${searchTool}`,
     systemPrompt,
     task: "find-official-sources",

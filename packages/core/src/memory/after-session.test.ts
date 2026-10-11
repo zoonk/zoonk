@@ -1,6 +1,9 @@
-import { type ExtractedMemoryFact, extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
 import { generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
 import { type MemoryInsightOutput } from "@zoonk/ai/tasks/v2/memory/insight-rules";
+import {
+  type SessionPattern,
+  findSessionPatterns,
+} from "@zoonk/ai/tasks/v2/memory/session-patterns";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
@@ -12,14 +15,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { scheduleMemoryAfterSession } from "./after-session";
 
-// Extraction and the coach are paid model calls; their behavior is covered by their evals.
-vi.mock("@zoonk/ai/tasks/v2/memory/extraction", () => ({ extractMemoryFacts: vi.fn() }));
+// Noticing patterns and the coach are paid model calls; their behavior is covered by their evals.
+vi.mock("@zoonk/ai/tasks/v2/memory/session-patterns", () => ({ findSessionPatterns: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/memory/insight", () => ({ generateMemoryInsight: vi.fn() }));
 
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn(), logWarning: vi.fn() }));
 
 const DAY_MS = 86_400_000;
-const NO_FACTS: ExtractedMemoryFact[] = [];
+const NO_PATTERNS: SessionPattern[] = [];
 
 const PROVENANCE = {
   generatedAt: "2026-09-26T12:00:00.000Z",
@@ -52,10 +55,12 @@ async function learnerWithAnswers({
 }) {
   const [user, skill] = await Promise.all([userFixture(), skillFixture({ name: "Percentages" })]);
 
-  const [goal] = await Promise.all([
-    goalFixture({ language: "en", studyTime: "07:00", title: "ENEM 2026", userId: user.id }),
-    learningProfileFixture({ birthMonth: 5, birthYear: 1990, userId: user.id }),
-  ]);
+  const goal = await goalFixture({
+    language: "en",
+    studyTime: "07:00",
+    title: "ENEM 2026",
+    userId: user.id,
+  });
 
   const plan = await planFixture({ goalId: goal.id });
   await planItemFixture({ planId: plan.id, skillId: skill.id });
@@ -100,10 +105,10 @@ function findInsights(userId: string) {
 
 describe(scheduleMemoryAfterSession, () => {
   beforeEach(() => {
-    vi.mocked(extractMemoryFacts).mockResolvedValue({
-      data: { facts: NO_FACTS },
+    vi.mocked(findSessionPatterns).mockResolvedValue({
+      data: { patterns: NO_PATTERNS },
       provenance: PROVENANCE,
-    } as Awaited<ReturnType<typeof extractMemoryFacts>>);
+    } as Awaited<ReturnType<typeof findSessionPatterns>>);
 
     mockInsight({});
   });
@@ -123,10 +128,9 @@ describe(scheduleMemoryAfterSession, () => {
       },
     ]);
 
-    expect(extractMemoryFacts).toHaveBeenCalledWith(
+    expect(findSessionPatterns).toHaveBeenCalledWith(
       expect.objectContaining({
-        input: expect.stringContaining("Answers in the last 7 days: 14 on 2 days, 50% right."),
-        source: "session",
+        activity: expect.stringContaining("Answers in the last 7 days: 14 on 2 days, 50% right."),
       }),
     );
 
@@ -163,7 +167,7 @@ describe(scheduleMemoryAfterSession, () => {
 
     await endSessionFor({ goalId: goal.id, userId: user.id });
 
-    expect(extractMemoryFacts).not.toHaveBeenCalled();
+    expect(findSessionPatterns).not.toHaveBeenCalled();
     expect(generateMemoryInsight).not.toHaveBeenCalled();
   });
 
@@ -225,7 +229,7 @@ describe(scheduleMemoryAfterSession, () => {
     await learningProfileFixture({ memoryEnabled: false, userId: user.id });
     await endSessionFor({ goalId: goal.id, userId: user.id });
 
-    expect(extractMemoryFacts).not.toHaveBeenCalled();
+    expect(findSessionPatterns).not.toHaveBeenCalled();
     expect(generateMemoryInsight).not.toHaveBeenCalled();
 
     await expect(

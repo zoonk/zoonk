@@ -1,15 +1,18 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import {
   CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
   MOCK_MINUTES,
+  THIN_CHECKPOINT,
   createCheckpointLearner,
   createUpcomingBoss,
   playDuel,
   starShownAt,
 } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
+import { type StreamEvent, followRun } from "./generation-run";
 import { continueToLastStep, nextStep, stepDots } from "./result-steps";
 import { openAs } from "./study-day";
 
@@ -102,6 +105,26 @@ test.describe("Checkpoints", () => {
 
     // Opened on its own rather than from today's session, it continues to Today.
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/today");
+
+    // Reopened once won, its challenge says how it went instead of inviting a duel already played.
+    await page.goto(`/challenge/${boss.id}`);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(`${CHECKPOINT_QUESTIONS} of ${CHECKPOINT_QUESTIONS} right`),
+    ).toBeVisible();
+
+    await expect(page.getByText(`${CHECKPOINT_PASS_MARK} right to win`)).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Start" })).toHaveCount(0);
+
+    await expect(page.getByRole("link", { name: "See how it went" })).toHaveAttribute(
+      "href",
+      `/checkpoint/${block.id}`,
+    );
+
     await page.context().close();
   });
 
@@ -180,7 +203,171 @@ test.describe("Checkpoints", () => {
   });
 });
 
+const GENERATIONS_URL = "**/v1/challenges/*/generations";
+
+/**
+ * A challenge the bank held too few questions for when today's session was planned: it stays in
+ * the day, and Start writes what it lacks before it opens. Tests never reach a model: the API's
+ * writing run is stood in for.
+ */
+test.describe("A challenge whose questions aren't written yet", () => {
+  test("writes them on Start, shows the wait, then opens with all ten", async ({ browser }) => {
+    const { block, boss, user, writeQuestions } = await createCheckpointLearner({ thin: true });
+    const runId = `e2e-challenge-${randomUUID()}`;
+    const page = await openAs(browser, user);
+    const events: StreamEvent[] = [];
+
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({ json: { generationId: runId, status: "generating" }, status: 202 }),
+    );
+
+    await followRun({ events, page, runId });
+    await page.goto(`/challenge/${boss.id}`);
+
+    // It promises what it will ask, never the few questions the bank has now.
+    await expect(
+      page.getByText(`${THIN_CHECKPOINT.questions} questions`, { exact: true }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(`${THIN_CHECKPOINT.passMark} right to win`, { exact: true }),
+    ).toBeVisible();
+
+    events.push({ status: "started", step: "writeChallengeQuestions" });
+
+    // Taps work once the page hydrates, so a first tap retries until the screen changes.
+    await expect(async () => {
+      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
+      await expect(page.getByText("Getting your challenge ready")).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 15_000 });
+
+    await expect(page.getByRole("progressbar", { name: "Writing your challenge" })).toBeVisible();
+    await expectAccessibleScreen(page, "a challenge whose questions are being written");
+
+    await writeQuestions();
+    events.push({ status: "completed", step: "challengeQuestionsReady" });
+
+    // No tap: it opens once its questions exist.
+    await expect(
+      page.getByText(`Question 1 of ${THIN_CHECKPOINT.questions}`, { exact: true }),
+    ).toBeVisible();
+
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
+    await page.context().close();
+  });
+
+  // A skill whose questions keep failing never holds the challenge back: once the run ends, it
+  // opens with what the bank has, if that's enough to judge the phase.
+  test("opens with the questions written when one of the run's calls fails", async ({
+    browser,
+  }) => {
+    const { boss, user, writeQuestions } = await createCheckpointLearner({ thin: true });
+    const runId = `e2e-challenge-${randomUUID()}`;
+    const page = await openAs(browser, user);
+    const events: StreamEvent[] = [{ status: "started", step: "writeChallengeQuestions" }];
+
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({ json: { generationId: runId, status: "generating" }, status: 202 }),
+    );
+
+    await followRun({ events, page, runId });
+    await page.goto(`/challenge/${boss.id}`);
+
+    await expect(async () => {
+      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
+      await expect(page.getByText("Getting your challenge ready")).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 15_000 });
+
+    await writeQuestions(1);
+    events.push({ status: "completed", step: "challengeQuestionsReady" });
+
+    await expect(page.getByText("Question 1 of 6", { exact: true })).toBeVisible();
+    await page.context().close();
+  });
+
+  test("opens with the questions it has when the run writes none", async ({ browser }) => {
+    const { boss, user, writeQuestions } = await createCheckpointLearner({ thin: true });
+    const runId = `e2e-challenge-${randomUUID()}`;
+    const page = await openAs(browser, user);
+    const events: StreamEvent[] = [{ status: "started", step: "writeChallengeQuestions" }];
+
+    // An earlier run wrote one skill's questions: six, short of the ten Start waits for.
+    await writeQuestions(1);
+
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({ json: { generationId: runId, status: "generating" }, status: 202 }),
+    );
+
+    await followRun({ events, page, runId });
+    await page.goto(`/challenge/${boss.id}`);
+
+    await expect(async () => {
+      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
+      await expect(page.getByText("Getting your challenge ready")).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 15_000 });
+
+    events.push({ reason: "aiGenerationFailed", status: "error", step: "workflowError" });
+
+    await expect(page.getByText("Question 1 of 6", { exact: true })).toBeVisible();
+    await page.context().close();
+  });
+
+  test("says why when today's help is used up, instead of starting", async ({ browser }) => {
+    const { boss, user } = await createCheckpointLearner({ thin: true });
+    const page = await openAs(browser, user);
+
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({ json: { error: { code: "USAGE_LIMIT_REACHED", details: {} } }, status: 402 }),
+    );
+
+    await page.goto(`/challenge/${boss.id}`);
+
+    await expect(async () => {
+      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
+
+      await expect(
+        page.getByText(
+          "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
+        ),
+      ).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 15_000 });
+
+    await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Start" })).toHaveCount(0);
+    await page.context().close();
+  });
+});
+
 test.describe("A checkpoint from today's session", () => {
+  test("opens on its intro from Today and starts in one tap", async ({ browser }) => {
+    const { block, boss, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+
+    await page.goto("/today");
+
+    // Taps work once the page hydrates, so a first tap retries until the screen changes.
+    await expect(async () => {
+      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
+
+      await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"), {
+        timeout: 1000,
+      });
+    }).toPass({ timeout: 10_000 });
+
+    // One tap on Start opens the duel, never this intro again with a Continue to tap (the block's
+    // page redirected Today's tap here, and the router kept that redirect for its address).
+    await expect(async () => {
+      await page.getByRole("button", { name: "Start" }).click({ timeout: 1000 });
+
+      await expect(page.getByText(`Question 1 of ${CHECKPOINT_QUESTIONS}`)).toBeVisible({
+        timeout: 5000,
+      });
+    }).toPass({ timeout: 15_000 });
+
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
+    await page.context().close();
+  });
+
   test("continues back to the session by keyboard, to the day's summary", async ({ browser }) => {
     const { block, boss, user } = await createCheckpointLearner();
     const page = await openAs(browser, user);

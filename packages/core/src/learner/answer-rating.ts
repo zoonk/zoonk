@@ -28,6 +28,22 @@ const SLOW_FACTOR = 2;
 const PASSING_SCORE = 0.5;
 
 /**
+ * A finished lesson as one answer on a topic it teaches without asking it directly: the share of
+ * its screens answered right the first time is the credit, so a lesson all right is Good, one with
+ * a miss is Hard and one under half right is Again (see `rateAnswer`). Its screens take as long as
+ * they need, so time doesn't count. Null for a lesson with no answers.
+ */
+export function gradeLessonAnswers(firstAnswers: readonly boolean[]): GradedAnswer | null {
+  if (firstAnswers.length === 0) {
+    return null;
+  }
+
+  const score = firstAnswers.filter(Boolean).length / firstAnswers.length;
+
+  return { durationMs: DEFAULT_EXPECTED_DURATION_MS, isCorrect: score >= PASSING_SCORE, score };
+}
+
+/**
  * Turns one graded answer into an FSRS grade. A wrong answer (or less than half the key points) is
  * Again; help, partial credit or taking over twice the expected time is Hard; answering in under
  * half the expected time is Easy; everything else is Good. It's a code rule rather than a model's

@@ -29,7 +29,7 @@ export const libraryLessonPaths = {
   "/library/lessons/{lessonId}": {
     get: {
       description:
-        'A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content is the same for everyone and includes the answers, so the app can give feedback at once. The screens load only with a session, a guest\'s included (POST /guests): without one, a written lesson returns its outline with `status: "sessionRequired"`, so lessons can\'t be scraped. While the content is being written, returns the outline with `status: "notGenerated"`. Reading screens is rate-limited per learner, and per network for guests: too many lessons in a short time is `SLOW_DOWN` (429, read it again after `Retry-After`). A private lesson is only visible to its owner.',
+        'A Library lesson ready to play: its screens in order (hook, explanations, worked examples, checks, typed and spoken answers, activities, the summary and language exercises) with image URLs. The content is the same for everyone and includes the answers, so the app can give feedback at once. The screens load only with a session, a guest\'s included (POST /guests): without one, a written lesson returns its outline with `status: "sessionRequired"`, so lessons can\'t be scraped. While the content is being written, returns the outline with `status: "notGenerated"`. A private lesson is only visible to its owner.',
       operationId: "getLibraryLesson",
       requestParams: { path: lessonPathParamsSchema },
       responses: {
@@ -39,7 +39,6 @@ export const libraryLessonPaths = {
         },
         "400": validationErrorResponse,
         "404": notFoundResponse,
-        "429": tooManyRequestsResponse,
       },
       security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Get a Library lesson to play",
@@ -94,7 +93,7 @@ export const libraryLessonPaths = {
   "/library/lessons/{lessonId}/starts": {
     post: {
       description:
-        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later.",
+        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later. A new lesson of a free exam plan past its first week (shown with `plusRequired` on its chapter) answers 402 `PLUS_REQUIRED`: Plus opens the rest of the plan, while lessons done or begun, lessons outside the plan, reviews and mistakes stay open.",
       operationId: "createLibraryLessonStart",
       requestBody: {
         content: { "application/json": { schema: libraryLessonStartInputSchema } },
@@ -110,7 +109,8 @@ export const libraryLessonPaths = {
         "401": unauthorizedResponse,
         "402": {
           ...paymentRequiredResponse,
-          description: "The free plan's lessons are used up; Plus has more",
+          description:
+            "The free plan's lessons are used up (`USAGE_LIMIT_REACHED`; Plus has more), or a free exam plan past its first week holds this new lesson for Plus (`PLUS_REQUIRED`)",
         },
         "403": {
           ...forbiddenResponse,

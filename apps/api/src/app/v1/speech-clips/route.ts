@@ -1,6 +1,7 @@
 import { createErrorResponse, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
+import { toApiImageUrl } from "@/lib/file-urls";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { speechClipRequestSchema } from "@/lib/openapi/schemas/speech-clips";
 import { requestSpeechClip } from "@zoonk/core/audio/speech-clip";
@@ -10,7 +11,8 @@ const SERVICE_UNAVAILABLE = 503;
 
 /**
  * Text read aloud in its language. Clips are shared, so this returns the stored one or voices it
- * the first time anyone asks; voicing calls a model, so it only runs from this POST.
+ * the first time anyone asks; voicing calls a model, so it only runs from this POST. A learner's
+ * own words (`personal`) are theirs alone: the clip points at the file route only they can read.
  */
 async function postSpeechClip(request: NextRequest) {
   const body = await parseBody(request, speechClipRequestSchema);
@@ -22,7 +24,7 @@ async function postSpeechClip(request: NextRequest) {
   const result = await requestSpeechClip(body.data);
 
   if (result.status === "ready") {
-    return NextResponse.json(result.clip);
+    return NextResponse.json({ ...result.clip, url: toApiImageUrl(result.clip.url) });
   }
 
   if (result.status === "invalid") {

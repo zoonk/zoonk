@@ -30,3 +30,22 @@ export const discountMath: GeneratedMathProblem = {
     { max: 50, min: 10, name: "discount", step: 5, unit: "%", value: 25 },
   ],
 };
+
+export const thirdsQuestion =
+  "A pizza has {slices} slices and you eat {eaten}. What share is left?";
+
+/** Two thirds of a pizza left: the SAT takes 2/3, .6666, .6667, .666 or .667, never .67. */
+export const thirdsMath: GeneratedMathProblem = {
+  answer: 2 / 3,
+  commonMistakes: [
+    { expression: "eaten / slices", misconception: "Eaten share", reason: "That's what you ate." },
+  ],
+  solution: "(slices - eaten) / slices",
+  steps: [],
+  tolerance: { kind: "absolute", value: 0.005 },
+  unit: null,
+  variables: [
+    { max: 3, min: 3, name: "slices", step: 1, unit: null, value: 3 },
+    { max: 1, min: 1, name: "eaten", step: 1, unit: null, value: 1 },
+  ],
+};

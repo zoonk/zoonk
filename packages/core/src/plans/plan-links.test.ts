@@ -1,4 +1,3 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -10,16 +9,9 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { createGoalPlan } from "./create-goal-plan";
 import { getPlanLink } from "./get-plan-link";
 import { startGoalFromPlanLink } from "./start-goal-from-plan-link";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -69,7 +61,6 @@ describe("plan links", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   afterEach(() => {

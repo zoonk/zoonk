@@ -9,11 +9,21 @@ import { useState, useTransition } from "react";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
 
-/** Reading the words again hit a cap: the day's small AI calls, or a guest's one goal. */
+/**
+ * Reading the words again hit a cap: the day's small AI calls, a guest's one goal, or the guests'
+ * daily AI budget.
+ */
 function isLimit(
   outcome: StartUnderstandingOutcome | null,
-): outcome is Extract<StartUnderstandingOutcome, { status: "limitReached" | "needsAccount" }> {
-  return outcome?.status === "limitReached" || outcome?.status === "needsAccount";
+): outcome is Extract<
+  StartUnderstandingOutcome,
+  { status: "limitReached" | "needsAccount" | "signUpRequired" }
+> {
+  return (
+    outcome?.status === "limitReached" ||
+    outcome?.status === "needsAccount" ||
+    outcome?.status === "signUpRequired"
+  );
 }
 
 /**

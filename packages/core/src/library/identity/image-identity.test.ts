@@ -24,14 +24,13 @@ function imageRequest(overrides: {
     hasLabels: false,
     kind: "image" as const,
     language: "pt",
-    styleVersion: 1,
     textAllowed: true,
     ...overrides,
   };
 }
 
 function imageKey({ language, prompt }: { language: string | null; prompt: string }) {
-  return buildImageReuseKey({ language, prompt, styleVersion: 1 });
+  return buildImageReuseKey({ language, prompt });
 }
 
 describe("image identity", () => {
@@ -39,12 +38,14 @@ describe("image identity", () => {
     vi.resetAllMocks();
   });
 
-  it("offers public images in the same style whose labels fit the lesson", async () => {
+  // A picture drawn in an earlier style is still the scene's: a style change draws new scenes
+  // only, and redrawing stored pictures is a person's call.
+  it("offers public images whose labels fit the lesson, whatever style drew them", async () => {
     const word = uniqueWord();
     const owner = await userFixture();
     const prompt = `Focal object: a ${word} on a scale.`;
 
-    const [noText, portugueseLabels] = await Promise.all([
+    const [noText, portugueseLabels, , earlierStyle] = await Promise.all([
       mediaAssetFixture({
         prompt,
         reuseKey: imageKey({ language: null, prompt: `${prompt} 1` }),
@@ -64,7 +65,7 @@ describe("image identity", () => {
       }),
       mediaAssetFixture({
         prompt,
-        reuseKey: buildImageReuseKey({ language: null, prompt, styleVersion: 2 }),
+        reuseKey: imageKey({ language: null, prompt: `${prompt} 5` }),
         styleVersion: 2,
       }),
       mediaAssetFixture({
@@ -87,7 +88,7 @@ describe("image identity", () => {
     ).resolves.toMatchObject({ id: noText.id, match: "search" });
 
     expect(getCandidateIds(decisionSpy).toSorted()).toStrictEqual(
-      [noText.id, portugueseLabels.id].toSorted(),
+      [noText.id, portugueseLabels.id, earlierStyle.id].toSorted(),
     );
   });
 

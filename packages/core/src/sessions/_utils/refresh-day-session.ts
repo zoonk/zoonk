@@ -4,6 +4,7 @@ import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
+import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -19,18 +20,40 @@ export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
 
 /** The version of the goal's plan a day is built from; null for a goal without a plan. */
-export async function loadPlanVersion(goalId: string): Promise<number | null> {
+async function loadPlanVersion(goalId: string): Promise<number | null> {
   const plan = await prisma.plan.findUnique({ select: { version: true }, where: { goalId } });
   return plan?.version ?? null;
 }
 
-/** A day holds one review, one practice, one essay and one checkpoint; lessons can be many. */
-const ONE_PER_DAY = new Set<StudySessionBlock["kind"]>([
-  "checkpoint",
-  "practice",
-  "produce",
-  "review",
-]);
+/** What a day still waiting on outlines records instead of its plan's version (see below). */
+const AWAITING_OUTLINES_VERSION = 0;
+
+/**
+ * The plan version a day records once built or refreshed: the plan's, so the day isn't read
+ * again until the plan changes; or, while it holds time for lessons still being outlined
+ * (`isDayAwaitingOutlines`), one older than any plan's, so every read checks it again until they
+ * land or nobody is writing them anymore, and the day fills up then.
+ */
+export async function loadDayPlanVersion({
+  goal,
+  localDate,
+}: {
+  goal: Goal;
+  localDate: Date;
+}): Promise<number | null> {
+  const [planVersion, awaiting] = await Promise.all([
+    loadPlanVersion(goal.id),
+    isDayAwaitingOutlines({ goal, localDate }),
+  ]);
+
+  return planVersion !== null && awaiting ? AWAITING_OUTLINES_VERSION : planVersion;
+}
+
+/**
+ * A day holds one review, one practice and one essay; lessons can be many, and so can challenges
+ * (each one due today, see `loadSessionBosses`).
+ */
+const ONE_PER_DAY = new Set<StudySessionBlock["kind"]>(["practice", "produce", "review"]);
 
 /** The blocks a learner's change keeps: those they started or finished. */
 function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
@@ -45,17 +68,47 @@ function getKeptMinutes(blocks: readonly StudySessionBlock[]): number {
   return sumMinutes(blocks.map((block) => ({ estimatedMinutes: block.estimatedMinutes ?? 0 })));
 }
 
+/**
+ * Practice's share of a day underway as it opened (see `SessionBuildInput.openedPractice`): a day
+ * nobody started is built again whole, with practice's share of the day it then has.
+ */
+function getOpenedPractice({
+  kept,
+  session,
+}: {
+  kept: readonly StudySessionBlock[];
+  session: StudySessionRow;
+}): SessionBuildInput["openedPractice"] {
+  const practice = session.blocks.find(
+    (block) => block.kind === "practice" && block.status === "pending",
+  );
+
+  if (kept.length === 0 || !practice?.estimatedMinutes || session.plannedMinutes <= 0) {
+    return undefined;
+  }
+
+  return { dayMinutes: session.plannedMinutes, minutes: practice.estimatedMinutes };
+}
+
 /** The day's build without what the kept blocks already hold: their lessons, questions and kinds. */
 function withoutKept({
   input,
   kept,
+  session,
 }: {
   input: SessionBuildInput;
   kept: readonly StudySessionBlock[];
+  session: StudySessionRow;
 }): SessionBuildInput {
   const kinds = new Set(kept.map((block) => block.kind));
   const lessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
   const itemIds = new Set(kept.flatMap((block) => getBlockItemIds(readBlockPayload(block))));
+
+  const keptCheckpoints = new Set(
+    kept.flatMap((block) =>
+      block.kind === "checkpoint" ? [readBlockPayload(block).planItemId] : [],
+    ),
+  );
 
   const isNewLesson = (lesson: { lessonId: string | null }) =>
     !lesson.lessonId || !lessonIds.has(lesson.lessonId);
@@ -63,9 +116,12 @@ function withoutKept({
   return {
     ...input,
     capsules: kinds.has("review") ? [] : input.capsules,
-    checkpoint: kinds.has("checkpoint") ? null : input.checkpoint,
+    checkpoints: input.checkpoints.filter(
+      (checkpoint) => !keptCheckpoints.has(checkpoint.planItemId),
+    ),
     drills: kinds.has("practice") ? [] : input.drills,
     lessons: input.lessons.filter((lesson) => isNewLesson(lesson)),
+    openedPractice: getOpenedPractice({ kept, session }),
     placementItemIds: kinds.has("review") ? [] : input.placementItemIds,
     practice: input.practice.filter((item) => !itemIds.has(item.itemId)),
     // A day that keeps its practice gives the rest of its time to lessons.
@@ -88,15 +144,16 @@ async function planRestOfDay({
 
   const input = await loadSessionBuildInput({
     goal,
+    keepsBlocks: kept.length > 0,
     localDate: session.localDate,
     now: new Date(),
     timeZone,
     userId: session.userId,
   });
 
-  // The day keeps the shape it opened with: a welcome back stays light.
+  // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
   const { blocks } = buildSessionBlocks(
-    withoutKept({ input: { ...input, freshStart: session.freshStart }, kept }),
+    withoutKept({ input: { ...input, freshStart: session.freshStart }, kept, session }),
   );
 
   const keptKinds = new Set(kept.map((block) => block.kind));
@@ -105,21 +162,35 @@ async function planRestOfDay({
 }
 
 /** What a block holds, to tell a rebuild that changes nothing from one that does. */
-function getContent(
-  block: Pick<PlannedBlock, "estimatedMinutes" | "kind" | "lessonId" | "payload">,
-) {
+function getContent({
+  anyOrder,
+  block,
+}: {
+  anyOrder: boolean;
+  block: Pick<PlannedBlock, "estimatedMinutes" | "kind" | "lessonId" | "payload">;
+}) {
+  const itemIds = getBlockItemIds(block.payload);
+
   return [
     block.kind,
     block.lessonId,
     block.estimatedMinutes,
-    ...getBlockItemIds(block.payload),
+    ...(anyOrder ? itemIds.toSorted() : itemIds),
   ].join(":");
 }
 
+/**
+ * Whether the rest of the day comes out as it was. In a day underway, the same questions in
+ * another order are the same day: practice ranks them again from the answers the learner gave
+ * since it opened. A day nobody started is built again whole, and a change of focus puts the
+ * topics it asks for first (Pedro's class test eve).
+ */
 function hasSameContent({
+  anyOrder,
   planned,
   replaced,
 }: {
+  anyOrder: boolean;
   planned: readonly PlannedBlock[];
   replaced: readonly StudySessionBlock[];
 }): boolean {
@@ -130,11 +201,14 @@ function hasSameContent({
 
       return (
         current !== undefined &&
-        getContent(block) ===
+        getContent({ anyOrder, block }) ===
           getContent({
-            ...current,
-            estimatedMinutes: current.estimatedMinutes ?? 0,
-            payload: readBlockPayload(current),
+            anyOrder,
+            block: {
+              ...current,
+              estimatedMinutes: current.estimatedMinutes ?? 0,
+              payload: readBlockPayload(current),
+            },
           })
       );
     })
@@ -168,9 +242,9 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   const kept = getKeptBlocks(session.blocks);
   const keptIds = new Set(kept.map((block) => block.id));
   const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
-  const planVersion = await loadPlanVersion(day.goal.id);
+  const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
   const planned = await planRestOfDay({ day, kept });
-  const unchanged = hasSameContent({ planned, replaced });
+  const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
 
   return withSessionAppendLock({
     run: async ({ session: locked, transaction }) => {
@@ -256,7 +330,7 @@ export async function followPlanChangeToday({
  */
 async function appendNewLessons({ day }: { day: DaySession }): Promise<void> {
   const { session } = day;
-  const planVersion = await loadPlanVersion(day.goal.id);
+  const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
   const planned = await planRestOfDay({ day, kept: session.blocks });
   const lessons = planned.filter((block) => block.kind === "learn");
 
@@ -295,9 +369,11 @@ async function appendNewLessons({ day }: { day: DaySession }): Promise<void> {
  * place of stand-ins, a re-plan) up to date, without changing anything they were shown: what Today
  * showed is what the day holds, started or not, so new lessons only join its end, when it has time
  * left; a day built without blocks (all its lessons still being outlined) is built now; a finished
- * day stays as it is. Only the learner's own change replaces what they haven't started
- * (`followPlanChangeToday`), and that change is announced. It runs on the learner's own read, since
- * building a day needs their session.
+ * day stays as it is. A day holding time for lessons being outlined is checked on every read
+ * (`loadDayPlanVersion`), so it fills up once they land or nobody is writing them anymore. Only
+ * the learner's own change replaces what they haven't started (`followPlanChangeToday`), and that
+ * change is announced. It runs on the learner's own read, since building a day needs their
+ * session.
  */
 export async function refreshDayFromPlan({
   session,

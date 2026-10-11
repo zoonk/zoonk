@@ -38,3 +38,18 @@ export async function courseDetailsWorkflow(
     iconUrl: icon.status === "fulfilled" ? icon.value : null,
   };
 }
+
+/**
+ * A shared course's icon on its own, started as its outline begins so the plan shows the subject's
+ * icon from the learner's first look. It's a run of its own, not a step of the outline's: a run
+ * moves on only once the steps it runs together are done, so an icon drawn beside the outline held
+ * the outline back for the minute the picture took. A failure leaves it to the course's details.
+ */
+export async function courseIconWorkflow(input: CourseDetailsInput): Promise<string | null> {
+  "use workflow";
+
+  const { workflowRunId } = getWorkflowMetadata();
+  const [icon] = await Promise.allSettled([createCourseIconStep({ ...input, workflowRunId })]);
+
+  return icon.status === "fulfilled" ? icon.value : null;
+}

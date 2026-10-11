@@ -13,9 +13,21 @@ const KINDS_WITH_PICTURES = new Set<WrittenScreen["kind"]>([
 ]);
 
 /**
- * A picture goes where the plan asked for one, or on any screen whose words point at something to
- * see that the app can't draw from data (a scene, a diagram, a map, a pie chart): the screen shows
- * it instead of describing it or being asked to drop it.
+ * A question asked about its pictures: options that are pictures, or a picture whose numbers mark
+ * the parts it asks about. Without them it can't be answered, so they're never dropped.
+ */
+function asksAboutItsPictures(screen: WrittenScreen): boolean {
+  return (
+    screen.kind === "check" &&
+    (Boolean(screen.image?.parts) || screen.options.some((option) => option.picture))
+  );
+}
+
+/**
+ * A picture goes where the plan asked for one, on a question asked about its pictures, or on any
+ * screen whose words point at something to see that the app can't draw from data (a scene, a
+ * diagram, a map, a pie chart): the screen shows it instead of describing it or being asked to
+ * drop it.
  */
 export function canHaveImage({
   language,
@@ -26,7 +38,7 @@ export function canHaveImage({
   screen: WrittenScreen;
   specScreen: LessonScreen;
 }): boolean {
-  if (specScreen.visual !== null) {
+  if (specScreen.visual !== null || asksAboutItsPictures(screen)) {
     return true;
   }
 
@@ -43,14 +55,17 @@ export function canHaveImage({
 
 /**
  * A screen shows what its words point at: the picture, the Markdown table, the chart or the
- * timeline. Activities draw their own. `allowImage` says whether the screen's picture is kept.
+ * timeline, or the template an explanation explores. Activities draw their own. `allowImage` says
+ * whether the screen's picture is kept, and `explores` whether its explored template passed.
  */
 export function getScreenVisualProblems({
   allowImage,
+  explores,
   language,
   screen,
 }: {
   allowImage: boolean;
+  explores: boolean;
   language: string;
   screen: WrittenScreen;
 }): string[] {
@@ -64,6 +79,7 @@ export function getScreenVisualProblems({
     canShowImage: screen.kind !== "typedAnswer",
     language,
     shown: {
+      explores,
       hasImage: allowImage && image !== null,
       texts: getScreenTexts(screen).map((piece) => piece.text),
       visual: screen.visual,

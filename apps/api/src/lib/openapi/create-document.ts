@@ -21,7 +21,6 @@ import { filePaths } from "./paths/files";
 import { generationPaths } from "./paths/generations";
 import { goalMapPaths } from "./paths/goal-maps";
 import { goalPaths } from "./paths/goals";
-import { guardianPaths } from "./paths/guardians";
 import { guestPaths } from "./paths/guests";
 import { instrumentWaitlistPaths } from "./paths/instrument-waitlist";
 import { languagePaths } from "./paths/language";
@@ -37,15 +36,19 @@ import { memoryPaths } from "./paths/memory";
 import { milestonePaths } from "./paths/milestones";
 import { mindMapPaths } from "./paths/mind-maps";
 import { mistakePaths } from "./paths/mistakes";
+import { mockSittingPaths } from "./paths/mock-sitting";
 import { mockPaths } from "./paths/mocks";
 import { onboardingPaths } from "./paths/onboarding";
 import { placementPaths } from "./paths/placement";
+import { planChangedSincePaths } from "./paths/plan-changed-since";
+import { planPreviewPaths } from "./paths/plan-previews";
 import { planPaths } from "./paths/plans";
 import { progressPaths } from "./paths/progress";
 import { pronunciationPaths } from "./paths/pronunciation";
 import { researchSourcePaths } from "./paths/research-sources";
 import { reviewFlagPaths } from "./paths/review-flags";
 import { sessionPaths } from "./paths/sessions";
+import { skillOutlinePaths } from "./paths/skill-outlines";
 import { speechClipPaths } from "./paths/speech-clips";
 import { studySessionPaths } from "./paths/study-sessions";
 import { subscriptionPaths } from "./paths/subscriptions";
@@ -107,7 +110,6 @@ const paths = withInternalErrorResponses({
   ...currentLearningPaths,
   ...examPaths,
   ...generationPaths,
-  ...guardianPaths,
   ...guestPaths,
   ...instrumentWaitlistPaths,
   ...languagePaths,
@@ -134,11 +136,15 @@ const paths = withInternalErrorResponses({
   ...goalPaths,
   ...goalMapPaths,
   ...planPaths,
+  ...planChangedSincePaths,
+  ...planPreviewPaths,
   ...memoryPaths,
   ...milestonePaths,
   ...mindMapPaths,
+  ...skillOutlinePaths,
   ...mistakePaths,
   ...mockPaths,
+  ...mockSittingPaths,
   ...onboardingPaths,
   ...researchSourcePaths,
   ...studySessionPaths,

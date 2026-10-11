@@ -18,6 +18,8 @@ export function getNoticePassages(edition: EnemEdition) {
     essayScoring:
       "A redação é corrigida por dois avaliadores, que atribuem de 0 a 200 pontos a cada uma das cinco competências.",
     firstDay: `O primeiro dia de provas, em ${formatDatePt(firstDay)}, terá Linguagens, Códigos e suas Tecnologias, Ciências Humanas e suas Tecnologias e a redação, com 5 horas e 30 minutos de duração.`,
+    foreignLanguage:
+      "O participante responderá às questões da prova de Língua Estrangeira (Inglês ou Espanhol) escolhida no sistema de inscrição.",
     irt: "As notas das provas objetivas são calculadas com base na Teoria de Resposta ao Item (TRI).",
     options: "Cada questão tem cinco alternativas, de A a E, e apenas uma é correta.",
     registration: `As inscrições vão de ${formatDatePt(edition.registration.start)} a ${formatDatePt(edition.registration.end)}, na Página do Participante.`,

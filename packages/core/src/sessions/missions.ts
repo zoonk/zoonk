@@ -1,12 +1,15 @@
 /**
  * The day's three missions come from the session itself: review (open today's capsules), something
- * new (finish the new lesson) and fix a mistake. Together they make a full meal, always +50 Brain
- * Power, which also feeds the buddy. They
- * renew at the learner's local midnight because each session belongs to one local day.
+ * new (finish the new lesson) and fix a mistake. Doing all three pays a bonus, always +50 Brain
+ * Power (`fullMeal` in code). They renew at the learner's local midnight because each session
+ * belongs to one local day.
  */
 type MissionKind = "review" | "somethingNew" | "fixMistake";
 
-/** `nothingToday` is honest: nothing was due or saved, which is a good thing, not a failure. */
+/**
+ * `nothingToday` is honest: nothing was due or saved, which is a good thing, not a failure. It
+ * isn't done either: only missions actually done count, and pay the bonus.
+ */
 type MissionStatus = "done" | "nothingToday" | "todo";
 
 export type Mission = { done: number; kind: MissionKind; status: MissionStatus; total: number };
@@ -47,13 +50,15 @@ export function getMissions({ fix, learn, review }: MissionInput): Mission[] {
   ];
 }
 
+/** How many of the day's missions the learner actually did; one with nothing due isn't one. */
+export function countDoneMissions(missions: readonly Pick<Mission, "status">[]): number {
+  return missions.filter((mission) => mission.status === "done").length;
+}
+
 /**
- * Every mission is done or had nothing to do today, and at least one was actually done, so an
- * empty day never pays the bonus.
+ * All three missions actually done, which pays the bonus. A day with nothing to review or fix
+ * doesn't: Pedro's first 74-second lesson paid it, and "all three missions" wasn't true.
  */
 export function isFullMeal(missions: readonly Mission[]): boolean {
-  return (
-    missions.every((mission) => mission.status !== "todo") &&
-    missions.some((mission) => mission.status === "done")
-  );
+  return missions.length > 0 && countDoneMissions(missions) === missions.length;
 }

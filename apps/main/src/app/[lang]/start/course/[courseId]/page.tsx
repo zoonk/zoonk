@@ -1,6 +1,11 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { NoAccountNote } from "@/components/public/no-account-note";
 import { type CourseStartFailure } from "@/components/public/use-course-start";
+import { redirect } from "@/i18n/navigation";
 import { CHAPTER_PARAM } from "@/lib/public/public-hrefs";
+import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
+import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
+import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
 import { getLibraryCourse } from "@zoonk/core/library/courses/get";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -8,7 +13,9 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
+import { getGoalLimitReason } from "../../goal-limit-reason";
 import { COURSE_START_ERROR_PARAM } from "../course-start-params";
 import { CourseStartScreen } from "./course-start-screen";
 
@@ -21,6 +28,7 @@ const LIMIT_REASONS = new Set<string>([
   "monthlyExplanations",
   "monthlyGoals",
   "oneActiveGoal",
+  "signUpRequired",
   "slowDown",
 ]);
 
@@ -57,13 +65,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-async function CourseStartContent({ params, searchParams }: Props) {
-  const [{ courseId }, query] = await Promise.all([params, searchParams]);
+/** A goal limit the learner already reached, said up front instead of after their answers. */
+function toLimitFailure(limit: AllowanceLimit | null): CourseStartFailure | null {
+  return limit
+    ? { reason: getGoalLimitReason({ limit, status: "limitReached" }), status: "limitReached" }
+    : null;
+}
 
-  const course = await loadStartableCourse(courseId);
+async function CourseStartContent({ params, searchParams }: Props) {
+  // Their goal on the course and whether they can start another are read fresh for each visit.
+  await connection();
+  const [{ courseId, lang }, query, t] = await Promise.all([params, searchParams, getExtracted()]);
+
+  const [course, existing, limit] = await Promise.all([
+    loadStartableCourse(courseId),
+    findCourseGoalStart(courseId),
+    findGoalStartLimit(),
+  ]);
 
   if (!course) {
     notFound();
+  }
+
+  // Their goal on this course already: back to it, without asking their level again.
+  if (existing) {
+    redirect({
+      href: existing.inOnboarding ? `/start/${existing.goalId}` : "/today",
+      locale: lang,
+    });
   }
 
   const chapterId = readParam(query[CHAPTER_PARAM]);
@@ -81,7 +110,16 @@ async function CourseStartContent({ params, searchParams }: Props) {
           title: item.title,
         }))}
         course={{ id: course.id, title: course.title }}
-        initialFailure={toFailure(readParam(query[COURSE_START_ERROR_PARAM]))}
+        initialFailure={
+          toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit)
+        }
+        note={
+          <NoAccountNote>
+            <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
+              {t("Free to start. No account needed for your first lesson.")}
+            </p>
+          </NoAccountNote>
+        }
       />
     </MainLearnProvider>
   );
@@ -98,9 +136,10 @@ function CourseStartSkeleton() {
 }
 
 /**
- * Where "Start this course" leads without JavaScript, and a shareable way to start a course or
- * one of its chapters (`?chapter=`): the page only shows the course and its start button, since
- * links are followed by crawlers too. The button starts the goal.
+ * Where every start of a whole course leads (asking the learner's level first), a visitor without
+ * JavaScript lands, and a shareable way to start a course or one of its chapters (`?chapter=`):
+ * the page only asks and shows its start button, since links are followed by crawlers too. The
+ * button starts the goal.
  */
 export default function CourseStartPage(props: Props) {
   return (

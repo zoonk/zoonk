@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
@@ -117,6 +118,29 @@ describe("plan changes", () => {
     expect(settings.settings).toMatchObject({ weekdayMinutes: null });
   });
 
+  it("says when a focused area starts against the plan the learner sees", async () => {
+    const { goal, library, plan } = await setup();
+    const biology = library.skills[1]?.id ?? "";
+
+    // The plan the learner sees starts Biology later than planning it again from today would (as
+    // when a week kept its days while lessons landed): Lucas was told he "still" started biology on
+    // the re-planned day while his plan showed it two days later.
+    await prisma.planItem.updateMany({
+      data: { scheduledFor: new Date("2020-10-09T00:00:00Z") },
+      where: { planId: plan.id, skillId: biology },
+    });
+
+    const result = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ areas: ["Biology"], kind: "focusAreas" }] },
+    });
+
+    // Today's lessons stay as the learner sees them, so Biology comes in from tomorrow.
+    expect(result.status === "applied" && result.change?.effect?.areaStarts).toStrictEqual([
+      { after: "2020-09-29", area: "Biology", before: "2020-10-09" },
+    ]);
+  });
+
   it("refuses changes that can't apply and changes to other learners' plans", async () => {
     const { goal } = await setup();
 
@@ -215,6 +239,100 @@ describe("plan changes", () => {
     ).resolves.toStrictEqual({ status: "conflict" });
   });
 
+  // Pedro asked his buddy to add starting with little money: the change planned today again from
+  // scratch, so his session swapped its lesson for the earlier phase's, and his Journey went back a
+  // phase. A topic the learner adds comes after today's lessons, as its card says.
+  it("keeps today's lessons when the learner adds a topic", async () => {
+    const { goal, library, plan } = await setup();
+
+    const [extra] = await planLibraryFixture({ skills: [{ area: "Math", lessons: 3 }] }).then(
+      (more) => more.skills,
+    );
+
+    const readToday = () =>
+      prisma.planItem
+        .findMany({
+          orderBy: { position: "asc" },
+          select: { lessonId: true, skillId: true },
+          where: { planId: plan.id, scheduledFor: new Date("2020-09-28T00:00:00Z") },
+        })
+        .then((items) => items.map((item) => item.lessonId ?? item.skillId));
+
+    const today = await readToday();
+
+    const proposed = await proposePlanChange({
+      goalId: goal.id,
+      operations: [
+        {
+          kind: "addSkills",
+          skills: [
+            {
+              area: "Math",
+              beforeSkillId: library.skills[0]?.id ?? null,
+              lessons: 3,
+              name: "Fractions",
+              skillId: extra?.id ?? "",
+            },
+          ],
+        },
+      ],
+      reason: "Starting with fractions, as you asked.",
+      source: "buddy",
+    });
+
+    const result =
+      proposed.status === "proposed"
+        ? await decidePlanChange({
+            changeId: proposed.changeId,
+            goalId: goal.id,
+            input: { status: "applied" },
+          })
+        : proposed;
+
+    expect(result.status).toMatch(/applied|updated/u);
+    expect(today.length).toBeGreaterThan(0);
+    await expect(readToday()).resolves.toStrictEqual(today);
+  });
+
+  // Pedro's card said a topic added 8 lessons, and the Library wrote 5 for it: a topic's lessons
+  // not written yet are the plan's estimate, so the card says about how many.
+  it("says about how many lessons a topic adds while its lessons aren't written", async () => {
+    const { goal } = await setup();
+
+    const [extra] = await planLibraryFixture({ skills: [{ area: "Math", lessons: 0 }] }).then(
+      (more) => more.skills,
+    );
+
+    const proposed = await proposePlanChange({
+      goalId: goal.id,
+      operations: [
+        {
+          kind: "addSkills",
+          skills: [
+            {
+              area: "Math",
+              beforeSkillId: null,
+              lessons: 4,
+              name: "Dividends",
+              skillId: extra?.id ?? "",
+            },
+          ],
+        },
+      ],
+      reason: "Adding dividends, as you asked.",
+      source: "buddy",
+    });
+
+    const change = await prisma.planChange.findUniqueOrThrow({
+      where: { id: "changeId" in proposed ? proposed.changeId : "" },
+    });
+
+    expect(parsePlanChangePayload(change.payload).effect).toMatchObject({
+      lessonsAdded: 4,
+      lessonsAddedEstimated: true,
+    });
+  });
+
   it("declines a proposal without touching the plan", async () => {
     const { goal, plan } = await setup();
     const before = await lastDate(plan.id);
@@ -305,8 +423,8 @@ describe("plan changes", () => {
       skills: [
         { area: "Math", lessons: 4, phase: 0 },
         { area: "Biology", lessons: 3, phase: 0 },
-        { area: "Math", lessons: 4, phase: 1 },
-        { area: "Biology", lessons: 3, phase: 1 },
+        { area: "Math", builds: 0, lessons: 4, phase: 1 },
+        { area: "Biology", builds: 1, lessons: 3, phase: 1 },
       ],
     });
 

@@ -7,6 +7,7 @@ import { goalGenerationQuerySchema } from "@/lib/openapi/schemas/content-generat
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { parseQueryParams } from "@/lib/query-params";
+import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { getGoalGenerationAccess } from "@zoonk/core/lookahead/goal-generation-access";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -36,7 +37,7 @@ async function createGoalGeneration(
     withResearch: Boolean(query.data.researchId),
   });
 
-  if (access.status === "limitReached" || access.status === "slowDown") {
+  if (isRefusedUsage(access)) {
     return usageDecisionError(access);
   }
 

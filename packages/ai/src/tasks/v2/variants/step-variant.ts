@@ -9,7 +9,9 @@ import { formatLocalContext } from "../../_utils/language-context";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { WRITTEN_SCREEN_SCHEMAS } from "../lesson-writer/written-lesson-schema";
-import systemPrompt from "./step-variant.prompt.md";
+import noInstallPrompt from "./step-variant-no-install.prompt.md";
+import toolPrompt from "./step-variant-tool.prompt.md";
+import basePrompt from "./step-variant.prompt.md";
 
 /**
  * In the step-variant eval (4 screens in English and Portuguese, 26 Sep 2026)
@@ -23,16 +25,17 @@ const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "low";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6-sol"] as const;
 
-/** A version set in the learner's field of work, or shown in the tool they use. */
-export type StepVariantKind = "field" | "tool";
-
 /**
  * The `tool` key of the version for learners who go without installing anything: install and
  * run-on-your-device steps become examples and simulations they read on the screen.
  */
 export const NO_INSTALL_TOOL_KEY = "no-install";
 
-/** Screens that have field and tool versions. */
+/** Each call reads the instructions of its own version only: in a tool, or with nothing installed. */
+const toolSystemPrompt = `${basePrompt}\n${toolPrompt}`;
+const noInstallSystemPrompt = `${basePrompt}\n${noInstallPrompt}`;
+
+/** Screens that have tool versions. */
 export const VARIANT_SCREEN_KINDS = ["explanation", "workedExample", "check"] as const;
 type VariantScreenKind = (typeof VARIANT_SCREEN_KINDS)[number];
 
@@ -40,11 +43,7 @@ type VariantScreenSchemas = Pick<typeof WRITTEN_SCREEN_SCHEMAS, VariantScreenKin
 export type WrittenVariant = z.infer<VariantScreenSchemas[VariantScreenKind]>;
 
 export type GenerateStepVariantParams = {
-  variant: StepVariantKind;
-  /**
-   * The field or tool as the model reads it ("nursing", "Spreadsheet (Google Sheets or Excel)",
-   * or `NO_INSTALL_TOOL_KEY`).
-   */
+  /** The tool as the model reads it ("Spreadsheet (Google Sheets or Excel)"), or `NO_INSTALL_TOOL_KEY`. */
   key: string;
   /** The original screen: its stored kind and content. */
   screen: { kind: VariantScreenKind; content: unknown };
@@ -57,24 +56,31 @@ export type GenerateStepVariantParams = {
   analytics?: AiGenerationContext;
 };
 
+function isNoInstall(params: GenerateStepVariantParams): boolean {
+  return params.key === NO_INSTALL_TOOL_KEY;
+}
+
+/** The tool's name; a version for a learner who installs nothing names no tool. */
+function formatTool(params: GenerateStepVariantParams): string {
+  return isNoInstall(params) ? "" : `\n${formatUntrustedInput({ KEY: params.key })}\n`;
+}
+
 function buildUserPrompt(params: GenerateStepVariantParams): string {
   return `
-    VARIANT: ${params.variant}
     SCREEN_KIND: ${params.screen.kind}
     LANGUAGE: ${getPromptLanguageName({ language: params.language })}
 ${formatLocalContext(params.language)}
     LEVEL: ${params.level}
     LESSON_TITLE: ${params.lessonTitle}
     SCREEN: ${JSON.stringify(params.screen.content)}
-
-${formatUntrustedInput({ KEY: params.key })}
-  `;
+${formatTool(params)}  `;
 }
 
 /**
- * Writes a field or tool version of one lesson screen in the same shape the
- * lesson writer uses, so core converts and validates it with the same code. The
- * result is shared by every learner with that field or tool.
+ * Writes a tool version of one lesson screen (shown in the learner's tool, or as
+ * examples for a learner who installs nothing) in the same shape the lesson writer
+ * uses, so core converts and validates it with the same code. The result is
+ * shared by every learner with that tool.
  */
 export async function generateStepVariant(params: GenerateStepVariantParams) {
   const {
@@ -85,6 +91,7 @@ export async function generateStepVariant(params: GenerateStepVariantParams) {
   } = params;
 
   const userPrompt = buildUserPrompt(params);
+  const systemPrompt = isNoInstall(params) ? noInstallSystemPrompt : toolSystemPrompt;
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
   const schema: z.ZodType<WrittenVariant> = WRITTEN_SCREEN_SCHEMAS[params.screen.kind];
 
@@ -99,6 +106,7 @@ export async function generateStepVariant(params: GenerateStepVariantParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "step-variant",
   });

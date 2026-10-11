@@ -28,7 +28,6 @@ export const accountDataExportSchema = z
       .object({ contentVotes: rowsSchema, messages: rowsSchema })
       .meta({ description: "Votes on content and messages sent to the team" }),
     goals: rowsSchema.meta({ description: "Goals with their plans, plan items and plan changes" }),
-    guardianLinks: rowsSchema.meta({ description: "Guardian invites and links, without tokens" }),
     language: z
       .object({
         calls: rowsSchema,

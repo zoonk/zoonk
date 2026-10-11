@@ -9,13 +9,13 @@ const DAYS_PER_WEEK = 7;
 const EXAM_TIME_ZONE = "America/Sao_Paulo";
 
 /**
- * Ana's goal plans back from the first exam day, and her hand-placed lessons, chapters and mocks
- * (`ana-exam.ts`) only fit inside the phases sized to the days left from 38 days out. Two months
- * leaves a margin and a few weeks for each phase before the final one.
+ * Ana's story (`ana-exam.ts`) is two weeks into her plan, her first mock done and weeks of study
+ * ahead: two months before the exam leave the planner a few weeks for each phase before the final
+ * one.
  */
 const MIN_DAYS_TO_PLANNED_EXAM = 60;
 
-/** Registration dates of Enem 2026, from its notice (Edital nº 64, May 21, 2026). */
+/** Registration dates of Enem 2026, from its notice (notice No. 64, May 21, 2026). */
 const REGISTRATION = { end: "06-12", start: "05-25" } as const;
 
 export type EnemEdition = {
@@ -69,8 +69,8 @@ export function getEnemEdition(now: Date): EnemEdition {
 
 /**
  * The Enem edition Ana prepares for (`ana-exam.ts`): this year's while its first exam day is at
- * least `MIN_DAYS_TO_PLANNED_EXAM` days away in Brasília, then next year's, so her hand-placed plan
- * always fits. When it's next year's, her goal is for an edition whose notice isn't out yet, as a
+ * least `MIN_DAYS_TO_PLANNED_EXAM` days away in Brasília, then next year's, so her story always
+ * fits. When it's next year's, her goal is for an edition whose notice isn't out yet, as a
  * learner preparing a year ahead is: her exam's days are estimated from the stored notice's.
  */
 export function getPlannedEnemEdition(now: Date): EnemEdition {

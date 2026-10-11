@@ -34,11 +34,13 @@ function rawSpec(screens: RawLessonScreen[]): RawLessonSpec {
   };
 }
 
-const templateIds = new Set(["slider-graph", "number-line"]);
+const templateIds = new Set(["slider-graph", "number-line", "find-error"]);
+const exploreIds = new Set(["slider-graph", "number-line"]);
 
 describe(normalizeLessonSpec, () => {
   it("trims text, falls back to the skill name as its topic and computes minutes", () => {
     const spec = normalizeLessonSpec({
+      exploreIds,
       raw: rawSpec([
         rawScreen({ kind: "hook", skills: [] }),
         rawScreen({ kind: "explanation" }),
@@ -54,8 +56,39 @@ describe(normalizeLessonSpec, () => {
     expect(spec.estimatedMinutes).toBe(2);
   });
 
+  it("takes the support mode from the screen after the hook, which the writer builds on", () => {
+    const explained = normalizeLessonSpec({
+      exploreIds,
+      raw: {
+        ...rawSpec([
+          rawScreen({ kind: "hook", skills: [] }),
+          rawScreen({ kind: "explanation" }),
+          rawScreen({ kind: "check" }),
+          rawScreen({ kind: "application" }),
+        ]),
+        supportMode: "questionFirst",
+      },
+      templateIds,
+    });
+
+    const asked = normalizeLessonSpec({
+      exploreIds,
+      raw: rawSpec([
+        rawScreen({ kind: "hook", skills: [] }),
+        rawScreen({ kind: "check" }),
+        rawScreen({ kind: "explanation" }),
+        rawScreen({ kind: "application" }),
+      ]),
+      templateIds,
+    });
+
+    expect(explained.supportMode).toBe("explanationFirst");
+    expect(asked.supportMode).toBe("questionFirst");
+  });
+
   it("turns skill numbers into indexes and drops unknown or repeated ones", () => {
     const spec = normalizeLessonSpec({
+      exploreIds,
       raw: rawSpec([rawScreen({ skills: [1, 1, 0, 2, 1.5] })]),
       templateIds,
     });
@@ -63,12 +96,54 @@ describe(normalizeLessonSpec, () => {
     expect(spec.screens[0]?.skills).toStrictEqual([0]);
   });
 
+  it("gives a one-skill lesson's screen that names no skill that skill, but never the hook", () => {
+    const spec = normalizeLessonSpec({
+      exploreIds,
+      raw: rawSpec([
+        rawScreen({ kind: "hook", skills: [] }),
+        rawScreen({ kind: "check", skills: [] }),
+        rawScreen({ kind: "application", skills: [7] }),
+      ]),
+      templateIds,
+    });
+
+    expect(spec.screens.map((screen) => screen.skills)).toStrictEqual([[], [0], [0]]);
+  });
+
+  it("writes what learners read as plain lines, without em dashes or Markdown", () => {
+    const raw = rawSpec([rawScreen({ kind: "hook", skills: [] })]);
+    const [skill] = raw.skills;
+
+    const spec = normalizeLessonSpec({
+      exploreIds,
+      raw: {
+        ...raw,
+        canDo: "Calcular — e **comparar** preços",
+        skills: [{ ...skill!, example: "De 80 para 100 — **25%", name: "## Calcular _juros_" }],
+        title: "[Juros](https://example.com) simples",
+      },
+      templateIds,
+    });
+
+    expect([spec.title, spec.canDo]).toStrictEqual([
+      "Juros simples",
+      "Calcular, e comparar preços",
+    ]);
+
+    expect(spec.skills[0]).toMatchObject({
+      example: "De 80 para 100, 25%",
+      name: "Calcular juros",
+      topic: "Calcular juros",
+    });
+  });
+
   it("keeps activities from the catalog and turns the others into checks", () => {
     const spec = normalizeLessonSpec({
+      exploreIds,
       raw: rawSpec([
         rawScreen({ activityTemplate: " slider-graph ", kind: "activity" }),
         rawScreen({ activityTemplate: "made-up-chart", kind: "activity" }),
-        rawScreen({ activityTemplate: "number-line", kind: "explanation" }),
+        rawScreen({ activityTemplate: "number-line", kind: "check" }),
       ]),
       templateIds,
     });
@@ -76,12 +151,31 @@ describe(normalizeLessonSpec, () => {
     expect(spec.screens.map((screen) => [screen.kind, screen.activityTemplate])).toStrictEqual([
       ["activity", "slider-graph"],
       ["check", null],
+      ["check", null],
+    ]);
+  });
+
+  it("keeps a template on an explanation only when it can be explored", () => {
+    const spec = normalizeLessonSpec({
+      exploreIds,
+      raw: rawSpec([
+        rawScreen({ activityTemplate: " number-line ", kind: "explanation" }),
+        rawScreen({ activityTemplate: "find-error", kind: "explanation" }),
+        rawScreen({ activityTemplate: "made-up-chart", kind: "explanation" }),
+      ]),
+      templateIds,
+    });
+
+    expect(spec.screens.map((screen) => [screen.kind, screen.activityTemplate])).toStrictEqual([
+      ["explanation", "number-line"],
+      ["explanation", null],
       ["explanation", null],
     ]);
   });
 
   it("stores an empty visual as no visual", () => {
     const spec = normalizeLessonSpec({
+      exploreIds,
       raw: rawSpec([rawScreen({ visual: "  " }), rawScreen({ visual: " A price tag. " })]),
       templateIds,
     });

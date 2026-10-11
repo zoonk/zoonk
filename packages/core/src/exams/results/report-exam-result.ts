@@ -1,11 +1,14 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { proposeNoticeChange } from "../../plans/notice-plan-change";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
 import { loadGoalScoreEstimate } from "../estimates/load-goal-estimate";
@@ -61,10 +64,38 @@ async function loadEstimateBefore({
   return null;
 }
 
+/** The exam's last day has come: the learner reports the whole of it. */
+function isExamOver({
+  days,
+  stage,
+  today,
+}: {
+  days: readonly Date[];
+  stage: ReturnType<typeof getExamStage>;
+  today: Date;
+}): boolean {
+  const last = days.toSorted((a, b) => a.getTime() - b.getTime()).at(-1);
+  return stage === "afterExam" || (stage === "examDay" && last?.getTime() === today.getTime());
+}
+
+/**
+ * A goal that studies everything after its exam (see `PlanSettings.fullCourse`) goes on: Today
+ * proposes the next sitting's date (see `proposeNoticeChange`), which the learner applies or
+ * keeps their plan over. Reporting the result never fails for it.
+ */
+async function offerNextSitting(goalId: string): Promise<void> {
+  const plan = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
+
+  if (plan && parsePlanSettings(plan.settings).fullCourse) {
+    await safeAsync(() => proposeNoticeChange({ goalId }));
+  }
+}
+
 /**
  * "How did it go?": stores the official result a learner reports after their exam, next to the
  * estimate they saw before it, so estimates for the exam can be calibrated and outcomes measured.
- * Reporting again replaces the earlier report. It opens on the first exam day.
+ * Reporting again replaces the earlier report. It opens on the first exam day. Once the exam is
+ * over, a goal that studies everything gets the next sitting's date proposed.
  */
 export async function reportExamResult({
   goalId,
@@ -143,6 +174,10 @@ export async function reportExamResult({
     goalId,
     userId,
   });
+
+  if (isExamOver({ days: toExamDates(calendar), stage, today })) {
+    await offerNextSitting(goalId);
+  }
 
   return { result: toExamResultView(row), status: "reported" };
 }

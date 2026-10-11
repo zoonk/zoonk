@@ -22,11 +22,11 @@ describe("dragging activity items with a mouse", () => {
 
     await dragWithMouse({
       from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
-      to: page.getByRole("button", { name: "Spot 4, bottom: empty" }),
+      to: page.getByRole("button", { name: "Spot 3: empty" }),
     });
 
     await expect
-      .element(page.getByRole("button", { name: "Spot 4, bottom: Right ventricle" }))
+      .element(page.getByRole("button", { name: "Spot 3: Right ventricle" }))
       .toBeVisible();
   });
 
@@ -36,11 +36,11 @@ describe("dragging activity items with a mouse", () => {
 
       await dragWithMouse({
         from: page.getByRole("button", { name: "Put Right ventricle on spot 1" }),
-        to: page.getByRole("button", { name: "Spot 4, bottom: empty" }),
+        to: page.getByRole("button", { name: "Spot 3: empty" }),
       });
 
       await expect
-        .element(page.getByRole("button", { name: "Spot 4, bottom: Right ventricle" }))
+        .element(page.getByRole("button", { name: "Spot 3: Right ventricle" }))
         .toBeVisible();
     });
   });

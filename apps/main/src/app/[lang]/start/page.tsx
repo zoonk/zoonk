@@ -2,7 +2,7 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { GOAL_PARAM, PLAN_PARAM } from "@/lib/public/public-hrefs";
-import { findGuestGoalLimit } from "@zoonk/core/entitlements/guest-goal-limit";
+import { findGoalStartLimit } from "@zoonk/core/entitlements/goal-start-limit";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -12,6 +12,7 @@ import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { getGoalLimitReason } from "./goal-limit-reason";
 import { StartClient } from "./start-client";
 import { DRAFT_PARAM, START_AGAIN_PARAM } from "./start-params";
 
@@ -41,15 +42,17 @@ async function loadDraft(draftId: string | null): Promise<OnboardingDraftView | 
 }
 
 async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
-  // Whether a guest can add a goal is read fresh for each visit: render per request.
+  // Whether the learner can start another goal is read fresh for each visit: render per request.
   await connection();
   const [language, query] = await Promise.all([lang(), searchParams]);
 
-  const [tutor, draft, guestGoalLimit] = await Promise.all([
+  const [tutor, draft, goalLimit] = await Promise.all([
     getTutorViewer(),
     loadDraft(readParam(query[DRAFT_PARAM])),
-    findGuestGoalLimit(),
+    findGoalStartLimit(),
   ]);
+
+  const isGuestLimit = goalLimit?.tier === "guest";
 
   // Once goals were created from the draft, its onboarding goes on at the goal.
   if (draft?.goalId) {
@@ -67,8 +70,13 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
         buddy={tutor.buddy}
         canAttach={tutor.canAsk}
         defaultGoal={readParam(query[GOAL_PARAM]) ?? ""}
+        goalLimit={
+          goalLimit && !isGuestLimit
+            ? getGoalLimitReason({ limit: goalLimit, status: "limitReached" })
+            : null
+        }
         initialDraft={draft}
-        needsAccount={guestGoalLimit !== null}
+        needsAccount={isGuestLimit}
         planId={plan && isUuid(plan) ? plan : null}
       />
     </MainLearnProvider>
@@ -90,7 +98,8 @@ function StartSkeleton() {
  * Onboarding starts here: the goal in the learner's own words, understood and confirmed. The goal
  * being confirmed stays in the address (`?draft=`), so a refresh shows the same screen. Links send
  * visitors here with `?goal=` filled in; it only fills the box, since reading a goal starts from
- * the learner's own tap. A guest whose one goal is taken is asked to create an account first.
+ * the learner's own tap. A guest whose one goal is taken is asked to create an account first; a
+ * learner whose plan can't start another goal is told up front, with the box open for questions.
  */
 export default function StartPage(props: PageProps<"/[lang]/start">) {
   return (

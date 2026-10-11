@@ -5,9 +5,9 @@ import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, HouseIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { createContext, use, useEffect, useRef, useState } from "react";
+import { createContext, use, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LearnLink } from "../learn-link";
-import { goBackTo, goBackToApp } from "./app-history";
+import { cameFromApp, goBackTo, goBackToApp, subscribeToHistory } from "./app-history";
 
 /**
  * The app's tabs as the host draws them, so a pushed page's bar keeps them in its middle from
@@ -209,7 +209,8 @@ export function LearnPageBar({
  * navigation while the learner is in it: the way back on the left, one action of the section's on
  * the right. Nothing from the app bar: no goal, no tabs, no account. On the section's own first
  * page (its hub) the way back leaves the section for the app page the learner left for it; on the
- * pages under it (`parent`) it goes back to the hub, whose name it shows beside it. `wide` lines it
+ * pages under it (`parent`) it goes back to the hub, whose name it shows beside it, unless the page
+ * was opened straight from the app (Plus from a locked feature), which it goes back to. `wide` lines it
  * up with a page as wide as the screen (the catalog's grid). `home` starts the bar with the way
  * home instead, for a section beside the app (the catalog).
  */
@@ -272,11 +273,15 @@ function SectionBarStart({
   parent?: { href: string; label: string };
   title?: string;
 }) {
+  // Read after hydration: the server has no history, and its render goes to the hub.
+  const fromApp = useSyncExternalStore(subscribeToHistory, cameFromApp, () => false);
+
   if (home) {
     return <LearnHomeLink href={backHref} />;
   }
 
-  if (!parent) {
+  // A page under the hub opened straight from the app goes back to that app page.
+  if (!parent || fromApp) {
     return (
       <>
         <LearnBackLink href={backHref} toApp />

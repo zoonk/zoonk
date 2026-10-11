@@ -10,20 +10,21 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronDownIcon, ChevronRightIcon, FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlusMark } from "../_components/plus-lock";
-import { useFormatIsoDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
 import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
-import { CheckpointRow, MockRow } from "./journey-phase-events";
-import { usePhaseWhen } from "./use-phase-when";
+import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
+import { useFinishDate, usePhaseWhen } from "./use-phase-when";
 
 type NodeState = PlanPhaseView["state"] | "finish";
 
 /**
- * A node on the path: a check once done, a filled dot where the learner is, the goal's flag. It
- * sits in a box as tall as its title's first line (`HEADER_CLASS`), so its centre is on that line.
+ * A node on the path: a check once done, a filled dot where the learner is, the goal's flag; an
+ * open ring for a phase ahead and for one the plan moved past with work set aside, never a check.
+ * It sits in a box as tall as its title's first line (`HEADER_CLASS`), so its centre is on that
+ * line.
  */
 function PathMarker({ state }: { state: NodeState }) {
   return (
@@ -33,7 +34,7 @@ function PathMarker({ state }: { state: NodeState }) {
           "flex size-8 items-center justify-center rounded-full",
           state === "done" && "bg-success text-background",
           state === "current" && "bg-primary ring-primary/15 ring-4",
-          state === "upcoming" && "border-border bg-card border-2",
+          (state === "upcoming" || state === "unfinished") && "border-border bg-card border-2",
           state === "finish" && "bg-foreground text-background",
         )}
       >
@@ -47,12 +48,14 @@ function PathMarker({ state }: { state: NodeState }) {
 
 /**
  * The stretch of path from a node down to the next one, centred under the nodes and tucked under
- * both (they sit 6px into their 44px box): walked once the phase is done.
+ * both (they sit 6px into their 44px box): walked once the phase is done. The path's last node
+ * has none.
  */
 function PathLine({ walked }: { walked: boolean }) {
   return (
     <span
       aria-hidden="true"
+      data-slot="path-line"
       className={cn(
         "absolute top-9 -bottom-2 left-3.75 w-0.5 rounded-full",
         walked ? "bg-success/60" : "bg-border",
@@ -61,9 +64,13 @@ function PathLine({ walked }: { walked: boolean }) {
   );
 }
 
-/** A node's date: a long one ("Por volta de maio de 2027") wraps before it squeezes the title. */
+/** A node's date: a long one ("Around May 2027") wraps before it squeezes the title. */
 const DATE_CLASS = "text-muted-foreground max-w-[45%] shrink-0 text-right text-sm text-balance";
 
+/**
+ * A phase's name and when it ends. One the plan moved past with work set aside says the lessons
+ * studied of its total under its name ("1 of 9 lessons done"), so it never reads as finished.
+ */
 function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
@@ -73,17 +80,27 @@ function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
 
   return (
     <>
-      <span
-        className={cn(
-          "min-w-0 flex-1 text-base",
-          phase.state === "done" && "text-muted-foreground",
-          phase.state === "current" && "font-semibold",
-          phase.state === "upcoming" && "font-medium",
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span
+          className={cn(
+            "text-base",
+            phase.state === "done" && "text-muted-foreground",
+            phase.state === "current" && "font-semibold",
+            (phase.state === "upcoming" || phase.state === "unfinished") && "font-medium",
+          )}
+        >
+          {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
+          {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
+          {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
+        </span>
+        {phase.state === "unfinished" && (
+          <span className="text-muted-foreground text-sm">
+            {t(
+              "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
+              { done: phase.lessonsDone, total: phase.lessonsTotal },
+            )}
+          </span>
         )}
-      >
-        {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
-        {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
-        {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       </span>
       {when && <span className={DATE_CLASS}>{when}</span>}
     </>
@@ -112,14 +129,15 @@ const HEADER_CHEVRON_CLASS = "text-muted-foreground mt-1 size-4 shrink-0 self-st
 /**
  * A phase of a goal whose structure has its own section below: one line, and in the phase the
  * learner is in, its next mock and the challenge that closes it. Phases ahead say how many mocks
- * they hold. Without mocks in the learner's plan (they come with Plus), they show all the same,
- * marked Plus.
+ * they hold, and after the exam that they're for the next sitting. Without mocks in the learner's
+ * plan (they come with Plus), they show all the same, marked Plus.
  */
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const t = useExtracted();
   const { plan } = usePlanScreen();
+  const mocksLine = usePhaseMocksLine();
   const { checkpoint, mocks, state } = phase;
   const locked = plan.access.mocksRequirePlus;
+  const forNextSitting = phase.kind === "afterExam";
   const isCurrent = state === "current";
   const hasEvents = isCurrent && (checkpoint !== null || mocks.nextDate !== null);
 
@@ -140,7 +158,11 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
 
         {state === "upcoming" && mocks.count > 0 && (
           <p className="text-muted-foreground -mt-1.5 flex items-center gap-2 pb-1 text-sm">
-            {t("{count, plural, one {# mock exam} other {# mock exams}}", { count: mocks.count })}
+            {mocksLine({
+              count: mocks.count,
+              forNextSitting,
+              nextSitting: plan.schedule.nextSitting,
+            })}
             {locked && <PlusMark />}
           </p>
         )}
@@ -149,7 +171,12 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
           <ul className="flex flex-col gap-2 pt-1 pb-1">
             {mocks.nextDate && (
               <li>
-                <MockRow date={mocks.nextDate} examHref={links.exam} locked={locked} />
+                <MockRow
+                  date={mocks.nextDate}
+                  examHref={links.exam}
+                  forNextSitting={forNextSitting}
+                  locked={locked}
+                />
               </li>
             )}
             {checkpoint && (
@@ -166,7 +193,8 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
 
 /**
  * A phase on the path. With links (the Journey), it opens in place to its chapters and its
- * checkpoint; the current phase starts open. Without them (the plan reveal), it's one line.
+ * checkpoint; the current phase starts open, and so does the one holding the chapter up next:
+ * Today's next lesson can be a later phase's. Without them (the plan reveal), it's one line.
  */
 function PhaseNode({
   compact,
@@ -209,7 +237,12 @@ function PhaseNode({
       <PathLine walked={phase.state === "done"} />
       <PathMarker state={phase.state} />
 
-      <Collapsible className="min-w-0 flex-1" defaultOpen={phase.state === "current"}>
+      <Collapsible
+        className="min-w-0 flex-1"
+        defaultOpen={
+          phase.state === "current" || phase.chapters.some((chapter) => chapter.state === "current")
+        }
+      >
         <CollapsibleTrigger className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS, "group/phase")}>
           <PhaseTitle phase={phase} />
           <ChevronDownIcon
@@ -235,29 +268,19 @@ function PhaseNode({
   );
 }
 
-/** When the goal is: its date ("About" an estimated one), or when the plan ends at this pace. */
-function useFinishDate(): string | null {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const { plan } = usePlanScreen();
-  const { targetDate, targetDateEstimated } = plan.schedule;
-
-  if (targetDate) {
-    return targetDateEstimated
-      ? t("About {date}", { date: formatDate(targetDate, "day") })
-      : formatDate(targetDate, "day");
-  }
-
-  const { endDate } = plan.estimate;
-
-  return endDate ? t("About {date}", { date: formatDate(endDate, "month") }) : null;
-}
-
 /**
  * The end of the path: the goal itself. An exam's opens "About the exam"; on a path whose rows open
  * (`linked`), another keeps its date in the dates' column.
  */
-function FinishNode({ examHref, linked }: { examHref: string | null; linked: boolean }) {
+function FinishNode({
+  continues,
+  examHref,
+  linked,
+}: {
+  continues: boolean;
+  examHref: string | null;
+  linked: boolean;
+}) {
   const t = useExtracted();
   const { goal } = usePlanScreen();
   const date = useFinishDate();
@@ -273,7 +296,8 @@ function FinishNode({ examHref, linked }: { examHref: string | null; linked: boo
   );
 
   return (
-    <li className="relative flex gap-3" data-state="finish">
+    <li className={cn("relative flex gap-3", continues && "pb-3")} data-state="finish">
+      {continues && <PathLine walked={false} />}
       <PathMarker state="finish" />
       {examHref ? (
         <LearnLink className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS)} href={examHref}>
@@ -292,7 +316,8 @@ function FinishNode({ examHref, linked }: { examHref: string | null; linked: boo
 
 /**
  * The way to the goal as one vertical path: each phase a node (done, where the learner is, ahead),
- * the current one open to its chapters, and the goal as the finish. With `links` every phase opens
+ * the current one open to its chapters, and the goal as the finish, with what the learner chose
+ * to study after an exam past it. With `links` every phase opens
  * in place and every row opens its page; without them (the plan reveal) the path shows only phases.
  * `compact` keeps it a timeline (phases, the current one's next mock and challenge, the finish)
  * when the goal's subjects or modules show its chapters instead.
@@ -308,13 +333,24 @@ export function JourneyPath({
 }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
+  const afterExam = plan.phases.filter((phase) => phase.kind === "afterExam");
+
+  const toNode = (phase: PlanPhaseView) => (
+    <PhaseNode compact={compact} key={phase.index} links={links} phase={phase} />
+  );
 
   return (
-    <ol aria-label={t("Your journey")} className={cn("flex flex-col", className)}>
-      {plan.phases.map((phase) => (
-        <PhaseNode compact={compact} key={phase.index} links={links} phase={phase} />
-      ))}
-      <FinishNode examHref={links?.exam ?? null} linked={links !== null} />
+    <ol
+      aria-label={t("Your journey")}
+      className={cn("flex flex-col [&>li:last-child>[data-slot=path-line]]:hidden", className)}
+    >
+      {plan.phases.filter((phase) => phase.kind !== "afterExam").map((phase) => toNode(phase))}
+      <FinishNode
+        continues={afterExam.length > 0}
+        examHref={links?.exam ?? null}
+        linked={links !== null}
+      />
+      {afterExam.map((phase) => toNode(phase))}
     </ol>
   );
 }

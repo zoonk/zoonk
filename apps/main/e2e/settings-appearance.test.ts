@@ -1,19 +1,14 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
-import {
-  guardianLinkFixture,
-  learningProfileFixture,
-} from "@zoonk/testing/fixtures/learning-profiles";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { milestoneFixture } from "@zoonk/testing/fixtures/memory";
 import { type Page, expect, test } from "./fixtures";
 
 /**
  * Appearance: the buddy can be chosen, changed, renamed and given earned glasses, sounds turn on
- * and off, a daily limit (under a guardian's, when one set it), and the app's language.
+ * and off, a daily limit, and the app's language.
  */
-
-const TEEN_BIRTH_YEAR = new Date().getUTCFullYear() - 15;
 
 function findProfile(userId: string) {
   return prisma.userLearningProfile.findUnique({ where: { userId } });
@@ -120,48 +115,6 @@ test.describe("Appearance", () => {
     await expect
       .poll(() => findProfile(noProgressUser.id))
       .toMatchObject({ dailyLimitMinutes: null });
-  });
-
-  test("a teen sees their guardian's daily limit and can only pick a shorter one", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    await Promise.all([
-      learningProfileFixture({
-        birthMonth: 1,
-        birthYear: TEEN_BIRTH_YEAR,
-        userId: noProgressUser.id,
-      }),
-      guardianLinkFixture({
-        acceptedAt: new Date(),
-        dailyLimitMinutes: 60,
-        status: "active",
-        userId: noProgressUser.id,
-      }),
-    ]);
-
-    await openAppearance(page);
-
-    const limit = page.getByRole("combobox", { name: "Daily time limit" });
-
-    await expect(limit.locator("option:checked")).toHaveText("60 min a day");
-
-    await expect(
-      page.getByText("Your guardian set this limit. You can choose a shorter one."),
-    ).toBeVisible();
-
-    await expect(limit.locator("option")).toHaveText([
-      "60 min a day",
-      "15 min a day",
-      "30 min a day",
-      "45 min a day",
-    ]);
-
-    await limit.selectOption({ label: "30 min a day" });
-
-    await expect
-      .poll(() => findProfile(noProgressUser.id))
-      .toMatchObject({ dailyLimitMinutes: 30 });
   });
 
   test("a visitor gets the app's language and nothing to save", async ({ page }) => {

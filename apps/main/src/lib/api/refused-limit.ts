@@ -32,9 +32,10 @@ function readTier({ limit, status }: { limit: unknown; status: number }) {
 
 /**
  * The API's refusal of a metered request in the learner's terms (see the API's
- * `usageDecisionError`): 403 asks a guest to sign up, 402 a free learner to wait or get Plus, and
- * a 429 is a short break (`SLOW_DOWN`) or Plus's cap for today. `details.limit` says which cap it
- * was and when it starts over. Null for any other answer.
+ * `usageDecisionError`): 403 asks a guest to sign up (`SIGN_UP_REQUIRED` once the day's AI budget
+ * all guests share is spent), 402 a free learner to wait or get Plus, and a 429 is a short break
+ * (`SLOW_DOWN`) or Plus's cap for today. `details.limit` says which cap it was and when it starts
+ * over. Null for any other answer.
  */
 export function readRefusedLimit({
   body,
@@ -50,6 +51,10 @@ export function readRefusedLimit({
   const error = isJsonObject(body) ? body.error : null;
   const details = isJsonObject(error) ? error.details : null;
   const limit = isJsonObject(details) ? details.limit : null;
+
+  if (getString(error, "code") === LESSON_PLAYER_ERROR_CODES.signUpRequired) {
+    return { status: "signUpRequired" };
+  }
 
   if (getString(error, "code") === LESSON_PLAYER_ERROR_CODES.slowDown) {
     return {

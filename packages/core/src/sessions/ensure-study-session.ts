@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { loadSessionBuildInput } from "./_utils/load-build-inputs";
-import { loadPlanVersion } from "./_utils/refresh-day-session";
+import { loadDayPlanVersion } from "./_utils/refresh-day-session";
 import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./_utils/study-session-access";
 import { buildSessionBlocks } from "./session-builder";
@@ -38,7 +38,7 @@ export async function ensureStudySession(day: SessionDay): Promise<StudySessionR
   await refreshPlanAroundSession({ goalId: day.goal.id, pace: "saved", revalidation: "skip" });
 
   // Read before the day is built from the plan: a change landing meanwhile reads as newer.
-  const planVersion = await loadPlanVersion(day.goal.id);
+  const planVersion = await loadDayPlanVersion(day);
   const input = await loadSessionBuildInput({ ...day, now: new Date() });
   const { blocks, plannedMinutes } = buildSessionBlocks(input);
 

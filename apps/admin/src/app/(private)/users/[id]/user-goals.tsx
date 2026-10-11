@@ -37,7 +37,7 @@ function GoalRow({ goal }: { goal: UserGoal }) {
       <TableCell className="text-right tabular-nums">{goal.dailyMinutes} min</TableCell>
       <TableCell>{formatDate(goal.targetDate)}</TableCell>
       <TableCell className="text-right tabular-nums">
-        {goal.plan ? `${goal.doneItems} / ${goal.plan._count.items}` : "No plan"}
+        {goal.plan ? `${goal.doneItems} / ${goal.totalItems}` : "No plan"}
       </TableCell>
       <TableCell className="text-right tabular-nums">
         {goal.plan ? `v${goal.plan.version}` : "—"}

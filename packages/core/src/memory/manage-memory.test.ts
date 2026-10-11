@@ -1,6 +1,5 @@
 import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
 import { prisma } from "@zoonk/db";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture, memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { revalidateTag } from "next/cache";
@@ -20,12 +19,10 @@ vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 // The sensitivity check is a paid model call; its behavior is covered by the memory-gate eval.
 vi.mock("@zoonk/ai/tasks/v2/memory/gate", () => ({ gateMemoryFact: vi.fn() }));
 
-const ADULT_BIRTH = { birthMonth: 5, birthYear: 1990 };
 const DAY_MS = 86_400_000;
 
-async function useAdult() {
+async function useLearner() {
   const user = await userFixture();
-  await learningProfileFixture({ ...ADULT_BIRTH, userId: user.id });
   mockSession(user.id);
   return user;
 }
@@ -40,7 +37,7 @@ describe(getCurrentUserMemory, () => {
   });
 
   it("lists active, unexpired facts newest first with where each came from", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
 
     const older = await memoryFactFixture({
       createdAt: new Date(Date.now() - DAY_MS),
@@ -64,11 +61,7 @@ describe(getCurrentUserMemory, () => {
 
     const memory = await getCurrentUserMemory();
 
-    expect(memory).toMatchObject({
-      categories: ["goals", "background", "routine", "preferences", "learning", "context"],
-      enabled: true,
-    });
-
+    expect(memory?.enabled).toBe(true);
     expect(memory?.facts.map((fact) => fact.id)).toStrictEqual([newer.id, older.id]);
 
     expect(memory?.facts[0]).toMatchObject({
@@ -77,26 +70,11 @@ describe(getCurrentUserMemory, () => {
       statement: "Likes football examples",
     });
   });
-
-  it("shows minors and learners of unknown age only goals and learning facts", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-
-    await Promise.all([
-      memoryFactFixture({ category: "learning", statement: "Mixes up fractions", userId: user.id }),
-      memoryFactFixture({ category: "context", statement: "Lives in Recife", userId: user.id }),
-    ]);
-
-    const memory = await getCurrentUserMemory();
-
-    expect(memory?.categories).toStrictEqual(["goals", "learning"]);
-    expect(memory?.facts.map((fact) => fact.statement)).toStrictEqual(["Mixes up fractions"]);
-  });
 });
 
 describe(updateMemorySettings, () => {
   it("turns memory off and on without touching the facts", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
     await memoryFactFixture({ userId: user.id });
 
     await expect(updateMemorySettings({ enabled: false })).resolves.toStrictEqual({
@@ -127,7 +105,7 @@ describe(updateMemorySettings, () => {
 
 describe(updateMemoryFact, () => {
   it("corrects a fact in place and makes it something the learner said", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
 
     const fact = await memoryFactFixture({
       category: "routine",
@@ -157,7 +135,7 @@ describe(updateMemoryFact, () => {
   });
 
   it("flags a correction that reveals something sensitive, after the response", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
     const fact = await memoryFactFixture({ category: "background", userId: user.id });
 
     vi.mocked(gateMemoryFact).mockResolvedValue({ decision: "keep", sensitive: true } as Awaited<
@@ -170,7 +148,6 @@ describe(updateMemoryFact, () => {
     await check();
 
     expect(gateMemoryFact).toHaveBeenCalledExactlyOnceWith({
-      allowSensitive: true,
       candidate: { category: "background", evidence: "Has diabetes", statement: "Has diabetes" },
     });
 
@@ -178,18 +155,8 @@ describe(updateMemoryFact, () => {
     expect(flagged).toMatchObject({ sensitive: true, statement: "Has diabetes" });
   });
 
-  it("refuses a category a minor's memory can't hold", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-    const fact = await memoryFactFixture({ category: "learning", userId: user.id });
-
-    await expect(
-      updateMemoryFact({ factId: fact.id, input: { category: "context" } }),
-    ).resolves.toStrictEqual({ status: "categoryNotAllowed" });
-  });
-
   it("never reveals or changes another learner's fact", async () => {
-    const [owner] = await Promise.all([userFixture(), useAdult()]);
+    const [owner] = await Promise.all([userFixture(), useLearner()]);
     const fact = await memoryFactFixture({ statement: "Owner's fact", userId: owner.id });
 
     await expect(
@@ -207,7 +174,7 @@ describe(updateMemoryFact, () => {
 
 describe(deleteMemoryFact, () => {
   it("deletes a fact with the facts it replaced, and undo brings them all back", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
     const current = await memoryFactFixture({ statement: "Wants Law", userId: user.id });
 
     const replaced = await memoryFactFixture({
@@ -252,7 +219,7 @@ describe(deleteMemoryFact, () => {
   });
 
   it("can't delete another learner's fact or one that is already deleted", async () => {
-    const [owner, learner] = await Promise.all([userFixture(), useAdult()]);
+    const [owner, learner] = await Promise.all([userFixture(), useLearner()]);
 
     const [theirs, deleted] = await Promise.all([
       memoryFactFixture({ userId: owner.id }),
@@ -266,7 +233,7 @@ describe(deleteMemoryFact, () => {
 
 describe(undoMemoryChanges, () => {
   it("takes back an added fact and puts a replaced fact back in its place", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
     const previous = await memoryFactFixture({ statement: "Wants Medicine", userId: user.id });
 
     const [replacement, added] = await Promise.all([
@@ -297,7 +264,7 @@ describe(undoMemoryChanges, () => {
   });
 
   it("undoes nothing when one change can't be undone anymore", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
 
     const [added, alreadyDeleted] = await Promise.all([
       memoryFactFixture({ statement: "Likes chess", userId: user.id }),
@@ -319,7 +286,7 @@ describe(undoMemoryChanges, () => {
   });
 
   it("never touches another learner's facts", async () => {
-    const [owner] = await Promise.all([userFixture(), useAdult()]);
+    const [owner] = await Promise.all([userFixture(), useLearner()]);
     const theirs = await memoryFactFixture({ userId: owner.id });
 
     await expect(
@@ -333,7 +300,7 @@ describe(undoMemoryChanges, () => {
 
 describe(exportCurrentUserMemory, () => {
   it("exports every stored fact with its history and the insights shown", async () => {
-    const user = await useAdult();
+    const user = await useLearner();
     const current = await memoryFactFixture({ statement: "Wants Law", userId: user.id });
 
     await Promise.all([

@@ -1,14 +1,11 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { RATE_LIMIT_RULES } from "@zoonk/auth/rate-limit";
 import { type UsageKind } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../cache/tags";
-import { isActorRateLimited } from "./_utils/actor-rate-limit";
 import { claimUsageForViewer } from "./_utils/claim-usage-for-viewer";
 import { getEntitlementViewer } from "./_utils/entitlement-viewer";
 import { type UsageDecision } from "./contract";
-import { RATE_LIMIT_RETRY_SECONDS } from "./limits";
 
 /**
  * Claims one metered action for the learner or guest in the session before it happens: starting a
@@ -33,16 +30,6 @@ export async function claimUsage({
 
   if (!viewer) {
     return { status: "unauthorized" };
-  }
-
-  const isLimited = await isActorRateLimited({
-    isGuest: viewer.isGuest,
-    rule: kind === "lessonStart" ? RATE_LIMIT_RULES.lessonStart : RATE_LIMIT_RULES.aiUsage,
-    userId: viewer.userId,
-  });
-
-  if (isLimited) {
-    return { retryAfterSeconds: RATE_LIMIT_RETRY_SECONDS, status: "slowDown" };
   }
 
   const decision = await claimUsageForViewer({

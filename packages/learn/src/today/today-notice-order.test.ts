@@ -13,7 +13,7 @@ const NO_HOST: TodayHostNoticeState = {
 function today(overrides: Partial<Today> = {}): Today {
   return {
     exam: null,
-    guardianInvite: false,
+    examChoice: null,
     insight: null,
     planChange: null,
     session: {
@@ -63,7 +63,9 @@ const fallingBehind: Today["planChange"] = {
     coveredBefore: 1,
     currentMinutes: 45,
     dailyMinutes: 60,
+    fittingDate: null,
     fullDepth: true,
+    maximumShare: null,
     measure: "exam",
   },
   id: "behind",
@@ -75,7 +77,7 @@ describe(pickTodayNotice, () => {
     expect(pick({})).toBeNull();
   });
 
-  it("puts a plan change waiting for an OK before a changed exam notice and a welcome back", () => {
+  it("puts a plan change waiting for an OK before a changed exam notice", () => {
     expect(
       pick({
         host: { sourceChange: true },
@@ -94,6 +96,31 @@ describe(pickTodayNotice, () => {
     expect(pick({ host: { sourceChange: true }, view: { planChange: fallingBehind } })).toBe(
       "planChange",
     );
+  });
+
+  // IELTS, free, day 9: falling behind asked for 3h 50m a day, which opens no lesson past the free
+  // week, and hid the notice saying so.
+  it("says a free exam plan's first week is over before anything that asks more of the plan", () => {
+    const trialEnded = welcomeBack({ examAccess: { trialEnded: true }, freshStart: null });
+
+    expect(pick({ view: { planChange: fallingBehind, session: trialEnded } })).toBe("examAccess");
+
+    expect(
+      pick({
+        host: { sourceChange: true },
+        view: { insight: insightChange("proposed"), session: trialEnded },
+      }),
+    ).toBe("examAccess");
+
+    expect(
+      pick({
+        view: {
+          exam: { resultReported: false, stage: "examDay" },
+          planChange: planChange("proposed"),
+          session: trialEnded,
+        },
+      }),
+    ).toBe("exam");
   });
 
   it("puts the exam's own days first, and its final stretch after a changed notice", () => {
@@ -154,33 +181,44 @@ describe(pickTodayNotice, () => {
     expect(pick({ view: { ...explained, planChange: planChange("proposed") } })).toBe("planChange");
   });
 
-  it("drops the welcome back once the learner has started the day", () => {
-    expect(pick({ view: { session: welcomeBack() } })).toBe("freshStart");
-    expect(pick({ view: { session: welcomeBack(), studiedToday: true } })).toBeNull();
+  it("leaves the welcome back to the session, so no notice ever hides it", () => {
+    expect(pick({ view: { session: welcomeBack() } })).toBeNull();
 
-    expect(
-      pick({
-        view: {
-          session: welcomeBack({ blocks: [{ status: "completed" }, { status: "pending" }] }),
-        },
-      }),
-    ).toBeNull();
+    // The learner away for days still hears why today is lighter beside the plan's end.
+    expect(pick({ view: { session: welcomeBack({ examAccess: { trialEnded: true } }) } })).toBe(
+      "examAccess",
+    );
+  });
+
+  it("asks for an exam choice left for later after what waits for an OK, before a change already made", () => {
+    const examChoice = { group: "Língua Estrangeira" };
+
+    expect(pick({ view: { examChoice } })).toBe("examChoice");
+    expect(pick({ view: { examChoice, planChange: planChange("proposed") } })).toBe("planChange");
+    expect(pick({ host: { uploadRequest: true }, view: { examChoice } })).toBe("uploadRequest");
+    expect(pick({ view: { examChoice, planChange: planChange("applied") } })).toBe("examChoice");
+    expect(pick({ view: { examChoice, session: welcomeBack() } })).toBe("examChoice");
   });
 
   it("offers a course from before goals only when nothing else needs saying", () => {
     const suggestedGoal = { id: "suggestion", status: "pending" as const, title: "Physics" };
 
     expect(pick({ view: { suggestedGoal } })).toBe("suggestedGoal");
-    expect(pick({ view: { session: welcomeBack(), suggestedGoal } })).toBe("freshStart");
-  });
 
-  it("asks a teen who just signed up from a guest session to invite a guardian, after the plan's asks", () => {
-    expect(pick({ view: { guardianInvite: true } })).toBe("guardianInvite");
+    // A fresh start says why today is lighter: the course waits until the learner has started.
+    expect(pick({ view: { session: welcomeBack(), suggestedGoal } })).toBeNull();
 
-    expect(pick({ host: { uploadRequest: true }, view: { guardianInvite: true } })).toBe(
-      "uploadRequest",
+    expect(
+      pick({
+        view: {
+          session: welcomeBack({ blocks: [{ status: "completed" }, { status: "pending" }] }),
+          suggestedGoal,
+        },
+      }),
+    ).toBe("suggestedGoal");
+
+    expect(pick({ view: { session: welcomeBack(), studiedToday: true, suggestedGoal } })).toBe(
+      "suggestedGoal",
     );
-
-    expect(pick({ view: { guardianInvite: true, session: welcomeBack() } })).toBe("guardianInvite");
   });
 });

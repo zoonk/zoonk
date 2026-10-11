@@ -1,10 +1,9 @@
 import { explainSpokenAnswer } from "@zoonk/ai/tasks/v2/language/explain-spoken-answer";
 import { transcribeSpeech } from "@zoonk/ai/tasks/v2/language/transcribe-speech";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -14,16 +13,9 @@ import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-ou
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 // Speech recognition, the explanation model and Blob storage are paid external services.
 vi.mock("@zoonk/ai/tasks/v2/language/transcribe-speech", () => ({ transcribeSpeech: vi.fn() }));
@@ -327,18 +319,6 @@ describe(gradeSpokenAnswer, () => {
     await expect(prisma.answerExplanation.count({ where: { stepId: step.id } })).resolves.toBe(0);
   });
 
-  it("slows down a burst of answers before calling any model", async () => {
-    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
-    mockSession(user.id);
-    vi.mocked(isRateLimited).mockResolvedValueOnce(true);
-
-    await expect(
-      gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id }),
-    ).resolves.toStrictEqual({ retryAfterSeconds: 60, status: "slowDown" });
-
-    expect(transcribeSpeech).not.toHaveBeenCalled();
-  });
-
   it("asks a guest who used today's help to sign up before calling any model", async () => {
     const step = await createSpokenStep();
     await useGuestOutOfHelp();
@@ -408,7 +388,12 @@ describe(gradeSpokenAnswer, () => {
   });
 
   it("brings the words that sounded different back as pronunciation reviews", async () => {
-    const [step, learner] = await Promise.all([createSpokenStep(), userFixture()]);
+    // A word no lesson taught yet joins the AI organization's shared vocabulary.
+    const [step, learner] = await Promise.all([
+      createSpokenStep(),
+      userFixture(),
+      aiOrganizationFixture(),
+    ]);
 
     mockSession(learner.id);
     mockTranscript("How much is the hent?");

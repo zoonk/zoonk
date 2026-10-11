@@ -98,7 +98,8 @@ function getComposerAvailability({
 
   const isReady = state.loadStatus === "ready";
 
-  const hasUsageLimit = state.answerError?.reason.kind === "usageLimit";
+  const refusal = state.answerError?.reason.kind;
+  const hasUsageLimit = refusal === "usageLimit" || refusal === "signUpRequired";
 
   const hasQuestionToSend = Boolean(state.draft.trim()) || isResolvingPreviousQuestion;
 

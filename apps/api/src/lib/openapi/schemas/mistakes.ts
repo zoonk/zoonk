@@ -5,6 +5,7 @@ import { mistakeSnapshotSchema } from "@zoonk/core/mistakes/snapshot";
 import { MistakeCause, MistakeStatus } from "@zoonk/db";
 import { z } from "zod";
 import { paginationSchema } from "./common";
+import { itemSetSchema } from "./item-set";
 import { bankQuestionSchema } from "./learner";
 
 const mistakeCauseSchema = z
@@ -92,6 +93,19 @@ export const mistakeDrillSchema = z
   })
   .meta({ id: "MistakeDrill" });
 
+/** A drill's question, with the passage, case, chart or recording it was asked with. */
+const mistakeQuestionSchema = z.intersection(
+  bankQuestionSchema,
+  z.object({
+    set: itemSetSchema
+      .nullable()
+      .meta({
+        description:
+          "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
+      }),
+  }),
+);
+
 export const mistakePracticeResponseSchema = z
   .object({
     practice: z.array(
@@ -99,7 +113,9 @@ export const mistakePracticeResponseSchema = z
         cause: mistakeCauseSchema.nullable(),
         drill: mistakeDrillSchema,
         mistakeId: z.uuid(),
-        questions: z.array(bankQuestionSchema).meta({ description: "The original question first" }),
+        questions: z
+          .array(mistakeQuestionSchema)
+          .meta({ description: "The original question first" }),
         snapshot: mistakeSnapshotSchema,
       }),
     ),
@@ -117,6 +133,7 @@ export const mistakePracticeFeedbackSchema = z
       .meta({ description: "The answer's id: send the run's answer ids when it finishes" }),
     correctAnswer: z.union([
       z.object({ selectedIndex: z.number().int().min(0) }),
+      z.object({ selectedIndexes: z.array(z.number().int().min(0)) }),
       z.object({ isTrue: z.boolean() }),
     ]),
     explanation: z.string().nullable(),

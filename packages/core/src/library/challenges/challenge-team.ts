@@ -114,7 +114,7 @@ function getTeamLanguage(language: string): string {
  * Picks four names in a row from the language's list, starting at the woman the seed (the plan's
  * id) points to, so every team is a woman, a man, a woman and a man in that order: cases are
  * written before anyone plays them, and they write each colleague's role in that gender
- * ("Pesquisadora de UX" for the first). No model is needed, and the same plan always gets the
+ * (a UX researcher written as a woman for the first). No model is needed, and the same plan always gets the
  * same team, even if it's picked again.
  */
 export function buildChallengeTeam({

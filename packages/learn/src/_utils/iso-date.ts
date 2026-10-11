@@ -11,10 +11,22 @@ export function isoDateToUtc(isoDate: string): Date {
   return new Date(`${isoDate}T00:00:00Z`);
 }
 
+/** The viewer's own calendar day as "YYYY-MM-DD", as view models label days. */
+export function toLocalIsoDate(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 /** Whole days from the viewer's today to a view model's calendar day, never below zero. */
 export function daysUntilIsoDate({ isoDate, today }: { isoDate: string; today: Date }): number {
   const start = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   return Math.max(0, Math.round((isoDateToUtc(isoDate).getTime() - start) / MS_PER_DAY));
+}
+
+/** Whole days from `from` to `to`, both YYYY-MM-DD. */
+export function daysBetween(from: string, to: string): number {
+  return Math.round((isoDateToUtc(to).getTime() - isoDateToUtc(from).getTime()) / MS_PER_DAY);
 }
 
 type DateStyle =
@@ -26,6 +38,7 @@ type DateStyle =
   | "monthShort"
   | "short"
   | "weekday"
+  | "weekdayDay"
   | "weekdayShort";
 
 const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
@@ -37,6 +50,7 @@ const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
   monthShort: { month: "short", year: "numeric" },
   short: { day: "numeric", month: "short", year: "numeric" },
   weekday: { weekday: "long" },
+  weekdayDay: { day: "numeric", month: "long", weekday: "long" },
   weekdayShort: { weekday: "short" },
 };
 
@@ -64,4 +78,22 @@ export function useFormatIsoDate() {
     const date = isoDateToUtc(isoDate);
     return format.dateTime(date, { ...getDateOptions({ date, style }), timeZone: "UTC" });
   };
+}
+
+/**
+ * A goal's date as the learner gave it: the month they named ("December 2026") when the date
+ * stands for that month (`namedMonth`), else the day in `style`.
+ */
+export function useFormatGoalDate() {
+  const formatDate = useFormatIsoDate();
+
+  return ({
+    isoDate,
+    namedMonth,
+    style = "day",
+  }: {
+    isoDate: string;
+    namedMonth: boolean;
+    style?: DateStyle;
+  }): string => formatDate(isoDate, namedMonth ? "month" : style);
 }

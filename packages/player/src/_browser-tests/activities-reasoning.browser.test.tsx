@@ -6,10 +6,10 @@ import {
   expectCount,
   expectVerdict,
   focusOn,
-  inlineImage,
   openActivity,
   press,
 } from "../_test-utils/activity-player";
+import { inlineImage } from "../preview/preview-steps";
 
 /** The picture a decision tree's case asks for: the tree to name from one leaf. */
 const LEAF = {

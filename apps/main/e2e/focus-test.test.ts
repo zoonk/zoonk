@@ -147,7 +147,7 @@ test.describe("The focus test", () => {
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
       await expect(page.getByRole("main").getByText("Algebra", { exact: true })).toBeVisible();
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("button", { exact: true, name: "Right answer" }).click();
+      await page.getByRole("radio", { exact: true, name: "Right answer" }).click();
       // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
       await page.getByRole("button", { name: "Next" }).click();
     }

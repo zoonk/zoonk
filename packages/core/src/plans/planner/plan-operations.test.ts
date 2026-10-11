@@ -23,7 +23,7 @@ function apply(
   operations: Parameters<typeof applyPlanOperations>[0]["operations"],
   from = state(),
 ) {
-  return applyPlanOperations({ operations, state: from, today: TODAY });
+  return applyPlanOperations({ goalKind: "exam", operations, state: from, today: TODAY });
 }
 
 describe(applyPlanOperations, () => {
@@ -238,5 +238,77 @@ describe(applyPlanOperations, () => {
     expect(
       apply([{ from: "2026-10-08", kind: "moveWeeklyEvent", to: "2026-10-09" }], friday),
     ).toStrictEqual({ error: "badMove" });
+  });
+
+  it("studies everything after the exam, for exams only", () => {
+    expect(apply([{ fullCourse: true, kind: "setFullCourse" }])).toMatchObject({
+      state: { goal: { targetDate: "2026-11-08" }, settings: { fullCourse: true } },
+    });
+
+    expect(
+      applyPlanOperations({
+        goalKind: "learn",
+        operations: [{ fullCourse: true, kind: "setFullCourse" }],
+        state: state(),
+        today: TODAY,
+      }),
+    ).toStrictEqual({ error: "notExam" });
+  });
+
+  it("keeps the learner's choice for each base, and none for a base studied for its core", () => {
+    const first = apply([
+      {
+        choices: [
+          { choice: "quick", skillId: "math" },
+          { choice: "skip", skillId: "bio" },
+          { choice: "deep", skillId: "chem" },
+        ],
+        kind: "setBaseChoices",
+      },
+    ]);
+
+    const settings = "state" in first ? first.state.settings : null;
+
+    expect(settings?.baseChoices).toStrictEqual([
+      { choice: "quick", skillId: "math" },
+      { choice: "skip", skillId: "bio" },
+      { choice: "deep", skillId: "chem" },
+    ]);
+
+    expect(
+      apply(
+        [
+          {
+            choices: [
+              { choice: "essential", skillId: "math" },
+              { choice: "essential", skillId: "chem" },
+            ],
+            kind: "setBaseChoices",
+          },
+        ],
+        state({ baseChoices: settings?.baseChoices ?? [] }),
+      ),
+    ).toMatchObject({ state: { settings: { baseChoices: [{ choice: "skip", skillId: "bio" }] } } });
+  });
+
+  it("starts a new preparation from today once a date set after the old one passed", () => {
+    const passed = state({ startDate: "2026-06-01" });
+    const exam = { ...passed, goal: { ...passed.goal, targetDate: "2026-09-20" } };
+
+    expect(
+      apply([{ estimated: true, kind: "setNoticeDate", targetDate: "2027-11-07" }], exam),
+    ).toMatchObject({
+      state: {
+        goal: { targetDate: "2027-11-07" },
+        settings: { noticeDate: "2027-11-07", startDate: "2026-09-28" },
+      },
+    });
+
+    expect(
+      apply(
+        [{ kind: "setTargetDate", targetDate: "2026-12-01" }],
+        state({ startDate: "2026-06-01" }),
+      ),
+    ).toMatchObject({ state: { settings: { startDate: "2026-06-01" } } });
   });
 });

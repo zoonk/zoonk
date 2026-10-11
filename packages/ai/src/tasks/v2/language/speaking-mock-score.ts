@@ -19,7 +19,9 @@ import {
   getOverallBand,
   normalizeBandRange,
 } from "./speaking-mock-bands";
-import systemPrompt from "./speaking-mock-score.prompt.md";
+import ieltsRubric from "./speaking-mock-score-ielts.prompt.md";
+import toeflRubric from "./speaking-mock-score-toefl.prompt.md";
+import basePrompt from "./speaking-mock-score.prompt.md";
 
 /**
  * Runs once per mock, and the learner waits for it on the results screen.
@@ -42,6 +44,12 @@ const fallbackModels = ["google/gemini-3.8-flash"] as const;
 const EXAM_NAMES: Record<SpeakingMockExam, string> = {
   ielts: "IELTS Speaking",
   toefl: "TOEFL iBT Speaking",
+};
+
+/** The rules every mock's rating shares, then only the rated exam's scale, criteria and anchors. */
+const SYSTEM_PROMPTS: Record<SpeakingMockExam, string> = {
+  ielts: `${basePrompt}\n${ieltsRubric}`,
+  toefl: `${basePrompt}\n${toeflRubric}`,
 };
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the evidence comes before the band it supports, the tip last, and each exam's criteria in the order its rubric lists them. */
@@ -152,6 +160,7 @@ function generateScore<TOutput>({
 }) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const systemPrompt = SYSTEM_PROMPTS[params.exam];
 
   return runTaskGeneration({
     analytics,
@@ -190,5 +199,11 @@ export async function scoreSpeakingMock(params: ScoreSpeakingMockParams) {
   const userPrompt = buildUserPrompt(params);
   const { data, provenance, result } = await scoreExam(params, userPrompt);
 
-  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return {
+    data,
+    provenance,
+    systemPrompt: SYSTEM_PROMPTS[params.exam],
+    usage: result.usage,
+    userPrompt,
+  };
 }

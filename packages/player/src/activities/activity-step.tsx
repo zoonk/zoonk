@@ -66,6 +66,7 @@ export function ActivityStep({
   const isMounted = useIsMounted();
   const { badge, Canvas, checkFirst } = activityRenderers[content.template];
   const expected = phase === "checked" ? getActivityExpected(content) : null;
+  const isCheckFirst = checkFirst(content);
 
   const checkArea = (
     <ActivityCheckArea
@@ -79,13 +80,13 @@ export function ActivityStep({
   return (
     <InteractiveStepLayout data-slot="activity-step">
       <div className="flex flex-col gap-3">
-        <ActivityBadge kind={badge} />
+        <ActivityBadge kind={badge(content)} />
         <LessonQuestion id={labelId}>{content.prompt}</LessonQuestion>
       </div>
 
       {picture}
 
-      {checkFirst && checkArea}
+      {isCheckFirst && checkArea}
 
       <div className="flex flex-col gap-2">
         {/* The canvas appears once the page can respond, so nothing is dragged or tapped in vain. */}
@@ -107,7 +108,7 @@ export function ActivityStep({
         <ActivityDataNote content={content} />
       </div>
 
-      {!checkFirst && checkArea}
+      {!isCheckFirst && checkArea}
 
       {phase === "checked" && isCorrect !== null && (
         <ActivityFeedback answer={answer} content={content} isCorrect={isCorrect} />

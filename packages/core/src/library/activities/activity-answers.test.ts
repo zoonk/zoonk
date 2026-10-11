@@ -34,15 +34,15 @@ describe(checkActivityAnswer, () => {
     );
 
     const listening = content(
-      "listeningSpeed",
-      { language: "es", script: "Hola.", speeds: [0.75, 1] },
+      "keyboardFretboard",
+      { byEar: true, instruments: ["piano"], target: { kind: "notes", notes: ["C", "G"] } },
       {
         kind: "choice",
         options: [
-          { id: "a", isCorrect: true, reason: "Yes.", text: "Hello" },
-          { id: "b", isCorrect: false, reason: "No.", text: "Bye" },
+          { id: "a", isCorrect: true, reason: "Yes.", text: "A perfect fifth" },
+          { id: "b", isCorrect: false, reason: "No.", text: "A major third" },
         ],
-        question: "What did they say?",
+        question: "What did you hear?",
       },
     );
 
@@ -157,18 +157,30 @@ describe(checkActivityAnswer, () => {
     ).toBe(false);
   });
 
-  it("fills the Punnett square from the alleles, whatever order the learner writes them in", () => {
-    const punnett = content("punnettSquare", {
-      parents: [
-        { alleles: ["P", "p"], label: "Purple" },
-        { alleles: ["p", "p"], label: "White" },
-      ],
-      phenotypes: { dominant: "Purple", recessive: "White" },
-      trait: "Flower color",
+  it("fills a Punnett grid from the alleles, whatever order the learner writes them in", () => {
+    const punnett = content("combinationGrid", {
+      columns: { label: "White", values: ["p", "p"] },
+      rows: { label: "Purple", values: ["P", "p"] },
+      rule: "alleles",
+      title: "Flower color",
+      traits: { dominant: "Purple", recessive: "White" },
     });
 
     expect(grade(punnett, { cells: ["Pp", "pP", "pp", "pp"], kind: "grid" })).toBe(true);
     expect(grade(punnett, { cells: ["Pp", "Pp", "Pp", "pp"], kind: "grid" })).toBe(false);
+  });
+
+  it("fills a number grid by its rule, reading each number as written", () => {
+    const sums = content("combinationGrid", {
+      columns: { label: "Second", values: [1, 11] },
+      rows: { label: "First", values: [1, 10] },
+      rule: "sum",
+      title: "Sums",
+    });
+
+    expect(grade(sums, { cells: ["2", "12", "11", "21"], kind: "grid" })).toBe(true);
+    // 12 and 21 have the same digits but aren't the same number.
+    expect(grade(sums, { cells: ["2", "21", "11", "12"], kind: "grid" })).toBe(false);
   });
 
   it("runs the learner's pattern against the examples", () => {
@@ -200,7 +212,7 @@ describe(checkActivityAnswer, () => {
     expect(grade(tip, { kind: "pattern", pattern: "=A1 * 0.2" })).toBe(false);
   });
 
-  it("compares program output, query results and built sentences", () => {
+  it("compares program output and query results", () => {
     const runner = content("codeRunner", {
       editableLines: [1],
       expectedOutput: "5050\n",
@@ -223,15 +235,6 @@ describe(checkActivityAnswer, () => {
       ],
     });
 
-    const sentence = content("sentenceBuilder", {
-      acceptedVariants: ["¿Venís a cenar?"],
-      distractors: [{ why: "That's for ustedes.", word: "Quieren" }],
-      language: "es",
-      prompt: "Do you all want to come to dinner?",
-      situation: "Inviting friends.",
-      target: "¿Queréis venir a cenar?",
-    });
-
     expect(grade(runner, { kind: "output", output: "5050  \n\n" })).toBe(true);
     expect(grade(runner, { kind: "output", output: "4950" })).toBe(false);
 
@@ -240,9 +243,6 @@ describe(checkActivityAnswer, () => {
     );
 
     expect(grade(query, { columns: ["name"], kind: "rows", rows: [["China"]] })).toBe(false);
-    expect(grade(sentence, { kind: "text", text: " ¿Queréis  venir a cenar? " })).toBe(true);
-    expect(grade(sentence, { kind: "text", text: "¿Venís a cenar?" })).toBe(true);
-    expect(grade(sentence, { kind: "text", text: "¿Quieren venir a cenar?" })).toBe(false);
   });
 
   it("grades music by pitch class and rhythm by timing", () => {
@@ -268,15 +268,17 @@ describe(checkActivityAnswer, () => {
     expect(grade(clave, { kind: "rhythm", tapTimesMs: [500, 1250] })).toBe(false);
   });
 
-  it("grades curve shifts and cause and effect links", () => {
-    const market = content("supplyDemand", {
-      demand: { intercept: 10, slope: -1 },
-      event: "Bird flu.",
-      feedback: { wrongCurve: "Not demand.", wrongDirection: "Less supply." },
-      priceLabel: "Price",
-      quantityLabel: "Eggs",
-      shift: { amount: 2, curve: "supply", direction: "left" },
-      supply: { intercept: 1, slope: 0.5 },
+  it("grades line shifts and cause and effect links", () => {
+    const market = content("lineCrossing", {
+      change: "Bird flu.",
+      feedback: { wrongDirection: "Less supply.", wrongLine: "Not demand." },
+      lines: [
+        { id: "supply", intercept: 1, label: "Supply", slope: 0.5 },
+        { id: "demand", intercept: 10, label: "Demand", slope: -1 },
+      ],
+      shift: { amount: 2, direction: "left", line: "supply" },
+      xLabel: "Eggs",
+      yLabel: "Price",
     });
 
     const chain = content("causeEffectChain", {

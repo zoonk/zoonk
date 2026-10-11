@@ -20,8 +20,12 @@ import { SURFACE_CLASS } from "./surface";
  *   </ListRowLink>
  * </ListGroup>
  * ```
+ *
+ * It clips its corners without becoming a scroll container (`overflow-clip`, not
+ * `overflow-hidden`), so inside a sheet's flex column it keeps its rows' height instead of
+ * shrinking to a line.
  */
-export const LIST_GROUP_CLASS = cn(SURFACE_CLASS, "flex flex-col overflow-hidden");
+export const LIST_GROUP_CLASS = cn(SURFACE_CLASS, "flex flex-col overflow-clip");
 
 export function ListGroup({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn(LIST_GROUP_CLASS, className)} data-slot="list-group" {...props} />;

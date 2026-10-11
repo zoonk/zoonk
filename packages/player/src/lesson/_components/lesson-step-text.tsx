@@ -1,20 +1,34 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { findMarkdownTables } from "@zoonk/utils/markdown-table";
+import { findMarkdownTableLines } from "@zoonk/utils/markdown-table";
 import { LessonRichText, LessonRichTextBlocks } from "./lesson-rich-text";
 
 /**
- * A question written with its data first ("The office logged its letters:", a table, then "Which
- * month had the fewest?") reads as that data, then the question itself.
+ * A question written with a table of data ("The office logged its letters:", a table, then "Which
+ * month had the fewest?") reads as that data, then the question itself: its last paragraph that
+ * isn't a table. Data written after the question ("Which sensor…?", then the table) shows above it
+ * too, so the heading never holds a table.
  */
 function splitQuestionData(text: string): { data: string | null; question: string } {
-  if (findMarkdownTables(text).length === 0) {
+  const lines = text.split(/\r?\n/u);
+  const tableLines = findMarkdownTableLines(lines);
+
+  if (tableLines.size === 0) {
     return { data: null, question: text };
   }
 
-  const paragraphs = text.trim().split(/\n\s*\n/u);
-  const question = paragraphs.at(-1) ?? text;
+  const isProse = (index: number) => !tableLines.has(index) && Boolean(lines[index]?.trim());
+  const end = lines.findLastIndex((_, index) => isProse(index));
 
-  return { data: paragraphs.slice(0, -1).join("\n\n"), question };
+  if (end === -1) {
+    return { data: text, question: "" };
+  }
+
+  const start = lines.findLastIndex((_, index) => index < end && !isProse(index)) + 1;
+
+  return {
+    data: [...lines.slice(0, start), ...lines.slice(end + 1)].join("\n").trim(),
+    question: lines.slice(start, end + 1).join("\n"),
+  };
 }
 
 /** The question or prompt of a screen: the one line the learner answers. */
@@ -24,12 +38,14 @@ export function LessonQuestion({ children, id }: { children: string; id?: string
   return (
     <>
       {data && <LessonContext>{data}</LessonContext>}
-      <h2
-        className="text-foreground text-xl leading-snug font-semibold tracking-tight text-balance sm:text-2xl"
-        id={id}
-      >
-        <LessonRichText text={question} />
-      </h2>
+      {question && (
+        <h2
+          className="text-foreground text-xl leading-snug font-semibold tracking-tight text-balance sm:text-2xl"
+          id={id}
+        >
+          <LessonRichText text={question} />
+        </h2>
+      )}
     </>
   );
 }

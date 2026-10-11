@@ -12,7 +12,7 @@ export async function PlusBenefits() {
 
   const benefits = [
     t("Unlimited lessons and goals"),
-    t("Full exam prep, with mock exams"),
+    t("Full exam prep, with mock exams and speaking tasks"),
     t("AI tutor whenever you're stuck"),
     t("Higher limits for speaking calls"),
   ];

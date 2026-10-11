@@ -3,6 +3,7 @@ import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rul
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { BuddyGlasses } from "@zoonk/db";
 import { z } from "zod";
+import { mockLeftOutSchema } from "./mock-left-out";
 import {
   logicalDateSchema,
   studyBlockDetailResponseSchema,
@@ -126,13 +127,14 @@ export const challengeResponseSchema = z
       }),
     goalId: z.uuid(),
     kind: kindSchema,
+    leftOut: mockLeftOutSchema,
     minutes: z
       .number()
       .int()
       .min(0)
       .meta({ description: "Time on the clock for a mock; about how long a checkpoint takes" }),
     mock: z.boolean().meta({ description: "An exam's weekly mock, in the exam's conditions" }),
-    netScored: z.boolean().meta({ description: "Wrong answers cancel right ones" }),
+    netScored: z.boolean().meta({ description: "Wrong answers cost points (see `wrongPenalty`)" }),
     number: z.number().int().min(1).nullable().meta({ description: '"Mock exam 3"' }),
     passMark: z
       .number()
@@ -145,12 +147,24 @@ export const challengeResponseSchema = z
     phase: phaseSchema.nullable(),
     planItemId: z.uuid(),
     questions: z.number().int().min(0),
+    recordings: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "Recordings a listening phase's boss asks its questions on, each played as in the exam; 0 for text questions",
+      }),
     reinforcementLessons: z
       .number()
       .int()
       .min(0)
       .meta({ description: "Short lessons on what a lost duel missed, before its new try" }),
     rematch: z.boolean().meta({ description: "A boss lost on an earlier day, back again" }),
+    result: checkpointResponseSchema.shape.result.meta({
+      description:
+        "How a boss's last finished try went, so a won one shows its result instead of a new duel; null before its first try and for the weekly challenge",
+    }),
     reward: rewardSchema,
     sections: z.array(
       z.object({
@@ -158,6 +172,10 @@ export const challengeResponseSchema = z
         minutes: z.number().int().min(0),
         name: z.string().nullable(),
         questions: z.number().int().min(0),
+        tools: z
+          .string()
+          .nullable()
+          .meta({ description: "What may be used or is given in it, in the notice's words" }),
       }),
     ),
     startTime: z
@@ -168,12 +186,20 @@ export const challengeResponseSchema = z
       .enum(CHALLENGE_STATUSES)
       .meta({
         description:
-          "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan); waiting (today's session was planned without it)",
+          "upcoming before its day; ready or started on it; tried (a boss lost today); done; plusRequired (a mock outside the plan, or a phase challenge past a free exam plan's first week); waiting (today's session was planned without it)",
       }),
     timeZone: z.string().nullable(),
     title: z.string(),
     today: logicalDateSchema.meta({ description: "The learner's today, to say when it is" }),
     written: mockWrittenPartsSchema,
+    wrongPenalty: z
+      .number()
+      .min(0)
+      .max(1)
+      .meta({
+        description:
+          "The share of a right answer each wrong one takes away (1: a wrong answer cancels a right one); 0 when wrong answers cost nothing",
+      }),
   })
   .meta({ id: "Challenge" }) satisfies z.ZodType<ChallengeView>;
 
@@ -186,6 +212,23 @@ export const challengeStartResponseSchema = z
     sessionId: z.uuid(),
   })
   .meta({ id: "ChallengeStart" });
+
+export const challengeGenerationSchema = z
+  .object({
+    generationId: z
+      .string()
+      .nullable()
+      .meta({
+        description: "The run writing the questions: stream GET /generations/{generationId}/events",
+      }),
+    status: z
+      .enum(["ready", "generating"])
+      .meta({
+        description:
+          "`ready`: start the challenge now. `generating`: follow the run's stream until `challengeQuestionsReady`, then start it",
+      }),
+  })
+  .meta({ id: "ChallengeGeneration" });
 
 export const challengeMoveResponseSchema = checkpointMoveResponseSchema
   .extend({

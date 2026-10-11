@@ -49,21 +49,35 @@ type ActivityTemplateHooks<TFields> = {
   verify?: (fields: TFields) => ActivityIssue[];
 };
 
+/** A rule that holds for the whole template, or depends on what a screen's fields say. */
+type FieldsRule<TFields> = boolean | ((fields: TFields) => boolean);
+
 type ActivityTemplateDefinition<
   TId extends string,
   TFields extends z.ZodType,
 > = ActivityTemplateHooks<z.output<TFields>> & {
   /** Check kinds this template supports. Every one is tied to the interaction. */
   checks: readonly ActivityCheckKind[];
+  /** The check kinds one screen's fields support, when an engine's modes differ (default: all). */
+  checksFor?: (fields: z.output<TFields>) => readonly ActivityCheckKind[];
   /** A `choice` check must give every option a `value`, because the answer is only a number. */
-  choicesNeedValues?: boolean;
+  choicesNeedValues?: FieldsRule<z.output<TFields>>;
   /** What the template teaches and what the writer fills, for the writer's prompt. */
   description: string;
   fields: TFields;
   id: TId;
   /** Shows data, so it must cite a source or be labeled as an example. */
-  needsData: boolean;
+  needsData: FieldsRule<z.output<TFields>>;
 };
+
+/** A rule for a screen: fields that don't parse follow no rule. */
+function applyRule<TFields>(rule: FieldsRule<TFields>, fields: TFields | null): boolean {
+  if (typeof rule === "boolean") {
+    return rule;
+  }
+
+  return fields !== null && rule(fields);
+}
 
 /**
  * The activity envelope. `image` is a picture the case needs to be seen (the leaf a decision
@@ -86,6 +100,19 @@ function buildContentSchema<TId extends string, TFields extends z.ZodType>(
 }
 
 /**
+ * The template on an explanation screen, to explore: its fields and data, with no prompt and no
+ * check, since nothing is asked or graded there.
+ */
+function buildExploreSchema<TId extends string, TFields extends z.ZodType>(
+  id: TId,
+  fields: TFields,
+) {
+  return z
+    .object({ data: activityDataSchema.optional(), fields, template: z.literal(id) })
+    .strict();
+}
+
+/**
  * Declares a template as data: its field schema, the checks it allows and how code computes them. The
  * hooks receive typed fields; the returned template exposes them for any content, so the
  * validator and answer checker can run every template through one code path.
@@ -93,7 +120,17 @@ function buildContentSchema<TId extends string, TFields extends z.ZodType>(
 export function defineActivityTemplate<const TId extends string, TFields extends z.ZodType>(
   definition: ActivityTemplateDefinition<TId, TFields>,
 ) {
-  const { expected, fields, formulas, value, verify, ...meta } = definition;
+  const {
+    checksFor,
+    choicesNeedValues = false,
+    expected,
+    fields,
+    formulas,
+    needsData,
+    value,
+    verify,
+    ...meta
+  } = definition;
 
   function parseFields(input: unknown): z.output<TFields> | null {
     const parsed = fields.safeParse(input);
@@ -102,6 +139,12 @@ export function defineActivityTemplate<const TId extends string, TFields extends
 
   return {
     ...meta,
+    allowedChecks: (input: unknown): readonly ActivityCheckKind[] => {
+      const parsed = parseFields(input);
+      return parsed === null || !checksFor ? meta.checks : checksFor(parsed);
+    },
+    choicesNeedValues: (input: unknown): boolean =>
+      applyRule(choicesNeedValues, parseFields(input)),
     computeExpected: (input: unknown): ActivityExpectedAnswer | null => {
       const parsed = parseFields(input);
       return parsed === null || !expected ? null : expected(parsed);
@@ -111,11 +154,15 @@ export function defineActivityTemplate<const TId extends string, TFields extends
       return parsed === null || !value ? null : value(parsed, target);
     },
     content: buildContentSchema(definition.id, fields),
+    explore: buildExploreSchema(definition.id, fields),
     fields,
     listFormulas: (input: unknown): ActivityFormula[] => {
       const parsed = parseFields(input);
       return parsed === null || !formulas ? [] : formulas(parsed);
     },
+    /** Whether some screens of this template show data, for the writer's prompt. */
+    mayShowData: needsData !== false,
+    showsData: (input: unknown): boolean => applyRule(needsData, parseFields(input)),
     verifyFields: (input: unknown): ActivityIssue[] => {
       const parsed = parseFields(input);
       return parsed === null || !verify ? [] : verify(parsed);
@@ -125,15 +172,22 @@ export function defineActivityTemplate<const TId extends string, TFields extends
 
 /** A template with its hooks erased to `unknown` fields, so every template fits one registry. */
 export type ActivityTemplate = {
+  /** The check kinds a screen's fields support. */
+  allowedChecks: (fields: unknown) => readonly ActivityCheckKind[];
+  /** Every check kind the template supports, in some mode. */
   checks: readonly ActivityCheckKind[];
-  choicesNeedValues?: boolean;
+  /** Whether a screen's choice options must carry values; `null` asks for the template-wide rule. */
+  choicesNeedValues: (fields: unknown) => boolean;
   computeExpected: (fields: unknown) => ActivityExpectedAnswer | null;
   computeValue: (fields: unknown, target: ActivityCheckTarget) => number | null;
   content: z.ZodType;
   description: string;
+  explore: z.ZodType;
   fields: z.ZodType;
   id: string;
   listFormulas: (fields: unknown) => ActivityFormula[];
-  needsData: boolean;
+  mayShowData: boolean;
+  /** Whether a screen's fields show data, which must cite a source or be labeled as an example. */
+  showsData: (fields: unknown) => boolean;
   verifyFields: (fields: unknown) => ActivityIssue[];
 };

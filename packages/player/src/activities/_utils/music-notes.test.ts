@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   chordMidis,
-  chordSymbol,
   displayNoteName,
   midiToNote,
   nameChord,
   noteToMidi,
   spellChord,
-  spellInterval,
 } from "./music-notes";
 
 describe("note numbers", () => {
@@ -36,18 +34,10 @@ describe("spelling", () => {
     expect(spellChord("B", "diminished")).toStrictEqual(["B", "D", "F"]);
   });
 
-  it("spells the top of an interval", () => {
-    expect(spellInterval("C4", "P5")).toBe("G");
-    expect(spellInterval("C4", "m3")).toBe("Eb");
-    expect(spellInterval("E", "P8")).toBe("E");
-    expect(spellInterval("C", "TT")).toBe("F#");
-  });
-
   it("names the chord a set of pitch classes forms", () => {
     expect(nameChord([0, 3, 7])).toStrictEqual({ quality: "minor", root: "C" });
     expect(nameChord([7, 11, 2, 5])).toStrictEqual({ quality: "dominant7", root: "G" });
     expect(nameChord([0, 2, 4])).toBeNull();
-    expect(chordSymbol("C4", "minor7")).toBe("Cm7");
   });
 
   it("shows notes with real accidentals and German B and H", () => {

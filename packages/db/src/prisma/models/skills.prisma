@@ -25,6 +25,10 @@ model Skill {
   /// A worked example: the back of the skill's study card.
   example        String?
   level          CourseLevel?
+  /// Whether the skill's work ends in one number a learner works out (a calculation, a count), so
+  /// it can be asked with a number typed in: null until the item writer was asked for such
+  /// questions, false when it found none.
+  isQuantitative Boolean?            @map("is_quantitative")
   mergedIntoId   String?             @map("merged_into_id") @db.Uuid
   mergedInto     Skill?              @relation("SkillMerge", fields: [mergedIntoId], references: [id], onDelete: SetNull)
   mergedSkills   Skill[]             @relation("SkillMerge")
@@ -90,39 +94,85 @@ model LessonSkill {
 /// A question about a figure (a diagram, a map, a geometry figure) asks for it in `content.image` and
 /// is stored only once that picture is drawn and checked, linked through `mediaAssetId`.
 model Item {
-  id                 String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  skillId            String              @map("skill_id") @db.Uuid
-  skill              Skill               @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  language           String              @db.VarChar(10)
-  format             ItemFormat
-  field              String?
-  content            Json
-  difficulty         Float?
-  discrimination     Float?
-  examBlueprintId    String?             @map("exam_blueprint_id") @db.Uuid
-  examBlueprint      ExamBlueprint?      @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
-  sourceId           String?             @map("source_id") @db.Uuid
-  source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
-  sourceCitation     String?             @map("source_citation")
-  mediaAssetId       String?             @map("media_asset_id") @db.Uuid
-  mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
-  model              String
-  promptVersion      String              @map("prompt_version")
-  runId              String              @map("run_id")
-  generatedAt        DateTime            @default(now()) @map("generated_at")
-  createdAt          DateTime            @default(now()) @map("created_at")
-  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
-  steps              Step[]
-  answerExplanations AnswerExplanation[]
-  attempts           Attempt[]
-  mistakes           Mistake[]
-  reviewFlags        ContentReviewFlag[]
+  id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  skillId               String                 @map("skill_id") @db.Uuid
+  skill                 Skill                  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  language              String                 @db.VarChar(10)
+  format                ItemFormat
+  field                 String?
+  content               Json
+  difficulty            Float?
+  discrimination        Float?
+  examBlueprintId       String?                @map("exam_blueprint_id") @db.Uuid
+  examBlueprint         ExamBlueprint?         @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  sourceId              String?                @map("source_id") @db.Uuid
+  source                Source?                @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  sourceCitation        String?                @map("source_citation")
+  mediaAssetId          String?                @map("media_asset_id") @db.Uuid
+  mediaAsset            MediaAsset?            @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
+  /// The set whose shared stimulus (a text, a chart, a case, a recording) the question is about.
+  setId                 String?                @map("set_id") @db.Uuid
+  set                   ItemSet?               @relation(fields: [setId], references: [id], onDelete: Cascade)
+  /// The question's place in its set, from 0: a recording's questions follow what is heard.
+  setPosition           Int?                   @map("set_position")
+  model                 String
+  promptVersion         String                 @map("prompt_version")
+  runId                 String                 @map("run_id")
+  generatedAt           DateTime               @default(now()) @map("generated_at")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @default(now()) @updatedAt @map("updated_at")
+  steps                 Step[]
+  answerExplanations    AnswerExplanation[]
+  attempts              Attempt[]
+  mistakes              Mistake[]
+  reviewFlags           ContentReviewFlag[]
+  anonymousFirstAnswers AnonymousFirstAnswer[]
 
   @@index([skillId, format])
   @@index([examBlueprintId])
   @@index([sourceId])
   @@index([mediaAssetId])
+  @@index([setId])
   @@map("items")
+}
+
+/// What a set's questions share: a passage, a chart, a case or a recording.
+enum ItemSetKind {
+  text
+  chart
+  case
+  audio
+}
+
+/// Questions that share one stimulus (a passage, a chart, a case, a recording) and are asked together,
+/// as exams do. Shared Library content: the stimulus never holds a learner's words. Its questions keep
+/// their own skill and format, in `Item.setPosition` order. `content` is the stimulus for its kind
+/// (`library/items/item-set-content.ts` in core). A recording's voiced file, or a stimulus picture, is
+/// linked through `mediaAssetId` once it's made.
+model ItemSet {
+  id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language        String         @db.VarChar(10)
+  kind            ItemSetKind
+  content         Json
+  examBlueprintId String?        @map("exam_blueprint_id") @db.Uuid
+  examBlueprint   ExamBlueprint? @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
+  sourceId        String?        @map("source_id") @db.Uuid
+  source          Source?        @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  sourceCitation  String?        @map("source_citation")
+  mediaAssetId    String?        @map("media_asset_id") @db.Uuid
+  mediaAsset      MediaAsset?    @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
+  model           String
+  promptVersion   String         @map("prompt_version")
+  runId           String         @map("run_id")
+  generatedAt     DateTime       @default(now()) @map("generated_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at")
+  items           Item[]
+
+  @@index([examBlueprintId])
+  @@index([sourceId])
+  @@index([mediaAssetId])
+  @@map("item_sets")
 }
 
 /// Shared explanation of a wrong typed or spoken answer, reused by the next learner who gives the same

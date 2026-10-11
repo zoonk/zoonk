@@ -1,6 +1,9 @@
 import { type GoalKind } from "@zoonk/db";
-import { findAnnouncedLessonIds } from "./announced-lessons";
-import { getFoundationSkillIds, getSkillArea, getWrittenTestAreas } from "./graph-areas";
+import { markAnnouncedUnits } from "./announced-lessons";
+import { getAreaRates } from "./area-rates";
+import { findBeyondNoticeSkillIds } from "./beyond-notice-skills";
+import { putChapterInProgressFirst } from "./chapter-in-progress";
+import { getAreaFoundationIds, getSkillArea, keepWrittenTestsIn } from "./graph-areas";
 import { type ExistingPlanItem } from "./plan-items";
 import { getLearningShare } from "./plan-phases";
 import { type PlanGraph, type PlanGraphSkill, type PlanSettings } from "./plan-state";
@@ -14,12 +17,12 @@ import {
   buildLessonUnits,
   countStandInLessons,
 } from "./plan-units";
+import { getSettledSkillIds } from "./settled-skills";
 import {
   FOCUS_WEIGHT_FACTOR,
   type SkillReadiness,
   getExamValue,
   inheritValues,
-  isRecalled,
   keepTeachingOrder,
   orderSkills,
 } from "./skill-order";
@@ -29,8 +32,13 @@ type QueueInput = {
   announcements?: readonly string[];
   goal: { kind: GoalKind; targetDate: Date | null };
   graph: PlanGraph;
-  items: readonly Pick<ExistingPlanItem, "kind" | "lessonId" | "skillId" | "status">[];
+  items: readonly Pick<
+    ExistingPlanItem,
+    "chapterId" | "completedAt" | "kind" | "lessonId" | "scheduledFor" | "skillId" | "status"
+  >[];
   lessons: readonly PlannerLesson[];
+  /** Skills the learner missed: a basic they passed over comes back (see `getHarderStartSkillIds`). */
+  missedSkillIds?: ReadonlySet<string>;
   paceFactor: number;
   prerequisites: ReadonlyMap<string, readonly string[]>;
   readiness: ReadonlyMap<string, SkillReadiness>;
@@ -40,6 +48,8 @@ type QueueInput = {
 
 type RankedSkill = PlanGraphSkill & {
   area: string;
+  /** It teaches none of the topics the notice lists for its subject (see `findBeyondNoticeSkillIds`). */
+  beyondNotice: boolean;
   focused: boolean;
   index: number;
   /** Its area is one the learner wants less of (see `PlanSettings.reducedAreas`). */
@@ -48,18 +58,11 @@ type RankedSkill = PlanGraphSkill & {
   minutes: number;
   /** What the skill is worth to the exam now: its weight, the learner's gap and their focus. */
   value: number;
+  /** What it's worth without the learner's steering (more or less time on its area). */
+  baseValue: number;
   /** Its value, or that of the most valuable skill it opens when it's worth more: its rank. */
   rank: number;
 };
-
-/** An area that is worth nothing right now still gets its turn in the study cycle, last. */
-const MIN_AREA_RATE = 1e-6;
-
-/**
- * A written test's protected share of the study cycle, as a part of what an average subject gets:
- * however well the learner already writes, graded writing keeps coming back every week.
- */
-const WRITTEN_TEST_MIN_SHARE = 0.5;
 
 /** Exam plans with a date put time where it pays; other plans follow the graph's phases. */
 export function isExamSchedule(goal: QueueInput["goal"]): boolean {
@@ -70,14 +73,17 @@ export function isExamSchedule(goal: QueueInput["goal"]): boolean {
 function getSkillMinutes({
   input,
   skill,
-  teaching,
+  taught,
 }: {
   input: QueueInput;
   skill: PlanGraphSkill;
-  /** The skill each lesson counts for (see `assignLessonSkills`): a shared lesson counts once. */
-  teaching: ReadonlyMap<string, string>;
+  /**
+   * Each skill's lessons, the ones it counts for (see `assignLessonSkills`: a shared lesson counts
+   * once), in the plan's lesson order.
+   */
+  taught: ReadonlyMap<string | undefined, readonly PlannerLesson[]>;
 }) {
-  const lessons = input.lessons.filter((lesson) => teaching.get(lesson.lessonId) === skill.skillId);
+  const lessons = taught.get(skill.skillId) ?? [];
 
   const outlined = lessons.reduce((total, lesson) => total + lesson.minutes, 0);
   const standIn = countStandInLessons({ lessons: skill.lessons, taught: lessons.length });
@@ -86,61 +92,27 @@ function getSkillMinutes({
 }
 
 /**
- * The skills placement or a test-out found the learner knows, by the items they tested out: a
- * lesson is tested out only when the learner knows every skill it teaches, and a stand-in when
- * they know its skill. Lessons the Library outlines for them later stay out of the plan, as the
- * first ones did, so every re-plan keeps what the first build skipped. Undoing the test-out
- * brings its items back to do, and the skills with them.
- */
-export function getSettledSkillIds({
-  items,
-  lessons,
-}: Pick<QueueInput, "items" | "lessons">): Set<string> {
-  const taughtBy = new Map(lessons.map((lesson) => [lesson.lessonId, lesson.skillIds]));
-
-  return new Set(
-    items.flatMap((item) => {
-      if (item.kind !== "lesson" || !item.skillId) {
-        return [];
-      }
-
-      if (!item.lessonId) {
-        return item.status === "todo" ? [] : [item.skillId];
-      }
-
-      return item.status === "testedOut" ? (taughtBy.get(item.lessonId) ?? [item.skillId]) : [];
-    }),
-  );
-}
-
-/**
  * The foundations the plan moves past, so the next lessons are the ones that build on them: those
  * of each area the learner said they're past the basics of, and with "harder", those of each area
- * they're doing well in. Areas without enough answers yet keep theirs.
+ * they're doing well in. Areas without enough answers yet keep theirs, and so does a foundation
+ * the learner then missed a question on: its lessons come back.
  */
 function getHarderStartSkillIds(input: QueueInput): Set<string> {
   const strong = input.settings.difficultyBias === "harder" ? (input.strongAreas ?? []) : [];
-  const areas = new Set([...strong, ...input.settings.pastBasicsAreas]);
+  const missed = input.missedSkillIds ?? new Set<string>();
 
-  if (areas.size === 0) {
-    return new Set();
-  }
+  const foundations = getAreaFoundationIds({
+    areas: new Set([...strong, ...input.settings.pastBasicsAreas]),
+    graph: input.graph,
+    prerequisites: input.prerequisites,
+  });
 
-  const foundations = getFoundationSkillIds(input.graph);
-
-  return new Set(
-    input.graph.skills
-      .filter(
-        (skill) =>
-          foundations.has(skill.skillId) && areas.has(getSkillArea({ graph: input.graph, skill })),
-      )
-      .map((skill) => skill.skillId),
-  );
+  return new Set([...foundations].filter((skillId) => !missed.has(skillId)));
 }
 
 /**
  * Whether the learner focused on a skill: its area is in focus, whole or in the part they named
- * ("biologia e química" of a sciences area that also holds physics).
+ * ("biology and chemistry" of a sciences area that also holds physics).
  */
 function isFocused({
   area,
@@ -157,7 +129,7 @@ function isFocused({
 
 /**
  * How much a skill counts for where the learner steers the plan: double in an area they focus on,
- * half in one they want less of ("menos Filosofia"), so its depth and the time it takes go to the
+ * half in one they want less of ("less Philosophy"), so its depth and the time it takes go to the
  * others first while it keeps its turn.
  */
 function getSteerFactor({ focused, reduced }: { focused: boolean; reduced: boolean }): number {
@@ -209,6 +181,7 @@ function rankSkills(input: QueueInput): RankedSkill[] {
   const settled = getSettledSkillIds(input);
   const pastStart = getHarderStartSkillIds(input);
   const phases = getStudyPhases(input);
+  const beyond = findBeyondNoticeSkillIds(input.graph);
 
   const studied = input.graph.skills
     .map((skill, index) => ({ area: getSkillArea({ graph: input.graph, skill }), index, skill }))
@@ -223,16 +196,21 @@ function rankSkills(input: QueueInput): RankedSkill[] {
     skills: studied.map(({ index, skill }) => ({ ...skill, index })),
   });
 
+  const taught = Map.groupBy(input.lessons, (lesson) => teaching.get(lesson.lessonId));
+
   const kept = studied.map(({ area, index, skill }) => {
     const focused = isFocused({ area, settings: input.settings, skillId: skill.skillId });
     const reduced = !focused && input.settings.reducedAreas.includes(area);
 
+    const readiness = input.readiness.get(skill.skillId);
+    const baseValue = getExamValue({ readiness, weight: skill.weight ?? 1 });
+
     const value = getExamValue({
-      readiness: input.readiness.get(skill.skillId),
+      readiness,
       weight: (skill.weight ?? 1) * getSteerFactor({ focused, reduced }),
     });
 
-    const minutes = getSkillMinutes({ input, skill, teaching });
+    const minutes = getSkillMinutes({ input, skill, taught });
 
     // An exam's written test (its outcome skills) gets its time from its share of the score, with
     // a protected floor (see `withWrittenTestFloor`), and its cores are cut like any other subject's
@@ -242,7 +220,21 @@ function rankSkills(input: QueueInput): RankedSkill[] {
 
     const phase = phases.get(skill.skillId) ?? skill.phase;
 
-    return { ...skill, area, focused, index, minutes, outcome, phase, reduced, value };
+    const beyondNotice = beyond.has(skill.skillId);
+
+    return {
+      ...skill,
+      area,
+      baseValue,
+      beyondNotice,
+      focused,
+      index,
+      minutes,
+      outcome,
+      phase,
+      reduced,
+      value,
+    };
   });
 
   const ranks = inheritValues({
@@ -271,88 +263,29 @@ function compareByPhase(a: RankedSkill, b: RankedSkill): number {
 /**
  * An exam's teaching order: phase by phase, so foundations come first, and inside a phase the
  * skills worth more to the exam first (its weight, the learner's gap and focus; a prerequisite
- * counts as the skill it opens), so a plan short on time leaves out what pays least.
+ * counts as the skill it opens), so a plan short on time leaves out what pays least. A skill beyond
+ * the notice comes after the skills of its phase that teach the notice's topics, so a subject
+ * opens with what the exam asks; what builds on it waits for it, and the rest of it comes after
+ * everything the notice asks (see `putBeyondNoticeLast`).
  */
 function compareExamSkills(a: RankedSkill, b: RankedSkill): number {
   return (
     a.phase - b.phase ||
     Number(b.focused) - Number(a.focused) ||
     Number(a.reduced) - Number(b.reduced) ||
+    Number(a.beyondNotice) - Number(b.beyondNotice) ||
     b.rank - a.rank ||
     a.index - b.index
   );
 }
 
 /**
- * Each area's share of an exam's study days: what its skills are worth on average, minute for
- * minute (the exam's weight on them, the learner's gaps and focus), so time goes where it pays,
- * with a written test kept at no less than its protected share (see `withWrittenTestFloor`).
- */
-function getAreaRates({
-  graph,
-  skills,
-}: {
-  graph: PlanGraph;
-  skills: readonly RankedSkill[];
-}): Map<string, number> {
-  return withWrittenTestFloor({
-    rates: getWorthRates(skills),
-    written: getWrittenTestAreas(graph),
-  });
-}
-
-/**
- * A written test's rate raised to `WRITTEN_TEST_MIN_SHARE` of the other subjects' average: the
- * exam's weight on it times the learner's gap there says how much time it gets, and a learner
- * who already writes well still practices it every week instead of only once the others are done.
- */
-function withWrittenTestFloor({
-  rates,
-  written,
-}: {
-  rates: ReadonlyMap<string, number>;
-  written: ReadonlySet<string>;
-}): Map<string, number> {
-  const others = [...rates].filter(([area]) => !written.has(area)).map(([, rate]) => rate);
-
-  if (others.length === 0) {
-    return new Map(rates);
-  }
-
-  const floor =
-    (WRITTEN_TEST_MIN_SHARE * others.reduce((sum, rate) => sum + rate, 0)) / others.length;
-
-  return new Map(
-    [...rates].map(([area, rate]) => [area, written.has(area) ? Math.max(rate, floor) : rate]),
-  );
-}
-
-/** Each area's rate from what its skills are worth on average, minute for minute. */
-function getWorthRates(skills: readonly RankedSkill[]): Map<string, number> {
-  const totals = skills.reduce((areas, skill) => {
-    const total = areas.get(skill.area) ?? { minutes: 0, worth: 0 };
-    const minutes = Math.max(skill.minutes, 1);
-
-    return areas.set(skill.area, {
-      minutes: total.minutes + minutes,
-      worth: total.worth + skill.value * minutes,
-    });
-  }, new Map<string, { minutes: number; worth: number }>());
-
-  return new Map(
-    [...totals].map(([area, total]) => [
-      area,
-      Math.max(MIN_AREA_RATE, total.worth / total.minutes),
-    ]),
-  );
-}
-
-/**
- * The plan's lessons in the order to learn them: phase by phase with focused areas first (an
+ * The plan's lessons in the order to learn them: phase by phase, the rest of the chapter the
+ * learner is in first in its phase (see `putChapterInProgressFirst`), then focused areas first (an
  * exam's skills worth more first inside a phase), every prerequisite first, and a skill placement
- * or a test-out settled left out. An exam's `rates` say what each of its areas is worth, which
- * its study cycle shares the days by (see `arrangeStudyCycle`). Learn plans and exam plans without
- * a date close each phase with a checkpoint, which takes its 10 minutes out of the day's time like
+ * or a test-out settled left out. An exam's `rates` say what each of its areas is worth, which its
+ * study cycle shares the days by (see `arrangeStudyCycle`). Learn plans and exam plans without a
+ * date close each phase with a checkpoint, which takes its 10 minutes out of the day's time like
  * the reviews around lessons do.
  */
 export function buildPlanQueue(queueInput: QueueInput): {
@@ -367,11 +300,6 @@ export function buildPlanQueue(queueInput: QueueInput): {
   ranks: Map<string, number>;
   /** An exam's areas and what each is worth; null for other goals, whose days follow the queue. */
   rates: Map<string, number> | null;
-  /**
-   * The planned skills the learner has recalled (see `isRecalled`): a plan short on time cuts what
-   * they showed they know before their gaps.
-   */
-  recalled: Set<string>;
   units: QueueUnit[];
   /**
    * What each planned skill is worth to the goal on its own (`RankedSkill.value`): a plan short on
@@ -395,34 +323,36 @@ export function buildPlanQueue(queueInput: QueueInput): {
     skills: rankSkills(input),
   });
 
-  const announced = findAnnouncedLessonIds({
-    announcements: input.announcements ?? [],
+  const lessonUnits = putChapterInProgressFirst({
+    items: input.items,
     lessons: input.lessons,
+    prerequisites: input.prerequisites,
+    units: markAnnouncedUnits({
+      announcements: input.announcements ?? [],
+      lessons: input.lessons,
+      skills: input.graph.skills,
+      units: buildLessonUnits({
+        lessons: input.lessons,
+        paceFactor: input.paceFactor,
+        prerequisites: input.prerequisites,
+        skills: ordered,
+      }),
+    }),
   });
 
-  const units = buildLessonUnits({
-    lessons: input.lessons,
-    paceFactor: input.paceFactor,
-    skills: ordered,
-  }).map((unit) =>
-    unit.lessonId && announced.has(unit.lessonId) ? { ...unit, announced: true } : unit,
-  );
+  const units = isExam
+    ? keepWrittenTestsIn({ graph: input.graph, units: lessonUnits })
+    : lessonUnits;
 
   const rates = isExam ? getAreaRates({ graph: input.graph, skills: ordered }) : null;
   const ranks = new Map(ordered.map((skill) => [skill.skillId, skill.rank]));
   const values = new Map(ordered.map((skill) => [skill.skillId, skill.value]));
   const focused = new Set(ordered.filter((skill) => skill.focused).map((skill) => skill.skillId));
 
-  const recalled = new Set(
-    ordered
-      .filter((skill) => isRecalled(input.readiness.get(skill.skillId)))
-      .map((skill) => skill.skillId),
-  );
-
   // An explain question is one quick explanation: there is no phase to close with a checkpoint,
   // and a dated exam's phases are time windows that close with their own checkpoints.
   if (isExamSchedule(input.goal) || input.goal.kind === "explain") {
-    return { focused, prerequisites: input.prerequisites, ranks, rates, recalled, units, values };
+    return { focused, prerequisites: input.prerequisites, ranks, rates, units, values };
   }
 
   const share = getLearningShare({ phaseKind: "learn", practiceBias: input.settings.practiceBias });
@@ -437,7 +367,6 @@ export function buildPlanQueue(queueInput: QueueInput): {
     prerequisites: input.prerequisites,
     ranks,
     rates,
-    recalled,
     units: withCheckpoints,
     values,
   };

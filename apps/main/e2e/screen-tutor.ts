@@ -5,6 +5,7 @@ import {
   type LessonQuestionResource,
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { expect } from "./fixtures";
 import { fulfillTutorAnswer } from "./tutor-answer";
 
@@ -27,8 +28,14 @@ function toContextSummary(
   return { kind: context.kind };
 }
 
-/** Stands in for the tutor's thread, question and answer routes of every screen. */
-export async function stubScreenTutor(page: Page) {
+/**
+ * Stands in for the tutor's thread, question and answer routes of every screen. Inside a goal the
+ * buddy answers there too, and `planChange` is the change its answer proposes, as the API sends it.
+ */
+export async function stubScreenTutor(
+  page: Page,
+  { planChange }: { planChange?: PlanChangeView } = {},
+) {
   const asked: { input: CreateLessonQuestionInput; path: string }[] = [];
 
   await page.route(/\/v1\/(?:chapters|mocks)\/[^/]+\/questions/u, async (route) => {
@@ -59,7 +66,11 @@ export async function stubScreenTutor(page: Page) {
   });
 
   await page.route("**/v1/questions/*/answers", (route) =>
-    fulfillTutorAnswer(route, SCREEN_TUTOR_ANSWER),
+    fulfillTutorAnswer(
+      route,
+      SCREEN_TUTOR_ANSWER,
+      planChange ? [{ data: planChange, type: "data-plan-change" }] : [],
+    ),
   );
 
   return asked;

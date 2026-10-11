@@ -1,3 +1,4 @@
+import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
@@ -16,6 +17,12 @@ export const todayResponseSchema = z
         description:
           'An exam goal\'s final stretch, day before, exam day or "How did it go?"; null otherwise',
       }),
+    examChoice: examChoiceViewSchema
+      .nullable()
+      .meta({
+        description:
+          "One of the exam's choices the learner hasn't picked yet (ENEM's foreign language), to ask on Today until they do: the plan studies none of its options before. Pick with POST /v1/goals/{goalId}/plan/exam-choices. Null when every choice is picked or the exam has none",
+      }),
     goal: z.object({
       dateEstimated: z
         .boolean()
@@ -31,12 +38,6 @@ export const todayResponseSchema = z
       targetDate: logicalDateSchema.nullable(),
       title: z.string(),
     }),
-    guardianInvite: z
-      .boolean()
-      .meta({
-        description:
-          'A learner under 18 with an account and no guardian invited yet: offer to invite one (POST /v1/me/guardian-links), with "Not now" (POST /v1/me/guardian-invite-dismissals)',
-      }),
     insight: memoryInsightSchema
       .nullable()
       .meta({ description: "At most one insight from recent sessions, until it's answered" }),

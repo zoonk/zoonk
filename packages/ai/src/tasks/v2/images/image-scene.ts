@@ -74,6 +74,7 @@ export async function generateImageScene({
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "image-scene",
   });

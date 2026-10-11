@@ -56,19 +56,27 @@ export const unprocessableEntityResponse = {
 } as const;
 
 /**
+ * A guest asked to create a free account for new AI work, where their work moves: their own cap is
+ * used (`USAGE_LIMIT_REACHED`), or the day's AI budget all guests share is spent (`SIGN_UP_REQUIRED`,
+ * which apps show as "Create your free account to continue" with the sign-up button).
+ */
+export const guestRefusalResponse = {
+  ...forbiddenResponse,
+  description:
+    "A guest is asked to create a free account, where their work moves: their own cap is used (`USAGE_LIMIT_REACHED` with `details.limit`), or the day's AI budget all guests share is spent (`SIGN_UP_REQUIRED`)",
+} as const;
+
+/**
  * A refused claim of small AI help (an answer's explanation, grading a spoken answer, a plan
- * edit): `USAGE_LIMIT_REACHED` with `details.limit`, or `SLOW_DOWN`.
+ * edit): `USAGE_LIMIT_REACHED` with `details.limit`, `SIGN_UP_REQUIRED` for a guest, or
+ * `SLOW_DOWN`.
  */
 export const smallAiHelpRefusalResponses = {
   "402": {
     ...paymentRequiredResponse,
     description: "A free learner reached today's AI budget (`USAGE_LIMIT_REACHED`)",
   },
-  "403": {
-    ...forbiddenResponse,
-    description:
-      "A guest used today's free AI help and is asked to sign up (`USAGE_LIMIT_REACHED`)",
-  },
+  "403": guestRefusalResponse,
   "429": {
     ...tooManyRequestsResponse,
     description:

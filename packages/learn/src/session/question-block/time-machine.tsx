@@ -4,6 +4,7 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { HistoryIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type StudyQuestion } from "../session-types";
 
@@ -19,7 +20,9 @@ function trimEndPeriod(text: string): string {
 
 /**
  * What the line says. Before the answer: only when the learner saw the question, since their
- * earlier answer could give today's away. After it: the earlier answer, quoted, when it was wrong.
+ * earlier answer could give today's away. After it: the earlier answer, quoted, when it was wrong,
+ * and, when it was right and today's isn't, why the question came back (Ana read only "you got
+ * this one right" under a wrong answer).
  * A statement's past answer is saved as "true" or "false" and reads in the exam's words.
  */
 function useTimeMachineText({
@@ -43,10 +46,11 @@ function useTimeMachineText({
     if (machine.isCorrect) {
       return result === "correct"
         ? t("Right again, like on {date}.", { date })
-        : t("On {date} you got this one right.", { date });
+        : t("You got it right on {date}. Reviewing it now helps it stick.", { date });
     }
 
-    const answer = format === "trueFalse" ? answerText(machine.answer) : machine.answer;
+    const answer =
+      format === "trueFalse" ? answerText(machine.answer) : toPlainItemLine(machine.answer ?? "");
 
     return answer
       ? t("On {date} you answered “{answer}”.", { answer: trimEndPeriod(answer), date })

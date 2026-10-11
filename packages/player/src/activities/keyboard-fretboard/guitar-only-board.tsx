@@ -22,6 +22,7 @@ import {
   initialPitches,
   pitchSpelling,
   targetPitches,
+  targetSound,
   voicingFor,
   voicingMidis,
   voicingPitches,
@@ -57,13 +58,14 @@ export function GuitarOnlyBoard({
   const spell = pitchSpelling([fields.target, fields.start]);
 
   const [voicing, setVoicing] = useState<GuitarVoicing>(
-    () => voicingFor(initialPitches({ answer, content })) ?? NO_STRINGS,
+    () => voicingFor(initialPitches({ answer, content, phase })) ?? NO_STRINGS,
   );
 
   const [firstFret, setFirstFret] = useState(() => fretWindowStart(voicing, FRETBOARD_SPAN));
   const played = voicingPitches(voicing);
   const expectedSet = expectedPitches(expected, targetPitches(fields.target));
-  const showAnswer = isChecked && check.kind === "interaction";
+  // A target found by ear shows once answered, even when the question only asked to name it.
+  const showAnswer = isChecked && (check.kind === "interaction" || Boolean(fields.byEar));
 
   function handleChange(stringIndex: number, fret: number | null) {
     const next = withFret(voicing, stringIndex, fret);
@@ -87,7 +89,7 @@ export function GuitarOnlyBoard({
     const pitch =
       fret === null || fret === undefined ? null : stringNoteMidi(stringIndex, fret) % OCTAVE;
 
-    if (!showAnswer || pitch === null) {
+    if (!showAnswer || check.kind !== "interaction" || pitch === null) {
       return "new" as const;
     }
 
@@ -97,6 +99,14 @@ export function GuitarOnlyBoard({
   return (
     <ActivityCanvas labelId={labelId}>
       <KeyboardFretboardHeader
+        byEar={
+          fields.byEar
+            ? {
+                isRevealed: phase !== "answering",
+                onPlay: () => void guitar.play(targetSound(fields.target)),
+              }
+            : null
+        }
         notes={played.map((pitch) => spell(pitch))}
         onHear={() => void guitar.play(together(voicingMidis(voicing), { gap: STRUM_GAP }))}
         target={fields.target}

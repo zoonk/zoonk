@@ -12,6 +12,16 @@ export const MISTAKE_DRILL_KINDS = [
 
 export type MistakeDrillKind = (typeof MISTAKE_DRILL_KINDS)[number];
 
+/** The lesson a content-gap drill goes over first: its title and its summary card's ideas. */
+export type DrillLesson = { id: string; ideas: string[]; title: string };
+
+/** A drill as apps show it: its kind, the lesson to go over before the questions, the time box. */
+export type DrillView = {
+  kind: MistakeDrillKind;
+  lesson: DrillLesson | null;
+  timeLimitSeconds: number | null;
+};
+
 /** A question on the mistake's skill the drill could use. */
 export type DrillItemCandidate = { hasMisconceptions: boolean; id: string; seen: boolean };
 

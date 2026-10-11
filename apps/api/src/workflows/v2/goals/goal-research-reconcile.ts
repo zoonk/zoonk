@@ -1,18 +1,18 @@
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
+import { mergeAddedTwins, saveAddedSkills } from "./goal-added-skills";
 import { isBuiltBeforeResearch, loadResearchedInputs } from "./goal-content-inputs";
-import { type BuiltCurriculum, startOutlines, toSlices } from "./goal-curriculum";
+import { type BuiltCurriculum, startOutlines } from "./goal-curriculum";
 import { type GoalRunContext } from "./goal-run-context";
+import { preparePlacementItems } from "./placement-items";
 import {
   checkGraphCoverageStep,
   createGoalPlanStep,
-  linkSkillPrerequisitesStep,
-  saveGoalSkillsStep,
+  saveExamSkillGraphStep,
 } from "./steps/goal-curriculum-steps";
 import {
   listPlanOutlineNeedsStep,
-  preparePlacementItemsStep,
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
 } from "./steps/goal-lookahead-steps";
@@ -59,36 +59,44 @@ function listResearchedReferences({
   return isNewBlueprint ? [blueprint, ...linked] : linked;
 }
 
-/** The skills the check added, saved to the Library in slices, with their prerequisites linked. */
-async function saveAddedSkills({
-  context,
+/**
+ * The exam's shared graph follows what the notice's reading checked this run's graph against: the
+ * first written for the exam keeps the skills it adds (`saveExamSkillGraphStep`).
+ */
+function keepExamGraph({
   curriculum,
   graph,
+  idsByKey,
+  researched,
   scope,
 }: {
-  context: GoalRunContext;
   curriculum: BuiltCurriculum;
   graph: BuiltCurriculum["graph"];
+  idsByKey: Record<string, string>;
+  researched: GoalCurriculumInputs;
   scope: CurriculumScope;
-}): Promise<Record<string, string>> {
-  const added = graph.skills.filter((skill) => curriculum.idsByKey[skill.key] === undefined);
+}): Promise<void> {
+  return saveExamSkillGraphStep({
+    courseIdsByKey: curriculum.courseIdsByKey,
+    graph,
+    idsByKey,
+    inputs: researched,
+    provenance: curriculum.provenance,
+    scope,
+  });
+}
 
-  if (added.length === 0) {
-    return curriculum.idsByKey;
-  }
+/** The plan stops waiting; once the step's retries run out, the wait runs out by itself. */
+function endNoticeWait(goalId: string): Promise<unknown> {
+  return endNoticeWaitStep(goalId).catch(() => null);
+}
 
-  const saved = await Promise.all(
-    toSlices(added).map((skills) =>
-      saveGoalSkillsStep({ ...context, provenance: curriculum.provenance, scope, skills }),
-    ),
-  );
-
-  const idsByKey = Object.fromEntries(
-    [curriculum.idsByKey, ...saved].flatMap((ids) => Object.entries(ids)),
-  );
-
-  await linkSkillPrerequisitesStep({ idsByKey, skills: added });
-  return idsByKey;
+/**
+ * Whether the reading still lands before the learner saw the plan; once the step's retries run
+ * out, it counts as missed, so the reading is proposed instead of changing a plan they may have seen.
+ */
+function claimNoticeLanding(goalId: string): Promise<boolean> {
+  return claimNoticeLandingStep(goalId).catch(() => false);
 }
 
 /**
@@ -120,7 +128,7 @@ async function followNotice({
   });
 
   // The reveal waited for this plan; what it needs next doesn't hold the learner.
-  await endNoticeWaitStep(goalId);
+  await endNoticeWait(goalId);
 }
 
 /**
@@ -145,6 +153,7 @@ async function replan({
   const idsByKey = await saveAddedSkills({ context, curriculum, graph, scope });
 
   await followNotice({ context, curriculum, goalId, graph, idsByKey });
+  await keepExamGraph({ curriculum, graph, idsByKey, researched, scope });
 
   const lookahead = await readGoalLookaheadStep(goalId);
 
@@ -155,7 +164,7 @@ async function replan({
 
   await Promise.all([
     startOutlines({ context, courses: needs, firstSkillId, forGuest: researched.isGuest }),
-    preparePlacementItemsStep({ ...context, goalId }),
+    preparePlacementItems({ ...context, forPlacement: true, goalId }),
   ]);
 }
 
@@ -168,23 +177,26 @@ async function proposeReading({
   context,
   curriculum,
   graph,
-  goalId,
+  researched,
   scope,
 }: {
   context: GoalRunContext;
   curriculum: BuiltCurriculum;
   graph: BuiltCurriculum["graph"];
-  goalId: string;
+  researched: GoalCurriculumInputs;
   scope: CurriculumScope;
 }) {
   const idsByKey = await saveAddedSkills({ context, curriculum, graph, scope });
 
   await proposeNoticeChangeStep({
     courseIdsByKey: curriculum.courseIdsByKey,
-    goalId,
+    goalId: researched.goal.id,
     graph,
     idsByKey,
   });
+
+  // The learner's own plan waits for their Apply; the exam's graph is the exam's.
+  await keepExamGraph({ curriculum, graph, idsByKey, researched, scope });
 }
 
 async function reconcile({
@@ -204,27 +216,32 @@ async function reconcile({
 
   // A reading that lands while the reveal waits is part of the plan: the reveal keeps waiting
   // while the plan is checked against it and built again with it.
-  const landed = await claimNoticeLandingStep(goalId);
+  const landed = await claimNoticeLanding(goalId);
 
   const references = listResearchedReferences({ after: researched, before: inputs });
   const blueprintId = researched.goal.examBlueprintId;
   const linkedBlueprint = blueprintId !== null && blueprintId !== inputs.goal.examBlueprintId;
 
-  const checked =
+  const covered =
     references.length > 0
       ? await checkGraphCoverageStep({
           ...context,
           graph: curriculum.graph,
-          prompt: researched.graphPrompt,
+          inputs: researched,
           references,
           scope,
         })
       : { changed: false, graph: curriculum.graph };
 
+  const checked = {
+    changed: covered.changed,
+    graph: await mergeAddedTwins({ context, curriculum, graph: covered.graph, scope }),
+  };
+
   const changesGraph = checked.changed || linkedBlueprint;
 
   // A check that outlasts the landing's wait may have let the learner see the plan meanwhile.
-  if (landed && (await claimNoticeLandingStep(goalId))) {
+  if (landed && (await claimNoticeLanding(goalId))) {
     await (changesGraph
       ? replan({ context, curriculum, graph: checked.graph, researched, scope })
       : followNotice({
@@ -233,7 +250,15 @@ async function reconcile({
           goalId,
           graph: curriculum.graph,
           idsByKey: curriculum.idsByKey,
-        }));
+        }).then(() =>
+          keepExamGraph({
+            curriculum,
+            graph: curriculum.graph,
+            idsByKey: curriculum.idsByKey,
+            researched,
+            scope,
+          }),
+        ));
 
     // A date the learner gave that isn't the notice's day is theirs to change.
     await proposeNoticeChangeStep({ goalId });
@@ -241,12 +266,20 @@ async function reconcile({
   }
 
   if (changesGraph) {
-    await proposeReading({ context, curriculum, goalId, graph: checked.graph, scope });
+    await proposeReading({ context, curriculum, graph: checked.graph, researched, scope });
     return;
   }
 
   // The notice adds nothing to the plan, but its exam day may not be the goal's.
   await proposeNoticeChangeStep({ goalId });
+
+  await keepExamGraph({
+    curriculum,
+    graph: curriculum.graph,
+    idsByKey: curriculum.idsByKey,
+    researched,
+    scope,
+  });
 }
 
 /**
@@ -276,7 +309,7 @@ export async function reconcileResearch({ researchId, ...input }: ReconcileInput
   const goalId = input.inputs.goal.id;
   const [outcome] = await Promise.allSettled([reconcile({ ...input, researchId })]);
 
-  await endNoticeWaitStep(goalId);
+  await endNoticeWait(goalId);
 
   if (outcome.status === "rejected") {
     await trackGenerationFailedStep({
@@ -316,13 +349,13 @@ export async function reconcileStoredPlan({
       const checked = await checkGraphCoverageStep({
         ...context,
         graph: curriculum.graph,
-        prompt: researched.graphPrompt,
+        inputs: researched,
         references,
         scope,
       });
 
       await (checked.changed
-        ? proposeReading({ context, curriculum, goalId, graph: checked.graph, scope })
+        ? proposeReading({ context, curriculum, graph: checked.graph, researched, scope })
         : proposeNoticeChangeStep({ goalId }));
     }),
   ]);

@@ -5,14 +5,21 @@ import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration, startTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
+import { draftAgainWhenFlawed } from "../../_utils/draft-again";
 import { formatLocalContext } from "../../_utils/language-context";
 import { type LessonExam, formatLessonExams } from "../../_utils/lesson-exams";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
+import { selectPromptVariants } from "../../_utils/prompt-variants";
 import { type CourseLevel } from "./_utils/course-levels";
 import { chapterSchema } from "./_utils/course-outline-schema";
 import { type CourseOutline, normalizeCourseOutline } from "./_utils/normalize-course-outline";
+import {
+  type MixedAreaChapter,
+  type OutlineAreaSkill,
+  findMixedAreaChapters,
+} from "./_utils/outline-areas";
 import { readStreamedChapter } from "./_utils/streamed-chapter";
-import systemPrompt from "./course-outline.prompt.md";
+import template from "./course-outline.prompt.md";
 
 /**
  * From the course-outline eval (6 cases, Astra judge, 26 Sep 2026): Opus 8.72,
@@ -34,6 +41,8 @@ type RequiredSkill = {
   description: string;
   /** With `MATERIAL`: the lessons the learner's plan gives it, which the outline keeps to. */
   lessons?: number;
+  /** For an exam's outline: the subject it sits in, which its chapter keeps to. */
+  area?: string | null;
 };
 
 /**
@@ -79,13 +88,18 @@ export type CourseOutlineParams = {
   analytics?: AiGenerationContext;
 };
 
+/** A skill's key, with its area in brackets when it has one: `algebra [Mathematics]`. */
+function formatSkillKey(skill: RequiredSkill): string {
+  return skill.area ? `${skill.key} [${skill.area}]` : skill.key;
+}
+
 function formatRequiredSkills(skills: readonly RequiredSkill[]): string {
   return skills.length === 0
     ? "none"
     : skills
         .map((skill) => {
           const lessons = skill.lessons ? ` (about ${skill.lessons} lessons)` : "";
-          return `\n- ${skill.key}: ${skill.name}. ${skill.description}${lessons}`;
+          return `\n- ${formatSkillKey(skill)}: ${skill.name}. ${skill.description}${lessons}`;
         })
         .join("");
 }
@@ -95,7 +109,7 @@ function formatExtendSkill(skill: ExtendSkill): string {
     .map((chapter) => `\n  - ${chapter.title}: ${chapter.lessons.join("; ")}`)
     .join("");
 
-  return `\n- ${skill.key}: ${skill.name}. ${skill.description}\n  Chapters so far:${chapters}\n  Lessons in the next chapter: ${skill.lessons}`;
+  return `\n- ${formatSkillKey(skill)}: ${skill.name}. ${skill.description}\n  Chapters so far:${chapters}\n  Lessons in the next chapter: ${skill.lessons}`;
 }
 
 function formatExtendSkills(skills: readonly ExtendSkill[]): string {
@@ -106,17 +120,80 @@ function formatTitles(titles: readonly string[]): string {
   return titles.length === 0 ? "none" : titles.map((title) => `\n- ${title}`).join("");
 }
 
-function buildUserPrompt(params: CourseOutlineParams): string {
+/** The required and continued skills with an area (an exam's subject), which chapters keep to. */
+function toSkillAreas(params: CourseOutlineParams): OutlineAreaSkill[] {
+  return [...(params.requiredSkills ?? []), ...(params.extendSkills ?? [])].filter(
+    (skill) => skill.area,
+  );
+}
+
+/** What code found in an earlier draft, for the next one to avoid. */
+function formatMixedAreaChapters(mixed: readonly MixedAreaChapter[]): string {
+  return mixed
+    .map((chapter) => `\n- "${chapter.title}" mixes ${chapter.areas.join(", ")}`)
+    .join("");
+}
+
+/**
+ * Which of the instructions' variant sections a call reads: the rules for an exam's skills only
+ * when the outline is written for an exam, one area per chapter only when its skills have areas, a
+ * learner's material only for their private course, and continuing skills only when it continues
+ * some.
+ */
+function toPromptVariants(params: CourseOutlineParams) {
+  const exams = Boolean(params.exams?.length);
+  const withoutTools = Boolean(params.withoutTools);
+
+  return {
+    areas: toSkillAreas(params).length > 0,
+    examSkills: exams || withoutTools,
+    exams,
+    extend: Boolean(params.extendSkills?.length),
+    material: Boolean(params.material),
+    withoutTools,
+  };
+}
+
+/** The instructions; a second draft for mixing areas (`redraft`) also reads how to fix it. */
+function buildSystemPrompt(params: CourseOutlineParams, redraft = false): string {
+  return selectPromptVariants({ template, variants: { ...toPromptVariants(params), redraft } });
+}
+
+/**
+ * The band's inputs. `WITHOUT_TOOLS` and `EXAMS` only for an outline written for an exam, and
+ * `EXTEND_SKILLS` only when some instruction it reads mentions it, so no call reads a "no" or a
+ * "none" for something it can't have.
+ */
+function formatBandInputs(params: CourseOutlineParams): string {
+  const variants = toPromptVariants(params);
+
+  return [
+    `LANGUAGE: ${getPromptLanguageName({ language: params.language })}`,
+    `COURSE_TITLE: ${params.courseTitle}`,
+    `LEVEL: ${params.level}`,
+    `REQUIRED_SKILLS: ${formatRequiredSkills(params.requiredSkills ?? [])}`,
+    (variants.extend || variants.examSkills) &&
+      `EXTEND_SKILLS: ${formatExtendSkills(params.extendSkills ?? [])}`,
+    `OTHER_LEVEL_CHAPTERS: ${formatTitles(params.otherLevelChapters ?? [])}`,
+    `TAUGHT_ELSEWHERE: ${formatTitles(params.taughtElsewhere ?? [])}`,
+    variants.withoutTools && "WITHOUT_TOOLS: yes",
+    variants.exams && formatLessonExams(params.exams),
+  ]
+    .filter(Boolean)
+    .map((line) => `    ${line}`)
+    .join("\n");
+}
+
+/**
+ * The call's input. A second draft of an outline whose chapters mixed areas also gets
+ * `MIXED_AREA_CHAPTERS`, the chapters to write again.
+ */
+function buildUserPrompt(
+  params: CourseOutlineParams,
+  mixed: readonly MixedAreaChapter[] = [],
+): string {
   return `
-    LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-    COURSE_TITLE: ${params.courseTitle}
-    LEVEL: ${params.level}
-    REQUIRED_SKILLS: ${formatRequiredSkills(params.requiredSkills ?? [])}
-    EXTEND_SKILLS: ${formatExtendSkills(params.extendSkills ?? [])}
-    OTHER_LEVEL_CHAPTERS: ${formatTitles(params.otherLevelChapters ?? [])}
-    TAUGHT_ELSEWHERE: ${formatTitles(params.taughtElsewhere ?? [])}
-    WITHOUT_TOOLS: ${params.withoutTools ? "yes" : "no"}
-    ${formatLessonExams(params.exams)}
+${formatBandInputs(params)}${mixed.length > 0 ? `\n    MIXED_AREA_CHAPTERS: ${formatMixedAreaChapters(mixed)}` : ""}
 
 ${formatLocalContext(params.language)}
 ${params.material ? `\n${formatUntrustedInput({ MATERIAL: params.material })}` : ""}
@@ -131,9 +208,48 @@ ${params.material ? `\n${formatUntrustedInput({ MATERIAL: params.material })}` :
  * close to it.
  */
 export async function generateCourseOutline(params: CourseOutlineParams) {
+  const drafts: OutlineDraft[] = [];
+
+  // A chapter that still mixes areas after code splits what it can is written again once, told
+  // which; when the second draft mixes as many, the first stays.
+  const kept = await draftAgainWhenFlawed<OutlineDraft>({
+    countProblems: (draft) => draft.mixed.length,
+    draft: async (previous) => {
+      const draft = await draftOutline({ mixed: previous?.mixed ?? [], params });
+      drafts.push(draft);
+      return draft;
+    },
+  });
+
+  return {
+    data: kept.data,
+    provenance: kept.provenance,
+    /** A draft written again for mixing areas, so its spend is counted too. */
+    setAside: drafts
+      .filter((draft) => draft !== kept)
+      .map(({ provenance, usage }) => ({ model: provenance.model, usage })),
+    systemPrompt: kept.systemPrompt,
+    usage: kept.usage,
+    userPrompt: kept.userPrompt,
+  };
+}
+
+type OutlineDraft = Awaited<ReturnType<typeof draftOutline>>;
+
+/** One call for the whole outline, cleaned, with the chapters that still mix areas. */
+async function draftOutline({
+  mixed,
+  params,
+}: {
+  /** Chapters an earlier draft mixed areas in, to write again. */
+  mixed: readonly MixedAreaChapter[];
+  params: CourseOutlineParams;
+}) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
-  const userPrompt = buildUserPrompt(params);
+  const systemPrompt = buildSystemPrompt(params, mixed.length > 0);
+  const userPrompt = buildUserPrompt(params, mixed);
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+  const skillAreas = toSkillAreas(params);
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
@@ -146,6 +262,7 @@ export async function generateCourseOutline(params: CourseOutlineParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "course-outline",
   });
@@ -154,9 +271,17 @@ export async function generateCourseOutline(params: CourseOutlineParams) {
     level: params.level,
     raw: result.output,
     requiredSkillKeys: toRequiredSkillKeys(params),
+    skillAreas,
   });
 
-  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return {
+    data,
+    mixed: findMixedAreaChapters({ chapters: data.chapters, skills: skillAreas }),
+    provenance,
+    systemPrompt,
+    usage: result.usage,
+    userPrompt,
+  };
 }
 
 function toRequiredSkillKeys(params: CourseOutlineParams): string[] {
@@ -188,7 +313,8 @@ type StreamedChapter = {
  * while the model still writes the rest, so its lessons can be saved and written early. `early`
  * is what that returned, or null when no chapter was accepted before the outline ended. The
  * chapter's provenance names the requested model; the finished provenance says whether a
- * fallback answered.
+ * fallback answered. Chapters that mix areas are split where their lessons allow but never
+ * written again: the learner is waiting, and the early chapter is already saved.
  */
 export async function streamCourseOutline<T>({
   isEarlyChapter,
@@ -199,8 +325,10 @@ export async function streamCourseOutline<T>({
   saveEarlyChapter: (found: StreamedChapter) => Promise<T>;
 }) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
+  const systemPrompt = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
   const requiredSkillKeys = toRequiredSkillKeys(params);
+  const skillAreas = toSkillAreas(params);
   const run = startTaskGeneration({ analytics, systemPrompt, task: "course-outline" });
   const earlyChapter = Promise.withResolvers<Omit<StreamedChapter, "provenance"> | null>();
 
@@ -227,6 +355,7 @@ export async function streamCourseOutline<T>({
         isWanted: isEarlyChapter,
         level: params.level,
         requiredSkillKeys,
+        skillAreas,
       });
 
       if (found) {
@@ -244,7 +373,12 @@ export async function streamCourseOutline<T>({
     ]);
 
     return {
-      data: normalizeCourseOutline({ level: params.level, raw: output, requiredSkillKeys }),
+      data: normalizeCourseOutline({
+        level: params.level,
+        raw: output,
+        requiredSkillKeys,
+        skillAreas,
+      }),
       provenance: await run.finish({ finalStep, steps, usage }),
       usage,
     };

@@ -1,5 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
-import { type ExamOutline, isWrittenTestSubject, placeInExam } from "../exam-outline";
+import { toPlainLine } from "@zoonk/utils/text-repairs";
+import { type ExamOutline, canBuildOn, isWrittenTestSubject, placeInExam } from "../exam-outline";
 import { COURSE_LEVELS, type CourseLevel } from "./course-levels";
 import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
@@ -8,6 +9,7 @@ import {
   removeCycles,
   sortSkillsTopologically,
 } from "./order-skill-graph";
+import { toSkillNameKey } from "./skill-graph-checks";
 
 type RawSkillGraphSkill = {
   area: string;
@@ -93,9 +95,10 @@ function toKey(value: string): string {
 }
 
 /**
- * Keeps the first skill for each key and each name. A later duplicate is
- * dropped, its prerequisites and topics join the survivor and its key becomes
- * an alias, so edges that pointed at it still resolve.
+ * Keeps the first skill for each key and each name, a name written with other articles or in
+ * another word order included (`toSkillNameKey`). A later duplicate is dropped, its prerequisites
+ * and topics join the survivor and its key becomes an alias, so edges that pointed at it still
+ * resolve.
  */
 function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
   const survivors = new Map<string, RawSkillGraphSkill>();
@@ -104,7 +107,7 @@ function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
 
   for (const skill of skills) {
     const key = toKey(skill.key || skill.name);
-    const name = normalizeString(skill.name);
+    const name = toSkillNameKey(skill.name) || normalizeString(skill.name);
     const survivorKey = survivors.has(key) ? key : keysByName.get(name);
     const survivor = survivorKey ? survivors.get(survivorKey) : undefined;
 
@@ -120,7 +123,7 @@ function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
     } else if (name) {
       aliases.set(key, key);
       keysByName.set(name, key);
-      survivors.set(key, { ...skill, key, name: skill.name.trim() });
+      survivors.set(key, { ...skill, key, name: toPlainLine(skill.name) });
     }
   }
 
@@ -151,7 +154,7 @@ function sortLevels(levels: Iterable<CourseLevel>): CourseLevel[] {
  * Courses keep the model's order and only the ones with skills. A course lists
  * every level band its skills sit in, even when the model forgot one.
  */
-function normalizeCourses({
+export function normalizeCourses({
   courses,
   skills,
 }: {
@@ -169,16 +172,16 @@ function normalizeCourses({
 
     const levels = sortLevels([...course.levels, ...courseSkills.map((skill) => skill.level)]);
 
-    return [{ key, levels, title: course.title.trim() }];
+    return [{ key, levels, title: toPlainLine(course.title) }];
   });
 }
 
-function toHours(lessons: number): number {
+export function toHours(lessons: number): number {
   return Math.round(((lessons * STUDY_MINUTES_PER_LESSON) / MINUTES_PER_HOUR) * 10) / 10;
 }
 
 /** Removes phases left without skills and renumbers the rest from 1. */
-function normalizePhases({
+export function normalizePhases({
   phases,
   skills,
 }: {
@@ -198,8 +201,8 @@ function normalizePhases({
           .filter((skill) => skill.phase === number)
           .reduce((total, skill) => total + skill.estimatedLessons, 0),
       ),
-      milestone: phase.milestone.trim(),
-      title: phase.title.trim(),
+      milestone: toPlainLine(phase.milestone),
+      title: toPlainLine(phase.title),
     })),
     skills: skills.map((skill) => ({ ...skill, phase: renumber.get(skill.phase) ?? 1 })),
   };
@@ -255,7 +258,7 @@ function toGraphSkill({
   return {
     ...placed,
     course,
-    description: skill.description.trim(),
+    description: toPlainLine(skill.description),
     estimatedLessons: clamp({ max: MAX_SKILL_LESSONS, min: 1, value: skill.estimatedLessons }),
     examWeight: toExamWeight(skill.examWeight),
     key: skill.key,
@@ -265,6 +268,31 @@ function toGraphSkill({
     phase: clamp({ max: phaseCount, min: 1, value: skill.phase }),
     prerequisites: resolvePrerequisites({ aliases, skill }),
   };
+}
+
+/**
+ * Drops prerequisites on an option of the exam's choices from skills outside that option (see
+ * `canBuildOn`): a learner who picks another option never studies it, so nothing may wait for it.
+ */
+function dropChoicePrerequisites({
+  outline,
+  skills,
+}: {
+  outline?: ExamOutline;
+  skills: SkillGraphSkill[];
+}): SkillGraphSkill[] {
+  if (!outline?.subjects.some((subject) => subject.choiceGroup)) {
+    return skills;
+  }
+
+  const areas = new Map(skills.map((skill) => [skill.key, skill.area]));
+
+  return skills.map((skill) => ({
+    ...skill,
+    prerequisites: skill.prerequisites.filter((key) =>
+      canBuildOn({ area: skill.area, outline, prerequisiteArea: areas.get(key) ?? "" }),
+    ),
+  }));
 }
 
 /** The model answered with a graph that has no course, phase or skill: nothing to plan from. */
@@ -277,11 +305,13 @@ export class EmptySkillGraphError extends Error {
 
 /**
  * Turns the model's graph into one the planner can trust: duplicate skills
- * merged, prerequisites that point nowhere or close a cycle dropped, every
- * skill in a phase no earlier than its prerequisites, skills ordered so
- * prerequisites come first, empty phases and courses removed, each phase's
- * size given in hours of study rather than dates, and an exam's skills placed
- * in its notice's subjects and topics, word for word.
+ * merged (the same name in other words' order too), what learners read as plain
+ * lines (`toPlainLine`: no em dashes or Markdown), prerequisites that point
+ * nowhere or close a cycle dropped, every skill in a phase no earlier than its
+ * prerequisites, skills ordered so prerequisites come first, empty phases and
+ * courses removed, each phase's size given in hours of study rather than dates,
+ * and an exam's skills placed in its notice's subjects and topics, word for word,
+ * with nothing waiting for an option of a choice but that option's own skills.
  */
 export function normalizeSkillGraph(
   raw: RawSkillGraph,
@@ -298,9 +328,12 @@ export function normalizeSkillGraph(
 
   const { aliases, skills: uniqueSkills } = dedupeSkills(raw.skills);
 
-  const graphSkills = uniqueSkills.map((skill) =>
-    toGraphSkill({ aliases, courseTitles, outline, phaseCount: raw.phases.length, skill }),
-  );
+  const graphSkills = dropChoicePrerequisites({
+    outline,
+    skills: uniqueSkills.map((skill) =>
+      toGraphSkill({ aliases, courseTitles, outline, phaseCount: raw.phases.length, skill }),
+    ),
+  });
 
   const ordered = sortSkillsTopologically(pushPhasesAfterPrerequisites(removeCycles(graphSkills)));
   const normalized = normalizePhases({ phases: raw.phases, skills: ordered });

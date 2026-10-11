@@ -97,18 +97,6 @@ const CANONICAL_OPERATIONS = [
     operationId: "updateCurrentUserLearningProfile",
     path: "/me/learning-profile",
   },
-  { method: "get", operationId: "listCurrentUserGuardianLinks", path: "/me/guardian-links" },
-  { method: "post", operationId: "inviteGuardian", path: "/me/guardian-links" },
-  { method: "delete", operationId: "revokeGuardianLink", path: "/me/guardian-links/{linkId}" },
-  { method: "post", operationId: "acceptGuardianInvite", path: "/me/guardian-invite-acceptances" },
-  { method: "get", operationId: "listGuardedLearners", path: "/me/guarded-learners" },
-  { method: "patch", operationId: "updateGuardedLearner", path: "/me/guarded-learners/{linkId}" },
-  {
-    method: "post",
-    operationId: "approveGuardedLearnerPlus",
-    path: "/me/guarded-learners/{linkId}/plus-approval",
-  },
-  { method: "post", operationId: "requestPlusApproval", path: "/me/plus-approval-requests" },
   { method: "get", operationId: "getGeneration", path: "/generations/{generationId}" },
   {
     method: "get",
@@ -329,6 +317,21 @@ describe("OpenAPI document", () => {
     expect(document.paths["/sessions/apple"]?.post?.responses["429"]).toMatchObject({
       headers: { "Retry-After": { schema: { minimum: 0, type: "integer" } } },
     });
+  });
+
+  it("documents the sign-up a guest's AI work asks for once the guests' daily budget is spent", () => {
+    const document = documentContractSchema.parse(openAPIDocument);
+
+    const guestAiPaths = [
+      document.paths["/goal-understandings"]?.post,
+      document.paths["/goals"]?.post,
+      document.paths["/speech-clips"]?.post,
+      document.paths["/steps/{stepId}/answer-explanations"]?.post,
+    ];
+
+    for (const operation of guestAiPaths) {
+      expect(operation?.responses["403"]?.description).toContain("SIGN_UP_REQUIRED");
+    }
   });
 
   it("documents the course collection as a browse-only resource", () => {

@@ -1,9 +1,16 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type CourseLevel, type Goal, prisma } from "@zoonk/db";
+import { type ExamChoice } from "../../exams/choices/exam-choices";
+import { loadSkillEvidence } from "../../learner/_utils/load-skill-claims";
+import { listClaimed } from "../../learner/_utils/skill-claims";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { loadSkillSurvivors } from "../../learner/_utils/update-learner-skill";
-import { type DifficultyBias, type PlanGraph } from "../planner/plan-state";
+import { getOwnLevel } from "../../learner/placement/placement-contract";
+import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
+import { listFocusedSkillIds } from "../planner/focus-targets";
+import { type DifficultyBias, type PlanGraph, type PlanSettings } from "../planner/plan-state";
 import { type SkillReadiness } from "../planner/skill-order";
+import { getLevelFloor } from "./level-bands";
 import { loadExamFacts } from "./planner-exam-facts";
 import { loadGoalPlannerLessons } from "./planner-lessons";
 import { loadStrongAreas } from "./strong-areas";
@@ -24,16 +31,16 @@ export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> 
   };
 }
 
-async function loadPrerequisites(skillIds: string[]): Promise<Map<string, string[]>> {
-  const edges = await prisma.skillPrerequisite.findMany({
-    select: { prerequisiteId: true, skillId: true },
-    where: { prerequisiteId: { in: skillIds }, skillId: { in: skillIds } },
+/** The Library band the skill graph put each skill in (see `PlanBase`). */
+async function loadSkillBands(skillIds: string[]): Promise<Map<string, CourseLevel>> {
+  const skills = await prisma.skill.findMany({
+    select: { id: true, level: true },
+    where: { id: { in: skillIds } },
   });
 
-  return edges.reduce((map, edge) => {
-    map.set(edge.skillId, [...(map.get(edge.skillId) ?? []), edge.prerequisiteId]);
-    return map;
-  }, new Map<string, string[]>());
+  return new Map(
+    skills.flatMap((skill) => (skill.level ? [[skill.id, skill.level] as const] : [])),
+  );
 }
 
 /** For exam priority: each skill's state and how much of it will be remembered on the exam day. */
@@ -69,59 +76,25 @@ async function loadReadiness({
   );
 }
 
-/** More test answers than this on one goal's skills say nothing new about where its gaps are. */
-const MAX_TEST_ANSWERS = 1000;
-
-/**
- * The skills whose last answer in a test (placement, the focus test, a chapter test: bank questions
- * answered outside lessons and sessions) was wrong or "I don't know yet". A don't-know leaves no
- * state in the learner model, so the answers themselves say where the gaps are; a later right
- * answer closes one.
- */
-async function loadMissedSkillIds({
-  skillIds,
-  userId,
-}: {
-  skillIds: string[];
-  userId: string;
-}): Promise<Set<string>> {
-  const answers = await prisma.attempt.findMany({
-    orderBy: { answeredAt: "desc" },
-    select: { isCorrect: true, skillId: true },
-    take: MAX_TEST_ANSWERS,
-    where: {
-      itemId: { not: null },
-      skillId: { in: skillIds },
-      stepId: null,
-      studySessionId: null,
-      userId,
-    },
-  });
-
-  const last = answers.reduce(
-    (latest, answer) =>
-      answer.skillId && !latest.has(answer.skillId)
-        ? latest.set(answer.skillId, answer.isCorrect)
-        : latest,
-    new Map<string, boolean>(),
-  );
-
-  return new Set([...last].filter(([, isCorrect]) => !isCorrect).map(([skillId]) => skillId));
-}
-
 /**
  * Reads what the planner needs from the Library and the learner model for one goal's graph. A plan
  * the learner made harder also needs the areas they're doing well in, which it starts past.
  */
 export async function loadPlannerInputs({
   difficultyBias,
+  examChoices = [],
+  focus = { focusAreas: [], focusParts: [] },
   goal,
   graph,
   targetDate,
   userId,
 }: {
   difficultyBias: DifficultyBias;
-  goal: Pick<Goal, "details" | "examBlueprintId" | "kind" | "primaryCourseId">;
+  /** The options the learner picked of their exam's choices (`PlanSettings.examChoices`). */
+  examChoices?: readonly ExamChoice[];
+  /** Where the learner focuses: their own answers take those skills as known twice. */
+  focus?: Pick<PlanSettings, "focusAreas" | "focusParts">;
+  goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind" | "primaryCourseId">;
   graph: PlanGraph;
   targetDate: Date | null;
   userId: string;
@@ -129,18 +102,45 @@ export async function loadPlannerInputs({
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const isExam = goal.kind === "exam";
 
-  const [lessons, prerequisites, readiness, exam, missedSkillIds] = await Promise.all([
+  const focused = listFocusedSkillIds({ graph, settings: focus });
+
+  const [lessons, prerequisites, readiness, exam, evidence, bands] = await Promise.all([
     loadGoalPlannerLessons({ goal, graph, userId }),
-    loadPrerequisites(skillIds),
+    loadSkillPrerequisites(skillIds),
     loadReadiness({ skillIds, targetDate: isExam ? targetDate : null, userId }),
-    loadExamFacts({ goal, graph }),
-    isExam ? loadMissedSkillIds({ skillIds, userId }) : new Set<string>(),
+    loadExamFacts({ choices: examChoices, goal, graph }),
+    loadSkillEvidence({
+      focused: (skillId) => focused.has(skillId),
+      goalId: goal.id,
+      skillIds,
+      userId,
+    }),
+    // An exam tells its bases by how often it asks topics; other goals, by band (see `PlanBase`).
+    isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
   ]);
+
+  // A test's miss is a gap, and so is a topic the learner was taken to know (or passed over by
+  // choice) that practice then missed: its lessons come back first (see `SkillClaim`).
+  // What the learner showed they know, as the syllabus says it (see `listKnownSkills`). A skill
+  // they passed over by choice has no lessons in the plan either way, so it never waits for time.
+  const { answeredWrong, claims, known: knownSkillIds } = evidence;
+  const missedSkillIds = listClaimed({ claim: "gap", claims });
 
   const strongAreas =
     difficultyBias === "harder"
       ? await loadStrongAreas({ graph, lessons, userId })
       : new Set<string>();
 
-  return { lessons, missedSkillIds, prerequisites, readiness, strongAreas, ...exam };
+  return {
+    answeredWrongSkillIds: answeredWrong,
+    bands,
+    knownSkillIds,
+    lessons,
+    levelFloor: getLevelFloor(getOwnLevel({ goal })),
+    missedSkillIds,
+    prerequisites,
+    readiness,
+    strongAreas,
+    ...exam,
+  };
 }

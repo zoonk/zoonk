@@ -2,21 +2,21 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type ExamDate, type ExamEdition } from "../../library/exams/blueprint-contract";
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
+import { groupSittings, markRegistration } from "./exam-sittings";
+
+/**
+ * An exam day of the edition a learner prepares for. `registrationClosed`: the notice gives its
+ * sitting's last day to register, and that day has passed.
+ */
+export type EditionExamDay = ExamDate & { registrationClosed: boolean };
 
 /**
  * The exam days of the edition a learner prepares for, in order. `estimated` days come from
  * another edition's timing because no notice for that edition is stored yet.
  */
-export type EditionExamDays = { days: ExamDate[]; estimated: boolean };
+export type EditionExamDays = { days: EditionExamDay[]; estimated: boolean };
 
 const NO_DAYS: EditionExamDays = { days: [], estimated: false };
-
-/**
- * Exam days further apart than this are separate sittings the learner picks from (the SAT's March
- * and May dates); closer ones are one exam spread over several days (ENEM's two Sundays, the
- * Abitur's subjects).
- */
-const SITTING_GAP_DAYS = 14;
 
 const YEAR_LENGTH = 4;
 
@@ -24,25 +24,21 @@ function yearOf(isoDate: string): number {
   return Number(isoDate.slice(0, YEAR_LENGTH));
 }
 
-function getNoticeExamDays(edition: ExamEdition | null): ExamDate[] {
-  return (edition?.dates ?? [])
-    .filter((date) => date.kind === "exam")
-    .toSorted((first, second) => first.date.localeCompare(second.date));
-}
+/** The notice's exam days, marked closed for registration once their deadline passed. */
+function getNoticeExamDays({
+  edition,
+  from,
+}: {
+  edition: ExamEdition | null;
+  from: string;
+}): EditionExamDay[] {
+  const dates = edition?.dates ?? [];
 
-function isSameSitting({ day, previous }: { day: ExamDate; previous: ExamDate | undefined }) {
-  return (
-    previous !== undefined &&
-    daysBetween(fromIsoDate(previous.date), fromIsoDate(day.date)) <= SITTING_GAP_DAYS
-  );
-}
-
-function addToSittings(sittings: ExamDate[][], day: ExamDate): ExamDate[][] {
-  const current = sittings.at(-1) ?? [];
-
-  return isSameSitting({ day, previous: current.at(-1) })
-    ? [...sittings.slice(0, -1), [...current, day]]
-    : [...sittings, [day]];
+  return markRegistration({
+    days: dates.filter((date) => date.kind === "exam"),
+    deadlines: dates.filter((date) => date.kind === "registrationEnd").map((date) => date.date),
+    from,
+  });
 }
 
 /**
@@ -70,7 +66,13 @@ function moveToYear({ date, year }: { date: Date; year: number }): Date {
  * week and weekday, keeping their distance from the first: their month beats the notice's timing,
  * which only tells the likely week and weekday.
  */
-function moveIntoMonth({ days, month }: { days: ExamDate[]; month: number }): ExamDate[] {
+function moveIntoMonth<Day extends ExamDate>({
+  days,
+  month,
+}: {
+  days: Day[];
+  month: number;
+}): Day[] {
   const [first] = days;
 
   if (!first) {
@@ -104,7 +106,10 @@ function moveSitting({ sitting, years }: { sitting: ExamDate[]; years: number })
   }));
 }
 
-/** The notice's days moved by whole years, with the edition's year in their labels following. */
+/**
+ * The notice's days moved by whole years, with the edition's year in their labels following. Its
+ * registration deadlines are the notice's edition's, never the estimated one's.
+ */
 function estimateEdition({
   days,
   editionYear,
@@ -113,14 +118,17 @@ function estimateEdition({
   days: ExamDate[];
   editionYear: number;
   years: number;
-}): ExamDate[] {
+}): EditionExamDay[] {
   const noticeYear = String(editionYear);
   const estimatedYear = String(editionYear + years);
 
-  return days
-    .reduce<ExamDate[][]>((sittings, day) => addToSittings(sittings, day), [])
+  return groupSittings(days)
     .flatMap((sitting) => moveSitting({ sitting, years }))
-    .map((day) => ({ ...day, label: day.label.replaceAll(noticeYear, estimatedYear) }))
+    .map((day) => ({
+      ...day,
+      label: day.label.replaceAll(noticeYear, estimatedYear),
+      registrationClosed: false,
+    }))
     .toSorted((first, second) => first.date.localeCompare(second.date));
 }
 
@@ -185,7 +193,7 @@ function getEditionDays({
   examYear: number | null;
   from: string;
 }): EditionExamDays {
-  const days = getNoticeExamDays(edition);
+  const days = getNoticeExamDays({ edition, from });
   const [first] = days;
 
   if (!first) {
@@ -237,7 +245,7 @@ export function readExamMonth(details: unknown): number | null {
 }
 
 /**
- * The first day of the month the learner named for the exam ("em março de 2027"), for a plan no
+ * The first day of the month the learner named for the exam ("in March 2027"), for a plan no
  * notice gives a day to yet: it counts down to that month's start, so the learner is ready
  * whichever day it turns out to be, and their month wins until a notice sets the day. Null
  * without a named month and year, or once that day isn't after `from`.

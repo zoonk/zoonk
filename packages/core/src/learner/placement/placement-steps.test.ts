@@ -3,6 +3,8 @@ import { type PlacementEvidence, getPlacementBeliefs } from "./placement-beliefs
 import { getTargetDifficulty } from "./placement-difficulty";
 import { type PlacementSkill } from "./placement-graph";
 import { pickPlacementItem } from "./placement-item-choice";
+import { readSkillStatuses } from "./placement-known";
+import { getSkillPlacementStatus } from "./placement-status";
 import {
   type OwnLevel,
   chooseNextPlacementSkill,
@@ -10,7 +12,6 @@ import {
   getPhaseStarts,
   getScratchAreaStarts,
   getScratchPhaseStarts,
-  getSkillPlacementStatus,
   isPlacementSettled,
 } from "./placement-steps";
 
@@ -104,7 +105,15 @@ function answer(
 
 function place(evidence: PlacementEvidence[], skills = CHAIN) {
   const beliefs = getPlacementBeliefs({ evidence, skills });
-  return { beliefs, phases: getPhaseStarts({ beliefs, skills }) };
+
+  const statuses = readSkillStatuses({
+    answers: evidence,
+    evidence,
+    focusedSkillIds: new Set(),
+    skills,
+  });
+
+  return { beliefs, phases: getPhaseStarts({ skills, statuses }), statuses };
 }
 
 describe(getPlacementBeliefs, () => {
@@ -308,11 +317,12 @@ describe(getPhaseStarts, () => {
   });
 
   it("stops when every phase has a confident start, not after a set count", () => {
+    // Every skill before the start is confirmed by an answer of its own.
     const { phases } = place([
-      answer("c", "correct"),
+      answer("a", "correct"),
+      answer("b", "correct"),
       answer("c", "correct", "typed"),
       answer("e", "wrong"),
-      answer("d", "correct"),
       answer("d", "correct", "typed"),
     ]);
 
@@ -328,33 +338,33 @@ describe(chooseNextPlacementSkill, () => {
     expect(
       chooseNextPlacementSkill({
         askableSkillIds: ALL_ASKABLE,
-        beliefs: place([]).beliefs,
         evidence: [],
         skills: CHAIN,
+        statuses: place([]).statuses,
       }),
     ).toBe("c");
   });
 
   it("starts where the learner's own level points", () => {
-    const beliefs = place([]).beliefs;
+    const { statuses } = place([]);
 
     expect(
       chooseNextPlacementSkill({
         askableSkillIds: ALL_ASKABLE,
-        beliefs,
         evidence: [],
         ownLevel: "none",
         skills: CHAIN,
+        statuses,
       }),
     ).toBe("a");
 
     expect(
       chooseNextPlacementSkill({
         askableSkillIds: ALL_ASKABLE,
-        beliefs,
         evidence: [],
         ownLevel: "advanced",
         skills: CHAIN,
+        statuses,
       }),
     ).toBe("d");
   });
@@ -366,18 +376,18 @@ describe(chooseNextPlacementSkill, () => {
     expect(
       chooseNextPlacementSkill({
         askableSkillIds: ALL_ASKABLE,
-        beliefs: place(right).beliefs,
         evidence: right,
         skills: CHAIN,
+        statuses: place(right).statuses,
       }),
     ).toBe("d");
 
     expect(
       chooseNextPlacementSkill({
         askableSkillIds: ALL_ASKABLE,
-        beliefs: place(wrong).beliefs,
         evidence: wrong,
         skills: CHAIN,
+        statuses: place(wrong).statuses,
       }),
     ).toBe("a");
   });
@@ -388,9 +398,9 @@ describe(chooseNextPlacementSkill, () => {
     expect(
       chooseNextPlacementSkill({
         askableSkillIds: ALL_ASKABLE,
-        beliefs: place(evidence).beliefs,
         evidence,
         skills: CHAIN,
+        statuses: place(evidence).statuses,
       }),
     ).toBeNull();
   });
@@ -401,9 +411,9 @@ describe(chooseNextPlacementSkill, () => {
     expect(
       chooseNextPlacementSkill({
         askableSkillIds: askable,
-        beliefs: place([]).beliefs,
         evidence: [],
         skills: CHAIN,
+        statuses: place([]).statuses,
       }),
     ).not.toBe("c");
   });
@@ -412,10 +422,44 @@ describe(chooseNextPlacementSkill, () => {
 function nextFor(evidence: PlacementEvidence[], ownLevel: "basic" | "none" | null = null) {
   return chooseNextPlacementSkill({
     askableSkillIds: EXAM_ASKABLE,
-    beliefs: place(evidence, EXAM).beliefs,
     evidence,
     ownLevel,
     skills: EXAM,
+    statuses: place(evidence, EXAM).statuses,
+  });
+}
+
+/** The next skill for a learner who said history is weak for them. */
+function nextForWeakHistory(evidence: PlacementEvidence[]) {
+  return chooseNextPlacementSkill({
+    askableSkillIds: EXAM_ASKABLE,
+    evidence,
+    focusAreas: ["History"],
+    ownLevel: null,
+    skills: EXAM,
+    statuses: place(evidence, EXAM).statuses,
+  });
+}
+
+/** History is worth most of the exam (its notice's questions); `focusAreas` are the weak ones. */
+function nextForHeavyHistory({
+  evidence,
+  focusAreas = [],
+}: {
+  evidence: PlacementEvidence[];
+  focusAreas?: string[];
+}) {
+  return chooseNextPlacementSkill({
+    areaShares: new Map([
+      ["History", 0.6],
+      ["Math", 0.4],
+    ]),
+    askableSkillIds: EXAM_ASKABLE,
+    evidence,
+    focusAreas,
+    ownLevel: null,
+    skills: EXAM,
+    statuses: place(evidence, EXAM).statuses,
   });
 }
 
@@ -428,6 +472,21 @@ describe("placement across an exam's areas", () => {
     expect(nextFor([])).toBe("m2");
     expect(nextFor([answer("m2", "correct")])).toBe("h2");
     expect(nextFor([answer("m2", "correct"), answer("h2", "wrong")])).toBe("m3");
+  });
+
+  it("asks first about the subjects the learner said are weak, among those asked least", () => {
+    expect(nextForWeakHistory([])).toBe("h2");
+    // Every subject is asked before a weak one twice.
+    expect(nextForWeakHistory([answer("h2", "correct")])).toBe("m2");
+  });
+
+  it("asks the subject worth most of the exam first among those asked least, after weak ones", () => {
+    // The OAB's ethics, 8 of 80 questions, comes before a subject the plan reaches first.
+    expect(nextForHeavyHistory({ evidence: [] })).toBe("h2");
+    // Every subject is asked before the heaviest one twice.
+    expect(nextForHeavyHistory({ evidence: [answer("h2", "correct")] })).toBe("m2");
+    // A subject the learner said is weak comes before a heavier one.
+    expect(nextForHeavyHistory({ evidence: [], focusAreas: ["Math"] })).toBe("m2");
   });
 
   it("follows each area's own answers: harder after a right one, easier after a wrong one", () => {
@@ -447,22 +506,22 @@ describe("placement across an exam's areas", () => {
   it("isn't settled until every area has a confident start", () => {
     const mathOnly = place([answer("m1", "dontKnow")], EXAM);
 
-    expect(getAreaStarts({ beliefs: mathOnly.beliefs, skills: EXAM })).toStrictEqual([
+    expect(getAreaStarts({ skills: EXAM, statuses: mathOnly.statuses })).toStrictEqual([
       { area: "Math", confident: true, startSkillId: "m1" },
       { area: "History", confident: false, startSkillId: "h1" },
     ]);
 
     expect(mathOnly.phases).toStrictEqual([{ confident: false, phase: 0, startSkillId: "m1" }]);
-    expect(isPlacementSettled({ beliefs: mathOnly.beliefs, skills: EXAM })).toBe(false);
+    expect(isPlacementSettled({ skills: EXAM, statuses: mathOnly.statuses })).toBe(false);
 
     const both = place([answer("m1", "dontKnow"), answer("h1", "dontKnow")], EXAM);
 
-    expect(isPlacementSettled({ beliefs: both.beliefs, skills: EXAM })).toBe(true);
+    expect(isPlacementSettled({ skills: EXAM, statuses: both.statuses })).toBe(true);
   });
 
   it("has nothing to settle before the plan has skills", () => {
-    expect(isPlacementSettled({ beliefs: new Map(), skills: [] })).toBe(false);
-    expect(getAreaStarts({ beliefs: new Map(), skills: [] })).toStrictEqual([]);
+    expect(isPlacementSettled({ skills: [], statuses: new Map() })).toBe(false);
+    expect(getAreaStarts({ skills: [], statuses: new Map() })).toStrictEqual([]);
   });
 });
 

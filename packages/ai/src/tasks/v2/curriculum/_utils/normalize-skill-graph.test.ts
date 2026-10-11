@@ -43,6 +43,18 @@ function rawGraph(
   };
 }
 
+/** An option of ENEM's foreign-language choice, as the exam outline lists it. */
+function choiceOption(name: string, topic: string) {
+  return {
+    choiceGroup: "Língua Estrangeira",
+    group: null,
+    name,
+    questions: 5,
+    topics: [topic],
+    weight: null,
+  };
+}
+
 describe(normalizeSkillGraph, () => {
   it("merges duplicate skills by key or name and keeps edges pointing at the survivor", () => {
     const graph = normalizeSkillGraph(
@@ -71,6 +83,36 @@ describe(normalizeSkillGraph, () => {
     expect(graph.skills.find((skill) => skill.key === "motion")?.prerequisites).toStrictEqual([
       "algebra",
     ]);
+  });
+
+  it("merges a skill written twice in other words' order and takes em dashes out", () => {
+    const graph = normalizeSkillGraph(
+      rawGraph(
+        [
+          rawSkill({ key: "tipos", name: "Distinguir tipos e gêneros textuais" }),
+          rawSkill({ key: "generos", name: "Distinguir gêneros e tipos textuais" }),
+          rawSkill({
+            description: "Read a graph — then decide.",
+            key: "graphs",
+            name: "Read graphs — bars and lines",
+            prerequisites: ["generos"],
+          }),
+        ],
+        { phases: [{ milestone: "Read — and decide", title: "Reading — data" }] },
+      ),
+    );
+
+    expect(graph.skills.map((skill) => [skill.name, skill.prerequisites])).toStrictEqual([
+      ["Distinguir tipos e gêneros textuais", []],
+      ["Read graphs, bars and lines", ["tipos"]],
+    ]);
+
+    expect(graph.skills[1]?.description).toBe("Read a graph, then decide.");
+
+    expect(graph.phases[0]).toMatchObject({
+      milestone: "Read, and decide",
+      title: "Reading, data",
+    });
   });
 
   it("drops prerequisites that point nowhere, at the skill itself or close a cycle", () => {
@@ -263,6 +305,42 @@ describe(normalizeSkillGraph, () => {
     expect(graph.skills.map((skill) => [skill.key, skill.outcome])).toStrictEqual([
       ["spelling", false],
       ["piece", true],
+    ]);
+  });
+
+  it("never makes a skill wait for an option of a choice the learner may not take", () => {
+    const outline = {
+      name: "ENEM",
+      notes: [],
+      subjects: [
+        {
+          group: null,
+          name: "Linguagens",
+          questions: 40,
+          topics: ["Estudo do texto"],
+          weight: null,
+        },
+        choiceOption("Língua Inglesa", "Leitura em inglês"),
+        choiceOption("Língua Espanhola", "Leitura em espanhol"),
+      ],
+      topicFrequency: [],
+    };
+
+    const graph = normalizeSkillGraph(
+      rawGraph([
+        rawSkill({ area: "Língua Inglesa", key: "english", topics: ["S2.1"] }),
+        rawSkill({ area: "Língua Inglesa", key: "idioms", prerequisites: ["english"] }),
+        rawSkill({ area: "Língua Espanhola", key: "spanish", prerequisites: ["english"] }),
+        rawSkill({ area: "Linguagens", key: "reading", prerequisites: ["english", "spanish"] }),
+      ]),
+      outline,
+    );
+
+    expect(graph.skills.map((skill) => [skill.key, skill.prerequisites])).toStrictEqual([
+      ["english", []],
+      ["idioms", ["english"]],
+      ["spanish", []],
+      ["reading", []],
     ]);
   });
 

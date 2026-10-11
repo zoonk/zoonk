@@ -1,14 +1,10 @@
 import { z } from "zod";
+import { examDocumentSchema } from "../exams/exam-document";
 import { anyPlanOperationSchema } from "./plan-contract";
+import { planEffectSchema } from "./plan-effect-contract";
 import { type PlanChangeView } from "./plan-view-contract";
-import { DAYS_PER_WEEK } from "./planner/plan-state";
 
 const isoDateSchema = z.iso.date();
-
-const weekdaySchema = z
-  .int()
-  .min(0)
-  .max(DAYS_PER_WEEK - 1);
 
 /**
  * The source of a change the exam's notice brings: research read the notice after the learner saw
@@ -18,81 +14,17 @@ const weekdaySchema = z
 export const NOTICE_SOURCE = "notice";
 
 /**
+ * The source of a proposal to move the plan's phase dates (`fitPhaseDates`): lessons written since
+ * the learner saw them take more or less time than planned, and keeping the dates leaves lessons
+ * out by the goal's date. Clients answer it with Apply or "Keep mine", like the notice's.
+ */
+export const PHASE_DATES_SOURCE = "phaseDates";
+
+/**
  * The same statuses as the database's, listed here so clients can parse a change. `replaced`: a
  * proposal a newer change about the same thing replaced before the learner answered it.
  */
 const PLAN_CHANGE_STATUSES = ["proposed", "applied", "declined", "undone", "replaced"] as const;
-
-const areaTopicsSchema = z
-  .object({
-    area: z.string().meta({ description: "The plan's area, as plan changes name it" }),
-    topics: z.array(z.string()).meta({ description: "In the notice's own words" }),
-  })
-  .meta({ id: "PlanEffectTopics" });
-
-export const planEffectSchema = z
-  .object({
-    areaStarts: z
-      .array(
-        z.object({
-          after: isoDateSchema.nullable(),
-          area: z.string(),
-          before: isoDateSchema.nullable(),
-        }),
-      )
-      .optional()
-      .meta({
-        description:
-          "For a focus: when each focused area's first lesson is due after the change and before it. It may stay after what the area builds on",
-      }),
-    endDateAfter: isoDateSchema
-      .nullable()
-      .meta({ description: "When the plan ends after the change" }),
-    endDateBefore: isoDateSchema.nullable().meta({ description: "When it ended before" }),
-    lessonsAdded: z.int().min(0),
-    lessonsRemoved: z.int().min(0),
-    reviewFirst: z
-      .object({
-        areas: z
-          .array(z.string())
-          .meta({ description: "The focused areas, or the parts of them the focus names" }),
-        date: isoDateSchema.meta({ description: "The review day the focused topics open" }),
-      })
-      .optional()
-      .meta({
-        description:
-          "For a focus: the next review day ahead (a class test's day before, a free plan's full review) asks the focused topics first",
-      }),
-    topicsAdded: z
-      .array(areaTopicsSchema)
-      .optional()
-      .meta({ description: "The exam's notice topics the change brings into the plan, by area" }),
-    topicsLeftOut: z
-      .array(areaTopicsSchema)
-      .optional()
-      .meta({
-        description:
-          "The exam's notice topics the change leaves out of the plan, by area: say them before the learner applies it",
-      }),
-    weeklyEvents: z
-      .object({
-        after: weekdaySchema.meta({
-          description: "The weekday they move to, from Sunday (0) to Saturday (6)",
-        }),
-        before: weekdaySchema.meta({ description: "The weekday they were on" }),
-        kind: z
-          .enum(["challenge", "mock"])
-          .meta({
-            description: "`mock`: an exam's weekly mocks; `challenge`: the weekly challenges",
-          }),
-      })
-      .optional()
-      .meta({
-        description:
-          "The week's mocks or challenges move to another weekday, as a change to the learner's days moves them off a rest day",
-      }),
-  })
-  .meta({ id: "PlanEffect" });
 
 /**
  * A change to a plan as the learner sees it: the plan's own changes, and a change the buddy
@@ -118,7 +50,22 @@ export const planChangeSchema = z
             description:
               "The daily time to offer: the one that covers the whole goal in depth again (fullDepth), else the most time a day; null when the learner already gives it",
           }),
+        fittingDate: isoDateSchema
+          .nullable()
+          .meta({
+            description:
+              "When no daily time covers a goal that isn't an exam: the date the learner's time covers it all by, offered instead of more time (setTargetDate)",
+          }),
         fullDepth: z.boolean(),
+        maximumShare: z
+          .number()
+          .min(0)
+          .max(1)
+          .nullable()
+          .meta({
+            description:
+              "When no daily time covers the goal (fullDepth false): the share dailyMinutes, the most time a day, covers by the date",
+          }),
         measure: z
           .enum(["exam", "goal"])
           .meta({ description: "A share of the exam's questions and points, or of the goal" }),
@@ -126,7 +73,7 @@ export const planChangeSchema = z
       .nullable()
       .meta({
         description:
-          "For missedDays: falling behind made the plan cover less of its goal by its date. Offer that daily time, keeping the time with less depth, or choosing where to focus. Null when the date isn't at risk",
+          "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it). Offer that daily time, keeping the time with less depth, or choosing where to focus. On Today, the choices (dailyMinutes, fullDepth, maximumShare, fittingDate, canFocus) are the plan's as it is now, the same the plan's feasibility says. Null when the date isn't at risk",
       }),
     canUndo: z
       .boolean()
@@ -137,17 +84,21 @@ export const planChangeSchema = z
       .nullable()
       .meta({ description: "For missedDays: the earlier days that left lessons, now first" }),
     effect: planEffectSchema.nullable(),
+    examDocument: examDocumentSchema,
     id: z.uuid(),
     kind: z
       .string()
       .meta({
         description:
-          "edited, testedOut, missedDays, estimateUpdated or resumed; keep unknown kinds",
+          "edited, testedOut, missedDays, estimateUpdated, resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (planned again as lessons were written or the learner studied, the plan teaches other topics by its date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds",
       }),
     lessonsSkipped: z
       .int()
       .min(0)
-      .meta({ description: "Plan items a test-out skipped, the same count as its result" }),
+      .meta({
+        description:
+          "Lessons a test-out skipped, as the plan's subjects and phases count them: a topic still being written counts the lessons the plan teaches in its place",
+      }),
     officialDate: z
       .object({
         date: isoDateSchema,

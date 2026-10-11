@@ -25,7 +25,8 @@ describe(getLessonCheckModels, () => {
       { fallbackModels: ["anthropic/claude-sonnet-5.5"], model: "google/gemini-3.8-flash" },
     ]);
 
-    // A private course's lesson, written by Gemini, never gets a Gemini reviewer.
+    // A lesson Gemini wrote (a last draft after other families' were held back) never gets a
+    // Gemini reviewer.
     expect(
       getLessonCheckModels({ reuse: "personal", writerModel: "google/gemini-3.8-flash" }),
     ).toStrictEqual({ fallbackModels: ["openai/gpt-6-sol"], model: "anthropic/claude-sonnet-5.5" });

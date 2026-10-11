@@ -14,38 +14,41 @@ import {
   type PlanItemKind,
   type PlanItemStatus,
   type Prisma,
-  type StudyBlockKind,
-  type StudyBlockStatus,
-  type StudySessionStatus,
   type VoteValue,
 } from "../../../../generated/prisma/client";
-import { type SeedLanguage } from "../_utils/localize";
+import { type Localized, type SeedLanguage } from "../_utils/localize";
 import { type SeedCourse } from "../library/types";
 import { type MemoryPreset } from "./memory-presets";
 
 /** A day relative to today in the learner's time zone: 0 is today, -1 yesterday, 3 in three days. */
 type Day = number;
 
-/** Exam plans with a date use time-boxed phases; every other plan follows its skill graph. */
-type SeedPhaseKind = "finalStretch" | "foundations" | "gaps" | "learn" | "practice";
+/**
+ * A phase of the skill graph. The planner dates it; an exam plan with a date has time windows
+ * instead, which have no name: apps name them by kind.
+ */
+type SeedPhase = { name: string; milestone?: string };
 
 /**
- * A plan phase. Exam phases are time windows and have no name: apps name them by kind. Other
- * phases take their dates and size from the plan's schedule (see `plan-schedule.ts`).
+ * One skill of a goal's skill graph as the graph task writes it: an exam's skills with their area,
+ * size in lessons, phase, weight and the notice's contents they teach.
  */
-type SeedPhase = {
-  kind?: SeedPhaseKind;
-  name: string;
-  /** Exam phases only: the first and last day of the window. */
-  startDay?: Day;
-  endDay?: Day;
-  milestone?: string;
+export type SeedGraphSkill = {
+  skill: string;
+  area: Localized;
+  lessons: number;
+  phase: number;
+  weight: number | null;
+  topics: readonly Localized[];
+  /** A written test's skill, such as ENEM's essay (see `PlanGraphSkill.outcome`). */
+  outcome?: boolean;
 };
 
 /**
  * One step of a plan: a lesson or chapter of the goal's course by key, or a checkpoint, mock,
- * review or boss with its own title. Outside exams, items still to do after this week have no
- * day: they only set the skills' order, and the seed plans the rest like the app does.
+ * review or boss with its own title. The seed writes what the learner finished and what's due this
+ * week; the planner lays out the rest, so later items have no day: they only set the skills'
+ * order.
  */
 export type SeedPlanItem = {
   kind: PlanItemKind;
@@ -61,7 +64,7 @@ export type SeedPlanItem = {
  * A change to the plan with its one-sentence reason: applied (with an undo) or proposed and waiting
  * for the learner's OK. A test-out change points at the plan items it skipped on its own.
  */
-type SeedPlanChange = {
+export type SeedPlanChange = {
   kind: "edited" | "estimateUpdated" | "missedDays" | "resumed" | "testedOut";
   status?: "applied" | "proposed";
   reason: string;
@@ -91,9 +94,16 @@ export type SeedGoal = {
      * the graph task estimates it (at most 60 each). Other skills are the size of their lessons.
      */
     skillLessons?: Partial<Record<string, number>>;
+    /**
+     * The goal's whole skill graph, when it's more than its plan items teach (an exam's every
+     * skill). Without it, the graph is the skills the plan items teach (see `buildPlanGraph`).
+     */
+    graph?: readonly SeedGraphSkill[];
     changes?: SeedPlanChange[];
     /** Areas the learner asked to focus on, as plan settings keep them. */
     focusAreas?: string[];
+    /** The option the learner takes of each of the exam's choices, by the notice's names. */
+    examChoices?: { group: Localized; subject: Localized }[];
   };
 };
 
@@ -116,34 +126,6 @@ export type SeedAttempt = {
     /** When a fixed mistake was answered right again; yesterday when absent. */
     fixedDay?: Day;
   };
-};
-
-/** A capsule: the ideas of one lesson (or one skill) sealed for review, with its quick questions. */
-type SeedCapsule = {
-  title: string;
-  lesson?: string;
-  skills: string[];
-  items: string[];
-  format?: "matchPairs" | "rapidFire" | "swipe";
-};
-
-/**
- * One stop of today's session, in the shape the session builder writes: capsules for a review,
- * a lesson for a learn block, drills on saved mistakes (by the key of the attempt that left them)
- * and questions for practice. Items and skills are keys; the payload stores ids.
- */
-export type SeedBlock = {
-  kind: StudyBlockKind;
-  status: StudyBlockStatus;
-  minutes: number;
-  /** Brain Power a finished block paid. */
-  brainPower?: number;
-  lesson?: string;
-  title?: string;
-  capsules?: SeedCapsule[];
-  drills?: { mistake: string; items: string[] }[];
-  items?: string[];
-  skills?: string[];
 };
 
 /** How the learner studied over the past weeks, turned into ledger rows and daily totals. */
@@ -193,12 +175,18 @@ export type SeedLearner = {
   language: SeedLanguage;
   timeZone: string;
   buddy?: { kind: BuddyKind; name: string; glasses: BuddyGlasses };
-  birth?: { month: number; yearsOld: number };
-  guardian?: { email: string; dailyLimitMinutes: number };
+  /** The learner's own daily study limit, set in Appearance. */
+  dailyLimitMinutes?: number;
   goal: SeedGoal;
   skills: { skill: string; memory: MemoryPreset }[];
   attempts: SeedAttempt[];
-  session: { status: StudySessionStatus; blocks: SeedBlock[] };
+  /**
+   * How far the learner got through today's session, which the seed builds as the app does when
+   * the learner opens Today (core's session builder, from their plan as the day began): the first
+   * `finished` blocks done and, when `started`, the next one begun. Null before the learner opens
+   * Today, when the app builds it.
+   */
+  session: { finished: number; started?: boolean } | null;
   history: SeedHistory;
   brainPower: number;
   memory: { category: MemoryCategory; statement: string; origin: MemoryOrigin }[];

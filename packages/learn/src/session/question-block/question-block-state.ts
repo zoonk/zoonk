@@ -10,7 +10,7 @@ export type QuestionBlockPhase =
   | { kind: "answering" }
   | { kind: "checking" }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; kind: "feedback" }
-  | { kind: "answerFailed"; retryAfterSeconds: number | null }
+  | { kind: "answerFailed" }
   | { kind: "finishing" }
   | { kind: "finishFailed" }
   | { kind: "finished"; moment: StudyMomentView };
@@ -26,7 +26,7 @@ export type QuestionBlockState = {
 type QuestionBlockAction =
   | { type: "check" }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; itemId: string; type: "answered" }
-  | { retryAfterSeconds: number | null; type: "answerFailed" }
+  | { type: "answerFailed" }
   | { type: "next" }
   | { type: "finish" }
   | { type: "finishFailed" }
@@ -84,10 +84,7 @@ export function questionBlockReducer(
       case "next":
         return advance({ state, total });
       case "answerFailed":
-        return {
-          ...state,
-          phase: { kind: "answerFailed", retryAfterSeconds: action.retryAfterSeconds },
-        };
+        return { ...state, phase: { kind: "answerFailed" } };
       case "finish":
         return { ...state, phase: { kind: "finishing" } };
       case "finishFailed":

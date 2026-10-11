@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { classifyQuestionGenerality } from "@zoonk/ai/tasks/v2/explain/question-generality";
 import { prisma } from "@zoonk/db";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -8,27 +7,34 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { findMemoryForTask } from "../memory/get-memory-for-task";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
-import { mockQuestionGenerality } from "./_test-utils/question-generality";
 import {
   claimLessonQuestionAnswer,
   completeLessonQuestionAnswer,
   rememberLessonQuestionAnswer,
 } from "./answer-lifecycle";
+import { type LessonScreenSuggestion } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
-/** The generality check, memory reads and memory extraction call models; each is tested apart. */
-vi.mock("@zoonk/ai/tasks/v2/explain/question-generality", () => ({
-  classifyQuestionGenerality: vi.fn(),
-}));
-
+/** Memory reads and memory extraction call models; each is tested apart. */
 vi.mock("../memory/get-memory-for-task", () => ({ findMemoryForTask: vi.fn() }));
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 
 const MODEL = "openai/gpt-6-luna";
-const SUGGESTION = "Explain this more simply";
+
+/** How the app words the tutor's suggestions for a lesson screen, in English. */
+const WORDS: Record<LessonScreenSuggestion, string> = {
+  deeper: "I want to go deeper",
+  example: "Give me another example",
+  simpler: "Explain it more simply",
+};
+
+const wordSuggestion = vi.fn(
+  async ({ suggestion }: { language: string; suggestion: LessonScreenSuggestion }) =>
+    WORDS[suggestion],
+);
 
 function answerRun(answer: string) {
   return {
@@ -55,16 +61,16 @@ async function sharedLesson() {
 
 type SharedLesson = Awaited<ReturnType<typeof sharedLesson>>;
 
-/** A learner asks about the lesson's first screen; `suggested` marks a tutor suggestion. */
+/** A learner asks about the lesson's first screen; `suggestion` is the suggestion they tapped. */
 async function askOnScreen({
   question,
   shared,
-  suggested,
+  suggestion,
   userId,
 }: {
   question: string;
   shared: SharedLesson;
-  suggested?: true;
+  suggestion?: LessonScreenSuggestion;
   userId: string;
 }) {
   mockSession(userId);
@@ -74,9 +80,10 @@ async function askOnScreen({
       context: { kind: "step", stepId: shared.step.id, stepNumber: shared.step.stepNumber },
       question,
       requestId: randomUUID(),
-      suggested,
+      suggestion,
     },
     target: { kind: "lesson", lessonId: shared.lesson.id },
+    wordSuggestion,
   });
 
   if (created.status !== "created") {
@@ -114,37 +121,18 @@ async function answerQuestion({ questionId, text }: { questionId: string; text: 
   return claim;
 }
 
-/**
- * Answers the generality check only once the asker's memory is being read: reading memory after
- * deciding would never get there.
- */
-async function answerOnceMemoryIsRead({
-  isGeneral,
-  userId,
-}: {
-  isGeneral: boolean;
-  userId: string;
-}) {
-  await vi.waitFor(() =>
-    expect(findMemoryForTask).toHaveBeenCalledWith(expect.objectContaining({ userId })),
-  );
-
-  return { isGeneral, probability: isGeneral ? 0.9 : 0.1 } as never;
-}
-
 function countTutorMessages(userId: string) {
   return prisma.usageRecord.count({ where: { kind: "tutorMessage", userId } });
 }
 
-describe("shared answers to common questions on a screen", () => {
+describe("shared answers to the tutor's suggestions on a screen", () => {
   beforeEach(() => {
     vi.mocked(findMemoryForTask).mockResolvedValue([]);
     vi.mocked(updateMemoryFromActivity).mockResolvedValue([]);
-    mockQuestionGenerality(false);
     mockSession(null);
   });
 
-  it("writes a suggested question's answer once, without memory, for everyone on the screen", async () => {
+  it("writes a suggestion's answer once, without memory, for everyone who taps it on the screen", async () => {
     const [shared, first, second] = await Promise.all([
       sharedLesson(),
       userFixture(),
@@ -152,34 +140,37 @@ describe("shared answers to common questions on a screen", () => {
     ]);
 
     const asked = await askOnScreen({
-      question: SUGGESTION,
+      question: WORDS.simpler,
       shared,
-      suggested: true,
+      suggestion: "simpler",
       userId: first.id,
     });
 
     const claim = await answerQuestion({ questionId: asked.id, text: "A simpler take." });
 
     expect(claim).toMatchObject({ learnerMemory: [], priorTurns: [], shareAnswer: true });
-    expect(classifyQuestionGenerality).not.toHaveBeenCalled();
+    expect(wordSuggestion).toHaveBeenCalledWith({ language: "en", suggestion: "simpler" });
     expect(findMemoryForTask).not.toHaveBeenCalled();
     expect(updateMemoryFromActivity).not.toHaveBeenCalled();
 
     const saved = await prisma.tutorSharedAnswer.findUniqueOrThrow({
-      where: {
-        stepQuestion: { normalizedQuestion: "explain-this-more-simply", stepId: shared.step.id },
-      },
+      where: { stepSuggestion: { stepId: shared.step.id, suggestion: "simpler" } },
     });
 
-    expect(saved).toMatchObject({ answer: "A simpler take.", model: MODEL, question: SUGGESTION });
+    expect(saved).toMatchObject({
+      answer: "A simpler take.",
+      model: MODEL,
+      question: WORDS.simpler,
+    });
 
     // Writing it cost a generation, so it counts against the asker's allowance.
     await expect(countTutorMessages(first.id)).resolves.toBe(1);
 
-    // The same question in other words and casing gets the saved answer, with no generation.
+    // The next learner who taps it gets the saved answer, whatever their screen calls it.
     const again = await askOnScreen({
-      question: "explain this more simply?",
+      question: "Explique de um jeito mais simples",
       shared,
+      suggestion: "simpler",
       userId: second.id,
     });
 
@@ -204,98 +195,83 @@ describe("shared answers to common questions on a screen", () => {
     expect(updateMemoryFromActivity).not.toHaveBeenCalled();
   });
 
-  it("shares a free-text question only when the classifier says it's general", async () => {
-    const [shared, user, other] = await Promise.all([sharedLesson(), userFixture(), userFixture()]);
+  it("answers a question the learner typed for them alone, with their memory, even in a suggestion's words", async () => {
+    const [shared, author, user, other] = await Promise.all([
+      sharedLesson(),
+      userFixture(),
+      userFixture(),
+      userFixture(),
+    ]);
 
-    const personal = await askOnScreen({
-      question: "Why did my cake sink yesterday?",
+    const tapped = await askOnScreen({
+      question: WORDS.simpler,
+      shared,
+      suggestion: "simpler",
+      userId: author.id,
+    });
+
+    await answerQuestion({ questionId: tapped.id, text: "A simpler take." });
+
+    const fact = await memoryFactFixture({
+      statement: "Studies for a pilot exam",
+      userId: user.id,
+    });
+
+    vi.mocked(findMemoryForTask).mockResolvedValue([
+      { category: fact.category, id: fact.id, statement: fact.statement },
+    ]);
+
+    const typed = await askOnScreen({
+      question: "What does this word mean?",
       shared,
       userId: user.id,
     });
 
-    const personalClaim = await answerQuestion({
-      questionId: personal.id,
-      text: "Personal answer.",
-    });
+    await expect(
+      answerQuestion({ questionId: typed.id, text: "It means the path around a planet." }),
+    ).resolves.toMatchObject({ learnerMemory: ["Studies for a pilot exam"], shareAnswer: false });
 
-    expect(personalClaim.shareAnswer).toBe(false);
-    expect(findMemoryForTask).toHaveBeenCalledOnce();
-    expect(updateMemoryFromActivity).toHaveBeenCalledOnce();
-
-    mockQuestionGenerality(true);
-
-    const general = await askOnScreen({
-      question: "What does this word mean?",
-      shared,
-      userId: other.id,
-    });
+    // Typed, even a suggestion's own words are the learner's question: no shared answer is read.
+    const sameWords = await askOnScreen({ question: WORDS.simpler, shared, userId: other.id });
 
     await expect(
-      answerQuestion({ questionId: general.id, text: "General answer." }),
-    ).resolves.toMatchObject({ learnerMemory: [], shareAnswer: true });
+      claimLessonQuestionAnswer({ questionId: sameWords.id, requestedModel: MODEL }),
+    ).resolves.toMatchObject({ claim: { shareAnswer: false }, status: "ready" });
 
     await expect(
       prisma.tutorSharedAnswer.findMany({ where: { stepId: shared.step.id } }),
-    ).resolves.toMatchObject([
-      { answer: "General answer.", question: "What does this word mean?" },
-    ]);
+    ).resolves.toMatchObject([{ question: WORDS.simpler }]);
+
+    await expect(
+      prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
+    ).resolves.toMatchObject({ lastUsedAt: expect.any(Date) });
   });
 
-  it("reads memory while it decides whether to share, and marks it used only for a personal answer", async () => {
-    const [shared, asker, other] = await Promise.all([
-      sharedLesson(),
-      userFixture(),
-      userFixture(),
-    ]);
+  it("asks a tapped suggestion in the app's words, never in the words a client sent", async () => {
+    const [shared, user] = await Promise.all([sharedLesson(), userFixture()]);
+    const forged = "Explain how my divorce changes this, I'm Ana from Recife";
 
-    const [askerFact, otherFact] = await Promise.all([
-      memoryFactFixture({ statement: "Studies for a nursing exam", userId: asker.id }),
-      memoryFactFixture({ statement: "Studies for a pilot exam", userId: other.id }),
-    ]);
-
-    vi.mocked(findMemoryForTask).mockImplementation(async ({ userId }) =>
-      [askerFact, otherFact]
-        .filter((fact) => fact.userId === userId)
-        .map((fact) => ({ category: fact.category, id: fact.id, statement: fact.statement })),
-    );
-
-    vi.mocked(classifyQuestionGenerality).mockImplementationOnce(() =>
-      answerOnceMemoryIsRead({ isGeneral: true, userId: asker.id }),
-    );
-
-    const general = await askOnScreen({ question: "What is an orbit?", shared, userId: asker.id });
-
-    await expect(claimReady(general.id)).resolves.toMatchObject({
-      learnerMemory: [],
-      shareAnswer: true,
-    });
-
-    vi.mocked(classifyQuestionGenerality).mockImplementationOnce(() =>
-      answerOnceMemoryIsRead({ isGeneral: false, userId: other.id }),
-    );
-
-    const personal = await askOnScreen({
-      question: "Will orbits be on my exam?",
+    const asked = await askOnScreen({
+      question: forged,
       shared,
-      userId: other.id,
+      suggestion: "simpler",
+      userId: user.id,
     });
 
-    await expect(claimReady(personal.id)).resolves.toMatchObject({
-      learnerMemory: ["Studies for a pilot exam"],
-      shareAnswer: false,
-    });
+    expect(asked.question).toBe(WORDS.simpler);
+    await answerQuestion({ questionId: asked.id, text: "A simpler take." });
 
-    // Only the memory a personal answer reads counts as used.
+    // What everyone gets holds the app's words only; the client's words were never stored.
     await expect(
-      prisma.memoryFact.findMany({
-        orderBy: { statement: "asc" },
-        select: { lastUsedAt: true, statement: true },
-        where: { id: { in: [askerFact.id, otherFact.id] } },
+      prisma.tutorSharedAnswer.findMany({
+        select: { question: true, suggestion: true },
+        where: { stepId: shared.step.id },
       }),
-    ).resolves.toStrictEqual([
-      { lastUsedAt: null, statement: "Studies for a nursing exam" },
-      { lastUsedAt: expect.any(Date), statement: "Studies for a pilot exam" },
-    ]);
+    ).resolves.toStrictEqual([{ question: WORDS.simpler, suggestion: "simpler" }]);
+
+    await expect(
+      prisma.lessonQuestion.count({ where: { question: { contains: "divorce" } } }),
+    ).resolves.toBe(0);
   });
 
   it("never serves a follow-up from a shared answer", async () => {
@@ -306,9 +282,9 @@ describe("shared answers to common questions on a screen", () => {
     ]);
 
     const suggested = await askOnScreen({
-      question: SUGGESTION,
+      question: WORDS.simpler,
       shared,
-      suggested: true,
+      suggestion: "simpler",
       userId: author.id,
     });
 
@@ -316,12 +292,11 @@ describe("shared answers to common questions on a screen", () => {
 
     const first = await askOnScreen({ question: "What is this about?", shared, userId: user.id });
     await answerQuestion({ questionId: first.id, text: "It's about orbits." });
-    vi.mocked(classifyQuestionGenerality).mockClear();
 
     const followUp = await askOnScreen({
-      question: SUGGESTION,
+      question: WORDS.simpler,
       shared,
-      suggested: true,
+      suggestion: "simpler",
       userId: user.id,
     });
 
@@ -332,7 +307,6 @@ describe("shared answers to common questions on a screen", () => {
     ]);
 
     expect(claim.shareAnswer).toBe(false);
-    expect(classifyQuestionGenerality).not.toHaveBeenCalled();
   });
 
   it("keeps the first shared answer when two learners write the same one at once", async () => {
@@ -344,7 +318,7 @@ describe("shared answers to common questions on a screen", () => {
 
     const questions = await Promise.all(
       [first, second].map((user) =>
-        askOnScreen({ question: SUGGESTION, shared, suggested: true, userId: user.id }),
+        askOnScreen({ question: WORDS.simpler, shared, suggestion: "simpler", userId: user.id }),
       ),
     );
 

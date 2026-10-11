@@ -3,7 +3,6 @@ import {
   type PlayableLibraryLesson,
   type PlayableTeachingStepOf,
 } from "@zoonk/core/lesson-player/contract";
-import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
 import { SpeechPlayerProvider, type VoiceText } from "@zoonk/learn/speech/provider";
 import { type ReactNode } from "react";
 import { vi } from "vitest";
@@ -14,6 +13,7 @@ import {
 import { LessonPlayerShell } from "../lesson/lesson-player-shell";
 import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
 import { type PlayerLinkComponent } from "../player-context";
+import { localAdapters } from "../preview/preview-lesson";
 import { speechClips } from "./speech-clips";
 
 /** A link that stays on the page: following it would navigate away from the test's frame. */
@@ -37,16 +37,6 @@ export function TestLink({
   );
 }
 
-/** A run the server just started: new, or resumed with the answers it already has. */
-export function startedRun({
-  answers = [],
-  hyperdrive = { knownStepIds: [], streak: 0 },
-  runId = crypto.randomUUID(),
-  startedAt = new Date().toISOString(),
-}: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
-  return { answers, hyperdrive, reason: "started" as const, runId, startedAt };
-}
-
 const MS_PER_MINUTE = 60_000;
 
 /** An answer the server already has, given `minutesAgo` before now. */
@@ -66,57 +56,30 @@ export function runAnswer({
   };
 }
 
+/** A run the server just started: new, or resumed with the answers it already has. */
+export function startedRun({
+  answers = [],
+  hyperdrive = { knownStepIds: [], streak: 0 },
+  runId = crypto.randomUUID(),
+  startedAt = new Date().toISOString(),
+}: Partial<Extract<LessonStartOutcome, { reason: "started" }>> = {}) {
+  return { answers, hyperdrive, reason: "started" as const, runId, startedAt };
+}
+
 /**
- * Adapters that answer like the server: the run starts, each answer is graded the way the server
- * grades it (with the same function the device uses), and the lesson completes. Tests pass their
- * own adapter to change one answer.
+ * The preview's local adapters (`localAdapters`) as mocks, so tests see each call: answers are
+ * graded the way the server grades them. Tests pass their own adapter to change one answer.
  */
 export function buildAdapters(
   lesson: PlayableLibraryLesson,
   overrides: Partial<LessonPlayerAdapters> = {},
 ): LessonPlayerAdapters {
+  const local = localAdapters(lesson);
+
   return {
-    checkStep: vi.fn<LessonPlayerAdapters["checkStep"]>(({ answer, stepId }) => {
-      const step = lesson.steps.find((item) => item.id === stepId);
-      const graded = step ? gradeStepAnswer({ answer, step }) : null;
-
-      if (!graded) {
-        return Promise.resolve({ status: "failed" as const });
-      }
-
-      return Promise.resolve({
-        result: {
-          checked: true,
-          correctAnswer: graded.correctAnswer,
-          corrections: [],
-          feedback: graded.feedback,
-          isCorrect: graded.isCorrect,
-          keyPoints: null,
-          nextReviewAt: null,
-          savedMistake: !graded.isCorrect,
-          score: null,
-          spelling: null,
-        },
-        status: "checked" as const,
-      });
-    }),
-    completeLesson: vi.fn(() =>
-      Promise.resolve({
-        completion: {
-          brainPower: 10,
-          correctCount: 1,
-          energyDelta: 1,
-          incorrectCount: 0,
-          isFirstCompletion: true,
-          nextReviewAt: null,
-          seconds: 60,
-          studyBlock: null,
-          totalBrainPower: 10,
-        },
-        status: "completed" as const,
-      }),
-    ),
-    startLesson: vi.fn(() => Promise.resolve(startedRun())),
+    checkStep: vi.fn(local.checkStep),
+    completeLesson: vi.fn(local.completeLesson),
+    startLesson: vi.fn(local.startLesson),
     ...overrides,
   };
 }
@@ -151,28 +114,6 @@ export function acceptedAnswerCheck(
       status: "checked" as const,
     });
   });
-}
-
-/** A lesson of the given screens, in the order given. */
-export function buildLesson(
-  steps: PlayableLibraryLesson["steps"],
-  overrides: Partial<PlayableLibraryLesson> = {},
-): PlayableLibraryLesson {
-  return {
-    canDo: null,
-    chapter: null,
-    description: "A lesson for the player's browser tests",
-    estimatedMinutes: 5,
-    id: crypto.randomUUID(),
-    language: "en",
-    level: "beginner",
-    skills: [],
-    steps: steps.map((step, position) => ({ ...step, position })),
-    summaryIdeas: [],
-    targetLanguage: null,
-    title: "Test lesson",
-    ...overrides,
-  };
 }
 
 /**

@@ -7,8 +7,9 @@ import {
   reauthorizeAppleForAccountDeletion,
 } from "@zoonk/auth/native-apple";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
-import { trackAccountDeleted } from "../analytics/server";
 import { getSession } from "./get-session";
 
 type AccountDeletionAuthorization = {
@@ -133,6 +134,19 @@ async function throwAfterTemporarySessionCleanup({
 }
 
 /**
+ * Keeps the deleted account's id (its PostHog distinct id) so an admin can remove its analytics
+ * by hand and mark it done. The account is already gone, so a failure is logged with the id and
+ * never fails the deletion.
+ */
+async function logAccountDeletion(userId: string) {
+  const { error } = await safeAsync(() => prisma.accountDeletion.create({ data: { userId } }));
+
+  if (error) {
+    logError("Couldn't log the account deletion; remove its analytics by hand:", userId, error);
+  }
+}
+
+/**
  * Permanently deletes the authenticated user through Better Auth's sensitive
  * operation boundary. Better Auth resolves the acting user from the request,
  * checks the authoritative session, and rejects sessions older than freshAge
@@ -152,26 +166,19 @@ export async function deleteCurrentUser({
     return { appleAuthorizationRevoked: cleanup.appleAuthorizationRevoked };
   }
 
-  const [authorization, user] = await Promise.all([
-    getAccountDeletionAuthorization({
-      appleCredentials,
-      emailCredentials,
-      requestHeaders,
-      userId: session.user.id,
-    }),
-    prisma.user.findUnique({ select: { analyticsDisabled: true }, where: { id: session.user.id } }),
-  ]);
+  const authorization = await getAccountDeletionAuthorization({
+    appleCredentials,
+    emailCredentials,
+    requestHeaders,
+    userId: session.user.id,
+  });
 
   try {
     const cleanup = await captureAccountDeletionCleanup(() =>
       auth.api.deleteUser({ body: {}, headers: authorization.headers }),
     );
 
-    // Once the account is gone, PostHog is told so the learner's analytics can go too.
-    await trackAccountDeleted({
-      analyticsDisabled: user?.analyticsDisabled ?? false,
-      userId: session.user.id,
-    });
+    await logAccountDeletion(session.user.id);
 
     return {
       appleAuthorizationRevoked: getAppleAuthorizationRevocationResult({

@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { usageDecisionError } from "@/lib/lesson-player-errors";
+import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { testOutQuestionsWorkflow } from "@/workflows/v2/goals/test-out-questions-workflow";
@@ -13,7 +13,7 @@ const ACCEPTED = 202;
 /**
  * Gets a chapter's test-out ready when the learner asks for it: `ready` when it has a question for
  * every skill it samples, otherwise a run writes the missing ones (a second request joins it).
- * Each start counts as small AI help.
+ * Each start counts as small AI help. Past a free exam plan's first week it comes with Plus (402).
  */
 async function createTestOutGeneration(
   _request: Request,
@@ -40,6 +40,10 @@ async function createTestOutGeneration(
 
   if (result.status === "refused") {
     return usageDecisionError(result.decision);
+  }
+
+  if (result.status === "plusRequired") {
+    return plusRequiredError();
   }
 
   if (result.status === "ready") {

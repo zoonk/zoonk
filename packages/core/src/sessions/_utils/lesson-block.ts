@@ -2,6 +2,7 @@ import "server-only";
 import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
+import { loadLessonReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { readBlockPayload } from "../block-payload";
@@ -125,8 +126,9 @@ export async function markLessonBlockDone({
 }
 
 /**
- * The learner-local day the lesson's capsule opens: the first of its skills FSRS says is due,
- * never after the goal's date (see `capReviewDay`), as a UTC-midnight date label.
+ * The learner-local day the lesson's capsule opens: the first of the skills it comes back with
+ * (`loadLessonReviewSkillIds`) FSRS says is due, never after the goal's date (see
+ * `capReviewDay`), as a UTC-midnight date label.
  */
 export async function getLessonComesBack({
   lessonId,
@@ -149,9 +151,15 @@ export async function getLessonComesBack({
     where: { lessonId },
   });
 
+  const skillIds = await loadLessonReviewSkillIds({
+    lessonId,
+    ownSkillIds: skills.map((skill) => skill.skillId),
+    userId,
+  });
+
   const memories = await prisma.learnerSkill.findMany({
     select: { due: true },
-    where: { skillId: { in: skills.map((skill) => skill.skillId) }, userId },
+    where: { skillId: { in: skillIds }, userId },
   });
 
   const opening = getCapsuleOpening(memories);

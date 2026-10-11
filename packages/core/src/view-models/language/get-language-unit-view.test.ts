@@ -4,9 +4,15 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getLanguageUnitView } from "./get-language-unit-view";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
@@ -67,12 +73,54 @@ describe("a language unit's page", () => {
     const unit = result.status === "ready" ? result.unit : null;
 
     expect(unit?.lessons).toStrictEqual([
-      { done: true, lessonId: done?.id, minutes: 6, title: done?.title, written: true },
-      { done: false, lessonId: next?.id, minutes: 4, title: next?.title, written: false },
+      {
+        done: true,
+        lessonId: done?.id,
+        minutes: 6,
+        state: "done",
+        title: done?.title,
+        written: true,
+      },
+      {
+        done: false,
+        lessonId: next?.id,
+        minutes: 4,
+        state: "next",
+        title: next?.title,
+        written: false,
+      },
     ]);
 
     expect(unit?.summaries).toStrictEqual([
       { ideas: ["Rent é o aluguel."], lessonId: done?.id, title: done?.title },
+    ]);
+  });
+
+  // Marcos's unit page marked "Introducing yourself" next while Today opened "Summary".
+  it("marks next the lesson today's session opens next, not the first one not done", async () => {
+    const { goal, lessons, renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const first = lessons[2];
+    const second = lessons[3];
+
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
+      userId: user.id,
+    });
+
+    await studySessionBlockFixture({
+      lessonId: second?.id,
+      sessionId: session.id,
+      status: "active",
+    });
+
+    const result = await getLanguageUnitView({ chapterId: renting.id });
+    const unit = result.status === "ready" ? result.unit : null;
+
+    expect(unit?.lessons.map((lesson) => [lesson.lessonId, lesson.state])).toStrictEqual([
+      [first?.id, "upcoming"],
+      [second?.id, "next"],
     ]);
   });
 

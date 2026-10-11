@@ -4,6 +4,7 @@ import { generateMindMapImage } from "@zoonk/ai/tasks/v2/mind-maps/image";
 import { type MindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/schema";
 import { generateMindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/structure";
 import { prisma } from "@zoonk/db";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -12,6 +13,7 @@ import { readStoredImage } from "../images/read-stored-image";
 import { uploadImage } from "../images/upload-image";
 import { drawTestImage } from "../library/media/_test-utils/image-mocks";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
+import { getChapterView } from "../view-models/chapter/get-chapter-view";
 import {
   checkChapterMindMapImage,
   drawChapterMindMap,
@@ -23,16 +25,9 @@ import {
 import { getChapterMindMap } from "./get-chapter-mind-map";
 import { listGoalMindMaps } from "./list-goal-mind-maps";
 import { requestChapterMindMap } from "./request-chapter-mind-map";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 /** Models and Vercel Blob are the external boundaries; rows, claims and files' sizes run for real. */
 vi.mock("@zoonk/ai/tasks/v2/mind-maps/structure", () => ({ generateMindMapStructure: vi.fn() }));
@@ -200,6 +195,24 @@ describe("chapter mind maps", () => {
 
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toStrictEqual({
       status: "unauthorized",
+    });
+  });
+
+  it("offers the map of a finished chapter whose skill goes on in a later one, which its page calls done", async () => {
+    const { finished, lessons, skills } = await finishedChapter();
+    const nextLesson = lessons[2];
+    const [firstSkill] = skills;
+
+    // Lucas's first chapter: its skill has more lessons in the next chapter, still to study.
+    await prisma.lessonSkill.deleteMany({ where: { lessonId: nextLesson?.id } });
+    await lessonSkillFixture({ lessonId: nextLesson?.id ?? "", skillId: firstSkill?.id ?? "" });
+
+    await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
+      mindMap: { position: 1, status: "available" },
+    });
+
+    await expect(getChapterView({ chapterId: finished })).resolves.toMatchObject({
+      chapter: { chapter: { state: "done" } },
     });
   });
 

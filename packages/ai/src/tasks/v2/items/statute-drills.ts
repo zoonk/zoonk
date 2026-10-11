@@ -61,10 +61,20 @@ export type StatuteDrill = Extract<GeneratedItem, { format: StatuteDrillFormat }
 /** The reference comes first so the model picks its article before writing about it. */
 const reference = z.string();
 
+/**
+ * A drill asks about the law's own words, so it has no chart or picture: without them, every
+ * style's schema is small enough for each provider's structured output (Gemini rejected the
+ * generic style's three formats with their pictures, 9 Oct 2026).
+ */
+const NO_PICTURES = { image: true, visual: true } as const;
+
 const DRILL_SCHEMAS = {
-  multipleChoice: z.object({ reference, ...GENERATED_ITEM_SCHEMAS.multipleChoice.shape }),
-  trueFalse: z.object({ reference, ...GENERATED_ITEM_SCHEMAS.trueFalse.shape }),
-  typed: z.object({ reference, ...GENERATED_ITEM_SCHEMAS.typed.shape }),
+  multipleChoice: z.object({
+    reference,
+    ...GENERATED_ITEM_SCHEMAS.multipleChoice.omit(NO_PICTURES).shape,
+  }),
+  trueFalse: z.object({ reference, ...GENERATED_ITEM_SCHEMAS.trueFalse.omit(NO_PICTURES).shape }),
+  typed: z.object({ reference, ...GENERATED_ITEM_SCHEMAS.typed.omit(NO_PICTURES).shape }),
 };
 
 /** Each style only allows its board's formats, so a Cebraspe set can't come back as multiple choice. */
@@ -72,7 +82,10 @@ const STYLE_SCHEMAS = {
   cebraspe: DRILL_SCHEMAS.trueFalse,
   fgv: DRILL_SCHEMAS.multipleChoice,
   generic: z.union([DRILL_SCHEMAS.trueFalse, DRILL_SCHEMAS.typed, DRILL_SCHEMAS.multipleChoice]),
-} as const satisfies Record<StatuteDrillStyle, z.ZodType<StatuteDrill>>;
+} as const satisfies Record<
+  StatuteDrillStyle,
+  z.ZodType<Omit<StatuteDrill, keyof typeof NO_PICTURES>>
+>;
 
 function buildUserPrompt({ articles, count, language, law, style }: StatuteDrillParams): string {
   const references = articles
@@ -128,11 +141,17 @@ export async function generateStatuteDrills(params: StatuteDrillParams) {
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "statute-drills",
   });
 
-  const drills: StatuteDrill[] = result.output.drills;
+  const drills: StatuteDrill[] = result.output.drills.map((drill) => ({
+    ...drill,
+    image: null,
+    visual: null,
+  }));
+
   const data = checkStatuteDrills({ articles, drills });
 
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };

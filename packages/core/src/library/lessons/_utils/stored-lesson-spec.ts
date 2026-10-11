@@ -4,6 +4,7 @@ import {
   SUPPORT_MODES,
 } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { z } from "zod";
+import { currentTemplateId } from "../../activities/activity-templates";
 
 /** `Lesson.spec` holds the normalized spec `generateLessonSpec` returns: skill indexes are 0-based. */
 const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
@@ -13,7 +14,11 @@ const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
   screens: z
     .array(
       z.object({
-        activityTemplate: z.string().nullable(),
+        // A plan saved before a template merged into an engine names the engine now.
+        activityTemplate: z
+          .string()
+          .nullable()
+          .transform((id) => (id === null ? null : currentTemplateId(id))),
         brief: z.string(),
         kind: z.enum(LESSON_SCREEN_KINDS),
         skills: z.array(z.number().int().nonnegative()),

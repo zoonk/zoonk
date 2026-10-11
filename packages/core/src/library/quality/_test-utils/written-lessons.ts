@@ -119,6 +119,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
       },
       {
         exampleLineIdea: "A cold morning where the learner lives.",
+        explore: null,
         image: {
           alt: "A thermometer with an arrow going up past zero.",
           prompt: "A thermometer from −5 °C to 5 °C.",
@@ -177,6 +178,7 @@ export function writtenTemperatureLesson(): WrittenLesson {
       },
       {
         exampleLineIdea: null,
+        explore: null,
         image: null,
         kind: "explanation",
         text: "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
@@ -201,16 +203,19 @@ export function writtenTemperatureLesson(): WrittenLesson {
         options: [
           {
             isCorrect: true,
+            picture: null,
             reason: "Six degrees reach zero and three more go above it.",
             text: "3 °C",
           },
           {
             isCorrect: false,
+            picture: null,
             reason: "That's what you get by moving down 9 degrees instead of up.",
             text: "−15 °C",
           },
           {
             isCorrect: false,
+            picture: null,
             reason: "You added the numbers without their signs: the start is below zero.",
             text: "15 °C",
           },

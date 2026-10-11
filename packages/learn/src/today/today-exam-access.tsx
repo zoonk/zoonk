@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
-import { PlusNotice } from "../_components/plus-lock";
+import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { useLearnAnalytics } from "../learn-context";
 import { useTodayScreen } from "./today-context";
 
@@ -29,11 +29,7 @@ export function TodayExamAccess() {
 
   return (
     <aside aria-label={t("Exam prep on the free plan")}>
-      <PlusNotice href={actions.plusHref} title={t("Your free week of exam prep is over")}>
-        {t(
-          "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-        )}
-      </PlusNotice>
+      <FreeWeekOverNotice href={actions.plusHref} />
     </aside>
   );
 }

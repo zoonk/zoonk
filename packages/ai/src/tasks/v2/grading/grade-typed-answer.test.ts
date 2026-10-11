@@ -7,6 +7,10 @@ import type * as Ai from "ai";
 vi.mock("server-only", () => ({}));
 vi.mock("./grade-typed-answer.prompt.md", () => ({ default: "Grade the answer." }));
 
+vi.mock("./grade-typed-answer-language-practice.prompt.md", () => ({
+  default: "Language practice rules.",
+}));
+
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
 
@@ -29,6 +33,16 @@ const openAnswerParams = {
   language: "en",
   question: "In your own words, what happens during photosynthesis?",
 };
+
+/** The fields of the JSON schema the last call asked for, from the output spec it was given. */
+async function requestedSchemaFields(): Promise<string[]> {
+  const output = vi.mocked(generateText).mock.calls[0]?.[0].output as unknown as {
+    responseFormat: Promise<{ schema: { properties: Record<string, unknown> } }>;
+  };
+
+  const { schema } = await output.responseFormat;
+  return Object.keys(schema.properties);
+}
 
 describe(gradeTypedAnswer, () => {
   beforeEach(() => {
@@ -302,12 +316,11 @@ describe(gradeTypedAnswer, () => {
     expect(result.data).toMatchObject({ isCorrect: true, score: 1 });
   });
 
-  // The feedback said "Muito bem!" for a placement answer the key points marked wrong: written
+  // The feedback said "Well done!" for a placement answer the key points marked wrong: written
   // before them, it couldn't follow their verdict.
   it("has the model decide every key point before it writes the feedback", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
-        corrections: [],
         feedback: "Inputs, energy source and products are all there.",
         keyPoints: [
           { met: true, number: 1 },
@@ -319,12 +332,42 @@ describe(gradeTypedAnswer, () => {
 
     await gradeTypedAnswer({ ...openAnswerParams, answer: "Light turns CO2 into sugar and O2." });
 
-    const output = vi.mocked(generateText).mock.calls[0]?.[0].output as unknown as {
-      responseFormat: Promise<{ schema: { properties: Record<string, unknown> } }>;
+    await expect(requestedSchemaFields()).resolves.toStrictEqual(["keyPoints", "feedback"]);
+  });
+
+  it("sends the language-practice rules and asks for corrections only in language practice", async () => {
+    const grade = createGenerateTextResult({
+      corrections: [],
+      feedback: "Você perguntou quem contatar.",
+      keyPoints: [{ met: true, number: 1 }],
+    });
+
+    vi.mocked(generateText).mockResolvedValueOnce(grade).mockResolvedValueOnce(grade);
+
+    const params = {
+      answer: "Who should I contact?",
+      keyPoints: ["Pergunta quem deve ser contatado"],
+      language: "pt",
+      question: "Pergunte ao recrutador quem você deve contatar.",
     };
 
-    const { schema } = await output.responseFormat;
-    expect(Object.keys(schema.properties)).toStrictEqual(["keyPoints", "corrections", "feedback"]);
+    const practice = await gradeTypedAnswer({ ...params, practicedLanguage: "en" });
+
+    expect(practice.systemPrompt).toBe("Grade the answer.\nLanguage practice rules.");
+    expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(practice.systemPrompt);
+
+    await expect(requestedSchemaFields()).resolves.toStrictEqual([
+      "keyPoints",
+      "corrections",
+      "feedback",
+    ]);
+
+    vi.mocked(generateText).mockClear();
+    const other = await gradeTypedAnswer(params);
+
+    expect(other.systemPrompt).toBe("Grade the answer.");
+    expect(other.userPrompt).not.toContain("PRACTICED_LANGUAGE");
+    await expect(requestedSchemaFields()).resolves.toStrictEqual(["keyPoints", "feedback"]);
   });
 
   it("turns HTML entities in the feedback back into the letters they stand for", async () => {

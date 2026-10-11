@@ -1,7 +1,7 @@
 import "server-only";
 import { type ImageSceneParams, generateImageScene } from "@zoonk/ai/tasks/v2/images/scene";
 import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
-import { IMAGE_STYLE_VERSION, getImagePalette } from "@zoonk/ai/tasks/v2/images/style";
+import { getImagePalette } from "@zoonk/ai/tasks/v2/images/style";
 import { resolveLibraryIdentity } from "../../identity/resolve-library-identity";
 
 export type ImageAnalytics = ImageSceneParams["analytics"];
@@ -18,6 +18,11 @@ export type LibraryImageRequest = {
   category: string | null;
   /** False for language courses: their images carry no text. */
   textAllowed: boolean;
+  /**
+   * The parts a numbered picture marks, in order: code writes the numbers as its only labels
+   * (1 on the first part), so the screen's answer key is this list. Numbers carry no language.
+   */
+  numberedParts?: readonly string[] | null;
   /** The owner of a private course; its images stay private and are never reused. */
   ownerId: string | null;
   analytics?: ImageAnalytics;
@@ -43,6 +48,14 @@ export type PlannedLibraryImage =
   | { kind: "existing"; assetId: string }
   | { kind: "generate"; plan: ImagePlan };
 
+/** One number on each part, in order: "1" on the first. */
+function numberLabels(parts: readonly string[]): ImageScene["labels"] {
+  return parts.map((part, index) => ({
+    target: `pointing at the ${part}`,
+    text: String(index + 1),
+  }));
+}
+
 /**
  * Plans one Library image: a structured scene first, then the same agentic
  * identity flow as lessons (exact key, model search terms, text search and a
@@ -53,34 +66,34 @@ export async function planLibraryImage({
   category,
   context,
   language,
+  numberedParts,
   ownerId,
   request,
   screenText,
   textAllowed,
 }: LibraryImageRequest): Promise<PlannedLibraryImage> {
-  const { data: scene } = await generateImageScene({
+  const parts = numberedParts ?? [];
+
+  const { data: planned } = await generateImageScene({
     analytics,
     context,
     language,
-    request,
+    request:
+      parts.length > 0
+        ? `${request}\nShow each of these parts clearly: ${parts.join("; ")}.`
+        : request,
     screenText,
-    textAllowed,
+    textAllowed: textAllowed && parts.length === 0,
   });
 
+  const scene = parts.length > 0 ? { ...planned, labels: numberLabels(parts) } : planned;
   const prompt = describeImageScene(scene);
-  const hasLabels = scene.labels.length > 0;
+  // Numbers read the same in every language, so a numbered picture serves them all.
+  const hasLabels = parts.length === 0 && scene.labels.length > 0;
 
   const resolution = await resolveLibraryIdentity({
     analytics,
-    request: {
-      hasLabels,
-      kind: "image",
-      language,
-      ownerId,
-      prompt,
-      styleVersion: IMAGE_STYLE_VERSION,
-      textAllowed,
-    },
+    request: { hasLabels, kind: "image", language, ownerId, prompt, textAllowed },
   });
 
   if (resolution.kind === "existing") {

@@ -17,6 +17,7 @@ Run commands from the repository root using `mise x -- pnpm ...` in this environ
 | Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                       |
 | Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                         |
 
+- Vitest suites that use the database run on their own copy of the test database (`zoonk_test`, or the worktree's), made when the run starts and dropped when it ends; the next run drops copies a crashed run left. The test database itself is only the template: tests never write to it, `pnpm --filter @zoonk/db db:setup:test` migrates it (turbo's `test` task runs it first), and a migration edited in place needs its change and new checksum applied to it too. A run refuses a template whose migrations don't match the repository's.
 - In a macOS sandbox, run browser-launching tests with escalated permissions on the first attempt because Chromium needs Mach services. This is an execution permission requirement, not a request to stop implementation for local review.
 - Building `apps/api` (`build`, `build:e2e`) clears the local workflow store at `apps/api/.next/workflow-data`, which a running API dev server from the same checkout uses: its in-flight workflow runs are lost. While one runs, give the build its own store, for example `WORKFLOW_TARGET_WORLD=local WORKFLOW_LOCAL_DATA_DIR=.next-e2e/workflow-data`, and pass the same variables to the E2E run that serves that build.
 
@@ -26,3 +27,11 @@ Run commands from the repository root using `mise x -- pnpm ...` in this environ
 
 - `pnpm dev` starts the apps and mailbox through clone- and worktree-scoped Portless routes. Use the URLs it prints. Use `pnpm dev:lan` for another device, `pnpm dev:direct` for direct ports, and `pnpm dev:prune` for orphaned servers. Stop active stacks from their original terminals.
 - For local sign-in, use an account from `packages/db/src/prisma/seed/users.ts`, such as `owner@zoonk.test`, or a new `@zoonk.test` address. Request an OTP and read the newest message for that address in the local mailbox.
+
+## Persona passes
+
+- Put a seeded persona on any day of its plan with `pnpm dev:persona <name> [--day <n>] [--away <days>] [--plus|--free] [--tz <zone>] [--locale en|pt]`. It writes a private copy to the local development database without calling a model and prints how to sign in; the [persona catalog](../skills/zoonk-persona-walkthrough/references/personas.md) explains the options.
+- Walk an onboarding once as `onboarded-<name>@zoonk.test`, then copy that learner for every later pass with `pnpm dev:persona --from onboarded-<name>@zoonk.test [--day <n> | --away <days>] [--plus|--free] [--tz <zone>]`, which writes a private copy the same way.
+- Keep the shared Library between passes: once no workflow is running, `pnpm dev:remove-test-learners` lists every learner the seed didn't write except `onboarded-` ones, and `--yes` removes them through account deletion. Shared courses, lessons, skills and exam content stay, so the next pass doesn't pay to generate them again. It only runs against the local development database.
+- Reset the database and reseed it only when migrations change the schema; a reset throws away the shared Library.
+- To cover the cold path, run one persona per pass on a goal no earlier pass used.

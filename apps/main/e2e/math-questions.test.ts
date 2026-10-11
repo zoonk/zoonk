@@ -1,16 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
+import { MIN_CHECKPOINT_QUESTIONS, getPassMark } from "@zoonk/core/checkpoints/rules";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
+import { playDuel } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { continueToLastStep } from "./result-steps";
 import { openAs } from "./study-day";
@@ -120,7 +122,10 @@ async function createMathDay({ problems }: { problems: ReturnType<typeof discoun
   return { user };
 }
 
-/** Today's session holding one boss that asks one math problem, won with one right answer. */
+/**
+ * Today's session holding one boss with the fewest questions a boss is asked with, so it starts
+ * as it is: a math problem first, then choice questions.
+ */
 async function createMathBoss() {
   const [user, skill] = await Promise.all([
     createE2EUser(getBaseURL()),
@@ -134,8 +139,13 @@ async function createMathBoss() {
     phases: [{ name: "Basics" }, { name: "Practice" }],
   });
 
-  const [math, boss, session] = await Promise.all([
+  const [math, choices, boss, session] = await Promise.all([
     itemFixture({ content: discountContent("Boss"), format: "numeric", skillId: skill.id }),
+    Promise.all(
+      Array.from({ length: MIN_CHECKPOINT_QUESTIONS - 1 }, () =>
+        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+      ),
+    ),
     planItemFixture({ kind: "boss", phase: 0, planId: plan.id, position: 0 }),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
@@ -148,12 +158,12 @@ async function createMathBoss() {
       checkpoint: {
         kind: "boss",
         mock: false,
-        passMark: 1,
+        passMark: getPassMark(MIN_CHECKPOINT_QUESTIONS),
         phase: 0,
         rematch: false,
         timeLimitMinutes: null,
       },
-      itemIds: [math.id],
+      itemIds: [math.id, ...choices.map((item) => item.id)],
       planItemId: boss.id,
       skillIds: [skill.id],
       title: "Basics boss",
@@ -226,12 +236,13 @@ test.describe("Math problems", () => {
   test("a boss asks a math problem without hints, then shows the way", async ({ browser }) => {
     const { block, user } = await createMathBoss();
     const page = await openAs(browser, user);
+    const firstQuestion = page.getByText(`Question 1 of ${MIN_CHECKPOINT_QUESTIONS}`);
     await page.goto(`/checkpoint/${block.id}`);
 
     // Keys work once the page hydrates, so the first press retries until the duel opens.
     await expect(async () => {
       await page.keyboard.press("Enter");
-      await expect(page.getByText("Question 1 of 1")).toBeVisible({ timeout: 1000 });
+      await expect(firstQuestion).toBeVisible({ timeout: 1000 });
     }).toPass({ timeout: 5000 });
 
     const boss = await readNumbers(page, "Boss");
@@ -243,6 +254,14 @@ test.describe("Math problems", () => {
 
     await expect(page.getByText(SAVED_REASON)).toHaveCount(0);
     await page.keyboard.press("Enter");
+
+    // The rest of the duel, missed too.
+    await playDuel(page, {
+      answer: "Wrong answer",
+      from: 2,
+      keyboard: true,
+      total: MIN_CHECKPOINT_QUESTIONS,
+    });
 
     // The result's last step has the answers, with the worked steps, behind a link.
     await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();

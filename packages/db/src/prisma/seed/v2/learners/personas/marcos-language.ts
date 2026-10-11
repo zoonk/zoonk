@@ -65,16 +65,6 @@ const marcos: SeedLearner = {
       seconds: 31,
       skill: "rental-words",
     },
-    {
-      answer: { selectedIndex: 0 },
-      day: 0,
-      inSession: true,
-      isCorrect: true,
-      item: "ask-deposit-choice",
-      key: "review-deposit",
-      seconds: 12,
-      skill: "ask-rent",
-    },
   ],
   brainPower: 2180,
   email: "v2-language@zoonk.test",
@@ -156,33 +146,7 @@ const marcos: SeedLearner = {
   ],
   milestones: [],
   name: "Marcos Oliveira",
-  session: {
-    blocks: [
-      {
-        brainPower: 20,
-        capsules: [
-          {
-            items: ["ask-deposit-choice"],
-            lesson: "how-much-is-the-rent",
-            skills: ["ask-rent", "rental-words"],
-            title: "Quanto é o aluguel?",
-          },
-        ],
-        kind: "review",
-        minutes: 5,
-        status: "completed",
-      },
-      { kind: "learn", lesson: "there-is-there-are", minutes: 8, status: "pending" },
-      {
-        drills: [{ items: ["first-last-rent"], mistake: "first-last-rent" }],
-        kind: "practice",
-        minutes: 5,
-        status: "pending",
-        title: "Corrigir um erro",
-      },
-    ],
-    status: "active",
-  },
+  session: { finished: 0, started: true },
   skills: [
     { memory: "solid", skill: "explain-visit" },
     { memory: "mastered", skill: "airport-directions" },

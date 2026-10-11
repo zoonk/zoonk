@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { type DifficultyBias } from "../plans/planner/plan-state";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   SESSION_NOW,
   daysAgo,
@@ -11,7 +12,6 @@ import {
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 import { readBlockPayload } from "./block-payload";
-import { getTodayStudySession } from "./get-today-study-session";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));

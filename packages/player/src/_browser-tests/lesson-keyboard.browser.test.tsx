@@ -4,14 +4,14 @@ import { type Locator, page, userEvent } from "vitest/browser";
 import { expectVerdict, focusOn, press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { tabTo } from "../_test-utils/keyboard";
-import { activityStep, teachingStep } from "../_test-utils/lesson-steps";
 import {
   acceptedAnswerCheck,
   buildAdapters,
-  buildLesson,
   renderLessonPlayer,
 } from "../_test-utils/render-lesson-player";
 import { type PlayableLibraryStep } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import { activityStep, teachingStep } from "../preview/preview-steps";
 
 /**
  * The lesson player by keyboard alone, at desktop size: Enter runs the screen's main action from

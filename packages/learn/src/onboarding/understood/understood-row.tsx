@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
+import { UseDateButton } from "../../plan/notice-day";
 import { type UnderstoodRow as Row, type UnderstoodRowIcon } from "./use-understood-rows";
 
 const ICONS: Record<UnderstoodRowIcon, React.ComponentType<{ className?: string }>> = {
@@ -36,27 +38,11 @@ const ICONS: Record<UnderstoodRowIcon, React.ComponentType<{ className?: string 
   work: BriefcaseBusinessIcon,
 };
 
-/** Years ahead the card accepts for an exam: sooner than that, nobody plans yet. */
-const MAX_YEARS_AHEAD = 10;
-
 type EditorType = NonNullable<Row["editable"]>["kind"];
 
-/** The editor's native limits: no day before today, and an exam year from this one on. */
+/** The editor's native limits: no day before today. */
 function getInputLimits(type: EditorType) {
-  const today = new Date();
-
-  if (type === "date") {
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return { min: `${today.getFullYear()}-${month}-${day}` };
-  }
-
-  if (type === "year") {
-    const year = today.getFullYear();
-    return { inputMode: "numeric" as const, max: year + MAX_YEARS_AHEAD, min: year, step: 1 };
-  }
-
-  return {};
+  return type === "date" ? { min: toLocalIsoDate(new Date()) } : {};
 }
 
 /** Past this, a notice's title (often its whole heading, in capitals) reads as its site instead. */
@@ -133,7 +119,7 @@ function RowEditor({
         id={inputId}
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={(event) => event.key === "Escape" && onCancel()}
-        type={type === "year" ? "number" : type}
+        type={type}
         value={value}
         {...getInputLimits(type)}
       />
@@ -154,10 +140,81 @@ function RowEditor({
   );
 }
 
+/** "Use this date" for the notice's day, saved as the row's date, with a word when it isn't. */
+function SuggestedDate({
+  date,
+  onSave,
+}: {
+  date: string;
+  onSave: (value: string) => Promise<boolean>;
+}) {
+  const t = useExtracted();
+  const [failed, setFailed] = useState(false);
+
+  return (
+    <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+      <UseDateButton
+        onUse={async () => {
+          setFailed(false);
+          setFailed(!(await onSave(date)));
+        }}
+      />
+      {failed && (
+        <span className="text-destructive text-sm" role="alert">
+          {t("We couldn't save that. Try again in a moment.")}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** The dates the row's date is picked from (an exam's next sittings), each saved with one tap. */
+function ChoiceDates({
+  dates,
+  onSave,
+}: {
+  dates: string[];
+  onSave: (value: string) => Promise<boolean>;
+}) {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+  const [failed, setFailed] = useState(false);
+  const [isSaving, startSaving] = useTransition();
+
+  return (
+    <span className="mt-1.5 flex flex-wrap items-center gap-2">
+      {dates.map((date) => (
+        <Button
+          disabled={isSaving}
+          focusableWhenDisabled
+          key={date}
+          onClick={() =>
+            startSaving(async () => {
+              setFailed(false);
+              setFailed(!(await onSave(date)));
+            })
+          }
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          {formatDate(date, "short")}
+        </Button>
+      ))}
+      {failed && (
+        <span className="text-destructive text-sm" role="alert">
+          {t("We couldn't save that. Try again in a moment.")}
+        </span>
+      )}
+    </span>
+  );
+}
+
 /**
  * One understood fact: what it is, the value, where it came from, and a pencil to fix it in
- * place. Official exam dates keep their source one tap away; another year reads that year's days.
- * Closing the editor gives focus back to the pencil (`focusEdit`), so keyboard users keep their place.
+ * place. Official exam dates keep their source one tap away, and the notice's day, when the date
+ * is another, one tap to take. Closing the editor gives focus back to the pencil (`focusEdit`), so
+ * keyboard users keep their place.
  */
 export function UnderstoodRowItem({
   editValue,
@@ -221,6 +278,12 @@ export function UnderstoodRowItem({
             {row.source && <SourceBadge source={row.source} />}
           </span>
         )}
+
+        {row.suggestedDate && !editing && (
+          <SuggestedDate date={row.suggestedDate} onSave={onSave} />
+        )}
+
+        {row.choiceDates && !editing && <ChoiceDates dates={row.choiceDates} onSave={onSave} />}
       </div>
 
       {row.editable && !editing && (

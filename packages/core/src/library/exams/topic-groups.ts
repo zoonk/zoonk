@@ -34,7 +34,7 @@ function findStarts({
 }
 
 /**
- * A subject's topics under the syllabus's own headings (ENEM's Física, Química and Biologia): each
+ * A subject's topics under the syllabus's own headings (ENEM's physics, chemistry and biology): each
  * heading takes the topics from its first one up to the next heading's, in the reading's order,
  * keeping only the topics the blueprint kept. A heading whose first topic isn't listed is left out,
  * and so is a group left without topics. Topics before the first heading belong to none. Nothing

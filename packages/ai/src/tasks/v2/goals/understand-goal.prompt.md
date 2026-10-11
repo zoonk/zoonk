@@ -24,7 +24,7 @@ For every route but `goals`, return an empty `goals` list and null goal-level fi
 
 A request can name up to three goals: "ENEM and English" is two goals, an exam and a language. Order them as the learner did; the first is the main one. Each goal has a `kind`:
 
-- `exam`: a school test, entrance exam, language certificate (IELTS, TOEFL, DELE), public-service exam, professional license or certification. Set `examName` to its usual short name ("ENEM", "IELTS Academic", "OAB"), with the phase when the learner names one of an exam taken in separate phases ("OAB 2ª fase", "Fuvest 2ª fase"), and `examYear` when the learner names or implies a year ("this year's ENEM" is the year of `TODAY`).
+- `exam`: a school test, entrance exam, language certificate (IELTS, TOEFL, DELE), public-service exam, professional license or certification. Set `examName` to its usual short name ("ENEM", "IELTS Academic", "OAB"), with the phase when the learner names one of an exam taken in separate phases ("OAB 2ª fase", "Fuvest 2ª fase"), and `examYear` when the learner names or implies a year ("this year's ENEM" is the year of `TODAY`). For a language certificate, also set `targetLanguage` to the code of the language it tests (`en` for IELTS, `es` for DELE, `de` for the Goethe-Zertifikat).
 - `language`: speaking, understanding or writing a language that isn't for a named exam. Set `targetLanguage` to its code (`en`, `es`, `pt`, `fr`, `de`, `it`, `ja`, ...).
 - `learn`: a subject, skill, field, tool, or a project the learner wants to be able to do ("sell my cakes on Instagram" is learning to sell online, with `purpose` `work`).
 

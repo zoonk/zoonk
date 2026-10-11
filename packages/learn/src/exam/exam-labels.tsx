@@ -1,11 +1,10 @@
 "use client";
 
 import { type ExamDayChecklistKey } from "@zoonk/core/exams/final-stretch/rules";
+import { type ExamDay } from "@zoonk/core/exams/view/contract";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatTimeOfDay } from "../_utils/time-format";
-
-type ExamDay = { date: string; label: string | null; startTime: string | null };
 
 /** The real exam day's checklist, in the learner's words. */
 export function useExamChecklistLabel() {

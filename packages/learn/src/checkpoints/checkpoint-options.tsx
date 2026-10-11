@@ -4,6 +4,7 @@ import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { CheckIcon } from "lucide-react";
 import { ANSWER_LETTERS, AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
+import { ItemLine } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { type CheckpointAnswer } from "./checkpoint-duel-state";
@@ -76,7 +77,7 @@ export function CheckpointOptions({
             onClick={() => pick(index)}
             picked={picked}
           >
-            {label}
+            <ItemLine text={label} />
           </AnswerOption>
         );
       })}

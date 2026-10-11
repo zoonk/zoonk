@@ -3,7 +3,11 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { SESSION_NOW, sessionGoalFixture } from "../../sessions/_test-utils/session-goal";
+import {
+  NET_SCORED_EXAM_STRUCTURE,
+  SESSION_NOW,
+  sessionGoalFixture,
+} from "../../sessions/_test-utils/session-goal";
 import { getExamView } from "../view/get-exam-view";
 import { getCutoffTarget } from "./cutoff-target";
 import { loadTargetCutoff } from "./load-target-cutoff";
@@ -18,6 +22,7 @@ const MEDICINA_UFMG = { institution: "UFMG", targetCourse: "Medicina", targetSco
 
 const UNKNOWN = {
   edition: null,
+  maxScore: null,
   quota: null,
   score: null,
   source: null,
@@ -26,6 +31,7 @@ const UNKNOWN = {
 
 const FOUND = {
   edition: "Sisu 2025",
+  maxScore: 1000,
   quota: "ampla concorrência",
   score: 790.8,
   source: SOURCE,
@@ -103,6 +109,7 @@ describe("a target's cut-off", () => {
           course: "Medicina",
           edition: "Sisu 2025",
           institution: "UFMG",
+          maxScore: 1000,
           position: null,
           quota: "ampla concorrência",
           score: 790.8,
@@ -112,6 +119,58 @@ describe("a target's cut-off", () => {
       },
       status: "ready",
     });
+  });
+
+  /*
+   * Juliana's TJ-SP page said "Last cut-off: 7", with no scale: the source gave "7.0" and the
+   * notice scores the objective test from 0 to 10.
+   */
+  it("shows only on a scale the learner can read: the source's, else the notice's", async () => {
+    const role = "Escrevente Técnico Judiciário";
+    const position = { targetPosition: role };
+    const tenPoints = { fromPercent: null, max: 10, min: 0, name: null, passScore: 5, step: null };
+
+    const tenPointStructure = {
+      ...NET_SCORED_EXAM_STRUCTURE,
+      mock: {
+        ...NET_SCORED_EXAM_STRUCTURE.mock,
+        scoring: { ...NET_SCORED_EXAM_STRUCTURE.mock.scoring, scale: tenPoints },
+      },
+    };
+
+    const [unscaled, scaled, other] = await Promise.all([
+      examBlueprintFixture({ role }),
+      examBlueprintFixture({ role, structure: tenPointStructure }),
+      examBlueprintFixture({ role, structure: tenPointStructure }),
+    ]);
+
+    const record = async ({ blueprintId, score }: { blueprintId: string; score: number }) => {
+      const { goal } = await examGoal({ blueprintId, details: position });
+      const lookup = await findTargetCutoffLookup({ goalId: goal.id, year: 2026 });
+      const finding = { ...FOUND, edition: "Concurso TJ SP 2024", maxScore: null, score };
+
+      await recordTargetCutoff({ finding, lookup: lookup!, provenance: PROVENANCE });
+    };
+
+    await Promise.all([
+      record({ blueprintId: unscaled.id, score: 7 }),
+      record({ blueprintId: scaled.id, score: 7 }),
+      record({ blueprintId: other.id, score: 70 }),
+    ]);
+
+    // Neither the source nor the notice says what 7 is out of: no number at all.
+    await expect(
+      loadTargetCutoff({ details: position, examBlueprintId: unscaled.id }),
+    ).resolves.toBeNull();
+
+    await expect(
+      loadTargetCutoff({ details: position, examBlueprintId: scaled.id }),
+    ).resolves.toMatchObject({ maxScore: 10, score: 7 });
+
+    // A score off the notice's scale is on another one, which nothing names.
+    await expect(
+      loadTargetCutoff({ details: position, examBlueprintId: other.id }),
+    ).resolves.toBeNull();
   });
 
   it("is never looked up for a learner's own exam, or a course without its institution", async () => {

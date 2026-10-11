@@ -1,52 +1,33 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { localDay } from "../../_utils/dates";
+import { t } from "../../_utils/localize";
 import { enemCourse } from "../../library/enem/enem-course";
 import { type EnemEdition } from "../../library/enem/enem-edition";
 import { type SeedAttempt, type SeedGoal, type SeedLearner } from "../types";
+import { anaGraph } from "./ana-graph";
 
 const TIME_ZONE = "America/Sao_Paulo";
 const DAYS_PER_WEEK = 7;
-const FIRST_MOCK = "Simulado 1: Ciências da Natureza e Matemática";
+/**
+ * Her first mock, untitled as the planner's mocks are: apps name them by number, and core plans
+ * its questions from the bank as the session builder plans the week's mock.
+ */
+const FIRST_MOCK = "";
 
-/** Days from today (in São Paulo) to an ISO date. */
-function daysUntil(isoDate: string, now: Date): number {
-  return Math.round(
-    (new Date(`${isoDate}T00:00:00.000Z`).getTime() - localDay(now, TIME_ZONE).getTime()) /
-      MS_PER_DAY,
-  );
-}
-
-/** Days until the next Sunday, when her weekly mock runs; never today. */
-function nextSunday(now: Date): number {
-  return DAYS_PER_WEEK - localDay(now, TIME_ZONE).getUTCDay();
-}
-
-/** Days back to the last Sunday, when she took her first mock; never today. */
+/**
+ * Days back to the last Sunday, when she took her first mock; never today, so on a Sunday it's the
+ * one a week ago. Her plan began two weeks ago, so it's the planner's first mock day (the week's
+ * event day from the plan's second week), and the next ones come every few weeks at her 45 minutes
+ * a day, as the planner lays them out.
+ */
 function lastSunday(now: Date): number {
-  return nextSunday(now) - DAYS_PER_WEEK;
+  return -(localDay(now, TIME_ZONE).getUTCDay() || DAYS_PER_WEEK);
 }
 
 /**
- * The four exam phases, sized to the days left: foundations, gaps, practice and the final stretch.
- * Her hand-placed plan items only fit inside them from 38 days out, so `getPlannedEnemEdition`
- * keeps her exam at least two months away.
+ * The exam's four windows (foundations, gaps, practice and the final stretch), which the planner
+ * dates back from the exam day and apps name by kind.
  */
-function examPhases(examDay: number) {
-  const gaps = Math.round(examDay * 0.2);
-  const practice = Math.round(examDay * 0.55);
-  const finalStretch = examDay - DAYS_PER_WEEK;
-
-  return {
-    gaps,
-    phases: [
-      { endDay: gaps - 1, kind: "foundations" as const, name: "", startDay: -14 },
-      { endDay: practice - 1, kind: "gaps" as const, name: "", startDay: gaps },
-      { endDay: finalStretch - 1, kind: "practice" as const, name: "", startDay: practice },
-      { endDay: examDay - 1, kind: "finalStretch" as const, name: "", startDay: finalStretch },
-    ],
-    practice,
-  };
-}
+const EXAM_PHASES = [{ name: "" }, { name: "" }, { name: "" }, { name: "" }];
 
 const anaAttempts: SeedAttempt[] = [
   {
@@ -182,26 +163,23 @@ const anaAttempts: SeedAttempt[] = [
     seconds: 95,
     skill: "series-resistors",
   },
-  {
-    answer: { selectedIndex: 1 },
-    day: 0,
-    inSession: true,
-    isCorrect: true,
-    item: "energy-loss-reason",
-    key: "review-energy",
-    seconds: 30,
-    skill: "energy-flow",
-  },
-  {
+  // Answers inside the lessons she finished: what shows preparation, since one right answer in a
+  // test only frees a topic from its lessons until practice confirms it.
+  ...(
+    [
+      [-13, "percent-basics"],
+      [-12, "main-idea"],
+      [-11, "energy-flow"],
+      [-8, "rule-of-three"],
+    ] as const
+  ).map(([day, skill]): SeedAttempt => ({
     answer: { selectedIndex: 0 },
-    day: 0,
-    inSession: true,
+    day,
     isCorrect: true,
-    item: "beach-sign",
-    key: "review-sign",
-    seconds: 18,
-    skill: "inference",
-  },
+    key: `lesson-${skill}`,
+    seconds: 25,
+    skill,
+  })),
 ];
 
 const anaProfile: Omit<SeedLearner, "goal"> = {
@@ -234,34 +212,7 @@ const anaProfile: Omit<SeedLearner, "goal"> = {
   milestones: [{ day: -3, key: "yellow", kind: "belt", shown: true }],
   name: "Ana Souza",
   plus: true,
-  session: {
-    blocks: [
-      {
-        brainPower: 25,
-        capsules: [
-          { items: ["energy-loss-reason"], skills: ["energy-flow"], title: "Ecologia" },
-          { items: ["beach-sign"], skills: ["inference"], title: "Interpretação de texto" },
-        ],
-        kind: "review",
-        minutes: 6,
-        status: "completed",
-      },
-      { kind: "learn", lesson: "percent-discount", minutes: 14, status: "active" },
-      {
-        drills: [
-          { items: ["discount-shirt"], mistake: "shirt-discount" },
-          { items: ["flashlight-current"], mistake: "circuit-one-resistor" },
-          { items: ["fund-gain-loss"], mistake: "fund-trap" },
-        ],
-        items: ["discount-refrigerator", "buy-five-pay-four", "clt-era"],
-        kind: "practice",
-        minutes: 16,
-        status: "pending",
-        title: "Questões no formato do ENEM",
-      },
-    ],
-    status: "active",
-  },
+  session: { finished: 1, started: true },
   skills: [
     { memory: "solid", skill: "percent-basics" },
     { memory: "solid", skill: "rule-of-three" },
@@ -280,9 +231,6 @@ const anaProfile: Omit<SeedLearner, "goal"> = {
 
 /** The ENEM goal, planned back from the first exam day of the edition ahead. */
 function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoal {
-  const examDay = daysUntil(edition.examDays[0], now);
-  const { gaps, phases, practice } = examPhases(examDay);
-  const sunday = nextSunday(now);
   const firstMock = lastSunday(now);
 
   return {
@@ -325,7 +273,14 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
           status: "proposed",
         },
       ],
+      examChoices: [
+        {
+          group: t("Foreign language", "Língua Estrangeira"),
+          subject: t("English", "Língua Inglesa"),
+        },
+      ],
       focusAreas: ["Ciências da Natureza"],
+      graph: anaGraph,
       items: [
         { day: -13, kind: "lesson", lesson: "what-a-percent-is", phase: 0, status: "done" },
         { day: -12, kind: "lesson", lesson: "main-idea", phase: 0, status: "done" },
@@ -336,72 +291,8 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
         { day: 1, kind: "lesson", lesson: "raise-then-discount", phase: 0, status: "todo" },
         { day: 2, kind: "lesson", lesson: "food-chain-energy", phase: 0, status: "todo" },
         { day: 3, kind: "lesson", lesson: "ohms-law", phase: 0, status: "todo" },
-        {
-          day: sunday,
-          kind: "mock",
-          phase: 0,
-          status: "todo",
-          title: "Simulado 2: Ciências da Natureza e Matemática",
-        },
-        {
-          day: gaps - 1,
-          kind: "boss",
-          phase: 0,
-          status: "todo",
-          title: "Desafio da fase Fundamentos",
-        },
-        { chapter: "statistics", day: gaps, kind: "chapter", phase: 1, status: "todo" },
-        { day: gaps + 1, kind: "lesson", lesson: "vargas-era", phase: 1, status: "todo" },
-        { chapter: "electricity", day: gaps + 3, kind: "chapter", phase: 1, status: "todo" },
-        { day: gaps + 4, kind: "lesson", lesson: "what-a-text-implies", phase: 1, status: "todo" },
-        { chapter: "essay", day: gaps + 6, kind: "chapter", phase: 1, status: "todo" },
-        { chapter: "functions", day: gaps + 9, kind: "chapter", phase: 1, status: "todo" },
-        {
-          day: practice,
-          kind: "mock",
-          phase: 2,
-          status: "todo",
-          title: "Simulado 3: prova completa do 2º dia",
-        },
-        {
-          day: practice + DAYS_PER_WEEK,
-          kind: "mock",
-          phase: 2,
-          status: "todo",
-          title: "Simulado 4: prova completa do 1º dia",
-        },
-        {
-          day: examDay - 3,
-          kind: "review",
-          phase: 3,
-          status: "todo",
-          title: "Revisão final dos seus erros",
-        },
       ],
-      phases,
-      skillLessons: {
-        "buy-x-pay-y": 7,
-        "central-tendency": 7,
-        "coffee-with-milk": 7,
-        "energy-flow": 7,
-        "essay-competencies": 7,
-        "essay-conclusion": 7,
-        inference: 7,
-        "intervention-proposal": 7,
-        "linear-function": 7,
-        "main-idea": 7,
-        "ohms-law": 7,
-        "percent-basics": 7,
-        "percent-discount": 7,
-        "percent-factor": 7,
-        "quadratic-function": 7,
-        "read-charts": 7,
-        "rule-of-three": 7,
-        "series-resistors": 7,
-        "successive-percent": 7,
-        "ten-percent-rule": 7,
-        "vargas-era": 7,
-      },
+      phases: EXAM_PHASES,
     },
     prompt: `quero passar em medicina na federal, vou fazer o enem de ${edition.year}`,
     studyTime: "19:00",
@@ -416,7 +307,8 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
  * earned her the aviator glasses then (already celebrated, so her next session doesn't).
  */
 export function buildAna(context: { edition: EnemEdition; now: Date }): SeedLearner {
-  const mock = { correct: 31, day: lastSunday(context.now), title: FIRST_MOCK, total: 45 };
+  // The exam's first day, half of it: the 30 Languages and Humanities questions the bank has.
+  const mock = { correct: 21, day: lastSunday(context.now), title: FIRST_MOCK, total: 30 };
 
   return {
     ...anaProfile,

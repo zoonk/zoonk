@@ -9,7 +9,7 @@ const TODAY = "2026-10-07";
 const NATUREZA = "Ciências da Natureza e suas Tecnologias";
 const HUMANAS = "Ciências Humanas e suas Tecnologias";
 
-/** ENEM's objetos de conhecimento as its notice lists them (Edital do Enem 2026). */
+/** ENEM's objects of knowledge as its notice lists them (the Enem 2026 notice). */
 const NATUREZA_TOPICS = [
   "Conhecimentos básicos e fundamentais",
   "O movimento, o equilíbrio e a descoberta de leis físicas",
@@ -46,7 +46,7 @@ const HUMANAS_TOPICS = [
 
 /**
  * Real exams, one subject at a time as research asks them. Analyses of ENEM's past papers agree that ecology, genetics and organic chemistry
- * are among Natureza's most asked topics and gravitation among its least; a concurso's Portuguese
+ * are among natural sciences' most asked topics and gravitation among its least; a civil service exam's Portuguese
  * under Cebraspe always leans on reading comprehension, though a source per subject may not exist.
  */
 export const TEST_CASES: FindTopicFrequencyCase[] = [

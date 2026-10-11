@@ -4,13 +4,18 @@ import { generateLessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec";
 import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { checkLessonQuality } from "@zoonk/ai/tasks/v2/quality/lesson-check";
 import { trackSystemEvent } from "@zoonk/core/analytics/server";
+import { ensureQuickLessons } from "@zoonk/core/library/quick-lessons";
 import { prisma } from "@zoonk/db";
 import { writtenChallengeCaseFixture } from "@zoonk/testing/fixtures/challenge-written-case";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterSkillFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
@@ -21,6 +26,7 @@ import { recordedOutput, taskResult } from "../_test-utils/recorded-outputs";
 import { lessonImagesWorkflow } from "../images/lesson-images-workflow";
 import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
+import { writeLessonContentStep } from "./steps/write-lesson-content-step";
 
 vi.mock("workflow/api", () => ({
   getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("failed") })),
@@ -29,6 +35,12 @@ vi.mock("workflow/api", () => ({
 
 // Model calls are external: tests replay a real spec and draft recorded for the same lesson.
 vi.mock("@zoonk/ai/tasks/v2/lesson-spec", () => ({ generateLessonSpec: vi.fn() }));
+
+// The picture check is a model call too: every planned picture is kept, as the recorded spec planned.
+vi.mock("@zoonk/ai/tasks/v2/lesson-spec/picture-need", () => ({
+  keepTeachingPictures: vi.fn(({ spec }: { spec: unknown }) => Promise.resolve(spec)),
+}));
+
 vi.mock("@zoonk/ai/tasks/v2/lesson-writer", () => ({ writeLessonDraft: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/quality/lesson-check", () => ({ checkLessonQuality: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/challenge/case", () => ({ generateChallengeCase: vi.fn() }));
@@ -131,6 +143,59 @@ describe(lessonContentWorkflow, () => {
         plan: expect.objectContaining({ lesson: recordedDraft, review: true, version: 1 }),
       },
     ]);
+  });
+
+  it("plans a skill's quick lesson as a quick one, on its own, and writes it like any lesson", async () => {
+    const [chapter, skill] = await Promise.all([
+      libraryChapterFixture({ title: "Biomoléculas" }),
+      skillFixture({ name: "Relacionar estrutura proteica e função" }),
+    ]);
+
+    const sibling = await libraryLessonFixture({ homeChapterId: chapter.id });
+
+    await Promise.all([
+      chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
+      chapterLessonFixture({ chapterId: chapter.id, lessonId: sibling.id }),
+    ]);
+
+    const quickLessons = await ensureQuickLessons({ skillIds: [skill.id] });
+    const lessonId = quickLessons.get(skill.id)?.lessonId ?? "";
+    vi.mocked(generateLessonSpec).mockClear();
+
+    await expect(lessonContentWorkflow({ lessonId })).resolves.toStrictEqual({
+      lessonId,
+      status: "ready",
+    });
+
+    expect(generateLessonSpec).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        chapterLessons: [],
+        quick: true,
+        skills: ["Relacionar estrutura proteica e função"],
+      }),
+    );
+
+    const stored = await prisma.lesson.findUniqueOrThrow({
+      include: { chapters: true, steps: true },
+      where: { id: lessonId },
+    });
+
+    expect(stored).toMatchObject({ chapters: [], contentStatus: "completed" });
+    expect(stored.steps).toHaveLength(recordedDraft.screens.length);
+  });
+
+  it("reports the lesson published when its write step runs again after publishing it, without writing it again", async () => {
+    const lesson = await outlinedLesson();
+    await lessonContentWorkflow({ lessonId: lesson.id });
+    vi.mocked(writeLessonDraft).mockClear();
+
+    // The runtime runs a step's body again when its result was lost after the body ended (an
+    // invocation that timed out, a stream write that failed): the lesson is this run's already.
+    await expect(
+      writeLessonContentStep({ lessonId: lesson.id, workflowRunId: "test-run-id" }),
+    ).resolves.toStrictEqual({ check: null, imageScope: "shared", status: "published" });
+
+    expect(writeLessonDraft).not.toHaveBeenCalled();
   });
 
   it("plans and writes a lesson a learner reaches soon at the standard tier, and one for a later day at the flex tier", async () => {
@@ -306,10 +371,15 @@ describe(lessonContentWorkflow, () => {
       lessonContentWorkflow({ analytics: { distinctId: user.id }, lessonId: lesson.id }),
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 
-    // Its model checks may start too (a sample of lessons gets the reasoning check).
     expect(start).toHaveBeenCalledWith(lessonImagesWorkflow, [
       { analytics: { contentScope: "personal", distinctId: user.id }, lessonId: lesson.id },
     ]);
+
+    // Luna plans it, the shared writer writes it, and no reviewer reads it: only reusable lessons
+    // get model checks.
+    expect(vi.mocked(generateLessonSpec).mock.calls[0]?.[0].model).toBe("openai/gpt-6-luna");
+    expect(vi.mocked(writeLessonDraft).mock.calls[0]?.[0].model).toBeUndefined();
+    expect(start).not.toHaveBeenCalledWith(lessonCheckWorkflow, expect.anything());
   });
 
   it("draws no pictures for a guest's own lesson", async () => {

@@ -4,6 +4,7 @@ import { type AnalyticsPlatform } from "../../analytics/shared-properties";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { findOwnedGoal } from "../_utils/owned-goal";
+import { isTestOutPlusOnly } from "./_utils/test-out-access";
 import { loadChapterTestOut } from "./get-chapter-test-out";
 
 /**
@@ -22,13 +23,14 @@ export type TestOutQuestionsRequest =
     }
   | { decision: RefusedUsage; status: "refused" }
   | { status: "notFound" }
+  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
 /**
  * Decides what asking for a chapter's test-out questions does, when the learner taps to get the
  * test ready: skills the test-out samples without their share of questions get some written
  * (shared with placement, reviews and practice), claimed as small AI help first. Nothing is written
- * when the test-out already has every skill's share.
+ * when the test-out already has every skill's share, or when it comes with Plus.
  */
 export async function requestTestOutQuestions({
   chapterId,
@@ -41,6 +43,10 @@ export async function requestTestOutQuestions({
 
   if (owned.status !== "ready") {
     return owned;
+  }
+
+  if (await isTestOutPlusOnly(owned.goal)) {
+    return { status: "plusRequired" };
   }
 
   const testOut = await loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });

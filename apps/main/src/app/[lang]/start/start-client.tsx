@@ -5,6 +5,7 @@ import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { StartFlow } from "@zoonk/learn/onboarding";
+import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import {
   WEB_ONBOARDING_ACTIONS,
   WEB_ONBOARDING_ROUTES,
@@ -16,6 +17,7 @@ export function StartClient({
   buddy,
   canAttach,
   defaultGoal,
+  goalLimit,
   initialDraft,
   needsAccount,
   planId,
@@ -25,6 +27,8 @@ export function StartClient({
   /** An account can attach material; guests and visitors are asked to create one. */
   canAttach: boolean;
   defaultGoal: string;
+  /** A goal limit the learner already reached, said before they type. */
+  goalLimit: GoalLimitReason | null;
   initialDraft: OnboardingDraftView | null;
   /** A guest whose one goal is taken: only an account adds another. */
   needsAccount: boolean;
@@ -41,6 +45,7 @@ export function StartClient({
         canAttach={canAttach}
         defaultGoal={defaultGoal}
         fromSharedPlan={planId !== null}
+        goalLimit={goalLimit}
         initialDraft={initialDraft}
         navigation={navigation}
         needsAccount={needsAccount}

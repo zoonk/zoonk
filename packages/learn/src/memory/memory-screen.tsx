@@ -49,49 +49,26 @@ function applyFactEdit(facts: MemoryFactView[], edit: FactEdit): MemoryFactView[
   return facts.map((fact) => (fact.id === edit.id ? { ...fact, statement } : fact));
 }
 
-function groupByCategory({
-  categories,
-  facts,
-}: {
-  categories: MemoryCategory[];
-  facts: MemoryFactView[];
-}) {
-  return categories
-    .map((category) => ({ category, facts: facts.filter((fact) => fact.category === category) }))
-    .filter((group) => group.facts.length > 0);
+/** The order the Memory screen lists categories in: what they aim for first, then who they are. */
+const CATEGORY_ORDER: MemoryCategory[] = [
+  "goals",
+  "background",
+  "routine",
+  "preferences",
+  "learning",
+  "context",
+];
+
+function groupByCategory(facts: MemoryFactView[]) {
+  return CATEGORY_ORDER.map((category) => ({
+    category,
+    facts: facts.filter((fact) => fact.category === category),
+  })).filter((group) => group.facts.length > 0);
 }
 
-/** Minors' memory keeps only goals and learning, and starts off until they turn it on. */
-function isLearningOnly(categories: MemoryCategory[]): boolean {
-  return categories.every((category) => category === "goals" || category === "learning");
-}
-
-/**
- * What the switch does, said where it's turned on: a learner under 18 reads what memory would keep
- * and that they can ask an adult, before choosing.
- */
-function MemorySwitchDescription({
-  enabled,
-  learningOnly,
-  offByGuardian,
-}: {
-  enabled: boolean;
-  learningOnly: boolean;
-  offByGuardian: boolean;
-}) {
+/** What the switch does, said where it's turned on or off. */
+function MemorySwitchDescription({ enabled }: { enabled: boolean }) {
   const t = useExtracted();
-
-  if (offByGuardian) {
-    return t("Your guardian turned memory off.");
-  }
-
-  if (learningOnly) {
-    return enabled
-      ? t("Examples and answers that fit your goals and how you learn")
-      : t(
-          "Off. Turn it on and Zoonk remembers your goals and how you learn, to fit examples to you. Not sure? Ask a parent or guardian.",
-        );
-  }
 
   return enabled
     ? t("Personal examples and plans that fit your week")
@@ -100,13 +77,9 @@ function MemorySwitchDescription({
 
 function MemorySwitch({
   enabled,
-  learningOnly,
-  offByGuardian,
   onChange,
 }: {
   enabled: boolean;
-  learningOnly: boolean;
-  offByGuardian: boolean;
   onChange: (enabled: boolean) => void;
 }) {
   const t = useExtracted();
@@ -118,11 +91,7 @@ function MemorySwitch({
       <SettingCardText>
         <SettingCardLabel id={labelId}>{t("Use memory")}</SettingCardLabel>
         <SettingCardDescription id={descriptionId}>
-          <MemorySwitchDescription
-            enabled={enabled}
-            learningOnly={learningOnly}
-            offByGuardian={offByGuardian}
-          />
+          <MemorySwitchDescription enabled={enabled} />
         </SettingCardDescription>
       </SettingCardText>
 
@@ -131,7 +100,6 @@ function MemorySwitch({
           aria-describedby={descriptionId}
           aria-labelledby={labelId}
           checked={enabled}
-          disabled={offByGuardian}
           onCheckedChange={onChange}
         />
       </SettingCardControl>
@@ -205,23 +173,16 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
 
 /**
  * Everything Zoonk remembers, grouped by category, with where each fact came from. The learner can
- * correct or delete any fact (with undo), turn memory on or off and download it. Minors only see the
- * categories their memory may hold, and their memory starts off; a guardian can keep it off.
+ * correct or delete any fact (with undo), turn memory on or off and download it.
  */
 export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memory: MemoryView }) {
   const t = useExtracted();
   const screen = useMemoryScreen({ actions, memory });
-  const groups = groupByCategory({ categories: memory.categories, facts: screen.facts });
-  const learningOnly = isLearningOnly(memory.categories);
+  const groups = groupByCategory(screen.facts);
 
   return (
     <div className="flex flex-col gap-8" data-slot="memory-screen">
-      <MemorySwitch
-        enabled={screen.enabled}
-        learningOnly={learningOnly}
-        offByGuardian={memory.offByGuardian}
-        onChange={screen.setEnabled}
-      />
+      <MemorySwitch enabled={screen.enabled} onChange={screen.setEnabled} />
 
       {screen.lastChange && (
         <MemoryUpdated
@@ -270,13 +231,9 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
 
       <footer className="flex flex-col gap-4">
         <p className="text-muted-foreground px-1 text-sm">
-          {learningOnly
-            ? t(
-                "Zoonk only remembers your goals and how you learn, never health, religion or other sensitive details.",
-              )
-            : t(
-                "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
-              )}
+          {t(
+            "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to.",
+          )}
         </p>
         <MemoryExportButton exportMemory={actions.exportMemory} />
       </footer>

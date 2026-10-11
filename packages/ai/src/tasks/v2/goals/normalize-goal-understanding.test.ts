@@ -90,6 +90,25 @@ describe(normalizeGoalUnderstanding, () => {
     });
   });
 
+  it("writes the course an exam's learner aims for with a capital, as a name stands alone", () => {
+    const result = normalizeGoalUnderstanding({
+      raw: raw({
+        goals: [
+          rawGoal({
+            examName: "ENEM",
+            institution: "UFMG",
+            kind: "exam",
+            targetCourse: " medicina ",
+            title: "Passar no ENEM",
+          }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({ goals: [{ institution: "UFMG", targetCourse: "Medicina" }] });
+  });
+
   it("keeps the month the learner named for an exam, only a real one, and only for exams", () => {
     const result = normalizeGoalUnderstanding({
       raw: raw({

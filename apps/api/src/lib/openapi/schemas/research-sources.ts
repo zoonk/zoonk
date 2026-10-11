@@ -1,4 +1,5 @@
 import { researchResultSchema } from "@/workflows/v2/research/research-result";
+import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   examEditionSchema,
   examStructureSchema,
@@ -179,7 +180,8 @@ export const examBlueprintResourceSchema = z
   .object({
     board: z.string().nullable(),
     country: z.string(),
-    edition: examEditionSchema.meta({ id: "ExamEdition" }),
+    // The check of the reading is research's own bookkeeping, not part of the exam.
+    edition: examEditionSchema.omit({ check: true }).meta({ id: "ExamEdition" }),
     examDate: z.iso.datetime().nullable(),
     id: z.uuid(),
     language: z.string(),
@@ -233,6 +235,7 @@ export const goalUploadRequestResponseSchema = z
   .object({
     request: z
       .object({
+        examDocument: examDocumentSchema,
         goalId: z.uuid(),
         goalKind: z.enum(GoalKind),
         language: z
@@ -252,7 +255,12 @@ export const goalUploadRequestResponseSchema = z
 
 export const freshnessCommandRequestSchema = z
   .object({
-    command: z.enum(["checkNow", "stop"]),
+    command: z
+      .enum(["checkNow", "readAgain", "stop"])
+      .meta({
+        description:
+          "`checkNow` reads a notice or source again only when its document changed; `readAgain` reads an exam's stored notice again with today's instructions, even unchanged (the only way a stored reading is redone; exams only); `stop` ends its checks",
+      }),
     target: z.discriminatedUnion("kind", [
       z.object({ examBlueprintId: z.uuid(), kind: z.literal("exam") }),
       z.object({ kind: z.literal("source"), sourceId: z.uuid() }),
@@ -266,7 +274,7 @@ export const freshnessCommandResponseSchema = z
       .enum(["started", "stopped"])
       .meta({
         description:
-          "A check started, or no more checks until a learner's goal needs the exam or source again",
+          "A check or a reading started, or no more checks until a learner's goal needs the exam or source again",
       }),
   })
   .meta({ id: "FreshnessCommand" });

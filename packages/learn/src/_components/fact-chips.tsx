@@ -1,7 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
- * A short row of facts about one thing ("45 perguntas", "2h 45min"), each with its icon, instead of
+ * A short row of facts about one thing ("45 questions", "2h 45min"), each with its icon, instead of
  * label/value text pairs. A list, so screen readers count the facts.
  */
 export function FactChips({ className, ...props }: React.ComponentProps<"ul">) {

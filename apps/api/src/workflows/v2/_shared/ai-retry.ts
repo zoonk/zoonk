@@ -1,3 +1,4 @@
+import { isTimeoutError } from "@zoonk/ai/evaluate/timeout";
 import { isJsonObject } from "@zoonk/utils/json";
 import { RetryableError } from "workflow";
 
@@ -13,8 +14,9 @@ function isRateLimited(error: unknown): boolean {
 }
 
 /**
- * Runs AI work inside a step. A rate limit is retried after a minute instead of at once, so a
- * busy provider gets time to recover; every other error keeps the step's default retries.
+ * Runs AI work inside a step. A rate limit or a call past its deadline is retried after a minute
+ * instead of at once, so a busy provider gets time to recover and a burst of outlines finishes
+ * instead of failing; every other error keeps the step's default retries.
  */
 export async function withAiRetry<T>(run: () => Promise<T>): Promise<T> {
   try {
@@ -22,6 +24,12 @@ export async function withAiRetry<T>(run: () => Promise<T>): Promise<T> {
   } catch (error) {
     if (isRateLimited(error)) {
       throw new RetryableError("The AI provider is rate limiting; retrying in a minute.", {
+        retryAfter: "1m",
+      });
+    }
+
+    if (isTimeoutError(error)) {
+      throw new RetryableError("The AI provider is too busy to answer; retrying in a minute.", {
         retryAfter: "1m",
       });
     }

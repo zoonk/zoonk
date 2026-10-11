@@ -39,7 +39,7 @@ test.describe("Goal understandings API", () => {
   });
 
   test("understands words read today at once, keeps fixes and is where the learner continues", async () => {
-    const [{ api }, other] = await Promise.all([
+    const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "understanding" }),
       createBearerLearner({ baseURL, prefix: "understanding-other" }),
     ]);
@@ -53,6 +53,7 @@ test.describe("Goal understandings API", () => {
         goals: [{ kind: "learn", subject: "Welding", title: "Learn to weld" }],
         route: "goals",
       },
+      userId,
     });
 
     const response = await api.post("/v1/goal-understandings", {
@@ -91,13 +92,13 @@ test.describe("Goal understandings API", () => {
 
     expect(fixed.understanding).toMatchObject({ goals: [{ draft: { title: "Weld pipes" } }] });
 
-    const [notAnExam, badEdit, hidden] = await Promise.all([
-      api.patch(path, { data: { field: "examYear", goal: 0, value: 2030 } }),
+    const [pastDate, badEdit, hidden] = await Promise.all([
+      api.patch(path, { data: { field: "targetDate", goal: 0, value: "2001-01-01" } }),
       api.patch(path, { data: { field: "title", goal: 0 } }),
       other.api.get(path),
     ]);
 
-    expect([notAnExam.status(), badEdit.status(), hidden.status()]).toEqual([422, 400, 404]);
+    expect([pastDate.status(), badEdit.status(), hidden.status()]).toEqual([422, 400, 404]);
 
     await expect(
       readBody({
@@ -112,6 +113,15 @@ test.describe("Goal understandings API", () => {
         schema: onboardingResumeSchema,
       }),
     ).resolves.toStrictEqual({ resume: null });
+
+    // The reading is the learner's own: another learner's same words are read for them.
+    const theirs = await other.api.post("/v1/goal-understandings", {
+      data: { goal, language: "en", timeZone: "America/New_York" },
+    });
+
+    await expect(
+      readBody({ response: theirs, schema: onboardingDraftViewSchema, status: 202 }),
+    ).resolves.toMatchObject({ status: "understanding" });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
   });

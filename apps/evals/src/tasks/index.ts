@@ -5,6 +5,7 @@ import { assessPronunciationTask } from "./assess-pronunciation/task";
 import { challengeCaseTask } from "./challenge-case/task";
 import { changingFactsTask } from "./changing-facts/task";
 import { checkCitedFactsTask } from "./check-cited-facts/task";
+import { checkExamReadingTask } from "./check-exam-reading/task";
 import { citeMaterialTask } from "./cite-material/task";
 import { conversationFeedbackTask } from "./conversation-feedback/task";
 import { conversationObjectivesTask } from "./conversation-objectives/task";
@@ -15,6 +16,8 @@ import { courseIntentTask } from "./course-intent/task";
 import { courseOutlineTask } from "./course-outline/task";
 import { coverageCheckTask } from "./coverage-check/task";
 import { examIdentityDecisionTask } from "./exam-identity-decision/task";
+import { examSpeakingCardTask } from "./exam-speaking-card/task";
+import { examSpeakingScoreTask } from "./exam-speaking-score/task";
 import { exampleLinesTask } from "./example-lines/task";
 import { explainSpokenAnswerTask } from "./explain-spoken-answer/task";
 import { explainWrongAnswerTask } from "./explain-wrong-answer/task";
@@ -51,29 +54,39 @@ import { memoryInsightTask } from "./memory-insight/task";
 import { memoryReconcileTask } from "./memory-reconcile/task";
 import { memoryRelevanceTask } from "./memory-relevance/task";
 import { memorySearchTermsTask } from "./memory-search-terms/task";
+import { memorySessionPatternsTask } from "./memory-session-patterns/task";
 import { mindMapImageTask } from "./mind-map-image/task";
 import { mistakeCauseTask } from "./mistake-cause/task";
 import { mistakePatternTask } from "./mistake-pattern/task";
 import { pastQuestionsTask } from "./past-questions/task";
+import { pictureNeedTask } from "./picture-need/task";
 import { placementItemsTask } from "./placement-items/task";
 import { planEditIntentTask } from "./plan-edit-intent/task";
+import { planRoutineFitTask } from "./plan-routine-fit/task";
 import { questionGeneralityTask } from "./question-generality/task";
 import { quickExplanationTask } from "./quick-explanation/task";
 import { researchPlanTask } from "./research-plan/task";
 import { setupLessonOutlineTask } from "./setup-lesson-outline/task";
 import { skillGraphTask } from "./skill-graph/task";
 import { sourceChangeNoticeTask } from "./source-change-notice/task";
+import { sourceResearchPlanTask } from "./source-research-plan/task";
+import { speakingMockScenarioTask } from "./speaking-mock-scenario/task";
 import { speakingMockScoreTask } from "./speaking-mock-score/task";
 import { statuteDrillsTask } from "./statute-drills/task";
 import { stepVariantTask } from "./step-variant/task";
+import { topicSkillNamesTask } from "./topic-skill-names/task";
 import { transcribeSpeechTask } from "./transcribe-speech/task";
+import { translatePassMarksTask } from "./translate-pass-marks/task";
 import { understandGoalTask } from "./understand-goal/task";
 import { uploadVisibilityTask } from "./upload-visibility/task";
 import { workFieldTask } from "./work-field/task";
+import { writeItemSetTask } from "./write-item-set/task";
+import { writeListeningSetTask } from "./write-listening-set/task";
 
 export const TASKS: readonly RegisteredTask[] = [
   changingFactsTask,
   researchPlanTask,
+  sourceResearchPlanTask,
   findOfficialSourcesTask,
   findExamDateTask,
   findCourseWeightsTask,
@@ -83,11 +96,13 @@ export const TASKS: readonly RegisteredTask[] = [
   findChoiceOptionsTask,
   extractExamBlueprintTask,
   checkCitedFactsTask,
+  checkExamReadingTask,
   citeMaterialTask,
   answerFromMaterialTask,
   examIdentityDecisionTask,
   uploadVisibilityTask,
   sourceChangeNoticeTask,
+  translatePassMarksTask,
   lessonQuestionTask,
   courseIntentTask,
   imageInputSafetyRewriteTask,
@@ -98,6 +113,8 @@ export const TASKS: readonly RegisteredTask[] = [
   generateItemsTask,
   placementItemsTask,
   statuteDrillsTask,
+  writeListeningSetTask,
+  writeItemSetTask,
   pastQuestionsTask,
   workFieldTask,
   gradeTypedAnswerTask,
@@ -112,6 +129,7 @@ export const TASKS: readonly RegisteredTask[] = [
   courseIconTask,
   coverageCheckTask,
   lessonSpecTask,
+  pictureNeedTask,
   lessonWriterTask,
   lessonQualityCheckTask,
   lessonFixTask,
@@ -123,6 +141,8 @@ export const TASKS: readonly RegisteredTask[] = [
   goalTutorTask,
   mistakeCauseTask,
   planEditIntentTask,
+  planRoutineFitTask,
+  topicSkillNamesTask,
   understandGoalTask,
   memoryExtractionTask,
   memoryGateTask,
@@ -130,15 +150,19 @@ export const TASKS: readonly RegisteredTask[] = [
   memorySearchTermsTask,
   memoryRelevanceTask,
   memoryInsightTask,
+  memorySessionPatternsTask,
   languageLessonTask,
   explainSpokenAnswerTask,
   transcribeSpeechTask,
   assessPronunciationTask,
   conversationScenarioTask,
+  speakingMockScenarioTask,
+  examSpeakingCardTask,
   conversationFeedbackTask,
   conversationObjectivesTask,
   liveConversationTask,
   speakingMockScoreTask,
+  examSpeakingScoreTask,
   mistakePatternTask,
   levelTestBankTask,
   alphabetLessonTask,

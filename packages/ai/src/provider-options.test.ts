@@ -108,15 +108,59 @@ describe(chooseServiceTier, () => {
 });
 
 describe(buildImageProviderOptions, () => {
-  it("adds caller-owned image fallback models while preserving the openai image settings", () => {
+  it("lets shared Library pictures fall back to FLUX and Recraft, after Sunburst", () => {
     expect(
       buildImageProviderOptions({
-        fallbackModels: ["bfl/flux-kontext-max", "xai/grok-imagine-image"],
+        promptTraining: true,
         quality: "low",
+        size: "1024x1024",
+        useFallback: true,
       }),
     ).toStrictEqual({
-      gateway: { models: ["bfl/flux-kontext-max", "xai/grok-imagine-image"] },
+      gateway: {
+        models: [
+          "openai/gpt-image-2.5-sunburst",
+          "bfl/flux-3-image",
+          "recraft/recraft-v4.1-utility",
+        ],
+      },
       openai: { output_format: "webp", quality: "low" },
     });
+  });
+
+  it("leaves Recraft out of sizes it can't draw", () => {
+    expect(
+      buildImageProviderOptions({
+        promptTraining: true,
+        quality: "low",
+        size: "1024x1280",
+        useFallback: true,
+      }).gateway.models,
+    ).toStrictEqual(["openai/gpt-image-2.5-sunburst", "bfl/flux-3-image"]);
+  });
+
+  it("keeps pictures that can't train with providers that don't train on prompts", () => {
+    expect(
+      buildImageProviderOptions({
+        promptTraining: false,
+        quality: "medium",
+        size: "1024x1024",
+        useFallback: true,
+      }),
+    ).toStrictEqual({
+      gateway: { models: ["openai/gpt-image-2.5-sunburst"] },
+      openai: { output_format: "webp", quality: "medium" },
+    });
+  });
+
+  it("drops every fallback when an eval tests one model", () => {
+    expect(
+      buildImageProviderOptions({
+        promptTraining: true,
+        quality: "low",
+        size: "1024x1024",
+        useFallback: false,
+      }).gateway.models,
+    ).toStrictEqual([]);
   });
 });

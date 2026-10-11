@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isUnaidedRecall, rateAnswer } from "./answer-rating";
+import { gradeLessonAnswers, isUnaidedRecall, rateAnswer } from "./answer-rating";
 
 describe(rateAnswer, () => {
   it("rates a wrong answer Again", () => {
@@ -39,5 +39,33 @@ describe(isUnaidedRecall, () => {
     expect(isUnaidedRecall({ durationMs: 1000, isCorrect: true, score: 0.8 })).toBe(false);
     expect(isUnaidedRecall({ durationMs: 1000, isCorrect: true, usedHint: true })).toBe(false);
     expect(isUnaidedRecall({ durationMs: 1000, isCorrect: false })).toBe(false);
+  });
+});
+
+/** A lesson's grade from its screens' first answers, for lessons that have some. */
+function gradeLesson(firstAnswers: boolean[]) {
+  const grade = gradeLessonAnswers(firstAnswers);
+
+  if (!grade) {
+    throw new Error("Expected a grade");
+  }
+
+  return grade;
+}
+
+describe(gradeLessonAnswers, () => {
+  it("rates a lesson by its screens right the first time, never by its pace", () => {
+    expect(rateAnswer(gradeLesson([true, true, true, true, true, true, true, true]))).toBe("good");
+    expect(rateAnswer(gradeLesson([true, true, true, false]))).toBe("hard");
+    expect(rateAnswer(gradeLesson([true, false, false]))).toBe("again");
+  });
+
+  it("counts a lesson all right as a recall and one with a miss as not", () => {
+    expect(isUnaidedRecall(gradeLesson([true, true]))).toBe(true);
+    expect(isUnaidedRecall(gradeLesson([true, false]))).toBe(false);
+  });
+
+  it("has no grade for a lesson without answers", () => {
+    expect(gradeLessonAnswers([])).toBeNull();
   });
 });

@@ -26,6 +26,7 @@ const historicalLessonKindLabels: Record<string, string> = {
 const ledgerLessonKindLabels: Record<string, string> = {
   boss: "Boss",
   capsule: "Capsule review",
+  examSpeaking: "Exam speaking task",
   extraPractice: "Extra practice",
   finalBoss: "Final boss",
   library: "Library lesson",

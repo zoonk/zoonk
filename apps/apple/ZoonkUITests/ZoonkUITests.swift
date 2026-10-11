@@ -6,7 +6,6 @@ private enum UITestScenario: Equatable {
   case appleSubscription
   case freeSubscription
   case googleSubscription
-  case guardianApprovalSubscription
   case catalog
   case progress
   case progressActivityUnauthorized
@@ -22,7 +21,7 @@ private enum UITestScenario: Equatable {
       requiredSetupAccountJSON
     case .appleSubscription:
       accountJSON(provider: "apple")
-    case .freeSubscription, .guardianApprovalSubscription:
+    case .freeSubscription:
       accountJSON(provider: nil)
     case .googleSubscription:
       accountJSON(provider: "google")
@@ -47,8 +46,8 @@ private enum UITestScenario: Equatable {
       progressDaypartOnlyUITestSnapshotJSON
     case .progressEmpty:
       progressEmptyUITestSnapshotJSON
-    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription,
-      .guardianApprovalSubscription, .requiredSetup, .signedOut:
+    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription, .requiredSetup,
+      .signedOut:
       nil
     }
   }
@@ -59,15 +58,10 @@ private enum UITestScenario: Equatable {
       "activity-unauthorized"
     case .progressOverviewFailure:
       "overview-network"
-    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription,
-      .guardianApprovalSubscription, .progress, .progressDaypartOnly, .progressEmpty,
-      .requiredSetup, .signedOut:
+    case .appleSubscription, .catalog, .freeSubscription, .googleSubscription, .progress,
+      .progressDaypartOnly, .progressEmpty, .requiredSetup, .signedOut:
       nil
     }
-  }
-
-  var plusPurchase: String? {
-    self == .guardianApprovalSubscription ? "needsGuardianApproval" : nil
   }
 
   private var requiredSetupAccountJSON: String {
@@ -286,36 +280,6 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertFalse(
       app.buttons["Close"].exists,
       "Expected navigation Back to be the only way out of the pushed subscription screen")
-  }
-
-  /// Proves a learner under 18 asks a guardian instead of reaching the App Store offer.
-  @MainActor
-  func testLearnerUnder18AsksAGuardianBeforeSeeingPlus() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .guardianApprovalSubscription)
-    app.launch()
-    openAccount(in: app)
-
-    let subscription = app.buttons["Subscription"]
-    XCTAssertTrue(subscription.waitForExistence(timeout: 5))
-    subscription.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["Ask a guardian"].waitForExistence(timeout: 5),
-      "Expected a learner under 18 to be asked for a guardian's approval")
-    XCTAssertTrue(app.navigationBars["Zoonk Plus"].exists)
-    XCTAssertFalse(
-      app.staticTexts["Plus Monthly"].exists,
-      "Expected the App Store offer to stay hidden until a guardian approves")
-
-    app.buttons["Ask for approval"].tap()
-
-    XCTAssertTrue(
-      app.staticTexts["We emailed your guardian. Check again after they approve."]
-        .waitForExistence(timeout: 5),
-      "Expected the learner to see that their guardian was asked")
-    XCTAssertTrue(app.buttons["Check again"].exists)
   }
 
   /// Proves App Store ownership is visible before the native subscription-management sheet opens.
@@ -1220,10 +1184,6 @@ final class ZoonkUITests: XCTestCase {
 
     if let progressFailure = scenario.progressFailure {
       app.launchEnvironment["ZOONK_UI_TEST_PROGRESS_FAILURE"] = progressFailure
-    }
-
-    if let plusPurchase = scenario.plusPurchase {
-      app.launchEnvironment["ZOONK_UI_TEST_PLUS_PURCHASE"] = plusPurchase
     }
 
     return app

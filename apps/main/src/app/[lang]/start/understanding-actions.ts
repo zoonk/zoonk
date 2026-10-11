@@ -2,6 +2,7 @@
 
 import { postAsLearner } from "@/lib/api/learner-api";
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
+import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
 import {
   type OnboardingDraftView,
   goalUnderstandingInputSchema,
@@ -24,6 +25,11 @@ import { z } from "zod";
  */
 
 const TOO_MANY_REQUESTS = 429;
+
+/** A guest asked to create an account once the day's AI budget all guests share is spent. */
+const signUpRequiredSchema = z.object({
+  error: z.object({ code: z.literal(LESSON_PLAYER_ERROR_CODES.signUpRequired) }),
+});
 
 /** A plan's cap the API refused the run for (`USAGE_LIMIT_REACHED` with `details.limit`). */
 const limitSchema = z.object({
@@ -72,6 +78,10 @@ async function startRun(draft: OnboardingDraftView): Promise<StartUnderstandingO
     return { draft: started.data ?? draft, status: "started" };
   }
 
+  if (signUpRequiredSchema.safeParse(response.json).success) {
+    return { status: "signUpRequired" };
+  }
+
   const limit = limitSchema.safeParse(response.json).data?.error.details.limit;
 
   if (limit) {
@@ -115,7 +125,9 @@ export async function startUnderstandingAction(input: unknown): Promise<StartUnd
     return toLimitOutcome(result.limit);
   }
 
-  return result.status === "slowDown" ? result : { status: "failed" };
+  return result.status === "slowDown" || result.status === "signUpRequired"
+    ? result
+    : { status: "failed" };
 }
 
 export async function getUnderstandingAction(draftId: string): Promise<OnboardingDraftView | null> {

@@ -1,10 +1,12 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getDayBeforePlan, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
 import { getExamDayChecklist, getExamStage } from "../final-stretch/final-stretch-rules";
 import { loadFinalStretchStart } from "../final-stretch/load-final-stretch-start";
+import { listExamTools } from "./_utils/exam-tools";
 import { loadExamWork } from "./_utils/exam-work";
 import { type ExamMomentView } from "./exam-view-contract";
 
@@ -73,8 +75,11 @@ export async function loadExamMoment({
     loadShortPlanDay({ goal, today }),
   ]);
 
+  const hasChecklist = CHECKLIST_STAGES.has(stage);
+  const structure = blueprint ? readBlueprintContent(blueprint).structure : null;
+
   return {
-    checklist: CHECKLIST_STAGES.has(stage) ? getExamDayChecklist(blueprint) : [],
+    checklist: hasChecklist ? getExamDayChecklist(blueprint) : [],
     day: pickDay({ days: calendar.days, today }),
     dayBefore: getDayBeforePlan({ includesMockExams, shortPlan, today }),
     examName: blueprint?.name ?? goal.title,
@@ -84,5 +89,6 @@ export async function loadExamMoment({
     sessionsDone: work.sessionsDone,
     stage,
     timeZone: calendar.timeZone,
+    tools: hasChecklist ? listExamTools(structure) : [],
   };
 }

@@ -1,10 +1,12 @@
 import "server-only";
-import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { type Attempt, type Goal, type ItemFormat, type PlanItem, prisma } from "@zoonk/db";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { fitsExamChoice, getExamChoiceFormat } from "../../../library/exams/exam-choice-format";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
+import { type ItemSetPick, listItemSetsForSkills } from "../../../library/items/item-sets";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
+import { type MockFormat, getItemFormatKey, getMockFormatMix } from "../mock-format-mix";
 import { type MockCandidate } from "../mock-plan";
 
 /** Fewer exam questions than this and the goal's own questions stand in for the exam's. */
@@ -73,17 +75,52 @@ export async function loadSkillAreas(goalId: string): Promise<Map<string, string
   return new Map([...taughtAreas.toReversed(), ...graphAreas]);
 }
 
+/**
+ * The formats a mock asks besides picks, as the exam's notice lists them: a number typed into an
+ * answer box (`numeric`), a word or a short answer typed in (`typed`, only questions with the
+ * wordings code accepts, so a model grades just the misses).
+ */
+function listTypedFormats(structure: ExamStructure | null): ItemFormat[] {
+  const kinds = new Set(structure?.formats.map((format) => format.kind));
+
+  return [
+    ...(kinds.has("numeric") ? (["numeric"] as const) : []),
+    ...(kinds.has("shortAnswer") ? (["typed"] as const) : []),
+  ];
+}
+
+/** Bank questions in the formats a mock asks: picks, and the exam's typed formats. */
+export function getFormatFilter(typed: readonly ItemFormat[]) {
+  return {
+    OR: [
+      {
+        format: { in: [...GRADABLE_ITEM_FORMATS, ...typed.filter((format) => format !== "typed")] },
+      },
+      ...(typed.includes("typed")
+        ? [
+            {
+              NOT: { content: { equals: [], path: ["acceptedAnswers"] } },
+              format: "typed" as const,
+            },
+          ]
+        : []),
+    ],
+  };
+}
+
 async function loadItems({
   examBlueprintId,
   itemIds,
   skillIds,
+  typed,
 }: {
   examBlueprintId: string | null;
   itemIds: readonly string[] | null;
   skillIds: readonly string[];
+  typed: readonly ItemFormat[];
 }) {
   const where = {
-    format: { in: [...GRADABLE_ITEM_FORMATS] },
+    ...getFormatFilter(typed),
     ...(itemIds
       ? { id: { in: [...itemIds] } }
       : { skillId: { in: [...skillIds] }, ...getItemAudienceFilter({ examBlueprintId }) }),
@@ -99,11 +136,131 @@ async function loadItems({
     : prisma.item.findMany({ orderBy: { id: "asc" }, where });
 }
 
+type LastAnswer = Omit<Attempt, "answer">;
+
 /**
- * Questions a mock may ask: choice questions on the goal's skills (the exam's own when it has
- * enough) that the learner has never answered, since repeats would inflate the score, in the
- * exam's own choice format with its number of options (ENEM never asks four options). With
- * `itemIds`, only those questions, to rebuild the sections of a mock already picked.
+ * The order a mock asks answered questions again: the ones the learner got wrong last time first,
+ * then the ones answered longest ago, so a repeat is worth the most and remembered the least.
+ */
+function byReuseOrder(first: LastAnswer, second: LastAnswer): number {
+  if (first.isCorrect !== second.isCorrect) {
+    return first.isCorrect ? 1 : -1;
+  }
+
+  return first.answeredAt.getTime() - second.answeredAt.getTime();
+}
+
+/** The learner's latest answer to each of these questions they ever answered, in reuse order. */
+async function loadLastAnswers({
+  itemIds,
+  userId,
+}: {
+  itemIds: readonly string[];
+  userId: string;
+}): Promise<LastAnswer[]> {
+  const answers = await prisma.attempt.findMany({
+    distinct: ["itemId"],
+    omit: { answer: true },
+    orderBy: [{ itemId: "asc" }, { answeredAt: "desc" }],
+    where: { itemId: { in: [...itemIds] }, userId },
+  });
+
+  return answers.toSorted(byReuseOrder);
+}
+
+type BankItem = Awaited<ReturnType<typeof loadItems>>[number];
+
+type CandidateUnit = { answered: boolean; candidates: MockCandidate[]; key: string };
+
+/** A question's place in its set, for a mock rebuilt from the questions it picked (whole sets). */
+function toPickedSet({ item, items }: { item: BankItem; items: readonly BankItem[] }) {
+  const { setId } = item;
+
+  return setId
+    ? {
+        id: setId,
+        position: item.setPosition ?? 0,
+        size: items.filter((other) => other.setId === setId).length,
+      }
+    : undefined;
+}
+
+/**
+ * The sets on the mock's skills a mock may ask (a text, a case or a chart several questions read;
+ * recordings belong to listening sections), whole: each only when all of its questions are in the
+ * exam's formats, its questions in the set's order, all in the area of its first skill that has
+ * one, so a set stays in one section.
+ */
+async function loadSetUnits({
+  areas,
+  fits,
+  goal,
+  mix,
+  skillIds,
+  typed,
+  userId,
+}: {
+  areas: ReadonlyMap<string, string>;
+  fits: (item: BankItem) => boolean;
+  goal: Pick<Goal, "examBlueprintId">;
+  mix: readonly MockFormat[];
+  skillIds: readonly string[];
+  typed: readonly ItemFormat[];
+  userId: string;
+}): Promise<CandidateUnit[]> {
+  const listed = await listItemSetsForSkills({
+    examBlueprintId: goal.examBlueprintId,
+    skillIds,
+    userId,
+  });
+
+  const sets = listed.filter((set) => set.kind !== "audio");
+
+  const rows = await prisma.item.findMany({
+    where: {
+      AND: [
+        getFormatFilter(typed),
+        { id: { in: sets.flatMap((set) => set.items.map((item) => item.id)) } },
+      ],
+    },
+  });
+
+  const byId = new Map(rows.map((row) => [row.id, row]));
+
+  return sets.flatMap((set: ItemSetPick): CandidateUnit[] => {
+    const members = set.items.flatMap((item) => byId.get(item.id) ?? []);
+
+    if (members.length < set.items.length || !members.every((member) => fits(member))) {
+      return [];
+    }
+
+    const area = set.skillIds.map((skillId) => areas.get(skillId)).find(Boolean) ?? null;
+    const answered = set.lastAnsweredAt !== null;
+
+    const candidates = members.map((member, position) => ({
+      answered,
+      area,
+      difficulty: member.difficulty,
+      format: getItemFormatKey({ item: member, mix }),
+      itemId: member.id,
+      set: { id: set.id, position, size: members.length },
+      skillId: member.skillId,
+    }));
+
+    return [{ answered, candidates, key: set.id }];
+  });
+}
+
+/**
+ * Questions a mock may ask: questions on the goal's skills (the exam's own when it has enough),
+ * in the exam's own formats: its choice format with its number of options (ENEM never asks four
+ * options), and the numbers and words typed in that its notice lists, and the sets of questions
+ * that read one text whole (see `loadSetUnits`). The ones the learner has never answered come
+ * first, sets among them in the order they were written; the ones they answered follow, marked
+ * `answered`, the missed ones first and then the ones answered longest ago, then the sets answered
+ * longest ago, for a mock to ask again only once it has no new ones left, since repeats inflate
+ * the score. With `itemIds`, only those questions, to rebuild the sections of a mock already
+ * picked.
  */
 export async function loadMockCandidates({
   goal,
@@ -119,30 +276,68 @@ export async function loadMockCandidates({
   structure?: ExamStructure | null;
   userId: string;
 }): Promise<MockCandidate[]> {
+  const typed = listTypedFormats(structure);
+  const mix = getMockFormatMix(structure);
+
   const [loaded, areas] = await Promise.all([
-    loadItems({ examBlueprintId: goal.examBlueprintId, itemIds, skillIds }),
+    loadItems({ examBlueprintId: goal.examBlueprintId, itemIds, skillIds, typed }),
     goal.id ? loadSkillAreas(goal.id) : new Map<string, string>(),
   ]);
 
   const choice = getExamChoiceFormat(structure);
-  const items = itemIds ? loaded : loaded.filter((item) => fitsExamChoice({ choice, item }));
 
-  const seen = itemIds
-    ? []
-    : await prisma.attempt.findMany({
-        distinct: ["itemId"],
-        select: { itemId: true },
-        where: { itemId: { in: items.map((item) => item.id) }, userId },
-      });
+  const items = itemIds
+    ? loaded
+    : loaded.filter((item) => typed.includes(item.format) || fitsExamChoice({ choice, item }));
 
-  const seenIds = new Set(seen.map((attempt) => attempt.itemId));
+  const [answers, sets] = await Promise.all([
+    loadLastAnswers({ itemIds: items.map((item) => item.id), userId }),
+    itemIds
+      ? []
+      : loadSetUnits({
+          areas,
+          fits: (item) => typed.includes(item.format) || fitsExamChoice({ choice, item }),
+          goal,
+          mix,
+          skillIds,
+          typed,
+          userId,
+        }),
+  ]);
 
-  return items
-    .filter((item) => !seenIds.has(item.id))
-    .map((item) => ({
+  const answered = new Set(answers.map((answer) => answer.itemId));
+  const byId = new Map(items.map((item) => [item.id, item]));
+
+  const toCandidate = (item: BankItem): MockCandidate => {
+    const set = itemIds ? toPickedSet({ item, items }) : undefined;
+
+    return {
+      answered: answered.has(item.id),
       area: areas.get(item.skillId) ?? null,
       difficulty: item.difficulty,
+      format: getItemFormatKey({ item, mix }),
       itemId: item.id,
+      ...(set ? { set } : {}),
       skillId: item.skillId,
-    }));
+    };
+  };
+
+  const fresh = [
+    ...items
+      .filter((item) => !answered.has(item.id))
+      .map((item): CandidateUnit => ({
+        answered: false,
+        candidates: [toCandidate(item)],
+        key: item.id,
+      })),
+    ...sets.filter((set) => !set.answered),
+  ].toSorted((first, second) => first.key.localeCompare(second.key));
+
+  return [
+    ...fresh.flatMap((unit) => unit.candidates),
+    ...answers
+      .flatMap((answer) => byId.get(answer.itemId ?? "") ?? [])
+      .map((item) => toCandidate(item)),
+    ...sets.filter((set) => set.answered).flatMap((set) => set.candidates),
+  ];
 }

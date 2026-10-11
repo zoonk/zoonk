@@ -1,4 +1,5 @@
 import { targetCutoffSchema } from "@zoonk/core/exams/cutoffs/contract";
+import { examDocumentSchema } from "@zoonk/core/exams/document";
 import { EXAM_DAY_CHECKLIST_KEYS, EXAM_STAGES } from "@zoonk/core/exams/final-stretch/rules";
 import {
   MOCK_PURPOSES,
@@ -7,15 +8,19 @@ import {
   netCalibrationSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { examResultScaleSchema } from "@zoonk/core/exams/results/contract";
-import { EXAM_SCALES } from "@zoonk/core/exams/scales";
 import {
   DAY_BEFORE_PLANS,
   type ExamMomentView,
   type ExamView,
 } from "@zoonk/core/exams/view/contract";
 import { speakingMockExamSchema } from "@zoonk/core/language/conversations/contract";
+import { speakingPaperViewSchema } from "@zoonk/core/language/exam-speaking/contract";
 import { TOPIC_FREQUENCY_LEVELS } from "@zoonk/core/library/exams/blueprint-contract";
+import { passMarksSchema } from "@zoonk/core/library/exams/pass-marks";
 import { z } from "zod";
+import { examMockProgressSchema } from "./exam-progress";
+import { examScoringSchema } from "./exam-scoring";
+import { noSittingSchema, noticeDaySchema } from "./notice-dates";
 import { estimatedScoreSchema } from "./preparation";
 import { logicalDateSchema } from "./study-sessions";
 
@@ -84,6 +89,12 @@ export const examMomentSchema = z
     sessionsDone: z.number().int().min(0),
     stage: z.enum(EXAM_STAGES).exclude(["preparing"]),
     timeZone: z.string().nullable(),
+    tools: z
+      .array(z.string())
+      .meta({
+        description:
+          "What the notice lets candidates use or gives them (calculator, formula sheet, legislation), beside the checklist; empty without it",
+      }),
   })
   .meta({ id: "ExamMoment" }) satisfies z.ZodType<ExamMomentView>;
 
@@ -107,7 +118,7 @@ const examMapSubjectSchema = z.object({
     .nullable()
     .meta({
       description:
-        'The notice\'s group for the subject, such as "Conhecimentos básicos (P1)"; null when the notice has none',
+        "The notice's group for the subject, such as its basic knowledge part (P1); null when the notice has none",
     }),
   level: examMapLevelSchema.nullable(),
   name: z.string(),
@@ -161,6 +172,7 @@ export const examViewResponseSchema = z
       }),
     daysLeft: z.number().int().nullable(),
     estimate: estimatedScoreSchema.nullable(),
+    examDocument: examDocumentSchema,
     examName: z.string(),
     format: z
       .array(examFormatDaySchema)
@@ -180,6 +192,15 @@ export const examViewResponseSchema = z
               "The id its result opens by (GET /v1/mocks/{blockId}): its session block's for a mock the plan scheduled, its own for one taken any time",
           }),
         correct: z.number().int().min(0),
+        examQuestions: z
+          .number()
+          .int()
+          .min(0)
+          .nullable()
+          .meta({
+            description:
+              "The exam's questions for what it sat, when it asked fewer (the bank had too few new ones): say how many it asked of them. Null when it asked them all",
+          }),
         finishedAt: z.iso.datetime(),
         measure: z
           .number()
@@ -201,6 +222,12 @@ export const examViewResponseSchema = z
         description:
           "Mock exams come with Plus and the learner's plan doesn't include them: show them (the next one too) locked, with a way to Plus, never hidden",
       }),
+    namedMonth: z
+      .boolean()
+      .meta({
+        description:
+          "The one day is the start of the month the learner named, standing for that month: show the month, not the day",
+      }),
     nextMock: z
       .object({
         date: logicalDateSchema.nullable(),
@@ -217,31 +244,35 @@ export const examViewResponseSchema = z
         description:
           "The plan's next mock exam, also when the learner's plan doesn't include mocks (`mocksRequirePlus`); null when the next checkpoint isn't one",
       }),
-    passMarks: z
-      .array(z.string())
-      .meta({ description: "What it takes to pass, as the notice says it; empty when it doesn't" }),
+    noSitting: noSittingSchema,
+    noticeDay: noticeDaySchema,
+    passMarks: passMarksSchema
+      .nullable()
+      .meta({
+        description:
+          "What it takes to pass, as the notice says it, saying its language when it isn't the learner's; null when it doesn't, or when `scoring.noticeScale.passScore` says it",
+      }),
     prepared: z
       .boolean()
       .meta({
         description:
           "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished): say they prepared only when true",
       }),
+    progress: examMockProgressSchema
+      .nullable()
+      .meta({
+        description:
+          "How the learner's mocks went over time: each one's score (the latest twenty, oldest first), each subject's trend, what got better and what still needs work. Null before the first finished mock, and when mocks need Plus (`mocksRequirePlus`): show it locked, never hidden",
+      }),
     result: examResultResponseSchema.nullable(),
-    scoring: z.object({
-      method: z.enum(MOCK_SCORINGS),
-      note: z.string().nullable(),
-      scale: z
-        .enum(EXAM_SCALES)
-        .nullable()
-        .meta({ description: "The exam's own scale, which estimates and results use" }),
-      stated: z
-        .boolean()
-        .meta({
-          description:
-            "The notice says how the exam is scored. False when `method` is the mocks' default (a class test from the learner's material, a notice that doesn't say): don't give advice from it",
-        }),
-    }),
+    scoring: examScoringSchema,
     sessionsDone: z.number().int().min(0),
+    speaking: speakingPaperViewSchema
+      .nullable()
+      .meta({
+        description:
+          "DELE, DELF or DALF, Goethe-Zertifikat and Cambridge English goals: the exam's speaking paper, each task started with POST /v1/language-conversations (kind examSpeaking) and run as a live call with the AI as examiner or partner. Tasks come with Plus (`access`); show them locked, never hidden. Null for other exams",
+      }),
     speakingMock: speakingMockExamSchema
       .nullable()
       .meta({
@@ -254,5 +285,11 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({ description: "The score the learner said they aim for, in their words" }),
     timeZone: z.string().nullable(),
+    tools: z
+      .array(z.string())
+      .meta({
+        description:
+          "What the notice lets candidates use or gives them (calculator, formula sheet, legislation), for exam day's checklist",
+      }),
   })
   .meta({ id: "ExamView" }) satisfies z.ZodType<ExamView>;

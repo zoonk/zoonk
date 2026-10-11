@@ -9,6 +9,7 @@ import {
   getValues,
 } from "../../items/_utils/math-values";
 import { checkItem } from "../../items/item-checks";
+import { repairItem } from "../../items/item-repairs";
 
 /** A lesson check shows the right answer and at most three wrong methods, like other checks. */
 const MAX_WRONG_OPTIONS = 3;
@@ -84,14 +85,34 @@ function getWrongOptions({
   return distinct.filter((option) => option.text !== correct.text).slice(0, MAX_WRONG_OPTIONS);
 }
 
+/** The calculation with what code repairs in a numeric item's texts (`repairItem`). */
+function repairCalculation({
+  input,
+  language,
+}: {
+  input: MathCheckInput;
+  language: string;
+}): MathCheckInput {
+  const { context, math, question } = input;
+
+  const item = repairItem({
+    item: { context, difficulty: "medium", format: "numeric", math, otherSolutions: [], question },
+    language,
+  });
+
+  return item.format === "numeric"
+    ? { ...input, context: item.context, math: item.math, question: item.question }
+    : input;
+}
+
 /**
  * Turns a calculation written as data into a multiple-choice check whose
  * numbers code computed: the right option from the solution and one wrong
  * option per common mistake, in increasing order. The same math is stored as
- * an item so reviews can ask it again with new numbers.
+ * an item so reviews can ask it again with new numbers. Code repairs its texts first.
  */
 export function toMathCheckContent({
-  input,
+  input: written,
   language,
 }: {
   input: MathCheckInput;
@@ -103,11 +124,12 @@ export function toMathCheckContent({
       content: { context?: string; options: object[]; question: string };
       item: Omit<MathCheckInput, "correctReason">;
     } {
+  const input = repairCalculation({ input: written, language });
   const { context, math, question } = input;
 
   const problems = checkItem({
     expectedFormat: "numeric",
-    item: { context, difficulty: "medium", format: "numeric", math, question },
+    item: { context, difficulty: "medium", format: "numeric", math, otherSolutions: [], question },
     language,
   });
 

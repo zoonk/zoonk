@@ -1,11 +1,24 @@
-import { type LessonVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
+import { PARTIAL_CREDIT_RULES } from "@zoonk/ai/tasks/v2/research/partial-credit";
 import { type MistakeCause } from "@zoonk/db";
 import { z } from "zod";
 import { type ExamDayChecklistItem } from "../../checkpoints/weekly-challenge-rules";
+import { type SpeakingSectionView } from "../../language/exam-speaking/speaking-contract";
 import { answerTimeZoneSchema } from "../../learner/contract";
+import { sectionNavigationSchema } from "../../library/exams/blueprint-contract";
+import { type PassMarks } from "../../library/exams/pass-marks";
 import { type TrueFalseLabels } from "../../library/exams/true-false-labels";
-import { type ItemImage } from "../../library/items/item-image";
-import { type ItemCitation } from "../../library/sources/source-citation";
+import { type EssayView } from "../essays/essay-contract";
+import { type ExamDocument } from "../exam-document";
+import {
+  type MockAdaptView,
+  type MockCurrentSection,
+  type MockEssayView,
+  type MockLeftOut,
+  type MockReviewEntry,
+  type MockScoreNotes,
+  type MockSectionView,
+  type MockSizeSource,
+} from "./mock-view-contract";
 
 /**
  * How a mock is scored, from the blueprint: item response theory (ENEM), wrong-cancels-right
@@ -58,11 +71,29 @@ export type MockShape = z.infer<typeof mockShapeSchema>;
 const routingSchema = z.object({ easier: z.array(z.string()), harder: z.array(z.string()) });
 
 const mockSectionSchema = z.object({
+  /** The break after it, before the next section's clock starts; none for older mocks. */
+  breakAfterMinutes: z.int().min(1).nullable().optional(),
+  /** The essays a full mock's written part asks on the section's clock; none for older mocks. */
+  essays: z.array(z.string()).default([]),
   itemIds: z.array(z.string()),
+  /**
+   * `listening`: its questions are on recordings it plays; `speaking`: the speaking paper, its
+   * tasks live calls; absent for the others.
+   */
+  kind: z.enum(["listening", "speaking"]).optional(),
   minutes: z.int().min(1),
   name: z.string().nullable(),
+  /** How candidates move through it, as the notice says; none moves freely (older mocks too). */
+  navigation: sectionNavigationSchema.nullable().optional(),
   questions: z.int().min(0),
   routing: routingSchema.nullable(),
+  /**
+   * A speaking section's paper, once the learner reached it and its task cards were written
+   * (`startMockSpeaking`): one per mock, kept so a reload never writes another.
+   */
+  speakingSectionId: z.uuid().nullable().optional(),
+  /** What may be used or is given in it, in the notice's words; none for older mocks. */
+  tools: z.string().nullable().optional(),
 });
 
 /**
@@ -71,8 +102,24 @@ const mockSectionSchema = z.object({
  */
 export const mockConditionsSchema = z.object({
   day: z.int().nullable(),
+  /**
+   * The questions of the exam (or of the part of it) a mock taken any time sits, when it asks
+   * fewer: the bank had too few new ones, and a full mock never repeats answered ones to make up
+   * for them. Null when it asks them all, and for the plan's own mocks and older ones.
+   */
+  examQuestions: z.int().min(0).nullable().default(null),
   fullLength: z.boolean(),
+  /**
+   * How a question with several picks scores when partly right, as the notice says (see
+   * `getPickCredit`); only every right option earns it for older mocks and notices that don't say.
+   */
+  partialCredit: z.enum(PARTIAL_CREDIT_RULES).default("allOrNothing"),
   purpose: z.enum(MOCK_PURPOSES).default("planned"),
+  /**
+   * Questions it asks that the learner answered before, which a mock asks only once the bank has
+   * no new ones left for them (the missed ones first).
+   */
+  reused: z.int().min(0).default(0),
   scoring: z.enum(MOCK_SCORINGS),
   sections: z.array(mockSectionSchema),
   /** What a mock taken any time sits; null for the plan's own and a placement one. */
@@ -81,43 +128,11 @@ export const mockConditionsSchema = z.object({
   timeZone: z.string().nullable(),
   /** Sections that ended because their time ran out, not because the learner submitted them. */
   timedOutSections: z.array(z.int()).default([]),
+  /** For `net`, the share of a right answer each wrong one takes away (1 for older mocks). */
+  wrongPenalty: z.number().min(0).max(1).default(1),
 });
 
 export type MockConditions = z.infer<typeof mockConditionsSchema>;
-
-/** A pick in a mock: an option or true/false. Null leaves the question blank. */
-export const mockChoiceSchema = z
-  .union([
-    z.object({ selectedIndex: z.int().min(0) }).strict(),
-    z.object({ isTrue: z.boolean() }).strict(),
-  ])
-  .meta({ id: "MockChoice" });
-
-export type MockChoice = z.infer<typeof mockChoiceSchema>;
-
-/** A stored draft's pick; anything else reads as blank. */
-export function readMockChoice(value: unknown): MockChoice | null {
-  return mockChoiceSchema.safeParse(value).data ?? null;
-}
-
-/** An hour covers the slowest question; anything longer is a tab left open. */
-const MAX_ANSWER_DURATION_MS = 3_600_000;
-
-export const mockAnswerInputSchema = z
-  .object({
-    answer: mockChoiceSchema.nullable().meta({ description: "Null leaves the question blank" }),
-    durationMs: z
-      .int()
-      .min(0)
-      .max(MAX_ANSWER_DURATION_MS)
-      .meta({ description: "Total time spent on the question so far" }),
-    flagged: z.boolean().meta({ description: "Marked to come back to; also means unsure" }),
-    itemId: z.uuid(),
-  })
-  .strict()
-  .meta({ id: "MockAnswerInput" });
-
-export type MockAnswerInput = z.infer<typeof mockAnswerInputSchema>;
 
 export const mockTimeZoneInputSchema = z
   .object({ timeZone: answerTimeZoneSchema })
@@ -126,8 +141,12 @@ export const mockTimeZoneInputSchema = z
 
 export type MockTimeZoneInput = z.infer<typeof mockTimeZoneInputSchema>;
 
+/**
+ * `correct` counts right answers, plus the share a multi-pick question answered partly right
+ * earned where the notice gives partial credit (two decimals).
+ */
 const areaResultSchema = z.object({
-  correct: z.int(),
+  correct: z.number(),
   name: z.string(),
   /** An area's estimated score on the exam's scale; only for item response theory. */
   score: z.object({ high: z.number(), low: z.number(), score: z.number() }).nullable(),
@@ -152,7 +171,7 @@ export const netCalibrationSchema = z
   .object({
     advice: z.enum(["blankUnsure", "keepAnswering"]).nullable(),
     blankingGain: z
-      .int()
+      .number()
       .meta({ description: "Net points leaving unsure answers blank would have gained" }),
     sure: calibrationGroupSchema,
     unsure: calibrationGroupSchema.meta({ description: "Answers the learner flagged" }),
@@ -172,7 +191,8 @@ export const mockResultSchema = z
     coherence: z
       .object({ easyWrong: z.int(), hardRight: z.int(), isCoherent: z.boolean() })
       .nullable(),
-    correct: z.int(),
+    /** Right answers, with partial credit's shares (see `areaResultSchema`). */
+    correct: z.number(),
     irt: z
       .object({
         high: z.number(),
@@ -184,7 +204,17 @@ export const mockResultSchema = z
       .nullable(),
     minutesUsed: z.number(),
     net: z
-      .object({ blank: z.int(), max: z.int(), net: z.int(), right: z.int(), wrong: z.int() })
+      .object({
+        blank: z.int(),
+        max: z.int(),
+        net: z.number(),
+        /** Answers partly right, each earning its share of a point; none for older mocks. */
+        partial: z.int().default(0),
+        /** The share of a right answer each wrong one took away (1 for older mocks). */
+        penalty: z.number().default(1),
+        right: z.int(),
+        wrong: z.int(),
+      })
       .nullable(),
     plannedMinutes: z.number(),
     preparation: z.object({ after: z.number(), before: z.number() }).nullable(),
@@ -201,57 +231,6 @@ export const mockResultSchema = z
 
 export type MockResult = z.infer<typeof mockResultSchema>;
 
-/** A question as the learner sees it during the mock: never the answer or why. */
-export type MockQuestion = {
-  area: string | null;
-  context: string | null;
-  format: "multipleChoice" | "trueFalse";
-  /** The figure the question is about, when it's about one. */
-  image: ItemImage | null;
-  itemId: string;
-  /** Its number across the whole mock, as the answer sheet counts. */
-  number: number;
-  options: string[] | null;
-  question: string;
-  skillId: string;
-  /** A chart or timeline the question reads, drawn from its data. */
-  visual: LessonVisual | null;
-};
-
-export type MockDraft = {
-  answer: MockChoice | null;
-  durationMs: number;
-  flagged: boolean;
-  itemId: string;
-};
-
-export type MockSectionView = {
-  index: number;
-  minutes: number;
-  name: string | null;
-  questions: number;
-  status: "current" | "done" | "upcoming";
-};
-
-/** A question missed or left blank, with the right answer and why, once the mock is over. */
-export type MockReviewEntry = {
-  area: string | null;
-  /**
-   * The passage it quotes, such as an article of law, with its source's title, link and the date
-   * it was last checked.
-   */
-  citation: ItemCitation | null;
-  /** For true or false questions, the answers are "true" or "false", shown in the app's words. */
-  correctAnswer: string | null;
-  explanation: string | null;
-  format: "multipleChoice" | "trueFalse";
-  itemId: string;
-  learnerAnswer: string | null;
-  number: number;
-  outcome: "blank" | "wrong";
-  question: string;
-};
-
 /**
  * The mock screen (the weekly mock exam, the Big Challenge, or a mock taken any time): before it
  * starts, the exam's conditions and the day's checklist; while it runs, the current section's
@@ -264,28 +243,51 @@ export type MockView = {
   /** The id it opens by: its session block's, or its own for a mock taken any time. */
   blockId: string;
   brainPower: number;
+  /** On the break between two sections: when the next one's clock starts (it can start earlier). */
+  breakUntil: string | null;
   canMove: boolean;
   checklist: ExamDayChecklistItem[];
-  current: {
-    deadline: string;
-    drafts: MockDraft[];
-    questions: MockQuestion[];
-    section: number;
-  } | null;
+  current: MockCurrentSection | null;
   /** The session's day, YYYY-MM-DD. */
   date: string;
+  /** Which exam day it copies, when the exam runs over several days. */
+  day: number | null;
+  /** The rubric its essays are graded by; null when it asks none. */
+  essayRubric: EssayView["rubric"] | null;
+  /** What it leaves out of the real exam, each with why (see `MockLeftOut`). */
+  leftOut: MockLeftOut[];
+  /** A full mock's essays once it's over, each with its grade or why there's none yet. */
+  essays: MockEssayView[];
+  /** What the exam's official documents are, for the screen's words (see `ExamDocument`). */
+  examDocument: ExamDocument;
   examName: string | null;
+  /**
+   * The exam's questions for what it sits, when it asks fewer (`MockConditions.examQuestions`):
+   * the screen says how many it asks of them. Null when it asks them all.
+   */
+  examQuestions: number | null;
   fullLength: boolean;
   goalId: string | null;
   minutes: number;
   mistakes: { cause: MistakeCause | null; count: number }[];
   /** "Mock exam 3": this goal's mocks, counting this one. */
   number: number;
+  /**
+   * What it takes to pass, in the notice's own words (such as at least half of the answers right),
+   * for a mock of the whole exam (see `getPassMarks`); null for a part of it, or an exam without a
+   * pass mark.
+   */
+  passMarks: PassMarks | null;
   /** The plan item it plays, whose intro is the challenge page; null for an unplanned one. */
   planItemId: string | null;
   purpose: MockPurpose;
   questions: number;
   result: MockResult | null;
+  /**
+   * Questions it asks that the learner answered before, because the bank had no new ones left for
+   * them: the ones they missed first, then the ones answered longest ago. The screen says so.
+   */
+  reusedQuestions: number;
   review: MockReviewEntry[];
   scoring: MockScoring;
   /** The exam's own words on scoring, such as "A wrong answer cancels a right one." */
@@ -295,6 +297,15 @@ export type MockView = {
   sessionId: string | null;
   /** What a mock taken any time sits (a whole day, half of one, a subject); null for the plan's. */
   shape: MockShape | null;
+  /** What its result says about the real score (see `MockScoreNotes`). */
+  scoreNotes: MockScoreNotes;
+  /**
+   * Its speaking paper once the learner reached its speaking section and started it: each task a
+   * live call, and the paper's estimate once every task is graded (see `startMockSpeaking`).
+   */
+  speaking: SpeakingSectionView | null;
+  /** Where its number of questions, split and time come from (see `MockSizeSource`). */
+  sizeSource: MockSizeSource;
   /** When the real exam starts, in its own time zone, so the mock can match it. */
   startTime: string | null;
   status: "finished" | "ready" | "running";
@@ -365,15 +376,25 @@ export type MockOptionView = MockShape & {
   /** The notice's subjects it asks, in its words. */
   areas: string[];
   /**
+   * The exam day's sections it sits, by the notice's names ("Listening", "Reading"), when it
+   * leaves one out that isn't a written part (IELTS's Speaking): what it covers, said plainly.
+   * Null when it sits every such section, and for a subject's mock.
+   */
+  covers: string[] | null;
+  /**
    * About how long it takes: learners' real pace on this exam's mocks, or the exam's own pace
    * until there's enough of it; never more than `minutes`.
    */
   estimatedMinutes: number;
   /** The exam's time for it, which its clock gives. */
   minutes: number;
-  /** The exam day also has a written part (a redação, a discursive test) this mock leaves out. */
+  /** What it leaves out of the real exam, each with why (see `MockLeftOut`). */
+  leftOut: MockLeftOut[];
+  /** The exam day also has a written part (an essay, a discursive test) this mock leaves out. */
   objectiveOnly: boolean;
   questions: number;
+  /** The written parts a full mock asks, as the notice names them, beside its questions. */
+  written: string[];
 };
 
 /**
@@ -402,7 +423,11 @@ export type PlacementMockOptionView = {
  */
 export type MockOptionsView = {
   access: "open" | "plusRequired";
+  /** What the exam's official documents are, for the screen's words (see `ExamDocument`). */
+  examDocument: ExamDocument;
   examName: string;
+  /** Where the options' number of questions, split and time come from (see `MockSizeSource`). */
+  sizeSource: MockSizeSource;
   goalId: string;
   options: MockOptionView[];
   /**
@@ -416,16 +441,6 @@ export type MockOptionsView = {
     recommended: PlacementMockLength;
   } | null;
   running: { id: string; purpose: MockPurpose; shape: MockShape | null } | null;
-};
-
-/**
- * What a finished mock offers to change in the plan, each answered by the learner, never applied
- * on its own: skip the lessons of the topics it showed they know (every question on them right),
- * and give the area that went worst more of the plan's time. Null parts have nothing to offer.
- */
-export type MockAdaptView = {
-  focus: { area: string; correct: number; total: number } | null;
-  skip: { lessons: number; topics: string[] } | null;
 };
 
 const MOCK_PLAN_OFFERS = ["skip", "focus"] as const;

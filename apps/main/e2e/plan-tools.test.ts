@@ -169,16 +169,7 @@ test.describe("Plan tools", () => {
 });
 
 /** Every onboarding question is behind the learner, so `/start/{goalId}` opens on the plan. */
-const ANSWERED = [
-  "purpose",
-  "targetDate",
-  "level",
-  "schedule",
-  "age",
-  "memory",
-  "buddy",
-  "placement",
-];
+const ANSWERED = ["purpose", "targetDate", "level", "schedule", "buddy", "placement"];
 
 async function createRevealGoal(userId: string) {
   const id = randomUUID().slice(0, 8);

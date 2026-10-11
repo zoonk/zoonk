@@ -79,7 +79,7 @@ export async function readGoalWords(
 export type UnderstoodLanguagePair = { language: string; targetLanguage: string };
 
 /**
- * Keeps what was understood for the same words today, then puts the card on the draft, with the
+ * Keeps what was understood for the learner's same words today, then puts the card on the draft, with the
  * named exam's dates. Returns the language goals it found, so their level tests can be written
  * before the learner gets there.
  */
@@ -97,6 +97,7 @@ export async function completeUnderstandingDraft({
     normalizedPrompt: normalizeString(draft.prompt),
     provenance,
     result,
+    userId: draft.userId,
   });
 
   const completed = await completeDraft({ draft, understanding: result });

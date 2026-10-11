@@ -163,13 +163,15 @@ async function TodayContent() {
     notFound();
   }
 
-  const [buddy, notices, planEnd, readAt, mocks, mistakes] = await Promise.all([
+  // The language goal's view is read once per request: the notices read it too.
+  const [buddy, notices, planEnd, readAt, mocks, mistakes, languageToday] = await Promise.all([
     getLearnerBuddy(),
     loadHostNotices(result.today.goal),
     loadPlanEnd(result.today),
     getReadAt(),
     loadTodayMocks(result.today.goal),
     countOpenMistakes(result.today.goal.id),
+    loadLanguageToday(result.today.goal),
   ]);
 
   return (
@@ -180,6 +182,7 @@ async function TodayContent() {
       notices={notices}
       planEnd={planEnd}
       readAt={readAt}
+      speaking={languageToday?.speaking ?? null}
       today={result.today}
     />
   );

@@ -21,6 +21,7 @@ type Moment = Pick<
   | "resultReported"
   | "sessionsDone"
   | "stage"
+  | "tools"
 >;
 
 const ICONS = {
@@ -140,7 +141,7 @@ export function ExamMomentCard({ href, moment }: { href: string | null; moment: 
         </div>
       </div>
 
-      <ExamChecklist items={moment.checklist} />
+      <ExamChecklist items={moment.checklist} tools={moment.tools} />
 
       {href && (
         <LearnLink

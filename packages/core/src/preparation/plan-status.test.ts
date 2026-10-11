@@ -33,7 +33,7 @@ describe(getPlanStatus, () => {
     ).toBeNull();
   });
 
-  it("is on track within a day's worth of items", () => {
+  it("keeps pace within a day's worth of items", () => {
     expect(
       getPlanStatus({ items: schedule(9), minutesPerItem: 4, targetDate: null, today: TODAY }),
     ).toStrictEqual({ kind: "onTrack" });
@@ -84,6 +84,18 @@ describe(getPlanStatus, () => {
         today: TODAY,
       }),
     ).toStrictEqual({ kind: "needsAdjusting", options: ["addTime", "narrowScope", "moveDate"] });
+  });
+
+  it("keeps pace when the learner chose to go on after the target date", () => {
+    expect(
+      getPlanStatus({
+        items: schedule(10),
+        minutesPerItem: 4,
+        studiesPastTarget: true,
+        targetDate: new Date("2026-09-12T00:00:00Z"),
+        today: TODAY,
+      }),
+    ).toStrictEqual({ kind: "onTrack" });
   });
 
   it("counts tested-out and skipped items as finished", () => {

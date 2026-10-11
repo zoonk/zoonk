@@ -2,6 +2,7 @@ import "server-only";
 import { type CourseLevel, type Goal, type LibraryVisibility, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { OUTLINE_AHEAD_DAYS } from "../../lookahead/outline-ahead";
+import { toPlanCourseScope } from "../../lookahead/plan-outline-needs";
 import { goalUsesTools } from "../../plans/_utils/plan-tools";
 import { loadGoalPlannerLessons } from "../../plans/_utils/planner-lessons";
 import { addDays } from "../../plans/planner/plan-calendar";
@@ -207,16 +208,6 @@ type ExtensionCourse = {
   visibility: LibraryVisibility;
 };
 
-/** Shared courses are written for everyone; a private one stays its owner's. */
-function toCourseScope(course: ExtensionCourse): CurriculumScope {
-  return {
-    generalGoal: null,
-    language: course.language,
-    ownerId: course.visibility === "private" ? course.userId : null,
-    targetLanguage: course.targetLanguage,
-  };
-}
-
 function groupByBand({
   extensions,
   plans,
@@ -238,16 +229,22 @@ function groupByBand({
   }));
 }
 
+/**
+ * A course's extension request, outlined for the same learners as the course's other chapters the
+ * plan needs (`toPlanCourseScope`), so one run for both writes for the goal's exam.
+ */
 async function toCourseRequest({
   course,
   extensions,
+  goal,
   withToolChapters,
 }: {
   course: ExtensionCourse;
   extensions: readonly SkillExtension[];
+  goal: Parameters<typeof toPlanCourseScope>[0]["goal"];
   withToolChapters: boolean;
 }): Promise<CourseExtensionRequest[]> {
-  const scope = toCourseScope(course);
+  const scope = toPlanCourseScope({ course, goal });
 
   const plans = await planSkillExtensions({
     courseId: course.id,
@@ -291,11 +288,14 @@ export async function listSkillExtensions({
   const goal = await prisma.goal.findUnique({
     select: {
       details: true,
+      examBlueprint: true,
       examBlueprintId: true,
       kind: true,
       plan: { select: { graph: true } },
       primaryCourseId: true,
       status: true,
+      targetLanguage: true,
+      title: true,
       userId: true,
     },
     where: { id: goalId },
@@ -342,11 +342,15 @@ export async function listSkillExtensions({
         course,
         extensions: graphSkills
           .filter((graphSkill) => getSkillCourseId({ goal, skill: graphSkill }) === course.id)
-          .flatMap((graphSkill) => skills.filter((skill) => skill.id === graphSkill.skillId))
-          .map((skill) => ({
-            lessons: standIns.get(skill.id) ?? 0,
-            skill: { ...skill, key: skill.id },
-          })),
+          .flatMap((graphSkill) =>
+            skills
+              .filter((skill) => skill.id === graphSkill.skillId)
+              .map((skill) => ({
+                lessons: standIns.get(skill.id) ?? 0,
+                skill: { ...skill, area: graphSkill.area, key: skill.id },
+              })),
+          ),
+        goal,
         withToolChapters,
       }),
     ),

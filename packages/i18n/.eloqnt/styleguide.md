@@ -36,3 +36,4 @@ Zoonk helps anyone learn anything, with a focus on people outside privileged env
 ## Punctuation
 
 - Use the ellipsis character "…" instead of three periods "..." for loading states and other UI copy.
+- Never use em dashes "—". Use a comma, a colon or a period, as the source text does.

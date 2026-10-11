@@ -6,11 +6,13 @@ import {
 } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MinusIcon, PlusIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
-import { usePlanScreen } from "../plan/plan-context";
+import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
+import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
+import { useWritingLine } from "../topic-outline/use-far-topic-line";
 import { getChapterWindow } from "./chapter-window";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
@@ -21,32 +23,38 @@ function getChapterKey(chapter: PlanChapterView): string {
 }
 
 /**
- * A chapter's name: a settled row of skills is named by them, not by its course. Lessons still
- * being written go by their course, which for a language goal is the language itself, so those
- * are just "More lessons".
+ * A chapter's name: a settled row of skills says how many the learner already knows, not its
+ * course, and never runs on as a list of their names. Lessons still being written go by their
+ * course, and are just "More lessons" when that's the goal's own course (core leaves the title
+ * empty then).
  */
 function useChapterTitle() {
   const t = useExtracted();
-  const format = useFormatter();
-  const { goal } = usePlanScreen();
 
   return (chapter: PlanChapterView): string => {
     if (chapter.skills.length > 0) {
-      return format.list(chapter.skills);
-    }
-
-    if (chapter.writing && goal.kind === "language") {
-      return t("More lessons");
+      return t(
+        "{count, plural, one {# skill you already know} other {# skills you already know}}",
+        { count: chapter.skills.length },
+      );
     }
 
     return chapter.title || t("More lessons");
   };
 }
 
+/** Done without studying it: placement settled its skills, or a test took all its lessons off. */
+function isSkipped(chapter: PlanChapterView): boolean {
+  return chapter.skills.length > 0 || chapter.testedOut;
+}
+
 /**
  * One chapter of the path: done, the next one (its tile and "Next", the page's obvious target) or
- * ahead. Its page opens on tap; lessons still being written have no page yet, so their row only
- * says so.
+ * ahead. Its page opens on tap. Lessons still being written have no page yet, so their row only
+ * says so; topics after the weeks the plan writes ahead say what the plan knows ("About 12 lessons
+ * · from March") and, unless chapters already teach them, open a sheet that can write their
+ * lessons now. A chapter an earlier phase started says it goes deeper, so a later phase never reads
+ * as listing it twice.
  */
 function ChapterRow({
   chapter,
@@ -59,11 +67,24 @@ function ChapterRow({
 }) {
   const t = useExtracted();
   const title = useChapterTitle();
+  const writingLine = useWritingLine();
+  const outlineActions = useTopicOutlineActions();
+
+  const writing = chapter.writing
+    ? writingLine({ far: chapter.far, lessons: chapter.plannedLessons, nextDate: chapter.nextDate })
+    : null;
+
+  const line =
+    writing ??
+    (chapter.testedOut && chapter.skills.length === 0
+      ? t("Skipped because you already know it")
+      : null) ??
+    (chapter.deeper ? t("Going deeper into an earlier topic") : null);
 
   const content = (
     <>
       <span className={PATH_ROW_LEADING_CLASS}>
-        <ChapterMark chapter={chapter} isNext={isNext} />
+        <ChapterMark chapter={chapter} isNext={isNext} skipped={isSkipped(chapter)} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span
@@ -75,9 +96,7 @@ function ChapterRow({
         >
           {title(chapter)}
         </span>
-        {chapter.writing && (
-          <span className="text-muted-foreground text-xs">{t("Lessons on the way")}</span>
-        )}
+        {line && <span className="text-muted-foreground text-xs">{line}</span>}
       </span>
       {isNext && (
         <span className="bg-primary text-primary-foreground shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium">
@@ -86,6 +105,24 @@ function ChapterRow({
       )}
     </>
   );
+
+  if (chapter.writing && chapter.skillId && outlineActions) {
+    return (
+      <FarTopicSheet
+        actions={outlineActions}
+        chapterHref={links.chapter}
+        lessons={chapter.plannedLessons}
+        nextDate={chapter.nextDate}
+        skillId={chapter.skillId}
+        title={title(chapter)}
+        trigger={
+          <button className={cn(PATH_ROW_CLASS, "hover:bg-muted w-full text-left")} type="button" />
+        }
+      >
+        {content}
+      </FarTopicSheet>
+    );
+  }
 
   if (!chapter.chapterId) {
     return <div className={PATH_ROW_CLASS}>{content}</div>;

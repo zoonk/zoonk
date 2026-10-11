@@ -1,5 +1,4 @@
 import { BuddyGlasses, type UserLearningProfile, prisma } from "@zoonk/db";
-import { getAgeGroup } from "@zoonk/utils/age";
 import { type LearningProfileView } from "../learning-profile-contract";
 
 const STARTER_GLASSES = BuddyGlasses.round;
@@ -18,15 +17,7 @@ export async function listAvailableGlasses(userId: string): Promise<BuddyGlasses
   );
 }
 
-function getBirth(profile: UserLearningProfile | null) {
-  if (!profile || profile.birthMonth === null || profile.birthYear === null) {
-    return null;
-  }
-
-  return { month: profile.birthMonth, year: profile.birthYear };
-}
-
-/** A learner without a saved profile has no buddy or age yet. */
+/** A learner without a saved profile has no buddy yet. */
 function toLearningProfileView({
   availableGlasses,
   profile,
@@ -34,13 +25,9 @@ function toLearningProfileView({
   availableGlasses: BuddyGlasses[];
   profile: UserLearningProfile | null;
 }): LearningProfileView {
-  const birth = getBirth(profile);
-
   return {
     activeGoalId: profile?.activeGoalId ?? null,
-    ageGroup: getAgeGroup({ birthMonth: birth?.month ?? null, birthYear: birth?.year ?? null }),
     availableGlasses,
-    birth,
     buddy: profile?.buddyKind
       ? { glasses: profile.buddyGlasses, kind: profile.buddyKind, name: profile.buddyName }
       : null,

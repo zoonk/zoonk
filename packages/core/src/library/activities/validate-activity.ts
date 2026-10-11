@@ -3,8 +3,12 @@ import { type z } from "zod";
 import { type ActivityCheck } from "./activity-schemas";
 import {
   type ActivityStepContent,
+  type ExploreActivityContent,
   activityContentSchema,
+  exploreActivitySchema,
+  exploresSolved,
   getActivityTemplate,
+  isExploreTemplate,
   showsActivityData,
 } from "./activity-templates";
 import {
@@ -78,7 +82,7 @@ function choiceIssues(
   const valued = check.options.filter((option) => option.value !== undefined);
 
   if (valued.length === 0) {
-    return template.choicesNeedValues
+    return template.choicesNeedValues(content.fields)
       ? [issue("answerMismatch", "check.options", "Every option needs the value it stands for")]
       : [];
   }
@@ -120,12 +124,12 @@ function choiceIssues(
 function checkIssues(template: ActivityTemplate, content: ActivityStepContent): ActivityIssue[] {
   const { check } = content;
 
-  if (!template.checks.includes(check.kind)) {
+  if (!template.allowedChecks(content.fields).includes(check.kind)) {
     return [
       issue(
         "checkNotAllowed",
         "check.kind",
-        `"${template.id}" doesn't support ${check.kind} checks`,
+        `"${template.id}" doesn't support ${check.kind} checks here`,
       ),
     ];
   }
@@ -143,8 +147,8 @@ function checkIssues(template: ActivityTemplate, content: ActivityStepContent): 
     : [issue("answerMismatch", "fields", "Code can't compute the answer this interaction expects")];
 }
 
-function formulaIssues(template: ActivityTemplate, content: ActivityStepContent): ActivityIssue[] {
-  return template.listFormulas(content.fields).flatMap((formula) => {
+function formulaIssues(template: ActivityTemplate, fields: unknown): ActivityIssue[] {
+  return template.listFormulas(fields).flatMap((formula) => {
     const sampled = sampleExpression(formula);
 
     if (sampled.ok) {
@@ -156,6 +160,20 @@ function formulaIssues(template: ActivityTemplate, content: ActivityStepContent)
   });
 }
 
+/** The rules a template's fields and data follow wherever it shows, asked about or explored. */
+function fieldIssues(
+  template: ActivityTemplate,
+  content: { data?: unknown; fields: unknown },
+): ActivityIssue[] {
+  return [
+    ...(template.showsData(content.fields) && !content.data
+      ? [issue("missingDataSource", "data", "Cite the data's source or mark it as an example")]
+      : []),
+    ...formulaIssues(template, content.fields),
+    ...template.verifyFields(content.fields),
+  ];
+}
+
 function ruleIssues(content: ActivityStepContent): ActivityIssue[] {
   const template = getActivityTemplate(content.template);
 
@@ -163,14 +181,7 @@ function ruleIssues(content: ActivityStepContent): ActivityIssue[] {
     return [issue("unknownTemplate", "template", `Unknown template "${content.template}"`)];
   }
 
-  return [
-    ...(template.needsData && !content.data
-      ? [issue("missingDataSource", "data", "Cite the data's source or mark it as an example")]
-      : []),
-    ...formulaIssues(template, content),
-    ...checkIssues(template, content),
-    ...template.verifyFields(content.fields),
-  ];
+  return [...fieldIssues(template, content), ...checkIssues(template, content)];
 }
 
 /**
@@ -219,7 +230,69 @@ export function validateActivity(input: unknown): ActivityValidationResult {
   }
 
   // A template that shows no data keeps no data label, which would read as a note on nothing.
-  const content = showsActivityData(parsed.data.template)
+  const content = showsActivityData(parsed.data)
+    ? parsed.data
+    : { ...parsed.data, data: undefined };
+
+  return { content, ok: true };
+}
+
+type ExploreValidationResult =
+  | { content: ExploreActivityContent; ok: true }
+  | { issues: ActivityIssue[]; ok: false };
+
+/** A template explored solved needs the end state code computes from its fields. */
+function solvedStateIssues(template: ActivityTemplate, fields: unknown): ActivityIssue[] {
+  return exploresSolved(template.id) && !template.computeExpected(fields)
+    ? [issue("answerMismatch", "fields", "Code can't compute the end state this template shows")]
+    : [];
+}
+
+/**
+ * The publishing rules for a template an explanation screen shows to explore: one of the
+ * templates that can be explored, its schema and label limits, formulas that work across their
+ * whole range, cited or example-labeled data and the template's own consistency rules. There's no
+ * check to verify, since nothing is asked.
+ */
+export function validateExploreActivity(input: unknown): ExploreValidationResult {
+  if (!isJsonObject(input) || typeof input.template !== "string") {
+    return {
+      issues: [issue("invalidSchema", "", "An explored activity names its template")],
+      ok: false,
+    };
+  }
+
+  const template = getActivityTemplate(input.template);
+
+  if (!template || !isExploreTemplate(input.template)) {
+    return {
+      issues: [
+        issue(
+          "unknownTemplate",
+          "template",
+          `"${input.template}" can't be explored on an explanation screen`,
+        ),
+      ],
+      ok: false,
+    };
+  }
+
+  const parsed = exploreActivitySchema.safeParse(input);
+
+  if (!parsed.success) {
+    return { issues: parsed.error.issues.map((zodIssue) => toIssue(zodIssue)), ok: false };
+  }
+
+  const issues = [
+    ...fieldIssues(template, parsed.data),
+    ...solvedStateIssues(template, parsed.data.fields),
+  ];
+
+  if (issues.length > 0) {
+    return { issues, ok: false };
+  }
+
+  const content = showsActivityData(parsed.data)
     ? parsed.data
     : { ...parsed.data, data: undefined };
 

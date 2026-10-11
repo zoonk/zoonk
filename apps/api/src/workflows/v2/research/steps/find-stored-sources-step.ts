@@ -1,4 +1,4 @@
-import { type ResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
+import { type SourceResearchPlan } from "@zoonk/ai/tasks/v2/research/source-plan";
 import {
   type ResearchSourceTopic,
   findStoredResearchSources,
@@ -14,7 +14,7 @@ export async function findStoredSourcesStep({
   plan,
   topic,
 }: {
-  plan: ResearchPlan;
+  plan: SourceResearchPlan;
   topic: ResearchSourceTopic;
 }): Promise<string[]> {
   "use step";
@@ -24,7 +24,8 @@ export async function findStoredSourcesStep({
       country: plan.country,
       language: plan.language,
       name: plan.name,
-      publisher: plan.board,
+      // Only an exam has an organizer in its plan (its board); a law, product or subject has none.
+      publisher: null,
       searchTerms: plan.searchTerms,
       topic,
     }),

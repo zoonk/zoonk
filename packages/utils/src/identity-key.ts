@@ -26,7 +26,7 @@ function boundIdentityKey(key: string): string {
 
 /**
  * Reduces text to its words so casing, accents, spacing and punctuation never
- * turn one identity into two ("Regra de Três" and "regra de tres!" match).
+ * turn one identity into two ("Café Society" and "cafe society!" match).
  */
 export function normalizeIdentityText(value: string): string {
   return (removeAccents(value).toLowerCase().match(WORD_PATTERN) ?? []).join("-");
@@ -66,14 +66,22 @@ export function buildSetupSkillIdentityKey({
 }
 
 /**
+ * Whether a skill sets up a tool on a device, shared or owner-scoped, from its key alone: the
+ * lesson pipeline plans and writes its lesson with the setup rules.
+ */
+export function isSetupSkillIdentityKey(identityKey: string): boolean {
+  return identityKey.includes(SETUP_SKILL_KEY_PREFIX);
+}
+
+/**
  * A lesson is the set of skills it teaches at one level of one course. Skills are shared across
  * courses, but the same skills teach different content in another subject ("find the main idea"
  * in an English-reading course and in a Portuguese one), so only lessons of the same course match
  * exactly; another course's lesson is reused only when the reuse decision sees both courses.
  * Lessons outside any course (quick explanations, setup lessons) have an empty course part.
  *
- * An outline sometimes splits one skill set into several lessons ("Lançamento de ofício", "por
- * declaração" and "por homologação", all on "Classify assessment types"). Those lessons pass their
+ * An outline sometimes splits one skill set into several lessons ("Ex officio assessment", "by
+ * declaration" and "by approval", all on "Classify assessment types"). Those lessons pass their
  * `title`, which tells them apart, so each keeps its own row instead of all becoming the first.
  */
 export function buildLessonIdentityKey({
@@ -161,27 +169,20 @@ export function buildSourceIdentityKey({
   throw new Error("A source identity needs a URL or a content hash.");
 }
 
-/** Every image key of one style version starts with this, so search keeps versions apart. */
-export function getImageReuseKeyPrefix({ styleVersion }: { styleVersion: number }): string {
-  return `image:v${styleVersion}:`;
-}
-
 /**
- * The same scene in the same style makes the same picture. An image with
- * labels is made per language; one without text (`language` null) serves
- * every language. Scenes are long, so the key keeps only their hash.
+ * The same scene makes the same picture, whatever style drew it: a style change draws new scenes
+ * only, and redrawing stored pictures is a person's call. An image with labels is made per
+ * language; one without text (`language` null) serves every language. Scenes are long, so the key
+ * keeps only their hash.
  */
 export function buildImageReuseKey({
   language,
   prompt,
-  styleVersion,
 }: {
   language: string | null;
   prompt: string;
-  styleVersion: number;
 }): string {
-  const prefix = getImageReuseKeyPrefix({ styleVersion });
-  return `${prefix}${language ?? "any"}:${hashText(normalizeIdentityText(prompt))}`;
+  return `image:${language ?? "any"}:${hashText(normalizeIdentityText(prompt))}`;
 }
 
 /**

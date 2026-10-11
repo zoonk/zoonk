@@ -66,19 +66,66 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
 }
 
 /**
- * Builds the provider options shared by image-generation tasks.
- * Image requests do not use the text fallback helper, so they need their own
- * small wrapper to keep the OpenAI image output format in one place instead of
- * drifting across each task entry point.
+ * Every image task's fallbacks after its model, GPT Image 2.5 Flare: Sunburst letters as well at
+ * the same price (mind-map eval, 7 Oct 2026). Seedream refuses images under 3.7 megapixels.
+ */
+const IMAGE_FALLBACK_MODELS = ["openai/gpt-image-2.5-sunburst"] as const;
+
+/**
+ * Shared Library pictures can also go to Black Forest Labs' FLUX 3 Image (about $0.024 an image),
+ * and square ones to Recraft V4.1 Utility ($0.035, flat front-facing scenes), as main did for pop
+ * culture and other subjects OpenAI's models won't draw. Both may train on prompts, so they only
+ * draw where `allowsPromptTraining` allows it, never a picture made for one learner. Recraft V4.1
+ * refuses sizes outside its own list, such as the lessons' 1024x1280 (its 4:5 is 896x1152). The
+ * providers' current models on 8 Oct 2026 (docs.bfl.ai, recraft.ai/docs, AI Gateway's model list).
+ */
+const TRAINING_IMAGE_FALLBACKS: readonly { model: string; sizes?: readonly string[] }[] = [
+  { model: "bfl/flux-3-image" },
+  { model: "recraft/recraft-v4.1-utility", sizes: ["1024x1024"] },
+];
+
+function getImageFallbackModels({
+  promptTraining,
+  size,
+  useFallback,
+}: {
+  promptTraining: boolean;
+  size: string;
+  useFallback: boolean;
+}): string[] {
+  if (!useFallback) {
+    return [];
+  }
+
+  const training = promptTraining
+    ? TRAINING_IMAGE_FALLBACKS.filter(({ sizes }) => !sizes || sizes.includes(size))
+    : [];
+
+  return [...IMAGE_FALLBACK_MODELS, ...training.map(({ model }) => model)];
+}
+
+/**
+ * Builds the provider options shared by image-generation tasks: the fallback chain and the OpenAI
+ * image output format, in one place instead of drifting across each task entry point.
+ * `promptTraining` is the task run's `allowsPromptTraining` decision; evals turn `useFallback` off
+ * so each image comes from the model under test.
  */
 export function buildImageProviderOptions({
-  fallbackModels,
+  promptTraining,
   quality,
+  size,
+  useFallback,
 }: {
-  fallbackModels: readonly string[];
+  promptTraining: boolean;
   quality: ImageGenerationQuality;
+  /** The size every model in the chain is asked for. */
+  size: string;
+  useFallback: boolean;
 }): ImageProviderOptionsResult {
-  return { gateway: { models: [...fallbackModels] }, openai: { output_format: "webp", quality } };
+  return {
+    gateway: { models: getImageFallbackModels({ promptTraining, size, useFallback }) },
+    openai: { output_format: "webp", quality },
+  };
 }
 
 /**

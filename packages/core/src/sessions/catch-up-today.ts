@@ -10,13 +10,15 @@ import { toLessonBlock } from "./session-builder";
 
 export type CatchUpTodayResult =
   | { session: StudySessionView; status: "ready" }
-  | { status: "nothingToCatchUp" | "notFound" | "unauthorized" };
+  | { status: "nothingToCatchUp" | "notFound" | "plusRequired" | "unauthorized" };
 
 /**
  * "Catch up today": the lessons earlier days left that the day's normal time didn't fit join the
  * end of today's session, in plan order, so the learner is back on pace once they're done. Without
  * the tap they come first on the next days. A day already done opens again, as "10 more minutes"
- * does.
+ * does. Only while the day offers it (`CatchUpView.later.offered`): more than about one more day's
+ * time or a fresh start leaves them to the next days, and past a free exam plan's first week new
+ * lessons, these too, come with Plus.
  */
 export async function catchUpToday({
   input,
@@ -32,6 +34,16 @@ export async function catchUpToday({
   }
 
   const { userId } = owned;
+  const timeZone = getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone });
+  const day = await loadStudySessionView({ session: owned.session, timeZone, userId });
+
+  if (day.examAccess.trialEnded) {
+    return { status: "plusRequired" };
+  }
+
+  if (!day.catchUp?.later.offered) {
+    return { status: "nothingToCatchUp" };
+  }
 
   const added = await withSessionAppendLock({
     run: async ({ session, transaction }) => {
@@ -80,8 +92,6 @@ export async function catchUpToday({
   if (fresh.status !== "ready") {
     return fresh;
   }
-
-  const timeZone = getAnswerTimeZone({ goal: fresh.session.goal, timeZone: input.timeZone });
 
   return {
     session: await loadStudySessionView({ session: fresh.session, timeZone, userId }),

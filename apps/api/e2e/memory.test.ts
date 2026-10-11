@@ -3,7 +3,6 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture, memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import {
@@ -18,14 +17,6 @@ import {
 } from "../src/lib/openapi/schemas/memory";
 import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
-
-const ADULT_BIRTH = { birthMonth: 5, birthYear: 1990 };
-
-async function adultLearner({ baseURL, prefix }: { baseURL: string; prefix: string }) {
-  const learner = await createBearerLearner({ baseURL, prefix });
-  await learningProfileFixture({ ...ADULT_BIRTH, userId: learner.userId });
-  return learner;
-}
 
 test.describe("Memory API", () => {
   let baseURL: string;
@@ -60,7 +51,7 @@ test.describe("Memory API", () => {
   });
 
   test("lists, corrects, deletes and restores facts, and turns memory off", async () => {
-    const { api, userId } = await adultLearner({ baseURL, prefix: "memory-manage" });
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "memory-manage" });
 
     const [law, football] = await Promise.all([
       memoryFactFixture({
@@ -149,9 +140,9 @@ test.describe("Memory API", () => {
     await api.dispose();
   });
 
-  test("validates input and keeps minors' memory to goals and learning", async () => {
+  test("validates input, hides other learners' facts and starts with memory on", async () => {
     const [{ api, userId }, owner] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "memory-minor" }),
+      createBearerLearner({ baseURL, prefix: "memory-validate" }),
       userFixture(),
     ]);
 
@@ -160,23 +151,16 @@ test.describe("Memory API", () => {
       memoryFactFixture({ userId: owner.id }),
     ]);
 
-    const [empty, invalidId, tooMany, context, hidden] = await Promise.all([
+    const [empty, invalidId, tooMany, hidden] = await Promise.all([
       api.patch(`/v1/me/memory/facts/${fact.id}`, { data: {} }),
       api.delete("/v1/me/memory/facts/not-a-uuid"),
       api.post("/v1/me/memory/change-reversals", { data: { changes: [] } }),
-      api.patch(`/v1/me/memory/facts/${fact.id}`, { data: { category: "context" } }),
       api.delete(`/v1/me/memory/facts/${theirs.id}`),
     ]);
 
     expect([empty, invalidId, tooMany].map((response) => response.status())).toStrictEqual([
       400, 400, 400,
     ]);
-
-    expect(context.status()).toBe(422);
-
-    await expect(context.json()).resolves.toMatchObject({
-      error: { code: "MEMORY_CATEGORY_NOT_ALLOWED" },
-    });
 
     expect(hidden.status()).toBe(404);
 
@@ -185,16 +169,13 @@ test.describe("Memory API", () => {
       schema: memoryResponseSchema,
     });
 
-    expect(memory.categories).toStrictEqual(["goals", "learning"]);
-
-    // Without an adult's age answer, memory starts off until the learner turns it on.
-    expect(memory).toMatchObject({ enabled: false, offByGuardian: false });
+    expect(memory).toMatchObject({ enabled: true, facts: [{ id: fact.id }] });
 
     await api.dispose();
   });
 
   test("exports every stored fact and shown insight", async () => {
-    const { api, userId } = await adultLearner({ baseURL, prefix: "memory-export" });
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "memory-export" });
 
     await Promise.all([
       memoryFactFixture({ statement: "Wants Law", userId }),
@@ -219,7 +200,7 @@ test.describe("Memory API", () => {
 
   test("shows the current insight and applies an accepted schedule idea once", async () => {
     const [{ api, userId }, owner] = await Promise.all([
-      adultLearner({ baseURL, prefix: "memory-insight" }),
+      createBearerLearner({ baseURL, prefix: "memory-insight" }),
       userFixture(),
     ]);
 
@@ -282,7 +263,7 @@ test.describe("Memory API", () => {
   });
 
   test("shows what a bigger plan change adds before the learner's OK", async () => {
-    const { api, userId } = await adultLearner({ baseURL, prefix: "memory-gap" });
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "memory-gap" });
     const goal = await goalFixture({ userId });
     const planChangeId = randomUUID();
 

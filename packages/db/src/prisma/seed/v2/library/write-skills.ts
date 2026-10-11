@@ -8,8 +8,60 @@ import { type SeedCourse, type SeedSkill } from "./types";
 
 type CourseLanguage = { course: SeedCourse; language: SeedLanguage; prisma: PrismaClient };
 
+/** The Library row of each of a course's skills in one language, by the skill's key. */
+export type SkillIds = ReadonlyMap<string, string>;
+
 function targetLanguageOf(course: SeedCourse): string | null {
   return course.targetLanguage ?? null;
+}
+
+function identityKeyOf(course: SeedCourse, skill: SeedSkill, language: SeedLanguage): string {
+  return buildSkillIdentityKey({
+    name: skill.name.in(language),
+    targetLanguage: targetLanguageOf(course),
+  });
+}
+
+/** The id of a course skill's Library row, from `findSkillIds`. */
+export function skillIdOf(course: SeedCourse, skillIds: SkillIds, key: string): string {
+  const id = skillIds.get(key);
+
+  if (!id) {
+    throw new Error(`Seed course "${course.key}" has no skill "${key}"`);
+  }
+
+  return id;
+}
+
+/**
+ * Each of a course's skills in one language, by key: the Library row with its identity. Identity
+ * search keeps one skill per identity, so a skill the app already wrote under the same name, on a
+ * database learners have used, is the seed's skill too, under the app's id. The others are the
+ * seed's own rows, under their stable ids.
+ */
+export async function findSkillIds({
+  course,
+  language,
+  prisma,
+}: CourseLanguage): Promise<SkillIds> {
+  const skills = course.skills.map((skill) => ({
+    identityKey: identityKeyOf(course, skill, language),
+    key: skill.key,
+  }));
+
+  const rows = await prisma.skill.findMany({
+    select: { id: true, identityKey: true },
+    where: { identityKey: { in: skills.map((skill) => skill.identityKey) }, language },
+  });
+
+  const byIdentity = new Map(rows.map((row) => [row.identityKey, row.id]));
+
+  return new Map(
+    skills.map(({ identityKey, key }) => [
+      key,
+      byIdentity.get(identityKey) ?? libraryIds.skill(course.key, key, language),
+    ]),
+  );
 }
 
 async function upsertSkill({ course, language, prisma }: CourseLanguage, skill: SeedSkill) {
@@ -20,7 +72,7 @@ async function upsertSkill({ course, language, prisma }: CourseLanguage, skill: 
   const data = {
     description: skill.description.in(language),
     example: skill.example?.in(language) ?? null,
-    identityKey: buildSkillIdentityKey({ name, targetLanguage }),
+    identityKey: identityKeyOf(course, skill, language),
     language,
     level: skill.level,
     name,
@@ -32,16 +84,24 @@ async function upsertSkill({ course, language, prisma }: CourseLanguage, skill: 
   await prisma.skill.upsert({ create: { id, ...data }, update: data, where: { id } });
 }
 
-/** Skills first, then the graph edges between them. */
-export async function writeSkills(context: CourseLanguage): Promise<void> {
+/**
+ * Skills first, then the graph edges between them. A skill the app already wrote is reused as is
+ * (see `findSkillIds`). Returns each skill's row, which the course's lessons and items point at.
+ */
+export async function writeSkills(context: CourseLanguage): Promise<SkillIds> {
   const { course, language, prisma } = context;
+  const skillIds = await findSkillIds(context);
 
-  await Promise.all(course.skills.map((skill) => upsertSkill(context, skill)));
+  const ownSkills = course.skills.filter(
+    (skill) => skillIds.get(skill.key) === libraryIds.skill(course.key, skill.key, language),
+  );
+
+  await Promise.all(ownSkills.map((skill) => upsertSkill(context, skill)));
 
   const edges = course.skills.flatMap((skill) =>
     (skill.prerequisites ?? []).map((prerequisite) => ({
-      prerequisiteId: libraryIds.skill(course.key, prerequisite, language),
-      skillId: libraryIds.skill(course.key, skill.key, language),
+      prerequisiteId: skillIdOf(course, skillIds, prerequisite),
+      skillId: skillIdOf(course, skillIds, skill.key),
     })),
   );
 
@@ -54,10 +114,17 @@ export async function writeSkills(context: CourseLanguage): Promise<void> {
       }),
     ),
   );
+
+  return skillIds;
 }
 
 /** Bank questions per skill; math items keep their solution as data inside `content`. */
-export async function writeItems({ course, language, prisma }: CourseLanguage): Promise<void> {
+export async function writeItems({
+  course,
+  language,
+  prisma,
+  skillIds,
+}: CourseLanguage & { skillIds: SkillIds }): Promise<void> {
   await Promise.all(
     course.items.map((item) => {
       const id = libraryIds.item(course.key, item.key, language);
@@ -68,7 +135,7 @@ export async function writeItems({ course, language, prisma }: CourseLanguage): 
         examBlueprintId: item.exam ? libraryIds.blueprint(item.exam, language) : null,
         format: item.format,
         language,
-        skillId: libraryIds.skill(course.key, item.skill, language),
+        skillId: skillIdOf(course, skillIds, item.skill),
         ...SEED_PROVENANCE,
       };
 

@@ -5,86 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "All three keys are defensible and legally accurate. Efficiency alone does not authorize dispensing with procurement requirements; official publicity that promotes the mayor personally violates impersonality and article 37, paragraph 1; and legally protected personal information may be restricted without making otherwise public contract information inaccessible. No correctness cap applies.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The false item contains one realistic misconception: treating efficiency as independent permission to bypass statutory procurement requirements. Its label identifies that mistake precisely, and its explanation directly corrects it. The true-item explanations also explain the relevant boundaries rather than merely repeating their keys. No feedback cap applies.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Each item presents a concise assertion suitable for a Cebraspe Certo/Errado judgment. The procurement item's absolute word 'sempre' creates a conventional, realistic legal trap. The official-publicity and access-to-information situations are credible public-service examination material, with appropriately formal Brazilian Portuguese.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The items apply constitutional principles to three distinct administrative situations rather than merely requesting definitions, and all learner-facing content is in Portuguese. However, the cognitive difficulty varies less than the easy/medium/hard labels imply: the purportedly hard item supplies the decisive legal characterization in its context. A more demanding application would better complete the intermediate-level set.",
-          "score": 8,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 2029,
-          "inputTokens": 2032,
-          "outputTokens": 798,
-          "reasoningTokens": 275
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The difficulty range is narrower than the labels suggest. The third item is labeled hard, but explicitly describing the withheld data as legally protected makes the judgment straightforward rather than requiring a more demanding application.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Make the third scenario more discriminating by identifying particular personal information within a contract file and requiring the learner to distinguish lawful partial redaction from withholding the entire document.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Cebraspe-style true/false items in Brazilian Portuguese on the principles of public administration (legalidade, impessoalidade, moralidade, publicidade, eficiência) under article 37 of the Brazilian Constitution. False items must hide one realistic trap. Check the legal accuracy of every statement.",
-        "id": "pt-cebraspe-principios-administracao-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "Cebraspe (concurso público)",
-            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
-          },
-          "format": "trueFalse",
-          "language": "pt",
-          "level": "intermediate",
-          "skill": {
-            "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
-            "name": "Princípios da administração pública (LIMPE)"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "Independent solutions give x = 19, x = 43/5, and 24 miles. Each matches its key, each question has exactly one correct option, and all worked solutions are accurate. No correctness cap applies.",
           "score": 10,
           "label": "Correctness",
@@ -158,91 +78,6 @@
           "skill": {
             "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
             "name": "Solving linear equations in one variable"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "Independent calculations give 24/80 × 100 = 30, 54/240 × 100 = 22.5, and (1650 − 1200)/1200 × 100 = 37.5. All supplied keys, solution expressions, and worked steps are correct. The ranges preserve positive quantities and the stated direction of change. However, the exact-answer configuration does not adequately support generated versions requiring rounded numeric responses. No wrong-key or factual-error cap is triggered.",
-          "score": 8,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every common mistake represents a realistic error: using the new value as the denominator, reporting the percent remaining or the new value's relative size, or comparing boxes instead of total items. Labels identify the specific misconception, and reasons explain what the learner did wrong in plain English.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The supplied versions have concise contexts, direct questions, and appropriate student-produced numeric answers. However, permitted generated versions can require fractions too long for SAT entry or rounded decimals that conflict with zero tolerance. This makes part of the generated set incompatible with the named exam's response mechanics, triggering the at-most-7 setting-realism cap.",
-          "score": 7,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "All items require calculating percent change and are entirely in English. The set includes increases, a decrease, and a more demanding calculation using products. Nevertheless, items 1 and 2 test the same direct original-to-new calculation in essentially the same way, triggering the explicit at-most-7 repetition cap.",
-          "score": 7,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 2982,
-          "inputTokens": 2985,
-          "outputTokens": 950,
-          "reasoningTokens": 296
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The variable ranges do not keep every generated version suitable for SAT numeric entry. For example, item 1 permits 70 original notebooks and 101 new notebooks, giving 310/7 percent. Neither that fraction nor a sufficiently complete decimal fits the SAT response field. With tolerance set to 0 and no rounding instruction, an ordinary rounded response would not be accepted. Similar cases occur in all three items.",
-          "kind": "majorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Items 1 and 2 use essentially the same direct, two-value percent-change procedure, differing mainly in context and increase versus decrease. This limits variety, although item 3 adds a meaningful total-quantity calculation.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Constrain generated values to produce SAT-enterable exact answers, or specify rounding and compatible answer acceptance. Replace one direct percent-change item with a comparison of changes to broaden the reasoning required while retaining the target skill.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Digital SAT Math student-produced-response items in English on percent change, stored as math data. The variable ranges must keep every new version sensible, the solution expression must compute the answer and the common mistakes must be real (for example dividing by the new value instead of the original).",
-        "id": "en-sat-math-percent-change-numeric-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "Digital SAT Math",
-            "optionCount": 4,
-            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
-          },
-          "format": "numeric",
-          "language": "en",
-          "level": "intermediate",
-          "skill": {
-            "description": "Compute the percent increase or decrease between an original and a new value.",
-            "name": "Percent change"
           }
         }
       }
@@ -646,83 +481,6 @@
           "skill": {
             "description": "Tell when Brazilian public administration must annul an administrative act and when it may revoke it, and what effects each has.",
             "name": "Annulment and revocation of administrative acts"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "Independent calculations give (25−20)/20 × 100 = 25% increase, (40−30)/40 × 100 = 25% decrease, and (50−40)/50 × 100 = 20% decrease. Each matches its key and explanation, and each item has exactly one defensible correct option. No clinical knowledge is required, and there is no patient-safety contradiction.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor represents an identifiable mistake: using the ending value as the denominator, reporting the absolute difference as a percentage, confusing a ratio with an increase, reversing direction, or comparing the wrong days. Labels identify these mistakes specifically, and feedback explains the learner's error rather than merely supplying the correct answer.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Scheduled vital-sign checks, dressing-kit inventory, and patient-education handouts are plausible everyday nursing situations. The language and arithmetic are beginner-accessible, options are concise and parallel, and no specialized nursing facts are needed. No exam-specific requirements apply.",
-          "score": 10,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "All items apply percent change and are written in English. Contexts vary, and item 3 adds selection of the correct interval. Nevertheless, items 2 and 3 both ask for a direct percent decrease using the same calculation procedure, triggering the explicit maximum of 7 for two questions testing the same thing the same way.",
-          "score": 7,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 2538,
-          "inputTokens": 2541,
-          "outputTokens": 808,
-          "reasoningTokens": 253
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "The set has limited variety in what learners must do. All three questions request a direct percent-change calculation; items 2 and 3 both calculate a decrease from two counts. The extra day in item 3 adds interval selection but leaves the main task substantially unchanged.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Replace one direct decrease question with a beginner-friendly comparison of two percent changes or a question diagnosing an incorrect calculation. Preserve the everyday nursing context and mistake-based distractors.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "Everyday multiple-choice practice in US English on percent change, set in a nurse's everyday work (a patient's weight, fluid intake, a ward's number of falls or beds from one month to the next), shared by every learner who works in nursing. The questions still test percent change: someone with the skill answers them without any nursing knowledge, and no answer depends on a clinical fact. Distractors come from real slips such as dividing by the new value or reporting the change instead of the percent. The math must be right, and nothing may contradict standard patient safety.",
-        "id": "en-field-nursing-percent-change-1",
-        "userInput": {
-          "count": 3,
-          "field": "nursing",
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "beginner",
-          "skill": {
-            "description": "Compute the percent increase or decrease between an original and a new value.",
-            "name": "Percent change"
           }
         }
       }
@@ -1380,87 +1138,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "No factual or legal errors are apparent. The constitutional equality reference is appropriate, and the rubric accurately represents ENEM's five competencies. Every rubric row has null points, as expressly required. A unique keyed answer is not applicable to this open-ended essay.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The key points and sample outline provide useful, appropriate guidance without treating one argument as the only acceptable answer. However, several key points bundle requirements a grader could assess separately, particularly the intervention's viability, detail and coherence. No distractor-related caps apply.",
-          "score": 8,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The result is recognizably an ENEM essay task: two short motivating texts, a socially relevant Brazilian theme, a formal dissertative-argumentative command, a human-rights-respecting intervention and the five-competency rubric. The essay-specific expectations correctly take precedence over multiple-choice conventions. Adding the usual line limit and fuller argument-organization instruction would improve fidelity, but the task does not look out of place.",
-          "score": 9,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The task directly requires the requested skill: constructing a thesis, developing supported arguments, organizing the text and proposing an intervention. Its scope suits intermediate learners, and the learner-facing material is entirely in Brazilian Portuguese. With exactly one essay requested, there is no missing cross-item variety.",
-          "score": 10,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 1 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 2321,
-          "inputTokens": 2324,
-          "outputTokens": 738,
-          "reasoningTokens": 203
-        }
-      },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        {
-          "conclusion": "Some key points combine independently assessable requirements. For example, the intervention must be viable, detailed and coherent, while another point combines explaining obstacles, explaining consequences and avoiding repetition of the support texts. Separate checks would make grading more consistent.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "For closer ENEM fidelity, include the 30-line limit and the standard instruction to select, organize and relate arguments and facts coherently and cohesively in defense of a viewpoint.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
-        "id": "pt-enem-redacao-essay-1",
-        "userInput": {
-          "count": 1,
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
-          },
-          "format": "essay",
-          "language": "pt",
-          "level": "intermediate",
-          "skill": {
-            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
-            "name": "Redação do ENEM"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "Independent calculations give 1.2 × 0.5 × 20 = 12 kWh; 1.5 × 2 × 12 × 0.18 = $6.48; and 1.6 × 0.5 × (12 × 0.25 + 8 × 0.10) = $3.04. Each item has exactly one defensible correct option, and every key and worked solution agrees. No correctness cap applies.",
           "score": 10,
           "label": "Correctness",
@@ -1535,6 +1212,812 @@
             "description": "Calculate the energy a household appliance uses from its power and time of use, and what it costs.",
             "example": "A 5,500 W electric shower used 10 minutes a day for 30 days uses 27.5 kWh.",
             "name": "Household electricity consumption"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All three keys are legally defensible. Item 1 is false: the informative character of official publicity does not authorize personal promotion, consistent with article 37, paragraph 1. Item 2 is true: eliminating an unnecessary, nonmandatory duplicate step can promote efficiency without violating legality; the qualified wording avoids asserting unrestricted administrative discretion. Item 3 is true: withholding information protected by legal confidentiality does not, by itself, violate publicity. The explanations accurately support these judgments.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The sole false item contains one realistic trap: treating the informative purpose of institutional publicity as permission for personal promotion. Its misconception label identifies that confusion specifically, and its explanation directly corrects it. The true-item explanations also identify the conditions that make the statements correct rather than merely repeating their keys.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The items use Brazilian Portuguese and present single assertions for Certo/Errado judgment, consistent with Cebraspe. The municipal scenarios are plausible, and the false assertion uses a recognizable legal-exception trap. There is no apparent departure from the requested exam format.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three items apply article 37 principles to concrete situations rather than asking for definitions. They vary the decision being assessed: official publicity and personal promotion, procedural simplification, and lawful limits on disclosure. However, the intermediate-level challenge and difficulty spread are limited because the second and third statements explicitly supply the decisive legal conditions; the hard item requires only a straightforward exception recognition.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2104,
+          "outputTokens": 791,
+          "reasoningTokens": 216
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The difficulty progression is weak for an intermediate set. The supposedly hard third item explicitly states that the withheld information is protected by legal confidentiality, making the publicity exception straightforward. The second item similarly supplies nearly every condition needed to approve the simplification.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make one item require a less signposted distinction between competing principles or between a lawful exception and an administrative convenience. Preserve a single defensible answer and explain the decisive condition in the feedback.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Cebraspe-style true/false items in Brazilian Portuguese on the principles of public administration (legalidade, impessoalidade, moralidade, publicidade, eficiência) under article 37 of the Brazilian Constitution. False items must hide one realistic trap. Check the legal accuracy of every statement.",
+        "id": "pt-cebraspe-principios-administracao-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Cebraspe (concurso público)",
+            "style": "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas."
+          },
+          "format": "trueFalse",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Aplicar os princípios da administração pública do art. 37 da Constituição a situações concretas.",
+            "name": "Princípios da administração pública (LIMPE)"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The statements about digital public services are accurate and appropriately qualified. The rubric correctly represents ENEM's five competencies, including an intervention respecting human rights, and all five points fields are null as required. This essay task does not require a unique answer or an objective answer key.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The key points and sample outline provide useful, open-ended guidance rather than prescribing a single thesis. However, several key points combine distinct grading checks, most clearly the intervention's viability, relevance, and completeness. These should be separated to satisfy the requirement for independently checkable ideas. Distractor-related caps do not apply to this essay.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The result closely matches the requested ENEM essay format: short motivating texts, a Brazil-focused social theme, the standard formal dissertative-argumentative command, a human-rights-respecting intervention, and five competency-based rubric rows. Five alternatives are not appropriate for the explicitly requested essay format. A sourced motivating excerpt would further strengthen booklet authenticity.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The single intermediate-level task directly elicits a thesis, developed arguments, sociocultural repertoire, and a complete intervention proposal. It requires application and explanation rather than recall, stays within ENEM essay writing, and presents the learner-facing content in Brazilian Portuguese. Variety across multiple questions is not applicable to the requested count of one.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2377,
+          "outputTokens": 815,
+          "reasoningTokens": 274
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "Some key points bundle independently assessable requirements. In particular, the intervention key point combines viability, connection to the discussion, and completeness of its elements. Separating these would make partial achievement easier to grade consistently.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "A brief, accurately attributed excerpt from a relevant public source could make the motivating-text collection more representative of an ENEM booklet without making it longer or prescribing the student's argument.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "One ENEM essay prompt (redação) in Brazilian Portuguese: a theme with short motivating texts and the standard command for a dissertative-argumentative text with an intervention proposal. The rubric uses ENEM's five competencies, and since ENEM's grid doesn't give its rows points of their own, every row's points is null.",
+        "id": "pt-enem-redacao-essay-1",
+        "userInput": {
+          "count": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada. Redação: texto dissertativo-argumentativo com proposta de intervenção, corrigido pelas cinco competências."
+          },
+          "format": "essay",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Escrever um texto dissertativo-argumentativo com tese, argumentos com repertório e proposta de intervenção completa.",
+            "name": "Redação do ENEM"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation gives 20%, 25%, and 50%, matching every displayed key and worked solution. All permitted ranges preserve the stated direction of change and keep denominators positive. However, exact-zero tolerance does not accommodate rounded responses to recurring results. Also, item 3's feedback becomes factually incorrect when the permitted quantities are equal; this is an error in one item's generated versions, triggering the cap of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The mistakes are realistic and specifically labeled: using the new value as the denominator, finding the percent remaining, and comparing totals instead of unit prices. Explanations clearly identify the learner's error. The weakness is that the total-cost mistake becomes a correct method when item 3 generates equal quantities. Constrain those quantities to differ or conditionally omit that mistake.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The concise contexts, direct questions, and numeric responses resemble Digital SAT Math items. However, the generated set does not consistently score like SAT student-produced responses: recurring-decimal answers combined with zero tolerance can reject acceptable finite decimal entries. This scoring mismatch triggers the setting-realism cap of 7.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All items require calculating percent change rather than recalling definitions. The set varies contexts and includes an increase, a decrease, and a multistep comparison of unit prices, providing a useful difficulty progression. Everything is in English and remains within the requested skill.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3050,
+          "outputTokens": 1075,
+          "reasoningTokens": 492
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All three displayed answers are correct, but zero absolute tolerance is unsuitable for some permitted regenerated versions. For example, 90 visitors increasing to 120 gives 33.333...%. Without a rounding or equivalent-answer policy, normal Digital SAT decimal responses can be rejected despite being correct to the available entry precision.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Item 3 permits equal old and new notebook quantities. In those versions, comparing total costs gives the correct percent change, so the listed common mistake is no longer a mistake and its explanation incorrectly claims that different quantities were purchased.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Digital SAT Math student-produced-response items in English on percent change, stored as math data. The variable ranges must keep every new version sensible, the solution expression must compute the answer and the common mistakes must be real (for example dividing by the new value instead of the original).",
+        "id": "en-sat-math-percent-change-numeric-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Compute the percent increase or decrease between an original and a new value.",
+            "name": "Percent change"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give (25−20)/20 × 100 = 25% increase, (80−60)/80 × 100 = 25% decrease, and (48−36)/48 × 100 = 25% decrease. Each item has exactly one defensible answer, correctly keyed, and the explanations support it. No clinical or patient-safety inaccuracies appear.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Every distractor represents a specific realistic mistake: using the new value as the denominator, confusing absolute change with percentage change, reversing direction, or calculating the percentage remaining. Labels identify those mistakes, and feedback explains what went wrong in accessible language.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Supply stocking, recording fluid intake, and distributing patient handouts are plausible everyday nursing activities. The questions are concise, beginner-accessible, and require no nursing knowledge or clinical judgment. Options are comparably phrased and do not reveal the answer through length or confidence.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All items require percent-change calculations and use US English. However, questions 2 and 3 test the same decrease calculation in essentially the same way, triggering the explicit maximum of 7. Every answer is also 25%, and the nominal difficulty levels provide little genuine progression.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2599,
+          "outputTokens": 739,
+          "reasoningTokens": 184
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The set repeats the same calculation pattern: questions 2 and 3 both ask for a 25% decrease with closely parallel distractors. All three correct answers are 25%. This limits practice variety and triggers the skill-fit cap for two questions testing the same thing the same way.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The easy, medium, and hard labels overstate the actual difficulty spread. All three items use straightforward arithmetic, and the final item introduces no meaningful additional challenge.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Vary the correct answer's position; it is the first option in every item, creating an avoidable answer-position cue.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Everyday multiple-choice practice in US English on percent change, set in a nurse's everyday work (a patient's weight, fluid intake, a ward's number of falls or beds from one month to the next), shared by every learner who works in nursing. The questions still test percent change: someone with the skill answers them without any nursing knowledge, and no answer depends on a clinical fact. Distractors come from real slips such as dividing by the new value or reporting the change instead of the percent. The math must be right, and nothing may contradict standard patient safety.",
+        "id": "en-field-nursing-percent-change-1",
+        "userInput": {
+          "count": 3,
+          "field": "nursing",
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "beginner",
+          "skill": {
+            "description": "Compute the percent increase or decrease between an original and a new value.",
+            "name": "Percent change"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 60/160 = 3/8, (100 - 40 - 25)/100 = 7/20, and (24 + 6)/(60 + 6 - 16) = 3/5, matching all keys and worked expressions. Across the permitted ranges, counts remain valid and answers remain positive, with reduced fractions that fit the positive-answer grid-in limit. Each question has one defensible mathematical answer.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The misconception labels identify realistic errors, and the reasons explain what the learner did rather than merely restating the answer. However, two mistake expressions can coincide with the correct solution for permitted variable combinations: the complement in item 1 and the unchanged denominator in item 3. Without conditional handling, those diagnoses are unreliable.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The English wording, direct questions, and student-produced response format fit Digital SAT Math. No question requests rounding. However, zero-tolerance scoring is incompatible with SAT decimal-entry conventions for recurring fractions generated by the ranges, such as 1/6. The items therefore do not consistently score like the named exam.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three questions require calculating a fraction of a whole rather than recalling a definition. They vary the operation meaningfully: direct part-to-whole conversion, finding a remainder after two removals, and converting a ratio before updating both the part and whole. The difficulty progression and English language fit the requested set.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3124,
+          "outputTokens": 1559,
+          "reasoningTokens": 941
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Two range-dependent problems affect scoring and feedback. First, every item specifies zero absolute tolerance, which rejects SAT-valid decimal approximations for recurring answers. For example, item 1 permits band = 20 and total = 120, giving 1/6; the grid-in decimal .1667 should be accepted. Second, some designated common mistakes equal the correct answer for allowed values: item 1's complement equals the requested fraction when band = 60 and total = 120, and item 3's original-total expression is correct whenever added_art = depart_science. These cases need conditional handling to avoid treating correct answers as mistakes.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "Digital SAT Math student-produced-response (grid-in) items in English whose answers are fractions such as 2/3 or 5/8, stored as math data. The answer box takes a fraction or a decimal, so no question asks to round, the answer for every combination of the variable ranges is a positive value that fits a grid-in, and the common mistakes are real (inverting the fraction, using the part instead of the remainder).",
+        "id": "en-sat-math-grid-in-fraction-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing.",
+            "entry": { "kind": "fraction", "places": null }
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Find a part of a whole as a fraction from a word problem or a ratio.",
+            "name": "Fractions of a whole"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculation confirms that the first two options, and only those options, are correct in every item. Item 1 gives meeting time 8/3 s, height 160/9 m, distance 200/9 m, and relative speed 30 m/s. Item 2 gives greatest separation 49/4 m at 7.5 s and a meeting at 8/3 s. Item 3 gives impact time (3 + √21)/4 s and relative impact speed 2√21 m/s. However, Item 2's explanation incorrectly states that the graph has two sloped parts rather than three. This triggers the stated one-question factual-error cap of 7, despite the correct keys and numerical results.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All wrong options reflect identifiable, realistic mistakes: displacement versus distance, subtracting opposing speeds, reversing relative position, missing a velocity crossing, confusing reference frames, and confusing acceleration with velocity. Labels identify those mistakes, and explanations directly correct them with relevant calculations rather than merely announcing the correct answer.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four-option, independently judged statements, SI units, and false fixedOrder values fit the requested format. Most statements require legitimate multistep kinematics. However, the velocity-crossing option in Item 2 is a direct graph-reading exercise, contrary to the explicitly required difficulty for every statement. The mirrored separation options also make that item less convincing as an advanced examination question.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set is entirely in English and varies the applications well: delayed vertical launches, integration of a piecewise velocity graph with relative motion, and motion relative to an accelerating elevator. These directly exercise the requested skill without duplicating the same task. The main weakness is uneven cognitive demand, particularly the standalone crossing-count option in Item 2.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3367,
+          "outputTokens": 1503,
+          "reasoningTokens": 784
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Item 2's final option requires only counting intersections of the velocity graph with v = 1 m/s. This violates the explicit requirement that no statement be answerable through a single graph reading and weakens the requested JEE Advanced difficulty.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Item 2's final explanation incorrectly refers to 'both sloped parts': the graph has three sloped segments, over 0–2, 6–8, and 8–10 s. Also, its first and third options repeat the same separation with opposite positional implications, creating an avoidable answer cue.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show the relative-position equation used to obtain the meeting time in Item 1. For Item 2's greatest-separation explanation, compare the separation at both relative-velocity zeros and the interval endpoints; matching velocities alone does not establish a global maximum.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The empty items list exactly matches the task-specific expectation. No artificial numeric question or incorrect answer was introduced.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "No items are required, so distractors, misconception labels, and feedback are appropriately absent.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The result correctly avoids inventing numeric-response questions for a Digital SAT Reading and Writing skill.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Returning no items respects the explicit requirement that Words in Context does not support a worked-out numeric answer.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1684,
+          "outputTokens": 290,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expectations": "No items: \"Words in Context\" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).",
+        "id": "en-sat-words-in-context-numeric-none-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "entry": { "kind": "fraction", "places": null },
+            "name": "Digital SAT",
+            "optionCount": 4,
+            "style": "Reading and Writing: short passages, each with one question and 4 options (A to D). Math: a short context or equation with 4 options, or a student-produced numeric response typed into a grid."
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Choose the word or phrase that most precisely fits the meaning of a short passage.",
+            "name": "Words in Context"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Both supplied items are correct. For item 1, the original carbonate amount is (56 − 22.4)/22.4 = 1.5 mol, giving 159 g. Across its ranges, the mass is always a positive multiple of 53 g. For item 2, hydrogen production gives m(Mg) = 4m(alloy) − 72n(H₂), yielding 108 g at the default values. Every allowed combination gives an integer Mg mass between 16 and 200 g and physically valid amounts of both metals. The worked expressions and reaction ratios are accurate.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The mistake expressions represent recognizable errors: counting newly formed carbonate as original carbonate, misusing the bicarbonate reaction ratio, and attributing hydrogen to only one alloy component. The feedback explains the missing contribution or incorrect ratio rather than merely supplying the correct answer. The aluminum-only mistake also assumes an incorrect hydrogen-to-aluminum ratio, which its reason explicitly addresses.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The supplied questions are credible JEE Main numerical-answer chemistry problems: concise quantitative contexts, specified molar masses and gas volume convention, and multi-step stoichiometric reasoning. Answers are stored as math data, are whole numbers throughout the variable ranges, and require no rounding instruction.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Both items require applying mole relationships and reaction ratios rather than recalling definitions, and both are entirely in English. Sequential decomposition and acid treatment differ meaningfully from simultaneous alloy reactions. However, supplying only two of the requested three items materially reduces the intended practice coverage, and both supplied items ultimately ask for a component mass in a binary mixture.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 3 parts passed. Item 2: Common mistake 1 gives the correct answer.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2926,
+          "outputTokens": 994,
+          "reasoningTokens": 410
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Only two items were provided, although three were requested. One-third of the requested practice set is missing.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Show the simultaneous equations in the alloy solution before presenting the derived expression. Use the missing third item for a different stoichiometric task, such as a limiting-reagent calculation, to broaden practice.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Main-style chemistry numerical items in English whose answer is a whole number for every combination of the variable ranges (for example moles, or a count of particles in a stated unit), stored as math data, with no rounding instruction in the question and real common mistakes.",
+        "id": "en-jee-main-mole-concept-integer-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Main",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "entry": { "kind": "integer", "places": null }
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Compute amounts of substance from masses, molar masses and reaction ratios.",
+            "name": "Mole concept and stoichiometry"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 136 m, 192 m, and 192 m, matching the keys and worked expressions. Item 1 correctly adds outward and return distances; item 2 correctly sums the above-threshold distances during acceleration and braking; item 3 correctly maximizes separation when velocities match. Every allowed variable combination preserves the required motion regime and produces a non-negative integer. Expressions use bare variable names, and no question requests rounding. No correctness cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "All six common mistakes represent specific, plausible errors, including confusing displacement with distance, omitting a motion phase, including below-threshold motion, and confusing position with separation. Their labels identify the error, and their reasons plainly explain what was counted incorrectly or omitted. No generic labels or implausible traps trigger a cap.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The questions are concise numerical-answer physics problems with SI units and unambiguous targets. Each combines multiple ideas rather than requiring a single textbook substitution: relative motion with reversal, speed-threshold selection across two phases, and maximum separation in staged relative motion. They satisfy the stated JEE Advanced complexity criterion, and no out-of-place format or wording triggers a cap.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three questions require application of straight-line kinematics and are entirely in English. Although they share a cart setting, they test distinct reasoning: total distance after reversal, distance within a speed-selected interval, and maximum relative separation. They do not test the same thing the same way, and the progression provides an appropriate range of multistep demands.",
+          "score": 9,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3510,
+          "outputTokens": 1093,
+          "reasoningTokens": 516
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the validity of the motion intervals explicit in the worked explanations: in item 1, show that the next meeting always occurs after reversal because speed > 2*other_speed throughout the ranges; in item 3, explain that relative velocity changes from positive to negative at 2*duration, establishing the maximum separation before overtaking.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced numerical-answer physics items in English on straight-line kinematics whose answer is a non-negative whole number for every combination of the variable ranges, stored as math data. Every expression (the solution, each step's and each common mistake's) names variables bare, the stated answer is the solution's, and no question asks to round. Difficulty matches JEE Advanced's own numerical questions, not a textbook's: each problem needs several steps that combine at least two ideas (two stages of a motion, a relative motion set up and then solved).",
+        "id": "en-jee-advanced-kinematics-integer-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "entry": { "kind": "integer", "places": null }
+          },
+          "format": "numeric",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Describe straight-line motion with displacement, velocity and constant acceleration, and solve problems with the equations of motion.",
+            "name": "Kinematics in one dimension"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Both supplied questions have one defensible answer, and both keys are correct. The book notice recommends registering interest and postponing purchase because availability is uncertain; the museum notice requires late arrivals to wait in the vestibule. However, item 2's false-cognate classification is a factual linguistic error: Portuguese “tarde” also expresses lateness. The one-question factual-error cap applies.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors represent specific mistakes, including treating possibility as certainty, reversing the timing of an instruction, ignoring a negation, and confusing a changed route with cancellation. Their reasons generally explain the error. The “tarde” distractor identifies a plausible sense confusion but mislabels its linguistic basis, and the remaining-books distractor is comparatively weakly grounded. The generic-misconception and several-implausible-distractors caps are not triggered.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The supplied items have short Spanish support texts, Portuguese commands and feedback, five options, and one correct answer. Nevertheless, the set consists entirely of procedural notices with direct instruction-retrieval questions, omits the third item, and does not meet the specified genre diversity or Spanish-dependent interpretation standard. As delivered, it falls short of the requested ENEM-style set, triggering the maximum score of 7 for setting mismatch.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Both questions ask learners to retrieve what a person should do from a notice, triggering the cap of 7 for testing the same thing the same way. More importantly, cognate-heavy answer cues undermine the explicit requirement that Portuguese alone should not suffice. Only two items are present, so the requested breadth of genres, situations, and decisive expressions is also incomplete. The Spanish/Portuguese language distribution is otherwise appropriate.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "2 of 3 parts passed. Item 3: Its words point at a picture (a scene, a diagram, a map or an illustration), but it shows none: give it an `image` whose `prompt` describes that picture with every label and detail the words use.",
+          "score": 7,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2740,
+          "outputTokens": 1171,
+          "reasoningTokens": 410
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Only two of the requested three items are supplied, and both support texts are instructional notices rather than different genres. The set also fails to reliably require Spanish-specific comprehension: transparent phrases such as “nombre en la lista” and “esperar en el vestíbulo” strongly identify the answers. In item 2, the misconception label incorrectly calls “tarde” a false cognate; Portuguese also uses “tarde” to mean late.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The Spanish notices are placed in Brazilian settings without explaining their intended Spanish-speaking audience. Some distractors are less firmly grounded than others: item 1's suggestion of taking a remaining book adds an unauthorized action, whereas the possibility-versus-certainty distractor follows directly from a realistic misreading.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a third item and diversify the genres and interpretive tasks, for example by using a chronicle and an advertisement alongside one notice. Make each answer depend decisively on a different Spanish expression rather than transparent vocabulary. Describe the “tarde” trap as confusion between lateness and time of day, and connect feedback more explicitly to the relevant Spanish wording.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "ENEM-style foreign language items for a Brazilian learner who chose Spanish: each item's support text is in Spanish (a notice, a chronicle, a website, an ad, a song, a comic strip or another real genre), while the command, the 5 options and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill. The answer must depend on words or structures of the Spanish text that a Portuguese reader can't infer from cognates, so a reader who knows only Portuguese can't pick it from the look-alike words or from the options alone, and the command never translates the words that settle it. Distractors come from real misreadings (a false friend, a cognate taken at face value, a detail read in isolation). The three texts differ in genre and situation and turn on different expressions. Check every key against the Spanish text.",
+        "id": "pt-enem-espanhol-interpretacao-multiple-choice-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "level": "intermediate",
+          "skill": {
+            "description": "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
+            "name": "Interpretar vocabulário e estruturas de textos em espanhol"
           }
         }
       }

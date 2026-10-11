@@ -38,6 +38,7 @@ export async function prepareGraphPlacement({
   goalId,
   graph,
   knownAreas,
+  ownLevel,
   skillIds,
   waitsForNotice,
 }: {
@@ -48,6 +49,8 @@ export async function prepareGraphPlacement({
   graph: GoalSkillGraph;
   /** The subjects the learner knows well: placement takes their basics as known. */
   knownAreas: readonly string[];
+  /** The learner's own level, where placement starts asking in each subject. */
+  ownLevel: Parameters<typeof pickPlacementGraphSkillIds>[0]["ownLevel"];
   /** The skills' Library ids by graph key, once every skill is saved. */
   skillIds: Promise<Record<string, string>>;
   /** Research is reading the exam's new notice: the questions wait for its formats. */
@@ -60,7 +63,7 @@ export async function prepareGraphPlacement({
   await startPlacementItems({
     context,
     goalId,
-    skillIds: pickPlacementGraphSkillIds({ everySkill, graph, idsByKey, knownAreas }),
+    skillIds: pickPlacementGraphSkillIds({ everySkill, graph, idsByKey, knownAreas, ownLevel }),
     waitsForNotice,
   });
 }

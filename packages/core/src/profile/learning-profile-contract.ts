@@ -1,11 +1,8 @@
 import { BuddyGlasses, BuddyKind } from "@zoonk/db";
-import { type AgeGroup, isValidBirthMonthYear } from "@zoonk/utils/age";
 import { z } from "zod";
-import { dailyLimitMinutesSchema } from "../minors/guardian/guardian-contract";
+import { MAX_DAILY_LIMIT_MINUTES, MIN_DAILY_LIMIT_MINUTES } from "./daily-limit";
 
 const BUDDY_NAME_MAX_LENGTH = 24;
-const FIRST_MONTH = 1;
-const LAST_MONTH = 12;
 
 const buddyInputSchema = z
   .object({
@@ -26,17 +23,6 @@ const buddyInputSchema = z
   .strict()
   .meta({ id: "BuddyInput" });
 
-const birthInputSchema = z
-  .object({
-    month: z.int().min(FIRST_MONTH).max(LAST_MONTH).meta({ description: "Birth month, 1 to 12" }),
-    year: z.int().meta({ description: "Birth year" }),
-  })
-  .strict()
-  .refine(({ month, year }) => isValidBirthMonthYear({ birthMonth: month, birthYear: year }), {
-    message: "Birth month and year must be a real date that isn't in the future",
-  })
-  .meta({ id: "BirthMonthYearInput" });
-
 function hasProfileField(input: Record<string, unknown>) {
   return Object.values(input).some((value) => value !== undefined);
 }
@@ -49,14 +35,17 @@ export const learningProfileUpdateSchema = z
       .nullable()
       .optional()
       .meta({ description: "The goal the tabs show, or null for none" }),
-    birth: birthInputSchema.optional(),
     buddy: buddyInputSchema
       .nullable()
       .optional()
       .meta({ description: "The learner's buddy, or null to remove it" }),
-    dailyLimitMinutes: dailyLimitMinutesSchema
+    dailyLimitMinutes: z
+      .int()
+      .min(MIN_DAILY_LIMIT_MINUTES)
+      .max(MAX_DAILY_LIMIT_MINUTES)
+      .nullable()
       .optional()
-      .meta({ description: "The learner's own daily study limit; a guardian's can be stricter" }),
+      .meta({ description: "The learner's daily study limit in minutes, or null for no limit" }),
     soundsEnabled: z
       .boolean()
       .optional()
@@ -71,10 +60,8 @@ export type LearningProfileUpdateInput = z.infer<typeof learningProfileUpdateSch
 /** What every screen and the API read about a learner's profile. */
 export type LearningProfileView = {
   activeGoalId: string | null;
-  ageGroup: AgeGroup;
   availableGlasses: BuddyGlasses[];
-  birth: { month: number; year: number } | null;
-  /** The learner's own daily limit in minutes; a guardian's stricter limit still applies. */
+  /** The learner's own daily study limit in minutes, or null for none. */
   dailyLimitMinutes: number | null;
   buddy: { glasses: BuddyGlasses; kind: BuddyKind; name: string | null } | null;
   /** On until the learner turns them off in Appearance. */

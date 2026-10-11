@@ -1,5 +1,6 @@
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { DAYS_PER_WEEK, type LightWeek, type PlanSettings } from "./plan-state";
+import { getWeekShape, isWeekend } from "./week-shape";
 
 const ISO_DATE_LENGTH = 10;
 const SUNDAY = 0;
@@ -80,6 +81,17 @@ export function getWeekdayMinutes({
   return calendar.weekdayMinutes?.[weekday] ?? calendar.dailyMinutes;
 }
 
+/** The minutes of the learner's average study day: their week's days with time, before light weeks. */
+export function getStudyDayMinutes(
+  calendar: Pick<StudyCalendar, "dailyMinutes" | "weekdayMinutes">,
+): number {
+  const days = (calendar.weekdayMinutes ?? [calendar.dailyMinutes]).filter(
+    (minutes) => minutes > 0,
+  );
+
+  return days.length > 0 ? days.reduce((sum, minutes) => sum + minutes, 0) / days.length : 0;
+}
+
 function isFirstDay({ calendar, date }: { calendar: StudyCalendar; date: Date }): boolean {
   return calendar.firstDay?.getTime() === date.getTime();
 }
@@ -106,8 +118,10 @@ export function getStudyMinutes({
 }
 
 /**
- * Changes the daily time and keeps the week's shape: "less on weekends" stays less, rest days stay
- * rest days, and every study day moves in proportion.
+ * Changes the daily time and keeps the week's shape: rest days stay rest days and the weekdays move
+ * in proportion, a lighter day staying lighter. A weekend with its own time keeps it (see
+ * `getWeekShape`): the learner gave it apart from the daily time, as onboarding and the plan
+ * editor ask it, so "an hour a day" changes the weekdays and leaves their Saturday as it was.
  */
 export function scaleWeekdayMinutes({
   dailyMinutes,
@@ -122,9 +136,15 @@ export function scaleWeekdayMinutes({
     return null;
   }
 
-  return weekdayMinutes.map((minutes) =>
-    minutes === 0 ? 0 : Math.max(1, Math.round((minutes * dailyMinutes) / Math.max(from, 1))),
-  );
+  const { weekend } = getWeekShape({ dailyMinutes: from, weekdayMinutes });
+
+  return weekdayMinutes.map((minutes, weekday) => {
+    if (minutes === 0 || (weekend !== null && isWeekend(weekday))) {
+      return minutes;
+    }
+
+    return Math.max(1, Math.round((minutes * dailyMinutes) / Math.max(from, 1)));
+  });
 }
 
 /** How many days a week have study time: "6 days a week". */

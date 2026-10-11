@@ -1,10 +1,15 @@
 import "server-only";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
 import { prisma } from "@zoonk/db";
-import { activityTemplates } from "../activities/activity-templates";
+import { isSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
+import { listPlannerTemplates } from "../activities/writer-templates";
 import { loadChapterLessons } from "../lessons/_utils/chapter-lessons";
 import { loadLessonExams } from "../lessons/_utils/lesson-exams";
 import { loadLessonDocuments } from "../lessons/_utils/lesson-sources";
+import {
+  getSiblingsChapterId,
+  isQuickLessonIdentityKey,
+} from "../quick-lessons/quick-lesson-identity";
 import { formatMaterialPages } from "../sources/material-pages";
 import { type CurriculumScope } from "./curriculum-scope";
 
@@ -17,14 +22,6 @@ export type LessonSpecInputs = {
   scope: CurriculumScope;
 };
 
-/** The activity templates a spec may plan, with when each helps, in catalog order. */
-function listSpecActivityTemplates(): SpecPrompt["activityTemplates"] {
-  return activityTemplates.map((template) => ({
-    description: template.description,
-    id: template.id,
-  }));
-}
-
 /**
  * Loads what planning one lesson needs: its outline (title, description, can-do line and skills),
  * where it sits (course, chapter and what the chapter's other lessons teach and use so far, so it
@@ -36,7 +33,10 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
   const lesson = await prisma.lesson.findUnique({
     include: {
       homeChapter: { include: { homeCourse: { select: { id: true, title: true } } } },
-      skills: { include: { skill: { select: { name: true } } }, orderBy: { createdAt: "asc" } },
+      skills: {
+        include: { skill: { select: { identityKey: true, name: true } } },
+        orderBy: { createdAt: "asc" },
+      },
     },
     omit: { spec: true, summary: true },
     where: { id: lessonId },
@@ -60,14 +60,18 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       ...goalsOf,
       query: [lesson.title, lesson.description, lesson.canDo, ...skills].join(" "),
     }),
-    loadChapterLessons({ chapterId: lesson.homeChapterId, lessonId, ownerId: lesson.ownerId }),
+    loadChapterLessons({
+      chapterId: getSiblingsChapterId(lesson),
+      lessonId,
+      ownerId: lesson.ownerId,
+    }),
     loadLessonExams(goalsOf),
   ]);
 
   return {
     homeChapterId: lesson.homeChapterId,
     prompt: {
-      activityTemplates: listSpecActivityTemplates(),
+      activityTemplates: listPlannerTemplates(),
       chapterLessons,
       chapterTitle: chapter?.title ?? lesson.title,
       courseTitle: chapter?.homeCourse?.title ?? chapter?.title ?? lesson.title,
@@ -79,6 +83,8 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       lessonTitle: lesson.title,
       level: lesson.level,
       material: material.length > 0 ? formatMaterialPages(material) : undefined,
+      quick: isQuickLessonIdentityKey(lesson.identityKey),
+      setup: lesson.skills.some(({ skill }) => isSetupSkillIdentityKey(skill.identityKey)),
       skills,
       sources: sources.length > 0 ? formatMaterialPages(sources) : undefined,
     },

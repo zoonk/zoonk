@@ -1,14 +1,11 @@
 "use client";
 
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { CalendarCogIcon, CalendarDaysIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindTile } from "../_components/kind-tile";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type TutorCardActions, type TutorCards, getTutorCards } from "./tutor-cards";
 import { useTutorIdentity } from "./tutor-identity";
-import { type DecideTutorPlanChange, TutorPlanChange } from "./tutor-plan-change";
-import { type TutorToolActions, TutorToolOfferCard } from "./tutor-tool-offer";
 
 /**
  * What the buddy's first suggestions lean on: whether today's session is there and whether the
@@ -17,16 +14,11 @@ import { type TutorToolActions, TutorToolOfferCard } from "./tutor-tool-offer";
 export type TutorSituation = { hasMistake: boolean; hasToday: boolean };
 
 /** Everything a host's conversation needs from the buddy: who it is and how it starts. */
-export type TutorConversationContent = {
+export type TutorConversationContent = TutorCards & {
   composerLabel: string;
   greeting: string;
   identity: { avatar: React.ReactNode; name: string };
   placeholder: string;
-  renderPlanChange: (input: {
-    change: PlanChangeView;
-    onAnswered: (change: PlanChangeView) => void;
-  }) => React.ReactNode;
-  renderToolOffer: (offer: TutorToolOffer) => React.ReactNode;
   suggestions: { icon: React.ReactNode; id: string; label: string }[];
 };
 
@@ -82,11 +74,9 @@ export function useTutorConversationContent({
   decide,
   situation,
   tools,
-}: {
+}: TutorCardActions & {
   buddy: LearnBuddy | null;
-  decide: DecideTutorPlanChange;
   situation: TutorSituation;
-  tools: TutorToolActions;
 }): TutorConversationContent {
   const t = useExtracted();
   const identity = useTutorIdentity(buddy);
@@ -109,10 +99,7 @@ export function useTutorConversationContent({
     greeting,
     identity,
     placeholder: t("Message {name}…", { name }),
-    renderPlanChange: ({ change, onAnswered }) => (
-      <TutorPlanChange change={change} decide={decide} onAnswered={onAnswered} />
-    ),
-    renderToolOffer: (offer) => <TutorToolOfferCard actions={tools} offer={offer} />,
+    ...getTutorCards({ decide, tools }),
     suggestions,
   };
 }

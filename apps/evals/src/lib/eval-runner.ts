@@ -205,6 +205,7 @@ function combineOutputsAndResults(
       categoryScores: scored.categoryScores,
       classification: scored.classification,
       duration: output.duration,
+      extraCalls: output.extraCalls,
       inputTokens: output.inputTokens,
       judge: scored.judge,
       output: output.output,

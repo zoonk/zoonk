@@ -1,10 +1,10 @@
 import { type CourseCategory } from "@zoonk/utils/categories";
 
 /**
- * The version of the style block, the palettes and the prompt layout. Every
- * image stores it, and reuse only matches images of the same version, so a
- * change that makes new images look different must bump it. Old images are
- * replaced when their lesson is next revised, never regenerated in bulk.
+ * The version of the style block, the palettes and the prompt layout, which every image stores: a
+ * change that makes new images look different bumps it. Reuse matches a scene whatever style drew
+ * it, so stored images are never drawn again on their own; redrawing an older style is a person's
+ * call, and this version is how they find those images.
  */
 export const IMAGE_STYLE_VERSION = 2;
 

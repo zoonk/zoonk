@@ -1,26 +1,27 @@
 "use server";
 
 import { anytimeMockInputSchema } from "@zoonk/core/exams/mocks/contract";
-import { startAnytimeMock } from "@zoonk/core/exams/mocks/start-anytime";
+import {
+  type StartAnytimeMockResult,
+  startAnytimeMock,
+} from "@zoonk/core/exams/mocks/start-anytime";
 import { z } from "zod";
 
 const goalIdSchema = z.uuid();
 
 /**
  * What starting a mock any time came to: it runs (`started`, or the one `running` already), its
- * questions must be written first, or why it couldn't start.
+ * questions must be written first, it can ask only part of them now (`short`, for the learner to
+ * start it knowingly), or why it couldn't start.
  */
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }
-  | { status: "dailyLimitReached" | "failed" | "needsQuestions" | "notEnoughQuestions" };
+  | Extract<StartAnytimeMockResult, { status: "short" }>
+  | { status: "failed" | "needsQuestions" | "notEnoughQuestions" };
 
-type KeptRefusal = "dailyLimitReached" | "needsQuestions" | "notEnoughQuestions";
+type KeptRefusal = "needsQuestions" | "notEnoughQuestions";
 
-const KEPT_REFUSALS: readonly KeptRefusal[] = [
-  "dailyLimitReached",
-  "needsQuestions",
-  "notEnoughQuestions",
-];
+const KEPT_REFUSALS: readonly KeptRefusal[] = ["needsQuestions", "notEnoughQuestions"];
 
 /** The refusals the screen says in its own words; the rest read as a failed start. */
 function isKeptRefusal(status: string): status is KeptRefusal {
@@ -43,6 +44,10 @@ export async function startAnytimeMockAction(
 
   if ("id" in result) {
     return { id: result.id, status: result.status };
+  }
+
+  if (result.status === "short") {
+    return result;
   }
 
   return isKeptRefusal(result.status) ? { status: result.status } : { status: "failed" };

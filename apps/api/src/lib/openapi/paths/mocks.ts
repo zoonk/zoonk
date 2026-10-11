@@ -1,24 +1,22 @@
 import {
   anytimeMockInputSchema,
-  mockAnswerInputSchema,
   mockPlanOfferInputSchema,
   mockQuestionsInputSchema,
   mockTimeZoneInputSchema,
 } from "@zoonk/core/exams/mocks/contract";
 import { z } from "zod";
 import {
+  mockEssayGradesResponseSchema,
+  mockStepResponseSchema,
+  mockViewResponseSchema,
+} from "../schemas/mock-exam";
+import {
   anytimeMockResponseSchema,
   mockOptionsResponseSchema,
   mockPlanOfferResultSchema,
   mockQuestionsGenerationSchema,
-  mockStepResponseSchema,
-  mockViewResponseSchema,
 } from "../schemas/mocks";
-import {
-  goalPathParamsSchema,
-  mockPathParamsSchema,
-  mockSectionPathParamsSchema,
-} from "../schemas/paths";
+import { goalPathParamsSchema, mockPathParamsSchema } from "../schemas/paths";
 import {
   conflictResponse,
   forbiddenResponse,
@@ -61,7 +59,7 @@ export const mockPaths = {
     },
     post: {
       description:
-        "Starts one of the goal's mocks now (`shape` from the list), or in onboarding a diagnostic mock as placement (`purpose: placement`, with a `length` from `placement.options`), from the shared bank's questions the learner never answered, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. When the bank is short of the mock's questions it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `acceptFewer`. A placement mock grades only the questions answered, so stopping midway keeps them, and its answers set where the plan starts when placement finishes.",
+        "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, or in onboarding a diagnostic mock as placement (`purpose: placement`, with a `length` from `placement.options`), its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `acceptFewer`. A mock still well short of its questions with nothing to write now answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): start it with `acceptFewer` if the learner wants. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock). A placement mock asks new questions only, grades only the questions answered, so stopping midway keeps them, and its answers set where the plan starts when placement finishes.",
       operationId: "startAnytimeMock",
       requestBody: {
         content: { "application/json": { schema: anytimeMockInputSchema } },
@@ -82,7 +80,6 @@ export const mockPaths = {
         },
         ...commonErrors,
         "402": { ...paymentRequiredResponse, description: "Mock exams come with Plus" },
-        "403": { ...forbiddenResponse, description: "Today's time limit is reached" },
         "409": { ...conflictResponse, description: "The goal is paused" },
         "422": {
           ...unprocessableEntityResponse,
@@ -97,7 +94,7 @@ export const mockPaths = {
   "/goals/{goalId}/mocks/generations": {
     post: {
       description:
-        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
+        "Gets a mock's questions ready when the learner starts it (never on a screen view): `ready` when the shared bank holds them, `preparing` while the goal's skill map is still drawn, otherwise a run writes the missing ones in the exam's own format (shared with every later learner of the exam) and answers 202; a second request joins that run. Each run counts toward the plan's fair use for new mock questions (a diagnostic mock's, as small AI help); past it, nothing is written and it answers `ready`, for the mock to ask questions the learner answered before. A refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
       operationId: "createMockQuestionsGeneration",
       requestBody: {
         content: { "application/json": { schema: mockQuestionsInputSchema } },
@@ -107,7 +104,8 @@ export const mockPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: mockQuestionsGenerationSchema } },
-          description: "The bank holds the mock's questions, or the skill map isn't ready yet",
+          description:
+            "The mock can start (the bank holds its questions, or fair use for new ones is used for now), or the skill map isn't ready yet",
         },
         "202": {
           content: { "application/json": { schema: mockQuestionsGenerationSchema } },
@@ -147,24 +145,27 @@ export const mockPaths = {
       tags: TAGS,
     },
   },
-  "/mocks/{blockId}/answers": {
-    put: {
+  "/mocks/{blockId}/essay-grades": {
+    post: {
       description:
-        "Saves a draft answer in the running section, like marking an answer sheet: a pick or null for blank, whether it's flagged to come back to (which also marks it unsure, for calibration) and the time spent. Nothing is graded until the mock ends. A section whose time ran out takes no more answers.",
-      operationId: "saveMockAnswer",
+        "Grades a finished full mock's essays (its written part, `essays` with `pending` on GET /mocks/{blockId}) with the exam's official rubric, and records them as learning: call it right after the hand-in, while the objective result already shows. Each essay is graded once; a second request waits for the first one's grades. They count toward the day's essay grades: past them, the rest wait for another day (`ESSAY_LIMIT_REACHED`).",
+      operationId: "gradeMockEssays",
       requestBody: {
-        content: { "application/json": { schema: mockAnswerInputSchema } },
+        content: { "application/json": { schema: mockTimeZoneInputSchema } },
         required: true,
       },
       requestParams: { path: mockPathParamsSchema },
       responses: {
-        "204": { description: "Saved" },
+        "200": {
+          content: { "application/json": { schema: mockEssayGradesResponseSchema } },
+          description: "Every written essay has its grade: GET /mocks/{blockId} shows them",
+        },
         ...commonErrors,
-        "409": { ...conflictResponse, description: "The mock isn't running or the time ran out" },
-        "422": { ...unprocessableEntityResponse, description: "Not in the running section" },
+        "409": { ...conflictResponse, description: "The mock isn't handed in yet" },
+        "429": { ...tooManyRequestsResponse, description: "Today's essay grades are used up" },
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Save a mock answer",
+      summary: "Grade a mock's essays",
       tags: TAGS,
     },
   },
@@ -210,29 +211,6 @@ export const mockPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Change the plan from a mock",
-      tags: TAGS,
-    },
-  },
-  "/mocks/{blockId}/sections/{section}/submissions": {
-    post: {
-      description:
-        "Hands in the running section, by the learner or when its time runs out: the next section's clock starts (an adaptive exam's next module is picked from how the last one went), and handing in the last section ends and grades the mock.",
-      operationId: "submitMockSection",
-      requestBody: {
-        content: { "application/json": { schema: mockTimeZoneInputSchema } },
-        required: true,
-      },
-      requestParams: { path: mockSectionPathParamsSchema },
-      responses: {
-        "200": {
-          content: { "application/json": { schema: mockStepResponseSchema } },
-          description: "The next section started, or the mock finished",
-        },
-        ...commonErrors,
-        "409": { ...conflictResponse, description: "Not the running section" },
-      },
-      security: AUTHENTICATED_SECURITY,
-      summary: "Hand in a mock section",
       tags: TAGS,
     },
   },

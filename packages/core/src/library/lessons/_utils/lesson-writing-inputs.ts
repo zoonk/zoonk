@@ -1,6 +1,7 @@
 import "server-only";
 import { type LessonSpec, type LessonSpecSkill } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { type CourseLevel, type Skill, prisma } from "@zoonk/db";
+import { isSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { normalizeString } from "@zoonk/utils/string";
 import {
   type WriterActivityTemplate,
@@ -8,6 +9,7 @@ import {
 } from "../../activities/writer-templates";
 import { type HeldBackDraft, parseHeldBackDrafts } from "../../generation/held-back-drafts";
 import { type LessonWritingContext } from "../../quality/lesson-quality-gate";
+import { getSiblingsChapterId } from "../../quick-lessons/quick-lesson-identity";
 import { type MaterialPage, formatMaterialPages } from "../../sources/material-pages";
 import { type ChapterLesson, loadChapterLessons } from "./chapter-lessons";
 import { loadLessonExams } from "./lesson-exams";
@@ -33,6 +35,10 @@ export type LessonWritingInputs = {
   spec: LessonSpec;
   /** The pages of the learner's own material a private lesson is written from; empty otherwise. */
   material: MaterialPage[];
+  /** The learner whose private course the lesson is in; null for a shared Library lesson. */
+  ownerId: string | null;
+  /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
+  setup: boolean;
   /**
    * Passages of the public documents the lesson's facts come from (a law, an exam notice), for
    * lessons of goals built from sources; empty for lessons built from material and all others.
@@ -106,7 +112,7 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
   const [{ material, sources }, chapterLessons, exams] = await Promise.all([
     loadLessonDocuments({ ...goalsOf, query: toMaterialQuery(spec) }),
     loadChapterLessons({
-      chapterId: lesson.homeChapterId,
+      chapterId: getSiblingsChapterId(lesson),
       lessonId: lesson.id,
       ownerId: lesson.ownerId,
     }),
@@ -130,6 +136,8 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       language: lesson.language,
       level: lesson.level,
       material,
+      ownerId: lesson.ownerId,
+      setup: lesson.skills.some(({ skill }) => isSetupSkillIdentityKey(skill.identityKey)),
       skillIds: matchSpecSkills({
         lessonSkills: lesson.skills.map((item) => item.skill),
         specSkills: spec.skills,
@@ -173,6 +181,7 @@ export function toWritingContext(inputs: LessonWritingInputs): LessonWritingCont
     language: inputs.language,
     level: inputs.level,
     material: inputs.material.length > 0 ? formatMaterialPages(inputs.material) : undefined,
+    setup: inputs.setup,
     sources: inputs.sources.length > 0 ? formatMaterialPages(inputs.sources) : undefined,
     spec: inputs.spec,
   };

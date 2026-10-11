@@ -4,7 +4,6 @@ import { scheduleMemoryAfterSession } from "../../memory/after-session";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { BRAIN_POWER_BONUS } from "../brain-power";
-import { getSessionBlockMinutes } from "../daily-goal";
 import { type Mission, isFullMeal } from "../missions";
 import { measureSessionState } from "./capture-snapshot";
 import { refreshPlanAroundSession } from "./refresh-plan";
@@ -15,8 +14,6 @@ import { countMistakesFixedToday, getSessionMissions } from "./session-missions"
 import { applySessionProgress } from "./session-progress";
 import { type SessionState } from "./session-snapshot";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
-
-const SECONDS_PER_MINUTE = 60;
 
 type SessionDay = { session: StudySessionRow; timeZone: string; userId: string };
 
@@ -118,7 +115,6 @@ async function completeIfFinished({
       totals: {
         correctAnswers: answers.filter((answer) => answer.isCorrect).length,
         incorrectAnswers: answers.filter((answer) => !answer.isCorrect).length,
-        seconds: Math.round(getSessionBlockMinutes(session.blocks) * SECONDS_PER_MINUTE),
       },
       userId,
     });

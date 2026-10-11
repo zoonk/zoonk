@@ -39,10 +39,11 @@ function statesFacts(source: LessonSourceRow): boolean {
 
 /**
  * The passages of public documents a lesson's facts come from, for lessons of goals built from
- * sources: what research found for a goal that plans the lesson (a law, a product's docs), never
- * an exam's notice (see `FACT_TOPICS`). Only public sources, so a learner's private upload never
- * reaches a shared lesson, and only passages about the lesson (`query`: its title, description
- * and skills), so a lesson the documents don't cover reads none.
+ * sources: what research found for a goal that plans the lesson (a law, a product's docs), or
+ * what the lesson's own screens cite, which stays with the lesson after those goals' learners
+ * leave; never an exam's notice (see `FACT_TOPICS`). Only public sources, so a learner's private
+ * upload never reaches a shared lesson, and only passages about the lesson (`query`: its title,
+ * description and skills), so a lesson the documents don't cover reads none.
  */
 async function loadLessonSourcePages({
   chapterId,
@@ -62,9 +63,9 @@ async function loadLessonSourcePages({
     select: { extractedText: true, id: true, mimeType: true, structure: true, title: true },
     take: MAX_LESSON_SOURCES,
     where: {
+      OR: [{ learnerSources: { some: { goal: goals } } }, { steps: { some: { lessonId } } }],
       extractedText: { not: null },
       kind: { not: "upload" },
-      learnerSources: { some: { goal: goals } },
       visibility: "public",
     },
   });

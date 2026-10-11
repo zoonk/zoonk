@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -8,16 +7,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { claimUsage } from "./claim-usage";
 import { getDailySpendBudgetMicros, getEstimatedCostMicros } from "./limits";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 /** Mid-month and mid-day, so seeded usage lands in the periods the test means. */
 const NOW = new Date("2026-09-15T12:00:00Z");
@@ -60,7 +52,6 @@ describe(claimUsage, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   afterEach(() => {
@@ -473,22 +464,6 @@ describe(claimUsage, () => {
     });
 
     await expect(startLesson({ generated: false })).resolves.toStrictEqual({ status: "allowed" });
-  });
-
-  it("slows the learner down when the firewall rate limit trips, keyed on the account", async () => {
-    const user = await useLearner();
-    vi.mocked(isRateLimited).mockResolvedValue(true);
-
-    await expect(startLesson()).resolves.toStrictEqual({
-      retryAfterSeconds: 60,
-      status: "slowDown",
-    });
-
-    expect(isRateLimited).toHaveBeenCalledWith(
-      expect.objectContaining({ key: `user:${user.id}`, rule: "lesson-start" }),
-    );
-
-    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
   it("never lets parallel starts pass the daily cap together", async () => {

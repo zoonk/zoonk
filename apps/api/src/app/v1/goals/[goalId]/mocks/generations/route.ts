@@ -16,7 +16,8 @@ const ACCEPTED = 202;
 /**
  * Gets a mock's questions ready when the learner starts it: `ready` when the shared bank holds
  * them, `preparing` while the goal's skill map is drawn, otherwise a run writes the missing ones
- * (a second request joins it). Each start counts as small AI help.
+ * and its listening sections' missing recordings (a second request joins it). Each start counts
+ * as small AI help.
  */
 async function createMockQuestions(
   request: NextRequest,
@@ -45,17 +46,17 @@ async function createMockQuestions(
     return NextResponse.json({ generationId: null, status: result.status });
   }
 
-  if (!("skillIds" in result)) {
+  if (result.status !== "start") {
     return examError(result);
   }
 
   const run = await start(mockQuestionsWorkflow, [
     {
       analytics: result.analytics,
-      format: result.format,
       goalId: path.data.goalId,
-      questionsPerSkill: result.questionsPerSkill,
-      skillIds: result.skillIds,
+      listening: result.listening,
+      quickFormat: result.quickFormat,
+      writes: result.writes,
     },
   ]);
 

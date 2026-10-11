@@ -2,17 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
-import { type MistakeDrill, type MistakeDrillKind } from "./mistake-drills";
-
-/** The lesson a content-gap drill goes over first: its title and its summary card's ideas. */
-type DrillLesson = { id: string; ideas: string[]; title: string };
-
-/** A drill as apps show it: its kind, the lesson to go over before the questions, the time box. */
-export type DrillView = {
-  kind: MistakeDrillKind;
-  lesson: DrillLesson | null;
-  timeLimitSeconds: number | null;
-};
+import { type DrillLesson, type DrillView, type MistakeDrill } from "./mistake-drills";
 
 /**
  * The first lesson teaching each skill that the learner can open (a public lesson or their own),

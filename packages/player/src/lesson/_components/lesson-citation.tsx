@@ -24,7 +24,7 @@ function useCitationLabel() {
   };
 }
 
-/** "Aula 5, slide 4": the page of the learner's own material, so they can open it there. */
+/** "Class 5, slide 4": the page of the learner's own material, so they can open it there. */
 function MaterialCitation({ citation }: { citation: MaterialStepCitation }) {
   const t = useExtracted();
   const label = useCitationLabel()(citation);

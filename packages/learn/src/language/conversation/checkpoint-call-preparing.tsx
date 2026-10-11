@@ -40,7 +40,7 @@ export function CheckpointCallPreparing({
   unitTitle: string;
 }) {
   const t = useExtracted();
-  const title = useConversationTitle({ exam: null, kind: "checkpoint" });
+  const title = useConversationTitle({ exam: null, examTask: null, kind: "checkpoint" });
   const [state, setState] = useState<WriteState>("idle");
 
   const start = async () => {

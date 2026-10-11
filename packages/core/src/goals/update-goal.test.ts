@@ -1,4 +1,3 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -10,18 +9,12 @@ import { trackServerEvent } from "../analytics/server";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { updateGoal } from "./update-goal";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 // PostHog is an external service; the mock records what would leave the server.
 vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -50,7 +43,6 @@ describe(updateGoal, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(MONDAY);
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   afterEach(() => {

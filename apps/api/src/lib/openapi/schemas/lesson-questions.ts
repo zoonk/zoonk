@@ -32,9 +32,9 @@ export const createLessonQuestionRequestSchema = createLessonQuestionInputSchema
     requestId: createLessonQuestionInputSchema.shape.requestId.meta({
       description: "Client-generated idempotency key reused for exact request retries",
     }),
-    suggested: createLessonQuestionInputSchema.shape.suggested.meta({
+    suggestion: createLessonQuestionInputSchema.shape.suggestion.meta({
       description:
-        "True when the learner sent one of the tutor's suggested questions as offered; a suggested question about a lesson screen is answered once for everyone who asks it there",
+        "The tutor's suggestion the learner tapped: the `id` of one of the lesson's `tutorSuggestions` (`GET /v1/library/lessons/{lessonId}`). The question is stored in that suggestion's words, whatever `question` says, and a lesson screen's suggestion is answered once for everyone who taps it there; anything typed is answered as the learner's own question",
     }),
   })
   .meta({ id: "CreateLessonQuestionRequest" });

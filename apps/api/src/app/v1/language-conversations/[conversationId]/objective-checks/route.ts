@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
-import { conversationRefusalError, languageError } from "@/lib/language-errors";
+import { languageError } from "@/lib/language-errors";
 import { languageConversationPathParamsSchema } from "@/lib/openapi/schemas/language";
 import { parsePathParams } from "@/lib/path-params";
 import { checkLanguageConversationObjectives } from "@zoonk/core/language/conversations/check-objectives";
@@ -35,10 +35,6 @@ async function checkObjectives(
     conversationId: path.data.conversationId,
     input: body.data,
   });
-
-  if (result.status === "slowDown") {
-    return conversationRefusalError(result);
-  }
 
   if (result.status !== "ready") {
     return languageError(result.status, "Conversation not found");

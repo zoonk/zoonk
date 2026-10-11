@@ -4,7 +4,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { cacheTag } from "next/cache";
 import { getMemoryCacheTag } from "../../cache/tags";
 import { getSession } from "../../users/get-session";
-import { getMemoryAccess } from "../_utils/memory-access";
+import { isMemoryEnabled } from "../_utils/memory-access";
 import { type MemoryInsightQuery, type MemoryInsightView } from "../memory-contract";
 import { toMemoryInsightView } from "./_utils/insight-view";
 
@@ -34,9 +34,7 @@ export async function getCurrentMemoryInsight(
   const userId = session.user.id;
   cacheTag(getMemoryCacheTag(userId));
 
-  const access = await getMemoryAccess(userId);
-
-  if (!access.enabled) {
+  if (!(await isMemoryEnabled(userId))) {
     return { insight: null, status: "ready" };
   }
 

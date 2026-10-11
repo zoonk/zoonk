@@ -22,7 +22,7 @@ export type MaterialPage = {
 const SECTION_CHARACTERS = 2000;
 /** What one lesson reads from the material: a few pages, enough for one idea and its context. */
 const LESSON_MATERIAL_CHARACTERS = 12_000;
-/** Words shorter than this ("the", "de", "and") say nothing about what a page is about. */
+/** Words shorter than this ("the", "of", "and") say nothing about what a page is about. */
 const MIN_TERM_LENGTH = 4;
 /** How much of each page the index shows: its title line and what follows. */
 const INDEX_LINE_CHARACTERS = 160;

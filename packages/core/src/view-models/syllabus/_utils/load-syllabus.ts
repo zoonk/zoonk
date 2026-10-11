@@ -1,128 +1,39 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { namesMatch } from "../../../exams/_utils/name-match";
-import { getSubjectShare } from "../../../exams/map/exam-map";
-import { isWrittenSection } from "../../../exams/mocks/mock-plan";
-import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { getPassMarks } from "../../../library/exams/pass-marks";
-import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
-import {
-  getPastQuestionsSource,
-  getSubjectQuestions,
-} from "../../../library/exams/subject-questions";
-import { getTopicFrequencySource, listTopicLevels } from "../../../library/exams/topic-frequency";
-import { getTopicHeadings } from "../../../library/exams/topic-groups";
+import { loadClaimEvents } from "../../../learner/_utils/load-skill-claims";
+import { listKnownSkills } from "../../../learner/_utils/skill-claims";
+import { loadSkillPrerequisites } from "../../../library/skills/skill-prerequisites";
+import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { getWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
-import { readCourseWeights } from "../../../plans/planner/course-weights";
+import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import {
   type PlanGraph,
   parsePlanGraph,
   parsePlanSettings,
 } from "../../../plans/planner/plan-state";
-import { type SyllabusView } from "../syllabus-contract";
 import {
   type AreaCourse,
-  type NoticeSubject,
   type SyllabusInput,
   type SyllabusItem,
   type SyllabusSkill,
 } from "./syllabus-input";
 import { getPastBasicsSkillIds, withTestedOutSkills } from "./syllabus-known-skills";
+import { loadNotice } from "./syllabus-notice";
 import { getSkillSubjects } from "./syllabus-subjects";
 
 const itemSelect = {
   chapterId: true,
+  id: true,
   kind: true,
   lessonId: true,
+  lessons: true,
   phase: true,
   scheduledFor: true,
   skillId: true,
   status: true,
   titleSnapshot: true,
 } as const;
-
-/** The course weights a syllabus shows: those research found for the goal's course, if any. */
-function toCourseWeights(details: Goal["details"] | undefined): SyllabusView["courseWeights"] {
-  const weights = readCourseWeights(details);
-
-  return weights
-    ? {
-        course: weights.course,
-        edition: weights.edition,
-        institution: weights.institution,
-        source: weights.source,
-        subjects: weights.subjects,
-      }
-    : null;
-}
-
-/**
- * What a subject's written test asks, from the exam's written sections named like it or its group
- * ("Prova discursiva (P3)": two discursive questions and a peça técnica).
- */
-function getWrittenTasks({
-  structure,
-  subject,
-}: {
-  structure: ExamStructure;
-  subject: ExamStructure["subjects"][number];
-}): string[] {
-  const names = [subject.name, subject.group].filter((name) => name !== undefined && name !== null);
-
-  return (structure.mock?.sections ?? [])
-    .filter(
-      (section) =>
-        isWrittenSection({ section, structure }) &&
-        names.some((name) => namesMatch(section.name, name)),
-    )
-    .flatMap((section) => (section.tasks ?? []).map((task) => task.description));
-}
-
-/** The exam's notice subjects (with their short names), when the goal is an exam with a blueprint. */
-async function loadNotice(
-  goal: Pick<Goal, "examBlueprintId" | "kind"> & Partial<Pick<Goal, "details">>,
-): Promise<SyllabusInput["notice"]> {
-  if (goal.kind !== "exam" || !goal.examBlueprintId) {
-    return null;
-  }
-
-  const blueprint = await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
-
-  if (!blueprint) {
-    return null;
-  }
-
-  const { edition, structure, topicFrequency } = readBlueprintContent(blueprint);
-  const levels = listTopicLevels({ structure, topicFrequency });
-
-  const subjects: NoticeSubject[] = structure.subjects.map((subject) => ({
-    frequencySource: getTopicFrequencySource({ structure, subject }),
-    group: subject.group ?? null,
-    matrix: subject.matrix ?? [],
-    name: subject.name,
-    questions: getSubjectQuestions({ structure, subject }),
-    share: getSubjectShare({ structure, subject }),
-    shortName: subject.shortName ?? null,
-    topicFrequency: new Map(
-      levels
-        .filter((level) => level.subject === subject.name)
-        .map((level) => [level.topic, level.level]),
-    ),
-    topicHeadings: getTopicHeadings(subject.topicGroups),
-    topics: subject.topics,
-    writtenTasks: getWrittenTasks({ structure, subject }),
-  }));
-
-  return {
-    courseWeights: toCourseWeights(goal.details),
-    fromMaterial: blueprint.ownerId !== null,
-    passMarks: getPassMarks(structure),
-    questionsSource: getPastQuestionsSource(structure),
-    subjects,
-    url: edition.noticeUrl,
-  };
-}
 
 function toSkills(graph: PlanGraph): SyllabusSkill[] {
   return graph.skills.map((skill) => ({
@@ -255,12 +166,13 @@ async function loadChapterTitles(items: readonly SyllabusItem[]): Promise<Map<st
  * its lessons in plan order, their chapters' titles and each area's course. Null without a plan.
  */
 export async function loadSyllabusInput(
-  goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind"> &
+  goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "language" | "userId"> &
     Partial<Pick<Goal, "details" | "targetDate">>,
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
     prisma.plan.findUnique({
       select: {
+        goal: { select: { primaryCourseId: true } },
         graph: true,
         items: {
           orderBy: { position: "asc" },
@@ -281,24 +193,50 @@ export async function loadSyllabusInput(
   const graph = parsePlanGraph(plan.graph);
   const graphSkillIds = new Set(graph.skills.map((skill) => skill.skillId));
 
-  const [items, areaCourses, chapterTitles] = await Promise.all([
-    withSkills({ graphSkillIds, items: plan.items }).then((withOwn) =>
-      withTestedOutSkills({ graphSkillIds, items: withOwn }),
-    ),
-    loadAreaCourses(graph),
-    loadChapterTitles(plan.items),
-  ]);
+  const [items, areaCourses, chapterTitles, claimEvents, prerequisites, taughtSkillIds] =
+    await Promise.all([
+      withSkills({ graphSkillIds, items: plan.items }).then((withOwn) =>
+        withTestedOutSkills({ graphSkillIds, items: withOwn }),
+      ),
+      loadAreaCourses(graph),
+      loadChapterTitles(plan.items),
+      loadClaimEvents({ goalId: goal.id, skillIds: [...graphSkillIds], userId: goal.userId }),
+      loadSkillPrerequisites([...graphSkillIds]),
+      listTaughtStandInSkills({
+        goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
+        graph,
+        items: plan.items,
+      }),
+    ]);
 
   const settings = parsePlanSettings(plan.settings);
+  const pastBasicsSkillIds = getPastBasicsSkillIds({ graph, items, prerequisites, settings });
+  const focused = listFocusedSkillIds({ graph, settings });
+
+  const skippedBaseIds = new Set(
+    settings.baseChoices.flatMap((entry) => (entry.choice === "skip" ? [entry.skillId] : [])),
+  );
+
+  // A basic the learner passed over by choice is still to confirm, not known: the page says they
+  // chose to skip it until practice confirms it.
+  const passedOver = (skillId: string) =>
+    skippedBaseIds.has(skillId) || pastBasicsSkillIds.has(skillId);
 
   return {
     areaCourses,
     chapterTitles,
     items,
+    knownSkillIds: listKnownSkills({
+      events: claimEvents,
+      focused: (skillId) => focused.has(skillId),
+      passedOver,
+    }),
     notice,
-    pastBasicsSkillIds: getPastBasicsSkillIds({ graph, items, settings }),
+    pastBasicsSkillIds,
     skills: toSkills(graph),
     skippedAreas: settings.skippedAreas,
+    skippedBaseIds,
+    taughtSkillIds,
     writtenPractice: getWrittenPracticeView({
       goal: { createdAt: goal.createdAt, kind: goal.kind, targetDate: goal.targetDate ?? null },
       graph,
@@ -308,7 +246,7 @@ export async function loadSyllabusInput(
 }
 
 /**
- * Each of the goal's skills by its subject's short name ("Língua Portuguesa"), for labels on
+ * Each of the goal's skills by its subject's short name ("Portuguese Language"), for labels on
  * Today's lessons; empty for goals with fewer than two subjects. Reads only the graph, the notice
  * and the areas' courses, so a session doesn't load the whole plan for it.
  */

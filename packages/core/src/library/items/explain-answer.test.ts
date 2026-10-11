@@ -1,5 +1,4 @@
 import { explainWrongAnswer } from "@zoonk/ai/tasks/v2/grading/explain-wrong-answer";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
@@ -11,16 +10,9 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { generatedProvenance, generatedTypedItem } from "./_test-utils/generated-items";
 import { explainAnswer } from "./explain-answer";
 import { toStoredItem } from "./item-content";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 /** The model call is the external boundary; persistence and reuse run for real. */
 vi.mock("@zoonk/ai/tasks/v2/grading/explain-wrong-answer", () => ({ explainWrongAnswer: vi.fn() }));
@@ -73,19 +65,6 @@ describe(explainAnswer, () => {
     await expect(
       explainAnswer({ answer: "R$ 15", target: { stepId: step.id } }),
     ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
-
-    expect(explainWrongAnswer).not.toHaveBeenCalled();
-  });
-
-  it("asks for a pause before writing a new explanation over the AI rate limit", async () => {
-    const [step, learner] = await Promise.all([createTypedAnswerStep(), userFixture()]);
-
-    mockSession(learner.id);
-    vi.mocked(isRateLimited).mockResolvedValueOnce(true);
-
-    await expect(
-      explainAnswer({ answer: "R$ 15", target: { stepId: step.id } }),
-    ).resolves.toMatchObject({ status: "slowDown" });
 
     expect(explainWrongAnswer).not.toHaveBeenCalled();
   });

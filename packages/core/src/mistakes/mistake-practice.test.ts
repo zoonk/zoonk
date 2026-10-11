@@ -3,7 +3,13 @@ import { prisma } from "@zoonk/db";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
-import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  choiceItemContent,
+  itemFixture,
+  itemSetFixture,
+  skillFixture,
+  textSetContent,
+} from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -108,6 +114,47 @@ describe(getMistakePractice, () => {
         [extra.id, null],
       ]),
     );
+  });
+
+  it("brings a passage question's mistake back with its passage, and only that question of it", async () => {
+    const { extra, original, skill, user } = await setup();
+    const passage = textSetContent("The Sunday library");
+    const set = await itemSetFixture({ content: passage });
+
+    const [, missed] = await Promise.all([
+      itemFixture({
+        content: choiceItemContent(),
+        setId: set.id,
+        setPosition: 0,
+        skillId: skill.id,
+      }),
+      itemFixture({
+        content: choiceItemContent(),
+        setId: set.id,
+        setPosition: 1,
+        skillId: skill.id,
+      }),
+    ]);
+
+    await mistakeFixture({
+      cause: "gap",
+      createdAt: YESTERDAY,
+      itemId: missed?.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const result = await getMistakePractice({ timeZone: "UTC" });
+    const questions = result.status === "ready" ? (result.practice[0]?.questions ?? []) : [];
+
+    expect(
+      questions.map((question) => [question.itemId, question.set?.text ?? null]),
+    ).toStrictEqual([
+      [missed?.id, passage.text],
+      ...[original.id, extra.id].toSorted().map((itemId) => [itemId, null]),
+    ]);
+
+    expect(questions[0]?.set).toMatchObject({ count: 2, position: 1, title: "The Sunday library" });
   });
 
   it("goes over a lesson the learner can open, with its summary, before a gap's questions", async () => {

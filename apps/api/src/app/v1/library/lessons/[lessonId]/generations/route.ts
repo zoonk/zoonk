@@ -1,6 +1,10 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { lessonSetAsideError, usageDecisionError } from "@/lib/lesson-player-errors";
+import {
+  lessonSetAsideError,
+  plusRequiredError,
+  usageDecisionError,
+} from "@/lib/lesson-player-errors";
 import { startLessonWriting } from "@/lib/lesson-writing";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
@@ -23,7 +27,7 @@ function acceptedGeneration(generationId: string) {
  * answers with the run writing it, so a second request follows it from its stream's start instead
  * of paying twice (a run that stopped is replaced); otherwise a run starts. Asking counts as the
  * lesson start it leads to, planned lessons included. A lesson set aside after its last
- * held-back draft answers 409.
+ * held-back draft answers 409, and a new lesson of a free exam plan past its first week 402.
  */
 async function createLessonGeneration(
   _request: Request,
@@ -51,6 +55,10 @@ async function createLessonGeneration(
 
   if (result.status === "setAside") {
     return lessonSetAsideError();
+  }
+
+  if (result.status === "plusRequired") {
+    return plusRequiredError();
   }
 
   if (result.status === "ready") {

@@ -82,14 +82,17 @@ function WritingTestOut({ generationId, page }: { generationId: string; page: Te
 
 /**
  * A test-out with no questions yet. Opened from "Take the test", it follows the run that tap
- * started; opened any other way, the learner's tap asks for the questions first.
+ * started; opened any other way, the learner's tap asks for the questions first. One a free exam
+ * plan past its first week takes with Plus only (`plusRequired`) offers Plus instead.
  */
 export function TestOutPreparingClient({
   generationId,
   page,
+  plusRequired = false,
 }: {
   generationId: string | null;
   page: TestOutPage;
+  plusRequired?: boolean;
 }) {
   const router = useRouter();
 
@@ -123,6 +126,7 @@ export function TestOutPreparingClient({
       closeHref={page.closeHref}
       limit={writing?.status === "refused" ? writing.limit : null}
       onStart={start}
+      plusRequired={plusRequired || writing?.status === "plusRequired"}
       run={writing?.status === "failed" && !isPending ? notStartedRun(start) : null}
       starting={isPending || writing?.status === "ready"}
     />

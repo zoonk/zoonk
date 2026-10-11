@@ -1,10 +1,22 @@
+import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
+import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-activities";
 import { challengeTeamSchema } from "../../library/challenges/challenge-team";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "../plan-tools-contract";
 
-/** Learn phases come from the skill graph; exam plans with a date use time-boxed phases instead. */
-const PLAN_PHASE_KINDS = ["learn", "foundations", "gaps", "practice", "finalStretch"] as const;
+/**
+ * Learn phases come from the skill graph; exam plans with a date use time-boxed phases instead,
+ * and one that studies everything (`PlanSettings.fullCourse`) goes on after the exam.
+ */
+const PLAN_PHASE_KINDS = [
+  "learn",
+  "foundations",
+  "gaps",
+  "practice",
+  "finalStretch",
+  "afterExam",
+] as const;
 
 export const PRACTICE_BIASES = ["moreExplanation", "balanced", "morePractice"] as const;
 export const DIFFICULTY_BIASES = ["easier", "standard", "harder"] as const;
@@ -13,12 +25,20 @@ export const AREA_STARTS = ["pastBasics", "basics"] as const;
 const PACE_SOURCES = ["own", "course", "typical"] as const;
 
 /**
- * When an exam's written tests (a redação, a discursive test) are practiced: a little every week
+ * When an exam's written tests (ENEM's essay, a discursive test) are practiced: a little every week
  * (the default: spaced practice with feedback improves writing most), every other week, or only
  * in the final weeks before the exam. The total practice stays the same; only when it comes moves.
  */
 export const WRITTEN_CADENCES = ["weekly", "biweekly", "finalWeeks"] as const;
 
+/**
+ * How the learner studies one of the plan's bases (see `findPlanBases`): every lesson (`deep`), its
+ * core before what builds on it (`essential`, the default: the first third of its lessons), one
+ * quick lesson that sums it up with a worked example (`quick`), or not at all (`skip`).
+ */
+export const BASE_CHOICES = ["deep", "essential", "quick", "skip"] as const;
+
+export type BaseChoice = (typeof BASE_CHOICES)[number];
 export type PlanPhaseKind = (typeof PLAN_PHASE_KINDS)[number];
 export type PracticeBias = (typeof PRACTICE_BIASES)[number];
 export type DifficultyBias = (typeof DIFFICULTY_BIASES)[number];
@@ -59,6 +79,12 @@ const graphSkillSchema = z.object({
    */
   outcome: z.boolean().optional(),
   phase: z.int().min(0),
+  /**
+   * The lessons the plan's last build counted for the skill: its Library lessons and stand-ins,
+   * before any cut (`BuiltPlan.skillLessons`). Its core is the first third of them
+   * (`getCoreLessons`), which a phase's challenge waits for. Absent until a build saves it.
+   */
+  plannedLessons: z.int().min(0).optional(),
   skillId: z.string(),
   /**
    * The exact texts of the source's topics this skill teaches (for an exam, its notice's
@@ -68,8 +94,19 @@ const graphSkillSchema = z.object({
   weight: z.number().nullable().default(null),
 });
 
-/** The goal's skill graph in teaching order: prerequisites always come first. */
+/**
+ * A skill of an option the learner doesn't take of one of their exam's choices, set aside with the
+ * skill it came after in the graph (null at its start), where a pick brings it back.
+ */
+const optionSkillSchema = graphSkillSchema.extend({ after: z.string().nullable().default(null) });
+
+/**
+ * The goal's skill graph in teaching order: prerequisites always come first. `skills` holds only
+ * what the learner studies: the skills of an exam choice's options they don't take are set aside
+ * in `optionSkills` (see `setAsideOptionSkills`), so nothing that reads the plan's skills sees them.
+ */
 export const planGraphSchema = z.object({
+  optionSkills: z.array(optionSkillSchema).optional(),
   phases: z.array(graphPhaseSchema).default([]),
   skills: z.array(graphSkillSchema).default([]),
 });
@@ -80,8 +117,8 @@ const lightWeekSchema = z.object({ endDate: isoDateSchema, startDate: isoDateSch
 const movedEventSchema = z.object({ from: isoDateSchema, to: isoDateSchema });
 
 /**
- * The part of a focused area the learner named ("mais biologia e química" in ENEM's Ciências da
- * Natureza, which also holds physics): only these skills of the area get the focus, under the
+ * The part of a focused area the learner named ("more biology and chemistry" in ENEM's natural
+ * sciences, which also hold physics): only these skills of the area get the focus, under the
  * name the learner would say.
  */
 const focusPartSchema = z.object({
@@ -101,15 +138,56 @@ export const toolChoiceSchema = z.object({
   system: z.enum(TOOL_SYSTEMS).nullable().default(null),
 });
 
+/** The learner's choice for one base; a base without one is studied for its core (`essential`). */
+const baseChoiceSchema = z.object({
+  choice: z.enum(BASE_CHOICES).exclude(["essential"]),
+  skillId: z.string(),
+});
+
+/**
+ * Choices saved before there were four: studying only a base's first lesson is its quick lesson
+ * now, and learning it first is its core, the default, which isn't stored.
+ */
+function upgradeBaseChoices(value: unknown): unknown {
+  if (!Array.isArray(value)) {
+    return value;
+  }
+
+  return value.flatMap((entry: unknown) => {
+    if (!isJsonObject(entry)) {
+      return [entry];
+    }
+
+    if (entry.choice === "learn") {
+      return [];
+    }
+
+    return [entry.choice === "essentials" ? { ...entry, choice: "quick" } : entry];
+  });
+}
+
 /**
  * How the learner shaped the plan. `weekdayMinutes` (Sunday first) overrides the goal's daily
  * minutes per weekday, with 0 for rest days; null means every day gets the daily minutes.
  */
 const planSettingsSchema = z.object({
+  /** The bases the learner studies another way than for their core (see `BaseChoice`). */
+  baseChoices: z.preprocess(upgradeBaseChoices, z.array(baseChoiceSchema)).default([]),
   difficultyBias: z.enum(DIFFICULTY_BIASES).default("standard"),
+  /**
+   * The option the learner takes of each of their exam's choices (ENEM's foreign language): the
+   * plan studies only those, and nothing of a choice they haven't picked (see `toChosenStructure`).
+   */
+  examChoices: z.array(examChoicePickSchema).default([]),
   focusAreas: z.array(z.string()).default([]),
   /** Focused areas narrowed to the part the learner named; an area without one is focused whole. */
   focusParts: z.array(focusPartSchema).default([]),
+  /**
+   * An exam plan that studies everything: until the exam it's the plan its date shapes (what the
+   * exam asks most first, mocks, the final stretch), and what doesn't fit before it goes on after
+   * the exam, at the learner's time. Other goals study everything by having no date.
+   */
+  fullCourse: z.boolean().default(false),
   lightWeeks: z.array(lightWeekSchema).default([]),
   movedEvents: z.array(movedEventSchema).default([]),
   /**
@@ -129,7 +207,7 @@ const planSettingsSchema = z.object({
   pastBasicsAreas: z.array(z.string()).default([]),
   practiceBias: z.enum(PRACTICE_BIASES).default("balanced"),
   /**
-   * Areas the learner wants less of but keeps ("menos Filosofia"): they count half, so their depth
+   * Areas the learner wants less of but keeps ("less philosophy"): they count half, so their depth
    * and their share of the days go to the others first. A focus on one of them takes it back out.
    */
   reducedAreas: z.array(z.string()).default([]),
@@ -169,12 +247,14 @@ const planPhaseSchema = z.object({
 
 export type PlanGraph = z.infer<typeof planGraphSchema>;
 export type PlanGraphSkill = PlanGraph["skills"][number];
+export type PlanOptionSkill = NonNullable<PlanGraph["optionSkills"]>[number];
 export type PlanSettings = z.infer<typeof planSettingsSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
 export type LightWeek = z.infer<typeof lightWeekSchema>;
 export type MovedEvent = z.infer<typeof movedEventSchema>;
 export type FocusPart = z.infer<typeof focusPartSchema>;
 export type PlanToolChoice = z.infer<typeof toolChoiceSchema>;
+export type StoredBaseChoice = z.infer<typeof baseChoiceSchema>;
 
 /** What an undo restores: the goal's time settings, the graph and the settings. */
 export const planStateSchema = z.object({

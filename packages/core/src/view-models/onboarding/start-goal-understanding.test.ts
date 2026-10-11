@@ -1,18 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { classifyCourseIntent } from "@zoonk/ai/tasks/courses/intent";
 import { understandGoal as runUnderstandGoal } from "@zoonk/ai/tasks/v2/goals/understand-goal";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { buildExamIdentityKey } from "../../library/exams/exam-identity";
 import { startGoalUnderstanding } from "./start-goal-understanding";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
@@ -21,21 +19,16 @@ vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("@zoonk/ai/tasks/v2/goals/understand-goal", () => ({ understandGoal: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/courses/intent", () => ({ classifyCourseIntent: vi.fn() }));
 
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
-
 function uniqueGoal(text: string) {
   return `${text} ${randomUUID()}`;
 }
 
-describe(startGoalUnderstanding, () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
+/** Small AI calls the learner claimed: reading new words takes one. */
+function countAssists(userId: string) {
+  return prisma.usageRecord.count({ where: { kind: "assist", userId } });
+}
 
+describe(startGoalUnderstanding, () => {
   it("needs a session, which guests have", async () => {
     mockSession(null);
 
@@ -67,6 +60,7 @@ describe(startGoalUnderstanding, () => {
         route: "goals",
         studyTimeNote: "After work",
       },
+      userId: user.id,
     });
 
     const result = await startGoalUnderstanding({
@@ -76,7 +70,7 @@ describe(startGoalUnderstanding, () => {
     });
 
     expect(runUnderstandGoal).not.toHaveBeenCalled();
-    expect(isRateLimited).not.toHaveBeenCalled();
+    await expect(countAssists(user.id)).resolves.toBe(0);
     expect(result.status).toBe("understood");
 
     const draft = result.status === "understood" ? result.draft : null;
@@ -156,6 +150,7 @@ describe(startGoalUnderstanding, () => {
         goals: [{ examName, examYear: 2099, kind: "exam", subject: examName, title: "Pass it" }],
         route: "goals",
       },
+      userId: user.id,
     });
 
     const result = await startGoalUnderstanding({ goal, language: "en" });
@@ -166,9 +161,69 @@ describe(startGoalUnderstanding, () => {
     expect(understood?.draft.examBlueprintId).toBe(blueprint.id);
 
     expect(understood?.examDates).toStrictEqual([
-      { date: "2099-11-08", estimated: false, label: "Day 1", source: official },
-      { date: "2099-11-15", estimated: false, label: "Day 2", source: official },
+      {
+        date: "2099-11-08",
+        estimated: false,
+        label: "Day 1",
+        registrationClosed: false,
+        source: official,
+      },
+      {
+        date: "2099-11-15",
+        estimated: false,
+        label: "Day 2",
+        registrationClosed: false,
+        source: official,
+      },
     ]);
+  });
+
+  // Sofia named "March" while the OAB notice said 10 January: the card offered that day, and her
+  // goal remembers it, so Today doesn't ask her the same thing again after she kept her month.
+  it("remembers the notice's day the card offers next to a month the learner named", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const examName = `Test Exam ${randomUUID()}`;
+    const source = await sourceFixture({ title: "Official notice" });
+    const citation = { passage: "The exam takes place on", sourceId: source.id };
+
+    await examBlueprintFixture({
+      edition: {
+        citations: [],
+        dates: [{ citation, date: "2099-11-08", kind: "exam", label: "Exam" }],
+        noticeUrl: null,
+        questionCount: null,
+        sourceHash: null,
+        year: 2099,
+      },
+      identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),
+      name: examName,
+    });
+
+    const understand = async (examMonth: number) => {
+      const goal = uniqueGoal(`pass the exam in month ${examMonth} of 2099`);
+
+      await goalUnderstandingFixture({
+        goal,
+        result: {
+          followUps: [],
+          goals: [
+            { examMonth, examName, examYear: 2099, kind: "exam", subject: examName, title: "Pass" },
+          ],
+          route: "goals",
+        },
+        userId: user.id,
+      });
+
+      const result = await startGoalUnderstanding({ goal, language: "en" });
+      const understanding = result.status === "understood" ? result.draft.understanding : null;
+      const [understood] = understanding?.status === "goals" ? understanding.goals : [];
+
+      return understood?.draft.details?.offeredNoticeDay;
+    };
+
+    await expect(understand(12)).resolves.toBe("2099-11-08");
+    await expect(understand(11)).resolves.toBeUndefined();
   });
 
   it("saves new words as a draft to read in a run, without calling the models here", async () => {
@@ -184,7 +239,7 @@ describe(startGoalUnderstanding, () => {
 
     expect(runUnderstandGoal).not.toHaveBeenCalled();
     expect(classifyCourseIntent).not.toHaveBeenCalled();
-    expect(isRateLimited).toHaveBeenCalledOnce();
+    await expect(countAssists(user.id)).resolves.toBe(1);
 
     expect(result).toStrictEqual({
       draft: {
@@ -205,17 +260,6 @@ describe(startGoalUnderstanding, () => {
     ).resolves.toMatchObject({ language: "pt", runId: null, timeZone: "Europe/Berlin" });
   });
 
-  it("slows down a learner who asks too often, before saving anything", async () => {
-    const user = await userFixture();
-    mockSession(user.id);
-    vi.mocked(isRateLimited).mockResolvedValue(true);
-
-    const result = await startGoalUnderstanding({ goal: uniqueGoal("chemistry"), language: "en" });
-
-    expect(result).toStrictEqual({ retryAfterSeconds: expect.any(Number), status: "slowDown" });
-    await expect(prisma.onboardingDraft.count({ where: { userId: user.id } })).resolves.toBe(0);
-  });
-
   it("asks a guest whose one goal is taken to create an account before anything is read", async () => {
     const guest = await userFixture();
     mockGuestSession(guest.id);
@@ -229,6 +273,7 @@ describe(startGoalUnderstanding, () => {
         goals: [{ kind: "learn", subject: "Baking", title: "Bake bread" }],
         route: "goals",
       },
+      userId: guest.id,
     });
 
     const refused = {
@@ -245,7 +290,7 @@ describe(startGoalUnderstanding, () => {
       startGoalUnderstanding({ goal: uniqueGoal("learn welding"), language: "en" }),
     ).resolves.toStrictEqual(refused);
 
-    expect(isRateLimited).not.toHaveBeenCalled();
+    await expect(countAssists(guest.id)).resolves.toBe(0);
     await expect(prisma.onboardingDraft.count({ where: { userId: guest.id } })).resolves.toBe(0);
   });
 
@@ -273,6 +318,7 @@ describe(startGoalUnderstanding, () => {
         goals: [{ kind: "learn", subject: "Cooking", title: "Cook rice" }],
         route: "goals",
       },
+      userId: guest.id,
     });
 
     await expect(

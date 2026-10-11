@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
+import { type PromptTrainingInput, runUnderPromptTrainingRule } from "../data-protection";
 import { type AiGenerationContext } from "./ai-generation-event";
 import { captureAiGeneration } from "./ai-generation-sink";
 import {
@@ -77,17 +78,25 @@ export function startTaskGeneration(input: TaskGenerationInput) {
  * Runs one task generation and returns its provenance next to the untouched
  * AI SDK result, so every task reports the model that actually ran, its
  * prompt version, usage, cost and latency the same way, and sends one
- * `$ai_generation` event.
+ * `$ai_generation` event. Streamed runs (`startTaskGeneration`) always keep
+ * the no-training filter.
  */
 export async function runTaskGeneration<TGeneration extends FinishedGeneration>({
   generate,
+  libraryInput,
   ...input
-}: TaskGenerationInput & { generate: () => Promise<TGeneration> }): Promise<{
-  provenance: TaskProvenance;
-  result: TGeneration;
-}> {
+}: TaskGenerationInput &
+  PromptTrainingInput & {
+    generate: (rule: { promptTraining: boolean }) => Promise<TGeneration>;
+  }): Promise<{ provenance: TaskProvenance; result: TGeneration }> {
   const run = startTaskGeneration(input);
-  const result = await generate();
+
+  const result = await runUnderPromptTrainingRule({
+    contentScope: input.analytics?.contentScope,
+    generate,
+    libraryInput,
+  });
+
   const provenance = await run.finish(result);
 
   return { provenance, result };

@@ -100,18 +100,24 @@ export type BandInput = {
   workflowRunId: string;
 };
 
-/** The outline writer's input for a band, the same whether it's streamed or not. */
+/**
+ * The outline writer's input for a band, the same whether it's streamed or not. An exam's skills
+ * carry their subject, so each chapter keeps to one.
+ */
 export function toOutlineParams({
   analytics,
   plan,
   scope,
   workflowRunId,
 }: Omit<BandInput, "courseId">): CourseOutlineParams {
+  const forExam = Boolean(scope.exams?.length);
+
   return {
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
     courseTitle: plan.courseTitle,
     exams: scope.exams,
     extendSkills: plan.extensions.map(({ chapters, lessons, skill }) => ({
+      area: forExam ? skill.area : null,
       chapters,
       description: skill.description,
       key: skill.key,
@@ -125,7 +131,8 @@ export function toOutlineParams({
     otherLevelChapters: plan.otherChapterTitles,
     // A private course from the learner's material teaches each skill in the lessons the goal's
     // graph planned: a test days away is sized to what fits before it.
-    requiredSkills: plan.skills.map(({ description, key, lessons, name }) => ({
+    requiredSkills: plan.skills.map(({ area, description, key, lessons, name }) => ({
+      area: forExam ? area : null,
       description,
       key,
       lessons: plan.material ? lessons : undefined,

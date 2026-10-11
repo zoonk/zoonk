@@ -3,6 +3,12 @@ import { type Mistake, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { io } from "next/cache";
 import {
+  isDrillQuestion,
+  listDrillableMistakes,
+  loadLearnerListeningSkillIds,
+  loadListeningSkillIds,
+} from "../exams/listening/listening-skills";
+import {
   GRADABLE_ITEM_FORMATS,
   type QuestionView,
   hasMisconceptions,
@@ -14,16 +20,13 @@ import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
 import { getGoalField, getItemAudienceFilter } from "../library/items/item-field";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
-import { loadExamStructure } from "../sessions/_utils/load-build-inputs";
+import { type ItemSetView } from "../library/items/item-set-view";
+import { ITEM_SET_INCLUDE, toItemSetView } from "../library/items/item-sets";
+import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
 import { type MistakePracticeInput } from "./contract";
-import {
-  type DrillView,
-  findTeachingLessonIds,
-  loadDrillLessons,
-  toDrillView,
-} from "./drill-lessons";
-import { selectMistakeDrill, selectMistakesToPractice } from "./mistake-drills";
+import { findTeachingLessonIds, loadDrillLessons, toDrillView } from "./drill-lessons";
+import { type DrillView, selectMistakeDrill, selectMistakesToPractice } from "./mistake-drills";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
 /** One tap of "Practice mistakes" is a short session: five mistakes, each with its drill. */
@@ -36,7 +39,8 @@ type MistakePracticeEntry = {
   cause: Mistake["cause"];
   drill: DrillView;
   mistakeId: string;
-  questions: QuestionView[];
+  /** A passage's, a case's or a recording's question shows with it (`set`), as it was asked. */
+  questions: (QuestionView & { set: ItemSetView | null })[];
   snapshot: MistakeSnapshot;
 };
 
@@ -50,9 +54,14 @@ export type MistakePracticeResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-async function resolveScope(goalId: string | undefined) {
+async function resolveScope({ goalId, userId }: { goalId: string | undefined; userId: string }) {
+  // Without a goal, a skill that any of the learner's goals practices only with recordings counts.
   if (!goalId) {
-    return { goal: null, skillIds: null };
+    return {
+      goal: null,
+      listeningSkillIds: await loadLearnerListeningSkillIds(userId),
+      skillIds: null,
+    };
   }
 
   const owned = await findOwnedGoal(goalId);
@@ -61,7 +70,12 @@ async function resolveScope(goalId: string | undefined) {
     return null;
   }
 
-  return { goal: owned.goal, skillIds: await loadGoalSkillIds(goalId) };
+  const [skillIds, listeningSkillIds] = await Promise.all([
+    loadGoalSkillIds(goalId),
+    loadListeningSkillIds(goalId),
+  ]);
+
+  return { goal: owned.goal, listeningSkillIds, skillIds };
 }
 
 async function loadDrillMaterial({
@@ -83,7 +97,7 @@ async function loadDrillMaterial({
 
   const [items, lessons] = await Promise.all([
     prisma.item.findMany({
-      include: ITEM_IMAGE_INCLUDE,
+      include: { ...ITEM_IMAGE_INCLUDE, ...ITEM_SET_INCLUDE },
       orderBy: { id: "asc" },
       where: {
         format: { in: [...GRADABLE_ITEM_FORMATS] },
@@ -107,7 +121,9 @@ async function loadDrillMaterial({
   const seen = new Set(answered.map((attempt) => attempt.itemId));
   const choices = items.map((item) => parseChoiceItem(item)).filter((item) => item !== null);
 
-  return { choices, lessons, seen };
+  const sets = new Map(items.map((item) => [item.id, toItemSetView({ item })]));
+
+  return { choices, lessons, seen, sets };
 }
 
 /**
@@ -125,7 +141,7 @@ export async function getMistakePractice(
   }
 
   const userId = session.user.id;
-  const scope = await resolveScope(input.goalId);
+  const scope = await resolveScope({ goalId: input.goalId, userId });
 
   if (!scope) {
     return { status: "notFound" };
@@ -148,16 +164,19 @@ export async function getMistakePractice(
     },
   });
 
+  const { listeningSkillIds } = scope;
+  const drillable = await listDrillableMistakes({ listeningSkillIds, mistakes: open });
+
   const selected = selectMistakesToPractice({
     limit: PRACTICE_SIZE,
-    mistakes: open.map((mistake) => ({
+    mistakes: drillable.map((mistake) => ({
       ...mistake,
       createdLocalDate: getDateInTimeZone({ date: mistake.createdAt, timeZone }),
     })),
     today,
   });
 
-  const { choices, lessons, seen } = await loadDrillMaterial({
+  const { choices, lessons, seen, sets } = await loadDrillMaterial({
     examBlueprintId: scope.goal?.examBlueprintId ?? null,
     field: getGoalField(scope.goal?.details),
     mistakes: selected,
@@ -165,7 +184,11 @@ export async function getMistakePractice(
   });
 
   const drills = selected.map((mistake) => {
-    const skillItems = choices.filter((item) => item.skillId === mistake.skillId);
+    const skillItems = choices.filter(
+      (item) =>
+        item.skillId === mistake.skillId &&
+        isDrillQuestion({ item, listeningSkillIds, mistakeItemId: mistake.itemId }),
+    );
 
     const drill = selectMistakeDrill({
       candidates: skillItems.map((item) => ({
@@ -193,7 +216,7 @@ export async function getMistakePractice(
     questions: drill.itemIds
       .map((id) => skillItems.find((item) => item.id === id))
       .filter((item) => item !== undefined)
-      .map((item) => toQuestionView(item)),
+      .map((item) => ({ ...toQuestionView(item), set: sets.get(item.id) ?? null })),
     snapshot: readMistakeSnapshot(mistake.snapshot),
   }));
 

@@ -5,202 +5,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent calculation confirms all six intended answers: R$ 216.00; R$ 600.00; 25 cups; cheese with an increase of 19 units, versus 15 and 10; R$ 24.48; and monthly consumption of 24 versus 15 kWh, a difference of 9 kWh. Each multiple-choice question has one correct option. However, mathematically false explanations occur in the percentage, table, and energy questions. The table introduction also contradicts its data. Because factual errors occur in two or more questions, the explicit maximum score of 5 applies.",
-          "score": 5,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Some distractors accurately represent realistic mistakes, including adding successive percentage changes, adding table entries instead of subtracting them, and calculating only one day's energy cost. However, several other values do not result from their stated misconceptions, and the energy feedback includes a confusing rhetorical correction followed by an incorrect calculation claim. These trigger the cap of 7 for several implausible distractors; their frequency warrants a lower score. Empty accepted-answer lists and incomplete or non-atomic typed grading points further reduce grading usefulness.",
-          "score": 5,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The multiple-choice questions provide short contexts, clear commands, and five options, and the tables are correctly placed in context as GFM pipe tables. Nevertheless, the set often reads like routine school exercises with city and person names added. In particular, extracting 61 and 36 and subtracting them is presented as a primary-school exercise, contrary to the explicit ENEM expectation. The set therefore triggers the maximum score of 7 for looking out of place in the named exam. The unexplained 1,000 W household lamp also weakens everyday realism.",
-          "score": 7,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "All questions require application rather than definition recall and remain within their assigned skills. Each skill has one multiple-choice and one typed question in Brazilian Portuguese. Paired questions use different situations and demands: forward versus reverse percentage calculation, a single table difference versus comparing increases, and energy cost versus comparing consumption. The typed questions neither repeat nor reveal their paired multiple-choice answers. The table tasks are simpler than the percentage and energy tasks, providing appropriate substantive differentiation despite the uniform difficulty labels.",
-          "score": 9,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 6 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 3919,
-          "outputTokens": 1322,
-          "reasoningTokens": 407
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "Several distractor explanations are mathematically false. The percentage explanation attached to R$ 210.00 actually produces R$ 220.00. The table explanation attached to 16 cups describes 52 − 45, which is 7. In the energy question, using 1.08 kW produces R$ 29.376, not R$ 27.54; omitting the eight-day multiplier produces R$ 3.06, not R$ 19.20; and treating 900 W as 900 kW produces R$ 24,480.00, not R$ 2,448.00. These errors undermine instructional feedback across three questions. The table multiple-choice question also reads like a primary-school subtraction exercise rather than an ENEM item.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The sales-table introduction says two days but lists four. All typed questions have empty accepted-answer lists, leaving common correct wordings and alternative solution methods unspecified. The energy key-point list combines two independently checkable consumption values in one point, while the table question requests an explanation of the comparison without explicitly including that reasoning in its grading points.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Make the ENEM contexts more consequential by connecting the calculations to a practical comparison or decision while preserving each skill's scope. Specify a plausible use for the 1,000 W lamp, such as a floodlight, rather than presenting it as an ordinary household lamp.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row) and one typed question asking for a short answer or explanation with checkable key points. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't repeat or give away the multiple-choice one's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
-        "id": "pt-enem-placement-three-skills-1",
-        "userInput": {
-          "quickCount": 1,
-          "typedCount": 1,
-          "examFormat": {
-            "name": "ENEM",
-            "optionCount": 5,
-            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
-          },
-          "language": "pt",
-          "quickFormat": "multipleChoice",
-          "skills": [
-            {
-              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
-              "level": "intermediate",
-              "name": "Aumentos e descontos percentuais sucessivos"
-            },
-            {
-              "description": "Ler e comparar dados apresentados em tabelas para responder a perguntas sobre valores, diferenças e variações.",
-              "level": "beginner",
-              "name": "Leitura de dados em tabelas"
-            },
-            {
-              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
-              "level": "intermediate",
-              "name": "Consumo de energia elétrica em casa"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "Independent calculation confirms all keyed answers: the equations yield 14/5 and 33, the price increase is 15%, the original discounted price is $90, the rental intercept is $4, and the battery slope is a decrease of 8 percentage points per hour. Each multiple-choice item has one defensible correct option. However, the first explanation incorrectly says to subtract 5 after clearing the denominator: multiplying by 4 gives 3(x−2)+20=8x. That incorrect worked instruction triggers the one-question factual-error cap of 7.",
-          "score": 7,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "The percent and linear-model distractors generally identify realistic mistakes with useful explanations. Several algebra distractors are less defensible: rounding 2.8 normally gives 3, not 2; distributing 12 as described does not yield 57; and changing the right side to 12x does not yield −9. The feedback about subtracting 24 does not explain that this operation is valid when applied to both sides. These multiple implausible mistake-to-answer mappings trigger the cap of 7. Both typed items have checkable key points but no accepted-answer variants, further weakening grading support.",
-          "score": 7,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "Most multiple-choice items have concise contexts or equations, direct questions, and four options appropriate to SAT math. However, both typed items require verbal explanations rather than student-produced numeric answers, and the algebra diagnosis question combines identifying an error with reporting a solution. The resulting set would look out of place as a Digital SAT assessment, triggering the cap of 7.",
-          "score": 7,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "Most questions apply the named skills and are written in English. However, two multiple-choice/typed pairs repeat exactly the same situation and task, triggering the cap of 7 for testing the same thing the same way. The set also violates the requested one-multiple-choice/one-typed structure for every skill, entirely omits the percent-change typed item, and includes an inverse-percent question outside the specified original-to-new percent-change task. These substantial coverage and variety failures warrant a score below that cap.",
-          "score": 6,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "5 of 6 parts passed. Solving linear equations in one variable, quick: 2 instead of 1. Percent change, quick: 2 instead of 1. Percent change, typed 1: Two accepted answers are the same. Interpreting linear models, quick: 2 instead of 1.",
-          "score": 8.5,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 4516,
-          "outputTokens": 1274,
-          "reasoningTokens": 408
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The required assessment structure is not met: every skill has two multiple-choice questions instead of one, Percent change has no typed question, and both existing typed questions repeat a multiple-choice situation and task. Both typed items also have empty acceptedAnswers. The first equation's correct-answer explanation gives an incorrect denominator-clearing instruction. The reverse-discount item tests finding an original price rather than the specified skill of calculating percent change between two values. The explanatory typed responses also do not match the Digital SAT's student-produced numeric-response format.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Several algebra distractors have weak or inconsistent mistake-to-answer mappings: 2 is not the ordinary rounding of 14/5, and the error-diagnosis options pair alleged mistakes with numerical solutions those mistakes do not produce. Its feedback about subtracting 24 also fails to clarify that subtracting 24 from both sides is valid. The bike-rental question has two essentially identical wrong options describing $2.50 as the initial cost, reducing diagnostic value.",
-          "kind": "minorErrors",
-          "score": 7
-        },
-        {
-          "conclusion": "Broaden the difficulty range rather than labeling every item medium, and use distinct distractors to diagnose different errors. More precise context wording would help: a rental covers miles rather than 'lasts' miles, and battery charge is expressed as a percentage while changes are measured in percentage points.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "Placement questions in US English for three Digital SAT skills, each with one SAT-style multiple-choice question (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value) and one typed question with checkable key points and accepted answers for short answers. The math must be right. Each question tests only its own skill, and a skill's typed question uses a different situation from its multiple-choice one.",
-        "id": "en-sat-placement-three-skills-1",
-        "userInput": {
-          "quickCount": 1,
-          "typedCount": 1,
-          "examFormat": {
-            "name": "Digital SAT Math",
-            "optionCount": 4,
-            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
-          },
-          "language": "en",
-          "quickFormat": "multipleChoice",
-          "skills": [
-            {
-              "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
-              "level": "intermediate",
-              "name": "Solving linear equations in one variable"
-            },
-            {
-              "description": "Compute the percent increase or decrease between an original and a new value.",
-              "level": "intermediate",
-              "name": "Percent change"
-            },
-            {
-              "description": "Interpret the slope and y-intercept of a linear model in the context of a real situation.",
-              "level": "intermediate",
-              "name": "Interpreting linear models"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "The judgments and typed-answer keys are legally defensible. Personal promotion in official publicity conflicts with article 37, paragraph 1; unjustified denial of public information implicates publicity. The annulment/revocation distinction matches article 53 of Law 9.784/1999 and STF Precedent 473, and prospective revocation effects are correctly qualified as the general rule. Police powers do not invariably possess all three listed attributes, and the limits on urgent interdiction are sound. No wrong-key or factual-error cap is triggered.",
           "score": 10,
           "label": "Correctness",
@@ -294,28 +98,225 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "Independent checking supports all three multiple-choice keys, with one defensible best answer each. The typed sample answers are scientifically sound at this beginner level: oxygen supports aerobic respiration, most of its processes occur in mitochondria, carbon dioxide deprivation reduces photosynthetic sugar production and oxygen release, and extreme temperature or pH can impair enzyme function. The photosynthesis products are appropriate under the standard net-reaction treatment. No correctness cap is triggered.",
-          "score": 10,
+          "reasoning": "All keyed answers are correct and unambiguous. Independent calculations give 200 × 1.20 × 0.90 = 216; 1.25 × 0.75 = 0.9375, so equal successive rates do not restore the original price; monthly collection changes are +30, −5 and +45 kg; fiction accounts for 48 of 100 loans; energy cost is 0.8 × 3 × 25 × 0.75 = R$ 45; and remaining usage is (30 − 0.8 × 20)/0.8 = 17.5 hours. However, the explanation attached to R$ 15 falsely describes a calculation that produces 0.60. This is a factual numerical error in one question, triggering the maximum score of 7.",
+          "score": 7,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Wrong options generally reflect recognizable mistakes, and their feedback explains the specific input/product, location, or enzyme-activity confusion rather than merely announcing the correct answer. However, every typed item has an empty acceptedAnswers list, so common correct wordings are not explicitly covered. One photosynthesis key point combines the predicted decrease with its cause, and the nuclear-location respiration distractor combines two misconceptions. The explicit caps for generic labels or several implausible distractors are not triggered, but the typed-answer coverage is a substantial weakness.",
+          "reasoning": "Several distractor-to-mistake mappings are unsupported: equal-rate cancellation does not explain the unequal-rate percentage item, comparing final values does not explain January–February, and ignoring all usage time does not produce R$ 15. These are multiple failures to provide a realistic, correctly diagnosed learner mistake, warranting the cap of 7. Many other distractors are useful, including applying both percentages to the original base, selecting nonconsecutive months, and confusing kWh with reais. Typed grading is weakened by two empty accepted-answer lists and compound key points. The labels are generally specific, so the generic-misconception cap of 6 does not apply.",
           "score": 7,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "The questions use clear US English, manageable beginner-level reasoning, and generally balanced options. The greenhouse and enzyme-testing scenarios are plausible. However, the science-night and lesson settings mostly decorate abstract recall questions; the named people and cities do not help establish a meaningful everyday problem. This is a realism weakness, although the set is not broadly out of place for informal beginner biology placement, so the explicit setting cap is not triggered.",
+          "reasoning": "The multiple-choice questions generally fit accessible ENEM-style items: concise everyday contexts, clear commands, five reasonably balanced alternatives, and one correct answer. Tables are correctly placed in context as GFM pipe tables. The typed percentage question is less authentic because it presents a generic mathematical claim without a concrete support situation. This is a localized weakness rather than a set-wide mismatch warranting the out-of-place cap.",
           "score": 8,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The result supplies one multiple-choice and one typed question for each requested skill, stays within those skills, and uses English throughout. The photosynthesis prediction and enzyme questions require useful causal reasoning. However, the respiration pair repeats oxygen use and mitochondrial location as direct factual recall, triggering the maximum score of 7 for two questions testing the same thing the same way. The photosynthesis multiple-choice item also tests product recall, and the set offers limited variation in cognitive demand.",
+          "reasoning": "The questions require calculation, comparison, or explanation rather than definition recall, and all learner-facing content is in Portuguese. The table pair changes both setting and task, while the energy pair distinguishes computing cost from working backward from a consumption limit. Typed questions do not reveal the multiple-choice answers. However, the percentage pair retains the same price-increase-and-discount situation, contrary to the explicit variety requirement. Its tasks differ—numerical calculation versus explanation—so the cap for testing the same thing the same way is not triggered.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3873,
+          "outputTokens": 1361,
+          "reasoningTokens": 459
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The feedback for the R$ 15,00 energy distractor is mathematically false: multiplying only 0.8 kW by the tariff gives 0.60, not 15.00. That distractor actually results from omitting the three daily hours while retaining the 25 days. The percentage pair also reuses the same price-increase-then-discount situation rather than providing the required different situations.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several distractor diagnoses do not explain their associated choices. The R$ 200,00 option invokes equal percentages although the question uses 20% and 10%; comparing final table values would not explain choosing January–February. The first two typed items have empty accepted-answer lists, and several key points combine independently checkable claims rather than expressing one idea each.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use a genuinely different application for the typed percentage item, such as successive changes in production. Separate typed grading criteria into individual checks and include equivalent correct explanations and numerical demonstrations. Replace speculative decimal-error feedback with an explicit, reproducible calculation showing the mistaken conversion.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in Brazilian Portuguese for three ENEM skills, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row) and one typed question asking for a short answer or explanation with checkable key points. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't repeat or give away the multiple-choice one's answer. Tables go in `context` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.",
+        "id": "pt-enem-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos"
+            },
+            {
+              "description": "Ler e comparar dados apresentados em tabelas para responder a perguntas sobre valores, diferenças e variações.",
+              "level": "beginner",
+              "name": "Leitura de dados em tabelas"
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations give 300 × 1.20 × 0.90 = R$ 324.00; 500 × 1.18 × 0.90 = R$ 531.00; 1.5 × (40/60) × 30 × 0.90 = R$ 27.00; and 1.6 × (45/60) × 4 × 5 × 0.85 = R$ 20.40. Each question has exactly one correct option, correctly keyed. However, the air-fryer feedback incorrectly attributes R$ 810.00 to a thousandfold unit-conversion error. That error would yield R$ 27,000.00. This factual error triggers the cap of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors identify specific mistakes and explain them plainly, including adding successive rates, ignoring an adjustment, treating 45 minutes as 0.45 hour, and confusing consumption with cost. However, the R$ 810.00 explanation does not produce its option, arbitrarily halving 40 minutes is poorly motivated, and cancellation of unequal percentage rates is a weak trap. These weaknesses prevent the distractor set from being consistently diagnostic.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "All four questions have short everyday contexts, clear commands, five similarly formatted numeric options, and one correct answer. Their formal Brazilian Portuguese and multistep calculations are compatible with ENEM-style practice. There are no answer-length giveaways or apparent copied questions. The explicit exclusion of additional energy charges keeps the cost calculations appropriately bounded.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The output supplies exactly two multiple-choice questions per skill, no typed questions, and Portuguese throughout. All questions require applying their assigned skill. Nevertheless, prohibited bank situations are reused through surface substitutions, most clearly in the equipment-price and air-fryer questions. Within each skill, both new questions ask for the same outcome using essentially the same method; changing materials or usage frequency does not satisfy the requirement to vary what they ask. The repeated-method cap of 7 applies, and the additional explicit situation-reuse violations warrant a lower score.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3606,
+          "outputTokens": 1118,
+          "reasoningTokens": 284
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The set violates the situation-reuse and variety requirements. Both percentage questions repeat the bank's price-increase-then-discount scenario and ask for the final amount. The air-fryer question likewise repeats the bank's appliance-power/daily-use/monthly-period setup with substituted details. Both energy questions ask for cost using essentially the same calculation. There is also a factual error in the air-fryer feedback: failing to convert watts to kilowatts produces R$ 27,000.00, not R$ 810.00.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Some distractors have weak diagnostic value. Using half of the air fryer's stated operating time has no clear basis in a typical conversion mistake. Treating a 20% increase and a 10% discount as cancelling is also less convincing than the usual equal-percentage cancellation trap. The percentage question labeled hard adds little difficulty relative to the medium question.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Correct-answer feedback would be more useful with a compact numerical calculation showing the successive percentage factors or the power, time, and tariff conversions, rather than describing the procedure only.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Mock exam questions in Brazilian Portuguese for two ENEM skills: exactly two ENEM-style multiple-choice questions per skill (short support text, a command, 5 options, distractors from typical mistakes) and no typed questions. Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question uses one of them again with other names, places or numbers, and a skill's two new questions differ from each other in situation and in what they ask. Each question tests only its own skill and reads like a real ENEM question at its level. The math must be right.",
+        "id": "pt-enem-mock-quick-only-1",
+        "userInput": {
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "language": "pt",
+          "quickCount": 2,
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+              "level": "intermediate",
+              "name": "Aumentos e descontos percentuais sucessivos",
+              "usedSituations": [
+                "Uma loja aumentou o preço de um produto em 10% e, no mês seguinte, deu 10% de desconto."
+              ]
+            },
+            {
+              "description": "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+              "level": "intermediate",
+              "name": "Consumo de energia elétrica em casa",
+              "usedSituations": [
+                "Um chuveiro elétrico de 5.500 W é usado 30 minutos por dia durante um mês."
+              ]
+            }
+          ],
+          "typedCount": 0
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Independent calculations confirm every key: 4(x − 3) = 28 gives x = 10; (2x + 1)/3 = 5 gives x = 7, with the first error at 2x = 16; the fee increase is 12/80 × 100 = 15%; and 64/0.80 = 80. The coefficient 8 is the hourly charge, and the tank's intercept means 240 gallons at time zero. Each multiple-choice item has exactly one defensible correct answer, and the worked steps are accurate. No correctness cap is triggered.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The wrong options generally trace to specific realistic mistakes, and their explanations identify those mistakes clearly. For example, 7.75 follows from distributing only to x, and approximately 13.0% follows from dividing by the new fee. However, two typed items have no accepted answers, and the jacket item omits common equivalents such as '$80' and '80 dollars.' The tank key points also substantially overlap rather than checking distinct ideas. No generic-misconception or implausible-distractor cap is triggered, but typed-answer grading support is incomplete.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The multiple-choice items have concise contexts, direct questions, and four options consistent with the Digital SAT. However, the typed set requests written explanations and error diagnosis, and the intercept item requires a verbal answer rather than a student-produced numeric response. This makes a substantial part of the set out of place in the named exam, triggering the maximum score of 7.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The items are in US English, and each typed item uses a different situation from its multiple-choice counterpart. The equation items cover parentheses and fractions, while the model items address slope and intercept. However, finding an original price from a known discount is not the specified task of calculating percent change between two values. The slope question is also largely answered by the context's explicit '$8 per hour' statement, and difficulty variation is limited. The recall-majority and same-task-same-way caps are not triggered.",
           "score": 7,
           "label": "Skill fit & variety",
           "weight": 20
@@ -333,24 +334,122 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 3261,
-          "outputTokens": 968,
-          "reasoningTokens": 188
+          "inputTokens": 3417,
+          "outputTokens": 1091,
+          "reasoningTokens": 303
         }
       },
       "steps": [
         {
-          "conclusion": "The two cellular-respiration questions test essentially the same facts in the same way, limiting their placement value. Three of the six questions primarily ask for recall rather than application or explanation of a situation. All three typed items have empty accepted-answer lists, leaving common correct phrasings uncovered despite the explicit expectation.",
+          "conclusion": "The typed items do not match Digital SAT student-produced numeric responses: they request explanations, error diagnosis, or a verbal interpretation. The percent-change typed item asks for an original price rather than computing percent change between original and new values, so it misses the specified skill. Accepted answers are empty for two typed items and cover only one numeric wording for the third, despite the explicit requirement.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "Several contexts merely name a learner and city without contributing to the question, making parts of the set feel like textbook recall rather than everyday situations. The respiration distractor combining carbon dioxide use with a nuclear location bundles two mistakes, reducing its diagnostic precision. The first photosynthesis typed key point combines a prediction with its justification instead of separating independently checkable ideas.",
+          "conclusion": "The linear-model multiple-choice item has two distractors expressing essentially the same fixed-fee misconception. Its context also explicitly identifies the hourly rate, making the requested interpretation unusually easy. All items are labeled medium, but the set provides little difficulty progression.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Use the respiration typed item to assess a different aspect, such as explaining how glucose breakdown provides energy stored in ATP. Add accepted variants such as 'slows down or stops,' 'makes less glucose,' and 'the active site changes so the substrate no longer fits.' Replace decorative contexts with observations the learner must use, and separate predictions from explanations in the grading points.",
+          "conclusion": "Use the available question slots to gather more distinct diagnostic evidence: replace one fixed-fee distractor with a different realistic confusion, and make the linear-model context require interpreting the equation rather than repeating information already stated in words.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions in US English for three Digital SAT skills, each with one SAT-style multiple-choice question (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value) and one typed question with checkable key points and accepted answers for short answers. The math must be right. Each question tests only its own skill, and a skill's typed question uses a different situation from its multiple-choice one.",
+        "id": "en-sat-placement-three-skills-1",
+        "userInput": {
+          "quickCount": 1,
+          "typedCount": 1,
+          "examFormat": {
+            "name": "Digital SAT Math",
+            "optionCount": 4,
+            "style": "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing."
+          },
+          "language": "en",
+          "quickFormat": "multipleChoice",
+          "skills": [
+            {
+              "description": "Solve linear equations in one variable, including ones with parentheses and fractions.",
+              "level": "intermediate",
+              "name": "Solving linear equations in one variable"
+            },
+            {
+              "description": "Compute the percent increase or decrease between an original and a new value.",
+              "level": "intermediate",
+              "name": "Percent change"
+            },
+            {
+              "description": "Interpret the slope and y-intercept of a linear model in the context of a real situation.",
+              "level": "intermediate",
+              "name": "Interpreting linear models"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The multiple-choice keys are defensible in their intended contexts, and the photosynthesis and excessive-heat explanations are broadly accurate. However, the respiration typed item assumes that any reduction in oxygen delivery reduces energy release. Oxygen could remain sufficient to sustain the same aerobic respiration rate, so an unchanged-rate answer is also defensible. This single underdetermined item triggers the cap of 7.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most distractors name specific confusions, and their feedback identifies the mistaken structure or assumption rather than merely marking it wrong. Typed key points are generally independently checkable. However, every acceptedAnswers list is empty, so common correct paraphrases are not supplied. The enzyme-to-substrate distractor is also weakly grounded in a realistic mistake about temperature or pH.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The language is accessible US English, the options are reasonably balanced, and the hiking, plant-care, and enzyme-testing situations are recognizable. However, the organelle questions remain textbook recall exercises despite their contextual wrappers, and repeated city references add artificial detail without helping learners reason. The set is usable for beginners but could feel more naturally situated.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The result supplies exactly one multiple-choice and one typed question per skill, and the typed questions ask for predictions and explanations. Nevertheless, two multiple-choice questions assess bare location recall. Photosynthesis location is not the process explanation specified in that skill, and its pair leaves water, carbon dioxide, and oxygen unassessed. Respiration likewise receives limited assessment of glucose breakdown and usable energy production. The enzyme pair provides stronger within-skill variety by covering both pH and heat.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 6 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3236,
+          "outputTokens": 1499,
+          "reasoningTokens": 780
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The respiration typed question does not establish that oxygen has become limiting: less oxygen reaching cells does not necessarily reduce aerobic respiration. Its key therefore excludes a scientifically defensible response. All three typed items have empty acceptedAnswers lists, omitting the required common correct wordings. Two multiple-choice items merely ask learners to recall organelle names, and the photosynthesis item does not assess the supplied skill of explaining its inputs and outputs.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The enzyme distractor claiming that an enzyme turns into its substrate is an implausible consequence of acidity and provides little diagnostic value. Several contexts are decorative rather than functional, particularly the city references. The darkness answer would also be clearer if it stated that sustained darkness stops photosynthetic sugar production rather than saying only 'much less.'",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use the limited question slots to assess more of each described process: glucose breakdown and ATP production for respiration, and water, carbon dioxide, sugar, and oxygen for photosynthesis. Replace organelle-name recall with simple predictions or explanations using those processes.",
           "kind": "potentialImprovements",
           "score": 8
         }

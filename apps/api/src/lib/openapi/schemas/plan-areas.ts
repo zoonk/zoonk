@@ -7,10 +7,17 @@ export const planAreaSchema = z.object({
     .nullable()
     .meta({
       description:
-        'The part of a focused area the learner named, such as "Biologia e Química" (`focusAreas` with `parts`); null when it\'s focused whole',
+        "The part of a focused area the learner named, such as biology and chemistry (`focusAreas` with `parts`); null when it's focused whole",
     }),
   focused: z.boolean(),
   name: z.string(),
+  partOf: z
+    .string()
+    .nullable()
+    .meta({
+      description:
+        "The area it's part of, for an option the exam counts inside another subject (the foreign language a candidate takes, inside ENEM's languages area): show and focus it with that area, never on its own. Null for every other area",
+    }),
   pastBasics: z
     .boolean()
     .meta({ description: "The learner said they're past its basics (`setAreaStart`)" }),

@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { lessonPacesSql } from "@zoonk/db/anonymous-records";
 import { addDays } from "../planner/plan-calendar";
 import { type PaceSample } from "../planner/plan-pace";
 
@@ -41,8 +42,8 @@ async function loadOwnSample(userId: string): Promise<PaceSample | null> {
 }
 
 /**
- * Other learners' pace on the plan's lessons and everyone's pace on any lesson, from the last
- * month of finished lessons, in one pass over the ledger's date index.
+ * Other learners' pace on the plan's lessons and everyone's pace on any lesson (deleted learners'
+ * included), from the last month of finished lessons, in one pass over the ledger's date index.
  */
 async function loadSharedSamples({
   lessonIds,
@@ -73,16 +74,12 @@ async function loadSharedSamples({
       SELECT
         e.seconds,
         l.estimated_minutes * 60 AS expected,
-        (e.user_id <> ${userId}::uuid AND l.id::text = ANY(${[...lessonIds]}::text[])) AS in_plan
-      FROM learning_events e
-      JOIN library_lessons l
-        ON l.id = CASE
-          WHEN e.content_ids->>'lessonId' ~* '^[0-9a-f-]{36}$' THEN (e.content_ids->>'lessonId')::uuid
-        END
-      WHERE e.local_date BETWEEN ${since}::date AND ${now}::date
-        AND e.kind = 'lesson' AND e.ended_at IS NOT NULL
-        AND e.seconds BETWEEN l.estimated_minutes * ${MIN_SECONDS_PER_MINUTE}
-          AND l.estimated_minutes * ${MAX_SECONDS_PER_MINUTE}
+        (e.user_id IS DISTINCT FROM ${userId}::uuid
+          AND l.id::text = ANY(${[...lessonIds]}::text[])) AS in_plan
+      FROM ${lessonPacesSql({ since, until: now })} e
+      JOIN library_lessons l ON l.id = e.lesson_id
+      WHERE e.seconds BETWEEN l.estimated_minutes * ${MIN_SECONDS_PER_MINUTE}
+        AND l.estimated_minutes * ${MAX_SECONDS_PER_MINUTE}
       LIMIT ${SAMPLE_LIMIT}
     ) s`;
 

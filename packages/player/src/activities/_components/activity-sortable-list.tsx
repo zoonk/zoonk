@@ -70,12 +70,10 @@ function SortableRow({
   children,
   disabled,
   id,
-  label,
 }: {
   children: React.ReactNode;
   disabled?: boolean;
   id: string;
-  label: string;
 }) {
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
     disabled,
@@ -91,7 +89,6 @@ function SortableRow({
       <button
         {...attributes}
         {...listeners}
-        aria-label={label}
         className={cn(
           "focus-visible:ring-ring/50 flex min-h-11 w-full touch-none items-start gap-3 rounded-2xl px-3 py-2 text-left outline-none select-none focus-visible:ring-[3px]",
           !disabled && "hover:bg-accent cursor-grab active:cursor-grabbing",
@@ -158,7 +155,7 @@ export function ActivitySortableList({
       <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
         <ol aria-label={label} className="flex flex-col gap-2" data-slot="activity-sortable-list">
           {items.map((item, index) => (
-            <SortableRow disabled={disabled} id={item.id} key={item.id} label={item.label}>
+            <SortableRow disabled={disabled} id={item.id} key={item.id}>
               {renderItem(item, index)}
             </SortableRow>
           ))}

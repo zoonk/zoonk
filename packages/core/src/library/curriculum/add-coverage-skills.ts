@@ -1,6 +1,7 @@
 import { type checkCoverage } from "@zoonk/ai/tasks/v2/curriculum/coverage-check";
 import {
   type ExamOutline,
+  canBuildOn,
   findUncoveredTopics,
   isWrittenTestSubject,
 } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
@@ -50,10 +51,48 @@ function getTopicOrder({
   return positions.length > 0 ? Math.min(...positions) : Infinity;
 }
 
+/** The last skill of the first run of the graph's skills in `area`, by index; -1 without one. */
+function findFirstRunEnd({ area, graph }: { area: string; graph: GoalSkillGraph }): number {
+  const start = graph.skills.findIndex((skill) => skill.area === area);
+  const end = graph.skills.findIndex((skill, index) => index > start && skill.area !== area);
+
+  if (start === -1) {
+    return -1;
+  }
+
+  return end === -1 ? graph.skills.length - 1 : end - 1;
+}
+
+/**
+ * Where a subject the graph has no skill of starts: right after the first run of skills of the
+ * nearest subject the notice lists before it, so ENEM's Spanish starts beside its languages area,
+ * in its course and phase. -1 when no earlier subject has skills.
+ */
+function findEarlierSubjectEnd({
+  area,
+  graph,
+  outline,
+}: {
+  area: string | null | undefined;
+  graph: GoalSkillGraph;
+  outline?: ExamOutline;
+}): number {
+  const subjects = outline?.subjects ?? [];
+  const position = subjects.findIndex((subject) => subject.name === area);
+
+  const ends = subjects
+    .slice(0, Math.max(0, position))
+    .map((subject) => findFirstRunEnd({ area: subject.name, graph }));
+
+  return ends.findLast((index) => index >= 0) ?? -1;
+}
+
 /**
  * The skill a new one goes after, by the index in the graph: its last prerequisite; for a notice
  * topic, the last skill of its subject that teaches an earlier topic (or, when none does, it goes
- * right before the subject's first skill); otherwise none, and it starts the graph.
+ * right before the subject's first skill), and for a subject the graph has no skill of yet (an
+ * option the notice's reading named later), beside the subject the notice lists before it;
+ * otherwise none, and it starts the graph.
  */
 function findAfter({
   graph,
@@ -83,7 +122,11 @@ function findAfter({
     return skill !== undefined && getTopicOrder({ outline, skill }) < order;
   });
 
-  return earlier.at(-1) ?? (subject[0] === undefined ? -1 : subject[0] - 1);
+  if (subject[0] === undefined) {
+    return findEarlierSubjectEnd({ area: missing.area, graph, outline });
+  }
+
+  return earlier.at(-1) ?? subject[0] - 1;
 }
 
 function toGraphSkill({
@@ -97,7 +140,13 @@ function toGraphSkill({
   missing: MissingSkill;
   outline?: ExamOutline;
 }): { after: number; skill: GraphSkill } {
-  const prerequisites = graph.skills.filter((skill) => missing.prerequisites.includes(skill.key));
+  const prerequisites = graph.skills.filter(
+    (skill) =>
+      missing.prerequisites.includes(skill.key) &&
+      (!outline ||
+        canBuildOn({ area: missing.area ?? "", outline, prerequisiteArea: skill.area ?? "" })),
+  );
+
   const after = findAfter({ graph, missing, outline, prerequisites });
 
   // The skill it sits next to lends it its course, band and phase: the one before it, or the one

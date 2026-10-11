@@ -7,7 +7,8 @@ import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
 import { decodeHtmlEntities } from "../../_utils/html-entities";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
-import systemPrompt from "./grade-typed-answer.prompt.md";
+import languagePracticePrompt from "./grade-typed-answer-language-practice.prompt.md";
+import basePrompt from "./grade-typed-answer.prompt.md";
 import {
   type TypedAnswerMatch,
   matchTypedAnswer,
@@ -33,19 +34,35 @@ import {
  * and meeting a key point that names a term with the learner's own words for it,
  * it got 8 sampled verdicts right, two right class-test answers it had marked
  * wrong for a missing term included (8 Oct 2026, 1.3s p50; one feedback without
- * an accent).
+ * an accent). Told that the learner never sees the key points, so one that says
+ * to use a phrase the question doesn't ask for is met by another correct
+ * wording, it got all 10 language-practice cases right, an own-words answer it
+ * had graded "1 of 2" for a missing taught phrase included (11 Oct 2026, 1.2s p50).
  */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;
 const INCOMPLETE_GRADE_MESSAGE = "AI provider didn't grade every key point of a typed answer";
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model decides each key point before it writes the feedback, so the feedback says the verdict the key points give. */
-const schema = z.object({
-  keyPoints: z.array(z.object({ number: z.number().int(), met: z.boolean() })),
+const keyPointsSchema = z.array(z.object({ number: z.number().int(), met: z.boolean() }));
+
+const schema = z.object({ keyPoints: keyPointsSchema, feedback: z.string() });
+
+/** Only language practice grades form, so only its answers list form mistakes. */
+const languagePracticeSchema = z.object({
+  keyPoints: keyPointsSchema,
   corrections: z.array(z.object({ wrong: z.string(), right: z.string() })),
   feedback: z.string(),
 });
 /* oxlint-enable eslint/sort-keys */
+
+type ModelGrade = z.infer<typeof schema> & { corrections?: TypedAnswerCorrection[] };
+
+/**
+ * Language practice reads its rules (the practiced language, form mistakes as corrections) after
+ * the shared ones; every other answer gets the shared rules alone, so its prompt never carries them.
+ */
+const languagePracticeSystemPrompt = `${basePrompt}\n${languagePracticePrompt}`;
 
 /** A language form mistake in the answer: the learner's words as written and how to write them. */
 export type TypedAnswerCorrection = { wrong: string; right: string };
@@ -174,12 +191,11 @@ function buildUserPrompt(params: GradeTypedAnswerParams): string {
   const answerBlock = formatUntrustedInput({ LEARNER_ANSWER: params.answer });
 
   const practiced = params.practicedLanguage
-    ? getPromptLanguageName({ language: params.practicedLanguage, userLanguage: params.language })
-    : "none";
+    ? `\n    PRACTICED_LANGUAGE: ${getPromptLanguageName({ language: params.practicedLanguage, userLanguage: params.language })}`
+    : "";
 
   return `
-    FEEDBACK_LANGUAGE: ${getPromptLanguageName({ language: params.language })}
-    PRACTICED_LANGUAGE: ${practiced}
+    FEEDBACK_LANGUAGE: ${getPromptLanguageName({ language: params.language })}${practiced}
     QUESTION: ${params.question}
     KEY_POINTS:
 ${formatKeyPoints(params.keyPoints)}
@@ -221,7 +237,7 @@ function getCodeMethod({
  */
 export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
   const { analytics, keyPoints, model = defaultModel, reasoning, useFallback = true } = params;
-
+  const systemPrompt = params.practicedLanguage ? languagePracticeSystemPrompt : basePrompt;
   const userPrompt = buildUserPrompt(params);
 
   const match = matchTypedAnswer({
@@ -258,7 +274,9 @@ export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object<ModelGrade>({
+          schema: params.practicedLanguage ? languagePracticeSchema : schema,
+        }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -278,7 +296,7 @@ export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
   return {
     data: toGrade({
       corrections: getFormCorrections({
-        corrections: result.output.corrections,
+        corrections: result.output.corrections ?? [],
         practicedLanguage: params.practicedLanguage,
       }),
       feedback: decodeHtmlEntities(result.output.feedback),

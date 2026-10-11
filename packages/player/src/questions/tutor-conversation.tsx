@@ -1,7 +1,6 @@
 "use client";
 
-import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
-import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -27,24 +26,17 @@ import { FirstDay, Suggestions, TurnDay, type TutorSuggestion } from "./tutor-co
 import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 
-/** How the host draws a plan change an answer proposed, and tells the conversation how it went. */
-type RenderPlanChange = (input: {
-  change: PlanChangeView;
-  onAnswered: (change: PlanChangeView) => void;
-}) => React.ReactNode;
-
-/** How the host draws one of the app's tools an answer offered, with the button that opens it. */
-type RenderToolOffer = (offer: TutorToolOffer) => React.ReactNode;
-
-type TutorConversationProps = {
+/**
+ * The conversation draws the cards under the buddy's answers as the host says (`getTutorCards`):
+ * a plan change it proposed, telling the conversation how the learner answered, and an app tool.
+ */
+type TutorConversationProps = TutorCards & {
   /** What the composer is called for screen readers, such as "Message Zu". */
   composerLabel: string;
   /** The tutor's hello, always the conversation's first message. */
   greeting: string;
   identity: TutorIdentity;
   placeholder: string;
-  renderPlanChange: RenderPlanChange;
-  renderToolOffer: RenderToolOffer;
   /** Up to three questions the learner can send with one tap before the first message. */
   suggestions: readonly TutorSuggestion[];
 };
@@ -255,7 +247,7 @@ function ConversationBody({
       <div className={cn(COMPOSER_POSITION, "flex flex-col gap-3")}>
         {empty && canAskQuestions && (
           <Suggestions
-            onSend={(question) => void controller.sendSuggestion(question)}
+            onSend={(question) => void controller.sendSuggestion({ question })}
             suggestions={suggestions}
           />
         )}

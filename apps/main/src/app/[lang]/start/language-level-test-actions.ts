@@ -53,7 +53,7 @@ export async function answerLevelTestAction(
 export async function speakLevelTestAction(
   goalId: string,
   form: FormData,
-): Promise<LanguageLevelTestView | "noSpeech" | null> {
+): Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null> {
   const audio = form.get("audio");
 
   if (!(audio instanceof Blob)) {
@@ -65,8 +65,8 @@ export async function speakLevelTestAction(
     goalId,
   });
 
-  if (result.status === "noSpeech") {
-    return "noSpeech";
+  if (result.status === "noSpeech" || result.status === "signUpRequired") {
+    return result.status;
   }
 
   return result.status === "ready" ? result.test : null;

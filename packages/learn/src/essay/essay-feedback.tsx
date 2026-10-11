@@ -40,7 +40,30 @@ function hasMissingElements(grade: Grade): boolean {
   return elements !== null && ELEMENTS.some((key) => !elements[key]);
 }
 
-function CriteriaRows({ grade }: { grade: Grade }) {
+type Criterion = Grade["criteria"][number];
+
+/**
+ * A criterion's score as its row says it, out of its maximum: an official rubric's own points
+ * (ENEM's 200, OAB's sections), and a custom rubric's equal share on the total's scale, so a
+ * 10-point answer's three criteria read "10 of 10", never Pedro's "3.34 · 3.33 · 3.33".
+ */
+function toShownScore({
+  criterion,
+  rubric,
+  total,
+}: {
+  criterion: Criterion;
+  rubric: string;
+  total: Grade["total"];
+}): { max: number; score: number } {
+  if (rubric !== "custom" || criterion.maxScore <= 0) {
+    return { max: criterion.maxScore, score: criterion.score };
+  }
+
+  return { max: total.maxScore, score: (criterion.score / criterion.maxScore) * total.maxScore };
+}
+
+function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
   const formatScore = useFormatScore();
@@ -48,8 +71,9 @@ function CriteriaRows({ grade }: { grade: Grade }) {
   return (
     <StepRows aria-label={t("Score by criterion")}>
       {grade.criteria.map((criterion) => {
-        const isNext = criterion.id === grade.nextStep.criterionId;
+        const isNext = criterion.id === grade.nextStep?.criterionId;
         const share = criterion.maxScore > 0 ? criterion.score / criterion.maxScore : 0;
+        const shown = toShownScore({ criterion, rubric, total: grade.total });
 
         return (
           <StepRow key={criterion.id}>
@@ -59,8 +83,11 @@ function CriteriaRows({ grade }: { grade: Grade }) {
             <Meter className="w-16 shrink-0 sm:w-20">
               <MeterFill className={isNext ? "bg-warning" : undefined} share={share} />
             </Meter>
-            <span className="w-10 shrink-0 text-right font-medium tabular-nums">
-              {formatScore(criterion.score)}
+            <span className="shrink-0 text-right font-medium whitespace-nowrap tabular-nums">
+              {t("{score} of {max}", {
+                max: formatScore(shown.max),
+                score: formatScore(shown.score),
+              })}
             </span>
           </StepRow>
         );
@@ -69,10 +96,12 @@ function CriteriaRows({ grade }: { grade: Grade }) {
   );
 }
 
-/** The estimated range, big, and each criterion's score; the one to work on next stands out. */
-function GradeStep({ grade }: { grade: Grade }) {
+/**
+ * The estimated range, big, and each criterion's score; the one to work on next stands out. Also
+ * a full mock's essay grade, by the exam's rubric (`rubric`).
+ */
+export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string }) {
   const t = useExtracted();
-  const { rubric } = useEssayScreen().essay;
   const formatScore = useFormatScore();
   const writingName = useWritingName();
 
@@ -101,18 +130,47 @@ function GradeStep({ grade }: { grade: Grade }) {
             })}
           </StepTitleNumber>
         </StepTitle>
-        <StepDetail>{t("Estimated")}</StepDetail>
+        <StepDetail>
+          {t("Estimated score, from 0 to {max}", { max: formatScore(grade.total.maxScore) })}
+        </StepDetail>
       </StepHeader>
-      <CriteriaRows grade={grade} />
+      <CriteriaRows grade={grade} rubric={rubric} />
+    </StepCard>
+  );
+}
+
+function GradeStep({ grade }: { grade: Grade }) {
+  const { rubric } = useEssayScreen().essay;
+  return <EssayGradeCard grade={grade} rubric={rubric} />;
+}
+
+/** With every point scored, nothing is left to work on, and the step says so. */
+function NothingLeftComment() {
+  const t = useExtracted();
+
+  return (
+    <StepCard>
+      <KindTile icon={CheckIcon} kind="essay" size="lg" />
+      <StepHeader>
+        <StepEyebrow>{t("Next step")}</StepEyebrow>
+        <StepTitle>{t("Nothing left to work on")}</StepTitle>
+        <StepDetail>{t("Every criterion has full marks in this estimate.")}</StepDetail>
+      </StepHeader>
     </StepCard>
   );
 }
 
 /** The one next step, on the criterion that would gain the most, with the learner's own words. */
-function NextStepComment({ grade }: { grade: Grade }) {
+export function NextStepComment({ grade }: { grade: Grade }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
-  const criterion = grade.criteria.find((item) => item.id === grade.nextStep.criterionId);
+  const { nextStep } = grade;
+
+  if (!nextStep) {
+    return <NothingLeftComment />;
+  }
+
+  const criterion = grade.criteria.find((item) => item.id === nextStep.criterionId);
 
   return (
     <StepCard className="items-stretch text-left">
@@ -129,7 +187,7 @@ function NextStepComment({ grade }: { grade: Grade }) {
           {criterion.quote}
         </blockquote>
       )}
-      <p>{grade.nextStep.text}</p>
+      <p>{nextStep.text}</p>
       {criterion?.example && (
         <p className="text-muted-foreground text-sm">
           {t("For example: {example}", { example: criterion.example })}

@@ -35,7 +35,16 @@ export function CharacterAvatar({
 }
 
 /** Plays a phrase read aloud in its language; the phrase is on screen if the audio fails. */
-export function SpeakButton({ language, text }: { language: string; text: string }) {
+export function SpeakButton({
+  language,
+  personal = false,
+  text,
+}: {
+  language: string;
+  /** The learner's own words, read in a clip of theirs alone. */
+  personal?: boolean;
+  text: string;
+}) {
   const t = useExtracted();
   const speech = useSpokenAudio(language);
   const { status } = speech.state;
@@ -52,7 +61,7 @@ export function SpeakButton({ language, text }: { language: string; text: string
       onClick={
         status === "loading" || status === "playing"
           ? speech.cancel
-          : () => speech.speak({ segments: [text] })
+          : () => speech.speak({ segments: [{ audioUrl: null, personal, text }] })
       }
       size="icon"
       variant="outline"

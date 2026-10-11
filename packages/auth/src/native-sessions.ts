@@ -54,8 +54,8 @@ export async function createEmailCodeSession({
 }
 
 /**
- * Creates a guest session for a client that keeps a bearer token. The auth hooks run BotID and the
- * per-network cap first, like guest sign-in on the web.
+ * Creates a guest session for a client that keeps a bearer token. BotID and Better Auth's rate
+ * limit run first, like guest sign-in on the web.
  */
 export async function createGuestSession({
   headers,

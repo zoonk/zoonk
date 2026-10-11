@@ -8,7 +8,7 @@ import { type MemoryCategory, type MemoryFact, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { markMemoryFactsUsed } from "./_utils/mark-facts-used";
-import { getMemoryAccess } from "./_utils/memory-access";
+import { isMemoryEnabled } from "./_utils/memory-access";
 import { currentFactsWhere } from "./_utils/memory-fact-view";
 import { searchMemoryFactIds } from "./_utils/search-memory-facts";
 
@@ -30,7 +30,7 @@ type MemoryTaskRequest = {
   language: string;
   /** What the task is about to do, such as "Examples for a lesson on discounts". */
   need?: string;
-  /** Sensitive facts only reach tasks that help with them, such as the tutor, and only for adults. */
+  /** Sensitive facts only reach tasks that help with them, such as the tutor. */
   includeSensitive?: boolean;
   analytics?: AiGenerationContext;
 };
@@ -128,8 +128,8 @@ async function selectFacts({
 }
 
 /**
- * The facts one AI task may read about a learner: only the categories it asks for and the learner's
- * age allows, nothing when memory is off, and never more than ten. When those categories hold
+ * The facts one AI task may read about a learner: only the categories it asks for, nothing when
+ * memory is off, and never more than ten. When those categories hold
  * more than that and the task says what it needs, an agentic search picks the relevant facts;
  * otherwise the most recent ones come back. Returned facts are marked as used, so stale ones can
  * be reviewed.
@@ -161,20 +161,11 @@ export async function findMemoryForTask({
   need,
   userId,
 }: MemoryTaskRequest): Promise<MemoryFactForTask[]> {
-  const access = await getMemoryAccess(userId);
-  const allowed = access.categories.filter((category) => categories.includes(category));
-
-  if (!access.enabled || allowed.length === 0) {
+  if (categories.length === 0 || !(await isMemoryEnabled(userId))) {
     return [];
   }
 
-  // A minor's own correction can still be flagged sensitive; it stays listed for them, never read.
-  const scope = {
-    categories: allowed,
-    includeSensitive: includeSensitive && access.allowSensitive,
-    now: new Date(),
-    userId,
-  };
+  const scope = { categories: [...categories], includeSensitive, now: new Date(), userId };
 
   return selectFacts({ analytics, language, need, scope });
 }

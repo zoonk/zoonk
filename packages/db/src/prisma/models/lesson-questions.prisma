@@ -1,3 +1,11 @@
+/// The tutor's suggestions a learner taps to ask about a lesson screen: explain it more simply, go
+/// deeper, another example. The server words a tapped one itself, so its words are never a learner's.
+enum LessonScreenSuggestion {
+  simpler
+  deeper
+  example
+}
+
 /// A learner's questions to the tutor about one thing, named by `kind`: a Library lesson, a Library
 /// chapter, a goal (`plan`: the conversation with the buddy about the goal, its subject and its plan,
 /// where plan changes are proposed by talking) or a finished mock. One thread per learner and thing. Content links use SetNull so questions outlive regenerated content (threads
@@ -44,6 +52,8 @@ model LessonQuestion {
   contextKind        LessonQuestionContextKind @map("context_kind")
   contextSnapshot    Json                      @map("context_snapshot")
   question           String
+  /// The tutor's suggestion the learner tapped, which `question` words in the thread's language.
+  suggestion         LessonScreenSuggestion?
   answer             String?
   status             LessonQuestionStatus      @default(pending)
   generationRevision Int                       @default(0) @map("generation_revision")
@@ -54,7 +64,7 @@ model LessonQuestion {
   generatedAt        DateTime?                 @map("generated_at")
   provider           String?
   finishReason       String?                   @map("finish_reason")
-  /// The shared answer this question was served from, when it was a general question about a screen.
+  /// The shared answer this question was served from, when it was a suggestion about a screen.
   sharedAnswerId     String?                   @map("shared_answer_id") @db.Uuid
   sharedAnswer       TutorSharedAnswer?        @relation(fields: [sharedAnswerId], references: [id], onDelete: SetNull)
   /// The plan change the buddy proposed in this answer, waiting for the learner's tap (or answered).
@@ -74,25 +84,25 @@ model LessonQuestion {
   @@map("lesson_questions")
 }
 
-/// The tutor's answer to a general question about one lesson screen ("Explain this more simply"),
-/// written without any learner's memory or conversation and shared by everyone who asks the same
-/// thing there. Questions are matched by their normalized text; the generality classifier decides
-/// which free-text questions are general enough to share. Goes away with its screen.
+/// The tutor's answer to one of its suggestions about a lesson screen ("Explain it more simply"),
+/// written without any learner's memory or conversation and shared by everyone who taps it there.
+/// Only the tutor's own suggestions are shared, never what a learner typed, so no learner's words
+/// are ever in it. Goes away with its screen.
 model TutorSharedAnswer {
-  id                 String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  stepId             String           @map("step_id") @db.Uuid
-  step               Step             @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  normalizedQuestion String           @map("normalized_question")
-  /// The first asker's wording, for review.
-  question           String
-  answer             String
-  model              String
-  promptVersion      String           @map("prompt_version")
-  runId              String           @map("run_id")
-  generatedAt        DateTime         @default(now()) @map("generated_at")
-  createdAt          DateTime         @default(now()) @map("created_at")
-  questions          LessonQuestion[]
+  id            String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  stepId        String                 @map("step_id") @db.Uuid
+  step          Step                   @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  suggestion    LessonScreenSuggestion
+  /// The suggestion as the app words it in the lesson's language, for review.
+  question      String
+  answer        String
+  model         String
+  promptVersion String                 @map("prompt_version")
+  runId         String                 @map("run_id")
+  generatedAt   DateTime               @default(now()) @map("generated_at")
+  createdAt     DateTime               @default(now()) @map("created_at")
+  questions     LessonQuestion[]
 
-  @@unique([stepId, normalizedQuestion], name: "stepQuestion")
+  @@unique([stepId, suggestion], name: "stepSuggestion")
   @@map("tutor_shared_answers")
 }

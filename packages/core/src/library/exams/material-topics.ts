@@ -10,10 +10,10 @@ import { toStems, toTopicKey } from "./topic-key";
 /** A heading's number or bullet: "1)", "2.", "3.1", "b)", "IV -", "•". */
 const NUMBERING = /^\s*(?:\d+(?:\.\d+)*[.)]?|[A-Za-z][.)]|[IVXL]{1,4}\s*[.)–-]|[-–•*·])\s+/u;
 
-/** A remark after the topic's words: "(CAI MUITO!!)", "- IMPORTANTE", or a run of "!". */
+/** A remark after the topic's words: "(ALWAYS ON THE TEST!!)", "- IMPORTANT", or a run of "!". */
 const TRAILING_REMARK = /\s*(?:\((?<aside>[^()]*)\)|\s[-–]\s+(?<dash>.+)|(?<bang>!+))\s*$/u;
 
-/** No small letters: a remark in capitals stresses ("IMPORTANTE"), unless it's an acronym. */
+/** No small letters: a remark in capitals stresses ("IMPORTANT"), unless it's an acronym. */
 const IN_CAPITALS = /^[^\p{Ll}]*$/u;
 
 /** An acronym in parentheses names the topic ("(DNA)", "(RE)"): a short word in capitals. */
@@ -31,8 +31,8 @@ function isEmphasis(remark: string): boolean {
 
 /**
  * A heading of the learner's own material as a topic: its words without the numbering, and the
- * learner's own remark that it matters ("CAI MUITO!!") taken out of its name as emphasis. A remark
- * that says what the topic holds ("(mitocôndria e cloroplasto)") stays in it.
+ * learner's own remark that it matters ("ALWAYS ON THE TEST!!") taken out of its name as emphasis. A remark
+ * that says what the topic holds ("(mitochondria and chloroplast)") stays in it.
  */
 function cleanMaterialTopic(heading: string): MaterialTopic {
   const words = heading.replace(NUMBERING, "").trim();
@@ -60,7 +60,7 @@ function findSourceId({
   return documents.find((document) => document.text?.includes(heading))?.sourceId ?? fallback;
 }
 
-/** What the learner's material stresses, as frequency: their "CAI MUITO!!" comes up a lot. */
+/** What the learner's material stresses, as frequency: their "ALWAYS ON THE TEST!!" comes up a lot. */
 function toEmphasisFrequency({
   content,
   documents,
@@ -132,9 +132,9 @@ function listSections({
 }
 
 /**
- * The headings an announced format asks about ("uma dissertativa sobre osmose"): the ones whose
- * name it says ("a tabela das organelas"), else the one heading whose part of the material holds
- * a word of it that no other part does (osmosis is under "Membrana plasmática"). None when its
+ * The headings an announced format asks about ("an essay on osmosis"): the ones whose
+ * name it says ("the organelles table"), else the one heading whose part of the material holds
+ * a word of it that no other part does (osmosis is under "Plasma membrane"). None when its
  * words point at several topics or at none.
  */
 function findAnnouncedHeadings({
@@ -171,8 +171,8 @@ function findAnnouncedHeadings({
 }
 
 /**
- * What the test announces, as frequency: a topic the teacher said a question is about ("vai ter
- * uma dissertativa sobre osmose") comes up on the test, so it counts as coming up a lot, cited to
+ * What the test announces, as frequency: a topic the teacher said a question is about ("there will
+ * be an essay on osmosis") comes up on the test, so it counts as coming up a lot, cited to
  * the announcement.
  */
 function toAnnouncedFrequency({
@@ -208,8 +208,8 @@ const toFrequencyKey = (entry: Pick<TopicFrequency[number], "subject" | "topic">
 /**
  * A blueprint read from the learner's own material (class notes, slides) as the plan and its
  * pages show it: each topic in the material's words without its numbering or the learner's
- * remarks; the topics they stressed ("4) Organelas (CAI MUITO!!)") and the ones the test announces
- * a question about ("uma dissertativa sobre osmose") marked as coming up a lot, which gives them
+ * remarks; the topics they stressed ("4) Organelles (ALWAYS ON THE TEST!!)") and the ones the test announces
+ * a question about ("an essay on osmosis") marked as coming up a lot, which gives them
  * more of the time and keeps them in a plan short on time, unless the reading already said how
  * often they come up; and every question format the material announces, so its practice rehearses
  * all of them.
@@ -222,6 +222,7 @@ export function toMaterialContent({
   documents: readonly ExtractionDocument[];
 }): BlueprintContent {
   const read = content.topicFrequency.map((entry) => ({ ...entry, topic: toName(entry.topic) }));
+
   const formats = [
     ...content.structure.formats,
     ...findNamedFormats({ documents, formats: content.structure.formats }),

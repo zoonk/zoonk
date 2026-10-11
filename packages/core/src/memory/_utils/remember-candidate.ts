@@ -4,7 +4,6 @@ import { gateMemoryFact } from "@zoonk/ai/tasks/v2/memory/gate";
 import { reconcileMemoryFact } from "@zoonk/ai/tasks/v2/memory/reconcile";
 import { type MemoryFact } from "@zoonk/db";
 import { type MemoryChange, type MemorySource } from "../memory-contract";
-import { type MemoryAccess } from "./memory-access";
 import { type MemoryCandidate, isSameStatement } from "./memory-candidates";
 import { toMemoryFactView } from "./memory-fact-view";
 import {
@@ -16,7 +15,6 @@ import {
 import { findRelatedMemoryFacts } from "./related-memory-facts";
 
 export type CandidateContext = {
-  access: MemoryAccess;
   language: string;
   now: Date;
   provenance: NewMemoryFact["provenance"];
@@ -25,22 +23,16 @@ export type CandidateContext = {
 };
 
 /**
- * A fact to remember must pass the gate: lasting, and not sensitive unless an adult explicitly
+ * A fact to remember must pass the gate: lasting, and not sensitive unless the learner explicitly
  * asked. A fact to forget stores nothing, so it skips the gate. Returns null when the fact stays
  * out, or whether a kept fact is sensitive.
  */
-async function passGate({
-  access,
-  candidate,
-}: {
-  access: MemoryAccess;
-  candidate: MemoryCandidate;
-}): Promise<{ sensitive: boolean } | null> {
+async function passGate(candidate: MemoryCandidate): Promise<{ sensitive: boolean } | null> {
   if (candidate.intent === "forget") {
     return { sensitive: false };
   }
 
-  const verdict = await gateMemoryFact({ allowSensitive: access.allowSensitive, candidate });
+  const verdict = await gateMemoryFact({ candidate });
   return verdict.decision === "keep" ? { sensitive: verdict.sensitive } : null;
 }
 
@@ -122,20 +114,14 @@ export async function rememberCandidate({
   candidate: MemoryCandidate;
   context: CandidateContext;
 }): Promise<MemoryChange | null> {
-  const { access, language, now, provenance, source, userId } = context;
-  const gate = await passGate({ access, candidate });
+  const { language, now, provenance, source, userId } = context;
+  const gate = await passGate(candidate);
 
   if (!gate) {
     return null;
   }
 
-  const related = await findRelatedMemoryFacts({
-    candidate,
-    categories: access.categories,
-    language,
-    now,
-    userId,
-  });
+  const related = await findRelatedMemoryFacts({ candidate, language, now, userId });
 
   const action = await decide({ candidate, related });
 

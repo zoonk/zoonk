@@ -1,4 +1,5 @@
 import { challengeCaseFixture } from "@zoonk/testing/fixtures/challenge-contents";
+import { numberedCheckContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
 import {
   type StepContentByKind,
@@ -107,12 +108,78 @@ describe("step contract", () => {
     });
   });
 
+  it("reads em dashes as the app writes them: commas", () => {
+    expect(
+      parseStepContent("explanation", { text: "Na contestação — a defesa escrita — o réu fala." }),
+    ).toStrictEqual({ text: "Na contestação, a defesa escrita, o réu fala." });
+  });
+
   it("narrows activity content by template", () => {
     const content = parseStepContent("activity", contents.activity);
 
     expect(
       content.template === "processOrder" && content.fields.steps.map((step) => step.id),
     ).toStrictEqual(["a", "b", "c"]);
+  });
+
+  it("keeps a question whose options are pictures, every one of them, with no other picture", () => {
+    const doorways = {
+      options: [
+        {
+          id: "a",
+          isCorrect: true,
+          picture: {
+            alt: "A tall doorway with a pointed arch and thin columns",
+            prompt: "A stone church doorway with a pointed arch, alone on a plain background",
+          },
+          reason: "The pointed arch is Gothic.",
+          text: "Gothic",
+        },
+        {
+          id: "b",
+          isCorrect: false,
+          picture: {
+            alt: "A low doorway with a round arch and thick walls",
+            prompt: "A stone church doorway with a round arch, alone on a plain background",
+          },
+          reason: "A round arch is Romanesque.",
+          text: "Romanesque",
+        },
+      ],
+      question: "Which doorway is Gothic?",
+    };
+
+    const [gothic, romanesque] = doorways.options;
+
+    expect(safeParseStepContent("check", doorways).success).toBe(true);
+
+    const oneMissing = { ...doorways, options: [gothic, { ...romanesque, picture: undefined }] };
+
+    const withScreenPicture = {
+      ...doorways,
+      image: { alt: "Two doorways", prompt: "Two church doorways side by side" },
+    };
+
+    const namedInAlt = {
+      ...doorways,
+      options: [
+        { ...gothic, picture: { ...gothic?.picture, alt: "A Gothic doorway with a pointed arch" } },
+        romanesque,
+      ],
+    };
+
+    expect(safeParseStepContent("check", oneMissing).success).toBe(false);
+    expect(safeParseStepContent("check", withScreenPicture).success).toBe(false);
+    expect(safeParseStepContent("check", namedInAlt).success).toBe(false);
+  });
+
+  it("asks which number marks a part only with numbers the picture draws", () => {
+    const [right, ...wrong] = numberedCheckContent.options;
+
+    const pastTheLast = { ...numberedCheckContent, options: [right, { ...wrong[0], text: "4" }] };
+
+    expect(safeParseStepContent("check", numberedCheckContent).success).toBe(true);
+    expect(safeParseStepContent("check", pastTheLast).success).toBe(false);
   });
 
   it("rejects content that doesn't match its kind", () => {

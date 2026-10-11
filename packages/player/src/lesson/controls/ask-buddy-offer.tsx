@@ -40,7 +40,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
       <div className="flex flex-wrap gap-2">
         <Button
           className="pl-1.5"
-          onClick={() => buddy.open(t("Explain it more simply"))}
+          onClick={() => buddy.open("simpler")}
           size="sm"
           variant="secondary"
         >

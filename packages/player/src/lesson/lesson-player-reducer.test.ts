@@ -84,6 +84,21 @@ describe(lessonPlayerReducer, () => {
     expect(getCurrentStep(skipped)?.id).toBe("tip");
   });
 
+  it("leaves out screens that can't be played, the one in view too, and keeps the ones before", () => {
+    const steps = [
+      explanationStep("tip"),
+      typedAnswerStep("numbered"),
+      explanationStep("next"),
+      summaryStep("end"),
+    ];
+
+    const atNumbered = play(steps, [{ type: "continue" }]);
+    const left = lessonPlayerReducer(atNumbered, { stepIds: ["numbered"], type: "skipSteps" });
+
+    expect(left.queue).toStrictEqual(["tip", "next", "end"]);
+    expect(getCurrentStep(left)?.id).toBe("next");
+  });
+
   it("finishes a lesson whose only screens left were skipped", () => {
     const steps = [explanationStep("tip"), typedAnswerStep("write")];
 

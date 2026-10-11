@@ -47,6 +47,8 @@ model Course {
   courseChapters       CourseChapter[]
   homeChapters         Chapter[]
   goals                Goal[]
+  examSkillGraphs      ExamSkillGraph[]
+  goFurtherLessons     Lesson[]
 
   @@unique([organizationId, slug], name: "orgSlug")
   @@unique([userId, slug], name: "userSlug")

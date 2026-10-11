@@ -8,17 +8,10 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getLessonSupport } from "./get-lesson-support";
 import { startLibraryLesson } from "./start-library-lesson";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 /** A lesson that opens (after its hook) with an explanation of `opening`, and also teaches `other`. */
 async function setupLesson() {

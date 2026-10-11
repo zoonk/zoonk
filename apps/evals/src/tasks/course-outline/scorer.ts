@@ -1,6 +1,7 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
 import { type CourseOutlineParams } from "@zoonk/ai/tasks/v2/curriculum/course-outline";
+import { findMixedAreaChapters } from "@zoonk/ai/tasks/v2/curriculum/outline-areas";
 import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
 
 /**
@@ -57,27 +58,47 @@ function getToolProblems({
   ].filter((problem) => typeof problem === "string");
 }
 
+/** The pipeline's check (`findMixedAreaChapters`): an exam chapter keeps to one subject. */
+function getAreaProblems({
+  chapter,
+  params,
+}: {
+  chapter: OutlineChapter;
+  params: CourseOutlineParams;
+}): string[] {
+  const skills = [...(params.requiredSkills ?? []), ...(params.extendSkills ?? [])];
+
+  return findMixedAreaChapters({
+    chapters: [{ skillKeys: chapter.skillKeys ?? [], title: chapter.title }],
+    skills,
+  }).map(
+    (mixed) =>
+      `Chapter "${mixed.title}" teaches skills of several areas: ${mixed.areas.join(", ")}.`,
+  );
+}
+
 /**
  * Each chapter is one part: its tools are generic names, at most four, and none in an overview
- * band. A case that expects a tool adds one part that passes when some chapter names it. Tools
- * don't change what the judge scores, so it sees the whole outline.
+ * band, and an exam's chapter keeps to one area. A case that expects a tool adds one part that
+ * passes when some chapter names it. Neither changes what the judge scores, so it sees the whole
+ * outline.
  */
-function checkOutlineTools({
+function checkOutline({
   expected,
-  level,
   output,
-  withoutTools,
+  params,
 }: {
   expected: CourseOutlineExpected | undefined;
-  level: CourseOutlineParams["level"];
   output: string;
-  withoutTools: boolean;
+  params: CourseOutlineParams;
 }): CodeCheckResult {
+  const { level, withoutTools = false } = params;
   const chapters = parseChapters(output);
 
-  const chapterProblems = chapters.map((chapter) =>
-    getToolProblems({ chapter, level, withoutTools }),
-  );
+  const chapterProblems = chapters.map((chapter) => [
+    ...getToolProblems({ chapter, level, withoutTools }),
+    ...getAreaProblems({ chapter, params }),
+  ]);
 
   const pattern = expected ? new RegExp(expected.tool, "iu") : null;
 
@@ -99,11 +120,10 @@ function checkOutlineTools({
 }
 
 export const scoreCourseOutline: TaskScorer<CourseOutlineExpected> = ({ output, testCase }) => {
-  const { level, withoutTools = false } = testCase.userInput as CourseOutlineParams;
+  const params = testCase.userInput as CourseOutlineParams;
 
   return scoreWithCodeChecks({
-    check: (value) =>
-      checkOutlineTools({ expected: testCase.expected, level, output: value, withoutTools }),
+    check: (value) => checkOutline({ expected: testCase.expected, output: value, params }),
     output,
     scoreCategories: COURSE_OUTLINE_SCORE_CATEGORIES,
     testCase,

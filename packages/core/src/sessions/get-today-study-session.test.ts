@@ -1,15 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
-import {
-  guardianLinkFixture,
-  learningProfileFixture,
-} from "@zoonk/testing/fixtures/learning-profiles";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { toIsoDate } from "../plans/planner/plan-calendar";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -18,7 +16,6 @@ import {
   dueSkillFixture,
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
-import { getTodayStudySession } from "./get-today-study-session";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
@@ -164,7 +161,12 @@ describe(getTodayStudySession, () => {
 
   it("makes the first session after a break lighter and says so", async () => {
     const user = await userFixture();
-    const { goal } = await sessionGoalFixture({ lessons: 8, userId: user.id });
+
+    const { goal } = await sessionGoalFixture({
+      goal: { createdAt: daysAgo(5) },
+      lessons: 8,
+      userId: user.id,
+    });
 
     await Promise.all([
       dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 900, userId: user.id }]),
@@ -285,12 +287,47 @@ describe(getTodayStudySession, () => {
     expect(days.find((day) => day.isToday)?.goalMinutes).toBeGreaterThan(0);
   });
 
-  it("fits a guardian's daily limit", async () => {
+  it("measures a day already past against what it asked, after the learner's time changes", async () => {
+    const user = await userFixture();
+
+    // Ana studied 45 minutes on Monday, a 45-minute day, without ending its session. She then
+    // chose 3 hours a day: Monday's check turned into a partial pie measured against 3 hours.
+    const { goal } = await sessionGoalFixture({ goal: { createdAt: daysAgo(7) }, userId: user.id });
+
+    await Promise.all([
+      studySessionFixture({
+        goalId: goal.id,
+        localDate: daysAgo(2),
+        plannedMinutes: 45,
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([{ date: daysAgo(2), timeSpentSeconds: 2700, userId: user.id }]),
+      prisma.goal.update({ data: { dailyMinutes: 180 }, where: { id: goal.id } }),
+    ]);
+
+    mockSession(user.id);
+    const result = await getTodayStudySession({ goalId: goal.id });
+
+    if (result.status !== "ready") {
+      throw new Error(`Expected a session, got ${result.status}`);
+    }
+
+    const monday = result.session.week.days.find(
+      (day) => day.date.getTime() === new Date(toIsoDate(daysAgo(2))).getTime(),
+    );
+
+    expect(monday).toMatchObject({ goalMinutes: 45, hitGoal: true, minutes: 45 });
+
+    // Today and the days ahead ask the new time.
+    expect(result.session.week.days.find((day) => day.isToday)?.goalMinutes).toBe(180);
+  });
+
+  it("fits the learner's daily limit", async () => {
     const user = await userFixture();
     const { goal } = await sessionGoalFixture({ userId: user.id });
 
     await Promise.all([
-      guardianLinkFixture({ dailyLimitMinutes: 10, status: "active", userId: user.id }),
+      learningProfileFixture({ dailyLimitMinutes: 10, userId: user.id }),
       dailyProgressFixtureMany([
         { date: SESSION_TODAY, timeSpentSeconds: 9 * 60, userId: user.id },
       ]),

@@ -7,9 +7,11 @@ import { useExtracted } from "next-intl";
 export type PlanStatus = NonNullable<PlanView["status"]>;
 
 /**
- * One status in a few words: "One day ahead", "On track", "3 lessons to catch up" (lessons earlier
- * days left, until they're done), "2 days behind". Being behind is a count to catch up on, never a
- * judgment.
+ * One status in a few words: "One day ahead", "Keeping pace", "3 lessons to catch up" (lessons
+ * earlier days left, until they're done), "2 days behind". Each is the learner's pace against
+ * their plan, never whether the plan reaches the goal, which the plan's notice says (Marcos read
+ * "On track" beside a plan covering 49% of his goal). Being behind is a count to catch up on,
+ * never a judgment.
  */
 function usePlanStatusText() {
   const t = useExtracted();
@@ -27,16 +29,21 @@ function usePlanStatusText() {
       case "needsAdjusting":
         return t("Needs adjusting");
       case "onTrack":
-        return t("On track");
+        return t("Keeping pace");
       default:
-        return t("On track");
+        return t("Keeping pace");
     }
   };
 }
 
+/**
+ * Being behind is a calm, neutral fact: an orange "127 lessons to catch up" read as an alarm to a
+ * learner just back from a break, while the plan already spreads them over the next days. A plan
+ * that no longer fits says so in red, and its notice asks what to do.
+ */
 const DOT_CLASSES: Record<PlanStatus["kind"], string> = {
   ahead: "bg-success",
-  behind: "bg-warning",
+  behind: "bg-muted-foreground/60",
   needsAdjusting: "bg-destructive",
   onTrack: "bg-success",
 };

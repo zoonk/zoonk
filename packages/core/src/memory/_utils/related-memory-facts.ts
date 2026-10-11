@@ -1,5 +1,5 @@
 import "server-only";
-import { type MemoryCategory, type MemoryFact, prisma } from "@zoonk/db";
+import { MemoryCategory, type MemoryFact, prisma } from "@zoonk/db";
 import { type MemoryCandidate } from "./memory-candidates";
 import { currentFactsWhere } from "./memory-fact-view";
 import { searchMemoryFactIds } from "./search-memory-facts";
@@ -12,19 +12,17 @@ const MAX_OTHER_CATEGORY_MATCHES = 3;
 
 async function findOtherCategoryMatches({
   candidate,
-  categories,
   language,
   now,
   userId,
 }: {
   candidate: MemoryCandidate;
-  categories: readonly MemoryCategory[];
   language: string;
   now: Date;
   userId: string;
 }): Promise<MemoryFact[]> {
   const ids = await searchMemoryFactIds({
-    categories: categories.filter((category) => category !== candidate.category),
+    categories: Object.values(MemoryCategory).filter((category) => category !== candidate.category),
     language,
     limit: MAX_OTHER_CATEGORY_MATCHES,
     now,
@@ -43,7 +41,6 @@ async function findOtherCategoryMatches({
  */
 export async function findRelatedMemoryFacts(params: {
   candidate: MemoryCandidate;
-  categories: readonly MemoryCategory[];
   language: string;
   now: Date;
   userId: string;

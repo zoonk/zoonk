@@ -60,8 +60,11 @@ Walk through the task: can someone recognize what matters, predict what happens 
 
 Inspect implemented changes in the running app on a phone (390px), a tablet (820px) and a laptop (1280px), with touch, mouse and keyboard. Check affected loading, empty, disabled, and error states, plus focus, touch targets, long translations, and dark mode. Use the product as the people it serves would, end to end, with real content: type a real goal, go through onboarding, study day one. Check every page a change can reach, not only the one you redesigned. Recheck observed friction. For proposals, show representative screens and transitions. State what remains unverified.
 
+For substantial features, walk the running product as contrasting learner personas, including their bad days, with [zoonk-persona-walkthrough](../zoonk-persona-walkthrough/SKILL.md). Look for redundant controls, jargon, unnecessary choices, hidden progress, and effort that grows with repeated use.
+
 ## Related guidance
 
+- [Zoonk persona walkthrough](../zoonk-persona-walkthrough/SKILL.md) for using the product as learners before calling a change done.
 - [Zoonk compound components](../zoonk-compound-components/SKILL.md) for reusable React UI architecture.
 - [Apple Human Interface Guidelines](../apple-human-interface-guidelines/SKILL.md) for Apple UI.
 - [Android Material guidelines](../android-material-guidelines/SKILL.md) for Android UI.

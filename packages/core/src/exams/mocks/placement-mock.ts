@@ -9,14 +9,10 @@ import {
   type PlacementMockOptionView,
 } from "./mock-contract";
 import { planWholeExam } from "./mock-option-plan";
-import {
-  estimateMockMinutes,
-  getObjectiveSubjects,
-  getSubjectPace,
-  subjectName,
-} from "./mock-options";
+import { estimateMockMinutes, getObjectiveSubjects } from "./mock-options";
 import { type MockCandidate, type MockPlan, getMockDays, getPace, outlineMock } from "./mock-plan";
 import { isMockShort } from "./mock-shortfall";
+import { getSubjectPace } from "./subject-sections";
 import { isWrittenSubject } from "./written-subject";
 
 /**
@@ -39,10 +35,13 @@ const MIN_PER_AREA: Record<PlacementMockLength, number> = { long: 2, medium: 1, 
  * whose areas aren't the notice's, one of its areas.
  */
 type PlacementArea = {
-  /** Its full name, which the plan's areas are matched to ("Matemática e suas Tecnologias"). */
-  fullName: string | null;
-  /** The name its questions and the exam's sections go by ("Matemática"); null for the whole. */
+  /**
+   * The name its questions and every screen go by, the notice's ("Mathematics and its
+   * Technologies"); null for the whole.
+   */
   name: string | null;
+  /** The notice's short name for it ("Mathematics"), which a plan's area may go by. */
+  shortName: string | null;
   /** Minutes per question at the exam's pace, which the mock's clock gives. */
   pace: number;
   /** Its share of the exam: its questions on the notice, or one each when the notice doesn't say. */
@@ -81,17 +80,17 @@ function getAreas({
 
   if (structure && subjects.length > 0) {
     return subjects.map((subject) => ({
-      fullName: subject.name,
-      name: subjectName(subject),
+      name: subject.name,
       pace: getSubjectPace({ structure, subject }),
+      shortName: subject.shortName ?? null,
       worth: getSubjectQuestions({ structure, subject }) ?? 1,
     }));
   }
 
   // A plan of its own areas places each one; before the plan has any, the whole exam is one part.
   return goalAreas.length > 0
-    ? goalAreas.map((area) => ({ fullName: area, name: area, pace, worth: 1 }))
-    : [{ fullName: null, name: null, pace, worth: 1 }];
+    ? goalAreas.map((area) => ({ name: area, pace, shortName: null, worth: 1 }))
+    : [{ name: null, pace, shortName: null, worth: 1 }];
 }
 
 /** The most a diagnostic mock asks: the whole exam's objective questions. */
@@ -316,13 +315,16 @@ export function planPlacementMock({
   skills: readonly PlacementSkill[];
   structure: ExamStructure | null;
 }): { missingSkillIds: string[]; plan: MockPlan } {
-  const subjects = option.counts.map((entry) => entry.area.fullName);
+  const subjects = option.counts.map((entry) => entry.area.name);
 
-  // Each plan area belongs to its best-matching subject alone: "Direito Civil" never to
-  // "Direito Processual Civil".
+  // Each plan area belongs to its best-matching subject alone: "Civil Law" never to
+  // "Civil Procedure Law".
   const owners = matchAreasToSubjects({
     areas: [...new Set(skills.map((skill) => skill.area))],
-    subjects: subjects.map((subject) => subject ?? ""),
+    subjects: option.counts.map(({ area }) => ({
+      name: area.name ?? "",
+      shortName: area.shortName,
+    })),
   });
 
   const skillsOf = (index: number) =>

@@ -6,7 +6,6 @@
     let courseCatalog: CourseCatalogStore
     let initiallyPresentsAccount: Bool
     let myCourses: MyCoursesStore
-    let plusAccess: PlusAccessStore
     let progress: ProgressStore
     let session: SessionStore
 
@@ -30,11 +29,6 @@
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"),
         myCourses: MyCoursesStore(
           api: myCoursesAPI(snapshot: catalogSnapshot),
-          session: session),
-        plusAccess: PlusAccessStore(
-          api: UITestPlusAccessAPI(
-            access: environment["ZOONK_UI_TEST_PLUS_PURCHASE"]
-              .flatMap(UITestPlusPurchaseAccess.init(rawValue:)) ?? .allowed),
           session: session),
         progress: ProgressStore(
           api: progressAPI(from: environment),
@@ -110,27 +104,6 @@
       } catch {
         preconditionFailure("ZOONK_UI_TEST_CATALOG must contain a valid catalog snapshot")
       }
-    }
-  }
-
-  private enum UITestPlusPurchaseAccess: String {
-    case allowed
-    case needsGuardianApproval
-  }
-
-  /// Answers the Plus check from the scenario, and accepts every guardian approval request.
-  private struct UITestPlusAccessAPI: PlusAccessAPIClient {
-    let access: UITestPlusPurchaseAccess
-
-    func getPlusPurchaseAccess(token: String) async throws -> PlusPurchaseAccess {
-      switch access {
-      case .allowed: .allowed
-      case .needsGuardianApproval: .needsGuardianApproval
-      }
-    }
-
-    func requestPlusApproval(token: String) async throws -> PlusApprovalRequestResult {
-      .requested
     }
   }
 

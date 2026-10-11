@@ -8,6 +8,7 @@ import {
   MockChooserScreen,
   type MockChooserStatus,
   type MockStart,
+  getMockOptionKey,
 } from "@zoonk/learn/mock/chooser";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
@@ -66,14 +67,23 @@ async function requestMockWriting({
   return ask(PREPARING_TRIES);
 }
 
-function toFailure(outcome: MockStartOutcome): MockChooserStatus {
-  if (outcome.status === "dailyLimitReached") {
-    return { kind: "failed", reason: "dailyLimit" };
+/** The picked option's key, for a mock that can ask only part of its questions now. */
+function getStartKey(start: MockStart): string | null {
+  return start.purpose === "practice" ? getMockOptionKey(start.option) : null;
+}
+
+/** Why the mock didn't open: it can ask only part of its questions now, or it couldn't start. */
+function toStatus({ outcome, start }: { outcome: MockStartOutcome; start: MockStart }) {
+  const optionKey = getStartKey(start);
+
+  if (outcome.status === "short" && optionKey) {
+    const { examQuestions, limit, minutes, questions } = outcome;
+    return { examQuestions, kind: "short", limit, minutes, optionKey, questions } as const;
   }
 
   return outcome.status === "notEnoughQuestions"
-    ? { kind: "failed", reason: "notEnoughQuestions" }
-    : { kind: "failed", reason: "failed" };
+    ? ({ kind: "failed", reason: "notEnoughQuestions" } as const)
+    : ({ kind: "failed", reason: "failed" } as const);
 }
 
 /** The chooser while a run writes the picked mock's questions; it starts the mock once they're in. */
@@ -113,19 +123,19 @@ export function MockChooserClient({ page, view }: { page: ChooserPage; view: Moc
       timeZone: getLocalTimeZone(),
     });
 
-  const open = (outcome: MockStartOutcome) => {
+  const open = ({ outcome, start }: { outcome: MockStartOutcome; start: MockStart }) => {
     if ("id" in outcome) {
       router.push(`/mock/${outcome.id}`);
       return;
     }
 
     setWriting(null);
-    setStatus(toFailure(outcome));
+    setStatus(toStatus({ outcome, start }));
   };
 
   // The bank holds what it can now: the mock starts with the questions there are.
   const startWithWhatThereIs = async (start: MockStart) =>
-    open(await startMock({ acceptFewer: true, start }));
+    open({ outcome: await startMock({ acceptFewer: true, start }), start });
 
   const write = async (start: MockStart) => {
     const result = await requestMockWriting({ page, start });
@@ -150,15 +160,17 @@ export function MockChooserClient({ page, view }: { page: ChooserPage; view: Moc
 
   const begin = (start: MockStart) =>
     startTransition(async () => {
+      // Start again on a mock the screen said is short takes it as it is.
+      const acceptFewer = status.kind === "short" && status.optionKey === getStartKey(start);
       setStatus({ kind: "choosing" });
-      const outcome = await startMock({ acceptFewer: false, start });
+      const outcome = await startMock({ acceptFewer, start });
 
       if (outcome.status === "needsQuestions") {
         await write(start);
         return;
       }
 
-      open(outcome);
+      open({ outcome, start });
     });
 
   const screen = {

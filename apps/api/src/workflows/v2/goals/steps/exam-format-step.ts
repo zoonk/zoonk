@@ -1,8 +1,10 @@
-import { hasGoalExamFormat } from "@zoonk/core/library/exams/notice-formats";
+import { getPlacementExamWait } from "@zoonk/core/library/exams/notice-formats";
 
-/** Whether the goal knows how its exam asks questions yet (see `hasGoalExamFormat`). */
-export async function hasGoalExamFormatStep(goalId: string): Promise<boolean> {
+/** What placement's first questions still wait for of the goal's exam (see `getPlacementExamWait`). */
+export async function readPlacementExamWaitStep(
+  goalId: string,
+): Promise<"blueprint" | "formats" | null> {
   "use step";
 
-  return hasGoalExamFormat(goalId);
+  return getPlacementExamWait(goalId);
 }

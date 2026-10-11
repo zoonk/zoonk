@@ -68,7 +68,7 @@ export const researchSourcePaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: freshnessCommandResponseSchema } },
-          description: "A check started, or the checks stopped",
+          description: "A check or a reading started, or the checks stopped",
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
@@ -76,7 +76,8 @@ export const researchSourcePaths = {
         "404": notFoundResponse,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Check an exam or source now, or stop its checks (admins)",
+      summary:
+        "Check an exam or source now, read an exam's notice again, or stop its checks (admins)",
       tags: TAGS,
     },
   },

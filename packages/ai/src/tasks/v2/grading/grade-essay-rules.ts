@@ -9,16 +9,16 @@ import { findEssayQuote } from "./grade-essay-quote";
 /**
  * Official rubric facts, checked in Sep 2026:
  *
- * ENEM (INEP, "A redação do Enem 2025, cartilha do participante"): five
+ * ENEM (INEP, "The Enem 2025 essay, participant's handbook"): five
  * competencies (C1 formal written norm, C2 understanding the prompt and the
  * dissertative-argumentative type with repertoire, C3 selecting and organizing
  * arguments, C4 cohesion, C5 an intervention proposal that respects human
  * rights), each 0 to 200 in steps of 40, total 0 to 1000. An essay scores 0
  * when it flees the theme, isn't dissertative-argumentative or has up to 7
- * handwritten lines ("texto insuficiente").
+ * handwritten lines ("insufficient text").
  * https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf
  *
- * ENEM C5 (INEP evaluator training, Módulo 07, Competência V): the level is
+ * ENEM C5 (INEP evaluator training, Module 07, Competency V): the level is
  * the number of valid elements (action, agent, means or mode, effect or
  * purpose, detail) in the most complete proposal, so 5 elements are needed
  * for 200. Conditional proposals stop at 80, tangent essays at 40.
@@ -319,7 +319,10 @@ function getGap(criterion: EssayCriterionGrade): number {
   return criterion.maxScore - criterion.score;
 }
 
-/** Ties go to the earlier criterion, so the choice is stable for the same scores. */
+/**
+ * Ties go to the earlier criterion, so the choice is stable for the same scores. With every point
+ * scored there's nothing to work on: no next step, never one on a criterion at full marks.
+ */
 function getNextStep({
   criteria,
   output,
@@ -338,6 +341,10 @@ function getNextStep({
     criteria.reduce((current, criterion) =>
       getGap(criterion) > getGap(current) ? criterion : current,
     );
+
+  if (!zeroCriterion && getGap(weakest) <= 0) {
+    return null;
+  }
 
   return { criterionId: weakest.id, text: output.criteria[weakest.id]?.nextStep.trim() ?? "" };
 }
@@ -387,7 +394,7 @@ export function buildEssayGrade({
   output: EssayModelOutput;
   rubric: EssayRubric;
 }): EssayGrade {
-  const zeroReason = rubric.kind === "enem" ? output.zeroReason : null;
+  const zeroReason = rubric.kind === "enem" ? (output.zeroReason ?? null) : null;
   return assembleEssayGrade({ essay, output, rubric, zeroReason });
 }
 

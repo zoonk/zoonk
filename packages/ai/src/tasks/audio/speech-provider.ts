@@ -2,6 +2,7 @@ import { type TTSVoice } from "@zoonk/utils/languages";
 import { type SpeechModel, generateSpeech } from "ai";
 import { directOpenAI } from "../../direct-providers";
 import { zoonkGateway } from "../../gateway";
+import { type ServiceTier } from "../../provider-options";
 import { type SpeechModelName, speechModels } from "./speech-models";
 
 /** OpenAI has its own voices; Marin is the closest to Gemini's Kore. */
@@ -32,25 +33,30 @@ function getSpeechProvider({
  * PCM samples, so the task applies one validation and encoding pipeline without codec-specific
  * branches. The instructions name the passage's language, which both providers follow; neither
  * reads the AI SDK's `language` option (it only logged a warning for every clip; checked 8 Oct
- * 2026), so it isn't sent. The provider metadata carries AI Gateway's routing and cost.
+ * 2026), so it isn't sent. The provider metadata carries AI Gateway's routing and cost. A
+ * service tier goes to AI Gateway (`chooseServiceTier`); OpenAI's direct call has none.
  */
 export async function generateSpeechWithProvider({
   instructions,
   model,
+  serviceTier,
   text,
   voice,
 }: {
   instructions: string;
   model: SpeechModelName;
+  serviceTier?: ServiceTier;
   text: string;
   voice: TTSVoice;
 }): Promise<{ audio: Uint8Array; providerMetadata: Record<string, unknown> }> {
   const provider = getSpeechProvider({ model, voice });
+  const tiered = serviceTier && model !== speechModels.openai;
 
   const { audio, providerMetadata } = await generateSpeech({
     instructions,
     model: provider.model,
     outputFormat: "wav",
+    ...(tiered ? { providerOptions: { gateway: { serviceTier } } } : {}),
     text,
     voice: provider.voice,
   });

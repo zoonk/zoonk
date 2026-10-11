@@ -42,7 +42,7 @@ function countLeftOut(syllabus: SyllabusView): { forTime: boolean; leftOut: numb
   };
 }
 
-/** "Ética 8 · Civil 7 · Constitucional 6": the subjects that weigh most, for a notice without topics. */
+/** "Ethics 8 · Civil 7 · Constitutional 6": the subjects that weigh most, for a notice without topics. */
 function useHeaviestSubjects(syllabus: SyllabusView): string | null {
   const t = useExtracted();
   const subjects = syllabus.subjects.filter((subject) => subject.source === "notice");
@@ -124,7 +124,7 @@ function useSummaryLines({
   }
 
   // The learner's material is never called a notice: a material that lists only headings (a
-  // teacher's "Teoria celular, Organelas…") counts those as its topics.
+  // teacher's "Cell theory, Organelles…") counts those as its topics.
   if (syllabus.fromMaterial) {
     const title = t(
       "{count, plural, one {# topic from your material} other {# topics from your material}}",
@@ -139,11 +139,11 @@ function useSummaryLines({
   }
 
   const title = t(
-    "{count, plural, one {# subject from the notice} other {# subjects from the notice}}",
-    { count: noticeSubjects },
+    "{document, select, notice {{count, plural, one {# subject from the notice} other {# subjects from the notice}}} other {{count, plural, one {# part from the official guide} other {# parts from the official guide}}}}",
+    { count: noticeSubjects, document: syllabus.examDocument },
   );
 
-  // A notice that names its subjects without listing their topics (the OAB's 1ª fase).
+  // A notice that names its subjects without listing their topics (the OAB's first phase).
   if (syllabus.topicCount === 0) {
     return { detail: heaviest ?? firstSubjects, title };
   }
@@ -228,8 +228,16 @@ function SummarySubject({ subject }: { subject: SyllabusSubject }) {
   );
 }
 
-function SummaryGroup({ fromMaterial, group }: { fromMaterial: boolean; group: SubjectGroup }) {
-  const name = useGroupName({ fromMaterial, group });
+function SummaryGroup({
+  document,
+  fromMaterial,
+  group,
+}: {
+  document: SyllabusView["examDocument"];
+  fromMaterial: boolean;
+  group: SubjectGroup;
+}) {
+  const name = useGroupName({ document, fromMaterial, group });
 
   return (
     <div className="flex flex-col gap-1">
@@ -286,6 +294,7 @@ function SummaryCard({
         <DrawerContent className="flex flex-col gap-2 pt-1">
           {groups.map((group) => (
             <SummaryGroup
+              document={syllabus.examDocument}
               fromMaterial={syllabus.fromMaterial}
               group={group}
               key={group.extra ? "extra" : (group.name ?? "all")}

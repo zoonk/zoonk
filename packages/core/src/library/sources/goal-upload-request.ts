@@ -2,6 +2,7 @@ import "server-only";
 import { type GoalKind, type ResearchUploadReason, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
+import { type ExamDocument, getExamDocument } from "../../exams/exam-document";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
@@ -12,6 +13,8 @@ import { type ResearchAccess, getResearchAccess } from "../exams/research-access
  * own material. `reason` says why, so the ask says it too.
  */
 export type GoalUploadRequest = {
+  /** What the exam's official documents are, for the ask's words (see `ExamDocument`). */
+  examDocument: ExamDocument;
   goalId: string;
   goalKind: GoalKind;
   /** The goal's language, for uploads whose documents don't say their own. */
@@ -46,6 +49,7 @@ export async function getGoalUploadRequest({
 
   const request = goal.researchUploadReason
     ? {
+        examDocument: getExamDocument(goal),
         goalId: goal.id,
         goalKind: goal.kind,
         language: goal.language,

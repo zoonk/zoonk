@@ -1,5 +1,6 @@
 "use client";
 
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { AlphabetStep } from "../../components/alphabet-step";
 import { FillBlankStep } from "../../components/fill-blank-step";
 import { ListeningStep } from "../../components/listening-step";
@@ -9,6 +10,7 @@ import { ReadingStep } from "../../components/reading-step";
 import { TranslationStep } from "../../components/translation-step";
 import { VocabularyStep } from "../../components/vocabulary-step";
 import { type SelectedAnswer, type StepResult } from "../../step-answer";
+import { useLessonPlayerConfig } from "../lesson-player-context";
 import { type LessonPlayerAnswer, type PlayableLanguageStep } from "../lesson-player-types";
 import { type LessonStepViewProps } from "./lesson-step-view-props";
 import { WordHints } from "./word-hints";
@@ -32,6 +34,12 @@ function toSelectedAnswer(answer: LessonPlayerAnswer | undefined): SelectedAnswe
   return answer && isExerciseAnswer(answer) ? answer : undefined;
 }
 
+/** A lesson in the learner's own language (English for English readers) defines its words. */
+function useDefinesWords(): boolean {
+  const { language, targetLanguage } = useLessonPlayerConfig().lesson;
+  return targetLanguage ? isSameLanguage({ learnerLanguage: language, targetLanguage }) : false;
+}
+
 /**
  * Language exercises play through the exercise components in `src/components`, with their own
  * answers and inline feedback.
@@ -45,6 +53,7 @@ export function ExerciseStepView({
 }: LessonStepViewProps<PlayableLanguageStep>) {
   const { exercise } = step;
   const selectedAnswer = toSelectedAnswer(answer);
+  const definesWords = useDefinesWords();
 
   const stepResult: StepResult | undefined = result
     ? {
@@ -85,7 +94,7 @@ export function ExerciseStepView({
     case "reading":
       return <ReadingStep {...shared} result={stepResult} />;
     case "translation":
-      return <TranslationStep {...shared} />;
+      return <TranslationStep {...shared} definesWords={definesWords} />;
     default:
       return null;
   }

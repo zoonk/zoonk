@@ -4,8 +4,10 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
+import { useMemo } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { ChoiceQuestion } from "../questions/choice-question";
+import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemSupport } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { DrillAnswerNotes } from "./drill/drill-answer-notes";
@@ -113,6 +115,8 @@ export function PracticeStepView({
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { phase } = run.state;
   const { drill } = step.entry;
+  // A recording's plays count in this run, as practice: a mistake retried another time starts over.
+  const runId = useMemo(() => crypto.randomUUID(), []);
 
   // The earlier answer belongs to the mistake's own question; next to another one it misleads.
   const lastAnswer =
@@ -152,6 +156,15 @@ export function PracticeStepView({
           key={step.question.itemId}
           onTimeUp={run.timeUp}
           seconds={drill.timeLimitSeconds}
+        />
+      )}
+
+      {step.question.set && (
+        <ItemSetStimulus
+          askedIn={runId}
+          key={step.question.itemId}
+          practice
+          set={step.question.set}
         />
       )}
 

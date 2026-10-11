@@ -108,7 +108,7 @@ describe(normalizePlanEdit, () => {
   });
 
   it("never focuses an area the learner wants less of: it gets less time instead", () => {
-    // "mais Processo Civil e menos Filosofia": a model that also put Filosofia in the focus would
+    // "more Civil Procedure and less Philosophy": a model that also put Philosophy in the focus would
     // give it more time, the opposite of what the learner asked.
     const result = normalizePlanEdit({
       input,
@@ -145,7 +145,7 @@ describe(normalizePlanEdit, () => {
   });
 
   it("keeps a focus on part of an area over less time for the whole area", () => {
-    // "mais biologia e química, física pode ser menos": the part's focus already gives the rest of
+    // "more biology and chemistry, physics can be less": the part's focus already gives the rest of
     // the area less, and less time for the whole area would take biology and chemistry with it.
     const skills = [
       { area: "Natural sciences", name: "Explain heredity", skillId: "genetics" },
@@ -394,6 +394,7 @@ describe(normalizePlanEdit, () => {
     expect(result.operations).toStrictEqual([
       {
         kind: "addTopics",
+        startDate: null,
         topics: [
           {
             area: "Inglês",
@@ -406,21 +407,35 @@ describe(normalizePlanEdit, () => {
     ]);
   });
 
-  it("never adds topics while fitting a new plan to the learner's routine", () => {
+  // Carla asked to start her school's portfolio project "logo", and it landed seven weeks out.
+  it.each([
+    { date: "2026-09-28", expected: "2026-09-28", when: "today, for logo" },
+    { date: "2026-10-05", expected: "2026-10-05", when: "next week" },
+    { date: "2026-09-27", expected: null, when: "a day already past" },
+    { date: "2027-04-07", expected: null, when: "the goal's own date" },
+    { date: "next week", expected: null, when: "words instead of a day" },
+  ])("starts added topics on the day the learner said: $when", ({ date, expected }) => {
     const result = normalizePlanEdit({
-      input: { ...input, purpose: "routine" },
+      input: { ...input, areas: ["Portfólio"], goalKind: "learn", targetDate: "2027-04-07" },
       raw: {
         changes: [
           change({
+            date,
             kind: "addTopics",
-            topics: [{ area: null, description: "Estatística.", name: "Calcular médias" }],
+            topics: [
+              {
+                area: "Portfólio",
+                description: "Um estudo de caso com a escola.",
+                name: "Conduzir um estudo de caso de UX na escola",
+              },
+            ],
           }),
         ],
-        summary: "",
+        summary: "O projeto da escola entra no plano.",
         understood: true,
       },
     });
 
-    expect(result).toMatchObject({ operations: [], understood: false });
+    expect(result.operations).toMatchObject([{ kind: "addTopics", startDate: expected }]);
   });
 });

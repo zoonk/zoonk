@@ -37,6 +37,14 @@ function edition({
   };
 }
 
+function deadline(date: string) {
+  return { citation, date, kind: "registrationEnd" as const, label: "Closes", startTime: null };
+}
+
+function exam(date: string) {
+  return { citation, date, kind: "exam" as const, label: "Exam", startTime: null };
+}
+
 /** ENEM 2026: the second and third Sundays of November. */
 const ENEM_2026 = edition({
   days: [
@@ -201,6 +209,45 @@ describe(getExamEditionDays, () => {
 
     expect(result).toMatchObject({ estimated: false });
     expect(datesOf(result)).toStrictEqual(["2026-11-08", "2026-11-15"]);
+  });
+
+  // DELE's calendar gives each sitting's last day to register, and a deadline can fall after an
+  // earlier sitting (May's closes after April's exam).
+  it("marks the sittings whose registration closed, when the notice gives their deadline", () => {
+    const dele: ExamEdition = {
+      ...edition({ days: [], year: 2026 }),
+      dates: [
+        exam("2026-05-23"),
+        deadline("2026-09-02"),
+        deadline("2026-09-30"),
+        exam("2026-10-16"),
+        exam("2026-11-14"),
+        deadline("2027-02-10"),
+        exam("2027-04-02"),
+        deadline("2027-04-07"),
+        deadline("2027-05-12"),
+        exam("2027-05-22"),
+        exam("2027-07-09"),
+      ],
+    };
+
+    const result = getExamEditionDays({ edition: dele, examYear: null, from: "2026-10-10" });
+
+    expect(result.days.map((day) => [day.date, day.registrationClosed])).toStrictEqual([
+      // No deadline given for May's: never marked closed.
+      ["2026-05-23", false],
+      ["2026-10-16", true],
+      ["2026-11-14", true],
+      ["2027-04-02", false],
+      ["2027-05-22", false],
+      ["2027-07-09", false],
+    ]);
+
+    // Estimated days have no deadline of their own.
+    const estimated = getExamEditionDays({ edition: dele, examYear: 2029, from: "2026-10-10" });
+
+    expect(estimated.estimated).toBe(true);
+    expect(estimated.days.every((day) => !day.registrationClosed)).toBe(true);
   });
 
   it("has no days for an exam whose notice has none", () => {

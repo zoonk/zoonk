@@ -1,30 +1,33 @@
 "use client";
 
 import { type PlanTimeAdvice, getRecommendedTime } from "@zoonk/core/plans/time-advice-contract";
+import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
-import { Toggle } from "@zoonk/ui/components/toggle";
 import { cn } from "@zoonk/ui/lib/utils";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { WeekdayToggle } from "../../_components/weekday-toggle";
 import { WeekendTime } from "../../_components/weekend-time";
-import { useFormatIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
-import { usePoll } from "../../_utils/use-poll";
-import { isWeekend } from "../../plan/week-shape";
+import { type GenerationRun } from "../../generation/generation-run";
 import { type Choice, ChoiceList } from "../choice-list";
+import { AdviceSentence } from "./advice-sentence";
+import { FullCourseToggle } from "./full-course-toggle";
 import { StepForm } from "./step-form";
+import {
+  type AdviceAnswer,
+  type StudyWeek,
+  getWeekAdvice,
+  toStudyWeek,
+  useTimeAdvice,
+} from "./use-time-advice";
+import { isRunStopped } from "./wait-run";
 
 /** From a short habit to a full study day for a big exam: the plan takes up to 4 hours. */
 const MINUTE_OPTIONS = ["15", "30", "45", "60", "90", "120", "180", "240"].map(Number);
 const DAYS_PER_WEEK = 7;
 const EVERY_DAY = Array.from({ length: DAYS_PER_WEEK }, (_, day) => day);
-/** A Sunday, so weekday names come out in order from Sunday (0). */
-const FIRST_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
-const ADVICE_POLL_MS = 3000;
-/** The plan is usually ready by now; past this the question goes on without a recommendation. */
-const ADVICE_TIMEOUT_MS = 3 * 60 * 1000;
 
 /**
  * The time chips: the usual amounts, with the recommended time in place of the closest one when
@@ -54,9 +57,12 @@ function getMinuteOptions({
 }
 
 function useMinuteChoices({
+  current,
   picked,
   recommended,
 }: {
+  /** The recommended time is the one for the days shown, not the last week's (see `ScheduleStep`). */
+  current: boolean;
   picked: string | null;
   recommended: number | null;
 }): Choice<string>[] {
@@ -65,7 +71,7 @@ function useMinuteChoices({
   const options = getMinuteOptions({ picked: picked ? Number(picked) : null, recommended });
 
   return options.map((value) => ({
-    description: value === recommended ? t("Recommended") : undefined,
+    description: current && value === recommended ? t("Recommended") : undefined,
     label: formatDuration(value),
     value: String(value),
   }));
@@ -88,91 +94,6 @@ function getRecommended(advice: PlanTimeAdvice | null): number | null {
   return advice ? (getRecommendedTime(advice)?.dailyMinutes ?? null) : null;
 }
 
-/**
- * The goal's daily time from its plan, on the chosen study days, asked again whenever they
- * change. The plan may still be being built when the question shows, so it asks until it's ready
- * (and gives up quietly after a few minutes: the question works without it).
- */
-function useTimeAdvice({
-  dated,
-  getAdvice,
-  studyDays,
-}: {
-  /** Whether the goal has a date to cover it by: without one, there's nothing to recommend. */
-  dated: boolean;
-  getAdvice: (studyDays: number[]) => Promise<PlanTimeAdvice | null>;
-  studyDays: number[];
-}): { advice: PlanTimeAdvice | null; waiting: boolean } {
-  const key = studyDays.join(",");
-  const [answer, setAnswer] = useState<{ advice: PlanTimeAdvice; key: string } | null>(null);
-  const current = answer?.key === key && answer.advice.ready;
-
-  const poll = usePoll({
-    active: dated && !current,
-    intervalMs: ADVICE_POLL_MS,
-    onPoll: async () => {
-      const advice = await getAdvice(studyDays);
-
-      if (!advice) {
-        throw new Error("The goal's daily time couldn't be read");
-      }
-
-      setAnswer({ advice, key });
-    },
-    timeoutMs: ADVICE_TIMEOUT_MS,
-  });
-
-  // While other days are asked about, the last answer stays until the new one comes.
-  return {
-    advice: answer?.advice.ready ? answer.advice : null,
-    waiting: poll.status === "polling",
-  };
-}
-
-/**
- * What the question recommends, said once the plan says it: the time that covers everything in
- * depth by the goal's date, or, when that's more than anyone keeps up, that it is, with the most
- * time a day. While the plan is still being built, it says so.
- */
-function AdviceSentence({ advice, waiting }: { advice: PlanTimeAdvice | null; waiting: boolean }) {
-  const t = useExtracted();
-  const format = useFormatter();
-  const formatDuration = useFormatDuration();
-  const formatDate = useFormatIsoDate();
-  const date = advice?.targetDate ? formatDate(advice.targetDate) : null;
-
-  if (waiting && !advice) {
-    return t("Working out the time your goal needs…");
-  }
-
-  if (date && advice?.recommendedMinutes) {
-    return t("To study everything in depth by {date}, we recommend {time} a day.", {
-      date,
-      time: formatDuration(advice.recommendedMinutes),
-    });
-  }
-
-  if (date && advice?.maximum) {
-    const values = {
-      date,
-      share: format.number(advice.maximum.coveredShare, { style: "percent" }),
-      time: formatDuration(advice.maximum.dailyMinutes),
-    };
-
-    return advice.measure === "exam"
-      ? t(
-          "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: it covers {share} of the exam, what comes up most first.",
-          values,
-        )
-      : t(
-          "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: it covers {share} of your goal, what matters most first.",
-          values,
-        );
-  }
-
-  return t("You can change this anytime.");
-}
-
 function WeekdayToggles({
   days,
   onChange,
@@ -181,38 +102,31 @@ function WeekdayToggles({
   onChange: (days: number[]) => void;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
 
   return (
     <fieldset className="flex flex-col gap-3">
       <legend className="mb-3 text-base font-semibold">{t("Which days?")}</legend>
       <div className="flex justify-between gap-1.5">
-        {EVERY_DAY.map((day) => {
-          const date = new Date(FIRST_SUNDAY + day * MS_PER_DAY);
-          const pressed = days.includes(day);
-
-          return (
-            <Toggle
-              aria-label={format.dateTime(date, { timeZone: "UTC", weekday: "long" })}
-              className={cn(
-                "size-11 rounded-full text-sm font-semibold",
-                "aria-pressed:bg-foreground aria-pressed:text-background",
-              )}
-              key={day}
-              onPressedChange={(next) =>
-                onChange(
-                  next
-                    ? [...days, day].toSorted((a, b) => a - b)
-                    : days.filter((item) => item !== day),
-                )
-              }
-              pressed={pressed}
-              variant="outline"
-            >
-              {format.dateTime(date, { timeZone: "UTC", weekday: "narrow" })}
-            </Toggle>
-          );
-        })}
+        {EVERY_DAY.map((day) => (
+          <WeekdayToggle
+            className={cn(
+              "size-11 rounded-full text-sm font-semibold",
+              "aria-pressed:bg-foreground aria-pressed:text-background",
+            )}
+            display="narrow"
+            key={day}
+            onPressedChange={(next) =>
+              onChange(
+                next
+                  ? [...days, day].toSorted((a, b) => a - b)
+                  : days.filter((item) => item !== day),
+              )
+            }
+            pressed={days.includes(day)}
+            variant="outline"
+            weekday={day}
+          />
+        ))}
       </div>
     </fieldset>
   );
@@ -256,38 +170,59 @@ function WeekendMinutes({
 /**
  * How much time a day and on which days. It comes after placement, once the plan knows what the
  * learner already knows, so it recommends the time the plan needs to study the whole goal in depth
- * by its date, on the days they pick: the same number the plan shows next. That time comes picked
- * until the learner picks one; less is theirs to choose, and the plan then says what it covers.
- * Without a date there's nothing to cover by, so a starting pick from the goal's size comes picked
- * instead, claiming nothing. Weekends can take their own time.
+ * by its date, in the week they pick (its days, and the weekend's own time, which counts too): the
+ * same number the plan shows next. That time comes picked until the learner picks one; less is
+ * theirs to choose, and the plan then says what it covers. Without a date there's nothing to cover
+ * by, so a starting pick from the goal's size comes picked instead, claiming nothing.
  */
 export function ScheduleStep({
   dated,
+  exam = false,
   getTimeAdvice,
   onAnswer,
   pending,
   recommendedMinutes,
+  run,
 }: {
   /** The goal has a date (its own, or its exam's): the plan says the time that covers it. */
   dated: boolean;
-  /** The goal's daily time from its plan, on these study days; null when it couldn't be read. */
-  getTimeAdvice: (studyDays: number[]) => Promise<PlanTimeAdvice | null>;
+  /** An exam: the learner can also choose to study everything, even after it. */
+  exam?: boolean;
+  /** The goal's daily time from its plan, in this week; null when it couldn't be read. */
+  getTimeAdvice: (week: StudyWeek) => Promise<PlanTimeAdvice | null>;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
   /** A starting pick from how big the goal is and how soon its date is, until the plan says. */
   recommendedMinutes: number;
+  /** The run building the plan, when the host follows it: a stopped one waits for its "Try again". */
+  run: GenerationRun | null;
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const [picked, setPicked] = useState<string | null>(null);
   const [weekendMinutes, setWeekendMinutes] = useState<string | null>(null);
   const [days, setDays] = useState<number[]>(EVERY_DAY);
-  const { advice, waiting } = useTimeAdvice({ dated, getAdvice: getTimeAdvice, studyDays: days });
-  const recommended = getRecommended(advice);
-  const choices = useMinuteChoices({ picked, recommended });
+  const [answer, setAnswer] = useState<AdviceAnswer | null>(null);
+  const [fullCourse, setFullCourse] = useState(false);
+  // While another week is asked about, the last answer's time stays picked until the new one
+  // comes, so the pick doesn't jump, but it's only said to be recommended for the week it was
+  // asked for: Marcos saw 6 days' 1h 10min recommended with 5 days picked, which needed 1h 25min.
+  const recommended = getRecommended(answer?.advice.ready ? answer.advice : null);
   const minutes = picked ?? String(recommended ?? getFirstPick(recommendedMinutes));
   const studiesOnWeekends = days.some((day) => isWeekend(day));
   const weekend = studiesOnWeekends ? weekendMinutes : null;
+  const week = toStudyWeek({ days, minutes, weekend });
+  const advice = getWeekAdvice({ answer, week });
+  const choices = useMinuteChoices({ current: advice !== null, picked, recommended });
+
+  const asking = useTimeAdvice({
+    answer,
+    dated,
+    getAdvice: getTimeAdvice,
+    onAnswer: setAnswer,
+    stopped: isRunStopped(run),
+    week,
+  });
 
   const weekly = days.reduce(
     (total, day) => total + Number(isWeekend(day) && weekend ? weekend : minutes),
@@ -299,12 +234,18 @@ export function ScheduleStep({
       canContinue={days.length > 0}
       description={
         <span aria-live="polite">
-          <AdviceSentence advice={advice} waiting={waiting} />
+          <AdviceSentence
+            advice={advice}
+            onRetry={asking.restart}
+            readingNotice={answer?.advice.readingNotice ?? false}
+            status={asking.status}
+          />
         </span>
       }
       onContinue={() =>
         onAnswer({
           dailyMinutes: Number(minutes),
+          fullCourse: exam ? fullCourse : undefined,
           question: "schedule",
           studyDays: days.length === EVERY_DAY.length ? undefined : days,
           timeZone: getLocalTimeZone(),
@@ -339,6 +280,8 @@ export function ScheduleStep({
           time: formatDuration(weekly),
         })}
       </p>
+
+      {exam && <FullCourseToggle checked={fullCourse} onCheckedChange={setFullCourse} />}
     </StepForm>
   );
 }

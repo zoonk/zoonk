@@ -2,49 +2,38 @@ import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph"
 import { type GoalSkillGraph } from "@zoonk/core/library/curriculum/save-goal-skills";
 import { listNoticeGoals, proposeNoticeChange } from "@zoonk/core/plans/notice-change";
 import { claimNoticeLanding, endNoticeWait, startNoticeWait } from "@zoonk/core/plans/notice-wait";
-import { safeAsync } from "@zoonk/utils/error";
-import { logError } from "@zoonk/utils/logger";
 
 /**
- * The exam plan just built waits for research's reading of the notice; the reveal says so. The
- * wait only shapes the reveal, so a failure to record it is logged and never holds the plan.
+ * The exam plan just built waits for research's reading of the notice; the reveal says so. A
+ * failed write throws, so the runtime retries it; the wait only shapes the reveal, so once the
+ * retries run out the plan goes on without it.
  */
 export async function startNoticeWaitStep(goalId: string): Promise<void> {
   "use step";
 
-  const { error } = await safeAsync(() => startNoticeWait({ goalId }));
-
-  if (error) {
-    logError(`The plan of goal ${goalId} couldn't start waiting for its notice:`, error);
-  }
+  await startNoticeWait({ goalId });
 }
 
 /**
  * Whether the notice's reading still lands before the learner saw the plan (and the reveal keeps
- * waiting while the plan is built again); false once the wait ran out, or when it can't be told,
- * so the reading is proposed instead of changing a plan the learner may have seen.
+ * waiting while the plan is built again); false once the wait ran out. A failed write throws, so
+ * the runtime retries it; once the retries run out, the run takes it as false, so the reading is
+ * proposed instead of changing a plan the learner may have seen.
  */
 export async function claimNoticeLandingStep(goalId: string): Promise<boolean> {
   "use step";
 
-  const { data, error } = await safeAsync(() => claimNoticeLanding({ goalId }));
-
-  if (error) {
-    logError(`The plan of goal ${goalId} couldn't claim its notice's landing:`, error);
-  }
-
-  return data ?? false;
+  return claimNoticeLanding({ goalId });
 }
 
-/** The plan stops waiting for the notice; a failure is logged, and the wait runs out by itself. */
+/**
+ * The plan stops waiting for the notice. A failed write throws, so the runtime retries it; once
+ * the retries run out, the wait runs out by itself.
+ */
 export async function endNoticeWaitStep(goalId: string): Promise<void> {
   "use step";
 
-  const { error } = await safeAsync(() => endNoticeWait(goalId));
-
-  if (error) {
-    logError(`The plan of goal ${goalId} couldn't stop waiting for its notice:`, error);
-  }
+  await endNoticeWait(goalId);
 }
 
 /**

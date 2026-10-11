@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
-import { teachingStep } from "../_test-utils/lesson-steps";
-import { buildLesson, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { teachingStep } from "../preview/preview-steps";
 
 /**
  * A lesson built from the learner's own material says where each screen comes from: the slide it

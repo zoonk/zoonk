@@ -10,9 +10,14 @@ export type SpeechClipOutcome =
 
 /**
  * How the host app gets text read aloud: from the learner's tap to its API, which returns the
- * shared clip or voices it the first time anyone asks. Never called on render or page load.
+ * shared clip or voices it the first time anyone asks. The learner's own words (`personal`) get a
+ * clip of theirs alone. Never called on render or page load.
  */
-export type VoiceText = (input: { language: string; text: string }) => Promise<SpeechClipOutcome>;
+export type VoiceText = (input: {
+  language: string;
+  personal?: boolean;
+  text: string;
+}) => Promise<SpeechClipOutcome>;
 
 type PlaybackEnd = "ended" | "failed" | "stopped";
 
@@ -42,8 +47,8 @@ const SILENT_WAV =
 
 const SpeechPlayerContext = createContext<SpeechPlayer | null>(null);
 
-function clipKey({ language, text }: { language: string; text: string }): string {
-  return `${language}\n${text}`;
+function clipKey({ language, personal = false, text }: Parameters<VoiceText>[0]): string {
+  return `${language}\n${String(personal)}\n${text}`;
 }
 
 type Playback = { finish: (end: PlaybackEnd) => void; owner: PlaybackOwner };

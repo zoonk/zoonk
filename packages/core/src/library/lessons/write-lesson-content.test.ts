@@ -16,6 +16,7 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it, vi } from "vitest";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { temperatureSpec, writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
@@ -80,6 +81,7 @@ function withScreen(lesson: WrittenLesson, index: number, screen: WrittenScreen)
 function explanation(text: string): WrittenScreen {
   return {
     exampleLineIdea: null,
+    explore: null,
     image: null,
     kind: "explanation",
     text,
@@ -92,10 +94,20 @@ function explanation(text: string): WrittenScreen {
 async function createClaimedLesson({
   homeChapterId = null,
   ownerId = null,
+  skillIdentityKey,
   spec = temperatureSpec(),
-}: { homeChapterId?: string | null; ownerId?: string | null; spec?: object | null } = {}) {
+}: {
+  homeChapterId?: string | null;
+  ownerId?: string | null;
+  skillIdentityKey?: string;
+  spec?: object | null;
+} = {}) {
   const workflowRunId = randomUUID();
-  const skill = await skillFixture({ name: "Add a rise to a temperature below zero" });
+
+  const skill = await skillFixture({
+    name: "Add a rise to a temperature below zero",
+    ...(skillIdentityKey ? { identityKey: skillIdentityKey } : {}),
+  });
 
   const lesson = await libraryLessonFixture({
     contentRunId: workflowRunId,
@@ -243,6 +255,148 @@ describe(writeLessonContent, () => {
 
     expect(steps).toStrictEqual([]);
     expect(stored.contentStatus).toBe("failed");
+
+    // A shared lesson gets one fix pass, then fresh drafts (see the workflow's redrafts).
+    expect(fixLessonDraft).toHaveBeenCalledOnce();
+    expect(stored.setAsideAt).toBeNull();
+  });
+
+  it("gives a private lesson a second fix pass on what the code checks still flag", async () => {
+    const user = await userFixture();
+    const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
+    const written = writtenTemperatureLesson();
+    const filler = withScreen(written, 4, explanation("It's worth noting that zero is a mark."));
+
+    mockDraft(filler);
+    mockFix({ changedScreens: [], lesson: filler });
+    const fix = mockFix({ changedScreens: [4], lesson: written });
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { check: { lesson: written }, fixed: true, status: "published" },
+    );
+
+    expect(writeLessonDraft).toHaveBeenCalledOnce();
+    expect(fixLessonDraft).toHaveBeenCalledTimes(2);
+
+    expect(vi.mocked(fixLessonDraft).mock.calls[1]?.[0]).toMatchObject({
+      lesson: filler,
+      problems: [expect.objectContaining({ screen: 4, source: "code" })],
+    });
+
+    const steps = await listSteps(lesson.id);
+    expect(steps.find((step) => step.position === 4)?.runId).toBe(fix.runId);
+  });
+
+  it("repairs Markdown learners would see and an option written twice in code, with no fix pass", async () => {
+    const user = await userFixture();
+    const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
+    const written = writtenTemperatureLesson();
+    const [guess] = written.screens;
+
+    if (guess?.kind !== "hookGuess") {
+      throw new Error("The temperature lesson opens on a guess.");
+    }
+
+    // Italics split across lines show their underscores, since the player reads line by line, and
+    // "2.0 °C" is the right answer written again.
+    const twin = withScreen(written, 0, {
+      ...guess,
+      options: [...guess.options, { isCorrect: false, text: "2.0 °C" }],
+    });
+
+    mockDraft(withScreen(twin, 4, explanation("_Zero is a mark.\nCount past it._")));
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { fixed: false, status: "published" },
+    );
+
+    expect(fixLessonDraft).not.toHaveBeenCalled();
+
+    const steps = await listSteps(lesson.id);
+    const opening = steps.find((step) => step.position === 0);
+    const stored = steps.find((step) => step.position === 4);
+
+    expect(stored && parseStepContent("explanation", stored.content).text).toBe(
+      "Zero is a mark.\nCount past it.",
+    );
+
+    // Options are shuffled when stored.
+    const content = opening?.content as { options?: { text: string }[] } | undefined;
+    const options = content?.options ?? [];
+
+    expect(options.map((option) => option.text).toSorted()).toStrictEqual(
+      ["2 °C", "8 °C", "−8 °C"].toSorted(),
+    );
+  });
+
+  it("never stores what code can't repair: a private lesson's code checks send it to the fix pass, with no review", async () => {
+    const user = await userFixture();
+    const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
+    const written = writtenTemperatureLesson();
+
+    // A slot the writer left to fill in.
+    const unfinished = withScreen(written, 4, explanation("Zero is a mark. [Inserir exemplo]"));
+
+    mockDraft(unfinished);
+    mockFix({ changedScreens: [4], lesson: written });
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { fixed: true, status: "published" },
+    );
+
+    expect(vi.mocked(fixLessonDraft).mock.calls[0]?.[0]).toMatchObject({
+      problems: [expect.objectContaining({ screen: 4, source: "code" })],
+    });
+
+    expect(checkLessonQuality).not.toHaveBeenCalled();
+
+    const steps = await listSteps(lesson.id);
+    const stored = steps.find((step) => step.position === 4);
+
+    expect(stored && parseStepContent("explanation", stored.content).text).toBe(
+      "Zero is just a mark on the way up. Count the degrees to zero, then the degrees after it.",
+    );
+  });
+
+  it("sets a private lesson aside when its fix passes leave it failing, without a fresh draft", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+    const plan = await planFixture({ goalId: goal.id });
+    const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
+    const item = await planItemFixture({ lessonId: lesson.id, phase: 0, planId: plan.id });
+
+    const filler = withScreen(
+      writtenTemperatureLesson(),
+      4,
+      explanation("It's worth noting that zero is a mark."),
+    );
+
+    mockDraft(filler);
+    mockFix({ changedScreens: [], lesson: filler });
+    mockFix({ changedScreens: [], lesson: filler });
+
+    await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
+      { status: "heldBack" },
+    );
+
+    const [stored, planItem] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+      prisma.planItem.findUniqueOrThrow({ where: { id: item.id } }),
+    ]);
+
+    expect(stored.contentStatus).toBe("failed");
+    expect(stored.setAsideAt).toBeInstanceOf(Date);
+    expect(planItem.status).toBe("skipped");
+  });
+
+  it("never reviews a private lesson, even one with math that a rewrite asks to review", async () => {
+    const user = await userFixture();
+    const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
+    mockDraft(writtenTemperatureLesson());
+
+    await expect(
+      writeLessonContent({ forceReview: true, lessonId: lesson.id, workflowRunId }),
+    ).resolves.toMatchObject({ check: { cite: false, review: false }, status: "published" });
   });
 
   it("holds back a lesson whose code activity doesn't print its expected output", async () => {
@@ -361,9 +515,9 @@ describe(writeLessonContent, () => {
     await learnerSourceFixture({ goalId: goal.id, sourceId: slides.id, userId: user.id });
     mockDraft(writtenTemperatureLesson());
 
-    // A lesson written from material is always reviewed and cited, both after publishing.
+    // Only reusable lessons are reviewed: a private one is cited after publishing, never reviewed.
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
-      { check: { cite: true, review: true }, status: "published" },
+      { check: { cite: true, review: false }, status: "published" },
     );
 
     // The writer reads the slides, tagged so each page can be cited.
@@ -418,6 +572,23 @@ describe(writeLessonContent, () => {
     );
 
     expect(draftInput?.sources).not.toContain("Agency history");
+  });
+
+  it("writes a setup lesson with the setup rules, and other lessons without them", async () => {
+    const [setup, other] = await Promise.all([
+      createClaimedLesson({
+        skillIdentityKey: buildSetupSkillIdentityKey({ system: "windows", tool: randomUUID() }),
+      }),
+      createClaimedLesson(),
+    ]);
+
+    mockDraft(writtenTemperatureLesson());
+    await writeLessonContent({ lessonId: setup.lesson.id, workflowRunId: setup.workflowRunId });
+    expect(vi.mocked(writeLessonDraft).mock.calls.at(-1)?.[0].setup).toBe(true);
+
+    mockDraft(writtenTemperatureLesson());
+    await writeLessonContent({ lessonId: other.lesson.id, workflowRunId: other.workflowRunId });
+    expect(vi.mocked(writeLessonDraft).mock.calls.at(-1)?.[0].setup).toBe(false);
   });
 
   it("publishes a rewrite of a lesson taken out of play as its next version, keeping the old screens for learners playing them", async () => {
@@ -520,10 +691,16 @@ describe(writeLessonContent, () => {
       options: [
         {
           isCorrect: true,
+          picture: null,
           reason: "Twelve degrees reach zero and three more go above.",
           text: "3 °C",
         },
-        { isCorrect: false, reason: "That's moving down instead of up.", text: "−27 °C" },
+        {
+          isCorrect: false,
+          picture: null,
+          reason: "That's moving down instead of up.",
+          text: "−27 °C",
+        },
       ],
       question: "What will the thermometer show?",
       visual: null,

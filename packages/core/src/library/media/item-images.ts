@@ -2,6 +2,7 @@ import "server-only";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { prisma } from "@zoonk/db";
 import { drawPlannedImage } from "./_utils/draw-planned-image";
+import { canStorePicture } from "./_utils/picture-store";
 import { type ImageAnalytics, planLibraryImage } from "./_utils/plan-library-image";
 
 type ImageRequest = NonNullable<Extract<GeneratedItem, { image: unknown }>["image"]>;
@@ -82,7 +83,8 @@ export type ItemPicture = { assetId: string; drawn: boolean };
  * Draws the picture one question asks for, the way lesson pictures are drawn: a structured scene,
  * an existing image of the same scene when there is one, or a new image. A new image is used at
  * once and checked after (`drawn`: the caller starts its check). Null when no picture could be
- * drawn, so the question is never stored without the picture it points at.
+ * drawn or stored (a private skill's, without the private store), so the question is never stored
+ * without the picture it points at.
  *
  * This is a workflow bridge: it runs for Library questions a workflow is already writing.
  */
@@ -99,7 +101,7 @@ export async function drawItemImage({
 }): Promise<ItemPicture | null> {
   const request = getItemImageRequest(item);
 
-  if (!request) {
+  if (!request || !canStorePicture(scope.ownerId)) {
     return null;
   }
 

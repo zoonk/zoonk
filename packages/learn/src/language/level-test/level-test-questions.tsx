@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/language/level-test/contract";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { CreateAccountLink } from "../../_components/create-account-link";
 import {
   OnboardingColumn,
   OnboardingFooter,
@@ -87,11 +88,12 @@ export function SpeakingStep({
   onSkip: () => void;
   onView: (view: LanguageLevelTestView) => void;
   sentence: Extract<NextStep, { kind: "speaking" }>;
-  speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | null>;
+  speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null>;
 }) {
   const t = useExtracted();
   const noSpeech = useNoSpeechMessage();
   const [error, setError] = useState<string | null>(null);
+  const [needsAccount, setNeedsAccount] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -104,9 +106,15 @@ export function SpeakingStep({
         onRecorded={(audio) =>
           startTransition(async () => {
             const result = await speak(audio);
+            setNeedsAccount(result === "signUpRequired");
 
             if (result === "noSpeech") {
               setError(noSpeech);
+              return;
+            }
+
+            if (result === "signUpRequired") {
+              setError(t("Create your free account to continue."));
               return;
             }
 
@@ -121,6 +129,7 @@ export function SpeakingStep({
         sentence={sentence}
       />
       <OnboardingFooter>
+        {needsAccount && <CreateAccountLink />}
         <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
           {t("Skip this part")}
         </OnboardingSecondaryButton>

@@ -37,6 +37,7 @@ export async function findNewlyMetObjectives({
         ...(row.goalId ? { goalId: row.goalId } : {}),
       },
       characterNotes: scenario.characterBrief,
+      exam: scenario.exam,
       learnerLanguage: row.language,
       objectives: open,
       situation: scenario.situation,

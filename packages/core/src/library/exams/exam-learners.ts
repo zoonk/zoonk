@@ -1,6 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type GoalKind, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { getReferenceSyllabusNeed } from "../curriculum/goal-curriculum-inputs";
+import { toExamIdentity, toSharedContext } from "../curriculum/shared-graph-prompt";
+import { readTestedLanguage } from "./blueprint-language";
 
 /** Learners still preparing for an exam: goals linked to its blueprint that are active. */
 export function countActiveExamGoals(examBlueprintId: string): Promise<number> {
@@ -40,7 +43,8 @@ export function countActiveSourceGoals(sourceId: string): Promise<number> {
 /**
  * Points a goal at its exam's blueprint once research found or built it, so
  * the plan, the exam map and Today read the same canonical exam as everyone
- * preparing for it.
+ * preparing for it. An exam goal also learns the language the notice says the
+ * exam tests (PTE Academic: English), whatever the exam is called.
  */
 export async function linkGoalToExamBlueprint({
   examBlueprintId,
@@ -49,10 +53,21 @@ export async function linkGoalToExamBlueprint({
   examBlueprintId: string;
   goalId: string;
 }): Promise<boolean> {
+  const blueprint = await prisma.examBlueprint.findUnique({
+    select: { structure: true },
+    where: { id: examBlueprintId },
+  });
+
+  const targetLanguage = blueprint ? readTestedLanguage(blueprint.structure) : null;
+
   const { count } = await prisma.goal.updateMany({
     data: { examBlueprintId },
     where: { id: goalId },
   });
+
+  if (count > 0 && targetLanguage) {
+    await prisma.goal.updateMany({ data: { targetLanguage }, where: { id: goalId, kind: "exam" } });
+  }
 
   return count > 0;
 }
@@ -130,4 +145,36 @@ export async function getResearchGoal(goalId: string) {
     referenceSyllabi: getReferenceSyllabusNeed(goal),
     uploadIds: learnerSources.map((link) => link.sourceId),
   };
+}
+
+/**
+ * What the research plan reads about a goal. The plan names the exam (or law, product or
+ * subject), whose identity, official sources and searches every learner of it shares, so it reads
+ * the exam onboarding understood (`toExamIdentity`), or another goal's title, and the details
+ * naming it (`toSharedContext`), never the learner's own words or target. A goal from the
+ * learner's own material (an upload, their class test) is theirs alone and keeps what they wrote,
+ * so its plan is `personal`: never sent where providers may train on it.
+ */
+export function toResearchPlanInput(goal: {
+  details: unknown;
+  kind: GoalKind;
+  prompt: string;
+  title: string;
+  uploadIds: readonly string[];
+}): { details: string; goal: string; personal: boolean } {
+  const details = isJsonObject(goal.details) ? goal.details : {};
+  const ownMaterial = goal.uploadIds.length > 0 || details.materialIntent === "exam";
+
+  if (ownMaterial) {
+    return {
+      details: JSON.stringify(details),
+      goal: `${goal.title}\n${goal.prompt}`,
+      personal: true,
+    };
+  }
+
+  const named =
+    goal.kind === "exam" ? toExamIdentity({ details, exams: [], title: goal.title }) : goal.title;
+
+  return { details: toSharedContext(details) ?? "none", goal: named, personal: false };
 }

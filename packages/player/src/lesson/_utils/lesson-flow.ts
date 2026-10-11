@@ -89,27 +89,42 @@ export function advance(state: LessonPlayerState): LessonPlayerState {
 }
 
 /**
- * Leaves out the screens of kinds the learner just skipped ("Skip writing"): the rest of the
- * lesson goes on from where they are, and a lesson with nothing left ends.
+ * Leaves out the screens from the one in view on that `isLeftOut` names: the rest of the lesson
+ * goes on from where the learner is, and a lesson with nothing left ends.
  */
-export function skipStepKinds(
+function leaveOutAhead(
   state: LessonPlayerState,
-  kinds: readonly PlayableLibraryStep["kind"][],
+  isLeftOut: (stepId: string) => boolean,
 ): LessonPlayerState {
   if (state.phase !== "playing") {
     return state;
   }
 
-  const ahead = state.queue.slice(state.position).filter((id) => {
-    const kind = state.steps[id]?.kind;
-    return !kind || !kinds.includes(kind);
-  });
-
+  const ahead = state.queue.slice(state.position).filter((id) => !isLeftOut(id));
   const next = { ...state, queue: [...state.queue.slice(0, state.position), ...ahead] };
 
   return state.position >= next.queue.length
     ? complete(next)
     : enterPosition({ ...next, notice: null }, state.position);
+}
+
+/** Leaves out the screens of kinds the learner just skipped ("Skip writing"). */
+export function skipStepKinds(
+  state: LessonPlayerState,
+  kinds: readonly PlayableLibraryStep["kind"][],
+): LessonPlayerState {
+  return leaveOutAhead(state, (id) => {
+    const kind = state.steps[id]?.kind;
+    return kind !== undefined && kinds.includes(kind);
+  });
+}
+
+/**
+ * Leaves out screens that can't be played after all, such as a question about a numbered picture
+ * that never came: without it, nobody can tell which number is which.
+ */
+export function skipSteps(state: LessonPlayerState, stepIds: readonly string[]): LessonPlayerState {
+  return leaveOutAhead(state, (id) => stepIds.includes(id));
 }
 
 /** Continue on a reading screen reveals a worked example one step at a time, then moves on. */

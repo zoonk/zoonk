@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-07T20:04:19.199Z",
+  "fetchedAt": "2026-10-08T14:09:33.238Z",
   "models": {
     "alibaba/qwen-3-14b": { "input": 1.2e-7, "output": 2.4e-7 },
     "alibaba/qwen-3-235b": { "input": 2.2e-7, "output": 8.8e-7 },
@@ -442,7 +442,7 @@
     },
     "anthropic/claude-sonnet-5.5": {
       "input": 0.000002,
-      "inputCacheRead": 2e-7,
+      "inputCacheRead": 1e-7,
       "inputCacheWrite": 0.0000025,
       "output": 0.00001
     },
@@ -450,7 +450,7 @@
     "bfl/flux-3-image": {
       "input": 0,
       "output": 0,
-      "perImage": 0.0205,
+      "perImage": 0.024,
       "perImageBySize": {
         "768x768": 0.0205,
         "1024x1024": 0.024,
@@ -459,6 +459,11 @@
         "4096x4096": 0.3035
       }
     },
+    "bfl/flux-kontext-max": { "input": 0, "output": 0, "perImage": 0.08 },
+    "bfl/flux-kontext-pro": { "input": 0, "output": 0, "perImage": 0.04 },
+    "bfl/flux-pro-1.0-fill": { "input": 0, "output": 0, "perImage": 0.05 },
+    "bfl/flux-pro-1.1": { "input": 0, "output": 0, "perImage": 0.04 },
+    "bfl/flux-pro-1.1-ultra": { "input": 0, "output": 0, "perImage": 0.06 },
     "bytedance/seed-1.6": {
       "input": 2.5e-7,
       "inputCacheRead": 5e-8,
@@ -486,16 +491,15 @@
       ]
     },
     "bytedance/seed-2.1-turbo": { "input": 5e-7, "inputCacheRead": 1e-7, "output": 0.0000025 },
+    "bytedance/seedream-4.0": { "input": 0, "output": 0, "perImage": 0.03 },
+    "bytedance/seedream-4.5": { "input": 0, "output": 0, "perImage": 0.04 },
+    "bytedance/seedream-5.0-lite": { "input": 0, "output": 0, "perImage": 0.035 },
+    "bytedance/seedream-5.0-pro": { "input": 3e-9, "output": 0, "perImage": 0.035 },
     "cohere/command-a": { "input": 0.0000025, "output": 0.00001 },
     "convaiinnovations/laya": { "input": 0, "output": 0 },
     "convaiinnovations/laya-free": { "input": 0, "output": 0 },
     "deepseek/deepseek-r1": { "input": 0.00000135, "output": 0.0000054 },
     "deepseek/deepseek-v3.1": { "input": 2.5e-7, "inputCacheRead": 1.3e-7, "output": 9.5e-7 },
-    "deepseek/deepseek-v3.1-terminus": {
-      "input": 2.7e-7,
-      "inputCacheRead": 1.35e-7,
-      "output": 0.000001
-    },
     "deepseek/deepseek-v3.2": { "input": 6.2e-7, "output": 0.00000185 },
     "deepseek/deepseek-v3.2-thinking": { "input": 6.2e-7, "output": 0.00000185 },
     "deepseek/deepseek-v4-flash": { "input": 1.3e-7, "inputCacheRead": 2.8e-8, "output": 2.6e-7 },
@@ -516,11 +520,6 @@
       "output": 0.00000198
     },
     "deepseek/deepseek-v4.1-flash": { "input": 3e-7, "inputCacheRead": 7e-9, "output": 0.0000012 },
-    "deepseek/deepseek-v4.1-flash-fast": {
-      "input": 3e-7,
-      "inputCacheRead": 6e-9,
-      "output": 0.0000012
-    },
     "fireworks/ember-1": { "input": 0.000003, "inputCacheRead": 3e-7, "output": 0.000015 },
     "fish-audio/transcribe-1": { "input": 1e-10, "output": 0, "perSecond": 0.0001 },
     "google/gemini-2.5-flash": {
@@ -750,6 +749,7 @@
     "meta/llama-4-maverick": { "input": 2.4e-7, "output": 9.7e-7 },
     "meta/llama-4-scout": { "input": 1.7e-7, "output": 6.6e-7 },
     "meta/muse-glimmer-30b": { "input": 3.5e-7, "inputCacheRead": 4e-8, "output": 0.0000015 },
+    "meta/muse-image-1.0": { "input": 0, "output": 0, "perImage": 0.01 },
     "meta/muse-spark-1.1": { "input": 0.00000125, "inputCacheRead": 1.5e-7, "output": 0.00000425 },
     "meta/muse-spark-1.2": { "input": 0.00000125, "inputCacheRead": 1.5e-7, "output": 0.00000425 },
     "meta/muse-spark-1.2-contributor": { "input": 1e-7, "inputCacheRead": 2e-9, "output": 2e-7 },
@@ -814,11 +814,6 @@
     "mistral/mistral-small": { "input": 1.5e-7, "inputCacheRead": 1.5e-8, "output": 6e-7 },
     "mixedbread/toast-1": { "input": 3e-7, "inputCacheRead": 3.6e-8, "output": 7.2e-7 },
     "moonshotai/kimi-k2": { "input": 5.7e-7, "output": 0.0000023 },
-    "moonshotai/kimi-k2-thinking": {
-      "input": 4.7e-7,
-      "inputCacheRead": 1.41e-7,
-      "output": 0.000002
-    },
     "moonshotai/kimi-k2.5": { "input": 6e-7, "output": 0.000003 },
     "moonshotai/kimi-k2.6": { "input": 9.5e-7, "inputCacheRead": 1.6e-7, "output": 0.000004 },
     "moonshotai/kimi-k2.7-code": { "input": 9.5e-7, "inputCacheRead": 1.9e-7, "output": 0.000004 },
@@ -1460,6 +1455,15 @@
       "inputCacheWrite": 0.0000075,
       "output": 0.00003
     },
+    "recraft/recraft-v2": { "input": 0, "output": 0, "perImage": 0.022 },
+    "recraft/recraft-v3": { "input": 0, "output": 0, "perImage": 0.04 },
+    "recraft/recraft-v4": { "input": 0, "output": 0, "perImage": 0.04 },
+    "recraft/recraft-v4-pro": { "input": 0, "output": 0, "perImage": 0.25 },
+    "recraft/recraft-v4.1": { "input": 0, "output": 0, "perImage": 0.035 },
+    "recraft/recraft-v4.1-flash": { "input": 0, "output": 0, "perImage": 0.007 },
+    "recraft/recraft-v4.1-pro": { "input": 0, "output": 0, "perImage": 0.21 },
+    "recraft/recraft-v4.1-utility": { "input": 0, "output": 0, "perImage": 0.035 },
+    "recraft/recraft-v4.1-utility-pro": { "input": 0, "output": 0, "perImage": 0.21 },
     "sakana/fugu-max": { "input": 0.000002, "inputCacheRead": 2.5e-7, "output": 0.000006 },
     "sakana/fugu-ultra": {
       "input": 0.000005,
@@ -1497,7 +1501,6 @@
     },
     "sakana/namazu": { "input": 9.5e-7, "inputCacheRead": 1.5e-7, "output": 0.000004 },
     "stealth/glyph-cluster": { "input": 0, "output": 0 },
-    "stepfun/step-3.5-flash": { "input": 9e-8, "inputCacheRead": 2e-8, "output": 3e-7 },
     "stepfun/step-3.7-flash": { "input": 2e-7, "inputCacheRead": 4e-8, "output": 0.00000115 },
     "stepfun/step-5-preview": { "input": 0.000001, "inputCacheRead": 5e-8, "output": 0.0000027 },
     "tencent/hy-mt2-lite": { "input": 4.4e-8, "output": 1.77e-7 },
@@ -1730,6 +1733,8 @@
         "priority": { "input": 0.000002, "inputCacheRead": 4e-7, "output": 0.000004 }
       }
     },
+    "spacexai/grok-imagine-image": { "input": 0, "output": 0, "perImage": 0.02 },
+    "spacexai/grok-imagine-image-2.0": { "input": 0, "output": 0, "perImage": 0.06 },
     "spacexai/grok-stt": { "input": 0, "output": 0, "perSecond": 0.000028 },
     "spacexai/grok-voice-think-fast-1.0": { "input": 0, "output": 0, "perSecond": 0.000834 },
     "spacexai/grok-voice-think-fast-2.0": { "input": 0, "output": 0, "perSecond": 0.001334 },

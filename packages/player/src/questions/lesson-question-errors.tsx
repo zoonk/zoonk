@@ -29,6 +29,10 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
     return <>{t("Take a short break, then ask again.")}</>;
   }
 
+  if (error?.kind === "signUpRequired") {
+    return <>{t("Create your free account to continue.")}</>;
+  }
+
   if (error?.kind === "usageLimit") {
     return <UsageLimitMessage period={error.period} tier={error.tier} />;
   }
@@ -91,7 +95,10 @@ export function QuestionErrorAction({
     );
   }
 
-  if (error?.kind === "usageLimit" && error.tier === "guest") {
+  if (
+    error?.kind === "signUpRequired" ||
+    (error?.kind === "usageLimit" && error.tier === "guest")
+  ) {
     return (
       <Link
         className={buttonVariants({ className, variant: "outline" })}

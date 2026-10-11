@@ -17,24 +17,28 @@ const PROMPT_VERSION = getPromptVersion({
 });
 
 /**
- * Stores what onboarding understood from a typed goal, so tests reach the "Here's what I
- * understood" card without the understanding AI task. `result` is the task's normalized output.
+ * Stores what onboarding understood from a goal the learner typed, so tests reach the "Here's what
+ * I understood" card without the understanding AI task. `result` is the task's normalized output;
+ * it's the learner's own, as a real reading is.
  */
 export async function goalUnderstandingFixture({
   goal,
   language = "en",
   result,
+  userId,
 }: {
   goal: string;
   language?: string;
   result: UnderstandingResult;
+  /** The learner who typed the words. */
+  userId: string;
 }) {
   const normalizedPrompt = normalizeString(goal);
   const data = { generatedAt: new Date(), model: "test", promptVersion: PROMPT_VERSION, result };
 
   return prisma.goalUnderstanding.upsert({
-    create: { ...data, language, normalizedPrompt },
+    create: { ...data, language, normalizedPrompt, userId },
     update: data,
-    where: { languageNormalizedPrompt: { language, normalizedPrompt } },
+    where: { userLanguagePrompt: { language, normalizedPrompt, userId } },
   });
 }

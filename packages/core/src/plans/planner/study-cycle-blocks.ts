@@ -134,12 +134,15 @@ export function forceStuckLessons({
   state: CycleState;
   taken: Map<Lane, number>;
 }): void {
-  const canGoOn = state.lanes.some(
-    (open) =>
-      open.units.length > 0 && isUnitReady({ context, left: state.left, unit: open.units[0] }),
-  );
+  const isReady = (open: Lane) =>
+    open.units.length > 0 && isUnitReady({ context, left: state.left, unit: open.units[0] });
 
-  const lane = [...chosen, ...others, ...state.lanes].find((open) => open.units.length > 0);
+  const canGoOn = state.lanes.some((open) => isReady(open));
+  const lanes = [...chosen, ...others, ...state.lanes];
+
+  // A subject that can go on goes first: given anyway, the first subject's next lesson was a
+  // skill whose base, in another subject, hadn't started (R16, Câmara).
+  const lane = lanes.find((open) => isReady(open)) ?? lanes.find((open) => open.units.length > 0);
   const unit = lane?.units[0];
   const fits = state.used === start || state.used + (unit?.minutes ?? 0) <= dayEnd + EPSILON;
 
@@ -161,4 +164,44 @@ export function forceStuckLessons({
   others.push(...more.filter((other) => !others.includes(other)));
 
   forceStuckLessons({ chosen, context, dayEnd, others, start, state, taken });
+}
+
+/**
+ * What doesn't fit before the plan's last day keeps each subject's order, the subjects in turn, and
+ * a skill still comes after what it builds on in other subjects (`isUnitReady`): a later layout
+ * with more days dates these lessons, and Câmara's transcription ethics came a day before the
+ * access-to-information law it builds on.
+ */
+export function appendRest({
+  context,
+  lanes,
+  state,
+}: {
+  context: CycleContext;
+  lanes: readonly Lane[];
+  state: CycleState;
+}): void {
+  const take = (lane: Lane) => {
+    const unit = lane.units.shift();
+
+    if (unit) {
+      state.placed.push(unit);
+
+      if (unit.skillId && !unit.depth) {
+        state.left.set(unit.skillId, (state.left.get(unit.skillId) ?? 1) - 1);
+      }
+    }
+  };
+
+  let open = lanes.filter((lane) => lane.units.length > 0);
+
+  while (open.length > 0) {
+    const ready = open.filter((lane) =>
+      isUnitReady({ context, left: state.left, unit: lane.units[0] }),
+    );
+
+    // A prerequisite cycle the graph normalizer missed must not stall the plan.
+    (ready.length > 0 ? ready : open.slice(0, 1)).forEach((lane) => take(lane));
+    open = open.filter((lane) => lane.units.length > 0);
+  }
 }

@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
-import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -65,7 +65,7 @@ export async function practiceMistakePattern({
     })),
   });
 
-  const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
+  const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
   const incorrect = verdicts.length - correct;
 
   await prisma.$transaction(async (tx) => {

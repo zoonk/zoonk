@@ -1,5 +1,5 @@
 import { normalizeString } from "@zoonk/utils/string";
-import { type TopicLevel, type TopicPart } from "../../library/exams/topic-frequency";
+import { type TopicLevel } from "../../library/exams/topic-frequency";
 import { toTopicKey } from "../../library/exams/topic-key";
 import { type PlanGraph, type PlanGraphSkill } from "./plan-state";
 
@@ -15,6 +15,11 @@ function toKey({ subject, topic }: { subject: string; topic: string }): string {
 
 /** One of a skill's notice topics, as the planner weighs it: which one, and how often it's asked. */
 export type ScoredTopic = { key: string; score: number };
+
+/** A topic the exam asks most ("Cai bastante"). */
+function isMostAsked(topic: ScoredTopic): boolean {
+  return topic.score === LEVEL_SCORES.high;
+}
 
 /**
  * Each skill's notice topics, scored by how often the exam asks them (`levels`); a topic nothing
@@ -40,28 +45,41 @@ export function scoreSkillTopics({
   );
 }
 
+/** A skill that teaches none of the notice's topics: the exam doesn't ask it. */
+const NOT_ASKED_SCORE = 0;
+
 /**
- * The part of its subject each skill is in (ENEM's "Biologia" of Ciências da Natureza): the part
- * the notice lists its first grouped topic under. Skills of subjects the notice doesn't group have
- * none.
+ * How often the exam asks each skill's most asked topic (see `scoreSkillTopics`), a skill that
+ * teaches none of the notice's topics scoring below every topic it lists: a plan short on time
+ * cuts the depth of the least asked first, and a skill asked less than a topic built on it is one
+ * of the plan's bases (see `findPlanBases`).
  */
-export function getSkillParts({
+export function getAskedScore(
+  topics: ReadonlyMap<string, readonly ScoredTopic[]>,
+): (skillId: string | null) => number {
+  return (skillId) => {
+    const scores = (topics.get(skillId ?? "") ?? []).map((topic) => topic.score);
+    return scores.length > 0 ? Math.max(...scores) : NOT_ASKED_SCORE;
+  };
+}
+
+/**
+ * The skills that teach a topic the exam asks most ("Appears a lot", or a teacher's "ALWAYS ON THE TEST"):
+ * one the learner already knows keeps its practice whatever the time (see `loadPracticeClaims`).
+ */
+export function findFrequentSkillIds({
   graph,
-  parts,
+  levels,
 }: {
   graph: PlanGraph;
-  parts: readonly TopicPart[];
-}): Map<string, string> {
-  const partOf = new Map(parts.map((part) => [toKey(part), part.part]));
+  levels: readonly TopicLevel[];
+}): Set<string> {
+  const scored = scoreSkillTopics({ graph, levels });
 
-  return new Map(
-    graph.skills.flatMap((skill) => {
-      const part = (skill.topics ?? [])
-        .map((topic) => partOf.get(toKey({ subject: skill.area ?? "", topic })))
-        .find((name) => name !== undefined);
-
-      return part ? [[skill.skillId, part] as const] : [];
-    }),
+  return new Set(
+    [...scored]
+      .filter(([, topics]) => topics.some((topic) => isMostAsked(topic)))
+      .map(([skillId]) => skillId),
   );
 }
 

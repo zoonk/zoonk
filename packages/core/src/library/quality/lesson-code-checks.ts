@@ -15,6 +15,7 @@ import { findLessonPhrases } from "./_utils/lesson-phrases";
 import { findLongSentences, getMaxExplanationCharacters } from "./_utils/reading-level";
 import { type RepeatedExample, findRepeatedExamples } from "./_utils/repeated-examples";
 import { findRepeatedQuestions } from "./_utils/repeated-questions";
+import { findAnswerFlaws, findTextFlaws } from "./_utils/screen-flaws";
 import { getScreenTexts } from "./_utils/screen-texts";
 import { canHaveImage, getScreenVisualProblems } from "./_utils/screen-visuals";
 import { findTermsUsedBeforeExplained } from "./_utils/term-order";
@@ -26,12 +27,16 @@ const SENTENCE_END = /[.!?…](?:\s|$)/gu;
 type LessonCheckCode =
   | "activityProgram"
   | "activityTemplate"
+  | "answerKey"
   | "arithmetic"
   | "duplicateOptions"
   | "filler"
   | "invalidContent"
   | "lessonFraming"
+  | "markdown"
+  | "optionData"
   | "optionPosition"
+  | "placeholder"
   | "readingLevel"
   | "repeatedExample"
   | "repeatedQuestion"
@@ -81,15 +86,6 @@ function getKindProblems(input: ScreenCheckInput): Problem[] {
   ];
 }
 
-function hasDuplicateOptions(screen: WrittenScreen): boolean {
-  if (screen.kind !== "check" && screen.kind !== "hookGuess") {
-    return false;
-  }
-
-  const texts = screen.options.map((option) => normalizeString(option.text));
-  return new Set(texts).size !== texts.length;
-}
-
 /** Screens whose options are shuffled before learners see them. */
 function hasShuffledOptions(screen: WrittenScreen): boolean {
   return screen.kind === "check" || screen.kind === "hookGuess";
@@ -102,11 +98,13 @@ function getTextProblems({
 }: Pick<ScreenCheckInput, "language" | "level" | "screen">): Problem[] {
   const texts = getScreenTexts(screen);
 
-  const textProblems = texts.flatMap(({ prose, text }) => {
+  const textProblems = texts.flatMap((screenText) => {
+    const { prose, text } = screenText;
     const phrases = findLessonPhrases({ language, text });
     const positions = hasShuffledOptions(screen) ? findOptionPositionReferences(text) : [];
 
     return [
+      ...findTextFlaws(screenText),
       ...positions.map((phrase) => ({
         code: "optionPosition" as const,
         problem: `Points at an option by its place ("${phrase}"), but options are shuffled before learners see them; name the option by what it says instead.`,
@@ -141,17 +139,16 @@ function getTextProblems({
         code: "screenLength",
         problem: `The text has ${removeMarkdownTables(screen.text).length} characters besides its tables; one screen holds one idea in under ${maxCharacters}. Cut words or keep only this screen's idea.`,
       },
-    hasDuplicateOptions(screen) && {
-      code: "duplicateOptions",
-      problem: "Two options say the same thing.",
-    },
+    ...findAnswerFlaws({ language, screen }),
   ];
 }
 
 /**
  * The text rules for one screen written on its own, such as a field or tool
  * version: no talk about the lesson, no filler, sentences and screens short
- * enough for the level, right arithmetic and distinct options.
+ * enough for the level, right arithmetic, Markdown the player renders, nothing
+ * left unfinished, distinct options that agree with the screen's data and a
+ * typed answer's sample that gives an accepted answer.
  */
 export function checkScreenText(input: {
   language: string;
@@ -159,6 +156,11 @@ export function checkScreenText(input: {
   screen: WrittenScreen;
 }): string[] {
   return getTextProblems(input).flatMap((problem) => (problem ? [problem.problem] : []));
+}
+
+/** Whether the converted screen kept a template to explore, which only passes when valid. */
+function exploresTemplate(converted: ConvertedScreen): boolean {
+  return converted.ok && "explore" in converted.content;
 }
 
 function checkScreen(input: ScreenCheckInput): {
@@ -176,10 +178,9 @@ function checkScreen(input: ScreenCheckInput): {
     ...getKindProblems(input),
     ...contentProblems,
     ...getTextProblems(input),
-    ...getScreenVisualProblems({ ...input, allowImage }).map((problem) => ({
-      code: "visual" as const,
-      problem,
-    })),
+    ...getScreenVisualProblems({ ...input, allowImage, explores: exploresTemplate(converted) }).map(
+      (problem) => ({ code: "visual" as const, problem }),
+    ),
   ]
     .filter((problem) => problem !== false)
     .map((problem) => ({ ...problem, screen: input.index }));
@@ -204,7 +205,10 @@ function getSummaryProblems({
 
   const normalized = summary.map((idea) => normalizeString(idea));
 
+  const writing = summary.flatMap((idea) => findTextFlaws({ layout: "inline", text: idea }));
+
   const problems: Problem[] = [
+    ...writing,
     !parsed.success && {
       code: "summary",
       problem: `The summary card is invalid: ${parsed.error?.issues.map((issue) => issue.message).join("; ")}.`,
@@ -295,7 +299,9 @@ export function toReviewedLesson({
  * and the activity validator, calculations recomputed from their data,
  * arithmetic in the text recomputed, no talk about "this lesson", no filler,
  * sentences and screens short enough for the level, no term used before the screen that explains
- * it, distinct options, no example an earlier lesson of the chapter already used (nor an
+ * it, Markdown the player renders, nothing left unfinished, distinct options that agree with the
+ * screen's data, typed answers whose sample gives an accepted answer, no example an earlier
+ * lesson of the chapter already used (nor an
  * application that repeats one of this lesson's screens), no check that asks an earlier check's
  * question again and a summary card of one sentence per idea. Returns each screen converted to its
  * stored content next to the problems, written for the fix pass.

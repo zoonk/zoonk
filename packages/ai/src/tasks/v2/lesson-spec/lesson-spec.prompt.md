@@ -41,15 +41,15 @@ Plan the screens in this order:
 Choose `supportMode`:
 
 - `explanationFirst` when most learners at this level meet the idea for the first time. The screen after the hook is an explanation.
-- `questionFirst` when most learners at this level partly know the idea, as in school review, exam prep or a refresher. The screen after the hook is a check they can try before the explanation, and the explanation that follows builds on their answer.
+- `questionFirst` when most learners at this level partly know the idea, as in school review, exam prep or a refresher. The screen after the hook is a check they can try before the explanation, and the explanation that follows builds on its question and right answer, whatever option the learner picked.
 
 For each screen:
 
 - `kind`: `hook`, `explanation`, `workedExample`, `check`, `activity` or `application`.
 - `skills`: the numbers of the skills the screen is about, where 1 is the first skill you listed. The hook may list none; every other screen lists at least one.
 - `brief`: one or two sentences for the writer saying what the screen shows or asks, with the concrete example, numbers or case to use. For checks, say what the learner does and which tempting wrong answer to include.
-- `visual`: the picture the screen shows, in one line: what it shows and every part, place, label or detail the screen's words name or its answer depends on ("the brain from the side, with the frontal, parietal, temporal and occipital lobes labeled"). Null when the screen needs no picture, and when it shows a table, a chart or a timeline instead (see "Visuals").
-- `activityTemplate`: the template id on activity screens, null on every other screen.
+- `visual`: the picture the screen shows, in one line: what it shows and every part, place, label or detail the screen's words name or its answer depends on ("the brain from the side, with the frontal, parietal, temporal and occipital lobes labeled"). Null when the screen needs no picture, and when it shows a table, a chart, a timeline or a template to explore instead (see "Visuals").
+- `activityTemplate`: the template id on activity screens, and on an explanation screen that shows a template to explore (see "Visuals"); null on every other screen.
 
 # Visuals
 
@@ -58,18 +58,31 @@ Plan every screen with one test: would the learner have to imagine something to 
 Choose the kind of visual the app draws itself first, since it's sharp, accessible and free, and a picture only when none of these fits:
 
 1. **Tables, charts and timelines.** Data in rows and columns is a table. Numbers across months, years, amounts or groups are a bar or line chart: growth over time, a trend, a value that changes with another (a bar or line chart can start its axis above zero). Dated events in order are a timeline. A screen that compares values (sizes, distances, balances year by year, prices) shows them this way even when its words state them, and a picture never carries the numbers. The writer draws all three from data, so the brief gives their exact values, labels or dates, and `visual` stays null.
-2. **Activities.** When the learner should work with the thing (label the parts of a diagram, find places on a map, measure a figure, build a model, move a value and watch another change), plan an activity whose template in `ACTIVITY_TEMPLATES` draws it.
-3. **Pictures.** When the learner needs to see how something looks, is built, is arranged or moves, and none of these can show it, plan a picture in `visual`. For example the lobes of the brain, two paintings or two planets compared, an animal's adaptations, a building's style, a lever and its forces, a molecule, a sentence's parts, a map with a few places, and many more.
+2. **Templates to explore.** The templates marked "(explorable)" in `ACTIVITY_TEMPLATES` can show on an explanation screen with nothing asked, for the learner to look at and play with. Check them before you plan a picture for an explanation or leave it as text. An explanation whose idea is one of these shows it with that template: the stages of a process in order (`processOrder`), causes leading to their effects (`causeEffectChain`), how a case is decided question by question, such as which legal rule or category applies (`decisionTree`), a value that changes with another, such as a formula, a rate, a dose, a price or a score (`formulaModel`), events far apart in time (`timeline`), places on a map (`mapExplorer`), one whole and its named parts (`labeledDiagram`), a molecule's atoms and bonds (`moleculeBuilder`), combinations in a grid (`combinationGrid`), chance (`randomSimulation`), how data spreads (`distributionExplorer`) or a program and what it prints (`codeRunner`, `codeTracer`). Set that screen's `activityTemplate` to it and say in the brief exactly what it shows (the steps in order, the causes and effects, the questions and outcomes, the formula and the slider's range, the dates, the places, the parts, the atoms, the program), and `visual` stays null. It shows only what the screen explains, never decoration, and it never replaces a check: the checks still come every 2 or 3 screens. When several explanations build one model (the stages of one cycle, the parts of one organ), explore it once, on the explanation where it comes together; the others stay text or pictures.
+3. **Activities.** When the learner should work with the thing and answer about it (label the parts of a diagram, find places on a map, measure a figure, build a model, move a value and say what changed), plan an activity whose template in `ACTIVITY_TEMPLATES` draws it.
+4. **Pictures.** When the learner needs to see how something looks, is built, is arranged or moves, and none of these can show it, plan a picture in `visual`. For example the lobes of the brain, two paintings or two planets compared, an animal's adaptations, a building's style, a lever and its forces, a molecule, a sentence's parts, a map with a few places, and many more.
+
+A picture never only decorates. Plan none for a situation its sentence already describes in full (a glass left in the sun, two coins on a table, a person at a bus stop), so a hook gets one only when its question is about something to see; for numbers the screen gives (a price tag, bars, rows of icons: a table or a chart shows numbers); for a formula, a derivation, code, a terminal or an app's screen (the writer writes these as text); for something every learner already knows the look of, unless the screen is about a detail of it they don't; or for the answer to the screen's own question.
 
 A screen about the parts of a whole (for example the lobes of the brain, the stages of a cycle or the forces on a lever) shows the whole with those parts labeled. A screen about one part shows it in its place, highlighted, with the landmarks its words use. Each picture shows something new: a new part, a new state, a new view or a new case; a screen that adds nothing to see beyond the picture before it stays text only.
 
-A check or the application shows a picture when the learner answers by looking (which part is marked, what a map, an artwork or a diagram shows) or would otherwise have to picture a layout, a place or a setup (players on a field, weights on a lever), with every label and detail the answer depends on, never a description of it. A situation the words describe fully (someone walking on sand, a can with drops on it) stays text only. Plan a question about a picture only when the skill is reading pictures (parts of a diagram, maps, artworks, captions, signs, cartoons); otherwise prefer a question the words, a table or a chart can carry. Only a chart the app can't draw, such as one with uneven intervals or a 3D effect, is a picture, and so are two drawings compared on one screen (two paintings, bars standing or lying down): one picture with both, labeled 1 and 2. A picture never compares more than two: to ask which chart fits some data, the screen shows one chart and asks about it.
+A check or the application shows a picture when the learner answers by looking (which number marks a part of one whole, which of a few things drawn alone is the one named, what a map, an artwork or a diagram shows) or would otherwise have to picture a layout, a place or a setup (players on a field, weights on a lever), with every label and detail the answer depends on, never a description of it. A situation the words describe fully (someone walking on sand, a can with drops on it) stays text only. Plan a question about a picture only when the skill is reading pictures (parts of a diagram, maps, artworks, captions, signs, cartoons); otherwise prefer a question the words, a table or a chart can carry. Only a chart the app can't draw, such as one with uneven intervals or a 3D effect, is a picture, and so are two drawings compared on one screen (two paintings, bars standing or lying down): one picture with both, labeled 1 and 2. A picture never compares more than two: to ask which chart fits some data, the screen shows one chart and asks about it.
 
 # Activities
 
-On an activity screen the learner moves, predicts or builds something, and a question checks what they saw. Choose one only when doing beats reading: a value that changes with another, an order to rebuild, a model to take apart, a guess to test. Pick the id from `ACTIVITY_TEMPLATES` that fits; if none fits, plan a check instead. Most lessons have no activity or one. An activity counts as a check. Never add one to decorate a screen or to show data you made up.
+On an activity screen the learner orders, links, decides, pairs, moves or builds something, and a question checks what they did or saw. Look at the move the lesson's skill asks the learner to make. When it's one of these, plan one activity with its template, so the learner makes that move:
 
-Where AI tools are part of the work (work and career courses, and fields AI is changing, such as programming, writing, design and data analysis), plan one "Spot the AI's mistake" screen when `findError` is in `ACTIVITY_TEMPLATES`: an activity whose brief says an AI assistant answered a realistic question from the job, and names the one plausible mistake the lesson's skill helps catch and the step it's made in. Put it in an early or middle step, so the steps after it build on it and the conclusion comes out wrong because of it: a mistake always in the final "So…" step teaches learners to check only the last line.
+- putting the steps or stages of a process in order: `processOrder`; linking causes to their effects: `causeEffectChain`;
+- deciding which rule, category or outcome applies to a case by answering questions in turn (legal hypotheses, a diagnosis, an identification key): `decisionTree`;
+- pairing each term, rule, format or tool with its example or use: `matchPairs`;
+- working with a value that depends on others (a formula, a rate, a price, a dose, a score): `formulaModel`, or `numberLine`, `balance` or `areaModel` when the move is on a number line, an equation or a product;
+- comparing two states before and after a change (a reform, an invention, a new law): `beforeAfter`; placing events in time: `timeline`; finding places: `mapExplorer`; naming the parts of one whole: `labeledDiagram`;
+- sorting items into the named categories the skill itself defines (physical or chemical change; competition, predation or mutualism): `categorize`. A sort into "X" or "not X", "fits" or "doesn't fit", is a set of true-or-false judgments: plan checks instead;
+- finding the wrong step in a worked answer: `findError` (see below).
+
+When the skill's move is none of these (recalling a fact, applying one rule to one case, working out a number to type, judging statements true or false), the lesson has no activity: plan checks in its place, so a check still comes after at most 3 explanation or worked example screens. No lesson has more than two. An activity counts as a check. Never add one to decorate a screen or to show data you made up.
+
+"Spot the AI's mistake" is a `findError` whose worked answer an AI assistant wrote. It fits a lesson whose skill is judging work an AI assistant drafts for people at their job, as in a work or career course on writing code, drafting texts, designing screens or analyzing data, when it fits that skill better than the other templates. Its brief says an AI assistant answered a realistic question from the job, and names the one plausible mistake the lesson's skill helps catch and the step it's made in. Never plan it with `EXAMS` or in a foreign language's lessons: there a wrong step to find, when the skill calls for one, is in a plain worked answer. In every `findError`, put the mistake in an early or middle step, so the steps after it build on it and the conclusion comes out wrong because of it: a mistake always in the final "So…" step teaches learners to check only the last line.
 
 # Level
 
@@ -79,6 +92,7 @@ Where AI tools are part of the work (work and career courses, and fields AI is c
 
 With `EXAMS`, the level says how deep into the subject the lesson goes, and its words follow the exams' candidates (see "Exam preparation").
 
+{{#exams}}
 # Exam preparation
 
 When `EXAMS` lists exams, the learners who study this lesson are preparing for them, with how each exam's questions look and score. Plan the topic the way those exams ask it, at their depth, for their candidates:
@@ -90,18 +104,25 @@ When `EXAMS` lists exams, the learners who study this lesson are preparing for t
 - `supportMode` is `questionFirst`, unless most candidates meet the idea for the first time here.
 - Never name these exams, their boards or notices on a screen (see "Shared lessons").
 
+{{/exams}}
+{{#material}}
 # The learner's own material
 
 When a `MATERIAL` block is given, this lesson is built from the learner's own class material (their teacher's slides, a handout, their notes), given page by page. Plan what those pages teach for this lesson, in their order, with their terms, examples, numbers and memory aids; skills, examples and use cases come from the material first. Leave out what the pages don't cover beyond what the idea needs to make sense, and never plan anything that contradicts them. Plan no pictures: the material has its own.
 
+{{/material}}
+{{#sources}}
 # Official sources
 
 When a `SOURCES` block is given, the lesson is about facts that must be exact or that change over time, and these are excerpts of the official documents (a law, official guidance, a product's documentation). Plan examples and briefs with their exact figures, names, articles and terms, and never plan anything that contradicts them. They don't set the lesson's order or scope: plan the lesson as usual.
 
+{{/sources}}
+{{#setup}}
 # Setup lessons
 
 When the lesson sets up a tool on the learner's device (its title and skills name the tool and the device, like "Set up Python on Windows"), plan the setup itself, in order, for that device: getting the tool from its official source, installing or opening it, and one small thing that proves it works. Checks ask what comes next or how to tell it worked. Using the tool is taught in later lessons.
 
+{{/setup}}
 # The chapter's other lessons
 
 `CHAPTER_LESSONS` lists the chapter's other lessons in teaching order: "Already taught" ones come before this lesson and "Taught next" ones after it. Each has its title and can-do line and, once it's planned or written, the ideas it teaches and the cases, numbers and questions it uses.
@@ -136,4 +157,4 @@ For each lesson:
 
 # Final check
 
-Before answering, check each lesson: 1 to 3 skills, 5 to 12 screens, a hook first, no more than 3 teaching screens in a row, a worked example for every hard skill, at most one new term per screen, checks that apply the idea and each ask something new, every skill explained and practiced, one application last, every screen the learner would otherwise have to imagine showing it (a table, chart or timeline in its brief, an activity or a picture) with no decorative visual, and with `EXAMS`, nothing planned below the depth those exams ask. If a lesson breaks a size rule, split it.
+Before answering, check each lesson: 1 to 3 skills, 5 to 12 screens, a hook first, no more than 3 teaching screens in a row, a worked example for every hard skill, at most one new term per screen, checks that apply the idea and each ask something new, every skill explained and practiced, one application last, every screen the learner would otherwise have to imagine showing it (a table, chart or timeline in its brief, a template to explore, an activity or a picture) with no decorative visual, and with `EXAMS`, nothing planned below the depth those exams ask. If a lesson breaks a size rule, split it.

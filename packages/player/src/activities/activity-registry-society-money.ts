@@ -4,17 +4,11 @@ import {
 } from "./_utils/define-activity-renderer";
 
 /**
- * Money and business, history and society: calculators, supply and demand, what-if scenarios,
- * timelines, maps, cause and effect, and sources. Spread into `activityRenderers`.
+ * Money and business, history and society: lines and their crossing (supply and demand,
+ * break-even), timelines, maps, cause and effect, and sources. Spread into `activityRenderers`.
  */
 export const societyMoneyRenderers: ActivityRendererMap<
-  | "causeEffectChain"
-  | "mapExplorer"
-  | "scenarioSimulator"
-  | "sliderCalculator"
-  | "sourceComparison"
-  | "supplyDemand"
-  | "timeline"
+  "causeEffectChain" | "lineCrossing" | "mapExplorer" | "sourceComparison" | "timeline"
 > = {
   causeEffectChain: defineActivityRenderer({
     badge: "linkCauses",
@@ -24,27 +18,19 @@ export const societyMoneyRenderers: ActivityRendererMap<
       ),
     template: "causeEffectChain",
   }),
+  lineCrossing: defineActivityRenderer({
+    badge: "moveCurve",
+    load: () =>
+      import("./line-crossing/line-crossing-activity").then(
+        (module) => module.LineCrossingActivity,
+      ),
+    template: "lineCrossing",
+  }),
   mapExplorer: defineActivityRenderer({
     badge: "exploreMap",
     load: () =>
       import("./map-explorer/map-explorer-activity").then((module) => module.MapExplorerActivity),
     template: "mapExplorer",
-  }),
-  scenarioSimulator: defineActivityRenderer({
-    badge: "whatIf",
-    load: () =>
-      import("./scenario-simulator/scenario-simulator-activity").then(
-        (module) => module.ScenarioSimulatorActivity,
-      ),
-    template: "scenarioSimulator",
-  }),
-  sliderCalculator: defineActivityRenderer({
-    badge: "tryIt",
-    load: () =>
-      import("./slider-calculator/slider-calculator-activity").then(
-        (module) => module.SliderCalculatorActivity,
-      ),
-    template: "sliderCalculator",
   }),
   sourceComparison: defineActivityRenderer({
     badge: "compareSources",
@@ -53,14 +39,6 @@ export const societyMoneyRenderers: ActivityRendererMap<
         (module) => module.SourceComparisonActivity,
       ),
     template: "sourceComparison",
-  }),
-  supplyDemand: defineActivityRenderer({
-    badge: "moveCurve",
-    load: () =>
-      import("./supply-demand/supply-demand-activity").then(
-        (module) => module.SupplyDemandActivity,
-      ),
-    template: "supplyDemand",
   }),
   timeline: defineActivityRenderer({
     badge: "placeInTime",

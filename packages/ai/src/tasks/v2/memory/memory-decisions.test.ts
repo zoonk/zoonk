@@ -9,45 +9,26 @@ describe(decideMemoryGate, () => {
   const lastingEveryday = { explicitlyAsked: 0.05, lasting: 0.9, sensitive: 0.05 };
 
   it("keeps a lasting everyday fact", () => {
-    expect(
-      decideMemoryGate({ allowSensitive: true, probabilities: lastingEveryday }),
-    ).toStrictEqual({ decision: "keep", sensitive: false });
+    expect(decideMemoryGate(lastingEveryday)).toStrictEqual({ decision: "keep", sensitive: false });
   });
 
   it("drops a passing fact even when the learner asked to keep it", () => {
     expect(
-      decideMemoryGate({
-        allowSensitive: true,
-        probabilities: { explicitlyAsked: 0.95, lasting: 0.2, sensitive: 0.05 },
-      }),
+      decideMemoryGate({ explicitlyAsked: 0.95, lasting: 0.2, sensitive: 0.05 }),
     ).toStrictEqual({ decision: "notLasting", sensitive: false });
   });
 
   it("drops a sensitive fact the learner only stated", () => {
-    expect(
-      decideMemoryGate({
-        allowSensitive: true,
-        probabilities: { explicitlyAsked: 0.1, lasting: 0.9, sensitive: 0.4 },
-      }),
-    ).toStrictEqual({ decision: "sensitive", sensitive: true });
+    expect(decideMemoryGate({ explicitlyAsked: 0.1, lasting: 0.9, sensitive: 0.4 })).toStrictEqual({
+      decision: "sensitive",
+      sensitive: true,
+    });
   });
 
-  it("keeps a sensitive fact an adult explicitly asked to remember, flagged as sensitive", () => {
-    expect(
-      decideMemoryGate({
-        allowSensitive: true,
-        probabilities: { explicitlyAsked: 0.9, lasting: 0.9, sensitive: 0.95 },
-      }),
-    ).toStrictEqual({ decision: "keep", sensitive: true });
-  });
-
-  it("never keeps a sensitive fact for learners who may not store one, even when asked", () => {
-    expect(
-      decideMemoryGate({
-        allowSensitive: false,
-        probabilities: { explicitlyAsked: 0.99, lasting: 0.9, sensitive: 0.9 },
-      }),
-    ).toStrictEqual({ decision: "sensitive", sensitive: true });
+  it("keeps a sensitive fact the learner explicitly asked to remember, flagged as sensitive", () => {
+    expect(decideMemoryGate({ explicitlyAsked: 0.9, lasting: 0.9, sensitive: 0.95 })).toStrictEqual(
+      { decision: "keep", sensitive: true },
+    );
   });
 });
 

@@ -90,7 +90,7 @@ function examPlan({
   };
 }
 
-/** Lucas: ENEM's four areas and its redação a month away, three hours a day: short on time. */
+/** Lucas: ENEM's four areas and its essay a month away, three hours a day: short on time. */
 function lucas(cadence?: WrittenCadence) {
   return examPlan({
     areas: ["Linguagens", "Humanas", "Natureza", "Matemática"],
@@ -103,7 +103,7 @@ function lucas(cadence?: WrittenCadence) {
 }
 
 /**
- * Rafaela: a concurso's knowledge subjects, a discursive test and a peça three months away, two
+ * Rafaela: a civil service exam's knowledge subjects, a discursive test and a drafted document three months away, two
  * hours a day: short on time.
  */
 function rafaela(cadence?: WrittenCadence) {
@@ -185,7 +185,7 @@ describe("when an exam's written tests are practiced", () => {
     expect(final).toHaveLength(weekly.length);
   });
 
-  it("keeps a concurso's two written tests whole in its final weeks", () => {
+  it("keeps a civil service exam's two written tests whole in its final weeks", () => {
     const weekly = writtenLessons(rafaela("weekly"));
     const final = writtenLessons(rafaela("finalWeeks"));
     const biweekly = writtenLessons(rafaela("biweekly"));

@@ -1,5 +1,5 @@
 import { type StudySessionBlock } from "@zoonk/db";
-import { type DailyTimeLimitStatus } from "../../minors/get-daily-time-limit";
+import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
 import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
 import {
   BRAIN_POWER_BONUS,
@@ -12,9 +12,11 @@ import {
 import { type CapsuleFormat } from "../capsules";
 import { type WeekDay, getSessionMinutesDone } from "../daily-goal";
 import { type ExtraTime, getExtraTime } from "../extra-time";
+import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
 import { type ExamPrepAccess } from "./exam-access";
+import { isExamTomorrow } from "./exam-tomorrow";
 import { type SessionAnswer } from "./session-answers";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -47,6 +49,11 @@ export type StudyBlockView = Pick<
    */
   fullReview: boolean;
   /**
+   * A practice block that only fixes the learner's mistakes (their drills, no practice questions),
+   * as a free exam plan's day is past its first week: named for that, not as mixed practice.
+   */
+  mistakesOnly: boolean;
+  /**
    * Practice scored net, as in exams where a wrong answer cancels a right one: statements can be
    * left blank. Swipe capsules are scored net on their own.
    */
@@ -57,11 +64,16 @@ export type StudyBlockView = Pick<
   questions: number;
   reinforcement: boolean;
   /**
-   * The goal's subject the block studies ("Língua Portuguesa"), by its short name: Today labels
+   * The goal's subject the block studies ("Portuguese Language"), by its short name: Today labels
    * lessons with it. Null for blocks that mix subjects, and for goals with fewer than two.
    */
   subject: string | null;
   title: string | null;
+  /**
+   * A review of the weakest studied topics, none of them due: a day with nothing due and nothing
+   * else to study gets it instead of staying empty.
+   */
+  weakest: boolean;
 };
 
 function getEstimateOutcome(block: StudySessionBlock): {
@@ -108,6 +120,16 @@ export function toStudyBlockView({
   const itemIds = getBlockItemIds(payload);
   const teaches = block.kind === "learn" || block.kind === "practice" || block.kind === "produce";
 
+  // A challenge judged by right answers (a language call has no pass mark) that the bank held too
+  // few questions for asks its full ten once Start writes them (`getPlannedQuestions`).
+  const { checkpoint } = payload;
+
+  const waitsForQuestions =
+    checkpoint !== null &&
+    !checkpoint.mock &&
+    checkpoint.passMark > 0 &&
+    block.status === "pending";
+
   return {
     answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
     brainPower: block.brainPower,
@@ -129,15 +151,18 @@ export function toStudyBlockView({
     id: block.id,
     kind: block.kind,
     lessonId: block.lessonId,
+    mistakesOnly:
+      block.kind === "practice" && payload.drills.length > 0 && payload.itemIds.length === 0,
     netScored: payload.netScored,
     oftenTested: teaches && payload.skillIds.some((skillId) => oftenTestedSkillIds.has(skillId)),
     planItemId: payload.planItemId,
     position: block.position,
-    questions: itemIds.length,
+    questions: waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length,
     reinforcement: payload.reinforcement,
     status: block.status,
     subject,
     title: payload.title ?? payload.capsules[0]?.title ?? null,
+    weakest: payload.weakest,
   };
 }
 
@@ -146,12 +171,13 @@ export type EmptyDay = "lessonsComing" | "nothingNew";
 /**
  * Where catching up stands on a day: the day's blocks that catch up (lessons earlier days left,
  * which the day opens with), how many such lessons are left in all, and the ones the day's normal
- * time doesn't fit, with how long they take: the learner can add them to today with one tap, or
- * they come first on the next days.
+ * time doesn't fit, with how long they take: they come first on the next days, or, while they
+ * take about one more day of the learner's daily time (`offered`), the learner can add them to
+ * today with one tap.
  */
 export type CatchUpView = {
   blockIds: string[];
-  later: { lessons: number; minutes: number };
+  later: { lessons: number; minutes: number; offered: boolean };
   lessonsLeft: number;
 };
 
@@ -178,6 +204,11 @@ export type StudySessionView = {
    */
   emptyDay: EmptyDay | null;
   examAccess: ExamPrepAccess;
+  /**
+   * The goal's exam is tomorrow (see `isExamTomorrow`): nothing of the goal comes back tomorrow,
+   * so the day says what it leaves without pointing there.
+   */
+  examTomorrow: boolean;
   extraTime: ExtraTime;
   freshStart: StudySessionRow["freshStart"];
   /**
@@ -310,6 +341,7 @@ export function toStudySessionView({
     dailyLimit,
     emptyDay: session.blocks.length === 0 && dayMinutes > 0 ? emptyDay : null,
     examAccess,
+    examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
     extraTime: getExtraTime({
       blocks: session.blocks.map((block) => ({
         extra: readBlockPayload(block).extra,

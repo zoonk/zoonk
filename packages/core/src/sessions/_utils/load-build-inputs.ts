@@ -1,80 +1,34 @@
 import "server-only";
-import { type Goal, type PlanItem, prisma } from "@zoonk/db";
-import { loadSessionBoss } from "../../checkpoints/_utils/load-boss";
+import { type PlanItem } from "@zoonk/db";
+import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
 import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly-challenge";
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
-import { getAllowance } from "../../entitlements/get-allowance";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
-import { getDaysToExam, getFinalStretchStart } from "../../exams/final-stretch/final-stretch-rules";
-import { withClassTestMock } from "../../exams/mocks/class-test-mock";
-import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
-import { type ExamStructure } from "../../library/exams/blueprint-contract";
-import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
+import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
 import { getGoalField } from "../../library/items/item-field";
 import {
   type AlphabetIntro,
   loadAlphabetIntro,
 } from "../../library/language/alphabet/alphabet-intro";
-import { getDailyTimeLimitStatus } from "../../minors/get-daily-time-limit";
 import { isWritingItem } from "../../plans/_utils/plan-phase-views";
-import { parsePlanGraph, parsePlanPhases } from "../../plans/planner/plan-state";
-import { type BlockCapsule } from "../block-payload";
+import { type BlockDrill } from "../block-payload";
 import { getFreshStart } from "../fresh-start";
-import { type PlannedLesson, type SessionBuildInput, getPracticeShare } from "../session-builder";
-import { getLessonLookahead, pickDayLessonItems } from "./day-lessons";
-import { getGoalDayMinutes } from "./day-minutes";
+import { getPracticeShare } from "../practice-share";
+import { type PlannedLesson, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { loadDayCapsules } from "./day-capsules";
+import { LEARN_KINDS, getLessonLookahead, pickDayLessons } from "./day-lessons";
+import { loadDayPlan } from "./day-plan";
 import { getExamPrepAccess } from "./exam-access";
+import { markLessonsBeforeChallenges } from "./lessons-before-challenges";
+import { loadMistakeDrills } from "./load-mistake-drills";
 import { loadPlanLessons } from "./load-plan-lessons";
-import { loadMistakeDrills, loadPracticeItems } from "./load-practice";
+import { loadPracticeItems } from "./load-practice";
 import { getReviewHorizon, loadReviewCapsules } from "./load-review-capsules";
+import { isDayAwaitingOutlines } from "./outlining-stand-ins";
+import { loadReviewsAndClaims } from "./practice-claims";
 import { getPracticeDifficulty } from "./practice-difficulty";
 import { getFocusedSkillIds, getTestSkillIds } from "./review-skills";
 import { type SessionDayContext, loadSessionPlacement } from "./session-placement";
-
-const LEARN_KINDS = new Set<PlanItem["kind"]>(["lesson", "chapter"]);
-
-/**
- * How the goal's exam is structured and scored, from its blueprint; null for other goals. A class
- * test's short mock fits `dayMinutes`, the time of the day it's for, when given.
- */
-export async function loadExamStructure(
-  goal: Pick<Goal, "examBlueprintId">,
-  { dayMinutes }: { dayMinutes?: number | null } = {},
-): Promise<ExamStructure | null> {
-  if (!goal.examBlueprintId) {
-    return null;
-  }
-
-  const blueprint = await prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } });
-
-  return blueprint
-    ? withClassTestMock({
-        dayMinutes,
-        ownerId: blueprint.ownerId,
-        structure: readBlueprintContent(blueprint).structure,
-      })
-    : null;
-}
-
-/** Whether the goal had a day before this one: day one starts nothing over. */
-async function hasEarlierDay({ goalId, today }: { goalId: string; today: Date }) {
-  const earlier = await prisma.studySession.findFirst({
-    select: { id: true },
-    where: { goalId, localDate: { lt: today } },
-  });
-
-  return earlier !== null;
-}
-
-async function loadLastStudyDate({ today, userId }: { today: Date; userId: string }) {
-  const day = await prisma.dailyProgress.findFirst({
-    orderBy: { date: "desc" },
-    select: { date: true },
-    where: { date: { lt: today }, timeSpentSeconds: { gt: 0 }, userId },
-  });
-
-  return day?.date ?? null;
-}
 
 /** A review day the plan scheduled for today or earlier and the learner hasn't done yet. */
 function findReviewDay({ items, today }: { items: readonly PlanItem[]; today: Date }) {
@@ -106,56 +60,20 @@ function getPlanProgress(items: readonly PlanItem[]): number {
     : items.filter((item) => item.status !== "todo").length / items.length;
 }
 
-/**
- * A mistake's own question belongs to its drill, where fixing it counts for the mission, and a
- * checkpoint's questions stay unseen until the duel, so capsules leave both out. A capsule left
- * without questions is covered by the drill or checkpoint on its skill.
- */
-function withoutReservedItems({
-  capsules,
-  reserved,
+/** A question the checkpoint asks is answered there; answering it right fixes its mistake too. */
+function withoutCheckpointItems({
+  checkpointItems,
+  drills,
 }: {
-  capsules: readonly BlockCapsule[];
-  reserved: ReadonlySet<string>;
-}): BlockCapsule[] {
-  return capsules
-    .map((capsule) => ({ ...capsule, itemIds: capsule.itemIds.filter((id) => !reserved.has(id)) }))
-    .filter((capsule) => capsule.itemIds.length > 0);
+  checkpointItems: ReadonlySet<string>;
+  drills: readonly BlockDrill[];
+}): BlockDrill[] {
+  return drills
+    .map((drill) => ({ ...drill, itemIds: drill.itemIds.filter((id) => !checkpointItems.has(id)) }))
+    .filter((drill) => drill.itemIds.length > 0);
 }
 
 type BuildContext = SessionDayContext;
-
-async function loadPlanContext({ goal, localDate, userId }: BuildContext) {
-  const [plan, goalPlan, allowance, limit, lastStudyDate, hadEarlierDay] = await Promise.all([
-    prisma.plan.findUnique({
-      include: { items: { orderBy: { position: "asc" } } },
-      where: { goalId: goal.id },
-    }),
-    loadGoalPlan(goal.id),
-    getAllowance(),
-    getDailyTimeLimitStatus(),
-    loadLastStudyDate({ today: localDate, userId }),
-    hasEarlierDay({ goalId: goal.id, today: localDate }),
-  ]);
-
-  // The day's mock fits the day: a class test's short mock takes the time the learner gives it.
-  const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
-  const structure = await loadExamStructure(goal, { dayMinutes });
-
-  return {
-    allowance,
-    dayMinutes,
-    finalStretchStart: getFinalStretchStart(parsePlanPhases(plan?.phases)),
-    graph: parsePlanGraph(plan?.graph),
-    isFirstDay: !hadEarlierDay,
-    items: plan?.items ?? [],
-    lastStudyDate,
-    limit,
-    settings: plan?.settings ?? null,
-    skills: goalPlan.skills,
-    structure,
-  };
-}
 
 /**
  * A language whose script isn't Latin opens a new learner's sessions with its alphabet lesson,
@@ -180,28 +98,88 @@ function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
   ];
 }
 
+/** What the day's quick review reads (see `loadReviewCapsules`). */
+function toReviewInput({
+  context: { goal, localDate, timeZone, userId },
+  field,
+  netScored,
+  plan,
+}: {
+  context: BuildContext;
+  field: string | null;
+  netScored: boolean;
+  plan: Awaited<ReturnType<typeof loadDayPlan>>;
+}): Parameters<typeof loadReviewCapsules>[0] {
+  return {
+    dailyMinutes: goal.dailyMinutes,
+    examBlueprintId: goal.examBlueprintId,
+    field,
+    horizon: getReviewHorizon({
+      finalStretchStart: plan.finalStretchStart,
+      goal,
+      localDate,
+      timeZone,
+    }),
+    listeningSkillIds: plan.listeningSkillIds,
+    netScoring: netScored,
+    planLessons: plan.items.flatMap((item) =>
+      item.lessonId ? [{ ...item, lessonId: item.lessonId }] : [],
+    ),
+    skillIds: plan.skills.map((skill) => skill.id),
+    userId,
+  };
+}
+
+/**
+ * A day with nothing due and nothing else to study (no lesson, practice, drill or challenge) is
+ * never empty: it reviews the learner's weakest studied topics instead, briefly, and says so
+ * (`weakestReview`). A learner who studied nothing yet still has an empty day.
+ */
+async function withWeakestReview({
+  input,
+  review,
+}: {
+  input: SessionBuildInput;
+  review: Parameters<typeof loadReviewCapsules>[0];
+}): Promise<SessionBuildInput> {
+  if (buildSessionBlocks(input).blocks.length > 0) {
+    return input;
+  }
+
+  const capsules = await loadReviewCapsules({ ...review, weakest: true });
+
+  return capsules.length > 0 ? { ...input, capsules, weakestReview: true } : input;
+}
+
 /**
  * Loads everything the day's session is built from: the alphabet first for a new script, the
- * plan's next lessons, today's capsules, a mistake to fix, mixed practice, a boss or weekly
- * checkpoint when one is due, and the day's shape (fresh start, practice share, a guardian's
- * limit, what a free exam plan covers).
+ * plan's next lessons, today's capsules, a mistake to fix, mixed practice (with a question on each
+ * topic the learner was taken to know, whatever the plan teaches; see `loadPracticeClaims`), a
+ * day's bosses or weekly checkpoint when due, and the day's shape (fresh start, practice share, the
+ * learner's daily limit, what a free exam plan covers).
  */
-export async function loadSessionBuildInput(context: BuildContext): Promise<SessionBuildInput> {
-  const { goal, localDate, now, timeZone, userId } = context;
-  const plan = await loadPlanContext(context);
-  const { dayMinutes } = plan;
+export async function loadSessionBuildInput(
+  context: BuildContext & {
+    /**
+     * The day is underway and keeps blocks it already holds: it isn't empty, so it never gets a
+     * review of the weakest topics (`withWeakestReview`).
+     */
+    keepsBlocks?: boolean;
+  },
+): Promise<SessionBuildInput> {
+  const { goal, keepsBlocks = false, localDate, now, timeZone, userId } = context;
+
+  const [plan, awaitingOutlines] = await Promise.all([
+    loadDayPlan(context),
+    isDayAwaitingOutlines({ goal, localDate }),
+  ]);
+
+  const { dayMinutes, listeningSkillIds, textSkillIds } = plan;
   const skillIds = plan.skills.map((skill) => skill.id);
   const field = getGoalField(goal.details);
   const netScored = isNetScored(plan.structure);
 
-  // A stand-in for lessons the Library hasn't outlined yet has nothing to teach today, so it
-  // doesn't take a lookahead slot from the written lessons after it; one due today keeps its time.
-  const learnItems = pickDayLessonItems({
-    graph: plan.graph,
-    isExam: goal.kind === "exam",
-    items: plan.items.filter((item) => LEARN_KINDS.has(item.kind) && item.status === "todo"),
-    today: localDate,
-  });
+  const { heldSkillIds, learnItems } = pickDayLessons({ awaitingOutlines, goal, localDate, plan });
 
   // Every topic of the test, the ones its days left out too: what a mock asks, and the full
   // review a free plan gets on a mock's day.
@@ -211,43 +189,41 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
     settings: plan.settings,
   });
 
-  const access = getExamPrepAccess({
-    examPrep: plan.allowance?.examPrep ?? null,
-    goal,
-    timeZone,
-    today: localDate,
-  });
+  const access = getExamPrepAccess({ examPrep: plan.examPrep, goal, timeZone, today: localDate });
+  const review = toReviewInput({ context, field, netScored, plan });
 
-  const [planLessons, alphabet, dueCapsules, dueDrills, boss, weekly, produce] = await Promise.all([
+  const [
+    planLessons,
+    alphabet,
+    { capsules: dueCapsules, claims },
+    dueDrills,
+    boss,
+    weekly,
+    produce,
+  ] = await Promise.all([
     loadPlanLessons({ items: learnItems.slice(0, getLessonLookahead(dayMinutes)), userId }),
     loadAlphabetIntro({ goal, userId }),
-    loadReviewCapsules({
-      dailyMinutes: goal.dailyMinutes,
-      examBlueprintId: goal.examBlueprintId,
-      field,
-      horizon: getReviewHorizon({
-        finalStretchStart: plan.finalStretchStart,
-        goal,
-        localDate,
-        timeZone,
-      }),
-      netScoring: netScored,
-      planLessonIds: new Set(plan.items.flatMap((item) => (item.lessonId ? [item.lessonId] : []))),
-      skillIds,
-      userId,
+    loadReviewsAndClaims({
+      claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },
+      practiceLocked: access.trialEnded,
+      review,
     }),
     loadMistakeDrills({
       examBlueprintId: goal.examBlueprintId,
       field,
-      skillIds,
+      listeningSkillIds,
+      skills: plan.skills,
       timeZone,
       today: localDate,
       userId,
     }),
-    loadSessionBoss({
+    loadSessionBosses({
       examBlueprintId: goal.examBlueprintId,
       goalKind: goal.kind,
+      graphSkills: plan.graph.skills,
+      itemSkillIds: plan.itemSkillIds,
       items: plan.items,
+      listeningSkillIds,
       skills: plan.skills,
       today: localDate,
       userId,
@@ -258,7 +234,7 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
       items: plan.items,
       mockSkillIds: testSkillIds,
       now,
-      skillIds,
+      skillIds: textSkillIds,
       structure: plan.structure,
       today: localDate,
       userId,
@@ -275,35 +251,42 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
     }),
   ]);
 
-  const lessons = [...toAlphabetLessons(alphabet), ...planLessons];
-  const checkpoint = boss.checkpoint ?? weekly.checkpoint;
-  const checkpointItems = new Set(checkpoint?.itemIds);
+  const lessons = [
+    ...toAlphabetLessons(alphabet),
+    ...markLessonsBeforeChallenges({
+      checkpoints: boss.checkpoints,
+      items: plan.items,
+      lessons: planLessons,
+    }),
+  ];
 
-  // A question the checkpoint asks is answered there; answering it right fixes its mistake too.
-  const drills = dueDrills
-    .map((drill) => ({ ...drill, itemIds: drill.itemIds.filter((id) => !checkpointItems.has(id)) }))
-    .filter((drill) => drill.itemIds.length > 0);
+  const checkpoints =
+    boss.checkpoints.length > 0
+      ? boss.checkpoints
+      : [weekly.checkpoint].filter((entry) => entry !== null);
+
+  const checkpointItems = new Set(checkpoints.flatMap((checkpoint) => checkpoint.itemIds));
+
+  const drills = withoutCheckpointItems({ checkpointItems, drills: dueDrills });
 
   const reserved = new Set([...drills.flatMap((drill) => drill.itemIds), ...checkpointItems]);
-
-  const capsules = withoutReservedItems({ capsules: dueCapsules, reserved });
-  const used = new Set([...reserved, ...capsules.flatMap((capsule) => capsule.itemIds)]);
-
-  const placementItemIds = await loadSessionPlacement({
-    context,
-    skills: plan.skills,
-    structure: plan.structure,
-    used,
-  });
 
   // A mock the learner's plan doesn't include (a free plan's) leaves its day to a full review of
   // every topic of the test, the ones its days left out too.
   const fullReview = weekly.plusRequired;
   const reviewPlanItemId = findReviewDay({ items: plan.items, today: localDate })?.id ?? null;
+  const isReviewDay = fullReview || reviewPlanItemId !== null;
+
+  const capsules = await loadDayCapsules({ capsules: dueCapsules, isReviewDay, reserved, userId });
+
+  const used = new Set([...reserved, ...capsules.flatMap((capsule) => capsule.itemIds)]);
+
+  const placementItemIds = await loadSessionPlacement({ context, isReviewDay, plan, used });
 
   const reviewSkillIds = fullReview ? testSkillIds : skillIds;
 
   const practice = await loadPracticeItems({
+    claims,
     difficultyBias: getPracticeDifficulty({
       daysToExam: getDaysToExam({ targetDate: goal.targetDate, today: localDate }),
       hasLessonsLeft: learnItems.length > 0,
@@ -313,18 +296,20 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
     examBlueprintId: goal.examBlueprintId,
     excludeItemIds: new Set([...used, ...placementItemIds]),
     field,
-    focusSkillIds:
-      fullReview || reviewPlanItemId
-        ? getFocusedSkillIds({ graph: plan.graph, settings: plan.settings })
-        : undefined,
+    firstSkillIds: heldSkillIds,
+    focusSkillIds: isReviewDay
+      ? getFocusedSkillIds({ graph: plan.graph, settings: plan.settings })
+      : undefined,
+    listeningSkillIds,
     now,
+    repeatOnlyMissed: isReviewDay,
     skillIds: reviewSkillIds,
     userId,
   });
 
-  return {
+  const input: SessionBuildInput = {
     capsules,
-    checkpoint,
+    checkpoints,
     dailyMinutes: dayMinutes,
     drills,
     examTrialEnded: access.trialEnded,
@@ -332,6 +317,7 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
       isFirstDay: plan.isFirstDay,
       isNewPhase: isNewPhase(plan.items),
       lastStudyDate: plan.lastStudyDate,
+      startDate: plan.planStart,
       today: localDate,
     }),
     fullReviewSkillIds: fullReview ? reviewSkillIds : null,
@@ -344,8 +330,10 @@ export async function loadSessionBuildInput(context: BuildContext): Promise<Sess
       planProgress: getPlanProgress(plan.items),
     }),
     produce,
-    reinforcement: boss.checkpoint ? boss.reinforcement : [],
-    remainingLimitMinutes: plan.limit?.remainingMinutes ?? null,
+    reinforcement: boss.reinforcement,
+    remainingLimitMinutes: plan.limit.remainingMinutes,
     reviewPlanItemId,
   };
+
+  return keepsBlocks ? input : withWeakestReview({ input, review });
 }

@@ -105,6 +105,42 @@ async function prepareSixLessonDay(userId: string) {
 }
 
 describe(getSessionPreparationAccess, () => {
+  // Past a free exam plan's first week its new lessons, practice and challenges come with Plus,
+  // yet each session POST still wrote lessons and outlines ahead for it.
+  it("prepares nothing for a free exam plan past its first week, while Plus keeps preparing", async () => {
+    const [free, plus] = await Promise.all([userFixture(), userFixture()]);
+
+    const [freeGoal, plusGoal] = await Promise.all(
+      [free, plus].map((user) =>
+        goalFixture({ createdAt: addDays(new Date(), -10), kind: "exam", userId: user.id }),
+      ),
+    );
+
+    const [freeSession, plusSession] = await Promise.all([
+      studySessionFixture({ goalId: freeGoal?.id, localDate: today(), userId: free.id }),
+      studySessionFixture({ goalId: plusGoal?.id, localDate: today(), userId: plus.id }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: plus.id, status: "active" },
+      }),
+    ]);
+
+    mockSession(free.id);
+
+    await expect(getSessionPreparationAccess({ sessionId: freeSession.id })).resolves.toStrictEqual(
+      { status: "plusRequired" },
+    );
+
+    await expect(getGoalPreparationAccess({ goalId: freeGoal?.id ?? "" })).resolves.toStrictEqual({
+      status: "plusRequired",
+    });
+
+    mockSession(plus.id);
+
+    await expect(getSessionPreparationAccess({ sessionId: plusSession.id })).resolves.toMatchObject(
+      { status: "ready" },
+    );
+  });
+
   it("prepares the owner's sessions, ended ones included, and skips guests and other learners", async () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
     const goal = await goalFixture({ timezone: "America/Sao_Paulo", userId: owner.id });

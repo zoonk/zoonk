@@ -22,7 +22,7 @@ import {
   PageTitle,
 } from "../_components/page";
 import { Surface } from "../_components/surface";
-import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatGoalDate } from "../_utils/iso-date";
 import { usePoll } from "../_utils/use-poll";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
@@ -38,7 +38,9 @@ import {
   usePlanScreen,
 } from "../plan/plan-context";
 import { PlanEditor } from "../plan/plan-editor";
+import { ExamChoiceNotices } from "../plan/plan-exam-choices";
 import { PlanNotice } from "../plan/plan-notice";
+import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { WIDE_PAGE_CLASS } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
 import {
@@ -48,7 +50,7 @@ import {
   useSetGoalStatus,
 } from "./goal-actions";
 import { JourneyHero, type JourneyStanding } from "./journey-hero";
-import { type JourneyPathLinks } from "./journey-links";
+import { type JourneyPathLinks, getPartialCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { JourneyPath } from "./journey-path";
 import { StudyNext } from "./study-next";
@@ -79,28 +81,20 @@ export type JourneyLinks = JourneyPathLinks & {
   subject: (key: string) => string;
 };
 
-/** The Library course a plan picks some chapters of, when it has a public page to see all of it. */
-function getPartialCourse(plan: PlanView): { brandSlug: string; courseSlug: string } | null {
-  const { course } = plan;
-
-  if (!course?.brandSlug || course.planChapterCount === 0) {
-    return null;
-  }
-
-  return course.planChapterCount < course.chapterCount
-    ? { brandSlug: course.brandSlug, courseSlug: course.courseSlug }
-    : null;
-}
-
 /** Once the plan is done: what to study next, and the host's "Continue at the next level". */
 type JourneyNext = { onContinue: () => Promise<boolean>; view: StudyNextView };
 
 type JourneyAlphabet = { link: AlphabetLink; onSkip: () => Promise<boolean> };
 
-/** The current phase still stands in for lessons being written. */
+/**
+ * The current phase still stands in for lessons on the way. Topics after the weeks the plan writes
+ * ahead (`far`) aren't being written: nothing would change by reading them again.
+ */
 function isPhaseBeingWritten(plan: PlanView): boolean {
   return plan.phases.some(
-    (phase) => phase.state === "current" && phase.chapters.some((chapter) => chapter.writing),
+    (phase) =>
+      phase.state === "current" &&
+      phase.chapters.some((chapter) => chapter.writing && !chapter.far),
   );
 }
 
@@ -140,13 +134,29 @@ export function JourneyBuilding({
   );
 }
 
-/** "ENEM 2026 · November 8": the goal, and its date when it has one. */
+/**
+ * "ENEM 2026 · November 8": the goal, and its date when it has one, "About" a day the plan only
+ * estimates (an edition whose notice isn't out), and the month the learner named as that month.
+ */
 function useJourneyEyebrow(): string {
-  const formatDate = useFormatIsoDate();
+  const t = useExtracted();
+  const formatGoalDate = useFormatGoalDate();
   const { goal, plan } = usePlanScreen();
-  const { targetDate } = plan.schedule;
+  const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
-  return targetDate ? `${goal.title} · ${formatDate(targetDate, "long")}` : goal.title;
+  if (!targetDate) {
+    return goal.title;
+  }
+
+  const date = formatGoalDate({
+    isoDate: targetDate,
+    namedMonth: targetDateNamedMonth,
+    style: "long",
+  });
+
+  const isAbout = targetDateEstimated && !targetDateNamedMonth;
+
+  return `${goal.title} · ${isAbout ? t("About {date}", { date }) : date}`;
 }
 
 /** "Phase 2 of 4": where the path is, beside its header; nothing for a path of one phase. */
@@ -255,6 +265,7 @@ function JourneyBody({
             />
           )}
           <PlanNotice adjustInNotice={standing === null} onAdjust={adjust} />
+          <ExamChoiceNotices />
 
           <PageSection aria-labelledby="journey-path-title">
             <PageSectionHeader>
@@ -273,9 +284,7 @@ function JourneyBody({
         <div className="flex min-w-0 flex-col gap-8 empty:hidden">
           {structure && <SyllabusSection subjectHref={links.subject} syllabus={structure} />}
 
-          {next && (
-            <StudyNext courseHref={links.course} next={next.view} onContinue={next.onContinue} />
-          )}
+          {next && <StudyNext courseHref={links.course} next={next} onAdjust={adjust} />}
 
           {links.mindMaps && (
             <MindMapsReference
@@ -307,8 +316,8 @@ function JourneyBody({
  * topics and chapters; without one (a language's units, a plan from one course) the current phase
  * opens to its chapters. The "…" beside the title adjusts the plan and holds what's done now and
  * then; mocks and the mistakes notebook are practiced from Today. The host
- * passes the plan's actions, already bound to the goal, and `refresh`, which reads the plan again
- * while lessons in it are being written.
+ * passes the plan's actions, already bound to the goal, and `refresh`, called every few seconds
+ * while lessons in it are being written: the host reads the plan again once they changed.
  */
 export function JourneyScreen({
   actions,
@@ -318,6 +327,7 @@ export function JourneyScreen({
   links,
   next = null,
   openFocus = false,
+  openFullCourse = false,
   plan,
   refresh,
   shareHref,
@@ -335,8 +345,10 @@ export function JourneyScreen({
   next?: JourneyNext | null;
   /** Opens "Choose where to focus" on arrival, as the buddy's offer asks. */
   openFocus?: boolean;
+  /** Opens "Study everything" on arrival, as Today's offer asks. */
+  openFullCourse?: boolean;
   plan: PlanView;
-  refresh: () => void;
+  refresh: () => unknown;
   shareHref: string;
   /** Null for a goal without a number to stand on yet. */
   standing: JourneyStanding | null;
@@ -345,20 +357,27 @@ export function JourneyScreen({
   /** The buddy's conversation, for questions about the plan and changes in the learner's words. */
   tutor?: PlanTutor;
 }) {
-  usePoll({ active: isPhaseBeingWritten(plan), intervalMs: WRITING_REFRESH_MS, onPoll: refresh });
+  usePoll({
+    active: isPhaseBeingWritten(plan),
+    intervalMs: WRITING_REFRESH_MS,
+    onPoll: refresh,
+    startNow: false,
+  });
 
   return (
     <PlanScreenProvider
       value={{ actions, focusTestHref: links.focusTest, goal, openFocus, plan, shareHref, tutor }}
     >
-      <JourneyBody
-        alphabet={alphabet}
-        goalStatus={goalStatus}
-        links={links}
-        next={next}
-        standing={standing}
-        syllabus={syllabus}
-      />
+      <PlanSheetHosts openFullCourse={openFullCourse}>
+        <JourneyBody
+          alphabet={alphabet}
+          goalStatus={goalStatus}
+          links={links}
+          next={next}
+          standing={standing}
+          syllabus={syllabus}
+        />
+      </PlanSheetHosts>
     </PlanScreenProvider>
   );
 }

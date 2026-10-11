@@ -16,14 +16,6 @@ const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 const ICON_SIZE = "1024x1024";
 
-/**
- * Every image call keeps to providers that don't train on prompts (`noPromptTrainingImageMiddleware`),
- * which rules out FLUX and Recraft (BFL's terms also forbid data about anyone under 18), and
- * Seedream refuses images under 3.7 megapixels. Sunburst letters as well as Flare at the same
- * price (mind-map eval, 7 Oct 2026).
- */
-const fallbackModels = ["openai/gpt-image-2.5-sunburst"] as const;
-
 function buildCourseIconPrompt({ input }: { input: string }): string {
   return promptTemplate.replace("{{INPUT}}", () => input);
 }
@@ -71,7 +63,7 @@ export async function generateCourseIcon({
 
   const { provenance, result } = await runImageTaskGeneration({
     analytics,
-    generate: () =>
+    generate: ({ promptTraining }) =>
       generateImageWithSafetyRetry({
         analytics,
         buildPrompt: buildCourseIconPrompt,
@@ -79,11 +71,14 @@ export async function generateCourseIcon({
         maxImagesPerCall: 1,
         model,
         providerOptions: buildImageProviderOptions({
-          fallbackModels: useFallback ? fallbackModels : [],
+          promptTraining,
           quality,
+          size: ICON_SIZE,
+          useFallback,
         }),
         size: ICON_SIZE,
       }),
+    libraryInput: true,
     requestedModel: model,
     systemPrompt: promptTemplate,
     task: "course-icon",

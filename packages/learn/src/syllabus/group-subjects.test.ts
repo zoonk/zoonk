@@ -13,6 +13,7 @@ function subject(
     imageUrl: null,
     key,
     lessonsDone: 0,
+    lessonsKnown: 0,
     lessonsTotal: 1,
     matrix: [],
     name: key,
@@ -24,6 +25,7 @@ function subject(
     source: "notice",
     topicFrequencySource: null,
     topics: [],
+    topicsKnown: null,
     topicsStudied: null,
     ...attrs,
   };

@@ -64,7 +64,7 @@ Run the following commands to set up Prisma:
 
 #### Local Curriculum Content
 
-The regular Prisma seed creates local users, accounts, subscriptions, organizations and progress, plus the v2 seed: a few Library courses and one learner persona per goal kind (`v2-*@zoonk.test`).
+The regular Prisma seed creates local users, accounts, subscriptions, organizations and progress, plus the v2 seed: a few Library courses and one learner persona per goal kind (`v2-*@zoonk.test`). This package writes each persona's history and what's due this week; core's planner lays out the rest of their plans (`pnpm --filter @zoonk/core seed:v2`, which the Prisma seed runs after the regular one), so a seeded plan is the one the app makes.
 
 To refresh the local curriculum from a database copy, run the regular seed once (it creates the local AI organization), then provide the copy's connection string:
 

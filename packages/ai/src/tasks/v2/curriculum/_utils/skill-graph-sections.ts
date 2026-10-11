@@ -87,6 +87,12 @@ function findTopicTeachers(skills: readonly RawSkill[]): Map<string, string> {
   );
 }
 
+/** The call (from 0) that wrote a skill of a joined graph, read from the key `joinSections` gave it. */
+export function getSectionCall(key: string): number | null {
+  const call = /^s(?<call>\d+)-/u.exec(key)?.groups?.call;
+  return call ? Number(call) - 1 : null;
+}
+
 /**
  * The skills of every call as one list, with keys no other call can have (calls write at the same
  * time and may each name a skill `interpret-texts`). A call's prerequisites name its own skills, or

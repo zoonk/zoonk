@@ -79,6 +79,52 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
+    // Helena's placement (ENEM, Oct 2026): a sound answer to "what check would you recommend?" was
+    // graded wrong for not naming elimination, a second technique its key points demanded.
+    expectations: `Placement questions in Brazilian Portuguese for one ENEM test-taking skill: one ENEM-style multiple-choice question and one typed question with checkable key points, both set in a situation during the exam. The typed question asks how to handle a question in the exam, and its key points say what any sound answer does: a question asking for a check or a strategy accepts any sound one, so no key point demands one particular technique among several (eliminating options, rereading the command, skipping and coming back) on top of another that does the same job. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.`,
+    id: "pt-enem-placement-test-taking",
+    userInput: {
+      ...PLACEMENT_COUNTS,
+      examFormat: ENEM,
+      language: "pt",
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Decidir entre alternativas próximas e administrar o tempo de uma questão difícil durante a prova.",
+          level: "intermediate",
+          name: "Decidir entre alternativas e administrar o tempo",
+        },
+      ],
+    },
+  },
+  {
+    // Bia's placement (ENEM, 10 Oct 2026): she picked Spanish of the exam's foreign language
+    // choice, so placement asked its two skills; the questions written then were sound.
+    expectations: `Placement questions in Brazilian Portuguese for two skills of ENEM's foreign language test in Spanish, the option the learner picked of the exam's choice. As in ENEM, each question's support text is in Spanish (a notice, a chronicle, a website, an ad, a song or another real genre), while the setup, the command, the options, the reasons and the typed question's key points are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill, and never a question a reader of Portuguese could answer without understanding the Spanish (distractors come from real misreadings: false friends such as "apenas", "exquisito" or "embarazada", a detail read in isolation, a cognate taken at face value). Check every key against the Spanish text. Each skill has one ENEM-style multiple-choice question with 5 options and one typed question answered in Portuguese with checkable key points; a skill's two questions use different texts.`,
+    id: "pt-enem-placement-spanish-option",
+    userInput: {
+      ...PLACEMENT_COUNTS,
+      examFormat: ENEM,
+      language: "pt",
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Usar vocabulário, expressões e estruturas linguísticas para entender o tema e a função de textos em espanhol.",
+          level: "intermediate",
+          name: "Interpretar vocabulário e estruturas de textos em espanhol",
+        },
+        {
+          description:
+            "Usar o espanhol para obter informações e conhecer tecnologias e culturas em textos de diferentes fontes.",
+          level: "intermediate",
+          name: "Usar o espanhol para acessar informações e culturas",
+        },
+      ],
+    },
+  },
+  {
     expectations: `Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill's quick question is a Cebraspe-style assertion judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Each skill also has one typed question with checkable key points. Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, and the typed question doesn't give away the assertion's judgment.`,
     id: "pt-cebraspe-placement-true-false",
     userInput: {
@@ -106,6 +152,38 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
           name: "Poder de polícia",
         },
       ],
+    },
+  },
+  {
+    // A mock's questions (mock-questions-workflow): one format, several per skill, no typed ones.
+    expectations: `Mock exam questions in Brazilian Portuguese for two ENEM skills: exactly two ENEM-style multiple-choice questions per skill (short support text, a command, 5 options, distractors from typical mistakes) and no typed questions. Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question uses one of them again with other names, places or numbers, and a skill's two new questions differ from each other in situation and in what they ask. Each question tests only its own skill and reads like a real ENEM question at its level. The math must be right.`,
+    id: "pt-enem-mock-quick-only",
+    userInput: {
+      examFormat: ENEM,
+      language: "pt",
+      quickCount: 2,
+      quickFormat: "multipleChoice",
+      skills: [
+        {
+          description:
+            "Calcular o efeito de aumentos e descontos percentuais aplicados um após o outro.",
+          level: "intermediate",
+          name: "Aumentos e descontos percentuais sucessivos",
+          usedSituations: [
+            "Uma loja aumentou o preço de um produto em 10% e, no mês seguinte, deu 10% de desconto.",
+          ],
+        },
+        {
+          description:
+            "Calcular a energia que um aparelho doméstico consome a partir da potência e do tempo de uso, e quanto isso custa.",
+          level: "intermediate",
+          name: "Consumo de energia elétrica em casa",
+          usedSituations: [
+            "Um chuveiro elétrico de 5.500 W é usado 30 minutos por dia durante um mês.",
+          ],
+        },
+      ],
+      typedCount: 0,
     },
   },
   {

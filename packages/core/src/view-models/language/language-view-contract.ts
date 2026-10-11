@@ -1,6 +1,7 @@
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { speakingMockExamSchema } from "../../language/conversations/conversation-contract";
+import { speakingPaperViewSchema } from "../../language/exam-speaking/speaking-contract";
 import { LANGUAGE_SKILLS } from "../../language/levels/skill-level-rules";
 
 const logicalDateSchema = z.iso.date();
@@ -43,6 +44,12 @@ export const languageProgressViewSchema = z
           'The level across skills ("A2+"): their average, rounded down to a half step; null before any',
       }),
     levels: z.array(languageSkillLevelSchema),
+    speaking: speakingPaperViewSchema
+      .nullable()
+      .meta({
+        description:
+          "The speaking paper of the exam the goal prepares for (DELE, DELF or DALF, Goethe-Zertifikat, Cambridge English): each task starts with POST /v1/language-conversations, kind examSpeaking; null for other goals",
+      }),
     speakingMock: speakingMockExamSchema
       .nullable()
       .meta({
@@ -119,6 +126,12 @@ export const languageUnitViewSchema = z
           done: z.boolean(),
           lessonId: z.uuid(),
           minutes: z.int().min(0),
+          state: z
+            .enum(["done", "next", "upcoming"])
+            .meta({
+              description:
+                "`next`: the one to open next, the lesson Today opens next when it's in this unit, else the plan's next",
+            }),
           title: z.string(),
           written: z
             .boolean()
@@ -128,7 +141,7 @@ export const languageUnitViewSchema = z
             }),
         }),
       )
-      .meta({ description: "In teaching order; the first not done is the one to open next" }),
+      .meta({ description: "In teaching order" }),
     mistakes: z.array(unitMistakeSchema).meta({ description: "Open mistakes, newest first" }),
     pattern: noticedPatternSchema
       .nullable()
@@ -177,6 +190,16 @@ export const languageTodayViewSchema = z
     pronunciation: duePronunciationSchema
       .nullable()
       .meta({ description: "Mispronounced words due to be said again today" }),
+    speaking: z
+      .object({
+        access: z.enum(["open", "plusRequired"]),
+        title: z.string().meta({ description: 'The paper\'s exam and level, "B1 Preliminary"' }),
+      })
+      .nullable()
+      .meta({
+        description:
+          "The exam-style speaking tasks the goal practices any time, at its target level; null when its language has none",
+      }),
   })
   .meta({ id: "LanguageToday" });
 

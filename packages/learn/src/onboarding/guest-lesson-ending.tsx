@@ -45,20 +45,23 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
         </div>
       )}
 
+      {/* The bar is the chapter's, named above it: under the course alone it read as the course's. */}
       <div className="flex flex-col gap-1.5">
+        <span className="flex items-baseline justify-between gap-3 text-xs">
+          <span className="min-w-0 truncate font-medium">{chapter.title}</span>
+          <span className="text-muted-foreground shrink-0 tabular-nums">
+            {t("{number, number} of {total, plural, one {# lesson} other {# lessons}}", {
+              number: chapter.lessonNumber,
+              total: chapter.lessonCount,
+            })}
+          </span>
+        </span>
         <Progress
           locale={locale}
           aria-label={t("Lessons done in this chapter")}
           className="**:data-[slot=progress-track]:h-1.5"
           value={(chapter.lessonNumber / Math.max(1, chapter.lessonCount)) * 100}
         />
-        <span className="text-muted-foreground self-end text-xs">
-          {t("{chapter} · {number, number} of {total, number}", {
-            chapter: chapter.title,
-            number: chapter.lessonNumber,
-            total: chapter.lessonCount,
-          })}
-        </span>
       </div>
     </section>
   );

@@ -1,25 +1,50 @@
+import { randomUUID } from "node:crypto";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
-import { EXAM_BLUEPRINT_PROMPT_VERSION } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint-version";
 import { prisma } from "@zoonk/db";
-import { seedV2 } from "@zoonk/db/seed/v2";
+import { type SeedCourse, writeLibraryCourse } from "@zoonk/db/seed/v2";
+import { t } from "@zoonk/db/seed/v2/localize";
+import { SEED_PERSONA_NAMES } from "@zoonk/db/seed/v2/personas";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   buildChapterIdentityKey,
   buildLessonIdentityKey,
   buildSkillIdentityKey,
 } from "@zoonk/utils/identity-key";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../_test-utils/mock-session";
+import { loadCheckpointCandidates } from "../checkpoints/_utils/checkpoint-candidates";
+import { MIN_CHECKPOINT_QUESTIONS, selectCheckpointItems } from "../checkpoints/checkpoint-rules";
+import { getCheckpoint } from "../checkpoints/get-checkpoint";
 import { namesMatch } from "../exams/_utils/name-match";
+import { findChoiceOption, findOptionAreas, readExamChoices } from "../exams/choices/exam-choices";
+import { loadGoalScoreEstimate } from "../exams/estimates/load-goal-estimate";
+import { loadExamHistory } from "../exams/view/_utils/exam-history";
 import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { mistakeSnapshotSchema } from "../mistakes/mistake-snapshot";
 import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { loadPlanContext } from "../plans/_utils/plan-context";
-import { loadPlannerInputs, resolveMergedSkills } from "../plans/_utils/planner-inputs";
-import { buildPlan } from "../plans/planner/build-plan";
+import { isPlanUnchanged } from "../plans/_utils/plan-unchanged";
+import { computePlan } from "../plans/_utils/replan";
+import { getPlanTimeAdvice } from "../plans/get-time-advice";
 import { toIsoDate } from "../plans/planner/plan-calendar";
-import { type ExistingPlanItem, type PlannedItem, getItemKey } from "../plans/planner/plan-items";
-import { parsePlanGraph, parsePlanPhases } from "../plans/planner/plan-state";
-import { SESSION_ITEM_FORMATS } from "../sessions/_utils/session-items";
+import { MAX_DAILY_MINUTES, parsePlanGraph, parsePlanPhases } from "../plans/planner/plan-state";
+import { seedV2, seedV2PersonaCopy } from "../seed/seed-v2";
+import { followPlanChangeToday } from "../sessions/_utils/refresh-day-session";
+import { parseSessionItem } from "../sessions/_utils/session-items";
 import { getBlockItemIds, readBlockPayload } from "../sessions/block-payload";
+import { type PlannedBlock } from "../sessions/session-builder";
 import { validateActivity } from "./activities/validate-activity";
 import {
   examEditionSchema,
@@ -27,12 +52,34 @@ import {
   topicFrequencySchema,
 } from "./exams/blueprint-contract";
 import { isPassageInDocument } from "./exams/passage-check";
+import { getPastQuestionsSource, getSubjectQuestions } from "./exams/subject-questions";
 import { checkItem } from "./items/item-checks";
 import { parseItemContent } from "./items/item-content";
 import { STEP_CONTRACT_VERSION, parseStepContent } from "./steps/contract/step-contract";
+import type * as SessionBuilder from "../sessions/session-builder";
+
+vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
+
+/** Every day the app's session builder planned while this file ran, the seed's among them. */
+const builtDays = vi.hoisted((): PlannedBlock[][] => []);
+
+vi.mock("../sessions/session-builder", async (importOriginal) => {
+  const builder = await importOriginal<typeof SessionBuilder>();
+
+  return {
+    ...builder,
+    buildSessionBlocks: (input: SessionBuilder.SessionBuildInput) => {
+      const day = builder.buildSessionBlocks(input);
+      builtDays.push(day.blocks);
+      return day;
+    },
+  };
+});
 
 /** Every seeded Library row carries this run id, which keeps the checks off other tests' rows. */
 const SEED_RUN = "seed-v2";
+
+const ONE_HOUR = 60;
 
 /** ENEM questions always have five options, A to E. */
 const ENEM_OPTIONS = 5;
@@ -44,6 +91,88 @@ const ENEM_OPTIONS = 5;
  */
 const BEFORE_CLOCKS_GO_BACK = new Date("2026-09-30T04:30:00Z");
 const BEFORE_CLOCKS_GO_FORWARD = new Date("2026-12-01T04:30:00Z");
+
+/** Noon on a Sunday in São Paulo, the exam persona's mock day. */
+const SUNDAY_IN_SAO_PAULO = new Date("2026-10-11T15:00:00Z");
+
+/** Days of their plans `pnpm dev:persona` can put copies on: rewound to the first days, or later. */
+const PERSONA_COPY_DAYS = [1, 3, 40];
+
+/** A copy months into the longer plans, where their later phases' challenges come due. */
+const LATE_COPY_DAY = 120;
+
+/** The same words in both seed languages, for a course a test writes. */
+function sameText(value: string) {
+  return t(value, value);
+}
+
+/** A course for the seed's Library writer to write, in English. */
+function testCourse({
+  chapters,
+  key,
+  skills,
+}: Pick<SeedCourse, "chapters" | "key" | "skills">): SeedCourse {
+  return {
+    category: "science",
+    chapters,
+    description: sameText(key),
+    format: "core",
+    items: [],
+    key,
+    languages: ["en"],
+    skills,
+    slug: sameText(key),
+    title: sameText(key),
+  };
+}
+
+/** A beginner chapter of a test course, with a lesson on each skill (see `testLessonTitle`). */
+function testChapter(key: string, skills: readonly string[]): SeedCourse["chapters"][number] {
+  const lessons = skills.map((skill) => ({
+    description: sameText(`${key} ${skill}`),
+    key: `${key}-${skill}`,
+    minutes: 4,
+    skills: [skill],
+    title: sameText(testLessonTitle(key, skill)),
+  }));
+
+  return {
+    description: sameText(key),
+    key,
+    lessons,
+    level: "beginner",
+    objectives: [],
+    title: sameText(`Chapter ${key}`),
+  };
+}
+
+function testLessonTitle(chapterKey: string, skill: string): string {
+  return `Lesson ${chapterKey} ${skill}`;
+}
+
+function testSkill(
+  key: string,
+  name: string,
+  prerequisites: readonly string[] = [],
+): SeedCourse["skills"][number] {
+  return {
+    description: sameText(name),
+    key,
+    level: "beginner",
+    name: sameText(name),
+    prerequisites,
+  };
+}
+
+/** What a session block holds, as a rebuild tells one day from another. */
+function describeBlock({
+  estimatedMinutes,
+  kind,
+  lessonId,
+  payload,
+}: Pick<PlannedBlock, "kind" | "lessonId" | "payload"> & { estimatedMinutes: number | null }) {
+  return [kind, lessonId, estimatedMinutes, ...getBlockItemIds(payload)].join(":");
+}
 
 function describeError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
@@ -78,78 +207,51 @@ async function countSeedRows() {
 }
 
 /**
- * What the planner makes of a seeded goal today, as the plan screen's estimate does, but at the
- * lessons' own pace: the seed can't know the pace other learners set in the database it runs on.
+ * The goals whose plan the app would write again on the day the seed wrote it: a refresh of a
+ * seeded plan finds the same work at the pace it saved, so opening the app changes nothing.
  */
-async function planAtLessonPace(goalId: string) {
-  const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
-  const context = await loadPlanContext({ goal });
+async function listPlansRefreshChanges(userIds = learnerIds()) {
+  const goals = await prisma.goal.findMany({ where: { userId: { in: userIds } } });
 
-  if (!context) {
-    throw new Error(`Goal ${goalId} has no plan`);
-  }
-
-  const graph = await resolveMergedSkills(context.state.graph);
-  const { targetDate, userId } = goal;
-
-  const inputs = await loadPlannerInputs({
-    difficultyBias: context.state.settings.difficultyBias,
-    goal,
-    graph,
-    targetDate,
-    userId,
-  });
-
-  const built = buildPlan({
-    ...inputs,
-    goal: { dailyMinutes: goal.dailyMinutes, kind: goal.kind, targetDate },
-    graph,
-    items: context.items,
-    mode: "automatic",
-    paceFactor: 1,
-    settings: { ...context.state.settings, shortMockMinutes: inputs.shortMockMinutes },
-    today: context.today,
-  });
-
-  return { built, context };
-}
-
-/** Each item by the planner's key and its day, in plan order. */
-function describeItems(items: readonly (ExistingPlanItem | PlannedItem)[]) {
-  return items.map(
-    (item) =>
-      `${getItemKey({ ...item, id: item.id ?? "" })}@${item.scheduledFor ? toIsoDate(item.scheduledFor) : ""}`,
-  );
-}
-
-/** Each plan outside exams as the seed stored it and as the planner makes it from the skill graph. */
-async function listPlansOutsideExams() {
-  const goals = await prisma.goal.findMany({
-    where: { kind: { not: "exam" }, userId: { in: learnerIds() } },
-  });
-
-  const plans = await Promise.all(
+  const changed = await Promise.all(
     goals.map(async (goal) => {
-      const { built, context } = await planAtLessonPace(goal.id);
+      const context = await loadPlanContext({ goal });
 
-      return {
-        built: {
-          estimateHours: built.estimate.totalMinutes / 60,
-          goal: goal.title,
-          items: describeItems(built.items),
-          phases: built.phases,
-        },
-        stored: {
-          estimateHours: context.plan.estimateHours,
-          goal: goal.title,
-          items: describeItems(context.items),
-          phases: context.phases,
-        },
-      };
+      if (!context) {
+        return `${goal.title}: no plan`;
+      }
+
+      const computed = await computePlan({ context, mode: "automatic" });
+      return isPlanUnchanged({ computed, context }) ? null : goal.title;
     }),
   );
 
-  return { built: plans.map((plan) => plan.built), stored: plans.map((plan) => plan.stored) };
+  return changed.filter((title) => title !== null);
+}
+
+/** Each seeded learner's session today, their latest; the others are their past days'. */
+async function loadTodaySessions(userIds = learnerIds()) {
+  const sessions = await prisma.studySession.findMany({
+    include: { blocks: { orderBy: { position: "asc" } } },
+    orderBy: { localDate: "desc" },
+    where: { userId: { in: userIds } },
+  });
+
+  return sessions.filter(
+    (session, index) => sessions.findIndex((other) => other.userId === session.userId) === index,
+  );
+}
+
+/** The days items are on, in order. */
+function listItemDays(items: readonly { scheduledFor: Date | null }[]): string[] {
+  return items
+    .flatMap((item) => (item.scheduledFor ? [toIsoDate(item.scheduledFor)] : []))
+    .toSorted((first, second) => first.localeCompare(second));
+}
+
+/** The learner-local date today in a goal's time zone, as `@db.Date` columns store it. */
+function goalToday(goal: { timezone: string | null }): Date {
+  return getDateInTimeZone({ date: new Date(), timeZone: goal.timezone ?? "UTC" });
 }
 
 /** A plan's items scheduled outside their phase's dates, each as `kind@day: phase start..end`. */
@@ -173,11 +275,11 @@ function listItemsOutsidePhases({
   });
 }
 
-/** The plans outside exams of a seed run at another moment. */
-async function listPlansSeededAt(moment: Date) {
+/** The seeded plans a refresh would change, from a seed run at another moment. */
+async function listRefreshChangesSeededAt(moment: Date) {
   vi.setSystemTime(moment);
-  await seedV2(prisma);
-  return listPlansOutsideExams();
+  await seedV2();
+  return listPlansRefreshChanges();
 }
 
 /*
@@ -189,7 +291,7 @@ describe("v2 seed", () => {
     // The checks plan from the day the seed ran: a run crossing a learner's midnight would compare
     // two days.
     vi.useFakeTimers({ toFake: ["Date"] });
-    ({ learners } = await seedV2(prisma));
+    ({ learners } = await seedV2());
   }, 120_000);
 
   afterAll(() => {
@@ -318,19 +420,6 @@ describe("v2 seed", () => {
       expect(missing).toStrictEqual([]);
     });
 
-    // The first ENEM learner of a local pass waited 8.5 minutes for the seeded notice to be read
-    // again, because the seed's reading looked older than today's instructions.
-    it("stores the ENEM notice as read with today's reading instructions", async () => {
-      const blueprints = await prisma.examBlueprint.findMany({
-        where: { identityKey: "enem", runId: SEED_RUN },
-      });
-
-      expect(blueprints.map((blueprint) => blueprint.promptVersion)).toStrictEqual([
-        EXAM_BLUEPRINT_PROMPT_VERSION,
-        EXAM_BLUEPRINT_PROMPT_VERSION,
-      ]);
-    });
-
     it("describes the ENEM edition ahead, rating topics by the notice's own names", async () => {
       const blueprints = await prisma.examBlueprint.findMany({
         where: { identityKey: "enem", runId: SEED_RUN },
@@ -385,6 +474,50 @@ describe("v2 seed", () => {
       expect(repeated).toStrictEqual([]);
     });
 
+    it("offers ENEM's foreign language as a choice inside Linguagens, counted by the latest edition", async () => {
+      const blueprint = await prisma.examBlueprint.findFirstOrThrow({
+        where: { identityKey: "enem", language: "pt", runId: SEED_RUN },
+      });
+
+      const structure = examStructureSchema.parse(blueprint.structure);
+
+      const options = structure.subjects
+        .filter((subject) => subject.choiceGroup)
+        .map((subject) => ({
+          choiceGroup: subject.choiceGroup,
+          name: subject.name,
+          partOf: subject.partOf,
+          questions: getSubjectQuestions({ structure, subject }),
+        }));
+
+      const languages = "Linguagens, Códigos e suas Tecnologias";
+
+      expect(options).toStrictEqual([
+        {
+          choiceGroup: "Língua Estrangeira",
+          name: "Língua Inglesa",
+          partOf: languages,
+          questions: 5,
+        },
+        {
+          choiceGroup: "Língua Estrangeira",
+          name: "Língua Espanhola",
+          partOf: languages,
+          questions: 5,
+        },
+      ]);
+
+      // The notice doesn't count them: the latest edition's answer key does, cited.
+      expect(
+        structure.subjects.flatMap((subject) => (subject.choiceGroup ? [subject.questions] : [])),
+      ).toStrictEqual([null, null]);
+
+      expect(getPastQuestionsSource(structure)).toMatchObject({
+        edition: "Enem 2025",
+        url: expect.stringContaining("inep.gov.br"),
+      });
+    });
+
     it("builds identity keys the way identity search does", async () => {
       const [chapters, lessons, skills] = await Promise.all([
         prisma.chapter.findMany({ where: { runId: SEED_RUN } }),
@@ -418,12 +551,19 @@ describe("v2 seed", () => {
     });
 
     it("gives every written lesson a summary card and every outline lesson its skills", async () => {
+      // Rows, not `_count`: Prisma counts a relation over its whole table, and the test database
+      // keeps every run's rows.
       const lessons = await prisma.lesson.findMany({
-        include: { _count: { select: { skills: true, steps: true } } },
+        select: {
+          skills: { select: { skillId: true } },
+          steps: { select: { id: true } },
+          summary: true,
+          title: true,
+        },
         where: { runId: SEED_RUN },
       });
 
-      const written = lessons.filter((lesson) => lesson._count.steps > 0);
+      const written = lessons.filter((lesson) => lesson.steps.length > 0);
 
       expect(written.length).toBeGreaterThan(0);
 
@@ -432,17 +572,185 @@ describe("v2 seed", () => {
       ).toStrictEqual([]);
 
       expect(
-        lessons.filter((lesson) => lesson._count.skills === 0).map((lesson) => lesson.title),
+        lessons.filter((lesson) => lesson.skills.length === 0).map((lesson) => lesson.title),
       ).toStrictEqual([]);
     });
 
     it("runs again without duplicating anything", async () => {
       const before = await countSeedRows();
 
-      await seedV2(prisma);
+      await seedV2();
 
       await expect(countSeedRows()).resolves.toStrictEqual(before);
     }, 120_000);
+
+    /*
+     * On a database learners have used, the app may already hold a skill under a seeded skill's
+     * name (the ENEM skills come from a real goal's graph). Identity search keeps one skill per
+     * name, so the seed points its course at the app's skill, leaves it as it was, and runs again.
+     */
+    it("points a course at a skill the app already wrote under the same name, again and again", async () => {
+      const key = `skills-${randomUUID().slice(0, 8)}`;
+      const name = `${key} motion graphs`;
+      const nextName = `${key} speed`;
+      const chapter = testChapter(`${key}-motion`, ["graphs"]);
+
+      const [appSkill, organization] = await Promise.all([
+        skillFixture({ identityKey: buildSkillIdentityKey({ name, targetLanguage: null }), name }),
+        organizationFixture(),
+      ]);
+
+      const course = testCourse({
+        chapters: [chapter],
+        key,
+        skills: [testSkill("graphs", name), testSkill("speed", nextName, ["graphs"])],
+      });
+
+      await writeLibraryCourse({ course, organizationId: organization.id, prisma });
+      await writeLibraryCourse({ course, organizationId: organization.id, prisma });
+
+      const [lesson, next, sameName] = await Promise.all([
+        prisma.lesson.findFirstOrThrow({
+          include: { skills: true },
+          where: { title: testLessonTitle(chapter.key, "graphs") },
+        }),
+        prisma.skill.findFirstOrThrow({
+          include: { prerequisites: true },
+          where: { name: nextName },
+        }),
+        prisma.skill.findMany({ where: { name } }),
+      ]);
+
+      expect(lesson.skills.map((row) => row.skillId)).toStrictEqual([appSkill.id]);
+      expect(next.prerequisites.map((row) => row.prerequisiteId)).toStrictEqual([appSkill.id]);
+      expect(sameName).toStrictEqual([appSkill]);
+    });
+
+    /*
+     * The app adds its own chapters to a seeded course in teaching order, and a split lesson right
+     * after the one it came from, renumbering the rest. The seed keeps those places and puts what
+     * it adds where its own position is free, or at the end.
+     */
+    it("keeps the chapters and lessons the app placed in a seeded course, and adds new ones after them", async () => {
+      const key = `outline-${randomUUID().slice(0, 8)}`;
+      const skills = ["a", "b", "c", "d"].map((skill) => testSkill(skill, `${key} ${skill}`));
+      const first = testChapter(`${key}-1`, ["a"]);
+      const second = testChapter(`${key}-2`, ["b"]);
+      const third = testChapter(`${key}-3`, ["c"]);
+      const organization = await organizationFixture();
+
+      const write = (chapters: SeedCourse["chapters"]) =>
+        writeLibraryCourse({
+          course: testCourse({ chapters, key, skills }),
+          organizationId: organization.id,
+          prisma,
+        });
+
+      await write([first, second]);
+
+      const [course, firstRow, secondRow, appChapter, appLesson] = await Promise.all([
+        prisma.course.findFirstOrThrow({ where: { organizationId: organization.id, slug: key } }),
+        prisma.chapter.findFirstOrThrow({ where: { title: `Chapter ${first.key}` } }),
+        prisma.chapter.findFirstOrThrow({ where: { title: `Chapter ${second.key}` } }),
+        libraryChapterFixture(),
+        libraryLessonFixture(),
+      ]);
+
+      // The app continues the first chapter with one of its own, and splits its lesson in two.
+      await prisma.courseChapter.update({
+        data: { position: 2 },
+        where: { courseId_chapterId: { chapterId: secondRow.id, courseId: course.id } },
+      });
+
+      await Promise.all([
+        courseChapterFixture({ chapterId: appChapter.id, courseId: course.id, position: 1 }),
+        chapterLessonFixture({ chapterId: firstRow.id, lessonId: appLesson.id, position: 1 }),
+      ]);
+
+      // The seed then adds a chapter, and a lesson to the first chapter.
+      const firstWithMore = testChapter(first.key, ["a", "d"]);
+
+      await write([firstWithMore, second, third]);
+      await write([firstWithMore, second, third]);
+
+      const [outline, firstLessons] = await Promise.all([
+        prisma.courseChapter.findMany({
+          orderBy: { position: "asc" },
+          select: { chapter: { select: { title: true } }, position: true },
+          where: { courseId: course.id },
+        }),
+        prisma.chapterLesson.findMany({
+          orderBy: { position: "asc" },
+          select: { lesson: { select: { title: true } }, position: true },
+          where: { chapterId: firstRow.id },
+        }),
+      ]);
+
+      expect(outline.map((row) => [row.position, row.chapter.title])).toStrictEqual([
+        [0, `Chapter ${first.key}`],
+        [1, appChapter.title],
+        [2, `Chapter ${second.key}`],
+        [3, `Chapter ${third.key}`],
+      ]);
+
+      expect(firstLessons.map((row) => [row.position, row.lesson.title])).toStrictEqual([
+        [0, testLessonTitle(first.key, "a")],
+        [1, appLesson.title],
+        [2, testLessonTitle(first.key, "d")],
+      ]);
+    });
+
+    /*
+     * A learner reaching a seeded outline lesson has the app write it, at a cost. Seeding again
+     * keeps that lesson as the app wrote it, so nothing is paid for twice.
+     */
+    it("keeps a lesson the app wrote when it seeds again", async () => {
+      const key = `content-${randomUUID().slice(0, 8)}`;
+      const chapter = testChapter(`${key}-1`, ["a", "b"]);
+      const organization = await organizationFixture();
+
+      const course = testCourse({
+        chapters: [chapter],
+        key,
+        skills: ["a", "b"].map((skill) => testSkill(skill, `${key} ${skill}`)),
+      });
+
+      await writeLibraryCourse({ course, organizationId: organization.id, prisma });
+
+      const [written, untouched] = await Promise.all([
+        prisma.lesson.findFirstOrThrow({ where: { title: testLessonTitle(chapter.key, "a") } }),
+        prisma.lesson.findFirstOrThrow({ where: { title: testLessonTitle(chapter.key, "b") } }),
+      ]);
+
+      const step = await libraryStepFixture({ lessonId: written.id, position: 0 });
+
+      await prisma.lesson.update({
+        data: {
+          canDo: "You can read a motion graph.",
+          contentStatus: "completed",
+          specStatus: "completed",
+        },
+        where: { id: written.id },
+      });
+
+      await writeLibraryCourse({ course, organizationId: organization.id, prisma });
+
+      const lessons = await prisma.lesson.findMany({
+        orderBy: { title: "asc" },
+        select: { canDo: true, contentStatus: true, specStatus: true, steps: true },
+        where: { id: { in: [written.id, untouched.id] } },
+      });
+
+      expect(lessons).toStrictEqual([
+        {
+          canDo: "You can read a motion graph.",
+          contentStatus: "completed",
+          specStatus: "completed",
+          steps: [step],
+        },
+        { canDo: null, contentStatus: "pending", specStatus: "pending", steps: [] },
+      ]);
+    });
   });
 
   describe("learners", () => {
@@ -472,11 +780,6 @@ describe("v2 seed", () => {
       expect(changes.some((change) => change.status === "proposed")).toBe(true);
     });
 
-    /*
-     * Exam plans keep the persona's own windows and hand-placed items, so only the seed keeps each
-     * item inside its phase: an exam too close for them ends a window before its items, or before
-     * it starts.
-     */
     it("keeps every exam plan item inside its phase's dates", async () => {
       const plans = await prisma.plan.findMany({
         include: { items: { orderBy: { position: "asc" } } },
@@ -488,30 +791,89 @@ describe("v2 seed", () => {
     });
 
     /*
-     * The plan screen plans from the skill graph: its estimate and each phase's size and dates
-     * only agree when the seed stores the plan the planner makes, weekly challenges and phase
-     * checkpoints included. Exam plans keep the persona's own windows.
+     * The seed stores the plan the planner makes: opening the app on the seeded day, a refresh
+     * finds the same work, graph and settings, so Today and the plan screen show what was seeded.
      */
-    it("stores the plan the planner makes from the skill graph outside exams", async () => {
-      const { built, stored } = await listPlansOutsideExams();
-
-      expect(stored.length).toBeGreaterThan(0);
-      expect(stored).toStrictEqual(built);
+    it("stores the plan a refresh keeps", async () => {
+      await expect(listPlansRefreshChanges()).resolves.toStrictEqual([]);
     });
 
-    it("stores the plan the planner makes when the clocks change while it runs", async () => {
+    /*
+     * Onboarding's time question and the plan editor advise the time a day the whole exam needs.
+     * Ana's ENEM graph has a real one's skills and sizes (about 3,800 lessons), so she's advised
+     * what a real ENEM goal needs: more than an hour a day with the exam months away, and no time
+     * that covers it all when it's closer. A graph of the course's own 21 skills advised 5 minutes.
+     */
+    it("advises the exam persona the time a real ENEM goal needs", async () => {
+      mockSession(learners.exam.userId);
+
+      const result = await getPlanTimeAdvice({ goalId: learners.exam.goalId, input: {} });
+      const advice = result.status === "ready" ? result.advice : null;
+
+      expect(advice?.ready).toBe(true);
+      expect(advice?.recommendedMinutes ?? MAX_DAILY_MINUTES).toBeGreaterThan(ONE_HOUR);
+    });
+
+    /*
+     * A plan change reads a topic as in the plan by its items' skills: a seeded lesson without the
+     * skill the planner counts it for made a persona's missed-days card say its own lessons'
+     * topics now fit.
+     */
+    it("gives every lesson on a plan the skill it counts for", async () => {
+      const lessons = await prisma.planItem.findMany({
+        where: { kind: "lesson", plan: { goal: { userId: { in: learnerIds() } } }, skillId: null },
+      });
+
+      expect(lessons.map((item) => item.titleSnapshot)).toStrictEqual([]);
+    });
+
+    /*
+     * `pnpm dev:persona` writes copies on other days of their plans: a plan rewound to its first
+     * days or started earlier is the planner's too, with exam items in their windows.
+     */
+    it("stores the plan a refresh keeps for a copy on another day of its plan", async () => {
+      const copies = await Promise.all(
+        PERSONA_COPY_DAYS.flatMap((day) =>
+          SEED_PERSONA_NAMES.map((persona) =>
+            seedV2PersonaCopy({
+              copyKey: `day-${day}`,
+              day,
+              email: `seed-copy-${persona}-day-${day}@zoonk.test`,
+              persona,
+            }),
+          ),
+        ),
+      );
+
+      const userIds = copies.map((copy) => copy.userId);
+
+      const examPlans = await prisma.plan.findMany({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { goal: { kind: "exam", userId: { in: userIds } } },
+      });
+
+      await expect(listPlansRefreshChanges(userIds)).resolves.toStrictEqual([]);
+      expect(examPlans).toHaveLength(PERSONA_COPY_DAYS.length);
+      expect(examPlans.flatMap((plan) => listItemsOutsidePhases(plan))).toStrictEqual([]);
+    }, 120_000);
+
+    it("stores the plan a refresh keeps when the clocks change while it runs", async () => {
       const today = new Date();
-      const goingBack = await listPlansSeededAt(BEFORE_CLOCKS_GO_BACK);
-      const goingForward = await listPlansSeededAt(BEFORE_CLOCKS_GO_FORWARD);
+      const goingBack = await listRefreshChangesSeededAt(BEFORE_CLOCKS_GO_BACK);
+      const goingForward = await listRefreshChangesSeededAt(BEFORE_CLOCKS_GO_FORWARD);
 
       // The other checks read today's seed.
       vi.setSystemTime(today);
-      await seedV2(prisma);
+      await seedV2();
 
-      expect(goingBack.stored).toStrictEqual(goingBack.built);
-      expect(goingForward.stored).toStrictEqual(goingForward.built);
+      expect(goingBack).toStrictEqual([]);
+      expect(goingForward).toStrictEqual([]);
     }, 120_000);
 
+    /*
+     * A plan its date leaves short of time stops where the time runs out (Marcos covers part of
+     * the way to B1+ by his move), so only the phases of plans that fit close with their challenge.
+     */
     it("closes each phase with a phase checkpoint, never a weekly challenge or a practice day", async () => {
       const bosses = await prisma.planItem.findMany({
         where: {
@@ -522,7 +884,10 @@ describe("v2 seed", () => {
 
       const plans = await prisma.plan.findMany({
         include: { items: { orderBy: { position: "asc" } } },
-        where: { goal: { kind: { in: ["learn", "language"] }, userId: { in: learnerIds() } } },
+        where: {
+          OR: [{ coveredShare: null }, { coveredShare: { gte: 1 } }],
+          goal: { kind: { in: ["learn", "language"] }, userId: { in: learnerIds() } },
+        },
       });
 
       const missing = plans.flatMap((plan) =>
@@ -540,14 +905,404 @@ describe("v2 seed", () => {
       expect(missing).toStrictEqual([]);
     });
 
+    /*
+     * A phase challenge waits silently while its phase's skills hold fewer questions than it needs,
+     * so every challenge a persona or a `pnpm dev:persona` copy reaches has enough in the bank. A
+     * language goal's challenge is a call, and a phase whose skills all start in another phase has
+     * none to ask.
+     */
+    it("has the questions for every phase challenge a seeded learner reaches", async () => {
+      const copies = await Promise.all(
+        [...PERSONA_COPY_DAYS, LATE_COPY_DAY].flatMap((day) =>
+          SEED_PERSONA_NAMES.map((persona) =>
+            seedV2PersonaCopy({
+              copyKey: `bank-${day}`,
+              day,
+              email: `seed-bank-${persona}-day-${day}@zoonk.test`,
+              persona,
+            }),
+          ),
+        ),
+      );
+
+      const goals = await prisma.goal.findMany({
+        where: {
+          kind: { not: "language" },
+          userId: { in: [...learnerIds(), ...copies.map((copy) => copy.userId)] },
+        },
+      });
+
+      const short = await Promise.all(
+        goals.map(async (goal) => {
+          const plan = await loadGoalPlan(goal.id);
+
+          const bosses = await prisma.planItem.findMany({
+            where: { kind: "boss", plan: { goalId: goal.id }, status: "todo" },
+          });
+
+          const counts = await Promise.all(
+            bosses.map(async (boss) => {
+              const skillIds = plan.skills
+                .filter((skill) => skill.phase === boss.phase)
+                .map((skill) => skill.id);
+
+              const candidates = await loadCheckpointCandidates({
+                examBlueprintId: goal.examBlueprintId,
+                skillIds,
+                userId: goal.userId,
+              });
+
+              const asked = selectCheckpointItems({ candidates, skillIds }).length;
+
+              return skillIds.length === 0 || asked >= MIN_CHECKPOINT_QUESTIONS
+                ? []
+                : [`${goal.title} phase ${boss.phase}: ${asked} questions`];
+            }),
+          );
+
+          return counts.flat();
+        }),
+      );
+
+      expect(goals.length).toBeGreaterThan(copies.length);
+      expect(short.flat()).toStrictEqual([]);
+    }, 120_000);
+
+    /*
+     * The app rebuilds a learner's session for the day with blocks of its own, which hold the
+     * positions the seeded blocks take, so running the seed again puts the seeded blocks back.
+     */
+    it("writes today's session again over blocks the app built into it", async () => {
+      const copy = {
+        copyKey: "app-blocks",
+        email: "seed-copy-exam-app-blocks@zoonk.test",
+        persona: "exam",
+      } as const;
+
+      const { goalId } = await seedV2PersonaCopy(copy);
+
+      const loadToday = () =>
+        prisma.studySession.findFirstOrThrow({
+          orderBy: { localDate: "desc" },
+          select: {
+            blocks: {
+              orderBy: { position: "asc" },
+              select: { id: true, kind: true, position: true },
+            },
+            id: true,
+          },
+          where: { goalId },
+        });
+
+      const seeded = await loadToday();
+
+      await prisma.studySessionBlock.deleteMany({ where: { sessionId: seeded.id } });
+
+      await prisma.studySessionBlock.create({
+        data: { kind: "review", position: 0, sessionId: seeded.id },
+      });
+
+      await seedV2PersonaCopy(copy);
+
+      await expect(loadToday()).resolves.toStrictEqual(seeded);
+    });
+
+    // A walk on a shared persona left a plan change that every later walk was told about.
+    it("drops the plan changes the app made to a persona when it seeds again", async () => {
+      const copy = {
+        copyKey: "app-change",
+        email: "seed-copy-language-app-change@zoonk.test",
+        persona: "language",
+      } as const;
+
+      const { goalId } = await seedV2PersonaCopy(copy);
+      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
+
+      const change = await prisma.planChange.create({
+        data: { kind: "missedDays", planId: plan.id, reason: "The app moved the plan." },
+      });
+
+      await seedV2PersonaCopy(copy);
+
+      await expect(prisma.planChange.findUnique({ where: { id: change.id } })).resolves.toBeNull();
+    });
+
+    /*
+     * A seeded day the session builder wouldn't make (Marcos: 3 blocks where it makes 6) turned
+     * into the builder's on the first rebuild, so any plan change looked like it changed today.
+     */
+    it("writes the day the app's session builder plans, with how far the persona got", async () => {
+      const sessions = await loadTodaySessions();
+
+      const planned = new Set(
+        builtDays.map((blocks) => blocks.map((block) => describeBlock(block)).join(" | ")),
+      );
+
+      const unplanned = sessions.flatMap((session) => {
+        const day = session.blocks.map((block) =>
+          describeBlock({ ...block, payload: readBlockPayload(block) }),
+        );
+
+        return planned.has(day.join(" | ")) ? [] : [day];
+      });
+
+      expect(sessions.length).toBeGreaterThan(0);
+      expect(unplanned).toStrictEqual([]);
+
+      // The personas got part of the way: none finished nothing, so each day shows its progress.
+      expect(
+        sessions.filter((session) => session.blocks.every((block) => block.status === "pending")),
+      ).toStrictEqual([]);
+    });
+
+    /*
+     * Lucas started today's lesson, then made a change that didn't touch today: the rest of his day
+     * came back rebuilt, practice taking its share of what was left, so a second lesson came in and
+     * practice lost half its questions. Ana's got one lesson more and two questions less.
+     */
+    it("keeps the rest of a started day as it was when a plan change leaves today alone", async () => {
+      const copies = await Promise.all(
+        SEED_PERSONA_NAMES.map(async (persona) => ({
+          persona,
+          ...(await seedV2PersonaCopy({
+            copyKey: "started-day",
+            email: `seed-copy-${persona}-started-day@zoonk.test`,
+            persona,
+          })),
+        })),
+      );
+
+      const results = await Promise.all(
+        copies.map(async ({ goalId, persona, userId }) => {
+          const [goal, session] = await Promise.all([
+            prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),
+            prisma.studySession.findFirst({ orderBy: { localDate: "desc" }, where: { goalId } }),
+          ]);
+
+          const refresh = session
+            ? await followPlanChangeToday({
+                goalId,
+                localDate: session.localDate,
+                timeZone: getAnswerTimeZone({ goal }),
+                userId,
+              })
+            : "notBuilt";
+
+          return [persona, refresh];
+        }),
+      );
+
+      expect(results.filter(([, refresh]) => refresh === "rebuilt")).toStrictEqual([]);
+      expect(results.some(([, refresh]) => refresh === "same")).toBe(true);
+    }, 120_000);
+
+    /*
+     * The week's days, a boss's result and a mock's sitting read a learner's past sessions: a
+     * persona with history but no sessions showed an empty week and a won boss with no result.
+     */
+    it("writes a finished session for every past day the history counts, a block for each of its rows", async () => {
+      const goals = await prisma.goal.findMany({ where: { userId: { in: learnerIds() } } });
+
+      const gaps = await Promise.all(
+        goals.map(async (goal) => {
+          const today = goalToday(goal);
+
+          const [events, sessions] = await Promise.all([
+            prisma.learningEvent.findMany({
+              where: { localDate: { lt: today }, userId: goal.userId },
+            }),
+            prisma.studySession.findMany({
+              include: { blocks: { where: { status: "completed" } } },
+              where: { goalId: goal.id, localDate: { lt: today }, status: "completed" },
+            }),
+          ]);
+
+          const rows = Map.groupBy(events, (event) => toIsoDate(event.localDate));
+
+          const blocks = new Map(
+            sessions.map((session) => [toIsoDate(session.localDate), session.blocks.length]),
+          );
+
+          return [...rows].flatMap(([day, dayRows]) =>
+            blocks.get(day) === dayRows.length ? [] : [`${goal.title} ${day}`],
+          );
+        }),
+      );
+
+      expect(goals.length).toBeGreaterThan(0);
+      expect(gaps.flat()).toStrictEqual([]);
+    });
+
+    // Lucas's bosses showed "won" on his Journey and opened to the pre-game card, with no result.
+    it("shows each boss a persona fought with the result its history gives", async () => {
+      const { userId } = learners.buddy;
+
+      const [blocks, rows] = await Promise.all([
+        prisma.studySessionBlock.findMany({
+          orderBy: { startedAt: "asc" },
+          where: { kind: "checkpoint", session: { status: "completed", userId } },
+        }),
+        prisma.learningEvent.findMany({
+          orderBy: { endedAt: "asc" },
+          where: { kind: "checkpoint", userId },
+        }),
+      ]);
+
+      mockSession(userId);
+
+      const results = await Promise.all(
+        blocks.map(async (block) => {
+          const found = await getCheckpoint(block.id);
+          return found.status === "ready" ? found.checkpoint.result : null;
+        }),
+      );
+
+      expect(rows.length).toBeGreaterThan(0);
+
+      expect(results.map((result) => result && [result.correct, result.total])).toStrictEqual(
+        rows.map((row) => [row.correctAnswers, row.correctAnswers + row.incorrectAnswers]),
+      );
+    });
+
+    // Ana's exam page had no mocks while her preparation, which reads the ledger, cited one.
+    it("gives the exam persona's mocks a finished sitting the exam page shows, as the ledger counts it", async () => {
+      const { goalId, userId } = learners.exam;
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+      const [history, rows] = await Promise.all([
+        loadExamHistory({ goalId, today: goalToday(goal) }),
+        prisma.learningEvent.findMany({
+          orderBy: { endedAt: "desc" },
+          where: { kind: "mock", userId },
+        }),
+      ]);
+
+      expect(rows.length).toBeGreaterThan(0);
+
+      expect(history.mocks.map((mock) => [mock.correct, mock.total])).toStrictEqual(
+        rows.map((row) => [row.correctAnswers, row.correctAnswers + row.incorrectAnswers]),
+      );
+
+      expect(history.mocks.filter((mock) => mock.blockId === null)).toStrictEqual([]);
+    });
+
+    // Ana's first mock asked the six questions the bank had for its exam day, too few for an
+    // estimate, so her preparation showed no score after it.
+    it("gives the exam persona's first mock enough questions for a score on the exam's scale", async () => {
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: learners.exam.goalId } });
+      const estimate = await loadGoalScoreEstimate({ goal, ledgerMocks: [] });
+
+      expect(estimate?.scale).toBe("irt");
+    });
+
+    // Seeded on a Sunday, Ana's "last Sunday" was today, so she had no mock taken.
+    it("gives the exam persona a mock taken when the seed runs on a Sunday", async () => {
+      const today = new Date();
+      vi.setSystemTime(SUNDAY_IN_SAO_PAULO);
+      await seedV2();
+
+      const { goalId } = learners.exam;
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+      const [history, estimate] = await Promise.all([
+        loadExamHistory({ goalId, today: goalToday(goal) }),
+        loadGoalScoreEstimate({ goal, ledgerMocks: [] }),
+      ]);
+
+      // The other checks read today's seed.
+      vi.setSystemTime(today);
+      await seedV2();
+
+      expect(history.mocks).toHaveLength(1);
+      expect(estimate?.scale).toBe("irt");
+    }, 120_000);
+
+    /*
+     * Ana's next mock was seeded on next Sunday, off the planner's days for her 45 minutes a day
+     * (a mock every four weeks), so the first change that planned her days again moved it.
+     */
+    it("puts the exam persona's next mocks on the days her plan made again keeps", async () => {
+      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: learners.exam.goalId } });
+      const context = await loadPlanContext({ goal });
+
+      const stored = await prisma.planItem.findMany({
+        orderBy: { scheduledFor: "asc" },
+        where: { kind: "mock", plan: { goalId: goal.id }, status: "todo" },
+      });
+
+      const computed = context ? await computePlan({ context, mode: "forced" }) : null;
+
+      const replanned = (computed?.built.items ?? []).filter(
+        (item) => item.kind === "mock" && item.status === "todo",
+      );
+
+      expect(stored.length).toBeGreaterThan(0);
+      expect(listItemDays(replanned)).toStrictEqual(listItemDays(stored));
+    });
+
+    // The Journey asked the seeded ENEM learner which foreign language she takes on every visit.
+    it("picks the exam persona's foreign language, an option of her exam that her graph teaches", async () => {
+      const goal = await prisma.goal.findUniqueOrThrow({
+        include: { examBlueprint: true, plan: true },
+        where: { id: learners.exam.goalId },
+      });
+
+      const structure = examStructureSchema.parse(goal.examBlueprint?.structure);
+      const choices = readExamChoices(goal.plan?.settings);
+
+      const taught = findOptionAreas({
+        areas: parsePlanGraph(goal.plan?.graph).skills.flatMap((skill) => skill.area ?? []),
+        structure,
+      });
+
+      expect(choices.length).toBeGreaterThan(0);
+
+      expect(choices.filter((choice) => !findChoiceOption({ choice, structure }))).toStrictEqual(
+        [],
+      );
+
+      expect(
+        choices.filter((choice) => ![...taught.values()].includes(choice.subject)),
+      ).toStrictEqual([]);
+    });
+
+    // Lucas had six lessons done and two answers in all.
+    it("has answers in every lesson the buddy persona finished, on the day he finished it", async () => {
+      const { goalId, userId } = learners.buddy;
+
+      const [lessons, attempts] = await Promise.all([
+        prisma.planItem.findMany({
+          include: { lesson: { include: { skills: true } } },
+          where: { kind: "lesson", plan: { goalId }, status: "done" },
+        }),
+        prisma.attempt.findMany({ where: { userId } }),
+      ]);
+
+      const answered = new Set(
+        attempts.map((attempt) => `${attempt.skillId}:${toIsoDate(attempt.localDate)}`),
+      );
+
+      const unanswered = lessons.filter((item) => {
+        const day = item.scheduledFor ? toIsoDate(item.scheduledFor) : null;
+        return !item.lesson?.skills.some((skill) => answered.has(`${skill.skillId}:${day}`));
+      });
+
+      expect(lessons.length).toBeGreaterThan(0);
+      expect(unanswered.map((item) => item.titleSnapshot)).toStrictEqual([]);
+    });
+
     it("builds today's blocks in the session payload shape, asking only questions sessions grade", async () => {
+      const today = await loadTodaySessions();
+
       const blocks = await prisma.studySessionBlock.findMany({
-        where: { kind: { in: ["practice", "review"] }, session: { userId: { in: learnerIds() } } },
+        where: {
+          kind: { in: ["practice", "review"] },
+          sessionId: { in: today.map((session) => session.id) },
+        },
       });
 
       const itemIds = blocks.flatMap((block) => getBlockItemIds(readBlockPayload(block)));
       const items = await prisma.item.findMany({ where: { id: { in: itemIds } } });
-      const gradable: readonly string[] = SESSION_ITEM_FORMATS;
 
       expect(
         blocks.filter((block) => getBlockItemIds(readBlockPayload(block)).length === 0),
@@ -556,17 +1311,26 @@ describe("v2 seed", () => {
       expect(items).toHaveLength(new Set(itemIds).size);
 
       expect(
-        items.filter((item) => !gradable.includes(item.format)).map((item) => item.id),
+        items.filter((item) => parseSessionItem(item) === null).map((item) => item.id),
       ).toStrictEqual([]);
     });
 
     it("gives every learner an active goal with a plan, today's session, skills and history", async () => {
+      // Rows, not `_count`: Prisma counts a relation over its whole table, and the test database
+      // keeps every run's rows.
       const users = await prisma.user.findMany({
-        include: {
-          _count: { select: { learnerSkills: true, learningEvents: true, studySessions: true } },
-          goals: { include: { plan: { include: { _count: { select: { items: true } } } } } },
-          learningProfile: true,
-          studySessions: { include: { _count: { select: { blocks: true } } } },
+        select: {
+          email: true,
+          goals: { select: { id: true, plan: { select: { items: { select: { id: true } } } } } },
+          isAnonymous: true,
+          learnerSkills: { select: { id: true } },
+          learningEvents: { select: { id: true } },
+          learningProfile: { select: { activeGoalId: true } },
+          studySessions: {
+            orderBy: { localDate: "desc" },
+            select: { blocks: { select: { id: true } } },
+            take: 1,
+          },
         },
         where: { id: { in: learnerIds() } },
       });
@@ -578,10 +1342,13 @@ describe("v2 seed", () => {
 
         return [
           user.learningProfile?.activeGoalId !== goal?.id && `${user.email}: active goal`,
-          !goal?.plan?._count.items && `${user.email}: plan items`,
-          user.studySessions[0]?._count.blocks ? null : `${user.email}: today's session`,
-          user._count.learnerSkills === 0 && `${user.email}: skills`,
-          user._count.learningEvents === 0 && `${user.email}: history`,
+          !goal?.plan?.items.length && `${user.email}: plan items`,
+          // The guest finished a public lesson before making a goal, and hasn't opened Today.
+          user.isAnonymous || user.studySessions[0]?.blocks.length
+            ? null
+            : `${user.email}: today's session`,
+          user.learnerSkills.length === 0 && `${user.email}: skills`,
+          user.learningEvents.length === 0 && `${user.email}: history`,
         ].filter((gap) => typeof gap === "string");
       });
 
@@ -608,7 +1375,8 @@ describe("v2 seed", () => {
 
     /*
      * Mocks group their scores by the plan's area of each question's skill, falling back to the
-     * exam day's name, so a bank question outside the plan's areas shows up as a made-up area.
+     * exam day's name, so a bank question outside the plan's areas shows up as a made-up area. A
+     * subject counted inside another (ENEM's foreign language, inside Linguagens) isn't an area.
      */
     it("puts every exam bank question in a plan area that names one of the exam's areas", async () => {
       const goal = await prisma.goal.findUniqueOrThrow({
@@ -620,7 +1388,9 @@ describe("v2 seed", () => {
         where: { examBlueprintId: goal.examBlueprintId },
       });
 
-      const { subjects } = examStructureSchema.parse(goal.examBlueprint?.structure);
+      const subjects = examStructureSchema
+        .parse(goal.examBlueprint?.structure)
+        .subjects.filter((subject) => !subject.partOf);
 
       const areas = new Map(
         parsePlanGraph(goal.plan?.graph).skills.map((skill) => [skill.skillId, skill.area]),
@@ -647,21 +1417,15 @@ describe("v2 seed", () => {
       expect(mistakes.filter((mistake) => mistake.attemptId === null)).toStrictEqual([]);
     });
 
-    it("seeds a grown buddy, a minor with a guardian and an anonymous guest", async () => {
-      const [buddy, minor, guest] = await Promise.all([
+    it("seeds a grown buddy, a learner with a daily limit and an anonymous guest", async () => {
+      const [buddy, stocks, guest] = await Promise.all([
         prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: learners.buddy.userId } }),
-        prisma.user.findUniqueOrThrow({
-          include: { guardianLinks: true, learningProfile: true },
-          where: { id: learners.minor.userId },
-        }),
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: learners.stocks.userId } }),
         prisma.user.findUniqueOrThrow({ where: { id: learners.guest.userId } }),
       ]);
 
-      // The adult turned memory on; the minor keeps the default, off until they choose.
       expect(buddy).toMatchObject({ buddyGlasses: "star", buddyKind: "otto", memoryEnabled: true });
-      expect(minor.learningProfile?.birthYear).toBeGreaterThan(new Date().getUTCFullYear() - 18);
-      expect(minor.learningProfile?.memoryEnabled).toBeNull();
-      expect(minor.guardianLinks[0]?.status).toBe("active");
+      expect(stocks).toMatchObject({ dailyLimitMinutes: 60, memoryEnabled: true });
       expect(guest.isAnonymous).toBe(true);
     });
   });

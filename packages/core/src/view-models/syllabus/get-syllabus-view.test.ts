@@ -1,17 +1,19 @@
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import {
   chapterSkillFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getSyllabusView } from "./get-syllabus-view";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
@@ -144,6 +146,16 @@ async function signedInExamLearner({ topics }: { topics: boolean }) {
   return { goal, lawChapter, portugueseChapter, user };
 }
 
+/** What the signed-in learner's syllabus says of one of its topics. */
+async function readTopicStatus(name: string) {
+  const result = await getSyllabusView();
+  const syllabus = result.status === "ready" ? result.syllabus : null;
+
+  return syllabus?.subjects
+    .flatMap((subject) => subject.topics)
+    .find((topic) => topic.name === name)?.status;
+}
+
 describe(getSyllabusView, () => {
   it("requires a session and the learner's own goal with a plan", async () => {
     const { goal } = await signedInExamLearner({ topics: false });
@@ -198,7 +210,8 @@ describe(getSyllabusView, () => {
         "https://example.com/pt.webp",
         0.75,
         1,
-        2,
+        // Each of its two skills is two lessons as the graph sizes it, whatever the plan holds.
+        4,
       ],
       [
         "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
@@ -219,10 +232,14 @@ describe(getSyllabusView, () => {
     expect(syllabus?.subjects[0]?.chapters).toStrictEqual([
       {
         chapterId: portugueseChapter.id,
+        far: false,
+        known: false,
         lessonsDone: 1,
         lessonsTotal: 2,
         nextDate: "2026-10-07",
+        plannedLessons: null,
         position: 1,
+        skillId: null,
         state: "upcoming",
         title: "Grafia e coesão",
         writing: false,
@@ -354,11 +371,17 @@ describe(getSyllabusView, () => {
     const result = await getSyllabusView({ goalId: goal.id });
     const subjects = result.status === "ready" ? result.syllabus.subjects : [];
 
+    // Tested out, not studied: each counts it among the lessons the learner knows.
     expect(
-      subjects.map((subject) => [subject.name, subject.notPlannedReason, subject.lessonsDone]),
+      subjects.map((subject) => [
+        subject.name,
+        subject.notPlannedReason,
+        subject.lessonsDone,
+        subject.lessonsKnown,
+      ]),
     ).toStrictEqual([
-      ["Explicar a membrana", null, 1],
-      ["Responder sobre osmose", null, 1],
+      ["Explicar a membrana", null, 0, 1],
+      ["Responder sobre osmose", null, 0, 1],
     ]);
   });
 
@@ -426,5 +449,31 @@ describe(getSyllabusView, () => {
       basis: "questões de 2015 a 2025",
       ...source,
     });
+  });
+
+  // One true-or-false answer is right by luck half the time: a Câmara learner's one right answer in
+  // a session read as known, and the plan cut the topic first. Three right ones of its own show it.
+  it("says a topic is known only from three right true-or-false answers of its own", async () => {
+    const { goal, lawChapter, user } = await signedInExamLearner({ topics: true });
+    const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    const skillId =
+      parsePlanGraph(plan.graph).skills.find((entry) => entry.name === "Aplicar os princípios")
+        ?.skillId ?? "";
+
+    // The plan has no lessons on the topic: the time left it out, unless the learner knows it.
+    await prisma.planItem.deleteMany({ where: { chapterId: lawChapter.id, planId: plan.id } });
+
+    const answerRight = async () => {
+      const item = await itemFixture({ format: "trueFalse", skillId });
+      await attemptFixture({ isPlacement: true, itemId: item.id, skillId, userId: user.id });
+    };
+
+    await answerRight();
+    await answerRight();
+    await expect(readTopicStatus("Princípios fundamentais")).resolves.toBe("notPlanned");
+
+    await answerRight();
+    await expect(readTopicStatus("Princípios fundamentais")).resolves.toBe("known");
   });
 });

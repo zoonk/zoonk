@@ -2,14 +2,10 @@ import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/contrac
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { languageStep } from "../_test-utils/language-steps";
-import { spokenAnswerStep, teachingStep } from "../_test-utils/lesson-steps";
-import {
-  buildAdapters,
-  buildLesson,
-  renderLessonPlayer,
-} from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
 
 /**
  * "Say it out loud": the learner records the sentence and the host grades it. When they can't talk

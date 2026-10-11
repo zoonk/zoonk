@@ -15,13 +15,13 @@ import { trackServerEvent } from "../analytics/server";
 import { startMock } from "../exams/mocks/start-mock";
 import { submitMockSection } from "../exams/mocks/submit-mock-section";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
+import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
-import { getTodayStudySession } from "../sessions/get-today-study-session";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import {
   claimLessonQuestionAnswer,
@@ -280,7 +280,7 @@ describe("the tutor beyond lessons", () => {
       ]);
     });
 
-    it("answers about a mock only once it's finished, from its result", async () => {
+    it("answers about a mock only once it's finished, from its result and the goal's plan", async () => {
       const user = await userFixture();
       const blueprint = await examBlueprintFixture();
 
@@ -324,13 +324,19 @@ describe("the tutor beyond lessons", () => {
 
       const snapshot = await storedSnapshot(question.id);
 
+      // The buddy reads the goal's plan with the mock, so it can change the plan from there.
       expect(snapshot).toMatchObject({
-        exam: { number: 1 },
-        result: { blank: expect.any(Number), estimate: null },
-        scope: { kind: "mock" },
+        goal: { kind: "exam" },
+        scope: { kind: "plan" },
+        screen: {
+          exam: { number: 1 },
+          result: { blank: expect.any(Number), estimate: null },
+          scope: { kind: "mock" },
+        },
       });
 
-      const missed = "missed" in snapshot ? snapshot.missed : [];
+      const screen = "screen" in snapshot ? snapshot.screen : null;
+      const missed = screen && "missed" in screen ? screen.missed : [];
 
       expect(missed.length).toBeGreaterThan(0);
       expect(missed.every((entry) => entry.skill !== null)).toBe(true);

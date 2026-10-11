@@ -128,60 +128,68 @@ model ChapterSkill {
 /// (title and one-line description) exists up front; its spec and content are generated on demand. One
 /// home chapter gives it a canonical URL.
 model Lesson {
-  id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  language         String                 @db.VarChar(10)
-  targetLanguage   String?                @map("target_language") @db.VarChar(10)
+  id                String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  language          String                 @db.VarChar(10)
+  targetLanguage    String?                @map("target_language") @db.VarChar(10)
   /// Normalized identity (skills, level and target language) claimed by one generation workflow at a time.
-  identityKey      String                 @map("identity_key")
-  slug             String
-  title            String
-  normalizedTitle  String                 @map("normalized_title")
+  identityKey       String                 @map("identity_key")
+  slug              String
+  title             String
+  normalizedTitle   String                 @map("normalized_title")
   /// One line on why the lesson matters.
-  description      String
+  description       String
   /// What the learner will be able to do afterwards, shown on session tiles. Written with the spec.
-  canDo            String?                @map("can_do")
-  level            CourseLevel
-  estimatedMinutes Int                    @map("estimated_minutes") @db.SmallInt
-  homeChapterId    String?                @map("home_chapter_id") @db.Uuid
-  homeChapter      Chapter?               @relation(fields: [homeChapterId], references: [id], onDelete: SetNull)
-  visibility       LibraryVisibility      @default(public)
+  canDo             String?                @map("can_do")
+  level             CourseLevel
+  estimatedMinutes  Int                    @map("estimated_minutes") @db.SmallInt
+  homeChapterId     String?                @map("home_chapter_id") @db.Uuid
+  homeChapter       Chapter?               @relation(fields: [homeChapterId], references: [id], onDelete: SetNull)
+  visibility        LibraryVisibility      @default(public)
   /// Owner of private content. Private content is deleted with its owner.
-  ownerId          String?                @map("owner_id") @db.Uuid
-  owner            User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId           String?                @map("owner_id") @db.Uuid
+  owner             User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   /// Lesson spec: skills, screen plan, activity and visual flags, and support mode.
-  spec             Json?
-  specStatus       GenerationStatus       @default(pending) @map("spec_status")
-  specRunId        String?                @map("spec_run_id")
-  contentStatus    GenerationStatus       @default(pending) @map("content_status")
+  spec              Json?
+  specStatus        GenerationStatus       @default(pending) @map("spec_status")
+  specRunId         String?                @map("spec_run_id")
+  contentStatus     GenerationStatus       @default(pending) @map("content_status")
   /// Claim held by the running content generation, so one workflow writes the steps.
-  contentRunId     String?                @map("content_run_id")
+  contentRunId      String?                @map("content_run_id")
   /// Drafts the quality gate held back since the lesson was last published, oldest first: the writer model, the
   /// problems and the run of each. The next draft is told what held them back; publishing clears them.
-  heldBackDrafts   Json                   @default("[]") @map("held_back_drafts")
+  heldBackDrafts    Json                   @default("[]") @map("held_back_drafts")
   /// Set when the lesson's last allowed draft was held back: nothing writes it again and plans move on without it.
-  setAsideAt       DateTime?              @map("set_aside_at")
+  setAsideAt        DateTime?              @map("set_aside_at")
   /// The summary card: each idea in one sentence. Public on SEO pages.
-  summary          Json?
-  model            String
-  promptVersion    String                 @map("prompt_version")
-  runId            String                 @map("run_id")
-  generatedAt      DateTime               @default(now()) @map("generated_at")
-  createdAt        DateTime               @default(now()) @map("created_at")
-  updatedAt        DateTime               @default(now()) @updatedAt @map("updated_at")
-  chapters         ChapterLesson[]
-  steps            Step[]
-  skills           LessonSkill[]
-  planItems        PlanItem[]
-  studyBlocks      StudySessionBlock[]
-  words            LessonWord[]
-  sentences        LessonSentence[]
-  questionThreads  LessonQuestionThread[]
-  reviewFlags      ContentReviewFlag[]
+  summary           Json?
+  /// A quick explanation's "Want to go further?": the questions to ask next and the subject's
+  /// Overview course. They belong to the lesson, not to the goal that first asked, so every learner
+  /// it's reused for gets them after that learner leaves.
+  relatedQuestions  String[]               @default([]) @map("related_questions")
+  goFurtherCourseId String?                @map("go_further_course_id") @db.Uuid
+  goFurtherCourse   Course?                @relation(fields: [goFurtherCourseId], references: [id], onDelete: SetNull)
+  model             String
+  promptVersion     String                 @map("prompt_version")
+  runId             String                 @map("run_id")
+  generatedAt       DateTime               @default(now()) @map("generated_at")
+  createdAt         DateTime               @default(now()) @map("created_at")
+  updatedAt         DateTime               @default(now()) @updatedAt @map("updated_at")
+  chapters          ChapterLesson[]
+  steps             Step[]
+  skills            LessonSkill[]
+  planItems         PlanItem[]
+  studyBlocks       StudySessionBlock[]
+  words             LessonWord[]
+  sentences         LessonSentence[]
+  questionThreads   LessonQuestionThread[]
+  reviewFlags       ContentReviewFlag[]
+  anonymousPaces    AnonymousLessonPace[]
 
   @@unique([language, identityKey], name: "languageIdentity")
   @@unique([homeChapterId, slug], name: "homeChapterSlug")
   @@index([language, level, normalizedTitle])
   @@index([ownerId])
+  @@index([goFurtherCourseId])
   @@map("library_lessons")
 }
 
@@ -242,6 +250,7 @@ model Step {
   updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
   variants           StepVariant[]
   exampleLines       StepExampleLine[]
+  optionPictures     StepOptionPicture[]
   answerExplanations AnswerExplanation[]
   attempts           Attempt[]
   mistakes           Mistake[]
@@ -257,6 +266,23 @@ model Step {
   @@index([mediaAssetId])
   @@index([sourceId])
   @@map("library_steps")
+}
+
+/// The picture one option of a question shows, for a question whose options are pictures ("which of
+/// these doorways is Gothic?"): one per option, drawn from the option's own request and reused
+/// across lessons like any picture. When a picture is taken out of use its row goes with it, and
+/// the option shows its description instead.
+model StepOptionPicture {
+  stepId       String     @map("step_id") @db.Uuid
+  step         Step       @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  optionId     String     @map("option_id")
+  mediaAssetId String     @map("media_asset_id") @db.Uuid
+  mediaAsset   MediaAsset @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  @@id([stepId, optionId])
+  @@index([mediaAssetId])
+  @@map("library_step_option_pictures")
 }
 
 /// A field or tool version of a step, made the first time a learner with that field or tool needs
@@ -308,32 +334,34 @@ model StepExampleLine {
 /// once and reused. Images keep the structured scene they were drawn from and the subject palette; an
 /// image with labels has the labels' `language`, and one without text serves every language.
 model MediaAsset {
-  id            String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  id            String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   kind          MediaKind
   url           String
-  mimeType      String?           @map("mime_type")
-  reuseKey      String            @unique @map("reuse_key")
-  language      String?           @db.VarChar(10)
+  mimeType      String?             @map("mime_type")
+  reuseKey      String              @unique @map("reuse_key")
+  language      String?             @db.VarChar(10)
   prompt        String?
   /// The structured scene an image was drawn from: focal object, supporting objects, relation, motion and labels.
   scene         Json?
   /// The subject palette key the image was drawn with.
   palette       String?
-  styleVersion  Int?              @map("style_version")
+  styleVersion  Int?                @map("style_version")
   width         Int?
   height        Int?
-  durationMs    Int?              @map("duration_ms")
-  visibility    LibraryVisibility @default(public)
+  durationMs    Int?                @map("duration_ms")
+  visibility    LibraryVisibility   @default(public)
   /// Owner of a private course's image. Private assets are deleted with their owner.
-  ownerId       String?           @map("owner_id") @db.Uuid
-  owner         User?             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId       String?             @map("owner_id") @db.Uuid
+  owner         User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   model         String
-  promptVersion String            @map("prompt_version")
-  runId         String            @map("run_id")
-  generatedAt   DateTime          @default(now()) @map("generated_at")
-  createdAt     DateTime          @default(now()) @map("created_at")
+  promptVersion String              @map("prompt_version")
+  runId         String              @map("run_id")
+  generatedAt   DateTime            @default(now()) @map("generated_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
   steps         Step[]
+  stepOptions   StepOptionPicture[]
   items         Item[]
+  itemSets      ItemSet[]
 
   @@index([ownerId])
   @@map("media_assets")

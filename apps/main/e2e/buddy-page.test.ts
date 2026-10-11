@@ -9,9 +9,11 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
+import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -21,7 +23,7 @@ import { createGoalLearner } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
-import { fulfillTutorAnswer } from "./tutor-answer";
+import { fulfillTutorAnswer, toProposal } from "./tutor-answer";
 
 const STUDY_SECONDS = 600;
 const FULL_MEAL_DAYS = [1, 2];
@@ -46,8 +48,8 @@ function readChangeStatus(changeId: string) {
 }
 
 /**
- * A learner with Zu who won a checkpoint (the Star glasses), had a full meal on two earlier days
- * and, today, finished the new lesson but not its review, with nothing to fix.
+ * A learner with Zu who won a checkpoint (the Star glasses), did all three missions on two earlier
+ * days and, today, finished the new lesson but not its review, with nothing to fix.
  */
 async function createBuddyLearner() {
   const { goal, user } = await createGoalLearner();
@@ -105,27 +107,54 @@ async function createBuddyLearner() {
   return user;
 }
 
-/** A learner with Zu whose session today already made a full meal: nothing left to do. */
-async function createFullMealLearner() {
+/**
+ * A learner with Zu who did all three missions today, and got their bonus: the new lesson, the
+ * day's review and a mistake fixed. Nothing left to do.
+ */
+async function createAllMissionsLearner() {
   const { goal, user } = await createGoalLearner();
   const today = toUTCMidnight(new Date());
+  const skill = await skillFixture();
 
-  const [session] = await Promise.all([
+  const [session, item] = await Promise.all([
     studySessionFixture({
       fullMealAt: new Date(),
       goalId: goal.id,
       localDate: today,
       userId: user.id,
     }),
+    itemFixture({ skillId: skill.id }),
     learningProfileFixture({ activeGoalId: goal.id, buddyKind: "zu", userId: user.id }),
+    mistakeFixture({ fixedAt: new Date(), status: "fixed", userId: user.id }),
   ]);
 
-  await studySessionBlockFixture({
-    kind: "learn",
-    position: 0,
-    sessionId: session.id,
-    status: "completed",
-  });
+  await Promise.all([
+    studySessionBlockFixture({
+      kind: "learn",
+      position: 0,
+      sessionId: session.id,
+      status: "completed",
+    }),
+    studySessionBlockFixture({
+      kind: "review",
+      payload: {
+        capsules: [
+          {
+            format: "rapidFire",
+            itemIds: [item.id],
+            key: `skill:${skill.id}`,
+            lessonId: null,
+            skillIds: [skill.id],
+            title: "Percentages",
+          },
+        ],
+      },
+      position: 1,
+      sessionId: session.id,
+      status: "completed",
+    }),
+    attemptFixture({ itemId: item.id, studySessionId: session.id, userId: user.id }),
+  ]);
 
   return user;
 }
@@ -157,7 +186,7 @@ type BuddyAnswer = {
  * answers are written and saved.
  */
 async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page }) {
-  const asked: { question: string; suggested: boolean }[] = [];
+  const asked: { question: string }[] = [];
   const queue = [...answers];
 
   await page.route(/\/v1\/goals\/[^/]+\/plan\/questions/u, async (route) => {
@@ -170,7 +199,7 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
 
     const input = createLessonQuestionInputSchema.parse(request.postDataJSON());
     const now = new Date().toISOString();
-    asked.push({ question: input.question, suggested: input.suggested === true });
+    asked.push({ question: input.question });
 
     const question: LessonQuestionResource = {
       answer: null,
@@ -204,30 +233,6 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
   return asked;
 }
 
-/** A proposal as the conversation shows it, from the change core saved. */
-function toProposal(change: { createdAt: Date; id: string; payload: unknown }): PlanChangeView {
-  const { operations } = change.payload as Pick<PlanChangeView, "operations">;
-
-  return {
-    behind: null,
-    canUndo: false,
-    createdAt: change.createdAt.toISOString(),
-    days: null,
-    effect: null,
-    id: change.id,
-    kind: "edited",
-    lessonsSkipped: 0,
-    officialDate: null,
-    operations,
-    // A change read from the learner's words is said from what it does, never the model's words.
-    reason: null,
-    seen: false,
-    source: "planEdit",
-    status: "proposed",
-    todaySession: null,
-  };
-}
-
 test.describe("Buddy tab", () => {
   test("keeps the buddy's day to two tiles: Energy opening its page and missions in a sheet, glasses and the rest in its menu, and studying wakes it", async ({
     browser,
@@ -247,7 +252,7 @@ test.describe("Buddy tab", () => {
     await expect(
       page
         .getByRole("navigation", { name: "Learning tabs" })
-        .getByRole("link", { name: /^Zu\s*2 of 3 missions today$/u }),
+        .getByRole("link", { name: /^Zu\s*1 of 3 missions today$/u }),
     ).toHaveAttribute("aria-current", "page");
 
     // Before a day of study has passed there's no Energy to show: no empty meter, just when it starts.
@@ -257,7 +262,7 @@ test.describe("Buddy tab", () => {
       "/energy",
     );
 
-    await expect(main.getByRole("button", { name: "2 of 3 missions" })).toBeVisible();
+    await expect(main.getByRole("button", { name: "1 of 3 missions" })).toBeVisible();
     const first = await openBuddyToday(page, "Zu");
     await expect(first.getByRole("link", { name: /^Energy/u })).toHaveCount(0);
 
@@ -282,7 +287,7 @@ test.describe("Buddy tab", () => {
 
     const energyTile = main.getByRole("link", { name: /^Energy \d+%$/u });
     await expect(energyTile).toHaveAttribute("href", "/energy");
-    await expect(main.getByRole("button", { name: "2 of 3 missions" })).toBeVisible();
+    await expect(main.getByRole("button", { name: "1 of 3 missions" })).toBeVisible();
 
     const today = await openBuddyToday(page, "Zu");
     const energy = today.getByRole("link", { name: /^Energy/u });
@@ -291,16 +296,19 @@ test.describe("Buddy tab", () => {
     await expect(energy).toHaveAttribute("href", "/energy");
 
     const missions = today.getByRole("region", { name: "Today's missions" });
-    await expect(missions.getByText("2 of 3")).toBeVisible();
+    await expect(missions.getByText("1 of 3")).toBeVisible();
 
     // A mission done says nothing more than its check; one to do says what's left.
     await expect(missions.getByRole("listitem")).toHaveText([
       /^Review\s*0 of 1 reviews\s*To do$/u,
       /^Something new\s*Done$/u,
-      /^Fix a mistake\s*Nothing due today\. It still counts\.\s*Done$/u,
+      /^Fix a mistake\s*Nothing due today\.\s*To do$/u,
     ]);
 
-    await expect(missions.getByText("All three make a full meal: +50 Brain Power.")).toBeVisible();
+    await expect(
+      missions.getByText("+50 Brain Power for finishing all three missions."),
+    ).toBeVisible();
+
     await expectAccessibleScreen(page, "the buddy's day");
 
     await page.keyboard.press("Escape");
@@ -324,7 +332,9 @@ test.describe("Buddy tab", () => {
     await expect(sheet).toBeVisible();
 
     // Locked pairs say how they're earned and how far along the learner is.
-    await expect(sheet.getByRole("radio", { name: /Cat-eye\s*2 of 7 full meals/u })).toBeDisabled();
+    await expect(
+      sheet.getByRole("radio", { name: /Cat-eye\s*2 of 7 days with all three missions/u }),
+    ).toBeDisabled();
 
     await expect(
       sheet.getByRole("radio", { name: /Monocle\s*Win the final challenge/u }),
@@ -373,10 +383,10 @@ test.describe("Buddy tab", () => {
     await page.context().close();
   });
 
-  test("a full meal says it's done, and missions wait for a session that doesn't exist yet", async ({
+  test("all three missions done says so, and missions wait for a session that doesn't exist yet", async ({
     browser,
   }) => {
-    const fed = await createFullMealLearner();
+    const fed = await createAllMissionsLearner();
     const page = await openAs(browser, fed);
     await stubBuddy({ answers: [], page });
 
@@ -390,7 +400,7 @@ test.describe("Buddy tab", () => {
     const missions = fedToday.getByRole("region", { name: "Today's missions" });
 
     await expect(missions.getByText("3 of 3")).toBeVisible();
-    await expect(missions.getByText("Full meal! +50 Brain Power")).toBeVisible();
+    await expect(missions.getByText("All three missions done: +50 Brain Power")).toBeVisible();
     await page.context().close();
 
     // Reading the buddy never builds today's session, so the missions say when they start.
@@ -812,7 +822,6 @@ test.describe("Buddy tab", () => {
       await expect(conversation.getByText("Superposition", { exact: true })).toBeVisible();
       await expect(suggestions).toHaveCount(0);
       expect(asked).toHaveLength(1);
-      expect(asked[0]?.suggested).toBe(true);
 
       // A plan change in the learner's own words comes back as a card; nothing changes yet.
       const composer = conversation.getByRole("textbox", { name: "Message Otto" });
@@ -822,7 +831,7 @@ test.describe("Buddy tab", () => {
       const card = conversation.getByRole("region", { name: "Change to your plan" });
       await expect(card).toContainText("Saturday: rest day.");
       await expect(composer).toHaveValue("");
-      expect(asked[1]).toStrictEqual({ question: "No studying on Saturdays", suggested: false });
+      expect(asked[1]).toStrictEqual({ question: "No studying on Saturdays" });
       expect(await readChangeStatus(change.id)).toBe("proposed");
       await expectAccessibleScreen(page, "the buddy's conversation");
 

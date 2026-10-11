@@ -163,7 +163,6 @@ export const foodChainEnergyLesson: SeedLesson = {
             "A hundredth of the plants' energy: that's why a single jaguar needs a huge territory.",
             "Um centésimo da energia das plantas: por isso uma única onça precisa de um território enorme.",
           ),
-          expression: "1000000 * 0.1^2",
           max: 1_000_000,
           min: 1,
           scale: "log",
@@ -171,17 +170,24 @@ export const foodChainEnergyLesson: SeedLesson = {
             "Each level multiplies by about 0.1, so two levels up keeps 0.1 × 0.1 = 1%.",
             "Cada nível multiplica por cerca de 0,1, então dois níveis acima sobra 0,1 × 0,1 = 1%.",
           ),
+          truth: {
+            expression: "1000000 * 0.1^2",
+            kind: "computed",
+            workings: [
+              {
+                expression: "1000000 * 0.1",
+                label: t("Capybaras (level 2)", "Capivaras (nível 2)"),
+              },
+              { expression: "1000000 * 0.1^2", label: t("Jaguars (level 3)", "Onças (nível 3)") },
+            ],
+          },
           unit: "kcal",
-          workings: [
-            { expression: "1000000 * 0.1", label: t("Capybaras (level 2)", "Capivaras (nível 2)") },
-            { expression: "1000000 * 0.1^2", label: t("Jaguars (level 3)", "Onças (nível 3)") },
-          ],
         },
         prompt: t(
           "The plants of a wetland capture 1,000,000 kcal. Capybaras eat the plants and jaguars eat the capybaras. Guess first: how much reaches the jaguars?",
           "As plantas de um pantanal captam 1.000.000 kcal. Capivaras comem as plantas e onças comem as capivaras. Chute primeiro: quanto chega às onças?",
         ),
-        template: "estimateReveal",
+        template: "guessReveal",
       },
       kind: "activity",
       skill: "ten-percent-rule",

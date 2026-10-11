@@ -80,22 +80,37 @@ function plannerPlan(skillId: string) {
   };
 }
 
+/**
+ * A boss planned while the bank held fewer than five questions for it: ten, seven right to win,
+ * once Start has the rest written.
+ */
+export const THIN_CHECKPOINT = { minutes: 15, passMark: 7, questions: 10 } as const;
+
+/** A checkpoint takes about a minute and a half a question. */
+const CHECKPOINT_MINUTES = 9;
+
+/** Questions the bank holds per skill when the checkpoint is thin, and what writing adds. */
+const THIN_QUESTIONS_PER_SKILL = 1;
+const WRITTEN_PER_SKILL = 4;
+
 function toPayload({
   bossId,
   itemIds,
   kind,
+  passMark,
   skillIds,
 }: {
   bossId: string;
   itemIds: string[];
   kind: CheckpointKind;
+  passMark: number;
   skillIds: string[];
 }) {
   return {
     checkpoint: {
       kind,
       mock: kind === "weekly",
-      passMark: CHECKPOINT_PASS_MARK,
+      passMark,
       phase: 0,
       rematch: false,
       timeLimitMinutes: kind === "weekly" ? MOCK_MINUTES : null,
@@ -109,15 +124,19 @@ function toPayload({
 
 /**
  * Today's session holding one checkpoint: the first phase's boss (or the week's mock), with six
- * questions on two skills. The plan has a second phase, which a lost boss never locks.
+ * questions on two skills. The plan has a second phase, which a lost boss never locks. A `thin`
+ * boss was planned while the bank held one question per skill: `writeQuestions` stands in for
+ * the run that writes the rest.
  */
 export async function createCheckpointLearner({
   kind = "boss",
   planned = false,
+  thin = false,
 }: {
   kind?: CheckpointKind;
   /** The planner owns the plan and today holds the week's challenge, so it can move. */
   planned?: boolean;
+  thin?: boolean;
 } = {}) {
   const [{ goal, user }, skills] = await Promise.all([
     createGoalLearner(),
@@ -130,10 +149,12 @@ export async function createCheckpointLearner({
     ...(planned ? plannerPlan(skills[0]?.id ?? "") : {}),
   });
 
+  const perSkill = thin ? THIN_QUESTIONS_PER_SKILL : QUESTIONS_PER_SKILL;
+
   const [items, boss, session] = await Promise.all([
     Promise.all(
       skills.flatMap((skill, skillIndex) =>
-        Array.from({ length: QUESTIONS_PER_SKILL }, (_, index) =>
+        Array.from({ length: perSkill }, (_, index) =>
           itemFixture({
             content: choiceItemContent(`${SKILL_NAMES[skillIndex]} question ${index + 1}?`),
             skillId: skill.id,
@@ -153,19 +174,37 @@ export async function createCheckpointLearner({
   ]);
 
   const block = await studySessionBlockFixture({
-    estimatedMinutes: 9,
+    estimatedMinutes: thin ? THIN_CHECKPOINT.minutes : CHECKPOINT_MINUTES,
     kind: "checkpoint",
     payload: toPayload({
       bossId: boss.id,
       itemIds: items.map((item) => item.id),
       kind,
+      passMark: thin ? THIN_CHECKPOINT.passMark : CHECKPOINT_PASS_MARK,
       skillIds: skills.map((skill) => skill.id),
     }),
     position: 0,
     sessionId: session.id,
   });
 
-  return { block, boss, plan, user };
+  // The run's calls write each skill's questions; `skillCount` of them succeed.
+  const writeQuestions = (skillCount = skills.length) =>
+    Promise.all(
+      skills
+        .slice(0, skillCount)
+        .flatMap((skill, skillIndex) =>
+          Array.from({ length: WRITTEN_PER_SKILL }, (_, index) =>
+            itemFixture({
+              content: choiceItemContent(
+                `${SKILL_NAMES[skillIndex]} written question ${index + 1}?`,
+              ),
+              skillId: skill.id,
+            }),
+          ),
+        ),
+    );
+
+  return { block, boss, plan, user, writeQuestions };
 }
 
 const DAYS_TO_BOSS = 3;
@@ -214,10 +253,15 @@ type DuelAnswer = keyof typeof DUEL_VERDICTS;
 
 async function answerDuelQuestion(
   page: Page,
-  { answer, keyboard, number }: { answer: DuelAnswer; keyboard: boolean; number: number },
+  {
+    answer,
+    keyboard,
+    number,
+    total,
+  }: { answer: DuelAnswer; keyboard: boolean; number: number; total: number },
 ) {
   const verdict = page.getByRole("status");
-  await expect(page.getByText(`Question ${number} of ${CHECKPOINT_QUESTIONS}`)).toBeVisible();
+  await expect(page.getByText(`Question ${number} of ${total}`)).toBeVisible();
 
   if (keyboard) {
     // The options keep their order: the right answer is the first.
@@ -229,7 +273,7 @@ async function answerDuelQuestion(
     return;
   }
 
-  const isLast = number === CHECKPOINT_QUESTIONS;
+  const isLast = number === total;
   await page.getByRole("radio", { name: answer }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(verdict).toHaveText(DUEL_VERDICTS[answer]);
@@ -238,15 +282,21 @@ async function answerDuelQuestion(
 
 /**
  * Answers every question of a running duel with the same option, reading each verdict before
- * moving on. By keyboard, a number key picks the option and Enter confirms, then moves on.
+ * moving on. By keyboard, a number key picks the option and Enter confirms, then moves on. `from`
+ * skips the questions a test answered itself; `total` is the duel's length (the fixtures' six).
  */
 export async function playDuel(
   page: Page,
-  { answer = "Right answer", keyboard = false }: { answer?: DuelAnswer; keyboard?: boolean } = {},
+  {
+    answer = "Right answer",
+    from = 1,
+    keyboard = false,
+    total = CHECKPOINT_QUESTIONS,
+  }: { answer?: DuelAnswer; from?: number; keyboard?: boolean; total?: number } = {},
 ) {
-  for (let number = 1; number <= CHECKPOINT_QUESTIONS; number += 1) {
+  for (let number = from; number <= total; number += 1) {
     // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.
-    await answerDuelQuestion(page, { answer, keyboard, number });
+    await answerDuelQuestion(page, { answer, keyboard, number, total });
   }
 }
 

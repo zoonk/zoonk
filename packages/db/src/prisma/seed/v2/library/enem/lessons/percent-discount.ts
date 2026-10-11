@@ -130,23 +130,31 @@ export const percentDiscountLesson: SeedLesson = {
         data: { isExample: true },
         fields: {
           compareAt: 25,
-          formula: "80 * (1 - off / 100)",
-          output: { label: t("You pay", "Você paga"), unit: "R$" },
-          variable: {
-            initial: 25,
-            label: t("Discount", "Desconto"),
-            max: 90,
-            min: 0,
-            name: "off",
-            step: 5,
-            unit: "%",
-          },
+          outputs: [
+            {
+              formula: "80 * (1 - off / 100)",
+              id: "output",
+              label: t("You pay", "Você paga"),
+              unit: "R$",
+            },
+          ],
+          variables: [
+            {
+              initial: 25,
+              label: t("Discount", "Desconto"),
+              max: 90,
+              min: 0,
+              name: "off",
+              step: 5,
+              unit: "%",
+            },
+          ],
         },
         prompt: t(
           "Slide the discount on the R$ 80 T-shirt and watch what you pay. The line drops R$ 8 for every 10%.",
           "Deslize o desconto da camiseta de R$ 80 e veja quanto você paga. A linha cai R$ 8 a cada 10%.",
         ),
-        template: "sliderGraph",
+        template: "formulaModel",
       },
       kind: "activity",
       skill: "percent-discount",

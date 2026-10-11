@@ -2,11 +2,68 @@ import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
 /**
  * Lessons whose questions are about something to see (6 Oct 2026, after an owner found a
- * Câmara "Imagens e legendas" lesson that described its pictures in words and a check that
+ * Câmara "Images and captions" lesson that described its pictures in words and a check that
  * wrote its table as "7h → 9; 8h → 5"). The writer must show them: a picture on every question
  * about one, the data as a Markdown table, a chart or a timeline drawn from data.
  */
 export const VISUAL_LESSON_SPECS = {
+  /**
+   * Telling separate things apart by how they look (Oct 2026, the owner brought back main's
+   * "which one is a dendrite?" pictures): the check about the three doorways shows one picture per
+   * option, each doorway alone, never one picture with parts numbered.
+   */
+  "en-church-doorways-beginner": {
+    canDo: "Tell Romanesque, Gothic and Baroque church doorways apart by how they look",
+    description: "Spot the shapes that give away when a church doorway was built.",
+    estimatedMinutes: 3,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Tell the story of the builders in Paris around 1160 who pointed their arches: the weight went down thin columns, so churches could grow taller and lighter. Don't name the style yet.",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Three styles of church doorway: Romanesque (round arch, thick walls, small openings), Gothic (pointed arch, thin columns, tall) and Baroque (twisting columns, curves and rich decoration). The arch's shape is the first thing to look at.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Show three doorways, one of each style, and ask which one is Gothic. Tempting wrong answer: the Baroque one, because it is the most decorated.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Ana visits a church in Lisbon whose doorway has a round arch set in thick walls. Ask which style it most likely is (Romanesque) and why. Tempting wrong answer: Gothic, because the church is old.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Romanesque doorways have round arches, Gothic ones pointed arches and Baroque ones twisting columns and curves.",
+        example: "A pointed arch over thin columns means Gothic.",
+        hard: false,
+        name: "Recognize church doorway styles",
+        topic: "Architecture styles",
+        useCase: "Telling how old a church is on a trip.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Reading a church doorway",
+  },
   /**
    * A plan that asked for a picture of data (Oct 2026, "native visuals first"): the writer draws a
    * curve of balances as the app's line chart, never as a generated picture.
@@ -70,6 +127,64 @@ export const VISUAL_LESSON_SPECS = {
     ],
     supportMode: "explanationFirst",
     title: "Compound interest",
+  },
+  /**
+   * Where a part sits in one whole (Oct 2026, drawn-in numbers): the check shows one flower cut in
+   * half with its parts numbered by code, and asks which number is the ovary.
+   */
+  "en-flower-parts-numbered": {
+    canDo: "Find the parts of a flower that make seeds",
+    description: "Find where a flower makes its seeds, and which parts help.",
+    estimatedMinutes: 3,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Every apple, bean and grain of rice started inside a flower: open with the fact that the fruit you eat grew from one small part at a flower's base.",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "The flower's parts for seeds: stamens make pollen; the stigma on top of the pistil catches it; the ovary at the pistil's base holds the ovules that become seeds, and it grows into the fruit. Petals only attract insects.",
+        kind: "explanation",
+        skills: [0],
+        visual:
+          "A flower cut in half lengthwise, with the petals, stamens, stigma and ovary labeled.",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Show a flower cut in half with its petal, stamen, stigma and ovary numbered, and ask which number is the ovary. Tempting wrong answer: the stigma, at the top of the same stalk.",
+        kind: "check",
+        skills: [0],
+        visual:
+          "A flower cut in half lengthwise, with the petal, stamen, stigma and ovary numbered.",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Leo cuts a young pea pod open and finds tiny peas in a row. Ask which part of the flower the pod grew from (the ovary) and what the peas were (the ovules). Tempting wrong answer: the petals.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Stamens make pollen, the stigma catches it and the ovary at the pistil's base holds the ovules that become seeds.",
+        example: "A pea pod is a ripe ovary, and the peas inside were its ovules.",
+        hard: false,
+        name: "Name the flower parts that make seeds",
+        topic: "Flowers and seeds",
+        useCase: "Knowing where fruit comes from in a garden.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Where seeds come from",
   },
   /**
    * A real spec (6 Oct 2026) whose writer labeled options "Desenho 1/2/3" and asked to "observe

@@ -1,0 +1,28 @@
+{
+  "name": "playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "dev": "node ../../scripts/dev/run-service.mts playground",
+    "dev:app": "next dev",
+    "dev:direct": "next dev -p 3202",
+    "start": "next start -p 3202",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@zoonk/player": "workspace:*",
+    "@zoonk/ui": "workspace:*",
+    "next": "catalog:",
+    "next-intl": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

@@ -11,9 +11,10 @@ import { getConversationBrainPower } from "../conversation-rules";
 import { type WrittenFeedback } from "./conversation-feedback";
 import { type ConversationRow, getCheckpointOutcome } from "./conversation-view";
 
-/** The ledger row of each kind of call; a speaking mock counts as a mock. */
+/** The ledger row of each kind of call; a speaking mock and an exam's speaking task count as mocks. */
 const LEDGER_KINDS = {
   checkpoint: "checkpoint",
+  examSpeaking: "mock",
   practice: "conversation",
   speakingMock: "mock",
 } as const satisfies Record<ConversationRow["kind"], LearningEventKind>;
@@ -35,7 +36,7 @@ function getLessonKind({ bossKind, row }: Pick<ConversationSettlement, "bossKind
     return CHECKPOINT_LEDGER_KINDS[bossKind];
   }
 
-  return row.kind === "speakingMock" ? "speakingMock" : null;
+  return row.kind === "speakingMock" || row.kind === "examSpeaking" ? row.kind : null;
 }
 
 async function findBlockContext(studyBlockId: string | null) {

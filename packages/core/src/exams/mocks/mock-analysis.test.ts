@@ -8,22 +8,34 @@ const HARD = { difficulty: 1, discrimination: 1, guessing: 0.2 };
 function conditions(scoring: MockConditions["scoring"]): MockConditions {
   return {
     day: 2,
+    examQuestions: null,
     fullLength: false,
+    partialCredit: "allOrNothing",
     purpose: "planned",
+    reused: 0,
     scoring,
     sections: [
-      { itemIds: [], minutes: 20, name: "Natural Sciences and Math", questions: 6, routing: null },
+      {
+        essays: [],
+        itemIds: [],
+        minutes: 20,
+        name: "Natural Sciences and Math",
+        questions: 6,
+        routing: null,
+      },
     ],
     shape: null,
     startTime: "13:30",
     timeZone: "America/Sao_Paulo",
     timedOutSections: [],
+    wrongPenalty: 1,
   };
 }
 
 function answer(overrides: Partial<GradedMockAnswer>): GradedMockAnswer {
   return {
     area: "Math",
+    credit: overrides.outcome === undefined || overrides.outcome === "right" ? 1 : 0,
     durationMs: 120_000,
     flagged: false,
     irtItem: EASY,
@@ -115,7 +127,16 @@ describe(analyzeMock, () => {
       previous: null,
     });
 
-    expect(result.net).toStrictEqual({ blank: 1, max: 4, net: 1, right: 2, wrong: 1 });
+    expect(result.net).toStrictEqual({
+      blank: 1,
+      max: 4,
+      net: 1,
+      partial: 0,
+      penalty: 1,
+      right: 2,
+      wrong: 1,
+    });
+
     expect(result.calibration?.unsure).toStrictEqual({ answered: 1, right: 0 });
     expect(result.irt).toBeNull();
     expect(getMockMeasure(result)).toBe(1);

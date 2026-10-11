@@ -118,7 +118,43 @@ describe(mergeBlueprintContent, () => {
     expect(merged.content.edition.questionCount).toBe(50);
   });
 
-  it("asks again for the subjects' counts a lookup didn't find once a reading changes the subjects", () => {
+  it("stores the language a new reading says the exam tests, and keeps it when a later one misses it", () => {
+    const testedLanguage = { citation: NEW_CITATION, language: "en" };
+    const unread = content();
+    const read = content({ structure: { ...unread.structure, testedLanguage } });
+
+    const first = mergeBlueprintContent({ current: unread, next: read });
+    const again = mergeBlueprintContent({ current: first.content, next: unread });
+
+    // How a goal learns its language isn't news for learners.
+    expect([first.changes, again.changes]).toStrictEqual([[], []]);
+    expect(first.content.structure.testedLanguage).toStrictEqual(testedLanguage);
+    expect(again.content.structure.testedLanguage).toStrictEqual(testedLanguage);
+  });
+
+  // DELE's pass mark, read before translations, showed in Spanish in a Portuguese screen.
+  it("takes a new reading's translations of the same pass mark, which aren't news for learners", () => {
+    const passMark = { citation: OLD_CITATION, kind: "passMark" as const, text: "Apto con 60." };
+    const unread = content({ structure: { ...content().structure, rules: [passMark] } });
+    const translations = { en: "Pass with 60.", pt: "Apto com 60." };
+
+    const read = content({
+      structure: {
+        ...unread.structure,
+        rules: [{ ...passMark, citation: NEW_CITATION, translations }],
+      },
+    });
+
+    const first = mergeBlueprintContent({ current: unread, next: read });
+    const again = mergeBlueprintContent({ current: first.content, next: unread });
+
+    expect([first.changes, again.changes]).toStrictEqual([[], []]);
+    expect(first.content.structure.rules).toStrictEqual([{ ...passMark, translations }]);
+    // A reading whose translation failed keeps the ones a reading before it made.
+    expect(again.content.structure.rules).toStrictEqual([{ ...passMark, translations }]);
+  });
+
+  it("asks again for the subjects' counts a lookup didn't give once a reading changes the subjects", () => {
     const found = {
       checkedAt: "2026-10-01T00:00:00.000Z",
       edition: "47º Exame",
@@ -148,9 +184,9 @@ describe(mergeBlueprintContent, () => {
       structure: { ...content().structure, subjects: [...content().structure.subjects, ethics] },
     });
 
-    // The subjects the lookup found nothing for weren't the exam's (Ética was missing), so the
-    // new subjects are asked for again; counts it found stay, and so does a lookup for the
-    // same subjects.
+    // The subjects the lookup was asked for weren't the exam's (ethics was missing), so the new
+    // subjects are asked for again, whether it found nothing or the other subjects' counts; a
+    // lookup that counts every new subject stays, and so does one for the same subjects.
     expect(
       mergeBlueprintContent({ current: withLookup(notFound), next }).content.structure
         .pastQuestions,
@@ -158,7 +194,17 @@ describe(mergeBlueprintContent, () => {
 
     expect(
       mergeBlueprintContent({ current: withLookup(found), next }).content.structure.pastQuestions,
-    ).toStrictEqual(found);
+    ).toBeUndefined();
+
+    const everySubject = {
+      ...found,
+      subjects: [...found.subjects, { name: "Ética Profissional", questions: 8 }],
+    };
+
+    expect(
+      mergeBlueprintContent({ current: withLookup(everySubject), next }).content.structure
+        .pastQuestions,
+    ).toStrictEqual(everySubject);
 
     expect(
       mergeBlueprintContent({ current: withLookup(notFound), next: content() }).content.structure
@@ -194,8 +240,8 @@ describe(mergeBlueprintContent, () => {
       },
     });
 
-    // ENEM read again from fewer documents: no counts, groups or headings, and "Prova de
-    // Redação" for the part learners and plans call "Redação".
+    // ENEM read again from fewer documents: no counts, groups or headings, and "Essay
+    // test" for the part learners and plans call "Essay".
     const next = content({
       structure: {
         ...content().structure,
@@ -233,6 +279,39 @@ describe(mergeBlueprintContent, () => {
     expect(
       mergeBlueprintContent({ current: merged.content, next: skipping }).content.structure.subjects,
     ).toStrictEqual(merged.content.structure.subjects);
+  });
+
+  it("keeps the choice a subject is an option of when a new reading of it leaves it out", () => {
+    const option = {
+      choiceGroup: "Língua Estrangeira",
+      citation: OLD_CITATION,
+      name: "Língua Espanhola",
+      partOf: "Linguagens",
+      questions: 5,
+      topics: [],
+      weight: null,
+    };
+
+    const current = content({ structure: { ...content().structure, subjects: [option] } });
+
+    const next = content({
+      structure: {
+        ...content().structure,
+        subjects: [
+          {
+            citation: NEW_CITATION,
+            name: "Língua Espanhola",
+            questions: 6,
+            topics: [],
+            weight: null,
+          },
+        ],
+      },
+    });
+
+    expect(mergeBlueprintContent({ current, next }).content.structure.subjects).toStrictEqual([
+      { ...option, citation: NEW_CITATION, questions: 6 },
+    ]);
   });
 
   it("compares stored JSON regardless of key order", () => {

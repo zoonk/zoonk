@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  createEmDashReplacer,
   deduplicateNormalizedTexts,
   ensureLocaleSuffix,
   getFirstSentence,
   normalizePunctuation,
   normalizeString,
   removeAccents,
+  replaceEmDashes,
   replaceNamePlaceholder,
   segmentWords,
   stripPunctuation,
@@ -298,6 +300,67 @@ describe(segmentWords, () => {
 
   it("keeps surrounding punctuation on non-space tokens", () => {
     expect(segmentWords("¿Hola?")).toStrictEqual(["¿Hola?"]);
+  });
+});
+
+describe(replaceEmDashes, () => {
+  // Real lessons (Oct 2026): an OAB worked example and a Civil law lesson.
+  it.each([
+    [
+      "Na contestação — a defesa escrita de quem responde — o advogado assina.",
+      "Na contestação, a defesa escrita de quem responde, o advogado assina.",
+    ],
+    [
+      "Cabem perdas e danos — reparação do prejuízo —, não anulação.",
+      "Cabem perdas e danos, reparação do prejuízo, não anulação.",
+    ],
+    ["Clarify—don't guess.", "Clarify, don't guess."],
+    ["Ends with a dash —", "Ends with a dash"],
+    ["— Could you repeat that?\n— Sure.", "Could you repeat that?\nSure."],
+  ])("turns %j into %j", (text, expected) => {
+    expect(replaceEmDashes(text)).toBe(expected);
+  });
+
+  it("keeps en dashes, which join ranges", () => {
+    expect(replaceEmDashes("Nível B1–B2, artigos 1º–5º")).toBe("Nível B1–B2, artigos 1º–5º");
+  });
+});
+
+/** The text sent in the pieces a stream would cut it into, joined back. */
+function stream(pieces: string[]): string {
+  const replacer = createEmDashReplacer();
+  return pieces.map((piece) => replacer.push(piece)).join("") + replacer.end();
+}
+
+describe(createEmDashReplacer, () => {
+  // A buddy reply (persona pass 9) and the cases `replaceEmDashes` covers, as a stream sends them.
+  const TEXTS = [
+    "Dá para começar cedo, sim — e o sistema de matrícula é um bom caso.",
+    "Na contestação — a defesa escrita de quem responde — o advogado assina.",
+    "Cabem perdas e danos — reparação do prejuízo —, não anulação.",
+    "Clarify—don't guess.",
+    "Ends with a dash —",
+    "— Could you repeat that?\n— Sure.",
+    "Antes:\n\n- um ponto — outro\n— fala\nfim — \nnova linha",
+  ];
+
+  it.each(TEXTS)("reads %j as the whole text would, wherever the stream cuts it", (text) => {
+    const expected = replaceEmDashes(text);
+    const characters = text.split("");
+
+    expect(stream(characters)).toBe(expected);
+
+    characters.forEach((_, index) => {
+      expect(stream([text.slice(0, index), text.slice(index)])).toBe(expected);
+    });
+  });
+
+  it("sends a piece's words right away, holding back only what a dash could still change", () => {
+    const replacer = createEmDashReplacer();
+
+    expect(replacer.push("Sim, dá ")).toBe("Sim, dá");
+    expect(replacer.push("— e")).toBe(", e");
+    expect(replacer.end()).toBe("");
   });
 });
 

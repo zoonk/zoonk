@@ -5,6 +5,7 @@ import { findTermsUsedBeforeExplained } from "./term-order";
 function explanation(text: string): WrittenScreen {
   return {
     exampleLineIdea: null,
+    explore: null,
     image: null,
     kind: "explanation",
     text,
@@ -19,8 +20,8 @@ function check(question: string, option = "Two"): WrittenScreen {
     image: null,
     kind: "check",
     options: [
-      { isCorrect: true, reason: "Right.", text: option },
-      { isCorrect: false, reason: "Not quite.", text: "Four" },
+      { isCorrect: true, picture: null, reason: "Right.", text: option },
+      { isCorrect: false, picture: null, reason: "Not quite.", text: "Four" },
     ],
     question,
     visual: null,

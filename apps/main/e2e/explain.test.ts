@@ -1,11 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { openPaletteWithKeyboard } from "./command-palette";
+import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
@@ -35,6 +37,7 @@ test.describe("Quick explanations", () => {
     await goalUnderstandingFixture({
       goal: question,
       result: { question: "How a microwave works", route: "explain" },
+      userId: await ensureGuest(page),
     });
 
     await page.goto("/start");
@@ -130,7 +133,9 @@ test.describe("Quick explanations", () => {
     await expect(page.getByText("A cloud, not a little ball").first()).toBeVisible();
   });
 
-  test("builds the subject's course plan in one tap, with no goal to type", async ({
+  // Sam left "How much do you already know?" and still had a plan with lessons being written: now
+  // the level comes before anything exists, and only Start makes the goal.
+  test("builds the subject's course plan with no goal to type, creating nothing before Start", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -157,27 +162,40 @@ test.describe("Quick explanations", () => {
     await page.goto(`/explain/${goal.id}`);
 
     await page
-      .getByRole("button", { name: `I want to learn this in depth Build a ${course.title} plan` })
+      .getByRole("link", { name: `I want to learn this in depth Build a plan for ${course.title}` })
       .click();
 
-    // The course is the goal already: no goal to type and nothing to confirm, just its steps.
-    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+    // The course is the goal: no goal to type and nothing to confirm, just the learner's level.
+    await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}$`, "u"));
 
     await expect(
-      page.getByRole("heading", { name: "How much do you already know?" }),
+      page.getByRole("heading", { level: 1, name: "How much do you already know?" }),
     ).toBeVisible();
 
     await expect(page.getByRole("main").getByText(course.title, { exact: true })).toBeVisible();
     await expect(page.getByRole("textbox", { name: "Your goal" })).toBeHidden();
-    await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeHidden();
 
-    const goalId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
-
-    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
-      details: { courseStart: { chapterId: null } },
-      kind: "learn",
+    // Leaving here leaves nothing: no goal, so no plan and no lessons being written.
+    const courseGoals = {
+      kind: "learn" as const,
       primaryCourseId: course.id,
       userId: noProgressUser.id,
+    };
+
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`/explain/${goal.id}$`, "u"));
+    await expect(prisma.goal.count({ where: courseGoals })).resolves.toBe(0);
+
+    await page.goForward();
+    await startCourseWithLevel(page);
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+
+    // The level is behind them: onboarding goes on with what it still needs.
+    await expect(page.getByRole("heading", { name: "How much do you already know?" })).toBeHidden();
+
+    await expect(prisma.goal.findFirstOrThrow({ where: courseGoals })).resolves.toMatchObject({
+      details: { answered: ["level"], courseStart: { chapterId: null }, level: "basic" },
+      kind: "learn",
     });
   });
 
@@ -276,8 +294,8 @@ test.describe("Quick explanations", () => {
       const goFurther = page.getByRole("region", { name: "Want to go further?" });
 
       await expect(
-        goFurther.getByRole("button", {
-          name: /I want to learn this in depth Build a How the stock market works plan/u,
+        goFurther.getByRole("link", {
+          name: /I want to learn this in depth Build a plan for How the stock market works/u,
         }),
       ).toBeVisible();
 

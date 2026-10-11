@@ -58,6 +58,7 @@ ${formatUntrustedInput({ CHANGES: changes, SOURCE: source })}`;
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "source-change-notice",
   });

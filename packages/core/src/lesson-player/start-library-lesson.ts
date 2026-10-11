@@ -1,13 +1,11 @@
 import "server-only";
-import { RATE_LIMIT_RULES } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { isActorRateLimited } from "../entitlements/_utils/actor-rate-limit";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
-import { RATE_LIMIT_RETRY_SECONDS } from "../entitlements/limits";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
-import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { startLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
 import { trackLessonStarted } from "./_utils/lesson-events";
@@ -26,10 +24,12 @@ import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract"
 /** How the ledger labels a lesson run, so admin stats can tell it from checkpoints and practice. */
 const LIBRARY_LESSON_KIND = "library";
 
+/** `plusRequired`: a free exam plan past its first week holds this new lesson of its plan for Plus. */
 export type LibraryLessonStartOutcome =
   | Exclude<UsageDecision, { status: "allowed" }>
   | { run: LibraryLessonRun; status: "started" }
-  | { status: "notFound" };
+  | { status: "notFound" }
+  | { status: "plusRequired" };
 
 type RunSource = {
   lesson: { homeChapterId: string | null; id: string; title: string };
@@ -91,24 +91,6 @@ async function loadRunProgress({
   return loadProgressAnswers({ lessonId, since, userId });
 }
 
-async function limitExplanationStarts({
-  isGuest,
-  userId,
-}: {
-  isGuest: boolean;
-  userId: string;
-}): Promise<UsageDecision> {
-  const isLimited = await isActorRateLimited({
-    isGuest,
-    rule: RATE_LIMIT_RULES.lessonStart,
-    userId,
-  });
-
-  return isLimited
-    ? { retryAfterSeconds: RATE_LIMIT_RETRY_SECONDS, status: "slowDown" }
-    : { status: "allowed" };
-}
-
 /**
  * Starts a Library lesson for the learner or guest in the session. Starting counts against the
  * allowance once per lesson (restarts are free), so the outcome can ask the learner to slow down,
@@ -118,7 +100,7 @@ async function limitExplanationStarts({
  * week), so the learner continues where they left off; answers and the completion refer to its id.
  * The run says where Hyperdrive stood when it started, continuing this session's streak (never
  * another day's), and how the lesson opens for this learner (`support`). Only a new run counts as
- * "Lesson Started".
+ * "Lesson Started". A free exam plan past its first week opens its new lessons with Plus only.
  */
 export async function startLibraryLesson({
   input,
@@ -146,15 +128,19 @@ export async function startLibraryLesson({
 
   /**
    * A quick explanation is the front door: asking for it already claimed its own fair-use
-   * allowance, so playing it never takes one of the learner's lessons. Starting it again and again
-   * still waits under the lesson-start rate limit, since every run can grade typed answers.
+   * allowance, so playing it never takes one of the learner's lessons. The grader still checks only
+   * a few typed answers to each screen a day (`canGradeWithModel`).
    */
-  const usage = isOwnExplanation(lesson)
-    ? await limitExplanationStarts({ isGuest: session.user.isAnonymous === true, userId })
-    : await claimUsage({ kind: "lessonStart", targetId: lesson.id });
+  if (!isOwnExplanation(lesson)) {
+    if (await isLessonPlusOnly({ lessonId: lesson.id, timeZone: input.timeZone, userId })) {
+      return { status: "plusRequired" };
+    }
 
-  if (usage.status !== "allowed") {
-    return usage;
+    const usage = await claimUsage({ kind: "lessonStart", targetId: lesson.id });
+
+    if (usage.status !== "allowed") {
+      return usage;
+    }
   }
 
   const studySessionId = await findLessonStudySessionId({
@@ -166,7 +152,7 @@ export async function startLibraryLesson({
   const { isNew, run } = await openLessonRun({
     lesson,
     studySessionId,
-    timeZone: getAnswerTimeZone({ goal: null, timeZone: input.timeZone }),
+    timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),
     userId,
   });
 

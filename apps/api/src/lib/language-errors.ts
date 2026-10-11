@@ -1,6 +1,7 @@
 import { type UsageDecision } from "@zoonk/core/entitlements/contract";
 import { z } from "zod";
 import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-errors";
+import { signUpRequiredError } from "./lesson-player-errors";
 
 type RefusedConversation =
   | Exclude<UsageDecision, { status: "allowed" | "unauthorized" }>
@@ -34,6 +35,10 @@ export function conversationRefusalError(result: RefusedConversation) {
       message: "Too many conversations at once",
       retryAfterSeconds: result.retryAfterSeconds,
     });
+  }
+
+  if (result.status === "signUpRequired") {
+    return signUpRequiredError();
   }
 
   return languageError(result.status, "Conversation not found");
@@ -75,12 +80,22 @@ function conversationEndedError() {
   });
 }
 
+/** An exam's speaking task, like every mock exam, comes with Plus. */
+function plusRequiredError() {
+  return createErrorResponse({
+    code: "PLUS_REQUIRED",
+    message: "Exam speaking tasks come with Plus",
+    status: httpStatus.paymentRequired,
+  });
+}
+
 type LanguageRefusal =
   | "conversationEnded"
   | "invalid"
   | "noGoal"
   | "notFound"
   | "notLanguage"
+  | "plusRequired"
   | "unauthorized";
 
 /** Maps a language capability's outcome that isn't ready to the shared error envelope. */
@@ -92,6 +107,8 @@ export function languageError(status: LanguageRefusal, notFoundMessage = "Resour
       return notLanguageError();
     case "conversationEnded":
       return conversationEndedError();
+    case "plusRequired":
+      return plusRequiredError();
     case "invalid":
       return errors.unprocessableEntity("This request can't be applied here");
     case "noGoal":

@@ -501,6 +501,7 @@ function planChange(overrides: Partial<PlanChangeView>): PlanChangeView {
     createdAt: "2026-08-21T12:00:00.000Z",
     days: null,
     effect: null,
+    examDocument: "notice",
     id: "0198ca70-9c50-7000-8000-0000000000c1",
     kind: "edited",
     lessonsSkipped: 0,

@@ -1,3 +1,4 @@
+import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type LearnBuddy } from "@zoonk/learn/tutor-identity";
 import { type LessonQuestionConnection } from "../../questions/lesson-question-api";
 import { type LessonQuestionNavigation } from "../../questions/lesson-question-navigation";
@@ -12,4 +13,9 @@ export type LessonTutorConfig = {
   canAsk: boolean;
   connection: LessonQuestionConnection;
   navigation: LessonQuestionNavigation;
+  /**
+   * In a lesson, the tutor's suggestions for its screens from the lesson's payload, worded by the
+   * server in the lesson's language (`wordTutorSuggestions`); none on other screens.
+   */
+  suggestions?: readonly LessonTutorSuggestion[];
 };

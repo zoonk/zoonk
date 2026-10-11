@@ -6,11 +6,13 @@ import { useLessonSessionSlots } from "@/components/session/use-lesson-session-s
 import { Link, useRouter } from "@/i18n/navigation";
 import { changeLanguageActivityAction } from "@/lib/language/language-activity-action";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
+import { useTutorCards } from "@/lib/learn/use-tutor-cards";
 import { requestExampleLine } from "@/lib/lessons/lesson-help-requests";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { requestSpokenGrade } from "@/lib/speech/spoken-answer-request";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
+import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { LessonPlayerProvider, type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { LessonPlayerShell } from "@zoonk/player/lesson/shell";
@@ -33,7 +35,7 @@ import { startLibraryLesson } from "./start-library-lesson";
 const ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
 /** Guests and quick explanations play without the questions sheet. */
-const NO_TUTOR: TutorViewer = { buddy: null, canAsk: false };
+const NO_TUTOR: TutorViewer = { buddy: null, canAsk: false, goalId: null };
 
 /** Where a lesson closes to: back where it was opened from, and the next lesson there, if any. */
 export type LessonRouting = Pick<LessonPlayerRoutes, "exit" | "exitTo" | "nextLesson">;
@@ -93,6 +95,7 @@ export function LessonPlayerClient({
   studySessionId,
   support = null,
   tutor: tutorViewer = NO_TUTOR,
+  tutorSuggestions,
 }: {
   /** The learner's colleagues in a challenge, kept with their plan. */
   challengeTeam?: ChallengeTeam | null;
@@ -127,6 +130,8 @@ export function LessonPlayerClient({
    * (guests, quick explanations) the lesson plays without questions.
    */
   tutor?: TutorViewer;
+  /** The tutor's suggestions for the lesson's screens, worded in its language (`wordTutorSuggestions`). */
+  tutorSuggestions?: readonly LessonTutorSuggestion[];
 }) {
   const router = useRouter();
 
@@ -135,8 +140,14 @@ export function LessonPlayerClient({
     [lesson.id, skippableLanguage, studySessionId],
   );
 
-  const { buddy, canAsk } = tutorViewer;
-  const tutor = useMemo(() => getTutorConfig({ buddy, canAsk }), [buddy, canAsk]);
+  const { buddy, canAsk, goalId } = tutorViewer;
+  const cards = useTutorCards(goalId);
+
+  const tutor = useMemo(
+    () => getTutorConfig({ buddy, canAsk, cards, suggestions: tutorSuggestions }),
+    [buddy, canAsk, cards, tutorSuggestions],
+  );
+
   const sessionSlots = useLessonSessionSlots({ session: sessionContext });
 
   const slots = useMemo(

@@ -2,10 +2,10 @@ import "server-only";
 import { type Mistake, type MistakeCause, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
-import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { readGoalPlan } from "../learner/_utils/read-goal-plan";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../library/exams/true-false-labels";
-import { loadExamStructure } from "../sessions/_utils/load-build-inputs";
+import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { getSession } from "../users/get-session";
 import { type MistakeListInput } from "./contract";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
@@ -39,7 +39,12 @@ async function getScopeSkillIds(input: MistakeListInput): Promise<string[] | nul
     return [input.skillId];
   }
 
-  return input.goalId ? loadGoalSkillIds(input.goalId) : null;
+  if (!input.goalId) {
+    return null;
+  }
+
+  const plan = await readGoalPlan(input.goalId);
+  return plan.skills.map((skill) => skill.id);
 }
 
 async function countMistakes(where: {

@@ -64,7 +64,7 @@ async function FreePlanAnswer({ hasNoAccount }: { hasNoAccount: boolean }) {
       "{tutor, plural, one {# tutor message} other {# tutor messages}} and {uploads, plural, one {# upload} other {# uploads}} a day",
       { tutor: limits.tutorMessagesPerDay ?? 0, uploads: limits.uploadsPerDay ?? 0 },
     ),
-    t("Speaking calls, with lower limits than Plus"),
+    t("Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"),
   ];
 
   return (

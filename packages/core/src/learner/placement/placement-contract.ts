@@ -2,6 +2,7 @@ import { type Goal } from "@zoonk/db";
 import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
+import { readCourseStart } from "../../goals/course-start-details";
 import { answerTimeZoneSchema, choiceAnswerSchema, itemAnswerInputSchema } from "../contract";
 import { type OwnLevel } from "./placement-steps";
 
@@ -105,6 +106,30 @@ export function getOwnLevel({
   const parsed = ownLevelSchema.safeParse(stored);
 
   return parsed.success ? parsed.data : fromCefrLevel(stored);
+}
+
+/**
+ * Whether the goal's level was measured, not stated: a language goal's level test sets it from
+ * answers on calibrated questions (`details.levelTest`), so it counts as evidence (see
+ * `listKnownByMeasuredLevel`). A level the learner gave in onboarding only marks bands to confirm.
+ */
+export function isLevelMeasured(goal: Pick<Goal, "details">): boolean {
+  return isJsonObject(goal.details) && isJsonObject(goal.details.levelTest);
+}
+
+/**
+ * Whether the learner skipped placement for the goal: they start from nothing (`level: "none"`),
+ * at a chapter they chose in the catalog, or chose to start from scratch. Placement then asks
+ * them nothing, in onboarding or the first week's sessions, and nothing writes its questions.
+ */
+export function isPlacementSkipped(goal: { details: unknown }): boolean {
+  const details = isJsonObject(goal.details) ? goal.details : {};
+
+  return (
+    details.level === "none" ||
+    details.placementDeclined === true ||
+    Boolean(readCourseStart(details)?.chapterId)
+  );
 }
 
 /**

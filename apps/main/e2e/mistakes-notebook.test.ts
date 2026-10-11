@@ -94,7 +94,7 @@ test.describe("Mistakes notebook", () => {
       await expect(page.getByText(/^Last time you answered/u)).toBeHidden();
 
       // A misread is drilled by reading first: the answers show once the question is read.
-      await expect(page.getByRole("button", { name: "R$ 2.040" })).toBeHidden();
+      await expect(page.getByRole("radio", { name: "R$ 2.040" })).toBeHidden();
 
       // Keys work once the page hydrates, so the first press retries. Enter shows the answers of
       // a question read first, then a number picks; picking again is harmless.
@@ -102,7 +102,7 @@ test.describe("Mistakes notebook", () => {
         await page.keyboard.press("Enter");
         await page.keyboard.press("2");
 
-        await expect(page.getByRole("button", { name: "R$ 2.040", pressed: true })).toBeVisible({
+        await expect(page.getByRole("radio", { checked: true, name: "R$ 2.040" })).toBeVisible({
           timeout: 1000,
         });
       }).toPass({ timeout: 5000 });
@@ -132,7 +132,7 @@ test.describe("Mistakes notebook", () => {
       page.getByText("There's a trap in here. Find it before you answer."),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "Right answer" }).click();
+    await page.getByRole("radio", { name: "Right answer" }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
 
     // A trap drill names the trap after the answer, a right one included.
@@ -191,7 +191,7 @@ test.describe("Mistakes notebook", () => {
   test("reports a practice question while its keys wait", async ({ browser }) => {
     const { user } = await createMistakeLearner({ causes: ["guess"] });
     const page = await openAs(browser, user);
-    const answer = page.getByRole("button", { name: "Right answer" });
+    const answer = page.getByRole("radio", { name: "Right answer" });
 
     await page.goto("/mistakes/practice");
 
@@ -212,7 +212,7 @@ test.describe("Mistakes notebook", () => {
     await page.keyboard.press("Enter");
     await expect(page.getByRole("menu")).toBeVisible();
     await page.keyboard.press("1");
-    await expect(answer).toHaveAttribute("aria-pressed", "false");
+    await expect(answer).not.toBeChecked();
 
     // The menu only reports a problem: no votes in the middle of a practice.
     await expect(page.getByRole("menuitemcheckbox")).toHaveCount(0);
@@ -224,12 +224,12 @@ test.describe("Mistakes notebook", () => {
     await page.keyboard.press("1");
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
-    await expect(answer).toHaveAttribute("aria-pressed", "false");
+    await expect(answer).not.toBeChecked();
 
     // Once the form is closed and focus is back on the menu's button, number keys answer again.
     await expect(page.getByRole("button", { name: "Question options" })).toBeFocused();
     await page.keyboard.press("1");
-    await expect(answer).toHaveAttribute("aria-pressed", "true");
+    await expect(answer).toBeChecked();
     await page.context().close();
   });
 });

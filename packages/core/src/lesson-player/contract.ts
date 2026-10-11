@@ -12,11 +12,14 @@ import { studyBlockCompletionSchema } from "../sessions/completion-contract";
 /**
  * Stable error codes of the lesson endpoints, so the player (web or native) reacts to each one
  * (a calm wait, a sign-up or upgrade prompt, a fresh start) without parsing messages.
+ * `SIGN_UP_REQUIRED` is a guest's new AI work once the day's budget all guests share is spent.
  */
 export const LESSON_PLAYER_ERROR_CODES = {
   lessonSetAside: "LESSON_SET_ASIDE",
   noSpeech: "NO_SPEECH",
+  plusRequired: "PLUS_REQUIRED",
   runEnded: "LESSON_RUN_ENDED",
+  signUpRequired: "SIGN_UP_REQUIRED",
   slowDown: "SLOW_DOWN",
   usageLimitReached: "USAGE_LIMIT_REACHED",
 } as const;
@@ -126,8 +129,11 @@ export type PlayableStepImage = {
   width: number | null;
 };
 
-/** A screen's picture drawn after the lesson was read, for the player to show as it arrives. */
-export type LessonPicture = { image: PlayableStepImage; stepId: string };
+/**
+ * A screen's picture drawn after the lesson was read, for the player to show as it arrives: the
+ * screen's own, or with `optionId` one of its options'.
+ */
+export type LessonPicture = { image: PlayableStepImage; optionId?: string; stepId: string };
 
 type PlayableStepBase = {
   id: string;
@@ -137,7 +143,7 @@ type PlayableStepBase = {
 };
 
 /**
- * Where a screen comes from: a page of the learner's own material ("Aula 5, slide 4") for lessons
+ * Where a screen comes from: a page of the learner's own material ("Class 5, slide 4") for lessons
  * built from it, or a public document its facts come from (a law, an exam notice), shown as a
  * dated "Sources" chip.
  */
@@ -161,6 +167,11 @@ export type PlayableTeachingStepOf<TKind extends TeachingStepKind> = PlayableSte
    */
   imagePending: boolean;
   kind: TKind;
+  /**
+   * The pictures of a question whose options are pictures, by option id. An option without one
+   * (still being drawn, or taken out of use) shows its description.
+   */
+  optionPictures?: Readonly<Record<string, PlayableStepImage>>;
 };
 
 /**

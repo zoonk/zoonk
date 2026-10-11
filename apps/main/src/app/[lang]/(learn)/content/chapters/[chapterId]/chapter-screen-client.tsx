@@ -7,6 +7,7 @@ import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { type ChapterView } from "@zoonk/core/view-models/chapter/contract";
 import { type ChapterHrefs, ChapterScreen } from "@zoonk/learn/chapter";
+import { type MindMapLimit } from "@zoonk/learn/mind-maps";
 import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
@@ -25,12 +26,15 @@ export function ChapterScreenClient({
   back,
   chapter,
   mindMap,
+  mindMapCap,
   tutor,
 }: {
   back: ChapterBack | null;
   chapter: ChapterView;
   /** The chapter's mind map (`getChapterMindMap`), made from its summary once it's finished. */
   mindMap: ChapterMindMapView | null;
+  /** The cap of the learner's plan their maps already reached (`getReachedCap`), or null. */
+  mindMapCap: MindMapLimit | null;
   /** Who asks and the buddy who answers (`getTutorViewer`). */
   tutor: TutorViewer;
 }) {
@@ -62,7 +66,7 @@ export function ChapterScreenClient({
       ask={<MainAskTutor {...tutor} size="bar" target={target} />}
       chapter={chapter}
       hrefs={back ? { ...CHAPTER_HREFS, back: back.href, backLabel: back.label } : CHAPTER_HREFS}
-      mindMap={mindMap && { actions: mindMapActions, view: mindMap }}
+      mindMap={mindMap && { actions: mindMapActions, cap: mindMapCap, view: mindMap }}
       renderLessonText={(text) => <LessonRichText text={text} />}
     />
   );

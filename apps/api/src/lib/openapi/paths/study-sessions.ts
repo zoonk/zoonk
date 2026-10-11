@@ -1,9 +1,9 @@
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
 import {
   studyAnswerInputSchema,
+  studyBlockStartInputSchema,
   studySessionTimeZoneInputSchema,
 } from "@zoonk/core/sessions/contract";
-import { z } from "zod";
 import { studySessionErrorCodes } from "../../study-session-errors";
 import {
   goalPathParamsSchema,
@@ -15,7 +15,7 @@ import {
   forbiddenResponse,
   jsonResponse,
   notFoundResponse,
-  tooManyRequestsResponse,
+  paymentRequiredResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
@@ -48,18 +48,6 @@ const sessionSummaryResponse = jsonResponse(
   studySessionSummaryResponseSchema,
   "What changed in the session",
 );
-
-const slowDownResponse = {
-  ...tooManyRequestsResponse,
-  description: `Take a short break, then keep reviewing. Error code: ${studySessionErrorCodes.slowDown}.`,
-  headers: z.object({
-    "Retry-After": z
-      .number()
-      .int()
-      .nonnegative()
-      .meta({ description: "Seconds until the next review can be answered" }),
-  }),
-} as const;
 
 export const studySessionPaths = {
   "/goals/{goalId}/weekly-challenge": {
@@ -105,7 +93,7 @@ export const studySessionPaths = {
   },
   "/study-sessions/{sessionId}/blocks/{blockId}/answers": {
     post: {
-      description: `Grades one answer and records it as learning (memory, mistakes notebook, fixes). A checkpoint says right or wrong without the answer until it ends. At unusual review volume it answers 429 with Retry-After (${studySessionErrorCodes.slowDown}).`,
+      description: `Grades one answer and records it as learning (memory, mistakes notebook, fixes). A checkpoint says right or wrong without the answer until it ends.`,
       operationId: "createStudyAnswer",
       requestBody: {
         content: { "application/json": { schema: studyAnswerInputSchema } },
@@ -126,7 +114,6 @@ export const studySessionPaths = {
           ...unprocessableEntityResponse,
           description: `The question isn't in the block. Error code: ${studySessionErrorCodes.invalidItem}.`,
         },
-        "429": slowDownResponse,
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Answer a study question",
@@ -136,7 +123,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/blocks/{blockId}/completions": {
     post: {
       description:
-        "Finishes a block and returns its completion moment: Brain Power (the full meal included when it just completed), the session bar, missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. Learn blocks finish once their lesson was finished in the lesson player.",
+        "Finishes a block and returns its completion moment: Brain Power (with the bonus for all three missions when it just paid), the session bar, missions, a checkpoint's result with each right answer and why, when a lesson comes back, and milestones earned. Learn blocks finish once their lesson was finished in the lesson player.",
       operationId: "createStudyBlockCompletion",
       requestBody: timeZoneBody,
       requestParams: { path: studyBlockPathParamsSchema },
@@ -162,7 +149,10 @@ export const studySessionPaths = {
       description:
         "Starts or resumes a block. The session's first start records where the learner stands, so its end can say what changed. The daily time limit is checked before anything new starts.",
       operationId: "createStudyBlockStart",
-      requestBody: timeZoneBody,
+      requestBody: {
+        content: { "application/json": { schema: studyBlockStartInputSchema } },
+        required: true,
+      },
       requestParams: { path: studyBlockPathParamsSchema },
       responses: {
         "200": jsonResponse(startedStudyBlockResponseSchema, "The started block"),
@@ -173,7 +163,7 @@ export const studySessionPaths = {
         },
         "409": {
           ...conflictResponse,
-          description: `The block is finished. Error code: ${studySessionErrorCodes.blockFinished}.`,
+          description: `The block is finished (error code ${studySessionErrorCodes.blockFinished}), or it's a challenge whose questions aren't written yet (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations, follow the run until it ends, then start it again with \`afterWriting\`).`,
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -184,16 +174,20 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/catch-up-blocks": {
     post: {
       description:
-        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again.",
+        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`); past a free exam plan's first week its new lessons come with Plus, these too.",
       operationId: "createStudyCatchUpBlocks",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },
       responses: {
         "200": jsonResponse(studySessionResponseSchema, "The session with the lessons added"),
         ...readErrors,
+        "402": {
+          ...paymentRequiredResponse,
+          description: `A free exam plan past its first week: its new lessons come with Plus (\`examAccess.trialEnded\`). Error code: ${studySessionErrorCodes.plusRequired}.`,
+        },
         "422": {
           ...unprocessableEntityResponse,
-          description: `No lessons left to catch up on. Error code: ${studySessionErrorCodes.nothingToCatchUp}.`,
+          description: `Nothing to add to today: no lessons left to catch up on, or the day doesn't offer them (\`catchUp.later.offered\` is false or \`catchUp\` is null). Error code: ${studySessionErrorCodes.nothingToCatchUp}.`,
         },
       },
       security: AUTHENTICATED_SECURITY,
@@ -204,7 +198,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/extra-blocks": {
     post: {
       description:
-        '"10 more minutes": one bonus block of mixed practice (or the next lesson) after the day\'s session, at most twice a day and never past the daily time limit. Its Brain Power is capped.',
+        '"10 more minutes": one bonus block of mixed practice (or the next lesson) after the day\'s session, at most twice a day and never past the daily time limit. Its Brain Power is capped. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.',
       operationId: "createStudyExtraBlock",
       requestParams: { path: studySessionPathParamsSchema },
       responses: {

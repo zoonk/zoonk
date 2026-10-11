@@ -14,12 +14,12 @@ import { useExtracted } from "next-intl";
 export function ActivityDataNote({
   content,
 }: {
-  content: Pick<ActivityStepContent, "data" | "template">;
+  content: Pick<ActivityStepContent, "data" | "fields" | "template">;
 }) {
   const t = useExtracted();
   const { data } = content;
 
-  if (!data || !showsActivityData(content.template)) {
+  if (!data || !showsActivityData(content)) {
     return null;
   }
 

@@ -13,9 +13,9 @@ import {
   type OnboardingRoutes,
   type RevealedPlan,
 } from "./onboarding-actions";
-import { AgeStep, GuardianInviteStep, TooYoung } from "./steps/age-step";
 import { BuddyStep } from "./steps/buddy-step";
-import { MemoryStep } from "./steps/memory-step";
+import { ExamChoiceStep } from "./steps/exam-choice-step";
+import { readLevelChoice } from "./steps/level-choices";
 import { PlacementStep } from "./steps/placement-step";
 import { PlanReveal } from "./steps/plan-reveal";
 import {
@@ -45,6 +45,12 @@ function getNativeLanguage(view: OnboardingView): string {
   return typeof native === "string" && native.trim() ? native : view.goal.language;
 }
 
+/** The exam's subjects the learner said they know well, as the goal saved them. */
+function readKnownSubjects(details: Record<string, unknown>): string[] {
+  const known = details.knownSubjects;
+  return Array.isArray(known) ? known.filter((name) => typeof name === "string") : [];
+}
+
 const EXAM_TARGETS: readonly ExamTarget[] = ["admission", "position", "score"];
 
 /**
@@ -56,7 +62,6 @@ function getExamTarget(details: Record<string, unknown>): ExamTarget {
   return EXAM_TARGETS.find((target) => target === details.examTarget) ?? "admission";
 }
 
-/** The month and year the learner said the exam is in ("in March 2027"), when they said both. */
 const QUESTION_STEPS = [
   "purpose",
   "role",
@@ -64,6 +69,7 @@ const QUESTION_STEPS = [
   "target",
   "targetDate",
   "followUps",
+  "examChoice",
   "level",
 ] as const;
 
@@ -73,7 +79,10 @@ function isQuestionStep(step: OnboardingStep): step is QuestionStep {
   return QUESTION_STEPS.some((question) => question === step);
 }
 
-/** A question about the goal: what it's for, the role, why, the target, the date or the level. */
+/**
+ * A question about the goal: what it's for, the role, why, the target, the date, the exam's
+ * choices or the level.
+ */
 function QuestionStepScreen({
   onAnswer,
   pending,
@@ -114,12 +123,20 @@ function QuestionStepScreen({
       return <DateStep {...props} />;
     case "followUps":
       return <FollowUpsStep {...props} questions={view.followUps} />;
+    case "examChoice":
+      return <ExamChoiceStep {...props} choices={view.examChoices} subject={subject} />;
     case "level":
       // One level for nine subjects says little: an exam with several asks which they know.
+      // Back shows what was picked before.
       return view.examSubjects.length > 1 ? (
-        <SubjectsLevelStep {...props} subject={subject} subjects={view.examSubjects} />
+        <SubjectsLevelStep
+          {...props}
+          initialKnown={readKnownSubjects(view.goal.details)}
+          subject={subject}
+          subjects={view.examSubjects}
+        />
       ) : (
-        <LevelStep {...props} subject={subject} />
+        <LevelStep {...props} initialLevel={readLevelChoice(view.goal.details)} subject={subject} />
       );
     default:
       return step satisfies never;
@@ -129,24 +146,19 @@ function QuestionStepScreen({
 /** The screen for one onboarding step. Each answer goes back through the flow. */
 export function OnboardingStepScreen({
   actions,
-  inviting,
   isGuest,
   onAnswer,
-  onGuardianDone,
   onPlacementDone,
   pending,
   plan,
   routes,
   run,
   step,
-  tooYoung,
   view,
 }: {
   actions: OnboardingActions;
-  inviting: boolean;
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => void;
-  onGuardianDone: () => void;
   onPlacementDone: () => void;
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
@@ -154,19 +166,10 @@ export function OnboardingStepScreen({
   /** The run building the goal's skill map, questions and plan, when the host follows it. */
   run: GenerationRun | null;
   step: OnboardingStep;
-  tooYoung: boolean;
   view: OnboardingView;
 }) {
   const subject = getSubject(view);
   const props = { onAnswer, pending };
-
-  if (tooYoung) {
-    return <TooYoung />;
-  }
-
-  if (inviting) {
-    return <GuardianInviteStep onDone={onGuardianDone} onInvite={actions.inviteGuardian} />;
-  }
 
   if (isQuestionStep(step)) {
     return <QuestionStepScreen {...props} step={step} subject={subject} view={view} />;
@@ -179,14 +182,12 @@ export function OnboardingStepScreen({
           {...props}
           // An exam takes its notice's day when the learner gave none.
           dated={view.goal.targetDate !== null || view.goal.kind === "exam"}
-          getTimeAdvice={(studyDays) => actions.getTimeAdvice({ goalId: view.goal.id, studyDays })}
+          exam={view.goal.kind === "exam"}
+          getTimeAdvice={(week) => actions.getTimeAdvice({ goalId: view.goal.id, ...week })}
           recommendedMinutes={view.recommendedMinutes}
+          run={run}
         />
       );
-    case "age":
-      return <AgeStep {...props} />;
-    case "memory":
-      return <MemoryStep {...props} isMinor={view.isMinor} />;
     case "buddy":
       return <BuddyStep {...props} />;
     case "placement":

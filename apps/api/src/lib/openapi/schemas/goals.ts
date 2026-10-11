@@ -22,8 +22,17 @@ export const goalSchema = z
       .object({
         currentPhase: z.int().nullable(),
         endDate: isoDateSchema.nullable(),
-        lessonsDone: z.int().min(0),
-        lessonsTotal: z.int().min(0),
+        lessonsDone: z
+          .int()
+          .min(0)
+          .meta({ description: "Lessons the learner studied; lessons set aside never count" }),
+        lessonsTotal: z
+          .int()
+          .min(0)
+          .meta({
+            description:
+              "Lessons in the plan: every one but those tested out, which are off the plan",
+          }),
         phaseCount: z.int().min(0),
         ready: z.boolean().meta({ description: "False while the planner is building the plan" }),
       })

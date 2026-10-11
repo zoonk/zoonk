@@ -51,7 +51,7 @@ const schema = z.object({
 
 type FindTopicFrequencyInput = {
   board: string | null;
-  /** The exam and, when it has phases or roles, the learner's ("OAB…, 1ª fase"). */
+  /** The exam and, when it has phases or roles, the learner's ("OAB…, first phase"). */
   exam: string;
   /** The subjects to rank, each with its topics in the notice's words. */
   subjects: TopicFrequencySubject[];
@@ -121,6 +121,7 @@ export async function findTopicFrequency({
         stopWhen: isStepCount(MAX_STEPS),
         tools: buildResearchSearchTools({ model, searchTool }),
       }),
+    libraryInput: true,
     promptVersion: `search:${searchTool}`,
     systemPrompt,
     task: "find-topic-frequency",

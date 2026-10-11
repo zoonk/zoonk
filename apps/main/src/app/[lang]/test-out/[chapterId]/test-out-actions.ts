@@ -27,7 +27,7 @@ export async function submitTestOutAction(
     changeId: outcome.changeId,
     correct: outcome.correct,
     passed: outcome.passed,
-    skippedLessons: outcome.testedOutPlanItemIds.length,
+    skippedLessons: outcome.lessonsSkipped,
     total: outcome.total,
   };
 }

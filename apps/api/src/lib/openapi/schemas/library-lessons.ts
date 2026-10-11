@@ -1,4 +1,5 @@
 import { type TeachingStepKind } from "@zoonk/core/lesson-player/contract";
+import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
 import { CourseLevel } from "@zoonk/db";
@@ -134,6 +135,12 @@ export const playableLibraryLessonResponseSchema = z
         targetLanguage: z.string().nullable(),
       }),
       status: z.literal("ready"),
+      tutorSuggestions: z
+        .array(lessonTutorSuggestionSchema)
+        .meta({
+          description:
+            "The tutor's suggestions for the lesson's screens, worded in the lesson's language: show `label` on the chip and send `id` as `suggestion` when the learner taps it (`POST /v1/lessons/{lessonId}/questions`). The question is stored in these same words",
+        }),
     }),
     z.object({ lesson: z.object(lessonOutlineShape), status: z.literal("notGenerated") }),
     z

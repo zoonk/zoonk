@@ -1,13 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
-import { inlineImage } from "../_test-utils/activity-player";
-import { explanationStep, teachingStep } from "../_test-utils/lesson-steps";
-import {
-  buildAdapters,
-  buildLesson,
-  renderLessonPlayer,
-} from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { swipeFrom, tap } from "../_test-utils/touch-screen";
+import { buildLesson } from "../preview/preview-lesson";
+import { explanationStep, inlineImage, teachingStep } from "../preview/preview-steps";
 
 /**
  * Lessons on a phone's touch screen (the touch instance in vitest.config.mts) turn like stories: a
@@ -57,6 +53,19 @@ describe("turning lesson screens with a finger", () => {
     // A swipe on the picture itself turns too: the whole screen is the page.
     await swipeFrom(page.getByRole("img", { name: OCCIPITAL.alt }), { x: SWIPE_PX });
     await expect.element(heading(FRONTAL.title)).toBeVisible();
+  });
+
+  it("turns on a quick flick the page reads late, as a busy phone does", async () => {
+    const lesson = buildLesson([pictured(FRONTAL), pictured(OCCIPITAL)]);
+    renderLessonPlayer({ lesson });
+
+    // The finger was quick; the page only reads its lift a second later.
+    await swipeFrom(page.getByText("It plans what you do next."), {
+      liftReadAfterMs: 1000,
+      x: -SWIPE_PX,
+    });
+
+    await expect.element(heading(OCCIPITAL.title)).toBeVisible();
   });
 
   it("never answers, checks or skips a question with a swipe", async () => {

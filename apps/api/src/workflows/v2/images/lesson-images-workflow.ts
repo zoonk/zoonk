@@ -2,7 +2,9 @@ import { getWorkflowMetadata } from "workflow";
 import {
   type ImageAnalytics,
   createStepImageStep,
+  createStepOptionPictureStep,
   listLessonImageStepsStep,
+  listLessonOptionPicturesStep,
 } from "./steps/lesson-image-steps";
 import { checkPictureStep } from "./steps/picture-check-steps";
 
@@ -32,9 +34,10 @@ function countOutcomes(
  * Gives a written lesson its pictures in the background, all at once: a screen asks for a picture
  * only when it needs one (the learner would otherwise have to imagine what it shows, or a question
  * is about it), so every one is drawn, each reused from an image of the same scene when there is
- * one. The lesson opens before this ends and the player shows each picture as it arrives, before
- * its model check: the checks run once every picture is linked, and one that fails is redrawn and
- * replaced (`checkImageAsset`); a screen whose redraws fail too shows its description instead.
+ * one, and so is each option of a question whose options are pictures. The lesson opens before
+ * this ends and the player shows each picture as it arrives, before its model check: the checks
+ * run once every picture is linked, and one that fails is redrawn and replaced
+ * (`checkImageAsset`); a screen or option whose redraws fail too shows its description instead.
  */
 export async function lessonImagesWorkflow({
   analytics,
@@ -44,11 +47,16 @@ export async function lessonImagesWorkflow({
 
   const { workflowRunId } = getWorkflowMetadata();
   const context = { contentScope: "shared" as const, traceId: workflowRunId, ...analytics };
-  const stepIds = await listLessonImageStepsStep(lessonId);
 
-  const outcomes = await Promise.allSettled(
-    stepIds.map((stepId) => createStepImageStep({ analytics: context, stepId })),
-  );
+  const [stepIds, options] = await Promise.all([
+    listLessonImageStepsStep(lessonId),
+    listLessonOptionPicturesStep(lessonId),
+  ]);
+
+  const outcomes = await Promise.allSettled([
+    ...stepIds.map((stepId) => createStepImageStep({ analytics: context, stepId })),
+    ...options.map((option) => createStepOptionPictureStep({ analytics: context, ...option })),
+  ]);
 
   // Each new picture shows as soon as it's linked; its model check follows, at flex.
   await Promise.allSettled(

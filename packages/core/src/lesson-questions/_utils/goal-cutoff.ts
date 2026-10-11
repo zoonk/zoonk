@@ -20,6 +20,7 @@ export async function loadGoalCutoff(goal: Goal): Promise<PlanScopeContext["goal
 
   return {
     edition: cutoff.edition,
+    maxScore: cutoff.maxScore,
     quota: cutoff.quota,
     score: cutoff.score,
     source: cutoff.source.url,

@@ -50,7 +50,7 @@ function sharesWordsAndNumbers({
 
 /**
  * Words in order with single spaces around them, so a name matches whole words only. A hyphen
- * inside a word joins its halves, since PDF text often loses it ("políticoadministrativa").
+ * inside a word joins its halves, since PDF text often loses it ("well-known" read as "wellknown").
  */
 function toWordLine(text: string): string {
   const joined = normalizeText(text).replaceAll(/(?<=\p{L})-(?=\p{L})/gu, "");

@@ -2,6 +2,7 @@ import { type Item, type ItemFormat, type MediaAsset } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { type ParsedItemContent, parseItemContent } from "../../library/items/item-content";
 import { type ItemImage, toItemImage } from "../../library/items/item-image";
+import { gradeOptionPicks } from "../../library/items/option-picks";
 import { type MistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { type ChoiceAnswer } from "../contract";
 
@@ -79,18 +80,33 @@ export function toQuestionView(item: ChoiceItem) {
     format: item.format,
     options: item.content.options.map((option) => option.text),
     question: item.content.question,
+    /** How many options the learner picks: one, an exact number, or every right one ("all"). */
+    select: item.content.select,
   };
 }
 
 export type QuestionView = ReturnType<typeof toQuestionView>;
 
+/** Whether a question is answered with one pick: a statement, or one right option. */
+export function isSinglePick(item: ChoiceItem): boolean {
+  return item.format === "trueFalse" || item.content.select === 1;
+}
+
+/** The indexes of a multiple-choice question's right options. */
+function getRightIndexes(options: readonly { isCorrect: boolean }[]): number[] {
+  return options.flatMap((option, index) => (option.isCorrect ? [index] : []));
+}
+
 /** The right answer in the shape the learner answers with, shown after grading. */
 export function getChoiceCorrectAnswer(
   item: ChoiceItem,
-): { isTrue: boolean } | { selectedIndex: number } {
-  return item.format === "trueFalse"
-    ? { isTrue: item.content.isTrue }
-    : { selectedIndex: item.content.options.findIndex((option) => option.isCorrect) };
+): { isTrue: boolean } | { selectedIndex: number } | { selectedIndexes: number[] } {
+  if (item.format === "trueFalse") {
+    return { isTrue: item.content.isTrue };
+  }
+
+  const right = getRightIndexes(item.content.options);
+  return isSinglePick(item) ? { selectedIndex: right[0] ?? -1 } : { selectedIndexes: right };
 }
 
 /** The question text, for how long reading it takes and for the notebook. */
@@ -138,6 +154,44 @@ function gradeTrueFalse({
   };
 }
 
+function getPicks(answer: ChoiceAnswer): number[] {
+  if ("selectedIndex" in answer) {
+    return [answer.selectedIndex];
+  }
+
+  return "selectedIndexes" in answer ? [...new Set(answer.selectedIndexes)] : [];
+}
+
+function joinTexts(options: readonly { text: string }[]): string | null {
+  return options.length > 0 ? options.map((option) => option.text).join("; ") : null;
+}
+
+/**
+ * Why a multiple-choice answer went the way it did: a right answer's picks say why they're right;
+ * a miss says what went wrong, each wrong pick and each right option left unpicked, not the right
+ * picks the learner already has (several reasons in a row would repeat what they share).
+ */
+function explainPicks({
+  isCorrect,
+  missed,
+  picked,
+}: {
+  isCorrect: boolean;
+  missed: readonly { isCorrect: boolean; reason: string }[];
+  picked: readonly { isCorrect: boolean; reason: string }[];
+}): string | null {
+  const explained = isCorrect
+    ? picked
+    : [...picked.filter((option) => !option.isCorrect), ...missed];
+
+  const reasons = explained.map((option) => option.reason);
+  return reasons.length > 0 ? reasons.join(" ") : null;
+}
+
+/**
+ * Grades the options picked against the right ones (`gradeOptionPicks`): one pick for a question
+ * with one right option, every right option and nothing else for one that asks for several.
+ */
 function gradeMultipleChoice({
   answer,
   item,
@@ -145,25 +199,30 @@ function gradeMultipleChoice({
   answer: ChoiceAnswer;
   item: Extract<ChoiceItem, { format: "multipleChoice" }>;
 }): GradedChoice {
-  const chosen = "selectedIndex" in answer ? item.content.options[answer.selectedIndex] : undefined;
+  const { options } = item.content;
+  const picks = getPicks(answer);
+  const graded = gradeOptionPicks({ options, picked: picks });
+  const picked = picks.flatMap((index) => options[index] ?? []);
+  const missed = options.filter((option, index) => option.isCorrect && !picks.includes(index));
+  const trap = picked.find((option) => !option.isCorrect);
 
   return {
     dontKnow: "dontKnow" in answer,
-    isCorrect: chosen?.isCorrect ?? false,
+    isCorrect: picks.length > 0 && graded.isCorrect,
     snapshot: {
-      answer: chosen?.text ?? null,
-      correctAnswer: item.content.options.find((option) => option.isCorrect)?.text ?? null,
-      explanation: chosen?.reason ?? null,
+      answer: joinTexts(picked),
+      correctAnswer: joinTexts(options.filter((option) => option.isCorrect)),
+      explanation: explainPicks({ isCorrect: graded.isCorrect, missed, picked }),
       format: item.format,
-      misconception: chosen && !chosen.isCorrect ? chosen.misconception : null,
+      misconception: trap?.misconception ?? null,
       question: item.content.question,
     },
   };
 }
 
 /**
- * Grades a choice answer. An option index past the list, or an answer shape for the other format,
- * counts as wrong, like any wrong pick.
+ * Grades a choice answer. An option index past the list, a pick count other than the question
+ * asks for, or an answer shape for the other format, counts as wrong, like any wrong pick.
  */
 export function gradeChoiceAnswer({ answer, item }: { answer: ChoiceAnswer; item: ChoiceItem }) {
   return item.format === "trueFalse"

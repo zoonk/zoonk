@@ -1,31 +1,25 @@
 import { type CourseLevel } from "./course-levels";
 import { chapterSchema } from "./course-outline-schema";
 import { type CourseOutline, normalizeCourseOutline } from "./normalize-course-outline";
+import { type OutlineAreaSkill } from "./outline-areas";
 
 type OutlineChapter = CourseOutline["chapters"][number];
 
-function cleanChapter({
-  chapter,
-  level,
-  requiredSkillKeys,
-}: {
-  chapter: unknown;
+type CleanInput = {
   level: CourseLevel;
   requiredSkillKeys: readonly string[];
-}): OutlineChapter | null {
+  skillAreas?: readonly OutlineAreaSkill[];
+};
+
+/** A streamed chapter cleaned the way the whole outline is: none, or more than one once split. */
+function cleanChapter({ chapter, ...input }: CleanInput & { chapter: unknown }): OutlineChapter[] {
   const parsed = chapterSchema.safeParse(chapter);
 
   if (!parsed.success) {
-    return null;
+    return [];
   }
 
-  const [clean] = normalizeCourseOutline({
-    level,
-    raw: { chapters: [parsed.data] },
-    requiredSkillKeys,
-  }).chapters;
-
-  return clean ?? null;
+  return normalizeCourseOutline({ ...input, raw: { chapters: [parsed.data] } }).chapters;
 }
 
 /**
@@ -36,18 +30,12 @@ function cleanChapter({
 export function readStreamedChapter({
   chapters = [],
   isWanted,
-  level,
-  requiredSkillKeys,
-}: {
+  ...input
+}: CleanInput & {
   chapters?: readonly unknown[];
   isWanted: (chapter: OutlineChapter) => boolean;
-  level: CourseLevel;
-  requiredSkillKeys: readonly string[];
 }): { before: OutlineChapter[]; chapter: OutlineChapter } | null {
-  const complete = chapters.slice(0, -1).flatMap((chapter) => {
-    const clean = cleanChapter({ chapter, level, requiredSkillKeys });
-    return clean ? [clean] : [];
-  });
+  const complete = chapters.slice(0, -1).flatMap((chapter) => cleanChapter({ ...input, chapter }));
 
   const index = complete.findIndex((chapter) => isWanted(chapter));
   const chapter = complete[index];

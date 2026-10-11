@@ -75,10 +75,12 @@ export function TimelineTray({
       >
         <GripVertical aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="flex-1 text-sm font-medium">{label}</span>
-        <span aria-hidden="true" className="text-muted-foreground text-xs">
-          {t("Drag onto the timeline")}
-        </span>
       </button>
+
+      {/* Outside the button, so the button's name holds all the text it shows. */}
+      <p aria-hidden="true" className="text-muted-foreground text-xs">
+        {t("Drag onto the timeline")}
+      </p>
     </div>
   );
 }

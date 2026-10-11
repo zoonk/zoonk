@@ -47,8 +47,8 @@ async function startMock(request: NextRequest, context: MocksContext) {
 
   const result = await startAnytimeMock({ goalId: path.data.goalId, input: body.data });
 
-  if (result.status === "needsQuestions") {
-    return NextResponse.json({ id: null, status: result.status });
+  if (result.status === "needsQuestions" || result.status === "short") {
+    return NextResponse.json({ ...result, id: null });
   }
 
   if (!("id" in result)) {

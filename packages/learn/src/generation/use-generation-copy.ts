@@ -2,20 +2,13 @@
 
 import { useExtracted } from "next-intl";
 import { type NumberedLines } from "./_utils/detail-line";
-import { type GenerationKind, type GenerationPhase } from "./generation-kinds";
-
-export type PhaseCopy = {
-  label: string;
-  /** What the phase is doing, in order while it runs. */
-  lines: readonly string[];
-  numbered?: NumberedLines;
-};
-
-type KindCopy<TKind extends GenerationKind> = {
-  /** What is being made: the progress bar's accessible name. */
-  name: string;
-  phases: Record<GenerationPhase<TKind>, PhaseCopy>;
-};
+import {
+  useConversationCallCopy,
+  useExamSpeakingCopy,
+  useSpeakingMockCopy,
+} from "./call-generation-copy";
+import { type KindCopy, type PhaseCopy } from "./generation-copy-types";
+import { type GenerationKind } from "./generation-kinds";
 
 /** Numbered "Writing question 3…" lines for a wait that writes questions, as many as `count`. */
 function useQuestionLines() {
@@ -32,14 +25,6 @@ function useGoalPhaseCopy() {
   const t = useExtracted();
 
   return {
-    // An exam's notice read again with newer instructions, once per exam.
-    edital: {
-      label: t("Reading the exam notice"),
-      lines: [
-        t("Finding the subjects and topics it lists…"),
-        t("Checking the exam's dates and format…"),
-      ],
-    },
     goal: {
       label: t("Reading your goal"),
       lines: [t("Reading your answers…"), t("Deciding how deep to go…")],
@@ -204,44 +189,6 @@ function useExplanationCopy(): KindCopy<"explanation"> {
   };
 }
 
-function useConversationCallCopy(): KindCopy<"conversationCall"> {
-  const t = useExtracted();
-
-  return {
-    name: t("Writing your call"),
-    phases: {
-      write: {
-        label: t("Writing the call for your level"),
-        lines: [
-          t("Choosing who you'll talk to…"),
-          t("Writing what they say first…"),
-          t("Picking what to get across…"),
-          t("Adding phrases you can lean on…"),
-        ],
-      },
-    },
-  };
-}
-
-function useSpeakingMockCopy(): KindCopy<"speakingMock"> {
-  const t = useExtracted();
-
-  return {
-    name: t("Writing your mock"),
-    phases: {
-      write: {
-        label: t("Writing the examiner's script"),
-        lines: [
-          t("Choosing your examiner…"),
-          t("Writing the examiner's questions…"),
-          t("Fitting the parts into about five minutes…"),
-          t("Adding phrases you can lean on…"),
-        ],
-      },
-    },
-  };
-}
-
 function useTestOutQuestionsCopy(): KindCopy<"testOutQuestions"> {
   const t = useExtracted();
   const questionLines = useQuestionLines();
@@ -269,6 +216,22 @@ function useFocusTestQuestionsCopy(): KindCopy<"focusTestQuestions"> {
         label: t("Writing questions on each subject"),
         lines: [t("Picking what to ask in each subject…")],
         numbered: questionLines({ count: 8 }),
+      },
+    },
+  };
+}
+
+function useChallengeQuestionsCopy(): KindCopy<"challengeQuestions"> {
+  const t = useExtracted();
+  const questionLines = useQuestionLines();
+
+  return {
+    name: t("Writing your challenge"),
+    phases: {
+      questions: {
+        label: t("Writing questions on what you studied"),
+        lines: [t("Picking the skills to ask about…")],
+        numbered: questionLines({ count: 10 }),
       },
     },
   };
@@ -322,9 +285,11 @@ export function useGenerationCopy(kind: GenerationKind): {
   phases: Record<string, PhaseCopy>;
 } {
   const copy = {
+    challengeQuestions: useChallengeQuestionsCopy(),
     conversationCall: useConversationCallCopy(),
     courseOutline: useCourseOutlineCopy(),
     curriculum: useCurriculumCopy(),
+    examSpeaking: useExamSpeakingCopy(),
     explanation: useExplanationCopy(),
     firstLesson: useFirstLessonCopy(),
     focusTestQuestions: useFocusTestQuestionsCopy(),

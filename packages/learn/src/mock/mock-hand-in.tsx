@@ -15,9 +15,9 @@ import { useSectionCounts } from "./mock-answer-sheet";
 import { useMockScreen } from "./mock-context";
 
 /** What's still open in the section: blank and flagged questions, or that every one is answered. */
-function useLeftOpen(): string {
+function useQuestionsLeftOpen(): string {
   const t = useExtracted();
-  const { blank, flagged } = useSectionCounts();
+  const { blank, essays, flagged, total } = useSectionCounts();
 
   if (blank > 0 && flagged > 0) {
     return t(
@@ -38,7 +38,24 @@ function useLeftOpen(): string {
     });
   }
 
-  return t("Every question is answered.");
+  // A written part on its own has no questions to count.
+  return total > essays ? t("Every question is answered.") : "";
+}
+
+/** What's still open, an essay left blank (a full mock's written part) said apart. */
+function useLeftOpen(): string {
+  const t = useExtracted();
+  const { blankEssays } = useSectionCounts();
+  const questions = useQuestionsLeftOpen();
+
+  const essays =
+    blankEssays > 0
+      ? t("{count, plural, one {The essay is blank.} other {# essays are blank.}}", {
+          count: blankEssays,
+        })
+      : "";
+
+  return [questions, essays].filter(Boolean).join(" ");
 }
 
 /**

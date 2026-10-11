@@ -28,10 +28,9 @@ test.describe("Settings Navbar", () => {
     await expect(settings.getByRole("link", { name: /appearance/iu })).toBeVisible();
     await expect(settings.getByRole("link", { exact: true, name: "Help" })).toBeVisible();
 
-    // The language lives in Appearance; memory needs a session, guardian links an account under 18.
+    // The language lives in Appearance; memory needs a session.
     await expect(settings.getByRole("link", { name: /language/iu })).toHaveCount(0);
     await expect(settings.getByRole("link", { name: /memory/iu })).toHaveCount(0);
-    await expect(settings.getByRole("link", { name: /guardian/iu })).toHaveCount(0);
   });
 
   test("on desktop every settings page keeps the pages in a sidebar beside it, the current one marked, and goes back to the hub", async ({

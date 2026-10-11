@@ -1,4 +1,3 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
@@ -6,6 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerBlockInOrder } from "./_test-utils/answer-block";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   SESSION_NOW,
   daysAgo,
@@ -16,21 +16,13 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { BRAIN_POWER_BONUS } from "./brain-power";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
-import { getTodayStudySession } from "./get-today-study-session";
 import { startStudyBlock } from "./start-study-block";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 // The classifier is a paid model call; its behavior is covered by its eval.
 vi.mock("@zoonk/ai/tasks/v2/mistakes/cause", () => ({ classifyMistakeCause: vi.fn() }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 async function setup() {
   const user = await userFixture();
@@ -260,25 +252,6 @@ describe("study session blocks", () => {
       answeredAt: daysAgo(3),
       isCorrect: false,
     });
-  });
-
-  it("asks for a short wait at unusual review volume instead of blocking", async () => {
-    const { session } = await setup();
-    const blockId = session.blocks[0]?.id ?? "";
-
-    await startStudyBlock({ blockId, input: {}, sessionId: session.id });
-    vi.mocked(isRateLimited).mockResolvedValueOnce(true);
-
-    const detail = await getStudyBlock({ blockId, sessionId: session.id });
-    const itemId = detail.status === "ready" ? (detail.detail.questions[0]?.itemId ?? "") : "";
-
-    await expect(
-      answerStudyQuestion({
-        blockId,
-        input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId },
-        sessionId: session.id,
-      }),
-    ).resolves.toStrictEqual({ retryAfterSeconds: 60, status: "slowDown" });
   });
 
   it("keeps sessions private to their learner", async () => {

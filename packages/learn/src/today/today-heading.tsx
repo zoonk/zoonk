@@ -14,7 +14,7 @@ import {
 import { PlanStatusLabel } from "../plan/plan-status-label";
 import { useShortDayRange, useShortFocusName } from "../plan/use-short-plan";
 import { useTodayScreen } from "./today-context";
-import { useTodayDate } from "./use-today-copy";
+import { isWelcomeBackDay, useTodayDate } from "./use-today-copy";
 
 /**
  * "34 days left" for a goal with a date ("About 292 days left" when the date is an estimate, until
@@ -64,7 +64,9 @@ function ShortPlanLine({ short }: { short: NonNullable<TodayView["shortPlan"]> }
 
 /**
  * One phrase beside the days left: where the plan stands ("1 day ahead of plan"), or, in a plan for
- * a test days away, what today is for. How prepared the learner is lives in the Journey.
+ * a test days away, what today is for. How prepared the learner is lives in the Journey. A return
+ * after a break leaves the lessons to catch up to the Journey: "377 lessons to catch up" above
+ * "Welcome back! Today is lighter" read as a backlog to clear.
  */
 function TodayStatus() {
   const { today } = useTodayScreen();
@@ -72,6 +74,10 @@ function TodayStatus() {
 
   if (today.shortPlan) {
     return <ShortPlanLine short={today.shortPlan} />;
+  }
+
+  if (status?.kind === "behind" && isWelcomeBackDay(today.session)) {
+    return null;
   }
 
   return status ? (

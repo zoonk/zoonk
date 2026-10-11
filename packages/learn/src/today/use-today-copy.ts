@@ -2,6 +2,7 @@
 
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted, useFormatter } from "next-intl";
+import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";
 
 /** The session's day as the learner reads it: "Wednesday, October 7". */
@@ -17,14 +18,34 @@ export function useTodayDate(): string {
   });
 }
 
-/** A fresh start says why today is lighter, kindly and briefly. Null on an ordinary day. */
+const NO_BREAK_SPACE = "\u00A0";
+
+/**
+ * A return after a break: Today opens with the greeting and the lighter day, and leaves the rest
+ * (the notice, how far behind the plan is) after them or to the Journey.
+ */
+export function isWelcomeBackDay(session: Pick<TodayView["session"], "freshStart">): boolean {
+  return session.freshStart === "welcomeBack";
+}
+
+/**
+ * A fresh start says why today is lighter, kindly and briefly; a return after a break says how long
+ * the day takes, since "lighter" beside 12 activities said nothing. Null on an ordinary day.
+ */
 export function useFreshStartText(): string | null {
   const t = useExtracted();
+  const formatDuration = useFormatDuration();
   const { today } = useTodayScreen();
+  const { blocks, freshStart } = today.session;
 
-  switch (today.session.freshStart) {
+  switch (freshStart) {
     case "welcomeBack":
-      return t("Welcome back! Today is a lighter session, so it's easy to pick up again.");
+      // The time stays on one line: "about 55" ending a line and "min" starting the next.
+      return t("Welcome back! Today is lighter, about {time}, so it's easy to pick up again.", {
+        time: formatDuration(
+          blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+        ).replaceAll(" ", NO_BREAK_SPACE),
+      });
     case "newPhase":
       return t("A new phase starts today, with an easy warm-up first.");
     case "newWeek":

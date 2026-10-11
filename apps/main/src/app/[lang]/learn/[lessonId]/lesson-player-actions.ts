@@ -125,7 +125,9 @@ export async function explainAnswerAction({
     return { period: result.limit.period, status: "limitReached", tier: result.limit.tier };
   }
 
-  return result.status === "slowDown" ? result : { status: "failed" };
+  return result.status === "slowDown" || result.status === "signUpRequired"
+    ? result
+    : { status: "failed" };
 }
 
 /**

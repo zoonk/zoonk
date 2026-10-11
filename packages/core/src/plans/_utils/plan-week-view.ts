@@ -10,6 +10,7 @@ import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
 import { type ExistingPlanItem, getItemKey } from "../planner/plan-items";
 import { DAYS_PER_WEEK } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle, isWritingItem } from "./plan-phase-views";
+import { isWorkFinished } from "./work-progress";
 
 type ItemAccess = { freeUntil: string | null; mocksRequirePlus: boolean };
 
@@ -54,9 +55,10 @@ function toPlanItemView({
 }
 
 /**
- * Only study makes a past day done: its scheduled items finished, or, with nothing scheduled on
- * it, time spent studying. Days before the goal started and past days with nothing scheduled
- * (missed work re-flows to later days) stay neutral, as rest, never done or missed.
+ * Only study makes a past day done: its scheduled items finished (`isWorkFinished`: studied or
+ * tested out, never set aside after missed days), or, with nothing scheduled on it, time spent
+ * studying. Days before the goal started and past days with nothing scheduled (missed work
+ * re-flows to later days) stay neutral, as rest, never done or missed.
  */
 function getDayState({
   date,
@@ -88,7 +90,7 @@ function getDayState({
     return studied ? "done" : "rest";
   }
 
-  return items.every((item) => item.status !== "todo") ? "done" : "missed";
+  return items.every((item) => isWorkFinished(item.status)) ? "done" : "missed";
 }
 
 /** This week, Monday to Sunday: each day's minutes, what it focuses on, and the week's checkpoint. */

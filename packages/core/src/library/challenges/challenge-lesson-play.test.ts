@@ -1,10 +1,9 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import {
   CHALLENGE_STRONG_PATH,
   CHALLENGE_WEAK_PATH,
 } from "@zoonk/testing/fixtures/challenge-contents";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   setupPlayableLesson,
   stepOfKind,
@@ -13,15 +12,9 @@ import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
 import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 const TIME_ZONE = "UTC";
 
@@ -54,10 +47,6 @@ async function playChallenge(choiceIds: string[]) {
 }
 
 describe("playing a challenge lesson", () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("serves the case as a playable screen", async () => {
     const { lesson } = await setupPlayableLesson({ steps: ["challenge"] });
     const result = await getPlayableLibraryLesson({ lessonId: lesson.id });

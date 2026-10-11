@@ -7,6 +7,10 @@ export function getGoalLimitReason(decision: GoalRefusal["decision"] | undefined
     return "slowDown";
   }
 
+  if (decision.status === "signUpRequired") {
+    return "signUpRequired";
+  }
+
   if (decision.limit.tier === "guest") {
     return "guest";
   }

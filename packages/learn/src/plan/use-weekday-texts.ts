@@ -58,3 +58,17 @@ export function useWeeklyEventsText() {
       : t("Weekly challenges move to {day}.", { day });
   };
 }
+
+/** "Your next mock moves to Sunday, November 1.": the day a change moves the next mock to. */
+export function useNextMockText() {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+
+  return function nextMockText(effect: PlanChangeView["effect"]): string | null {
+    const moved = effect?.nextMock;
+
+    return moved
+      ? t("Your next mock moves to {date}.", { date: formatDate(moved.after, "weekdayDay") })
+      : null;
+  };
+}

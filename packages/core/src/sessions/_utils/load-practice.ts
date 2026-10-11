@@ -2,16 +2,15 @@ import "server-only";
 import { type Item, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { interleave } from "@zoonk/utils/interleave";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getSkillRetrievability } from "../../learner/fsrs-scheduler";
 import { getFieldRank, getItemAudienceFilter } from "../../library/items/item-field";
-import { findTeachingLessonIds } from "../../mistakes/drill-lessons";
-import { selectMistakeDrill, selectMistakesToPractice } from "../../mistakes/mistake-drills";
+import { listItemSetsForSkills } from "../../library/items/item-sets";
 import { type DifficultyBias } from "../../plans/planner/plan-state";
-import { type BlockDrill } from "../block-payload";
 import { type PracticeItem } from "../session-builder";
-import { loadLastAnswers } from "./load-review-capsules";
-import { QUESTION_ITEM_FORMATS, hasTraps, parseSessionItem } from "./session-items";
+import { loadLastAnswers, loadRightAnswers } from "./load-review-capsules";
+import { NO_PRACTICE_CLAIMS, type PracticeClaims } from "./practice-claims";
+import { listAskedSets, takePracticeQuestions, toSetUnits } from "./practice-sets";
+import { getPracticeItemFilter } from "./session-items";
 
 /** Practice rotates through the weakest skills; this many questions is plenty for any day. */
 const PRACTICE_POOL = 30;
@@ -22,16 +21,13 @@ const PRACTICE_POOL = 30;
  */
 const RECENTLY_ANSWERED_MS = MS_PER_DAY;
 
-/** Open mistakes considered for today's drill, oldest first. */
-const MISTAKE_POOL = 50;
-
-/** One mistake a day makes the "fix a mistake" mission; the notebook holds the rest. */
-const DAILY_MISTAKE_DRILLS = 1;
-
 type PracticeCandidate = Pick<
   Item,
   "difficulty" | "examBlueprintId" | "field" | "id" | "skillId"
 > & { lastAnsweredAt: Date | null };
+
+/** What practice takes in one turn of a skill: a question, or a set's questions together. */
+type PracticeUnit = PracticeCandidate & { questions: PracticeItem[] };
 
 /**
  * "Too easy" asks for the hardest questions first and "Too hard" for the easiest; a question
@@ -94,6 +90,23 @@ function comparePractice({
   return (a.lastAnsweredAt?.getTime() ?? 0) - (b.lastAnsweredAt?.getTime() ?? 0);
 }
 
+/**
+ * A review day's order: questions never answered before the missed ones it brings back, then the
+ * usual order (see `comparePractice`).
+ */
+function compareDayPractice({
+  a,
+  b,
+  repeatOnlyMissed,
+  ...rules
+}: Parameters<typeof comparePractice>[0] & { repeatOnlyMissed: boolean }): number {
+  const unseenFirst = repeatOnlyMissed
+    ? Number(a.lastAnsweredAt !== null) - Number(b.lastAnsweredAt !== null)
+    : 0;
+
+  return unseenFirst || comparePractice({ a, b, ...rules });
+}
+
 /** A focused skill's questions in two turns of a round, so it gets two to every other skill's one. */
 function withFocusTurns<T>({
   focusSkillIds,
@@ -112,22 +125,118 @@ function withFocusTurns<T>({
 }
 
 /**
+ * The order practice takes a goal's skills in, one question of each in turn: a held subject's
+ * (`firstSkillIds`), then the ones the learner focused on, then what they were taken to know on topics the exam asks most or the class test
+ * announces, then the weakest first (lowest chance of recall), and last what they were taken to
+ * know on other topics, so a short block cuts that first. Topics taken as known go least recently
+ * asked first, so a day too short for all of them leaves the ones it asked for later.
+ */
+function orderPracticeSkills({
+  claims,
+  firstSkillIds,
+  focusSkillIds,
+  skills,
+}: {
+  claims: PracticeClaims;
+  firstSkillIds: ReadonlySet<string>;
+  focusSkillIds: ReadonlySet<string>;
+  skills: readonly { recall: number; skillId: string }[];
+}): string[] {
+  const isFirst = (skillId: string) => Number(firstSkillIds.has(skillId));
+  const isFocused = (skillId: string) => Number(focusSkillIds.has(skillId));
+
+  // Only topics to confirm take turns by it: studied skills go weakest first.
+  const getLastAsked = (skillId: string) =>
+    claims.first.has(skillId) || claims.last.has(skillId)
+      ? (claims.lastAsked.get(skillId) ?? 0)
+      : 0;
+
+  const getTurn = (skillId: string) => {
+    if (claims.first.has(skillId)) {
+      return 0;
+    }
+
+    return claims.last.has(skillId) ? 2 : 1;
+  };
+
+  return skills
+    .toSorted(
+      (a, b) =>
+        isFirst(b.skillId) - isFirst(a.skillId) ||
+        isFocused(b.skillId) - isFocused(a.skillId) ||
+        getTurn(a.skillId) - getTurn(b.skillId) ||
+        getLastAsked(a.skillId) - getLastAsked(b.skillId) ||
+        a.recall - b.recall,
+    )
+    .map((row) => row.skillId);
+}
+
+/**
+ * The listening skills practice has nothing to ask today: no voiced recording on them that wasn't
+ * answered in the last day. Their subject's time goes to the other subjects (see `pickDayLessons`).
+ */
+export async function loadIdleListeningSkillIds({
+  examBlueprintId,
+  listeningSkillIds,
+  now,
+  userId,
+}: {
+  examBlueprintId: string | null;
+  listeningSkillIds: ReadonlySet<string>;
+  now: Date;
+  userId: string;
+}): Promise<Set<string>> {
+  if (listeningSkillIds.size === 0) {
+    return new Set();
+  }
+
+  const sets = await listItemSetsForSkills({
+    examBlueprintId,
+    skillIds: [...listeningSkillIds],
+    userId,
+  });
+
+  const askable = sets.filter(
+    (set) =>
+      set.kind === "audio" &&
+      (set.lastAnsweredAt?.getTime() ?? 0) <= now.getTime() - RECENTLY_ANSWERED_MS,
+  );
+
+  return new Set(
+    [...listeningSkillIds].filter(
+      (skillId) => !askable.some((set) => set.skillIds.includes(skillId)),
+    ),
+  );
+}
+
+/**
  * Mixed practice for a goal: questions on skills the learner has studied, one skill after another
  * in turn with the weakest first (lowest chance of recall), in the exam's own format when the goal
  * has one, never one they answered in the last day. The last questions land on stronger skills, so
- * the block ends with a win.
+ * the block ends with a win. A topic the learner was taken to know gets one question until practice
+ * confirms it (see `orderPracticeSkills`). A review day asks new questions first and brings back
+ * only the ones the learner missed.
  */
 export async function loadPracticeItems({
+  claims = NO_PRACTICE_CLAIMS,
   difficultyBias,
   everySkill = false,
   examBlueprintId,
+  firstSkillIds = new Set(),
   focusSkillIds = new Set(),
   excludeItemIds,
   field,
+  listeningSkillIds = new Set(),
   now,
+  repeatOnlyMissed = false,
   skillIds,
   userId,
 }: {
+  /**
+   * The skills the learner was taken to know that practice still has to confirm (see
+   * `loadPracticeClaims`), asked whether or not the plan teaches them.
+   */
+  claims?: PracticeClaims;
   /** The plan's "Too easy" or "Too hard" steering. */
   difficultyBias: DifficultyBias;
   /**
@@ -135,6 +244,11 @@ export async function loadPracticeItems({
    * test, the ones never studied first, as the weakest.
    */
   everySkill?: boolean;
+  /**
+   * The skills of a day's subject with nothing written to study yet (`listHeldAreas`): its time
+   * goes to their questions, asked first, studied or not.
+   */
+  firstSkillIds?: ReadonlySet<string>;
   /**
    * Skills the learner asked to focus on, on a review day: they open the practice and get two
    * questions to every other skill's one.
@@ -144,12 +258,25 @@ export async function loadPracticeItems({
   excludeItemIds: ReadonlySet<string>;
   /** The goal's field (work and career goals): its questions come first, other fields' never. */
   field: string | null;
+  /**
+   * Skills only recordings practice (`getListeningSkillIds`): a text question or a text set about
+   * a conversation tests reading, so they get a voiced recording's questions or wait.
+   */
+  listeningSkillIds?: ReadonlySet<string>;
   now: Date;
+  /**
+   * A review day (the day before a test, a free plan's mock day): questions the learner answered
+   * right last time don't come back, and the ones never answered come before the missed ones.
+   */
+  repeatOnlyMissed?: boolean;
   skillIds: readonly string[];
   userId: string;
 }): Promise<PracticeItem[]> {
+  const claimed = new Set([...claims.first, ...claims.last]);
+  const pool = [...new Set([...skillIds, ...claimed, ...firstSkillIds])];
+
   const studied = await prisma.learnerSkill.findMany({
-    where: { reps: { gt: 0 }, skillId: { in: [...skillIds] }, userId },
+    where: { reps: { gt: 0 }, skillId: { in: pool }, userId },
   });
 
   const recalls = studied.map((row) => ({
@@ -157,135 +284,78 @@ export async function loadPracticeItems({
     skillId: row.skillId,
   }));
 
-  const unstudied = everySkill
-    ? skillIds
-        .filter((skillId) => !studied.some((row) => row.skillId === skillId))
-        .map((skillId) => ({ recall: 0, skillId }))
-    : [];
+  const unstudied = pool
+    .filter(
+      (skillId) =>
+        (everySkill || claimed.has(skillId) || firstSkillIds.has(skillId)) &&
+        !studied.some((row) => row.skillId === skillId),
+    )
+    .map((skillId) => ({ recall: 0, skillId }));
 
-  const isFocused = (skillId: string) => Number(focusSkillIds.has(skillId));
-
-  const weakestFirst = [...unstudied, ...recalls]
-    .toSorted((a, b) => isFocused(b.skillId) - isFocused(a.skillId) || a.recall - b.recall)
-    .map((row) => row.skillId);
-
-  const items = await prisma.item.findMany({
-    orderBy: { id: "asc" },
-    select: { difficulty: true, examBlueprintId: true, field: true, id: true, skillId: true },
-    where: {
-      format: { in: [...QUESTION_ITEM_FORMATS] },
-      skillId: { in: weakestFirst },
-      ...getItemAudienceFilter({ examBlueprintId, field }),
-    },
+  const ordered = orderPracticeSkills({
+    claims,
+    firstSkillIds,
+    focusSkillIds,
+    skills: [...unstudied, ...recalls],
   });
 
-  const lastAnswers = await loadLastAnswers({ itemIds: items.map((item) => item.id), userId });
-  const recentSince = now.getTime() - RECENTLY_ANSWERED_MS;
-
-  const isRecent = (itemId: string) => (lastAnswers.get(itemId)?.getTime() ?? 0) > recentSince;
-
-  const perSkill = weakestFirst.map((skillId) =>
-    items
-      .filter(
-        (item) => item.skillId === skillId && !excludeItemIds.has(item.id) && !isRecent(item.id),
-      )
-      .map((item) => ({ ...item, lastAnsweredAt: lastAnswers.get(item.id) ?? null }))
-      .toSorted((a, b) => comparePractice({ a, b, difficultyBias, examBlueprintId, field })),
-  );
-
-  return interleave(
-    perSkill.flatMap((skillItems, index) =>
-      withFocusTurns({ focusSkillIds, items: skillItems, skillId: weakestFirst[index] ?? "" }),
-    ),
-  )
-    .slice(0, PRACTICE_POOL)
-    .map((item) => ({ itemId: item.id, skillId: item.skillId }));
-}
-
-/**
- * Today's "fix a mistake": the oldest open mistake on the goal's skills from an earlier day, with
- * the drill its cause calls for (the same question first, then a few more on its skill), its kind,
- * the lesson a content gap goes over first and a timed drill's time box.
- */
-export async function loadMistakeDrills({
-  examBlueprintId,
-  field,
-  skillIds,
-  timeZone,
-  today,
-  userId,
-}: {
-  /** The goal's exam: other exams' questions never come up in a drill. */
-  examBlueprintId: string | null;
-  /** The goal's field: its questions come first in a drill, other fields' never. */
-  field: string | null;
-  skillIds: readonly string[];
-  timeZone: string;
-  /** The learner-local date, as a UTC-midnight label. */
-  today: Date;
-  userId: string;
-}): Promise<BlockDrill[]> {
-  const open = await prisma.mistake.findMany({
-    orderBy: { createdAt: "asc" },
-    take: MISTAKE_POOL,
-    where: { skillId: { in: [...skillIds] }, status: "open", userId },
-  });
-
-  const selected = selectMistakesToPractice({
-    limit: DAILY_MISTAKE_DRILLS,
-    mistakes: open.map((mistake) => ({
-      ...mistake,
-      createdLocalDate: getDateInTimeZone({ date: mistake.createdAt, timeZone }),
-    })),
-    today,
-  });
-
-  const selectedSkillIds = selected.flatMap((mistake) =>
-    mistake.skillId ? [mistake.skillId] : [],
-  );
-
-  const [items, lessons] = await Promise.all([
+  const [items, sets] = await Promise.all([
     prisma.item.findMany({
       orderBy: { id: "asc" },
+      select: { difficulty: true, examBlueprintId: true, field: true, id: true, skillId: true },
       where: {
-        format: { in: [...QUESTION_ITEM_FORMATS] },
-        skillId: { in: selectedSkillIds },
-        ...getItemAudienceFilter({
-          examBlueprintId,
-          field,
-          keepIds: selected.flatMap((mistake) => mistake.itemId ?? []),
-        }),
+        ...getPracticeItemFilter(),
+        skillId: { in: ordered.filter((skillId) => !listeningSkillIds.has(skillId)) },
+        ...getItemAudienceFilter({ examBlueprintId, field }),
       },
     }),
-    findTeachingLessonIds({ skillIds: selectedSkillIds, userId }),
+    listItemSetsForSkills({ examBlueprintId, skillIds: ordered, userId }),
   ]);
 
-  const lastAnswers = await loadLastAnswers({ itemIds: items.map((item) => item.id), userId });
+  const itemIds = [...items, ...sets.flatMap((set) => set.items)].map((item) => item.id);
 
-  const questions = items
-    .toSorted(
-      (a, b) =>
-        getFieldRank({ field, itemField: a.field }) - getFieldRank({ field, itemField: b.field }),
-    )
-    .map((item) => parseSessionItem(item))
-    .filter((item) => item !== null);
+  const [lastAnswers, answeredRight] = await Promise.all([
+    loadLastAnswers({ itemIds, userId }),
+    repeatOnlyMissed ? loadRightAnswers({ itemIds, userId }) : new Set<string>(),
+  ]);
 
-  return selected
-    .map((mistake) => {
-      const drill = selectMistakeDrill({
-        candidates: questions
-          .filter((item) => item.skillId === mistake.skillId)
-          .map((item) => ({
-            hasMisconceptions: hasTraps(item),
-            id: item.id,
-            seen: lastAnswers.has(item.id),
-          })),
-        cause: mistake.cause,
-        lessonId: mistake.skillId ? (lessons.get(mistake.skillId) ?? null) : null,
-        originalItemId: mistake.itemId,
-      });
+  const isAsked = (itemId: string) =>
+    !excludeItemIds.has(itemId) &&
+    !answeredRight.has(itemId) &&
+    (lastAnswers.get(itemId)?.getTime() ?? 0) <= now.getTime() - RECENTLY_ANSWERED_MS;
 
-      return { ...drill, mistakeId: mistake.id };
-    })
-    .filter((drill) => drill.itemIds.length > 0);
+  const rules = { difficultyBias, examBlueprintId, field, repeatOnlyMissed };
+
+  const askedSets = listAskedSets({ isAsked, listeningSkillIds, sets });
+
+  // One question confirms what the learner was taken to know, or brings its lessons back, so a
+  // set waits, except a listening skill's recording (see `toSetUnits`); a full review asks it like
+  // every other topic.
+  const perSkill = ordered.map((skillId) => {
+    const isOne = claimed.has(skillId) && !everySkill;
+
+    return [
+      ...toSetUnits({ isOne, listeningSkillIds, ordered, sets: askedSets, skillId }),
+      ...items
+        .filter((item) => item.skillId === skillId && isAsked(item.id))
+        .map((item): PracticeUnit => ({
+          ...item,
+          lastAnsweredAt: lastAnswers.get(item.id) ?? null,
+          questions: [{ itemId: item.id, skillId: item.skillId }],
+        })),
+    ]
+      .toSorted((a, b) => compareDayPractice({ a, b, ...rules }))
+      .slice(0, isOne ? 1 : undefined);
+  });
+
+  const units = interleave(
+    perSkill.flatMap((skillUnits, index) =>
+      withFocusTurns({ focusSkillIds, items: skillUnits, skillId: ordered[index] ?? "" }),
+    ),
+  );
+
+  return takePracticeQuestions({
+    practice: units.flatMap((unit) => unit.questions),
+    room: PRACTICE_POOL,
+  });
 }

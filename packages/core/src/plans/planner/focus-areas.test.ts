@@ -118,7 +118,8 @@ function examPlan(settings: object): BuildPlanInput {
     mockMinutes: 60,
     mode: "forced",
     paceFactor: 1,
-    prerequisites: new Map(),
+    // Reading texts builds on Portuguese's basics.
+    prerequisites: new Map([["pt-texts", ["pt-basics"]]]),
     readiness: new Map(),
     settings: parsePlanSettings({ startDate: "2026-09-28", ...settings }),
     today: TODAY,

@@ -1,6 +1,7 @@
 "use client";
 
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
+import { type ListeningSetView } from "@zoonk/core/library/listening/view";
 import { type StudyBlockCompletionView } from "@zoonk/core/sessions/completion-contract";
 import { useEffect, useReducer, useRef } from "react";
 import { type LearnAnalytics, useLearnAnalytics } from "../learn-context";
@@ -18,11 +19,11 @@ import {
  * capabilities. Each resolves to null when the request didn't go through.
  */
 export type CheckpointActions = {
-  answer: (input: {
-    answer: CheckpointAnswer;
-    durationMs: number;
-    itemId: string;
-  }) => Promise<{ isCorrect: boolean } | null>;
+  answer: (input: { answer: CheckpointAnswer; durationMs: number; itemId: string }) => Promise<{
+    isCorrect: boolean;
+    /** A recording's transcript, on the answer that finishes its questions. */
+    transcript: ListeningSetView["transcript"];
+  } | null>;
   finish: () => Promise<StudyBlockCompletionView | null>;
 };
 
@@ -124,7 +125,14 @@ export function useCheckpointDuel({
       return;
     }
 
-    dispatch({ isCorrect: result.isCorrect, itemId: question.itemId, type: "answered" });
+    const setId = question.set?.id;
+
+    dispatch({
+      isCorrect: result.isCorrect,
+      itemId: question.itemId,
+      recording: setId && result.transcript ? { setId, transcript: result.transcript } : null,
+      type: "answered",
+    });
   }
 
   async function next() {

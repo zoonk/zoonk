@@ -17,7 +17,6 @@ msgstr "Entrar"
 #: src/app/[lang]/(catalog)/_components/account-dropdown-item.tsx
 #: src/app/[lang]/(settings)/_components/protected-section.tsx
 #: src/app/[lang]/(settings)/_components/settings-account-button.tsx
-#: src/app/[lang]/(settings)/settings/guardian/page.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
 msgstr "Criar uma conta"
@@ -299,7 +298,7 @@ msgstr "Escreva do jeito que você falaria. Em seguida, vêm seu plano e a prime
 #: src/app/[lang]/(home)/_components/final-call.tsx
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+#: src/app/[lang]/start/course/[courseId]/page.tsx
 msgctxt "tHkQJi"
 msgid "Free to start. No account needed for your first lesson."
 msgstr "Comece grátis. Você não precisa de uma conta para fazer sua primeira aula."
@@ -506,9 +505,9 @@ msgid "Small wins every day"
 msgstr "Pequenas conquistas todos os dias"
 
 #: src/app/[lang]/(home)/_components/motivation-section.tsx
-msgctxt "AzP3hh"
-msgid "Studying feeds your buddy, and every phase ends with a challenge. Mistakes never cost you anything."
-msgstr "Estudar alimenta seu parceiro, e toda fase termina com um desafio. Errar não custa nada."
+msgctxt "Ar-YJU"
+msgid "Your buddy grows as you study, and every phase ends with a challenge. Mistakes never cost you anything."
+msgstr "Seu parceiro cresce conforme você estuda, e toda fase termina com um desafio. Errar nunca custa nada."
 
 #: src/app/[lang]/(home)/_components/motivation-section.tsx
 msgctxt "-iIKeu"
@@ -516,9 +515,9 @@ msgid "Three missions a day: a review, something new and a mistake to fix. Your 
 msgstr "Três missões por dia: uma revisão, algo novo e um erro para corrigir. Seu parceiro cresce à medida que você aprende."
 
 #: src/app/[lang]/(home)/_components/motivation-section.tsx
-msgctxt "B0mHh3"
-msgid "A buddy you feed by learning"
-msgstr "Um parceiro que cresce com seus estudos"
+msgctxt "3baE9Z"
+msgid "A buddy that grows as you learn"
+msgstr "Um parceiro que cresce enquanto você aprende"
 
 #: src/app/[lang]/(home)/_components/motivation-section.tsx
 msgctxt "p-H7oU"
@@ -731,16 +730,6 @@ msgstr "agora"
 msgctxt "gIGYkd"
 msgid "Stuck, or curious for more? Just ask."
 msgstr "Travou ou quer saber mais? É só perguntar."
-
-#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
-msgctxt "AcKlQI"
-msgid "Explain it more simply"
-msgstr "Explique de um jeito mais simples"
-
-#: src/app/[lang]/(home)/_components/previews/class-preview.tsx
-msgctxt "s6QqT3"
-msgid "I want to go deeper"
-msgstr "Quero ir mais a fundo"
 
 #: src/app/[lang]/(home)/_components/previews/exam-preview.tsx
 msgctxt "5vUSgc"
@@ -1028,6 +1017,11 @@ msgctxt "Z9Sg5E"
 msgid "Mind maps"
 msgstr "Mapas mentais"
 
+#: src/app/[lang]/(learn)/speaking/page.tsx
+msgctxt "LdUCtG"
+msgid "Speaking practice"
+msgstr "Prática de conversação"
+
 #: src/app/[lang]/(learn)/today/page.tsx
 msgctxt "UKxoV8"
 msgid "Welcome back"
@@ -1091,13 +1085,6 @@ msgstr "Você precisa estar logado para acessar esta página."
 msgctxt "odXlk8"
 msgid "Log in"
 msgstr "Entrar"
-
-#: src/app/[lang]/(settings)/_components/settings-links.tsx
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-#: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "poUf8i"
-msgid "Guardian"
-msgstr "Responsável"
 
 #: src/app/[lang]/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
@@ -1233,121 +1220,6 @@ msgstr "Escolha seu parceiro, os sons, um limite diário de tempo e o idioma do 
 msgctxt "BbrYZc"
 msgid "Your buddy, lessons and language, the way you like them."
 msgstr "Seu parceiro, suas aulas e seu idioma, do seu jeito."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "rdZ1RR"
-msgid "Enter your guardian's email address, not yours."
-msgstr "Digite o email do seu responsável, não o seu."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "_1kNlx"
-msgid "You've sent a few invites today. Try again tomorrow."
-msgstr "Você já enviou alguns convites hoje. Tente de novo amanhã."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "P2CfYa"
-msgid "We couldn't send the invite. Try again."
-msgstr "Não deu para enviar o convite. Tente de novo."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "7AjVf6"
-msgid "Invite another guardian"
-msgstr "Convidar outro responsável"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "ApmdzQ"
-msgid "Your guardian's email"
-msgstr "Email do seu responsável"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "9hMKDz"
-msgid "parent@example.com"
-msgstr "responsavel@exemplo.com"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "pAt8ra"
-msgid "Invite sent. It works for 7 days."
-msgstr "Convite enviado. Ele vale por 7 dias."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "c6fa4a"
-msgid "They get an email to accept. You can cancel the invite until then."
-msgstr "A pessoa recebe um email para aceitar. Você pode cancelar o convite até lá."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-invite-form.tsx
-msgctxt "oBB4L4"
-msgid "Send invite"
-msgstr "Enviar convite"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "fgnw9j"
-msgid "No daily time limit"
-msgstr "Sem limite diário de tempo"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "Xvc3GB"
-msgid "Daily limit: {minutes} min"
-msgstr "Limite diário: {minutes} min"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "BwJC5I"
-msgid "Memory off"
-msgstr "Memória desativada"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "cYLBm9"
-msgid "Plus approved"
-msgstr "Plus aprovado"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "Lz_jJl"
-msgid "Only your guardian can end this link."
-msgstr "Só seu responsável pode encerrar este vínculo."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "PLh2YP"
-msgid "Waiting for them to accept. The invite works until {date}."
-msgstr "Aguardando a pessoa aceitar. O convite vale até {date}."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "m0ccCu"
-msgid "Waiting for them to accept."
-msgstr "Aguardando a pessoa aceitar."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "sCc3aL"
-msgid "Cancel invite"
-msgstr "Cancelar convite"
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "eKZ1rH"
-msgid "We couldn't cancel the invite. Try again."
-msgstr "Não deu para cancelar o convite. Tente de novo."
-
-#: src/app/[lang]/(settings)/settings/guardian/guardian-links.tsx
-msgctxt "e5WSCR"
-msgid "Invite sent"
-msgstr "Convite enviado"
-
-#: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "N2KcgD"
-msgid "Invite a parent or guardian to see your week, set a daily limit, turn memory off and approve Plus."
-msgstr "Convide um responsável para ver sua semana, definir um limite diário, desativar a memória e aprovar o Plus."
-
-#: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "-1JR11"
-msgid "Create an account to invite a guardian."
-msgstr "Crie uma conta para convidar um responsável."
-
-#: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "Pw2Cov"
-msgid "Guardian links are for learners under 18."
-msgstr "Os vínculos com responsáveis são para quem tem menos de 18 anos."
-
-#: src/app/[lang]/(settings)/settings/guardian/page.tsx
-msgctxt "NUsUzs"
-msgid "A parent or guardian can see your weekly activity, set a daily time limit, turn memory off and approve Plus."
-msgstr "Um responsável pode ver suas atividades da semana, definir um limite diário de tempo, desativar a memória e aprovar o Plus."
 
 #: src/app/[lang]/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
@@ -1809,6 +1681,11 @@ msgctxt "eXAMzi"
 msgid "Your best day and time"
 msgstr "Seu melhor dia e horário"
 
+#: src/app/[lang]/account-deleted-toast.tsx
+msgctxt "H30ctc"
+msgid "Your account was deleted."
+msgstr "Sua conta foi excluída."
+
 #: src/app/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons-card.tsx
 msgctxt "iqLF8D"
 msgid "Lessons"
@@ -2006,8 +1883,8 @@ msgid "Writing practice"
 msgstr "Prática de escrita"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
-msgctxt "4H9z4m"
-msgid "Build a {course} plan"
+msgctxt "UOYMne"
+msgid "Build a plan for {course}"
 msgstr "Monte um plano para {course}"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
@@ -2196,11 +2073,6 @@ msgid "Say it again"
 msgstr "Fale de novo"
 
 #: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
-msgctxt "IUKnu0"
-msgid "Its chapters and lessons are written when you start."
-msgstr "Os capítulos e as aulas são criados quando você começa."
-
-#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
 msgctxt "8Dn3GJ"
 msgid "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}"
 msgstr "{chapters, plural, one {# capítulo} other {# capítulos}} · {lessons, plural, one {# aula} other {# aulas}}"
@@ -2216,9 +2088,19 @@ msgid "Your plan starts at this chapter and follows the course from there, in th
 msgstr "Seu plano começa neste capítulo e segue o curso a partir daí, de acordo com o tempo que você tem por dia."
 
 #: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "8s-b4U"
+msgid "How much do you already know?"
+msgstr "Quanto você já sabe?"
+
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
+msgctxt "eePhP0"
+msgid "It only changes where your plan starts."
+msgstr "Isso só muda por onde seu plano começa."
+
+#: src/app/[lang]/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
-msgstr "Seu plano segue este curso, de acordo com o tempo que você tem por dia."
+msgstr "Seu plano segue este curso e se adapta ao tempo que você tem por dia."
 
 #: src/app/[lang]/start/course/[courseId]/page.tsx
 msgctxt "6e3fLf"
@@ -2300,45 +2182,15 @@ msgctxt "Lxn0Fm"
 msgid "Price shown at checkout"
 msgstr "Preço mostrado ao finalizar a compra"
 
-#: src/components/pricing/guardian-approval-request.tsx
-msgctxt "O2N_hH"
-msgid "Invite a parent or guardian first. Once they accept, you can ask them here."
-msgstr "Convide primeiro um dos seus pais ou um responsável. Depois que essa pessoa aceitar, você pode pedir por aqui."
-
-#: src/components/pricing/guardian-approval-request.tsx
-msgctxt "TpuJqb"
-msgid "Invite a guardian"
-msgstr "Convidar um responsável"
-
-#: src/components/pricing/guardian-approval-request.tsx
-msgctxt "oO-R1j"
-msgid "We emailed your guardian. Once they approve, come back here to subscribe."
-msgstr "Enviamos um email para seu responsável. Quando essa pessoa aprovar, volte aqui para assinar o Plus."
-
-#: src/components/pricing/guardian-approval-request.tsx
-msgctxt "17Kgny"
-msgid "You're under 18, so a guardian approves Plus before you subscribe."
-msgstr "Como você tem menos de 18 anos, precisa da aprovação de um responsável para assinar o Plus."
-
-#: src/components/pricing/guardian-approval-request.tsx
-msgctxt "5LliRf"
-msgid "Ask my guardian"
-msgstr "Pedir ao meu responsável"
-
-#: src/components/pricing/guardian-approval-request.tsx
-msgctxt "PkW36-"
-msgid "We couldn't send that. Try again in a moment."
-msgstr "Não foi possível enviar. Tente de novo daqui a pouco."
-
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "3dBFur"
 msgid "Unlimited lessons and goals"
 msgstr "Aulas e metas ilimitadas"
 
 #: src/components/pricing/plus-benefits.tsx
-msgctxt "mYDLUu"
-msgid "Full exam prep, with mock exams"
-msgstr "Preparo completo para provas, com simulados"
+msgctxt "-6ADwG"
+msgid "Full exam prep, with mock exams and speaking tasks"
+msgstr "Preparo completo para provas, com simulados e atividades de fala"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "kBEnAH"
@@ -2361,24 +2213,14 @@ msgid "Zoonk Plus: plans and pricing"
 msgstr "Zoonk Plus: planos e preços"
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "tvsXXs"
-msgid "Your goal: {goal}"
-msgstr "Sua meta: {goal}"
-
-#: src/components/pricing/plus-pricing.tsx
-msgctxt "-xdmmE"
-msgid "Keep going with Plus."
-msgstr "Continue com Plus."
-
-#: src/components/pricing/plus-pricing.tsx
 msgctxt "I9zhni"
 msgid "Get ready for your exam, new job or move."
 msgstr "Prepare-se para uma prova, um novo emprego ou uma mudança."
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "XLh9rZ"
-msgid "Plus gives you everything Zoonk has."
-msgstr "Com o Plus, você tem acesso a tudo que o Zoonk oferece."
+msgctxt "uPJSSB"
+msgid "Subscribe to Zoonk Plus"
+msgstr "Assine o Zoonk Plus"
 
 #: src/components/pricing/plus-purchase.tsx
 msgctxt "h9kFux"
@@ -2452,9 +2294,9 @@ msgid "{tutor, plural, one {# tutor message} other {# tutor messages}} and {uplo
 msgstr "{tutor, plural, one {# mensagem para o tutor} other {# mensagens para o tutor}} e {uploads, plural, one {# envio} other {# envios}} por dia"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "wo99A0"
-msgid "Speaking calls, with lower limits than Plus"
-msgstr "Chamadas de conversação, com limites menores que no Plus"
+msgctxt "QKrdr3"
+msgid "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"
+msgstr "Chamadas de prática, com limites menores que no Plus (as atividades de fala para provas vêm com o Plus)"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "uUjwhB"

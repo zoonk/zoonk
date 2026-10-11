@@ -43,10 +43,30 @@ function optionText(pause: Pause, optionId: string | undefined): string {
   return pause.options.find((option) => option.id === optionId)?.text ?? "";
 }
 
+/** What the learner does next: step on, or, at the end of the run, check their predictions. */
+function RunHint({ isExploring, isLastStep }: { isExploring: boolean; isLastStep: boolean }) {
+  const t = useExtracted();
+
+  if (!isLastStep) {
+    return (
+      <p className="text-muted-foreground text-xs">{t("Step forward to run the next line.")}</p>
+    );
+  }
+
+  return (
+    <p className="text-muted-foreground text-xs">
+      {isExploring
+        ? t("That's the whole run.")
+        : t("That's the whole run. Check your predictions when you're ready.")}
+    </p>
+  );
+}
+
 /**
  * Step through a program line by line and watch its variables change. At each pause the learner
  * predicts a value before stepping on to see it; the predictions are the answer. After the check
  * every pause shows the traced value next to the prediction, and the run can still be replayed.
+ * Explored on an explanation screen, the program steps freely with nothing to predict.
  */
 export function CodeTracerActivity({
   answer,
@@ -59,6 +79,8 @@ export function CodeTracerActivity({
   const t = useExtracted();
   const { fields } = content;
   const isChecked = phase === "checked";
+  const isExploring = phase === "explore";
+  const asksNothing = isChecked || isExploring;
   const start = firstStep(fields.pauses);
   const [step, setStep] = useState(start);
   const [furthest, setFurthest] = useState(start);
@@ -69,8 +91,8 @@ export function CodeTracerActivity({
 
   const expectedPairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
   const lastStep = fields.trace.length - 1;
-  const blocking = isChecked ? null : blockingPause({ pauses: fields.pauses, predictions, step });
-  const upcoming = isChecked ? null : upcomingPause(fields.pauses, step);
+  const blocking = asksNothing ? null : blockingPause({ pauses: fields.pauses, predictions, step });
+  const upcoming = asksNothing ? null : upcomingPause(fields.pauses, step);
   const isRevealed = (pause: Pause) => isChecked || furthest >= pause.step;
   const values = watchedValues({ step, trace: fields.trace, watch: fields.watch });
 
@@ -159,11 +181,7 @@ export function CodeTracerActivity({
       )}
 
       {!isChecked && !(upcoming && !isRevealed(upcoming.pause)) && (
-        <p className="text-muted-foreground text-xs">
-          {step < lastStep
-            ? t("Step forward to run the next line.")
-            : t("That's the whole run. Check your predictions when you're ready.")}
-        </p>
+        <RunHint isExploring={isExploring} isLastStep={step >= lastStep} />
       )}
 
       <TracerPredictionLog results={revealed} />

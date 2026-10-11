@@ -1,3 +1,4 @@
+import { toPlainLine } from "@zoonk/utils/text-repairs";
 import {
   type LessonScreen,
   type LessonScreenKind,
@@ -5,6 +6,7 @@ import {
   type LessonSpecSkill,
   type SupportMode,
   estimateLessonMinutes,
+  getSupportModeFromScreens,
 } from "./lesson-spec-rules";
 
 /** A screen as the model writes it: skills are numbered from 1 in the order the lesson lists them. */
@@ -25,38 +27,60 @@ export type RawLessonSpec = {
   title: string;
 };
 
-function trimSkill(skill: LessonSpecSkill): LessonSpecSkill {
+/** A skill's texts are a study card's lines and a lesson's title: plain lines (`toPlainLine`). */
+function cleanSkill(skill: LessonSpecSkill): LessonSpecSkill {
+  const name = toPlainLine(skill.name);
+
   return {
-    description: skill.description.trim(),
-    example: skill.example.trim(),
+    description: toPlainLine(skill.description),
+    example: toPlainLine(skill.example),
     hard: skill.hard,
-    name: skill.name.trim(),
-    topic: skill.topic.trim() || skill.name.trim(),
-    useCase: skill.useCase.trim(),
+    name,
+    topic: toPlainLine(skill.topic) || name,
+    useCase: toPlainLine(skill.useCase),
   };
 }
 
-function toSkillIndexes({ numbers, skillCount }: { numbers: number[]; skillCount: number }) {
+/**
+ * The screen's skill numbers as indexes, without unknown or repeated ones. In a lesson of one
+ * skill, a screen past the hook that names none is about that skill.
+ */
+function toSkillIndexes({
+  kind,
+  numbers,
+  skillCount,
+}: {
+  kind: LessonScreenKind;
+  numbers: number[];
+  skillCount: number;
+}) {
   const indexes = numbers
     .map((number) => number - 1)
     .filter((index) => Number.isInteger(index) && index >= 0 && index < skillCount);
 
-  return [...new Set(indexes)];
+  return indexes.length === 0 && kind !== "hook" && skillCount === 1 ? [0] : [...new Set(indexes)];
 }
+
+/** The template ids the catalog has, and those an explanation screen can show to explore. */
+type TemplateSets = { exploreIds: ReadonlySet<string>; templateIds: ReadonlySet<string> };
 
 /**
  * An activity only stays when the spec names a template the catalog has, since
  * the writer can't build anything else. Otherwise the screen keeps its brief
- * and becomes a regular check, so the learner still uses the idea there.
+ * and becomes a regular check, so the learner still uses the idea there. An
+ * explanation keeps a template only when it can be explored; otherwise it stays
+ * an explanation without one.
  */
 function normalizeActivity({
+  exploreIds,
   screen,
   templateIds,
-}: {
-  screen: RawLessonScreen;
-  templateIds: ReadonlySet<string>;
-}): Pick<LessonScreen, "activityTemplate" | "kind"> {
+}: TemplateSets & { screen: RawLessonScreen }): Pick<LessonScreen, "activityTemplate" | "kind"> {
   const template = screen.activityTemplate?.trim() ?? "";
+
+  if (screen.kind === "explanation") {
+    return { activityTemplate: exploreIds.has(template) ? template : null, kind: screen.kind };
+  }
 
   if (screen.kind !== "activity") {
     return { activityTemplate: null, kind: screen.kind };
@@ -68,49 +92,47 @@ function normalizeActivity({
 }
 
 function normalizeScreen({
+  exploreIds,
   screen,
   skillCount,
   templateIds,
-}: {
-  screen: RawLessonScreen;
-  skillCount: number;
-  templateIds: ReadonlySet<string>;
-}): LessonScreen {
+}: TemplateSets & { screen: RawLessonScreen; skillCount: number }): LessonScreen {
   const visual = screen.visual?.trim() ?? "";
 
   return {
-    ...normalizeActivity({ screen, templateIds }),
+    ...normalizeActivity({ exploreIds, screen, templateIds }),
     brief: screen.brief.trim(),
-    skills: toSkillIndexes({ numbers: screen.skills, skillCount }),
+    skills: toSkillIndexes({ kind: screen.kind, numbers: screen.skills, skillCount }),
     visual: visual || null,
   };
 }
 
 /**
- * Turns the model's lesson into a stored spec: trimmed text, skill numbers
- * turned into indexes (unknown ones dropped), activities limited to the
- * catalog and minutes computed from the screen plan.
+ * Turns the model's lesson into a stored spec: what learners read as plain lines
+ * (`toPlainLine`: no em dashes or Markdown), skill numbers turned into indexes
+ * (unknown ones dropped; a one-skill lesson's screen that names none is about
+ * its skill), activities limited to the catalog, explored templates to those
+ * that can be, and minutes and the support mode computed from the screen plan.
  */
 export function normalizeLessonSpec({
+  exploreIds,
   raw,
   templateIds,
-}: {
-  raw: RawLessonSpec;
-  templateIds: ReadonlySet<string>;
-}): LessonSpec {
-  const skills = raw.skills.map((skill) => trimSkill(skill));
+}: TemplateSets & { raw: RawLessonSpec }): LessonSpec {
+  const skills = raw.skills.map((skill) => cleanSkill(skill));
 
   const screens = raw.screens.map((screen) =>
-    normalizeScreen({ screen, skillCount: skills.length, templateIds }),
+    normalizeScreen({ exploreIds, screen, skillCount: skills.length, templateIds }),
   );
 
   return {
-    canDo: raw.canDo.trim(),
-    description: raw.description.trim(),
+    canDo: toPlainLine(raw.canDo),
+    description: toPlainLine(raw.description),
     estimatedMinutes: estimateLessonMinutes(screens.map((screen) => screen.kind)),
     screens,
     skills,
-    supportMode: raw.supportMode,
-    title: raw.title.trim(),
+    // The writer builds an explanation on the check before it, so the screen plan decides.
+    supportMode: getSupportModeFromScreens(screens),
+    title: toPlainLine(raw.title),
   };
 }

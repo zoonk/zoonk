@@ -80,6 +80,12 @@ const componentsSchema = z
         .number()
         .min(0)
         .meta({ description: "How many answers the weighted ones are worth as evidence" }),
+      supported: shareSchema
+        .nullable()
+        .meta({
+          description:
+            "The share right the answers support (Wilson's lower bound): what preparation counts, and the value to show for this part",
+        }),
       value: shareSchema
         .nullable()
         .meta({
@@ -133,7 +139,8 @@ export const goalPreparationResponseSchema = z
     estimatedScore: estimatedScoreSchema
       .nullable()
       .meta({
-        description: "Only for an exam goal after a mock exam, always a range labeled Estimated",
+        description:
+          "Only for an exam goal once its last three mock exams hold at least 30 questions and not one subject alone, always a range labeled Estimated. Null before that: after a mock (components.mocks.taken > 0), say that more mocks of the whole exam or half of it bring the estimate",
       }),
     goalId: z.uuid(),
     skills: skillStateCountsSchema,

@@ -8,6 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
@@ -143,7 +144,7 @@ describe("a class test whose material announces its questions", () => {
   });
 
   it("keeps the lesson on his miss the teacher announced an essay on, before what he knows", async () => {
-    const { nucleus, organelles, passive, plan, virus } = await setup();
+    const { nucleus, passive, plan, virus } = await setup();
 
     const lessons = await prisma.planItem.findMany({
       orderBy: { position: "asc" },
@@ -153,8 +154,116 @@ describe("a class test whose material announces its questions", () => {
     const titles = lessons.map((item) => item.titleSnapshot);
     const skills = new Set(lessons.map((item) => item.skillId));
 
+    // The announced topic comes first, with its skill's core; what he knows waits for it.
     expect(titles).toContain(OSMOSIS);
-    expect(skills.has(passive?.id ?? "") && skills.has(organelles?.id ?? "")).toBe(true);
+    expect(skills.has(passive?.id ?? "")).toBe(true);
     expect(skills.has(nucleus?.id ?? "") || skills.has(virus?.id ?? "")).toBe(false);
   });
+
+  it("keeps the table practice the teacher announced through a focus on osmosis", async () => {
+    const { goal, osmosis, plan, table } = await setupFormatSkills();
+    const tableLessons = await listSkillTitles({ planId: plan.id, skillId: table.id });
+
+    expect(tableLessons).toHaveLength(TABLE_LESSONS);
+
+    const result = await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ areas: [AREA], kind: "focusAreas", parts: [osmosis] }] },
+    });
+
+    expect(result.status).toBe("applied");
+
+    await expect(listSkillTitles({ planId: plan.id, skillId: table.id })).resolves.toStrictEqual(
+      tableLessons,
+    );
+  });
 });
+
+/** Pass 9's reading of Pedro's notes: the formats, described without what they ask about. */
+const GENERIC_FORMATS = {
+  ...NOTES_STRUCTURE,
+  formats: [
+    { ...NOTES_STRUCTURE.formats[0], description: "Questão de completar tabela." },
+    { ...NOTES_STRUCTURE.formats[1], description: "Questão dissertativa." },
+  ],
+};
+
+const AREA = "Biologia Celular";
+const TABLE_LESSONS = 4;
+
+/** Pedro's graph from pass 9: a skill for each of the formats his teacher announced. */
+const FORMAT_SKILLS = [
+  { lessons: 3, name: "Explicar os fundamentos da teoria celular", weight: 3 },
+  { lessons: 5, name: "Calcular e prever processos de transporte passivo", weight: 5 },
+  { lessons: 5, name: "Identificar organelas de síntese e digestão", weight: 5 },
+  { lessons: TABLE_LESSONS, name: "Completar tabelas de funções das organelas", weight: 4 },
+  { lessons: 4, name: "Elaborar resposta dissertativa sobre comportamento osmótico", weight: 4 },
+  { lessons: 3, name: "Descrever a morfologia do núcleo eucarionte", weight: 3 },
+];
+
+async function listSkillTitles({ planId, skillId }: { planId: string; skillId: string }) {
+  const items = await prisma.planItem.findMany({
+    orderBy: { position: "asc" },
+    where: { kind: "lesson", planId, skillId, status: "todo" },
+  });
+
+  return items.map((item) => item.titleSnapshot).toSorted();
+}
+
+/**
+ * Pedro a week before his test with 25 minutes a day, as persona pass 9 met him: his notes'
+ * reading kept the formats the teacher announced but not what they ask about, and his graph has
+ * a skill practicing each format.
+ */
+async function setupFormatSkills() {
+  const user = await userFixture();
+
+  const [blueprint, library] = await Promise.all([
+    examBlueprintFixture({
+      name: "Prova de biologia",
+      ownerId: user.id,
+      structure: GENERIC_FORMATS,
+      visibility: "private",
+    }),
+    planLibraryFixture({
+      skills: FORMAT_SKILLS.map((skill) => ({
+        area: AREA,
+        lessons: skill.lessons,
+        weight: skill.weight,
+      })),
+    }),
+  ]);
+
+  const graph = {
+    ...library.graph,
+    skills: library.graph.skills.map((skill, index) => ({
+      ...skill,
+      name: FORMAT_SKILLS[index]?.name ?? skill.name,
+    })),
+  };
+
+  const [, passive, , table, essay] = library.skills;
+
+  const { goal, plan } = await unplannedGoalFixture({
+    dailyMinutes: 25,
+    details: { placementDeclined: true },
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    targetDate: new Date(TODAY.getTime() + 7 * DAY_MS),
+    timezone: "UTC",
+    userId: user.id,
+  });
+
+  await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+  mockSession(user.id);
+  await createGoalPlan({ goalId: goal.id, graph });
+
+  if (!table) {
+    throw new Error("The library has no table skill.");
+  }
+
+  // His focus on osmosis: the passive transport skill that teaches it and the essay on it.
+  const osmosis = { area: AREA, name: "Osmose", skillIds: [passive?.id ?? "", essay?.id ?? ""] };
+
+  return { goal, osmosis, plan, table };
+}

@@ -1,26 +1,18 @@
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getEstimatedCostMicros } from "../../entitlements/limits";
 import { createGoals } from "../../goals/create-goals";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
 import { getExplanation } from "./get-explanation";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(),
-}));
 
 async function explainGoalFixture({
   courseId = null,
@@ -43,10 +35,6 @@ async function explainGoalFixture({
 }
 
 describe(getExplanation, () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("says the explanation is being written until its lesson is ready", async () => {
     const user = await userFixture();
     mockSession(user.id);
@@ -175,10 +163,6 @@ describe(getExplanation, () => {
 });
 
 describe("asking a quick question", () => {
-  beforeEach(() => {
-    vi.mocked(isRateLimited).mockResolvedValue(false);
-  });
-
   it("uses the explanations allowance and leaves the goal the learner follows active", async () => {
     const user = await userFixture();
     mockSession(user.id);

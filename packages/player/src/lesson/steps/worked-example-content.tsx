@@ -4,7 +4,7 @@ import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { RichInlineSegments } from "../../components/rich-inline-segments";
-import { LessonRichText, LessonRichTextBlocks } from "../_components/lesson-rich-text";
+import { LessonRichTextBlocks } from "../_components/lesson-rich-text";
 import { type StepOf } from "./lesson-step-view-props";
 
 type WorkedExampleContentData = StepOf<"workedExample">["content"];
@@ -26,7 +26,7 @@ function WorkedExampleLine({
       </span>
       {/* Full width on every step, so each formula centers on the same axis. */}
       <div className="flex min-w-0 flex-1 flex-col gap-1 pt-0.5 text-base leading-relaxed sm:text-lg">
-        <LessonRichText text={step.text} />
+        <LessonRichTextBlocks text={step.text} />
         {step.math && <RichInlineSegments segments={[{ kind: "displayMath", text: step.math }]} />}
       </div>
     </li>
@@ -89,9 +89,10 @@ export function WorkedExampleContent({
       {isDone && (
         <div className="border-success/40 bg-success/5 flex flex-col gap-1 rounded-2xl border p-4">
           <p className="text-success text-sm font-semibold">{t("Result")}</p>
-          <p className="text-base leading-relaxed sm:text-lg">
-            <LessonRichText text={content.result} />
-          </p>
+          <LessonRichTextBlocks
+            className="text-base leading-relaxed sm:text-lg"
+            text={content.result}
+          />
         </div>
       )}
 

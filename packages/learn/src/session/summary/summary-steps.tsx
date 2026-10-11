@@ -4,6 +4,7 @@ import { useExtracted } from "next-intl";
 import { KindTile } from "../../_components/kind-tile";
 import { StepCard, StepEyebrow, StepHeader, StepTitle } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
+import { OpenNextStep } from "../open-next-step";
 import { getRisenSkills } from "./risen-skills";
 import { FinishButton, SummaryOptions } from "./summary-actions";
 import { useIsStopped, useSessionSummary } from "./summary-context";
@@ -67,11 +68,19 @@ function useWithCeremony(items: StepsItem[]): StepsItem[] {
 /**
  * The end of the session, one thing at a time: the session done with its numbers, what changed
  * (the goal's number, the skills that rose), what it earned, then tomorrow with Finish. Right
- * after "Stop for today", one step: what's done so far, with Finish and Keep going.
+ * after "Stop for today", one step: what's done so far, with Finish and Keep going. A session
+ * with a block still waiting that the learner didn't stop (the host read the day before "10 more
+ * minutes" added it) goes straight on to that block.
  */
 export function SummarySteps() {
-  const { exitHref } = useSessionSummary();
+  const t = useExtracted();
+  const stopped = useIsStopped();
+  const { actions, exitHref, summary } = useSessionSummary();
   const items = useWithCeremony(useSummaryItems());
+
+  if (!stopped && !summary.finished) {
+    return <OpenNextStep onOpen={actions.keepGoing} status={t("Getting it ready…")} />;
+  }
 
   return (
     <Steps

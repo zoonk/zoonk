@@ -6,6 +6,22 @@ import { scienceMoneyActivities } from "./activity-contents/science-money";
 import { societyReasoningActivities } from "./activity-contents/society-reasoning";
 
 /**
+ * The fixtures by subject area, in catalog order, so a preview can list the templates the way the
+ * catalog groups them.
+ */
+export const activityFixtureAreas: readonly {
+  fixtures: Readonly<Record<string, Record<string, unknown> & { template: string }>>;
+  title: string;
+}[] = [
+  { fixtures: numbersAlgebraActivities, title: "Numbers and algebra" },
+  { fixtures: geometryProbabilityActivities, title: "Geometry and probability" },
+  { fixtures: scienceMoneyActivities, title: "Science and money" },
+  { fixtures: computingLanguagesActivities, title: "Computing and languages" },
+  { fixtures: societyReasoningActivities, title: "Society and reasoning" },
+  { fixtures: musicAnySubjectActivities, title: "Music and any subject" },
+];
+
+/**
  * One valid `activity` step content per template, keyed by template id. Core's validator test
  * proves each one publishes, so E2E lessons can reuse them as they are.
  * The data is plain JSON; parse it with core's `activityContentSchema` for typed fields.
@@ -18,3 +34,6 @@ export const activityContentFixtures = {
   ...societyReasoningActivities,
   ...musicAnySubjectActivities,
 };
+
+/** The generic engines' other modes, by template and mode, like `formulaModel.scenario`. */
+export { engineModeFixtures } from "./activity-contents/engine-modes";

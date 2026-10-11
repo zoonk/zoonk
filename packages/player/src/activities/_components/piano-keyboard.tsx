@@ -98,6 +98,7 @@ export function PianoKeyboard({
 
         return (
           <Element
+            key={key.midi}
             {...(isInteractive && {
               ...rovingProps(index),
               "aria-label": spokenNameOf(key.midi),
@@ -119,7 +120,6 @@ export function PianoKeyboard({
               isInteractive && key.isBlack && "active:bg-neutral-700 motion-safe:transition-colors",
             )}
             data-slot="piano-key"
-            key={key.midi}
             style={keyPosition(key, whiteCount)}
           >
             {mark && <NoteMark kind={mark} label={nameOf(key.midi)} />}

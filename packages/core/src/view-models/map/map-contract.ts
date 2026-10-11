@@ -7,6 +7,13 @@ const countSchema = z.int().min(0);
 
 const progressStateSchema = z.enum(["done", "current", "upcoming"]);
 
+const phaseStateSchema = z
+  .enum(["done", "unfinished", "current", "upcoming"])
+  .meta({
+    description:
+      "`current` is the earliest phase with work left; one before it is `done` once the learner finished its work, `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done",
+  });
+
 export const mapSkillSchema = z
   .object({
     description: z.string().nullable().meta({ description: "The idea in one sentence" }),
@@ -47,7 +54,7 @@ const mapPhaseSchema = z
     counts: skillStateCountsSchema,
     index: z.int().min(0),
     name: z.string().meta({ description: "Empty for exam phases, which apps name by kind" }),
-    state: progressStateSchema,
+    state: phaseStateSchema,
   })
   .meta({ id: "MapPhase" });
 
@@ -91,7 +98,10 @@ export const fieldMapViewSchema = z
     goal: z.object({ id: z.uuid(), kind: z.enum(GoalKind), title: z.string() }),
     next: studyNextSchema
       .nullable()
-      .meta({ description: "What to study next, once every lesson of the plan is done" }),
+      .meta({
+        description:
+          "What to study next, once nothing of the plan is left to do: finished, or ended with lessons set aside (see the plan's `end`)",
+      }),
     phases: z.array(mapPhaseSchema),
     refresh: z
       .object({

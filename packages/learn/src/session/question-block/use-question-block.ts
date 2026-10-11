@@ -102,10 +102,7 @@ export function useQuestionBlock({
       return;
     }
 
-    dispatch({
-      retryAfterSeconds: outcome.status === "slowDown" ? outcome.retryAfterSeconds : null,
-      type: "answerFailed",
-    });
+    dispatch({ type: "answerFailed" });
   };
 
   return {

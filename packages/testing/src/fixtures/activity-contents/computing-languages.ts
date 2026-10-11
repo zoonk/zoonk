@@ -1,5 +1,5 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
-import { choiceCheck, interactionCheck } from "./activity-checks";
+import { interactionCheck } from "./activity-checks";
 
 /** Computing and languages: one valid activity per template. */
 export const computingLanguagesActivities = {
@@ -111,23 +111,6 @@ export const computingLanguagesActivities = {
     prompt: "You have a sore throat. How do you answer?",
     template: "dialogueSimulator",
   },
-  listeningSpeed: {
-    check: choiceCheck("What time is dinner booked for?", [
-      ["8:45", false],
-      ["9:00", false],
-      ["9:30", true],
-      ["10:30", false],
-    ]),
-    fields: {
-      language: "es",
-      script:
-        "¡Hola! Soy Lucía. Ya tengo la mesa para el sábado. Al final no es a las nueve, es a las nueve y media. ¡Nos vemos allí!",
-      speeds: [0.5, 0.75, 1],
-      voice: "Lucía, from Madrid",
-    },
-    prompt: "Lucía sent a voice message. What time is dinner booked for?",
-    template: "listeningSpeed",
-  },
   patternTable: {
     check: interactionCheck,
     fields: {
@@ -184,29 +167,6 @@ export const computingLanguagesActivities = {
     },
     prompt: "Write the pattern.",
     template: "patternTester",
-  },
-  sentenceBuilder: {
-    check: {
-      explanation: "With friends in Spain, use vosotros: venís, not the formal vienen.",
-      kind: "interaction",
-    },
-    fields: {
-      acceptedVariants: ["¿Esta noche venís a cenar?"],
-      distractors: [
-        {
-          why: "Vienen is the ustedes form, which sounds formal in Spain. With friends, use vosotros.",
-          word: "Vienen",
-        },
-        { why: "Vais means you all go. You're asking them to come.", word: "vais" },
-        { why: "Cena is the noun, dinner. After a you need the verb, cenar.", word: "cena" },
-      ],
-      language: "es",
-      prompt: "Are you all coming to dinner tonight?",
-      situation: "Text your friends in Madrid",
-      target: "¿Venís a cenar esta noche?",
-    },
-    prompt: "Build the invitation in Spanish.",
-    template: "sentenceBuilder",
   },
   sqlPlayground: {
     check: interactionCheck,

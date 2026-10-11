@@ -9,10 +9,10 @@ export type PreparationSkill = {
   skillId: string;
   state: MasteryState;
   /**
-   * When the learner first showed it: their first answer on it or in one of its lessons (a lesson,
-   * practice, placement, a test-out or a mock), never "I don't know yet". Null when not yet, even
-   * when placement assumed it known from a ticked subject or a stated level: that skips lessons but
-   * isn't preparation.
+   * When the learner first showed it: their first answer in one of its lessons, or their first
+   * right answer to it in practice (a session's questions, its full review or mock), never "I don't
+   * know yet". Null when not yet, even when a test took it as known (one right placement answer, a
+   * ticked subject, a stated level): that skips lessons, and practice still has to confirm it.
    */
   studiedAt: Date | null;
   /**
@@ -85,6 +85,11 @@ export type PreparationComponents = {
      * when every answer counts alike, fewer when a few weigh most.
      */
     evidence: number;
+    /**
+     * The share right the answers support (Wilson's lower bound): what preparation counts and the
+     * part shows, since five right of five says less than forty of forty.
+     */
+    supported: number | null;
     /** The share right, each answer counting by its skill's importance. */
     value: number | null;
   };
@@ -95,6 +100,7 @@ export type PreparationComponents = {
      * there's no full review to take either.
      */
     plusRequired: boolean;
+    /** Every test taken by then; `value` averages the latest few (`RECENT_MOCKS`). */
     taken: number;
     value: number | null;
   };
@@ -163,6 +169,32 @@ function getCoverage({ asOf, skills }: { asOf: Date; skills: readonly Preparatio
   };
 }
 
+/** One-sided 95%: what a share of right answers is at least, given how many there were. */
+const MASTERY_CONFIDENCE_Z = 1.645;
+
+/**
+ * The share of right answers the evidence supports (Wilson's lower bound): five right of five says
+ * less than forty of forty, so a few right answers on a small plan never read as everything known.
+ */
+function getSupportedMastery({
+  evidence,
+  value,
+}: {
+  evidence: number;
+  value: number | null;
+}): number | null {
+  if (value === null || evidence <= 0) {
+    return value;
+  }
+
+  const z2 = MASTERY_CONFIDENCE_Z ** 2;
+  const halfZ = MASTERY_CONFIDENCE_Z / 2;
+  const spread = Math.sqrt((value * (1 - value)) / evidence + (halfZ / evidence) ** 2);
+  const center = value + z2 / (2 * evidence);
+
+  return Math.max(0, (center - MASTERY_CONFIDENCE_Z * spread) / (1 + z2 / evidence));
+}
+
 function getMastery({
   answers,
   asOf,
@@ -186,11 +218,15 @@ function getMastery({
     0,
   );
 
+  const evidence = squares > 0 ? total ** 2 / squares : 0;
+  const value = recent.length >= MIN_MASTERY_ANSWERS && total > 0 ? right / total : null;
+
   return {
     answered: recent.length,
     correct: recent.filter((answer) => answer.isCorrect).length,
-    evidence: squares > 0 ? total ** 2 / squares : 0,
-    value: recent.length >= MIN_MASTERY_ANSWERS && total > 0 ? right / total : null,
+    evidence,
+    supported: getSupportedMastery({ evidence, value }),
+    value,
   };
 }
 
@@ -223,17 +259,16 @@ function getMocks({
   mocks: readonly MockResult[];
   plusRequired: boolean;
 }) {
-  const recent = mocks
+  const taken = mocks
     .filter((mock) => mock.total > 0 && mock.endedAt.getTime() <= asOf.getTime())
-    .toSorted((a, b) => b.endedAt.getTime() - a.endedAt.getTime())
-    .slice(0, RECENT_MOCKS);
+    .toSorted((a, b) => b.endedAt.getTime() - a.endedAt.getTime());
 
-  const scores = recent.map((mock) => mock.correct / mock.total);
+  const scores = taken.slice(0, RECENT_MOCKS).map((mock) => mock.correct / mock.total);
 
   return {
     kind,
     plusRequired,
-    taken: recent.length,
+    taken: taken.length,
     value: scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : null,
   };
 }
@@ -270,28 +305,6 @@ export function getPreparationComponents({
   };
 }
 
-/** One-sided 95%: what a share of right answers is at least, given how many there were. */
-const MASTERY_CONFIDENCE_Z = 1.645;
-
-/**
- * The share of right answers the evidence supports (Wilson's lower bound): five right of five says
- * less than forty of forty, so a few right answers on a small plan never read as everything known.
- */
-function getSupportedMastery(mastery: PreparationComponents["mastery"]): number | null {
-  const { evidence, value } = mastery;
-
-  if (value === null || evidence <= 0) {
-    return value;
-  }
-
-  const z2 = MASTERY_CONFIDENCE_Z ** 2;
-  const halfZ = MASTERY_CONFIDENCE_Z / 2;
-  const spread = Math.sqrt((value * (1 - value)) / evidence + (halfZ / evidence) ** 2);
-  const center = value + z2 / (2 * evidence);
-
-  return Math.max(0, (center - MASTERY_CONFIDENCE_Z * spread) / (1 + z2 / evidence));
-}
-
 /**
  * One number from 0 to 1 that never says more than the evidence does. The rule:
  *
@@ -299,13 +312,16 @@ function getSupportedMastery(mastery: PreparationComponents["mastery"]): number 
  *   the learner's course's weights, how often the exam asks its topics) times how hard it is (its
  *   questions' difficulty, calibrated from every learner's answers, or its place in the skill
  *   graph): a hard, frequent topic counts several times an easy, rare one.
- * - Coverage is the share of that importance the learner has shown on (answered, never "I don't
- *   know yet"): an untested topic counts as not ready, whatever a stated level or a ticked subject
- *   says.
- * - How well the studied part is known is the weighted mean of the evidence there is: accuracy on
- *   questions never seen before (each answer counting by its skill's importance, read only as far
- *   as the number of answers supports, Wilson's lower bound), what's still remembered, and mock
- *   exams or weekly challenges.
+ * - Coverage is the share of that importance the learner has shown (studied in its lessons, or
+ *   answered right in practice): an untested topic counts as not ready, and so does one a test
+ *   only took as known (one right answer, a stated level, a ticked subject) until practice
+ *   confirms it.
+ * - How well the studied part is known weighs every part the learner can have, one without
+ *   evidence yet counting as none, so new evidence never lowers the number: accuracy on questions
+ *   never seen before (each answer counting by its skill's importance, read only as far as the
+ *   number of answers supports, Wilson's lower bound), what's still remembered, and mock exams or
+ *   weekly challenges (unless the learner's plan can't take one). One area, which mocks don't
+ *   measure alone, reads how well its studied part is known from the evidence there is.
  * - Preparation is coverage times that, and it reaches Solid only when the goal's heavier part (its
  *   hardest and most asked skills) studied times that reaches it too, and after a test in the real
  *   conditions (a mock exam, a full review in the exam's format when the learner's plan has no
@@ -324,19 +340,26 @@ export function getPreparationValue(
     needsTest?: boolean;
   } = {},
 ): number {
-  const evidence = [
-    { value: getSupportedMastery(components.mastery), weight: QUALITY_WEIGHTS.mastery },
-    { value: components.retention.value, weight: QUALITY_WEIGHTS.retention },
-    { value: components.mocks.value, weight: QUALITY_WEIGHTS.mocks },
-  ].flatMap(({ value, weight }) => (value === null ? [] : [{ value, weight }]));
+  // The goal counts every part the learner can have, a missing one as none, so new evidence only
+  // adds (a test their plan can't take isn't one of them). One area reads how well its studied
+  // part is known, where practice is needed, from the evidence there is.
+  const canTest = needsTest && !components.mocks.plusRequired;
 
-  const totalWeight = evidence.reduce((sum, part) => sum + part.weight, 0);
+  const parts = [
+    { value: components.mastery.supported, weight: QUALITY_WEIGHTS.mastery },
+    { value: components.retention.value, weight: QUALITY_WEIGHTS.retention },
+    ...(canTest ? [{ value: components.mocks.value, weight: QUALITY_WEIGHTS.mocks }] : []),
+  ].filter((part) => needsTest || part.value !== null);
+
+  const totalWeight = parts.reduce((sum, part) => sum + part.weight, 0);
 
   if (totalWeight === 0) {
     return 0;
   }
 
-  const quality = evidence.reduce((sum, part) => sum + part.value * part.weight, 0) / totalWeight;
+  const quality =
+    parts.reduce((sum, part) => sum + (part.value ?? 0) * part.weight, 0) / totalWeight;
+
   const { heaviest, value } = components.coverage;
   const prepared = value * quality;
   const hasTest = !needsTest || components.mocks.taken > 0;

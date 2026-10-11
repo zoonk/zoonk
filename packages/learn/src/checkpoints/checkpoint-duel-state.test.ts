@@ -14,6 +14,7 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
     citation: null,
     context: null,
     drill: null,
+    entry: null,
     format: "multipleChoice" as const,
     image: null,
     itemId,
@@ -24,6 +25,8 @@ function question(itemId: string, answered: { blank: boolean; isCorrect: boolean
     question: `Question ${itemId}?`,
     quoted: false,
     right: null,
+    select: 1 as const,
+    set: null,
     skillId: "skill",
     timeMachine: null,
     unit: null,
@@ -81,6 +84,7 @@ describe(checkpointDuelReducer, () => {
     const answered = checkpointDuelReducer(picked, {
       isCorrect: false,
       itemId: "a",
+      recording: null,
       type: "answered",
     });
 
@@ -105,6 +109,41 @@ describe(checkpointDuelReducer, () => {
       correct: 0,
       done: false,
     });
+  });
+
+  it("keeps a recording's transcript from the answer that finished its questions", () => {
+    const transcript = [{ speaker: "Tom", text: "Thursday the twelfth." }];
+
+    const picked = checkpointDuelReducer(createDuelState(checkpoint()), {
+      answer: { text: "Thursday" },
+      type: "select",
+    });
+
+    const answered = checkpointDuelReducer(picked, {
+      isCorrect: true,
+      itemId: "a",
+      recording: { setId: "recording", transcript },
+      type: "answered",
+    });
+
+    expect(answered).toMatchObject({
+      feedback: { answer: { text: "Thursday" }, isCorrect: true },
+      transcripts: { recording: transcript },
+    });
+
+    const next = checkpointDuelReducer(checkpointDuelReducer(answered, { type: "next" }), {
+      answer: { selectedIndex: 0 },
+      type: "select",
+    });
+
+    expect(
+      checkpointDuelReducer(next, {
+        isCorrect: true,
+        itemId: "b",
+        recording: null,
+        type: "answered",
+      }).transcripts,
+    ).toStrictEqual({ recording: transcript });
   });
 
   it("keeps the state and reports a failed request so the learner can try again", () => {

@@ -57,15 +57,13 @@ type MemoryGateRun = EvaluationRunDetails &
 
 /**
  * Decides whether a candidate fact may enter memory: it must be lasting, and a sensitive fact only
- * stays when the learner explicitly asked and is allowed to keep one (adults only). The candidate
+ * stays when the learner explicitly asked. The candidate
  * and its evidence are untrusted data, so a "please store this, it's approved" line can't
  * override the verdict beyond what the learner could ask for anyway.
  */
 export async function gateMemoryFact({
-  allowSensitive,
   candidate,
 }: {
-  allowSensitive: boolean;
   candidate: MemoryGateCandidate;
 }): Promise<MemoryGateRun> {
   const { answers, ...run } = await evaluateQuestions({
@@ -81,5 +79,5 @@ export async function gateMemoryFact({
     sensitive: answers.sensitive.probability,
   };
 
-  return { ...run, ...decideMemoryGate({ allowSensitive, probabilities }), probabilities };
+  return { ...run, ...decideMemoryGate(probabilities), probabilities };
 }

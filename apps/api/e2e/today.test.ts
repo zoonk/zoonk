@@ -7,17 +7,34 @@ import {
   planItemFixture,
   suggestedGoalFixture,
 } from "@zoonk/testing/fixtures/goals";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { suggestedGoalResultSchema } from "../src/lib/openapi/schemas/suggested-goals";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
 import { createBearerLearner } from "./helpers/bearer";
 
 const DAY_MS = 86_400_000;
 const DAYS_TO_EXAM = 20;
+const SAO_PAULO = "America/Sao_Paulo";
+
+function localDay(timeZone: string): Date {
+  return getDateInTimeZone({ date: new Date(), timeZone });
+}
+
+function toIsoDay(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+/** A zone whose day isn't the goal's right now: far ahead of it, or far behind it early on. */
+function zoneOnAnotherDay(goalZone: string): string {
+  const zones = ["Pacific/Kiritimati", "Pacific/Pago_Pago"];
+  return zones.find((zone) => localDay(zone).getTime() !== localDay(goalZone).getTime()) ?? "UTC";
+}
 
 /** An exam goal 20 days away with one lesson in its plan, set as the learner's active goal. */
 async function createExamGoal(userId: string) {
@@ -189,6 +206,49 @@ test.describe("Today API", () => {
     });
 
     await api.dispose();
+  });
+
+  test("reads the day in the goal's zone, and takes the request's before the learner's day starts", async () => {
+    const [studied, fresh] = await Promise.all([
+      createBearerLearner({ baseURL, prefix: "today-zone-studied" }),
+      createBearerLearner({ baseURL, prefix: "today-zone-fresh" }),
+    ]);
+
+    const goals = await Promise.all(
+      [studied, fresh].map(async ({ userId }) => {
+        const { goal } = await createExamGoal(userId);
+        return prisma.goal.update({ data: { timezone: SAO_PAULO }, where: { id: goal.id } });
+      }),
+    );
+
+    const device = zoneOnAnotherDay(SAO_PAULO);
+
+    // She answered a question today in São Paulo, so her day stays the goal's until tomorrow.
+    await attemptFixture({ localDate: localDay(SAO_PAULO), userId: studied.userId });
+
+    const [kept, moved] = await Promise.all(
+      [studied, fresh].map(async ({ api }) => {
+        const response = await api.get(`/v1/today?timeZone=${device}`);
+        expect(response.status(), await response.text()).toBe(200);
+        return todayResponseSchema.parse(await response.json());
+      }),
+    );
+
+    expect(kept?.session.localDate).toBe(toIsoDay(localDay(SAO_PAULO)));
+    expect(moved?.session.localDate).toBe(toIsoDay(localDay(device)));
+
+    const zones = await prisma.goal.findMany({
+      orderBy: { userId: "asc" },
+      select: { timezone: true, userId: true },
+      where: { id: { in: goals.map((goal) => goal.id) } },
+    });
+
+    expect(Object.fromEntries(zones.map((goal) => [goal.userId, goal.timezone]))).toStrictEqual({
+      [fresh.userId]: device,
+      [studied.userId]: SAO_PAULO,
+    });
+
+    await Promise.all([studied.api.dispose(), fresh.api.dispose()]);
   });
 
   test("rejects an invalid timezone", async () => {

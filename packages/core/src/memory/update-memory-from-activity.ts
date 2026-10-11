@@ -1,5 +1,7 @@
 import "server-only";
+import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { extractMemoryFacts } from "@zoonk/ai/tasks/v2/memory/extraction";
+import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -8,8 +10,8 @@ import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getMemoryCacheTag } from "../cache/tags";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { toProvenanceData } from "../library/_utils/library-rows";
-import { getMemoryAccess } from "./_utils/memory-access";
-import { toMemoryCandidates } from "./_utils/memory-candidates";
+import { isMemoryEnabled } from "./_utils/memory-access";
+import { toMemoryCandidates, toSessionFacts } from "./_utils/memory-candidates";
 import {
   type MemoryChatMessage,
   formatChatInput,
@@ -32,6 +34,42 @@ export type MemoryUpdateRequest = {
 };
 
 type ExtractionInput = { input: string; language: string; source: MemorySource };
+
+/**
+ * What a model proposes to remember: lasting facts from what the learner said (onboarding, a
+ * chat), or learning patterns from a session's numbers, which have their own task.
+ */
+async function proposeFacts({
+  analytics,
+  extraction,
+  today,
+}: {
+  analytics: AiGenerationContext;
+  extraction: ExtractionInput;
+  today: string;
+}) {
+  const { input, language, source } = extraction;
+
+  if (source.kind === "session") {
+    const { data, provenance } = await findSessionPatterns({
+      activity: input,
+      analytics,
+      language,
+    });
+
+    return { facts: toSessionFacts(data.patterns), provenance };
+  }
+
+  const { data, provenance } = await extractMemoryFacts({
+    analytics,
+    input,
+    language,
+    source: source.kind,
+    today,
+  });
+
+  return { facts: data.facts, provenance };
+}
 
 async function loadExtractionInput({
   source,
@@ -79,8 +117,7 @@ async function rememberInOrder({
  * Learns from what the learner said or did: after onboarding, a chat or a study session, a cheap
  * model proposes lasting facts, a classifier drops passing and sensitive ones, and each survivor is
  * compared with related facts to be added, replace one, remove one or be ignored. Returns what
- * changed, so a chat can show "Memory updated" with undo. Nothing is learned while memory is off,
- * and minors' memory keeps only goals and learning.
+ * changed, so a chat can show "Memory updated" with undo. Nothing is learned while memory is off.
  *
  * This is a bridge for chats and workflows: `userId` comes from the public capability or workflow
  * that a session started, never from a client.
@@ -90,12 +127,12 @@ export async function updateMemoryFromActivity(
 ): Promise<MemoryChange[]> {
   const { goalId, timeZone, userId } = request;
 
-  const [access, extraction] = await Promise.all([
-    getMemoryAccess(userId),
+  const [enabled, extraction] = await Promise.all([
+    isMemoryEnabled(userId),
     loadExtractionInput(request),
   ]);
 
-  if (!access.enabled || !extraction?.input.trim()) {
+  if (!enabled || !extraction?.input.trim()) {
     return [];
   }
 
@@ -103,26 +140,17 @@ export async function updateMemoryFromActivity(
   const zone = getAnswerTimeZone({ goal: null, timeZone });
   const today = getDateInTimeZone({ date: now, timeZone: zone });
 
-  const { data, provenance } = await extractMemoryFacts({
+  const { facts, provenance } = await proposeFacts({
     analytics: { contentScope: "personal", distinctId: userId, goalId: goalId ?? undefined },
-    categories: access.categories,
-    input: extraction.input,
-    language: extraction.language,
-    source: extraction.source.kind,
+    extraction,
     today: today.toISOString().slice(0, 10),
   });
 
-  const candidates = toMemoryCandidates({
-    categories: access.categories,
-    facts: data.facts,
-    source: extraction.source.kind,
-    today,
-  });
+  const candidates = toMemoryCandidates({ facts, today });
 
   const changes = await rememberInOrder({
     candidates,
     context: {
-      access,
       language: extraction.language,
       now,
       provenance: toProvenanceData(provenance),

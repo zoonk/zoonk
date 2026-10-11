@@ -48,7 +48,7 @@ export async function writeLearnerSkills(scope: LearnerScope): Promise<void> {
 async function writeAttempt(
   scope: LearnerScope,
   attempt: SeedAttempt,
-  { order, sessionId }: { order: number; sessionId: string },
+  { order, sessionId }: { order: number; sessionId: string | null },
 ) {
   const { learner, lookup, prisma, userId } = scope;
   const id = seedId(`learner:${learner.key}:attempt:${attempt.key}`);
@@ -101,11 +101,19 @@ async function writeAttempt(
   });
 }
 
-/** Answers with their learner-local time, and the mistakes notebook entries some of them left. */
-export async function writeAttempts(scope: LearnerScope, sessionId: string): Promise<void> {
+/**
+ * Answers with their learner-local time, and the mistakes notebook entries some of them left:
+ * those given in today's session (`inSession`, written with it) or the others.
+ */
+export async function writeAttempts(
+  scope: LearnerScope,
+  { inSession, sessionId }: { inSession: boolean; sessionId: string | null },
+): Promise<void> {
   await Promise.all(
-    scope.learner.attempts.map((attempt, order) =>
-      writeAttempt(scope, attempt, { order, sessionId }),
+    scope.learner.attempts.flatMap((attempt, order) =>
+      Boolean(attempt.inSession) === inSession
+        ? [writeAttempt(scope, attempt, { order, sessionId })]
+        : [],
     ),
   );
 }

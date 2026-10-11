@@ -1,3 +1,4 @@
+import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { detectLanguageExam } from "../language-exam";
 
 /**
@@ -89,6 +90,22 @@ export function getExamScale({
   );
 }
 
+/** ENEM, whose own scale (and item response theory scoring on it) only it uses. */
+const ENEM_PATTERN = /\benem\b/iu;
+
+/** Whether the exam is ENEM, from its blueprint's name or key or the goal's title. */
+export function isEnemExam({
+  blueprint,
+  goal,
+}: {
+  blueprint: { identityKey: string; name: string } | null;
+  goal: { title: string } | null;
+}): boolean {
+  return [blueprint?.name, blueprint?.identityKey, goal?.title].some(
+    (text) => text !== undefined && ENEM_PATTERN.test(text),
+  );
+}
+
 export function isExamScale(value: string | null): value is ExamScale {
   return EXAM_SCALES.some((scale) => scale === value);
 }
@@ -113,6 +130,74 @@ export function percentToExamScale({
     high: roundToExamScale({ scale, value: fromPercent(range.high) }),
     low: roundToExamScale({ scale, value: fromPercent(range.low) }),
   };
+}
+
+/**
+ * A scale an exam's score shows on, beside a mock's right answers: the notice's own (its `scale`,
+ * such as EXANI-II's 700 to 1300), else the exam's preset (SAT, AP, TOEFL). `fromPercent` turns a
+ * share of right answers into it only where the map is known: the notice's linear one, or the
+ * preset's approximation.
+ */
+export type ScoreScale = {
+  fromPercent: ((percent: number) => number) | null;
+  max: number;
+  min: number;
+  name: string | null;
+  passScore: number | null;
+  step: number | null;
+};
+
+export function getScoreScale({
+  blueprint,
+  goal,
+  structure,
+}: {
+  blueprint: { identityKey: string; name: string } | null;
+  goal: { title: string } | null;
+  structure: ExamStructure | null;
+}): ScoreScale | null {
+  const notice = structure?.mock?.scoring.scale;
+
+  if (notice) {
+    const map = notice.fromPercent;
+
+    return {
+      fromPercent: map ? (percent) => map.base + map.perPercent * percent : null,
+      max: notice.max,
+      min: notice.min,
+      name: notice.name,
+      passScore: notice.passScore,
+      step: notice.step,
+    };
+  }
+
+  const preset = getExamScale({ blueprint, goal });
+
+  if (!preset) {
+    return null;
+  }
+
+  const { fromPercent, max, min, step } = SCALE_RULES[preset];
+  return { fromPercent, max, min, name: null, passScore: null, step };
+}
+
+/** A share of right answers (0 to 1) on the scale, to its step and within it; null without a map. */
+export function toScaleScore({
+  scale,
+  share,
+}: {
+  scale: ScoreScale;
+  share: number;
+}): number | null {
+  if (!scale.fromPercent) {
+    return null;
+  }
+
+  const PERCENT = 100;
+  const value = scale.fromPercent(share * PERCENT);
+  const stepped = scale.step ? Math.round(value / scale.step) * scale.step : Math.round(value);
+
+  return Math.min(scale.max, Math.max(scale.min, stepped));
 }
 
 /** Whether a reported score fits the exam's scale: 1350 for the SAT, 4 for AP, 4.5 for TOEFL. */

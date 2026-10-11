@@ -1,19 +1,25 @@
 "use client";
 
+import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type LanguageActivityType } from "@zoonk/core/language/activities";
-import { NOTICE_SOURCE } from "@zoonk/core/plans/change-contract";
+import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
 import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { OWN_LEVEL_SOURCE } from "@zoonk/core/plans/own-level-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { REBALANCE_SOURCE } from "@zoonk/core/preparation/rebalance";
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatDuration } from "../_utils/time-format";
+import { useNoticeDayText } from "./notice-day";
 import { useActivityName } from "./plan-activities";
 import { hasAreas, useAreaSentence } from "./use-area-sentence";
-import { useAreaStartTexts } from "./use-area-start-texts";
-import { useLessonsEffectText, useTopicsEffectText } from "./use-effect-counts";
+import { isChoiceOperation, useChoiceSentence } from "./use-choice-sentence";
+import { useCoverageSentence } from "./use-coverage-sentence";
+import { usePhaseDatesSentence } from "./use-phase-dates-sentence";
+import { useShortList } from "./use-short-list";
+import { useSystemChangeSentence } from "./use-system-change-sentence";
 import { useToolSentence } from "./use-tool-sentence";
-import { useWeekdaySentence, useWeeklyEventsText } from "./use-weekday-texts";
+import { useWeekdaySentence } from "./use-weekday-texts";
 import { useWrittenCadenceWords } from "./written-cadence";
 
 type DifficultyBias = PlanView["steering"]["difficultyBias"];
@@ -38,6 +44,20 @@ export function useDifficultySentence() {
   };
 }
 
+/**
+ * "Your plan follows the exam notice.": what a change that brings the notice's subjects in did, or
+ * a language certificate's official guide (see `ExamDocument`).
+ */
+function useFollowsNoticeSentence() {
+  const t = useExtracted();
+
+  return (document: ExamDocument): string =>
+    t(
+      "{document, select, notice {Your plan follows the exam notice.} other {Your plan follows the exam's official guide.}}",
+      { document },
+    );
+}
+
 /** Says one operation the way the learner would: "Light week from Oct 12". */
 function useOperationSentence() {
   const t = useExtracted();
@@ -54,15 +74,23 @@ function useOperationSentence() {
   const areaSentence = useAreaSentence();
   const weekdaySentence = useWeekdaySentence();
   const writtenCadence = useWrittenCadenceWords();
+  const choiceSentence = useChoiceSentence();
+  const formatDuration = useFormatDuration();
+  const followsNotice = useFollowsNoticeSentence();
+  const shortList = useShortList();
 
-  return (operation: PlanOperation): string => {
+  return (operation: PlanOperation, document: ExamDocument): string => {
     if (hasAreas(operation)) {
       return areaSentence(operation);
     }
 
+    if (isChoiceOperation(operation)) {
+      return choiceSentence(operation);
+    }
+
     switch (operation.kind) {
       case "setDailyMinutes":
-        return t("Daily time changed to {minutes, number} min.", { minutes: operation.minutes });
+        return t("Daily time changed to {time}.", { time: formatDuration(operation.minutes) });
       case "setWeekdayMinutes":
         return weekdaySentence(operation);
       case "addLightWeek":
@@ -73,10 +101,6 @@ function useOperationSentence() {
         return t("The weekly challenge moved to {date}.", {
           date: formatDate(operation.to, "long"),
         });
-      case "setTargetDate":
-        return operation.targetDate
-          ? t("Date moved to {date}.", { date: formatDate(operation.targetDate, "long") })
-          : t("Date removed.");
       case "skipActivities":
         return t("{activities} left out of your lessons.", {
           activities: activityList(operation.activities),
@@ -98,15 +122,25 @@ function useOperationSentence() {
           "{count, plural, one {{skills} comes into your plan.} other {{skills} come into your plan.}}",
           {
             count: operation.skills.length,
-            skills: list(operation.skills.map((skill) => skill.name)),
+            skills: shortList(
+              operation.skills.map((skill) => skill.name),
+              "topics",
+            ),
           },
         );
       case "followNotice":
-        return t("Your plan follows the exam notice.");
+        return followsNotice(document);
       case "setNoticeDate":
         return t("Date moved to {date}.", { date: formatDate(operation.targetDate, "long") });
       case "setTools":
         return toolSentence(operation.tools);
+      case "fitPhaseDates":
+        return t("Your phase dates moved, so more lessons fit before your goal's date.");
+      case "setExamChoice":
+        return t("Your plan studies {subject} for {group}.", {
+          group: operation.group,
+          subject: operation.subject,
+        });
       default:
         return t("Your plan changed.");
     }
@@ -115,41 +149,45 @@ function useOperationSentence() {
 
 /**
  * What the exam's notice changes, said once: its subjects when research read it after the plan
- * was built, and its exam day when it isn't the plan's date.
+ * was built, and its exam day when it isn't the plan's date. A language certificate's are its
+ * official guide's (see `ExamDocument`).
  */
 function useNoticeSentence() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const noticeDayText = useNoticeDayText();
+  const followsNotice = useFollowsNoticeSentence();
 
-  return (operations: PlanOperation[]): string => {
-    const followsNotice = operations.some((operation) => operation.kind === "followNotice");
+  return ({ examDocument: document, operations }: PlanChangeView): string => {
+    const follows = operations.some((operation) => operation.kind === "followNotice");
     const day = operations.find((operation) => operation.kind === "setNoticeDate");
     const date = day?.kind === "setNoticeDate" ? formatDate(day.targetDate, "long") : null;
     const estimated = day?.kind === "setNoticeDate" && day.estimated;
 
-    if (followsNotice && date) {
+    if (follows && date) {
       return estimated
         ? t(
-            "We read the exam notice: your plan can follow its subjects, with the exam around {date}.",
-            { date },
+            "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam around {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam around {date}.}}",
+            { date, document },
           )
         : t(
-            "We read the exam notice: your plan can follow its subjects, with the exam on {date}.",
-            { date },
+            "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam on {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam on {date}.}}",
+            { date, document },
           );
     }
 
-    if (followsNotice) {
-      return t("We read the exam notice: your plan can follow its subjects and topics.");
+    if (follows) {
+      return t(
+        "{document, select, notice {We read the exam notice: your plan can follow its subjects and topics.} other {We read the exam's official guide: your plan can follow its parts and topics.}}",
+        { document },
+      );
     }
 
-    if (date) {
-      return estimated
-        ? t("The exam's likely date is now {date}, until its notice is out.", { date })
-        : t("The exam notice puts the exam on {date}.", { date });
+    if (day?.kind === "setNoticeDate") {
+      return noticeDayText({ date: day.targetDate, document, estimated: day.estimated });
     }
 
-    return t("Your plan follows the exam notice.");
+    return followsNotice(document);
   };
 }
 
@@ -181,8 +219,12 @@ export function useAppliedLine() {
 export function useChangeSentence() {
   const t = useExtracted();
   const format = useFormatter();
+  const shortList = useShortList();
   const operationSentence = useOperationSentence();
   const noticeSentence = useNoticeSentence();
+  const coverageSentence = useCoverageSentence();
+  const systemSentence = useSystemChangeSentence();
+  const phaseDatesSentence = usePhaseDatesSentence();
 
   return (change: PlanChangeView): string => {
     if (change.reason) {
@@ -190,7 +232,11 @@ export function useChangeSentence() {
     }
 
     if (change.source === NOTICE_SOURCE) {
-      return noticeSentence(change.operations);
+      return noticeSentence(change);
+    }
+
+    if (change.source === PHASE_DATES_SOURCE && change.status === "proposed") {
+      return phaseDatesSentence(change.effect);
     }
 
     const [first] = change.operations;
@@ -198,9 +244,9 @@ export function useChangeSentence() {
     // A lower level of your own brings in foundations: they say what comes first now.
     if (change.source === OWN_LEVEL_SOURCE && first?.kind === "addSkills") {
       return t("For your new level, these come first: {skills}.", {
-        skills: format.list(
+        skills: shortList(
           first.skills.map((skill) => skill.name),
-          { type: "conjunction" },
+          "topics",
         ),
       });
     }
@@ -212,162 +258,47 @@ export function useChangeSentence() {
       });
     }
 
-    switch (change.kind) {
-      case "missedDays":
-        return t("Lessons earlier days left come first, and the rest of your plan moved forward.");
-      case "estimateUpdated":
-        return t("Your plan got more precise as you studied.");
-      case "testedOut":
-        return t(
-          "{lessons, plural, one {You tested out of # lesson} other {You tested out of # lessons}}, so it's off your plan.",
-          { lessons: change.lessonsSkipped },
-        );
-      default:
-        return change.operations.length > 0
-          ? change.operations.map((operation) => operationSentence(operation)).join(" ")
-          : t("Your plan changed.");
-    }
+    return (
+      systemSentence(change) ??
+      (change.operations.length > 0
+        ? change.operations
+            .map((operation) => operationSentence(operation, change.examDocument))
+            .join(" ")
+        : coverageSentence(change))
+    );
   };
 }
 
 /**
  * "The exam notice sets the exam for January 10, 2027." for a waiting change that moves an exam off
- * the day its notice sets: said with the change, so the learner keeps their own date only on
- * purpose. Null otherwise.
+ * the day its notice sets (a language certificate's official calendar): said with the change, so
+ * the learner keeps their own date only on purpose. Null otherwise.
  */
 export function useOfficialDateLine() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
   return function officialDateLine(
-    change: Pick<PlanChangeView, "officialDate" | "status">,
+    change: Pick<PlanChangeView, "examDocument" | "officialDate" | "status">,
   ): string | null {
     return change.status === "proposed" && change.officialDate
-      ? t("The exam notice sets the exam for {date}.", {
-          date: formatDate(change.officialDate.date, "long"),
-        })
-      : null;
-  };
-}
-
-/** How a change moves the end: "Ends Nov 20 instead of Nov 12". Null when the end stays. */
-function useChangeEffectText() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-
-  return function effectText(change: Pick<PlanChangeView, "effect">): string | null {
-    const { effect } = change;
-
-    if (!effect?.endDateAfter || !effect.endDateBefore) {
-      return null;
-    }
-
-    if (effect.endDateAfter === effect.endDateBefore) {
-      return null;
-    }
-
-    return t("Ends {after} instead of {before}.", {
-      after: formatDate(effect.endDateAfter, "long"),
-      before: formatDate(effect.endDateBefore, "long"),
-    });
-  };
-}
-
-/** The plan as it is now, so a waiting change's effect never names an end the plan doesn't show. */
-type CurrentEnd = Pick<PlanView["estimate"], "endDate"> & Pick<PlanView["schedule"], "targetDate">;
-
-function toMonth(isoDate: string): string {
-  return isoDate.slice(0, "YYYY-MM".length);
-}
-
-/**
- * The end a change moves, in the plan's own terms. A plan with a date keeps it, so only a plan
- * without one says its new end, by month as its title does, and only while the change starts from
- * the end the plan shows now: an older change's dates would contradict it.
- */
-function usePlanEndEffectText() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-
-  return function planEndEffect({
-    current,
-    effect,
-  }: {
-    current: CurrentEnd;
-    effect: PlanChangeView["effect"];
-  }): string | null {
-    const before = effect?.endDateBefore;
-    const after = effect?.endDateAfter;
-
-    if (current.targetDate || !current.endDate || !before || !after) {
-      return null;
-    }
-
-    if (toMonth(before) !== toMonth(current.endDate) || toMonth(after) === toMonth(before)) {
-      return null;
-    }
-
-    return t("Ends around {after} instead of {before}.", {
-      after: formatDate(after, "month"),
-      before: formatDate(before, "month"),
-    });
-  };
-}
-
-/**
- * The review day ahead a focus opens with its topics: "Your review on Oct 9 starts with Osmose e
- * organelas." A class test's day before has no lessons for a focus to move, only its questions.
- */
-function useReviewFirstText() {
-  const t = useExtracted();
-  const format = useFormatter();
-  const formatDate = useFormatIsoDate();
-
-  return function reviewFirstText(effect: PlanChangeView["effect"]): string | null {
-    const review = effect?.reviewFirst;
-
-    return review
-      ? t("Your review on {date} starts with {areas}.", {
-          areas: format.list(review.areas, { type: "conjunction" }),
-          date: formatDate(review.date, "long"),
-        })
+      ? t(
+          "{document, select, notice {The exam notice sets the exam for {date}.} other {The exam's official calendar sets the exam for {date}.}}",
+          { date: formatDate(change.officialDate.date, "long"), document: change.examDocument },
+        )
       : null;
   };
 }
 
 /**
- * What a proposal does, for the learner to weigh before saying yes: "Adds 6 lessons. Ends Nov 20
- * instead of Nov 12." or "Leaves out 56 lessons." With `current` (the plan on screen), its end is
- * said the plan's way, or not at all when the plan has a date. Null when it neither changes how
- * many lessons are left nor moves the end.
+ * "Keep the notice's date": declining a change that moves the exam off its official day keeps that
+ * day, said the same on Today and in the buddy's card (a language certificate's official date).
  */
-export function useProposalEffectText() {
-  const effectText = useChangeEffectText();
-  const lessonsText = useLessonsEffectText();
-  const topicsText = useTopicsEffectText();
-  const planEndEffect = usePlanEndEffectText();
-  const areaStartTexts = useAreaStartTexts();
-  const reviewFirstText = useReviewFirstText();
-  const weeklyEventsText = useWeeklyEventsText();
+export function useKeepOfficialDateLabel() {
+  const t = useExtracted();
 
-  return function proposalEffectText(
-    change: Pick<PlanChangeView, "effect">,
-    current?: CurrentEnd,
-  ): string | null {
-    // With a review ahead that the focus opens, a start that stays says nothing the review doesn't.
-    const starts = (change.effect?.areaStarts ?? []).filter(
-      (start) => !change.effect?.reviewFirst || start.after !== start.before,
-    );
-
-    const sentences = [
-      ...areaStartTexts(starts),
-      reviewFirstText(change.effect),
-      weeklyEventsText(change.effect),
-      lessonsText(change.effect),
-      topicsText(change.effect),
-      current ? planEndEffect({ current, effect: change.effect }) : effectText(change),
-    ].filter(Boolean);
-
-    return sentences.length > 0 ? sentences.join(" ") : null;
-  };
+  return (document: ExamDocument): string =>
+    t("{document, select, notice {Keep the notice's date} other {Keep the official date}}", {
+      document,
+    });
 }

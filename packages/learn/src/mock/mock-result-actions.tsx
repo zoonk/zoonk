@@ -13,7 +13,8 @@ import { MockReviewSheet } from "./mock-review";
 /** The questions answered wrong: the ones to fix. Blanks are reviewed but aren't mistakes. */
 export function useMistakeCount(): number {
   const { runner } = useMockScreen();
-  return runner.view.review.filter((entry) => entry.outcome === "wrong").length;
+  // A question with several picks answered partly right missed some, so the notebook keeps it too.
+  return runner.view.review.filter((entry) => entry.outcome !== "blank").length;
 }
 
 /** The one thing to do now: the mistakes to review. */

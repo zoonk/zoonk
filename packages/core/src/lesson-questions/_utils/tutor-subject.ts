@@ -12,7 +12,14 @@ import { type LibraryQuestionLesson, getLessonQuestionAccess } from "./question-
 export type TutorSubject =
   | { chapterId: string; kind: "chapter"; language: string }
   | { goal: Goal; kind: "plan"; language: string }
-  | { blockId: string | null; kind: "mock"; language: string; mockExamId: string }
+  | {
+      blockId: string | null;
+      /** The goal the mock was taken for, whose plan the buddy reads with it. */
+      goalId: string | null;
+      kind: "mock";
+      language: string;
+      mockExamId: string;
+    }
   | { kind: "lesson"; language: string; lesson: LibraryQuestionLesson };
 
 /** A thread finds its mock by id: the mock's session block may be gone. */
@@ -77,7 +84,7 @@ async function findMockSubject({
 
   return toAccess(
     mock && language
-      ? { blockId: mock.blockId, kind: "mock", language, mockExamId: mock.id }
+      ? { blockId: mock.blockId, goalId: mock.goalId, kind: "mock", language, mockExamId: mock.id }
       : null,
   );
 }

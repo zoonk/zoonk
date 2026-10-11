@@ -7,7 +7,7 @@ import {
   CollapsibleTrigger,
 } from "@zoonk/ui/components/collapsible";
 import { ChevronDownIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { StepCard, StepRow, StepRows, StepTitle } from "../_components/step-card";
 
 type Topic = MockResult["topics"][number];
@@ -20,9 +20,14 @@ function byShare(first: Topic, second: Topic): number {
 
 function useRightOf() {
   const t = useExtracted();
+  const format = useFormatter();
 
+  // An area's partial credit leaves decimals: "2,25 of 6" in Portuguese.
   return ({ correct, total }: { correct: number; total: number }) =>
-    t("{correct} of {total}", { correct: String(correct), total: String(total) });
+    t("{correct} of {total}", {
+      correct: format.number(correct, { maximumFractionDigits: 2 }),
+      total: String(total),
+    });
 }
 
 /** "300–470": a range, since one mock can't pin a score down. */

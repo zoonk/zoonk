@@ -1,8 +1,13 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
-import { type ConversationActions, ConversationScreen } from "@zoonk/learn/language/conversation";
+import {
+  type ConversationActions,
+  type ConversationHrefs,
+  ConversationScreen,
+} from "@zoonk/learn/language/conversation";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import {
@@ -13,9 +18,23 @@ import {
 
 /**
  * Where a call leads: a checkpoint back to today's session, which opens the next block; practice
- * back to its unit; a speaking mock to the Journey, where it starts.
+ * back to its unit; an exam task to the exam screen it was started from, or else to the speaking
+ * practice page, where its "Next" opens the paper's next task; a speaking mock to the Journey.
  */
-function getHrefs(conversation: LanguageConversationView) {
+function getHrefs({
+  conversation,
+  fromExam,
+  fromMock,
+}: {
+  conversation: LanguageConversationView;
+  fromExam: boolean;
+  fromMock: string | null;
+}): ConversationHrefs {
+  // A mock's speaking task goes back to the mock, which opens its next task.
+  if (fromMock) {
+    return { exit: `/mock/${fromMock}`, next: `/mock/${fromMock}` };
+  }
+
   if (conversation.kind === "checkpoint") {
     return { exit: "/today", next: "/session" };
   }
@@ -25,13 +44,37 @@ function getHrefs(conversation: LanguageConversationView) {
     return { exit: unit, next: unit };
   }
 
+  if (fromExam) {
+    return { exit: "/exam", next: "/exam", nextTask: (task) => `/exam?task=${task}` };
+  }
+
+  // A language goal's exam-style tasks live on their own page, where "Next" opens the next one.
+  if (conversation.examTask) {
+    return { exit: "/speaking", next: "/speaking", nextTask: (task) => `/speaking?task=${task}` };
+  }
+
   return { exit: "/journey", next: "/journey" };
 }
 
-/** Wires the call screen to the app: opening the call, its goals, saving it, and another mock. */
-export function ConversationClient({ conversation }: { conversation: LanguageConversationView }) {
-  const startConversation = useStartLanguageConversation();
-  const { goalId, id, kind } = conversation;
+/**
+ * Wires the call screen to the app: opening the call, its goals, saving it, and another try: a new
+ * speaking mock, or the same exam task with a new card. A mock's task goes straight back to the
+ * mock once saved: the mock shows no feedback until it's over.
+ */
+export function ConversationClient({
+  conversation,
+  fromExam,
+  fromMock,
+}: {
+  conversation: LanguageConversationView;
+  fromExam: boolean;
+  /** The mock whose speaking section the call is a task of, which it leads back to. */
+  fromMock: string | null;
+}) {
+  const router = useRouter();
+  const startConversation = useStartLanguageConversation(fromExam ? { from: "exam" } : {});
+  const { examTask, goalId, id, kind } = conversation;
+  const examTaskKey = examTask && examTask.sectionId === null ? examTask.task.key : null;
 
   const actions = useMemo<ConversationActions>(
     () => ({
@@ -46,15 +89,24 @@ export function ConversationClient({ conversation }: { conversation: LanguageCon
             },
           }
         : {}),
+      // A task of a whole paper (a mock's section) goes on with its section instead.
+      ...(examTaskKey && goalId
+        ? {
+            startAgain: async () => {
+              await startConversation({ goalId, kind: "examSpeaking", task: examTaskKey });
+            },
+          }
+        : {}),
     }),
-    [goalId, id, kind, startConversation],
+    [examTaskKey, goalId, id, kind, startConversation],
   );
 
   return (
     <ConversationScreen
       actions={actions}
       conversation={conversation}
-      hrefs={getHrefs(conversation)}
+      hrefs={getHrefs({ conversation, fromExam, fromMock })}
+      onSaved={fromMock ? () => router.replace(`/mock/${fromMock}`) : undefined}
     />
   );
 }

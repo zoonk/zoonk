@@ -3,7 +3,7 @@ import { type GuestLinkContext } from "./merge-keyed-rows";
 
 type ProfileMerge = Pick<
   UserLearningProfile,
-  "activeGoalId" | "birthMonth" | "birthYear" | "buddyGlasses" | "buddyKind" | "buddyName"
+  "activeGoalId" | "buddyGlasses" | "buddyKind" | "buddyName"
 >;
 
 /** Adds a guest's day to the account's day, keeping the higher Energy the day ended with. */
@@ -97,12 +97,9 @@ function getMergedProfile({
   guest: UserLearningProfile;
 }): ProfileMerge {
   const buddy = account.buddyKind ? account : guest;
-  const birth = account.birthMonth !== null && account.birthYear !== null ? account : guest;
 
   return {
     activeGoalId: guest.activeGoalId ?? account.activeGoalId,
-    birthMonth: birth.birthMonth,
-    birthYear: birth.birthYear,
     buddyGlasses: buddy.buddyGlasses,
     buddyKind: buddy.buddyKind,
     buddyName: buddy.buddyName,

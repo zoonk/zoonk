@@ -19,8 +19,6 @@
     "./native-sessions": "./src/native-sessions.ts",
     "./testing": "./src/testing.ts",
     "./permissions": "./src/permissions.ts",
-    "./plus-purchase": "./src/minors/plus-purchase.ts",
-    "./rate-limit": "./src/request-guards/rate-limit.ts",
     "./username-rules": "./src/username-rules.ts",
     "./user-blobs": "./src/user-blobs.ts",
     "./stripe-prices": "./src/stripe/prices.ts",
@@ -34,9 +32,7 @@
   "dependencies": {
     "@better-auth/prisma-adapter": "1.7.7",
     "@better-auth/stripe": "1.7.7",
-    "@sentry/nextjs": "catalog:",
     "@vercel/blob": "2.8.1",
-    "@vercel/firewall": "1.2.6",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",

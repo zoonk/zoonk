@@ -1,7 +1,8 @@
 import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
 import { countSkillStates } from "../../learner/mastery-state";
-import { isPlanFinished, loadPlanCourse } from "../../plans/_utils/plan-course";
+import { loadPlanCourse } from "../../plans/_utils/plan-course";
+import { isPlanOver } from "../../plans/_utils/plan-end";
 import { loadGoalMap } from "../_utils/goal-map";
 import { listFadingSkills } from "../_utils/group-skills";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
@@ -56,9 +57,7 @@ export async function getFieldMapView(
       course,
       courses: areaCourses.map(({ courseId, title }) => ({ courseId, title })),
       goal: { id: goal.id, kind: goal.kind, title: goal.title },
-      next: isPlanFinished(map.items)
-        ? buildStudyNext({ course, courses, goalKind: goal.kind })
-        : null,
+      next: isPlanOver(map.items) ? buildStudyNext({ course, courses, goalKind: goal.kind }) : null,
       phases: map.phases,
       refresh: { emphasized: isRefreshGoal(goal.details), skills: listFadingSkills(skills) },
     },

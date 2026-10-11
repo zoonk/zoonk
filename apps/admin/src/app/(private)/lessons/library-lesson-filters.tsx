@@ -32,14 +32,20 @@ function toModelOptions(options: StepProvenanceOption[]) {
   }));
 }
 
-/** Prompt versions are hashes, so each option names the model that used it. */
+/**
+ * Prompt versions are hashes, so each option names the models that used it. A version two models
+ * used is one option: the filter matches the version, whichever model wrote with it.
+ */
 function toPromptVersionOptions(options: StepProvenanceOption[], model?: string) {
-  return options
-    .filter((option) => !model || option.model === model)
-    .map((option) => ({
-      label: `${option.promptVersion} · ${option.model} (${option.screens} screens)`,
-      value: option.promptVersion,
-    }));
+  const rowsByVersion = Map.groupBy(
+    options.filter((option) => !model || option.model === model),
+    (option) => option.promptVersion,
+  );
+
+  return [...rowsByVersion].map(([promptVersion, rows]) => ({
+    label: `${promptVersion} · ${rows.map((row) => row.model).join(", ")} (${rows.reduce((total, row) => total + row.screens, 0)} screens)`,
+    value: promptVersion,
+  }));
 }
 
 /**

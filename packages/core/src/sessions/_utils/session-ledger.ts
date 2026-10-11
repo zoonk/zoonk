@@ -42,8 +42,30 @@ export async function addSessionBrainPower(
 }
 
 /**
- * Closes the session's ledger row with its totals, dated when it ended. It keeps the Brain Power
- * the row already holds (the full meal); ending a session twice keeps the first ending.
+ * The time a session took: the seconds its lessons and question blocks recorded as each finished,
+ * which today's totals add up too, so the session's end, its ledger row and the learner's stats say
+ * one number (Pedro's end said the plan's 31 minutes for 8 minutes of study).
+ */
+export async function sumSessionSeconds(
+  client: Pick<TransactionClient, "learningEvent">,
+  { sessionId, userId }: { sessionId: string; userId: string },
+): Promise<number> {
+  const { _sum } = await client.learningEvent.aggregate({
+    _sum: { seconds: true },
+    where: {
+      contentIds: { equals: sessionId, path: ["studySessionId"] },
+      kind: { not: "session" },
+      userId,
+    },
+  });
+
+  return _sum.seconds ?? 0;
+}
+
+/**
+ * Closes the session's ledger row with its totals and the time it took, dated when it ended. It
+ * keeps the Brain Power the row already holds (the full meal); ending a session twice keeps the
+ * first ending.
  */
 export async function recordSessionEnd(
   tx: TransactionClient,
@@ -57,7 +79,7 @@ export async function recordSessionEnd(
     endedAt: Date;
     sessionId: string;
     timeZone: string;
-    totals: { correctAnswers: number; incorrectAnswers: number; seconds: number };
+    totals: { correctAnswers: number; incorrectAnswers: number };
     userId: string;
   },
 ) {
@@ -69,11 +91,13 @@ export async function recordSessionEnd(
     return;
   }
 
+  const seconds = await sumSessionSeconds(tx, { sessionId, userId });
+
   await finishLearningEvent(tx, {
     endedAt,
     eventId: row.id,
     kind: "session",
-    outcome: { ...totals, brainPower: row.brainPower, energyDelta: row.energyDelta },
+    outcome: { ...totals, brainPower: row.brainPower, energyDelta: row.energyDelta, seconds },
     timeZone,
   });
 }

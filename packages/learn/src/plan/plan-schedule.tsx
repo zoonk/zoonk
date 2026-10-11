@@ -1,26 +1,32 @@
 "use client";
 
+import { getRecommendedTime } from "@zoonk/core/plans/time-advice-contract";
+import { getWeekShape, isWeekend } from "@zoonk/core/plans/week-shape";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
-import { Toggle } from "@zoonk/ui/components/toggle";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
-import { isoDateToUtc, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
-import { CoverageSwitch, CoveredSentence, TargetSentence, usePlanCoverage } from "./plan-coverage";
+import {
+  CoverageAction,
+  CoveredSentence,
+  TargetSentence,
+  useFittingDateText,
+  usePlanCoverage,
+} from "./plan-coverage";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
 import { usePlanChange } from "./use-plan-change";
-import { getWeekShape, isWeekend } from "./week-shape";
 
 const MINUTE_CHOICES = ["10", "15", "20", "30", "45", "60", "90", "120", "180", "240"] as const;
 const DAYS_PER_WEEK = 7;
 
 /**
  * Choices always include the learner's own daily time, even an unusual one, and the time the goal
- * needs: the one that covers it whole by its date, recommended wherever a daily time is chosen.
+ * needs: the one that covers it whole by its date, or the most time a day when none does,
+ * recommended wherever a daily time is chosen.
  */
 function getMinuteChoices({
   current,
@@ -33,19 +39,19 @@ function getMinuteChoices({
   return [...new Set([...MINUTE_CHOICES.map(Number), ...extra])].toSorted((a, b) => a - b);
 }
 
-/** Sunday first, as the plan counts weekdays. A fixed Sunday names each day in the viewer's language. */
-const SUNDAY = "2026-01-04";
-
 /**
  * What the chosen time covers, under the control, so each change shows its effect right away: the
- * whole goal, or the share it covers with the time that covers it all and one tap to switch.
- * Nothing for a plan without a date, which covers everything at any pace.
+ * whole goal, or the share it covers with the time that covers it all and one tap to switch; when
+ * no daily time covers it by its date, what the most time covers and one tap to the date the
+ * learner's time covers it all by. Nothing for a plan without a date, which covers everything at
+ * any pace. Studying everything is chosen with the date, above it (see `PlanDate`).
  */
 function DailyCoverage({ pending }: { pending: boolean }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
   const canChooseFocus = useCanChooseFocus();
+  const fittingDateText = useFittingDateText();
 
   if (!plan.feasibility?.deadline) {
     return null;
@@ -63,12 +69,21 @@ function DailyCoverage({ pending }: { pending: boolean }) {
             <CoveredSentence
               coreFits={coverage.coreFits}
               coveredShare={coverage.coveredShare}
+              deepensMostAsked={coverage.deepensMostAsked}
               measure={coverage.measure}
             />
           </div>
           {coverage.target && <TargetSentence target={coverage.target} />}
+          {coverage.fittingDate && (
+            <p>
+              {fittingDateText({
+                dailyMinutes: plan.schedule.dailyMinutes,
+                fittingDate: coverage.fittingDate,
+              })}
+            </p>
+          )}
           <div className="flex flex-wrap items-center gap-2">
-            {coverage.target && <CoverageSwitch target={coverage.target} />}
+            <CoverageAction coverage={coverage} />
             {canChooseFocus && <ChooseFocus />}
           </div>
         </>
@@ -105,7 +120,9 @@ function DailyMinutes({
   const { plan } = usePlanScreen();
   const shape = useWeekShape();
   const current = shape.weekdays;
-  const recommended = plan.feasibility?.recommendedMinutes ?? null;
+
+  const recommended =
+    (plan.feasibility && getRecommendedTime(plan.feasibility)?.dailyMinutes) ?? null;
 
   const setMinutes = (minutes: number) =>
     change([
@@ -142,7 +159,6 @@ function DailyMinutes({
 
 function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChange }) {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
   const { plan } = usePlanScreen();
   const { weekdayMinutes } = plan.schedule;
   const shape = useWeekShape();
@@ -151,11 +167,8 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   const minutesFor = (weekday: number) =>
     shape.weekend !== null && isWeekend(weekday) ? shape.weekend : shape.weekdays;
 
+  // Sunday first, as the plan counts weekdays.
   const weekdays = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) => ({
-    label: formatDate(
-      new Date(isoDateToUtc(SUNDAY).getTime() + weekday * MS_PER_DAY).toISOString().slice(0, 10),
-      "weekdayShort",
-    ),
     studies: (weekdayMinutes[weekday] ?? 0) > 0,
     weekday,
   }));
@@ -168,10 +181,11 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
       {/* Seven equal columns keep the week on one row on a phone, whatever the day names. */}
       <div className="grid max-w-sm grid-cols-7 gap-1">
         {weekdays.map((day) => (
-          <Toggle
+          <WeekdayToggle
             className="aria-pressed:bg-foreground aria-pressed:text-background h-11 min-w-0 px-0 capitalize"
             // The last study day can't be turned off: a plan needs at least one.
             disabled={isPending || (day.studies && studyCount === 1)}
+            display="short"
             focusableWhenDisabled
             key={day.weekday}
             onPressedChange={(pressed) =>
@@ -185,9 +199,8 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
             }
             pressed={day.studies}
             variant="outline"
-          >
-            {day.label}
-          </Toggle>
+            weekday={day.weekday}
+          />
         ))}
       </div>
     </fieldset>

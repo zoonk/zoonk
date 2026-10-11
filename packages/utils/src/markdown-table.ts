@@ -135,16 +135,20 @@ export function findRaggedTableRows(text: string): string[] {
   });
 }
 
-/** The text without its tables, for rules about prose: sentence length, screen length. */
-export function removeMarkdownTables(text: string): string {
-  const lines = text.split(/\r?\n/u);
-
-  const tableLines = new Set(
+/** The indexes of the lines that belong to a table, from its header row to its last row. */
+export function findMarkdownTableLines(lines: readonly string[]): ReadonlySet<number> {
+  return new Set(
     lines.flatMap((_, index) => {
       const read = isRow(lines[index - 1]) ? null : readMarkdownTable(lines, index);
       return read ? Array.from({ length: read.end - index }, (__, offset) => index + offset) : [];
     }),
   );
+}
+
+/** The text without its tables, for rules about prose: sentence length, screen length. */
+export function removeMarkdownTables(text: string): string {
+  const lines = text.split(/\r?\n/u);
+  const tableLines = findMarkdownTableLines(lines);
 
   return lines.filter((_, index) => !tableLines.has(index)).join("\n");
 }

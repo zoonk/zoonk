@@ -14,8 +14,8 @@ import { isSaidInTitle } from "./said-in-title";
 import { useDateRow } from "./understood-date-row";
 
 /**
- * A fact the learner can fix in place: the goal's title and date, the exam's year, one of its
- * details, or when they study (shared by every goal of the onboarding).
+ * A fact the learner can fix in place: the goal's title and date, one of its details, or when they
+ * study (shared by every goal of the onboarding).
  */
 export type EditableField =
   | { kind: "date"; key: "targetDate" }
@@ -24,8 +24,7 @@ export type EditableField =
       key: "institution" | "reason" | "role" | "targetCourse" | "targetPosition" | "targetScore";
     }
   | { kind: "text"; key: "title" }
-  | { kind: "time"; key: "studyTime" }
-  | { kind: "year"; key: "examYear" };
+  | { kind: "time"; key: "studyTime" };
 
 export type UnderstoodRowIcon =
   | "calendar"
@@ -43,16 +42,20 @@ export type UnderstoodRowIcon =
 export type UnderstoodRow = {
   /** A small marker next to the value, such as "you said" for a level. */
   badge?: string;
+  /** Dates the learner picks the row's date from with one tap (an exam's next sittings). */
+  choiceDates?: string[];
   editable?: EditableField;
-  /** What the editor starts from when the field is still empty, such as the exam's year. */
+  /** What the editor starts from when the field is still empty, such as the exam's first day. */
   editDefault?: string;
-  /** What the row is called while it's being fixed, when that's another fact (the exam's year). */
+  /** What the row is called while it's being fixed, when that's one of its facts (one date). */
   editLabel?: string;
   icon: UnderstoodRowIcon;
   id: string;
   label: string;
   note?: string;
   source?: { title: string | null; url: string } | null;
+  /** The notice's day, when it isn't the date the row shows: taken with one tap. */
+  suggestedDate?: string;
   value: string;
 };
 

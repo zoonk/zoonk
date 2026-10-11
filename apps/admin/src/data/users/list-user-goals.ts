@@ -13,10 +13,7 @@ export const listUserGoals = cacheAdminData(async (userId: string) => {
     include: {
       examBlueprint: { select: { id: true, name: true } },
       plan: {
-        include: {
-          _count: { select: { items: true } },
-          changes: { orderBy: { createdAt: "desc" }, take: RECENT_PLAN_CHANGES },
-        },
+        include: { changes: { orderBy: { createdAt: "desc" }, take: RECENT_PLAN_CHANGES } },
         omit: { graph: true, phases: true, settings: true },
       },
       primaryCourse: { select: { id: true, title: true } },
@@ -27,17 +24,22 @@ export const listUserGoals = cacheAdminData(async (userId: string) => {
 
   const planIds = goals.flatMap((goal) => (goal.plan ? [goal.plan.id] : []));
 
-  const doneItems = await prisma.planItem.groupBy({
+  // Counted for these plans only: a relation `_count` would count every plan's items.
+  const itemCounts = await prisma.planItem.groupBy({
     _count: { id: true },
-    by: ["planId"],
-    where: { planId: { in: planIds }, status: { in: ["done", "testedOut"] } },
+    by: ["planId", "status"],
+    where: { planId: { in: planIds } },
   });
 
-  const doneByPlan = new Map(doneItems.map((row) => [row.planId, row._count.id]));
+  const countItems = (planId: string, statuses?: readonly string[]) =>
+    itemCounts
+      .filter((row) => row.planId === planId && (!statuses || statuses.includes(row.status)))
+      .reduce((total, row) => total + row._count.id, 0);
 
   return goals.map((goal) => ({
     ...goal,
-    doneItems: goal.plan ? (doneByPlan.get(goal.plan.id) ?? 0) : 0,
+    doneItems: goal.plan ? countItems(goal.plan.id, ["done", "testedOut"]) : 0,
+    totalItems: goal.plan ? countItems(goal.plan.id) : 0,
   }));
 });
 

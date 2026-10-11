@@ -47,6 +47,7 @@ function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null 
     error?.kind === "subscription" ||
     error?.kind === "unavailable" ||
     error?.kind === "slowDown" ||
+    error?.kind === "signUpRequired" ||
     error?.kind === "usageLimit"
   ) {
     return <RequestErrorMessage error={error} />;

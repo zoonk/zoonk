@@ -1,6 +1,8 @@
 import "server-only";
+import { getAllowance } from "../../entitlements/get-allowance";
 import { getSpeakingMockExam } from "../../exams/language-exam";
 import { readGoalDetails } from "../../language/_utils/language-goal";
+import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import {
   getTargetLevel,
   loadLanguageSkillLevels,
@@ -36,7 +38,8 @@ function getCanDo({ doneIds, units }: UnitProgress) {
 
 /**
  * Progress for a language goal: the level across skills and of each skill with how it moved since
- * the level test, the target, "I can already" checks from the units and the exam's speaking mock when it has one.
+ * the level test, the target, "I can already" checks from the units, and the exam's speaking mock
+ * or speaking paper when it has one.
  */
 export async function getLanguageProgressView(
   input: { goalId?: string } = {},
@@ -52,10 +55,17 @@ export async function getLanguageProgressView(
   const { goal, units, userId } = loaded.context;
   const details = readGoalDetails(goal);
 
-  const [levels, doneIds] = await Promise.all([
+  const [levels, doneIds, allowance] = await Promise.all([
     loadLanguageSkillLevels({ details, language: goal.targetLanguage, userId }),
     loadDoneUnitIds({ units, userId }),
+    getAllowance(),
   ]);
+
+  // An exam's speaking tasks come with Plus, like its mocks: free learners see them locked.
+  const speaking = await loadSpeakingPaper({
+    access: allowance?.examPrep.includesMockExams ? "open" : "plusRequired",
+    goal,
+  });
 
   return {
     progress: {
@@ -68,6 +78,7 @@ export async function getLanguageProgressView(
       },
       level: getOverallLevel(levels.map((level) => level.score)),
       levels,
+      speaking,
       speakingMock: getSpeakingMockExam(goal),
       target: getTargetLevel(details),
     },

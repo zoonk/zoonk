@@ -4,7 +4,7 @@ import { type Source, prisma } from "@zoonk/db";
 import { buildSourceIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../../entitlements/claim-usage";
-import { type AllowanceLimit } from "../../entitlements/contract";
+import { type RefusedUsage } from "../../entitlements/contract";
 import { getSession } from "../../users/get-session";
 import { libraryRowsVisibleTo } from "../_utils/library-visibility";
 import { isOwnUploadPathname } from "./create-upload-token";
@@ -25,8 +25,7 @@ export type SourceUploadResult =
   | { status: "invalidPathname" }
   | { status: "notFound" }
   | { status: "unsupported" }
-  | { limit: AllowanceLimit; status: "limitReached" }
-  | { retryAfterSeconds: number; status: "slowDown" }
+  | RefusedUsage
   | { checkVisibility: boolean; source: UploadedSource; status: "ready" };
 
 /** Links the learner to a source and returns it; a second link to the same source is a no-op. */
@@ -107,10 +106,7 @@ function createPrivateSource({
   });
 }
 
-type UsageRefusal = Extract<
-  SourceUploadResult,
-  { status: "limitReached" | "slowDown" | "unauthorized" }
->;
+type UsageRefusal = RefusedUsage | { status: "unauthorized" };
 
 /**
  * Counts the upload against the learner's plan before it's stored. Uploading

@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
-import { usageDecisionError } from "@/lib/lesson-player-errors";
+import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { libraryLessonStartInputSchema } from "@zoonk/core/lesson-player/contract";
@@ -13,7 +13,7 @@ const CREATED = 201;
 /**
  * Starts (or resumes) a run of a Library lesson for the learner or guest in the session. The
  * lesson counts toward the allowance once; a refused start says whether to wait, sign up or
- * upgrade.
+ * upgrade. A new lesson of a free exam plan past its first week answers 402 `PLUS_REQUIRED`.
  */
 async function createLibraryLessonStart(
   request: NextRequest,
@@ -40,6 +40,10 @@ async function createLibraryLessonStart(
 
   if (outcome.status === "notFound") {
     return errors.notFound();
+  }
+
+  if (outcome.status === "plusRequired") {
+    return plusRequiredError();
   }
 
   return usageDecisionError(outcome);

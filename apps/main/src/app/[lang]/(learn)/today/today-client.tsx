@@ -3,6 +3,7 @@
 import {
   answerPlanChangeAction,
   changePlanAction,
+  chooseExamOptionAction,
 } from "@/app/[lang]/(learn)/journey/journey-actions";
 import {
   getGenerationIdAction,
@@ -10,8 +11,9 @@ import {
 } from "@/app/[lang]/start/onboarding-actions";
 import { useRouter } from "@/i18n/navigation";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
-import { dismissGuardianInviteAction } from "@/lib/guardian/guardian-invite-actions";
+import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
+import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { answerMemoryInsightAction, catchUpTodayAction } from "@/lib/session/study-session-actions";
@@ -20,7 +22,9 @@ import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
+import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
+import { SpeakingPracticeRow } from "@zoonk/learn/language/speaking";
 import { MockEntryRow } from "@zoonk/learn/mock/entry";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayPreparing } from "@zoonk/learn/today/preparing";
@@ -38,6 +42,7 @@ export function TodayClient({
   notices,
   planEnd,
   readAt,
+  speaking,
   today,
 }: {
   buddy: LearnerBuddy;
@@ -47,12 +52,22 @@ export function TodayClient({
   mocks: MockOptionsView | null;
   notices: TodayHostNotices;
   planEnd: string | null;
+  /** A language goal's exam-style speaking tasks, when its language has a paper; null otherwise. */
+  speaking: LanguageTodayView["speaking"];
   /** When the page read `today` (`getReadAt`). */
   readAt: number;
   today: TodayView;
 }) {
   const router = useRouter();
   useRefreshWhenOld(readAt);
+  useFollowTimeZone(today.goal.id);
+
+  const refreshOnPlanChange = useRefreshOnPlanChange({
+    goalId: today.goal.id,
+    readAt,
+    watch: "today",
+  });
+
   const navigation = useStudyNavigation(today.session.id);
   const answerSuggestedGoal = useAnswerSuggestedGoal({ hasGoal: true });
   const startTestOut = useStartTestOut();
@@ -81,16 +96,20 @@ export function TodayClient({
           const outcome = await changePlanAction(today.goal.id, operations);
           return outcome?.status === "applied" ? outcome.change : null;
         },
+        chooseExamOption: async (input) => {
+          const outcome = await chooseExamOptionAction(today.goal.id, input);
+          return outcome?.change ?? null;
+        },
         chooseFocusHref: "/journey?focus=choose",
         continueSession: navigation.continueSession,
         decidePlanChange: (input) => answerPlanChangeAction(today.goal.id, input),
-        dismissGuardianInvite: dismissGuardianInviteAction,
         examHref: "/exam",
         mistakesHref: "/mistakes",
         plusHref: "/subscription",
-        refresh: () => router.refresh(),
+        refresh: refreshOnPlanChange,
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),
+        studyEverythingHref: "/journey?focus=everything",
         summaryHref: "/session",
       }}
       buddy={buddy}
@@ -98,6 +117,7 @@ export function TodayClient({
       mockEntry={mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={mocks} />}
       notices={notices}
       planEnd={planEnd}
+      speakingEntry={speaking && <SpeakingPracticeRow entry={speaking} href="/speaking" />}
       today={today}
     />
   );

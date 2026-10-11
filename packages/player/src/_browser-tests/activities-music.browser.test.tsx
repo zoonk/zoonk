@@ -1,5 +1,8 @@
 import { rhythmTapTimes } from "@zoonk/core/library/activities/music";
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { beforeEach, describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -11,8 +14,11 @@ import {
   openActivity,
   press,
 } from "../_test-utils/activity-player";
-import { activityStep } from "../_test-utils/lesson-steps";
-import { buildLesson, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { getActivityAudioContext } from "../activities/_utils/activity-audio";
+import { heardAtMs } from "../activities/rhythm-tapper/rhythm-clock";
+import { buildLesson } from "../preview/preview-lesson";
+import { activityStep } from "../preview/preview-steps";
 
 /** Where the rhythm activities keep the device's measured sound delay. */
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
@@ -29,26 +35,7 @@ const SOUND_CHECK_INTERVAL_MS = 1000;
  */
 const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
-const progression = {
-  check: { explanation: "After G, the C chord sounds like a small lift.", kind: "interaction" },
-  fields: {
-    chords: [
-      { quality: "major", root: "G" },
-      { quality: "major", root: "C" },
-      { quality: "major", root: "D" },
-    ],
-    hidden: 1,
-    mode: "progression",
-    options: [
-      { id: "g", quality: "major", root: "G" },
-      { id: "c", quality: "major", root: "C" },
-      { id: "d", quality: "major", root: "D" },
-    ],
-    song: "Asa Branca",
-  },
-  prompt: "Which chord did you hear in the middle?",
-  template: "earTrainer",
-};
+const { byEar, byEarChoice } = engineModeFixtures.keyboardFretboard;
 
 const guitarChord = {
   check: { explanation: "G major is G, B and D.", kind: "interaction" },
@@ -95,10 +82,22 @@ function sleepUntil(time: number) {
   });
 }
 
-/** Taps along with the sound check's clicks, a second apart from the first measured one. */
+/**
+ * How long after the audio clock plays a sound the device lets it out: the machine's own speakers
+ * add a few milliseconds, Bluetooth headphones a few hundred.
+ */
+function outputDelayMs() {
+  const context = getActivityAudioContext();
+  return heardAtMs(context, context.currentTime) - performance.now();
+}
+
+/**
+ * Taps along with the sound check's clicks as they're heard, as a learner does, a second apart
+ * from the first measured one.
+ */
 async function tapAlongWithSoundCheck() {
   await waitForFrameWithText("Tap with each click · 1 of");
-  const start = performance.now();
+  const start = performance.now() + outputDelayMs();
 
   for (const click of [0, 1, 2, 3, 4, 5]) {
     // oxlint-disable-next-line no-await-in-loop -- Each tap waits for its click.
@@ -161,22 +160,30 @@ describe("music activities", () => {
     await expectVerdict("Correct!");
   });
 
-  it("ear trainer: a wrong interval shows what played and offers a comparison", async () => {
-    openActivity({ template: "earTrainer" });
-    await page.getByRole("button", { exact: true, name: "Play" }).click();
-    await expect.element(page.getByRole("button", { name: "Play again" })).toBeVisible();
-    await page.getByRole("radio", { name: "Perfect fourth" }).click();
+  it("keyboard by ear: the sound isn't named until the notes heard are found", async () => {
+    openActivity({ content: byEar, template: "keyboardFretboard" });
+    await expect.element(page.getByText("By ear", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("2 notes", { exact: true })).not.toBeInTheDocument();
+    await expect.element(pianoKey("C")).toHaveAttribute("aria-pressed", "false");
+    await page.getByRole("button", { name: "Play the sound" }).click();
+    await pianoKey("C").click();
+    await pianoKey("G").click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("2 notes", { exact: true })).toBeVisible();
+  });
+
+  it("keyboard by ear: naming a chord wrong shows the chord that played", async () => {
+    openActivity({ content: byEarChoice, template: "keyboardFretboard" });
+    await page.getByRole("button", { name: "Play the sound" }).click();
+    await page.getByRole("radio", { name: /A major chord/u }).click();
     await checkActivity();
     await expectVerdict("Not quite");
-    await expect.element(page.getByText("7 half steps: C → G")).toBeVisible();
-
+    await expect.element(page.getByText("A minor", { exact: true })).toBeVisible();
+    // The chord that played shows on the keys, named for screen readers in any order.
     await expect
-      .element(page.getByText("Twinkle, Twinkle, Little Star", { exact: true }))
-      .toBeVisible();
-
-    await expect
-      .element(page.getByRole("button", { name: "Hear your pick to compare" }))
-      .toBeVisible();
+      .element(page.getByText(/^On the keys: (?=.*\bA\b)(?=.*\bC\b)(?=.*\bE\b)/u))
+      .toBeInTheDocument();
   });
 
   it(
@@ -237,11 +244,10 @@ describe("music activities", () => {
     },
   );
 
-  it("musicianship lesson: hear the chord change, then play it on guitar", async () => {
-    openActivities({ contents: [progression, guitarChord] });
-    await expect.element(page.getByText("Asa Branca")).toBeVisible();
-    await expect.element(page.getByRole("listitem", { name: "The chord to name" })).toBeVisible();
-    await page.getByRole("radio", { name: /C major/u }).click();
+  it("musicianship lesson: hear a chord, name it, then play one on guitar", async () => {
+    openActivities({ contents: [byEarChoice, guitarChord] });
+    await page.getByRole("button", { name: "Play the sound" }).click();
+    await page.getByRole("radio", { name: /A minor chord/u }).click();
     await checkActivity();
     await expectVerdict("Correct!");
     await page.getByRole("button", { name: /^Continue/u }).click();

@@ -143,23 +143,31 @@ export const raiseThenDiscountLesson: SeedLesson = {
         data: { isExample: true },
         fields: {
           compareAt: 10,
-          formula: "100 * (1 + change / 100) * (1 - change / 100)",
-          output: { label: t("Final price", "Preço final"), unit: "R$" },
-          variable: {
-            initial: 10,
-            label: t("Up, then down by", "Sobe e depois cai"),
-            max: 50,
-            min: 0,
-            name: "change",
-            step: 5,
-            unit: "%",
-          },
+          outputs: [
+            {
+              formula: "100 * (1 + change / 100) * (1 - change / 100)",
+              id: "output",
+              label: t("Final price", "Preço final"),
+              unit: "R$",
+            },
+          ],
+          variables: [
+            {
+              initial: 10,
+              label: t("Up, then down by", "Sobe e depois cai"),
+              max: 50,
+              min: 0,
+              name: "change",
+              step: 5,
+              unit: "%",
+            },
+          ],
         },
         prompt: t(
           "A price of R$ 100 goes up by some percent, then down by the same percent. Slide it and watch where it ends.",
           "Um preço de R$ 100 sobe uma porcentagem e depois cai a mesma porcentagem. Deslize e veja onde ele termina.",
         ),
-        template: "sliderGraph",
+        template: "formulaModel",
       },
       kind: "activity",
       skill: "successive-percent",

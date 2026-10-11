@@ -1,9 +1,11 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
 import { asPersona, findPlanChapterId } from "./learn-personas";
 import { askSuggestion, stubScreenTutor } from "./screen-tutor";
+import { toProposal } from "./tutor-answer";
 
 /**
  * A chapter of Maya's plan (quantum physics from scratch): she's in "Exponents and scientific
@@ -12,6 +14,14 @@ import { askSuggestion, stubScreenTutor } from "./screen-tutor";
 const CHAPTER = "Exponents and scientific notation";
 
 const EXTRA = { equals: true, path: ["extra"] };
+
+const SATURDAY = 6;
+
+function readChangeStatus(changeId: string) {
+  return prisma.planChange
+    .findUniqueOrThrow({ where: { id: changeId } })
+    .then((change) => change.status);
+}
 
 /** The day's bonus practice played out: the block "Practice now" added, then a second one. */
 async function useUpBonusPractice(goalId: string) {
@@ -60,7 +70,8 @@ test.describe("Chapter page", () => {
         page.getByRole("main").getByRole("link", { name: "Back to Journey" }),
       ).toHaveAttribute("href", "/journey");
 
-      await expect(page.getByText("Chapter 4", { exact: true })).toBeVisible();
+      // Numbered as her course lists it (its tenth chapter), not by where her plan teaches it.
+      await expect(page.getByText("Chapter 10", { exact: true })).toBeVisible();
       // Its one way in, with how far she is in it, right under its name.
       await expect(page.getByRole("link", { name: /^Continue\s*33% complete$/u })).toHaveAttribute(
         "href",
@@ -123,7 +134,6 @@ test.describe("Chapter page", () => {
           input: expect.objectContaining({
             context: { kind: "chapter" },
             question: "What will I be able to do after this chapter?",
-            suggested: true,
           }),
           path: `/v1/chapters/${chapterId}/questions`,
         },
@@ -160,6 +170,52 @@ test.describe("Chapter page", () => {
       // A chapter outside the learner's plan isn't hers to open.
       await page.goto(`/content/chapters/${outside.id}`);
       await expect(page.getByRole("heading", { name: "We couldn't find this page" })).toBeVisible();
+    });
+  });
+
+  // Persona pass 9: asked from a chapter's page, the buddy couldn't see the plan to change it.
+  test("the buddy asked on a chapter proposes a change to the plan, applied only on the learner's tap", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
+      const [chapterId, plan] = await Promise.all([
+        findPlanChapterId(user.goalId, CHAPTER),
+        prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } }),
+      ]);
+
+      const change = await planChangeFixture({
+        kind: "edited",
+        payload: {
+          operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [SATURDAY] }],
+          source: "planEdit",
+        },
+        planId: plan.id,
+        reason: "Saturdays are off.",
+        status: "proposed",
+      });
+
+      await stubScreenTutor(page, { planChange: toProposal(change) });
+      await page.goto(`/content/chapters/${chapterId}`);
+
+      const tutor = await askSuggestion({
+        ask: "Ask Buddy about this chapter",
+        description: "Ask questions about this chapter",
+        page,
+        suggestion: "What will I be able to do after this chapter?",
+      });
+
+      // The card comes with the answer, as in the buddy's own conversation; nothing changes yet.
+      const card = tutor.getByRole("region", { name: "Change to your plan" });
+      await expect(card).toContainText("Saturday: rest day.");
+      expect(await readChangeStatus(change.id)).toBe("proposed");
+
+      await card.getByRole("button", { name: "Apply" }).click();
+
+      await expect(card.getByRole("status")).toHaveText(
+        "It's in your plan, and today's session follows it.",
+      );
+
+      await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
     });
   });
 });

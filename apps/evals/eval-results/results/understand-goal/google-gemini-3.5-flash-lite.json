@@ -29,35 +29,6 @@
         "expected": {
           "goals": [
             {
-              "examName": {},
-              "examTarget": "admission",
-              "hasTarget": true,
-              "hasTargetDate": false,
-              "kind": "exam"
-            }
-          ],
-          "hasStudyTime": true,
-          "route": "goals"
-        },
-        "id": "pt-exam-enem-nursing-1",
-        "userInput": {
-          "goal": "quero passar no ENEM desse ano pra enfermagem. estudo à noite, depois da escola",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": { "expected": "goals", "predicted": "goals" },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
               "kind": "language",
               "month": "2027-03",
               "nativeLanguage": "es",
@@ -235,53 +206,6 @@
         "id": "en-unclear-essay-1",
         "userInput": {
           "goal": "write my history essay for me",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": { "expected": "goals", "predicted": "goals" },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            { "examName": {}, "kind": "exam" },
-            { "kind": "language", "targetLanguage": "en" }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-two-goals-1",
-        "userInput": { "goal": "ENEM e inglês", "language": "pt", "today": "2026-09-26" }
-      }
-    },
-    {
-      "classification": { "expected": "goals", "predicted": "goals" },
-      "steps": [
-        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
-        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": {},
-              "examTarget": "score",
-              "hasTarget": true,
-              "kind": "exam",
-              "month": "2027-03"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-exam-ielts-band-1",
-        "userInput": {
-          "goal": "get band 7 on the IELTS by March",
           "language": "en",
           "today": "2026-09-26"
         }
@@ -746,6 +670,123 @@
           "goal": "quero entender física quântica sem precisar fazer conta",
           "language": "pt",
           "today": "2026-09-28"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examTarget": "admission",
+              "hasTarget": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "hasStudyTime": true,
+          "route": "goals"
+        },
+        "id": "pt-exam-enem-nursing-1",
+        "userInput": {
+          "goal": "quero passar no ENEM desse ano pra enfermagem. estudo à noite, depois da escola",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            { "examName": {}, "kind": "exam" },
+            { "kind": "language", "targetLanguage": "en" }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-two-goals-1",
+        "userInput": { "goal": "ENEM e inglês", "language": "pt", "today": "2026-09-26" }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examTarget": "score",
+              "hasTarget": true,
+              "kind": "exam",
+              "month": "2027-03",
+              "targetLanguage": "en"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-ielts-band-1",
+        "userInput": {
+          "goal": "get band 7 on the IELTS by March",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "title repeats targetScore", "kind": "majorErrors", "score": 8 },
+        { "conclusion": "title repeats targetScore", "kind": "minorErrors", "score": 8 },
+        { "conclusion": "title repeats targetScore", "kind": "potentialImprovements", "score": 8 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examName": {}, "kind": "exam", "targetLanguage": "es" }],
+          "route": "goals"
+        },
+        "id": "pt-exam-dele-b2-language-1",
+        "userInput": {
+          "goal": "quero passar no DELE B2 em maio do ano que vem",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [{ "examName": {}, "kind": "exam", "targetLanguage": "de" }],
+          "route": "goals"
+        },
+        "id": "pt-exam-goethe-b1-language-1",
+        "userInput": {
+          "goal": "preciso do Goethe-Zertifikat B1 pra visto de trabalho na Alemanha",
+          "language": "pt",
+          "today": "2026-09-26"
         }
       }
     }

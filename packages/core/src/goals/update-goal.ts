@@ -13,6 +13,7 @@ import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { toPlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { type PlanContext, loadPlanContext } from "../plans/_utils/plan-context";
 import { commitPlan, computePlan, withPlanRetry } from "../plans/_utils/replan";
+import { withSeenTopics } from "../plans/_utils/seen-effect";
 import { type LearnerPlanOperation } from "../plans/plan-contract";
 import { type PlanChangeView } from "../plans/plan-view-contract";
 import { getWeekdayMinutes } from "../plans/planner/plan-calendar";
@@ -114,7 +115,10 @@ async function resumePlan(context: PlanContext): Promise<string | null> {
   return commitPlan({
     change: {
       kind: "resumed",
-      payload: toPlanChangePayload({ effect: computed.effect, source: "system" }),
+      payload: toPlanChangePayload({
+        effect: withSeenTopics({ computed, shown: context.items }),
+        source: "system",
+      }),
       reason: RESUMED_NOTE,
       status: "applied",
     },

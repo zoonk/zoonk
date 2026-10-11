@@ -36,7 +36,6 @@ const cachedListMissingAudio = cacheAdminData(async () => {
   const [words, wordTotal, sentences, sentenceTotal] = await Promise.all([
     prisma.word.findMany({
       include: {
-        _count: { select: { lessonWords: true } },
         lessonWords: {
           orderBy: { createdAt: "asc" },
           select: lessonLinkSelect,
@@ -50,7 +49,6 @@ const cachedListMissingAudio = cacheAdminData(async () => {
     prisma.word.count({ where: wordWhere }),
     prisma.sentence.findMany({
       include: {
-        _count: { select: { lessonSentences: true } },
         lessonSentences: {
           orderBy: { createdAt: "asc" },
           select: lessonLinkSelect,
@@ -64,12 +62,33 @@ const cachedListMissingAudio = cacheAdminData(async () => {
     prisma.sentence.count({ where: sentenceWhere }),
   ]);
 
+  // Counted for the listed words and sentences only: a relation `_count` would count every
+  // word's and sentence's lessons.
+  const [wordLessons, sentenceLessons] = await Promise.all([
+    prisma.lessonWord.groupBy({
+      _count: { lessonId: true },
+      by: ["wordId"],
+      where: { wordId: { in: words.map((word) => word.id) } },
+    }),
+    prisma.lessonSentence.groupBy({
+      _count: { lessonId: true },
+      by: ["sentenceId"],
+      where: { sentenceId: { in: sentences.map((sentence) => sentence.id) } },
+    }),
+  ]);
+
+  const lessonsByWord = new Map(wordLessons.map((row) => [row.wordId, row._count.lessonId]));
+
+  const lessonsBySentence = new Map(
+    sentenceLessons.map((row) => [row.sentenceId, row._count.lessonId]),
+  );
+
   return {
     sentenceTotal,
     sentences: sentences.map((sentence) =>
       toMissingAudioResource({
         id: sentence.id,
-        lessonCount: sentence._count.lessonSentences,
+        lessonCount: lessonsBySentence.get(sentence.id) ?? 0,
         lessonLinks: sentence.lessonSentences,
         targetLanguage: sentence.targetLanguage,
         text: sentence.sentence,
@@ -79,7 +98,7 @@ const cachedListMissingAudio = cacheAdminData(async () => {
     words: words.map((word) =>
       toMissingAudioResource({
         id: word.id,
-        lessonCount: word._count.lessonWords,
+        lessonCount: lessonsByWord.get(word.id) ?? 0,
         lessonLinks: word.lessonWords,
         targetLanguage: word.targetLanguage,
         text: word.word,

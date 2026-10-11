@@ -73,7 +73,7 @@ export function findFeedbackWritingIssue({
 }
 
 /**
- * Openings that call the whole answer right ("Muito bem!", "Correct."): feedback that starts so
+ * Openings that call the whole answer right ("Well done!", "Correct."): feedback that starts so
  * on an answer marked wrong tells the learner the opposite of the verdict.
  */
 const PRAISE_OPENING =

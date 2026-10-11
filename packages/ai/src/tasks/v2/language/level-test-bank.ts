@@ -262,6 +262,7 @@ async function writeLevel({
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "level-test-bank",
   });

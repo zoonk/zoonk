@@ -38,7 +38,6 @@ export async function prepareToolVersionStep({
     getOrCreateStepVariant({
       analytics: toContentAnalytics({ analytics, scope: target, workflowRunId }),
       key: target.key,
-      kind: "tool",
       label: target.label,
       stepId: target.stepId,
     }),

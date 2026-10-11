@@ -3,8 +3,9 @@ import { type VoiceText } from "@zoonk/learn/speech/provider";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { expect } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
-import { type ActivityContent, activityStep } from "./lesson-steps";
-import { buildLesson, renderLessonPlayer } from "./render-lesson-player";
+import { buildLesson } from "../preview/preview-lesson";
+import { type ActivityContent, activityStep } from "../preview/preview-steps";
+import { renderLessonPlayer } from "./render-lesson-player";
 
 /**
  * Helpers for the per-template activity specs (`activities-*.browser.test.tsx`): each one plays a
@@ -110,36 +111,4 @@ export async function dragBy(from: Locator, offset: { x: number; y: number }) {
 /** How many elements a locator matches, once it settles on `count`. */
 export async function expectCount(locator: Locator, count: number) {
   await expect.poll(() => locator.elements()).toHaveLength(count);
-}
-
-function escapeSvgText(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-/**
- * A drawn picture for a screen, portrait like the pictures lessons draw, inline so the tests don't
- * depend on an image host: the same `img` semantics without network errors or 404 fallbacks.
- */
-export function inlineImage({ alt }: { alt: string }): PlayableStepImage {
-  const svg = [
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1280" viewBox="0 0 1024 1280">',
-    '<rect width="1024" height="1280" fill="#f4f4f5" />',
-    '<text x="512" y="640" fill="#111827" font-family="Arial, sans-serif" font-size="36" text-anchor="middle">',
-    escapeSvgText(alt),
-    "</text>",
-    "</svg>",
-  ].join("");
-
-  return {
-    alt,
-    height: 1280,
-    id: crypto.randomUUID(),
-    url: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
-    width: 1024,
-  };
 }

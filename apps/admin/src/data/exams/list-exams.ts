@@ -9,12 +9,36 @@ function readEditionYear(edition: unknown): number | null {
   return examEditionSchema.safeParse(edition).data?.year ?? null;
 }
 
+/**
+ * The goals and items depending on each exam, counted for the page's exams only: a relation
+ * `_count` would count every exam's rows.
+ */
+async function countExamRows(examIds: string[]) {
+  const [goals, items] = await Promise.all([
+    prisma.goal.groupBy({
+      _count: { id: true },
+      by: ["examBlueprintId"],
+      where: { examBlueprintId: { in: examIds }, ...trackedAnalyticsUserRelationWhere },
+    }),
+    prisma.item.groupBy({
+      _count: { id: true },
+      by: ["examBlueprintId"],
+      where: { examBlueprintId: { in: examIds } },
+    }),
+  ]);
+
+  const goalsByExam = new Map(goals.map((row) => [row.examBlueprintId, row._count.id]));
+  const itemsByExam = new Map(items.map((row) => [row.examBlueprintId, row._count.id]));
+
+  return (examId: string) => ({
+    goals: goalsByExam.get(examId) ?? 0,
+    items: itemsByExam.get(examId) ?? 0,
+  });
+}
+
 const cachedListExams = cacheAdminData(async (limit: number, offset: number) => {
   const [exams, total] = await Promise.all([
     prisma.examBlueprint.findMany({
-      include: {
-        _count: { select: { goals: { where: trackedAnalyticsUserRelationWhere }, items: true } },
-      },
       omit: { structure: true, topicFrequency: true },
       orderBy: [{ name: "asc" }, { language: "asc" }, { id: "asc" }],
       skip: offset,
@@ -23,9 +47,12 @@ const cachedListExams = cacheAdminData(async (limit: number, offset: number) => 
     prisma.examBlueprint.count(),
   ]);
 
+  const counts = await countExamRows(exams.map((exam) => exam.id));
+
   return {
     exams: exams.map(({ edition, ...exam }) => ({
       ...exam,
+      _count: counts(exam.id),
       editionYear: readEditionYear(edition),
     })),
     total,

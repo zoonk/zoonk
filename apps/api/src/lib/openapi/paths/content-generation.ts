@@ -15,7 +15,7 @@ import {
 } from "../schemas/paths";
 import {
   conflictResponse,
-  forbiddenResponse,
+  guestRefusalResponse,
   notFoundResponse,
   paymentRequiredResponse,
   tooManyRequestsResponse,
@@ -36,7 +36,7 @@ export const contentGenerationPaths = {
   "/goals/{goalId}/generations": {
     post: {
       description:
-        "Starts a goal's curriculum (skill graph, plan and course outlines) or, for an explain question, its quick explanation again, such as after a start failed. A run already going is joined, and only what is missing is written. POST /goals starts it the first time. Stream GET /generations/{generationId}/events for live steps: a curriculum reports `understandGoal`, `readExamNotice` (only while research reads a class test's own material before its skill graph), `readNotice` (only while research reads a stored exam notice again with newer reading instructions before the skill graph), `buildSkillGraph`, `saveSkills`, `preparePlacement` (placement's questions start being written, by a run of their own that this stream doesn't follow: GET /goals/{goalId}/placement asks each once it's written), `createPlan`, `outlineCourses`, `prepareFirstLessons`, then `goalReady`, or `workflowError` when the plan couldn't be built; an explanation `classifyQuestion`, `findExplanation`, `writeExplanation` (completed once the explanation can be read), then `explanationReady` once its course to go further is linked. A run that finds another run already writing the goal reports `joinRunningGoal` or `joinRunningExplanation` with that run's id as `entityId`: follow that run's events instead. Starting a goal whose plan is already built again with a newer `researchId` reconciles the plan with that research, which counts as small AI help: a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` (403 asks a guest to sign up, 402 a free learner to upgrade or come back, 429 Plus to slow down).",
+        "Starts a goal's curriculum (skill graph, plan and course outlines) or, for an explain question, its quick explanation again, such as after a start failed. A run already going is joined, and only what is missing is written. POST /goals starts it the first time. Stream GET /generations/{generationId}/events for live steps: a curriculum reports `understandGoal`, `readExamNotice` (only while research reads a class test's own material before its skill graph), `buildSkillGraph`, `saveSkills`, `preparePlacement` (placement's questions start being written, by a run of their own that this stream doesn't follow: GET /goals/{goalId}/placement asks each once it's written), `createPlan`, `outlineCourses`, `prepareFirstLessons`, then `goalReady`, or `workflowError` when the plan couldn't be built; an explanation `classifyQuestion`, `findExplanation`, `writeExplanation` (completed once the explanation can be read), then `explanationReady` once its course to go further is linked. A run that finds another run already writing the goal reports `joinRunningGoal` or `joinRunningExplanation` with that run's id as `entityId`: follow that run's events instead. Starting a goal whose plan is already built again with a newer `researchId` reconciles the plan with that research, which counts as small AI help: a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` (403 asks a guest to sign up, 402 a free learner to upgrade or come back, 429 Plus to slow down).",
       operationId: "createGoalGeneration",
       requestParams: { path: goalPathParamsSchema, query: goalGenerationQuerySchema },
       responses: {
@@ -48,7 +48,7 @@ export const contentGenerationPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "402": paymentRequiredResponse,
-        "403": forbiddenResponse,
+        "403": guestRefusalResponse,
         "404": notFoundResponse,
         "429": tooManyRequestsResponse,
       },
@@ -80,7 +80,7 @@ export const contentGenerationPaths = {
   "/library/lessons/{lessonId}/generations": {
     post: {
       description:
-        "Gets a Library lesson written now. A written lesson answers `ready`. A lesson being written answers 202 with the run writing it, so a second request follows the same run from its stream's start instead of starting another. Otherwise a run starts. Asking to write a lesson counts as the lesson start it leads to (starting it once written counts nothing more), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` like a lesson start.",
+        "Gets a Library lesson written now. A written lesson answers `ready`. A lesson being written answers 202 with the run writing it, so a second request follows the same run from its stream's start instead of starting another. Otherwise a run starts. Asking to write a lesson counts as the lesson start it leads to (starting it once written counts nothing more), so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` like a lesson start. A new lesson of a free exam plan past its first week answers 402 `PLUS_REQUIRED` and is never written.",
       operationId: "createLibraryLessonGeneration",
       requestParams: { path: lessonPathParamsSchema },
       responses: {
@@ -96,7 +96,7 @@ export const contentGenerationPaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "402": paymentRequiredResponse,
-        "403": forbiddenResponse,
+        "403": guestRefusalResponse,
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,

@@ -79,15 +79,25 @@ describe(getWeeklyEventWeekday, () => {
 });
 
 describe(scaleWeekdayMinutes, () => {
-  it("keeps the week's shape when the daily time changes", () => {
+  it("keeps the week's shape when the daily time changes: rest days rest, a lighter day stays lighter", () => {
     expect(
       scaleWeekdayMinutes({
         dailyMinutes: 60,
         from: 30,
-        weekdayMinutes: [0, 30, 30, 30, 30, 30, 15],
+        weekdayMinutes: [30, 30, 15, 30, 0, 30, 30],
       }),
-    ).toStrictEqual([0, 60, 60, 60, 60, 60, 30]);
+    ).toStrictEqual([60, 60, 30, 60, 0, 60, 60]);
 
     expect(scaleWeekdayMinutes({ dailyMinutes: 60, from: 30, weekdayMinutes: null })).toBeNull();
+  });
+
+  it("leaves a weekend with its own time as the learner gave it", () => {
+    expect(
+      scaleWeekdayMinutes({
+        dailyMinutes: 60,
+        from: 30,
+        weekdayMinutes: [0, 30, 30, 30, 30, 30, 120],
+      }),
+    ).toStrictEqual([0, 60, 60, 60, 60, 60, 120]);
   });
 });

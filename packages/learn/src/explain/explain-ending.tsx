@@ -83,7 +83,7 @@ export function ExplainEnding({
   result,
   saving = false,
 }: {
-  /** "I want to learn this in depth": `ExplainDeeperButton` or `ExplainDeeperLink`. */
+  /** "I want to learn this in depth": the host's `ExplainDeeperLink`. */
   deeper: React.ReactNode;
   doneHref: string;
   explanation: Pick<ExplanationView, "goFurther" | "recap" | "title">;

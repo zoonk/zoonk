@@ -12,7 +12,7 @@ import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
-import { getTodayStudySession } from "./get-today-study-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import { startStudyBlock } from "./start-study-block";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));

@@ -1,22 +1,19 @@
 import "server-only";
 import { type PlanChange, prisma } from "@zoonk/db";
-import { forgetAssumedSkills, loadPlanItemSkillIds } from "../learner/_utils/known-skills";
+import { replaceWaitingProposals } from "./_utils/apply-plan-change";
 import { computeChange } from "./_utils/compute-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
+import { applyChangeOperations } from "./_utils/part-areas";
+import { askPhaseDatesAfterChange } from "./_utils/phase-dates-proposal";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { canUndoChange } from "./_utils/plan-change-view";
 import { type PlanContext } from "./_utils/plan-context";
-import {
-  commitPlan,
-  computePlan,
-  getVersionAfter,
-  revalidatePlanTags,
-  withPlanRetry,
-} from "./_utils/replan";
+import { commitPlan, getVersionAfter, revalidatePlanTags, withPlanRetry } from "./_utils/replan";
+import { undoChange } from "./_utils/undo-change";
 import { type PlanChangeDecisionInput } from "./plan-contract";
 import { type PlanChangeView } from "./plan-view-contract";
-import { type PlanOperationError, applyPlanOperations } from "./planner/plan-operations";
+import { type PlanOperationError } from "./planner/plan-operations";
 
 export type PlanChangeDecisionResult =
   | { change: PlanChangeView; status: "updated" }
@@ -32,20 +29,19 @@ type Decision = { change: PlanChange; context: PlanContext };
 async function acceptProposal({ change, context }: Decision) {
   const payload = parsePlanChangePayload(change.payload);
 
-  const result = applyPlanOperations({
+  const result = await applyChangeOperations({
+    context,
     noticeGraph: payload.noticeGraph,
     operations: payload.operations,
-    state: context.state,
-    today: context.today,
   });
 
   if ("error" in result) {
     return { error: result.error, status: "invalid" as const };
   }
 
-  const { computed, effect } = await computeChange({
+  const { bringsBackSetAside, computed, effect } = await computeChange({
     context,
-    operations: payload.operations,
+    operations: result.operations,
     state: result.state,
   });
 
@@ -58,7 +54,6 @@ async function acceptProposal({ change, context }: Decision) {
         data: {
           payload: toPlanChangePayload({
             ...payload,
-            before: context.state,
             effect,
             versionAfter: getVersionAfter(context),
           }),
@@ -66,69 +61,29 @@ async function acceptProposal({ change, context }: Decision) {
         },
         where: { id: change.id },
       }),
+    restorable: change.id,
   });
 
   await followPlanToday({ changeId: change.id, context });
 
-  return null;
-}
+  const replaced = await replaceWaitingProposals({
+    applied: true,
+    except: change.id,
+    operations: payload.operations,
+    planId: context.plan.id,
+    source: payload.source,
+  });
 
-/** Brings back the state before an edit; what was done since stays done. */
-async function undoEdit({ change, context }: Decision) {
-  const { before } = parsePlanChangePayload(change.payload);
-
-  if (!before) {
-    return { status: "conflict" as const };
+  if (replaced.length > 0) {
+    revalidatePlanTags(context.goal.userId);
   }
 
-  const computed = await computePlan({ context, mode: "forced", state: before });
-
-  await commitPlan({
-    change: null,
+  await askPhaseDatesAfterChange({
+    bringBackSetAside: bringsBackSetAside,
     computed,
     context,
-    extraWrites: (tx) =>
-      tx.planChange.update({ data: { status: "undone" }, where: { id: change.id } }),
+    operations: payload.operations,
   });
-
-  await followPlanToday({ context });
-
-  return null;
-}
-
-/**
- * Puts the lessons a test-out skipped back in the plan, for a learner who wants them anyway, and
- * forgets the skills the skip only assumed known.
- */
-async function undoTestOut({ change, context }: Decision) {
-  const ids = new Set(parsePlanChangePayload(change.payload).planItemIds);
-  const skillIds = await loadPlanItemSkillIds({ goalId: context.goal.id, planItemIds: [...ids] });
-
-  const items = context.items.map((item) =>
-    ids.has(item.id) && item.status === "testedOut"
-      ? { ...item, completedAt: null, status: "todo" as const }
-      : item,
-  );
-
-  const restored = { ...context, items };
-  const computed = await computePlan({ context: restored, mode: "forced" });
-
-  await commitPlan({
-    change: null,
-    computed,
-    context: restored,
-    extraWrites: async (tx) => {
-      await tx.planItem.updateMany({
-        data: { completedAt: null, status: "todo" },
-        where: { id: { in: [...ids] }, planId: context.plan.id, status: "testedOut" },
-      });
-
-      await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
-      await tx.planChange.update({ data: { status: "undone" }, where: { id: change.id } });
-    },
-  });
-
-  await followPlanToday({ context: restored });
 
   return null;
 }
@@ -178,7 +133,7 @@ async function decide({ decision, input }: { decision: Decision; input: PlanChan
     return { status: "conflict" as const };
   }
 
-  return change.kind === "testedOut" ? undoTestOut(decision) : undoEdit(decision);
+  return undoChange(decision);
 }
 
 /**

@@ -2,7 +2,6 @@ import "server-only";
 import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../../_utils/library-rows";
-import { getScopeModel } from "../../curriculum/curriculum-scope";
 import { type HeldBackDraft } from "../../generation/held-back-drafts";
 import { type LessonAnalytics, type LessonGate } from "../../lessons/_utils/checked-version";
 import {
@@ -26,28 +25,22 @@ export type CheckContext = {
   workflowRunId: string;
 };
 
-/** A private course's lesson is its owner's cost, written by its cheaper writer; a shared one, the Library's. */
-export async function loadLessonScope({ analytics, lessonId, workflowRunId }: CheckContext) {
+/** Whose cost a check's calls are: a private course's lesson is its owner's; a shared one, the Library's. */
+export async function toTaskAnalytics({
+  analytics,
+  lessonId,
+  workflowRunId,
+}: CheckContext): Promise<LessonAnalytics> {
   const lesson = await prisma.lesson.findUnique({
     select: { ownerId: true },
     where: { id: lessonId },
   });
 
-  const ownerId = lesson?.ownerId ?? null;
-
   return {
-    analytics: {
-      ...analytics,
-      contentScope: ownerId ? ("personal" as const) : ("shared" as const),
-      traceId: workflowRunId,
-    } satisfies LessonAnalytics,
-    model: getScopeModel({ ownerId }),
+    ...analytics,
+    contentScope: lesson?.ownerId ? "personal" : "shared",
+    traceId: workflowRunId,
   };
-}
-
-export async function toTaskAnalytics(context: CheckContext): Promise<LessonAnalytics> {
-  const scope = await loadLessonScope(context);
-  return scope.analytics;
 }
 
 /** What a version's check reads: the lesson's plan and context, if `version` is still current. */

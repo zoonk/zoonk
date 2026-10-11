@@ -1,5 +1,5 @@
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
-import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
+import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
 import { scoreSpeakingMock } from "@zoonk/ai/tasks/v2/language/speaking-mock-score";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
@@ -15,8 +15,8 @@ vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 // The examiner's script and the scores are paid model calls.
-vi.mock("@zoonk/ai/tasks/v2/language/conversation-scenario", () => ({
-  generateConversationScenario: vi.fn(),
+vi.mock("@zoonk/ai/tasks/v2/language/speaking-mock-scenario", () => ({
+  generateSpeakingMockScenario: vi.fn(),
 }));
 
 vi.mock("@zoonk/ai/tasks/v2/language/speaking-mock-score", () => ({ scoreSpeakingMock: vi.fn() }));
@@ -121,7 +121,7 @@ async function startMock(goalId: string) {
 
 describe("speaking mocks", () => {
   beforeEach(() => {
-    vi.mocked(generateConversationScenario).mockResolvedValue({
+    vi.mocked(generateSpeakingMockScenario).mockResolvedValue({
       ...GENERATED,
       data: TOEFL_SCENARIO,
       userPrompt: "",
@@ -143,8 +143,8 @@ describe("speaking mocks", () => {
       status: "ready",
     });
 
-    expect(generateConversationScenario).toHaveBeenCalledWith(
-      expect.objectContaining({ level: "A2", unitTitle: "IELTS Speaking test" }),
+    expect(generateSpeakingMockScenario).toHaveBeenCalledWith(
+      expect.objectContaining({ exam: "ielts", level: "A2", minutes: 5 }),
     );
   });
 
@@ -162,8 +162,8 @@ describe("speaking mocks", () => {
       status: "ready",
     });
 
-    expect(generateConversationScenario).toHaveBeenCalledWith(
-      expect.objectContaining({ unitTitle: "TOEFL iBT Speaking section" }),
+    expect(generateSpeakingMockScenario).toHaveBeenCalledWith(
+      expect.objectContaining({ exam: "toefl", minutes: 5 }),
     );
   });
 
@@ -207,7 +207,7 @@ describe("speaking mocks", () => {
       startLanguageConversation({ goalId: spanish.goal.id, kind: "speakingMock" }),
     ).resolves.toStrictEqual({ status: "notLanguage" });
 
-    expect(generateConversationScenario).not.toHaveBeenCalled();
+    expect(generateSpeakingMockScenario).not.toHaveBeenCalled();
   });
 
   it("scores a TOEFL mock by TOEFL criteria and stores its feedback once", async () => {
@@ -314,10 +314,10 @@ describe("speaking mocks", () => {
       { kind: "speakingMock", level: "A2", startedAt: null, status: "ready" },
     ]);
 
-    expect(generateConversationScenario).toHaveBeenCalledOnce();
+    expect(generateSpeakingMockScenario).toHaveBeenCalledOnce();
 
     await expect(startMock(goal.id)).resolves.toBe(waiting[0]?.id);
-    expect(generateConversationScenario).toHaveBeenCalledOnce();
+    expect(generateSpeakingMockScenario).toHaveBeenCalledOnce();
   });
 
   it("writes no next mock for one that never connected, so ending unstarted mocks can't write mocks", async () => {
@@ -330,7 +330,7 @@ describe("speaking mocks", () => {
     await waitForDeferredWork();
 
     expect(scoreSpeakingMock).not.toHaveBeenCalled();
-    expect(generateConversationScenario).toHaveBeenCalledOnce();
+    expect(generateSpeakingMockScenario).toHaveBeenCalledOnce();
   });
 
   it("writes the next mock ahead once a mock ends, so another try starts at once", async () => {
@@ -347,12 +347,12 @@ describe("speaking mocks", () => {
     await completeLanguageConversation({ conversationId: first, input: COMPLETION });
     await waitForDeferredWork();
 
-    expect(generateConversationScenario).toHaveBeenCalledTimes(2);
+    expect(generateSpeakingMockScenario).toHaveBeenCalledTimes(2);
 
     const next = await startMock(goal.id);
 
     expect(next).not.toBe(first);
-    expect(generateConversationScenario).toHaveBeenCalledTimes(2);
+    expect(generateSpeakingMockScenario).toHaveBeenCalledTimes(2);
 
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: next } }),
@@ -385,7 +385,7 @@ describe("speaking mocks", () => {
     expect(mocks).toHaveLength(3);
     expect(mocks.find((mock) => mock.id === started)).toMatchObject({ level: "B1" });
 
-    expect(generateConversationScenario).toHaveBeenLastCalledWith(
+    expect(generateSpeakingMockScenario).toHaveBeenLastCalledWith(
       expect.objectContaining({ level: "B1" }),
     );
   });
@@ -395,7 +395,7 @@ describe("speaking mocks", () => {
 
     await prepareSpeakingMock({ goalId: goal.id, userId: user.id });
 
-    expect(generateConversationScenario).not.toHaveBeenCalled();
+    expect(generateSpeakingMockScenario).not.toHaveBeenCalled();
 
     await expect(prisma.languageConversation.count({ where: { goalId: goal.id } })).resolves.toBe(
       0,

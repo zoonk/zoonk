@@ -5,7 +5,6 @@ import { seedOrganizations } from "./seed/orgs";
 import { seedProgress } from "./seed/progress";
 import { seedSubscriptions } from "./seed/subscriptions";
 import { seedUsers } from "./seed/users";
-import { seedV2 } from "./seed/v2";
 
 async function main() {
   const users = await seedUsers(prisma);
@@ -13,7 +12,6 @@ async function main() {
   await seedSubscriptions(prisma, users);
   await seedOrganizations(prisma, users);
   await seedProgress(prisma, users);
-  await seedV2(prisma);
 }
 
 main()

@@ -7,8 +7,16 @@ import {
 import { type NoteMarkKind } from "../_components/note-mark";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type GuitarVoicing, findGuitarVoicing, stringNoteMidi } from "../_utils/guitar-voicing";
-import { midiToNote, nameChord, pitchClassName, spellChord } from "../_utils/music-notes";
-import { type ActivityExpected } from "../activity-renderer";
+import {
+  chordMidis,
+  midiToNote,
+  nameChord,
+  noteToMidi,
+  pitchClassName,
+  spellChord,
+} from "../_utils/music-notes";
+import { type SoundEvent, oneByOne, together } from "../_utils/sound-events";
+import { type ActivityExpected, type ActivityPhase } from "../activity-renderer";
 
 const OCTAVE = 12;
 
@@ -155,14 +163,20 @@ export function expectedPitches(
 
 /**
  * Where the notes start: the learner's answer when there is one, else the start chord, else
- * (for a question about the target) the target itself to explore.
+ * (for a question about the target) the target itself to explore. A target found by ear stays
+ * hidden until it's explored or answered.
  */
 export function initialPitches({
   answer,
   content,
+  phase,
 }: {
   answer: ActivityAnswer | null;
-  content: { check: { kind: string }; fields: { start?: NoteTarget; target: NoteTarget } };
+  content: {
+    check: { kind: string };
+    fields: { byEar?: boolean; start?: NoteTarget; target: NoteTarget };
+  };
+  phase: ActivityPhase;
 }): number[] {
   const answered = answer?.kind === "notes" ? notesPitchClasses(answer.notes) : null;
 
@@ -171,5 +185,30 @@ export function initialPitches({
   }
 
   const { check, fields } = content;
-  return targetPitches(fields.start ?? (check.kind === "interaction" ? undefined : fields.target));
+  const showsTarget = fields.byEar ? phase === "explore" : check.kind !== "interaction";
+
+  return targetPitches(fields.start ?? (showsTarget ? fields.target : undefined));
+}
+
+const MELODY_GAP = 0.7;
+const CHORD_GAP = 0.03;
+
+/**
+ * How a target sounds when it's found by ear: a chord struck together, and notes one after the
+ * other, each above the one before, so an interval is heard as a leap up.
+ */
+export function targetSound(target: NoteTarget): SoundEvent[] {
+  if (target.kind === "chord") {
+    return together(chordMidis(target.root, target.quality), { gap: CHORD_GAP });
+  }
+
+  const midis = target.notes.reduce<number[]>((played, note) => {
+    const midi = noteToMidi(note) ?? KEYBOARD_FROM;
+    const previous = played.at(-1);
+    played.push(previous === undefined || midi > previous ? midi : midi + OCTAVE);
+
+    return played;
+  }, []);
+
+  return oneByOne(midis, MELODY_GAP);
 }

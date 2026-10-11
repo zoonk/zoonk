@@ -67,9 +67,14 @@ async function MockContent({ params, searchParams }: Props) {
       ? `/start/${mock.goalId}`
       : sessionReturn.continueHref;
 
+  // The buddy reads and changes the plan of the goal the mock was taken for, as core does.
   return (
     <MainLearnProvider>
-      <MockClient continueHref={continueHref} mock={mock} tutor={tutor} />
+      <MockClient
+        continueHref={continueHref}
+        mock={mock}
+        tutor={{ ...tutor, goalId: mock.goalId ?? tutor.goalId }}
+      />
     </MainLearnProvider>
   );
 }

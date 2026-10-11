@@ -17,6 +17,12 @@ export function splitStandIns(units: readonly QueueUnit[]): QueueUnit[] {
     }
 
     const parts = Math.max(1, Math.round(unit.minutes / DEFAULT_LESSON_MINUTES));
+
+    // A part split again (a study cycle splits what the cut already split) stays one: as it is.
+    if (parts === 1) {
+      return [unit];
+    }
+
     return Array.from({ length: parts }, () => ({ ...unit, minutes: unit.minutes / parts }));
   });
 }

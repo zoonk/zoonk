@@ -14,6 +14,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
 
 /**
@@ -22,7 +23,7 @@ import { type Page, expect, test } from "./fixtures";
  * an account to save", and signing up keeps what they did.
  */
 
-/** A published course whose lesson a visitor opens from its public page. */
+/** A published course whose first lesson a visitor opens from its public page; another follows it. */
 async function createPublicLesson() {
   const id = randomUUID().slice(0, 8);
   const org = await getAiOrganization();
@@ -44,18 +45,30 @@ async function createPublicLesson() {
     skillFixture({ name: `Explain why atoms are stable ${id}` }),
   ]);
 
-  const lesson = await libraryLessonFixture({
-    contentStatus: "completed",
-    estimatedMinutes: 5,
-    homeChapterId: chapter.id,
-    slug: `electron-${id}`,
-    title: `Why doesn't the electron fall in ${id}`,
-  });
+  const [lesson, nextLesson, nextSkill] = await Promise.all([
+    libraryLessonFixture({
+      contentStatus: "completed",
+      estimatedMinutes: 5,
+      homeChapterId: chapter.id,
+      slug: `electron-${id}`,
+      title: `Why doesn't the electron fall in ${id}`,
+    }),
+    libraryLessonFixture({
+      contentStatus: "completed",
+      estimatedMinutes: 5,
+      homeChapterId: chapter.id,
+      slug: `orbitals-${id}`,
+      title: `Where the electron can be ${id}`,
+    }),
+    skillFixture({ name: `Read an orbital diagram ${id}` }),
+  ]);
 
   await Promise.all([
     courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: nextLesson.id, position: 1 }),
     lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+    lessonSkillFixture({ lessonId: nextLesson.id, skillId: nextSkill.id }),
     libraryStepFixture({
       content: {
         options: [
@@ -88,6 +101,7 @@ async function createPublicLesson() {
     course,
     lessonId: lesson.id,
     lessonPath: `/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+    nextLesson,
   };
 }
 
@@ -149,17 +163,19 @@ test.describe("A visitor from a public lesson page", () => {
     });
 
     // "Build my plan" starts the lesson's course without typing it again. The lesson was in the
-    // course's first chapter, so the plan starts at the course's beginning.
+    // course's first chapter, so the plan starts at the course's beginning, after their level.
     await page.getByRole("button", { name: "Build my plan" }).click();
-    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+    await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}$`, "u"));
 
     const level = "How much do you already know?";
     await expect(page.getByRole("heading", { name: level })).toBeVisible();
+    await startCourseWithLevel(page);
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
 
     const goalId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
-      details: { courseStart: { chapterId: null } },
+      details: { courseStart: { chapterId: null }, level: "basic" },
       primaryCourseId: course.id,
     });
 
@@ -180,5 +196,38 @@ test.describe("A visitor from a public lesson page", () => {
       .toBeGreaterThan(0);
 
     await expect.poll(() => prisma.user.findUnique({ where: { id: guest.userId } })).toBeNull();
+  });
+
+  test("counts the lesson finished as a guest in the plan built from it: Today goes on to the next one", async ({
+    page,
+  }) => {
+    const { lessonPath, nextLesson } = await createPublicLesson();
+
+    await finishLessonFromPublicPage(page, lessonPath);
+    await page.getByRole("button", { name: "Build my plan" }).click();
+    await startCourseWithLevel(page);
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+
+    // The rest of onboarding is behind them, as the guest would leave it: only the plan is left.
+    const goalId = new URL(page.url()).pathname.split("/").at(-1) ?? "";
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          answered: ["level", "schedule", "age", "memory", "buddy", "placement"],
+          courseStart: { chapterId: null },
+        },
+      },
+      where: { id: goalId },
+    });
+
+    await page.goto(`/start/${goalId}`);
+    await expect(page.getByRole("heading", { level: 1, name: "Your plan is ready" })).toBeVisible();
+    await page.getByRole("link", { name: "Start" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+
+    // The lesson they just finished isn't asked again: the day starts with the one after it.
+    const next = page.locator('[data-slot="today-next"]').getByRole("heading", { level: 3 });
+    await expect(next).toHaveText(nextLesson.title);
   });
 });

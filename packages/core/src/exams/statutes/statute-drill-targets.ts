@@ -67,8 +67,8 @@ function findLawSkill({
 
 /**
  * The laws a public-service exam goal should drill word for word: statutes among the goal's
- * sources (by title or the official site), each matched to the goal skill that names it. Laws no
- * skill names are left for the lessons. Internal workflow bridge: the goal id comes from the
+ * public sources (by title or the official site), each matched to the goal skill that names it.
+ * Laws no skill names are left for the lessons. Internal workflow bridge: the goal id comes from the
  * public boundary that created the goal.
  */
 export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDrillTarget[]> {
@@ -79,13 +79,18 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
 
   const blueprint = goal?.examBlueprint;
 
-  if (!goal || goal.kind !== "exam" || !blueprint) {
+  if (!goal || goal.kind !== "exam" || !blueprint || blueprint.ownerId) {
     return [];
   }
 
+  // Drills are shared by every learner of the exam: only a law's public text, never a learner's
+  // own upload ("Lei 8.112 anotada.pdf" reads as a law too).
   const sources = await prisma.learnerSource.findMany({
     select: { source: true },
-    where: { goalId, source: { extractedText: { not: null } } },
+    where: {
+      goalId,
+      source: { extractedText: { not: null }, kind: { not: "upload" }, visibility: "public" },
+    },
   });
 
   const skills = parsePlanGraph(goal.plan?.graph).skills;

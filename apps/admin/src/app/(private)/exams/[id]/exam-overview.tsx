@@ -1,5 +1,5 @@
 import { AdminJson } from "@/components/admin-json";
-import { AdminSection } from "@/components/admin-section";
+import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { getExam } from "@/data/exams/get-exam";
@@ -8,6 +8,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FreshnessCommandForm } from "../../sources/freshness-command-form";
 import { formatExamDate } from "../_utils/format-exam-date";
+import { ReadNoticeAgainForm } from "./read-notice-again-form";
+import { ResetExamSkillGraphForm } from "./reset-exam-skill-graph-form";
+
+/** How many skills a stored graph has. */
+function countGraphSkills(graph: unknown): number {
+  const skills =
+    typeof graph === "object" && graph !== null && "skills" in graph ? graph.skills : [];
+
+  return Array.isArray(skills) ? skills.length : 0;
+}
 
 /** The blueprint's key facts, what was read from its documents and its freshness controls. */
 export async function ExamOverview({ examBlueprintId }: { examBlueprintId: string }) {
@@ -61,12 +71,39 @@ export async function ExamOverview({ examBlueprintId }: { examBlueprintId: strin
         </dl>
       </AdminSection>
 
-      <AdminSection title="Blueprint">
+      <AdminSection
+        action={exam.source && <ReadNoticeAgainForm examBlueprintId={exam.id} />}
+        description="Read from its notice once and reused whatever prompt version read it. Read again to redo it with today's instructions."
+        title="Blueprint"
+      >
         <div className="flex flex-col gap-3">
           <AdminJson label="Current edition" value={exam.edition} />
           <AdminJson label="Structure" value={exam.structure} />
           <AdminJson label="Topic frequency" value={exam.topicFrequency} />
         </div>
+      </AdminSection>
+
+      <AdminSection
+        action={exam.skillGraph && <ResetExamSkillGraphForm examBlueprintId={exam.id} />}
+        description="Every new learner of the exam plans from it, whatever prompt version wrote it. Reading the notice again also adds skills for topics none of its skills teaches (an option a new reading names); reset to have the next learner write a new one."
+        title="Skill graph"
+      >
+        {exam.skillGraph ? (
+          <dl className="divide-y">
+            <DetailField label="Skills">{countGraphSkills(exam.skillGraph.graph)}</DetailField>
+            <DetailField label="Generated">
+              {formatDateTime(exam.skillGraph.generatedAt)}
+            </DetailField>
+            <DetailField label="Model">{exam.skillGraph.model}</DetailField>
+            <DetailField label="Prompt version">
+              <span className="font-mono text-xs">{exam.skillGraph.promptVersion}</span>
+            </DetailField>
+          </dl>
+        ) : (
+          <AdminSectionEmpty>
+            No skill graph yet: the exam&apos;s next learner writes one.
+          </AdminSectionEmpty>
+        )}
       </AdminSection>
 
       <AdminSection title="Provenance">

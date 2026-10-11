@@ -1,6 +1,6 @@
 import "server-only";
 import { type LessonQuestionGetPayload, type LessonQuestionThreadGetPayload } from "@zoonk/db";
-import { toPlanChangeView } from "../../plans/_utils/plan-change-view";
+import { changeGoalSelect, toPlanChangeView } from "../../plans/_utils/plan-change-view";
 import {
   type LessonQuestionContextSummary,
   type LessonQuestionResource,
@@ -16,7 +16,11 @@ export const lessonQuestionResourceOmit = { contextSnapshot: true } as const;
  * change its answer proposed (with the plan's version, which says whether it can still be undone).
  */
 export const lessonQuestionResourceQuery = {
-  include: { planChange: { include: { plan: { select: { version: true } } } } },
+  include: {
+    planChange: {
+      include: { plan: { select: { goal: { select: changeGoalSelect }, version: true } } },
+    },
+  },
   omit: lessonQuestionResourceOmit,
 } as const;
 
@@ -61,7 +65,11 @@ export function toLessonQuestionResource(
     createdAt: question.createdAt.toISOString(),
     id: question.id,
     planChange: planChange
-      ? toPlanChangeView({ change: planChange, planVersion: planChange.plan.version })
+      ? toPlanChangeView({
+          change: planChange,
+          goal: planChange.plan.goal,
+          planVersion: planChange.plan.version,
+        })
       : null,
     question: question.question,
     status: question.status,

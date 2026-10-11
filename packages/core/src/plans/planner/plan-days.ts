@@ -1,3 +1,4 @@
+import { type MockDays, getMockDays, getMockWeeks, isMockDay, isMockWeek } from "./mock-days";
 import {
   type StudyCalendar,
   addDays,
@@ -10,8 +11,7 @@ import { type ExamWindow, findExamWindow, getLearningShare } from "./plan-phases
 import { type MovedEvent, type PlanSettings, type PracticeBias } from "./plan-state";
 import { BOSS_MINUTES, getBossKey } from "./plan-units";
 import { type DayShape, type FixedEvent } from "./schedule-units";
-import { getShortExamEvents, isLightDayBefore, isShortExam } from "./short-exam-plan";
-import { MIN_DAYS_APART } from "./spare-mocks";
+import { getShortExamEvents, isLightDayBefore, isShortExam, mockEvent } from "./short-exam-plan";
 
 /** A weekly checkpoint outside exams: a short mixed challenge on the week's skills. */
 export const WEEKLY_CHECKPOINT_MINUTES = 15;
@@ -21,9 +21,21 @@ export const DAY_BEFORE_EXAM_MINUTES = 15;
 
 /**
  * What an exam's days depend on besides the calendar: the plan's first day, which tells a test
- * days away, and a class test's short mock, which rehearses it on the day before.
+ * days away, a class test's short mock, which rehearses it on the day before, and whether the plan
+ * studies everything (`PlanSettings.fullCourse`), so its days go on after the exam.
  */
-export type ExamDayRules = { planStart: Date | null; shortMockMinutes: number | null };
+export type ExamDayRules = {
+  /**
+   * The first day the run plans (today) and the days of the plan's mocks the learner took: a plan,
+   * or a phase two weeks long or more, whose weekly mock days are all past, and none taken, gets a
+   * mock of its own (see `getMockDays`). Absent: a plan made today, no mock taken.
+   */
+  from?: Date;
+  fullCourse?: boolean;
+  planStart: Date | null;
+  shortMockMinutes: number | null;
+  takenMocks?: readonly Date[];
+};
 
 /** An exam's day rules from its plan's settings; null for goals that aren't exams. */
 export function getExamDayRules({
@@ -31,13 +43,14 @@ export function getExamDayRules({
   settings,
 }: {
   isExam: boolean;
-  settings: Pick<PlanSettings, "shortMockMinutes" | "startDate">;
+  settings: Pick<PlanSettings, "fullCourse" | "shortMockMinutes" | "startDate">;
 }): ExamDayRules | null {
   if (!isExam) {
     return null;
   }
 
   return {
+    fullCourse: settings.fullCourse,
     planStart: settings.startDate ? fromIsoDate(settings.startDate) : null,
     shortMockMinutes: settings.shortMockMinutes,
   };
@@ -55,34 +68,57 @@ function fixedEvent(
 }
 
 /**
+ * The week's event outside exam phases: a short mixed challenge, or an exam's weekly mock
+ * (`mockMinutes`) in place of that day's lessons.
+ */
+function getWeeklyEvent({ date, mockMinutes }: { date: Date; mockMinutes: number | null }) {
+  if (mockMinutes !== null) {
+    return mockEvent({ date, minutes: mockMinutes, replacesDay: true });
+  }
+
+  return fixedEvent({
+    key: `checkpoint:${toIsoDate(date)}`,
+    kind: "checkpoint",
+    minutes: WEEKLY_CHECKPOINT_MINUTES,
+    title: "",
+  });
+}
+
+/**
  * Days of a plan without exam phases: the learner's minutes, a weekly checkpoint from the second
- * week on, and nothing on or after the target date, when there is one.
+ * week on, and nothing on or after the target date, when there is one. An exam's days without
+ * phases (no date yet, or after an exam the plan goes on past) keep its weekly mock instead
+ * (`mockMinutes`), every few weeks when it's longer than the learner's study day (see
+ * `getMockWeeks`): every exam plan has mocks.
  */
 export function createLearnDays({
   calendar,
   eventWeekday,
+  mockMinutes = null,
   practiceBias,
   start,
   targetDate,
-}: CalendarInput & { eventWeekday: number; start: Date; targetDate: Date | null }): (
-  date: Date,
-) => DayShape {
+}: CalendarInput & {
+  eventWeekday: number;
+  /** An exam's weekly mock, in place of the weekly checkpoint; null for other goals. */
+  mockMinutes?: number | null;
+  start: Date;
+  targetDate: Date | null;
+}): (date: Date) => DayShape {
   const firstCheckpoint = addDays(start, DAY_OF_SECOND_WEEK);
   const share = getLearningShare({ phaseKind: "learn", practiceBias });
+  const every = mockMinutes === null ? 1 : getMockWeeks({ calendar, minutes: mockMinutes });
 
   return (date) => {
     const open = targetDate === null || date < targetDate;
-    const isCheckpointDay = date >= firstCheckpoint && date.getUTCDay() === eventWeekday;
 
-    const checkpoint = fixedEvent({
-      key: `checkpoint:${toIsoDate(date)}`,
-      kind: "checkpoint",
-      minutes: WEEKLY_CHECKPOINT_MINUTES,
-      title: "",
-    });
+    const isCheckpointDay =
+      date >= firstCheckpoint &&
+      date.getUTCDay() === eventWeekday &&
+      isMockWeek({ date, every, firstMockDay: firstCheckpoint });
 
     return {
-      events: open && isCheckpointDay ? [checkpoint] : [],
+      events: open && isCheckpointDay ? [getWeeklyEvent({ date, mockMinutes })] : [],
       minutes: open ? getStudyMinutes({ calendar, date }) : 0,
       open,
       phase: null,
@@ -92,40 +128,16 @@ export function createLearnDays({
 }
 
 /**
- * A weekly mock's day: the week's event day from the gaps phase on, never days before the exam
- * (see `MIN_DAYS_APART`), which the final stretch keeps for review.
- */
-function isMockDay({
-  date,
-  eventWeekday,
-  targetDate,
-  window,
-}: {
-  date: Date;
-  eventWeekday: number;
-  targetDate: Date;
-  window: ExamWindow;
-}): boolean {
-  return (
-    window.kind !== "foundations" &&
-    date.getUTCDay() === eventWeekday &&
-    daysBetween(date, targetDate) >= MIN_DAYS_APART
-  );
-}
-
-/**
  * A phase closes with its checkpoint on its last study day that isn't a mock day: a rest day the
  * phase ends on never takes it. A phase without such a day keeps its last day.
  */
 function getPhaseCheckpointDay({
   calendar,
-  eventWeekday,
-  targetDate,
+  mockDays,
   window,
 }: {
   calendar: StudyCalendar;
-  eventWeekday: number;
-  targetDate: Date;
+  mockDays: MockDays;
   window: ExamWindow;
 }): Date {
   const length = daysBetween(window.startDate, window.endDate) + 1;
@@ -133,50 +145,41 @@ function getPhaseCheckpointDay({
 
   return (
     fromEnd.find(
-      (date) =>
-        getStudyMinutes({ calendar, date }) > 0 &&
-        !isMockDay({ date, eventWeekday, targetDate, window }),
+      (date) => getStudyMinutes({ calendar, date }) > 0 && !isMockDay({ date, mockDays, window }),
     ) ?? window.endDate
   );
 }
 
 function isPhaseCheckpointDay({
-  calendar,
   date,
-  eventWeekday,
-  targetDate,
+  getCheckpointDay,
   window,
 }: {
-  calendar: StudyCalendar;
   date: Date;
-  eventWeekday: number;
-  targetDate: Date;
+  getCheckpointDay: (window: ExamWindow) => Date;
   window: ExamWindow;
 }): boolean {
-  return (
-    window.kind !== "finalStretch" &&
-    date.getTime() ===
-      getPhaseCheckpointDay({ calendar, eventWeekday, targetDate, window }).getTime()
-  );
+  return window.kind !== "finalStretch" && date.getTime() === getCheckpointDay(window).getTime();
 }
 
 function getExamEvents({
-  calendar,
   date,
-  eventWeekday,
+  fullMockMinutes,
+  getCheckpointDay,
   isDayBefore,
   minutes,
+  mockDays,
   mockMinutes,
   phase,
-  targetDate,
   window,
 }: {
-  calendar: StudyCalendar;
   date: Date;
-  eventWeekday: number;
-  targetDate: Date;
+  fullMockMinutes: number;
+  /** Each phase's checkpoint day (see `getPhaseCheckpointDay`), found once per phase. */
+  getCheckpointDay: (window: ExamWindow) => Date;
   isDayBefore: boolean;
   minutes: number;
+  mockDays: MockDays;
   mockMinutes: number;
   phase: number;
   window: ExamWindow;
@@ -188,23 +191,17 @@ function getExamEvents({
     return minutes > 0 ? [review] : [];
   }
 
-  if (isMockDay({ date, eventWeekday, targetDate, window })) {
-    return [
-      fixedEvent({
-        key: `mock:${day}`,
-        kind: "mock",
-        minutes: mockMinutes,
-        replacesDay: true,
-        title: "",
-      }),
-    ];
+  // The final stretch's mock is the whole exam day, as the mock itself asks it.
+  if (isMockDay({ date, mockDays, window })) {
+    const mock = window.kind === "finalStretch" ? fullMockMinutes : mockMinutes;
+    return [mockEvent({ date, minutes: mock, replacesDay: true })];
   }
 
   if (window.kind === "finalStretch") {
     return minutes > 0 ? [review] : [];
   }
 
-  return isPhaseCheckpointDay({ calendar, date, eventWeekday, targetDate, window })
+  return isPhaseCheckpointDay({ date, getCheckpointDay, window })
     ? [fixedEvent({ key: getBossKey(phase), kind: "boss", minutes: BOSS_MINUTES, title: "" })]
     : [];
 }
@@ -233,14 +230,17 @@ function getExamDayMinutes({
 }
 
 /**
- * Days of an exam plan: each phase's share of new learning, weekly mocks from the gaps phase on
- * (in place of that day's lessons), a checkpoint closing each phase before the final stretch, the
- * final stretch as review days, and a light day before the exam. A test days away keeps only its
- * short plan's events: no phase checkpoints or weekly mocks, and a last day with nothing new.
+ * Days of an exam plan: each phase's share of new learning, weekly mocks from the plan's second
+ * week in every phase, every few weeks when a mock is longer than the learner's study day (see
+ * `getMockWeeks`; in place of that day's lessons; the whole exam day in the final stretch),
+ * a checkpoint closing each phase before the final stretch, the final stretch as review days, and
+ * a light day before the exam. A test days away keeps only its short plan's events: no phase
+ * checkpoints or weekly mocks, its one mock, and a last day with nothing new.
  */
 export function createExamDays({
   calendar,
   eventWeekday,
+  fullMockMinutes,
   mockMinutes,
   practiceBias,
   rules,
@@ -248,6 +248,9 @@ export function createExamDays({
   windows,
 }: CalendarInput & {
   eventWeekday: number;
+  /** The final stretch's mocks: the real exam day's time, its written test included. */
+  fullMockMinutes: number;
+  /** The regular weeks' mocks: half the exam's first day. */
   mockMinutes: number;
   rules: ExamDayRules;
   targetDate: Date;
@@ -256,6 +259,27 @@ export function createExamDays({
   const dayBefore = addDays(targetDate, -1);
   const firstDay = windows[0]?.startDate ?? dayBefore;
   const isShortPlan = isShortExam({ planStart: firstDay, targetDate });
+
+  const mockDays = getMockDays({
+    calendar,
+    eventWeekday,
+    firstMockDay: addDays(firstDay, DAY_OF_SECOND_WEEK),
+    from: rules.from,
+    mockMinutes: { finalStretch: fullMockMinutes, weekly: mockMinutes },
+    shortMockMinutes: rules.shortMockMinutes,
+    takenMocks: rules.takenMocks,
+    targetDate,
+    windows,
+  });
+
+  // Every date of a phase asks for its checkpoint day: a plan a year long asked hundreds of times.
+  const checkpointDays = new Map<ExamWindow, Date>();
+
+  const getCheckpointDay = (window: ExamWindow): Date => {
+    const day = checkpointDays.get(window) ?? getPhaseCheckpointDay({ calendar, mockDays, window });
+    checkpointDays.set(window, day);
+    return day;
+  };
 
   return (date) => {
     const window = findExamWindow({ date, windows });
@@ -268,25 +292,31 @@ export function createExamDays({
     const isDayBefore = date.getTime() === dayBefore.getTime();
     const minutes = getExamDayMinutes({ calendar, date, rules, targetDate });
 
-    const events = isShortPlan
-      ? getShortExamEvents({
-          date,
-          isLastDay: window.kind === "finalStretch",
-          isOnlyDay: isDayBefore && windows.length === 1,
-          minutes,
-          shortMockMinutes: rules.shortMockMinutes,
-        })
-      : getExamEvents({
-          calendar,
-          date,
-          eventWeekday,
-          isDayBefore,
-          minutes,
-          mockMinutes,
-          phase,
-          targetDate,
-          window,
-        });
+    // A class test's own mock on the day before (see `getMockDays`) goes as on a short plan's
+    // last day: the short mock, then a review with the time left.
+    const events =
+      isShortPlan || (isDayBefore && isMockDay({ date, mockDays, window }))
+        ? getShortExamEvents({
+            date,
+            isFirstPracticeDay:
+              window.kind === "practice" && date.getTime() === window.startDate.getTime(),
+            isLastDay: window.kind === "finalStretch",
+            isOnlyDay: isDayBefore && windows.length === 1,
+            minutes,
+            mockMinutes,
+            shortMockMinutes: rules.shortMockMinutes,
+          })
+        : getExamEvents({
+            date,
+            fullMockMinutes,
+            getCheckpointDay,
+            isDayBefore,
+            minutes,
+            mockDays,
+            mockMinutes,
+            phase,
+            window,
+          });
 
     return {
       events,
@@ -300,8 +330,9 @@ export function createExamDays({
 
 /**
  * The minutes a learner has planned for one date: their weekday's time, halved in a light week,
- * none from the target date on, and a short review the day before an exam (unless a short plan
- * needs that day). Sessions build the day from it, so the plan and Today agree.
+ * none from the target date on (except the days after an exam whose plan studies everything), and
+ * a short review the day before an exam (unless a short plan needs that day). Sessions build the
+ * day from it, so the plan and Today agree.
  */
 export function getPlannedMinutes({
   calendar,
@@ -316,7 +347,7 @@ export function getPlannedMinutes({
   targetDate: Date | null;
 }): number {
   if (targetDate && date >= targetDate) {
-    return 0;
+    return exam?.fullCourse && date > targetDate ? getStudyMinutes({ calendar, date }) : 0;
   }
 
   return exam && targetDate

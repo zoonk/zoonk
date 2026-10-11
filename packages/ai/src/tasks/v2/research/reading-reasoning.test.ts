@@ -22,7 +22,19 @@ function fileDocument(mediaType: string): ResearchDocument {
 }
 
 function format(kind: QuestionFormat["kind"], options: number | null = null): QuestionFormat {
-  return { description: `${kind} question`, document: 1, kind, options, passage: kind };
+  return {
+    count: null,
+    countPassage: null,
+    description: `${kind} question`,
+    document: 1,
+    entry: null,
+    kind,
+    markingPassage: null,
+    options,
+    partialCredit: null,
+    passage: kind,
+    select: null,
+  };
 }
 
 describe(getReadingReasoning, () => {

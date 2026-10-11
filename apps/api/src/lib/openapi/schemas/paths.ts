@@ -37,6 +37,17 @@ export const goalChapterPathParamsSchema = goalPathParamsSchema
   .extend({ chapterId: z.uuid().meta({ description: "Library chapter ID in the goal's plan" }) })
   .meta({ id: "GoalChapterPathParams" });
 
+export const goalSkillPathParamsSchema = goalPathParamsSchema
+  .extend({
+    skillId: z
+      .uuid()
+      .meta({
+        description:
+          "A skill of the goal's plan: a far topic's `skillId` on the Journey or the syllabus",
+      }),
+  })
+  .meta({ id: "GoalSkillPathParams" });
+
 export const mistakePathParamsSchema = z
   .object({ mistakeId: z.uuid().meta({ description: "Mistake ID" }) })
   .meta({ id: "MistakePathParams" });
@@ -122,7 +133,10 @@ export const ownFilePathParamsSchema = z
   .object({
     folder: z
       .enum(PRIVATE_FILE_FOLDERS)
-      .meta({ description: "`images` (a private course's pictures) or `sources` (uploads)" }),
+      .meta({
+        description:
+          "`images` (a private course's pictures), `sources` (uploads) or `audio` (a learner's own sentences read aloud)",
+      }),
     name: z.string().min(1).meta({ description: "The file's name" }),
     ownerId: z.uuid().meta({ description: "The learner the file belongs to" }),
   })

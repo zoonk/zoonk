@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { checkItem } from "../items/item-checks";
 import { toStoredItem } from "../items/item-content";
+import { repairItem } from "../items/item-repairs";
 import { resolveReviewFlags } from "../sources/content-review-flags";
 import { type FlaggedDrillGroup } from "./flagged-content";
 
@@ -35,7 +36,8 @@ export async function replaceFlaggedDrills({
       return [];
     }
 
-    const { reference: _reference, ...item } = drill;
+    const { reference: _reference, ...written } = drill;
+    const item = repairItem({ item: written, language: group.language, optionCount });
 
     const problems = checkItem({
       expectedFormat: group.format,
@@ -52,7 +54,7 @@ export async function replaceFlaggedDrills({
       pairs.map(({ item, itemId }, index) =>
         tx.item.update({
           data: {
-            ...toStoredItem(item),
+            ...toStoredItem(item, { citesSource: true }),
             ...toProvenanceData({ ...provenance, runId: `${provenance.runId}:${index}` }),
             discrimination: null,
             sourceCitation: group.citation,

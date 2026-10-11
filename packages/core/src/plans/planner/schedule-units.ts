@@ -78,6 +78,11 @@ function prefixSums(values: readonly number[]): number[] {
   }, []);
 }
 
+/** Each day's lesson minutes added up from the first day: where in the plan's time a day ends. */
+export function getCumulativeCapacity(days: readonly PlanDay[]): number[] {
+  return prefixSums(days.map((day) => getLessonCapacity(day)));
+}
+
 /** The first day whose cumulative capacity reaches `needed`, or -1 when none does. */
 export function findDayIndex({
   cumulative,
@@ -101,46 +106,175 @@ export function findDayIndex({
   return cumulative.length === 0 ? -1 : search(0, cumulative.length - 1);
 }
 
+/**
+ * `findDayIndex` for a unit placed after the one that landed on day `from`: what it needs only
+ * grows, so no day before `from` reaches it. The search gallops from there (a step, then twice as
+ * many) instead of searching every day for each unit: a real-size exam places thousands of units,
+ * many times per plan, and each lands on or near the day before it.
+ */
+function findDayIndexFrom({
+  cumulative,
+  from,
+  needed,
+}: {
+  cumulative: readonly number[];
+  from: number;
+  needed: number;
+}): number {
+  const last = cumulative.length - 1;
+
+  if (from < 0 || from > last) {
+    return -1;
+  }
+
+  const reaches = (day: number) => (cumulative[day] ?? 0) + EPSILON >= needed;
+
+  const search = (low: number, high: number): number => {
+    if (low >= high) {
+      return low;
+    }
+
+    const middle = Math.floor((low + high) / 2);
+    return reaches(middle) ? search(low, middle) : search(middle + 1, high);
+  };
+
+  const gallop = (low: number, step: number): number => {
+    const high = Math.min(last, low + step - 1);
+
+    if (reaches(high)) {
+      return search(low, high);
+    }
+
+    return high === last ? -1 : gallop(high + 1, step * 2);
+  };
+
+  return gallop(from, 1);
+}
+
 /** Where a unit landed: its day, and where it starts in the plan's cumulative lesson minutes. */
 type PlacedUnit = { dayIndex: number; start: number; unit: QueueUnit };
 
-/** Where the day that `used` reaches into ends: `used` itself when it ends a day. */
-function getDayEnd({ cumulative, used }: { cumulative: readonly number[]; used: number }) {
-  return Math.max(used, cumulative[findDayIndex({ cumulative, needed: used })] ?? used);
+/**
+ * Where in the plan's lesson minutes the next unit starts after one that ends at `needed`, on a
+ * day that ends at `dayEnd`: a phase checkpoint closes its day, and a kept phase end's challenge
+ * (`heldOn`) takes only its own day's time, even past it (a day the learner rests, or two
+ * challenges a half-studied day left on it), so the next day keeps its lessons.
+ */
+export function getUsedAfter({
+  dayEnd,
+  needed,
+  unit,
+}: {
+  dayEnd: number | undefined;
+  needed: number;
+  unit: QueueUnit;
+}): number {
+  if (dayEnd === undefined || unit.kind !== "boss") {
+    return needed;
+  }
+
+  return unit.heldOn === undefined ? Math.max(needed, dayEnd) : dayEnd;
 }
 
 /**
- * The day each unit is due: the first whose cumulative time covers it. A phase checkpoint closes
- * its day, so the next phase starts fresh on the day after, never in the middle of the one before;
- * a unit that opens a study-cycle day does the same for the day before it, and one placed after
- * days the cycle left without lessons starts after them.
+ * Where the day that `used` reaches into ends: `used` itself when it ends a day, as nothing used
+ * yet ends the day before the first.
  */
-function placeUnits({
+function getDayEnd({ cumulative, used }: { cumulative: readonly number[]; used: number }) {
+  if (used <= EPSILON) {
+    return used;
+  }
+
+  return Math.max(used, cumulative[findDayIndex({ cumulative, needed: used })] ?? used);
+}
+
+/** A lesson, or a stand-in's part as long as one. */
+function isOneLesson(unit: QueueUnit): boolean {
+  return unit.kind === "lesson" && (unit.lessonId !== null || (unit.lessons ?? 1) <= 1);
+}
+
+/**
+ * The day a unit is due (see `placeUnits`), except that the first unit, when it starts on the
+ * plan's first day, is due on it even though it runs into the next, and so is a first lesson the
+ * plan's time doesn't cover at all: day one always has a session, and at a few minutes a day every
+ * lesson is longer than a day's lesson time, while a test two days away has time for less than one.
+ */
+function getDueDay({
+  cumulative,
+  dayIndex,
+  first,
+  start,
+  unit,
+}: {
+  cumulative: readonly number[];
+  dayIndex: number;
+  first: boolean;
+  start: number;
+  unit: QueueUnit;
+}): number {
+  const startsDayOne = first && start + EPSILON < (cumulative[0] ?? 0);
+
+  if (!startsDayOne || dayIndex === 0) {
+    return dayIndex;
+  }
+
+  return dayIndex > 0 || isOneLesson(unit) ? 0 : dayIndex;
+}
+
+/**
+ * The day each unit is due: the first whose cumulative time covers it (the plan's first unit
+ * aside; see `getDueDay`). A phase checkpoint closes its day, so the next phase starts fresh on
+ * the day after, never in the middle of the one before, though a challenge right after it shares
+ * its day (the one a half-studied day left, then the next phase's on the day it ends; see
+ * `keepAfterEarlierChallenges`), and a kept phase end's challenge stays on its day (`heldOn`); a
+ * unit that opens a study-cycle day does the same for the day before it, and one placed after days
+ * the cycle left without lessons starts after them.
+ */
+export function placeUnits({
   cumulative,
   units,
 }: {
   cumulative: readonly number[];
   units: readonly QueueUnit[];
 }): PlacedUnit[] {
-  return units.reduce<{ placed: PlacedUnit[]; used: number }>(
+  return units.reduce<{
+    bossEnd: number | null;
+    dayIndex: number;
+    placed: PlacedUnit[];
+    used: number;
+  }>(
     (state, unit) => {
+      const from = unit.kind === "boss" && state.bossEnd !== null ? state.bossEnd : state.used;
+
       const start = Math.max(
         unit.startsAt ?? 0,
-        unit.opensDay ? getDayEnd({ cumulative, used: state.used }) : state.used,
+        unit.opensDay ? getDayEnd({ cumulative, used: from }) : from,
       );
 
       const needed = start + unit.minutes;
-      const dayIndex = findDayIndex({ cumulative, needed });
-      const dayEnd = cumulative[dayIndex];
+      const found = findDayIndexFrom({ cumulative, from: state.dayIndex, needed });
+      const dayEnd = cumulative[unit.heldOn ?? found];
 
-      state.placed.push({ dayIndex, start, unit });
+      const first = state.placed.length === 0;
+
+      state.placed.push({
+        dayIndex: unit.heldOn ?? getDueDay({ cumulative, dayIndex: found, first, start, unit }),
+        start,
+        unit,
+      });
+
+      // The next unit is looked for from a held challenge's day, even when its minutes run past it.
+      const { heldOn } = unit;
+      const next = heldOn !== undefined && (found === -1 || found > heldOn) ? heldOn : found;
 
       return {
+        bossEnd: unit.kind === "boss" ? needed : null,
+        dayIndex: next,
         placed: state.placed,
-        used: unit.kind === "boss" && dayEnd !== undefined ? Math.max(needed, dayEnd) : needed,
+        used: getUsedAfter({ dayEnd, needed, unit }),
       };
     },
-    { placed: [], used: 0 },
+    { bossEnd: null, dayIndex: 0, placed: [], used: 0 },
   ).placed;
 }
 
@@ -198,6 +332,23 @@ function closeWhatFits({
     : unchanged;
 }
 
+/** The units laid on these days with room made for the goal's outcomes (see `makeRoomForOutcomes`). */
+export function makeOutcomeRoom({
+  cumulative,
+  units,
+}: {
+  cumulative: readonly number[];
+  units: readonly QueueUnit[];
+}) {
+  return makeRoomForOutcomes({
+    dropsOutcome: (list) =>
+      placeUnits({ cumulative, units: list }).some(
+        ({ dayIndex, unit }) => dayIndex < 0 && unit.outcome && !unit.depth,
+      ),
+    units,
+  });
+}
+
 /**
  * Lays units on days in order. Each day gives new lessons its study minutes, minus fixed events,
  * times its learning share; a unit is due on the day the cumulative time covers it, so a long
@@ -215,17 +366,10 @@ export function scheduleUnits({
   days: readonly PlanDay[];
   units: readonly QueueUnit[];
 }): { dropped: DroppedUnit[]; events: ScheduledEvent[]; units: ScheduledUnit[] } {
-  const cumulative = prefixSums(days.map((day) => getLessonCapacity(day)));
+  const cumulative = getCumulativeCapacity(days);
   const capacity = cumulative.at(-1) ?? 0;
 
-  const room = makeRoomForOutcomes({
-    dropsOutcome: (list) =>
-      placeUnits({ cumulative, units: list }).some(
-        ({ dayIndex, unit }) => dayIndex < 0 && unit.outcome && !unit.depth,
-      ),
-    units,
-  });
-
+  const room = makeOutcomeRoom({ cumulative, units });
   const closed = closeWhatFits({ cumulative, units: room.kept });
   const { kept } = closed;
   const leftOut = [...room.leftOut, ...closed.leftOut];

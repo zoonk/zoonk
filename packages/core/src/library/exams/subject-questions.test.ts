@@ -78,7 +78,7 @@ describe(needsPastQuestions, () => {
     expect(needsPastQuestions({ now: NOW, structure: looked })).toBe(false);
   });
 
-  it("tries again a month after finding nothing, or when the notice renames a subject", () => {
+  it("tries again a month after finding no count for every subject, keeping the counts it found", () => {
     const empty = {
       ...oab,
       pastQuestions: {
@@ -95,8 +95,16 @@ describe(needsPastQuestions, () => {
       needsPastQuestions({ now: new Date("2026-11-15T00:00:00.000Z"), structure: empty }),
     ).toBe(true);
 
-    const renamed = { ...looked, subjects: [...looked.subjects, subject("Direito Eleitoral")] };
-    expect(needsPastQuestions({ now: NOW, structure: renamed })).toBe(true);
+    // The source didn't count electoral law on its own: the others keep their counts.
+    const partial = { ...looked, subjects: [...looked.subjects, subject("Direito Eleitoral")] };
+    const [civil] = partial.subjects;
+
+    expect(needsPastQuestions({ now: NOW, structure: partial })).toBe(false);
+    expect(civil && getSubjectQuestions({ structure: partial, subject: civil })).toBe(7);
+
+    expect(
+      needsPastQuestions({ now: new Date("2026-11-15T00:00:00.000Z"), structure: partial }),
+    ).toBe(true);
   });
 
   it("leaves exams the notice weighs, discursive-only exams and short lists alone", () => {

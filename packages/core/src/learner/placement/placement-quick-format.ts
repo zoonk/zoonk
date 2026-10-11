@@ -7,7 +7,7 @@ export type PlacementQuickFormat = "multipleChoice" | "trueFalse";
 
 /**
  * A goal's quick placement format: its exam's own when the exam judges assertions right or wrong
- * (Cebraspe's Certo ou Errado), so placement feels like the exam's drills; multiple choice
+ * (Cebraspe's right-or-wrong statements), so placement feels like the exam's drills; multiple choice
  * otherwise, and before the goal's blueprint is known. The typed confirmation is the same for all.
  */
 export function getPlacementQuickFormat(

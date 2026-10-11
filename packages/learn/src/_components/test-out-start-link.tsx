@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { FreeWeekOverNotice } from "./free-week-over";
 import { type HelpLimit, HelpLimitNotice } from "./help-limit-notice";
 import { KindTile } from "./kind-tile";
 import {
@@ -14,14 +15,16 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "./list-group";
+import { PlusMark } from "./plus-lock";
 
 /**
  * How asking for a chapter's test-out went. `started` means the host already opened it; a
- * refusal says what the learner's AI help allows.
+ * refusal says what the learner's AI help allows, and `plusRequired` that a free exam plan past
+ * its first week takes it with Plus only.
  */
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }
-  | { status: "failed" | "started" };
+  | { status: "failed" | "plusRequired" | "started" };
 
 /**
  * One tap asks for the test's questions and opens it, where they're written while the learner
@@ -43,7 +46,10 @@ export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
   return { isPending, opening: isPending || result?.status === "started", result, start };
 }
 
-/** What a tap that didn't open the test says: the AI help limit, or to try again. */
+/**
+ * What a tap that didn't open the test says: the AI help limit, the end of a free exam plan's
+ * first week, or to try again.
+ */
 export function TestOutStartStatus({
   isPending,
   result,
@@ -56,6 +62,10 @@ export function TestOutStartStatus({
 
   if (result?.status === "refused") {
     return <HelpLimitNotice limit={result.limit} linkComponent={LearnLink} routes={routes} />;
+  }
+
+  if (result?.status === "plusRequired") {
+    return <FreeWeekOverNotice />;
   }
 
   if (result?.status === "failed" && !isPending) {
@@ -99,9 +109,12 @@ export function TestOutStartLink({ onStart }: { onStart: () => Promise<TestOutSt
  */
 export function TestOutStartRow({
   onStart,
+  plusRequired = false,
   scope,
 }: {
   onStart: () => Promise<TestOutStart>;
+  /** A free exam plan past its first week takes it with Plus only: marked Plus, as its lessons. */
+  plusRequired?: boolean;
   /** What passing the test skips, as the page calls it. */
   scope: "chapter" | "unit";
 }) {
@@ -115,7 +128,10 @@ export function TestOutStartRow({
           <KindTile icon={FastForwardIcon} kind="practice" />
         </ListRowLeading>
         <ListRowContent>
-          <ListRowTitle>{t("Already know this?")}</ListRowTitle>
+          <ListRowTitle className="flex items-center gap-2">
+            {t("Already know this?")}
+            {plusRequired && <PlusMark />}
+          </ListRowTitle>
           <ListRowDescription>
             {opening && t("Opening the test…")}
             {!opening && scope === "chapter" && t("Take the test and skip the chapter")}

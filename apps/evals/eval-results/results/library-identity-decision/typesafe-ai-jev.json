@@ -1936,6 +1936,159 @@
           "position": 3
         }
       }
+    },
+    {
+      "classification": { "expected": "reuse", "predicted": "reuse" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "reuse": true },
+        "id": "pt-skill-graph-twin-reordered-1",
+        "userInput": {
+          "candidate": {
+            "courses": ["Língua Portuguesa"],
+            "description": "Reconhecer a finalidade e a estrutura de cada tipo e gênero de texto.",
+            "title": "Distinguir tipos e gêneros textuais"
+          },
+          "subject": {
+            "goal": "Passar no concurso da Câmara dos Deputados",
+            "item": {
+              "courses": ["Língua Portuguesa"],
+              "description": "Identificar o gênero e o tipo textual de um texto pela sua função e forma.",
+              "title": "Distinguir gêneros e tipos textuais"
+            },
+            "kind": "skill",
+            "language": "pt"
+          },
+          "others": [
+            {
+              "description": "Eu falo, tu falas, ele fala: as formas do presente",
+              "title": "Conjugar verbos regulares no presente do indicativo"
+            },
+            {
+              "courses": ["Língua Portuguesa"],
+              "description": "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+              "title": "Inferir sentidos e argumentos de textos"
+            },
+            {
+              "courses": ["Português"],
+              "description": "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+              "title": "Inferir sentidos e argumentos de textos"
+            },
+            {
+              "courses": ["Matemática e suas Tecnologias"],
+              "description": "Tirar valores, tendências e comparações de gráficos e tabelas.",
+              "title": "Interpretar gráficos e tabelas"
+            }
+          ],
+          "position": 4
+        }
+      }
+    },
+    {
+      "classification": { "expected": "reuse", "predicted": "reuse" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "reuse": true },
+        "id": "pt-skill-graph-twin-reworded-1",
+        "userInput": {
+          "candidate": {
+            "courses": ["Matemática e suas Tecnologias"],
+            "description": "Tirar valores, tendências e comparações de gráficos e tabelas.",
+            "title": "Interpretar gráficos e tabelas"
+          },
+          "subject": {
+            "goal": "Passar no ENEM",
+            "item": {
+              "courses": ["Matemática e suas Tecnologias"],
+              "description": "Ler os dados de gráficos e tabelas e comparar o que mostram.",
+              "title": "Ler e comparar dados em gráficos e tabelas"
+            },
+            "kind": "skill",
+            "language": "pt"
+          },
+          "others": [
+            {
+              "description": "Eu falo, tu falas, ele fala: as formas do presente",
+              "title": "Conjugar verbos regulares no presente do indicativo"
+            },
+            {
+              "courses": ["Língua Portuguesa"],
+              "description": "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+              "title": "Inferir sentidos e argumentos de textos"
+            },
+            {
+              "courses": ["Português"],
+              "description": "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+              "title": "Inferir sentidos e argumentos de textos"
+            },
+            {
+              "courses": ["Língua Portuguesa"],
+              "description": "Reconhecer a finalidade e a estrutura de cada tipo e gênero de texto.",
+              "title": "Distinguir tipos e gêneros textuais"
+            }
+          ],
+          "position": 0
+        }
+      }
+    },
+    {
+      "classification": { "expected": "generate", "predicted": "generate" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "reuse": false },
+        "id": "pt-skill-graph-sibling-not-twin-1",
+        "userInput": {
+          "candidate": {
+            "courses": ["Matemática e suas Tecnologias"],
+            "description": "Calcular o montante quando os juros incidem só sobre o capital inicial.",
+            "title": "Calcular juros simples"
+          },
+          "subject": {
+            "goal": "Passar no ENEM",
+            "item": {
+              "courses": ["Matemática e suas Tecnologias"],
+              "description": "Calcular o montante quando os juros de cada período entram no capital.",
+              "title": "Calcular juros compostos"
+            },
+            "kind": "skill",
+            "language": "pt"
+          },
+          "others": [
+            {
+              "description": "Eu falo, tu falas, ele fala: as formas do presente",
+              "title": "Conjugar verbos regulares no presente do indicativo"
+            },
+            {
+              "courses": ["Língua Portuguesa"],
+              "description": "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+              "title": "Inferir sentidos e argumentos de textos"
+            },
+            {
+              "courses": ["Português"],
+              "description": "Reconhecer pressupostos, inferências e relações argumentativas sustentadas pelo texto.",
+              "title": "Inferir sentidos e argumentos de textos"
+            },
+            {
+              "courses": ["Língua Portuguesa"],
+              "description": "Reconhecer a finalidade e a estrutura de cada tipo e gênero de texto.",
+              "title": "Distinguir tipos e gêneros textuais"
+            }
+          ],
+          "position": 1
+        }
+      }
     }
   ],
   "taskId": "library-identity-decision"

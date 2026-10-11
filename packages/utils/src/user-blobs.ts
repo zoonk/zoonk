@@ -1,8 +1,9 @@
 /**
- * The private store's top folders: a private course's pictures and uploads, each with one folder
- * per learner (`{folder}/{userId}/`). Spoken answers are never stored.
+ * The private store's top folders: a private course's pictures, uploads, and a learner's own
+ * sentences read aloud (a call's corrections), each with one folder per learner
+ * (`{folder}/{userId}/`). Spoken answers are never stored.
  */
-export const PRIVATE_FILE_FOLDERS = ["images", "sources"] as const;
+export const PRIVATE_FILE_FOLDERS = ["audio", "images", "sources"] as const;
 
 type PrivateFileFolder = (typeof PRIVATE_FILE_FOLDERS)[number];
 
@@ -18,6 +19,11 @@ export function getSourceUploadFolder(userId: string): string {
 /** A private course's pictures live under its owner's folder, like everything else only they see. */
 export function getPrivateImageFolder(userId: string): string {
   return getUserFolder({ folder: "images", userId });
+}
+
+/** A learner's own sentences read aloud (a call's corrections) live under their folder. */
+export function getPrivateAudioFolder(userId: string): string {
+  return getUserFolder({ folder: "audio", userId });
 }
 
 /** Every folder of private files one learner owns, removed when their account is deleted. */
@@ -60,6 +66,26 @@ export function getPrivateBlobPathname(url: string): string | null {
  * cookie with an image request.
  */
 export const OWN_FILES_WEB_PATH = "/api/files";
+
+/** Where the API serves a learner's own files (`GET /v1/files/{folder}/{ownerId}/{name}`). */
+const OWN_FILES_API_PATH = "/v1/files/";
+
+/**
+ * An API file route's address as the web app serves the same file on its own origin
+ * (`OWN_FILES_WEB_PATH`), so an audio or image request from the page sends the session cookie;
+ * the API reads its bearer token, which a media element can't send. Any other URL stays as it is.
+ */
+export function toWebOwnFileUrl(url: string): string {
+  if (!URL.canParse(url)) {
+    return url;
+  }
+
+  const { pathname } = new URL(url);
+
+  return pathname.startsWith(OWN_FILES_API_PATH)
+    ? `${OWN_FILES_WEB_PATH}/${pathname.slice(OWN_FILES_API_PATH.length)}`
+    : url;
+}
 
 /**
  * The address a client reads a stored file from: a public file's CDN URL as it is, and a private

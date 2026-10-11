@@ -1,12 +1,16 @@
+import { randomUUID } from "node:crypto";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
+  lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it } from "vitest";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
 import { loadLessonSpecInputs } from "./lesson-spec-inputs";
@@ -116,6 +120,31 @@ describe(loadLessonSpecInputs, () => {
     expect(inputs?.prompt.chapterLessons).toStrictEqual([]);
   });
 
+  it("plans a setup lesson with the setup rules, and other lessons without them", async () => {
+    const [setupSkill, otherSkill, setupLesson, otherLesson] = await Promise.all([
+      skillFixture({
+        identityKey: buildSetupSkillIdentityKey({ system: "windows", tool: randomUUID() }),
+        name: "Set up Python on Windows",
+      }),
+      skillFixture({ name: "Read a thermometer below zero" }),
+      libraryLessonFixture({ title: "Set up Python on Windows" }),
+      libraryLessonFixture({ title: "Temperatures below zero" }),
+    ]);
+
+    await Promise.all([
+      lessonSkillFixture({ lessonId: setupLesson.id, skillId: setupSkill.id }),
+      lessonSkillFixture({ lessonId: otherLesson.id, skillId: otherSkill.id }),
+    ]);
+
+    const [setup, other] = await Promise.all([
+      loadLessonSpecInputs(setupLesson.id),
+      loadLessonSpecInputs(otherLesson.id),
+    ]);
+
+    expect(setup?.prompt.setup).toBe(true);
+    expect(other?.prompt.setup).toBe(false);
+  });
+
   it("plans a lesson outside any chapter without other lessons", async () => {
     const lesson = await libraryLessonFixture({ title: "Temperature drops" });
     const inputs = await loadLessonSpecInputs(lesson.id);
@@ -124,7 +153,7 @@ describe(loadLessonSpecInputs, () => {
   });
 
   /*
-   * A shared OAB lesson opened with "a entidade dos advogados do Brasil, chamada OAB" for law
+   * A shared OAB lesson opened with "Brazil's lawyers' association, called the OAB" for law
    * graduates: the planner didn't know who studies it. It now gets the exams of the goals that
    * plan it, so it's written for their candidates (without naming them).
    */

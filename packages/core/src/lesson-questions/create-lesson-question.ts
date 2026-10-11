@@ -20,7 +20,20 @@ import {
   findTutorSubject,
   getSubjectThreadColumn,
 } from "./_utils/tutor-subject";
-import { type CreateLessonQuestionInput, type TutorTarget } from "./contract";
+import {
+  type CreateLessonQuestionInput,
+  type LessonScreenSuggestion,
+  type TutorTarget,
+} from "./contract";
+
+/** How the apps word one of the tutor's suggestions in a language. */
+type WordSuggestion = (input: {
+  language: string;
+  suggestion: LessonScreenSuggestion;
+}) => Promise<string>;
+
+/** What the learner asked, as stored: a tapped suggestion in the app's own words. */
+type AskedQuestion = { question: string; suggestion: LessonScreenSuggestion | null };
 
 function getCreateLessonQuestionOutcome({
   question,
@@ -52,6 +65,7 @@ function findExistingLessonQuestion({
 }
 
 async function persistLessonQuestion({
+  asked,
   contextSnapshot,
   input,
   requestFingerprint,
@@ -60,6 +74,7 @@ async function persistLessonQuestion({
   subject,
   userId,
 }: {
+  asked: AskedQuestion;
   contextSnapshot: LessonQuestionContextSnapshot;
   input: CreateLessonQuestionInput;
   requestFingerprint: string;
@@ -104,10 +119,11 @@ async function persistLessonQuestion({
           contextKind: input.context.kind,
           contextSnapshot: toDatabaseLessonQuestionContextSnapshot(contextSnapshot),
           libraryStepId: stepId,
-          question: input.question,
+          question: asked.question,
           requestFingerprint,
           requestId: input.requestId,
           stepNumber,
+          suggestion: asked.suggestion,
           threadId: thread.id,
         },
         omit: lessonQuestionResourceOmit,
@@ -125,6 +141,29 @@ async function persistLessonQuestion({
 }
 
 /**
+ * A tapped suggestion is asked in the app's own words, in the thread's language, whatever words
+ * the client sent, so a learner's words never stand in for one. Anything else is asked as written.
+ */
+async function toAskedQuestion({
+  input,
+  language,
+  wordSuggestion,
+}: {
+  input: CreateLessonQuestionInput;
+  language: string;
+  wordSuggestion?: WordSuggestion;
+}): Promise<AskedQuestion> {
+  if (!input.suggestion || !wordSuggestion) {
+    return { question: input.question, suggestion: null };
+  }
+
+  return {
+    question: await wordSuggestion({ language, suggestion: input.suggestion }),
+    suggestion: input.suggestion,
+  };
+}
+
+/**
  * Creates one durable learner turn only after live access to what it's about has been checked and
  * the context the tutor sees has been built on the server: a lesson's screens from the step ids
  * the client sent, or the chapter, plan or finished mock as a whole.
@@ -132,9 +171,12 @@ async function persistLessonQuestion({
 export async function createLessonQuestion({
   input,
   target,
+  wordSuggestion,
 }: {
   input: CreateLessonQuestionInput;
   target: TutorTarget;
+  /** Words a tapped suggestion; without it, a suggestion is asked as the learner's own words. */
+  wordSuggestion?: WordSuggestion;
 }) {
   const session = await getSession();
 
@@ -162,13 +204,17 @@ export async function createLessonQuestion({
     return getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint });
   }
 
-  const context = await buildTutorContextSnapshot({ context: input.context, subject, userId });
+  const [context, asked] = await Promise.all([
+    buildTutorContextSnapshot({ context: input.context, subject, userId }),
+    toAskedQuestion({ input, language: subject.language, wordSuggestion }),
+  ]);
 
   if (context.status !== "ready") {
     return context;
   }
 
   return persistLessonQuestion({
+    asked,
     contextSnapshot: context.contextSnapshot,
     input,
     requestFingerprint,

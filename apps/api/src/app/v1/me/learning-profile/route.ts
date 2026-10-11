@@ -1,4 +1,4 @@
-import { accessErrorCodes, underMinimumAgeError } from "@/lib/access-error-codes";
+import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { parseBody } from "@/lib/body-parser";
@@ -11,7 +11,7 @@ import {
 import { type NextRequest } from "next/server";
 import { createLearningProfileResponse } from "./_utils/learning-profile-response";
 
-/** Buddy, age answer, settings and active goal of the learner or guest in the session. */
+/** Buddy, settings and active goal of the learner or guest in the session. */
 async function getProfile() {
   const profile = await getLearningProfile();
 
@@ -29,18 +29,6 @@ function getUpdateErrorResponse(
     return errors.unauthorized();
   }
 
-  if (result.status === "accountDeleted") {
-    return underMinimumAgeError();
-  }
-
-  if (result.status === "birthChangeNeedsSupport") {
-    return createErrorResponse({
-      code: accessErrorCodes.birthChangeNeedsSupport,
-      message: "An answer that makes the learner older is corrected by support",
-      status: httpStatus.conflict,
-    });
-  }
-
   if (result.status === "goalNotFound") {
     return createErrorResponse({
       code: accessErrorCodes.goalNotFound,
@@ -56,7 +44,7 @@ function getUpdateErrorResponse(
   });
 }
 
-/** Saves what a screen changed. An age under 13 deletes the account, and clients sign out. */
+/** Saves what a screen changed. */
 async function updateProfile(request: NextRequest) {
   const parsed = await parseBody(request, learningProfileUpdateSchema);
 

@@ -6,7 +6,6 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { dismissGuardianInvite } from "../../minors/guardian/dismiss-guardian-invite";
 import {
   DAY_MS,
   SESSION_NOW,
@@ -57,80 +56,6 @@ describe(getTodayView, () => {
 
   afterEach(() => {
     vi.useRealTimers();
-  });
-
-  it("offers a teen who just signed up from a guest session to invite a guardian, until one is", async () => {
-    const { goal, user } = await setup();
-    const signedUpAt = new Date(SESSION_NOW.getTime() - 60 * 60 * 1000);
-
-    // The goal came from the guest session: it's older than the account.
-    await Promise.all([
-      prisma.user.update({ data: { createdAt: signedUpAt }, where: { id: user.id } }),
-      prisma.goal.update({
-        data: { createdAt: new Date(signedUpAt.getTime() - DAY_MS) },
-        where: { id: goal.id },
-      }),
-      prisma.userLearningProfile.update({
-        data: { birthMonth: 3, birthYear: 2009 },
-        where: { userId: user.id },
-      }),
-    ]);
-
-    const before = await getTodayView({});
-    expect(before.status === "ready" && before.today.guardianInvite).toBe(true);
-
-    await prisma.guardianLink.create({
-      data: {
-        guardianEmail: "mom@zoonk.test",
-        status: "pending",
-        tokenHash: crypto.randomUUID(),
-        userId: user.id,
-      },
-    });
-
-    const after = await getTodayView({});
-    expect(after.status === "ready" && after.today.guardianInvite).toBe(false);
-  });
-
-  it("stops offering the guardian invite once the teen says not now", async () => {
-    const { goal, user } = await setup();
-    const signedUpAt = new Date(SESSION_NOW.getTime() - 60 * 60 * 1000);
-
-    await Promise.all([
-      prisma.user.update({ data: { createdAt: signedUpAt }, where: { id: user.id } }),
-      prisma.goal.update({
-        data: { createdAt: new Date(signedUpAt.getTime() - DAY_MS) },
-        where: { id: goal.id },
-      }),
-      prisma.userLearningProfile.update({
-        data: { birthMonth: 3, birthYear: 2009 },
-        where: { userId: user.id },
-      }),
-    ]);
-
-    const before = await getTodayView({});
-    expect(before.status === "ready" && before.today.guardianInvite).toBe(true);
-
-    await expect(dismissGuardianInvite()).resolves.toStrictEqual({ status: "dismissed" });
-
-    const after = await getTodayView({});
-    expect(after.status === "ready" && after.today.guardianInvite).toBe(false);
-  });
-
-  it("leaves the invite to onboarding for a teen who signed up first, and never asks an adult", async () => {
-    const { user } = await setup();
-
-    const adult = await getTodayView({});
-    expect(adult.status === "ready" && adult.today.guardianInvite).toBe(false);
-
-    // Onboarding offered it after the age question: the goal is newer than the account.
-    await prisma.userLearningProfile.update({
-      data: { birthMonth: 3, birthYear: 2009 },
-      where: { userId: user.id },
-    });
-
-    const teen = await getTodayView({});
-    expect(teen.status === "ready" && teen.today.guardianInvite).toBe(false);
   });
 
   it("refuses a visitor without a session", async () => {

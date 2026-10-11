@@ -4,6 +4,7 @@ import { undoMemoryChangesAction } from "@/app/[lang]/(settings)/settings/memory
 import { Link } from "@/i18n/navigation";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { MemoryUpdated } from "@zoonk/learn/memory-updated";
+import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type LessonTutorConfig } from "@zoonk/player/lesson/types";
 import { API_URL } from "@zoonk/utils/url";
 
@@ -17,24 +18,30 @@ const renderMemoryUpdate: NonNullable<TutorNavigation["renderMemoryUpdate"]> = (
  * The tutor in a lesson or on a screen (a chapter, course, plan or mock), over the public API:
  * the learner's buddy answers, by face and name (`getLearnerBuddy`; null before they pick one).
  * Signed-in learners ask; visitors and guests see the sign-up prompt, since the tutor isn't part
- * of a guest's allowance.
+ * of a guest's allowance. Inside a goal, its answers carry the buddy's cards (`useTutorCards`).
  */
 export function getTutorConfig({
   buddy,
   canAsk,
+  cards = null,
+  suggestions,
 }: {
   buddy: LessonTutorConfig["buddy"];
   canAsk: boolean;
+  cards?: TutorCards | null;
+  suggestions?: LessonTutorConfig["suggestions"];
 }): LessonTutorConfig {
   return {
     buddy,
     canAsk,
     connection: { apiUrl: API_URL, getHeaders: getWorkflowAuthHeaders },
     navigation: {
+      ...cards,
       linkComponent: Link,
       loginHref: "/login",
       renderMemoryUpdate,
       subscriptionHref: "/subscription",
     },
+    suggestions,
   };
 }

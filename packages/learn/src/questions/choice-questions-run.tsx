@@ -11,7 +11,12 @@ import {
   readAnswerDraft,
   writeAnswerDraft,
 } from "./_utils/answer-draft";
-import { type ChoiceAnswer, ChoiceQuestion, type ChoiceQuestionView } from "./choice-question";
+import {
+  CHOICE_QUESTION_TITLE_SLOT,
+  type ChoiceAnswer,
+  ChoiceQuestion,
+  type ChoiceQuestionView,
+} from "./choice-question";
 import { QuestionsHeader } from "./questions-header";
 
 /** One answer of a run of questions, with how long the learner took on it. */
@@ -94,6 +99,34 @@ function useAnswerDraft({
 }
 
 /**
+ * A new question takes the focus, on its title: a screen reader reads it, and Enter sends the
+ * answer picked instead of pressing the button the last question was answered with ("I don't know
+ * yet" kept the focus, so Enter sent that for every later answer). The first question keeps the
+ * focus where the browser put it.
+ */
+function useFocusNewQuestion({
+  container,
+  itemId,
+}: {
+  container: React.RefObject<HTMLElement | null>;
+  itemId: string | null;
+}) {
+  const shownId = useRef(itemId);
+
+  useEffect(() => {
+    if (!itemId || itemId === shownId.current) {
+      return;
+    }
+
+    shownId.current = itemId;
+
+    container.current
+      ?.querySelector<HTMLElement>(`[data-slot="${CHOICE_QUESTION_TITLE_SLOT}"]`)
+      ?.focus({ preventScroll: true });
+  }, [container, itemId]);
+}
+
+/**
  * Questions asked one per screen, full screen like every task: no feedback until the end, "I
  * don't know yet" always allowed, and Enter for Next once an option is picked. The test's header
  * (`header`) shows how far in, a quiet line sits above each question (`hint`), and the host gets
@@ -129,6 +162,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   const [answers, setAnswers] = useState<ChoiceQuestionAnswer[]>([]);
   const [selected, setSelected] = useState<ChoiceAnswer | null>(null);
   const shownAt = useRef(0);
+  const questionRef = useRef<HTMLDivElement>(null);
   const question = questions[index];
   const total = Math.max(questions.length, upcoming?.total ?? 0);
   const itemId = question?.itemId ?? null;
@@ -148,6 +182,8 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       shownAt.current = Date.now();
     }
   }, [itemId]);
+
+  useFocusNewQuestion({ container: questionRef, itemId });
 
   const answer = (choice: ChoiceAnswer) => {
     if (!question) {
@@ -197,7 +233,10 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       )}
 
       {question && (
-        <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-6">
+        <div
+          className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-6"
+          ref={questionRef}
+        >
           {hint && <p className="text-muted-foreground text-sm">{hint(question)}</p>}
 
           <ChoiceQuestion

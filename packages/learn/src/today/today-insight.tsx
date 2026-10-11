@@ -8,7 +8,8 @@ import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { SURFACE_CLASS } from "../_components/surface";
 import { useLearnAnalytics } from "../learn-context";
-import { useAppliedLine, useProposalEffectText } from "../plan/use-change-sentence";
+import { useAppliedLine } from "../plan/use-change-sentence";
+import { useProposalEffectText } from "../plan/use-effect-text";
 import { useTodayScreen } from "./today-context";
 
 type InsightAnswer = "accepted" | "dismissed";

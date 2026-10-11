@@ -52,7 +52,11 @@ export async function answerPronunciationAction(
     return { status: "failed" };
   }
 
-  if (result.status === "graded" || result.status === "noSpeech") {
+  if (
+    result.status === "graded" ||
+    result.status === "noSpeech" ||
+    result.status === "signUpRequired"
+  ) {
     return result;
   }
 

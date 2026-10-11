@@ -22,8 +22,15 @@ type UploadRequestActions = {
 
 type CardState = "answered" | "asking" | "dismissed" | "uploading";
 
-/** What's missing, in the goal's own terms: an exam's notice, a law's text, a class's material. */
-function useRequestCopy({ goalKind, reason }: Pick<GoalUploadRequest, "goalKind" | "reason">) {
+/**
+ * What's missing, in the goal's own terms: an exam's notice (a language certificate's official
+ * guide), a law's text, a class's material.
+ */
+function useRequestCopy({
+  examDocument: document,
+  goalKind,
+  reason,
+}: Pick<GoalUploadRequest, "examDocument" | "goalKind" | "reason">) {
   const t = useExtracted();
 
   if (reason === "classMaterial") {
@@ -44,20 +51,32 @@ function useRequestCopy({ goalKind, reason }: Pick<GoalUploadRequest, "goalKind"
     };
   }
 
+  const action = t(
+    "{document, select, notice {Upload the notice} other {Upload the official guide}}",
+    { document },
+  );
+
   if (reason === "unverified") {
     return {
-      action: t("Upload the notice"),
+      action,
       body: t(
-        "What we found didn't match the exam's details. Upload the official notice so your plan follows the real exam.",
+        "{document, select, notice {What we found didn't match the exam's details. Upload the official notice so your plan follows the real exam.} other {What we found didn't match the exam's details. Upload the official guide so your plan follows the real exam.}}",
+        { document },
       ),
       title: t("We couldn't confirm the exam's details"),
     };
   }
 
   return {
-    action: t("Upload the notice"),
-    body: t("Upload it so your plan follows the real exam."),
-    title: t("We couldn't find the official notice"),
+    action,
+    body: t(
+      "{document, select, notice {Upload the notice so your plan follows the real exam.} other {Upload the official guide so your plan follows the real exam.}}",
+      { document },
+    ),
+    title: t(
+      "{document, select, notice {We couldn't find the official notice} other {We couldn't find the official guide}}",
+      { document },
+    ),
   };
 }
 
@@ -77,7 +96,7 @@ export function UploadRequestCard({
   className?: string;
   /** The learner's language, for uploads that don't say their own. */
   language: string;
-  request: Pick<GoalUploadRequest, "goalKind" | "reason">;
+  request: Pick<GoalUploadRequest, "examDocument" | "goalKind" | "reason">;
 }) {
   const t = useExtracted();
   const titleId = useId();

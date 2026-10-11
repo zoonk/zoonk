@@ -81,19 +81,19 @@ export const activityRenderers: {
       ),
     template: "distributionExplorer",
   }),
-  estimateReveal: defineActivityRenderer({
-    badge: "estimateFirst",
-    load: () =>
-      import("./estimate-reveal/estimate-reveal-activity").then(
-        (module) => module.EstimateRevealActivity,
-      ),
-    template: "estimateReveal",
-  }),
   findError: defineActivityRenderer({
     badge: "findError",
     load: () =>
       import("./find-error/find-error-activity").then((module) => module.FindErrorActivity),
     template: "findError",
+  }),
+  formulaModel: defineActivityRenderer({
+    badge: "tryIt",
+    load: () =>
+      import("./formula-model/formula-model-activity").then(
+        (module) => module.FormulaModelActivity,
+      ),
+    template: "formulaModel",
   }),
   geometryBoard: defineActivityRenderer({
     badge: "dragCorner",
@@ -102,6 +102,12 @@ export const activityRenderers: {
         (module) => module.GeometryBoardActivity,
       ),
     template: "geometryBoard",
+  }),
+  guessReveal: defineActivityRenderer({
+    badge: "estimateFirst",
+    load: () =>
+      import("./guess-reveal/guess-reveal-activity").then((module) => module.GuessRevealActivity),
+    template: "guessReveal",
   }),
   matchPairs: defineActivityRenderer({
     badge: "matchPairs",
@@ -123,36 +129,14 @@ export const activityRenderers: {
       ),
     template: "patternTester",
   }),
-  predictReveal: defineActivityRenderer({
-    badge: "predictValue",
+  randomSimulation: defineActivityRenderer({
+    badge: ({ fields }) => (fields.mode === "chance" ? "predictFirst" : "simulate"),
+    checkFirst: ({ fields }) => fields.mode === "chance",
     load: () =>
-      import("./predict-reveal/predict-reveal-activity").then(
-        (module) => module.PredictRevealActivity,
+      import("./random-simulation/random-simulation-activity").then(
+        (module) => module.RandomSimulationActivity,
       ),
-    template: "predictReveal",
-  }),
-  predictSimulate: defineActivityRenderer({
-    badge: "predictFirst",
-    checkFirst: true,
-    load: () =>
-      import("./predict-simulate/predict-simulate-activity").then(
-        (module) => module.PredictSimulateActivity,
-      ),
-    template: "predictSimulate",
-  }),
-  samplingSimulator: defineActivityRenderer({
-    badge: "simulate",
-    load: () =>
-      import("./sampling-simulator/sampling-simulator-activity").then(
-        (module) => module.SamplingSimulatorActivity,
-      ),
-    template: "samplingSimulator",
-  }),
-  sliderGraph: defineActivityRenderer({
-    badge: "tryIt",
-    load: () =>
-      import("./slider-graph/slider-graph-activity").then((module) => module.SliderGraphActivity),
-    template: "sliderGraph",
+    template: "randomSimulation",
   }),
   sqlPlayground: defineActivityRenderer({
     badge: "queryData",

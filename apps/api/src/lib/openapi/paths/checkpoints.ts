@@ -1,5 +1,11 @@
-import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import {
+  studyBlockStartInputSchema,
+  studySessionTimeZoneInputSchema,
+} from "@zoonk/core/sessions/contract";
+import { z } from "zod";
+import { studySessionErrorCodes } from "../../study-session-errors";
+import {
+  challengeGenerationSchema,
   challengeMoveResponseSchema,
   challengeResponseSchema,
   challengeStartResponseSchema,
@@ -16,7 +22,10 @@ import {
 import {
   conflictResponse,
   forbiddenResponse,
+  guestRefusalResponse,
   notFoundResponse,
+  paymentRequiredResponse,
+  tooManyRequestsResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
@@ -41,6 +50,38 @@ export const checkpointPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Get a challenge",
+      tags: ["Study sessions"],
+    },
+  },
+  "/challenges/{planItemId}/generations": {
+    post: {
+      description:
+        "Writes the questions a challenge still lacks when the learner starts it (never on a screen view): `ready` when the bank holds its ten, otherwise a run writes what it lacks on the skills it asks with the fewest (shared with every learner of those skills, and with reviews and practice) and answers 202; a run already writing them is joined. Follow the run's stream until it ends (`challengeQuestionsReady`, or an error when no question could be written), then start the challenge again with `afterWriting`. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. A challenge the learner's plan leaves to Plus (a phase challenge past a free exam plan's first week) answers 402 `PLUS_REQUIRED` and nothing is written.",
+      operationId: "createChallengeGeneration",
+      requestParams: { path: challengePathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: challengeGenerationSchema } },
+          description: "The challenge has its questions",
+        },
+        "202": {
+          content: { "application/json": { schema: challengeGenerationSchema } },
+          description: "A run is writing the questions",
+          headers: z.object({
+            Location: z
+              .string()
+              .meta({ description: "The run's status URL: GET /generations/{generationId}" }),
+          }),
+        },
+        "400": validationErrorResponse,
+        "401": unauthorizedResponse,
+        "402": paymentRequiredResponse,
+        "403": guestRefusalResponse,
+        "404": notFoundResponse,
+        "429": tooManyRequestsResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Write a challenge's questions",
       tags: ["Study sessions"],
     },
   },
@@ -103,7 +144,7 @@ export const checkpointPaths = {
         "Starts a challenge on its day: today's session is planned if it isn't yet, and the challenge's block starts (a mock's sections are fixed and its clock starts). The response says where it's played: a checkpoint (`/checkpoints/{blockId}`) or a mock (`/mocks/{blockId}`).",
       operationId: "startChallenge",
       requestBody: {
-        content: { "application/json": { schema: studySessionTimeZoneInputSchema } },
+        content: { "application/json": { schema: studyBlockStartInputSchema } },
         required: true,
       },
       requestParams: { path: challengePathParamsSchema },
@@ -114,11 +155,15 @@ export const checkpointPaths = {
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
+        "402": {
+          ...paymentRequiredResponse,
+          description: `The learner's plan leaves it to Plus (\`status\` \`plusRequired\` on the challenge): a mock without mocks in the plan, or a phase challenge past a free exam plan's first week. Error code: ${studySessionErrorCodes.plusRequired}.`,
+        },
         "403": { ...forbiddenResponse, description: "Today's time limit is reached" },
         "404": notFoundResponse,
         "409": {
           ...conflictResponse,
-          description: "It isn't in today's session, or it's already finished",
+          description: `It isn't in today's session, it's already finished, or the bank holds too few questions for it (error code ${studySessionErrorCodes.questionsNeeded}: POST /challenges/{planItemId}/generations writes them; follow the run until it ends, whether every call succeeded or not, then start it again with \`afterWriting\`).`,
         },
       },
       security: AUTHENTICATED_SECURITY,

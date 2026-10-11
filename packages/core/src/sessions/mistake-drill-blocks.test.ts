@@ -9,16 +9,17 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   SESSION_NOW,
   daysAgo,
   dueSkillFixture,
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
+import { toStudyBlockView } from "./_utils/session-view";
 import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
-import { getTodayStudySession } from "./get-today-study-session";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
@@ -108,6 +109,70 @@ describe("mistake drills in today's session", () => {
       kind: "reteach",
       lesson: { id: lesson?.id, ideas: [], title: lesson?.title },
       timeLimitSeconds: null,
+    });
+  });
+
+  it("drills a lesson's mistake on a finer skill with the questions of the plan's skill it's held for", async () => {
+    // Production's outlines hold a lesson for the plan's skill while its screens teach a finer
+    // skill of their own, where a wrong answer is saved; the bank's questions are on the plan's.
+    const user = await userFixture();
+
+    const [fixture, planSkill] = await Promise.all([
+      sessionGoalFixture({ itemsPerSkill: 0, lessons: 2, userId: user.id }),
+      skillFixture({ name: "Plan skill" }),
+    ]);
+
+    const [finer] = fixture.skills;
+    const [lesson] = fixture.lessons;
+
+    const [bank, mistake] = await Promise.all([
+      Promise.all(
+        Array.from({ length: 3 }, () =>
+          itemFixture({ content: choiceItemContent(), skillId: planSkill.id }),
+        ),
+      ),
+      mistakeFixture({ cause: "gap", createdAt: daysAgo(1), skillId: finer?.id, userId: user.id }),
+      prisma.planItem.update({
+        data: { completedAt: daysAgo(1), skillId: planSkill.id, status: "done" },
+        where: { id: fixture.planItems[0]?.id },
+      }),
+    ]);
+
+    mockSession(user.id);
+    const today = await getTodayStudySession({ goalId: fixture.goal.id });
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      where: { sessionId: today.status === "ready" ? today.session.id : "" },
+    });
+
+    const drills = blocks.flatMap((block) => readBlockPayload(block).drills);
+    const bankIds = new Set(bank.map((item) => item.id));
+
+    expect(drills).toMatchObject([
+      { kind: "reteach", lessonId: lesson?.id, mistakeId: mistake.id },
+    ]);
+
+    expect(drills[0]?.itemIds.length).toBeGreaterThan(0);
+    expect(drills[0]?.itemIds.every((itemId) => bankIds.has(itemId))).toBe(true);
+  });
+
+  // Past a free exam plan's first week the day's only practice is fixing mistakes, and Today
+  // called it "Mixed practice", the practice the free plan no longer has.
+  it("says a practice block that only fixes mistakes is that, and a mixed one isn't", async () => {
+    const { block, item, session } = await drillBlockFixture({ kind: "retry" });
+
+    const mixed = await studySessionBlockFixture({
+      kind: "practice",
+      payload: { drills: readBlockPayload(block).drills, itemIds: [item.id] },
+      sessionId: session.id,
+    });
+
+    expect(toStudyBlockView({ answeredItemIds: new Set(), block })).toMatchObject({
+      mistakesOnly: true,
+    });
+
+    expect(toStudyBlockView({ answeredItemIds: new Set(), block: mixed })).toMatchObject({
+      mistakesOnly: false,
     });
   });
 

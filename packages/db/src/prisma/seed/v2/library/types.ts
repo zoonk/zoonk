@@ -98,7 +98,7 @@ export type SeedChapter = {
   /** How much the chapter's topics pay off on the exam, from 1 to 5, from how often they're asked. */
   weight?: number;
   /**
-   * The chapter is one of the exam's written tests (a redação): plan graphs mark its skills as
+   * The chapter is one of the exam's written tests (ENEM's essay): plan graphs mark its skills as
    * outcome skills, as the skill graph does for an exam's parts answered in writing.
    */
   writtenTest?: boolean;

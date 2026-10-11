@@ -1,14 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
-import { languageStep, pairWord } from "../_test-utils/language-steps";
-import { explanationStep, teachingStep } from "../_test-utils/lesson-steps";
-import {
-  buildAdapters,
-  buildLesson,
-  renderLessonPlayer,
-} from "../_test-utils/render-lesson-player";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import { explanationStep, languageStep, teachingStep } from "../preview/preview-steps";
 
 /**
  * What a lesson shows around its screens: the header's minutes and the summary card in the
@@ -199,7 +195,7 @@ describe("lesson screens", () => {
   it("asks to translate a noun with its article without calling it a phrase", async () => {
     // Words carry their article ("as colunas", "die Miete") and chunks are several words
     // ("Thanks for having me"): the prompt names neither, so it fits both.
-    const columns = pairWord({ translation: "as colunas", word: "columns" });
+    const columns = { translation: "as colunas", word: "columns" };
 
     renderLessonPlayer({
       lesson: buildLesson([languageStep("translation", {}, { word: columns })], {
@@ -211,6 +207,25 @@ describe("lesson screens", () => {
     await expect.element(page.getByText("Translate:", { exact: true })).toBeVisible();
     await expect.element(page.getByText("as colunas", { exact: true })).toBeVisible();
     await expect.element(page.getByText(/phrase/iu)).not.toBeInTheDocument();
+  });
+
+  it("asks which one a definition means when the lesson is in the learner's own language", async () => {
+    // An IELTS candidate reading the app in English learns English words from definitions.
+    const rent = { translation: "money you pay each month to live somewhere", word: "rent" };
+
+    renderLessonPlayer({
+      lesson: buildLesson([languageStep("translation", {}, { word: rent })], {
+        language: "en",
+        targetLanguage: "en",
+      }),
+    });
+
+    await expect.element(page.getByText("Which one means this?", { exact: true })).toBeVisible();
+    await expect.element(page.getByText(rent.translation, { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Translate:", { exact: true })).not.toBeInTheDocument();
+    await page.getByRole("radio", { name: "Rent" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(verdict("Correct!")).toBeVisible();
   });
 
   it("dates a screen built from a law and opens the law from its Sources chip", async () => {

@@ -1,9 +1,37 @@
 import "server-only";
+import { openLanguageCheckpointCall } from "@zoonk/core/language/conversations/start";
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { type StudyBlock } from "@zoonk/learn/session/types";
 import { prepareStudySession } from "./session-preparation";
 import { type StudyDestination } from "./study-destination";
+
+/**
+ * Where a checkpoint or mock block opens. A planned challenge that hasn't started (or stepped aside)
+ * opens on its intro, which starts it. Through the block's page, which redirects there, the
+ * intro's Start landed back on the intro: the router kept that redirect for the block's address.
+ * A language goal's call opens on the block's page, which takes it to the call.
+ */
+async function toChallengeDestination({
+  block,
+  sessionId,
+}: {
+  block: Pick<StudyBlock, "checkpoint" | "id" | "planItemId" | "status">;
+  sessionId: string;
+}): Promise<StudyDestination> {
+  const waiting = block.status === "pending" || block.status === "skipped";
+
+  if (waiting && block.planItemId) {
+    const call = await openLanguageCheckpointCall(block.id);
+
+    if (call.status === "notLanguage") {
+      return { kind: "challenge", planItemId: block.planItemId, sessionId };
+    }
+  }
+
+  // An exam's weekly Big Challenge is a mock in real conditions, on its own screen.
+  return { blockId: block.id, kind: block.checkpoint?.mock ? "mock" : "checkpoint", sessionId };
+}
 
 /** A lesson still being written can't open yet: the session screen shows the wait instead. */
 async function isLessonReady(lessonId: string | null): Promise<boolean> {
@@ -27,15 +55,14 @@ export async function openStudyBlock({
   sessionId,
   timeZone,
 }: {
-  block: Pick<StudyBlock, "checkpoint" | "id" | "kind" | "lessonId">;
+  block: Pick<StudyBlock, "checkpoint" | "id" | "kind" | "lessonId" | "planItemId" | "status">;
   sessionId: string;
   timeZone: string;
 }): Promise<StudyDestination | null> {
   prepareStudySession(sessionId);
 
   if (block.kind === "checkpoint") {
-    // An exam's weekly Big Challenge is a mock in real conditions, on its own screen.
-    return { blockId: block.id, kind: block.checkpoint?.mock ? "mock" : "checkpoint", sessionId };
+    return toChallengeDestination({ block, sessionId });
   }
 
   if (block.kind === "learn" && !(await isLessonReady(block.lessonId))) {

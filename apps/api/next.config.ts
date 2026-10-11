@@ -54,7 +54,7 @@ const withNextIntl = createNextIntlPlugin({
     messages: {
       format: "po",
       locales: "infer",
-      path: ["./messages"],
+      path: ["./messages", "../../packages/player/messages"],
       precompile: true,
       sourceLocale: "en",
     },

@@ -17,7 +17,10 @@ const ITEM_FORMATS = [
 export type ItemFormat = (typeof ITEM_FORMATS)[number];
 
 const MIN_OPTIONS = 2;
-const MAX_OPTIONS = 5;
+/** USMLE and the PMP print up to 8 options; most exams print 4 or 5. */
+const MAX_OPTIONS = 8;
+/** JEE Advanced asks numbers to 2 decimal places; no exam asks more than 4. */
+const MAX_DECIMAL_PLACES = 4;
 const MIN_KEY_POINTS = 1;
 const MAX_KEY_POINTS = 5;
 const MAX_PAIRS = 6;
@@ -37,6 +40,32 @@ export const essayRubricRowSchema = z.object({
 });
 
 const difficulty = z.enum(["easy", "medium", "hard"]);
+
+/**
+ * How many options a multiple-choice question asks the learner to pick: one, an exact number
+ * ("choose two", with exactly that many right) or every right one ("select all that apply", one
+ * or more right). The exam's format sets it for the call that writes the question.
+ */
+export const optionSelectSchema = z.union([
+  z.number().int().min(1).max(MAX_OPTIONS),
+  z.literal("all"),
+]);
+
+export type OptionSelect = z.infer<typeof optionSelectSchema>;
+
+/**
+ * How a typed number is entered, as the exam's answer grid or box takes it: any number, graded by
+ * its tolerance (`number`); a whole number (`integer`, JEE Main's integer answers); a number given
+ * to `places` decimal places (`decimals`, JEE Advanced's "correct to two decimal places"); or a
+ * fraction or a decimal (`fraction`, the SAT's student-produced answers). The exam's format sets it
+ * for the call that writes the question.
+ */
+export const numericEntrySchema = z.object({
+  kind: z.enum(["number", "integer", "decimals", "fraction"]),
+  places: z.number().int().min(1).max(MAX_DECIMAL_PLACES).nullable(),
+});
+
+export type NumericEntry = z.infer<typeof numericEntrySchema>;
 
 /** A chart or timeline the app draws next to the question, when the question reads one; or null. */
 const visual = lessonVisualSchema.nullable();
@@ -61,6 +90,12 @@ const multipleChoiceItem = z.object({
     )
     .min(MIN_OPTIONS)
     .max(MAX_OPTIONS),
+  /**
+   * The options keep the order they're written in: a fixed set whose order means something (True,
+   * False, Not given; "1 only, 2 only, both, neither"; a quantity comparison's four answers).
+   * Every other question's options are shuffled once when stored.
+   */
+  fixedOrder: z.boolean(),
 });
 
 const trueFalseItem = z.object({
@@ -162,6 +197,11 @@ const numericItem = z.object({
   context: z.string().nullable(),
   question: z.string(),
   math: mathProblem,
+  /**
+   * Other answers that are right too, as expressions over the same variables, for a question with
+   * more than one ("one possible value of x": the other root). Empty for most questions.
+   */
+  otherSolutions: z.array(z.string()),
 });
 /* oxlint-enable eslint/sort-keys */
 

@@ -1,9 +1,18 @@
 import { randomUUID } from "node:crypto";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  studySessionBlockFixture,
+  studySessionFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
 import { ANSWERED } from "./onboarding-fixtures";
+import { openAs } from "./study-day";
 
 /**
  * A data question stored the way item writers wrote them in Sep 2026: its data as a GFM pipe table
@@ -62,6 +71,26 @@ const FIGURE_QUESTION = {
     },
   ],
   question: "Qual organela a seta indica?",
+};
+
+/** Item writers quote a word or a sentence in _italics_, in options and reasons too. */
+const QUOTED_WORDS_QUESTION = {
+  context: "Valéria quotes a resident in an exhibition: _A gente se reunia na calçada._",
+  options: [
+    {
+      isCorrect: true,
+      misconception: null,
+      reason: "The quote keeps the resident's own words.",
+      text: "Keep the quote as the resident said it",
+    },
+    {
+      isCorrect: false,
+      misconception: "Treats a quote as text to correct",
+      reason: "A quote keeps what was said.",
+      text: "Change _a gente se reunia_ to _nós nos reuníamos_",
+    },
+  ],
+  question: "Which decision fits the exhibition?",
 };
 
 async function createGoalWithQuestion({
@@ -151,4 +180,83 @@ test("a placement question about a figure shows its picture with the question", 
 
   await expect(page.getByText("Qual organela a seta indica?")).toBeVisible();
   await expect(page.getByRole("img", { name: FIGURE_QUESTION.image.alt })).toBeVisible();
+});
+
+test("a placement question's options show quoted words in italics, never underscores", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await createGoalWithQuestion({
+    content: QUOTED_WORDS_QUESTION,
+    userId: noProgressUser.id,
+  });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+  const options = page.getByRole("radiogroup", { name: QUOTED_WORDS_QUESTION.question });
+  await expect(options.getByRole("radio", { name: /nós nos reuníamos/u })).toBeVisible();
+  await expect(options.locator("em", { hasText: "nós nos reuníamos" })).toBeVisible();
+  await expect(page.getByText("_", { exact: false })).toHaveCount(0);
+});
+
+test("practice feedback shows quoted words in italics, never underscores", async ({ browser }) => {
+  const [user, skill] = await Promise.all([
+    createE2EUser(getBaseURL()),
+    skillFixture({ name: `Official writing ${randomUUID()}` }),
+  ]);
+
+  const goal = await goalFixture({ kind: "exam", timezone: "UTC", userId: user.id });
+
+  const [plan, lesson] = await Promise.all([
+    planFixture({ goalId: goal.id }),
+    libraryLessonFixture({ title: "Official writing" }),
+  ]);
+
+  const [item, session] = await Promise.all([
+    itemFixture({
+      content: {
+        context: null,
+        isTrue: true,
+        misconception: null,
+        reason: "_Em breve_ names no deadline, so the reader can't tell when.",
+        statement: `"Em breve" makes a notice imprecise: ${randomUUID()}`,
+      },
+      format: "trueFalse",
+      skillId: skill.id,
+    }),
+    studySessionFixture({ goalId: goal.id, userId: user.id }),
+    planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  await studySessionBlockFixture({
+    estimatedMinutes: 2,
+    kind: "review",
+    payload: {
+      capsules: [
+        {
+          format: "swipe",
+          itemIds: [item.id],
+          key: `skill:${skill.id}`,
+          lessonId: null,
+          skillIds: [skill.id],
+          title: "Official writing",
+        },
+      ],
+      skillIds: [skill.id],
+    },
+    position: 0,
+    sessionId: session.id,
+  });
+
+  const page = await openAs(browser, user);
+  await page.goto("/session");
+  await page.getByRole("button", { name: /^Start/u }).click();
+  await page.getByRole("button", { name: /^True/u }).click();
+
+  const feedback = page.getByRole("region", { name: "Answer feedback" });
+  await expect(feedback.locator("em", { hasText: "Em breve" })).toBeVisible();
+  await expect(feedback.getByText("_", { exact: false })).toHaveCount(0);
+  await page.context().close();
 });

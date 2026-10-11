@@ -5,10 +5,10 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
+import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, daysAgo } from "./_test-utils/session-goal";
 import { addRefreshPracticeBlock } from "./add-refresh-practice-block";
 import { readBlockPayload } from "./block-payload";
-import { getTodayStudySession } from "./get-today-study-session";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));

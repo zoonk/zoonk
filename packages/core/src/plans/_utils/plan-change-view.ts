@@ -1,9 +1,10 @@
 import "server-only";
-import { type PlanChange, prisma } from "@zoonk/db";
+import { type Goal, type PlanChange, prisma } from "@zoonk/db";
+import { getExamDocument } from "../../exams/exam-document";
 import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { addDays } from "../planner/plan-calendar";
-import { parsePlanChangePayload } from "./plan-change-payload";
+import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload";
 
 /** Changes stay on the plan for two weeks; proposals stay until the learner answers. */
 const RECENT_CHANGE_DAYS = 14;
@@ -35,20 +36,21 @@ export function canUndoChange({
   change: Pick<PlanChange, "kind" | "payload" | "status">;
   planVersion: number;
 }): boolean {
-  const undoable = change.kind === "edited" || change.kind === "testedOut";
-
   return (
-    undoable &&
-    change.status === "applied" &&
-    parsePlanChangePayload(change.payload).versionAfter === planVersion
+    isUndoableChange(change) && parsePlanChangePayload(change.payload).versionAfter === planVersion
   );
 }
 
+/** The plan's goal as a change's view reads it: what its exam's documents are. */
+export const changeGoalSelect = { kind: true, targetLanguage: true } as const;
+
 export function toPlanChangeView({
   change,
+  goal,
   planVersion,
 }: {
   change: PlanChange;
+  goal: Pick<Goal, "kind" | "targetLanguage">;
   planVersion: number;
 }): PlanChangeView {
   const payload = parsePlanChangePayload(change.payload);
@@ -59,9 +61,10 @@ export function toPlanChangeView({
     createdAt: change.createdAt.toISOString(),
     days: payload.days,
     effect: payload.effect,
+    examDocument: getExamDocument(goal),
     id: change.id,
     kind: change.kind,
-    lessonsSkipped: payload.planItemIds.length,
+    lessonsSkipped: payload.lessonsSkipped ?? payload.planItemIds.length,
     officialDate: payload.officialDate,
     operations: payload.operations,
     // A change without a sentence of its own (an exam notice's, say) is said by the app.
@@ -75,10 +78,12 @@ export function toPlanChangeView({
 
 /** Proposals waiting for the learner's OK, then the changes of the last two weeks, newest first. */
 export async function loadPlanChangeViews({
+  goal,
   now,
   planId,
   planVersion,
 }: {
+  goal: Pick<Goal, "kind" | "targetLanguage">;
   now: Date;
   planId: string;
   planVersion: number;
@@ -94,5 +99,5 @@ export async function loadPlanChangeViews({
 
   return changes
     .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
-    .map((change) => toPlanChangeView({ change, planVersion }));
+    .map((change) => toPlanChangeView({ change, goal, planVersion }));
 }

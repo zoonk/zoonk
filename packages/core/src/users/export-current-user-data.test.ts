@@ -4,10 +4,7 @@ import { contentFeedbackFixture, feedbackFixture } from "@zoonk/testing/fixtures
 import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
-import {
-  guardianLinkFixture,
-  learningProfileFixture,
-} from "@zoonk/testing/fixtures/learning-profiles";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { memoryFactFixture, milestoneFixture } from "@zoonk/testing/fixtures/memory";
@@ -83,7 +80,6 @@ async function createLearnerWithData() {
     memoryFactFixture({ statement: "Wants Law at a public university", userId: user.id }),
     contentFeedbackFixture({ contentId: randomUUID(), userId: user.id, vote: "down" }),
     feedbackFixture({ email: user.email, message: "Loving the new plan", userId: user.id }),
-    guardianLinkFixture({ guardianEmail: "parent@zoonk.test", userId: user.id }),
   ]);
 
   return { goal, user };
@@ -132,7 +128,6 @@ describe(exportCurrentUserData, () => {
           title: "Pass ENEM",
         },
       ],
-      guardianLinks: [expect.objectContaining({ guardianEmail: "parent@zoonk.test" })],
       learnerModel: {
         milestones: [expect.objectContaining({ userId: user.id })],
         mistakes: [expect.objectContaining({ userId: user.id })],
@@ -150,7 +145,6 @@ describe(exportCurrentUserData, () => {
       usage: [expect.objectContaining({ kind: "lessonStart" })],
     });
 
-    expect(data?.guardianLinks[0]).not.toHaveProperty("tokenHash");
     // How a row was made and what it cost Zoonk are ours, not the learner's.
     expect(data?.buddy.conversations[0]?.questions[0]).not.toHaveProperty("model");
     expect(data?.buddy.exampleLines[0]).not.toHaveProperty("runId");

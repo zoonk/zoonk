@@ -14,6 +14,7 @@ import {
   conflictResponse,
   jsonResponse,
   notFoundResponse,
+  paymentRequiredResponse,
   tooManyRequestsResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
@@ -36,7 +37,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Starts a live conversation: practice for a unit (1 to 5 minutes), a language goal's checkpoint call (its length set by the learner's level), or a speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT). The character speaks at the learner's speaking level. Nothing is charged until the call connects.",
+        "Starts a live conversation: practice for a unit (1 to 5 minutes), a language goal's checkpoint call (its length set by the learner's level), a speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT), or one task of a DELE, DELF or DALF, Goethe-Zertifikat or Cambridge English speaking paper (kind examSpeaking, Plus only: 402 PLUS_REQUIRED otherwise), with a new card each time and the call as long as the task's official time; a task whose shortest official time doesn't fit the call time left today or this month is refused with 429 CONVERSATION_LIMIT_REACHED (`details` names the period) before any card is written. The character speaks at the learner's speaking level, an exam's examiner or partner at the exam's. Nothing is charged until the call connects.",
       operationId: "startLanguageConversation",
       requestBody: {
         content: { "application/json": { schema: languageConversationStartInputSchema } },
@@ -44,6 +45,8 @@ export const languageConversationPaths = {
       },
       responses: {
         "201": jsonResponse(languageConversationCreatedSchema, "The new conversation"),
+        "402": paymentRequiredResponse,
+        "429": tooManyRequestsResponse,
         ...readErrors,
       },
       summary: "Start a live conversation",
@@ -111,7 +114,6 @@ export const languageConversationPaths = {
       responses: {
         "200": jsonResponse(languageConversationObjectiveCheckSchema, "Every goal met so far"),
         "409": conflictResponse,
-        "429": tooManyRequestsResponse,
         ...readErrors,
       },
       summary: "Check a live conversation's goals",

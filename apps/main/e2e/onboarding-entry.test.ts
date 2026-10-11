@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
@@ -80,7 +80,7 @@ test.describe("Coming back", () => {
     page,
   }) => {
     const goal = uniqueWords("understand quantum physics, back later");
-    await goalUnderstandingFixture({ goal, result: QUANTUM });
+    await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
 
     // The home goal box sends what was typed, with no second submit.
     await page.goto("/");
@@ -215,6 +215,7 @@ test.describe("Fixing what was understood", () => {
   test("fixing the words reads them again and replaces every fact", async ({ page }) => {
     const examWords = uniqueWords("pass the enem, nursing at a federal university");
     const learnWords = uniqueWords("actually, understand quantum physics");
+    const userId = await ensureGuest(page);
 
     await Promise.all([
       goalUnderstandingFixture({
@@ -233,8 +234,9 @@ test.describe("Fixing what was understood", () => {
           ],
           route: "goals",
         },
+        userId,
       }),
-      goalUnderstandingFixture({ goal: learnWords, result: QUANTUM }),
+      goalUnderstandingFixture({ goal: learnWords, result: QUANTUM, userId }),
     ]);
 
     await sendGoal(page, examWords);
@@ -260,23 +262,11 @@ test.describe("Fixing what was understood", () => {
 });
 
 /** Signs the page in as a new guest and returns the guest's id. */
-async function signInAsGuest(page: Page): Promise<string> {
-  const guest = await page.request.post("/api/auth/sign-in/anonymous", {
-    data: {},
-    headers: { Origin: getBaseURL() },
-  });
-
-  expect(guest.ok(), await guest.text()).toBe(true);
-  const body: { user: { id: string } } = await guest.json();
-
-  return body.user.id;
-}
-
 test.describe("Goal limits", () => {
   test("a guest whose one goal is taken is asked for an account before typing another", async ({
     page,
   }) => {
-    const guestId = await signInAsGuest(page);
+    const guestId = await ensureGuest(page);
     await goalFixture({ userId: guestId });
 
     await page.goto("/start");
@@ -305,17 +295,17 @@ test.describe("Goal limits", () => {
   }) => {
     const goal = uniqueWords("understand astronomy as a guest");
 
-    const [guestId] = await Promise.all([
-      signInAsGuest(page),
-      goalUnderstandingFixture({
-        goal,
-        result: {
-          followUps: [],
-          goals: [{ kind: "learn", subject: "astronomy", title: "Understand astronomy" }],
-          route: "goals",
-        },
-      }),
-    ]);
+    const guestId = await ensureGuest(page);
+
+    await goalUnderstandingFixture({
+      goal,
+      result: {
+        followUps: [],
+        goals: [{ kind: "learn", subject: "astronomy", title: "Understand astronomy" }],
+        route: "goals",
+      },
+      userId: guestId,
+    });
 
     await sendGoal(page, goal);
     await expect(page.getByRole("heading", { name: "Here's what I understood:" })).toBeVisible();

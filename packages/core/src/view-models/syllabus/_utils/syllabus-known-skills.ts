@@ -62,13 +62,15 @@ export async function withTestedOutSkills({
 export function getPastBasicsSkillIds({
   graph,
   items,
+  prerequisites,
   settings,
 }: {
   graph: PlanGraph;
   items: readonly SyllabusItem[];
+  prerequisites: ReadonlyMap<string, readonly string[]>;
   settings: Pick<PlanSettings, "difficultyBias" | "pastBasicsAreas">;
 }): Set<string> {
-  const foundations = getFoundationSkillIds(graph);
+  const foundations = getFoundationSkillIds({ graph, prerequisites });
   const taught = new Set(items.flatMap((item) => (item.skillId ? [item.skillId] : [])));
   const pastAreas = new Set(settings.pastBasicsAreas);
   const areaOf = (skill: PlanGraph["skills"][number]) => getSkillArea({ graph, skill });

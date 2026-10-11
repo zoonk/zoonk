@@ -4,6 +4,7 @@ import { postFromBrowser } from "@/lib/api/browser-api";
 import { speechClipSchema } from "@zoonk/core/audio/speech-clip-contract";
 import { type SpeechClipOutcome } from "@zoonk/learn/speech/provider";
 import { getUsageRefusal } from "@zoonk/player/usage-refusal";
+import { toWebOwnFileUrl } from "@zoonk/utils/user-blobs";
 
 const FAILED: SpeechClipOutcome = { limit: null, status: "failed" };
 
@@ -17,7 +18,7 @@ async function toSpeechClipOutcome(response: Response): Promise<SpeechClipOutcom
 
   if (response.ok) {
     const clip = speechClipSchema.safeParse(body);
-    return clip.success ? { status: "ready", url: clip.data.url } : FAILED;
+    return clip.success ? { status: "ready", url: toWebOwnFileUrl(clip.data.url) } : FAILED;
   }
 
   const refusal = getUsageRefusal(body);
@@ -27,6 +28,10 @@ async function toSpeechClipOutcome(response: Response): Promise<SpeechClipOutcom
       limit: { retryAfterSeconds: refusal.retryAfterSeconds, status: "slowDown" },
       status: "failed",
     };
+  }
+
+  if (refusal?.kind === "signUpRequired") {
+    return { limit: { status: "signUpRequired" }, status: "failed" };
   }
 
   return refusal
@@ -39,16 +44,23 @@ async function toSpeechClipOutcome(response: Response): Promise<SpeechClipOutcom
 
 /**
  * Text read aloud for the web's learn screens and lesson player: the shared clip from the API, or
- * a new one voiced the first time anyone asks. It goes from the browser on the learner's tap, so a
- * clip that takes seconds never holds up the page's Server Actions.
+ * a new one voiced the first time anyone asks; the learner's own words (`personal`) play from
+ * their private file through the web's file route (`toWebOwnFileUrl`). It goes from the browser on
+ * the learner's tap, so a clip that takes seconds never holds up the page's Server Actions.
  */
 export async function requestSpeechClip({
   language,
+  personal = false,
   text,
 }: {
   language: string;
+  personal?: boolean;
   text: string;
 }): Promise<SpeechClipOutcome> {
-  const response = await postFromBrowser({ body: { language, text }, path: "/v1/speech-clips" });
+  const response = await postFromBrowser({
+    body: { language, personal, text },
+    path: "/v1/speech-clips",
+  });
+
   return response ? toSpeechClipOutcome(response) : FAILED;
 }

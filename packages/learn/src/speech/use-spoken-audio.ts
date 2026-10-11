@@ -5,8 +5,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type HelpLimit } from "../_components/help-limit-notice";
 import { type SpeechClipOutcome, useSpeechPlayer } from "./speech-player-provider";
 
-/** Text to read aloud, or a word with a native recording that plays instead when there is one. */
-export type SpokenText = string | { audioUrl: string | null; text: string };
+/**
+ * Text to read aloud, or a word with a native recording that plays instead when there is one. The
+ * learner's own words (`personal`) are read in a clip of theirs alone.
+ */
+export type SpokenText = string | { audioUrl: string | null; personal?: boolean; text: string };
 
 /**
  * Nothing playing; the first clip on its way (it can take a few seconds the first time anyone
@@ -60,7 +63,7 @@ function loadSegment({
 
   return segment.audioUrl
     ? Promise.resolve({ status: "ready", url: segment.audioUrl })
-    : player.load({ language, text: segment.text });
+    : player.load({ language, text: segment.text, ...(segment.personal && { personal: true }) });
 }
 
 /** A recording that wouldn't play is read aloud instead. */

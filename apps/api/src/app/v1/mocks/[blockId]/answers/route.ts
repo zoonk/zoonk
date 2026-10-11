@@ -5,7 +5,7 @@ import { examError } from "@/lib/exam-errors";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { saveMockAnswer } from "@zoonk/core/exams/mocks/answer";
-import { mockAnswerInputSchema } from "@zoonk/core/exams/mocks/contract";
+import { mockAnswerInputSchema } from "@zoonk/core/exams/mocks/answer-contract";
 import { type NextRequest } from "next/server";
 
 const NO_CONTENT = 204;

@@ -9,16 +9,9 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getFocusTest } from "./get-focus-test";
 import { requestFocusTestQuestions } from "./request-focus-test-questions";
 import { submitFocusTest } from "./submit-focus-test";
-import type * as RateLimit from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimit>()),
-  isRateLimited: vi.fn(async () => false),
-}));
 
 // PostHog is an external service; the mock records what would leave the server.
 vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));

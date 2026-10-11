@@ -18,7 +18,7 @@ import { getGoalPlan } from "../plans/get-goal-plan";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getSession } from "../users/get-session";
-import { findAnsweringQuestion } from "./_utils/answering-question";
+import { findAnsweringGoal } from "./_utils/answering-question";
 import {
   offerEssay,
   offerMistakes,
@@ -253,8 +253,8 @@ function resolveOffer({
  * learning, statistics, the week in review, memory or Plus. A feature the learner's plan doesn't
  * include comes locked, never hidden. The offer is saved with the answer, so the conversation
  * shows its card after a reload too; a feature that can't help now comes back `unavailable` with
- * why. Only the generation answering the learner's own question about one of their goals may
- * offer one.
+ * why. Only the generation answering the learner's own question inside one of their goals may
+ * offer one, wherever they asked it.
  */
 export async function offerTutorTool({
   area = null,
@@ -278,9 +278,7 @@ export async function offerTutorTool({
     return { status: "notFound" };
   }
 
-  const question = await findAnsweringQuestion({ questionId, revision, userId: session.user.id });
-  const goalId = question?.thread.goalId;
-  const goal = goalId ? await prisma.goal.findUnique({ where: { id: goalId } }) : null;
+  const goal = await findAnsweringGoal({ questionId, revision, userId: session.user.id });
 
   if (!goal) {
     return { status: "notFound" };

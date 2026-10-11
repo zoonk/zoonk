@@ -4,13 +4,15 @@ import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows
 import { type ImageAnalytics } from "../media/_utils/plan-library-image";
 import { drawItemImage, getItemImageRequest, loadItemImageScope } from "../media/item-images";
 import { checkItem } from "./item-checks";
-import { toStoredItem } from "./item-content";
+import { type ItemAnswerFormat, toStoredItem } from "./item-content";
+import { repairItem } from "./item-repairs";
 
-type RejectedItem = { index: number; problems: string[] };
+export type RejectedItem = { index: number; problems: string[] };
 
 type CheckedItem = { index: number; item: GeneratedItem };
 
 type ItemRows = {
+  answerFormat: ItemAnswerFormat;
   examBlueprintId: string | null;
   field: string | null;
   format: ItemFormat;
@@ -37,7 +39,7 @@ async function storeBatch({
   pictured: boolean;
   rows: ItemRows;
 }): Promise<Item[]> {
-  const { format, provenance, skillId, ...shared } = rows;
+  const { answerFormat, format, provenance, skillId, ...shared } = rows;
 
   return prisma.$transaction(async (transaction) => {
     const existing = await transaction.item.findMany({
@@ -56,7 +58,7 @@ async function storeBatch({
 
     return transaction.item.createManyAndReturn({
       data: entries.map(({ item, mediaAssetId }) => ({
-        ...toStoredItem(item),
+        ...toStoredItem(item, { ...answerFormat, citesSource: shared.sourceCitation !== null }),
         ...shared,
         mediaAssetId,
         skillId,
@@ -64,6 +66,35 @@ async function storeBatch({
       })),
     });
   });
+}
+
+/** An item after code repaired what it can (`repairItem`), with what its checks still find. */
+export function toCheckedItem({
+  answerFormat,
+  format,
+  index,
+  item: written,
+  language,
+  optionCount,
+}: {
+  answerFormat: ItemAnswerFormat;
+  format: ItemFormat;
+  index: number;
+  item: GeneratedItem;
+  language: string;
+  optionCount: number | null;
+}): CheckedItem & { problems: string[] } {
+  const item = repairItem({ item: written, language, optionCount });
+
+  const problems = checkItem({
+    ...answerFormat,
+    expectedFormat: format,
+    item,
+    language,
+    optionCount,
+  });
+
+  return { index, item, problems };
 }
 
 /** Draws every picture the batch asks for at once; a question whose picture failed is dropped. */
@@ -101,8 +132,9 @@ async function drawPictures({
 }
 
 /**
- * Stores the generated items for a skill that pass the item checks and
- * reports the rest, so a workflow can log or regenerate them. Only checked
+ * Stores the generated items for a skill that pass the item checks, after code
+ * repaired what it can (`repairItem`), and reports the rest, so a workflow can
+ * log or regenerate them. Only checked
  * items reach learners. A question about a figure is stored only once its
  * picture is drawn, so no learner ever sees it without one; the questions
  * without a picture are stored meanwhile, so nobody waits on them. Pictures
@@ -117,6 +149,7 @@ async function drawPictures({
  */
 export async function createItems({
   analytics,
+  entry,
   examBlueprintId = null,
   field = null,
   format,
@@ -124,10 +157,11 @@ export async function createItems({
   language,
   optionCount = null,
   provenance,
+  select,
   skillId,
   sourceCitation = null,
   sourceId = null,
-}: {
+}: ItemAnswerFormat & {
   /** Who the pictures are drawn for, so their cost is counted with the questions'. */
   analytics?: ImageAnalytics;
   examBlueprintId?: string | null;
@@ -143,15 +177,16 @@ export async function createItems({
   sourceCitation?: string | null;
   sourceId?: string | null;
 }): Promise<{ created: Item[]; rejected: RejectedItem[]; unchecked: string[] }> {
-  const checked = items.map((item, index) => ({
-    index,
-    item,
-    problems: checkItem({ expectedFormat: format, item, language, optionCount }),
-  }));
+  const answerFormat = { entry, select };
 
-  const passing = checked.filter((entry) => entry.problems.length === 0);
+  const checked = items.map((item, index) =>
+    toCheckedItem({ answerFormat, format, index, item, language, optionCount }),
+  );
+
+  const passing = checked.filter((checkedItem) => checkedItem.problems.length === 0);
 
   const rows = {
+    answerFormat,
     examBlueprintId,
     field,
     format,
@@ -165,14 +200,14 @@ export async function createItems({
   const [plain, pictures] = await Promise.all([
     storeBatch({
       entries: passing
-        .filter((entry) => !getItemImageRequest(entry.item))
-        .map((entry) => ({ ...entry, mediaAssetId: null })),
+        .filter((checkedItem) => !getItemImageRequest(checkedItem.item))
+        .map((checkedItem) => ({ ...checkedItem, mediaAssetId: null })),
       pictured: false,
       rows,
     }),
     drawPictures({
       analytics,
-      entries: passing.filter((entry) => getItemImageRequest(entry.item)),
+      entries: passing.filter((checkedItem) => getItemImageRequest(checkedItem.item)),
       language,
       skillId,
     }),
@@ -184,7 +219,7 @@ export async function createItems({
     created: [...plain, ...pictured],
     rejected: [
       ...checked
-        .filter((entry) => entry.problems.length > 0)
+        .filter((checkedItem) => checkedItem.problems.length > 0)
         .map(({ index, problems }) => ({ index, problems })),
       ...pictures.failed,
     ],

@@ -12,10 +12,10 @@ export function toTopicKey(topic: string): string {
   return normalizeString(topic.replace(ITEM_NUMBER, ""));
 }
 
-/** The letters a word's stem keeps: "eletricidade" and "elétricos" share "eletri". */
+/** The letters a word's stem keeps: "electricity" and "electric" share "electr". */
 const STEM_LENGTH = 6;
 
-/** Shorter words ("de", "das", "com") join a topic's words; they never decide a match. */
+/** Shorter words ("of", "the", "and") join a topic's words; they never decide a match. */
 const MIN_STEM_WORD = 4;
 
 /** The stems of a text's meaningful words, as topics are matched by (see `toTopicKey`). */

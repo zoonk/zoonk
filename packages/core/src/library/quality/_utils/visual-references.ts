@@ -6,8 +6,8 @@ import { normalizeString } from "@zoonk/utils/string";
 /**
  * What a learner can be asked to look at: a picture (a scene, a diagram, a map, an infographic),
  * numbered drawings or charts compared side by side (`panels`), a table, a chart or a timeline. A
- * screen or question whose words point at one ("na imagem", "no diagrama", "Desenho 2", "the
- * table below", "no gráfico") must show it, never describe it in words instead.
+ * screen or question whose words point at one ("in the diagram", "look at the photo", "Drawing 2", "the
+ * table below", "in the chart") must show it, never describe it in words instead.
  */
 const VISUAL_KINDS = ["chart", "image", "panels", "table", "timeline"] as const;
 
@@ -17,10 +17,10 @@ type VisualPatterns = Readonly<Record<VisualKind, readonly RegExp[]>>;
 
 /**
  * Phrases that point the learner at something on the screen, compared without accents or case
- * and with punctuation as spaces. They need a pointing word ("na", "the … below", "observe a"),
- * so a picture that's part of a story ("the mayor's photo on the poster", "sua imagem pessoal"),
- * a figure of speech or the periodic table never count. Numbered drawings ("Desenho 1"), a
- * second chart ("Gráfico 2") and "the two drawings" are panels: several drawings compared side
+ * and with punctuation as spaces. They need a pointing word ("in the", "the … below", "look at"),
+ * so a picture that's part of a story ("the mayor's photo on the poster", "your personal image"),
+ * a figure of speech or the periodic table never count. Numbered drawings ("Drawing 1"), a
+ * second chart ("Chart 2") and "the two drawings" are panels: several drawings compared side
  * by side, which only a picture with numbered panels shows.
  */
 const EN_PATTERNS: VisualPatterns = {
@@ -147,7 +147,7 @@ function findVisualReferences({
 }
 
 /**
- * Words that name the numbered panels of one picture ("na versão 1 … na versão 2", "scenes 1 and
+ * Words that name the numbered panels of one picture ("in version 1 … in version 2", "scenes 1 and
  * 2"), in any language: the same word before 1 and then 2.
  */
 const NUMBERED_PANELS =
@@ -171,8 +171,12 @@ export function pointsAtFigure({ language, text }: { language: string; text: str
   );
 }
 
-/** What a screen or question shows: its picture, its tables in Markdown and its chart or timeline. */
+/**
+ * What a screen or question shows: its picture, its tables in Markdown, its chart or timeline, and
+ * on an explanation, an activity template to explore (a map, a diagram, a model, a timeline).
+ */
 export type ShownVisuals = {
+  explores?: boolean;
   hasImage: boolean;
   texts: readonly string[];
   visual: LessonVisual | null;
@@ -181,15 +185,17 @@ export type ShownVisuals = {
 /**
  * A picture shows a table, chart or timeline too (one about how a chart is drawn, with uneven
  * intervals or a 3D effect, can only be a picture); data is better as a Markdown table or a
- * visual the app draws, which the writers are told.
+ * visual the app draws, which the writers are told. A template explored on the screen (a map, a
+ * diagram, a chart to read, a timeline) is what its words point at too.
  */
 const SHOWS: Readonly<Record<VisualKind, (shown: ShownVisuals) => boolean>> = {
-  chart: (shown) => shown.hasImage || shown.visual?.kind === "chart",
-  image: (shown) => shown.hasImage,
+  chart: (shown) => shown.hasImage || shown.explores === true || shown.visual?.kind === "chart",
+  image: (shown) => shown.hasImage || shown.explores === true,
   panels: (shown) => shown.hasImage,
   table: (shown) =>
     shown.hasImage || shown.texts.some((text) => findMarkdownTables(text).length > 0),
-  timeline: (shown) => shown.hasImage || shown.visual?.kind === "timeline",
+  timeline: (shown) =>
+    shown.hasImage || shown.explores === true || shown.visual?.kind === "timeline",
 };
 
 const MISSING: Readonly<Record<VisualKind, string>> = {
@@ -282,6 +288,9 @@ export function getVisualProblems({
     ...(shown.visual ? getChartProblems(shown.visual) : []),
     ...(shown.hasImage && shown.visual
       ? ["It has both a picture and a chart or timeline: show one of them."]
+      : []),
+    ...(shown.explores === true && (shown.hasImage || shown.visual)
+      ? ["It shows a template to explore and a picture, chart or timeline too: show one of them."]
       : []),
     ...(shown.texts.some((text) => drawsWithCharacters(text))
       ? [

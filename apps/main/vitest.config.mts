@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { getTestEnvironment } from "@zoonk/db/test-environment";
+import { getTestRunEnvironment } from "@zoonk/db/test-environment";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -16,9 +16,10 @@ export default defineConfig({
   },
   test: {
     deps: { optimizer: { ssr: { include: ["next"] } } },
-    env: { ...getTestEnvironment("test"), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
+    env: { ...getTestRunEnvironment(), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
+    globalSetup: ["./vitest.global-setup.ts"],
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200

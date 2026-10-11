@@ -18,6 +18,11 @@ export type ExpectedChange = {
   start?: string;
   /** Topics to add: the area each one goes under (null for none), in any order. */
   topics?: (string | null)[];
+  /**
+   * Words of the learner's own life no topic's name or description may carry: topics become
+   * lessons other learners share.
+   */
+  topicsAvoid?: string[];
   weekdays?: number[];
 };
 
@@ -104,6 +109,12 @@ function matchesParts(value: unknown, expected: NonNullable<ExpectedChange["part
   );
 }
 
+/** No topic's name or description carries any of the learner's own words in `avoid`. */
+function avoidsWords(value: unknown, avoid: readonly string[]): boolean {
+  const text = JSON.stringify(value ?? []).toLowerCase();
+  return avoid.every((word) => !text.includes(word.toLowerCase()));
+}
+
 /** As many topics as expected, each named, under the expected areas. */
 function matchesTopics(value: unknown, expected: NonNullable<ExpectedChange["topics"]>): boolean {
   const topics = Array.isArray(value) ? value.filter((topic) => isJsonObject(topic)) : [];
@@ -137,6 +148,7 @@ function matches(operation: GeneratedOperation, expected: ExpectedChange): boole
     expected.start === undefined || operation.start === expected.start,
     expected.parts === undefined || matchesParts(operation.parts, expected.parts),
     expected.topics === undefined || matchesTopics(operation.topics, expected.topics),
+    expected.topicsAvoid === undefined || avoidsWords(operation.topics, expected.topicsAvoid),
     expected.date === undefined ||
       getValue(operation, ["startDate", "targetDate"]) === expected.date,
   ];

@@ -1,22 +1,35 @@
 import { randomUUID } from "node:crypto";
-import { type Item, type Skill, type SkillPrerequisite, prisma } from "@zoonk/db";
+import { type Item, type ItemSet, type Skill, type SkillPrerequisite, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
-/** Creates a Library skill with a unique identity key. */
-export async function skillFixture(attrs?: FixtureAttrs<Skill>) {
+/** A skill row with a unique identity key and, unless given one, a unique name. */
+function skillData(attrs?: FixtureAttrs<Skill>) {
   const name = attrs?.name ?? `Test skill ${randomUUID()}`;
 
-  return prisma.skill.create({
-    data: {
-      description: "Test skill idea in one sentence",
-      identityKey: `test-skill-${randomUUID()}`,
-      language: "en",
-      name,
-      normalizedName: normalizeString(name),
-      ...fixtureProvenance(),
-      ...attrs,
-    },
+  return {
+    description: "Test skill idea in one sentence",
+    identityKey: `test-skill-${randomUUID()}`,
+    language: "en",
+    name,
+    normalizedName: normalizeString(name),
+    ...fixtureProvenance(),
+    ...attrs,
+  };
+}
+
+/** Creates a Library skill with a unique identity key. */
+export async function skillFixture(attrs?: FixtureAttrs<Skill>) {
+  return prisma.skill.create({ data: skillData(attrs) });
+}
+
+/** One skill like `skillFixture`'s for each name, in one statement. */
+export async function skillsFixture(
+  names: readonly string[],
+  attrs?: Omit<FixtureAttrs<Skill>, "identityKey" | "name" | "normalizedName">,
+) {
+  return prisma.skill.createManyAndReturn({
+    data: names.map((name) => skillData({ ...attrs, name })),
   });
 }
 
@@ -64,6 +77,28 @@ export async function itemFixture(attrs: FixtureAttrs<Item, "content"> & Pick<It
         question: "Test question?",
       },
       format: "multipleChoice",
+      language: "en",
+      ...fixtureProvenance(),
+      ...attrs,
+    },
+  });
+}
+
+/** A passage several questions read (`ItemSet.content` of kind `text`), unique per call. */
+export function textSetContent(title = `Test passage ${randomUUID()}`) {
+  return {
+    source: "Adapted from a test article.",
+    text: "The town's library opened on Sundays last year. Visits rose by a third, mostly families.",
+    title,
+  };
+}
+
+/** Creates an item set: a passage, unless another kind and content are given. */
+export async function itemSetFixture(attrs?: FixtureAttrs<ItemSet, "content">) {
+  return prisma.itemSet.create({
+    data: {
+      content: textSetContent(),
+      kind: "text",
       language: "en",
       ...fixtureProvenance(),
       ...attrs,

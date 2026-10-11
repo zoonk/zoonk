@@ -1,3 +1,4 @@
+import { EvaluationTimeoutError } from "@zoonk/ai/evaluate/timeout";
 import {
   generateCourseOutline,
   streamCourseOutline,
@@ -6,7 +7,6 @@ import { type generateSkillGraph } from "@zoonk/ai/tasks/v2/curriculum/skill-gra
 import { decideLibraryIdentity } from "@zoonk/ai/tasks/v2/identity/decision";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
-import { createCourseIcon } from "@zoonk/core/library/courses/icon";
 import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { createGoalPlan } from "@zoonk/core/plans/create";
 import { prisma } from "@zoonk/db";
@@ -24,10 +24,15 @@ import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
-import { recordedOutput, replayStreamedOutline, taskResult } from "../_test-utils/recorded-outputs";
-import { courseDetailsWorkflow } from "./course-details-workflow";
+import {
+  outlineResult,
+  recordedOutput,
+  replayStreamedOutline,
+  taskResult,
+} from "../_test-utils/recorded-outputs";
+import { courseDetailsWorkflow, courseIconWorkflow } from "./course-details-workflow";
 import { courseOutlineWorkflow } from "./course-outline-workflow";
-import { writeOutlineBandStep } from "./steps/course-outline-steps";
+import { saveOutlineChapterStep, writeOutlineBandStep } from "./steps/course-outline-steps";
 
 vi.mock("workflow/api", () => ({
   getRun: vi.fn(() => ({ exists: Promise.resolve(false), status: Promise.resolve("failed") })),
@@ -42,8 +47,6 @@ vi.mock("@zoonk/ai/tasks/v2/curriculum/course-outline", () => ({
 
 vi.mock("@zoonk/ai/tasks/v2/identity/decision", () => ({ decideLibraryIdentity: vi.fn() }));
 
-// Drawing an icon is an image model's call: the mock says which course got one.
-vi.mock("@zoonk/core/library/courses/icon", () => ({ createCourseIcon: vi.fn(async () => null) }));
 vi.mock("@zoonk/ai/tasks/v2/identity/search-terms", () => ({ generateSearchTerms: vi.fn() }));
 
 // PostHog is an external service; the mock records what would leave the server.
@@ -177,7 +180,7 @@ describe(courseOutlineWorkflow, () => {
     );
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
-    vi.mocked(generateCourseOutline).mockResolvedValue(taskResult(recordedOutline));
+    vi.mocked(generateCourseOutline).mockResolvedValue(outlineResult(recordedOutline));
 
     vi.mocked(streamCourseOutline).mockImplementation(
       replayStreamedOutline(recordedOutline) as never,
@@ -228,15 +231,13 @@ describe(courseOutlineWorkflow, () => {
       expect(items.length).toBeGreaterThan(0);
       expect(items.every((item) => item.lessonId !== null)).toBe(true);
 
-      // Its page details follow; level bands no goal needs are never written ahead.
-      expect(start).toHaveBeenCalledExactlyOnceWith(courseDetailsWorkflow, [
-        { analytics: undefined, courseId: course.id },
+      // The icon is drawn by a run of its own as the outline starts, so the plan shows it from the
+      // start and the outline never waits for the picture; the page details follow, and level
+      // bands no goal needs are never written ahead.
+      expect(vi.mocked(start).mock.calls).toStrictEqual([
+        [courseIconWorkflow, [{ analytics: undefined, courseId: course.id }]],
+        [courseDetailsWorkflow, [{ analytics: undefined, courseId: course.id }]],
       ]);
-
-      // The icon is drawn while the outline is written, not after the whole run.
-      expect(createCourseIcon).toHaveBeenCalledWith(
-        expect.objectContaining({ courseId: course.id }),
-      );
     },
   );
 
@@ -305,7 +306,7 @@ describe(courseOutlineWorkflow, () => {
       const secondStarted = new Promise<boolean>((resolve) => {
         vi.mocked(generateCourseOutline).mockImplementation(async (params) => {
           resolve(params.level === "beginner");
-          return taskResult(recordedOutline);
+          return outlineResult(recordedOutline);
         });
 
         setTimeout(() => resolve(false), 5000);
@@ -526,12 +527,13 @@ describe(courseOutlineWorkflow, () => {
         }),
       );
 
-      // The goal keeps its stand-ins, and a shared course gets no background work from a failed run.
+      // The goal keeps its stand-ins, and a shared course gets no page details from a failed run
+      // (only the icon its outline started with).
       const items = await lessonItems(goal.id);
 
       expect(items.length).toBeGreaterThan(0);
       expect(items.every((item) => item.lessonId === null)).toBe(true);
-      expect(start).not.toHaveBeenCalled();
+      expect(start).not.toHaveBeenCalledWith(courseDetailsWorkflow, expect.anything());
     },
   );
 
@@ -576,7 +578,7 @@ describe(courseOutlineWorkflow, () => {
       const [first, ...rest] = recordedOutline.chapters;
 
       vi.mocked(generateCourseOutline).mockResolvedValue(
-        taskResult({
+        outlineResult({
           ...recordedOutline,
           chapters: [...(first ? [{ ...first, skillKeys: [] }] : []), ...rest],
         }),
@@ -695,6 +697,41 @@ describe(courseOutlineWorkflow, () => {
   );
 
   it(
+    "tells an exam's outline the subject each skill sits in, and a shared course's outline none",
+    { timeout: TIMEOUT },
+    async () => {
+      const [{ bandSkills }, examCourse, course] = await Promise.all([
+        waitingGoal(),
+        courseFixture({ outlineStatus: "pending", title: "ENEM" }),
+        courseFixture({ outlineStatus: "pending", title: "Immunology" }),
+      ]);
+
+      const skills = bandSkills.map((skill) => ({ ...skill, area: "Matemática" }));
+      const examScope = { ...scope, exams: [{ name: "ENEM", style: "Five-option items." }] };
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "overview", skills }],
+        courseId: examCourse.id,
+        scope: examScope,
+      });
+
+      await courseOutlineWorkflow({
+        bands: [{ level: "overview", skills }],
+        courseId: course.id,
+        scope,
+      });
+
+      const [exam, shared] = vi
+        .mocked(generateCourseOutline)
+        .mock.calls.map(([params]) => params.requiredSkills?.map((skill) => skill.area));
+
+      // An exam's chapters keep to one subject; other goals' areas don't bind their chapters.
+      expect(exam).toStrictEqual(skills.map(() => "Matemática"));
+      expect(shared).toStrictEqual(skills.map(() => null));
+    },
+  );
+
+  it(
     "waits while another run saves the course's other bands, then plans against what it saved",
     { timeout: TIMEOUT },
     async () => {
@@ -773,7 +810,6 @@ describe(courseOutlineWorkflow, () => {
       expect(items.length).toBeGreaterThan(0);
       expect(items.every((item) => item.lessonId !== null)).toBe(true);
       expect(start).not.toHaveBeenCalled();
-      expect(createCourseIcon).not.toHaveBeenCalled();
     },
   );
 
@@ -807,6 +843,66 @@ describe(courseOutlineWorkflow, () => {
       ).resolves.toMatchObject({ status: "written" });
 
       expect(start).not.toHaveBeenCalled();
+    },
+  );
+
+  it(
+    "retries a chapter whose reuse decisions time out on a busy provider, and the retry saves it once",
+    { timeout: TIMEOUT },
+    async () => {
+      const token = `zq${crypto.randomUUID().slice(0, 8)}`;
+
+      const [{ bandSkills }, course] = await Promise.all([
+        waitingGoal(),
+        courseFixture({ title: "Immunology" }),
+        // A Library skill every search finds, so each of the chapter's skills asks for a decision.
+        skillFixture({ name: `Antigen recognition ${token}` }),
+      ]);
+
+      vi.mocked(generateSearchTerms).mockImplementation(
+        async ({ subjects }) =>
+          taskResult({ subjects: subjects.map(() => ({ terms: [token] })) }) as never,
+      );
+
+      // The decision model runs out of time once, as it did for 9 of 22 runs in a burst of onboardings.
+      vi.mocked(decideLibraryIdentity).mockRejectedValueOnce(
+        new EvaluationTimeoutError("typesafe-ai/jev didn't answer within 10000 ms."),
+      );
+
+      const [chapter] = recordedOutline.chapters;
+
+      if (!chapter) {
+        throw new Error("The recorded outline has no chapter.");
+      }
+
+      const save = () =>
+        saveOutlineChapterStep({
+          chapter,
+          courseId: course.id,
+          goalSkills: bandSkills,
+          level: "overview",
+          position: 0,
+          provenance: taskResult(recordedOutline).provenance,
+          scope,
+          workflowRunId: "outline-run",
+        });
+
+      // The step is retried a minute later instead of failing the band for good.
+      await expect(save()).rejects.toMatchObject({ name: "RetryableError", retryAfter: "1m" });
+
+      const saved = await save();
+
+      const [placements, homeLessons, stored] = await Promise.all([
+        prisma.courseChapter.findMany({ where: { courseId: course.id } }),
+        prisma.lesson.findMany({ where: { homeChapterId: saved.chapterId } }),
+        prisma.chapter.findUniqueOrThrow({ where: { id: saved.chapterId } }),
+      ]);
+
+      // One chapter, each of its lessons and its challenge once, all of them placed.
+      expect(placements.map((placement) => placement.chapterId)).toStrictEqual([saved.chapterId]);
+      expect(homeLessons).toHaveLength(chapter.lessons.length + 1);
+      expect(saved.lessonIds.toSorted()).toStrictEqual(homeLessons.map((row) => row.id).toSorted());
+      expect(stored.outlineStatus).toBe("completed");
     },
   );
 
@@ -927,7 +1023,7 @@ describe(courseOutlineWorkflow, () => {
 
       // The model repeats the existing chapter, then writes two new ones and an unrelated chapter.
       vi.mocked(generateCourseOutline).mockResolvedValue(
-        taskResult({
+        outlineResult({
           chapters: [
             interviewChapter("Candidaturas e entrevistas", [ref.key]),
             interviewChapter("Entrevistas com perguntas situacionais", [ref.key]),
@@ -946,6 +1042,7 @@ describe(courseOutlineWorkflow, () => {
 
       expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].extendSkills).toStrictEqual([
         {
+          area: null,
           chapters: [{ lessons: written.map((lesson) => lesson.title), title: existing.title }],
           description: skill.description,
           key: ref.key,
@@ -1034,7 +1131,7 @@ describe(courseOutlineWorkflow, () => {
       // different chapters in the same places.
       vi.mocked(generateCourseOutline)
         .mockResolvedValueOnce(
-          taskResult({
+          outlineResult({
             chapters: [
               interviewChapter("Entrevistas com perguntas situacionais", [extended.id]),
               interviewChapter("Negociação de salário", [missing.id]),
@@ -1043,7 +1140,7 @@ describe(courseOutlineWorkflow, () => {
           }),
         )
         .mockResolvedValueOnce(
-          taskResult({
+          outlineResult({
             chapters: [
               interviewChapter("Entrevistas técnicas", [extended.id]),
               interviewChapter("Benefícios e contratos", [missing.id]),

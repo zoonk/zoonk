@@ -102,10 +102,14 @@ describe(capReviewDay, () => {
     );
   });
 
-  it("never says an idea comes back after the exam: the last day before it instead", () => {
+  it("says no day when the idea's review falls on or after the exam, which it outlasts", () => {
     expect(
       capReviewDay({ day: day("2026-11-30"), targetDate: day("2026-11-08"), today }),
-    ).toStrictEqual(day("2026-11-07"));
+    ).toBeNull();
+
+    expect(
+      capReviewDay({ day: day("2026-11-08"), targetDate: day("2026-11-08"), today }),
+    ).toBeNull();
   });
 
   it("brings an idea already due back tomorrow, never on a day that passed", () => {

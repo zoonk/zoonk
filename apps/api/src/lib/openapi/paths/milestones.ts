@@ -38,7 +38,7 @@ export const milestonePaths = {
   "/me/milestones": {
     get: {
       description:
-        'The learner\'s milestones: every pair of glasses with how far it is ("4/7 full meals"), badges for the logbook, belts and buddy stages, and the one milestone to celebrate next. Nothing is random or sold.',
+        'The learner\'s milestones: every pair of glasses with how far it is ("4 of 7 days with all three missions"), badges for the logbook, belts and buddy stages, and the one milestone to celebrate next. Nothing is random or sold.',
       operationId: "listCurrentUserMilestones",
       responses: {
         "200": {

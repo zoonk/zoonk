@@ -67,6 +67,26 @@ function getPictureProblem({
   return null;
 }
 
+/** A case about activities counts as one more part: no lesson plans a template it must avoid. */
+function getTemplateProblem({
+  expected,
+  lessons,
+}: {
+  expected: LessonSpecExpected | undefined;
+  lessons: LessonSpec[];
+}): string | null {
+  const avoided = new Set(expected?.avoidTemplates);
+
+  const planned = lessons
+    .flatMap((lesson) => lesson.screens)
+    .flatMap((screen) => (screen.activityTemplate ? [screen.activityTemplate] : []))
+    .filter((template) => avoided.has(template));
+
+  return planned.length > 0
+    ? `Plans ${[...new Set(planned)].join(" and ")}, which would only decorate this skill.`
+    : null;
+}
+
 /**
  * Each lesson is one part: it passes when it meets the size and shape rules
  * (1 to 3 skills, 5 to 12 screens, 2 to 5 minutes, a hook first, a check
@@ -92,20 +112,27 @@ function checkLessonSpecs({
   }));
 
   const passing = results.filter((result) => result.problems.length === 0);
-  const hasPictureCheck = expected !== undefined && expected.pictures !== "any";
+  const hasPictureCheck = expected?.pictures !== undefined && expected.pictures !== "any";
   const pictureProblem = hasPictureCheck ? getPictureProblem({ expected, lessons }) : null;
+  const hasTemplateCheck = (expected?.avoidTemplates?.length ?? 0) > 0;
+  const templateProblem = hasTemplateCheck ? getTemplateProblem({ expected, lessons }) : null;
+  const extraChecks = Number(hasPictureCheck) + Number(hasTemplateCheck);
 
   return {
     judgedOutput: JSON.stringify({ lessons: passing.map((result) => result.lesson) }, null, 2),
-    passed: passing.length + (hasPictureCheck && !pictureProblem ? 1 : 0),
+    passed:
+      passing.length +
+      (hasPictureCheck && !pictureProblem ? 1 : 0) +
+      (hasTemplateCheck && !templateProblem ? 1 : 0),
     problems:
       lessons.length === 0
         ? ["The output has no valid lesson specs."]
         : [
             ...results.flatMap((result) => result.problems),
             ...(pictureProblem ? [pictureProblem] : []),
+            ...(templateProblem ? [templateProblem] : []),
           ],
-    total: Math.max(lessons.length, 1) + (hasPictureCheck ? 1 : 0),
+    total: Math.max(lessons.length, 1) + extraChecks,
   };
 }
 

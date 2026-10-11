@@ -16,10 +16,26 @@ function getLimitStatus(tier: string): number {
   return tier === "free" ? httpStatus.paymentRequired : httpStatus.tooManyRequests;
 }
 
+/**
+ * A guest's new AI work once the day's budget all guests share is spent: the app asks them to
+ * create a free account, where their work moves with them. It never says a cap's numbers.
+ */
+export function signUpRequiredError() {
+  return createErrorResponse({
+    code: LESSON_PLAYER_ERROR_CODES.signUpRequired,
+    message: "Create your free account to continue",
+    status: httpStatus.forbidden,
+  });
+}
+
 /** Maps a refused allowance claim to the shared error envelope. */
 export function usageDecisionError(decision: RefusedUsage) {
   if (decision.status === "unauthorized") {
     return errors.unauthorized();
+  }
+
+  if (decision.status === "signUpRequired") {
+    return signUpRequiredError();
   }
 
   if (decision.status === "slowDown") {
@@ -35,6 +51,18 @@ export function usageDecisionError(decision: RefusedUsage) {
     details: { limit: decision.limit },
     message: "This plan's limit is reached",
     status: getLimitStatus(decision.limit.tier),
+  });
+}
+
+/**
+ * A free exam plan past its first week holds this new lesson of its plan, or its phase challenge,
+ * for Plus: reviews and fixing mistakes stay free.
+ */
+export function plusRequiredError() {
+  return createErrorResponse({
+    code: LESSON_PLAYER_ERROR_CODES.plusRequired,
+    message: "The rest of this exam plan comes with Plus",
+    status: httpStatus.paymentRequired,
   });
 }
 

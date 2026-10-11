@@ -1,5 +1,6 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { type CourseStart, readCourseStart } from "../../goals/course-start-details";
+import { isPlacementSkipped } from "../../learner/placement/placement-contract";
 import {
   ONBOARDING_QUESTIONS,
   type OnboardingQuestion,
@@ -8,15 +9,18 @@ import {
 
 type GoalKind = "exam" | "explain" | "language" | "learn";
 
-type StepGoal = { details: Record<string, unknown>; kind: GoalKind; targetDate: string | null };
+type StepGoal = {
+  details: Record<string, unknown>;
+  /**
+   * The exam has a choice the learner hasn't picked an option of (ENEM's foreign language), read
+   * from its notice and plan by callers that load them; others leave it out and never ask.
+   */
+  hasUnpickedChoice?: boolean;
+  kind: GoalKind;
+  targetDate: string | null;
+};
 
 type StepProfile = {
-  /**
-   * Memory starts off for a learner under 18 or of unknown age, so onboarding asks them once
-   * whether to turn it on, unless they already chose or a guardian keeps it off.
-   */
-  asksMemory: boolean;
-  hasBirth: boolean;
   /** The buddy is offered once, in the learner's first onboarding; Appearance changes it later. */
   hasEarlierGoals: boolean;
   hasBuddy: boolean;
@@ -42,7 +46,7 @@ const EXAM_TARGETS = ["admission", "position", "score"] as const;
 
 /**
  * What an exam's learner aims for beyond passing, as onboarding understood it: a course or school
- * (`admission`, ENEM), a score (`score`, IELTS) or a position (`position`, a concurso). Null for
+ * (`admission`, ENEM), a score (`score`, IELTS) or a position (`position`, a civil service exam). Null for
  * an exam that is only passed or failed (the OAB, a license, a class test).
  */
 export type ExamTarget = (typeof EXAM_TARGETS)[number];
@@ -85,16 +89,13 @@ export function getAnsweredQuestions(details: Record<string, unknown>): string[]
 }
 
 /**
- * Whether the learner still has placement ahead: they haven't ended it, and they'll take it (a
- * learner starting from nothing has nothing to place, and one who started at a chapter begins
- * where they chose). Until then, placement may test out what the plan starts with.
+ * Whether the learner still has placement ahead: they haven't ended it, and they'll take it (see
+ * `isPlacementSkipped`: a learner starting from nothing has nothing to place, and one who started
+ * at a chapter begins where they chose). Until then, placement may test out what the plan starts
+ * with.
  */
 export function isPlacementAhead(details: Record<string, unknown>): boolean {
-  return (
-    !getAnsweredQuestions(details).includes("placement") &&
-    details.level !== "none" &&
-    !readCourseStart(details)?.chapterId
-  );
+  return !getAnsweredQuestions(details).includes("placement") && !isPlacementSkipped({ details });
 }
 
 /** The AI's follow-up questions for an unusual goal, as stored on the goal. */
@@ -147,6 +148,8 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
       return goal.targetDate === null && (kind !== "exam" || isClassTest(details));
     case "followUps":
       return getFollowUpQuestions(details).length > 0;
+    case "examChoice":
+      return kind === "exam" && goal.hasUnpickedChoice === true;
     case "level":
       return !hasText(details.level);
     case "schedule":
@@ -156,20 +159,8 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
   }
 }
 
-function getProfileSteps({
-  answered,
-  profile,
-}: {
-  answered: Set<string>;
-  profile: StepProfile;
-}): OnboardingStep[] {
-  const picksBuddy = !profile.hasEarlierGoals && !profile.hasBuddy && !answered.has("buddy");
-
-  return [
-    !profile.hasBirth && !answered.has("age") && ("age" as const),
-    profile.asksMemory && !answered.has("memory") && ("memory" as const),
-    picksBuddy && ("buddy" as const),
-  ].filter((step) => step !== false);
+function picksBuddy({ answered, profile }: { answered: Set<string>; profile: StepProfile }) {
+  return !profile.hasEarlierGoals && !profile.hasBuddy && !answered.has("buddy");
 }
 
 /**
@@ -186,9 +177,8 @@ export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
 
 /**
  * The onboarding screens still ahead for a new goal, in order: only the questions the typed goal
- * and earlier screens didn't answer, then the age when the profile doesn't have it, whether memory
- * may personalize lessons for a learner it starts off for, the buddy in the learner's first
- * onboarding, placement, the daily time, and the plan. A learner starting from
+ * and earlier screens didn't answer, then the buddy in the learner's first onboarding, placement,
+ * the daily time, and the plan. A learner starting from
  * nothing skips placement: there's nothing to place, and every phase starts at its beginning. So
  * does one who started at a chapter: the plan begins where they chose. The daily time comes last,
  * once placement said what the learner already knows: it recommends the time the plan needs to
@@ -216,7 +206,7 @@ export function getOnboardingSteps({
 
   return [
     ...questions.filter((question) => question !== "schedule"),
-    ...getProfileSteps({ answered, profile }),
+    ...(picksBuddy({ answered, profile }) ? (["buddy"] as const) : []),
     ...(isPlacementAhead(goal.details) ? (["placement"] as const) : []),
     ...questions.filter((question) => question === "schedule"),
     "plan",

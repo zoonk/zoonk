@@ -7,7 +7,6 @@ import {
 } from "@zoonk/core/library/curriculum/plan-skill-graph";
 import { findReusableCurriculum } from "@zoonk/core/library/curriculum/reusable-curriculum";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
-import { safeAsync } from "@zoonk/utils/error";
 import { getRun } from "workflow/api";
 import { type BuiltCurriculum } from "../goal-curriculum";
 import { type GoalStreamStep } from "./goal-progress-step";
@@ -38,11 +37,18 @@ function toBuiltCurriculum({
   };
 }
 
+/** When a run started, or null for an id that was never a run (seeded content, a test's). */
+async function readRunStart(runId: string): Promise<Date | null> {
+  const run = getRun(runId);
+  return (await run.exists) ? run.createdAt : null;
+}
+
 /**
  * The curriculum a goal's stored plan stands for, when research `researchId` started after the
  * plan was built (research restarted, as after a run that failed or stalled): the run that built
  * the plan reconciled it with research that ended before, so this reading would reach nothing.
- * Null otherwise, or when the plan or the run can't be read.
+ * Null otherwise, or when the goal has no plan or the research never ran. A run that can't be
+ * read right now throws, so the runtime retries the step.
  */
 export async function loadStoredCurriculumStep({
   goalId,
@@ -53,9 +59,9 @@ export async function loadStoredCurriculumStep({
 }): Promise<BuiltCurriculum | null> {
   "use step";
 
-  const [stored, { data: startedAt }] = await Promise.all([
+  const [stored, startedAt] = await Promise.all([
     loadPlanSkillGraph(goalId),
-    safeAsync(() => getRun(researchId).createdAt),
+    readRunStart(researchId),
   ]);
 
   if (!stored?.plannedAt || !startedAt || startedAt <= stored.plannedAt) {

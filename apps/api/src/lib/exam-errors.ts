@@ -8,8 +8,13 @@ import { studySessionErrorCodes } from "./study-session-errors";
 const examErrorCodes = {
   essayLimitReached: "ESSAY_LIMIT_REACHED",
   invalidMockOption: "INVALID_MOCK_OPTION",
+  mockAnswerLocked: "MOCK_ANSWER_LOCKED",
   mockFinished: "MOCK_FINISHED",
+  mockNotFinished: "MOCK_NOT_FINISHED",
+  mockNotOnBreak: "MOCK_NOT_ON_BREAK",
   mockNotRunning: "MOCK_NOT_RUNNING",
+  mockNotSpeaking: "MOCK_NOT_SPEAKING",
+  mockPlaysUsed: "MOCK_PLAYS_USED",
   notEnoughQuestions: "NOT_ENOUGH_QUESTIONS",
   notExam: "NOT_AN_EXAM",
   plusRequired: "PLUS_REQUIRED",
@@ -26,16 +31,22 @@ type ExamRefusal = {
     | "goalNotActive"
     | "invalidItem"
     | "invalidOption"
+    | "invalidSet"
     | "limitReached"
+    | "locked"
     | "noGoal"
     | "notEnoughQuestions"
     | "notExam"
+    | "notFinished"
     | "notFound"
+    | "notOnBreak"
     | "notRunning"
+    | "notSpeaking"
     | "plusRequired"
     | "timeUp"
     | "tooEarly"
-    | "unauthorized";
+    | "unauthorized"
+    | "usedUp";
 };
 
 const REFUSALS = {
@@ -74,10 +85,20 @@ const REFUSALS = {
     message: "That isn't one of the goal's mocks; list them again",
     status: httpStatus.unprocessableEntity,
   },
+  invalidSet: {
+    code: studySessionErrorCodes.invalidItem,
+    message: "This recording isn't in the running listening section",
+    status: httpStatus.unprocessableEntity,
+  },
   limitReached: {
     code: examErrorCodes.essayLimitReached,
     message: "Today's essay grades are used up",
     status: httpStatus.tooManyRequests,
+  },
+  locked: {
+    code: examErrorCodes.mockAnswerLocked,
+    message: "This section never goes back to a question left behind",
+    status: httpStatus.conflict,
   },
   notEnoughQuestions: {
     code: examErrorCodes.notEnoughQuestions,
@@ -89,9 +110,24 @@ const REFUSALS = {
     message: "This goal isn't an exam",
     status: httpStatus.unprocessableEntity,
   },
+  notFinished: {
+    code: examErrorCodes.mockNotFinished,
+    message: "Hand the mock in first",
+    status: httpStatus.conflict,
+  },
+  notOnBreak: {
+    code: examErrorCodes.mockNotOnBreak,
+    message: "The mock isn't on a break",
+    status: httpStatus.conflict,
+  },
   notRunning: {
     code: examErrorCodes.mockNotRunning,
     message: "Start the mock first, or it moved on already",
+    status: httpStatus.conflict,
+  },
+  notSpeaking: {
+    code: examErrorCodes.mockNotSpeaking,
+    message: "The mock isn't on its speaking section",
     status: httpStatus.conflict,
   },
   plusRequired: {
@@ -107,6 +143,11 @@ const REFUSALS = {
   tooEarly: {
     code: examErrorCodes.tooEarly,
     message: "The exam hasn't happened yet",
+    status: httpStatus.conflict,
+  },
+  usedUp: {
+    code: examErrorCodes.mockPlaysUsed,
+    message: "This recording has no plays left",
     status: httpStatus.conflict,
   },
 } as const;

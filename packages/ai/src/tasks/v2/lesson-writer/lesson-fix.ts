@@ -1,6 +1,7 @@
 import "server-only";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { acceptOmittedNulls } from "../../../_utils/omitted-nulls";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
@@ -19,12 +20,14 @@ import {
 } from "./written-lesson-schema";
 
 /**
- * From the lesson-fix eval (3 lessons with code and reviewer problems, 26 Sep
- * 2026): Sol and Gemini 3.8 Flash fixed every one, Sol at $15 per 1,000 fixes
- * and 7s p50, Gemini at $28 and 9s.
+ * From the lesson-fix eval (lessons with code and reviewer problems): on 26 Sep 2026 Sol and
+ * Gemini 3.8 Flash fixed every one, Sol at $15 per 1,000 fixes and 7s p50, Gemini at $28 and 9s;
+ * on 9 Oct Luna fixed all 4 cases too, at $0.84 per 1,000 and 8s p50. A fix rewrites a few
+ * flagged screens, so the cheapest model that fixes them all leads. Gemini isn't a fallback: it
+ * rejects the screens' schema as too large.
  */
-const defaultModel = "openai/gpt-6-sol";
-const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
+const defaultModel = "openai/gpt-6-luna";
+const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the screen number comes before its content. */
 const schema = z.object({
@@ -112,11 +115,12 @@ ${formatLessonProblems(params.problems)}
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object({ schema: acceptOmittedNulls(schema) }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "lesson-fix",
   });

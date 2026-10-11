@@ -1,6 +1,7 @@
 import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { authRateLimitError } from "@/lib/auth-rate-limit-error";
 import { getAuthError } from "@zoonk/auth/errors";
 import { createGuestSession } from "@zoonk/auth/native-sessions";
 import { safeAsync } from "@zoonk/utils/error";
@@ -17,14 +18,6 @@ function getGuestErrorResponse(error: unknown) {
     });
   }
 
-  if (code === accessErrorCodes.guestSignInLimitReached) {
-    return createErrorResponse({
-      code,
-      message: "Too many guests from this network. Try again later",
-      status: httpStatus.tooManyRequests,
-    });
-  }
-
   if (code === "ANONYMOUS_USERS_CANNOT_SIGN_IN_AGAIN_ANONYMOUSLY") {
     return createErrorResponse({
       code: accessErrorCodes.alreadyGuest,
@@ -33,7 +26,7 @@ function getGuestErrorResponse(error: unknown) {
     });
   }
 
-  return null;
+  return authRateLimitError(error);
 }
 
 /**

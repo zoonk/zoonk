@@ -5,14 +5,24 @@ import { useFormatter } from "next-intl";
 import { isoDateToUtc } from "../_utils/iso-date";
 
 /**
- * A calendar page for one day ("NOV" over a big "8"): the anchor of a screen about a date, such
- * as an exam's. Decorative: the text beside it says the day in words.
+ * A calendar page for one day ("NOV" over a big "8"), or for a month whose day isn't known yet
+ * (`monthOnly`: "2027" over "MAR"): the anchor of a screen about a date, such as an exam's.
+ * Decorative: the text beside it says the day in words.
  */
-export function DateTile({ className, isoDate }: { className?: string; isoDate: string }) {
+export function DateTile({
+  className,
+  isoDate,
+  monthOnly = false,
+}: {
+  className?: string;
+  isoDate: string;
+  monthOnly?: boolean;
+}) {
   const format = useFormatter();
   const date = isoDateToUtc(isoDate);
   const month = format.dateTime(date, { month: "short", timeZone: "UTC" }).replace(".", "");
   const day = format.dateTime(date, { day: "numeric", timeZone: "UTC" });
+  const year = format.dateTime(date, { timeZone: "UTC", year: "numeric" });
 
   return (
     <span
@@ -24,9 +34,15 @@ export function DateTile({ className, isoDate }: { className?: string; isoDate: 
       data-slot="date-tile"
     >
       <span className="bg-foreground text-background py-1 text-[0.6875rem] leading-4 font-semibold tracking-wider uppercase">
-        {month}
+        {monthOnly ? year : month}
       </span>
-      <span className="py-1.5 text-3xl leading-9 font-bold tracking-tight tabular-nums">{day}</span>
+      {monthOnly ? (
+        <span className="py-1.5 text-xl leading-9 font-bold tracking-tight uppercase">{month}</span>
+      ) : (
+        <span className="py-1.5 text-3xl leading-9 font-bold tracking-tight tabular-nums">
+          {day}
+        </span>
+      )}
     </span>
   );
 }

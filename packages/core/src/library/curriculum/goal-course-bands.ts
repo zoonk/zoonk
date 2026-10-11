@@ -25,6 +25,7 @@ function toSkillRef({
   return id
     ? [
         {
+          area: skill.area,
           description: skill.description,
           id,
           key: skill.key,
@@ -147,26 +148,22 @@ export function toGoalCourses({
 }
 
 /**
- * The goal's course bands split by when the plan gets to them: `near` bands teach a skill the plan
- * reaches within the learner's outline window (`nearSkillIds`), and are outlined while the plan is
- * built; `far` bands teach none, and wait (or run at the flex tier) until the plan gets close. A
- * band is written whole, so one near skill makes the whole band near.
+ * The goal's course bands that teach a skill the plan reaches within the learner's outline window
+ * (`nearSkillIds`): those are outlined while the plan is built, and the rest wait until the plan
+ * gets close to them. A band is written whole, so one near skill keeps the whole band.
  */
-export function splitGoalCourseBands({
+export function keepNearCourseBands({
   nearSkillIds,
   needs,
 }: {
   nearSkillIds: ReadonlySet<string>;
   needs: readonly GoalCourseNeed[];
-}): { far: GoalCourseNeed[]; near: GoalCourseNeed[] } {
-  const isNear = (band: GoalCourseNeed["bands"][number]) =>
-    band.skills.some((skill) => nearSkillIds.has(skill.id));
+}): GoalCourseNeed[] {
+  return needs.flatMap((need) => {
+    const bands = need.bands.filter((band) =>
+      band.skills.some((skill) => nearSkillIds.has(skill.id)),
+    );
 
-  const pick = (keep: (band: GoalCourseNeed["bands"][number]) => boolean) =>
-    needs.flatMap((need) => {
-      const bands = need.bands.filter((band) => keep(band));
-      return bands.length > 0 ? [{ ...need, bands }] : [];
-    });
-
-  return { far: pick((band) => !isNear(band)), near: pick((band) => isNear(band)) };
+    return bands.length > 0 ? [{ ...need, bands }] : [];
+  });
 }

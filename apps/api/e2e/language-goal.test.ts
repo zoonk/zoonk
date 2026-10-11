@@ -120,6 +120,8 @@ test.describe("Language goal API", () => {
       level: { label: "A2", target: "B1+" },
       pattern: null,
       pronunciation: null,
+      // No exam named: English's paper at the B1+ target, locked on the free plan.
+      speaking: { access: "plusRequired", title: "B1 Preliminary" },
     });
 
     expect(await unit.json()).toMatchObject({
@@ -249,6 +251,99 @@ test.describe("Language goal API", () => {
     expect(await exam.json()).toMatchObject({ speakingMock: "toefl" });
 
     await apiContext.dispose();
+  });
+
+  test("offers a Cambridge goal its speaking paper, locked without Plus, and starts a task with Plus", async () => {
+    const [free, plus] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "exam-speaking-free" }),
+      createAuthenticatedApiContext({ baseURL, prefix: "exam-speaking-plus" }),
+    ]);
+
+    const [freeGoal, plusGoal] = await Promise.all([
+      languageGoalFixture({ userId: free.user.id }),
+      languageGoalFixture({ userId: plus.user.id }),
+      prisma.subscription.create({
+        data: { plan: "plus", provider: "zoonk", referenceId: plus.user.id, status: "active" },
+      }),
+    ]);
+
+    await prisma.goal.updateMany({
+      data: { details: { level: "A2", reason: "Vou fazer o Cambridge B2 First em novembro" } },
+      where: { id: { in: [freeGoal.goal.id, plusGoal.goal.id] } },
+    });
+
+    const progress = await free.apiContext.get(`/v1/goals/${freeGoal.goal.id}/language-progress`);
+
+    expect(await progress.json()).toMatchObject({
+      speaking: { access: "plusRequired", exam: "cambridge", language: "en", title: "B2 First" },
+      speakingMock: null,
+    });
+
+    const refused = await free.apiContext.post("/v1/language-conversations", {
+      data: { goalId: freeGoal.goal.id, kind: "examSpeaking", task: "p1" },
+    });
+
+    expect(refused.status()).toBe(402);
+    expect(await refused.json()).toMatchObject({ error: { code: "PLUS_REQUIRED" } });
+
+    // A card written ahead and never called starts at once, with no model writing another.
+    const waiting = await prisma.languageConversation.create({
+      data: {
+        goalId: plusGoal.goal.id,
+        kind: "examSpeaking",
+        language: "pt",
+        level: "B2",
+        minutes: 2,
+        scenario: {
+          ...RENTING_SCENARIO,
+          examTask: {
+            card: {
+              instructions: ["Answer the examiner's questions about yourself."],
+              photos: [],
+              prompts: [],
+              summary: "Responda às perguntas da examinadora sobre você.",
+              table: null,
+              text: null,
+            },
+            exam: "cambridge",
+            level: "B2",
+            task: "p1",
+          },
+        },
+        targetLanguage: "en",
+        titleSnapshot: "Part 1: Interview",
+        userId: plus.user.id,
+      },
+    });
+
+    const [started, missing] = await Promise.all([
+      plus.apiContext.post("/v1/language-conversations", {
+        data: { goalId: plusGoal.goal.id, kind: "examSpeaking", task: "p1" },
+      }),
+      plus.apiContext.post("/v1/language-conversations", {
+        data: { goalId: plusGoal.goal.id, kind: "examSpeaking", task: "p9" },
+      }),
+    ]);
+
+    expect([started.status(), missing.status()]).toStrictEqual([201, 404]);
+    expect(await started.json()).toStrictEqual({ conversationId: waiting.id });
+
+    const view = await plus.apiContext.get(`/v1/language-conversations/${waiting.id}`);
+
+    expect(await view.json()).toMatchObject({
+      examTask: {
+        exam: "cambridge",
+        number: 1,
+        sectionId: null,
+        task: { key: "p1", name: "Part 1: Interview", role: "examiner" },
+        taskCount: 4,
+        title: "B2 First",
+      },
+      kind: "examSpeaking",
+      minutes: 2,
+    });
+
+    await Promise.all([free.apiContext.dispose(), plus.apiContext.dispose()]);
   });
 
   test("starts a practice call, keeps it private and finishes it once", async () => {

@@ -1,16 +1,17 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { withApiImageUrls } from "@/lib/file-urls";
-import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { parsePathParams } from "@/lib/path-params";
 import { getPlayableLibraryLesson } from "@zoonk/core/lesson-player/get";
+import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { NextResponse } from "next/server";
 
 /**
  * A Library lesson ready to play, or its outline while its content is written. Its screens need a
- * session (a guest's is enough); without one, a public lesson returns only its outline. Reading
- * screens too fast is a 429 with `Retry-After`. A private lesson is readable only by its owner.
+ * session (a guest's is enough); without one, a public lesson returns only its outline. A private
+ * lesson is readable only by its owner. A lesson ready to play carries the tutor's suggestions for
+ * its screens, worded in its language as the question a tap on one is stored with.
  */
 async function getLibraryLessonRoute(
   _request: Request,
@@ -28,11 +29,12 @@ async function getLibraryLessonRoute(
     return errors.notFound();
   }
 
-  if (result.status === "slowDown") {
-    return usageDecisionError({ retryAfterSeconds: result.retryAfterSeconds, status: "slowDown" });
+  if (result.status !== "ready") {
+    return NextResponse.json(withApiImageUrls(result));
   }
 
-  return NextResponse.json(withApiImageUrls(result));
+  const tutorSuggestions = await wordTutorSuggestions(result.lesson.language);
+  return NextResponse.json(withApiImageUrls({ ...result, tutorSuggestions }));
 }
 
 export const GET = withApiErrorBoundary(getLibraryLessonRoute);

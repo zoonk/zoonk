@@ -65,9 +65,9 @@ export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: stri
         </p>
       )}
 
-      {(state.status === "slowDown" || state.status === "limitReached") && (
-        <LessonHelpLimitNotice limit={state} />
-      )}
+      {(state.status === "slowDown" ||
+        state.status === "limitReached" ||
+        state.status === "signUpRequired") && <LessonHelpLimitNotice limit={state} />}
     </div>
   );
 }

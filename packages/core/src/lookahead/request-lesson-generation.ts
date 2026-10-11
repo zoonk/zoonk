@@ -5,6 +5,7 @@ import { type AnalyticsPlatform } from "../analytics/shared-properties";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { getLessonGenerationState } from "../library/generation/lesson-generation-state";
+import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { findViewerLesson } from "./_utils/viewer-lesson";
 
 /**
@@ -12,7 +13,8 @@ import { findViewerLesson } from "./_utils/viewer-lesson";
  * `start`: the caller starts a run with these inputs, whose analytics name the learner, their goal
  * and the client that asked. `refused`: the learner's allowance doesn't
  * cover writing a new lesson now. `setAside`: its last allowed draft was held back, so nothing
- * writes it again; plans moved on without it.
+ * writes it again; plans moved on without it. `plusRequired`: a free exam plan past its first week
+ * holds this new lesson of its plan for Plus, so nothing writes it for them.
  */
 export type LessonGenerationRequest =
   | { status: "ready" }
@@ -30,6 +32,7 @@ export type LessonGenerationRequest =
   | { decision: Exclude<UsageDecision, { status: "allowed" | "unauthorized" }>; status: "refused" }
   | { status: "setAside" }
   | { status: "notFound" }
+  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
 async function getActiveGoal(userId: string) {
@@ -58,6 +61,10 @@ export async function requestLessonGeneration({
 
   if (viewer.status !== "ready") {
     return viewer;
+  }
+
+  if (await isLessonPlusOnly({ lessonId, userId: viewer.userId })) {
+    return { status: "plusRequired" };
   }
 
   const state = await getLessonGenerationState(lessonId);

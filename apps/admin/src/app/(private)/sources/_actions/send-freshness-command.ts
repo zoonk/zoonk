@@ -6,7 +6,7 @@ import { parseFormField } from "@zoonk/utils/form";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidatePath } from "next/cache";
 
-type FreshnessCommand = "checkNow" | "stop";
+type FreshnessCommand = "checkNow" | "readAgain" | "stop";
 export type FreshnessTargetKind = "exam" | "source";
 type FreshnessResult = "started" | "stopped";
 
@@ -18,7 +18,7 @@ export type FreshnessCommandState = {
 };
 
 function parseCommand(value: string | null): FreshnessCommand | null {
-  return value === "checkNow" || value === "stop" ? value : null;
+  return value === "checkNow" || value === "readAgain" || value === "stop" ? value : null;
 }
 
 /** The API names an exam target by its blueprint id and a source target by its source id. */

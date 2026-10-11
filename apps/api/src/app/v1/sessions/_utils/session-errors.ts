@@ -1,5 +1,6 @@
 import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, httpStatus } from "@/lib/api-errors";
+import { authRateLimitError } from "@/lib/auth-rate-limit-error";
 import { sessionErrorCodes } from "@/lib/session-error-codes";
 import { DISPOSABLE_EMAIL_ERROR_MESSAGE } from "@zoonk/auth/email-signup-contract";
 import { getAuthError } from "@zoonk/auth/errors";
@@ -7,26 +8,6 @@ import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/na
 
 function isInvalidSocialAuthorization(error: unknown) {
   return getAuthError(error)?.statusCode === httpStatus.unauthorized;
-}
-
-function getRateLimitErrorResponse(error: unknown) {
-  const authError = getAuthError(error);
-
-  if (authError?.statusCode !== httpStatus.tooManyRequests) {
-    return null;
-  }
-
-  const response = createErrorResponse({
-    code: sessionErrorCodes.rateLimitExceeded,
-    message: "Too many requests. Try again later",
-    status: httpStatus.tooManyRequests,
-  });
-
-  if (authError.retryAfter !== undefined) {
-    response.headers.set("Retry-After", authError.retryAfter.toString());
-  }
-
-  return response;
 }
 
 function getAccountDisabledErrorResponse(error: unknown) {
@@ -76,7 +57,7 @@ function getSharedSessionErrorResponse(error: unknown) {
 
   return (
     getUntrustedOriginErrorResponse(error) ??
-    getRateLimitErrorResponse(error) ??
+    authRateLimitError(error) ??
     getAccountDisabledErrorResponse(error)
   );
 }

@@ -1,10 +1,16 @@
 import { type Task } from "@/lib/types";
 import {
   type GenerateGoalTutorAnswerParams,
-  type GoalTutorAppToolResult,
-  type GoalTutorPlanChangeResult,
   generateGoalTutorAnswer,
 } from "@zoonk/ai/tasks/v2/tutor/goal-tutor";
+import {
+  type GoalTutorAppToolResult,
+  type GoalTutorPlanChangeResult,
+} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-cards";
+import {
+  type GoalTutorLookUp,
+  type GoalTutorLookUpResult,
+} from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
 import { type GoalTutorAppTool } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-tools";
 import { TEST_CASES } from "./test-cases";
 
@@ -14,6 +20,8 @@ import { TEST_CASES } from "./test-cases";
  */
 type GoalTutorOutput = {
   answer: string;
+  /** What the buddy looked up, with what core answered (`found`, `notFound`); null when nothing. */
+  lookUps: string | null;
   offeredTools: string | null;
   proposedChange: string | null;
   searches: string | null;
@@ -55,9 +63,17 @@ export type GoalTutorAppToolStandIn = Partial<
   >
 >;
 
-type GoalTutorInput = Omit<GenerateGoalTutorAnswerParams, "offerAppTool" | "proposePlanChange"> & {
+/** What core answers each lookup with; a kind the case leaves out finds nothing. */
+export type GoalTutorLookUpStandIn = Partial<Record<GoalTutorLookUp, GoalTutorLookUpResult>>;
+
+type GoalTutorInput = Omit<
+  GenerateGoalTutorAnswerParams,
+  "lookUp" | "offerAppTool" | "proposePlanChange"
+> & {
   /** What core answers each app tool with; a tool the case leaves out is unavailable. */
   appTools?: GoalTutorAppToolStandIn;
+  /** What core answers each lookup with. */
+  lookUps?: GoalTutorLookUpStandIn;
   /** What core answers the change with: proposed (the default), or unchanged for a no-op. */
   planChange?: GoalTutorPlanChangeStandIn;
 };
@@ -88,34 +104,37 @@ function standInAppTool({
 }
 
 /**
- * Stands in for core: the change is "proposed" with the request as its summary (or "unchanged",
+ * Stands in for core: a lookup finds what the case says, the change is "proposed" with the request as its summary (or "unchanged",
  * when the case says the plan already works that way), with what the case says core adds (parts
  * left out, the notice's official date, cautions, the effect), and an app tool is offered or not
  * as the case says, so the eval sees whether the buddy chose the right lever and how it talks
  * about it afterwards. Searches run for real.
  */
-async function generate({ appTools, planChange, ...input }: GoalTutorInput & { model: string }) {
+async function generate({
+  appTools,
+  lookUps,
+  planChange,
+  ...input
+}: GoalTutorInput & { model: string }) {
   const requests: string[] = [];
   const offers: string[] = [];
+  const looked: string[] = [];
   const results: unknown[] = [];
 
-  // One card per message, as the API keeps it: a plan change's or a feature's, the first one.
-  const hasCard = () =>
-    results.some(
-      (shown) =>
-        typeof shown === "object" &&
-        shown !== null &&
-        "status" in shown &&
-        (shown.status === "proposed" || shown.status === "offered"),
-    );
-
+  // The buddy's tools keep one card per message (`createCardTools`): only calls that may show
+  // one reach these stand-ins, so a feature turned away for the message's card isn't listed.
   const result = await generateGoalTutorAnswer({
     ...input,
+    // What core finds for each kind, as the case says; a kind it leaves out finds nothing.
+    lookUp: ({ area, query, what }) => {
+      const answer = lookUps?.[what] ?? { status: "notFound" as const, what };
+      const asked = [area, query].filter(Boolean).join(", ");
+      looked.push(`${what}${asked ? ` (${asked})` : ""}: ${answer.status}`);
+      results.push(answer);
+      return Promise.resolve(answer);
+    },
     offerAppTool: ({ area, goal, tool, topic }) => {
-      const answer: GoalTutorAppToolResult = hasCard()
-        ? { reason: "onePerMessage", status: "unavailable", tool }
-        : standInAppTool({ appTools, area, tool });
-
+      const answer = standInAppTool({ appTools, area, tool });
       const asked = [area, goal, topic].filter(Boolean).join(", ");
       const locked = answer.status === "offered" && answer.plusRequired ? " (locked: Plus)" : "";
       offers.push(`${tool}${asked ? ` (${asked})` : ""}: ${answer.status}${locked}`);
@@ -125,7 +144,7 @@ async function generate({ appTools, planChange, ...input }: GoalTutorInput & { m
     proposePlanChange: (request) => {
       requests.push(request);
 
-      const proposed = (): GoalTutorPlanChangeResult =>
+      const answer: GoalTutorPlanChangeResult =
         planChange === "unchanged"
           ? { leftOut: [], status: "unchanged" }
           : {
@@ -137,10 +156,6 @@ async function generate({ appTools, planChange, ...input }: GoalTutorInput & { m
               status: "proposed",
             };
 
-      const answer: GoalTutorPlanChangeResult = hasCard()
-        ? { reason: "onePerMessage", status: "notPossible" }
-        : proposed();
-
       results.push(answer);
       return Promise.resolve(answer);
     },
@@ -149,6 +164,7 @@ async function generate({ appTools, planChange, ...input }: GoalTutorInput & { m
   return {
     data: {
       answer: result.data.answer,
+      lookUps: looked.join(" | ") || null,
       offeredTools: offers.join(" | ") || null,
       proposedChange: requests.join(" | ") || null,
       searches: result.data.searches.join(" | ") || null,

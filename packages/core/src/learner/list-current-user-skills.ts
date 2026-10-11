@@ -3,8 +3,9 @@ import { type LearnerSkill, type Skill, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag } from "../cache/tags";
 import { getSession } from "../users/get-session";
-import { type GoalSkillNode, loadGoalPlan } from "./_utils/goal-skill-graph";
+import { type GoalSkillNode } from "./_utils/goal-skill-graph";
 import { findOwnedGoal } from "./_utils/owned-goal";
+import { readGoalPlan } from "./_utils/read-goal-plan";
 import { type SkillStatus, toSkillStatus } from "./_utils/skill-status";
 import { type SkillListInput } from "./contract";
 import { type SkillStateCounts, countSkillStates } from "./mastery-state";
@@ -68,7 +69,7 @@ async function loadGoalCards({
   now: Date;
   userId: string;
 }) {
-  const { skills: nodes } = await loadGoalPlan(goalId);
+  const { skills: nodes } = await readGoalPlan(goalId);
   const skillIds = nodes.map((node) => node.id);
 
   const [skills, learnerSkills] = await Promise.all([

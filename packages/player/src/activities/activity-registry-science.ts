@@ -1,15 +1,24 @@
+import { isFillable } from "@zoonk/core/library/activities/combination-grid";
 import {
   type ActivityRendererMap,
   defineActivityRenderer,
 } from "./_utils/define-activity-renderer";
 
 /**
- * Science: parameter simulations, labeled diagrams, process order, molecules and Punnett squares.
+ * Science: combination grids (Punnett squares), labeled diagrams, process order and molecules.
  * Spread into `activityRenderers`.
  */
 export const scienceRenderers: ActivityRendererMap<
-  "labeledDiagram" | "moleculeBuilder" | "parameterSimulation" | "processOrder" | "punnettSquare"
+  "combinationGrid" | "labeledDiagram" | "moleculeBuilder" | "processOrder"
 > = {
+  combinationGrid: defineActivityRenderer({
+    badge: ({ fields }) => (isFillable(fields) ? "fillSquare" : "readChart"),
+    load: () =>
+      import("./combination-grid/combination-grid-activity").then(
+        (module) => module.CombinationGridActivity,
+      ),
+    template: "combinationGrid",
+  }),
   labeledDiagram: defineActivityRenderer({
     badge: "labelIt",
     load: () =>
@@ -26,14 +35,6 @@ export const scienceRenderers: ActivityRendererMap<
       ),
     template: "moleculeBuilder",
   }),
-  parameterSimulation: defineActivityRenderer({
-    badge: "tryIt",
-    load: () =>
-      import("./parameter-simulation/parameter-simulation-activity").then(
-        (module) => module.ParameterSimulationActivity,
-      ),
-    template: "parameterSimulation",
-  }),
   processOrder: defineActivityRenderer({
     badge: "putInOrder",
     load: () =>
@@ -41,13 +42,5 @@ export const scienceRenderers: ActivityRendererMap<
         (module) => module.ProcessOrderActivity,
       ),
     template: "processOrder",
-  }),
-  punnettSquare: defineActivityRenderer({
-    badge: "fillSquare",
-    load: () =>
-      import("./punnett-square/punnett-square-activity").then(
-        (module) => module.PunnettSquareActivity,
-      ),
-    template: "punnettSquare",
   }),
 };

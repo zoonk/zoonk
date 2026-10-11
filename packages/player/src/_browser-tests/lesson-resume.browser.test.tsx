@@ -2,15 +2,15 @@ import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import { lessonStepCheckInputSchema } from "@zoonk/core/lesson-player/contract";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { teachingStep } from "../_test-utils/lesson-steps";
 import {
   buildAdapters,
-  buildLesson,
   renderLessonPlayer,
   runAnswer,
   startedRun,
 } from "../_test-utils/render-lesson-player";
 import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
+import { buildLesson } from "../preview/preview-lesson";
+import { teachingStep } from "../preview/preview-steps";
 
 /**
  * Coming back to a lesson: the run on the server keeps the learner's answers, so the lesson opens

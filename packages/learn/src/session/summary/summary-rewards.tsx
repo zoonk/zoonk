@@ -4,7 +4,7 @@ import { BRAIN_POWER_BONUS } from "@zoonk/core/sessions/brain-power";
 import { BeltIndicator, beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BrainIcon, ChevronsUpIcon, UtensilsIcon } from "lucide-react";
+import { BrainIcon, ChevronsUpIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { StepCard, StepRow, StepRows, StepTitle } from "../../_components/step-card";
 import { useBeltName } from "../../_utils/use-belt-name";
@@ -63,17 +63,17 @@ function RewardsArt() {
   );
 }
 
-/** The full meal: all three missions done, and the bonus they paid. */
-function FullMealRow() {
+/** Today's three missions, all done, and the bonus they paid. */
+function MissionsBonusRow() {
   const t = useExtracted();
   const format = useFormatter();
 
   return (
     <StepRow>
-      <UtensilsIcon aria-hidden="true" className="text-muted-foreground" />
+      <ListChecksIcon aria-hidden="true" className="text-muted-foreground" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="font-medium">{t("Full meal")}</span>
-        <span className="text-muted-foreground">{t("All three missions done today")}</span>
+        <span className="font-medium">{t("Today's missions")}</span>
+        <span className="text-muted-foreground">{t("All three done")}</span>
       </span>
       <span className="text-success shrink-0 font-semibold tabular-nums">
         {t("+{bonus}", { bonus: format.number(BRAIN_POWER_BONUS.fullMeal) })}
@@ -134,8 +134,8 @@ function StreakRow({ count }: { count: number }) {
 }
 
 /**
- * What the session earned, around the buddy: Brain Power big, then only what happened: the full
- * meal, a new stripe on the belt and the best streak of right answers.
+ * What the session earned, around the buddy: Brain Power big, then only what happened: the bonus
+ * for all three missions, a new stripe on the belt and the best streak of right answers.
  */
 export function RewardsStep() {
   const t = useExtracted();
@@ -157,7 +157,7 @@ export function RewardsStep() {
 
       {(fullMeal || hasStripe || hasStreak) && (
         <StepRows>
-          {fullMeal && <FullMealRow />}
+          {fullMeal && <MissionsBonusRow />}
           {hasStripe && <BeltRow belt={belt} />}
           {hasStreak && <StreakRow count={bestStreak} />}
         </StepRows>

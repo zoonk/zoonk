@@ -34,7 +34,6 @@ export const TEST_CASES: TestCase<never, StepVariantInput>[] = [
         },
         kind: "explanation",
       },
-      variant: "tool",
     },
   },
   {
@@ -65,7 +64,6 @@ export const TEST_CASES: TestCase<never, StepVariantInput>[] = [
         },
         kind: "workedExample",
       },
-      variant: "tool",
     },
   },
   {
@@ -90,7 +88,6 @@ export const TEST_CASES: TestCase<never, StepVariantInput>[] = [
         },
         kind: "explanation",
       },
-      variant: "tool",
     },
   },
   {
@@ -124,7 +121,6 @@ export const TEST_CASES: TestCase<never, StepVariantInput>[] = [
         },
         kind: "check",
       },
-      variant: "tool",
     },
   },
 ];

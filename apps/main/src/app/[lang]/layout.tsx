@@ -8,6 +8,7 @@ import { type Metadata } from "next";
 import { lang } from "next/root-params";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
+import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
 import "../globals.css";
@@ -30,18 +31,21 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   return (
     <html lang={await lang()}>
       <body className="font-sans antialiased">
+        {/* First, so the toast region listens before any page's first effects add a toast (the
+            confirmation of a deleted account, shown as the home page loads). */}
+        <Toaster />
         <NuqsAdapter>
           <ClientMessagesProvider scope="site">
             <MainFeedbackProvider>
               <MainSpeechProvider>{children}</MainSpeechProvider>
               <AppCommandPaletteSlot />
+              <AccountDeletedToast />
             </MainFeedbackProvider>
           </ClientMessagesProvider>
         </NuqsAdapter>
         <Suspense fallback={null}>
           <AppAnalytics />
         </Suspense>
-        <Toaster />
       </body>
     </html>
   );

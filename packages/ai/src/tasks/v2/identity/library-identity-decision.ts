@@ -3,7 +3,14 @@ import { decideBoolean } from "../../../evaluate/decisions";
 import { type EvaluationRunDetails, evaluateQuestions } from "../../../evaluate/evaluate-questions";
 import { JEV_MODEL_ID } from "../../../evaluate/evaluation-models";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
-import decisionPrompt from "./library-identity-decision.prompt.md";
+import chapterLessonRules from "./library-identity-chapter-lesson.prompt.md";
+import courseItemRules from "./library-identity-course-items.prompt.md";
+import courseRules from "./library-identity-course.prompt.md";
+import basePrompt from "./library-identity-decision.prompt.md";
+import imageRules from "./library-identity-image.prompt.md";
+import researchSourceRules from "./library-identity-research-source.prompt.md";
+import skillRules from "./library-identity-skill.prompt.md";
+import sourceRules from "./library-identity-source.prompt.md";
 import {
   type LibraryIdentityCandidate,
   type LibraryIdentityKind,
@@ -53,6 +60,17 @@ const REUSE_CRITERIA: Readonly<Record<LibraryIdentityKind, { false: string; true
   },
 };
 
+/** Each question reads the reuse rules of its own kind of item only, after the shared ones. */
+const DECISION_PROMPTS: Readonly<Record<LibraryIdentityKind, string>> = {
+  chapter: [basePrompt, courseItemRules, chapterLessonRules].join("\n"),
+  course: [basePrompt, courseRules].join("\n"),
+  image: [basePrompt, imageRules].join("\n"),
+  lesson: [basePrompt, courseItemRules, chapterLessonRules].join("\n"),
+  researchSource: [basePrompt, researchSourceRules].join("\n"),
+  skill: [basePrompt, courseItemRules, skillRules].join("\n"),
+  source: [basePrompt, sourceRules].join("\n"),
+};
+
 export type LibraryIdentityVerdict = {
   id: string;
   /** P(the candidate can replace the request), as the model estimated it. */
@@ -79,7 +97,7 @@ export function getLibraryIdentityQuestion({
 }) {
   return {
     criteria: REUSE_CRITERIA[kind],
-    instructions: `${decisionPrompt}\nThis question is about ${toCandidateField(position)} only.`,
+    instructions: `${DECISION_PROMPTS[kind]}\nThis question is about ${toCandidateField(position)} only.`,
     type: "boolean",
   } as const;
 }

@@ -18,7 +18,7 @@ describe("the plan's course", () => {
   it("says which course the plan is built from, how much of it and at which level", async () => {
     const { course, organization, plan } = await readPlan(["done", "todo", "todo", "todo"]);
 
-    expect(plan?.finished).toBe(false);
+    expect(plan?.end).toBeNull();
 
     expect(plan?.course).toMatchObject({
       brandSlug: organization.slug,
@@ -34,9 +34,12 @@ describe("the plan's course", () => {
     ).toStrictEqual(["overview"]);
   });
 
-  it("is finished once every lesson is behind the learner", async () => {
-    const { plan } = await readPlan(["done", "skipped", "testedOut", "done"]);
-    expect(plan?.finished).toBe(true);
+  it("is finished once every lesson was studied or tested out, and only ended with one set aside", async () => {
+    const finished = await readPlan(["done", "testedOut", "testedOut", "done"]);
+    expect(finished.plan?.end).toStrictEqual({ kind: "finished", setAsideLessons: 0 });
+
+    const ended = await readPlan(["done", "skipped", "testedOut", "done"]);
+    expect(ended.plan?.end).toStrictEqual({ kind: "ended", setAsideLessons: 1 });
   });
 
   it("has no levels or public page for a private course", async () => {

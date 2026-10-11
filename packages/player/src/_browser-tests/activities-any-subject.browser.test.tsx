@@ -1,4 +1,4 @@
-import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
+import { engineModeFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { type Locator, page } from "vitest/browser";
 import {
@@ -29,9 +29,11 @@ function hasVisibleBox(element: Element | null) {
   return box.width > 0 && box.height > 0;
 }
 
+const cited = engineModeFixtures.guessReveal.cited;
+
 describe("any-subject activities", () => {
-  it("predict then reveal: a close guess shows the real value", async () => {
-    openActivity({ template: "predictReveal" });
+  it("guess then reveal: a close guess shows the cited value", async () => {
+    openActivity({ content: cited, template: "guessReveal" });
     await expect.element(page.getByText("Drag to guess")).toBeVisible();
     await valueInput().fill("14");
     await checkActivity();
@@ -40,8 +42,8 @@ describe("any-subject activities", () => {
     await expect.element(page.getByText("The map stretches land near the poles.")).toBeVisible();
   });
 
-  it("predict then reveal: a far guess says how far", async () => {
-    openActivity({ template: "predictReveal" });
+  it("guess then reveal: a far guess says how far", async () => {
+    openActivity({ content: cited, template: "guessReveal" });
     await valueInput().fill("3");
     await checkActivity();
     await expectVerdict("Not quite");
@@ -72,15 +74,13 @@ describe("any-subject activities", () => {
   });
 
   it("activities render lesson math in the prompt and the reveal", async () => {
-    const fixture = activityContentFixtures.predictReveal;
-
     openActivity({
       content: {
-        ...fixture,
-        fields: { ...fixture.fields, explanation: "Africa is about $14 \\times$ Greenland." },
+        ...cited,
+        fields: { ...cited.fields, takeaway: "Africa is about $14 \\times$ Greenland." },
         prompt: "How many Greenlands fit in $A_{Africa}$?",
       },
-      template: "predictReveal",
+      template: "guessReveal",
     });
 
     const prompt = page.getByRole("heading", { name: /How many Greenlands fit in/u });
@@ -95,8 +95,8 @@ describe("any-subject activities", () => {
 });
 
 describe("any-subject activities with a keyboard", () => {
-  it("predict then reveal: arrow keys place the guess", async () => {
-    openActivity({ template: "predictReveal" });
+  it("guess then reveal: arrow keys place the guess", async () => {
+    openActivity({ content: cited, template: "guessReveal" });
     await pressOnSlider("Your guess", "ArrowRight", 10);
     await expect.element(page.getByText(/^Your guess: /u)).toBeVisible();
     await expect.element(valueInput()).not.toHaveValue("");

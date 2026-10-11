@@ -1,18 +1,13 @@
 "use client";
 
 import { saveBuddyAction } from "@/app/[lang]/(settings)/settings/appearance/actions";
-import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
-import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
-import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
-import { getGoalStartHref } from "@/lib/public/public-hrefs";
-import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
+import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
 import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
 import {
   BuddyScreen,
-  type BuddyScreenActions,
   type BuddyScreenHrefs,
   type BuddyStatusView,
   type TutorSituation,
@@ -20,26 +15,8 @@ import {
 } from "@zoonk/learn/buddy";
 import { TutorConversation } from "@zoonk/player/tutor/conversation";
 import { useMemo } from "react";
-import { answerPlanChangeAction } from "../journey/journey-actions";
 
 const HREFS: BuddyScreenHrefs = { energy: "/energy", logbook: "/logbook" };
-
-/**
- * Where each feature the buddy offers opens. Choosing where to focus is the Journey with its
- * "Choose where to focus" sheet open; a written test is its subject's page.
- */
-const TOOL_HREFS: BuddyScreenActions["tools"]["hrefs"] = {
-  chooseFocus: "/journey?focus=choose",
-  chooseMock: MOCK_ENTRY_HREFS.choose,
-  course: ({ brandSlug, slug }) => getCourseHref({ brandSlug, courseSlug: slug }),
-  logbook: "/logbook",
-  memory: "/settings/memory",
-  mistakes: "/mistakes",
-  pronunciation: "/pronunciation",
-  startGoal: getGoalStartHref,
-  stats: "/stats",
-  subject: (key) => `/journey/${key}`,
-};
 
 /** What the conversation shows at once: the newest messages and where the earlier ones continue. */
 type ThreadPage = Pick<LessonQuestionThreadResource, "hasMore" | "nextCursor" | "questions">;
@@ -88,22 +65,13 @@ export function BuddyPageClient({
   status: BuddyStatusView;
 }) {
   const router = useRouter();
-  const startTestOut = useStartTestOut();
-  const startConversation = useStartLanguageConversation();
+  const { decide, tools } = useTutorCardActions(goalId);
   useRefreshWhenOld(readAt);
 
   return (
     <BuddyScreen
       actions={{
-        decidePlanChange: async ({ changeId, status: decision }) => {
-          const answered = await answerPlanChangeAction(goalId, { changeId, status: decision });
-
-          if (answered) {
-            router.refresh();
-          }
-
-          return answered;
-        },
+        decidePlanChange: decide,
         saveBuddy: async (buddy) => {
           const saved = await saveBuddyAction(buddy);
 
@@ -113,12 +81,7 @@ export function BuddyPageClient({
 
           return saved;
         },
-        tools: {
-          hrefs: TOOL_HREFS,
-          startConversation: ({ chapterId, goalId: callGoalId, minutes }) =>
-            startConversation({ chapterId, goalId: callGoalId, kind: "practice", minutes }),
-          startTestOut,
-        },
+        tools,
       }}
       hrefs={HREFS}
       situation={situation}

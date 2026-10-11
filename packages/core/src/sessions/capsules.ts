@@ -129,9 +129,9 @@ export function getCapsuleOpening(skills: readonly { due: Date | null }[]): Date
 
 /**
  * The day an idea comes back for review as the learner reads it: an idea already due comes back at
- * the next session (tomorrow), never on a day that passed, and never on or after the goal's date,
- * where the plan ends (an exam's final stretch reviews what would fade by then), so the last day
- * before it. Null when that leaves no day after today. Days are UTC-midnight labels.
+ * the next session (tomorrow), never on a day that passed. Null when that's on or after the goal's
+ * date, where the plan ends: an exam's final stretch reviews only what would fade before the exam,
+ * and an idea due after it doesn't. Days are UTC-midnight labels.
  */
 export function capReviewDay({
   day,
@@ -142,18 +142,23 @@ export function capReviewDay({
   targetDate: Date | null;
   today: Date;
 }): Date | null {
-  const tomorrow = today.getTime() + MS_PER_DAY;
-  const next = new Date(Math.max(day.getTime(), tomorrow));
+  const next = new Date(Math.max(day.getTime(), today.getTime() + MS_PER_DAY));
+  return !targetDate || next < targetDate ? next : null;
+}
 
-  if (!targetDate) {
-    return next;
-  }
+/** The capsules whose questions fit `maxQuestions`, most urgent first; at least the first one. */
+export function takeCapsules<T extends { itemIds: readonly string[] }>({
+  capsules,
+  maxQuestions,
+}: {
+  capsules: readonly T[];
+  maxQuestions: number;
+}): T[] {
+  return capsules.filter((_, index) => {
+    const questions = capsules
+      .slice(0, index + 1)
+      .reduce((sum, capsule) => sum + capsule.itemIds.length, 0);
 
-  const lastDay = targetDate.getTime() - MS_PER_DAY;
-
-  if (next.getTime() <= lastDay) {
-    return next;
-  }
-
-  return lastDay >= tomorrow ? new Date(lastDay) : null;
+    return index === 0 || questions <= maxQuestions;
+  });
 }

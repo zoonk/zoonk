@@ -17,7 +17,8 @@ export type GoalUnderstandingRunResult =
 
 /**
  * Gets a draft ready for the run that reads its words, when the learner starts it or tries again:
- * `understood` when nothing needs to run (already read, or the same words were understood today),
+ * `understood` when nothing needs to run (already read, or the learner's same words were understood
+ * today),
  * `start` when a run should start. A new draft's first run was already claimed when it was saved;
  * starting one again is another of the learner's small AI calls (`claimAssist`). A guest whose one
  * goal is taken can't confirm it, so nothing is read for them. A failed draft goes back to being
@@ -48,6 +49,7 @@ export async function prepareGoalUnderstandingRun({
     language: draft.language,
     normalizedPrompt: normalizeString(draft.prompt),
     now: new Date(),
+    userId: session.user.id,
   });
 
   if (cached) {

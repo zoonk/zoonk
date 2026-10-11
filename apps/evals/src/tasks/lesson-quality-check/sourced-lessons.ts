@@ -24,6 +24,7 @@ const taxDeadlines: WrittenLesson = {
     },
     {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "Each spring you report last year's income to the federal government on a **tax return**. For your 2025 income, the return is due **April 15, 2026**. Filing late without asking for more time can cost you penalties.",
@@ -32,6 +33,7 @@ const taxDeadlines: WrittenLesson = {
     },
     {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "If your forms aren't ready, send **Form 4868** by April 15 and you get 6 more months to file: until October 15, 2026. It doesn't delay paying: the tax you owe is still due April 15, 2026, or interest and penalties start.",
@@ -45,17 +47,20 @@ const taxDeadlines: WrittenLesson = {
       options: [
         {
           isCorrect: true,
+          picture: null,
           reason: "The extension only moves the filing date, so payment stays on April 15.",
           text: "April 15, 2026",
         },
         {
           isCorrect: false,
+          picture: null,
           reason:
             "Tempting, since that's her new filing date, but the extension doesn't move payment.",
           text: "October 15, 2026",
         },
         {
           isCorrect: false,
+          picture: null,
           reason:
             "Paying when she files means paying late: interest and penalties run from April 15.",
           text: "Whenever she files",
@@ -72,18 +77,21 @@ const taxDeadlines: WrittenLesson = {
       options: [
         {
           isCorrect: true,
+          picture: null,
           reason:
             "He gets until October 15 to file, and paying by April 15 avoids interest and penalties.",
           text: "Send Form 4868 and pay about $1,200 by April 15",
         },
         {
           isCorrect: false,
+          picture: null,
           reason:
             "The form gives him time to file, but paying in October adds interest and penalties.",
           text: "Send Form 4868 and pay in October",
         },
         {
           isCorrect: false,
+          picture: null,
           reason: "Without the form by April 15, both filing and paying are late.",
           text: "Wait and file everything by October 15",
         },
@@ -115,6 +123,7 @@ const estabilidade: WrittenLesson = {
     },
     {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "**Estabilidade** é a garantia de não ser mandado embora por decisão de um chefe. Quem entra por concurso ganha essa garantia depois de **três anos** trabalhando no cargo, e só se for aprovado numa avaliação do seu trabalho feita por uma comissão.",
@@ -128,18 +137,21 @@ const estabilidade: WrittenLesson = {
       options: [
         {
           isCorrect: true,
+          picture: null,
           reason:
             "Os três anos são só uma parte: sem a aprovação na avaliação, ele ainda não é estável.",
           text: "Não, falta ser aprovado na avaliação",
         },
         {
           isCorrect: false,
+          picture: null,
           reason:
             "É a pegadinha mais comum: o tempo sozinho não dá estabilidade, a avaliação é obrigatória.",
           text: "Sim, três anos bastam",
         },
         {
           isCorrect: false,
+          picture: null,
           reason: "Na posse ele só começa a contar os três anos.",
           text: "Sim, desde a posse",
         },
@@ -150,6 +162,7 @@ const estabilidade: WrittenLesson = {
     },
     {
       exampleLineIdea: null,
+      explore: null,
       image: null,
       kind: "explanation",
       text: "Estabilidade não é para sempre. Por falta ou mau desempenho, o servidor estável pode perder o cargo por uma decisão da Justiça da qual não cabe mais recurso, por um **processo administrativo** (uma apuração feita pelo próprio órgão, em que ele pode se defender) ou por avaliações periódicas do seu trabalho, também com direito a defesa.",
@@ -164,17 +177,20 @@ const estabilidade: WrittenLesson = {
       options: [
         {
           isCorrect: true,
+          picture: null,
           reason:
             "Uma servidora estável só perde o cargo depois de um processo em que possa se defender.",
           text: "Não, antes vem um processo com direito a defesa",
         },
         {
           isCorrect: false,
+          picture: null,
           reason: "O chefe pode abrir o processo, mas não decide sozinho nem na hora.",
           text: "Sim, falta grave permite demitir na hora",
         },
         {
           isCorrect: false,
+          picture: null,
           reason:
             "Pagar indenização não substitui o processo: acusada de falta grave, ela só perde o cargo depois de um processo em que possa se defender.",
           text: "Sim, se a prefeitura pagar uma indenização",

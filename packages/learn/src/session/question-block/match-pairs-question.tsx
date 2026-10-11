@@ -6,6 +6,8 @@ import { useEnterKey, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { toPlainItemLine } from "../../questions/_utils/item-text";
+import { ItemLine } from "../../questions/item-text";
 import { type StudyQuestionAnswer } from "../session-types";
 
 /** Each left entry's pick, as an index into the right column; -1 while unmatched. */
@@ -20,6 +22,15 @@ function PairBadge({ number }: { number: number }) {
         {number}
       </span>
     </LineMarker>
+  );
+}
+
+/** An entry's words, with the emphasis item writers use, filling the button's width. */
+function EntryText({ text }: { text: string }) {
+  return (
+    <span className="flex-1">
+      <ItemLine text={text} />
+    </span>
   );
 }
 
@@ -122,7 +133,7 @@ export function MatchPairsQuestion({
                 type="button"
               >
                 {matches[index] !== UNMATCHED && <PairBadge number={index + 1} />}
-                <span className="flex-1">{entry}</span>
+                <EntryText text={entry} />
               </button>
             </li>
           ))}
@@ -137,8 +148,11 @@ export function MatchPairsQuestion({
                 <button
                   aria-label={
                     owner === UNMATCHED
-                      ? entry
-                      : t("{entry}, matched with {other}", { entry, other: left[owner] ?? "" })
+                      ? toPlainItemLine(entry)
+                      : t("{entry}, matched with {other}", {
+                          entry: toPlainItemLine(entry),
+                          other: toPlainItemLine(left[owner] ?? ""),
+                        })
                   }
                   className={entryClass}
                   disabled={disabled || (selected === null && owner === UNMATCHED)}
@@ -146,7 +160,7 @@ export function MatchPairsQuestion({
                   type="button"
                 >
                   {owner !== UNMATCHED && <PairBadge number={owner + 1} />}
-                  <span className="flex-1">{entry}</span>
+                  <EntryText text={entry} />
                 </button>
               </li>
             );

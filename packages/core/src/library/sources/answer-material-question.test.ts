@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { answerFromMaterial } from "@zoonk/ai/tasks/v2/material/answer";
-import { isRateLimited } from "@zoonk/auth/rate-limit";
 import { prisma } from "@zoonk/db";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -11,7 +10,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { answerMaterialQuestion } from "./answer-material-question";
 import { PAGE_BREAK, PPTX_CONTENT_TYPE } from "./source-contract";
-import type * as RateLimitModule from "@zoonk/auth/rate-limit";
 
 vi.mock("../../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("@zoonk/ai/tasks/v2/material/answer", () => ({ answerFromMaterial: vi.fn() }));
@@ -19,12 +17,6 @@ vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 
 // PostHog is an external service; the mock records what would leave the server.
 vi.mock("../../analytics/server", () => ({ trackServerEvent: vi.fn() }));
-
-/** The Vercel Firewall only answers on Vercel, so tests stand in for the adapter that asks it. */
-vi.mock("@zoonk/auth/rate-limit", async (importOriginal) => ({
-  ...(await importOriginal<typeof RateLimitModule>()),
-  isRateLimited: vi.fn(),
-}));
 
 function mockAnswer(data: { answer: string; found: boolean; refs: string[] }) {
   vi.mocked(answerFromMaterial).mockResolvedValueOnce({
@@ -67,7 +59,6 @@ describe(answerMaterialQuestion, () => {
   beforeEach(() => {
     mockSession(null);
     vi.mocked(headers).mockResolvedValue(new Headers());
-    vi.mocked(isRateLimited).mockResolvedValue(false);
   });
 
   it("answers from the learner's own material with the slides it came from", async () => {

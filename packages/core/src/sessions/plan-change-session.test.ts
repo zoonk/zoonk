@@ -9,7 +9,7 @@ import { submitChapterTestOut } from "../learner/test-out/submit-chapter-test-ou
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
-import { getTodayStudySession } from "./get-today-study-session";
+import { getTodayStudySession } from "./_test-utils/open-today";
 
 vi.mock("../users/get-session", () => ({ getSession: vi.fn() }));
 vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));

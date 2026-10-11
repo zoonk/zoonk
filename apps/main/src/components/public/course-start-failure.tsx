@@ -19,7 +19,7 @@ function getCourseStartRemedy(failure: CourseStartFailure): CourseStartRemedy {
     return "retry";
   }
 
-  if (failure.reason === "guest") {
+  if (failure.reason === "guest" || failure.reason === "signUpRequired") {
     return "signUp";
   }
 

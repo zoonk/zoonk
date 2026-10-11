@@ -188,6 +188,21 @@ describe(getVisualProblems, () => {
     ).toStrictEqual([]);
   });
 
+  it("counts a template explored on the screen as the map, diagram or timeline its words point at", () => {
+    const shown = {
+      explores: true,
+      hasImage: false,
+      texts: ["No mapa abaixo, veja até onde o império chegou. A linha do tempo mostra quando."],
+      visual: null,
+    };
+
+    expect(getVisualProblems({ language: "pt", shown })).toStrictEqual([]);
+
+    expect(
+      getVisualProblems({ language: "pt", shown: { ...shown, hasImage: true } }),
+    ).toStrictEqual([expect.stringContaining("show one of them")]);
+  });
+
   it("refuses a chart drawn with characters", () => {
     const problems = getVisualProblems({
       language: "pt",

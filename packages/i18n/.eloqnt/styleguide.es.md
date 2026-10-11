@@ -63,6 +63,7 @@ The app shows one translation for text that appears in more than one catalog, so
 - "Check again": "Volver a comprobar"
 - "Check": "Comprobar"
 - "Create a free account": "Crear una cuenta gratis"
+- "Create your free account to continue.": "Crea tu cuenta gratis para continuar."
 - "Explain it more simply": "Explícalo de forma más sencilla"
 - "Fix a mistake": "Corregir un error"
 - "I want to go deeper": "Quiero profundizar más"

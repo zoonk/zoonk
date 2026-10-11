@@ -231,8 +231,8 @@ catalogs:
       specifier: 6.1.2
       version: 6.1.2
     ai:
-      specifier: 7.0.130
-      version: 7.0.130
+      specifier: 7.0.137
+      version: 7.0.137
     botid:
       specifier: 1.5.11
       version: 1.5.11
@@ -446,6 +446,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/player':
+        specifier: workspace:*
+        version: link:../../packages/player
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -454,7 +457,7 @@ importers:
         version: link:../../packages/utils
       ai:
         specifier: 'catalog:'
-        version: 7.0.130(zod@4.6.5)
+        version: 7.0.137(zod@4.6.5)
       botid:
         specifier: 'catalog:'
         version: 1.5.11(next@16.4.0(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
@@ -615,7 +618,7 @@ importers:
         version: link:../../packages/utils
       ai:
         specifier: 'catalog:'
-        version: 7.0.130(zod@4.6.5)
+        version: 7.0.137(zod@4.6.5)
       lucide-react:
         specifier: 'catalog:'
         version: 1.52.0(@types/react@19.3.0)(react@19.3.0)
@@ -812,23 +815,60 @@ importers:
         specifier: 'catalog:'
         version: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@24.19.1)(@vitest/browser-playwright@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2(@noble/hashes@2.4.0))(vite@8.3.3(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
+  apps/playground:
+    dependencies:
+      '@zoonk/player':
+        specifier: workspace:*
+        version: link:../../packages/player
+      '@zoonk/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      next:
+        specifier: 'catalog:'
+        version: 16.4.0(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next-intl:
+        specifier: 'catalog:'
+        version: 4.14.9(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.0(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.1
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+
   packages/ai:
     dependencies:
       '@ai-sdk/anthropic':
-        specifier: 4.0.74
-        version: 4.0.74(zod@4.6.5)
+        specifier: 4.0.78
+        version: 4.0.78(zod@4.6.5)
       '@ai-sdk/gateway':
-        specifier: 4.0.106
-        version: 4.0.106(zod@4.6.5)
+        specifier: 4.0.110
+        version: 4.0.110(zod@4.6.5)
       '@ai-sdk/google':
-        specifier: 4.0.90
-        version: 4.0.90(zod@4.6.5)
+        specifier: 4.0.93
+        version: 4.0.93(zod@4.6.5)
       '@ai-sdk/openai':
-        specifier: 4.0.86
-        version: 4.0.86(zod@4.6.5)
+        specifier: 4.0.91
+        version: 4.0.91(zod@4.6.5)
       '@ai-sdk/provider-utils':
-        specifier: 5.0.56
-        version: 5.0.56(zod@4.6.5)
+        specifier: 5.0.58
+        version: 5.0.58(zod@4.6.5)
       '@audio/decode-wav':
         specifier: 2.0.0
         version: 2.0.0
@@ -837,7 +877,7 @@ importers:
         version: link:../utils
       ai:
         specifier: 'catalog:'
-        version: 7.0.130(zod@4.6.5)
+        version: 7.0.137(zod@4.6.5)
       server-only:
         specifier: 'catalog:'
         version: 0.0.1
@@ -872,15 +912,9 @@ importers:
       '@better-auth/stripe':
         specifier: 1.7.7
         version: 1.7.7(@better-auth/core@1.7.7(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.2)(@opentelemetry/api@1.9.1)(better-call@1.4.0(zod@4.6.5))(jose@6.2.12)(kysely@0.29.6)(nanostores@1.5.5))(better-auth@1.7.7(@opentelemetry/api@1.9.1)(@prisma/client@7.10.0(prisma@7.10.0(@types/node@24.19.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@7.0.2))(typescript@7.0.2))(mysql2@3.24.5(@types/node@24.19.1))(next@16.4.0(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(pg@8.23.1)(prisma@7.10.0(@types/node@24.19.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@7.0.2))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@5.0.3))(better-call@1.4.0(zod@4.6.5))(stripe@22.6.2(@types/node@24.19.1))
-      '@sentry/nextjs':
-        specifier: 'catalog:'
-        version: 11.5.0(next@16.4.0(@opentelemetry/api@1.9.1)(@playwright/test@1.63.0)(@types/node@24.19.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(webpack@5.111.1(@swc/core@1.15.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.29)(sharp@0.35.5(@types/node@24.19.1)))
       '@vercel/blob':
         specifier: 2.8.1
         version: 2.8.1
-      '@vercel/firewall':
-        specifier: 1.2.6
-        version: 1.2.6
       '@zoonk/db':
         specifier: workspace:*
         version: link:../db
@@ -1012,6 +1046,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
@@ -1109,8 +1146,8 @@ importers:
   packages/learn:
     dependencies:
       '@ai-sdk/openai':
-        specifier: 4.0.86
-        version: 4.0.86(zod@4.6.5)
+        specifier: 4.0.91
+        version: 4.0.91(zod@4.6.5)
       '@zoonk/core':
         specifier: workspace:*
         version: link:../core
@@ -1122,7 +1159,7 @@ importers:
         version: link:../utils
       ai:
         specifier: 'catalog:'
-        version: 7.0.130(zod@4.6.5)
+        version: 7.0.137(zod@4.6.5)
       lucide-react:
         specifier: 'catalog:'
         version: 1.52.0(@types/react@19.3.0)(react@19.3.0)
@@ -1203,6 +1240,9 @@ importers:
       '@zoonk/learn':
         specifier: workspace:*
         version: link:../learn
+      '@zoonk/testing':
+        specifier: workspace:*
+        version: link:../testing
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../ui
@@ -1214,7 +1254,7 @@ importers:
         version: 6.7.1
       ai:
         specifier: 'catalog:'
-        version: 7.0.130(zod@4.6.5)
+        version: 7.0.137(zod@4.6.5)
       d3-geo:
         specifier: 3.1.1
         version: 3.1.1
@@ -1264,6 +1304,9 @@ importers:
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
       '@types/topojson-client':
         specifier: 3.1.5
         version: 3.1.5
@@ -1282,9 +1325,6 @@ importers:
       '@zoonk/i18n':
         specifier: workspace:*
         version: link:../i18n
-      '@zoonk/testing':
-        specifier: workspace:*
-        version: link:../testing
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -1443,8 +1483,8 @@ importers:
 
 packages:
 
-  '@ai-sdk/anthropic@4.0.74':
-    resolution: {integrity: sha512-q/A7hCZSsCknmC1TtyNkBgNlT12hbKOWrgyb1UdPpIAO9sZcFS0nilZFIsW/ugVKG+hd6bU1r9NL1Ru33FDwZw==}
+  '@ai-sdk/anthropic@4.0.78':
+    resolution: {integrity: sha512-lVMxa9tLM5WoB72bqxjzWEWQlCwtBTo1L3yIKxAefowWATd+1YKohrINey6wTn8gtGEqyYm79z4DUGJBYauUFw==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -1455,14 +1495,20 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/google@4.0.90':
-    resolution: {integrity: sha512-XQNKWT6CwcgARdqTUZn0j89y0gvDMR0k2j2qhOg7ffoL+6MNViQ9t3ALoleAAKo10yMLFE7Ato0Fk+RD14i2kg==}
+  '@ai-sdk/gateway@4.0.110':
+    resolution: {integrity: sha512-5IwnOR6v7KC+D9eddUqsCobXl/FbLUVb2LaQc/uyuQdpP3/n9s0YLc9zl4/W3IS/R2pjHrqUfCzEAeOu7bFLoQ==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@4.0.86':
-    resolution: {integrity: sha512-sbUHayMvjAYV6ELydYXFTr5UBX5qyYmRELqZR3tV0dieUhgUYd8dED9bwEgqZJNJU6V8GGLOlaEpL1ltbNXA/g==}
+  '@ai-sdk/google@4.0.93':
+    resolution: {integrity: sha512-hubOUxbG2W7oD3acdCxxnrQ84NlnLqfzcHe9uWMmwkglHxq/rwsbjloPhvebeQlcQ2G0gaX+akDF1Ddm/fNAnQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/openai@4.0.91':
+    resolution: {integrity: sha512-Nk382R6us0GNxI1cGJUXMryz1XHpyrmC3K/Rmqdx9tIsqAlc7UtuO/hC9dd31F41w8uzoS362HJSDXgAI7zKbA==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -1473,8 +1519,18 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
+  '@ai-sdk/provider-utils@5.0.58':
+    resolution: {integrity: sha512-iXSwKR/7LpHzAlyrUl+bTinwzmZ3Nmup1viwPisM5Gn5cogRdIG4rV9w1ZDuKFcrXyu/AeVs42E1CX/0aNwrfQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/provider@4.0.24':
     resolution: {integrity: sha512-iztFqJTdxNN0ZzqZAAnVPMhRMaL1bfQFa3GIPAffWQ0+dP2FXIkyMD8kHeEI7EpB/C6TR45cqOkrS7YZZ1sATA==}
+    engines: {node: '>=22'}
+
+  '@ai-sdk/provider@4.0.26':
+    resolution: {integrity: sha512-BZ443uBEq6HuMA+Z4b7Hpm65GpZSo7pWqnYqpf/7tAO3C48JbtvAhOE2JnODFj+jodsZzfRHkAyQb64xuD2tZQ==}
     engines: {node: '>=22'}
 
   '@alloc/quick-lru@5.3.0':
@@ -4611,10 +4667,6 @@ packages:
     resolution: {integrity: sha512-g9XerViJ/paZujufXYcu5XYI2vU2rtB4sgdpjUHde5RnOkdmpu0ngH46LCFGHoPXO/C+qDPSczIHIRN+8Q2YKQ==}
     engines: {node: '>= 18'}
 
-  '@vercel/firewall@1.2.6':
-    resolution: {integrity: sha512-89ybsa2rnVNdw6RI3jGOVvqUJaBj6Umm4IagC1o3PKtr/MXxBKOLek+yyUgF0csA0O5W+dzcpdIhKxVXhgVVtA==}
-    engines: {node: '>= 20'}
-
   '@vercel/functions@3.9.11':
     resolution: {integrity: sha512-DbqKqcbUHGBTYgHZieSNDuF1/L2iSPZV0OGm0Xkm/t+s61lFk4VX8yGQ22Og3WYGxypW1l4Elx1NP8BL928u8Q==}
     engines: {node: '>= 20'}
@@ -4958,6 +5010,12 @@ packages:
 
   ai@7.0.130:
     resolution: {integrity: sha512-QkBkCogl46jXUg0SrSsdqQlOI2ZVMCjfnbBQS8t3gE21U/SO17oNMVFyjmcC9z20wOoYUA+2O2vsso0maoS7dw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  ai@7.0.137:
+    resolution: {integrity: sha512-JxrPkSQknxIN/gYqS3UQksExS6eWI23QMPBrKMGXeeFHhru6xFtF4MuMq17WaHD+lXPh0lne6H0BM2Z2VMW9EQ==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -8554,10 +8612,10 @@ packages:
 
 snapshots:
 
-  '@ai-sdk/anthropic@4.0.74(zod@4.6.5)':
+  '@ai-sdk/anthropic@4.0.78(zod@4.6.5)':
     dependencies:
-      '@ai-sdk/provider': 4.0.24
-      '@ai-sdk/provider-utils': 5.0.56(zod@4.6.5)
+      '@ai-sdk/provider': 4.0.26
+      '@ai-sdk/provider-utils': 5.0.58(zod@4.6.5)
       zod: 4.6.5
 
   '@ai-sdk/gateway@4.0.106(zod@4.6.5)':
@@ -8567,16 +8625,23 @@ snapshots:
       '@vercel/oidc': 3.2.0
       zod: 4.6.5
 
-  '@ai-sdk/google@4.0.90(zod@4.6.5)':
+  '@ai-sdk/gateway@4.0.110(zod@4.6.5)':
     dependencies:
-      '@ai-sdk/provider': 4.0.24
-      '@ai-sdk/provider-utils': 5.0.56(zod@4.6.5)
+      '@ai-sdk/provider': 4.0.26
+      '@ai-sdk/provider-utils': 5.0.58(zod@4.6.5)
+      '@vercel/oidc': 3.2.0
       zod: 4.6.5
 
-  '@ai-sdk/openai@4.0.86(zod@4.6.5)':
+  '@ai-sdk/google@4.0.93(zod@4.6.5)':
     dependencies:
-      '@ai-sdk/provider': 4.0.24
-      '@ai-sdk/provider-utils': 5.0.56(zod@4.6.5)
+      '@ai-sdk/provider': 4.0.26
+      '@ai-sdk/provider-utils': 5.0.58(zod@4.6.5)
+      zod: 4.6.5
+
+  '@ai-sdk/openai@4.0.91(zod@4.6.5)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.26
+      '@ai-sdk/provider-utils': 5.0.58(zod@4.6.5)
       zod: 4.6.5
 
   '@ai-sdk/provider-utils@5.0.56(zod@4.6.5)':
@@ -8588,7 +8653,20 @@ snapshots:
       undici: 7.30.0
       zod: 4.6.5
 
+  '@ai-sdk/provider-utils@5.0.58(zod@4.6.5)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.26
+      '@standard-schema/spec': 1.1.0
+      '@workflow/serde': 4.1.0
+      eventsource-parser: 3.1.1
+      undici: 7.30.0
+      zod: 4.6.5
+
   '@ai-sdk/provider@4.0.24':
+    dependencies:
+      json-schema: 0.4.0
+
+  '@ai-sdk/provider@4.0.26':
     dependencies:
       json-schema: 0.4.0
 
@@ -11038,8 +11116,6 @@ snapshots:
     dependencies:
       execa: 5.1.1
 
-  '@vercel/firewall@1.2.6': {}
-
   '@vercel/functions@3.9.11(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0)':
     dependencies:
       '@vercel/oidc': 4.0.0
@@ -11712,6 +11788,13 @@ snapshots:
       '@ai-sdk/gateway': 4.0.106(zod@4.6.5)
       '@ai-sdk/provider': 4.0.24
       '@ai-sdk/provider-utils': 5.0.56(zod@4.6.5)
+      zod: 4.6.5
+
+  ai@7.0.137(zod@4.6.5):
+    dependencies:
+      '@ai-sdk/gateway': 4.0.110(zod@4.6.5)
+      '@ai-sdk/provider': 4.0.26
+      '@ai-sdk/provider-utils': 5.0.58(zod@4.6.5)
       zod: 4.6.5
 
   ajv-formats@3.0.1(ajv@8.20.0):

@@ -1,13 +1,26 @@
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  chapterSkillFixture,
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
 import { addDays } from "../plans/planner/plan-calendar";
-import { listPlanOutlineNeeds, listPlanSkillIdsWithin } from "./plan-outline-needs";
+import {
+  listPlanOutlineNeeds,
+  listPlanSkillIdsWithin,
+  listTaughtStandInSkills,
+} from "./plan-outline-needs";
 
 describe(listPlanOutlineNeeds, () => {
   it("lists the bands a copied plan's courses still need, the course reached first first", async () => {
@@ -50,23 +63,37 @@ describe(listPlanOutlineNeeds, () => {
     });
 
     const lesson = await libraryLessonFixture();
+    const scheduledFor = new Date();
 
     await Promise.all([
-      planItemFixture({ planId: plan.id, position: 0, skillId: notes.id }),
-      planItemFixture({ lessonId: lesson.id, planId: plan.id, position: 1, skillId: written.id }),
-      planItemFixture({ planId: plan.id, position: 2, skillId: basics.id }),
-      planItemFixture({ planId: plan.id, position: 3, skillId: advanced.id }),
-      planItemFixture({ planId: plan.id, position: 4, skillId: basics.id, status: "done" }),
+      planItemFixture({ planId: plan.id, position: 0, scheduledFor, skillId: notes.id }),
+      planItemFixture({
+        lessonId: lesson.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor,
+        skillId: written.id,
+      }),
+      planItemFixture({ planId: plan.id, position: 2, scheduledFor, skillId: basics.id }),
+      planItemFixture({ planId: plan.id, position: 3, scheduledFor, skillId: advanced.id }),
+      planItemFixture({
+        planId: plan.id,
+        position: 4,
+        scheduledFor,
+        skillId: basics.id,
+        status: "done",
+      }),
     ]);
 
     const toRef = (skill: typeof basics) => ({
+      area: null,
       description: skill.description,
       id: skill.id,
       key: skill.id,
       name: skill.name,
     });
 
-    await expect(listPlanOutlineNeeds({ days: null, goalId: goal.id })).resolves.toStrictEqual([
+    await expect(listPlanOutlineNeeds({ days: 14, goalId: goal.id })).resolves.toStrictEqual([
       {
         bands: [{ level: "beginner", skills: [toRef(notes)], withToolChapters: true }],
         courseId: own.id,
@@ -127,9 +154,14 @@ describe(listPlanOutlineNeeds, () => {
       },
     });
 
-    await planItemFixture({ planId: plan.id, position: 0, skillId: topic.id });
+    await planItemFixture({
+      planId: plan.id,
+      position: 0,
+      scheduledFor: new Date(),
+      skillId: topic.id,
+    });
 
-    await expect(listPlanOutlineNeeds({ days: null, goalId: goal.id })).resolves.toMatchObject([
+    await expect(listPlanOutlineNeeds({ days: 14, goalId: goal.id })).resolves.toMatchObject([
       { bands: [{ level: "intermediate", skills: [{ id: topic.id }] }], courseId: course.id },
     ]);
   });
@@ -157,7 +189,7 @@ describe(listPlanOutlineNeeds, () => {
         phases: [{ milestone: null, name: "One" }],
         skills: [
           {
-            area: null,
+            area: "Ética Profissional",
             courseIds: [course.id],
             lessons: 4,
             name: skill.name,
@@ -169,21 +201,32 @@ describe(listPlanOutlineNeeds, () => {
       },
     });
 
-    await planItemFixture({ planId: plan.id, position: 0, skillId: skill.id });
+    await planItemFixture({
+      planId: plan.id,
+      position: 0,
+      scheduledFor: new Date(),
+      skillId: skill.id,
+    });
 
-    const [need] = await listPlanOutlineNeeds({ days: null, goalId: goal.id });
+    const [need] = await listPlanOutlineNeeds({ days: 14, goalId: goal.id });
 
     expect(need?.bands.map((band) => [band.level, band.withToolChapters])).toStrictEqual([
       ["intermediate", false],
     ]);
 
-    // Its outlines are written for that exam's candidates, without naming it.
+    // Its outlines are written for that exam's candidates, without naming it, and their reuse
+    // decisions read the exam, never the learner's title for the goal.
     expect(need?.scope.exams?.map((exam) => exam.name)).toStrictEqual([
       "OAB Exame de Ordem, 1ª fase",
     ]);
+
+    expect(need?.scope.generalGoal).toBe("OAB Exame de Ordem, 1ª fase");
+
+    // Each skill keeps its subject, so a chapter of its outline keeps to one.
+    expect(need?.bands[0]?.skills.map((ref) => ref.area)).toStrictEqual(["Ética Profissional"]);
   });
 
-  it("lists only the stand-ins due within the window when one is given", async () => {
+  it("lists only the stand-ins due within the window", async () => {
     const user = await userFixture();
 
     const [goal, course, soon, later] = await Promise.all([
@@ -231,13 +274,6 @@ describe(listPlanOutlineNeeds, () => {
     expect(need?.bands.flatMap((band) => band.skills.map((skill) => skill.id))).toStrictEqual([
       soon.id,
     ]);
-
-    const [all] = await listPlanOutlineNeeds({ days: null, goalId: goal.id });
-
-    expect(all?.bands.flatMap((band) => band.skills.map((skill) => skill.id))).toStrictEqual([
-      soon.id,
-      later.id,
-    ]);
   });
 
   it("needs nothing when every lesson of the plan is in its courses already", async () => {
@@ -248,7 +284,7 @@ describe(listPlanOutlineNeeds, () => {
 
     await planItemFixture({ lessonId: lesson.id, planId: plan.id, position: 0 });
 
-    await expect(listPlanOutlineNeeds({ days: null, goalId: goal.id })).resolves.toStrictEqual([]);
+    await expect(listPlanOutlineNeeds({ days: 14, goalId: goal.id })).resolves.toStrictEqual([]);
   });
 });
 
@@ -295,5 +331,62 @@ describe(listPlanSkillIdsWithin, () => {
     const within = await listPlanSkillIdsWithin({ days: 14, goalId: goal.id });
 
     expect(within.toSorted()).toStrictEqual([written.id, standIn.id].toSorted());
+  });
+});
+
+/** A plan item standing in for a skill's lessons not written yet. */
+function standInItem(skillId: string) {
+  return {
+    chapterId: null,
+    kind: "lesson" as const,
+    lessonId: null,
+    skillId,
+    status: "todo" as const,
+  };
+}
+
+describe(listTaughtStandInSkills, () => {
+  // Maya's "More lessons" sheet listed the chapters above it: her stand-ins were skills chapters
+  // already teach, one only through a lesson of another skill's chapter.
+  it("lists the stand-ins' skills a chapter of their course already teaches", async () => {
+    const user = await userFixture();
+
+    const [goal, course, chapter, lesson, partly, alongside, fresh] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      courseFixture(),
+      libraryChapterFixture(),
+      libraryLessonFixture(),
+      skillFixture(),
+      skillFixture(),
+      skillFixture(),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({ chapterId: chapter.id, courseId: course.id }),
+      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
+      chapterSkillFixture({ chapterId: chapter.id, skillId: partly.id }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: alongside.id }),
+    ]);
+
+    const graph = {
+      phases: [{ milestone: null, name: "One" }],
+      skills: [partly, alongside, fresh].map((skill) => ({
+        area: null,
+        courseIds: [course.id],
+        lessons: 10,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
+      })),
+    };
+
+    const taught = await listTaughtStandInSkills({
+      goal,
+      graph,
+      items: [standInItem(partly.id), standInItem(alongside.id), standInItem(fresh.id)],
+    });
+
+    expect([...taught].toSorted()).toStrictEqual([partly.id, alongside.id].toSorted());
   });
 });

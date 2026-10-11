@@ -6,6 +6,7 @@ import { ListChecksIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
 import { Disclosure } from "../_components/disclosure";
+import { type MindMapLimit } from "../_components/help-limit-notice";
 import { LessonList } from "../_components/lesson-list";
 import { LessonSummaries } from "../_components/lesson-summaries";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
@@ -28,8 +29,15 @@ export type { AreaPracticeOutcome } from "../_utils/use-practice-run";
 export type { TestOutStart } from "../_components/test-out-start-link";
 export type { ChapterActions, ChapterHrefs } from "./chapter-context";
 
-/** The chapter's mind map and what the host does for it; null for a language's unit. */
-export type ChapterMindMap = { actions: MindMapActions; view: ChapterMindMapView };
+/**
+ * The chapter's mind map and what the host does for it, with the cap of the learner's plan its
+ * maps already reached (`cap`); null for a language's unit.
+ */
+export type ChapterMindMap = {
+  actions: MindMapActions;
+  cap?: MindMapLimit | null;
+  view: ChapterMindMapView;
+};
 
 const PRACTICE_TITLE_ID = "chapter-practice-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
@@ -64,6 +72,7 @@ function ChapterSummary({
       {map && (
         <MindMapCard
           actions={map.actions}
+          cap={map.cap ?? null}
           chapterTitle={chapter.chapter.title}
           mindMap={map.view}
         />
@@ -110,7 +119,13 @@ function ChapterPractice() {
       </PageSectionHeader>
 
       <ListGroup>
-        {canTestOut && <TestOutStartRow onStart={actions.startTestOut} scope="chapter" />}
+        {canTestOut && (
+          <TestOutStartRow
+            onStart={actions.startTestOut}
+            plusRequired={chapter.testOut.plusRequired}
+            scope="chapter"
+          />
+        )}
         <ChapterMistakes />
       </ListGroup>
     </PageSection>
@@ -140,6 +155,8 @@ function ChapterBody({
             <LessonList
               lessonHref={(lessonId) => `${hrefs.lessonBasePath}/${lessonId}`}
               lessons={chapter.lessons}
+              // Only the chapter holding Today's next lesson says "Up next" for it.
+              upNext={chapter.chapter.state === "current"}
             />
           )}
           <ChapterPractice />

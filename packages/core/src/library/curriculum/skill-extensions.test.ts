@@ -222,6 +222,7 @@ describe("skill extensions", () => {
                 // The plan's stand-in: the 15 of the graph's 20 lessons the course doesn't have.
                 lessons: SKILL_LESSONS - OUTLINED_LESSONS,
                 skill: {
+                  area: "Inglês",
                   description: skill.description,
                   id: skill.id,
                   key: skill.id,
@@ -235,7 +236,14 @@ describe("skill extensions", () => {
           },
         ],
         courseId: course.id,
-        scope: { generalGoal: null, language: "pt", ownerId: null, targetLanguage: "en" },
+        // The same learners the course's first chapters are written for, in a run with them.
+        scope: {
+          exams: [],
+          generalGoal: goal.title,
+          language: "pt",
+          ownerId: null,
+          targetLanguage: "en",
+        },
       },
     ]);
   });

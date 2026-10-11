@@ -65,6 +65,7 @@ async function publishSteps({
     const claimed = await tx.lesson.updateMany({
       data: {
         contentStatus: "completed",
+        relatedQuestions: explanation.goFurther.relatedQuestions,
         summary: { ideas: explanation.recap.map((text) => ({ text })) },
       },
       where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
@@ -220,21 +221,30 @@ export async function linkExplanationToGoal({
 }
 
 /**
- * Points an explain goal at the subject's Overview course for "Want to go further?", unless it
- * already has one. A new explanation is linked to its goal first, so the learner reads it while
- * the course is found.
+ * Points an explain goal and its explanation at the subject's Overview course for "Want to go
+ * further?", unless they already have one. The lesson keeps it for every learner it's reused for
+ * (`findExplanationGoFurther`). A new explanation is linked to its goal first, so the learner reads
+ * it while the course is found.
  */
 export async function linkGoFurtherCourse({
   courseId,
   goalId,
+  lessonId,
 }: {
   courseId: string;
   goalId: string;
+  lessonId: string;
 }): Promise<void> {
-  const goal = await prisma.goal.findUnique({
-    select: { primaryCourseId: true, userId: true },
-    where: { id: goalId },
-  });
+  const [goal] = await Promise.all([
+    prisma.goal.findUnique({
+      select: { primaryCourseId: true, userId: true },
+      where: { id: goalId },
+    }),
+    prisma.lesson.updateMany({
+      data: { goFurtherCourseId: courseId },
+      where: { goFurtherCourseId: null, id: lessonId },
+    }),
+  ]);
 
   if (!goal || goal.primaryCourseId) {
     return;
@@ -256,22 +266,20 @@ export function readRelatedQuestions(details: Record<string, unknown>): string[]
 
 /**
  * "Want to go further?" for an explanation someone already asked for: the shared Overview course
- * and related questions the first goal that got it was given. Only a shared course is passed on.
+ * and related questions its lesson keeps, whoever asked first. Only a shared course is passed on.
  */
 export async function findExplanationGoFurther(
   lessonId: string,
 ): Promise<{ courseId: string | null; relatedQuestions: string[] }> {
-  const goal = await prisma.goal.findFirst({
-    orderBy: { createdAt: "asc" },
-    select: { details: true, primaryCourse: { select: { id: true, visibility: true } } },
-    where: { kind: "explain", plan: { items: { some: { lessonId } } } },
+  const lesson = await prisma.lesson.findUnique({
+    select: { goFurtherCourse: { select: { id: true, visibility: true } }, relatedQuestions: true },
+    where: { id: lessonId },
   });
 
-  const details = isJsonObject(goal?.details) ? goal.details : {};
-  const course = goal?.primaryCourse;
+  const course = lesson?.goFurtherCourse;
 
   return {
     courseId: course?.visibility === "public" ? course.id : null,
-    relatedQuestions: readRelatedQuestions(details),
+    relatedQuestions: lesson?.relatedQuestions ?? [],
   };
 }

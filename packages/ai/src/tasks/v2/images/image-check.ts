@@ -15,18 +15,23 @@ import { type ImageScene, describeImageScene } from "./image-scene-schema";
  * Flash Lite let one image with unrequested labels through. On 25 images (7 Oct
  * 2026), Claude Haiku 5.5 with thinking off got every one right as Luna did, at
  * p50 1.9s against 3.1s (p95 2.8s against 5.8s) and $0.27 per 1,000 checks
- * against $0.40.
+ * against $0.40. On 28 images (8 Oct 2026, adding three drawings numbered by part whose markers
+ * end on a part's edge or on something that belongs to it), Haiku listing problems before its
+ * verdicts passed all 15 good images and caught 12 of 13 bad ones: it let through the microwave
+ * drawn twice, which the earlier prompt caught while rejecting two of the numbered drawings.
  */
 const defaultModel = "anthropic/claude-haiku-5.5";
 const defaultReasoning: Reasoning = "none";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;
 
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: with thinking off, the model names what fails before it rules on it. */
 const schema = z.object({
+  problems: z.array(z.string()),
   matchesScene: z.boolean(),
   onStyle: z.boolean(),
-  problems: z.array(z.string()),
   textCorrect: z.boolean(),
 });
+/* oxlint-enable eslint/sort-keys */
 
 export type ImageCheckVerdict = z.infer<typeof schema> & { passed: boolean };
 
@@ -96,6 +101,7 @@ export async function checkLessonImage({
         providerOptions,
         reasoning,
       }),
+    libraryInput: true,
     systemPrompt,
     task: "image-check",
   });

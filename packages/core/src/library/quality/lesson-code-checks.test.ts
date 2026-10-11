@@ -25,6 +25,7 @@ function withScreen(index: number, screen: WrittenScreen): WrittenLesson {
 function explanation(text: string): Extract<WrittenScreen, { kind: "explanation" }> {
   return {
     exampleLineIdea: null,
+    explore: null,
     image: null,
     kind: "explanation",
     text,
@@ -82,7 +83,7 @@ describe(checkWrittenLesson, () => {
 
     expect(codesOf(withScreen(7, pointing))).toStrictEqual([[7, "visual"]]);
 
-    const shown = check(withScreen(7, { ...pointing, image: picture }));
+    const shown = check(withScreen(7, { ...pointing, image: { ...picture, parts: null } }));
 
     expect(shown.problems).toStrictEqual([]);
     expect(shown.screens[7]?.ok && shown.screens[7].content).toMatchObject({ image: picture });
@@ -95,6 +96,72 @@ describe(checkWrittenLesson, () => {
 
     expect(codesOf(withScreen(4, explanation("The chart below shows the morning.")))).toStrictEqual(
       [[4, "visual"]],
+    );
+  });
+
+  it("keeps the numbered picture a question asks about, even where the plan drew none", () => {
+    const application = writtenTemperatureLesson().screens[7];
+
+    if (application?.kind !== "check") {
+      throw new Error("Screen 8 is a check.");
+    }
+
+    const image = {
+      alt: "A thermometer from −10 °C to 10 °C with three numbered marks.",
+      parts: ["−6 °C mark", "zero mark", "3 °C mark"],
+      prompt: "A thermometer from −10 °C to 10 °C.",
+    };
+
+    const numbered = {
+      ...application,
+      context: null,
+      image,
+      options: [
+        { isCorrect: true, picture: null, reason: "Water freezes at zero.", text: "2" },
+        { isCorrect: false, picture: null, reason: "That's below freezing.", text: "1" },
+        { isCorrect: false, picture: null, reason: "That's above freezing.", text: "3" },
+      ],
+      question: "Which number marks where water freezes?",
+    };
+
+    const shown = check(withScreen(7, numbered));
+
+    expect(shown.problems).toStrictEqual([]);
+    expect(shown.screens[7]?.ok && shown.screens[7].content).toMatchObject({ image });
+  });
+
+  it("keeps a question's picture options, even where the plan drew none", () => {
+    const application = writtenTemperatureLesson().screens[7];
+
+    if (application?.kind !== "check") {
+      throw new Error("Screen 8 is a check.");
+    }
+
+    const pictured = {
+      ...application,
+      context: null,
+      options: [
+        {
+          isCorrect: true,
+          picture: { alt: "A glass tube with a red line", prompt: "A glass thermometer, alone" },
+          reason: "A liquid thermometer has a glass tube.",
+          text: "Liquid thermometer",
+        },
+        {
+          isCorrect: false,
+          picture: { alt: "A small screen with digits", prompt: "A digital thermometer, alone" },
+          reason: "That one shows digits on a screen.",
+          text: "Digital thermometer",
+        },
+      ],
+      question: "Which one is a liquid thermometer?",
+    };
+
+    const shown = check(withScreen(7, pictured));
+    const content = shown.screens[7]?.ok ? shown.screens[7].content : null;
+
+    expect(content && "options" in content && content.options).toStrictEqual(
+      expect.arrayContaining([expect.objectContaining({ picture: expect.any(Object) })]),
     );
   });
 
@@ -132,6 +199,7 @@ describe(checkWrittenLesson, () => {
     const second = {
       ...explanation("Zero is just a mark on the way up. Count the degrees to zero, then past it."),
       exampleLineIdea: "Another cold morning.",
+      explore: null,
     };
 
     const result = check(withScreen(4, second));
@@ -202,8 +270,8 @@ describe(checkWrittenLesson, () => {
       image: null,
       kind: "check",
       options: [
-        { isCorrect: true, reason: "Right.", text: "2 °C" },
-        { isCorrect: true, reason: "Also right?", text: "3 °C" },
+        { isCorrect: true, picture: null, reason: "Right.", text: "2 °C" },
+        { isCorrect: true, picture: null, reason: "Also right?", text: "3 °C" },
       ],
       question: "Which one?",
       visual: null,
@@ -289,6 +357,58 @@ describe(checkWrittenLesson, () => {
     const duplicated = { ...hook, options: [...hook.options, { isCorrect: false, text: "2 °c" }] };
 
     expect(codesOf(withScreen(0, duplicated))).toContainEqual([0, "duplicateOptions"]);
+  });
+
+  it("rejects options the screen's data disagrees with, as sensors A to E against options A to D", () => {
+    const hook = writtenTemperatureLesson().screens[0];
+
+    if (hook?.kind !== "hookGuess") {
+      throw new Error("Screen 1 is a guess.");
+    }
+
+    const sensors = {
+      ...hook,
+      options: ["A", "B", "C", "D"].map((text) => ({ isCorrect: text === "C", text })),
+      question:
+        "Which sensor is the most precise?\n\n| Sensor | mm |\n|---|---:|\n| A | 49,8 |\n| B | 50,4 |\n| C | 50,0 |\n| D | 49,6 |\n| E | 50,1 |",
+    };
+
+    expect(codesOf(withScreen(0, sensors))).toStrictEqual([[0, "optionData"]]);
+  });
+
+  it("rejects a typed answer whose sample gives none of the accepted answers", () => {
+    const typed = writtenTemperatureLesson().screens[6];
+
+    if (typed?.kind !== "typedAnswer") {
+      throw new Error("Screen 7 is a typed answer.");
+    }
+
+    const contradicting = {
+      ...typed,
+      acceptedAnswers: ["2 °C", "2 degrees"],
+      sampleAnswer: "It ends at 3 °C.",
+    };
+
+    expect(codesOf(withScreen(6, contradicting))).toStrictEqual([[6, "answerKey"]]);
+  });
+
+  it("rejects Markdown the player shows as marks and text a writer left unfinished", () => {
+    const split = explanation("_The speaker opens the session.\nThe floor is yours._");
+
+    expect(codesOf(withScreen(1, split))).toStrictEqual([
+      [1, "markdown"],
+      [1, "markdown"],
+    ]);
+
+    expect(codesOf(withScreen(1, explanation("[Insert an example here]")))).toStrictEqual([
+      [1, "placeholder"],
+    ]);
+
+    const lesson = writtenTemperatureLesson();
+
+    expect(codesOf({ ...lesson, summary: ["A rise moves up.", "## Recap"] })).toStrictEqual([
+      [null, "markdown"],
+    ]);
   });
 
   it("rejects a guess's reveal that points at an option by its place", () => {

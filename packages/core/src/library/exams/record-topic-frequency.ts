@@ -60,15 +60,18 @@ export async function findTopicFrequencyLookup({
 /**
  * Stores what the lookup found on the blueprint's structure, next to what earlier lookups found
  * for other subjects, with when it ran (also when it found nothing): the plan's weights and the
- * subject pages read it from there.
+ * subject pages read it from there. A lookup that couldn't reach every subject (`complete` false:
+ * a subject's call failed) keeps what it found but no date, so the next lookup asks for the rest.
  *
  * This is a workflow bridge: the blueprint comes from the research run that looked it up.
  */
 export async function recordTopicFrequency({
+  complete = true,
   examBlueprintId,
   now = new Date(),
   subjects,
 }: {
+  complete?: boolean;
   examBlueprintId: string;
   now?: Date;
   subjects: PastTopicFrequency["subjects"];
@@ -82,7 +85,7 @@ export async function recordTopicFrequency({
   const found = new Set(subjects.map((subject) => subject.name));
 
   const pastTopicFrequency: PastTopicFrequency = {
-    checkedAt: now.toISOString(),
+    checkedAt: complete ? now.toISOString() : null,
     subjects: [
       ...(earlier?.subjects ?? []).filter((subject) => !found.has(subject.name)),
       ...subjects,

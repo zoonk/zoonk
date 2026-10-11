@@ -108,7 +108,7 @@ const ORDINALS = [
 /** Words that only ever name an answer option, unlike "answer" or "statement". */
 const OPTION_NOUNS = ["opcao", "alternativa", "option", "choice", "opcion"].join("|");
 
-/** "the second option", "a alternativa C", "it's the second." */
+/** "the second option", Portuguese "a alternativa C", "it's the second." */
 const POSITION_PATTERNS: readonly { cased: boolean; pattern: RegExp }[] = [
   { cased: false, pattern: new RegExp(`\\b(?:${ORDINALS}) (?:${OPTION_NOUNS})\\b`, "gu") },
   {
@@ -130,7 +130,7 @@ function withoutAccents(text: string): string {
 }
 
 /**
- * Where feedback points at an answer option by its place ("é a segunda", "option C"). Options are
+ * Where feedback points at an answer option by its place ("it's the second one", "option C"). Options are
  * shuffled after they're written and every screen shows its own letters, so a position the writer
  * meant never matches the one the learner sees: feedback names an option by what it says.
  */

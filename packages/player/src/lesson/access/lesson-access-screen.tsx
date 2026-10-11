@@ -1,5 +1,6 @@
 "use client";
 
+import { useFreeWeekOverCopy } from "@zoonk/learn/free-week";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleAlertIcon, HourglassIcon, SparklesIcon, UserRoundPlusIcon } from "lucide-react";
@@ -51,6 +52,31 @@ function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
           : t("That's all the new lessons for today")
       }
     >
+      <LinkComponent className={PRIMARY_BUTTON} href={routes.upgrade}>
+        {t("See Plus")}
+      </LinkComponent>
+      <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
+        {t("Back")}
+      </LinkComponent>
+    </AccessLayout>
+  );
+}
+
+/**
+ * A free exam plan past its first week: its new lessons come with Plus, while reviews and fixing
+ * mistakes stay free, as Today says. Plus is a choice, with the way back beside it.
+ */
+function FreeWeekOver() {
+  const t = useExtracted();
+  const { body, title } = useFreeWeekOverCopy();
+  const { linkComponent: LinkComponent, routes, track } = useLessonPlayerConfig();
+
+  useEffect(() => {
+    track({ name: "Subscription Gate Shown" });
+  }, [track]);
+
+  return (
+    <AccessLayout description={body} icon={<SparklesIcon aria-hidden="true" />} title={title}>
       <LinkComponent className={PRIMARY_BUTTON} href={routes.upgrade}>
         {t("See Plus")}
       </LinkComponent>
@@ -151,11 +177,16 @@ function Unavailable({
 
 /**
  * When a lesson can't start: a calm wait for fair use, a sign-up for a guest who used their
- * lessons, Plus for a free learner, or a retry when the connection failed. Never a dead end.
+ * lessons, Plus for a free learner (out of lessons, or past a free exam plan's first week), or a
+ * retry when the connection failed. Never a dead end.
  */
 export function LessonAccessScreen({ refusal }: { refusal: LessonRunRefusal }) {
   if (refusal.reason === "slowDown") {
     return <SlowDown retryAfterSeconds={refusal.retryAfterSeconds} />;
+  }
+
+  if (refusal.reason === "plusRequired") {
+    return <FreeWeekOver />;
   }
 
   if (refusal.reason === "limitReached") {

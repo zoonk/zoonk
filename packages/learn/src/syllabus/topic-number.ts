@@ -1,12 +1,12 @@
 /**
  * A syllabus item's own number ("1", "1.1", "5.7."), which a notice writes before its words; a
- * year opening a topic ("2026 em números") isn't one.
+ * year opening a topic ("2026 in numbers") isn't one.
  */
 const ITEM_NUMBER = /^\s*(?<number>\d{1,3}(?:\.\d{1,3})*)\.?\s+(?<text>\S.*)$/su;
 
 /**
  * A sub-item's code, which some notices write instead of a number under a named item: ENEM's
- * "H18 - Identificar…" under "Competência de área 5 - …".
+ * "H18 - Identify…" under "Area competency 5 - …".
  */
 const ITEM_CODE = /^\s*(?<number>[A-Z]{1,3}\d{1,3})\s*[-–—:]\s+(?<text>\S.*)$/su;
 
@@ -14,7 +14,7 @@ const ITEM_CODE = /^\s*(?<number>[A-Z]{1,3}\d{1,3})\s*[-–—:]\s+(?<text>\S.*)
 type NumberedTopic = { depth: number; number: string | null; text: string };
 
 /**
- * The notice's own numbering of a topic ("1.1 Princípios…", or a sub-item's code such as "H18 -"):
+ * The notice's own numbering of a topic ("1.1 Principles…", or a sub-item's code such as "H18 -"):
  * its number, its words and its depth (0 for "1", 1 for "1.1" or a code), so lists show the
  * notice's hierarchy instead of a second index.
  */
@@ -36,6 +36,14 @@ function splitTopicNumber(name: string): NumberedTopic {
   }
 
   return { depth: 0, number: null, text: name };
+}
+
+/**
+ * A topic in its words, without the notice's own number or code ("3.3 Relations…" is "Relations…"):
+ * how a sentence names it, where the outline's numbering means nothing.
+ */
+export function toTopicWords(name: string): string {
+  return splitTopicNumber(name).text;
 }
 
 /**
