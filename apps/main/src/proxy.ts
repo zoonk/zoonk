@@ -2,6 +2,7 @@ import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import createMiddleware from "next-intl/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { proxyApiRequest } from "./lib/api-proxy";
 import { getCatalogNotFound } from "./lib/catalog-not-found";
 import { getSessionRedirect } from "./lib/session-redirects";
 
@@ -20,6 +21,10 @@ const CATALOG_PATH = new RegExp(
  * Once the language is settled, a course or category that doesn't exist gets a real 404.
  */
 export default async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname === "/v1" || request.nextUrl.pathname.startsWith("/v1/")) {
+    return proxyApiRequest(request);
+  }
+
   const sessionRedirect = getSessionRedirect(request);
 
   if (sessionRedirect) {
@@ -41,6 +46,7 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/v1/:path*",
     "/((?!api|auth/callback|_next|_vercel|\\.well-known/workflow|149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3|.*\\..*).*)",
   ],
 };

@@ -2,11 +2,11 @@
 
 import { undoMemoryChangesAction } from "@/app/[lang]/(settings)/settings/memory/actions";
 import { Link } from "@/i18n/navigation";
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { MemoryUpdated } from "@zoonk/learn/memory-updated";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type LessonTutorConfig } from "@zoonk/player/lesson/types";
-import { API_URL } from "@zoonk/utils/url";
 
 type TutorNavigation = LessonTutorConfig["navigation"];
 
@@ -34,7 +34,12 @@ export function getTutorConfig({
   return {
     buddy,
     canAsk,
-    connection: { apiUrl: API_URL, getHeaders: getWorkflowAuthHeaders },
+    connection: {
+      get apiUrl() {
+        return getBrowserApiUrl();
+      },
+      getHeaders: getWorkflowAuthHeaders,
+    },
     navigation: {
       ...cards,
       linkComponent: Link,

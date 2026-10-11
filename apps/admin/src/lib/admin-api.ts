@@ -1,4 +1,5 @@
 import "server-only";
+import { getApiDeploymentHeaders } from "@zoonk/core/security/api-deployment";
 import { safeAsync } from "@zoonk/utils/error";
 import { API_URL } from "@zoonk/utils/url";
 
@@ -18,11 +19,12 @@ export async function postAdminApi({
   path: `/v1/${string}`;
   sessionToken: string;
 }) {
-  const { data: response, error } = await safeAsync(() =>
+  const { data: response, error } = await safeAsync(async () =>
     fetch(`${API_URL}${path}`, {
       body: JSON.stringify(body),
       cache: "no-store",
       headers: {
+        ...(await getApiDeploymentHeaders()),
         Authorization: `Bearer ${sessionToken}`,
         "Content-Type": "application/json",
         Origin: API_ORIGIN,

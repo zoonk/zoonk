@@ -1,7 +1,7 @@
 "use client";
 
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { safeAsync } from "@zoonk/utils/error";
-import { API_URL } from "@zoonk/utils/url";
 import { getWorkflowAuthHeaders } from "../workflow/auth-headers";
 
 /**
@@ -47,7 +47,10 @@ export async function postFromBrowser({
   const { data: response } = await safeAsync(async () => {
     const headers = await getWorkflowAuthHeaders();
 
-    return fetch(`${API_URL}${path}`, { ...toRequestBody({ body, headers }), method: "POST" });
+    return fetch(`${getBrowserApiUrl()}${path}`, {
+      ...toRequestBody({ body, headers }),
+      method: "POST",
+    });
   });
 
   return response;
@@ -61,7 +64,7 @@ export async function postFromBrowser({
 export async function getFromBrowser(path: `/v1/${string}`): Promise<Response | null> {
   const { data: response } = await safeAsync(async () => {
     const headers = await getWorkflowAuthHeaders();
-    return fetch(`${API_URL}${path}`, { headers });
+    return fetch(`${getBrowserApiUrl()}${path}`, { headers });
   });
 
   return response;

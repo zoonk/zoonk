@@ -1,4 +1,5 @@
 import "server-only";
+import { getApiDeploymentHeaders } from "@zoonk/core/security/api-deployment";
 import { logError } from "@zoonk/utils/logger";
 import { API_URL } from "@zoonk/utils/url";
 import { headers } from "next/headers";
@@ -31,6 +32,7 @@ export async function postAsLearner({
     const response = await fetch(`${API_URL}${path}`, {
       body: body === undefined ? undefined : JSON.stringify(body),
       headers: {
+        ...(await getApiDeploymentHeaders()),
         "Content-Type": "application/json",
         Cookie: requestHeaders.get("cookie") ?? "",
         Origin: API_ORIGIN,

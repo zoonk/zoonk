@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  queue: max
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID_API: ${{ vars.VERCEL_PROJECT_ID_API }}
+  VERCEL_PROJECT_ID_MAIN: ${{ vars.VERCEL_PROJECT_ID_MAIN }}
+  VERCEL_PROJECT_ID_ADMIN: ${{ vars.VERCEL_PROJECT_ID_ADMIN }}
+
+jobs:
+  checks-needed:
+    runs-on: ubuntu-latest
+    outputs:
+      required: ${{ steps.check.outputs.required }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        with:
+          runtime: node@24
+          cache: true
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: pnpm deploy:ci-required
+
+  quality:
+    needs: checks-needed
+    if: needs.checks-needed.outputs.required == 'true'
+    uses: ./.github/workflows/code-quality.yml
+    secrets: inherit
+
+  main-e2e:
+    needs: checks-needed
+    if: needs.checks-needed.outputs.required == 'true'
+    uses: ./.github/workflows/e2e-main.yml
+    secrets: inherit
+
+  api-e2e:
+    needs: checks-needed
+    if: needs.checks-needed.outputs.required == 'true'
+    uses: ./.github/workflows/e2e-api.yml
+    secrets: inherit
+
+  tests:
+    needs: checks-needed
+    if: needs.checks-needed.outputs.required == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
+      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+    services:
+      db:
+        image: postgres:18-alpine
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: zoonk_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        with:
+          runtime: node@24
+          cache: true
+      - name: Run database migrations
+        run: pnpm --filter @zoonk/db db:deploy
+      - name: Run unit and integration tests
+        run: pnpm test
+
+  staging:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [quality, tests, main-e2e, api-e2e]
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      DEPLOY_TARGET: staging
+      DEPLOY_SHA: ${{ github.sha }}
+      DEPLOY_REF: main
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+      NEON_PRODUCTION_BRANCH: ${{ vars.NEON_PRODUCTION_BRANCH }}
+      NEON_STAGING_BRANCH: ${{ vars.NEON_STAGING_BRANCH }}
+      NEON_DATABASE: ${{ vars.NEON_DATABASE }}
+      NEON_ROLE: ${{ vars.NEON_ROLE }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        with:
+          runtime: node@24
+          cache: true
+      - name: Load staging database credentials
+        run: pnpm deploy:database
+      - name: Migrate staging once
+        run: pnpm --filter @zoonk/db db:deploy
+      - name: Deploy staging apps
+        run: pnpm deploy staging

@@ -1,11 +1,11 @@
 "use client";
 
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { type GenerationKind } from "@zoonk/learn/generation/kinds";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
-import { API_URL } from "@zoonk/utils/url";
 import { useEffect, useEffectEvent, useReducer } from "react";
 import { getGenerationEventsUrl } from "./_utils/generation-events-url";
 import {
@@ -37,7 +37,7 @@ function isRunStatus(value: string | null): value is RunStatus {
 /** The workflow's own status for a run, or null when the API couldn't be reached. */
 async function readRunStatus(runId: string): Promise<RunStatus | null> {
   const headers = await getWorkflowAuthHeaders();
-  const url = `${API_URL}/v1/generations/${encodeURIComponent(runId)}`;
+  const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}`;
   const { data: response } = await safeAsync(() => fetch(url, { headers }));
 
   if (!response?.ok) {
@@ -140,7 +140,7 @@ export function useWorkflowRun({
   const url =
     isConnected && runId
       ? getGenerationEventsUrl({
-          baseUrl: `${API_URL}/v1/generations`,
+          baseUrl: `${getBrowserApiUrl()}/v1/generations`,
           generationId: runId,
           reconnectCount: state.connection,
         })

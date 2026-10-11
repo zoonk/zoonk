@@ -1,0 +1,54 @@
+name: Production Release
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: production-release
+  queue: max
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID_API: ${{ vars.VERCEL_PROJECT_ID_API }}
+  VERCEL_PROJECT_ID_MAIN: ${{ vars.VERCEL_PROJECT_ID_MAIN }}
+  VERCEL_PROJECT_ID_ADMIN: ${{ vars.VERCEL_PROJECT_ID_ADMIN }}
+
+jobs:
+  release:
+    if: "!github.event.release.prerelease"
+    runs-on: ubuntu-latest
+    timeout-minutes: 95
+    env:
+      DEPLOY_TARGET: production
+      DEPLOY_REF: ${{ github.event.release.tag_name }}
+      GH_TOKEN: ${{ github.token }}
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+      NEON_PRODUCTION_BRANCH: ${{ vars.NEON_PRODUCTION_BRANCH }}
+      NEON_STAGING_BRANCH: ${{ vars.NEON_STAGING_BRANCH }}
+      NEON_DATABASE: ${{ vars.NEON_DATABASE }}
+      NEON_ROLE: ${{ vars.NEON_ROLE }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Check out the release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3
+        with:
+          runtime: node@24
+          cache: true
+      - name: Require successful CI for the tagged commit
+        run: pnpm deploy:validate-release
+      - name: Load production database credentials
+        run: pnpm deploy:database
+      - name: Migrate production once
+        run: pnpm --filter @zoonk/db db:deploy
+      - name: Deploy all production apps concurrently on Turbo machines
+        run: pnpm deploy production

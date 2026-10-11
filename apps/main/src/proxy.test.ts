@@ -2,10 +2,14 @@ import { randomUUID } from "node:crypto";
 import { ACCOUNT_MARKER_COOKIE } from "@zoonk/auth/cookies";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { API_URL } from "@zoonk/utils/url";
 import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 import { NextRequest } from "next/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import proxy, { config } from "./proxy";
+
+/** Local adapter tests use a fake, unexpired provider token and never contact Vercel. */
+const oidcToken = `eyJhbGciOiJub25lIn0.${Buffer.from(JSON.stringify({ exp: 9_999_999_999 })).toString("base64url")}.test-signature`;
 
 describe("catalog locale routing", () => {
   it.each([
@@ -280,5 +284,90 @@ describe("proxy matcher", () => {
     "/sitemap.xml",
   ])("ignores non-localized path %s", (url) => {
     expect(unstable_doesMiddlewareMatch({ config, url })).toBe(false);
+  });
+});
+
+describe("protected preview API proxy", () => {
+  beforeEach(() => {
+    vi.stubEnv("VERCEL_ENV", "preview");
+    vi.stubEnv("VERCEL_OIDC_TOKEN", oidcToken);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("forwards bearer auth and query parameters while replacing platform auth and removing cookies", async () => {
+    const response = await proxy(
+      new NextRequest("https://main.zoonk.dev/v1/generations?startIndex=4", {
+        headers: {
+          authorization: "Bearer user-token",
+          "content-type": "application/json",
+          cookie: "session=browser-cookie",
+          origin: "https://main.zoonk.dev",
+          "x-generation-visitor-id": "visitor-id",
+          "x-vercel-oidc-token": "untrusted-inbound-token",
+          "x-vercel-protection-bypass": "untrusted-bypass",
+          "x-vercel-trusted-oidc-idp-token": "untrusted-token",
+        },
+        method: "POST",
+      }),
+    );
+
+    expect(response.headers.get("x-middleware-rewrite")).toBe(
+      `${API_URL}/v1/generations?startIndex=4`,
+    );
+
+    expect(response.headers.get("x-middleware-request-authorization")).toBe("Bearer user-token");
+
+    expect(response.headers.get("x-middleware-request-x-generation-visitor-id")).toBe("visitor-id");
+
+    expect(response.headers.get("x-middleware-request-x-vercel-trusted-oidc-idp-token")).toBe(
+      oidcToken,
+    );
+
+    expect(response.headers.get("x-middleware-request-cookie")).toBeNull();
+    expect(response.headers.get("x-middleware-request-x-vercel-protection-bypass")).toBeNull();
+    expect(response.headers.get("x-middleware-request-x-vercel-oidc-token")).toBeNull();
+  });
+
+  it.each([undefined, "https://other.example"])(
+    "rejects unsafe origin %s before retrieving platform credentials",
+    async (origin) => {
+      const response = await proxy(
+        new NextRequest("https://main.zoonk.dev/v1/feedback", {
+          headers: origin ? { origin } : {},
+          method: "POST",
+        }),
+      );
+
+      expect(response.status).toBe(403);
+      expect(response.headers.get("x-middleware-rewrite")).toBeNull();
+    },
+  );
+
+  it.each(["production", "development"])(
+    "does not proxy API requests in %s",
+    async (environment) => {
+      vi.stubEnv("VERCEL_ENV", environment);
+      const response = await proxy(new NextRequest("https://www.zoonk.com/v1/generations"));
+      expect(response.status).toBe(404);
+      expect(response.headers.get("x-middleware-rewrite")).toBeNull();
+    },
+  );
+
+  it.each(["/v1/auth", "/v1/auth/sign-in/social"])(
+    "keeps central auth path %s off the proxy",
+    async (path) => {
+      const response = await proxy(new NextRequest(`https://main.zoonk.dev${path}`));
+      expect(response.status).toBe(404);
+      expect(response.headers.get("x-middleware-rewrite")).toBeNull();
+    },
+  );
+
+  it("matches API paths containing dots and bypasses locale redirects", () => {
+    expect(unstable_doesMiddlewareMatch({ config, url: "/v1/questions/question.id/answers" })).toBe(
+      true,
+    );
   });
 });

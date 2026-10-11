@@ -1,12 +1,12 @@
 "use client";
 
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { uploadPresigned } from "@vercel/blob/client";
 import { authClient } from "@zoonk/auth/client";
 import { type AttachOutcome } from "@zoonk/learn/onboarding/actions";
 import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
-import { API_URL } from "@zoonk/utils/url";
 import { getSourceUploadFolder } from "@zoonk/utils/user-blobs";
 import { postFromBrowser } from "../api/browser-api";
 import { getWorkflowAuthHeaders } from "../workflow/auth-headers";
@@ -102,7 +102,7 @@ export async function attachGoalFile({
   const { data: blob, error } = await safeAsync(() =>
     uploadPresigned(pathname, file, {
       access: UPLOAD_ACCESS,
-      handleUploadUrl: `${API_URL}/v1/uploads/tokens`,
+      handleUploadUrl: `${getBrowserApiUrl()}/v1/uploads/tokens`,
       headers,
     }),
   );

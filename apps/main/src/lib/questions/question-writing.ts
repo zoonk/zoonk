@@ -1,10 +1,10 @@
 import { readRefusedLimit } from "@/lib/api/refused-limit";
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
 import { getWorkflowAuthHeaders } from "@/lib/workflow/auth-headers";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString, isJsonObject } from "@zoonk/utils/json";
-import { API_URL } from "@zoonk/utils/url";
 
 export type QuestionWriting =
   | { generationId: string; status: "writing" }
@@ -23,7 +23,7 @@ export async function requestQuestionWriting(
   body?: Record<string, unknown>,
 ): Promise<QuestionWriting> {
   const auth = await getWorkflowAuthHeaders();
-  const url = `${API_URL}/v1${path}`;
+  const url = `${getBrowserApiUrl()}/v1${path}`;
   const headers = body ? { ...auth, "Content-Type": "application/json" } : auth;
 
   const { data: response, error } = await safeAsync(() =>
