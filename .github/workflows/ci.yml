@@ -55,15 +55,15 @@ jobs:
     uses: ./.github/workflows/e2e-api.yml
     secrets: inherit
 
-  tests:
+  vitest:
     needs: checks-needed
     if: needs.checks-needed.outputs.required == 'true'
-    uses: ./.github/workflows/unit-tests.yml
+    uses: ./.github/workflows/vitest.yml
     secrets: inherit
 
   staging:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [quality, tests, main-e2e, api-e2e]
+    needs: [quality, vitest, main-e2e, api-e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:

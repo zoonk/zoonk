@@ -38,6 +38,19 @@ function heading(text: string) {
   return page.getByRole("heading", { name: text });
 }
 
+/** The nearest element that scrolls sideways, as the swipe looks for one. */
+function sidewaysScroller(element: Element): Element | null {
+  for (let node: Element | null = element; node; node = node.parentElement) {
+    const { overflowX } = getComputedStyle(node);
+
+    if (overflowX === "auto" || overflowX === "scroll") {
+      return node;
+    }
+  }
+
+  return null;
+}
+
 describe("turning lesson screens with a finger", () => {
   it("swipes left to read on and right to go back, picture first", async () => {
     const lesson = buildLesson([pictured(FRONTAL), pictured(OCCIPITAL), teachingStep("check")]);
@@ -125,11 +138,12 @@ describe("turning lesson screens with a finger", () => {
   });
 
   it("leaves a wide table's sideways swipe to the table", async () => {
+    // Wider than a phone in any font: its longest words alone pass the screen's 375 pixels.
     const table = [
-      "| Planet | Distance from the Sun | Length of a year | Moons | Surface |",
-      "|---|---:|---:|---:|---|",
-      "| Mercury | 58 million km | 88 days | 0 | Rocky and cratered |",
-      "| Mars | 228 million km | 687 days | 2 | Rocky and dusty red |",
+      "| Planet | Distance from the Sun | Length of a year | Moons | Surface | Atmosphere | Temperature | Magnetosphere |",
+      "|---|---:|---:|---:|---|---|---|---|",
+      "| Mercury | 58 million km | 88 days | 0 | Cratered | Negligible | Scorching | Weak |",
+      "| Mars | 228 million km | 687 days | 2 | Dusty | Thin | Freezing | Vanished |",
     ].join("\n");
 
     const lesson = buildLesson([
@@ -139,7 +153,13 @@ describe("turning lesson screens with a finger", () => {
 
     renderLessonPlayer({ lesson });
 
-    await swipeFrom(page.getByRole("cell", { name: "Mercury" }), { x: -SWIPE_PX });
+    const mercury = page.getByRole("cell", { name: "Mercury" });
+    await expect.element(mercury).toBeVisible();
+
+    const scroller = sidewaysScroller(mercury.element());
+    expect(scroller && scroller.scrollWidth > scroller.clientWidth).toBe(true);
+
+    await swipeFrom(mercury, { x: -SWIPE_PX });
 
     await expect.element(heading("Two rocky planets")).toBeVisible();
     await expect.element(heading(OCCIPITAL.title)).not.toBeInTheDocument();

@@ -4,15 +4,15 @@ GitHub Actions owns deployments of `api`, `main`, and `admin`. Their Vercel proj
 
 This configuration takes effect on a branch when its app-level `vercel.json` files are pushed. Merging the configuration into `main` runs CI and deploys staging, without creating a production release or deployment.
 
-| Event                           | Checks and deployment                                                                                                                      |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| PR opened, updated, or reopened | Code-quality checks and unit/integration tests (sharded, on a fresh migrated Postgres) for PRs targeting `main`.                           |
-| Preview requested               | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                  |
-| PR closed                       | Cancel remaining preview builds and delete the PR's Neon branch.                                                                           |
-| Push to `main`                  | Code quality, unit/integration tests, and main/API E2E. After success, migrate staging and deploy the three staging apps.                  |
-| Push a `v*` tag                 | Run CI if the exact commit has not already passed CI on `main`. This supports hotfix commits outside `main`.                               |
-| Publish a stable GitHub release | Require successful CI for the tagged commit, migrate production once, and deploy all three production apps concurrently on Turbo machines. |
-| Publish a prerelease            | No production deployment.                                                                                                                  |
+| Event                           | Checks and deployment                                                                                                                                 |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PR opened, updated, or reopened | Code quality and Vitest (unit, database integration and player browser tests, in four shards, on a fresh migrated Postgres) for PRs targeting `main`. |
+| Preview requested               | `pnpm preview [pr]` (or "Run workflow" on PR Preview) gives an open same-repository PR a Neon branch and Vercel previews.                             |
+| PR closed                       | Cancel remaining preview builds and delete the PR's Neon branch.                                                                                      |
+| Push to `main`                  | Code quality, unit/integration tests, and main/API E2E. After success, migrate staging and deploy the three staging apps.                             |
+| Push a `v*` tag                 | Run CI if the exact commit has not already passed CI on `main`. This supports hotfix commits outside `main`.                                          |
+| Publish a stable GitHub release | Require successful CI for the tagged commit, migrate production once, and deploy all three production apps concurrently on Turbo machines.            |
+| Publish a prerelease            | No production deployment.                                                                                                                             |
 
 Production domains move automatically when each deployment succeeds. Apps switch independently, so a failed release can leave a successful app on the new version while another remains on the old version. Production releases are serialized with GitHub's `queue: max`; up to 100 runs can wait without replacing one another.
 
@@ -56,7 +56,7 @@ Production and local development retain direct API requests and omit these OIDC 
 
 The default build machine is Basic; production selects Turbo per deployment. On-demand concurrency is a Vercel project setting and applies across its environments. Production deployment requests are submitted concurrently; their actual build start times depend on available build capacity.
 
-The main branch ruleset requires the `code-quality` and `unit-tests` PR checks. Unit tests run again on `main` before staging, since a PR doesn't have to be up to date with `main`. E2E runs after merge.
+The main branch ruleset requires the `code-quality` and `vitest` PR checks. Vitest runs again on `main` before staging, since a PR doesn't have to be up to date with `main`. E2E runs after merge.
 
 ## Preview behavior
 

@@ -1,3 +1,4 @@
+import { availableParallelism } from "node:os";
 import { resolve } from "node:path";
 import { getTestRunEnvironment } from "@zoonk/db/test-environment";
 import { defineConfig } from "vitest/config";
@@ -14,6 +15,12 @@ const markdownAsText = {
   },
 };
 
+/**
+ * Every worker opens up to 10 connections to the one test database (node-postgres' pool), and
+ * fixtures create rows in parallel, so one worker per core overflows Postgres' default 100.
+ */
+const MAX_DATABASE_WORKERS = 6;
+
 export default defineConfig({
   plugins: [markdownAsText],
   resolve: {
@@ -24,9 +31,9 @@ export default defineConfig({
     env: { ...getTestRunEnvironment(), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
     environment: "node",
     globalSetup: ["./vitest.global-setup.ts"],
-    // Every worker opens up to 10 connections to the one test database (node-postgres' pool), and
-    // fixtures create rows in parallel, so one worker per core overflows Postgres' default 100.
-    maxWorkers: 6,
+    // Fewer cores than that (CI's runners have 4) get one worker each, so the database work they
+    // share isn't starved of CPU.
+    maxWorkers: Math.min(MAX_DATABASE_WORKERS, availableParallelism()),
     setupFiles: ["./setup-tests.ts"],
   },
 });

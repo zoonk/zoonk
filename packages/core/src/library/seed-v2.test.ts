@@ -1005,7 +1005,7 @@ describe("v2 seed", () => {
       await seedV2PersonaCopy(copy);
 
       await expect(loadToday()).resolves.toStrictEqual(seeded);
-    });
+    }, 120_000);
 
     // A walk on a shared persona left a plan change that every later walk was told about.
     it("drops the plan changes the app made to a persona when it seeds again", async () => {
@@ -1025,7 +1025,7 @@ describe("v2 seed", () => {
       await seedV2PersonaCopy(copy);
 
       await expect(prisma.planChange.findUnique({ where: { id: change.id } })).resolves.toBeNull();
-    });
+    }, 120_000);
 
     /*
      * A seeded day the session builder wouldn't make (Marcos: 3 blocks where it makes 6) turned

@@ -157,5 +157,5 @@ describe("lesson identity search", () => {
     await resolveLibraryIdentity({ request });
 
     expect(getCandidateIds(decisionSpy)).toStrictEqual([target.id]);
-  });
+  }, 30_000);
 });

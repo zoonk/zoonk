@@ -1,7 +1,8 @@
-name: Unit Tests
+name: Vitest
 
-# Unit and integration tests (Vitest, against a fresh Postgres migrated from scratch) on every PR,
-# and again on `main` before staging, where `ci.yml` calls this workflow.
+# Every Vitest suite (`pnpm test`): unit tests, database integration tests against a fresh Postgres
+# migrated from scratch, and the player's browser tests. On every PR, and again on `main` before
+# staging, where `ci.yml` calls this workflow.
 on:
   workflow_call:
     inputs:
@@ -17,19 +18,20 @@ permissions:
   contents: read
 
 concurrency:
-  group: unit-tests-${{ github.event.pull_request.number || github.ref }}
+  group: vitest-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   shard:
-    name: unit-tests-shard (${{ matrix.shard }})
+    name: vitest (${{ matrix.shard }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        # Core's database tests alone take minutes, so every package's tests are split in two.
-        shard: [1, 2]
+        # Core's database tests take over 10 minutes on CI's 4-core runners, so every package's
+        # tests are split in four.
+        shard: [1, 2, 3, 4]
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
@@ -63,11 +65,11 @@ jobs:
         run: pnpm --filter @zoonk/db db:deploy
 
       # A package with fewer test files than shards has none in the last one.
-      - name: Run unit and integration tests
+      - name: Run Vitest
         run: pnpm test -- --shard=${{ matrix.shard }}/${{ strategy.job-total }} --passWithNoTests
 
   # One check for the ruleset to require, whatever the number of shards.
-  unit-tests:
+  vitest:
     needs: shard
     if: always()
     runs-on: ubuntu-latest
