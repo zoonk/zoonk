@@ -1,11 +1,9 @@
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
-import { durationSequencer } from "@zoonk/testing/vitest/duration-sequencer";
 import { type CDPSession, type Page } from "playwright";
 import { defineConfig } from "vitest/config";
 import { type BrowserCommand } from "vitest/node";
-import durations from "./vitest.durations.json" with { type: "json" };
 
 const browserTests = ["src/**/*.browser.test.tsx"];
 const unitTests = ["src/**/*.test.ts", "src/**/*.test.tsx"];
@@ -124,7 +122,6 @@ export default defineConfig({
         },
       },
     ],
-    sequence: { sequencer: durationSequencer(durations) },
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200

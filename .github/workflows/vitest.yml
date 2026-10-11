@@ -22,52 +22,27 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  shard:
-    name: vitest (${{ matrix.suite }} ${{ matrix.shard }})
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Core's database and planner tests, most of the work, in shards of about equal time
-          # (see packages/testing/src/vitest/duration-sequencer.ts), on Arm runners: they need no
-          # browser, and the player's browser tests need Chrome, which only x64 has.
-          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 1/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 2/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 3/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 4/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 5/6 }
-          - { suite: core, filter: "--filter=@zoonk/core", runner: ubuntu-24.04-arm, shard: 6/6 }
-          # The player's browser tests on runners of their own: sharing four cores with the database
-          # tests slowed both past their timeouts.
-          - { suite: player, filter: "--filter=@zoonk/player", runner: ubuntu-latest, shard: 1/2 }
-          - { suite: player, filter: "--filter=@zoonk/player", runner: ubuntu-latest, shard: 2/2 }
-          # Every other package's tests, which take seconds each.
-          - suite: packages
-            filter: "--filter=!@zoonk/core --filter=!@zoonk/player"
-            runner: ubuntu-latest
-            shard: 1/1
+  vitest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-      # MEASUREMENT ONLY: run every suite instead of replaying cached results. Remove before merging.
-      TURBO_FORCE: true
+    services:
+      db:
+        image: postgres:18-alpine
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: zoonk_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 10
     steps:
-      # A throwaway database in memory that never waits on the disk, with room for every package's
-      # test workers at once (they run side by side). Started in the background, so its image
-      # downloads while the code and packages do.
-      - name: Start Postgres
-        run: >-
-          docker run --detach --name postgres --publish 5432:5432
-          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_test
-          --tmpfs /var/lib/postgresql
-          postgres:18-alpine
-          -c max_connections=500 -c fsync=off -c synchronous_commit=off -c full_page_writes=off
-          > "$RUNNER_TEMP/postgres.log" 2>&1 &
-
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -78,24 +53,9 @@ jobs:
         with:
           runtime: node@24
           cache: true
-          # Every shard installs the same store, so one saving it is enough.
-          save-cache: ${{ matrix.suite == 'core' && matrix.shard == '1/6' }}
 
-      # Over TCP: the image's first start runs its setup on a server that only takes local sockets.
-      - name: Wait for Postgres
-        run: >-
-          timeout 120 sh -c 'until docker exec postgres pg_isready --host=127.0.0.1 --dbname=zoonk_test --username=postgres; do sleep 1; done'
-          || { cat "$RUNNER_TEMP/postgres.log"; docker logs postgres; exit 1; }
+      - name: Run database migrations
+        run: pnpm --filter @zoonk/db db:deploy
 
-      # Turbo migrates the database first (`db:setup:test`).
       - name: Run Vitest
-        run: pnpm exec turbo run test ${{ matrix.filter }} -- --shard=${{ matrix.shard }} --passWithNoTests
-
-  # One check for the ruleset to require, whatever the number of shards.
-  vitest:
-    needs: shard
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Require every shard to pass
-        run: test "${{ needs.shard.result }}" = "success"
+        run: pnpm test

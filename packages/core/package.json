@@ -504,7 +504,6 @@
   "scripts": {
     "seed:v2": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
     "test": "vitest run",
-    "test:durations": "vitest run --reporter=default --reporter=@zoonk/testing/vitest/durations-reporter",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },

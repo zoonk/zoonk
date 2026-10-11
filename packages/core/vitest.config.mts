@@ -1,9 +1,7 @@
 import { availableParallelism } from "node:os";
 import { resolve } from "node:path";
 import { getTestRunEnvironment } from "@zoonk/db/test-environment";
-import { durationSequencer } from "@zoonk/testing/vitest/duration-sequencer";
 import { defineConfig } from "vitest/config";
-import durations from "./vitest.durations.json" with { type: "json" };
 
 /**
  * Prompts load as their text, as the apps' raw-loader serves them, so a prompt's version here is
@@ -36,7 +34,6 @@ export default defineConfig({
     // Fewer cores than that (CI's runners have 4) get one worker each, so the database work they
     // share isn't starved of CPU.
     maxWorkers: Math.min(MAX_DATABASE_WORKERS, availableParallelism()),
-    sequence: { sequencer: durationSequencer(durations) },
     setupFiles: ["./setup-tests.ts"],
   },
 });
