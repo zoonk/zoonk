@@ -4,6 +4,7 @@ import { type CourseLevel, Prisma, type PrismaClient } from "../../../../generat
 import { type SeedLanguage, localizeObject } from "../_utils/localize";
 import { SEED_PROVENANCE } from "../_utils/provenance";
 import { seedId } from "../_utils/seed-id";
+import { SEED_TRANSACTION } from "../_utils/seed-transaction";
 import { buildLessonSpec } from "./lesson-spec";
 import { libraryIds } from "./library-ids";
 import { type SeedChapter, type SeedCourse, type SeedLesson } from "./types";
@@ -130,12 +131,15 @@ async function writeLessonVocabulary(context: CourseContext, lesson: SeedLesson,
     ...SEED_PROVENANCE,
   }));
 
-  await prisma.$transaction([
-    prisma.lessonWord.deleteMany({ where: { lessonId } }),
-    prisma.lessonSentence.deleteMany({ where: { lessonId } }),
-    prisma.lessonWord.createMany({ data: words }),
-    prisma.lessonSentence.createMany({ data: sentences }),
-  ]);
+  await prisma.$transaction(
+    [
+      prisma.lessonWord.deleteMany({ where: { lessonId } }),
+      prisma.lessonSentence.deleteMany({ where: { lessonId } }),
+      prisma.lessonWord.createMany({ data: words }),
+      prisma.lessonSentence.createMany({ data: sentences }),
+    ],
+    SEED_TRANSACTION,
+  );
 }
 
 /**

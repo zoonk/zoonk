@@ -2,6 +2,7 @@ import { type LearningEventKind, type Prisma } from "../../../../generated/prism
 import { seededRandom } from "../../progress";
 import { localTimeFields } from "../_utils/dates";
 import { seedId } from "../_utils/seed-id";
+import { SEED_TRANSACTION } from "../_utils/seed-transaction";
 import { itemLessonKeys } from "./plan-graph";
 import { type SeedLearner } from "./types";
 import { type LearnerScope, planItemId } from "./write-goal";
@@ -418,12 +419,15 @@ export async function writeHistory(scope: LearnerScope, goalId: string): Promise
     toLedgerRow(scope, goalId, event, order % 3),
   );
 
-  await prisma.$transaction([
-    prisma.learningEvent.deleteMany({ where: { userId } }),
-    prisma.dailyProgress.deleteMany({ where: { userId } }),
-    prisma.learningEvent.createMany({ data: rows }),
-    prisma.dailyProgress.createMany({ data: toDailyTotals(scope, rows) }),
-  ]);
+  await prisma.$transaction(
+    [
+      prisma.learningEvent.deleteMany({ where: { userId } }),
+      prisma.dailyProgress.deleteMany({ where: { userId } }),
+      prisma.learningEvent.createMany({ data: rows }),
+      prisma.dailyProgress.createMany({ data: toDailyTotals(scope, rows) }),
+    ],
+    SEED_TRANSACTION,
+  );
 
   // A learner who hasn't opened today's session was last active at their last study.
   const endTimes = rows.flatMap((row) => (row.endedAt ? [new Date(row.endedAt).getTime()] : []));
@@ -475,10 +479,10 @@ export async function writeTodayHistory(
   );
 
   if (rows.length > 0) {
-    await scope.prisma.$transaction([
-      scope.prisma.learningEvent.createMany({ data: rows }),
-      ...totals,
-    ]);
+    await scope.prisma.$transaction(
+      [scope.prisma.learningEvent.createMany({ data: rows }), ...totals],
+      SEED_TRANSACTION,
+    );
   }
 
   return rowsByBlock.map((blockRows) =>
