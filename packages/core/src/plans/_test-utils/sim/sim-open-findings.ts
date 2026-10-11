@@ -2,11 +2,10 @@ import { type SimFixtureName } from "./sim-fixture";
 
 /**
  * The rules each fixture's lives still break, with the open bug behind each (reported to the
- * planner's owner with the life that shows it). The tests fail on any other rule, and the fast
- * tier also fails once a rule listed for a fixture no longer breaks there: remove it with the fix,
- * so the tests guard it from then on.
+ * planner's owner with the life that shows it). A large run fails on any other rule: remove an
+ * entry with its fix.
  */
-export const OPEN_FINDINGS: Record<SimFixtureName, Partial<Record<string, string>>> = {
+const OPEN_FINDINGS: Record<SimFixtureName, Partial<Record<string, string>>> = {
   camara: {},
   career: {},
   "class-test": {},

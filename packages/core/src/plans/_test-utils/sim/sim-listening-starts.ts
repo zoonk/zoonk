@@ -10,8 +10,8 @@ import { type SimWorld } from "./sim-world";
  * text answers (`known`, those it took as known) start past the basics of the band they confirm,
  * leaving out areas already past them. The plan's skills are the graph's, their bands the
  * Library's, the misses the learner's test answers (the pure tier has no others), and the areas
- * whose start the learner chose those of their applied `setAreaStart` changes. The conformance
- * test fails when this copy drifts.
+ * whose start the learner chose those of their applied `setAreaStart` changes. Nothing checks this
+ * copy against it in the normal run: confirm a finding through the database tier.
  */
 export function listSimPlacementListeningAreas({
   known,
