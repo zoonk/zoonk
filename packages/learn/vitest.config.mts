@@ -1,3 +1,4 @@
 import { defineConfig } from "vitest/config";
 
-export default defineConfig({ test: { environment: "node" } });
+// No test mocks a module or changes the clock, globals or env.
+export default defineConfig({ test: { environment: "node", isolate: false } });
