@@ -28,22 +28,45 @@ function toNumbers(text: string): string[] {
   return text.match(NUMBER_PATTERN) ?? [];
 }
 
+type CheckedDocument = { normalized: string; numbers: Set<string>; words: Set<string> };
+
+/**
+ * The document the last passage was checked in. Callers check every passage of a document in turn,
+ * and preparing a whole notice again for each passage took most of research's check.
+ */
+let lastChecked: { document: CheckedDocument; text: string } | null = null;
+
+function checkedDocument(text: string): CheckedDocument {
+  if (lastChecked?.text !== text) {
+    const normalized = normalizeText(text);
+
+    lastChecked = {
+      document: {
+        normalized,
+        numbers: new Set(toNumbers(normalized)),
+        words: new Set(toWords(normalized)),
+      },
+      text,
+    };
+  }
+
+  return lastChecked.document;
+}
+
 function sharesWordsAndNumbers({
   document,
   passage,
 }: {
-  document: string;
+  document: CheckedDocument;
   passage: string;
 }): boolean {
-  const documentWords = new Set(toWords(document));
-  const documentNumbers = new Set(toNumbers(document));
   const passageWords = toWords(passage);
 
-  if (!toNumbers(passage).every((number) => documentNumbers.has(number))) {
+  if (!toNumbers(passage).every((number) => document.numbers.has(number))) {
     return false;
   }
 
-  const found = passageWords.filter((word) => documentWords.has(word)).length;
+  const found = passageWords.filter((word) => document.words.has(word)).length;
 
   return passageWords.length > 0 && found / passageWords.length >= MIN_WORD_SHARE;
 }
@@ -94,10 +117,10 @@ export function isPassageInDocument({ passage, text }: { passage: string; text: 
     return false;
   }
 
-  const normalizedDocument = normalizeText(text);
+  const document = checkedDocument(text);
 
   return (
-    normalizedDocument.includes(normalizedPassage) ||
-    sharesWordsAndNumbers({ document: normalizedDocument, passage: normalizedPassage })
+    document.normalized.includes(normalizedPassage) ||
+    sharesWordsAndNumbers({ document, passage: normalizedPassage })
   );
 }

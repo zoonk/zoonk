@@ -1776,8 +1776,9 @@ describe(goalContentWorkflow, () => {
 
       const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
       const waits: (Date | null)[] = [];
-      // Research links the notice it read with a second of the reveal's wait left.
-      const landedWait = new Date(Date.now() + 1000);
+      // Research links the notice it read with a minute of the reveal's wait left: well before a
+      // landing's own hold ends, and still ahead of a slow runner reaching the landing.
+      const landedWait = new Date(Date.now() + 60_000);
 
       vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
 
@@ -1820,7 +1821,7 @@ describe(goalContentWorkflow, () => {
 
       await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-      // The landing moved the reveal's wait past that second before the check ran, so a check
+      // The landing moved the reveal's wait past that minute before the check ran, so a check
       // that takes longer still finds the reveal waiting.
       expect(waits[0]?.getTime()).toBeGreaterThan(landedWait.getTime());
 
