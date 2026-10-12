@@ -21,14 +21,17 @@ import { activityStep } from "../preview/preview-steps";
 /** Where the rhythm activities keep the device's measured sound delay. */
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 
-/** The son clave fixture, one round of it: a real run as short as the rhythm takes. */
-const QUICK_CLAVE = {
+/**
+ * Two taps on the beat, one round, at the fixture's tempo: a real run as short as a valid rhythm
+ * gets, since its count-in and its round each last the pattern.
+ */
+const QUICK_RHYTHM = {
   ...activityContentFixtures.rhythmTapper,
-  fields: { ...activityContentFixtures.rhythmTapper.fields, rounds: 1 },
+  fields: { ...activityContentFixtures.rhythmTapper.fields, pattern: "x...x...", rounds: 1 },
 };
 
-/** When each tap of the clave should land, from the first, as core grades it. */
-const CLAVE_TAPS_MS = rhythmTapTimes(QUICK_CLAVE.fields);
+/** When each tap should land, from the first, as core grades it. */
+const RHYTHM_TAPS_MS = rhythmTapTimes(QUICK_RHYTHM.fields);
 
 /** A rhythm plays in real time, past a browser test's default budget: it keeps the E2E's. */
 const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
@@ -75,11 +78,11 @@ function sleepUntil(time: number) {
   });
 }
 
-/** Taps the son clave on time: each Space press lands on its hit, measured from the first. */
-async function tapClave() {
+/** Taps the rhythm on time: each Space press lands on its hit, measured from the first. */
+async function tapRhythm() {
   const start = performance.now();
 
-  for (const tapMs of CLAVE_TAPS_MS) {
+  for (const tapMs of RHYTHM_TAPS_MS) {
     // oxlint-disable-next-line no-await-in-loop -- Each tap waits for its moment in the rhythm.
     await sleepUntil(start + tapMs);
     // oxlint-disable-next-line no-await-in-loop -- The taps are the rhythm, so they go in order.
@@ -179,13 +182,13 @@ describe("music activities", () => {
   // Taps are graded against the audio clock, which only a real run plays: one quick round of the
   // clave keeps that while the grading's details are core's (`rhythmTapOffsets`).
   it("rhythm: tapping on the beats is right", { timeout: REAL_TIME_TEST_TIMEOUT_MS }, async () => {
-    openActivities({ contents: [QUICK_CLAVE] });
+    openActivities({ contents: [QUICK_RHYTHM] });
     await page.getByRole("button", { name: "Skip for now" }).click();
     await page.getByRole("button", { name: "Start tapping" }).click();
     await waitForFrameWithText("Round 1 of 1");
-    await tapClave();
+    await tapRhythm();
 
-    await expect.element(page.getByText("5 of 5 taps on time."), { timeout: 15_000 }).toBeVisible();
+    await expect.element(page.getByText("2 of 2 taps on time."), { timeout: 15_000 }).toBeVisible();
 
     // A run can always be tapped again before it's checked.
     await expect.element(page.getByRole("button", { name: "Try again" })).toBeVisible();
