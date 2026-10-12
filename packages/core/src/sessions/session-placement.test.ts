@@ -3,7 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
@@ -108,7 +108,12 @@ async function hasReviewBlock({ goal, user }: { goal: { id: string }; user: { id
   return blocks.some((block) => block.kind === "review");
 }
 
+/**
+ * Stops the clock where the test starts and says its day as a request would: the setup's
+ * "yesterday" and the session's "today" stay a day apart, even when the test runs across midnight.
+ */
 function mockClock() {
+  vi.useFakeTimers({ toFake: ["Date"] });
   const now = new Date();
 
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
@@ -121,6 +126,10 @@ function mockClock() {
 describe("placement in the first week's sessions", () => {
   beforeEach(() => {
     mockClock();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("opens the session with the unsure skill's question, marked as placement", async () => {

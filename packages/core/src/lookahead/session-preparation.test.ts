@@ -17,6 +17,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { addDays } from "../plans/planner/plan-calendar";
 import {
@@ -232,6 +233,8 @@ async function planTomorrowLesson(goalId: string) {
 
 describe(listSessionPreparation, () => {
   it("lists this session's next lessons and the next study day's first one, not the next chapter's specs", async () => {
+    freezeClock();
+
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
 
@@ -295,6 +298,8 @@ describe(listSessionPreparation, () => {
   });
 
   it("writes more ahead for a Plus subscriber than for a free learner", async () => {
+    freezeClock();
+
     const [free, plus] = await Promise.all([userFixture(), userFixture()]);
 
     await prisma.subscription.create({

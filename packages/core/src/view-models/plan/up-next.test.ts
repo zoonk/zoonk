@@ -4,6 +4,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../../_test-utils/frozen-clock";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getChapterView } from "../chapter/get-chapter-view";
@@ -23,6 +24,8 @@ describe("the lesson up next", () => {
   // Pedro's Today opened "Where a share's price comes from", of his second phase, while his
   // Journey and the first phase's chapter page marked the first phase's chapter as up next.
   it("is the lesson Today opens, on the Journey and on the chapters' pages, even in the next phase", async () => {
+    freezeClock();
+
     const { chapters, goal, items, lessons, user } = await signedInCourseGoal({
       statuses: ["done", "todo", "todo", "todo"],
     });

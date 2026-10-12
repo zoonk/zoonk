@@ -7,6 +7,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLanguageProgressView } from "./get-language-progress-view";
 import { getLanguageTodayView } from "./get-language-today-view";
@@ -264,6 +265,8 @@ describe("language view models", () => {
   });
 
   it("offers only the call lengths left today, and says when calls come back once none fits", async () => {
+    freezeClock();
+
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
 

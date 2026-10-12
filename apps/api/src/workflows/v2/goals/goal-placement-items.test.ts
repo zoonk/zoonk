@@ -17,7 +17,7 @@ import { listeningGoalFixture } from "@zoonk/testing/fixtures/listening";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
 import { getStreamedEvents } from "../../_test-utils/parse-stream-events";
@@ -369,6 +369,13 @@ describe(placementItemsWorkflow, () => {
   });
 
   it("then starts a class test's practice, sized to its days, and nothing for a longer plan", async () => {
+    // The clock stops where the test starts: the test stays two days away, run across midnight too.
+    vi.useFakeTimers({ toFake: ["Date"] });
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
     const user = await userFixture();
     const skills = await Promise.all([skillFixture(), skillFixture()]);
     const inTwoDays = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`);

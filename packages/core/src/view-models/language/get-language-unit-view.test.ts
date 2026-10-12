@@ -11,6 +11,7 @@ import {
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getLanguageUnitView } from "./get-language-unit-view";
@@ -95,6 +96,8 @@ describe("a language unit's page", () => {
 
   // Marcos's unit page marked "Introducing yourself" next while Today opened "Summary".
   it("marks next the lesson today's session opens next, not the first one not done", async () => {
+    freezeClock();
+
     const { goal, lessons, renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const first = lessons[2];

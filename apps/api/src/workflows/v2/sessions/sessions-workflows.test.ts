@@ -26,7 +26,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHook, sleep } from "workflow";
 import { start } from "workflow/api";
 import { mockHookConflict } from "../../../../mocks/workflow";
@@ -180,6 +180,16 @@ async function personalLayer({
 }
 
 describe(sessionPreparationWorkflow, () => {
+  // The clock stops where each test starts: the session it sets up today is the one the preparation
+  // reads, even when the test runs across midnight.
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("starts a content run for each unwritten lesson of today's session and the next study day, for the client that asked", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });

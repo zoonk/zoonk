@@ -13,6 +13,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { getMistakePractice } from "./get-mistake-practice";
@@ -40,6 +41,8 @@ async function setup() {
 
 describe(getMistakePractice, () => {
   it("builds a drill per mistake from earlier days, the original question first", async () => {
+    freezeClock();
+
     const { extra, lesson, original, skill, user } = await setup();
 
     const [mistake] = await Promise.all([

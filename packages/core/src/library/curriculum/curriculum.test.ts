@@ -17,7 +17,7 @@ import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateTag } from "next/cache";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag, getCourseRouteCacheTag } from "../../cache/tags";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import {
@@ -760,11 +760,24 @@ describe("course outline state", () => {
   });
 });
 
+/**
+ * A Monday in 2020, before the learning events other tests write, which a plan's pace reads. A
+ * plan made on the real day laid its lessons out differently on each weekday, and a test that ran
+ * past midnight re-planned a new day.
+ */
+const NOW = new Date("2020-09-28T12:00:00Z");
+
 describe(replanGoalsWaitingOnSkills, () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
     mockSearchTerms([uniqueWord()]);
     mockDecision(null);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("replaces a skill's stand-in with its outlined lessons, in chapter order, leaving today's session in place", async () => {
@@ -845,11 +858,14 @@ describe(replanGoalsWaitingOnSkills, () => {
       where: { kind: "lesson", plan: { goalId: goal.id } },
     });
 
-    expect(items.map((item) => item.lessonId ?? item.skillId)).toStrictEqual([
-      ...saved.lessonIds,
-      second.id,
-    ]);
+    const ofSkill = (skillId: string) =>
+      items.flatMap((item) => (item.skillId === skillId ? [item.lessonId ?? item.skillId] : []));
 
+    // The outlined lessons start where the stand-in was, in chapter order. Those past the time it
+    // held go on the next days with room, which the other skill's stand-in may come before.
+    expect(items).toHaveLength(saved.lessonIds.length + 1);
+    expect(ofSkill(first.id)).toStrictEqual(saved.lessonIds);
+    expect(ofSkill(second.id)).toStrictEqual([second.id]);
     expect(items.slice(0, 2).every((item) => item.skillId === first.id)).toBe(true);
 
     // A screen showing today's session still reaches it: the learner's next read brings it up to

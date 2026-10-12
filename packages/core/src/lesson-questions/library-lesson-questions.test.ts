@@ -6,6 +6,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { claimUsage } from "../entitlements/claim-usage";
 import {
@@ -219,6 +220,8 @@ describe("questions about a Library lesson", () => {
   });
 
   it("asks a guest to sign up and a free learner to wait once their allowance is used", async () => {
+    freezeClock();
+
     const guest = await setupPlayableLesson({ guest: true });
     const guestQuestion = await ask({ context: { kind: "lesson" }, lessonId: guest.lesson.id });
 

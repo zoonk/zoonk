@@ -13,6 +13,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { saveLessonVersion } from "../library/lessons/_utils/save-lesson-content";
@@ -380,6 +381,8 @@ describe(completeLibraryLesson, () => {
   });
 
   it("reviews the plan's skill its lesson is held for once, from every screen, and says when it comes back", async () => {
+    freezeClock();
+
     // Production's outlines hold a lesson for the plan's skill while its screens teach a finer
     // skill of their own, where each answer lands; reviews and practice ask the plan's skill.
     const setup = await setupPlayableLesson({

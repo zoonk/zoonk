@@ -15,6 +15,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { addDays } from "../plans/planner/plan-calendar";
 import { getSkillOutline, requestSkillOutline } from "./skill-outline";
@@ -212,6 +213,8 @@ describe(requestSkillOutline, () => {
   });
 
   it("caps a free learner's lesson plans at three a day, and a guest's at one", async () => {
+    freezeClock();
+
     const free = await farPlan({ beginner: 4 });
     mockSession(free.user.id);
 

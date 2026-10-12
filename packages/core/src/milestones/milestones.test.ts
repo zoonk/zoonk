@@ -16,6 +16,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { awardMilestones } from "./award-milestones";
 import { getBuddyStatus } from "./get-buddy-status";
@@ -255,6 +256,8 @@ async function energyOf() {
 
 describe(getBuddyStatus, () => {
   it("shows the buddy's Energy, how far the next stage is and the glasses", async () => {
+    freezeClock();
+
     const user = await userFixture();
 
     await Promise.all([
@@ -293,6 +296,8 @@ describe(getBuddyStatus, () => {
   });
 
   it("has no Energy to show a brand-new learner until a day of study has passed", async () => {
+    freezeClock();
+
     const user = await userFixture();
     const today = new Date(new Date().toISOString().slice(0, 10));
 

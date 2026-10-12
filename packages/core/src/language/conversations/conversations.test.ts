@@ -12,6 +12,7 @@ import {
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
@@ -195,6 +196,8 @@ describe("language conversations", () => {
   });
 
   it("starts a dropped call over when it connects again, keeping what the dropped one ran", async () => {
+    freezeClock();
+
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     // A one-minute call, so what's left of the day's call time holds it again.

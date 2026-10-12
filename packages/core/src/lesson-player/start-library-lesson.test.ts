@@ -14,6 +14,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { trackServerEvent } from "../analytics/server";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
@@ -341,6 +342,8 @@ describe(startLibraryLesson, () => {
   });
 
   it("asks the learner to slow down when fair use spaces starts out", async () => {
+    freezeClock();
+
     const { lesson, user } = await setupPlayableLesson();
 
     await Promise.all([

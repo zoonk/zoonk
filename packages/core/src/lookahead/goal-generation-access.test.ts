@@ -3,6 +3,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { getGoalGenerationAccess } from "./goal-generation-access";
 
@@ -26,6 +27,8 @@ describe(getGoalGenerationAccess, () => {
   });
 
   it("counts reconciling a built plan with newer research as small AI help, up to the free plan's cap", async () => {
+    freezeClock();
+
     const { goal, user } = await learnerGoal({ built: true });
 
     await expect(

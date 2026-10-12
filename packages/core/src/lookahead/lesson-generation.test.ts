@@ -12,6 +12,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import {
   getLessonGenerationStates,
@@ -202,6 +203,8 @@ describe(requestLessonGeneration, () => {
   });
 
   it("refuses an account past today's new lessons, planned ones included", async () => {
+    freezeClock();
+
     const { plan, user } = await learnerWithPlan();
     const lesson = await libraryLessonFixture();
 

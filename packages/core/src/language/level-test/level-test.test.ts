@@ -6,6 +6,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../../_test-utils/frozen-clock";
 import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
@@ -217,6 +218,8 @@ describe("language level test", () => {
   });
 
   it("asks a guest who used today's help to sign up before checking the sentence", async () => {
+    freezeClock();
+
     await saveBank();
     const { goal, user } = await languageGoalFixture();
 

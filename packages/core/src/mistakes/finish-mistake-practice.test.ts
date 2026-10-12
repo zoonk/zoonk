@@ -5,6 +5,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
@@ -117,6 +118,8 @@ describe(finishMistakePractice, () => {
   });
 
   it("counts a run once, however often or however fast it's finished", async () => {
+    freezeClock();
+
     const { extra, mistake, original, user } = await setup();
 
     const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });
@@ -140,6 +143,8 @@ describe(finishMistakePractice, () => {
   });
 
   it("grows one run as it's finished after every answer, counting each answer once", async () => {
+    freezeClock();
+
     const { extra, mistake, original, user } = await setup();
 
     const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id });

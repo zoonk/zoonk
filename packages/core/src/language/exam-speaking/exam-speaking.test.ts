@@ -8,6 +8,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import sharp from "sharp";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { uploadImage } from "../../images/upload-image";
 import { completeLanguageConversation } from "../conversations/complete-language-conversation";
@@ -278,6 +279,8 @@ describe("exam speaking tasks", () => {
   });
 
   it("waits, unwritten, when the call time left today can't fit the task's official length", async () => {
+    freezeClock();
+
     const { goal, user } = await deleLearner();
 
     // 15 of Plus's 20 minutes today are used: DELE B2's Task 1 needs at least 6.

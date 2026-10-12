@@ -3,6 +3,7 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
+import { freezeClock } from "../_test-utils/frozen-clock";
 import { mockSession } from "../_test-utils/mock-session";
 import { updateLearningProfile } from "../profile/update-learning-profile";
 import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
@@ -27,6 +28,8 @@ async function studiedToday(userId: string) {
 
 describe(getDailyTimeLimitStatus, () => {
   it("counts the day against the learner's own limit", async () => {
+    freezeClock();
+
     const learner = await userFixture();
     mockSession(learner.id);
 
@@ -53,6 +56,8 @@ describe(getDailyTimeLimitStatus, () => {
   });
 
   it("says the limit is reached once the day's study meets it", async () => {
+    freezeClock();
+
     const learner = await userFixture();
 
     await Promise.all([
