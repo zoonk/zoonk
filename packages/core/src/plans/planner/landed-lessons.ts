@@ -28,14 +28,18 @@ export type LandedUnits = ReadonlyMap<string, readonly QueueUnit[]>;
  * plan's two stand-ins on this week, though their parts ran into December: the week spilled, the
  * rest was laid out again from Monday and 736 items moved. A skill the plan holds lessons of
  * doesn't land: its stand-in is what isn't written yet, and its lessons the plan doesn't hold are
- * the ones its cut left out, which an OAB plan's day-one landing read as written since. A lesson
- * the plan holds keeps the chapter it holds it in, which a landing's outline can place it in too.
+ * the ones its cut left out, which an OAB plan's day-one landing read as written since. It does
+ * when the run's only news is its lessons (`heldSkillsLand`): then they're its next chapter. A
+ * lesson the plan holds keeps the chapter it holds it in, which a landing's outline can place it
+ * in too.
  */
 export function findLanding(input: BuildPlanInput): Landing | null {
   const planned = new Set(input.items.flatMap((item) => item.lessonId ?? []));
 
   const written = new Set(
-    input.items.flatMap((item) => (item.lessonId && item.skillId ? [item.skillId] : [])),
+    input.heldSkillsLand
+      ? []
+      : input.items.flatMap((item) => (item.lessonId && item.skillId ? [item.skillId] : [])),
   );
 
   const standIns = new Set(

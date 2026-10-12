@@ -30,7 +30,8 @@ export function isStandInItem(item: ExistingPlanItem): boolean {
  * A stand-in whose skill the Library has outlined lessons for since the plan was saved (lessons it
  * doesn't hold yet): they take its place. `written` says which lessons count for each skill. A
  * skill the plan holds lessons of keeps its stand-in for what isn't written yet this week: lessons
- * written for it since come after this week, which stays as the learner saw it.
+ * written for it since come after this week, which stays as the learner saw it. When they're the
+ * run's only news, its next chapter, they land in the stand-in's place (see `heldSkillsLand`).
  */
 function isLandedStandIn({
   item,

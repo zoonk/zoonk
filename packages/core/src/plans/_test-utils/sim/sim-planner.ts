@@ -1,6 +1,6 @@
 import { getKnownSubjects, getOwnLevel } from "../../../learner/placement/placement-contract";
 import { getLevelFloor, keepPastBasicsBands } from "../../_utils/level-bands";
-import { getPlanInputsKey, isOnlyLanding } from "../../_utils/plan-inputs-key";
+import { getPlanInputsKey, readLanding } from "../../_utils/plan-inputs-key";
 import { type ComputedPlan } from "../../_utils/replan";
 import { isStandIn } from "../../_utils/stand-in-lessons";
 import { chooseBases } from "../../planner/base-choices";
@@ -208,9 +208,9 @@ export function computeSimPlan(request: SimPlanRequest): ComputedPlan {
   const chosen = chooseBases(prepared.input);
   const { input } = chosen;
 
-  const landedOnly = isOnlyLanding({ input, savedKey: world.plan.inputsKey });
+  const landing = readLanding({ input, savedKey: world.plan.inputsKey });
 
-  const built = buildPlan({ ...input, landedOnly });
+  const built = buildPlan({ ...input, ...landing });
 
   const studied = applyBaseChoices({
     bases: input.bases ?? [],

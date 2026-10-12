@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { type BuildPlanInput } from "../planner/build-plan";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { parsePlanSettings } from "../planner/plan-state";
-import { getPlanInputsKey, isOnlyLanding } from "./plan-inputs-key";
+import { getPlanInputsKey, readLanding } from "./plan-inputs-key";
 
 /** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
@@ -44,6 +44,7 @@ const input: Required<BuildPlanInput> = {
       { area: "Math", lessons: 2, name: "Ratios", phase: 0, skillId: "ratios", weight: 1 },
     ],
   },
+  heldSkillsLand: true,
   items: [],
   knownAreas: new Set(["Math"]),
   knownSkillIds: new Set(["fractions", "ratios"]),
@@ -75,6 +76,7 @@ const RUN_FIELDS = new Set([
   "bringBackSetAside",
   "carryOver",
   "examWindows",
+  "heldSkillsLand",
   "items",
   "landedOnly",
   "mode",
@@ -135,7 +137,7 @@ describe(getPlanInputsKey, () => {
   });
 });
 
-describe(isOnlyLanding, () => {
+describe(readLanding, () => {
   const standIn: ExistingPlanItem = {
     chapterId: null,
     completedAt: null,
@@ -168,8 +170,22 @@ describe(isOnlyLanding, () => {
   const savedKey = getPlanInputsKey({ input: saved, items: [] });
   const landed = { ...saved, lessons };
 
+  /** A plan that holds the first ratios lesson, and a stand-in for the rest of the skill. */
+  const held: BuildPlanInput = {
+    ...saved,
+    graph: {
+      ...saved.graph,
+      skills: saved.graph.skills.map((skill) => ({ ...skill, lessons: 6 })),
+    },
+    items: [
+      { ...standIn, id: "ratios-0", lessonId: "ratios-0", titleSnapshot: "ratios 0" },
+      { ...standIn, position: 1 },
+    ],
+    lessons: lessons.filter((lesson) => lesson.lessonId !== "ratios-1"),
+  };
+
   it("reads a run whose only news is lessons written for the plan's stand-ins", () => {
-    expect(isOnlyLanding({ input: landed, savedKey })).toBe(true);
+    expect(readLanding({ input: landed, savedKey })).toMatchObject({ landedOnly: true });
   });
 
   it("reads a landing with anything else new as more than a landing", () => {
@@ -180,9 +196,31 @@ describe(isOnlyLanding, () => {
       items: [standIn, { ...standIn, id: "done", status: "done" as const }],
     };
 
-    expect(isOnlyLanding({ input: longer, savedKey })).toBe(false);
-    expect(isOnlyLanding({ input: studied, savedKey })).toBe(false);
-    expect(isOnlyLanding({ input: { ...landed, mode: "forced" }, savedKey })).toBe(false);
-    expect(isOnlyLanding({ input: landed, savedKey: null })).toBe(false);
+    expect(readLanding({ input: longer, savedKey })).toStrictEqual({ landedOnly: false });
+    expect(readLanding({ input: studied, savedKey })).toStrictEqual({ landedOnly: false });
+
+    expect(readLanding({ input: { ...landed, mode: "forced" }, savedKey })).toStrictEqual({
+      landedOnly: false,
+    });
+
+    expect(readLanding({ input: landed, savedKey: null })).toStrictEqual({ landedOnly: false });
+  });
+
+  it("lands a skill's next chapter, written since, though the plan holds lessons of it", () => {
+    const heldKey = getPlanInputsKey({ input: held, items: [] });
+
+    expect(readLanding({ input: { ...held, lessons }, savedKey: heldKey })).toStrictEqual({
+      heldSkillsLand: true,
+      landedOnly: true,
+    });
+  });
+
+  // An OAB plan's day-one landing read lessons its cut left out as written since.
+  it("never reads a lesson the plan was saved without, but knew, as written since", () => {
+    const heldKey = getPlanInputsKey({ input: { ...held, lessons }, items: [] });
+
+    expect(readLanding({ input: { ...held, lessons }, savedKey: heldKey })).toStrictEqual({
+      landedOnly: false,
+    });
   });
 });

@@ -25,6 +25,8 @@ vi.mock("../../progress/get-request-date-context", () => ({
 
 /** A Monday in 2020, before the learning events other tests write, so no one's pace moves dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
+/** The Monday after `NOW`: this week's lessons come before it. */
+const NEXT_WEEK = new Date("2020-10-05T00:00:00Z");
 
 /** What the graph says describing work experience takes; the course has a chapter of five. */
 const SKILL_LESSONS = 20;
@@ -478,5 +480,36 @@ describe("skill extensions", () => {
 
     // The skill keeps the graph's size: written lessons replace part of the stand-in.
     expect(after.estimateHours).toBeCloseTo(before.estimateHours ?? 0);
+  });
+
+  // On a Monday the stand-in ended this week, which a refresh keeps as it is: the next chapter it
+  // was written for waited for the week after, behind the stand-in for the lessons that come after
+  // it and the phase's challenge.
+  it("puts the next chapter in the stand-in's place this week, before the rest of the skill", async () => {
+    const { course, goal, plan, skill } = await setup();
+
+    await addChapter({
+      courseId: course.id,
+      lessons: 4,
+      position: 1,
+      skillId: skill.id,
+      title: "Entrevistas com perguntas situacionais",
+    });
+
+    await expect(replanGoalsWaitingOnSkills({ skillIds: [skill.id] })).resolves.toStrictEqual([
+      goal.id,
+    ]);
+
+    const items = await planItems(plan.id);
+    const next = items.filter((item) => item.titleSnapshot.startsWith("Entrevistas"));
+
+    expect(items.map((item) => item.titleSnapshot)).toStrictEqual([
+      ...[1, 2, 3, 4, 5].map((index) => `Candidaturas e entrevistas ${index}`),
+      ...[1, 2, 3, 4].map((index) => `Entrevistas com perguntas situacionais ${index}`),
+      skill.name,
+      "Trabalho",
+    ]);
+
+    expect(next.every((item) => item.scheduledFor && item.scheduledFor < NEXT_WEEK)).toBe(true);
   });
 });

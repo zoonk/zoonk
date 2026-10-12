@@ -21,6 +21,7 @@ const KEYED_FIELDS = {
   fullMockMinutes: true,
   goal: true,
   graph: true,
+  heldSkillsLand: "Whether a landing's lessons include next chapters, whose lessons the key reads.",
   items: "The saved plan itself: only the learner's progress in it counts (see `progress`).",
   knownAreas: true,
   knownSkillIds: true,
@@ -158,22 +159,32 @@ export function getPlanInputsKey({
 /**
  * Whether an automatic run's only news is lessons the Library wrote for the plan's stand-ins: its
  * input without them (see `findLanding`) is the one the plan was saved from (`savedKey`), with the
- * same progress. Such a run keeps every other item as the plan has it (see `landedOnly`).
+ * same progress. Such a run keeps every other item as the plan has it (see `landedOnly`). The
+ * lessons of skills the plan holds lessons of count when the input without them is the saved one
+ * too: they were written since, not left out by the plan's cut (see `heldSkillsLand`).
  */
-export function isOnlyLanding({
+export function readLanding({
   input,
   savedKey,
 }: {
   input: BuildPlanInput;
   savedKey: string | null | undefined;
-}): boolean {
-  const landing = savedKey ? findLanding(input) : null;
+}): Pick<BuildPlanInput, "heldSkillsLand" | "landedOnly"> {
+  const isOnly = (candidate: BuildPlanInput) => {
+    const landing = savedKey ? findLanding(candidate) : null;
 
-  return (
-    landing !== null &&
-    getPlanInputsKey({
-      input: landing.asSaved,
-      items: input.items.map((item) => ({ key: getItemKey(item), status: item.status })),
-    }) === savedKey
-  );
+    return (
+      landing !== null &&
+      getPlanInputsKey({
+        input: landing.asSaved,
+        items: input.items.map((item) => ({ key: getItemKey(item), status: item.status })),
+      }) === savedKey
+    );
+  };
+
+  if (isOnly({ ...input, heldSkillsLand: true })) {
+    return { heldSkillsLand: true, landedOnly: true };
+  }
+
+  return { landedOnly: isOnly(input) };
 }

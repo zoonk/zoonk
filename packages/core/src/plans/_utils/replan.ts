@@ -36,7 +36,7 @@ import {
   isUndoableChange,
 } from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
-import { getPlanInputsKey, isOnlyLanding } from "./plan-inputs-key";
+import { getPlanInputsKey, readLanding } from "./plan-inputs-key";
 import { toPlanSnapshot } from "./plan-snapshot";
 import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
 import { loadQuickBaseLessons } from "./quick-bases";
@@ -259,9 +259,9 @@ export async function computePlan({
 
   // A run whose only news is lessons written for the plan's stand-ins keeps every other item as the
   // plan has it (see `landedOnly`).
-  const landedOnly = isOnlyLanding({ input, savedKey: context.plan.inputsKey });
+  const landing = readLanding({ input, savedKey: context.plan.inputsKey });
 
-  const built = buildPlan({ ...input, landedOnly });
+  const built = buildPlan({ ...input, ...landing });
   // Measuring what fits builds the plan again as its graph sizes it: Progress never asks.
   const feasibility = once(() => getPlanFeasibility({ examSubjects, input, planned: built }));
 

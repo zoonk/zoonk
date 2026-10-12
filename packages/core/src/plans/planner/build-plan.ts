@@ -92,6 +92,14 @@ export type BuildPlanInput = {
   fullMockMinutes?: number;
   goal: { dailyMinutes: number; kind: GoalKind; targetDate: Date | null };
   graph: PlanGraph;
+  /**
+   * The run's only news is lessons the Library wrote for the plan's stand-ins, those of skills the
+   * plan holds lessons of included (their next chapters, see `readLanding`): they land too, in
+   * their stand-in's place. Absent: such a skill doesn't land (see `findLanding`), and a stand-in
+   * this week kept the time its next chapter was written for: the chapter waited for the week
+   * after, behind the stand-in for the lessons after it and the phase's challenge.
+   */
+  heldSkillsLand?: boolean;
   items: readonly ExistingPlanItem[];
   /**
    * The exam's parts the learner said they already know (onboarding's known subjects, or past the
@@ -106,7 +114,7 @@ export type BuildPlanInput = {
   knownSkillIds?: ReadonlySet<string>;
   /**
    * The run's only news is lessons the Library wrote for the plan's stand-ins: the rest of its input
-   * is the one the plan was saved from (see `isOnlyLanding`). It keeps every other item as the plan
+   * is the one the plan was saved from (see `readLanding`). It keeps every other item as the plan
    * has it: planned again, the plan as saved disagreed with itself, and an OAB plan's next morning
    * swapped 10 lessons. Absent: a landing plans the plan as saved again (see `findLanding`).
    */
