@@ -65,6 +65,7 @@ jobs:
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
       - name: Cancel superseded remote preview builds
         run: pnpm deploy cancel-previews
       - name: Confirm this is still the current PR commit
@@ -112,5 +113,6 @@ jobs:
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
       - name: Clean up the closed PR
         run: pnpm deploy:cleanup

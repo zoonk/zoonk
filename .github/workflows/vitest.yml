@@ -22,14 +22,27 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  vitest:
+  suites:
+    name: vitest (${{ matrix.part }})
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    # MEASUREMENT: how many suites at once a 4-vCPU runner keeps busy without starving tests.
+    timeout-minutes: 15
+    # Three runners of about the same length: core's and the API's files split in half across two,
+    # and the player's browser tests, which leave a runner's CPU a third idle, with the small suites
+    # on the third. Each runner has 4 vCPUs, which two suites at once keep busy; more at once only
+    # slowed every test down.
     strategy:
       fail-fast: false
       matrix:
-        concurrency: [1, 2, 10]
+        include:
+          - part: core and api 1 of 2
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=1/2"
+          - part: core and api 2 of 2
+            filter: "--filter=@zoonk/core --filter=api"
+            args: "-- --shard=2/2"
+          - part: player and the rest
+            filter: "--filter=!@zoonk/core --filter=!api"
+            args: ""
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
@@ -37,12 +50,13 @@ jobs:
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
       # Postgres pulls and starts while the code checks out and installs; as a service container it
-      # held the job ~13 s before its first step. Test suites run at the same time, each worker with
-      # up to 10 connections, more than Postgres' default 100 allows.
+      # held the job ~13 s before its first step. A throwaway database: it lives in memory and skips
+      # flushing its files. Suites share it at the same time, each worker with up to 10 connections.
       - name: Start Postgres
         run: >-
-          docker run --detach --name db --publish 5432:5432
+          docker run --detach --name db --publish 5432:5432 --tmpfs /var/lib/postgresql
           --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_test
+          --env POSTGRES_INITDB_ARGS=--no-sync
           postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
 
       - name: Check out code
@@ -50,11 +64,14 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
+      # Every job saved its own copy of the store (533 MB, 7-10 s), filling the repository's cache:
+      # runs on `main` save it, and pull requests restore that one.
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
 
       # Over TCP: while the image sets up its database, Postgres only listens on its socket.
       - name: Wait for Postgres
@@ -68,18 +85,15 @@ jobs:
           docker logs db
           exit 1
 
-      - name: Sample CPU
-        run: (vmstat -n 2 > "$RUNNER_TEMP/vmstat.log" &)
-
-      # Migrates the test database first (`db:setup:test`), then runs every suite.
+      # Migrates the test database first (`db:setup:test`), then runs the part's suites.
       - name: Run Vitest
-        run: pnpm turbo run test --concurrency=${{ matrix.concurrency }} --continue
-        env:
-          TURBO_FORCE: "true"
+        run: pnpm turbo run test ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
 
-      - name: CPU use
-        if: always()
-        run: |
-          awk 'NR > 2 { n++; us += $13; sy += $14; id += $15; wa += $16; r += $1 }
-            END { printf "samples=%d user=%.0f%% sys=%.0f%% idle=%.0f%% wait=%.0f%% runnable=%.1f\n", n, us/n, sy/n, id/n, wa/n, r/n }' "$RUNNER_TEMP/vmstat.log"
-          awk 'NR > 2 { printf "%s%d", (NR > 3 ? " " : ""), 100 - $15 } END { print "" }' "$RUNNER_TEMP/vmstat.log"
+  # The one check branch protection requires: it passes only when every part passed.
+  vitest:
+    if: always()
+    needs: suites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every part passed
+        run: test "${{ needs.suites.result }}" = success

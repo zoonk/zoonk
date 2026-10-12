@@ -79,6 +79,7 @@ jobs:
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Setup database
         run: pnpm --filter @zoonk/db db:setup:e2e

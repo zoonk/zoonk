@@ -44,6 +44,7 @@ jobs:
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
       - name: Require successful CI for the tagged commit
         run: pnpm deploy:validate-release
       - name: Load production database credentials

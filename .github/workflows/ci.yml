@@ -32,6 +32,7 @@ jobs:
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
       - id: check
         env:
           GH_TOKEN: ${{ github.token }}
@@ -83,6 +84,7 @@ jobs:
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
       - name: Load staging database credentials
         run: pnpm deploy:database
       - name: Migrate staging once

@@ -46,6 +46,7 @@ jobs:
         with:
           runtime: node@24
           cache: true
+          save-cache: ${{ github.ref == 'refs/heads/main' }}
 
       # The OpenAPI schemas import Prisma enums, so the client must exist first.
       - name: Generate Prisma client
