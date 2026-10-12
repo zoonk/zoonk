@@ -11,6 +11,8 @@ metadata:
 
 Follow the repository's local-review and explicit-commit boundary. Drafting a message does not authorize a commit or push. An authorized PR uses one commit; never amend or force-push.
 
+Before an authorized commit, opening a PR, or marking it ready for review, complete the [root commit and PR verification gate](../../../AGENTS.md#commit-and-pr-verification-gate). This includes the full local PR and `main` quality checks, including Main and API E2E, and applies again before every new commit on an existing PR. Include the final results in the PR's verification section.
+
 Use `type(scope): short message` for both commit messages and PR titles. Keep the entire title lowercase, imperative, under 72 characters, and without a final period.
 
 | Type       | Use                                                  |
